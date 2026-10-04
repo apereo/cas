@@ -1,0 +1,1021 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="light dark">
+    
+    
+    
+
+
+
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <meta name="description" content="Shibboleth Integration. Technical guides for Apereo CAS: enterprise identity, authentication, single sign-on and access management.">
+    <meta name="robots" content="index,follow">
+    <meta name="theme-color" content="#06304a">
+    <link rel="canonical" href="https://apereo.github.io/cas/development/integration/Shibboleth.html">
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="en_US">
+    <meta property="og:site_name" content="Apereo CAS Documentation">
+    <meta property="og:title" content="CAS - Shibboleth Integration">
+    <meta property="og:description" content="Shibboleth Integration. Technical guides for Apereo CAS: enterprise identity, authentication, single sign-on and access management.">
+    <meta property="og:url" content="https://apereo.github.io/cas/development/integration/Shibboleth.html">
+    <meta property="og:image" content="https://apereo.github.io/cas/images/cas_logo.png">
+    <meta property="og:image:alt" content="Apereo CAS">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="CAS - Shibboleth Integration">
+    <meta name="twitter:description" content="Shibboleth Integration. Technical guides for Apereo CAS: enterprise identity, authentication, single sign-on and access management.">
+    <meta name="twitter:image" content="https://apereo.github.io/cas/images/cas_logo.png">
+
+    
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "TechArticle",
+      "headline": "Shibboleth Integration",
+      "description": "Shibboleth Integration. Technical guides for Apereo CAS: enterprise identity, authentication, single sign-on and access management.",
+      "url": "https://apereo.github.io/cas/development/integration/Shibboleth.html",
+      "inLanguage": "en",
+      "isPartOf": {"@type": "WebSite", "name": "Apereo CAS Documentation",
+                   "url": "https://apereo.github.io/cas/"},
+      "author": {"@type": "Organization", "name": "Apereo Foundation", "url": "https://www.apereo.org/"},
+      "publisher": {"@type": "Organization", "name": "Apereo Foundation", "url": "https://www.apereo.org/"}
+    }
+    </script>
+    
+
+    <script>
+        ((i, s, o, g, r, a, m) => {
+            i['GoogleAnalyticsObject'] = r;
+            i[r] = i[r] || function () {
+                (i[r].q = i[r].q || []).push(arguments)
+            }, i[r].l = 1 * new Date();
+            a = s.createElement(o),
+                m = s.getElementsByTagName(o)[0];
+            a.async = 1;
+            a.src = g;
+            m.parentNode.insertBefore(a, m)
+        })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
+
+        ga('create', 'UA-83384532-2', 'auto');
+        ga('send', 'pageview');
+
+    </script>
+
+    <script>
+        function readThemePreference() {
+            try {
+                return localStorage.getItem('cas-docs-theme') || 'system';
+            } catch (error) {
+                return 'system';
+            }
+        }
+
+        function systemTheme() {
+            return window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+        }
+
+        function resolveTheme(preference) {
+            return preference === 'dark' || preference === 'light' ? preference : systemTheme();
+        }
+
+        function changeTheme(theme) {
+            if (theme !== 'dark' && theme !== 'light') {
+                return;
+            }
+
+            if (document.documentElement.getAttribute('data-bs-theme') !== theme) {
+                document.documentElement.setAttribute('data-bs-theme', theme);
+            }
+        }
+
+        (() => {
+            let preference = readThemePreference();
+            if (preference !== 'dark' && preference !== 'light') {
+                preference = 'system';
+
+            }
+
+            changeTheme(resolveTheme(preference));
+
+            if (window.matchMedia) {
+                window.matchMedia('(prefers-color-scheme: light)').addEventListener('change', () => {
+                    if (readThemePreference() !== 'system') {
+                        return;
+                    }
+                    const theme = systemTheme();
+                    changeTheme(theme);
+                });
+            }
+        })();
+    </script>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@docsearch/css@3"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.5/css/lightbox.min.css" />
+    
+    
+    <link rel="stylesheet" type="text/css" media="screen" href='/cas/stylesheets/site.css'>
+    <link rel="stylesheet" type="text/css" media="print" href='/cas/stylesheets/site-print.css'>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400..700;1,9..40,400..500&family=JetBrains+Mono:wght@400;500;700&family=Manrope:wght@400..800&family=Newsreader:ital,opsz,wght@0,6..72,300..600;1,6..72,300..600&display=swap" rel="stylesheet">
+    <link href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css" rel="stylesheet">
+
+    <title>CAS - Shibboleth Integration · Apereo CAS Documentation</title>
+
+</head>
+
+<body class="" data-docs-base="/cas" data-docs-version="development" data-docs-build="20261004000849">
+    <a class="skip-link" href="#cas-docs-container">Skip to content</a>
+    <header class="site-header">
+        <div class="masthead">
+            <a class="cas-brand" href="../../index.html" aria-label="Apereo CAS home">
+                <img class="brand-logo" src="/cas/images/cas_logo.png" width="119" height="60" alt="CAS">
+                <span class="brand-caption">APEREO CAS<span>Documentation</span></span>
+            </a>
+            <div class="brand-mission">
+                <p>Enterprise Authentication <span class="brand-mission-accent">for All Earthlings and Beyond</span></p>
+                <span>Identity, Single Sign-On and Access Management</span>
+            </div>
+            <a id="forkme_banner" href="https://github.com/apereo/cas"><i class="fab fa-github" aria-hidden="true"></i><span>View on GitHub</span><span aria-hidden="true">↗</span></a>
+        </div>
+        <div class="navigation-bar">
+            
+            <button onclick="navigateSidebar()" id="sidebarNavButton" class="icon-button" type="button" aria-controls="sidebar" aria-expanded="true" aria-label="Toggle documentation navigation" title="Toggle documentation navigation">
+                <i class="fa fa-bars" aria-hidden="true"></i>
+            </button>
+            
+            <nav class="primary-navigation" aria-label="Main navigation">
+                <a href="../../index.html">Home</a>
+                <a href="https://github.com/apereo/cas/releases">Releases</a>
+                <a href="../../Support.html">Support</a>
+                <a href="../../Mailing-Lists.html">Mailing Lists</a>
+                <div class="dropdown">
+                    <button class="dropdown-toggle" type="button" id="cas-versions" data-bs-toggle="dropdown" aria-expanded="false">Versions</button>
+                    <div class="dropdown-menu" aria-labelledby="cas-versions">
+                        
+                        <a class="dropdown-item" href="/cas/development/">Development</a>
+                        
+                        <a class="dropdown-item" href="/cas/8.0.x/">v8.0.x</a>
+                        
+                        <a class="dropdown-item" href="/cas/7.3.x/">v7.3.x</a>
+                        
+                    </div>
+                </div>
+                <a href="https://apereo.github.io" target="_blank" rel="noopener">Blog <span aria-hidden="true">↗</span><span class="visually-hidden"> (opens in a new tab)</span></a>
+            </nav>
+            <div class="navigation-tools">
+                <div id="searchField"></div>
+                <button id="settingsSearchButton" class="icon-button" type="button" aria-label="Search configuration settings (press Shift twice)" title="Search configuration settings (Shift Shift)"><i class="fa fa-sliders" aria-hidden="true"></i></button>
+                <button id="themeToggle" class="icon-button" type="button" onclick="toggleDarkMode()" aria-label="Toggle color theme" title="Toggle color theme"><i class="fa fa-circle-half-stroke" aria-hidden="true"></i></button>
+            </div>
+        </div>
+        <div class="reading-progress" aria-hidden="true"><span id="readingProgress"></span></div>
+    </header>
+
+    <div class="docs-shell">
+        
+        <aside id="sidebar" class="docs-sidebar" aria-label="Documentation navigation">
+    <div class="sidebar-heading">
+<span class="eyebrow">APEREO CAS DOCUMENTATION</span><span class="sidebar-symbol" aria-hidden="true">✳</span>
+</div>
+    <nav id="sidebar-navigation" aria-label="Documentation topics"></nav>
+    <noscript><p>Browse the <a href="/cas/development/sidebar.html">documentation index</a>.</p></noscript>
+</aside>
+
+        
+        <main class="cas-docs-content">
+            
+            <div class="page-toolbar">
+                <nav id="docsNavBar" aria-label="Breadcrumb"></nav>
+                <div id="toolbarIcons" role="group" aria-label="Page tools"></div>
+            </div>
+            
+            
+            <aside id="dev-doc-info" aria-labelledby="dev-doc-title">
+                <span class="development-marker" aria-hidden="true"></span>
+                <div>
+                    <p id="dev-doc-title">WORKERS AHEAD!</p>
+                    <p>You are viewing the <strong>development</strong> documentation for the Apereo CAS server. <strong>The
+                        functionality presented here <a href="https://github.com/apereo/cas/milestones">is not officially released yet</a></strong>.
+                        This is a work in progress and will be continually updated as development moves forward.
+                        <strong>You are most encouraged to test the changes presented.</strong>
+                    </p>
+                </div>
+            </aside>
+            
+            <article id="cas-docs-container" tabindex="-1">
+                
+<h1 id="overview">Overview</h1>
+
+<p>CAS can be integrated with the <a href="http://shibboleth.net/">Shibboleth federated SSO platform</a> by a couple
+different strategies. It is possible to designate CAS to serve as the authentication provider for the Shibboleth IdP.
+With such a setup, when user is routed to the IdP, the following may take place:</p>
+
+<ul>
+  <li>If the user has already authenticated to CAS and has a valid CAS SSO session, the IdP will transparently
+perform the requested action, e.g. attribute release.</li>
+  <li>If the user does not have a valid CAS SSO session, the user will be redirected to CAS and must
+authenticate before the IdP proceeds with the requested action.</li>
+</ul>
+
+<div class="alert alert-info">
+<img class="emoji" title=":information_source:" alt=":information_source:" src="https://github.githubassets.com/images/icons/emoji/unicode/2139.png" height="20" width="20"> <strong>Note</strong><p>Remember that this page is specifically dedicated to integration options with the Shibboleth Identity Provider. If you need CAS to act as a SAML2 identity provider on its own, you should <a href="../authentication/Configuring-SAML2-Authentication.html">start here instead</a>.</p>
+</div>
+
+<h2 id="sso-for-shibboleth-idp-external">SSO for Shibboleth IdP (External)</h2>
+
+<p>This is a Shibboleth IdP external authentication plugin that delegates
+the authentication to CAS. This solution has the ability to
+utilize a full range of native CAS protocol features such as <code class="language-plaintext highlighter-rouge">renew</code> and <code class="language-plaintext highlighter-rouge">gateway</code>.</p>
+
+<p>The plugin is available for both
+Shibboleth Identity Provider <a href="https://github.com/Unicon/shib-cas-authn2">v2</a>
+and <a href="https://github.com/Unicon/shib-cas-authn3">v3</a> and <a href="https://github.com/Unicon/shib-cas-authn">v4</a>.</p>
+
+<p>Support is enabled by including the following dependency in the WAR overlay:</p>
+
+<div style="display: block">
+
+    <ul class="nav nav-pills cas-modules" role="tablist">
+        <li class="nav-item cas-module" role="presentation"><a class="nav-link" id="mavenorgapereocascasserversupportshibboleth-tab" data-bs-toggle="tab" href="#mavenorgapereocascasserversupportshibboleth" role="tab" aria-controls="mavenorgapereocascasserversupportshibboleth" aria-selected="false">Apache Maven</a></li>
+        <li class="nav-item cas-module" role="presentation"><a class="nav-link" id="gradleorgapereocascasserversupportshibboleth-tab" data-bs-toggle="tab" href="#gradleorgapereocascasserversupportshibboleth" role="tab" aria-controls="gradleorgapereocascasserversupportshibboleth" aria-selected="false">Gradle</a></li>
+<li class="nav-item cas-module" role="presentation"><a class="nav-link" id="bomorgapereocascasserversupportshibboleth-tab" data-bs-toggle="tab" href="#bomorgapereocascasserversupportshibboleth" role="tab" aria-controls="bomorgapereocascasserversupportshibboleth" aria-selected="false">BOM - Spring</a></li>
+        <li class="nav-item cas-module" role="presentation"><a class="nav-link active" id="bomGradleorgapereocascasserversupportshibboleth-tab" data-bs-toggle="tab" href="#bomGradleorgapereocascasserversupportshibboleth" role="tab" aria-controls="bomGradleorgapereocascasserversupportshibboleth" aria-selected="true">BOM - Gradle</a></li>
+<li class="nav-item dropdown cas-module" role="presentation">
+            <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">Resources<span class="caret"></span>
+            </a>
+            <div class="dropdown-menu">
+                <a class="dropdown-item" href="https://getcas.apereo.org/ui?dependencies=webapp-tomcat,support-shibboleth" target="_blank" rel="noopener">Show in CAS Initializr <span aria-hidden="true">↗</span><span class="visually-hidden"> (opens in a new tab)</span></a>
+                <a class="dropdown-item" href="javascript:generateOverlay('cas-server-support-shibboleth',%20'cas-overlay');">Generate CAS Server WAR Overlay</a>
+            </div>
+        </li>
+    </ul>
+
+
+    <div class="cas-module-tabs tab-content clearfix">
+        <div class="tab-pane fade" id="mavenorgapereocascasserversupportshibboleth" role="tabpanel" aria-labelledby="mavenorgapereocascasserversupportshibboleth-tab">
+<span>
+      <div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+</pre></td>
+<td class="rouge-code"><pre><span class="nt">&lt;dependency&gt;</span>
+    <span class="nt">&lt;groupId&gt;</span>org.apereo.cas<span class="nt">&lt;/groupId&gt;</span>
+    <span class="nt">&lt;artifactId&gt;</span>cas-server-support-shibboleth<span class="nt">&lt;/artifactId&gt;</span>
+    <span class="nt">&lt;version&gt;</span>${cas.version}<span class="nt">&lt;/version&gt;</span>
+<span class="nt">&lt;/dependency&gt;</span>
+</pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+    </span>
+
+        </div>
+
+
+        <div class="tab-pane fade" id="gradleorgapereocascasserversupportshibboleth" role="tabpanel" aria-labelledby="gradleorgapereocascasserversupportshibboleth-tab">
+
+            <span>
+    
+<div class="language-groovy highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td>
+<td class="rouge-code"><pre><span class="n">implementation</span> <span class="s2">"org.apereo.cas:cas-server-support-shibboleth:${project.'cas.version'}"</span>
+</pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+  </span>
+
+        </div>
+
+        <div class="tab-pane fade" id="bomorgapereocascasserversupportshibboleth" role="tabpanel" aria-labelledby="bomorgapereocascasserversupportshibboleth-tab">
+<span>
+    <div class="language-groovy highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+</pre></td>
+<td class="rouge-code"><pre><span class="n">dependencyManagement</span> <span class="o">{</span>
+    <span class="n">imports</span> <span class="o">{</span>
+        <span class="n">mavenBom</span> <span class="s2">"org.apereo.cas:cas-server-support-bom:${project.'cas.version'}"</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+
+<span class="n">dependencies</span> <span class="o">{</span>
+    <span class="n">implementation</span> <span class="s2">"org.apereo.cas:cas-server-support-shibboleth"</span>
+<span class="o">}</span>
+</pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+  </span>
+
+        </div>
+
+        <div class="tab-pane fade show active" id="bomGradleorgapereocascasserversupportshibboleth" role="tabpanel" aria-labelledby="bomGradleorgapereocascasserversupportshibboleth-tab">
+<span>
+    <div class="language-groovy highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+</pre></td>
+<td class="rouge-code"><pre><span class="n">dependencies</span> <span class="o">{</span>
+    <span class="cm">/*
+        The following platform references are included automatically and are listed for reference only.
+
+        implementation enforcedPlatform("org.apereo.cas:cas-server-support-bom:${project.'cas.version'}")
+        implementation platform(org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES)
+        
+    */</span>
+    <span class="n">implementation</span> <span class="s2">"org.apereo.cas:cas-server-support-shibboleth"</span>
+<span class="o">}</span>
+</pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+  </span>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- fragment:keep -->
+
+<p>The following settings and properties are available from the CAS configuration catalog:</p>
+
+
+<div class="cas-properties">
+    <div class="cas-properties-list">
+<div class="cas-property" data-kind="optional" data-name="cas.authn.shib-idp.server-url" data-default="localhost">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.shib-idp.server-url</code><span class="cas-property-summary">The server url of the shibboleth idp deployment.</span>
+</div>
+        <div class="cas-property-default"><code>localhost</code></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>The server url of the shibboleth idp deployment.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><code>localhost</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.saml.shibboleth.ShibbolethIdPProperties">ShibbolethIdPProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+</div>
+<p class="cas-properties-legend">
+        <strong>Required</strong> settings may be needed to activate or affect the feature; review them even when they have a default.
+        <strong>Optional</strong> settings only need to be set to change a default or to turn on the behavior they control.
+        <strong>Third party</strong> settings belong to libraries such as Spring Boot that CAS builds on; their own documentation may have more detail.
+    </p>
+<div class="cas-properties-topics"><details class="cas-properties-topic">
+            <summary><i class="fa fa-newspaper" aria-hidden="true"></i>Notes on configuration</summary>
+            <div class="cas-properties-topic-body">
+<!-- fragment:keep -->
+
+<p></p>
+
+<h4 id="configuration-metadata">Configuration Metadata</h4>
+
+<p>The collection of configuration properties listed in this section are automatically generated from the CAS source and components that contain the actual field
+definitions, types, descriptions, modules, etc. This metadata may not always be 100% accurate, or could be lacking details and sufficient explanations.</p>
+
+<h4 id="be-selective">Be Selective</h4>
+
+<p>This section is meant as a guide only. Do NOT copy/paste the entire collection of settings into your CAS configuration; rather pick only the properties that you
+need. Do NOT enable settings unless you are certain of their purpose and do NOT copy settings into your configuration only to keep them as reference. All these
+ideas lead to upgrade headaches, maintenance nightmares and premature aging.</p>
+
+<h4 id="yagni">YAGNI</h4>
+
+<p>Note that for nearly ALL use cases, declaring and configuring properties listed here is sufficient. You should NOT have to explicitly massage a CAS XML/Java/etc
+configuration file to design an authentication handler, create attribute release policies, etc. CAS at runtime will auto-configure all required changes for you.
+If you are unsure about the meaning of a given CAS setting, do NOT turn it on without hesitation. Review the codebase or better yet, ask questions to clarify
+the intended behavior.</p>
+
+<h4 id="naming-convention">Naming Convention</h4>
+
+<p>Property names can be specified in very relaxed terms. For instance <code class="language-plaintext highlighter-rouge">cas.someProperty</code>, <code class="language-plaintext highlighter-rouge">cas.some-property</code>, <code class="language-plaintext highlighter-rouge">cas.some_property</code> are all valid names. While all
+forms are accepted by CAS, there are certain components (in CAS and other frameworks used) whose activation at runtime is conditional on a property value, where
+this property is required to have been specified in CAS configuration using kebab case. This is both true for properties that are owned by CAS as well as those
+that might be presented to the system via an external library or framework such as Spring Boot, etc.</p>
+
+<div class="alert alert-info">
+<img class="emoji" title=":information_source:" alt=":information_source:" src="https://github.githubassets.com/images/icons/emoji/unicode/2139.png" height="20" width="20"> <strong>Note</strong> <p>
+When possible, properties should be stored in lower-case kebab format, such as <code>cas.property-name=value</code>.
+The only possible exception to this rule is when naming actuator endpoints; The name of the
+actuator endpoints (i.e. <code>ssoSessions</code>) <strong>MUST</strong> remain in camelCase mode. 
+</p>
+</div>
+
+<p>Settings and properties that are controlled by the CAS platform directly always begin with the prefix <code class="language-plaintext highlighter-rouge">cas</code>. All other settings are controlled and provided
+to CAS via other underlying frameworks and may have their own schemas and syntax. BE CAREFUL with
+the distinction. Unrecognized properties are rejected by CAS and/or frameworks upon which CAS depends. This means if you somehow misspell a property definition
+or fail to adhere to the dot-notation syntax and such, your setting is entirely refused by CAS and likely the feature it controls will never be activated in the
+way you intend.</p>
+
+<h4 id="validation">Validation</h4>
+
+<p>Configuration properties are automatically validated on CAS startup to report issues with configuration binding, especially if defined CAS settings cannot be
+recognized or validated by the configuration schema. Additional validation processes are also handled
+via <a href="/cas/development/configuration/Configuration-Metadata-Repository.html">Configuration Metadata</a> and property migrations applied automatically on
+startup by Spring Boot and family.</p>
+
+<h4 id="indexed-settings">Indexed Settings</h4>
+
+<p>CAS settings able to accept multiple values are typically documented with an index, such as <code class="language-plaintext highlighter-rouge">cas.some.setting[0]=value</code>. The index <code class="language-plaintext highlighter-rouge">[0]</code> is meant to be
+incremented by the adopter to allow for distinct multiple configuration blocks.</p>
+
+            </div>
+        </details></div>
+</div>
+
+<h3 id="relying-party-entityid">Relying Party EntityId</h3>
+
+<p>The authentication plugin is able to pass the relying party’s entity ID over
+to the CAS server upon authentication requests.
+The entity ID is passed in form of a url parameter to the CAS server as such:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td>
+<td class="rouge-code"><pre>https://sso.example.org/cas/login?service=&lt;authentication-plugin-url&gt;&amp;entityId=&lt;relying-party-entity-id&gt;
+</pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+<p>You can also take advantage of the <code class="language-plaintext highlighter-rouge">entityId</code> parameter and treat it as a normal CAS service definition,
+so it can be used for multifactor authentication and authorization.</p>
+
+<p>See <a href="../mfa/Configuring-Multifactor-Authentication-Triggers.html">this guide</a> for more info.</p>
+
+<h2 id="displaying-saml-mdui">Displaying SAML MDUI</h2>
+
+<p>The CAS server is able to recognize the <code class="language-plaintext highlighter-rouge">entityId</code> parameter and display SAML MDUI on the login page,
+that is provided by the metadata associated with the relying party.</p>
+
+<h3 id="configuration">Configuration</h3>
+
+<p>Support is enabled by including the following dependency in the WAR overlay:</p>
+
+<div style="display: block">
+
+    <ul class="nav nav-pills cas-modules" role="tablist">
+        <li class="nav-item cas-module" role="presentation"><a class="nav-link" id="mavenorgapereocascasserversupportsamlmdui-tab" data-bs-toggle="tab" href="#mavenorgapereocascasserversupportsamlmdui" role="tab" aria-controls="mavenorgapereocascasserversupportsamlmdui" aria-selected="false">Apache Maven</a></li>
+        <li class="nav-item cas-module" role="presentation"><a class="nav-link" id="gradleorgapereocascasserversupportsamlmdui-tab" data-bs-toggle="tab" href="#gradleorgapereocascasserversupportsamlmdui" role="tab" aria-controls="gradleorgapereocascasserversupportsamlmdui" aria-selected="false">Gradle</a></li>
+<li class="nav-item cas-module" role="presentation"><a class="nav-link" id="bomorgapereocascasserversupportsamlmdui-tab" data-bs-toggle="tab" href="#bomorgapereocascasserversupportsamlmdui" role="tab" aria-controls="bomorgapereocascasserversupportsamlmdui" aria-selected="false">BOM - Spring</a></li>
+        <li class="nav-item cas-module" role="presentation"><a class="nav-link active" id="bomGradleorgapereocascasserversupportsamlmdui-tab" data-bs-toggle="tab" href="#bomGradleorgapereocascasserversupportsamlmdui" role="tab" aria-controls="bomGradleorgapereocascasserversupportsamlmdui" aria-selected="true">BOM - Gradle</a></li>
+<li class="nav-item dropdown cas-module" role="presentation">
+            <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">Resources<span class="caret"></span>
+            </a>
+            <div class="dropdown-menu">
+                <a class="dropdown-item" href="https://getcas.apereo.org/ui?dependencies=webapp-tomcat,support-saml-mdui" target="_blank" rel="noopener">Show in CAS Initializr <span aria-hidden="true">↗</span><span class="visually-hidden"> (opens in a new tab)</span></a>
+                <a class="dropdown-item" href="javascript:generateOverlay('cas-server-support-saml-mdui',%20'cas-overlay');">Generate CAS Server WAR Overlay</a>
+            </div>
+        </li>
+    </ul>
+
+
+    <div class="cas-module-tabs tab-content clearfix">
+        <div class="tab-pane fade" id="mavenorgapereocascasserversupportsamlmdui" role="tabpanel" aria-labelledby="mavenorgapereocascasserversupportsamlmdui-tab">
+<span>
+      <div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+</pre></td>
+<td class="rouge-code"><pre><span class="nt">&lt;dependency&gt;</span>
+    <span class="nt">&lt;groupId&gt;</span>org.apereo.cas<span class="nt">&lt;/groupId&gt;</span>
+    <span class="nt">&lt;artifactId&gt;</span>cas-server-support-saml-mdui<span class="nt">&lt;/artifactId&gt;</span>
+    <span class="nt">&lt;version&gt;</span>${cas.version}<span class="nt">&lt;/version&gt;</span>
+<span class="nt">&lt;/dependency&gt;</span>
+</pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+    </span>
+
+        </div>
+
+
+        <div class="tab-pane fade" id="gradleorgapereocascasserversupportsamlmdui" role="tabpanel" aria-labelledby="gradleorgapereocascasserversupportsamlmdui-tab">
+
+            <span>
+    
+<div class="language-groovy highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td>
+<td class="rouge-code"><pre><span class="n">implementation</span> <span class="s2">"org.apereo.cas:cas-server-support-saml-mdui:${project.'cas.version'}"</span>
+</pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+  </span>
+
+        </div>
+
+        <div class="tab-pane fade" id="bomorgapereocascasserversupportsamlmdui" role="tabpanel" aria-labelledby="bomorgapereocascasserversupportsamlmdui-tab">
+<span>
+    <div class="language-groovy highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+</pre></td>
+<td class="rouge-code"><pre><span class="n">dependencyManagement</span> <span class="o">{</span>
+    <span class="n">imports</span> <span class="o">{</span>
+        <span class="n">mavenBom</span> <span class="s2">"org.apereo.cas:cas-server-support-bom:${project.'cas.version'}"</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+
+<span class="n">dependencies</span> <span class="o">{</span>
+    <span class="n">implementation</span> <span class="s2">"org.apereo.cas:cas-server-support-saml-mdui"</span>
+<span class="o">}</span>
+</pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+  </span>
+
+        </div>
+
+        <div class="tab-pane fade show active" id="bomGradleorgapereocascasserversupportsamlmdui" role="tabpanel" aria-labelledby="bomGradleorgapereocascasserversupportsamlmdui-tab">
+<span>
+    <div class="language-groovy highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+</pre></td>
+<td class="rouge-code"><pre><span class="n">dependencies</span> <span class="o">{</span>
+    <span class="cm">/*
+        The following platform references are included automatically and are listed for reference only.
+
+        implementation enforcedPlatform("org.apereo.cas:cas-server-support-bom:${project.'cas.version'}")
+        implementation platform(org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES)
+        
+    */</span>
+    <span class="n">implementation</span> <span class="s2">"org.apereo.cas:cas-server-support-saml-mdui"</span>
+<span class="o">}</span>
+</pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+  </span>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- fragment:keep -->
+
+<p>The following settings and properties are available from the CAS configuration catalog:</p>
+
+
+<div class="cas-properties">
+    <div class="cas-properties-list">
+<div class="cas-property" data-kind="required" data-name="cas.saml-metadata-ui.resources" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.saml-metadata-ui.resources</code><span class="cas-property-summary">Metadata resources to load and parse through based on the incoming entity id in order to locate MDUI.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-required"><i class="fa fa-asterisk" aria-hidden="true"></i>Required</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Metadata resources to load and parse through based on the incoming entity id in order to locate MDUI. Resources can be classpath/file/http resources. If each metadata resource has a signing certificate, they can be added onto the resource with a <code>::</code> separator. Example: <code>classpath:/sp-metadata.xml::classpath:/pub.key</code>.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>List&lt;String&gt;</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.saml.mdui.SamlMetadataUIProperties">SamlMetadataUIProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.saml-metadata-ui.max-validity" data-default="0">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.saml-metadata-ui.max-validity</code><span class="cas-property-summary">If specified, creates a validity filter on the metadata to check for metadata freshness based on the max validity.</span>
+</div>
+        <div class="cas-property-default"><code>0</code></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>If specified, creates a validity filter on the metadata to check for metadata freshness based on the max validity. Value is specified in seconds.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Long</code></dd>
+<dt>Default</dt>
+<dd><code>0</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.saml.mdui.SamlMetadataUIProperties">SamlMetadataUIProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.saml-metadata-ui.parameter" data-default="entityId">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.saml-metadata-ui.parameter</code><span class="cas-property-summary">The parameter name that indicates the entity id of the service provider submitted to CAS.</span>
+</div>
+        <div class="cas-property-default"><code>entityId</code></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>The parameter name that indicates the entity id of the service provider submitted to CAS.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><code>entityId</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.saml.mdui.SamlMetadataUIProperties">SamlMetadataUIProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.saml-metadata-ui.require-signed-root" data-default="false">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.saml-metadata-ui.require-signed-root</code><span class="cas-property-summary">When parsing metadata, whether the root element is required to be signed.</span>
+</div>
+        <div class="cas-property-default"><code>false</code></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>When parsing metadata, whether the root element is required to be signed.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Boolean</code></dd>
+<dt>Default</dt>
+<dd><code>false</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.saml.mdui.SamlMetadataUIProperties">SamlMetadataUIProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.saml-metadata-ui.require-valid-metadata" data-default="true">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.saml-metadata-ui.require-valid-metadata</code><span class="cas-property-summary">Whether valid metadata is required when parsing metadata.</span>
+</div>
+        <div class="cas-property-default"><code>true</code></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Whether valid metadata is required when parsing metadata.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Boolean</code></dd>
+<dt>Default</dt>
+<dd><code>true</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.saml.mdui.SamlMetadataUIProperties">SamlMetadataUIProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.saml-metadata-ui.schedule.cron-expression" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.saml-metadata-ui.schedule.cron-expression</code><span class="cas-property-summary">A cron-like expression, extending the usual UN*X definition to include triggers on the second, minute, hour, day of month, month, and day of week.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>A cron-like expression, extending the usual UN*X definition to include triggers on the second, minute, hour, day of month, month, and day of week. For example, <code>0 * * * * MON-FRI</code> means once per minute on weekdays (at the top of the minute - the 0th second) or <code>0 0 0 * * *</code> means every day at midnight. * Note that when cron expressions are defined, the start delay and repeat interval settings are must be removed and set to blank.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.quartz.SchedulingProperties">SchedulingProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.saml-metadata-ui.schedule.cron-time-zone" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.saml-metadata-ui.schedule.cron-time-zone</code><span class="cas-property-summary">A time zone for which the cron expression will be resolved.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>A time zone for which the cron expression will be resolved. By default, this attribute is empty (i.e. the scheduler's time zone will be used).</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.quartz.SchedulingProperties">SchedulingProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.saml-metadata-ui.schedule.enabled" data-default="true">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.saml-metadata-ui.schedule.enabled</code><span class="cas-property-summary">Whether scheduler should be enabled to schedule the job to run.</span>
+</div>
+        <div class="cas-property-default"><code>true</code></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Whether scheduler should be enabled to schedule the job to run.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Boolean</code></dd>
+<dt>Default</dt>
+<dd><code>true</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.quartz.SchedulingProperties">SchedulingProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.saml-metadata-ui.schedule.enabled-on-host" data-default=".*" data-regex>
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.saml-metadata-ui.schedule.enabled-on-host</code><span class="cas-property-summary">Overrides SchedulingProperties#enabled property value of true if this property does not match hostname of CAS server.</span>
+</div>
+        <div class="cas-property-default"><code>.*</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag"><i class="fa fa-asterisk" aria-hidden="true"></i>Regex</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Overrides <code>SchedulingProperties#enabled</code> property value of true if this property does not match hostname of CAS server. This can be useful if deploying CAS with an image in a statefulset where all names are predictable but where having different configurations for different servers is hard. The value can be an exact hostname or a regular expression that will be used to match the hostname.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><code>.*</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.quartz.SchedulingProperties">SchedulingProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.saml-metadata-ui.schedule.repeat-interval" data-default="PT2M" data-duration>
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.saml-metadata-ui.schedule.repeat-interval</code><span class="cas-property-summary">String representation of a repeat interval of re-loading data for a data store implementation.</span>
+</div>
+        <div class="cas-property-default"><code>PT2M</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag"><i class="fa fa-clock" aria-hidden="true"></i>Duration</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>String representation of a repeat interval of re-loading data for a data store implementation. This is the timeout between consecutive job’s executions.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><code>PT2M</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.quartz.SchedulingProperties">SchedulingProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.saml-metadata-ui.schedule.start-delay" data-default="PT15S" data-duration>
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.saml-metadata-ui.schedule.start-delay</code><span class="cas-property-summary">String representation of a start delay of loading data for a data store implementation.</span>
+</div>
+        <div class="cas-property-default"><code>PT15S</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag"><i class="fa fa-clock" aria-hidden="true"></i>Duration</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>String representation of a start delay of loading data for a data store implementation. This is the delay between scheduler startup and first job’s execution</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><code>PT15S</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.quartz.SchedulingProperties">SchedulingProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+</div>
+<p class="cas-properties-legend">
+        <strong>Required</strong> settings may be needed to activate or affect the feature; review them even when they have a default.
+        <strong>Optional</strong> settings only need to be set to change a default or to turn on the behavior they control.
+        <strong>Third party</strong> settings belong to libraries such as Spring Boot that CAS builds on; their own documentation may have more detail.
+    </p>
+<div class="cas-properties-topics"><details class="cas-properties-topic">
+            <summary><i class="fa fa-newspaper" aria-hidden="true"></i>Notes on configuration</summary>
+            <div class="cas-properties-topic-body">
+<!-- fragment:keep -->
+
+<p></p>
+
+<h4 id="configuration-metadata">Configuration Metadata</h4>
+
+<p>The collection of configuration properties listed in this section are automatically generated from the CAS source and components that contain the actual field
+definitions, types, descriptions, modules, etc. This metadata may not always be 100% accurate, or could be lacking details and sufficient explanations.</p>
+
+<h4 id="be-selective">Be Selective</h4>
+
+<p>This section is meant as a guide only. Do NOT copy/paste the entire collection of settings into your CAS configuration; rather pick only the properties that you
+need. Do NOT enable settings unless you are certain of their purpose and do NOT copy settings into your configuration only to keep them as reference. All these
+ideas lead to upgrade headaches, maintenance nightmares and premature aging.</p>
+
+<h4 id="yagni">YAGNI</h4>
+
+<p>Note that for nearly ALL use cases, declaring and configuring properties listed here is sufficient. You should NOT have to explicitly massage a CAS XML/Java/etc
+configuration file to design an authentication handler, create attribute release policies, etc. CAS at runtime will auto-configure all required changes for you.
+If you are unsure about the meaning of a given CAS setting, do NOT turn it on without hesitation. Review the codebase or better yet, ask questions to clarify
+the intended behavior.</p>
+
+<h4 id="naming-convention">Naming Convention</h4>
+
+<p>Property names can be specified in very relaxed terms. For instance <code class="language-plaintext highlighter-rouge">cas.someProperty</code>, <code class="language-plaintext highlighter-rouge">cas.some-property</code>, <code class="language-plaintext highlighter-rouge">cas.some_property</code> are all valid names. While all
+forms are accepted by CAS, there are certain components (in CAS and other frameworks used) whose activation at runtime is conditional on a property value, where
+this property is required to have been specified in CAS configuration using kebab case. This is both true for properties that are owned by CAS as well as those
+that might be presented to the system via an external library or framework such as Spring Boot, etc.</p>
+
+<div class="alert alert-info">
+<img class="emoji" title=":information_source:" alt=":information_source:" src="https://github.githubassets.com/images/icons/emoji/unicode/2139.png" height="20" width="20"> <strong>Note</strong> <p>
+When possible, properties should be stored in lower-case kebab format, such as <code>cas.property-name=value</code>.
+The only possible exception to this rule is when naming actuator endpoints; The name of the
+actuator endpoints (i.e. <code>ssoSessions</code>) <strong>MUST</strong> remain in camelCase mode. 
+</p>
+</div>
+
+<p>Settings and properties that are controlled by the CAS platform directly always begin with the prefix <code class="language-plaintext highlighter-rouge">cas</code>. All other settings are controlled and provided
+to CAS via other underlying frameworks and may have their own schemas and syntax. BE CAREFUL with
+the distinction. Unrecognized properties are rejected by CAS and/or frameworks upon which CAS depends. This means if you somehow misspell a property definition
+or fail to adhere to the dot-notation syntax and such, your setting is entirely refused by CAS and likely the feature it controls will never be activated in the
+way you intend.</p>
+
+<h4 id="validation">Validation</h4>
+
+<p>Configuration properties are automatically validated on CAS startup to report issues with configuration binding, especially if defined CAS settings cannot be
+recognized or validated by the configuration schema. Additional validation processes are also handled
+via <a href="/cas/development/configuration/Configuration-Metadata-Repository.html">Configuration Metadata</a> and property migrations applied automatically on
+startup by Spring Boot and family.</p>
+
+<h4 id="indexed-settings">Indexed Settings</h4>
+
+<p>CAS settings able to accept multiple values are typically documented with an index, such as <code class="language-plaintext highlighter-rouge">cas.some.setting[0]=value</code>. The index <code class="language-plaintext highlighter-rouge">[0]</code> is meant to be
+incremented by the adopter to allow for distinct multiple configuration blocks.</p>
+
+            </div>
+        </details></div>
+</div>
+
+<h3 id="relying-party-metadata">Relying Party Metadata</h3>
+
+<p>You may allow CAS to recognize SAML MDUI directly from metadata documents that are fed 
+to CAS via settings. If the metadata for the relying party matches the 
+requested <code class="language-plaintext highlighter-rouge">entityId</code> and contains MDUI elements, those will be passed 
+onto the login page for decorations. If MDUI is not available in the metadata, the relevant 
+elements from the matching service in the service registry will be used all the same.</p>
+
+<h3 id="service-registry-metadata">Service Registry Metadata</h3>
+
+<p>You may also register the relying party in the CAS service registry as a regular 
+service application and specify a number of MDUI-like elements in the body of the registration record. An example follows:</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+</pre></td>
+<td class="rouge-code"><pre><span class="p">{</span><span class="w">
+  </span><span class="nl">"@class"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"org.apereo.cas.services.CasRegisteredService"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"serviceId"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"relying-party-entity-id"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"name"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"Test"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"id"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="mi">100</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"description"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"This is the test application."</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"evaluationOrder"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="mi">10000</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"logo"</span><span class="p">:</span><span class="w"> </span><span class="s2">"images/logo.png"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"informationUrl"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://test.example.org/info"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"privacyUrl"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://test.example.org/privacy"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+            </article>
+            <div class="article-end" aria-hidden="true">
+<span></span><span>CAS</span><span></span>
+</div>
+        </main>
+        
+        <aside class="docs-toc" aria-label="On this page">
+    <nav id="pageContents" aria-label="Table of contents">
+        <p class="eyebrow">ON THIS PAGE</p>
+        <ul class="section-nav"></ul>
+    </nav>
+    <a class="toc-top" href="#cas-docs-container">Back to top <span aria-hidden="true">↑</span></a>
+</aside>
+
+        
+    </div>
+
+    <footer class="site-footer">
+        <a class="footer-brand" href="../../index.html">APEREO <strong>CAS</strong></a>
+        <p>CAS is supported by the <a href="https://www.apereo.org/">Apereo Foundation</a>.</p>
+        <a href="#cas-docs-container">Back to top <span aria-hidden="true">↑</span></a>
+    </footer>
+    <div id="docs-status" class="visually-hidden" role="status" aria-live="polite"></div>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/tether@2.0.0/dist/js/tether.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.11/clipboard.min.js"></script>
+
+    <script src="/cas/javascripts/URI.js"></script>
+    <script src="/cas/javascripts/site.js"></script>
+
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@docsearch/js@3"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="https://code.jquery.com/ui/1.13.1/jquery-ui.js"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.5/js/lightbox.min.js"></script>
+
+    <script>
+        let pageSection = "Integration";
+        let siteUrl = "https://apereo.github.io";
+        let basePath = "/cas";
+
+        
+    </script>
+</body>
+
+</html>

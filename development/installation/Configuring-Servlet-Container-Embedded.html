@@ -1,0 +1,1569 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="light dark">
+    
+    
+    
+
+
+
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <meta name="description" content="Servlet Container. Technical guides for Apereo CAS: enterprise identity, authentication, single sign-on and access management.">
+    <meta name="robots" content="index,follow">
+    <meta name="theme-color" content="#06304a">
+    <link rel="canonical" href="https://apereo.github.io/cas/development/installation/Configuring-Servlet-Container-Embedded.html">
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="en_US">
+    <meta property="og:site_name" content="Apereo CAS Documentation">
+    <meta property="og:title" content="CAS - Servlet Container">
+    <meta property="og:description" content="Servlet Container. Technical guides for Apereo CAS: enterprise identity, authentication, single sign-on and access management.">
+    <meta property="og:url" content="https://apereo.github.io/cas/development/installation/Configuring-Servlet-Container-Embedded.html">
+    <meta property="og:image" content="https://apereo.github.io/cas/images/cas_logo.png">
+    <meta property="og:image:alt" content="Apereo CAS">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="CAS - Servlet Container">
+    <meta name="twitter:description" content="Servlet Container. Technical guides for Apereo CAS: enterprise identity, authentication, single sign-on and access management.">
+    <meta name="twitter:image" content="https://apereo.github.io/cas/images/cas_logo.png">
+
+    
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "TechArticle",
+      "headline": "Servlet Container",
+      "description": "Servlet Container. Technical guides for Apereo CAS: enterprise identity, authentication, single sign-on and access management.",
+      "url": "https://apereo.github.io/cas/development/installation/Configuring-Servlet-Container-Embedded.html",
+      "inLanguage": "en",
+      "isPartOf": {"@type": "WebSite", "name": "Apereo CAS Documentation",
+                   "url": "https://apereo.github.io/cas/"},
+      "author": {"@type": "Organization", "name": "Apereo Foundation", "url": "https://www.apereo.org/"},
+      "publisher": {"@type": "Organization", "name": "Apereo Foundation", "url": "https://www.apereo.org/"}
+    }
+    </script>
+    
+
+    <script>
+        ((i, s, o, g, r, a, m) => {
+            i['GoogleAnalyticsObject'] = r;
+            i[r] = i[r] || function () {
+                (i[r].q = i[r].q || []).push(arguments)
+            }, i[r].l = 1 * new Date();
+            a = s.createElement(o),
+                m = s.getElementsByTagName(o)[0];
+            a.async = 1;
+            a.src = g;
+            m.parentNode.insertBefore(a, m)
+        })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
+
+        ga('create', 'UA-83384532-2', 'auto');
+        ga('send', 'pageview');
+
+    </script>
+
+    <script>
+        function readThemePreference() {
+            try {
+                return localStorage.getItem('cas-docs-theme') || 'system';
+            } catch (error) {
+                return 'system';
+            }
+        }
+
+        function systemTheme() {
+            return window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+        }
+
+        function resolveTheme(preference) {
+            return preference === 'dark' || preference === 'light' ? preference : systemTheme();
+        }
+
+        function changeTheme(theme) {
+            if (theme !== 'dark' && theme !== 'light') {
+                return;
+            }
+
+            if (document.documentElement.getAttribute('data-bs-theme') !== theme) {
+                document.documentElement.setAttribute('data-bs-theme', theme);
+            }
+        }
+
+        (() => {
+            let preference = readThemePreference();
+            if (preference !== 'dark' && preference !== 'light') {
+                preference = 'system';
+
+            }
+
+            changeTheme(resolveTheme(preference));
+
+            if (window.matchMedia) {
+                window.matchMedia('(prefers-color-scheme: light)').addEventListener('change', () => {
+                    if (readThemePreference() !== 'system') {
+                        return;
+                    }
+                    const theme = systemTheme();
+                    changeTheme(theme);
+                });
+            }
+        })();
+    </script>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@docsearch/css@3"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.5/css/lightbox.min.css" />
+    
+    
+    <link rel="stylesheet" type="text/css" media="screen" href='/cas/stylesheets/site.css'>
+    <link rel="stylesheet" type="text/css" media="print" href='/cas/stylesheets/site-print.css'>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400..700;1,9..40,400..500&family=JetBrains+Mono:wght@400;500;700&family=Manrope:wght@400..800&family=Newsreader:ital,opsz,wght@0,6..72,300..600;1,6..72,300..600&display=swap" rel="stylesheet">
+    <link href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css" rel="stylesheet">
+
+    <title>CAS - Servlet Container · Apereo CAS Documentation</title>
+
+</head>
+
+<body class="" data-docs-base="/cas" data-docs-version="development" data-docs-build="20261004000849">
+    <a class="skip-link" href="#cas-docs-container">Skip to content</a>
+    <header class="site-header">
+        <div class="masthead">
+            <a class="cas-brand" href="../../index.html" aria-label="Apereo CAS home">
+                <img class="brand-logo" src="/cas/images/cas_logo.png" width="119" height="60" alt="CAS">
+                <span class="brand-caption">APEREO CAS<span>Documentation</span></span>
+            </a>
+            <div class="brand-mission">
+                <p>Enterprise Authentication <span class="brand-mission-accent">for All Earthlings and Beyond</span></p>
+                <span>Identity, Single Sign-On and Access Management</span>
+            </div>
+            <a id="forkme_banner" href="https://github.com/apereo/cas"><i class="fab fa-github" aria-hidden="true"></i><span>View on GitHub</span><span aria-hidden="true">↗</span></a>
+        </div>
+        <div class="navigation-bar">
+            
+            <button onclick="navigateSidebar()" id="sidebarNavButton" class="icon-button" type="button" aria-controls="sidebar" aria-expanded="true" aria-label="Toggle documentation navigation" title="Toggle documentation navigation">
+                <i class="fa fa-bars" aria-hidden="true"></i>
+            </button>
+            
+            <nav class="primary-navigation" aria-label="Main navigation">
+                <a href="../../index.html">Home</a>
+                <a href="https://github.com/apereo/cas/releases">Releases</a>
+                <a href="../../Support.html">Support</a>
+                <a href="../../Mailing-Lists.html">Mailing Lists</a>
+                <div class="dropdown">
+                    <button class="dropdown-toggle" type="button" id="cas-versions" data-bs-toggle="dropdown" aria-expanded="false">Versions</button>
+                    <div class="dropdown-menu" aria-labelledby="cas-versions">
+                        
+                        <a class="dropdown-item" href="/cas/development/">Development</a>
+                        
+                        <a class="dropdown-item" href="/cas/8.0.x/">v8.0.x</a>
+                        
+                        <a class="dropdown-item" href="/cas/7.3.x/">v7.3.x</a>
+                        
+                    </div>
+                </div>
+                <a href="https://apereo.github.io" target="_blank" rel="noopener">Blog <span aria-hidden="true">↗</span><span class="visually-hidden"> (opens in a new tab)</span></a>
+            </nav>
+            <div class="navigation-tools">
+                <div id="searchField"></div>
+                <button id="settingsSearchButton" class="icon-button" type="button" aria-label="Search configuration settings (press Shift twice)" title="Search configuration settings (Shift Shift)"><i class="fa fa-sliders" aria-hidden="true"></i></button>
+                <button id="themeToggle" class="icon-button" type="button" onclick="toggleDarkMode()" aria-label="Toggle color theme" title="Toggle color theme"><i class="fa fa-circle-half-stroke" aria-hidden="true"></i></button>
+            </div>
+        </div>
+        <div class="reading-progress" aria-hidden="true"><span id="readingProgress"></span></div>
+    </header>
+
+    <div class="docs-shell">
+        
+        <aside id="sidebar" class="docs-sidebar" aria-label="Documentation navigation">
+    <div class="sidebar-heading">
+<span class="eyebrow">APEREO CAS DOCUMENTATION</span><span class="sidebar-symbol" aria-hidden="true">✳</span>
+</div>
+    <nav id="sidebar-navigation" aria-label="Documentation topics"></nav>
+    <noscript><p>Browse the <a href="/cas/development/sidebar.html">documentation index</a>.</p></noscript>
+</aside>
+
+        
+        <main class="cas-docs-content">
+            
+            <div class="page-toolbar">
+                <nav id="docsNavBar" aria-label="Breadcrumb"></nav>
+                <div id="toolbarIcons" role="group" aria-label="Page tools"></div>
+            </div>
+            
+            
+            <aside id="dev-doc-info" aria-labelledby="dev-doc-title">
+                <span class="development-marker" aria-hidden="true"></span>
+                <div>
+                    <p id="dev-doc-title">WORKERS AHEAD!</p>
+                    <p>You are viewing the <strong>development</strong> documentation for the Apereo CAS server. <strong>The
+                        functionality presented here <a href="https://github.com/apereo/cas/milestones">is not officially released yet</a></strong>.
+                        This is a work in progress and will be continually updated as development moves forward.
+                        <strong>You are most encouraged to test the changes presented.</strong>
+                    </p>
+                </div>
+            </aside>
+            
+            <article id="cas-docs-container" tabindex="-1">
+                
+<h1 id="embedded-servlet-container">Embedded Servlet Container</h1>
+
+<p>Note that CAS itself ships with a number of embedded containers that allow the platform to be self-contained 
+as much as possible. These embedded containers are an integral part of the CAS software, are maintained and 
+updated usually for every release and surely are meant to and can be used in production deployments. 
+You <strong>DO NOT</strong> need to, but can if you want to, configure and deploy to an externally configured container.</p>
+
+<h2 id="configuration">Configuration</h2>
+
+<!-- fragment:keep -->
+
+<p>The following settings and properties are available from the CAS configuration catalog:</p>
+
+
+<div class="cas-properties">
+    <div class="cas-properties-list">
+<div class="cas-property" data-kind="thirdparty" data-name="server.connection-timeout" data-default="" data-deprecated>
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">server.connection-timeout</code><span class="cas-property-summary"></span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags">
+<span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span><span class="cas-property-tag cas-property-tag-deprecated"><i class="fa fa-skull" aria-hidden="true"></i>Deprecated</span>
+</div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Duration</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Deprecation</dt>
+<dd>
+<code>ERROR</code>, no replacement</dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="server.port" data-default="8080">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">server.port</code><span class="cas-property-summary">Server HTTP port.</span>
+</div>
+        <div class="cas-property-default"><code>8080</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Server HTTP port.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Integer</code></dd>
+<dt>Default</dt>
+<dd><code>8080</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.web.server.autoconfigure.ServerProperties">ServerProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="server.servlet.application-display-name" data-default="application">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">server.servlet.application-display-name</code><span class="cas-property-summary">Display name of the application.</span>
+</div>
+        <div class="cas-property-default"><code>application</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Display name of the application.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><code>application</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.web.server.autoconfigure.ServerProperties$Servlet">ServerProperties$Servlet</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="server.servlet.context-parameters" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">server.servlet.context-parameters</code><span class="cas-property-summary">Servlet context init parameters.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Servlet context init parameters.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Map&lt;String,String&gt;</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.web.server.autoconfigure.ServerProperties$Servlet">ServerProperties$Servlet</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="server.servlet.context-path" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">server.servlet.context-path</code><span class="cas-property-summary">Context path of the application.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Context path of the application.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.web.server.autoconfigure.ServerProperties$Servlet">ServerProperties$Servlet</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="server.servlet.encoding.charset" data-default="" data-deprecated>
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">server.servlet.encoding.charset</code><span class="cas-property-summary">Charset of HTTP requests and responses.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags">
+<span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span><span class="cas-property-tag cas-property-tag-deprecated"><i class="fa fa-skull" aria-hidden="true"></i>Deprecated</span>
+</div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Charset of HTTP requests and responses. Added to the Content-Type header if not set explicitly.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Charset</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Deprecation</dt>
+<dd>
+<code>ERROR</code>, replaced by <code>spring.servlet.encoding.charset</code>
+</dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="server.servlet.encoding.enabled" data-default="true" data-deprecated>
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">server.servlet.encoding.enabled</code><span class="cas-property-summary">Whether to enable http encoding support.</span>
+</div>
+        <div class="cas-property-default"><code>true</code></div>
+        <div class="cas-property-tags">
+<span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span><span class="cas-property-tag cas-property-tag-deprecated"><i class="fa fa-skull" aria-hidden="true"></i>Deprecated</span>
+</div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Whether to enable http encoding support.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Boolean</code></dd>
+<dt>Default</dt>
+<dd><code>true</code></dd>
+<dt>Deprecation</dt>
+<dd>
+<code>ERROR</code>, replaced by <code>spring.servlet.encoding.enabled</code>
+</dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="server.servlet.encoding.force" data-default="false" data-deprecated>
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">server.servlet.encoding.force</code><span class="cas-property-summary">Whether to force the encoding to the configured charset on HTTP requests and responses.</span>
+</div>
+        <div class="cas-property-default"><code>false</code></div>
+        <div class="cas-property-tags">
+<span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span><span class="cas-property-tag cas-property-tag-deprecated"><i class="fa fa-skull" aria-hidden="true"></i>Deprecated</span>
+</div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Whether to force the encoding to the configured charset on HTTP requests and responses.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Boolean</code></dd>
+<dt>Default</dt>
+<dd><code>false</code></dd>
+<dt>Deprecation</dt>
+<dd>
+<code>ERROR</code>, replaced by <code>spring.servlet.encoding.force</code>
+</dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="server.servlet.encoding.force-request" data-default="true" data-deprecated>
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">server.servlet.encoding.force-request</code><span class="cas-property-summary">Whether to force the encoding to the configured charset on HTTP requests.</span>
+</div>
+        <div class="cas-property-default"><code>true</code></div>
+        <div class="cas-property-tags">
+<span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span><span class="cas-property-tag cas-property-tag-deprecated"><i class="fa fa-skull" aria-hidden="true"></i>Deprecated</span>
+</div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Whether to force the encoding to the configured charset on HTTP requests. Defaults to true when force has not been specified.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Boolean</code></dd>
+<dt>Default</dt>
+<dd><code>true</code></dd>
+<dt>Deprecation</dt>
+<dd>
+<code>ERROR</code>, replaced by <code>spring.servlet.encoding.force-request</code>
+</dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="server.servlet.encoding.force-response" data-default="false" data-deprecated>
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">server.servlet.encoding.force-response</code><span class="cas-property-summary">Whether to force the encoding to the configured charset on HTTP responses.</span>
+</div>
+        <div class="cas-property-default"><code>false</code></div>
+        <div class="cas-property-tags">
+<span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span><span class="cas-property-tag cas-property-tag-deprecated"><i class="fa fa-skull" aria-hidden="true"></i>Deprecated</span>
+</div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Whether to force the encoding to the configured charset on HTTP responses.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Boolean</code></dd>
+<dt>Default</dt>
+<dd><code>false</code></dd>
+<dt>Deprecation</dt>
+<dd>
+<code>ERROR</code>, replaced by <code>spring.servlet.encoding.force-response</code>
+</dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="server.servlet.encoding.mapping" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">server.servlet.encoding.mapping</code><span class="cas-property-summary">Mapping of locale to charset for response encoding.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Mapping of locale to charset for response encoding.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Map&lt;Locale,Charset&gt;</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.web.server.autoconfigure.ServerProperties$Encoding">ServerProperties$Encoding</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="server.servlet.jsp.class-name" data-default="org.apache.jasper.servlet.JspServlet">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">server.servlet.jsp.class-name</code><span class="cas-property-summary">Class name of the servlet to use for JSPs.</span>
+</div>
+        <div class="cas-property-default"><code>org.apache.jasper.servlet.JspServlet</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Class name of the servlet to use for JSPs. If registered is true and this class * is on the classpath then it will be registered.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><code>org.apache.jasper.servlet.JspServlet</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.web.server.servlet.Jsp">Jsp</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="server.servlet.jsp.init-parameters" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">server.servlet.jsp.init-parameters</code><span class="cas-property-summary">Init parameters used to configure the JSP servlet.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Init parameters used to configure the JSP servlet.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Map&lt;String,String&gt;</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.web.server.servlet.Jsp">Jsp</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="server.servlet.jsp.registered" data-default="true">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">server.servlet.jsp.registered</code><span class="cas-property-summary">Whether the JSP servlet is registered.</span>
+</div>
+        <div class="cas-property-default"><code>true</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Whether the JSP servlet is registered.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Boolean</code></dd>
+<dt>Default</dt>
+<dd><code>true</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.web.server.servlet.Jsp">Jsp</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="server.servlet.path" data-default="/" data-deprecated>
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">server.servlet.path</code><span class="cas-property-summary">Path of the main dispatcher servlet.</span>
+</div>
+        <div class="cas-property-default"><code>/</code></div>
+        <div class="cas-property-tags">
+<span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span><span class="cas-property-tag cas-property-tag-deprecated"><i class="fa fa-skull" aria-hidden="true"></i>Deprecated</span>
+</div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Path of the main dispatcher servlet.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><code>/</code></dd>
+<dt>Deprecation</dt>
+<dd>
+<code>ERROR</code>, replaced by <code>spring.mvc.servlet.path</code>
+</dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="server.servlet.register-default-servlet" data-default="false">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">server.servlet.register-default-servlet</code><span class="cas-property-summary">Whether to register the default Servlet with the container.</span>
+</div>
+        <div class="cas-property-default"><code>false</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Whether to register the default Servlet with the container.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Boolean</code></dd>
+<dt>Default</dt>
+<dd><code>false</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.web.server.autoconfigure.ServerProperties$Servlet">ServerProperties$Servlet</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="server.servlet.session.cookie.comment" data-default="" data-deprecated>
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">server.servlet.session.cookie.comment</code><span class="cas-property-summary">Comment for the cookie.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags">
+<span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span><span class="cas-property-tag cas-property-tag-deprecated"><i class="fa fa-skull" aria-hidden="true"></i>Deprecated</span>
+</div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Comment for the cookie.</p></div>
+            <dl class="cas-property-meta">
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Deprecation</dt>
+<dd>
+<code>ERROR</code>, no replacement</dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="server.servlet.session.cookie.domain" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">server.servlet.session.cookie.domain</code><span class="cas-property-summary">Domain for the cookie.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Domain for the cookie.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.web.server.Cookie">Cookie</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="server.servlet.session.cookie.http-only" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">server.servlet.session.cookie.http-only</code><span class="cas-property-summary">Whether to use "HttpOnly" cookies for the cookie.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Whether to use "HttpOnly" cookies for the cookie.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Boolean</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.web.server.Cookie">Cookie</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="server.servlet.session.cookie.max-age" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">server.servlet.session.cookie.max-age</code><span class="cas-property-summary">Maximum age of the cookie.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Maximum age of the cookie. If a duration suffix is not specified, seconds will be used. A positive value indicates when the cookie expires relative to the current time. A value of 0 means the cookie should expire immediately. A negative value means no "Max-Age".</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Duration</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.web.server.Cookie">Cookie</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="server.servlet.session.cookie.name" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">server.servlet.session.cookie.name</code><span class="cas-property-summary">Name for the cookie.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Name for the cookie.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.web.server.Cookie">Cookie</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="server.servlet.session.cookie.partitioned" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">server.servlet.session.cookie.partitioned</code><span class="cas-property-summary">Whether the generated cookie carries the Partitioned attribute.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Whether the generated cookie carries the Partitioned attribute.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Boolean</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.web.server.Cookie">Cookie</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="server.servlet.session.cookie.path" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">server.servlet.session.cookie.path</code><span class="cas-property-summary">Path of the cookie.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Path of the cookie.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.web.server.Cookie">Cookie</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="server.servlet.session.cookie.same-site" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">server.servlet.session.cookie.same-site</code><span class="cas-property-summary">SameSite setting for the cookie.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>SameSite setting for the cookie.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Cookie.SameSite</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.web.server.Cookie">Cookie</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="server.servlet.session.cookie.secure" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">server.servlet.session.cookie.secure</code><span class="cas-property-summary">Whether to always mark the cookie as secure.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Whether to always mark the cookie as secure.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Boolean</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.web.server.Cookie">Cookie</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="server.servlet.session.persistent" data-default="false">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">server.servlet.session.persistent</code><span class="cas-property-summary">Whether to persist session data between restarts.</span>
+</div>
+        <div class="cas-property-default"><code>false</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Whether to persist session data between restarts.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Boolean</code></dd>
+<dt>Default</dt>
+<dd><code>false</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.web.server.servlet.Session">Session</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="server.servlet.session.store-dir" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">server.servlet.session.store-dir</code><span class="cas-property-summary">Directory used to store session data.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Directory used to store session data.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>File</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.web.server.servlet.Session">Session</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="server.servlet.session.timeout" data-default="30m">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">server.servlet.session.timeout</code><span class="cas-property-summary">Session timeout.</span>
+</div>
+        <div class="cas-property-default"><code>30m</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Session timeout. If a duration suffix is not specified, seconds will be used.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Duration</code></dd>
+<dt>Default</dt>
+<dd><code>30m</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.web.server.servlet.Session">Session</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="server.servlet.session.tracking-modes" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">server.servlet.session.tracking-modes</code><span class="cas-property-summary">Session tracking modes.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Session tracking modes.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Set&lt;Session.SessionTrackingMode&gt;</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.web.server.servlet.Session">Session</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="server.ssl.bundle" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">server.ssl.bundle</code><span class="cas-property-summary">Name of a configured SSL bundle.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Name of a configured SSL bundle.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.web.server.Ssl">Ssl</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="server.ssl.certificate" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">server.ssl.certificate</code><span class="cas-property-summary">Path to a PEM-encoded SSL certificate file.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Path to a PEM-encoded SSL certificate file.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.web.server.Ssl">Ssl</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="server.ssl.certificate-private-key" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">server.ssl.certificate-private-key</code><span class="cas-property-summary">Path to a PEM-encoded private key file for the SSL certificate.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Path to a PEM-encoded private key file for the SSL certificate.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.web.server.Ssl">Ssl</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="server.ssl.ciphers" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">server.ssl.ciphers</code><span class="cas-property-summary">Supported SSL ciphers.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Supported SSL ciphers.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String[]</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.web.server.Ssl">Ssl</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="server.ssl.client-auth" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">server.ssl.client-auth</code><span class="cas-property-summary">Client authentication mode.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Client authentication mode. Requires a trust store.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Ssl.ClientAuth</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.web.server.Ssl">Ssl</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="server.ssl.enabled" data-default="true">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">server.ssl.enabled</code><span class="cas-property-summary">Whether to enable SSL support.</span>
+</div>
+        <div class="cas-property-default"><code>true</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Whether to enable SSL support.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Boolean</code></dd>
+<dt>Default</dt>
+<dd><code>true</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.web.server.Ssl">Ssl</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="server.ssl.enabled-protocols" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">server.ssl.enabled-protocols</code><span class="cas-property-summary">Enabled SSL protocols.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Enabled SSL protocols.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String[]</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.web.server.Ssl">Ssl</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="server.ssl.key-alias" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">server.ssl.key-alias</code><span class="cas-property-summary">Alias that identifies the key in the key store.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Alias that identifies the key in the key store.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.web.server.Ssl">Ssl</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="server.ssl.key-password" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">server.ssl.key-password</code><span class="cas-property-summary">Password used to access the key in the key store.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Password used to access the key in the key store.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.web.server.Ssl">Ssl</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="server.ssl.key-store" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">server.ssl.key-store</code><span class="cas-property-summary">Path to the key store that holds the SSL certificate (typically a jks file).</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Path to the key store that holds the SSL certificate (typically a jks file).</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.web.server.Ssl">Ssl</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="server.ssl.key-store-password" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">server.ssl.key-store-password</code><span class="cas-property-summary">Password used to access the key store.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Password used to access the key store.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.web.server.Ssl">Ssl</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="server.ssl.key-store-provider" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">server.ssl.key-store-provider</code><span class="cas-property-summary">Provider for the key store.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Provider for the key store.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.web.server.Ssl">Ssl</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="server.ssl.key-store-type" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">server.ssl.key-store-type</code><span class="cas-property-summary">Type of the key store.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Type of the key store.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.web.server.Ssl">Ssl</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="server.ssl.protocol" data-default="TLS">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">server.ssl.protocol</code><span class="cas-property-summary">SSL protocol to use.</span>
+</div>
+        <div class="cas-property-default"><code>TLS</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>SSL protocol to use.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><code>TLS</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.web.server.Ssl">Ssl</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="server.ssl.server-name-bundles" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">server.ssl.server-name-bundles</code><span class="cas-property-summary">Mapping of host names to SSL bundles for SNI configuration.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Mapping of host names to SSL bundles for SNI configuration.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>List&lt;Ssl.ServerNameSslBundle&gt;</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.web.server.Ssl">Ssl</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="server.ssl.trust-certificate" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">server.ssl.trust-certificate</code><span class="cas-property-summary">Path to a PEM-encoded SSL certificate authority file.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Path to a PEM-encoded SSL certificate authority file.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.web.server.Ssl">Ssl</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="server.ssl.trust-certificate-private-key" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">server.ssl.trust-certificate-private-key</code><span class="cas-property-summary">Path to a PEM-encoded private key file for the SSL certificate authority.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Path to a PEM-encoded private key file for the SSL certificate authority.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.web.server.Ssl">Ssl</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="server.ssl.trust-store" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">server.ssl.trust-store</code><span class="cas-property-summary">Trust store that holds SSL certificates.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Trust store that holds SSL certificates.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.web.server.Ssl">Ssl</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="server.ssl.trust-store-password" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">server.ssl.trust-store-password</code><span class="cas-property-summary">Password used to access the trust store.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Password used to access the trust store.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.web.server.Ssl">Ssl</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="server.ssl.trust-store-provider" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">server.ssl.trust-store-provider</code><span class="cas-property-summary">Provider for the trust store.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Provider for the trust store.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.web.server.Ssl">Ssl</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="server.ssl.trust-store-type" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">server.ssl.trust-store-type</code><span class="cas-property-summary">Type of the trust store.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Type of the trust store.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.web.server.Ssl">Ssl</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="server.use-forward-headers" data-default="" data-deprecated>
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">server.use-forward-headers</code><span class="cas-property-summary"></span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags">
+<span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span><span class="cas-property-tag cas-property-tag-deprecated"><i class="fa fa-skull" aria-hidden="true"></i>Deprecated</span>
+</div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Boolean</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Deprecation</dt>
+<dd>
+<code>ERROR</code>, replaced by <code>server.forward-headers-strategy</code>
+</dd>
+</dl>
+        </div>
+    </div>
+</div>
+</div>
+<p class="cas-properties-legend">
+        <strong>Required</strong> settings may be needed to activate or affect the feature; review them even when they have a default.
+        <strong>Optional</strong> settings only need to be set to change a default or to turn on the behavior they control.
+        <strong>Third party</strong> settings belong to libraries such as Spring Boot that CAS builds on; their own documentation may have more detail.
+    </p>
+<div class="cas-properties-topics"><details class="cas-properties-topic">
+            <summary><i class="fa fa-newspaper" aria-hidden="true"></i>Notes on configuration</summary>
+            <div class="cas-properties-topic-body">
+<!-- fragment:keep -->
+
+<p></p>
+
+<h4 id="configuration-metadata">Configuration Metadata</h4>
+
+<p>The collection of configuration properties listed in this section are automatically generated from the CAS source and components that contain the actual field
+definitions, types, descriptions, modules, etc. This metadata may not always be 100% accurate, or could be lacking details and sufficient explanations.</p>
+
+<h4 id="be-selective">Be Selective</h4>
+
+<p>This section is meant as a guide only. Do NOT copy/paste the entire collection of settings into your CAS configuration; rather pick only the properties that you
+need. Do NOT enable settings unless you are certain of their purpose and do NOT copy settings into your configuration only to keep them as reference. All these
+ideas lead to upgrade headaches, maintenance nightmares and premature aging.</p>
+
+<h4 id="yagni">YAGNI</h4>
+
+<p>Note that for nearly ALL use cases, declaring and configuring properties listed here is sufficient. You should NOT have to explicitly massage a CAS XML/Java/etc
+configuration file to design an authentication handler, create attribute release policies, etc. CAS at runtime will auto-configure all required changes for you.
+If you are unsure about the meaning of a given CAS setting, do NOT turn it on without hesitation. Review the codebase or better yet, ask questions to clarify
+the intended behavior.</p>
+
+<h4 id="naming-convention">Naming Convention</h4>
+
+<p>Property names can be specified in very relaxed terms. For instance <code class="language-plaintext highlighter-rouge">cas.someProperty</code>, <code class="language-plaintext highlighter-rouge">cas.some-property</code>, <code class="language-plaintext highlighter-rouge">cas.some_property</code> are all valid names. While all
+forms are accepted by CAS, there are certain components (in CAS and other frameworks used) whose activation at runtime is conditional on a property value, where
+this property is required to have been specified in CAS configuration using kebab case. This is both true for properties that are owned by CAS as well as those
+that might be presented to the system via an external library or framework such as Spring Boot, etc.</p>
+
+<div class="alert alert-info">
+<img class="emoji" title=":information_source:" alt=":information_source:" src="https://github.githubassets.com/images/icons/emoji/unicode/2139.png" height="20" width="20"> <strong>Note</strong> <p>
+When possible, properties should be stored in lower-case kebab format, such as <code>cas.property-name=value</code>.
+The only possible exception to this rule is when naming actuator endpoints; The name of the
+actuator endpoints (i.e. <code>ssoSessions</code>) <strong>MUST</strong> remain in camelCase mode. 
+</p>
+</div>
+
+<p>Settings and properties that are controlled by the CAS platform directly always begin with the prefix <code class="language-plaintext highlighter-rouge">cas</code>. All other settings are controlled and provided
+to CAS via other underlying frameworks and may have their own schemas and syntax. BE CAREFUL with
+the distinction. Unrecognized properties are rejected by CAS and/or frameworks upon which CAS depends. This means if you somehow misspell a property definition
+or fail to adhere to the dot-notation syntax and such, your setting is entirely refused by CAS and likely the feature it controls will never be activated in the
+way you intend.</p>
+
+<h4 id="validation">Validation</h4>
+
+<p>Configuration properties are automatically validated on CAS startup to report issues with configuration binding, especially if defined CAS settings cannot be
+recognized or validated by the configuration schema. Additional validation processes are also handled
+via <a href="/cas/development/configuration/Configuration-Metadata-Repository.html">Configuration Metadata</a> and property migrations applied automatically on
+startup by Spring Boot and family.</p>
+
+<h4 id="indexed-settings">Indexed Settings</h4>
+
+<p>CAS settings able to accept multiple values are typically documented with an index, such as <code class="language-plaintext highlighter-rouge">cas.some.setting[0]=value</code>. The index <code class="language-plaintext highlighter-rouge">[0]</code> is meant to be
+incremented by the adopter to allow for distinct multiple configuration blocks.</p>
+
+            </div>
+        </details></div>
+</div>
+
+<h2 id="execution">Execution</h2>
+
+<p>The CAS web application, once built, may be deployed in place with the embedded container via the following command:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td>
+<td class="rouge-code"><pre>java <span class="nt">-jar</span> /path/to/cas.war
+</pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+<p>Additionally, it is also possible to run CAS as a fully executable web application:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+2
+</pre></td>
+<td class="rouge-code"><pre><span class="c"># chmod +x /path/to/cas.war</span>
+/path/to/cas.war
+</pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+<p>This is achieved via the build process of the deployment overlay where a 
+launch script is <em>inserted</em> at the beginning of the web application artifact. If you
+ wish to see and examine the script, run the following commands:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+2
+</pre></td>
+<td class="rouge-code"><pre> <span class="c"># X is the number of lines from the beginning of the file</span>
+ <span class="nb">head</span> <span class="nt">-n</span> X /path/to.cas.war
+</pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+<p>Note that running CAS as a standalone and fully executable web application 
+is supported on most Linux and OS X distributions. 
+Other platforms such as Windows may require custom configuration.</p>
+
+<p>The following embedded servlet containers are available:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Option</th>
+      <th>Reference</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Apache Tomcat</td>
+      <td>Please see <a href="Configuring-Servlet-Container-Embedded-Tomcat.html">this guide</a>.</td>
+    </tr>
+    <tr>
+      <td>Jetty</td>
+      <td>Please see <a href="Configuring-Servlet-Container-Embedded-Jetty.html">this guide</a>.</td>
+    </tr>
+  </tbody>
+</table>
+
+            </article>
+            <div class="article-end" aria-hidden="true">
+<span></span><span>CAS</span><span></span>
+</div>
+        </main>
+        
+        <aside class="docs-toc" aria-label="On this page">
+    <nav id="pageContents" aria-label="Table of contents">
+        <p class="eyebrow">ON THIS PAGE</p>
+        <ul class="section-nav"></ul>
+    </nav>
+    <a class="toc-top" href="#cas-docs-container">Back to top <span aria-hidden="true">↑</span></a>
+</aside>
+
+        
+    </div>
+
+    <footer class="site-footer">
+        <a class="footer-brand" href="../../index.html">APEREO <strong>CAS</strong></a>
+        <p>CAS is supported by the <a href="https://www.apereo.org/">Apereo Foundation</a>.</p>
+        <a href="#cas-docs-container">Back to top <span aria-hidden="true">↑</span></a>
+    </footer>
+    <div id="docs-status" class="visually-hidden" role="status" aria-live="polite"></div>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/tether@2.0.0/dist/js/tether.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.11/clipboard.min.js"></script>
+
+    <script src="/cas/javascripts/URI.js"></script>
+    <script src="/cas/javascripts/site.js"></script>
+
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@docsearch/js@3"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="https://code.jquery.com/ui/1.13.1/jquery-ui.js"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.5/js/lightbox.min.js"></script>
+
+    <script>
+        let pageSection = "Installation";
+        let siteUrl = "https://apereo.github.io";
+        let basePath = "/cas";
+
+        
+    </script>
+</body>
+
+</html>

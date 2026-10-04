@@ -1,0 +1,129 @@
+{%- comment -%}
+    Tabs are driven by Bootstrap alone. The ids use the full coordinates plus the variant
+    options so two modules on one page never share a pane; the default tab and pane are
+    chosen together so the selected tab always matches the visible content.
+{%- endcomment -%}
+{%- assign casModuleId = include.group | append: include.module | append: include.bundled | append: include.ignoreBOM | remove: "-" | remove: "." -%}
+{%- if include.ignoreBOM == "true" -%}
+{%- assign casModuleDefaultTab = "gradle" -%}
+{%- else -%}
+{%- assign casModuleDefaultTab = "bomGradle" -%}
+{%- endif -%}
+
+{%- assign displayClass = "block" -%}
+
+{%- if include.hide == "true" -%}
+{%- assign displayClass="none" -%}
+{%- endif -%}
+
+<div style="display: {{ displayClass }}">
+
+    <ul class='nav nav-pills cas-modules' role='tablist'>
+        <li class='nav-item cas-module' role='presentation'><a class='nav-link' id='maven{{ casModuleId }}-tab' data-bs-toggle='tab' href='#maven{{ casModuleId }}' role='tab' aria-controls='maven{{ casModuleId }}' aria-selected='false'>Apache Maven</a></li>
+        <li class='nav-item cas-module' role='presentation'><a class='nav-link{% if casModuleDefaultTab == "gradle" %} active{% endif %}' id='gradle{{ casModuleId }}-tab' data-bs-toggle='tab' href='#gradle{{ casModuleId }}' role='tab' aria-controls='gradle{{ casModuleId }}' aria-selected='{% if casModuleDefaultTab == "gradle" %}true{% else %}false{% endif %}'>Gradle</a></li>
+
+        {%- unless include.ignoreBOM == "true" -%}
+        <li class='nav-item cas-module' role='presentation'><a class='nav-link' id='bom{{ casModuleId }}-tab' data-bs-toggle='tab' href='#bom{{ casModuleId }}' role='tab' aria-controls='bom{{ casModuleId }}' aria-selected='false'>BOM - Spring</a></li>
+        <li class='nav-item cas-module' role='presentation'><a class='nav-link active' id='bomGradle{{ casModuleId }}-tab' data-bs-toggle='tab' href='#bomGradle{{ casModuleId }}' role='tab' aria-controls='bomGradle{{ casModuleId }}' aria-selected='true'>BOM - Gradle</a></li>
+        {%- endunless -%}
+
+        <li class='nav-item dropdown cas-module' role='presentation'>
+            <a class='nav-link dropdown-toggle' data-bs-toggle='dropdown' href='#' role='button' aria-expanded='false'>Resources<span class='caret'></span>
+            </a>
+            <div class='dropdown-menu'>
+                <a class='dropdown-item' href="https://getcas.apereo.org/ui?dependencies=webapp-tomcat,{{ include.module | remove_first: 'cas-server-' }}" target="_blank" rel="noopener">Show in CAS Initializr <span aria-hidden="true">↗</span><span class="visually-hidden"> (opens in a new tab)</span></a>
+                <a class='dropdown-item' href="javascript:generateOverlay('{{include.module}}', 'cas-overlay');">Generate CAS Server WAR Overlay</a>
+            </div>
+        </li>
+    </ul>
+
+
+    <div class='cas-module-tabs tab-content clearfix'>
+        <div class='tab-pane fade{% if casModuleDefaultTab == "maven" %} show active{% endif %}' id='maven{{ casModuleId }}' role='tabpanel' aria-labelledby='maven{{ casModuleId }}-tab'>
+            {%- capture maven -%}
+```xml
+<dependency>
+    <groupId>{{include.group}}</groupId>
+    <artifactId>{{include.module}}</artifactId>
+    <version>${cas.version}</version>
+</dependency>
+```
+            {%- endcapture -%}
+
+            <span>
+      {{ maven | markdownify }}
+    </span>
+
+        </div>
+
+
+        <div class='tab-pane fade{% if casModuleDefaultTab == "gradle" %} show active{% endif %}' id='gradle{{ casModuleId }}' role='tabpanel' aria-labelledby='gradle{{ casModuleId }}-tab'>
+            {%- if include.module contains "-bom" -%}
+{%- capture gradle -%}
+```groovy
+implementation enforcedPlatform("{{include.group}}:{{include.module}}:${project.'cas.version'}")
+```
+{% endcapture %}
+            {% endif %}
+
+            {% unless include.module contains "-bom" %}
+            {% capture gradle %}
+```groovy
+implementation "{{include.group}}:{{include.module}}:${project.'cas.version'}"
+```
+            {%- endcapture -%}
+            {%- endunless -%}
+            <span>
+    {{ gradle | markdownify }}
+  </span>
+
+        </div>
+
+        <div class='tab-pane fade{% if casModuleDefaultTab == "bom" %} show active{% endif %}' id='bom{{ casModuleId }}' role='tabpanel' aria-labelledby='bom{{ casModuleId }}-tab'>
+            {%- capture bom -%}
+```groovy
+dependencyManagement {
+    imports {
+        mavenBom "org.apereo.cas:cas-server-support-bom:${project.'cas.version'}"
+    }
+}
+
+dependencies {
+    implementation "{{include.group}}:{{include.module}}"
+}
+```
+            {%- endcapture -%}
+            <span>
+    {{ bom | markdownify }}
+  </span>
+
+        </div>
+
+        <div class='tab-pane fade{% if casModuleDefaultTab == "bomGradle" %} show active{% endif %}' id='bomGradle{{ casModuleId }}' role='tabpanel' aria-labelledby='bomGradle{{ casModuleId }}-tab'>
+            {%- capture bom -%}
+```groovy
+dependencies {
+    /*
+        The following platform references are included automatically and are listed for reference only.
+
+        implementation enforcedPlatform("org.apereo.cas:cas-server-support-bom:${project.'cas.version'}")
+        implementation platform(org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES)
+        {% if include.bundled == "true" %}
+        Including this module in the CAS WAR overlay is optional and unnecessary. This module is automatically included
+        and bundled with the CAS server distribution and there are alternative options baked in to allow one to replace
+        this module with another. The entry below is listed for reference only.
+        {%- endif %}
+    */
+    implementation "{{include.group}}:{{include.module}}"
+}
+```
+            {%- endcapture -%}
+            <span>
+    {{ bom | markdownify }}
+  </span>
+
+        </div>
+
+    </div>
+
+</div>

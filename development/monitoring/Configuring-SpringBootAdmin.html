@@ -1,0 +1,1227 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="light dark">
+    
+    
+    
+
+
+
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <meta name="description" content="Monitoring. Technical guides for Apereo CAS: enterprise identity, authentication, single sign-on and access management.">
+    <meta name="robots" content="index,follow">
+    <meta name="theme-color" content="#06304a">
+    <link rel="canonical" href="https://apereo.github.io/cas/development/monitoring/Configuring-SpringBootAdmin.html">
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="en_US">
+    <meta property="og:site_name" content="Apereo CAS Documentation">
+    <meta property="og:title" content="CAS - Monitoring">
+    <meta property="og:description" content="Monitoring. Technical guides for Apereo CAS: enterprise identity, authentication, single sign-on and access management.">
+    <meta property="og:url" content="https://apereo.github.io/cas/development/monitoring/Configuring-SpringBootAdmin.html">
+    <meta property="og:image" content="https://apereo.github.io/cas/images/cas_logo.png">
+    <meta property="og:image:alt" content="Apereo CAS">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="CAS - Monitoring">
+    <meta name="twitter:description" content="Monitoring. Technical guides for Apereo CAS: enterprise identity, authentication, single sign-on and access management.">
+    <meta name="twitter:image" content="https://apereo.github.io/cas/images/cas_logo.png">
+
+    
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "TechArticle",
+      "headline": "Monitoring",
+      "description": "Monitoring. Technical guides for Apereo CAS: enterprise identity, authentication, single sign-on and access management.",
+      "url": "https://apereo.github.io/cas/development/monitoring/Configuring-SpringBootAdmin.html",
+      "inLanguage": "en",
+      "isPartOf": {"@type": "WebSite", "name": "Apereo CAS Documentation",
+                   "url": "https://apereo.github.io/cas/"},
+      "author": {"@type": "Organization", "name": "Apereo Foundation", "url": "https://www.apereo.org/"},
+      "publisher": {"@type": "Organization", "name": "Apereo Foundation", "url": "https://www.apereo.org/"}
+    }
+    </script>
+    
+
+    <script>
+        ((i, s, o, g, r, a, m) => {
+            i['GoogleAnalyticsObject'] = r;
+            i[r] = i[r] || function () {
+                (i[r].q = i[r].q || []).push(arguments)
+            }, i[r].l = 1 * new Date();
+            a = s.createElement(o),
+                m = s.getElementsByTagName(o)[0];
+            a.async = 1;
+            a.src = g;
+            m.parentNode.insertBefore(a, m)
+        })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
+
+        ga('create', 'UA-83384532-2', 'auto');
+        ga('send', 'pageview');
+
+    </script>
+
+    <script>
+        function readThemePreference() {
+            try {
+                return localStorage.getItem('cas-docs-theme') || 'system';
+            } catch (error) {
+                return 'system';
+            }
+        }
+
+        function systemTheme() {
+            return window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+        }
+
+        function resolveTheme(preference) {
+            return preference === 'dark' || preference === 'light' ? preference : systemTheme();
+        }
+
+        function changeTheme(theme) {
+            if (theme !== 'dark' && theme !== 'light') {
+                return;
+            }
+
+            if (document.documentElement.getAttribute('data-bs-theme') !== theme) {
+                document.documentElement.setAttribute('data-bs-theme', theme);
+            }
+        }
+
+        (() => {
+            let preference = readThemePreference();
+            if (preference !== 'dark' && preference !== 'light') {
+                preference = 'system';
+
+            }
+
+            changeTheme(resolveTheme(preference));
+
+            if (window.matchMedia) {
+                window.matchMedia('(prefers-color-scheme: light)').addEventListener('change', () => {
+                    if (readThemePreference() !== 'system') {
+                        return;
+                    }
+                    const theme = systemTheme();
+                    changeTheme(theme);
+                });
+            }
+        })();
+    </script>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@docsearch/css@3"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.5/css/lightbox.min.css" />
+    
+    
+    <link rel="stylesheet" type="text/css" media="screen" href='/cas/stylesheets/site.css'>
+    <link rel="stylesheet" type="text/css" media="print" href='/cas/stylesheets/site-print.css'>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400..700;1,9..40,400..500&family=JetBrains+Mono:wght@400;500;700&family=Manrope:wght@400..800&family=Newsreader:ital,opsz,wght@0,6..72,300..600;1,6..72,300..600&display=swap" rel="stylesheet">
+    <link href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css" rel="stylesheet">
+
+    <title>CAS - Monitoring · Apereo CAS Documentation</title>
+
+</head>
+
+<body class="" data-docs-base="/cas" data-docs-version="development" data-docs-build="20261004000849">
+    <a class="skip-link" href="#cas-docs-container">Skip to content</a>
+    <header class="site-header">
+        <div class="masthead">
+            <a class="cas-brand" href="../../index.html" aria-label="Apereo CAS home">
+                <img class="brand-logo" src="/cas/images/cas_logo.png" width="119" height="60" alt="CAS">
+                <span class="brand-caption">APEREO CAS<span>Documentation</span></span>
+            </a>
+            <div class="brand-mission">
+                <p>Enterprise Authentication <span class="brand-mission-accent">for All Earthlings and Beyond</span></p>
+                <span>Identity, Single Sign-On and Access Management</span>
+            </div>
+            <a id="forkme_banner" href="https://github.com/apereo/cas"><i class="fab fa-github" aria-hidden="true"></i><span>View on GitHub</span><span aria-hidden="true">↗</span></a>
+        </div>
+        <div class="navigation-bar">
+            
+            <button onclick="navigateSidebar()" id="sidebarNavButton" class="icon-button" type="button" aria-controls="sidebar" aria-expanded="true" aria-label="Toggle documentation navigation" title="Toggle documentation navigation">
+                <i class="fa fa-bars" aria-hidden="true"></i>
+            </button>
+            
+            <nav class="primary-navigation" aria-label="Main navigation">
+                <a href="../../index.html">Home</a>
+                <a href="https://github.com/apereo/cas/releases">Releases</a>
+                <a href="../../Support.html">Support</a>
+                <a href="../../Mailing-Lists.html">Mailing Lists</a>
+                <div class="dropdown">
+                    <button class="dropdown-toggle" type="button" id="cas-versions" data-bs-toggle="dropdown" aria-expanded="false">Versions</button>
+                    <div class="dropdown-menu" aria-labelledby="cas-versions">
+                        
+                        <a class="dropdown-item" href="/cas/development/">Development</a>
+                        
+                        <a class="dropdown-item" href="/cas/8.0.x/">v8.0.x</a>
+                        
+                        <a class="dropdown-item" href="/cas/7.3.x/">v7.3.x</a>
+                        
+                    </div>
+                </div>
+                <a href="https://apereo.github.io" target="_blank" rel="noopener">Blog <span aria-hidden="true">↗</span><span class="visually-hidden"> (opens in a new tab)</span></a>
+            </nav>
+            <div class="navigation-tools">
+                <div id="searchField"></div>
+                <button id="settingsSearchButton" class="icon-button" type="button" aria-label="Search configuration settings (press Shift twice)" title="Search configuration settings (Shift Shift)"><i class="fa fa-sliders" aria-hidden="true"></i></button>
+                <button id="themeToggle" class="icon-button" type="button" onclick="toggleDarkMode()" aria-label="Toggle color theme" title="Toggle color theme"><i class="fa fa-circle-half-stroke" aria-hidden="true"></i></button>
+            </div>
+        </div>
+        <div class="reading-progress" aria-hidden="true"><span id="readingProgress"></span></div>
+    </header>
+
+    <div class="docs-shell">
+        
+        <aside id="sidebar" class="docs-sidebar" aria-label="Documentation navigation">
+    <div class="sidebar-heading">
+<span class="eyebrow">APEREO CAS DOCUMENTATION</span><span class="sidebar-symbol" aria-hidden="true">✳</span>
+</div>
+    <nav id="sidebar-navigation" aria-label="Documentation topics"></nav>
+    <noscript><p>Browse the <a href="/cas/development/sidebar.html">documentation index</a>.</p></noscript>
+</aside>
+
+        
+        <main class="cas-docs-content">
+            
+            <div class="page-toolbar">
+                <nav id="docsNavBar" aria-label="Breadcrumb"></nav>
+                <div id="toolbarIcons" role="group" aria-label="Page tools"></div>
+            </div>
+            
+            
+            <aside id="dev-doc-info" aria-labelledby="dev-doc-title">
+                <span class="development-marker" aria-hidden="true"></span>
+                <div>
+                    <p id="dev-doc-title">WORKERS AHEAD!</p>
+                    <p>You are viewing the <strong>development</strong> documentation for the Apereo CAS server. <strong>The
+                        functionality presented here <a href="https://github.com/apereo/cas/milestones">is not officially released yet</a></strong>.
+                        This is a work in progress and will be continually updated as development moves forward.
+                        <strong>You are most encouraged to test the changes presented.</strong>
+                    </p>
+                </div>
+            </aside>
+            
+            <article id="cas-docs-container" tabindex="-1">
+                
+<h1 id="cas-spring-boot-administration">CAS Spring Boot Administration</h1>
+
+<p>CAS takes advantage of <a href="https://github.com/codecentric/spring-boot-admin">Spring Boot Admin</a> to manage and monitor its 
+internal state visually. As a Spring Boot Admin client, CAS registers itself with the 
+Spring Boot Admin server over HTTP and reports back its status and health to the server’s web interface.</p>
+
+<h2 id="spring-boot-admin-server">Spring Boot Admin Server</h2>
+
+<p>The Spring Boot Admin web application server is part of the CAS server via a dedicated extension module. Support 
+is added by including the following dependency in the WAR overlay:</p>
+
+<div style="display: block">
+
+    <ul class="nav nav-pills cas-modules" role="tablist">
+        <li class="nav-item cas-module" role="presentation"><a class="nav-link" id="mavenorgapereocascasserversupportbootadmin-tab" data-bs-toggle="tab" href="#mavenorgapereocascasserversupportbootadmin" role="tab" aria-controls="mavenorgapereocascasserversupportbootadmin" aria-selected="false">Apache Maven</a></li>
+        <li class="nav-item cas-module" role="presentation"><a class="nav-link" id="gradleorgapereocascasserversupportbootadmin-tab" data-bs-toggle="tab" href="#gradleorgapereocascasserversupportbootadmin" role="tab" aria-controls="gradleorgapereocascasserversupportbootadmin" aria-selected="false">Gradle</a></li>
+<li class="nav-item cas-module" role="presentation"><a class="nav-link" id="bomorgapereocascasserversupportbootadmin-tab" data-bs-toggle="tab" href="#bomorgapereocascasserversupportbootadmin" role="tab" aria-controls="bomorgapereocascasserversupportbootadmin" aria-selected="false">BOM - Spring</a></li>
+        <li class="nav-item cas-module" role="presentation"><a class="nav-link active" id="bomGradleorgapereocascasserversupportbootadmin-tab" data-bs-toggle="tab" href="#bomGradleorgapereocascasserversupportbootadmin" role="tab" aria-controls="bomGradleorgapereocascasserversupportbootadmin" aria-selected="true">BOM - Gradle</a></li>
+<li class="nav-item dropdown cas-module" role="presentation">
+            <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">Resources<span class="caret"></span>
+            </a>
+            <div class="dropdown-menu">
+                <a class="dropdown-item" href="https://getcas.apereo.org/ui?dependencies=webapp-tomcat,support-bootadmin" target="_blank" rel="noopener">Show in CAS Initializr <span aria-hidden="true">↗</span><span class="visually-hidden"> (opens in a new tab)</span></a>
+                <a class="dropdown-item" href="javascript:generateOverlay('cas-server-support-bootadmin',%20'cas-overlay');">Generate CAS Server WAR Overlay</a>
+            </div>
+        </li>
+    </ul>
+
+
+    <div class="cas-module-tabs tab-content clearfix">
+        <div class="tab-pane fade" id="mavenorgapereocascasserversupportbootadmin" role="tabpanel" aria-labelledby="mavenorgapereocascasserversupportbootadmin-tab">
+<span>
+      <div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+</pre></td>
+<td class="rouge-code"><pre><span class="nt">&lt;dependency&gt;</span>
+    <span class="nt">&lt;groupId&gt;</span>org.apereo.cas<span class="nt">&lt;/groupId&gt;</span>
+    <span class="nt">&lt;artifactId&gt;</span>cas-server-support-bootadmin<span class="nt">&lt;/artifactId&gt;</span>
+    <span class="nt">&lt;version&gt;</span>${cas.version}<span class="nt">&lt;/version&gt;</span>
+<span class="nt">&lt;/dependency&gt;</span>
+</pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+    </span>
+
+        </div>
+
+
+        <div class="tab-pane fade" id="gradleorgapereocascasserversupportbootadmin" role="tabpanel" aria-labelledby="gradleorgapereocascasserversupportbootadmin-tab">
+
+            <span>
+    
+<div class="language-groovy highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td>
+<td class="rouge-code"><pre><span class="n">implementation</span> <span class="s2">"org.apereo.cas:cas-server-support-bootadmin:${project.'cas.version'}"</span>
+</pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+  </span>
+
+        </div>
+
+        <div class="tab-pane fade" id="bomorgapereocascasserversupportbootadmin" role="tabpanel" aria-labelledby="bomorgapereocascasserversupportbootadmin-tab">
+<span>
+    <div class="language-groovy highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+</pre></td>
+<td class="rouge-code"><pre><span class="n">dependencyManagement</span> <span class="o">{</span>
+    <span class="n">imports</span> <span class="o">{</span>
+        <span class="n">mavenBom</span> <span class="s2">"org.apereo.cas:cas-server-support-bom:${project.'cas.version'}"</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+
+<span class="n">dependencies</span> <span class="o">{</span>
+    <span class="n">implementation</span> <span class="s2">"org.apereo.cas:cas-server-support-bootadmin"</span>
+<span class="o">}</span>
+</pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+  </span>
+
+        </div>
+
+        <div class="tab-pane fade show active" id="bomGradleorgapereocascasserversupportbootadmin" role="tabpanel" aria-labelledby="bomGradleorgapereocascasserversupportbootadmin-tab">
+<span>
+    <div class="language-groovy highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+</pre></td>
+<td class="rouge-code"><pre><span class="n">dependencies</span> <span class="o">{</span>
+    <span class="cm">/*
+        The following platform references are included automatically and are listed for reference only.
+
+        implementation enforcedPlatform("org.apereo.cas:cas-server-support-bom:${project.'cas.version'}")
+        implementation platform(org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES)
+        
+    */</span>
+    <span class="n">implementation</span> <span class="s2">"org.apereo.cas:cas-server-support-bootadmin"</span>
+<span class="o">}</span>
+</pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+  </span>
+
+        </div>
+
+    </div>
+
+</div>
+
+<div class="alert alert-warning">
+<img class="emoji" title=":warning:" alt=":warning:" src="https://github.githubassets.com/images/icons/emoji/unicode/26a0.png" height="20" width="20"> <strong>Secure Endpoints</strong><p>Note that the admin server's API 
+endpoints MUST be secured. It is also best to run both the Admin server and the registering CAS server 
+node under HTTPS, specially if credentials are used to authenticate into endpoints.</p>
+</div>
+
+<p>Once deployed, the Spring Boot Admin dashboard is available under the <code class="language-plaintext highlighter-rouge">/sba</code> context path.</p>
+
+<p>To learn more about options, please <a href="https://github.com/codecentric/spring-boot-admin">see this guide</a>.</p>
+
+<!-- fragment:keep -->
+
+<p>The following settings and properties are available from the CAS configuration catalog:</p>
+
+
+<div class="cas-properties">
+    <div class="cas-properties-list">
+<div class="cas-property" data-kind="thirdparty" data-name="spring.boot.admin.server.enabled" data-default="true">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.boot.admin.server.enabled</code><span class="cas-property-summary">Enable Spring Boot Admin Server Default: true</span>
+</div>
+        <div class="cas-property-default"><code>true</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Enable Spring Boot Admin Server Default: true</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Boolean</code></dd>
+<dt>Default</dt>
+<dd><code>true</code></dd>
+<dt>Defined by</dt>
+<dd><code title="de.codecentric.boot.admin.server.config.AdminServerProperties$ServerProperties">AdminServerProperties$ServerProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+</div>
+<p class="cas-properties-legend">
+        <strong>Required</strong> settings may be needed to activate or affect the feature; review them even when they have a default.
+        <strong>Optional</strong> settings only need to be set to change a default or to turn on the behavior they control.
+        <strong>Third party</strong> settings belong to libraries such as Spring Boot that CAS builds on; their own documentation may have more detail.
+    </p>
+<div class="cas-properties-topics"><details class="cas-properties-topic">
+            <summary><i class="fa fa-newspaper" aria-hidden="true"></i>Notes on configuration</summary>
+            <div class="cas-properties-topic-body">
+<!-- fragment:keep -->
+
+<p></p>
+
+<h4 id="configuration-metadata">Configuration Metadata</h4>
+
+<p>The collection of configuration properties listed in this section are automatically generated from the CAS source and components that contain the actual field
+definitions, types, descriptions, modules, etc. This metadata may not always be 100% accurate, or could be lacking details and sufficient explanations.</p>
+
+<h4 id="be-selective">Be Selective</h4>
+
+<p>This section is meant as a guide only. Do NOT copy/paste the entire collection of settings into your CAS configuration; rather pick only the properties that you
+need. Do NOT enable settings unless you are certain of their purpose and do NOT copy settings into your configuration only to keep them as reference. All these
+ideas lead to upgrade headaches, maintenance nightmares and premature aging.</p>
+
+<h4 id="yagni">YAGNI</h4>
+
+<p>Note that for nearly ALL use cases, declaring and configuring properties listed here is sufficient. You should NOT have to explicitly massage a CAS XML/Java/etc
+configuration file to design an authentication handler, create attribute release policies, etc. CAS at runtime will auto-configure all required changes for you.
+If you are unsure about the meaning of a given CAS setting, do NOT turn it on without hesitation. Review the codebase or better yet, ask questions to clarify
+the intended behavior.</p>
+
+<h4 id="naming-convention">Naming Convention</h4>
+
+<p>Property names can be specified in very relaxed terms. For instance <code class="language-plaintext highlighter-rouge">cas.someProperty</code>, <code class="language-plaintext highlighter-rouge">cas.some-property</code>, <code class="language-plaintext highlighter-rouge">cas.some_property</code> are all valid names. While all
+forms are accepted by CAS, there are certain components (in CAS and other frameworks used) whose activation at runtime is conditional on a property value, where
+this property is required to have been specified in CAS configuration using kebab case. This is both true for properties that are owned by CAS as well as those
+that might be presented to the system via an external library or framework such as Spring Boot, etc.</p>
+
+<div class="alert alert-info">
+<img class="emoji" title=":information_source:" alt=":information_source:" src="https://github.githubassets.com/images/icons/emoji/unicode/2139.png" height="20" width="20"> <strong>Note</strong> <p>
+When possible, properties should be stored in lower-case kebab format, such as <code>cas.property-name=value</code>.
+The only possible exception to this rule is when naming actuator endpoints; The name of the
+actuator endpoints (i.e. <code>ssoSessions</code>) <strong>MUST</strong> remain in camelCase mode. 
+</p>
+</div>
+
+<p>Settings and properties that are controlled by the CAS platform directly always begin with the prefix <code class="language-plaintext highlighter-rouge">cas</code>. All other settings are controlled and provided
+to CAS via other underlying frameworks and may have their own schemas and syntax. BE CAREFUL with
+the distinction. Unrecognized properties are rejected by CAS and/or frameworks upon which CAS depends. This means if you somehow misspell a property definition
+or fail to adhere to the dot-notation syntax and such, your setting is entirely refused by CAS and likely the feature it controls will never be activated in the
+way you intend.</p>
+
+<h4 id="validation">Validation</h4>
+
+<p>Configuration properties are automatically validated on CAS startup to report issues with configuration binding, especially if defined CAS settings cannot be
+recognized or validated by the configuration schema. Additional validation processes are also handled
+via <a href="/cas/development/configuration/Configuration-Metadata-Repository.html">Configuration Metadata</a> and property migrations applied automatically on
+startup by Spring Boot and family.</p>
+
+<h4 id="indexed-settings">Indexed Settings</h4>
+
+<p>CAS settings able to accept multiple values are typically documented with an index, such as <code class="language-plaintext highlighter-rouge">cas.some.setting[0]=value</code>. The index <code class="language-plaintext highlighter-rouge">[0]</code> is meant to be
+incremented by the adopter to allow for distinct multiple configuration blocks.</p>
+
+            </div>
+        </details></div>
+</div>
+
+<h2 id="spring-boot-admin-client">Spring Boot Admin Client</h2>
+
+<p>Each individual CAS server is given the ability to auto-register itself 
+with the Spring Boot Admin server, provided configuration is made available to instruct 
+the CAS server how to locate and connect to the admin server.</p>
+
+<p>Note that CAS server’s actuator endpoints are by default secured. In order to allow secure 
+communication between the CAS server and the Spring Boot Admin server, <a href="https://github.com/codecentric/spring-boot-admin">please see guide</a>.</p>
+
+<!-- fragment:keep -->
+
+<p>The following settings and properties are available from the CAS configuration catalog:</p>
+
+
+<div class="cas-properties">
+    <div class="cas-properties-list">
+<div class="cas-property" data-kind="thirdparty" data-name="spring.boot.admin.client.api-path" data-default="instances">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.boot.admin.client.api-path</code><span class="cas-property-summary">The admin rest-apis path.</span>
+</div>
+        <div class="cas-property-default"><code>instances</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>The admin rest-apis path.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><code>instances</code></dd>
+<dt>Defined by</dt>
+<dd><code title="de.codecentric.boot.admin.client.config.ClientProperties">ClientProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.boot.admin.client.auto-deregistration" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.boot.admin.client.auto-deregistration</code><span class="cas-property-summary">Enable automatic deregistration on shutdown If not set it defaults to true if an active CloudPlatform is present;</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Enable automatic deregistration on shutdown If not set it defaults to true if an active <code>CloudPlatform</code> is present;</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Boolean</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="de.codecentric.boot.admin.client.config.ClientProperties">ClientProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.boot.admin.client.auto-registration" data-default="true">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.boot.admin.client.auto-registration</code><span class="cas-property-summary">Enable automatic registration when the application is ready.</span>
+</div>
+        <div class="cas-property-default"><code>true</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Enable automatic registration when the application is ready.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Boolean</code></dd>
+<dt>Default</dt>
+<dd><code>true</code></dd>
+<dt>Defined by</dt>
+<dd><code title="de.codecentric.boot.admin.client.config.ClientProperties">ClientProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.boot.admin.client.connect-timeout" data-default="5000ms">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.boot.admin.client.connect-timeout</code><span class="cas-property-summary">Connect timeout for the registration.</span>
+</div>
+        <div class="cas-property-default"><code>5000ms</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Connect timeout for the registration.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Duration</code></dd>
+<dt>Default</dt>
+<dd><code>5000ms</code></dd>
+<dt>Defined by</dt>
+<dd><code title="de.codecentric.boot.admin.client.config.ClientProperties">ClientProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.boot.admin.client.enabled" data-default="true">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.boot.admin.client.enabled</code><span class="cas-property-summary">Enable Spring Admin Client.</span>
+</div>
+        <div class="cas-property-default"><code>true</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Enable Spring Admin Client.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Boolean</code></dd>
+<dt>Default</dt>
+<dd><code>true</code></dd>
+<dt>Defined by</dt>
+<dd><code title="de.codecentric.boot.admin.client.config.ClientProperties">ClientProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.boot.admin.client.instance.health-url" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.boot.admin.client.instance.health-url</code><span class="cas-property-summary">Client-health-URL to register with.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Client-health-URL to register with. Inferred at runtime, can be overridden in case the reachable URL is different (e.g. Docker). Must be unique all services registry.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="de.codecentric.boot.admin.client.config.InstanceProperties">InstanceProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.boot.admin.client.instance.management-base-url" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.boot.admin.client.instance.management-base-url</code><span class="cas-property-summary">Base url for computing the management-url to register with.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Base url for computing the management-url to register with. The path is inferred at runtime, and appended to the base url.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="de.codecentric.boot.admin.client.config.InstanceProperties">InstanceProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.boot.admin.client.instance.management-url" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.boot.admin.client.instance.management-url</code><span class="cas-property-summary">Management-url to register with.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Management-url to register with. Inferred at runtime, can be overridden in case the reachable URL is different (e.g. Docker).</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="de.codecentric.boot.admin.client.config.InstanceProperties">InstanceProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.boot.admin.client.instance.metadata" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.boot.admin.client.instance.metadata</code><span class="cas-property-summary">Metadata that should be associated with this application</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Metadata that should be associated with this application</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Map&lt;String,String&gt;</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="de.codecentric.boot.admin.client.config.InstanceProperties">InstanceProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.boot.admin.client.instance.name" data-default="spring-boot-application">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.boot.admin.client.instance.name</code><span class="cas-property-summary">Name to register with.</span>
+</div>
+        <div class="cas-property-default"><code>spring-boot-application</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Name to register with. Defaults to ${spring.application.name}</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><code>spring-boot-application</code></dd>
+<dt>Defined by</dt>
+<dd><code title="de.codecentric.boot.admin.client.config.InstanceProperties">InstanceProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.boot.admin.client.instance.prefer-ip" data-default="false" data-deprecated>
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.boot.admin.client.instance.prefer-ip</code><span class="cas-property-summary">Should the registered urls be built with server.address or with hostname.</span>
+</div>
+        <div class="cas-property-default"><code>false</code></div>
+        <div class="cas-property-tags">
+<span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span><span class="cas-property-tag cas-property-tag-deprecated"><i class="fa fa-skull" aria-hidden="true"></i>Deprecated</span>
+</div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Should the registered urls be built with server.address or with hostname. @deprecated Use serviceHostType instead.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Boolean</code></dd>
+<dt>Default</dt>
+<dd><code>false</code></dd>
+<dt>Defined by</dt>
+<dd><code title="de.codecentric.boot.admin.client.config.InstanceProperties">InstanceProperties</code></dd>
+<dt>Deprecation</dt>
+<dd>
+<code>WARNING</code>, no replacement</dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.boot.admin.client.instance.service-base-url" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.boot.admin.client.instance.service-base-url</code><span class="cas-property-summary">Base url for computing the service-url to register with.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Base url for computing the service-url to register with. The path is inferred at runtime, and appended to the base url.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="de.codecentric.boot.admin.client.config.InstanceProperties">InstanceProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.boot.admin.client.instance.service-host-type" data-default="canonical-host-name">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.boot.admin.client.instance.service-host-type</code><span class="cas-property-summary">Should the registered urls be built with server.address or with hostname.</span>
+</div>
+        <div class="cas-property-default"><code>canonical-host-name</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Should the registered urls be built with server.address or with hostname.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>ServiceHostType</code></dd>
+<dt>Default</dt>
+<dd><code>canonical-host-name</code></dd>
+<dt>Defined by</dt>
+<dd><code title="de.codecentric.boot.admin.client.config.InstanceProperties">InstanceProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.boot.admin.client.instance.service-path" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.boot.admin.client.instance.service-path</code><span class="cas-property-summary">Path for computing the service-url to register with.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Path for computing the service-url to register with. If not specified, defaults to "/"</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="de.codecentric.boot.admin.client.config.InstanceProperties">InstanceProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.boot.admin.client.instance.service-url" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.boot.admin.client.instance.service-url</code><span class="cas-property-summary">Client-service-URL register with.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Client-service-URL register with. Inferred at runtime, can be overridden in case the reachable URL is different (e.g. Docker).</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="de.codecentric.boot.admin.client.config.InstanceProperties">InstanceProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.boot.admin.client.password" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.boot.admin.client.password</code><span class="cas-property-summary">Password for basic authentication on admin server</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Password for basic authentication on admin server</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="de.codecentric.boot.admin.client.config.ClientProperties">ClientProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.boot.admin.client.period" data-default="10000ms">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.boot.admin.client.period</code><span class="cas-property-summary">Time interval the registration is repeated</span>
+</div>
+        <div class="cas-property-default"><code>10000ms</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Time interval the registration is repeated</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Duration</code></dd>
+<dt>Default</dt>
+<dd><code>10000ms</code></dd>
+<dt>Defined by</dt>
+<dd><code title="de.codecentric.boot.admin.client.config.ClientProperties">ClientProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.boot.admin.client.read-timeout" data-default="5000ms">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.boot.admin.client.read-timeout</code><span class="cas-property-summary">Read timeout (in ms) for the registration.</span>
+</div>
+        <div class="cas-property-default"><code>5000ms</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Read timeout (in ms) for the registration.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Duration</code></dd>
+<dt>Default</dt>
+<dd><code>5000ms</code></dd>
+<dt>Defined by</dt>
+<dd><code title="de.codecentric.boot.admin.client.config.ClientProperties">ClientProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.boot.admin.client.register-once" data-default="true">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.boot.admin.client.register-once</code><span class="cas-property-summary">Enable registration against one or all admin servers</span>
+</div>
+        <div class="cas-property-default"><code>true</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Enable registration against one or all admin servers</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Boolean</code></dd>
+<dt>Default</dt>
+<dd><code>true</code></dd>
+<dt>Defined by</dt>
+<dd><code title="de.codecentric.boot.admin.client.config.ClientProperties">ClientProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.boot.admin.client.url" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.boot.admin.client.url</code><span class="cas-property-summary">The admin server urls to register at</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>The admin server urls to register at</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String[]</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="de.codecentric.boot.admin.client.config.ClientProperties">ClientProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.boot.admin.client.username" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.boot.admin.client.username</code><span class="cas-property-summary">Username for basic authentication on admin server</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Username for basic authentication on admin server</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="de.codecentric.boot.admin.client.config.ClientProperties">ClientProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+</div>
+<p class="cas-properties-legend">
+        <strong>Required</strong> settings may be needed to activate or affect the feature; review them even when they have a default.
+        <strong>Optional</strong> settings only need to be set to change a default or to turn on the behavior they control.
+        <strong>Third party</strong> settings belong to libraries such as Spring Boot that CAS builds on; their own documentation may have more detail.
+    </p>
+<div class="cas-properties-topics"><details class="cas-properties-topic">
+            <summary><i class="fa fa-newspaper" aria-hidden="true"></i>Notes on configuration</summary>
+            <div class="cas-properties-topic-body">
+<!-- fragment:keep -->
+
+<p></p>
+
+<h4 id="configuration-metadata">Configuration Metadata</h4>
+
+<p>The collection of configuration properties listed in this section are automatically generated from the CAS source and components that contain the actual field
+definitions, types, descriptions, modules, etc. This metadata may not always be 100% accurate, or could be lacking details and sufficient explanations.</p>
+
+<h4 id="be-selective">Be Selective</h4>
+
+<p>This section is meant as a guide only. Do NOT copy/paste the entire collection of settings into your CAS configuration; rather pick only the properties that you
+need. Do NOT enable settings unless you are certain of their purpose and do NOT copy settings into your configuration only to keep them as reference. All these
+ideas lead to upgrade headaches, maintenance nightmares and premature aging.</p>
+
+<h4 id="yagni">YAGNI</h4>
+
+<p>Note that for nearly ALL use cases, declaring and configuring properties listed here is sufficient. You should NOT have to explicitly massage a CAS XML/Java/etc
+configuration file to design an authentication handler, create attribute release policies, etc. CAS at runtime will auto-configure all required changes for you.
+If you are unsure about the meaning of a given CAS setting, do NOT turn it on without hesitation. Review the codebase or better yet, ask questions to clarify
+the intended behavior.</p>
+
+<h4 id="naming-convention">Naming Convention</h4>
+
+<p>Property names can be specified in very relaxed terms. For instance <code class="language-plaintext highlighter-rouge">cas.someProperty</code>, <code class="language-plaintext highlighter-rouge">cas.some-property</code>, <code class="language-plaintext highlighter-rouge">cas.some_property</code> are all valid names. While all
+forms are accepted by CAS, there are certain components (in CAS and other frameworks used) whose activation at runtime is conditional on a property value, where
+this property is required to have been specified in CAS configuration using kebab case. This is both true for properties that are owned by CAS as well as those
+that might be presented to the system via an external library or framework such as Spring Boot, etc.</p>
+
+<div class="alert alert-info">
+<img class="emoji" title=":information_source:" alt=":information_source:" src="https://github.githubassets.com/images/icons/emoji/unicode/2139.png" height="20" width="20"> <strong>Note</strong> <p>
+When possible, properties should be stored in lower-case kebab format, such as <code>cas.property-name=value</code>.
+The only possible exception to this rule is when naming actuator endpoints; The name of the
+actuator endpoints (i.e. <code>ssoSessions</code>) <strong>MUST</strong> remain in camelCase mode. 
+</p>
+</div>
+
+<p>Settings and properties that are controlled by the CAS platform directly always begin with the prefix <code class="language-plaintext highlighter-rouge">cas</code>. All other settings are controlled and provided
+to CAS via other underlying frameworks and may have their own schemas and syntax. BE CAREFUL with
+the distinction. Unrecognized properties are rejected by CAS and/or frameworks upon which CAS depends. This means if you somehow misspell a property definition
+or fail to adhere to the dot-notation syntax and such, your setting is entirely refused by CAS and likely the feature it controls will never be activated in the
+way you intend.</p>
+
+<h4 id="validation">Validation</h4>
+
+<p>Configuration properties are automatically validated on CAS startup to report issues with configuration binding, especially if defined CAS settings cannot be
+recognized or validated by the configuration schema. Additional validation processes are also handled
+via <a href="/cas/development/configuration/Configuration-Metadata-Repository.html">Configuration Metadata</a> and property migrations applied automatically on
+startup by Spring Boot and family.</p>
+
+<h4 id="indexed-settings">Indexed Settings</h4>
+
+<p>CAS settings able to accept multiple values are typically documented with an index, such as <code class="language-plaintext highlighter-rouge">cas.some.setting[0]=value</code>. The index <code class="language-plaintext highlighter-rouge">[0]</code> is meant to be
+incremented by the adopter to allow for distinct multiple configuration blocks.</p>
+
+            </div>
+        </details></div>
+</div>
+
+<h2 id="security">Security</h2>
+
+<p>Accessing the Spring Boot Admin Server will by default require a form-based user authentication. The credentials
+used to access this feature are those presented by Spring Security configuration:</p>
+
+<!-- fragment:keep -->
+
+<p>The following settings and properties are available from the CAS configuration catalog:</p>
+
+
+<div class="cas-properties">
+    <div class="cas-properties-list">
+<div class="cas-property" data-kind="thirdparty" data-name="spring.security.user.name" data-default="user">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.security.user.name</code><span class="cas-property-summary">Default user name.</span>
+</div>
+        <div class="cas-property-default"><code>user</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Default user name.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><code>user</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.security.autoconfigure.SecurityProperties$User">SecurityProperties$User</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.security.user.password" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.security.user.password</code><span class="cas-property-summary">Password for the default user name.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Password for the default user name.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.security.autoconfigure.SecurityProperties$User">SecurityProperties$User</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.security.user.roles" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.security.user.roles</code><span class="cas-property-summary">Granted roles for the default user name.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Granted roles for the default user name.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>List&lt;String&gt;</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.security.autoconfigure.SecurityProperties$User">SecurityProperties$User</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+</div>
+<p class="cas-properties-legend">
+        <strong>Required</strong> settings may be needed to activate or affect the feature; review them even when they have a default.
+        <strong>Optional</strong> settings only need to be set to change a default or to turn on the behavior they control.
+        <strong>Third party</strong> settings belong to libraries such as Spring Boot that CAS builds on; their own documentation may have more detail.
+    </p>
+<div class="cas-properties-topics"><details class="cas-properties-topic">
+            <summary><i class="fa fa-newspaper" aria-hidden="true"></i>Notes on configuration</summary>
+            <div class="cas-properties-topic-body">
+<!-- fragment:keep -->
+
+<p></p>
+
+<h4 id="configuration-metadata">Configuration Metadata</h4>
+
+<p>The collection of configuration properties listed in this section are automatically generated from the CAS source and components that contain the actual field
+definitions, types, descriptions, modules, etc. This metadata may not always be 100% accurate, or could be lacking details and sufficient explanations.</p>
+
+<h4 id="be-selective">Be Selective</h4>
+
+<p>This section is meant as a guide only. Do NOT copy/paste the entire collection of settings into your CAS configuration; rather pick only the properties that you
+need. Do NOT enable settings unless you are certain of their purpose and do NOT copy settings into your configuration only to keep them as reference. All these
+ideas lead to upgrade headaches, maintenance nightmares and premature aging.</p>
+
+<h4 id="yagni">YAGNI</h4>
+
+<p>Note that for nearly ALL use cases, declaring and configuring properties listed here is sufficient. You should NOT have to explicitly massage a CAS XML/Java/etc
+configuration file to design an authentication handler, create attribute release policies, etc. CAS at runtime will auto-configure all required changes for you.
+If you are unsure about the meaning of a given CAS setting, do NOT turn it on without hesitation. Review the codebase or better yet, ask questions to clarify
+the intended behavior.</p>
+
+<h4 id="naming-convention">Naming Convention</h4>
+
+<p>Property names can be specified in very relaxed terms. For instance <code class="language-plaintext highlighter-rouge">cas.someProperty</code>, <code class="language-plaintext highlighter-rouge">cas.some-property</code>, <code class="language-plaintext highlighter-rouge">cas.some_property</code> are all valid names. While all
+forms are accepted by CAS, there are certain components (in CAS and other frameworks used) whose activation at runtime is conditional on a property value, where
+this property is required to have been specified in CAS configuration using kebab case. This is both true for properties that are owned by CAS as well as those
+that might be presented to the system via an external library or framework such as Spring Boot, etc.</p>
+
+<div class="alert alert-info">
+<img class="emoji" title=":information_source:" alt=":information_source:" src="https://github.githubassets.com/images/icons/emoji/unicode/2139.png" height="20" width="20"> <strong>Note</strong> <p>
+When possible, properties should be stored in lower-case kebab format, such as <code>cas.property-name=value</code>.
+The only possible exception to this rule is when naming actuator endpoints; The name of the
+actuator endpoints (i.e. <code>ssoSessions</code>) <strong>MUST</strong> remain in camelCase mode. 
+</p>
+</div>
+
+<p>Settings and properties that are controlled by the CAS platform directly always begin with the prefix <code class="language-plaintext highlighter-rouge">cas</code>. All other settings are controlled and provided
+to CAS via other underlying frameworks and may have their own schemas and syntax. BE CAREFUL with
+the distinction. Unrecognized properties are rejected by CAS and/or frameworks upon which CAS depends. This means if you somehow misspell a property definition
+or fail to adhere to the dot-notation syntax and such, your setting is entirely refused by CAS and likely the feature it controls will never be activated in the
+way you intend.</p>
+
+<h4 id="validation">Validation</h4>
+
+<p>Configuration properties are automatically validated on CAS startup to report issues with configuration binding, especially if defined CAS settings cannot be
+recognized or validated by the configuration schema. Additional validation processes are also handled
+via <a href="/cas/development/configuration/Configuration-Metadata-Repository.html">Configuration Metadata</a> and property migrations applied automatically on
+startup by Spring Boot and family.</p>
+
+<h4 id="indexed-settings">Indexed Settings</h4>
+
+<p>CAS settings able to accept multiple values are typically documented with an index, such as <code class="language-plaintext highlighter-rouge">cas.some.setting[0]=value</code>. The index <code class="language-plaintext highlighter-rouge">[0]</code> is meant to be
+incremented by the adopter to allow for distinct multiple configuration blocks.</p>
+
+            </div>
+        </details></div>
+</div>
+
+<p>Additional points to consider:</p>
+
+<ul>
+  <li>Spring Boot Admin Server will reach out to CAS actuator endpoints to parse and present data. As CAS actuator endpoints require authenticated access, Spring Boot Admin Server is configured by default to use the same credentials used to protected actuator endpoints.</li>
+  <li>CAS server acting as a Spring Boot Admin client will reach out to the Spring Boot Admin Server to auto-register itself and report status updates. Such requests and API calls re by default configured to use the same security mechanism and credentials.</li>
+  <li>CAS server can act both as a Spring Boot Admin Server or a client of the Spring Boot Admin Server. Each CAS server deployment can be individually tuned to turn off client/service functionality as needed. For example, in a clustered CAS deployment the primary CAS server node might act as both Spring Boot Admin Server and Client, while all other secondary nodes may simply be a client of the primary CAS (Spring Boot Admin) server.</li>
+</ul>
+
+<h2 id="troubleshooting">Troubleshooting</h2>
+
+<p>To enable additional logging, modify the logging configuration file to add the following:</p>
+
+<div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+2
+</pre></td>
+<td class="rouge-code"><pre><span class="nt">&lt;Logger</span> <span class="na">name=</span><span class="s">"de.codecentric.boot"</span> <span class="na">level=</span><span class="s">"debug"</span> <span class="nt">/&gt;</span>
+<span class="nt">&lt;Logger</span> <span class="na">name=</span><span class="s">"org.springframework.web.reactive"</span> <span class="na">level=</span><span class="s">"debug"</span> <span class="nt">/&gt;</span>
+</pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+            </article>
+            <div class="article-end" aria-hidden="true">
+<span></span><span>CAS</span><span></span>
+</div>
+        </main>
+        
+        <aside class="docs-toc" aria-label="On this page">
+    <nav id="pageContents" aria-label="Table of contents">
+        <p class="eyebrow">ON THIS PAGE</p>
+        <ul class="section-nav"></ul>
+    </nav>
+    <a class="toc-top" href="#cas-docs-container">Back to top <span aria-hidden="true">↑</span></a>
+</aside>
+
+        
+    </div>
+
+    <footer class="site-footer">
+        <a class="footer-brand" href="../../index.html">APEREO <strong>CAS</strong></a>
+        <p>CAS is supported by the <a href="https://www.apereo.org/">Apereo Foundation</a>.</p>
+        <a href="#cas-docs-container">Back to top <span aria-hidden="true">↑</span></a>
+    </footer>
+    <div id="docs-status" class="visually-hidden" role="status" aria-live="polite"></div>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/tether@2.0.0/dist/js/tether.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.11/clipboard.min.js"></script>
+
+    <script src="/cas/javascripts/URI.js"></script>
+    <script src="/cas/javascripts/site.js"></script>
+
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@docsearch/js@3"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="https://code.jquery.com/ui/1.13.1/jquery-ui.js"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.5/js/lightbox.min.js"></script>
+
+    <script>
+        let pageSection = "Monitoring & Statistics";
+        let siteUrl = "https://apereo.github.io";
+        let basePath = "/cas";
+
+        
+    </script>
+</body>
+
+</html>

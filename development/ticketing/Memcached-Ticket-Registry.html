@@ -1,0 +1,1507 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="light dark">
+    
+    
+    
+
+
+
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <meta name="description" content="Memcached Ticket Registry. Technical guides for Apereo CAS: enterprise identity, authentication, single sign-on and access management.">
+    <meta name="robots" content="index,follow">
+    <meta name="theme-color" content="#06304a">
+    <link rel="canonical" href="https://apereo.github.io/cas/development/ticketing/Memcached-Ticket-Registry.html">
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="en_US">
+    <meta property="og:site_name" content="Apereo CAS Documentation">
+    <meta property="og:title" content="CAS - Memcached Ticket Registry">
+    <meta property="og:description" content="Memcached Ticket Registry. Technical guides for Apereo CAS: enterprise identity, authentication, single sign-on and access management.">
+    <meta property="og:url" content="https://apereo.github.io/cas/development/ticketing/Memcached-Ticket-Registry.html">
+    <meta property="og:image" content="https://apereo.github.io/cas/images/cas_logo.png">
+    <meta property="og:image:alt" content="Apereo CAS">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="CAS - Memcached Ticket Registry">
+    <meta name="twitter:description" content="Memcached Ticket Registry. Technical guides for Apereo CAS: enterprise identity, authentication, single sign-on and access management.">
+    <meta name="twitter:image" content="https://apereo.github.io/cas/images/cas_logo.png">
+
+    
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "TechArticle",
+      "headline": "Memcached Ticket Registry",
+      "description": "Memcached Ticket Registry. Technical guides for Apereo CAS: enterprise identity, authentication, single sign-on and access management.",
+      "url": "https://apereo.github.io/cas/development/ticketing/Memcached-Ticket-Registry.html",
+      "inLanguage": "en",
+      "isPartOf": {"@type": "WebSite", "name": "Apereo CAS Documentation",
+                   "url": "https://apereo.github.io/cas/"},
+      "author": {"@type": "Organization", "name": "Apereo Foundation", "url": "https://www.apereo.org/"},
+      "publisher": {"@type": "Organization", "name": "Apereo Foundation", "url": "https://www.apereo.org/"}
+    }
+    </script>
+    
+
+    <script>
+        ((i, s, o, g, r, a, m) => {
+            i['GoogleAnalyticsObject'] = r;
+            i[r] = i[r] || function () {
+                (i[r].q = i[r].q || []).push(arguments)
+            }, i[r].l = 1 * new Date();
+            a = s.createElement(o),
+                m = s.getElementsByTagName(o)[0];
+            a.async = 1;
+            a.src = g;
+            m.parentNode.insertBefore(a, m)
+        })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
+
+        ga('create', 'UA-83384532-2', 'auto');
+        ga('send', 'pageview');
+
+    </script>
+
+    <script>
+        function readThemePreference() {
+            try {
+                return localStorage.getItem('cas-docs-theme') || 'system';
+            } catch (error) {
+                return 'system';
+            }
+        }
+
+        function systemTheme() {
+            return window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+        }
+
+        function resolveTheme(preference) {
+            return preference === 'dark' || preference === 'light' ? preference : systemTheme();
+        }
+
+        function changeTheme(theme) {
+            if (theme !== 'dark' && theme !== 'light') {
+                return;
+            }
+
+            if (document.documentElement.getAttribute('data-bs-theme') !== theme) {
+                document.documentElement.setAttribute('data-bs-theme', theme);
+            }
+        }
+
+        (() => {
+            let preference = readThemePreference();
+            if (preference !== 'dark' && preference !== 'light') {
+                preference = 'system';
+
+            }
+
+            changeTheme(resolveTheme(preference));
+
+            if (window.matchMedia) {
+                window.matchMedia('(prefers-color-scheme: light)').addEventListener('change', () => {
+                    if (readThemePreference() !== 'system') {
+                        return;
+                    }
+                    const theme = systemTheme();
+                    changeTheme(theme);
+                });
+            }
+        })();
+    </script>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@docsearch/css@3"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.5/css/lightbox.min.css" />
+    
+    
+    <link rel="stylesheet" type="text/css" media="screen" href='/cas/stylesheets/site.css'>
+    <link rel="stylesheet" type="text/css" media="print" href='/cas/stylesheets/site-print.css'>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400..700;1,9..40,400..500&family=JetBrains+Mono:wght@400;500;700&family=Manrope:wght@400..800&family=Newsreader:ital,opsz,wght@0,6..72,300..600;1,6..72,300..600&display=swap" rel="stylesheet">
+    <link href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css" rel="stylesheet">
+
+    <title>CAS - Memcached Ticket Registry · Apereo CAS Documentation</title>
+
+</head>
+
+<body class="" data-docs-base="/cas" data-docs-version="development" data-docs-build="20261004000849">
+    <a class="skip-link" href="#cas-docs-container">Skip to content</a>
+    <header class="site-header">
+        <div class="masthead">
+            <a class="cas-brand" href="../../index.html" aria-label="Apereo CAS home">
+                <img class="brand-logo" src="/cas/images/cas_logo.png" width="119" height="60" alt="CAS">
+                <span class="brand-caption">APEREO CAS<span>Documentation</span></span>
+            </a>
+            <div class="brand-mission">
+                <p>Enterprise Authentication <span class="brand-mission-accent">for All Earthlings and Beyond</span></p>
+                <span>Identity, Single Sign-On and Access Management</span>
+            </div>
+            <a id="forkme_banner" href="https://github.com/apereo/cas"><i class="fab fa-github" aria-hidden="true"></i><span>View on GitHub</span><span aria-hidden="true">↗</span></a>
+        </div>
+        <div class="navigation-bar">
+            
+            <button onclick="navigateSidebar()" id="sidebarNavButton" class="icon-button" type="button" aria-controls="sidebar" aria-expanded="true" aria-label="Toggle documentation navigation" title="Toggle documentation navigation">
+                <i class="fa fa-bars" aria-hidden="true"></i>
+            </button>
+            
+            <nav class="primary-navigation" aria-label="Main navigation">
+                <a href="../../index.html">Home</a>
+                <a href="https://github.com/apereo/cas/releases">Releases</a>
+                <a href="../../Support.html">Support</a>
+                <a href="../../Mailing-Lists.html">Mailing Lists</a>
+                <div class="dropdown">
+                    <button class="dropdown-toggle" type="button" id="cas-versions" data-bs-toggle="dropdown" aria-expanded="false">Versions</button>
+                    <div class="dropdown-menu" aria-labelledby="cas-versions">
+                        
+                        <a class="dropdown-item" href="/cas/development/">Development</a>
+                        
+                        <a class="dropdown-item" href="/cas/8.0.x/">v8.0.x</a>
+                        
+                        <a class="dropdown-item" href="/cas/7.3.x/">v7.3.x</a>
+                        
+                    </div>
+                </div>
+                <a href="https://apereo.github.io" target="_blank" rel="noopener">Blog <span aria-hidden="true">↗</span><span class="visually-hidden"> (opens in a new tab)</span></a>
+            </nav>
+            <div class="navigation-tools">
+                <div id="searchField"></div>
+                <button id="settingsSearchButton" class="icon-button" type="button" aria-label="Search configuration settings (press Shift twice)" title="Search configuration settings (Shift Shift)"><i class="fa fa-sliders" aria-hidden="true"></i></button>
+                <button id="themeToggle" class="icon-button" type="button" onclick="toggleDarkMode()" aria-label="Toggle color theme" title="Toggle color theme"><i class="fa fa-circle-half-stroke" aria-hidden="true"></i></button>
+            </div>
+        </div>
+        <div class="reading-progress" aria-hidden="true"><span id="readingProgress"></span></div>
+    </header>
+
+    <div class="docs-shell">
+        
+        <aside id="sidebar" class="docs-sidebar" aria-label="Documentation navigation">
+    <div class="sidebar-heading">
+<span class="eyebrow">APEREO CAS DOCUMENTATION</span><span class="sidebar-symbol" aria-hidden="true">✳</span>
+</div>
+    <nav id="sidebar-navigation" aria-label="Documentation topics"></nav>
+    <noscript><p>Browse the <a href="/cas/development/sidebar.html">documentation index</a>.</p></noscript>
+</aside>
+
+        
+        <main class="cas-docs-content">
+            
+            <div class="page-toolbar">
+                <nav id="docsNavBar" aria-label="Breadcrumb"></nav>
+                <div id="toolbarIcons" role="group" aria-label="Page tools"></div>
+            </div>
+            
+            
+            <aside id="dev-doc-info" aria-labelledby="dev-doc-title">
+                <span class="development-marker" aria-hidden="true"></span>
+                <div>
+                    <p id="dev-doc-title">WORKERS AHEAD!</p>
+                    <p>You are viewing the <strong>development</strong> documentation for the Apereo CAS server. <strong>The
+                        functionality presented here <a href="https://github.com/apereo/cas/milestones">is not officially released yet</a></strong>.
+                        This is a work in progress and will be continually updated as development moves forward.
+                        <strong>You are most encouraged to test the changes presented.</strong>
+                    </p>
+                </div>
+            </aside>
+            
+            <article id="cas-docs-container" tabindex="-1">
+                
+<h1 id="memcached-ticket-registry">Memcached Ticket Registry</h1>
+
+<p>Memcached integration is enabled by including the following dependency in the WAR overlay:</p>
+
+<div style="display: block">
+
+    <ul class="nav nav-pills cas-modules" role="tablist">
+        <li class="nav-item cas-module" role="presentation"><a class="nav-link" id="mavenorgapereocascasserversupportmemcachedticketregistry-tab" data-bs-toggle="tab" href="#mavenorgapereocascasserversupportmemcachedticketregistry" role="tab" aria-controls="mavenorgapereocascasserversupportmemcachedticketregistry" aria-selected="false">Apache Maven</a></li>
+        <li class="nav-item cas-module" role="presentation"><a class="nav-link" id="gradleorgapereocascasserversupportmemcachedticketregistry-tab" data-bs-toggle="tab" href="#gradleorgapereocascasserversupportmemcachedticketregistry" role="tab" aria-controls="gradleorgapereocascasserversupportmemcachedticketregistry" aria-selected="false">Gradle</a></li>
+<li class="nav-item cas-module" role="presentation"><a class="nav-link" id="bomorgapereocascasserversupportmemcachedticketregistry-tab" data-bs-toggle="tab" href="#bomorgapereocascasserversupportmemcachedticketregistry" role="tab" aria-controls="bomorgapereocascasserversupportmemcachedticketregistry" aria-selected="false">BOM - Spring</a></li>
+        <li class="nav-item cas-module" role="presentation"><a class="nav-link active" id="bomGradleorgapereocascasserversupportmemcachedticketregistry-tab" data-bs-toggle="tab" href="#bomGradleorgapereocascasserversupportmemcachedticketregistry" role="tab" aria-controls="bomGradleorgapereocascasserversupportmemcachedticketregistry" aria-selected="true">BOM - Gradle</a></li>
+<li class="nav-item dropdown cas-module" role="presentation">
+            <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">Resources<span class="caret"></span>
+            </a>
+            <div class="dropdown-menu">
+                <a class="dropdown-item" href="https://getcas.apereo.org/ui?dependencies=webapp-tomcat,support-memcached-ticket-registry" target="_blank" rel="noopener">Show in CAS Initializr <span aria-hidden="true">↗</span><span class="visually-hidden"> (opens in a new tab)</span></a>
+                <a class="dropdown-item" href="javascript:generateOverlay('cas-server-support-memcached-ticket-registry',%20'cas-overlay');">Generate CAS Server WAR Overlay</a>
+            </div>
+        </li>
+    </ul>
+
+
+    <div class="cas-module-tabs tab-content clearfix">
+        <div class="tab-pane fade" id="mavenorgapereocascasserversupportmemcachedticketregistry" role="tabpanel" aria-labelledby="mavenorgapereocascasserversupportmemcachedticketregistry-tab">
+<span>
+      <div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+</pre></td>
+<td class="rouge-code"><pre><span class="nt">&lt;dependency&gt;</span>
+    <span class="nt">&lt;groupId&gt;</span>org.apereo.cas<span class="nt">&lt;/groupId&gt;</span>
+    <span class="nt">&lt;artifactId&gt;</span>cas-server-support-memcached-ticket-registry<span class="nt">&lt;/artifactId&gt;</span>
+    <span class="nt">&lt;version&gt;</span>${cas.version}<span class="nt">&lt;/version&gt;</span>
+<span class="nt">&lt;/dependency&gt;</span>
+</pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+    </span>
+
+        </div>
+
+
+        <div class="tab-pane fade" id="gradleorgapereocascasserversupportmemcachedticketregistry" role="tabpanel" aria-labelledby="gradleorgapereocascasserversupportmemcachedticketregistry-tab">
+
+            <span>
+    
+<div class="language-groovy highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td>
+<td class="rouge-code"><pre><span class="n">implementation</span> <span class="s2">"org.apereo.cas:cas-server-support-memcached-ticket-registry:${project.'cas.version'}"</span>
+</pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+  </span>
+
+        </div>
+
+        <div class="tab-pane fade" id="bomorgapereocascasserversupportmemcachedticketregistry" role="tabpanel" aria-labelledby="bomorgapereocascasserversupportmemcachedticketregistry-tab">
+<span>
+    <div class="language-groovy highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+</pre></td>
+<td class="rouge-code"><pre><span class="n">dependencyManagement</span> <span class="o">{</span>
+    <span class="n">imports</span> <span class="o">{</span>
+        <span class="n">mavenBom</span> <span class="s2">"org.apereo.cas:cas-server-support-bom:${project.'cas.version'}"</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+
+<span class="n">dependencies</span> <span class="o">{</span>
+    <span class="n">implementation</span> <span class="s2">"org.apereo.cas:cas-server-support-memcached-ticket-registry"</span>
+<span class="o">}</span>
+</pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+  </span>
+
+        </div>
+
+        <div class="tab-pane fade show active" id="bomGradleorgapereocascasserversupportmemcachedticketregistry" role="tabpanel" aria-labelledby="bomGradleorgapereocascasserversupportmemcachedticketregistry-tab">
+<span>
+    <div class="language-groovy highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+</pre></td>
+<td class="rouge-code"><pre><span class="n">dependencies</span> <span class="o">{</span>
+    <span class="cm">/*
+        The following platform references are included automatically and are listed for reference only.
+
+        implementation enforcedPlatform("org.apereo.cas:cas-server-support-bom:${project.'cas.version'}")
+        implementation platform(org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES)
+        
+    */</span>
+    <span class="n">implementation</span> <span class="s2">"org.apereo.cas:cas-server-support-memcached-ticket-registry"</span>
+<span class="o">}</span>
+</pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+  </span>
+
+        </div>
+
+    </div>
+
+</div>
+
+<div class="alert alert-warning">
+<img class="emoji" title=":warning:" alt=":warning:" src="https://github.githubassets.com/images/icons/emoji/unicode/26a0.png" height="20" width="20"> <strong>Usage</strong>
+<p><strong>This feature is deprecated and is scheduled to be removed in the future.</strong></p>
+</div>
+
+<p>This registry stores tickets in one or more <a href="http://memcached.org/">memcached</a> instances. 
+Memcached stores data in exactly one node among many in a distributed cache, thus avoiding the requirement to replicate
+or otherwise share data between nodes. A deterministic function is used to locate the node, <em>N’</em>, on which to store
+key <em>K</em>:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td>
+<td class="rouge-code"><pre>N' = f(h(K), N1, N2, N3, ... Nm)
+</pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+<p>where <em>h(K)</em> is the hash of key <em>K</em>, <em>N1 … Nm</em> is the set of cache nodes, and <em>N’</em> ∈ <em>N … Nm</em>.</p>
+
+<p>The function is deterministic in that it consistently produces the same result for a given key and set of cache nodes.
+Note that a change in the set of available cache nodes may produce a different target node on which to store the key.</p>
+
+<p>The actual memcached implementation may be supported via one of the following options, expected to be defined in the overlay.</p>
+
+<div class="alert alert-warning">
+<img class="emoji" title=":warning:" alt=":warning:" src="https://github.githubassets.com/images/icons/emoji/unicode/26a0.png" height="20" width="20"> <strong>Usage Warning!</strong><p>Not all ticket 
+registry operations are supported by the memcached ticket registry implementation. In particular, operations
+that execute bulk queries such as deleting and fetching all tickets in a single request may be unsupported,
+as memcached itself is rather unable to process and support that type of query.</p>
+</div>
+
+<h2 id="spymemcached">Spymemcached</h2>
+
+<p>Enable support via the <a href="">spymemcached library</a>. This is a simple, asynchronous, 
+single-threaded memcached client that should be the default choice for the majority of deployments.</p>
+
+<p>Support is enabled by including the following dependency in the WAR overlay:</p>
+
+<div style="display: block">
+
+    <ul class="nav nav-pills cas-modules" role="tablist">
+        <li class="nav-item cas-module" role="presentation"><a class="nav-link" id="mavenorgapereocascasserversupportmemcachedspy-tab" data-bs-toggle="tab" href="#mavenorgapereocascasserversupportmemcachedspy" role="tab" aria-controls="mavenorgapereocascasserversupportmemcachedspy" aria-selected="false">Apache Maven</a></li>
+        <li class="nav-item cas-module" role="presentation"><a class="nav-link" id="gradleorgapereocascasserversupportmemcachedspy-tab" data-bs-toggle="tab" href="#gradleorgapereocascasserversupportmemcachedspy" role="tab" aria-controls="gradleorgapereocascasserversupportmemcachedspy" aria-selected="false">Gradle</a></li>
+<li class="nav-item cas-module" role="presentation"><a class="nav-link" id="bomorgapereocascasserversupportmemcachedspy-tab" data-bs-toggle="tab" href="#bomorgapereocascasserversupportmemcachedspy" role="tab" aria-controls="bomorgapereocascasserversupportmemcachedspy" aria-selected="false">BOM - Spring</a></li>
+        <li class="nav-item cas-module" role="presentation"><a class="nav-link active" id="bomGradleorgapereocascasserversupportmemcachedspy-tab" data-bs-toggle="tab" href="#bomGradleorgapereocascasserversupportmemcachedspy" role="tab" aria-controls="bomGradleorgapereocascasserversupportmemcachedspy" aria-selected="true">BOM - Gradle</a></li>
+<li class="nav-item dropdown cas-module" role="presentation">
+            <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">Resources<span class="caret"></span>
+            </a>
+            <div class="dropdown-menu">
+                <a class="dropdown-item" href="https://getcas.apereo.org/ui?dependencies=webapp-tomcat,support-memcached-spy" target="_blank" rel="noopener">Show in CAS Initializr <span aria-hidden="true">↗</span><span class="visually-hidden"> (opens in a new tab)</span></a>
+                <a class="dropdown-item" href="javascript:generateOverlay('cas-server-support-memcached-spy',%20'cas-overlay');">Generate CAS Server WAR Overlay</a>
+            </div>
+        </li>
+    </ul>
+
+
+    <div class="cas-module-tabs tab-content clearfix">
+        <div class="tab-pane fade" id="mavenorgapereocascasserversupportmemcachedspy" role="tabpanel" aria-labelledby="mavenorgapereocascasserversupportmemcachedspy-tab">
+<span>
+      <div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+</pre></td>
+<td class="rouge-code"><pre><span class="nt">&lt;dependency&gt;</span>
+    <span class="nt">&lt;groupId&gt;</span>org.apereo.cas<span class="nt">&lt;/groupId&gt;</span>
+    <span class="nt">&lt;artifactId&gt;</span>cas-server-support-memcached-spy<span class="nt">&lt;/artifactId&gt;</span>
+    <span class="nt">&lt;version&gt;</span>${cas.version}<span class="nt">&lt;/version&gt;</span>
+<span class="nt">&lt;/dependency&gt;</span>
+</pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+    </span>
+
+        </div>
+
+
+        <div class="tab-pane fade" id="gradleorgapereocascasserversupportmemcachedspy" role="tabpanel" aria-labelledby="gradleorgapereocascasserversupportmemcachedspy-tab">
+
+            <span>
+    
+<div class="language-groovy highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td>
+<td class="rouge-code"><pre><span class="n">implementation</span> <span class="s2">"org.apereo.cas:cas-server-support-memcached-spy:${project.'cas.version'}"</span>
+</pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+  </span>
+
+        </div>
+
+        <div class="tab-pane fade" id="bomorgapereocascasserversupportmemcachedspy" role="tabpanel" aria-labelledby="bomorgapereocascasserversupportmemcachedspy-tab">
+<span>
+    <div class="language-groovy highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+</pre></td>
+<td class="rouge-code"><pre><span class="n">dependencyManagement</span> <span class="o">{</span>
+    <span class="n">imports</span> <span class="o">{</span>
+        <span class="n">mavenBom</span> <span class="s2">"org.apereo.cas:cas-server-support-bom:${project.'cas.version'}"</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+
+<span class="n">dependencies</span> <span class="o">{</span>
+    <span class="n">implementation</span> <span class="s2">"org.apereo.cas:cas-server-support-memcached-spy"</span>
+<span class="o">}</span>
+</pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+  </span>
+
+        </div>
+
+        <div class="tab-pane fade show active" id="bomGradleorgapereocascasserversupportmemcachedspy" role="tabpanel" aria-labelledby="bomGradleorgapereocascasserversupportmemcachedspy-tab">
+<span>
+    <div class="language-groovy highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+</pre></td>
+<td class="rouge-code"><pre><span class="n">dependencies</span> <span class="o">{</span>
+    <span class="cm">/*
+        The following platform references are included automatically and are listed for reference only.
+
+        implementation enforcedPlatform("org.apereo.cas:cas-server-support-bom:${project.'cas.version'}")
+        implementation platform(org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES)
+        
+    */</span>
+    <span class="n">implementation</span> <span class="s2">"org.apereo.cas:cas-server-support-memcached-spy"</span>
+<span class="o">}</span>
+</pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+  </span>
+
+        </div>
+
+    </div>
+
+</div>
+
+<h2 id="aws-elasticache">AWS ElastiCache</h2>
+
+<p>You may also use <a href="https://docs.aws.amazon.com/AmazonElastiCache/latest/dg/WhatIs.html">AWS ElastiCache</a> 
+which is a web service that makes it easy to set up, manage, and scale a distributed in-memory 
+data store or cache environment in the cloud. It provides a high-performance, scalable, and cost-effective caching 
+solution, while removing the complexity associated with deploying and managing a distributed cache environment.</p>
+
+<p>For clusters running the Memcached engine, ElastiCache supports Auto Discovery—the ability 
+for client programs to automatically identify all of the nodes in a cache cluster, 
+and to initiate and maintain connections to all of these nodes. With Auto Discovery, 
+CAS does not need to manually connect to individual cache nodes; instead, CAS connects to one 
+Memcached node and retrieves the list of nodes. From that list, CAS is aware of the rest 
+of the nodes in the cluster and can connect to any of them. You do not need to hard 
+code the individual cache node endpoints in the configuration</p>
+
+<p>All of the cache nodes in the cluster maintain a list of metadata about all of the other nodes. 
+This metadata is updated whenever nodes are added or removed from the cluster.</p>
+
+<p>Support is enabled by including the following dependency in the WAR overlay:</p>
+
+<div style="display: block">
+
+    <ul class="nav nav-pills cas-modules" role="tablist">
+        <li class="nav-item cas-module" role="presentation"><a class="nav-link" id="mavenorgapereocascasserversupportmemcachedawselasticache-tab" data-bs-toggle="tab" href="#mavenorgapereocascasserversupportmemcachedawselasticache" role="tab" aria-controls="mavenorgapereocascasserversupportmemcachedawselasticache" aria-selected="false">Apache Maven</a></li>
+        <li class="nav-item cas-module" role="presentation"><a class="nav-link" id="gradleorgapereocascasserversupportmemcachedawselasticache-tab" data-bs-toggle="tab" href="#gradleorgapereocascasserversupportmemcachedawselasticache" role="tab" aria-controls="gradleorgapereocascasserversupportmemcachedawselasticache" aria-selected="false">Gradle</a></li>
+<li class="nav-item cas-module" role="presentation"><a class="nav-link" id="bomorgapereocascasserversupportmemcachedawselasticache-tab" data-bs-toggle="tab" href="#bomorgapereocascasserversupportmemcachedawselasticache" role="tab" aria-controls="bomorgapereocascasserversupportmemcachedawselasticache" aria-selected="false">BOM - Spring</a></li>
+        <li class="nav-item cas-module" role="presentation"><a class="nav-link active" id="bomGradleorgapereocascasserversupportmemcachedawselasticache-tab" data-bs-toggle="tab" href="#bomGradleorgapereocascasserversupportmemcachedawselasticache" role="tab" aria-controls="bomGradleorgapereocascasserversupportmemcachedawselasticache" aria-selected="true">BOM - Gradle</a></li>
+<li class="nav-item dropdown cas-module" role="presentation">
+            <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">Resources<span class="caret"></span>
+            </a>
+            <div class="dropdown-menu">
+                <a class="dropdown-item" href="https://getcas.apereo.org/ui?dependencies=webapp-tomcat,support-memcached-aws-elasticache" target="_blank" rel="noopener">Show in CAS Initializr <span aria-hidden="true">↗</span><span class="visually-hidden"> (opens in a new tab)</span></a>
+                <a class="dropdown-item" href="javascript:generateOverlay('cas-server-support-memcached-aws-elasticache',%20'cas-overlay');">Generate CAS Server WAR Overlay</a>
+            </div>
+        </li>
+    </ul>
+
+
+    <div class="cas-module-tabs tab-content clearfix">
+        <div class="tab-pane fade" id="mavenorgapereocascasserversupportmemcachedawselasticache" role="tabpanel" aria-labelledby="mavenorgapereocascasserversupportmemcachedawselasticache-tab">
+<span>
+      <div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+</pre></td>
+<td class="rouge-code"><pre><span class="nt">&lt;dependency&gt;</span>
+    <span class="nt">&lt;groupId&gt;</span>org.apereo.cas<span class="nt">&lt;/groupId&gt;</span>
+    <span class="nt">&lt;artifactId&gt;</span>cas-server-support-memcached-aws-elasticache<span class="nt">&lt;/artifactId&gt;</span>
+    <span class="nt">&lt;version&gt;</span>${cas.version}<span class="nt">&lt;/version&gt;</span>
+<span class="nt">&lt;/dependency&gt;</span>
+</pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+    </span>
+
+        </div>
+
+
+        <div class="tab-pane fade" id="gradleorgapereocascasserversupportmemcachedawselasticache" role="tabpanel" aria-labelledby="gradleorgapereocascasserversupportmemcachedawselasticache-tab">
+
+            <span>
+    
+<div class="language-groovy highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td>
+<td class="rouge-code"><pre><span class="n">implementation</span> <span class="s2">"org.apereo.cas:cas-server-support-memcached-aws-elasticache:${project.'cas.version'}"</span>
+</pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+  </span>
+
+        </div>
+
+        <div class="tab-pane fade" id="bomorgapereocascasserversupportmemcachedawselasticache" role="tabpanel" aria-labelledby="bomorgapereocascasserversupportmemcachedawselasticache-tab">
+<span>
+    <div class="language-groovy highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+</pre></td>
+<td class="rouge-code"><pre><span class="n">dependencyManagement</span> <span class="o">{</span>
+    <span class="n">imports</span> <span class="o">{</span>
+        <span class="n">mavenBom</span> <span class="s2">"org.apereo.cas:cas-server-support-bom:${project.'cas.version'}"</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+
+<span class="n">dependencies</span> <span class="o">{</span>
+    <span class="n">implementation</span> <span class="s2">"org.apereo.cas:cas-server-support-memcached-aws-elasticache"</span>
+<span class="o">}</span>
+</pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+  </span>
+
+        </div>
+
+        <div class="tab-pane fade show active" id="bomGradleorgapereocascasserversupportmemcachedawselasticache" role="tabpanel" aria-labelledby="bomGradleorgapereocascasserversupportmemcachedawselasticache-tab">
+<span>
+    <div class="language-groovy highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+</pre></td>
+<td class="rouge-code"><pre><span class="n">dependencies</span> <span class="o">{</span>
+    <span class="cm">/*
+        The following platform references are included automatically and are listed for reference only.
+
+        implementation enforcedPlatform("org.apereo.cas:cas-server-support-bom:${project.'cas.version'}")
+        implementation platform(org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES)
+        
+    */</span>
+    <span class="n">implementation</span> <span class="s2">"org.apereo.cas:cas-server-support-memcached-aws-elasticache"</span>
+<span class="o">}</span>
+</pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+  </span>
+
+        </div>
+
+    </div>
+
+</div>
+
+<h2 id="configuration-considerations">Configuration Considerations</h2>
+
+<p>There are three core configuration concerns with memcached:</p>
+
+<ol>
+  <li>Hash Algorithm</li>
+  <li>Node locator strategy</li>
+  <li>Object serialization mechanism</li>
+</ol>
+
+<h3 id="hash-algorithm">Hash Algorithm</h3>
+
+<p>The hash algorithm is used to transform a key value into a memcached storage key that uniquely identifies the
+corresponding value. The choice of hashing algorithm has implications for failover behavior that is important
+for HA deployments. The <code class="language-plaintext highlighter-rouge">FNV1_64_HASH</code> algorithm is recommended since it offers a nice balance of speed and low
+collision rate; see the <a href="https://github.com/couchbase/spymemcached/blob/2.8.1/src/main/java/net/spy/memcached/DefaultHashAlgorithm.java">javadocs</a>
+for alternatives.</p>
+
+<h3 id="node-locator">Node Locator</h3>
+
+<p>The node locator serves as the deterministic node selection function for the memcached client provided by the
+underlying spymemcached library. There are two choices:</p>
+
+<ol>
+  <li><a href="https://github.com/couchbase/spymemcached/blob/2.8.1/src/main/java/net/spy/memcached/ArrayModNodeLocator.java">ARRAY_MOD</a></li>
+  <li><a href="https://github.com/couchbase/spymemcached/blob/2.9.0/src/main/java/net/spy/memcached/KetamaNodeLocator.java">CONSISTENT</a></li>
+</ol>
+
+<p>The array modulus mechanism is the default and suitable for cases when the number of nodes in the memcached pool is
+expected to be consistent. The algorithm computes an index into the array of memcached nodes:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td>
+<td class="rouge-code"><pre>hash(key) % length(nodes)
+</pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+<p>Obviously the selected index is a function of the number of memcached nodes, so variance in number of nodes produces
+variance in the node selected to store the key, which is undesirable.</p>
+
+<p>The consistent strategy generally provides a target node that does not vary with the number of nodes. This strategy
+should be used in cases where the memcached pool may grow or shrink dynamically, including due to frequent node
+failure.</p>
+
+<h3 id="object-serialization">Object Serialization</h3>
+
+<p>Memcached stores bytes of data, so CAS tickets must be serialized to a byte array prior to storage. CAS ships with
+a custom serialization component <code class="language-plaintext highlighter-rouge">KryoTranscoder</code> based on the <a href="https://github.com/EsotericSoftware/kryo">Kryo</a> serialization
+framework. This component is recommended over the default Java serialization mechanism since it produces much more
+compact data, which benefits both storage requirements and throughput.</p>
+
+<h2 id="configuration">Configuration</h2>
+
+<!-- fragment:keep -->
+
+<p>The following settings and properties are available from the CAS configuration catalog:</p>
+
+
+<div class="cas-properties">
+    <div class="cas-properties-list">
+<div class="cas-property" data-kind="required" data-name="cas.ticket.registry.memcached.crypto.encryption.key" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.ticket.registry.memcached.crypto.encryption.key</code><span class="cas-property-summary">The encryption key.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-required"><i class="fa fa-asterisk" aria-hidden="true"></i>Required</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>The encryption key. The encryption key by default and unless specified otherwise must be randomly-generated string whose length is defined by the encryption key size setting.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.core.util.EncryptionRandomizedCryptoProperties">EncryptionRandomizedCryptoProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="required" data-name="cas.ticket.registry.memcached.crypto.signing.key" data-default="" data-spel>
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.ticket.registry.memcached.crypto.signing.key</code><span class="cas-property-summary">The signing key is a string whose length is defined by the signing key size setting.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags">
+<span class="cas-property-tag cas-property-tag-required"><i class="fa fa-asterisk" aria-hidden="true"></i>Required</span><span class="cas-property-tag"><i class="fa fa-code" aria-hidden="true"></i>SpEL</span>
+</div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>The signing key is a string whose length is defined by the signing key size setting.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.core.util.SigningJwtCryptoProperties">SigningJwtCryptoProperties</code></dd>
+<dt>Supports</dt>
+<dd><a href="/cas/development/configuration/Configuration-Spring-Expressions.html">Spring Expression Language</a></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="required" data-name="cas.ticket.registry.memcached.servers" data-default="localhost:11211">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.ticket.registry.memcached.servers</code><span class="cas-property-summary">Comma-separated list of memcached servers.</span>
+</div>
+        <div class="cas-property-default"><code>localhost:11211</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-required"><i class="fa fa-asterisk" aria-hidden="true"></i>Required</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Comma-separated list of memcached servers.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><code>localhost:11211</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.memcached.MemcachedTicketRegistryProperties">MemcachedTicketRegistryProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.ticket.registry.memcached.crypto.alg" data-default="AES">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.ticket.registry.memcached.crypto.alg</code><span class="cas-property-summary">The signing/encryption algorithm to use.</span>
+</div>
+        <div class="cas-property-default"><code>AES</code></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>The signing/encryption algorithm to use.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><code>AES</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.core.util.EncryptionRandomizedSigningJwtCryptographyProperties">EncryptionRandomizedSigningJwtCryptographyProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.ticket.registry.memcached.crypto.enabled" data-default="true">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.ticket.registry.memcached.crypto.enabled</code><span class="cas-property-summary">Whether crypto operations are enabled.</span>
+</div>
+        <div class="cas-property-default"><code>true</code></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Whether crypto operations are enabled.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Boolean</code></dd>
+<dt>Default</dt>
+<dd><code>true</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.core.util.EncryptionRandomizedSigningJwtCryptographyProperties">EncryptionRandomizedSigningJwtCryptographyProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.ticket.registry.memcached.crypto.encryption.key-size" data-default="16">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.ticket.registry.memcached.crypto.encryption.key-size</code><span class="cas-property-summary">Encryption key size.</span>
+</div>
+        <div class="cas-property-default"><code>16</code></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Encryption key size.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Integer</code></dd>
+<dt>Default</dt>
+<dd><code>16</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.core.util.EncryptionRandomizedCryptoProperties">EncryptionRandomizedCryptoProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.ticket.registry.memcached.crypto.signing-enabled" data-default="true">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.ticket.registry.memcached.crypto.signing-enabled</code><span class="cas-property-summary">Whether signing encryption operations are enabled.</span>
+</div>
+        <div class="cas-property-default"><code>true</code></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Whether signing encryption operations are enabled.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Boolean</code></dd>
+<dt>Default</dt>
+<dd><code>true</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.core.util.EncryptionRandomizedSigningJwtCryptographyProperties">EncryptionRandomizedSigningJwtCryptographyProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.ticket.registry.memcached.crypto.signing.key-size" data-default="512">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.ticket.registry.memcached.crypto.signing.key-size</code><span class="cas-property-summary">The signing key size.</span>
+</div>
+        <div class="cas-property-default"><code>512</code></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>The signing key size.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Integer</code></dd>
+<dt>Default</dt>
+<dd><code>512</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.core.util.SigningJwtCryptoProperties">SigningJwtCryptoProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.ticket.registry.memcached.daemon" data-default="true">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.ticket.registry.memcached.daemon</code><span class="cas-property-summary">Set the daemon state of the IO thread (defaults to true).</span>
+</div>
+        <div class="cas-property-default"><code>true</code></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Set the daemon state of the IO thread (defaults to true).</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Boolean</code></dd>
+<dt>Default</dt>
+<dd><code>true</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.memcached.MemcachedTicketRegistryProperties">MemcachedTicketRegistryProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.ticket.registry.memcached.failure-mode" data-default="Redistribute">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.ticket.registry.memcached.failure-mode</code><span class="cas-property-summary">Failure mode.</span>
+</div>
+        <div class="cas-property-default"><code>Redistribute</code></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Failure mode. Acceptable values are <code>Redistribute,Retry,Cancel</code>.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><code>Redistribute</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.memcached.MemcachedTicketRegistryProperties">MemcachedTicketRegistryProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.ticket.registry.memcached.hash-algorithm" data-default="FNV1_64_HASH">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.ticket.registry.memcached.hash-algorithm</code><span class="cas-property-summary">Hash algorithm.</span>
+</div>
+        <div class="cas-property-default"><code>FNV1_64_HASH</code></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Hash algorithm. Acceptable values are <code>NATIVE_HASH,CRC_HASH,FNV1_64_HASH,FNV1A_64_HASH,FNV1_32_HASH,FNV1A_32_HASH,KETAMA_HASH</code>.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><code>FNV1_64_HASH</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.memcached.MemcachedTicketRegistryProperties">MemcachedTicketRegistryProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.ticket.registry.memcached.kryo-auto-reset" data-default="false">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.ticket.registry.memcached.kryo-auto-reset</code><span class="cas-property-summary">If true, reset is called automatically after an entire object graph has been read or written.</span>
+</div>
+        <div class="cas-property-default"><code>false</code></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>If true, <code>reset</code> is called automatically after an entire object graph has been read or written. If false, <code>reset</code> must be called manually, which allows unregistered class names, references, and other information to span multiple object graphs.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Boolean</code></dd>
+<dt>Default</dt>
+<dd><code>false</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.memcached.MemcachedTicketRegistryProperties">MemcachedTicketRegistryProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.ticket.registry.memcached.kryo-objects-by-reference" data-default="false">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.ticket.registry.memcached.kryo-objects-by-reference</code><span class="cas-property-summary">If true, each appearance of an object in the graph after the first is stored as an integer ordinal.</span>
+</div>
+        <div class="cas-property-default"><code>false</code></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>If true, each appearance of an object in the graph after the first is stored as an integer ordinal. When set to true, <code>MapReferenceResolver</code> is used. This enables references to the same object and cyclic graphs to be serialized, but typically adds overhead of one byte per object.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Boolean</code></dd>
+<dt>Default</dt>
+<dd><code>false</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.memcached.MemcachedTicketRegistryProperties">MemcachedTicketRegistryProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.ticket.registry.memcached.kryo-registration-required" data-default="true">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.ticket.registry.memcached.kryo-registration-required</code><span class="cas-property-summary">If true, an exception is thrown when an unregistered class is encountered.</span>
+</div>
+        <div class="cas-property-default"><code>true</code></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description">
+<p>If true, an exception is thrown when an unregistered class is encountered.</p>
+<p>If false, when an unregistered class is encountered, its fully qualified class name will be serialized and the default serializer for the class used to serialize the object. Subsequent appearances of the class within the same object graph are serialized as an int id. Registered classes are serialized as an int id, avoiding the overhead of serializing the class name, but have the drawback of needing to know the classes to be serialized up front. See <code>ComponentSerializationPlan</code> for help here.</p>
+</div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Boolean</code></dd>
+<dt>Default</dt>
+<dd><code>true</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.memcached.MemcachedTicketRegistryProperties">MemcachedTicketRegistryProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.ticket.registry.memcached.locator-type" data-default="ARRAY_MOD">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.ticket.registry.memcached.locator-type</code><span class="cas-property-summary">Locator mode.</span>
+</div>
+        <div class="cas-property-default"><code>ARRAY_MOD</code></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Locator mode. Acceptable values are <code>ARRAY_MOD, CONSISTENT, VBUCKET</code>.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><code>ARRAY_MOD</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.memcached.MemcachedTicketRegistryProperties">MemcachedTicketRegistryProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.ticket.registry.memcached.max-idle" data-default="8">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.ticket.registry.memcached.max-idle</code><span class="cas-property-summary">Set the value for the maxTotal configuration attribute for pools created with this configuration instance.</span>
+</div>
+        <div class="cas-property-default"><code>8</code></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Set the value for the maxTotal configuration attribute for pools created with this configuration instance.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Integer</code></dd>
+<dt>Default</dt>
+<dd><code>8</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.memcached.MemcachedTicketRegistryProperties">MemcachedTicketRegistryProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.ticket.registry.memcached.max-reconnect-delay" data-default="-1">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.ticket.registry.memcached.max-reconnect-delay</code><span class="cas-property-summary">Set the maximum reconnect delay.</span>
+</div>
+        <div class="cas-property-default"><code>-1</code></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Set the maximum reconnect delay.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Long</code></dd>
+<dt>Default</dt>
+<dd><code>-1</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.memcached.MemcachedTicketRegistryProperties">MemcachedTicketRegistryProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.ticket.registry.memcached.max-total" data-default="20">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.ticket.registry.memcached.max-total</code><span class="cas-property-summary">Sets the cap on the number of objects that can be allocated by the pool (checked out to clients, or idle awaiting checkout) at a given time.</span>
+</div>
+        <div class="cas-property-default"><code>20</code></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Sets the cap on the number of objects that can be allocated by the pool (checked out to clients, or idle awaiting checkout) at a given time. Use a negative value for no limit.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Integer</code></dd>
+<dt>Default</dt>
+<dd><code>20</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.memcached.MemcachedTicketRegistryProperties">MemcachedTicketRegistryProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.ticket.registry.memcached.min-idle" data-default="0">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.ticket.registry.memcached.min-idle</code><span class="cas-property-summary">Get the value for the minIdle configuration attribute for pools created with this configuration instance.</span>
+</div>
+        <div class="cas-property-default"><code>0</code></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Get the value for the minIdle configuration attribute for pools created with this configuration instance.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Integer</code></dd>
+<dt>Default</dt>
+<dd><code>0</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.memcached.MemcachedTicketRegistryProperties">MemcachedTicketRegistryProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.ticket.registry.memcached.op-timeout" data-default="-1">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.ticket.registry.memcached.op-timeout</code><span class="cas-property-summary">Set the default operation timeout in milliseconds.</span>
+</div>
+        <div class="cas-property-default"><code>-1</code></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Set the default operation timeout in milliseconds.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Long</code></dd>
+<dt>Default</dt>
+<dd><code>-1</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.memcached.MemcachedTicketRegistryProperties">MemcachedTicketRegistryProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.ticket.registry.memcached.protocol" data-default="TEXT">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.ticket.registry.memcached.protocol</code><span class="cas-property-summary">Protocol.</span>
+</div>
+        <div class="cas-property-default"><code>TEXT</code></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Protocol. Acceptable values are <code>TEXT, BINARY</code>.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><code>TEXT</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.memcached.MemcachedTicketRegistryProperties">MemcachedTicketRegistryProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.ticket.registry.memcached.should-optimize" data-default="false">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.ticket.registry.memcached.should-optimize</code><span class="cas-property-summary">Set to false if the default operation optimization is not desirable.</span>
+</div>
+        <div class="cas-property-default"><code>false</code></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Set to false if the default operation optimization is not desirable.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Boolean</code></dd>
+<dt>Default</dt>
+<dd><code>false</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.memcached.MemcachedTicketRegistryProperties">MemcachedTicketRegistryProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.ticket.registry.memcached.shutdown-timeout-seconds" data-default="-1">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.ticket.registry.memcached.shutdown-timeout-seconds</code><span class="cas-property-summary">The number of seconds to wait for connections to finish before shutting down the client.</span>
+</div>
+        <div class="cas-property-default"><code>-1</code></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>The number of seconds to wait for connections to finish before shutting down the client.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Long</code></dd>
+<dt>Default</dt>
+<dd><code>-1</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.memcached.MemcachedTicketRegistryProperties">MemcachedTicketRegistryProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.ticket.registry.memcached.timeout-exception-threshold" data-default="2">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.ticket.registry.memcached.timeout-exception-threshold</code><span class="cas-property-summary">Set the maximum timeout exception threshold.</span>
+</div>
+        <div class="cas-property-default"><code>2</code></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Set the maximum timeout exception threshold.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Integer</code></dd>
+<dt>Default</dt>
+<dd><code>2</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.memcached.MemcachedTicketRegistryProperties">MemcachedTicketRegistryProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.ticket.registry.memcached.transcoder" data-default="KRYO">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.ticket.registry.memcached.transcoder</code><span class="cas-property-summary">Indicate the transcoder type.</span>
+</div>
+        <div class="cas-property-default"><code>KRYO</code></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><div>Indicate the transcoder type. Available values are as follows: <ul>
+<li>
+<code>KRYO</code>: CAS transcoder implementation based on Kryo fast serialization framework suited for efficient serialization of tickets. Provides pooling mechanisms as well as control over object registration and sequences.</li>
+<li>
+<code>SERIAL</code>: Kryo native transcoder that serializes and compresses objects.</li>
+<li>
+<code>WHALIN</code>: Transcoder that provides compatibility with Greg Whalin's memcached client.</li>
+<li>
+<code>WHALINV1</code>: Handles old whalin encoding: data type is in the first byte of the value.</li>
+</ul>
+</div></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>BaseMemcachedProperties.TranscoderTypes</code></dd>
+<dt>Default</dt>
+<dd><code>KRYO</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.memcached.MemcachedTicketRegistryProperties">MemcachedTicketRegistryProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.ticket.registry.memcached.transcoder-compression-threshold" data-default="16384">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.ticket.registry.memcached.transcoder-compression-threshold</code><span class="cas-property-summary">For transcoders other than kryo, determines the compression threshold.</span>
+</div>
+        <div class="cas-property-default"><code>16384</code></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>For transcoders other than kryo, determines the compression threshold. Does not apply to kryo.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Integer</code></dd>
+<dt>Default</dt>
+<dd><code>16384</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.memcached.MemcachedTicketRegistryProperties">MemcachedTicketRegistryProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.ticket.registry.memcached.use-nagle-algorithm" data-default="false">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.ticket.registry.memcached.use-nagle-algorithm</code><span class="cas-property-summary">Set to true if you'd like to enable the Nagle algorithm.</span>
+</div>
+        <div class="cas-property-default"><code>false</code></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Set to true if you'd like to enable the Nagle algorithm.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Boolean</code></dd>
+<dt>Default</dt>
+<dd><code>false</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.memcached.MemcachedTicketRegistryProperties">MemcachedTicketRegistryProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+</div>
+<p class="cas-properties-legend">
+        <strong>Required</strong> settings may be needed to activate or affect the feature; review them even when they have a default.
+        <strong>Optional</strong> settings only need to be set to change a default or to turn on the behavior they control.
+        <strong>Third party</strong> settings belong to libraries such as Spring Boot that CAS builds on; their own documentation may have more detail.
+    </p>
+<div class="cas-properties-topics">
+<details class="cas-properties-topic">
+            <summary><i class="fa fa-user-secret" aria-hidden="true"></i>Signing &amp; encryption</summary>
+            <div class="cas-properties-topic-body">
+<p></p>
+
+<p>This CAS feature is able to accept signing and encryption crypto keys. In most scenarios if keys are not provided, CAS will
+auto-generate them. The following instructions apply if you wish to manually and beforehand create the signing and encryption keys.</p>
+
+<p>Note that if you are asked to create a <a href="https://tools.ietf.org/html/rfc7517">JWK</a> of a certain size for the key, you are to use
+the following set of commands to generate the token:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+2
+</pre></td>
+<td class="rouge-code"><pre>wget https://raw.githubusercontent.com/apereo/cas/master/etc/jwk-gen.jar
+java <span class="nt">-jar</span> jwk-gen.jar <span class="nt">-t</span> oct <span class="nt">-s</span> <span class="o">[</span>size]
+</pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+<p>The outcome would be similar to:</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+</pre></td>
+<td class="rouge-code"><pre><span class="p">{</span><span class="w">
+  </span><span class="nl">"kty"</span><span class="p">:</span><span class="w"> </span><span class="s2">"oct"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"kid"</span><span class="p">:</span><span class="w"> </span><span class="s2">"..."</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"k"</span><span class="p">:</span><span class="w"> </span><span class="s2">"..."</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+<p>The generated value for <code class="language-plaintext highlighter-rouge">k</code> needs to be assigned to the relevant CAS settings. Note that keys generated via
+the above algorithm are processed by CAS using the Advanced Encryption Standard (<code class="language-plaintext highlighter-rouge">AES</code>) algorithm which is a
+specification for the encryption of electronic data established by the U.S. National Institute of Standards and Technology.</p>
+
+<hr>
+
+
+            </div>
+        </details><details class="cas-properties-topic">
+            <summary><i class="fa fa-newspaper" aria-hidden="true"></i>Notes on configuration</summary>
+            <div class="cas-properties-topic-body">
+<!-- fragment:keep -->
+
+<p></p>
+
+<h4 id="configuration-metadata">Configuration Metadata</h4>
+
+<p>The collection of configuration properties listed in this section are automatically generated from the CAS source and components that contain the actual field
+definitions, types, descriptions, modules, etc. This metadata may not always be 100% accurate, or could be lacking details and sufficient explanations.</p>
+
+<h4 id="be-selective">Be Selective</h4>
+
+<p>This section is meant as a guide only. Do NOT copy/paste the entire collection of settings into your CAS configuration; rather pick only the properties that you
+need. Do NOT enable settings unless you are certain of their purpose and do NOT copy settings into your configuration only to keep them as reference. All these
+ideas lead to upgrade headaches, maintenance nightmares and premature aging.</p>
+
+<h4 id="yagni">YAGNI</h4>
+
+<p>Note that for nearly ALL use cases, declaring and configuring properties listed here is sufficient. You should NOT have to explicitly massage a CAS XML/Java/etc
+configuration file to design an authentication handler, create attribute release policies, etc. CAS at runtime will auto-configure all required changes for you.
+If you are unsure about the meaning of a given CAS setting, do NOT turn it on without hesitation. Review the codebase or better yet, ask questions to clarify
+the intended behavior.</p>
+
+<h4 id="naming-convention">Naming Convention</h4>
+
+<p>Property names can be specified in very relaxed terms. For instance <code class="language-plaintext highlighter-rouge">cas.someProperty</code>, <code class="language-plaintext highlighter-rouge">cas.some-property</code>, <code class="language-plaintext highlighter-rouge">cas.some_property</code> are all valid names. While all
+forms are accepted by CAS, there are certain components (in CAS and other frameworks used) whose activation at runtime is conditional on a property value, where
+this property is required to have been specified in CAS configuration using kebab case. This is both true for properties that are owned by CAS as well as those
+that might be presented to the system via an external library or framework such as Spring Boot, etc.</p>
+
+<div class="alert alert-info">
+<img class="emoji" title=":information_source:" alt=":information_source:" src="https://github.githubassets.com/images/icons/emoji/unicode/2139.png" height="20" width="20"> <strong>Note</strong> <p>
+When possible, properties should be stored in lower-case kebab format, such as <code>cas.property-name=value</code>.
+The only possible exception to this rule is when naming actuator endpoints; The name of the
+actuator endpoints (i.e. <code>ssoSessions</code>) <strong>MUST</strong> remain in camelCase mode. 
+</p>
+</div>
+
+<p>Settings and properties that are controlled by the CAS platform directly always begin with the prefix <code class="language-plaintext highlighter-rouge">cas</code>. All other settings are controlled and provided
+to CAS via other underlying frameworks and may have their own schemas and syntax. BE CAREFUL with
+the distinction. Unrecognized properties are rejected by CAS and/or frameworks upon which CAS depends. This means if you somehow misspell a property definition
+or fail to adhere to the dot-notation syntax and such, your setting is entirely refused by CAS and likely the feature it controls will never be activated in the
+way you intend.</p>
+
+<h4 id="validation">Validation</h4>
+
+<p>Configuration properties are automatically validated on CAS startup to report issues with configuration binding, especially if defined CAS settings cannot be
+recognized or validated by the configuration schema. Additional validation processes are also handled
+via <a href="/cas/development/configuration/Configuration-Metadata-Repository.html">Configuration Metadata</a> and property migrations applied automatically on
+startup by Spring Boot and family.</p>
+
+<h4 id="indexed-settings">Indexed Settings</h4>
+
+<p>CAS settings able to accept multiple values are typically documented with an index, such as <code class="language-plaintext highlighter-rouge">cas.some.setting[0]=value</code>. The index <code class="language-plaintext highlighter-rouge">[0]</code> is meant to be
+incremented by the adopter to allow for distinct multiple configuration blocks.</p>
+
+            </div>
+        </details>
+</div>
+</div>
+
+<h2 id="high-availability-considerations">High Availability Considerations</h2>
+
+<p>Memcached does not provide for replication by design, but the client is tolerant to node failures with
+<code class="language-plaintext highlighter-rouge">failureMode="Redistribute"</code>. In this mode a write failure will cause the client to flag the node as failed
+and remove it from the set of available nodes. It subsequently recomputes the node location function with the reduced
+node set to find a new node on which to store the key. If the node location function selects the same node,
+which is likely for the <em>CONSISTENT</em> strategy, a backup node will be computed. The value is written to and read from
+the failover node until the primary node recovers. The client will periodically check the failed node for liveliness
+and restore it to the node pool as soon as it recovers. When the primary node is resurrected, if it contains a value
+for a particular key, it would supersede the value known to the failover node. The most common effect on CAS behavior
+in this circumstance would occur when ticket-granting tickets have duplicate values, which could affect single sign-out
+and prevent access to services. In particular, services accessed and forced authentications that occur while the
+failover service is active would be lost when the failed node recovers. In most cases this behavior is tolerable,
+but it can be avoided by restarting the memcached service on the failed node prior to rejoining the cache pool.</p>
+
+<p>A read failure in <em>Redistribute</em> mode causes the node to be removed from the set of available nodes, a failover node
+is computed, and a value is read from that node. In most cases this results in a key not found situation. The effect
+on CAS behavior depends on the type of ticket requested:</p>
+
+<ul>
+  <li>Service ticket - Service access would be denied for the requested ticket, but permitted for subsequent attempts since
+a new ticket would be generated and validated.</li>
+  <li>Ticket-granting ticket - The SSO session would be terminated and re-authentication would be required.</li>
+</ul>
+
+<p>Read failures are thus entirely innocuous for environments where re-authentication is acceptable.</p>
+
+            </article>
+            <div class="article-end" aria-hidden="true">
+<span></span><span>CAS</span><span></span>
+</div>
+        </main>
+        
+        <aside class="docs-toc" aria-label="On this page">
+    <nav id="pageContents" aria-label="Table of contents">
+        <p class="eyebrow">ON THIS PAGE</p>
+        <ul class="section-nav"></ul>
+    </nav>
+    <a class="toc-top" href="#cas-docs-container">Back to top <span aria-hidden="true">↑</span></a>
+</aside>
+
+        
+    </div>
+
+    <footer class="site-footer">
+        <a class="footer-brand" href="../../index.html">APEREO <strong>CAS</strong></a>
+        <p>CAS is supported by the <a href="https://www.apereo.org/">Apereo Foundation</a>.</p>
+        <a href="#cas-docs-container">Back to top <span aria-hidden="true">↑</span></a>
+    </footer>
+    <div id="docs-status" class="visually-hidden" role="status" aria-live="polite"></div>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/tether@2.0.0/dist/js/tether.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.11/clipboard.min.js"></script>
+
+    <script src="/cas/javascripts/URI.js"></script>
+    <script src="/cas/javascripts/site.js"></script>
+
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@docsearch/js@3"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="https://code.jquery.com/ui/1.13.1/jquery-ui.js"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.5/js/lightbox.min.js"></script>
+
+    <script>
+        let pageSection = "Ticketing";
+        let siteUrl = "https://apereo.github.io";
+        let basePath = "/cas";
+
+        
+    </script>
+</body>
+
+</html>

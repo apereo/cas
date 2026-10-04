@@ -1,0 +1,287 @@
+{%- assign actuatorIds = include.endpoints | split: "," -%}
+{%- assign actuatorBlockId = include.endpoints | remove: "," | remove: " " | truncate: 50, '' | prepend: "actuators-" -%}
+{%- assign actuatorOperationCount = 0 -%}
+{%- assign actuatorPackages = "" | split: "" -%}
+{%- for actuatorId in actuatorIds -%}
+{%- assign actuatorOperations = site.data[siteDataVersion] | cas_actuator_operations: actuatorId -%}
+{%- assign actuatorOperationCount = actuatorOperationCount | plus: actuatorOperations.size -%}
+{%- assign actuatorOperationPackages = actuatorOperations | map: "ownerPackage" -%}
+{%- assign actuatorPackages = actuatorPackages | concat: actuatorOperationPackages -%}
+{%- endfor -%}
+{%- if actuatorOperationCount > 0 -%}
+{%- assign actuatorPackages = actuatorPackages | uniq | sort -%}
+{%- assign actuatorIdList = actuatorIds | join: "," -%}
+
+{%- capture endpointprops -%}{% include_cached thirdpartyproperties.html
+disableSearch="true"
+disableNotes="true"
+thirdPartyStartsWith="management.endpoints,management.health,management.endpoint.health" %}
+{%- endcapture -%}
+
+{%- capture basicauthprops -%}{% include_cached thirdpartyproperties.html
+disableSearch="true"
+disableNotes="true"
+thirdPartyStartsWith="spring.security.user" %}
+{%- endcapture -%}
+
+{%- capture jdbcauthprops -%}{% include_cached casproperties.html disableSearch="true" disableNotes="true" intro="false"
+properties="cas.monitor.endpoints.jdbc" %}{%- endcapture -%}
+{%- capture ldapauthprops -%}{% include_cached casproperties.html disableSearch="true" disableNotes="true" intro="false"
+properties="cas.monitor.endpoints.ldap" %}{%- endcapture -%}
+{%- capture jaasauthprops -%}{% include_cached casproperties.html disableSearch="true" disableNotes="true" intro="false"
+properties="cas.monitor.endpoints.jaas" %}{%- endcapture -%}
+{%- capture jsonauthprops -%}{% include_cached casproperties.html disableSearch="true" disableNotes="true" intro="false"
+properties="cas.monitor.endpoints.json" %}{%- endcapture -%}
+{%- capture casendpointsconfigprops -%}{% include_cached casproperties.html disableSearch="true" disableNotes="true" intro="false"
+properties="cas.monitor.endpoints.form-login-enabled,cas.monitor.endpoints.endpoint" %}{%- endcapture -%}
+{%- if actuatorIds.size == 1 -%}
+{%- assign casendpointsconfigprops = casendpointsconfigprops | replace: "[key]", actuatorIds[0] -%}
+{%- endif -%}
+
+{%- if include.casModule.size > 0 -%}
+{%- capture casModuleReference -%}{% include_cached casmodule.html group="org.apereo.cas" module=include.casModule %}{%- endcapture -%}
+{%- endif -%}
+
+{%- capture actuatorLogging -%}
+```xml
+{% for actuatorPackage in actuatorPackages %}<Logger name="{{ actuatorPackage }}" level="debug" additivity="false">
+    <AppenderRef ref="console" />
+    <AppenderRef ref="file" />
+</Logger>
+{% endfor %}<Logger name="org.springframework.security" level="debug" additivity="false">
+    <AppenderRef ref="console" />
+    <AppenderRef ref="file" />
+</Logger>
+```
+{%- endcapture -%}
+
+{%- capture actuatorJsonUsers -%}
+```json
+[
+    {
+        "username": "casuser",
+        "password": "{sha512}<hashed-password>",
+        "authorities": [ "ROLE_ADMIN" ]
+    }
+]
+```
+{%- endcapture -%}
+
+{%- capture actuatorPathMapping -%}
+```properties
+management.endpoints.web.path-mapping.health=healthcheck
+```
+{%- endcapture %}
+{::nomarkdown}
+<div class="cas-actuators" id="{{ actuatorBlockId }}">
+{%- for actuatorId in actuatorIds -%}
+{%- assign actuatorOperations = site.data[siteDataVersion] | cas_actuator_operations: actuatorId -%}
+{%- if actuatorOperations.size > 0 -%}
+{%- assign actuatorGets = actuatorOperations | where: "method", "GET" -%}
+{%- assign actuatorPosts = actuatorOperations | where: "method", "POST" -%}
+{%- assign actuatorDeletes = actuatorOperations | where: "method", "DELETE" -%}
+{%- assign actuatorOwnedByCas = actuatorOperations | where: "casEndpoint", true -%}
+<section class="cas-actuator" data-actuator="{{ actuatorId }}">
+    <header class="cas-actuator-head">
+        <div class="cas-actuator-title">
+            <div class="cas-actuator-id"><i class="fa fa-plug" aria-hidden="true"></i><code>{{ actuatorId }}</code></div>
+            <div class="cas-actuator-chips">
+                {%- if actuatorOwnedByCas.size > 0 -%}
+                <span class="cas-actuator-chip cas-actuator-chip-cas" title="This endpoint is owned, provided and controlled by CAS."><i class="fa fa-copyright" aria-hidden="true"></i>CAS endpoint</span>
+                {%- else -%}
+                <span class="cas-actuator-chip" title="This endpoint is provided to CAS by a third-party framework such as Spring Boot."><i class="fa fa-cubes" aria-hidden="true"></i>Third-party endpoint</span>
+                {%- endif -%}
+                <span class="cas-actuator-chip"><i class="fa fa-layer-group" aria-hidden="true"></i>{{ actuatorOperations.size }} operation{% if actuatorOperations.size != 1 %}s{% endif %}</span>
+                {%- assign actuatorExposed = actuatorId | cas_actuator_exposed_by_default -%}
+                {%- if actuatorExposed -%}
+                <span class="cas-actuator-chip cas-actuator-chip-ok"><i class="fa fa-eye" aria-hidden="true"></i>Exposed by default</span>
+                {%- else -%}
+                <span class="cas-actuator-chip cas-actuator-chip-warn"><i class="fa fa-eye-slash" aria-hidden="true"></i>Not exposed by default</span>
+                {%- endif -%}
+                {%- if include.casModule.size > 0 -%}
+                <span class="cas-actuator-chip"><i class="fa fa-cube" aria-hidden="true"></i>{{ include.casModule }}</span>
+                {%- endif -%}
+            </div>
+        </div>
+        <div class="cas-actuator-actions">
+            <button type="button" class="cas-actuator-goto" data-tab="enable"><i class="fa fa-toggle-on" aria-hidden="true"></i>Enable &amp; expose</button>
+            <button type="button" class="cas-actuator-goto" data-tab="security"><i class="fa fa-shield-halved" aria-hidden="true"></i>Security</button>
+            <button type="button" class="cas-actuator-goto" data-tab="troubleshooting"><i class="fa fa-bug" aria-hidden="true"></i>Troubleshoot</button>
+        </div>
+    </header>
+    {%- if actuatorOperations.size > 4 -%}
+    <div class="cas-actuator-toolbar">
+        <label class="cas-actuator-search"><i class="fa fa-magnifying-glass" aria-hidden="true"></i><span class="visually-hidden">Filter operations</span><input type="search" placeholder="Filter operations by path or description"></label>
+        <div class="cas-actuator-methods" role="group" aria-label="Filter by HTTP method">
+            <button type="button" class="cas-actuator-method" data-method="" aria-pressed="true">All<b>{{ actuatorOperations.size }}</b></button>
+            {%- if actuatorGets.size > 0 -%}<button type="button" class="cas-actuator-method" data-method="GET" aria-pressed="false">GET<b>{{ actuatorGets.size }}</b></button>{%- endif -%}
+            {%- if actuatorPosts.size > 0 -%}<button type="button" class="cas-actuator-method" data-method="POST" aria-pressed="false">POST<b>{{ actuatorPosts.size }}</b></button>{%- endif -%}
+            {%- if actuatorDeletes.size > 0 -%}<button type="button" class="cas-actuator-method" data-method="DELETE" aria-pressed="false">DELETE<b>{{ actuatorDeletes.size }}</b></button>{%- endif -%}
+        </div>
+        <span class="cas-actuator-base">base path <code>/cas/actuator/</code></span>
+    </div>
+    {%- endif -%}
+    <div class="cas-actuator-ops">
+        {%- for op in actuatorOperations -%}
+        <div class="cas-op" id="{{ op.anchor }}" data-method="{{ op.method }}" data-text="{{ op.searchText | escape }}">
+            <button type="button" class="cas-op-row" aria-expanded="false" aria-controls="{{ op.anchor }}-detail">
+                <span class="cas-op-method cas-op-method-{{ op.methodClass }}">{{ op.method }}</span>
+                <span class="cas-op-path">{{ op.pathHtml }}</span>
+                <span class="cas-op-summary">{{ op.summary | escape }}</span>
+                <span class="cas-op-meta">
+                    {%- if op.deprecated -%}<span class="cas-actuator-chip cas-actuator-chip-warn">Deprecated</span>{%- endif -%}
+                    {%- if op.params.size > 0 -%}<span class="cas-actuator-chip"><i class="fa fa-sliders" aria-hidden="true"></i>{{ op.params.size }} param{% if op.params.size != 1 %}s{% endif %}</span>
+                    {%- else -%}<span class="cas-actuator-chip">no params</span>{%- endif -%}
+                </span>
+                <i class="fa fa-chevron-down cas-op-chevron" aria-hidden="true"></i>
+            </button>
+            <div class="cas-op-detail" id="{{ op.anchor }}-detail" hidden>
+                <div class="cas-op-info">
+                    {%- if op.params.size > 0 -%}
+                    <div class="cas-op-label">Parameters</div>
+                    <div class="cas-op-params">
+                        <table>
+                            <thead><tr><th>Name</th><th>In</th><th>Type</th><th>Description</th></tr></thead>
+                            <tbody>
+                            {%- for param in op.params -%}
+                            <tr>
+                                <td><code>{{ param.name | escape }}</code>{% if param.required %}<span class="cas-op-required">required</span>{% endif %}</td>
+                                <td>{{ param.in }}</td>
+                                <td>{% if param.type.size > 0 %}<code>{{ param.type | escape }}</code>{% else %}<span class="cas-op-none">&ndash;</span>{% endif %}</td>
+                                <td>{{ param.description | escape }}{% if param.defaultText.size > 0 %} <span class="cas-op-none">Default: <code>{{ param.defaultText | escape }}</code></span>{% endif %}</td>
+                            </tr>
+                            {%- endfor -%}
+                            </tbody>
+                        </table>
+                    </div>
+                    {%- endif -%}
+                    <div class="cas-op-label">Response</div>
+                    <dl class="cas-op-facts">
+                        <dt>Returns</dt><dd>{% if op.returnType.size > 0 %}<code>{{ op.returnType | escape }}</code>{% else %}<span class="cas-op-none">nothing</span>{% endif %}</dd>
+                        {%- if op.producesText.size > 0 -%}<dt>Produces</dt><dd><code>{{ op.producesText | escape }}</code></dd>{%- endif -%}
+                        {%- if op.consumesText.size > 0 -%}<dt>Consumes</dt><dd><code>{{ op.consumesText | escape }}</code></dd>{%- endif -%}
+                        {%- if op.signatureShort.size > 0 -%}<dt>Java method</dt><dd><code title="{{ op.signature | escape }}">{{ op.signatureShort | escape }}</code></dd>{%- endif -%}
+                        {%- if op.ownerShort.size > 0 -%}<dt>Defined in</dt><dd><code title="{{ op.owner | escape }}">{{ op.ownerShort | escape }}</code></dd>{%- endif -%}
+                    </dl>
+                </div>
+                <div class="cas-op-example">
+                    <div class="cas-op-label">Example request <a class="cas-op-link" href="#{{ op.anchor }}" aria-label="Link to this operation"><i class="fa fa-link" aria-hidden="true"></i></a></div>
+                    {%- capture opCurl -%}
+```bash
+{{ op.curl }}
+```
+{%- endcapture -%}
+                    {{ opCurl | markdownify }}
+                </div>
+            </div>
+        </div>
+        {%- endfor -%}
+    </div>
+</section>
+{%- endif -%}
+{%- endfor -%}
+
+<div class="cas-actuator-shared">
+    <div class="cas-actuator-tabs" role="tablist" aria-label="Endpoint setup">
+        <button type="button" role="tab" class="cas-actuator-tab" data-tab="enable" aria-selected="true" aria-controls="{{ actuatorBlockId }}-enable">Enable &amp; expose</button>
+        <button type="button" role="tab" class="cas-actuator-tab" data-tab="security" aria-selected="false" aria-controls="{{ actuatorBlockId }}-security">Security</button>
+        {%- if actuatorIds contains "health" -%}
+        <button type="button" role="tab" class="cas-actuator-tab" data-tab="health" aria-selected="false" aria-controls="{{ actuatorBlockId }}-health">Health</button>
+        {%- endif -%}
+        <button type="button" role="tab" class="cas-actuator-tab" data-tab="settings" aria-selected="false" aria-controls="{{ actuatorBlockId }}-settings">Settings</button>
+        <button type="button" role="tab" class="cas-actuator-tab" data-tab="thirdparty" aria-selected="false" aria-controls="{{ actuatorBlockId }}-thirdparty">Spring Boot settings</button>
+        <button type="button" role="tab" class="cas-actuator-tab" data-tab="troubleshooting" aria-selected="false" aria-controls="{{ actuatorBlockId }}-troubleshooting">Troubleshooting</button>
+    </div>
+
+    <div class="cas-actuator-panel" role="tabpanel" id="{{ actuatorBlockId }}-enable" data-tab="enable">
+        {%- if include.casModule.size > 0 -%}
+        <div class="cas-actuator-step">
+            <span class="cas-actuator-step-number">1</span>
+            <div class="cas-actuator-step-body">
+                <p>Include the module that provides {% if actuatorIds.size == 1 %}this endpoint{% else %}these endpoints{% endif %} in the WAR overlay:</p>
+                {{ casModuleReference | markdownify }}
+            </div>
+        </div>
+        {%- endif -%}
+        <div class="cas-actuator-step">
+            <span class="cas-actuator-step-number">{% if include.casModule.size > 0 %}2{% else %}1{% endif %}</span>
+            <div class="cas-actuator-step-body">
+                <p>Turn {% if actuatorIds.size == 1 %}the endpoint{% else %}the endpoints{% endif %} on and expose {% if actuatorIds.size == 1 %}it{% else %}them{% endif %} over the web.
+                    One entry covers every operation. By default only <code>info</code>, <code>health</code> and <code>status</code> are exposed.</p>
+                {%- include cas-actuator-snippet.html kind="enable" ids=actuatorIds -%}
+            </div>
+        </div>
+        <div class="cas-actuator-note">
+            <p>Endpoints may be mapped to other paths. For example, to serve <code>health</code> at <code>healthcheck</code>:</p>
+            {{ actuatorPathMapping | markdownify }}
+        </div>
+    </div>
+
+    <div class="cas-actuator-panel" role="tabpanel" id="{{ actuatorBlockId }}-security" data-tab="security" hidden>
+        <p>Once exposed, every call goes through <a href="https://spring.io/projects/spring-security">Spring Security</a>,
+            and CAS decides access per endpoint. Without a rule, the special <code>defaults</code> endpoint applies, which denies access.</p>
+        <div class="cas-actuator-label">Who may call {% if actuatorIds.size == 1 %}it{% else %}them{% endif %}</div>
+        <div class="cas-actuator-choice" role="group" aria-label="Access rule" data-group="rule">
+            <button type="button" data-choice="authenticated" aria-pressed="true">Authenticated</button>
+            <button type="button" data-choice="role" aria-pressed="false">Role</button>
+            <button type="button" data-choice="ip" aria-pressed="false">IP address</button>
+            <button type="button" data-choice="permit" aria-pressed="false">Anyone</button>
+        </div>
+        {%- assign actuatorRules = "authenticated,role,ip,permit" | split: "," -%}
+        {%- for actuatorRule in actuatorRules -%}
+        <div class="cas-actuator-choice-panel" data-group="rule" data-choice="{{ actuatorRule }}"{% unless forloop.first %} hidden{% endunless %}>
+            {%- include cas-actuator-snippet.html kind="security" rule=actuatorRule ids=actuatorIds -%}
+        </div>
+        {%- endfor -%}
+
+        <div class="cas-actuator-label">Where credentials are checked</div>
+        <div class="cas-actuator-choice" role="group" aria-label="Credential source" data-group="source">
+            <button type="button" data-choice="basic" aria-pressed="true">Basic</button>
+            <button type="button" data-choice="jaas" aria-pressed="false">JAAS</button>
+            <button type="button" data-choice="ldap" aria-pressed="false">LDAP</button>
+            <button type="button" data-choice="jdbc" aria-pressed="false">JDBC</button>
+            <button type="button" data-choice="json" aria-pressed="false">JSON</button>
+        </div>
+        <div class="cas-actuator-choice-panel" data-group="source" data-choice="basic">
+            <p>A single user defined in CAS settings. If the name and password are left undefined, CAS generates them at startup.</p>
+            {{ basicauthprops | markdownify }}
+        </div>
+        <div class="cas-actuator-choice-panel" data-group="source" data-choice="jaas" hidden>{{ jaasauthprops | markdownify }}</div>
+        <div class="cas-actuator-choice-panel" data-group="source" data-choice="ldap" hidden>{{ ldapauthprops | markdownify }}</div>
+        <div class="cas-actuator-choice-panel" data-group="source" data-choice="jdbc" hidden>{{ jdbcauthprops | markdownify }}</div>
+        <div class="cas-actuator-choice-panel" data-group="source" data-choice="json" hidden>
+            <p>A static list of users, passwords and roles in a JSON file.
+                Supported password encodings are <code>{sha512}</code>, <code>{sha256}</code>, <code>{bcrypt}</code>,
+                <code>{noop}</code>, <code>{pbkdf2}</code>, <code>{scrypt}</code> and <code>{argon2}</code>.</p>
+            {{ actuatorJsonUsers | markdownify }}
+            {{ jsonauthprops | markdownify }}
+        </div>
+    </div>
+
+    {%- if actuatorIds contains "health" -%}
+    {%- capture healthendpointinfo -%}{% include_cached {{ version }}/health-actuator-configuration.md healthIndicators=include.healthIndicators %}{%- endcapture -%}
+    <div class="cas-actuator-panel" role="tabpanel" id="{{ actuatorBlockId }}-health" data-tab="health" hidden>
+        {{ healthendpointinfo | markdownify }}
+    </div>
+    {%- endif -%}
+
+    <div class="cas-actuator-panel" role="tabpanel" id="{{ actuatorBlockId }}-settings" data-tab="settings" hidden>
+        {{ casendpointsconfigprops | markdownify }}
+    </div>
+
+    <div class="cas-actuator-panel" role="tabpanel" id="{{ actuatorBlockId }}-thirdparty" data-tab="thirdparty" hidden>
+        {{ endpointprops | markdownify }}
+    </div>
+
+    <div class="cas-actuator-panel" role="tabpanel" id="{{ actuatorBlockId }}-troubleshooting" data-tab="troubleshooting" hidden>
+        <ul class="cas-actuator-checks">
+            <li><code>404</code>: the endpoint is not enabled or not exposed; check the <em>Enable &amp; expose</em> tab.</li>
+            <li><code>401</code> or <code>403</code>: the access rule or the credentials rejected the call; check the <em>Security</em> tab.</li>
+        </ul>
+        <p>For more detail, raise these log levels in the log4j configuration:</p>
+        {{ actuatorLogging | markdownify }}
+    </div>
+</div>
+</div>
+{:/nomarkdown}
+{%- endif -%}

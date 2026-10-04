@@ -1,0 +1,2287 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="light dark">
+    
+    
+    
+
+
+
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <meta name="description" content="Apache Pulsar Ticket Registry. Technical guides for Apereo CAS: enterprise identity, authentication, single sign-on and access management.">
+    <meta name="robots" content="index,follow">
+    <meta name="theme-color" content="#06304a">
+    <link rel="canonical" href="https://apereo.github.io/cas/development/ticketing/Pulsar-Ticket-Registry.html">
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="en_US">
+    <meta property="og:site_name" content="Apereo CAS Documentation">
+    <meta property="og:title" content="CAS - Apache Pulsar Ticket Registry">
+    <meta property="og:description" content="Apache Pulsar Ticket Registry. Technical guides for Apereo CAS: enterprise identity, authentication, single sign-on and access management.">
+    <meta property="og:url" content="https://apereo.github.io/cas/development/ticketing/Pulsar-Ticket-Registry.html">
+    <meta property="og:image" content="https://apereo.github.io/cas/images/cas_logo.png">
+    <meta property="og:image:alt" content="Apereo CAS">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="CAS - Apache Pulsar Ticket Registry">
+    <meta name="twitter:description" content="Apache Pulsar Ticket Registry. Technical guides for Apereo CAS: enterprise identity, authentication, single sign-on and access management.">
+    <meta name="twitter:image" content="https://apereo.github.io/cas/images/cas_logo.png">
+
+    
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "TechArticle",
+      "headline": "Apache Pulsar Ticket Registry",
+      "description": "Apache Pulsar Ticket Registry. Technical guides for Apereo CAS: enterprise identity, authentication, single sign-on and access management.",
+      "url": "https://apereo.github.io/cas/development/ticketing/Pulsar-Ticket-Registry.html",
+      "inLanguage": "en",
+      "isPartOf": {"@type": "WebSite", "name": "Apereo CAS Documentation",
+                   "url": "https://apereo.github.io/cas/"},
+      "author": {"@type": "Organization", "name": "Apereo Foundation", "url": "https://www.apereo.org/"},
+      "publisher": {"@type": "Organization", "name": "Apereo Foundation", "url": "https://www.apereo.org/"}
+    }
+    </script>
+    
+
+    <script>
+        ((i, s, o, g, r, a, m) => {
+            i['GoogleAnalyticsObject'] = r;
+            i[r] = i[r] || function () {
+                (i[r].q = i[r].q || []).push(arguments)
+            }, i[r].l = 1 * new Date();
+            a = s.createElement(o),
+                m = s.getElementsByTagName(o)[0];
+            a.async = 1;
+            a.src = g;
+            m.parentNode.insertBefore(a, m)
+        })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
+
+        ga('create', 'UA-83384532-2', 'auto');
+        ga('send', 'pageview');
+
+    </script>
+
+    <script>
+        function readThemePreference() {
+            try {
+                return localStorage.getItem('cas-docs-theme') || 'system';
+            } catch (error) {
+                return 'system';
+            }
+        }
+
+        function systemTheme() {
+            return window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+        }
+
+        function resolveTheme(preference) {
+            return preference === 'dark' || preference === 'light' ? preference : systemTheme();
+        }
+
+        function changeTheme(theme) {
+            if (theme !== 'dark' && theme !== 'light') {
+                return;
+            }
+
+            if (document.documentElement.getAttribute('data-bs-theme') !== theme) {
+                document.documentElement.setAttribute('data-bs-theme', theme);
+            }
+        }
+
+        (() => {
+            let preference = readThemePreference();
+            if (preference !== 'dark' && preference !== 'light') {
+                preference = 'system';
+
+            }
+
+            changeTheme(resolveTheme(preference));
+
+            if (window.matchMedia) {
+                window.matchMedia('(prefers-color-scheme: light)').addEventListener('change', () => {
+                    if (readThemePreference() !== 'system') {
+                        return;
+                    }
+                    const theme = systemTheme();
+                    changeTheme(theme);
+                });
+            }
+        })();
+    </script>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@docsearch/css@3"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.5/css/lightbox.min.css" />
+    
+    
+    <link rel="stylesheet" type="text/css" media="screen" href='/cas/stylesheets/site.css'>
+    <link rel="stylesheet" type="text/css" media="print" href='/cas/stylesheets/site-print.css'>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400..700;1,9..40,400..500&family=JetBrains+Mono:wght@400;500;700&family=Manrope:wght@400..800&family=Newsreader:ital,opsz,wght@0,6..72,300..600;1,6..72,300..600&display=swap" rel="stylesheet">
+    <link href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css" rel="stylesheet">
+
+    <title>CAS - Apache Pulsar Ticket Registry · Apereo CAS Documentation</title>
+
+</head>
+
+<body class="" data-docs-base="/cas" data-docs-version="development" data-docs-build="20261004000849">
+    <a class="skip-link" href="#cas-docs-container">Skip to content</a>
+    <header class="site-header">
+        <div class="masthead">
+            <a class="cas-brand" href="../../index.html" aria-label="Apereo CAS home">
+                <img class="brand-logo" src="/cas/images/cas_logo.png" width="119" height="60" alt="CAS">
+                <span class="brand-caption">APEREO CAS<span>Documentation</span></span>
+            </a>
+            <div class="brand-mission">
+                <p>Enterprise Authentication <span class="brand-mission-accent">for All Earthlings and Beyond</span></p>
+                <span>Identity, Single Sign-On and Access Management</span>
+            </div>
+            <a id="forkme_banner" href="https://github.com/apereo/cas"><i class="fab fa-github" aria-hidden="true"></i><span>View on GitHub</span><span aria-hidden="true">↗</span></a>
+        </div>
+        <div class="navigation-bar">
+            
+            <button onclick="navigateSidebar()" id="sidebarNavButton" class="icon-button" type="button" aria-controls="sidebar" aria-expanded="true" aria-label="Toggle documentation navigation" title="Toggle documentation navigation">
+                <i class="fa fa-bars" aria-hidden="true"></i>
+            </button>
+            
+            <nav class="primary-navigation" aria-label="Main navigation">
+                <a href="../../index.html">Home</a>
+                <a href="https://github.com/apereo/cas/releases">Releases</a>
+                <a href="../../Support.html">Support</a>
+                <a href="../../Mailing-Lists.html">Mailing Lists</a>
+                <div class="dropdown">
+                    <button class="dropdown-toggle" type="button" id="cas-versions" data-bs-toggle="dropdown" aria-expanded="false">Versions</button>
+                    <div class="dropdown-menu" aria-labelledby="cas-versions">
+                        
+                        <a class="dropdown-item" href="/cas/development/">Development</a>
+                        
+                        <a class="dropdown-item" href="/cas/8.0.x/">v8.0.x</a>
+                        
+                        <a class="dropdown-item" href="/cas/7.3.x/">v7.3.x</a>
+                        
+                    </div>
+                </div>
+                <a href="https://apereo.github.io" target="_blank" rel="noopener">Blog <span aria-hidden="true">↗</span><span class="visually-hidden"> (opens in a new tab)</span></a>
+            </nav>
+            <div class="navigation-tools">
+                <div id="searchField"></div>
+                <button id="settingsSearchButton" class="icon-button" type="button" aria-label="Search configuration settings (press Shift twice)" title="Search configuration settings (Shift Shift)"><i class="fa fa-sliders" aria-hidden="true"></i></button>
+                <button id="themeToggle" class="icon-button" type="button" onclick="toggleDarkMode()" aria-label="Toggle color theme" title="Toggle color theme"><i class="fa fa-circle-half-stroke" aria-hidden="true"></i></button>
+            </div>
+        </div>
+        <div class="reading-progress" aria-hidden="true"><span id="readingProgress"></span></div>
+    </header>
+
+    <div class="docs-shell">
+        
+        <aside id="sidebar" class="docs-sidebar" aria-label="Documentation navigation">
+    <div class="sidebar-heading">
+<span class="eyebrow">APEREO CAS DOCUMENTATION</span><span class="sidebar-symbol" aria-hidden="true">✳</span>
+</div>
+    <nav id="sidebar-navigation" aria-label="Documentation topics"></nav>
+    <noscript><p>Browse the <a href="/cas/development/sidebar.html">documentation index</a>.</p></noscript>
+</aside>
+
+        
+        <main class="cas-docs-content">
+            
+            <div class="page-toolbar">
+                <nav id="docsNavBar" aria-label="Breadcrumb"></nav>
+                <div id="toolbarIcons" role="group" aria-label="Page tools"></div>
+            </div>
+            
+            
+            <aside id="dev-doc-info" aria-labelledby="dev-doc-title">
+                <span class="development-marker" aria-hidden="true"></span>
+                <div>
+                    <p id="dev-doc-title">WORKERS AHEAD!</p>
+                    <p>You are viewing the <strong>development</strong> documentation for the Apereo CAS server. <strong>The
+                        functionality presented here <a href="https://github.com/apereo/cas/milestones">is not officially released yet</a></strong>.
+                        This is a work in progress and will be continually updated as development moves forward.
+                        <strong>You are most encouraged to test the changes presented.</strong>
+                    </p>
+                </div>
+            </aside>
+            
+            <article id="cas-docs-container" tabindex="-1">
+                
+<h1 id="apache-pulsar-ticket-registry">Apache Pulsar Ticket Registry</h1>
+
+<p>The Apache Pulsar ticket registry is very much an extension of the <a href="Default-Ticket-Registry.html">default ticket registry</a>.
+The difference is that ticket operations applied to the registry are broadcasted using Pulsar topics
+to other listening CAS nodes. Each node keeps copies of ticket state on its own and only
+instructs others to keep their copy accurate by broadcasting messages and data associated with each.
+Each message and ticket registry instance running inside a CAS node in the cluster is tagged with a unique
+identifier in order to avoid endless looping behavior and recursive needless inbound operations.</p>
+
+<p>The broadcast and pub/sub mechanism is backed by <a href="https://pulsar.apache.org/">Apache Pulsar</a>. Apache Pulsar is 
+an open-source, distributed messaging and streaming platform built for the cloud.</p>
+
+<p>In Apache Pulsar, topics do not need to be created beforehand. They are created automatically on first use, as long as:</p>
+
+<ul>
+  <li>The namespace exists, and</li>
+  <li>Auto-creation is enabled in the broker configuration (it is enabled by default in most local/docker setups).</li>
+</ul>
+
+<p>Support is enabled by including the following dependency in the overlay:</p>
+
+<div style="display: block">
+
+    <ul class="nav nav-pills cas-modules" role="tablist">
+        <li class="nav-item cas-module" role="presentation"><a class="nav-link" id="mavenorgapereocascasserversupportpulsarticketregistry-tab" data-bs-toggle="tab" href="#mavenorgapereocascasserversupportpulsarticketregistry" role="tab" aria-controls="mavenorgapereocascasserversupportpulsarticketregistry" aria-selected="false">Apache Maven</a></li>
+        <li class="nav-item cas-module" role="presentation"><a class="nav-link" id="gradleorgapereocascasserversupportpulsarticketregistry-tab" data-bs-toggle="tab" href="#gradleorgapereocascasserversupportpulsarticketregistry" role="tab" aria-controls="gradleorgapereocascasserversupportpulsarticketregistry" aria-selected="false">Gradle</a></li>
+<li class="nav-item cas-module" role="presentation"><a class="nav-link" id="bomorgapereocascasserversupportpulsarticketregistry-tab" data-bs-toggle="tab" href="#bomorgapereocascasserversupportpulsarticketregistry" role="tab" aria-controls="bomorgapereocascasserversupportpulsarticketregistry" aria-selected="false">BOM - Spring</a></li>
+        <li class="nav-item cas-module" role="presentation"><a class="nav-link active" id="bomGradleorgapereocascasserversupportpulsarticketregistry-tab" data-bs-toggle="tab" href="#bomGradleorgapereocascasserversupportpulsarticketregistry" role="tab" aria-controls="bomGradleorgapereocascasserversupportpulsarticketregistry" aria-selected="true">BOM - Gradle</a></li>
+<li class="nav-item dropdown cas-module" role="presentation">
+            <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">Resources<span class="caret"></span>
+            </a>
+            <div class="dropdown-menu">
+                <a class="dropdown-item" href="https://getcas.apereo.org/ui?dependencies=webapp-tomcat,support-pulsar-ticket-registry" target="_blank" rel="noopener">Show in CAS Initializr <span aria-hidden="true">↗</span><span class="visually-hidden"> (opens in a new tab)</span></a>
+                <a class="dropdown-item" href="javascript:generateOverlay('cas-server-support-pulsar-ticket-registry',%20'cas-overlay');">Generate CAS Server WAR Overlay</a>
+            </div>
+        </li>
+    </ul>
+
+
+    <div class="cas-module-tabs tab-content clearfix">
+        <div class="tab-pane fade" id="mavenorgapereocascasserversupportpulsarticketregistry" role="tabpanel" aria-labelledby="mavenorgapereocascasserversupportpulsarticketregistry-tab">
+<span>
+      <div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+</pre></td>
+<td class="rouge-code"><pre><span class="nt">&lt;dependency&gt;</span>
+    <span class="nt">&lt;groupId&gt;</span>org.apereo.cas<span class="nt">&lt;/groupId&gt;</span>
+    <span class="nt">&lt;artifactId&gt;</span>cas-server-support-pulsar-ticket-registry<span class="nt">&lt;/artifactId&gt;</span>
+    <span class="nt">&lt;version&gt;</span>${cas.version}<span class="nt">&lt;/version&gt;</span>
+<span class="nt">&lt;/dependency&gt;</span>
+</pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+    </span>
+
+        </div>
+
+
+        <div class="tab-pane fade" id="gradleorgapereocascasserversupportpulsarticketregistry" role="tabpanel" aria-labelledby="gradleorgapereocascasserversupportpulsarticketregistry-tab">
+
+            <span>
+    
+<div class="language-groovy highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td>
+<td class="rouge-code"><pre><span class="n">implementation</span> <span class="s2">"org.apereo.cas:cas-server-support-pulsar-ticket-registry:${project.'cas.version'}"</span>
+</pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+  </span>
+
+        </div>
+
+        <div class="tab-pane fade" id="bomorgapereocascasserversupportpulsarticketregistry" role="tabpanel" aria-labelledby="bomorgapereocascasserversupportpulsarticketregistry-tab">
+<span>
+    <div class="language-groovy highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+</pre></td>
+<td class="rouge-code"><pre><span class="n">dependencyManagement</span> <span class="o">{</span>
+    <span class="n">imports</span> <span class="o">{</span>
+        <span class="n">mavenBom</span> <span class="s2">"org.apereo.cas:cas-server-support-bom:${project.'cas.version'}"</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+
+<span class="n">dependencies</span> <span class="o">{</span>
+    <span class="n">implementation</span> <span class="s2">"org.apereo.cas:cas-server-support-pulsar-ticket-registry"</span>
+<span class="o">}</span>
+</pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+  </span>
+
+        </div>
+
+        <div class="tab-pane fade show active" id="bomGradleorgapereocascasserversupportpulsarticketregistry" role="tabpanel" aria-labelledby="bomGradleorgapereocascasserversupportpulsarticketregistry-tab">
+<span>
+    <div class="language-groovy highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+</pre></td>
+<td class="rouge-code"><pre><span class="n">dependencies</span> <span class="o">{</span>
+    <span class="cm">/*
+        The following platform references are included automatically and are listed for reference only.
+
+        implementation enforcedPlatform("org.apereo.cas:cas-server-support-bom:${project.'cas.version'}")
+        implementation platform(org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES)
+        
+    */</span>
+    <span class="n">implementation</span> <span class="s2">"org.apereo.cas:cas-server-support-pulsar-ticket-registry"</span>
+<span class="o">}</span>
+</pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+  </span>
+
+        </div>
+
+    </div>
+
+</div>
+
+<h2 id="cas-configuration">CAS Configuration</h2>
+
+<!-- fragment:keep -->
+
+<p>The following settings and properties are available from the CAS configuration catalog:</p>
+
+
+<div class="cas-properties">
+    <div class="cas-properties-list">
+<div class="cas-property" data-kind="required" data-name="cas.ticket.registry.in-memory.crypto.encryption.key" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.ticket.registry.in-memory.crypto.encryption.key</code><span class="cas-property-summary">The encryption key.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-required"><i class="fa fa-asterisk" aria-hidden="true"></i>Required</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>The encryption key. The encryption key by default and unless specified otherwise must be randomly-generated string whose length is defined by the encryption key size setting.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.core.util.EncryptionRandomizedCryptoProperties">EncryptionRandomizedCryptoProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="required" data-name="cas.ticket.registry.in-memory.crypto.signing.key" data-default="" data-spel>
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.ticket.registry.in-memory.crypto.signing.key</code><span class="cas-property-summary">The signing key is a string whose length is defined by the signing key size setting.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags">
+<span class="cas-property-tag cas-property-tag-required"><i class="fa fa-asterisk" aria-hidden="true"></i>Required</span><span class="cas-property-tag"><i class="fa fa-code" aria-hidden="true"></i>SpEL</span>
+</div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>The signing key is a string whose length is defined by the signing key size setting.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.core.util.SigningJwtCryptoProperties">SigningJwtCryptoProperties</code></dd>
+<dt>Supports</dt>
+<dd><a href="/cas/development/configuration/Configuration-Spring-Expressions.html">Spring Expression Language</a></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.ticket.registry.in-memory.concurrency" data-default="20">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.ticket.registry.in-memory.concurrency</code><span class="cas-property-summary">The estimated number of concurrently updating threads.</span>
+</div>
+        <div class="cas-property-default"><code>20</code></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>The estimated number of concurrently updating threads. The implementation performs internal sizing to try to accommodate this many threads.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Integer</code></dd>
+<dt>Default</dt>
+<dd><code>20</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.core.ticket.registry.InMemoryTicketRegistryProperties">InMemoryTicketRegistryProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.ticket.registry.in-memory.crypto.alg" data-default="AES">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.ticket.registry.in-memory.crypto.alg</code><span class="cas-property-summary">The signing/encryption algorithm to use.</span>
+</div>
+        <div class="cas-property-default"><code>AES</code></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>The signing/encryption algorithm to use.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><code>AES</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.core.util.EncryptionRandomizedSigningJwtCryptographyProperties">EncryptionRandomizedSigningJwtCryptographyProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.ticket.registry.in-memory.crypto.enabled" data-default="true">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.ticket.registry.in-memory.crypto.enabled</code><span class="cas-property-summary">Whether crypto operations are enabled.</span>
+</div>
+        <div class="cas-property-default"><code>true</code></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Whether crypto operations are enabled.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Boolean</code></dd>
+<dt>Default</dt>
+<dd><code>true</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.core.util.EncryptionRandomizedSigningJwtCryptographyProperties">EncryptionRandomizedSigningJwtCryptographyProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.ticket.registry.in-memory.crypto.encryption.key-size" data-default="16">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.ticket.registry.in-memory.crypto.encryption.key-size</code><span class="cas-property-summary">Encryption key size.</span>
+</div>
+        <div class="cas-property-default"><code>16</code></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Encryption key size.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Integer</code></dd>
+<dt>Default</dt>
+<dd><code>16</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.core.util.EncryptionRandomizedCryptoProperties">EncryptionRandomizedCryptoProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.ticket.registry.in-memory.crypto.signing-enabled" data-default="true">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.ticket.registry.in-memory.crypto.signing-enabled</code><span class="cas-property-summary">Whether signing encryption operations are enabled.</span>
+</div>
+        <div class="cas-property-default"><code>true</code></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Whether signing encryption operations are enabled.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Boolean</code></dd>
+<dt>Default</dt>
+<dd><code>true</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.core.util.EncryptionRandomizedSigningJwtCryptographyProperties">EncryptionRandomizedSigningJwtCryptographyProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.ticket.registry.in-memory.crypto.signing.key-size" data-default="512">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.ticket.registry.in-memory.crypto.signing.key-size</code><span class="cas-property-summary">The signing key size.</span>
+</div>
+        <div class="cas-property-default"><code>512</code></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>The signing key size.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Integer</code></dd>
+<dt>Default</dt>
+<dd><code>512</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.core.util.SigningJwtCryptoProperties">SigningJwtCryptoProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.ticket.registry.in-memory.initial-capacity" data-default="1000">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.ticket.registry.in-memory.initial-capacity</code><span class="cas-property-summary">The initial capacity of the underlying memory store.</span>
+</div>
+        <div class="cas-property-default"><code>1000</code></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>The initial capacity of the underlying memory store. The implementation performs internal sizing to accommodate this many elements.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Integer</code></dd>
+<dt>Default</dt>
+<dd><code>1000</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.core.ticket.registry.InMemoryTicketRegistryProperties">InMemoryTicketRegistryProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.ticket.registry.in-memory.load-factor" data-default="1">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.ticket.registry.in-memory.load-factor</code><span class="cas-property-summary">The load factor threshold, used to control resizing.</span>
+</div>
+        <div class="cas-property-default"><code>1</code></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>The load factor threshold, used to control resizing. Resizing may be performed when the average number of elements per bin exceeds this threshold.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Integer</code></dd>
+<dt>Default</dt>
+<dd><code>1</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.core.ticket.registry.InMemoryTicketRegistryProperties">InMemoryTicketRegistryProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.ticket.registry.in-memory.properties" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.ticket.registry.in-memory.properties</code><span class="cas-property-summary">Free-form key-value pairs to configure the specific registry with custom settings.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Free-form key-value pairs to configure the specific registry with custom settings.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Map&lt;String,String&gt;</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.core.ticket.registry.InMemoryTicketRegistryProperties">InMemoryTicketRegistryProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.ticket.registry.pulsar.concurrency" data-default="1">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.ticket.registry.pulsar.concurrency</code><span class="cas-property-summary"></span>
+</div>
+        <div class="cas-property-default"><code>1</code></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Integer</code></dd>
+<dt>Default</dt>
+<dd><code>1</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.pulsar.PulsarTicketRegistryProperties">PulsarTicketRegistryProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.ticket.registry.pulsar.subscription-name" data-default="cas-pulsar-ticket-registry-subscription">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.ticket.registry.pulsar.subscription-name</code><span class="cas-property-summary"></span>
+</div>
+        <div class="cas-property-default"><code>cas-pulsar-ticket-registry-subscription</code></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><code>cas-pulsar-ticket-registry-subscription</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.pulsar.PulsarTicketRegistryProperties">PulsarTicketRegistryProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.pulsar.admin.authentication.param" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.pulsar.admin.authentication.param</code><span class="cas-property-summary">Authentication parameter(s) as a map of parameter names to parameter values.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Authentication parameter(s) as a map of parameter names to parameter values.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Map&lt;String,String&gt;</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.pulsar.autoconfigure.PulsarProperties$Authentication">PulsarProperties$Authentication</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.pulsar.admin.authentication.plugin-class-name" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.pulsar.admin.authentication.plugin-class-name</code><span class="cas-property-summary">Fully qualified class name of the authentication plugin.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Fully qualified class name of the authentication plugin.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.pulsar.autoconfigure.PulsarProperties$Authentication">PulsarProperties$Authentication</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.pulsar.admin.connection-timeout" data-default="1m">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.pulsar.admin.connection-timeout</code><span class="cas-property-summary">Duration to wait for a connection to server to be established.</span>
+</div>
+        <div class="cas-property-default"><code>1m</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Duration to wait for a connection to server to be established.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Duration</code></dd>
+<dt>Default</dt>
+<dd><code>1m</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.pulsar.autoconfigure.PulsarProperties$Admin">PulsarProperties$Admin</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.pulsar.admin.read-timeout" data-default="1m">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.pulsar.admin.read-timeout</code><span class="cas-property-summary">Server response read time out for any request.</span>
+</div>
+        <div class="cas-property-default"><code>1m</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Server response read time out for any request.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Duration</code></dd>
+<dt>Default</dt>
+<dd><code>1m</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.pulsar.autoconfigure.PulsarProperties$Admin">PulsarProperties$Admin</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.pulsar.admin.request-timeout" data-default="5m">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.pulsar.admin.request-timeout</code><span class="cas-property-summary">Server request time out for any request.</span>
+</div>
+        <div class="cas-property-default"><code>5m</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Server request time out for any request.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Duration</code></dd>
+<dt>Default</dt>
+<dd><code>5m</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.pulsar.autoconfigure.PulsarProperties$Admin">PulsarProperties$Admin</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.pulsar.admin.service-url" data-default="http://localhost:8080">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.pulsar.admin.service-url</code><span class="cas-property-summary">Pulsar web URL for the admin endpoint in the format '(http|https)://host:port'.</span>
+</div>
+        <div class="cas-property-default"><code>http://localhost:8080</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Pulsar web URL for the admin endpoint in the format '(http|https)://host:port'.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><code>http://localhost:8080</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.pulsar.autoconfigure.PulsarProperties$Admin">PulsarProperties$Admin</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.pulsar.client.authentication.param" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.pulsar.client.authentication.param</code><span class="cas-property-summary">Authentication parameter(s) as a map of parameter names to parameter values.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Authentication parameter(s) as a map of parameter names to parameter values.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Map&lt;String,String&gt;</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.pulsar.autoconfigure.PulsarProperties$Authentication">PulsarProperties$Authentication</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.pulsar.client.authentication.plugin-class-name" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.pulsar.client.authentication.plugin-class-name</code><span class="cas-property-summary">Fully qualified class name of the authentication plugin.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Fully qualified class name of the authentication plugin.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.pulsar.autoconfigure.PulsarProperties$Authentication">PulsarProperties$Authentication</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.pulsar.client.connection-timeout" data-default="10s">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.pulsar.client.connection-timeout</code><span class="cas-property-summary">Duration to wait for a connection to a broker to be established.</span>
+</div>
+        <div class="cas-property-default"><code>10s</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Duration to wait for a connection to a broker to be established.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Duration</code></dd>
+<dt>Default</dt>
+<dd><code>10s</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.pulsar.autoconfigure.PulsarProperties$Client">PulsarProperties$Client</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.pulsar.client.failover.backup-clusters" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.pulsar.client.failover.backup-clusters</code><span class="cas-property-summary">List of backup clusters.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>List of backup clusters. The backup cluster is chosen in the sequence of the given list. If all backup clusters are available, the Pulsar client chooses the first backup cluster.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>List&lt;PulsarProperties.Failover.BackupCluster&gt;</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.pulsar.autoconfigure.PulsarProperties$Failover">PulsarProperties$Failover</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.pulsar.client.failover.check-interval" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.pulsar.client.failover.check-interval</code><span class="cas-property-summary">Frequency of performing a probe task.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Frequency of performing a probe task.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Duration</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.pulsar.autoconfigure.PulsarProperties$Failover">PulsarProperties$Failover</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.pulsar.client.failover.delay" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.pulsar.client.failover.delay</code><span class="cas-property-summary">Delay before the Pulsar client switches from the primary cluster to the backup cluster.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Delay before the Pulsar client switches from the primary cluster to the backup cluster.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Duration</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.pulsar.autoconfigure.PulsarProperties$Failover">PulsarProperties$Failover</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.pulsar.client.failover.policy" data-default="order">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.pulsar.client.failover.policy</code><span class="cas-property-summary">Cluster failover policy.</span>
+</div>
+        <div class="cas-property-default"><code>order</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Cluster failover policy.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>AutoClusterFailoverBuilder.FailoverPolicy</code></dd>
+<dt>Default</dt>
+<dd><code>order</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.pulsar.autoconfigure.PulsarProperties$Failover">PulsarProperties$Failover</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.pulsar.client.failover.switch-back-delay" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.pulsar.client.failover.switch-back-delay</code><span class="cas-property-summary">Delay before the Pulsar client switches from the backup cluster to the primary cluster.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Delay before the Pulsar client switches from the backup cluster to the primary cluster.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Duration</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.pulsar.autoconfigure.PulsarProperties$Failover">PulsarProperties$Failover</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.pulsar.client.lookup-timeout" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.pulsar.client.lookup-timeout</code><span class="cas-property-summary">Client lookup timeout.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Client lookup timeout.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Duration</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.pulsar.autoconfigure.PulsarProperties$Client">PulsarProperties$Client</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.pulsar.client.operation-timeout" data-default="30s">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.pulsar.client.operation-timeout</code><span class="cas-property-summary">Client operation timeout.</span>
+</div>
+        <div class="cas-property-default"><code>30s</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Client operation timeout.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Duration</code></dd>
+<dt>Default</dt>
+<dd><code>30s</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.pulsar.autoconfigure.PulsarProperties$Client">PulsarProperties$Client</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.pulsar.client.service-url" data-default="pulsar://localhost:6650">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.pulsar.client.service-url</code><span class="cas-property-summary">Pulsar service URL in the format '(pulsar|pulsar+ssl)://host:port'.</span>
+</div>
+        <div class="cas-property-default"><code>pulsar://localhost:6650</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Pulsar service URL in the format '(pulsar|pulsar+ssl)://host:port'.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><code>pulsar://localhost:6650</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.pulsar.autoconfigure.PulsarProperties$Client">PulsarProperties$Client</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.pulsar.client.threads.io" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.pulsar.client.threads.io</code><span class="cas-property-summary">Number of threads to be used for handling connections to brokers.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Number of threads to be used for handling connections to brokers.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Integer</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.pulsar.autoconfigure.PulsarProperties$Threads">PulsarProperties$Threads</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.pulsar.client.threads.listener" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.pulsar.client.threads.listener</code><span class="cas-property-summary">Number of threads to be used for message listeners.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Number of threads to be used for message listeners.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Integer</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.pulsar.autoconfigure.PulsarProperties$Threads">PulsarProperties$Threads</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.pulsar.consumer.dead-letter-policy.dead-letter-topic" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.pulsar.consumer.dead-letter-policy.dead-letter-topic</code><span class="cas-property-summary">Name of the dead topic where the failing messages will be sent.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Name of the dead topic where the failing messages will be sent.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.pulsar.autoconfigure.PulsarProperties$Consumer$DeadLetterPolicy">PulsarProperties$Consumer$DeadLetterPolicy</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.pulsar.consumer.dead-letter-policy.initial-subscription-name" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.pulsar.consumer.dead-letter-policy.initial-subscription-name</code><span class="cas-property-summary">Name of the initial subscription of the dead letter topic.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Name of the initial subscription of the dead letter topic. When not set, the initial subscription will not be created. However, when the property is set then the broker's 'allowAutoSubscriptionCreation' must be enabled or the DLQ producer will fail.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.pulsar.autoconfigure.PulsarProperties$Consumer$DeadLetterPolicy">PulsarProperties$Consumer$DeadLetterPolicy</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.pulsar.consumer.dead-letter-policy.max-redeliver-count" data-default="0">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.pulsar.consumer.dead-letter-policy.max-redeliver-count</code><span class="cas-property-summary">Maximum number of times that a message will be redelivered before being sent to the dead letter queue.</span>
+</div>
+        <div class="cas-property-default"><code>0</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Maximum number of times that a message will be redelivered before being sent to the dead letter queue.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Integer</code></dd>
+<dt>Default</dt>
+<dd><code>0</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.pulsar.autoconfigure.PulsarProperties$Consumer$DeadLetterPolicy">PulsarProperties$Consumer$DeadLetterPolicy</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.pulsar.consumer.dead-letter-policy.retry-letter-topic" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.pulsar.consumer.dead-letter-policy.retry-letter-topic</code><span class="cas-property-summary">Name of the retry topic where the failing messages will be sent.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Name of the retry topic where the failing messages will be sent.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.pulsar.autoconfigure.PulsarProperties$Consumer$DeadLetterPolicy">PulsarProperties$Consumer$DeadLetterPolicy</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.pulsar.consumer.name" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.pulsar.consumer.name</code><span class="cas-property-summary">Consumer name to identify a particular consumer from the topic stats.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Consumer name to identify a particular consumer from the topic stats.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.pulsar.autoconfigure.PulsarProperties$Consumer">PulsarProperties$Consumer</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.pulsar.consumer.priority-level" data-default="0">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.pulsar.consumer.priority-level</code><span class="cas-property-summary">Priority level for shared subscription consumers.</span>
+</div>
+        <div class="cas-property-default"><code>0</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Priority level for shared subscription consumers.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Integer</code></dd>
+<dt>Default</dt>
+<dd><code>0</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.pulsar.autoconfigure.PulsarProperties$Consumer">PulsarProperties$Consumer</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.pulsar.consumer.read-compacted" data-default="false">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.pulsar.consumer.read-compacted</code><span class="cas-property-summary">Whether to read messages from the compacted topic rather than the full message backlog.</span>
+</div>
+        <div class="cas-property-default"><code>false</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Whether to read messages from the compacted topic rather than the full message backlog.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Boolean</code></dd>
+<dt>Default</dt>
+<dd><code>false</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.pulsar.autoconfigure.PulsarProperties$Consumer">PulsarProperties$Consumer</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.pulsar.consumer.retry-enable" data-default="false">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.pulsar.consumer.retry-enable</code><span class="cas-property-summary">Whether to auto retry messages.</span>
+</div>
+        <div class="cas-property-default"><code>false</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Whether to auto retry messages.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Boolean</code></dd>
+<dt>Default</dt>
+<dd><code>false</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.pulsar.autoconfigure.PulsarProperties$Consumer">PulsarProperties$Consumer</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.pulsar.consumer.subscription.initial-position" data-default="latest">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.pulsar.consumer.subscription.initial-position</code><span class="cas-property-summary">Position where to initialize a newly created subscription.</span>
+</div>
+        <div class="cas-property-default"><code>latest</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Position where to initialize a newly created subscription.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>SubscriptionInitialPosition</code></dd>
+<dt>Default</dt>
+<dd><code>latest</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.pulsar.autoconfigure.PulsarProperties$Consumer$Subscription">PulsarProperties$Consumer$Subscription</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.pulsar.consumer.subscription.mode" data-default="durable">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.pulsar.consumer.subscription.mode</code><span class="cas-property-summary">Subscription mode to be used when subscribing to the topic.</span>
+</div>
+        <div class="cas-property-default"><code>durable</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Subscription mode to be used when subscribing to the topic.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>SubscriptionMode</code></dd>
+<dt>Default</dt>
+<dd><code>durable</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.pulsar.autoconfigure.PulsarProperties$Consumer$Subscription">PulsarProperties$Consumer$Subscription</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.pulsar.consumer.subscription.name" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.pulsar.consumer.subscription.name</code><span class="cas-property-summary">Subscription name for the consumer.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Subscription name for the consumer.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.pulsar.autoconfigure.PulsarProperties$Consumer$Subscription">PulsarProperties$Consumer$Subscription</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.pulsar.consumer.subscription.topics-mode" data-default="persistentonly">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.pulsar.consumer.subscription.topics-mode</code><span class="cas-property-summary">Determines which type of topics (persistent, non-persistent, or all) the consumer should be subscribed to when using pattern subscriptions.</span>
+</div>
+        <div class="cas-property-default"><code>persistentonly</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Determines which type of topics (persistent, non-persistent, or all) the consumer should be subscribed to when using pattern subscriptions.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>RegexSubscriptionMode</code></dd>
+<dt>Default</dt>
+<dd><code>persistentonly</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.pulsar.autoconfigure.PulsarProperties$Consumer$Subscription">PulsarProperties$Consumer$Subscription</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.pulsar.consumer.subscription.type" data-default="exclusive">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.pulsar.consumer.subscription.type</code><span class="cas-property-summary">Subscription type to be used when subscribing to a topic.</span>
+</div>
+        <div class="cas-property-default"><code>exclusive</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Subscription type to be used when subscribing to a topic.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>SubscriptionType</code></dd>
+<dt>Default</dt>
+<dd><code>exclusive</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.pulsar.autoconfigure.PulsarProperties$Consumer$Subscription">PulsarProperties$Consumer$Subscription</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.pulsar.consumer.topics" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.pulsar.consumer.topics</code><span class="cas-property-summary">Topics the consumer subscribes to.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Topics the consumer subscribes to.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>List&lt;String&gt;</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.pulsar.autoconfigure.PulsarProperties$Consumer">PulsarProperties$Consumer</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.pulsar.consumer.topics-pattern" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.pulsar.consumer.topics-pattern</code><span class="cas-property-summary">Pattern for topics the consumer subscribes to.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Pattern for topics the consumer subscribes to.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Pattern</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.pulsar.autoconfigure.PulsarProperties$Consumer">PulsarProperties$Consumer</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.pulsar.defaults.topic.enabled" data-default="true">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.pulsar.defaults.topic.enabled</code><span class="cas-property-summary">Whether to enable default tenant and namespace support for topics.</span>
+</div>
+        <div class="cas-property-default"><code>true</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Whether to enable default tenant and namespace support for topics.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Boolean</code></dd>
+<dt>Default</dt>
+<dd><code>true</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.pulsar.defaults.topic.namespace" data-default="default">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.pulsar.defaults.topic.namespace</code><span class="cas-property-summary">Default namespace to use when producing or consuming messages against a non-fully-qualified topic URL.</span>
+</div>
+        <div class="cas-property-default"><code>default</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Default namespace to use when producing or consuming messages against a non-fully-qualified topic URL.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><code>default</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.pulsar.autoconfigure.PulsarProperties$Defaults$Topic">PulsarProperties$Defaults$Topic</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.pulsar.defaults.topic.tenant" data-default="public">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.pulsar.defaults.topic.tenant</code><span class="cas-property-summary">Default tenant to use when producing or consuming messages against a non-fully-qualified topic URL.</span>
+</div>
+        <div class="cas-property-default"><code>public</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Default tenant to use when producing or consuming messages against a non-fully-qualified topic URL.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><code>public</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.pulsar.autoconfigure.PulsarProperties$Defaults$Topic">PulsarProperties$Defaults$Topic</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.pulsar.defaults.type-mappings" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.pulsar.defaults.type-mappings</code><span class="cas-property-summary">List of mappings from message type to topic name and schema info to use as a defaults when a topic name and/or schema is not explicitly specified when producing or consuming messages of the mapped type.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>List of mappings from message type to topic name and schema info to use as a defaults when a topic name and/or schema is not explicitly specified when producing or consuming messages of the mapped type.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>List&lt;PulsarProperties.Defaults.TypeMapping&gt;</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.pulsar.autoconfigure.PulsarProperties$Defaults">PulsarProperties$Defaults</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.pulsar.function.enabled" data-default="true">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.pulsar.function.enabled</code><span class="cas-property-summary">Whether to enable function support.</span>
+</div>
+        <div class="cas-property-default"><code>true</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Whether to enable function support.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Boolean</code></dd>
+<dt>Default</dt>
+<dd><code>true</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.pulsar.function.fail-fast" data-default="true">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.pulsar.function.fail-fast</code><span class="cas-property-summary">Whether to stop processing further function creates/updates when a failure occurs.</span>
+</div>
+        <div class="cas-property-default"><code>true</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Whether to stop processing further function creates/updates when a failure occurs.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Boolean</code></dd>
+<dt>Default</dt>
+<dd><code>true</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.pulsar.autoconfigure.PulsarProperties$Function">PulsarProperties$Function</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.pulsar.function.propagate-failures" data-default="true">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.pulsar.function.propagate-failures</code><span class="cas-property-summary">Whether to throw an exception if any failure is encountered during server startup while creating/updating functions.</span>
+</div>
+        <div class="cas-property-default"><code>true</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Whether to throw an exception if any failure is encountered during server startup while creating/updating functions.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Boolean</code></dd>
+<dt>Default</dt>
+<dd><code>true</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.pulsar.autoconfigure.PulsarProperties$Function">PulsarProperties$Function</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.pulsar.function.propagate-stop-failures" data-default="false">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.pulsar.function.propagate-stop-failures</code><span class="cas-property-summary">Whether to throw an exception if any failure is encountered during server shutdown while enforcing stop policy on functions.</span>
+</div>
+        <div class="cas-property-default"><code>false</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Whether to throw an exception if any failure is encountered during server shutdown while enforcing stop policy on functions.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Boolean</code></dd>
+<dt>Default</dt>
+<dd><code>false</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.pulsar.autoconfigure.PulsarProperties$Function">PulsarProperties$Function</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.pulsar.listener.concurrency" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.pulsar.listener.concurrency</code><span class="cas-property-summary">Number of threads used by listener container.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Number of threads used by listener container.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Integer</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.pulsar.autoconfigure.PulsarProperties$Listener">PulsarProperties$Listener</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.pulsar.listener.observation-enabled" data-default="false">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.pulsar.listener.observation-enabled</code><span class="cas-property-summary">Whether to record observations for when the Observations API is available and the client supports it.</span>
+</div>
+        <div class="cas-property-default"><code>false</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Whether to record observations for when the Observations API is available and the client supports it.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Boolean</code></dd>
+<dt>Default</dt>
+<dd><code>false</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.pulsar.autoconfigure.PulsarProperties$Listener">PulsarProperties$Listener</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.pulsar.listener.schema-type" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.pulsar.listener.schema-type</code><span class="cas-property-summary">SchemaType of the consumed messages.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>SchemaType of the consumed messages.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>SchemaType</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.pulsar.autoconfigure.PulsarProperties$Listener">PulsarProperties$Listener</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.pulsar.producer.access-mode" data-default="shared">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.pulsar.producer.access-mode</code><span class="cas-property-summary">Type of access to the topic the producer requires.</span>
+</div>
+        <div class="cas-property-default"><code>shared</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Type of access to the topic the producer requires.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>ProducerAccessMode</code></dd>
+<dt>Default</dt>
+<dd><code>shared</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.pulsar.autoconfigure.PulsarProperties$Producer">PulsarProperties$Producer</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.pulsar.producer.batching-enabled" data-default="true">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.pulsar.producer.batching-enabled</code><span class="cas-property-summary">Whether to automatically batch messages.</span>
+</div>
+        <div class="cas-property-default"><code>true</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Whether to automatically batch messages.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Boolean</code></dd>
+<dt>Default</dt>
+<dd><code>true</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.pulsar.autoconfigure.PulsarProperties$Producer">PulsarProperties$Producer</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.pulsar.producer.cache.enabled" data-default="true">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.pulsar.producer.cache.enabled</code><span class="cas-property-summary">Whether to enable caching in the PulsarProducerFactory.</span>
+</div>
+        <div class="cas-property-default"><code>true</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Whether to enable caching in the PulsarProducerFactory.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Boolean</code></dd>
+<dt>Default</dt>
+<dd><code>true</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.pulsar.producer.cache.expire-after-access" data-default="1m">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.pulsar.producer.cache.expire-after-access</code><span class="cas-property-summary">Time period to expire unused entries in the cache.</span>
+</div>
+        <div class="cas-property-default"><code>1m</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Time period to expire unused entries in the cache.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Duration</code></dd>
+<dt>Default</dt>
+<dd><code>1m</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.pulsar.autoconfigure.PulsarProperties$Producer$Cache">PulsarProperties$Producer$Cache</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.pulsar.producer.cache.initial-capacity" data-default="50">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.pulsar.producer.cache.initial-capacity</code><span class="cas-property-summary">Initial size of cache.</span>
+</div>
+        <div class="cas-property-default"><code>50</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Initial size of cache.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Integer</code></dd>
+<dt>Default</dt>
+<dd><code>50</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.pulsar.autoconfigure.PulsarProperties$Producer$Cache">PulsarProperties$Producer$Cache</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.pulsar.producer.cache.maximum-size" data-default="1000">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.pulsar.producer.cache.maximum-size</code><span class="cas-property-summary">Maximum size of cache (entries).</span>
+</div>
+        <div class="cas-property-default"><code>1000</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Maximum size of cache (entries).</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Long</code></dd>
+<dt>Default</dt>
+<dd><code>1000</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.pulsar.autoconfigure.PulsarProperties$Producer$Cache">PulsarProperties$Producer$Cache</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.pulsar.producer.chunking-enabled" data-default="false">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.pulsar.producer.chunking-enabled</code><span class="cas-property-summary">Whether to split large-size messages into multiple chunks.</span>
+</div>
+        <div class="cas-property-default"><code>false</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Whether to split large-size messages into multiple chunks.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Boolean</code></dd>
+<dt>Default</dt>
+<dd><code>false</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.pulsar.autoconfigure.PulsarProperties$Producer">PulsarProperties$Producer</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.pulsar.producer.compression-type" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.pulsar.producer.compression-type</code><span class="cas-property-summary">Message compression type.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Message compression type.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>CompressionType</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.pulsar.autoconfigure.PulsarProperties$Producer">PulsarProperties$Producer</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.pulsar.producer.hashing-scheme" data-default="javastringhash">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.pulsar.producer.hashing-scheme</code><span class="cas-property-summary">Message hashing scheme to choose the partition to which the message is published.</span>
+</div>
+        <div class="cas-property-default"><code>javastringhash</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Message hashing scheme to choose the partition to which the message is published.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>HashingScheme</code></dd>
+<dt>Default</dt>
+<dd><code>javastringhash</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.pulsar.autoconfigure.PulsarProperties$Producer">PulsarProperties$Producer</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.pulsar.producer.message-routing-mode" data-default="roundrobinpartition">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.pulsar.producer.message-routing-mode</code><span class="cas-property-summary">Message routing mode for a partitioned producer.</span>
+</div>
+        <div class="cas-property-default"><code>roundrobinpartition</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Message routing mode for a partitioned producer.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>MessageRoutingMode</code></dd>
+<dt>Default</dt>
+<dd><code>roundrobinpartition</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.pulsar.autoconfigure.PulsarProperties$Producer">PulsarProperties$Producer</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.pulsar.producer.name" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.pulsar.producer.name</code><span class="cas-property-summary">Name for the producer.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Name for the producer. If not assigned, a unique name is generated.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.pulsar.autoconfigure.PulsarProperties$Producer">PulsarProperties$Producer</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.pulsar.producer.send-timeout" data-default="30s">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.pulsar.producer.send-timeout</code><span class="cas-property-summary">Time before a message has to be acknowledged by the broker.</span>
+</div>
+        <div class="cas-property-default"><code>30s</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Time before a message has to be acknowledged by the broker.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Duration</code></dd>
+<dt>Default</dt>
+<dd><code>30s</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.pulsar.autoconfigure.PulsarProperties$Producer">PulsarProperties$Producer</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.pulsar.producer.topic-name" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.pulsar.producer.topic-name</code><span class="cas-property-summary">Topic the producer will publish to.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Topic the producer will publish to.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.pulsar.autoconfigure.PulsarProperties$Producer">PulsarProperties$Producer</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.pulsar.reader.name" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.pulsar.reader.name</code><span class="cas-property-summary">Reader name.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Reader name.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.pulsar.autoconfigure.PulsarProperties$Reader">PulsarProperties$Reader</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.pulsar.reader.read-compacted" data-default="false">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.pulsar.reader.read-compacted</code><span class="cas-property-summary">Whether to read messages from a compacted topic rather than a full message backlog of a topic.</span>
+</div>
+        <div class="cas-property-default"><code>false</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Whether to read messages from a compacted topic rather than a full message backlog of a topic.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Boolean</code></dd>
+<dt>Default</dt>
+<dd><code>false</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.pulsar.autoconfigure.PulsarProperties$Reader">PulsarProperties$Reader</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.pulsar.reader.subscription-name" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.pulsar.reader.subscription-name</code><span class="cas-property-summary">Subscription name.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Subscription name.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.pulsar.autoconfigure.PulsarProperties$Reader">PulsarProperties$Reader</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.pulsar.reader.subscription-role-prefix" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.pulsar.reader.subscription-role-prefix</code><span class="cas-property-summary">Prefix of subscription role.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Prefix of subscription role.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.pulsar.autoconfigure.PulsarProperties$Reader">PulsarProperties$Reader</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.pulsar.reader.topics" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.pulsar.reader.topics</code><span class="cas-property-summary">Topics the reader subscribes to.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Topics the reader subscribes to.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>List&lt;String&gt;</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.pulsar.autoconfigure.PulsarProperties$Reader">PulsarProperties$Reader</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.pulsar.template.observations-enabled" data-default="false">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.pulsar.template.observations-enabled</code><span class="cas-property-summary">Whether to record observations for when the Observations API is available.</span>
+</div>
+        <div class="cas-property-default"><code>false</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Whether to record observations for when the Observations API is available.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Boolean</code></dd>
+<dt>Default</dt>
+<dd><code>false</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.pulsar.autoconfigure.PulsarProperties$Template">PulsarProperties$Template</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.pulsar.transaction.enabled" data-default="false">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.pulsar.transaction.enabled</code><span class="cas-property-summary">Whether transaction support is enabled.</span>
+</div>
+        <div class="cas-property-default"><code>false</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Whether transaction support is enabled.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Boolean</code></dd>
+<dt>Default</dt>
+<dd><code>false</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.pulsar.autoconfigure.PulsarProperties$Transaction">PulsarProperties$Transaction</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+</div>
+<p class="cas-properties-legend">
+        <strong>Required</strong> settings may be needed to activate or affect the feature; review them even when they have a default.
+        <strong>Optional</strong> settings only need to be set to change a default or to turn on the behavior they control.
+        <strong>Third party</strong> settings belong to libraries such as Spring Boot that CAS builds on; their own documentation may have more detail.
+    </p>
+<div class="cas-properties-topics">
+<details class="cas-properties-topic">
+            <summary><i class="fa fa-user-secret" aria-hidden="true"></i>Signing &amp; encryption</summary>
+            <div class="cas-properties-topic-body">
+<p></p>
+
+<p>This CAS feature is able to accept signing and encryption crypto keys. In most scenarios if keys are not provided, CAS will
+auto-generate them. The following instructions apply if you wish to manually and beforehand create the signing and encryption keys.</p>
+
+<p>Note that if you are asked to create a <a href="https://tools.ietf.org/html/rfc7517">JWK</a> of a certain size for the key, you are to use
+the following set of commands to generate the token:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+2
+</pre></td>
+<td class="rouge-code"><pre>wget https://raw.githubusercontent.com/apereo/cas/master/etc/jwk-gen.jar
+java <span class="nt">-jar</span> jwk-gen.jar <span class="nt">-t</span> oct <span class="nt">-s</span> <span class="o">[</span>size]
+</pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+<p>The outcome would be similar to:</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+</pre></td>
+<td class="rouge-code"><pre><span class="p">{</span><span class="w">
+  </span><span class="nl">"kty"</span><span class="p">:</span><span class="w"> </span><span class="s2">"oct"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"kid"</span><span class="p">:</span><span class="w"> </span><span class="s2">"..."</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"k"</span><span class="p">:</span><span class="w"> </span><span class="s2">"..."</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+<p>The generated value for <code class="language-plaintext highlighter-rouge">k</code> needs to be assigned to the relevant CAS settings. Note that keys generated via
+the above algorithm are processed by CAS using the Advanced Encryption Standard (<code class="language-plaintext highlighter-rouge">AES</code>) algorithm which is a
+specification for the encryption of electronic data established by the U.S. National Institute of Standards and Technology.</p>
+
+<hr>
+
+
+            </div>
+        </details><details class="cas-properties-topic">
+            <summary><i class="fa fa-laptop-code" aria-hidden="true"></i>Groovy scripting</summary>
+            <div class="cas-properties-topic-body">
+                <p>CAS takes advantage of Apache Groovy in forms of either embedded or external scripts that allow one to, by default,
+                    dynamically build constructs, attributes, access strategies and a lot more. To activate the functionality
+                    described here, you may need to prepare CAS to support and integrate with Apache Groovy.</p>
+                <p>Please <a href="https://apereo.github.io/cas/development/integration/Apache-Groovy-Scripting.html">review this guide</a> to configure your build.</p>
+            </div>
+        </details><details class="cas-properties-topic">
+            <summary><i class="fa fa-newspaper" aria-hidden="true"></i>Notes on configuration</summary>
+            <div class="cas-properties-topic-body">
+<!-- fragment:keep -->
+
+<p></p>
+
+<h4 id="configuration-metadata">Configuration Metadata</h4>
+
+<p>The collection of configuration properties listed in this section are automatically generated from the CAS source and components that contain the actual field
+definitions, types, descriptions, modules, etc. This metadata may not always be 100% accurate, or could be lacking details and sufficient explanations.</p>
+
+<h4 id="be-selective">Be Selective</h4>
+
+<p>This section is meant as a guide only. Do NOT copy/paste the entire collection of settings into your CAS configuration; rather pick only the properties that you
+need. Do NOT enable settings unless you are certain of their purpose and do NOT copy settings into your configuration only to keep them as reference. All these
+ideas lead to upgrade headaches, maintenance nightmares and premature aging.</p>
+
+<h4 id="yagni">YAGNI</h4>
+
+<p>Note that for nearly ALL use cases, declaring and configuring properties listed here is sufficient. You should NOT have to explicitly massage a CAS XML/Java/etc
+configuration file to design an authentication handler, create attribute release policies, etc. CAS at runtime will auto-configure all required changes for you.
+If you are unsure about the meaning of a given CAS setting, do NOT turn it on without hesitation. Review the codebase or better yet, ask questions to clarify
+the intended behavior.</p>
+
+<h4 id="naming-convention">Naming Convention</h4>
+
+<p>Property names can be specified in very relaxed terms. For instance <code class="language-plaintext highlighter-rouge">cas.someProperty</code>, <code class="language-plaintext highlighter-rouge">cas.some-property</code>, <code class="language-plaintext highlighter-rouge">cas.some_property</code> are all valid names. While all
+forms are accepted by CAS, there are certain components (in CAS and other frameworks used) whose activation at runtime is conditional on a property value, where
+this property is required to have been specified in CAS configuration using kebab case. This is both true for properties that are owned by CAS as well as those
+that might be presented to the system via an external library or framework such as Spring Boot, etc.</p>
+
+<div class="alert alert-info">
+<img class="emoji" title=":information_source:" alt=":information_source:" src="https://github.githubassets.com/images/icons/emoji/unicode/2139.png" height="20" width="20"> <strong>Note</strong> <p>
+When possible, properties should be stored in lower-case kebab format, such as <code>cas.property-name=value</code>.
+The only possible exception to this rule is when naming actuator endpoints; The name of the
+actuator endpoints (i.e. <code>ssoSessions</code>) <strong>MUST</strong> remain in camelCase mode. 
+</p>
+</div>
+
+<p>Settings and properties that are controlled by the CAS platform directly always begin with the prefix <code class="language-plaintext highlighter-rouge">cas</code>. All other settings are controlled and provided
+to CAS via other underlying frameworks and may have their own schemas and syntax. BE CAREFUL with
+the distinction. Unrecognized properties are rejected by CAS and/or frameworks upon which CAS depends. This means if you somehow misspell a property definition
+or fail to adhere to the dot-notation syntax and such, your setting is entirely refused by CAS and likely the feature it controls will never be activated in the
+way you intend.</p>
+
+<h4 id="validation">Validation</h4>
+
+<p>Configuration properties are automatically validated on CAS startup to report issues with configuration binding, especially if defined CAS settings cannot be
+recognized or validated by the configuration schema. Additional validation processes are also handled
+via <a href="/cas/development/configuration/Configuration-Metadata-Repository.html">Configuration Metadata</a> and property migrations applied automatically on
+startup by Spring Boot and family.</p>
+
+<h4 id="indexed-settings">Indexed Settings</h4>
+
+<p>CAS settings able to accept multiple values are typically documented with an index, such as <code class="language-plaintext highlighter-rouge">cas.some.setting[0]=value</code>. The index <code class="language-plaintext highlighter-rouge">[0]</code> is meant to be
+incremented by the adopter to allow for distinct multiple configuration blocks.</p>
+
+            </div>
+        </details>
+</div>
+</div>
+
+<h2 id="troubleshooting">Troubleshooting</h2>
+
+<p>To enable additional logging, configure the log4j configuration file to add the following levels:</p>
+
+<div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+</pre></td>
+<td class="rouge-code"><pre>...
+<span class="nt">&lt;Logger</span> <span class="na">name=</span><span class="s">"org.springframework.pulsar"</span> <span class="na">level=</span><span class="s">"debug"</span> <span class="na">additivity=</span><span class="s">"false"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;AppenderRef</span> <span class="na">ref=</span><span class="s">"casConsole"</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;AppenderRef</span> <span class="na">ref=</span><span class="s">"casFile"</span><span class="nt">/&gt;</span>
+<span class="nt">&lt;/Logger&gt;</span>
+<span class="nt">&lt;Logger</span> <span class="na">name=</span><span class="s">"org.apache.pulsar"</span> <span class="na">level=</span><span class="s">"debug"</span> <span class="na">additivity=</span><span class="s">"false"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;AppenderRef</span> <span class="na">ref=</span><span class="s">"casConsole"</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;AppenderRef</span> <span class="na">ref=</span><span class="s">"casFile"</span><span class="nt">/&gt;</span>
+<span class="nt">&lt;/Logger&gt;</span>
+...
+</pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+            </article>
+            <div class="article-end" aria-hidden="true">
+<span></span><span>CAS</span><span></span>
+</div>
+        </main>
+        
+        <aside class="docs-toc" aria-label="On this page">
+    <nav id="pageContents" aria-label="Table of contents">
+        <p class="eyebrow">ON THIS PAGE</p>
+        <ul class="section-nav"></ul>
+    </nav>
+    <a class="toc-top" href="#cas-docs-container">Back to top <span aria-hidden="true">↑</span></a>
+</aside>
+
+        
+    </div>
+
+    <footer class="site-footer">
+        <a class="footer-brand" href="../../index.html">APEREO <strong>CAS</strong></a>
+        <p>CAS is supported by the <a href="https://www.apereo.org/">Apereo Foundation</a>.</p>
+        <a href="#cas-docs-container">Back to top <span aria-hidden="true">↑</span></a>
+    </footer>
+    <div id="docs-status" class="visually-hidden" role="status" aria-live="polite"></div>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/tether@2.0.0/dist/js/tether.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.11/clipboard.min.js"></script>
+
+    <script src="/cas/javascripts/URI.js"></script>
+    <script src="/cas/javascripts/site.js"></script>
+
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@docsearch/js@3"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="https://code.jquery.com/ui/1.13.1/jquery-ui.js"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.5/js/lightbox.min.js"></script>
+
+    <script>
+        let pageSection = "Ticketing";
+        let siteUrl = "https://apereo.github.io";
+        let basePath = "/cas";
+
+        
+    </script>
+</body>
+
+</html>

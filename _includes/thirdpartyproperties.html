@@ -1,0 +1,14 @@
+<!-- fragment:keep -->
+{%- assign thirdPartyPropertyResults = site.data[siteDataVersion] | cas_third_party_properties: include.thirdParty, include.thirdPartyExactMatch, include.thirdPartyStartsWith, include.excludes %}
+{::nomarkdown}
+<div class="cas-properties{% if include.disableSearch == "true" %} cas-properties-compact{% endif %}">
+    <div class="cas-properties-list">
+        {%- for property in thirdPartyPropertyResults -%}
+        {% include casproperty.html property=property %}
+        {%- endfor -%}
+    </div>
+    {%- if thirdPartyPropertyResults.size == 0 -%}
+    <p class="cas-properties-none">No settings in the configuration catalog match this section.</p>
+    {%- endif -%}
+</div>
+{:/nomarkdown}

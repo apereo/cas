@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="light dark">
+    
+    
+    
+
+
+
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <meta name="description" content="JDBC Drivers. Technical guides for Apereo CAS: enterprise identity, authentication, single sign-on and access management.">
+    <meta name="robots" content="index,follow">
+    <meta name="theme-color" content="#06304a">
+    <link rel="canonical" href="https://apereo.github.io/cas/development/installation/JDBC-Drivers.html">
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="en_US">
+    <meta property="og:site_name" content="Apereo CAS Documentation">
+    <meta property="og:title" content="CAS - JDBC Drivers">
+    <meta property="og:description" content="JDBC Drivers. Technical guides for Apereo CAS: enterprise identity, authentication, single sign-on and access management.">
+    <meta property="og:url" content="https://apereo.github.io/cas/development/installation/JDBC-Drivers.html">
+    <meta property="og:image" content="https://apereo.github.io/cas/images/cas_logo.png">
+    <meta property="og:image:alt" content="Apereo CAS">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="CAS - JDBC Drivers">
+    <meta name="twitter:description" content="JDBC Drivers. Technical guides for Apereo CAS: enterprise identity, authentication, single sign-on and access management.">
+    <meta name="twitter:image" content="https://apereo.github.io/cas/images/cas_logo.png">
+
+    
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "TechArticle",
+      "headline": "JDBC Drivers",
+      "description": "JDBC Drivers. Technical guides for Apereo CAS: enterprise identity, authentication, single sign-on and access management.",
+      "url": "https://apereo.github.io/cas/development/installation/JDBC-Drivers.html",
+      "inLanguage": "en",
+      "isPartOf": {"@type": "WebSite", "name": "Apereo CAS Documentation",
+                   "url": "https://apereo.github.io/cas/"},
+      "author": {"@type": "Organization", "name": "Apereo Foundation", "url": "https://www.apereo.org/"},
+      "publisher": {"@type": "Organization", "name": "Apereo Foundation", "url": "https://www.apereo.org/"}
+    }
+    </script>
+    
+
+    <script>
+        ((i, s, o, g, r, a, m) => {
+            i['GoogleAnalyticsObject'] = r;
+            i[r] = i[r] || function () {
+                (i[r].q = i[r].q || []).push(arguments)
+            }, i[r].l = 1 * new Date();
+            a = s.createElement(o),
+                m = s.getElementsByTagName(o)[0];
+            a.async = 1;
+            a.src = g;
+            m.parentNode.insertBefore(a, m)
+        })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
+
+        ga('create', 'UA-83384532-2', 'auto');
+        ga('send', 'pageview');
+
+    </script>
+
+    <script>
+        function readThemePreference() {
+            try {
+                return localStorage.getItem('cas-docs-theme') || 'system';
+            } catch (error) {
+                return 'system';
+            }
+        }
+
+        function systemTheme() {
+            return window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+        }
+
+        function resolveTheme(preference) {
+            return preference === 'dark' || preference === 'light' ? preference : systemTheme();
+        }
+
+        function changeTheme(theme) {
+            if (theme !== 'dark' && theme !== 'light') {
+                return;
+            }
+
+            if (document.documentElement.getAttribute('data-bs-theme') !== theme) {
+                document.documentElement.setAttribute('data-bs-theme', theme);
+            }
+        }
+
+        (() => {
+            let preference = readThemePreference();
+            if (preference !== 'dark' && preference !== 'light') {
+                preference = 'system';
+
+            }
+
+            changeTheme(resolveTheme(preference));
+
+            if (window.matchMedia) {
+                window.matchMedia('(prefers-color-scheme: light)').addEventListener('change', () => {
+                    if (readThemePreference() !== 'system') {
+                        return;
+                    }
+                    const theme = systemTheme();
+                    changeTheme(theme);
+                });
+            }
+        })();
+    </script>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@docsearch/css@3"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.5/css/lightbox.min.css" />
+    
+    
+    <link rel="stylesheet" type="text/css" media="screen" href='/cas/stylesheets/site.css'>
+    <link rel="stylesheet" type="text/css" media="print" href='/cas/stylesheets/site-print.css'>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400..700;1,9..40,400..500&family=JetBrains+Mono:wght@400;500;700&family=Manrope:wght@400..800&family=Newsreader:ital,opsz,wght@0,6..72,300..600;1,6..72,300..600&display=swap" rel="stylesheet">
+    <link href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css" rel="stylesheet">
+
+    <title>CAS - JDBC Drivers · Apereo CAS Documentation</title>
+
+</head>
+
+<body class="" data-docs-base="/cas" data-docs-version="development" data-docs-build="20261004000849">
+    <a class="skip-link" href="#cas-docs-container">Skip to content</a>
+    <header class="site-header">
+        <div class="masthead">
+            <a class="cas-brand" href="../../index.html" aria-label="Apereo CAS home">
+                <img class="brand-logo" src="/cas/images/cas_logo.png" width="119" height="60" alt="CAS">
+                <span class="brand-caption">APEREO CAS<span>Documentation</span></span>
+            </a>
+            <div class="brand-mission">
+                <p>Enterprise Authentication <span class="brand-mission-accent">for All Earthlings and Beyond</span></p>
+                <span>Identity, Single Sign-On and Access Management</span>
+            </div>
+            <a id="forkme_banner" href="https://github.com/apereo/cas"><i class="fab fa-github" aria-hidden="true"></i><span>View on GitHub</span><span aria-hidden="true">↗</span></a>
+        </div>
+        <div class="navigation-bar">
+            
+            <button onclick="navigateSidebar()" id="sidebarNavButton" class="icon-button" type="button" aria-controls="sidebar" aria-expanded="true" aria-label="Toggle documentation navigation" title="Toggle documentation navigation">
+                <i class="fa fa-bars" aria-hidden="true"></i>
+            </button>
+            
+            <nav class="primary-navigation" aria-label="Main navigation">
+                <a href="../../index.html">Home</a>
+                <a href="https://github.com/apereo/cas/releases">Releases</a>
+                <a href="../../Support.html">Support</a>
+                <a href="../../Mailing-Lists.html">Mailing Lists</a>
+                <div class="dropdown">
+                    <button class="dropdown-toggle" type="button" id="cas-versions" data-bs-toggle="dropdown" aria-expanded="false">Versions</button>
+                    <div class="dropdown-menu" aria-labelledby="cas-versions">
+                        
+                        <a class="dropdown-item" href="/cas/development/">Development</a>
+                        
+                        <a class="dropdown-item" href="/cas/8.0.x/">v8.0.x</a>
+                        
+                        <a class="dropdown-item" href="/cas/7.3.x/">v7.3.x</a>
+                        
+                    </div>
+                </div>
+                <a href="https://apereo.github.io" target="_blank" rel="noopener">Blog <span aria-hidden="true">↗</span><span class="visually-hidden"> (opens in a new tab)</span></a>
+            </nav>
+            <div class="navigation-tools">
+                <div id="searchField"></div>
+                <button id="settingsSearchButton" class="icon-button" type="button" aria-label="Search configuration settings (press Shift twice)" title="Search configuration settings (Shift Shift)"><i class="fa fa-sliders" aria-hidden="true"></i></button>
+                <button id="themeToggle" class="icon-button" type="button" onclick="toggleDarkMode()" aria-label="Toggle color theme" title="Toggle color theme"><i class="fa fa-circle-half-stroke" aria-hidden="true"></i></button>
+            </div>
+        </div>
+        <div class="reading-progress" aria-hidden="true"><span id="readingProgress"></span></div>
+    </header>
+
+    <div class="docs-shell">
+        
+        <aside id="sidebar" class="docs-sidebar" aria-label="Documentation navigation">
+    <div class="sidebar-heading"><span class="eyebrow">APEREO CAS DOCUMENTATION</span><span class="sidebar-symbol" aria-hidden="true">✳</span></div>
+    <nav id="sidebar-navigation" aria-label="Documentation topics"></nav>
+    <noscript><p>Browse the <a href="/cas/development/sidebar.html">documentation index</a>.</p></noscript>
+</aside>
+
+        
+        <main class="cas-docs-content">
+            
+            <div class="page-toolbar">
+                <nav id="docsNavBar" aria-label="Breadcrumb"></nav>
+                <div id="toolbarIcons" role="group" aria-label="Page tools"></div>
+            </div>
+            
+            
+            <aside id="dev-doc-info" aria-labelledby="dev-doc-title">
+                <span class="development-marker" aria-hidden="true"></span>
+                <div>
+                    <p id="dev-doc-title">WORKERS AHEAD!</p>
+                    <p>You are viewing the <strong>development</strong> documentation for the Apereo CAS server. <strong>The
+                        functionality presented here <a href="https://github.com/apereo/cas/milestones">is not officially released yet</a></strong>.
+                        This is a work in progress and will be continually updated as development moves forward.
+                        <strong>You are most encouraged to test the changes presented.</strong>
+                    </p>
+                </div>
+            </aside>
+            
+            <article id="cas-docs-container" tabindex="-1">
+                
+<h1 id="jdbc-drivers">JDBC Drivers</h1>
+
+<p>While in most cases this is unnecessary and handled by CAS automatically,
+you may need to also include the following module to account for various database drivers:</p>
+
+<div style="display: block">
+
+    <ul class="nav nav-pills cas-modules" role="tablist">
+        <li class="nav-item cas-module" role="presentation"><a class="nav-link" id="mavenorgapereocascasserversupportjdbcdrivers-tab" data-bs-toggle="tab" href="#mavenorgapereocascasserversupportjdbcdrivers" role="tab" aria-controls="mavenorgapereocascasserversupportjdbcdrivers" aria-selected="false">Apache Maven</a></li>
+        <li class="nav-item cas-module" role="presentation"><a class="nav-link" id="gradleorgapereocascasserversupportjdbcdrivers-tab" data-bs-toggle="tab" href="#gradleorgapereocascasserversupportjdbcdrivers" role="tab" aria-controls="gradleorgapereocascasserversupportjdbcdrivers" aria-selected="false">Gradle</a></li><li class="nav-item cas-module" role="presentation"><a class="nav-link" id="bomorgapereocascasserversupportjdbcdrivers-tab" data-bs-toggle="tab" href="#bomorgapereocascasserversupportjdbcdrivers" role="tab" aria-controls="bomorgapereocascasserversupportjdbcdrivers" aria-selected="false">BOM - Spring</a></li>
+        <li class="nav-item cas-module" role="presentation"><a class="nav-link active" id="bomGradleorgapereocascasserversupportjdbcdrivers-tab" data-bs-toggle="tab" href="#bomGradleorgapereocascasserversupportjdbcdrivers" role="tab" aria-controls="bomGradleorgapereocascasserversupportjdbcdrivers" aria-selected="true">BOM - Gradle</a></li><li class="nav-item dropdown cas-module" role="presentation">
+            <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">Resources<span class="caret"></span>
+            </a>
+            <div class="dropdown-menu">
+                <a class="dropdown-item" href="https://getcas.apereo.org/ui?dependencies=webapp-tomcat,support-jdbc-drivers" target="_blank" rel="noopener">Show in CAS Initializr <span aria-hidden="true">↗</span><span class="visually-hidden"> (opens in a new tab)</span></a>
+                <a class="dropdown-item" href="javascript:generateOverlay('cas-server-support-jdbc-drivers', 'cas-overlay');">Generate CAS Server WAR Overlay</a>
+            </div>
+        </li>
+    </ul>
+
+
+    <div class="cas-module-tabs tab-content clearfix">
+        <div class="tab-pane fade" id="mavenorgapereocascasserversupportjdbcdrivers" role="tabpanel" aria-labelledby="mavenorgapereocascasserversupportjdbcdrivers-tab"><span>
+      <div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+</pre></td><td class="rouge-code"><pre><span class="nt">&lt;dependency&gt;</span>
+    <span class="nt">&lt;groupId&gt;</span>org.apereo.cas<span class="nt">&lt;/groupId&gt;</span>
+    <span class="nt">&lt;artifactId&gt;</span>cas-server-support-jdbc-drivers<span class="nt">&lt;/artifactId&gt;</span>
+    <span class="nt">&lt;version&gt;</span>${cas.version}<span class="nt">&lt;/version&gt;</span>
+<span class="nt">&lt;/dependency&gt;</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+    </span>
+
+        </div>
+
+
+        <div class="tab-pane fade" id="gradleorgapereocascasserversupportjdbcdrivers" role="tabpanel" aria-labelledby="gradleorgapereocascasserversupportjdbcdrivers-tab">
+
+            <span>
+    
+<div class="language-groovy highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td><td class="rouge-code"><pre><span class="n">implementation</span> <span class="s2">"org.apereo.cas:cas-server-support-jdbc-drivers:${project.'cas.version'}"</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+  </span>
+
+        </div>
+
+        <div class="tab-pane fade" id="bomorgapereocascasserversupportjdbcdrivers" role="tabpanel" aria-labelledby="bomorgapereocascasserversupportjdbcdrivers-tab"><span>
+    <div class="language-groovy highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+</pre></td><td class="rouge-code"><pre><span class="n">dependencyManagement</span> <span class="o">{</span>
+    <span class="n">imports</span> <span class="o">{</span>
+        <span class="n">mavenBom</span> <span class="s2">"org.apereo.cas:cas-server-support-bom:${project.'cas.version'}"</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+
+<span class="n">dependencies</span> <span class="o">{</span>
+    <span class="n">implementation</span> <span class="s2">"org.apereo.cas:cas-server-support-jdbc-drivers"</span>
+<span class="o">}</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+  </span>
+
+        </div>
+
+        <div class="tab-pane fade show active" id="bomGradleorgapereocascasserversupportjdbcdrivers" role="tabpanel" aria-labelledby="bomGradleorgapereocascasserversupportjdbcdrivers-tab"><span>
+    <div class="language-groovy highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+</pre></td><td class="rouge-code"><pre><span class="n">dependencies</span> <span class="o">{</span>
+    <span class="cm">/*
+        The following platform references are included automatically and are listed for reference only.
+
+        implementation enforcedPlatform("org.apereo.cas:cas-server-support-bom:${project.'cas.version'}")
+        implementation platform(org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES)
+        
+    */</span>
+    <span class="n">implementation</span> <span class="s2">"org.apereo.cas:cas-server-support-jdbc-drivers"</span>
+<span class="o">}</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+  </span>
+
+        </div>
+
+    </div>
+
+</div>
+
+<h2 id="jpa-implementations">JPA Implementations</h2>
+
+<p>The following JPA implementations are provided by CAS. In most cases, the indicated modules do not need
+to be included in a CAS build and the implementation would be automatically chosen by the feature module.
+The details below are listed for reference and may be of use in advanced scenarios where development may be required.</p>
+
+<h3 id="hibernate">Hibernate</h3>
+
+<p><a href="https://github.com/hibernate/hibernate-orm">Hibernate ORM</a> is an object–relational mapping tool for the Java programming 
+language. It provides a framework for mapping an object-oriented domain model to a relational database.</p>
+
+<div style="display: block">
+
+    <ul class="nav nav-pills cas-modules" role="tablist">
+        <li class="nav-item cas-module" role="presentation"><a class="nav-link" id="mavenorgapereocascasserversupportjpahibernate-tab" data-bs-toggle="tab" href="#mavenorgapereocascasserversupportjpahibernate" role="tab" aria-controls="mavenorgapereocascasserversupportjpahibernate" aria-selected="false">Apache Maven</a></li>
+        <li class="nav-item cas-module" role="presentation"><a class="nav-link" id="gradleorgapereocascasserversupportjpahibernate-tab" data-bs-toggle="tab" href="#gradleorgapereocascasserversupportjpahibernate" role="tab" aria-controls="gradleorgapereocascasserversupportjpahibernate" aria-selected="false">Gradle</a></li><li class="nav-item cas-module" role="presentation"><a class="nav-link" id="bomorgapereocascasserversupportjpahibernate-tab" data-bs-toggle="tab" href="#bomorgapereocascasserversupportjpahibernate" role="tab" aria-controls="bomorgapereocascasserversupportjpahibernate" aria-selected="false">BOM - Spring</a></li>
+        <li class="nav-item cas-module" role="presentation"><a class="nav-link active" id="bomGradleorgapereocascasserversupportjpahibernate-tab" data-bs-toggle="tab" href="#bomGradleorgapereocascasserversupportjpahibernate" role="tab" aria-controls="bomGradleorgapereocascasserversupportjpahibernate" aria-selected="true">BOM - Gradle</a></li><li class="nav-item dropdown cas-module" role="presentation">
+            <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">Resources<span class="caret"></span>
+            </a>
+            <div class="dropdown-menu">
+                <a class="dropdown-item" href="https://getcas.apereo.org/ui?dependencies=webapp-tomcat,support-jpa-hibernate" target="_blank" rel="noopener">Show in CAS Initializr <span aria-hidden="true">↗</span><span class="visually-hidden"> (opens in a new tab)</span></a>
+                <a class="dropdown-item" href="javascript:generateOverlay('cas-server-support-jpa-hibernate', 'cas-overlay');">Generate CAS Server WAR Overlay</a>
+            </div>
+        </li>
+    </ul>
+
+
+    <div class="cas-module-tabs tab-content clearfix">
+        <div class="tab-pane fade" id="mavenorgapereocascasserversupportjpahibernate" role="tabpanel" aria-labelledby="mavenorgapereocascasserversupportjpahibernate-tab"><span>
+      <div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+</pre></td><td class="rouge-code"><pre><span class="nt">&lt;dependency&gt;</span>
+    <span class="nt">&lt;groupId&gt;</span>org.apereo.cas<span class="nt">&lt;/groupId&gt;</span>
+    <span class="nt">&lt;artifactId&gt;</span>cas-server-support-jpa-hibernate<span class="nt">&lt;/artifactId&gt;</span>
+    <span class="nt">&lt;version&gt;</span>${cas.version}<span class="nt">&lt;/version&gt;</span>
+<span class="nt">&lt;/dependency&gt;</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+    </span>
+
+        </div>
+
+
+        <div class="tab-pane fade" id="gradleorgapereocascasserversupportjpahibernate" role="tabpanel" aria-labelledby="gradleorgapereocascasserversupportjpahibernate-tab">
+
+            <span>
+    
+<div class="language-groovy highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td><td class="rouge-code"><pre><span class="n">implementation</span> <span class="s2">"org.apereo.cas:cas-server-support-jpa-hibernate:${project.'cas.version'}"</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+  </span>
+
+        </div>
+
+        <div class="tab-pane fade" id="bomorgapereocascasserversupportjpahibernate" role="tabpanel" aria-labelledby="bomorgapereocascasserversupportjpahibernate-tab"><span>
+    <div class="language-groovy highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+</pre></td><td class="rouge-code"><pre><span class="n">dependencyManagement</span> <span class="o">{</span>
+    <span class="n">imports</span> <span class="o">{</span>
+        <span class="n">mavenBom</span> <span class="s2">"org.apereo.cas:cas-server-support-bom:${project.'cas.version'}"</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+
+<span class="n">dependencies</span> <span class="o">{</span>
+    <span class="n">implementation</span> <span class="s2">"org.apereo.cas:cas-server-support-jpa-hibernate"</span>
+<span class="o">}</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+  </span>
+
+        </div>
+
+        <div class="tab-pane fade show active" id="bomGradleorgapereocascasserversupportjpahibernate" role="tabpanel" aria-labelledby="bomGradleorgapereocascasserversupportjpahibernate-tab"><span>
+    <div class="language-groovy highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+</pre></td><td class="rouge-code"><pre><span class="n">dependencies</span> <span class="o">{</span>
+    <span class="cm">/*
+        The following platform references are included automatically and are listed for reference only.
+
+        implementation enforcedPlatform("org.apereo.cas:cas-server-support-bom:${project.'cas.version'}")
+        implementation platform(org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES)
+        
+    */</span>
+    <span class="n">implementation</span> <span class="s2">"org.apereo.cas:cas-server-support-jpa-hibernate"</span>
+<span class="o">}</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+  </span>
+
+        </div>
+
+    </div>
+
+</div>
+
+<h3 id="eclipselink">EclipseLink</h3>
+
+<p><a href="https://projects.eclipse.org/projects/ee4j.eclipselink">EclipseLink</a> is the open source Eclipse Persistence Services Project from the 
+Eclipse Foundation. The software provides an extensible framework that allows 
+Java developers to interact with various data services, including databases, 
+web services, Object XML mapping, and enterprise information systems.</p>
+
+<div style="display: block">
+
+    <ul class="nav nav-pills cas-modules" role="tablist">
+        <li class="nav-item cas-module" role="presentation"><a class="nav-link" id="mavenorgapereocascasserversupportjpaeclipselink-tab" data-bs-toggle="tab" href="#mavenorgapereocascasserversupportjpaeclipselink" role="tab" aria-controls="mavenorgapereocascasserversupportjpaeclipselink" aria-selected="false">Apache Maven</a></li>
+        <li class="nav-item cas-module" role="presentation"><a class="nav-link" id="gradleorgapereocascasserversupportjpaeclipselink-tab" data-bs-toggle="tab" href="#gradleorgapereocascasserversupportjpaeclipselink" role="tab" aria-controls="gradleorgapereocascasserversupportjpaeclipselink" aria-selected="false">Gradle</a></li><li class="nav-item cas-module" role="presentation"><a class="nav-link" id="bomorgapereocascasserversupportjpaeclipselink-tab" data-bs-toggle="tab" href="#bomorgapereocascasserversupportjpaeclipselink" role="tab" aria-controls="bomorgapereocascasserversupportjpaeclipselink" aria-selected="false">BOM - Spring</a></li>
+        <li class="nav-item cas-module" role="presentation"><a class="nav-link active" id="bomGradleorgapereocascasserversupportjpaeclipselink-tab" data-bs-toggle="tab" href="#bomGradleorgapereocascasserversupportjpaeclipselink" role="tab" aria-controls="bomGradleorgapereocascasserversupportjpaeclipselink" aria-selected="true">BOM - Gradle</a></li><li class="nav-item dropdown cas-module" role="presentation">
+            <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">Resources<span class="caret"></span>
+            </a>
+            <div class="dropdown-menu">
+                <a class="dropdown-item" href="https://getcas.apereo.org/ui?dependencies=webapp-tomcat,support-jpa-eclipselink" target="_blank" rel="noopener">Show in CAS Initializr <span aria-hidden="true">↗</span><span class="visually-hidden"> (opens in a new tab)</span></a>
+                <a class="dropdown-item" href="javascript:generateOverlay('cas-server-support-jpa-eclipselink', 'cas-overlay');">Generate CAS Server WAR Overlay</a>
+            </div>
+        </li>
+    </ul>
+
+
+    <div class="cas-module-tabs tab-content clearfix">
+        <div class="tab-pane fade" id="mavenorgapereocascasserversupportjpaeclipselink" role="tabpanel" aria-labelledby="mavenorgapereocascasserversupportjpaeclipselink-tab"><span>
+      <div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+</pre></td><td class="rouge-code"><pre><span class="nt">&lt;dependency&gt;</span>
+    <span class="nt">&lt;groupId&gt;</span>org.apereo.cas<span class="nt">&lt;/groupId&gt;</span>
+    <span class="nt">&lt;artifactId&gt;</span>cas-server-support-jpa-eclipselink<span class="nt">&lt;/artifactId&gt;</span>
+    <span class="nt">&lt;version&gt;</span>${cas.version}<span class="nt">&lt;/version&gt;</span>
+<span class="nt">&lt;/dependency&gt;</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+    </span>
+
+        </div>
+
+
+        <div class="tab-pane fade" id="gradleorgapereocascasserversupportjpaeclipselink" role="tabpanel" aria-labelledby="gradleorgapereocascasserversupportjpaeclipselink-tab">
+
+            <span>
+    
+<div class="language-groovy highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td><td class="rouge-code"><pre><span class="n">implementation</span> <span class="s2">"org.apereo.cas:cas-server-support-jpa-eclipselink:${project.'cas.version'}"</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+  </span>
+
+        </div>
+
+        <div class="tab-pane fade" id="bomorgapereocascasserversupportjpaeclipselink" role="tabpanel" aria-labelledby="bomorgapereocascasserversupportjpaeclipselink-tab"><span>
+    <div class="language-groovy highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+</pre></td><td class="rouge-code"><pre><span class="n">dependencyManagement</span> <span class="o">{</span>
+    <span class="n">imports</span> <span class="o">{</span>
+        <span class="n">mavenBom</span> <span class="s2">"org.apereo.cas:cas-server-support-bom:${project.'cas.version'}"</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+
+<span class="n">dependencies</span> <span class="o">{</span>
+    <span class="n">implementation</span> <span class="s2">"org.apereo.cas:cas-server-support-jpa-eclipselink"</span>
+<span class="o">}</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+  </span>
+
+        </div>
+
+        <div class="tab-pane fade show active" id="bomGradleorgapereocascasserversupportjpaeclipselink" role="tabpanel" aria-labelledby="bomGradleorgapereocascasserversupportjpaeclipselink-tab"><span>
+    <div class="language-groovy highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+</pre></td><td class="rouge-code"><pre><span class="n">dependencies</span> <span class="o">{</span>
+    <span class="cm">/*
+        The following platform references are included automatically and are listed for reference only.
+
+        implementation enforcedPlatform("org.apereo.cas:cas-server-support-bom:${project.'cas.version'}")
+        implementation platform(org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES)
+        
+    */</span>
+    <span class="n">implementation</span> <span class="s2">"org.apereo.cas:cas-server-support-jpa-eclipselink"</span>
+<span class="o">}</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+  </span>
+
+        </div>
+
+    </div>
+
+</div>
+
+<h2 id="database-support">Database Support</h2>
+
+<p>Automatic support for drivers includes the following databases.
+All other drivers need to be manually added to the build configuration.</p>
+
+<p />
+
+<p>Control global properties that are relevant to Hibernate,
+when CAS attempts to employ and utilize database resources,
+connections and queries.</p>
+
+<!-- fragment:keep -->
+
+
+<div class="cas-properties">
+    <div class="cas-properties-list"><div class="cas-property" data-kind="optional" data-name="cas.jdbc.gen-ddl" data-default="true">
+    <div class="cas-property-head">
+        <div class="cas-property-key"><code class="cas-property-name">cas.jdbc.gen-ddl</code><span class="cas-property-summary">Whether to generate DDL after the EntityManagerFactory has been initialized creating/updating all relevant tables.</span></div>
+        <div class="cas-property-default"><code>true</code></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Whether to generate DDL after the EntityManagerFactory has been initialized creating/updating all relevant tables.</p></div>
+            <dl class="cas-property-meta"><dt>Type</dt><dd><code>Boolean</code></dd><dt>Default</dt><dd><code>true</code></dd><dt>Defined by</dt><dd><code title="org.apereo.cas.configuration.model.support.jpa.DatabaseProperties">DatabaseProperties</code></dd></dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.jdbc.physical-table-names" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key"><code class="cas-property-name">cas.jdbc.physical-table-names</code><span class="cas-property-summary">Indicate a physical table name to be used by the hibernate naming strategy in case table names need to be customized for the specific type of database.</span></div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Indicate a physical table name to be used by the hibernate naming strategy in case table names need to be customized for the specific type of database. The key here indicates the CAS-provided table name and the value is the translate physical name for the database. If a match is not found for the CAS-provided table name, then that name will be used by default.</p></div>
+            <dl class="cas-property-meta"><dt>Type</dt><dd><code>Map&lt;String,String&gt;</code></dd><dt>Default</dt><dd><em>none</em></dd><dt>Defined by</dt><dd><code title="org.apereo.cas.configuration.model.support.jpa.DatabaseProperties">DatabaseProperties</code></dd></dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.jdbc.show-sql" data-default="false">
+    <div class="cas-property-head">
+        <div class="cas-property-key"><code class="cas-property-name">cas.jdbc.show-sql</code><span class="cas-property-summary">Whether SQL queries should be displayed in the console/logs.</span></div>
+        <div class="cas-property-default"><code>false</code></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Whether SQL queries should be displayed in the console/logs.</p></div>
+            <dl class="cas-property-meta"><dt>Type</dt><dd><code>Boolean</code></dd><dt>Default</dt><dd><code>false</code></dd><dt>Defined by</dt><dd><code title="org.apereo.cas.configuration.model.support.jpa.DatabaseProperties">DatabaseProperties</code></dd></dl>
+        </div>
+    </div>
+</div>
+</div></div>
+
+<h3 id="h2">H2</h3>
+
+<p>Available drivers are:</p>
+
+<ol>
+  <li><code class="language-plaintext highlighter-rouge">org.h2.Driver</code></li>
+</ol>
+
+<table>
+  <thead>
+    <tr>
+      <th>Dialects</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">org.hibernate.dialect.H2Dialect</code></td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="hsqldb">HSQLDB</h3>
+
+<p>Available drivers are:</p>
+
+<ol>
+  <li><code class="language-plaintext highlighter-rouge">org.hsqldb.jdbcDriver</code></li>
+</ol>
+
+<table>
+  <thead>
+    <tr>
+      <th>Dialects</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">org.hibernate.dialect.HSQLDialect</code></td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="oracle">Oracle</h3>
+
+<p>Available drivers are:</p>
+
+<ol>
+  <li><code class="language-plaintext highlighter-rouge">oracle.jdbc.driver.OracleDriver</code></li>
+</ol>
+
+<table>
+  <thead>
+    <tr>
+      <th>Dialects</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">org.hibernate.dialect.OracleDialect</code></td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="mysql">MYSQL</h3>
+
+<p>Available drivers are:</p>
+
+<ol>
+  <li><code class="language-plaintext highlighter-rouge">com.mysql.jdbc.Driver</code></li>
+  <li><code class="language-plaintext highlighter-rouge">com.mysql.cj.jdbc.Driver</code></li>
+</ol>
+
+<table>
+  <thead>
+    <tr>
+      <th>Dialects</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">org.hibernate.dialect.MySQLDialect</code></td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="postgresql">PostgreSQL</h3>
+
+<p>Available drivers are:</p>
+
+<ol>
+  <li><code class="language-plaintext highlighter-rouge">org.postgresql.Driver</code></li>
+</ol>
+
+<table>
+  <thead>
+    <tr>
+      <th>Dialects</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">org.hibernate.dialect.PostgreSQLDialect</code></td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="mariadb">MariaDB</h3>
+
+<p>Available drivers are:</p>
+
+<ol>
+  <li><code class="language-plaintext highlighter-rouge">org.mariadb.jdbc.Driver</code></li>
+</ol>
+
+<table>
+  <thead>
+    <tr>
+      <th>Dialects</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">org.hibernate.dialect.MariaDBDialect</code></td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="microsoft-sql-server">Microsoft SQL Server</h3>
+
+<p>Available drivers are:</p>
+
+<ol>
+  <li><code class="language-plaintext highlighter-rouge">net.sourceforge.jtds.jdbc.Driver</code></li>
+  <li><code class="language-plaintext highlighter-rouge">com.microsoft.sqlserver.jdbc.SQLServerDriver</code></li>
+</ol>
+
+<table>
+  <thead>
+    <tr>
+      <th>Dialects</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">org.hibernate.dialect.SQLServerDialect</code></td>
+    </tr>
+  </tbody>
+</table>
+
+            </article>
+            <div class="article-end" aria-hidden="true"><span></span><span>CAS</span><span></span></div>
+        </main>
+        
+        <aside class="docs-toc" aria-label="On this page">
+    <nav id="pageContents" aria-label="Table of contents">
+        <p class="eyebrow">ON THIS PAGE</p>
+        <ul class="section-nav"></ul>
+    </nav>
+    <a class="toc-top" href="#cas-docs-container">Back to top <span aria-hidden="true">↑</span></a>
+</aside>
+
+        
+    </div>
+
+    <footer class="site-footer">
+        <a class="footer-brand" href="../../index.html">APEREO <strong>CAS</strong></a>
+        <p>CAS is supported by the <a href="https://www.apereo.org/">Apereo Foundation</a>.</p>
+        <a href="#cas-docs-container">Back to top <span aria-hidden="true">↑</span></a>
+    </footer>
+    <div id="docs-status" class="visually-hidden" role="status" aria-live="polite"></div>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/tether@2.0.0/dist/js/tether.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.11/clipboard.min.js"></script>
+
+    <script src='/cas/javascripts/URI.js'></script>
+    <script src='/cas/javascripts/site.js'></script>
+
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@docsearch/js@3"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="https://code.jquery.com/ui/1.13.1/jquery-ui.js"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.5/js/lightbox.min.js"></script>
+
+    <script>
+        let pageSection = "Configuration";
+        let siteUrl = "https://apereo.github.io";
+        let basePath = "/cas";
+
+        
+    </script>
+</body>
+
+</html>

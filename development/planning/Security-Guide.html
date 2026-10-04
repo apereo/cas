@@ -1,0 +1,1537 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="light dark">
+    
+    
+    
+
+
+
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <meta name="description" content="Security Guide. Technical guides for Apereo CAS: enterprise identity, authentication, single sign-on and access management.">
+    <meta name="robots" content="index,follow">
+    <meta name="theme-color" content="#06304a">
+    <link rel="canonical" href="https://apereo.github.io/cas/development/planning/Security-Guide.html">
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="en_US">
+    <meta property="og:site_name" content="Apereo CAS Documentation">
+    <meta property="og:title" content="CAS - Security Guide">
+    <meta property="og:description" content="Security Guide. Technical guides for Apereo CAS: enterprise identity, authentication, single sign-on and access management.">
+    <meta property="og:url" content="https://apereo.github.io/cas/development/planning/Security-Guide.html">
+    <meta property="og:image" content="https://apereo.github.io/cas/images/cas_logo.png">
+    <meta property="og:image:alt" content="Apereo CAS">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="CAS - Security Guide">
+    <meta name="twitter:description" content="Security Guide. Technical guides for Apereo CAS: enterprise identity, authentication, single sign-on and access management.">
+    <meta name="twitter:image" content="https://apereo.github.io/cas/images/cas_logo.png">
+
+    
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "TechArticle",
+      "headline": "Security Guide",
+      "description": "Security Guide. Technical guides for Apereo CAS: enterprise identity, authentication, single sign-on and access management.",
+      "url": "https://apereo.github.io/cas/development/planning/Security-Guide.html",
+      "inLanguage": "en",
+      "isPartOf": {"@type": "WebSite", "name": "Apereo CAS Documentation",
+                   "url": "https://apereo.github.io/cas/"},
+      "author": {"@type": "Organization", "name": "Apereo Foundation", "url": "https://www.apereo.org/"},
+      "publisher": {"@type": "Organization", "name": "Apereo Foundation", "url": "https://www.apereo.org/"}
+    }
+    </script>
+    
+
+    <script>
+        ((i, s, o, g, r, a, m) => {
+            i['GoogleAnalyticsObject'] = r;
+            i[r] = i[r] || function () {
+                (i[r].q = i[r].q || []).push(arguments)
+            }, i[r].l = 1 * new Date();
+            a = s.createElement(o),
+                m = s.getElementsByTagName(o)[0];
+            a.async = 1;
+            a.src = g;
+            m.parentNode.insertBefore(a, m)
+        })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
+
+        ga('create', 'UA-83384532-2', 'auto');
+        ga('send', 'pageview');
+
+    </script>
+
+    <script>
+        function readThemePreference() {
+            try {
+                return localStorage.getItem('cas-docs-theme') || 'system';
+            } catch (error) {
+                return 'system';
+            }
+        }
+
+        function systemTheme() {
+            return window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+        }
+
+        function resolveTheme(preference) {
+            return preference === 'dark' || preference === 'light' ? preference : systemTheme();
+        }
+
+        function changeTheme(theme) {
+            if (theme !== 'dark' && theme !== 'light') {
+                return;
+            }
+
+            if (document.documentElement.getAttribute('data-bs-theme') !== theme) {
+                document.documentElement.setAttribute('data-bs-theme', theme);
+            }
+        }
+
+        (() => {
+            let preference = readThemePreference();
+            if (preference !== 'dark' && preference !== 'light') {
+                preference = 'system';
+
+            }
+
+            changeTheme(resolveTheme(preference));
+
+            if (window.matchMedia) {
+                window.matchMedia('(prefers-color-scheme: light)').addEventListener('change', () => {
+                    if (readThemePreference() !== 'system') {
+                        return;
+                    }
+                    const theme = systemTheme();
+                    changeTheme(theme);
+                });
+            }
+        })();
+    </script>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@docsearch/css@3"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.5/css/lightbox.min.css" />
+    
+    
+    <link rel="stylesheet" type="text/css" media="screen" href='/cas/stylesheets/site.css'>
+    <link rel="stylesheet" type="text/css" media="print" href='/cas/stylesheets/site-print.css'>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400..700;1,9..40,400..500&family=JetBrains+Mono:wght@400;500;700&family=Manrope:wght@400..800&family=Newsreader:ital,opsz,wght@0,6..72,300..600;1,6..72,300..600&display=swap" rel="stylesheet">
+    <link href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css" rel="stylesheet">
+
+    <title>CAS - Security Guide · Apereo CAS Documentation</title>
+
+</head>
+
+<body class="" data-docs-base="/cas" data-docs-version="development" data-docs-build="20261004000849">
+    <a class="skip-link" href="#cas-docs-container">Skip to content</a>
+    <header class="site-header">
+        <div class="masthead">
+            <a class="cas-brand" href="../../index.html" aria-label="Apereo CAS home">
+                <img class="brand-logo" src="/cas/images/cas_logo.png" width="119" height="60" alt="CAS">
+                <span class="brand-caption">APEREO CAS<span>Documentation</span></span>
+            </a>
+            <div class="brand-mission">
+                <p>Enterprise Authentication <span class="brand-mission-accent">for All Earthlings and Beyond</span></p>
+                <span>Identity, Single Sign-On and Access Management</span>
+            </div>
+            <a id="forkme_banner" href="https://github.com/apereo/cas"><i class="fab fa-github" aria-hidden="true"></i><span>View on GitHub</span><span aria-hidden="true">↗</span></a>
+        </div>
+        <div class="navigation-bar">
+            
+            <button onclick="navigateSidebar()" id="sidebarNavButton" class="icon-button" type="button" aria-controls="sidebar" aria-expanded="true" aria-label="Toggle documentation navigation" title="Toggle documentation navigation">
+                <i class="fa fa-bars" aria-hidden="true"></i>
+            </button>
+            
+            <nav class="primary-navigation" aria-label="Main navigation">
+                <a href="../../index.html">Home</a>
+                <a href="https://github.com/apereo/cas/releases">Releases</a>
+                <a href="../../Support.html">Support</a>
+                <a href="../../Mailing-Lists.html">Mailing Lists</a>
+                <div class="dropdown">
+                    <button class="dropdown-toggle" type="button" id="cas-versions" data-bs-toggle="dropdown" aria-expanded="false">Versions</button>
+                    <div class="dropdown-menu" aria-labelledby="cas-versions">
+                        
+                        <a class="dropdown-item" href="/cas/development/">Development</a>
+                        
+                        <a class="dropdown-item" href="/cas/8.0.x/">v8.0.x</a>
+                        
+                        <a class="dropdown-item" href="/cas/7.3.x/">v7.3.x</a>
+                        
+                    </div>
+                </div>
+                <a href="https://apereo.github.io" target="_blank" rel="noopener">Blog <span aria-hidden="true">↗</span><span class="visually-hidden"> (opens in a new tab)</span></a>
+            </nav>
+            <div class="navigation-tools">
+                <div id="searchField"></div>
+                <button id="settingsSearchButton" class="icon-button" type="button" aria-label="Search configuration settings (press Shift twice)" title="Search configuration settings (Shift Shift)"><i class="fa fa-sliders" aria-hidden="true"></i></button>
+                <button id="themeToggle" class="icon-button" type="button" onclick="toggleDarkMode()" aria-label="Toggle color theme" title="Toggle color theme"><i class="fa fa-circle-half-stroke" aria-hidden="true"></i></button>
+            </div>
+        </div>
+        <div class="reading-progress" aria-hidden="true"><span id="readingProgress"></span></div>
+    </header>
+
+    <div class="docs-shell">
+        
+        <aside id="sidebar" class="docs-sidebar" aria-label="Documentation navigation">
+    <div class="sidebar-heading">
+<span class="eyebrow">APEREO CAS DOCUMENTATION</span><span class="sidebar-symbol" aria-hidden="true">✳</span>
+</div>
+    <nav id="sidebar-navigation" aria-label="Documentation topics"></nav>
+    <noscript><p>Browse the <a href="/cas/development/sidebar.html">documentation index</a>.</p></noscript>
+</aside>
+
+        
+        <main class="cas-docs-content">
+            
+            <div class="page-toolbar">
+                <nav id="docsNavBar" aria-label="Breadcrumb"></nav>
+                <div id="toolbarIcons" role="group" aria-label="Page tools"></div>
+            </div>
+            
+            
+            <aside id="dev-doc-info" aria-labelledby="dev-doc-title">
+                <span class="development-marker" aria-hidden="true"></span>
+                <div>
+                    <p id="dev-doc-title">WORKERS AHEAD!</p>
+                    <p>You are viewing the <strong>development</strong> documentation for the Apereo CAS server. <strong>The
+                        functionality presented here <a href="https://github.com/apereo/cas/milestones">is not officially released yet</a></strong>.
+                        This is a work in progress and will be continually updated as development moves forward.
+                        <strong>You are most encouraged to test the changes presented.</strong>
+                    </p>
+                </div>
+            </aside>
+            
+            <article id="cas-docs-container" tabindex="-1">
+                
+<h1 id="security-guide">Security Guide</h1>
+
+<p>CAS is security software that provides secure Web-based single sign-on to Web-based applications. Single sign-on
+provides a win/win in terms of security and convenience: it reduces password exposure to a single, trusted credential
+broker while transparently providing access to multiple services without repetitious logins. The use of CAS generally
+improves the security environment, but there are several CAS configuration, policy, and deployment concerns that should
+be considered to achieve suitable security.</p>
+
+<div class="alert alert-info">
+<img class="emoji" title=":information_source:" alt=":information_source:" src="https://github.githubassets.com/images/icons/emoji/unicode/2139.png" height="20" width="20"> <strong>Reporting Issues</strong><p>The security team asks that you 
+please <strong>DO NOT</strong> create publicly-viewable issues or posts to discuss what you may consider a security vulnerability. To report issues 
+properly and learn about how responses are produced, please <a href="/cas/developer/Sec-Vuln-Response.html">see this guide</a>.</p>
+</div>
+
+<h2 id="system-security-considerations">System Security Considerations</h2>
+
+<p>Infrastructure security matters to consider may include the following.</p>
+
+<h3 id="secure-transport-https">Secure Transport (https)</h3>
+
+<p>All communication with the CAS server MUST occur over a secure channel (i.e. TLSv1). There are two primary
+justifications for this requirement:</p>
+
+<ol>
+  <li>The authentication process requires transmission of security credentials.</li>
+  <li>The CAS ticket-granting ticket is a bearer token.</li>
+</ol>
+
+<p>Since the disclosure of either data would allow impersonation attacks, it’s vitally important to secure the
+communication channel between CAS clients and the CAS server.</p>
+
+<p>Practically, it means that all CAS urls must use HTTPS, but it <strong>also</strong> means that all connections
+from the CAS server to the application must be done using HTTPS:</p>
+
+<ul>
+  <li>when the generated service ticket is sent back to the application on the “service” url</li>
+  <li>when a proxy callback url is called.</li>
+</ul>
+
+<!-- fragment:keep -->
+
+<p>The following settings and properties are available from the CAS configuration catalog:</p>
+
+
+<div class="cas-properties">
+    <div class="cas-properties-list">
+<div class="cas-property" data-kind="optional" data-name="cas.http-client.allow-local-urls" data-default="true">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.http-client.allow-local-urls</code><span class="cas-property-summary">Whether CAS should accept local URLs.</span>
+</div>
+        <div class="cas-property-default"><code>true</code></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Whether CAS should accept local URLs. For example <code>http(s)://localhost/logout</code>.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Boolean</code></dd>
+<dt>Default</dt>
+<dd><code>true</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.core.authentication.HttpClientProperties">HttpClientProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.http-client.async-timeout" data-default="PT5S" data-duration>
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.http-client.async-timeout</code><span class="cas-property-summary">Indicates timeout for async operations.</span>
+</div>
+        <div class="cas-property-default"><code>PT5S</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag"><i class="fa fa-clock" aria-hidden="true"></i>Duration</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Indicates timeout for async operations.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><code>PT5S</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.core.authentication.HttpClientProperties">HttpClientProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.http-client.authority-validation-reg-ex-case-sensitive" data-default="true">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.http-client.authority-validation-reg-ex-case-sensitive</code><span class="cas-property-summary">Whether the regular expression specified with #authorityValidationRegex should be handled as case-sensitive ( true ) or case-insensitive ( false ).</span>
+</div>
+        <div class="cas-property-default"><code>true</code></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Whether the regular expression specified with <code>#authorityValidationRegex</code> should be handled as case-sensitive (<code>true</code>) or case-insensitive (<code>false</code>). If no <code>#authorityValidationRegex</code> is set, this value does not have any effect.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Boolean</code></dd>
+<dt>Default</dt>
+<dd><code>true</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.core.authentication.HttpClientProperties">HttpClientProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.http-client.authority-validation-regex" data-default="" data-regex>
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.http-client.authority-validation-regex</code><span class="cas-property-summary">If specified the regular expression will be used to validate the url's authority.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag"><i class="fa fa-asterisk" aria-hidden="true"></i>Regex</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>If specified the regular expression will be used to validate the url's authority.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.core.authentication.HttpClientProperties">HttpClientProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.http-client.connection-timeout" data-default="PT5S" data-duration>
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.http-client.connection-timeout</code><span class="cas-property-summary">Connection timeout for all operations that reach out to URL endpoints.</span>
+</div>
+        <div class="cas-property-default"><code>PT5S</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag"><i class="fa fa-clock" aria-hidden="true"></i>Duration</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Connection timeout for all operations that reach out to URL endpoints.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><code>PT5S</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.core.authentication.HttpClientProperties">HttpClientProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.http-client.default-headers" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.http-client.default-headers</code><span class="cas-property-summary">The default headers to use for any HTTP connection.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>The default headers to use for any HTTP connection. This is defined as map, where the key is the header name and the value is the header value that should be sent along with request.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Map&lt;String,String&gt;</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.core.authentication.HttpClientProperties">HttpClientProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.http-client.host-name-verifier" data-default="default">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.http-client.host-name-verifier</code><span class="cas-property-summary">Enable hostname verification when attempting to contact URL endpoints.</span>
+</div>
+        <div class="cas-property-default"><code>default</code></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Enable hostname verification when attempting to contact URL endpoints. May also be set to <code>none</code> to disable verification.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><code>default</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.core.authentication.HttpClientProperties">HttpClientProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.http-client.proxy-host" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.http-client.proxy-host</code><span class="cas-property-summary">Send requests via a proxy; define the hostname.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Send requests via a proxy; define the hostname.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.core.authentication.HttpClientProperties">HttpClientProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.http-client.proxy-port" data-default="0">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.http-client.proxy-port</code><span class="cas-property-summary">Send requests via a proxy; define the proxy port.</span>
+</div>
+        <div class="cas-property-default"><code>0</code></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Send requests via a proxy; define the proxy port. Negative/zero values should deactivate the proxy configuration for the http client.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Integer</code></dd>
+<dt>Default</dt>
+<dd><code>0</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.core.authentication.HttpClientProperties">HttpClientProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.http-client.response-timeout" data-default="PT5S" data-duration>
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.http-client.response-timeout</code><span class="cas-property-summary">Determines the timeout until arrival of a response from the opposite endpoint.</span>
+</div>
+        <div class="cas-property-default"><code>PT5S</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag"><i class="fa fa-clock" aria-hidden="true"></i>Duration</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Determines the timeout until arrival of a response from the opposite endpoint. A timeout value of zero is interpreted as an infinite timeout. Please note that response timeout may be unsupported by HTTP transports with message multiplexing.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><code>PT5S</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.core.authentication.HttpClientProperties">HttpClientProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.http-client.socket-timeout" data-default="PT5S" data-duration>
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.http-client.socket-timeout</code><span class="cas-property-summary">Determines the default socket timeout value for I/O operations.</span>
+</div>
+        <div class="cas-property-default"><code>PT5S</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag"><i class="fa fa-clock" aria-hidden="true"></i>Duration</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Determines the default socket timeout value for I/O operations.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><code>PT5S</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.core.authentication.HttpClientProperties">HttpClientProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.http-client.truststore.file" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.http-client.truststore.file</code><span class="cas-property-summary">The CAS local truststore resource to contain certificates to the CAS deployment.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>The CAS local truststore resource to contain certificates to the CAS deployment. In the event that local certificates are to be imported into the CAS running environment, a local truststore is provided by CAS to improve portability of configuration across environments.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Resource</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.core.authentication.HttpClientTrustStoreProperties">HttpClientTrustStoreProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.http-client.truststore.psw" data-default="changeit">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.http-client.truststore.psw</code><span class="cas-property-summary">The truststore password.</span>
+</div>
+        <div class="cas-property-default"><code>changeit</code></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>The truststore password.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><code>changeit</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.core.authentication.HttpClientTrustStoreProperties">HttpClientTrustStoreProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.http-client.truststore.type" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.http-client.truststore.type</code><span class="cas-property-summary">Truststore type used to create a SSL context for http client.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Truststore type used to create a SSL context for http client.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.core.authentication.HttpClientTrustStoreProperties">HttpClientTrustStoreProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+</div>
+<p class="cas-properties-legend">
+        <strong>Required</strong> settings may be needed to activate or affect the feature; review them even when they have a default.
+        <strong>Optional</strong> settings only need to be set to change a default or to turn on the behavior they control.
+        <strong>Third party</strong> settings belong to libraries such as Spring Boot that CAS builds on; their own documentation may have more detail.
+    </p>
+<div class="cas-properties-topics"><details class="cas-properties-topic">
+            <summary><i class="fa fa-newspaper" aria-hidden="true"></i>Notes on configuration</summary>
+            <div class="cas-properties-topic-body">
+<!-- fragment:keep -->
+
+<p></p>
+
+<h4 id="configuration-metadata">Configuration Metadata</h4>
+
+<p>The collection of configuration properties listed in this section are automatically generated from the CAS source and components that contain the actual field
+definitions, types, descriptions, modules, etc. This metadata may not always be 100% accurate, or could be lacking details and sufficient explanations.</p>
+
+<h4 id="be-selective">Be Selective</h4>
+
+<p>This section is meant as a guide only. Do NOT copy/paste the entire collection of settings into your CAS configuration; rather pick only the properties that you
+need. Do NOT enable settings unless you are certain of their purpose and do NOT copy settings into your configuration only to keep them as reference. All these
+ideas lead to upgrade headaches, maintenance nightmares and premature aging.</p>
+
+<h4 id="yagni">YAGNI</h4>
+
+<p>Note that for nearly ALL use cases, declaring and configuring properties listed here is sufficient. You should NOT have to explicitly massage a CAS XML/Java/etc
+configuration file to design an authentication handler, create attribute release policies, etc. CAS at runtime will auto-configure all required changes for you.
+If you are unsure about the meaning of a given CAS setting, do NOT turn it on without hesitation. Review the codebase or better yet, ask questions to clarify
+the intended behavior.</p>
+
+<h4 id="naming-convention">Naming Convention</h4>
+
+<p>Property names can be specified in very relaxed terms. For instance <code class="language-plaintext highlighter-rouge">cas.someProperty</code>, <code class="language-plaintext highlighter-rouge">cas.some-property</code>, <code class="language-plaintext highlighter-rouge">cas.some_property</code> are all valid names. While all
+forms are accepted by CAS, there are certain components (in CAS and other frameworks used) whose activation at runtime is conditional on a property value, where
+this property is required to have been specified in CAS configuration using kebab case. This is both true for properties that are owned by CAS as well as those
+that might be presented to the system via an external library or framework such as Spring Boot, etc.</p>
+
+<div class="alert alert-info">
+<img class="emoji" title=":information_source:" alt=":information_source:" src="https://github.githubassets.com/images/icons/emoji/unicode/2139.png" height="20" width="20"> <strong>Note</strong> <p>
+When possible, properties should be stored in lower-case kebab format, such as <code>cas.property-name=value</code>.
+The only possible exception to this rule is when naming actuator endpoints; The name of the
+actuator endpoints (i.e. <code>ssoSessions</code>) <strong>MUST</strong> remain in camelCase mode. 
+</p>
+</div>
+
+<p>Settings and properties that are controlled by the CAS platform directly always begin with the prefix <code class="language-plaintext highlighter-rouge">cas</code>. All other settings are controlled and provided
+to CAS via other underlying frameworks and may have their own schemas and syntax. BE CAREFUL with
+the distinction. Unrecognized properties are rejected by CAS and/or frameworks upon which CAS depends. This means if you somehow misspell a property definition
+or fail to adhere to the dot-notation syntax and such, your setting is entirely refused by CAS and likely the feature it controls will never be activated in the
+way you intend.</p>
+
+<h4 id="validation">Validation</h4>
+
+<p>Configuration properties are automatically validated on CAS startup to report issues with configuration binding, especially if defined CAS settings cannot be
+recognized or validated by the configuration schema. Additional validation processes are also handled
+via <a href="/cas/development/configuration/Configuration-Metadata-Repository.html">Configuration Metadata</a> and property migrations applied automatically on
+startup by Spring Boot and family.</p>
+
+<h4 id="indexed-settings">Indexed Settings</h4>
+
+<p>CAS settings able to accept multiple values are typically documented with an index, such as <code class="language-plaintext highlighter-rouge">cas.some.setting[0]=value</code>. The index <code class="language-plaintext highlighter-rouge">[0]</code> is meant to be
+incremented by the adopter to allow for distinct multiple configuration blocks.</p>
+
+            </div>
+        </details></div>
+</div>
+
+<h3 id="connections-to-dependent-systems">Connections to Dependent Systems</h3>
+
+<p>CAS commonly requires connections to other systems such as LDAP directories, databases, and caching services.
+We generally recommend to use secure transport (SSL/TLS, IPSec) to those systems where possible, but there may
+be compensating controls that make secure transport unnecessary. Private networks and corporate networks with strict
+access controls are common exceptions, but secure transport is recommended nonetheless.
+Client certification validation can be another good solution for LDAP to bring sufficient security.</p>
+
+<p>As stated previously, connections to other systems must be secured. But if the CAS server is deployed on several nodes,
+the same applies to the CAS server itself. If a cache-based ticket registry runs without any security issue on a single
+CAS server, synchronization can become a security problem when using multiple nodes if the network is not protected.</p>
+
+<h2 id="deployment-driven-security-features">Deployment-Driven Security Features</h2>
+
+<p>CAS supports a number of features that can be leveraged to implement various security policies.
+The following features are provided through CAS configuration and CAS client integration. Note that many features
+are available out of the box, while others require explicit setup</p>
+
+<h3 id="forced-authentication">Forced Authentication</h3>
+
+<p>Many CAS clients and supported protocols support the concept of forced authentication whereby a user must
+re-authenticate to access a particular service. The CAS protocols support forced authentication via the <em>renew</em>
+parameter. Forced authentication provides additional assurance in the identity of
+the principal of an SSO session since the user must verify his or her credentials prior to access.
+Forced authentication is suitable for services where higher security is desired or mandated. Typically forced
+authentication is configured on a per-service basis, but the <a href="#service-management">service management</a> facility
+provides some support for implementing forced authentication as a matter of centralized security policy.
+Forced authentication may be combined with 
+<a href="../mfa/Configuring-Multifactor-Authentication.html">multi-factor authentication</a> features to
+implement arbitrary service-specific access control policy.</p>
+
+<h3 id="passive-authentication">Passive Authentication</h3>
+
+<p>Some CAS protocols support passive authentication where access to a CAS-protected service is granted anonymously
+when requested. The CASv2 and CASv3 protocols support this capability via the <em>gateway</em> feature. Passive authentication
+complements forced authentication; where forced authentication requires authentication to access a service, passive
+authentication permits service access, albeit anonymously, without authentication.</p>
+
+<h3 id="proxy-authentication">Proxy Authentication</h3>
+
+<p>Proxy authentication, or delegated authentication, provides a powerful, important, and potentially security-improving
+feature of CAS. Proxy authentication is supported by the CASv2 and CASv3 protocols and is mediated by proxy tickets
+that are requested by a service on behalf of a user; thus the service proxies authentication for the user.
+Proxy authentication is commonly used in cases where a service cannot interact directly with the user and as an
+alternative to replaying end-user credentials to a service.</p>
+
+<p>However, proxy tickets carry risk in that services accepting proxy tickets are responsible for validating the
+proxy chain (the list of services through which the end-user’s authentication have been delegated to arrive at
+the ticket validating service). Services can opt out of accepting proxy tickets entirely (and avoid
+responsibility for validating proxy chains) by validating tickets against the /serviceValidate
+validation endpoint, but experience has shown it’s easy to be confused about this and configure to
+unintentionally use the /proxyValidate endpoint yet not scrutinize any proxy chains that appear in the
+ticket validation response. Thus proxy authentication requires careful configuration for proper security controls;
+it is recommended to disable proxy authentication components at the CAS server if proxy authentication is not
+needed.</p>
+
+<p>Historically any service could obtain a proxy-granting ticket and from it a proxy ticket to access any other service.
+In other words, the security model is decentralized rather than centralized. The service management facility affords
+some centralized control of proxy authentication by exposing a proxy authentication flag that can enabled or disabled
+on a per-service basis. By default registered services are not granted proxy authentication capability.</p>
+
+<h3 id="credential-caching-and-replay">Credential Caching and Replay</h3>
+
+<p>The <em>ClearPass</em> extension provides a mechanism to capture primary authentication credentials, cache them (encrypted),
+and replay on demand as needed to access legacy services. While <a href="#proxy-authentication">proxy authentication</a>
+is recommended in lieu of password replay, it may be required to integrate legacy services with CAS. See the
+<a href="../integration/ClearPass.html">ClearPass</a> documentation for detailed information.</p>
+
+<h3 id="service-management">Service Management</h3>
+
+<p>The service management facility provides a number of service-specific configuration controls that affect security
+policy and provide some support for centralized security policy. (Note that CAS has historically supported the
+decentralized security policy model.) Some highlights of service management controls:</p>
+
+<ul>
+  <li>Authorized services</li>
+  <li>Forced authentication</li>
+  <li>Attribute release</li>
+  <li>Proxy authentication control</li>
+  <li>Theme control</li>
+  <li>Service authorization control</li>
+  <li>Multi-factor service access policy</li>
+</ul>
+
+<p>The service management facility is comprised of a service registry containing one or more registered services, each
+of which specifies the management controls above. The service registry can be controlled via static configuration files,
+a Web user interface, or both. See the <a href="../services/Service-Management.html">Service Management</a> section for more
+information.</p>
+
+<div class="alert alert-warning">
+<img class="emoji" title=":warning:" alt=":warning:" src="https://github.githubassets.com/images/icons/emoji/unicode/26a0.png" height="20" width="20"> <strong>Authorized Services</strong><p>
+As a security best practice, it is <strong>strongly</strong> recommended to limit the service management facility
+to only include the list of known applications that are authorized to use CAS. Leaving the management interface
+open for all applications may create an opportunity for security attacks.
+</p>
+</div>
+
+<h3 id="sso-cookie-encryption">SSO Cookie Encryption</h3>
+
+<p>A ticket-granting cookie is an HTTP cookie set by CAS upon the establishment of a single sign-on session.
+The cookie value is by default encrypted and signed via settings defined in CAS properties.
+While sample data is provided for initial deployments, these keys <strong>MUST</strong> be regenerated per your specific
+environment. Please <a href="../authentication/Configuring-SSO.html">see this guide</a> for more info.</p>
+
+<h3 id="password-management-secure-links">Password Management Secure Links</h3>
+
+<p>Account password reset requests are handled via a secured link that is sent to the registered
+email address of the user. The link is available only within a defined time window
+and the request is properly signed and encrypted by CAS. While sample data is provided for initial deployments, these keys <strong>MUST</strong> be regenerated per your specific environment.</p>
+
+<p>Please <a href="../installation/Password-Policy-Enforcement.html">see this guide</a> for more info.</p>
+
+<h3 id="protocol-ticket-encryption">Protocol Ticket Encryption</h3>
+
+<p>Protocol tickets that are issued by CAS and shared with other applications such as service tickets may optionally go through a signing/encryption process. Even though the CAS server will always cross check ticket validity and expiration policy, this may be forced as an extra check to ensure tickets in transit to other applications are not tampered with and remain to be authentic. While sample data is provided for initial deployments, these keys <strong>MUST</strong> be regenerated per your specific environment.</p>
+
+<div class="alert alert-warning">
+<img class="emoji" title=":warning:" alt=":warning:" src="https://github.githubassets.com/images/icons/emoji/unicode/26a0.png" height="20" width="20"> <strong>Pay Attention</strong><p>Encrypting and signing a generated ticket will, depending on the encryption method and algorithm used, increase the generated ticket length. Not all CAS clients are equipped to handle lengthy ticket strings and may get upset with you. Evaluate existing integrations before turning this on and consider whether this feature is truly needed for your deployment.</p>
+</div>
+
+<p></p>
+
+<p>This CAS feature is able to accept signing and encryption crypto keys. In most scenarios if keys are not provided, CAS will
+auto-generate them. The following instructions apply if you wish to manually and beforehand create the signing and encryption keys.</p>
+
+<p>Note that if you are asked to create a <a href="https://tools.ietf.org/html/rfc7517">JWK</a> of a certain size for the key, you are to use
+the following set of commands to generate the token:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+2
+</pre></td>
+<td class="rouge-code"><pre>wget https://raw.githubusercontent.com/apereo/cas/master/etc/jwk-gen.jar
+java <span class="nt">-jar</span> jwk-gen.jar <span class="nt">-t</span> oct <span class="nt">-s</span> <span class="o">[</span>size]
+</pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+<p>The outcome would be similar to:</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+</pre></td>
+<td class="rouge-code"><pre><span class="p">{</span><span class="w">
+  </span><span class="nl">"kty"</span><span class="p">:</span><span class="w"> </span><span class="s2">"oct"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"kid"</span><span class="p">:</span><span class="w"> </span><span class="s2">"..."</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"k"</span><span class="p">:</span><span class="w"> </span><span class="s2">"..."</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+<p>The generated value for <code class="language-plaintext highlighter-rouge">k</code> needs to be assigned to the relevant CAS settings. Note that keys generated via
+the above algorithm are processed by CAS using the Advanced Encryption Standard (<code class="language-plaintext highlighter-rouge">AES</code>) algorithm which is a
+specification for the encryption of electronic data established by the U.S. National Institute of Standards and Technology.</p>
+
+<hr>
+
+<h3 id="ticket-registry-encryption">Ticket Registry Encryption</h3>
+
+<p>Secure ticket replication as it regards clustered CAS deployments may be required to ensure generated tickets by CAS are not tampered with in transit. CAS covers this issue by allowing tickets to be natively encrypted and signed. While sample data is provided for initial deployments, these keys <strong>MUST</strong> be regenerated per your specific environment.
+Please <a href="../installation/Ticket-Registry-Replication-Encryption.html">see this guide</a> for more info.</p>
+
+<h3 id="ticket-expiration-policies">Ticket Expiration Policies</h3>
+
+<p>Ticket expiration policies are a primary mechanism for implementing security policy. Ticket expiration policy allows
+control of some important aspects of CAS SSO session behavior:</p>
+
+<ul>
+  <li>SSO session duration (sliding expiration, absolute)</li>
+  <li>Ticket reuse</li>
+</ul>
+
+<p>See the <a href="../ticketing/Configuring-Ticketing-Components.html">Configuring Ticketing Components</a> section for a
+detailed discussion of the various expiration policies and configuration instructions.</p>
+
+<h3 id="single-sign-out">Single Sign-Out</h3>
+
+<p>Single sign-out, or single log-out (SLO), is a feature by which CAS services are notified of the termination of a CAS
+SSO session with the expectation that services terminate access for the SSO session owner. While single sign-out can
+improve security, it is fundamentally a best-effort facility and may not actually terminate access to all services
+consumed during an SSO session. The following compensating controls may be used to improve risks associated with
+single sign-out shortcomings:</p>
+
+<ul>
+  <li>Require forced authentication for sensitive services</li>
+  <li>Reduce application session timeouts</li>
+  <li>Reduce SSO session duration</li>
+</ul>
+
+<p>SLO can happen in two ways: from the CAS server (back-channel logout) and/or from the browser (front-channel logout).
+For back-channel logout, the SLO process relies on the <code class="language-plaintext highlighter-rouge">SimpleHttpClient</code> class which has a threads pool: its size must be defined to properly treat all the logout requests.
+Additional not-already-processed logout requests are temporarily stored in a queue before being sent: its size is defined to 20% of the global capacity of the threads pool and can be adjusted.
+Both sizes are critical settings of the CAS system and their values should never exceed the real capacity of the CAS server.</p>
+
+<h3 id="login-throttling">Login Throttling</h3>
+
+<p>CAS supports a policy-driven feature to limit successive failed authentication attempts to help prevent brute force
+and denial of service attacks. The feature is beneficial in environments where back-end authentication stores lack
+equivalent features. In cases where this support is available in underlying systems, we encourage using it instead
+of CAS features; the justification is that enabling support in underlying systems provides the feature in all dependent
+systems including CAS. See the <a href="../authentication/Configuring-Authentication-Throttling.html">login throttling configuration</a> 
+section for further information.</p>
+
+<h3 id="credential-encryption">Credential Encryption</h3>
+
+<p>To learn how sensitive CAS settings can be secured via encryption, <a href="../configuration/Configuration-Properties-Security.html">please review this guide</a>.</p>
+
+<h3 id="cas-security-filter">CAS Security Filter</h3>
+
+<p>The CAS project provides a number of a blunt security filters suitable for patching-in-place Java
+CAS server and Java CAS client deployments vulnerable to certain request parameter based bad-CAS-protocol-input attacks.
+The filters are configured to sanitize authentication request parameters and reject the request if it is not compliant with
+the CAS protocol in the event that for instance, a parameter is repeated multiple times, includes multiple values, contains unacceptable values, etc.</p>
+
+<p>It is <strong>STRONGLY</strong> recommended that all CAS deployments be evaluated and include this configuration if necessary to prevent
+protocol attacks in situations where the CAS container and environment are unable to block malicious and badly-configured requests.</p>
+
+<h4 id="cors">CORS</h4>
+
+<p>CAS provides first-class support for enabling HTTP access control (CORS).
+One application of CORS is when a resource makes a cross-origin HTTP request when it requests a resource from a
+different domain than the one which the first resource itself serves. This should help more with CAS-enabled
+applications are accessed via XHR/Ajax requests.</p>
+
+<!-- fragment:keep -->
+
+<p>The following settings and properties are available from the CAS configuration catalog:</p>
+
+
+<div class="cas-properties">
+    <div class="cas-properties-list">
+<div class="cas-property" data-kind="required" data-name="cas.http-web-request.cors.enabled" data-default="false">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.http-web-request.cors.enabled</code><span class="cas-property-summary">Whether CORS should be enabled for http requests.</span>
+</div>
+        <div class="cas-property-default"><code>false</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-required"><i class="fa fa-asterisk" aria-hidden="true"></i>Required</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Whether CORS should be enabled for http requests.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Boolean</code></dd>
+<dt>Default</dt>
+<dd><code>false</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.core.web.security.HttpCorsRequestProperties">HttpCorsRequestProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.http-web-request.cors.allow-credentials" data-default="true">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.http-web-request.cors.allow-credentials</code><span class="cas-property-summary">The Access-Control-Allow-Credentials header Indicates whether or not the response to the request can be exposed when the credentials flag is true.</span>
+</div>
+        <div class="cas-property-default"><code>true</code></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>The Access-Control-Allow-Credentials header Indicates whether or not the response to the request can be exposed when the credentials flag is true. When used as part of a response to a preflight request, this indicates whether or not the actual request can be made using credentials. Note that simple GET requests are not preflighted, and so if a request is made for a resource with credentials, if this header is not returned with the resource, the response is ignored by the browser and not returned to web content.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Boolean</code></dd>
+<dt>Default</dt>
+<dd><code>true</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.core.web.security.HttpCorsRequestProperties">HttpCorsRequestProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.http-web-request.cors.allow-headers" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.http-web-request.cors.allow-headers</code><span class="cas-property-summary">The Access-Control-Allow-Headers header is used in response to a preflight request to indicate which HTTP headers can be used when making the actual request.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>The Access-Control-Allow-Headers header is used in response to a preflight request to indicate which HTTP headers can be used when making the actual request. Default is everything.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>List&lt;String&gt;</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.core.web.security.HttpCorsRequestProperties">HttpCorsRequestProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.http-web-request.cors.allow-methods" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.http-web-request.cors.allow-methods</code><span class="cas-property-summary">The Access-Control-Allow-Methods header specifies the method or methods allowed when accessing the resource.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>The Access-Control-Allow-Methods header specifies the method or methods allowed when accessing the resource. This is used in response to a pre-flight request. The conditions under which a request is pre-flighted are discussed above. Default is everything.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>List&lt;String&gt;</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.core.web.security.HttpCorsRequestProperties">HttpCorsRequestProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.http-web-request.cors.allow-origin-patterns" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.http-web-request.cors.allow-origin-patterns</code><span class="cas-property-summary">Comma-separated list of origin patterns to allow.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Comma-separated list of origin patterns to allow. Unlike allowed origins which only supports <code>*</code>, origin patterns are more flexible (for example <code>https://*.example.com</code>) and can be used when credentials are allowed. When no allowed origin patterns or allowed origins are set, CORS support is disabled.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>List&lt;String&gt;</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.core.web.security.HttpCorsRequestProperties">HttpCorsRequestProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.http-web-request.cors.allow-origins" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.http-web-request.cors.allow-origins</code><span class="cas-property-summary">The Origin header indicates the origin of the cross-site access request or preflight request.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>The Origin header indicates the origin of the cross-site access request or preflight request. The origin is a URI indicating the server from which the request initiated. When credentials are allowed, '*' cannot be used and origin patterns should be configured instead. It does not include any path information, but only the server name.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>List&lt;String&gt;</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.core.web.security.HttpCorsRequestProperties">HttpCorsRequestProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.http-web-request.cors.exposed-headers" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.http-web-request.cors.exposed-headers</code><span class="cas-property-summary">The Access-Control-Expose-Headers header lets a server accept headers that browsers are allowed to access.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>The Access-Control-Expose-Headers header lets a server accept headers that browsers are allowed to access.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>List&lt;String&gt;</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.core.web.security.HttpCorsRequestProperties">HttpCorsRequestProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.http-web-request.cors.max-age" data-default="3600">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.http-web-request.cors.max-age</code><span class="cas-property-summary">The Access-Control-Max-Age header indicates how long the results of a preflight request can be cached.</span>
+</div>
+        <div class="cas-property-default"><code>3600</code></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>The Access-Control-Max-Age header indicates how long the results of a preflight request can be cached.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Long</code></dd>
+<dt>Default</dt>
+<dd><code>3600</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.core.web.security.HttpCorsRequestProperties">HttpCorsRequestProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+</div>
+<p class="cas-properties-legend">
+        <strong>Required</strong> settings may be needed to activate or affect the feature; review them even when they have a default.
+        <strong>Optional</strong> settings only need to be set to change a default or to turn on the behavior they control.
+        <strong>Third party</strong> settings belong to libraries such as Spring Boot that CAS builds on; their own documentation may have more detail.
+    </p>
+<div class="cas-properties-topics"><details class="cas-properties-topic">
+            <summary><i class="fa fa-newspaper" aria-hidden="true"></i>Notes on configuration</summary>
+            <div class="cas-properties-topic-body">
+<!-- fragment:keep -->
+
+<p></p>
+
+<h4 id="configuration-metadata">Configuration Metadata</h4>
+
+<p>The collection of configuration properties listed in this section are automatically generated from the CAS source and components that contain the actual field
+definitions, types, descriptions, modules, etc. This metadata may not always be 100% accurate, or could be lacking details and sufficient explanations.</p>
+
+<h4 id="be-selective">Be Selective</h4>
+
+<p>This section is meant as a guide only. Do NOT copy/paste the entire collection of settings into your CAS configuration; rather pick only the properties that you
+need. Do NOT enable settings unless you are certain of their purpose and do NOT copy settings into your configuration only to keep them as reference. All these
+ideas lead to upgrade headaches, maintenance nightmares and premature aging.</p>
+
+<h4 id="yagni">YAGNI</h4>
+
+<p>Note that for nearly ALL use cases, declaring and configuring properties listed here is sufficient. You should NOT have to explicitly massage a CAS XML/Java/etc
+configuration file to design an authentication handler, create attribute release policies, etc. CAS at runtime will auto-configure all required changes for you.
+If you are unsure about the meaning of a given CAS setting, do NOT turn it on without hesitation. Review the codebase or better yet, ask questions to clarify
+the intended behavior.</p>
+
+<h4 id="naming-convention">Naming Convention</h4>
+
+<p>Property names can be specified in very relaxed terms. For instance <code class="language-plaintext highlighter-rouge">cas.someProperty</code>, <code class="language-plaintext highlighter-rouge">cas.some-property</code>, <code class="language-plaintext highlighter-rouge">cas.some_property</code> are all valid names. While all
+forms are accepted by CAS, there are certain components (in CAS and other frameworks used) whose activation at runtime is conditional on a property value, where
+this property is required to have been specified in CAS configuration using kebab case. This is both true for properties that are owned by CAS as well as those
+that might be presented to the system via an external library or framework such as Spring Boot, etc.</p>
+
+<div class="alert alert-info">
+<img class="emoji" title=":information_source:" alt=":information_source:" src="https://github.githubassets.com/images/icons/emoji/unicode/2139.png" height="20" width="20"> <strong>Note</strong> <p>
+When possible, properties should be stored in lower-case kebab format, such as <code>cas.property-name=value</code>.
+The only possible exception to this rule is when naming actuator endpoints; The name of the
+actuator endpoints (i.e. <code>ssoSessions</code>) <strong>MUST</strong> remain in camelCase mode. 
+</p>
+</div>
+
+<p>Settings and properties that are controlled by the CAS platform directly always begin with the prefix <code class="language-plaintext highlighter-rouge">cas</code>. All other settings are controlled and provided
+to CAS via other underlying frameworks and may have their own schemas and syntax. BE CAREFUL with
+the distinction. Unrecognized properties are rejected by CAS and/or frameworks upon which CAS depends. This means if you somehow misspell a property definition
+or fail to adhere to the dot-notation syntax and such, your setting is entirely refused by CAS and likely the feature it controls will never be activated in the
+way you intend.</p>
+
+<h4 id="validation">Validation</h4>
+
+<p>Configuration properties are automatically validated on CAS startup to report issues with configuration binding, especially if defined CAS settings cannot be
+recognized or validated by the configuration schema. Additional validation processes are also handled
+via <a href="/cas/development/configuration/Configuration-Metadata-Repository.html">Configuration Metadata</a> and property migrations applied automatically on
+startup by Spring Boot and family.</p>
+
+<h4 id="indexed-settings">Indexed Settings</h4>
+
+<p>CAS settings able to accept multiple values are typically documented with an index, such as <code class="language-plaintext highlighter-rouge">cas.some.setting[0]=value</code>. The index <code class="language-plaintext highlighter-rouge">[0]</code> is meant to be
+incremented by the adopter to allow for distinct multiple configuration blocks.</p>
+
+            </div>
+        </details></div>
+</div>
+
+<h4 id="security-response-headers">Security Response Headers</h4>
+
+<p>As part of the CAS Security Filter, the CAS project automatically provides the necessary configuration to
+insert HTTP Security headers into the web response to prevent against HSTS, XSS, X-FRAME and other attacks.
+These settings are presently on by default.</p>
+
+<!-- fragment:keep -->
+
+<p>The following settings and properties are available from the CAS configuration catalog:</p>
+
+
+<div class="cas-properties">
+    <div class="cas-properties-list">
+<div class="cas-property" data-kind="required" data-name="cas.http-web-request.header.enabled" data-default="true">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.http-web-request.header.enabled</code><span class="cas-property-summary">Allow CAS to inject and enforce http security headers via an http filter that are outlined here for caching, HSTS, etc.</span>
+</div>
+        <div class="cas-property-default"><code>true</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-required"><i class="fa fa-asterisk" aria-hidden="true"></i>Required</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Allow CAS to inject and enforce http security headers via an http filter that are outlined here for caching, HSTS, etc.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Boolean</code></dd>
+<dt>Default</dt>
+<dd><code>true</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.core.web.security.HttpHeadersRequestProperties">HttpHeadersRequestProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.http-web-request.header.cache" data-default="true">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.http-web-request.header.cache</code><span class="cas-property-summary">When true, will inject the following headers into the response for non-static resources.</span>
+</div>
+        <div class="cas-property-default"><code>true</code></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><div>When true, will inject the following headers into the response for non-static resources. <pre> Cache-Control: no-cache, no-store, max-age=0, must-revalidate Pragma: no-cache Expires: 0 </pre>
+</div></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Boolean</code></dd>
+<dt>Default</dt>
+<dd><code>true</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.core.web.security.HttpHeadersRequestProperties">HttpHeadersRequestProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.http-web-request.header.cache-control-static-resources" data-default="css|js|png|txt|jpg|ico|jpeg|bmp|gif" data-regex>
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.http-web-request.header.cache-control-static-resources</code><span class="cas-property-summary">Files with these extensions are considered static, so they will be cached by browsers.</span>
+</div>
+        <div class="cas-property-default"><code>css|js|png|txt|jpg|ico|jpeg|bmp|gif</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag"><i class="fa fa-asterisk" aria-hidden="true"></i>Regex</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Files with these extensions are considered static, so they will be cached by browsers. The value is part of a RegEx.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><code>css|js|png|txt|jpg|ico|jpeg|bmp|gif</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.core.web.security.HttpHeadersRequestProperties">HttpHeadersRequestProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.http-web-request.header.content-security-policy" data-default="script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google.com; object-src 'none'; worker-src 'self' blob: 'unsafe-inline';" data-spel>
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.http-web-request.header.content-security-policy</code><span class="cas-property-summary">Helps you reduce XSS risks on modern browsers by declaring what dynamic resources are allowed to load via a HTTP Header.</span>
+</div>
+        <div class="cas-property-default"><code>script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google.com; object-src 'none'; worker-src 'self' blob: 'unsafe-inline';</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag"><i class="fa fa-code" aria-hidden="true"></i>SpEL</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Helps you reduce XSS risks on modern browsers by declaring what dynamic resources are allowed to load via a HTTP Header. Header value is made up of one or more directives. Multiple directives are separated with a semicolon. @nonce@ is a specific value which is replaced by a generated random value saved as the request attribute 'contentSecurityPolicyGeneratedNonce'.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><code>script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google.com; object-src 'none'; worker-src 'self' blob: 'unsafe-inline';</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.core.web.security.HttpHeadersRequestProperties">HttpHeadersRequestProperties</code></dd>
+<dt>Supports</dt>
+<dd><a href="/cas/development/configuration/Configuration-Spring-Expressions.html">Spring Expression Language</a></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.http-web-request.header.hsts" data-default="true">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.http-web-request.header.hsts</code><span class="cas-property-summary">When true, will inject the following headers into the response: Strict-Transport-Security: ... .</span>
+</div>
+        <div class="cas-property-default"><code>true</code></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>When true, will inject the following headers into the response: <code>Strict-Transport-Security: ...</code>.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Boolean</code></dd>
+<dt>Default</dt>
+<dd><code>true</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.core.web.security.HttpHeadersRequestProperties">HttpHeadersRequestProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.http-web-request.header.hsts-options" data-default="max-age=15768000 ; includeSubDomains">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.http-web-request.header.hsts-options</code><span class="cas-property-summary">Control the value of the Strict-Transport-Security header.</span>
+</div>
+        <div class="cas-property-default"><code>max-age=15768000 ; includeSubDomains</code></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Control the value of the <code>Strict-Transport-Security</code> header.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><code>max-age=15768000 ; includeSubDomains</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.core.web.security.HttpHeadersRequestProperties">HttpHeadersRequestProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.http-web-request.header.xcontent" data-default="true">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.http-web-request.header.xcontent</code><span class="cas-property-summary">When true, will inject the following headers into the response: X-Content-Type-Options: nosniff .</span>
+</div>
+        <div class="cas-property-default"><code>true</code></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>When true, will inject the following headers into the response: <code>X-Content-Type-Options: nosniff</code>.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Boolean</code></dd>
+<dt>Default</dt>
+<dd><code>true</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.core.web.security.HttpHeadersRequestProperties">HttpHeadersRequestProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.http-web-request.header.xframe" data-default="true">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.http-web-request.header.xframe</code><span class="cas-property-summary">When true, will inject the following headers into the response: X-Frame-Options: DENY .</span>
+</div>
+        <div class="cas-property-default"><code>true</code></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>When true, will inject the following headers into the response: <code>X-Frame-Options: DENY</code>.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Boolean</code></dd>
+<dt>Default</dt>
+<dd><code>true</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.core.web.security.HttpHeadersRequestProperties">HttpHeadersRequestProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.http-web-request.header.xframe-options" data-default="DENY">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.http-web-request.header.xframe-options</code><span class="cas-property-summary">Will inject values into the X-Frame-Options header into the response.</span>
+</div>
+        <div class="cas-property-default"><code>DENY</code></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Will inject values into the <code>X-Frame-Options</code> header into the response.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><code>DENY</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.core.web.security.HttpHeadersRequestProperties">HttpHeadersRequestProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.http-web-request.header.xss" data-default="true">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.http-web-request.header.xss</code><span class="cas-property-summary">When true, will inject the following headers into the response: X-XSS-Protection: 1; mode=block .</span>
+</div>
+        <div class="cas-property-default"><code>true</code></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>When true, will inject the following headers into the response: <code>X-XSS-Protection: 1; mode=block</code>.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Boolean</code></dd>
+<dt>Default</dt>
+<dd><code>true</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.core.web.security.HttpHeadersRequestProperties">HttpHeadersRequestProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.http-web-request.header.xss-options" data-default="1; mode=block">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.http-web-request.header.xss-options</code><span class="cas-property-summary">Will inject values into the X-XSS-Protection header into the response.</span>
+</div>
+        <div class="cas-property-default"><code>1; mode=block</code></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Will inject values into the <code>X-XSS-Protection</code> header into the response.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><code>1; mode=block</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.core.web.security.HttpHeadersRequestProperties">HttpHeadersRequestProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+</div>
+<p class="cas-properties-legend">
+        <strong>Required</strong> settings may be needed to activate or affect the feature; review them even when they have a default.
+        <strong>Optional</strong> settings only need to be set to change a default or to turn on the behavior they control.
+        <strong>Third party</strong> settings belong to libraries such as Spring Boot that CAS builds on; their own documentation may have more detail.
+    </p>
+<div class="cas-properties-topics"><details class="cas-properties-topic">
+            <summary><i class="fa fa-newspaper" aria-hidden="true"></i>Notes on configuration</summary>
+            <div class="cas-properties-topic-body">
+<!-- fragment:keep -->
+
+<p></p>
+
+<h4 id="configuration-metadata">Configuration Metadata</h4>
+
+<p>The collection of configuration properties listed in this section are automatically generated from the CAS source and components that contain the actual field
+definitions, types, descriptions, modules, etc. This metadata may not always be 100% accurate, or could be lacking details and sufficient explanations.</p>
+
+<h4 id="be-selective">Be Selective</h4>
+
+<p>This section is meant as a guide only. Do NOT copy/paste the entire collection of settings into your CAS configuration; rather pick only the properties that you
+need. Do NOT enable settings unless you are certain of their purpose and do NOT copy settings into your configuration only to keep them as reference. All these
+ideas lead to upgrade headaches, maintenance nightmares and premature aging.</p>
+
+<h4 id="yagni">YAGNI</h4>
+
+<p>Note that for nearly ALL use cases, declaring and configuring properties listed here is sufficient. You should NOT have to explicitly massage a CAS XML/Java/etc
+configuration file to design an authentication handler, create attribute release policies, etc. CAS at runtime will auto-configure all required changes for you.
+If you are unsure about the meaning of a given CAS setting, do NOT turn it on without hesitation. Review the codebase or better yet, ask questions to clarify
+the intended behavior.</p>
+
+<h4 id="naming-convention">Naming Convention</h4>
+
+<p>Property names can be specified in very relaxed terms. For instance <code class="language-plaintext highlighter-rouge">cas.someProperty</code>, <code class="language-plaintext highlighter-rouge">cas.some-property</code>, <code class="language-plaintext highlighter-rouge">cas.some_property</code> are all valid names. While all
+forms are accepted by CAS, there are certain components (in CAS and other frameworks used) whose activation at runtime is conditional on a property value, where
+this property is required to have been specified in CAS configuration using kebab case. This is both true for properties that are owned by CAS as well as those
+that might be presented to the system via an external library or framework such as Spring Boot, etc.</p>
+
+<div class="alert alert-info">
+<img class="emoji" title=":information_source:" alt=":information_source:" src="https://github.githubassets.com/images/icons/emoji/unicode/2139.png" height="20" width="20"> <strong>Note</strong> <p>
+When possible, properties should be stored in lower-case kebab format, such as <code>cas.property-name=value</code>.
+The only possible exception to this rule is when naming actuator endpoints; The name of the
+actuator endpoints (i.e. <code>ssoSessions</code>) <strong>MUST</strong> remain in camelCase mode. 
+</p>
+</div>
+
+<p>Settings and properties that are controlled by the CAS platform directly always begin with the prefix <code class="language-plaintext highlighter-rouge">cas</code>. All other settings are controlled and provided
+to CAS via other underlying frameworks and may have their own schemas and syntax. BE CAREFUL with
+the distinction. Unrecognized properties are rejected by CAS and/or frameworks upon which CAS depends. This means if you somehow misspell a property definition
+or fail to adhere to the dot-notation syntax and such, your setting is entirely refused by CAS and likely the feature it controls will never be activated in the
+way you intend.</p>
+
+<h4 id="validation">Validation</h4>
+
+<p>Configuration properties are automatically validated on CAS startup to report issues with configuration binding, especially if defined CAS settings cannot be
+recognized or validated by the configuration schema. Additional validation processes are also handled
+via <a href="/cas/development/configuration/Configuration-Metadata-Repository.html">Configuration Metadata</a> and property migrations applied automatically on
+startup by Spring Boot and family.</p>
+
+<h4 id="indexed-settings">Indexed Settings</h4>
+
+<p>CAS settings able to accept multiple values are typically documented with an index, such as <code class="language-plaintext highlighter-rouge">cas.some.setting[0]=value</code>. The index <code class="language-plaintext highlighter-rouge">[0]</code> is meant to be
+incremented by the adopter to allow for distinct multiple configuration blocks.</p>
+
+            </div>
+        </details></div>
+</div>
+
+<h3 id="spring-webflow-sessions">Spring Webflow Sessions</h3>
+
+<p>The CAS project uses Spring Webflow to manage and orchestrate the authentication process. The conversational state of the
+webflow used by CAS is managed by the client which is then passed and tracked throughout various states of the authentication
+process. This state must be secured and encrypted to prevent session hijacking. While CAS provides default encryption
+settings out of the box, it is <strong>STRONGLY</strong> recommended that <a href="../webflow/Webflow-Customization.html">all CAS deployments</a> be
+evaluated prior to production deployments and regenerate this configuration to prevent attacks.</p>
+
+<h3 id="long-term-authentication">Long Term Authentication</h3>
+
+<p>The long term authentication feature, commonly referred to as “Remember Me”, is selected (usually via checkbox) on the CAS login
+form to avoid re-authentication for an extended period of time. Long term authentication allows users to elect additional convenience at
+the expense of reduced security. The extent of reduced security is a function of the characteristics of the device used to establish
+a CAS SSO session. A long-term SSO session established from a device owned or operated by a single user is marginally less secure than
+a standard CAS SSO session. The only real concern would be the increased lifetime and resulting increased exposure of the
+CAS ticket-granting ticket. Establishing a long-term CAS SSO session from a shared device, on the other hand, may dramatically reduce security.
+The likelihood of artifacts from previous SSO sessions affecting subsequent SSO sessions established by other users, even in the face
+of single sign-out, may increase the likelihood of impersonation. While there is no feasible mitigation for improving security
+of long-term SSO sessions on a shared device, educating users on the inherent risks may improve overall security.</p>
+
+<p>It is important to note that forced authentication supersedes long term authentication, thus if a service were
+configured for forced authentication, authentication would be required for service access even in the context of a
+long-term session.</p>
+
+<p>Long term authentication support must be explicitly enabled through
+<a href="../authentication/Configuring-LongTerm-Authentication.html">configuration and UI customization</a>
+during the installation process. Thus deployers choose to offer long-term authentication support, and when available
+users may elect to use it via selection on the CAS login form.</p>
+
+<h3 id="warning-before-redirect">Warning Before Redirect</h3>
+
+<p>CAS supports optional notification of service access during an established SSO session. By default CAS
+transparently requests tickets needed for service access and presents them to the target service for validation,
+whereby upon successful validation access to the service is permitted. In most cases this happens nearly instantly
+and the user is not aware of the CAS authentication process required to access CAS-enabled services. There may be
+some security benefit to awareness of this process, and CAS supports a <em>warn</em> flag that may be selected by the user
+on the CAS login screen to provide an interstitial notification page that is displayed prior to accessing a service.
+By default the notification page offers the user an option to proceed with CAS authentication or abort by
+navigating away from the target service.</p>
+
+            </article>
+            <div class="article-end" aria-hidden="true">
+<span></span><span>CAS</span><span></span>
+</div>
+        </main>
+        
+        <aside class="docs-toc" aria-label="On this page">
+    <nav id="pageContents" aria-label="Table of contents">
+        <p class="eyebrow">ON THIS PAGE</p>
+        <ul class="section-nav"></ul>
+    </nav>
+    <a class="toc-top" href="#cas-docs-container">Back to top <span aria-hidden="true">↑</span></a>
+</aside>
+
+        
+    </div>
+
+    <footer class="site-footer">
+        <a class="footer-brand" href="../../index.html">APEREO <strong>CAS</strong></a>
+        <p>CAS is supported by the <a href="https://www.apereo.org/">Apereo Foundation</a>.</p>
+        <a href="#cas-docs-container">Back to top <span aria-hidden="true">↑</span></a>
+    </footer>
+    <div id="docs-status" class="visually-hidden" role="status" aria-live="polite"></div>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/tether@2.0.0/dist/js/tether.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.11/clipboard.min.js"></script>
+
+    <script src="/cas/javascripts/URI.js"></script>
+    <script src="/cas/javascripts/site.js"></script>
+
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@docsearch/js@3"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="https://code.jquery.com/ui/1.13.1/jquery-ui.js"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.5/js/lightbox.min.js"></script>
+
+    <script>
+        let pageSection = "Planning";
+        let siteUrl = "https://apereo.github.io";
+        let basePath = "/cas";
+
+        
+    </script>
+</body>
+
+</html>

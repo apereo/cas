@@ -1,0 +1,1681 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="light dark">
+    
+    
+    
+
+
+
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <meta name="description" content="Microsoft Azure Active Directory Authentication. Technical guides for Apereo CAS: enterprise identity, authentication, single sign-on and access management.">
+    <meta name="robots" content="index,follow">
+    <meta name="theme-color" content="#06304a">
+    <link rel="canonical" href="https://apereo.github.io/cas/development/authentication/Azure-ActiveDirectory-Authentication.html">
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="en_US">
+    <meta property="og:site_name" content="Apereo CAS Documentation">
+    <meta property="og:title" content="CAS - Microsoft Azure Active Directory Authentication">
+    <meta property="og:description" content="Microsoft Azure Active Directory Authentication. Technical guides for Apereo CAS: enterprise identity, authentication, single sign-on and access management.">
+    <meta property="og:url" content="https://apereo.github.io/cas/development/authentication/Azure-ActiveDirectory-Authentication.html">
+    <meta property="og:image" content="https://apereo.github.io/cas/images/cas_logo.png">
+    <meta property="og:image:alt" content="Apereo CAS">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="CAS - Microsoft Azure Active Directory Authentication">
+    <meta name="twitter:description" content="Microsoft Azure Active Directory Authentication. Technical guides for Apereo CAS: enterprise identity, authentication, single sign-on and access management.">
+    <meta name="twitter:image" content="https://apereo.github.io/cas/images/cas_logo.png">
+
+    
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "TechArticle",
+      "headline": "Microsoft Azure Active Directory Authentication",
+      "description": "Microsoft Azure Active Directory Authentication. Technical guides for Apereo CAS: enterprise identity, authentication, single sign-on and access management.",
+      "url": "https://apereo.github.io/cas/development/authentication/Azure-ActiveDirectory-Authentication.html",
+      "inLanguage": "en",
+      "isPartOf": {"@type": "WebSite", "name": "Apereo CAS Documentation",
+                   "url": "https://apereo.github.io/cas/"},
+      "author": {"@type": "Organization", "name": "Apereo Foundation", "url": "https://www.apereo.org/"},
+      "publisher": {"@type": "Organization", "name": "Apereo Foundation", "url": "https://www.apereo.org/"}
+    }
+    </script>
+    
+
+    <script>
+        ((i, s, o, g, r, a, m) => {
+            i['GoogleAnalyticsObject'] = r;
+            i[r] = i[r] || function () {
+                (i[r].q = i[r].q || []).push(arguments)
+            }, i[r].l = 1 * new Date();
+            a = s.createElement(o),
+                m = s.getElementsByTagName(o)[0];
+            a.async = 1;
+            a.src = g;
+            m.parentNode.insertBefore(a, m)
+        })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
+
+        ga('create', 'UA-83384532-2', 'auto');
+        ga('send', 'pageview');
+
+    </script>
+
+    <script>
+        function readThemePreference() {
+            try {
+                return localStorage.getItem('cas-docs-theme') || 'system';
+            } catch (error) {
+                return 'system';
+            }
+        }
+
+        function systemTheme() {
+            return window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+        }
+
+        function resolveTheme(preference) {
+            return preference === 'dark' || preference === 'light' ? preference : systemTheme();
+        }
+
+        function changeTheme(theme) {
+            if (theme !== 'dark' && theme !== 'light') {
+                return;
+            }
+
+            if (document.documentElement.getAttribute('data-bs-theme') !== theme) {
+                document.documentElement.setAttribute('data-bs-theme', theme);
+            }
+        }
+
+        (() => {
+            let preference = readThemePreference();
+            if (preference !== 'dark' && preference !== 'light') {
+                preference = 'system';
+
+            }
+
+            changeTheme(resolveTheme(preference));
+
+            if (window.matchMedia) {
+                window.matchMedia('(prefers-color-scheme: light)').addEventListener('change', () => {
+                    if (readThemePreference() !== 'system') {
+                        return;
+                    }
+                    const theme = systemTheme();
+                    changeTheme(theme);
+                });
+            }
+        })();
+    </script>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@docsearch/css@3"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.5/css/lightbox.min.css" />
+    
+    
+    <link rel="stylesheet" type="text/css" media="screen" href='/cas/stylesheets/site.css'>
+    <link rel="stylesheet" type="text/css" media="print" href='/cas/stylesheets/site-print.css'>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400..700;1,9..40,400..500&family=JetBrains+Mono:wght@400;500;700&family=Manrope:wght@400..800&family=Newsreader:ital,opsz,wght@0,6..72,300..600;1,6..72,300..600&display=swap" rel="stylesheet">
+    <link href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css" rel="stylesheet">
+
+    <title>CAS - Microsoft Azure Active Directory Authentication · Apereo CAS Documentation</title>
+
+</head>
+
+<body class="" data-docs-base="/cas" data-docs-version="development" data-docs-build="20261004000849">
+    <a class="skip-link" href="#cas-docs-container">Skip to content</a>
+    <header class="site-header">
+        <div class="masthead">
+            <a class="cas-brand" href="../../index.html" aria-label="Apereo CAS home">
+                <img class="brand-logo" src="/cas/images/cas_logo.png" width="119" height="60" alt="CAS">
+                <span class="brand-caption">APEREO CAS<span>Documentation</span></span>
+            </a>
+            <div class="brand-mission">
+                <p>Enterprise Authentication <span class="brand-mission-accent">for All Earthlings and Beyond</span></p>
+                <span>Identity, Single Sign-On and Access Management</span>
+            </div>
+            <a id="forkme_banner" href="https://github.com/apereo/cas"><i class="fab fa-github" aria-hidden="true"></i><span>View on GitHub</span><span aria-hidden="true">↗</span></a>
+        </div>
+        <div class="navigation-bar">
+            
+            <button onclick="navigateSidebar()" id="sidebarNavButton" class="icon-button" type="button" aria-controls="sidebar" aria-expanded="true" aria-label="Toggle documentation navigation" title="Toggle documentation navigation">
+                <i class="fa fa-bars" aria-hidden="true"></i>
+            </button>
+            
+            <nav class="primary-navigation" aria-label="Main navigation">
+                <a href="../../index.html">Home</a>
+                <a href="https://github.com/apereo/cas/releases">Releases</a>
+                <a href="../../Support.html">Support</a>
+                <a href="../../Mailing-Lists.html">Mailing Lists</a>
+                <div class="dropdown">
+                    <button class="dropdown-toggle" type="button" id="cas-versions" data-bs-toggle="dropdown" aria-expanded="false">Versions</button>
+                    <div class="dropdown-menu" aria-labelledby="cas-versions">
+                        
+                        <a class="dropdown-item" href="/cas/development/">Development</a>
+                        
+                        <a class="dropdown-item" href="/cas/8.0.x/">v8.0.x</a>
+                        
+                        <a class="dropdown-item" href="/cas/7.3.x/">v7.3.x</a>
+                        
+                    </div>
+                </div>
+                <a href="https://apereo.github.io" target="_blank" rel="noopener">Blog <span aria-hidden="true">↗</span><span class="visually-hidden"> (opens in a new tab)</span></a>
+            </nav>
+            <div class="navigation-tools">
+                <div id="searchField"></div>
+                <button id="settingsSearchButton" class="icon-button" type="button" aria-label="Search configuration settings (press Shift twice)" title="Search configuration settings (Shift Shift)"><i class="fa fa-sliders" aria-hidden="true"></i></button>
+                <button id="themeToggle" class="icon-button" type="button" onclick="toggleDarkMode()" aria-label="Toggle color theme" title="Toggle color theme"><i class="fa fa-circle-half-stroke" aria-hidden="true"></i></button>
+            </div>
+        </div>
+        <div class="reading-progress" aria-hidden="true"><span id="readingProgress"></span></div>
+    </header>
+
+    <div class="docs-shell">
+        
+        <aside id="sidebar" class="docs-sidebar" aria-label="Documentation navigation">
+    <div class="sidebar-heading">
+<span class="eyebrow">APEREO CAS DOCUMENTATION</span><span class="sidebar-symbol" aria-hidden="true">✳</span>
+</div>
+    <nav id="sidebar-navigation" aria-label="Documentation topics"></nav>
+    <noscript><p>Browse the <a href="/cas/development/sidebar.html">documentation index</a>.</p></noscript>
+</aside>
+
+        
+        <main class="cas-docs-content">
+            
+            <div class="page-toolbar">
+                <nav id="docsNavBar" aria-label="Breadcrumb"></nav>
+                <div id="toolbarIcons" role="group" aria-label="Page tools"></div>
+            </div>
+            
+            
+            <aside id="dev-doc-info" aria-labelledby="dev-doc-title">
+                <span class="development-marker" aria-hidden="true"></span>
+                <div>
+                    <p id="dev-doc-title">WORKERS AHEAD!</p>
+                    <p>You are viewing the <strong>development</strong> documentation for the Apereo CAS server. <strong>The
+                        functionality presented here <a href="https://github.com/apereo/cas/milestones">is not officially released yet</a></strong>.
+                        This is a work in progress and will be continually updated as development moves forward.
+                        <strong>You are most encouraged to test the changes presented.</strong>
+                    </p>
+                </div>
+            </aside>
+            
+            <article id="cas-docs-container" tabindex="-1">
+                
+<h1 id="microsoft-azure-active-directory-authentication">Microsoft Azure Active Directory Authentication</h1>
+
+<p><a href="https://docs.microsoft.com/en-us/azure/active-directory/fundamentals/active-directory-whatis">Azure Active Directory (Azure AD)</a> is Microsoft’s cloud-based identity and access management service. The functionality described here allows one to authenticate credentials using 
+Azure Active Directory as the account store and optionally fetch user attributes using Microsoft Graph.</p>
+
+<h2 id="configuration">Configuration</h2>
+
+<p>Support is enabled by including the following dependency in the WAR overlay:</p>
+
+<div style="display: block">
+
+    <ul class="nav nav-pills cas-modules" role="tablist">
+        <li class="nav-item cas-module" role="presentation"><a class="nav-link" id="mavenorgapereocascasserversupportazureadauthentication-tab" data-bs-toggle="tab" href="#mavenorgapereocascasserversupportazureadauthentication" role="tab" aria-controls="mavenorgapereocascasserversupportazureadauthentication" aria-selected="false">Apache Maven</a></li>
+        <li class="nav-item cas-module" role="presentation"><a class="nav-link" id="gradleorgapereocascasserversupportazureadauthentication-tab" data-bs-toggle="tab" href="#gradleorgapereocascasserversupportazureadauthentication" role="tab" aria-controls="gradleorgapereocascasserversupportazureadauthentication" aria-selected="false">Gradle</a></li>
+<li class="nav-item cas-module" role="presentation"><a class="nav-link" id="bomorgapereocascasserversupportazureadauthentication-tab" data-bs-toggle="tab" href="#bomorgapereocascasserversupportazureadauthentication" role="tab" aria-controls="bomorgapereocascasserversupportazureadauthentication" aria-selected="false">BOM - Spring</a></li>
+        <li class="nav-item cas-module" role="presentation"><a class="nav-link active" id="bomGradleorgapereocascasserversupportazureadauthentication-tab" data-bs-toggle="tab" href="#bomGradleorgapereocascasserversupportazureadauthentication" role="tab" aria-controls="bomGradleorgapereocascasserversupportazureadauthentication" aria-selected="true">BOM - Gradle</a></li>
+<li class="nav-item dropdown cas-module" role="presentation">
+            <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">Resources<span class="caret"></span>
+            </a>
+            <div class="dropdown-menu">
+                <a class="dropdown-item" href="https://getcas.apereo.org/ui?dependencies=webapp-tomcat,support-azuread-authentication" target="_blank" rel="noopener">Show in CAS Initializr <span aria-hidden="true">↗</span><span class="visually-hidden"> (opens in a new tab)</span></a>
+                <a class="dropdown-item" href="javascript:generateOverlay('cas-server-support-azuread-authentication',%20'cas-overlay');">Generate CAS Server WAR Overlay</a>
+            </div>
+        </li>
+    </ul>
+
+
+    <div class="cas-module-tabs tab-content clearfix">
+        <div class="tab-pane fade" id="mavenorgapereocascasserversupportazureadauthentication" role="tabpanel" aria-labelledby="mavenorgapereocascasserversupportazureadauthentication-tab">
+<span>
+      <div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+</pre></td>
+<td class="rouge-code"><pre><span class="nt">&lt;dependency&gt;</span>
+    <span class="nt">&lt;groupId&gt;</span>org.apereo.cas<span class="nt">&lt;/groupId&gt;</span>
+    <span class="nt">&lt;artifactId&gt;</span>cas-server-support-azuread-authentication<span class="nt">&lt;/artifactId&gt;</span>
+    <span class="nt">&lt;version&gt;</span>${cas.version}<span class="nt">&lt;/version&gt;</span>
+<span class="nt">&lt;/dependency&gt;</span>
+</pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+    </span>
+
+        </div>
+
+
+        <div class="tab-pane fade" id="gradleorgapereocascasserversupportazureadauthentication" role="tabpanel" aria-labelledby="gradleorgapereocascasserversupportazureadauthentication-tab">
+
+            <span>
+    
+<div class="language-groovy highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td>
+<td class="rouge-code"><pre><span class="n">implementation</span> <span class="s2">"org.apereo.cas:cas-server-support-azuread-authentication:${project.'cas.version'}"</span>
+</pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+  </span>
+
+        </div>
+
+        <div class="tab-pane fade" id="bomorgapereocascasserversupportazureadauthentication" role="tabpanel" aria-labelledby="bomorgapereocascasserversupportazureadauthentication-tab">
+<span>
+    <div class="language-groovy highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+</pre></td>
+<td class="rouge-code"><pre><span class="n">dependencyManagement</span> <span class="o">{</span>
+    <span class="n">imports</span> <span class="o">{</span>
+        <span class="n">mavenBom</span> <span class="s2">"org.apereo.cas:cas-server-support-bom:${project.'cas.version'}"</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+
+<span class="n">dependencies</span> <span class="o">{</span>
+    <span class="n">implementation</span> <span class="s2">"org.apereo.cas:cas-server-support-azuread-authentication"</span>
+<span class="o">}</span>
+</pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+  </span>
+
+        </div>
+
+        <div class="tab-pane fade show active" id="bomGradleorgapereocascasserversupportazureadauthentication" role="tabpanel" aria-labelledby="bomGradleorgapereocascasserversupportazureadauthentication-tab">
+<span>
+    <div class="language-groovy highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+</pre></td>
+<td class="rouge-code"><pre><span class="n">dependencies</span> <span class="o">{</span>
+    <span class="cm">/*
+        The following platform references are included automatically and are listed for reference only.
+
+        implementation enforcedPlatform("org.apereo.cas:cas-server-support-bom:${project.'cas.version'}")
+        implementation platform(org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES)
+        
+    */</span>
+    <span class="n">implementation</span> <span class="s2">"org.apereo.cas:cas-server-support-azuread-authentication"</span>
+<span class="o">}</span>
+</pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+  </span>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- fragment:keep -->
+
+<p>The following settings and properties are available from the CAS configuration catalog:</p>
+
+
+<div class="cas-properties">
+    <div class="cas-properties-list">
+<div class="cas-property" data-kind="required" data-name="cas.authn.azure-active-directory.client-id" data-default="" data-spel>
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.azure-active-directory.client-id</code><span class="cas-property-summary">Client id of the application.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags">
+<span class="cas-property-tag cas-property-tag-required"><i class="fa fa-asterisk" aria-hidden="true"></i>Required</span><span class="cas-property-tag"><i class="fa fa-code" aria-hidden="true"></i>SpEL</span>
+</div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Client id of the application.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.azuread.AzureActiveDirectoryAuthenticationProperties">AzureActiveDirectoryAuthenticationProperties</code></dd>
+<dt>Supports</dt>
+<dd><a href="/cas/development/configuration/Configuration-Spring-Expressions.html">Spring Expression Language</a></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="required" data-name="cas.authn.azure-active-directory.client-secret" data-default="" data-spel>
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.azure-active-directory.client-secret</code><span class="cas-property-summary">Client secret of the registered app in microsoft azure portal.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags">
+<span class="cas-property-tag cas-property-tag-required"><i class="fa fa-asterisk" aria-hidden="true"></i>Required</span><span class="cas-property-tag"><i class="fa fa-code" aria-hidden="true"></i>SpEL</span>
+</div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Client secret of the registered app in microsoft azure portal.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.azuread.AzureActiveDirectoryAuthenticationProperties">AzureActiveDirectoryAuthenticationProperties</code></dd>
+<dt>Supports</dt>
+<dd><a href="/cas/development/configuration/Configuration-Spring-Expressions.html">Spring Expression Language</a></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="required" data-name="cas.authn.azure-active-directory.password-encoder.encoding-algorithm" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.azure-active-directory.password-encoder.encoding-algorithm</code><span class="cas-property-summary">The encoding algorithm to use such as MD5 .</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-required"><i class="fa fa-asterisk" aria-hidden="true"></i>Required</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>The encoding algorithm to use such as <code>MD5</code>. Relevant when the type used is <code>DEFAULT</code> or <code>GLIBC_CRYPT</code>. When used with <code>PasswordEncoderTypes#PBKDF2</code>, it should be one of <code>PBKDF2WithHmacSHA1</code>, <code>PBKDF2WithHmacSHA256</code> or <code>PBKDF2WithHmacSHA512</code>.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties">PasswordEncoderProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="required" data-name="cas.authn.azure-active-directory.password-encoder.type" data-default="NONE">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.azure-active-directory.password-encoder.type</code><span class="cas-property-summary">Define the password encoder type to use.</span>
+</div>
+        <div class="cas-property-default"><code>NONE</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-required"><i class="fa fa-asterisk" aria-hidden="true"></i>Required</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description">
+<p>Define the password encoder type to use. Type may be specified as blank or <code>NONE</code> to disable password encoding. It may also refer to a fully-qualified class name that implements the Spring Security's <code>PasswordEncoder</code> interface if you wish you define your own encoder.</p>
+<div>The following types may be used: <ul> <li>
+<code>NONE</code>: No password encoding (i.e. plain-text) takes place.</li>
+<li>
+<code>DEFAULT</code>: Use the <code>DefaultPasswordEncoder</code> of CAS. For message-digest algorithms via <code>character-encoding</code> and <code>encoding-algorithm</code>.</li>
+<li>
+<code>BCRYPT</code>: Use the <code>BCryptPasswordEncoder</code> based on the strength provided and an optional secret.</li>
+<li>
+<code>SCRYPT</code>: Use the <code>SCryptPasswordEncoder</code>.</li>
+<li>
+<code>PBKDF2</code>: Use the <code>Pbkdf2PasswordEncoder</code> based on the strength provided and an optional secret.</li>
+<li>
+<code>STANDARD</code>: Use the <code>StandardPasswordEncoder</code> based on the secret provided.</li>
+<li>
+<code>SSHA</code>: Use the <code>LdapShaPasswordEncoder</code> supports Ldap SHA and SSHA (salted-SHA). The values are base-64 encoded and have the label {SHA} or {SSHA} prepended to the encoded hash.</li>
+<li>
+<code>GLIBC_CRYPT</code>: Use the <code>GlibcCryptPasswordEncoder</code> based on the <code>encoding-algorithm</code>, strength provided and an optional secret.</li>
+<li>
+<code>org.example.MyEncoder</code>: An implementation of <code>PasswordEncoder</code> of your own choosing.</li>
+<li>
+<code>file:///path/to/script.groovy</code>: Path to a Groovy script charged with handling password encoding operations.</li>
+</ul>
+</div>
+</div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><code>NONE</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties">PasswordEncoderProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="required" data-name="cas.authn.azure-active-directory.principal-transformation.groovy.location" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.azure-active-directory.principal-transformation.groovy.location</code><span class="cas-property-summary">The location of the resource.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-required"><i class="fa fa-asterisk" aria-hidden="true"></i>Required</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description">
+<p>The location of the resource. Resources can be URLs, or files found either on the classpath or outside somewhere in the file system.</p>
+<p>In the event the configured resource is a Groovy script, especially if the script is set to reload on changes, you may need to adjust the total number of <code>inotify</code> instances. On Linux, you may need to add the following line to <code>/etc/sysctl.conf</code>: <code>fs.inotify.max_user_instances = 256</code>.</p>
+<p>You can check the current value via <code>cat /proc/sys/fs/inotify/max_user_instances</code>.</p>
+<p>In situations and scenarios where CAS is able to automatically watch the underlying resource for changes and detect updates and modifications dynamically, you may be able to specify the following setting as either an environment variable or system property with a value of <code>false</code> to disable the resource watcher: <code>org.apereo.cas.util.io.PathWatcherService</code>.</p>
+</div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Resource</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.core.authentication.GroovyPrincipalTransformationProperties">GroovyPrincipalTransformationProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="required" data-name="cas.authn.azure-active-directory.tenant" data-default="" data-spel>
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.azure-active-directory.tenant</code><span class="cas-property-summary">The microsoft tenant id.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags">
+<span class="cas-property-tag cas-property-tag-required"><i class="fa fa-asterisk" aria-hidden="true"></i>Required</span><span class="cas-property-tag"><i class="fa fa-code" aria-hidden="true"></i>SpEL</span>
+</div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>The microsoft tenant id.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.azuread.AzureActiveDirectoryAuthenticationProperties">AzureActiveDirectoryAuthenticationProperties</code></dd>
+<dt>Supports</dt>
+<dd><a href="/cas/development/configuration/Configuration-Spring-Expressions.html">Spring Expression Language</a></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.authn.azure-active-directory.credential-criteria" data-default="" data-regex>
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.azure-active-directory.credential-criteria</code><span class="cas-property-summary">A number of authentication handlers are allowed to determine whether they can operate on the provided credential and as such lend themselves to be tried and tested during the authentication handler selection phase.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag"><i class="fa fa-asterisk" aria-hidden="true"></i>Regex</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><div>A number of authentication handlers are allowed to determine whether they can operate on the provided credential and as such lend themselves to be tried and tested during the authentication handler selection phase. The credential criteria may be one of the following options:<ul> <li>1) A regular expression pattern that is tested against the credential identifier.</li>
+<li>2) A fully qualified class name of your own design that implements <code>Predicate</code>.</li>
+<li>3) Path to an external Groovy script that implements the same interface.</li>
+</ul>
+</div></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.azuread.AzureActiveDirectoryAuthenticationProperties">AzureActiveDirectoryAuthenticationProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.authn.azure-active-directory.enabled" data-default="true">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.azure-active-directory.enabled</code><span class="cas-property-summary">Enable authentication against Azure active directory.</span>
+</div>
+        <div class="cas-property-default"><code>true</code></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Enable authentication against Azure active directory.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Boolean</code></dd>
+<dt>Default</dt>
+<dd><code>true</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.azuread.AzureActiveDirectoryAuthenticationProperties">AzureActiveDirectoryAuthenticationProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.authn.azure-active-directory.login-url" data-default="https://login.microsoftonline.com/common/">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.azure-active-directory.login-url</code><span class="cas-property-summary">This URL of the security token service that CAS goes to for acquiring tokens for resources and users This URL allows CAS to establish what is called an 'authority'.</span>
+</div>
+        <div class="cas-property-default"><code>https://login.microsoftonline.com/common/</code></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><div>This URL of the security token service that CAS goes to for acquiring tokens for resources and users This URL allows CAS to establish what is called an 'authority'. You can think of the authority as the directory issuing the identities/tokens. The login URL here is then composed of <code>https://&lt;instance&gt;/&lt;tenant&gt;</code>, where 'instance' is the Azure AD host (such as <code>https://login.microsoftonline.com</code>) and 'tenant' is the domain name (such as <code>contoso.onmicrosoft.com</code>) or tenant ID of the directory. Examples of authority URL are: <ul> <li>
+<code>https://login.microsoftonline.com/f31e6716-26e8-4651-b323-2563936b4163</code>: for a single tenant application defined in the tenant</li>
+<li>
+<code>https://login.microsoftonline.com/contoso.onmicrosoft.com</code>: This representation is like the previous one, but uses the tenant domain name instead of the tenant Id.</li>
+<li>
+<code>https://login.microsoftonline.de/contoso.de</code>: also uses a domain name, but in this case the Azure AD tenant admins have set a custom domain for their tenant, and the instance URL here is for the German national cloud.</li>
+<li>
+<code>https://login.microsoftonline.com/common</code>: in the case of a multi-tenant application, that is an application available in several Azure AD tenants.</li>
+<li>It can finally be an Active Directory Federation Services (ADFS) URL, which is recognized with the convention that the URL should contain adfs like <code>https://contoso.com/adfs</code>.</li>
+</ul>
+</div></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><code>https://login.microsoftonline.com/common/</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.azuread.AzureActiveDirectoryAuthenticationProperties">AzureActiveDirectoryAuthenticationProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.authn.azure-active-directory.name" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.azure-active-directory.name</code><span class="cas-property-summary">The name of the authentication handler.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>The name of the authentication handler.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.azuread.AzureActiveDirectoryAuthenticationProperties">AzureActiveDirectoryAuthenticationProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.authn.azure-active-directory.order" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.azure-active-directory.order</code><span class="cas-property-summary">The order of this authentication handler in the chain.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>The order of this authentication handler in the chain.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Integer</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.azuread.AzureActiveDirectoryAuthenticationProperties">AzureActiveDirectoryAuthenticationProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.authn.azure-active-directory.password-encoder.character-encoding" data-default="UTF-8">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.azure-active-directory.password-encoder.character-encoding</code><span class="cas-property-summary">The encoding algorithm to use such as 'UTF-8'.</span>
+</div>
+        <div class="cas-property-default"><code>UTF-8</code></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>The encoding algorithm to use such as 'UTF-8'. Relevant when the type used is <code>DEFAULT</code>.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><code>UTF-8</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties">PasswordEncoderProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.authn.azure-active-directory.password-encoder.hash-length" data-default="16">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.azure-active-directory.password-encoder.hash-length</code><span class="cas-property-summary">When used by PasswordEncoderTypes#ARGON2 , it indicates the hash strength/length.</span>
+</div>
+        <div class="cas-property-default"><code>16</code></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>When used by <code>PasswordEncoderTypes#ARGON2</code>, it indicates the hash strength/length.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Integer</code></dd>
+<dt>Default</dt>
+<dd><code>16</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties">PasswordEncoderProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.authn.azure-active-directory.password-encoder.iterations" data-default="310000">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.azure-active-directory.password-encoder.iterations</code><span class="cas-property-summary">When used by PasswordEncoderTypes#PBKDF2 , it indicates the required number of iterations.</span>
+</div>
+        <div class="cas-property-default"><code>310000</code></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>When used by <code>PasswordEncoderTypes#PBKDF2</code>, it indicates the required number of iterations.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Integer</code></dd>
+<dt>Default</dt>
+<dd><code>310000</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties">PasswordEncoderProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.authn.azure-active-directory.password-encoder.secret" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.azure-active-directory.password-encoder.secret</code><span class="cas-property-summary">Secret to use with PasswordEncoderTypes#STANDARD , PasswordEncoderTypes#PBKDF2 , PasswordEncoderTypes#BCRYPT , PasswordEncoderTypes#GLIBC_CRYPT password encoders.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Secret to use with <code>PasswordEncoderTypes#STANDARD</code>, <code>PasswordEncoderTypes#PBKDF2</code>, <code>PasswordEncoderTypes#BCRYPT</code>, <code>PasswordEncoderTypes#GLIBC_CRYPT</code> password encoders. Secret usually is an optional setting.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties">PasswordEncoderProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.authn.azure-active-directory.password-encoder.strength" data-default="16">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.azure-active-directory.password-encoder.strength</code><span class="cas-property-summary">Strength or number of iterations to use for password hashing.</span>
+</div>
+        <div class="cas-property-default"><code>16</code></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Strength or number of iterations to use for password hashing. Usually relevant when dealing with <code>PasswordEncoderTypes#BCRYPT</code>, <code>PasswordEncoderTypes#PBKDF2</code> or <code>PasswordEncoderTypes#GLIBC_CRYPT</code>. When used by <code>PasswordEncoderTypes#ARGON2</code> or <code>PasswordEncoderTypes#PBKDF2</code>, it indicates the salt strength.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Integer</code></dd>
+<dt>Default</dt>
+<dd><code>16</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties">PasswordEncoderProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.authn.azure-active-directory.principal-transformation.blocking-pattern" data-default="" data-spel>
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.azure-active-directory.principal-transformation.blocking-pattern</code><span class="cas-property-summary">A regular expression that will be used against the username to match for blocking/forbidden values.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag"><i class="fa fa-code" aria-hidden="true"></i>SpEL</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>A regular expression that will be used against the username to match for blocking/forbidden values. If a match is found, an exception will be thrown and principal transformation will fail.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties">PrincipalTransformationProperties</code></dd>
+<dt>Supports</dt>
+<dd><a href="/cas/development/configuration/Configuration-Spring-Expressions.html">Spring Expression Language</a></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.authn.azure-active-directory.principal-transformation.case-conversion" data-default="NONE">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.azure-active-directory.principal-transformation.case-conversion</code><span class="cas-property-summary">Indicate whether the principal identifier should be transformed into upper-case, lower-case, etc.</span>
+</div>
+        <div class="cas-property-default"><code>NONE</code></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><div>Indicate whether the principal identifier should be transformed into upper-case, lower-case, etc. Available values are as follows: <ul>
+<li>
+<code>NONE</code>: No conversion.</li>
+<li>
+<code>LOWERCASE</code>: Lowercase conversion.</li>
+<li>
+<code>UPPERCASE</code>: Uppercase conversion.</li>
+</ul>
+</div></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>PrincipalTransformationProperties.CaseConversion</code></dd>
+<dt>Default</dt>
+<dd><code>NONE</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties">PrincipalTransformationProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.authn.azure-active-directory.principal-transformation.pattern" data-default="" data-spel>
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.azure-active-directory.principal-transformation.pattern</code><span class="cas-property-summary">A regular expression that will be used against the provided username for username extractions.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag"><i class="fa fa-code" aria-hidden="true"></i>SpEL</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>A regular expression that will be used against the provided username for username extractions. On a successful match, the first matched group in the pattern will be used as the extracted username.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties">PrincipalTransformationProperties</code></dd>
+<dt>Supports</dt>
+<dd><a href="/cas/development/configuration/Configuration-Spring-Expressions.html">Spring Expression Language</a></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.authn.azure-active-directory.principal-transformation.prefix" data-default="" data-spel>
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.azure-active-directory.principal-transformation.prefix</code><span class="cas-property-summary">Prefix to add to the principal id prior to authentication.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag"><i class="fa fa-code" aria-hidden="true"></i>SpEL</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Prefix to add to the principal id prior to authentication.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties">PrincipalTransformationProperties</code></dd>
+<dt>Supports</dt>
+<dd><a href="/cas/development/configuration/Configuration-Spring-Expressions.html">Spring Expression Language</a></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.authn.azure-active-directory.principal-transformation.suffix" data-default="" data-spel>
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.azure-active-directory.principal-transformation.suffix</code><span class="cas-property-summary">Suffix to add to the principal id prior to authentication.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag"><i class="fa fa-code" aria-hidden="true"></i>SpEL</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Suffix to add to the principal id prior to authentication.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties">PrincipalTransformationProperties</code></dd>
+<dt>Supports</dt>
+<dd><a href="/cas/development/configuration/Configuration-Spring-Expressions.html">Spring Expression Language</a></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.authn.azure-active-directory.resource" data-default="https://graph.microsoft.com/">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.azure-active-directory.resource</code><span class="cas-property-summary">Resource url for the graph API to fetch attributes.</span>
+</div>
+        <div class="cas-property-default"><code>https://graph.microsoft.com/</code></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Resource url for the graph API to fetch attributes.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><code>https://graph.microsoft.com/</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.azuread.AzureActiveDirectoryAuthenticationProperties">AzureActiveDirectoryAuthenticationProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.authn.azure-active-directory.scope" data-default="openid,email,profile,address">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.azure-active-directory.scope</code><span class="cas-property-summary">Scope used when fetching access tokens.</span>
+</div>
+        <div class="cas-property-default"><code>openid,email,profile,address</code></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Scope used when fetching access tokens. Multiple scopes may be separated using a comma.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><code>openid,email,profile,address</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.azuread.AzureActiveDirectoryAuthenticationProperties">AzureActiveDirectoryAuthenticationProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.authn.azure-active-directory.state" data-default="active">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.azure-active-directory.state</code><span class="cas-property-summary">Define the scope and state of this authentication handler and the lifecycle in which it can be invoked or activated.</span>
+</div>
+        <div class="cas-property-default"><code>active</code></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><div>Define the scope and state of this authentication handler and the lifecycle in which it can be invoked or activated. Available values are as follows: <ul>
+<li>
+<code>ACTIVE</code>: Active authentication handler, and is invoked by default automatically to verify credentials globally.</li>
+<li>
+<code>STANDBY</code>: Authentication handler is in a semi-enabled state, waiting to be called only on-demand when explicitly asked for.</li>
+</ul>
+</div></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>AuthenticationHandlerStates</code></dd>
+<dt>Default</dt>
+<dd><code>active</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.azuread.AzureActiveDirectoryAuthenticationProperties">AzureActiveDirectoryAuthenticationProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+</div>
+<p class="cas-properties-legend">
+        <strong>Required</strong> settings may be needed to activate or affect the feature; review them even when they have a default.
+        <strong>Optional</strong> settings only need to be set to change a default or to turn on the behavior they control.
+        <strong>Third party</strong> settings belong to libraries such as Spring Boot that CAS builds on; their own documentation may have more detail.
+    </p>
+<div class="cas-properties-topics">
+<details class="cas-properties-topic">
+            <summary><i class="fa fa-laptop-code" aria-hidden="true"></i>Groovy scripting</summary>
+            <div class="cas-properties-topic-body">
+                <p>CAS takes advantage of Apache Groovy in forms of either embedded or external scripts that allow one to, by default,
+                    dynamically build constructs, attributes, access strategies and a lot more. To activate the functionality
+                    described here, you may need to prepare CAS to support and integrate with Apache Groovy.</p>
+                <p>Please <a href="https://apereo.github.io/cas/development/integration/Apache-Groovy-Scripting.html">review this guide</a> to configure your build.</p>
+            </div>
+        </details><details class="cas-properties-topic">
+            <summary><i class="fa fa-user-check" aria-hidden="true"></i>Authentication</summary>
+            <div class="cas-properties-topic-body">
+<!-- fragment:keep -->
+
+<p></p>
+
+<p>Certain authentication handlers are allowed to determine whether they can operate on the provided credential
+and as such lend themselves to be tried and tested during the authentication handler selection phase. The credential criteria
+may be one of the following options:</p>
+
+<ul>
+  <li>A regular expression pattern that is tested against the credential identifier.</li>
+  <li>A fully qualified class name of your own design that looks similar to the below example:</li>
+</ul>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+</pre></td>
+<td class="rouge-code"><pre><span class="kn">import</span> <span class="nn">java.util.function.Predicate</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.apereo.cas.authentication.Credential</span><span class="o">;</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">PredicateExample</span> <span class="kd">implements</span> <span class="nc">Predicate</span><span class="o">&lt;</span><span class="nc">Credential</span><span class="o">&gt;</span> <span class="o">{</span>
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">boolean</span> <span class="nf">test</span><span class="o">(</span><span class="kd">final</span> <span class="nc">Credential</span> <span class="n">credential</span><span class="o">)</span> <span class="o">{</span>
+        <span class="c1">// Examine the credential and return true/false</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+<ul>
+  <li>Path to an external Groovy script that looks similar to the below example:</li>
+</ul>
+
+<div class="language-groovy highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+</pre></td>
+<td class="rouge-code"><pre><span class="kn">import</span> <span class="nn">org.apereo.cas.authentication.Credential</span>
+<span class="kn">import</span> <span class="nn">java.util.function.Predicate</span>
+
+<span class="kd">class</span> <span class="nc">PredicateExample</span> <span class="kd">implements</span> <span class="n">Predicate</span><span class="o">&lt;</span><span class="n">Credential</span><span class="o">&gt;</span> <span class="o">{</span>
+    <span class="nd">@Override</span>
+    <span class="kt">boolean</span> <span class="nf">test</span><span class="o">(</span><span class="kd">final</span> <span class="n">Credential</span> <span class="n">credential</span><span class="o">)</span> <span class="o">{</span>
+        <span class="c1">// test and return result</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+<p>To prepare CAS to support and integrate with Apache Groovy, please <a href="https://apereo.github.io/cas/development//integration/Apache-Groovy-Scripting.html">review this guide</a>.</p>
+
+            </div>
+        </details><details class="cas-properties-topic">
+            <summary><i class="fa fa-key" aria-hidden="true"></i>Password encoding</summary>
+            <div class="cas-properties-topic-body">
+<!-- fragment:keep -->
+
+<p></p>
+
+<p>If you need to design your own password encoding scheme where the type is specified as a fully 
+qualified Java class name, the structure of the class would be similar to the following:</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+</pre></td>
+<td class="rouge-code"><pre><span class="kn">package</span> <span class="nn">org.example.cas</span><span class="o">;</span>
+
+<span class="kn">import</span> <span class="nn">org.springframework.security.crypto.codec.*</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.springframework.security.crypto.password.*</span><span class="o">;</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">MyEncoder</span> <span class="kd">extends</span> <span class="nc">AbstractPasswordEncoder</span> <span class="o">{</span>
+    <span class="nd">@Override</span>
+    <span class="kd">protected</span> <span class="kt">byte</span><span class="o">[]</span> <span class="nf">encode</span><span class="o">(</span><span class="nc">CharSequence</span> <span class="n">rawPassword</span><span class="o">,</span> <span class="kt">byte</span><span class="o">[]</span> <span class="n">salt</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="o">...</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+<p>If you need to design your own password encoding scheme where the type is 
+specified as a path to a Groovy script, the structure of the script would be similar to the following:</p>
+
+<div class="language-groovy highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+</pre></td>
+<td class="rouge-code"><pre><span class="kn">import</span> <span class="nn">java.util.*</span>
+
+<span class="kt">byte</span><span class="o">[]</span> <span class="nf">run</span><span class="o">(</span><span class="kd">final</span> <span class="n">Object</span><span class="o">...</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+    <span class="kt">def</span> <span class="o">(</span><span class="n">rawPassword</span><span class="o">,</span><span class="n">generatedSalt</span><span class="o">,</span><span class="n">logger</span><span class="o">,</span><span class="n">applicationContext</span><span class="o">)</span> <span class="o">=</span> <span class="n">args</span>
+    <span class="n">logger</span><span class="o">.</span><span class="na">debug</span><span class="o">(</span><span class="s2">"Encoding password..."</span><span class="o">)</span>
+    <span class="k">return</span> <span class="o">...</span>
+<span class="o">}</span>
+
+<span class="n">Boolean</span> <span class="nf">matches</span><span class="o">(</span><span class="kd">final</span> <span class="n">Object</span><span class="o">...</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+    <span class="kt">def</span> <span class="o">(</span><span class="n">rawPassword</span><span class="o">,</span><span class="n">encodedPassword</span><span class="o">,</span><span class="n">logger</span><span class="o">,</span><span class="n">applicationContext</span><span class="o">)</span> <span class="o">=</span> <span class="n">args</span>
+    <span class="n">logger</span><span class="o">.</span><span class="na">debug</span><span class="o">(</span><span class="s2">"Does match or not ?"</span><span class="o">);</span>
+    <span class="k">return</span> <span class="o">...</span>
+</pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+<p>To prepare CAS to support and integrate with Apache Groovy, please <a href="https://apereo.github.io/cas/development//integration/Apache-Groovy-Scripting.html">review this guide</a>.</p>
+
+            </div>
+        </details><details class="cas-properties-topic">
+            <summary><i class="fa fa-person-booth" aria-hidden="true"></i>Principal transformation</summary>
+            <div class="cas-properties-topic-body">
+<!-- fragment:keep -->
+
+<p></p>
+
+<p>Authentication handlers that generally deal with username-password credentials can be configured to 
+transform the user id prior to executing the authentication sequence. Each authentication 
+strategy in CAS provides settings to properly transform the principal. Refer to the 
+relevant settings for the authentication strategy at hand to learn more.</p>
+
+<p>Authentication handlers as part of principal transformation may also be provided a path to a 
+Groovy script to transform the provided username. The outline of the script may take on the following form:</p>
+
+<div class="language-groovy highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+</pre></td>
+<td class="rouge-code"><pre><span class="n">String</span> <span class="nf">run</span><span class="o">(</span><span class="kd">final</span> <span class="n">Object</span><span class="o">...</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+    <span class="kt">def</span> <span class="o">(</span><span class="n">providedUsername</span><span class="o">,</span><span class="n">logger</span><span class="o">)</span> <span class="o">=</span> <span class="n">args</span>
+    <span class="k">return</span> <span class="n">providedUsername</span><span class="o">.</span><span class="na">concat</span><span class="o">(</span><span class="s2">"SomethingElse"</span><span class="o">)</span>
+<span class="o">}</span>
+</pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+<p>To prepare CAS to support and integrate with Apache Groovy, please <a href="https://apereo.github.io/cas/development//integration/Apache-Groovy-Scripting.html">review this guide</a>.</p>
+
+            </div>
+        </details><details class="cas-properties-topic">
+            <summary><i class="fa fa-newspaper" aria-hidden="true"></i>Notes on configuration</summary>
+            <div class="cas-properties-topic-body">
+<!-- fragment:keep -->
+
+<p></p>
+
+<h4 id="configuration-metadata">Configuration Metadata</h4>
+
+<p>The collection of configuration properties listed in this section are automatically generated from the CAS source and components that contain the actual field
+definitions, types, descriptions, modules, etc. This metadata may not always be 100% accurate, or could be lacking details and sufficient explanations.</p>
+
+<h4 id="be-selective">Be Selective</h4>
+
+<p>This section is meant as a guide only. Do NOT copy/paste the entire collection of settings into your CAS configuration; rather pick only the properties that you
+need. Do NOT enable settings unless you are certain of their purpose and do NOT copy settings into your configuration only to keep them as reference. All these
+ideas lead to upgrade headaches, maintenance nightmares and premature aging.</p>
+
+<h4 id="yagni">YAGNI</h4>
+
+<p>Note that for nearly ALL use cases, declaring and configuring properties listed here is sufficient. You should NOT have to explicitly massage a CAS XML/Java/etc
+configuration file to design an authentication handler, create attribute release policies, etc. CAS at runtime will auto-configure all required changes for you.
+If you are unsure about the meaning of a given CAS setting, do NOT turn it on without hesitation. Review the codebase or better yet, ask questions to clarify
+the intended behavior.</p>
+
+<h4 id="naming-convention">Naming Convention</h4>
+
+<p>Property names can be specified in very relaxed terms. For instance <code class="language-plaintext highlighter-rouge">cas.someProperty</code>, <code class="language-plaintext highlighter-rouge">cas.some-property</code>, <code class="language-plaintext highlighter-rouge">cas.some_property</code> are all valid names. While all
+forms are accepted by CAS, there are certain components (in CAS and other frameworks used) whose activation at runtime is conditional on a property value, where
+this property is required to have been specified in CAS configuration using kebab case. This is both true for properties that are owned by CAS as well as those
+that might be presented to the system via an external library or framework such as Spring Boot, etc.</p>
+
+<div class="alert alert-info">
+<img class="emoji" title=":information_source:" alt=":information_source:" src="https://github.githubassets.com/images/icons/emoji/unicode/2139.png" height="20" width="20"> <strong>Note</strong> <p>
+When possible, properties should be stored in lower-case kebab format, such as <code>cas.property-name=value</code>.
+The only possible exception to this rule is when naming actuator endpoints; The name of the
+actuator endpoints (i.e. <code>ssoSessions</code>) <strong>MUST</strong> remain in camelCase mode. 
+</p>
+</div>
+
+<p>Settings and properties that are controlled by the CAS platform directly always begin with the prefix <code class="language-plaintext highlighter-rouge">cas</code>. All other settings are controlled and provided
+to CAS via other underlying frameworks and may have their own schemas and syntax. BE CAREFUL with
+the distinction. Unrecognized properties are rejected by CAS and/or frameworks upon which CAS depends. This means if you somehow misspell a property definition
+or fail to adhere to the dot-notation syntax and such, your setting is entirely refused by CAS and likely the feature it controls will never be activated in the
+way you intend.</p>
+
+<h4 id="validation">Validation</h4>
+
+<p>Configuration properties are automatically validated on CAS startup to report issues with configuration binding, especially if defined CAS settings cannot be
+recognized or validated by the configuration schema. Additional validation processes are also handled
+via <a href="/cas/development/configuration/Configuration-Metadata-Repository.html">Configuration Metadata</a> and property migrations applied automatically on
+startup by Spring Boot and family.</p>
+
+<h4 id="indexed-settings">Indexed Settings</h4>
+
+<p>CAS settings able to accept multiple values are typically documented with an index, such as <code class="language-plaintext highlighter-rouge">cas.some.setting[0]=value</code>. The index <code class="language-plaintext highlighter-rouge">[0]</code> is meant to be
+incremented by the adopter to allow for distinct multiple configuration blocks.</p>
+
+            </div>
+        </details>
+</div>
+</div>
+
+<h2 id="principal-attributes">Principal Attributes</h2>
+
+<p>The above dependency may also be used, in the event that principal attributes 
+need to be fetched from Azure Active Directory without necessarily authenticating credentials .</p>
+
+<!-- fragment:keep -->
+
+<p>The following settings and properties are available from the CAS configuration catalog:</p>
+
+
+<div class="cas-properties">
+    <div class="cas-properties-list">
+<div class="cas-property" data-kind="required" data-name="cas.authn.attribute-repository.azure-active-directory[0].client-id" data-default="" data-spel>
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.attribute-repository.azure-active-directory[0].client-id</code><span class="cas-property-summary">Client id of the registered app in microsoft azure portal.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags">
+<span class="cas-property-tag cas-property-tag-required"><i class="fa fa-asterisk" aria-hidden="true"></i>Required</span><span class="cas-property-tag"><i class="fa fa-code" aria-hidden="true"></i>SpEL</span>
+</div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Client id of the registered app in microsoft azure portal.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.azuread.AzureActiveDirectoryAttributesProperties">AzureActiveDirectoryAttributesProperties</code></dd>
+<dt>Supports</dt>
+<dd><a href="/cas/development/configuration/Configuration-Spring-Expressions.html">Spring Expression Language</a></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="required" data-name="cas.authn.attribute-repository.azure-active-directory[0].client-secret" data-default="" data-spel>
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.attribute-repository.azure-active-directory[0].client-secret</code><span class="cas-property-summary">Client secret of the registered app in microsoft azure portal.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags">
+<span class="cas-property-tag cas-property-tag-required"><i class="fa fa-asterisk" aria-hidden="true"></i>Required</span><span class="cas-property-tag"><i class="fa fa-code" aria-hidden="true"></i>SpEL</span>
+</div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Client secret of the registered app in microsoft azure portal.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.azuread.AzureActiveDirectoryAttributesProperties">AzureActiveDirectoryAttributesProperties</code></dd>
+<dt>Supports</dt>
+<dd><a href="/cas/development/configuration/Configuration-Spring-Expressions.html">Spring Expression Language</a></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.authn.attribute-repository.azure-active-directory" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.attribute-repository.azure-active-directory</code><span class="cas-property-summary">Retrieve attributes from multiple Microsoft Graph instances.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Retrieve attributes from multiple Microsoft Graph instances.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>List&lt;AzureActiveDirectoryAttributesProperties&gt;</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.core.authentication.PrincipalAttributesProperties">PrincipalAttributesProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.authn.attribute-repository.azure-active-directory[0].api-base-url" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.attribute-repository.azure-active-directory[0].api-base-url</code><span class="cas-property-summary">Base API url used to contact microsoft graph for calls.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Base API url used to contact microsoft graph for calls.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.azuread.AzureActiveDirectoryAttributesProperties">AzureActiveDirectoryAttributesProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.authn.attribute-repository.azure-active-directory[0].attributes" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.attribute-repository.azure-active-directory[0].attributes</code><span class="cas-property-summary">Comma-separated attributes and user properties to fetch from microsoft graph.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Comma-separated attributes and user properties to fetch from microsoft graph. If attributes are specified here, they would be the only ones requested and fetched. If this field is left blank, a default set of attributes are fetched and returned.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.azuread.AzureActiveDirectoryAttributesProperties">AzureActiveDirectoryAttributesProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.authn.attribute-repository.azure-active-directory[0].case-insensitive" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.attribute-repository.azure-active-directory[0].case-insensitive</code><span class="cas-property-summary">Whether attribute repository should consider the underlying attribute names in a case-insensitive manner.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Whether attribute repository should consider the underlying attribute names in a case-insensitive manner.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>boolean</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.azuread.AzureActiveDirectoryAttributesProperties">AzureActiveDirectoryAttributesProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.authn.attribute-repository.azure-active-directory[0].domain" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.attribute-repository.azure-active-directory[0].domain</code><span class="cas-property-summary">Domain that is appended to usernames when doing lookups.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Domain that is appended to usernames when doing lookups. The <code>@</code> is automatically included.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.azuread.AzureActiveDirectoryAttributesProperties">AzureActiveDirectoryAttributesProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.authn.attribute-repository.azure-active-directory[0].grant-type" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.attribute-repository.azure-active-directory[0].grant-type</code><span class="cas-property-summary">Grant type used to fetch access tokens; defaults to client_credentials .</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Grant type used to fetch access tokens; defaults to <code>client_credentials</code>.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.azuread.AzureActiveDirectoryAttributesProperties">AzureActiveDirectoryAttributesProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.authn.attribute-repository.azure-active-directory[0].id" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.attribute-repository.azure-active-directory[0].id</code><span class="cas-property-summary">A value can be assigned to this field to uniquely identify this resolver.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>A value can be assigned to this field to uniquely identify this resolver.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.azuread.AzureActiveDirectoryAttributesProperties">AzureActiveDirectoryAttributesProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.authn.attribute-repository.azure-active-directory[0].logging-level" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.attribute-repository.azure-active-directory[0].logging-level</code><span class="cas-property-summary">Adjust the logging level of the API calls.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Adjust the logging level of the API calls. Defaults to <code>basic</code>. Accepted values are <code>none,headers,basic,body</code>.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.azuread.AzureActiveDirectoryAttributesProperties">AzureActiveDirectoryAttributesProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.authn.attribute-repository.azure-active-directory[0].login-base-url" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.attribute-repository.azure-active-directory[0].login-base-url</code><span class="cas-property-summary">Base login url used to fetch access tokens.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Base login url used to fetch access tokens.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.azuread.AzureActiveDirectoryAttributesProperties">AzureActiveDirectoryAttributesProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.authn.attribute-repository.azure-active-directory[0].order" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.attribute-repository.azure-active-directory[0].order</code><span class="cas-property-summary">The order of this attribute repository in the chain of repositories.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>The order of this attribute repository in the chain of repositories. Can be used to explicitly position this source in chain and affects merging strategies.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>int</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.azuread.AzureActiveDirectoryAttributesProperties">AzureActiveDirectoryAttributesProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.authn.attribute-repository.azure-active-directory[0].resource" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.attribute-repository.azure-active-directory[0].resource</code><span class="cas-property-summary">Resource to fetch access tokens for; defaults to the graph api url.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Resource to fetch access tokens for; defaults to the graph api url.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.azuread.AzureActiveDirectoryAttributesProperties">AzureActiveDirectoryAttributesProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.authn.attribute-repository.azure-active-directory[0].scope" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.attribute-repository.azure-active-directory[0].scope</code><span class="cas-property-summary">Scope used when fetching access tokens.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Scope used when fetching access tokens.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.azuread.AzureActiveDirectoryAttributesProperties">AzureActiveDirectoryAttributesProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.authn.attribute-repository.azure-active-directory[0].tenant" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.attribute-repository.azure-active-directory[0].tenant</code><span class="cas-property-summary">The microsoft tenant id.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>The microsoft tenant id.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.azuread.AzureActiveDirectoryAttributesProperties">AzureActiveDirectoryAttributesProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+</div>
+<p class="cas-properties-legend">
+        <strong>Required</strong> settings may be needed to activate or affect the feature; review them even when they have a default.
+        <strong>Optional</strong> settings only need to be set to change a default or to turn on the behavior they control.
+        <strong>Third party</strong> settings belong to libraries such as Spring Boot that CAS builds on; their own documentation may have more detail.
+    </p>
+<div class="cas-properties-topics"><details class="cas-properties-topic">
+            <summary><i class="fa fa-newspaper" aria-hidden="true"></i>Notes on configuration</summary>
+            <div class="cas-properties-topic-body">
+<!-- fragment:keep -->
+
+<p></p>
+
+<h4 id="configuration-metadata">Configuration Metadata</h4>
+
+<p>The collection of configuration properties listed in this section are automatically generated from the CAS source and components that contain the actual field
+definitions, types, descriptions, modules, etc. This metadata may not always be 100% accurate, or could be lacking details and sufficient explanations.</p>
+
+<h4 id="be-selective">Be Selective</h4>
+
+<p>This section is meant as a guide only. Do NOT copy/paste the entire collection of settings into your CAS configuration; rather pick only the properties that you
+need. Do NOT enable settings unless you are certain of their purpose and do NOT copy settings into your configuration only to keep them as reference. All these
+ideas lead to upgrade headaches, maintenance nightmares and premature aging.</p>
+
+<h4 id="yagni">YAGNI</h4>
+
+<p>Note that for nearly ALL use cases, declaring and configuring properties listed here is sufficient. You should NOT have to explicitly massage a CAS XML/Java/etc
+configuration file to design an authentication handler, create attribute release policies, etc. CAS at runtime will auto-configure all required changes for you.
+If you are unsure about the meaning of a given CAS setting, do NOT turn it on without hesitation. Review the codebase or better yet, ask questions to clarify
+the intended behavior.</p>
+
+<h4 id="naming-convention">Naming Convention</h4>
+
+<p>Property names can be specified in very relaxed terms. For instance <code class="language-plaintext highlighter-rouge">cas.someProperty</code>, <code class="language-plaintext highlighter-rouge">cas.some-property</code>, <code class="language-plaintext highlighter-rouge">cas.some_property</code> are all valid names. While all
+forms are accepted by CAS, there are certain components (in CAS and other frameworks used) whose activation at runtime is conditional on a property value, where
+this property is required to have been specified in CAS configuration using kebab case. This is both true for properties that are owned by CAS as well as those
+that might be presented to the system via an external library or framework such as Spring Boot, etc.</p>
+
+<div class="alert alert-info">
+<img class="emoji" title=":information_source:" alt=":information_source:" src="https://github.githubassets.com/images/icons/emoji/unicode/2139.png" height="20" width="20"> <strong>Note</strong> <p>
+When possible, properties should be stored in lower-case kebab format, such as <code>cas.property-name=value</code>.
+The only possible exception to this rule is when naming actuator endpoints; The name of the
+actuator endpoints (i.e. <code>ssoSessions</code>) <strong>MUST</strong> remain in camelCase mode. 
+</p>
+</div>
+
+<p>Settings and properties that are controlled by the CAS platform directly always begin with the prefix <code class="language-plaintext highlighter-rouge">cas</code>. All other settings are controlled and provided
+to CAS via other underlying frameworks and may have their own schemas and syntax. BE CAREFUL with
+the distinction. Unrecognized properties are rejected by CAS and/or frameworks upon which CAS depends. This means if you somehow misspell a property definition
+or fail to adhere to the dot-notation syntax and such, your setting is entirely refused by CAS and likely the feature it controls will never be activated in the
+way you intend.</p>
+
+<h4 id="validation">Validation</h4>
+
+<p>Configuration properties are automatically validated on CAS startup to report issues with configuration binding, especially if defined CAS settings cannot be
+recognized or validated by the configuration schema. Additional validation processes are also handled
+via <a href="/cas/development/configuration/Configuration-Metadata-Repository.html">Configuration Metadata</a> and property migrations applied automatically on
+startup by Spring Boot and family.</p>
+
+<h4 id="indexed-settings">Indexed Settings</h4>
+
+<p>CAS settings able to accept multiple values are typically documented with an index, such as <code class="language-plaintext highlighter-rouge">cas.some.setting[0]=value</code>. The index <code class="language-plaintext highlighter-rouge">[0]</code> is meant to be
+incremented by the adopter to allow for distinct multiple configuration blocks.</p>
+
+            </div>
+        </details></div>
+</div>
+
+
+            </article>
+            <div class="article-end" aria-hidden="true">
+<span></span><span>CAS</span><span></span>
+</div>
+        </main>
+        
+        <aside class="docs-toc" aria-label="On this page">
+    <nav id="pageContents" aria-label="Table of contents">
+        <p class="eyebrow">ON THIS PAGE</p>
+        <ul class="section-nav"></ul>
+    </nav>
+    <a class="toc-top" href="#cas-docs-container">Back to top <span aria-hidden="true">↑</span></a>
+</aside>
+
+        
+    </div>
+
+    <footer class="site-footer">
+        <a class="footer-brand" href="../../index.html">APEREO <strong>CAS</strong></a>
+        <p>CAS is supported by the <a href="https://www.apereo.org/">Apereo Foundation</a>.</p>
+        <a href="#cas-docs-container">Back to top <span aria-hidden="true">↑</span></a>
+    </footer>
+    <div id="docs-status" class="visually-hidden" role="status" aria-live="polite"></div>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/tether@2.0.0/dist/js/tether.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.11/clipboard.min.js"></script>
+
+    <script src="/cas/javascripts/URI.js"></script>
+    <script src="/cas/javascripts/site.js"></script>
+
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@docsearch/js@3"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="https://code.jquery.com/ui/1.13.1/jquery-ui.js"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.5/js/lightbox.min.js"></script>
+
+    <script>
+        let pageSection = "Authentication";
+        let siteUrl = "https://apereo.github.io";
+        let basePath = "/cas";
+
+        
+    </script>
+</body>
+
+</html>

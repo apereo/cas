@@ -1,0 +1,2651 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="light dark">
+    
+    
+    
+
+
+
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <meta name="description" content="Configuration Management Clustered Deployment. Technical guides for Apereo CAS: enterprise identity, authentication, single sign-on and access management.">
+    <meta name="robots" content="index,follow">
+    <meta name="theme-color" content="#06304a">
+    <link rel="canonical" href="https://apereo.github.io/cas/development/configuration/Configuration-Management-Clustered-AMQP.html">
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="en_US">
+    <meta property="og:site_name" content="Apereo CAS Documentation">
+    <meta property="og:title" content="CAS - Configuration Management Clustered Deployment">
+    <meta property="og:description" content="Configuration Management Clustered Deployment. Technical guides for Apereo CAS: enterprise identity, authentication, single sign-on and access management.">
+    <meta property="og:url" content="https://apereo.github.io/cas/development/configuration/Configuration-Management-Clustered-AMQP.html">
+    <meta property="og:image" content="https://apereo.github.io/cas/images/cas_logo.png">
+    <meta property="og:image:alt" content="Apereo CAS">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="CAS - Configuration Management Clustered Deployment">
+    <meta name="twitter:description" content="Configuration Management Clustered Deployment. Technical guides for Apereo CAS: enterprise identity, authentication, single sign-on and access management.">
+    <meta name="twitter:image" content="https://apereo.github.io/cas/images/cas_logo.png">
+
+    
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "TechArticle",
+      "headline": "Configuration Management Clustered Deployment",
+      "description": "Configuration Management Clustered Deployment. Technical guides for Apereo CAS: enterprise identity, authentication, single sign-on and access management.",
+      "url": "https://apereo.github.io/cas/development/configuration/Configuration-Management-Clustered-AMQP.html",
+      "inLanguage": "en",
+      "isPartOf": {"@type": "WebSite", "name": "Apereo CAS Documentation",
+                   "url": "https://apereo.github.io/cas/"},
+      "author": {"@type": "Organization", "name": "Apereo Foundation", "url": "https://www.apereo.org/"},
+      "publisher": {"@type": "Organization", "name": "Apereo Foundation", "url": "https://www.apereo.org/"}
+    }
+    </script>
+    
+
+    <script>
+        ((i, s, o, g, r, a, m) => {
+            i['GoogleAnalyticsObject'] = r;
+            i[r] = i[r] || function () {
+                (i[r].q = i[r].q || []).push(arguments)
+            }, i[r].l = 1 * new Date();
+            a = s.createElement(o),
+                m = s.getElementsByTagName(o)[0];
+            a.async = 1;
+            a.src = g;
+            m.parentNode.insertBefore(a, m)
+        })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
+
+        ga('create', 'UA-83384532-2', 'auto');
+        ga('send', 'pageview');
+
+    </script>
+
+    <script>
+        function readThemePreference() {
+            try {
+                return localStorage.getItem('cas-docs-theme') || 'system';
+            } catch (error) {
+                return 'system';
+            }
+        }
+
+        function systemTheme() {
+            return window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+        }
+
+        function resolveTheme(preference) {
+            return preference === 'dark' || preference === 'light' ? preference : systemTheme();
+        }
+
+        function changeTheme(theme) {
+            if (theme !== 'dark' && theme !== 'light') {
+                return;
+            }
+
+            if (document.documentElement.getAttribute('data-bs-theme') !== theme) {
+                document.documentElement.setAttribute('data-bs-theme', theme);
+            }
+        }
+
+        (() => {
+            let preference = readThemePreference();
+            if (preference !== 'dark' && preference !== 'light') {
+                preference = 'system';
+
+            }
+
+            changeTheme(resolveTheme(preference));
+
+            if (window.matchMedia) {
+                window.matchMedia('(prefers-color-scheme: light)').addEventListener('change', () => {
+                    if (readThemePreference() !== 'system') {
+                        return;
+                    }
+                    const theme = systemTheme();
+                    changeTheme(theme);
+                });
+            }
+        })();
+    </script>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@docsearch/css@3"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.5/css/lightbox.min.css" />
+    
+    
+    <link rel="stylesheet" type="text/css" media="screen" href='/cas/stylesheets/site.css'>
+    <link rel="stylesheet" type="text/css" media="print" href='/cas/stylesheets/site-print.css'>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400..700;1,9..40,400..500&family=JetBrains+Mono:wght@400;500;700&family=Manrope:wght@400..800&family=Newsreader:ital,opsz,wght@0,6..72,300..600;1,6..72,300..600&display=swap" rel="stylesheet">
+    <link href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css" rel="stylesheet">
+
+    <title>CAS - Configuration Management Clustered Deployment · Apereo CAS Documentation</title>
+
+</head>
+
+<body class="" data-docs-base="/cas" data-docs-version="development" data-docs-build="20261004000849">
+    <a class="skip-link" href="#cas-docs-container">Skip to content</a>
+    <header class="site-header">
+        <div class="masthead">
+            <a class="cas-brand" href="../../index.html" aria-label="Apereo CAS home">
+                <img class="brand-logo" src="/cas/images/cas_logo.png" width="119" height="60" alt="CAS">
+                <span class="brand-caption">APEREO CAS<span>Documentation</span></span>
+            </a>
+            <div class="brand-mission">
+                <p>Enterprise Authentication <span class="brand-mission-accent">for All Earthlings and Beyond</span></p>
+                <span>Identity, Single Sign-On and Access Management</span>
+            </div>
+            <a id="forkme_banner" href="https://github.com/apereo/cas"><i class="fab fa-github" aria-hidden="true"></i><span>View on GitHub</span><span aria-hidden="true">↗</span></a>
+        </div>
+        <div class="navigation-bar">
+            
+            <button onclick="navigateSidebar()" id="sidebarNavButton" class="icon-button" type="button" aria-controls="sidebar" aria-expanded="true" aria-label="Toggle documentation navigation" title="Toggle documentation navigation">
+                <i class="fa fa-bars" aria-hidden="true"></i>
+            </button>
+            
+            <nav class="primary-navigation" aria-label="Main navigation">
+                <a href="../../index.html">Home</a>
+                <a href="https://github.com/apereo/cas/releases">Releases</a>
+                <a href="../../Support.html">Support</a>
+                <a href="../../Mailing-Lists.html">Mailing Lists</a>
+                <div class="dropdown">
+                    <button class="dropdown-toggle" type="button" id="cas-versions" data-bs-toggle="dropdown" aria-expanded="false">Versions</button>
+                    <div class="dropdown-menu" aria-labelledby="cas-versions">
+                        
+                        <a class="dropdown-item" href="/cas/development/">Development</a>
+                        
+                        <a class="dropdown-item" href="/cas/8.0.x/">v8.0.x</a>
+                        
+                        <a class="dropdown-item" href="/cas/7.3.x/">v7.3.x</a>
+                        
+                    </div>
+                </div>
+                <a href="https://apereo.github.io" target="_blank" rel="noopener">Blog <span aria-hidden="true">↗</span><span class="visually-hidden"> (opens in a new tab)</span></a>
+            </nav>
+            <div class="navigation-tools">
+                <div id="searchField"></div>
+                <button id="settingsSearchButton" class="icon-button" type="button" aria-label="Search configuration settings (press Shift twice)" title="Search configuration settings (Shift Shift)"><i class="fa fa-sliders" aria-hidden="true"></i></button>
+                <button id="themeToggle" class="icon-button" type="button" onclick="toggleDarkMode()" aria-label="Toggle color theme" title="Toggle color theme"><i class="fa fa-circle-half-stroke" aria-hidden="true"></i></button>
+            </div>
+        </div>
+        <div class="reading-progress" aria-hidden="true"><span id="readingProgress"></span></div>
+    </header>
+
+    <div class="docs-shell">
+        
+        <aside id="sidebar" class="docs-sidebar" aria-label="Documentation navigation">
+    <div class="sidebar-heading">
+<span class="eyebrow">APEREO CAS DOCUMENTATION</span><span class="sidebar-symbol" aria-hidden="true">✳</span>
+</div>
+    <nav id="sidebar-navigation" aria-label="Documentation topics"></nav>
+    <noscript><p>Browse the <a href="/cas/development/sidebar.html">documentation index</a>.</p></noscript>
+</aside>
+
+        
+        <main class="cas-docs-content">
+            
+            <div class="page-toolbar">
+                <nav id="docsNavBar" aria-label="Breadcrumb"></nav>
+                <div id="toolbarIcons" role="group" aria-label="Page tools"></div>
+            </div>
+            
+            
+            <aside id="dev-doc-info" aria-labelledby="dev-doc-title">
+                <span class="development-marker" aria-hidden="true"></span>
+                <div>
+                    <p id="dev-doc-title">WORKERS AHEAD!</p>
+                    <p>You are viewing the <strong>development</strong> documentation for the Apereo CAS server. <strong>The
+                        functionality presented here <a href="https://github.com/apereo/cas/milestones">is not officially released yet</a></strong>.
+                        This is a work in progress and will be continually updated as development moves forward.
+                        <strong>You are most encouraged to test the changes presented.</strong>
+                    </p>
+                </div>
+            </aside>
+            
+            <article id="cas-docs-container" tabindex="-1">
+                
+<h1 id="configuration-management---clustered-deployments-with-amqp">Configuration Management - Clustered Deployments with AMQP</h1>
+
+<p>This is one option for broadcasting change events to CAS nodes.
+<a href="https://www.rabbitmq.com/">RabbitMQ</a> is open source message broker
+software (sometimes called message-oriented middleware) that implements
+the Advanced Message Queuing Protocol (AMQP).</p>
+
+<p>Support is enabled by including the following dependency in the final overlay:</p>
+
+<div style="display: block">
+
+    <ul class="nav nav-pills cas-modules" role="tablist">
+        <li class="nav-item cas-module" role="presentation"><a class="nav-link" id="mavenorgapereocascasserversupportconfigurationcloudamqp-tab" data-bs-toggle="tab" href="#mavenorgapereocascasserversupportconfigurationcloudamqp" role="tab" aria-controls="mavenorgapereocascasserversupportconfigurationcloudamqp" aria-selected="false">Apache Maven</a></li>
+        <li class="nav-item cas-module" role="presentation"><a class="nav-link" id="gradleorgapereocascasserversupportconfigurationcloudamqp-tab" data-bs-toggle="tab" href="#gradleorgapereocascasserversupportconfigurationcloudamqp" role="tab" aria-controls="gradleorgapereocascasserversupportconfigurationcloudamqp" aria-selected="false">Gradle</a></li>
+<li class="nav-item cas-module" role="presentation"><a class="nav-link" id="bomorgapereocascasserversupportconfigurationcloudamqp-tab" data-bs-toggle="tab" href="#bomorgapereocascasserversupportconfigurationcloudamqp" role="tab" aria-controls="bomorgapereocascasserversupportconfigurationcloudamqp" aria-selected="false">BOM - Spring</a></li>
+        <li class="nav-item cas-module" role="presentation"><a class="nav-link active" id="bomGradleorgapereocascasserversupportconfigurationcloudamqp-tab" data-bs-toggle="tab" href="#bomGradleorgapereocascasserversupportconfigurationcloudamqp" role="tab" aria-controls="bomGradleorgapereocascasserversupportconfigurationcloudamqp" aria-selected="true">BOM - Gradle</a></li>
+<li class="nav-item dropdown cas-module" role="presentation">
+            <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">Resources<span class="caret"></span>
+            </a>
+            <div class="dropdown-menu">
+                <a class="dropdown-item" href="https://getcas.apereo.org/ui?dependencies=webapp-tomcat,support-configuration-cloud-amqp" target="_blank" rel="noopener">Show in CAS Initializr <span aria-hidden="true">↗</span><span class="visually-hidden"> (opens in a new tab)</span></a>
+                <a class="dropdown-item" href="javascript:generateOverlay('cas-server-support-configuration-cloud-amqp',%20'cas-overlay');">Generate CAS Server WAR Overlay</a>
+            </div>
+        </li>
+    </ul>
+
+
+    <div class="cas-module-tabs tab-content clearfix">
+        <div class="tab-pane fade" id="mavenorgapereocascasserversupportconfigurationcloudamqp" role="tabpanel" aria-labelledby="mavenorgapereocascasserversupportconfigurationcloudamqp-tab">
+<span>
+      <div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+</pre></td>
+<td class="rouge-code"><pre><span class="nt">&lt;dependency&gt;</span>
+    <span class="nt">&lt;groupId&gt;</span>org.apereo.cas<span class="nt">&lt;/groupId&gt;</span>
+    <span class="nt">&lt;artifactId&gt;</span>cas-server-support-configuration-cloud-amqp<span class="nt">&lt;/artifactId&gt;</span>
+    <span class="nt">&lt;version&gt;</span>${cas.version}<span class="nt">&lt;/version&gt;</span>
+<span class="nt">&lt;/dependency&gt;</span>
+</pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+    </span>
+
+        </div>
+
+
+        <div class="tab-pane fade" id="gradleorgapereocascasserversupportconfigurationcloudamqp" role="tabpanel" aria-labelledby="gradleorgapereocascasserversupportconfigurationcloudamqp-tab">
+
+            <span>
+    
+<div class="language-groovy highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td>
+<td class="rouge-code"><pre><span class="n">implementation</span> <span class="s2">"org.apereo.cas:cas-server-support-configuration-cloud-amqp:${project.'cas.version'}"</span>
+</pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+  </span>
+
+        </div>
+
+        <div class="tab-pane fade" id="bomorgapereocascasserversupportconfigurationcloudamqp" role="tabpanel" aria-labelledby="bomorgapereocascasserversupportconfigurationcloudamqp-tab">
+<span>
+    <div class="language-groovy highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+</pre></td>
+<td class="rouge-code"><pre><span class="n">dependencyManagement</span> <span class="o">{</span>
+    <span class="n">imports</span> <span class="o">{</span>
+        <span class="n">mavenBom</span> <span class="s2">"org.apereo.cas:cas-server-support-bom:${project.'cas.version'}"</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+
+<span class="n">dependencies</span> <span class="o">{</span>
+    <span class="n">implementation</span> <span class="s2">"org.apereo.cas:cas-server-support-configuration-cloud-amqp"</span>
+<span class="o">}</span>
+</pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+  </span>
+
+        </div>
+
+        <div class="tab-pane fade show active" id="bomGradleorgapereocascasserversupportconfigurationcloudamqp" role="tabpanel" aria-labelledby="bomGradleorgapereocascasserversupportconfigurationcloudamqp-tab">
+<span>
+    <div class="language-groovy highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+</pre></td>
+<td class="rouge-code"><pre><span class="n">dependencies</span> <span class="o">{</span>
+    <span class="cm">/*
+        The following platform references are included automatically and are listed for reference only.
+
+        implementation enforcedPlatform("org.apereo.cas:cas-server-support-bom:${project.'cas.version'}")
+        implementation platform(org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES)
+        
+    */</span>
+    <span class="n">implementation</span> <span class="s2">"org.apereo.cas:cas-server-support-configuration-cloud-amqp"</span>
+<span class="o">}</span>
+</pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+  </span>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- fragment:keep -->
+
+<p>The following settings and properties are available from the CAS configuration catalog:</p>
+
+
+<div class="cas-properties">
+    <div class="cas-properties-list">
+<div class="cas-property" data-kind="thirdparty" data-name="spring.rabbitmq.address-shuffle-mode" data-default="none">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.rabbitmq.address-shuffle-mode</code><span class="cas-property-summary">Mode used to shuffle configured addresses.</span>
+</div>
+        <div class="cas-property-default"><code>none</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Mode used to shuffle configured addresses.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>AbstractConnectionFactory.AddressShuffleMode</code></dd>
+<dt>Default</dt>
+<dd><code>none</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.rabbitmq.autoconfigure.RabbitProperties">RabbitProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.rabbitmq.addresses" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.rabbitmq.addresses</code><span class="cas-property-summary">List of addresses to which the client should connect.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>List of addresses to which the client should connect. When set, the host and port are ignored.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>List&lt;String&gt;</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.rabbitmq.autoconfigure.RabbitProperties">RabbitProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.rabbitmq.cache.channel.checkout-timeout" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.rabbitmq.cache.channel.checkout-timeout</code><span class="cas-property-summary">Duration to wait to obtain a channel if the cache size has been reached.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Duration to wait to obtain a channel if the cache size has been reached. If 0, always create a new channel.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Duration</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.rabbitmq.autoconfigure.RabbitProperties$Cache$Channel">RabbitProperties$Cache$Channel</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.rabbitmq.cache.channel.size" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.rabbitmq.cache.channel.size</code><span class="cas-property-summary">Number of channels to retain in the cache.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Number of channels to retain in the cache. When "check-timeout" &gt; 0, max channels per connection.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Integer</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.rabbitmq.autoconfigure.RabbitProperties$Cache$Channel">RabbitProperties$Cache$Channel</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.rabbitmq.cache.connection.mode" data-default="channel">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.rabbitmq.cache.connection.mode</code><span class="cas-property-summary">Connection factory cache mode.</span>
+</div>
+        <div class="cas-property-default"><code>channel</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Connection factory cache mode.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>CachingConnectionFactory.CacheMode</code></dd>
+<dt>Default</dt>
+<dd><code>channel</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.rabbitmq.autoconfigure.RabbitProperties$Cache$Connection">RabbitProperties$Cache$Connection</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.rabbitmq.cache.connection.size" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.rabbitmq.cache.connection.size</code><span class="cas-property-summary">Number of connections to cache.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Number of connections to cache. Only applies when mode is CONNECTION.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Integer</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.rabbitmq.autoconfigure.RabbitProperties$Cache$Connection">RabbitProperties$Cache$Connection</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.rabbitmq.channel-rpc-timeout" data-default="10m">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.rabbitmq.channel-rpc-timeout</code><span class="cas-property-summary">Continuation timeout for RPC calls in channels.</span>
+</div>
+        <div class="cas-property-default"><code>10m</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Continuation timeout for RPC calls in channels. Set it to zero to wait forever.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Duration</code></dd>
+<dt>Default</dt>
+<dd><code>10m</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.rabbitmq.autoconfigure.RabbitProperties">RabbitProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.rabbitmq.connection-timeout" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.rabbitmq.connection-timeout</code><span class="cas-property-summary">Connection timeout.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Connection timeout. Set it to zero to wait forever.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Duration</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.rabbitmq.autoconfigure.RabbitProperties">RabbitProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.rabbitmq.dynamic" data-default="true">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.rabbitmq.dynamic</code><span class="cas-property-summary">Whether to create an AmqpAdmin bean.</span>
+</div>
+        <div class="cas-property-default"><code>true</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Whether to create an AmqpAdmin bean.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Boolean</code></dd>
+<dt>Default</dt>
+<dd><code>true</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.rabbitmq.host" data-default="localhost">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.rabbitmq.host</code><span class="cas-property-summary">RabbitMQ host.</span>
+</div>
+        <div class="cas-property-default"><code>localhost</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>RabbitMQ host. Ignored if an address is set.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><code>localhost</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.rabbitmq.autoconfigure.RabbitProperties">RabbitProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.rabbitmq.listener.direct.acknowledge-mode" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.rabbitmq.listener.direct.acknowledge-mode</code><span class="cas-property-summary">Acknowledge mode of container.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Acknowledge mode of container.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>AcknowledgeMode</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.rabbitmq.autoconfigure.RabbitProperties$DirectContainer">RabbitProperties$DirectContainer</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.rabbitmq.listener.direct.auto-startup" data-default="true">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.rabbitmq.listener.direct.auto-startup</code><span class="cas-property-summary">Whether to start the container automatically on startup.</span>
+</div>
+        <div class="cas-property-default"><code>true</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Whether to start the container automatically on startup.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Boolean</code></dd>
+<dt>Default</dt>
+<dd><code>true</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.rabbitmq.autoconfigure.RabbitProperties$DirectContainer">RabbitProperties$DirectContainer</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.rabbitmq.listener.direct.consumers-per-queue" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.rabbitmq.listener.direct.consumers-per-queue</code><span class="cas-property-summary">Number of consumers per queue.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Number of consumers per queue.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Integer</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.rabbitmq.autoconfigure.RabbitProperties$DirectContainer">RabbitProperties$DirectContainer</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.rabbitmq.listener.direct.de-batching-enabled" data-default="true">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.rabbitmq.listener.direct.de-batching-enabled</code><span class="cas-property-summary">Whether the container should present batched messages as discrete messages or call the listener with the batch.</span>
+</div>
+        <div class="cas-property-default"><code>true</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Whether the container should present batched messages as discrete messages or call the listener with the batch.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Boolean</code></dd>
+<dt>Default</dt>
+<dd><code>true</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.rabbitmq.autoconfigure.RabbitProperties$DirectContainer">RabbitProperties$DirectContainer</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.rabbitmq.listener.direct.default-requeue-rejected" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.rabbitmq.listener.direct.default-requeue-rejected</code><span class="cas-property-summary">Whether rejected deliveries are re-queued by default.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Whether rejected deliveries are re-queued by default.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Boolean</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.rabbitmq.autoconfigure.RabbitProperties$DirectContainer">RabbitProperties$DirectContainer</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.rabbitmq.listener.direct.force-stop" data-default="false">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.rabbitmq.listener.direct.force-stop</code><span class="cas-property-summary">Whether the container (when stopped) should stop immediately after processing the current message or stop after processing all pre-fetched messages.</span>
+</div>
+        <div class="cas-property-default"><code>false</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Whether the container (when stopped) should stop immediately after processing the current message or stop after processing all pre-fetched messages.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Boolean</code></dd>
+<dt>Default</dt>
+<dd><code>false</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.rabbitmq.autoconfigure.RabbitProperties$DirectContainer">RabbitProperties$DirectContainer</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.rabbitmq.listener.direct.idle-event-interval" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.rabbitmq.listener.direct.idle-event-interval</code><span class="cas-property-summary">How often idle container events should be published.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>How often idle container events should be published.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Duration</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.rabbitmq.autoconfigure.RabbitProperties$DirectContainer">RabbitProperties$DirectContainer</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.rabbitmq.listener.direct.missing-queues-fatal" data-default="false">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.rabbitmq.listener.direct.missing-queues-fatal</code><span class="cas-property-summary">Whether to fail if the queues declared by the container are not available on the broker.</span>
+</div>
+        <div class="cas-property-default"><code>false</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Whether to fail if the queues declared by the container are not available on the broker.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Boolean</code></dd>
+<dt>Default</dt>
+<dd><code>false</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.rabbitmq.autoconfigure.RabbitProperties$DirectContainer">RabbitProperties$DirectContainer</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.rabbitmq.listener.direct.observation-enabled" data-default="false">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.rabbitmq.listener.direct.observation-enabled</code><span class="cas-property-summary">Whether to enable observation.</span>
+</div>
+        <div class="cas-property-default"><code>false</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Whether to enable observation.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Boolean</code></dd>
+<dt>Default</dt>
+<dd><code>false</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.rabbitmq.autoconfigure.RabbitProperties$DirectContainer">RabbitProperties$DirectContainer</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.rabbitmq.listener.direct.prefetch" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.rabbitmq.listener.direct.prefetch</code><span class="cas-property-summary">Maximum number of unacknowledged messages that can be outstanding at each consumer.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Maximum number of unacknowledged messages that can be outstanding at each consumer.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Integer</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.rabbitmq.autoconfigure.RabbitProperties$DirectContainer">RabbitProperties$DirectContainer</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.rabbitmq.listener.direct.retry.enabled" data-default="false">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.rabbitmq.listener.direct.retry.enabled</code><span class="cas-property-summary">Whether publishing retries are enabled.</span>
+</div>
+        <div class="cas-property-default"><code>false</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Whether publishing retries are enabled.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Boolean</code></dd>
+<dt>Default</dt>
+<dd><code>false</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.rabbitmq.autoconfigure.RabbitProperties$ListenerRetry">RabbitProperties$ListenerRetry</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.rabbitmq.listener.direct.retry.initial-interval" data-default="1000ms">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.rabbitmq.listener.direct.retry.initial-interval</code><span class="cas-property-summary">Duration between the first and second attempt to deliver a message.</span>
+</div>
+        <div class="cas-property-default"><code>1000ms</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Duration between the first and second attempt to deliver a message.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Duration</code></dd>
+<dt>Default</dt>
+<dd><code>1000ms</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.rabbitmq.autoconfigure.RabbitProperties$ListenerRetry">RabbitProperties$ListenerRetry</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.rabbitmq.listener.direct.retry.max-attempts" data-default="" data-deprecated>
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.rabbitmq.listener.direct.retry.max-attempts</code><span class="cas-property-summary"></span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags">
+<span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span><span class="cas-property-tag cas-property-tag-deprecated"><i class="fa fa-skull" aria-hidden="true"></i>Deprecated</span>
+</div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Long</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Deprecation</dt>
+<dd>
+<code>ERROR</code>, replaced by <code>spring.rabbitmq.listener.direct.retry.max-retries</code>
+</dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.rabbitmq.listener.direct.retry.max-interval" data-default="10000ms">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.rabbitmq.listener.direct.retry.max-interval</code><span class="cas-property-summary">Maximum duration between attempts.</span>
+</div>
+        <div class="cas-property-default"><code>10000ms</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Maximum duration between attempts.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Duration</code></dd>
+<dt>Default</dt>
+<dd><code>10000ms</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.rabbitmq.autoconfigure.RabbitProperties$ListenerRetry">RabbitProperties$ListenerRetry</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.rabbitmq.listener.direct.retry.max-retries" data-default="3">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.rabbitmq.listener.direct.retry.max-retries</code><span class="cas-property-summary">Maximum number of retry attempts to deliver a message.</span>
+</div>
+        <div class="cas-property-default"><code>3</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Maximum number of retry attempts to deliver a message.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Long</code></dd>
+<dt>Default</dt>
+<dd><code>3</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.rabbitmq.autoconfigure.RabbitProperties$ListenerRetry">RabbitProperties$ListenerRetry</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.rabbitmq.listener.direct.retry.multiplier" data-default="1">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.rabbitmq.listener.direct.retry.multiplier</code><span class="cas-property-summary">Multiplier to apply to the previous retry interval.</span>
+</div>
+        <div class="cas-property-default"><code>1</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Multiplier to apply to the previous retry interval.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Double</code></dd>
+<dt>Default</dt>
+<dd><code>1</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.rabbitmq.autoconfigure.RabbitProperties$ListenerRetry">RabbitProperties$ListenerRetry</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.rabbitmq.listener.direct.retry.stateless" data-default="true">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.rabbitmq.listener.direct.retry.stateless</code><span class="cas-property-summary">Whether retries are stateless or stateful.</span>
+</div>
+        <div class="cas-property-default"><code>true</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Whether retries are stateless or stateful.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Boolean</code></dd>
+<dt>Default</dt>
+<dd><code>true</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.rabbitmq.autoconfigure.RabbitProperties$ListenerRetry">RabbitProperties$ListenerRetry</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.rabbitmq.listener.simple.acknowledge-mode" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.rabbitmq.listener.simple.acknowledge-mode</code><span class="cas-property-summary">Acknowledge mode of container.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Acknowledge mode of container.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>AcknowledgeMode</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.rabbitmq.autoconfigure.RabbitProperties$SimpleContainer">RabbitProperties$SimpleContainer</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.rabbitmq.listener.simple.auto-startup" data-default="true">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.rabbitmq.listener.simple.auto-startup</code><span class="cas-property-summary">Whether to start the container automatically on startup.</span>
+</div>
+        <div class="cas-property-default"><code>true</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Whether to start the container automatically on startup.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Boolean</code></dd>
+<dt>Default</dt>
+<dd><code>true</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.rabbitmq.autoconfigure.RabbitProperties$SimpleContainer">RabbitProperties$SimpleContainer</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.rabbitmq.listener.simple.batch-size" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.rabbitmq.listener.simple.batch-size</code><span class="cas-property-summary">Batch size, expressed as the number of physical messages, to be used by the container.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Batch size, expressed as the number of physical messages, to be used by the container.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Integer</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.rabbitmq.autoconfigure.RabbitProperties$SimpleContainer">RabbitProperties$SimpleContainer</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.rabbitmq.listener.simple.concurrency" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.rabbitmq.listener.simple.concurrency</code><span class="cas-property-summary">Minimum number of listener invoker threads.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Minimum number of listener invoker threads.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Integer</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.rabbitmq.autoconfigure.RabbitProperties$SimpleContainer">RabbitProperties$SimpleContainer</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.rabbitmq.listener.simple.consumer-batch-enabled" data-default="false">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.rabbitmq.listener.simple.consumer-batch-enabled</code><span class="cas-property-summary">Whether the container creates a batch of messages based on the 'receive-timeout' and 'batch-size'.</span>
+</div>
+        <div class="cas-property-default"><code>false</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Whether the container creates a batch of messages based on the 'receive-timeout' and 'batch-size'. Coerces 'de-batching-enabled' to true to include the contents of a producer created batch in the batch as discrete records.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Boolean</code></dd>
+<dt>Default</dt>
+<dd><code>false</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.rabbitmq.autoconfigure.RabbitProperties$SimpleContainer">RabbitProperties$SimpleContainer</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.rabbitmq.listener.simple.de-batching-enabled" data-default="true">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.rabbitmq.listener.simple.de-batching-enabled</code><span class="cas-property-summary">Whether the container should present batched messages as discrete messages or call the listener with the batch.</span>
+</div>
+        <div class="cas-property-default"><code>true</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Whether the container should present batched messages as discrete messages or call the listener with the batch.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Boolean</code></dd>
+<dt>Default</dt>
+<dd><code>true</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.rabbitmq.autoconfigure.RabbitProperties$SimpleContainer">RabbitProperties$SimpleContainer</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.rabbitmq.listener.simple.default-requeue-rejected" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.rabbitmq.listener.simple.default-requeue-rejected</code><span class="cas-property-summary">Whether rejected deliveries are re-queued by default.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Whether rejected deliveries are re-queued by default.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Boolean</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.rabbitmq.autoconfigure.RabbitProperties$SimpleContainer">RabbitProperties$SimpleContainer</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.rabbitmq.listener.simple.force-stop" data-default="false">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.rabbitmq.listener.simple.force-stop</code><span class="cas-property-summary">Whether the container (when stopped) should stop immediately after processing the current message or stop after processing all pre-fetched messages.</span>
+</div>
+        <div class="cas-property-default"><code>false</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Whether the container (when stopped) should stop immediately after processing the current message or stop after processing all pre-fetched messages.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Boolean</code></dd>
+<dt>Default</dt>
+<dd><code>false</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.rabbitmq.autoconfigure.RabbitProperties$SimpleContainer">RabbitProperties$SimpleContainer</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.rabbitmq.listener.simple.idle-event-interval" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.rabbitmq.listener.simple.idle-event-interval</code><span class="cas-property-summary">How often idle container events should be published.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>How often idle container events should be published.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Duration</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.rabbitmq.autoconfigure.RabbitProperties$SimpleContainer">RabbitProperties$SimpleContainer</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.rabbitmq.listener.simple.max-concurrency" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.rabbitmq.listener.simple.max-concurrency</code><span class="cas-property-summary">Maximum number of listener invoker threads.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Maximum number of listener invoker threads.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Integer</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.rabbitmq.autoconfigure.RabbitProperties$SimpleContainer">RabbitProperties$SimpleContainer</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.rabbitmq.listener.simple.missing-queues-fatal" data-default="true">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.rabbitmq.listener.simple.missing-queues-fatal</code><span class="cas-property-summary">Whether to fail if the queues declared by the container are not available on the broker and/or whether to stop the container if one or more queues are deleted at runtime.</span>
+</div>
+        <div class="cas-property-default"><code>true</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Whether to fail if the queues declared by the container are not available on the broker and/or whether to stop the container if one or more queues are deleted at runtime.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Boolean</code></dd>
+<dt>Default</dt>
+<dd><code>true</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.rabbitmq.autoconfigure.RabbitProperties$SimpleContainer">RabbitProperties$SimpleContainer</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.rabbitmq.listener.simple.observation-enabled" data-default="false">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.rabbitmq.listener.simple.observation-enabled</code><span class="cas-property-summary">Whether to enable observation.</span>
+</div>
+        <div class="cas-property-default"><code>false</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Whether to enable observation.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Boolean</code></dd>
+<dt>Default</dt>
+<dd><code>false</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.rabbitmq.autoconfigure.RabbitProperties$SimpleContainer">RabbitProperties$SimpleContainer</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.rabbitmq.listener.simple.prefetch" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.rabbitmq.listener.simple.prefetch</code><span class="cas-property-summary">Maximum number of unacknowledged messages that can be outstanding at each consumer.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Maximum number of unacknowledged messages that can be outstanding at each consumer.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Integer</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.rabbitmq.autoconfigure.RabbitProperties$SimpleContainer">RabbitProperties$SimpleContainer</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.rabbitmq.listener.simple.retry.enabled" data-default="false">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.rabbitmq.listener.simple.retry.enabled</code><span class="cas-property-summary">Whether publishing retries are enabled.</span>
+</div>
+        <div class="cas-property-default"><code>false</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Whether publishing retries are enabled.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Boolean</code></dd>
+<dt>Default</dt>
+<dd><code>false</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.rabbitmq.autoconfigure.RabbitProperties$ListenerRetry">RabbitProperties$ListenerRetry</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.rabbitmq.listener.simple.retry.initial-interval" data-default="1000ms">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.rabbitmq.listener.simple.retry.initial-interval</code><span class="cas-property-summary">Duration between the first and second attempt to deliver a message.</span>
+</div>
+        <div class="cas-property-default"><code>1000ms</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Duration between the first and second attempt to deliver a message.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Duration</code></dd>
+<dt>Default</dt>
+<dd><code>1000ms</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.rabbitmq.autoconfigure.RabbitProperties$ListenerRetry">RabbitProperties$ListenerRetry</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.rabbitmq.listener.simple.retry.max-attempts" data-default="" data-deprecated>
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.rabbitmq.listener.simple.retry.max-attempts</code><span class="cas-property-summary"></span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags">
+<span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span><span class="cas-property-tag cas-property-tag-deprecated"><i class="fa fa-skull" aria-hidden="true"></i>Deprecated</span>
+</div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Long</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Deprecation</dt>
+<dd>
+<code>ERROR</code>, replaced by <code>spring.rabbitmq.listener.simple.retry.max-retries</code>
+</dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.rabbitmq.listener.simple.retry.max-interval" data-default="10000ms">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.rabbitmq.listener.simple.retry.max-interval</code><span class="cas-property-summary">Maximum duration between attempts.</span>
+</div>
+        <div class="cas-property-default"><code>10000ms</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Maximum duration between attempts.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Duration</code></dd>
+<dt>Default</dt>
+<dd><code>10000ms</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.rabbitmq.autoconfigure.RabbitProperties$ListenerRetry">RabbitProperties$ListenerRetry</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.rabbitmq.listener.simple.retry.max-retries" data-default="3">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.rabbitmq.listener.simple.retry.max-retries</code><span class="cas-property-summary">Maximum number of retry attempts to deliver a message.</span>
+</div>
+        <div class="cas-property-default"><code>3</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Maximum number of retry attempts to deliver a message.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Long</code></dd>
+<dt>Default</dt>
+<dd><code>3</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.rabbitmq.autoconfigure.RabbitProperties$ListenerRetry">RabbitProperties$ListenerRetry</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.rabbitmq.listener.simple.retry.multiplier" data-default="1">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.rabbitmq.listener.simple.retry.multiplier</code><span class="cas-property-summary">Multiplier to apply to the previous retry interval.</span>
+</div>
+        <div class="cas-property-default"><code>1</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Multiplier to apply to the previous retry interval.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Double</code></dd>
+<dt>Default</dt>
+<dd><code>1</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.rabbitmq.autoconfigure.RabbitProperties$ListenerRetry">RabbitProperties$ListenerRetry</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.rabbitmq.listener.simple.retry.stateless" data-default="true">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.rabbitmq.listener.simple.retry.stateless</code><span class="cas-property-summary">Whether retries are stateless or stateful.</span>
+</div>
+        <div class="cas-property-default"><code>true</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Whether retries are stateless or stateful.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Boolean</code></dd>
+<dt>Default</dt>
+<dd><code>true</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.rabbitmq.autoconfigure.RabbitProperties$ListenerRetry">RabbitProperties$ListenerRetry</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.rabbitmq.listener.simple.transaction-size" data-default="" data-deprecated>
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.rabbitmq.listener.simple.transaction-size</code><span class="cas-property-summary"></span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags">
+<span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span><span class="cas-property-tag cas-property-tag-deprecated"><i class="fa fa-skull" aria-hidden="true"></i>Deprecated</span>
+</div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Integer</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Deprecation</dt>
+<dd>
+<code>ERROR</code>, no replacement</dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.rabbitmq.listener.stream.native-listener" data-default="false">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.rabbitmq.listener.stream.native-listener</code><span class="cas-property-summary">Whether the container will support listeners that consume native stream messages instead of Spring AMQP messages.</span>
+</div>
+        <div class="cas-property-default"><code>false</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Whether the container will support listeners that consume native stream messages instead of Spring AMQP messages.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Boolean</code></dd>
+<dt>Default</dt>
+<dd><code>false</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.rabbitmq.autoconfigure.RabbitProperties$StreamContainer">RabbitProperties$StreamContainer</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.rabbitmq.listener.stream.observation-enabled" data-default="false">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.rabbitmq.listener.stream.observation-enabled</code><span class="cas-property-summary">Whether to enable observation.</span>
+</div>
+        <div class="cas-property-default"><code>false</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Whether to enable observation.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Boolean</code></dd>
+<dt>Default</dt>
+<dd><code>false</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.rabbitmq.autoconfigure.RabbitProperties$StreamContainer">RabbitProperties$StreamContainer</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.rabbitmq.listener.type" data-default="simple">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.rabbitmq.listener.type</code><span class="cas-property-summary">Listener container type.</span>
+</div>
+        <div class="cas-property-default"><code>simple</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Listener container type.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>RabbitProperties.ContainerType</code></dd>
+<dt>Default</dt>
+<dd><code>simple</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.rabbitmq.autoconfigure.RabbitProperties$Listener">RabbitProperties$Listener</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.rabbitmq.max-inbound-message-body-size" data-default="64MB">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.rabbitmq.max-inbound-message-body-size</code><span class="cas-property-summary">Maximum size of the body of inbound (received) messages.</span>
+</div>
+        <div class="cas-property-default"><code>64MB</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Maximum size of the body of inbound (received) messages.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>DataSize</code></dd>
+<dt>Default</dt>
+<dd><code>64MB</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.rabbitmq.autoconfigure.RabbitProperties">RabbitProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.rabbitmq.password" data-default="guest">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.rabbitmq.password</code><span class="cas-property-summary">Login to authenticate against the broker.</span>
+</div>
+        <div class="cas-property-default"><code>guest</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Login to authenticate against the broker.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><code>guest</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.rabbitmq.autoconfigure.RabbitProperties">RabbitProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.rabbitmq.port" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.rabbitmq.port</code><span class="cas-property-summary">RabbitMQ port.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>RabbitMQ port. Ignored if an address is set. Default to 5672, or 5671 if SSL is enabled.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Integer</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.rabbitmq.autoconfigure.RabbitProperties">RabbitProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.rabbitmq.publisher-confirm-type" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.rabbitmq.publisher-confirm-type</code><span class="cas-property-summary">Type of publisher confirms to use.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Type of publisher confirms to use.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>CachingConnectionFactory.ConfirmType</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.rabbitmq.autoconfigure.RabbitProperties">RabbitProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.rabbitmq.publisher-confirms" data-default="" data-deprecated>
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.rabbitmq.publisher-confirms</code><span class="cas-property-summary"></span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags">
+<span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span><span class="cas-property-tag cas-property-tag-deprecated"><i class="fa fa-skull" aria-hidden="true"></i>Deprecated</span>
+</div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Boolean</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Deprecation</dt>
+<dd>
+<code>ERROR</code>, no replacement</dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.rabbitmq.publisher-returns" data-default="false">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.rabbitmq.publisher-returns</code><span class="cas-property-summary">Whether to enable publisher returns.</span>
+</div>
+        <div class="cas-property-default"><code>false</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Whether to enable publisher returns.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Boolean</code></dd>
+<dt>Default</dt>
+<dd><code>false</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.rabbitmq.autoconfigure.RabbitProperties">RabbitProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.rabbitmq.requested-channel-max" data-default="2047">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.rabbitmq.requested-channel-max</code><span class="cas-property-summary">Number of channels per connection requested by the client.</span>
+</div>
+        <div class="cas-property-default"><code>2047</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Number of channels per connection requested by the client. Use 0 for unlimited.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Integer</code></dd>
+<dt>Default</dt>
+<dd><code>2047</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.rabbitmq.autoconfigure.RabbitProperties">RabbitProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.rabbitmq.requested-heartbeat" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.rabbitmq.requested-heartbeat</code><span class="cas-property-summary">Requested heartbeat timeout; zero for none.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Requested heartbeat timeout; zero for none. If a duration suffix is not specified, seconds will be used.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Duration</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.rabbitmq.autoconfigure.RabbitProperties">RabbitProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.rabbitmq.ssl.algorithm" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.rabbitmq.ssl.algorithm</code><span class="cas-property-summary">SSL algorithm to use.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>SSL algorithm to use. By default, configured by the Rabbit client library.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.rabbitmq.autoconfigure.RabbitProperties$Ssl">RabbitProperties$Ssl</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.rabbitmq.ssl.bundle" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.rabbitmq.ssl.bundle</code><span class="cas-property-summary">SSL bundle name.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>SSL bundle name.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.rabbitmq.autoconfigure.RabbitProperties$Ssl">RabbitProperties$Ssl</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.rabbitmq.ssl.enabled" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.rabbitmq.ssl.enabled</code><span class="cas-property-summary">Whether to enable SSL support.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Whether to enable SSL support. Determined automatically if an address is provided with the protocol (amqp:// vs. amqps://).</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Boolean</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.rabbitmq.autoconfigure.RabbitProperties$Ssl">RabbitProperties$Ssl</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.rabbitmq.ssl.key-store" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.rabbitmq.ssl.key-store</code><span class="cas-property-summary">Path to the key store that holds the SSL certificate.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Path to the key store that holds the SSL certificate.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.rabbitmq.autoconfigure.RabbitProperties$Ssl">RabbitProperties$Ssl</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.rabbitmq.ssl.key-store-algorithm" data-default="SunX509">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.rabbitmq.ssl.key-store-algorithm</code><span class="cas-property-summary">Key store algorithm.</span>
+</div>
+        <div class="cas-property-default"><code>SunX509</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Key store algorithm.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><code>SunX509</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.rabbitmq.autoconfigure.RabbitProperties$Ssl">RabbitProperties$Ssl</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.rabbitmq.ssl.key-store-password" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.rabbitmq.ssl.key-store-password</code><span class="cas-property-summary">Password used to access the key store.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Password used to access the key store.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.rabbitmq.autoconfigure.RabbitProperties$Ssl">RabbitProperties$Ssl</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.rabbitmq.ssl.key-store-type" data-default="PKCS12">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.rabbitmq.ssl.key-store-type</code><span class="cas-property-summary">Key store type.</span>
+</div>
+        <div class="cas-property-default"><code>PKCS12</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Key store type.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><code>PKCS12</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.rabbitmq.autoconfigure.RabbitProperties$Ssl">RabbitProperties$Ssl</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.rabbitmq.ssl.trust-store" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.rabbitmq.ssl.trust-store</code><span class="cas-property-summary">Trust store that holds SSL certificates.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Trust store that holds SSL certificates.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.rabbitmq.autoconfigure.RabbitProperties$Ssl">RabbitProperties$Ssl</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.rabbitmq.ssl.trust-store-algorithm" data-default="SunX509">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.rabbitmq.ssl.trust-store-algorithm</code><span class="cas-property-summary">Trust store algorithm.</span>
+</div>
+        <div class="cas-property-default"><code>SunX509</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Trust store algorithm.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><code>SunX509</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.rabbitmq.autoconfigure.RabbitProperties$Ssl">RabbitProperties$Ssl</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.rabbitmq.ssl.trust-store-password" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.rabbitmq.ssl.trust-store-password</code><span class="cas-property-summary">Password used to access the trust store.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Password used to access the trust store.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.rabbitmq.autoconfigure.RabbitProperties$Ssl">RabbitProperties$Ssl</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.rabbitmq.ssl.trust-store-type" data-default="JKS">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.rabbitmq.ssl.trust-store-type</code><span class="cas-property-summary">Trust store type.</span>
+</div>
+        <div class="cas-property-default"><code>JKS</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Trust store type.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><code>JKS</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.rabbitmq.autoconfigure.RabbitProperties$Ssl">RabbitProperties$Ssl</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.rabbitmq.ssl.validate-server-certificate" data-default="true">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.rabbitmq.ssl.validate-server-certificate</code><span class="cas-property-summary">Whether to enable server side certificate validation.</span>
+</div>
+        <div class="cas-property-default"><code>true</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Whether to enable server side certificate validation.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Boolean</code></dd>
+<dt>Default</dt>
+<dd><code>true</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.rabbitmq.autoconfigure.RabbitProperties$Ssl">RabbitProperties$Ssl</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.rabbitmq.ssl.verify-hostname" data-default="true" data-deprecated>
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.rabbitmq.ssl.verify-hostname</code><span class="cas-property-summary">Whether to enable hostname verification.</span>
+</div>
+        <div class="cas-property-default"><code>true</code></div>
+        <div class="cas-property-tags">
+<span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span><span class="cas-property-tag cas-property-tag-deprecated"><i class="fa fa-skull" aria-hidden="true"></i>Deprecated</span>
+</div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Whether to enable hostname verification.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Boolean</code></dd>
+<dt>Default</dt>
+<dd><code>true</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.rabbitmq.autoconfigure.RabbitProperties$Ssl">RabbitProperties$Ssl</code></dd>
+<dt>Deprecation</dt>
+<dd>
+<code>WARNING</code>, no replacement</dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.rabbitmq.stream.host" data-default="localhost">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.rabbitmq.stream.host</code><span class="cas-property-summary">Host of a RabbitMQ instance with the Stream plugin enabled.</span>
+</div>
+        <div class="cas-property-default"><code>localhost</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Host of a RabbitMQ instance with the Stream plugin enabled.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><code>localhost</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.rabbitmq.autoconfigure.RabbitProperties$Stream">RabbitProperties$Stream</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.rabbitmq.stream.name" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.rabbitmq.stream.name</code><span class="cas-property-summary">Name of the stream.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Name of the stream.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.rabbitmq.autoconfigure.RabbitProperties$Stream">RabbitProperties$Stream</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.rabbitmq.stream.password" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.rabbitmq.stream.password</code><span class="cas-property-summary">Login password to authenticate to the broker.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Login password to authenticate to the broker. When not set spring.rabbitmq.password is used.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.rabbitmq.autoconfigure.RabbitProperties$Stream">RabbitProperties$Stream</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.rabbitmq.stream.port" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.rabbitmq.stream.port</code><span class="cas-property-summary">Stream port of a RabbitMQ instance with the Stream plugin enabled.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Stream port of a RabbitMQ instance with the Stream plugin enabled.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Integer</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.rabbitmq.autoconfigure.RabbitProperties$Stream">RabbitProperties$Stream</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.rabbitmq.stream.ssl.bundle" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.rabbitmq.stream.ssl.bundle</code><span class="cas-property-summary">SSL bundle name.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>SSL bundle name.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.rabbitmq.autoconfigure.RabbitProperties$Stream$Ssl">RabbitProperties$Stream$Ssl</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.rabbitmq.stream.ssl.enabled" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.rabbitmq.stream.ssl.enabled</code><span class="cas-property-summary">Whether to enable SSL support.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Whether to enable SSL support. Enabled automatically if "bundle" is provided.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Boolean</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.rabbitmq.autoconfigure.RabbitProperties$Stream$Ssl">RabbitProperties$Stream$Ssl</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.rabbitmq.stream.username" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.rabbitmq.stream.username</code><span class="cas-property-summary">Login user to authenticate to the broker.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Login user to authenticate to the broker. When not set, spring.rabbitmq.username is used.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.rabbitmq.autoconfigure.RabbitProperties$Stream">RabbitProperties$Stream</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.rabbitmq.stream.virtual-host" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.rabbitmq.stream.virtual-host</code><span class="cas-property-summary">Virtual host of a RabbitMQ instance with the Stream plugin enabled.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Virtual host of a RabbitMQ instance with the Stream plugin enabled. When not set, spring.rabbitmq.virtual-host is used.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.rabbitmq.autoconfigure.RabbitProperties$Stream">RabbitProperties$Stream</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.rabbitmq.template.allowed-list-patterns" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.rabbitmq.template.allowed-list-patterns</code><span class="cas-property-summary">Simple patterns for allowable packages/classes for deserialization.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Simple patterns for allowable packages/classes for deserialization.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>List&lt;String&gt;</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.rabbitmq.autoconfigure.RabbitProperties$Template">RabbitProperties$Template</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.rabbitmq.template.default-receive-queue" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.rabbitmq.template.default-receive-queue</code><span class="cas-property-summary">Name of the default queue to receive messages from when none is specified explicitly.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Name of the default queue to receive messages from when none is specified explicitly.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.rabbitmq.autoconfigure.RabbitProperties$Template">RabbitProperties$Template</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.rabbitmq.template.exchange" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.rabbitmq.template.exchange</code><span class="cas-property-summary">Name of the default exchange to use for send operations.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Name of the default exchange to use for send operations.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.rabbitmq.autoconfigure.RabbitProperties$Template">RabbitProperties$Template</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.rabbitmq.template.mandatory" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.rabbitmq.template.mandatory</code><span class="cas-property-summary">Whether to enable mandatory messages.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Whether to enable mandatory messages.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Boolean</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.rabbitmq.autoconfigure.RabbitProperties$Template">RabbitProperties$Template</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.rabbitmq.template.observation-enabled" data-default="false">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.rabbitmq.template.observation-enabled</code><span class="cas-property-summary">Whether to enable observation.</span>
+</div>
+        <div class="cas-property-default"><code>false</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Whether to enable observation.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Boolean</code></dd>
+<dt>Default</dt>
+<dd><code>false</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.rabbitmq.autoconfigure.RabbitProperties$Template">RabbitProperties$Template</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.rabbitmq.template.queue" data-default="" data-deprecated>
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.rabbitmq.template.queue</code><span class="cas-property-summary"></span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags">
+<span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span><span class="cas-property-tag cas-property-tag-deprecated"><i class="fa fa-skull" aria-hidden="true"></i>Deprecated</span>
+</div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Deprecation</dt>
+<dd>
+<code>ERROR</code>, replaced by <code>spring.rabbitmq.template.default-receive-queue</code>
+</dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.rabbitmq.template.receive-timeout" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.rabbitmq.template.receive-timeout</code><span class="cas-property-summary">Timeout for receive() operations.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Timeout for receive() operations.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Duration</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.rabbitmq.autoconfigure.RabbitProperties$Template">RabbitProperties$Template</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.rabbitmq.template.reply-timeout" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.rabbitmq.template.reply-timeout</code><span class="cas-property-summary">Timeout for sendAndReceive() operations.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Timeout for sendAndReceive() operations.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Duration</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.rabbitmq.autoconfigure.RabbitProperties$Template">RabbitProperties$Template</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.rabbitmq.template.retry.enabled" data-default="false">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.rabbitmq.template.retry.enabled</code><span class="cas-property-summary">Whether publishing retries are enabled.</span>
+</div>
+        <div class="cas-property-default"><code>false</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Whether publishing retries are enabled.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Boolean</code></dd>
+<dt>Default</dt>
+<dd><code>false</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.rabbitmq.autoconfigure.RabbitProperties$Retry">RabbitProperties$Retry</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.rabbitmq.template.retry.initial-interval" data-default="1000ms">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.rabbitmq.template.retry.initial-interval</code><span class="cas-property-summary">Duration between the first and second attempt to deliver a message.</span>
+</div>
+        <div class="cas-property-default"><code>1000ms</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Duration between the first and second attempt to deliver a message.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Duration</code></dd>
+<dt>Default</dt>
+<dd><code>1000ms</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.rabbitmq.autoconfigure.RabbitProperties$Retry">RabbitProperties$Retry</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.rabbitmq.template.retry.max-attempts" data-default="" data-deprecated>
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.rabbitmq.template.retry.max-attempts</code><span class="cas-property-summary"></span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags">
+<span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span><span class="cas-property-tag cas-property-tag-deprecated"><i class="fa fa-skull" aria-hidden="true"></i>Deprecated</span>
+</div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Long</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Deprecation</dt>
+<dd>
+<code>ERROR</code>, replaced by <code>spring.rabbitmq.template.retry.max-retries</code>
+</dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.rabbitmq.template.retry.max-interval" data-default="10000ms">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.rabbitmq.template.retry.max-interval</code><span class="cas-property-summary">Maximum duration between attempts.</span>
+</div>
+        <div class="cas-property-default"><code>10000ms</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Maximum duration between attempts.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Duration</code></dd>
+<dt>Default</dt>
+<dd><code>10000ms</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.rabbitmq.autoconfigure.RabbitProperties$Retry">RabbitProperties$Retry</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.rabbitmq.template.retry.max-retries" data-default="3">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.rabbitmq.template.retry.max-retries</code><span class="cas-property-summary">Maximum number of retry attempts to deliver a message.</span>
+</div>
+        <div class="cas-property-default"><code>3</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Maximum number of retry attempts to deliver a message.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Long</code></dd>
+<dt>Default</dt>
+<dd><code>3</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.rabbitmq.autoconfigure.RabbitProperties$Retry">RabbitProperties$Retry</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.rabbitmq.template.retry.multiplier" data-default="1">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.rabbitmq.template.retry.multiplier</code><span class="cas-property-summary">Multiplier to apply to the previous retry interval.</span>
+</div>
+        <div class="cas-property-default"><code>1</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Multiplier to apply to the previous retry interval.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Double</code></dd>
+<dt>Default</dt>
+<dd><code>1</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.rabbitmq.autoconfigure.RabbitProperties$Retry">RabbitProperties$Retry</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.rabbitmq.template.routing-key" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.rabbitmq.template.routing-key</code><span class="cas-property-summary">Value of a default routing key to use for send operations.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Value of a default routing key to use for send operations.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.rabbitmq.autoconfigure.RabbitProperties$Template">RabbitProperties$Template</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.rabbitmq.username" data-default="guest">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.rabbitmq.username</code><span class="cas-property-summary">Login user to authenticate to the broker.</span>
+</div>
+        <div class="cas-property-default"><code>guest</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Login user to authenticate to the broker.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><code>guest</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.rabbitmq.autoconfigure.RabbitProperties">RabbitProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.rabbitmq.virtual-host" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.rabbitmq.virtual-host</code><span class="cas-property-summary">Virtual host to use when connecting to the broker.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Virtual host to use when connecting to the broker.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.rabbitmq.autoconfigure.RabbitProperties">RabbitProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+</div>
+<p class="cas-properties-legend">
+        <strong>Required</strong> settings may be needed to activate or affect the feature; review them even when they have a default.
+        <strong>Optional</strong> settings only need to be set to change a default or to turn on the behavior they control.
+        <strong>Third party</strong> settings belong to libraries such as Spring Boot that CAS builds on; their own documentation may have more detail.
+    </p>
+<div class="cas-properties-topics"><details class="cas-properties-topic">
+            <summary><i class="fa fa-newspaper" aria-hidden="true"></i>Notes on configuration</summary>
+            <div class="cas-properties-topic-body">
+<!-- fragment:keep -->
+
+<p></p>
+
+<h4 id="configuration-metadata">Configuration Metadata</h4>
+
+<p>The collection of configuration properties listed in this section are automatically generated from the CAS source and components that contain the actual field
+definitions, types, descriptions, modules, etc. This metadata may not always be 100% accurate, or could be lacking details and sufficient explanations.</p>
+
+<h4 id="be-selective">Be Selective</h4>
+
+<p>This section is meant as a guide only. Do NOT copy/paste the entire collection of settings into your CAS configuration; rather pick only the properties that you
+need. Do NOT enable settings unless you are certain of their purpose and do NOT copy settings into your configuration only to keep them as reference. All these
+ideas lead to upgrade headaches, maintenance nightmares and premature aging.</p>
+
+<h4 id="yagni">YAGNI</h4>
+
+<p>Note that for nearly ALL use cases, declaring and configuring properties listed here is sufficient. You should NOT have to explicitly massage a CAS XML/Java/etc
+configuration file to design an authentication handler, create attribute release policies, etc. CAS at runtime will auto-configure all required changes for you.
+If you are unsure about the meaning of a given CAS setting, do NOT turn it on without hesitation. Review the codebase or better yet, ask questions to clarify
+the intended behavior.</p>
+
+<h4 id="naming-convention">Naming Convention</h4>
+
+<p>Property names can be specified in very relaxed terms. For instance <code class="language-plaintext highlighter-rouge">cas.someProperty</code>, <code class="language-plaintext highlighter-rouge">cas.some-property</code>, <code class="language-plaintext highlighter-rouge">cas.some_property</code> are all valid names. While all
+forms are accepted by CAS, there are certain components (in CAS and other frameworks used) whose activation at runtime is conditional on a property value, where
+this property is required to have been specified in CAS configuration using kebab case. This is both true for properties that are owned by CAS as well as those
+that might be presented to the system via an external library or framework such as Spring Boot, etc.</p>
+
+<div class="alert alert-info">
+<img class="emoji" title=":information_source:" alt=":information_source:" src="https://github.githubassets.com/images/icons/emoji/unicode/2139.png" height="20" width="20"> <strong>Note</strong> <p>
+When possible, properties should be stored in lower-case kebab format, such as <code>cas.property-name=value</code>.
+The only possible exception to this rule is when naming actuator endpoints; The name of the
+actuator endpoints (i.e. <code>ssoSessions</code>) <strong>MUST</strong> remain in camelCase mode. 
+</p>
+</div>
+
+<p>Settings and properties that are controlled by the CAS platform directly always begin with the prefix <code class="language-plaintext highlighter-rouge">cas</code>. All other settings are controlled and provided
+to CAS via other underlying frameworks and may have their own schemas and syntax. BE CAREFUL with
+the distinction. Unrecognized properties are rejected by CAS and/or frameworks upon which CAS depends. This means if you somehow misspell a property definition
+or fail to adhere to the dot-notation syntax and such, your setting is entirely refused by CAS and likely the feature it controls will never be activated in the
+way you intend.</p>
+
+<h4 id="validation">Validation</h4>
+
+<p>Configuration properties are automatically validated on CAS startup to report issues with configuration binding, especially if defined CAS settings cannot be
+recognized or validated by the configuration schema. Additional validation processes are also handled
+via <a href="/cas/development/configuration/Configuration-Metadata-Repository.html">Configuration Metadata</a> and property migrations applied automatically on
+startup by Spring Boot and family.</p>
+
+<h4 id="indexed-settings">Indexed Settings</h4>
+
+<p>CAS settings able to accept multiple values are typically documented with an index, such as <code class="language-plaintext highlighter-rouge">cas.some.setting[0]=value</code>. The index <code class="language-plaintext highlighter-rouge">[0]</code> is meant to be
+incremented by the adopter to allow for distinct multiple configuration blocks.</p>
+
+            </div>
+        </details></div>
+</div>
+
+<h2 id="troubleshooting">Troubleshooting</h2>
+
+<p>To enable additional logging, modify the logging configuration file to add the following:</p>
+
+<div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+</pre></td>
+<td class="rouge-code"><pre><span class="nt">&lt;Logger</span> <span class="na">name=</span><span class="s">"org.springframework.amqp"</span> <span class="na">level=</span><span class="s">"debug"</span> <span class="na">additivity=</span><span class="s">"false"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;AppenderRef</span> <span class="na">ref=</span><span class="s">"casConsole"</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;AppenderRef</span> <span class="na">ref=</span><span class="s">"casFile"</span><span class="nt">/&gt;</span>
+<span class="nt">&lt;/Logger&gt;</span>
+</pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+            </article>
+            <div class="article-end" aria-hidden="true">
+<span></span><span>CAS</span><span></span>
+</div>
+        </main>
+        
+        <aside class="docs-toc" aria-label="On this page">
+    <nav id="pageContents" aria-label="Table of contents">
+        <p class="eyebrow">ON THIS PAGE</p>
+        <ul class="section-nav"></ul>
+    </nav>
+    <a class="toc-top" href="#cas-docs-container">Back to top <span aria-hidden="true">↑</span></a>
+</aside>
+
+        
+    </div>
+
+    <footer class="site-footer">
+        <a class="footer-brand" href="../../index.html">APEREO <strong>CAS</strong></a>
+        <p>CAS is supported by the <a href="https://www.apereo.org/">Apereo Foundation</a>.</p>
+        <a href="#cas-docs-container">Back to top <span aria-hidden="true">↑</span></a>
+    </footer>
+    <div id="docs-status" class="visually-hidden" role="status" aria-live="polite"></div>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/tether@2.0.0/dist/js/tether.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.11/clipboard.min.js"></script>
+
+    <script src="/cas/javascripts/URI.js"></script>
+    <script src="/cas/javascripts/site.js"></script>
+
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@docsearch/js@3"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="https://code.jquery.com/ui/1.13.1/jquery-ui.js"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.5/js/lightbox.min.js"></script>
+
+    <script>
+        let pageSection = "Configuration";
+        let siteUrl = "https://apereo.github.io";
+        let basePath = "/cas";
+
+        
+    </script>
+</body>
+
+</html>
