@@ -22,6 +22,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.util.ReflectionUtils;
 import tools.jackson.core.JsonParser;
+import tools.jackson.core.StreamReadFeature;
 import tools.jackson.core.TokenStreamFactory;
 import tools.jackson.core.json.JsonFactory;
 import tools.jackson.core.json.JsonReadFeature;
@@ -107,6 +108,12 @@ public class JacksonObjectMapperFactory {
 
     @Builder.Default
     private final boolean sorted = false;
+
+    /**
+     * Whether a JSON object that repeats a property name is refused when read, rather than the last value winning.
+     */
+    @Builder.Default
+    private final boolean strictDuplicateDetection = false;
 
     @Builder.Default
     private final TokenStreamFactory jsonFactory = new JsonFactory();
@@ -215,6 +222,7 @@ public class JacksonObjectMapperFactory {
             .configure(EnumFeature.READ_ENUMS_USING_TO_STRING, false)
             .configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS, true)
 
+            .configure(StreamReadFeature.STRICT_DUPLICATE_DETECTION, strictDuplicateDetection)
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, isFailOnUnknownProperties())
             .configure(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT, true)
             .configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, isSingleValueAsArray())

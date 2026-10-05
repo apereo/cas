@@ -60,6 +60,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.ResultMatcher;
 import tools.jackson.databind.ObjectMapper;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -614,6 +615,55 @@ class OidcVerifiableCredentialEndpointControllerTests {
                     .content(MAPPER.writeValueAsString(request)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.credentials[0].credential").exists());
+        }
+
+        @Test
+        void verifyCredentialNotification() throws Throwable {
+            val clientId = UUID.randomUUID().toString();
+            servicesManager.save(getOidcRegisteredService(clientId));
+            val accessToken = createOAuth20AccessToken(clientId);
+            val request = new OidcVerifiableCredentialRequest();
+            request.setCredentialConfigurationId("myorg");
+            request.setProofs(buildProofs(buildValidRsaProofJwt()));
+            val response = mockMvc.perform(post(CREDENTIAL_ENDPOINT_URL).with(withHttpRequestProcessor())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken.getId())
+                    .content(MAPPER.writeValueAsString(request)))
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString();
+            val id = MAPPER.readValue(response, Map.class).get("notification_id").toString();
+
+            performNotification(accessToken, "{\"notification_id\":\"%s\",\"event\":\"credential_accepted\"}", id, status().isNoContent());
+            performNotification(accessToken, "{\"notification_id\":\"%s\",\"event\":\"credential_accepted\"}", id, status().isNoContent());
+            performNotification(accessToken, "{\"notification_id\":\"%s\",\"event\":\"credential_failure\","
+                + "\"event_description\":\"Could not store the Credential. Out of storage.\",\"extra\":true}", id, status().isNoContent());
+            for (val invalid : List.of("{\"notification_id\":\"%s\",\"event\":\"credential_lost\"}",
+                "{\"notification_id\":\"%s\",\"event\":\"credential_deleted\",\"event_description\":\"Deleted \\\"by\\\" the user\"}",
+                "{\"notification_id\":\"%s\",\"event\":\"credential_deleted\",\"event\":\"credential_accepted\"}",
+                "{\"event\":\"credential_deleted\",\"other\":\"%s\"}")) {
+                performNotification(accessToken, invalid, id, status().isBadRequest())
+                    .andExpect(jsonPath("$.error").value(OidcConstants.VC_ERROR_INVALID_NOTIFICATION_REQUEST));
+            }
+            val otherClientId = UUID.randomUUID().toString();
+            servicesManager.save(getOidcRegisteredService(otherClientId));
+            performNotification(createOAuth20AccessToken(otherClientId), "{\"notification_id\":\"%s\",\"event\":\"credential_deleted\"}",
+                id, status().isBadRequest()).andExpect(jsonPath("$.error").value(OidcConstants.VC_ERROR_INVALID_NOTIFICATION_ID));
+            performNotification(accessToken, "{\"notification_id\":\"%s\",\"event\":\"credential_deleted\"}",
+                UUID.randomUUID().toString(), status().isBadRequest())
+                .andExpect(jsonPath("$.error").value(OidcConstants.VC_ERROR_INVALID_NOTIFICATION_ID));
+            mockMvc.perform(post("/cas/" + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.VC_NOTIFICATION_URL)
+                    .with(withHttpRequestProcessor()).contentType(MediaType.APPLICATION_JSON)
+                    .content("{\"notification_id\":\"%s\",\"event\":\"credential_accepted\"}".formatted(id)))
+                .andExpect(status().isUnauthorized());
+        }
+
+        private ResultActions performNotification(final OAuth20AccessToken accessToken, final String body,
+                                                  final String notificationId, final ResultMatcher expected) throws Exception {
+            return mockMvc.perform(post("/cas/" + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.VC_NOTIFICATION_URL)
+                    .with(withHttpRequestProcessor()).contentType(MediaType.APPLICATION_JSON)
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken.getId())
+                    .content(body.formatted(notificationId)))
+                .andExpect(expected);
         }
     }
 

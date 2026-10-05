@@ -14,6 +14,7 @@ import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import tools.jackson.core.JacksonException;
 import tools.jackson.dataformat.xml.XmlFactory;
 import tools.jackson.dataformat.yaml.YAMLFactory;
 import static org.junit.jupiter.api.Assertions.*;
@@ -37,6 +38,15 @@ class JacksonObjectMapperFactoryTests {
         val results = mapper.writeValueAsString(payload);
         val read = mapper.readValue(results, Payload.class);
         assertEquals(read, payload);
+    }
+
+    @Test
+    void verifyStrictDuplicateDetection() {
+        val json = "{\"firstName\":\"Bob\",\"firstName\":\"Alice\"}";
+        val lenient = JacksonObjectMapperFactory.builder().defaultTypingEnabled(false).build().toObjectMapper();
+        assertEquals("Alice", lenient.readValue(json, Payload.class).getFirstName());
+        val strict = JacksonObjectMapperFactory.builder().defaultTypingEnabled(false).strictDuplicateDetection(true).build().toObjectMapper();
+        assertThrows(JacksonException.class, () -> strict.readValue(json, Payload.class));
     }
 
     @Test

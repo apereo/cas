@@ -46,6 +46,7 @@ async function createPublicKey() {
             assert(res.data.credential_issuer !== undefined);
             assert(res.data.authorization_servers !== undefined);
             assert(res.data.credential_endpoint !== undefined);
+            assert(res.data.notification_endpoint === "https://localhost:8443/cas/oidc/oidcVcNotification");
         }, (error) => {
             throw `Operation failed ${error}`;
         });
@@ -172,4 +173,17 @@ async function createPublicKey() {
 
     await cas.log(`Credential issued at ${decoded.iat} and expires at ${decoded.exp}`);
     assert(decoded.exp - decoded.iat === 30 * 24 * 60 * 60);
+
+    assert(result.notification_id !== undefined);
+    const notification = JSON.stringify({
+        notification_id: result.notification_id,
+        event: "credential_accepted"
+    });
+    const notificationHeaders = {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${accessToken}`
+    };
+    await cas.doRequest("https://localhost:8443/cas/oidc/oidcVcNotification", "POST", notificationHeaders, 204, notification);
+    await cas.doRequest("https://localhost:8443/cas/oidc/oidcVcNotification", "POST", notificationHeaders, 400,
+        JSON.stringify({notification_id: "unknown", event: "credential_accepted"}));
 })();

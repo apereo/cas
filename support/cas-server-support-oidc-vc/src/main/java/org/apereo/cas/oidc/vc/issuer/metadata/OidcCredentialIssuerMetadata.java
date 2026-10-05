@@ -40,6 +40,9 @@ public class OidcCredentialIssuerMetadata implements Serializable {
     @JsonProperty("nonce_endpoint")
     private String nonceEndpoint;
 
+    @JsonProperty("notification_endpoint")
+    private String notificationEndpoint;
+
     @JsonProperty("batch_credential_issuance")
     private BatchCredentialIssuance batchCredentialIssuance;
 

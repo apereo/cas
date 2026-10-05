@@ -226,6 +226,10 @@ public interface OidcConstants {
      */
     String VC_NONCE_URL = "oidcVcNonce";
     /**
+     * Oidc VC notification url path segment.
+     */
+    String VC_NOTIFICATION_URL = "oidcVcNotification";
+    /**
      * Credential error response: the credential request is invalid.
      * OpenID4VCI 1.0 defines its own error codes for the Credential Endpoint; the OAuth codes of the
      * token endpoint do not apply there.
@@ -253,6 +257,14 @@ public interface OidcConstants {
      * Credential error response: the issuer denies issuance of the requested credential.
      */
     String VC_ERROR_CREDENTIAL_REQUEST_DENIED = "credential_request_denied";
+    /**
+     * Notification error response: the {@code notification_id} is unknown, expired or not the caller's.
+     */
+    String VC_ERROR_INVALID_NOTIFICATION_ID = "invalid_notification_id";
+    /**
+     * Notification error response: the notification request is missing a parameter or is otherwise malformed.
+     */
+    String VC_ERROR_INVALID_NOTIFICATION_REQUEST = "invalid_notification_request";
     /**
      * Oidc pushed authorization request url path segment url.
      */

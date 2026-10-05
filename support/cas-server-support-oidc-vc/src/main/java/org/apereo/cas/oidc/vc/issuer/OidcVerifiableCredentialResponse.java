@@ -33,6 +33,12 @@ public class OidcVerifiableCredentialResponse implements Serializable {
     private List<IssuedCredential> credentials;
 
     /**
+     * Identifies the credentials of this response in notifications the wallet sends to the notification endpoint.
+     */
+    @JsonProperty("notification_id")
+    private String notificationId;
+
+    /**
      * A single issued credential.
      */
     @JsonInclude(JsonInclude.Include.NON_EMPTY)

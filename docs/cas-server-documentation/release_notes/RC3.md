@@ -114,6 +114,8 @@ The CAS documentation site has received a visual and functional overhaul. Notabl
 - Every page opens with a short summary, which also serves as its description in search results.
 - [Docker installation](../installation/Docker-Installation.html) names an explicit image tag, and
   [Getting Started](../planning/Getting-Started.html) points to it for a quick local trial.
+- The site loads two web fonts instead of four; code and the sidebar use the system monospace font. Images hosted on
+  third-party sites are removed, and the [logout](../installation/Logout-Single-Signout.html) session example is now a table.
 
 ### Heimdall AuthZEN
 
@@ -286,6 +288,9 @@ and failures were recorded twice. Failed SAML2 ECP authentication attempts, whic
   and its proof of possession, per [OAuth 2.0 Attestation-Based Client Authentication](../authentication/OIDC-Authentication-AccessToken-AuthMethods.html)
   (`attest_jwt_client_auth`), as the High Assurance Interoperability Profile requires of wallet attestations. Attestations must chain to
   trust anchors set with `cas.authn.oidc.client-attestation.trust-anchors`, which also advertises the method in the discovery document.
+- Wallets may report what became of issued credentials at the new [notification endpoint](../authentication/OIDC-Authentication-Verifiable-Credentials.html):
+  credential responses carry a `notification_id`, and `credential_accepted`, `credential_failure` and `credential_deleted`
+  notifications are recorded in the audit log.
 
 ### Stateless Ticket Registry
 

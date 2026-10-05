@@ -39,6 +39,7 @@ public class OidcCredentialIssuerMetadataService {
         metadata.setAuthorizationServers(List.of(issuer));
         metadata.setCredentialEndpoint(issuer + '/' + OidcConstants.VC_CREDENTIAL_URL);
         metadata.setNonceEndpoint(issuer + '/' + OidcConstants.VC_NONCE_URL);
+        metadata.setNotificationEndpoint(issuer + '/' + OidcConstants.VC_NOTIFICATION_URL);
         metadata.setDisplay(buildIssuerDisplays(properties.getVc().getIssuer().getDisplay()));
         metadata.setBatchCredentialIssuance(OidcCredentialIssuerMetadata.BatchCredentialIssuance
             .builder()

@@ -1,6 +1,10 @@
 package org.apereo.cas.config;
 
 import module java.base;
+import org.apereo.cas.audit.AuditActionResolvers;
+import org.apereo.cas.audit.AuditResourceResolvers;
+import org.apereo.cas.audit.AuditTrailConstants;
+import org.apereo.cas.audit.AuditTrailRecordResolutionPlanConfigurer;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.oidc.OidcConfigurationContext;
 import org.apereo.cas.oidc.vc.issuer.OidcDefaultVerifiableCredentialIssuerService;
@@ -13,6 +17,8 @@ import org.apereo.cas.oidc.vc.issuer.enc.OidcVerifiableCredentialJwtVcJsonLdEnco
 import org.apereo.cas.oidc.vc.issuer.metadata.OidcCredentialIssuerMetadataService;
 import org.apereo.cas.oidc.vc.issuer.nonce.OidcVerifiableCredentialDefaultNonceService;
 import org.apereo.cas.oidc.vc.issuer.nonce.OidcVerifiableCredentialNonceService;
+import org.apereo.cas.oidc.vc.issuer.notification.OidcVerifiableCredentialDefaultNotificationService;
+import org.apereo.cas.oidc.vc.issuer.notification.OidcVerifiableCredentialNotificationService;
 import org.apereo.cas.oidc.vc.issuer.proof.OidcVerifiableCredentialJwtProofValidator;
 import org.apereo.cas.oidc.vc.issuer.proof.OidcVerifiableCredentialKeyAttestationValidator;
 import org.apereo.cas.oidc.vc.issuer.proof.OidcVerifiableCredentialProofValidator;
@@ -22,6 +28,8 @@ import org.apereo.cas.oidc.vc.issuer.web.OidcVerifiableCredentialNonceEndpointCo
 import org.apereo.cas.oidc.vc.issuer.web.OidcVerifiableCredentialTypeMetadataController;
 import org.apereo.cas.oidc.vc.token.OidcVerifiableCredentialsAccessTokenGeneratorCustomizer;
 import lombok.val;
+import org.apereo.inspektr.audit.spi.support.DefaultAuditActionResolver;
+import org.apereo.inspektr.audit.spi.support.ShortenedReturnValueAsStringAuditResourceResolver;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -130,9 +138,31 @@ class OidcVerifiableCredentialsIssuerConfiguration {
         @Qualifier(OidcConfigurationContext.BEAN_NAME)
         final OidcConfigurationContext oidcConfigurationContext,
         @Qualifier("oidcVerifiableCredentialIssuerService")
-        final OidcVerifiableCredentialIssuerService oidcVerifiableCredentialIssuerService) {
+        final OidcVerifiableCredentialIssuerService oidcVerifiableCredentialIssuerService,
+        @Qualifier(OidcVerifiableCredentialNotificationService.BEAN_NAME)
+        final OidcVerifiableCredentialNotificationService oidcVerifiableCredentialNotificationService) {
         return new OidcVerifiableCredentialEndpointController(
-            oidcConfigurationContext, oidcVerifiableCredentialIssuerService);
+            oidcConfigurationContext, oidcVerifiableCredentialIssuerService, oidcVerifiableCredentialNotificationService);
+    }
+
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    @ConditionalOnMissingBean(name = OidcVerifiableCredentialNotificationService.BEAN_NAME)
+    @Bean
+    public OidcVerifiableCredentialNotificationService oidcVerifiableCredentialNotificationService(
+        @Qualifier(OidcConfigurationContext.BEAN_NAME) final OidcConfigurationContext oidcConfigurationContext) {
+        return new OidcVerifiableCredentialDefaultNotificationService(oidcConfigurationContext);
+    }
+
+    @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    @ConditionalOnMissingBean(name = "oidcVerifiableCredentialAuditTrailRecordResolutionPlanConfigurer")
+    public AuditTrailRecordResolutionPlanConfigurer oidcVerifiableCredentialAuditTrailRecordResolutionPlanConfigurer() {
+        return plan -> {
+            plan.registerAuditActionResolver(AuditActionResolvers.OIDC_VERIFIABLE_CREDENTIAL_NOTIFICATION_ACTION_RESOLVER,
+                new DefaultAuditActionResolver(AuditTrailConstants.AUDIT_ACTION_POSTFIX_SUCCESS, AuditTrailConstants.AUDIT_ACTION_POSTFIX_FAILED));
+            plan.registerAuditResourceResolver(AuditResourceResolvers.OIDC_VERIFIABLE_CREDENTIAL_NOTIFICATION_RESOURCE_RESOLVER,
+                new ShortenedReturnValueAsStringAuditResourceResolver());
+        };
     }
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

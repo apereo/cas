@@ -8,6 +8,7 @@ import org.apereo.cas.oidc.vc.issuer.OidcVerifiableCredentialIssuerService;
 import org.apereo.cas.oidc.vc.issuer.OidcVerifiableCredentialRequest;
 import org.apereo.cas.oidc.vc.issuer.OidcVerifiableCredentialResponse;
 import org.apereo.cas.oidc.vc.issuer.OidcVerifiableCredentialValidationContext;
+import org.apereo.cas.oidc.vc.issuer.notification.OidcVerifiableCredentialNotificationService;
 import org.apereo.cas.oidc.vc.issuer.proof.OidcVerifiableCredentialProofException;
 import org.apereo.cas.oidc.vc.services.OidcVerifiableCredentialPolicyUtils;
 import org.apereo.cas.services.OidcRegisteredService;
@@ -19,6 +20,7 @@ import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.util.Couplet;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
@@ -35,6 +37,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.server.ResponseStatusException;
+import tools.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -51,13 +54,26 @@ import jakarta.servlet.http.HttpServletResponse;
 @Tag(name = "OpenID Connect")
 @Slf4j
 public class OidcVerifiableCredentialEndpointController extends BaseOAuth20Controller<OidcConfigurationContext> {
+    private static final ObjectMapper NOTIFICATION_MAPPER = JacksonObjectMapperFactory.builder()
+        .defaultTypingEnabled(false)
+        .minimal(true)
+        .strictDuplicateDetection(true)
+        .build()
+        .toObjectMapper();
+
+    private static final Pattern NOTIFICATION_EVENT_DESCRIPTION = Pattern.compile("[\\x20-\\x21\\x23-\\x5B\\x5D-\\x7E]*");
+
     protected final OidcVerifiableCredentialIssuerService credentialIssuerService;
+
+    protected final OidcVerifiableCredentialNotificationService notificationService;
 
     public OidcVerifiableCredentialEndpointController(
         final OidcConfigurationContext configurationContext,
-        final OidcVerifiableCredentialIssuerService credentialIssuerService) {
+        final OidcVerifiableCredentialIssuerService credentialIssuerService,
+        final OidcVerifiableCredentialNotificationService notificationService) {
         super(configurationContext);
         this.credentialIssuerService = credentialIssuerService;
+        this.notificationService = notificationService;
     }
 
     /**
@@ -80,7 +96,7 @@ public class OidcVerifiableCredentialEndpointController extends BaseOAuth20Contr
         final HttpServletRequest httpRequest,
         final HttpServletResponse httpResponse) throws Throwable {
 
-        val verified = verifyRequest(httpRequest, httpResponse);
+        val verified = verifyRequest(httpRequest, httpResponse, OidcConstants.VC_CREDENTIAL_URL);
         if (verified.getRight() != null) {
             return verified.getRight();
         }
@@ -110,8 +126,68 @@ public class OidcVerifiableCredentialEndpointController extends BaseOAuth20Contr
                 .credential(issued.credential())
                 .build())
             .toList();
-        val response = OidcVerifiableCredentialResponse.builder().credentials(credentials).build();
+        val response = OidcVerifiableCredentialResponse.builder()
+            .credentials(credentials)
+            .notificationId(notificationService.register(decodedToken, issuanceContext.resolveConfigurationId()))
+            .build();
         return ResponseEntity.ok(response);
+    }
+
+    /**
+     * Receive a notification from the wallet about the credentials of a credential response, per OpenID4VCI 1.0
+     * section 11. The access token is checked as it is at the credential endpoint. A malformed request, an unknown
+     * event or an event description with characters outside the permitted ASCII set is
+     * {@code invalid_notification_request}; a notification id that is unknown, expired or was not issued to the
+     * client and user of the access token is {@code invalid_notification_id}. Unknown parameters are ignored, and the
+     * same notification may be sent again.
+     *
+     * @param body         the notification request body
+     * @param httpRequest  the http request
+     * @param httpResponse the http response
+     * @return the response entity
+     */
+    @PostMapping(value = {
+        '/' + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.VC_NOTIFICATION_URL,
+        "/**/" + OidcConstants.VC_NOTIFICATION_URL
+    }, consumes = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Handle OIDC credential notification",
+        description = "Handles notifications from wallets about issued credentials")
+    public ResponseEntity handleNotification(
+        @RequestBody final String body,
+        final HttpServletRequest httpRequest,
+        final HttpServletResponse httpResponse) {
+        val verified = verifyRequest(httpRequest, httpResponse, OidcConstants.VC_NOTIFICATION_URL);
+        if (verified.getRight() != null) {
+            return verified.getRight();
+        }
+        val notificationRequest = readNotificationRequest(body);
+        if (notificationRequest == null) {
+            return badRequest(OidcConstants.VC_ERROR_INVALID_NOTIFICATION_REQUEST, "Notification request is invalid");
+        }
+        try {
+            notificationService.notify(Objects.requireNonNull(verified.getLeft()), notificationRequest);
+            return ResponseEntity.noContent().build();
+        } catch (final OidcVerifiableCredentialNotificationService.InvalidNotificationException e) {
+            LOGGER.warn(e.getMessage());
+            return badRequest(OidcConstants.VC_ERROR_INVALID_NOTIFICATION_ID, e.getMessage());
+        }
+    }
+
+    protected static OidcVerifiableCredentialNotificationService.@Nullable NotificationRequest readNotificationRequest(final String body) {
+        try {
+            val parameters = NOTIFICATION_MAPPER.readValue(body, Map.class);
+            if (parameters.get("notification_id") instanceof final String notificationId && StringUtils.isNotBlank(notificationId)
+                && parameters.get("event") instanceof final String event
+                && OidcVerifiableCredentialNotificationService.EVENTS.contains(event)) {
+                val description = parameters.get("event_description");
+                if (description == null || (description instanceof final String text && NOTIFICATION_EVENT_DESCRIPTION.matcher(text).matches())) {
+                    return new OidcVerifiableCredentialNotificationService.NotificationRequest(notificationId, event, (String) description);
+                }
+            }
+        } catch (final Exception e) {
+            LOGGER.debug("Unable to read notification request: [{}]", e.getMessage());
+        }
+        return null;
     }
 
     /**
@@ -226,9 +302,10 @@ public class OidcVerifiableCredentialEndpointController extends BaseOAuth20Contr
 
     protected Couplet<@Nullable OAuth20AccessToken, @Nullable ResponseEntity> verifyRequest(
         final HttpServletRequest httpRequest,
-        final HttpServletResponse httpResponse) {
+        final HttpServletResponse httpResponse,
+        final String endpoint) {
         val webContext = new JEEContext(httpRequest, httpResponse);
-        if (!getConfigurationContext().getIssuerService().validateIssuer(webContext, List.of(OidcConstants.VC_CREDENTIAL_URL))) {
+        if (!getConfigurationContext().getIssuerService().validateIssuer(webContext, List.of(endpoint))) {
             LOGGER.warn("CAS cannot accept the request given the issuer is invalid.");
             return Couplet.right(badRequest(OidcConstants.VC_ERROR_INVALID_CREDENTIAL_REQUEST, "Invalid issuer"));
         }
