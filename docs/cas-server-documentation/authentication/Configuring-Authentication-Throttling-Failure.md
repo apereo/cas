@@ -1,6 +1,6 @@
 ---
 layout: default
-title: CAS - Configuring Authentication Throttling
+title: CAS - Throttling Authentication Attempts - Failure
 category: Authentication
 ---
 {% include variables.html %}

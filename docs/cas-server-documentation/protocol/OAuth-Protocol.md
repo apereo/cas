@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - OAuth Protocol
+description: "Use CAS as an OAuth 2.0 authorization server or delegate to OAuth providers, plus User-Managed Access (UMA)."
 category: Protocols
 ---
 

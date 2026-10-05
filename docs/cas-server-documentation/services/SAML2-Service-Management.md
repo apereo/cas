@@ -1,6 +1,6 @@
 ---
 layout: default
-title: CAS - SAML2 Service Management
+title: CAS - SAML2 Services
 category: Services
 ---
 

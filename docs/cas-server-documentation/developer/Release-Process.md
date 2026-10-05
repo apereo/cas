@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Release Process
+description: "The steps a release engineer takes to cut and publish a CAS server release."
 category: Developer
 ---
 

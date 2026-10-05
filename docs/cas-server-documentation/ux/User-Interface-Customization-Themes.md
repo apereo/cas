@@ -1,6 +1,7 @@
 ---
 layout: default
-title: Themes - User Interface Customization - CAS
+title: CAS - Themes - User Interface Customization
+description: "Themes that give different applications their own look and feel on the CAS login pages."
 category: User Interface
 ---
 

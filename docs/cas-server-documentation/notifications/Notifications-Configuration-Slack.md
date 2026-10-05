@@ -1,6 +1,6 @@
 ---
 layout: default
-title: CAS - Notifications
+title: CAS - Notifications - Slack
 category: Notifications
 ---
 

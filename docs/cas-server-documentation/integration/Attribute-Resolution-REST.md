@@ -1,6 +1,6 @@
 ---
 layout: default
-title: CAS - Attribute Resolution
+title: CAS - REST Attribute Resolution
 category: Attributes
 ---
 

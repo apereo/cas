@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Logging Configuration
+description: "Configure CAS logging with Log4j: log levels, appenders, masking sensitive data and routing logs to external systems."
 category: Logs & Audits
 ---
 

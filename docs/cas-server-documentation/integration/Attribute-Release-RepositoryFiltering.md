@@ -1,6 +1,6 @@
 ---
 layout: default
-title: CAS - Attribute Release Caching
+title: CAS - Attribute Repository Filtering
 category: Attributes
 ---
 

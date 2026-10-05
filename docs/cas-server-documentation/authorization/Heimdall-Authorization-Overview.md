@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Heimdall Authorization
+description: "Heimdall, the CAS authorization engine for APIs: policies, resources, the AuthZEN evaluation API and integration with gateways and proxies."
 category: Authorization
 ---
 

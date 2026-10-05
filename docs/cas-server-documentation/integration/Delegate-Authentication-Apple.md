@@ -1,6 +1,6 @@
 ---
 layout: default
-title: CAS - Delegate Authentication
+title: CAS - Apple Signin - Delegated Authentication
 category: Authentication
 ---
 

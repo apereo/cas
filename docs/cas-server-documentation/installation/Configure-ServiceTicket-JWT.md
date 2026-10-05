@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - JWT Service Tickets
+description: "Issue service tickets as signed and encrypted JSON Web Tokens that applications can validate without calling CAS."
 category: Ticketing
 ---
 {% include variables.html %}

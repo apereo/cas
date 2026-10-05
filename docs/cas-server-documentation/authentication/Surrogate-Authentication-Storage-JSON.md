@@ -1,6 +1,6 @@
 ---
 layout: default
-title: CAS - Surrogate Authentication
+title: CAS - JSON Surrogate Authentication Registration
 category: Authentication
 ---
 {% include variables.html %}

@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Logout & Single Logout
+description: "Logout and single logout (SLO) in CAS: ending the SSO session and notifying applications by back-channel or front-channel requests."
 category: SSO & SLO
 ---
 {% include variables.html %}

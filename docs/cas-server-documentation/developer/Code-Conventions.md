@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Code Conventions
+description: "Code conventions for contributing to the CAS codebase: Java style, Javadoc, logging and other project rules."
 ---
 
 # Code Conventions

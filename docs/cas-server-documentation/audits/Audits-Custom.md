@@ -1,6 +1,6 @@
 ---
 layout: default
-title: CAS - Audit Configuration
+title: CAS - Custom Audits
 category: Logs & Audits
 ---
 {% include variables.html %}

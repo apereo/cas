@@ -1,12 +1,12 @@
 ---
 layout: default
-title: CAS - Delegate Authentication
+title: CAS - Microsoft Entra ID - Delegated Authentication
 category: Authentication
 ---
 
 {% include variables.html %}
 
-# Azure Active Directory
+# Microsoft Entra ID
 
 For an overview of the delegated authentication flow, please [see this guide](Delegate-Authentication.html).
 

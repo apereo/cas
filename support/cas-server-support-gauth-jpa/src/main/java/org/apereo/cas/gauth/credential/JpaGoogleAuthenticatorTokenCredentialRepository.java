@@ -133,9 +133,12 @@ public class JpaGoogleAuthenticatorTokenCredentialRepository extends BaseGoogleA
         return entityManager.merge(ac);
     }
 
+    /**
+     * Delete all accounts with one bulk delete. Hibernate also deletes the rows of the accounts' collection tables,
+     * such as scratch codes and properties.
+     */
     @Override
     public void deleteAll() {
-        entityManager.createNativeQuery("DELETE FROM " + OneTimeTokenAccount.TABLE_NAME_SCRATCH_CODES).executeUpdate();
         entityManager.createQuery("DELETE FROM " + ENTITY_NAME).executeUpdate();
     }
 
@@ -153,12 +156,14 @@ public class JpaGoogleAuthenticatorTokenCredentialRepository extends BaseGoogleA
         LOGGER.debug("Deleted [{}] account record(s) for [{}]", count, username);
     }
 
+    /**
+     * Delete the account with one bulk delete. Hibernate also deletes the rows of the account's collection tables,
+     * such as scratch codes and properties.
+     *
+     * @param id the account id
+     */
     @Override
     public void delete(final long id) {
-        entityManager.createNativeQuery("DELETE FROM " + OneTimeTokenAccount.TABLE_NAME_SCRATCH_CODES + " WHERE id = :id")
-            .setParameter("id", id)
-            .executeUpdate();
-
         entityManager.createQuery("DELETE FROM " + ENTITY_NAME + " r WHERE r.id = :id")
             .setParameter("id", id)
             .executeUpdate();

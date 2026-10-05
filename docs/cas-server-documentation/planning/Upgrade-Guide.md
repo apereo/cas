@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Upgrade Guide
+description: "How to plan and execute a CAS upgrade: choosing the target version, comparing overlays, reviewing release notes and testing changes."
 category: Planning
 ---
 

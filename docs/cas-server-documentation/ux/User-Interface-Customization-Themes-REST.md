@@ -1,6 +1,6 @@
 ---
 layout: default
-title: Themes - User Interface Customization - CAS
+title: CAS - RESTful Themes - User Interface Customization
 category: User Interface
 ---
 

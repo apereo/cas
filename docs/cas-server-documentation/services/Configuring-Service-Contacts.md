@@ -1,6 +1,7 @@
 ---
 layout: default
-title: CAS - Configuring Service Contacts
+title: CAS - Configure Service Contacts
+description: "Assign owners and contacts to registered services, who are notified when the service definition changes."
 category: Services
 ---
 

@@ -224,6 +224,29 @@ function toggleDarkMode() {
     document.getElementById("docs-status").textContent = `${newTheme === "dark" ? "Dark" : "Light"} theme enabled`;
 }
 
+// Keep the current topic across releases, falling back only when that page is absent.
+document.querySelectorAll(".cas-version-link").forEach(link => {
+    link.addEventListener("click", async event => {
+        if (event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) {
+            return;
+        }
+        event.preventDefault();
+        const target = new URL(link.href);
+        target.search = window.location.search;
+        target.hash = window.location.hash;
+        try {
+            const response = await fetch(target, {method: "HEAD"});
+            if (response.status === 404) {
+                window.location.assign(link.dataset.versionHome);
+                return;
+            }
+        } catch (error) {
+            // Let ordinary navigation handle network failures.
+        }
+        window.location.assign(target.href);
+    });
+});
+
 function generateToolbarIcons() {
     let casRepositoryUrl = $("#forkme_banner").attr("href");
     let activeVersion = getActiveDocumentationVersionInView(true);
@@ -243,9 +266,6 @@ function generateToolbarIcons() {
     }
 
 
-    let href = location.href.replace("https://apereo.github.io", "http://localhost:4000");
-    $("#toolbarIcons").append(`<a href='${href}'><i class='fab fa-codepen' aria-hidden='true'></i><span class='visually-hidden'>See this page running on localhost</span></a>`);
-
     if (activeVersion !== CONST_CURRENT_VER && activeVersion !== "") {
         let prefix = "/cas/";
         let linkToDev = prefix + page.replace(activeVersion, CONST_CURRENT_VER).replace("//", "/");
@@ -257,20 +277,16 @@ function generateToolbarIcons() {
     let baseLink = casRepositoryUrl;
     let editLink = "";
     let historyLink = "";
-    let deleteLink = "";
 
     if (activeVersion === "") {
         editLink = `${baseLink}/edit/gh-pages/`;
         historyLink = `${baseLink}/commits/gh-pages/`;
-        deleteLink = `${baseLink}/delete/gh-pages/`;
     } else if (activeVersion === CONST_CURRENT_VER) {
         editLink = `${baseLink}/edit/master/docs/cas-server-documentation/`;
         historyLink = `${baseLink}/commits/master/docs/cas-server-documentation/`;
-        deleteLink = `${baseLink}/delete/master/docs/cas-server-documentation/`;
     } else {
         editLink = `${baseLink}/edit/${activeVersion}/docs/cas-server-documentation/`;
         historyLink = `${baseLink}/commits/${activeVersion}/docs/cas-server-documentation/`;
-        deleteLink = `${baseLink}/delete/${activeVersion}/docs/cas-server-documentation/`;
     }
 
     editLink += editablePage;
@@ -279,12 +295,7 @@ function generateToolbarIcons() {
 
     historyLink += editablePage;
 
-
     $("#toolbarIcons").append(`<a target='_blank' rel='noopener' href='${historyLink}'><i class='fa fa-history' aria-hidden='true'></i><span class='visually-hidden'>View commit history on GitHub</span></a>`);
-
-    deleteLink += editablePage;
-
-    $("#toolbarIcons").append(`<a target='_blank' rel='noopener' href='${deleteLink}'><i class='fa fa-times' aria-hidden='true'></i><span class='visually-hidden'>Delete with GitHub</span></a>`);
 }
 
 function generatePageTOC() {
@@ -373,7 +384,6 @@ function initializePage() {
 
     let activeVersion = getActiveDocumentationVersionInView(true);
     let filters = [`version: ${activeVersion}`];
-    console.log(`Documentation search is filtering by ${filters}`);
 
     if (typeof docsearch === "function") {
         // The search overlay contains interactive controls and is a dialog, not a button.
@@ -397,7 +407,7 @@ function initializePage() {
             indexName: "apereoapereo",
             container: "#searchField",
             searchParameters: {"facetFilters": filters},
-            debug: true
+            debug: false
         });
         const searchButton = document.querySelector("#searchField .DocSearch-Button");
         if (searchButton) {

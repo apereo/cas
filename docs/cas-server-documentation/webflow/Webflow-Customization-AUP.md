@@ -1,6 +1,7 @@
 ---
 layout: default
-title: CAS - Web Flow Acceptable Usage Policy
+title: CAS - Acceptable Usage Policy
+description: "Acceptable usage policy (terms of use): ask users to accept a policy before they continue to the application."
 category: Acceptable Usage Policy
 ---
 

@@ -1,6 +1,6 @@
 ---
 layout: default
-title: CAS - Configuration Server
+title: CAS - Spring Cloud Configuration Server - Spring Cloud Amazon S3
 category: Configuration
 ---
 

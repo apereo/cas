@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Getting Started Guide
+description: "A practical path to planning a CAS deployment: collecting use cases, studying the architecture, building an overlay and asking for help."
 category: Planning
 ---
 

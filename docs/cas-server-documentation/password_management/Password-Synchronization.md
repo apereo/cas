@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Password Synchronization
+description: "Synchronize a user's password to other systems such as LDAP directories when they log in to CAS."
 category: Authentication
 ---
 {% include variables.html %}

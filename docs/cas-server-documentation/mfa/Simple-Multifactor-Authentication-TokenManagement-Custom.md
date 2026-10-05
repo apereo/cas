@@ -1,6 +1,6 @@
 ---
 layout: default
-title: CAS - Simple Multifactor Authentication
+title: CAS - Simple Multifactor Authentication - Custom Token Management
 category: Multifactor Authentication
 ---
 

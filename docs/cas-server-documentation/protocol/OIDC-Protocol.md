@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - OIDC Protocol
+description: "Use CAS as an OpenID Connect provider, or delegate authentication from CAS to external OpenID Connect providers."
 category: Protocols
 ---
 

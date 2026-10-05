@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Cluster Topology Management
+description: "Discover and report the members of a clustered CAS deployment and its supporting components."
 category: High Availability
 ---
 

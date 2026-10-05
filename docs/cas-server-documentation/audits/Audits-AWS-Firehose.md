@@ -1,6 +1,6 @@
 ---
 layout: default
-title: CAS - Audit Configuration
+title: CAS - Amazon Kinesis Firehose Audits
 category: Logs & Audits
 ---
 {% include variables.html %}

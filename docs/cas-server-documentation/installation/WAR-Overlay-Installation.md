@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Overlay Installation
+description: "Install CAS with a WAR overlay: generate a project, add modules, override configuration and UI, and build a deployable cas.war."
 category: Installation
 ---
 {% include variables.html %}

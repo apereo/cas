@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Configuration Feature Toggles
+description: "Turn CAS features and their auto-configuration on or off with feature toggles, and see which modules each toggle controls."
 category: Configuration
 ---
 

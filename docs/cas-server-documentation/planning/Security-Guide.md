@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Security Guide
+description: "Security considerations for running CAS: transport security, dependent systems, cookie and ticket encryption, throttling, security headers and session controls."
 category: Planning
 ---
 

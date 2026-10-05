@@ -1,6 +1,6 @@
 ---
 layout: default
-title: CAS - FIDO2 WebAuthn Multifactor Authentication
+title: CAS - FIDO2 WebAuthn (Passkey) Multifactor Authentication
 category: Multifactor Authentication
 ---
 

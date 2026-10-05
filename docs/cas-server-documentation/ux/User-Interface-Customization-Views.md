@@ -1,6 +1,7 @@
 ---
 layout: default
-title: Views - User Interface Customization - CAS
+title: CAS - User Interface Views
+description: "Override the Thymeleaf views of the CAS user interface in your WAR overlay, and show a warning before redirecting to applications."
 category: User Interface
 ---
 

@@ -1,6 +1,6 @@
 ---
 layout: default
-title: CAS - Configuring Authentication Throttling
+title: CAS - MongoDb Throttling Authentication Attempts
 category: Authentication
 ---
 {% include variables.html %}

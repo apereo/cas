@@ -1,6 +1,6 @@
 ---
 layout: default
-title: CAS - Passwordless Authentication
+title: CAS - Passwordless Authentication - Messaging & Notifications
 category: Authentication
 ---
 {% include variables.html %}

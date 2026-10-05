@@ -1,6 +1,7 @@
 ---
 layout: default
-title: CAS - Configuring Authentication Policy
+title: CAS - Authentication Policy
+description: "Authentication policies that decide when an authentication transaction succeeds, such as requiring all handlers or a specific handler."
 category: Authentication
 ---
 {% include variables.html %}

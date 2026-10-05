@@ -1,6 +1,7 @@
 ---
 layout: default
-title: CAS - Password Management
+title: CAS - Account Unlock - Password Management
+description: "Let users unlock a locked or disabled account during login, with a CAPTCHA-style challenge."
 category: Password Management
 ---
 

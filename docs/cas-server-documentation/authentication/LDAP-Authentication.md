@@ -31,8 +31,8 @@ Attributes retrieved directly as part of LDAP authentication trump all other att
 
 To learn how to enforce a password policy for LDAP, please [review this guide](../installation/Password-Policy-Enforcement.html).
 
-## Password Policy Enforcement
-              
+## Password Synchronization
+
 You may also be interested in synchronizing account passwords with one or more LDAP servers. To learn more, 
 please [review this guide](../password_management/Password-Synchronization.html).
  

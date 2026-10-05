@@ -1,6 +1,6 @@
 ---
 layout: default
-title: CAS - Release Notes
+title: CAS - 8.1.0-RC2 Release Notes
 category: Planning
 palantir_images:
   - src: img_14.png

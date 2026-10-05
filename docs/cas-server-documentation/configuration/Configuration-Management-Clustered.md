@@ -1,6 +1,7 @@
 ---
 layout: default
-title: CAS - Configuration Management Clustered Deployment
+title: CAS - Configuration Management - Clustered Deployments
+description: "Broadcast configuration changes to every CAS node in a cluster with the Spring Cloud Bus over AMQP or Kafka."
 category: Configuration
 ---
 

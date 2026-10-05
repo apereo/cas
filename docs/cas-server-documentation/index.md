@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Home
+description: "Apereo CAS is an open-source identity provider and single sign-on platform supporting CAS, SAML2, OAuth2, OpenID Connect, MFA and delegated authentication."
 ---
 
 {% include variables.html %}
@@ -43,7 +44,7 @@ The following items include a summary of features and technologies presented by 
 [OAuth2](protocol/OAuth-Protocol.html), [OpenID Connect](protocol/OIDC-Protocol.html), [REST](protocol/REST-Protocol.html))
 * Support for [multifactor authentication](mfa/Configuring-Multifactor-Authentication.html) via a variety of 
 providers ([Duo Security](mfa/DuoSecurity-Authentication.html), [FIDO2 WebAuthN](mfa/FIDO2-WebAuthn-Authentication.html), [Google Authenticator](mfa/GoogleAuthenticator-Authentication.html), [Inwebo](mfa/Inwebo-Authentication.html), etc.)
-* Support for [delegated authentication](integration/Delegate-Authentication.html) to external identity providers such as [ADFS](integration/ADFS-Integration.html), Facebook, Twitter, SAML2 IdPs, OIDC OPs, etc.
+* Support for [delegated authentication](integration/Delegate-Authentication.html) to external identity providers such as [ADFS](integration/ADFS-Integration.html), Facebook, X (Twitter), SAML2 IdPs, OIDC OPs, etc.
 * Built-in support for [password management](password_management/Password-Management.html), [notifications](webflow/Webflow-Customization-Interrupt.html), [terms of use](webflow/Webflow-Customization-AUP.html) and [impersonation](authentication/Surrogate-Authentication.html).
 * Support for [attribute release](integration/Attribute-Release.html) including [user consent](integration/Attribute-Release-Consent.html).
 * [Monitor and track](monitoring/Monitoring-Statistics.html) application and system behavior, [statistics and metrics](monitoring/Configuring-Metrics.html) in real-time.

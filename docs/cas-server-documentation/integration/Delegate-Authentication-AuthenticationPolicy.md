@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Delegate Authentication Policy
+description: "Restrict which external identity providers each registered application may use for delegated authentication."
 category: Authentication
 ---
 

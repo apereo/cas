@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Release Notes
+description: "Release notes for each release candidate of the current CAS development line, with new features, changes and fixes."
 category: Planning
 ---
 

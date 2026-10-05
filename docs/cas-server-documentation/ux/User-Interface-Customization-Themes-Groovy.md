@@ -1,6 +1,6 @@
 ---
 layout: default
-title: Themes - User Interface Customization - CAS
+title: CAS - Groovy Themes - User Interface Customization
 category: User Interface
 ---
 

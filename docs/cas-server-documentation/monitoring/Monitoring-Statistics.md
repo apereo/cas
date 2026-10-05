@@ -1,6 +1,7 @@
 ---
 layout: default
-title: CAS - Monitoring & Statistics
+title: CAS - Monitoring / Statistics
+description: "CAS actuator endpoints for monitoring and managing the server, and how to enable, expose and secure them."
 category: Monitoring & Statistics
 ---
 

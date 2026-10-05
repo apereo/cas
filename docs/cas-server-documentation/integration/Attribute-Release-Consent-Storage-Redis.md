@@ -1,6 +1,6 @@
 ---
 layout: default
-title: CAS - Attribute Release Consent
+title: CAS - Redis - Attribute Consent Storage
 category: Attributes
 ---
 

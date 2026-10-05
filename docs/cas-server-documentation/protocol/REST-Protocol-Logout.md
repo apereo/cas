@@ -1,6 +1,6 @@
 ---
 layout: default
-title: CAS - CAS REST Protocol
+title: CAS - Logout - REST Protocol
 category: Protocols
 ---
 

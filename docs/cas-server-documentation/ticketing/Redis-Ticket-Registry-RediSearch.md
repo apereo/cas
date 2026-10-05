@@ -1,6 +1,6 @@
 ---
 layout: default
-title: CAS - Redis Ticket Registry
+title: CAS - Redis Ticket Registry - Indexing & Search
 category: Ticketing
 ---
 

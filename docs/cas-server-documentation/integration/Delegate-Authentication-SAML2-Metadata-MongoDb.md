@@ -1,6 +1,6 @@
 ---
 layout: default
-title: CAS - SAML2 Delegated Authentication
+title: CAS - SAML2 Delegated Authentication - MongoDb Service Provider Metadata
 category: Authentication
 ---
 

@@ -1,6 +1,6 @@
 ---
 layout: default
-title: CAS - OAuth Authentication
+title: CAS - OAuth Authentication - CSRF Cookie
 category: Authentication
 ---
 {% include variables.html %}

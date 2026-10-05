@@ -1,6 +1,6 @@
 ---
 layout: default
-title: CAS - CAS Protocol
+title: CAS - CAS Protocol - Ticket Validation
 category: Protocols
 ---
 {% include variables.html %}

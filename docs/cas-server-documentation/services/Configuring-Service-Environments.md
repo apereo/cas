@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Configuring Service Environments
+description: "Tag registered services with environment names so each CAS environment only loads the definitions meant for it."
 category: Services
 ---
 

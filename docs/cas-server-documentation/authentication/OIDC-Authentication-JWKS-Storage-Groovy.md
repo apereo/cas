@@ -1,6 +1,6 @@
 ---
 layout: default
-title: CAS - OpenID Connect Authentication
+title: CAS - OpenID Connect Authentication JWKS Storage - Groovy
 category: Protocols
 ---
 {% include variables.html %}

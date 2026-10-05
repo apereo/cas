@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - CAS Clients
+description: "CAS client libraries for Java, .NET, PHP, Apache httpd, Python and other platforms."
 category: Integration
 ---
 

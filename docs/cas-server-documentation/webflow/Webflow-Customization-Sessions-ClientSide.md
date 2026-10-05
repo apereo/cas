@@ -1,6 +1,6 @@
 ---
 layout: default
-title: CAS - Web Flow Customization
+title: CAS - Client-side Sessions
 category: Webflow Management
 ---
 

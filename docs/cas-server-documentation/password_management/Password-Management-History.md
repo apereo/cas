@@ -1,6 +1,7 @@
 ---
 layout: default
-title: CAS - Password Management
+title: CAS - Password History - Password Management
+description: "Keep a history of previous passwords so users cannot reuse them when changing or resetting a password."
 category: Password Management
 ---
 

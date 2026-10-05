@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - AWS CLI Integration
+description: "Use CAS to hand out temporary AWS credentials to authenticated users through Amazon STS."
 category: Integration
 ---
 

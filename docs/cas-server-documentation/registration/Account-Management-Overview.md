@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Account Profile Management
+description: "The CAS account profile portal, where signed-in users review login activity and MFA devices and manage their password and security questions."
 category: Registration
 ---
 

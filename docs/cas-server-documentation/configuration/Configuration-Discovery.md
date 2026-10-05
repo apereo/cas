@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Configuration Discovery
+description: "The CAS discovery profile endpoint, which reports supported protocols, attributes and capabilities of a running CAS server."
 category: Configuration
 ---
        

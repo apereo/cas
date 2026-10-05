@@ -1,6 +1,6 @@
 ---
 layout: default
-title: CAS - FIDO2 WebAuthn Multifactor Authentication
+title: CAS - Redis FIDO2 WebAuthn Multifactor Registration
 category: Multifactor Authentication
 ---
 

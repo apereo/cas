@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Attribute Release
+description: "How CAS releases the user identifier and attributes to applications, and where release policies and consent fit in."
 category: Attributes
 ---
 

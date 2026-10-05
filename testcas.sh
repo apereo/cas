@@ -564,9 +564,7 @@ while (( "$#" )); do
                 task+="testAMQP "
                 ;;
             *)
-                printf "${RED}Unable to recognize test category: ${item}${ENDCOLOR}\n"
-                printHelp
-                exit 1
+                printf "${CYAN}Skipping test category: ${item}${ENDCOLOR}\n"
                 ;;
             esac
         done

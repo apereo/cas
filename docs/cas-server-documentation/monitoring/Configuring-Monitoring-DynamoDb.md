@@ -1,6 +1,6 @@
 ---
 layout: default
-title: CAS - Monitoring
+title: CAS - DynamoDb Monitoring
 category: Monitoring & Statistics
 ---
 

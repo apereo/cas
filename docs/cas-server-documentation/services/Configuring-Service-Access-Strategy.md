@@ -1,6 +1,7 @@
 ---
 layout: default
-title: CAS - Configuring Service Access Strategy
+title: CAS - Configure Service Access Strategy
+description: "Access strategies for registered applications: enable or disable access, require attributes, restrict by time or delegate the decision to an external engine."
 category: Services
 ---
 

@@ -1,6 +1,7 @@
 ---
 layout: default
-title: CAS - Service Management
+title: CAS - Service Management - Caching
+description: "How CAS caches service definitions loaded from registries, and how to reload them on a schedule or on demand."
 category: Services
 ---
 

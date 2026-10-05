@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Docker Installation
+description: "Run CAS from the official Docker images, and build your own images from a CAS WAR overlay project."
 category: Installation
 ---
 {% include variables.html %}

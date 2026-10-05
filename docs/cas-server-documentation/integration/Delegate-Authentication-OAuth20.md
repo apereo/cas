@@ -1,6 +1,6 @@
 ---
 layout: default
-title: CAS - Delegate Authentication
+title: CAS - OAuth20 - Delegated Authentication
 category: Authentication
 ---
 

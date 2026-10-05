@@ -1,6 +1,6 @@
 ---
 layout: default
-title: CAS - YubiKey Authentication
+title: CAS - DynamoDb YubiKey Registration
 category: Multifactor Authentication
 ---
 

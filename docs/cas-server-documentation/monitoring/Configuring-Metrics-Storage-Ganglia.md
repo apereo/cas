@@ -1,6 +1,6 @@
 ---
 layout: default
-title: CAS - Metrics
+title: CAS - Ganglia Storage - CAS Metrics
 category: Monitoring & Statistics
 ---
 

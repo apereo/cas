@@ -1,6 +1,6 @@
 ---
 layout: default
-title: CAS - Sending Email
+title: CAS - Sending Email - Amazon Simple Email Service (SES)
 category: Notifications
 ---
 

@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Authorization
+description: "The authorization options in CAS: service access strategies, external policy engines and the Heimdall authorization engine."
 category: Authorization
 ---
 

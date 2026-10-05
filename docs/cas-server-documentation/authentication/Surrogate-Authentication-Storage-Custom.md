@@ -1,6 +1,6 @@
 ---
 layout: default
-title: CAS - Surrogate Authentication
+title: CAS - Custom Surrogate Authentication
 category: Authentication
 ---
 {% include variables.html %}

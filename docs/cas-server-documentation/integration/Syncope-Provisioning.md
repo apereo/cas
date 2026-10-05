@@ -1,6 +1,6 @@
 ---
 layout: default
-title: CAS - Apache Syncope Provisioning
+title: CAS - Apache Syncope - Principal Provisioning
 category: Integration
 ---
 

@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Graal VM Native Image Installation
+description: "Build and run CAS as a GraalVM native image for faster startup and a smaller memory footprint, with the limitations that apply."
 category: Installation
 ---
 {% include variables.html %}

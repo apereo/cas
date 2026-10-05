@@ -1,6 +1,7 @@
 ---
 layout: default
-title: CAS - Authentication Interrupt
+title: CAS - Tracking Authentication Interrupts Per Service
+description: "Give registered applications their own authentication interrupt policy."
 category: Webflow Management
 ---
 

@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Multitenancy
+description: "Run several isolated tenants on one CAS server, each with its own URL, authentication strategy, policies and settings."
 category: Multitenancy
 ---
 {% include variables.html %}

@@ -1,6 +1,6 @@
 ---
 layout: default
-title: CAS - Trusted Device Multifactor Authentication
+title: CAS - Bypass - Multifactor Authentication Trusted Device/Browser
 category: Multifactor Authentication
 ---
 

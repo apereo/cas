@@ -1,6 +1,6 @@
 ---
 layout: default
-title: CAS - OpenID Connect Authentication
+title: CAS - Verifiable Credentials - OpenID Connect Authentication
 category: Protocols
 ---
 {% include variables.html %}
@@ -120,6 +120,10 @@ no client registration to authenticate with.
 For the same reason the authorization server metadata advertises `pre-authorized_grant_anonymous_access_supported`
 as `true` whenever the pre-authorized code grant is listed in `grant_types_supported`. A wallet that finds no such
 value assumes `false` and may refuse to redeem the code without a `client_id` it does not have.
+
+In the authorization code flow, wallets authenticate at the pushed authorization request and token endpoints with a
+wallet attestation, as the High Assurance Interoperability Profile requires, using
+[attestation-based client authentication](OIDC-Authentication-AccessToken-AuthMethods.html#attestation-based-client-authentication).
 
 ### Credential Endpoint
 

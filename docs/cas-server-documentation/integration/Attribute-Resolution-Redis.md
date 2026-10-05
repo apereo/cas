@@ -1,6 +1,6 @@
 ---
 layout: default
-title: CAS - Attribute Resolution
+title: CAS - Redis Attribute Resolution
 category: Attributes
 ---
 

@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Architecture
+description: "The building blocks of a CAS deployment: the CAS server, CAS clients, supported protocols and the web, ticketing and authentication subsystems."
 category: Planning
 ---
 
@@ -40,8 +41,7 @@ Platforms:
 * .NET ([.NET CAS Client](https://github.com/apereo/dotnet-cas-client))
 * PHP ([phpCAS](https://github.com/Jasig/phpCAS))
 * Perl (PerlCAS)
-* Python (pycas)
-* Ruby (rubycas-client)
+* Python ([python-cas](https://github.com/python-cas/python-cas))
 
 Applications:
 

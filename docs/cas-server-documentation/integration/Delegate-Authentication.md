@@ -1,6 +1,7 @@
 ---
 layout: default
-title: CAS - Delegate Authentication
+title: CAS - Delegated Authentication
+description: "Delegate authentication from CAS to external identity providers such as SAML2 IdPs, OpenID Connect providers, other CAS servers and social logins."
 category: Authentication
 ---
 
@@ -13,7 +14,7 @@ the [Pac4j library](https://github.com/pac4j/pac4j) and delegate the authenticat
 
 * CAS servers
 * SAML2 identity providers
-* OAuth2 providers such as Facebook, Twitter, GitHub, Google, LinkedIn, etc
+* OAuth2 providers such as Facebook, X (formerly Twitter), GitHub, Google, LinkedIn, etc
 * OpenID Connect identity providers such as Google, Apple
 * [ADFS](ADFS-Integration.html)
 

@@ -1,6 +1,7 @@
 ---
 layout: default
-title: CAS - Releasing Principal Id
+title: CAS - Principal-Id Attribute
+description: "Control the user identifier each application receives, such as an attribute value, an anonymous ID or a transformed username."
 category: Attributes
 ---
 

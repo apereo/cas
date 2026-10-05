@@ -1,6 +1,6 @@
 ---
 layout: default
-title: CAS - Delegate Authentication
+title: CAS - Facebook - Delegated Authentication
 category: Authentication
 ---
 

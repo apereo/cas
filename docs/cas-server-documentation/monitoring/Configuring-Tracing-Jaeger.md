@@ -1,6 +1,7 @@
 ---
 layout: default
-title: CAS - Monitoring
+title: CAS - Jaeger Distributed Tracing
+description: "Export CAS distributed traces to Jaeger."
 category: Monitoring & Statistics
 ---
 

@@ -1,6 +1,6 @@
 ---
 layout: default
-title: CAS - Releasing Principal Id
+title: CAS - Encrypted Principal Id
 category: Attributes
 ---
 

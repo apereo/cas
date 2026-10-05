@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Service Management
+description: "Register the applications that may use CAS, with service registries in JSON, YAML, databases, caches and cloud stores."
 category: Services
 ---
 
@@ -61,22 +62,28 @@ check the dedicated guide for the capability you have in mind (i.e. OAuth, SAML,
 
 The following options may be used to store services in CAS.
 
-| Storage       | Description                                          | Usage                                                                                                    |
-|---------------|------------------------------------------------------|----------------------------------------------------------------------------------------------------------|
-| Memory        | [See this guide](InMemory-Service-Management.html).  | Store service definitions XML stored in memory. Changes require CAS repackaging and server restarts      |
-| JSON          | [See this guide](JSON-Service-Management.html).      | Store service definitions in flat JSON files. HA deployments require replication of service definitions. |
-| YAML          | [See this guide](YAML-Service-Management.html).      | Same as `JSON`.                                                                                          |
-| GIT           | [See this guide](Git-Service-Management.html).       | Store service definitions in Git repository. Candidate for HA deployments.                               |
-| MongoDb       | [See this guide](MongoDb-Service-Management.html).   | Store service definitions in MongoDb. Candidate for HA deployments.                                      |
-| Redis         | [See this guide](Redis-Service-Management.html).     | Store service definitions in Redis. Candidate for HA deployments.                                        |
-| LDAP          | [See this guide](LDAP-Service-Management.html).      | Store service definitions in a directory server. Candidate for HA deployments.                           |
-| JPA           | [See this guide](JPA-Service-Management.html).       | Store service definitions in a relational database (Oracle, MySQL, etc). Candidate for HA deployments.   |
-| DynamoDb      | [See this guide](DynamoDb-Service-Management.html).  | Store service definitions in DynamoDb. Candidate for HA deployments.                                     |
-| Amazon S3     | [See this guide](AmazonS3-Service-Management.html).  | Store service definitions in Amazon S3 buckets. Candidate for HA deployments.                            |
-| CosmosDb      | [See this guide](CosmosDb-Service-Management.html).  | Store service definitions in an Azure CosmosDb. Candidate for HA deployments.                            |
-| Cassandra     | [See this guide](Cassandra-Service-Management.html). | Store service definitions in an Apache Cassandra. Candidate for HA deployments.                          |
-| REST          | [See this guide](REST-Service-Management.html).      | Design your own service registry implementation as a REST API. Candidate for HA deployments.             |
-| Custom        | [See this guide](Custom-Service-Management.html).    | Design your own service registry using CAS APIs as an extension. Candidate for HA deployments.           |
+| Storage                                                   | Kind            | Shared across nodes                  | Notes                                                                                   |
+|-----------------------------------------------------------|-----------------|--------------------------------------|-----------------------------------------------------------------------------------------|
+| [In memory](InMemory-Service-Management.html)             | Code            | Built into each node                 | Definitions are Spring beans in your overlay; changes need a rebuild and restart.      |
+| [JSON](JSON-Service-Management.html)                      | Files           | No, [replicate](Configuring-Service-Replication.html) them | Files are watched and reloaded when they change.                                       |
+| [YAML](YAML-Service-Management.html)                      | Files           | No, [replicate](Configuring-Service-Replication.html) them | Same as JSON.                                                                          |
+| [Git](Git-Service-Management.html)                        | Repository      | Yes, through the remote repository   | Each node clones the repository and pulls changes; history comes with Git.             |
+| [JPA](JPA-Service-Management.html)                        | Database        | Yes                                  | Relational databases such as Oracle, MySQL or PostgreSQL.                              |
+| [MongoDb](MongoDb-Service-Management.html)                | Database        | Yes                                  |                                                                                         |
+| [Redis](Redis-Service-Management.html)                    | Database        | Yes                                  |                                                                                         |
+| [LDAP](LDAP-Service-Management.html)                      | Directory       | Yes                                  | Definitions are stored as directory entries.                                           |
+| [DynamoDb](DynamoDb-Service-Management.html)              | Database        | Yes                                  |                                                                                         |
+| [Apache Cassandra](Cassandra-Service-Management.html)     | Database        | Yes                                  |                                                                                         |
+| [Google Cloud Firestore](GCP-Firestore-Service-Management.html) | Database  | Yes                                  |                                                                                         |
+| [Amazon S3](AmazonS3-Service-Management.html)             | Object storage  | Yes                                  |                                                                                         |
+| [Google Cloud Storage](GCP-Storage-Service-Management.html) | Object storage | Yes                                 |                                                                                         |
+| [REST](REST-Service-Management.html)                      | Your API        | Yes, through your API                | You implement the storage behind a REST API.                                           |
+| [Custom](Custom-Service-Management.html)                   | Your code       | Depends on your implementation       | You implement the registry with CAS APIs.                                              |
+| [Azure CosmosDb](CosmosDb-Service-Management.html)        | Database        | Yes                                  | Deprecated.                                                                            |
+
+Service definitions are cached by each node and reloaded on a schedule; see
+[caching and reloading](Service-Management-Caching-Reloading.html). The
+[Palantir dashboard](../installation/Admin-Dashboard.html) can edit definitions in any registry that accepts writes.
 
 ### How Do I Choose?
 

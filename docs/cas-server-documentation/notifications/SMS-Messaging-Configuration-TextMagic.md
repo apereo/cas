@@ -1,6 +1,6 @@
 ---
 layout: default
-title: CAS - SMS Messaging
+title: CAS - TextMagic SMS Messaging
 category: Notifications
 ---
 

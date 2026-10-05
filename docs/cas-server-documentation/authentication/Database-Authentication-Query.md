@@ -1,6 +1,6 @@
 ---
 layout: default
-title: CAS - Database Authentication
+title: CAS - Query Database Authentication
 category: Authentication
 ---
 {% include variables.html %}

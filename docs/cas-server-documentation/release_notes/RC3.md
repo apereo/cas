@@ -1,6 +1,6 @@
 ---
 layout: default
-title: CAS - Release Notes
+title: CAS - 8.1.0-RC3 Release Notes
 category: Planning
 ---
 
@@ -98,6 +98,15 @@ The CAS documentation site has received a visual and functional overhaul. Notabl
   classes they control and a link to the relevant documentation, and every toggle can be copied as `.properties`, YAML or environment variables.
 - The documentation build and validation time is significantly reduced and changes are now published up to `75%` faster. External links are checked on a weekly schedule
   rather than on every change, and broken external links no longer block publishing.
+- Every page has its own title, overview pages carry a written description, and other pages describe themselves
+  in search results with their first paragraph rather than a shared boilerplate sentence.
+- The **Versions** menu opens the current page in the selected release, and lists development and the releases
+  still under [maintenance](../../developer/Maintenance-Policy.html).
+- Comparison tables help choose between [ticket registries](../ticketing/Configuring-Ticketing-Components.html),
+  [service registries](../services/Service-Management.html), [multifactor providers](../mfa/Configuring-Multifactor-Authentication.html)
+  and [protocols](../protocol/Protocol-Overview.html).
+- Text in setting lists and feature toggles meets contrast requirements in both themes, the dependency tabs are
+  announced correctly by screen readers, and third-party scripts and stylesheets are pinned and loaded with integrity checks.
 
 ### Heimdall AuthZEN
 
@@ -266,6 +275,10 @@ and failures were recorded twice. Failed SAML2 ECP authentication attempts, whic
   as an `attestation` proof that yields one credential per attested key. Attestations must chain to trust anchors set with
   `cas.authn.oidc.vc.issuer.key-attestation.trust-anchors`, and a credential configuration may require them, along with the
   key storage and user authentication levels it accepts, which the issuer metadata advertises as `key_attestations_required`.
+- Clients, wallets above all, may authenticate at the token and pushed authorization request endpoints with a client attestation
+  and its proof of possession, per [OAuth 2.0 Attestation-Based Client Authentication](../authentication/OIDC-Authentication-AccessToken-AuthMethods.html)
+  (`attest_jwt_client_auth`), as the High Assurance Interoperability Profile requires of wallet attestations. Attestations must chain to
+  trust anchors set with `cas.authn.oidc.client-attestation.trust-anchors`, which also advertises the method in the discovery document.
 
 ### Stateless Ticket Registry
 
@@ -352,5 +365,7 @@ authentication. See the [stateless ticket registry documentation](../ticketing/S
 - Redis-backed counts and key lookups, such as the [ticket](../ticketing/Redis-Ticket-Registry.html) and
   [service registry](../services/Redis-Service-Management.html) counts, now return their connection when done. With
   connection pooling enabled, every call used to keep a pooled connection until the pool ran out.
+- The [Redis ticket registry](../ticketing/Redis-Ticket-Registry.html) query for ticket ids and loading all
+  [YubiKey](../mfa/YubiKey-Authentication.html) devices from Redis also return their connection when done.
 - WebAuthn falls back to the cached [FIDO metadata BLOB](../mfa/FIDO2-WebAuthn-Authentication-Attestation.html) when
   downloading a fresh one fails at startup, for example when the FIDO metadata service rate-limits the request, instead of failing to start.

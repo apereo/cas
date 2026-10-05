@@ -1,6 +1,7 @@
 ---
 layout: default
-title: CAS - Web Flow Customization
+title: CAS - Webflow Errors Customization
+description: "Map authentication errors to messages and webflow states, and handle custom exceptions."
 category: Webflow Management
 ---
 

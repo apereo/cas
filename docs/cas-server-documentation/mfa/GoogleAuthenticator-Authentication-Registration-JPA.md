@@ -1,6 +1,6 @@
 ---
 layout: default
-title: CAS - Google Authenticator Authentication
+title: CAS - JPA Google Authenticator Registration
 category: Multifactor Authentication
 ---
 

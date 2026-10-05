@@ -1,6 +1,6 @@
 ---
 layout: default
-title: CAS - SAML2 Authentication
+title: CAS - SAML2 Authentication - Unsolicited SSO
 category: Protocols
 ---
 {% include variables.html %}

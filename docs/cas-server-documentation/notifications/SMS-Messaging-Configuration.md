@@ -1,6 +1,7 @@
 ---
 layout: default 
-title: CAS - SMS Messaging 
+title: CAS - SMS Messaging
+description: "Send SMS messages from CAS for MFA tokens, password resets and alerts, with the supported SMS providers."
 category: Notifications
 ---
 
@@ -30,4 +31,4 @@ compile-time. See below on how to customize or override the default behavior wit
 | Clickatell | [See this guide](SMS-Messaging-Configuration-Clickatell.html). |
 | SmsMode    | [See this guide](SMS-Messaging-Configuration-SmsMode.html).    |
 | Amazon SNS | [See this guide](SMS-Messaging-Configuration-AmazonSNS.html).  |
-| Nexmo      | [See this guide](SMS-Messaging-Configuration-Nexmo.html).      |
+| Vonage (Nexmo) | [See this guide](SMS-Messaging-Configuration-Nexmo.html).  |

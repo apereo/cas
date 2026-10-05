@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Delegated Authentication Request Customization
+description: "Customize the authentication requests CAS sends to external identity providers at runtime."
 category: Authentication
 ---
 

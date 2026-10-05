@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS Configuration Metadata Repository
+description: "The generated CAS configuration metadata: what it contains, how CAS validates settings with it and how to query it."
 category: Configuration
 ---
 

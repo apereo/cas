@@ -18,24 +18,26 @@
 
 <div style="display: {{ displayClass }}">
 
-    <ul class='nav nav-pills cas-modules' role='tablist'>
-        <li class='nav-item cas-module' role='presentation'><a class='nav-link' id='maven{{ casModuleId }}-tab' data-bs-toggle='tab' href='#maven{{ casModuleId }}' role='tab' aria-controls='maven{{ casModuleId }}' aria-selected='false'>Apache Maven</a></li>
-        <li class='nav-item cas-module' role='presentation'><a class='nav-link{% if casModuleDefaultTab == "gradle" %} active{% endif %}' id='gradle{{ casModuleId }}-tab' data-bs-toggle='tab' href='#gradle{{ casModuleId }}' role='tab' aria-controls='gradle{{ casModuleId }}' aria-selected='{% if casModuleDefaultTab == "gradle" %}true{% else %}false{% endif %}'>Gradle</a></li>
+    <div class='cas-module-controls nav-pills'>
+        <ul class='nav cas-modules' role='tablist' aria-label='Dependency format'>
+            <li class='nav-item cas-module' role='presentation'><a class='nav-link' id='maven{{ casModuleId }}-tab' data-bs-toggle='tab' href='#maven{{ casModuleId }}' role='tab' aria-controls='maven{{ casModuleId }}' aria-selected='false'>Apache Maven</a></li>
+            <li class='nav-item cas-module' role='presentation'><a class='nav-link{% if casModuleDefaultTab == "gradle" %} active{% endif %}' id='gradle{{ casModuleId }}-tab' data-bs-toggle='tab' href='#gradle{{ casModuleId }}' role='tab' aria-controls='gradle{{ casModuleId }}' aria-selected='{% if casModuleDefaultTab == "gradle" %}true{% else %}false{% endif %}'>Gradle</a></li>
 
-        {%- unless include.ignoreBOM == "true" -%}
-        <li class='nav-item cas-module' role='presentation'><a class='nav-link' id='bom{{ casModuleId }}-tab' data-bs-toggle='tab' href='#bom{{ casModuleId }}' role='tab' aria-controls='bom{{ casModuleId }}' aria-selected='false'>BOM - Spring</a></li>
-        <li class='nav-item cas-module' role='presentation'><a class='nav-link active' id='bomGradle{{ casModuleId }}-tab' data-bs-toggle='tab' href='#bomGradle{{ casModuleId }}' role='tab' aria-controls='bomGradle{{ casModuleId }}' aria-selected='true'>BOM - Gradle</a></li>
-        {%- endunless -%}
+            {%- unless include.ignoreBOM == "true" -%}
+            <li class='nav-item cas-module' role='presentation'><a class='nav-link' id='bom{{ casModuleId }}-tab' data-bs-toggle='tab' href='#bom{{ casModuleId }}' role='tab' aria-controls='bom{{ casModuleId }}' aria-selected='false'>BOM - Spring</a></li>
+            <li class='nav-item cas-module' role='presentation'><a class='nav-link active' id='bomGradle{{ casModuleId }}-tab' data-bs-toggle='tab' href='#bomGradle{{ casModuleId }}' role='tab' aria-controls='bomGradle{{ casModuleId }}' aria-selected='true'>BOM - Gradle</a></li>
+            {%- endunless -%}
 
-        <li class='nav-item dropdown cas-module' role='presentation'>
-            <a class='nav-link dropdown-toggle' data-bs-toggle='dropdown' href='#' role='button' aria-expanded='false'>Resources<span class='caret'></span>
-            </a>
+        </ul>
+        <div class='dropdown cas-module'>
+            <button class='nav-link dropdown-toggle' data-bs-toggle='dropdown' type='button' aria-expanded='false'>Resources<span class='caret'></span>
+            </button>
             <div class='dropdown-menu'>
                 <a class='dropdown-item' href="https://getcas.apereo.org?dependencies=webapp-tomcat,{{ include.module | remove_first: 'cas-server-' }}" target="_blank" rel="noopener">Show in CAS Initializr <span aria-hidden="true">↗</span><span class="visually-hidden"> (opens in a new tab)</span></a>
                 <a class='dropdown-item' href="javascript:generateOverlay('{{include.module}}', 'cas-overlay');">Generate CAS Server WAR Overlay</a>
             </div>
-        </li>
-    </ul>
+        </div>
+    </div>
 
 
     <div class='cas-module-tabs tab-content clearfix'>

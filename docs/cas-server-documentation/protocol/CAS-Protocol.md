@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - CAS Protocol
+description: "The CAS protocol: ticket-granting and service tickets, validation endpoints, proxy authentication and the protocol flows."
 category: Protocols
 ---
 {% include variables.html %}

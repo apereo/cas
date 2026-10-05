@@ -1,6 +1,7 @@
 ---
 layout: default
-title: CAS - Configuring Ticketing Components
+title: CAS - Ticketing
+description: "CAS tickets and ticket registries: how to choose a registry for your deployment, and the supported cache, database and messaging options."
 category: Ticketing
 ---
 
@@ -38,6 +39,31 @@ There are a wide range of ticket registries on the menu. The selection criteria 
 The above outlines suggestions and guidelines you may wish to consider. Each option presents various pros and cons and 
 in the end, you must decide which drawbacks or advantages provide you with the best experience.
 
+#### Comparison
+
+The table below compares the registries on the properties that matter most when choosing one. Each registry's own
+page has the details, including connection, replication and encryption settings.
+
+| Registry                                                   | Kind          | Shared across nodes              | Tickets survive a full restart               | Distributed locking                                   |
+|------------------------------------------------------------|---------------|----------------------------------|----------------------------------------------|-------------------------------------------------------|
+| [Default](Default-Ticket-Registry.html)                    | In memory     | No, one node only                | No                                           | In-process only                                       |
+| [Stateless](Stateless-Ticket-Registry.html)                | No storage    | Yes, with the same keys on every node | Yes, tickets travel with the request    | Not needed                                            |
+| [Hazelcast](Hazelcast-Ticket-Registry.html)                | Cache grid    | Yes                              | Only while some cluster members keep running | In-process only                                       |
+| [Apache Ignite](Ignite-Ticket-Registry.html)               | Cache grid    | Yes                              | Only while some cluster members keep running | In-process only                                       |
+| [Apache Geode](Geode-Ticket-Registry.html)                 | Cache grid    | Yes                              | Only while some cluster members keep running | In-process only                                       |
+| [AMQP](Messaging-AMQP-Ticket-Registry.html), [Kafka](Kafka-Ticket-Registry.html), [Pulsar](Pulsar-Ticket-Registry.html), [Google Cloud PubSub](GCP-PubSub-Ticket-Registry.html) | Messaging | Yes, replicated through the broker | No                         | In-process only                                       |
+| [JPA](JPA-Ticket-Registry.html)                            | Database      | Yes                              | Yes                                          | [Yes](Ticket-Registry-Locking.html)                   |
+| [Redis](Redis-Ticket-Registry.html)                        | Database      | Yes                              | When Redis persistence is turned on          | [Yes](Ticket-Registry-Locking.html)                   |
+| [MongoDb](MongoDb-Ticket-Registry.html)                    | Database      | Yes                              | Yes                                          | In-process only                                       |
+| [DynamoDb](DynamoDb-Ticket-Registry.html)                  | Database      | Yes                              | Yes                                          | In-process only                                       |
+| [Apache Cassandra](Cassandra-Ticket-Registry.html)         | Database      | Yes                              | Yes                                          | In-process only                                       |
+| [Google Cloud Firestore](GCP-Firestore-Ticket-Registry.html) | Database    | Yes                              | Yes                                          | In-process only                                       |
+| [Memcached](Memcached-Ticket-Registry.html) (deprecated)   | Cache         | Yes                              | No                                           | In-process only                                       |
+| [Azure CosmosDb](CosmosDb-Ticket-Registry.html) (deprecated) | Database    | Yes                              | Yes                                          | In-process only                                       |
+
+"In-process only" means CAS uses the [default lock implementation](Ticket-Registry-Locking.html), which only
+coordinates requests within one node.
+
 ### Cache-Based Ticket Registries
 
 Cached-based ticket registries provide a high-performance solution for ticket storage in high availability
@@ -47,6 +73,7 @@ deployments. Components for the following caching technologies are provided:
 * [Hazelcast](Hazelcast-Ticket-Registry.html)
 * [Apache Ignite](Ignite-Ticket-Registry.html)
 * [Apache Geode](Geode-Ticket-Registry.html)
+* [Memcached](Memcached-Ticket-Registry.html)
 
 ### Stateless Ticket Registries
 
@@ -76,6 +103,8 @@ Cassandra, for ticket storage and persistence:
 * [Redis](Redis-Ticket-Registry.html)
 * [MongoDb](MongoDb-Ticket-Registry.html)
 * [DynamoDb](DynamoDb-Ticket-Registry.html)
+* [Apache Cassandra](Cassandra-Ticket-Registry.html)
+* [Azure CosmosDb](CosmosDb-Ticket-Registry.html)
 * [Google Cloud Firestore](GCP-Firestore-Ticket-Registry.html)
 
 ### Secure Cache Replication

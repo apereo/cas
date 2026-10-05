@@ -20,7 +20,7 @@
     --docs-code: #0b2436;
     --docs-code-line: #ffffff1a;
     --docs-green: #136d60;
-    --docs-amber: #a96a12;
+    --docs-amber: #8a560c;
     --docs-shadow: 0 12px 40px #143c5510;
     --docs-shadow-lift: 0 18px 48px #0c3a5618;
     --docs-glow: 0 0 0 1px #006b9c1f;
@@ -2682,7 +2682,6 @@ ul.tab-content > li:not(.active):not(.property-name):not(.property-tab):not(.cas
 .cas-properties-group-heading span {
     font-weight: 700;
     letter-spacing: 0;
-    opacity: .75;
 }
 
 .cas-property {
@@ -2732,7 +2731,6 @@ ul.tab-content > li:not(.active):not(.property-name):not(.property-tab):not(.cas
 .cas-property-parent {
     color: var(--docs-muted);
     font-weight: 400;
-    opacity: .8;
 }
 
 .cas-property-summary {
@@ -2770,7 +2768,6 @@ ul.tab-content > li:not(.active):not(.property-name):not(.property-tab):not(.cas
     color: var(--docs-muted);
     font-size: .74rem;
     font-style: italic;
-    opacity: .8;
 }
 
 .cas-property-tags {
@@ -4042,7 +4039,6 @@ ul.tab-content > li:not(.active):not(.property-name):not(.property-tab):not(.cas
     font-weight: 600;
     letter-spacing: 0;
     text-transform: none;
-    opacity: .85;
 }
 
 .cas-feature {
@@ -4262,4 +4258,17 @@ ul.tab-content > li:not(.active):not(.property-name):not(.property-tab):not(.cas
     .cas-features-toolbar .cas-properties-format {
         margin-left: 0;
     }
+}
+
+.cas-module-controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.cas-module-controls .cas-modules {
+    gap: .2rem;
+    margin: 0;
+    padding: 0;
+    border: 0;
 }

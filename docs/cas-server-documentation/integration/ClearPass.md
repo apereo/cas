@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - ClearPass
+description: "ClearPass releases the user's password to selected applications that need it, encrypted for that application. Off by default."
 category: Authentication
 ---
 
