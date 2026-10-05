@@ -8,6 +8,8 @@ category: Notifications
 
 # Amazon SNS SMS Messaging
 
+Send SMS messages from CAS through Amazon Simple Notification Service.
+
 To learn more, [visit this site](https://docs.aws.amazon.com/sns).
 
 {% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-sms-aws-sns" %}

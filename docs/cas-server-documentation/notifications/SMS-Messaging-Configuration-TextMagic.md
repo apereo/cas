@@ -8,6 +8,8 @@ category: Notifications
 
 # TextMagic SMS Messaging
 
+Send SMS messages from CAS through TextMagic.
+
 To learn more, [visit this site](https://www.textmagic.com/).
 
 {% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-sms-textmagic" %}

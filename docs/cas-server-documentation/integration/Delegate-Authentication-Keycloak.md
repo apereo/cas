@@ -8,6 +8,8 @@ category: Authentication
 
 # Keycloak
 
+Let users log in to CAS with an account managed by a Keycloak server, through OpenID Connect.
+
 For an overview of the delegated authentication flow, please [see this guide](Delegate-Authentication.html).
 
 Support is enabled by including the following dependency in the WAR overlay:

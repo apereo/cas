@@ -8,6 +8,8 @@ category: Multifactor Authentication
 
 # Simple Multifactor Authentication - Custom Token Management
 
+Issue and validate CAS Simple multifactor tokens with your own implementation of `CasSimpleMultifactorAuthenticationService`.
+
 You may define your own multifactor authentication service using the following
 bean definition and by implementing `CasSimpleMultifactorAuthenticationService`:
 

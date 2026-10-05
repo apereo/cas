@@ -8,6 +8,8 @@ category: Attributes
 
 # Custom - Attribute Consent Storage
 
+Keep attribute consent decisions in your own store by registering a custom `ConsentRepository` with CAS.
+
 You may also inject your own implementation for attribute consent management
 into CAS that would itself handle storing consent decisions, etc. In order
 to do this, you will need to design a configuration class that roughly matches the following:

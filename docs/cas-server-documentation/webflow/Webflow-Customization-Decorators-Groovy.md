@@ -8,6 +8,8 @@ category: Webflow Management
 
 # Groovy Decorators - Webflow Decorations
 
+Add data to the CAS login page with a Groovy script, for example announcements fetched from another system.
+
 Groovy login decorators allow one to inject data into the Spring webflow 
 context by using an external Groovy script that may take on the following form:
 

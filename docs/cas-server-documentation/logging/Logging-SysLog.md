@@ -8,6 +8,8 @@ category: Logs & Audits
 
 # SysLog Logging
 
+Send CAS log messages to a syslog server with the Log4j syslog appender.
+
 CAS logging framework does have the ability to route messages to an external
 syslog instance. To configure this, you first configure the `SysLogAppender` and then specify which
 messages need to be routed over to this instance:

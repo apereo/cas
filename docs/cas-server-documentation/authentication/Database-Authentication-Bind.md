@@ -14,4 +14,4 @@ Authenticates a user by attempting to create a database connection using the use
 ## Multitenancy
 
 Configuration settings for database authentication can be specified in a multitenant environment.
-Please [review this guide](../multitenancy/Multitenancy-Overview.html) for more information.
+Please [review this guide](../multitenancy/Multitenancy-Tenant-Properties.html) for more information.

@@ -62,6 +62,13 @@ It is generally recommended that you follow the blog and keep up with project ne
 announcements as much as possible, and do not shy away from writing and contributing your own blog posts, 
 experiences and updates throughout your CAS deployment.
 
+## Try CAS Locally
+
+To see CAS running before you plan anything, start one of the official Docker images with a single
+`docker run` command, as shown in [Docker Installation](../installation/Docker-Installation.html). It is a
+quick way to explore the login flow and the defaults; build your real deployment with a WAR overlay, as
+described below.
+
 ## Prepare Environment
 
 Study the [installation requirements](Installation-Requirements.html) for the deployment environment.

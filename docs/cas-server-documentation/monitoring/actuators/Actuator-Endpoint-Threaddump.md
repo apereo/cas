@@ -8,6 +8,8 @@ category: Monitoring & Statistics
 
 # Actuator Endpoint - Thread Dump
 
+The `threaddump` actuator endpoint returns a snapshot of the threads in the CAS JVM, which helps diagnose hung or slow requests.
+
 Performs a thread dump.
 
 {% include_cached actuators.html endpoints="threaddump" %}

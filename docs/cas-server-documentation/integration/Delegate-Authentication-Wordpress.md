@@ -8,6 +8,8 @@ category: Authentication
 
 # Wordpress
 
+Let users log in to CAS with their WordPress.com account.
+
 For an overview of the delegated authentication flow, please [see this guide](Delegate-Authentication.html).
 
 Support is enabled by including the following dependency in the WAR overlay:

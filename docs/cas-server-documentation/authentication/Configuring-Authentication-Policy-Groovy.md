@@ -7,6 +7,8 @@ category: Authentication
 
 # Groovy - Authentication Policy
 
+Decide whether an authentication attempt succeeds with a Groovy script that inspects the authentication result and can reject it with an exception.
+
 {% include_cached casproperties.html properties="cas.authn.policy.groovy" %}
 
 The script may be designed as:

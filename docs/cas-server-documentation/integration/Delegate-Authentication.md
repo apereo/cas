@@ -86,7 +86,7 @@ via the following settings:
 ## Multitenancy
 
 Configuration settings for delegated authentication to any and all identity providers can be specified in a multitenant environment.
-Please [review this guide](../multitenancy/Multitenancy-Overview.html) for more information.
+Please [review this guide](../multitenancy/Multitenancy-Tenant-Properties.html) for more information.
    
 ## Impersonation
 

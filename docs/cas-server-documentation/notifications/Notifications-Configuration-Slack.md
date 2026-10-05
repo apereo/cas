@@ -8,6 +8,8 @@ category: Notifications
 
 # Notifications - Slack
 
+Send notifications to users as Slack messages.
+
 Support is enabled via the relevant modules using the following module:
 
 {% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-notifications-slack" %}

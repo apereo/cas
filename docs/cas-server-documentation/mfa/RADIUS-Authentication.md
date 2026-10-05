@@ -8,6 +8,8 @@ category: Multifactor Authentication
 
 # RADIUS Authentication
 
+Authenticate users against a RADIUS server, either as the primary login or as a second factor with one-time codes from RSA SecurID or another RADIUS-backed token system.
+
 RADIUS support is enabled by only including the following dependency in the overlay:
 
 {% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-radius" %}

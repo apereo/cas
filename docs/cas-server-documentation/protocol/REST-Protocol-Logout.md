@@ -8,6 +8,8 @@ category: Protocols
 
 # Logout - REST Protocol
 
+End a single sign-on session through the REST API by deleting its ticket-granting ticket.
+
 Destroy the SSO session by removing the issued ticket:
 
 ```bash

@@ -83,7 +83,7 @@ ask for policy acceptance. Upon accepting the policy, the result will be stored 
 ### Multitenancy
 
 Configuration settings for a number of storage mechanisms can be specified in a multitenant environment.
-Please [review this guide](../multitenancy/Multitenancy-Overview.html) for more information and then
+Please [review this guide](../multitenancy/Multitenancy-Tenant-Properties.html) for more information and then
 cross check with the specific storage mechanism guides listed above.
 
 ## Policy Terms

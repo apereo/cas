@@ -146,7 +146,7 @@ Inlined table buttons in [Palantir Admin Dashboard](../installation/Admin-Dashbo
 replaced with proper context menus triggered by right clicks. The configuration tab is also extended 
 to display cached scripted resources with the ability to either remove or recompute the cache entry.
      
-Furthermore, [Heimdall authorization policies](../authorization/Heimdall-Authorization-Overview.html)
+Furthermore, [Heimdall authorization policies](../authorization/Heimdall-Authorization-Policies.html)
 can now be created, edited and removed from the [Palantir Admin Dashboard](../installation/Admin-Dashboard.html).
 There is also dedicated simulation support to experiment with authorization requests.
 
@@ -219,7 +219,7 @@ support multitenancy. A number of storage mechanisms are now available to suppor
 - [RediSearch](../ticketing/Redis-Ticket-Registry-RediSearch.html) functionality now supports Redis clustering.
 - The maximum lifetime of a transient session ticket (i.e. `TST`) is by default reduced from `15` minutes to `5` minutes.
 - Groovy integration tests have now switched to use Groovy `5.1.x`.
-- Redis integration tests have now switched to use Groovy `8.10.x`.
+- Redis integration tests have now switched to use Redis `8.10.x`.
 - Attributes requested for [Consent](../integration/Attribute-Release-Consent.html) may now be localized using language bundles and a prefixed language key that is `screen.consent.attributes.attribute.[attribute-name]`.
 - When removing cookies, particularly during logout, the existing cookie value is no longer echoed back for remove operations.
 - [CAS REST APIs](../protocol/REST-Protocol.html) now return a `403` status code instead of a `500` type of error when unauthorized application requests are identified.

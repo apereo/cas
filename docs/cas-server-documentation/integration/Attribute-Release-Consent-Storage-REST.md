@@ -33,4 +33,4 @@ The consent decision object in transit will and must match the JSON structure ab
 ## Multitenancy
 
 Configuration settings for attribute consent storage can be specified in a multitenant environment.
-Please [review this guide](../multitenancy/Multitenancy-Overview.html) for more information.
+Please [review this guide](../multitenancy/Multitenancy-Tenant-Properties.html) for more information.

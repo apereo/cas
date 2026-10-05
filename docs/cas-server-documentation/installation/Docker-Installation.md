@@ -11,20 +11,20 @@ category: Installation
 
 Upon every release of the CAS software, docker images are tagged and pushed
 to the Apereo CAS repository on [Docker Hub](https://hub.docker.com/r/apereo/cas/).
-Images can be pulled down via the following command:
+Images are tagged with the CAS version they contain, such as `8.0.2`; see
+[Docker Hub](https://hub.docker.com/r/apereo/cas/tags) for the available tags. Always name a tag, because the
+`latest` tag is not kept up to date. Pull an image with:
 
 ```bash
-docker pull apereo/cas
+docker pull apereo/cas:${tag}
 ```
 
-...where `[A.B.C]` represents the image tag that is mapped to the CAS server version.
-        
-Then:
+...where `${tag}` is the CAS version you want. Then:
 
 ```bash
 docker run --quiet  --rm \
   -e SERVER_SSL_ENABLED=false -e SERVER_PORT=8080 \
-  -p 8080:8080 --name casserver apereo/cas
+  -p 8080:8080 --name casserver apereo/cas:${tag}
 ```
 
 CAS should be running on http://localhost:8080/cas.

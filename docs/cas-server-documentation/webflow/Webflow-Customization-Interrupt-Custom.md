@@ -8,6 +8,8 @@ category: Webflow Management
 
 # Custom Authentication Interrupt
 
+Decide when to interrupt the login flow with your own `InterruptInquirer`, registered with CAS as a Spring bean.
+
 If you wish to design your own interrupt strategy to make 
 inquiries, you can design your component to make determinations:
 

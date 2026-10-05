@@ -8,6 +8,8 @@ category: Registration
 
 # Account (Self-Service) Registration - Apache Syncope Provisioning
 
+Create the accounts users register through CAS in Apache Syncope.
+
 Account registration requests can be submitted to Apache Syncope. Support is enabled by including the 
 following dependency in the WAR overlay:
 

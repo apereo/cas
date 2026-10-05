@@ -8,6 +8,8 @@ category: Multifactor Authentication
 
 # Bypass - Multifactor Authentication Trusted Device/Browser
 
+Skip the trusted device step for selected applications, or let users decline to register a trusted device during MFA.
+
 Users are allowed to optionally opt out of registering a trusted 
 device with CAS as part of the MFA workflow. Furthermore, 
 trusted device workflow for MFA can be bypassed on a per application basis:

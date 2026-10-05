@@ -107,6 +107,13 @@ The CAS documentation site has received a visual and functional overhaul. Notabl
   and [protocols](../protocol/Protocol-Overview.html).
 - Text in setting lists and feature toggles meets contrast requirements in both themes, the dependency tabs are
   announced correctly by screen readers, and third-party scripts and stylesheets are pinned and loaded with integrity checks.
+- On phones, the site header scrolls away to leave only the navigation bar, and the development notice shrinks to a
+  single line, so the page heading appears on the first screen.
+- [Heimdall](../authorization/Heimdall-Authorization-Overview.html) and [multitenancy](../multitenancy/Multitenancy-Overview.html)
+  documentation is split into focused pages with their own menu entries.
+- Every page opens with a short summary, which also serves as its description in search results.
+- [Docker installation](../installation/Docker-Installation.html) names an explicit image tag, and
+  [Getting Started](../planning/Getting-Started.html) points to it for a quick local trial.
 
 ### Heimdall AuthZEN
 
@@ -114,11 +121,11 @@ The CAS documentation site has received a visual and functional overhaul. Notabl
 [AuthZEN Authorization API 1.0](https://openid.net/specs/authorization-api-1_0.html) specification:
 
 - The AuthZEN `resource.id` now identifies the resource instance rather than a policy namespace. AuthZEN requests are matched
-  against [resources in all namespaces](../authorization/Heimdall-Authorization-Overview.html) by their new `resourceType`, `actions` and optional `resourceIdPattern` fields, and all matching resources must grant access.
+  against [resources in all namespaces](../authorization/Heimdall-Authorization-Resources.html) by their new `resourceType`, `actions` and optional `resourceIdPattern` fields, and all matching resources must grant access.
   Existing AuthZEN resources must define these fields, or AuthZEN requests are denied; requests to `/heimdall/authorize` are unaffected.
 - Evaluated denials return `200` with `"decision": false`, malformed requests `400`, and failed caller authentication `401`. The `X-Request-ID` header is echoed.
 - Tokens must be issued to a registered OAuth or OpenID Connect application whose access strategy allows access, and
-  a new [Heimdall access strategy](../authorization/Heimdall-Authorization-Overview.html) can prevent an application from calling Heimdall. [DPoP-bound](../authentication/OIDC-Authentication-DPoP.html) and certificate-bound tokens
+  a new [Heimdall access strategy](../authorization/Heimdall-Authorization-Principal.html) can prevent an application from calling Heimdall. [DPoP-bound](../authentication/OIDC-Authentication-DPoP.html) and certificate-bound tokens
   now require their proof. On the AuthZEN endpoint, `Basic` credentials are the `client_id:client_secret` of a registered application
   rather than CAS user credentials.
 - [JWT bearer assertions](../authentication/OIDC-Authentication-JWT-Bearer.html) must carry `jti` and `iat` claims, are accepted once, and may not live longer than
@@ -126,7 +133,7 @@ The CAS documentation site has received a visual and functional overhaul. Notabl
 - Failed caller authentication on `/heimdall/authorize` now returns `401` instead of `403`. Failed caller authentication on both
   Heimdall endpoints is subject to [authentication throttling](../authentication/Configuring-Authentication-Throttling-Failure.html).
 - A resource with no policies now denies access instead of granting it, and the REST policy no longer sends the resource's policies to its endpoint.
-- [JDBC policies](../authorization/Heimdall-Authorization-Overview.html) use a shared connection pool, registered as an application context bean and optionally named via `dataSourceName`,
+- [JDBC policies](../authorization/Heimdall-Authorization-Policies.html) use a shared connection pool, registered as an application context bean and optionally named via `dataSourceName`,
   instead of opening a new database connection for every decision. Queries time out after `queryTimeout` (five seconds by default).
   Policies are evaluated in order rather than on the shared thread pool.
 - AuthZEN subjects are resolved from CAS [attribute repositories](../integration/Attribute-Resolution.html) only for the `user` subject type. Required and rejected attribute policies accept qualified names such as `subject.properties.department`,
@@ -135,14 +142,14 @@ The CAS documentation site has received a visual and functional overhaul. Notabl
 - A resource that does not set `enforceAllPolicies` is now granted when any one of its policies grants access, as documented;
   previously every policy had to grant. Set `enforceAllPolicies` to `true` on resources that rely on the old behavior.
   In that mode, a policy that fails with an error no longer prevents a later policy from granting access.
-- Heimdall supports the AuthZEN [access evaluations API](../authorization/Heimdall-Authorization-Overview.html) at
+- Heimdall supports the AuthZEN [access evaluations API](../authorization/Heimdall-Authorization-AuthZEN.html#access-evaluations) at
   `/heimdall/authzen/evaluations`, with the `execute_all`, `deny_on_first_deny` and `permit_on_first_permit` semantics.
-- Heimdall publishes AuthZEN [policy decision point metadata](../authorization/Heimdall-Authorization-Overview.html) at
+- Heimdall publishes AuthZEN [policy decision point metadata](../authorization/Heimdall-Authorization-AuthZEN.html#policy-decision-point-metadata) at
   `/heimdall/.well-known/authzen-configuration`; the well-known location defined by the specification needs a
   [rewrite rule](../installation/Servlet-Container-Embedded-Tomcat-RewriteValve.html).
-- Denied AuthZEN decisions carry a [decision context](../authorization/Heimdall-Authorization-Overview.html)
+- Denied AuthZEN decisions carry a [decision context](../authorization/Heimdall-Authorization-AuthZEN.html#decision-context)
   with a `reason` code.
-- [JDBC and OpenFGA policies](../authorization/Heimdall-Authorization-Overview.html) receive the AuthZEN subject, resource and action. [Palantir](../installation/Admin-Dashboard.html) can edit the AuthZEN fields
+- [JDBC and OpenFGA policies](../authorization/Heimdall-Authorization-Policies.html) receive the AuthZEN subject, resource and action. [Palantir](../installation/Admin-Dashboard.html) can edit the AuthZEN fields
   of a resource and configure the Heimdall access strategy.
 
 ### Certificate-Bound Access Tokens

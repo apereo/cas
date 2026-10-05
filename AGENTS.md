@@ -213,6 +213,12 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
 - Do not dim muted text with `opacity`: `--docs-muted` on its own meets 4.5:1 in both themes, and opacity drops it below.
   `--docs-amber` is darker in light mode for the same reason.
 - In `casmodule.html`, only the tab links sit inside `role="tablist"`; the Resources dropdown is a sibling `<button>`.
+- Every documentation page needs an opening paragraph right after the H1 that the layout can use as its description:
+  at least 40 characters, not ending in a colon, and not a "see this guide" or dependency lead-in.
+- On phones (`max-width: 760px`) the sticky header is offset by `--docs-masthead-height` so only the navigation bar
+  stays visible, and `site.js` sets `--docs-header-height` to that bar alone; keep both in step when changing the masthead.
+- Large topics are split into one page per concern with a sidebar submenu (see `authorization/Heimdall-Authorization-*.md`
+  and `multitenancy/Multitenancy-*.md`); when moving a section, update cross-page anchors and links in release notes.
 
 ## OIDC verifiable credentials (OID4VCI / OID4VP)
 
@@ -1300,6 +1306,7 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
 - To compile a Java file outside the repository with Lombok, copy the repo's `lombok.config` next to it; without it, `@Slf4j` creates `log` rather than `LOGGER`.
 - Hibernate 7 JPQL bulk deletes (`DELETE FROM Entity e WHERE ...`) also delete the matching rows of the entity's element-collection tables (`DELETE ... WHERE id IN (SELECT ...)`), so they need no native SQL. The physical naming strategy turns table names into snake case (`google_authenticator_registration_record`), so native SQL must not use the `@Table` name as written.
 - A Java `Stream` built with `onClose(...)` releases nothing unless it is closed: wrap any stream that holds a cursor or connection, such as `CasRedisTemplate.scan(...)`, in try-with-resources, even for a terminal `count()` or `collect()`. When pooling is enabled, CAS turns off Lettuce native-connection sharing, so every leaked Redis connection is a pooled one. To catch such a leak in a test, enable the pool with a small `max-active` and call the method more times than the pool allows. The fakeredis emulator in the VM cannot run the Redis ticket-registry suites that need RediSearch.
+- One puppeteer scenario can cover several storage backends: put every backend module in `dependencies`, list the init scripts comma-separated in `initScript`, and give each backend a `variations` entry that turns the others off with `--CasFeatureModule.<Feature>.<module>.enabled=false` (each backend auto-configuration carries `@ConditionalOnFeatureEnabled`). `SCENARIO_VARIATION` holds the variation name. `mfa-gauth-login-encrypted-stores` does this for GAuth on JPA and Redis, with encryption on.
 
 ## Google Authenticator Redis repository
 

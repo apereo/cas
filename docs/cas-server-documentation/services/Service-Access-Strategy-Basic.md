@@ -8,6 +8,7 @@ category: Services
 
 # Service Access Strategy - Basic
 
+The default access strategy turns an application on or off and controls whether it may take part in single sign-on.
 
 The default strategy allows one to configure a service with the following properties:
 

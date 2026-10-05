@@ -8,6 +8,8 @@ category: Acceptable Usage Policy
 
 # Custom Acceptable Usage Policy
 
+Keep acceptable usage policy acceptance in your own store by registering a custom `AcceptableUsagePolicyRepository` with CAS.
+
 If you wish to design your own storage mechanism, you may follow the below approach:
 
 ```java

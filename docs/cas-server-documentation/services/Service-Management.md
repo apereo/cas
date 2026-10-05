@@ -62,24 +62,24 @@ check the dedicated guide for the capability you have in mind (i.e. OAuth, SAML,
 
 The following options may be used to store services in CAS.
 
-| Storage                                                   | Kind            | Shared across nodes                  | Notes                                                                                   |
-|-----------------------------------------------------------|-----------------|--------------------------------------|-----------------------------------------------------------------------------------------|
-| [In memory](InMemory-Service-Management.html)             | Code            | Built into each node                 | Definitions are Spring beans in your overlay; changes need a rebuild and restart.      |
-| [JSON](JSON-Service-Management.html)                      | Files           | No, [replicate](Configuring-Service-Replication.html) them | Files are watched and reloaded when they change.                                       |
-| [YAML](YAML-Service-Management.html)                      | Files           | No, [replicate](Configuring-Service-Replication.html) them | Same as JSON.                                                                          |
-| [Git](Git-Service-Management.html)                        | Repository      | Yes, through the remote repository   | Each node clones the repository and pulls changes; history comes with Git.             |
-| [JPA](JPA-Service-Management.html)                        | Database        | Yes                                  | Relational databases such as Oracle, MySQL or PostgreSQL.                              |
-| [MongoDb](MongoDb-Service-Management.html)                | Database        | Yes                                  |                                                                                         |
-| [Redis](Redis-Service-Management.html)                    | Database        | Yes                                  |                                                                                         |
-| [LDAP](LDAP-Service-Management.html)                      | Directory       | Yes                                  | Definitions are stored as directory entries.                                           |
-| [DynamoDb](DynamoDb-Service-Management.html)              | Database        | Yes                                  |                                                                                         |
-| [Apache Cassandra](Cassandra-Service-Management.html)     | Database        | Yes                                  |                                                                                         |
-| [Google Cloud Firestore](GCP-Firestore-Service-Management.html) | Database  | Yes                                  |                                                                                         |
-| [Amazon S3](AmazonS3-Service-Management.html)             | Object storage  | Yes                                  |                                                                                         |
-| [Google Cloud Storage](GCP-Storage-Service-Management.html) | Object storage | Yes                                 |                                                                                         |
-| [REST](REST-Service-Management.html)                      | Your API        | Yes, through your API                | You implement the storage behind a REST API.                                           |
-| [Custom](Custom-Service-Management.html)                   | Your code       | Depends on your implementation       | You implement the registry with CAS APIs.                                              |
-| [Azure CosmosDb](CosmosDb-Service-Management.html)        | Database        | Yes                                  | Deprecated.                                                                            |
+| Storage                                                         | Kind           | Shared across nodes                                        | Notes                                                                             |
+|-----------------------------------------------------------------|----------------|------------------------------------------------------------|-----------------------------------------------------------------------------------|
+| [In memory](InMemory-Service-Management.html)                   | Code           | Built into each node                                       | Definitions are Spring beans in your overlay; changes need a rebuild and restart. |
+| [JSON](JSON-Service-Management.html)                            | Files          | No, [replicate](Configuring-Service-Replication.html) them | Files are watched and reloaded when they change.                                  |
+| [YAML](YAML-Service-Management.html)                            | Files          | No, [replicate](Configuring-Service-Replication.html) them | Same as JSON.                                                                     |
+| [Git](Git-Service-Management.html)                              | Repository     | Yes, through the remote repository                         | Each node clones the repository and pulls changes; history comes with Git.        |
+| [JPA](JPA-Service-Management.html)                              | Database       | Yes                                                        | Relational databases such as Oracle, MySQL or PostgreSQL.                         |
+| [MongoDb](MongoDb-Service-Management.html)                      | Database       | Yes                                                        |                                                                                   |
+| [Redis](Redis-Service-Management.html)                          | Database       | Yes                                                        |                                                                                   |
+| [LDAP](LDAP-Service-Management.html)                            | Directory      | Yes                                                        | Definitions are stored as directory entries.                                      |
+| [DynamoDb](DynamoDb-Service-Management.html)                    | Database       | Yes                                                        |                                                                                   |
+| [Apache Cassandra](Cassandra-Service-Management.html)           | Database       | Yes                                                        |                                                                                   |
+| [Google Cloud Firestore](GCP-Firestore-Service-Management.html) | Database       | Yes                                                        |                                                                                   |
+| [Amazon S3](AmazonS3-Service-Management.html)                   | Object storage | Yes                                                        |                                                                                   |
+| [Google Cloud Storage](GCP-Storage-Service-Management.html)     | Object storage | Yes                                                        |                                                                                   |
+| [REST](REST-Service-Management.html)                            | Your API       | Yes, through your API                                      | You implement the storage behind a REST API.                                      |
+| [Custom](Custom-Service-Management.html)                        | Your code      | Depends on your implementation                             | You implement the registry with CAS APIs.                                         |
+| [Azure CosmosDb](CosmosDb-Service-Management.html)              | Database       | Yes                                                        | Deprecated.                                                                       |
 
 Service definitions are cached by each node and reloaded on a schedule; see
 [caching and reloading](Service-Management-Caching-Reloading.html). The

@@ -8,4 +8,4 @@ category: Monitoring & Statistics
 
 # Actuator Endpoint - Http Trace
 
-{% include_cached actuators.html endpoints="logfile" %}
+The `httptrace` actuator endpoint from earlier Spring Boot versions no longer exists. Use the [httpexchanges](Actuator-Endpoint-Httpexchanges.html) endpoint to see recent HTTP requests and responses.

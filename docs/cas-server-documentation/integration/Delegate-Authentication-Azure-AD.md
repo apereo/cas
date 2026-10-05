@@ -8,6 +8,8 @@ category: Authentication
 
 # Microsoft Entra ID
 
+Let users log in to CAS with their Microsoft Entra ID (formerly Azure AD) account through OpenID Connect.
+
 For an overview of the delegated authentication flow, please [see this guide](Delegate-Authentication.html).
 
 Support is enabled by including the following dependency in the WAR overlay:

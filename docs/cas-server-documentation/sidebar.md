@@ -210,7 +210,14 @@ layout: null
 
 * [Authorization](#casauthorization)
     *   [Overview](/cas/{{ version }}/authorization/Authorization-Overview.html)
-    *   [Heimdall](/cas/{{ version }}/authorization/Heimdall-Authorization-Overview.html)
+    *   [Heimdall](#heimdallauthz)
+        *   [Overview](/cas/{{ version }}/authorization/Heimdall-Authorization-Overview.html)
+        *   [Authorization Requests](/cas/{{ version }}/authorization/Heimdall-Authorization-Requests.html)
+        *   [AuthZEN](/cas/{{ version }}/authorization/Heimdall-Authorization-AuthZEN.html)
+        *   [Authorization Principal](/cas/{{ version }}/authorization/Heimdall-Authorization-Principal.html)
+        *   [Authorization Resources](/cas/{{ version }}/authorization/Heimdall-Authorization-Resources.html)
+        *   [Authorization Policies](/cas/{{ version }}/authorization/Heimdall-Authorization-Policies.html)
+        *   [Gateway Integration](/cas/{{ version }}/authorization/Heimdall-Authorization-Gateway.html)
     *   [OpenFGA](/cas/{{ version }}/services/Service-Access-Strategy-OpenFGA.html)
     *   [Cerbos](/cas/{{ version }}/services/Service-Access-Strategy-Cerbos.html)
     *   [SCIM](/cas/{{ version }}/services/Service-Access-Strategy-SCIM.html)
@@ -221,6 +228,10 @@ layout: null
 
 * [Multitenancy](#multitenancy)
     *   [Overview](/cas/{{ version }}/multitenancy/Multitenancy-Overview.html)
+    *   [Tenant Registration](/cas/{{ version }}/multitenancy/Multitenancy-Tenant-Registration.html)
+    *   [Tenant Capabilities](/cas/{{ version }}/multitenancy/Multitenancy-Tenant-Capabilities.html)
+    *   [Tenant Properties](/cas/{{ version }}/multitenancy/Multitenancy-Tenant-Properties.html)
+    *   [Performance](/cas/{{ version }}/multitenancy/Multitenancy-Performance.html)
 
 * [Delegation & Proxying](#delegationauthn)
     *   [Overview](/cas/{{ version }}/integration/Delegate-Authentication.html)

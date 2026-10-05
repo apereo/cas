@@ -8,6 +8,8 @@ category: Multifactor Authentication
 
 # DynamoDb YubiKey Registration
 
+Keep YubiKey device registrations in an Amazon DynamoDB table.
+
 Support is enabled by including the following dependencies in the WAR overlay:
 
 {% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-yubikey-dynamodb" %}

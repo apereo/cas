@@ -8,6 +8,8 @@ category: Authentication
 
 # SAML2 Delegated Authentication - JDBC Service Provider Metadata
 
+Keep the SAML2 service provider metadata that CAS generates for delegated authentication in a relational database, so every node shares it.
+
 SAML2 metadata for CAS as the SAML2 service provider may also be managed inside a relational database instance. To active this feature, you need to start by 
 including the following module in the overlay:
 

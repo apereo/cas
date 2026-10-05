@@ -8,6 +8,8 @@ category: Notifications
 
 # SmsMode SMS Messaging
 
+Send SMS messages from CAS through smsmode.
+
 To learn more, [visit this site](https://www.smsmode.com/).
 
 {% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-sms-smsmode" %}

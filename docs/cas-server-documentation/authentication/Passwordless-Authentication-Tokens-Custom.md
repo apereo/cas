@@ -7,6 +7,8 @@ category: Authentication
 
 # Custom Passwordless Authentication Tokens
 
+Keep passwordless one-time tokens in your own store by implementing `PasswordlessTokenRepository` and registering it with CAS.
+
 You may also define your own token management store using the following 
 bean definition and by implementing `PasswordlessTokenRepository`:
 

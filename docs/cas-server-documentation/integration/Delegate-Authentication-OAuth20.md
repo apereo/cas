@@ -8,6 +8,8 @@ category: Authentication
 
 # OAuth20
 
+Let users log in through any OAuth 2.0 provider that has no dedicated integration, by describing its endpoints and profile attributes in CAS settings.
+
 For an overview of the delegated authentication flow, please [see this guide](Delegate-Authentication.html).
 
 Support is enabled by including the following dependency in the WAR overlay:

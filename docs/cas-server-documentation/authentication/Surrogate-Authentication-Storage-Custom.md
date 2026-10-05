@@ -8,6 +8,8 @@ category: Authentication
 
 # Custom Surrogate Authentication
 
+Decide who may impersonate whom with your own `SurrogateAuthenticationService`, registered with CAS as a Spring bean.
+
 If you wish to design your own account store, you may follow the below approach:
 
 ```java

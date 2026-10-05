@@ -7,6 +7,9 @@ category: Attributes
 {% include variables.html %}
 
 # Attribute Repository Selection
+
+Choose which attribute repositories CAS consults for a login: all active repositories, only those assigned to the application, or only those tied to the authentication method used.
+
      
 Principal attributes that are retrieved from dedicated [attribute repositories](Attribute-Resolution.html) 
 through the process of [principal resolution](../installation/Configuring-Principal-Resolution.html) are activated

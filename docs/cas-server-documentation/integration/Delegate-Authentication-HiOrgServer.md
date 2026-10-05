@@ -8,6 +8,8 @@ category: Authentication
 
 # HiOrg Server
 
+Let users log in to CAS with their HiOrg-Server account.
+
 For an overview of the delegated authentication flow, please [see this guide](Delegate-Authentication.html).
 
 Support is enabled by including the following dependency in the WAR overlay:

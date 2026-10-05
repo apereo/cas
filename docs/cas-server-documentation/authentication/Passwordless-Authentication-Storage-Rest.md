@@ -7,6 +7,8 @@ category: Authentication
 
 # REST Passwordless Authentication Storage
 
+Look up passwordless user accounts, with their email address and phone number, by calling a REST endpoint you provide.
+
 This strategy allows one design REST endpoints in charge of locating 
 passwordless user records. A successful execution of the endpoint  
 would produce a response body similar to the following:

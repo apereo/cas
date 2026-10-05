@@ -8,6 +8,8 @@ category: Services
 
 # Service Access Strategy - Custom
 
+Enforce your own authorization rules by implementing a `RegisteredServiceAccessStrategyEnforcer` and registering it with CAS.
+
 If you wish to create your own access strategy and authorization policy enforcer, you will need to
 design a component and register it with CAS to handle the enforcement:
 

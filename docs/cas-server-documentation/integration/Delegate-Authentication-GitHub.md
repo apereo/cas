@@ -8,6 +8,8 @@ category: Authentication
 
 # GitHub
 
+Let users log in to CAS with their GitHub account.
+
 For an overview of the delegated authentication flow, please [see this guide](Delegate-Authentication.html).
 
 Support is enabled by including the following dependency in the WAR overlay:

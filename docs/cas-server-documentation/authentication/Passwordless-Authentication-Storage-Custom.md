@@ -7,6 +7,8 @@ category: Authentication
 
 # Custom Passwordless Authentication Storage
 
+Look up passwordless user accounts in your own store by implementing `PasswordlessUserAccountStore` and registering it with CAS.
+
 You may also define your own user account store using the following 
 bean definition and by implementing `PasswordlessUserAccountStore`:
 

@@ -7,6 +7,8 @@ category: Authentication
 
 # Groovy Passwordless Authentication Storage
 
+Look up passwordless user accounts, with their email address and phone number, through a Groovy script.
+
 This strategy allows one to locate user records via a Groovy script. The body 
 of the script may be defined as such:
 

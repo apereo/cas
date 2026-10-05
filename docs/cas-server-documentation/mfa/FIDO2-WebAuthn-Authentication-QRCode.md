@@ -7,6 +7,9 @@ category: Multifactor Authentication
 {% include variables.html %}
 
 # FIDO2 WebAuthn Multifactor Authentication - QR Codes
+
+Let users complete WebAuthn on their phone by scanning a QR code shown by CAS on another device, such as a laptop.
+
          
 CAS can be configured to support FIDO2 WebAuthn authentication using QR codes. Once enabled, this 
 feature allows users to authenticate using a FIDO2-enabled device by scanning a QR code 

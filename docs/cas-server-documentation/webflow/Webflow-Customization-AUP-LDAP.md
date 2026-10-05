@@ -8,6 +8,8 @@ category: Acceptable Usage Policy
 
 # LDAP Acceptable Usage Policy
 
+Read and record acceptance of the acceptable usage policy in an attribute of the user's LDAP entry.
+
 Alternatively, CAS can be configured to use LDAP as the storage mechanism. Upon
 accepting the policy, the result will be stored back into LDAP and remembered
 via the same attribute. Support is enabled by including the following dependency in the WAR overlay:

@@ -433,8 +433,10 @@ $(() => {
         }
     });
     const header = document.querySelector(".site-header");
+    const masthead = header.querySelector(".masthead");
     new ResizeObserver(() => {
-        document.documentElement.style.setProperty("--docs-header-height", `${header.offsetHeight}px`);
+        const stuckHeight = header.offsetHeight - (mobileNavigation.matches ? masthead.offsetHeight : 0);
+        document.documentElement.style.setProperty("--docs-header-height", `${stuckHeight}px`);
     }).observe(header);
     loadSidebarForActiveVersion();
     generatePageTOC();

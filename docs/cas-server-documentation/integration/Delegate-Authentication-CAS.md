@@ -8,6 +8,8 @@ category: Authentication
 
 # CAS Delegated Authentication
 
+Let users log in through another CAS server, which acts as the external identity provider for this one.
+
 For an overview of the delegated authentication flow, please [see this guide](Delegate-Authentication.html).
 
 Support is enabled by including the following dependency in the WAR overlay:

@@ -8,6 +8,8 @@ category: Authentication
 
 # DropBox
 
+Let users log in to CAS with their Dropbox account.
+
 For an overview of the delegated authentication flow, please [see this guide](Delegate-Authentication.html).
 
 Support is enabled by including the following dependency in the WAR overlay:

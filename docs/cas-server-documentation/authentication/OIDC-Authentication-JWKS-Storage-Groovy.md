@@ -7,6 +7,8 @@ category: Protocols
 
 # OpenID Connect Authentication JWKS Storage - Groovy
 
+Let a Groovy script generate and return the JSON Web Key Set that CAS uses to sign and encrypt OpenID Connect tokens.
+
 Keystore generation can be outsourced to an external Groovy script whose body should be defined as such: 
 
 ```groovy

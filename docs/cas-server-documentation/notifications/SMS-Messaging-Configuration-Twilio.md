@@ -8,6 +8,8 @@ category: Notifications
 
 # Twilio Messaging & Calls
 
+Send SMS messages and make phone calls from CAS through Twilio.
+
 To learn more, [visit this site](https://www.twilio.com/). The CAS integration with Twilio to support SMS messages
 and phone calls via dedicated configuration settings.
 

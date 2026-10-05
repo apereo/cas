@@ -7,6 +7,9 @@ category: Notifications
 {% include variables.html %}
 
 # Sending Email - Amazon Simple Email Service (SES)
+
+Send email from CAS through Amazon Simple Email Service instead of an SMTP server.
+
    
 You may instruct CAS to use [Amazon SES](https://aws.amazon.com/ses/) for sending emails.
 Support is enabled by including the following module:

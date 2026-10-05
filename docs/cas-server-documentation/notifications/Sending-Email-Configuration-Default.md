@@ -8,6 +8,8 @@ category: Notifications
 
 # Sending Email - Default
 
+By default, CAS sends email through an SMTP server using the JavaMail API.
+
 The default strategy uses the `JavaMail` API which provides a platform-independent and 
 protocol-independent framework to build mail and messaging applications, primarily using SMTP:
 

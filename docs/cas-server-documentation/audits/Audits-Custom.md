@@ -7,6 +7,8 @@ category: Logs & Audits
 
 # Custom Audits
 
+Plug your own audit storage into CAS by registering an `AuditTrailManager`, and change how client and server IP addresses are recorded with a custom `ClientInfoResolver`.
+
 If you wish to create your own auditor implementation, you will need to
 design an `AuditTrailManager` component and register it with CAS:
 

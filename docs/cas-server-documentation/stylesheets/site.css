@@ -861,6 +861,10 @@ button, a {
     margin: 0;
 }
 
+#dev-doc-info .dev-doc-summary {
+    display: none;
+}
+
 #dev-doc-title {
     font-family: var(--font-display);
     font-weight: 800;
@@ -2302,10 +2306,15 @@ ul.tab-content > li:not(.active):not(.property-name):not(.property-tab):not(.cas
         display: none;
     }
     :root {
-        --docs-header-height: 10.5rem;
+        --docs-header-height: 6.5rem;
+        --docs-masthead-height: 4.3rem;
+    }
+    .site-header {
+        top: calc(-1 * var(--docs-masthead-height));
     }
     .masthead {
-        min-height: 4.3rem;
+        height: var(--docs-masthead-height);
+        min-height: 0;
         padding: .8rem 1.2rem;
     }
     .brand-logo {
@@ -2329,8 +2338,19 @@ ul.tab-content > li:not(.active):not(.property-name):not(.property-tab):not(.cas
         display: none;
     }
     .navigation-bar {
-        padding: .35rem 1.25rem .55rem;
+        min-height: 0;
+        padding: .3rem 1.25rem .3rem;
         column-gap: 1rem;
+        row-gap: .1rem;
+    }
+    .navigation-bar .icon-button {
+        min-width: 2.2rem;
+        min-height: 2.2rem;
+        padding: .3rem;
+    }
+    #searchField .DocSearch-Button {
+        width: 2.2rem;
+        height: 2.2rem;
     }
     #sidebarNavButton {
         order: 0;
@@ -2344,7 +2364,7 @@ ul.tab-content > li:not(.active):not(.property-name):not(.property-tab):not(.cas
         gap: .7rem;
     }
     .primary-navigation > a, .primary-navigation .dropdown-toggle {
-        min-height: 2.1rem;
+        min-height: 1.8rem;
         font-size: .69rem;
     }
     .docs-shell, .docs-sidebar-hidden .docs-shell, .docs-home .docs-shell {
@@ -2363,11 +2383,23 @@ ul.tab-content > li:not(.active):not(.property-name):not(.property-tab):not(.cas
         background: var(--docs-surface);
     }
     .cas-docs-content {
-        padding-top: 1.2rem;
+        padding-top: .8rem;
     }
     .page-toolbar {
-        align-items: flex-start;
-        margin-bottom: 1rem;
+        align-items: center;
+        margin-bottom: .6rem;
+    }
+    .breadcrumb {
+        flex-wrap: nowrap;
+        overflow: hidden;
+        white-space: nowrap;
+    }
+    .breadcrumb li:last-child {
+        min-width: 0;
+    }
+    .breadcrumb li:last-child > * {
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
     #toolbarIcons {
         gap: 0;
@@ -2381,9 +2413,19 @@ ul.tab-content > li:not(.active):not(.property-name):not(.property-tab):not(.cas
         font-size: .65rem;
     }
     #dev-doc-info {
+        align-items: center;
         font-size: .71rem;
-        padding: .9rem;
-        margin-bottom: 1.7rem;
+        padding: .55rem .8rem;
+        margin-bottom: 1.1rem;
+    }
+    #dev-doc-info .dev-doc-details, #dev-doc-title {
+        display: none;
+    }
+    #dev-doc-info .dev-doc-summary {
+        display: block;
+    }
+    .development-marker {
+        margin-top: 0;
     }
     h1 {
         font-size: 2.35rem;

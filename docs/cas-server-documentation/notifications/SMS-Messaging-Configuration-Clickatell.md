@@ -8,6 +8,8 @@ category: Notifications
 
 # Clickatell SMS Messaging
 
+Send SMS messages from CAS through Clickatell.
+
 To learn more, [visit this site](http://www.clickatell.com/).
 
 {% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-sms-clickatell" %}

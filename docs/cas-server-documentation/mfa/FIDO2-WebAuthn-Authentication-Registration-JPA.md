@@ -8,6 +8,8 @@ category: Multifactor Authentication
 
 # JPA FIDO2 WebAuthn Multifactor Registration
 
+Keep FIDO2 WebAuthn device registrations in a relational database.
+
 Device registrations may be kept inside a relational database 
 instance by including the following module in the WAR overlay:
 
