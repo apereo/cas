@@ -5,6 +5,7 @@ import org.apereo.cas.config.CasOidcVerifiableCredentialsAutoConfiguration;
 import org.apereo.cas.config.CasStatelessTicketRegistryAutoConfiguration;
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.oidc.OidcConstants;
+import org.apereo.cas.oidc.vc.issuer.status.OidcVerifiableCredentialStatusEndpoint;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
@@ -15,12 +16,16 @@ import com.nimbusds.jose.JWSHeader;
 import com.nimbusds.jose.crypto.RSASSASigner;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.gen.RSAKeyGenerator;
+import com.nimbusds.jose.util.Base64URL;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -28,6 +33,7 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import tools.jackson.databind.ObjectMapper;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -47,7 +53,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
     "cas.authn.oidc.vc.issuer.credential-configurations.UniversityDegreeCredential.format=DC_SD_JWT",
     "cas.authn.oidc.vc.issuer.credential-configurations.UniversityDegreeCredential.scope=UniversityDegree",
     "cas.authn.oidc.vc.issuer.credential-configurations.DriverLicenseCredential.format=DC_SD_JWT",
-    "cas.authn.oidc.vc.issuer.credential-configurations.DriverLicenseCredential.scope=DriverLicense"
+    "cas.authn.oidc.vc.issuer.credential-configurations.DriverLicenseCredential.scope=DriverLicense",
+    "cas.authn.oidc.vc.issuer.status-list.enabled=true",
+    "management.endpoints.web.exposure.include=oidcVcStatus",
+    "management.endpoint.oidcVcStatus.access=UNRESTRICTED"
 })
 class OidcVerifiableCredentialIssuanceTests extends AbstractOidcTests {
 
@@ -64,9 +73,90 @@ class OidcVerifiableCredentialIssuanceTests extends AbstractOidcTests {
 
     private static final String CREDENTIAL_URL = "/cas/" + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.VC_CREDENTIAL_URL;
 
+    private static final String STATUS_LIST_URL = "/cas/" + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.VC_STATUS_LIST_URL;
+
     private static final String CREDENTIAL_ISSUER = "https://sso.example.org/cas/oidc";
 
     private static final JOSEObjectType PROOF_JWT_TYPE = new JOSEObjectType("openid4vci-proof+jwt");
+
+    @Autowired
+    @Qualifier("oidcVerifiableCredentialStatusEndpoint")
+    private OidcVerifiableCredentialStatusEndpoint oidcVerifiableCredentialStatusEndpoint;
+
+    @Test
+    void verifyIssuedCredentialStatusCanBeChanged() throws Throwable {
+        val registeredService = getOidcRegisteredService(UUID.randomUUID().toString());
+        servicesManager.save(registeredService);
+        val credential = issueCredential(mockMvc, registeredService.getClientId(), registeredService.getClientSecrets().getFirst().getValue());
+        val claims = SignedJWT.parse(StringUtils.substringBefore(credential, "~")).getJWTClaimsSet();
+        val statusList = assertInstanceOf(Map.class, claims.getJSONObjectClaim("status").get("status_list"));
+        val uri = statusList.get("uri").toString();
+        val index = ((Number) statusList.get("idx")).longValue();
+        assertTrue(uri.startsWith(CREDENTIAL_ISSUER + '/' + OidcConstants.VC_STATUS_LIST_URL + '/'));
+        val statusListId = StringUtils.substringAfterLast(uri, "/");
+        assertEquals(0, readStatus(statusListId, index));
+
+        val entry = oidcVerifiableCredentialStatusEndpoint.getEntries(claims.getSubject()).stream()
+            .filter(candidate -> candidate.credentialId().equals(claims.getJWTID()))
+            .findFirst()
+            .orElseThrow();
+        assertEquals(index, entry.index());
+        assertEquals(registeredService.getClientId(), entry.clientId());
+        assertEquals(200, oidcVerifiableCredentialStatusEndpoint.updateStatus(statusListId, index, "invalid").getStatus());
+        assertEquals(1, readStatus(statusListId, index));
+        assertEquals(200, oidcVerifiableCredentialStatusEndpoint.updateStatus(statusListId, index, "SUSPENDED").getStatus());
+        assertEquals(2, readStatus(statusListId, index));
+        assertEquals(400, oidcVerifiableCredentialStatusEndpoint.updateStatus(statusListId, index, "unknown").getStatus());
+        assertEquals(404, oidcVerifiableCredentialStatusEndpoint.updateStatus("9999", index, "VALID").getStatus());
+        mockMvc.perform(get(STATUS_LIST_URL + "/9999").with(withHttpRequestProcessor())).andExpect(status().isNotFound());
+        mockMvc.perform(get(STATUS_LIST_URL + "/unknown").with(withHttpRequestProcessor())).andExpect(status().isNotFound());
+    }
+
+    private int readStatus(final String statusListId, final long index) throws Exception {
+        val response = mockMvc.perform(get(STATUS_LIST_URL + '/' + statusListId).with(withHttpRequestProcessor()))
+            .andExpect(status().isOk())
+            .andExpect(content().contentTypeCompatibleWith("application/statuslist+jwt"))
+            .andExpect(header().string(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, "*"))
+            .andReturn().getResponse().getContentAsString();
+        val token = SignedJWT.parse(response);
+        assertEquals("statuslist+jwt", token.getHeader().getType().toString());
+        val claims = token.getJWTClaimsSet();
+        assertEquals(CREDENTIAL_ISSUER + '/' + OidcConstants.VC_STATUS_LIST_URL + '/' + statusListId, claims.getSubject());
+        assertNotNull(claims.getIssueTime());
+        assertTrue(claims.getExpirationTime().after(claims.getIssueTime()));
+        assertEquals(600L, claims.getLongClaim("ttl"));
+        val statusList = claims.getJSONObjectClaim("status_list");
+        assertEquals(2L, ((Number) statusList.get("bits")).longValue());
+        val inflater = new Inflater();
+        inflater.setInput(new Base64URL(statusList.get("lst").toString()).decode());
+        val statuses = new byte[131_072 / 4];
+        assertEquals(statuses.length, inflater.inflate(statuses));
+        inflater.end();
+        return statuses[(int) (index / 4)] >> (int) (index % 4 * 2) & 0b11;
+    }
+
+    private static String issueCredential(final MockMvc mockMvc, final String clientId, final String clientSecret) throws Exception {
+        val transaction = createOfferTransaction(mockMvc, clientId, clientSecret, "casuser", List.of("UniversityDegreeCredential"));
+        val preAuthorizedCode = fetchPreAuthorizedCode(mockMvc, transaction.transactionId());
+        val tokenResponseBody = mockMvc.perform(tokenExchangeRequest(clientId, clientSecret, preAuthorizedCode, transaction.txCode()))
+            .andExpect(status().isOk())
+            .andReturn().getResponse().getContentAsString();
+        val accessToken = JsonPath.read(tokenResponseBody, "$." + OAuth20Constants.ACCESS_TOKEN).toString();
+        val nonceResponseBody = mockMvc.perform(post(NONCE_URL).with(withHttpRequestProcessor()).contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andReturn().getResponse().getContentAsString();
+        val credentialRequest = new OidcVerifiableCredentialRequest();
+        credentialRequest.setCredentialConfigurationId("UniversityDegreeCredential");
+        credentialRequest.setProofs(buildProofs(buildProofJwt(JsonPath.read(nonceResponseBody, "$." + OidcConstants.C_NONCE).toString())));
+        val credentialResponseBody = mockMvc.perform(post(CREDENTIAL_URL)
+                .with(withHttpRequestProcessor())
+                .contentType(MediaType.APPLICATION_JSON)
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                .content(MAPPER.writeValueAsString(credentialRequest)))
+            .andExpect(status().isOk())
+            .andReturn().getResponse().getContentAsString();
+        return JsonPath.read(credentialResponseBody, "$.credentials[0].credential").toString();
+    }
 
     @Test
     void verifyPreAuthorizedCodeExchangeRequiresTransactionCode() throws Exception {
@@ -182,13 +272,15 @@ class OidcVerifiableCredentialIssuanceTests extends AbstractOidcTests {
             credentialRequest.setCredentialConfigurationId("UniversityDegreeCredential");
             for (var attempt = 0; attempt < 2; attempt++) {
                 credentialRequest.setProofs(buildProofs(buildProofJwt(nonce)));
-                mockMvc.perform(post(CREDENTIAL_URL)
+                val credentialResponseBody = mockMvc.perform(post(CREDENTIAL_URL)
                         .with(withHttpRequestProcessor())
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
                         .content(MAPPER.writeValueAsString(credentialRequest)))
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.credentials[0].credential").exists());
+                    .andReturn().getResponse().getContentAsString();
+                val credential = JsonPath.read(credentialResponseBody, "$.credentials[0].credential").toString();
+                assertNull(SignedJWT.parse(StringUtils.substringBefore(credential, "~")).getJWTClaimsSet().getClaim("status"));
             }
 
             credentialRequest.setCredentialConfigurationId("DriverLicenseCredential");

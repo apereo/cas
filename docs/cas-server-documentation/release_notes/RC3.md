@@ -291,6 +291,11 @@ and failures were recorded twice. Failed SAML2 ECP authentication attempts, whic
 - Wallets may report what became of issued credentials at the new [notification endpoint](../authentication/OIDC-Authentication-Verifiable-Credentials.html):
   credential responses carry a `notification_id`, and `credential_accepted`, `credential_failure` and `credential_deleted`
   notifications are recorded in the audit log.
+- Issued SD-JWT VC credentials may carry a `status` claim and be revoked or suspended, following the
+  [Token Status List](../authentication/OIDC-Authentication-Verifiable-Credentials.html) specification: CAS publishes signed
+  status list tokens, keeps entries in the ticket registry, offers an `oidcVcStatus` actuator endpoint to change a credential's
+  status, and as a verifier checks the status of its own credentials instead of refusing them. Turn it on with
+  `cas.authn.oidc.vc.issuer.status-list.enabled=true`.
 
 ### Stateless Ticket Registry
 

@@ -230,6 +230,10 @@ public interface OidcConstants {
      */
     String VC_NOTIFICATION_URL = "oidcVcNotification";
     /**
+     * Oidc VC status list url path segment.
+     */
+    String VC_STATUS_LIST_URL = "oidcVcStatusList";
+    /**
      * Credential error response: the credential request is invalid.
      * OpenID4VCI 1.0 defines its own error codes for the Credential Endpoint; the OAuth codes of the
      * token endpoint do not apply there.

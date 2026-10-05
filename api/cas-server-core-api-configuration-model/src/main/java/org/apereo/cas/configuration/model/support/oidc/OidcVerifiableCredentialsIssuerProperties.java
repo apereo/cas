@@ -33,6 +33,12 @@ public class OidcVerifiableCredentialsIssuerProperties implements Serializable {
     private OidcVerifiableCredentialKeyAttestationProperties keyAttestation = new OidcVerifiableCredentialKeyAttestationProperties();
 
     /**
+     * Token Status List settings, with which issued credentials can be revoked or suspended.
+     */
+    @NestedConfigurationProperty
+    private OidcVerifiableCredentialStatusListProperties statusList = new OidcVerifiableCredentialStatusListProperties();
+
+    /**
      * Supported credential configurations keyed by identifier.
      */
     private Map<String, OidcVerifiableCredentialConfigurationProperties> credentialConfigurations = new LinkedHashMap<>();

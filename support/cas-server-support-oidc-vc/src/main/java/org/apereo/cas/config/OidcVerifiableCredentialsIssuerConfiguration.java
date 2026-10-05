@@ -22,15 +22,21 @@ import org.apereo.cas.oidc.vc.issuer.notification.OidcVerifiableCredentialNotifi
 import org.apereo.cas.oidc.vc.issuer.proof.OidcVerifiableCredentialJwtProofValidator;
 import org.apereo.cas.oidc.vc.issuer.proof.OidcVerifiableCredentialKeyAttestationValidator;
 import org.apereo.cas.oidc.vc.issuer.proof.OidcVerifiableCredentialProofValidator;
+import org.apereo.cas.oidc.vc.issuer.status.OidcVerifiableCredentialDefaultStatusListService;
+import org.apereo.cas.oidc.vc.issuer.status.OidcVerifiableCredentialStatusEndpoint;
+import org.apereo.cas.oidc.vc.issuer.status.OidcVerifiableCredentialStatusListService;
 import org.apereo.cas.oidc.vc.issuer.web.OidcVerifiableCredentialEndpointController;
 import org.apereo.cas.oidc.vc.issuer.web.OidcVerifiableCredentialIssuerMetadataController;
 import org.apereo.cas.oidc.vc.issuer.web.OidcVerifiableCredentialNonceEndpointController;
+import org.apereo.cas.oidc.vc.issuer.web.OidcVerifiableCredentialStatusListEndpointController;
 import org.apereo.cas.oidc.vc.issuer.web.OidcVerifiableCredentialTypeMetadataController;
 import org.apereo.cas.oidc.vc.token.OidcVerifiableCredentialsAccessTokenGeneratorCustomizer;
 import lombok.val;
 import org.apereo.inspektr.audit.spi.support.DefaultAuditActionResolver;
 import org.apereo.inspektr.audit.spi.support.ShortenedReturnValueAsStringAuditResourceResolver;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -51,8 +57,38 @@ class OidcVerifiableCredentialsIssuerConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "oidcVerifiableCredentialDcSdJwtEncoder")
     public OidcVerifiableCredentialEncoder oidcVerifiableCredentialDcSdJwtEncoder(
+        @Qualifier(OidcConfigurationContext.BEAN_NAME) final OidcConfigurationContext oidcConfigurationContext,
+        @Qualifier(OidcVerifiableCredentialStatusListService.BEAN_NAME)
+        final OidcVerifiableCredentialStatusListService oidcVerifiableCredentialStatusListService) {
+        return new OidcVerifiableCredentialDcSdJwtEncoder(oidcConfigurationContext, oidcVerifiableCredentialStatusListService);
+    }
+
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    @ConditionalOnMissingBean(name = OidcVerifiableCredentialStatusListService.BEAN_NAME)
+    @Bean
+    public OidcVerifiableCredentialStatusListService oidcVerifiableCredentialStatusListService(
         @Qualifier(OidcConfigurationContext.BEAN_NAME) final OidcConfigurationContext oidcConfigurationContext) {
-        return new OidcVerifiableCredentialDcSdJwtEncoder(oidcConfigurationContext);
+        return new OidcVerifiableCredentialDefaultStatusListService(oidcConfigurationContext);
+    }
+
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    @ConditionalOnMissingBean(name = "oidcVerifiableCredentialStatusListEndpointController")
+    @Bean
+    public OidcVerifiableCredentialStatusListEndpointController oidcVerifiableCredentialStatusListEndpointController(
+        @Qualifier(OidcVerifiableCredentialStatusListService.BEAN_NAME)
+        final OidcVerifiableCredentialStatusListService oidcVerifiableCredentialStatusListService,
+        @Qualifier(OidcConfigurationContext.BEAN_NAME) final OidcConfigurationContext oidcConfigurationContext) {
+        return new OidcVerifiableCredentialStatusListEndpointController(oidcConfigurationContext, oidcVerifiableCredentialStatusListService);
+    }
+
+    @Bean
+    @ConditionalOnAvailableEndpoint
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    public OidcVerifiableCredentialStatusEndpoint oidcVerifiableCredentialStatusEndpoint(
+        @Qualifier(OidcVerifiableCredentialStatusListService.BEAN_NAME)
+        final ObjectProvider<OidcVerifiableCredentialStatusListService> oidcVerifiableCredentialStatusListService,
+        final CasConfigurationProperties casProperties) {
+        return new OidcVerifiableCredentialStatusEndpoint(casProperties, oidcVerifiableCredentialStatusListService);
     }
 
     @Bean

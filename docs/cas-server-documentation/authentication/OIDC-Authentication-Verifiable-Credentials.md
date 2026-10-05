@@ -626,10 +626,11 @@ expired unanswered.
 
 CAS as a verifier trusts only itself. A presented credential is accepted when its `iss` is this
 deployment's own issuer, its `vct` resolves to one of the credential configurations above, and its
-signature verifies against this deployment's own signing key; `iat` and `exp` are both required, and a
-credential carrying a `status` claim is refused rather than accepted unchecked, since CAS evaluates no
-status list. There is no external issuer trust list, no `x5c` chain validation, no DID resolution, no
-OpenID Federation and no Token Status List, so credentials issued elsewhere are rejected.
+signature verifies against this deployment's own signing key; `iat` and `exp` are both required. A
+credential carrying a `status` claim must point into a [status list](#credential-status) CAS publishes, and
+its entry must be `VALID`; any other status reference is refused rather than accepted unchecked. There is no
+external issuer trust list, no `x5c` chain validation, no DID resolution and no OpenID Federation, so credentials
+issued elsewhere are rejected.
 
 This is a trust policy rather than a protocol limitation: OpenID4VP leaves issuer trust to the verifier,
 noting that "Verifiers must verify that the issuer of a received presentation is trusted on their own".
@@ -683,6 +684,63 @@ code, the nonce or the access token used to obtain it.
 
 Claim values come from principal attributes. A value that reads as a number, such as `95.5`, is issued as a
 number; one whose number would not read back the same way, such as `02134`, is issued as text exactly as released.
+
+## Credential Status
+
+Issued credentials can carry a `status` claim, so they can be revoked or suspended after issuance, following the
+[Token Status List](https://datatracker.ietf.org/doc/draft-ietf-oauth-status-list/) specification as the
+[High Assurance Interoperability Profile](https://openid.net/specs/openid4vc-high-assurance-interoperability-profile-1_0.html)
+requires of SD-JWT VC credentials. Once turned on in CAS settings, every `dc+sd-jwt` credential references its own
+entry in a status list published by CAS:
+
+```json
+{
+  "status": {
+    "status_list": {
+      "idx": 48213,
+      "uri": "https://sso.example.org/cas/oidc/oidcVcStatusList/1"
+    }
+  }
+}
+```
+
+Each credential gets a random, unpredictable index, unique among the unexpired credentials of its status list, and a new status
+list is started once a list has little room left. Entries are kept in the ticket registry and expire with their credential, so
+statuses survive restarts and are shared by all nodes that share the registry; an index may be reused once the credential that
+held it has expired. The stateless ticket registry cannot keep entries, so credentials are issued without status when it is used.
+
+The status list is served by a public endpoint, which allows cross-origin requests:
+
+```bash
+GET /oidc/oidcVcStatusList/{id}
+```
+
+The response is a status list token, of type `application/statuslist+jwt`, signed with the issuer signing key and carrying its
+`x5c` certificate chain, if any. Each entry takes 2 bits, for the `VALID`, `INVALID` and `SUSPENDED` statuses, and verifiers may
+cache the token for its `ttl`; CAS caches the token it builds for as long, so a status change is visible to verifiers within that time.
+
+```json
+{
+  "sub": "https://sso.example.org/cas/oidc/oidcVcStatusList/1",
+  "iat": 1791238400,
+  "exp": 1791324800,
+  "ttl": 600,
+  "status_list": {
+    "bits": 2,
+    "lst": "eNrtwTEBAAAAwqD1T20ND6AAAAAAAAAAAAAAAAAAAAAAAH4G..."
+  }
+}
+```
+
+{% include_cached casproperties.html properties="cas.authn.oidc.vc.issuer.status-list" %}
+
+The status of issued credentials is managed through an actuator endpoint, which lists the credentials issued to a user and
+changes the status of one, to revoke, suspend or reinstate it:
+
+{% include_cached actuators.html endpoints="oidcVcStatus" casModule="cas-server-support-oidc-vc" %}
+
+Key attestations and wallet attestations that carry a `status` claim are still accepted with a warning; their status lists are
+not fetched.
 
 ## Credential Formats
 

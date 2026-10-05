@@ -1637,6 +1637,7 @@ ul.tab-content > li:not(.active):not(.property-name):not(.property-tab):not(.cas
     color: transparent;
     -webkit-box-decoration-break: clone;
     box-decoration-break: clone;
+    font-size: 0.73em;
 }
 
 /* The promise is retyped in place (see initializeHomeTitle in site.js). */

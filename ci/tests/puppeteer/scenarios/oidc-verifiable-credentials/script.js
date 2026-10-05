@@ -174,6 +174,18 @@ async function createPublicKey() {
     await cas.log(`Credential issued at ${decoded.iat} and expires at ${decoded.exp}`);
     assert(decoded.exp - decoded.iat === 30 * 24 * 60 * 60);
 
+    assert(decoded.status.status_list.uri.startsWith("https://localhost:8443/cas/oidc/oidcVcStatusList/"));
+    assert(Number.isInteger(decoded.status.status_list.idx));
+    const statusListToken = await cas.doRequest(decoded.status.status_list.uri, "GET", {
+        "Accept": "application/statuslist+jwt"
+    }, 200);
+    const statusList = await cas.decodeJwt(statusListToken, true);
+    assert(statusList.header.typ === "statuslist+jwt");
+    assert(statusList.payload.sub === decoded.status.status_list.uri);
+    assert(statusList.payload.ttl > 0);
+    assert(statusList.payload.status_list.bits === 2);
+    assert(statusList.payload.status_list.lst !== undefined);
+
     assert(result.notification_id !== undefined);
     const notification = JSON.stringify({
         notification_id: result.notification_id,
