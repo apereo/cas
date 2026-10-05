@@ -5,6 +5,7 @@ import org.apereo.cas.oidc.vc.issuer.proof.OidcVerifiableCredentialProofExceptio
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.Nullable;
 import jakarta.servlet.http.HttpServletRequest;
 
 /**
@@ -44,16 +45,38 @@ public record OidcVerifiableCredentialValidationContext(
     }
 
     /**
-     * Proof JWTs presented with this request. One credential is issued per proof.
+     * Proof JWTs presented with this request. One credential is issued per proof. When the request carries an
+     * {@code attestation} proof instead, there are no proof JWTs.
      *
-     * @return the proof JWTs, never empty
+     * @return the proof JWTs, empty when the request carries an attestation proof
      */
     public List<String> resolveProofs() {
         val proofs = credentialRequest.getProofs();
         val jwts = proofs != null && proofs.getJwt() != null ? proofs.getJwt() : List.<String>of();
+        val attestations = proofs != null && proofs.getAttestation() != null ? proofs.getAttestation() : List.<String>of();
+        if (!attestations.isEmpty()) {
+            if (!jwts.isEmpty() || attestations.size() != 1 || StringUtils.isBlank(attestations.getFirst())) {
+                throw OidcVerifiableCredentialProofException.invalidProof(
+                    "A credential request carries either proof JWTs or exactly one key attestation");
+            }
+            return List.of();
+        }
         if (jwts.isEmpty() || jwts.stream().anyMatch(StringUtils::isBlank)) {
             throw OidcVerifiableCredentialProofException.invalidProof("Credential request carries no proof of possession");
         }
         return jwts;
+    }
+
+    /**
+     * Key attestation presented as the {@code attestation} proof, if any.
+     *
+     * @return the key attestation, or null when the request carries proof JWTs
+     */
+    public @Nullable String resolveAttestationProof() {
+        resolveProofs();
+        val proofs = credentialRequest.getProofs();
+        return proofs != null && proofs.getAttestation() != null && !proofs.getAttestation().isEmpty()
+            ? proofs.getAttestation().getFirst()
+            : null;
     }
 }

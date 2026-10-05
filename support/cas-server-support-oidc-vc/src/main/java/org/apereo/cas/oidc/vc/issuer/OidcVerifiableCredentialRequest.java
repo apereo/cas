@@ -57,5 +57,12 @@ public class OidcVerifiableCredentialRequest implements Serializable {
          */
         @JsonProperty("jwt")
         private List<String> jwt = new ArrayList<>();
+
+        /**
+         * Key attestations standing for proof of possession of the keys they attest ({@code attestation} proof type,
+         * OpenID4VCI 1.0 Appendix D). Exactly one may be presented, instead of proof JWTs.
+         */
+        @JsonProperty("attestation")
+        private List<String> attestation = new ArrayList<>();
     }
 }

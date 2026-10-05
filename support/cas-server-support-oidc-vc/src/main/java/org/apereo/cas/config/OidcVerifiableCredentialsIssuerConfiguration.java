@@ -14,6 +14,7 @@ import org.apereo.cas.oidc.vc.issuer.metadata.OidcCredentialIssuerMetadataServic
 import org.apereo.cas.oidc.vc.issuer.nonce.OidcVerifiableCredentialDefaultNonceService;
 import org.apereo.cas.oidc.vc.issuer.nonce.OidcVerifiableCredentialNonceService;
 import org.apereo.cas.oidc.vc.issuer.proof.OidcVerifiableCredentialJwtProofValidator;
+import org.apereo.cas.oidc.vc.issuer.proof.OidcVerifiableCredentialKeyAttestationValidator;
 import org.apereo.cas.oidc.vc.issuer.proof.OidcVerifiableCredentialProofValidator;
 import org.apereo.cas.oidc.vc.issuer.web.OidcVerifiableCredentialEndpointController;
 import org.apereo.cas.oidc.vc.issuer.web.OidcVerifiableCredentialIssuerMetadataController;
@@ -106,7 +107,8 @@ class OidcVerifiableCredentialsIssuerConfiguration {
         @Qualifier(OidcVerifiableCredentialNonceService.BEAN_NAME)
         final OidcVerifiableCredentialNonceService oidcVerifiableCredentialNonceService,
         final CasConfigurationProperties casProperties) {
-        return new OidcVerifiableCredentialJwtProofValidator(casProperties, oidcVerifiableCredentialNonceService);
+        return new OidcVerifiableCredentialJwtProofValidator(casProperties, oidcVerifiableCredentialNonceService,
+            new OidcVerifiableCredentialKeyAttestationValidator(casProperties));
     }
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

@@ -47,6 +47,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.jose4j.jwk.PublicJsonWebKey;
 import org.jose4j.jws.AlgorithmIdentifiers;
 import org.jose4j.jws.JsonWebSignature;
+import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -2299,6 +2300,141 @@ class OidcVerifiableCredentialEndpointControllerTests {
             val proof = cfg.getProofTypesSupported().get("jwt");
             assertTrue(proof.getProofSigningAlgValuesSupported().contains("ES256"));
             assertTrue(proof.getProofSigningAlgValuesSupported().contains("RS256"));
+        }
+    }
+
+    /**
+     * OpenID4VCI 1.0 Appendix D and HAIP 1.0 section 4.5.1: key attestations signed by a certificate that chains to a
+     * configured trust anchor, in the {@code key_attestation} header of a {@code jwt} proof or as an
+     * {@code attestation} proof.
+     */
+    @Nested
+    @TestPropertySource(properties = {
+        "cas.authn.oidc.vc.issuer.key-attestation.trust-anchors=classpath:vc-attestation-root.pem",
+        "cas.authn.oidc.vc.issuer.credential-configurations.myorg.key-attestations.required=true",
+        "cas.authn.oidc.vc.issuer.credential-configurations.myorg.key-attestations.key-storage=iso_18045_high,iso_18045_moderate"
+    })
+    class KeyAttestationTests extends BaseTests {
+        private static final JOSEObjectType KEY_ATTESTATION_TYPE = new JOSEObjectType("key-attestation+jwt");
+
+        @Test
+        void verifyJwtProofWithKeyAttestation() throws Throwable {
+            val holderKey = generateEcHolderKey();
+            val attestation = buildKeyAttestation(List.of(holderKey), List.of("iso_18045_high"), null, false);
+            val result = oidcVerifiableCredentialProofValidator.validate(
+                buildProofJwt(attestedProofHeader(holderKey, attestation), new ECDSASigner(holderKey)), "myorg", new HashSet<>());
+            assertEquals(holderKey.toPublicJWK().computeThumbprint(), result.holderJwk().computeThumbprint());
+
+            val unattested = new JWSHeader.Builder(JWSAlgorithm.ES256).type(PROOF_JWT_TYPE).jwk(holderKey.toPublicJWK()).build();
+            assertInvalidProof(buildProofJwt(unattested, new ECDSASigner(holderKey)));
+            assertNotNull(oidcVerifiableCredentialProofValidator.validate(buildProofJwt(unattested, new ECDSASigner(holderKey))));
+
+            val otherKey = generateEcHolderKey();
+            assertInvalidProof(buildProofJwt(attestedProofHeader(holderKey,
+                buildKeyAttestation(List.of(otherKey), List.of("iso_18045_high"), null, false)), new ECDSASigner(holderKey)));
+            assertInvalidProof(buildProofJwt(attestedProofHeader(holderKey,
+                buildKeyAttestation(List.of(holderKey), List.of("iso_18045_basic"), null, false)), new ECDSASigner(holderKey)));
+            assertInvalidProof(buildProofJwt(attestedProofHeader(holderKey,
+                buildKeyAttestation(List.of(holderKey), List.of("iso_18045_high"), null, true)), new ECDSASigner(holderKey)));
+        }
+
+        @Test
+        void verifyAttestationProof() throws Throwable {
+            val firstKey = generateEcHolderKey();
+            val secondKey = new ECKeyGenerator(Curve.P_256).generate();
+            val nonce = oidcVerifiableCredentialNonceService.create().value();
+            val attestation = buildKeyAttestation(List.of(firstKey, secondKey), List.of("iso_18045_moderate"), nonce, false);
+
+            val results = oidcVerifiableCredentialProofValidator.validateAttestation(attestation, "myorg", new HashSet<>());
+            assertEquals(2, results.size());
+            assertEquals("attestation", results.getFirst().proofType());
+            assertEquals(firstKey.toPublicJWK().computeThumbprint(), results.getFirst().holderJwk().computeThumbprint());
+            assertEquals(secondKey.toPublicJWK().computeThumbprint(), results.getLast().holderJwk().computeThumbprint());
+
+            val replayed = assertThrows(OidcVerifiableCredentialProofException.class,
+                () -> oidcVerifiableCredentialProofValidator.validateAttestation(attestation, "myorg", new HashSet<>()));
+            assertEquals(OidcConstants.VC_ERROR_INVALID_NONCE, replayed.getError());
+            val withoutNonce = assertThrows(OidcVerifiableCredentialProofException.class,
+                () -> oidcVerifiableCredentialProofValidator.validateAttestation(
+                    buildKeyAttestation(List.of(firstKey), List.of("iso_18045_high"), null, false), "myorg", new HashSet<>()));
+            assertEquals(OidcConstants.VC_ERROR_INVALID_NONCE, withoutNonce.getError());
+        }
+
+        @Test
+        void verifyCredentialEndpointIssuesOneCredentialPerAttestedKey() throws Throwable {
+            val clientId = UUID.randomUUID().toString();
+            servicesManager.save(getOidcRegisteredService(clientId));
+            val accessToken = createOAuth20AccessToken(clientId);
+            val nonce = oidcVerifiableCredentialNonceService.create().value();
+            val request = new OidcVerifiableCredentialRequest();
+            request.setCredentialConfigurationId("myorg");
+            val proofs = new OidcVerifiableCredentialRequest.Proofs();
+            proofs.setAttestation(List.of(buildKeyAttestation(List.of(generateEcHolderKey(), generateRsaHolderKey()),
+                List.of("iso_18045_high"), nonce, false)));
+            request.setProofs(proofs);
+
+            mockMvc.perform(post(CREDENTIAL_ENDPOINT_URL)
+                    .with(withHttpRequestProcessor())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken.getId())
+                    .content(MAPPER.writeValueAsString(request)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.credentials.length()").value(2));
+
+            proofs.setJwt(List.of(buildValidRsaProofJwt()));
+            mockMvc.perform(post(CREDENTIAL_ENDPOINT_URL)
+                    .with(withHttpRequestProcessor())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken.getId())
+                    .content(MAPPER.writeValueAsString(request)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error").value(OidcConstants.VC_ERROR_INVALID_PROOF));
+        }
+
+        @Test
+        void verifyMetadataAdvertisesKeyAttestations() {
+            val metadata = MAPPER.valueToTree(oidcCredentialIssuerMetadataService.build()).path("credential_configurations_supported");
+            val myorg = metadata.path("myorg").path("proof_types_supported");
+            assertEquals("iso_18045_high", myorg.path("jwt").path("key_attestations_required").path("key_storage").get(0).asString());
+            assertEquals("iso_18045_high", myorg.path("attestation").path("key_attestations_required").path("key_storage").get(0).asString());
+            val employee = metadata.path("employee").path("proof_types_supported");
+            assertTrue(employee.path("jwt").path("key_attestations_required").isMissingNode());
+            assertTrue(employee.path("attestation").path("key_attestations_required").isObject());
+            assertEquals(0, employee.path("attestation").path("key_attestations_required").size());
+        }
+
+        private void assertInvalidProof(final String proofJwt) {
+            val exception = assertThrows(OidcVerifiableCredentialProofException.class,
+                () -> oidcVerifiableCredentialProofValidator.validate(proofJwt, "myorg", new HashSet<>()));
+            assertEquals(OidcConstants.VC_ERROR_INVALID_PROOF, exception.getError());
+        }
+
+        private static JWSHeader attestedProofHeader(final ECKey holderKey, final String attestation) {
+            return new JWSHeader.Builder(JWSAlgorithm.ES256)
+                .type(PROOF_JWT_TYPE)
+                .jwk(holderKey.toPublicJWK())
+                .customParam("key_attestation", attestation)
+                .build();
+        }
+
+        private static String buildKeyAttestation(final List<? extends JWK> attestedKeys, final List<String> keyStorage,
+                                                  final @Nullable String nonce, final boolean includeTrustAnchor) throws Exception {
+            val issuerKey = assertInstanceOf(ECKey.class, JWKSet.load(new ClassPathResource("vc-issuer-x5c.jwks").getInputStream())
+                .getKeyByKeyId("vc-issuer"));
+            val certificateChain = issuerKey.getX509CertChain();
+            val chain = includeTrustAnchor ? certificateChain : certificateChain.subList(0, 1);
+            val header = new JWSHeader.Builder(JWSAlgorithm.ES256).type(KEY_ATTESTATION_TYPE).x509CertChain(chain).build();
+            val claims = new JWTClaimsSet.Builder()
+                .issueTime(new Date())
+                .expirationTime(Date.from(Instant.now(Clock.systemUTC()).plusSeconds(300)))
+                .claim("attested_keys", attestedKeys.stream().map(key -> key.toPublicJWK().toJSONObject()).toList())
+                .claim("key_storage", keyStorage);
+            if (nonce != null) {
+                claims.claim("nonce", nonce);
+            }
+            val keyAttestation = new SignedJWT(header, claims.build());
+            keyAttestation.sign(new ECDSASigner(issuerKey));
+            return keyAttestation.serialize();
         }
     }
 }

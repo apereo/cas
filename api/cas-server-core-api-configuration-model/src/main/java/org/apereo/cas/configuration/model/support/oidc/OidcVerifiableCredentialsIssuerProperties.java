@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.support.RequiresModule;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * This is {@link OidcVerifiableCredentialsIssuerProperties}.
@@ -24,6 +25,12 @@ public class OidcVerifiableCredentialsIssuerProperties implements Serializable {
      * Maximum number of credential requests accepted in a single batch.
      */
     private int batchSize = 10;
+
+    /**
+     * Key attestation settings, such as the trust anchors key attestations must chain to.
+     */
+    @NestedConfigurationProperty
+    private OidcVerifiableCredentialKeyAttestationProperties keyAttestation = new OidcVerifiableCredentialKeyAttestationProperties();
 
     /**
      * Supported credential configurations keyed by identifier.

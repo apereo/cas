@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * This is {@link OidcVerifiableCredentialConfigurationProperties}.
@@ -73,6 +74,14 @@ public class OidcVerifiableCredentialConfigurationProperties implements Serializ
      * proof-of-possession tokens or JWT-based proofs presented by the holder.
      */
     private List<String> proofSigningAlgValuesSupported = Stream.of("ES256", "RS256").toList();
+
+    /**
+     * Key attestations this credential configuration requires with its proofs, advertised as
+     * {@code key_attestations_required}.
+     */
+    @NestedConfigurationProperty
+    private OidcVerifiableCredentialKeyAttestationRequirementProperties keyAttestations =
+        new OidcVerifiableCredentialKeyAttestationRequirementProperties();
 
     /**
      * Collection of claim definitions supported by this credential configuration.

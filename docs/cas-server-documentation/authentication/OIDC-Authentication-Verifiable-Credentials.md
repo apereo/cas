@@ -141,7 +141,8 @@ This endpoint expects:
 - The requested credential, named either by `credential_configuration_id` or, when the token
   response returned `credential_identifiers` in its authorization details, by
   `credential_identifier`. The two are mutually exclusive.
-- A `proofs` object holding one or more proof JWTs, each carrying a `nonce` claim.
+- A `proofs` object holding one or more proof JWTs, each carrying a `nonce` claim, or exactly one key attestation
+  as an `attestation` proof (see [Key Attestations](#key-attestations)).
 
 The endpoint body is expected as:
 
@@ -293,6 +294,75 @@ In practical terms, the flow is:
 - CAS consumes it so the same proof cannot be replayed.
 
 The token endpoint issues the nonce. The credential endpoint enforces it while validating the proof.
+
+## Key Attestations
+
+A wallet may vouch for the keys it wants credentials bound to with a key attestation, as described by
+[OpenID4VCI 1.0 Appendix D](https://openid.net/specs/openid-4-verifiable-credential-issuance-1_0.html#appendix-D):
+a `key-attestation+jwt` signed by the wallet provider that lists the `attested_keys` and how they are
+protected (`key_storage`, `user_authentication`). Key attestations are verified once trust anchors are
+configured in CAS settings as PEM certificates, typically those of the wallet providers that are trusted.
+Following [HAIP 1.0](https://openid.net/specs/openid4vc-high-assurance-interoperability-profile-1_0.html),
+the attestation carries its signing certificate, and any intermediate certificates, in its `x5c` header;
+the chain must lead to a configured trust anchor without including it, and the signer must not be self-signed.
+The attestation must carry `iat` and, when it carries `exp`, must not have expired. A `status` claim is
+accepted, and logged as a warning, since its revocation status is not checked.
+
+A key attestation can be presented in two ways:
+
+- In the `key_attestation` header of a `jwt` proof. The proof key must be one of the attested keys.
+- As an `attestation` proof, standing in for proof JWTs. Its `nonce` claim must carry a c_nonce issued by CAS,
+  and one credential is issued per attested key, up to the batch size limit.
+
+```json
+{
+  "credential_configuration_id": "myorg",
+  "proofs": {
+    "attestation": [
+      "eyJ0eXAiOiJrZXktYXR0ZXN0YXRpb24rand0Ii..."
+    ]
+  }
+}
+```
+
+A credential configuration may require key attestations, and may list the `key_storage` and `user_authentication`
+values it accepts; an attestation must then name at least one accepted value of each list. A `jwt` proof without
+a key attestation is refused for such a configuration. The requirement is advertised in the issuer metadata as
+`key_attestations_required`, and the `attestation` proof type is advertised once trust anchors are configured:
+
+```json
+{
+  "proof_types_supported": {
+    "jwt": {
+      "proof_signing_alg_values_supported": [
+        "ES256",
+        "RS256"
+      ],
+      "key_attestations_required": {
+        "key_storage": [
+          "iso_18045_high",
+          "iso_18045_moderate"
+        ]
+      }
+    },
+    "attestation": {
+      "proof_signing_alg_values_supported": [
+        "ES256",
+        "RS256"
+      ],
+      "key_attestations_required": {
+        "key_storage": [
+          "iso_18045_high",
+          "iso_18045_moderate"
+        ]
+      }
+    }
+  }
+}
+```
+
+A key attestation that fails any of these checks is answered with `invalid_proof`, while a missing, unknown or reused
+nonce in an `attestation` proof is answered with `invalid_nonce`.
 
 ## Authorization Code Flow
 

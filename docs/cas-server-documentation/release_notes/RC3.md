@@ -253,14 +253,19 @@ and failures were recorded twice. Failed SAML2 ECP authentication attempts, whic
   by refreshing may still request the credentials those details granted. Previously only scope-based grants survived a refresh.
 - [Verifiable presentation responses](../authentication/OIDC-Authentication-Verifiable-Credentials.html) can be
   encrypted (`direct_post.jwt`), as the High Assurance Interoperability Profile requires, with
-  `cas.authn.oidc.vc.presentation.response-mode=DIRECT_POST_JWT` or per request with `"response_mode":
-  "direct_post.jwt"`: each request carries its own ephemeral `ECDH-ES` key, and presentations sent in the clear are
-  refused.
+  `cas.authn.oidc.vc.presentation.response-mode=DIRECT_POST_JWT` or per request with
+  `"response_mode": "direct_post.jwt"`: each request carries its own ephemeral `ECDH-ES` key, and presentations sent in
+  the clear are refused.
 - Verifiable presentation requests may identify CAS with the `x509_hash` client identifier prefix, which the High Assurance
   Interoperability Profile requires of verifiers that sign requests: `cas.authn.oidc.vc.presentation.client-identifier-prefix=X509_HASH`.
 - Verifiable presentations may be requested through the [W3C Digital Credentials API](../authentication/OIDC-Authentication-Verifiable-Credentials.html)
   with the `dc_api` and `dc_api.jwt` response modes: CAS builds the request the relying party page passes to the browser, and
   verifies what the page posts back, bound to the page's origin.
+- Credential requests may carry [key attestations](../authentication/OIDC-Authentication-Verifiable-Credentials.html), as
+  OpenID4VCI 1.0 and the High Assurance Interoperability Profile define: in the `key_attestation` header of a `jwt` proof, or
+  as an `attestation` proof that yields one credential per attested key. Attestations must chain to trust anchors set with
+  `cas.authn.oidc.vc.issuer.key-attestation.trust-anchors`, and a credential configuration may require them, along with the
+  key storage and user authentication levels it accepts, which the issuer metadata advertises as `key_attestations_required`.
 
 ### Stateless Ticket Registry
 
@@ -344,7 +349,8 @@ authentication. See the [stateless ticket registry documentation](../ticketing/S
 - The Google Authenticator [JPA repository](../mfa/GoogleAuthenticator-Authentication-Registration-JPA.html) can now save
   a device whose id is not already in the database, such as one imported through the actuator endpoint; the database
   assigns it a new id. Removing a user's devices is now a single bulk delete.
-- Redis-backed counts and key lookups, such as the ticket and service registry counts, now return their connection when
-  done. With connection pooling enabled, every call used to keep a pooled connection until the pool ran out.
-- [WebAuthn](../mfa/FIDO2-WebAuthn-Authentication.html) falls back to the cached FIDO metadata BLOB when downloading a fresh one
-  fails at startup, for example when the FIDO metadata service rate-limits the request, instead of failing to start.
+- Redis-backed counts and key lookups, such as the [ticket](../ticketing/Redis-Ticket-Registry.html) and
+  [service registry](../services/Redis-Service-Management.html) counts, now return their connection when done. With
+  connection pooling enabled, every call used to keep a pooled connection until the pool ran out.
+- WebAuthn falls back to the cached [FIDO metadata BLOB](../mfa/FIDO2-WebAuthn-Authentication-Attestation.html) when
+  downloading a fresh one fails at startup, for example when the FIDO metadata service rate-limits the request, instead of failing to start.

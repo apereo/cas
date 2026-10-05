@@ -65,9 +65,7 @@ public class OidcCredentialIssuerMetadataService {
             cfg.setCryptographicBindingMethodsSupported(value.getCryptographicBindingMethodsSupported());
             cfg.setCredentialSigningAlgValuesSupported(value.getCredentialSigningAlgValuesSupported());
 
-            val proof = new OidcCredentialIssuerMetadata.ProofTypeSupported();
-            proof.setProofSigningAlgValuesSupported(value.getProofSigningAlgValuesSupported());
-            cfg.setProofTypesSupported(Map.of("jwt", proof));
+            cfg.setProofTypesSupported(buildProofTypesSupported(value));
 
             if (properties.getVc().getMetadata().isIncludeClaims()) {
                 val claims = new ArrayList<OidcCredentialIssuerMetadata.ClaimMetadata>();
@@ -181,5 +179,37 @@ public class OidcCredentialIssuerMetadataService {
             return metadata;
         }
         return null;
+    }
+
+    /**
+     * Proof types a credential configuration accepts. A {@code jwt} proof always; it lists
+     * {@code key_attestations_required} when the configuration requires key attestations. The {@code attestation}
+     * proof type (OpenID4VCI 1.0 Appendix D) is offered once key attestation trust anchors are configured, and always
+     * lists {@code key_attestations_required}, since the proof is a key attestation.
+     *
+     * @param configuration the credential configuration
+     * @return the proof types supported
+     */
+    protected Map<String, OidcCredentialIssuerMetadata.ProofTypeSupported> buildProofTypesSupported(
+        final OidcVerifiableCredentialConfigurationProperties configuration) {
+        val requirement = configuration.getKeyAttestations();
+        final OidcCredentialIssuerMetadata.KeyAttestationsRequired keyAttestationsRequired = OidcCredentialIssuerMetadata.KeyAttestationsRequired.builder()
+            .keyStorage(requirement.getKeyStorage().isEmpty() ? null : requirement.getKeyStorage())
+            .userAuthentication(requirement.getUserAuthentication().isEmpty() ? null : requirement.getUserAuthentication())
+            .build();
+        val proofTypes = new LinkedHashMap<String, OidcCredentialIssuerMetadata.ProofTypeSupported>();
+        val jwt = new OidcCredentialIssuerMetadata.ProofTypeSupported();
+        jwt.setProofSigningAlgValuesSupported(configuration.getProofSigningAlgValuesSupported());
+        if (requirement.isRequired()) {
+            jwt.setKeyAttestationsRequired(keyAttestationsRequired);
+        }
+        proofTypes.put("jwt", jwt);
+        if (!casProperties.getAuthn().getOidc().getVc().getIssuer().getKeyAttestation().getTrustAnchors().isEmpty()) {
+            val attestation = new OidcCredentialIssuerMetadata.ProofTypeSupported();
+            attestation.setProofSigningAlgValuesSupported(configuration.getProofSigningAlgValuesSupported());
+            attestation.setKeyAttestationsRequired(keyAttestationsRequired);
+            proofTypes.put("attestation", attestation);
+        }
+        return proofTypes;
     }
 }

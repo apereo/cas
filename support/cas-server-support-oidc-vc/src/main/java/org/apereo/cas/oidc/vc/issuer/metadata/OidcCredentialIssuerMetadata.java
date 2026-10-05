@@ -143,6 +143,37 @@ public class OidcCredentialIssuerMetadata implements Serializable {
         @JsonProperty("proof_signing_alg_values_supported")
         @Builder.Default
         private List<String> proofSigningAlgValuesSupported = Stream.of("ES256", "RS256").toList();
+
+        /**
+         * Key attestations required with proofs of this type; present, even empty, means a key attestation is required,
+         * so an empty object is still written.
+         */
+        @JsonProperty("key_attestations_required")
+        @JsonInclude(JsonInclude.Include.NON_NULL)
+        private KeyAttestationsRequired keyAttestationsRequired;
+    }
+
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @SuperBuilder
+    @Jacksonized
+    public static class KeyAttestationsRequired implements Serializable {
+        @Serial
+        private static final long serialVersionUID = 3108913328617999837L;
+
+        /**
+         * Accepted key storage attack potential resistance levels; a key attestation must name at least one.
+         */
+        @JsonProperty("key_storage")
+        private List<String> keyStorage;
+
+        /**
+         * Accepted user authentication attack potential resistance levels; a key attestation must name at least one.
+         */
+        @JsonProperty("user_authentication")
+        private List<String> userAuthentication;
     }
 
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
