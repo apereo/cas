@@ -19,7 +19,7 @@ for moving or controlling something. Actuators can generate a large amount of mo
 
 ## Actuator Endpoints
 
-{% assign actuators = "logfile,auditevents,beans,caches,conditions,configprops,env,httpexchanges,loggers,info,startup,threaddump,health,metrics,httptrace,mappings,scheduledtasks,heapdump,prometheus,startup,quartz,sbom" | split: "," | sort %}
+{% assign actuators = "logfile,auditevents,beans,caches,conditions,configprops,env,httpexchanges,loggers,info,startup,threaddump,health,metrics,mappings,scheduledtasks,heapdump,prometheus,quartz,sbom" | split: "," | sort %}
 
 The following actuator endpoints are provided:
 

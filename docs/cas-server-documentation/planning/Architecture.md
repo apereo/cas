@@ -36,11 +36,11 @@ have been developed.
 
 Platforms:
 
-* Apache httpd Server ([mod_auth_cas module](https://github.com/Jasig/mod_auth_cas))
+* Apache httpd Server ([mod_auth_cas module](https://github.com/apereo/mod_auth_cas))
 * Java ([Java CAS Client](https://github.com/apereo/java-cas-client))
 * .NET ([.NET CAS Client](https://github.com/apereo/dotnet-cas-client))
-* PHP ([phpCAS](https://github.com/Jasig/phpCAS))
-* Perl (PerlCAS)
+* PHP ([phpCAS](https://github.com/apereo/phpCAS))
+* Perl ([AuthCAS](https://metacpan.org/pod/AuthCAS), [Authen::CAS::Client](https://metacpan.org/pod/Authen::CAS::Client))
 * Python ([python-cas](https://github.com/python-cas/python-cas))
 
 Applications:

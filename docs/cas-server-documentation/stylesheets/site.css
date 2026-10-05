@@ -1,9 +1,9 @@
 @import url(pygment_material.css);
 
 /* CAS: deep ocean blue, clear cyan, and generous space for technical reading.
-   Four type roles carry the whole site: Newsreader sets every heading, Manrope sets
-   structure (navigation, labels, buttons), DM Sans carries the prose, and
-   JetBrains Mono holds every piece of code. */
+   Two web fonts carry the whole site: Newsreader sets every heading, DM Sans sets the
+   prose and the structure (navigation, labels, buttons), and code uses the system
+   monospace font. */
 :root {
     color-scheme: light;
     --docs-bg: #f6f9fc;
@@ -29,9 +29,9 @@
     --docs-radius-sm: .45rem;
     --docs-rule: linear-gradient(90deg, var(--docs-accent), transparent 70%);
     --docs-sheen: linear-gradient(135deg, #ffffff 0%, #f2f8fd 100%);
-    --font-display: 'Manrope', system-ui, sans-serif;
+    --font-display: 'DM Sans', system-ui, sans-serif;
     --font-body: 'DM Sans', system-ui, sans-serif;
-    --font-mono: 'JetBrains Mono', 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
+    --font-mono: ui-monospace, 'SFMono-Regular', Menlo, Consolas, 'Liberation Mono', monospace;
     --font-editorial: 'Newsreader', Georgia, serif;
     --font-heading: 'Newsreader', Georgia, 'Times New Roman', serif;
     --bs-body-bg: var(--docs-bg);
@@ -1882,7 +1882,7 @@ ul.tab-content > li:not(.active):not(.property-name):not(.property-tab):not(.cas
     border-radius: 50%;
     background: linear-gradient(135deg, #0b6084, #06314a);
     color: white;
-    font-family: 'Manrope', sans-serif;
+    font-family: var(--font-display);
     font-size: 1.9rem;
     font-weight: 800;
     letter-spacing: -.1em;
@@ -2511,9 +2511,6 @@ ul.tab-content > li:not(.active):not(.property-name):not(.property-tab):not(.cas
     }
     html {
         scroll-behavior: auto;
-    }
-    .page_404 img {
-        display: none;
     }
     *, *::before, *::after {
         animation: none !important;

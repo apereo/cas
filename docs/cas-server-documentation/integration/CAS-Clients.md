@@ -18,8 +18,8 @@ supporting a number of software platforms and products have been developed.
 
 * [.NET CAS Client](https://github.com/apereo/dotnet-cas-client)
 * [Java CAS Client](https://github.com/apereo/java-cas-client)
-* [PHP CAS Client](https://github.com/Jasig/phpCAS)
-* [Apache CAS Client](https://github.com/Jasig/mod_auth_cas)
+* [PHP CAS Client](https://github.com/apereo/phpCAS)
+* [Apache CAS Client](https://github.com/apereo/mod_auth_cas)
 
 
 ## Other Clients

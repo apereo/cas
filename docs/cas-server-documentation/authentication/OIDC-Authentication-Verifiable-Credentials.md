@@ -201,6 +201,32 @@ POST /oidc/oidcVcNonce
 
 This endpoint returns `c_nonce`. The challenge is never returned from the token endpoint.
 
+### Notification Endpoint
+
+Receives notifications from the wallet about the credentials of a credential response, as described by
+[OpenID4VCI 1.0 section 11](https://openid.net/specs/openid-4-verifiable-credential-issuance-1_0.html#name-notification-endpoint).
+Each credential response carries a `notification_id`, and the issuer metadata advertises the endpoint as `notification_endpoint`.
+
+```bash
+POST /oidc/oidcVcNotification
+```
+
+The request carries the access token that obtained the credentials, checked as it is at the credential endpoint, and a JSON body:
+
+```json
+{
+  "notification_id": "TST-1-...",
+  "event": "credential_failure",
+  "event_description": "Could not store the Credential. Out of storage."
+}
+```
+
+The `event` is one of `credential_accepted`, `credential_failure` or `credential_deleted`. A notification is answered with `204`
+and recorded in the CAS audit log as `OIDC_VERIFIABLE_CREDENTIAL_NOTIFICATION`; sending the same notification again succeeds again.
+A notification id that is unknown, has expired with the access token, or was issued to another client or user is answered with
+`invalid_notification_id`, and a malformed request, an unknown event or an `event_description` with characters outside the
+permitted ASCII set with `invalid_notification_request`.
+
 ### Credential Offer Endpoint
 
 Exposes a prepared credential offer for a previously-created issuance transaction.

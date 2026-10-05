@@ -59,7 +59,7 @@ To enable additional logging, configure the log4j configuration file to add the 
 ## Webflow Diagram
 
 <a href="../images/cas_flow_diagram.png" data-lightbox="image-0">
-    <img src="../images/cas_flow_diagram.png" alt="CAS Web flow diagram" title="CAS Web flow diagram" />
+    <img src="../images/cas_flow_diagram.png" alt="Sequence diagram of CAS browser single sign-on: the first visit to an application redirects to the CAS login form, CAS sets the ticket-granting cookie and returns a service ticket that the application validates; a second application then gets a service ticket without another login" title="CAS browser single sign-on sequence diagram" />
 </a>
 
 ## Proxy Webflow Diagram
@@ -68,7 +68,7 @@ One of the most powerful feature of the CAS protocol is the ability for a CAS se
 proxy for another CAS service, transmitting the user identity.
 
 <a href="../images/cas_proxy_flow_diagram.jpg" data-lightbox="image-1">
-    <img src="../images/cas_proxy_flow_diagram.jpg" alt="CAS Proxy web flow diagram" title="CAS Proxy web flow diagram" />
+    <img src="../images/cas_proxy_flow_diagram.jpg" alt="Sequence diagram of CAS proxy authentication: the proxy application validates its service ticket with a pgtUrl, receives a proxy-granting ticket through its callback, requests a proxy ticket for a back-end application, and that application validates it with proxyValidate" title="CAS proxy authentication sequence diagram" />
 </a>
 
 
