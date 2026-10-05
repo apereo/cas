@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.oidc.OidcVerifiableCredentialConfigurationProperties;
 import org.apereo.cas.oidc.AbstractOidcTests;
+import org.apereo.cas.support.oauth.OAuth20ClientAuthenticationMethods;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -57,6 +58,21 @@ class OidcServerDiscoverySettingsFactoryTests extends AbstractOidcTests {
         assertNotNull(oidcServerDiscoverySettings.getUserinfoEndpoint());
         assertNotNull(oidcServerDiscoverySettings.getIssuer());
         assertNotNull(oidcServerDiscoverySettings.getJwksUri());
+    }
+
+    @Test
+    void verifyClientAttestationIsAdvertisedWithTrustAnchors() throws Exception {
+        assertFalse(oidcServerDiscoverySettings.getTokenEndpointAuthMethodsSupported()
+            .contains(OAuth20ClientAuthenticationMethods.ATTEST_JWT_CLIENT_AUTH.getType()));
+        assertNull(oidcServerDiscoverySettings.getClientAttestationSigningAlgValuesSupported());
+
+        val properties = new CasConfigurationProperties();
+        properties.getAuthn().getOidc().getClientAttestation().getTrustAnchors().add("classpath:client-attestation-root.pem");
+        val settings = new OidcServerDiscoverySettingsFactory(properties, oidcIssuerService, applicationContext).getObject();
+        assertTrue(settings.getTokenEndpointAuthMethodsSupported().contains(OAuth20ClientAuthenticationMethods.ATTEST_JWT_CLIENT_AUTH.getType()));
+        assertTrue(settings.getClientAttestationSigningAlgValuesSupported().contains("ES256"));
+        assertTrue(settings.getClientAttestationPopSigningAlgValuesSupported().contains("ES256"));
+        assertTrue(settings.toJson().contains("client_attestation_pop_signing_alg_values_supported"));
     }
 
     @Test

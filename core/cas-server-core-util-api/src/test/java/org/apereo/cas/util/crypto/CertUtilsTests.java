@@ -5,6 +5,7 @@ import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.io.InputStreamSource;
+import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -36,6 +37,17 @@ class CertUtilsTests {
         assertTrue(CertUtils.withoutTrustAnchor(null).isEmpty());
         assertTrue(CertUtils.isSelfIssued(root));
         assertFalse(CertUtils.isSelfIssued(leaf));
+    }
+
+    @Test
+    void verifyCertificateChainValidation() {
+        val root = mockCertificate("CN=Root", "CN=Root");
+        val leaf = mockCertificate("CN=Leaf", "CN=Root");
+        val trustAnchors = CertUtils.readTrustAnchors(List.of("classpath:x509.crt"));
+        assertEquals(1, trustAnchors.size());
+        assertThrows(CertificateException.class, () -> CertUtils.validateCertificateChain(List.of(), trustAnchors));
+        assertThrows(CertificateException.class, () -> CertUtils.validateCertificateChain(List.of(leaf, root), trustAnchors));
+        assertThrows(CertificateException.class, () -> CertUtils.validateCertificateChain(List.of(root), trustAnchors));
     }
 
     private static X509Certificate mockCertificate(final String subject, final String issuer) {

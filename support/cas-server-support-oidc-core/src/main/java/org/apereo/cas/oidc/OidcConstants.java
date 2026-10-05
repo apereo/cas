@@ -353,6 +353,10 @@ public interface OidcConstants {
      */
     String CAS_OAUTH_CLIENT_PRIVATE_KEY_JWT_AUTHN = "ClientPrivateKeyJwtClient";
     /**
+     * Authenticator used to verify clients by their client attestation.
+     */
+    String CAS_OAUTH_CLIENT_ATTESTATION_AUTHN = "ClientAttestationClient";
+    /**
      * This is a standard label for a custom scope which will have a scope name.
      * This should not be added to StandardScopes enumeration because it isn't standard.
      */

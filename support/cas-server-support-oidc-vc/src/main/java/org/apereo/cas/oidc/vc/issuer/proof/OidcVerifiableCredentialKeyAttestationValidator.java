@@ -3,9 +3,7 @@ package org.apereo.cas.oidc.vc.issuer.proof;
 import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.oidc.OidcVerifiableCredentialConfigurationProperties;
-import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.crypto.CertUtils;
-import org.apereo.cas.util.function.FunctionUtils;
 import com.nimbusds.jose.Algorithm;
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.crypto.ECDSAVerifier;
@@ -38,7 +36,7 @@ public class OidcVerifiableCredentialKeyAttestationValidator {
     private final Set<TrustAnchor> trustAnchors;
 
     public OidcVerifiableCredentialKeyAttestationValidator(final CasConfigurationProperties casProperties) {
-        this.trustAnchors = loadTrustAnchors(casProperties.getAuthn().getOidc().getVc().getIssuer().getKeyAttestation().getTrustAnchors());
+        this.trustAnchors = CertUtils.readTrustAnchors(casProperties.getAuthn().getOidc().getVc().getIssuer().getKeyAttestation().getTrustAnchors());
     }
 
     /**
@@ -118,17 +116,9 @@ public class OidcVerifiableCredentialKeyAttestationValidator {
         }
         val chain = new ArrayList<X509Certificate>();
         for (val encoded : encodedChain) {
-            val certificate = X509CertUtils.parse(encoded.decode());
-            if (certificate == null || CertUtils.isSelfIssued(certificate)) {
-                throw OidcVerifiableCredentialProofException.invalidProof(
-                    "Key attestation x5c must hold valid certificates, without the trust anchor or a self-signed signer");
-            }
-            chain.add(certificate);
+            chain.add(Objects.requireNonNull(X509CertUtils.parse(encoded.decode()), "Key attestation x5c holds an invalid certificate"));
         }
-        val parameters = new PKIXParameters(trustAnchors);
-        parameters.setRevocationEnabled(false);
-        CertPathValidator.getInstance("PKIX").validate(CertUtils.getCertificateFactory().generateCertPath(chain), parameters);
-        return chain.getFirst();
+        return CertUtils.validateCertificateChain(chain, trustAnchors);
     }
 
     protected void verifySignature(final SignedJWT signedJwt, final X509Certificate signer) throws Exception {
@@ -173,24 +163,6 @@ public class OidcVerifiableCredentialKeyAttestationValidator {
         if (!accepted.isEmpty() && attested.stream().noneMatch(accepted::contains)) {
             throw OidcVerifiableCredentialProofException.invalidProof(
                 "Key attestation %s %s does not meet the required %s".formatted(claimName, attested, accepted));
-        }
-    }
-
-    private static Set<TrustAnchor> loadTrustAnchors(final List<String> locations) {
-        return locations
-            .stream()
-            .map(location -> FunctionUtils.doUnchecked(() -> readCertificates(location)))
-            .flatMap(List::stream)
-            .map(certificate -> new TrustAnchor(certificate, null))
-            .collect(Collectors.toUnmodifiableSet());
-    }
-
-    private static List<X509Certificate> readCertificates(final String location) throws Exception {
-        try (val input = ResourceUtils.getResourceFrom(location).getInputStream()) {
-            return CertUtils.getCertificateFactory().generateCertificates(input)
-                .stream()
-                .map(X509Certificate.class::cast)
-                .toList();
         }
     }
 

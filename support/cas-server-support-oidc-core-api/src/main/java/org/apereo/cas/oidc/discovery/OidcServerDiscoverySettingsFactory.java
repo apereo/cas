@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.oidc.OidcVerifiableCredentialConfigurationProperties;
 import org.apereo.cas.oidc.issuer.OidcIssuerService;
+import org.apereo.cas.support.oauth.OAuth20ClientAuthenticationMethods;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -52,6 +53,12 @@ public class OidcServerDiscoverySettingsFactory implements FactoryBean<OidcServe
             new LinkedHashSet<>(discoveryConfig.getTokenEndpointAuthMethodsSupported()));
         discovery.setTokenEndpointAuthSigningAlgValuesSupported(
             new LinkedHashSet<>(discoveryConfig.getTokenEndpointAuthSigningAlgValuesSupported()));
+        val clientAttestation = oidc.getClientAttestation();
+        if (!clientAttestation.getTrustAnchors().isEmpty()) {
+            discovery.getTokenEndpointAuthMethodsSupported().add(OAuth20ClientAuthenticationMethods.ATTEST_JWT_CLIENT_AUTH.getType());
+            discovery.setClientAttestationSigningAlgValuesSupported(new LinkedHashSet<>(clientAttestation.getSigningAlgValuesSupported()));
+            discovery.setClientAttestationPopSigningAlgValuesSupported(new LinkedHashSet<>(clientAttestation.getSigningAlgValuesSupported()));
+        }
         discovery.setClaimsParameterSupported(discoveryConfig.isClaimsParameterSupported());
         discovery.setPromptValuesSupported(new LinkedHashSet<>(discoveryConfig.getPromptValuesSupported()));
 

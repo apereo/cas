@@ -3,12 +3,16 @@ package org.apereo.cas.oidc.web.controllers.authorize;
 import module java.base;
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.oidc.OidcConstants;
+import org.apereo.cas.oidc.authn.OidcClientAttestationAuthenticator;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
+import com.nimbusds.jose.jwk.Curve;
+import com.nimbusds.jose.jwk.gen.ECKeyGenerator;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.web.servlet.ResultActions;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -19,7 +23,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * @since 6.5.0
  */
 @Tag("OIDCWeb")
-@TestPropertySource(properties = "cas.authn.oidc.discovery.require-pushed-authorization-requests=true")
+@TestPropertySource(properties = {
+    "cas.authn.oidc.discovery.require-pushed-authorization-requests=true",
+    "cas.authn.oidc.client-attestation.trust-anchors=classpath:client-attestation-root.pem"
+})
 class OidcPushedAuthorizeEndpointControllerTests extends AbstractOidcTests {
 
     @Test
@@ -97,5 +104,51 @@ class OidcPushedAuthorizeEndpointControllerTests extends AbstractOidcTests {
                     return request;
                 }))
             .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void verifyPostWithClientAttestation() throws Exception {
+        val id = UUID.randomUUID().toString();
+        val service = getOidcRegisteredService(id);
+        service.setBypassApprovalPrompt(true);
+        servicesManager.save(service);
+
+        val instanceKey = new ECKeyGenerator(Curve.P_256).generate();
+        val attestation = buildClientAttestation(id, instanceKey, false);
+        val issuer = oidcServerDiscoverySettings.getIssuer();
+        val proof = buildClientAttestationProof(instanceKey, issuer);
+        performPushedAuthorizationRequest(id, attestation, proof)
+            .andExpect(status().isCreated())
+            .andExpect(jsonPath("$.request_uri").exists());
+        performPushedAuthorizationRequest(id, attestation, proof).andExpect(status().isUnauthorized());
+
+        performPushedAuthorizationRequest(id, attestation,
+            buildClientAttestationProof(new ECKeyGenerator(Curve.P_256).generate(), issuer)).andExpect(status().isUnauthorized());
+        performPushedAuthorizationRequest(id, attestation,
+            buildClientAttestationProof(instanceKey, "https://other.example.org")).andExpect(status().isUnauthorized());
+        performPushedAuthorizationRequest(id, buildClientAttestation(id, instanceKey, true),
+            buildClientAttestationProof(instanceKey, issuer)).andExpect(status().isUnauthorized());
+        performPushedAuthorizationRequest(id, buildClientAttestation(UUID.randomUUID().toString(), instanceKey, false),
+            buildClientAttestationProof(instanceKey, issuer)).andExpect(status().isUnauthorized());
+
+        mockMvc.perform(post("/cas/oidc/" + OidcConstants.PUSHED_AUTHORIZE_URL)
+                .param(OAuth20Constants.CLIENT_ID, id)
+                .param(OAuth20Constants.REDIRECT_URI, "https://oauth.example.org/")
+                .param(OAuth20Constants.RESPONSE_TYPE, OAuth20ResponseTypes.CODE.name().toLowerCase(Locale.ENGLISH))
+                .header(OidcClientAttestationAuthenticator.HEADER_CLIENT_ATTESTATION, attestation, attestation)
+                .header(OidcClientAttestationAuthenticator.HEADER_CLIENT_ATTESTATION_POP, buildClientAttestationProof(instanceKey, issuer))
+                .with(withHttpRequestProcessor()))
+            .andExpect(status().isUnauthorized());
+    }
+
+    private ResultActions performPushedAuthorizationRequest(final String clientId, final String attestation,
+                                                            final String proof) throws Exception {
+        return mockMvc.perform(post("/cas/oidc/" + OidcConstants.PUSHED_AUTHORIZE_URL)
+            .param(OAuth20Constants.CLIENT_ID, clientId)
+            .param(OAuth20Constants.REDIRECT_URI, "https://oauth.example.org/")
+            .param(OAuth20Constants.RESPONSE_TYPE, OAuth20ResponseTypes.CODE.name().toLowerCase(Locale.ENGLISH))
+            .header(OidcClientAttestationAuthenticator.HEADER_CLIENT_ATTESTATION, attestation)
+            .header(OidcClientAttestationAuthenticator.HEADER_CLIENT_ATTESTATION_POP, proof)
+            .with(withHttpRequestProcessor()));
     }
 }

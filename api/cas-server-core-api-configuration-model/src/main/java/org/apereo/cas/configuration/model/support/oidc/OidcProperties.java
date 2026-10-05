@@ -113,4 +113,10 @@ public class OidcProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private OidcVerifiableCredentialsProperties vc = new OidcVerifiableCredentialsProperties();
+
+    /**
+     * Attestation-based client authentication settings.
+     */
+    @NestedConfigurationProperty
+    private OidcClientAttestationProperties clientAttestation = new OidcClientAttestationProperties();
 }

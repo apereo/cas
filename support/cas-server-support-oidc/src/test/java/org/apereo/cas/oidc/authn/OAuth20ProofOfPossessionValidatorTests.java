@@ -4,6 +4,7 @@ import module java.base;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.oidc.OidcConstants;
+import org.apereo.cas.support.oauth.OAuth20ClientAuthenticationMethods;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import com.jayway.jsonpath.JsonPath;
@@ -17,6 +18,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.TestPropertySource;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -27,6 +29,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * @since 8.1.0
  */
 @Tag("OIDCWeb")
+@TestPropertySource(properties = "cas.authn.oidc.client-attestation.trust-anchors=classpath:client-attestation-root.pem")
 class OAuth20ProofOfPossessionValidatorTests extends AbstractOidcTests {
 
     @Test
@@ -101,6 +104,39 @@ class OAuth20ProofOfPossessionValidatorTests extends AbstractOidcTests {
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .header(OAuth20Constants.DPOP, profileDpopProof.serialize())
                 .param(OAuth20Constants.TOKEN, accessToken))
+            .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void verifyClientAttestationAtTokenEndpoint() throws Throwable {
+        val registeredService = getOidcRegisteredService(UUID.randomUUID().toString());
+        registeredService.setTokenEndpointAuthenticationMethod(OAuth20ClientAuthenticationMethods.ATTEST_JWT_CLIENT_AUTH.getType());
+        servicesManager.save(registeredService);
+        val principal = CoreAuthenticationTestUtils.getPrincipal("casuser");
+        val instanceKey = new ECKeyGenerator(Curve.P_256).generate();
+
+        mockMvc.perform(post("/cas/" + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.TOKEN_URL)
+                .with(withHttpRequestProcessor())
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .header(OidcClientAttestationAuthenticator.HEADER_CLIENT_ATTESTATION,
+                    buildClientAttestation(registeredService.getClientId(), instanceKey, false))
+                .header(OidcClientAttestationAuthenticator.HEADER_CLIENT_ATTESTATION_POP,
+                    buildClientAttestationProof(instanceKey, oidcServerDiscoverySettings.getIssuer()))
+                .param(OAuth20Constants.CLIENT_ID, registeredService.getClientId())
+                .param(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.AUTHORIZATION_CODE.getType())
+                .param(OAuth20Constants.REDIRECT_URI, "https://oauth.example.org")
+                .param(OAuth20Constants.CODE, addCode(principal, registeredService).getId()))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.access_token").exists());
+
+        mockMvc.perform(post("/cas/" + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.TOKEN_URL)
+                .with(withHttpRequestProcessor())
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .param(OAuth20Constants.CLIENT_ID, registeredService.getClientId())
+                .param(OAuth20Constants.CLIENT_SECRET, registeredService.getClientSecret())
+                .param(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.AUTHORIZATION_CODE.getType())
+                .param(OAuth20Constants.REDIRECT_URI, "https://oauth.example.org")
+                .param(OAuth20Constants.CODE, addCode(principal, registeredService).getId()))
             .andExpect(status().isUnauthorized());
     }
 }

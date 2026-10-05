@@ -5,6 +5,7 @@ import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -95,6 +96,14 @@ public class OidcServerDiscoverySettings {
 
     @JsonProperty("token_endpoint_auth_signing_alg_values_supported")
     private Set<String> tokenEndpointAuthSigningAlgValuesSupported;
+
+    @JsonProperty("client_attestation_signing_alg_values_supported")
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    private Set<String> clientAttestationSigningAlgValuesSupported;
+
+    @JsonProperty("client_attestation_pop_signing_alg_values_supported")
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    private Set<String> clientAttestationPopSigningAlgValuesSupported;
 
     @JsonProperty("code_challenge_methods_supported")
     private Set<String> codeChallengeMethodsSupported;
