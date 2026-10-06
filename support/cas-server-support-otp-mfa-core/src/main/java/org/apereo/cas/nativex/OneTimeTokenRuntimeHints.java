@@ -1,6 +1,7 @@
 package org.apereo.cas.nativex;
 
 import module java.base;
+import org.apereo.cas.authentication.OneTimeTokenAccount;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenAccountCipherExecutor;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import org.jspecify.annotations.NonNull;
@@ -17,8 +18,8 @@ public class OneTimeTokenRuntimeHints implements CasRuntimeHintsRegistrar {
     @Override
     public void registerHints(final @NonNull RuntimeHints hints, final @Nullable ClassLoader classLoader) {
         registerReflectionHints(hints, List.of(OneTimeTokenAccountCipherExecutor.class));
+        registerReflectionHints(hints, findSubclassesOf(OneTimeTokenAccount.class));
     }
 
 }
-
 

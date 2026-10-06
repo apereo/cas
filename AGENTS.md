@@ -330,6 +330,9 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
 - Nested `@Nested` test classes that extend `AbstractOidcTests` do not inherit the enclosing class's `@ImportAutoConfiguration` or `@TestPropertySource`: repeat what they need, including whatever the enclosing instance autowires (the outer instance is built from the nested context).
 - The openid.net spec pages are long: WebFetch summaries truncate and can invent text. Fetch the markdown source (`raw.githubusercontent.com/openid/OpenID4VCI/main/1.0/...`, `.../OpenID4VC-HAIP/main/1.0/...`) with curl and grep it instead.
 - The VM compile check can also run Error Prone, which `-Werror` turns every warning of into a build failure: add `-XDcompilePolicy=byfile -XDshould-stop.ifError=FLOW "-Xplugin:ErrorProne <the -Xep flags of project-conventions.gradle> -XepOpt:NullAway:OnlyNullMarked=true -XepOpt:NullAway:JSpecifyMode=true"`, the `-J--add-exports`/`--add-opens` of `jdk.compiler`'s `api, main, model, parser, processing, tree, util, code, comp, file` packages, and every cached jar on `-processorpath`. NullAway refuses to start without one of its package options. For the VM test runner, leave out every `spring-cloud-*` jar except `spring-cloud-commons` and `spring-cloud-context` (the Vault, Consul and Kubernetes bootstrap configurations otherwise start and fail).
+- Attestation-based client authentication (draft 11): an `HttpAction` thrown from a pac4j authenticator is adapted as is, so the `400 use_attestation_challenge` body and its `OAuth-Client-Attestation-Challenge` header survive; rethrow `HttpAction` before any generic `catch (Exception)` that would turn it into a `401`. Challenges are transient session tickets, opt-in and reusable until they expire, and only apply once offered (setting on and trust anchors present). In DPoP combined mode (`attest_jwt_client_auth_dpop`, no PoP header, one `DPoP` header) the authenticator verifies the DPoP proof itself with `DPoPTokenRequestVerifier`, checks its `jwk` thumbprint against the attestation `cnf` key, and records its `jti` under its own prefix; challenges do not apply there and DPoP nonces are not supported.
+- Issuer-signed JWTs (status list tokens, signed issuer metadata) go through `OidcVerifiableCredentialSigningUtils.sign`: issuer key, `kid`, `x5c` without the trust anchor. Do not copy the signing code into a new endpoint. Signed metadata is served when `Accept` names `application/jwt` with a quality at least that of JSON (wildcards count as JSON), so plain browsers and `*/*` clients still get JSON.
+- IETF drafts are blocked on ietf.org here: fetch the markdown source from the draft's GitHub repository at the published tag (`raw.githubusercontent.com/oauth-wg/<repo>/draft-ietf-oauth-<name>-NN/draft-ietf-oauth-<name>.md`), and confirm the number is the latest published one.
 
 ## Parallel test execution and shared registries
 
@@ -1145,7 +1148,10 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
   type-specific code). Fix call sites as scenarios need them, not all at once. Delegation: the webflow manager keeps the
   built transient ticket in the flow (it carries the request properties) and hands the stored ticket to
   `DelegatedClientSessionManager.trackIdentifier(WebContext, Ticket, Client)` and the CAS client session key. Still
-  open: password reset, account registration and others not in the scenarios.
+  open: account registration and others not in the scenarios. Password reset (`DefaultPasswordResetUrlBuilder` puts the
+  stored TST id in the link; scenario `forgot-password-stateless`) and dynamic client registration
+  (`OidcDynamicClientRegistrationEndpointController.generateRegistrationAccessToken` returns the stored token, resolved
+  through `resolveAccessToken`; scenario `oidc-client-registration-stateless`) are done. Reset links are not single-use.
 - Duo `TICKET_REGISTRY` session storage is unsupported with the stateless registry (maintainer decision: document only,
   no code). The TST holds the whole flow (authentication, result builder, all webflow scopes) as objects, Duo's SDK
   rejects a `state` over 1024 characters, and the Duo webflow is wired at startup by storage type, so a runtime fallback

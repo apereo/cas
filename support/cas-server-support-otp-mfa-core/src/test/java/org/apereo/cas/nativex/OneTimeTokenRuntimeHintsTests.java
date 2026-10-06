@@ -1,6 +1,7 @@
 package org.apereo.cas.nativex;
 
 import module java.base;
+import org.apereo.cas.authentication.OneTimeTokenAccount;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenAccountCipherExecutor;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -18,9 +19,15 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Native")
 class OneTimeTokenRuntimeHintsTests {
     @Test
-    void verifyHints() {
+    void verifyHints() throws Exception {
         val hints = new RuntimeHints();
         new OneTimeTokenRuntimeHints().registerHints(hints, getClass().getClassLoader());
         assertTrue(RuntimeHintsPredicates.reflection().onType(OneTimeTokenAccountCipherExecutor.class).test(hints));
+        assertTrue(RuntimeHintsPredicates.reflection()
+            .onConstructorInvocation(OneTimeTokenAccount.class.getConstructor()).test(hints));
+        assertTrue(RuntimeHintsPredicates.reflection()
+            .onMethodInvocation(OneTimeTokenAccount.class.getMethod("getUsername")).test(hints));
+        assertTrue(RuntimeHintsPredicates.reflection()
+            .onMethodInvocation(OneTimeTokenAccount.class.getMethod("setUsername", String.class)).test(hints));
     }
 }

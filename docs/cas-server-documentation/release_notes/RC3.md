@@ -90,7 +90,7 @@ The CAS documentation site has received a visual and functional overhaul. Notabl
   example inline. Instructions to enable, expose and secure the endpoint along with related settings and
   troubleshooting notes are shown once per endpoint rather than once per operation, which makes pages considerably lighter.
 - The [configuration properties](../configuration/Configuration-Properties.html) search is rewritten. It matches setting names regardless
-  of how they are written (property names, environment variables including indexed ones such as `CAS_AUTHN_LDAP_0_LDAP_URL`, or pasted assignments), supports exact name matches,
+  of how they are written (property names, environment variables including indexed ones such as `CAS_AUTHN_LDAP_0_LDAP_URL`{: .cas-setting}, or pasted assignments), supports exact name matches,
   searches names or descriptions, filters CAS or third-party and deprecated settings, and keeps the search in the page address so results can be shared.
 - Pressing <kbd>Shift</kbd> twice on any documentation page opens a quick search for configuration settings.
 - [Feature toggles](../configuration/Configuration-Feature-Toggles.html) are grouped by area and can be searched or filtered
@@ -149,12 +149,12 @@ The CAS documentation site has received a visual and functional overhaul. Notabl
 - A resource that does not set `enforceAllPolicies` is now granted when any one of its policies grants access, as documented;
   previously every policy had to grant. Set `enforceAllPolicies` to `true` on resources that rely on the old behavior.
   In that mode, a policy that fails with an error no longer prevents a later policy from granting access.
-- Heimdall supports the AuthZEN [access evaluations API](../authorization/Heimdall-Authorization-AuthZEN.html#access-evaluations) at
+- Heimdall supports the AuthZEN [access evaluations API](../authorization/Heimdall-Authorization-AuthZEN.html) at
   `/heimdall/authzen/evaluations`, with the `execute_all`, `deny_on_first_deny` and `permit_on_first_permit` semantics.
-- Heimdall publishes AuthZEN [policy decision point metadata](../authorization/Heimdall-Authorization-AuthZEN.html#policy-decision-point-metadata) at
+- Heimdall publishes AuthZEN [policy decision point metadata](../authorization/Heimdall-Authorization-AuthZEN.html) at
   `/heimdall/.well-known/authzen-configuration`; the well-known location defined by the specification needs a
   [rewrite rule](../installation/Servlet-Container-Embedded-Tomcat-RewriteValve.html).
-- Denied AuthZEN decisions carry a [decision context](../authorization/Heimdall-Authorization-AuthZEN.html#decision-context)
+- Denied AuthZEN decisions carry a [decision context](../authorization/Heimdall-Authorization-AuthZEN.html)
   with a `reason` code.
 - [JDBC and OpenFGA policies](../authorization/Heimdall-Authorization-Policies.html) receive the AuthZEN subject, resource and action. [Palantir](../installation/Admin-Dashboard.html) can edit the AuthZEN fields
   of a resource and configure the Heimdall access strategy.
@@ -172,7 +172,7 @@ before the upgrade carry the old value and are no longer accepted by resource se
 [Authentication throttling](../authentication/Configuring-Authentication-Throttling-Failure.html) now records a failed attempt only
 when the response status is `401`, once per request. Previously, any response other than `200`, `201` or `302`, such as a malformed
 request (`400`), an authorization denial (`403`), a missing resource (`404`) or a server error (`500`), was counted as a failed login,
-and failures were recorded twice. Failed SAML2 ECP authentication attempts, which answer with a SOAP fault, are now counted as well.
+and failures were recorded twice. Failed [SAML2 ECP authentication](../authentication/Configuring-SAML2-Authentication.html) attempts, which answer with a SOAP fault, are now counted as well.
 
 ### Passwordless Authentication
 
@@ -206,7 +206,7 @@ and failures were recorded twice. Failed SAML2 ECP authentication attempts, whic
 - [FIDO2 WebAuthn](../mfa/FIDO2-WebAuthn-Authentication.html) publishes its origins at `/.well-known/webauthn` for
   related origin requests, so passkeys can be used from origins whose domain differs from the relying party identifier.
 - After a successful authentication, CAS reports the user's accepted passkeys and current account details to the browser
-  through the Signal API, and passkey autofill checks `getClientCapabilities()` where the browser offers it.
+  through the [Signal API](../mfa/FIDO2-WebAuthn-Authentication.html), and passkey autofill checks `getClientCapabilities()` where the browser offers it.
 - Registration and authentication requests carry the user-agent hints set in `cas.authn.mfa.web-authn.core.hints`{: .cas-setting}, and
   each registration records whether the authenticator reported a discoverable credential (`credProps`).
 - When an assertion fails because the owning account no longer holds the passkey, the response says so and the browser
@@ -254,7 +254,7 @@ and failures were recorded twice. Failed SAML2 ECP authentication attempts, whic
   the credentials it issues. Deployments under a context path should add `jwt-vc-issuer` to the [well-known rewrite rule](../installation/Servlet-Container-Embedded-Tomcat-RewriteValve.html).
 - The verifier accepts RSA and Ed25519 holder keys in addition to EC keys, advertises those key binding algorithms,
   and advertises the signing algorithms of its `dc+sd-jwt` credential configurations instead of a fixed list.
-- A presentation request may carry a registered `redirect_uri` for a same-device flow: the wallet is sent back to it
+- A presentation request may carry a registered `redirect_uri` for a [same-device flow](../authentication/OIDC-Authentication-Verifiable-Credentials.html): the wallet is sent back to it
   with a `response_code`, which the relying party must present to collect the outcome. Outcomes are now released
   only to the client that created the request.
 - Claims marked `"required": false` in a presentation request are now optional: they are requested through DCQL
@@ -318,7 +318,7 @@ and failures were recorded twice. Failed SAML2 ECP authentication attempts, whic
   from the new challenge endpoint, advertised as `challenge_endpoint`, once turned on with
   `cas.authn.oidc.client-attestation.challenge.enabled=true`{: .cas-setting}. With trust anchors set, clients may also use a DPoP proof
   in place of the attestation proof of possession (`attest_jwt_client_auth_dpop`).
-- Status list tokens carry an `aggregation_uri`, and the new status list aggregation endpoint, advertised as
+- Status list tokens carry an `aggregation_uri`, and the new [status list aggregation endpoint](../authentication/OIDC-Authentication-Verifiable-Credentials.html), advertised as
   `status_list_aggregation_endpoint`, lists all published status lists.
 - Wallets that ask for `application/jwt` receive the credential issuer metadata as
   [signed metadata](../authentication/OIDC-Authentication-Verifiable-Credentials.html), per OpenID4VCI 1.0.
@@ -368,7 +368,7 @@ authentication. See the [stateless ticket registry documentation](../ticketing/S
 - Browser storage used by [Duo Security](../mfa/DuoSecurity-Authentication.html) and the [SAML2 identity provider](../authentication/Configuring-SAML2-Authentication.html) now falls back to cookies when the browser cannot use local or session storage.
 - Ed25519 keys presented to the OpenID Connect [client JWKS registration endpoint](../authentication/OIDC-Authentication-JWKS-Clients.html) are now
   verified with the JDK's own EdDSA support. Verification previously relied on Google Tink, which CAS does not ship, so such registrations failed at runtime.
-- CAS now logs a warning when a cookie it writes, such as the ticket-granting cookie, is larger than the 4 KB that browsers are guaranteed to accept.
+- CAS now logs a warning when a cookie it writes, such as the [ticket-granting cookie](../authentication/Configuring-SSO-Cookie.html), is larger than the 4 KB that browsers are guaranteed to accept.
 - MongoDb integration tests have now switched to using MongoDb `9.x`.
 - [Google Authenticator](../mfa/GoogleAuthenticator-Authentication.html) devices can only be removed or confirmed by the user that owns them;
   a device id that belongs to another user is now refused.
@@ -412,5 +412,5 @@ authentication. See the [stateless ticket registry documentation](../ticketing/S
   [YubiKey](../mfa/YubiKey-Authentication.html) devices from Redis also return their connection when done.
 - WebAuthn falls back to the cached [FIDO metadata BLOB](../mfa/FIDO2-WebAuthn-Authentication-Attestation.html) when
   downloading a fresh one fails at startup, for example when the FIDO metadata service rate-limits the request, instead of failing to start.
-- The project [README](https://github.com/apereo/cas#readme) is reworked as a landing page, with a one-minute Docker try-out,
+- The project [README](https://github.com/apereo/cas) is reworked as a landing page, with a one-minute Docker try-out,
   a link to the new [Quick Start](../planning/Quick-Start.html), features grouped by area and the maintained documentation versions.
