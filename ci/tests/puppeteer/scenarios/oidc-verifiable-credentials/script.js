@@ -66,7 +66,7 @@ async function createPublicKey() {
 
     const body = JSON.stringify({
         "principal": "casuser",
-        "credentialConfigurationIds": ["myorg"]
+        "credentialConfigurationIds": ["myorg", "deferredorg"]
     });
     const payload = JSON.parse(
         await cas.doRequest("https://localhost:8443/cas/oidc/oidcVcCredentialOfferTransactions?scope=openid", "POST", {
@@ -201,7 +201,48 @@ async function createPublicKey() {
         JSON.stringify({notification_id: "unknown", event: "credential_accepted"}));
 
     await verifyEncryptedIssuance(url, accessToken);
+    await verifyDeferredIssuance(url, accessToken);
 })();
+
+async function verifyDeferredIssuance(url, accessToken) {
+    const metadata = await cas.doGet("https://localhost:8443/cas/oidc/.well-known/openid-credential-issuer",
+        (res) => res.data, (error) => {
+            throw `Operation failed ${error}`;
+        });
+    const deferredUrl = "https://localhost:8443/cas/oidc/oidcVcDeferredCredential";
+    assert(metadata.deferred_credential_endpoint === deferredUrl);
+
+    const headers = {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${accessToken}`
+    };
+    const pending = JSON.parse(await cas.doRequest(url, "POST", headers, 202, JSON.stringify({
+        credential_configuration_id: "deferredorg",
+        proofs: {
+            jwt: [await createPublicKey()]
+        }
+    })));
+    await cas.log(pending);
+    assert(pending.transaction_id !== undefined);
+    assert(pending.interval > 0);
+    assert(pending.credentials === undefined && pending.notification_id === undefined);
+
+    const deferredRequest = JSON.stringify({transaction_id: pending.transaction_id});
+    const waiting = JSON.parse(await cas.doRequest(deferredUrl, "POST", headers, 202, deferredRequest));
+    assert(waiting.transaction_id === pending.transaction_id);
+
+    const transactions = JSON.parse(await cas.doRequest("https://localhost:8443/cas/actuator/oidcVcDeferred", "GET", {}, 200));
+    assert(transactions.some((transaction) => transaction.transactionId === pending.transaction_id && transaction.status === "PENDING"));
+    await cas.doRequest(`https://localhost:8443/cas/actuator/oidcVcDeferred/${pending.transaction_id}`, "POST", {
+        "Content-Type": "application/json"
+    }, 200, JSON.stringify({status: "APPROVED"}));
+
+    const result = JSON.parse(await cas.doRequest(deferredUrl, "POST", headers, 200, deferredRequest));
+    await cas.log(result);
+    assert(result.credentials.length === 1);
+    assert(result.notification_id !== undefined);
+    await cas.doRequest(deferredUrl, "POST", headers, 400, deferredRequest);
+}
 
 async function verifyEncryptedIssuance(url, accessToken) {
     const metadata = await cas.doGet("https://localhost:8443/cas/oidc/.well-known/openid-credential-issuer",

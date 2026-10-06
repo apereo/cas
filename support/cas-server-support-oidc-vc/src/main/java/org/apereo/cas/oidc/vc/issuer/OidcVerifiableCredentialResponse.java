@@ -10,8 +10,9 @@ import lombok.SuperBuilder;
 import lombok.extern.jackson.Jacksonized;
 
 /**
- * This is {@link OidcVerifiableCredentialResponse}, the OpenID4VCI 1.0 credential response.
- * The number of entries in {@code credentials} matches the number of proofs the wallet supplied.
+ * This is {@link OidcVerifiableCredentialResponse}, the OpenID4VCI 1.0 credential response, also used by the deferred
+ * credential endpoint. The number of entries in {@code credentials} matches the number of proofs the wallet supplied;
+ * a deferred response carries {@code transaction_id} and {@code interval} instead.
  *
  * @author Misagh Moayyed
  * @since 8.0.0
@@ -37,6 +38,19 @@ public class OidcVerifiableCredentialResponse implements Serializable {
      */
     @JsonProperty("notification_id")
     private String notificationId;
+
+    /**
+     * Identifies a deferred transaction, when the credentials are not issued yet; the wallet collects them from the
+     * deferred credential endpoint.
+     */
+    @JsonProperty("transaction_id")
+    private String transactionId;
+
+    /**
+     * Minimum number of seconds the wallet should wait before asking for the credentials of a deferred transaction.
+     */
+    @JsonProperty("interval")
+    private Long interval;
 
     /**
      * A single issued credential.

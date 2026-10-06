@@ -311,6 +311,9 @@ and failures were recorded twice. Failed SAML2 ECP authentication attempts, whic
 - Once the token response returns `credential_identifiers`, credential requests must use `credential_identifier`, as OpenID4VCI 1.0
   requires; a `credential_configuration_id` is then refused with `invalid_credential_request`. Otherwise a request must name a
   `credential_configuration_id`, and no longer falls back to the configuration recorded on the access token.
+- Credential configurations may defer issuance (`deferred-issuance`): credential requests are answered with a `transaction_id`,
+  an `oidcVcDeferred` actuator endpoint approves or denies the pending transactions, and wallets collect the credentials from the
+  new [deferred credential endpoint](../authentication/OIDC-Authentication-Verifiable-Credentials.html), per OpenID4VCI 1.0.
 
 ### Stateless Ticket Registry
 
@@ -401,3 +404,5 @@ authentication. See the [stateless ticket registry documentation](../ticketing/S
   [YubiKey](../mfa/YubiKey-Authentication.html) devices from Redis also return their connection when done.
 - WebAuthn falls back to the cached [FIDO metadata BLOB](../mfa/FIDO2-WebAuthn-Authentication-Attestation.html) when
   downloading a fresh one fails at startup, for example when the FIDO metadata service rate-limits the request, instead of failing to start.
+- The project [README](https://github.com/apereo/cas#readme) is reworked as a landing page, with a one-minute Docker try-out,
+  a link to the new [Quick Start](../planning/Quick-Start.html), features grouped by area and the maintained documentation versions.

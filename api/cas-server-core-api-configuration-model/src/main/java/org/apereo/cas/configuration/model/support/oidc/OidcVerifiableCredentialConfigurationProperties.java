@@ -84,6 +84,14 @@ public class OidcVerifiableCredentialConfigurationProperties implements Serializ
         new OidcVerifiableCredentialKeyAttestationRequirementProperties();
 
     /**
+     * Whether credentials of this configuration are issued in a deferred manner. A credential request is then answered with a
+     * {@code transaction_id}, and the wallet collects the credentials from the deferred credential endpoint once the
+     * transaction has been approved through the {@code oidcVcDeferred} actuator endpoint. The ticket registry keeps the
+     * transactions; a registry that cannot keep them, such as the stateless ticket registry, issues the credentials immediately.
+     */
+    private boolean deferredIssuance;
+
+    /**
      * Collection of claim definitions supported by this credential configuration.
      * The map key is the logical claim name that will appear in the issued credential,
      * while the value describes how that claim is sourced, typed, and enforced.

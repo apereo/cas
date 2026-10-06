@@ -229,6 +229,11 @@ public interface OidcConstants {
      * Oidc VC notification url path segment.
      */
     String VC_NOTIFICATION_URL = "oidcVcNotification";
+
+    /**
+     * Oidc VC deferred credential url path segment.
+     */
+    String VC_DEFERRED_CREDENTIAL_URL = "oidcVcDeferredCredential";
     /**
      * Oidc VC status list url path segment.
      */
@@ -267,6 +272,11 @@ public interface OidcConstants {
      * the issuer requires encrypted responses.
      */
     String VC_ERROR_INVALID_ENCRYPTION_PARAMETERS = "invalid_encryption_parameters";
+    /**
+     * Deferred credential error response: the {@code transaction_id} is unknown, expired, already used, or was not issued
+     * to the client and user of the access token.
+     */
+    String VC_ERROR_INVALID_TRANSACTION_ID = "invalid_transaction_id";
     /**
      * Notification error response: the {@code notification_id} is unknown, expired or not the caller's.
      */

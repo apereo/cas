@@ -45,6 +45,12 @@ public class OidcVerifiableCredentialsIssuerProperties implements Serializable {
     private OidcVerifiableCredentialEncryptionProperties encryption = new OidcVerifiableCredentialEncryptionProperties();
 
     /**
+     * Deferred issuance settings, for credential configurations that turn it on.
+     */
+    @NestedConfigurationProperty
+    private OidcVerifiableCredentialDeferredIssuanceProperties deferredIssuance = new OidcVerifiableCredentialDeferredIssuanceProperties();
+
+    /**
      * Supported credential configurations keyed by identifier.
      */
     private Map<String, OidcVerifiableCredentialConfigurationProperties> credentialConfigurations = new LinkedHashMap<>();

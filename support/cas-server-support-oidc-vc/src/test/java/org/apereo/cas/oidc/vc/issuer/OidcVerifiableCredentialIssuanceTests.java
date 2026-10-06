@@ -5,6 +5,7 @@ import org.apereo.cas.config.CasOidcVerifiableCredentialsAutoConfiguration;
 import org.apereo.cas.config.CasStatelessTicketRegistryAutoConfiguration;
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.oidc.OidcConstants;
+import org.apereo.cas.oidc.vc.issuer.deferred.OidcVerifiableCredentialDeferredIssuanceEndpoint;
 import org.apereo.cas.oidc.vc.issuer.status.OidcVerifiableCredentialStatusEndpoint;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
@@ -39,6 +40,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
@@ -70,9 +72,17 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
     "cas.authn.oidc.vc.issuer.credential-configurations.UniversityDegreeCredential.scope=UniversityDegree",
     "cas.authn.oidc.vc.issuer.credential-configurations.DriverLicenseCredential.format=DC_SD_JWT",
     "cas.authn.oidc.vc.issuer.credential-configurations.DriverLicenseCredential.scope=DriverLicense",
+    "cas.authn.oidc.vc.issuer.credential-configurations.DeferredCredential.format=DC_SD_JWT",
+    "cas.authn.oidc.vc.issuer.credential-configurations.DeferredCredential.scope=Deferred",
+    "cas.authn.oidc.vc.issuer.credential-configurations.DeferredCredential.deferred-issuance=true",
+    "cas.authn.oidc.vc.issuer.credential-configurations.DeferredReviewCredential.format=DC_SD_JWT",
+    "cas.authn.oidc.vc.issuer.credential-configurations.DeferredReviewCredential.scope=DeferredReview",
+    "cas.authn.oidc.vc.issuer.credential-configurations.DeferredReviewCredential.deferred-issuance=true",
+    "cas.authn.oidc.vc.issuer.credential-configurations.DeferredReviewCredential.claims.license_number.mandatory=true",
     "cas.authn.oidc.vc.issuer.status-list.enabled=true",
-    "management.endpoints.web.exposure.include=oidcVcStatus",
-    "management.endpoint.oidcVcStatus.access=UNRESTRICTED"
+    "management.endpoints.web.exposure.include=oidcVcStatus,oidcVcDeferred",
+    "management.endpoint.oidcVcStatus.access=UNRESTRICTED",
+    "management.endpoint.oidcVcDeferred.access=UNRESTRICTED"
 })
 class OidcVerifiableCredentialIssuanceTests extends AbstractOidcTests {
 
@@ -91,6 +101,8 @@ class OidcVerifiableCredentialIssuanceTests extends AbstractOidcTests {
 
     private static final String STATUS_LIST_URL = "/cas/" + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.VC_STATUS_LIST_URL;
 
+    private static final String DEFERRED_URL = "/cas/" + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.VC_DEFERRED_CREDENTIAL_URL;
+
     private static final String METADATA_URL = "/cas/" + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.WELL_KNOWN_OPENID_CREDENTIAL_ISSUER_URL;
 
     private static final MediaType APPLICATION_JWT = MediaType.parseMediaType(OidcConstants.CONTENT_TYPE_JWT);
@@ -102,6 +114,9 @@ class OidcVerifiableCredentialIssuanceTests extends AbstractOidcTests {
     @Autowired
     @Qualifier("oidcVerifiableCredentialStatusEndpoint")
     private OidcVerifiableCredentialStatusEndpoint oidcVerifiableCredentialStatusEndpoint;
+
+    @Autowired
+    private ObjectProvider<OidcVerifiableCredentialDeferredIssuanceEndpoint> oidcVerifiableCredentialDeferredIssuanceEndpoint;
 
     @Test
     void verifyIssuedCredentialStatusCanBeChanged() throws Throwable {
@@ -168,7 +183,12 @@ class OidcVerifiableCredentialIssuanceTests extends AbstractOidcTests {
     }
 
     private static String obtainAccessToken(final MockMvc mockMvc, final String clientId, final String clientSecret) throws Exception {
-        val transaction = createOfferTransaction(mockMvc, clientId, clientSecret, "casuser", List.of("UniversityDegreeCredential"));
+        return obtainAccessToken(mockMvc, clientId, clientSecret, "UniversityDegreeCredential");
+    }
+
+    private static String obtainAccessToken(final MockMvc mockMvc, final String clientId, final String clientSecret,
+                                            final String credentialConfigurationId) throws Exception {
+        val transaction = createOfferTransaction(mockMvc, clientId, clientSecret, "casuser", List.of(credentialConfigurationId));
         val preAuthorizedCode = fetchPreAuthorizedCode(mockMvc, transaction.transactionId());
         val tokenResponseBody = mockMvc.perform(tokenExchangeRequest(clientId, clientSecret, preAuthorizedCode, transaction.txCode()))
             .andExpect(status().isOk())
@@ -229,11 +249,114 @@ class OidcVerifiableCredentialIssuanceTests extends AbstractOidcTests {
 
     private static ResultActions postCredentialRequest(final MockMvc mockMvc, final String accessToken,
                                                        final MediaType contentType, final String body) throws Exception {
-        return mockMvc.perform(post(CREDENTIAL_URL)
+        return postCredentialRequest(mockMvc, accessToken, contentType, body, CREDENTIAL_URL);
+    }
+
+    private static ResultActions postCredentialRequest(final MockMvc mockMvc, final String accessToken,
+                                                       final MediaType contentType, final String body, final String url) throws Exception {
+        return mockMvc.perform(post(url)
             .with(withHttpRequestProcessor())
             .contentType(contentType)
             .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
             .content(body));
+    }
+
+    @Test
+    void verifyDeferredIssuance() throws Throwable {
+        mockMvc.perform(get(METADATA_URL).with(withHttpRequestProcessor()))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.deferred_credential_endpoint").value(CREDENTIAL_ISSUER + '/' + OidcConstants.VC_DEFERRED_CREDENTIAL_URL));
+        val registeredService = getOidcRegisteredService(UUID.randomUUID().toString());
+        servicesManager.save(registeredService);
+        val accessToken = obtainAccessToken(mockMvc, registeredService.getClientId(),
+            registeredService.getClientSecrets().getFirst().getValue(), "DeferredCredential");
+        val transactionId = requestDeferredCredential(accessToken);
+        val endpoint = oidcVerifiableCredentialDeferredIssuanceEndpoint.getObject();
+        val transaction = endpoint.getTransactions(null).stream()
+            .filter(candidate -> candidate.transactionId().equals(transactionId)).findFirst().orElseThrow();
+        assertEquals("PENDING", transaction.status().name());
+        assertEquals(registeredService.getClientId(), transaction.clientId());
+        assertEquals(1, transaction.getCredentials());
+
+        postDeferredRequest(accessToken, transactionId)
+            .andExpect(status().isAccepted())
+            .andExpect(jsonPath("$.transaction_id").value(transactionId))
+            .andExpect(jsonPath("$.interval").value(300))
+            .andExpect(jsonPath("$.credentials").doesNotExist());
+        val walletKey = new ECKeyGenerator(Curve.P_256).algorithm(JWEAlgorithm.ECDH_ES).generate();
+        postCredentialRequest(mockMvc, accessToken, MediaType.APPLICATION_JSON, MAPPER.writeValueAsString(Map.of("transaction_id", transactionId,
+                "credential_response_encryption", Map.of("jwk", walletKey.toPublicJWK().toJSONObject(), "enc", "A128GCM"))), DEFERRED_URL)
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.error").value(OidcConstants.VC_ERROR_INVALID_ENCRYPTION_PARAMETERS));
+        val otherService = getOidcRegisteredService(UUID.randomUUID().toString());
+        servicesManager.save(otherService);
+        val otherAccessToken = obtainAccessToken(mockMvc, otherService.getClientId(),
+            otherService.getClientSecrets().getFirst().getValue(), "DeferredCredential");
+        for (val request : List.of(Map.of("transaction_id", transactionId), Map.of("transaction_id", "TST-unknown"), Map.of())) {
+            postCredentialRequest(mockMvc, otherAccessToken, MediaType.APPLICATION_JSON, MAPPER.writeValueAsString(request), DEFERRED_URL)
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error").value(OidcConstants.VC_ERROR_INVALID_TRANSACTION_ID));
+        }
+
+        assertEquals(400, endpoint.decide(transactionId, "PENDING").getStatus());
+        assertEquals(404, endpoint.decide("TST-unknown", "APPROVED").getStatus());
+        assertEquals(200, endpoint.decide(transactionId, "approved").getStatus());
+        val response = postDeferredRequest(accessToken, transactionId)
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.transaction_id").doesNotExist())
+            .andExpect(jsonPath("$.notification_id").exists())
+            .andReturn().getResponse().getContentAsString();
+        val credential = JsonPath.read(response, "$.credentials[0].credential").toString();
+        assertNotNull(SignedJWT.parse(StringUtils.substringBefore(credential, "~")).getJWTClaimsSet().getSubject());
+        postDeferredRequest(accessToken, transactionId)
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.error").value(OidcConstants.VC_ERROR_INVALID_TRANSACTION_ID));
+
+        val deniedTransactionId = requestDeferredCredential(accessToken);
+        assertEquals(200, endpoint.decide(deniedTransactionId, "DENIED").getStatus());
+        postDeferredRequest(accessToken, deniedTransactionId)
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.error").value(OidcConstants.VC_ERROR_CREDENTIAL_REQUEST_DENIED));
+        postDeferredRequest(accessToken, deniedTransactionId)
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.error").value(OidcConstants.VC_ERROR_INVALID_TRANSACTION_ID));
+    }
+
+    @Test
+    void verifyDeferredTransactionSurvivesFailedDelivery() throws Throwable {
+        val registeredService = getOidcRegisteredService(UUID.randomUUID().toString());
+        servicesManager.save(registeredService);
+        val accessToken = obtainAccessToken(mockMvc, registeredService.getClientId(),
+            registeredService.getClientSecrets().getFirst().getValue(), "DeferredReviewCredential");
+        val transactionId = requestDeferredCredential(accessToken, "DeferredReviewCredential");
+        val endpoint = oidcVerifiableCredentialDeferredIssuanceEndpoint.getObject();
+        assertEquals(200, endpoint.decide(transactionId, "APPROVED").getStatus());
+        postDeferredRequest(accessToken, transactionId)
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.error").value(OidcConstants.VC_ERROR_INVALID_CREDENTIAL_REQUEST));
+        assertTrue(endpoint.getTransactions(null).stream().anyMatch(transaction -> transaction.transactionId().equals(transactionId)
+            && "APPROVED".equals(transaction.status().name())));
+    }
+
+    private String requestDeferredCredential(final String accessToken) throws Exception {
+        return requestDeferredCredential(accessToken, "DeferredCredential");
+    }
+
+    private String requestDeferredCredential(final String accessToken, final String credentialConfigurationId) throws Exception {
+        val request = buildCredentialRequest(fetchNonce(mockMvc), null);
+        request.setCredentialConfigurationId(credentialConfigurationId);
+        val response = postCredentialRequest(mockMvc, accessToken, MediaType.APPLICATION_JSON, MAPPER.writeValueAsString(request))
+            .andExpect(status().isAccepted())
+            .andExpect(jsonPath("$.credentials").doesNotExist())
+            .andExpect(jsonPath("$.notification_id").doesNotExist())
+            .andExpect(jsonPath("$.interval").value(300))
+            .andReturn().getResponse().getContentAsString();
+        return JsonPath.read(response, "$.transaction_id").toString();
+    }
+
+    private ResultActions postDeferredRequest(final String accessToken, final String transactionId) throws Exception {
+        return postCredentialRequest(mockMvc, accessToken, MediaType.APPLICATION_JSON,
+            MAPPER.writeValueAsString(Map.of("transaction_id", transactionId)), DEFERRED_URL);
     }
 
     @Test
@@ -476,7 +599,7 @@ class OidcVerifiableCredentialIssuanceTests extends AbstractOidcTests {
             val clientSecret = registeredService.getClientSecrets().getFirst().getValue();
 
             val transaction = createOfferTransaction(mockMvc, registeredService.getClientId(), clientSecret,
-                "casuser", List.of("UniversityDegreeCredential"));
+                "casuser", List.of("UniversityDegreeCredential", "DeferredCredential"));
             val preAuthorizedCode = fetchPreAuthorizedCode(mockMvc, transaction.transactionId());
 
             val tokenResponseBody = mockMvc.perform(tokenExchangeRequest(registeredService.getClientId(),
@@ -509,6 +632,17 @@ class OidcVerifiableCredentialIssuanceTests extends AbstractOidcTests {
                 val credential = JsonPath.read(credentialResponseBody, "$.credentials[0].credential").toString();
                 assertNull(SignedJWT.parse(StringUtils.substringBefore(credential, "~")).getJWTClaimsSet().getClaim("status"));
             }
+
+            credentialRequest.setCredentialConfigurationId("DeferredCredential");
+            credentialRequest.setProofs(buildProofs(buildProofJwt(nonce)));
+            mockMvc.perform(post(CREDENTIAL_URL)
+                    .with(withHttpRequestProcessor())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                    .content(MAPPER.writeValueAsString(credentialRequest)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.credentials[0].credential").exists())
+                .andExpect(jsonPath("$.transaction_id").doesNotExist());
 
             credentialRequest.setCredentialConfigurationId("DriverLicenseCredential");
             credentialRequest.setProofs(buildProofs(buildProofJwt(nonce)));

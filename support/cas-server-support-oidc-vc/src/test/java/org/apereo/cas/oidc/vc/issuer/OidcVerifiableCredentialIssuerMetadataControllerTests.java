@@ -51,6 +51,7 @@ class OidcVerifiableCredentialIssuerMetadataControllerTests extends AbstractOidc
             .andExpect(jsonPath("$.credential_endpoint").exists())
             .andExpect(jsonPath("$.nonce_endpoint").exists())
             .andExpect(jsonPath("$.notification_endpoint").exists())
+            .andExpect(jsonPath("$.deferred_credential_endpoint").doesNotExist())
             .andExpect(jsonPath("$.credential_configurations_supported").exists())
             .andExpect(jsonPath("$.batch_credential_issuance.batch_size").isNumber())
             .andExpect(jsonPath("$.batch_credential_endpoint").doesNotExist());

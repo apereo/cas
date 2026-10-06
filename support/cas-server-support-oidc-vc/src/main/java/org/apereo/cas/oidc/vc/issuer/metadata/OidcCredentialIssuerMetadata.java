@@ -43,6 +43,9 @@ public class OidcCredentialIssuerMetadata implements Serializable {
     @JsonProperty("notification_endpoint")
     private String notificationEndpoint;
 
+    @JsonProperty("deferred_credential_endpoint")
+    private String deferredCredentialEndpoint;
+
     @JsonProperty("credential_request_encryption")
     private CredentialRequestEncryption credentialRequestEncryption;
 

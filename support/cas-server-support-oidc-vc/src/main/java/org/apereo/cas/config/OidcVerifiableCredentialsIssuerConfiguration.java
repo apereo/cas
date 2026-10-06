@@ -10,6 +10,9 @@ import org.apereo.cas.oidc.OidcConfigurationContext;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeyCacheKey;
 import org.apereo.cas.oidc.vc.issuer.OidcDefaultVerifiableCredentialIssuerService;
 import org.apereo.cas.oidc.vc.issuer.OidcVerifiableCredentialIssuerService;
+import org.apereo.cas.oidc.vc.issuer.deferred.OidcVerifiableCredentialDefaultDeferredIssuanceService;
+import org.apereo.cas.oidc.vc.issuer.deferred.OidcVerifiableCredentialDeferredIssuanceEndpoint;
+import org.apereo.cas.oidc.vc.issuer.deferred.OidcVerifiableCredentialDeferredIssuanceService;
 import org.apereo.cas.oidc.vc.issuer.enc.OidcVerifiableCredentialDcSdJwtEncoder;
 import org.apereo.cas.oidc.vc.issuer.enc.OidcVerifiableCredentialEncoder;
 import org.apereo.cas.oidc.vc.issuer.enc.OidcVerifiableCredentialEncoderFactory;
@@ -129,8 +132,29 @@ class OidcVerifiableCredentialsIssuerConfiguration {
     public OidcCredentialIssuerMetadataService oidcCredentialIssuerMetadataService(
         @Qualifier(OidcVerifiableCredentialEncryptionService.BEAN_NAME)
         final OidcVerifiableCredentialEncryptionService oidcVerifiableCredentialEncryptionService,
+        @Qualifier(OidcVerifiableCredentialDeferredIssuanceService.BEAN_NAME)
+        final OidcVerifiableCredentialDeferredIssuanceService oidcVerifiableCredentialDeferredIssuanceService,
         final CasConfigurationProperties casProperties) {
-        return new OidcCredentialIssuerMetadataService(casProperties, oidcVerifiableCredentialEncryptionService);
+        return new OidcCredentialIssuerMetadataService(casProperties, oidcVerifiableCredentialEncryptionService,
+            oidcVerifiableCredentialDeferredIssuanceService);
+    }
+
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    @ConditionalOnMissingBean(name = OidcVerifiableCredentialDeferredIssuanceService.BEAN_NAME)
+    @Bean
+    public OidcVerifiableCredentialDeferredIssuanceService oidcVerifiableCredentialDeferredIssuanceService(
+        @Qualifier(OidcConfigurationContext.BEAN_NAME) final OidcConfigurationContext oidcConfigurationContext) {
+        return new OidcVerifiableCredentialDefaultDeferredIssuanceService(oidcConfigurationContext);
+    }
+
+    @Bean
+    @ConditionalOnAvailableEndpoint
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    public OidcVerifiableCredentialDeferredIssuanceEndpoint oidcVerifiableCredentialDeferredIssuanceEndpoint(
+        @Qualifier(OidcVerifiableCredentialDeferredIssuanceService.BEAN_NAME)
+        final ObjectProvider<OidcVerifiableCredentialDeferredIssuanceService> oidcVerifiableCredentialDeferredIssuanceService,
+        final CasConfigurationProperties casProperties) {
+        return new OidcVerifiableCredentialDeferredIssuanceEndpoint(casProperties, oidcVerifiableCredentialDeferredIssuanceService);
     }
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -195,9 +219,12 @@ class OidcVerifiableCredentialsIssuerConfiguration {
         @Qualifier(OidcVerifiableCredentialNotificationService.BEAN_NAME)
         final OidcVerifiableCredentialNotificationService oidcVerifiableCredentialNotificationService,
         @Qualifier(OidcVerifiableCredentialEncryptionService.BEAN_NAME)
-        final OidcVerifiableCredentialEncryptionService oidcVerifiableCredentialEncryptionService) {
+        final OidcVerifiableCredentialEncryptionService oidcVerifiableCredentialEncryptionService,
+        @Qualifier(OidcVerifiableCredentialDeferredIssuanceService.BEAN_NAME)
+        final OidcVerifiableCredentialDeferredIssuanceService oidcVerifiableCredentialDeferredIssuanceService) {
         return new OidcVerifiableCredentialEndpointController(oidcConfigurationContext, oidcVerifiableCredentialIssuerService,
-            oidcVerifiableCredentialNotificationService, oidcVerifiableCredentialEncryptionService);
+            oidcVerifiableCredentialNotificationService, oidcVerifiableCredentialEncryptionService,
+            oidcVerifiableCredentialDeferredIssuanceService);
     }
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -216,6 +243,10 @@ class OidcVerifiableCredentialsIssuerConfiguration {
             plan.registerAuditActionResolver(AuditActionResolvers.OIDC_VERIFIABLE_CREDENTIAL_NOTIFICATION_ACTION_RESOLVER,
                 new DefaultAuditActionResolver(AuditTrailConstants.AUDIT_ACTION_POSTFIX_SUCCESS, AuditTrailConstants.AUDIT_ACTION_POSTFIX_FAILED));
             plan.registerAuditResourceResolver(AuditResourceResolvers.OIDC_VERIFIABLE_CREDENTIAL_NOTIFICATION_RESOURCE_RESOLVER,
+                new ShortenedReturnValueAsStringAuditResourceResolver());
+            plan.registerAuditActionResolver(AuditActionResolvers.OIDC_VERIFIABLE_CREDENTIAL_DEFERRED_ISSUANCE_ACTION_RESOLVER,
+                new DefaultAuditActionResolver(AuditTrailConstants.AUDIT_ACTION_POSTFIX_SUCCESS, AuditTrailConstants.AUDIT_ACTION_POSTFIX_FAILED));
+            plan.registerAuditResourceResolver(AuditResourceResolvers.OIDC_VERIFIABLE_CREDENTIAL_DEFERRED_ISSUANCE_RESOURCE_RESOLVER,
                 new ShortenedReturnValueAsStringAuditResourceResolver());
         };
     }

@@ -191,7 +191,7 @@ The response is:
 }
 ```
 
-Errors carry the codes of [OpenID4VCI 1.0 section 8.3.1.2](https://openid.net/specs/openid-4-verifiable-credential-issuance-1_0.html#name-credential-request-errors):
+Errors carry the codes of [OpenID4VCI 1.0 section 8.3.1.2](https://openid.net/specs/openid-4-verifiable-credential-issuance-1_0.html#section-8.3.1.2):
 a `credential_identifier` the token response did not return is `unknown_credential_identifier`, a credential configuration CAS does
 not publish is `unknown_credential_configuration`, one it publishes but will not issue to this client or access token is
 `credential_request_denied`, and a proof that cannot be accepted is `invalid_proof`, or `invalid_nonce` when only its nonce is stale.
@@ -308,6 +308,51 @@ and recorded in the CAS audit log as `OIDC_VERIFIABLE_CREDENTIAL_NOTIFICATION`; 
 A notification id that is unknown, has expired with the access token, or was issued to another client or user is answered with
 `invalid_notification_id`, and a malformed request, an unknown event or an `event_description` with characters outside the
 permitted ASCII set with `invalid_notification_request`.
+
+### Deferred Credential Endpoint
+
+Hands out credentials whose issuance was deferred, as described by
+[OpenID4VCI 1.0 section 9](https://openid.net/specs/openid-4-verifiable-credential-issuance-1_0.html#name-deferred-credential-endpoin).
+A credential configuration opts in with its `deferred-issuance` setting, and the issuer metadata then advertises the endpoint as
+`deferred_credential_endpoint`. A credential request for such a configuration is validated as usual, proofs included, and answered
+with `202`:
+
+```json
+{
+  "transaction_id": "TST-1-...",
+  "interval": 300
+}
+```
+
+The transaction is kept in the ticket registry, bound to the client and the user of the access token, with the holder public keys
+of the validated proofs and nothing else. It stays pending until it is approved or denied through the actuator endpoint below.
+The wallet asks for the credentials with an access token of the same client and user that still authorizes the credential
+configuration, such as the original token or one refreshed from it, waiting at least `interval` seconds between attempts:
+
+```bash
+POST /oidc/oidcVcDeferredCredential
+```
+
+```json
+{
+  "transaction_id": "TST-1-..."
+}
+```
+
+A pending transaction is answered with `202` and the same `transaction_id`. Once approved, the answer is `200` with the
+`credentials` and a `notification_id`, built at that moment from the user's attributes, and the `transaction_id` can no longer be
+used. A denied transaction is answered with `credential_request_denied`. A `transaction_id` that is unknown, expired, already
+used, or was started by another client or user is answered with `invalid_transaction_id`. The request may be encrypted and may
+carry its own `credential_response_encryption`, as at the credential endpoint, whatever the credential request asked for.
+
+The stateless ticket registry cannot keep transactions, so with it credentials of these configurations are issued immediately.
+
+{% include_cached casproperties.html properties="cas.authn.oidc.vc.issuer.deferred-issuance" %}
+
+Pending transactions are listed, approved and denied through an actuator endpoint, and each decision is recorded in the CAS
+audit log as `OIDC_VERIFIABLE_CREDENTIAL_DEFERRED_ISSUANCE`:
+
+{% include_cached actuators.html endpoints="oidcVcDeferred" casModule="cas-server-support-oidc-vc" %}
 
 ### Credential Offer Endpoint
 

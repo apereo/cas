@@ -1,11 +1,13 @@
 package org.apereo.cas.web.report;
 
 import module java.base;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.spring.RestActuatorEndpoint;
 import org.apereo.cas.util.spring.RestActuatorEndpointDiscoverer;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.endpoint.Access;
@@ -33,6 +35,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
         "management.endpoints.web.exposure.exclude=myExcludedEndpoint",
         "cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS"
     }, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@ExtendWith(CasTestExtension.class)
 class RestActuatorEndpointDiscovererTests extends AbstractCasEndpointTests {
 
     @Autowired

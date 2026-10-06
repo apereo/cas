@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.oidc.OidcVerifiableCredentialConfigurationProperties;
 import org.apereo.cas.configuration.model.support.oidc.OidcVerifiableCredentialsIssuerProperties;
 import org.apereo.cas.oidc.OidcConstants;
+import org.apereo.cas.oidc.vc.issuer.deferred.OidcVerifiableCredentialDeferredIssuanceService;
 import org.apereo.cas.oidc.vc.issuer.enc.BaseOidcVerifiableCredentialEncoder;
 import org.apereo.cas.oidc.vc.issuer.encryption.OidcVerifiableCredentialEncryptionService;
 import org.apereo.cas.oidc.vc.issuer.metadata.CredentialConfigurationDisplay.CredentialConfigurationDisplayLogo;
@@ -28,6 +29,8 @@ public class OidcCredentialIssuerMetadataService {
 
     private final OidcVerifiableCredentialEncryptionService encryptionService;
 
+    private final OidcVerifiableCredentialDeferredIssuanceService deferredIssuanceService;
+
     /**
      * Build oidc credential issuer metadata.
      *
@@ -43,6 +46,9 @@ public class OidcCredentialIssuerMetadataService {
         metadata.setCredentialEndpoint(issuer + '/' + OidcConstants.VC_CREDENTIAL_URL);
         metadata.setNonceEndpoint(issuer + '/' + OidcConstants.VC_NONCE_URL);
         metadata.setNotificationEndpoint(issuer + '/' + OidcConstants.VC_NOTIFICATION_URL);
+        if (deferredIssuanceService.isDeferredIssuanceSupported()) {
+            metadata.setDeferredCredentialEndpoint(issuer + '/' + OidcConstants.VC_DEFERRED_CREDENTIAL_URL);
+        }
         metadata.setCredentialRequestEncryption(encryptionService.buildRequestEncryptionMetadata());
         metadata.setCredentialResponseEncryption(encryptionService.buildResponseEncryptionMetadata());
         metadata.setDisplay(buildIssuerDisplays(properties.getVc().getIssuer().getDisplay()));
