@@ -105,6 +105,14 @@ public class OidcServerDiscoverySettings {
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     private Set<String> clientAttestationPopSigningAlgValuesSupported;
 
+    @JsonProperty("challenge_endpoint")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private String challengeEndpoint;
+
+    @JsonProperty("status_list_aggregation_endpoint")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private String statusListAggregationEndpoint;
+
     @JsonProperty("code_challenge_methods_supported")
     private Set<String> codeChallengeMethodsSupported;
 

@@ -5,10 +5,12 @@ import org.apereo.cas.configuration.support.RequiresModule;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
- * Attestation-based client authentication settings ({@code attest_jwt_client_auth}), with which wallets authenticate
- * by a wallet attestation (OpenID4VCI 1.0 Appendix E).
+ * Attestation-based client authentication settings ({@code attest_jwt_client_auth}, and {@code attest_jwt_client_auth_dpop}
+ * where a DPoP proof serves as the proof of possession), with which wallets authenticate by a wallet attestation
+ * (OpenID4VCI 1.0 Appendix E).
  *
  * @author Misagh Moayyed
  * @since 8.1.0
@@ -36,4 +38,10 @@ public class OidcClientAttestationProperties implements Serializable {
      */
     private List<String> signingAlgValuesSupported = Stream.of("ES256", "ES384", "ES512",
         "PS256", "PS384", "PS512", "RS256", "RS384", "RS512").toList();
+
+    /**
+     * Server-provided challenges for client attestation proofs of possession.
+     */
+    @NestedConfigurationProperty
+    private OidcClientAttestationChallengeProperties challenge = new OidcClientAttestationChallengeProperties();
 }

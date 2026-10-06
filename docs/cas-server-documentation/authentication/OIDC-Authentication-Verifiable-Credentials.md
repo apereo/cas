@@ -104,6 +104,46 @@ ones such as `/.well-known/acme-challenge/<token>` untouched.
 
 A wallet that cannot resolve this metadata may not begin issuance at all.
 
+#### Signed Metadata
+
+A wallet that asks for `application/jwt` in its `Accept` header, preferring it at least as much as JSON, receives the
+issuer metadata as a JWT of type `openidvci-issuer-metadata+jwt`, signed with the issuer signing key and carrying its `x5c`
+certificate chain, if any, without the trust anchor, as the
+[High Assurance Interoperability Profile](https://openid.net/specs/openid4vc-high-assurance-interoperability-profile-1_0.html)
+requires. Every metadata parameter is a top-level claim, next to `sub` and `iss`, both set to the credential issuer, `iat`
+and `exp`:
+
+```json
+{
+  "alg": "ES256",
+  "typ": "openidvci-issuer-metadata+jwt",
+  "kid": "cas-vc-signing",
+  "x5c": [
+    "MIIB..."
+  ]
+}
+```
+
+```json
+{
+  "sub": "https://sso.example.org/cas/oidc",
+  "iss": "https://sso.example.org/cas/oidc",
+  "iat": 1791238400,
+  "exp": 1791324800,
+  "credential_issuer": "https://sso.example.org/cas/oidc",
+  "credential_endpoint": "https://sso.example.org/cas/oidc/oidcVcCredential",
+  "credential_configurations_supported": {
+    "UniversityDegree": {
+      "format": "dc+sd-jwt"
+    }
+  }
+}
+```
+
+Other requests receive the unsigned JSON document. How long signed metadata remains valid is controlled in CAS settings:
+
+{% include_cached casproperties.html properties="cas.authn.oidc.vc.metadata" %}
+
 #### Token Endpoint Authentication
 
 The pre-authorized code grant carries no client credentials. CAS authenticates the exchange from
@@ -854,8 +894,27 @@ cache the token for its `ttl`; CAS caches the token it builds for as long, so a 
   "ttl": 600,
   "status_list": {
     "bits": 2,
-    "lst": "eNrtwTEBAAAAwqD1T20ND6AAAAAAAAAAAAAAAAAAAAAAAH4G..."
+    "lst": "eNrtwTEBAAAAwqD1T20ND6AAAAAAAAAAAAAAAAAAAAAAAH4G...",
+    "aggregation_uri": "https://sso.example.org/cas/oidc/oidcVcStatusListAggregation"
   }
+}
+```
+
+Every status list token also names the status list aggregation as its `aggregation_uri`, and the authorization
+server metadata advertises it as `status_list_aggregation_endpoint`. The aggregation lists the URIs of all status lists
+that hold unexpired entries, so a verifier can fetch and cache them ahead of time; it is public and allows
+cross-origin requests as well:
+
+```bash
+GET /oidc/oidcVcStatusListAggregation
+```
+
+```json
+{
+  "status_lists": [
+    "https://sso.example.org/cas/oidc/oidcVcStatusList/1",
+    "https://sso.example.org/cas/oidc/oidcVcStatusList/2"
+  ]
 }
 ```
 

@@ -24,6 +24,8 @@ import org.apereo.cas.oidc.assurance.DefaultAssuranceVerifiedClaimsProducer;
 import org.apereo.cas.oidc.authn.OidcAccessTokenAuthenticator;
 import org.apereo.cas.oidc.authn.OidcCasCallbackUrlResolver;
 import org.apereo.cas.oidc.authn.OidcClientAttestationAuthenticator;
+import org.apereo.cas.oidc.authn.OidcClientAttestationChallengeService;
+import org.apereo.cas.oidc.authn.OidcClientAttestationDefaultChallengeService;
 import org.apereo.cas.oidc.authn.OidcClientConfigurationAccessTokenAuthenticator;
 import org.apereo.cas.oidc.authn.OidcClientIdClientSecretAuthenticator;
 import org.apereo.cas.oidc.authn.OidcJwtAuthenticator;
@@ -657,6 +659,18 @@ class OidcConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = OidcClientAttestationChallengeService.BEAN_NAME)
+        public OidcClientAttestationChallengeService oidcClientAttestationChallengeService(
+            @Qualifier(TicketRegistry.BEAN_NAME)
+            final TicketRegistry ticketRegistry,
+            @Qualifier(TicketFactory.BEAN_NAME)
+            final TicketFactory ticketFactory,
+            final CasConfigurationProperties casProperties) {
+            return new OidcClientAttestationDefaultChallengeService(ticketRegistry, ticketFactory, casProperties);
+        }
+
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "oidcClientAttestationClientProvider")
         public OAuth20AuthenticationClientProvider oidcClientAttestationClientProvider(
             @Qualifier(TicketRegistry.BEAN_NAME)
@@ -669,11 +683,13 @@ class OidcConfiguration {
             @Qualifier(AuditableExecution.AUDITABLE_EXECUTION_REGISTERED_SERVICE_ACCESS)
             final AuditableExecution registeredServiceAccessStrategyEnforcer,
             @Qualifier(OidcServerDiscoverySettings.BEAN_NAME_FACTORY)
-            final OidcServerDiscoverySettings oidcServerDiscoverySettings) {
+            final OidcServerDiscoverySettings oidcServerDiscoverySettings,
+            @Qualifier(OidcClientAttestationChallengeService.BEAN_NAME)
+            final OidcClientAttestationChallengeService oidcClientAttestationChallengeService) {
             return () -> {
                 val authenticator = new OidcClientAttestationAuthenticator(servicesManager,
                     registeredServiceAccessStrategyEnforcer, ticketRegistry, ticketFactory,
-                    casProperties, oidcServerDiscoverySettings);
+                    casProperties, oidcServerDiscoverySettings, oidcClientAttestationChallengeService);
                 val client = new HeaderClient();
                 client.setCredentialsExtractor(new OidcClientAttestationAuthenticator.ClientAttestationCredentialsExtractor());
                 client.setAuthenticator(authenticator);

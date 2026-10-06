@@ -59,4 +59,26 @@ public class OidcVerifiableCredentialStatusListEndpointController extends BaseOA
                 .body(value.getBytes(StandardCharsets.US_ASCII)))
             .orElseGet(() -> ResponseEntity.notFound().build());
     }
+
+    /**
+     * Status list aggregation (draft-ietf-oauth-status-list, section 9): the URIs of the status lists that hold unexpired
+     * entries, so a verifier can fetch and cache all of them. It is advertised as {@code status_list_aggregation_endpoint}
+     * and as the {@code aggregation_uri} of every status list token.
+     *
+     * @return the status list aggregation, or {@code 404} when status lists are not turned on
+     */
+    @GetMapping(value = {
+        '/' + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.VC_STATUS_LIST_AGGREGATION_URL,
+        "/**/" + OidcConstants.VC_STATUS_LIST_AGGREGATION_URL
+    }, produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Get the status list aggregation", description = "Returns the URIs of the published status lists")
+    public ResponseEntity<Map<String, List<String>>> handleAggregation() {
+        if (!getConfigurationContext().getCasProperties().getAuthn().getOidc().getVc().getIssuer().getStatusList().isEnabled()) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok()
+            .contentType(MediaType.APPLICATION_JSON)
+            .header(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, "*")
+            .body(Map.of("status_lists", statusListService.getStatusListUris()));
+    }
 }

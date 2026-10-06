@@ -4,6 +4,7 @@ import module java.base;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.oidc.OidcConstants;
+import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.support.oauth.OAuth20ClientAuthenticationMethods;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
@@ -19,6 +20,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.web.servlet.ResultActions;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -138,5 +140,46 @@ class OAuth20ProofOfPossessionValidatorTests extends AbstractOidcTests {
                 .param(OAuth20Constants.REDIRECT_URI, "https://oauth.example.org")
                 .param(OAuth20Constants.CODE, addCode(principal, registeredService).getId()))
             .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void verifyClientAttestationInDPoPCombinedModeAtTokenEndpoint() throws Throwable {
+        val registeredService = getOidcRegisteredService(UUID.randomUUID().toString());
+        registeredService.setTokenEndpointAuthenticationMethod(OAuth20ClientAuthenticationMethods.ATTEST_JWT_CLIENT_AUTH_DPOP.getType());
+        servicesManager.save(registeredService);
+        val principal = CoreAuthenticationTestUtils.getPrincipal("casuser");
+        val instanceKey = new ECKeyGenerator(Curve.P_256).generate();
+        val attestation = buildClientAttestation(registeredService.getClientId(), instanceKey, false);
+        val tokenUri = new URI("https://sso.example.org/cas/" + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.TOKEN_URL);
+        val dpopProof = new DefaultDPoPProofFactory(instanceKey, JWSAlgorithm.ES256).createDPoPJWT(HttpMethod.POST.name(), tokenUri).serialize();
+
+        performCombinedTokenRequest(registeredService, attestation, dpopProof, addCode(principal, registeredService).getId())
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.token_type").value(OAuth20Constants.TOKEN_TYPE_DPOP));
+        performCombinedTokenRequest(registeredService, attestation, dpopProof, addCode(principal, registeredService).getId())
+            .andExpect(status().isUnauthorized());
+        val otherProof = new DefaultDPoPProofFactory(new ECKeyGenerator(Curve.P_256).generate(), JWSAlgorithm.ES256)
+            .createDPoPJWT(HttpMethod.POST.name(), tokenUri).serialize();
+        performCombinedTokenRequest(registeredService, attestation, otherProof, addCode(principal, registeredService).getId())
+            .andExpect(status().isUnauthorized());
+
+        registeredService.setTokenEndpointAuthenticationMethod(OAuth20ClientAuthenticationMethods.ATTEST_JWT_CLIENT_AUTH.getType());
+        servicesManager.save(registeredService);
+        val freshProof = new DefaultDPoPProofFactory(instanceKey, JWSAlgorithm.ES256).createDPoPJWT(HttpMethod.POST.name(), tokenUri).serialize();
+        performCombinedTokenRequest(registeredService, attestation, freshProof, addCode(principal, registeredService).getId())
+            .andExpect(status().isUnauthorized());
+    }
+
+    private ResultActions performCombinedTokenRequest(final OidcRegisteredService registeredService, final String attestation,
+                                                      final String dpopProof, final String code) throws Exception {
+        return mockMvc.perform(post("/cas/" + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.TOKEN_URL)
+            .with(withHttpRequestProcessor())
+            .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+            .header(OidcClientAttestationAuthenticator.HEADER_CLIENT_ATTESTATION, attestation)
+            .header(OAuth20Constants.DPOP, dpopProof)
+            .param(OAuth20Constants.CLIENT_ID, registeredService.getClientId())
+            .param(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.AUTHORIZATION_CODE.getType())
+            .param(OAuth20Constants.REDIRECT_URI, "https://oauth.example.org")
+            .param(OAuth20Constants.CODE, code));
     }
 }

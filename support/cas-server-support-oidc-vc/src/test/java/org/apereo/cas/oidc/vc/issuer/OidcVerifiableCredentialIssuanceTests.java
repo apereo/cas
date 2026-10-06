@@ -145,6 +145,17 @@ class OidcVerifiableCredentialIssuanceTests extends AbstractOidcTests {
         assertEquals(404, oidcVerifiableCredentialStatusEndpoint.updateStatus("9999", index, "VALID").getStatus());
         mockMvc.perform(get(STATUS_LIST_URL + "/9999").with(withHttpRequestProcessor())).andExpect(status().isNotFound());
         mockMvc.perform(get(STATUS_LIST_URL + "/unknown").with(withHttpRequestProcessor())).andExpect(status().isNotFound());
+
+        val aggregationUri = CREDENTIAL_ISSUER + '/' + OidcConstants.VC_STATUS_LIST_AGGREGATION_URL;
+        mockMvc.perform(get("/cas/" + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.VC_STATUS_LIST_AGGREGATION_URL)
+                .with(withHttpRequestProcessor()))
+            .andExpect(status().isOk())
+            .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+            .andExpect(header().string(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, "*"))
+            .andExpect(jsonPath("$.status_lists[?(@ == '%s')]".formatted(uri)).exists());
+        mockMvc.perform(get("/cas/" + OidcConstants.BASE_OIDC_URL + "/.well-known/openid-configuration").with(withHttpRequestProcessor()))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.status_list_aggregation_endpoint").value(aggregationUri));
     }
 
     private int readStatus(final String statusListId, final long index) throws Exception {
@@ -162,6 +173,7 @@ class OidcVerifiableCredentialIssuanceTests extends AbstractOidcTests {
         assertEquals(600L, claims.getLongClaim("ttl"));
         val statusList = claims.getJSONObjectClaim("status_list");
         assertEquals(2L, ((Number) statusList.get("bits")).longValue());
+        assertEquals(CREDENTIAL_ISSUER + '/' + OidcConstants.VC_STATUS_LIST_AGGREGATION_URL, statusList.get("aggregation_uri"));
         val inflater = new Inflater();
         inflater.setInput(new Base64URL(statusList.get("lst").toString()).decode());
         val statuses = new byte[131_072 / 4];

@@ -4,6 +4,7 @@ import module java.base;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.oidc.OidcConfigurationContext;
 import org.apereo.cas.oidc.OidcConstants;
+import org.apereo.cas.oidc.vc.issuer.OidcVerifiableCredentialSigningUtils;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.Ticket;
@@ -14,16 +15,10 @@ import org.apereo.cas.ticket.expiration.HardTimeoutExpirationPolicy;
 import org.apereo.cas.util.CompressionUtils;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.RandomUtils;
-import org.apereo.cas.util.crypto.CertUtils;
-import org.apereo.cas.util.jwt.JsonWebTokenSigner;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.jose4j.jwk.EllipticCurveJsonWebKey;
-import org.jose4j.jwk.PublicJsonWebKey;
-import org.jose4j.jwk.RsaJsonWebKey;
-import org.jose4j.jws.AlgorithmIdentifiers;
 import org.jose4j.jwt.JwtClaims;
 import org.jose4j.jwt.NumericDate;
 import org.jspecify.annotations.Nullable;
@@ -124,7 +119,8 @@ public class OidcVerifiableCredentialDefaultStatusListService implements OidcVer
         claims.setIssuedAt(issuedAt);
         claims.setExpirationTime(NumericDate.fromSeconds(issuedAt.getValue() + Beans.newDuration(properties.getExpiration()).toSeconds()));
         claims.setClaim("ttl", timeToLive.toSeconds());
-        claims.setClaim("status_list", Map.of("bits", BITS, "lst", EncodingUtils.encodeUrlSafeBase64(CompressionUtils.deflate(statuses, false))));
+        claims.setClaim("status_list", Map.of("bits", BITS, "lst", EncodingUtils.encodeUrlSafeBase64(CompressionUtils.deflate(statuses, false)),
+            "aggregation_uri", toStatusListAggregationUri()));
         val token = sign(claims);
         statusListTokens.put(statusListId, new CachedStatusListToken(token, Instant.now(Clock.systemUTC()).plus(timeToLive)));
         return Optional.of(token);
@@ -144,6 +140,18 @@ public class OidcVerifiableCredentialDefaultStatusListService implements OidcVer
         try (val tickets = configurationContext.getTicketRegistry().getTickets(ticket -> isEntryOf(ticket, null)
             && principal.equals(((TransientSessionTicket) ticket).getProperty(PROPERTY_PRINCIPAL, String.class)))) {
             return tickets.map(ticket -> toEntry((TransientSessionTicket) ticket)).toList();
+        }
+    }
+
+    @Override
+    public List<String> getStatusListUris() {
+        try (val tickets = configurationContext.getTicketRegistry().getTickets(ticket -> isEntryOf(ticket, null))) {
+            return tickets
+                .map(ticket -> Objects.requireNonNull(((TransientSessionTicket) ticket).getProperty(PROPERTY_STATUS_LIST, String.class)))
+                .distinct()
+                .sorted(Comparator.comparingLong(Long::parseLong))
+                .map(this::toStatusListUri)
+                .toList();
         }
     }
 
@@ -188,28 +196,7 @@ public class OidcVerifiableCredentialDefaultStatusListService implements OidcVer
     }
 
     protected String sign(final JwtClaims claims) throws Throwable {
-        val signingKey = Objects.requireNonNull(configurationContext.getIdTokenSigningAndEncryptionService()
-            .getJsonWebKeySigningKey(Optional.empty()), "No signing key is available to sign the status list token");
-        val algorithm = resolveSigningAlgorithm(signingKey);
-        return JsonWebTokenSigner.builder()
-            .key(Objects.requireNonNull(signingKey.getPrivateKey(), "The status list signing key has no private key"))
-            .keyId(signingKey.getKeyId())
-            .algorithm(algorithm)
-            .allowedAlgorithms(Set.of(algorithm))
-            .mediaType("statuslist+jwt")
-            .certificateChain(CertUtils.withoutTrustAnchor(signingKey.getCertificateChain()))
-            .build()
-            .sign(claims);
-    }
-
-    protected static String resolveSigningAlgorithm(final PublicJsonWebKey signingKey) {
-        return switch (signingKey) {
-            case final EllipticCurveJsonWebKey ecKey when "P-384".equals(ecKey.getCurveName()) -> AlgorithmIdentifiers.ECDSA_USING_P384_CURVE_AND_SHA384;
-            case final EllipticCurveJsonWebKey ecKey when "P-521".equals(ecKey.getCurveName()) -> AlgorithmIdentifiers.ECDSA_USING_P521_CURVE_AND_SHA512;
-            case EllipticCurveJsonWebKey _ -> AlgorithmIdentifiers.ECDSA_USING_P256_CURVE_AND_SHA256;
-            case RsaJsonWebKey _ -> AlgorithmIdentifiers.RSA_USING_SHA256;
-            default -> throw new IllegalArgumentException("Status list tokens cannot be signed with a " + signingKey.getKeyType() + " key");
-        };
+        return OidcVerifiableCredentialSigningUtils.sign(configurationContext, claims, "statuslist+jwt");
     }
 
     protected Optional<StatusEntry> findEntry(final String statusListId, final long index) {
@@ -220,6 +207,11 @@ public class OidcVerifiableCredentialDefaultStatusListService implements OidcVer
         return ticket instanceof final TransientSessionTicket entry && !entry.isExpired()
             ? Optional.of(toEntry(entry))
             : Optional.empty();
+    }
+
+    protected String toStatusListAggregationUri() {
+        return configurationContext.getCasProperties().getAuthn().getOidc().getCore().getIssuer()
+            + '/' + OidcConstants.VC_STATUS_LIST_AGGREGATION_URL;
     }
 
     protected String toStatusListUri(final String statusListId) {

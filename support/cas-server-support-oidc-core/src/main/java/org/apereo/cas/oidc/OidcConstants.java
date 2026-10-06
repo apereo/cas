@@ -238,6 +238,11 @@ public interface OidcConstants {
      * Oidc VC status list url path segment.
      */
     String VC_STATUS_LIST_URL = "oidcVcStatusList";
+
+    /**
+     * Oidc VC status list aggregation url path segment.
+     */
+    String VC_STATUS_LIST_AGGREGATION_URL = "oidcVcStatusListAggregation";
     /**
      * Credential error response: the credential request is invalid.
      * OpenID4VCI 1.0 defines its own error codes for the Credential Endpoint; the OAuth codes of the
@@ -289,6 +294,19 @@ public interface OidcConstants {
      * Oidc pushed authorization request url path segment url.
      */
     String PUSHED_AUTHORIZE_URL = "oidcPushAuthorize";
+    /**
+     * Challenge endpoint url path segment, where clients fetch challenges for their client attestation proofs of
+     * possession.
+     */
+    String CLIENT_ATTESTATION_CHALLENGE_URL = "oidcAttestationChallenge";
+    /**
+     * Error response: the client attestation proof of possession does not carry an expected server-provided challenge.
+     */
+    String USE_ATTESTATION_CHALLENGE = "use_attestation_challenge";
+    /**
+     * Response header that carries a fresh challenge for client attestation proofs of possession.
+     */
+    String HEADER_CLIENT_ATTESTATION_CHALLENGE = "OAuth-Client-Attestation-Challenge";
     /**
      * JWKS Endpoint url.
      */

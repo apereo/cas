@@ -186,6 +186,18 @@ async function createPublicKey() {
     assert(statusList.payload.ttl > 0);
     assert(statusList.payload.status_list.bits === 2);
     assert(statusList.payload.status_list.lst !== undefined);
+    assert(statusList.payload.status_list.aggregation_uri === "https://localhost:8443/cas/oidc/oidcVcStatusListAggregation");
+    const aggregation = JSON.parse(await cas.doRequest(statusList.payload.status_list.aggregation_uri, "GET", {}, 200));
+    assert(aggregation.status_lists.includes(decoded.status.status_list.uri));
+
+    const signedMetadata = await cas.doRequest("https://localhost:8443/cas/oidc/.well-known/openid-credential-issuer", "GET", {
+        "Accept": "application/jwt"
+    }, 200);
+    const metadataJwt = await cas.decodeJwt(signedMetadata, true);
+    assert(metadataJwt.header.typ === "openidvci-issuer-metadata+jwt");
+    assert(metadataJwt.payload.sub === "https://localhost:8443/cas/oidc");
+    assert(metadataJwt.payload.credential_endpoint === "https://localhost:8443/cas/oidc/oidcVcCredential");
+    assert(metadataJwt.payload.exp > metadataJwt.payload.iat);
 
     assert(result.notification_id !== undefined);
     const notification = JSON.stringify({

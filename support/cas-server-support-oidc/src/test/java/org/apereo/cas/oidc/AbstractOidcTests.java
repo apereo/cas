@@ -633,6 +633,21 @@ public abstract class AbstractOidcTests {
      * @throws Exception the exception
      */
     protected static String buildClientAttestationProof(final ECKey instanceKey, final String audience) throws Exception {
+        return buildClientAttestationProof(instanceKey, audience, null);
+    }
+
+    /**
+     * Build the proof of possession of a client attestation, signed by the client instance key, with a server-provided
+     * challenge.
+     *
+     * @param instanceKey the client instance key
+     * @param audience    the audience
+     * @param challenge   the challenge, if any
+     * @return the proof of possession
+     * @throws Exception the exception
+     */
+    protected static String buildClientAttestationProof(final ECKey instanceKey, final String audience,
+                                                        final String challenge) throws Exception {
         val header = new JWSHeader.Builder(JWSAlgorithm.ES256)
             .type(new JOSEObjectType("oauth-client-attestation-pop+jwt"))
             .build();
@@ -640,6 +655,7 @@ public abstract class AbstractOidcTests {
             .audience(audience)
             .jwtID(UUID.randomUUID().toString())
             .issueTime(new Date())
+            .claim("challenge", challenge)
             .build();
         val proof = new SignedJWT(header, claims);
         proof.sign(new ECDSASigner(instanceKey));

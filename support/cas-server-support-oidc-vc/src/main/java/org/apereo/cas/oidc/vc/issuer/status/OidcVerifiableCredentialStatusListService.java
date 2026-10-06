@@ -61,6 +61,14 @@ public interface OidcVerifiableCredentialStatusListService {
     List<StatusEntry> getEntries(String principal);
 
     /**
+     * URIs of the status lists that hold unexpired entries, published as the status list aggregation
+     * (draft-ietf-oauth-status-list, section 9).
+     *
+     * @return the status list URIs
+     */
+    List<String> getStatusListUris();
+
+    /**
      * Change the status of an entry.
      *
      * @param statusListId the status list identifier

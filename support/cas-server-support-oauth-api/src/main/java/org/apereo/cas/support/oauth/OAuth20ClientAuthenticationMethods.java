@@ -47,6 +47,12 @@ public enum OAuth20ClientAuthenticationMethods {
     ATTEST_JWT_CLIENT_AUTH("attest_jwt_client_auth"),
 
     /**
+     * Attestation-based client authentication where a DPoP proof made with the attested key serves as the proof of
+     * possession (OAuth 2.0 Attestation-Based Client Authentication, DPoP combined mode).
+     */
+    ATTEST_JWT_CLIENT_AUTH_DPOP("attest_jwt_client_auth_dpop"),
+
+    /**
      * No client authentication at all. Used by public clients that hold no credentials, and by
      * grants that carry their own proof of authorization such as the OpenID4VCI pre-authorized
      * code, where the request is authenticated by the code itself rather than by the client.

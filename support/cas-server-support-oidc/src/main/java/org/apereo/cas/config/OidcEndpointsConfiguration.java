@@ -9,6 +9,7 @@ import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.discovery.CasServerProfileCustomizer;
 import org.apereo.cas.oidc.OidcConfigurationContext;
 import org.apereo.cas.oidc.OidcConstants;
+import org.apereo.cas.oidc.authn.OidcClientAttestationChallengeService;
 import org.apereo.cas.oidc.discovery.OidcServerDiscoverySettings;
 import org.apereo.cas.oidc.discovery.webfinger.OidcWebFingerDiscoveryService;
 import org.apereo.cas.oidc.issuer.OidcIssuerService;
@@ -18,6 +19,7 @@ import org.apereo.cas.oidc.jwks.rotation.OidcJsonWebKeystoreRotationService;
 import org.apereo.cas.oidc.token.ciba.CibaTokenDeliveryHandler;
 import org.apereo.cas.oidc.web.OidcHandlerInterceptorAdapter;
 import org.apereo.cas.oidc.web.OidcLocaleChangeInterceptor;
+import org.apereo.cas.oidc.web.controllers.OidcClientAttestationChallengeEndpointController;
 import org.apereo.cas.oidc.web.controllers.authorize.OidcAuthorizeEndpointController;
 import org.apereo.cas.oidc.web.controllers.authorize.OidcPushedAuthorizeEndpointController;
 import org.apereo.cas.oidc.web.controllers.ciba.OidcCibaController;
@@ -348,6 +350,17 @@ class OidcEndpointsConfiguration {
             @Qualifier(OidcConfigurationContext.BEAN_NAME)
             final OidcConfigurationContext oidcConfigurationContext) {
             return new OidcPushedAuthorizeEndpointController(oidcConfigurationContext);
+        }
+
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @Bean
+        @ConditionalOnMissingBean(name = "oidcClientAttestationChallengeEndpointController")
+        public OidcClientAttestationChallengeEndpointController oidcClientAttestationChallengeEndpointController(
+            @Qualifier(OidcClientAttestationChallengeService.BEAN_NAME)
+            final OidcClientAttestationChallengeService oidcClientAttestationChallengeService,
+            @Qualifier(OidcConfigurationContext.BEAN_NAME)
+            final OidcConfigurationContext oidcConfigurationContext) {
+            return new OidcClientAttestationChallengeEndpointController(oidcConfigurationContext, oidcClientAttestationChallengeService);
         }
 
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

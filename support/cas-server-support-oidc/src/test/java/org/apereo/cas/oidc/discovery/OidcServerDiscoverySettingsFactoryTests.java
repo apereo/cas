@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.oidc.OidcVerifiableCredentialConfigurationProperties;
 import org.apereo.cas.oidc.AbstractOidcTests;
+import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.support.oauth.OAuth20ClientAuthenticationMethods;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import lombok.val;
@@ -73,6 +74,16 @@ class OidcServerDiscoverySettingsFactoryTests extends AbstractOidcTests {
         assertTrue(settings.getClientAttestationSigningAlgValuesSupported().contains("ES256"));
         assertTrue(settings.getClientAttestationPopSigningAlgValuesSupported().contains("ES256"));
         assertTrue(settings.toJson().contains("client_attestation_pop_signing_alg_values_supported"));
+        assertTrue(settings.getTokenEndpointAuthMethodsSupported().contains(OAuth20ClientAuthenticationMethods.ATTEST_JWT_CLIENT_AUTH_DPOP.getType()));
+        assertNull(settings.getChallengeEndpoint());
+        assertNull(settings.getStatusListAggregationEndpoint());
+        assertFalse(settings.toJson().contains("challenge_endpoint"));
+
+        properties.getAuthn().getOidc().getClientAttestation().getChallenge().setEnabled(true);
+        properties.getAuthn().getOidc().getVc().getIssuer().getStatusList().setEnabled(true);
+        val withChallenges = new OidcServerDiscoverySettingsFactory(properties, oidcIssuerService, applicationContext).getObject();
+        assertTrue(withChallenges.getChallengeEndpoint().endsWith('/' + OidcConstants.CLIENT_ATTESTATION_CHALLENGE_URL));
+        assertTrue(withChallenges.getStatusListAggregationEndpoint().endsWith('/' + OidcConstants.VC_STATUS_LIST_AGGREGATION_URL));
     }
 
     @Test

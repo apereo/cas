@@ -314,6 +314,14 @@ and failures were recorded twice. Failed SAML2 ECP authentication attempts, whic
 - Credential configurations may defer issuance (`deferred-issuance`): credential requests are answered with a `transaction_id`,
   an `oidcVcDeferred` actuator endpoint approves or denies the pending transactions, and wallets collect the credentials from the
   new [deferred credential endpoint](../authentication/OIDC-Authentication-Verifiable-Credentials.html), per OpenID4VCI 1.0.
+- Client attestations may be bound to [short-lived challenges](../authentication/OIDC-Authentication-AccessToken-AuthMethods.html)
+  from the new challenge endpoint, advertised as `challenge_endpoint`, once turned on with
+  `cas.authn.oidc.client-attestation.challenge.enabled=true`{: .cas-setting}. With trust anchors set, clients may also use a DPoP proof
+  in place of the attestation proof of possession (`attest_jwt_client_auth_dpop`).
+- Status list tokens carry an `aggregation_uri`, and the new status list aggregation endpoint, advertised as
+  `status_list_aggregation_endpoint`, lists all published status lists.
+- Wallets that ask for `application/jwt` receive the credential issuer metadata as
+  [signed metadata](../authentication/OIDC-Authentication-Verifiable-Credentials.html), per OpenID4VCI 1.0.
 
 ### Stateless Ticket Registry
 
