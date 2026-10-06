@@ -1459,7 +1459,7 @@ function casSettingsLocation(path) {
 }
 
 function casSettingsFlat(value) {
-    return value.toLowerCase().replace(/\[[^\]]*]/g, "").replace(/[^a-z0-9]/g, "");
+    return value.toLowerCase().replace(/\[[^\]]*]/g, "").replace(/(^|[._-])\d+(?=[._-]|$)/g, "$1").replace(/[^a-z0-9]/g, "");
 }
 
 function casSettingsEscape(value) {

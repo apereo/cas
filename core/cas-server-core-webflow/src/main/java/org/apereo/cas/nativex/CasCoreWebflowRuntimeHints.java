@@ -69,7 +69,8 @@ public class CasCoreWebflowRuntimeHints implements CasRuntimeHintsRegistrar {
         registerSerializationHints(hints, findSubclassesOf(FlowExecutionKey.class));
 
         registerReflectionHints(hints, findSubclassesInPackage(MessageContext.class, "org.springframework.binding"));
-        registerReflectionHints(hints, findSubclassesInPackage(ValidationContext.class, "org.springframework.binding"));
+        registerReflectionHints(hints, findSubclassesInPackage(ValidationContext.class,
+            "org.springframework.binding", "org.springframework.webflow"));
         registerReflectionHints(hints, findSubclassesInPackage(RequestContext.class, "org.springframework.webflow"));
         registerReflectionHints(hints, findSubclassesInPackage(FlowSession.class, "org.springframework.webflow"));
         registerReflectionHints(hints, findSubclassesInPackage(ViewFactoryCreator.class, "org.springframework.webflow"));

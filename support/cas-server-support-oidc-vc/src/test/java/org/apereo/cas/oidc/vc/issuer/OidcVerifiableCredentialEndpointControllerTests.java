@@ -489,7 +489,7 @@ class OidcVerifiableCredentialEndpointControllerTests {
         }
 
         @Test
-        void verifyCredentialIssuanceWithResolvedConfigurationId() throws Throwable {
+        void verifyCredentialRequestNamingNoConfigurationIsRejected() throws Throwable {
             val clientId = UUID.randomUUID().toString();
             val registeredService = getOidcRegisteredService(clientId);
             servicesManager.save(registeredService);
@@ -506,8 +506,8 @@ class OidcVerifiableCredentialEndpointControllerTests {
                     .contentType(MediaType.APPLICATION_JSON)
                     .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken.getId())
                     .content(MAPPER.writeValueAsString(request)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.credentials[0].credential").exists());
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error").value(OidcConstants.VC_ERROR_INVALID_CREDENTIAL_REQUEST));
         }
 
         @Test
@@ -1392,7 +1392,7 @@ class OidcVerifiableCredentialEndpointControllerTests {
 
     /**
      * Once the token response has returned credential identifiers, the request must name one with
-     * {@code credential_identifier}; until then it must not use one.
+     * {@code credential_identifier}; until then it must name a {@code credential_configuration_id} instead.
      */
     @Nested
     class CredentialIdentifierTests extends BaseTests {

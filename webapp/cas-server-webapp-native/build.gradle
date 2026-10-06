@@ -181,6 +181,11 @@ plugins.withId("org.graalvm.buildtools.native") {
             args(
                 "--spring.profiles.active=${aotSpringActiveProfiles}",
                 "--spring.main.lazy-initialization=false",
+                // Retain endpoint beans during AOT; runtime configuration still controls access and exposure.
+                "--management.endpoints.access.default=UNRESTRICTED",
+                "--management.endpoint.shutdown.access=UNRESTRICTED",
+                "--management.endpoint.restart.access=UNRESTRICTED",
+                "--management.endpoints.web.exposure.include=*",
                 "--logging.level.org.apereo.cas=info",
                 "--logging.level.org.springframework.core.env=info",
                 "--logging.level.org.springframework.boot=info",

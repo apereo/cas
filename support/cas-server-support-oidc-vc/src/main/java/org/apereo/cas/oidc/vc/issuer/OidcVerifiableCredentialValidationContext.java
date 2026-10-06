@@ -23,8 +23,8 @@ public record OidcVerifiableCredentialValidationContext(
      * Resolve configuration id.
      * <p>
      * A credential identifier issued by CAS is the credential configuration id itself, so either
-     * request parameter resolves to the same configuration. When the wallet supplies neither,
-     * the configuration recorded on the access token at issuance time is used.
+     * request parameter resolves to the same configuration. The credential endpoint has already refused a request that
+     * names neither, as OpenID4VCI 1.0 section 8.2 requires one of them.
      *
      * @return the string
      */
@@ -35,13 +35,7 @@ public record OidcVerifiableCredentialValidationContext(
         if (StringUtils.isNotBlank(credentialRequest.getCredentialConfigurationId())) {
             return credentialRequest.getCredentialConfigurationId();
         }
-        val principal = accessToken.getAuthentication().getPrincipal();
-        val recorded = principal.getAttributes().get("credentialConfigurationIds");
-        if (recorded == null || recorded.isEmpty()) {
-            throw new IllegalArgumentException(
-                "Credential request names no credential configuration and the access token records none");
-        }
-        return recorded.getFirst().toString();
+        throw new IllegalArgumentException("Credential request names no credential configuration");
     }
 
     /**

@@ -90,7 +90,7 @@ The CAS documentation site has received a visual and functional overhaul. Notabl
   example inline. Instructions to enable, expose and secure the endpoint along with related settings and
   troubleshooting notes are shown once per endpoint rather than once per operation, which makes pages considerably lighter.
 - The [configuration properties](../configuration/Configuration-Properties.html) search is rewritten. It matches setting names regardless
-  of how they are written (property names, environment variables or pasted assignments), supports exact name matches,
+  of how they are written (property names, environment variables including indexed ones such as `CAS_AUTHN_LDAP_0_LDAP_URL`, or pasted assignments), supports exact name matches,
   searches names or descriptions, filters CAS or third-party and deprecated settings, and keeps the search in the page address so results can be shared.
 - Pressing <kbd>Shift</kbd> twice on any documentation page opens a quick search for configuration settings.
 - [Feature toggles](../configuration/Configuration-Feature-Toggles.html) are grouped by area and can be searched or filtered
@@ -309,7 +309,8 @@ and failures were recorded twice. Failed SAML2 ECP authentication attempts, whic
   `unknown_credential_configuration` instead of the draft-era `unsupported_credential_type`, and a `credential_identifier` the
   token response did not return is `unknown_credential_identifier` instead of `credential_request_denied`.
 - Once the token response returns `credential_identifiers`, credential requests must use `credential_identifier`, as OpenID4VCI 1.0
-  requires; a `credential_configuration_id` is then refused with `invalid_credential_request`.
+  requires; a `credential_configuration_id` is then refused with `invalid_credential_request`. Otherwise a request must name a
+  `credential_configuration_id`, and no longer falls back to the configuration recorded on the access token.
 
 ### Stateless Ticket Registry
 

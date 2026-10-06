@@ -7,6 +7,7 @@ import org.apereo.cas.oidc.jwks.OidcJsonWebKeyCacheKey;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeyUsage;
 import org.apereo.cas.oidc.vc.issuer.OidcVerifiableCredentialRequest;
 import org.apereo.cas.oidc.vc.issuer.metadata.OidcCredentialIssuerMetadata;
+import org.apereo.cas.util.function.FunctionUtils;
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -105,7 +106,7 @@ public class OidcVerifiableCredentialDefaultEncryptionService implements OidcVer
         try {
             return jwe.getPayload();
         } catch (final Exception e) {
-            LOGGER.debug("Unable to decrypt credential request: [{}]", e.getMessage());
+            LOGGER.debug("Unable to decrypt credential request", e);
             throw OidcVerifiableCredentialEncryptionException.invalidRequest("Encrypted credential request cannot be decrypted");
         }
     }
@@ -131,7 +132,7 @@ public class OidcVerifiableCredentialDefaultEncryptionService implements OidcVer
             val contentEncryption = factory.getJweContentEncryptionAlgorithmFactory().getAlgorithm(encryptionMethod);
             factory.getJweKeyManagementAlgorithmFactory().getAlgorithm(algorithm).validateEncryptionKey(key.getKey(), contentEncryption);
         } catch (final Exception e) {
-            LOGGER.debug("Credential response encryption key cannot be used: [{}]", e.getMessage());
+            LOGGER.debug("Credential response encryption key cannot be used", e);
             throw OidcVerifiableCredentialEncryptionException.invalidParameters(
                 "Credential response encryption key cannot be used with %s".formatted(algorithm));
         }
@@ -144,14 +145,12 @@ public class OidcVerifiableCredentialDefaultEncryptionService implements OidcVer
             val jwe = new JsonWebEncryption();
             jwe.setAlgorithmHeaderValue(key.getAlgorithm());
             jwe.setEncryptionMethodHeaderParameter(parameters.getEnc());
-            if (StringUtils.isNotBlank(key.getKeyId())) {
-                jwe.setKeyIdHeaderValue(key.getKeyId());
-            }
+            FunctionUtils.doIfNotBlank(key.getKeyId(), jwe::setKeyIdHeaderValue);
             jwe.setKey(key.getKey());
             jwe.setPayload(response);
             return jwe.getCompactSerialization();
         } catch (final Exception e) {
-            LOGGER.warn("Unable to encrypt credential response: [{}]", e.getMessage());
+            LOGGER.warn("Unable to encrypt credential response", e);
             throw OidcVerifiableCredentialEncryptionException.invalidParameters("Credential response cannot be encrypted");
         }
     }
@@ -234,7 +233,7 @@ public class OidcVerifiableCredentialDefaultEncryptionService implements OidcVer
             jwe.setCompactSerialization(request);
             return jwe;
         } catch (final Exception e) {
-            LOGGER.debug("Unable to read encrypted credential request: [{}]", e.getMessage());
+            LOGGER.debug("Unable to read encrypted credential request", e);
             throw OidcVerifiableCredentialEncryptionException.invalidRequest("Encrypted credential request is not a JWE");
         }
     }
@@ -243,7 +242,7 @@ public class OidcVerifiableCredentialDefaultEncryptionService implements OidcVer
         try {
             return PublicJsonWebKey.Factory.newPublicJwk(jwk);
         } catch (final Exception e) {
-            LOGGER.debug("Unable to read credential response encryption key: [{}]", e.getMessage());
+            LOGGER.debug("Unable to read credential response encryption key", e);
             throw OidcVerifiableCredentialEncryptionException.invalidParameters("Credential response encryption jwk is invalid");
         }
     }

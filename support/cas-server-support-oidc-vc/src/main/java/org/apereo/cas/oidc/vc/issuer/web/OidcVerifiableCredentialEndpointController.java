@@ -277,8 +277,8 @@ public class OidcVerifiableCredentialEndpointController extends BaseOAuth20Contr
     /**
      * The two request parameters are mutually exclusive, and which one is used depends on the token response, per
      * OpenID4VCI 1.0 section 8.2: once it returned {@code credential_identifiers}, the request must name one with
-     * {@code credential_identifier} and must not use {@code credential_configuration_id}; otherwise a
-     * {@code credential_identifier} must not be used.
+     * {@code credential_identifier} and must not use {@code credential_configuration_id}; otherwise it must name a
+     * {@code credential_configuration_id} and must not use a {@code credential_identifier}.
      *
      * @param request     the credential request
      * @param accessToken the access token
@@ -300,6 +300,10 @@ public class OidcVerifiableCredentialEndpointController extends BaseOAuth20Contr
         if (!hasIdentifier && identifiersReturned) {
             return badRequest(OidcConstants.VC_ERROR_INVALID_CREDENTIAL_REQUEST,
                 "The token response returned credential identifiers, so the request must name one with credential_identifier");
+        }
+        if (!hasIdentifier && !hasConfigurationId) {
+            return badRequest(OidcConstants.VC_ERROR_INVALID_CREDENTIAL_REQUEST,
+                "The credential request must name a credential_configuration_id");
         }
         return null;
     }

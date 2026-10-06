@@ -10,6 +10,7 @@ import org.springframework.aot.hint.RuntimeHints;
 import org.springframework.aot.hint.predicate.RuntimeHintsPredicates;
 import org.springframework.binding.message.DefaultMessageContext;
 import org.springframework.webflow.engine.impl.FlowExecutionImpl;
+import org.springframework.webflow.validation.DefaultValidationContext;
 import static org.junit.jupiter.api.Assertions.*;
 
 
@@ -29,5 +30,6 @@ class CasCoreWebflowRuntimeHintsTests {
         assertTrue(RuntimeHintsPredicates.reflection().onType(ClientFlowExecutionRepository.SerializedFlowExecutionState.class).test(hints));
         assertTrue(RuntimeHintsPredicates.reflection().onType(FlowExecutionImpl.class).test(hints));
         assertTrue(RuntimeHintsPredicates.reflection().onType(DefaultMessageContext.class).test(hints));
+        assertTrue(RuntimeHintsPredicates.reflection().onField(DefaultValidationContext.class, "requestContext").test(hints));
     }
 }
