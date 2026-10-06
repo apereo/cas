@@ -296,6 +296,10 @@ and failures were recorded twice. Failed SAML2 ECP authentication attempts, whic
   status list tokens, keeps entries in the ticket registry, offers an `oidcVcStatus` actuator endpoint to change a credential's
   status, and as a verifier checks the status of its own credentials instead of refusing them. Turn it on with
   `cas.authn.oidc.vc.issuer.status-list.enabled=true`.
+- Credential requests and responses may be [encrypted](../authentication/OIDC-Authentication-Verifiable-Credentials.html) on top
+  of TLS, per OpenID4VCI 1.0: wallets encrypt requests to the encryption keys of the OpenID Connect keystore, published as
+  `credential_request_encryption`, and receive the response encrypted to the key they send in `credential_response_encryption`.
+  Turn it on with `cas.authn.oidc.vc.issuer.encryption.enabled=true`; either direction may also be required.
 
 ### Stateless Ticket Registry
 

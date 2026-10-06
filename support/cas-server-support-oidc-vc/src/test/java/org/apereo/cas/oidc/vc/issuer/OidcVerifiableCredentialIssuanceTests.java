@@ -10,11 +10,26 @@ import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import com.jayway.jsonpath.JsonPath;
+import com.nimbusds.jose.EncryptionMethod;
 import com.nimbusds.jose.JOSEObjectType;
+import com.nimbusds.jose.JWEAlgorithm;
+import com.nimbusds.jose.JWEHeader;
+import com.nimbusds.jose.JWEObject;
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.JWSHeader;
+import com.nimbusds.jose.Payload;
+import com.nimbusds.jose.crypto.ECDHDecrypter;
+import com.nimbusds.jose.crypto.ECDHEncrypter;
+import com.nimbusds.jose.crypto.RSADecrypter;
+import com.nimbusds.jose.crypto.RSAEncrypter;
 import com.nimbusds.jose.crypto.RSASSASigner;
+import com.nimbusds.jose.jwk.Curve;
+import com.nimbusds.jose.jwk.ECKey;
+import com.nimbusds.jose.jwk.JWK;
+import com.nimbusds.jose.jwk.JWKSet;
+import com.nimbusds.jose.jwk.KeyUse;
 import com.nimbusds.jose.jwk.RSAKey;
+import com.nimbusds.jose.jwk.gen.ECKeyGenerator;
 import com.nimbusds.jose.jwk.gen.RSAKeyGenerator;
 import com.nimbusds.jose.util.Base64URL;
 import com.nimbusds.jwt.JWTClaimsSet;
@@ -31,6 +46,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import tools.jackson.databind.ObjectMapper;
 import static org.junit.jupiter.api.Assertions.*;
@@ -74,6 +90,10 @@ class OidcVerifiableCredentialIssuanceTests extends AbstractOidcTests {
     private static final String CREDENTIAL_URL = "/cas/" + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.VC_CREDENTIAL_URL;
 
     private static final String STATUS_LIST_URL = "/cas/" + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.VC_STATUS_LIST_URL;
+
+    private static final String METADATA_URL = "/cas/" + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.WELL_KNOWN_OPENID_CREDENTIAL_ISSUER_URL;
+
+    private static final MediaType APPLICATION_JWT = MediaType.parseMediaType(OidcConstants.CONTENT_TYPE_JWT);
 
     private static final String CREDENTIAL_ISSUER = "https://sso.example.org/cas/oidc";
 
@@ -136,26 +156,233 @@ class OidcVerifiableCredentialIssuanceTests extends AbstractOidcTests {
     }
 
     private static String issueCredential(final MockMvc mockMvc, final String clientId, final String clientSecret) throws Exception {
+        val accessToken = obtainAccessToken(mockMvc, clientId, clientSecret);
+        val credentialResponseBody = mockMvc.perform(post(CREDENTIAL_URL)
+                .with(withHttpRequestProcessor())
+                .contentType(MediaType.APPLICATION_JSON)
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                .content(MAPPER.writeValueAsString(buildCredentialRequest(fetchNonce(mockMvc), null))))
+            .andExpect(status().isOk())
+            .andReturn().getResponse().getContentAsString();
+        return JsonPath.read(credentialResponseBody, "$.credentials[0].credential").toString();
+    }
+
+    private static String obtainAccessToken(final MockMvc mockMvc, final String clientId, final String clientSecret) throws Exception {
         val transaction = createOfferTransaction(mockMvc, clientId, clientSecret, "casuser", List.of("UniversityDegreeCredential"));
         val preAuthorizedCode = fetchPreAuthorizedCode(mockMvc, transaction.transactionId());
         val tokenResponseBody = mockMvc.perform(tokenExchangeRequest(clientId, clientSecret, preAuthorizedCode, transaction.txCode()))
             .andExpect(status().isOk())
             .andReturn().getResponse().getContentAsString();
-        val accessToken = JsonPath.read(tokenResponseBody, "$." + OAuth20Constants.ACCESS_TOKEN).toString();
+        return JsonPath.read(tokenResponseBody, "$." + OAuth20Constants.ACCESS_TOKEN).toString();
+    }
+
+    private static String fetchNonce(final MockMvc mockMvc) throws Exception {
         val nonceResponseBody = mockMvc.perform(post(NONCE_URL).with(withHttpRequestProcessor()).contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
             .andReturn().getResponse().getContentAsString();
+        return JsonPath.read(nonceResponseBody, "$." + OidcConstants.C_NONCE).toString();
+    }
+
+    private static OidcVerifiableCredentialRequest buildCredentialRequest(final String nonce, final JWK responseEncryptionKey,
+                                                                          final String encryptionMethod) throws Exception {
+        val credentialRequest = buildCredentialRequest(nonce, null);
+        val responseEncryption = new OidcVerifiableCredentialRequest.CredentialResponseEncryption();
+        responseEncryption.setJwk(responseEncryptionKey.toPublicJWK().toJSONObject());
+        responseEncryption.setEnc(encryptionMethod);
+        credentialRequest.setCredentialResponseEncryption(responseEncryption);
+        return credentialRequest;
+    }
+
+    private static OidcVerifiableCredentialRequest buildCredentialRequest(final String nonce,
+        final OidcVerifiableCredentialRequest.CredentialResponseEncryption responseEncryption) throws Exception {
         val credentialRequest = new OidcVerifiableCredentialRequest();
         credentialRequest.setCredentialConfigurationId("UniversityDegreeCredential");
-        credentialRequest.setProofs(buildProofs(buildProofJwt(JsonPath.read(nonceResponseBody, "$." + OidcConstants.C_NONCE).toString())));
-        val credentialResponseBody = mockMvc.perform(post(CREDENTIAL_URL)
-                .with(withHttpRequestProcessor())
-                .contentType(MediaType.APPLICATION_JSON)
-                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
-                .content(MAPPER.writeValueAsString(credentialRequest)))
+        credentialRequest.setProofs(buildProofs(buildProofJwt(nonce)));
+        credentialRequest.setCredentialResponseEncryption(responseEncryption);
+        return credentialRequest;
+    }
+
+    private static String encryptRequest(final OidcVerifiableCredentialRequest request, final JWK issuerKey,
+                                         final EncryptionMethod encryptionMethod) throws Exception {
+        val header = new JWEHeader.Builder(JWEAlgorithm.parse(issuerKey.getAlgorithm().getName()), encryptionMethod)
+            .keyID(issuerKey.getKeyID())
+            .build();
+        val jwe = new JWEObject(header, new Payload(MAPPER.writeValueAsString(request)));
+        jwe.encrypt(issuerKey instanceof final ECKey ecKey ? new ECDHEncrypter(ecKey) : new RSAEncrypter((RSAKey) issuerKey));
+        return jwe.serialize();
+    }
+
+    private static JWK generateWalletKey(final JWK issuerKey) throws Exception {
+        if (issuerKey instanceof ECKey) {
+            return new ECKeyGenerator(Curve.P_256).keyID("wallet-ec").algorithm(JWEAlgorithm.ECDH_ES).keyUse(KeyUse.ENCRYPTION).generate();
+        }
+        return new RSAKeyGenerator(2048).keyID("wallet-rsa").algorithm(JWEAlgorithm.RSA_OAEP_256).generate();
+    }
+
+    private static List<JWK> fetchRequestEncryptionKeys(final MockMvc mockMvc) throws Exception {
+        val metadata = mockMvc.perform(get(METADATA_URL).with(withHttpRequestProcessor()))
             .andExpect(status().isOk())
             .andReturn().getResponse().getContentAsString();
-        return JsonPath.read(credentialResponseBody, "$.credentials[0].credential").toString();
+        val jwks = JsonPath.<Map<String, Object>>read(metadata, "$.credential_request_encryption.jwks");
+        return JWKSet.parse(jwks).getKeys();
+    }
+
+    private static ResultActions postCredentialRequest(final MockMvc mockMvc, final String accessToken,
+                                                       final MediaType contentType, final String body) throws Exception {
+        return mockMvc.perform(post(CREDENTIAL_URL)
+            .with(withHttpRequestProcessor())
+            .contentType(contentType)
+            .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+            .content(body));
+    }
+
+    @Test
+    void verifyEncryptionIsRefusedWhenNotEnabled() throws Exception {
+        val registeredService = getOidcRegisteredService(UUID.randomUUID().toString());
+        servicesManager.save(registeredService);
+        val accessToken = obtainAccessToken(mockMvc, registeredService.getClientId(), registeredService.getClientSecrets().getFirst().getValue());
+        mockMvc.perform(get(METADATA_URL).with(withHttpRequestProcessor()))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.credential_request_encryption").doesNotExist())
+            .andExpect(jsonPath("$.credential_response_encryption").doesNotExist());
+        postCredentialRequest(mockMvc, accessToken, APPLICATION_JWT, "eyJhbGciOiJFQ0RILUVTIn0.a.b.c.d")
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.error").value(OidcConstants.VC_ERROR_INVALID_CREDENTIAL_REQUEST));
+        val walletKey = new ECKeyGenerator(Curve.P_256).algorithm(JWEAlgorithm.ECDH_ES).generate();
+        postCredentialRequest(mockMvc, accessToken, MediaType.APPLICATION_JSON,
+            MAPPER.writeValueAsString(buildCredentialRequest(fetchNonce(mockMvc), walletKey, "A128GCM")))
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.error").value(OidcConstants.VC_ERROR_INVALID_ENCRYPTION_PARAMETERS));
+    }
+
+    /**
+     * Encryption is offered but not required: the request is encrypted to a key from the issuer metadata, and the
+     * response comes back encrypted to the key the wallet sent with it.
+     */
+    @Nested
+    @ImportAutoConfiguration(CasOidcVerifiableCredentialsAutoConfiguration.class)
+    @TestPropertySource(properties = {
+        "cas.authn.oidc.vc.issuer.credential-configurations.UniversityDegreeCredential.format=DC_SD_JWT",
+        "cas.authn.oidc.vc.issuer.credential-configurations.UniversityDegreeCredential.scope=UniversityDegree",
+        "management.endpoints.web.exposure.include=oidcVcStatus",
+        "management.endpoint.oidcVcStatus.access=UNRESTRICTED",
+        "cas.authn.oidc.vc.issuer.encryption.enabled=true",
+        "cas.authn.oidc.jwks.file-system.jwks-file=classpath:vc-encryption.jwks"
+    })
+    class EncryptionTests extends AbstractOidcTests {
+        @Test
+        void verifyEncryptedRequestAndResponse() throws Exception {
+            mockMvc.perform(get(METADATA_URL).with(withHttpRequestProcessor()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.credential_request_encryption.jwks.keys.length()").value(2))
+                .andExpect(jsonPath("$.credential_request_encryption.jwks.keys[0].alg").value("RSA-OAEP-256"))
+                .andExpect(jsonPath("$.credential_request_encryption.jwks.keys[0].use").value("enc"))
+                .andExpect(jsonPath("$.credential_request_encryption.jwks.keys[0].d").doesNotExist())
+                .andExpect(jsonPath("$.credential_request_encryption.jwks.keys[1].alg").value("ECDH-ES"))
+                .andExpect(jsonPath("$.credential_request_encryption.jwks.keys[1].d").doesNotExist())
+                .andExpect(jsonPath("$.credential_request_encryption.enc_values_supported[1]").value("A256GCM"))
+                .andExpect(jsonPath("$.credential_request_encryption.encryption_required").value(false))
+                .andExpect(jsonPath("$.credential_request_encryption.zip_values_supported").doesNotExist())
+                .andExpect(jsonPath("$.credential_response_encryption.alg_values_supported[0]").value("ECDH-ES"))
+                .andExpect(jsonPath("$.credential_response_encryption.alg_values_supported[1]").value("RSA-OAEP-256"))
+                .andExpect(jsonPath("$.credential_response_encryption.encryption_required").value(false));
+
+            val registeredService = getOidcRegisteredService(UUID.randomUUID().toString());
+            servicesManager.save(registeredService);
+            val accessToken = obtainAccessToken(mockMvc, registeredService.getClientId(), registeredService.getClientSecrets().getFirst().getValue());
+            for (val issuerKey : fetchRequestEncryptionKeys(mockMvc)) {
+                val walletKey = generateWalletKey(issuerKey);
+                val request = buildCredentialRequest(fetchNonce(mockMvc), walletKey, "A256GCM");
+                val response = postCredentialRequest(mockMvc, accessToken, APPLICATION_JWT, encryptRequest(request, issuerKey, EncryptionMethod.A128GCM))
+                    .andExpect(status().isOk())
+                    .andExpect(content().contentTypeCompatibleWith(APPLICATION_JWT))
+                    .andReturn().getResponse().getContentAsString();
+                val jwe = JWEObject.parse(response);
+                assertEquals(walletKey.getKeyID(), jwe.getHeader().getKeyID());
+                assertEquals(walletKey.getAlgorithm().getName(), jwe.getHeader().getAlgorithm().getName());
+                assertEquals(EncryptionMethod.A256GCM, jwe.getHeader().getEncryptionMethod());
+                jwe.decrypt(walletKey instanceof final ECKey ecKey ? new ECDHDecrypter(ecKey) : new RSADecrypter((RSAKey) walletKey));
+                val payload = jwe.getPayload().toString();
+                assertTrue(JsonPath.read(payload, "$.credentials[0].credential").toString().contains("~"));
+                assertNotNull(JsonPath.read(payload, "$.notification_id"));
+            }
+        }
+
+        @Test
+        void verifyEncryptionParametersAreChecked() throws Exception {
+            val registeredService = getOidcRegisteredService(UUID.randomUUID().toString());
+            servicesManager.save(registeredService);
+            val accessToken = obtainAccessToken(mockMvc, registeredService.getClientId(), registeredService.getClientSecrets().getFirst().getValue());
+            val issuerKey = fetchRequestEncryptionKeys(mockMvc).getLast();
+            val nonce = fetchNonce(mockMvc);
+            val walletKey = new ECKeyGenerator(Curve.P_256).algorithm(JWEAlgorithm.ECDH_ES).generate();
+
+            postCredentialRequest(mockMvc, accessToken, MediaType.APPLICATION_JSON,
+                MAPPER.writeValueAsString(buildCredentialRequest(nonce, walletKey, "A128GCM")))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.error").value(OidcConstants.VC_ERROR_INVALID_ENCRYPTION_PARAMETERS));
+
+            val invalidRequests = List.of(
+                buildCredentialRequest(nonce, new ECKeyGenerator(Curve.P_256).generate(), "A128GCM"),
+                buildCredentialRequest(nonce, walletKey, "A128CBC-HS256"),
+                buildCredentialRequest(nonce, new RSAKeyGenerator(2048).algorithm(JWEAlgorithm.ECDH_ES).generate(), "A128GCM"),
+                buildCredentialRequest(nonce, walletKey, "A128GCM"));
+            invalidRequests.getLast().getCredentialResponseEncryption().setZip("DEF");
+            for (val request : invalidRequests) {
+                postCredentialRequest(mockMvc, accessToken, APPLICATION_JWT, encryptRequest(request, issuerKey, EncryptionMethod.A128GCM))
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.error").value(OidcConstants.VC_ERROR_INVALID_ENCRYPTION_PARAMETERS));
+            }
+
+            val unknownKey = new ECKey.Builder((ECKey) issuerKey).keyID("unknown").build();
+            for (val body : List.of(encryptRequest(buildCredentialRequest(nonce, null), unknownKey, EncryptionMethod.A128GCM),
+                encryptRequest(buildCredentialRequest(nonce, null), issuerKey, EncryptionMethod.A128CBC_HS256),
+                "not-a-jwe")) {
+                postCredentialRequest(mockMvc, accessToken, APPLICATION_JWT, body)
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.error").value(OidcConstants.VC_ERROR_INVALID_CREDENTIAL_REQUEST));
+            }
+
+            postCredentialRequest(mockMvc, accessToken, APPLICATION_JWT,
+                    encryptRequest(buildCredentialRequest(nonce, null), issuerKey, EncryptionMethod.A256GCM))
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.credentials[0].credential").exists());
+        }
+    }
+
+    @Nested
+    @ImportAutoConfiguration(CasOidcVerifiableCredentialsAutoConfiguration.class)
+    @TestPropertySource(properties = {
+        "cas.authn.oidc.vc.issuer.credential-configurations.UniversityDegreeCredential.format=DC_SD_JWT",
+        "cas.authn.oidc.vc.issuer.credential-configurations.UniversityDegreeCredential.scope=UniversityDegree",
+        "management.endpoints.web.exposure.include=oidcVcStatus",
+        "management.endpoint.oidcVcStatus.access=UNRESTRICTED",
+        "cas.authn.oidc.vc.issuer.encryption.enabled=true",
+        "cas.authn.oidc.vc.issuer.encryption.request-encryption-required=true",
+        "cas.authn.oidc.vc.issuer.encryption.response-encryption-required=true",
+        "cas.authn.oidc.jwks.file-system.jwks-file=classpath:vc-encryption.jwks"
+    })
+    class EncryptionRequiredTests extends AbstractOidcTests {
+        @Test
+        void verifyEncryptionIsRequired() throws Exception {
+            mockMvc.perform(get(METADATA_URL).with(withHttpRequestProcessor()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.credential_request_encryption.encryption_required").value(true))
+                .andExpect(jsonPath("$.credential_response_encryption.encryption_required").value(true));
+            val registeredService = getOidcRegisteredService(UUID.randomUUID().toString());
+            servicesManager.save(registeredService);
+            val accessToken = obtainAccessToken(mockMvc, registeredService.getClientId(), registeredService.getClientSecrets().getFirst().getValue());
+            val request = buildCredentialRequest(fetchNonce(mockMvc), null);
+            postCredentialRequest(mockMvc, accessToken, MediaType.APPLICATION_JSON, MAPPER.writeValueAsString(request))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error").value(OidcConstants.VC_ERROR_INVALID_CREDENTIAL_REQUEST));
+            postCredentialRequest(mockMvc, accessToken, APPLICATION_JWT,
+                    encryptRequest(request, fetchRequestEncryptionKeys(mockMvc).getFirst(), EncryptionMethod.A128GCM))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error").value(OidcConstants.VC_ERROR_INVALID_ENCRYPTION_PARAMETERS));
+        }
     }
 
     @Test

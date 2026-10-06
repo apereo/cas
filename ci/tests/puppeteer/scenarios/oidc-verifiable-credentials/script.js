@@ -3,6 +3,7 @@ const assert = require("assert");
 const fs = require("fs");
 const path = require("path");
 const jwkToPem = require("jwk-to-pem");
+const jose = require("jose");
 
 const key = JSON.parse(fs.readFileSync(path.join(__dirname, "/keystore.json"))).keys[0];
 const privateKey = jwkToPem(key, {private: true});
@@ -198,4 +199,51 @@ async function createPublicKey() {
     await cas.doRequest("https://localhost:8443/cas/oidc/oidcVcNotification", "POST", notificationHeaders, 204, notification);
     await cas.doRequest("https://localhost:8443/cas/oidc/oidcVcNotification", "POST", notificationHeaders, 400,
         JSON.stringify({notification_id: "unknown", event: "credential_accepted"}));
+
+    await verifyEncryptedIssuance(url, accessToken);
 })();
+
+async function verifyEncryptedIssuance(url, accessToken) {
+    const metadata = await cas.doGet("https://localhost:8443/cas/oidc/.well-known/openid-credential-issuer",
+        (res) => res.data, (error) => {
+            throw `Operation failed ${error}`;
+        });
+    assert(metadata.credential_request_encryption.jwks.keys.length > 0);
+    assert(metadata.credential_request_encryption.encryption_required === false);
+    assert(metadata.credential_response_encryption.alg_values_supported.includes("ECDH-ES"));
+    assert(metadata.credential_response_encryption.enc_values_supported.includes("A256GCM"));
+    const issuerKey = metadata.credential_request_encryption.jwks.keys[0];
+    assert(issuerKey.kid !== undefined && issuerKey.alg !== undefined && issuerKey.d === undefined);
+
+    const walletKeys = await jose.generateKeyPair("ECDH-ES", {crv: "P-256", extractable: true});
+    const walletJwk = {...await jose.exportJWK(walletKeys.publicKey), alg: "ECDH-ES", kid: "wallet"};
+    const credentialRequest = {
+        credential_configuration_id: "myorg",
+        proofs: {
+            jwt: [await createPublicKey()]
+        },
+        credential_response_encryption: {
+            jwk: walletJwk,
+            enc: "A256GCM"
+        }
+    };
+    await cas.doRequest(url, "POST", {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${accessToken}`
+    }, 400, JSON.stringify(credentialRequest));
+
+    const encryptedRequest = await new jose.CompactEncrypt(new TextEncoder().encode(JSON.stringify(credentialRequest)))
+        .setProtectedHeader({alg: issuerKey.alg, enc: "A128GCM", kid: issuerKey.kid})
+        .encrypt(await jose.importJWK(issuerKey, issuerKey.alg));
+    const encryptedResponse = await cas.doRequest(url, "POST", {
+        "Content-Type": "application/jwt",
+        "Authorization": `Bearer ${accessToken}`
+    }, 200, encryptedRequest);
+    const {plaintext, protectedHeader} = await jose.compactDecrypt(encryptedResponse, walletKeys.privateKey);
+    assert(protectedHeader.kid === "wallet");
+    assert(protectedHeader.enc === "A256GCM");
+    const result = JSON.parse(new TextDecoder().decode(plaintext));
+    await cas.log(result);
+    assert(result.credentials.length === 1);
+    assert(result.notification_id !== undefined);
+}

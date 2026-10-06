@@ -6,6 +6,7 @@ import org.apereo.cas.configuration.model.support.oidc.OidcVerifiableCredentialC
 import org.apereo.cas.configuration.model.support.oidc.OidcVerifiableCredentialsIssuerProperties;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.vc.issuer.enc.BaseOidcVerifiableCredentialEncoder;
+import org.apereo.cas.oidc.vc.issuer.encryption.OidcVerifiableCredentialEncryptionService;
 import org.apereo.cas.oidc.vc.issuer.metadata.CredentialConfigurationDisplay.CredentialConfigurationDisplayLogo;
 import org.apereo.cas.oidc.vc.issuer.metadata.OidcCredentialConfigurationTypeMetadata.ClaimMetadata;
 import org.apereo.cas.oidc.vc.issuer.metadata.OidcCredentialIssuerMetadata.ClaimMetadata.ClaimDisplay;
@@ -25,6 +26,8 @@ import org.jspecify.annotations.Nullable;
 public class OidcCredentialIssuerMetadataService {
     private final CasConfigurationProperties casProperties;
 
+    private final OidcVerifiableCredentialEncryptionService encryptionService;
+
     /**
      * Build oidc credential issuer metadata.
      *
@@ -40,6 +43,8 @@ public class OidcCredentialIssuerMetadataService {
         metadata.setCredentialEndpoint(issuer + '/' + OidcConstants.VC_CREDENTIAL_URL);
         metadata.setNonceEndpoint(issuer + '/' + OidcConstants.VC_NONCE_URL);
         metadata.setNotificationEndpoint(issuer + '/' + OidcConstants.VC_NOTIFICATION_URL);
+        metadata.setCredentialRequestEncryption(encryptionService.buildRequestEncryptionMetadata());
+        metadata.setCredentialResponseEncryption(encryptionService.buildResponseEncryptionMetadata());
         metadata.setDisplay(buildIssuerDisplays(properties.getVc().getIssuer().getDisplay()));
         metadata.setBatchCredentialIssuance(OidcCredentialIssuerMetadata.BatchCredentialIssuance
             .builder()

@@ -39,6 +39,12 @@ public class OidcVerifiableCredentialsIssuerProperties implements Serializable {
     private OidcVerifiableCredentialStatusListProperties statusList = new OidcVerifiableCredentialStatusListProperties();
 
     /**
+     * Encryption of credential requests and responses, on top of TLS.
+     */
+    @NestedConfigurationProperty
+    private OidcVerifiableCredentialEncryptionProperties encryption = new OidcVerifiableCredentialEncryptionProperties();
+
+    /**
      * Supported credential configurations keyed by identifier.
      */
     private Map<String, OidcVerifiableCredentialConfigurationProperties> credentialConfigurations = new LinkedHashMap<>();

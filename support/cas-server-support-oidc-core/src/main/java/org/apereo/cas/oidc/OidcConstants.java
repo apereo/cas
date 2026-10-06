@@ -240,13 +240,14 @@ public interface OidcConstants {
      */
     String VC_ERROR_INVALID_CREDENTIAL_REQUEST = "invalid_credential_request";
     /**
-     * Credential error response: the issuer does not support the requested credential type.
+     * Credential error response: the requested {@code credential_configuration_id} is unknown to the issuer.
      */
-    String VC_ERROR_UNSUPPORTED_CREDENTIAL_TYPE = "unsupported_credential_type";
+    String VC_ERROR_UNKNOWN_CREDENTIAL_CONFIGURATION = "unknown_credential_configuration";
     /**
-     * Credential error response: the issuer does not support the requested credential format.
+     * Credential error response: the requested {@code credential_identifier} is unknown, that is, not among the
+     * credential identifiers the token response returned.
      */
-    String VC_ERROR_UNSUPPORTED_CREDENTIAL_FORMAT = "unsupported_credential_format";
+    String VC_ERROR_UNKNOWN_CREDENTIAL_IDENTIFIER = "unknown_credential_identifier";
     /**
      * Credential error response: the proof in the credential request is invalid.
      */
@@ -261,6 +262,11 @@ public interface OidcConstants {
      * Credential error response: the issuer denies issuance of the requested credential.
      */
     String VC_ERROR_CREDENTIAL_REQUEST_DENIED = "credential_request_denied";
+    /**
+     * Credential error response: the {@code credential_response_encryption} parameters are invalid, or missing while
+     * the issuer requires encrypted responses.
+     */
+    String VC_ERROR_INVALID_ENCRYPTION_PARAMETERS = "invalid_encryption_parameters";
     /**
      * Notification error response: the {@code notification_id} is unknown, expired or not the caller's.
      */

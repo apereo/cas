@@ -190,6 +190,87 @@ The response is:
 }
 ```
 
+Errors carry the codes of [OpenID4VCI 1.0 section 8.3.1.2](https://openid.net/specs/openid-4-verifiable-credential-issuance-1_0.html#name-credential-request-errors):
+a `credential_identifier` the token response did not return is `unknown_credential_identifier`, a credential configuration CAS does
+not publish is `unknown_credential_configuration`, one it publishes but will not issue to this client or access token is
+`credential_request_denied`, and a proof that cannot be accepted is `invalid_proof`, or `invalid_nonce` when only its nonce is stale.
+
+#### Encrypted Requests and Responses
+
+Credential requests and responses may be encrypted on top of TLS, as described by
+[OpenID4VCI 1.0 section 10](https://openid.net/specs/openid-4-verifiable-credential-issuance-1_0.html#name-encrypted-credential-reques).
+Once turned on in CAS settings, the issuer metadata advertises both directions:
+
+```json
+{
+  "credential_request_encryption": {
+    "jwks": {
+      "keys": [
+        {
+          "kty": "RSA",
+          "kid": "cas-4bKkzQdW",
+          "use": "enc",
+          "alg": "RSA-OAEP-256",
+          "n": "sLx5PUdqNoSl...",
+          "e": "AQAB"
+        }
+      ]
+    },
+    "enc_values_supported": [
+      "A128GCM",
+      "A256GCM"
+    ],
+    "encryption_required": false
+  },
+  "credential_response_encryption": {
+    "alg_values_supported": [
+      "ECDH-ES",
+      "RSA-OAEP-256"
+    ],
+    "enc_values_supported": [
+      "A128GCM",
+      "A256GCM"
+    ],
+    "encryption_required": false
+  }
+}
+```
+
+Requests are encrypted to the current encryption keys of the CAS OpenID Connect keystore: an RSA key is published for
+`RSA-OAEP-256` and an elliptic curve key for `ECDH-ES`. An encrypted request is sent as `application/jwt`, a JWE whose payload
+is the credential request and whose `kid` header names the key. To receive an encrypted response, the wallet adds the key to
+encrypt it to, with its `alg`, and the content encryption algorithm:
+
+```json
+{
+  "credential_configuration_id": "myorg",
+  "proofs": {
+    "jwt": [
+      "eyJ0eXAiOiJvcGVuaWQ0dmNpL..."
+    ]
+  },
+  "credential_response_encryption": {
+    "jwk": {
+      "kty": "EC",
+      "crv": "P-256",
+      "kid": "wallet",
+      "alg": "ECDH-ES",
+      "x": "N5rsOYN3J44MRbUT...",
+      "y": "IZKX5LyZlKGTHHE8..."
+    },
+    "enc": "A256GCM"
+  }
+}
+```
+
+A request asking for an encrypted response must itself be encrypted, so that the response key cannot be swapped on the way.
+The response is then returned as `application/jwt`, encrypted to that key and carrying its `kid`; error responses are never
+encrypted. Parameters that cannot be used, compression (`zip`) which CAS does not support, or a missing
+`credential_response_encryption` when encrypted responses are required are answered with `invalid_encryption_parameters`; a
+request that cannot be decrypted, or a plain request when encrypted requests are required, with `invalid_credential_request`.
+
+{% include_cached casproperties.html properties="cas.authn.oidc.vc.issuer.encryption" %}
+
 ### Nonce Endpoint
 
 Produces a fresh c_nonce that may be used by the wallet in a later proof for the

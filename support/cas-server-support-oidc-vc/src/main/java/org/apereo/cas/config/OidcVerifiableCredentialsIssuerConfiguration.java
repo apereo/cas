@@ -7,6 +7,7 @@ import org.apereo.cas.audit.AuditTrailConstants;
 import org.apereo.cas.audit.AuditTrailRecordResolutionPlanConfigurer;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.oidc.OidcConfigurationContext;
+import org.apereo.cas.oidc.jwks.OidcJsonWebKeyCacheKey;
 import org.apereo.cas.oidc.vc.issuer.OidcDefaultVerifiableCredentialIssuerService;
 import org.apereo.cas.oidc.vc.issuer.OidcVerifiableCredentialIssuerService;
 import org.apereo.cas.oidc.vc.issuer.enc.OidcVerifiableCredentialDcSdJwtEncoder;
@@ -14,6 +15,8 @@ import org.apereo.cas.oidc.vc.issuer.enc.OidcVerifiableCredentialEncoder;
 import org.apereo.cas.oidc.vc.issuer.enc.OidcVerifiableCredentialEncoderFactory;
 import org.apereo.cas.oidc.vc.issuer.enc.OidcVerifiableCredentialJwtVcJsonEncoder;
 import org.apereo.cas.oidc.vc.issuer.enc.OidcVerifiableCredentialJwtVcJsonLdEncoder;
+import org.apereo.cas.oidc.vc.issuer.encryption.OidcVerifiableCredentialDefaultEncryptionService;
+import org.apereo.cas.oidc.vc.issuer.encryption.OidcVerifiableCredentialEncryptionService;
 import org.apereo.cas.oidc.vc.issuer.metadata.OidcCredentialIssuerMetadataService;
 import org.apereo.cas.oidc.vc.issuer.nonce.OidcVerifiableCredentialDefaultNonceService;
 import org.apereo.cas.oidc.vc.issuer.nonce.OidcVerifiableCredentialNonceService;
@@ -31,9 +34,11 @@ import org.apereo.cas.oidc.vc.issuer.web.OidcVerifiableCredentialNonceEndpointCo
 import org.apereo.cas.oidc.vc.issuer.web.OidcVerifiableCredentialStatusListEndpointController;
 import org.apereo.cas.oidc.vc.issuer.web.OidcVerifiableCredentialTypeMetadataController;
 import org.apereo.cas.oidc.vc.token.OidcVerifiableCredentialsAccessTokenGeneratorCustomizer;
+import com.github.benmanes.caffeine.cache.LoadingCache;
 import lombok.val;
 import org.apereo.inspektr.audit.spi.support.DefaultAuditActionResolver;
 import org.apereo.inspektr.audit.spi.support.ShortenedReturnValueAsStringAuditResourceResolver;
+import org.jose4j.jwk.JsonWebKeySet;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
@@ -122,8 +127,20 @@ class OidcVerifiableCredentialsIssuerConfiguration {
     @ConditionalOnMissingBean(name = "oidcCredentialIssuerMetadataService")
     @Bean
     public OidcCredentialIssuerMetadataService oidcCredentialIssuerMetadataService(
+        @Qualifier(OidcVerifiableCredentialEncryptionService.BEAN_NAME)
+        final OidcVerifiableCredentialEncryptionService oidcVerifiableCredentialEncryptionService,
         final CasConfigurationProperties casProperties) {
-        return new OidcCredentialIssuerMetadataService(casProperties);
+        return new OidcCredentialIssuerMetadataService(casProperties, oidcVerifiableCredentialEncryptionService);
+    }
+
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    @ConditionalOnMissingBean(name = OidcVerifiableCredentialEncryptionService.BEAN_NAME)
+    @Bean
+    public OidcVerifiableCredentialEncryptionService oidcVerifiableCredentialEncryptionService(
+        @Qualifier(OidcConfigurationContext.BEAN_NAME) final OidcConfigurationContext oidcConfigurationContext,
+        @Qualifier("oidcDefaultJsonWebKeystoreCache")
+        final LoadingCache<OidcJsonWebKeyCacheKey, JsonWebKeySet> oidcDefaultJsonWebKeystoreCache) {
+        return new OidcVerifiableCredentialDefaultEncryptionService(oidcConfigurationContext, oidcDefaultJsonWebKeystoreCache);
     }
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -176,9 +193,11 @@ class OidcVerifiableCredentialsIssuerConfiguration {
         @Qualifier("oidcVerifiableCredentialIssuerService")
         final OidcVerifiableCredentialIssuerService oidcVerifiableCredentialIssuerService,
         @Qualifier(OidcVerifiableCredentialNotificationService.BEAN_NAME)
-        final OidcVerifiableCredentialNotificationService oidcVerifiableCredentialNotificationService) {
-        return new OidcVerifiableCredentialEndpointController(
-            oidcConfigurationContext, oidcVerifiableCredentialIssuerService, oidcVerifiableCredentialNotificationService);
+        final OidcVerifiableCredentialNotificationService oidcVerifiableCredentialNotificationService,
+        @Qualifier(OidcVerifiableCredentialEncryptionService.BEAN_NAME)
+        final OidcVerifiableCredentialEncryptionService oidcVerifiableCredentialEncryptionService) {
+        return new OidcVerifiableCredentialEndpointController(oidcConfigurationContext, oidcVerifiableCredentialIssuerService,
+            oidcVerifiableCredentialNotificationService, oidcVerifiableCredentialEncryptionService);
     }
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

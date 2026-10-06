@@ -8,6 +8,8 @@ import org.apereo.cas.oidc.vc.issuer.OidcVerifiableCredentialIssuerService;
 import org.apereo.cas.oidc.vc.issuer.OidcVerifiableCredentialRequest;
 import org.apereo.cas.oidc.vc.issuer.OidcVerifiableCredentialResponse;
 import org.apereo.cas.oidc.vc.issuer.OidcVerifiableCredentialValidationContext;
+import org.apereo.cas.oidc.vc.issuer.encryption.OidcVerifiableCredentialEncryptionException;
+import org.apereo.cas.oidc.vc.issuer.encryption.OidcVerifiableCredentialEncryptionService;
 import org.apereo.cas.oidc.vc.issuer.notification.OidcVerifiableCredentialNotificationService;
 import org.apereo.cas.oidc.vc.issuer.proof.OidcVerifiableCredentialProofException;
 import org.apereo.cas.oidc.vc.services.OidcVerifiableCredentialPolicyUtils;
@@ -54,7 +56,7 @@ import jakarta.servlet.http.HttpServletResponse;
 @Tag(name = "OpenID Connect")
 @Slf4j
 public class OidcVerifiableCredentialEndpointController extends BaseOAuth20Controller<OidcConfigurationContext> {
-    private static final ObjectMapper NOTIFICATION_MAPPER = JacksonObjectMapperFactory.builder()
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(false)
         .minimal(true)
         .strictDuplicateDetection(true)
@@ -67,19 +69,23 @@ public class OidcVerifiableCredentialEndpointController extends BaseOAuth20Contr
 
     protected final OidcVerifiableCredentialNotificationService notificationService;
 
+    protected final OidcVerifiableCredentialEncryptionService encryptionService;
+
     public OidcVerifiableCredentialEndpointController(
         final OidcConfigurationContext configurationContext,
         final OidcVerifiableCredentialIssuerService credentialIssuerService,
-        final OidcVerifiableCredentialNotificationService notificationService) {
+        final OidcVerifiableCredentialNotificationService notificationService,
+        final OidcVerifiableCredentialEncryptionService encryptionService) {
         super(configurationContext);
         this.credentialIssuerService = credentialIssuerService;
         this.notificationService = notificationService;
+        this.encryptionService = encryptionService;
     }
 
     /**
-     * Handle response entity.
+     * Handle a credential request, sent as JSON or, encrypted, as {@code application/jwt} (OpenID4VCI 1.0 section 10).
      *
-     * @param request      the credential request
+     * @param body         the credential request body
      * @param httpRequest  the http request
      * @param httpResponse the http response
      * @return the response entity
@@ -88,11 +94,11 @@ public class OidcVerifiableCredentialEndpointController extends BaseOAuth20Contr
     @PostMapping(value = {
         '/' + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.VC_CREDENTIAL_URL,
         "/**/" + OidcConstants.VC_CREDENTIAL_URL
-    }, consumes = MediaType.APPLICATION_JSON_VALUE)
+    }, consumes = {MediaType.APPLICATION_JSON_VALUE, OidcConstants.CONTENT_TYPE_JWT})
     @Operation(summary = "Handle OIDC credential request",
         description = "Handles requests for OIDC credential issuance")
     public ResponseEntity handle(
-        @RequestBody final OidcVerifiableCredentialRequest request,
+        @RequestBody final String body,
         final HttpServletRequest httpRequest,
         final HttpServletResponse httpResponse) throws Throwable {
 
@@ -101,6 +107,12 @@ public class OidcVerifiableCredentialEndpointController extends BaseOAuth20Contr
             return verified.getRight();
         }
         val decodedToken = Objects.requireNonNull(verified.getLeft());
+
+        val credentialRequest = readCredentialRequest(body, httpRequest);
+        if (credentialRequest.getRight() != null) {
+            return credentialRequest.getRight();
+        }
+        val request = Objects.requireNonNull(credentialRequest.getLeft());
 
         val identifierError = validateCredentialIdentifiers(request, decodedToken);
         if (identifierError != null) {
@@ -130,7 +142,79 @@ public class OidcVerifiableCredentialEndpointController extends BaseOAuth20Contr
             .credentials(credentials)
             .notificationId(notificationService.register(decodedToken, issuanceContext.resolveConfigurationId()))
             .build();
-        return ResponseEntity.ok(response);
+        return buildCredentialResponse(request, response);
+    }
+
+    /**
+     * Read the credential request, decrypting it when it arrives as {@code application/jwt}, and check its encryption
+     * as OpenID4VCI 1.0 section 8.2 asks: a request must be encrypted when the issuer requires it, and whenever it asks
+     * for an encrypted response, so that the response key cannot be swapped on the way. The response encryption
+     * parameters are checked here, before anything is issued; a missing {@code credential_response_encryption} when the
+     * issuer requires encrypted responses is {@code invalid_encryption_parameters}.
+     *
+     * @param body        the request body
+     * @param httpRequest the http request
+     * @return the credential request, or an error response
+     */
+    protected Couplet<@Nullable OidcVerifiableCredentialRequest, @Nullable ResponseEntity> readCredentialRequest(
+        final String body, final HttpServletRequest httpRequest) {
+        val encrypted = isEncryptedRequest(httpRequest);
+        if (encrypted && !encryptionService.isEnabled()) {
+            return Couplet.right(badRequest(OidcConstants.VC_ERROR_INVALID_CREDENTIAL_REQUEST, "Encrypted credential requests are not supported"));
+        }
+        if (!encrypted && encryptionService.isRequestEncryptionRequired()) {
+            return Couplet.right(badRequest(OidcConstants.VC_ERROR_INVALID_CREDENTIAL_REQUEST, "Credential requests must be encrypted"));
+        }
+        try {
+            val request = MAPPER.readValue(encrypted ? encryptionService.decryptRequest(body) : body, OidcVerifiableCredentialRequest.class);
+            if (request == null) {
+                return Couplet.right(badRequest(OidcConstants.VC_ERROR_INVALID_CREDENTIAL_REQUEST, "Credential request is empty"));
+            }
+            val responseEncryption = request.getCredentialResponseEncryption();
+            if (responseEncryption == null && encryptionService.isResponseEncryptionRequired()) {
+                throw OidcVerifiableCredentialEncryptionException.invalidParameters("Credential responses must be encrypted");
+            }
+            if (responseEncryption != null) {
+                if (!encryptionService.isEnabled()) {
+                    throw OidcVerifiableCredentialEncryptionException.invalidParameters("Credential response encryption is not supported");
+                }
+                if (!encrypted) {
+                    throw OidcVerifiableCredentialEncryptionException.invalidParameters(
+                        "A credential request asking for an encrypted response must itself be encrypted");
+                }
+                encryptionService.validateResponseEncryption(responseEncryption);
+            }
+            return Couplet.left(request);
+        } catch (final OidcVerifiableCredentialEncryptionException e) {
+            LOGGER.warn(e.getMessage());
+            return Couplet.right(badRequest(e.getError(), e.getMessage()));
+        }
+    }
+
+    /**
+     * The credential response, encrypted as {@code application/jwt} when the wallet asked for it, otherwise as JSON.
+     * Error responses are never encrypted.
+     *
+     * @param request  the credential request
+     * @param response the credential response
+     * @return the response entity
+     */
+    protected ResponseEntity buildCredentialResponse(final OidcVerifiableCredentialRequest request,
+                                                     final OidcVerifiableCredentialResponse response) {
+        val responseEncryption = request.getCredentialResponseEncryption();
+        if (responseEncryption == null) {
+            return ResponseEntity.ok(response);
+        }
+        val encrypted = encryptionService.encryptResponse(MAPPER.writeValueAsString(response), responseEncryption);
+        return ResponseEntity.ok()
+            .contentType(MediaType.parseMediaType(OidcConstants.CONTENT_TYPE_JWT))
+            .body(encrypted);
+    }
+
+    protected static boolean isEncryptedRequest(final HttpServletRequest request) {
+        val contentType = request.getContentType();
+        return StringUtils.isNotBlank(contentType)
+            && MediaType.parseMediaType(contentType).isCompatibleWith(MediaType.parseMediaType(OidcConstants.CONTENT_TYPE_JWT));
     }
 
     /**
@@ -175,7 +259,7 @@ public class OidcVerifiableCredentialEndpointController extends BaseOAuth20Contr
 
     protected static OidcVerifiableCredentialNotificationService.@Nullable NotificationRequest readNotificationRequest(final String body) {
         try {
-            val parameters = NOTIFICATION_MAPPER.readValue(body, Map.class);
+            val parameters = MAPPER.readValue(body, Map.class);
             if (parameters.get("notification_id") instanceof final String notificationId && StringUtils.isNotBlank(notificationId)
                 && parameters.get("event") instanceof final String event
                 && OidcVerifiableCredentialNotificationService.EVENTS.contains(event)) {
@@ -224,8 +308,9 @@ public class OidcVerifiableCredentialEndpointController extends BaseOAuth20Contr
 
     /**
      * Decide whether this token may obtain this credential, and say why not in the vocabulary
-     * OpenID4VCI defines for the credential endpoint: a credential the issuer does not publish is
-     * {@code unsupported_credential_type}, while one it publishes but will not hand to this caller is
+     * OpenID4VCI 1.0 section 8.3.1.2 defines for the credential endpoint: a {@code credential_identifier} the token
+     * response did not return is {@code unknown_credential_identifier}, a credential configuration the issuer does not
+     * publish is {@code unknown_credential_configuration}, while one it publishes but will not hand to this caller is
      * {@code credential_request_denied}. A wallet can act on the difference; a single opaque error
      * tells it only to stop.
      *
@@ -235,13 +320,19 @@ public class OidcVerifiableCredentialEndpointController extends BaseOAuth20Contr
      */
     protected @Nullable ResponseEntity validateCredentialIssuance(final OAuth20AccessToken accessToken,
                                                                    final OidcVerifiableCredentialValidationContext issuanceContext) {
+        val credentialIdentifier = issuanceContext.credentialRequest().getCredentialIdentifier();
+        if (StringUtils.isNotBlank(credentialIdentifier) && !resolveCredentialIdentifiers(accessToken).contains(credentialIdentifier)) {
+            LOGGER.warn("Credential identifier [{}] was not issued with the access token", credentialIdentifier);
+            return badRequest(OidcConstants.VC_ERROR_UNKNOWN_CREDENTIAL_IDENTIFIER,
+                "Credential identifier %s is unknown".formatted(credentialIdentifier));
+        }
         val requestedConfigurationId = issuanceContext.resolveConfigurationId();
         val publishedConfigurationIds = getConfigurationContext().getCasProperties()
             .getAuthn().getOidc().getVc().getIssuer().getCredentialConfigurations().keySet();
         if (!publishedConfigurationIds.contains(requestedConfigurationId)) {
             LOGGER.warn("Credential configuration [{}] is not published by this issuer", requestedConfigurationId);
-            return badRequest(OidcConstants.VC_ERROR_UNSUPPORTED_CREDENTIAL_TYPE,
-                "Credential configuration %s is not supported".formatted(requestedConfigurationId));
+            return badRequest(OidcConstants.VC_ERROR_UNKNOWN_CREDENTIAL_CONFIGURATION,
+                "Credential configuration %s is unknown".formatted(requestedConfigurationId));
         }
 
         val authorizedConfigurationIds = resolveAuthorizedCredentialConfigurationIds(accessToken);
@@ -285,11 +376,28 @@ public class OidcVerifiableCredentialEndpointController extends BaseOAuth20Contr
         if (grantedConfigurationIds != null) {
             configurationIds.addAll(grantedConfigurationIds);
         }
-        val authorizationDetails = accessToken.getAuthorizationDetails();
-        if (authorizationDetails != null) {
-            authorizationDetails.forEach(details -> configurationIds.add(toCredentialConfigurationId(details)));
-        }
+        configurationIds.addAll(resolveCredentialIdentifiers(accessToken));
         return configurationIds.stream().filter(StringUtils::isNotBlank).distinct().toList();
+    }
+
+    /**
+     * Credential identifiers returned with the access token, one per authorization detail. A CAS credential identifier
+     * is the credential configuration id of its authorization detail.
+     *
+     * @param accessToken the access token
+     * @return the credential identifiers, never null
+     */
+    protected List<String> resolveCredentialIdentifiers(final OAuth20AccessToken accessToken) {
+        val authorizationDetails = accessToken.getAuthorizationDetails();
+        if (authorizationDetails == null) {
+            return List.of();
+        }
+        return authorizationDetails
+            .stream()
+            .map(OidcVerifiableCredentialEndpointController::toCredentialConfigurationId)
+            .filter(StringUtils::isNotBlank)
+            .distinct()
+            .toList();
     }
 
     private static String toCredentialConfigurationId(final Serializable authorizationDetails) {
@@ -437,6 +545,9 @@ public class OidcVerifiableCredentialEndpointController extends BaseOAuth20Contr
         val proofException = findProofException(ex);
         if (proofException != null) {
             return badRequest(proofException.getError(), proofException.getMessage());
+        }
+        if (ex instanceof final OidcVerifiableCredentialEncryptionException encryptionException) {
+            return badRequest(encryptionException.getError(), encryptionException.getMessage());
         }
         if (ex instanceof final ResponseStatusException rse) {
             return ResponseEntity
