@@ -1391,47 +1391,49 @@ class OidcVerifiableCredentialEndpointControllerTests {
     }
 
     /**
-     * A credential identifier is only meaningful once the token response has advertised one.
+     * Once the token response has returned credential identifiers, the request must name one with
+     * {@code credential_identifier}; until then it must not use one.
      */
     @Nested
     class CredentialIdentifierTests extends BaseTests {
         @Test
-        void verifyCredentialIdentifierIsRejectedWithoutAuthorizationDetails() throws Throwable {
+        void verifyCredentialIdentifierFollowsTheTokenResponse() throws Throwable {
             val clientId = UUID.randomUUID().toString();
-            val registeredService = getOidcRegisteredService(clientId);
-            servicesManager.save(registeredService);
-
+            servicesManager.save(getOidcRegisteredService(clientId));
             val accessToken = createOAuth20AccessToken(clientId);
-            val request = new OidcVerifiableCredentialRequest();
-            request.setCredentialIdentifier("myorg");
-            request.setProofs(buildProofs(buildValidRsaProofJwt()));
-            for (val configurationId : Arrays.asList(null, "myorg")) {
-                request.setCredentialConfigurationId(configurationId);
-                mockMvc.perform(post(CREDENTIAL_ENDPOINT_URL)
-                        .with(withHttpRequestProcessor())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken.getId())
-                        .content(MAPPER.writeValueAsString(request)))
-                    .andExpect(status().isBadRequest())
-                    .andExpect(jsonPath("$.error").value(OidcConstants.VC_ERROR_INVALID_CREDENTIAL_REQUEST));
-            }
-            request.setCredentialConfigurationId(null);
+            expectError(performIdentifierRequest(accessToken, "myorg", null), OidcConstants.VC_ERROR_INVALID_CREDENTIAL_REQUEST);
+            expectError(performIdentifierRequest(accessToken, "myorg", "myorg"), OidcConstants.VC_ERROR_INVALID_CREDENTIAL_REQUEST);
 
             when(accessToken.hasAuthorizationDetails()).thenReturn(true);
             doReturn(List.of(Map.of("type", "openid_credential", "credential_configuration_id", "myorg")))
                 .when(accessToken).getAuthorizationDetails();
-            for (val identifier : List.of("employee", "NoSuchCredential", "myorg")) {
-                request.setCredentialIdentifier(identifier);
-                request.setProofs(buildProofs(buildValidRsaProofJwt()));
-                val result = mockMvc.perform(post(CREDENTIAL_ENDPOINT_URL).with(withHttpRequestProcessor()).contentType(MediaType.APPLICATION_JSON)
-                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken.getId()).content(MAPPER.writeValueAsString(request)));
-                if ("myorg".equals(identifier)) {
-                    result.andExpect(status().isOk()).andExpect(jsonPath("$.credentials[0].credential").exists());
-                } else {
-                    result.andExpect(status().isBadRequest())
-                        .andExpect(jsonPath("$.error").value(OidcConstants.VC_ERROR_UNKNOWN_CREDENTIAL_IDENTIFIER));
-                }
-            }
+            expectError(performIdentifierRequest(accessToken, "myorg", null), OidcConstants.VC_ERROR_INVALID_CREDENTIAL_REQUEST);
+
+            when(accessToken.getGrantType()).thenReturn(OAuth20GrantTypes.AUTHORIZATION_CODE);
+            expectError(performIdentifierRequest(accessToken, null, "myorg"), OidcConstants.VC_ERROR_INVALID_CREDENTIAL_REQUEST);
+            expectError(performIdentifierRequest(accessToken, null, null), OidcConstants.VC_ERROR_INVALID_CREDENTIAL_REQUEST);
+            expectError(performIdentifierRequest(accessToken, "employee", null), OidcConstants.VC_ERROR_UNKNOWN_CREDENTIAL_IDENTIFIER);
+            expectError(performIdentifierRequest(accessToken, "NoSuchCredential", null), OidcConstants.VC_ERROR_UNKNOWN_CREDENTIAL_IDENTIFIER);
+            performIdentifierRequest(accessToken, "myorg", null)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.credentials[0].credential").exists());
+        }
+
+        private ResultActions performIdentifierRequest(final OAuth20AccessToken accessToken, final String identifier,
+                                                       final String configurationId) throws Throwable {
+            val request = new OidcVerifiableCredentialRequest();
+            request.setCredentialIdentifier(identifier);
+            request.setCredentialConfigurationId(configurationId);
+            request.setProofs(buildProofs(buildValidRsaProofJwt()));
+            return mockMvc.perform(post(CREDENTIAL_ENDPOINT_URL)
+                .with(withHttpRequestProcessor())
+                .contentType(MediaType.APPLICATION_JSON)
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken.getId())
+                .content(MAPPER.writeValueAsString(request)));
+        }
+
+        private static void expectError(final ResultActions result, final String error) throws Exception {
+            result.andExpect(status().isBadRequest()).andExpect(jsonPath("$.error").value(error));
         }
 
         @Test

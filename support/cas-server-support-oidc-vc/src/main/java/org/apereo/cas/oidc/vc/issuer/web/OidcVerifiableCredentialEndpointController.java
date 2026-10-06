@@ -275,8 +275,10 @@ public class OidcVerifiableCredentialEndpointController extends BaseOAuth20Contr
     }
 
     /**
-     * A credential identifier is only meaningful when the token response advertised one, and the
-     * two request parameters are mutually exclusive.
+     * The two request parameters are mutually exclusive, and which one is used depends on the token response, per
+     * OpenID4VCI 1.0 section 8.2: once it returned {@code credential_identifiers}, the request must name one with
+     * {@code credential_identifier} and must not use {@code credential_configuration_id}; otherwise a
+     * {@code credential_identifier} must not be used.
      *
      * @param request     the credential request
      * @param accessToken the access token
@@ -290,11 +292,28 @@ public class OidcVerifiableCredentialEndpointController extends BaseOAuth20Contr
             return badRequest(OidcConstants.VC_ERROR_INVALID_CREDENTIAL_REQUEST,
                 "Only one of credential_identifier or credential_configuration_id may be specified");
         }
-        if (hasIdentifier && !accessToken.hasAuthorizationDetails()) {
+        val identifiersReturned = isCredentialIdentifiersReturned(accessToken);
+        if (hasIdentifier && !identifiersReturned) {
             return badRequest(OidcConstants.VC_ERROR_INVALID_CREDENTIAL_REQUEST,
-                "A credential identifier cannot be used with an access token that carries no authorization details");
+                "A credential identifier cannot be used when the token response returned no credential identifiers");
+        }
+        if (!hasIdentifier && identifiersReturned) {
+            return badRequest(OidcConstants.VC_ERROR_INVALID_CREDENTIAL_REQUEST,
+                "The token response returned credential identifiers, so the request must name one with credential_identifier");
         }
         return null;
+    }
+
+    /**
+     * Whether the token response returned {@code credential_identifiers}: it echoes the authorization details of the access
+     * token, each carrying its identifiers, except for the pre-authorized code grant
+     * (see {@code OidcVerifiableCredentialAccessTokenResponseCustomizer}).
+     *
+     * @param accessToken the access token
+     * @return true when credential identifiers were returned
+     */
+    protected boolean isCredentialIdentifiersReturned(final OAuth20AccessToken accessToken) {
+        return accessToken.getGrantType() != OAuth20GrantTypes.PRE_AUTHORIZED_CODE && accessToken.hasAuthorizationDetails();
     }
 
     protected @Nullable ResponseEntity validateBatchSize(final OidcVerifiableCredentialValidationContext context) {
@@ -364,8 +383,8 @@ public class OidcVerifiableCredentialEndpointController extends BaseOAuth20Contr
     /**
      * Credential configurations the access token is allowed to request. Tokens issued through the
      * pre-authorized code flow, or through the authorization code flow with a credential configuration's
-     * scope, carry the identifiers directly; authorization details attached to the token add theirs. A wallet
-     * may use both in one request, so the two are combined.
+     * scope, carry the identifiers directly; authorization details attached to the token add theirs, so the two
+     * are combined. Which request parameter may name them is decided by {@link #validateCredentialIdentifiers}.
      *
      * @param accessToken the access token
      * @return the authorized credential configuration ids, never null
@@ -376,18 +395,22 @@ public class OidcVerifiableCredentialEndpointController extends BaseOAuth20Contr
         if (grantedConfigurationIds != null) {
             configurationIds.addAll(grantedConfigurationIds);
         }
-        configurationIds.addAll(resolveCredentialIdentifiers(accessToken));
+        configurationIds.addAll(resolveAuthorizationDetailsConfigurationIds(accessToken));
         return configurationIds.stream().filter(StringUtils::isNotBlank).distinct().toList();
     }
 
     /**
-     * Credential identifiers returned with the access token, one per authorization detail. A CAS credential identifier
-     * is the credential configuration id of its authorization detail.
+     * Credential identifiers the token response returned, one per authorization detail, or none when it returned
+     * none. A CAS credential identifier is the credential configuration id of its authorization detail.
      *
      * @param accessToken the access token
      * @return the credential identifiers, never null
      */
     protected List<String> resolveCredentialIdentifiers(final OAuth20AccessToken accessToken) {
+        return isCredentialIdentifiersReturned(accessToken) ? resolveAuthorizationDetailsConfigurationIds(accessToken) : List.of();
+    }
+
+    private static List<String> resolveAuthorizationDetailsConfigurationIds(final OAuth20AccessToken accessToken) {
         val authorizationDetails = accessToken.getAuthorizationDetails();
         if (authorizationDetails == null) {
             return List.of();
