@@ -3,6 +3,7 @@ package org.apereo.cas.nativex;
 import module java.base;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import org.apereo.cas.webauthn.WebAuthnCredentialRegistrationCipherExecutor;
+import org.apereo.cas.webauthn.storage.WebAuthnCredentialRepository;
 import com.yubico.data.AssertionResponse;
 import com.yubico.data.CredentialRegistration;
 import com.yubico.data.RegistrationRequest;
@@ -64,6 +65,7 @@ import org.springframework.aot.hint.TypeReference;
 public class WebAuthnRuntimeHints implements CasRuntimeHintsRegistrar {
     @Override
     public void registerHints(final @NonNull RuntimeHints hints, final @Nullable ClassLoader classLoader) {
+        registerProxyHints(hints, WebAuthnCredentialRepository.class);
         registerReflectionHints(hints, List.of(
             MetadataBLOBHeader.class,
             MetadataBLOBHeader.MetadataBLOBHeaderBuilder.class,

@@ -337,7 +337,7 @@ class SamlIdPMetadataConfiguration {
             val properties = casProperties.getAuthn().getSamlIdp().getMetadata().getCore();
             val url = new URI(casProperties.getServer().getPrefix());
             val generator = new DefaultSamlIdPCertificateAndKeyWriter(url.getHost());
-            generator.setUriSubjectAltNames(CollectionUtils.wrap(url.getHost().concat("/idp/metadata")));
+            generator.setUriSubjectAltNames(CollectionUtils.wrap(url.toString().concat("/idp/metadata")));
             properties.setCertificateAlgorithm(properties.getCertificateAlgorithm());
             properties.setKeySize(properties.getKeySize());
             return generator;

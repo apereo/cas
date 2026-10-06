@@ -24,5 +24,6 @@ class DuoSecurityRuntimeHintsTests {
         new DuoSecurityRuntimeHints().registerHints(hints, getClass().getClassLoader());
         assertTrue(RuntimeHintsPredicates.reflection().onType(DuoSecurityUniversalPromptCredential.class).test(hints));
         assertTrue(RuntimeHintsPredicates.reflection().onType(DuoSecurityPasscodeCredential.class).test(hints));
+        assertTrue(RuntimeHintsPredicates.resource().forResource("ca_certs.pem").test(hints));
     }
 }
