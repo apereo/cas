@@ -8,18 +8,20 @@ const ENDPOINT = "https://localhost:8443/cas/actuator/gauthCredentialRepository"
  * was written and read back through the cipher correctly: two of the five scratch codes are used up,
  * the secret is the plain base32 key rather than ciphertext, and the last login was recorded.
  */
-function assertAccount(res, usedScratchCodes) {
+function assertAccount(res, usedScratchCodes, authenticated) {
     assert(res.data.length === 1);
     const account = res.data[0];
-    assert(account.scratchCodes.length === 3);
+    assert(account.scratchCodes.length === 5 - usedScratchCodes.length);
     assert(account.scratchCodes.every((code) => !usedScratchCodes.includes(String(code))));
     assert(/^[A-Z2-7]+=*$/.test(account.secretKey));
-    assert(account.lastUsedDateTime !== undefined && account.lastUsedDateTime !== null);
+    if (authenticated) {
+        assert(account.lastUsedDateTime !== undefined && account.lastUsedDateTime !== null);
+    }
 }
 
-async function fetchAccounts(url, usedScratchCodes) {
+async function fetchAccounts(url, usedScratchCodes, authenticated = true) {
     await cas.doGet(url,
-        (res) => assertAccount(res, usedScratchCodes),
+        (res) => assertAccount(res, usedScratchCodes, authenticated),
         (error) => {
             throw error;
         }, {
@@ -67,6 +69,7 @@ async function loginWithToken(page, token) {
      * form, which only the token prompt carries, rather than for a fixed interval.
      */
     await cas.waitForElement(page, "#fm1");
+    await fetchAccounts(`${ENDPOINT}/casuser`, [scratchCodes[0]], false);
 
     await cas.type(page, "#token", scratchCodes[1]);
     await cas.sleep(2000);
