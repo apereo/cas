@@ -14,5 +14,5 @@ pip==26.2
 six==1.16.0
 setuptools==83.0.0
 requests==2.33.0
-Werkzeug==3.1.6
+Werkzeug==3.1.9
 urllib3==2.8.0
