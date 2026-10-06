@@ -1,0 +1,7 @@
+{
+  "lambdaCapturingTypes": [
+    {
+      "name": "org.apereo.cas.authentication.PrincipalElectionStrategyConflictResolver"
+    }
+  ]
+}

@@ -4,6 +4,7 @@ import module java.base;
 import org.apereo.cas.authentication.principal.DefaultPrincipalAttributesRepository;
 import org.apereo.cas.authentication.principal.PrincipalProvisioner;
 import org.apereo.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator;
+import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.authentication.principal.cache.AbstractPrincipalAttributesRepository;
 import org.apereo.cas.authentication.principal.cache.CachingPrincipalAttributesRepository;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalAttributesCoreProperties;
@@ -97,6 +98,8 @@ import org.springframework.aot.hint.RuntimeHints;
 public class CasCoreServicesRuntimeHints implements CasRuntimeHintsRegistrar {
     @Override
     public void registerHints(final @NonNull RuntimeHints hints, final @Nullable ClassLoader classLoader) {
+        hints.resources().registerPattern("services/**");
+        registerSerializationHints(hints, findSubclassesOf(WebApplicationService.class));
         registerProxyHints(hints, List.of(
             PrincipalProvisioner.class,
             ServiceRegistryInitializer.class,

@@ -1,6 +1,7 @@
 package org.apereo.cas.nativex;
 
 import module java.base;
+import org.apereo.cas.authentication.principal.SimpleWebApplicationServiceImpl;
 import org.apereo.cas.services.BaseRegisteredService;
 import org.apereo.cas.services.CasRegisteredService;
 import org.apereo.cas.services.ServiceRegistry;
@@ -24,10 +25,17 @@ class CasCoreServicesRuntimeHintsTests {
     void verifyHints() {
         val hints = new RuntimeHints();
         new CasCoreServicesRuntimeHints().registerHints(hints, getClass().getClassLoader());
+        assertTrue(RuntimeHintsPredicates.resource().forResource("services/Simple-12345.json").test(hints));
+        assertTrue(RuntimeHintsPredicates.resource().forResource("services/native/Simple-12345.json").test(hints));
+        assertTrue(RuntimeHintsPredicates.resource().forResource("services/.donotdel").test(hints));
+        assertTrue(RuntimeHintsPredicates.resource().forResource("services/Simple-12345.json.ignore").test(hints));
         assertTrue(RuntimeHintsPredicates.proxies().forInterfaces(ServiceRegistryInitializer.class).test(hints));
         assertTrue(RuntimeHintsPredicates.proxies().forInterfaces(ServiceRegistry.class).test(hints));
 
         assertTrue(RuntimeHintsPredicates.reflection().onType(CasRegisteredService.class).test(hints));
         assertTrue(RuntimeHintsPredicates.reflection().onType(BaseRegisteredService.class).test(hints));
+        val serviceHint = hints.reflection().getTypeHint(SimpleWebApplicationServiceImpl.class);
+        assertNotNull(serviceHint);
+        assertTrue(serviceHint.hasJavaSerialization());
     }
 }

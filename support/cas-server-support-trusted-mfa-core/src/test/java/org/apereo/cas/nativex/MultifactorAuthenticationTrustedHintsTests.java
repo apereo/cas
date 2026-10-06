@@ -1,6 +1,7 @@
 package org.apereo.cas.nativex;
 
 import module java.base;
+import org.apereo.cas.trusted.web.flow.MultifactorAuthenticationTrustBean;
 import org.apereo.cas.trusted.web.flow.fingerprint.DeviceFingerprintExtractor;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -18,9 +19,16 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Native")
 class MultifactorAuthenticationTrustedHintsTests {
     @Test
-    void verifyHints() {
+    void verifyHints() throws Exception {
         val hints = new RuntimeHints();
         new MultifactorAuthenticationTrustedHints().registerHints(hints, getClass().getClassLoader());
         assertTrue(RuntimeHintsPredicates.proxies().forInterfaces(DeviceFingerprintExtractor.class).test(hints));
+        assertTrue(RuntimeHintsPredicates.reflection()
+            .onConstructorInvocation(MultifactorAuthenticationTrustBean.class.getConstructor()).test(hints));
+        assertTrue(RuntimeHintsPredicates.reflection()
+            .onMethodInvocation(MultifactorAuthenticationTrustBean.class.getMethod("setDeviceName", String.class)).test(hints));
+        val trustHint = hints.reflection().getTypeHint(MultifactorAuthenticationTrustBean.class);
+        assertNotNull(trustHint);
+        assertTrue(trustHint.hasJavaSerialization());
     }
 }

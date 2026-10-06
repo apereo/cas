@@ -29,5 +29,8 @@ class OneTimeTokenRuntimeHintsTests {
             .onMethodInvocation(OneTimeTokenAccount.class.getMethod("getUsername")).test(hints));
         assertTrue(RuntimeHintsPredicates.reflection()
             .onMethodInvocation(OneTimeTokenAccount.class.getMethod("setUsername", String.class)).test(hints));
+        val accountHint = hints.reflection().getTypeHint(OneTimeTokenAccount.class);
+        assertNotNull(accountHint);
+        assertTrue(accountHint.hasJavaSerialization());
     }
 }
