@@ -117,7 +117,7 @@ The CAS documentation site has received a visual and functional overhaul. Notabl
 - A short [Quick Start](../planning/Quick-Start.html) recipe, featured on the home page and at the top of Getting Started, takes a new deployer from the Docker image to a configured
   overlay with a registered application and an optional LDAP connection. Every setting it mentions is a link: clicking one
   opens its description, default value, module and `.properties`, YAML or environment variable form in place, without
-  leaving the page. Any page can mark settings the same way, and the <kbd>Shift</kbd> <kbd>Shift</kbd> search shows a
+  leaving the page. Settings mentioned throughout the documentation and release notes are marked the same way, and the <kbd>Shift</kbd> <kbd>Shift</kbd> search shows a
   setting's details directly instead of moving to the configuration catalog.
 - The site loads two web fonts instead of four; code and the sidebar use the system monospace font. Images hosted on
   third-party sites are removed, and the [logout](../installation/Logout-Single-Signout.html) session example is now a table.
@@ -308,6 +308,8 @@ and failures were recorded twice. Failed SAML2 ECP authentication attempts, whic
 - The credential endpoint answers with the error codes of OpenID4VCI 1.0: an unpublished credential configuration is
   `unknown_credential_configuration` instead of the draft-era `unsupported_credential_type`, and a `credential_identifier` the
   token response did not return is `unknown_credential_identifier` instead of `credential_request_denied`.
+- Once the token response returns `credential_identifiers`, credential requests must use `credential_identifier`, as OpenID4VCI 1.0
+  requires; a `credential_configuration_id` is then refused with `invalid_credential_request`.
 
 ### Stateless Ticket Registry
 

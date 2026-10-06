@@ -10,7 +10,7 @@ category: Services
 # Configure Service Environments
 
 Each registered application in the registry may be assigned a set of environment names. The environment names act as a filter, allowing
-CAS to only load and honor the registered service definition if the runtime environment does in fact match the registered service environment. This allows one to register multiple versions of the same application many times with CAS where each version may only be relevant in a particular runtime profile. Environments can be activated in CAS using the `spring.profiles.active` property specified as an environment variable or command-line flag, etc.
+CAS to only load and honor the registered service definition if the runtime environment does in fact match the registered service environment. This allows one to register multiple versions of the same application many times with CAS where each version may only be relevant in a particular runtime profile. Environments can be activated in CAS using the `spring.profiles.active`{: .cas-setting} property specified as an environment variable or command-line flag, etc.
 
 For example, the below service definition is only recognized and loaded by CAS if the runtime environment profile is one of `production` or `pre-production`:
 

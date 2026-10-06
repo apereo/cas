@@ -163,7 +163,7 @@ The [Palantir Admin Dashboard](../installation/Admin-Dashboard.html) now support
 By default, all authenticated users are assigned a `ROLE_USER` role/authority. To access critical functionality as an admin, 
 you will need to resolve and release a `role` attribute to Palantir with a value of `ADMIN` or `ROLE_ADMIN` if you are
 accessing Palantir via external CAS authentication, or your configuration needs to assign the authenticated user role
-via `spring.security.user.roles=ADMIN`.
+via `spring.security.user.roles=ADMIN`{: .cas-setting}.
   
 At this moment, all Palantir functionality is disabled and hidden for non-admin users, except 
 for the ability to manage the list of registered applications.

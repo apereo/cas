@@ -98,7 +98,7 @@ the following:
 All of them can be overridden by setting `spring.cloud.config.*` (where `*` is `name`, `profile` or `label`). The "label" is useful for rolling back to previous
 versions of configuration; with the default Config Server implementation it can be a git label, branch name or commit id. Label can also be provided as a
 comma-separated list, in which case the items in the list are tried on-by-one until one succeeds. This can be useful when working on a feature branch, for
-instance, when you might want to align the config label with your branch, but make it optional (e.g. `spring.cloud.config.label=myfeature,develop`).
+instance, when you might want to align the config label with your branch, but make it optional (e.g. `spring.cloud.config.label=myfeature,develop`{: .cas-setting}).
 
 To lean more about how CAS allows you to reload configuration changes, please [review this guide](Configuration-Management-Reload.html).
 
@@ -157,7 +157,7 @@ potential conflicts between repositories that contain values for the same proper
 
 The configuration server has an "overrides" feature that allows the operator to provide configuration properties to all applications that cannot be accidentally
 changed by the application using the normal change events and hooks. To declare overrides add a map of name-value pairs
-to `spring.cloud.config.server.overrides`.
+to `spring.cloud.config.server.overrides`{: .cas-setting}.
 
 For example:
 

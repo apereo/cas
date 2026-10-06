@@ -14,6 +14,7 @@ You can control the list of auto-configuration classes to exclude them in the `c
 ```properties
 spring.autoconfigure.exclude=org.apereo.cas.custom.config.SomethingConfigurationClass
 ```
+{: .cas-settings-linked}
 
 This is a very granular, internal way to control the auto-configuration classes, but it comes with a few important caveats: 
 

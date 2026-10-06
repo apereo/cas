@@ -16,7 +16,7 @@ Logging framework as a facade for the [Log4j engine](http://logging.apache.org) 
 The default log4j configuration file is located in `src/main/resources/log4j2.xml` of the `cas-server-webapp-resources` 
 source module. In the `cas.war` it is found at the root of the `cas-server-webapp-resources*.jar`. 
 The cas-overlay comes with an external log42.xml in etc/cas/config and a property 
-`logging.config=file:/etc/cas/config/log4j2.xml` set to reference it. 
+`logging.config=file:/etc/cas/config/log4j2.xml`{: .cas-setting} set to reference it. 
 By default logging is set to `INFO` for all functionality related to `org.apereo.cas` code.
 For debugging and diagnostic purposes you may want to set these levels to `DEBUG` or `TRACE`.
 

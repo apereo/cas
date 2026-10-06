@@ -142,9 +142,10 @@ This endpoint expects:
   A `DPoP`-bound token must be accompanied by a `DPoP` proof header bound to that token; a request
   without one, or with a proof that does not verify, is answered with `401` and
   `WWW-Authenticate: DPoP error="invalid_dpop_proof"`. A proof may not be reused.
-- The requested credential, named either by `credential_configuration_id` or, when the token
-  response returned `credential_identifiers` in its authorization details, by
-  `credential_identifier`. The two are mutually exclusive.
+- The requested credential. When the token response returned `credential_identifiers` in its authorization details, the
+  request must name one of them with `credential_identifier`; otherwise it names a `credential_configuration_id`. The two are
+  mutually exclusive, and using the one that does not apply is `invalid_credential_request`. Pre-authorized code token
+  responses return no authorization details, so those requests use `credential_configuration_id`.
 - A `proofs` object holding one or more proof JWTs, each carrying a `nonce` claim, or exactly one key attestation
   as an `attestation` proof (see [Key Attestations](#key-attestations)).
 

@@ -60,9 +60,9 @@ from the autofill menu of its username field and from its selection menu.
 
 ## Related Origins
 
-A passkey is bound to the relying party identifier (`cas.authn.mfa.web-authn.core.relying-party-id`, or the host of the
+A passkey is bound to the relying party identifier (`cas.authn.mfa.web-authn.core.relying-party-id`{: .cas-setting}, or the host of the
 CAS server name). When CAS is reached from origins whose domain differs from that identifier, list them under
-`cas.authn.mfa.web-authn.core.allowed-origins`. CAS accepts assertions from those origins and publishes them for
+`cas.authn.mfa.web-authn.core.allowed-origins`{: .cas-setting}. CAS accepts assertions from those origins and publishes them for
 [WebAuthn related origin requests](https://www.w3.org/TR/webauthn-3/#sctn-related-origins) at `/.well-known/webauthn`:
 
 ```json
