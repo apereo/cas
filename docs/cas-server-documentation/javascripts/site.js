@@ -1574,7 +1574,7 @@ function casSettingDescriptionHtml(doc) {
     return html.trim() ? html : "<p><em>No description is available.</em></p>";
 }
 
-function casSettingRowHtml(doc, text) {
+function casSettingRowHtml(doc, text, linkBase = "") {
     const tags = [];
     if (doc.kind === "required") {
         tags.push("<span class=\"cas-property-tag cas-property-tag-required\"><i class=\"fa fa-asterisk\" aria-hidden=\"true\"></i>Required</span>");
@@ -1589,13 +1589,13 @@ function casSettingRowHtml(doc, text) {
         tags.push("<span class=\"cas-property-tag cas-property-tag-deprecated\"><i class=\"fa fa-skull\" aria-hidden=\"true\"></i>Deprecated</span>");
     }
     const name = doc.name.replace(/\[]/g, "[0]");
-    const permalink = `?q=${encodeURIComponent(name)}&exact=1`;
+    const permalink = `${linkBase}?q=${encodeURIComponent(name)}&exact=1`;
     const meta = [
         doc.type ? `<dt>Type</dt><dd><code>${casSettingsEscape(doc.type)}</code></dd>` : "",
         `<dt>Default</dt><dd>${doc.defaultValue ? `<code>${casSettingsEscape(doc.defaultValue)}</code>` : "<em>none</em>"}</dd>`,
         doc.module ? `<dt>Module</dt><dd><code>${casSettingsEscape(doc.module)}</code></dd>` : "",
         doc.deprecated ? `<dt>Deprecation</dt><dd><code>${casSettingsEscape(doc.deprecated)}</code>${doc.replacement ? `, replaced by <code>${casSettingsEscape(doc.replacement)}</code>` : ", no replacement"}</dd>` : "",
-        `<dt>Link</dt><dd><a href="${permalink}">Link to this setting</a></dd>`
+        `<dt>Link</dt><dd><a href="${permalink}">${linkBase ? "Open in the settings catalog" : "Link to this setting"}</a></dd>`
     ].join("");
     return `<div class="cas-property" data-kind="${doc.kind}" data-name="${casSettingsEscape(name)}" data-default="${casSettingsEscape(doc.defaultValue)}"${doc.duration ? " data-duration" : ""}${doc.deprecated ? " data-deprecated" : ""}>
     <div class="cas-property-head" role="button" tabindex="0" aria-expanded="false">
@@ -1742,15 +1742,21 @@ function initializeCasSettingsPage() {
     input.focus();
 }
 
-function openCasSettingsPalette() {
+function openCasSettingsPalette(query) {
+    const preset = typeof query === "string" ? query.trim() : "";
     const pageInput = document.querySelector("#cas-settings .cas-settings-query input");
     if (pageInput) {
+        if (preset) {
+            pageInput.value = preset;
+            pageInput.dispatchEvent(new Event("input", {bubbles: true}));
+        }
         pageInput.focus();
         pageInput.select();
         return;
     }
     let dialog = document.getElementById("cas-settings-palette");
     if (!dialog) {
+        const format = readCasPropertyFormat();
         dialog = document.createElement("dialog");
         dialog.id = "cas-settings-palette";
         dialog.className = "cas-settings-palette";
@@ -1765,13 +1771,26 @@ function openCasSettingsPalette() {
           <kbd>Esc</kbd>
         </label>
         <ul id="cas-settings-palette-results" class="cas-settings-palette-results" role="listbox"></ul>
-        <p class="cas-settings-palette-footer"><span><kbd>↑</kbd><kbd>↓</kbd> choose</span><span><kbd>Enter</kbd> open</span><span>Activate with <kbd>Shift</kbd><kbd>Shift</kbd></span><a href="${casSettingsLocation(CAS_SETTINGS_PAGE)}">All settings</a></p>
+        <section class="cas-settings-palette-detail" aria-label="Setting details" hidden>
+          <div class="cas-settings-palette-bar">
+            <button type="button" class="cas-settings-palette-back"><i class="fa fa-arrow-left" aria-hidden="true"></i>Back to matches</button>
+            <div class="cas-properties-format" role="group" aria-label="Show setting as">${Object.entries(CAS_PROPERTY_FORMATS).map(([key, label]) =>
+            `<button type="button" data-format="${key}" aria-pressed="${key === format}">${label}</button>`).join("")}</div>
+          </div>
+          <div class="cas-properties"><div class="cas-properties-list"></div></div>
+        </section>
+        <p class="cas-settings-palette-footer"><span><kbd>↑</kbd><kbd>↓</kbd> choose</span><span><kbd>Enter</kbd> details</span><span><kbd>Ctrl</kbd><kbd>Enter</kbd> catalog</span><span>Activate with <kbd>Shift</kbd><kbd>Shift</kbd></span><a href="${casSettingsLocation(CAS_SETTINGS_PAGE)}">All settings</a></p>
       </form>`;
         document.body.append(dialog);
         const input = dialog.querySelector("input");
         const results = dialog.querySelector(".cas-settings-palette-results");
+        const detail = dialog.querySelector(".cas-settings-palette-detail");
+        const back = detail.querySelector(".cas-settings-palette-back");
+        const host = detail.querySelector(".cas-properties-list");
         let active = -1;
         let matches = [];
+        let view = "list";
+        const settingName = doc => doc.name.replace(/\[]/g, "[0]");
         const go = (query, exactName) => {
             const params = new URLSearchParams({q: query});
             if (exactName) {
@@ -1785,7 +1804,30 @@ function openCasSettingsPalette() {
                 item.scrollIntoView({block: "nearest"});
             }
         });
-        const update = () => {
+        const showList = () => {
+            view = "list";
+            detail.hidden = true;
+            results.hidden = false;
+            input.setAttribute("aria-expanded", "true");
+            paint();
+        };
+        const showDetail = index => {
+            const {doc} = matches[index];
+            active = index;
+            view = "detail";
+            host.innerHTML = casSettingRowHtml(doc, "", casSettingsLocation(CAS_SETTINGS_PAGE));
+            const row = host.firstElementChild;
+            const head = row.querySelector(".cas-property-head");
+            toggleCasProperty(row, true);
+            ["role", "tabindex", "aria-expanded"].forEach(attribute => head.removeAttribute(attribute));
+            back.hidden = matches.length < 2;
+            results.hidden = true;
+            detail.hidden = false;
+            detail.scrollTop = 0;
+            input.setAttribute("aria-expanded", "false");
+            document.getElementById("docs-status").textContent = `Showing setting ${settingName(doc)}`;
+        };
+        const update = reveal => {
             const text = input.value;
             loadCasSettings().then(docs => {
                 if (text !== input.value) {
@@ -1795,27 +1837,43 @@ function openCasSettingsPalette() {
                 active = matches.length ? 0 : -1;
                 results.innerHTML = matches.map(({doc}, index) => `
           <li role="option" data-index="${index}" aria-selected="false">
-            <code>${highlightCasSetting(doc.name.replace(/\[]/g, "[0]"), text)}</code>
+            <code>${highlightCasSetting(settingName(doc), text)}</code>
             <span>${casSettingsEscape(doc.summary)}</span>
           </li>`).join("") || (text.trim() ? "<li class=\"cas-settings-palette-empty\">No matching settings. Press Enter to search the catalog.</li>" : "");
-                paint();
+                if (reveal && matches.length && matches[0].doc.flatName === casSettingsFlat(text.replace(/\s*[=:].*$/, ""))) {
+                    showDetail(0);
+                } else {
+                    showList();
+                }
             }).catch(() => {
+                matches = [];
                 results.innerHTML = "<li class=\"cas-settings-palette-empty\">The configuration catalog could not be loaded. Press Enter to open the search page.</li>";
+                showList();
             });
         };
-        input.addEventListener("input", update);
-        input.addEventListener("keydown", event => {
+        dialog.casSettingsLookup = () => update(true);
+        input.addEventListener("input", () => update(false));
+        dialog.addEventListener("keydown", event => {
             if (event.key === "ArrowDown" || event.key === "ArrowUp") {
                 event.preventDefault();
-                if (matches.length) {
+                input.focus();
+                if (view === "detail") {
+                    showList();
+                } else if (matches.length) {
                     active = (active + (event.key === "ArrowDown" ? 1 : -1) + matches.length) % matches.length;
                     paint();
                 }
-            } else if (event.key === "Enter") {
+            } else if (event.key === "Enter" && event.target === input) {
                 event.preventDefault();
-                if (active >= 0 && matches[active]) {
-                    go(matches[active].doc.name.replace(/\[]/g, "[0]"), true);
-                } else if (input.value.trim()) {
+                if (event.ctrlKey || event.metaKey) {
+                    if (active >= 0 && matches[active]) {
+                        go(settingName(matches[active].doc), true);
+                    } else if (input.value.trim()) {
+                        go(input.value.trim(), false);
+                    }
+                } else if (view === "list" && active >= 0 && matches[active]) {
+                    showDetail(active);
+                } else if (view === "list" && input.value.trim()) {
                     go(input.value.trim(), false);
                 }
             }
@@ -1823,8 +1881,13 @@ function openCasSettingsPalette() {
         results.addEventListener("click", event => {
             const item = event.target.closest("li[data-index]");
             if (item) {
-                go(matches[Number(item.dataset.index)].doc.name.replace(/\[]/g, "[0]"), true);
+                showDetail(Number(item.dataset.index));
+                input.focus();
             }
+        });
+        back.addEventListener("click", () => {
+            showList();
+            input.focus();
         });
         dialog.addEventListener("click", event => {
             if (event.target === dialog) {
@@ -1836,8 +1899,58 @@ function openCasSettingsPalette() {
         dialog.showModal();
     }
     const input = dialog.querySelector("input");
-    input.select();
+    if (preset) {
+        input.value = preset;
+        dialog.casSettingsLookup();
+    }
+    if (preset && matchMedia("(pointer: coarse)").matches) {
+        input.blur();
+    } else {
+        input.select();
+    }
     loadCasSettings().catch(() => {
+    });
+}
+
+function initializeCasSettingLinks() {
+    const container = document.getElementById("cas-docs-container") || document.body;
+    const attach = (element, name) => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "cas-setting-link";
+        button.dataset.setting = name;
+        button.title = "Look up this setting";
+        button.setAttribute("aria-haspopup", "dialog");
+        element.replaceWith(button);
+        button.append(element);
+        return button;
+    };
+    container.querySelectorAll("code.cas-setting").forEach(code => {
+        attach(code, code.textContent.trim().replace(/\s*[=:].*$/, "")).insertAdjacentHTML("beforeend", "<i class=\"fa fa-sliders\" aria-hidden=\"true\"></i>");
+    });
+    container.querySelectorAll(".cas-settings-linked").forEach(block => {
+        const code = block.querySelector(".rouge-code pre") || block.querySelector("pre code");
+        if (!code) {
+            return;
+        }
+        code.innerHTML = code.textContent.split("\n").map(line => {
+            const setting = line.match(/^(\s*)([^\s#!=:][^\s=:]*)(\s*[=:]\s*)(.*)$/);
+            if (/^\s*[#!]/.test(line)) {
+                return `<span class="c">${casSettingsEscape(line)}</span>`;
+            }
+            if (!setting) {
+                return casSettingsEscape(line);
+            }
+            const [, indent, name, separator, value] = setting;
+            return `${indent}<button type="button" class="cas-setting-link cas-setting-link-code" data-setting="${casSettingsEscape(name)}" title="Look up this setting" aria-haspopup="dialog">${casSettingsEscape(name)}</button><span class="p">${casSettingsEscape(separator)}</span><span class="s">${casSettingsEscape(value)}</span>`;
+        }).join("\n");
+    });
+    document.addEventListener("click", event => {
+        const link = event.target.closest(".cas-setting-link");
+        if (link) {
+            event.preventDefault();
+            openCasSettingsPalette(link.dataset.setting);
+        }
     });
 }
 
@@ -1859,10 +1972,11 @@ function initializeCasSettingsShortcut() {
             lastShift = now;
         }
     });
-    document.getElementById("settingsSearchButton")?.addEventListener("click", openCasSettingsPalette);
+    document.getElementById("settingsSearchButton")?.addEventListener("click", () => openCasSettingsPalette());
 }
 
 initializeCasSettingsShortcut();
+initializeCasSettingLinks();
 initializeCasSettingsPage();
 
 function toggleCasFeature(feature, open) {

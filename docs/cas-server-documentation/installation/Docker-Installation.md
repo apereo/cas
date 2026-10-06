@@ -27,7 +27,8 @@ docker run --quiet  --rm \
   -p 8080:8080 --name casserver apereo/cas:${tag}
 ```
 
-CAS should be running on http://localhost:8080/cas.
+CAS should be running on http://localhost:8080/cas. To go from here to your own configured server, follow the
+[Quick Start](../planning/Quick-Start.html).
 
 ## Overview
 

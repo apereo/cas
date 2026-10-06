@@ -7,6 +7,7 @@ layout: null
 * [Planning](#planning)
     *   [Architecture](/cas/{{ version }}/planning/Architecture.html)
     *   [Getting Started](/cas/{{ version }}/planning/Getting-Started.html)
+    *   [Quick Start](/cas/{{ version }}/planning/Quick-Start.html)
     *   [Getting Involved](/cas/developer/Contributor-Guidelines.html)
     *   [Security Guide](/cas/{{ version }}/planning/Security-Guide.html)
     *   [Upgrade Guide](/cas/{{ version }}/planning/Upgrade-Guide.html)

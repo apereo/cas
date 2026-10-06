@@ -19,6 +19,10 @@ CAS is an open and well-documented authentication protocol. The primary implemen
 an open-source Java server component by the same name hosted here, with support for a plethora of 
 additional authentication protocols and features.
 
+<div class="home-quick-start">
+    <a href="planning/Quick-Start.html"><span class="home-quick-start-tag"><i class="fa fa-rocket" aria-hidden="true"></i>New to CAS?</span><span class="home-quick-start-text">Run CAS locally in a few short steps</span><span class="home-quick-start-go">Quick Start <span aria-hidden="true">→</span></span></a>
+</div>
+
 <div class="identity-orbit" aria-hidden="true">
     <span class="orbit-ring orbit-ring-one"></span><span class="orbit-ring orbit-ring-two"></span><span class="orbit-ring orbit-ring-three"></span>
     <span class="orbit-core"><img src="{{basePath}}/images/cas_logo.png" alt="" width="119" height="60"></span><span class="orbit-dot orbit-dot-one"></span><span class="orbit-dot orbit-dot-two"></span><span class="orbit-label">SUPPORTED BY APEREO FOUNDATION</span>
@@ -65,6 +69,7 @@ We recommend reading the following documentation in order to plan and execute a 
 
 * [Architecture](planning/Architecture.html)
 * [Getting Started](planning/Getting-Started.html)
+* [Quick Start](planning/Quick-Start.html)
 * [Installation Requirements](planning/Installation-Requirements.html)
 * [Installation](installation/WAR-Overlay-Installation.html)
 * [Blog](https://apereo.github.io)

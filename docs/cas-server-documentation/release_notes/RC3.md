@@ -114,6 +114,11 @@ The CAS documentation site has received a visual and functional overhaul. Notabl
 - Every page opens with a short summary, which also serves as its description in search results.
 - [Docker installation](../installation/Docker-Installation.html) names an explicit image tag, and
   [Getting Started](../planning/Getting-Started.html) points to it for a quick local trial.
+- A short [Quick Start](../planning/Quick-Start.html) recipe, featured on the home page and at the top of Getting Started, takes a new deployer from the Docker image to a configured
+  overlay with a registered application and an optional LDAP connection. Every setting it mentions is a link: clicking one
+  opens its description, default value, module and `.properties`, YAML or environment variable form in place, without
+  leaving the page. Any page can mark settings the same way, and the <kbd>Shift</kbd> <kbd>Shift</kbd> search shows a
+  setting's details directly instead of moving to the configuration catalog.
 - The site loads two web fonts instead of four; code and the sidebar use the system monospace font. Images hosted on
   third-party sites are removed, and the [logout](../installation/Logout-Single-Signout.html) session example is now a table.
 
@@ -131,7 +136,7 @@ The CAS documentation site has received a visual and functional overhaul. Notabl
   now require their proof. On the AuthZEN endpoint, `Basic` credentials are the `client_id:client_secret` of a registered application
   rather than CAS user credentials.
 - [JWT bearer assertions](../authentication/OIDC-Authentication-JWT-Bearer.html) must carry `jti` and `iat` claims, are accepted once, and may not live longer than
-  `cas.heimdall.jwt-assertion-max-lifetime` (five minutes by default).
+  `cas.heimdall.jwt-assertion-max-lifetime`{: .cas-setting} (five minutes by default).
 - Failed caller authentication on `/heimdall/authorize` now returns `401` instead of `403`. Failed caller authentication on both
   Heimdall endpoints is subject to [authentication throttling](../authentication/Configuring-Authentication-Throttling-Failure.html).
 - A resource with no policies now denies access instead of granting it, and the REST policy no longer sends the resource's policies to its endpoint.
@@ -202,7 +207,7 @@ and failures were recorded twice. Failed SAML2 ECP authentication attempts, whic
   related origin requests, so passkeys can be used from origins whose domain differs from the relying party identifier.
 - After a successful authentication, CAS reports the user's accepted passkeys and current account details to the browser
   through the Signal API, and passkey autofill checks `getClientCapabilities()` where the browser offers it.
-- Registration and authentication requests carry the user-agent hints set in `cas.authn.mfa.web-authn.core.hints`, and
+- Registration and authentication requests carry the user-agent hints set in `cas.authn.mfa.web-authn.core.hints`{: .cas-setting}, and
   each registration records whether the authenticator reported a discoverable credential (`credProps`).
 - When an assertion fails because the owning account no longer holds the passkey, the response says so and the browser
   is told to stop offering it (`signalUnknownCredential`); the account profile does the same as soon as a passkey is
@@ -222,7 +227,7 @@ and failures were recorded twice. Failed SAML2 ECP authentication attempts, whic
   *Google Password Manager* or *1Password*) with the provider's icon when the attestation does not name the device; the
   registration and login pages show that name and icon for the passkey just registered or used.
 - A new [passkey upgrade](../mfa/FIDO2-WebAuthn-Authentication.html), turned on with
-  `cas.authn.mfa.web-authn.core.passkey-upgrade-enabled` alongside primary authentication and untrusted attestation,
+  `cas.authn.mfa.web-authn.core.passkey-upgrade-enabled`{: .cas-setting} alongside primary authentication and untrusted attestation,
   shows a short page after a password login that lets the browser's password manager create a passkey for the account on
   its own (WebAuthn conditional create), then continues as usual. Such passkeys keep the typed username as their name
   when CAS later reports account details through the Signal API.
@@ -254,7 +259,7 @@ and failures were recorded twice. Failed SAML2 ECP authentication attempts, whic
   only to the client that created the request.
 - Claims marked `"required": false` in a presentation request are now optional: they are requested through DCQL
   `claim_sets` and may be withheld. Previously the flag was ignored and every claim was required.
-- Issuer metadata can describe the issuer for wallets via `cas.authn.oidc.vc.issuer.display` (name, language, logo).
+- Issuer metadata can describe the issuer for wallets via `cas.authn.oidc.vc.issuer.display`{: .cas-setting} (name, language, logo).
 - Credential offer transactions also return the `openid-credential-offer://` deep link for the offer.
 - Issued credentials no longer carry `client_id` (claim or header) or `credential_configuration_id`, which revealed to
   every verifier which relying party requested the credential; CAS verifies its own credentials by the key's `kid`.
@@ -271,23 +276,23 @@ and failures were recorded twice. Failed SAML2 ECP authentication attempts, whic
   by refreshing may still request the credentials those details granted. Previously only scope-based grants survived a refresh.
 - [Verifiable presentation responses](../authentication/OIDC-Authentication-Verifiable-Credentials.html) can be
   encrypted (`direct_post.jwt`), as the High Assurance Interoperability Profile requires, with
-  `cas.authn.oidc.vc.presentation.response-mode=DIRECT_POST_JWT` or per request with
+  `cas.authn.oidc.vc.presentation.response-mode=DIRECT_POST_JWT`{: .cas-setting} or per request with
   `"response_mode": "direct_post.jwt"`: each request carries its own ephemeral `ECDH-ES` key, and presentations sent in
   the clear are refused.
 - Verifiable presentation requests may identify CAS with the `x509_hash` client identifier prefix, which the High Assurance
-  Interoperability Profile requires of verifiers that sign requests: `cas.authn.oidc.vc.presentation.client-identifier-prefix=X509_HASH`.
+  Interoperability Profile requires of verifiers that sign requests: `cas.authn.oidc.vc.presentation.client-identifier-prefix=X509_HASH`{: .cas-setting}.
 - Verifiable presentations may be requested through the [W3C Digital Credentials API](../authentication/OIDC-Authentication-Verifiable-Credentials.html)
   with the `dc_api` and `dc_api.jwt` response modes: CAS builds the request the relying party page passes to the browser, and
   verifies what the page posts back, bound to the page's origin.
 - Credential requests may carry [key attestations](../authentication/OIDC-Authentication-Verifiable-Credentials.html), as
   OpenID4VCI 1.0 and the High Assurance Interoperability Profile define: in the `key_attestation` header of a `jwt` proof, or
   as an `attestation` proof that yields one credential per attested key. Attestations must chain to trust anchors set with
-  `cas.authn.oidc.vc.issuer.key-attestation.trust-anchors`, and a credential configuration may require them, along with the
+  `cas.authn.oidc.vc.issuer.key-attestation.trust-anchors`{: .cas-setting}, and a credential configuration may require them, along with the
   key storage and user authentication levels it accepts, which the issuer metadata advertises as `key_attestations_required`.
 - Clients, wallets above all, may authenticate at the token and pushed authorization request endpoints with a client attestation
   and its proof of possession, per [OAuth 2.0 Attestation-Based Client Authentication](../authentication/OIDC-Authentication-AccessToken-AuthMethods.html)
   (`attest_jwt_client_auth`), as the High Assurance Interoperability Profile requires of wallet attestations. Attestations must chain to
-  trust anchors set with `cas.authn.oidc.client-attestation.trust-anchors`, which also advertises the method in the discovery document.
+  trust anchors set with `cas.authn.oidc.client-attestation.trust-anchors`{: .cas-setting}, which also advertises the method in the discovery document.
 - Wallets may report what became of issued credentials at the new [notification endpoint](../authentication/OIDC-Authentication-Verifiable-Credentials.html):
   credential responses carry a `notification_id`, and `credential_accepted`, `credential_failure` and `credential_deleted`
   notifications are recorded in the audit log.
@@ -295,11 +300,14 @@ and failures were recorded twice. Failed SAML2 ECP authentication attempts, whic
   [Token Status List](../authentication/OIDC-Authentication-Verifiable-Credentials.html) specification: CAS publishes signed
   status list tokens, keeps entries in the ticket registry, offers an `oidcVcStatus` actuator endpoint to change a credential's
   status, and as a verifier checks the status of its own credentials instead of refusing them. Turn it on with
-  `cas.authn.oidc.vc.issuer.status-list.enabled=true`.
+  `cas.authn.oidc.vc.issuer.status-list.enabled=true`{: .cas-setting}.
 - Credential requests and responses may be [encrypted](../authentication/OIDC-Authentication-Verifiable-Credentials.html) on top
   of TLS, per OpenID4VCI 1.0: wallets encrypt requests to the encryption keys of the OpenID Connect keystore, published as
   `credential_request_encryption`, and receive the response encrypted to the key they send in `credential_response_encryption`.
-  Turn it on with `cas.authn.oidc.vc.issuer.encryption.enabled=true`; either direction may also be required.
+  Turn it on with `cas.authn.oidc.vc.issuer.encryption.enabled=true`{: .cas-setting}; either direction may also be required.
+- The credential endpoint answers with the error codes of OpenID4VCI 1.0: an unpublished credential configuration is
+  `unknown_credential_configuration` instead of the draft-era `unsupported_credential_type`, and a `credential_identifier` the
+  token response did not return is `unknown_credential_identifier` instead of `credential_request_denied`.
 
 ### Stateless Ticket Registry
 
@@ -329,7 +337,7 @@ like distinguished names, round-trip correctly. Other changes:
   credential offer and nonce endpoints hand out the stored ids. The pre-authorized code and nonces are not single use there.
   Verifiable presentations are not supported.
 
-The ticket-granting cookie can now be encrypted without being signed, using `cas.tgc.crypto.signing-enabled=false` (signing stays
+The ticket-granting cookie can now be encrypted without being signed, using `cas.tgc.crypto.signing-enabled=false`{: .cas-setting} (signing stays
 on while a signing key is defined). The cookie encryption is authenticated, so this keeps tamper detection and makes the cookie
 about a quarter smaller. This is recommended with the stateless ticket registry, where the cookie carries the
 ticket-granting ticket and can otherwise exceed the `4096` bytes browsers accept, for example after Duo Security multifactor

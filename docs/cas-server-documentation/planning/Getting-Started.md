@@ -9,6 +9,13 @@ category: Planning
 
 # Getting Started
 
+<a class="quick-start-callout" href="Quick-Start.html">
+  <i class="fa fa-rocket" aria-hidden="true"></i>
+  <span><strong>New to CAS? Start with the Quick Start</strong>
+  <small>Run CAS on your machine, set the essential settings, register an application and log in, in a few short steps.</small></span>
+  <b>Open the recipe <span aria-hidden="true">→</span></b>
+</a>
+
 We want to start by saying thank you for using CAS.
 
 This document provides a high-level guide on how to get started with a CAS server deployment.
@@ -64,10 +71,9 @@ experiences and updates throughout your CAS deployment.
 
 ## Try CAS Locally
 
-To see CAS running before you plan anything, start one of the official Docker images with a single
-`docker run` command, as shown in [Docker Installation](../installation/Docker-Installation.html). It is a
-quick way to explore the login flow and the defaults; build your real deployment with a WAR overlay, as
-described below.
+To see CAS running before you plan anything, follow the [Quick Start](Quick-Start.html): it starts the official
+Docker image with a single `docker run` command, then builds a WAR overlay with the essential settings, a registered
+application and an optional LDAP connection. Build your real deployment with a WAR overlay, as described below.
 
 ## Prepare Environment
 
