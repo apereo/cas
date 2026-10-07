@@ -51,7 +51,7 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAcces
         val requestedScopes = configurationContext.getRequestParameterResolver().resolveRequestScopes(context);
         LOGGER.debug("Requested scopes are [{}]", requestedScopes);
         val token = getOAuthTokenFromRequest(context);
-        ensureTokenIsValid(token);
+        FunctionUtils.throwIf(!ensureTokenIsValid(token), () -> new InvalidTicketException("Invalid token " + token.getId()));
 
         val scopes = extractRequestedScopesByToken(requestedScopes, token, context);
         val service = configurationContext.getWebApplicationServiceServiceFactory().createService(redirectUri);

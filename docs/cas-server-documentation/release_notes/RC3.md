@@ -354,7 +354,7 @@ like distinguished names, round-trip correctly. Other changes:
   keep their authorization details, access tokens keep their credential configurations and authorization details, and the
   credential offer and nonce endpoints hand out the stored ids. The pre-authorized code and nonces are not single use there.
   Verifiable presentations are not supported.
-- The OAuth client credentials and resource owner password grants issue access tokens; they failed while recording the use of
+- The OAuth [client credentials](../authentication/OAuth-ProtocolFlow-ClientCredentials.html) and [resource owner password](../authentication/OAuth-ProtocolFlow-ResourceOwner.html) grants issue access tokens; they failed while recording the use of
   the ticket-granting ticket they create, which the stateless registry hands back in encoded form.
 
 The ticket-granting cookie can now be encrypted without being signed, using `cas.tgc.crypto.signing-enabled=false`{: .cas-setting} (signing stays
@@ -366,6 +366,18 @@ authentication. See the [stateless ticket registry documentation](../ticketing/S
 ## Other Stuff
 
 - A large number of dependencies and libraries have been updated to their latest versions.
+- When the background reload is enabled, a request for an application that matches no cached service definition no longer
+  reads the whole service registry; definitions added outside CAS, for example by another node, are recognized at the
+  next scheduled reload. Changes picked up by the [JSON](../services/JSON-Service-Management.html) and
+  [YAML](../services/YAML-Service-Management.html) registry watchers now update the cache right away, fetching services
+  by type through the [`registeredServices` actuator endpoint](../services/Service-Management.html) no longer empties the cache, and CAS warns when the cache
+  expires definitions before the scheduler reloads them. See [this guide](../services/Service-Management-Caching-Reloading.html).
+- A `service` parameter that only resembles a number, such as `1.5`, `1e3`, `0x1F` or a value too large for an
+  identifier, no longer fails the request while CAS applies the application's [HTTP security headers](../services/Configuring-Service-Http-Security-Headers.html);
+  it is matched as a service URL instead.
+- Matching a request to an application definition no longer sorts every cached definition on each lookup, and listing
+  definitions, as the [OpenID Connect JWKS endpoint](../authentication/OIDC-Authentication-JWKS.html) and the `registeredServices` actuator endpoint do, no longer
+  re-indexes every cached definition.
 - Almost all CAS unit tests are internally reworked to allow maximum parallelization and speed up the overall test execution time.
 - [Delegated authentication](../integration/Delegate-Authentication.html) no longer fails intermittently when concurrent requests reach an identity provider that is still being initialized, typically right after startup. Such requests now wait for the initialization in progress instead of failing, which also affects [SAML2 identity providers](../integration/Delegate-Authentication-SAML2.html) when building SAML2 responses, metadata and logout requests.
 - [WebAuthn](../mfa/FIDO2-WebAuthn-Authentication.html) registration and login pages no longer show a broken image when the device has no icon in its attestation metadata, and fall back to the credential nickname for the device name.
@@ -411,6 +423,10 @@ authentication. See the [stateless ticket registry documentation](../ticketing/S
 - The Google Authenticator [JPA repository](../mfa/GoogleAuthenticator-Authentication-Registration-JPA.html) can now save
   a device whose id is not already in the database, such as one imported through the actuator endpoint; the database
   assigns it a new id. Removing a user's devices is now a single bulk delete.
+- The [MongoDB service registry](../services/MongoDb-Service-Management.html) deletes a service definition in one
+  request instead of reading it back first, counts definitions from collection metadata instead of scanning the
+  collection, and, when several definitions share a service id or name, returns the one that comes first in evaluation
+  order instead of an arbitrary match.
 - Redis-backed counts and key lookups, such as the [ticket](../ticketing/Redis-Ticket-Registry.html) and
   [service registry](../services/Redis-Service-Management.html) counts, now return their connection when done. With
   connection pooling enabled, every call used to keep a pooled connection until the pool ran out.

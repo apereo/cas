@@ -13,12 +13,12 @@ import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.serialization.TicketSerializationManager;
 import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
-import com.mongodb.client.MongoCollection;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.hjson.JsonValue;
 import org.hjson.Stringify;
+import org.jspecify.annotations.Nullable;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -34,6 +34,7 @@ import org.springframework.data.mongodb.core.query.Update;
 @Slf4j
 @Monitorable
 public class MongoDbTicketRegistry extends AbstractTicketRegistry {
+    private static final String FIELD_NAME_DOCUMENT_ID = "_id";
 
     private final MongoOperations mongoTemplate;
 
@@ -88,7 +89,7 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
             return null;
         }
         val collectionName = getTicketCollectionInstanceByMetadata(metadata);
-        val query = new Query(Criteria.where(MongoDbTicketDocument.FIELD_NAME_ID).is(encTicketId));
+        val query = includeTicketContent(new Query(Criteria.where(MongoDbTicketDocument.FIELD_NAME_ID).is(encTicketId)));
         val found = mongoTemplate.findOne(query, MongoDbTicketDocument.class, collectionName);
         if (found == null) {
             LOGGER.debug("Ticket [{}] could not be found in collection [{}]", ticketId, collectionName);
@@ -149,7 +150,7 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
     public Stream<? extends Ticket> stream(final TicketRegistryStreamCriteria criteria) {
         val maxResults = criteria.isInfiniteCount() ? -1 : criteria.getFrom() + criteria.getCount();
         var ticketStream = streamTicketDocuments(getTicketCollectionNames(ticketCatalog.findAll().stream()),
-            () -> limitQuery(new Query(), maxResults));
+            () -> includeTicketContent(limitQuery(new Query(), maxResults)));
         if (criteria.getFrom() > 0) {
             ticketStream = ticketStream.skip(criteria.getFrom());
         }
@@ -179,7 +180,7 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
     public long countTickets() {
         return getTicketCollectionNames(ticketCatalog.findAll().stream())
             .stream()
-            .mapToLong(collectionName -> mongoTemplate.count(new Query(), collectionName))
+            .mapToLong(mongoTemplate::estimatedCount)
             .sum();
     }
 
@@ -187,8 +188,8 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
     public Stream<? extends Ticket> getTicketsFor(final Service service) {
         val collectionNames = getTicketCollectionNames(ticketCatalog.findAll().stream());
         return streamTicketDocuments(collectionNames,
-            () -> buildTicketQuery(Criteria.where(MongoDbTicketDocument.FIELD_NAME_SERVICE).is(service.getId()),
-                buildUnexpiredTicketCriteria()))
+            () -> includeTicketContent(buildTicketQuery(Criteria.where(MongoDbTicketDocument.FIELD_NAME_SERVICE).is(service.getId()),
+                buildUnexpiredTicketCriteria())))
             .map(this::decodeTicketFromDocument)
             .filter(Objects::nonNull)
             .filter(ticket -> !ticket.isExpired());
@@ -198,7 +199,7 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
     public Stream<? extends Ticket> getSessionsFor(final String principalId) {
         val collectionNames = getTicketCollectionNames(ticketCatalog.findTicketDefinition(TicketGrantingTicket.class).stream());
         return streamTicketDocuments(collectionNames,
-            () -> buildTicketQuery(buildPrincipalCriteria(principalId), buildUnexpiredTicketCriteria()))
+            () -> includeTicketContent(buildTicketQuery(buildPrincipalCriteria(principalId), buildUnexpiredTicketCriteria())))
             .map(this::decodeTicketFromDocument)
             .filter(Objects::nonNull)
             .filter(ticket -> !ticket.isExpired());
@@ -227,7 +228,7 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
         val collectionNames = getTicketCollectionNames(ticketCatalog.findTicketDefinition(TicketGrantingTicket.class).stream());
         return streamTicketDocuments(collectionNames,
             () -> {
-                val query = buildTicketQuery(criteria);
+                val query = includeTicketContent(buildTicketQuery(criteria));
                 LOGGER.debug("Authenticated sessions query criteria is [{}]", query.getQueryObject());
                 return query;
             })
@@ -267,7 +268,16 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
         }
         val maxResults = criteria.getCount();
         try (val documentStream = streamTicketDocuments(getTicketCollectionNames(ticketDefinitions),
-            () -> limitQuery(buildTicketQuery(queryCriteria), maxResults))) {
+            () -> {
+                val query = limitQuery(buildTicketQuery(queryCriteria), maxResults);
+                if (criteria.isDecode()) {
+                    return includeTicketContent(query);
+                }
+                query.fields()
+                    .include(MongoDbTicketDocument.FIELD_NAME_ID, MongoDbTicketDocument.FIELD_NAME_PRINCIPAL)
+                    .exclude(FIELD_NAME_DOCUMENT_ID);
+                return query;
+            })) {
             val limitedDocumentStream = maxResults > 0 ? documentStream.limit(maxResults) : documentStream;
             return limitedDocumentStream
                 .map(document -> {
@@ -292,7 +302,28 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
             .sum();
     }
 
-    protected Ticket decodeTicketFromDocument(final MongoDbTicketDocument document) {
+    @Override
+    protected int deleteServiceTickets(final TicketGrantingTicket ticket) {
+        val services = ticket.getServices();
+        if (services == null || services.isEmpty()) {
+            return 0;
+        }
+        val ticketIdsByCollection = services.keySet()
+            .stream()
+            .map(ticketId -> Optional.ofNullable(ticketCatalog.find(ticketId))
+                .map(definition -> Map.entry(getTicketCollectionInstanceByMetadata(definition), digestIdentifier(ticketId))))
+            .flatMap(Optional::stream)
+            .collect(Collectors.groupingBy(Map.Entry::getKey, Collectors.mapping(Map.Entry::getValue, Collectors.toList())));
+        val deleted = ticketIdsByCollection.entrySet()
+            .stream()
+            .mapToLong(entry -> mongoTemplate.remove(new Query(Criteria.where(MongoDbTicketDocument.FIELD_NAME_ID).in(entry.getValue())),
+                entry.getKey()).getDeletedCount())
+            .sum();
+        LOGGER.debug("Removed [{}] ticket(s) issued by [{}]", deleted, ticket.getId());
+        return Math.toIntExact(deleted);
+    }
+
+    protected @Nullable Ticket decodeTicketFromDocument(final MongoDbTicketDocument document) {
         return decodeTicket(deserializeTicket(document.getJson(), document.getType()));
     }
 
@@ -304,6 +335,13 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
         return criteria.isEmpty()
             ? new Query()
             : new Query(new Criteria().andOperator(criteria));
+    }
+
+    protected Query includeTicketContent(final Query query) {
+        query.fields()
+            .include(MongoDbTicketDocument.FIELD_NAME_JSON, MongoDbTicketDocument.FIELD_NAME_TYPE)
+            .exclude(FIELD_NAME_DOCUMENT_ID);
+        return query;
     }
 
     protected Criteria buildPrincipalCriteria(final String principalId) {
@@ -319,7 +357,7 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
     protected long countTicketsByTicketType(final Class<? extends Ticket> ticketType) {
         return getTicketCollectionNames(ticketCatalog.findTicketImplementations(ticketType).stream())
             .stream()
-            .mapToLong(collectionName -> mongoTemplate.count(new Query(), collectionName))
+            .mapToLong(mongoTemplate::estimatedCount)
             .sum();
     }
 
@@ -351,16 +389,11 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
     }
 
     protected String getTicketCollectionInstanceByMetadata(final TicketDefinition metadata) {
-        val mapName = metadata.getProperties().getStorageName();
-        LOGGER.debug("Locating collection name [{}] for ticket definition [{}]", mapName, metadata);
-        val collection = getTicketCollectionInstance(mapName);
-        return Objects.requireNonNull(collection).getNamespace().getCollectionName();
-    }
-
-    protected MongoCollection getTicketCollectionInstance(final String mapName) {
-        val inst = mongoTemplate.getCollection(mapName);
-        LOGGER.debug("Located MongoDb collection instance [{}]", mapName);
-        return inst;
+        val collectionName = metadata.getProperties().getStorageName();
+        if (StringUtils.isBlank(collectionName)) {
+            throw new IllegalArgumentException("No collection name is defined for ticket definition " + metadata.getPrefix());
+        }
+        return collectionName;
     }
 
     /**

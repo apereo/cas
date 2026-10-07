@@ -48,7 +48,7 @@ public class MongoDbTicketRegistryProperties extends BaseMongoDbProperties {
      * Index names to create. By default, all indexes are created.
      * Supported indexes are:
      * <ul>
-     *     <li>{@code IDX_ID}: index created for ticket identifiers.</li>
+     *     <li>{@code IDX_ID}: unique index created for ticket identifiers.</li>
      *     <li>{@code IDX_PRINCIPAL}: index created for principal attached to the ticket.</li>
      *     <li>{@code IDX_EXPIRATION}: index created for ticket expiration date.</li>
      *     <li>{@code IDX_SERVICE}: index created for service attached to the ticket.</li>

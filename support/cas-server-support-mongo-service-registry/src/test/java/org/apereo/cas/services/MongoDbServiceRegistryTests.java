@@ -8,6 +8,7 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import lombok.Getter;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -60,5 +61,37 @@ class MongoDbServiceRegistryTests extends AbstractServiceRegistryTests {
         assertNotNull(newService);
         assertFalse(newService.getAttributeFriendlyNames().isEmpty());
         assertFalse(newService.getAttributeNameFormats().isEmpty());
+    }
+
+    @Test
+    void verifyExactLookupsFollowEvaluationOrder() {
+        val serviceId = "https://%s.example.org".formatted(UUID.randomUUID());
+        val name = UUID.randomUUID().toString();
+        val evaluatedLater = buildService(serviceId, name, 100);
+        val evaluatedFirst = buildService(serviceId, name, 1);
+        getNewServiceRegistry().save(evaluatedLater);
+        getNewServiceRegistry().save(evaluatedFirst);
+
+        assertEquals(evaluatedFirst.getId(), getNewServiceRegistry().findServiceByExactServiceId(serviceId).getId());
+        assertEquals(evaluatedFirst.getId(), getNewServiceRegistry().findServiceByExactServiceName(name).getId());
+        assertNull(getNewServiceRegistry().findServiceByExactServiceId(StringUtils.EMPTY));
+    }
+
+    @Test
+    void verifyDeleteReportsRemoval() {
+        val service = buildService("https://%s.example.org".formatted(UUID.randomUUID()), UUID.randomUUID().toString(), 0);
+        assertFalse(getNewServiceRegistry().delete(service));
+        getNewServiceRegistry().save(service);
+        assertTrue(getNewServiceRegistry().delete(service));
+        assertNull(getNewServiceRegistry().findServiceById(service.getId()));
+        assertFalse(getNewServiceRegistry().delete(service));
+    }
+
+    private static CasRegisteredService buildService(final String serviceId, final String name, final int evaluationOrder) {
+        val service = new CasRegisteredService();
+        service.setServiceId(serviceId);
+        service.setName(name);
+        service.setEvaluationOrder(evaluationOrder);
+        return service;
     }
 }

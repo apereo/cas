@@ -6,7 +6,9 @@ import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManagerRegisteredServiceLocator;
 import com.googlecode.cqengine.ConcurrentIndexedCollection;
 import com.googlecode.cqengine.IndexedCollection;
+import com.googlecode.cqengine.attribute.SimpleAttribute;
 import com.googlecode.cqengine.index.AttributeIndex;
+import com.googlecode.cqengine.index.hash.HashIndex;
 import com.googlecode.cqengine.query.QueryFactory;
 import com.googlecode.cqengine.query.option.QueryOptions;
 import lombok.extern.slf4j.Slf4j;
@@ -20,12 +22,16 @@ import lombok.val;
  */
 @Slf4j
 public class DefaultRegisteredServiceIndexService extends BaseRegisteredServiceIndexService {
+    private static final SimpleAttribute<RegisteredService, Long> REGISTERED_SERVICE_ID =
+        QueryFactory.attribute(RegisteredService.class, Long.class, "registeredServiceId", RegisteredService::getId);
+
     private final IndexedCollection<RegisteredService> indexedRegisteredServices = new ConcurrentIndexedCollection<>();
 
     public DefaultRegisteredServiceIndexService(
         final List<ServicesManagerRegisteredServiceLocator> registeredServiceLocators,
         final CasConfigurationProperties casProperties) {
         super(registeredServiceLocators, casProperties);
+        indexedRegisteredServices.addIndex(HashIndex.onAttribute(REGISTERED_SERVICE_ID));
     }
 
     @Override
@@ -69,7 +75,7 @@ public class DefaultRegisteredServiceIndexService extends BaseRegisteredServiceI
     @Override
     public Optional<RegisteredService> findServiceBy(final long id) {
         return isEnabled()
-            ? indexedRegisteredServices.stream().filter(registeredService -> registeredService.getId() == id).findFirst()
+            ? findIndexedServicesBy(id).stream().findFirst()
             : Optional.empty();
     }
 
@@ -104,8 +110,7 @@ public class DefaultRegisteredServiceIndexService extends BaseRegisteredServiceI
     @Override
     public void indexService(final RegisteredService service) {
         if (isEnabled()) {
-            indexedRegisteredServices.removeIf(registeredService -> registeredService.getId() == service.getId());
-            indexedRegisteredServices.add(service);
+            indexedRegisteredServices.update(findIndexedServicesBy(service.getId()), List.of(service));
         }
     }
 
@@ -114,6 +119,12 @@ public class DefaultRegisteredServiceIndexService extends BaseRegisteredServiceI
         val queryAttribute = new RegisteredServiceQueryAttribute(query);
         val propertyValue = queryAttribute.getValue(registeredService, new QueryOptions());
         return query.getValue().equals(propertyValue);
+    }
+
+    private List<RegisteredService> findIndexedServicesBy(final long id) {
+        try (val results = indexedRegisteredServices.retrieve(QueryFactory.equal(REGISTERED_SERVICE_ID, id))) {
+            return results.stream().toList();
+        }
     }
 
 }

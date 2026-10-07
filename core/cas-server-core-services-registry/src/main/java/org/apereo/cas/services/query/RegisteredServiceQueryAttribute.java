@@ -52,11 +52,10 @@ public class RegisteredServiceQueryAttribute extends SimpleAttribute<RegisteredS
 
     @Override
     public Object getValue(final RegisteredService service, final QueryOptions queryOptions) {
-        val registeredServiceWrapper = new BeanWrapperImpl(serviceClass);
-        registeredServiceWrapper.setBeanInstance(service);
         if ("@class".equalsIgnoreCase(getAttributeName())) {
             return service.getClass();
         }
+        val registeredServiceWrapper = new BeanWrapperImpl(service);
         return registeredServiceWrapper.isReadableProperty(getAttributeName())
             ? registeredServiceWrapper.getPropertyValue(getAttributeName())
             : StringUtils.EMPTY;

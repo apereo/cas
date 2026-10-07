@@ -387,6 +387,18 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
   is the giveaway that it is timing rather than logic. Moving the band fixed that class of failure
   wholesale; hardcoded 8080/8081 elsewhere in the tree is mostly harmless string-building and
   serialization anyway, and only tests that actually open a connection were ever exposed.
+- `ServicesManager.findServiceBy(Service)` matches against the services cache only while the background
+  reload is enabled and the cache size is above zero; it consults the registry on a miss only when the
+  scheduler is off or the cache is disabled. A test that writes straight to a `ServiceRegistry` and then
+  looks the service up by URL must call `servicesManager.load()` first. Lookups by id or name still fall back
+  to the registry. Registry events published by anything other than a services manager (the JSON/YAML
+  watchers, Redis, S3) update the cache through `DefaultRegisteredServicesEventListener`, synchronously.
+  `findServiceBy(Predicate)` reads the registry and must never write to the cache or index.
+- URL lookups match against `AbstractServicesManager.getSortedRegisteredServices`, a snapshot reused until the cache
+  version changes or the cache size differs from it. Any new code that adds or replaces entries in the services cache
+  must go through `cacheRegisteredService`/`cacheRegisteredServices` (or bump the version itself); a direct
+  `getServicesCache().put` leaves URL lookups on a stale snapshot. Read paths must not re-cache or re-index services
+  the cache already holds, and the returned list is shared and unmodifiable.
 
 ## Puppeteer scenario init scripts
 

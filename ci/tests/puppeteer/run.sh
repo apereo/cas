@@ -656,7 +656,6 @@ function awaitCasBuild() {
         linesShown=${totalLines}
       fi
     fi
-    sleep 2
   done
   wait "${pid}"
   local buildResult=$?
@@ -1284,7 +1283,6 @@ ${BUILD_SCRIPT:+ $BUILD_SCRIPT}${DAEMON:+ $DAEMON} \
                 -jar "${casArtifactToRun}" \
                 -Dcom.sun.net.ssl.checkRevocation=false \
                 --server.port=${serverPort} \
-                --spring.main.lazy-initialization=false \
                 --spring.profiles.active=none \
                 --spring.devtools.restart.enabled=false \
                 --management.endpoints.web.discovery.enabled=true \

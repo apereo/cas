@@ -9,12 +9,12 @@ import org.apereo.cas.services.RegisteredServiceProperty.RegisteredServiceProper
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.support.ArgumentExtractor;
 import org.apereo.cas.web.support.filters.ResponseHeadersEnforcementFilter;
+import com.google.common.primitives.Longs;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointProperties;
 import org.springframework.http.HttpStatus;
@@ -82,8 +82,9 @@ public class RegisteredServiceResponseHeadersEnforcementFilter extends ResponseH
             LOGGER.trace("Attempting to resolve service for [{}]", service);
             val resolved = authenticationRequestServiceSelectionStrategies.getObject().resolveService(service);
             val servicesManager = servicesManagerProvider.getObject();
-            val registeredService = NumberUtils.isCreatable(resolved.getId())
-                ? servicesManager.findServiceBy(Long.parseLong(resolved.getId()))
+            val registeredServiceId = Longs.tryParse(resolved.getId());
+            val registeredService = registeredServiceId != null
+                ? servicesManager.findServiceBy(registeredServiceId)
                 : servicesManager.findServiceBy(resolved);
             val audit = AuditableContext
                 .builder()

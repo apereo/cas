@@ -72,7 +72,8 @@ public class MongoDbTicketRegistryFacilitator {
             if (properties.getIndexes().isEmpty() || properties.getIndexes().contains(INDEX_NAME_ID)) {
                 val ticketIdIndex = new Index()
                     .named(INDEX_NAME_ID)
-                    .on(MongoDbTicketDocument.FIELD_NAME_ID, Sort.Direction.ASC);
+                    .on(MongoDbTicketDocument.FIELD_NAME_ID, Sort.Direction.ASC)
+                    .unique();
                 expectedIndexes.add(ticketIdIndex);
             }
 
