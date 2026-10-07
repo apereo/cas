@@ -37,6 +37,7 @@ import org.apereo.cas.oidc.vc.issuer.web.OidcVerifiableCredentialNonceEndpointCo
 import org.apereo.cas.oidc.vc.issuer.web.OidcVerifiableCredentialStatusListEndpointController;
 import org.apereo.cas.oidc.vc.issuer.web.OidcVerifiableCredentialTypeMetadataController;
 import org.apereo.cas.oidc.vc.token.OidcVerifiableCredentialsAccessTokenGeneratorCustomizer;
+import org.apereo.cas.support.oauth.validator.OAuth20DPoPNonceService;
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import lombok.val;
 import org.apereo.inspektr.audit.spi.support.DefaultAuditActionResolver;
@@ -266,8 +267,11 @@ class OidcVerifiableCredentialsIssuerConfiguration {
         @Qualifier(OidcVerifiableCredentialNonceService.BEAN_NAME)
         final OidcVerifiableCredentialNonceService oidcVerifiableCredentialNonceService,
         @Qualifier(OidcConfigurationContext.BEAN_NAME)
-        final OidcConfigurationContext oidcConfigurationContext) {
-        return new OidcVerifiableCredentialNonceEndpointController(oidcConfigurationContext, oidcVerifiableCredentialNonceService);
+        final OidcConfigurationContext oidcConfigurationContext,
+        @Qualifier(OAuth20DPoPNonceService.BEAN_NAME)
+        final OAuth20DPoPNonceService oauthDPoPNonceService) {
+        return new OidcVerifiableCredentialNonceEndpointController(oidcConfigurationContext,
+            oidcVerifiableCredentialNonceService, oauthDPoPNonceService);
     }
     
     @Bean

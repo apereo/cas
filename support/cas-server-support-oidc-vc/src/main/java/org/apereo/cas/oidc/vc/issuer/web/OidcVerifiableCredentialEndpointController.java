@@ -28,6 +28,7 @@ import org.apereo.cas.util.Couplet;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
+import com.nimbusds.oauth2.sdk.dpop.verifiers.InvalidDPoPNonceException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
@@ -674,6 +675,9 @@ public class OidcVerifiableCredentialEndpointController extends BaseOAuth20Contr
             getConfigurationContext().getProofOfPossessionValidator()
                 .validateProtectedResourceRequest(webContext, presentedAccessToken, accessToken);
             return null;
+        } catch (final InvalidDPoPNonceException e) {
+            LOGGER.info("DPoP proof of the credential request carries no valid nonce; a fresh nonce is provided");
+            return OAuth20Utils.useDPoPNonceResponse();
         } catch (final Throwable e) {
             LoggingUtils.warn(LOGGER, e);
             val description = StringUtils.defaultIfBlank(e.getMessage(), "DPoP proof validation failed");

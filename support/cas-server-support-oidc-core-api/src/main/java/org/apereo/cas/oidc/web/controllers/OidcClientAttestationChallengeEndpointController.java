@@ -6,9 +6,11 @@ import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.authn.OidcClientAttestationChallengeService;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
+import org.apereo.cas.support.oauth.validator.OAuth20DPoPNonceService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
+import org.pac4j.jee.context.JEEContext;
 import org.springframework.http.CacheControl;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -29,14 +31,19 @@ import jakarta.servlet.http.HttpServletResponse;
 public class OidcClientAttestationChallengeEndpointController extends BaseOidcController {
     private final OidcClientAttestationChallengeService challengeService;
 
+    private final OAuth20DPoPNonceService dpopNonceService;
+
     public OidcClientAttestationChallengeEndpointController(final OidcConfigurationContext configurationContext,
-                                                            final OidcClientAttestationChallengeService challengeService) {
+                                                            final OidcClientAttestationChallengeService challengeService,
+                                                            final OAuth20DPoPNonceService dpopNonceService) {
         super(configurationContext);
         this.challengeService = challengeService;
+        this.dpopNonceService = dpopNonceService;
     }
 
     /**
-     * Hand out a challenge.
+     * Hand out a challenge and, once DPoP nonces are turned on, a DPoP nonce in the {@code DPoP-Nonce} header, for clients that
+     * use the DPoP combined mode or DPoP on its own.
      *
      * @param request  the request
      * @param response the response
@@ -56,6 +63,9 @@ public class OidcClientAttestationChallengeEndpointController extends BaseOidcCo
         }
         if (!challengeService.isEnabled()) {
             return ResponseEntity.notFound().build();
+        }
+        if (dpopNonceService.isEnabled()) {
+            dpopNonceService.provide(new JEEContext(request, response));
         }
         return ResponseEntity.ok()
             .cacheControl(CacheControl.noStore())

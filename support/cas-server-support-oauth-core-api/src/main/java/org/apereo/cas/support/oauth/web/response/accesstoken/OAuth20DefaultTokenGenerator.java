@@ -321,8 +321,15 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
         return addTicketToRegistry(ticket, null);
     }
 
+    /**
+     * Record the use of the parent ticket-granting ticket. A stateless ticket-granting ticket is left alone: the stateless
+     * registry hands out an encoded ticket that cannot be compacted again, and the cookie keeps the original ticket anyway.
+     *
+     * @param ticketGrantingTicket the ticket-granting ticket
+     * @throws Exception the exception
+     */
     protected void updateTicketGrantingTicket(final Ticket ticketGrantingTicket) throws Exception {
-        if (ticketGrantingTicket != null && !ticketGrantingTicket.isExpired()) {
+        if (ticketGrantingTicket != null && !ticketGrantingTicket.isStateless() && !ticketGrantingTicket.isExpired()) {
             LOGGER.debug("Updating parent ticket-granting ticket [{}]", ticketGrantingTicket);
             ticketGrantingTicket.update();
             ticketRegistry.updateTicket(ticketGrantingTicket);

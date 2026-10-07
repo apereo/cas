@@ -26,6 +26,7 @@ import com.nimbusds.oauth2.sdk.dpop.verifiers.DPoPIssuer;
 import com.nimbusds.oauth2.sdk.dpop.verifiers.DPoPProofUse;
 import com.nimbusds.oauth2.sdk.dpop.verifiers.DPoPProtectedResourceRequestVerifier;
 import com.nimbusds.oauth2.sdk.dpop.verifiers.DPoPTokenRequestVerifier;
+import com.nimbusds.oauth2.sdk.dpop.verifiers.InvalidDPoPNonceException;
 import com.nimbusds.oauth2.sdk.dpop.verifiers.InvalidDPoPProofException;
 import com.nimbusds.oauth2.sdk.id.ClientID;
 import com.nimbusds.oauth2.sdk.token.DPoPAccessToken;
@@ -56,6 +57,7 @@ public class DefaultOAuth20ProofOfPossessionValidator implements OAuth20ProofOfP
     private final TicketFactory ticketFactory;
     private final AuditableExecution registeredServiceAccessStrategyEnforcer;
     private final CasConfigurationProperties casProperties;
+    private final OAuth20DPoPNonceService dpopNonceService;
 
     @Override
     public void validate(final WebContext webContext, final OAuth20AccessToken accessToken) throws Throwable {
@@ -103,7 +105,9 @@ public class DefaultOAuth20ProofOfPossessionValidator implements OAuth20ProofOfP
             getMaximumAgeInSeconds(), getMaximumAgeInSeconds(), getSingleUseChecker(dPopProof, clientId));
         val signedProof = getSignedProofOfPosessionJwt(dPopProof);
         val dPopIssuer = new DPoPIssuer(new ClientID(clientId));
-        return verifier.verify(dPopIssuer, signedProof, Set.of());
+        val confirmation = verifier.verify(dPopIssuer, signedProof, dpopNonceService.getAcceptedNonces(signedProof));
+        verifyNonce(webContext, signedProof);
+        return confirmation;
     }
 
     @Override
@@ -123,9 +127,27 @@ public class DefaultOAuth20ProofOfPossessionValidator implements OAuth20ProofOfP
         LOGGER.debug("Verifying DPoP proof for client [{}] at [{}]", clientId, webContext.getRequestURL());
         val verifier = new DPoPProtectedResourceRequestVerifier(getAcceptedSigningAlgorithms(),
             getMaximumAgeInSeconds(), getMaximumAgeInSeconds(), getSingleUseChecker(dPopProof, clientId));
+        val signedProof = getSignedProofOfPosessionJwt(dPopProof);
         verifier.verify(webContext.getRequestMethod(), new URI(webContext.getRequestURL()),
-            new DPoPIssuer(new ClientID(clientId)), getSignedProofOfPosessionJwt(dPopProof),
-            new DPoPAccessToken(presentedAccessToken), confirmation.get(), null);
+            new DPoPIssuer(new ClientID(clientId)), signedProof,
+            new DPoPAccessToken(presentedAccessToken), confirmation.get(), dpopNonceService.getAcceptedNonces(signedProof), null);
+        verifyNonce(webContext, signedProof);
+    }
+
+    /**
+     * Once nonces are turned on, the proof must carry, in its {@code nonce} claim, a nonce that CAS handed out and that has not
+     * expired (RFC 9449, sections 4.3 and 11.3). Otherwise a fresh nonce is put in the {@code DPoP-Nonce} header of the
+     * response, and the endpoint answers with {@code use_dpop_nonce}.
+     *
+     * @param webContext  the web context
+     * @param signedProof the verified proof
+     * @throws Throwable the throwable, {@link InvalidDPoPNonceException} when the nonce is missing or not valid
+     */
+    protected void verifyNonce(final WebContext webContext, final SignedJWT signedProof) throws Throwable {
+        if (!dpopNonceService.isAccepted(signedProof)) {
+            dpopNonceService.provide(webContext);
+            throw new InvalidDPoPNonceException("DPoP proof carries no valid server-provided nonce", null);
+        }
     }
 
     /**

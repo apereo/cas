@@ -81,7 +81,8 @@ along with a fresh challenge in the `OAuth-Client-Attestation-Challenge` header 
 In the DPoP combined mode (`attest_jwt_client_auth_dpop`), the request carries no `OAuth-Client-Attestation-PoP` header; a single
 `DPoP` proof stands for the proof of possession instead. It must be valid for the request per
 [RFC 9449](https://www.rfc-editor.org/rfc/rfc9449), signed with one of the `dpop_signing_alg_values_supported`, made with the key
-in the attestation's `cnf` and not used before. Challenges do not apply to this mode, and CAS does not issue DPoP nonces. A
+in the attestation's `cnf` and not used before. Challenges do not apply to this mode; once [DPoP nonces](OIDC-Authentication-DPoP.html#server-provided-nonces) are turned on,
+the proof must carry one instead, or the request is answered with `400` and `use_dpop_nonce`. A
 request that carries both headers is authenticated by the proof of possession; its DPoP proof, if any, is left to the endpoint,
 and binds the access token at the token endpoint.
 

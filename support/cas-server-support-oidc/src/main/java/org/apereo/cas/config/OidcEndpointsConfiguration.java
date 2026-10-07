@@ -38,6 +38,7 @@ import org.apereo.cas.oidc.web.controllers.token.OidcRevocationEndpointControlle
 import org.apereo.cas.oidc.web.flow.OidcMultifactorAuthenticationTrigger;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.authenticator.Authenticators;
+import org.apereo.cas.support.oauth.validator.OAuth20DPoPNonceService;
 import org.apereo.cas.support.oauth.validator.authorization.OAuth20AuthorizationRequestValidator;
 import org.apereo.cas.support.oauth.web.OAuth20RequestParameterResolver;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
@@ -359,8 +360,11 @@ class OidcEndpointsConfiguration {
             @Qualifier(OidcClientAttestationChallengeService.BEAN_NAME)
             final OidcClientAttestationChallengeService oidcClientAttestationChallengeService,
             @Qualifier(OidcConfigurationContext.BEAN_NAME)
-            final OidcConfigurationContext oidcConfigurationContext) {
-            return new OidcClientAttestationChallengeEndpointController(oidcConfigurationContext, oidcClientAttestationChallengeService);
+            final OidcConfigurationContext oidcConfigurationContext,
+            @Qualifier(OAuth20DPoPNonceService.BEAN_NAME)
+            final OAuth20DPoPNonceService oauthDPoPNonceService) {
+            return new OidcClientAttestationChallengeEndpointController(oidcConfigurationContext,
+                oidcClientAttestationChallengeService, oauthDPoPNonceService);
         }
 
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

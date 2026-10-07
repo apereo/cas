@@ -322,6 +322,10 @@ and failures were recorded twice. Failed [SAML2 ECP authentication](../authentic
   `status_list_aggregation_endpoint`, lists all published status lists.
 - Wallets that ask for `application/jwt` receive the credential issuer metadata as
   [signed metadata](../authentication/OIDC-Authentication-Verifiable-Credentials.html), per OpenID4VCI 1.0.
+- CAS can require [DPoP proofs to carry a nonce](../authentication/OIDC-Authentication-DPoP.html) it handed out, per RFC 9449:
+  turned on with `cas.authn.oidc.dpop.nonce.enabled=true`{: .cas-setting}, the token endpoint and the DPoP combined mode answer
+  with `400`, and protected resources with `401`, `use_dpop_nonce` and a fresh nonce in the `DPoP-Nonce` header. The OpenID4VCI
+  nonce endpoint and the client attestation challenge endpoint hand out nonces as well.
 
 ### Stateless Ticket Registry
 
@@ -414,3 +418,7 @@ authentication. See the [stateless ticket registry documentation](../ticketing/S
   downloading a fresh one fails at startup, for example when the FIDO metadata service rate-limits the request, instead of failing to start.
 - The project [README](https://github.com/apereo/cas) is reworked as a landing page, with a one-minute Docker try-out,
   a link to the new [Quick Start](../planning/Quick-Start.html), features grouped by area and the maintained documentation versions.
+- The [account profile](../registration/Account-Management-Overview.html) and the account management screens (sign-up,
+  password reset, forgot username, expired or must-change password) are redesigned: the profile gets a section rail,
+  an overview with summary cards and lists with inline details, filtering and keyboard support, and every account
+  management flow shows its steps beside a single form card. Features are unchanged; colors follow the CAS theme.

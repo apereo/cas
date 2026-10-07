@@ -99,6 +99,7 @@ import org.apereo.cas.support.oauth.authenticator.OAuth20CasAuthenticationBuilde
 import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
 import org.apereo.cas.support.oauth.profile.OAuth20UserProfileDataCreator;
 import org.apereo.cas.support.oauth.validator.OAuth20ClientSecretValidator;
+import org.apereo.cas.support.oauth.validator.OAuth20DPoPNonceService;
 import org.apereo.cas.support.oauth.validator.OAuth20ProofOfPossessionValidator;
 import org.apereo.cas.support.oauth.validator.authorization.OAuth20AuthorizationRequestValidator;
 import org.apereo.cas.support.oauth.validator.token.OAuth20TokenRequestValidator;
@@ -685,11 +686,13 @@ class OidcConfiguration {
             @Qualifier(OidcServerDiscoverySettings.BEAN_NAME_FACTORY)
             final OidcServerDiscoverySettings oidcServerDiscoverySettings,
             @Qualifier(OidcClientAttestationChallengeService.BEAN_NAME)
-            final OidcClientAttestationChallengeService oidcClientAttestationChallengeService) {
+            final OidcClientAttestationChallengeService oidcClientAttestationChallengeService,
+            @Qualifier(OAuth20DPoPNonceService.BEAN_NAME)
+            final OAuth20DPoPNonceService oauthDPoPNonceService) {
             return () -> {
                 val authenticator = new OidcClientAttestationAuthenticator(servicesManager,
                     registeredServiceAccessStrategyEnforcer, ticketRegistry, ticketFactory,
-                    casProperties, oidcServerDiscoverySettings, oidcClientAttestationChallengeService);
+                    casProperties, oidcServerDiscoverySettings, oidcClientAttestationChallengeService, oauthDPoPNonceService);
                 val client = new HeaderClient();
                 client.setCredentialsExtractor(new OidcClientAttestationAuthenticator.ClientAttestationCredentialsExtractor());
                 client.setAuthenticator(authenticator);

@@ -6,6 +6,7 @@ import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.vc.issuer.nonce.OidcVerifiableCredentialNonceService;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
+import org.apereo.cas.support.oauth.validator.OAuth20DPoPNonceService;
 import org.apereo.cas.support.oauth.web.endpoints.BaseOAuth20Controller;
 import org.apereo.cas.util.LoggingUtils;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -34,19 +35,25 @@ public class OidcVerifiableCredentialNonceEndpointController extends BaseOAuth20
 
     private final OidcVerifiableCredentialNonceService credentialNonceService;
 
+    private final OAuth20DPoPNonceService dpopNonceService;
+
     public OidcVerifiableCredentialNonceEndpointController(
         final OidcConfigurationContext configurationContext,
-        final OidcVerifiableCredentialNonceService credentialNonceService) {
+        final OidcVerifiableCredentialNonceService credentialNonceService,
+        final OAuth20DPoPNonceService dpopNonceService) {
         super(configurationContext);
         this.credentialNonceService = credentialNonceService;
+        this.dpopNonceService = dpopNonceService;
     }
 
     /**
-     * Handle response entity.
+     * Hand out a {@code c_nonce} and, once DPoP nonces are turned on, a DPoP nonce in the {@code DPoP-Nonce} header for the
+     * DPoP proof of the credential request (OpenID4VCI 1.0, section 7.2).
      *
      * @param httpRequest  the http request
      * @param httpResponse the http response
      * @return the response entity
+     * @throws Throwable the throwable
      */
     @PostMapping(value = {
         '/' + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.VC_NONCE_URL,
@@ -54,7 +61,7 @@ public class OidcVerifiableCredentialNonceEndpointController extends BaseOAuth20
     }, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity handle(
         final HttpServletRequest httpRequest,
-        final HttpServletResponse httpResponse) {
+        final HttpServletResponse httpResponse) throws Throwable {
 
         val webContext = new JEEContext(httpRequest, httpResponse);
         if (!getConfigurationContext().getIssuerService().validateIssuer(webContext, List.of(OidcConstants.VC_NONCE_URL))) {
@@ -63,6 +70,9 @@ public class OidcVerifiableCredentialNonceEndpointController extends BaseOAuth20
             return ResponseEntity.badRequest().body(body);
         }
         val nonce = credentialNonceService.create();
+        if (dpopNonceService.isEnabled()) {
+            dpopNonceService.provide(webContext);
+        }
         return ResponseEntity
             .ok()
             .cacheControl(CacheControl.noStore())

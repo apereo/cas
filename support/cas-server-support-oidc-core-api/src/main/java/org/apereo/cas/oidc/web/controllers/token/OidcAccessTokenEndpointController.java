@@ -7,6 +7,7 @@ import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20AccessTokenEndpointController;
+import com.nimbusds.oauth2.sdk.dpop.verifiers.InvalidDPoPNonceException;
 import com.nimbusds.oauth2.sdk.dpop.verifiers.InvalidDPoPProofException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -72,6 +73,8 @@ public class OidcAccessTokenEndpointController extends OAuth20AccessTokenEndpoin
      */
     @ExceptionHandler(InvalidDPoPProofException.class)
     public ModelAndView handleInvalidDPoPProofException(final HttpServletResponse req, final Exception ex) {
-        return OAuth20Utils.writeError(req, OAuth20Constants.INVALID_DPOP_PROOF);
+        return ex instanceof InvalidDPoPNonceException
+            ? OAuth20Utils.writeError(req, OAuth20Constants.USE_DPOP_NONCE, ex.getMessage())
+            : OAuth20Utils.writeError(req, OAuth20Constants.INVALID_DPOP_PROOF);
     }
 }

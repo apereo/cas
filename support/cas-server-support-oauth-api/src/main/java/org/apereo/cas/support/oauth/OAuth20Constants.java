@@ -251,6 +251,11 @@ public interface OAuth20Constants {
     String INVALID_DPOP_PROOF = "invalid_dpop_proof";
 
     /**
+     * Error code that asks the client to retry with the server-provided nonce in its DPoP proof (RFC 9449, section 8).
+     */
+    String USE_DPOP_NONCE = "use_dpop_nonce";
+
+    /**
      * The invalid token, per RFC 6750, section 3.1: the access token provided to a protected
      * resource is expired, revoked, malformed, or invalid for other reasons. Unlike the errors
      * above, which belong to the token endpoint, this one is answered with a 401 and a
@@ -437,6 +442,11 @@ public interface OAuth20Constants {
      * DPoP header.
      */
     String DPOP = "DPoP";
+
+    /**
+     * Header that carries a server-provided nonce for DPoP proofs (RFC 9449, section 8).
+     */
+    String DPOP_NONCE = "DPoP-Nonce";
 
     /**
      * resource parameter.

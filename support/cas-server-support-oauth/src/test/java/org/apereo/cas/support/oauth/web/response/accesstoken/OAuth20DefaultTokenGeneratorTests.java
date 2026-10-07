@@ -290,6 +290,27 @@ class OAuth20DefaultTokenGeneratorTests {
         }
 
         @Test
+        void verifyStatelessTicketGrantingTicketIsNotUpdated() throws Throwable {
+            val registeredService = getRegisteredService(SERVICE_URL, UUID.randomUUID().toString(), "secret");
+            servicesManager.save(registeredService);
+            val authentication = RegisteredServiceTestUtils.getAuthentication(UUID.randomUUID().toString());
+            val service = RegisteredServiceTestUtils.getService(SERVICE_URL);
+            val webContext = new JEEContext(new MockHttpServletRequest(HttpMethod.POST.name(), CONTEXT + OAuth20Constants.ACCESS_TOKEN_URL),
+                new MockHttpServletResponse());
+            val ticketGrantingTicket = new TicketGrantingTicketImpl(UUID.randomUUID().toString(), authentication,
+                new TimeoutExpirationPolicy(5));
+            ticketGrantingTicket.markTicketStateless();
+            val lastUsedTime = ticketGrantingTicket.getLastTimeUsed();
+            val tokenRequestContext = buildAccessTokenRequestContext(registeredService, authentication,
+                OAuth20GrantTypes.CLIENT_CREDENTIALS, service, ticketGrantingTicket, webContext);
+
+            val result = oauthTokenGenerator.generate(tokenRequestContext);
+            assertTrue(result.getAccessToken().isPresent());
+            assertEquals(lastUsedTime, ticketGrantingTicket.getLastTimeUsed());
+            assertEquals(0, ticketGrantingTicket.getCountOfUses());
+        }
+
+        @Test
         void verifyTicketGrantingTicketExpired() throws Throwable {
             val registeredService = getRegisteredService(SERVICE_URL, UUID.randomUUID().toString(), "secret");
             servicesManager.save(registeredService);

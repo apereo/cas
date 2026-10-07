@@ -305,17 +305,18 @@ class OidcDynamicClientRegistrationEndpointControllerTests {
             val registeredService = getOidcRegisteredService(UUID.randomUUID().toString());
             servicesManager.save(registeredService);
             val storedToken = getAccessToken(registeredService.getClientId(), Set.of(OidcConstants.CLIENT_CONFIGURATION_SCOPE));
-            storedToken.markTicketStateless();
+            when(storedToken.isStateless()).thenReturn(true);
+            val resolvedToken = getAccessToken(registeredService.getClientId(), Set.of(OidcConstants.CLIENT_CONFIGURATION_SCOPE));
             val registry = mock(TicketRegistry.class);
             when(registry.addTicket(any(Ticket.class))).thenReturn(storedToken);
-            when(registry.getTicket(storedToken.getId(), OAuth20AccessToken.class)).thenReturn(storedToken);
+            when(registry.getTicket(storedToken.getId(), OAuth20AccessToken.class)).thenReturn(resolvedToken);
             val context = spy(oidcConfigurationContext);
             when(context.getTicketRegistry()).thenReturn(registry);
 
             val controller = new OidcDynamicClientRegistrationEndpointController(context);
             val accessToken = controller.generateRegistrationAccessToken(new MockHttpServletRequest(),
                 new MockHttpServletResponse(), registeredService, new OidcClientRegistrationRequest());
-            assertSame(storedToken, accessToken);
+            assertSame(resolvedToken, accessToken);
             verify(registry).getTicket(storedToken.getId(), OAuth20AccessToken.class);
         }
     }

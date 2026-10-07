@@ -52,6 +52,8 @@ Tokens are further subject to the following rules:
 - The token must be issued to an OAuth or OpenID Connect application that is registered with CAS and whose access strategy allows access.
 - A token that is bound to a key via [DPoP](../authentication/OIDC-Authentication-DPoP.html) must be presented using the `DPoP`
   authorization scheme along with a valid DPoP proof for the Heimdall endpoint; it is rejected when presented as a `Bearer` token.
+  Once [DPoP nonces](../authentication/OIDC-Authentication-DPoP.html#server-provided-nonces) are turned on, the proof must carry
+  one, or the request is answered with `401`, `WWW-Authenticate: DPoP error="use_dpop_nonce"` and a fresh nonce.
 - A token that is bound to a client certificate via mutual TLS is only accepted when the same client certificate is presented on the request.
 - A JWT bearer token must carry `jti` and `iat` claims, may be presented only once, and its lifetime between `iat` and `exp`
   may not exceed a configurable maximum that defaults to five minutes.

@@ -119,4 +119,10 @@ public class OidcProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private OidcClientAttestationProperties clientAttestation = new OidcClientAttestationProperties();
+
+    /**
+     * DPoP settings.
+     */
+    @NestedConfigurationProperty
+    private OidcDPoPProperties dpop = new OidcDPoPProperties();
 }

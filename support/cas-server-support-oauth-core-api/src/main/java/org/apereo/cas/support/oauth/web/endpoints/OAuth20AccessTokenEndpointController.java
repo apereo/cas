@@ -16,6 +16,7 @@ import org.apereo.cas.ticket.OAuth20Token;
 import org.apereo.cas.ticket.OAuth20UnauthorizedScopeRequestException;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
+import com.nimbusds.oauth2.sdk.dpop.verifiers.InvalidDPoPNonceException;
 import com.nimbusds.oauth2.sdk.dpop.verifiers.InvalidDPoPProofException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -99,6 +100,9 @@ public class OAuth20AccessTokenEndpointController<T extends OAuth20Configuration
                 LOGGER.warn("Access token validation failed for request [{}]", context.getFullRequestURL());
                 return OAuth20Utils.writeError(response, OAuth20Constants.INVALID_GRANT);
             }
+        } catch (final InvalidDPoPNonceException e) {
+            LOGGER.info("DPoP proof of the access token request carries no valid nonce; a fresh nonce is provided");
+            return OAuth20Utils.writeError(response, OAuth20Constants.USE_DPOP_NONCE, e.getMessage());
         } catch (final InvalidDPoPProofException e) {
             LoggingUtils.error(LOGGER, e);
             return OAuth20Utils.writeError(response, OAuth20Constants.INVALID_DPOP_PROOF);

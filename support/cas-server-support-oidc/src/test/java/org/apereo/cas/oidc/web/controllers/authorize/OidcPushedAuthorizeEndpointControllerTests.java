@@ -12,7 +12,9 @@ import com.nimbusds.jose.jwk.Curve;
 import com.nimbusds.jose.jwk.ECKey;
 import com.nimbusds.jose.jwk.gen.ECKeyGenerator;
 import com.nimbusds.oauth2.sdk.dpop.DefaultDPoPProofFactory;
+import com.nimbusds.openid.connect.sdk.Nonce;
 import lombok.val;
+import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -191,19 +193,26 @@ class OidcPushedAuthorizeEndpointControllerTests extends AbstractOidcTests {
     }
 
     private static String buildDPoPProof(final ECKey key) throws Exception {
+        return buildDPoPProof(key, null);
+    }
+
+    private static String buildDPoPProof(final ECKey key, @Nullable final String nonce) throws Exception {
         return new DefaultDPoPProofFactory(key, JWSAlgorithm.ES256)
-            .createDPoPJWT("POST", new URI("https://sso.example.org/cas/oidc/" + OidcConstants.PUSHED_AUTHORIZE_URL))
+            .createDPoPJWT("POST", new URI("https://sso.example.org/cas/oidc/" + OidcConstants.PUSHED_AUTHORIZE_URL),
+                nonce == null ? null : new Nonce(nonce))
             .serialize();
     }
 
     /**
-     * Once challenges are turned on, the proof of possession must carry one handed out by CAS.
+     * Once challenges are turned on, the proof of possession must carry one handed out by CAS; once DPoP nonces are turned on,
+     * so must the DPoP proof of the DPoP combined mode.
      */
     @Nested
     @TestPropertySource(properties = {
         "cas.authn.oidc.discovery.require-pushed-authorization-requests=true",
         "cas.authn.oidc.client-attestation.trust-anchors=classpath:client-attestation-root.pem",
-        "cas.authn.oidc.client-attestation.challenge.enabled=true"
+        "cas.authn.oidc.client-attestation.challenge.enabled=true",
+        "cas.authn.oidc.dpop.nonce.enabled=true"
     })
     class ChallengeTests extends AbstractOidcTests {
         @Test
@@ -234,6 +243,39 @@ class OidcPushedAuthorizeEndpointControllerTests extends AbstractOidcTests {
                 .andReturn().getResponse().getHeader(OidcConstants.HEADER_CLIENT_ATTESTATION_CHALLENGE);
             for (val provided : List.of(challenge, challenge, Objects.requireNonNull(freshChallenge))) {
                 performPushedAuthorizationRequest(id, attestation, buildClientAttestationProof(instanceKey, issuer, provided))
+                    .andExpect(status().isCreated());
+            }
+        }
+
+        @Test
+        void verifyPostInDPoPCombinedModeWithNonce() throws Exception {
+            val id = UUID.randomUUID().toString();
+            val service = getOidcRegisteredService(id);
+            service.setBypassApprovalPrompt(true);
+            servicesManager.save(service);
+
+            val nonce = mockMvc.perform(post("/cas/oidc/" + OidcConstants.CLIENT_ATTESTATION_CHALLENGE_URL)
+                    .with(withHttpRequestProcessor()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.attestation_challenge").exists())
+                .andReturn().getResponse().getHeader(OAuth20Constants.DPOP_NONCE);
+            assertNotNull(nonce);
+
+            val instanceKey = new ECKeyGenerator(Curve.P_256).generate();
+            val attestation = buildClientAttestation(id, instanceKey, false);
+            val freshNonce = performPushedAuthorizationRequestWithDPoP(id, attestation, buildDPoPProof(instanceKey, null))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error").value(OAuth20Constants.USE_DPOP_NONCE))
+                .andExpect(header().string(HttpHeaders.CACHE_CONTROL, "no-store"))
+                .andExpect(header().doesNotExist(OidcConstants.HEADER_CLIENT_ATTESTATION_CHALLENGE))
+                .andReturn().getResponse().getHeader(OAuth20Constants.DPOP_NONCE);
+            assertNotNull(freshNonce);
+            performPushedAuthorizationRequestWithDPoP(id, attestation, buildDPoPProof(instanceKey, "unknown"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error").value(OAuth20Constants.USE_DPOP_NONCE))
+                .andExpect(header().exists(OAuth20Constants.DPOP_NONCE));
+            for (val provided : List.of(nonce, nonce, freshNonce)) {
+                performPushedAuthorizationRequestWithDPoP(id, attestation, buildDPoPProof(instanceKey, provided))
                     .andExpect(status().isCreated());
             }
         }

@@ -12,6 +12,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20ClientAuthenticationMethods;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
+import org.apereo.cas.support.oauth.validator.OAuth20DPoPNonceService;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.TransientSessionTicket;
@@ -64,7 +65,8 @@ import java.security.cert.X509Certificate;
  * possession, whose {@code aud} is the issuer and whose {@code jti} may be used once while its {@code iat} is recent.
  * Once challenges are turned on, the proof must also carry a challenge CAS handed out; otherwise the request is answered
  * with {@code use_attestation_challenge} and a fresh challenge. In the DPoP combined mode ({@code attest_jwt_client_auth_dpop})
- * the request carries no proof of possession header, and a DPoP proof made with the attested key takes its place.
+ * the request carries no proof of possession header, and a DPoP proof made with the attested key takes its place; once DPoP
+ * nonces are turned on, it must carry one, or the request is answered with {@code use_dpop_nonce} and a fresh nonce.
  *
  * @author Misagh Moayyed
  * @since 8.1.0
@@ -107,6 +109,8 @@ public class OidcClientAttestationAuthenticator implements Authenticator {
 
     protected final OidcClientAttestationChallengeService challengeService;
 
+    protected final OAuth20DPoPNonceService dpopNonceService;
+
     private final Set<TrustAnchor> trustAnchors;
 
     public OidcClientAttestationAuthenticator(final ServicesManager servicesManager,
@@ -115,7 +119,8 @@ public class OidcClientAttestationAuthenticator implements Authenticator {
                                               final TicketFactory ticketFactory,
                                               final CasConfigurationProperties casProperties,
                                               final OidcServerDiscoverySettings oidcServerDiscoverySettings,
-                                              final OidcClientAttestationChallengeService challengeService) {
+                                              final OidcClientAttestationChallengeService challengeService,
+                                              final OAuth20DPoPNonceService dpopNonceService) {
         this.servicesManager = servicesManager;
         this.registeredServiceAccessStrategyEnforcer = registeredServiceAccessStrategyEnforcer;
         this.ticketRegistry = ticketRegistry;
@@ -123,6 +128,7 @@ public class OidcClientAttestationAuthenticator implements Authenticator {
         this.casProperties = casProperties;
         this.oidcServerDiscoverySettings = oidcServerDiscoverySettings;
         this.challengeService = challengeService;
+        this.dpopNonceService = dpopNonceService;
         this.trustAnchors = CertUtils.readTrustAnchors(casProperties.getAuthn().getOidc().getClientAttestation().getTrustAnchors());
     }
 
@@ -131,7 +137,8 @@ public class OidcClientAttestationAuthenticator implements Authenticator {
      * must match the attestation's {@code sub}, and the registered service must allow access and, at the token
      * endpoint, accept {@code attest_jwt_client_auth}, or {@code attest_jwt_client_auth_dpop} in the DPoP combined mode, when
      * it names a token endpoint authentication method. A failed check leaves the request unauthenticated by this client,
-     * except a missing or invalid challenge, which is answered with {@code use_attestation_challenge}.
+     * except a missing or invalid challenge, which is answered with {@code use_attestation_challenge}, and a DPoP proof without
+     * a valid nonce in the DPoP combined mode, which is answered with {@code use_dpop_nonce}.
      *
      * @param callContext the call context
      * @param credentials the credentials
@@ -262,7 +269,8 @@ public class OidcClientAttestationAuthenticator implements Authenticator {
      * request ({@code typ}, an accepted algorithm, its signature by its own {@code jwk}, {@code htm}, {@code htu} and a recent
      * {@code iat}), made with the attested key, and with a {@code jti} not used before for client authentication. The proof
      * is checked here because endpoints such as the pushed authorization request endpoint do not validate DPoP proofs
-     * themselves; the token endpoint still does, to bind the access token. Server-provided challenges do not apply.
+     * themselves; the token endpoint still does, to bind the access token. Server-provided challenges do not apply; once DPoP
+     * nonces are turned on, the proof must carry a valid one instead (RFC 9449, section 8).
      *
      * @param webContext the web context
      * @param dpopProof  the DPoP proof
@@ -278,9 +286,13 @@ public class OidcClientAttestationAuthenticator implements Authenticator {
             .collect(Collectors.toSet());
         val maximumAge = Beans.newDuration(oidc.getCore().getSkew()).toSeconds();
         val verifier = new DPoPTokenRequestVerifier(algorithms, new URI(webContext.getRequestURL()), maximumAge, maximumAge, null);
-        val confirmation = verifier.verify(new DPoPIssuer(new ClientID(clientId)), signedProof);
+        val confirmation = verifier.verify(new DPoPIssuer(new ClientID(clientId)), signedProof, dpopNonceService.getAcceptedNonces(signedProof));
         if (!confirmation.getValue().equals(key.computeThumbprint())) {
             throw new CredentialsException("DPoP proof key does not match the client attestation key");
+        }
+        if (!dpopNonceService.isAccepted(signedProof)) {
+            dpopNonceService.provide(webContext);
+            throw badRequest(webContext, OAuth20Constants.USE_DPOP_NONCE, "A server-provided nonce is required in the DPoP proof");
         }
         val jwtId = signedProof.getJWTClaimsSet().getJWTID();
         if (StringUtils.isBlank(jwtId) || !registerProofOfPossessionIdentifier(DPOP_PROOF_PREFIX, clientId, jwtId)) {
@@ -299,11 +311,23 @@ public class OidcClientAttestationAuthenticator implements Authenticator {
     protected HttpAction useAttestationChallenge(final WebContext webContext) throws Throwable {
         LOGGER.info("Client attestation proof of possession carries no valid challenge; a fresh challenge is provided");
         webContext.setResponseHeader(OidcConstants.HEADER_CLIENT_ATTESTATION_CHALLENGE, challengeService.create());
+        return badRequest(webContext, OidcConstants.USE_ATTESTATION_CHALLENGE,
+            "A fresh challenge is required in the client attestation proof of possession");
+    }
+
+    /**
+     * A {@code 400} error that is not to be cached, kept as the response by pac4j when thrown from the authenticator.
+     *
+     * @param webContext  the web context
+     * @param error       the error code
+     * @param description the error description
+     * @return the error, to be thrown
+     */
+    protected static HttpAction badRequest(final WebContext webContext, final String error, final String description) {
         webContext.setResponseHeader(HttpHeaders.CACHE_CONTROL, "no-store");
         webContext.setResponseContentType(MediaType.APPLICATION_JSON_VALUE);
         val action = new BadRequestAction();
-        action.setContent(JSONObjectUtils.toJSONString(new LinkedHashMap<>(OAuth20Utils.getErrorResponseBody(
-            OidcConstants.USE_ATTESTATION_CHALLENGE, "A fresh challenge is required in the client attestation proof of possession"))));
+        action.setContent(JSONObjectUtils.toJSONString(new LinkedHashMap<>(OAuth20Utils.getErrorResponseBody(error, description))));
         return action;
     }
 

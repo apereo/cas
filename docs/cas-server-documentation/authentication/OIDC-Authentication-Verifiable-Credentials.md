@@ -181,7 +181,9 @@ This endpoint expects:
   An `access_token` or `token` request parameter is accepted as well, as it is elsewhere in CAS.
   A `DPoP`-bound token must be accompanied by a `DPoP` proof header bound to that token; a request
   without one, or with a proof that does not verify, is answered with `401` and
-  `WWW-Authenticate: DPoP error="invalid_dpop_proof"`. A proof may not be reused.
+  `WWW-Authenticate: DPoP error="invalid_dpop_proof"`. A proof may not be reused. Once
+  [DPoP nonces](OIDC-Authentication-DPoP.html#server-provided-nonces) are turned on, the proof must also carry one, or the
+  request is answered with `401`, `use_dpop_nonce` and a fresh nonce in the `DPoP-Nonce` header.
 - The requested credential. When the token response returned `credential_identifiers` in its authorization details, the
   request must name one of them with `credential_identifier`; otherwise it names a `credential_configuration_id`. The two are
   mutually exclusive, and using the one that does not apply is `invalid_credential_request`. Pre-authorized code token
@@ -321,7 +323,9 @@ credential request.
 POST /oidc/oidcVcNonce
 ```
 
-This endpoint returns `c_nonce`. The challenge is never returned from the token endpoint.
+This endpoint returns `c_nonce`. The challenge is never returned from the token endpoint. Once
+[DPoP nonces](OIDC-Authentication-DPoP.html#server-provided-nonces) are turned on, the response also carries a DPoP nonce in
+its `DPoP-Nonce` header, for the DPoP proof of the credential request.
 
 ### Notification Endpoint
 
