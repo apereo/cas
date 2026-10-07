@@ -20,14 +20,13 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Native")
 class CasCoreUtilRuntimeHintsTests {
     @Test
-    void verifyHints() throws Exception {
+    void verifyHints() {
         val hints = new RuntimeHints();
         new CasCoreUtilRuntimeHints().registerHints(hints, getClass().getClassLoader());
         assertTrue(RuntimeHintsPredicates.proxies().forInterfaces(ComponentSerializationPlanConfigurer.class).test(hints));
         assertTrue(RuntimeHintsPredicates.proxies().forInterfaces(Supplier.class).test(hints));
         assertTrue(RuntimeHintsPredicates.proxies().forInterfaces(FactoryBean.class).test(hints));
 
-        assertTrue(RuntimeHintsPredicates.reflection().onConstructorInvocation(Object.class.getConstructor()).test(hints));
         assertTrue(RuntimeHintsPredicates.reflection().onType(ZonedDateTime.class).test(hints));
         assertTrue(RuntimeHintsPredicates.reflection().onType(LinkedHashMap.class).test(hints));
         assertTrue(RuntimeHintsPredicates.reflection().onType(TreeSet.class).test(hints));

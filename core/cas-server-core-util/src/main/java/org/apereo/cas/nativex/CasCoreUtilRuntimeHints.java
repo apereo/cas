@@ -179,7 +179,6 @@ public class CasCoreUtilRuntimeHints implements CasRuntimeHintsRegistrar {
     }
 
     private void registerSerializationHints(final RuntimeHints hints) {
-        registerReflectionHintsForConstructors(hints, List.of(Object.class));
         registerSerializationHints(hints,
             Boolean.class,
             Double.class,
