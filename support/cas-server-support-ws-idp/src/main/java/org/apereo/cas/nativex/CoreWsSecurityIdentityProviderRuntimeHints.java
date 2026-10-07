@@ -4,6 +4,7 @@ import module java.base;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import org.apereo.cas.ws.idp.services.WSFederationRegisteredService;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
@@ -24,7 +25,7 @@ public class CoreWsSecurityIdentityProviderRuntimeHints implements CasRuntimeHin
         for (val bundle : bundles) {
             val url = Unchecked.supplier(() -> bundle.getURL().toExternalForm()).get();
             val path = url.substring(url.indexOf("org/apache/cxf/"));
-            hints.resources().registerResourceBundle(path.replace(".properties", "").replace('/', '.'));
+            hints.resources().registerResourceBundle(path.replace(".properties", StringUtils.EMPTY).replace('/', '.'));
         }
         registerSerializationHints(hints, WSFederationRegisteredService.class);
         registerReflectionHints(hints, List.of(
