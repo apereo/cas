@@ -22,6 +22,7 @@ import org.jspecify.annotations.Nullable;
 import org.slf4j.LoggerFactory;
 import org.springframework.aot.hint.RuntimeHints;
 import org.springframework.aot.hint.TypeReference;
+import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor;
 import org.springframework.beans.factory.config.ListFactoryBean;
@@ -54,6 +55,7 @@ public class CasCoreUtilRuntimeHints implements CasRuntimeHintsRegistrar {
         
         registerProxyHints(hints, List.of(
             ComponentSerializationPlanConfigurer.class,
+            FactoryBean.class,
             InitializingBean.class,
             Supplier.class,
             Runnable.class,
@@ -177,6 +179,7 @@ public class CasCoreUtilRuntimeHints implements CasRuntimeHintsRegistrar {
     }
 
     private void registerSerializationHints(final RuntimeHints hints) {
+        registerReflectionHintsForConstructors(hints, List.of(Object.class));
         registerSerializationHints(hints,
             Boolean.class,
             Double.class,

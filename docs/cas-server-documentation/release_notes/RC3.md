@@ -427,6 +427,18 @@ authentication. See the [stateless ticket registry documentation](../ticketing/S
   request instead of reading it back first, counts definitions from collection metadata instead of scanning the
   collection, and, when several definitions share a service id or name, returns the one that comes first in evaluation
   order instead of an arbitrary match.
+- The [MongoDB ticket registry](../ticketing/MongoDb-Ticket-Registry.html) reads only the stored ticket when fetching
+  tickets, counts tickets from collection metadata instead of scanning collections, and removes the service tickets of a
+  ticket-granting ticket with one request per collection instead of reading each one back first. Its ticket identifier
+  index is now unique and is rebuilt once at startup when index updates are enabled. Only ticket-granting tickets store
+  principal attributes and carry the attribute index, and only tickets linked to a service carry the service index, so
+  issuing and validating a service ticket no longer writes an index entry per attribute value; indexes left on other
+  collections by earlier versions are removed at startup.
+- MongoDB connection pools now default to 100 connections, keep connections for 30 minutes and idle connections for
+  5 minutes, and wait at most 10 seconds for a free connection instead of a minute. The server heartbeat uses the
+  driver's default instead of the connection `timeout`. Pool settings do not apply when `client-uri` is used; set the
+  connection string's own options instead. If an index CAS replaces cannot be rebuilt, the previous index is restored
+  instead of the collection being left without it.
 - Redis-backed counts and key lookups, such as the [ticket](../ticketing/Redis-Ticket-Registry.html) and
   [service registry](../services/Redis-Service-Management.html) counts, now return their connection when done. With
   connection pooling enabled, every call used to keep a pooled connection until the pool ran out.

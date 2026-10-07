@@ -2,14 +2,14 @@ package org.apereo.cas.nativex;
 
 import module java.base;
 import org.apereo.cas.ha.ClusterTopologyManager;
-import org.springframework.aop.SpringProxy;
-import org.springframework.aop.framework.Advised;
-import org.springframework.core.DecoratingProxy;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.aop.SpringProxy;
+import org.springframework.aop.framework.Advised;
 import org.springframework.aot.hint.RuntimeHints;
 import org.springframework.aot.hint.predicate.RuntimeHintsPredicates;
+import org.springframework.core.DecoratingProxy;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

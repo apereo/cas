@@ -1039,6 +1039,25 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
   whenever new code addresses a map field by path.
 - `IDX_PRINCIPAL` is created on every ticket collection, not only on the ticket-granting ticket
   collection, because `deleteTicketsFor` and the principal criteria run against all of them.
+- Ticket reads project to `json` and `type` (`includeTicketContent`); `query(decode=false)` projects to `ticketId` and
+  `principal`. A new read path that needs another field must add it to the projection, or the field comes back null.
+- Registry-wide counts (`countTickets`, `sessionCount`, `serviceTicketCount`) use `estimatedCount`; filtered counts
+  keep `count(query)`. Removing a ticket-granting ticket deletes its `getServices()` tickets with one `$in` remove per
+  collection (`deleteServiceTickets` override) without reading them back; linked proxy-granting tickets still take
+  the inherited path because each needs its parent updated.
+- Which collection gets what is decided once, by `MongoDbTicketRegistry.getSessionTicketDefinitions` (the
+  ticket-granting ticket definition) and `getServiceTicketDefinitions` (`ServiceAwareTicket` implementations). The
+  registry writes `attributes` only into session collections and runs service lookups only against service
+  collections; the facilitator builds `IDX_ATTRIBUTES`/`IDX_SERVICE` on the same sets and drops them elsewhere. Change
+  readers, writers and indexes together, or a lookup ends up scanning an unindexed collection.
+- `IDX_ID` is unique. `createOrUpdateIndexes` drops an index whose options changed before recreating it, and restores
+  the dropped index when the replacement fails, so a collection is never left without it. Storing the ticket id as
+  `_id` (dropping `IDX_ID`) is the planned follow-up and needs a migration story for live ticket-granting tickets.
+- `MongoDbServiceRegistry` exact lookups (`findServiceByExactServiceId`/`Name`) return the first match in natural
+  order, sorted in the JVM: the comparator leads with `getEvaluationPriority()`, which is type-derived and never
+  stored. `size()` is `estimatedCount`; `delete` is a single remove by id.
+- `MongoDbConnectionFactory.getMappingBasePackages()` is empty by default, so building a template scans nothing; the
+  mapping context registers entity types on first use. Pool settings apply only to the host/port branch.
 - `casTicketRegistryLockRepository` exists for Redis and JPA and does not exist for Mongo, so
   `LockRepository` is JVM-local on a Mongo cluster. `updateTicket` is an unconditional `updateFirst`
   with no version check, so every read-modify-write invariant is last-writer-wins across nodes.

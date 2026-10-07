@@ -16,6 +16,7 @@ import org.jspecify.annotations.Nullable;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.springframework.aot.hint.RuntimeHints;
 import org.springframework.beans.factory.DisposableBean;
+import org.springframework.beans.factory.InitializingBean;
 
 /**
  * This is {@link SamlIdPRuntimeHints}.
@@ -49,6 +50,7 @@ public class SamlIdPRuntimeHints implements CasRuntimeHintsRegistrar {
         registerReflectionHints(hints,
             findSubclassesInPackage(SamlIdPMetadataGenerator.class, CentralAuthenticationService.NAMESPACE));
 
+        registerSpringProxyHints(hints, InitializingBean.class, SamlIdPMetadataGenerator.class);
         registerProxyHints(hints, SamlRegisteredServiceMetadataResolver.class);
         registerProxyHints(hints, SamlRegisteredServiceMetadataResolutionPlanConfigurer.class);
         registerSpringProxyHints(hints, DisposableBean.class, SamlRegisteredServiceMetadataResolver.class);

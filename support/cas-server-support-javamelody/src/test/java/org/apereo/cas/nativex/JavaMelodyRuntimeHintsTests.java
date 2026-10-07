@@ -6,21 +6,21 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.aot.hint.RuntimeHints;
 import org.springframework.aot.hint.predicate.RuntimeHintsPredicates;
-import javax.security.auth.login.AccountLockedException;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * This is {@link LdapAuthenticationRuntimeHintsTests}.
+ * This is {@link JavaMelodyRuntimeHintsTests}.
  *
  * @author Misagh Moayyed
  * @since 8.1.0
  */
 @Tag("Native")
-class LdapAuthenticationRuntimeHintsTests {
+class JavaMelodyRuntimeHintsTests {
     @Test
     void verifyHints() throws Exception {
         val hints = new RuntimeHints();
-        new LdapAuthenticationRuntimeHints().registerHints(hints, getClass().getClassLoader());
-        assertTrue(RuntimeHintsPredicates.reflection().onConstructorInvocation(AccountLockedException.class.getConstructor(String.class)).test(hints));
+        new JavaMelodyRuntimeHints().registerHints(hints, getClass().getClassLoader());
+        val type = Class.forName("com.sun.management.ThreadMXBean");
+        assertTrue(RuntimeHintsPredicates.reflection().onMethodInvocation(type.getDeclaredMethod("isThreadAllocatedMemorySupported")).test(hints));
     }
 }

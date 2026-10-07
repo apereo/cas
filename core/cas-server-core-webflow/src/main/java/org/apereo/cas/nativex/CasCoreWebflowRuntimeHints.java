@@ -14,6 +14,7 @@ import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import org.springframework.aot.hint.RuntimeHints;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.binding.message.MessageContext;
 import org.springframework.binding.validation.ValidationContext;
 import org.springframework.webflow.conversation.Conversation;
@@ -55,6 +56,7 @@ public class CasCoreWebflowRuntimeHints implements CasRuntimeHintsRegistrar {
             CasWebflowExecutionPlanConfigurer.class,
             CasWebflowExceptionHandler.class
         ));
+        registerSpringProxyHints(hints, Action.class, InitializingBean.class);
         registerSpringProxyHints(hints, CasFlowExecutor.class);
         registerSpringProxyHints(hints, CasDelegatingWebflowEventResolver.class, CasWebflowEventResolver.class);
         registerSerializationHints(hints,

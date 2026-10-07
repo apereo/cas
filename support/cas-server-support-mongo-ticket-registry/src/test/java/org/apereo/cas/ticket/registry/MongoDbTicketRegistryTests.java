@@ -3,18 +3,25 @@ package org.apereo.cas.ticket.registry;
 import module java.base;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.config.CasMongoDbTicketRegistryAutoConfiguration;
+import org.apereo.cas.configuration.model.support.mongo.ticketregistry.MongoDbTicketRegistryProperties;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
+import org.apereo.cas.mongo.MongoDbConnectionFactory;
+import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.ticket.DefaultTicketDefinition;
+import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.expiration.HardTimeoutExpirationPolicy;
 import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
+import org.apereo.cas.ticket.proxy.ProxyTicket;
 import org.apereo.cas.ticket.serialization.TicketSerializationManager;
+import org.apereo.cas.util.MongoDbTicketRegistryFacilitator;
 import org.apereo.cas.util.TicketGrantingTicketIdGenerator;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
+import com.mongodb.client.model.IndexOptions;
 import lombok.Getter;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -26,6 +33,7 @@ import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -141,15 +149,23 @@ class MongoDbTicketRegistryTests {
             val collectionName = ticketDefinition.getProperties().getStorageName();
             val indexes = mongoDbTicketRegistryTemplate.getCollection(collectionName).listIndexes().into(new ArrayList<>());
 
+            val idIndex = getIndexByName(indexes, "IDX_ID");
+            assertEquals(new Document(MongoDbTicketDocument.FIELD_NAME_ID, 1), idIndex.get("key"));
+            assertEquals(Boolean.TRUE, idIndex.get("unique"));
+
             val expirationIndex = getIndexByName(indexes, "IDX_EXPIRATION");
             assertEquals(new Document(MongoDbTicketDocument.FIELD_NAME_EXPIRE_AT, 1), expirationIndex.get("key"));
             assertEquals(0, ((Number) expirationIndex.get("expireAfterSeconds")).longValue());
 
-            val serviceIndex = getIndexByName(indexes, "IDX_SERVICE");
-            assertEquals(new Document(MongoDbTicketDocument.FIELD_NAME_SERVICE, 1), serviceIndex.get("key"));
-
             val attributesIndex = getIndexByName(indexes, "IDX_ATTRIBUTES");
             assertEquals(new Document(MongoDbTicketDocument.FIELD_NAME_ATTRIBUTES + ".$**", 1), attributesIndex.get("key"));
+            assertTrue(indexes.stream().noneMatch(index -> "IDX_SERVICE".equals(index.getString("name"))));
+
+            val serviceTicketCollectionName = ticketCatalog.findTicketDefinition(ServiceTicket.class).orElseThrow().getProperties().getStorageName();
+            val serviceTicketIndexes = mongoDbTicketRegistryTemplate.getCollection(serviceTicketCollectionName).listIndexes().into(new ArrayList<>());
+            val serviceIndex = getIndexByName(serviceTicketIndexes, "IDX_SERVICE");
+            assertEquals(new Document(MongoDbTicketDocument.FIELD_NAME_SERVICE, 1), serviceIndex.get("key"));
+            assertTrue(serviceTicketIndexes.stream().noneMatch(index -> "IDX_ATTRIBUTES".equals(index.getString("name"))));
 
             val timeout = 30;
             val creationWindow = Instant.now();
@@ -195,6 +211,7 @@ class MongoDbTicketRegistryTests {
                 .setType(TicketGrantingTicket.PREFIX);
             val queryResults1 = getNewTicketRegistry().query(criteria1);
             assertEquals(criteria1.getCount(), queryResults1.size());
+            queryResults1.forEach(result -> assertFalse(result.toString().endsWith(":N/A"), "Principal missing from " + result));
 
             val criteria2 = new TicketRegistryQueryCriteria()
                 .setCount(5L)
@@ -299,6 +316,110 @@ class MongoDbTicketRegistryTests {
 
             tickets.forEach(Unchecked.consumer(ticket -> getNewTicketRegistry().deleteTicket(ticket)));
             assertEquals(0, getNewTicketRegistry().getSessionsFor(principalId).count());
+        }
+
+        @RepeatedTest(2)
+        void verifyDuplicateTicketIsRejected() throws Throwable {
+            val ticketGrantingTicketId = new TicketGrantingTicketIdGenerator(10, StringUtils.EMPTY)
+                .getNewTicketId(TicketGrantingTicket.PREFIX);
+            val ticket = new TicketGrantingTicketImpl(ticketGrantingTicketId,
+                CoreAuthenticationTestUtils.getAuthentication(UUID.randomUUID().toString()), NeverExpiresExpirationPolicy.INSTANCE);
+            getNewTicketRegistry().addTicket(ticket);
+            assertThrows(DuplicateKeyException.class, () -> getNewTicketRegistry().addTicket(ticket));
+        }
+
+        @RepeatedTest(2)
+        void verifyDeleteTicketWithRemovedServiceTicket() throws Throwable {
+            val ticketGrantingTicketId = TestTicketIdentifiers.generate().ticketGrantingTicketId();
+            getNewTicketRegistry().addTicket(new TicketGrantingTicketImpl(ticketGrantingTicketId,
+                CoreAuthenticationTestUtils.getAuthentication(UUID.randomUUID().toString()), NeverExpiresExpirationPolicy.INSTANCE));
+            val ticketGrantingTicket = getNewTicketRegistry().getTicket(ticketGrantingTicketId, TicketGrantingTicket.class);
+            val service = RegisteredServiceTestUtils.getService(UUID.randomUUID().toString());
+
+            val removedId = TestTicketIdentifiers.generate().serviceTicketId();
+            val keptId = TestTicketIdentifiers.generate().serviceTicketId();
+            val removed = ticketGrantingTicket.grantServiceTicket(removedId, service,
+                NeverExpiresExpirationPolicy.INSTANCE, false, serviceTicketSessionTrackingPolicy);
+            val kept = ticketGrantingTicket.grantServiceTicket(keptId, service,
+                NeverExpiresExpirationPolicy.INSTANCE, false, serviceTicketSessionTrackingPolicy);
+            getNewTicketRegistry().addTicket(removed);
+            getNewTicketRegistry().addTicket(kept);
+            getNewTicketRegistry().updateTicket(ticketGrantingTicket);
+            assertEquals(1, getNewTicketRegistry().deleteTicket(removed));
+
+            assertEquals(2, getNewTicketRegistry().deleteTicket(ticketGrantingTicketId));
+            assertNull(getNewTicketRegistry().getTicket(keptId));
+            assertNull(getNewTicketRegistry().getTicket(ticketGrantingTicketId));
+        }
+
+        @RepeatedTest(2)
+        void verifyAttributesStoredForSessionsOnly() throws Throwable {
+            val ticketGrantingTicketId = TestTicketIdentifiers.generate().ticketGrantingTicketId();
+            getNewTicketRegistry().addTicket(new TicketGrantingTicketImpl(ticketGrantingTicketId,
+                CoreAuthenticationTestUtils.getAuthentication(UUID.randomUUID().toString()), NeverExpiresExpirationPolicy.INSTANCE));
+            val ticketGrantingTicket = getNewTicketRegistry().getTicket(ticketGrantingTicketId, TicketGrantingTicket.class);
+            val service = RegisteredServiceTestUtils.getService(UUID.randomUUID().toString());
+            val serviceTicket = ticketGrantingTicket.grantServiceTicket(TestTicketIdentifiers.generate().serviceTicketId(), service,
+                NeverExpiresExpirationPolicy.INSTANCE, false, serviceTicketSessionTrackingPolicy);
+            getNewTicketRegistry().addTicket(serviceTicket);
+            getNewTicketRegistry().updateTicket(ticketGrantingTicket);
+
+            val sessionDocument = findDocument(TicketGrantingTicket.class, ticketGrantingTicketId);
+            assertNotNull(sessionDocument.getAttributes());
+            assertFalse(sessionDocument.getAttributes().isEmpty());
+
+            val serviceTicketDocument = findDocument(ServiceTicket.class, serviceTicket.getId());
+            assertNull(serviceTicketDocument.getAttributes());
+            assertNotNull(serviceTicketDocument.getPrincipal());
+            assertEquals(service.getId(), serviceTicketDocument.getService());
+
+            try (val tickets = getNewTicketRegistry().getTicketsFor(service)) {
+                assertEquals(1, tickets.count());
+            }
+            assertEquals(1, getNewTicketRegistry().countTicketsFor(service));
+        }
+
+        /**
+         * Runs against a database of its own: setting up collections re-creates indexes on every
+         * collection, which would race the index assertions of tests sharing the context's database.
+         */
+        @RepeatedTest(1)
+        void verifyUnusedIndexesAreDropped() {
+            val properties = new MongoDbTicketRegistryProperties();
+            properties.setHost("localhost");
+            properties.setPort(27017);
+            properties.setUserId("root");
+            properties.setPassword("secret");
+            properties.setAuthenticationDatabaseName("admin");
+            properties.setDatabaseName("ticket-registry-indexes-" + UUID.randomUUID());
+            val connectionFactory = new MongoDbConnectionFactory();
+            try (val client = connectionFactory.buildMongoDbClient(properties)) {
+                val template = connectionFactory.buildMongoTemplate(client, properties);
+                try {
+                    val facilitator = new MongoDbTicketRegistryFacilitator(ticketCatalog, template, properties);
+                    facilitator.createTicketCollections();
+
+                    val collectionName = ticketCatalog.findTicketDefinition(ProxyTicket.class).orElseThrow().getProperties().getStorageName();
+                    val collection = template.getCollection(collectionName);
+                    collection.createIndex(new Document(MongoDbTicketDocument.FIELD_NAME_ATTRIBUTES + ".$**", 1),
+                        new IndexOptions().name("IDX_ATTRIBUTES"));
+                    facilitator.createTicketCollections();
+
+                    val indexNames = collection.listIndexes().map(index -> index.getString("name")).into(new HashSet<>());
+                    assertFalse(indexNames.contains("IDX_ATTRIBUTES"));
+                    assertTrue(indexNames.contains("IDX_SERVICE"));
+                } finally {
+                    client.getDatabase(properties.getDatabaseName()).drop();
+                }
+            }
+        }
+
+        private MongoDbTicketDocument findDocument(final Class<? extends Ticket> ticketType, final String ticketId) {
+            val collectionName = ticketCatalog.findTicketDefinition(ticketType).orElseThrow().getProperties().getStorageName();
+            val query = new Query(Criteria.where(MongoDbTicketDocument.FIELD_NAME_ID).is(getNewTicketRegistry().digestIdentifier(ticketId)));
+            val document = mongoDbTicketRegistryTemplate.findOne(query, MongoDbTicketDocument.class, collectionName);
+            assertNotNull(document);
+            return document;
         }
 
         private static Document getIndexByName(final Collection<Document> indexes, final String name) {

@@ -51,7 +51,6 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAcces
         val requestedScopes = configurationContext.getRequestParameterResolver().resolveRequestScopes(context);
         LOGGER.debug("Requested scopes are [{}]", requestedScopes);
         val token = getOAuthTokenFromRequest(context);
-        FunctionUtils.throwIf(!ensureTokenIsValid(token), () -> new InvalidTicketException("Invalid token " + token.getId()));
 
         val scopes = extractRequestedScopesByToken(requestedScopes, token, context);
         val service = configurationContext.getWebApplicationServiceServiceFactory().createService(redirectUri);
@@ -86,12 +85,6 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAcces
     @Override
     public OAuth20ResponseTypes getResponseType() {
         return OAuth20ResponseTypes.NONE;
-    }
-
-    protected boolean ensureTokenIsValid(final OAuth20Token token) {
-        val validStatefulTicket = !token.isStateless() && token.isCode()
-            && getConfigurationContext().getObject().getTicketRegistry().getTicket(token.getTicketGrantingTicket().getId()) != null;
-        return validStatefulTicket || (token.isStateless() && token.getAuthentication() != null && !token.isExpired());
     }
 
     protected AccessTokenRequestContext extractInternal(

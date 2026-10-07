@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.aot.hint.RuntimeHints;
 import org.springframework.aot.hint.predicate.RuntimeHintsPredicates;
+import org.springframework.beans.factory.FactoryBean;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -19,12 +20,14 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Native")
 class CasCoreUtilRuntimeHintsTests {
     @Test
-    void verifyHints() {
+    void verifyHints() throws Exception {
         val hints = new RuntimeHints();
         new CasCoreUtilRuntimeHints().registerHints(hints, getClass().getClassLoader());
         assertTrue(RuntimeHintsPredicates.proxies().forInterfaces(ComponentSerializationPlanConfigurer.class).test(hints));
         assertTrue(RuntimeHintsPredicates.proxies().forInterfaces(Supplier.class).test(hints));
+        assertTrue(RuntimeHintsPredicates.proxies().forInterfaces(FactoryBean.class).test(hints));
 
+        assertTrue(RuntimeHintsPredicates.reflection().onConstructorInvocation(Object.class.getConstructor()).test(hints));
         assertTrue(RuntimeHintsPredicates.reflection().onType(ZonedDateTime.class).test(hints));
         assertTrue(RuntimeHintsPredicates.reflection().onType(LinkedHashMap.class).test(hints));
         assertTrue(RuntimeHintsPredicates.reflection().onType(TreeSet.class).test(hints));

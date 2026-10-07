@@ -48,6 +48,28 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
     }
 
     /**
+     * Ticket definitions whose collections hold sessions. Session lookups by principal and by attribute
+     * run against these collections only, so only their documents carry attributes and an attribute index.
+     *
+     * @param ticketCatalog the ticket catalog
+     * @return the session ticket definitions
+     */
+    public static Stream<TicketDefinition> getSessionTicketDefinitions(final TicketCatalog ticketCatalog) {
+        return ticketCatalog.findTicketDefinition(TicketGrantingTicket.class).stream();
+    }
+
+    /**
+     * Ticket definitions whose tickets are linked to a service. Lookups by service run against these
+     * collections only, so only they carry a service index.
+     *
+     * @param ticketCatalog the ticket catalog
+     * @return the service-aware ticket definitions
+     */
+    public static Stream<TicketDefinition> getServiceTicketDefinitions(final TicketCatalog ticketCatalog) {
+        return ticketCatalog.findTicketImplementations(ServiceAwareTicket.class).stream();
+    }
+
+    /**
      * Calculate the time at which the ticket is eligible for automated deletion by MongoDb.
      * Makes the assumption that the CAS server date and the Mongo server date are in sync.
      */
@@ -67,8 +89,8 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
         LOGGER.debug("Adding ticket [{}]", ticket.getId());
         val metadata = findTicketDefinition(ticket);
         LOGGER.trace("Located ticket definition [{}] in the ticket catalog", metadata);
-        val document = buildTicketAsDocument(ticket);
         val collectionName = getTicketCollectionInstanceByMetadata(metadata);
+        val document = buildTicketAsDocument(ticket, collectionName);
         LOGGER.trace("Found collection [{}] linked to ticket [{}]", collectionName, metadata);
         mongoTemplate.insert(document, collectionName);
         LOGGER.debug("Added ticket [{}]", ticket.getId());
@@ -131,8 +153,8 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
         LOGGER.debug("Updating ticket [{}]", ticket);
         val metadata = findTicketDefinition(ticket);
         LOGGER.debug("Located ticket definition [{}] in the ticket catalog", metadata);
-        val holder = buildTicketAsDocument(ticket);
         val collectionName = getTicketCollectionInstanceByMetadata(metadata);
+        val holder = buildTicketAsDocument(ticket, collectionName);
         val query = new Query(Criteria.where(MongoDbTicketDocument.FIELD_NAME_ID).is(holder.getTicketId()));
         val update = new Update()
             .set(MongoDbTicketDocument.FIELD_NAME_JSON, holder.getJson())
@@ -170,7 +192,7 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
     @Override
     public long countSessionsFor(final String principalId) {
         val query = buildTicketQuery(buildPrincipalCriteria(principalId), buildUnexpiredTicketCriteria());
-        return getTicketCollectionNames(ticketCatalog.findTicketDefinition(TicketGrantingTicket.class).stream())
+        return getTicketCollectionNames(getSessionTicketDefinitions(ticketCatalog))
             .stream()
             .mapToLong(collectionName -> mongoTemplate.count(query, collectionName))
             .sum();
@@ -186,7 +208,7 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public Stream<? extends Ticket> getTicketsFor(final Service service) {
-        val collectionNames = getTicketCollectionNames(ticketCatalog.findAll().stream());
+        val collectionNames = getTicketCollectionNames(getServiceTicketDefinitions(ticketCatalog));
         return streamTicketDocuments(collectionNames,
             () -> includeTicketContent(buildTicketQuery(Criteria.where(MongoDbTicketDocument.FIELD_NAME_SERVICE).is(service.getId()),
                 buildUnexpiredTicketCriteria())))
@@ -197,7 +219,7 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public Stream<? extends Ticket> getSessionsFor(final String principalId) {
-        val collectionNames = getTicketCollectionNames(ticketCatalog.findTicketDefinition(TicketGrantingTicket.class).stream());
+        val collectionNames = getTicketCollectionNames(getSessionTicketDefinitions(ticketCatalog));
         return streamTicketDocuments(collectionNames,
             () -> includeTicketContent(buildTicketQuery(buildPrincipalCriteria(principalId), buildUnexpiredTicketCriteria())))
             .map(this::decodeTicketFromDocument)
@@ -225,7 +247,7 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
             return Stream.empty();
         }
         criteria.add(buildUnexpiredTicketCriteria());
-        val collectionNames = getTicketCollectionNames(ticketCatalog.findTicketDefinition(TicketGrantingTicket.class).stream());
+        val collectionNames = getTicketCollectionNames(getSessionTicketDefinitions(ticketCatalog));
         return streamTicketDocuments(collectionNames,
             () -> {
                 val query = includeTicketContent(buildTicketQuery(criteria));
@@ -296,7 +318,7 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
     public long countTicketsFor(final Service service) {
         val query = buildTicketQuery(Criteria.where(MongoDbTicketDocument.FIELD_NAME_SERVICE).is(service.getId()),
             buildUnexpiredTicketCriteria());
-        return getTicketCollectionNames(ticketCatalog.findAll().stream())
+        return getTicketCollectionNames(getServiceTicketDefinitions(ticketCatalog))
             .stream()
             .mapToLong(collectionName -> mongoTemplate.count(query, collectionName))
             .sum();
@@ -361,7 +383,7 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
             .sum();
     }
 
-    protected MongoDbTicketDocument buildTicketAsDocument(final Ticket ticket) throws Exception {
+    protected MongoDbTicketDocument buildTicketAsDocument(final Ticket ticket, final String collectionName) throws Exception {
         val encTicket = encodeTicket(ticket);
         val json = serializeTicket(encTicket);
         if (StringUtils.isBlank(json)) {
@@ -384,8 +406,12 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
             .json(json)
             .principal(digestIdentifier(principal))
             .service(ticket instanceof final ServiceAwareTicket sat && Objects.nonNull(sat.getService()) ? sat.getService().getId() : null)
-            .attributes(collectAndDigestTicketAttributes(ticket))
+            .attributes(isSessionCollection(collectionName) ? collectAndDigestTicketAttributes(ticket) : null)
             .build();
+    }
+
+    protected boolean isSessionCollection(final String collectionName) {
+        return getTicketCollectionNames(getSessionTicketDefinitions(ticketCatalog)).contains(collectionName);
     }
 
     protected String getTicketCollectionInstanceByMetadata(final TicketDefinition metadata) {
