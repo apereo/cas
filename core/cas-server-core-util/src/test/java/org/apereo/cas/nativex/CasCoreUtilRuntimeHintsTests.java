@@ -35,4 +35,13 @@ class CasCoreUtilRuntimeHintsTests {
         assertTrue(RuntimeHintsPredicates.reflection().onType(Class.class).test(hints));
         assertTrue(RuntimeHintsPredicates.reflection().onType(JsonWebKeySetStringCipherExecutor.class).test(hints));
     }
+
+    @Test
+    void verifyConcurrentMapEntryHints() throws Exception {
+        val hints = new RuntimeHints();
+        new CasCoreUtilRuntimeHints().registerHints(hints, getClass().getClassLoader());
+        val entry = new ConcurrentHashMap<>(Map.of("key", "value")).entrySet().iterator().next();
+        assertTrue(RuntimeHintsPredicates.reflection().onMethod(entry.getClass().getMethod("getKey")).invoke().test(hints));
+        assertTrue(RuntimeHintsPredicates.reflection().onMethod(entry.getClass().getMethod("getValue")).invoke().test(hints));
+    }
 }

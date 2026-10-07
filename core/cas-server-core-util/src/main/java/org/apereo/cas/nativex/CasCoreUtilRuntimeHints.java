@@ -124,6 +124,7 @@ public class CasCoreUtilRuntimeHints implements CasRuntimeHintsRegistrar {
 
         registerReflectionHintsForPublicElements(hints, List.of(
             NamedType.class,
+            TypeReference.of("java.util.concurrent.ConcurrentHashMap$MapEntry"),
             TypeReference.of("java.util.LinkedHashMap$Entry"),
             TypeReference.of("java.util.TreeMap$Entry")
         ));
