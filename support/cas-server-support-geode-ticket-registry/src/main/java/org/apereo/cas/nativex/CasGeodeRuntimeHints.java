@@ -22,7 +22,7 @@ public class CasGeodeRuntimeHints implements CasRuntimeHintsRegistrar {
     public void registerHints(final @NonNull RuntimeHints hints, final @Nullable ClassLoader classLoader) {
         registerReflectionHints(hints, LogService.class);
 
-        val subclasses = findSubclassesOf(DataSerializableFixedID.class);
+        val subclasses = findSubclassesInPackage(DataSerializableFixedID.class, "org.apache.geode");
         registerReflectionHints(hints, subclasses);
         registerSerializationHints(hints, subclasses);
 

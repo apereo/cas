@@ -18,9 +18,11 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Native")
 class HazelcastCoreRuntimeHintsTests {
     @Test
-    void verifyHints() {
+    void verifyHints() throws Exception {
         val hints = new RuntimeHints();
         new HazelcastCoreRuntimeHints().registerHints(hints, getClass().getClassLoader());
+        assertTrue(RuntimeHintsPredicates.reflection()
+            .onMethodInvocation(Objects.class.getMethod("equals", Object.class, Object.class)).test(hints));
         assertTrue(RuntimeHintsPredicates.reflection().onType(ClusterProperty.class).test(hints));
     }
 }

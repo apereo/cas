@@ -73,6 +73,7 @@ import com.hazelcast.shaded.org.apache.calcite.schema.SchemaPlus;
 import com.hazelcast.shaded.org.apache.calcite.schema.Schemas;
 import com.hazelcast.shaded.org.apache.calcite.schema.Statistic;
 import com.hazelcast.shaded.org.apache.calcite.schema.Table;
+import com.hazelcast.shaded.org.apache.calcite.util.BuiltInMethod;
 import com.hazelcast.spi.properties.ClusterProperty;
 import com.hazelcast.spi.properties.HazelcastProperty;
 import com.hazelcast.sql.SqlService;
@@ -80,6 +81,7 @@ import com.hazelcast.sql.impl.type.converter.Converter;
 import lombok.val;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
+import org.springframework.aot.hint.ExecutableMode;
 import org.springframework.aot.hint.RuntimeHints;
 
 /**
@@ -158,6 +160,17 @@ public class HazelcastCoreRuntimeHints implements CasRuntimeHintsRegistrar {
                 GeneratedBuildProperties.class
             )
         );
+        for (val entry : BuiltInMethod.values()) {
+            if (entry.method != null) {
+                hints.reflection().registerMethod(entry.method, ExecutableMode.INVOKE);
+            }
+            if (entry.constructor != null) {
+                hints.reflection().registerConstructor(entry.constructor, ExecutableMode.INVOKE);
+            }
+            if (entry.field != null) {
+                hints.reflection().registerField(entry.field);
+            }
+        }
         val classes = findSubclassesInPackage(Converter.class, "com.hazelcast.sql");
         registerReflectionHints(hints, classes);
         registerSerializationHints(hints, classes);

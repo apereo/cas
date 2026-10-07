@@ -183,6 +183,9 @@ plugins.withId("org.graalvm.buildtools.native") {
                 "--spring.main.lazy-initialization=false",
                 // Eureka refresh proxies are not supported by Spring AOT.
                 "--eureka.client.refresh.enable=false",
+                // Remote configuration is supplied at runtime through Config Data imports.
+                "--spring.cloud.consul.config.import-check.enabled=false",
+                "--spring.cloud.zookeeper.config.import-check.enabled=false",
                 // Retain endpoint beans during AOT; runtime configuration still controls access and exposure.
                 "--management.endpoints.access.default=UNRESTRICTED",
                 "--management.endpoint.shutdown.access=UNRESTRICTED",
@@ -226,6 +229,8 @@ plugins.withId("org.graalvm.buildtools.native") {
                 buildArgs.add('-H:+TraceSecurityServices')
                 buildArgs.add('-H:+PrintAnalysisCallTree')
                 buildArgs.add('-H:+AddAllCharsets')
+                // HSQLDB initializes date formats with Locale.UK.
+                buildArgs.add('-H:IncludeLocales=en-GB')
                 buildArgs.add('-H:+ReportUnsupportedElementsAtRuntime')
 
                 buildArgs.add('-J-Xmx14G')

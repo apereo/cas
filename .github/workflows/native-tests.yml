@@ -28,6 +28,7 @@ env:
   AZURE_MAPS_CLIENT_ID: ${{ secrets.AZURE_MAPS_CLIENT_ID }}
   TERM: xterm-256color
   JDK_CURRENT: 25
+  GRAALVM_VERSION: '25.4'
   JDK_DISTRIBUTION: "corretto"
   NODE_CURRENT: '26.10.0'
   MAX_ATTEMPTS: 1
@@ -142,7 +143,7 @@ jobs:
         if: ${{ env.NATIVE_BUILD_ENABLED == 'true' }}
         with:
           distribution: 'graalvm'
-          java-version: 'latest-ea'
+          version: ${{ env.GRAALVM_VERSION }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
           set-java-home: 'true'
       - name: Set up Nodejs
@@ -202,7 +203,7 @@ jobs:
         if: ${{ env.NATIVE_BUILD_ENABLED == 'true' }}
         with:
           distribution: 'graalvm'
-          java-version: 'latest-ea'
+          version: ${{ env.GRAALVM_VERSION }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
           set-java-home: 'true'
       - name: Set up Nodejs
@@ -263,7 +264,7 @@ jobs:
         if: ${{ env.NATIVE_BUILD_ENABLED == 'true' }}
         with:
           distribution: 'graalvm'
-          java-version: 'latest-ea'
+          version: ${{ env.GRAALVM_VERSION }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
           set-java-home: 'true'
       - name: Set up Nodejs

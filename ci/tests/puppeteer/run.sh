@@ -680,13 +680,14 @@ function killPendingCasBuild() {
 
 function copyCasServerArtifact() {
   local instance="$1"
+  local reuseNativeArtifact="${2:-false}"
   local casServerArtifact="${casServerArtifacts[$instance]}"
   if [[ "${NATIVE_BUILD}" == "false" && "${NATIVE_RUN}" == "false" ]]; then
     if ! cp "${casWebApplicationFile}" "${casServerArtifact}"; then
       printred "Unable to build or locate the CAS web application file. Aborting test..."
       exit 1
     fi
-  elif [[ ${instances} -gt 1 ]]; then
+  elif [[ ${instances} -gt 1 && "${reuseNativeArtifact}" != "true" ]]; then
     if ! cp "${targetArtifact}" "${casServerArtifact}"; then
       printred "Unable to build or locate the CAS native image. Aborting test..."
       exit 1
@@ -846,6 +847,10 @@ function dockerImageNameForInstance() {
 }
 
 function buildAndRun() {
+  local reuseNativeArtifacts="false"
+  if [[ "${NATIVE_RUN}" == "true" && "${NATIVE_BUILD}" == "false" && "${REBUILD}" != "true" ]]; then
+    reuseNativeArtifacts="true"
+  fi
   createCasKeystore
 
   if [[ "${NATIVE_BUILD}" == "false" && "${NATIVE_RUN}" == "false" ]]; then
@@ -886,7 +891,7 @@ function buildAndRun() {
     targetArtifact="./webapp/cas-server-webapp${serverType:+-$serverType}/build/libs/cas-server-webapp${serverType:+-$serverType}-${casVersion}.${projectType}"
   else
     targetArtifact="./webapp/cas-server-webapp${serverType:+-$serverType}/build/${serverType}/nativeCompile/cas"
-    if [[ ! -f "$targetArtifact" ]]; then
+    if [[ ! -f "$targetArtifact" && "${NATIVE_RUN}" == "false" ]]; then
       NATIVE_BUILD="true"
     fi
   fi
@@ -909,7 +914,7 @@ function buildAndRun() {
   if [[ ${instances} -gt 1 || ${instanceDependencyCount} -gt 0 ]]; then
     printcyan "Preparing individual CAS server artifacts for ${instances} instance(s)."
   fi
-  if [[ ${instanceDependencyCount} -gt 0 ]]; then
+  if [[ ${instanceDependencyCount} -gt 0 && ("${NATIVE_BUILD}" == "true" || "${NATIVE_RUN}" == "false") ]]; then
     REBUILD="true"
   fi
 
@@ -941,6 +946,15 @@ function buildAndRun() {
       if [[ ${casServerBuildSources[$c]} -ne ${c} ]]; then
         printcyan "CAS instance #${c} has the same dependencies [${dependencies}] as instance #${casServerBuildSources[$c]} and reuses its artifact"
         continue
+      fi
+
+      if [[ "${reuseNativeArtifacts}" == "true" ]]; then
+        if [[ -x "${casServerArtifact}" ]]; then
+          printcyan "Reusing previously built native executable for CAS instance #${c}: ${casServerArtifact}"
+          copyCasServerArtifact "${c}" true
+          continue
+        fi
+        REBUILD="true"
       fi
 
       if [[ "${REBUILD}" == "true" ]]; then

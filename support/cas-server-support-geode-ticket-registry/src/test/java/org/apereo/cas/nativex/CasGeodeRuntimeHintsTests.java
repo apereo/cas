@@ -3,6 +3,7 @@ package org.apereo.cas.nativex;
 import module java.base;
 import org.apereo.cas.ticket.registry.GeodeTicketDocument;
 import lombok.val;
+import org.apache.geode.internal.cache.control.SerializableRegionRedundancyStatusImpl;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.aot.hint.RuntimeHints;
@@ -18,9 +19,11 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Native")
 class CasGeodeRuntimeHintsTests {
     @Test
-    void verifyHints() {
+    void verifyHints() throws Exception {
         val hints = new RuntimeHints();
         new CasGeodeRuntimeHints().registerHints(hints, getClass().getClassLoader());
         assertTrue(RuntimeHintsPredicates.reflection().onType(GeodeTicketDocument.class).test(hints));
+        assertTrue(RuntimeHintsPredicates.reflection()
+            .onConstructorInvocation(SerializableRegionRedundancyStatusImpl.class.getDeclaredConstructor()).test(hints));
     }
 }

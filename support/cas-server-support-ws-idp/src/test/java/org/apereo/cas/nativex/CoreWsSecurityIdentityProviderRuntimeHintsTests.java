@@ -21,6 +21,7 @@ class CoreWsSecurityIdentityProviderRuntimeHintsTests {
     void verifyHints() {
         val hints = new RuntimeHints();
         new CoreWsSecurityIdentityProviderRuntimeHints().registerHints(hints, getClass().getClassLoader());
+        assertTrue(RuntimeHintsPredicates.resource().forBundle("org.apache.cxf.bus.managers.Messages").test(hints));
         assertTrue(RuntimeHintsPredicates.reflection().onType(WSFederationRegisteredService.class).test(hints));
     }
 }

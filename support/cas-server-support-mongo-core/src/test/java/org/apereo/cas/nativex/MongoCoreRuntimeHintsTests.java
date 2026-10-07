@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.aot.hint.RuntimeHints;
 import org.springframework.aot.hint.predicate.RuntimeHintsPredicates;
+import org.springframework.data.mongodb.core.MongoOperations;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -23,6 +24,7 @@ class MongoCoreRuntimeHintsTests {
     void verifyHints() {
         val hints = new RuntimeHints();
         new MongoCoreRuntimeHints().registerHints(hints, getClass().getClassLoader());
+        assertTrue(RuntimeHintsPredicates.proxies().forInterfaces(MongoOperations.class).test(hints));
         assertTrue(RuntimeHintsPredicates.reflection().onType(WriteConcern.class).test(hints));
         assertTrue(RuntimeHintsPredicates.reflection().onType(ReadConcern.class).test(hints));
     }
