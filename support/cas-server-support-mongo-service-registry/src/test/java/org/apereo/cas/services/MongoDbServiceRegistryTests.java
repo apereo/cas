@@ -46,6 +46,15 @@ class MongoDbServiceRegistryTests extends AbstractServiceRegistryTests {
     @Qualifier("mongoDbServiceRegistry")
     private ServiceRegistry newServiceRegistry;
 
+    @Autowired
+    @Qualifier("mongoDbServiceRegistryChangeStreamWatcher")
+    private MongoDbServiceRegistryChangeStreamWatcher changeStreamWatcher;
+
+    @Test
+    void verifyChangeStreamNeedsReplicaSet() {
+        assertFalse(changeStreamWatcher.isRunning());
+    }
+
     @Test
     void verifySamlServiceAttributeNames() {
         val service = new SamlRegisteredService();

@@ -1061,7 +1061,9 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
   order, sorted in the JVM: the comparator leads with `getEvaluationPriority()`, which is type-derived and never
   stored. `size()` is `estimatedCount`; `delete` is a single remove by id.
 - `MongoDbServiceRegistryChangeStreamWatcher` (bean in the inner `MongoDbServiceRegistryChangeStreamConfiguration` of `CasMongoDbServiceRegistryAutoConfiguration`) is a plain
-  singleton `SmartLifecycle`, not refresh-scoped: `start()` checks `change-stream.enabled` and
+  singleton `SmartLifecycle`, deliberately not `@RefreshScope`: a refresh would dispose of it and, since scoped beans
+  are recreated only on access, nothing would start a new one. It listens for `RefreshScopeRefreshedEvent` and
+  restarts itself instead (stop, then `start()` re-reads the settings). `start()` checks `change-stream.enabled` and
   `isReplicaSetDefined` (no I/O), then a virtual thread asks the server `hello` for `setName` and stops for good
   without one. Activation is decided at runtime on purpose; a class-level `@Conditional` on properties is evaluated
   at AOT build time for native images. It re-resolves `mongoDbServiceRegistryTemplate` from its `ObjectProvider` on

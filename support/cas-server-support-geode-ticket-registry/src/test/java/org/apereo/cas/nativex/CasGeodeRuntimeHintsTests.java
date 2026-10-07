@@ -3,6 +3,7 @@ package org.apereo.cas.nativex;
 import module java.base;
 import org.apereo.cas.ticket.registry.GeodeTicketDocument;
 import lombok.val;
+import org.apache.geode.cache.query.internal.parse.ASTRegionPath;
 import org.apache.geode.distributed.internal.DistributionConfig;
 import org.apache.geode.internal.cache.UserSpecifiedRegionAttributes;
 import org.apache.geode.internal.cache.control.SerializableRegionRedundancyStatusImpl;
@@ -45,5 +46,7 @@ class CasGeodeRuntimeHintsTests {
             .onMethodInvocation(UserSpecifiedRegionAttributes.class.getDeclaredMethod("hasCacheListeners")).test(hints));
         assertTrue(RuntimeHintsPredicates.reflection()
             .onConstructorInvocation(SerializableRegionRedundancyStatusImpl.class.getDeclaredConstructor()).test(hints));
+        assertTrue(RuntimeHintsPredicates.reflection()
+            .onConstructorInvocation(ASTRegionPath.class.getDeclaredConstructor()).test(hints));
     }
 }

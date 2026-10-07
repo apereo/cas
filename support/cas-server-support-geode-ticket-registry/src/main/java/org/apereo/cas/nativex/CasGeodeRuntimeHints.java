@@ -4,6 +4,7 @@ import module java.base;
 import org.apereo.cas.ticket.registry.GeodeTicketDocument;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import lombok.val;
+import org.apache.geode.cache.query.internal.parse.GemFireAST;
 import org.apache.geode.distributed.internal.AbstractDistributionConfig;
 import org.apache.geode.distributed.internal.DistributionConfig;
 import org.apache.geode.internal.cache.InternalCacheBuilder;
@@ -42,6 +43,8 @@ public class CasGeodeRuntimeHints implements CasRuntimeHintsRegistrar {
         registerReflectionHints(hints, ObjectInputFilter.class, ObjectInputFilter.Config.class,
             ObjectInputFilter.FilterInfo.class, ObjectInputFilter.Status.class, ObjectInputStream.class);
         registerProxyHints(hints, ObjectInputFilter.class);
+        registerReflectionHints(hints, GemFireAST.class);
+        registerReflectionHints(hints, findSubclassesInPackage(GemFireAST.class, GemFireAST.class.getPackageName()));
 
         val subclasses = findSubclassesInPackage(DataSerializableFixedID.class, "org.apache.geode");
         registerReflectionHints(hints, subclasses);

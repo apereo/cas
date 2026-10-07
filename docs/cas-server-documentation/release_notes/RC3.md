@@ -434,6 +434,10 @@ authentication. See the [stateless ticket registry documentation](../ticketing/S
   principal attributes and carry the attribute index, and only tickets linked to a service carry the service index, so
   issuing and validating a service ticket no longer writes an index entry per attribute value; indexes left on other
   collections by earlier versions are removed at startup.
+- When MongoDB runs as a replica set, the [MongoDB service registry](../services/MongoDb-Service-Management.html)
+  watches its collection through a change stream and reloads service definitions on every CAS node shortly after they
+  change, including changes made by another node or directly in MongoDB. Deployments that are not replica sets keep
+  relying on the scheduled reload.
 - MongoDB connection pools now default to 100 connections, keep connections for 30 minutes and idle connections for
   5 minutes, and wait at most 10 seconds for a free connection instead of a minute. The server heartbeat uses the
   driver's default instead of the connection `timeout`. Pool settings do not apply when `client-uri` is used; set the
