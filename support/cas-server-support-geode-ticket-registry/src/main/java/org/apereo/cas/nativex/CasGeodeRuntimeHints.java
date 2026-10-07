@@ -7,6 +7,7 @@ import lombok.val;
 import org.apache.geode.distributed.internal.AbstractDistributionConfig;
 import org.apache.geode.distributed.internal.DistributionConfig;
 import org.apache.geode.internal.cache.InternalCacheBuilder;
+import org.apache.geode.internal.cache.UserSpecifiedRegionAttributes;
 import org.apache.geode.internal.serialization.DataSerializableFixedID;
 import org.apache.geode.logging.internal.log4j.api.LogService;
 import org.apache.geode.management.MemberMXBean;
@@ -36,7 +37,8 @@ public class CasGeodeRuntimeHints implements CasRuntimeHintsRegistrar {
             .distinct()
             .toList();
         registerReflectionHints(hints, managementTypes);
-        registerReflectionHintsForMethodsAndFields(hints, List.of(DistributionConfig.class, AbstractDistributionConfig.class));
+        registerReflectionHintsForMethodsAndFields(hints,
+            List.of(DistributionConfig.class, AbstractDistributionConfig.class, UserSpecifiedRegionAttributes.class));
         registerReflectionHints(hints, ObjectInputFilter.class, ObjectInputFilter.Config.class,
             ObjectInputFilter.FilterInfo.class, ObjectInputFilter.Status.class, ObjectInputStream.class);
         registerProxyHints(hints, ObjectInputFilter.class);

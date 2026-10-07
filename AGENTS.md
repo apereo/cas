@@ -96,6 +96,10 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
 - `import module java.base` makes `Signature` ambiguous (`java.security.Signature` vs `java.lang.classfile.Signature`); write `java.security.Signature`. Mapping to a `@SuperBuilder` result (`IntStream.mapToObj(i -> X.builder()...build())`) infers a capture type; give the stream a type witness (`.<X>mapToObj(...)`).
 - Lombok `val` cannot infer generic poly expressions: `val x = Objects.requireNonNullElse(list, List.of())` (or `...ElseGet(list, List::of)`) becomes `Object`. Assign the plain call to `val` and null-check separately, or declare the type.
 - Spring config classes generally use `@AutoConfiguration` or `@Configuration(proxyBeanMethods = false)`, `@EnableConfigurationProperties(CasConfigurationProperties.class)`, `@ConditionalOnFeatureEnabled`, and bean methods with `@RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)` plus `@ConditionalOnMissingBean`. See `support/cas-server-support-token-core/.../TokenCoreConfiguration.java`.
+- Configuration classes belong to an auto-configuration: prefer a static inner
+  `@Configuration(value = "...", proxyBeanMethods = false)` class nested in the module's main auto-configuration. A
+  configuration class kept outside it must follow the structure the sibling modules of that family already use; do not
+  introduce a new standalone `@Configuration` plus `@Import` where the family has none.
 - Configuration model classes usually live under `api/.../configuration/model/**`, use Lombok accessors, and carry `@RequiresModule(name = "...")`; example: `LdapAuthorizationProperties`.
 - Tests are organized by JUnit tags, not by the plain Gradle `test` task. The shared `buildSrc` test conventions disable `test` and register tasks like `testAuthentication` and `testTickets` for the tags discovered by `TestCategoryTagsValueSource` in `*Tests.java`. Both root category selectors and module-qualified category tasks execute tests; the plain `test` task never does.
 - Related test scenarios are often grouped with `@Nested`; example: `support/cas-server-support-token-core/.../JwtBuilderTests.java`.
@@ -1056,6 +1060,15 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
 - `MongoDbServiceRegistry` exact lookups (`findServiceByExactServiceId`/`Name`) return the first match in natural
   order, sorted in the JVM: the comparator leads with `getEvaluationPriority()`, which is type-derived and never
   stored. `size()` is `estimatedCount`; `delete` is a single remove by id.
+- `MongoDbServiceRegistryChangeStreamWatcher` (bean in the inner `MongoDbServiceRegistryChangeStreamConfiguration` of `CasMongoDbServiceRegistryAutoConfiguration`) is a plain
+  singleton `SmartLifecycle`, not refresh-scoped: `start()` checks `change-stream.enabled` and
+  `isReplicaSetDefined` (no I/O), then a virtual thread asks the server `hello` for `setName` and stops for good
+  without one. Activation is decided at runtime on purpose; a class-level `@Conditional` on properties is evaluated
+  at AOT build time for native images. It re-resolves `mongoDbServiceRegistryTemplate` from its `ObjectProvider` on
+  every poll and reopens the stream when a refresh produced a new instance. On change it calls
+  `ServicesManager.load()` after the quiet period rather than patching the cache, so templates, environment
+  filtering, expiration and registry post-load listeners all apply. Its own node's writes come back as events too;
+  the reload is idempotent. The scenario needs the replica set from `run-mongodb-server-clustered.sh` (ports 37017-37019).
 - `MongoDbConnectionFactory.getMappingBasePackages()` is empty by default, so building a template scans nothing; the
   mapping context registers entity types on first use. Pool settings apply only to the host/port branch.
 - `casTicketRegistryLockRepository` exists for Redis and JPA and does not exist for Mongo, so

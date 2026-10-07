@@ -38,7 +38,7 @@ on:
   workflow_dispatch:
     inputs:
       scenarioRegex:
-        description: 'Regex to match against scenario names'
+        description: 'Scenarios'
         required: false
         default: '.*'
         type: string

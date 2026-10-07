@@ -4,6 +4,7 @@ import module java.base;
 import org.apereo.cas.ticket.registry.GeodeTicketDocument;
 import lombok.val;
 import org.apache.geode.distributed.internal.DistributionConfig;
+import org.apache.geode.internal.cache.UserSpecifiedRegionAttributes;
 import org.apache.geode.internal.cache.control.SerializableRegionRedundancyStatusImpl;
 import org.apache.geode.management.JVMMetrics;
 import org.apache.geode.management.MemberMXBean;
@@ -38,6 +39,10 @@ class CasGeodeRuntimeHintsTests {
             .onFieldAccess(DistributionConfig.class.getDeclaredField("NAME_NAME")).test(hints));
         assertTrue(RuntimeHintsPredicates.reflection()
             .onMethodInvocation(DistributionConfig.class.getDeclaredMethod("setName", String.class)).test(hints));
+        assertTrue(RuntimeHintsPredicates.reflection()
+            .onFieldAccess(UserSpecifiedRegionAttributes.class.getDeclaredField("hasCacheListeners")).test(hints));
+        assertTrue(RuntimeHintsPredicates.reflection()
+            .onMethodInvocation(UserSpecifiedRegionAttributes.class.getDeclaredMethod("hasCacheListeners")).test(hints));
         assertTrue(RuntimeHintsPredicates.reflection()
             .onConstructorInvocation(SerializableRegionRedundancyStatusImpl.class.getDeclaredConstructor()).test(hints));
     }
