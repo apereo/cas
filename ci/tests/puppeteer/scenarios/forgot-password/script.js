@@ -11,7 +11,7 @@ const cas = require("../../cas.js");
     
     await cas.click(page, "#forgotPasswordLink");
     await cas.sleep(1000);
-    await cas.assertInnerText(page, "#reset #fm1 h3", "Reset your password");
+    await cas.assertInnerText(page, "#reset #fm1 h2", "Reset your password");
     await cas.assertVisibility(page, "#username");
     await cas.attributeValue(page, "#username", "autocapitalize", "none");
     await cas.attributeValue(page, "#username", "spellcheck", "false");

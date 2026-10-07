@@ -333,6 +333,7 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
 - Attestation-based client authentication (draft 11): an `HttpAction` thrown from a pac4j authenticator is adapted as is, so the `400 use_attestation_challenge` body and its `OAuth-Client-Attestation-Challenge` header survive; rethrow `HttpAction` before any generic `catch (Exception)` that would turn it into a `401`. Challenges are transient session tickets, opt-in and reusable until they expire, and only apply once offered (setting on and trust anchors present). In DPoP combined mode (`attest_jwt_client_auth_dpop`, no PoP header, one `DPoP` header) the authenticator verifies the DPoP proof itself with `DPoPTokenRequestVerifier`, checks its `jwk` thumbprint against the attestation `cnf` key, and records its `jti` under its own prefix; challenges do not apply there and DPoP nonces are not supported.
 - Issuer-signed JWTs (status list tokens, signed issuer metadata) go through `OidcVerifiableCredentialSigningUtils.sign`: issuer key, `kid`, `x5c` without the trust anchor. Do not copy the signing code into a new endpoint. Signed metadata is served when `Accept` names `application/jwt` with a quality at least that of JSON (wildcards count as JSON), so plain browsers and `*/*` clients still get JSON.
 - IETF drafts are blocked on ietf.org here: fetch the markdown source from the draft's GitHub repository at the published tag (`raw.githubusercontent.com/oauth-wg/<repo>/draft-ietf-oauth-<name>-NN/draft-ietf-oauth-<name>.md`), and confirm the number is the latest published one.
+- The compile script's `main` mode wipes `out/`, test classes included: run `test` mode again after every `main` run, or the runner falls back to stale prebuilt test classes and silently runs fewer tests.
 
 ## Parallel test execution and shared registries
 
@@ -411,6 +412,7 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
 - `ath` hashes the access token *as the client presented it*, not its decoded identifier. Pass `getAccessTokenFromRequest(...).getKey()`, never `getValue()`.
 - Before reporting a gap here, read the endpoint. The userinfo endpoint was already doing the resource verification correctly in an overridden `validateAccessToken`, and the defect worth reporting was the redundant second call beside it -- the opposite shape from the one first assumed. Grepping for the validator bean found the wrong call and missed the right one.
 - Identifiers that arrive on an unauthenticated request parameter are not identities. Under grants that carry their own proof of authorization -- the OpenID4VCI pre-authorized code above all -- `client_id` is whatever the wallet felt like sending. Resolve from the authenticated profile, then the token, then the parameter.
+- DPoP nonces (RFC 9449 sections 8 and 9) are transient session tickets, like attestation challenges, through `BaseTransientSessionNonceService` (one marker property per kind, so a challenge is never accepted as a nonce). Nimbus treats an empty set of accepted nonces as "a `nonce` claim is prohibited", so a verifier must be handed the proof's own nonce (`OAuth20DPoPNonceService.getAcceptedNonces`) and CAS checks it afterwards (`isAccepted`); the protected resource verifier's single-`Nonce` overload with `null` prohibits the claim too. On failure the fresh nonce goes on the servlet response before `InvalidDPoPNonceException` is thrown, and each endpoint maps it: `400 use_dpop_nonce` at the token endpoint and in combined mode, `OAuth20Utils.useDPoPNonceResponse()` (`401` + `WWW-Authenticate: DPoP error="use_dpop_nonce"`) at resources and Heimdall. The validator runs before the authorization code is consumed, so the client retries with the same code.
 
 ## Environment limits
 
@@ -512,6 +514,18 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
   template prefix directory is reachable over HTTP.
 - Test view components through `MockMvc` and the existing web-test infrastructure; use Lombok
   (`val`, `@RequiredArgsConstructor`, `@Slf4j`) and current Java features as the rest of the tree does.
+- Account profile and account-management flows share `static/css/account.css` and `static/js/account.js`. The profile is a
+  rail (`#navigationMenu`, one `#linkXxx` per `#divXxx` panel, `data-account-panel`) plus card lists with inline details;
+  the flows (sign-up, password reset, forgot username, must-change/expired password) render through
+  `fragments/accountflow :: shell(flow, step, steps, content)`, which owns the step trail (`screen.account.flow.<flow>.*`)
+  and keeps `h2`/`p` out of the brand panel so `#content h2` and `#content p` still hit the card. The strength meter
+  markup lives in `fragments/accountflow :: strengthMeter`; keep its ids, `passwordMeter.js` depends on them.
+- Puppeteer selectors for these pages are list-based now: `#mfaDevicesList [data-field=source|id|name|type|model|number]`,
+  `#mfaDevicesEmpty`, `#registrationOptions`, `#securityQuestionsList`, `#pwdmain h2`, `#reset #fm1 h2`. Do not
+  reintroduce DataTables there; filtering and paging come from `data-account-list`.
+- To try template changes without rebuilding the war, run the built war with
+  `spring.thymeleaf.prefix=file:<module>/src/main/resources/templates/`, static locations pointing at the module's
+  `static/`, the message bundle at the module's `messages`, and template caching off.
 
 ## CAS protocol (v1/v2/v3 + SAML 1.1) review discipline
 
@@ -1178,6 +1192,8 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
 - Scenarios that start an external SAML2 IdP from `readyScript` (after CAS is up) must call `/cas/sp/idp/metadata`
   before the first delegated login: the pac4j client failed to load the IdP metadata at startup, and redirecting to it
   fails with a `NullPointerException` in `ChainingMetadataResolver.setResolvers` until that endpoint forces a reload.
+- `addTicket` and `createTicketGrantingTicket` hand back a `DefaultEncodedTicket` here, which has no creation time and cannot be compacted again: `updateTicket` on it fails with a `NullPointerException` in `TicketCompactor.compact`. Guard updates of tickets that came back from the registry with `isStateless()`, as `OAuth20DefaultTokenGenerator` does for codes, refresh tokens and the parent ticket-granting ticket.
+- Test fixtures such as `AbstractOidcTests.getAccessToken` return Mockito mocks: `markTicketStateless()` does nothing on them, so stub `isStateless()` instead, and make the resolved ticket a different object than the stored one so the test can tell them apart.
 
 ## Passwordless authentication review discipline
 

@@ -11,7 +11,7 @@ const cas = require("../../cas.js");
     await cas.assertTextContent(page, "#content h1", "Authentication Succeeded with Warnings");
     await cas.assertVisibility(page, "#changePassword");
     await cas.submitForm(page, "#changePasswordForm");
-    await cas.assertTextContent(page, "#pwdmain h3", "Hello, casuser. You must change your password.");
+    await cas.assertTextContent(page, "#pwdmain h2", "Hello, casuser. You must change your password.");
     await cas.sleep(2000);
     
     await typePassword(page, "123456", "123456");

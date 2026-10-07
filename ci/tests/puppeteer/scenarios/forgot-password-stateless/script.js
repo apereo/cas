@@ -23,7 +23,7 @@ const cas = require("../../cas.js");
 
         await cas.goto(page, link);
         await cas.sleep(1000);
-        await cas.assertInnerText(page, "#content #pwdmain h3", "Hello, casuser. You must change your password.");
+        await cas.assertInnerText(page, "#content #pwdmain h2", "Hello, casuser. You must change your password.");
         await cas.type(page, "#password", "EaP8R&iX$eK4nb8eAI");
         await cas.type(page, "#confirmedPassword", "EaP8R&iX$eK4nb8eAI");
         await cas.sleep(1000);
@@ -34,7 +34,7 @@ const cas = require("../../cas.js");
         await cas.log("The reset link is not single-use and stays valid until it expires, as documented");
         await cas.goto(page, link);
         await cas.sleep(1000);
-        await cas.assertInnerText(page, "#content #pwdmain h3", "Hello, casuser. You must change your password.");
+        await cas.assertInnerText(page, "#content #pwdmain h2", "Hello, casuser. You must change your password.");
 
         await cas.log("A tampered reset link is rejected");
         const index = Math.floor(resetToken.length * 2 / 3);

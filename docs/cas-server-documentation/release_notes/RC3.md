@@ -354,6 +354,8 @@ like distinguished names, round-trip correctly. Other changes:
   keep their authorization details, access tokens keep their credential configurations and authorization details, and the
   credential offer and nonce endpoints hand out the stored ids. The pre-authorized code and nonces are not single use there.
   Verifiable presentations are not supported.
+- The OAuth client credentials and resource owner password grants issue access tokens; they failed while recording the use of
+  the ticket-granting ticket they create, which the stateless registry hands back in encoded form.
 
 The ticket-granting cookie can now be encrypted without being signed, using `cas.tgc.crypto.signing-enabled=false`{: .cas-setting} (signing stays
 on while a signing key is defined). The cookie encryption is authenticated, so this keeps tamper detection and makes the cookie

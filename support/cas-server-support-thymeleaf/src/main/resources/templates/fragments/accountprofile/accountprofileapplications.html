@@ -1,77 +1,46 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
-
     <title>Account Profile</title>
-    <link href="../../static/css/cas.css" rel="stylesheet" th:remove="tag"/>
+    <link href="../../static/css/account.css" rel="stylesheet" th:remove="tag"/>
 </head>
-
 <body>
-<span th:fragment="applications">
-        <script type="text/javascript">
-            (() => document.addEventListener("DOMContentLoaded", () => $("#applicationsTable").DataTable()))();
-        </script>
-
-
-        <div class="profile-content w-100 mdc-data-table table-responsive"
-             th:if="${authorizedServices}"
-             style="display: none; border-width: 0px;"
-             id="divApplications">
-
-            <h2>
-                <i class="mdi mdi-door-open fas fa-door-open" aria-hidden="true"></i>
-                <span>Hello,
-                    <span th:if="${authentication.principal.attributes['displayName'] != null}"
-                          th:text="${authentication.principal.attributes['displayName'][0]}" />
-                    <span th:if="${authentication.principal.attributes['displayName'] == null}"
-                          th:text="${authentication.principal.id}"></span>
-                </span>
-            </h2>
-            <div class="text-justify">
-                <p th:utext="#{screen.account.applications}">Applications</p>
-            </div>
-
-            <table id="applicationsTable" class="mdc-data-table__table table table-striped noborder">
-                <thead>
-                <tr class="mdc-data-table__header-row">
-                    <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Service</th>
-                    <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Description</th>
-                </tr>
-                </thead>
-                <tbody class="mdc-data-table__content">
-
-                <tr th:each="service : ${authorizedServices}" class="mdc-data-table__row">
-                    <td class="mdc-data-table__cell">
-                        <a th:id="${'service' + service.id}" th:title="${service.name}" th:utext="${service.name}"/>
-
-                        <script th:inline="javascript">
-                            /*<![CDATA[*/
-                            serviceId = /*[[${service.serviceId}]]*/;
-                            if (isValidURL(serviceId)) {
-                                let id = /*[[${'service' + service.id}]]*/;
-                                $(`a#${id}`).attr("href", serviceId);
-                            }
-                            /*]]>*/
-                        </script>
-                        <p>
-                            <a target="_blank" rel="noopener noreferrer" th:if="${service.informationUrl}" th:href="${service.informationUrl}">Information URL</a>
-                            <a target="_blank" rel="noopener noreferrer" th:if="${service.privacyUrl}" th:href="${service.privacyUrl}">Privacy URL</a>
-                        </p>
-                    </td>
-                    <td class="mdc-data-table__cell">
-                        <span th:utext="${service.description}" class="text-wrap"/>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
+<section th:fragment="applications" th:if="${authorizedServices}" id="divApplications" class="profile-content" hidden
+         aria-labelledby="divApplicationsTitle"
+         th:data-account-trail="|#{screen.account.trail.root} › #{screen.account.group.access} › #{screen.account.applications.title}|">
+    <header>
+        <div>
+            <h2 id="divApplicationsTitle" th:text="#{screen.account.applications.title}">Applications</h2>
+            <p th:utext="#{screen.account.applications}">Applications you are authorized to access.</p>
         </div>
-
-
-    </span>
+    </header>
+    <ul id="applicationsList" class="cas-account-list" data-account-list
+        th:unless="${#lists.isEmpty(authorizedServices)}"
+        th:attr="data-filter-label=#{screen.account.list.filter},data-more-label=#{screen.account.list.more},data-count-label=#{screen.account.list.count}">
+        <li class="cas-account-item" th:each="service : ${authorizedServices}">
+            <div class="cas-account-item-row">
+                <span class="cas-account-item-icon" aria-hidden="true"><i class="mdi mdi-apps"></i></span>
+                <div class="cas-account-item-body">
+                    <div class="cas-account-item-title">
+                        <a th:id="${'service' + service.id}" th:data-account-service-url="${service.serviceId}"
+                           th:text="${service.name}">Application</a>
+                    </div>
+                    <div class="cas-account-item-meta" th:text="${service.description}">Description</div>
+                </div>
+                <div class="cas-account-item-actions">
+                    <a class="acct-btn acct-btn-text" target="_blank" rel="noopener noreferrer"
+                       th:if="${service.informationUrl}" th:href="${service.informationUrl}"
+                       th:text="#{screen.account.applications.information}">Information</a>
+                    <a class="acct-btn acct-btn-text" target="_blank" rel="noopener noreferrer"
+                       th:if="${service.privacyUrl}" th:href="${service.privacyUrl}"
+                       th:text="#{screen.account.applications.privacy}">Privacy</a>
+                </div>
+            </div>
+        </li>
+    </ul>
+    <p class="cas-account-empty" th:if="${#lists.isEmpty(authorizedServices)}"
+       th:text="#{screen.account.applications.empty}">No applications to display.</p>
+</section>
 </body>
-
 </html>

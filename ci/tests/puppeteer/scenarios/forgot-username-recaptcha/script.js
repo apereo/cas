@@ -9,7 +9,7 @@ const cas = require("../../cas.js");
     await cas.click(page, "#forgotUsernameLink");
     await cas.sleep(1000);
 
-    await cas.assertTextContent(page, "#reset #fm1 h3", "Forgot your username?");
+    await cas.assertTextContent(page, "#reset #fm1 h2", "Forgot your username?");
     await cas.assertVisibility(page, "#email");
 
     await cas.type(page,"#email", "casuser@example.org");

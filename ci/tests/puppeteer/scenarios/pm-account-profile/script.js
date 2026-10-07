@@ -81,9 +81,9 @@ async function verifyAccountManagementFlow(browser) {
     await cas.click(page, "#linkMfaRegisteredAccounts");
     await cas.sleep(1000);
 
-    await cas.assertInnerText(page, "#mfaDevicesTable tbody tr td:first-child", "Google Authenticator");
-    await cas.assertInnerText(page, "#mfaDevicesTable tbody tr td:nth-child(2)", "1");
-    await cas.assertInnerText(page, "#mfaDevicesTable tbody tr td:nth-child(3)", "MyRecordName");
+    await cas.assertInnerText(page, "#mfaDevicesList [data-field=source]", "Google Authenticator");
+    await cas.assertInnerText(page, "#mfaDevicesList [data-field=id]", "1");
+    await cas.assertInnerText(page, "#mfaDevicesList [data-field=name]", "MyRecordName");
     await cas.click(page, "button#register");
     await cas.sleep(2000);
     await cas.click(page, "#gauthRegistrationLink");
@@ -102,7 +102,7 @@ async function verifyAccountManagementFlow(browser) {
 
     await cas.click(page, "#linkSecurityQuestions");
     await cas.sleep(1000);
-    await cas.assertVisibility(page, "#securityQuestionsTable");
+    await cas.assertVisibility(page, "#securityQuestionsList");
 
     await cas.click(page, "#linkAuditLog");
     await cas.sleep(1000);

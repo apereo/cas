@@ -36,7 +36,7 @@ const assert = require("assert");
     await cas.type(page,"#token", scratch);
     await cas.pressEnter(page);
     await cas.waitForNavigation(page);
-    await cas.assertInnerText(page, "#pwdmain h3", "Hello, casuser. You must change your password.");
+    await cas.assertInnerText(page, "#pwdmain h2", "Hello, casuser. You must change your password.");
 
     await cas.type(page,"#password", "Jv!e0mKD&dCNl^Q");
     await cas.type(page,"#confirmedPassword", "Jv!e0mKD&dCNl^Q");

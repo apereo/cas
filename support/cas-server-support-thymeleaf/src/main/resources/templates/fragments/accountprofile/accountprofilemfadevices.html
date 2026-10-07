@@ -2,241 +2,149 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
     <title>Account Profile</title>
-    <link href="../../static/css/cas.css" rel="stylesheet" th:remove="tag"/>
+    <link href="../../static/css/account.css" rel="stylesheet" th:remove="tag"/>
 </head>
 <body>
-<span th:fragment="mfadevices">
-        <script type="text/javascript" th:inline="javascript">
-            ((material, bootstrap) =>
-                document.addEventListener("DOMContentLoaded", () => {
-                    $("#mfaDevicesTable").DataTable();
-                    let dialogId = "mfaDevice-dialog";
-                    let dialog = material ?
-                        material.dialog.MDCDialog.attachTo(document.getElementById(dialogId)) :
-                        new bootstrap.Modal(document.getElementById(dialogId), {});
-                    document.getElementsByName("viewMfaDeviceDetails").forEach(btn =>
-                        btn.addEventListener("click", event => {
-                            let caller = event.target || event.srcElement;
-                            let json = $(caller).next("span").text().trim();
-                            $("#mfaDeviceDetails").text(json);
-                            hljs.highlightAll();
-                            dialog[material ? "open" : "show"]();
-                            event.preventDefault();
-                        }, false));
-
-                    document.getElementsByName("deleteMfaDevice").forEach(btn =>
-                        btn.addEventListener("click", event => {
-                            const id = $(btn).data("id");
-                            const source = $(btn).data("source");
-                            const name = $(btn).data("name");
-                            const body = $.param({ id: id, source: source, _eventId: "delete", execution: /*[[${flowExecutionKey}]]*/ });
-                            $.ajax({
-                                url: location.href,
-                                method: 'POST',
-                                contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
-                                data: body,
-                                success: () => {
-                                    const rpId = btn.dataset.rpId;
-                                    if (rpId && window.PublicKeyCredential && typeof PublicKeyCredential.signalUnknownCredential === "function") {
-                                        PublicKeyCredential.signalUnknownCredential({rpId, credentialId: btn.dataset.id})
-                                            .catch(err => console.debug("WebAuthn signal was not delivered", err));
-                                    }
-                                    Swal.fire({
-                                        title: `Multifactor Device Removed`,
-                                        text: `Multifactor authentication device ${name} has been removed.`,
-                                        icon: "info",
-                                        showConfirmButton: false
-                                    });
-                                    setTimeout(() => window.location.assign(window.location.href), 1000);
-                                },
-                                error: (xhr, status, error) => {
-                                    const errorResponse = JSON.parse(xhr.responseText);
-                                    Swal.fire({
-                                        title: `Request Failed: ${xhr.status}`,
-                                        text: errorResponse.message,
-                                        icon: "warning",
-                                        showConfirmButton: false
-                                    });
-                                }
-                            });
-                            event.preventDefault();
-                        }, false));
-
-                    
-
-
-                }))(window.mdc ? mdc : null, window.bootstrap ? bootstrap : null);
-        </script>
-        <div class="mdc-dialog modal" id="mfaDevice-dialog" role="alertdialog"
-             aria-modal="true" aria-labelledby="mfa-dialog-title" aria-describedby="mfa-dialog-content">
-            <div class="mdc-dialog__container w-100 modal-dialog">
-                <div class="mdc-dialog__surface mw-100 modal-content">
-                    <h1 class="mdc-dialog__title mt-lg-2 modal-header" id="mfa-dialog-title"
-                        th:utext="#{screen.account.mfadevices.devicepanel.title}"></h1>
-                    <div class="mdc-dialog__content modal-body" id="mfa-dialog-content">
-                        <p th:utext="#{screen.account.mfadevices.devicepanel.text}"></p>
-                        <pre><code id="mfaDeviceDetails" class="border-rounded language-json">Text</code></pre>
-                    </div>
-                    <footer class="mdc-dialog__actions modal-footer">
-                        <button type="button" class="mdc-button mdc-button--outline btn btn-outline-secondary"
-                                data-mdc-dialog-action="accept" data-mdc-dialog-button-default data-bs-dismiss="modal">
-                        <span class="mdc-button__label">Close</span>
-                        </button>
-                    </footer>
-                </div>
-            </div>
-            <div class="mdc-dialog__scrim"></div>
-        </div>
-
-        <div id="divMfaRegisteredAccounts"
-             th:if="${multifactorRegisteredAccounts}"
-             class="profile-content w-100"
-             style="display: none;">
-            <h2>
-                <i class="mdi mdi-account-reactivate fas fa-door-open" aria-hidden="true"></i>
-                <span th:utext="#{screen.account.mfadevices.title}">Multifactor Devices</span>
-            </h2>
-            <p th:utext="#{screen.account.mfadevices.subtitle}">MFA Devices are listed here</p>
-            <table id="mfaDevicesTable" class="mdc-data-table__table table table-striped noborder">
-                <thead>
-                    <tr class="mdc-data-table__header-row">
-                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Source</th>
-                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">ID</th>
-                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Name</th>
-                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Type</th>
-                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Model</th>
-                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Number</th>
-                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col"></th>
-                    </tr>
-                </thead>
-                <tbody class="mdc-data-table__content">
-                    <tr th:each="entry : ${multifactorRegisteredAccounts}" class="mdc-data-table__row">
-                        <td class="mdc-data-table__cell">
-                            <span th:switch="${entry.source}">
-                                <span th:case="'Google Authenticator'"><i class="mdi mdi-google" aria-hidden="true"></i></span>
-                                <span th:case="'Web Authn'"><i class="mdi mdi-fingerprint" aria-hidden="true"></i></span>
-                                <span th:case="'Duo Security'"><i class="mdi mdi-security"></i></span>
-                                <span th:case="'YubiKey'"><i class="mdi mdi-usb-flash-drive"></i></span>
-                                <span th:case="*"></span>
-                            </span>
-                            <span th:utext="${entry.source}"/>
-                        </td>
-                        <td class="mdc-data-table__cell"><code th:utext="${entry.id}">Value</code></td>
-                        <td class="mdc-data-table__cell" th:utext="${entry.name}">Value</td>
-                        <td class="mdc-data-table__cell" th:title="${entry.type}"
-                            th:utext="*{entry.type}?: 'N/A'">Value</td>
-                        <td class="mdc-data-table__cell" th:title="${entry.model}">
-                            <img th:if="${entry.details != null && entry.details['icon'] != null}"
-                                 th:src="@{${entry.details['icon']}}" alt="" aria-hidden="true"
-                                 width="20" height="20" class="me-1" style="vertical-align: text-bottom"/>
-                            <span th:utext="*{entry.model}?: 'N/A'">Value</span>
-                        </td>
-                        <td class="mdc-data-table__cell" th:title="${entry.number}"
-                            th:utext="*{entry.number}?: 'N/A'">Value</td>
-                        <td class="mdc-data-table__cell">
-                            <button type="button" name="viewMfaDeviceDetails" th:if="${entry.payload}"
-                                    class="mdc-button mdc-button--raised me-2 btn btn-link min-width-48x">
-                                <i class="mdi mdi-account-details fas fa-eye min-width-48x" aria-hidden="true"></i>
-                                <span style="display: none" th:utext="${entry.payload}"/>
-                            </button>
-                            <button type="button" name="deleteMfaDevice"
-                                    th:attr="data-name=${entry.name},data-id=${entry.id},data-source=${entry.source},data-number=${entry.number},data-type=${entry.type}"
-                                    th:data-rp-id="${entry.details != null ? entry.details['relyingPartyId'] : null}"
-                                    class="mdc-button mdc-button--raised me-2 btn btn-link min-width-48x">
-                                <i class="mdi mdi-delete fas fa-trash min-width-48x" aria-hidden="true"></i>
-                                <span style="display: none" th:utext="${entry.payload}"/>
-                            </button>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-
-            <div th:if="${#cas.isTrue(gauthAccountProfileRegistrationEnabled) || #cas.isTrue(webauthnAccountProfileRegistrationEnabled)}">
-                <hr>
-
-                <p th:utext="#{screen.authentication.gauth.reganotherdevice}"></p>
-                <div id="toolbar" class="mdc-menu-surface--anchor">
-                    <button id="register" name="register" value="Register" type="button"
-                            class="mdc-button mdc-button--raised mdc-button--leading btn btn-primary me-2 drop-button"
-                            onclick="initializeMenus();">
-                        <span class="mdc-button__ripple"></span>
-                        <i class="mdi mdi-arrow-down" aria-hidden="true"></i>
-                        <span class="mdc-button__label" th:utext="#{screen.welcome.button.register}"></span>
-                    </button>
-                    <form method="post" id="fm2" th:action="@{${'/' + activeFlowId} }">
-                        <div class="mdc-menu mdc-menu-surface mw-25">
-                            <ul class="mdc-list" role="menu" aria-hidden="true" aria-orientation="vertical" tabindex="-1">
-                                <li class="mdc-list-item" role="menuitem" th:if="${gauthAccountProfileRegistrationEnabled}">
-                                    <span class="mdc-list-item__ripple"></span>
-                                    <i class="mdi mdi-google fas fa-google" style="margin-top: 2px;" aria-hidden="true"></i>
-                                    <div class="text-justify">
-                                        <h4 th:utext="#{cas.mfa.providerselection.mfa-gauth}"/>
-                                        <span th:text="#{cas.mfa.providerselection.mfa-gauth.notes}"/>
-                                        <p></p>
-
-                                        
-                                        <button id="gauthRegistrationLink"
-                                                onclick="submitRegistrationRequest('gauth');"
-                                                class="mdc-button mdc-button--raised mb-2 drop-button" aria-label="Create">
-                                            <span class="mdc-button__label">
-                                                <i class="mdc-tab__icon mdi mdi-arrow-right valign-bottom" aria-hidden="true"></i>
-                                                <span th:remove="tag" th:utext="#{screen.welcome.button.register}"></span>
-                                            </span>
-                                        </button>
-                                        
-                                    </div>
-                                </li>
-                                <li class="mdc-list-item" role="menuitem" style="margin-top: 10px;" th:if="${webauthnAccountProfileRegistrationEnabled}">
-                                    <span class="mdc-list-item__ripple"></span>
-                                    <i class="mdi mdi-fingerprint" aria-hidden="true"></i>
-                                    <div class="text-justify">
-                                        <h4 th:utext="#{cas.mfa.providerselection.mfa-webauthn}"
-                                            style="margin-top: 2px;"/>
-                                        <span th:text="#{cas.mfa.providerselection.mfa-webauthn.notes}"/>
-                                            <p></p>
-
-                                            <button id="webauthnRegistrationLink"
-                                                    onclick="submitRegistrationRequest('webauthn');"
-                                                    class="mdc-button mdc-button--raised mb-2 drop-button" aria-label="Create">
-                                                <span class="mdc-button__label">
-                                                    <i class="mdc-tab__icon mdi mdi-arrow-right valign-bottom" aria-hidden="true"></i>
-                                                    <span th:remove="tag" th:utext="#{screen.welcome.button.register}"></span>
-                                                </span>
-                                            </button>
-                                    </div>
-                                </li>
-                            </ul>
-                        </div>
-                        <input type="hidden" name="type" value=""/>
-                        <input type="hidden" name="_eventId"/>
-                        <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
-                    </form>
-
-                    <script type="text/javascript" th:inline="javascript">
-                        function initializeMenus() {
-                            cas.openMenu();
-                        }
-
-                        function submitRegistrationRequest(type) {
-                            switch (type) {
-                                case 'gauth':
-                                    document.forms.fm2["_eventId"].value = "registerGauth";
-                                    break;
-                                case 'webauthn':
-                                    document.forms.fm2["_eventId"].value = "registerWebAuthn";
-                                    break;
+<section th:fragment="mfadevices" th:if="${multifactorRegisteredAccounts}" id="divMfaRegisteredAccounts" class="profile-content" hidden
+         aria-labelledby="divMfaRegisteredAccountsTitle"
+         th:data-account-trail="|#{screen.account.trail.root} › #{screen.account.group.security} › #{screen.account.nav.mfadevices}|">
+    <script type="text/javascript" th:inline="javascript">
+        document.addEventListener("DOMContentLoaded", () => {
+            document.getElementsByName("deleteMfaDevice").forEach(btn =>
+                btn.addEventListener("click", event => {
+                    const id = $(btn).data("id");
+                    const source = $(btn).data("source");
+                    const name = $(btn).data("name");
+                    const body = $.param({ id: id, source: source, _eventId: "delete", execution: /*[[${flowExecutionKey}]]*/ });
+                    $.ajax({
+                        url: location.href,
+                        method: 'POST',
+                        contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+                        data: body,
+                        success: () => {
+                            const rpId = btn.dataset.rpId;
+                            if (rpId && window.PublicKeyCredential && typeof PublicKeyCredential.signalUnknownCredential === "function") {
+                                PublicKeyCredential.signalUnknownCredential({rpId, credentialId: btn.dataset.id})
+                                    .catch(err => console.debug("WebAuthn signal was not delivered", err));
                             }
-                            document.forms.fm2.type.value = type;
-                            document.forms.fm2.submit();
+                            Swal.fire({
+                                title: `Multifactor Device Removed`,
+                                text: `Multifactor authentication device ${name} has been removed.`,
+                                icon: "info",
+                                showConfirmButton: false
+                            });
+                            setTimeout(() => window.location.assign(window.location.href), 1000);
+                        },
+                        error: (xhr, status, error) => {
+                            const errorResponse = JSON.parse(xhr.responseText);
+                            Swal.fire({
+                                title: `Request Failed: ${xhr.status}`,
+                                text: errorResponse.message,
+                                icon: "warning",
+                                showConfirmButton: false
+                            });
                         }
-                    </script>
+                    });
+                    event.preventDefault();
+                }, false));
+        });
+
+        function submitRegistrationRequest(type) {
+            document.forms.fm2["_eventId"].value = type === "gauth" ? "registerGauth" : "registerWebAuthn";
+            document.forms.fm2.type.value = type;
+            document.forms.fm2.submit();
+        }
+    </script>
+    <header>
+        <div>
+            <h2 id="divMfaRegisteredAccountsTitle" th:utext="#{screen.account.mfadevices.title}">Multifactor Devices</h2>
+            <p th:utext="#{screen.account.mfadevices.subtitle}">MFA Devices are listed here</p>
+        </div>
+        <button id="register" name="register" type="button" class="acct-btn acct-btn-primary"
+                th:if="${#cas.isTrue(gauthAccountProfileRegistrationEnabled) || #cas.isTrue(webauthnAccountProfileRegistrationEnabled)}"
+                data-account-action="register" aria-expanded="false" aria-controls="registrationOptions">
+            <i class="mdi mdi-plus" aria-hidden="true"></i>
+            <span th:text="#{screen.account.mfadevices.register}">Register a device</span>
+        </button>
+    </header>
+
+    <form method="post" id="fm2" th:action="@{${'/' + activeFlowId}}"
+          th:if="${#cas.isTrue(gauthAccountProfileRegistrationEnabled) || #cas.isTrue(webauthnAccountProfileRegistrationEnabled)}">
+        <div id="registrationOptions" class="cas-account-register" hidden>
+            <p class="visually-hidden" th:utext="#{screen.authentication.gauth.reganotherdevice}">You can also register another device.</p>
+            <section class="cas-account-register-option" th:if="${gauthAccountProfileRegistrationEnabled}" aria-labelledby="gauthRegistrationTitle">
+                <h3 id="gauthRegistrationTitle">
+                    <i class="mdi mdi-google" aria-hidden="true"></i>
+                    <span th:utext="#{cas.mfa.providerselection.mfa-gauth}">Google Authenticator</span>
+                </h3>
+                <p th:text="#{cas.mfa.providerselection.mfa-gauth.notes}">Google Authenticator notes</p>
+                <button id="gauthRegistrationLink" type="button" class="acct-btn acct-btn-primary"
+                        aria-describedby="gauthRegistrationTitle"
+                        onclick="submitRegistrationRequest('gauth');" th:text="#{screen.welcome.button.register}">Register</button>
+            </section>
+            <section class="cas-account-register-option" th:if="${webauthnAccountProfileRegistrationEnabled}" aria-labelledby="webauthnRegistrationTitle">
+                <h3 id="webauthnRegistrationTitle">
+                    <i class="mdi mdi-fingerprint" aria-hidden="true"></i>
+                    <span th:utext="#{cas.mfa.providerselection.mfa-webauthn}">FIDO2 WebAuthn</span>
+                </h3>
+                <p th:text="#{cas.mfa.providerselection.mfa-webauthn.notes}">WebAuthn notes</p>
+                <button id="webauthnRegistrationLink" type="button" class="acct-btn acct-btn-primary"
+                        aria-describedby="webauthnRegistrationTitle"
+                        onclick="submitRegistrationRequest('webauthn');" th:text="#{screen.welcome.button.register}">Register</button>
+            </section>
+        </div>
+        <input type="hidden" name="type" value=""/>
+        <input type="hidden" name="_eventId"/>
+        <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
+    </form>
+
+    <ul id="mfaDevicesList" class="cas-account-list" data-account-list
+        th:unless="${#lists.isEmpty(multifactorRegisteredAccounts)}"
+        th:attr="data-filter-label=#{screen.account.list.filter},data-more-label=#{screen.account.list.more},data-count-label=#{screen.account.list.count}">
+        <li class="cas-account-item" th:each="entry, iter : ${multifactorRegisteredAccounts}">
+            <div class="cas-account-item-row">
+                <span class="cas-account-item-icon" aria-hidden="true">
+                    <img th:if="${entry.details != null && entry.details['icon'] != null}"
+                         th:src="@{${entry.details['icon']}}" alt="" width="26" height="26"/>
+                    <th:block th:unless="${entry.details != null && entry.details['icon'] != null}" th:switch="${entry.source}">
+                        <i th:case="'Google Authenticator'" class="mdi mdi-google"></i>
+                        <i th:case="'Web Authn'" class="mdi mdi-fingerprint"></i>
+                        <i th:case="'Duo Security'" class="mdi mdi-security"></i>
+                        <i th:case="'YubiKey'" class="mdi mdi-usb-flash-drive"></i>
+                        <i th:case="*" class="mdi mdi-cellphone-key"></i>
+                    </th:block>
+                </span>
+                <div class="cas-account-item-body">
+                    <div class="cas-account-item-title">
+                        <span data-field="name" th:id="${'mfaDeviceTitle' + iter.index}" th:text="${entry.name}">MyRecordName</span>
+                        <span class="cas-account-tag" data-field="source" th:text="${entry.source}">Google Authenticator</span>
+                    </div>
+                    <div class="cas-account-item-meta">
+                        <span th:text="#{screen.account.mfadevices.id}">ID</span> <span class="acct-mono" data-field="id" th:text="${entry.id}">1</span>
+                        · <span th:text="#{screen.account.mfadevices.type}">Type</span> <span data-field="type" th:text="${entry.type} ?: 'N/A'">TOTP</span>
+                        · <span th:text="#{screen.account.mfadevices.model}">Model</span> <span data-field="model" th:text="${entry.model} ?: 'N/A'">N/A</span>
+                        · <span th:text="#{screen.account.mfadevices.number}">Number</span> <span data-field="number" th:text="${entry.number} ?: 'N/A'">N/A</span>
+                    </div>
+                </div>
+                <div class="cas-account-item-actions">
+                    <button type="button" name="viewMfaDeviceDetails" class="acct-btn acct-btn-text" th:if="${entry.payload}"
+                            data-account-toggle aria-expanded="false"
+                            th:attr="aria-controls=${'mfaDeviceDetails' + iter.index},aria-describedby=${'mfaDeviceTitle' + iter.index},data-label-show=#{screen.account.item.details},data-label-hide=#{screen.account.item.hide}"
+                            th:text="#{screen.account.item.details}">Details</button>
+                    <button type="button" name="deleteMfaDevice" class="acct-btn acct-btn-text acct-btn-danger"
+                            th:attr="data-name=${entry.name},data-id=${entry.id},data-source=${entry.source},data-number=${entry.number},data-type=${entry.type},aria-describedby=${'mfaDeviceTitle' + iter.index}"
+                            th:data-rp-id="${entry.details != null ? entry.details['relyingPartyId'] : null}"
+                            th:text="#{screen.account.mfadevices.remove}">Remove</button>
                 </div>
             </div>
-        </div>
-
-</span>
+            <div class="cas-account-item-details" th:if="${entry.payload}" th:id="${'mfaDeviceDetails' + iter.index}" hidden>
+                <pre data-account-json th:text="${entry.payload}">{}</pre>
+            </div>
+        </li>
+    </ul>
+    <p id="mfaDevicesEmpty" class="cas-account-empty" th:if="${#lists.isEmpty(multifactorRegisteredAccounts)}"
+       th:text="#{screen.account.mfadevices.empty}">No multifactor authentication devices are registered.</p>
+</section>
 </body>
 </html>
