@@ -21,6 +21,7 @@ import org.apereo.cas.support.oauth.validator.token.device.ThrottledOAuth20Devic
 import org.apereo.cas.support.oauth.validator.token.device.UnapprovedOAuth20DeviceUserCodeException;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestContext;
 import org.apereo.cas.ticket.AuthenticationAwareTicket;
+import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
@@ -176,6 +177,7 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
             return generateAccessTokenForTokenExchange(tokenRequestContext);
         }
 
+        consumeOAuthCode(tokenRequestContext);
         val authentication = finalizeAuthentication(tokenRequestContext, prepareAuthentication(tokenRequestContext));
         LOGGER.debug("Creating access token for [{}]", tokenRequestContext);
         val accessToken = createAccessToken(tokenRequestContext, authentication);
@@ -287,7 +289,6 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
             LOGGER.debug("Added access token [{}] to registry", finalAccessToken);
             updateRefreshToken(tokenRequestContext, finalAccessToken);
         }
-        updateOAuthCode(tokenRequestContext);
         return finalAccessToken;
     }
 
@@ -302,13 +303,16 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
         }
     }
 
-    private void updateOAuthCode(final AccessTokenRequestContext tokenRequestContext) throws Exception {
+    private void consumeOAuthCode(final AccessTokenRequestContext tokenRequestContext) throws Exception {
         if (isCodeTokenConsumed(tokenRequestContext)) {
             val token = tokenRequestContext.getToken();
             token.update();
             LOGGER.trace("Updated OAuth code [{}]", token.getId());
             if (token.isExpired()) {
-                ticketRegistry.deleteTicket(token);
+                if (ticketRegistry.deleteTicket(token) == 0) {
+                    LOGGER.warn("OAuth code [{}] was already redeemed by another token request", token.getId());
+                    throw new InvalidTicketException(token.getId());
+                }
             } else {
                 ticketRegistry.updateTicket(token);
             }

@@ -489,6 +489,14 @@ authentication. See the [stateless ticket registry documentation](../ticketing/S
   `response_type=id_token` no longer carry an `at_hash` claim, since no access token is issued with them. For
   `response_type=id_token token`, the `at_hash` claim is now computed over the access token returned in the same response;
   for JWT access tokens it used to be computed over a different token and did not match.
+- {: .fixed data-area="oidc"} An OAuth/OpenID Connect authorization code is now redeemed by removing it from the ticket
+  registry before any token is issued, and only the request that removes it receives tokens. Two token requests presenting
+  the same code at the same moment could previously both receive tokens. The code is also no longer written back to the
+  ticket registry right before it is redeemed.
+- {: .fixed data-area="tickets"} Removing a proxy-granting ticket no longer writes back the copy of the single sign-on
+  session it was issued from, which undid any change made to the session since, such as applications the user logged into
+  afterwards. When a single sign-on session ends, it is no longer rewritten once for each of its proxy-granting tickets and
+  once more right before it is removed.
 - {: .changed data-area="project"} Almost all CAS unit tests are internally reworked to allow maximum parallelization and speed up the overall test execution time.
 - {: .fixed} [Delegated authentication](../integration/Delegate-Authentication.html) no longer fails intermittently when concurrent requests reach an identity provider that is still being initialized, typically right after startup. Such requests now wait for the initialization in progress instead of failing, which also affects [SAML2 identity providers](../integration/Delegate-Authentication-SAML2.html) when building SAML2 responses, metadata and logout requests.
 - {: .fixed} [WebAuthn](../mfa/FIDO2-WebAuthn-Authentication.html) registration and login pages no longer show a broken image when the device has no icon in its attestation metadata, and fall back to the credential nickname for the device name.

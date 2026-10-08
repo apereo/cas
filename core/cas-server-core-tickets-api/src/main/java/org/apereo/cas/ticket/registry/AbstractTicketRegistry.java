@@ -168,12 +168,18 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
 
     @Override
     public int deleteTicket(final Ticket ticket) throws Exception {
+        return deleteTicket(ticket, true);
+    }
+
+    private int deleteTicket(final Ticket ticket, final boolean detachFromParent) throws Exception {
         val count = new AtomicLong(0);
         if (ticket instanceof final TicketGrantingTicket tgt) {
             LOGGER.debug("Removing children of ticket [{}] from the registry.", ticket.getId());
             count.getAndAdd(deleteServiceTickets(tgt));
             if (ticket instanceof final ProxyGrantingTicket pgt) {
-                deleteProxyGrantingTicketFromParent(pgt);
+                if (detachFromParent) {
+                    deleteProxyGrantingTicketFromParent(pgt);
+                }
             } else {
                 deleteLinkedProxyGrantingTickets(count, tgt);
             }
@@ -401,22 +407,32 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
             ByteSource.wrap(encodedTicketObject).read(), ticket.getPrefix());
     }
 
+    /*
+     * The parent is about to be removed with its proxy-granting tickets, so it is not rewritten
+     * once per proxy-granting ticket, nor once more after they are gone.
+     */
     private void deleteLinkedProxyGrantingTickets(final AtomicLong count,
                                                   final TicketGrantingTicket tgt) throws Exception {
-        val pgts = new LinkedHashSet<>(tgt.getProxyGrantingTickets().keySet());
-        val hasPgts = !pgts.isEmpty();
-        count.getAndAdd(deleteTickets(pgts));
-        if (hasPgts) {
-            LOGGER.debug("Removing proxy-granting tickets from parent ticket-granting ticket");
-            tgt.getProxyGrantingTickets().clear();
-            updateTicket(tgt);
+        for (val proxyGrantingTicketId : List.copyOf(tgt.getProxyGrantingTickets().keySet())) {
+            val proxyGrantingTicket = getTicket(proxyGrantingTicketId, _ -> true);
+            if (proxyGrantingTicket != null) {
+                count.getAndAdd(deleteTicket(proxyGrantingTicket, false));
+            }
         }
     }
 
+    /*
+     * The proxy-granting ticket carries a copy of its parent taken when it was issued. Writing that
+     * copy back would undo every change made to the parent since, so the current parent is read
+     * and only rewritten when it still lists this proxy-granting ticket.
+     */
     private void deleteProxyGrantingTicketFromParent(final ProxyGrantingTicket ticket) throws Exception {
-        if (ticket.getTicketGrantingTicket() instanceof final TicketGrantingTicket tgt) {
-            tgt.getProxyGrantingTickets().remove(ticket.getId());
-            updateTicket(tgt);
+        val parentTicket = ticket.getTicketGrantingTicket();
+        if (parentTicket != null
+            && getTicket(parentTicket.getId(), _ -> true) instanceof final TicketGrantingTicket parent
+            && !parent.isExpired()
+            && parent.getProxyGrantingTickets().remove(ticket.getId()) != null) {
+            updateTicket(parent);
         }
     }
 

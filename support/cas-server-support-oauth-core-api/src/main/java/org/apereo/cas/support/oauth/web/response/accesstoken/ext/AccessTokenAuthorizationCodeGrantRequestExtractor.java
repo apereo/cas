@@ -136,7 +136,9 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAcces
 
                 FunctionUtils.doUnchecked(_ -> {
                     token.assignTicketGrantingTicket(ticketGrantingTicket);
-                    configurationContext.getTicketRegistry().updateTicket(token);
+                    if (!token.isCode()) {
+                        configurationContext.getTicketRegistry().updateTicket(token);
+                    }
                 });
 
                 return ticketGrantingTicket;

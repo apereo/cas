@@ -130,6 +130,15 @@ dependencies {
 }
 
 plugins.withId("org.graalvm.buildtools.native") {
+    def reachabilityMetadata = configurations.create("graalvmReachabilityMetadata") {
+        canBeConsumed = false
+        canBeResolved = true
+        transitive = false
+    }
+    dependencies {
+        graalvmReachabilityMetadata "org.graalvm.buildtools:graalvm-reachability-metadata:${libs.versions.graalVmMetadataRepository.get()}:repository@zip"
+    }
+
     plugins.withId("org.springframework.boot") {
         tasks.named("processAot") { task ->
             task.notCompatibleWithConfigurationCache("processAot is not supported by the Gradle configuration cache")
@@ -202,7 +211,7 @@ plugins.withId("org.graalvm.buildtools.native") {
     graalvmNative {
         metadataRepository {
             enabled = true
-            version = "${libs.versions.graalVmMetadataRepository.get()}"
+            uri = reachabilityMetadata.singleFile.toURI()
         }
 
         /*

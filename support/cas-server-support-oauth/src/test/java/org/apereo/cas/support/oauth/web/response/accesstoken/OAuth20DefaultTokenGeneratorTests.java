@@ -16,6 +16,7 @@ import org.apereo.cas.support.oauth.validator.token.device.InvalidOAuth20DeviceT
 import org.apereo.cas.support.oauth.validator.token.device.ThrottledOAuth20DeviceUserCodeApprovalException;
 import org.apereo.cas.support.oauth.validator.token.device.UnapprovedOAuth20DeviceUserCodeException;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestContext;
+import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.OAuth20Token;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
@@ -313,6 +314,31 @@ class OAuth20DefaultTokenGeneratorTests {
             assertTrue(result.getAccessToken().isPresent());
             assertTrue(result.getRefreshToken().isPresent());
             assertEquals(1, ticketGrantingTicket.getCountOfUses());
+        }
+
+        @Test
+        void verifyCodeRedeemedOnce() throws Throwable {
+            val registeredService = getRegisteredService(SERVICE_URL, UUID.randomUUID().toString(), "secret");
+            servicesManager.save(registeredService);
+            val authentication = RegisteredServiceTestUtils.getAuthentication(UUID.randomUUID().toString());
+            val ticketGrantingTicket = new TicketGrantingTicketImpl(UUID.randomUUID().toString(), authentication,
+                new TimeoutExpirationPolicy(5));
+            ticketRegistry.addTicket(ticketGrantingTicket);
+            val code = addCode(authentication.getPrincipal(), registeredService);
+            val tokenRequestContext = AccessTokenRequestContext.builder()
+                .clientId(registeredService.getClientId())
+                .service(RegisteredServiceTestUtils.getService(SERVICE_URL))
+                .authentication(authentication)
+                .registeredService(registeredService)
+                .grantType(OAuth20GrantTypes.AUTHORIZATION_CODE)
+                .responseType(OAuth20ResponseTypes.CODE)
+                .ticketGrantingTicket(ticketGrantingTicket)
+                .token(code)
+                .build();
+
+            assertTrue(oauthTokenGenerator.generate(tokenRequestContext).getAccessToken().isPresent());
+            assertNull(ticketRegistry.getTicket(code.getId()));
+            assertThrows(InvalidTicketException.class, () -> oauthTokenGenerator.generate(tokenRequestContext));
         }
 
         @Test
