@@ -268,6 +268,7 @@ module CasReleaseNotes
       type = entry["type"] || topic&.dig("type")
       {
         "title" => entry["title"] || entry["section"], "summary" => entry["summary"], "anchor" => heading&.dig("id"),
+        "href" => heading && "##{heading['id']}",
         "area" => area, "areaLabel" => AREA_LABELS.fetch(area, area), "type" => type, "typeLabel" => SHORT[type] || TYPES[type],
         "count" => heading ? counts[heading["title"]] : 0
       }
@@ -275,12 +276,12 @@ module CasReleaseNotes
     upgrade = Array(release["upgrade"]).map do |entry|
       heading = entry["section"] ? resolve.call(entry["section"]) : nil
       type = entry["type"] || "changed"
-      entry.merge("anchor" => heading&.dig("id"), "typeLabel" => SHORT[type] || TYPES.fetch(type, type), "type" => type,
+      entry.merge("anchor" => heading&.dig("id"), "href" => heading && "##{heading['id']}", "typeLabel" => SHORT[type] || TYPES.fetch(type, type), "type" => type,
                   "areaLabel" => entry["area"] && AREA_LABELS.fetch(entry["area"], entry["area"]))
     end
     spotlight = release["spotlight"] && begin
       heading = resolve.call(release["spotlight"]["section"])
-      release["spotlight"].merge("anchor" => heading&.dig("id"))
+      release["spotlight"].merge("anchor" => heading&.dig("id"), "href" => heading && "##{heading['id']}")
     end
     types = TYPES.map { |key, label| { "key" => key, "label" => label, "count" => changes.count { |c| c["type"] == key } } }
     areas = AREAS.filter_map do |key, label|
@@ -297,6 +298,163 @@ module CasReleaseNotes
     }
   end
 
+
+  # Reads a transformed release page back into its tagged topics and Other Stuff items.
+  def collect(markdown)
+    headings, = inventory(markdown)
+    lines = markdown.split("\n")
+    topics = []
+    items = []
+    section = nil
+    other_line = nil
+    index = 0
+    while index < lines.length
+      line = lines[index]
+      if (heading = line.match(/\A## +(.+?)\s*\z/))
+        section = heading[1]
+        other_line = index if section.match?(OTHER)
+      elsif section&.match?(NOTEWORTHY) && (heading = line.match(/\A### +(.+?)\s*\z/)) &&
+            lines[index + 1].to_s.include?("cas-change-topic")
+        stop = index + 2
+        stop += 1 while stop < lines.length && !lines[stop].match?(/\A\#{1,3} /) && !lines[stop].start_with?("{% include release-footer")
+        body = lines[(index + 2)...stop]
+        body.shift while body.any? && body.first.strip.empty?
+        body.pop while body.any? && body.last.strip.empty?
+        id = headings.find { |entry| entry["line"] == index }&.dig("id")
+        topics << { "title" => heading[1], "tag" => lines[index + 1], "body" => body, "id" => id }
+        index = stop
+        next
+      elsif section&.match?(OTHER) && line.match?(/\A[-*] +\{:[^}]*cas-change-item/)
+        stop = index + 1
+        stop += 1 while stop < lines.length && lines[stop].start_with?("  ")
+        tag = line.match(/\A[-*] +#{TAG}\s*/)
+        text = ([line.sub(/\A[-*] +#{TAG}\s*/, "")] + lines[(index + 1)...stop]).join("\n")
+        _, area, = parse_tag(tag[1])
+        group = headings.find { |entry| entry["line"] > other_line && entry["title"] == AREA_LABELS.fetch(area, area) }
+        items << { "tag" => tag[1], "text" => text, "group" => group&.dig("id") }
+        index = stop
+        next
+      end
+      index += 1
+    end
+    [topics, items]
+  end
+
+  def pill(label, href)
+    "[#{label}](#{href}){: .cas-release-rc}"
+  end
+
+  def normalized(text)
+    text.to_s.gsub(/\s+/, " ").strip.downcase
+  end
+
+  # Builds the combined page from every release candidate, newest first: topics with the same title are merged and
+  # show each release candidate's notes, and identical Other Stuff items are listed once with every release candidate.
+  def aggregate(releases)
+    topics = {}
+    items = {}
+    releases.reverse_each do |release|
+      label = release[:label]
+      url = release[:url]
+      found_topics, found_items = collect(release[:markdown])
+      found_topics.each do |topic|
+        type, area, = parse_tag(topic["tag"][TAG, 1])
+        entry = topics[topic["title"].downcase] ||= { "title" => topic["title"], "type" => type, "area" => area, "variants" => [] }
+        entry["type"] ||= type
+        href = "#{url}##{topic['id']}"
+        variant = entry["variants"].find { |candidate| normalized(candidate["body"].join("\n")) == normalized(topic["body"].join("\n")) }
+        if variant
+          variant["rcs"] << [label, href]
+        else
+          entry["variants"] << { "body" => topic["body"], "rcs" => [[label, href]] }
+        end
+      end
+      found_items.each do |item|
+        type, area, rest = parse_tag(item["tag"])
+        key = normalized(item["text"])
+        entry = items[key] ||= { "text" => item["text"], "type" => type, "area" => area, "rest" => rest, "rcs" => [] }
+        entry["type"] ||= type
+        entry["rcs"] << [label, item["group"] ? "#{url}##{item['group']}" : url]
+      end
+    end
+    out = ["## New & Noteworthy", "", "Topics from every release candidate, grouped by area. When a topic appears in more than one release candidate, the notes of each are shown, newest first.", ""]
+    AREAS.each do |key, label|
+      matching = topics.values.select { |entry| entry["area"] == key }
+      next if matching.empty?
+      out << "### #{label}" << "{: .cas-change-group data-area=\"#{key}\"}" << ""
+      matching.each do |entry|
+        rcs = entry["variants"].flat_map { |variant| variant["rcs"] }
+        labels = rcs.map(&:first).uniq.sort_by { |name| name[/\d+/].to_i }
+        out << "#### #{entry['title']}"
+        out << tag_for("topic", entry["type"], entry["area"], ["data-rc=\"#{labels.join(' ')}\""]).sub(/ data-area-label="[^"]*"/, "")
+        out << ""
+        if entry["variants"].size == 1
+          out << entry["variants"].first["rcs"].sort_by { |name, _| name[/\d+/].to_i }.map { |name, href| pill(name, href) }.join(" ")
+          out << "{: .cas-release-rcs}" << ""
+          out.concat(entry["variants"].first["body"]) << ""
+        else
+          entry["variants"].each do |variant|
+            out << variant["rcs"].sort_by { |name, _| name[/\d+/].to_i }.map { |name, href| pill(name, href) }.join(" ")
+            out << "{: .cas-release-rcs .cas-release-from}" << ""
+            out.concat(variant["body"]) << ""
+          end
+        end
+      end
+    end
+    out << "## Other Changes" << "{: .cas-change-others}" << ""
+    AREAS.each do |key, label|
+      matching = items.values.select { |entry| entry["area"] == key }
+      next if matching.empty?
+      out << "### #{label}" << "{: .cas-change-group data-area=\"#{key}\"}" << ""
+      matching.each do |entry|
+        rcs = entry["rcs"].uniq(&:first).sort_by { |name, _| name[/\d+/].to_i }
+        tag = tag_for("item", entry["type"], entry["area"], entry["rest"] + ["data-rc=\"#{rcs.map(&:first).join(' ')}\""])
+        out << "- #{tag} #{rcs.map { |name, href| pill(name, href) }.join(' ')} #{entry['text']}"
+      end
+      out << ""
+    end
+    out.join("\n")
+  end
+
+  def aggregate_digest(markdown, releases, nav)
+    _, changes = inventory(markdown)
+    rc_counts = markdown.scan(/data-rc="([^"]+)"/).flatten.flat_map(&:split).tally
+    merge_by_title = lambda do |entries|
+      merged = {}
+      entries.each do |entry|
+        key = normalized(entry["title"])
+        if merged[key]
+          merged[key]["rcs"] << entry["rc"]
+        else
+          merged[key] = entry.merge("rcs" => [entry["rc"]])
+        end
+      end
+      merged.values
+    end
+    highlights = []
+    upgrade = []
+    releases.reverse_each do |release|
+      digest = release[:digest]
+      digest["highlights"].each { |entry| highlights << entry.merge("rc" => release[:label], "href" => entry["anchor"] && "#{release[:url]}##{entry['anchor']}") }
+      digest["upgrade"].each { |entry| upgrade << entry.merge("rc" => release[:label], "href" => entry["anchor"] ? "#{release[:url]}##{entry['anchor']}" : release[:url]) }
+    end
+    types = TYPES.map { |key, label| { "key" => key, "label" => label, "count" => changes.count { |c| c["type"] == key } } }
+    areas = AREAS.filter_map do |key, label|
+      count = changes.count { |c| c["area"] == key }
+      { "key" => key, "label" => label, "count" => count } if count.positive?
+    end
+    {
+      "nav" => nav, "highlights" => merge_by_title.call(highlights), "upgrade" => upgrade, "spotlight" => nil,
+      "types" => types.select { |entry| entry["count"].positive? }, "areas" => areas, "aggregate" => true,
+      "rcs" => releases.map { |release| { "label" => release[:label], "count" => rc_counts.fetch(release[:label], 0) } },
+      "stats" => {
+        "topics" => changes.count { |c| c["kind"] == "topic" }, "upgrade" => upgrade.size,
+        "others" => changes.count { |c| c["kind"] == "item" }, "fixed" => changes.count { |c| c["type"] == "fixed" },
+        "changes" => changes.size, "releases" => releases.size
+      }
+    }
+  end
+
   def rc_number(page)
     page.name[/\ARC(\d+)\.md\z/, 1]&.to_i
   end
@@ -309,25 +467,52 @@ end
 if defined?(Jekyll::Hooks)
   Jekyll::Hooks.register :site, :post_read do |site|
     releases = site.pages.select { |page| page.data["release"].is_a?(Hash) && CasReleaseNotes.rc_number(page) }
+    combined = site.pages.select { |page| page.data["release_aggregate"] }
     overview = Hash.new { |hash, key| hash[key] = [] }
-    releases.group_by(&:dir).each do |dir, pages|
-      pages = pages.sort_by { |page| CasReleaseNotes.rc_number(page) }
+    aggregates = {}
+    (releases.map(&:dir) | combined.map(&:dir)).each do |dir|
+      pages = releases.select { |page| page.dir == dir }.sort_by { |page| CasReleaseNotes.rc_number(page) }
+      all = combined.find { |page| page.dir == dir }
+      all_url = all&.name&.sub(/\.md\z/, ".html")
+      summaries = []
       pages.each do |page|
         page.content = CasReleaseNotes.transform(page.content, page.data["release"])
         nav = pages.map do |other|
           { "label" => "RC#{CasReleaseNotes.rc_number(other)}", "url" => other.name.sub(/\.md\z/, ".html"),
             "current" => other.equal?(page) }
         end
+        nav << { "label" => "All", "url" => all_url || "Overview.html", "current" => false, "all" => true }
         page.data["release_digest"] = CasReleaseNotes.digest(page.content, page.data["release"], nav)
         page.data["release_digest"]["version"] = CasReleaseNotes.version(page)
+        label = "RC#{CasReleaseNotes.rc_number(page)}"
+        summaries << { label: label, url: page.name.sub(/\.md\z/, ".html"), markdown: page.content,
+                       digest: page.data["release_digest"], release: page.data["release"] }
         overview[dir] << {
-          "label" => "RC#{CasReleaseNotes.rc_number(page)}", "version" => CasReleaseNotes.version(page),
+          "label" => label, "version" => CasReleaseNotes.version(page),
           "url" => page.name.sub(/\.md\z/, ".html"), "summary" => page.data["release"]["summary"],
           "date" => page.data["release"]["date"], "stats" => page.data["release_digest"]["stats"],
           "highlights" => page.data["release_digest"]["highlights"].map { |entry| entry["title"] }
         }
       end
+      next unless all
+      settings = all.data["release_aggregate"].is_a?(Hash) ? all.data["release_aggregate"] : {}
+      markdown = CasReleaseNotes.aggregate(summaries)
+      all.content = all.content.include?("<!-- release-changes -->") ? all.content.sub("<!-- release-changes -->") { markdown } : "#{all.content}\n\n#{markdown}\n"
+      nav = pages.map { |other| { "label" => "RC#{CasReleaseNotes.rc_number(other)}", "url" => other.name.sub(/\.md\z/, ".html"), "current" => false } }
+      nav << { "label" => "All", "url" => all_url, "current" => true, "all" => true }
+      newest = summaries.last
+      version = settings["version"] || newest&.dig(:digest, "version").to_s.sub(/-RC\d+\z/i, "")
+      all.data["release"] = {
+        "line" => settings["line"] || "All release candidates",
+        "summary" => settings["summary"] || "Every change from #{summaries.map { |entry| entry[:label] }.join(', ')} in one place. Each change links to the release candidate it shipped in.",
+        "facts" => settings["facts"] || newest&.dig(:release, "facts")
+      }
+      all.data["release_digest"] = CasReleaseNotes.aggregate_digest(all.content, summaries, nav)
+      all.data["release_digest"]["version"] = version.empty? ? "All releases" : version
+      aggregates[dir] = { "url" => all_url, "version" => all.data["release_digest"]["version"],
+                          "stats" => all.data["release_digest"]["stats"], "releases" => summaries.map { |entry| entry[:label] } }
     end
     site.data["cas_release_notes"] = overview.transform_values(&:reverse)
+    site.data["cas_release_aggregate"] = aggregates
   end
 end

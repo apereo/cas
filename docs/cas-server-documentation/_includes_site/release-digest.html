@@ -20,30 +20,35 @@
     {%- if digest.nav.size > 0 %}
     <nav class="cas-release-switcher" aria-label="Release candidates">
         {%- for entry in digest.nav %}
-        <a href="{{ entry.url }}"{% if entry.current %} aria-current="page"{% endif %}>{{ entry.label }}</a>
+        <a href="{{ entry.url }}"{% if entry.current %} aria-current="page"{% endif %}{% if entry.all %} class="cas-release-switcher-all" title="Every change from all release candidates"{% endif %}>{{ entry.label }}</a>
         {%- endfor %}
-        <a href="Overview.html" class="cas-release-switcher-all">All</a>
     </nav>
     {%- endif %}
 </header>
 
 <ul class="cas-release-stats" aria-label="In this release">
+    {%- if digest.aggregate %}
+    <li><b>{{ digest.stats.releases }}</b><span>Release {% if digest.stats.releases == 1 %}candidate{% else %}candidates{% endif %}</span></li>
+    {%- endif %}
     <li><b>{{ digest.stats.topics }}</b><span>New &amp; noteworthy topics</span></li>
     <li{% if digest.stats.upgrade > 0 %} class="cas-release-stat-attention"{% endif %}><b>{{ digest.stats.upgrade }}</b><span>{% if digest.stats.upgrade == 1 %}Change{% else %}Changes{% endif %} to review before upgrading</span></li>
     <li><b>{{ digest.stats.others }}</b><span>Other changes</span></li>
+    {%- unless digest.aggregate %}
     <li><b>{{ digest.stats.fixed }}</b><span>{% if digest.stats.fixed == 1 %}Fix{% else %}Fixes{% endif %}</span></li>
+    {%- endunless %}
 </ul>
 
 {%- if digest.upgrade.size > 0 %}
 <section class="cas-release-upgrade" aria-labelledby="before-you-upgrade">
     <h2 id="before-you-upgrade"><i class="fa fa-triangle-exclamation" aria-hidden="true"></i>Before You Upgrade</h2>
-    <p>These changes alter existing behavior. Each one links to its full description below.</p>
+    <p>These changes alter existing behavior. Each one links to its full description{% if digest.aggregate %} in the release candidate that introduced it{% else %} below{% endif %}.</p>
     <ul>
         {%- for note in digest.upgrade %}
         <li>
             <span class="cas-release-type" data-type="{{ note.type }}">{{ note.typeLabel }}</span>
             <div>
-                {%- if note.anchor %}<a href="#{{ note.anchor }}">{% endif %}<b>{{ note.title | markdownify | remove: '<p>' | remove: '</p>' | strip }}</b>{% if note.anchor %}</a>{% endif %}
+                {%- if note.rc %}<a class="cas-release-rc" href="{{ note.href }}">{{ note.rc }}</a> {% endif %}
+                {%- if note.href %}<a href="{{ note.href }}">{% endif %}<b>{{ note.title | markdownify | remove: '<p>' | remove: '</p>' | strip }}</b>{% if note.href %}</a>{% endif %}
                 {%- if note.text %} {{ note.text | markdownify | remove: '<p>' | remove: '</p>' | strip }}{% endif %}
                 {%- if note.areaLabel %}<span class="cas-release-note-area">{{ note.areaLabel | escape }}</span>{% endif %}
             </div>
@@ -80,7 +85,7 @@
             {%- endfor %}
         </ul>
         {%- endif %}
-        {%- if spotlight.anchor %}<a class="cas-release-more" href="#{{ spotlight.anchor }}">Read the full section <span aria-hidden="true">→</span></a>{% endif %}
+        {%- if spotlight.href %}<a class="cas-release-more" href="{{ spotlight.href }}">Read the full section <span aria-hidden="true">→</span></a>{% endif %}
     </div>
 </section>
 {%- endif %}
@@ -92,10 +97,10 @@
         {%- for highlight in digest.highlights %}
         <li data-area="{{ highlight.area }}">
             <p class="cas-release-card-top"><span class="cas-release-card-area">{{ highlight.areaLabel | escape }}</span>{% if highlight.type %}<span class="cas-release-type" data-type="{{ highlight.type }}">{{ highlight.typeLabel }}</span>{% endif %}</p>
-            <h3>{% if highlight.anchor %}<a href="#{{ highlight.anchor }}">{% endif %}{{ highlight.title | escape }}{% if highlight.anchor %}</a>{% endif %}</h3>
+            <h3>{% if highlight.href %}<a href="{{ highlight.href }}">{% endif %}{{ highlight.title | escape }}{% if highlight.href %}</a>{% endif %}</h3>
             {%- if highlight.summary %}<p>{{ highlight.summary | markdownify | remove: '<p>' | remove: '</p>' | strip }}</p>{% endif %}
-            {%- if highlight.anchor %}
-            <p class="cas-release-card-foot"><a href="#{{ highlight.anchor }}" aria-hidden="true" tabindex="-1">Read more →</a></p>
+            {%- if highlight.href %}
+            <p class="cas-release-card-foot">{% if highlight.rcs.size > 0 %}<span class="cas-release-rcs">{% for rc in highlight.rcs %}<span class="cas-release-rc">{{ rc }}</span>{% endfor %}</span>{% endif %}<a href="{{ highlight.href }}" aria-hidden="true" tabindex="-1">Read more →</a></p>
             {%- endif %}
         </li>
         {%- endfor %}
@@ -116,6 +121,14 @@
         <button type="button" data-type="{{ type.key }}" aria-pressed="false"><i aria-hidden="true"></i>{{ type.label }} <span>{{ type.count }}</span></button>
         {%- endfor %}
     </div>
+    {%- if digest.rcs.size > 1 %}
+    <div class="cas-release-chips cas-release-rc-filter" role="group" aria-label="Release candidate">
+        <button type="button" data-rc="" aria-pressed="true">All release candidates</button>
+        {%- for rc in digest.rcs %}
+        <button type="button" data-rc="{{ rc.label }}" aria-pressed="false">{{ rc.label }} <span>{{ rc.count }}</span></button>
+        {%- endfor %}
+    </div>
+    {%- endif %}
     {%- if digest.areas.size > 1 %}
     <div class="cas-release-chips cas-release-areas" role="group" aria-label="Area">
         <button type="button" data-area="" aria-pressed="true">All areas</button>

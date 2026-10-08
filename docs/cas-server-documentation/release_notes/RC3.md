@@ -173,7 +173,8 @@ The CAS documentation site has received a visual and functional overhaul. Notabl
   third-party sites are removed, and the [logout](../installation/Logout-Single-Signout.html) session example is now a table.
 - Release notes open with a digest of each release candidate: what to review before upgrading, the highlights and,
   where a release has screenshots, a spotlight. Every change below it is tagged by type and grouped by area, and can be
-  searched and filtered; the [overview](Overview.html) lists every release candidate with its summary.
+  searched and filtered; the [overview](Overview.html) lists every release candidate with its summary, and
+  [the combined release candidate page](RC.html) gathers every change from every release candidate on one page, tagged with the release candidate it shipped in.
 
 ### Heimdall AuthZEN
 {: .changed data-area="authorization"}
@@ -478,6 +479,16 @@ authentication. See the [stateless ticket registry documentation](../ticketing/S
   removes the session's service tickets with one statement instead of reading and deleting them one at a time. Service and
   OAuth tickets that were updated after they were issued, which lost the link to their session when ticket encryption was
   enabled, now keep it and are removed with the session.
+- {: .fixed data-area="tickets"} Validating a single-use service ticket now removes it in one step, and only the request that
+  actually removes it receives a successful response. Two requests validating the same ticket at the same moment, on the
+  same node or on different nodes, could previously both succeed with ticket registries that store copies of tickets, such as
+  JPA, MongoDB, Redis or Hazelcast, or with ticket encryption enabled. Each validation also costs fewer trips to the ticket
+  registry, and a validation that cannot obtain the ticket's lock is now rejected instead of being allowed without
+  consuming the ticket.
+- {: .fixed data-area="oidc"} [OpenID Connect](../authentication/OIDC-Authentication.html) ID tokens issued for
+  `response_type=id_token` no longer carry an `at_hash` claim, since no access token is issued with them. For
+  `response_type=id_token token`, the `at_hash` claim is now computed over the access token returned in the same response;
+  for JWT access tokens it used to be computed over a different token and did not match.
 - {: .changed data-area="project"} Almost all CAS unit tests are internally reworked to allow maximum parallelization and speed up the overall test execution time.
 - {: .fixed} [Delegated authentication](../integration/Delegate-Authentication.html) no longer fails intermittently when concurrent requests reach an identity provider that is still being initialized, typically right after startup. Such requests now wait for the initialization in progress instead of failing, which also affects [SAML2 identity providers](../integration/Delegate-Authentication-SAML2.html) when building SAML2 responses, metadata and logout requests.
 - {: .fixed} [WebAuthn](../mfa/FIDO2-WebAuthn-Authentication.html) registration and login pages no longer show a broken image when the device has no icon in its attestation metadata, and fall back to the credential nickname for the device name.

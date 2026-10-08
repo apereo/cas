@@ -9,13 +9,27 @@ category: Planning
 
 # Release Notes
 
-Each release candidate of the current development line, newest first. Every page opens with what changed,
+Each release candidate of the current development line, newest first, and every change across all of them on one page. Every page opens with what changed,
 what to review before upgrading and the highlights, followed by every change, which you can filter by area and type.
 
 {% assign releases = site.data.cas_release_notes[page.dir] %}
+{% assign combined = site.data.cas_release_aggregate[page.dir] %}
 {::nomarkdown}
 {%- if releases.size > 0 %}
 <ul class="cas-release-index">
+    {%- if combined %}
+    <li class="cas-release-index-all">
+        <h2 id="all-changes"><a href="{{ combined.url }}">All Changes</a></h2>
+        <div>
+            <p>Every {{ combined.version | escape }} change from {{ combined.releases | join: ', ' }} on one page, each tagged with the release candidate that introduced it.</p>
+        </div>
+        <p class="cas-release-index-stats">
+            <span><b>{{ combined.stats.topics }}</b>topics</span>
+            <span><b>{{ combined.stats.upgrade }}</b>to review</span>
+            <span><b>{{ combined.stats.others }}</b>other changes</span>
+        </p>
+    </li>
+    {%- endif %}
     {%- for release in releases %}
     <li>
         <h2 id="{{ release.label | downcase }}"><a href="{{ release.url }}">{{ release.version | escape }}</a></h2>

@@ -2074,23 +2074,26 @@ initializeCasFeatures();
  **********************************************/
 
 // The digest, tags and area groups are rendered by _plugins/cas_release_notes.rb; this wires the filters.
+// Release candidate pages tag topics as h3 headings; the combined page nests them as h4 under area groups.
 function initializeCasReleaseNotes() {
   const container = document.getElementById("cas-docs-container");
   const filter = container?.querySelector(".cas-release-filter");
   if (!filter) {
     return;
   }
-  const topics = Array.from(container.querySelectorAll("h3.cas-change-topic")).map(heading => {
+  const level = element => /^H[1-6]$/.test(element.tagName) ? Number(element.tagName[1]) : 7;
+  const topics = Array.from(container.querySelectorAll(".cas-change-topic")).map(heading => {
     const section = document.createElement("section");
     section.className = "cas-release-topic";
     section.dataset.type = heading.dataset.type || "";
     section.dataset.area = heading.dataset.area || "";
+    section.dataset.rc = heading.dataset.rc || "";
     heading.before(section);
     let node = heading;
     while (node) {
       const next = node.nextElementSibling;
       section.append(node);
-      if (!next || /^H[1-3]$/.test(next.tagName) || next.matches(".cas-release-footer")) {
+      if (!next || level(next) <= level(heading) || next.matches(".cas-release-footer")) {
         break;
       }
       node = next;
@@ -2098,53 +2101,63 @@ function initializeCasReleaseNotes() {
     return section;
   });
   const items = Array.from(container.querySelectorAll("li.cas-change-item"));
-  const groups = Array.from(container.querySelectorAll("h3.cas-change-group")).map(heading => {
-    const list = heading.nextElementSibling?.matches("ul") ? heading.nextElementSibling : null;
-    return {heading, list, items: list ? Array.from(list.querySelectorAll(":scope > li.cas-change-item")) : []};
-  });
   const entries = [...topics, ...items].map(element => ({
     element,
     type: element.dataset.type || "",
     area: element.dataset.area || "",
+    rcs: (element.dataset.rc || "").split(/\s+/).filter(Boolean),
     text: element.textContent.toLowerCase()
   }));
-  const parts = Array.from(container.querySelectorAll(":scope > h2")).map(heading => {
+  const owns = (member, entry) => member === entry.element || member.contains(entry.element);
+  const siblingsUntil = (heading, stop) => {
     const members = [];
     let node = heading.nextElementSibling;
-    while (node && node.tagName !== "H2" && !node.matches(".cas-release-footer")) {
+    while (node && !stop(node)) {
       members.push(node);
       node = node.nextElementSibling;
     }
-    const owned = entries.filter(entry => members.some(member => member === entry.element || member.contains(entry.element)));
-    const others = members.filter(member => !member.matches(".cas-release-topic, h3.cas-change-group, h3.cas-change-group + ul"));
+    return members;
+  };
+  const groups = Array.from(container.querySelectorAll(".cas-change-group")).map(heading => {
+    const members = siblingsUntil(heading, node => level(node) <= level(heading) || node.matches(".cas-release-footer"));
+    return {
+      heading,
+      lists: members.filter(member => !entries.some(entry => entry.element === member) && entries.some(entry => owns(member, entry))),
+      owned: entries.filter(entry => members.some(member => owns(member, entry)))
+    };
+  });
+  const parts = Array.from(container.querySelectorAll(":scope > h2")).map(heading => {
+    const members = siblingsUntil(heading, node => node.tagName === "H2" || node.matches(".cas-release-footer"));
+    const owned = entries.filter(entry => members.some(member => owns(member, entry)));
+    const others = members.filter(member => !member.matches(".cas-change-group") && !entries.some(entry => owns(member, entry)));
     return {heading, others, owned};
   }).filter(part => part.owned.length);
   const input = filter.querySelector("input[type=search]");
   const status = filter.querySelector(".cas-release-status");
   const params = new URLSearchParams(location.search);
-  const state = {q: params.get("q") || "", type: params.get("type") || "", area: params.get("area") || ""};
-
-  const press = (selector, value) => filter.querySelectorAll(selector).forEach(button => {
-    const key = selector.includes("data-type") ? button.dataset.type : button.dataset.area;
-    button.setAttribute("aria-pressed", String(key === value));
-  });
+  const state = {
+    q: params.get("q") || "", type: params.get("type") || "", area: params.get("area") || "", rc: params.get("rc") || ""
+  };
+  const filters = [["type", "button[data-type]"], ["area", "button[data-area]"], ["rc", "button[data-rc]"]];
 
   const apply = () => {
     const terms = state.q.toLowerCase().split(/\s+/).filter(Boolean);
+    const active = Boolean(terms.length || state.type || state.area || state.rc);
     let visible = 0;
     entries.forEach(entry => {
       const match = (!state.type || entry.type === state.type)
         && (!state.area || entry.area === state.area)
+        && (!state.rc || entry.rcs.includes(state.rc))
         && terms.every(term => entry.text.includes(term));
       entry.element.hidden = !match;
       visible += match ? 1 : 0;
     });
     groups.forEach(group => {
-      const shown = group.items.some(item => !item.hidden);
+      const shown = group.owned.some(entry => !entry.element.hidden);
       group.heading.hidden = !shown;
-      if (group.list) {
-        group.list.hidden = !shown;
-      }
+      group.lists.forEach(list => {
+        list.hidden = !group.owned.some(entry => !entry.element.hidden && owns(list, entry));
+      });
     });
     parts.forEach(part => {
       const shown = part.owned.some(entry => !entry.element.hidden);
@@ -2153,16 +2166,17 @@ function initializeCasReleaseNotes() {
         member.hidden = !shown;
       });
     });
-    container.classList.toggle("cas-release-filtered", Boolean(terms.length || state.type || state.area));
-    status.textContent = terms.length || state.type || state.area
+    container.classList.toggle("cas-release-filtered", active);
+    status.textContent = active
       ? (visible ? `Showing ${visible} of ${entries.length} changes.` : "No changes match these filters.")
       : "";
-    press("button[data-type]", state.type);
-    press("button[data-area]", state.area);
+    filters.forEach(([key, selector]) => filter.querySelectorAll(selector).forEach(button => {
+      button.setAttribute("aria-pressed", String(button.dataset[key] === state[key]));
+    }));
     const url = new URL(location.href);
-    [["q", state.q], ["type", state.type], ["area", state.area]].forEach(([key, value]) => {
-      if (value) {
-        url.searchParams.set(key, value);
+    ["q", "type", "area", "rc"].forEach(key => {
+      if (state[key]) {
+        url.searchParams.set(key, state[key]);
       } else {
         url.searchParams.delete(key);
       }
@@ -2171,9 +2185,9 @@ function initializeCasReleaseNotes() {
   };
 
   const reset = () => {
-    state.q = "";
-    state.type = "";
-    state.area = "";
+    Object.keys(state).forEach(key => {
+      state[key] = "";
+    });
     input.value = "";
     apply();
   };
@@ -2184,13 +2198,11 @@ function initializeCasReleaseNotes() {
     state.q = input.value.trim();
     apply();
   });
-  filter.querySelectorAll("button[data-type]").forEach(button => button.addEventListener("click", () => {
-    state.type = button.dataset.type;
-    apply();
-  }));
-  filter.querySelectorAll("button[data-area]").forEach(button => button.addEventListener("click", () => {
-    state.area = button.dataset.area;
-    apply();
+  filters.forEach(([key, selector]) => filter.querySelectorAll(selector).forEach(button => {
+    button.addEventListener("click", () => {
+      state[key] = button.dataset[key];
+      apply();
+    });
   }));
 
   // A link to a change that the filters hide clears them first.

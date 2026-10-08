@@ -4615,19 +4615,37 @@ ul.tab-content > li:not(.active):not(.property-name):not(.property-tab):not(.cas
     display: none;
 }
 
+/* The lede and facts span the full width; the release switcher sits beside the version. */
 .cas-release-hero {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: flex-end;
-    justify-content: space-between;
-    gap: 1.2rem 2rem;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    column-gap: 2rem;
+    align-items: center;
     padding-bottom: 1.5rem;
     border-bottom: 1px solid var(--docs-line);
 }
 
 .cas-release-hero-text {
-    flex: 1 1 32rem;
-    min-width: 0;
+    display: contents;
+}
+
+.cas-release-hero-text > * {
+    grid-column: 1 / -1;
+}
+
+.cas-release-hero-text > .cas-release-eyebrow {
+    grid-row: 1;
+}
+
+.cas-release-hero-text > h1 {
+    grid-column: 1;
+    grid-row: 2;
+}
+
+.cas-release-switcher {
+    grid-column: 2;
+    grid-row: 2;
+    justify-self: end;
 }
 
 .cas-release-eyebrow, .cas-release-kicker {
@@ -4655,7 +4673,6 @@ ul.tab-content > li:not(.active):not(.property-name):not(.property-tab):not(.cas
 }
 
 .cas-release-lede {
-    max-width: 64ch;
     margin: 0 0 1rem;
     color: var(--docs-muted);
     font-size: 1.04rem;
@@ -4943,7 +4960,9 @@ ul.tab-content > li:not(.active):not(.property-name):not(.property-tab):not(.cas
 
 .cas-release-highlights .cas-release-card-foot {
     display: flex;
+    align-items: center;
     justify-content: flex-end;
+    gap: .5rem;
     margin-top: auto;
     padding-top: .35rem;
     color: var(--docs-muted);
@@ -5158,14 +5177,14 @@ ul.tab-content > li:not(.active):not(.property-name):not(.property-tab):not(.cas
 }
 
 /* Tags written in the markdown become a label beside each topic and change. */
-h3.cas-change-topic {
+.cas-change-topic {
     display: flex;
     flex-wrap: wrap;
     align-items: baseline;
     gap: .2rem .6rem;
 }
 
-h3.cas-change-topic::after {
+.cas-change-topic::after {
     content: attr(data-area-label);
     order: -1;
     flex-basis: 100%;
@@ -5175,7 +5194,7 @@ h3.cas-change-topic::after {
     text-transform: uppercase;
 }
 
-h3.cas-change-topic[data-type-label]::before, li.cas-change-item[data-type-label]::before {
+.cas-change-topic[data-type-label]::before, li.cas-change-item[data-type-label]::before {
     content: attr(data-type-label);
     display: inline-block;
     padding: .28rem .45rem;
@@ -5188,15 +5207,15 @@ h3.cas-change-topic[data-type-label]::before, li.cas-change-item[data-type-label
     white-space: nowrap;
 }
 
-h3.cas-change-topic[data-type-label]::before {
+.cas-change-topic[data-type-label]::before {
     order: 1;
     align-self: center;
 }
 
-:is(h3.cas-change-topic, li.cas-change-item)[data-type="new"]::before { color: var(--release-new); }
-:is(h3.cas-change-topic, li.cas-change-item)[data-type="fixed"]::before { color: var(--release-fixed); }
-:is(h3.cas-change-topic, li.cas-change-item)[data-type="action"]::before { color: var(--release-action); }
-:is(h3.cas-change-topic, li.cas-change-item)[data-type="removed"]::before { color: var(--release-removed); }
+:is(.cas-change-topic, li.cas-change-item)[data-type="new"]::before { color: var(--release-new); }
+:is(.cas-change-topic, li.cas-change-item)[data-type="fixed"]::before { color: var(--release-fixed); }
+:is(.cas-change-topic, li.cas-change-item)[data-type="action"]::before { color: var(--release-action); }
+:is(.cas-change-topic, li.cas-change-item)[data-type="removed"]::before { color: var(--release-removed); }
 
 h3.cas-change-group {
     margin: 1.8rem 0 .6rem;
@@ -5288,7 +5307,7 @@ li.cas-change-item[data-type-label]::before {
 #cas-docs-container .cas-release-index li {
     position: relative;
     display: grid;
-    grid-template-columns: 7.5rem minmax(0, 1fr) auto;
+    grid-template-columns: 11rem minmax(0, 1fr) auto;
     gap: 1.2rem;
     align-items: center;
     margin: 0;
@@ -5303,6 +5322,7 @@ li.cas-change-item[data-type-label]::before {
 }
 
 .cas-release-index h2 {
+    white-space: nowrap;
     margin: 0;
     padding: 0;
     border: 0;
@@ -5369,6 +5389,12 @@ li.cas-change-item[data-type-label]::before {
     .cas-release-filter {
         position: static;
     }
+    .cas-release-switcher {
+        grid-column: 1 / -1;
+        grid-row: auto;
+        justify-self: start;
+        margin-top: 1rem;
+    }
     #cas-docs-container li.cas-change-item[data-type-label] {
         padding-left: 1rem;
     }
@@ -5384,4 +5410,68 @@ li.cas-change-item[data-type-label]::before {
     .cas-release-footer {
         grid-template-columns: minmax(0, 1fr);
     }
+}
+
+/* The combined page: every change carries the release candidates it shipped in. */
+.cas-release-rc, #cas-docs-container a.cas-release-rc {
+    display: inline-block;
+    padding: .12rem .42rem;
+    border: 1px solid color-mix(in srgb, var(--docs-accent) 35%, var(--docs-line));
+    border-radius: .35rem;
+    background: var(--docs-accent-soft);
+    color: var(--docs-accent);
+    font: 700 .66rem/1.3 var(--font-mono);
+    letter-spacing: .02em;
+    text-decoration: none;
+    vertical-align: .08em;
+    white-space: nowrap;
+}
+
+#cas-docs-container a.cas-release-rc:hover {
+    border-color: var(--docs-accent);
+}
+
+.cas-release-rcs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .3rem;
+    margin: 0 0 .7rem;
+}
+
+.cas-release-highlights .cas-release-card-foot .cas-release-rcs {
+    margin: 0 auto 0 0;
+}
+
+.cas-release-from {
+    margin-top: 1.1rem;
+    padding-top: .9rem;
+    border-top: 1px dashed var(--docs-line);
+}
+
+.cas-release-topic > .cas-release-from:first-of-type {
+    margin-top: 0;
+    padding-top: 0;
+    border-top: 0;
+}
+
+li.cas-change-item > a.cas-release-rc {
+    margin-right: .25rem;
+}
+
+li.cas-change-item > a.cas-release-rc + a.cas-release-rc {
+    margin-left: -.05rem;
+}
+
+.cas-release-upgrade li a.cas-release-rc {
+    margin-right: .35rem;
+}
+
+h4.cas-change-topic {
+    margin: 1.6rem 0 .6rem;
+    font-size: 1.22rem;
+}
+
+#cas-docs-container .cas-release-index li.cas-release-index-all {
+    border-color: color-mix(in srgb, var(--docs-accent) 45%, var(--docs-line));
+    background: linear-gradient(90deg, var(--docs-accent-soft), var(--docs-surface) 70%);
 }
