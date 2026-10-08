@@ -231,7 +231,8 @@ public class MongoDbServiceRegistryChangeStreamWatcher implements SmartLifecycle
             LOGGER.debug(e.getMessage(), e);
             try {
                 Thread.sleep(RETRY_DELAY);
-            } catch (InterruptedException _) {
+            } catch (final InterruptedException ex) {
+                LoggingUtils.warn(LOGGER, ex);
                 Thread.currentThread().interrupt();
             }
         }

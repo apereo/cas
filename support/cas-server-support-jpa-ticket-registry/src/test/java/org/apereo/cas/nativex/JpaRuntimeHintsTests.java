@@ -5,6 +5,10 @@ import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.aot.hint.RuntimeHints;
+import org.springframework.aot.hint.predicate.RuntimeHintsPredicates;
+import org.springframework.orm.jpa.EntityManagerProxy;
+import jakarta.persistence.EntityManager;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link JpaRuntimeHintsTests}.
@@ -19,5 +23,6 @@ class JpaRuntimeHintsTests {
     void verifyHints() {
         val hints = new RuntimeHints();
         new JpaRuntimeHints().registerHints(hints, getClass().getClassLoader());
+        assertTrue(RuntimeHintsPredicates.proxies().forInterfaces(EntityManager.class, EntityManagerProxy.class).test(hints));
     }
 }

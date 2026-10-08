@@ -215,7 +215,7 @@ plugins.withId("org.graalvm.buildtools.native") {
             main {
                 imageName = "cas"
                 quickBuild = CasBuildSettings.isCi(project)
-                debug = true
+                debug = !CasBuildSettings.isCi(project)
                 verbose = false
                 richOutput = true
                 sharedLibrary = false
@@ -236,9 +236,11 @@ plugins.withId("org.graalvm.buildtools.native") {
                 buildArgs.add('-H:+ReportUnsupportedElementsAtRuntime')
 
                 def nativeImageHeapSize = providers.systemProperty("nativeImageHeapSize")
-                    .getOrElse(CasBuildSettings.isCi(project) ? "10G" : "14G")
+                    .getOrElse(CasBuildSettings.isCi(project) ? "12G" : "14G")
                 buildArgs.add("-J-Xmx${nativeImageHeapSize}")
                 buildArgs.add('-J-Xms1G')
+                buildArgs.add('-J-XX:-UseParallelGC')
+                buildArgs.add('-J-XX:+UseG1GC')
                 def nativeImageParallelism = providers.systemProperty("nativeImageParallelism").getOrNull()
                 if (nativeImageParallelism != null) {
                     buildArgs.add("--parallelism=${nativeImageParallelism}")

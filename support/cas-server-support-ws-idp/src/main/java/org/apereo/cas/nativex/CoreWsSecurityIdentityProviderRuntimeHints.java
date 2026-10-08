@@ -20,6 +20,8 @@ import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 public class CoreWsSecurityIdentityProviderRuntimeHints implements CasRuntimeHintsRegistrar {
     @Override
     public void registerHints(final @NonNull RuntimeHints hints, final @Nullable ClassLoader classLoader) {
+        hints.resources().registerResourceBundle("messages.wss4j_errors");
+        hints.resources().registerResourceBundle("org.apache.xml.security.resource.xmlsecurity");
         val resolver = new PathMatchingResourcePatternResolver(classLoader);
         val bundles = Unchecked.supplier(() -> resolver.getResources("classpath*:org/apache/cxf/**/Messages.properties")).get();
         for (val bundle : bundles) {

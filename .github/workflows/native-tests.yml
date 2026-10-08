@@ -4,7 +4,7 @@ name: Native Image Tests
 
 env:
   JAVA_OPTS: "-Xms512m -Xmx6048m -Xss128m -XX:ReservedCodeCacheSize=512m -server"
-  GRADLE_OPTS: "-Xms256m -Xmx512m -Dorg.gradle.jvmargs=-Xmx2g"
+  GRADLE_OPTS: "-Xms256m -Xmx512m -Dorg.gradle.jvmargs=-Xmx1g"
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   GH_PACKAGE_REGISTRY_USER: ${{ secrets.GH_PACKAGE_REGISTRY_USER }}
   GH_PACKAGE_REGISTRY_TOKEN: ${{ secrets.GH_PACKAGE_REGISTRY_TOKEN }}

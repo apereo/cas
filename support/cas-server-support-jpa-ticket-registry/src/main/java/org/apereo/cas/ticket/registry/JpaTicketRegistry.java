@@ -21,11 +21,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
 import org.jspecify.annotations.Nullable;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.orm.jpa.SharedEntityManagerCreator;
 import org.springframework.transaction.support.TransactionOperations;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.LockModeType;
 import jakarta.persistence.NoResultException;
-import jakarta.persistence.PersistenceContext;
 
 /**
  * JPA implementation of a CAS {@link TicketRegistry}. This implementation of
@@ -48,8 +49,7 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
 
     private final JpaTicketEntityFactory ticketEntityFactory;
 
-    @PersistenceContext(unitName = "jpaTicketRegistryContext")
-    private EntityManager entityManager;
+    private final EntityManager entityManager;
 
     public JpaTicketRegistry(final CipherExecutor cipherExecutor,
                              final TicketSerializationManager ticketSerializationManager,
@@ -63,6 +63,8 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
         this.transactionTemplate = transactionTemplate;
         this.casProperties = casProperties;
         this.ticketEntityFactory = new JpaTicketEntityFactory(casProperties.getTicket().getRegistry().getJpa().getDialect());
+        this.entityManager = SharedEntityManagerCreator.createSharedEntityManager(
+            applicationContext.getBean("ticketEntityManagerFactory", EntityManagerFactory.class), null, true, EntityManager.class);
     }
 
     private static long countToLong(final Object result) {

@@ -741,6 +741,7 @@ function waitForCasInstance() {
   local exitCode
   local remaining
   local probeTimeoutArgs
+  local nativeStartupLog="${PUPPETEER_DIR}/overlay/cas-instance-${instance}.log"
   for url in "$@"; do
     printcyan "Checking healthcheck url: ${url}"
     while true; do
@@ -752,8 +753,13 @@ function waitForCasInstance() {
         fi
         probeTimeoutArgs=(--max-time "${remaining}")
       fi
-      if curl -I -k --connect-timeout 10 "${probeTimeoutArgs[@]}" --output /dev/null --silent --fail "${url}"; then
-        break
+      if [[ "${NATIVE_RUN}" != "true" ]] || {
+        grep -q 'Started CasNativeWebApplication in' "${nativeStartupLog}" 2>/dev/null &&
+          grep -q 'Ready to process requests' "${nativeStartupLog}" 2>/dev/null
+      }; then
+        if curl -I -k --connect-timeout 10 "${probeTimeoutArgs[@]}" --output /dev/null --silent --fail "${url}"; then
+          break
+        fi
       fi
       if [[ -n "${pid}" ]] && ! kill -0 "${pid}" >/dev/null 2>&1; then
         wait "${pid}"
@@ -1005,9 +1011,10 @@ ${BUILD_SCRIPT:+ $BUILD_SCRIPT}${DAEMON:+ $DAEMON} \
           fi
         else
           printcyan "Launching CAS build in the foreground..."
-          $BUILD_COMMAND
-          pid=$!
-          wait $pid
+          if ! $BUILD_COMMAND; then
+            printred "Failed to build CAS web application. Examine the build output."
+            exit 2
+          fi
           if [[ ! -e "${targetArtifact}" ]]; then
             printred "Failed to build CAS web application: ${targetArtifact}."
             exit 2
@@ -1202,6 +1209,8 @@ ${BUILD_SCRIPT:+ $BUILD_SCRIPT}${DAEMON:+ $DAEMON} \
         if [[ "${launchEnabled}" == "true" ]]; then
           if [[ "${NATIVE_RUN}" == "true" ]]; then
             printcyan "Launching CAS instance #${c} under port ${serverPort} from ${casArtifactToRun}"
+            nativeStartupLog="${PUPPETEER_DIR}/overlay/cas-instance-${c}.log"
+            : > "${nativeStartupLog}"
             ${casArtifactToRun} \
               -Dcom.sun.net.ssl.checkRevocation=false \
               -Dlog.console.stacktraces=true \
@@ -1213,7 +1222,8 @@ ${BUILD_SCRIPT:+ $BUILD_SCRIPT}${DAEMON:+ $DAEMON} \
               --management.endpoints.web.discovery.enabled=true \
               --server.port=${serverPort} \
               --spring.profiles.active=none \
-              --server.ssl.key-store="$keystore" ${properties} &
+              --server.ssl.key-store="$keystore" ${properties} \
+              > >(tee -a "${nativeStartupLog}") 2>&1 &
           elif [[ "${buildDockerImage}" == "true" ]]; then
             dockerImageName=$(dockerImageNameForInstance "$c")
             dockerHostDebugPort=$((5000 + c - 1))

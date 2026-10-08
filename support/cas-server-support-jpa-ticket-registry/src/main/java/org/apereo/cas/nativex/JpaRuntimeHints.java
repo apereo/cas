@@ -6,6 +6,8 @@ import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import org.springframework.aot.hint.RuntimeHints;
 import org.springframework.integration.jdbc.lock.LockRepository;
+import org.springframework.orm.jpa.EntityManagerProxy;
+import jakarta.persistence.EntityManager;
 
 /**
  * This is {@link JpaRuntimeHints}.
@@ -18,7 +20,7 @@ public class JpaRuntimeHints implements CasRuntimeHintsRegistrar {
     @Override
     public void registerHints(final @NonNull RuntimeHints hints, final @Nullable ClassLoader classLoader) {
         registerProxyHints(hints, LockRepository.class);
+        hints.proxies().registerJdkProxy(EntityManager.class, EntityManagerProxy.class);
     }
 }
-
 
