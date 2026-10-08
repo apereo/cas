@@ -53,17 +53,19 @@ public class MongoDbServiceRegistry extends AbstractServiceRegistry {
     }
 
     @Override
-    public RegisteredService findServiceById(final long svcId) {
-        return this.mongoTemplate.findOne(new Query(Criteria.where("id").is(svcId)), RegisteredService.class, this.collectionName);
+    public @Nullable RegisteredService findServiceById(final long svcId) {
+        return Optional.ofNullable(mongoTemplate.findOne(new Query(Criteria.where("id").is(svcId)), RegisteredService.class, collectionName))
+            .map(this::invokeServiceRegistryListenerPostLoad)
+            .orElse(null);
     }
 
     @Override
-    public RegisteredService findServiceByExactServiceId(final String id) {
+    public @Nullable RegisteredService findServiceByExactServiceId(final String id) {
         return StringUtils.isBlank(id) ? null : findFirst(Criteria.where("serviceId").is(id));
     }
 
     @Override
-    public RegisteredService findServiceByExactServiceName(final String name) {
+    public @Nullable RegisteredService findServiceByExactServiceName(final String name) {
         return findFirst(Criteria.where("name").is(name));
     }
 
@@ -94,7 +96,8 @@ public class MongoDbServiceRegistry extends AbstractServiceRegistry {
 
     @Override
     public Stream<? extends RegisteredService> getServicesStream() {
-        return mongoTemplate.stream(new Query(), RegisteredService.class, this.collectionName);
+        return mongoTemplate.stream(new Query(), RegisteredService.class, this.collectionName)
+            .map(this::invokeServiceRegistryListenerPostLoad);
     }
 
     private @Nullable RegisteredService findFirst(final Criteria criteria) {
@@ -102,6 +105,7 @@ public class MongoDbServiceRegistry extends AbstractServiceRegistry {
             .stream()
             .sorted()
             .findFirst()
+            .map(this::invokeServiceRegistryListenerPostLoad)
             .orElse(null);
     }
 }

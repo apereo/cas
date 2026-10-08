@@ -1063,6 +1063,8 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
   it on a shared database. Mixed-version clusters are not supported across this change.
 - `createOrUpdateIndexes` drops an index whose options changed before recreating it, and restores the dropped index when
   the replacement fails, so a collection is never left without it.
+- `MongoDbServiceRegistry` applies post-load listeners on every read path (`load`, `findServiceById`, exact lookups,
+  `getServicesStream`); a new read path must do the same, or OIDC services lose their scope-based release policies.
 - `MongoDbServiceRegistry` exact lookups (`findServiceByExactServiceId`/`Name`) return the first match in natural
   order, sorted in the JVM: the comparator leads with `getEvaluationPriority()`, which is type-derived and never
   stored. `size()` is `estimatedCount`; `delete` is a single remove by id.

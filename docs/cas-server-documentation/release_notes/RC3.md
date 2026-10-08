@@ -428,7 +428,9 @@ authentication. See the [stateless ticket registry documentation](../ticketing/S
 - The [MongoDB service registry](../services/MongoDb-Service-Management.html) deletes a service definition in one
   request instead of reading it back first, counts definitions from collection metadata instead of scanning the
   collection, and, when several definitions share a service id or name, returns the one that comes first in evaluation
-  order instead of an arbitrary match.
+  order instead of an arbitrary match. Definitions it looks up by id or name, or reads while the cache is empty, now get
+  the same post-processing as those it loads in bulk, so OpenID Connect applications keep their scope-based attribute
+  release policies.
 - The [MongoDB ticket registry](../ticketing/MongoDb-Ticket-Registry.html) reads only the stored ticket when fetching
   tickets, counts tickets from collection metadata instead of scanning collections, and removes the service tickets of a
   ticket-granting ticket with one request per collection instead of reading each one back first. Ticket identifiers are
