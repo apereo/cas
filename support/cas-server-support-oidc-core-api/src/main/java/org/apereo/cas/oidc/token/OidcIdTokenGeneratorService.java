@@ -168,7 +168,7 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
         if (attributes.containsKey(OAuth20Constants.NONCE)) {
             setClaim(claims, OAuth20Constants.NONCE, attributes.get(OAuth20Constants.NONCE).getFirst());
         }
-        generateAccessTokenHash(accessToken, oidcRegisteredService, claims);
+        generateAccessTokenHash(context, oidcRegisteredService, claims);
 
         if (context.getResponseType() == OAuth20ResponseTypes.ID_TOKEN || includeClaimsInIdTokenForcefully(context)) {
             FunctionUtils.doIf(includeClaimsInIdTokenForcefully(context),
@@ -381,13 +381,21 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
         return DigestUtils.sha512(jwtId);
     }
 
-    protected void generateAccessTokenHash(final OAuth20AccessToken accessToken,
+    /**
+     * Hash the access token exactly as the response carries it. Encoding it again would sign or encrypt a second,
+     * different token whenever the algorithm is randomized (ES*, PS*, any JWE).
+     *
+     * @param context           the context
+     * @param registeredService the registered service
+     * @param claims            the claims
+     * @throws Throwable the throwable
+     */
+    protected void generateAccessTokenHash(final IdTokenGenerationContext context,
                                            final OidcRegisteredService registeredService,
                                            final JwtClaims claims) throws Throwable {
-        val oidcIssuer = getConfigurationContext().getIssuerService().determineIssuer(Optional.of(registeredService));
-        val cipher = OAuth20JwtAccessTokenEncoder.toEncodableCipher(getConfigurationContext(),
-            registeredService, accessToken, oidcIssuer);
-        val encodedAccessToken = cipher.encode(accessToken.getId());
+        val encodedAccessToken = Optional.ofNullable(context.getEncodedAccessToken())
+            .filter(StringUtils::isNotBlank)
+            .orElseGet(() -> encodeAccessToken(context.getAccessToken(), registeredService));
         val jsonWebKey = getConfigurationContext().getIdTokenSigningAndEncryptionService()
             .getJsonWebKeySigningKey(Optional.of(registeredService));
 
@@ -400,6 +408,12 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
             .build()
             .generate();
         claims.setClaim(OidcConstants.CLAIM_AT_HASH, hash);
+    }
+
+    private String encodeAccessToken(final OAuth20AccessToken accessToken, final OidcRegisteredService registeredService) {
+        val oidcIssuer = getConfigurationContext().getIssuerService().determineIssuer(Optional.of(registeredService));
+        return OAuth20JwtAccessTokenEncoder.toEncodableCipher(getConfigurationContext(), registeredService, accessToken, oidcIssuer)
+            .encode(accessToken.getId());
     }
 
     protected Set<Object> buildAuthenticationMethods(final Authentication authentication) {

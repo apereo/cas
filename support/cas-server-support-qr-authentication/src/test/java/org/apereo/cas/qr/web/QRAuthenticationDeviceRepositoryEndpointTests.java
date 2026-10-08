@@ -25,7 +25,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Tag("ActuatorEndpoint")
 @SpringBootTest(classes = BaseQRAuthenticationTokenValidatorServiceTests.SharedTestConfiguration.class,
     properties = {
-        "cas.authn.qr.json.location=file:${java.io.tmpdir}/cas-qr-devices.json",
+        "cas.authn.qr.json.location=file:${java.io.tmpdir}/cas-qr-devices-${random.uuid}.json",
         "management.endpoint.qrDevices.access=UNRESTRICTED",
         "management.endpoints.web.exposure.include=*"
     },

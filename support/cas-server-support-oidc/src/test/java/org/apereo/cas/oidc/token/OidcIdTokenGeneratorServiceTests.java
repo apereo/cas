@@ -635,5 +635,38 @@ class OidcIdTokenGeneratorServiceTests {
                 .generate();
             assertEquals(hash, newHash);
         }
+
+        @Test
+        void verifyAccessTokenHashUsesAccessTokenFromResponse() throws Throwable {
+            val profile = new CommonProfile();
+            profile.setClientName("OIDC");
+            profile.setId(UUID.randomUUID().toString());
+
+            val clientId = UUID.randomUUID().toString();
+            val accessToken = getAccessToken(clientId);
+            val registeredService = getOidcRegisteredService(clientId);
+            registeredService.setJwtAccessToken(true);
+            registeredService.setIdTokenSigningAlg(AlgorithmIdentifiers.RSA_USING_SHA256);
+            servicesManager.save(registeredService);
+
+            val encodedAccessToken = UUID.randomUUID().toString();
+            val idTokenContext = IdTokenGenerationContext.builder()
+                .accessToken(accessToken)
+                .userProfile(profile)
+                .responseType(OAuth20ResponseTypes.CODE)
+                .grantType(OAuth20GrantTypes.NONE)
+                .registeredService(registeredService)
+                .encodedAccessToken(encodedAccessToken)
+                .build();
+            val idToken = oidcIdTokenGenerator.generate(idTokenContext);
+            val claims = oidcTokenSigningAndEncryptionService.decode(idToken.token(), Optional.of(registeredService));
+            val expectedHash = OAuth20TokenHashGenerator.builder()
+                .token(encodedAccessToken)
+                .registeredService(registeredService)
+                .algorithm(registeredService.getIdTokenSigningAlg())
+                .build()
+                .generate();
+            assertEquals(expectedHash, claims.getClaimValue(OidcConstants.CLAIM_AT_HASH, String.class));
+        }
     }
 }

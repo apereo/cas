@@ -1295,6 +1295,7 @@ ${BUILD_SCRIPT:+ $BUILD_SCRIPT}${DAEMON:+ $DAEMON} \
                 -Dlog.console.stacktraces=true \
                 $systemProperties \
                 -jar "${casArtifactToRun}" \
+                --spring.main.lazy-initialization=false \
                 -Dcom.sun.net.ssl.checkRevocation=false \
                 --server.port=${serverPort} \
                 --spring.profiles.active=none \
