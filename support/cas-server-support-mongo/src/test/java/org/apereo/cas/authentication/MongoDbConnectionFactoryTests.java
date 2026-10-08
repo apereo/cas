@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.model.support.mongo.SingleCollectionMongoDbP
 import org.apereo.cas.mongo.MongoDbConnectionFactory;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.data.domain.Sort;
@@ -66,7 +67,7 @@ class MongoDbConnectionFactoryTests {
     @Test
     void verifyIndexReplacedWithUniqueIndex() {
         val template = buildTemplate();
-        val collectionName = "IndexReplacement" + UUID.randomUUID().toString().replace("-", "");
+        val collectionName = "IndexReplacement" + UUID.randomUUID().toString().replace("-", StringUtils.EMPTY);
         MongoDbConnectionFactory.createCollection(template, collectionName, false);
         template.getCollection(collectionName).insertMany(List.of(
             new org.bson.Document("value", UUID.randomUUID().toString()),
@@ -85,7 +86,7 @@ class MongoDbConnectionFactoryTests {
     @Test
     void verifyFailedIndexReplacementRestoresIndex() {
         val template = buildTemplate();
-        val collectionName = "IndexReplacement" + UUID.randomUUID().toString().replace("-", "");
+        val collectionName = "IndexReplacement" + UUID.randomUUID().toString().replace("-", StringUtils.EMPTY);
         MongoDbConnectionFactory.createCollection(template, collectionName, false);
         template.getCollection(collectionName).insertMany(List.of(
             new org.bson.Document("value", "duplicate"),
