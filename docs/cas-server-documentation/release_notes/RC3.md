@@ -445,12 +445,15 @@ authentication. See the [stateless ticket registry documentation](../ticketing/S
   they are sent in the background, so one slow service provider no longer holds up the logout of the others, and the
   logout reports them as sent without waiting for a response. The incoming logout request is also parsed once per logout
   instead of once per service provider.
-- An OAuth/OpenID Connect token request now saves the user's single sign-on session once instead of once per token
+- {: .changed data-area="oidc"} An OAuth/OpenID Connect token request now saves the user's single sign-on session once instead of once per token
   it issues; exchanging an authorization code for an access and a refresh token used to write it three times.
-- The `at_hash` claim of an [OpenID Connect](../authentication/OIDC-Authentication.html) ID token is now computed over the
+- {: .fixed} The `at_hash` claim of an [OpenID Connect](../authentication/OIDC-Authentication.html) ID token is now computed over the
   access token returned in the same response. CAS used to build and sign the access token a second time for the hash, which
   doubled the work for JWT access tokens and produced an `at_hash` that did not match when the access token was signed with
   ES* or PS* algorithms, encrypted, or requested as a JWT through token exchange.
+- {: .changed} Reading the [OpenID Connect keystore](../authentication/OIDC-Authentication-JWKS.html) from a file, as
+  every request to the JWKS endpoint does, no longer fails an attempt to parse the file path as an inline keystore first,
+  and the keystore generated event is published only when CAS actually generates a new keystore instead of on every read.
 - {: .changed data-area="project"} Almost all CAS unit tests are internally reworked to allow maximum parallelization and speed up the overall test execution time.
 - {: .fixed} [Delegated authentication](../integration/Delegate-Authentication.html) no longer fails intermittently when concurrent requests reach an identity provider that is still being initialized, typically right after startup. Such requests now wait for the initialization in progress instead of failing, which also affects [SAML2 identity providers](../integration/Delegate-Authentication-SAML2.html) when building SAML2 responses, metadata and logout requests.
 - {: .fixed} [WebAuthn](../mfa/FIDO2-WebAuthn-Authentication.html) registration and login pages no longer show a broken image when the device has no icon in its attestation metadata, and fall back to the credential nickname for the device name.
