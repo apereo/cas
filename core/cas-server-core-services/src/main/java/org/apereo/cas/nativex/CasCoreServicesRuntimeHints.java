@@ -73,6 +73,7 @@ import org.apereo.cas.services.ServiceRegistry;
 import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
 import org.apereo.cas.services.ServiceRegistryInitializer;
 import org.apereo.cas.services.ServiceRegistryInitializerEventListener;
+import org.apereo.cas.services.ServicesManagerScheduledLoader;
 import org.apereo.cas.services.StaticRegisteredServiceUsernameProvider;
 import org.apereo.cas.services.TimeBasedRegisteredServiceAccessStrategy;
 import org.apereo.cas.services.UnauthorizedServiceException;
@@ -99,6 +100,7 @@ public class CasCoreServicesRuntimeHints implements CasRuntimeHintsRegistrar {
     @Override
     public void registerHints(final @NonNull RuntimeHints hints, final @Nullable ClassLoader classLoader) {
         hints.resources().registerPattern("services/**");
+        registerReflectionHintsForMethodsAndFields(hints, List.of(ServicesManagerScheduledLoader.class));
         registerSerializationHints(hints, findSubclassesOf(WebApplicationService.class));
         registerProxyHints(hints, List.of(
             PrincipalProvisioner.class,

@@ -6,9 +6,12 @@ import org.apereo.cas.util.serialization.ComponentSerializationPlanConfigurer;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.aop.SpringProxy;
+import org.springframework.aop.framework.Advised;
 import org.springframework.aot.hint.RuntimeHints;
 import org.springframework.aot.hint.predicate.RuntimeHintsPredicates;
 import org.springframework.beans.factory.FactoryBean;
+import org.springframework.core.DecoratingProxy;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -26,6 +29,8 @@ class CasCoreUtilRuntimeHintsTests {
         assertTrue(RuntimeHintsPredicates.proxies().forInterfaces(ComponentSerializationPlanConfigurer.class).test(hints));
         assertTrue(RuntimeHintsPredicates.proxies().forInterfaces(Supplier.class).test(hints));
         assertTrue(RuntimeHintsPredicates.proxies().forInterfaces(FactoryBean.class).test(hints));
+        assertTrue(RuntimeHintsPredicates.proxies()
+            .forInterfaces(Runnable.class, SpringProxy.class, Advised.class, DecoratingProxy.class).test(hints));
 
         assertTrue(RuntimeHintsPredicates.reflection().onType(ZonedDateTime.class).test(hints));
         assertTrue(RuntimeHintsPredicates.reflection().onType(LinkedHashMap.class).test(hints));

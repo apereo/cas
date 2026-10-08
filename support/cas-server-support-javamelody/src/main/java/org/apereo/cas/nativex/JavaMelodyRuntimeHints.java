@@ -15,6 +15,12 @@ import org.springframework.aot.hint.RuntimeHints;
 public class JavaMelodyRuntimeHints implements CasRuntimeHintsRegistrar {
     @Override
     public void registerHints(final @NonNull RuntimeHints hints, final @Nullable ClassLoader classLoader) {
-        registerReflectionHints(hints, List.of("com.sun.management.ThreadMXBean"));
+        hints.resources().registerResourceBundle("net.bull.javamelody.resource.translations");
+        hints.resources().registerPattern("net/bull/javamelody/resource/**");
+        registerReflectionHints(hints, List.of("com.sun.management.OperatingSystemMXBean",
+            "com.sun.management.ThreadMXBean", "com.sun.management.UnixOperatingSystemMXBean"));
+        registerReflectionHintsForMethodsAndFields(hints, List.of("net.bull.javamelody.internal.web.HtmlController",
+            "net.bull.javamelody.internal.web.PdfController", "net.bull.javamelody.internal.web.SerializableController"));
+        registerSerializationHints(hints, findSubclassesInPackage(Serializable.class, "net.bull.javamelody"));
     }
 }

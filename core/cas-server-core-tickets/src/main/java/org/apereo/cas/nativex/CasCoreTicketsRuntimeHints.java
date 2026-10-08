@@ -36,6 +36,9 @@ public class CasCoreTicketsRuntimeHints implements CasRuntimeHintsRegistrar {
         registerSpringProxyHints(hints, PropertyBoundCipherExecutor.class, CipherExecutor.class);
         registerSpringProxyHints(hints, QueueableTicketRegistry.class, TicketRegistry.class);
         registerSpringProxyHints(hints, AutoCloseable.class, DisposableBean.class, TicketRegistry.class);
+        registerSpringProxyHints(hints, DisposableBean.class, TicketRegistry.class);
+        registerReflectionHintsForMethodsAndFields(hints,
+            List.of("org.apereo.cas.config.CasCoreTicketsSchedulingConfiguration$TicketRegistryCleanerScheduler"));
 
         registerSerializationHints(hints, findSubclassesInPackage(Ticket.class, CentralAuthenticationService.NAMESPACE));
         val expirationPolicyClasses = findSubclassesInPackage(ExpirationPolicy.class, CentralAuthenticationService.NAMESPACE);

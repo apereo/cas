@@ -67,6 +67,7 @@ public class CasCoreUtilRuntimeHints implements CasRuntimeHintsRegistrar {
         ));
 
         registerSerializationHints(hints);
+        registerSpringProxyHints(hints, Runnable.class);
 
         registerReflectionHintForDeclaredMethod(hints, Map.Entry.class, "getKey");
         registerReflectionHintForDeclaredMethod(hints, Map.Entry.class, "getValue");

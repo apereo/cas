@@ -6,6 +6,7 @@ import org.apereo.cas.services.BaseRegisteredService;
 import org.apereo.cas.services.CasRegisteredService;
 import org.apereo.cas.services.ServiceRegistry;
 import org.apereo.cas.services.ServiceRegistryInitializer;
+import org.apereo.cas.services.ServicesManagerScheduledLoader;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -22,9 +23,11 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Native")
 class CasCoreServicesRuntimeHintsTests {
     @Test
-    void verifyHints() {
+    void verifyHints() throws Exception {
         val hints = new RuntimeHints();
         new CasCoreServicesRuntimeHints().registerHints(hints, getClass().getClassLoader());
+        assertTrue(RuntimeHintsPredicates.reflection()
+            .onMethodInvocation(ServicesManagerScheduledLoader.class.getDeclaredMethod("run")).test(hints));
         assertTrue(RuntimeHintsPredicates.resource().forResource("services/Simple-12345.json").test(hints));
         assertTrue(RuntimeHintsPredicates.resource().forResource("services/native/Simple-12345.json").test(hints));
         assertTrue(RuntimeHintsPredicates.resource().forResource("services/.donotdel").test(hints));
