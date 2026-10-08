@@ -468,6 +468,16 @@ authentication. See the [stateless ticket registry documentation](../ticketing/S
 - {: .changed data-area="oidc"} JWT access tokens, JWT response modes and other tokens signed or encrypted with keys defined
   per application now reuse the prepared signing and encryption keys instead of parsing them again for every token issued
   or read; a changed application definition or a rotated key is picked up the first time it is used.
+- {: .fixed data-area="tickets"} Ticket registries that replicate tickets through a message queue, such as
+  [Kafka](../ticketing/Kafka-Ticket-Registry.html), [AMQP](../ticketing/Messaging-AMQP-Ticket-Registry.html),
+  [Pulsar](../ticketing/Pulsar-Ticket-Registry.html) and [Google Cloud Pub/Sub](../ticketing/GCP-PubSub-Ticket-Registry.html),
+  now send one message per ticket update instead of two, and a node that applies an update received from another node no
+  longer sends it back out. Those echoed copies cost one extra message per node for every update and could overwrite a
+  newer version of the ticket on the node that made the change.
+- {: .changed data-area="tickets"} When a single sign-on session ends, the [JPA ticket registry](../ticketing/JPA-Ticket-Registry.html)
+  removes the session's service tickets with one statement instead of reading and deleting them one at a time. Service and
+  OAuth tickets that were updated after they were issued, which lost the link to their session when ticket encryption was
+  enabled, now keep it and are removed with the session.
 - {: .changed data-area="project"} Almost all CAS unit tests are internally reworked to allow maximum parallelization and speed up the overall test execution time.
 - {: .fixed} [Delegated authentication](../integration/Delegate-Authentication.html) no longer fails intermittently when concurrent requests reach an identity provider that is still being initialized, typically right after startup. Such requests now wait for the initialization in progress instead of failing, which also affects [SAML2 identity providers](../integration/Delegate-Authentication-SAML2.html) when building SAML2 responses, metadata and logout requests.
 - {: .fixed} [WebAuthn](../mfa/FIDO2-WebAuthn-Authentication.html) registration and login pages no longer show a broken image when the device has no icon in its attestation metadata, and fall back to the credential nickname for the device name.

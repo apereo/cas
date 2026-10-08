@@ -237,7 +237,7 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
   at least 40 characters, not ending in a colon, and not a "see this guide" or dependency lead-in.
 - On phones (`max-width: 760px`) the sticky header is offset by `--docs-masthead-height` so only the navigation bar
   stays visible, and `site.js` sets `--docs-header-height` to that bar alone; keep both in step when changing the masthead.
-- The docs load two web fonts only, Newsreader (headings) and DM Sans (everything else); `--font-mono` is the system
+- The docs load two web fonts only, Bricolage Grotesque (headings) and DM Sans (everything else); `--font-mono` is the system
   monospace stack. Do not add font families or hotlink images from third-party hosts; keep images under `images/`.
 - Large topics are split into one page per concern with a sidebar submenu (see `authorization/Heimdall-Authorization-*.md`
   and `multitenancy/Multitenancy-*.md`); when moving a section, update cross-page anchors and links in release notes.

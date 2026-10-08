@@ -46,7 +46,7 @@ on:
         default: '.*'
         type: string
       retryFailedScenarios:
-        description: 'Retry Previous Run'
+        description: 'Retry Failed Runs'
         required: false
         default: false
         type: boolean

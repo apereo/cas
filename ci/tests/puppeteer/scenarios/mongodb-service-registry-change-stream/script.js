@@ -10,7 +10,8 @@ async function runMongoCommand(command) {
     const output = execFileSync("docker", ["exec", "mongodb-server-clustered",
         "mongosh", "--quiet", MONGO_URI, "--eval", command]).toString();
     await cas.log(output);
-    return output;
+    // mongosh prints warnings, such as deprecation notices, on the same output; the result is the last line.
+    return output.trim().split("\n").pop().trim();
 }
 
 async function verifyService(page, service, authorized) {
@@ -43,7 +44,7 @@ async function verifyService(page, service, authorized) {
 
     await cas.logg("Creating the service definition directly in MongoDb, bypassing CAS");
     const created = await runMongoCommand(`db.getCollection('${COLLECTION}').replaceOne({_id: 1}, {
-        _id: NumberLong(1), _class: 'org.apereo.cas.services.CasRegisteredService',
+        _id: NumberLong('1'), _class: 'org.apereo.cas.services.CasRegisteredService',
         serviceId: '^https://localhost:9859/anything/original.*', name: 'Sample', evaluationOrder: 1}, {upsert: true}).acknowledged`);
     assert(created.trim() === "true");
 
