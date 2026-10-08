@@ -2068,3 +2068,147 @@ function initializeCasFeatures() {
 }
 
 initializeCasFeatures();
+
+/**********************************************
+ * Release notes
+ **********************************************/
+
+// The digest, tags and area groups are rendered by _plugins/cas_release_notes.rb; this wires the filters.
+function initializeCasReleaseNotes() {
+  const container = document.getElementById("cas-docs-container");
+  const filter = container?.querySelector(".cas-release-filter");
+  if (!filter) {
+    return;
+  }
+  const topics = Array.from(container.querySelectorAll("h3.cas-change-topic")).map(heading => {
+    const section = document.createElement("section");
+    section.className = "cas-release-topic";
+    section.dataset.type = heading.dataset.type || "";
+    section.dataset.area = heading.dataset.area || "";
+    heading.before(section);
+    let node = heading;
+    while (node) {
+      const next = node.nextElementSibling;
+      section.append(node);
+      if (!next || /^H[1-3]$/.test(next.tagName) || next.matches(".cas-release-footer")) {
+        break;
+      }
+      node = next;
+    }
+    return section;
+  });
+  const items = Array.from(container.querySelectorAll("li.cas-change-item"));
+  const groups = Array.from(container.querySelectorAll("h3.cas-change-group")).map(heading => {
+    const list = heading.nextElementSibling?.matches("ul") ? heading.nextElementSibling : null;
+    return {heading, list, items: list ? Array.from(list.querySelectorAll(":scope > li.cas-change-item")) : []};
+  });
+  const entries = [...topics, ...items].map(element => ({
+    element,
+    type: element.dataset.type || "",
+    area: element.dataset.area || "",
+    text: element.textContent.toLowerCase()
+  }));
+  const parts = Array.from(container.querySelectorAll(":scope > h2")).map(heading => {
+    const members = [];
+    let node = heading.nextElementSibling;
+    while (node && node.tagName !== "H2" && !node.matches(".cas-release-footer")) {
+      members.push(node);
+      node = node.nextElementSibling;
+    }
+    const owned = entries.filter(entry => members.some(member => member === entry.element || member.contains(entry.element)));
+    const others = members.filter(member => !member.matches(".cas-release-topic, h3.cas-change-group, h3.cas-change-group + ul"));
+    return {heading, others, owned};
+  }).filter(part => part.owned.length);
+  const input = filter.querySelector("input[type=search]");
+  const status = filter.querySelector(".cas-release-status");
+  const params = new URLSearchParams(location.search);
+  const state = {q: params.get("q") || "", type: params.get("type") || "", area: params.get("area") || ""};
+
+  const press = (selector, value) => filter.querySelectorAll(selector).forEach(button => {
+    const key = selector.includes("data-type") ? button.dataset.type : button.dataset.area;
+    button.setAttribute("aria-pressed", String(key === value));
+  });
+
+  const apply = () => {
+    const terms = state.q.toLowerCase().split(/\s+/).filter(Boolean);
+    let visible = 0;
+    entries.forEach(entry => {
+      const match = (!state.type || entry.type === state.type)
+        && (!state.area || entry.area === state.area)
+        && terms.every(term => entry.text.includes(term));
+      entry.element.hidden = !match;
+      visible += match ? 1 : 0;
+    });
+    groups.forEach(group => {
+      const shown = group.items.some(item => !item.hidden);
+      group.heading.hidden = !shown;
+      if (group.list) {
+        group.list.hidden = !shown;
+      }
+    });
+    parts.forEach(part => {
+      const shown = part.owned.some(entry => !entry.element.hidden);
+      part.heading.hidden = !shown;
+      part.others.forEach(member => {
+        member.hidden = !shown;
+      });
+    });
+    container.classList.toggle("cas-release-filtered", Boolean(terms.length || state.type || state.area));
+    status.textContent = terms.length || state.type || state.area
+      ? (visible ? `Showing ${visible} of ${entries.length} changes.` : "No changes match these filters.")
+      : "";
+    press("button[data-type]", state.type);
+    press("button[data-area]", state.area);
+    const url = new URL(location.href);
+    [["q", state.q], ["type", state.type], ["area", state.area]].forEach(([key, value]) => {
+      if (value) {
+        url.searchParams.set(key, value);
+      } else {
+        url.searchParams.delete(key);
+      }
+    });
+    history.replaceState(history.state, "", url);
+  };
+
+  const reset = () => {
+    state.q = "";
+    state.type = "";
+    state.area = "";
+    input.value = "";
+    apply();
+  };
+
+  filter.hidden = false;
+  input.value = state.q;
+  input.addEventListener("input", () => {
+    state.q = input.value.trim();
+    apply();
+  });
+  filter.querySelectorAll("button[data-type]").forEach(button => button.addEventListener("click", () => {
+    state.type = button.dataset.type;
+    apply();
+  }));
+  filter.querySelectorAll("button[data-area]").forEach(button => button.addEventListener("click", () => {
+    state.area = button.dataset.area;
+    apply();
+  }));
+
+  // A link to a change that the filters hide clears them first.
+  document.addEventListener("click", event => {
+    const link = event.target.closest?.("a[href^='#']");
+    const target = link && document.getElementById(decodeURIComponent(link.getAttribute("href").slice(1)));
+    if (target?.closest("[hidden]")) {
+      reset();
+    }
+  });
+  apply();
+  if (location.hash) {
+    const target = document.getElementById(decodeURIComponent(location.hash.slice(1)));
+    if (target?.closest("[hidden]")) {
+      reset();
+      target.scrollIntoView();
+    }
+  }
+}
+
+initializeCasReleaseNotes();

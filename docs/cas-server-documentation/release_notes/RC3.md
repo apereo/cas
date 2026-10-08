@@ -2,53 +2,99 @@
 layout: default
 title: CAS - 8.1.0-RC3 Release Notes
 category: Planning
+release:
+  line: 8.1.0 development
+  summary: >-
+    The third release candidate reworks Heimdall around the AuthZEN 1.0 specification, brings WebAuthn Level 3 and
+    passkeys to passwordless and multifactor login, and carries the stateless ticket-granting ticket in its cookie.
+  facts:
+    - label: Requires
+      value: JDK 25
+      url: ../planning/Installation-Requirements.html
+    - label: Built on
+      value: Spring Boot 4.2
+    - value: "572"
+      suffix: browser test scenarios
+      url: ../../developer/Test-Process.html
+    - value: "94%"
+      suffix: test coverage
+  upgrade:
+    - type: action
+      title: Certificate-bound access tokens
+      text: issued before the upgrade are rejected; thumbprints now follow RFC 8705.
+      section: Certificate-Bound Access Tokens
+      area: oidc
+    - type: action
+      title: Heimdall AuthZEN resources
+      text: must define `resourceType`, `actions` and optionally `resourceIdPattern`, or AuthZEN requests are denied.
+      section: Heimdall AuthZEN
+      area: authorization
+    - type: changed
+      title: Heimdall policies
+      text: deny access when a resource has none, and one granting policy is enough unless `enforceAllPolicies` is set.
+      section: Heimdall AuthZEN
+      area: authorization
+    - type: removed
+      title: "`cas.ticket.registry.stateless.storage-type`"
+      text: no longer applies; the ticket-granting ticket is carried by the ticket-granting cookie.
+      section: Stateless Ticket Registry
+      area: tickets
+    - type: changed
+      title: Stateless ticket-granting tickets
+      text: no longer carry principal attributes; attribute repositories are consulted each time instead.
+      section: Stateless Ticket Registry
+      area: tickets
+    - type: changed
+      title: Authentication throttling
+      text: counts a failed attempt only on a `401` response, once per request.
+      section: Authentication Throttling
+      area: authentication
+    - type: changed
+      title: WebAuthn
+      text: requires browsers that support the WebAuthn Level 3 JSON serialization.
+      section: WebAuthn Level 3
+      area: mfa
+    - type: changed
+      title: Passwordless tokens
+      text: arrive as `PasswordlessTokenCredential`, the only credential the handler accepts; the recorded credential type changes.
+      section: Passwordless Authentication
+      area: passwordless
+    - type: action
+      title: Google Authenticator on DynamoDB
+      text: needs a new `useridIndex` global secondary index; create it yourself if tables are not created at startup.
+      section: Multifactor & Passkeys
+      area: mfa
+  highlights:
+    - section: Heimdall AuthZEN
+      summary: Follows the AuthZEN Authorization API 1.0, with resource instances, the access evaluations API, decision point metadata and decision context.
+    - section: WebAuthn Level 3
+      summary: Related origins, the Signal API, passkey provider names and icons, and a passkey upgrade after password login.
+    - section: Passwordless Authentication
+      summary: Single-use tokens under load, one-time-code autofill, origin-bound SMS codes and passkeys from the autofill menu.
+    - section: Stateless Ticket Registry
+      summary: The ticket-granting ticket now rides in the ticket-granting cookie, with a versioned format and type-bound tickets.
+    - section: OpenID Connect Verifiable Credentials
+      summary: Proofs follow each credential configuration, and holder keys may be `x5c`, `did:jwk` or Ed25519.
+    - section: Documentation
+      summary: A refreshed theme, searchable settings, grouped actuator endpoints and feature toggles, and a Quick Start recipe.
 ---
 
 {% include variables.html %}
 
-# 8.1.0-RC3 Release Notes
-
-We strongly recommend that you take advantage of the release candidates as they come out. Waiting for a `GA` release is only going to set
-you up for unpleasant surprises. A `GA` is [a tag and nothing more](https://apereo.github.io/2017/03/08/the-myth-of-ga-rel/). Note
-that CAS releases are *strictly* time-based releases; they are not scheduled or based on specific benchmarks,
-statistics or completion of features. To gain confidence in a particular
-release, it is strongly recommended that you start early by experimenting with release candidates and/or follow-up snapshots.
-
-## Apereo Membership
-
-If you benefit from Apereo CAS as free and open-source software, we invite you
-to [join the Apereo Foundation](https://www.apereo.org/content/apereo-membership)
-and financially support the project at a capacity that best suits your deployment. Note that all development activity is performed
-*almost exclusively* on a voluntary basis with no expectations, commitments or strings attached. Having the financial means to better
-sustain engineering activities will allow the developer community to allocate *dedicated and committed* time for long-term support,
-maintenance and release planning, especially when it comes to addressing critical and security issues in a timely manner.
-
-## Get Involved
-
-- Start your CAS deployment today. Try out features and [share feedback](/cas/Mailing-Lists.html).
-- Better yet, [contribute patches](/cas/developer/Contributor-Guidelines.html).
-- Suggest and apply documentation improvements.
-
-## Resources
-
-- [Release Schedule](https://github.com/apereo/cas/milestones)
-- [Release Policy](/cas/developer/Release-Policy.html)
-
-## System Requirements
-
-The [JDK baseline requirement](../planning/Installation-Requirements.html) for this CAS release is and **MUST** be JDK `25`. All compatible distributions
-such as Amazon Corretto, Zulu, Eclipse Temurin, etc should work and are implicitly supported.
+{% include release-digest.html %}
 
 ## New & Noteworthy
 
 The following items are new improvements and enhancements presented in this release.
 
 ### OpenRewrite Recipes
+{: data-area="operations"}
 
 CAS continues to produce and publish [OpenRewrite](https://docs.openrewrite.org/) recipes that allow the project to upgrade installations
 in place from one version to the next. [See this guide](../installation/OpenRewrite-Upgrade-Recipes.html) to learn more.
 
 ### Graal VM Native Images
+{: data-area="operations"}
 
 A CAS server installation and deployment process can be tuned to build and run
 as a [Graal VM native image](../installation/GraalVM-NativeImage-Installation.html). We continue to polish native runtime hints.
@@ -56,12 +102,14 @@ The collection of end-to-end [browser tests based on Puppeteer](../../developer/
 to build and verify Graal VM native images and we plan to extend the coverage to all such scenarios in the coming releases.
 
 ### Testing Strategy
+{: data-area="project"}
 
 The collection of end-to-end [browser tests based on Puppeteer](../../developer/Test-Process.html) continue to grow to cover more use cases
 and scenarios. At the moment, total number of jobs stands at approximately `572` distinct scenarios. The overall
 test coverage of the CAS codebase is approximately `94%`.
 
 ### JSpecify & NullAway
+{: data-area="project"}
 
 CAS codebase is now annotated with [JSpecify](https://jspecify.dev/) annotations to indicate nullness contracts on method parameters,
 return types and fields. We will gradually extend the coverage of such annotations across the entire codebase in future releases
@@ -69,6 +117,7 @@ and will integrate the Gradle build tool with tools such as [NullAway](https://g
 during compile time.
 
 ### Spring Boot 4.2
+{: .changed data-area="project"}
 
 CAS is now built on top of Spring Boot `4.2.x`. This is an in-progress ongoing minor platform upgrade that
 affects almost all aspects of the codebase including many of the third-party core libraries used by CAS
@@ -78,6 +127,7 @@ Please refer to the [Spring Boot Wiki](https://github.com/spring-projects/spring
 for more information on the changes and updates in this release. 
 
 ### Documentation
+{: .new data-area="docs"}
 
 The CAS documentation site has received a visual and functional overhaul. Notable changes include:
 
@@ -121,8 +171,12 @@ The CAS documentation site has received a visual and functional overhaul. Notabl
   setting's details directly instead of moving to the configuration catalog.
 - The site loads two web fonts instead of four; code and the sidebar use the system monospace font. Images hosted on
   third-party sites are removed, and the [logout](../installation/Logout-Single-Signout.html) session example is now a table.
+- Release notes open with a digest of each release candidate: what to review before upgrading, the highlights and,
+  where a release has screenshots, a spotlight. Every change below it is tagged by type and grouped by area, and can be
+  searched and filtered; the [overview](Overview.html) lists every release candidate with its summary.
 
 ### Heimdall AuthZEN
+{: .changed data-area="authorization"}
 
 [Heimdall](../authorization/Heimdall-Authorization-Overview.html) AuthZEN support is reworked to follow the
 [AuthZEN Authorization API 1.0](https://openid.net/specs/authorization-api-1_0.html) specification:
@@ -160,6 +214,7 @@ The CAS documentation site has received a visual and functional overhaul. Notabl
   of a resource and configure the Heimdall access strategy.
 
 ### Certificate-Bound Access Tokens
+{: .action data-area="oidc"}
 
 The certificate thumbprint that CAS records for [mutual TLS client authentication](../authentication/OIDC-Authentication-AccessToken-AuthMethods.html)
 and emits as the `cnf` `x5t#S256` claim of access tokens and introspection responses is now computed as specified
@@ -168,6 +223,7 @@ Previously, it was computed from the certificate's public key and was not encode
 before the upgrade carry the old value and are no longer accepted by resource servers that verify the binding.
 
 ### Authentication Throttling
+{: .changed data-area="authentication"}
 
 [Authentication throttling](../authentication/Configuring-Authentication-Throttling-Failure.html) now records a failed attempt only
 when the response status is `401`, once per request. Previously, any response other than `200`, `201` or `302`, such as a malformed
@@ -175,6 +231,7 @@ request (`400`), an authorization denial (`403`), a missing resource (`404`) or 
 and failures were recorded twice. Failed [SAML2 ECP authentication](../authentication/Configuring-SAML2-Authentication.html) attempts, which answer with a SOAP fault, are now counted as well.
 
 ### Passwordless Authentication
+{: .new data-area="passwordless"}
 
 - [Passwordless authentication](../authentication/Passwordless-Authentication.html) tokens are now single-use under
   concurrent submissions, and every submitted token, including a wrong one, goes through the authentication manager and
@@ -202,6 +259,7 @@ and failures were recorded twice. Failed [SAML2 ECP authentication](../authentic
   option. Both hand the passkey assertion to the existing WebAuthn primary authentication flow.
 
 ### WebAuthn Level 3
+{: .new data-area="mfa"}
 
 - [FIDO2 WebAuthn](../mfa/FIDO2-WebAuthn-Authentication.html) publishes its origins at `/.well-known/webauthn` for
   related origin requests, so passkeys can be used from origins whose domain differs from the relying party identifier.
@@ -233,6 +291,7 @@ and failures were recorded twice. Failed [SAML2 ECP authentication](../authentic
   when CAS later reports account details through the Signal API.
 
 ### OpenID Connect Verifiable Credentials
+{: .new data-area="oidc"}
 
 - Credential proofs now follow what each [credential configuration](../authentication/OIDC-Authentication-Verifiable-Credentials.html)
   advertises: a proof signed with an algorithm outside `proof-signing-alg-values-supported`, or naming its key by a binding
@@ -328,6 +387,7 @@ and failures were recorded twice. Failed [SAML2 ECP authentication](../authentic
   nonce endpoint and the client attestation challenge endpoint hand out nonces as well.
 
 ### Stateless Ticket Registry
+{: .action data-area="tickets"}
 
 With the [stateless ticket registry](../ticketing/Stateless-Ticket-Registry.html), the ticket-granting ticket is now carried by the
 ticket-granting cookie, like with any other ticket registry, instead of being kept in browser storage. The single sign-on session
@@ -365,73 +425,84 @@ authentication. See the [stateless ticket registry documentation](../ticketing/S
 
 ## Other Stuff
 
-- A large number of dependencies and libraries have been updated to their latest versions.
-- When the background reload is enabled, a request for an application that matches no cached service definition no longer
+- {: .changed data-area="project"} A large number of dependencies and libraries have been updated to their latest versions.
+- {: .changed} When the background reload is enabled, a request for an application that matches no cached service definition no longer
   reads the whole service registry; definitions added outside CAS, for example by another node, are recognized at the
   next scheduled reload. Changes picked up by the [JSON](../services/JSON-Service-Management.html) and
   [YAML](../services/YAML-Service-Management.html) registry watchers now update the cache right away, fetching services
   by type through the [`registeredServices` actuator endpoint](../services/Service-Management.html) no longer empties the cache, and CAS warns when the cache
   expires definitions before the scheduler reloads them. See [this guide](../services/Service-Management-Caching-Reloading.html).
-- A `service` parameter that only resembles a number, such as `1.5`, `1e3`, `0x1F` or a value too large for an
+- {: .fixed} A `service` parameter that only resembles a number, such as `1.5`, `1e3`, `0x1F` or a value too large for an
   identifier, no longer fails the request while CAS applies the application's [HTTP security headers](../services/Configuring-Service-Http-Security-Headers.html);
   it is matched as a service URL instead.
-- Matching a request to an application definition no longer sorts every cached definition on each lookup, and listing
+- {: .changed} Matching a request to an application definition no longer sorts every cached definition on each lookup, and listing
   definitions, as the [OpenID Connect JWKS endpoint](../authentication/OIDC-Authentication-JWKS.html) and the `registeredServices` actuator endpoint do, no longer
   re-indexes every cached definition.
-- The [SAML2 identity provider](../authentication/Configuring-SAML2-Authentication.html) parses its signing key once
+- {: .changed} The [SAML2 identity provider](../authentication/Configuring-SAML2-Authentication.html) parses its signing key once
   instead of for every signed response or assertion; a rotated or replaced key is picked up the first time it is used.
-- Almost all CAS unit tests are internally reworked to allow maximum parallelization and speed up the overall test execution time.
-- [Delegated authentication](../integration/Delegate-Authentication.html) no longer fails intermittently when concurrent requests reach an identity provider that is still being initialized, typically right after startup. Such requests now wait for the initialization in progress instead of failing, which also affects [SAML2 identity providers](../integration/Delegate-Authentication-SAML2.html) when building SAML2 responses, metadata and logout requests.
-- [WebAuthn](../mfa/FIDO2-WebAuthn-Authentication.html) registration and login pages no longer show a broken image when the device has no icon in its attestation metadata, and fall back to the credential nickname for the device name.
-- [WebAuthn](../mfa/FIDO2-WebAuthn-Authentication.html) pages now report browsers that cannot run them; the support check was never applied, and it no longer requires a platform authenticator.
-- [WebAuthn](../mfa/FIDO2-WebAuthn-Authentication.html) authentication pages now send the CSRF token rendered by CAS instead of reading it from the `XSRF-TOKEN` cookie, which failed with `403` whenever the page could not read that cookie.
-- Browser storage used by [Duo Security](../mfa/DuoSecurity-Authentication.html) and the [SAML2 identity provider](../authentication/Configuring-SAML2-Authentication.html) now falls back to cookies when the browser cannot use local or session storage.
-- Ed25519 keys presented to the OpenID Connect [client JWKS registration endpoint](../authentication/OIDC-Authentication-JWKS-Clients.html) are now
+- {: .changed data-area="saml"} Back-channel [SAML2 single logout](../installation/Logout-Single-Signout.html) notifications sent with the HTTP-POST or
+  HTTP-Redirect bindings now honor `cas.slo.asynchronous` the way SOAP and CAS protocol notifications already did: by default
+  they are sent in the background, so one slow service provider no longer holds up the logout of the others, and the
+  logout reports them as sent without waiting for a response. The incoming logout request is also parsed once per logout
+  instead of once per service provider.
+- An OAuth/OpenID Connect token request now saves the user's single sign-on session once instead of once per token
+  it issues; exchanging an authorization code for an access and a refresh token used to write it three times.
+- The `at_hash` claim of an [OpenID Connect](../authentication/OIDC-Authentication.html) ID token is now computed over the
+  access token returned in the same response. CAS used to build and sign the access token a second time for the hash, which
+  doubled the work for JWT access tokens and produced an `at_hash` that did not match when the access token was signed with
+  ES* or PS* algorithms, encrypted, or requested as a JWT through token exchange.
+- {: .changed data-area="project"} Almost all CAS unit tests are internally reworked to allow maximum parallelization and speed up the overall test execution time.
+- {: .fixed} [Delegated authentication](../integration/Delegate-Authentication.html) no longer fails intermittently when concurrent requests reach an identity provider that is still being initialized, typically right after startup. Such requests now wait for the initialization in progress instead of failing, which also affects [SAML2 identity providers](../integration/Delegate-Authentication-SAML2.html) when building SAML2 responses, metadata and logout requests.
+- {: .fixed} [WebAuthn](../mfa/FIDO2-WebAuthn-Authentication.html) registration and login pages no longer show a broken image when the device has no icon in its attestation metadata, and fall back to the credential nickname for the device name.
+- {: .fixed} [WebAuthn](../mfa/FIDO2-WebAuthn-Authentication.html) pages now report browsers that cannot run them; the support check was never applied, and it no longer requires a platform authenticator.
+- {: .fixed} [WebAuthn](../mfa/FIDO2-WebAuthn-Authentication.html) authentication pages now send the CSRF token rendered by CAS instead of reading it from the `XSRF-TOKEN` cookie, which failed with `403` whenever the page could not read that cookie.
+- {: .fixed} Browser storage used by [Duo Security](../mfa/DuoSecurity-Authentication.html) and the [SAML2 identity provider](../authentication/Configuring-SAML2-Authentication.html) now falls back to cookies when the browser cannot use local or session storage.
+- {: .fixed} Ed25519 keys presented to the OpenID Connect [client JWKS registration endpoint](../authentication/OIDC-Authentication-JWKS-Clients.html) are now
   verified with the JDK's own EdDSA support. Verification previously relied on Google Tink, which CAS does not ship, so such registrations failed at runtime.
-- CAS now logs a warning when a cookie it writes, such as the [ticket-granting cookie](../authentication/Configuring-SSO-Cookie.html), is larger than the 4 KB that browsers are guaranteed to accept.
-- MongoDb integration tests have now switched to using MongoDb `9.x`.
-- [Google Authenticator](../mfa/GoogleAuthenticator-Authentication.html) devices can only be removed or confirmed by the user that owns them;
+- {: .new} CAS now logs a warning when a cookie it writes, such as the [ticket-granting cookie](../authentication/Configuring-SSO-Cookie.html), is larger than the 4 KB that browsers are guaranteed to accept.
+- {: .changed data-area="project"} MongoDb integration tests have now switched to using MongoDb `9.x`.
+- {: .fixed} [Google Authenticator](../mfa/GoogleAuthenticator-Authentication.html) devices can only be removed or confirmed by the user that owns them;
   a device id that belongs to another user is now refused.
-- Google Authenticator device repositories: removing a device or a user from
+- {: .fixed} Google Authenticator device repositories: removing a device or a user from
   [DynamoDB](../mfa/GoogleAuthenticator-Authentication-Registration-DynamoDb.html) no longer removes other records with
   it; registering or updating a device in [LDAP](../mfa/GoogleAuthenticator-Authentication-Registration-LDAP.html) no
   longer replaces the user's other devices; and removing or confirming a device with
   [JPA](../mfa/GoogleAuthenticator-Authentication-Registration-JPA.html) works again and no longer re-encrypts the
   device secret when encryption is enabled.
-- Google Authenticator device removal and confirmation now expire if not completed within a few minutes of the code being verified.
+- {: .changed} Google Authenticator device removal and confirmation now expire if not completed within a few minutes of the code being verified.
   The [REST device repository](../mfa/GoogleAuthenticator-Authentication-Registration-Rest.html) now sends deletions as `DELETE`
   and includes the device `id` and `properties` when saving. A REST or JSON repository that cannot be read now fails the login
   instead of offering device registration, and LDAP removes the right device when several users' device ids share leading digits.
-- More Google Authenticator repository fixes:
+- {: .fixed} More Google Authenticator repository fixes:
   [MongoDB](../mfa/GoogleAuthenticator-Authentication-Registration-MongoDb.html) no longer treats usernames that differ
   only by accents (such as `jose` and `josé`) as the same user; the tenant of a device is kept when it is registered and
   stored, including in DynamoDB and JPA; DynamoDB stores encrypted scratch codes and an emptied list of scratch codes;
   saving a device no longer alters the object passed in; and every repository now counts devices rather than users and
   replaces a device saved twice instead of storing a duplicate.
-- Google Authenticator devices now record when they were last used, in every repository. Updating a device that is not
+- {: .new} Google Authenticator devices now record when they were last used, in every repository. Updating a device that is not
   stored now adds it in every repository. A code used to verify a device removal or confirmation is no longer restored
   afterwards. A device id that is not a number is refused instead of failing with a server error. The
   [JSON repository](../mfa/GoogleAuthenticator-Authentication-Registration-JSON.html) replaces its file in one atomic step
   and is documented as single-node.
-- Faster Google Authenticator lookups: [DynamoDB](../mfa/GoogleAuthenticator-Authentication-Registration-DynamoDb.html)
+- {: .action} Faster Google Authenticator lookups: [DynamoDB](../mfa/GoogleAuthenticator-Authentication-Registration-DynamoDb.html)
   reads a device by key and finds a user's devices through a new `useridIndex` global secondary index instead of scanning
   the table (CAS adds the index at startup; create it yourself if table creation on startup is turned off), and counts
   without reading records back. [MongoDB](../mfa/GoogleAuthenticator-Authentication-Registration-MongoDb.html) creates
   an index on usernames with the collation its lookups use.
-- Google Authenticator [LDAP](../mfa/GoogleAuthenticator-Authentication-Registration-LDAP.html) device lookups by id no
+- {: .changed} Google Authenticator [LDAP](../mfa/GoogleAuthenticator-Authentication-Registration-LDAP.html) device lookups by id no
   longer read every entry, and saving or removing a device no longer decrypts and re-encrypts the user's other devices.
   [Redis](../mfa/GoogleAuthenticator-Authentication-Registration-Redis.html) loads all devices with batched `MGET`
   instead of one request per device, and saving a device no longer decrypts the user's other devices.
-- The Google Authenticator [JPA repository](../mfa/GoogleAuthenticator-Authentication-Registration-JPA.html) can now save
+- {: .fixed} The Google Authenticator [JPA repository](../mfa/GoogleAuthenticator-Authentication-Registration-JPA.html) can now save
   a device whose id is not already in the database, such as one imported through the actuator endpoint; the database
   assigns it a new id. Removing a user's devices is now a single bulk delete.
-- The [MongoDB service registry](../services/MongoDb-Service-Management.html) deletes a service definition in one
+- {: .changed} The [MongoDB service registry](../services/MongoDb-Service-Management.html) deletes a service definition in one
   request instead of reading it back first, counts definitions from collection metadata instead of scanning the
   collection, and, when several definitions share a service id or name, returns the one that comes first in evaluation
   order instead of an arbitrary match. Definitions it looks up by id or name, or reads while the cache is empty, now get
   the same post-processing as those it loads in bulk, so OpenID Connect applications keep their scope-based attribute
   release policies.
-- The [MongoDB ticket registry](../ticketing/MongoDb-Ticket-Registry.html) reads only the stored ticket when fetching
+- {: .changed} The [MongoDB ticket registry](../ticketing/MongoDb-Ticket-Registry.html) reads only the stored ticket when fetching
   tickets, counts tickets from collection metadata instead of scanning collections, and removes the service tickets of a
   ticket-granting ticket with one request per collection instead of reading each one back first. Ticket identifiers are
   now stored as the document `_id`, which removes the separate `IDX_ID` index and makes duplicate identifiers impossible;
@@ -440,25 +511,27 @@ authentication. See the [stateless ticket registry documentation](../ticketing/S
   principal attributes and carry the attribute index, and only tickets linked to a service carry the service index, so
   issuing and validating a service ticket no longer writes an index entry per attribute value; indexes left on other
   collections by earlier versions are removed at startup.
-- When MongoDB runs as a replica set, the [MongoDB service registry](../services/MongoDb-Service-Management.html)
+- {: .new} When MongoDB runs as a replica set, the [MongoDB service registry](../services/MongoDb-Service-Management.html)
   watches its collection through a change stream and reloads service definitions on every CAS node shortly after they
   change, including changes made by another node or directly in MongoDB. Deployments that are not replica sets keep
   relying on the scheduled reload.
-- MongoDB connection pools now default to 100 connections, keep connections for 30 minutes and idle connections for
+- {: .changed} MongoDB connection pools now default to 100 connections, keep connections for 30 minutes and idle connections for
   5 minutes, and wait at most 10 seconds for a free connection instead of a minute. The server heartbeat uses the
   driver's default instead of the connection `timeout`. Pool settings do not apply when `client-uri` is used; set the
   connection string's own options instead. If an index CAS replaces cannot be rebuilt, the previous index is restored
   instead of the collection being left without it.
-- Redis-backed counts and key lookups, such as the [ticket](../ticketing/Redis-Ticket-Registry.html) and
+- {: .fixed} Redis-backed counts and key lookups, such as the [ticket](../ticketing/Redis-Ticket-Registry.html) and
   [service registry](../services/Redis-Service-Management.html) counts, now return their connection when done. With
   connection pooling enabled, every call used to keep a pooled connection until the pool ran out.
-- The [Redis ticket registry](../ticketing/Redis-Ticket-Registry.html) query for ticket ids and loading all
+- {: .fixed} The [Redis ticket registry](../ticketing/Redis-Ticket-Registry.html) query for ticket ids and loading all
   [YubiKey](../mfa/YubiKey-Authentication.html) devices from Redis also return their connection when done.
-- WebAuthn falls back to the cached [FIDO metadata BLOB](../mfa/FIDO2-WebAuthn-Authentication-Attestation.html) when
+- {: .fixed} WebAuthn falls back to the cached [FIDO metadata BLOB](../mfa/FIDO2-WebAuthn-Authentication-Attestation.html) when
   downloading a fresh one fails at startup, for example when the FIDO metadata service rate-limits the request, instead of failing to start.
-- The project [README](https://github.com/apereo/cas) is reworked as a landing page, with a one-minute Docker try-out,
+- {: .changed data-area="project"} The project [README](https://github.com/apereo/cas) is reworked as a landing page, with a one-minute Docker try-out,
   a link to the new [Quick Start](../planning/Quick-Start.html), features grouped by area and the maintained documentation versions.
-- The [account profile](../registration/Account-Management-Overview.html) and the account management screens (sign-up,
+- {: .changed} The [account profile](../registration/Account-Management-Overview.html) and the account management screens (sign-up,
   password reset, forgot username, expired or must-change password) are redesigned: the profile gets a section rail,
   an overview with summary cards and lists with inline details, filtering and keyboard support, and every account
   management flow shows its steps beside a single form card. Features are unchanged; colors follow the CAS theme.
+
+{% include release-footer.html %}
