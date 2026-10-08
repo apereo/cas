@@ -26,21 +26,26 @@ import org.apereo.cas.util.http.HttpExecutionRequest;
 import org.apereo.cas.util.http.HttpUtils;
 import org.apereo.cas.web.HttpMessage;
 import org.apereo.cas.web.support.WebUtils;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import net.shibboleth.shared.xml.SerializeSupport;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.hc.core5.http.HttpEntityContainer;
 import org.apache.hc.core5.http.HttpResponse;
 import org.apache.velocity.app.VelocityEngine;
+import org.jspecify.annotations.Nullable;
 import org.opensaml.core.xml.util.XMLObjectSupport;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.saml2.core.LogoutRequest;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * This is {@link SamlIdPSingleLogoutServiceMessageHandler}.
@@ -50,7 +55,11 @@ import org.springframework.http.MediaType;
  */
 @Slf4j
 @Getter
-public class SamlIdPSingleLogoutServiceMessageHandler extends BaseSingleLogoutServiceMessageHandler {
+public class SamlIdPSingleLogoutServiceMessageHandler extends BaseSingleLogoutServiceMessageHandler implements DisposableBean {
+    private static final String LOGOUT_REQUEST_ISSUER_ATTRIBUTE = SamlIdPSingleLogoutServiceMessageHandler.class.getName() + ".logoutRequestIssuer";
+
+    private static final long TERMINATION_TIMEOUT_SECONDS = 5;
+
     /**
      * The Saml registered service caching metadata resolver.
      */
@@ -65,6 +74,9 @@ public class SamlIdPSingleLogoutServiceMessageHandler extends BaseSingleLogoutSe
      * The opensaml configuration bean.
      */
     protected final OpenSamlConfigBean openSamlConfigBean;
+
+    @Getter(AccessLevel.NONE)
+    private final ExecutorService logoutRequestExecutor = Executors.newVirtualThreadPerTaskExecutor();
 
     public SamlIdPSingleLogoutServiceMessageHandler(final HttpClient httpClient,
                                                     final SingleLogoutMessageCreator logoutMessageBuilder,
@@ -99,22 +111,32 @@ public class SamlIdPSingleLogoutServiceMessageHandler extends BaseSingleLogoutSe
     protected boolean sendMessageToEndpoint(final HttpMessage msg,
                                             final SingleLogoutRequestContext request,
                                             final SingleLogoutMessage logoutMessage) {
-        if (request.getExecutionRequest().getHttpServletRequest().isPresent()) {
-            val logoutRequest = WebUtils.getSingleLogoutRequest(request.getExecutionRequest().getHttpServletRequest().get());
-            val decodedRequest = EncodingUtils.decodeBase64(logoutRequest);
-            val samlLogoutRequest = SamlUtils.transformSamlObject(openSamlConfigBean, decodedRequest, LogoutRequest.class);
-            val logoutRequestIssuer = SamlIdPUtils.getIssuerFromSamlObject(samlLogoutRequest);
-            if (request.getService().getId().equalsIgnoreCase(logoutRequestIssuer)) {
-                LOGGER.trace("Skipping single logout request for [{}] as the request initiator", logoutRequestIssuer);
-                return true;
-            }
+        val logoutRequestIssuer = request.getExecutionRequest().getHttpServletRequest()
+            .map(this::getLogoutRequestIssuer)
+            .orElse(StringUtils.EMPTY);
+        if (request.getService().getId().equalsIgnoreCase(logoutRequestIssuer)) {
+            LOGGER.trace("Skipping single logout request for [{}] as the request initiator", logoutRequestIssuer);
+            return true;
         }
 
         val binding = request.getProperties().get(SamlIdPSingleLogoutServiceLogoutUrlBuilder.PROPERTY_NAME_SINGLE_LOGOUT_BINDING);
         if (SAMLConstants.SAML2_SOAP11_BINDING_URI.equalsIgnoreCase(binding)) {
             return super.sendMessageToEndpoint(msg, request, logoutMessage);
         }
+        if (isAsynchronous()) {
+            try {
+                logoutRequestExecutor.execute(() -> sendLogoutRequest(msg, logoutMessage, binding));
+                return true;
+            } catch (final RejectedExecutionException e) {
+                LoggingUtils.warn(LOGGER, e);
+                return false;
+            }
+        }
+        return sendLogoutRequest(msg, logoutMessage, binding);
+    }
 
+    protected boolean sendLogoutRequest(final HttpMessage msg, final SingleLogoutMessage logoutMessage,
+                                        @Nullable final String binding) {
         HttpResponse response = null;
         try {
             val logoutRequest = (LogoutRequest) logoutMessage.getMessage();
@@ -171,5 +193,34 @@ public class SamlIdPSingleLogoutServiceMessageHandler extends BaseSingleLogoutSe
             return msg;
         }
         return new LogoutHttpMessage(SamlProtocolConstants.PARAMETER_SAML_REQUEST, request.getLogoutUrl(), logoutMessage.getPayload(), isAsynchronous());
+    }
+
+    @Override
+    public void destroy() {
+        logoutRequestExecutor.shutdown();
+        try {
+            if (!logoutRequestExecutor.awaitTermination(TERMINATION_TIMEOUT_SECONDS, TimeUnit.SECONDS)) {
+                logoutRequestExecutor.shutdownNow();
+            }
+        } catch (final InterruptedException e) {
+            logoutRequestExecutor.shutdownNow();
+            Thread.currentThread().interrupt();
+        }
+    }
+
+    private String getLogoutRequestIssuer(final HttpServletRequest httpServletRequest) {
+        val encodedLogoutRequest = WebUtils.getSingleLogoutRequest(httpServletRequest);
+        if (httpServletRequest.getAttribute(LOGOUT_REQUEST_ISSUER_ATTRIBUTE) instanceof final LogoutRequestIssuer resolved
+            && Objects.equals(resolved.encodedLogoutRequest(), encodedLogoutRequest)) {
+            return resolved.issuer();
+        }
+        val decodedRequest = EncodingUtils.decodeBase64(encodedLogoutRequest);
+        val samlLogoutRequest = SamlUtils.transformSamlObject(openSamlConfigBean, decodedRequest, LogoutRequest.class);
+        val issuer = StringUtils.defaultString(SamlIdPUtils.getIssuerFromSamlObject(samlLogoutRequest));
+        httpServletRequest.setAttribute(LOGOUT_REQUEST_ISSUER_ATTRIBUTE, new LogoutRequestIssuer(encodedLogoutRequest, issuer));
+        return issuer;
+    }
+
+    private record LogoutRequestIssuer(@Nullable String encodedLogoutRequest, String issuer) {
     }
 }
