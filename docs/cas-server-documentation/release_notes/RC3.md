@@ -230,6 +230,12 @@ when the response status is `401`, once per request. Previously, any response ot
 request (`400`), an authorization denial (`403`), a missing resource (`404`) or a server error (`500`), was counted as a failed login,
 and failures were recorded twice. Failed [SAML2 ECP authentication](../authentication/Configuring-SAML2-Authentication.html) attempts, which answer with a SOAP fault, are now counted as well.
 
+[Redis authentication throttling](../authentication/Configuring-Authentication-Throttling-Redis.html) no longer reads the audit log.
+It used to scan and load every audit record stored in Redis on each login attempt, which slowed every login as the audit log grew.
+Failed attempts are now tracked in a small key per username and IP address that expires once outside the failure range.
+[Redis audit records](../audits/Audits-Redis.html) now expire after `cas.audit.redis.max-age`{: .cas-setting}, 180 days by default, and
+looking up audit records reads only the newest matching entries instead of loading every record.
+
 ### Passwordless Authentication
 {: .new data-area="passwordless"}
 

@@ -218,8 +218,12 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
 - Do not dim muted text with `opacity`: `--docs-muted` on its own meets 4.5:1 in both themes, and opacity drops it below.
   `--docs-amber` is darker in light mode for the same reason.
 - In `casmodule.html`, only the tab links sit inside `role="tablist"`; the Resources dropdown is a sibling `<button>`.
-- Setting links in docs (required): every reference to a configuration setting anywhere in the documentation, release
-  notes included, must be marked so readers can look it up in place. Inline, write `` `cas.server.name`{: .cas-setting} ``
+- Settings in docs (required, standing rule from the maintainer): never refer to a configuration setting by name in
+  documentation pages, neither inline nor in fenced `properties` blocks. Describe the feature, say that it is available,
+  and say that it is enabled, disabled or tuned through CAS settings; the page's `casproperties` include lists them. The
+  only exception is release notes, which may name CAS or other settings.
+- Setting links in release notes (required): every setting named in release notes must be marked so readers can look
+  it up in place. Inline, write `` `cas.server.name`{: .cas-setting} ``
   (an assignment such as `` `cas.tgc.secure=false`{: .cas-setting} `` works too; the value is ignored for the lookup). For a
   fenced `properties` block of settings, put `{: .cas-settings-linked}` on the line right after the closing fence. Mark only
   real CAS or Spring setting names, not prefixes used as headings, removed settings, JSON fields or registered-service
