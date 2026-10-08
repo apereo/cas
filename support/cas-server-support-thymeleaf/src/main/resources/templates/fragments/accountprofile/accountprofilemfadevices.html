@@ -34,7 +34,9 @@
                                 icon: "info",
                                 showConfirmButton: false
                             });
-                            setTimeout(() => window.location.assign(window.location.href), 1000);
+                            const target = new URL(window.location.href);
+                            target.hash = "";
+                            setTimeout(() => window.location.assign(target.toString()), 1000);
                         },
                         error: (xhr, status, error) => {
                             const errorResponse = JSON.parse(xhr.responseText);

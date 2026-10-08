@@ -15,7 +15,7 @@ const cas = require("../../cas.js");
     await cas.type(page,"#email", "casuser@example.org");
     await cas.pressEnter(page);
     await cas.waitForNavigation(page);
-    await cas.assertTextContent(page, "div .banner-danger p", "reCAPTCHA’s validation failed.");
+    await cas.assertTextContent(page, "div .acct-banner-error p", "reCAPTCHA’s validation failed.");
 
     await cas.closeBrowser(browser);
 })();
