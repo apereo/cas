@@ -290,6 +290,32 @@ class OAuth20DefaultTokenGeneratorTests {
         }
 
         @Test
+        void verifyTicketGrantingTicketUpdatedOncePerCodeExchange() throws Throwable {
+            val registeredService = getRegisteredService(SERVICE_URL, UUID.randomUUID().toString(), "secret");
+            servicesManager.save(registeredService);
+            val authentication = RegisteredServiceTestUtils.getAuthentication(UUID.randomUUID().toString());
+            val ticketGrantingTicket = new TicketGrantingTicketImpl(UUID.randomUUID().toString(), authentication,
+                new TimeoutExpirationPolicy(5));
+            ticketRegistry.addTicket(ticketGrantingTicket);
+            val tokenRequestContext = AccessTokenRequestContext.builder()
+                .clientId(registeredService.getClientId())
+                .service(RegisteredServiceTestUtils.getService(SERVICE_URL))
+                .authentication(authentication)
+                .registeredService(registeredService)
+                .grantType(OAuth20GrantTypes.AUTHORIZATION_CODE)
+                .responseType(OAuth20ResponseTypes.CODE)
+                .ticketGrantingTicket(ticketGrantingTicket)
+                .token(addCode(authentication.getPrincipal(), registeredService))
+                .generateRefreshToken(true)
+                .build();
+
+            val result = oauthTokenGenerator.generate(tokenRequestContext);
+            assertTrue(result.getAccessToken().isPresent());
+            assertTrue(result.getRefreshToken().isPresent());
+            assertEquals(1, ticketGrantingTicket.getCountOfUses());
+        }
+
+        @Test
         void verifyStatelessTicketGrantingTicketIsNotUpdated() throws Throwable {
             val registeredService = getRegisteredService(SERVICE_URL, UUID.randomUUID().toString(), "secret");
             servicesManager.save(registeredService);

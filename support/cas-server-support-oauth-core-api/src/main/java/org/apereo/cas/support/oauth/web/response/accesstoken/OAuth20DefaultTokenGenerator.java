@@ -186,6 +186,9 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
                 LOGGER.debug("Service [{}] is not able/allowed to receive refresh tokens", tokenRequestContext.getService());
                 return null;
             }).get();
+        if (isAccessTokenStored(tokenRequestContext, accessToken) || isCodeTokenConsumed(tokenRequestContext) || refreshToken != null) {
+            updateTicketGrantingTicket(tokenRequestContext.getTicketGrantingTicket());
+        }
         return new AccessAndRefreshTokens(addedAccessToken, refreshToken);
     }
 
@@ -201,6 +204,9 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
                 val subjectToken = (OAuth20AccessToken) tokenRequestContext.getSubjectToken();
                 val exchangedAccessToken = exchangeTokenForAccessToken(targetService, subjectToken, tokenRequestContext);
                 val addedAccessToken = addAccessToken(tokenRequestContext, exchangedAccessToken);
+                if (isAccessTokenStored(tokenRequestContext, exchangedAccessToken)) {
+                    updateTicketGrantingTicket(tokenRequestContext.getTicketGrantingTicket());
+                }
                 yield new AccessAndRefreshTokens(addedAccessToken, null);
             }
             default -> {
@@ -275,9 +281,9 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
     protected Ticket addAccessToken(final AccessTokenRequestContext tokenRequestContext,
                                     final OAuth20AccessToken accessToken) throws Exception {
         var finalAccessToken = (Ticket) accessToken;
-        if (tokenRequestContext.getResponseType() != OAuth20ResponseTypes.ID_TOKEN && accessToken.getExpiresIn() > 0) {
+        if (isAccessTokenStored(tokenRequestContext, accessToken)) {
             LOGGER.debug("Created access token [{}]", accessToken);
-            finalAccessToken = addTicketToRegistry(accessToken, tokenRequestContext.getTicketGrantingTicket());
+            finalAccessToken = addTicketToRegistry(accessToken);
             LOGGER.debug("Added access token [{}] to registry", finalAccessToken);
             updateRefreshToken(tokenRequestContext, finalAccessToken);
         }
@@ -297,8 +303,8 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
     }
 
     private void updateOAuthCode(final AccessTokenRequestContext tokenRequestContext) throws Exception {
-        val token = tokenRequestContext.getToken();
-        if (tokenRequestContext.isCodeToken() && !token.isStateless()) {
+        if (isCodeTokenConsumed(tokenRequestContext)) {
+            val token = tokenRequestContext.getToken();
             token.update();
             LOGGER.trace("Updated OAuth code [{}]", token.getId());
             if (token.isExpired()) {
@@ -306,23 +312,25 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
             } else {
                 ticketRegistry.updateTicket(token);
             }
-            updateTicketGrantingTicket(tokenRequestContext.getTicketGrantingTicket());
         }
     }
 
-    protected Ticket addTicketToRegistry(final Ticket ticket, final Ticket ticketGrantingTicket) throws Exception {
-        LOGGER.debug("Adding ticket [{}] to registry", ticket);
-        val addedToken = ticketRegistry.addTicket(ticket);
-        updateTicketGrantingTicket(ticketGrantingTicket);
-        return addedToken;
+    private static boolean isAccessTokenStored(final AccessTokenRequestContext tokenRequestContext, final OAuth20AccessToken accessToken) {
+        return tokenRequestContext.getResponseType() != OAuth20ResponseTypes.ID_TOKEN && accessToken.getExpiresIn() > 0;
+    }
+
+    private static boolean isCodeTokenConsumed(final AccessTokenRequestContext tokenRequestContext) {
+        return tokenRequestContext.isCodeToken() && !tokenRequestContext.getToken().isStateless();
     }
 
     protected Ticket addTicketToRegistry(final Ticket ticket) throws Exception {
-        return addTicketToRegistry(ticket, null);
+        LOGGER.debug("Adding ticket [{}] to registry", ticket);
+        return ticketRegistry.addTicket(ticket);
     }
 
     /**
-     * Record the use of the parent ticket-granting ticket. A stateless ticket-granting ticket is left alone: the stateless
+     * Record the use of the parent ticket-granting ticket, once per token request after every token linked to it
+     * has been added. A stateless ticket-granting ticket is left alone: the stateless
      * registry hands out an encoded ticket that cannot be compacted again, and the cookie keeps the original ticket anyway.
      *
      * @param ticketGrantingTicket the ticket-granting ticket
@@ -366,7 +374,7 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
 
         if (refreshToken.getExpirationPolicy().getTimeToLive() > 0) {
             LOGGER.debug("Adding refresh token [{}] to the registry", refreshToken);
-            val addedRefreshToken = addTicketToRegistry(refreshToken, ticketGrantingTicket);
+            val addedRefreshToken = addTicketToRegistry(refreshToken);
             if (tokenRequestContext.isExpireOldRefreshToken()) {
                 expireOldRefreshToken(tokenRequestContext);
             }
