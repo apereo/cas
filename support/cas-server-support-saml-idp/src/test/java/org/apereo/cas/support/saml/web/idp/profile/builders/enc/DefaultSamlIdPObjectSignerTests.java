@@ -1,18 +1,24 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders.enc;
 
 import module java.base;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
 import org.apereo.cas.support.saml.SamlIdPTestUtils;
+import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPMetadataLocator;
+import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceMetadataAdaptor;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.common.xml.SAMLConstants;
+import org.opensaml.saml.metadata.resolver.MetadataResolver;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.TestPropertySource;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * This is {@link DefaultSamlIdPObjectSignerTests}.
@@ -41,5 +47,26 @@ class DefaultSamlIdPObjectSignerTests extends BaseSamlIdPConfigurationTests {
             SAMLConstants.SAML2_POST_BINDING_URI, authnRequest, new MessageContext());
         assertNotNull(encodedRequest);
 
+    }
+
+    @Test
+    void verifySigningKeyParsedOncePerKeyMaterial() throws Throwable {
+        val generator = KeyPairGenerator.getInstance("RSA");
+        generator.initialize(2048);
+        val signingKey = generator.generateKeyPair().getPrivate();
+        val rotatedSigningKey = generator.generateKeyPair().getPrivate();
+
+        val metadataLocator = mock(SamlIdPMetadataLocator.class);
+        when(metadataLocator.resolveSigningKey(any()))
+            .thenReturn(new ByteArrayResource(signingKey.getEncoded()))
+            .thenReturn(new ByteArrayResource(signingKey.getEncoded()))
+            .thenReturn(new ByteArrayResource(rotatedSigningKey.getEncoded()));
+        val signer = new DefaultSamlIdPObjectSigner(mock(MetadataResolver.class), new CasConfigurationProperties(), metadataLocator);
+        val registeredService = new SamlRegisteredService();
+
+        val parsedKey = signer.getSigningPrivateKey(registeredService);
+        assertArrayEquals(signingKey.getEncoded(), parsedKey.getEncoded());
+        assertSame(parsedKey, signer.getSigningPrivateKey(registeredService));
+        assertArrayEquals(rotatedSigningKey.getEncoded(), signer.getSigningPrivateKey(registeredService).getEncoded());
     }
 }

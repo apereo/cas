@@ -1054,9 +1054,15 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
   registry writes `attributes` only into session collections and runs service lookups only against service
   collections; the facilitator builds `IDX_ATTRIBUTES`/`IDX_SERVICE` on the same sets and drops them elsewhere. Change
   readers, writers and indexes together, or a lookup ends up scanning an unindexed collection.
-- `IDX_ID` is unique. `createOrUpdateIndexes` drops an index whose options changed before recreating it, and restores
-  the dropped index when the replacement fails, so a collection is never left without it. Storing the ticket id as
-  `_id` (dropping `IDX_ID`) is the planned follow-up and needs a migration story for live ticket-granting tickets.
+- The ticket id is the document `_id` (`MongoDbTicketDocument.ticketId` is `@MongoId(FieldType.STRING)`, so a value
+  that happens to look like an ObjectId is never converted; `FIELD_NAME_ID` is `"_id"`). Pass `MongoDbTicketDocument.class`
+  to every `remove`/`updateFirst`/`find` that addresses the id, so the query is mapped with that field type. There is no
+  `IDX_ID` any more; the facilitator drops one it finds. `migrateTicketDocuments` (also run per collection at startup)
+  converts documents from earlier versions (`ObjectId` `_id` plus a `ticketId` field) with one `$merge` into the same
+  collection (`keepExisting`) followed by deleting the `ObjectId` documents; it touches nothing else, so tests may call
+  it on a shared database. Mixed-version clusters are not supported across this change.
+- `createOrUpdateIndexes` drops an index whose options changed before recreating it, and restores the dropped index when
+  the replacement fails, so a collection is never left without it.
 - `MongoDbServiceRegistry` exact lookups (`findServiceByExactServiceId`/`Name`) return the first match in natural
   order, sorted in the JVM: the comparator leads with `getEvaluationPriority()`, which is type-derived and never
   stored. `size()` is `estimatedCount`; `delete` is a single remove by id.
@@ -1077,7 +1083,11 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
   `LockRepository` is JVM-local on a Mongo cluster. `updateTicket` is an unconditional `updateFirst`
   with no version check, so every read-modify-write invariant is last-writer-wins across nodes.
   (Still open.)
-- Puppeteer coverage is `mongodb-ticket-service-registry` only. It refreshes the context first, then
+- Scenario `mongodb-service-registry-change-stream` runs the service registry against the replica set
+  (`run-mongodb-server-clustered.sh`), with the scheduled reload an hour away, and changes and deletes a definition with
+  `mongosh` inside the container (`execFileSync`, no shell, so `$set` survives); a URL is only accepted or refused
+  afterwards if the change stream reloaded. The rest of this paragraph is about the ticket registry.
+- Ticket registry puppeteer coverage is `mongodb-ticket-service-registry` only. It refreshes the context first, then
   clears sessions, logs in once and asserts exactly one ticket-granting ticket, the health indicator
   and the ticket-registry cleaner — so it exercises the refresh path but asserts nothing about what
   survives a refresh. There is no crypto-enabled variant, no TLS and no concurrency, so a change in

@@ -378,6 +378,8 @@ authentication. See the [stateless ticket registry documentation](../ticketing/S
 - Matching a request to an application definition no longer sorts every cached definition on each lookup, and listing
   definitions, as the [OpenID Connect JWKS endpoint](../authentication/OIDC-Authentication-JWKS.html) and the `registeredServices` actuator endpoint do, no longer
   re-indexes every cached definition.
+- The [SAML2 identity provider](../authentication/Configuring-SAML2-Authentication.html) parses its signing key once
+  instead of for every signed response or assertion; a rotated or replaced key is picked up the first time it is used.
 - Almost all CAS unit tests are internally reworked to allow maximum parallelization and speed up the overall test execution time.
 - [Delegated authentication](../integration/Delegate-Authentication.html) no longer fails intermittently when concurrent requests reach an identity provider that is still being initialized, typically right after startup. Such requests now wait for the initialization in progress instead of failing, which also affects [SAML2 identity providers](../integration/Delegate-Authentication-SAML2.html) when building SAML2 responses, metadata and logout requests.
 - [WebAuthn](../mfa/FIDO2-WebAuthn-Authentication.html) registration and login pages no longer show a broken image when the device has no icon in its attestation metadata, and fall back to the credential nickname for the device name.
