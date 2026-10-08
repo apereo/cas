@@ -69,4 +69,11 @@ class DefaultSamlIdPObjectSignerTests extends BaseSamlIdPConfigurationTests {
         assertSame(parsedKey, signer.getSigningPrivateKey(registeredService));
         assertArrayEquals(rotatedSigningKey.getEncoded(), signer.getSigningPrivateKey(registeredService).getEncoded());
     }
+
+    @Test
+    void verifySigningCredentialResolverBuiltOnce() throws Throwable {
+        val signer = new DefaultSamlIdPObjectSigner(mock(MetadataResolver.class),
+            new CasConfigurationProperties(), mock(SamlIdPMetadataLocator.class));
+        assertSame(signer.getSigningCredentialResolver(), signer.getSigningCredentialResolver());
+    }
 }

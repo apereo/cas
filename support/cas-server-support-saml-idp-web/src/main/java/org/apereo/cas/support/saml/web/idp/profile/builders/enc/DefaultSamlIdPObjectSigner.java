@@ -83,6 +83,9 @@ public class DefaultSamlIdPObjectSigner implements SamlIdPObjectSigner {
     private final SamlIdPMetadataLocator samlIdPMetadataLocator;
 
     @Getter(AccessLevel.NONE)
+    private volatile @Nullable SamlIdPMetadataCredentialResolver signingCredentialResolver;
+
+    @Getter(AccessLevel.NONE)
     private final Cache<String, PrivateKey> signingPrivateKeys = Caffeine.newBuilder()
         .maximumSize(SIGNING_KEYS_CACHE_SIZE)
         .expireAfterAccess(SIGNING_KEYS_CACHE_EXPIRATION)
@@ -258,17 +261,8 @@ public class DefaultSamlIdPObjectSigner implements SamlIdPObjectSigner {
     protected SignatureSigningConfiguration getSignatureSigningConfiguration(final SamlRegisteredService service) throws Throwable {
         val config = configureSignatureSigningSecurityConfiguration(service);
 
-        val samlIdp = casProperties.getAuthn().getSamlIdp();
         val privateKey = getSigningPrivateKey(service);
-
-        val mdCredentialResolver = new SamlIdPMetadataCredentialResolver();
-        val roleDescriptorResolver = SamlIdPUtils.getRoleDescriptorResolver(
-            samlIdPMetadataResolver,
-            samlIdp.getMetadata().getCore().isRequireValidMetadata());
-        mdCredentialResolver.setRoleDescriptorResolver(roleDescriptorResolver);
-        mdCredentialResolver.setKeyInfoCredentialResolver(
-            DefaultSecurityConfigurationBootstrap.buildBasicInlineKeyInfoCredentialResolver());
-        mdCredentialResolver.initialize();
+        val mdCredentialResolver = getSigningCredentialResolver();
 
         val criteriaSet = new CriteriaSet();
         criteriaSet.add(new SignatureSigningConfigurationCriterion(config));
@@ -303,6 +297,26 @@ public class DefaultSamlIdPObjectSigner implements SamlIdPObjectSigner {
         config.setSigningCredentials(finalCredentials);
         LOGGER.trace("Signature signing credentials configured with [{}] credentials", finalCredentials.size());
         return config;
+    }
+
+    /**
+     * The resolver only delegates to the IdP metadata resolver, which resolves per service on every call,
+     * so one instance serves every signature. Concurrent first calls may each build one; any of them will do.
+     *
+     * @return the signing credential resolver
+     * @throws Exception the exception
+     */
+    protected SamlIdPMetadataCredentialResolver getSigningCredentialResolver() throws Exception {
+        var resolver = signingCredentialResolver;
+        if (resolver == null) {
+            resolver = new SamlIdPMetadataCredentialResolver();
+            resolver.setRoleDescriptorResolver(SamlIdPUtils.getRoleDescriptorResolver(samlIdPMetadataResolver,
+                casProperties.getAuthn().getSamlIdp().getMetadata().getCore().isRequireValidMetadata()));
+            resolver.setKeyInfoCredentialResolver(DefaultSecurityConfigurationBootstrap.buildBasicInlineKeyInfoCredentialResolver());
+            resolver.initialize();
+            signingCredentialResolver = resolver;
+        }
+        return resolver;
     }
 
     /**

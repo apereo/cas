@@ -460,6 +460,11 @@ authentication. See the [stateless ticket registry documentation](../ticketing/S
 - {: .changed} Reading the [OpenID Connect keystore](../authentication/OIDC-Authentication-JWKS.html) from a file, as
   every request to the JWKS endpoint does, no longer fails an attempt to parse the file path as an inline keystore first,
   and the keystore generated event is published only when CAS actually generates a new keystore instead of on every read.
+- {: .changed} Cached [SAML2 service provider metadata](../installation/Configuring-SAML2-DynamicMetadata.html) is reloaded
+  in the background once three quarters of its cache lifetime has passed, so the request that finds it nearly expired no longer
+  waits for the metadata to be fetched, parsed and validated. The current metadata stays in use until the reload completes.
+- {: .changed} The [SAML2 identity provider](../authentication/Configuring-SAML2-Authentication.html) builds the resolver that
+  locates its signing credentials once instead of for every signed response or assertion.
 - {: .changed data-area="project"} Almost all CAS unit tests are internally reworked to allow maximum parallelization and speed up the overall test execution time.
 - {: .fixed} [Delegated authentication](../integration/Delegate-Authentication.html) no longer fails intermittently when concurrent requests reach an identity provider that is still being initialized, typically right after startup. Such requests now wait for the initialization in progress instead of failing, which also affects [SAML2 identity providers](../integration/Delegate-Authentication-SAML2.html) when building SAML2 responses, metadata and logout requests.
 - {: .fixed} [WebAuthn](../mfa/FIDO2-WebAuthn-Authentication.html) registration and login pages no longer show a broken image when the device has no icon in its attestation metadata, and fall back to the credential nickname for the device name.

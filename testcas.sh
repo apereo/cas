@@ -125,6 +125,10 @@ while (( "$#" )); do
         flags+=" --offline "
         shift
         ;;
+    --again|--rerun|--repeat|--rerun-tasks)
+        flags+=" --rerun-tasks "
+        shift
+        ;;
     --no-watch)
         flags+=" --no-watch-fs "
         shift
