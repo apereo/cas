@@ -18,5 +18,7 @@ public class JaversRuntimeHints implements CasRuntimeHintsRegistrar {
     @Override
     public void registerHints(final @NonNull RuntimeHints hints, final @Nullable ClassLoader classLoader) {
         hints.reflection().registerType(DBRefUnproxyObjectAccessHook.class, MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS);
+        registerReflectionHintsForConstructors(hints,
+            findSubclassesInPackage(Object.class, "org.javers.core", "org.javers.repository", "org.javers.common"));
     }
 }

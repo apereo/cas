@@ -3,6 +3,8 @@ package org.apereo.cas.nativex;
 import module java.base;
 import org.apereo.cas.util.cipher.JsonWebKeySetStringCipherExecutor;
 import org.apereo.cas.util.serialization.ComponentSerializationPlanConfigurer;
+import org.apereo.cas.util.spring.beans.BeanContainer;
+import com.fasterxml.jackson.annotation.SimpleObjectIdResolver;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -23,11 +25,12 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Native")
 class CasCoreUtilRuntimeHintsTests {
     @Test
-    void verifyHints() {
+    void verifyHints() throws Exception {
         val hints = new RuntimeHints();
         new CasCoreUtilRuntimeHints().registerHints(hints, getClass().getClassLoader());
         assertTrue(RuntimeHintsPredicates.proxies().forInterfaces(ComponentSerializationPlanConfigurer.class).test(hints));
         assertTrue(RuntimeHintsPredicates.proxies().forInterfaces(Supplier.class).test(hints));
+        assertTrue(RuntimeHintsPredicates.proxies().forInterfaces(BeanContainer.class).test(hints));
         assertTrue(RuntimeHintsPredicates.proxies().forInterfaces(FactoryBean.class).test(hints));
         assertTrue(RuntimeHintsPredicates.proxies()
             .forInterfaces(Runnable.class, SpringProxy.class, Advised.class, DecoratingProxy.class).test(hints));
@@ -41,6 +44,7 @@ class CasCoreUtilRuntimeHintsTests {
         assertTrue(RuntimeHintsPredicates.reflection().onType(Module.class).test(hints));
         assertTrue(RuntimeHintsPredicates.reflection().onType(Class.class).test(hints));
         assertTrue(RuntimeHintsPredicates.reflection().onType(JsonWebKeySetStringCipherExecutor.class).test(hints));
+        assertTrue(RuntimeHintsPredicates.reflection().onConstructorInvocation(SimpleObjectIdResolver.class.getDeclaredConstructor()).test(hints));
     }
 
     @Test

@@ -1035,14 +1035,33 @@ ${BUILD_SCRIPT:+ $BUILD_SCRIPT}${DAEMON:+ $DAEMON} \
       dockerImageName=$(dockerImageNameForInstance "$c")
       docker rmi "${dockerImageName}":latest --force >/dev/null 2>&1
 
-      if [[ -f "$SCENARIO_FOLDER/docker/Dockerfile" ]]; then
+      nativeDockerContext=""
+      if [[ "${NATIVE_BUILD}" == "true" || "${NATIVE_RUN}" == "true" ]]; then
+        nativeDockerContext=$(mktemp -d "${PUPPETEER_DIR}/overlay/native-docker-${c}.XXXXXX")
+        dockerContextDirectory="${nativeDockerContext}"
+        nativeDockerfile="$PWD/ci/tests/puppeteer/docker/Dockerfile.native"
+        if [[ -f "$SCENARIO_FOLDER/docker/Dockerfile.native" ]]; then
+          nativeDockerfile="$SCENARIO_FOLDER/docker/Dockerfile.native"
+        fi
+        cp "${nativeDockerfile}" "$dockerContextDirectory/Dockerfile"
+        cp "$PWD/ci/tests/puppeteer/docker/entrypoint.sh" "$dockerContextDirectory/entrypoint.sh"
+        cp "${casServerArtifacts[$c]}" "$dockerContextDirectory/cas"
+        mkdir -p "$dockerContextDirectory/native-libs"
+        for library in "$PWD/webapp/cas-server-webapp-native/build/native/nativeCompile/"*.so "$(dirname "${casServerArtifacts[$c]}")/"*.so; do
+          if [[ -f "${library}" ]]; then
+            cp "${library}" "$dockerContextDirectory/native-libs/"
+          fi
+        done
+      elif [[ -f "$SCENARIO_FOLDER/docker/Dockerfile" ]]; then
         dockerContextDirectory="$SCENARIO_FOLDER/docker"
       else
         dockerContextDirectory="$PWD/ci/tests/puppeteer/docker"
       fi
       printcyan "Building Docker image ${dockerImageName} for scenario ${scenarioName} via $dockerContextDirectory"
 
-      cp "${casServerArtifacts[$c]}" "$dockerContextDirectory/cas.${projectType}"
+      if [[ -z "${nativeDockerContext}" ]]; then
+        cp "${casServerArtifacts[$c]}" "$dockerContextDirectory/cas.${projectType}"
+      fi
       cp $keystore "$dockerContextDirectory"
 
       javaVersion=($(cat $PWD/gradle.properties | grep "sourceCompatibility" | cut -d= -f2))
@@ -1066,8 +1085,12 @@ ${BUILD_SCRIPT:+ $BUILD_SCRIPT}${DAEMON:+ $DAEMON} \
         -t "${dockerImageName}":latest \
         "$dockerContextDirectory"
       RC=$?
-      rm "$dockerContextDirectory/cas.${projectType}"
-      rm "$dockerContextDirectory/thekeystore"
+      if [[ -n "${nativeDockerContext}" ]]; then
+        rm -rf "${nativeDockerContext}"
+      else
+        rm "$dockerContextDirectory/cas.${projectType}"
+        rm "$dockerContextDirectory/thekeystore"
+      fi
       if [ $RC -ne 0 ]; then
         printred "Unable to build CAS Docker image."
         exit 2
@@ -1211,7 +1234,7 @@ ${BUILD_SCRIPT:+ $BUILD_SCRIPT}${DAEMON:+ $DAEMON} \
         fi
 
         if [[ "${launchEnabled}" == "true" ]]; then
-          if [[ "${NATIVE_RUN}" == "true" ]]; then
+          if [[ "${NATIVE_RUN}" == "true" && "${buildDockerImage}" != "true" ]]; then
             printcyan "Launching CAS instance #${c} under port ${serverPort} from ${casArtifactToRun}"
             nativeStartupLog="${PUPPETEER_DIR}/overlay/cas-instance-${c}.log"
             : > "${nativeStartupLog}"
@@ -1245,7 +1268,13 @@ ${BUILD_SCRIPT:+ $BUILD_SCRIPT}${DAEMON:+ $DAEMON} \
               -p ${dockerHostJavaDebugPort}:5005 \
               -p ${dockerHostHttpPort}:8080 \
               "${dockerImageName}":latest
-            docker logs -f "${dockerImageName}" 2>/dev/null &
+            if [[ "${NATIVE_RUN}" == "true" ]]; then
+              nativeStartupLog="${PUPPETEER_DIR}/overlay/cas-instance-${c}.log"
+              : > "${nativeStartupLog}"
+              docker logs -f "${dockerImageName}" > >(tee -a "${nativeStartupLog}") 2>&1 &
+            else
+              docker logs -f "${dockerImageName}" 2>/dev/null &
+            fi
           else
             if [[ "${aotEnabled}" == "true" && "${serverType:-external}" != "external" ]]; then
               printgreen "The scenario ${scenarioName} will run with AOT"
@@ -1370,7 +1399,7 @@ ${BUILD_SCRIPT:+ $BUILD_SCRIPT}${DAEMON:+ $DAEMON} \
     done
 
     printgreen "Ready!"
-    if [[ "${INITONLY}" == "false" ]]; then
+    if [[ "${INITONLY}" == "false" && ("${NATIVE_RUN}" != "true" || "${launchEnabled}" != "true") ]]; then
       readyScript=$(jq -j '.readyScript // empty' <"${config}")
       readyScript="${readyScript//\$\{PWD\}/${PWD}}"
       readyScript="${readyScript//\$\{SCENARIO\}/${scenarioName}}"
@@ -1379,7 +1408,10 @@ ${BUILD_SCRIPT:+ $BUILD_SCRIPT}${DAEMON:+ $DAEMON} \
       for script in ${scripts}; do
         printgreen "Running ready script: ${script}"
         chmod +x "${script}"
-        eval "${script}"
+        if ! eval "${script}"; then
+          printred "Ready script [${script}] failed."
+          exit 4
+        fi
       done
     fi
   fi
@@ -1517,6 +1549,7 @@ trap killPendingCasBuild EXIT
 
 fetchCasVersion
 parseArguments "$@"
+export CAS_NATIVE_RUN="${NATIVE_RUN}"
 validateScenario
 prepareScenario
 

@@ -11,8 +11,10 @@ import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import org.apereo.cas.util.serialization.ComponentSerializationPlanConfigurer;
 import org.apereo.cas.util.serialization.MapContentDeserializer;
 import org.apereo.cas.util.spring.RestActuatorEndpointFilter;
+import org.apereo.cas.util.spring.beans.BeanContainer;
 import org.apereo.cas.util.thread.Cleanable;
 import com.fasterxml.jackson.annotation.ObjectIdGenerator;
+import com.fasterxml.jackson.annotation.ObjectIdResolver;
 import lombok.val;
 import net.jpountz.lz4.LZ4Compressor;
 import net.jpountz.lz4.LZ4FastDecompressor;
@@ -54,6 +56,7 @@ public class CasCoreUtilRuntimeHints implements CasRuntimeHintsRegistrar {
         registerReflectionHints(hints, findSubclassesInPackage(LZ4SafeDecompressor.class, LZ4SafeDecompressor.class.getPackageName()));
         
         registerProxyHints(hints, List.of(
+            BeanContainer.class,
             ComponentSerializationPlanConfigurer.class,
             FactoryBean.class,
             InitializingBean.class,
@@ -159,6 +162,7 @@ public class CasCoreUtilRuntimeHints implements CasRuntimeHintsRegistrar {
 
         registerReflectionHintsForTypes(hints, findSubclassesInPackage(Clock.class, Clock.class.getPackageName()));
         registerReflectionHintsForPublicElements(hints, findSubclassesInPackage(ObjectIdGenerator.class, "com.fasterxml.jackson"));
+        registerReflectionHintsForPublicElements(hints, findSubclassesInPackage(ObjectIdResolver.class, "com.fasterxml.jackson"));
         registerReflectionHintsForPublicElements(hints, findSubclassesInPackage(LogMessageSummarizer.class, "org.apereo.cas"));
         registerReflectionHintsForPublicElements(hints, findSubclassesInPackage(CipherExecutor.class, "org.apereo.cas"));
 

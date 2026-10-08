@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.aot.hint.RuntimeHints;
 import org.springframework.aot.hint.predicate.RuntimeHintsPredicates;
+import org.springframework.util.ClassUtils;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -23,5 +24,11 @@ class JaversRuntimeHintsTests {
         new JaversRuntimeHints().registerHints(hints, getClass().getClassLoader());
         assertTrue(RuntimeHintsPredicates.reflection().onConstructorInvocation(
             DBRefUnproxyObjectAccessHook.class.getConstructor()).test(hints));
+        for (val name : List.of("org.javers.repository.jql.QueryRunner", "org.javers.repository.jql.QueryCompiler")) {
+            val type = ClassUtils.resolveClassName(name, getClass().getClassLoader());
+            for (val constructor : type.getConstructors()) {
+                assertTrue(RuntimeHintsPredicates.reflection().onConstructorInvocation(constructor).test(hints));
+            }
+        }
     }
 }

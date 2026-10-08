@@ -1,7 +1,10 @@
 package org.apereo.cas.nativex;
 
 import module java.base;
+import org.apereo.cas.ticket.AbstractTicket;
+import org.apereo.cas.ticket.ExpirableTicket;
 import org.apereo.cas.ticket.ServiceTicketImpl;
+import org.apereo.cas.ticket.StatelessTicket;
 import org.apereo.cas.ticket.TicketFactoryExecutionPlanConfigurer;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.expiration.TimeoutExpirationPolicy;
@@ -39,5 +42,8 @@ class CasCoreTicketsRuntimeHintsTests {
         assertTrue(RuntimeHintsPredicates.reflection().onType(TicketGrantingTicketImpl.class).test(hints));
         assertTrue(RuntimeHintsPredicates.reflection().onType(ServiceTicketImpl.class).test(hints));
         assertTrue(RuntimeHintsPredicates.reflection().onType(TimeoutExpirationPolicy.class).test(hints));
+        assertTrue(RuntimeHintsPredicates.reflection().onMethodInvocation(AbstractTicket.class.getMethod("getExpirationPolicy")).test(hints));
+        assertTrue(RuntimeHintsPredicates.reflection().onMethodInvocation(ExpirableTicket.class.getMethod("getExpirationPolicy")).test(hints));
+        assertTrue(RuntimeHintsPredicates.reflection().onMethodInvocation(StatelessTicket.class.getMethod("isStateless")).test(hints));
     }
 }

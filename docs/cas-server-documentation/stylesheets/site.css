@@ -1,7 +1,7 @@
 @import url(pygment_material.css);
 
 /* CAS: deep ocean blue, clear cyan, and generous space for technical reading.
-   Two web fonts carry the whole site: Newsreader sets every heading, DM Sans sets the
+   Two web fonts carry the whole site: Bricolage Grotesque sets every heading, DM Sans sets the
    prose and the structure (navigation, labels, buttons), and code uses the system
    monospace font. */
 :root {
@@ -32,8 +32,8 @@
     --font-display: 'DM Sans', system-ui, sans-serif;
     --font-body: 'DM Sans', system-ui, sans-serif;
     --font-mono: ui-monospace, 'SFMono-Regular', Menlo, Consolas, 'Liberation Mono', monospace;
-    --font-editorial: 'Newsreader', Georgia, serif;
-    --font-heading: 'Newsreader', Georgia, 'Times New Roman', serif;
+    --font-editorial: 'Bricolage Grotesque', 'DM Sans', system-ui, sans-serif;
+    --font-heading: 'Bricolage Grotesque', 'DM Sans', system-ui, sans-serif;
     --bs-body-bg: var(--docs-bg);
     --bs-body-color: var(--docs-text);
     --bs-heading-color: var(--docs-heading);
@@ -283,7 +283,8 @@ button, a {
 .brand-mission p {
     font-family: var(--font-editorial);
     font-size: 1.02rem;
-    font-style: italic;
+    font-weight: 600;
+    font-style: normal;
     letter-spacing: .005em;
     color: #eaf6fc;
     margin: 0;
@@ -966,13 +967,13 @@ button, a {
     outline-offset: 8px;
 }
 
-/* Headings use a high-contrast display serif at light weights; optical sizing
-   keeps the small levels sturdy while the large ones get fine hairlines. */
+/* Headings use Bricolage Grotesque in bold; optical sizing tightens the large
+   levels and keeps the small ones open. */
 h1, h2, h3, h4, h5, h6 {
     color: var(--docs-heading);
     font-family: var(--font-heading);
     font-optical-sizing: auto;
-    font-weight: 400;
+    font-weight: 700;
     line-height: 1.22;
     text-align: left;
     text-wrap: balance;
@@ -982,7 +983,7 @@ h1 {
     position: relative;
     margin: 0 0 1.45rem;
     font-size: clamp(2.3rem, 3.5vw, 3.35rem);
-    font-weight: 350;
+    font-weight: 700;
     letter-spacing: -.032em;
     word-spacing: -.04em;
     line-height: 1.08;
@@ -1021,14 +1022,14 @@ h2::before {
 h3 {
     margin: 2.1rem 0 .9rem;
     font-size: 1.42rem;
-    font-weight: 450;
+    font-weight: 700;
     letter-spacing: -.015em;
 }
 
 h4 {
     font-size: 1.2rem;
     margin: 1.7rem 0 .75rem;
-    font-weight: 500;
+    font-weight: 650;
     letter-spacing: -.005em;
 }
 
@@ -1036,7 +1037,7 @@ h5, h6 {
     font-size: .98rem;
     margin: 1.5rem 0 .75rem;
     color: var(--docs-muted);
-    font-weight: 600;
+    font-weight: 700;
     letter-spacing: .06em;
     text-transform: uppercase;
 }
@@ -1610,13 +1611,13 @@ ul.tab-content > li:not(.active):not(.property-name):not(.property-tab):not(.cas
 }
 
 /* Display type and brief motion are reserved for the homepage. */
-/* The title is set in the heading serif like every h1-h6; only the promise
+/* The title is set in the heading face like every h1-h6; only the promise
    carries the accent gradient. */
 .home-title-prefix, .home-title-accent {
     font-family: var(--font-heading);
     font-size: 1em;
     font-style: normal;
-    font-weight: 400;
+    font-weight: 700;
     letter-spacing: -.022em;
 }
 
@@ -4756,7 +4757,7 @@ ul.tab-content > li:not(.active):not(.property-name):not(.property-tab):not(.cas
 
 .cas-release-stats b {
     color: var(--docs-heading);
-    font: 400 2.1rem/1 var(--font-heading);
+    font: 700 2.1rem/1 var(--font-heading);
 }
 
 .cas-release-stats span {
@@ -5345,7 +5346,7 @@ li.cas-change-item[data-type-label]::before {
 .cas-release-index-stats b {
     display: block;
     color: var(--docs-heading);
-    font: 400 1.4rem/1.1 var(--font-heading);
+    font: 700 1.4rem/1.1 var(--font-heading);
 }
 
 @media (max-width: 1000px) {

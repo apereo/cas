@@ -131,7 +131,7 @@ for more information on the changes and updates in this release.
 
 The CAS documentation site has received a visual and functional overhaul. Notable changes include:
 
-- A refreshed theme with light and dark modes, a serif typeface for headings, a monospaced sidebar, and
+- A refreshed theme with light and dark modes, a bold grotesque typeface for headings, a monospaced sidebar, and
   quiet icons for recurring sections such as configuration, actuator endpoints and troubleshooting.
 - Configuration settings are presented as a searchable, filterable reference list. Each setting can be expanded
   to show its description, type, default value and deprecation status, and copied as `.properties`, YAML or

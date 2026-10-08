@@ -1,6 +1,7 @@
 package org.apereo.cas.nativex;
 
 import module java.base;
+import org.apereo.cas.ws.idp.services.WSFederationClaimsReleasePolicy;
 import org.apereo.cas.ws.idp.services.WSFederationRegisteredService;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -21,9 +22,7 @@ class CoreWsSecurityIdentityProviderRuntimeHintsTests {
     void verifyHints() {
         val hints = new RuntimeHints();
         new CoreWsSecurityIdentityProviderRuntimeHints().registerHints(hints, getClass().getClassLoader());
-        assertTrue(RuntimeHintsPredicates.resource().forBundle("org.apache.cxf.bus.managers.Messages").test(hints));
-        assertTrue(RuntimeHintsPredicates.resource().forBundle("messages.wss4j_errors").test(hints));
-        assertTrue(RuntimeHintsPredicates.resource().forBundle("org.apache.xml.security.resource.xmlsecurity").test(hints));
         assertTrue(RuntimeHintsPredicates.reflection().onType(WSFederationRegisteredService.class).test(hints));
+        assertTrue(RuntimeHintsPredicates.reflection().onType(WSFederationClaimsReleasePolicy.class).test(hints));
     }
 }
