@@ -393,6 +393,10 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
     protected void generateAccessTokenHash(final IdTokenGenerationContext context,
                                            final OidcRegisteredService registeredService,
                                            final JwtClaims claims) throws Throwable {
+        if (context.getResponseType() == OAuth20ResponseTypes.ID_TOKEN) {
+            LOGGER.trace("No access token is issued for response type [{}]; the ID token carries no access token hash", context.getResponseType());
+            return;
+        }
         val encodedAccessToken = Optional.ofNullable(context.getEncodedAccessToken())
             .filter(StringUtils::isNotBlank)
             .orElseGet(() -> encodeAccessToken(context.getAccessToken(), registeredService));

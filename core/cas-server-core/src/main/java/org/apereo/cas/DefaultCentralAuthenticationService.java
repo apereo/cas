@@ -167,131 +167,135 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
             throw new InvalidTicketException(serviceTicketId);
         }
 
-        try {
-            val selectedService = resolveServiceFromAuthenticationRequest(serviceTicket.getService());
-            val resolvedService = resolveServiceFromAuthenticationRequest(service);
-            LOGGER.debug("Resolved service [{}] from the authentication request with service [{}] linked to service ticket [{}]",
-                resolvedService, selectedService, serviceTicket.getId());
+        val selectedService = resolveServiceFromAuthenticationRequest(serviceTicket.getService());
+        val resolvedService = resolveServiceFromAuthenticationRequest(service);
+        LOGGER.debug("Resolved service [{}] from the authentication request with service [{}] linked to service ticket [{}]",
+            resolvedService, selectedService, serviceTicket.getId());
 
-            configurationContext.getLockRepository().execute(serviceTicket.getId(),
-                Unchecked.supplier(() -> {
-                    if (serviceTicket.isExpired()) {
-                        LOGGER.info("Service ticket [{}] has expired.", serviceTicketId);
-                        throw new InvalidTicketException(serviceTicketId);
-                    }
-                    if (!configurationContext.getServiceMatchingStrategy().matches(selectedService, resolvedService)) {
-                        LOGGER.error("Service ticket [{}] with service [{}] does not match supplied service [{}]",
-                            serviceTicketId, serviceTicket.getService().getId(), Objects.requireNonNull(resolvedService).getId());
-                        throw new UnrecognizableServiceForServiceTicketValidationException(selectedService);
-                    }
-                    if (StringUtils.isNotBlank(serviceTicket.getTenantId())) {
-                        if (!Strings.CI.equals(Objects.requireNonNull(resolvedService).getTenant(), serviceTicket.getTenantId())) {
-                            LOGGER.warn("Service ticket [{}] is not assigned to the same tenant [{}] as the service [{}]",
-                                serviceTicketId, serviceTicket.getTenantId(), resolvedService.getId());
-                            throw new UnknownTenantException("Unknown tenant %s for service ticket %s"
-                                .formatted(resolvedService.getTenant(), serviceTicketId));
-                        }
-                        if (configurationContext.getTenantExtractor().getTenantsManager().findTenant(serviceTicket.getTenantId()).isEmpty()) {
-                            LOGGER.warn("Service ticket [{}] is not assigned to a known valid tenant [{}] for service [{}]",
-                                serviceTicketId, serviceTicket.getTenantId(), resolvedService.getId());
-                            throw new UnknownTenantException("Unknown tenant %s for service ticket %s"
-                                .formatted(serviceTicket.getTenantId(), serviceTicketId));
-                        }
-                    }
-
-                    serviceTicket.update();
+        val validatedTicket = configurationContext.getLockRepository().execute(serviceTicket.getId(),
+            Unchecked.supplier(() -> {
+                if (serviceTicket.isExpired()) {
+                    LOGGER.info("Service ticket [{}] has expired.", serviceTicketId);
                     if (!serviceTicket.isStateless()) {
+                        configurationContext.getTicketRegistry().deleteTicket(serviceTicket);
+                    }
+                    throw new InvalidTicketException(serviceTicketId);
+                }
+                if (!configurationContext.getServiceMatchingStrategy().matches(selectedService, resolvedService)) {
+                    LOGGER.error("Service ticket [{}] with service [{}] does not match supplied service [{}]",
+                        serviceTicketId, serviceTicket.getService().getId(), Objects.requireNonNull(resolvedService).getId());
+                    throw new UnrecognizableServiceForServiceTicketValidationException(selectedService);
+                }
+                if (StringUtils.isNotBlank(serviceTicket.getTenantId())) {
+                    if (!Strings.CI.equals(Objects.requireNonNull(resolvedService).getTenant(), serviceTicket.getTenantId())) {
+                        LOGGER.warn("Service ticket [{}] is not assigned to the same tenant [{}] as the service [{}]",
+                            serviceTicketId, serviceTicket.getTenantId(), resolvedService.getId());
+                        throw new UnknownTenantException("Unknown tenant %s for service ticket %s"
+                            .formatted(resolvedService.getTenant(), serviceTicketId));
+                    }
+                    if (configurationContext.getTenantExtractor().getTenantsManager().findTenant(serviceTicket.getTenantId()).isEmpty()) {
+                        LOGGER.warn("Service ticket [{}] is not assigned to a known valid tenant [{}] for service [{}]",
+                            serviceTicketId, serviceTicket.getTenantId(), resolvedService.getId());
+                        throw new UnknownTenantException("Unknown tenant %s for service ticket %s"
+                            .formatted(serviceTicket.getTenantId(), serviceTicketId));
+                    }
+                }
+
+                serviceTicket.update();
+                if (!serviceTicket.isStateless()) {
+                    if (serviceTicket.isExpired()) {
+                        if (configurationContext.getTicketRegistry().deleteTicket(serviceTicket) == 0) {
+                            LOGGER.warn("Service ticket [{}] was already used by another validation request.", serviceTicketId);
+                            throw new InvalidTicketException(serviceTicketId);
+                        }
+                    } else {
                         configurationContext.getTicketRegistry().updateTicket(serviceTicket);
                     }
-                    return serviceTicket;
-                }));
-
-            val registeredService = configurationContext.getServicesManager().findServiceBy(selectedService);
-            LOGGER.trace("Located registered service definition [{}] from [{}] to handle validation request", registeredService, selectedService);
-            RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(selectedService, registeredService);
-
-            val ticketGrantingTicket = (TicketGrantingTicket) serviceTicket.getTicketGrantingTicket();
-            var authentication = serviceTicket.isStateless()
-                ? serviceTicket.getAuthentication()
-                : Objects.requireNonNull(ticketGrantingTicket).getRoot().getAuthentication();
-
-            authentication = getAuthenticationSatisfiedByPolicy(authentication, selectedService, Objects.requireNonNull(registeredService));
-            Objects.requireNonNull(authentication, "Authentication cannot be determined for service ticket validation");
-            val principal = serviceTicket.isStateless() ? rebuildStatelessTicketPrincipal(serviceTicket) : authentication.getPrincipal();
-            val attributePolicy = Objects.requireNonNull(registeredService.getAttributeReleasePolicy());
-            LOGGER.debug("Attribute policy [{}] is associated with service [{}]", attributePolicy, registeredService);
-
-            val context = RegisteredServiceAttributeReleasePolicyContext.builder()
-                .registeredService(registeredService)
-                .service(selectedService)
-                .principal(principal)
-                .applicationContext(configurationContext.getApplicationContext())
-                .build();
-            val attributesToRelease = attributePolicy.getAttributes(context);
-            LOGGER.debug("Calculated attributes for release per the release policy are [{}]", attributesToRelease.keySet());
-
-            val builder = DefaultAuthenticationBuilder.of(
-                configurationContext.getApplicationContext(),
-                Objects.requireNonNull(principal),
-                configurationContext.getPrincipalFactory(),
-                attributesToRelease,
-                selectedService,
-                registeredService,
-                authentication);
-            LOGGER.debug("Principal determined for release to [{}] is [{}]",
-                registeredService.getServiceId(), builder.getPrincipal().getId());
-
-            builder.addAttribute(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_FROM_NEW_LOGIN,
-                CollectionUtils.wrap(((RenewableServiceTicket) serviceTicket).isFromNewLogin()));
-            builder.addAttribute(CasProtocolConstants.VALIDATION_REMEMBER_ME_ATTRIBUTE_NAME,
-                CollectionUtils.wrap(CoreAuthenticationUtils.isRememberMeAuthentication(authentication)));
-
-            val finalAuthentication = builder.build();
-            /*
-             * The attribute release policy is evaluated once, against the resolved service. The
-             * principal carried by the final authentication is built from exactly those attributes,
-             * so merging it below is what puts the released set into the principal the access
-             * strategy sees; evaluating the policy a second time here would only repeat that work,
-             * and doing so against the unresolved service would let a service-aware policy decide
-             * access on a different service than the one the attributes are released to.
-             */
-            val merger = CoreAuthenticationUtils.getAttributeMerger(PrincipalAttributesCoreProperties.MergingStrategyTypes.MULTIVALUED);
-            var accessAttributes = CoreAuthenticationUtils.mergeAttributes(principal.getAttributes(), authentication.getAttributes(), merger);
-            accessAttributes = CoreAuthenticationUtils.mergeAttributes(accessAttributes, finalAuthentication.getPrincipal().getAttributes(), merger);
-            accessAttributes = CoreAuthenticationUtils.mergeAttributes(accessAttributes, finalAuthentication.getAttributes(), merger);
-            val accessPrincipal = configurationContext.getPrincipalFactory().createPrincipal(principal.getId(), accessAttributes);
-
-            enforceRegisteredServiceAccess(selectedService, registeredService, accessPrincipal);
-
-            val assertionContext = serviceTicket.isStateless()
-                ? CollectionUtils.<String, Serializable>wrap(Principal.class.getName(), authentication.getPrincipal().getId())
-                : CollectionUtils.<String, Serializable>wrap(TicketGrantingTicket.class.getName(), Objects.requireNonNull(ticketGrantingTicket).getRoot().getId());
-
-            val assertion = DefaultAssertionBuilder.builder()
-                .primaryAuthentication(finalAuthentication)
-                .originalAuthentication(authentication)
-                .service(selectedService)
-                .registeredService(registeredService)
-                .authentications(serviceTicket.isStateless()
-                    ? List.of(Objects.requireNonNull(serviceTicket.getAuthentication()))
-                    : Objects.requireNonNull(ticketGrantingTicket).getChainedAuthentications())
-                .newLogin(((RenewableServiceTicket) serviceTicket).isFromNewLogin())
-                .stateless(serviceTicket.isStateless())
-                .context(assertionContext)
-                .build()
-                .assemble();
-            val clientInfo = ClientInfoHolder.getClientInfo();
-            doPublishEvent(new CasServiceTicketValidatedEvent(this, serviceTicket, assertion, clientInfo));
-            return assertion;
-        } finally {
-            if (!serviceTicket.isStateless()) {
-                if (serviceTicket.isExpired()) {
-                    configurationContext.getTicketRegistry().deleteTicket(serviceTicketId);
-                } else {
-                    configurationContext.getTicketRegistry().updateTicket(serviceTicket);
                 }
-            }
+                return serviceTicket;
+            }));
+        if (validatedTicket.isEmpty()) {
+            LOGGER.warn("Service ticket [{}] could not be locked for validation.", serviceTicketId);
+            throw new InvalidTicketException(serviceTicketId);
         }
+
+        val registeredService = configurationContext.getServicesManager().findServiceBy(selectedService);
+        LOGGER.trace("Located registered service definition [{}] from [{}] to handle validation request", registeredService, selectedService);
+        RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(selectedService, registeredService);
+
+        val ticketGrantingTicket = (TicketGrantingTicket) serviceTicket.getTicketGrantingTicket();
+        var authentication = serviceTicket.isStateless()
+            ? serviceTicket.getAuthentication()
+            : Objects.requireNonNull(ticketGrantingTicket).getRoot().getAuthentication();
+
+        authentication = getAuthenticationSatisfiedByPolicy(authentication, selectedService, Objects.requireNonNull(registeredService));
+        Objects.requireNonNull(authentication, "Authentication cannot be determined for service ticket validation");
+        val principal = serviceTicket.isStateless() ? rebuildStatelessTicketPrincipal(serviceTicket) : authentication.getPrincipal();
+        val attributePolicy = Objects.requireNonNull(registeredService.getAttributeReleasePolicy());
+        LOGGER.debug("Attribute policy [{}] is associated with service [{}]", attributePolicy, registeredService);
+
+        val context = RegisteredServiceAttributeReleasePolicyContext.builder()
+            .registeredService(registeredService)
+            .service(selectedService)
+            .principal(principal)
+            .applicationContext(configurationContext.getApplicationContext())
+            .build();
+        val attributesToRelease = attributePolicy.getAttributes(context);
+        LOGGER.debug("Calculated attributes for release per the release policy are [{}]", attributesToRelease.keySet());
+
+        val builder = DefaultAuthenticationBuilder.of(
+            configurationContext.getApplicationContext(),
+            Objects.requireNonNull(principal),
+            configurationContext.getPrincipalFactory(),
+            attributesToRelease,
+            selectedService,
+            registeredService,
+            authentication);
+        LOGGER.debug("Principal determined for release to [{}] is [{}]",
+            registeredService.getServiceId(), builder.getPrincipal().getId());
+
+        builder.addAttribute(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_FROM_NEW_LOGIN,
+            CollectionUtils.wrap(((RenewableServiceTicket) serviceTicket).isFromNewLogin()));
+        builder.addAttribute(CasProtocolConstants.VALIDATION_REMEMBER_ME_ATTRIBUTE_NAME,
+            CollectionUtils.wrap(CoreAuthenticationUtils.isRememberMeAuthentication(authentication)));
+
+        val finalAuthentication = builder.build();
+        /*
+         * The attribute release policy is evaluated once, against the resolved service. The
+         * principal carried by the final authentication is built from exactly those attributes,
+         * so merging it below is what puts the released set into the principal the access
+         * strategy sees; evaluating the policy a second time here would only repeat that work,
+         * and doing so against the unresolved service would let a service-aware policy decide
+         * access on a different service than the one the attributes are released to.
+         */
+        val merger = CoreAuthenticationUtils.getAttributeMerger(PrincipalAttributesCoreProperties.MergingStrategyTypes.MULTIVALUED);
+        var accessAttributes = CoreAuthenticationUtils.mergeAttributes(principal.getAttributes(), authentication.getAttributes(), merger);
+        accessAttributes = CoreAuthenticationUtils.mergeAttributes(accessAttributes, finalAuthentication.getPrincipal().getAttributes(), merger);
+        accessAttributes = CoreAuthenticationUtils.mergeAttributes(accessAttributes, finalAuthentication.getAttributes(), merger);
+        val accessPrincipal = configurationContext.getPrincipalFactory().createPrincipal(principal.getId(), accessAttributes);
+
+        enforceRegisteredServiceAccess(selectedService, registeredService, accessPrincipal);
+
+        val assertionContext = serviceTicket.isStateless()
+            ? CollectionUtils.<String, Serializable>wrap(Principal.class.getName(), authentication.getPrincipal().getId())
+            : CollectionUtils.<String, Serializable>wrap(TicketGrantingTicket.class.getName(), Objects.requireNonNull(ticketGrantingTicket).getRoot().getId());
+
+        val assertion = DefaultAssertionBuilder.builder()
+            .primaryAuthentication(finalAuthentication)
+            .originalAuthentication(authentication)
+            .service(selectedService)
+            .registeredService(registeredService)
+            .authentications(serviceTicket.isStateless()
+                ? List.of(Objects.requireNonNull(serviceTicket.getAuthentication()))
+                : Objects.requireNonNull(ticketGrantingTicket).getChainedAuthentications())
+            .newLogin(((RenewableServiceTicket) serviceTicket).isFromNewLogin())
+            .stateless(serviceTicket.isStateless())
+            .context(assertionContext)
+            .build()
+            .assemble();
+        val clientInfo = ClientInfoHolder.getClientInfo();
+        doPublishEvent(new CasServiceTicketValidatedEvent(this, serviceTicket, assertion, clientInfo));
+        return assertion;
     }
 
 

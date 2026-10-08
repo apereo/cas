@@ -668,5 +668,29 @@ class OidcIdTokenGeneratorServiceTests {
                 .generate();
             assertEquals(expectedHash, claims.getClaimValue(OidcConstants.CLAIM_AT_HASH, String.class));
         }
+
+        @Test
+        void verifyNoAccessTokenHashWhenNoAccessTokenIsIssued() throws Throwable {
+            val profile = new CommonProfile();
+            profile.setClientName("OIDC");
+            profile.setId(UUID.randomUUID().toString());
+
+            val clientId = UUID.randomUUID().toString();
+            val accessToken = getAccessToken(clientId);
+            val registeredService = getOidcRegisteredService(clientId);
+            registeredService.setIdTokenSigningAlg(AlgorithmIdentifiers.RSA_USING_SHA256);
+            servicesManager.save(registeredService);
+
+            val idTokenContext = IdTokenGenerationContext.builder()
+                .accessToken(accessToken)
+                .userProfile(profile)
+                .responseType(OAuth20ResponseTypes.ID_TOKEN)
+                .grantType(OAuth20GrantTypes.NONE)
+                .registeredService(registeredService)
+                .build();
+            val idToken = oidcIdTokenGenerator.generate(idTokenContext);
+            val claims = oidcTokenSigningAndEncryptionService.decode(idToken.token(), Optional.of(registeredService));
+            assertFalse(claims.hasClaim(OidcConstants.CLAIM_AT_HASH));
+        }
     }
 }
