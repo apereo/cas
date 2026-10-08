@@ -1250,6 +1250,8 @@ ${BUILD_SCRIPT:+ $BUILD_SCRIPT}${DAEMON:+ $DAEMON} \
               --server.port=${serverPort} \
               --spring.profiles.active=none \
               --server.ssl.key-store="$keystore" ${properties} \
+              --logging.level.org.apereo.cas.nativex.CasNativeWebApplication=info \
+              --logging.level.org.apereo.cas.web.CasWebApplicationReady=info \
               > >(tee -a "${nativeStartupLog}") 2>&1 &
           elif [[ "${buildDockerImage}" == "true" ]]; then
             dockerImageName=$(dockerImageNameForInstance "$c")

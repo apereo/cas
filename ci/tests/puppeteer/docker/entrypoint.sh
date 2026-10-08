@@ -17,6 +17,7 @@ echo "================================"
 printgreen "Launching CAS server in Docker container..."
 echo "================================"
 read -r -a runtimeArguments <<< "${RUN_ARGS//$'\n'/ }"
+startupLoggingArguments=()
 if [[ "${CAS_NATIVE:-false}" == "true" ]]; then
   nativeArguments=()
   for argument in "${runtimeArguments[@]}"; do
@@ -26,6 +27,8 @@ if [[ "${CAS_NATIVE:-false}" == "true" ]]; then
   done
   casCommand=(./cas "${nativeArguments[@]}" -DTEST_TYPE=PUPPETEER -DVALIDATE_CONFIGURATION_ENABLED=false
     -Dlog.console.stacktraces=true -Dcom.sun.net.ssl.checkRevocation=false --spring.main.lazy-initialization=false)
+  startupLoggingArguments=(--logging.level.org.apereo.cas.nativex.CasNativeWebApplication=info
+    --logging.level.org.apereo.cas.web.CasWebApplicationReady=info)
 else
   casCommand=(java "${runtimeArguments[@]}" -Dlog.console.stacktraces=true -Dcom.sun.net.ssl.checkRevocation=false -jar cas.war)
 fi
@@ -34,4 +37,4 @@ exec "${casCommand[@]}" \
   --spring.profiles.active=none \
   --cas.audit.slf4j.use-single-line=true \
   --server.ssl.key-store="/etc/cas/thekeystore" \
-  ${CAS_PROPERTIES}
+  ${CAS_PROPERTIES} "${startupLoggingArguments[@]}"
