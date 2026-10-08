@@ -152,6 +152,9 @@ jobs:
         uses: actions/checkout@v7
         with:
           persist-credentials: false
+      - name: Prefetch Docker Images
+        continue-on-error: true
+        run: bash ./ci/tests/puppeteer/prefetch-docker-images.sh ${{matrix.scenario}}
       - name: Set up JDK
         uses: actions/setup-java@v6
         with:
@@ -201,6 +204,10 @@ jobs:
           command: |
             export RUNNER_OS=${{ runner.os }}
             ./ci/tests/puppeteer/run.sh --scenario $PWD/ci/tests/puppeteer/scenarios/${{matrix.scenario}}
+      - name: Docker Prefetch Summary
+        if: ${{ always() }}
+        continue-on-error: true
+        run: bash ./ci/tests/puppeteer/prefetch-docker-images.sh --summary
       - name: Upload screenshots
         uses: actions/upload-artifact@v7
         continue-on-error: true
@@ -227,6 +234,9 @@ jobs:
         uses: actions/checkout@v7
         with:
           persist-credentials: false
+      - name: Prefetch Docker Images
+        continue-on-error: true
+        run: bash ./ci/tests/puppeteer/prefetch-docker-images.sh ${{matrix.scenario}}
       - name: Set up JDK
         uses: actions/setup-java@v6
         with:
@@ -276,6 +286,10 @@ jobs:
           command: |
             export RUNNER_OS=${{ runner.os }}
             ./ci/tests/puppeteer/run.sh --scenario $PWD/ci/tests/puppeteer/scenarios/${{matrix.scenario}}
+      - name: Docker Prefetch Summary
+        if: ${{ always() }}
+        continue-on-error: true
+        run: bash ./ci/tests/puppeteer/prefetch-docker-images.sh --summary
       - name: Upload screenshots
         uses: actions/upload-artifact@v7
         continue-on-error: true
@@ -302,6 +316,9 @@ jobs:
         uses: actions/checkout@v7
         with:
           persist-credentials: false
+      - name: Prefetch Docker Images
+        continue-on-error: true
+        run: bash ./ci/tests/puppeteer/prefetch-docker-images.sh ${{matrix.scenario}}
       - name: Set up JDK
         uses: actions/setup-java@v6
         with:
@@ -351,6 +368,10 @@ jobs:
           command: |
             export RUNNER_OS=${{ runner.os }}
             ./ci/tests/puppeteer/run.sh --scenario $PWD/ci/tests/puppeteer/scenarios/${{matrix.scenario}}
+      - name: Docker Prefetch Summary
+        if: ${{ always() }}
+        continue-on-error: true
+        run: bash ./ci/tests/puppeteer/prefetch-docker-images.sh --summary
       - name: Upload screenshots
         uses: actions/upload-artifact@v7
         continue-on-error: true

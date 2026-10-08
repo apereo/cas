@@ -170,6 +170,10 @@ jobs:
         run: find ./ci -type f -name "*.sh" -exec chmod +x "{}" \; && ./ci/init-build.sh
       - name: Configure CI
         run: source ./ci/tests/puppeteer/configure-ci.sh ${{matrix.scenario}}
+      - name: Prefetch Docker Images
+        if: ${{ env.NATIVE_RUN_ENABLED == 'true' }}
+        continue-on-error: true
+        run: bash ./ci/tests/puppeteer/prefetch-docker-images.sh ${{matrix.scenario}}
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v6
         with:
@@ -206,11 +210,15 @@ jobs:
         if: ${{ env.NATIVE_RUN_ENABLED == 'true' }}
         with:
           max_attempts: ${{ env.MAX_ATTEMPTS }}
-          timeout_minutes: 5
+          timeout_minutes: 10
           retry_on: error
           shell: bash
           command: |
             ./ci/tests/puppeteer/run.sh --nr --scenario $PWD/ci/tests/puppeteer/scenarios/${{matrix.scenario}}
+      - name: Docker Prefetch Summary
+        if: ${{ always() && env.NATIVE_RUN_ENABLED == 'true' }}
+        continue-on-error: true
+        run: bash ./ci/tests/puppeteer/prefetch-docker-images.sh --summary
   ##########################################################################
   puppeteer-tests-511:
     runs-on: ubuntu-latest
@@ -231,6 +239,10 @@ jobs:
         run: find ./ci -type f -name "*.sh" -exec chmod +x "{}" \; && ./ci/init-build.sh
       - name: Configure CI
         run: ./ci/tests/puppeteer/configure-ci.sh ${{matrix.scenario}}
+      - name: Prefetch Docker Images
+        if: ${{ env.NATIVE_RUN_ENABLED == 'true' }}
+        continue-on-error: true
+        run: bash ./ci/tests/puppeteer/prefetch-docker-images.sh ${{matrix.scenario}}
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v6
         with:
@@ -267,12 +279,16 @@ jobs:
         if: ${{ env.NATIVE_RUN_ENABLED == 'true' }}
         with:
           max_attempts: ${{ env.MAX_ATTEMPTS }}
-          timeout_minutes: 5
+          timeout_minutes: 10
           retry_on: error
           shell: bash
           command: |
             export RUNNER_OS=${{ runner.os }}
             ./ci/tests/puppeteer/run.sh --nr --scenario $PWD/ci/tests/puppeteer/scenarios/${{matrix.scenario}}
+      - name: Docker Prefetch Summary
+        if: ${{ always() && env.NATIVE_RUN_ENABLED == 'true' }}
+        continue-on-error: true
+        run: bash ./ci/tests/puppeteer/prefetch-docker-images.sh --summary
   ##########################################################################
   puppeteer-tests-766:
     runs-on: ubuntu-latest
@@ -293,6 +309,10 @@ jobs:
         run: find ./ci -type f -name "*.sh" -exec chmod +x "{}" \; && ./ci/init-build.sh
       - name: Configure CI
         run: ./ci/tests/puppeteer/configure-ci.sh ${{matrix.scenario}}
+      - name: Prefetch Docker Images
+        if: ${{ env.NATIVE_RUN_ENABLED == 'true' }}
+        continue-on-error: true
+        run: bash ./ci/tests/puppeteer/prefetch-docker-images.sh ${{matrix.scenario}}
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v6
         with:
@@ -329,9 +349,13 @@ jobs:
         if: ${{ env.NATIVE_RUN_ENABLED == 'true' }}
         with:
           max_attempts: ${{ env.MAX_ATTEMPTS }}
-          timeout_minutes: 5
+          timeout_minutes: 10
           retry_on: error
           shell: bash
           command: |
             export RUNNER_OS=${{ runner.os }}
             ./ci/tests/puppeteer/run.sh --nr --scenario $PWD/ci/tests/puppeteer/scenarios/${{matrix.scenario}}
+      - name: Docker Prefetch Summary
+        if: ${{ always() && env.NATIVE_RUN_ENABLED == 'true' }}
+        continue-on-error: true
+        run: bash ./ci/tests/puppeteer/prefetch-docker-images.sh --summary
