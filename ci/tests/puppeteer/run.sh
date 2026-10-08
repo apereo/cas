@@ -1202,9 +1202,13 @@ ${BUILD_SCRIPT:+ $BUILD_SCRIPT}${DAEMON:+ $DAEMON} \
         springAppJson=$(jq -j '.SPRING_APPLICATION_JSON // empty' "${config}")
         [ -n "${springAppJson}" ] && export SPRING_APPLICATION_JSON=${springAppJson}
 
-        printcyan "Cleaning leftover artifacts from previous runs..."
-        rm -rf "$TMPDIR/keystore.jwks"
-        rm -rf "$TMPDIR/cas"
+        # Instances started earlier in this loop are already running and watching these locations:
+        # removing them again would delete their embedded service definitions and shared keystore.
+        if [[ ${c} -eq 1 ]]; then
+          printcyan "Cleaning leftover artifacts from previous runs..."
+          rm -rf "$TMPDIR/keystore.jwks"
+          rm -rf "$TMPDIR/cas"
+        fi
 
         if [[ "${launchEnabled}" == "true" ]]; then
           if [[ "${NATIVE_RUN}" == "true" ]]; then

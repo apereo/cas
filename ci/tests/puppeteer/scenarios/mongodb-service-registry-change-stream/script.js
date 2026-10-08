@@ -37,9 +37,17 @@ async function verifyService(page, service, authorized) {
     const browser = await cas.newBrowser(cas.browserOptions());
     const page = await cas.newPage(browser);
 
-    await cas.gotoLogin(page, originalService);
+    await cas.gotoLogin(page);
     await cas.loginWith(page);
-    await cas.assertTicketParameter(page);
+    await cas.assertCookie(page);
+
+    await cas.logg("Creating the service definition directly in MongoDb, bypassing CAS");
+    const created = await runMongoCommand(`db.getCollection('${COLLECTION}').replaceOne({_id: 1}, {
+        _id: NumberLong(1), _class: 'org.apereo.cas.services.CasRegisteredService',
+        serviceId: '^https://localhost:9859/anything/original.*', name: 'Sample', evaluationOrder: 1}, {upsert: true}).acknowledged`);
+    assert(created.trim() === "true");
+
+    await verifyService(page, originalService, true);
     await verifyService(page, changedService, false);
 
     await cas.logg("Changing the service definition directly in MongoDb, bypassing CAS");

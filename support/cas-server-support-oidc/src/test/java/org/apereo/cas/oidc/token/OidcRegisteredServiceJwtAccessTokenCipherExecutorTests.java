@@ -5,6 +5,7 @@ import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.services.DefaultRegisteredServiceProperty;
 import org.apereo.cas.services.RegisteredServiceProperty.RegisteredServiceProperties;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
+import org.apereo.cas.token.cipher.RegisteredServiceJwtTicketCipherExecutor;
 import org.apereo.cas.util.EncodingUtils;
 import com.nimbusds.jwt.SignedJWT;
 import lombok.val;
@@ -55,6 +56,23 @@ class OidcRegisteredServiceJwtAccessTokenCipherExecutorTests extends AbstractOid
         val decoded = oidcRegisteredServiceJwtAccessTokenCipherExecutor.decode(encoded, Optional.of(service));
         assertNotNull(decoded);
         assertEquals(at.getId(), decoded);
+    }
+
+    @Test
+    void verifySharedCipherLeavesSigningHeadersUntouched() throws Throwable {
+        val service = getOidcRegisteredService(UUID.randomUUID().toString());
+        service.setJwksKeyId("EC");
+        service.setJwtAccessTokenSigningAlg(AlgorithmIdentifiers.ECDSA_USING_P521_CURVE_AND_SHA512);
+        service.setClientId(UUID.randomUUID().toString());
+
+        val executor = (RegisteredServiceJwtTicketCipherExecutor) oidcRegisteredServiceJwtAccessTokenCipherExecutor;
+        val at = getAccessToken(service.getClientId());
+        val encoded = executor.encode(at.getId(), Optional.of(service));
+        val cipher = executor.getTokenTicketCipherExecutorForService(service);
+        assertSame(cipher, executor.getTokenTicketCipherExecutorForService(service));
+        assertTrue(cipher.getSigningOpHeaders().isEmpty());
+        assertEquals("EC", SignedJWT.parse(encoded).getHeader().getKeyID());
+        assertEquals(at.getId(), executor.decode(encoded, Optional.of(service)));
     }
 
     @Test

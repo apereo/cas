@@ -465,6 +465,9 @@ authentication. See the [stateless ticket registry documentation](../ticketing/S
   waits for the metadata to be fetched, parsed and validated. The current metadata stays in use until the reload completes.
 - {: .changed} The [SAML2 identity provider](../authentication/Configuring-SAML2-Authentication.html) builds the resolver that
   locates its signing credentials once instead of for every signed response or assertion.
+- {: .changed data-area="oidc"} JWT access tokens, JWT response modes and other tokens signed or encrypted with keys defined
+  per application now reuse the prepared signing and encryption keys instead of parsing them again for every token issued
+  or read; a changed application definition or a rotated key is picked up the first time it is used.
 - {: .changed data-area="project"} Almost all CAS unit tests are internally reworked to allow maximum parallelization and speed up the overall test execution time.
 - {: .fixed} [Delegated authentication](../integration/Delegate-Authentication.html) no longer fails intermittently when concurrent requests reach an identity provider that is still being initialized, typically right after startup. Such requests now wait for the initialization in progress instead of failing, which also affects [SAML2 identity providers](../integration/Delegate-Authentication-SAML2.html) when building SAML2 responses, metadata and logout requests.
 - {: .fixed} [WebAuthn](../mfa/FIDO2-WebAuthn-Authentication.html) registration and login pages no longer show a broken image when the device has no icon in its attestation metadata, and fall back to the credential nickname for the device name.

@@ -1091,9 +1091,10 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
   with no version check, so every read-modify-write invariant is last-writer-wins across nodes.
   (Still open.)
 - Scenario `mongodb-service-registry-change-stream` runs the service registry against the replica set
-  (`run-mongodb-server-clustered.sh`), with the scheduled reload an hour away, and changes and deletes a definition with
-  `mongosh` inside the container (`execFileSync`, no shell, so `$set` survives); a URL is only accepted or refused
-  afterwards if the change stream reloaded. The rest of this paragraph is about the ticket registry.
+  (`run-mongodb-server-clustered.sh`), with the scheduled reload an hour away, and creates, changes and deletes a definition
+  with `mongosh` inside the container (`execFileSync`, no shell, so `$set` survives); a URL is only accepted or refused
+  afterwards if the change stream reloaded. It does not initialize from JSON: the JSON registry would stay in the chain
+  and keep serving its own copy of the definition after Mongo changes. The rest of this paragraph is about the ticket registry.
 - Ticket registry puppeteer coverage is `mongodb-ticket-service-registry` only. It refreshes the context first, then
   clears sessions, logs in once and asserts exactly one ticket-granting ticket, the health indicator
   and the ticket-registry cleaner — so it exercises the refresh path but asserts nothing about what
