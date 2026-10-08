@@ -34,7 +34,6 @@ import org.springframework.data.mongodb.core.query.Update;
 @Slf4j
 @Monitorable
 public class MongoDbTicketRegistry extends AbstractTicketRegistry {
-    private static final String FIELD_NAME_DOCUMENT_ID = "_id";
 
     private final MongoOperations mongoTemplate;
 
@@ -123,10 +122,9 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public long deleteAll() {
-        val query = new Query(Criteria.where(MongoDbTicketDocument.FIELD_NAME_ID).exists(true));
         return getTicketCollectionNames(ticketCatalog.findAll().stream())
             .stream()
-            .mapToLong(collectionName -> mongoTemplate.remove(query, collectionName).getDeletedCount())
+            .mapToLong(collectionName -> mongoTemplate.remove(new Query(), MongoDbTicketDocument.class, collectionName).getDeletedCount())
             .sum();
     }
 
@@ -135,7 +133,7 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
         val query = buildTicketQuery(buildPrincipalCriteria(principalId));
         return getTicketCollectionNames(ticketCatalog.findAll().stream())
             .stream()
-            .mapToLong(collectionName -> mongoTemplate.remove(query, collectionName).getDeletedCount())
+            .mapToLong(collectionName -> mongoTemplate.remove(query, MongoDbTicketDocument.class, collectionName).getDeletedCount())
             .sum();
     }
 
@@ -163,7 +161,7 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
             .set(MongoDbTicketDocument.FIELD_NAME_PRINCIPAL, holder.getPrincipal())
             .set(MongoDbTicketDocument.FIELD_NAME_SERVICE, holder.getService())
             .set(MongoDbTicketDocument.FIELD_NAME_ATTRIBUTES, holder.getAttributes());
-        val result = mongoTemplate.updateFirst(query, update, collectionName);
+        val result = mongoTemplate.updateFirst(query, update, MongoDbTicketDocument.class, collectionName);
         LOGGER.debug("Updated ticket [{}] with result [{}]", ticket, result);
         return result.getMatchedCount() > 0 ? ticket : null;
     }
@@ -271,7 +269,7 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
         val metadata = ticketCatalog.find(ticketToDelete);
         val collectionName = getTicketCollectionInstanceByMetadata(Objects.requireNonNull(metadata));
         val query = new Query(Criteria.where(MongoDbTicketDocument.FIELD_NAME_ID).is(ticketId));
-        val res = mongoTemplate.remove(query, collectionName);
+        val res = mongoTemplate.remove(query, MongoDbTicketDocument.class, collectionName);
         LOGGER.debug("Deleted ticket [{}] with result [{}]", ticketToDelete.getId(), res);
         return res.getDeletedCount();
     }
@@ -296,8 +294,7 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
                     return includeTicketContent(query);
                 }
                 query.fields()
-                    .include(MongoDbTicketDocument.FIELD_NAME_ID, MongoDbTicketDocument.FIELD_NAME_PRINCIPAL)
-                    .exclude(FIELD_NAME_DOCUMENT_ID);
+                    .include(MongoDbTicketDocument.FIELD_NAME_ID, MongoDbTicketDocument.FIELD_NAME_PRINCIPAL);
                 return query;
             })) {
             val limitedDocumentStream = maxResults > 0 ? documentStream.limit(maxResults) : documentStream;
@@ -339,7 +336,7 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
         val deleted = ticketIdsByCollection.entrySet()
             .stream()
             .mapToLong(entry -> mongoTemplate.remove(new Query(Criteria.where(MongoDbTicketDocument.FIELD_NAME_ID).in(entry.getValue())),
-                entry.getKey()).getDeletedCount())
+                MongoDbTicketDocument.class, entry.getKey()).getDeletedCount())
             .sum();
         LOGGER.debug("Removed [{}] ticket(s) issued by [{}]", deleted, ticket.getId());
         return Math.toIntExact(deleted);
@@ -362,7 +359,7 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
     protected Query includeTicketContent(final Query query) {
         query.fields()
             .include(MongoDbTicketDocument.FIELD_NAME_JSON, MongoDbTicketDocument.FIELD_NAME_TYPE)
-            .exclude(FIELD_NAME_DOCUMENT_ID);
+            .exclude(MongoDbTicketDocument.FIELD_NAME_ID);
         return query;
     }
 

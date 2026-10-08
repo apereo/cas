@@ -27,11 +27,14 @@ import org.springframework.data.mongodb.core.index.IndexDefinition;
 @RequiredArgsConstructor
 public class MongoDbTicketRegistryFacilitator {
     /**
-     * Index name for ticket id.
+     * Index on the ticket id field that earlier versions stored next to a generated document id.
+     * The ticket id is the document id now, so this index is no longer created and is removed when found.
      * When/if changing index names, be sure to also update the field
      * documentation that lists all supported indexes.
      */
     private static final String INDEX_NAME_ID = "IDX_ID";
+
+    private static final String LEGACY_FIELD_NAME_ID = "ticketId";
     private static final String INDEX_NAME_PRINCIPAL = "IDX_PRINCIPAL";
     private static final String INDEX_NAME_EXPIRATION = "IDX_EXPIRATION";
     private static final String INDEX_NAME_SERVICE = "IDX_SERVICE";
@@ -59,6 +62,36 @@ public class MongoDbTicketRegistryFacilitator {
         LOGGER.info("Configured MongoDb Ticket Registry instance with available collections: [{}]", mongoTemplate.getCollectionNames());
     }
 
+    /**
+     * Convert documents written by earlier versions, which kept the ticket id in a {@code ticketId} field
+     * next to a generated {@code ObjectId}, so that the ticket id becomes the document id. Only documents
+     * whose id is an {@code ObjectId} are touched, so this is safe to run while the registry is in use
+     * and to run again after an interruption.
+     */
+    public void migrateTicketDocuments() {
+        getCollectionNames(ticketCatalog.findAll().stream())
+            .forEach(collectionName -> migrateLegacyDocuments(mongoTemplate.getCollection(collectionName)));
+    }
+
+    private static void migrateLegacyDocuments(final MongoCollection<Document> collection) {
+        val legacyDocuments = new Document(MongoDbTicketDocument.FIELD_NAME_ID, new Document("$type", "objectId"));
+        if (collection.find(legacyDocuments).projection(new Document(MongoDbTicketDocument.FIELD_NAME_ID, 1)).limit(1).first() == null) {
+            return;
+        }
+        val collectionName = collection.getNamespace().getCollectionName();
+        LOGGER.info("Converting ticket documents in [{}] to use the ticket id as the document id", collectionName);
+        collection.aggregate(List.of(
+            new Document("$match", new Document(legacyDocuments).append(LEGACY_FIELD_NAME_ID, new Document("$type", "string"))),
+            new Document("$set", new Document(MongoDbTicketDocument.FIELD_NAME_ID, "$" + LEGACY_FIELD_NAME_ID)),
+            new Document("$unset", LEGACY_FIELD_NAME_ID),
+            new Document("$merge", new Document("into", collectionName)
+                .append("on", MongoDbTicketDocument.FIELD_NAME_ID)
+                .append("whenMatched", "keepExisting")
+                .append("whenNotMatched", "insert")))).toCollection();
+        val converted = collection.deleteMany(legacyDocuments).getDeletedCount();
+        LOGGER.info("Converted [{}] ticket document(s) in [{}]", converted, collectionName);
+    }
+
     private static List<String> getCollectionNames(final Stream<TicketDefinition> definitions) {
         return definitions
             .map(definition -> definition.getProperties().getStorageName())
@@ -73,20 +106,13 @@ public class MongoDbTicketRegistryFacilitator {
         MongoDbConnectionFactory.createCollection(mongoTemplate, collectionName, properties.isDropCollection());
 
         val collection = mongoTemplate.getCollection(collectionName);
+        migrateLegacyDocuments(collection);
         if (properties.isUpdateIndexes()) {
             if (properties.isDropIndexes()) {
                 LOGGER.trace("Dropping existing indexes on collection [{}]...", collectionName);
                 MongoDbConnectionFactory.dropCollectionIndexes(collection);
             }
             val expectedIndexes = new ArrayList<IndexDefinition>();
-
-            if (properties.getIndexes().isEmpty() || properties.getIndexes().contains(INDEX_NAME_ID)) {
-                val ticketIdIndex = new Index()
-                    .named(INDEX_NAME_ID)
-                    .on(MongoDbTicketDocument.FIELD_NAME_ID, Sort.Direction.ASC)
-                    .unique();
-                expectedIndexes.add(ticketIdIndex);
-            }
 
             if (properties.getIndexes().isEmpty() || properties.getIndexes().contains(INDEX_NAME_PRINCIPAL)) {
                 val principalIdIndex = new Index()
@@ -117,7 +143,7 @@ public class MongoDbTicketRegistryFacilitator {
                 expectedIndexes.add(attributeIndex);
             }
 
-            val unusedIndexes = new ArrayList<String>();
+            val unusedIndexes = new ArrayList<>(List.of(INDEX_NAME_ID));
             if (!serviceCollection) {
                 unusedIndexes.add(INDEX_NAME_SERVICE);
             }

@@ -429,8 +429,10 @@ authentication. See the [stateless ticket registry documentation](../ticketing/S
   order instead of an arbitrary match.
 - The [MongoDB ticket registry](../ticketing/MongoDb-Ticket-Registry.html) reads only the stored ticket when fetching
   tickets, counts tickets from collection metadata instead of scanning collections, and removes the service tickets of a
-  ticket-granting ticket with one request per collection instead of reading each one back first. Its ticket identifier
-  index is now unique and is rebuilt once at startup when index updates are enabled. Only ticket-granting tickets store
+  ticket-granting ticket with one request per collection instead of reading each one back first. Ticket identifiers are
+  now stored as the document `_id`, which removes the separate `IDX_ID` index and makes duplicate identifiers impossible;
+  tickets stored by earlier versions are converted at startup, so all nodes sharing the registry should be upgraded
+  together. Only ticket-granting tickets store
   principal attributes and carry the attribute index, and only tickets linked to a service carry the service index, so
   issuing and validating a service ticket no longer writes an index entry per attribute value; indexes left on other
   collections by earlier versions are removed at startup.

@@ -149,9 +149,7 @@ class MongoDbTicketRegistryTests {
             val collectionName = ticketDefinition.getProperties().getStorageName();
             val indexes = mongoDbTicketRegistryTemplate.getCollection(collectionName).listIndexes().into(new ArrayList<>());
 
-            val idIndex = getIndexByName(indexes, "IDX_ID");
-            assertEquals(new Document(MongoDbTicketDocument.FIELD_NAME_ID, 1), idIndex.get("key"));
-            assertEquals(Boolean.TRUE, idIndex.get("unique"));
+            assertTrue(indexes.stream().noneMatch(index -> "IDX_ID".equals(index.getString("name"))));
 
             val expirationIndex = getIndexByName(indexes, "IDX_EXPIRATION");
             assertEquals(new Document(MongoDbTicketDocument.FIELD_NAME_EXPIRE_AT, 1), expirationIndex.get("key"));
@@ -407,11 +405,45 @@ class MongoDbTicketRegistryTests {
 
                     val indexNames = collection.listIndexes().map(index -> index.getString("name")).into(new HashSet<>());
                     assertFalse(indexNames.contains("IDX_ATTRIBUTES"));
+                    assertFalse(indexNames.contains("IDX_ID"));
                     assertTrue(indexNames.contains("IDX_SERVICE"));
                 } finally {
                     client.getDatabase(properties.getDatabaseName()).drop();
                 }
             }
+        }
+
+        /**
+         * Only this test writes documents in the shape earlier versions used, so concurrent tests cannot
+         * be affected by the conversion, which touches nothing else.
+         *
+         * @throws Throwable in case of failure
+         */
+        @RepeatedTest(1)
+        void verifyLegacyDocumentsAreMigrated() throws Throwable {
+            val ticketGrantingTicketId = TestTicketIdentifiers.generate().ticketGrantingTicketId();
+            getNewTicketRegistry().addTicket(new TicketGrantingTicketImpl(ticketGrantingTicketId,
+                CoreAuthenticationTestUtils.getAuthentication(UUID.randomUUID().toString()), NeverExpiresExpirationPolicy.INSTANCE));
+            val collectionName = ticketCatalog.findTicketDefinition(TicketGrantingTicket.class).orElseThrow().getProperties().getStorageName();
+            val collection = mongoDbTicketRegistryTemplate.getCollection(collectionName);
+            val storedId = getNewTicketRegistry().digestIdentifier(ticketGrantingTicketId);
+
+            val document = collection.find(new Document(MongoDbTicketDocument.FIELD_NAME_ID, storedId)).first();
+            assertNotNull(document);
+            collection.deleteOne(new Document(MongoDbTicketDocument.FIELD_NAME_ID, storedId));
+            document.remove(MongoDbTicketDocument.FIELD_NAME_ID);
+            document.put("ticketId", storedId);
+            collection.insertOne(document);
+            assertNull(getNewTicketRegistry().getTicket(ticketGrantingTicketId));
+
+            new MongoDbTicketRegistryFacilitator(ticketCatalog, mongoDbTicketRegistryTemplate,
+                new MongoDbTicketRegistryProperties()).migrateTicketDocuments();
+
+            assertNotNull(getNewTicketRegistry().getTicket(ticketGrantingTicketId, TicketGrantingTicket.class));
+            val migrated = collection.find(new Document(MongoDbTicketDocument.FIELD_NAME_ID, storedId)).first();
+            assertNotNull(migrated);
+            assertFalse(migrated.containsKey("ticketId"));
+            assertNull(collection.find(new Document("ticketId", storedId)).first());
         }
 
         private MongoDbTicketDocument findDocument(final Class<? extends Ticket> ticketType, final String ticketId) {
