@@ -4,14 +4,19 @@ import module java.base;
 import org.apereo.cas.authentication.principal.SimpleWebApplicationServiceImpl;
 import org.apereo.cas.services.BaseRegisteredService;
 import org.apereo.cas.services.CasRegisteredService;
+import org.apereo.cas.services.ResourceBasedServiceRegistry;
 import org.apereo.cas.services.ServiceRegistry;
 import org.apereo.cas.services.ServiceRegistryInitializer;
 import org.apereo.cas.services.ServicesManagerScheduledLoader;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.aop.SpringProxy;
+import org.springframework.aop.framework.Advised;
 import org.springframework.aot.hint.RuntimeHints;
 import org.springframework.aot.hint.predicate.RuntimeHintsPredicates;
+import org.springframework.beans.factory.DisposableBean;
+import org.springframework.core.DecoratingProxy;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -34,6 +39,8 @@ class CasCoreServicesRuntimeHintsTests {
         assertTrue(RuntimeHintsPredicates.resource().forResource("services/Simple-12345.json.ignore").test(hints));
         assertTrue(RuntimeHintsPredicates.proxies().forInterfaces(ServiceRegistryInitializer.class).test(hints));
         assertTrue(RuntimeHintsPredicates.proxies().forInterfaces(ServiceRegistry.class).test(hints));
+        assertTrue(RuntimeHintsPredicates.proxies().forInterfaces(ResourceBasedServiceRegistry.class,
+            DisposableBean.class, ServiceRegistry.class, SpringProxy.class, Advised.class, DecoratingProxy.class).test(hints));
 
         assertTrue(RuntimeHintsPredicates.reflection().onType(CasRegisteredService.class).test(hints));
         assertTrue(RuntimeHintsPredicates.reflection().onType(BaseRegisteredService.class).test(hints));

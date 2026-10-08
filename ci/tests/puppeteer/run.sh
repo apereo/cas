@@ -1469,7 +1469,9 @@ ${BUILD_SCRIPT:+ $BUILD_SCRIPT}${DAEMON:+ $DAEMON} \
     [ -n "${projectType}" ] && rm -f "$PWD"/cas.${projectType} >/dev/null 2>&1
     for ((c = 1; c <= ${instances:-1}; c++)); do
       [ -n "${projectType}" ] && rm -f "$PWD"/cas-instance-${c}.${projectType} >/dev/null 2>&1
-      rm -f "$PWD"/cas-instance-${c} >/dev/null 2>&1
+      if [[ "${NATIVE_BUILD}" != "true" || "${NATIVE_RUN}" == "true" ]]; then
+        rm -f "$PWD"/cas-instance-${c} >/dev/null 2>&1
+      fi
       rm -Rf "$PWD"/cas-instance-${c}-aot >/dev/null 2>&1
     done
     rm -f "${public_cert}" >/dev/null 2>&1

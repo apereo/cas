@@ -63,6 +63,7 @@ import org.apereo.cas.services.RegisteredServiceLogoutType;
 import org.apereo.cas.services.RegisteredServicePasswordlessPolicy;
 import org.apereo.cas.services.RegisteredServicePublicKeyImpl;
 import org.apereo.cas.services.RemoteEndpointServiceAccessStrategy;
+import org.apereo.cas.services.ResourceBasedServiceRegistry;
 import org.apereo.cas.services.RestfulRegisteredServiceAuthenticationPolicyCriteria;
 import org.apereo.cas.services.ReturnAllAttributeReleasePolicy;
 import org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy;
@@ -89,6 +90,7 @@ import lombok.val;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import org.springframework.aot.hint.RuntimeHints;
+import org.springframework.beans.factory.DisposableBean;
 
 /**
  * This is {@link CasCoreServicesRuntimeHints}.
@@ -110,6 +112,7 @@ public class CasCoreServicesRuntimeHints implements CasRuntimeHintsRegistrar {
             ServiceRegistryExecutionPlanConfigurer.class));
 
         registerSpringProxyHints(hints, ChainingServiceRegistry.class, ServiceRegistry.class);
+        registerSpringProxyHints(hints, ResourceBasedServiceRegistry.class, DisposableBean.class, ServiceRegistry.class);
         registerSerializableSpringProxyHints(hints, ServiceRegistryInitializerEventListener.class);
 
         registerSerializationHints(hints,

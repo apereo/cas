@@ -227,14 +227,22 @@ plugins.withId("org.graalvm.buildtools.native") {
                 buildArgs.add('-H:+ReportExceptionStackTraces')
                 buildArgs.add('-H:+InlineBeforeAnalysis')
                 buildArgs.add('-H:+TraceSecurityServices')
-                buildArgs.add('-H:+PrintAnalysisCallTree')
+                if (providers.systemProperty("nativeImagePrintAnalysisCallTree").getOrElse("false") == "true") {
+                    buildArgs.add('-H:+PrintAnalysisCallTree')
+                }
                 buildArgs.add('-H:+AddAllCharsets')
                 // HSQLDB initializes date formats with Locale.UK.
                 buildArgs.add('-H:IncludeLocales=en-GB')
                 buildArgs.add('-H:+ReportUnsupportedElementsAtRuntime')
 
-                buildArgs.add('-J-Xmx14G')
-                buildArgs.add('-J-Xms4G')
+                def nativeImageHeapSize = providers.systemProperty("nativeImageHeapSize")
+                    .getOrElse(CasBuildSettings.isCi(project) ? "10G" : "14G")
+                buildArgs.add("-J-Xmx${nativeImageHeapSize}")
+                buildArgs.add('-J-Xms1G')
+                def nativeImageParallelism = providers.systemProperty("nativeImageParallelism").getOrNull()
+                if (nativeImageParallelism != null) {
+                    buildArgs.add("--parallelism=${nativeImageParallelism}")
+                }
                 buildArgs.add('--native-image-info')
                 buildArgs.add('--enable-sbom')
                 buildArgs.add('--emit build-report')

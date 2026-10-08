@@ -19,10 +19,12 @@ import static org.junit.jupiter.api.Assertions.*;
 class CasCoreConfigurationRuntimeHintsTests {
 
     @Test
-    void verifyHints() {
+    void verifyHints() throws Exception {
         val hints = new RuntimeHints();
         new CasCoreConfigurationRuntimeHints().registerHints(hints, getClass().getClassLoader());
         assertTrue(RuntimeHintsPredicates.reflection().onType(CustomLoginFieldViewProperties.class).test(hints));
+        val context = Class.forName("org.springframework.boot.context.properties.bind.Binder$Context");
+        assertTrue(RuntimeHintsPredicates.reflection().onFieldAccess(context.getDeclaredField("dataObjectBindings")).test(hints));
     }
 }
 
