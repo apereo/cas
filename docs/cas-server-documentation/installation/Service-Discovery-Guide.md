@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Service Discovery
+description: "Register CAS nodes with service discovery servers such as Eureka or Consul for load balancing and failover."
 category: High Availability
 ---
 {% include variables.html %}

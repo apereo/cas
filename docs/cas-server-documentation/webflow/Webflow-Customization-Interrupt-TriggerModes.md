@@ -1,6 +1,7 @@
 ---
 layout: default
-title: CAS - Authentication Interrupt
+title: CAS - Authentication Interrupts Trigger Modes
+description: "Choose when authentication interrupts run: after authentication or after single sign-on."
 category: Webflow Management
 ---
 

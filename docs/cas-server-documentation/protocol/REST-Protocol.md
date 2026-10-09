@@ -1,6 +1,7 @@
 ---
 layout: default
-title: CAS - CAS REST Protocol
+title: CAS - REST Protocol
+description: "The CAS REST protocol for obtaining ticket-granting and service tickets programmatically, validating tickets and logging out."
 category: Protocols
 ---
 

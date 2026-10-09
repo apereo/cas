@@ -3,8 +3,12 @@ package org.apereo.cas.oidc.web.controllers.dynareg;
 import module java.base;
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.oidc.OidcConstants;
+import org.apereo.cas.oidc.dynareg.OidcClientRegistrationRequest;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeyStoreUtils;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeyUsage;
+import org.apereo.cas.ticket.Ticket;
+import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
+import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.MockWebServer;
 import lombok.val;
 import org.jose4j.jwk.JsonWebKey;
@@ -17,7 +21,11 @@ import org.junit.jupiter.api.parallel.Resources;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.TestPropertySource;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -290,6 +298,26 @@ class OidcDynamicClientRegistrationEndpointControllerTests {
                     .with(withHttpRequestProcessor())
                     .content("{}"))
                 .andExpect(status().isUnauthorized());
+        }
+
+        @Test
+        void verifyRegistrationAccessTokenIsTheStoredToken() throws Throwable {
+            val registeredService = getOidcRegisteredService(UUID.randomUUID().toString());
+            servicesManager.save(registeredService);
+            val storedToken = getAccessToken(registeredService.getClientId(), Set.of(OidcConstants.CLIENT_CONFIGURATION_SCOPE));
+            when(storedToken.isStateless()).thenReturn(true);
+            val resolvedToken = getAccessToken(registeredService.getClientId(), Set.of(OidcConstants.CLIENT_CONFIGURATION_SCOPE));
+            val registry = mock(TicketRegistry.class);
+            when(registry.addTicket(any(Ticket.class))).thenReturn(storedToken);
+            when(registry.getTicket(storedToken.getId(), OAuth20AccessToken.class)).thenReturn(resolvedToken);
+            val context = spy(oidcConfigurationContext);
+            when(context.getTicketRegistry()).thenReturn(registry);
+
+            val controller = new OidcDynamicClientRegistrationEndpointController(context);
+            val accessToken = controller.generateRegistrationAccessToken(new MockHttpServletRequest(),
+                new MockHttpServletResponse(), registeredService, new OidcClientRegistrationRequest());
+            assertSame(resolvedToken, accessToken);
+            verify(registry).getTicket(storedToken.getId(), OAuth20AccessToken.class);
         }
     }
 }

@@ -2,8 +2,8 @@ package org.apereo.cas.gauth.credential;
 
 import module java.base;
 import org.apereo.cas.authentication.OneTimeTokenAccount;
+import org.apereo.cas.configuration.model.support.dynamodb.AbstractDynamoDbProperties;
 import org.apereo.cas.configuration.model.support.mfa.gauth.DynamoDbGoogleAuthenticatorMultifactorProperties;
-import org.apereo.cas.dynamodb.DynamoDbQueryBuilder;
 import org.apereo.cas.dynamodb.DynamoDbTableUtils;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.DateTimeUtils;
@@ -12,15 +12,25 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jspecify.annotations.Nullable;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 import software.amazon.awssdk.services.dynamodb.model.AttributeDefinition;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
-import software.amazon.awssdk.services.dynamodb.model.ComparisonOperator;
 import software.amazon.awssdk.services.dynamodb.model.DeleteItemRequest;
+import software.amazon.awssdk.services.dynamodb.model.GetItemRequest;
+import software.amazon.awssdk.services.dynamodb.model.GlobalSecondaryIndex;
 import software.amazon.awssdk.services.dynamodb.model.KeySchemaElement;
 import software.amazon.awssdk.services.dynamodb.model.KeyType;
+import software.amazon.awssdk.services.dynamodb.model.Projection;
+import software.amazon.awssdk.services.dynamodb.model.ProjectionType;
+import software.amazon.awssdk.services.dynamodb.model.ProvisionedThroughput;
 import software.amazon.awssdk.services.dynamodb.model.PutItemRequest;
+import software.amazon.awssdk.services.dynamodb.model.QueryRequest;
+import software.amazon.awssdk.services.dynamodb.model.QueryResponse;
 import software.amazon.awssdk.services.dynamodb.model.ScalarAttributeType;
+import software.amazon.awssdk.services.dynamodb.model.ScanRequest;
+import software.amazon.awssdk.services.dynamodb.model.ScanResponse;
+import software.amazon.awssdk.services.dynamodb.model.Select;
 
 /**
  * This is {@link DynamoDbGoogleAuthenticatorTokenCredentialRepositoryFacilitator}.
@@ -31,6 +41,15 @@ import software.amazon.awssdk.services.dynamodb.model.ScalarAttributeType;
 @RequiredArgsConstructor
 @Slf4j
 public class DynamoDbGoogleAuthenticatorTokenCredentialRepositoryFacilitator {
+    /**
+     * Global secondary index on the user id column. Lookups by user query this index instead of scanning the table.
+     */
+    public static final String USERID_INDEX_NAME = "useridIndex";
+
+    private static final String EXPRESSION_NAME_USERID = "#userid";
+
+    private static final String EXPRESSION_VALUE_USERID = ":userid";
+
     private final DynamoDbGoogleAuthenticatorMultifactorProperties dynamoDbProperties;
 
     private final DynamoDbClient amazonDynamoDBClient;
@@ -97,62 +116,45 @@ public class DynamoDbGoogleAuthenticatorTokenCredentialRepositoryFacilitator {
     }
 
     /**
-     * Find.
+     * Find the record by its identifier, which is the table's hash key, with a single {@code GetItem}.
      *
      * @param id the id
-     * @return the one time token account
+     * @return the one time token account, or null when there is none
      */
-    public OneTimeTokenAccount find(final long id) {
-        val query =
-            List.of(
-                DynamoDbQueryBuilder.builder()
-                    .key(ColumnNames.ID.getColumnName())
-                    .attributeValue(List.of(AttributeValue.builder().n(String.valueOf(id)).build()))
-                    .operator(ComparisonOperator.EQ)
-                    .build());
-        val results = getRecordsByKeys(query);
-        return results.isEmpty() ? null : results.iterator().next();
+    public @Nullable OneTimeTokenAccount find(final long id) {
+        val request = GetItemRequest.builder()
+            .tableName(dynamoDbProperties.getTableName())
+            .key(keyOf(id))
+            .build();
+        val response = amazonDynamoDBClient.getItem(request);
+        return response.hasItem() ? extractAttributeValuesFrom(response.item()) : null;
     }
 
     /**
-     * Find.
+     * Find the record by its identifier and return it only when it belongs to the given user.
      *
      * @param uid the username
      * @param id  the id
-     * @return the one time token account
+     * @return the one time token account, or null when the user has no such record
      */
-    public OneTimeTokenAccount find(final String uid, final long id) {
-        val query =
-            List.of(
-                DynamoDbQueryBuilder.builder()
-                    .key(ColumnNames.USERID.getColumnName())
-                    .attributeValue(List.of(AttributeValue.builder().s(uid.toLowerCase(Locale.ENGLISH)).build()))
-                    .operator(ComparisonOperator.EQ)
-                    .build(),
-                DynamoDbQueryBuilder.builder()
-                    .key(ColumnNames.ID.getColumnName())
-                    .attributeValue(List.of(AttributeValue.builder().n(String.valueOf(id)).build()))
-                    .operator(ComparisonOperator.EQ)
-                    .build());
-        val results = getRecordsByKeys(query);
-        return results.isEmpty() ? null : results.iterator().next();
+    public @Nullable OneTimeTokenAccount find(final String uid, final long id) {
+        return Optional.ofNullable(find(id))
+            .filter(account -> account.getUsername().equals(normalizeUsername(uid)))
+            .orElse(null);
     }
 
     /**
-     * Find.
+     * Find the user's records by querying the user id index.
      *
      * @param username the username
      * @return the list
      */
     public Collection<? extends OneTimeTokenAccount> find(final String username) {
-        val query =
-            List.of(
-                DynamoDbQueryBuilder.builder()
-                    .key(ColumnNames.USERID.getColumnName())
-                    .attributeValue(List.of(AttributeValue.builder().s(username.toLowerCase(Locale.ENGLISH)).build()))
-                    .operator(ComparisonOperator.EQ)
-                    .build());
-        return getRecordsByKeys(query);
+        return amazonDynamoDBClient.queryPaginator(buildUserQuery(username).build())
+            .items()
+            .stream()
+            .map(DynamoDbGoogleAuthenticatorTokenCredentialRepositoryFacilitator::extractAttributeValuesFrom)
+            .collect(Collectors.toList());
     }
 
     /**
@@ -161,7 +163,9 @@ public class DynamoDbGoogleAuthenticatorTokenCredentialRepositoryFacilitator {
      * @return the list
      */
     public Collection<? extends OneTimeTokenAccount> findAll() {
-        return getRecordsByKeys(List.of());
+        return DynamoDbTableUtils.getRecordsByKeys(amazonDynamoDBClient, dynamoDbProperties.getTableName(),
+                List.of(), DynamoDbGoogleAuthenticatorTokenCredentialRepositoryFacilitator::extractAttributeValuesFrom)
+            .collect(Collectors.toSet());
     }
 
     /**
@@ -185,29 +189,12 @@ public class DynamoDbGoogleAuthenticatorTokenCredentialRepositoryFacilitator {
     }
 
     /**
-     * Remove.
+     * Remove the user's records, found through the user id index, one by one by key.
      *
      * @param username the username
      */
     public void remove(final String username) {
-        val query = List.of(
-            DynamoDbQueryBuilder.builder()
-                .key(ColumnNames.USERID.getColumnName())
-                .attributeValue(List.of(AttributeValue.builder().s(username.toLowerCase(Locale.ENGLISH)).build()))
-                .operator(ComparisonOperator.EQ)
-                .build());
-        val records = getRecordsByKeys(query);
-
-        records.forEach(record -> {
-            val del = DeleteItemRequest.builder()
-                .tableName(dynamoDbProperties.getTableName())
-                .key(CollectionUtils.wrap(
-                    ColumnNames.ID.getColumnName(), AttributeValue.builder().n(String.valueOf(record.getId())).build()))
-                .build();
-            LOGGER.debug("Submitting delete request [{}] for [{}]", del, record.getId());
-            val res = amazonDynamoDBClient.deleteItem(del);
-            LOGGER.debug("Delete request came back with result [{}]", res);
-        });
+        find(username).forEach(record -> remove(record.getId()));
     }
 
     /**
@@ -219,8 +206,7 @@ public class DynamoDbGoogleAuthenticatorTokenCredentialRepositoryFacilitator {
     public void remove(final long id) {
         val del = DeleteItemRequest.builder()
             .tableName(dynamoDbProperties.getTableName())
-            .key(CollectionUtils.wrap(
-                ColumnNames.ID.getColumnName(), AttributeValue.builder().n(String.valueOf(id)).build()))
+            .key(keyOf(id))
             .build();
         LOGGER.debug("Submitting delete request [{}] for [{}]", del, id);
         val res = amazonDynamoDBClient.deleteItem(del);
@@ -228,38 +214,54 @@ public class DynamoDbGoogleAuthenticatorTokenCredentialRepositoryFacilitator {
     }
 
     /**
-     * Count.
+     * Count all records. The table is scanned for a count only, so no record is read back.
      *
      * @return the long
      */
     public long count() {
-        return findAll().size();
+        val request = ScanRequest.builder()
+            .tableName(dynamoDbProperties.getTableName())
+            .select(Select.COUNT)
+            .build();
+        return amazonDynamoDBClient.scanPaginator(request)
+            .stream()
+            .mapToLong(ScanResponse::count)
+            .sum();
     }
 
     /**
-     * Count.
+     * Count the user's records by querying the user id index for a count only.
      *
      * @param username the username
      * @return the long
      */
     public long count(final String username) {
-        return find(username).size();
+        return amazonDynamoDBClient.queryPaginator(buildUserQuery(username).select(Select.COUNT).build())
+            .stream()
+            .mapToLong(QueryResponse::count)
+            .sum();
     }
 
     /**
-     * Create table.
+     * Create the table keyed by the record id, with a global secondary index on the user id.
+     * When the table already exists without the index, the index is added to it.
      *
      * @param deleteTables delete existing tables
      */
     public void createTable(final boolean deleteTables) {
         FunctionUtils.doUnchecked(_ -> DynamoDbTableUtils.createTable(amazonDynamoDBClient, dynamoDbProperties,
             dynamoDbProperties.getTableName(), deleteTables,
-            List.of(AttributeDefinition.builder()
-                .attributeName(ColumnNames.ID.getColumnName())
-                .attributeType(ScalarAttributeType.N).build()),
+            List.of(
+                AttributeDefinition.builder()
+                    .attributeName(ColumnNames.ID.getColumnName())
+                    .attributeType(ScalarAttributeType.N).build(),
+                AttributeDefinition.builder()
+                    .attributeName(ColumnNames.USERID.getColumnName())
+                    .attributeType(ScalarAttributeType.S).build()),
             List.of(KeySchemaElement.builder()
                 .attributeName(ColumnNames.ID.getColumnName())
-                .keyType(KeyType.HASH).build())));
+                .keyType(KeyType.HASH).build()),
+            List.of(buildUserIdIndex())));
     }
 
     /**
@@ -312,9 +314,37 @@ public class DynamoDbGoogleAuthenticatorTokenCredentialRepositoryFacilitator {
         private final String columnName;
     }
 
-    private Collection<? extends OneTimeTokenAccount> getRecordsByKeys(final List<? extends DynamoDbQueryBuilder> queries) {
-        return DynamoDbTableUtils.getRecordsByKeys(amazonDynamoDBClient, dynamoDbProperties.getTableName(),
-                queries, DynamoDbGoogleAuthenticatorTokenCredentialRepositoryFacilitator::extractAttributeValuesFrom)
-            .collect(Collectors.toSet());
+    private static String normalizeUsername(final String username) {
+        return username.trim().toLowerCase(Locale.ENGLISH);
+    }
+
+    private static Map<String, AttributeValue> keyOf(final long id) {
+        return CollectionUtils.wrap(ColumnNames.ID.getColumnName(), AttributeValue.builder().n(String.valueOf(id)).build());
+    }
+
+    private QueryRequest.Builder buildUserQuery(final String username) {
+        return QueryRequest.builder()
+            .tableName(dynamoDbProperties.getTableName())
+            .indexName(USERID_INDEX_NAME)
+            .keyConditionExpression(EXPRESSION_NAME_USERID + " = " + EXPRESSION_VALUE_USERID)
+            .expressionAttributeNames(Map.of(EXPRESSION_NAME_USERID, ColumnNames.USERID.getColumnName()))
+            .expressionAttributeValues(Map.of(EXPRESSION_VALUE_USERID, AttributeValue.builder().s(normalizeUsername(username)).build()));
+    }
+
+    private GlobalSecondaryIndex buildUserIdIndex() {
+        val indexBuilder = GlobalSecondaryIndex.builder()
+            .indexName(USERID_INDEX_NAME)
+            .keySchema(KeySchemaElement.builder()
+                .attributeName(ColumnNames.USERID.getColumnName())
+                .keyType(KeyType.HASH)
+                .build())
+            .projection(Projection.builder().projectionType(ProjectionType.ALL).build());
+        if (dynamoDbProperties.getBillingMode() == AbstractDynamoDbProperties.BillingMode.PROVISIONED) {
+            indexBuilder.provisionedThroughput(ProvisionedThroughput.builder()
+                .readCapacityUnits(dynamoDbProperties.getReadCapacity())
+                .writeCapacityUnits(dynamoDbProperties.getWriteCapacity())
+                .build());
+        }
+        return indexBuilder.build();
     }
 }

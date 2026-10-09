@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Configuring Service HTTP Security Headers
+description: "Turn security-related HTTP response headers on or off for individual registered applications."
 category: Services
 ---
 

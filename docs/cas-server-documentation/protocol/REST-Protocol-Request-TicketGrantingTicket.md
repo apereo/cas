@@ -1,6 +1,6 @@
 ---
 layout: default
-title: CAS - CAS REST Protocol
+title: CAS - Ticket-Granting Ticket REST Protocol
 category: Protocols
 ---
 

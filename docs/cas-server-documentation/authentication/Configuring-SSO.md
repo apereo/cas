@@ -1,6 +1,7 @@
 ---
 layout: default
-title: CAS - Configuring SSO Sessions
+title: CAS - SSO Sessions
+description: "The CAS single sign-on session and its ticket-granting cookie: cookie settings, encryption and how SSO participation is controlled."
 category: SSO & SLO
 ---
 {% include variables.html %}

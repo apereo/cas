@@ -107,14 +107,12 @@ if (CasProjectConventions.shouldBePublished(project)) {
 
 tasks.named('assemble') {
     if (publishFlag && !publishMinimalArtifacts) {
-        dependsOn(sourcesJar, javadocJar, resourcesJar, testJar)
-    } else {
-        dependsOn(testJar)
+        dependsOn('sourcesJar', 'javadocJar', 'resourcesJar', 'testJar')
     }
 }
 
 artifacts {
-    tests testJar
+    tests tasks.named('testJar')
 }
 
 sourceSets {

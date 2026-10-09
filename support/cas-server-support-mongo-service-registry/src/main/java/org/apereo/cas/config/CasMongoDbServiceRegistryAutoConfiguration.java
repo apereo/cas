@@ -6,9 +6,11 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.mongo.MongoDbConnectionFactory;
 import org.apereo.cas.services.MongoDbServiceRegistry;
+import org.apereo.cas.services.MongoDbServiceRegistryChangeStreamWatcher;
 import org.apereo.cas.services.ServiceRegistry;
 import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
 import org.apereo.cas.services.ServiceRegistryListener;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import lombok.val;
 import org.springframework.beans.factory.InitializingBean;
@@ -20,6 +22,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.data.domain.Sort;
@@ -93,5 +96,20 @@ public class CasMongoDbServiceRegistryAutoConfiguration {
         @Qualifier("mongoDbServiceRegistry")
         final ServiceRegistry mongoDbServiceRegistry) {
         return plan -> plan.registerServiceRegistry(mongoDbServiceRegistry);
+    }
+
+    @Configuration(value = "MongoDbServiceRegistryChangeStreamConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    static class MongoDbServiceRegistryChangeStreamConfiguration {
+        @Bean
+        @ConditionalOnMissingBean(name = "mongoDbServiceRegistryChangeStreamWatcher")
+        public MongoDbServiceRegistryChangeStreamWatcher mongoDbServiceRegistryChangeStreamWatcher(
+            @Qualifier("mongoDbServiceRegistryTemplate")
+            final ObjectProvider<MongoOperations> mongoDbServiceRegistryTemplate,
+            @Qualifier(ServicesManager.BEAN_NAME)
+            final ObjectProvider<ServicesManager> servicesManager,
+            final CasConfigurationProperties casProperties) {
+            return new MongoDbServiceRegistryChangeStreamWatcher(mongoDbServiceRegistryTemplate, servicesManager, casProperties);
+        }
     }
 }

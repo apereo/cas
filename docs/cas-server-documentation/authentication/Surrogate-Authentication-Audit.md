@@ -1,6 +1,7 @@
 ---
 layout: default
-title: CAS - Surrogate Authentication
+title: CAS - Audits - Surrogate Authentication
+description: "Audit records and email or SMS notifications for impersonation events."
 category: Authentication
 ---
 {% include variables.html %}

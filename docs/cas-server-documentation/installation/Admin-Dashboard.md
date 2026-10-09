@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Admin Console
+description: "Palantir, the CAS admin dashboard, for managing registered services, inspecting sessions and tickets and operating the server from the browser."
 category: Installation
 ---
 

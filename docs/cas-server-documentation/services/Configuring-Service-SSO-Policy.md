@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Configuring Service SSO Policy
+description: "Per-application single sign-on policies that disable SSO participation or control SSO cookie creation."
 category: Services
 ---
 

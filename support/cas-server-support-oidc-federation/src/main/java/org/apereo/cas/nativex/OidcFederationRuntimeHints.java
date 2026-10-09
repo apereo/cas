@@ -2,6 +2,7 @@ package org.apereo.cas.nativex;
 
 import module java.base;
 import org.apereo.cas.CentralAuthenticationService;
+import org.apereo.cas.oidc.federation.subordinate.OidcFederationSubordinate;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeyCacheKey;
 import org.apereo.cas.oidc.jwks.generator.OidcJsonWebKeystoreEntity;
 import org.apereo.cas.oidc.jwks.generator.OidcJsonWebKeystoreGeneratorService;
@@ -26,6 +27,7 @@ public class OidcFederationRuntimeHints implements CasRuntimeHintsRegistrar {
             OidcJsonWebKeystoreEntity.class
         ));
         registerReflectionHints(hints, List.of(
+            OidcFederationSubordinate.class,
             OidcJsonWebKeystoreEntity.class,
             OidcJsonWebKeystoreGeneratorService.class
         ));

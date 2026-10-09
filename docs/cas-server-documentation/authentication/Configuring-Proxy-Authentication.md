@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Proxy Authentication
+description: "Proxy authentication with the CAS protocol: how applications obtain proxy-granting tickets and proxy tickets for back-end services."
 category: Authentication
 ---
 {% include variables.html %}

@@ -1,6 +1,7 @@
 ---
 layout: default
-title: CAS - Web Flow Customization
+title: CAS - Webflow Session
+description: "Where CAS keeps login webflow state: client-side encrypted sessions or server-side sessions in a shared store."
 category: Webflow Management
 ---
 

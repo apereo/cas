@@ -1,12 +1,14 @@
 ---
 layout: default
-title: CAS - Web Flow Acceptable Usage Policy
+title: CAS - Custom Acceptable Usage Policy
 category: Acceptable Usage Policy
 ---
 
 {% include variables.html %}
 
 # Custom Acceptable Usage Policy
+
+Keep acceptable usage policy acceptance in your own store by registering a custom `AcceptableUsagePolicyRepository` with CAS.
 
 If you wish to design your own storage mechanism, you may follow the below approach:
 

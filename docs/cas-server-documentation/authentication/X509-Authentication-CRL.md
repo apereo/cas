@@ -1,6 +1,6 @@
 ---
 layout: default
-title: CAS - X.509 Authentication
+title: CAS - X.509 Authentication - X509 CRL Fetching / Revocation
 category: Authentication
 ---
 {% include variables.html %}

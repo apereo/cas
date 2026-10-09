@@ -1,6 +1,6 @@
 ---
 layout: default
-title: CAS - Servlet Container
+title: CAS - Apache Tomcat - Embedded Servlet Container Clustering
 category: Installation
 ---
 {% include variables.html %}

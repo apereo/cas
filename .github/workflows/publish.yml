@@ -70,6 +70,7 @@ jobs:
         uses: gradle/actions/setup-gradle@v6
         with:
           gradle-home-cache-excludes: caches/build-cache-1
+          cache-encryption-key: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
       - name: Initialize
         run: ls ./ci && find ./ci -type f -name "*.sh" -exec chmod +x "{}" \; && ./ci/init-build.sh
         
@@ -95,6 +96,7 @@ jobs:
          uses: gradle/actions/setup-gradle@v6
          with:
            gradle-home-cache-excludes: caches/build-cache-1
+           cache-encryption-key: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
        - name: Initialize
          run: find ./ci -type f -name "*.sh" -exec chmod +x "{}" \; && ./ci/init-build.sh
        - name: Publish SNAPSHOTs
@@ -136,6 +138,7 @@ jobs:
         uses: gradle/actions/setup-gradle@v6
         with:
           gradle-home-cache-excludes: caches/build-cache-1
+          cache-encryption-key: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
       - name: Initialize
         run: find ./ci -type f -name "*.sh" -exec chmod +x "{}" \; && ./ci/init-build.sh
       - name: Install MongoDB tools
@@ -149,7 +152,7 @@ jobs:
       - name: Build Modules Metadata
         run: |
           ./gradlew generateProjectModulesMetadata  \
-              --build-cache --quiet --configure-on-demand --no-daemon \
+              --build-cache --quiet --configure-on-demand \
               --parallel -x test -x javadoc -x check
       - name: Prepare DNS
         run: |
@@ -163,5 +166,5 @@ jobs:
         if: ${{ env.CAS_MODULE_METADATA_MONGODB_URL != null }}
         run: |
           ./gradlew publishProjectModulesMetadata \
-              --build-cache --quiet --configure-on-demand --no-daemon \
+              --build-cache --quiet --configure-on-demand \
               --parallel -x test -x javadoc -x check

@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Configuring Service Expiration Policy
+description: "Give a registered application an expiration date after which CAS disables or removes it and notifies its contacts."
 category: Services
 ---
 

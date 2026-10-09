@@ -1,6 +1,6 @@
 ---
 layout: default
-title: CAS - Attribute Release Policies
+title: CAS - Attribute Release Policy - External Groovy
 category: Attributes
 ---
 

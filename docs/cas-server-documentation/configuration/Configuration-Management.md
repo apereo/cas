@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Configuration Management
+description: "How CAS loads, overrides and manages its configuration across environments and nodes, built on Spring Boot and Spring Cloud."
 category: Configuration
 ---
 

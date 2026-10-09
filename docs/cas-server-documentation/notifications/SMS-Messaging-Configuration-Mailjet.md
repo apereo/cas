@@ -1,12 +1,14 @@
 ---
 layout: default
-title: CAS - SMS Messaging
+title: CAS - Mailjet SMS Messaging
 category: Notifications
 ---
 
 {% include variables.html %}
 
 # Mailjet SMS Messaging
+
+Send SMS messages from CAS through Mailjet.
 
 To learn more, [Mailjet](https://www.mailjet.com/). The CAS integration with Mailjet to support SMS messages
 and phone calls via dedicated configuration settings.

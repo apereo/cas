@@ -1,6 +1,7 @@
 ---
 layout: default
-title: CAS - Surrogate Authentication
+title: CAS - Account Selection - Surrogate Authentication
+description: "How an impersonating user chooses the surrogate account, with a login syntax or a selection screen."
 category: Authentication
 ---
 {% include variables.html %}

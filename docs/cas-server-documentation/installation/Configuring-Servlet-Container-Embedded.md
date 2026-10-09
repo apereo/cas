@@ -1,6 +1,6 @@
 ---
 layout: default
-title: CAS - Servlet Container
+title: CAS - Embedded Servlet Container
 category: Installation
 ---
 {% include variables.html %}

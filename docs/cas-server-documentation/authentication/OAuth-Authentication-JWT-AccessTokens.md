@@ -1,6 +1,6 @@
 ---
 layout: default
-title: CAS - OAuth Authentication
+title: CAS - OAuth Authentication - JWT Access Tokens
 category: Authentication
 ---
 {% include variables.html %}

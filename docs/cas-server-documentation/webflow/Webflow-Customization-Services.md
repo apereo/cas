@@ -1,6 +1,7 @@
 ---
 layout: default
-title: CAS - Webflow Customization
+title: CAS - Webflow Single Sign-on & Services
+description: "Control what CAS does when users log in without naming an application: a generic success page or a message instead of a login form."
 category: Webflow Management
 ---
 

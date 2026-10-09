@@ -1,6 +1,7 @@
 ---
 layout: default
-title: CAS - Surrogate Authentication
+title: CAS - Principal Resolution - Surrogate Authentication
+description: "Resolve the surrogate user's principal and attributes during impersonation."
 category: Authentication
 ---
 {% include variables.html %}

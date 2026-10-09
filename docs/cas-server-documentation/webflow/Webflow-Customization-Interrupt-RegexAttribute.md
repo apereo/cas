@@ -1,6 +1,6 @@
 ---
 layout: default
-title: CAS - Authentication Interrupt
+title: CAS - Regex Attribute Authentication Interrupt
 category: Webflow Management
 ---
 

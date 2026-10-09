@@ -1,11 +1,13 @@
 ---
 layout: default
-title: CAS - Audit Configuration
+title: CAS - DynamoDb Audits
 category: Logs & Audits
 ---
 {% include variables.html %}
 
 # DynamoDb Audits
+
+Store the CAS audit trail in an Amazon DynamoDB table, so audit records from every node end up in one durable place.
 
 If you intend to use a DynamoDb database for auditing functionality, enable the following module in your configuration:
 

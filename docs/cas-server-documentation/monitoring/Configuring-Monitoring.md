@@ -1,6 +1,7 @@
 ---
 layout: default
-title: CAS - Monitoring
+title: CAS - CAS Monitoring
+description: "Health indicators that report the status of the ticket registry, LDAP, databases, caches and other systems CAS depends on."
 category: Monitoring & Statistics
 ---
 

@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - JavaMelody Monitoring
+description: "JavaMelody monitoring for CAS. Support has been dropped; consider the alternatives listed on this page."
 category: Monitoring & Statistics
 ---
 

@@ -1,6 +1,6 @@
 ---
 layout: default
-title: CAS - Configuration Server
+title: CAS - Spring Cloud Configuration Server - Spring Cloud HashiCorp Vault
 category: Configuration
 ---
 
@@ -34,7 +34,7 @@ thirdPartyExactMatch="spring.cloud.vault.authentication"
 ## AppID Authentication
 
 Vault supports AppId authentication that consists of two hard to guess
-tokens. The AppId defaults to `spring.application.name` that is statically
+tokens. The AppId defaults to `spring.application.name`{: .cas-setting} that is statically
 configured. The second token is the UserId which is a part determined by the
 application, usually related to the runtime environment. Spring Cloud Vault
 Config supports IP address, Mac address and static

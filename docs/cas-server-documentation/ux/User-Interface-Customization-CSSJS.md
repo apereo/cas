@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CSS & JavaScript - User Interface Customization - CAS
+description: "Customize the CSS and JavaScript of the CAS user interface."
 category: User Interface
 ---
 
@@ -29,7 +30,7 @@ Please note that,
 
 CSS media queries bring responsive design features to CAS which would allow the adopter to focus 
 on one theme for all appropriate devices and platforms. These queries are defined in the 
-same `cas.css` file. They follow the Twitter Bootstrap breakpoints and grid.
+same `cas.css` file. They follow the Bootstrap breakpoints and grid.
 
 # JavaScript
 

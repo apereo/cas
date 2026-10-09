@@ -1,12 +1,14 @@
 ---
 layout: default
-title: CAS - Attribute Release Consent
+title: CAS - DynamoDb - Attribute Consent Storage
 category: Attributes
 ---
 
 {% include variables.html %}
 
 # DynamoDb - Attribute Consent Storage
+
+Keep the attribute consent decisions users make in an Amazon DynamoDB table.
 
 Support is enabled by including the following module in the WAR Overlay:
 

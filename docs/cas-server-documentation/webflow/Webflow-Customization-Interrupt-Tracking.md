@@ -1,6 +1,7 @@
 ---
 layout: default
-title: CAS - Authentication Interrupt
+title: CAS - Tracking Authentication Interrupts
+description: "How CAS remembers that an authentication interrupt has already been shown."
 category: Webflow Management
 ---
 

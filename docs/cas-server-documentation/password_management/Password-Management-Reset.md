@@ -1,6 +1,7 @@
 ---
 layout: default
-title: CAS - Password Management
+title: CAS - Password Management - Password Reset
+description: "Self-service password reset with time-limited links sent by email or SMS, security questions and reCAPTCHA."
 category: Password Management
 ---
 

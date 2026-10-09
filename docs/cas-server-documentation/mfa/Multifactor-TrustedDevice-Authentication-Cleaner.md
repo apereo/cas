@@ -1,6 +1,6 @@
 ---
 layout: default
-title: CAS - Trusted Device Multifactor Authentication
+title: CAS - Multifactor Authentication Trusted Device/Browser - Cleaning
 category: Multifactor Authentication
 ---
 

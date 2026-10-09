@@ -87,6 +87,15 @@ import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import com.github.benmanes.caffeine.cache.LoadingCache;
+import com.nimbusds.jose.JOSEObjectType;
+import com.nimbusds.jose.JWSAlgorithm;
+import com.nimbusds.jose.JWSHeader;
+import com.nimbusds.jose.crypto.ECDSASigner;
+import com.nimbusds.jose.jwk.ECKey;
+import com.nimbusds.jose.jwk.JWK;
+import com.nimbusds.jose.jwk.JWKSet;
+import com.nimbusds.jwt.JWTClaimsSet;
+import com.nimbusds.jwt.SignedJWT;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.jose4j.jwe.ContentEncryptionAlgorithmIdentifiers;
@@ -107,6 +116,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.tomcat.autoconfigure.servlet.TomcatServletWebServerAutoConfiguration;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.context.annotation.Import;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.web.servlet.MockMvc;
@@ -581,6 +591,75 @@ public abstract class AbstractOidcTests {
             request.setServerPort(443);
             return request;
         };
+    }
+
+    /**
+     * Build a client attestation for the client, binding the client instance key, signed by the test wallet provider
+     * whose certificate chains to {@code client-attestation-root.pem}.
+     *
+     * @param clientId           the client identifier, as {@code sub}
+     * @param instanceKey        the client instance key, as {@code cnf}
+     * @param includeTrustAnchor whether the {@code x5c} chain carries the trust anchor as well
+     * @return the client attestation
+     * @throws Exception the exception
+     */
+    protected static String buildClientAttestation(final String clientId, final JWK instanceKey,
+                                                   final boolean includeTrustAnchor) throws Exception {
+        val providerKey = (ECKey) JWKSet.load(new ClassPathResource("client-attestation-x5c.jwks").getInputStream())
+            .getKeyByKeyId("wallet-provider");
+        val certificateChain = providerKey.getX509CertChain();
+        val chain = includeTrustAnchor ? certificateChain : certificateChain.subList(0, 1);
+        val header = new JWSHeader.Builder(JWSAlgorithm.ES256)
+            .type(new JOSEObjectType("oauth-client-attestation+jwt"))
+            .x509CertChain(chain)
+            .build();
+        val claims = new JWTClaimsSet.Builder()
+            .subject(clientId)
+            .issueTime(new Date())
+            .expirationTime(Date.from(Instant.now(Clock.systemUTC()).plusSeconds(300)))
+            .claim("cnf", Map.of("jwk", instanceKey.toPublicJWK().toJSONObject()))
+            .build();
+        val attestation = new SignedJWT(header, claims);
+        attestation.sign(new ECDSASigner(providerKey));
+        return attestation.serialize();
+    }
+
+    /**
+     * Build the proof of possession of a client attestation, signed by the client instance key.
+     *
+     * @param instanceKey the client instance key
+     * @param audience    the audience
+     * @return the proof of possession
+     * @throws Exception the exception
+     */
+    protected static String buildClientAttestationProof(final ECKey instanceKey, final String audience) throws Exception {
+        return buildClientAttestationProof(instanceKey, audience, null);
+    }
+
+    /**
+     * Build the proof of possession of a client attestation, signed by the client instance key, with a server-provided
+     * challenge.
+     *
+     * @param instanceKey the client instance key
+     * @param audience    the audience
+     * @param challenge   the challenge, if any
+     * @return the proof of possession
+     * @throws Exception the exception
+     */
+    protected static String buildClientAttestationProof(final ECKey instanceKey, final String audience,
+                                                        final String challenge) throws Exception {
+        val header = new JWSHeader.Builder(JWSAlgorithm.ES256)
+            .type(new JOSEObjectType("oauth-client-attestation-pop+jwt"))
+            .build();
+        val claims = new JWTClaimsSet.Builder()
+            .audience(audience)
+            .jwtID(UUID.randomUUID().toString())
+            .issueTime(new Date())
+            .claim("challenge", challenge)
+            .build();
+        val proof = new SignedJWT(header, claims);
+        proof.sign(new ECDSASigner(instanceKey));
+        return proof.serialize();
     }
 
     @SpringBootConfiguration(proxyBeanMethods = false)

@@ -125,7 +125,7 @@ class SamlIdPEndpointsConfiguration {
         @ConditionalOnMissingBean(name = "samlIdPObjectSignatureValidator")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public SamlObjectSignatureValidator samlIdPObjectSignatureValidator(
+        public SamlIdPObjectSignatureValidator samlIdPObjectSignatureValidator(
             final CasConfigurationProperties casProperties,
             @Qualifier("casSamlIdPMetadataResolver")
             final MetadataResolver casSamlIdPMetadataResolver) {

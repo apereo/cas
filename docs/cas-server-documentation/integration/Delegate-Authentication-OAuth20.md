@@ -1,12 +1,14 @@
 ---
 layout: default
-title: CAS - Delegate Authentication
+title: CAS - OAuth20 - Delegated Authentication
 category: Authentication
 ---
 
 {% include variables.html %}
 
 # OAuth20
+
+Let users log in through any OAuth 2.0 provider that has no dedicated integration, by describing its endpoints and profile attributes in CAS settings.
 
 For an overview of the delegated authentication flow, please [see this guide](Delegate-Authentication.html).
 

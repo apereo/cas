@@ -57,7 +57,7 @@ function printred() {
 }
 
 function clean {
-  ./gradlew clean --parallel  --no-daemon -quiet
+  ./gradlew clean --parallel -quiet
   [ $? -ne 0 ] && { printred "Gradle clean task failed"; exit 1; }
 }
 
@@ -69,7 +69,7 @@ function snapshot() {
   fi
   printgreen "Publishing CAS SNAPSHOT artifacts. This might take a while..."
   ./gradlew assemble publishAggregationToCentralSnapshots \
-    -x test -x javadoc -x check --no-daemon --parallel --quiet \
+    -x test -x javadoc -x check --parallel --quiet \
     -DskipAot=true -DpublishSnapshots=true --stacktrace \
      --configure-on-demand -DpublishingType="${publishingType}" \
     -DrepositoryUsername="$REPOSITORY_USER" \
@@ -87,7 +87,7 @@ function publish {
     fi
 
     printgreen "Verifying dependency versions for CAS release ${casVersion}..."
-    ./gradlew verifyDependencyVersions -x test -x javadoc -x check --no-daemon --parallel
+    ./gradlew verifyDependencyVersions -x test -x javadoc -x check --parallel
     if [ $? -ne 0 ]; then
         printred "Dependency version verification failed."
         exit 1
@@ -104,7 +104,7 @@ function publish {
     fi
     ./gradlew assemble $task \
       -Pversion="${casVersion}" -PnextVersion="${nextVersion}" \
-      --parallel --no-daemon  -x test -x check -DprivateRelease=${privateRelease} \
+      --parallel -x test -x check -DprivateRelease=${privateRelease} \
       -DpublishingType="${publishingType}" -DskipAot=true -DpublishReleases=true --stacktrace --quiet \
       -DrepositoryUsername="$REPOSITORY_USER" -DrepositoryPassword="$REPOSITORY_PWD"
     if [ $? -ne 0 ]; then

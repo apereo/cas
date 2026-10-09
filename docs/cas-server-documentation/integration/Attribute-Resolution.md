@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Attribute Resolution
+description: "Fetch and merge user attributes from LDAP, databases, REST, Groovy and other attribute repositories with Person Directory."
 category: Attributes
 ---
 
@@ -86,7 +87,7 @@ The following options may be used to fetch attributes in CAS.
 | JDBC                             | [See this guide](Attribute-Resolution-JDBC.html).    |
 | OKTA                             | [See this guide](Attribute-Resolution-Okta.html).    |
 | Custom                           | [See this guide](Attribute-Resolution-Custom.html).  |
-| Microsoft Azure Active Directory | [See this guide](Attribute-Resolution-AzureAD.html). |
+| Microsoft Entra ID               | [See this guide](Attribute-Resolution-AzureAD.html). |
 | SCIM                             | [See this guide](Attribute-Resolution-SCIM.html).    |
 
 

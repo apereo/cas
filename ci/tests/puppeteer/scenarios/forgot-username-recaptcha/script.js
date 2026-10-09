@@ -9,13 +9,13 @@ const cas = require("../../cas.js");
     await cas.click(page, "#forgotUsernameLink");
     await cas.sleep(1000);
 
-    await cas.assertTextContent(page, "#reset #fm1 h3", "Forgot your username?");
+    await cas.assertTextContent(page, "#reset #fm1 h2", "Forgot your username?");
     await cas.assertVisibility(page, "#email");
 
     await cas.type(page,"#email", "casuser@example.org");
     await cas.pressEnter(page);
     await cas.waitForNavigation(page);
-    await cas.assertTextContent(page, "div .banner-danger p", "reCAPTCHA’s validation failed.");
+    await cas.assertTextContent(page, "div .acct-banner-error p", "reCAPTCHA’s validation failed.");
 
     await cas.closeBrowser(browser);
 })();

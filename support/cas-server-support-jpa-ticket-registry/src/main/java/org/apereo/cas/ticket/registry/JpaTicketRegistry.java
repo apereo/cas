@@ -21,11 +21,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
 import org.jspecify.annotations.Nullable;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.orm.jpa.SharedEntityManagerCreator;
 import org.springframework.transaction.support.TransactionOperations;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.LockModeType;
 import jakarta.persistence.NoResultException;
-import jakarta.persistence.PersistenceContext;
 
 /**
  * JPA implementation of a CAS {@link TicketRegistry}. This implementation of
@@ -40,6 +41,8 @@ import jakarta.persistence.PersistenceContext;
 @Monitorable
 public class JpaTicketRegistry extends AbstractTicketRegistry {
 
+    private static final int DELETE_BATCH_SIZE = 500;
+
     private final JpaBeanFactory jpaBeanFactory;
 
     private final TransactionOperations transactionTemplate;
@@ -48,8 +51,7 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
 
     private final JpaTicketEntityFactory ticketEntityFactory;
 
-    @PersistenceContext(unitName = "jpaTicketRegistryContext")
-    private EntityManager entityManager;
+    private final EntityManager entityManager;
 
     public JpaTicketRegistry(final CipherExecutor cipherExecutor,
                              final TicketSerializationManager ticketSerializationManager,
@@ -63,6 +65,8 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
         this.transactionTemplate = transactionTemplate;
         this.casProperties = casProperties;
         this.ticketEntityFactory = new JpaTicketEntityFactory(casProperties.getTicket().getRegistry().getJpa().getDialect());
+        this.entityManager = SharedEntityManagerCreator.createSharedEntityManager(
+            applicationContext.getBean("ticketEntityManagerFactory", EntityManagerFactory.class), null, true, EntityManager.class);
     }
 
     private static long countToLong(final Object result) {
@@ -73,10 +77,6 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
     public Ticket addSingleTicket(final Ticket ticket) {
         transactionTemplate.executeWithoutResult(Unchecked.consumer(status -> {
             val ticketEntity = getTicketEntityFrom(ticket);
-            if (ticket instanceof final TicketGrantingTicketAwareTicket grantingTicketAware && grantingTicketAware.getTicketGrantingTicket() != null) {
-                val parentId = digestIdentifier(grantingTicketAware.getTicketGrantingTicket().getId());
-                ticketEntity.setParentId(parentId);
-            }
             entityManager.persist(ticketEntity);
             LOGGER.debug("Added ticket [{}] to registry.", ticketEntity.getId());
         }));
@@ -380,11 +380,35 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
     protected BaseTicketEntity getTicketEntityFrom(final Ticket ticket) {
         return FunctionUtils.doUnchecked(() -> {
             val encodeTicket = encodeTicket(ticket);
-            return ticketEntityFactory
+            val ticketEntity = ticketEntityFactory
                 .fromTicket(encodeTicket, ticket)
                 .setPrincipalId(digestIdentifier(getPrincipalIdFrom(ticket)))
                 .setAttributes(collectAndDigestTicketAttributes(ticket));
+            if (ticket instanceof final TicketGrantingTicketAwareTicket grantingTicketAware && grantingTicketAware.getTicketGrantingTicket() != null) {
+                ticketEntity.setParentId(digestIdentifier(grantingTicketAware.getTicketGrantingTicket().getId()));
+            }
+            return ticketEntity;
         });
+    }
+
+    @Override
+    protected int deleteServiceTickets(final TicketGrantingTicket ticket) {
+        val services = ticket.getServices();
+        if (services == null || services.isEmpty()) {
+            return 0;
+        }
+        val ticketIds = services.keySet().stream().map(this::digestIdentifier).toList();
+        val sql = String.format("DELETE FROM %s t WHERE t.id IN :ids", ticketEntityFactory.getEntityName());
+        val result = transactionTemplate.execute(_ -> {
+            var count = 0;
+            for (var i = 0; i < ticketIds.size(); i += DELETE_BATCH_SIZE) {
+                val batch = ticketIds.subList(i, Math.min(i + DELETE_BATCH_SIZE, ticketIds.size()));
+                count += entityManager.createQuery(sql).setParameter("ids", batch).executeUpdate();
+            }
+            return count;
+        });
+        LOGGER.debug("Removed [{}] ticket(s) issued by [{}]", result, ticket.getId());
+        return result != null ? result : 0;
     }
 
     /*

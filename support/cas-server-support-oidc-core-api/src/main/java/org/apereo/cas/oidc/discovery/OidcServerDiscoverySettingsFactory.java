@@ -5,10 +5,13 @@ import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.oidc.OidcVerifiableCredentialConfigurationProperties;
+import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.issuer.OidcIssuerService;
+import org.apereo.cas.support.oauth.OAuth20ClientAuthenticationMethods;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.context.ConfigurableApplicationContext;
 
@@ -52,6 +55,21 @@ public class OidcServerDiscoverySettingsFactory implements FactoryBean<OidcServe
             new LinkedHashSet<>(discoveryConfig.getTokenEndpointAuthMethodsSupported()));
         discovery.setTokenEndpointAuthSigningAlgValuesSupported(
             new LinkedHashSet<>(discoveryConfig.getTokenEndpointAuthSigningAlgValuesSupported()));
+        val clientAttestation = oidc.getClientAttestation();
+        if (!clientAttestation.getTrustAnchors().isEmpty()) {
+            discovery.getTokenEndpointAuthMethodsSupported().add(OAuth20ClientAuthenticationMethods.ATTEST_JWT_CLIENT_AUTH.getType());
+            discovery.getTokenEndpointAuthMethodsSupported().add(OAuth20ClientAuthenticationMethods.ATTEST_JWT_CLIENT_AUTH_DPOP.getType());
+            discovery.setClientAttestationSigningAlgValuesSupported(new LinkedHashSet<>(clientAttestation.getSigningAlgValuesSupported()));
+            discovery.setClientAttestationPopSigningAlgValuesSupported(new LinkedHashSet<>(clientAttestation.getSigningAlgValuesSupported()));
+            if (clientAttestation.getChallenge().isEnabled()) {
+                discovery.setChallengeEndpoint(Strings.CI.appendIfMissing(discovery.getIssuer(), "/")
+                    .concat(OidcConstants.CLIENT_ATTESTATION_CHALLENGE_URL));
+            }
+        }
+        if (oidc.getVc().getIssuer().getStatusList().isEnabled()) {
+            discovery.setStatusListAggregationEndpoint(Strings.CI.appendIfMissing(discovery.getIssuer(), "/")
+                .concat(OidcConstants.VC_STATUS_LIST_AGGREGATION_URL));
+        }
         discovery.setClaimsParameterSupported(discoveryConfig.isClaimsParameterSupported());
         discovery.setPromptValuesSupported(new LinkedHashSet<>(discoveryConfig.getPromptValuesSupported()));
 

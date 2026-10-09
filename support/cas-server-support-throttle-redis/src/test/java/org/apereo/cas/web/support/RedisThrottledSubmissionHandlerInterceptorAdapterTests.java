@@ -3,14 +3,19 @@ package org.apereo.cas.web.support;
 import module java.base;
 import org.apereo.cas.config.CasRedisThrottlingAutoConfiguration;
 import org.apereo.cas.config.CasSupportRedisAuditAutoConfiguration;
+import org.apereo.cas.redis.core.CasRedisTemplate;
 import org.apereo.cas.test.CasTestExtension;
+import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import lombok.Getter;
+import lombok.val;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is  {@link RedisThrottledSubmissionHandlerInterceptorAdapterTests}.
@@ -41,4 +46,32 @@ class RedisThrottledSubmissionHandlerInterceptorAdapterTests extends BaseThrottl
     @Qualifier(ThrottledSubmissionHandlerInterceptor.BEAN_NAME)
     private ThrottledSubmissionHandlerInterceptor throttle;
 
+    @Autowired
+    @Qualifier("throttleRedisTemplate")
+    private CasRedisTemplate throttleRedisTemplate;
+
+    @Test
+    void verifyFailuresAreBoundedAndExpire() throws Throwable {
+        val username = RandomUtils.randomAlphabetic(12);
+        for (var i = 0; i < 5; i++) {
+            login(username, "badpassword", IP_ADDRESS);
+        }
+        val key = RedisThrottledSubmissionHandlerInterceptorAdapter.THROTTLED_SUBMISSION_PREFIX
+            + IP_ADDRESS + ':' + username.toLowerCase(Locale.ROOT);
+        assertEquals(2L, throttleRedisTemplate.opsForZSet().size(key));
+        val ttl = throttleRedisTemplate.getExpire(key, TimeUnit.MILLISECONDS);
+        assertTrue(ttl > 0 && ttl <= Duration.ofSeconds(3).toMillis());
+    }
+
+    @Test
+    void verifyUsernameIsCaseInsensitive() throws Throwable {
+        val username = RandomUtils.randomAlphabetic(12);
+        login(username.toUpperCase(Locale.ROOT), "badpassword", IP_ADDRESS);
+        login(username.toLowerCase(Locale.ROOT), "badpassword", IP_ADDRESS);
+        val key = RedisThrottledSubmissionHandlerInterceptorAdapter.THROTTLED_SUBMISSION_PREFIX
+            + IP_ADDRESS + ':' + username.toLowerCase(Locale.ROOT);
+        assertEquals(2L, throttleRedisTemplate.opsForZSet().size(key));
+        throttle.clear();
+        assertEquals(0L, throttleRedisTemplate.opsForZSet().size(key));
+    }
 }

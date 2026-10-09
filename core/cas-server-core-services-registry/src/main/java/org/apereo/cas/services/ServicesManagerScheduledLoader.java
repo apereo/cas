@@ -28,7 +28,7 @@ public class ServicesManagerScheduledLoader implements Runnable {
         cron = "${cas.service-registry.schedule.cron-expression:}",
         zone = "${cas.service-registry.schedule.cron-time-zone:}",
         initialDelayString = "${cas.service-registry.schedule.start-delay:PT20S}",
-        fixedDelayString = "${cas.service-registry.schedule.repeat-interval:PT60S}"
+        fixedDelayString = "${cas.service-registry.schedule.repeat-interval:PT2M}"
     )
     @Override
     public void run() {

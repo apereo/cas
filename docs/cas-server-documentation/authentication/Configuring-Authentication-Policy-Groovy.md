@@ -1,11 +1,13 @@
 ---
 layout: default
-title: CAS - Configuring Authentication Policy
+title: CAS - Groovy - Authentication Policy
 category: Authentication
 ---
 {% include variables.html %}
 
 # Groovy - Authentication Policy
+
+Decide whether an authentication attempt succeeds with a Groovy script that inspects the authentication result and can reject it with an exception.
 
 {% include_cached casproperties.html properties="cas.authn.policy.groovy" %}
 

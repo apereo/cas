@@ -1,6 +1,6 @@
 ---
 layout: default
-title: CAS - Multifactor Authentication Triggers
+title: CAS - Opt-In Request Parameter/Header - Multifactor Authentication Triggers
 category: Multifactor Authentication
 ---
 

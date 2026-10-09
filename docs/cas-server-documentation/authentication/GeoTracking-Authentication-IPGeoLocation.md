@@ -1,6 +1,6 @@
 ---
 layout: default
-title: CAS - GeoTracking Authentication Requests
+title: CAS - GeoTracking Authentication - IP GeoLocation
 category: Authentication
 ---
 {% include variables.html %}

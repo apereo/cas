@@ -1,12 +1,15 @@
 ---
 layout: default
-title: CAS - Delegate Authentication
+title: CAS - Apple Signin - Delegated Authentication
 category: Authentication
 ---
 
 {% include variables.html %}
 
 # Apple Signin
+
+Let users log in to CAS with their Apple ID through Sign in with Apple.
+
   
 For an overview of the delegated authentication flow, please [see this guide](Delegate-Authentication.html).
 

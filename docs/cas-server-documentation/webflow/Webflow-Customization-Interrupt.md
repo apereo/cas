@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Authentication Interrupt
+description: "Interrupt the login flow to show notices, ask for actions or block access based on external services."
 category: Webflow Management
 ---
 

@@ -1,6 +1,6 @@
 ---
 layout: default
-title: CAS - Releasing Principal Id
+title: CAS - Static Principal Id
 category: Attributes
 ---
 

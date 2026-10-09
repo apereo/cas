@@ -11,7 +11,10 @@ import org.apereo.cas.web.view.CasThymeleafView;
 import org.jspecify.annotations.Nullable;
 import org.springframework.aot.hint.RuntimeHints;
 import org.springframework.beans.factory.BeanClassLoaderAware;
+import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.web.context.ServletContextAware;
+import org.springframework.web.servlet.View;
 import org.thymeleaf.DialectConfiguration;
 import org.thymeleaf.engine.IterationStatusVar;
 import org.thymeleaf.engine.StandardModelFactory;
@@ -64,6 +67,7 @@ public class CasThymeleafRuntimeHints implements CasRuntimeHintsRegistrar {
         ));
 
         registerReflectionHints(hints, List.of("org.thymeleaf.engine.Text"));
+        registerSpringProxyHints(hints, View.class, BeanNameAware.class, ServletContextAware.class, ApplicationContextAware.class);
         registerSpringProxyHints(hints, ThemeViewResolverFactory.class, ApplicationContextAware.class);
         registerSpringProxyHints(hints, HierarchicalThemeSource.class, BeanClassLoaderAware.class);
     }

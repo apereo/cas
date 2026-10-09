@@ -1,11 +1,13 @@
 ---
 layout: default
-title: CAS - Passwordless Authentication
+title: CAS - Custom Passwordless Authentication Storage
 category: Authentication
 ---
 {% include variables.html %}
 
 # Custom Passwordless Authentication Storage
+
+Look up passwordless user accounts in your own store by implementing `PasswordlessUserAccountStore` and registering it with CAS.
 
 You may also define your own user account store using the following 
 bean definition and by implementing `PasswordlessUserAccountStore`:

@@ -1,6 +1,7 @@
 ---
 layout: default
-title: CAS - Multifactor Authentication
+title: CAS - Multifactor Authentication (MFA)
+description: "Multifactor authentication in CAS: supported providers such as Duo, WebAuthn and TOTP, triggers, bypass rules and failure modes."
 category: Multifactor Authentication
 ---
 
@@ -37,10 +38,26 @@ The following multifactor providers are supported by CAS.
 | Inwebo               | `mfa-inwebo`   | [See this guide](Inwebo-Authentication.html).              |
 | Custom               | Custom         | [See this guide](Custom-MFA-Authentication.html).          |
 
-<div class="alert alert-info">:information_source: <strong>Azure Multifactor</strong>
-<p>Microsoft has removed the ability for external SSO servers and identity providers to use Azure MFA
-as a standalone MFA solution. To use Azure MFA, you must also have all your users authenticate using Azure AD SSO.
-You may want to route authentication requests to Azure AD SSO using the delegated authentication features of CAS.</p></div>
+### Comparison
+
+| Provider                                                        | What the user does                                   | External service                | Registrations kept by CAS                                 | Phishing-resistant           |
+|-----------------------------------------------------------------|------------------------------------------------------|---------------------------------|-----------------------------------------------------------|------------------------------|
+| [Duo Security](DuoSecurity-Authentication.html)                 | Approves a push, takes a call or enters a passcode   | Duo                             | No, Duo keeps them                                        | Depends on the Duo method    |
+| [FIDO2 WebAuthn](FIDO2-WebAuthn-Authentication.html)            | Uses a passkey or security key                       | None                            | [Yes](FIDO2-WebAuthn-Authentication-Registration.html)    | Yes                          |
+| [Google Authenticator](GoogleAuthenticator-Authentication.html) | Enters a code from a TOTP app                        | None                            | Yes, in JSON, JPA, LDAP, MongoDb, Redis, DynamoDb or REST | No                           |
+| [YubiKey](YubiKey-Authentication.html)                          | Touches a YubiKey that types a one-time password     | Yubico validation service       | Yes, in JSON, JPA, MongoDb, Redis, DynamoDb or REST       | No                           |
+| [RSA/RADIUS](RADIUS-Authentication.html)                        | Enters a code checked by a RADIUS server             | Your RADIUS server, such as RSA | No                                                        | No                           |
+| [CAS Simple](Simple-Multifactor-Authentication.html)            | Enters a code CAS sent by email, SMS or notification | An email or SMS provider        | No, contact details come from user attributes             | No                           |
+| [Twilio](Twilio-Multifactor-Authentication.html)                | Enters a code sent by SMS, WhatsApp or voice call    | Twilio Verify                   | No, the recipient comes from a user attribute             | No                           |
+| [Inwebo](Inwebo-Authentication.html)                            | Approves the login with Inwebo (TrustBuilder)        | Inwebo                          | No, Inwebo keeps them                                     | Depends on the Inwebo method |
+
+Phishing-resistant factors are bound to the CAS site and cannot be replayed through a look-alike page. Codes and
+push approvals can be relayed by an attacker who controls such a page.
+
+<div class="alert alert-info">:information_source: <strong>Microsoft Entra Multifactor Authentication</strong>
+<p>Microsoft has removed the ability for external SSO servers and identity providers to use Microsoft Entra multifactor authentication
+as a standalone MFA solution. To use Microsoft Entra multifactor authentication, you must also have all your users authenticate using Microsoft Entra ID SSO.
+You may want to route authentication requests to Microsoft Entra ID SSO using the delegated authentication features of CAS.</p></div>
 
 <div class="alert alert-info">:information_source: <strong>Remember</strong><p>
 Support for Google Authenticator is not about supporting the mobile application itself. 

@@ -1,12 +1,14 @@
 ---
 layout: default
-title: CAS - YubiKey Authentication
+title: CAS - MongoDb YubiKey Registration
 category: Multifactor Authentication
 ---
 
 {% include variables.html %}
 
 # MongoDb YubiKey Registration
+
+Keep YubiKey device registrations in a MongoDB collection.
 
 Support is enabled by including the following dependencies in the WAR overlay:
 

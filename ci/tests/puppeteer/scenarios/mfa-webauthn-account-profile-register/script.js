@@ -25,12 +25,12 @@ const cas = require("../../cas.js");
     await cas.goto(page, endpoints.manage);
     await cas.sleep(1000);
     await cas.click(page, "#linkMfaRegisteredAccounts");
-    await cas.assertInnerTextContains(page, "#mfaDevicesTable", "No data available");
+    await cas.assertVisibility(page, "#mfaDevicesEmpty");
     await cas.sleep(1000);
 
     await cas.click(page, "button#register");
     await cas.sleep(2000);
-    await cas.assertInnerTextContains(page, "#toolbar", "Google Authenticator");
+    await cas.assertInnerTextContains(page, "#registrationOptions", "Google Authenticator");
     await cas.click(page, "#webauthnRegistrationLink");
     await cas.sleep(2000);
 
@@ -43,18 +43,18 @@ const cas = require("../../cas.js");
 
     await cas.sleep(4000);
 
-    await cas.assertInnerText(page, "#mfaDevicesTable tbody tr td:first-child", "Web Authn");
-    await cas.assertInnerText(page, "#mfaDevicesTable tbody tr td:nth-child(3)", deviceName);
+    await cas.assertInnerText(page, "#mfaDevicesList [data-field=source]", "Web Authn");
+    await cas.assertInnerText(page, "#mfaDevicesList [data-field=name]", deviceName);
     await cas.sleep(2000);
     assert((await storedCredentials()).length === 1);
 
     await cas.click(page, "#linkMfaRegisteredAccounts");
     await cas.sleep(1000);
-    await cas.click(page, "#mfaDevicesTable button[name=deleteMfaDevice]");
+    await cas.click(page, "#mfaDevicesList button[name=deleteMfaDevice]");
     await cas.sleep(3000);
     await cas.click(page, "#linkMfaRegisteredAccounts");
     await cas.sleep(1000);
-    await cas.assertInnerTextContains(page, "#mfaDevicesTable", "No data available");
+    await cas.assertVisibility(page, "#mfaDevicesEmpty");
     assert((await storedCredentials()).length === 0, "Deleting the last passkey should tell the browser to stop offering it");
 
     await cas.removeWebAuthnVirtualAuthenticator(virtualAuthenticator);

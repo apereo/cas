@@ -1,12 +1,14 @@
 ---
 layout: default
-title: CAS - SMS Messaging
+title: CAS - Vonage (Nexmo) SMS Messaging
 category: Notifications
 ---
 
 {% include variables.html %}
 
-# Nexmo SMS Messaging
+# Vonage (Nexmo) SMS Messaging
+
+Send SMS messages through the Vonage SMS API, formerly known as Nexmo. The module and its settings still use the `nexmo` name.
 
 {% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-sms-nexmo" %}
 

@@ -2,6 +2,7 @@ package org.apereo.cas.support.saml.idp.metadata.writer;
 
 import module java.base;
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
+import org.apereo.cas.util.crypto.CertUtils;
 import lombok.val;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
@@ -19,6 +20,15 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("SAMLMetadata")
 class DefaultSamlIdPCertificateAndKeyWriterTests extends BaseSamlIdPConfigurationTests {
+    private static void assertSubjectAlternativeNames(final String certificate, final String serverPrefix) throws Exception {
+        val cert = CertUtils.readCertificate(new ByteArrayInputStream(certificate.getBytes(StandardCharsets.UTF_8)));
+        val names = cert.getSubjectAlternativeNames();
+        assertNotNull(names);
+        assertEquals(2, names.size());
+        assertTrue(names.contains(List.of(2, new URI(serverPrefix).getHost())));
+        assertTrue(names.contains(List.of(6, serverPrefix + "/idp/metadata")));
+    }
+
     @Nested
     @Tag("SAMLMetadata")
     @TestPropertySource(properties = {
@@ -33,12 +43,13 @@ class DefaultSamlIdPCertificateAndKeyWriterTests extends BaseSamlIdPConfiguratio
         private SamlIdPCertificateAndKeyWriter samlSelfSignedCertificateWriter;
 
         @Test
-        void verifyOperation() {
+        void verifyOperation() throws Exception {
             val privateKey = new StringWriter();
             val certificate = new StringWriter();
             samlSelfSignedCertificateWriter.writeCertificateAndKey(privateKey, certificate);
             assertNotNull(privateKey.toString());
             assertNotNull(certificate.toString());
+            assertSubjectAlternativeNames(certificate.toString(), casProperties.getServer().getPrefix());
         }
     }
 
@@ -56,12 +67,13 @@ class DefaultSamlIdPCertificateAndKeyWriterTests extends BaseSamlIdPConfiguratio
         private SamlIdPCertificateAndKeyWriter samlSelfSignedCertificateWriter;
 
         @Test
-        void verifyOperation() {
+        void verifyOperation() throws Exception {
             val privateKey = new StringWriter();
             val certificate = new StringWriter();
             samlSelfSignedCertificateWriter.writeCertificateAndKey(privateKey, certificate);
             assertNotNull(privateKey.toString());
             assertNotNull(certificate.toString());
+            assertSubjectAlternativeNames(certificate.toString(), casProperties.getServer().getPrefix());
         }
     }
 }

@@ -4,7 +4,7 @@ name: Native Image Tests
 
 env:
   JAVA_OPTS: "-Xms512m -Xmx6048m -Xss128m -XX:ReservedCodeCacheSize=512m -server"
-  GRADLE_OPTS: "-Xms512m -Xmx6048m -Xss128m -XX:ReservedCodeCacheSize=512m -server"
+  GRADLE_OPTS: "-Xms256m -Xmx512m -Dorg.gradle.jvmargs=-Xmx1g"
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   GH_PACKAGE_REGISTRY_USER: ${{ secrets.GH_PACKAGE_REGISTRY_USER }}
   GH_PACKAGE_REGISTRY_TOKEN: ${{ secrets.GH_PACKAGE_REGISTRY_TOKEN }}
@@ -28,10 +28,11 @@ env:
   AZURE_MAPS_CLIENT_ID: ${{ secrets.AZURE_MAPS_CLIENT_ID }}
   TERM: xterm-256color
   JDK_CURRENT: 25
+  GRAALVM_VERSION: '25.4'
   JDK_DISTRIBUTION: "corretto"
   NODE_CURRENT: '26.11.1'
   MAX_ATTEMPTS: 1
-  RETRY_MINUTES: 20
+  RETRY_MINUTES: 45
   SCENARIO_REGEX: ${{ github.event.inputs.scenarioRegex || '.*' }}
 
 on:
@@ -40,10 +41,15 @@ on:
   workflow_dispatch:
     inputs:
       scenarioRegex:
-        description: 'Regex used to select native test scenarios'
+        description: 'Scenarios'
         required: false
         default: '.*'
         type: string
+      retryFailedScenarios:
+        description: 'Retry Failed Runs'
+        required: false
+        default: false
+        type: boolean
   schedule:
     - cron: '0 10 */2 * *'
 
@@ -70,6 +76,7 @@ jobs:
         uses: gradle/actions/setup-gradle@v6
         with:
           gradle-home-cache-excludes: caches/build-cache-1
+          cache-encryption-key: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
       - name: Initialize
         run: ls ./ci && find ./ci -type f -name "*.sh" -exec chmod +x "{}" \; && ./ci/init-build.sh
 
@@ -79,10 +86,13 @@ jobs:
     needs: [initialize]
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    permissions:
+      actions: read
+      contents: read
     outputs:
-      scenarios255: ${{ steps.get-scenarios255.outputs.scenarios255 }}
-      scenarios511: ${{ steps.get-scenarios511.outputs.scenarios511 }}
-      scenarios766: ${{ steps.get-scenarios766.outputs.scenarios766 }}
+      scenarios255: ${{ steps.get-scenarios.outputs.scenarios255 }}
+      scenarios511: ${{ steps.get-scenarios.outputs.scenarios511 }}
+      scenarios766: ${{ steps.get-scenarios.outputs.scenarios766 }}
     steps:
       - name: Checkout
         uses: actions/checkout@v7
@@ -93,25 +103,58 @@ jobs:
         with:
           java-version: ${{ env.JDK_CURRENT }}
           distribution: ${{ env.JDK_DISTRIBUTION }}
-          cache: 'gradle'
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v6
         with:
           gradle-home-cache-excludes: caches/build-cache-1
-      - id: print-scenarios
-        run: ./gradlew --build-cache --configure-on-demand --no-daemon -q puppeteerScenarios | jq
-      - id: get-scenarios255
-        run: echo "scenarios255=$(./gradlew --build-cache --configure-on-demand --no-daemon -q puppeteerScenarios -PpuppeteerScenariosFrom=0 -PpuppeteerScenariosTo=255)" >> "$GITHUB_OUTPUT"
-      - id: get-scenarios511
-        run: echo "scenarios511=$(./gradlew --build-cache --configure-on-demand --no-daemon -q puppeteerScenarios -PpuppeteerScenariosFrom=255 -PpuppeteerScenariosTo=511)" >> "$GITHUB_OUTPUT"
-      - id: get-scenarios766
-        name: Get Scenarios 511-766
-        run: echo "scenarios766=$(./gradlew --build-cache --configure-on-demand --no-daemon -q puppeteerScenarios -PpuppeteerScenariosFrom=511 -PpuppeteerScenariosTo=766)" >> "$GITHUB_OUTPUT"
+          cache-encryption-key: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
+      - name: List Scenarios
+        shell: bash
+        run: ./gradlew --build-cache --configure-on-demand -q puppeteerScenarios > "$RUNNER_TEMP/puppeteer-scenarios.json"
+      - name: Select Previously Failed Scenarios
+        if: ${{ inputs.retryFailedScenarios }}
+        shell: bash
+        run: |
+          workflow_file="$(basename "${GITHUB_WORKFLOW_REF%@*}")"
+          previous_run="$(gh api "repos/${GITHUB_REPOSITORY}/actions/workflows/${workflow_file}/runs?status=completed&per_page=20" \
+            --jq "first(.workflow_runs[] | select(.id != ${GITHUB_RUN_ID})) | {id, html_url, conclusion}")"
+          if [[ -z "${previous_run}" ]]; then
+            echo "::error::No completed run of ${workflow_file} was found to retry"
+            exit 1
+          fi
+          previous_run_id="$(jq -r .id <<< "${previous_run}")"
+          previous_run_url="$(jq -r .html_url <<< "${previous_run}")"
+          echo "Selecting failed scenarios from ${previous_run_url} ($(jq -r .conclusion <<< "${previous_run}"))"
+          gh api --paginate "repos/${GITHUB_REPOSITORY}/actions/runs/${previous_run_id}/jobs?filter=latest&per_page=100" \
+            --jq '.jobs[] | select(.conclusion == "failure" or .conclusion == "timed_out" or .conclusion == "cancelled") | .name' \
+            | jq -R . | jq -s 'unique' > "$RUNNER_TEMP/failed-jobs.json"
+          jq -c --slurpfile failed "$RUNNER_TEMP/failed-jobs.json" '[.[] | select(IN($failed[0][]))]' \
+            "$RUNNER_TEMP/puppeteer-scenarios.json" > "$RUNNER_TEMP/failed-scenarios.json"
+          mv "$RUNNER_TEMP/failed-scenarios.json" "$RUNNER_TEMP/puppeteer-scenarios.json"
+          count="$(jq length "$RUNNER_TEMP/puppeteer-scenarios.json")"
+          if [[ "${count}" -eq 0 ]]; then
+            echo "::notice::No failed scenarios found in ${previous_run_url}; nothing to retry"
+          fi
+          {
+            echo "### Retrying ${count} failed scenario(s) from [run ${previous_run_id}](${previous_run_url})"
+            jq -r '.[] | "- \(.)"' "$RUNNER_TEMP/puppeteer-scenarios.json"
+          } >> "$GITHUB_STEP_SUMMARY"
+      - id: get-scenarios
+        name: Split Scenarios
+        shell: bash
+        run: |
+          jq . "$RUNNER_TEMP/puppeteer-scenarios.json"
+          {
+            echo "scenarios255=$(jq -c '.[0:255]' "$RUNNER_TEMP/puppeteer-scenarios.json")"
+            echo "scenarios511=$(jq -c '.[255:511]' "$RUNNER_TEMP/puppeteer-scenarios.json")"
+            echo "scenarios766=$(jq -c '.[511:766]' "$RUNNER_TEMP/puppeteer-scenarios.json")"
+          } >> "$GITHUB_OUTPUT"
 
   ##########################################################################
   puppeteer-tests-255:
     runs-on: ubuntu-latest
     needs: [puppeteer-scenarios]
+    if: ${{ needs.puppeteer-scenarios.outputs.scenarios255 != '[]' }}
     continue-on-error: false
     strategy:
       fail-fast: false
@@ -127,18 +170,22 @@ jobs:
         run: find ./ci -type f -name "*.sh" -exec chmod +x "{}" \; && ./ci/init-build.sh
       - name: Configure CI
         run: source ./ci/tests/puppeteer/configure-ci.sh ${{matrix.scenario}}
+      - name: Prefetch Docker Images
+        if: ${{ env.NATIVE_RUN_ENABLED == 'true' }}
+        continue-on-error: true
+        run: bash ./ci/tests/puppeteer/prefetch-docker-images.sh ${{matrix.scenario}}
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v6
         with:
           gradle-home-cache-excludes: caches/build-cache-1
+          cache-encryption-key: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
       - name: "Setup Graal VM"
         uses: graalvm/setup-graalvm@v1
         if: ${{ env.NATIVE_BUILD_ENABLED == 'true' }}
         with:
           distribution: 'graalvm'
-          java-version: 'latest-ea'
+          version: ${{ env.GRAALVM_VERSION }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          cache: 'gradle'
           set-java-home: 'true'
       - name: Set up Nodejs
         uses: actions/setup-node@v7
@@ -163,15 +210,20 @@ jobs:
         if: ${{ env.NATIVE_RUN_ENABLED == 'true' }}
         with:
           max_attempts: ${{ env.MAX_ATTEMPTS }}
-          timeout_minutes: 5
+          timeout_minutes: 10
           retry_on: error
           shell: bash
           command: |
             ./ci/tests/puppeteer/run.sh --nr --scenario $PWD/ci/tests/puppeteer/scenarios/${{matrix.scenario}}
+      - name: Docker Prefetch Summary
+        if: ${{ always() && env.NATIVE_RUN_ENABLED == 'true' }}
+        continue-on-error: true
+        run: bash ./ci/tests/puppeteer/prefetch-docker-images.sh --summary
   ##########################################################################
   puppeteer-tests-511:
     runs-on: ubuntu-latest
     needs: [puppeteer-scenarios]
+    if: ${{ needs.puppeteer-scenarios.outputs.scenarios511 != '[]' }}
     continue-on-error: false
     strategy:
       fail-fast: false
@@ -187,18 +239,22 @@ jobs:
         run: find ./ci -type f -name "*.sh" -exec chmod +x "{}" \; && ./ci/init-build.sh
       - name: Configure CI
         run: ./ci/tests/puppeteer/configure-ci.sh ${{matrix.scenario}}
+      - name: Prefetch Docker Images
+        if: ${{ env.NATIVE_RUN_ENABLED == 'true' }}
+        continue-on-error: true
+        run: bash ./ci/tests/puppeteer/prefetch-docker-images.sh ${{matrix.scenario}}
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v6
         with:
           gradle-home-cache-excludes: caches/build-cache-1
+          cache-encryption-key: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
       - name: "Setup Graal VM"
         uses: graalvm/setup-graalvm@v1
         if: ${{ env.NATIVE_BUILD_ENABLED == 'true' }}
         with:
           distribution: 'graalvm'
-          java-version: 'latest-ea'
+          version: ${{ env.GRAALVM_VERSION }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          cache: 'gradle'
           set-java-home: 'true'
       - name: Set up Nodejs
         uses: actions/setup-node@v7
@@ -223,16 +279,21 @@ jobs:
         if: ${{ env.NATIVE_RUN_ENABLED == 'true' }}
         with:
           max_attempts: ${{ env.MAX_ATTEMPTS }}
-          timeout_minutes: 5
+          timeout_minutes: 10
           retry_on: error
           shell: bash
           command: |
             export RUNNER_OS=${{ runner.os }}
             ./ci/tests/puppeteer/run.sh --nr --scenario $PWD/ci/tests/puppeteer/scenarios/${{matrix.scenario}}
+      - name: Docker Prefetch Summary
+        if: ${{ always() && env.NATIVE_RUN_ENABLED == 'true' }}
+        continue-on-error: true
+        run: bash ./ci/tests/puppeteer/prefetch-docker-images.sh --summary
   ##########################################################################
   puppeteer-tests-766:
     runs-on: ubuntu-latest
     needs: [puppeteer-scenarios]
+    if: ${{ needs.puppeteer-scenarios.outputs.scenarios766 != '[]' }}
     continue-on-error: false
     strategy:
       fail-fast: false
@@ -248,18 +309,22 @@ jobs:
         run: find ./ci -type f -name "*.sh" -exec chmod +x "{}" \; && ./ci/init-build.sh
       - name: Configure CI
         run: ./ci/tests/puppeteer/configure-ci.sh ${{matrix.scenario}}
+      - name: Prefetch Docker Images
+        if: ${{ env.NATIVE_RUN_ENABLED == 'true' }}
+        continue-on-error: true
+        run: bash ./ci/tests/puppeteer/prefetch-docker-images.sh ${{matrix.scenario}}
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v6
         with:
           gradle-home-cache-excludes: caches/build-cache-1
+          cache-encryption-key: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
       - name: "Setup Graal VM"
         uses: graalvm/setup-graalvm@v1
         if: ${{ env.NATIVE_BUILD_ENABLED == 'true' }}
         with:
           distribution: 'graalvm'
-          java-version: 'latest-ea'
+          version: ${{ env.GRAALVM_VERSION }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          cache: 'gradle'
           set-java-home: 'true'
       - name: Set up Nodejs
         uses: actions/setup-node@v7
@@ -284,9 +349,13 @@ jobs:
         if: ${{ env.NATIVE_RUN_ENABLED == 'true' }}
         with:
           max_attempts: ${{ env.MAX_ATTEMPTS }}
-          timeout_minutes: 5
+          timeout_minutes: 10
           retry_on: error
           shell: bash
           command: |
             export RUNNER_OS=${{ runner.os }}
             ./ci/tests/puppeteer/run.sh --nr --scenario $PWD/ci/tests/puppeteer/scenarios/${{matrix.scenario}}
+      - name: Docker Prefetch Summary
+        if: ${{ always() && env.NATIVE_RUN_ENABLED == 'true' }}
+        continue-on-error: true
+        run: bash ./ci/tests/puppeteer/prefetch-docker-images.sh --summary

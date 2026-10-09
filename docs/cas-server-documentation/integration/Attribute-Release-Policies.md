@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Attribute Release Policies
+description: "Attribute release policies that decide which attributes each application receives, with filters, mappings and scripted rules."
 category: Attributes
 ---
 

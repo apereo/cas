@@ -327,7 +327,7 @@ class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
     static class GoogleAuthenticatorMultifactorAuthenticationWebflowConfiguration {
 
         @Bean
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_GOOGLE_ACCOUNT_AUTHORIZE_TOKEN_ATTEMPT)
         public Action googleAccountAuthorizeTokenAttemptAction(
             final ConfigurableApplicationContext applicationContext,

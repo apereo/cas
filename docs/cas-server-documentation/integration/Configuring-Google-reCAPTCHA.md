@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Google reCAPTCHA
+description: "Protect the CAS login form from bots with Google reCAPTCHA v2 or v3."
 category: Integration
 ---
 

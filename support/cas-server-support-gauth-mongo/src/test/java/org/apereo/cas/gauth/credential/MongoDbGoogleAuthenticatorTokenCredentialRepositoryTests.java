@@ -2,6 +2,7 @@ package org.apereo.cas.gauth.credential;
 
 import module java.base;
 import org.apereo.cas.config.CasGoogleAuthenticatorMongoDbAutoConfiguration;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
@@ -15,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
+import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import static org.junit.jupiter.api.Assertions.*;
@@ -52,6 +54,13 @@ class MongoDbGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseOneTi
     @Qualifier(BaseGoogleAuthenticatorTokenCredentialRepository.BEAN_NAME)
     private OneTimeTokenCredentialRepository registry;
 
+    @Autowired
+    @Qualifier("mongoDbGoogleAuthenticatorTemplate")
+    private MongoOperations mongoTemplate;
+
+    @Autowired
+    private CasConfigurationProperties casProperties;
+
     @BeforeEach
     void cleanUp() {
         registry.deleteAll();
@@ -63,5 +72,17 @@ class MongoDbGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseOneTi
         registry.save(registry.create("jose" + suffix));
         assertEquals(1, registry.count("JOSE" + suffix));
         assertEquals(0, registry.count("jos\u00e9" + suffix));
+    }
+
+    @Test
+    void verifyUsernameIndexCarriesCollation() {
+        val collection = casProperties.getAuthn().getMfa().getGauth().getMongo().getCollection();
+        val index = mongoTemplate.indexOps(collection).getIndexInfo()
+            .stream()
+            .filter(info -> MongoDbGoogleAuthenticatorTokenCredentialRepository.USERNAME_INDEX_NAME.equals(info.getName()))
+            .findFirst()
+            .orElseThrow();
+        assertEquals(2, ((Number) index.getCollation().orElseThrow().get("strength")).intValue());
+        assertEquals("en", index.getCollation().orElseThrow().get("locale"));
     }
 }

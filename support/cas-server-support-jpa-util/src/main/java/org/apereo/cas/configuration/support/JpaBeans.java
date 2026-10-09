@@ -18,6 +18,7 @@ import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 import org.springframework.jdbc.datasource.lookup.DataSourceLookupFailureException;
 import org.springframework.jdbc.datasource.lookup.JndiDataSourceLookup;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
+import org.springframework.orm.jpa.persistenceunit.PersistenceManagedTypes;
 
 /**
  * This is {@link JpaBeans}.
@@ -190,7 +191,9 @@ public class JpaBeans {
         }
 
         FunctionUtils.doIfNotBlank(config.getPersistenceUnitName(), _ -> bean.setPersistenceUnitName(config.getPersistenceUnitName()));
-        if (!config.getPackagesToScan().isEmpty()) {
+        if (!config.getManagedClassNames().isEmpty()) {
+            bean.setManagedTypes(PersistenceManagedTypes.of(List.copyOf(config.getManagedClassNames()), List.of()));
+        } else if (!config.getPackagesToScan().isEmpty()) {
             bean.setPackagesToScan(config.getPackagesToScan().toArray(ArrayUtils.EMPTY_STRING_ARRAY));
         }
         if (config.getDataSource() != null) {

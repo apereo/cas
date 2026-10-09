@@ -1,12 +1,14 @@
 ---
 layout: default
-title: CAS - Password Management
+title: CAS - Password Management - Groovy
 category: Password Management
 ---
 
 {% include variables.html %}
 
 # Password Management - Groovy
+
+Look up accounts, change passwords and handle security questions with a Groovy script.
 
 Accounts and password may be determined and handled using a customized Groovy script. The outline of the script may match the following:
 

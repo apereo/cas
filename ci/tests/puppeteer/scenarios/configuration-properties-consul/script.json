@@ -7,6 +7,8 @@
   "properties": [
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",
+    "--spring.cloud.bootstrap.enabled=false",
+    "--spring.config.import=consul:",
 
     "--spring.profiles.include=consul",
     
@@ -15,6 +17,7 @@
     "--spring.cloud.consul.host=localhost",
 
     "--spring.cloud.consul.config.enabled=true",
+    "--spring.cloud.consul.config.watch.enabled=false",
     "--spring.cloud.consul.config.profile-separator=-"
   ],
   "initScript": "${PWD}/ci/tests/consul/run-consul-server.sh"

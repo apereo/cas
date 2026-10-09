@@ -86,6 +86,7 @@ public abstract class AbstractServicesManagerTests {
         assertFalse(isServiceInCache(registeredService.getName(), 0));
         serviceRegistry.save(registeredService);
         assertNotNull(serviceRegistry.findServiceByExactServiceId(registeredService.getName()));
+        servicesManager.load();
         val svc = webApplicationServiceFactory.createService(registeredService.getName());
         assertNotNull(servicesManager.findServiceBy(svc, CasRegisteredService.class));
         assertTrue(isServiceInCache(registeredService.getName(), 0));

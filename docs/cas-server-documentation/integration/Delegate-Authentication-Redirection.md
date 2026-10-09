@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Delegate Authentication Redirection
+description: "Redirect users straight to an external identity provider instead of showing the provider selection menu."
 category: Authentication
 ---
 

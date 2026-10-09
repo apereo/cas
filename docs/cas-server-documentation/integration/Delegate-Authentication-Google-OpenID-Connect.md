@@ -1,12 +1,14 @@
 ---
 layout: default
-title: CAS - Delegate Authentication
+title: CAS - Google OpenID Connect - Delegated Authentication
 category: Authentication
 ---
 
 {% include variables.html %}
 
 # Google OpenID Connect
+
+Let users log in to CAS with their Google account through Google's OpenID Connect provider.
 
 For an overview of the delegated authentication flow, please [see this guide](Delegate-Authentication.html).
 

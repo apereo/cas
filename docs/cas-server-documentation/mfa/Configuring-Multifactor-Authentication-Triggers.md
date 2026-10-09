@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Multifactor Authentication Triggers
+description: "Triggers that decide when CAS asks for multifactor authentication: global, per application, per user or group, by request or by risk."
 category: Multifactor Authentication
 ---
 

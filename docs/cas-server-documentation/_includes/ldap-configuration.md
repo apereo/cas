@@ -2,7 +2,7 @@
 
 <p/>
 
-#### LDAP Scriptable Search Filter
+**LDAP Scriptable Search Filter**
 
 LDAP search filters can point to an external Groovy script to dynamically construct the final filter template.
 

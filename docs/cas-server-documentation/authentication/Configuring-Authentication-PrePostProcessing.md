@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Configuring Authentication Pre/Post Processing
+description: "Run custom logic before and after authentication with pre- and post-processors, including Groovy scripts."
 category: Authentication
 ---
 {% include variables.html %}

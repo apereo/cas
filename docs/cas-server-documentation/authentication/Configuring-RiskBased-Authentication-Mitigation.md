@@ -1,6 +1,6 @@
 ---
 layout: default
-title: CAS - Adaptive Risk-based Authentication
+title: CAS - Risk Mitigation
 category: Authentication
 ---
 {% include variables.html %}

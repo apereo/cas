@@ -29,7 +29,7 @@ const assert = require("assert");
     await cas.type(page, "#token", code);
     await cas.submitForm(page, "#fm1");
     await cas.sleep(4000);
-    await cas.assertInnerText(page, "#pwdmain h3", "Hello, casuser. You must change your password.");
+    await cas.assertInnerText(page, "#pwdmain h2", "Hello, casuser. You must change your password.");
     await cas.type(page,"#password", "Jv!e0mKD&dCNl^Q");
     await cas.type(page,"#confirmedPassword", "Jv!e0mKD&dCNl^Q");
     await cas.pressEnter(page);

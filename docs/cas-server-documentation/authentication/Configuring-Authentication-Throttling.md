@@ -1,6 +1,7 @@
 ---
 layout: default
-title: CAS - Configuring Authentication Throttling
+title: CAS - Throttling Authentication Attempts
+description: "Limit failed login attempts and overall request load on CAS with failure throttling and capacity throttling."
 category: Authentication
 ---
 {% include variables.html %}

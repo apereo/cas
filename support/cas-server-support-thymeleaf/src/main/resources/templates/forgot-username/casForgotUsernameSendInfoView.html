@@ -1,84 +1,62 @@
 <!DOCTYPE html>
-<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout(mainContentClass='container-xxl py-3')}">
 
 <head>
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-
-    <title th:text="#{screen.pm.forgotusername.title}">Forgot Username Instructions View</title>
+    <title th:text="#{screen.pm.forgotusername.title}">Forgot Username Send Instructions View</title>
     <link href="../../static/css/cas.css" rel="stylesheet" th:remove="tag" />
+    <link rel="stylesheet" type="text/css" th:href="@{/css/account.css}" />
 </head>
 
 <body>
-    <main class="container mt-3 mb-3">
-        <div layout:fragment="content" id="reset">
-            <div class="row">
-                <div class="col-lg-6 offset-lg-3">
-                    <div class="mdc-card card">
-                        <form method="post" id="fm1">
-                            <section class="p-4">
-                                <h3 th:utext="#{screen.pm.forgotusername.title}">Forgot your username?</h3>
-                                <div th:utext="#{screen.pm.forgotusername.instructions}" class="my-4">Please provide
-                                    your email address. You will receive an email with your username.</div>
-
-                                <div class="banner banner-danger alert alert-danger alert-dismissible mb-4"
-                                    th:if="${flowRequestContext.messageContext.hasErrorMessages()}">
-                                    <p th:each="message : ${flowRequestContext.messageContext.allMessages}"
-                                        th:utext="${message.text}">Message Text
-                                    </p>
-                                </div>
-
-                                <input type="hidden" name="execution" th:value="${flowExecutionKey}" />
-                                <input type="hidden" name="_eventId" value="findUsername" />
-                                <div class="d-flex">
-                                    <label for="email" class="mdc-text-field mdc-text-field--outlined control-label">
-                                        <span class="mdc-notched-outline">
-                                            <span class="mdc-notched-outline__leading"></span>
-                                            <span class="mdc-notched-outline__notch">
-                                                <span class="mdc-floating-label" th:utext="#{screen.pm.reset.email}">Email</span>
-                                            </span>
-                                            <span class="mdc-notched-outline__trailing"></span>
-                                        </span>
-                                        <input class="mdc-text-field__input form-control"
-                                               type="text"
-                                               name="email"
-                                               id="email"
-                                               size="65"
-                                               autocomplete="off" required />
-                                    </label>
-
-                                </div>
-                            </section>
-
-                            <span class="mdc-card__actions_actions p-4" th:if="${recaptchaForgotUsernameEnabled}">
-                                <div th:replace="~{fragments/recaptcha :: recaptchaToken}" />
-                            </span>
-
-                            <div class="mdc-card__actions_actions p-4">
-                                <div th:replace="~{fragments/submitbutton :: submitButton (messageKey='screen.pm.button.submit')}"/>
-                                
-                                <button class="mdc-button mdc-button--outline btn btn-outline-secondary mdc-card__actions_action mdc-card__actions_action--button"
-                                    name="cancel" th:value="#{screen.pm.button.cancel}" type="button"
-                                    onclick="location.href = location.href;" value="CANCEL">
-                                    <span class="mdc-button__label" th:text="#{screen.pm.button.cancel}">CANCEL</span>
-                                </button>
+<main class="container mt-3 mb-3">
+    <div layout:fragment="content" id="reset">
+        <div th:replace="~{fragments/accountflow :: shell(flow='username', step=1, steps=2, content=~{::flowContent})}">
+            <div th:fragment="flowContent">
+                <form method="post" id="fm1" class="cas-flow-form">
+                    <section>
+                        <div>
+                            <h2 th:utext="#{screen.pm.forgotusername.title}">Forgot your username?</h2>
+                            <p class="cas-flow-intro" th:utext="#{screen.pm.forgotusername.instructions}">Please provide your
+                                email address. You will receive an email with your username.</p>
+                        </div>
+                        <div class="alert alert-danger acct-banner acct-banner-error" role="alert"
+                             th:if="${flowRequestContext.messageContext.hasErrorMessages()}">
+                            <i class="mdi mdi-alert-circle-outline" aria-hidden="true"></i>
+                            <div class="acct-banner-body">
+                                <p th:each="message : ${flowRequestContext.messageContext.allMessages}" th:text="${message.text}">Message Text</p>
                             </div>
-                        </form>
+                        </div>
+                        <input type="hidden" name="execution" th:value="${flowExecutionKey}" />
+                        <input type="hidden" name="_eventId" value="findUsername" />
+                        <label class="cas-flow-field" for="email">
+                            <span th:utext="#{screen.pm.reset.email}">Email</span>
+                            <input class="acct-input" type="text" inputmode="email" name="email" id="email"
+                                   autocapitalize="none" spellcheck="false" autocomplete="email" required />
+                        </label>
+                    </section>
+                    <span th:if="${recaptchaForgotUsernameEnabled}">
+                        <div th:replace="~{fragments/recaptcha :: recaptchaToken}" />
+                    </span>
+                    <div class="cas-flow-actions">
+                        <div th:replace="~{fragments/submitbutton :: submitButton (messageKey='screen.pm.button.submit', iconClass='mdi-send-outline')}"/>
+                        <button class="acct-btn" name="cancel" type="button" onclick="location.href = location.href;"
+                                th:value="#{screen.pm.button.cancel}" th:text="#{screen.pm.button.cancel}">Cancel</button>
                     </div>
-                </div>
+                </form>
+                <script type="text/javascript" th:inline="javascript">
+                    const processingText = /*[[#{screen.welcome.button.loginwip}]]*/ "";
+                    $('#fm1').submit(function () {
+                        $(':submit').attr('disabled', true);
+                        $(':submit').attr('value', processingText);
+                        return true;
+                    });
+                </script>
             </div>
         </div>
-
-        <script type="text/javascript" th:inline="javascript">
-            var i = [[#{ screen.welcome.button.loginwip }]];
-            $('#fm1').submit(function () {
-                $(':submit').attr('disabled', true);
-                $(':submit').attr('value', i);
-                return true;
-            });
-        </script>
-        </div>
-    </main>
+    </div>
+</main>
 </body>
 
 </html>

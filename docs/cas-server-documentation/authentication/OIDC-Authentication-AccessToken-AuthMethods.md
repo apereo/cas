@@ -1,6 +1,6 @@
 ---
 layout: default
-title: CAS - OpenID Connect Authentication
+title: CAS - OpenID Connect - Access Token Authentication Methods
 category: Protocols
 ---
 {% include variables.html %}
@@ -10,13 +10,15 @@ category: Protocols
 Access token requests must be authenticated using any of the client authentication strategies
 specified in the [OpenID Connect discovery](OIDC-Authentication-Discovery.html). The following methods are supported by CAS:
 
-| Method                | Description                                                                                                                                                                                                                                                                                                   |
-|-----------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `client_secret_basic` | Default. The client id and client secret are used to create a HTTP Basic authentication scheme.                                                                                                                                                                                                               |
-| `client_secret_post`  | NOT RECOMMENDED. The `client_id` and `client_secret` are only supplied and accepted in the request body.                                                                                                                                                                                                      |
-| `client_secret_jwt`   | Clients with a client secret can create a JWT using an HMAC SHA algorithm, which is calculated using the client secret as the shared key. The JWT is passed as a `client_assertion` request parameter and `client_assertion_type` parameter MUST be `urn:ietf:params:oauth:client-assertion-type:jwt-bearer`. |
-| `private_key_jwt`     | Clients with a registered public key build and sign a JWT using that key. The JWT is passed as a `client_assertion` request parameter and `client_assertion_type` parameter MUST be `urn:ietf:params:oauth:client-assertion-type:jwt-bearer`.                                                                 |
-| `tls_client_auth`     | Mutual TLS utilizing the PKI method of associating a certificate to a client.                                                                                                                                                                                                                                 |
+| Method                        | Description                                                                                                                                                                                                                                                                                                   |
+|-------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `client_secret_basic`         | Default. The client id and client secret are used to create a HTTP Basic authentication scheme.                                                                                                                                                                                                               |
+| `client_secret_post`          | NOT RECOMMENDED. The `client_id` and `client_secret` are only supplied and accepted in the request body.                                                                                                                                                                                                      |
+| `client_secret_jwt`           | Clients with a client secret can create a JWT using an HMAC SHA algorithm, which is calculated using the client secret as the shared key. The JWT is passed as a `client_assertion` request parameter and `client_assertion_type` parameter MUST be `urn:ietf:params:oauth:client-assertion-type:jwt-bearer`. |
+| `private_key_jwt`             | Clients with a registered public key build and sign a JWT using that key. The JWT is passed as a `client_assertion` request parameter and `client_assertion_type` parameter MUST be `urn:ietf:params:oauth:client-assertion-type:jwt-bearer`.                                                                 |
+| `tls_client_auth`             | Mutual TLS utilizing the PKI method of associating a certificate to a client.                                                                                                                                                                                                                                 |
+| `attest_jwt_client_auth`      | A client attestation, such as a wallet attestation, in the `OAuth-Client-Attestation` header with its proof of possession in the `OAuth-Client-Attestation-PoP` header. See [below](#attestation-based-client-authentication).                                                                                |
+| `attest_jwt_client_auth_dpop` | A client attestation in the `OAuth-Client-Attestation` header, with a DPoP proof made with the attested key as its proof of possession (DPoP combined mode). See [below](#attestation-based-client-authentication).                                                                                           |
 
 Please study [the specification](https://openid.net/specs/openid-connect-core-1_0.html) to learn more.
                          
@@ -36,6 +38,91 @@ Enforced and required client authentication methods may be tuned and controlled 
 
 If the `tokenEndpointAuthenticationMethod` field is left blank, all available authentication methods are evaluated for access token requests
 and authentication method enforcement should effectively be disabled.
+
+## Attestation-Based Client Authentication
+
+Clients such as native wallet apps may authenticate with a client attestation, following
+[OAuth 2.0 Attestation-Based Client Authentication](https://datatracker.ietf.org/doc/draft-ietf-oauth-attestation-based-client-auth/).
+This is how wallets authenticate with a wallet attestation, as described by
+[OpenID4VCI 1.0 Appendix E](https://openid.net/specs/openid-4-verifiable-credential-issuance-1_0.html#appendix-E)
+and required by [HAIP 1.0](https://openid.net/specs/openid4vc-high-assurance-interoperability-profile-1_0.html),
+at the token and the [pushed authorization request](OIDC-Authentication-PAR.html) endpoints.
+
+{% include_cached casproperties.html properties="cas.authn.oidc.client-attestation" %}
+
+The client attestation is signed by the client attester, such as the wallet provider, and is sent in the
+`OAuth-Client-Attestation` header. It carries its signing certificate, and any intermediate certificates, in its `x5c`
+header; the chain must lead to one of the trust anchors defined in CAS settings, without including it, and the signer must
+not be self-signed. Its `sub` is the client identifier and must match the `client_id` request parameter when one is sent,
+it must carry an `exp` that has not passed, and its `cnf` claim names the key of the client instance. A `status` claim is
+accepted and logged as a warning, since its status is not checked.
+
+The proof of possession is sent in the `OAuth-Client-Attestation-PoP` header, signed by the key in `cnf`. Its `aud` must be
+the issuer, it must carry an `iat` within the last few minutes and a `jti` that may be used only once. Each header must be sent
+exactly once.
+
+Challenges may be turned on in CAS settings. The [discovery document](OIDC-Authentication-Discovery.html) then lists a
+`challenge_endpoint`, where a client fetches a challenge to put in the `challenge` claim of its proof of possession:
+
+```bash
+POST /oidc/oidcAttestationChallenge
+```
+
+```json
+{
+  "attestation_challenge": "TST-1-..."
+}
+```
+
+Every proof of possession must then carry a challenge that CAS handed out and that has not expired; a challenge may be used
+more than once until it expires. A missing, unknown or expired challenge is answered with `400` and `use_attestation_challenge`,
+along with a fresh challenge in the `OAuth-Client-Attestation-Challenge` header for the client to retry with.
+
+In the DPoP combined mode (`attest_jwt_client_auth_dpop`), the request carries no `OAuth-Client-Attestation-PoP` header; a single
+`DPoP` proof stands for the proof of possession instead. It must be valid for the request per
+[RFC 9449](https://www.rfc-editor.org/rfc/rfc9449), signed with one of the `dpop_signing_alg_values_supported`, made with the key
+in the attestation's `cnf` and not used before. Challenges do not apply to this mode; once [DPoP nonces](OIDC-Authentication-DPoP.html#server-provided-nonces) are turned on,
+the proof must carry one instead, or the request is answered with `400` and `use_dpop_nonce`. A
+request that carries both headers is authenticated by the proof of possession; its DPoP proof, if any, is left to the endpoint,
+and binds the access token at the token endpoint.
+
+Once trust anchors are configured, the [discovery document](OIDC-Authentication-Discovery.html) lists `attest_jwt_client_auth`
+and `attest_jwt_client_auth_dpop` among `token_endpoint_auth_methods_supported`, along with the accepted signing algorithms:
+
+```json
+{
+  "token_endpoint_auth_methods_supported": [
+    "client_secret_basic",
+    "private_key_jwt",
+    "attest_jwt_client_auth",
+    "attest_jwt_client_auth_dpop"
+  ],
+  "client_attestation_signing_alg_values_supported": [
+    "ES256",
+    "ES384",
+    "ES512"
+  ],
+  "client_attestation_pop_signing_alg_values_supported": [
+    "ES256",
+    "ES384",
+    "ES512"
+  ]
+}
+```
+
+A relying party that must authenticate this way at the token endpoint names the method, `attest_jwt_client_auth` or
+`attest_jwt_client_auth_dpop`:
+
+```json
+{
+  "@class": "org.apereo.cas.services.OidcRegisteredService",
+  "clientId": "https://wallet.example.org",
+  "serviceId": "^https://wallet.example.org/.*",
+  "name": "Wallet",
+  "id": 1,
+  "tokenEndpointAuthenticationMethod": "attest_jwt_client_auth"
+}
+```
 
 ## Mutual TLS Client Authentication
 

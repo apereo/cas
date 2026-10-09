@@ -20,6 +20,7 @@ import org.springframework.core.retry.RetryException;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.TestPropertySource;
 import static org.apereo.cas.util.junit.Assertions.assertThrowsWithRootCause;
+import static org.awaitility.Awaitility.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -241,6 +242,21 @@ class SamlRegisteredServiceDefaultCachingMetadataResolverTests extends BaseSamlI
         assertEquals(2, stats3.missCount());
         assertEquals(2, stats3.loadSuccessCount());
         assertEquals(1, stats3.hitCount());
+    }
+
+    @Test
+    void verifyEntryRefreshedInBackgroundBeforeExpiration() throws Throwable {
+        val entityId = "https://carmenwiki.osu.edu/shibboleth";
+        val service = getSamlRegisteredService(2000, entityId, "classpath:sample-sp.xml");
+        service.setMetadataExpirationDuration("PT8S");
+        val resolver = getResolver("PT1H");
+        val criteriaSet = getCriteriaFor(entityId);
+
+        val initial = resolver.resolve(service, criteriaSet);
+        await().pollInterval(Duration.ofMillis(200)).atMost(Duration.ofSeconds(20))
+            .until(() -> resolver.resolve(service, criteriaSet).getCachedInstant().isAfter(initial.getCachedInstant()));
+        assertEquals(1, resolver.getCacheStatistics().missCount());
+        resolver.invalidate();
     }
 
     private SamlRegisteredServiceDefaultCachingMetadataResolver getResolver(final String duration) {

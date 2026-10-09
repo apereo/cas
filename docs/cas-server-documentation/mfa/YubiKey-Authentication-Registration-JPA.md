@@ -1,12 +1,14 @@
 ---
 layout: default
-title: CAS - YubiKey Authentication
+title: CAS - JPA YubiKey Registration
 category: Multifactor Authentication
 ---
 
 {% include variables.html %}
 
 # JPA YubiKey Registration
+
+Keep YubiKey device registrations in a relational database.
 
 Support is enabled by including the following dependencies in the WAR overlay:
 

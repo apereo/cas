@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Configuration Management - Reloading Changes
+description: "Reload CAS configuration at runtime without a restart, using refresh endpoints or the Spring Cloud Bus."
 category: Configuration
 ---
 

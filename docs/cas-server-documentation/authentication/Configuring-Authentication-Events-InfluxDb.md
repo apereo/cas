@@ -1,6 +1,6 @@
 ---
 layout: default
-title: CAS - Configuring Authentication Events
+title: CAS - InfluxDb Authentication Events
 category: Authentication
 ---
 {% include variables.html %}

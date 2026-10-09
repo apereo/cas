@@ -30,7 +30,7 @@ public class MultifactorAuthenticationTrustStorageCleaner implements Cleanable {
         cron = "${cas.authn.mfa.trusted.cleaner.schedule.cron-expression:}",
         zone = "${cas.authn.mfa.trusted.cleaner.schedule.cron-time-zone:}",
         initialDelayString = "${cas.authn.mfa.trusted.cleaner.schedule.start-delay:PT10S}",
-        fixedDelayString = "${cas.authn.mfa.trusted.cleaner.schedule.repeat-interval:PT60S}")
+        fixedDelayString = "${cas.authn.mfa.trusted.cleaner.schedule.repeat-interval:PT2M}")
     public void clean() {
         FunctionUtils.doAndHandle(_ -> {
             LOGGER.trace("Proceeding to clean up expired trusted authentication records...");

@@ -1,6 +1,6 @@
 ---
 layout: default
-title: CAS - Password Management
+title: CAS - Password Management - REST
 category: Password Management
 ---
 

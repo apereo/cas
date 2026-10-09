@@ -1,12 +1,15 @@
 ---
 layout: default
-title: CAS - Delegate Authentication
+title: CAS - X (Twitter) - Delegated Authentication
 category: Authentication
 ---
 
 {% include variables.html %}
 
-# Twitter
+# X (Twitter)
+
+Delegate authentication to X, the service formerly known as Twitter. The provider is still named `Twitter`
+in CAS settings and client names.
 
 For an overview of the delegated authentication flow, please [see this guide](Delegate-Authentication.html).
 

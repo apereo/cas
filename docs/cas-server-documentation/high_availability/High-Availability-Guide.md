@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - High Availability Guide
+description: "A recommended high availability architecture for CAS: load balancing, shared ticket and service registries and stateless nodes."
 category: High Availability
 ---
 

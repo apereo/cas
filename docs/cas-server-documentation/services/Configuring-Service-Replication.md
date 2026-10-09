@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Configuring Service Replication
+description: "Keep service definitions stored as files in sync across CAS nodes with Hazelcast or other replication options."
 category: Services
 ---
 

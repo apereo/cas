@@ -1,7 +1,10 @@
 package org.apereo.cas.services;
 
 import module java.base;
+import org.apereo.cas.support.events.service.CasRegisteredServiceDeletedEvent;
 import org.apereo.cas.support.events.service.CasRegisteredServiceExpiredEvent;
+import org.apereo.cas.support.events.service.CasRegisteredServiceSavedEvent;
+import org.apereo.cas.support.events.service.CasRegisteredServicesLoadedEvent;
 import org.apereo.cas.support.events.service.CasRegisteredServicesRefreshEvent;
 import org.apereo.cas.util.spring.CasEventListener;
 import org.springframework.cloud.context.environment.EnvironmentChangeEvent;
@@ -56,5 +59,30 @@ public interface RegisteredServicesEventListener extends CasEventListener {
     @EventListener
     @Async
     void handleRegisteredServiceExpiredEvent(CasRegisteredServiceExpiredEvent event);
+
+    /**
+     * Cache a service that was saved outside the services manager,
+     * such as a service definition file picked up by a registry watcher.
+     *
+     * @param event the event
+     */
+    @EventListener
+    void handleRegisteredServiceSavedEvent(CasRegisteredServiceSavedEvent event);
+
+    /**
+     * Evict a service that was deleted outside the services manager.
+     *
+     * @param event the event
+     */
+    @EventListener
+    void handleRegisteredServiceDeletedEvent(CasRegisteredServiceDeletedEvent event);
+
+    /**
+     * Reload the services manager when a registry reloaded itself outside the services manager.
+     *
+     * @param event the event
+     */
+    @EventListener
+    void handleRegisteredServicesLoadedEvent(CasRegisteredServicesLoadedEvent event);
 
 }

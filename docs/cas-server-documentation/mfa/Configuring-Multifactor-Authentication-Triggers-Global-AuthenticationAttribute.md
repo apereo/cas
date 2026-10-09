@@ -1,6 +1,6 @@
 ---
 layout: default
-title: CAS - Multifactor Authentication Triggers
+title: CAS - Groovy Authentication Attribute - Multifactor Authentication Triggers
 category: Multifactor Authentication
 ---
 

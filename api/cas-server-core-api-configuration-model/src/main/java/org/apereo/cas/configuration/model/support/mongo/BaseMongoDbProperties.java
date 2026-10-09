@@ -27,7 +27,8 @@ public abstract class BaseMongoDbProperties implements CasFeatureModule, Seriali
     private static final long serialVersionUID = -2471243083598934186L;
 
     /**
-     * core connection-related settings.
+     * Core connection-related pool settings.
+     * These do not apply when {@link #getClientUri()} is set.
      */
     @NestedConfigurationProperty
     private MongoDbConnectionPoolProperties pool = new MongoDbConnectionPoolProperties();

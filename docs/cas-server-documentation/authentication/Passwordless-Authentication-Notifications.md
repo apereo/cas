@@ -1,6 +1,6 @@
 ---
 layout: default
-title: CAS - Passwordless Authentication
+title: CAS - Passwordless Authentication - Messaging & Notifications
 category: Authentication
 ---
 {% include variables.html %}
@@ -16,7 +16,7 @@ or [this guide](../notifications/Sending-Email-Configuration.html).
 ## SMS One-Time Codes
 
 CAS ends the SMS text with an [origin-bound one-time code](https://wicg.github.io/sms-one-time-codes/)
-line, `@<host> #<token>`, where the host is taken from the CAS server name. For example, with `cas.server.name`
+line, `@<host> #<token>`, where the host is taken from the CAS server name. For example, with `cas.server.name`{: .cas-setting}
 set to `https://sso.example.org` and a message text of `Your token is ${token}`, the user receives:
 
 ```

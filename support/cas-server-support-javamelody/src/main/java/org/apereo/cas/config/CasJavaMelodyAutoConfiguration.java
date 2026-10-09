@@ -17,6 +17,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.core.NativeDetector;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.servlet.util.matcher.PathPatternRequestMatcher;
 
@@ -38,6 +39,11 @@ public class CasJavaMelodyAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "monitorableComponentsAdvisor")
     public MonitoringSpringAdvisor monitorableComponentsAdvisor() {
+        if (NativeDetector.inNativeImage() && !System.getProperties().containsKey("java.home")) {
+            ProcessHandle.current().info().command()
+                .map(command -> Path.of(command).toAbsolutePath().getParent())
+                .ifPresent(home -> System.getProperties().putIfAbsent("java.home", home.toString()));
+        }
         return new MonitoringSpringAdvisor(new AnnotationMatchingPointcut(Monitorable.class, null));
     }
 

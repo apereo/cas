@@ -48,8 +48,10 @@ import org.apereo.cas.support.oauth.services.OAuth20RegisteredServiceCipherExecu
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.validator.CASOAuth20TicketValidator;
 import org.apereo.cas.support.oauth.validator.DefaultOAuth20ClientSecretValidator;
+import org.apereo.cas.support.oauth.validator.DefaultOAuth20DPoPNonceService;
 import org.apereo.cas.support.oauth.validator.DefaultOAuth20ProofOfPossessionValidator;
 import org.apereo.cas.support.oauth.validator.OAuth20ClientSecretValidator;
+import org.apereo.cas.support.oauth.validator.OAuth20DPoPNonceService;
 import org.apereo.cas.support.oauth.validator.OAuth20ProofOfPossessionValidator;
 import org.apereo.cas.support.oauth.validator.authorization.OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidator;
 import org.apereo.cas.support.oauth.validator.authorization.OAuth20AuthorizationRequestValidator;
@@ -489,9 +491,23 @@ class CasOAuth20Configuration {
             final ServicesManager servicesManager,
             final CasConfigurationProperties casProperties,
             @Qualifier(AuditableExecution.AUDITABLE_EXECUTION_REGISTERED_SERVICE_ACCESS)
-            final AuditableExecution registeredServiceAccessStrategyEnforcer) {
+            final AuditableExecution registeredServiceAccessStrategyEnforcer,
+            @Qualifier(OAuth20DPoPNonceService.BEAN_NAME)
+            final OAuth20DPoPNonceService oauthDPoPNonceService) {
             return new DefaultOAuth20ProofOfPossessionValidator(oauthDistributedSessionStore, servicesManager,
-                ticketRegistry, ticketFactory, registeredServiceAccessStrategyEnforcer, casProperties);
+                ticketRegistry, ticketFactory, registeredServiceAccessStrategyEnforcer, casProperties, oauthDPoPNonceService);
+        }
+
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = OAuth20DPoPNonceService.BEAN_NAME)
+        public OAuth20DPoPNonceService oauthDPoPNonceService(
+            @Qualifier(TicketFactory.BEAN_NAME)
+            final TicketFactory ticketFactory,
+            @Qualifier(TicketRegistry.BEAN_NAME)
+            final TicketRegistry ticketRegistry,
+            final CasConfigurationProperties casProperties) {
+            return new DefaultOAuth20DPoPNonceService(ticketRegistry, ticketFactory, casProperties);
         }
 
         @Bean

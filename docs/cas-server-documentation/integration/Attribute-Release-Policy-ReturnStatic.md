@@ -1,6 +1,6 @@
 ---
 layout: default
-title: CAS - Attribute Release Policies
+title: CAS - Attribute Release Policy - Return Static
 category: Attributes
 ---
 

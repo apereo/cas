@@ -53,11 +53,11 @@ public class DefaultPasswordResetUrlBuilder implements PasswordResetUrlBuilder {
                 PasswordManagementService.PARAMETER_TOKEN, token,
                 ExpirationPolicy.class.getName(), computeExpirationPolicy());
             val ticket = transientFactory.create(service, properties);
-            ticketRegistry.addTicket(ticket);
+            val storedTicket = Objects.requireNonNull(ticketRegistry.addTicket(ticket), "Unable to store password reset ticket");
 
             val resetUrl = new StringBuilder(casProperties.getServer().getPrefix())
                 .append('/').append(CasWebflowConfigurer.FLOW_ID_LOGIN).append('?')
-                .append(PasswordManagementService.PARAMETER_PASSWORD_RESET_TOKEN).append('=').append(ticket.getId());
+                .append(PasswordManagementService.PARAMETER_PASSWORD_RESET_TOKEN).append('=').append(storedTicket.getId());
 
             if (service != null) {
                 val encodeServiceUrl = UriUtils.encode(service.getOriginalUrl(), StandardCharsets.UTF_8);

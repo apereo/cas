@@ -41,10 +41,12 @@ import com.nimbusds.jwt.JWTClaimNames;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.oauth2.sdk.dpop.DefaultDPoPProofFactory;
 import com.nimbusds.oauth2.sdk.token.DPoPAccessToken;
+import com.nimbusds.openid.connect.sdk.Nonce;
 import lombok.val;
 import org.jose4j.jwk.JsonWebKeySet;
 import org.jose4j.jwk.PublicJsonWebKey;
 import org.jspecify.annotations.Nullable;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -60,6 +62,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import java.security.cert.X509Certificate;
@@ -991,6 +994,40 @@ class HeimdallAuthorizationControllerTests {
                 .andExpect(status().isUnauthorized());
         } finally {
             ticketRegistry.deleteTicket(token.getId());
+        }
+    }
+
+    /**
+     * Once DPoP nonces are turned on, a caller's DPoP proof must carry one handed out by CAS.
+     */
+    @Nested
+    @TestPropertySource(properties = "cas.authn.oidc.dpop.nonce.enabled=true")
+    class DPoPNonceTests {
+        @Test
+        void verifySenderConstrainedTokenRequiresNonce() throws Throwable {
+            val key = new ECKeyGenerator(Curve.P_256).generate();
+            val principal = RegisteredServiceTestUtils.getPrincipal(UUID.randomUUID().toString(), Map.of("memberOf", List.of("admin")));
+            val token = buildAccessToken(RegisteredServiceTestUtils.getAuthentication(principal,
+                Map.of(OAuth20Constants.DPOP_CONFIRMATION, List.of(key.computeThumbprint().toString()))));
+            ticketRegistry.addTicket(token);
+            try {
+                val target = URI.create("http://localhost/heimdall/authzen");
+                val factory = new DefaultDPoPProofFactory(key, JWSAlgorithm.ES256);
+                val presentedToken = new DPoPAccessToken(token.getId());
+                val nonce = mockMvc.perform(authZenRequest("DPoP " + token.getId())
+                        .header(OAuth20Constants.DPOP, factory.createDPoPJWT("POST", target, presentedToken).serialize()))
+                    .andExpect(status().isUnauthorized())
+                    .andExpect(header().string(HttpHeaders.WWW_AUTHENTICATE,
+                        org.hamcrest.Matchers.containsString("error=\"" + OAuth20Constants.USE_DPOP_NONCE + '"')))
+                    .andReturn().getResponse().getHeader(OAuth20Constants.DPOP_NONCE);
+                assertNotNull(nonce);
+                mockMvc.perform(authZenRequest("DPoP " + token.getId())
+                        .header(OAuth20Constants.DPOP, factory.createDPoPJWT("POST", target, presentedToken, new Nonce(nonce)).serialize()))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.decision").value(true));
+            } finally {
+                ticketRegistry.deleteTicket(token.getId());
+            }
         }
     }
 

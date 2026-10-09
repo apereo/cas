@@ -10,6 +10,7 @@ import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.ticket.expiration.FixedInstantExpirationPolicy;
 import org.apereo.cas.ticket.registry.compact.TicketCompactor;
 import org.apereo.cas.ticket.serialization.TicketSerializationManager;
+import org.apereo.cas.util.CompressionUtils;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
@@ -39,8 +40,6 @@ public class StatelessTicketRegistry extends AbstractTicketRegistry {
     private static final byte UNCOMPRESSED = 0;
 
     private static final byte DEFLATED = 1;
-
-    private static final int BUFFER_SIZE = 1024;
 
     private static final int HEADER_LENGTH = 2;
 
@@ -128,7 +127,7 @@ public class StatelessTicketRegistry extends AbstractTicketRegistry {
             throw new IllegalArgumentException("Ticket prefix %s is too long".formatted(prefix));
         }
         val content = compactTicket.getBytes(StandardCharsets.UTF_8);
-        val deflated = deflate(content);
+        val deflated = CompressionUtils.deflate(content, true);
         val useDeflated = deflated.length < content.length;
         val body = useDeflated ? deflated : content;
         val bodyStart = HEADER_LENGTH + prefixBytes.length;
@@ -154,38 +153,8 @@ public class StatelessTicketRegistry extends AbstractTicketRegistry {
         }
         return switch (content[0]) {
             case UNCOMPRESSED -> new String(content, bodyStart, content.length - bodyStart, StandardCharsets.UTF_8);
-            case DEFLATED -> new String(inflate(content, bodyStart), StandardCharsets.UTF_8);
+            case DEFLATED -> new String(CompressionUtils.inflate(content, bodyStart, true), StandardCharsets.UTF_8);
             default -> throw new DataFormatException("Unknown compact ticket encoding " + content[0]);
         };
-    }
-
-    private static byte[] deflate(final byte[] content) {
-        try (val deflater = new Deflater(Deflater.BEST_COMPRESSION, true)) {
-            deflater.setInput(content);
-            deflater.finish();
-            val output = new ByteArrayOutputStream(content.length);
-            val buffer = new byte[BUFFER_SIZE];
-            while (!deflater.finished()) {
-                output.write(buffer, 0, deflater.deflate(buffer));
-            }
-            return output.toByteArray();
-        }
-    }
-
-    private static byte[] inflate(final byte[] content, final int offset) throws DataFormatException {
-        try (val inflater = new Inflater(true)) {
-            val input = Arrays.copyOfRange(content, offset, content.length + 1);
-            inflater.setInput(input);
-            val output = new ByteArrayOutputStream((content.length - offset) * 4);
-            val buffer = new byte[BUFFER_SIZE];
-            while (!inflater.finished()) {
-                val count = inflater.inflate(buffer);
-                if (count == 0 && (inflater.needsInput() || inflater.needsDictionary())) {
-                    throw new DataFormatException("Compact ticket is truncated");
-                }
-                output.write(buffer, 0, count);
-            }
-            return output.toByteArray();
-        }
     }
 }

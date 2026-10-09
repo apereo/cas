@@ -1,6 +1,6 @@
 ---
 layout: default
-title: CAS - Account Registration Provisioning
+title: CAS - Account (Self-Service) Registration - Groovy Provisioning
 category: Registration
 ---
                   

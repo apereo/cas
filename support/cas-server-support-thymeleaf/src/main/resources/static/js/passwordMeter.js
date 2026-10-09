@@ -20,7 +20,12 @@ document.addEventListener("DOMContentLoaded", (event) => {
             UpdateProgressBar();
         });
 
-        function setProgress(value, bar) {
+        function setProgress(value, bar, label) {
+            $(settings.progressBar).attr('aria-valuenow', value).attr('aria-valuetext', label || '');
+            $('#password-strength-label').text(label || '');
+            if (!bar) {
+                return;
+            }
             let materialBar = bar.foundation;
             if (materialBar) {
                 materialBar.setProgress(value > 0 ? value / 100 : 0);
@@ -39,7 +44,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
                 let result = zxcvbn(password, settings.userInputs);
                 //result.score: 0, 1, 2, 3 or 4 - if crack time is less than 10**2, 10**4, 10**6, 10**8, Infinity.
                 let scorePercentage = (result.score + 1) * 20;
-                setProgress(scorePercentage, settings.bar);
+                setProgress(scorePercentage, settings.bar, strength[result.score]);
 
                 if (result.score === 0) {
                     //weak
@@ -67,7 +72,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
                     $(indicator).html(strength[4]);
                 }
             } else {
-                setProgress(0);
+                setProgress(0, settings.bar, '');
                 $(progressBar).removeClass(settings.allProgressBarClasses).addClass(settings.progressBarClass0);
                 $(indicator).html('');
             }

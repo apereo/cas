@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Project Management Committee
+description: "The CAS Project Management Committee: its members, responsibilities and how nominations work."
 ---
 
 # Project Management Committee

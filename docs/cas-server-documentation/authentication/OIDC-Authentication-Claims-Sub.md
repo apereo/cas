@@ -1,6 +1,6 @@
 ---
 layout: default
-title: CAS - OpenID Connect Authentication
+title: CAS - Subject Identifier Claim - OpenID Connect Authentication
 category: Protocols
 ---
 {% include variables.html %}

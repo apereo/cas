@@ -3,6 +3,7 @@ package org.apereo.cas.ticket.registry;
 import module java.base;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.config.CasCoreEventsAutoConfiguration;
+import org.apereo.cas.configuration.model.core.util.EncryptionRandomizedSigningJwtCryptographyProperties;
 import org.apereo.cas.logout.LogoutManager;
 import org.apereo.cas.mock.MockServiceTicket;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
@@ -11,12 +12,15 @@ import org.apereo.cas.support.events.logout.CasRequestSingleLogoutEvent;
 import org.apereo.cas.support.events.ticket.CasTicketGrantingTicketDestroyedEvent;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.ticket.DefaultTicketCatalog;
+import org.apereo.cas.ticket.ProxyGrantingTicketIssuerTicket;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.expiration.HardTimeoutExpirationPolicy;
+import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
 import org.apereo.cas.ticket.serialization.TicketSerializationManager;
 import org.apereo.cas.ticket.tracking.TicketTrackingPolicy;
+import org.apereo.cas.util.CoreTicketUtils;
 import org.apereo.cas.util.cipher.DefaultTicketCipherExecutor;
 import lombok.val;
 import org.junit.jupiter.api.Nested;
@@ -101,6 +105,71 @@ class DefaultTicketRegistryTests {
                     mock(ConfigurableApplicationContext.class));
             assertNull(reg.encodeTicket(null));
             assertNotNull(reg.decodeTicket(mock(Ticket.class)));
+        }
+
+        @RepeatedTest(1)
+        void verifyProxyGrantingTicketRemovalKeepsParentChanges() throws Throwable {
+            val registry = newEncryptedTicketRegistry(new AtomicInteger());
+            val ids = TestTicketIdentifiers.generate();
+            val service = RegisteredServiceTestUtils.getService(UUID.randomUUID().toString());
+            val tgt = new TicketGrantingTicketImpl(ids.ticketGrantingTicketId(),
+                CoreAuthenticationTestUtils.getAuthentication(), NeverExpiresExpirationPolicy.INSTANCE);
+            val st = (ProxyGrantingTicketIssuerTicket) tgt.grantServiceTicket(ids.serviceTicketId(), service,
+                NeverExpiresExpirationPolicy.INSTANCE, false, TicketTrackingPolicy.noOp());
+            val pgt = st.grantProxyGrantingTicket(ids.proxyGrantingTicketId(), CoreAuthenticationTestUtils.getAuthentication(),
+                NeverExpiresExpirationPolicy.INSTANCE, TicketTrackingPolicy.noOp());
+            tgt.getProxyGrantingTickets().put(pgt.getId(), service);
+            registry.addTicket(tgt);
+            registry.addTicket(pgt);
+
+            val current = registry.getTicket(tgt.getId(), TicketGrantingTicket.class);
+            val laterServiceTicketId = TestTicketIdentifiers.generate().serviceTicketId();
+            current.getServices().put(laterServiceTicketId, service);
+            registry.updateTicket(current);
+
+            assertEquals(1, registry.deleteTicket(pgt.getId()));
+            val parent = registry.getTicket(tgt.getId(), TicketGrantingTicket.class);
+            assertTrue(parent.getServices().containsKey(laterServiceTicketId));
+            assertFalse(parent.getProxyGrantingTickets().containsKey(pgt.getId()));
+        }
+
+        @RepeatedTest(1)
+        void verifyParentNotRewrittenWhenDeletedWithProxyGrantingTickets() throws Throwable {
+            val updates = new AtomicInteger();
+            val registry = newEncryptedTicketRegistry(updates);
+            val ids = TestTicketIdentifiers.generate();
+            val service = RegisteredServiceTestUtils.getService(UUID.randomUUID().toString());
+            val tgt = new TicketGrantingTicketImpl(ids.ticketGrantingTicketId(),
+                CoreAuthenticationTestUtils.getAuthentication(), NeverExpiresExpirationPolicy.INSTANCE);
+            val proxyGrantingTickets = new ArrayList<String>();
+            for (var i = 0; i < 2; i++) {
+                val st = (ProxyGrantingTicketIssuerTicket) tgt.grantServiceTicket(TestTicketIdentifiers.generate().serviceTicketId(), service,
+                    NeverExpiresExpirationPolicy.INSTANCE, false, TicketTrackingPolicy.noOp());
+                val pgt = st.grantProxyGrantingTicket(TestTicketIdentifiers.generate().proxyGrantingTicketId(),
+                    CoreAuthenticationTestUtils.getAuthentication(), NeverExpiresExpirationPolicy.INSTANCE, TicketTrackingPolicy.noOp());
+                tgt.getProxyGrantingTickets().put(pgt.getId(), service);
+                proxyGrantingTickets.add(pgt.getId());
+                registry.addTicket(pgt);
+            }
+            registry.addTicket(tgt);
+
+            assertEquals(3, registry.deleteTicket(tgt.getId()));
+            assertEquals(0, updates.get());
+            assertNull(registry.getTicket(tgt.getId()));
+            proxyGrantingTickets.forEach(id -> assertNull(registry.getTicket(id)));
+        }
+
+        private static DefaultTicketRegistry newEncryptedTicketRegistry(final AtomicInteger updates) {
+            val cipher = CoreTicketUtils.newTicketRegistryCipherExecutor(
+                new EncryptionRandomizedSigningJwtCryptographyProperties(), true, "[tests]");
+            return new DefaultTicketRegistry(cipher, mock(TicketSerializationManager.class), new DefaultTicketCatalog(),
+                mock(ConfigurableApplicationContext.class)) {
+                @Override
+                public Ticket updateTicket(final Ticket ticket) throws Exception {
+                    updates.incrementAndGet();
+                    return super.updateTicket(ticket);
+                }
+            };
         }
 
         @RepeatedTest(1)
