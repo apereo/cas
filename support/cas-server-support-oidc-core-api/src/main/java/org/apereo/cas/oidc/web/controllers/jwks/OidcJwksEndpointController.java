@@ -22,6 +22,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
 import org.jose4j.jwk.JsonWebKey;
 import org.jose4j.jwk.JsonWebKeySet;
+import org.jose4j.jwk.PublicJsonWebKey;
 import org.pac4j.jee.context.JEEContext;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
@@ -86,7 +87,10 @@ public class OidcJwksEndpointController extends BaseOidcController {
                 .forEach(service -> {
                     val set = OidcJsonWebKeyStoreUtils.getJsonWebKeySet(service,
                         getConfigurationContext().getApplicationContext(), Optional.empty());
-                    set.ifPresent(keys -> keys.getJsonWebKeys().forEach(jsonWebKeySet::addJsonWebKey));
+                    set.ifPresent(keys -> keys.getJsonWebKeys()
+                        .stream()
+                        .filter(PublicJsonWebKey.class::isInstance)
+                        .forEach(jsonWebKeySet::addJsonWebKey));
                 });
 
             if (StringUtils.isNotBlank(kid)) {
