@@ -1,11 +1,13 @@
 ---
 layout: default
-title: CAS - Passwordless Authentication
+title: CAS - REST Passwordless Authentication Storage
 category: Authentication
 ---
 {% include variables.html %}
 
 # REST Passwordless Authentication Storage
+
+Look up passwordless user accounts, with their email address and phone number, by calling a REST endpoint you provide.
 
 This strategy allows one design REST endpoints in charge of locating 
 passwordless user records. A successful execution of the endpoint  

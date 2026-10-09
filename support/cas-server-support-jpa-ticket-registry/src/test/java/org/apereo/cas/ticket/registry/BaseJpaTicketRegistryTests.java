@@ -170,6 +170,29 @@ public abstract class BaseJpaTicketRegistryTests extends BaseTicketRegistryTests
     }
 
     @RepeatedTest(2)
+    void verifyLogoutRemovesServiceTickets() throws Throwable {
+        val tgt = new TicketGrantingTicketImpl(TestTicketIdentifiers.generate().ticketGrantingTicketId(),
+            CoreAuthenticationTestUtils.getAuthentication(), NeverExpiresExpirationPolicy.INSTANCE);
+        newTicketRegistry.addTicket(tgt);
+        val trackedTicket = tgt.grantServiceTicket(TestTicketIdentifiers.generate().serviceTicketId(),
+            RegisteredServiceTestUtils.getService(UUID.randomUUID().toString()),
+            NeverExpiresExpirationPolicy.INSTANCE, false, serviceTicketSessionTrackingPolicy);
+        newTicketRegistry.addTicket(trackedTicket);
+        newTicketRegistry.updateTicket(tgt);
+
+        val untrackedTicket = tgt.grantServiceTicket(TestTicketIdentifiers.generate().serviceTicketId(),
+            RegisteredServiceTestUtils.getService(UUID.randomUUID().toString()),
+            NeverExpiresExpirationPolicy.INSTANCE, false, serviceTicketSessionTrackingPolicy);
+        newTicketRegistry.addTicket(untrackedTicket);
+        newTicketRegistry.updateTicket(untrackedTicket);
+
+        assertEquals(3, newTicketRegistry.deleteTicket(tgt.getId()));
+        assertNull(newTicketRegistry.getTicket(tgt.getId()));
+        assertNull(newTicketRegistry.getTicket(trackedTicket.getId()));
+        assertNull(newTicketRegistry.getTicket(untrackedTicket.getId()));
+    }
+
+    @RepeatedTest(2)
     @Transactional(transactionManager = TicketRegistry.TICKET_TRANSACTION_MANAGER, readOnly = false)
     void verifyRegistryQuery() throws Throwable {
         val tgt = new TicketGrantingTicketImpl(TestTicketIdentifiers.generate().ticketGrantingTicketId(),

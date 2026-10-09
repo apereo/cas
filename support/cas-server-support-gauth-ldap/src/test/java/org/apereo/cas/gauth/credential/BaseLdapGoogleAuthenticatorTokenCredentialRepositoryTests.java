@@ -21,8 +21,12 @@ import org.apereo.cas.config.CasOneTimeTokenAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
+import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.LdapConnectionFactory;
+import org.apereo.cas.util.LdapUtils;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
+import lombok.Cleanup;
 import lombok.Getter;
 import lombok.val;
 import org.junit.jupiter.api.Test;
@@ -61,9 +65,13 @@ public abstract class BaseLdapGoogleAuthenticatorTokenCredentialRepositoryTests 
             .collect(Collectors.toMap(OneTimeTokenAccount::getId, OneTimeTokenAccount::getSecretKey));
         assertEquals(Map.of(firstId, firstSecret, secondId, secondSecret), secrets);
 
+        val storedBefore = readStoredSecrets(username);
         val toUpdate = registry.get(username, firstId);
         toUpdate.setValidationCode(123456);
         registry.update(toUpdate);
+        val storedAfter = readStoredSecrets(username);
+        assertEquals(2, storedAfter.size());
+        assertEquals(1, storedAfter.stream().filter(storedBefore::contains).count());
 
         val accounts = registry.get(username);
         assertEquals(2, accounts.size());
@@ -89,6 +97,40 @@ public abstract class BaseLdapGoogleAuthenticatorTokenCredentialRepositoryTests 
         registry.delete(id);
         assertNull(registry.get(username, id));
         assertNotNull(registry.get(otherUsername, otherId));
+    }
+
+    @Test
+    void verifyGetByIdAndCount() throws Throwable {
+        val username = getUsernameUnderTest();
+        val account = registry.create(username);
+        val secret = account.getSecretKey();
+        val id = registry.save(account).getId();
+        assertEquals(secret, registry.get(id).getSecretKey());
+        assertNull(registry.get(id + 1));
+        assertEquals(1, registry.count(username));
+        assertTrue(registry.count() >= 1);
+    }
+
+    /**
+     * Read the secrets of the user's accounts as the directory stores them, that is encoded. With encryption on,
+     * encoding the same secret twice gives different values, so this tells whether an account was written again.
+     *
+     * @param username the username
+     * @return the stored secrets
+     * @throws Throwable when the directory cannot be searched
+     */
+    private List<String> readStoredSecrets(final String username) throws Throwable {
+        val ldap = casProperties.getAuthn().getMfa().getGauth().getLdap();
+        @Cleanup
+        val factory = new LdapConnectionFactory(LdapUtils.newLdaptiveConnectionFactory(ldap));
+        val filter = LdapUtils.newLdaptiveSearchFilter('(' + ldap.getSearchFilter() + ')', CollectionUtils.wrapList(username));
+        val response = factory.executeSearchOperation(ldap.getBaseDn(), filter, ldap.getPageSize(), ldap.getAccountAttributeName());
+        val stored = response.getEntry().getAttribute(ldap.getAccountAttributeName()).getStringValue();
+        return Pattern.compile("\"secretKey\"\\s*:\\s*\"([^\"]+)\"")
+            .matcher(stored)
+            .results()
+            .map(result -> result.group(1))
+            .toList();
     }
 
     protected static String getOrganizationalUnitLdif(final String baseDn) {

@@ -5,10 +5,19 @@ import org.apereo.cas.config.CasOidcVerifiableCredentialsAutoConfiguration;
 import org.apereo.cas.configuration.model.support.oidc.OidcVerifiableCredentialConfigurationProperties.CredentialConfigurationFormats;
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.oidc.OidcConstants;
+import com.nimbusds.jose.crypto.RSASSAVerifier;
+import com.nimbusds.jose.jwk.JWKSet;
+import com.nimbusds.jose.jwk.RSAKey;
+import com.nimbusds.jwt.SignedJWT;
+import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.TestPropertySource;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -50,6 +59,8 @@ class OidcVerifiableCredentialIssuerMetadataControllerTests extends AbstractOidc
             .andExpect(jsonPath("$.authorization_servers").isArray())
             .andExpect(jsonPath("$.credential_endpoint").exists())
             .andExpect(jsonPath("$.nonce_endpoint").exists())
+            .andExpect(jsonPath("$.notification_endpoint").exists())
+            .andExpect(jsonPath("$.deferred_credential_endpoint").doesNotExist())
             .andExpect(jsonPath("$.credential_configurations_supported").exists())
             .andExpect(jsonPath("$.batch_credential_issuance.batch_size").isNumber())
             .andExpect(jsonPath("$.batch_credential_endpoint").doesNotExist());
@@ -104,4 +115,47 @@ class OidcVerifiableCredentialIssuerMetadataControllerTests extends AbstractOidc
             .andExpect(jsonPath("$.credential_configurations_supported.myorg.proof_types_supported.jwt").exists());
     }
 
+    @Test
+    void verifySignedMetadata() throws Throwable {
+        val issuer = casProperties.getAuthn().getOidc().getCore().getIssuer();
+        val signed = mockMvc.perform(get(METADATA_ENDPOINT_URL)
+                .header(HttpHeaders.ACCEPT, "application/jwt, application/json;q=0.5")
+                .with(withHttpRequestProcessor()))
+            .andExpect(status().isOk())
+            .andExpect(header().string(HttpHeaders.VARY, HttpHeaders.ACCEPT))
+            .andExpect(content().contentTypeCompatibleWith(OidcConstants.CONTENT_TYPE_JWT))
+            .andReturn().getResponse().getContentAsString();
+        val jwt = SignedJWT.parse(signed);
+        assertEquals("openidvci-issuer-metadata+jwt", jwt.getHeader().getType().toString());
+        val signingKey = (RSAKey) JWKSet.load(new ClassPathResource("keystore.jwks").getInputStream()).getKeyByKeyId(jwt.getHeader().getKeyID());
+        assertTrue(jwt.verify(new RSASSAVerifier(signingKey)));
+        val claims = jwt.getJWTClaimsSet();
+        assertEquals(issuer, claims.getSubject());
+        assertEquals(issuer, claims.getIssuer());
+        assertEquals(issuer, claims.getStringClaim("credential_issuer"));
+        assertEquals(issuer + '/' + OidcConstants.VC_CREDENTIAL_URL, claims.getStringClaim("credential_endpoint"));
+        assertEquals(86_400L, (claims.getExpirationTime().getTime() - claims.getIssueTime().getTime()) / 1000);
+        assertNotNull(claims.getJSONObjectClaim("credential_configurations_supported").get("myorg"));
+
+        for (val accept : List.of("*/*", "application/json, application/jwt;q=0.5", "application/json")) {
+            mockMvc.perform(get(METADATA_ENDPOINT_URL).header(HttpHeaders.ACCEPT, accept).with(withHttpRequestProcessor()))
+                .andExpect(status().isOk())
+                .andExpect(header().string(HttpHeaders.VARY, HttpHeaders.ACCEPT))
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.credential_issuer").value(issuer));
+        }
+        mockMvc.perform(get(METADATA_ENDPOINT_URL)
+                .header(HttpHeaders.ACCEPT, OidcConstants.CONTENT_TYPE_JWT)
+                .with(withHttpRequestProcessor())
+                .with(request -> {
+                    request.setServerName("unknown.example.org");
+                    return request;
+                }))
+            .andExpect(status().isBadRequest())
+            .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$.error_description").value("Invalid issuer"));
+        mockMvc.perform(get("/cas/" + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.VC_STATUS_LIST_AGGREGATION_URL)
+                .with(withHttpRequestProcessor()))
+            .andExpect(status().isNotFound());
+    }
 }

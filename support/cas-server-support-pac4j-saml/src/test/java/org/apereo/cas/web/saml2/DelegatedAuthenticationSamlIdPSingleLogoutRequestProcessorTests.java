@@ -97,7 +97,7 @@ class DelegatedAuthenticationSamlIdPSingleLogoutRequestProcessorTests {
         registeredService.setId(RandomUtils.nextInt());
         registeredService.setName("SAML");
         registeredService.setServiceId(issuer.getValue());
-        registeredService.setMetadataLocation(issuer.getValue());
+        registeredService.setMetadataLocation("classpath:samltest-sp-metadata.xml");
         servicesManager.save(registeredService);
 
         requestContext.getHttpServletResponse().reset();

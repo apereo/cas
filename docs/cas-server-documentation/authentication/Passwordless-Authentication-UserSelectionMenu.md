@@ -1,6 +1,6 @@
 ---
 layout: default
-title: CAS - Passwordless Authentication
+title: CAS - Passwordless Authentication - User Selection Menu
 category: Authentication
 ---
 {% include variables.html %}

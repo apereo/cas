@@ -1,6 +1,6 @@
 ---
 layout: default
-title: CAS - Adaptive Authentication
+title: CAS - Adaptive Authentication - IP Intelligence
 category: Multifactor Authentication
 ---
 

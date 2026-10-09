@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Build Process
+description: "Build the CAS server from source for development: cloning, building with Gradle and running locally."
 category: Developer
 ---
 

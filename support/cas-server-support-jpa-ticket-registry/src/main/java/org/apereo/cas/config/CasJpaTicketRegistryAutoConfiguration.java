@@ -17,6 +17,7 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.CoreTicketUtils;
 import org.apereo.cas.util.lock.DefaultLockRepository;
 import org.apereo.cas.util.lock.LockRepository;
+import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanContainer;
@@ -111,14 +112,17 @@ public class CasJpaTicketRegistryAutoConfiguration {
             return BeanSupplier.of(FactoryBean.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
                 .supply(Unchecked.supplier(() -> {
+                    val properties = casProperties.getTicket().getRegistry().getJpa();
                     val ctx = JpaConfigurationContext.builder()
                         .jpaVendorAdapter(jpaBeanFactory.newJpaVendorAdapter(casProperties.getJdbc()))
                         .persistenceUnitName("jpaTicketRegistryContext")
                         .dataSource(dataSourceTicket)
                         .packagesToScan(ticketPackagesToScan.toSet())
+                        .managedClassNames(CasRuntimeHintsRegistrar.inNativeImage()
+                            ? Set.of(new JpaTicketEntityFactory(properties.getDialect()).getType().getName())
+                            : Set.of())
                         .build();
-                    return jpaBeanFactory.newEntityManagerFactoryBean(ctx,
-                        casProperties.getTicket().getRegistry().getJpa());
+                    return jpaBeanFactory.newEntityManagerFactoryBean(ctx, properties);
                 }))
                 .otherwiseProxy()
                 .get();

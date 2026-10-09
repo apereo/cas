@@ -1,12 +1,14 @@
 ---
 layout: default
-title: CAS - Attribute Release Consent
+title: CAS - Custom - Attribute Consent Storage
 category: Attributes
 ---
 
 {% include variables.html %}
 
 # Custom - Attribute Consent Storage
+
+Keep attribute consent decisions in your own store by registering a custom `ConsentRepository` with CAS.
 
 You may also inject your own implementation for attribute consent management
 into CAS that would itself handle storing consent decisions, etc. In order

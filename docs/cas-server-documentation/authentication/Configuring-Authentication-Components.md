@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Configuring Authentication Components
+description: "How CAS authenticates users: the authentication manager, authentication handlers, principal resolution and the supported authentication methods."
 category: Authentication
 ---
 {% include variables.html %}

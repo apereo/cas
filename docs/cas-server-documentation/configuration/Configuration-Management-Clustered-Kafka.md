@@ -1,6 +1,6 @@
 ---
 layout: default
-title: CAS - Configuration Management Clustered Deployment
+title: CAS - Configuration Management - Clustered Deployments with Kafka
 category: Configuration
 ---
 

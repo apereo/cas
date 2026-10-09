@@ -1,6 +1,7 @@
 ---
 layout: default
-title: CAS - Configuring Service Contacts
+title: CAS - Service Change Management & History
+description: "Track changes to registered service definitions and keep a version history with Javers, stored in MongoDB."
 category: Services
 ---
 

@@ -29,7 +29,6 @@ echo -e "Setting build environment...\n"
 $SUDO mkdir -p /etc/cas/config /etc/cas/saml /etc/cas/services /tmp /temp
 
 echo -e "Configuring Gradle wrapper...\n"
-mkdir -p ~/.gradle && echo "org.gradle.daemon=false" >> ~/.gradle/gradle.properties
 chmod +x ./gradlew
 echo "Gradle Home directory:"
 ./gradlew gradleHome --version

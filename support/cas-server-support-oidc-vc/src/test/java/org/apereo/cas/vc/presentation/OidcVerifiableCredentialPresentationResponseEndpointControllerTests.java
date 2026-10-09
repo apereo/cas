@@ -4,6 +4,7 @@ import module java.base;
 import org.apereo.cas.config.CasOidcVerifiableCredentialsAutoConfiguration;
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.oidc.OidcConstants;
+import org.apereo.cas.oidc.vc.issuer.status.OidcVerifiableCredentialStatusListService;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.ticket.TransientSessionTicket;
@@ -29,6 +30,7 @@ import com.nimbusds.jose.util.Base64URL;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.jose4j.jwe.ContentEncryptionAlgorithmIdentifiers;
 import org.jose4j.jwe.JsonWebEncryption;
 import org.jose4j.jwe.KeyManagementAlgorithmIdentifiers;
@@ -41,6 +43,8 @@ import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -62,7 +66,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @TestPropertySource(properties = {
     "cas.authn.oidc.vc.issuer.credential-configurations.UniversityDegreeCredential.format=DC_SD_JWT",
     "cas.authn.oidc.vc.issuer.credential-configurations.UniversityDegreeCredential.scope=UniversityDegree",
-    "cas.authn.oidc.vc.issuer.credential-configurations.UniversityDegreeCredential.credential-signing-alg-values-supported=ES512"
+    "cas.authn.oidc.vc.issuer.credential-configurations.UniversityDegreeCredential.credential-signing-alg-values-supported=ES512",
+    "cas.authn.oidc.vc.issuer.status-list.enabled=true"
 })
 class OidcVerifiableCredentialPresentationResponseEndpointControllerTests extends AbstractOidcTests {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
@@ -83,6 +88,10 @@ class OidcVerifiableCredentialPresentationResponseEndpointControllerTests extend
     private static final String DIGITAL_CREDENTIALS_ORIGIN = "https://wallet.example.org";
 
     private static final String DIGITAL_CREDENTIALS_AUDIENCE = "origin:" + DIGITAL_CREDENTIALS_ORIGIN;
+
+    @Autowired
+    @Qualifier(OidcVerifiableCredentialStatusListService.BEAN_NAME)
+    private OidcVerifiableCredentialStatusListService oidcVerifiableCredentialStatusListService;
 
     private OidcRegisteredService credentialClient;
 
@@ -479,6 +488,23 @@ class OidcVerifiableCredentialPresentationResponseEndpointControllerTests extend
             Map.of("status_list", Map.of("idx", 1, "uri", "https://issuer.example.net/statuslist"))));
         assertInvalid(submitPresentation(transaction.ticket().getId(),
             buildVpToken(bindCredential(material, transaction.nonce()))));
+    }
+
+    @Test
+    void verifyCredentialStatusIsChecked() throws Throwable {
+        val reference = oidcVerifiableCredentialStatusListService.allocate(getAccessToken(CREDENTIAL_CLIENT_ID), "casuser",
+            CREDENTIAL_CONFIGURATION_ID, UUID.randomUUID().toString(), Duration.ofMinutes(5)).orElseThrow();
+        val valid = createTransaction();
+        submitPresentation(valid.ticket().getId(), buildVpToken(bindCredential(
+            issueCredential(claims -> claims.setClaim("status", reference.toClaim())), valid.nonce())))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.status").value("verified"));
+
+        oidcVerifiableCredentialStatusListService.updateStatus(StringUtils.substringAfterLast(reference.uri(), "/"),
+            reference.index(), OidcVerifiableCredentialStatusListService.StatusType.INVALID);
+        val revoked = createTransaction();
+        assertInvalid(submitPresentation(revoked.ticket().getId(), buildVpToken(bindCredential(
+            issueCredential(claims -> claims.setClaim("status", reference.toClaim())), revoked.nonce()))));
     }
 
     private PresentationTransaction createTransaction() throws Throwable {

@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Installation Requirements
+description: "Software and hardware requirements for building and running CAS, including the required Java version and supported servlet containers."
 category: Installation
 ---
 

@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Webflow Customization
+description: "How CAS uses Spring Webflow for login and logout, and how to customize the flow."
 category: Webflow Management
 ---
 

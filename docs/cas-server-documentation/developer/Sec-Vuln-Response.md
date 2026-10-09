@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Vulnerability Response
+description: "How the CAS project receives, triages, fixes and discloses reported security vulnerabilities."
 ---
 
 # Security Vulnerability Response

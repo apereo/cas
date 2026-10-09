@@ -1,6 +1,6 @@
 ---
 layout: default
-title: CAS - Configuring SSO Sessions
+title: CAS - SSO Session - Services & Applications
 category: SSO & SLO
 ---
 {% include variables.html %}

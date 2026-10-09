@@ -81,9 +81,16 @@ async function verifyAccountManagementFlow(browser) {
     await cas.click(page, "#linkMfaRegisteredAccounts");
     await cas.sleep(1000);
 
-    await cas.assertInnerText(page, "#mfaDevicesTable tbody tr td:first-child", "Google Authenticator");
-    await cas.assertInnerText(page, "#mfaDevicesTable tbody tr td:nth-child(2)", "1");
-    await cas.assertInnerText(page, "#mfaDevicesTable tbody tr td:nth-child(3)", "MyRecordName");
+    const devices = await page.$$eval("#mfaDevicesList li", (items) => items.map((item) => ({
+        source: item.querySelector("[data-field=source]").innerText.trim(),
+        id: item.querySelector("[data-field=id]").innerText.trim(),
+        name: item.querySelector("[data-field=name]").innerText.trim()
+    })));
+    await cas.logg(devices);
+    const gauthDevice = devices.find((device) => device.source === "Google Authenticator");
+    assert(gauthDevice !== undefined, "Google Authenticator device must be listed");
+    assert(gauthDevice.id === "1");
+    assert(gauthDevice.name === "MyRecordName");
     await cas.click(page, "button#register");
     await cas.sleep(2000);
     await cas.click(page, "#gauthRegistrationLink");
@@ -102,7 +109,7 @@ async function verifyAccountManagementFlow(browser) {
 
     await cas.click(page, "#linkSecurityQuestions");
     await cas.sleep(1000);
-    await cas.assertVisibility(page, "#securityQuestionsTable");
+    await cas.assertVisibility(page, "#securityQuestionsList");
 
     await cas.click(page, "#linkAuditLog");
     await cas.sleep(1000);

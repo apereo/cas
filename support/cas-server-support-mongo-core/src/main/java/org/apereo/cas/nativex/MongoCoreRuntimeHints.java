@@ -8,6 +8,7 @@ import lombok.val;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import org.springframework.aot.hint.RuntimeHints;
+import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.aggregation.AggregationOperation;
 
 /**
@@ -21,5 +22,6 @@ public class MongoCoreRuntimeHints implements CasRuntimeHintsRegistrar {
     public void registerHints(final @NonNull RuntimeHints hints, final @Nullable ClassLoader classLoader) {
         val entries = List.<Class>of(WriteConcern.class, ReadConcern.class, AggregationOperation.class);
         registerReflectionHints(hints, entries);
+        registerSpringProxyHints(hints, MongoOperations.class);
     }
 }

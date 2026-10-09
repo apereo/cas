@@ -1,0 +1,23 @@
+FROM ubuntu:26.04
+
+ENV CAS_NATIVE="true"
+ENV RUN_ARGS=""
+ENV CAS_PROPERTIES=""
+ENV SERVER_PORT="8443"
+
+RUN apt-get update \
+    && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        ca-certificates libstdc++6 zlib1g libfreetype6 libfontconfig1 \
+        libx11-6 libxext6 libxi6 libxrender1 libxtst6 fonts-dejavu-core \
+    && rm -rf /var/lib/apt/lists/* \
+    && mkdir -p /etc/cas/config /etc/cas/services /etc/cas/saml /cas-server
+
+COPY cas /cas-server/cas
+COPY native-libs/ /cas-server/
+COPY thekeystore /etc/cas/thekeystore
+COPY entrypoint.sh /cas-server/entrypoint.sh
+RUN chmod +x /cas-server/cas /cas-server/entrypoint.sh
+
+EXPOSE 8080 8443
+WORKDIR /cas-server
+ENTRYPOINT ["/cas-server/entrypoint.sh"]

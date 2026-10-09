@@ -1,12 +1,14 @@
 ---
 layout: default
-title: CAS - Metrics
+title: CAS - Ganglia Storage - CAS Metrics
 category: Monitoring & Statistics
 ---
 
 {% include variables.html %}
 
 # Ganglia Storage - CAS Metrics
+
+Export CAS metrics to a Ganglia monitoring server.
 
 By default, metrics are exported to Ganglia running on your local
 machine. The Ganglia server host and port to use can be provided using:

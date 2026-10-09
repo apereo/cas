@@ -39,6 +39,24 @@ public interface OidcVerifiableCredentialProofValidator {
         return validate(proofJwt, null, new HashSet<>());
     }
 
+    /**
+     * Validate an {@code attestation} proof (OpenID4VCI 1.0 Appendix D): a key attestation whose {@code nonce} is a
+     * {@code c_nonce} of this issuer, standing for proof of possession of every key it attests. One proof result is
+     * returned per attested key, and one credential is issued for each. Validators that cannot verify key
+     * attestations refuse the proof.
+     *
+     * @param keyAttestation  the key attestation JWT
+     * @param configurationId the credential configuration id, or null when the caller names none
+     * @param consumedNonces  the nonces already consumed by this request
+     * @return the proof results, one per attested key
+     * @throws Exception the exception
+     */
+    default List<VerifiableCredentialProofResult> validateAttestation(final String keyAttestation,
+                                                                      final @Nullable String configurationId,
+                                                                      final Set<String> consumedNonces) throws Exception {
+        throw OidcVerifiableCredentialProofException.invalidProof("Attestation proofs are not supported");
+    }
+
     record VerifiableCredentialProofResult(
         String proofType,
         String jwtId,

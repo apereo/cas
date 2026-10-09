@@ -1,12 +1,14 @@
 ---
 layout: default
-title: CAS - SMS Messaging
+title: CAS - Amazon SNS SMS Messaging
 category: Notifications
 ---
 
 {% include variables.html %}
 
 # Amazon SNS SMS Messaging
+
+Send SMS messages from CAS through Amazon Simple Notification Service.
 
 To learn more, [visit this site](https://docs.aws.amazon.com/sns).
 

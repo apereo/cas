@@ -1,6 +1,6 @@
 ---
 layout: default
-title: CAS - Attribute Resolution
+title: CAS - LDAP Attribute Resolution
 category: Attributes
 ---
 
@@ -25,4 +25,4 @@ The following configuration describes how to fetch and retrieve attributes from 
 ## Multitenancy
 
 Configuration settings for LDAP attribute resolution can be specified in a multitenant environment.
-Please [review this guide](../multitenancy/Multitenancy-Overview.html) for more information.
+Please [review this guide](../multitenancy/Multitenancy-Tenant-Properties.html) for more information.

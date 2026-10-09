@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Scripting with Apache Groovy
+description: "Use Apache Groovy scripts to customize CAS behavior, and how scripts are loaded, cached and secured."
 category: Installation
 ---
 {% include variables.html %}

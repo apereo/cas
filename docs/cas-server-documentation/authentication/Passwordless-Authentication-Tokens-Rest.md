@@ -1,6 +1,6 @@
 ---
 layout: default
-title: CAS - Passwordless Authentication
+title: CAS - REST Passwordless Authentication Tokens
 category: Authentication
 ---
 {% include variables.html %}

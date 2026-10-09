@@ -3,6 +3,7 @@ package org.apereo.cas.config;
 import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.oidc.OidcConfigurationContext;
+import org.apereo.cas.oidc.vc.issuer.status.OidcVerifiableCredentialStatusListService;
 import org.apereo.cas.vc.presentation.OidcVerifiableCredentialPresentationRequestEndpointController;
 import org.apereo.cas.vc.presentation.OidcVerifiableCredentialPresentationResponseEndpointController;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -37,8 +38,11 @@ class OidcVerifiableCredentialsPresentationConfiguration {
     @ConditionalOnMissingBean(name = "oidcVerifiableCredentialPresentationResponseEndpointController")
     public OidcVerifiableCredentialPresentationResponseEndpointController oidcVerifiableCredentialPresentationResponseEndpointController(
         @Qualifier(OidcConfigurationContext.BEAN_NAME)
-        final OidcConfigurationContext oidcConfigurationContext) {
-        return new OidcVerifiableCredentialPresentationResponseEndpointController(oidcConfigurationContext);
+        final OidcConfigurationContext oidcConfigurationContext,
+        @Qualifier(OidcVerifiableCredentialStatusListService.BEAN_NAME)
+        final OidcVerifiableCredentialStatusListService oidcVerifiableCredentialStatusListService) {
+        return new OidcVerifiableCredentialPresentationResponseEndpointController(oidcConfigurationContext,
+            oidcVerifiableCredentialStatusListService);
     }
 
 }

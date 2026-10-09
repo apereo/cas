@@ -1,6 +1,7 @@
 ---
 layout: default
-title: CAS - Surrogate Authentication
+title: CAS - Session Expiration - Surrogate Authentication
+description: "Give impersonation sessions their own, shorter expiration policy."
 category: Authentication
 ---
 {% include variables.html %}

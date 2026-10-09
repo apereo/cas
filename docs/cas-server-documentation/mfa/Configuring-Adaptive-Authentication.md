@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Adaptive Authentication
+description: "Adaptive authentication: accept, reject or step up authentication requests based on location, browser, IP address and other request traits."
 category: Multifactor Authentication
 ---
 

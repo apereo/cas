@@ -8,6 +8,8 @@ category: Services
 
 # Custom Service Registry
 
+Store registered services somewhere CAS does not support by implementing your own `ServiceRegistryDao` and registering it with CAS.
+
 If you wish to design your own implementation of a service registry, you will need to inject your implementation into CAS as such:
 
 ```java

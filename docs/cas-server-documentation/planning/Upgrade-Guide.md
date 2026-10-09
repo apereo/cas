@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Upgrade Guide
+description: "How to plan and execute a CAS upgrade: choosing the target version, comparing overlays, reviewing release notes and testing changes."
 category: Planning
 ---
 
@@ -76,13 +77,7 @@ Your changes typically are:
 
 ## Prepare Development Environment
 
-<a href="http://i.imgur.com/jcdDHWb.jpg" data-lightbox="image-1">
-  <img src="http://i.imgur.com/jcdDHWb.jpg" width="160px" height="200px">
-</a>
-
-Um, No. 
-
-Make sure you have a separate development environment ready for configuration and testing. Regardless of how small
+Do not test an upgrade in production. Make sure you have a separate development environment ready for configuration and testing. Regardless of how small
 the upgrade is, you want to make sure it is well tested in your environment before you flip the switch. Evaluate
 the software dependencies and platform requirements of the new upgrade (i.e. Java, etc)
 and make sure you have everything installed and configured correctly before you attempt. 

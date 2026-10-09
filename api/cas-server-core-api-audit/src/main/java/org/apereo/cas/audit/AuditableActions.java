@@ -122,6 +122,16 @@ public interface AuditableActions {
      * Auditable action {@code OIDC_CIBA_RESPONSE}.
      */
     String OIDC_CIBA_RESPONSE = "OIDC_CIBA_RESPONSE";
+
+    /**
+     * Auditable action {@code OIDC_VERIFIABLE_CREDENTIAL_NOTIFICATION}.
+     */
+    String OIDC_VERIFIABLE_CREDENTIAL_NOTIFICATION = "OIDC_VERIFIABLE_CREDENTIAL_NOTIFICATION";
+
+    /**
+     * Auditable action {@code OIDC_VERIFIABLE_CREDENTIAL_DEFERRED_ISSUANCE}.
+     */
+    String OIDC_VERIFIABLE_CREDENTIAL_DEFERRED_ISSUANCE = "OIDC_VERIFIABLE_CREDENTIAL_DEFERRED_ISSUANCE";
     
     /**
      * Auditable action {@code OAUTH2_ACCESS_TOKEN_RESPONSE}.

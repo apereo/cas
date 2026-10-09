@@ -72,9 +72,11 @@ public class CasGoogleAuthenticatorMongoDbAutoConfiguration {
         @Qualifier("mongoDbGoogleAuthenticatorTemplate")
         final MongoOperations mongoDbGoogleAuthenticatorTemplate) {
         val mongo = casProperties.getAuthn().getMfa().getGauth().getMongo();
-        return new MongoDbGoogleAuthenticatorTokenCredentialRepository(googleAuthenticatorInstance,
+        val repository = new MongoDbGoogleAuthenticatorTokenCredentialRepository(googleAuthenticatorInstance,
             mongoDbGoogleAuthenticatorTemplate, mongo.getCollection(),
             googleAuthenticatorAccountCipherExecutor, googleAuthenticatorScratchCodesCipherExecutor);
+        repository.createIndexes();
+        return repository;
     }
 
     @Bean

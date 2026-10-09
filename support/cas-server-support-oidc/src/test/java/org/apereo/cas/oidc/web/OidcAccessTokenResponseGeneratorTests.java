@@ -10,8 +10,10 @@ import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.OAuth20TokenExchangeTypes;
 import org.apereo.cas.support.oauth.authenticator.Authenticators;
 import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20TokenGeneratedResult;
+import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20TokenHashGenerator;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20AccessTokenResponseResult;
 import lombok.val;
+import org.jose4j.jws.AlgorithmIdentifiers;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.pac4j.core.profile.CommonProfile;
@@ -211,5 +213,45 @@ class OidcAccessTokenResponseGeneratorTests extends AbstractOidcTests {
         assertTrue(modelMap.containsKey(OAuth20Constants.DEVICE_USER_CODE));
         assertTrue(modelMap.containsKey(OAuth20Constants.DEVICE_CODE));
         assertTrue(modelMap.containsKey(OAuth20Constants.DEVICE_INTERVAL));
+    }
+
+    @Test
+    void verifyAccessTokenHashMatchesReturnedAccessToken() throws Throwable {
+        val clientId = UUID.randomUUID().toString();
+        val accessToken = getAccessToken(clientId);
+        val registeredService = getOidcRegisteredService(clientId);
+        registeredService.setJwtAccessToken(true);
+        registeredService.setIdTokenSigningAlg(AlgorithmIdentifiers.RSA_USING_SHA256);
+        servicesManager.save(registeredService);
+
+        val token = OAuth20TokenGeneratedResult
+            .builder()
+            .accessToken(accessToken)
+            .registeredService(registeredService)
+            .responseType(OAuth20ResponseTypes.CODE)
+            .grantType(OAuth20GrantTypes.AUTHORIZATION_CODE)
+            .build();
+        val profile = new CommonProfile();
+        profile.setClientName(Authenticators.CAS_OAUTH_CLIENT_BASIC_AUTHN);
+        profile.setId("casuser");
+        val result = OAuth20AccessTokenResponseResult.builder()
+            .service(RegisteredServiceTestUtils.getService())
+            .registeredService(registeredService)
+            .casProperties(casProperties)
+            .generatedToken(token)
+            .userProfile(profile)
+            .grantType(OAuth20GrantTypes.AUTHORIZATION_CODE)
+            .responseType(OAuth20ResponseTypes.CODE)
+            .build();
+
+        val modelMap = oidcAccessTokenResponseGenerator.generate(result).getModelMap();
+        val claims = oidcTokenSigningAndEncryptionService.decode(modelMap.get(OidcConstants.ID_TOKEN).toString(), Optional.of(registeredService));
+        val expectedHash = OAuth20TokenHashGenerator.builder()
+            .token(modelMap.get(OAuth20Constants.ACCESS_TOKEN).toString())
+            .registeredService(registeredService)
+            .algorithm(registeredService.getIdTokenSigningAlg())
+            .build()
+            .generate();
+        assertEquals(expectedHash, claims.getClaimValue(OidcConstants.CLAIM_AT_HASH, String.class));
     }
 }

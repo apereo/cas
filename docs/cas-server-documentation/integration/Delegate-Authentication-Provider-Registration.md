@@ -1,6 +1,7 @@
 ---
 layout: default
-title: CAS - Delegate Authentication
+title: CAS - Delegated Authentication - Identity Provider Registration
+description: "Register external identity providers with CAS for delegated authentication, and the list of supported provider types."
 category: Authentication
 ---
 
@@ -9,8 +10,8 @@ category: Authentication
 # Delegated Authentication - Identity Provider Registration
 
 An identity provider is a server which can authenticate users (like Google, Yahoo...) instead of a CAS server.
-If you want to delegate the CAS authentication to Twitter for example, you have to add an
-OAuth client for the Twitter provider, which will be done automatically for you once provider settings are taught to CAS.
+If you want to delegate the CAS authentication to X (formerly Twitter) for example, you have to add an
+OAuth client for the X provider, which will be done automatically for you once provider settings are taught to CAS.
 
 Notice that for each provider, the CAS server is considered as a client and therefore should be declared as
 an client at the external identity provider. After the declaration, a key and a secret may be given by the provider which has

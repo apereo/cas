@@ -1,6 +1,7 @@
 ---
 layout: default
-title: CAS - Monitoring
+title: CAS - Zipkin Distributed Tracing
+description: "Export CAS distributed traces to Zipkin with Brave."
 category: Monitoring & Statistics
 ---
 

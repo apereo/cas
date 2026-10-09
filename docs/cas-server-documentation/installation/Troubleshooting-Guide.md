@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Troubleshooting Guide
+description: "Answers to common CAS deployment problems: logging, redirect loops, missing attributes, unauthorized services, expired tickets, memory and TLS errors."
 category: Installation
 ---
 {% include variables.html %}

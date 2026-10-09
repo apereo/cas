@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - JDBC Drivers
+description: "JDBC drivers and the Hibernate or EclipseLink providers available to CAS features that use relational databases."
 category: Configuration
 ---
 {% include variables.html %}

@@ -1,22 +1,27 @@
 <!DOCTYPE html>
-<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout(mainContentClass='container-xxl py-3')}">
 
 <head>
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-
-    <title th:text="#{screen.pm.reset.title}">Forgot Username Instructions View</title>
+    <title th:text="#{screen.pm.forgotusername.title}">Forgot Username Instructions View</title>
     <link href="../../static/css/cas.css" rel="stylesheet" th:remove="tag" />
+    <link rel="stylesheet" type="text/css" th:href="@{/css/account.css}" />
 </head>
 
 <body>
-    <main class="container mt-3 mb-3">
-        <div id="content" layout:fragment="content" class="mdc-card card p-4 m-auto w-lg-66">
-            <h2 th:utext="#{screen.pm.forgotusername.sent}">Instructions Sent Successfully.</h2>
-            <p th:utext="#{screen.pm.forgotusername.sentInstructions}">You should shortly receive an email with
-                follow-instructions to how to retrieve your username.</p>
+<main class="container mt-3 mb-3">
+    <div id="content" layout:fragment="content">
+        <div th:replace="~{fragments/accountflow :: shell(flow='username', step=2, steps=2, content=~{::flowContent})}">
+            <div th:fragment="flowContent" role="status">
+                <div th:replace="~{fragments/accountflow :: status(kind='mail', heading=#{screen.pm.forgotusername.sent}, message=#{screen.pm.forgotusername.sentInstructions})}"></div>
+                <div class="cas-flow-actions">
+                    <a class="acct-btn" th:href="@{/login}" th:text="#{screen.account.flow.backtologin}">Back to sign in</a>
+                </div>
+            </div>
         </div>
-    </main>
+    </div>
+</main>
 </body>
 
 </html>

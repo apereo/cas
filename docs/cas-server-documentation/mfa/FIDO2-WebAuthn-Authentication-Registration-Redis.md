@@ -1,12 +1,14 @@
 ---
 layout: default
-title: CAS - FIDO2 WebAuthn Multifactor Authentication
+title: CAS - Redis FIDO2 WebAuthn Multifactor Registration
 category: Multifactor Authentication
 ---
 
 {% include variables.html %}
 
 # Redis FIDO2 WebAuthn Multifactor Registration
+
+Keep FIDO2 WebAuthn device registrations in Redis.
 
 Device registrations may be kept inside a Redis database instance by including the following module in the WAR overlay:
 

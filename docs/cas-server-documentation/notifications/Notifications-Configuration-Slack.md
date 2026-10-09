@@ -1,12 +1,14 @@
 ---
 layout: default
-title: CAS - Notifications
+title: CAS - Notifications - Slack
 category: Notifications
 ---
 
 {% include variables.html %}
 
 # Notifications - Slack
+
+Send notifications to users as Slack messages.
 
 Support is enabled via the relevant modules using the following module:
 

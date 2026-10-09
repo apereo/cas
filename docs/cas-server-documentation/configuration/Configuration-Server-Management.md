@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Configuration Server
+description: "Run CAS with a Spring Cloud configuration server to manage settings from Git, Vault, databases, cloud stores or the native file system."
 category: Configuration
 ---
 

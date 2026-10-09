@@ -1,6 +1,7 @@
 ---
 layout: default
-title: CAS - Account Registration
+title: CAS - Account (Self-Service) Registration
+description: "Self-service account registration in CAS: collect user details, verify them by email or SMS, and provision the account."
 category: Registration
 ---
                   

@@ -226,19 +226,38 @@ public interface OidcConstants {
      */
     String VC_NONCE_URL = "oidcVcNonce";
     /**
+     * Oidc VC notification url path segment.
+     */
+    String VC_NOTIFICATION_URL = "oidcVcNotification";
+
+    /**
+     * Oidc VC deferred credential url path segment.
+     */
+    String VC_DEFERRED_CREDENTIAL_URL = "oidcVcDeferredCredential";
+    /**
+     * Oidc VC status list url path segment.
+     */
+    String VC_STATUS_LIST_URL = "oidcVcStatusList";
+
+    /**
+     * Oidc VC status list aggregation url path segment.
+     */
+    String VC_STATUS_LIST_AGGREGATION_URL = "oidcVcStatusListAggregation";
+    /**
      * Credential error response: the credential request is invalid.
      * OpenID4VCI 1.0 defines its own error codes for the Credential Endpoint; the OAuth codes of the
      * token endpoint do not apply there.
      */
     String VC_ERROR_INVALID_CREDENTIAL_REQUEST = "invalid_credential_request";
     /**
-     * Credential error response: the issuer does not support the requested credential type.
+     * Credential error response: the requested {@code credential_configuration_id} is unknown to the issuer.
      */
-    String VC_ERROR_UNSUPPORTED_CREDENTIAL_TYPE = "unsupported_credential_type";
+    String VC_ERROR_UNKNOWN_CREDENTIAL_CONFIGURATION = "unknown_credential_configuration";
     /**
-     * Credential error response: the issuer does not support the requested credential format.
+     * Credential error response: the requested {@code credential_identifier} is unknown, that is, not among the
+     * credential identifiers the token response returned.
      */
-    String VC_ERROR_UNSUPPORTED_CREDENTIAL_FORMAT = "unsupported_credential_format";
+    String VC_ERROR_UNKNOWN_CREDENTIAL_IDENTIFIER = "unknown_credential_identifier";
     /**
      * Credential error response: the proof in the credential request is invalid.
      */
@@ -254,9 +273,40 @@ public interface OidcConstants {
      */
     String VC_ERROR_CREDENTIAL_REQUEST_DENIED = "credential_request_denied";
     /**
+     * Credential error response: the {@code credential_response_encryption} parameters are invalid, or missing while
+     * the issuer requires encrypted responses.
+     */
+    String VC_ERROR_INVALID_ENCRYPTION_PARAMETERS = "invalid_encryption_parameters";
+    /**
+     * Deferred credential error response: the {@code transaction_id} is unknown, expired, already used, or was not issued
+     * to the client and user of the access token.
+     */
+    String VC_ERROR_INVALID_TRANSACTION_ID = "invalid_transaction_id";
+    /**
+     * Notification error response: the {@code notification_id} is unknown, expired or not the caller's.
+     */
+    String VC_ERROR_INVALID_NOTIFICATION_ID = "invalid_notification_id";
+    /**
+     * Notification error response: the notification request is missing a parameter or is otherwise malformed.
+     */
+    String VC_ERROR_INVALID_NOTIFICATION_REQUEST = "invalid_notification_request";
+    /**
      * Oidc pushed authorization request url path segment url.
      */
     String PUSHED_AUTHORIZE_URL = "oidcPushAuthorize";
+    /**
+     * Challenge endpoint url path segment, where clients fetch challenges for their client attestation proofs of
+     * possession.
+     */
+    String CLIENT_ATTESTATION_CHALLENGE_URL = "oidcAttestationChallenge";
+    /**
+     * Error response: the client attestation proof of possession does not carry an expected server-provided challenge.
+     */
+    String USE_ATTESTATION_CHALLENGE = "use_attestation_challenge";
+    /**
+     * Response header that carries a fresh challenge for client attestation proofs of possession.
+     */
+    String HEADER_CLIENT_ATTESTATION_CHALLENGE = "OAuth-Client-Attestation-Challenge";
     /**
      * JWKS Endpoint url.
      */
@@ -352,6 +402,10 @@ public interface OidcConstants {
      * Authenticator used to verify access using private key jwts.
      */
     String CAS_OAUTH_CLIENT_PRIVATE_KEY_JWT_AUTHN = "ClientPrivateKeyJwtClient";
+    /**
+     * Authenticator used to verify clients by their client attestation.
+     */
+    String CAS_OAUTH_CLIENT_ATTESTATION_AUTHN = "ClientAttestationClient";
     /**
      * This is a standard label for a custom scope which will have a scope name.
      * This should not be added to StandardScopes enumeration because it isn't standard.

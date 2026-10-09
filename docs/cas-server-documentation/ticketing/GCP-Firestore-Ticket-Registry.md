@@ -14,7 +14,7 @@ databases, as a NoSQL database it differs from them in the way it describes rela
 
 Support is enabled by including the following dependency in the overlay:
 
-{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-gcp-pubsub-ticket-registry" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-gcp-firestore-ticket-registry" %}
 
 Integration support is backed by the [Spring Cloud GCP project](https://cloud.google.com/java/docs/spring).
 Their [reference documentation](https://googlecloudplatform.github.io/spring-cloud-gcp/reference/html/index.html) 

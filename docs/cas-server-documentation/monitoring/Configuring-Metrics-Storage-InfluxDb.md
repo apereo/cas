@@ -1,12 +1,14 @@
 ---
 layout: default
-title: CAS - Metrics
+title: CAS - InfluxDb Storage - CAS Metrics
 category: Monitoring & Statistics
 ---
 
 {% include variables.html %}
 
 # InfluxDb Storage - CAS Metrics
+
+Export CAS metrics to an InfluxDB time-series database.
 
 By default, metrics are exported to Influx running on your local
 machine. The location of the Influx server to use can be provided using:

@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - GeoTracking Authentication Requests
+description: "Map authentication requests to physical locations with GeoLocation providers such as MaxMind or Google Maps."
 category: Authentication
 ---
 {% include variables.html %}

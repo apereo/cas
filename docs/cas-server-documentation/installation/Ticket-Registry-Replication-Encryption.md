@@ -1,6 +1,6 @@
 ---
 layout: default
-title: CAS - Configuring Ticketing Components
+title: CAS - Ticket Registry Replication Encryption
 category: Ticketing
 ---
 {% include variables.html %}

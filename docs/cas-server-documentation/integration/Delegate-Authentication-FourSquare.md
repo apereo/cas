@@ -1,12 +1,14 @@
 ---
 layout: default
-title: CAS - Delegate Authentication
+title: CAS - FourSquare - Delegated Authentication
 category: Authentication
 ---
 
 {% include variables.html %}
 
 # FourSquare
+
+Let users log in to CAS with their Foursquare account.
 
 For an overview of the delegated authentication flow, please [see this guide](Delegate-Authentication.html).
 

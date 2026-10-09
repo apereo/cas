@@ -8,6 +8,8 @@ category: Logs & Audits
 
 # Logstash Logging
 
+Send CAS log messages to Logstash over the network with a Log4j socket appender.
+
 CAS logging framework has the ability route log messages to a TCP/UDP endpoint.
 This configuration assumes that the Logstash server has enabled its [TCP input](https://www.elastic.co/guide/en/logstash/current/plugins-inputs-tcp.html) on port `9500`:
 

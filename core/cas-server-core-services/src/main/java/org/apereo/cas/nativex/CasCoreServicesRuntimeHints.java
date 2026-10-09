@@ -4,6 +4,7 @@ import module java.base;
 import org.apereo.cas.authentication.principal.DefaultPrincipalAttributesRepository;
 import org.apereo.cas.authentication.principal.PrincipalProvisioner;
 import org.apereo.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator;
+import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.authentication.principal.cache.AbstractPrincipalAttributesRepository;
 import org.apereo.cas.authentication.principal.cache.CachingPrincipalAttributesRepository;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalAttributesCoreProperties;
@@ -62,6 +63,7 @@ import org.apereo.cas.services.RegisteredServiceLogoutType;
 import org.apereo.cas.services.RegisteredServicePasswordlessPolicy;
 import org.apereo.cas.services.RegisteredServicePublicKeyImpl;
 import org.apereo.cas.services.RemoteEndpointServiceAccessStrategy;
+import org.apereo.cas.services.ResourceBasedServiceRegistry;
 import org.apereo.cas.services.RestfulRegisteredServiceAuthenticationPolicyCriteria;
 import org.apereo.cas.services.ReturnAllAttributeReleasePolicy;
 import org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy;
@@ -72,6 +74,7 @@ import org.apereo.cas.services.ServiceRegistry;
 import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
 import org.apereo.cas.services.ServiceRegistryInitializer;
 import org.apereo.cas.services.ServiceRegistryInitializerEventListener;
+import org.apereo.cas.services.ServicesManagerScheduledLoader;
 import org.apereo.cas.services.StaticRegisteredServiceUsernameProvider;
 import org.apereo.cas.services.TimeBasedRegisteredServiceAccessStrategy;
 import org.apereo.cas.services.UnauthorizedServiceException;
@@ -87,6 +90,7 @@ import lombok.val;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import org.springframework.aot.hint.RuntimeHints;
+import org.springframework.beans.factory.DisposableBean;
 
 /**
  * This is {@link CasCoreServicesRuntimeHints}.
@@ -97,6 +101,9 @@ import org.springframework.aot.hint.RuntimeHints;
 public class CasCoreServicesRuntimeHints implements CasRuntimeHintsRegistrar {
     @Override
     public void registerHints(final @NonNull RuntimeHints hints, final @Nullable ClassLoader classLoader) {
+        hints.resources().registerPattern("services/**");
+        registerReflectionHintsForMethodsAndFields(hints, List.of(ServicesManagerScheduledLoader.class));
+        registerSerializationHints(hints, findSubclassesOf(WebApplicationService.class));
         registerProxyHints(hints, List.of(
             PrincipalProvisioner.class,
             ServiceRegistryInitializer.class,
@@ -105,6 +112,7 @@ public class CasCoreServicesRuntimeHints implements CasRuntimeHintsRegistrar {
             ServiceRegistryExecutionPlanConfigurer.class));
 
         registerSpringProxyHints(hints, ChainingServiceRegistry.class, ServiceRegistry.class);
+        registerSpringProxyHints(hints, ResourceBasedServiceRegistry.class, DisposableBean.class, ServiceRegistry.class);
         registerSerializableSpringProxyHints(hints, ServiceRegistryInitializerEventListener.class);
 
         registerSerializationHints(hints,

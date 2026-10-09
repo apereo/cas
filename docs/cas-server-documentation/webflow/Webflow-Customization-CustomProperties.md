@@ -1,6 +1,7 @@
 ---
 layout: default
-title: CAS - Webflow Customization
+title: CAS - Webflow Custom Properties
+description: "Use CAS settings and your own custom properties in webflow components and CAS views."
 category: Webflow Management
 ---
 

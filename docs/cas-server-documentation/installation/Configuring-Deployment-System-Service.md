@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - OS Service Deployment
+description: "Run CAS as an operating system service with init.d or systemd on Linux, or as a Windows service."
 category: Installation
 ---
 {% include variables.html %}

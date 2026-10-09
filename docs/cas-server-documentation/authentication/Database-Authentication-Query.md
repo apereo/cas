@@ -1,6 +1,6 @@
 ---
 layout: default
-title: CAS - Database Authentication
+title: CAS - Query Database Authentication
 category: Authentication
 ---
 {% include variables.html %}
@@ -15,4 +15,4 @@ against the password on record determined by a configurable database query.
 ## Multitenancy
 
 Configuration settings for database authentication can be specified in a multitenant environment.
-Please [review this guide](../multitenancy/Multitenancy-Overview.html) for more information.
+Please [review this guide](../multitenancy/Multitenancy-Tenant-Properties.html) for more information.

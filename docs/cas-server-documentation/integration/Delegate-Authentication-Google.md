@@ -1,12 +1,14 @@
 ---
 layout: default
-title: CAS - Delegate Authentication
+title: CAS - Google - Delegated Authentication
 category: Authentication
 ---
 
 {% include variables.html %}
 
 # Google
+
+Let users log in to CAS with their Google account through Google's OAuth 2.0 client.
 
 For an overview of the delegated authentication flow, please [see this guide](Delegate-Authentication.html).
 

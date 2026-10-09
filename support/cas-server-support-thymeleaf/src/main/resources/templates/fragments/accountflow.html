@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Account Flow</title>
+    <link href="../../static/css/account.css" rel="stylesheet" th:remove="tag"/>
+</head>
+<body>
+<!--/*
+    Shared shell for the account management flows: a brand panel that lists the steps of the current flow
+    and a card that holds the screen content.
+    flow:    one of signup, reset, username, password (message keys screen.account.flow.<flow>.*)
+    step:    the current step, starting at 1
+    steps:   the number of steps in the flow
+    content: the fragment to render inside the card
+*/-->
+<div th:fragment="shell(flow, step, steps, content)" class="cas-flow">
+    <aside class="cas-flow-progress" th:aria-label="#{screen.account.flow.progress}">
+        <div class="cas-flow-eyebrow" th:text="#{${'screen.account.flow.' + flow + '.eyebrow'}}">Account recovery</div>
+        <div class="cas-flow-name" th:text="#{${'screen.account.flow.' + flow + '.name'}}">Reset your password</div>
+        <ol class="cas-flow-steps">
+            <li th:each="index : ${#numbers.sequence(1, steps)}"
+                th:classappend="${index < step} ? 'is-done' : (${index == step} ? 'is-current')"
+                th:aria-current="${index == step} ? 'step' : null">
+                <span class="cas-flow-step-mark" aria-hidden="true">
+                    <i th:if="${index < step}" class="mdi mdi-check"></i>
+                    <span th:unless="${index < step}" th:text="${index}">1</span>
+                </span>
+                <span>
+                    <span th:text="#{${'screen.account.flow.' + flow + '.step.' + index}}">Find your account</span>
+                    <span class="visually-hidden" th:if="${index < step}" th:text="#{screen.account.flow.completed}">(completed)</span>
+                    <span class="visually-hidden" th:if="${index == step}" th:text="#{screen.account.flow.current}">(current step)</span>
+                </span>
+            </li>
+        </ol>
+        <div class="cas-flow-compact">
+            <div class="cas-flow-compact-bar" aria-hidden="true">
+                <span th:each="index : ${#numbers.sequence(1, steps)}"
+                      th:classappend="${index < step} ? 'is-done' : (${index == step} ? 'is-current')"></span>
+            </div>
+            <div class="cas-flow-compact-text">
+                <span th:text="#{screen.account.flow.step(${step}, ${steps})}">Step 1 of 5</span>
+                · <span th:text="#{${'screen.account.flow.' + flow + '.step.' + step}}">Find your account</span>
+            </div>
+        </div>
+        <div class="cas-flow-help" th:text="#{${'screen.account.flow.' + flow + '.help'}}">Help</div>
+    </aside>
+    <div class="cas-flow-panel">
+        <div class="cas-flow-card">
+            <div th:replace="${content}">Content</div>
+        </div>
+    </div>
+</div>
+
+<!--/* Shared status content: icon, heading, message and a link back to the login page. */-->
+<div th:fragment="status(kind, heading, message)" class="cas-flow-status">
+    <span class="cas-flow-status-icon" aria-hidden="true"
+          th:classappend="${kind == 'success'} ? 'is-success' : (${kind == 'error'} ? 'is-error' : (${kind == 'warning'} ? 'is-warning'))">
+        <i class="mdi" th:classappend="${kind == 'success'} ? 'mdi-check' : (${kind == 'error'} ? 'mdi-close' : (${kind == 'warning'} ? 'mdi-alert-outline' : 'mdi-email-outline'))"></i>
+    </span>
+    <h2 th:utext="${heading}">Heading</h2>
+    <p class="cas-flow-intro" th:utext="${message}">Message</p>
+</div>
+
+<!--/* Shared password strength meter and policy notes, driven by passwordMeter.js. */-->
+<div th:fragment="strengthMeter" class="cas-flow-strength">
+    <div class="cas-flow-meter">
+        <span class="cas-flow-meter-caption" id="password-strength-caption" th:text="#{screen.pm.password.strength}">Strength:</span>
+        <div id="strengthProgressBar" class="cas-flow-meter-track" role="progressbar"
+             aria-labelledby="password-strength-caption" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+            <div id="progress-strength-indicator"></div>
+        </div>
+        <span class="cas-flow-meter-label">
+            <span id="password-strength-icon" class="mdi" aria-hidden="true"></span>
+            <span id="password-strength-label" aria-live="polite"></span>
+        </span>
+    </div>
+    <div class="cas-flow-notes" id="password-strength-notes">
+        <div id="password-strength-msg" class="acct-banner acct-banner-warning" role="status" style="display: none;">
+            <i class="mdi mdi-information-outline" aria-hidden="true"></i>
+            <p>
+                <span id="password-strength-warning"></span>
+                <span id="password-strength-suggestions"></span>
+            </p>
+        </div>
+        <div id="password-policy-violation-msg" class="acct-banner acct-banner-error" role="alert" style="display: none;">
+            <i class="mdi mdi-alert-circle-outline" aria-hidden="true"></i>
+            <p th:text="#{screen.pm.password.policyViolation}">Password does not match the password policy requirement.</p>
+        </div>
+        <div id="password-confirm-mismatch-msg" class="acct-banner acct-banner-error" role="alert" style="display: none;">
+            <i class="mdi mdi-alert-circle-outline" aria-hidden="true"></i>
+            <p th:text="#{screen.pm.password.confirmMismatch}">Passwords do not match.</p>
+        </div>
+    </div>
+</div>
+</body>
+</html>

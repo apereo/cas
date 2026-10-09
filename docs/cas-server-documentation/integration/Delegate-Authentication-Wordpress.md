@@ -1,12 +1,14 @@
 ---
 layout: default
-title: CAS - Delegate Authentication
+title: CAS - Wordpress - Delegated Authentication
 category: Authentication
 ---
 
 {% include variables.html %}
 
 # Wordpress
+
+Let users log in to CAS with their WordPress.com account.
 
 For an overview of the delegated authentication flow, please [see this guide](Delegate-Authentication.html).
 

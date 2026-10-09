@@ -7,6 +7,7 @@ import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
+import com.nimbusds.oauth2.sdk.dpop.verifiers.InvalidDPoPNonceException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -103,6 +104,9 @@ public class OAuth20UserProfileEndpointController<T extends OAuth20Configuration
             updateAccessTokenUsage(accessTokenTicket);
             val map = getConfigurationContext().getUserProfileDataCreator().createFrom(accessTokenTicket);
             return getConfigurationContext().getUserProfileViewRenderer().render(map, accessTokenTicket, response);
+        } catch (final InvalidDPoPNonceException e) {
+            LOGGER.info("DPoP proof of the user profile request carries no valid nonce; a fresh nonce is provided");
+            return OAuth20Utils.useDPoPNonceResponse();
         } catch (final Throwable e) {
             LoggingUtils.error(LOGGER, e);
             return buildUnauthorizedResponseEntity(OAuth20Constants.INVALID_REQUEST);
@@ -153,7 +157,7 @@ public class OAuth20UserProfileEndpointController<T extends OAuth20Configuration
                 ticketRegistry.deleteTicket(accessTokenTicket.getId());
             } else {
                 ticketRegistry.updateTicket(accessTokenTicket);
-                FunctionUtils.doIfNull(accessTokenTicket.getTicketGrantingTicket(), ticket -> {
+                FunctionUtils.doIfNotNull(accessTokenTicket.getTicketGrantingTicket(), ticket -> {
                     val tgt = ticketRegistry.getTicket(ticket.getId(), TicketGrantingTicket.class);
                     ticketRegistry.updateTicket(tgt.update());
                 });

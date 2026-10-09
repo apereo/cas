@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Multifactor Authentication - Failure Modes
+description: "Decide what CAS does when a multifactor provider is unreachable: block the login, allow it, or skip MFA."
 category: Multifactor Authentication
 ---
 

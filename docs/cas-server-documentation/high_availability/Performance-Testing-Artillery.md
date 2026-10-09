@@ -1,6 +1,6 @@
 ---
 layout: default
-title: CAS - High Availability Performance Testing
+title: CAS - Artillery Performance Testing
 category: High Availability
 ---
 

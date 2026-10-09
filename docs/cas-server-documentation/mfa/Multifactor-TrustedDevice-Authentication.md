@@ -1,6 +1,7 @@
 ---
 layout: default
-title: CAS - Trusted Device Multifactor Authentication
+title: CAS - Multifactor Authentication Trusted Device/Browser
+description: "Let users trust a browser or device so CAS skips multifactor prompts on it for a configurable period."
 category: Multifactor Authentication
 ---
 

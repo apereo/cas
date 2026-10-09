@@ -1,6 +1,6 @@
 ---
 layout: default
-title: CAS - Monitoring
+title: CAS - JDBC Monitoring
 category: Monitoring & Statistics
 ---
 

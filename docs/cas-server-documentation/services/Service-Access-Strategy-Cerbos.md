@@ -1,6 +1,7 @@
 ---
 layout: default
-title: CAS - Configuring Service Access Strategy
+title: CAS - Service Access Strategy - Cerbos
+description: "Authorize access to applications registered with CAS by sending a resource check request to Cerbos."
 category: Services
 ---
 

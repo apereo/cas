@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Attribute Definitions 
+description: "Attribute definitions: give attributes metadata such as friendly names, scopes, encryption and value transformations."
 category: Attributes
 ---
 

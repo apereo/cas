@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Configuration Extensions
+description: "Extend CAS configuration with your own Spring beans and auto-configuration classes, and override existing CAS components."
 category: Configuration
 ---
 

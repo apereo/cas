@@ -8,6 +8,8 @@ category: Authentication
 
 # MongoDb Authentication
 
+Verify usernames and passwords against user accounts stored in a MongoDB collection.
+
 Verify and authenticate credentials against a [MongoDb](https://www.mongodb.org/) instance.
 Support is enabled by including the following dependency in the WAR overlay:
 

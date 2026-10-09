@@ -1,6 +1,6 @@
 ---
 layout: default
-title: CAS - Simple Multifactor Authentication
+title: CAS - Simple Multifactor Authentication - Rate Limiting
 category: Multifactor Authentication
 ---
 

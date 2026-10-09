@@ -1,12 +1,14 @@
 ---
 layout: default
-title: CAS - Surrogate Authentication
+title: CAS - Custom Surrogate Authentication
 category: Authentication
 ---
 {% include variables.html %}
 
 
 # Custom Surrogate Authentication
+
+Decide who may impersonate whom with your own `SurrogateAuthenticationService`, registered with CAS as a Spring bean.
 
 If you wish to design your own account store, you may follow the below approach:
 

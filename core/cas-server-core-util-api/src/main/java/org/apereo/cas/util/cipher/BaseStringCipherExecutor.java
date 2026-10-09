@@ -122,7 +122,7 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
     }
 
     protected @Nullable String decode(final Serializable value, final Object[] parameters,
-                                      final Key encKey, final Key signingKey) {
+                                      @Nullable final Key encKey, final Key signingKey) {
         if (strategyType == CipherOperationsStrategyType.ENCRYPT_AND_SIGN) {
             return verifyAndDecrypt(value, encKey, signingKey);
         }
@@ -162,16 +162,16 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
     protected void configureEncryptionKeyFromPublicKeyResource(final String secretKeyToUse) {
         val object = extractPublicKeyFromResource(secretKeyToUse);
         LOGGER.debug("Located encryption key resource [{}]", secretKeyToUse);
-        setEncryptionKey(object);
-        setEncryptionAlgorithm(KeyManagementAlgorithmIdentifiers.RSA_OAEP_256);
+        encryptionKey = object;
+        encryptionAlgorithm = KeyManagementAlgorithmIdentifiers.RSA_OAEP_256;
     }
 
-    protected boolean isEncryptionPossible(final Key key) {
+    protected boolean isEncryptionPossible(@Nullable final Key key) {
         return this.encryptionEnabled && key != null;
     }
 
 
-    protected String encryptValueAsJwt(final Key encryptionKey, final Serializable value) {
+    protected String encryptValueAsJwt(@Nullable final Key encryptionKey, final Serializable value) {
         val headers = new LinkedHashMap<>(getCommonHeaders());
         headers.putAll(getEncryptionOpHeaders());
         return JsonWebTokenEncryptor.builder()
@@ -211,7 +211,7 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
         configureSigningKey(signingKeyToUse);
     }
 
-    private void configureEncryptionParameters(final String secretKeyEncryption, final String contentEncryptionAlgorithmIdentifier) {
+    private void configureEncryptionParameters(@Nullable final String secretKeyEncryption, final String contentEncryptionAlgorithmIdentifier) {
         var secretKeyToUse = secretKeyEncryption;
         if (StringUtils.isBlank(secretKeyToUse)) {
             LOGGER.warn("Secret key for encryption is not defined for [{}]; CAS will attempt to auto-generate the encryption key", getName());
@@ -225,7 +225,7 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
             try {
                 val results = JsonUtil.parseJson(secretKeyToUse);
                 LOGGER.trace("Parsed encryption key as a JSON web key for [{}] as [{}]", getName(), results);
-                setEncryptionKey(EncodingUtils.generateJsonWebKey(results));
+                encryptionKey = EncodingUtils.generateJsonWebKey(results);
             } catch (final Exception e) {
                 LOGGER.trace("Unable to recognize encryption key [{}] as a JSON web key: [{}].", getEncryptionKeySetting(), e.getMessage());
                 LOGGER.debug("Using pre-defined encryption key to use for [{}]", getEncryptionKeySetting());
@@ -240,12 +240,12 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
         } finally {
             if (this.encryptionKey == null) {
                 LOGGER.trace("Creating encryption key instance based on provided secret key");
-                setEncryptionKey(EncodingUtils.generateJsonWebKey(secretKeyToUse));
+                this.encryptionKey = EncodingUtils.generateJsonWebKey(secretKeyToUse);
             }
             if (StringUtils.isBlank(contentEncryptionAlgorithmIdentifier)) {
-                setContentEncryptionAlgorithmIdentifier(EncryptionJwtCryptoProperties.DEFAULT_CONTENT_ENCRYPTION_ALGORITHM);
+                this.contentEncryptionAlgorithmIdentifier = EncryptionJwtCryptoProperties.DEFAULT_CONTENT_ENCRYPTION_ALGORITHM;
             } else {
-                setContentEncryptionAlgorithmIdentifier(contentEncryptionAlgorithmIdentifier);
+                this.contentEncryptionAlgorithmIdentifier = contentEncryptionAlgorithmIdentifier;
             }
             LOGGER.trace("Initialized cipher encryption sequence via content encryption [{}] and algorithm [{}]",
                 this.contentEncryptionAlgorithmIdentifier, this.encryptionAlgorithm);
@@ -266,10 +266,10 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
             LOGGER.trace("Attempting to verify signature based on signing key defined by [{}]", getSigningKeySetting());
             return verifySignature(currentValue, signingKey);
         }, () -> currentValue).get();
-        return new String(encoded, StandardCharsets.UTF_8);
+        return new String(Objects.requireNonNull(encoded), StandardCharsets.UTF_8);
     }
 
-    private String verifyAndDecrypt(final Serializable value, final Key encryptionKey, final Key signingKey) {
+    private @Nullable String verifyAndDecrypt(final Serializable value, final Key encryptionKey, final Key signingKey) {
         Objects.requireNonNull(value, () -> """
             Value to verify/decrypt cannot be null. This is likely because keys used to sign and encrypt the value do not match.
             """.stripIndent().trim());
@@ -284,7 +284,7 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
             val encodedObj = new String(encoded, StandardCharsets.UTF_8);
 
             if (isEncryptionPossible(encryptionKey)) {
-                LOGGER.trace("Attempting to decrypt value based on encryption key defined by [{}]", getEncryptionKeySetting());
+                LOGGER.trace("Attempting to decrypt value via encryption key defined by [{}]", getEncryptionKeySetting());
                 return EncodingUtils.decryptJwtValue(encryptionKey, encodedObj);
             }
             return encodedObj;
@@ -292,16 +292,16 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
         return null;
     }
 
-    private String encryptAndSign(final Serializable value, final Key encryptionKey, final Key signingKey) {
+    private @Nullable String encryptAndSign(final Serializable value, @Nullable final Key encryptionKey, @Nullable final Key signingKey) {
         val encoded = FunctionUtils.doIf(isEncryptionPossible(encryptionKey),
             () -> {
-                LOGGER.trace("Attempting to encrypt value based on encryption key defined by [{}]", getEncryptionKeySetting());
+                LOGGER.trace("Attempting to encrypt value with encryption key defined by [{}]", getEncryptionKeySetting());
                 return encryptValueAsJwt(encryptionKey, value);
             },
             value::toString).get();
 
         if (this.signingEnabled) {
-            LOGGER.trace("Attempting to sign value based on signing key defined by [{}]", getSigningKeySetting());
+            LOGGER.trace("Attempting to sign value with signing key defined by [{}]", getSigningKeySetting());
             val signed = sign(encoded.getBytes(StandardCharsets.UTF_8), signingKey);
             return new String(signed, StandardCharsets.UTF_8);
         }

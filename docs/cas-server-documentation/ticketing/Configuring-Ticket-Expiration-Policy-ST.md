@@ -1,6 +1,6 @@
 ---
 layout: default
-title: CAS - Configuring Ticket Expiration Policy Components
+title: CAS - Service Ticket Policies
 category: Ticketing
 ---
 

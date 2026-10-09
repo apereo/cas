@@ -14,7 +14,7 @@ const cas = require("../../cas.js");
     await cas.assertCookie(page);
     await cas.goto(page, url);
     await cas.sleep(2000);
-    await cas.assertInnerText(page, "#pwdmain h3", "Hello, casuser. You must change your password.");
+    await cas.assertInnerText(page, "#pwdmain h2", "Hello, casuser. You must change your password.");
     await cas.attributeValue(page, ".generate-password", "title",  "Generate password");
     await cas.type(page,"#password", "Jv!e0mKD&dCNl^Q");
     await cas.type(page,"#confirmedPassword", "Jv!e0mKD&dCNl^Q");

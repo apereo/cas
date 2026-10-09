@@ -1,6 +1,6 @@
 ---
 layout: default
-title: CAS - Multifactor Authentication Triggers
+title: CAS - Global Multifactor Authentication Trigger
 category: Multifactor Authentication
 ---
 

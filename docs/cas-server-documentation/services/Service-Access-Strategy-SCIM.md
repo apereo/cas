@@ -1,6 +1,7 @@
 ---
 layout: default
-title: CAS - Configuring Service Access Strategy
+title: CAS - Service Access Strategy - SCIM
+description: "Authorize access to applications registered with CAS using group memberships looked up from a SCIM server."
 category: Services
 ---
 

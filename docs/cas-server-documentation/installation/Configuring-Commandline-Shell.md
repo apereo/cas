@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Configuring Commandline Shell
+description: "Use the CAS command-line shell to look up settings and modules and run other utility commands against a CAS installation."
 category: Installation
 ---
 

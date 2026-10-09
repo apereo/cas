@@ -1,6 +1,6 @@
 ---
 layout: default
-title: CAS - Attribute Resolution
+title: CAS - REST Attribute Resolution
 category: Attributes
 ---
 
@@ -26,4 +26,4 @@ to be a JSON map as such:
 ## Multitenancy
 
 Configuration settings for REST attribute resolution can be specified in a multitenant environment.
-Please [review this guide](../multitenancy/Multitenancy-Overview.html) for more information.
+Please [review this guide](../multitenancy/Multitenancy-Tenant-Properties.html) for more information.

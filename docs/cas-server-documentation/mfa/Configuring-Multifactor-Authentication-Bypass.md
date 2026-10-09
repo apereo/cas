@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Multifactor Authentication Bypass
+description: "Bypass rules that let a multifactor provider skip MFA for certain users, attributes, applications or requests."
 category: Multifactor Authentication
 ---
 

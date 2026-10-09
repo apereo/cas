@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Swagger API Integration
+description: "Generate OpenAPI documentation for the CAS REST APIs and endpoints with Swagger and springdoc."
 category: Integration
 ---
 

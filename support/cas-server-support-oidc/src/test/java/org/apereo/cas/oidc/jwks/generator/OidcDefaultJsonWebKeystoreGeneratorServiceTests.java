@@ -15,9 +15,11 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.ResourceLock;
 import org.springframework.beans.factory.DisposableBean;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.test.context.TestPropertySource;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * This is {@link OidcDefaultJsonWebKeystoreGeneratorServiceTests}.
@@ -105,6 +107,24 @@ class OidcDefaultJsonWebKeystoreGeneratorServiceTests {
             properties.getJwks().getCore().setJwksType("ec");
             properties.getJwks().getCore().setJwksKeySize(521);
             verifyGeneration(properties);
+        }
+
+        @Test
+        void verifyGeneratedEventOnlyWhenKeystoreIsGenerated() throws Throwable {
+            val file = new File(FileUtils.getTempDirectoryPath(), RandomUtils.randomAlphabetic(8) + ".jwks");
+            val properties = new OidcProperties();
+            properties.getJwks().getFileSystem().setJwksFile("file:" + file.getAbsolutePath());
+            properties.getJwks().getFileSystem().setWatcherEnabled(false);
+            val context = mock(ConfigurableApplicationContext.class);
+            val service = new OidcDefaultJsonWebKeystoreGeneratorService(properties, context);
+            try {
+                assertTrue(service.generate().exists());
+                assertTrue(service.generate().exists());
+                verify(context, times(1)).publishEvent(any(OidcJsonWebKeystoreGeneratedEvent.class));
+            } finally {
+                service.destroy();
+                FileUtils.deleteQuietly(file);
+            }
         }
 
         private static File deleteSharedKeystore() {

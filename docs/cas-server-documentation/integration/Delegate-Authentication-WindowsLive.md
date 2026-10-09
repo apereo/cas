@@ -1,12 +1,14 @@
 ---
 layout: default
-title: CAS - Delegate Authentication
+title: CAS - Windows Live - Delegated Authentication
 category: Authentication
 ---
 
 {% include variables.html %}
 
 # Windows Live
+
+Let users log in to CAS with their Microsoft (Windows Live) account.
 
 For an overview of the delegated authentication flow, please [see this guide](Delegate-Authentication.html).
 

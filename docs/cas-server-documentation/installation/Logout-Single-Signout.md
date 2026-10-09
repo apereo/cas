@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Logout & Single Logout
+description: "Logout and single logout (SLO) in CAS: ending the SSO session and notifying applications by back-channel or front-channel requests."
 category: SSO & SLO
 ---
 {% include variables.html %}
@@ -170,6 +171,11 @@ and adjusted depending on the ideal user experience in the event that the applic
 In the event that Single Logout is not activated, typically, application may expose a logout endpoint in order to destroy the session and next, redirect
 the agent to the CAS `logout` endpoint in order to completely destroy the SSO session as well.
 
-Here's a brief diagram that demonstrates various application session configuration and interactions with CAS:
+The example below shows how different application session settings interact with a CAS single sign-on session
+that has an 8-hour fixed lifetime:
 
-![](http://i.imgur.com/0XyuLgz.png)
+| Application session                    | When the application session ends while the CAS session is valid                 | When the application session ends after the CAS session has expired |
+|----------------------------------------|-----------------------------------------------------------------------------------|----------------------------------------------------------------------|
+| 2-hour fixed lifetime                  | The next request goes to CAS for a new service ticket, without a login prompt.    | The next request goes to CAS and the user logs in again.             |
+| 30-minute sliding (idle) lifetime      | The next request after 30 idle minutes goes to CAS for a new service ticket.      | The next request goes to CAS and the user logs in again.             |
+| Opts out of SSO with `renew=true`      | Every request to CAS asks the user to log in, whatever the CAS session state.     | Same.                                                                |

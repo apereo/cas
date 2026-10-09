@@ -6,6 +6,7 @@ import org.apereo.cas.configuration.model.support.oidc.OidcVerifiableCredentialC
 import org.apereo.cas.oidc.OidcConfigurationContext;
 import org.apereo.cas.oidc.vc.issuer.OidcVerifiableCredentialValidationContext;
 import org.apereo.cas.oidc.vc.issuer.proof.OidcVerifiableCredentialProofValidator;
+import org.apereo.cas.oidc.vc.issuer.status.OidcVerifiableCredentialStatusListService;
 import com.authlete.sd.Disclosure;
 import com.authlete.sd.SDJWT;
 import com.authlete.sd.SDObjectBuilder;
@@ -23,8 +24,12 @@ public class OidcVerifiableCredentialDcSdJwtEncoder extends BaseOidcVerifiableCr
     private final OidcVerifiableCredentialConfigurationProperties.CredentialConfigurationFormats format =
         OidcVerifiableCredentialConfigurationProperties.CredentialConfigurationFormats.DC_SD_JWT;
 
-    public OidcVerifiableCredentialDcSdJwtEncoder(final OidcConfigurationContext configurationContext) {
+    private final OidcVerifiableCredentialStatusListService statusListService;
+
+    public OidcVerifiableCredentialDcSdJwtEncoder(final OidcConfigurationContext configurationContext,
+                                                  final OidcVerifiableCredentialStatusListService statusListService) {
         super(configurationContext);
+        this.statusListService = statusListService;
     }
 
     @Override
@@ -53,6 +58,9 @@ public class OidcVerifiableCredentialDcSdJwtEncoder extends BaseOidcVerifiableCr
             });
             sdBuilder.build().forEach(jwtClaims::setClaim);
             jwtClaims.setStringClaim("sub", principal.getId());
+            statusListService.allocate(context.accessToken(), principal.getId(), configurationId, jwtClaims.getJwtId(),
+                    resolveCredentialValidity(configurationId))
+                .ifPresent(reference -> jwtClaims.setClaim("status", reference.toClaim()));
         });
         return new SDJWT(signedClaims, disclosures).toString();
     }

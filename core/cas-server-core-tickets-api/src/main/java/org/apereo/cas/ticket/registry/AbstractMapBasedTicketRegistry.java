@@ -121,7 +121,9 @@ public abstract class AbstractMapBasedTicketRegistry extends AbstractTicketRegis
     @Override
     public Ticket updateTicketInQueue(final Ticket ticket) throws Exception {
         LOGGER.trace("Updating ticket [{}] in registry...", ticket.getId());
-        addTicket(ticket);
+        if (!ticket.isExpired()) {
+            addTicketToQueue(ticket);
+        }
         return ticket;
     }
 

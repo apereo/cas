@@ -1,6 +1,6 @@
 ---
 layout: default
-title: CAS - Passwordless Authentication
+title: CAS - Passwordless Authentication - Passkeys
 category: Authentication
 ---
 {% include variables.html %}
@@ -40,7 +40,7 @@ also offers a passkey option that asks the browser for a passkey with its own pr
 
 <div class="alert alert-warning">:warning: <strong>User Verification</strong><p>
 A passkey that logs the user in on its own should also verify the user with a PIN or biometric. Unless
-<code>cas.authn.mfa.web-authn.core.user-verification-requirement</code> is set to <code>REQUIRED</code>, the default
+<code class="cas-setting">cas.authn.mfa.web-authn.core.user-verification-requirement</code> is set to <code>REQUIRED</code>, the default
 is <code>PREFERRED</code> and an authenticator that only checks for user presence, such as a security key without a PIN,
 is accepted.</p></div>
 

@@ -27,6 +27,7 @@ import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import com.nimbusds.oauth2.sdk.client.RedirectURIValidator;
+import com.nimbusds.oauth2.sdk.token.DPoPTokenError;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -39,7 +40,9 @@ import org.pac4j.core.context.WebContext;
 import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.core.profile.UserProfile;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.json.JacksonJsonView;
 import tools.jackson.core.type.TypeReference;
@@ -105,6 +108,20 @@ public class OAuth20Utils {
             model.put(OAuth20Constants.ERROR_DESCRIPTION, description);
         }
         return model;
+    }
+
+    /**
+     * The answer of a protected resource that requires the server-provided nonce in DPoP proofs (RFC 9449, section 9):
+     * {@code 401} with a {@code WWW-Authenticate: DPoP} challenge carrying {@code use_dpop_nonce}. The fresh nonce is already
+     * in the {@code DPoP-Nonce} header of the response.
+     *
+     * @return the response entity
+     */
+    public static ResponseEntity useDPoPNonceResponse() {
+        val error = DPoPTokenError.USE_DPOP_NONCE;
+        return ResponseEntity.status(error.getHTTPStatusCode())
+            .header(HttpHeaders.WWW_AUTHENTICATE, error.toWWWAuthenticateHeader())
+            .body(getErrorResponseBody(error.getCode(), error.getDescription()));
     }
 
     /**

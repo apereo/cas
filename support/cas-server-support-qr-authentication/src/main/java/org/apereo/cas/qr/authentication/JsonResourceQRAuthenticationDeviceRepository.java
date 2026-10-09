@@ -74,7 +74,17 @@ public class JsonResourceQRAuthenticationDeviceRepository implements QRAuthentic
     }
 
     private void writeToJsonResource() {
-        FunctionUtils.doUnchecked(_ -> MAPPER.writerWithDefaultPrettyPrinter().writeValue(jsonResource.getFile(), devices));
+        FunctionUtils.doUnchecked(_ -> {
+            val path = jsonResource.getFile().toPath();
+            val target = Files.exists(path) ? path.toRealPath() : path.toAbsolutePath();
+            val temp = Files.createTempFile(target.getParent(), target.getFileName().toString(), ".tmp");
+            try {
+                MAPPER.writerWithDefaultPrettyPrinter().writeValue(temp.toFile(), Map.copyOf(devices));
+                Files.move(temp, target, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
+            } finally {
+                Files.deleteIfExists(temp);
+            }
+        });
     }
 
     private void readFromJsonResource() {
@@ -84,7 +94,7 @@ public class JsonResourceQRAuthenticationDeviceRepository implements QRAuthentic
                     val personList = new TypeReference<Map<String, String>>() {
                     };
                     val results = MAPPER.readValue(JsonValue.readHjson(reader).toString(), personList);
-                    devices.clear();
+                    devices.keySet().retainAll(results.keySet());
                     devices.putAll(results);
                 }
             });

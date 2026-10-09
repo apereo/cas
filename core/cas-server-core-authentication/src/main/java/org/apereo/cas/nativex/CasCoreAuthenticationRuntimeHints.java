@@ -11,6 +11,8 @@ import org.apereo.cas.authentication.AuthenticationHandlerResolver;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
 import org.apereo.cas.authentication.AuthenticationPostProcessor;
 import org.apereo.cas.authentication.AuthenticationPreProcessor;
+import org.apereo.cas.authentication.AuthenticationResult;
+import org.apereo.cas.authentication.AuthenticationResultBuilder;
 import org.apereo.cas.authentication.AuthenticationTransactionManager;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.CredentialMetadata;
@@ -27,8 +29,10 @@ import org.apereo.cas.authentication.adaptive.intel.IPAddressIntelligenceRespons
 import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
 import org.apereo.cas.authentication.metadata.CacheCredentialsCipherExecutor;
 import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.SimplePrincipal;
 import org.apereo.cas.authentication.principal.WebApplicationService;
+import org.apereo.cas.authentication.principal.merger.AttributeMerger;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import org.apereo.cas.validation.ValidationResponseType;
 import lombok.val;
@@ -60,6 +64,11 @@ public class CasCoreAuthenticationRuntimeHints implements CasRuntimeHintsRegistr
         subclassesInPackage.addAll(findSubclassesInPackage(Authentication.class, CentralAuthenticationService.NAMESPACE));
         subclassesInPackage.addAll(findSubclassesInPackage(AuthenticationHandlerExecutionResult.class, CentralAuthenticationService.NAMESPACE));
         subclassesInPackage.addAll(findSubclassesInPackage(Credential.class, CentralAuthenticationService.NAMESPACE));
+        subclassesInPackage.addAll(findSubclassesOf(AuthenticationResult.class));
+        subclassesInPackage.addAll(findSubclassesOf(AuthenticationResultBuilder.class));
+        subclassesInPackage.addAll(findSubclassesOf(PrincipalElectionStrategy.class));
+        subclassesInPackage.addAll(findSubclassesOf(PrincipalFactory.class));
+        subclassesInPackage.addAll(findSubclassesOf(AttributeMerger.class));
         registerSerializationHints(hints, subclassesInPackage);
 
         val credentials = findSubclassesInPackage(Credential.class, CentralAuthenticationService.NAMESPACE);

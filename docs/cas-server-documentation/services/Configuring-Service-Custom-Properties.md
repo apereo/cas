@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Configuring Service Custom Properties
+description: "Attach custom properties to registered services for use by CAS features and your own extensions."
 category: Services
 ---
 

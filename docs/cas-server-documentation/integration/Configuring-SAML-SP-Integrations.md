@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - SAML SP Integrations
+description: "Built-in SAML2 integrations for common service providers, from cloud apps to SaaS platforms, configured with CAS settings."
 category: Integration
 ---
 

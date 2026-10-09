@@ -1,6 +1,7 @@
 ---
 layout: default
-title: CAS - Configuring Service Access Strategy
+title: CAS - Service Access Strategy - AWS Verified Permissions
+description: "Authorize access to applications registered with CAS by sending an authorization request to Amazon Verified Permissions."
 category: Services
 ---
 
