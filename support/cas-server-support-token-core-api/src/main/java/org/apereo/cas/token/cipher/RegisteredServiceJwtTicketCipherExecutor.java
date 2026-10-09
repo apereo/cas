@@ -7,6 +7,8 @@ import org.apereo.cas.services.RegisteredServiceCipherExecutor;
 import org.apereo.cas.services.RegisteredServiceProperty;
 import org.apereo.cas.services.RegisteredServiceProperty.RegisteredServiceProperties;
 import org.apereo.cas.util.CollectionUtils;
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -24,6 +26,14 @@ import org.jspecify.annotations.Nullable;
 @Slf4j
 @NoArgsConstructor
 public class RegisteredServiceJwtTicketCipherExecutor extends JwtTicketCipherExecutor implements RegisteredServiceCipherExecutor {
+    private static final int TOKEN_CIPHER_EXECUTORS_CACHE_SIZE = 1_000;
+
+    private static final Duration TOKEN_CIPHER_EXECUTORS_CACHE_EXPIRATION = Duration.ofHours(1);
+
+    private final Cache<TokenCipherExecutorKey, JwtTicketCipherExecutor> tokenCipherExecutors = Caffeine.newBuilder()
+        .maximumSize(TOKEN_CIPHER_EXECUTORS_CACHE_SIZE)
+        .expireAfterAccess(TOKEN_CIPHER_EXECUTORS_CACHE_EXPIRATION)
+        .build();
 
     @Override
     public @Nullable String decode(final String data, final Optional<RegisteredService> service) {
@@ -61,7 +71,8 @@ public class RegisteredServiceJwtTicketCipherExecutor extends JwtTicketCipherExe
     }
 
     /**
-     * Gets token ticket cipher executor for service.
+     * Gets token ticket cipher executor for service. Ciphers are built once per service definition and key material,
+     * then shared, since building one parses its keys. A changed definition or a rotated key is a new cache key.
      *
      * @param registeredService the registered service
      * @return the token ticket cipher executor for service
@@ -69,6 +80,12 @@ public class RegisteredServiceJwtTicketCipherExecutor extends JwtTicketCipherExe
     public JwtTicketCipherExecutor getTokenTicketCipherExecutorForService(final RegisteredService registeredService) {
         val encryptionKey = getEncryptionKey(registeredService).orElse(StringUtils.EMPTY);
         val signingKey = getSigningKey(registeredService).orElse(StringUtils.EMPTY);
+        val cacheKey = new TokenCipherExecutorKey(registeredService.getId(), registeredService, encryptionKey, signingKey);
+        return tokenCipherExecutors.get(cacheKey, _ -> buildTokenTicketCipherExecutor(encryptionKey, signingKey, registeredService));
+    }
+
+    private JwtTicketCipherExecutor buildTokenTicketCipherExecutor(final String encryptionKey, final String signingKey,
+                                                                   final RegisteredService registeredService) {
         val cipher = createCipherExecutorInstance(encryptionKey, signingKey, registeredService);
         val order = getCipherOperationsStrategyType(registeredService).orElse(CipherOperationsStrategyType.ENCRYPT_AND_SIGN);
         cipher.setStrategyType(order);
@@ -167,5 +184,9 @@ public class RegisteredServiceJwtTicketCipherExecutor extends JwtTicketCipherExe
 
     protected RegisteredServiceProperty.RegisteredServiceProperties getCipherOperationRegisteredServiceEncryptionEnabledProperty() {
         return RegisteredServiceProperties.TOKEN_AS_SERVICE_TICKET_ENCRYPTION_ENABLED;
+    }
+
+    private record TokenCipherExecutorKey(long serviceId, RegisteredService registeredService,
+                                          String encryptionKey, String signingKey) {
     }
 }

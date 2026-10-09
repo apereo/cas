@@ -8,6 +8,8 @@ import lombok.Setter;
 import lombok.SuperBuilder;
 import lombok.ToString;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.FieldType;
+import org.springframework.data.mongodb.core.mapping.MongoId;
 
 /**
  * This is {@link MongoDbTicketDocument}.
@@ -39,9 +41,9 @@ public class MongoDbTicketDocument implements Serializable {
     public static final String FIELD_NAME_EXPIRE_AT = "expireAt";
 
     /**
-     * Field name to hold ticket id.
+     * Field name to hold ticket id. The ticket id is the document identifier.
      */
-    public static final String FIELD_NAME_ID = "ticketId";
+    public static final String FIELD_NAME_ID = "_id";
 
     /**
      * Field name to hold the principal id.
@@ -65,6 +67,7 @@ public class MongoDbTicketDocument implements Serializable {
     private String json;
 
     @JsonProperty
+    @MongoId(FieldType.STRING)
     private String ticketId;
 
     @JsonProperty

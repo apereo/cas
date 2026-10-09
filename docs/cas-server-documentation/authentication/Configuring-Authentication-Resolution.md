@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Configuring Authentication Resolution
+description: "Narrow which authentication handlers run for a request, based on the service, credential type or other selection criteria."
 category: Authentication
 ---
 {% include variables.html %}

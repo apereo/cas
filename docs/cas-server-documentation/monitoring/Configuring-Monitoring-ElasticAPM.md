@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Elastic APM Monitoring
+description: "Send CAS traces and performance data to Elastic Application Performance Monitoring."
 category: Monitoring & Statistics
 ---
 

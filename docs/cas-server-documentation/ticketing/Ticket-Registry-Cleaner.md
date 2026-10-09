@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Ticket Registry Cleaner
+description: "The background ticket registry cleaner that removes expired tickets, and when it should be turned off."
 category: Ticketing
 ---
 

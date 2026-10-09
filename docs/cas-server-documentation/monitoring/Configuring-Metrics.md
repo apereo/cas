@@ -1,6 +1,7 @@
 ---
 layout: default
-title: CAS - Metrics
+title: CAS - CAS Metrics
+description: "Metrics CAS registers through Spring Boot, and exporting them to Prometheus, Datadog, CloudWatch and other monitoring systems."
 category: Monitoring & Statistics
 ---
 

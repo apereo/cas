@@ -1,61 +1,41 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-
     <title>Account Profile</title>
-    <link href="../../static/css/cas.css" rel="stylesheet" th:remove="tag" />
+    <link href="../../static/css/account.css" rel="stylesheet" th:remove="tag"/>
 </head>
-
 <body>
-    <span th:fragment="attributes">
-        <script type="text/javascript">
-            (() => document.addEventListener("DOMContentLoaded", () => $("#attributesTable").DataTable()))();
-        </script>
-
-        <div class="profile-content w-100 mdc-data-table table-responsive noborder"
-                                     id="divAttributes">
-                            <h2>
-                                <i class="mdi mdi-human-greeting-variant fas fa-door-open" aria-hidden="true"></i>
-                                <span>Hello,
-                                    <span th:if="${authentication.principal.attributes['displayName'] != null}"
-                                          th:text="${authentication.principal.attributes['displayName'][0]}" />
-                                    <span th:if="${authentication.principal.attributes['displayName'] == null}"
-                                          th:text="${authentication.principal.id}"></span>
-                                </span>
-                            </h2>
-                            <div class="text-justify">
-                                <p th:utext="#{screen.account.attributes}">Attributes</p>
-                            </div>
-
-                            <table id="attributesTable" class="table table-striped" style="white-space: unset">
-                                <thead>
-                                <tr class="mdc-data-table__header-row">
-                                    <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Attribute</th>
-                                    <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Value(s)</th>
-                                </tr>
-                                </thead>
-                                <tbody class="mdc-data-table__content">
-                                <tr th:each="attribute : ${authentication.principal.attributes}" class="mdc-data-table__row">
-                                    <td class="mdc-data-table__cell"><code><kbd th:utext="${attribute.key}"/></code></td>
-                                    <td class="mdc-data-table__cell">
-                                        <code><kbd th:utext="${#strings.abbreviate(attribute.value, 80)}"/></code>
-                                    </td>
-                                </tr>
-                                <tr th:each="attribute : ${authentication.attributes}" class="mdc-data-table__row">
-                                    <td class="mdc-data-table__cell"><code><kbd th:utext="${attribute.key}"/></code></td>
-                                    <td class="mdc-data-table__cell">
-                                        <code><kbd th:utext="${#strings.abbreviate(attribute.value, 80)}"/></code>
-                                    </td>
-                                </tr>
-                                </tbody>
-                            </table>
+<section th:fragment="attributes" id="divAttributes" class="profile-content" hidden aria-labelledby="divAttributesTitle"
+         th:data-account-trail="|#{screen.account.trail.root} › #{screen.account.group.privacy} › #{screen.account.attributes.title}|">
+    <header>
+        <div>
+            <h2 id="divAttributesTitle" th:text="#{screen.account.attributes.title}">Attributes</h2>
+            <p th:utext="#{screen.account.attributes}">These are the attributes that CAS has found and attached to your authenticated profile.</p>
         </div>
-
-    </span>
+    </header>
+    <div class="cas-account-attributes">
+        <section class="cas-account-card" aria-labelledby="principalAttributesTitle">
+            <h3 id="principalAttributesTitle" th:text="#{screen.account.attributes.principal}">Principal attributes</h3>
+            <dl id="principalAttributesList" data-account-list
+                th:attr="data-filter-label=#{screen.account.list.filter},data-more-label=#{screen.account.list.more},data-count-label=#{screen.account.list.count}">
+                <div th:each="attribute : ${authentication.principal.attributes}">
+                    <dt th:text="${attribute.key}">displayName</dt>
+                    <dd th:text="${#strings.abbreviate(attribute.value, 80)}" th:title="${attribute.value}">[CAS User]</dd>
+                </div>
+            </dl>
+        </section>
+        <section class="cas-account-card" aria-labelledby="authenticationAttributesTitle">
+            <h3 id="authenticationAttributesTitle" th:text="#{screen.account.attributes.authentication}">Authentication attributes</h3>
+            <dl id="authenticationAttributesList" data-account-list
+                th:attr="data-filter-label=#{screen.account.list.filter},data-more-label=#{screen.account.list.more},data-count-label=#{screen.account.list.count}">
+                <div th:each="attribute : ${authentication.attributes}">
+                    <dt th:text="${attribute.key}">authenticationDate</dt>
+                    <dd th:text="${#strings.abbreviate(attribute.value, 80)}" th:title="${attribute.value}">[2026-10-02T21:14:06Z]</dd>
+                </div>
+            </dl>
+        </section>
+    </div>
+</section>
 </body>
-
 </html>

@@ -1,12 +1,14 @@
 ---
 layout: default
-title: CAS - Surrogate Authentication
+title: CAS - REST Surrogate Authentication
 category: Authentication
 ---
 {% include variables.html %}
 
 
 # REST Surrogate Authentication
+
+Decide who may impersonate whom by calling a REST API that answers whether a user may log in as another account and lists the accounts allowed.
 
 REST support for surrogate authentication is enabled by including the following dependencies in the WAR overlay:
 

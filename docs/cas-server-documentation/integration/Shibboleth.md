@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Shibboleth Integration
+description: "Integrate CAS with the Shibboleth identity provider, using CAS as its authentication source or alongside it."
 category: Integration
 ---
 

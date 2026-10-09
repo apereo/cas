@@ -2,7 +2,7 @@
 
 <p/>
 
-#### Password Policy Strategies
+**Password Policy Strategies**
 
 If the password policy strategy is to be handed off to a Groovy script, the outline of the script may be as follows:
 

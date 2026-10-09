@@ -1,12 +1,12 @@
 ---
 layout: default
-title: CAS - Sending Email
+title: CAS - Sending Email - Microsoft Entra ID
 category: Notifications
 ---
 
 {% include variables.html %}
 
-# Sending Email - Microsoft Azure Active Directory
+# Sending Email - Microsoft Entra ID
 
 When using Microsoft’s SMTP service with OAuth2 (instead of a static password), this module allows CAS
 to obtain an access token dynamically instead of storing and using a fixed password. The access token is acquired from 

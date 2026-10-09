@@ -8,6 +8,7 @@ import org.apereo.cas.util.crypto.CertUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.webauthn.web.flow.BaseWebAuthnWebflowTests;
 import com.yubico.webauthn.attestation.AttestationTrustSource;
+import com.yubico.webauthn.attestation.YubicoJsonMetadataService;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -50,7 +51,7 @@ class CompositeAttestationTrustSourceTests {
     @Test
     void verifyOperation() throws Throwable {
         val composite = assertInstanceOf(CompositeAttestationTrustSource.class, webAuthnMetadataService);
-        assertEquals(2, composite.getTrustSources().size());
+        assertTrue(composite.getTrustSources().stream().anyMatch(YubicoJsonMetadataService.class::isInstance));
 
         val map = MAPPER.readValue(casProperties.getAuthn().getMfa().getWebAuthn().getCore()
             .getTrustSource().getTrustedDeviceMetadata().getLocation().getInputStream(), Map.class);

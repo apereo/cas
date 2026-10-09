@@ -1,6 +1,6 @@
 ---
 layout: default
-title: CAS - Configuring SSO Sessions
+title: CAS - SSO Session - Notifications
 category: SSO & SLO
 ---
 {% include variables.html %}

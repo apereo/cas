@@ -1,125 +1,61 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
-
     <title>Account Profile</title>
-    <link href="../../static/css/cas.css" rel="stylesheet" th:remove="tag"/>
+    <link href="../../static/css/account.css" rel="stylesheet" th:remove="tag"/>
 </head>
-
 <body>
-<span th:fragment="securityquestions">
-        <script type="text/javascript">
-            function addSecurityQuestionRow(element) {
-                // let lastRow = $('#securityQuestionsTable tr:last');
-                let currentRow = $(element).parent().parent();
-                let newRow = currentRow.clone();
-                newRow.insertAfter(currentRow);
-            }
-
-            function removeSecurityQuestionRow(element) {
-                if ($("#securityQuestionsTable tr").length > 1) {
-                    $(element).parent().parent().remove();
-                }
-            }
-        </script>
-
-        <div id="divSecurityQuestions"
-             th:if="${securityQuestionsEnabled}"
-             class="profile-content w-100"
-             style="display: none;">
-
-            <h2>
-                <i class="mdi mdi-door-open fas fa-door-open" aria-hidden="true"></i>
-                <span th:utext="#{screen.account.securityquestions.title}">Security Questions</span>
-            </h2>
-            <p th:utext="#{screen.account.securityquestions.subtitle}">
-                You can review and update your security questions here.</p>
-
-            <span th:remove="tag"
-                  th:if="${flowRequestContext.messageContext.allMessages.length > 0}">
-                <div class="banner banner-danger my-2" th:if="${flowRequestContext.messageContext.hasErrorMessages()}">
-                    <h2 th:utext="#{screen.account.failure}">Failure</h2>
-                    <span th:each="message : ${flowRequestContext.messageContext.allMessages}"
-                          th:if="${message.severity.name() == 'ERROR'}"
-                          th:utext="${message.text}">Message Text</span>
-                </div>
-                <div class="banner banner-success my-2"
-                     th:unless="${flowRequestContext.messageContext.hasErrorMessages()}">
-                    <span th:each="message : ${flowRequestContext.messageContext.allMessages}"
-                          th:utext="${message.text}">Message Text</span>
-                </div>
-            </span>
-
-            <div class="mdc-data-table table-responsive p-2 w-100 noborder">
-                <form method="post" id="updateQuestionsForm">
-                    <table id="securityQuestionsTable" class="table table-striped w-100">
-                        <tbody class="mdc-data-table__content">
-                        <tr th:each="entry,iterStat : ${questions}" class="mdc-data-table__header-row py-1">
-                            <td class="mdc-data-table__cell pad-0">
-                                <a href="#divSecurityQuestions" onclick="addSecurityQuestionRow(this)"/>
-                                <i class="mdi mdi-account-multiple-plus-outline fas fa-add" aria-hidden="true"></i>
-                            </td>
-                            <td class="mdc-data-table__cell pad-0">
-                                <a href="#divSecurityQuestions" onclick="removeSecurityQuestionRow(this)"/>
-                                <i class="mdi mdi-delete fas fa-delete" aria-hidden="true"></i>
-                            </td>
-
-                            <td class="mdc-data-table__cell w-50 pad-0">
-                                <div class="cas-field form-group my-3">
-                                    <label class="mdc-text-field mdc-text-field--outlined control-label">
-                                        <span class="mdc-notched-outline">
-                                            <span class="mdc-notched-outline__leading"></span>
-                                            <span class="mdc-notched-outline__notch">
-                                                <span class="mdc-floating-label"
-                                                      th:utext="#{screen.pm.reset.question(${iterStat.count})}">Question</span>
-                                            </span>
-                                            <span class="mdc-notched-outline__trailing"></span>
-                                        </span>
-                                        <input class="mdc-text-field__input form-control"
-                                               type="text"
-                                               th:name="questions"
-                                               th:value="${entry.key}"
-                                               autocomplete="off" required/>
-                                    </label>
-                                </div>
-                            </td>
-                            <td class="mdc-data-table__cell pad-0">
-                                <div class="cas-field form-group my-3">
-                                    <label class="mdc-text-field mdc-text-field--outlined control-label">
-                                        <span class="mdc-notched-outline">
-                                            <span class="mdc-notched-outline__leading"></span>
-                                            <span class="mdc-notched-outline__notch">
-                                                <span class="mdc-floating-label"
-                                                      th:utext="#{screen.pm.reset.answer(${iterStat.count})}">Answer</span>
-                                            </span>
-                                            <span class="mdc-notched-outline__trailing"></span>
-                                        </span>
-                                        <input class="mdc-text-field__input form-control"
-                                               type="text"
-                                               th:value="${entry.value}"
-                                               th:name="answers"
-                                               autocomplete="off" required/>
-                                    </label>
-                                </div>
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
-                    <div>
-                        <p/>
-                        <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
-                        <input type="hidden" name="_eventId" value="updateSecurityQuestions"/>
-                        <div th:replace="~{fragments/submitbutton :: submitButton (messageKey='screen.welcome.button.login')}"/>
-                    </div>
-                </form>
-            </div>
+<section th:fragment="securityquestions" th:if="${securityQuestionsEnabled}" id="divSecurityQuestions" class="profile-content" hidden
+         aria-labelledby="divSecurityQuestionsTitle"
+         th:data-account-trail="|#{screen.account.trail.root} › #{screen.account.group.security} › #{screen.account.nav.questions}|">
+    <header>
+        <div>
+            <h2 id="divSecurityQuestionsTitle" th:utext="#{screen.account.securityquestions.title}">Security Questions</h2>
+            <p th:utext="#{screen.account.securityquestions.subtitle}">You can review and update your security questions here.</p>
         </div>
+    </header>
 
-    </span>
+    <template id="securityQuestionTemplate">
+        <fieldset class="cas-account-question" th:fragment="questionRow(question, answer, number)">
+            <legend class="visually-hidden" data-question-number
+                    th:attr="data-question-template=#{screen.pm.reset.question('{0}')}"
+                    th:text="#{screen.pm.reset.question(${number})}">Question 1</legend>
+            <label>
+                <span data-question-number th:attr="data-question-template=#{screen.pm.reset.question('{0}')}"
+                      th:text="#{screen.pm.reset.question(${number})}">Question 1</span>
+                <input class="acct-input" type="text" name="questions" th:value="${question}" autocomplete="off" required/>
+            </label>
+            <label>
+                <span data-question-number th:attr="data-question-template=#{screen.pm.reset.answer('{0}')}"
+                      th:text="#{screen.pm.reset.answer(${number})}">Answer 1</span>
+                <input class="acct-input" type="text" name="answers" th:value="${answer}" autocomplete="off" required/>
+            </label>
+            <button type="button" class="acct-btn acct-btn-text acct-btn-danger" data-account-action="remove-question"
+                    th:text="#{screen.account.securityquestions.remove}">Remove</button>
+        </fieldset>
+    </template>
+
+    <form method="post" id="updateQuestionsForm" class="cas-account-card cas-account-questions">
+        <div id="securityQuestionsList">
+            <th:block th:each="entry, iter : ${questions}">
+                <fieldset th:replace="~{fragments/accountprofile/accountprofilesecurityquestions :: questionRow(${entry.key}, ${entry.value}, ${iter.count})}"></fieldset>
+            </th:block>
+            <th:block th:if="${#maps.isEmpty(questions)}">
+                <fieldset th:replace="~{fragments/accountprofile/accountprofilesecurityquestions :: questionRow(null, null, 1)}"></fieldset>
+            </th:block>
+        </div>
+        <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
+        <input type="hidden" name="_eventId" value="updateSecurityQuestions"/>
+        <div class="cas-account-actions">
+            <button type="button" id="addSecurityQuestion" class="acct-btn" data-account-action="add-question">
+                <i class="mdi mdi-plus" aria-hidden="true"></i>
+                <span th:text="#{screen.account.securityquestions.add}">Add question</span>
+            </button>
+            <button type="submit" id="saveSecurityQuestions" class="acct-btn acct-btn-primary"
+                    th:text="#{screen.account.securityquestions.save}">Save questions</button>
+        </div>
+    </form>
+</section>
 </body>
-
 </html>

@@ -1,12 +1,14 @@
 ---
 layout: default
-title: CAS - SMS Messaging
+title: CAS - Clickatell SMS Messaging
 category: Notifications
 ---
 
 {% include variables.html %}
 
 # Clickatell SMS Messaging
+
+Send SMS messages from CAS through Clickatell.
 
 To learn more, [visit this site](http://www.clickatell.com/).
 

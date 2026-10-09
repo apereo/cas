@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Delegate Authentication Post Processing
+description: "Adjust external identity providers before they are shown to the user, such as titles, icons and redirect URLs."
 category: Authentication
 ---
 

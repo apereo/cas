@@ -115,7 +115,8 @@ public class OidcDynamicClientRegistrationEndpointController extends BaseOidcCon
             List.of(OidcConstants.CLIENT_CONFIGURATION_SCOPE),
             registeredService.getClientId(),
             OAuth20ResponseTypes.NONE, OAuth20GrantTypes.NONE);
-        getConfigurationContext().getTicketRegistry().addTicket(accessToken);
-        return accessToken;
+        val storedToken = Objects.requireNonNull(getConfigurationContext().getTicketRegistry().addTicket(accessToken),
+            "Unable to store registration access token");
+        return Objects.requireNonNull(resolveAccessToken(storedToken), "Unable to resolve registration access token");
     }
 }

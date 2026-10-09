@@ -61,6 +61,7 @@ public class SamlRegisteredServiceDefaultCachingMetadataResolver implements Saml
         this.cache = Caffeine.newBuilder()
             .maximumSize(core.getCacheMaximumSize())
             .recordStats()
+            .executor(task -> Thread.ofVirtual().name("saml-metadata-cache").start(task))
             .expireAfter(new SamlRegisteredServiceMetadataExpirationPolicy(metadataCacheExpiration))
             .build(loader);
     }
@@ -145,6 +146,7 @@ public class SamlRegisteredServiceDefaultCachingMetadataResolver implements Saml
         val cacheResult = Objects.requireNonNull(cache.get(cacheKey));
         LOGGER.debug("Loaded and cached SAML metadata [{}] from [{}]",
             cacheResult.getMetadataResolver().getId(), service.getMetadataLocation());
+        refreshIfNearingExpiration(cacheKey, cacheResult);
         Assert.isTrue(cacheResult.isResolved(), "Metadata resolver cannot be found from the cache for " + service.getName());
 
         return MetadataResolverCacheQueryResult
@@ -152,6 +154,27 @@ public class SamlRegisteredServiceDefaultCachingMetadataResolver implements Saml
             .entityDescriptor(Optional.empty())
             .result(cacheResult)
             .build();
+    }
+
+    /**
+     * Reload an entry in the background once three quarters of its lifetime has passed, so the request that would
+     * otherwise find it expired is not the one that waits for metadata to be fetched and parsed. The current resolver
+     * keeps being served until the reload completes, and a failed reload leaves it in place until it expires.
+     *
+     * @param cacheKey    the cache key
+     * @param cacheResult the cached result
+     */
+    protected void refreshIfNearingExpiration(final SamlRegisteredServiceCacheKey cacheKey,
+                                              final CachedMetadataResolverResult cacheResult) {
+        val age = Duration.between(cacheResult.getCachedInstant(), Instant.now(Clock.systemUTC()));
+        cache.policy().expireVariably()
+            .flatMap(expiration -> expiration.getExpiresAfter(cacheKey))
+            .filter(remaining -> remaining.compareTo(age.dividedBy(3)) <= 0)
+            .ifPresent(remaining -> {
+                LOGGER.debug("Refreshing SAML metadata for [{}] in the background; it expires in [{}]",
+                    cacheKey.getRegisteredService().getName(), remaining);
+                cache.refresh(cacheKey);
+            });
     }
 
     @SuperBuilder

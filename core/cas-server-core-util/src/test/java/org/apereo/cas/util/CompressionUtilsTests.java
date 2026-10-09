@@ -25,6 +25,24 @@ class CompressionUtilsTests {
     }
 
     @Test
+    void verifyDeflationFormats() throws Throwable {
+        val oneBitStatusList = new byte[]{(byte) 0xb9, (byte) 0xa3};
+        assertEquals("eNrbuRgAAhcBXQ", EncodingUtils.encodeUrlSafeBase64(CompressionUtils.deflate(oneBitStatusList, false)));
+        val twoBitStatusList = new byte[]{(byte) 0xc9, 0x44, (byte) 0xf9};
+        assertEquals("eNo76fITAAPfAgc", EncodingUtils.encodeUrlSafeBase64(CompressionUtils.deflate(twoBitStatusList, false)));
+
+        val content = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>".repeat(50).getBytes(StandardCharsets.UTF_8);
+        for (val raw : List.of(true, false)) {
+            val deflated = CompressionUtils.deflate(content, raw);
+            val prefixed = new byte[deflated.length + 3];
+            System.arraycopy(deflated, 0, prefixed, 3, deflated.length);
+            assertArrayEquals(content, CompressionUtils.inflate(prefixed, 3, raw));
+            assertThrows(DataFormatException.class,
+                () -> CompressionUtils.inflate(Arrays.copyOf(deflated, deflated.length / 2), 0, raw));
+        }
+    }
+
+    @Test
     void verifyInflation() {
         val source = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
                      + "<samlp:AuthnRequest xmlns:samlp=\"urn:oasis:names:tc:SAML:2.0:protocol\" "

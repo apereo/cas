@@ -1,6 +1,6 @@
 ---
 layout: default
-title: CAS - Securing Configuration Properties
+title: CAS - Configuration Security - Spring Cloud
 category: Configuration
 ---
 

@@ -1,12 +1,14 @@
 ---
 layout: default
-title: CAS - Metrics
+title: CAS - StatsD Storage - CAS Metrics
 category: Monitoring & Statistics
 ---
 
 {% include variables.html %}
 
 # StatsD Storage - CAS Metrics
+
+Export CAS metrics to a StatsD agent over UDP.
 
 The StatsD registry pushes metrics over UDP to a StatsD agent eagerly. By default,
 metrics are exported to a StatsD agent running on your local machine.

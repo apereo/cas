@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Test Process
+description: "How CAS is tested during development: unit and integration test categories, Docker-based tests and Puppeteer browser scenarios."
 category: Developer
 ---
 

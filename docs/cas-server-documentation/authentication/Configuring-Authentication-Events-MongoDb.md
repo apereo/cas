@@ -1,6 +1,6 @@
 ---
 layout: default
-title: CAS - Configuring Authentication Events
+title: CAS - MongoDb Authentication Events
 category: Authentication
 ---
 {% include variables.html %}

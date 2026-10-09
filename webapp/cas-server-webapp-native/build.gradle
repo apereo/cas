@@ -130,6 +130,15 @@ dependencies {
 }
 
 plugins.withId("org.graalvm.buildtools.native") {
+    def reachabilityMetadata = configurations.create("graalvmReachabilityMetadata") {
+        canBeConsumed = false
+        canBeResolved = true
+        transitive = false
+    }
+    dependencies {
+        graalvmReachabilityMetadata "org.graalvm.buildtools:graalvm-reachability-metadata:${libs.versions.graalVmMetadataRepository.get()}:repository@zip"
+    }
+
     plugins.withId("org.springframework.boot") {
         tasks.named("processAot") { task ->
             task.notCompatibleWithConfigurationCache("processAot is not supported by the Gradle configuration cache")
@@ -181,6 +190,16 @@ plugins.withId("org.graalvm.buildtools.native") {
             args(
                 "--spring.profiles.active=${aotSpringActiveProfiles}",
                 "--spring.main.lazy-initialization=false",
+                // Eureka refresh proxies are not supported by Spring AOT.
+                "--eureka.client.refresh.enable=false",
+                // Remote configuration is supplied at runtime through Config Data imports.
+                "--spring.cloud.consul.config.import-check.enabled=false",
+                "--spring.cloud.zookeeper.config.import-check.enabled=false",
+                // Retain endpoint beans during AOT; runtime configuration still controls access and exposure.
+                "--management.endpoints.access.default=UNRESTRICTED",
+                "--management.endpoint.shutdown.access=UNRESTRICTED",
+                "--management.endpoint.restart.access=UNRESTRICTED",
+                "--management.endpoints.web.exposure.include=*",
                 "--logging.level.org.apereo.cas=info",
                 "--logging.level.org.springframework.core.env=info",
                 "--logging.level.org.springframework.boot=info",
@@ -192,7 +211,7 @@ plugins.withId("org.graalvm.buildtools.native") {
     graalvmNative {
         metadataRepository {
             enabled = true
-            version = "${libs.versions.graalVmMetadataRepository.get()}"
+            uri = reachabilityMetadata.singleFile.toURI()
         }
 
         /*
@@ -205,7 +224,7 @@ plugins.withId("org.graalvm.buildtools.native") {
             main {
                 imageName = "cas"
                 quickBuild = CasBuildSettings.isCi(project)
-                debug = true
+                debug = !CasBuildSettings.isCi(project)
                 verbose = false
                 richOutput = true
                 sharedLibrary = false
@@ -217,12 +236,24 @@ plugins.withId("org.graalvm.buildtools.native") {
                 buildArgs.add('-H:+ReportExceptionStackTraces')
                 buildArgs.add('-H:+InlineBeforeAnalysis')
                 buildArgs.add('-H:+TraceSecurityServices')
-                buildArgs.add('-H:+PrintAnalysisCallTree')
+                if (providers.systemProperty("nativeImagePrintAnalysisCallTree").getOrElse("false") == "true") {
+                    buildArgs.add('-H:+PrintAnalysisCallTree')
+                }
                 buildArgs.add('-H:+AddAllCharsets')
+                // HSQLDB initializes date formats with Locale.UK.
+                buildArgs.add('-H:IncludeLocales=en-GB')
                 buildArgs.add('-H:+ReportUnsupportedElementsAtRuntime')
 
-                buildArgs.add('-J-Xmx14G')
-                buildArgs.add('-J-Xms4G')
+                def nativeImageHeapSize = providers.systemProperty("nativeImageHeapSize")
+                    .getOrElse(CasBuildSettings.isCi(project) ? "12G" : "14G")
+                buildArgs.add("-J-Xmx${nativeImageHeapSize}")
+                buildArgs.add('-J-Xms1G')
+                buildArgs.add('-J-XX:-UseParallelGC')
+                buildArgs.add('-J-XX:+UseG1GC')
+                def nativeImageParallelism = providers.systemProperty("nativeImageParallelism").getOrNull()
+                if (nativeImageParallelism != null) {
+                    buildArgs.add("--parallelism=${nativeImageParallelism}")
+                }
                 buildArgs.add('--native-image-info')
                 buildArgs.add('--enable-sbom')
                 buildArgs.add('--emit build-report')

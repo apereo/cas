@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - High Availability Performance Testing
+description: "Load-test a CAS deployment with Locust, JMeter or Artillery before going to production."
 category: High Availability
 ---
 

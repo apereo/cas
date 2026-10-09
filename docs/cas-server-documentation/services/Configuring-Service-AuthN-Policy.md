@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Service Authentication Policy
+description: "Per-application authentication policies that decide which authentication handlers must succeed for that application."
 category: Services
 ---
 

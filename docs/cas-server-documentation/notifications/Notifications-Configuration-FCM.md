@@ -1,12 +1,14 @@
 ---
 layout: default
-title: CAS - Notifications
+title: CAS - Notifications - Google Firebase Cloud Messaging
 category: Notifications
 ---
 
 {% include variables.html %}
 
 # Notifications - Google Firebase Cloud Messaging
+
+Send push notifications to users' devices through Google Firebase Cloud Messaging.
 
 Support is enabled via the relevant modules using the following module:
 

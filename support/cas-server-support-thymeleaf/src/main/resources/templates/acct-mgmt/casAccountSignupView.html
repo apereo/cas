@@ -1,94 +1,82 @@
 <!DOCTYPE html>
-<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout(mainContentClass='container-xxl py-3')}">
 
 <head>
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+    <title th:text="#{cas.screen.acct.title}">Account Registration</title>
     <link href="../../static/css/cas.css" rel="stylesheet" th:remove="tag"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/account.css}"/>
 </head>
 
 <body id="cas">
 <main class="container mt-3 mb-3">
-    <div layout:fragment="content" class="mdc-card p-4 m-auto w-lg-100">
+    <div layout:fragment="content">
         <script>
-            document.addEventListener("DOMContentLoaded", (event) => document.forms[0].elements[0].focus());
+            document.addEventListener("DOMContentLoaded", (event) => document.forms.fm1.elements[0].focus());
         </script>
+        <div th:replace="~{fragments/accountflow :: shell(flow='signup', step=1, steps=4, content=~{::flowContent})}">
+            <div th:fragment="flowContent">
+                <h2 th:utext="#{cas.screen.acct.title}">Account Registration</h2>
+                <p class="cas-flow-intro" th:utext="#{cas.screen.acct.intro}">Please provide the following information.</p>
 
-        <h2 th:utext="#{cas.screen.acct.title}" />
-        <p class="intro" th:utext="#{cas.screen.acct.intro}" />
-
-        <form method="post" id="fm1" novalidate class="needs-validation">
-            <div class="banner banner-danger my-2" th:if="${flowRequestContext.messageContext.hasErrorMessages()}">
-                <p th:each="message : ${flowRequestContext.messageContext.allMessages}"
-                   th:utext="${message.text}">Message Text</p>
-            </div>
-
-
-            <section th:each="entry : ${registrationProperties}" class="cas-field form-group my-3">
-                <label class="mdc-text-field mdc-text-field--outlined control-label"
-                        th:if="${entry.type != 'select'}">
-                    <span class="mdc-notched-outline">
-                        <span class="mdc-notched-outline__leading"></span>
-                        <span class="mdc-notched-outline__notch">
-                            <span class="mdc-floating-label" th:utext="#{${entry.label}}">Label</span>
-                        </span>
-                        <span class="mdc-notched-outline__trailing"></span>
-                    </span>
-                    <input class="mdc-text-field__input form-control"
-                            th:id="${entry.name}"
-                            th:name="${entry.name}"
-                            size="25"
-                            th:classappend="${entry.cssClass}"
-                            th:type="${entry.type}"
-                            th:attr="required=${entry.required ? 'true' : 'false'},pattern=${entry.pattern}"
-                            autocapitalize="none"
-                            th:title="#{${entry.title}}"
-                            spellcheck="false"
-                            th:autocomplete="${entry.name}"/>
-                    <div class="mdc-text-field-helper-line invalid-feedback" th:if="${entry.validationMessage != null}">
-                        <div th:id="${'helpertext-' + entry.name}"
-                            class="mdc-text-field-helper-text mdc-text-field-helper-text--validation-msg" aria-hidden="true">
-                            <span th:if="${entry.validationMessage != null}" th:utext="#{${entry.validationMessage}}"></span>
+                <form method="post" id="fm1" novalidate class="needs-validation cas-flow-form">
+                    <div class="alert alert-danger acct-banner acct-banner-error" role="alert"
+                         th:if="${flowRequestContext.messageContext.hasErrorMessages()}">
+                        <i class="mdi mdi-alert-circle-outline" aria-hidden="true"></i>
+                        <div class="acct-banner-body">
+                            <p th:each="message : ${flowRequestContext.messageContext.allMessages}"
+                               th:utext="${message.text}">Message Text</p>
                         </div>
                     </div>
-                </label>
 
-                <select class="form-control"
-                        th:if="${entry.type == 'select'}"
-                        th:id="${entry.name}"
-                        th:aria-label="#{${entry.title}}"
-                        th:title="#{${entry.title}}"
-                        th:name="${entry.name}"
-                        th:classappend="${'custom-select ' + entry.cssClass}">
-                        <option th:each="option,status : ${entry.values}" th:value="${status.index}" th:text="${option}" />
-                </select>
+                    <div class="cas-flow-grid">
+                        <div th:each="entry : ${registrationProperties}" class="cas-flow-field form-group">
+                            <label th:for="${entry.name}" th:utext="#{${entry.label}}">Label</label>
+                            <input class="acct-input form-control"
+                                   th:if="${entry.type != 'select'}"
+                                   th:id="${entry.name}"
+                                   th:name="${entry.name}"
+                                   th:classappend="${entry.cssClass}"
+                                   th:type="${entry.type}"
+                                   th:attr="required=${entry.required ? 'true' : 'false'},pattern=${entry.pattern},aria-describedby=${entry.validationMessage != null ? 'helpertext-' + entry.name : null}"
+                                   autocapitalize="none"
+                                   th:title="#{${entry.title}}"
+                                   spellcheck="false"
+                                   th:autocomplete="${entry.name}"/>
+                            <select class="acct-input form-control"
+                                    th:if="${entry.type == 'select'}"
+                                    th:id="${entry.name}"
+                                    th:title="#{${entry.title}}"
+                                    th:name="${entry.name}"
+                                    th:classappend="${entry.cssClass}">
+                                <option th:each="option,status : ${entry.values}" th:value="${status.index}" th:text="${option}"/>
+                            </select>
+                            <div class="cas-flow-error-text invalid-feedback" th:if="${entry.validationMessage != null}"
+                                 th:id="${'helpertext-' + entry.name}" th:utext="#{${entry.validationMessage}}">Validation message</div>
+                        </div>
+                    </div>
 
+                    <span th:if="${accountRegistrationCaptchaEnabled}">
+                        <div th:replace="~{fragments/recaptcha :: recaptchaToken}"/>
+                    </span>
 
-
-            </section>
-
-            <span th:if="${accountRegistrationCaptchaEnabled}">
-                <div th:replace="~{fragments/recaptcha :: recaptchaToken}" />
-            </span>
-
-            <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
-            <input type="hidden" name="_eventId" value="submit"/>
-            <div class="form-actions d-flex justify-content-center">
-                <div th:replace="~{fragments/submitbutton :: submitButton (messageKey='cas.screen.acct.button.submit', id='submit', name='submit')}"/>
-                &nbsp;
-                <button class="mdc-button mdc-button--outlined btn btn-secondary"
-                        name="cancel"
-                        th:value="#{cas.screen.acct.button.cancel}"
-                        id="cancel"
-                        type="button"
-                        onclick="location.href = location.href;">
-                    <span class="mdc-button__label" th:text="#{cas.screen.acct.button.cancel}">CANCEL</span>
-                </button>
+                    <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
+                    <input type="hidden" name="_eventId" value="submit"/>
+                    <div class="cas-flow-actions">
+                        <div th:replace="~{fragments/submitbutton :: submitButton (messageKey='cas.screen.acct.button.submit', id='submit', name='submit', iconClass='mdi-account-plus-outline')}"/>
+                        <button class="acct-btn"
+                                name="cancel"
+                                th:value="#{cas.screen.acct.button.cancel}"
+                                id="cancel"
+                                type="button"
+                                onclick="location.href = location.href;"
+                                th:text="#{cas.screen.acct.button.cancel}">Cancel</button>
+                    </div>
+                </form>
             </div>
-        </form>
+        </div>
     </div>
-
-
 </main>
 </body>
 </html>

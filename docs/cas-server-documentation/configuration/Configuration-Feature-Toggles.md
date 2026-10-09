@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Configuration Feature Toggles
+description: "Turn CAS features and their auto-configuration on or off with feature toggles, and see which modules each toggle controls."
 category: Configuration
 ---
 
@@ -13,6 +14,7 @@ You can control the list of auto-configuration classes to exclude them in the `c
 ```properties
 spring.autoconfigure.exclude=org.apereo.cas.custom.config.SomethingConfigurationClass
 ```
+{: .cas-settings-linked}
 
 This is a very granular, internal way to control the auto-configuration classes, but it comes with a few important caveats: 
 

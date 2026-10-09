@@ -1,6 +1,6 @@
 ---
 layout: default
-title: CAS - Passwordless Authentication
+title: CAS - LDAP Passwordless Authentication Storage
 category: Authentication
 ---
 {% include variables.html %}

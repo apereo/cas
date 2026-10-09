@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Surrogate Authentication
+description: "Surrogate authentication (impersonation): let an authorized user log in to applications as another user."
 category: Authentication
 ---
 {% include variables.html %}

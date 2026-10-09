@@ -1,6 +1,6 @@
 ---
 layout: default
-title: CAS - Attribute Release Consent
+title: CAS - Groovy - Attribute Consent Storage
 category: Attributes
 ---
 

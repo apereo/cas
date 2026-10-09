@@ -23,6 +23,9 @@ import org.apereo.cas.oidc.assurance.AssuranceVerifiedClaimsProducer;
 import org.apereo.cas.oidc.assurance.DefaultAssuranceVerifiedClaimsProducer;
 import org.apereo.cas.oidc.authn.OidcAccessTokenAuthenticator;
 import org.apereo.cas.oidc.authn.OidcCasCallbackUrlResolver;
+import org.apereo.cas.oidc.authn.OidcClientAttestationAuthenticator;
+import org.apereo.cas.oidc.authn.OidcClientAttestationChallengeService;
+import org.apereo.cas.oidc.authn.OidcClientAttestationDefaultChallengeService;
 import org.apereo.cas.oidc.authn.OidcClientConfigurationAccessTokenAuthenticator;
 import org.apereo.cas.oidc.authn.OidcClientIdClientSecretAuthenticator;
 import org.apereo.cas.oidc.authn.OidcJwtAuthenticator;
@@ -96,6 +99,7 @@ import org.apereo.cas.support.oauth.authenticator.OAuth20CasAuthenticationBuilde
 import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
 import org.apereo.cas.support.oauth.profile.OAuth20UserProfileDataCreator;
 import org.apereo.cas.support.oauth.validator.OAuth20ClientSecretValidator;
+import org.apereo.cas.support.oauth.validator.OAuth20DPoPNonceService;
 import org.apereo.cas.support.oauth.validator.OAuth20ProofOfPossessionValidator;
 import org.apereo.cas.support.oauth.validator.authorization.OAuth20AuthorizationRequestValidator;
 import org.apereo.cas.support.oauth.validator.token.OAuth20TokenRequestValidator;
@@ -651,6 +655,50 @@ class OidcConfiguration {
                 privateKeyJwtClient.setPasswordParameter(OAuth20Constants.CLIENT_ASSERTION);
                 privateKeyJwtClient.init();
                 return privateKeyJwtClient;
+            };
+        }
+
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = OidcClientAttestationChallengeService.BEAN_NAME)
+        public OidcClientAttestationChallengeService oidcClientAttestationChallengeService(
+            @Qualifier(TicketRegistry.BEAN_NAME)
+            final TicketRegistry ticketRegistry,
+            @Qualifier(TicketFactory.BEAN_NAME)
+            final TicketFactory ticketFactory,
+            final CasConfigurationProperties casProperties) {
+            return new OidcClientAttestationDefaultChallengeService(ticketRegistry, ticketFactory, casProperties);
+        }
+
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "oidcClientAttestationClientProvider")
+        public OAuth20AuthenticationClientProvider oidcClientAttestationClientProvider(
+            @Qualifier(TicketRegistry.BEAN_NAME)
+            final TicketRegistry ticketRegistry,
+            @Qualifier(TicketFactory.BEAN_NAME)
+            final TicketFactory ticketFactory,
+            @Qualifier(ServicesManager.BEAN_NAME)
+            final ServicesManager servicesManager,
+            final CasConfigurationProperties casProperties,
+            @Qualifier(AuditableExecution.AUDITABLE_EXECUTION_REGISTERED_SERVICE_ACCESS)
+            final AuditableExecution registeredServiceAccessStrategyEnforcer,
+            @Qualifier(OidcServerDiscoverySettings.BEAN_NAME_FACTORY)
+            final OidcServerDiscoverySettings oidcServerDiscoverySettings,
+            @Qualifier(OidcClientAttestationChallengeService.BEAN_NAME)
+            final OidcClientAttestationChallengeService oidcClientAttestationChallengeService,
+            @Qualifier(OAuth20DPoPNonceService.BEAN_NAME)
+            final OAuth20DPoPNonceService oauthDPoPNonceService) {
+            return () -> {
+                val authenticator = new OidcClientAttestationAuthenticator(servicesManager,
+                    registeredServiceAccessStrategyEnforcer, ticketRegistry, ticketFactory,
+                    casProperties, oidcServerDiscoverySettings, oidcClientAttestationChallengeService, oauthDPoPNonceService);
+                val client = new HeaderClient();
+                client.setCredentialsExtractor(new OidcClientAttestationAuthenticator.ClientAttestationCredentialsExtractor());
+                client.setAuthenticator(authenticator);
+                client.setName(OidcConstants.CAS_OAUTH_CLIENT_ATTESTATION_AUTHN);
+                client.init();
+                return client;
             };
         }
 

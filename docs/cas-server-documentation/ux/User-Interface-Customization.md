@@ -1,6 +1,7 @@
 ---
 layout: default
 title: Overview - User Interface Customization - CAS
+description: "Brand and customize the CAS login pages: CSS and JavaScript, Thymeleaf views, themes and localization."
 category: User Interface
 ---
 

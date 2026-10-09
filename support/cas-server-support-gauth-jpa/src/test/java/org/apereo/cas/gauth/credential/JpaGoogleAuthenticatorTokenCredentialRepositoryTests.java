@@ -101,4 +101,42 @@ class JpaGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseOneTimeTo
         assertTrue(account.getId() > 0);
         assertEquals(String.valueOf(account.getId()), account.getFormattedId());
     }
+
+    @Test
+    void verifySaveWithUnknownIdAndDeleteById() {
+        val username = UUID.randomUUID().toString();
+        val repo = getRegistry("verifySaveWithUnknownIdAndDeleteById");
+        val imported = repo.create(username).assignIdIfNecessary();
+        imported.setProperties(new ArrayList<>(List.of("verified")));
+        val saved = repo.save(imported);
+        assertEquals(List.of("verified"), repo.get(username, saved.getId()).getProperties());
+
+        repo.delete(saved.getId());
+        assertNull(repo.get(saved.getId()));
+        assertEquals(0, repo.count(username));
+    }
+
+    @Test
+    void verifyDeleteByUsernameKeepsOtherUsers() {
+        val username = UUID.randomUUID().toString();
+        val otherUsername = UUID.randomUUID().toString();
+        val repo = getRegistry("verifyDeleteByUsernameKeepsOtherUsers");
+        for (var i = 0; i < 2; i++) {
+            val account = repo.create(username);
+            account.setProperties(new ArrayList<>(List.of("verified")));
+            repo.save(account);
+        }
+        val other = repo.create(otherUsername);
+        other.setProperties(new ArrayList<>(List.of("kept")));
+        val otherScratchCodes = other.getScratchCodes().stream().map(Number::intValue).sorted().toList();
+        val otherId = repo.save(other).getId();
+        assertEquals(2, repo.count(username));
+
+        repo.delete(username);
+        assertEquals(0, repo.count(username));
+        assertTrue(repo.get(username).isEmpty());
+        val kept = repo.get(otherUsername, otherId);
+        assertEquals(List.of("kept"), kept.getProperties());
+        assertEquals(otherScratchCodes, kept.getScratchCodes().stream().map(Number::intValue).sorted().toList());
+    }
 }

@@ -5,7 +5,9 @@ import org.apereo.cas.support.events.service.CasRegisteredServiceLoadedEvent;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
+import org.jspecify.annotations.Nullable;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -39,12 +41,10 @@ public class MongoDbServiceRegistry extends AbstractServiceRegistry {
 
     @Override
     public boolean delete(final RegisteredService svc) {
-        if (this.findServiceById(svc.getId()) != null) {
-            this.mongoTemplate.remove(svc, this.collectionName);
-            LOGGER.debug("Removed registered service: [{}]", svc);
-            return true;
-        }
-        return false;
+        val query = new Query(Criteria.where("id").is(svc.getId()));
+        val result = mongoTemplate.remove(query, RegisteredService.class, collectionName);
+        LOGGER.debug("Removed [{}] registered service(s) with id [{}]", result.getDeletedCount(), svc.getId());
+        return result.getDeletedCount() > 0;
     }
 
     @Override
@@ -53,18 +53,20 @@ public class MongoDbServiceRegistry extends AbstractServiceRegistry {
     }
 
     @Override
-    public RegisteredService findServiceById(final long svcId) {
-        return this.mongoTemplate.findOne(new Query(Criteria.where("id").is(svcId)), RegisteredService.class, this.collectionName);
+    public @Nullable RegisteredService findServiceById(final long svcId) {
+        return Optional.ofNullable(mongoTemplate.findOne(new Query(Criteria.where("id").is(svcId)), RegisteredService.class, collectionName))
+            .map(this::invokeServiceRegistryListenerPostLoad)
+            .orElse(null);
     }
 
     @Override
-    public RegisteredService findServiceByExactServiceId(final String id) {
-        return this.mongoTemplate.findOne(new Query(Criteria.where("serviceId").is(id)), RegisteredService.class, this.collectionName);
+    public @Nullable RegisteredService findServiceByExactServiceId(final String id) {
+        return StringUtils.isBlank(id) ? null : findFirst(Criteria.where("serviceId").is(id));
     }
 
     @Override
-    public RegisteredService findServiceByExactServiceName(final String name) {
-        return this.mongoTemplate.findOne(new Query(Criteria.where("name").is(name)), RegisteredService.class, this.collectionName);
+    public @Nullable RegisteredService findServiceByExactServiceName(final String name) {
+        return findFirst(Criteria.where("name").is(name));
     }
 
     @Override
@@ -89,11 +91,21 @@ public class MongoDbServiceRegistry extends AbstractServiceRegistry {
 
     @Override
     public long size() {
-        return mongoTemplate.count(new Query(), RegisteredService.class, this.collectionName);
+        return mongoTemplate.estimatedCount(collectionName);
     }
 
     @Override
     public Stream<? extends RegisteredService> getServicesStream() {
-        return mongoTemplate.stream(new Query(), RegisteredService.class, this.collectionName);
+        return mongoTemplate.stream(new Query(), RegisteredService.class, this.collectionName)
+            .map(this::invokeServiceRegistryListenerPostLoad);
+    }
+
+    private @Nullable RegisteredService findFirst(final Criteria criteria) {
+        return mongoTemplate.find(new Query(criteria), RegisteredService.class, collectionName)
+            .stream()
+            .sorted()
+            .findFirst()
+            .map(this::invokeServiceRegistryListenerPostLoad)
+            .orElse(null);
     }
 }

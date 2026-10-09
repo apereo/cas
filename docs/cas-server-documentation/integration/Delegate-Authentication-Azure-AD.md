@@ -1,12 +1,14 @@
 ---
 layout: default
-title: CAS - Delegate Authentication
+title: CAS - Microsoft Entra ID - Delegated Authentication
 category: Authentication
 ---
 
 {% include variables.html %}
 
-# Azure Active Directory
+# Microsoft Entra ID
+
+Let users log in to CAS with their Microsoft Entra ID (formerly Azure AD) account through OpenID Connect.
 
 For an overview of the delegated authentication flow, please [see this guide](Delegate-Authentication.html).
 

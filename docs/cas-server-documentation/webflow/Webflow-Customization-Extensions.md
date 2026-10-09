@@ -1,6 +1,7 @@
 ---
 layout: default 
 title: CAS - Web Flow Extensions 
+description: "Extend the CAS login webflow with your own actions, states and transitions."
 category: Webflow Management
 ---
 

@@ -1,6 +1,6 @@
 ---
 layout: default
-title: CAS - Delegate Authentication
+title: CAS - OpenID Connect Generic - Delegated Authentication
 category: Authentication
 ---
 

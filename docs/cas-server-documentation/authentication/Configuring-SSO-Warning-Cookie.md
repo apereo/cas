@@ -1,6 +1,6 @@
 ---
 layout: default
-title: CAS - Configuring SSO Sessions
+title: CAS - SSO Warning Session Cookie
 category: SSO & SLO
 ---
 {% include variables.html %}

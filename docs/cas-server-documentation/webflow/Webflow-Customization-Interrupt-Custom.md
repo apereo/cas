@@ -1,12 +1,14 @@
 ---
 layout: default
-title: CAS - Authentication Interrupt
+title: CAS - Custom Authentication Interrupt
 category: Webflow Management
 ---
 
 {% include variables.html %}
 
 # Custom Authentication Interrupt
+
+Decide when to interrupt the login flow with your own `InterruptInquirer`, registered with CAS as a Spring bean.
 
 If you wish to design your own interrupt strategy to make 
 inquiries, you can design your component to make determinations:

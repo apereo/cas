@@ -20,6 +20,7 @@ import org.springframework.aot.hint.RuntimeHints;
 public class DuoSecurityRuntimeHints implements CasRuntimeHintsRegistrar {
     @Override
     public void registerHints(final @NonNull RuntimeHints hints, final @Nullable ClassLoader classLoader) {
+        hints.resources().registerPattern("ca_certs.pem");
         registerReflectionHints(hints,
             DuoSecurityUniversalPromptCredential.class,
             DuoSecurityPasscodeCredential.class,

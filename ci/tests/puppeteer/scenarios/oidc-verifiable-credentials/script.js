@@ -3,6 +3,7 @@ const assert = require("assert");
 const fs = require("fs");
 const path = require("path");
 const jwkToPem = require("jwk-to-pem");
+const jose = require("jose");
 
 const key = JSON.parse(fs.readFileSync(path.join(__dirname, "/keystore.json"))).keys[0];
 const privateKey = jwkToPem(key, {private: true});
@@ -46,6 +47,7 @@ async function createPublicKey() {
             assert(res.data.credential_issuer !== undefined);
             assert(res.data.authorization_servers !== undefined);
             assert(res.data.credential_endpoint !== undefined);
+            assert(res.data.notification_endpoint === "https://localhost:8443/cas/oidc/oidcVcNotification");
         }, (error) => {
             throw `Operation failed ${error}`;
         });
@@ -64,7 +66,7 @@ async function createPublicKey() {
 
     const body = JSON.stringify({
         "principal": "casuser",
-        "credentialConfigurationIds": ["myorg"]
+        "credentialConfigurationIds": ["myorg", "deferredorg"]
     });
     const payload = JSON.parse(
         await cas.doRequest("https://localhost:8443/cas/oidc/oidcVcCredentialOfferTransactions?scope=openid", "POST", {
@@ -172,4 +174,129 @@ async function createPublicKey() {
 
     await cas.log(`Credential issued at ${decoded.iat} and expires at ${decoded.exp}`);
     assert(decoded.exp - decoded.iat === 30 * 24 * 60 * 60);
+
+    assert(decoded.status.status_list.uri.startsWith("https://localhost:8443/cas/oidc/oidcVcStatusList/"));
+    assert(Number.isInteger(decoded.status.status_list.idx));
+    const statusListToken = await cas.doRequest(decoded.status.status_list.uri, "GET", {
+        "Accept": "application/statuslist+jwt"
+    }, 200);
+    const statusList = await cas.decodeJwt(statusListToken, true);
+    assert(statusList.header.typ === "statuslist+jwt");
+    assert(statusList.payload.sub === decoded.status.status_list.uri);
+    assert(statusList.payload.ttl > 0);
+    assert(statusList.payload.status_list.bits === 2);
+    assert(statusList.payload.status_list.lst !== undefined);
+    assert(statusList.payload.status_list.aggregation_uri === "https://localhost:8443/cas/oidc/oidcVcStatusListAggregation");
+    const aggregation = JSON.parse(await cas.doRequest(statusList.payload.status_list.aggregation_uri, "GET", {}, 200));
+    assert(aggregation.status_lists.includes(decoded.status.status_list.uri));
+
+    const signedMetadata = await cas.doRequest("https://localhost:8443/cas/oidc/.well-known/openid-credential-issuer", "GET", {
+        "Accept": "application/jwt"
+    }, 200);
+    const metadataJwt = await cas.decodeJwt(signedMetadata, true);
+    assert(metadataJwt.header.typ === "openidvci-issuer-metadata+jwt");
+    assert(metadataJwt.payload.sub === "https://localhost:8443/cas/oidc");
+    assert(metadataJwt.payload.credential_endpoint === "https://localhost:8443/cas/oidc/oidcVcCredential");
+    assert(metadataJwt.payload.exp > metadataJwt.payload.iat);
+
+    assert(result.notification_id !== undefined);
+    const notification = JSON.stringify({
+        notification_id: result.notification_id,
+        event: "credential_accepted"
+    });
+    const notificationHeaders = {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${accessToken}`
+    };
+    await cas.doRequest("https://localhost:8443/cas/oidc/oidcVcNotification", "POST", notificationHeaders, 204, notification);
+    await cas.doRequest("https://localhost:8443/cas/oidc/oidcVcNotification", "POST", notificationHeaders, 400,
+        JSON.stringify({notification_id: "unknown", event: "credential_accepted"}));
+
+    await verifyEncryptedIssuance(url, accessToken);
+    await verifyDeferredIssuance(url, accessToken);
 })();
+
+async function verifyDeferredIssuance(url, accessToken) {
+    const metadata = await cas.doGet("https://localhost:8443/cas/oidc/.well-known/openid-credential-issuer",
+        (res) => res.data, (error) => {
+            throw `Operation failed ${error}`;
+        });
+    const deferredUrl = "https://localhost:8443/cas/oidc/oidcVcDeferredCredential";
+    assert(metadata.deferred_credential_endpoint === deferredUrl);
+
+    const headers = {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${accessToken}`
+    };
+    const pending = JSON.parse(await cas.doRequest(url, "POST", headers, 202, JSON.stringify({
+        credential_configuration_id: "deferredorg",
+        proofs: {
+            jwt: [await createPublicKey()]
+        }
+    })));
+    await cas.log(pending);
+    assert(pending.transaction_id !== undefined);
+    assert(pending.interval > 0);
+    assert(pending.credentials === undefined && pending.notification_id === undefined);
+
+    const deferredRequest = JSON.stringify({transaction_id: pending.transaction_id});
+    const waiting = JSON.parse(await cas.doRequest(deferredUrl, "POST", headers, 202, deferredRequest));
+    assert(waiting.transaction_id === pending.transaction_id);
+
+    const transactions = JSON.parse(await cas.doRequest("https://localhost:8443/cas/actuator/oidcVcDeferred", "GET", {}, 200));
+    assert(transactions.some((transaction) => transaction.transactionId === pending.transaction_id && transaction.status === "PENDING"));
+    await cas.doRequest(`https://localhost:8443/cas/actuator/oidcVcDeferred/${pending.transaction_id}`, "POST", {
+        "Content-Type": "application/json"
+    }, 200, JSON.stringify({status: "APPROVED"}));
+
+    const result = JSON.parse(await cas.doRequest(deferredUrl, "POST", headers, 200, deferredRequest));
+    await cas.log(result);
+    assert(result.credentials.length === 1);
+    assert(result.notification_id !== undefined);
+    await cas.doRequest(deferredUrl, "POST", headers, 400, deferredRequest);
+}
+
+async function verifyEncryptedIssuance(url, accessToken) {
+    const metadata = await cas.doGet("https://localhost:8443/cas/oidc/.well-known/openid-credential-issuer",
+        (res) => res.data, (error) => {
+            throw `Operation failed ${error}`;
+        });
+    assert(metadata.credential_request_encryption.jwks.keys.length > 0);
+    assert(metadata.credential_request_encryption.encryption_required === false);
+    assert(metadata.credential_response_encryption.alg_values_supported.includes("ECDH-ES"));
+    assert(metadata.credential_response_encryption.enc_values_supported.includes("A256GCM"));
+    const issuerKey = metadata.credential_request_encryption.jwks.keys[0];
+    assert(issuerKey.kid !== undefined && issuerKey.alg !== undefined && issuerKey.d === undefined);
+
+    const walletKeys = await jose.generateKeyPair("ECDH-ES", {crv: "P-256", extractable: true});
+    const walletJwk = {...await jose.exportJWK(walletKeys.publicKey), alg: "ECDH-ES", kid: "wallet"};
+    const credentialRequest = {
+        credential_configuration_id: "myorg",
+        proofs: {
+            jwt: [await createPublicKey()]
+        },
+        credential_response_encryption: {
+            jwk: walletJwk,
+            enc: "A256GCM"
+        }
+    };
+    await cas.doRequest(url, "POST", {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${accessToken}`
+    }, 400, JSON.stringify(credentialRequest));
+
+    const encryptedRequest = await new jose.CompactEncrypt(new TextEncoder().encode(JSON.stringify(credentialRequest)))
+        .setProtectedHeader({alg: issuerKey.alg, enc: "A128GCM", kid: issuerKey.kid})
+        .encrypt(await jose.importJWK(issuerKey, issuerKey.alg));
+    const encryptedResponse = await cas.doRequest(url, "POST", {
+        "Content-Type": "application/jwt",
+        "Authorization": `Bearer ${accessToken}`
+    }, 200, encryptedRequest);
+    const {plaintext, protectedHeader} = await jose.compactDecrypt(encryptedResponse, walletKeys.privateKey);
+    assert(protectedHeader.kid === "wallet");
+    assert(protectedHeader.enc === "A256GCM");
+    const result = JSON.parse(new TextDecoder().decode(plaintext));
+    await cas.log(result);
+    assert(result.credentials.length === 1);
+    assert(result.notification_id !== undefined);
+}

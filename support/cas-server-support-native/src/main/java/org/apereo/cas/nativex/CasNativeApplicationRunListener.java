@@ -5,11 +5,13 @@ import org.apereo.cas.configuration.CasConfigurationPropertiesEnvironmentManager
 import org.apereo.cas.configuration.DefaultCasConfigurationPropertiesSourceLocator;
 import org.apereo.cas.configuration.StandaloneConfigurationFilePropertiesSourceLocator;
 import org.apereo.cas.configuration.support.CasConfigurationJasyptCipherExecutor;
+import org.apereo.cas.util.nativex.CasNativeApplicationContextInitializer;
 import lombok.val;
 import org.jspecify.annotations.NonNull;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.SpringApplicationRunListener;
 import org.springframework.boot.bootstrap.ConfigurableBootstrapContext;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.io.DefaultResourceLoader;
 
@@ -21,6 +23,12 @@ import org.springframework.core.io.DefaultResourceLoader;
  */
 class CasNativeApplicationRunListener implements SpringApplicationRunListener {
     CasNativeApplicationRunListener(final SpringApplication application, final String[] args) {
+    }
+
+    @Override
+    public void contextPrepared(final @NonNull ConfigurableApplicationContext context) {
+        ServiceLoader.load(CasNativeApplicationContextInitializer.class, context.getClassLoader())
+            .forEach(initializer -> initializer.initialize(context));
     }
 
     @Override

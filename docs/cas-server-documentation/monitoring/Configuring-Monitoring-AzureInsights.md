@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Azure Monitor Application Insights
+description: "Attach the Azure Monitor Application Insights agent to CAS for monitoring and observability."
 category: Monitoring & Statistics
 ---
 

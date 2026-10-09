@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Long Term Authentication
+description: "Remember Me in CAS: extend the single sign-on session to days or weeks, with the security trade-offs involved."
 category: SSO & SLO
 ---
 {% include variables.html %}

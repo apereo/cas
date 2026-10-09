@@ -1,6 +1,6 @@
 ---
 layout: default
-title: CAS - Monitoring & Statistics
+title: CAS - Actuator Endpoint - Mappings
 category: Monitoring & Statistics
 ---
 

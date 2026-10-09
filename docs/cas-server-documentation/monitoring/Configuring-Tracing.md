@@ -1,6 +1,7 @@
 ---
 layout: default
-title: CAS - Monitoring
+title: CAS - Distributed Tracing
+description: "Distributed tracing for CAS with Micrometer Tracing, exporting to OpenTelemetry, Zipkin or Jaeger."
 category: Monitoring & Statistics
 ---
 

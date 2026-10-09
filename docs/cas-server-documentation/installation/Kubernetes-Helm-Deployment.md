@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Kubernetes Helm Deployment
+description: "Deploy CAS on Kubernetes with the Helm chart from the CAS Initializr, using a local cluster as the worked example."
 category: Installation
 ---
 {% include variables.html %}

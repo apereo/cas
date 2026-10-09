@@ -10,6 +10,7 @@ import org.apereo.cas.services.RegisteredServiceCipherExecutor;
 import org.apereo.cas.token.cipher.JwtTicketCipherExecutor;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.EncodingUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -128,14 +129,12 @@ public class InternalJwtAccessTokenCipherExecutor extends JwtTicketCipherExecuto
     protected byte[] sign(final byte[] value, final Key signingKey) {
         return Optional.ofNullable(this.signingWebKey)
             .map(key -> {
-                val kid = key.getKeyId();
-                if (StringUtils.isNotBlank(kid)) {
-                    getSigningOpHeaders().put(JsonWebKey.KEY_ID_PARAMETER, kid);
-                }
                 val alg = StringUtils.defaultIfBlank(key.getAlgorithm(),
                     getSigningAlgorithmFor(key.getKey()));
-                getSigningOpHeaders().put(JsonWebKey.ALGORITHM_PARAMETER, alg);
-                return signWith(value, alg, signingKey);
+                val headers = new LinkedHashMap<String, Object>();
+                FunctionUtils.doIfNotBlank(key.getKeyId(), id -> headers.put(JsonWebKey.KEY_ID_PARAMETER, id));
+                headers.put(JsonWebKey.ALGORITHM_PARAMETER, alg);
+                return signWith(value, alg, signingKey, headers);
             })
             .orElseGet(() -> super.sign(value, signingKey));
     }

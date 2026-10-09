@@ -1,12 +1,15 @@
 ---
 layout: default
-title: CAS - Sending Email
+title: CAS - Sending Email - Twilio SendGrid
 category: Notifications
 ---
 
 {% include variables.html %}
 
 # Sending Email - Twilio SendGrid
+
+Send email from CAS through Twilio SendGrid instead of an SMTP server.
+
    
 You may instruct CAS to use [Twilio SendGrid](https://sendgrid.com/) for sending emails.
 Support is enabled by including the following module:

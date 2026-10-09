@@ -1,6 +1,6 @@
 ---
 layout: default
-title: CAS - CAS REST Protocol
+title: CAS - Create Service - REST Protocol
 category: Protocols
 ---
 

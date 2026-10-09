@@ -118,7 +118,9 @@ public class GoogleAuthenticatorOneTimeTokenCredentialValidator implements
         if (!authorized && account.getScratchCodes().stream().map(Number::intValue).toList().contains(token)) {
             LOGGER.debug("Token [{}] is a valid scratch code for account [{}]", token, account);
             removeScratchCode(account, token);
-            credentialRepository.update(account);
+            if (account.getId() > 0) {
+                credentialRepository.update(account);
+            }
             return true;
         }
         return authorized;

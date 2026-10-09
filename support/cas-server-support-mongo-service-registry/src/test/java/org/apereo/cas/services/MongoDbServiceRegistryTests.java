@@ -2,19 +2,24 @@ package org.apereo.cas.services;
 
 import module java.base;
 import org.apereo.cas.config.CasMongoDbServiceRegistryAutoConfiguration;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import lombok.Getter;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.data.mongodb.core.MongoOperations;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * This is {@link MongoDbServiceRegistryTests}.
@@ -45,6 +50,41 @@ class MongoDbServiceRegistryTests extends AbstractServiceRegistryTests {
     @Qualifier("mongoDbServiceRegistry")
     private ServiceRegistry newServiceRegistry;
 
+    @Autowired
+    @Qualifier("mongoDbServiceRegistryChangeStreamWatcher")
+    private MongoDbServiceRegistryChangeStreamWatcher changeStreamWatcher;
+
+    @Autowired
+    @Qualifier("mongoDbServiceRegistryTemplate")
+    private MongoOperations mongoDbServiceRegistryTemplate;
+
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
+
+    @Autowired
+    private CasConfigurationProperties casProperties;
+
+    @Test
+    void verifyLookupsInvokePostLoadListeners() {
+        val listener = mock(ServiceRegistryListener.class, CALLS_REAL_METHODS);
+        val registry = new MongoDbServiceRegistry(applicationContext, mongoDbServiceRegistryTemplate,
+            casProperties.getServiceRegistry().getMongo().getCollection(), List.of(listener));
+        val saved = registry.save(buildService("https://%s.example.org".formatted(UUID.randomUUID()), UUID.randomUUID().toString(), 0));
+
+        assertNotNull(registry.findServiceById(saved.getId()));
+        assertNotNull(registry.findServiceByExactServiceId(saved.getServiceId()));
+        assertNotNull(registry.findServiceByExactServiceName(saved.getName()));
+        try (val services = registry.getServicesStream()) {
+            assertTrue(services.anyMatch(service -> service.getId() == saved.getId()));
+        }
+        verify(listener, times(4)).postLoad(argThat(service -> service.getId() == saved.getId()));
+    }
+
+    @Test
+    void verifyChangeStreamNeedsReplicaSet() {
+        assertFalse(changeStreamWatcher.isRunning());
+    }
+
     @Test
     void verifySamlServiceAttributeNames() {
         val service = new SamlRegisteredService();
@@ -60,5 +100,37 @@ class MongoDbServiceRegistryTests extends AbstractServiceRegistryTests {
         assertNotNull(newService);
         assertFalse(newService.getAttributeFriendlyNames().isEmpty());
         assertFalse(newService.getAttributeNameFormats().isEmpty());
+    }
+
+    @Test
+    void verifyExactLookupsFollowEvaluationOrder() {
+        val serviceId = "https://%s.example.org".formatted(UUID.randomUUID());
+        val name = UUID.randomUUID().toString();
+        val evaluatedLater = buildService(serviceId, name, 100);
+        val evaluatedFirst = buildService(serviceId, name, 1);
+        getNewServiceRegistry().save(evaluatedLater);
+        getNewServiceRegistry().save(evaluatedFirst);
+
+        assertEquals(evaluatedFirst.getId(), getNewServiceRegistry().findServiceByExactServiceId(serviceId).getId());
+        assertEquals(evaluatedFirst.getId(), getNewServiceRegistry().findServiceByExactServiceName(name).getId());
+        assertNull(getNewServiceRegistry().findServiceByExactServiceId(StringUtils.EMPTY));
+    }
+
+    @Test
+    void verifyDeleteReportsRemoval() {
+        val service = buildService("https://%s.example.org".formatted(UUID.randomUUID()), UUID.randomUUID().toString(), 0);
+        assertFalse(getNewServiceRegistry().delete(service));
+        getNewServiceRegistry().save(service);
+        assertTrue(getNewServiceRegistry().delete(service));
+        assertNull(getNewServiceRegistry().findServiceById(service.getId()));
+        assertFalse(getNewServiceRegistry().delete(service));
+    }
+
+    private static CasRegisteredService buildService(final String serviceId, final String name, final int evaluationOrder) {
+        val service = new CasRegisteredService();
+        service.setServiceId(serviceId);
+        service.setName(name);
+        service.setEvaluationOrder(evaluationOrder);
+        return service;
     }
 }

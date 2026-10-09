@@ -493,8 +493,9 @@ public class RedisTicketRegistry extends AbstractTicketRegistry implements Clean
                     .collect(Collectors.toList());
             }
         }
-        val keys = fetchKeysForTickets(redisTicketsKey);
-        return (queryCriteria.getCount() > 0 ? keys.limit(queryCriteria.getCount()) : keys).collect(Collectors.toList());
+        try (val keys = fetchKeysForTickets(redisTicketsKey)) {
+            return (queryCriteria.getCount() > 0 ? keys.limit(queryCriteria.getCount()) : keys).collect(Collectors.toList());
+        }
     }
 
     @Override

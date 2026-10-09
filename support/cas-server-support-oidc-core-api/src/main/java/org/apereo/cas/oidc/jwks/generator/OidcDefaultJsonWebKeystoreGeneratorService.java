@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.jose4j.jwk.JsonWebKey;
 import org.jose4j.jwk.JsonWebKeySet;
@@ -83,9 +84,7 @@ public class OidcDefaultJsonWebKeystoreGeneratorService implements OidcJsonWebKe
                 });
             resourceWatcherService.start(resource.getFilename());
         }
-        val resultingResource = generate(resource);
-        applicationContext.publishEvent(new OidcJsonWebKeystoreGeneratedEvent(this, resultingResource, clientInfo));
-        return resultingResource;
+        return generate(resource);
     }
 
     protected Resource generate(final Resource file) throws Exception {
@@ -95,6 +94,7 @@ public class OidcDefaultJsonWebKeystoreGeneratorService implements OidcJsonWebKe
         }
         val jsonWebKeySet = OidcJsonWebKeystoreGeneratorService.generateJsonWebKeySet(oidcProperties);
         store(jsonWebKeySet);
+        applicationContext.publishEvent(new OidcJsonWebKeystoreGeneratedEvent(this, file, ClientInfoHolder.getClientInfo()));
         return file;
     }
 
@@ -103,23 +103,25 @@ public class OidcDefaultJsonWebKeystoreGeneratorService implements OidcJsonWebKe
         val file = SpringExpressionLanguageValueResolver.getInstance()
             .resolve(oidcProperties.getJwks().getFileSystem().getJwksFile());
         try {
-            val jsonKeys = new JsonWebKeySet(file).toJson(JsonWebKey.OutputControlLevel.INCLUDE_PRIVATE);
-            return new ByteArrayResource(jsonKeys.getBytes(StandardCharsets.UTF_8), "OpenID Connect Keystore");
+            if (StringUtils.startsWith(StringUtils.trim(file), "{")) {
+                val jsonKeys = new JsonWebKeySet(file).toJson(JsonWebKey.OutputControlLevel.INCLUDE_PRIVATE);
+                return new ByteArrayResource(jsonKeys.getBytes(StandardCharsets.UTF_8), "OpenID Connect Keystore");
+            }
         } catch (final Exception e) {
             LOGGER.debug("Given resource [{}] cannot be parsed as a raw JSON web keystore", file);
             LOGGER.trace(e.getMessage(), e);
-            val resource = ResourceUtils.getRawResourceFrom(file);
-            if (ResourceUtils.doesResourceExist(file)) {
-                try (val is = resource.getInputStream()) {
-                    val jwks = IOUtils.toString(is, StandardCharsets.UTF_8);
-                    if (CasConfigurationJasyptCipherExecutor.isValueEncrypted(jwks)) {
-                        val cipher = new CasConfigurationJasyptCipherExecutor(applicationContext.getEnvironment());
-                        return new ByteArrayResource(cipher.decryptValue(jwks).getBytes(StandardCharsets.UTF_8));
-                    }
+        }
+        val resource = ResourceUtils.getRawResourceFrom(file);
+        if (ResourceUtils.doesResourceExist(file)) {
+            try (val is = resource.getInputStream()) {
+                val jwks = IOUtils.toString(is, StandardCharsets.UTF_8);
+                if (CasConfigurationJasyptCipherExecutor.isValueEncrypted(jwks)) {
+                    val cipher = new CasConfigurationJasyptCipherExecutor(applicationContext.getEnvironment());
+                    return new ByteArrayResource(cipher.decryptValue(jwks).getBytes(StandardCharsets.UTF_8));
                 }
             }
-            return resource;
         }
+        return resource;
     }
 
 }

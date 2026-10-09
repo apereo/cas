@@ -1,11 +1,13 @@
 ---
 layout: default
-title: CAS - SAML2 Authentication
+title: CAS - SAML2 Authentication - Unsolicited SSO
 category: Protocols
 ---
 {% include variables.html %}
 
 # SAML2 Authentication - Unsolicited SSO
+
+With IdP-initiated (unsolicited) SSO, CAS as a SAML2 identity provider starts the login and sends an assertion to a service provider that did not send an authentication request first.
 
 SAML2 IdP `Unsolicited/SSO` profile, also known as *IdP Initiated*, supports the following parameters:
 

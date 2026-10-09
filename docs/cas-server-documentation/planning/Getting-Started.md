@@ -1,12 +1,20 @@
 ---
 layout: default
 title: CAS - Getting Started Guide
+description: "A practical path to planning a CAS deployment: collecting use cases, studying the architecture, building an overlay and asking for help."
 category: Planning
 ---
 
 {% include variables.html %}
 
 # Getting Started
+
+<a class="quick-start-callout" href="Quick-Start.html">
+  <i class="fa fa-rocket" aria-hidden="true"></i>
+  <span><strong>New to CAS? Start with the Quick Start</strong>
+  <small>Run CAS on your machine, set the essential settings, register an application and log in, in a few short steps.</small></span>
+  <b>Open the recipe <span aria-hidden="true">→</span></b>
+</a>
 
 We want to start by saying thank you for using CAS.
 
@@ -60,6 +68,12 @@ that might become useful as you are thinking about requirements and evaluating f
 It is generally recommended that you follow the blog and keep up with project news and 
 announcements as much as possible, and do not shy away from writing and contributing your own blog posts, 
 experiences and updates throughout your CAS deployment.
+
+## Try CAS Locally
+
+To see CAS running before you plan anything, follow the [Quick Start](Quick-Start.html): it starts the official
+Docker image with a single `docker run` command, then builds a WAR overlay with the essential settings, a registered
+application and an optional LDAP connection. Build your real deployment with a WAR overlay, as described below.
 
 ## Prepare Environment
 

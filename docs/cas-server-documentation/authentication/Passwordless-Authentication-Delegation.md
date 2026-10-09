@@ -1,6 +1,6 @@
 ---
 layout: default
-title: CAS - Passwordless Authentication
+title: CAS - Passwordless Authentication - Delegated Authentication
 category: Authentication
 ---
 {% include variables.html %}

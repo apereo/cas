@@ -1,6 +1,7 @@
 ---
 layout: default
-title: CAS - Webflow Customization
+title: CAS - Webflow Auto Configuration
+description: "How CAS modules automatically configure the login webflow, and how to control or turn off that behavior."
 category: Webflow Management
 ---
 

@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Webflow Decorations
+description: "Add dynamic data, such as announcements fetched from external sources, to the CAS login flow."
 category: Webflow Management
 ---
 

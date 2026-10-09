@@ -1,15 +1,15 @@
 ---
 layout: default
-title: CAS - Attribute Resolution
+title: CAS - Microsoft Entra ID Attribute Resolution
 category: Attributes
 ---
 
 {% include variables.html %}
 
-# Microsoft Azure Active Directory Attribute Resolution
+# Microsoft Entra ID Attribute Resolution
 
 The following configuration describes how to fetch and retrieve 
-attributes from Microsoft Azure Active Directory attribute repositories.
+attributes from Microsoft Entra ID attribute repositories.
 
 {% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-azuread-authentication" %}
 

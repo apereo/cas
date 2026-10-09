@@ -1,12 +1,14 @@
 ---
 layout: default
-title: CAS - YubiKey Authentication
+title: CAS - DynamoDb YubiKey Registration
 category: Multifactor Authentication
 ---
 
 {% include variables.html %}
 
 # DynamoDb YubiKey Registration
+
+Keep YubiKey device registrations in an Amazon DynamoDB table.
 
 Support is enabled by including the following dependencies in the WAR overlay:
 

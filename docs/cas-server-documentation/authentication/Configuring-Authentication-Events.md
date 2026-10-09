@@ -1,6 +1,7 @@
 ---
 layout: default
-title: CAS - Configuring Authentication Events
+title: CAS - Authentication Events
+description: "Record authentication events in a database or cache for reporting and risk-based authentication, with the supported storage backends."
 category: Authentication
 ---
 {% include variables.html %}

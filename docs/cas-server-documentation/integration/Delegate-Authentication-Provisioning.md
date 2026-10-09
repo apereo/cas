@@ -1,6 +1,7 @@
 ---
 layout: default
-title: CAS - Delegate Authentication
+title: CAS - Delegated Authentication Provisioning
+description: "Provision and link user profiles returned by external identity providers into identity stores such as SCIM or a REST API."
 category: Authentication
 ---
 

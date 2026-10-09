@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Configuration Properties
+description: "Search every CAS and third-party configuration setting by name or description, with types, defaults and deprecation status."
 category: Configuration
 ---
 

@@ -1,6 +1,6 @@
 ---
 layout: default
-title: CAS - Web Flow Acceptable Usage Policy
+title: CAS - JDBC Acceptable Usage Policy
 category: Acceptable Usage Policy
 ---
 

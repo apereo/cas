@@ -1,6 +1,6 @@
 ---
 layout: default
-title: CAS - GUA Authentication
+title: CAS - LDAP Graphical User Authentication
 category: Authentication
 ---
 {% include variables.html %}

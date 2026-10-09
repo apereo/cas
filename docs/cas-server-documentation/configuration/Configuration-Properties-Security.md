@@ -1,6 +1,7 @@
 ---
 layout: default
-title: CAS - Securing Configuration Properties
+title: CAS - Configuration Security
+description: "Secure CAS configuration: encrypt and decrypt sensitive settings with Jasypt, and fetch secrets from Vault, cloud secret managers or Docker secrets."
 category: Configuration
 ---
 

@@ -40,9 +40,6 @@ function printyellow() {
 }
 
 if [[ "${BUILD}" == "true" ]]; then
-  if [[ "${CI}" == "true" ]]; then
-    BUILD_OPTIONS="${BUILD_OPTIONS} --no-daemon"
-  fi
   printgreen "Building CAS Graal VM native image..."
   export GRAALVM_BUILDTOOLS_MAX_PARALLEL_BUILDS=8
   tasks="./gradlew ${BUILD_TASKS} -DcasModules=${CAS_MODULES} ${BUILD_OPTIONS}"

@@ -19,6 +19,7 @@ import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshToken;
 import org.apereo.cas.util.function.FunctionUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.ObjectProvider;
 
 /**
@@ -75,7 +76,7 @@ public class OidcAccessTokenResponseGenerator extends OAuth20DefaultAccessTokenR
     protected void collectIdToken(final OAuth20AccessTokenResponseResult result,
                                   final OAuth20AccessToken token,
                                   final Map<String, Object> model) {
-        val idToken = generateIdToken(result, token);
+        val idToken = generateIdToken(result, token, (String) model.get(OAuth20Constants.ACCESS_TOKEN));
         if (idToken != null) {
             val idTokenValue = idToken.token();
             LOGGER.debug("Generated ID token [{}] based on grant type [{}]", idTokenValue, result.getGrantType());
@@ -85,7 +86,8 @@ public class OidcAccessTokenResponseGenerator extends OAuth20DefaultAccessTokenR
     }
 
     protected OidcIdToken generateIdToken(final OAuth20AccessTokenResponseResult result,
-                                          final OAuth20AccessToken accessToken) {
+                                          final OAuth20AccessToken accessToken,
+                                          @Nullable final String encodedAccessToken) {
         return FunctionUtils.doUnchecked(() -> {
             val refreshToken = result.getGeneratedToken().getRefreshToken().orElse(null);
             var idTokenContext = IdTokenGenerationContext
@@ -96,6 +98,7 @@ public class OidcAccessTokenResponseGenerator extends OAuth20DefaultAccessTokenR
                 .grantType(result.getGrantType())
                 .registeredService((OAuthRegisteredService) result.getRegisteredService())
                 .refreshToken(resolveToken(refreshToken, OAuth20RefreshToken.class))
+                .encodedAccessToken(encodedAccessToken)
                 .build();
             LOGGER.debug("Generating ID token for access token [{}]", accessToken.getId());
             return configurationContext.getObject().getIdTokenGeneratorService().generate(idTokenContext);

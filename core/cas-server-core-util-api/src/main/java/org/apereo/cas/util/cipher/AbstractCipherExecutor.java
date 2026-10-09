@@ -123,8 +123,14 @@ public abstract class AbstractCipherExecutor<T, R> implements CipherExecutor<T, 
      * @return the byte [ ]
      */
     protected byte[] signWith(final byte[] value, final String algHeaderValue, final Key key) {
+        return signWith(value, algHeaderValue, key, Map.of());
+    }
+
+    protected byte[] signWith(final byte[] value, final String algHeaderValue, final Key key,
+                              final Map<String, Object> additionalHeaders) {
         val headers = new LinkedHashMap<>(commonHeaders);
         headers.putAll(getSigningOpHeaders());
+        headers.putAll(additionalHeaders);
 
         return JsonWebTokenSigner.builder()
             .key(key)

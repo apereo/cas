@@ -4,8 +4,13 @@ import module java.base;
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.jwks.rotation.OidcJsonWebKeystoreRotationService.JsonWebKeyLifecycleStates;
+import org.apereo.cas.util.EncodingUtils;
+import com.nimbusds.jose.jwk.JWKSet;
+import com.nimbusds.jose.jwk.KeyType;
+import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -47,5 +52,19 @@ class OidcJwksEndpointControllerTests extends AbstractOidcTests {
                 .with(withHttpRequestProcessor())
             )
             .andExpect(status().isOk());
+    }
+
+    @Test
+    void verifyServiceSymmetricKeyIsNotPublished() throws Throwable {
+        val registeredService = getOidcRegisteredService(UUID.randomUUID().toString());
+        registeredService.setJwks(EncodingUtils.generateJsonWebKey(512));
+        servicesManager.save(registeredService);
+
+        val body = mockMvc.perform(get("/cas/oidc/" + OidcConstants.JWKS_URL)
+                .with(withHttpRequestProcessor()))
+            .andExpect(status().isOk())
+            .andReturn().getResponse().getContentAsString();
+        val jwks = JWKSet.parse(body);
+        assertTrue(jwks.getKeys().stream().noneMatch(key -> KeyType.OCT.equals(key.getKeyType())));
     }
 }

@@ -1,6 +1,7 @@
 ---
 layout: default
-title: CAS - Account Registration
+title: CAS - Account (Self-Service) Registration - Communication
+description: "Send account activation links by email or SMS during self-service registration."
 category: Registration
 ---
                   

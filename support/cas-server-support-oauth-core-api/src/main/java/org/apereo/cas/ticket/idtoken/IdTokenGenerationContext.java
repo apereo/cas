@@ -44,4 +44,8 @@ public class IdTokenGenerationContext {
     private final OAuth20GrantTypes grantType = OAuth20GrantTypes.NONE;
     @NonNull
     private final OAuthRegisteredService registeredService;
+
+    @Nullable
+    @ToString.Exclude
+    private final String encodedAccessToken;
 }

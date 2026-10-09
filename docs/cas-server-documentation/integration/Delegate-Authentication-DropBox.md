@@ -1,12 +1,14 @@
 ---
 layout: default
-title: CAS - Delegate Authentication
+title: CAS - DropBox - Delegated Authentication
 category: Authentication
 ---
 
 {% include variables.html %}
 
 # DropBox
+
+Let users log in to CAS with their Dropbox account.
 
 For an overview of the delegated authentication flow, please [see this guide](Delegate-Authentication.html).
 

@@ -1,11 +1,13 @@
 ---
 layout: default
-title: CAS - Audit Configuration
+title: CAS - MongoDb Audits
 category: Logs & Audits
 ---
 {% include variables.html %}
 
 # MongoDb Audits
+
+Store the CAS audit trail in a MongoDB collection, so audit records from every node end up in one durable place.
 
 If you intend to use a MongoDb database for auditing functionality, enable the following module in your configuration:
 

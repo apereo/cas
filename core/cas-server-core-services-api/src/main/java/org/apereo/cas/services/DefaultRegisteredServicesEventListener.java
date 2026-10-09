@@ -8,7 +8,10 @@ import org.apereo.cas.notifications.mail.EmailMessageBodyBuilder;
 import org.apereo.cas.notifications.mail.EmailMessageRequest;
 import org.apereo.cas.notifications.sms.SmsBodyBuilder;
 import org.apereo.cas.notifications.sms.SmsRequest;
+import org.apereo.cas.support.events.service.CasRegisteredServiceDeletedEvent;
 import org.apereo.cas.support.events.service.CasRegisteredServiceExpiredEvent;
+import org.apereo.cas.support.events.service.CasRegisteredServiceSavedEvent;
+import org.apereo.cas.support.events.service.CasRegisteredServicesLoadedEvent;
 import org.apereo.cas.support.events.service.CasRegisteredServicesRefreshEvent;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +20,7 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
 import org.springframework.cloud.context.environment.EnvironmentChangeEvent;
+import org.springframework.context.ApplicationEvent;
 import org.springframework.context.event.ContextRefreshedEvent;
 
 /**
@@ -51,6 +55,30 @@ public class DefaultRegisteredServicesEventListener implements RegisteredService
     public void handleContextRefreshedEvent(final ContextRefreshedEvent event) {
         val manager = event.getApplicationContext().getBean(ServicesManager.BEAN_NAME, ServicesManager.class);
         manager.load();
+    }
+
+    @Override
+    public void handleRegisteredServiceSavedEvent(final CasRegisteredServiceSavedEvent event) {
+        if (isPublishedOutsideServicesManager(event) && servicesManager instanceof final CacheableServicesManager manager) {
+            LOGGER.debug("Caching service [{}] saved by [{}]", event.getRegisteredService().getName(), event.getSource());
+            manager.cacheRegisteredService(event.getRegisteredService());
+        }
+    }
+
+    @Override
+    public void handleRegisteredServiceDeletedEvent(final CasRegisteredServiceDeletedEvent event) {
+        if (isPublishedOutsideServicesManager(event) && servicesManager instanceof final CacheableServicesManager manager) {
+            LOGGER.debug("Evicting service [{}] deleted by [{}]", event.getRegisteredService().getName(), event.getSource());
+            manager.removeRegisteredServiceFromCache(event.getRegisteredService());
+        }
+    }
+
+    @Override
+    public void handleRegisteredServicesLoadedEvent(final CasRegisteredServicesLoadedEvent event) {
+        if (isPublishedOutsideServicesManager(event)) {
+            LOGGER.debug("Reloading services after [{}] reloaded the service registry", event.getSource());
+            servicesManager.load();
+        }
     }
 
     @Override
@@ -104,5 +132,9 @@ public class DefaultRegisteredServicesEventListener implements RegisteredService
                     communicationsManager.sms(smsRequest);
                 }));
         }
+    }
+
+    private static boolean isPublishedOutsideServicesManager(final ApplicationEvent event) {
+        return !(event.getSource() instanceof ServicesManager);
     }
 }

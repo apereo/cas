@@ -14,7 +14,7 @@ const cas = require("../../cas.js");
     await cas.loginWith(page, username, currentPassword);
     await cas.sleep(2000);
     await cas.screenshot(page);
-    await cas.assertInnerText(page, "#pwdmain h3", `Hello, ${username}. You must change your password.`);
+    await cas.assertInnerText(page, "#pwdmain h2", `Hello, ${username}. You must change your password.`);
     await cas.type(page, "#password", newPassword);
     await cas.type(page, "#confirmedPassword", newPassword);
     await cas.pressEnter(page);
@@ -50,7 +50,7 @@ const cas = require("../../cas.js");
     await cas.pressEnter(page);
     await cas.waitForNavigation(page);
     await cas.sleep(2000);
-    await cas.assertInnerText(page, "#pwdmain h3", `Hello, ${username}. You must change your password.`);
+    await cas.assertInnerText(page, "#pwdmain h2", `Hello, ${username}. You must change your password.`);
 
     newPassword = await cas.randomWord();
     await cas.type(page, "#password", newPassword, true);

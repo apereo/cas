@@ -37,6 +37,10 @@ public class OidcVerifiableCredentialJwtProofValidator implements OidcVerifiable
 
     private static final String BINDING_METHOD_JWK = "jwk";
 
+    private static final String KEY_ATTESTATION_HEADER = "key_attestation";
+
+    private static final String PROOF_TYPE_ATTESTATION = "attestation";
+
     private static final String DID_PREFIX = "did:";
 
     private static final String DID_JWK_PREFIX = "did:jwk:";
@@ -46,6 +50,7 @@ public class OidcVerifiableCredentialJwtProofValidator implements OidcVerifiable
 
     private final CasConfigurationProperties casProperties;
     private final OidcVerifiableCredentialNonceService oidcVerifiableCredentialNonceService;
+    private final OidcVerifiableCredentialKeyAttestationValidator keyAttestationValidator;
 
     /**
      * Every way this can fail is either {@code invalid_nonce} or {@code invalid_proof} as far as
@@ -55,7 +60,9 @@ public class OidcVerifiableCredentialJwtProofValidator implements OidcVerifiable
      * <p>
      * When a credential configuration is named, the proof must also use one of the proof signing algorithms
      * and one of the cryptographic binding methods that configuration advertises, so that what the issuer
-     * metadata promises a wallet is exactly what is accepted.
+     * metadata promises a wallet is exactly what is accepted. A key attestation in the {@code key_attestation} header
+     * is verified and must attest the proof key; a configuration that requires key attestations refuses a proof
+     * without one.
      */
     @Override
     public VerifiableCredentialProofResult validate(final String proofJwt,
@@ -69,6 +76,7 @@ public class OidcVerifiableCredentialJwtProofValidator implements OidcVerifiable
             val holderJwk = resolveHolderKey(signedJwt, configuration);
             verifyAlgorithm(signedJwt, holderJwk, configuration);
             verifySignature(signedJwt, holderJwk);
+            verifyKeyAttestation(signedJwt, holderJwk, configuration);
             verifyAudience(signedJwt);
             verifyFreshness(signedJwt);
             val nonce = verifyNonce(signedJwt, consumedNonces);
@@ -96,9 +104,72 @@ public class OidcVerifiableCredentialJwtProofValidator implements OidcVerifiable
         }
     }
 
+    /**
+     * Validate an {@code attestation} proof. The key attestation must carry a {@code c_nonce} of this issuer, since it
+     * replaces a proof JWT that would carry one, be signed with an algorithm the configuration accepts for proofs, and
+     * attest no more keys than a batch may hold; every attested key must arrive by the {@code jwk} binding method.
+     *
+     * @param keyAttestation  the key attestation JWT
+     * @param configurationId the credential configuration id, or null when the caller names none
+     * @param consumedNonces  the nonces already consumed by this request
+     * @return the proof results, one per attested key
+     * @throws Exception the exception
+     */
+    @Override
+    public List<VerifiableCredentialProofResult> validateAttestation(final String keyAttestation,
+                                                                     final @Nullable String configurationId,
+                                                                     final Set<String> consumedNonces) throws Exception {
+        val configuration = resolveConfiguration(configurationId);
+        val attestation = keyAttestationValidator.validate(keyAttestation, configuration);
+        if (configuration != null && !configuration.getProofSigningAlgValuesSupported().contains(attestation.algorithm())) {
+            throw OidcVerifiableCredentialProofException.invalidProof(
+                "Key attestation algorithm %s is not supported by this credential configuration".formatted(attestation.algorithm()));
+        }
+        verifyBindingMethod(configuration, BINDING_METHOD_JWK);
+        if (attestation.attestedKeys().size() > Math.max(1, casProperties.getAuthn().getOidc().getVc().getIssuer().getBatchSize())) {
+            throw OidcVerifiableCredentialProofException.invalidProof("Key attestation attests more keys than a batch may hold");
+        }
+        val nonce = verifyNonce(attestation.nonce(), consumedNonces);
+        return attestation.attestedKeys()
+            .stream()
+            .map(key -> new VerifiableCredentialProofResult(PROOF_TYPE_ATTESTATION, UUID.randomUUID().toString(), null, key, nonce))
+            .toList();
+    }
+
+    /**
+     * Verify the key attestation a {@code jwt} proof carries in its {@code key_attestation} header, if any: it must be
+     * valid and attest the proof's key. A credential configuration that requires key attestations refuses a proof
+     * without one.
+     *
+     * @param signedJwt     the proof JWT
+     * @param holderJwk     the proof key
+     * @param configuration the credential configuration, or null when the caller names none
+     * @throws Exception the exception
+     */
+    protected void verifyKeyAttestation(final SignedJWT signedJwt, final JWK holderJwk,
+                                        final @Nullable OidcVerifiableCredentialConfigurationProperties configuration) throws Exception {
+        val keyAttestation = signedJwt.getHeader().getCustomParam(KEY_ATTESTATION_HEADER);
+        if (keyAttestation == null) {
+            if (configuration != null && configuration.getKeyAttestations().isRequired()) {
+                throw OidcVerifiableCredentialProofException.invalidProof("This credential configuration requires a key attestation");
+            }
+            return;
+        }
+        val attestation = keyAttestationValidator.validate(keyAttestation.toString(), configuration);
+        val attestedThumbprints = new HashSet<Base64URL>();
+        for (val attestedKey : attestation.attestedKeys()) {
+            attestedThumbprints.add(attestedKey.computeThumbprint());
+        }
+        if (!attestedThumbprints.contains(holderJwk.computeThumbprint())) {
+            throw OidcVerifiableCredentialProofException.invalidProof("The proof key is not one the key attestation attests");
+        }
+    }
+
     protected @Nullable String verifyNonce(final SignedJWT signedJwt, final Set<String> consumedNonces) throws Exception {
-        val claims = signedJwt.getJWTClaimsSet();
-        val nonce = claims.getStringClaim("nonce");
+        return verifyNonce(signedJwt.getJWTClaimsSet().getStringClaim("nonce"), consumedNonces);
+    }
+
+    protected @Nullable String verifyNonce(final @Nullable String nonce, final Set<String> consumedNonces) {
         if (nonce == null) {
             throw OidcVerifiableCredentialProofException.invalidNonce("Proof nonce is missing");
         }

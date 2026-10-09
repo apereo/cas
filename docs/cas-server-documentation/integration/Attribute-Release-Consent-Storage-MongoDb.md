@@ -1,6 +1,6 @@
 ---
 layout: default
-title: CAS - Attribute Release Consent
+title: CAS - MongoDb - Attribute Consent Storage
 category: Attributes
 ---
 
@@ -19,4 +19,4 @@ Support is enabled by including the following module in the WAR Overlay:
 ## Multitenancy
 
 Configuration settings for attribute consent storage can be specified in a multitenant environment.
-Please [review this guide](../multitenancy/Multitenancy-Overview.html) for more information.
+Please [review this guide](../multitenancy/Multitenancy-Tenant-Properties.html) for more information.

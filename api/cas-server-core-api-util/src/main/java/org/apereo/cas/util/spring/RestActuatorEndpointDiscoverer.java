@@ -4,6 +4,7 @@ import module java.base;
 import lombok.Getter;
 import lombok.val;
 import org.jspecify.annotations.NonNull;
+import org.springframework.boot.actuate.autoconfigure.endpoint.expose.IncludeExcludeEndpointFilter;
 import org.springframework.boot.actuate.endpoint.Access;
 import org.springframework.boot.actuate.endpoint.EndpointFilter;
 import org.springframework.boot.actuate.endpoint.EndpointId;
@@ -30,7 +31,11 @@ public class RestActuatorEndpointDiscoverer extends EndpointDiscoverer<RestActua
 
     public RestActuatorEndpointDiscoverer(final ApplicationContext applicationContext, final List<PathMapper> endpointPathMappers,
                                           final Collection<EndpointFilter<RestActuatorControllerEndpoint>> filters) {
-        super(applicationContext, ParameterValueMapper.NONE, List.of(), filters, List.of());
+        super(applicationContext, ParameterValueMapper.NONE, List.of(),
+            Stream.concat(filters.stream(),
+                Stream.of(new IncludeExcludeEndpointFilter<>(RestActuatorControllerEndpoint.class,
+                    applicationContext.getEnvironment(), "management.endpoints.web.exposure")))
+                .toList(), List.of());
         this.endpointPathMappers = List.copyOf(endpointPathMappers);
     }
 

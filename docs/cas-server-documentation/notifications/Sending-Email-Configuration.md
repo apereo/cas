@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Sending Email
+description: "Send email from CAS for password resets, MFA tokens and alerts, via SMTP or cloud email services."
 category: Notifications
 ---
 

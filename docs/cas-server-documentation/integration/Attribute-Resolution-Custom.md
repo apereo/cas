@@ -1,12 +1,14 @@
 ---
 layout: default
-title: CAS - Attribute Resolution
+title: CAS - Custom Attribute Resolution
 category: Attributes
 ---
 
 {% include variables.html %}
 
 # Custom Attribute Resolution
+
+Fetch attributes from a source CAS does not support by registering your own `PersonAttributeDao` attribute repository.
 
 You may also design and inject your own attribute repository and principal resolution implementation 
 into CAS that would itself handle fetching attributes and resolving persons, etc. In order

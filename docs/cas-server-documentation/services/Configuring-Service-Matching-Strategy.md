@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Configuring Service Matching Strategy
+description: "How CAS matches an incoming service URL to a registered service: regular expressions, exact matches and other strategies."
 category: Services
 ---
 

@@ -8,8 +8,6 @@ import org.apereo.cas.adaptors.yubikey.YubiKeyRegisteredDevice;
 import org.apereo.cas.adaptors.yubikey.registry.BaseYubiKeyAccountRegistry;
 import org.apereo.cas.redis.core.CasRedisTemplate;
 import lombok.val;
-import org.apache.commons.io.IOUtils;
-import org.springframework.data.redis.core.ScanOptions;
 
 /**
  * This is {@link RedisYubiKeyAccountRegistry}.
@@ -39,19 +37,27 @@ public class RedisYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
         return CAS_YUBIKEY_PREFIX + id;
     }
 
+    /**
+     * Load every account. The key scan is closed when done, which closes the cursor and returns its connection;
+     * with a connection pool, a connection that is never returned is lost to the pool.
+     *
+     * @return the accounts
+     */
     @Override
     public Collection<? extends YubiKeyAccount> getAccountsInternal() {
-        return getYubiKeyDevicesStream()
-            .map(redisKey -> {
-                val device = redisTemplate.boundValueOps(redisKey).get();
-                if (device == null) {
-                    this.redisTemplate.delete(redisKey);
-                    return null;
-                }
-                return device;
-            })
-            .filter(Objects::nonNull)
-            .collect(Collectors.toList());
+        try (val keys = redisTemplate.scan(getPatternYubiKeyDevices())) {
+            return keys
+                .map(redisKey -> {
+                    val device = redisTemplate.boundValueOps(redisKey).get();
+                    if (device == null) {
+                        this.redisTemplate.delete(redisKey);
+                        return null;
+                    }
+                    return device;
+                })
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+        }
     }
 
     @Override
@@ -104,14 +110,5 @@ public class RedisYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
         val redisKey = getYubiKeyDeviceRedisKey(account.getUsername());
         this.redisTemplate.boundValueOps(redisKey).set(account);
         return true;
-    }
-
-    private Stream<String> getYubiKeyDevicesStream() {
-        val cursor = Objects.requireNonNull(redisTemplate.getConnectionFactory()).getConnection()
-            .keyCommands().scan(ScanOptions.scanOptions().match(getPatternYubiKeyDevices()).build());
-        return StreamSupport
-            .stream(Spliterators.spliteratorUnknownSize(cursor, Spliterator.ORDERED), false)
-            .map(key -> (String) redisTemplate.getKeySerializer().deserialize(key))
-            .onClose(() -> IOUtils.closeQuietly(cursor));
     }
 }

@@ -1,6 +1,7 @@
 ---
 layout: default
-title: CAS - Account Registration
+title: CAS - Account (Self-Service) Registration - Requests
+description: "Define the fields and validation rules of the self-service account registration form."
 category: Registration
 ---
                   

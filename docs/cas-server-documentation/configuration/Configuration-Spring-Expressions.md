@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Spring Expressions
+description: "Use Spring Expression Language in CAS settings and resources to resolve system properties, environment variables and dynamic values."
 category: Installation
 ---
 

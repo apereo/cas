@@ -1,12 +1,14 @@
 ---
 layout: default
-title: CAS - FIDO2 WebAuthn Multifactor Authentication
+title: CAS - MongoDb FIDO2 WebAuthn Multifactor Registration
 category: Multifactor Authentication
 ---
 
 {% include variables.html %}
 
 # MongoDb FIDO2 WebAuthn Multifactor Registration
+
+Keep FIDO2 WebAuthn device registrations in a MongoDB collection.
 
 Device registrations may be kept inside a MongoDb instance by including the following module in the WAR overlay:
 

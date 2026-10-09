@@ -1,6 +1,7 @@
 ---
 layout: default
-title: CAS - Configuring Service Access Strategy
+title: CAS - Service Access Strategy - Permit.io
+description: "Authorize access to applications registered with CAS by syncing the user to Permit.io and asking it for a decision."
 category: Services
 ---
 
@@ -11,6 +12,10 @@ category: Services
 [Permit.io](https://github.com/permitio) offers permissions as a service, 
 allowing developers to bake-in permissions and access control into applications quickly. It offers a centralized control 
 panel, SDKs, APIs and microservices developers need to add to create a decision and enforcement points.
+
+Support is enabled by including the following dependency in the WAR overlay:
+
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-permitio" %}
 
 This access strategy attempts to sync the user with Permit.io, and then builds an authorization request and submits it to Permit.io. The specifics
 of the authorization request are taught to CAS using the settings typically defined within the access strategy itself:

@@ -1,6 +1,7 @@
 ---
 layout: default
 title: Localization - User Interface Customization - CAS
+description: "Translate the CAS user interface and choose the language with locale parameters and message bundles."
 category: User Interface
 ---
 

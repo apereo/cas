@@ -413,6 +413,13 @@
 
         <!-- Custom checks based on regular expressions -->
         <module name="RegexpSinglelineJava">
+            <property name="id" value="RefreshScopeMethodCheck"/>
+            <property name="format" value="\s*@RefreshScope$"/>
+            <property name="message" value="@RefreshScope found on method without a proxy mode"/>
+            <property name="severity" value="error"/>
+        </module>
+
+        <module name="RegexpSinglelineJava">
             <property name="id" value="secureRandom"/>
             <metadata name="net.sf.eclipsecs.core.comment" value="Do not create a standalone instance of SecureRandom"/>
             <property name="severity" value="error"/>

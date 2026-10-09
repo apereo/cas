@@ -60,6 +60,7 @@ import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -410,6 +411,7 @@ class CasCoreServicesConfiguration {
                     if (!serviceRegistryExecutionPlan.getObject().find(filter).isEmpty()) {
                         LOGGER.trace("Background task to load services is enabled to run every [{}]",
                             casProperties.getServiceRegistry().getSchedule().getRepeatInterval());
+                        warnIfServicesCacheExpiresBeforeReload(casProperties);
                         return new ServicesManagerScheduledLoader(servicesManager.getObject());
                     }
                     LOGGER.trace("Background task to load services is disabled");
@@ -417,6 +419,19 @@ class CasCoreServicesConfiguration {
                 })
                 .otherwiseProxy()
                 .get();
+        }
+
+        private static void warnIfServicesCacheExpiresBeforeReload(final CasConfigurationProperties casProperties) {
+            val serviceRegistry = casProperties.getServiceRegistry();
+            val cacheDuration = serviceRegistry.getCache().getDuration();
+            val schedule = serviceRegistry.getSchedule();
+            if (StringUtils.isNotBlank(cacheDuration) && StringUtils.isBlank(schedule.getCronExpression())
+                && Beans.newDuration(cacheDuration).compareTo(Beans.newDuration(schedule.getRepeatInterval())) <= 0) {
+                LOGGER.warn("Cached service definitions expire after [{}], which is not longer than the service registry reload interval [{}]. "
+                    + "Services expire from the cache before they are reloaded and are rejected as unauthorized until the next reload. "
+                    + "Set [cas.service-registry.cache.duration] to a value longer than [cas.service-registry.schedule.repeat-interval].",
+                    cacheDuration, schedule.getRepeatInterval());
+            }
         }
     }
 }

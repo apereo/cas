@@ -2,6 +2,7 @@ package org.apereo.cas.nativex;
 
 import module java.base;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
+import org.apereo.cas.ws.idp.services.WSFederationClaimsReleasePolicy;
 import org.apereo.cas.ws.idp.services.WSFederationRegisteredService;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
@@ -17,6 +18,8 @@ public class CoreWsSecurityIdentityProviderRuntimeHints implements CasRuntimeHin
     @Override
     public void registerHints(final @NonNull RuntimeHints hints, final @Nullable ClassLoader classLoader) {
         registerSerializationHints(hints, WSFederationRegisteredService.class);
+        registerReflectionHints(hints, findSubclassesInPackage(WSFederationClaimsReleasePolicy.class,
+            WSFederationClaimsReleasePolicy.class.getPackageName()));
         registerReflectionHints(hints, List.of(
             WSFederationRegisteredService.class
         ));
