@@ -194,20 +194,6 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
         });
     }
 
-    /**
-     * Counted by the indexed query {@link #getSessionsFor(String)} runs, rather than by the inherited
-     * version, which reads and decodes every ticket in the table through a cursor it never closes.
-     *
-     * @param principalId the principal id
-     * @return the number of sessions held for the principal
-     */
-    @Override
-    public long countSessionsFor(final String principalId) {
-        try (val sessions = getSessionsFor(principalId)) {
-            return sessions.count();
-        }
-    }
-
     @Override
     public Stream<? extends Ticket> getTicketsFor(final Service service) {
         val sql = String.format("SELECT t FROM %s t WHERE t.service=:service", ticketEntityFactory.getEntityName());
