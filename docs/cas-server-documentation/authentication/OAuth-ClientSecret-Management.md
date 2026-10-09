@@ -1,6 +1,6 @@
 ---
 layout: default
-title: CAS - OAuth Authentication
+title: CAS - Client Secret Management - OAuth Authentication
 category: Authentication
 ---
 {% include variables.html %}

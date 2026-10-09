@@ -1,41 +1,123 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
-
     <title>Account Profile</title>
-    <link href="../../static/css/cas.css" rel="stylesheet" th:remove="tag"/>
+    <link href="../../static/css/account.css" rel="stylesheet" th:remove="tag"/>
 </head>
-
 <body>
-<span th:fragment="overview">
-        <div id="divOverview" class="profile-content p-1" style="display: none;">
-            <h2>
-                <i class="mdi mdi-human-greeting-variant fas fa-door-open" aria-hidden="true"></i>
-                <span>Hello,
-                    <span th:if="${authentication.principal.attributes['displayName'] != null}"
-                          th:text="${authentication.principal.attributes['displayName'][0]}" />
-                    <span th:if="${authentication.principal.attributes['displayName'] == null}"
-                          th:text="${authentication.principal.id}"></span>!
-                </span>
-            </h2>
-            <p th:utext="#{screen.account.success(${authentication.principal.id})}">You,
-                <strong>username</strong>, have successfully logged into the Central Authentication Service.</p>
-            <p th:utext="#{screen.account.security}">
-                When you are finished, for security reasons, please <a href="logout">log out</a> and exit your web browser.
-            </p>
-
-            <div id="infoMessages" class="banner banner-success banner-dismissible my-2" th:if="${flowRequestContext.messageContext.allMessages.length > 0}">
-                <button type="button" class="close" onclick="$(this).parent().hide();" th:aria-label="#{screen.pm.button.close}"><span class="mdi mdi-close-box" aria-hidden="true"></span></button>
-                <span th:each="message : ${flowRequestContext.messageContext.allMessages}" th:utext="${message.text}">Message Text</span>
-                <script>autoHideElement("infoMessages");</script>
-            </div>
+<section th:fragment="overview" id="divOverview" class="profile-content" aria-labelledby="divOverviewTitle"
+         th:data-account-trail="#{screen.account.trail.root}"
+         th:with="questionCount=${questions != null ? #maps.size(questions) : 0},
+                  securityPanel=${multifactorRegisteredAccounts != null ? '#divMfaRegisteredAccounts'
+                        : (multifactorTrustedDevices != null ? '#divMultifactorTrustedDevices'
+                        : (#cas.isTrue(securityQuestionsEnabled) ? '#divSecurityQuestions' : null))},
+                  passwordEnabled=${passwordManagementEnabled != null && passwordManagementEnabled}">
+    <header>
+        <div>
+            <h2 id="divOverviewTitle" th:text="#{screen.account.greeting(${fullName})}">Hello, CAS User!</h2>
+            <p th:utext="#{screen.account.success(${authentication.principal.id})}">You, <strong>casuser</strong>,
+                have successfully logged into the Central Authentication Service.</p>
         </div>
+    </header>
 
-    </span>
+    <div class="cas-account-summary">
+        <section class="cas-account-card" aria-labelledby="overviewSecurityTitle"
+                 th:if="${securityPanel != null || passwordEnabled}">
+            <h3 id="overviewSecurityTitle">
+                <span class="cas-account-card-icon" aria-hidden="true"><i class="mdi mdi-shield-outline"></i></span>
+                <span th:text="#{screen.account.group.security}">Sign-in &amp; security</span>
+            </h3>
+            <dl>
+                <th:block th:if="${multifactorRegisteredAccounts != null}">
+                    <dt th:text="#{screen.account.count.mfadevices}">MFA devices</dt>
+                    <dd th:text="${#lists.size(multifactorRegisteredAccounts)}">2</dd>
+                </th:block>
+                <th:block th:if="${multifactorTrustedDevices != null}">
+                    <dt th:text="#{screen.account.count.trusteddevices}">Trusted devices</dt>
+                    <dd th:text="${#lists.size(multifactorTrustedDevices)}">1</dd>
+                </th:block>
+                <th:block th:if="${#cas.isTrue(securityQuestionsEnabled)}">
+                    <dt th:text="#{screen.account.count.questions}">Security questions</dt>
+                    <dd th:text="${questionCount}">2</dd>
+                </th:block>
+            </dl>
+            <a class="cas-account-card-link" th:if="${securityPanel != null}" th:href="${securityPanel}"
+               th:data-account-panel="${securityPanel}" th:text="#{screen.account.overview.security.link}">Manage security</a>
+        </section>
+
+        <section class="cas-account-card" aria-labelledby="overviewAccessTitle">
+            <h3 id="overviewAccessTitle">
+                <span class="cas-account-card-icon" aria-hidden="true"><i class="mdi mdi-monitor"></i></span>
+                <span th:text="#{screen.account.group.access}">Sessions &amp; apps</span>
+            </h3>
+            <dl>
+                <dt th:text="#{screen.account.count.sessions}">Active SSO sessions</dt>
+                <dd th:text="${singleSignOnSessions != null ? #lists.size(singleSignOnSessions) : 0}">2</dd>
+                <th:block th:if="${authorizedServices != null}">
+                    <dt th:text="#{screen.account.count.applications}">Applications</dt>
+                    <dd th:text="${#lists.size(authorizedServices)}">3</dd>
+                </th:block>
+                <th:block th:if="${!#lists.isEmpty(oidcAccessTokens)}">
+                    <dt th:text="#{screen.account.count.tokens}">Access tokens</dt>
+                    <dd th:text="${#lists.size(oidcAccessTokens)}">1</dd>
+                </th:block>
+            </dl>
+            <a class="cas-account-card-link" href="#divSessions" data-account-panel="#divSessions"
+               th:text="#{screen.account.overview.access.link}">Review access</a>
+        </section>
+
+        <section class="cas-account-card" aria-labelledby="overviewPrivacyTitle">
+            <h3 id="overviewPrivacyTitle">
+                <span class="cas-account-card-icon" aria-hidden="true"><i class="mdi mdi-account-outline"></i></span>
+                <span th:text="#{screen.account.group.privacy}">Privacy</span>
+            </h3>
+            <dl>
+                <dt th:text="#{screen.account.count.attributes}">Profile attributes</dt>
+                <dd th:text="${#maps.size(authentication.principal.attributes)}">6</dd>
+                <th:block th:if="${consentDecisions != null}">
+                    <dt th:text="#{screen.account.count.consent}">Consent decisions</dt>
+                    <dd th:text="${#lists.size(consentDecisions)}">1</dd>
+                </th:block>
+            </dl>
+            <a class="cas-account-card-link" href="#divAttributes" data-account-panel="#divAttributes"
+               th:text="#{screen.account.overview.privacy.link}">See what is shared</a>
+        </section>
+    </div>
+
+    <div class="cas-account-actions cas-account-overview-actions" th:if="${passwordEnabled}">
+        <button type="button" class="acct-btn" data-account-action="password"
+                th:attr="data-confirm-title=#{screen.account.pwreset.title},data-confirm-text=#{screen.account.pwreset},data-confirm-button=#{screen.account.continue},data-cancel-button=#{screen.account.cancel}">
+            <i class="mdi mdi-form-textbox-password" aria-hidden="true"></i>
+            <span th:text="#{screen.account.nav.password}">Reset password</span>
+        </button>
+    </div>
+
+    <section class="cas-account-card" aria-labelledby="overviewActivityTitle" th:if="${!#lists.isEmpty(auditLog)}">
+        <div class="cas-account-card-header">
+            <h3 id="overviewActivityTitle" th:text="#{screen.account.overview.activity}">Latest activity</h3>
+            <a href="#divAuditLog" data-account-panel="#divAuditLog" th:text="#{screen.account.overview.activity.link}">Full audit log</a>
+        </div>
+        <ol class="cas-account-activity">
+            <li th:each="entry, iter : ${auditLog}" th:if="${iter.index < 4}">
+                <span class="cas-account-activity-dot" aria-hidden="true"
+                      th:classappend="${#strings.contains(entry.actionPerformed, 'FAIL')} ? 'is-failure'"></span>
+                <div>
+                    <strong class="acct-mono" th:text="${entry.actionPerformed}">AUTHENTICATION_SUCCESS</strong>
+                    <span>
+                        <span th:text="${#cas.format(entry.whenActionWasPerformed, 'MMMM dd, yyyy')}">October 2, 2026</span>
+                        · <span th:text="${entry.clientInfo.clientIpAddress}">192.0.2.14</span>
+                        · <span th:data-account-useragent="${entry.clientInfo.userAgent}"
+                                th:text="${#strings.abbreviate(entry.clientInfo.userAgent, 60)}">Chrome · macOS</span>
+                    </span>
+                </div>
+            </li>
+        </ol>
+    </section>
+
+    <p class="cas-account-note" th:utext="#{screen.account.security}">
+        When you are finished, for security reasons, please <a href="logout">log out</a> and exit your web browser.
+    </p>
+</section>
 </body>
-
 </html>

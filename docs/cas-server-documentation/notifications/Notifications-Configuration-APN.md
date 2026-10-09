@@ -1,12 +1,14 @@
 ---
 layout: default
-title: CAS - Notifications
+title: CAS - Notifications - Apple Push Notification Messaging
 category: Notifications
 ---
 
 {% include variables.html %}
 
 # Notifications - Apple Push Notification Messaging
+
+Send push notifications to users' Apple devices through the Apple Push Notification service.
 
 Support is enabled via the relevant modules using the following module:
 

@@ -26,7 +26,7 @@ import org.springframework.data.redis.serializer.RedisSerializer;
 @ToString
 @Getter
 public class RedisGoogleAuthenticatorTokenCredentialRepository extends BaseGoogleAuthenticatorTokenCredentialRepository {
-    private static final int PRINCIPAL_KEYS_BATCH_SIZE = 500;
+    private static final int SCAN_BATCH_SIZE = 500;
 
     private final CasRedisTemplates casRedisTemplates;
 
@@ -41,10 +41,10 @@ public class RedisGoogleAuthenticatorTokenCredentialRepository extends BaseGoogl
 
     @Override
     public @Nullable OneTimeTokenAccount get(final String username, final long id) {
-        return get(username)
-            .stream()
+        return readPrincipalAccounts(username)
             .filter(account -> account.getId() == id)
             .findFirst()
+            .map(this::decode)
             .orElse(null);
     }
 
@@ -57,26 +57,32 @@ public class RedisGoogleAuthenticatorTokenCredentialRepository extends BaseGoogl
 
     @Override
     public Collection<? extends OneTimeTokenAccount> get(final String username) {
-        val redisAccountKey = RedisCompositeKey.forPrincipals().withPrincipal(username).toKeyPattern();
-        val accounts = casRedisTemplates.getPrincipalsRedisTemplate().boundSetOps(redisAccountKey).members();
-        return Objects.requireNonNull(accounts)
-            .stream()
-            .filter(Objects::nonNull)
+        return readPrincipalAccounts(username)
             .map(this::decode)
             .filter(Objects::nonNull)
             .collect(Collectors.toList());
     }
 
+    /**
+     * Load every account. Account keys are found with {@code SCAN}, and their values are read with one {@code MGET}
+     * per batch of keys rather than one {@code GET} per key.
+     *
+     * @return the decoded accounts
+     */
     @Override
     public Collection<? extends OneTimeTokenAccount> load() {
-        val keyPattern = RedisCompositeKey.forAccounts().toKeyPattern();
-        val accounts = casRedisTemplates.getAccountsRedisTemplate().keys(keyPattern);
-        return Objects.requireNonNull(accounts)
-            .stream()
-            .map(redisKey -> casRedisTemplates.getAccountsRedisTemplate().boundValueOps(redisKey).get())
-            .filter(Objects::nonNull)
-            .map(this::decode)
-            .collect(Collectors.toList());
+        val accountsTemplate = casRedisTemplates.getAccountsRedisTemplate();
+        try (val keys = accountsTemplate.scan(scanOptions(RedisCompositeKey.forAccounts().toKeyPattern()))) {
+            return keys.stream()
+                .distinct()
+                .gather(Gatherers.windowFixed(SCAN_BATCH_SIZE))
+                .map(batch -> accountsTemplate.opsForValue().multiGet(batch))
+                .filter(Objects::nonNull)
+                .flatMap(List::stream)
+                .filter(Objects::nonNull)
+                .map(this::decode)
+                .collect(Collectors.toList());
+        }
     }
 
     @Override
@@ -84,33 +90,46 @@ public class RedisGoogleAuthenticatorTokenCredentialRepository extends BaseGoogl
         return update(account.assignIdIfNecessary());
     }
 
+    /**
+     * Store the account record and replace the account's entry in the owner's principal set. The set's members are
+     * matched by id as stored, without being decoded, and the stale entry is removed as the raw bytes Redis holds.
+     * The commands run one after another on the shared connection rather than in a pipeline: with Lettuce, a pipeline
+     * takes a dedicated connection, which costs more than the few round trips it saves on a call made at every login.
+     *
+     * @param account the account
+     * @return the encoded account
+     */
     @Override
+    @SuppressWarnings("unchecked")
     public OneTimeTokenAccount update(final OneTimeTokenAccount account) {
         val encodedAccount = encode(account);
+        val accountKey = RedisCompositeKey.forAccounts().withAccount(encodedAccount).toKeyPattern().getBytes(StandardCharsets.UTF_8);
+        val principalKey = RedisCompositeKey.forPrincipals().withPrincipal(encodedAccount).toKeyPattern().getBytes(StandardCharsets.UTF_8);
+        LOGGER.trace("Saving account [{}]", encodedAccount);
 
-        val redisAccountKey = RedisCompositeKey.forAccounts().withAccount(encodedAccount).toKeyPattern();
-        LOGGER.trace("Saving account [{}] using key [{}]", encodedAccount, redisAccountKey);
-        casRedisTemplates.getAccountsRedisTemplate().boundValueOps(redisAccountKey).set(encodedAccount);
-
-        val redisPrincipalKey = RedisCompositeKey.forPrincipals().withPrincipal(encodedAccount).toKeyPattern();
-        LOGGER.trace("Saving principal [{}] using key [{}]", encodedAccount, redisPrincipalKey);
-        val principalOps = casRedisTemplates.getPrincipalsRedisTemplate().boundSetOps(redisPrincipalKey);
-        principalOps
-            .members()
-            .stream()
-            .filter(value -> {
-                val existingAccount = decode(value);
-                return account.getId() == existingAccount.getId();
-            })
-            .findFirst()
-            .ifPresent(principalOps::remove);
-        principalOps.add(encodedAccount);
+        val accountSerializer = (RedisSerializer<OneTimeTokenAccount>) Objects.requireNonNull(casRedisTemplates.getAccountsRedisTemplate().getValueSerializer());
+        val principalsTemplate = casRedisTemplates.getPrincipalsRedisTemplate();
+        val principalSerializer = (RedisSerializer<OneTimeTokenAccount>) Objects.requireNonNull(principalsTemplate.getValueSerializer());
+        val accountValue = Objects.requireNonNull(accountSerializer.serialize(encodedAccount));
+        val principalValue = Objects.requireNonNull(principalSerializer.serialize(encodedAccount));
+        principalsTemplate.execute((RedisCallback<Object>) connection -> {
+            connection.stringCommands().set(accountKey, accountValue);
+            val staleMembers = Objects.requireNonNullElseGet(connection.setCommands().sMembers(principalKey), Set::<byte[]>of)
+                .stream()
+                .filter(member -> isAccount(principalSerializer, member, encodedAccount.getId()))
+                .toArray(byte[][]::new);
+            if (staleMembers.length > 0) {
+                connection.setCommands().sRem(principalKey, staleMembers);
+            }
+            connection.setCommands().sAdd(principalKey, principalValue);
+            return null;
+        });
         return encodedAccount;
     }
 
     @Override
     public void deleteAll() {
-        var options = ScanOptions.scanOptions().match(RedisCompositeKey.forAccounts().toKeyPattern()).build();
+        var options = scanOptions(RedisCompositeKey.forAccounts().toKeyPattern());
         try (val result = casRedisTemplates.getAccountsRedisTemplate().scan(options)) {
             casRedisTemplates.getAccountsRedisTemplate().executePipelined((RedisCallback<Object>) connection -> {
                 StreamSupport.stream(result.spliterator(), false)
@@ -118,7 +137,7 @@ public class RedisGoogleAuthenticatorTokenCredentialRepository extends BaseGoogl
                 return null;
             });
         }
-        options = ScanOptions.scanOptions().match(RedisCompositeKey.forPrincipals().toKeyPattern()).build();
+        options = scanOptions(RedisCompositeKey.forPrincipals().toKeyPattern());
         try (val result = casRedisTemplates.getPrincipalsRedisTemplate().scan(options)) {
             casRedisTemplates.getPrincipalsRedisTemplate().executePipelined((RedisCallback<Object>) connection -> {
                 StreamSupport.stream(result.spliterator(), false)
@@ -163,18 +182,26 @@ public class RedisGoogleAuthenticatorTokenCredentialRepository extends BaseGoogl
         } else {
             LOGGER.debug("Account [{}] has no record; scanning principal keys for entries left behind", id);
             val principalKeyPattern = RedisCompositeKey.forPrincipals().toKeyPattern();
-            try (val principalKeys = casRedisTemplates.getPrincipalsRedisTemplate().scan(principalKeyPattern)) {
-                principalKeys
-                    .gather(Gatherers.windowFixed(PRINCIPAL_KEYS_BATCH_SIZE))
+            try (val principalKeys = casRedisTemplates.getPrincipalsRedisTemplate().scan(scanOptions(principalKeyPattern))) {
+                principalKeys.stream()
+                    .distinct()
+                    .gather(Gatherers.windowFixed(SCAN_BATCH_SIZE))
                     .forEach(batch -> removePrincipalEntries(batch, id, List.of()));
             }
         }
     }
 
+    /**
+     * Count the account records with {@code SCAN}, asking for batches of keys rather than the server's default of ten,
+     * and closing the cursor and its connection when done.
+     *
+     * @return the number of accounts
+     */
     @Override
     public long count() {
-        val redisKeyPattern = RedisCompositeKey.forAccounts().toKeyPattern();
-        return casRedisTemplates.getAccountsRedisTemplate().count(redisKeyPattern);
+        try (val keys = casRedisTemplates.getAccountsRedisTemplate().scan(scanOptions(RedisCompositeKey.forAccounts().toKeyPattern()))) {
+            return keys.stream().count();
+        }
     }
 
     @Override
@@ -208,7 +235,7 @@ public class RedisGoogleAuthenticatorTokenCredentialRepository extends BaseGoogl
             if (principalSets.get(index) instanceof Collection<?> members) {
                 val matches = members.stream()
                     .map(byte[].class::cast)
-                    .filter(member -> valueSerializer.deserialize(member) instanceof OneTimeTokenAccount account && account.getId() == id)
+                    .filter(member -> isAccount(valueSerializer, member, id))
                     .toArray(byte[][]::new);
                 if (matches.length > 0) {
                     removals.put(principalKeys.get(index), matches);
@@ -226,6 +253,20 @@ public class RedisGoogleAuthenticatorTokenCredentialRepository extends BaseGoogl
                 return null;
             });
         }
+    }
+
+    private static ScanOptions scanOptions(final String pattern) {
+        return ScanOptions.scanOptions().match(pattern).count(SCAN_BATCH_SIZE).build();
+    }
+
+    private static boolean isAccount(final RedisSerializer<?> serializer, final byte[] member, final long id) {
+        return serializer.deserialize(member) instanceof OneTimeTokenAccount account && account.getId() == id;
+    }
+
+    private Stream<OneTimeTokenAccount> readPrincipalAccounts(final String username) {
+        val redisAccountKey = RedisCompositeKey.forPrincipals().withPrincipal(username).toKeyPattern();
+        val accounts = casRedisTemplates.getPrincipalsRedisTemplate().boundSetOps(redisAccountKey).members();
+        return Objects.requireNonNull(accounts).stream().filter(Objects::nonNull);
     }
 
     @Data

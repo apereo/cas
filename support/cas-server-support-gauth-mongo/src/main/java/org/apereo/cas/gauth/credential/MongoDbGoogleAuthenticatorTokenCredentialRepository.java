@@ -6,8 +6,11 @@ import org.apereo.cas.gauth.CasGoogleAuthenticator;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import lombok.Getter;
 import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoOperations;
+import org.springframework.data.mongodb.core.index.Index;
 import org.springframework.data.mongodb.core.query.Collation;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -20,13 +23,21 @@ import org.springframework.data.mongodb.core.query.Query;
  */
 @ToString
 @Getter
+@Slf4j
 public class MongoDbGoogleAuthenticatorTokenCredentialRepository extends BaseGoogleAuthenticatorTokenCredentialRepository {
+    /**
+     * Name of the index on usernames. It carries the username collation, since a query with a collation can only
+     * use an index with the same collation, and it is named so it does not clash with a plain index on usernames.
+     */
+    public static final String USERNAME_INDEX_NAME = "username_collated";
+
     /**
      * Usernames are matched ignoring case but not accents. Primary strength would also ignore accents, so
      * {@code jose} and {@code josé} would share devices. Case is still ignored because documents written before
      * usernames were stored lowercased may hold mixed-case names.
      */
     private static final Collation USERNAME_COLLATION = Collation.of(Locale.ENGLISH).strength(Collation.ComparisonLevel.secondary());
+
 
     private final MongoOperations mongoTemplate;
 
@@ -43,11 +54,27 @@ public class MongoDbGoogleAuthenticatorTokenCredentialRepository extends BaseGoo
         this.collectionName = collectionName;
     }
 
+    /**
+     * Create the index that lookups by username use. Creating an index that already exists with the same options does
+     * nothing. A failure, such as missing privileges, is logged and does not stop startup; lookups then scan the collection.
+     * Lookups by id use the {@code _id} index and carry no collation, so they need nothing else.
+     */
+    public void createIndexes() {
+        val index = new Index()
+            .on("username", Sort.Direction.ASC)
+            .named(USERNAME_INDEX_NAME)
+            .collation(USERNAME_COLLATION);
+        try {
+            mongoTemplate.indexOps(collectionName).createIndex(index);
+        } catch (final Exception e) {
+            LOGGER.warn("Unable to create index [{}] on collection [{}]: [{}]", USERNAME_INDEX_NAME, collectionName, e.getMessage());
+        }
+    }
+
     @Override
     public OneTimeTokenAccount get(final long id) {
         val query = new Query();
-        query.addCriteria(Criteria.where("id").is(id))
-            .collation(USERNAME_COLLATION);
+        query.addCriteria(Criteria.where("id").is(id));
         val r = this.mongoTemplate.findOne(query, GoogleAuthenticatorAccount.class, this.collectionName);
         return Optional.ofNullable(r).map(this::decode).orElse(null);
     }
@@ -107,8 +134,7 @@ public class MongoDbGoogleAuthenticatorTokenCredentialRepository extends BaseGoo
     @Override
     public void delete(final long id) {
         val query = new Query();
-        query.addCriteria(Criteria.where("id").is(id))
-            .collation(USERNAME_COLLATION);
+        query.addCriteria(Criteria.where("id").is(id));
         this.mongoTemplate.remove(query, GoogleAuthenticatorAccount.class, this.collectionName);
     }
 

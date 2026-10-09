@@ -3,7 +3,6 @@ package org.apereo.cas.mongo;
 import module java.base;
 import org.apereo.cas.configuration.model.support.mongo.BaseMongoDbProperties;
 import org.apereo.cas.configuration.support.Beans;
-import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import com.mongodb.ConnectionString;
@@ -18,7 +17,6 @@ import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.connection.ConnectionPoolSettings;
-import com.mongodb.connection.ServerSettings;
 import com.mongodb.connection.SocketSettings;
 import com.mongodb.connection.SslSettings;
 import lombok.Getter;
@@ -154,32 +152,55 @@ public class MongoDbConnectionFactory {
                                              final MongoCollection<org.bson.Document> collection,
                                              final List<? extends IndexDefinition> indexesToCreate) {
         val collectionName = collection.getNamespace().getCollectionName();
-        val indexes = collection.listIndexes();
+        val indexes = collection.listIndexes().into(new ArrayList<>());
         LOGGER.debug("Existing indexes on collection [{}] are [{}]", collection.getNamespace(), indexes);
         indexesToCreate.forEach(index -> {
-            var indexExistsWithDifferentOptions = false;
             val indexKeys = index.getIndexKeys();
             val indexOptions = index.getIndexOptions();
-            for (val existingIndex : indexes) {
-                val keyMatches = existingIndex.get("key").equals(indexKeys);
-                val optionsMatch = indexOptions.entrySet().stream()
-                    .allMatch(entry -> entry.getValue().equals(existingIndex.get(entry.getKey())));
-                val noExtraOptions = existingIndex.keySet().stream()
-                    .allMatch(key -> MONGO_INDEX_KEYS.contains(key) || indexOptions.containsKey(key));
-                indexExistsWithDifferentOptions = indexExistsWithDifferentOptions || (keyMatches && !(optionsMatch && noExtraOptions));
-            }
+            val replacedIndex = indexes
+                .stream()
+                .filter(existingIndex -> existingIndex.get("key").equals(indexKeys))
+                .filter(existingIndex -> {
+                    val optionsMatch = indexOptions.entrySet().stream()
+                        .allMatch(entry -> entry.getValue().equals(existingIndex.get(entry.getKey())));
+                    val noExtraOptions = existingIndex.keySet().stream()
+                        .allMatch(key -> MONGO_INDEX_KEYS.contains(key) || indexOptions.containsKey(key));
+                    return !(optionsMatch && noExtraOptions);
+                })
+                .findFirst();
 
-            try {
-                if (indexExistsWithDifferentOptions) {
+            if (replacedIndex.isPresent()) {
+                try {
                     LOGGER.debug("Removing MongoDb index [{}] from [{}]", indexKeys, collection.getNamespace());
                     collection.dropIndex(indexKeys);
+                } catch (final Exception e) {
+                    LoggingUtils.warn(LOGGER, e);
+                    return;
                 }
+            }
+            try {
                 LOGGER.debug("Creating index [{}] on collection [{}]", index, collectionName);
                 mongoTemplate.indexOps(collectionName).createIndex(index);
             } catch (final Exception e) {
                 LoggingUtils.warn(LOGGER, e);
+                replacedIndex.ifPresent(existingIndex -> restoreIndex(mongoTemplate, collectionName, existingIndex));
             }
         });
+    }
+
+    private static void restoreIndex(final MongoOperations mongoTemplate, final String collectionName,
+                                     final org.bson.Document existingIndex) {
+        try {
+            val specification = new org.bson.Document(existingIndex);
+            specification.remove("ns");
+            mongoTemplate.executeCommand(new org.bson.Document("createIndexes", collectionName)
+                .append("indexes", List.of(specification)));
+            LOGGER.warn("Restored index [{}] on collection [{}] after its replacement could not be created",
+                existingIndex.get("name"), collectionName);
+        } catch (final Exception e) {
+            LOGGER.error("Unable to restore index [{}] on collection [{}]", existingIndex.get("name"), collectionName);
+            LoggingUtils.error(LOGGER, e);
+        }
     }
 
     private static MongoDatabaseFactory mongoDbFactory(final MongoClient mongo, final BaseMongoDbProperties props) {
@@ -271,12 +292,6 @@ public class MongoDbConnectionFactory {
                         .build();
                     builder.applySettings(ssl);
                 })
-                .applyToServerSettings(builder -> {
-                    val server = ServerSettings.builder()
-                        .heartbeatFrequency(Beans.newDuration(mongo.getTimeout()).toMillis(), TimeUnit.MILLISECONDS)
-                        .build();
-                    builder.applySettings(server);
-                })
                 .retryWrites(mongo.isRetryWrites());
         }
         return MongoClients.create(settingsBuilder.build());
@@ -306,7 +321,7 @@ public class MongoDbConnectionFactory {
     }
 
     protected Collection<String> getMappingBasePackages() {
-        return CollectionUtils.wrap(getClass().getPackage().getName());
+        return List.of();
     }
 
     private MongoMappingContext mongoMappingContext() {

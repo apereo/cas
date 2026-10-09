@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Support
+description: "Where to get help with Apereo CAS: community mailing lists, commercial support providers and Apereo Foundation membership."
 pdf: true
 ---
 

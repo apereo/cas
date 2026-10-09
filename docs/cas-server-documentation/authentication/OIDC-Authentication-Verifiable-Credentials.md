@@ -1,6 +1,6 @@
 ---
 layout: default
-title: CAS - OpenID Connect Authentication
+title: CAS - Verifiable Credentials - OpenID Connect Authentication
 category: Protocols
 ---
 {% include variables.html %}
@@ -104,6 +104,46 @@ ones such as `/.well-known/acme-challenge/<token>` untouched.
 
 A wallet that cannot resolve this metadata may not begin issuance at all.
 
+#### Signed Metadata
+
+A wallet that asks for `application/jwt` in its `Accept` header, preferring it at least as much as JSON, receives the
+issuer metadata as a JWT of type `openidvci-issuer-metadata+jwt`, signed with the issuer signing key and carrying its `x5c`
+certificate chain, if any, without the trust anchor, as the
+[High Assurance Interoperability Profile](https://openid.net/specs/openid4vc-high-assurance-interoperability-profile-1_0.html)
+requires. Every metadata parameter is a top-level claim, next to `sub` and `iss`, both set to the credential issuer, `iat`
+and `exp`:
+
+```json
+{
+  "alg": "ES256",
+  "typ": "openidvci-issuer-metadata+jwt",
+  "kid": "cas-vc-signing",
+  "x5c": [
+    "MIIB..."
+  ]
+}
+```
+
+```json
+{
+  "sub": "https://sso.example.org/cas/oidc",
+  "iss": "https://sso.example.org/cas/oidc",
+  "iat": 1791238400,
+  "exp": 1791324800,
+  "credential_issuer": "https://sso.example.org/cas/oidc",
+  "credential_endpoint": "https://sso.example.org/cas/oidc/oidcVcCredential",
+  "credential_configurations_supported": {
+    "UniversityDegree": {
+      "format": "dc+sd-jwt"
+    }
+  }
+}
+```
+
+Other requests receive the unsigned JSON document. How long signed metadata remains valid is controlled in CAS settings:
+
+{% include_cached casproperties.html properties="cas.authn.oidc.vc.metadata" %}
+
 #### Token Endpoint Authentication
 
 The pre-authorized code grant carries no client credentials. CAS authenticates the exchange from
@@ -121,6 +161,10 @@ For the same reason the authorization server metadata advertises `pre-authorized
 as `true` whenever the pre-authorized code grant is listed in `grant_types_supported`. A wallet that finds no such
 value assumes `false` and may refuse to redeem the code without a `client_id` it does not have.
 
+In the authorization code flow, wallets authenticate at the pushed authorization request and token endpoints with a
+wallet attestation, as the High Assurance Interoperability Profile requires, using
+[attestation-based client authentication](OIDC-Authentication-AccessToken-AuthMethods.html#attestation-based-client-authentication).
+
 ### Credential Endpoint
 
 Issues a verifiable credential to the wallet once the access token, proof, and requested
@@ -137,11 +181,15 @@ This endpoint expects:
   An `access_token` or `token` request parameter is accepted as well, as it is elsewhere in CAS.
   A `DPoP`-bound token must be accompanied by a `DPoP` proof header bound to that token; a request
   without one, or with a proof that does not verify, is answered with `401` and
-  `WWW-Authenticate: DPoP error="invalid_dpop_proof"`. A proof may not be reused.
-- The requested credential, named either by `credential_configuration_id` or, when the token
-  response returned `credential_identifiers` in its authorization details, by
-  `credential_identifier`. The two are mutually exclusive.
-- A `proofs` object holding one or more proof JWTs, each carrying a `nonce` claim.
+  `WWW-Authenticate: DPoP error="invalid_dpop_proof"`. A proof may not be reused. Once
+  [DPoP nonces](OIDC-Authentication-DPoP.html#server-provided-nonces) are turned on, the proof must also carry one, or the
+  request is answered with `401`, `use_dpop_nonce` and a fresh nonce in the `DPoP-Nonce` header.
+- The requested credential. When the token response returned `credential_identifiers` in its authorization details, the
+  request must name one of them with `credential_identifier`; otherwise it names a `credential_configuration_id`. The two are
+  mutually exclusive, and using the one that does not apply is `invalid_credential_request`. Pre-authorized code token
+  responses return no authorization details, so those requests use `credential_configuration_id`.
+- A `proofs` object holding one or more proof JWTs, each carrying a `nonce` claim, or exactly one key attestation
+  as an `attestation` proof (see [Key Attestations](#key-attestations)).
 
 The endpoint body is expected as:
 
@@ -185,6 +233,87 @@ The response is:
 }
 ```
 
+Errors carry the codes of [OpenID4VCI 1.0 section 8.3.1.2](https://openid.net/specs/openid-4-verifiable-credential-issuance-1_0.html#section-8.3.1.2):
+a `credential_identifier` the token response did not return is `unknown_credential_identifier`, a credential configuration CAS does
+not publish is `unknown_credential_configuration`, one it publishes but will not issue to this client or access token is
+`credential_request_denied`, and a proof that cannot be accepted is `invalid_proof`, or `invalid_nonce` when only its nonce is stale.
+
+#### Encrypted Requests and Responses
+
+Credential requests and responses may be encrypted on top of TLS, as described by
+[OpenID4VCI 1.0 section 10](https://openid.net/specs/openid-4-verifiable-credential-issuance-1_0.html#name-encrypted-credential-reques).
+Once turned on in CAS settings, the issuer metadata advertises both directions:
+
+```json
+{
+  "credential_request_encryption": {
+    "jwks": {
+      "keys": [
+        {
+          "kty": "RSA",
+          "kid": "cas-4bKkzQdW",
+          "use": "enc",
+          "alg": "RSA-OAEP-256",
+          "n": "sLx5PUdqNoSl...",
+          "e": "AQAB"
+        }
+      ]
+    },
+    "enc_values_supported": [
+      "A128GCM",
+      "A256GCM"
+    ],
+    "encryption_required": false
+  },
+  "credential_response_encryption": {
+    "alg_values_supported": [
+      "ECDH-ES",
+      "RSA-OAEP-256"
+    ],
+    "enc_values_supported": [
+      "A128GCM",
+      "A256GCM"
+    ],
+    "encryption_required": false
+  }
+}
+```
+
+Requests are encrypted to the current encryption keys of the CAS OpenID Connect keystore: an RSA key is published for
+`RSA-OAEP-256` and an elliptic curve key for `ECDH-ES`. An encrypted request is sent as `application/jwt`, a JWE whose payload
+is the credential request and whose `kid` header names the key. To receive an encrypted response, the wallet adds the key to
+encrypt it to, with its `alg`, and the content encryption algorithm:
+
+```json
+{
+  "credential_configuration_id": "myorg",
+  "proofs": {
+    "jwt": [
+      "eyJ0eXAiOiJvcGVuaWQ0dmNpL..."
+    ]
+  },
+  "credential_response_encryption": {
+    "jwk": {
+      "kty": "EC",
+      "crv": "P-256",
+      "kid": "wallet",
+      "alg": "ECDH-ES",
+      "x": "N5rsOYN3J44MRbUT...",
+      "y": "IZKX5LyZlKGTHHE8..."
+    },
+    "enc": "A256GCM"
+  }
+}
+```
+
+A request asking for an encrypted response must itself be encrypted, so that the response key cannot be swapped on the way.
+The response is then returned as `application/jwt`, encrypted to that key and carrying its `kid`; error responses are never
+encrypted. Parameters that cannot be used, compression (`zip`) which CAS does not support, or a missing
+`credential_response_encryption` when encrypted responses are required are answered with `invalid_encryption_parameters`; a
+request that cannot be decrypted, or a plain request when encrypted requests are required, with `invalid_credential_request`.
+
+{% include_cached casproperties.html properties="cas.authn.oidc.vc.issuer.encryption" %}
+
 ### Nonce Endpoint
 
 Produces a fresh c_nonce that may be used by the wallet in a later proof for the
@@ -194,7 +323,80 @@ credential request.
 POST /oidc/oidcVcNonce
 ```
 
-This endpoint returns `c_nonce`. The challenge is never returned from the token endpoint.
+This endpoint returns `c_nonce`. The challenge is never returned from the token endpoint. Once
+[DPoP nonces](OIDC-Authentication-DPoP.html#server-provided-nonces) are turned on, the response also carries a DPoP nonce in
+its `DPoP-Nonce` header, for the DPoP proof of the credential request.
+
+### Notification Endpoint
+
+Receives notifications from the wallet about the credentials of a credential response, as described by
+[OpenID4VCI 1.0 section 11](https://openid.net/specs/openid-4-verifiable-credential-issuance-1_0.html#name-notification-endpoint).
+Each credential response carries a `notification_id`, and the issuer metadata advertises the endpoint as `notification_endpoint`.
+
+```bash
+POST /oidc/oidcVcNotification
+```
+
+The request carries the access token that obtained the credentials, checked as it is at the credential endpoint, and a JSON body:
+
+```json
+{
+  "notification_id": "TST-1-...",
+  "event": "credential_failure",
+  "event_description": "Could not store the Credential. Out of storage."
+}
+```
+
+The `event` is one of `credential_accepted`, `credential_failure` or `credential_deleted`. A notification is answered with `204`
+and recorded in the CAS audit log as `OIDC_VERIFIABLE_CREDENTIAL_NOTIFICATION`; sending the same notification again succeeds again.
+A notification id that is unknown, has expired with the access token, or was issued to another client or user is answered with
+`invalid_notification_id`, and a malformed request, an unknown event or an `event_description` with characters outside the
+permitted ASCII set with `invalid_notification_request`.
+
+### Deferred Credential Endpoint
+
+Hands out credentials whose issuance was deferred, as described by
+[OpenID4VCI 1.0 section 9](https://openid.net/specs/openid-4-verifiable-credential-issuance-1_0.html#name-deferred-credential-endpoin).
+A credential configuration opts in with its `deferred-issuance` setting, and the issuer metadata then advertises the endpoint as
+`deferred_credential_endpoint`. A credential request for such a configuration is validated as usual, proofs included, and answered
+with `202`:
+
+```json
+{
+  "transaction_id": "TST-1-...",
+  "interval": 300
+}
+```
+
+The transaction is kept in the ticket registry, bound to the client and the user of the access token, with the holder public keys
+of the validated proofs and nothing else. It stays pending until it is approved or denied through the actuator endpoint below.
+The wallet asks for the credentials with an access token of the same client and user that still authorizes the credential
+configuration, such as the original token or one refreshed from it, waiting at least `interval` seconds between attempts:
+
+```bash
+POST /oidc/oidcVcDeferredCredential
+```
+
+```json
+{
+  "transaction_id": "TST-1-..."
+}
+```
+
+A pending transaction is answered with `202` and the same `transaction_id`. Once approved, the answer is `200` with the
+`credentials` and a `notification_id`, built at that moment from the user's attributes, and the `transaction_id` can no longer be
+used. A denied transaction is answered with `credential_request_denied`. A `transaction_id` that is unknown, expired, already
+used, or was started by another client or user is answered with `invalid_transaction_id`. The request may be encrypted and may
+carry its own `credential_response_encryption`, as at the credential endpoint, whatever the credential request asked for.
+
+The stateless ticket registry cannot keep transactions, so with it credentials of these configurations are issued immediately.
+
+{% include_cached casproperties.html properties="cas.authn.oidc.vc.issuer.deferred-issuance" %}
+
+Pending transactions are listed, approved and denied through an actuator endpoint, and each decision is recorded in the CAS
+audit log as `OIDC_VERIFIABLE_CREDENTIAL_DEFERRED_ISSUANCE`:
+
+{% include_cached actuators.html endpoints="oidcVcDeferred" casModule="cas-server-support-oidc-vc" %}
 
 ### Credential Offer Endpoint
 
@@ -293,6 +495,75 @@ In practical terms, the flow is:
 - CAS consumes it so the same proof cannot be replayed.
 
 The token endpoint issues the nonce. The credential endpoint enforces it while validating the proof.
+
+## Key Attestations
+
+A wallet may vouch for the keys it wants credentials bound to with a key attestation, as described by
+[OpenID4VCI 1.0 Appendix D](https://openid.net/specs/openid-4-verifiable-credential-issuance-1_0.html#appendix-D):
+a `key-attestation+jwt` signed by the wallet provider that lists the `attested_keys` and how they are
+protected (`key_storage`, `user_authentication`). Key attestations are verified once trust anchors are
+configured in CAS settings as PEM certificates, typically those of the wallet providers that are trusted.
+Following [HAIP 1.0](https://openid.net/specs/openid4vc-high-assurance-interoperability-profile-1_0.html),
+the attestation carries its signing certificate, and any intermediate certificates, in its `x5c` header;
+the chain must lead to a configured trust anchor without including it, and the signer must not be self-signed.
+The attestation must carry `iat` and, when it carries `exp`, must not have expired. A `status` claim is
+accepted, and logged as a warning, since its revocation status is not checked.
+
+A key attestation can be presented in two ways:
+
+- In the `key_attestation` header of a `jwt` proof. The proof key must be one of the attested keys.
+- As an `attestation` proof, standing in for proof JWTs. Its `nonce` claim must carry a c_nonce issued by CAS,
+  and one credential is issued per attested key, up to the batch size limit.
+
+```json
+{
+  "credential_configuration_id": "myorg",
+  "proofs": {
+    "attestation": [
+      "eyJ0eXAiOiJrZXktYXR0ZXN0YXRpb24rand0Ii..."
+    ]
+  }
+}
+```
+
+A credential configuration may require key attestations, and may list the `key_storage` and `user_authentication`
+values it accepts; an attestation must then name at least one accepted value of each list. A `jwt` proof without
+a key attestation is refused for such a configuration. The requirement is advertised in the issuer metadata as
+`key_attestations_required`, and the `attestation` proof type is advertised once trust anchors are configured:
+
+```json
+{
+  "proof_types_supported": {
+    "jwt": {
+      "proof_signing_alg_values_supported": [
+        "ES256",
+        "RS256"
+      ],
+      "key_attestations_required": {
+        "key_storage": [
+          "iso_18045_high",
+          "iso_18045_moderate"
+        ]
+      }
+    },
+    "attestation": {
+      "proof_signing_alg_values_supported": [
+        "ES256",
+        "RS256"
+      ],
+      "key_attestations_required": {
+        "key_storage": [
+          "iso_18045_high",
+          "iso_18045_moderate"
+        ]
+      }
+    }
+  }
+}
+```
+
+A key attestation that fails any of these checks is answered with `invalid_proof`, while a missing, unknown or reused
+nonce in an `attestation` proof is answered with `invalid_nonce`.
 
 ## Authorization Code Flow
 
@@ -526,10 +797,11 @@ expired unanswered.
 
 CAS as a verifier trusts only itself. A presented credential is accepted when its `iss` is this
 deployment's own issuer, its `vct` resolves to one of the credential configurations above, and its
-signature verifies against this deployment's own signing key; `iat` and `exp` are both required, and a
-credential carrying a `status` claim is refused rather than accepted unchecked, since CAS evaluates no
-status list. There is no external issuer trust list, no `x5c` chain validation, no DID resolution, no
-OpenID Federation and no Token Status List, so credentials issued elsewhere are rejected.
+signature verifies against this deployment's own signing key; `iat` and `exp` are both required. A
+credential carrying a `status` claim must point into a [status list](#credential-status) CAS publishes, and
+its entry must be `VALID`; any other status reference is refused rather than accepted unchecked. There is no
+external issuer trust list, no `x5c` chain validation, no DID resolution and no OpenID Federation, so credentials
+issued elsewhere are rejected.
 
 This is a trust policy rather than a protocol limitation: OpenID4VP leaves issuer trust to the verifier,
 noting that "Verifiers must verify that the issuer of a received presentation is trusted on their own".
@@ -583,6 +855,82 @@ code, the nonce or the access token used to obtain it.
 
 Claim values come from principal attributes. A value that reads as a number, such as `95.5`, is issued as a
 number; one whose number would not read back the same way, such as `02134`, is issued as text exactly as released.
+
+## Credential Status
+
+Issued credentials can carry a `status` claim, so they can be revoked or suspended after issuance, following the
+[Token Status List](https://datatracker.ietf.org/doc/draft-ietf-oauth-status-list/) specification as the
+[High Assurance Interoperability Profile](https://openid.net/specs/openid4vc-high-assurance-interoperability-profile-1_0.html)
+requires of SD-JWT VC credentials. Once turned on in CAS settings, every `dc+sd-jwt` credential references its own
+entry in a status list published by CAS:
+
+```json
+{
+  "status": {
+    "status_list": {
+      "idx": 48213,
+      "uri": "https://sso.example.org/cas/oidc/oidcVcStatusList/1"
+    }
+  }
+}
+```
+
+Each credential gets a random, unpredictable index, unique among the unexpired credentials of its status list, and a new status
+list is started once a list has little room left. Entries are kept in the ticket registry and expire with their credential, so
+statuses survive restarts and are shared by all nodes that share the registry; an index may be reused once the credential that
+held it has expired. The stateless ticket registry cannot keep entries, so credentials are issued without status when it is used.
+
+The status list is served by a public endpoint, which allows cross-origin requests:
+
+```bash
+GET /oidc/oidcVcStatusList/{id}
+```
+
+The response is a status list token, of type `application/statuslist+jwt`, signed with the issuer signing key and carrying its
+`x5c` certificate chain, if any. Each entry takes 2 bits, for the `VALID`, `INVALID` and `SUSPENDED` statuses, and verifiers may
+cache the token for its `ttl`; CAS caches the token it builds for as long, so a status change is visible to verifiers within that time.
+
+```json
+{
+  "sub": "https://sso.example.org/cas/oidc/oidcVcStatusList/1",
+  "iat": 1791238400,
+  "exp": 1791324800,
+  "ttl": 600,
+  "status_list": {
+    "bits": 2,
+    "lst": "eNrtwTEBAAAAwqD1T20ND6AAAAAAAAAAAAAAAAAAAAAAAH4G...",
+    "aggregation_uri": "https://sso.example.org/cas/oidc/oidcVcStatusListAggregation"
+  }
+}
+```
+
+Every status list token also names the status list aggregation as its `aggregation_uri`, and the authorization
+server metadata advertises it as `status_list_aggregation_endpoint`. The aggregation lists the URIs of all status lists
+that hold unexpired entries, so a verifier can fetch and cache them ahead of time; it is public and allows
+cross-origin requests as well:
+
+```bash
+GET /oidc/oidcVcStatusListAggregation
+```
+
+```json
+{
+  "status_lists": [
+    "https://sso.example.org/cas/oidc/oidcVcStatusList/1",
+    "https://sso.example.org/cas/oidc/oidcVcStatusList/2"
+  ]
+}
+```
+
+{% include_cached casproperties.html properties="cas.authn.oidc.vc.issuer.status-list" %}
+
+The status of issued credentials is managed through an actuator endpoint, which lists the credentials issued to a user and
+changes the status of one, to revoke, suspend or reinstate it:
+
+{% include_cached actuators.html endpoints="oidcVcStatus" casModule="cas-server-support-oidc-vc" %}
+
+Key attestations and wallet attestations that carry a `status` claim are still accepted with a warning; their status lists are
+not fetched.
 
 ## Credential Formats
 

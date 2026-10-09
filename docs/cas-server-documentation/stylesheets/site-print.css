@@ -123,6 +123,10 @@ blockquote, #dev-doc-info {
     font-weight: bold;
 }
 
+#dev-doc-info .dev-doc-summary {
+    display: none;
+}
+
 .tab, .nav-pills, .nav-tabs {
     display: none;
 }

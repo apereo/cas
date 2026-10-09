@@ -138,6 +138,36 @@ class RegisteredServiceResponseHeadersEnforcementFilterTests {
     }
 
     @Test
+    void verifyNumericLookingServiceIsNotAnIdentifier() {
+        val filter = getFilterForProperty(UUID.randomUUID().toString(), RegisteredServiceProperties.HTTP_HEADER_ENABLE_CACHE_CONTROL);
+        filter.init(new MockFilterConfig(new MockServletContext()));
+        for (val service : List.of("1.5", "0x1F", "1e3", "99999999999999999999")) {
+            val response = new MockHttpServletResponse();
+            val request = new MockHttpServletRequest();
+            request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, service);
+            assertDoesNotThrow(() -> filter.doFilter(request, response, new MockFilterChain()));
+            assertEquals(HttpStatus.SC_FORBIDDEN, response.getStatus());
+        }
+    }
+
+    @Test
+    void verifyServiceByNumericIdentifier() {
+        val id = UUID.randomUUID().toString();
+        val filter = getFilterForProperty(id, RegisteredServiceProperties.HTTP_HEADER_ENABLE_CACHE_CONTROL);
+        val registeredService = servicesManager.findServiceBy(RegisteredServiceTestUtils.getService(id));
+        assertNotNull(registeredService);
+        val response = new MockHttpServletResponse();
+        val request = new MockHttpServletRequest();
+        request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, String.valueOf(registeredService.getId()));
+        val filterConfig = new MockFilterConfig(new MockServletContext());
+        filterConfig.addInitParameter(ResponseHeadersEnforcementFilter.INIT_PARAM_CACHE_CONTROL_STATIC_RESOURCES, "css|js|png|txt|jpg|ico|jpeg|bmp|gif");
+        filter.init(filterConfig);
+        filter.doFilter(request, response, new MockFilterChain());
+        assertEquals(HttpStatus.SC_OK, response.getStatus());
+        assertNotNull(response.getHeader("Cache-Control"));
+    }
+
+    @Test
     void verifyCacheControl() {
         val id = UUID.randomUUID().toString();
         val filter = getFilterForProperty(id, RegisteredServiceProperties.HTTP_HEADER_ENABLE_CACHE_CONTROL);

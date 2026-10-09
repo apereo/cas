@@ -1,6 +1,7 @@
 ---
 layout: default
-title: CAS - Audit Configuration
+title: CAS - Audits
+description: "The CAS audit log: what is recorded, the audit trail format and storage in files, databases and other backends."
 category: Logs & Audits
 ---
 {% include variables.html %}

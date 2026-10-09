@@ -1,6 +1,6 @@
 ---
 layout: default
-title: CAS - Google Cloud Logging Configuration
+title: CAS - Elastic Search Logging
 category: Logs & Audits
 ---
 

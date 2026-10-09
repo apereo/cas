@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Configuring Service Proxy Policy
+description: "Proxy policies that control whether a registered application may receive proxy-granting tickets, and for which callback URLs."
 category: Services
 ---
 

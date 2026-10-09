@@ -1,10 +1,12 @@
 ---
 layout: default
-title: CAS - CAS REST Protocol
+title: CAS - Ticket Status - REST Protocol
 category: Protocols
 ---
 
 {% include variables.html %}
+
+# Ticket Status - REST Protocol
 
 Verify the status of an obtained ticket to make sure it still is valid
 and has not yet expired.

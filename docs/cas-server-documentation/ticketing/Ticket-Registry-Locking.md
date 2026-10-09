@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Ticket Registry Locking
+description: "Distributed locking in ticket registries, which keeps concurrent requests from corrupting tickets under heavy load."
 category: Ticketing
 ---
 

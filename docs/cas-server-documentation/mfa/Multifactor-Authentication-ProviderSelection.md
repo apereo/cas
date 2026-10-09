@@ -1,6 +1,7 @@
 ---
 layout: default
-title: CAS - Multifactor Authentication
+title: CAS - Multifactor Authentication - Provider Selection
+description: "Choose between several eligible multifactor providers by rank, by script, or by letting the user select one."
 category: Multifactor Authentication
 ---
 

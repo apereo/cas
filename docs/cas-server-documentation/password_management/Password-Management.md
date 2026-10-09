@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Password Management
+description: "Let users change expired or rejected passwords during login, with LDAP, JDBC, REST and other account stores."
 category: Password Management
 ---
 

@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Delegate Authentication Discovery Selection
+description: "Let users discover and select an external identity provider, for example by email domain, before delegating authentication."
 category: Authentication
 ---
 

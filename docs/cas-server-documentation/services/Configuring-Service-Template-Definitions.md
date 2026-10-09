@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Service Template Definitions
+description: "Templates and blueprints that supply shared defaults for registered service definitions."
 category: Services
 ---
 

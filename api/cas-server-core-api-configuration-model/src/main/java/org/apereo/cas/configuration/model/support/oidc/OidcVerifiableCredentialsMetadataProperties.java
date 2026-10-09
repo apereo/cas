@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration.model.support.oidc;
 
 import module java.base;
+import org.apereo.cas.configuration.support.DurationCapable;
 import org.apereo.cas.configuration.support.RequiresModule;
 import lombok.Getter;
 import lombok.Setter;
@@ -24,4 +25,11 @@ public class OidcVerifiableCredentialsMetadataProperties implements Serializable
      * Whether claims should be included in the metadata.
      */
     private boolean includeClaims = true;
+
+    /**
+     * How long signed credential issuer metadata, returned to wallets that ask for {@code application/jwt}, remains valid,
+     * advertised as its {@code exp} claim.
+     */
+    @DurationCapable
+    private String signedMetadataExpiration = "P1D";
 }

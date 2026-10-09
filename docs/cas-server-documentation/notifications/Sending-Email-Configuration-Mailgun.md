@@ -1,12 +1,15 @@
 ---
 layout: default
-title: CAS - Sending Email
+title: CAS - Sending Email - Mailgun
 category: Notifications
 ---
 
 {% include variables.html %}
 
 # Sending Email - Mailgun
+
+Send email from CAS through Mailgun instead of an SMTP server.
+
    
 You may instruct CAS to use [Mailgun](https://www.mailgun.com/) for sending emails.
 Support is enabled by including the following module:

@@ -2,6 +2,7 @@ package org.apereo.cas.util.crypto;
 
 import module java.base;
 import org.apereo.cas.util.DateTimeUtils;
+import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import lombok.experimental.UtilityClass;
 import lombok.val;
@@ -10,6 +11,7 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import org.cryptacular.util.CertUtil;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.InputStreamSource;
+import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 
 
@@ -115,11 +117,56 @@ public class CertUtils {
     }
 
     /**
+     * Read trust anchors from PEM resources, each of which may hold several certificates.
+     *
+     * @param locations the resource locations
+     * @return the trust anchors
+     */
+    public static Set<TrustAnchor> readTrustAnchors(final List<String> locations) {
+        return locations
+            .stream()
+            .map(location -> FunctionUtils.doUnchecked(() -> readCertificates(location)))
+            .flatMap(List::stream)
+            .map(certificate -> new TrustAnchor(certificate, null))
+            .collect(Collectors.toUnmodifiableSet());
+    }
+
+    /**
+     * Validate a certificate chain, leaf first, as sent in an {@code x5c} header, with PKIX against the trust anchors and
+     * without revocation checking. The chain must not carry the trust anchor and no certificate in it may be self-issued,
+     * as HAIP 1.0 requires of attestation and credential signers.
+     *
+     * @param certificateChain the certificate chain, leaf first
+     * @param trustAnchors     the trust anchors
+     * @return the leaf certificate
+     * @throws GeneralSecurityException when the chain is empty, carries a self-issued certificate or does not validate
+     */
+    public static X509Certificate validateCertificateChain(final List<X509Certificate> certificateChain,
+                                                           final Set<TrustAnchor> trustAnchors) throws GeneralSecurityException {
+        if (certificateChain.isEmpty() || certificateChain.stream().anyMatch(CertUtils::isSelfIssued)) {
+            throw new CertificateException("Certificate chain must not be empty or carry a trust anchor or a self-signed certificate");
+        }
+        val parameters = new PKIXParameters(trustAnchors);
+        parameters.setRevocationEnabled(false);
+        CertPathValidator.getInstance("PKIX").validate(getCertificateFactory().generateCertPath(certificateChain), parameters);
+        return certificateChain.getFirst();
+    }
+
+    /**
      * Gets a certificate factory for creating X.509 artifacts.
      *
      * @return X509 certificate factory.
      */
     public static CertificateFactory getCertificateFactory() {
         return FunctionUtils.doUnchecked(() -> CertificateFactory.getInstance(X509_CERTIFICATE_TYPE));
+    }
+
+    private static List<X509Certificate> readCertificates(final String location) throws Exception {
+        try (val input = ResourceUtils.getResourceFrom(location).getInputStream()) {
+            return getCertificateFactory().generateCertificates(input)
+                .stream()
+                .map(X509Certificate.class::cast)
+                .toList();
+        }
     }
 }

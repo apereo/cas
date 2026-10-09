@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Service Registry Initialization
+description: "Seed a service registry with default JSON service definitions when CAS starts."
 category: Services
 ---
 

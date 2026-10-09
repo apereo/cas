@@ -13,7 +13,6 @@ import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.util.DateTimeUtils;
 import lombok.val;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -31,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Authentication")
 @ExtendWith(CasTestExtension.class)
 @SpringBootTest(classes = BaseQRAuthenticationTokenValidatorServiceTests.SharedTestConfiguration.class,
-    properties = "cas.authn.qr.json.location=file:${java.io.tmpdir}/cas-qr-devices.json")
+    properties = "cas.authn.qr.json.location=file:${java.io.tmpdir}/cas-qr-devices-${random.uuid}.json")
 class DefaultQRAuthenticationTokenValidatorServiceTests {
     @Autowired
     @Qualifier(JwtBuilder.TICKET_JWT_BUILDER_BEAN_NAME)
@@ -51,11 +50,6 @@ class DefaultQRAuthenticationTokenValidatorServiceTests {
     @Autowired
     @Qualifier("qrAuthenticationDeviceRepository")
     private QRAuthenticationDeviceRepository qrAuthenticationDeviceRepository;
-
-    @BeforeEach
-    void beforeEach() {
-        qrAuthenticationDeviceRepository.removeAll();
-    }
 
     @Test
     void verifyUnknownTicket() throws Throwable {

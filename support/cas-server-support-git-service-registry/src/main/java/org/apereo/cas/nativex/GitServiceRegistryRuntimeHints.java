@@ -5,6 +5,7 @@ import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import org.eclipse.jgit.dircache.DirCache;
 import org.eclipse.jgit.internal.JGitText;
 import org.eclipse.jgit.lib.CoreConfig;
+import org.eclipse.jgit.lib.GcConfig;
 import org.eclipse.jgit.transport.HttpConfig;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
@@ -23,6 +24,7 @@ public class GitServiceRegistryRuntimeHints implements CasRuntimeHintsRegistrar 
         registerReflectionHints(hints, List.of(
             HttpConfig.HttpRedirectMode.class,
             DirCache.DirCacheVersion.class,
+            GcConfig.PackRefsMode.class,
             JGitText.class,
             CoreConfig.CheckStat.class,
             CoreConfig.SymLinks.class,

@@ -11,7 +11,7 @@ const cas = require("../../cas.js");
     
     await cas.click(page, "#forgotPasswordLink");
     await cas.sleep(1000);
-    await cas.assertInnerText(page, "#reset #fm1 h3", "Reset your password");
+    await cas.assertInnerText(page, "#reset #fm1 h2", "Reset your password");
     await cas.assertVisibility(page, "#username");
     await cas.attributeValue(page, "#username", "autocapitalize", "none");
     await cas.attributeValue(page, "#username", "spellcheck", "false");
@@ -29,12 +29,12 @@ const cas = require("../../cas.js");
     const link = await cas.extractFromEmail(browser);
     await cas.goto(page, link);
     await cas.sleep(1000);
-    await cas.assertInnerText(page, "#content #pwdmain h3", "Hello, casuser. You must change your password.");
+    await cas.assertInnerText(page, "#content #pwdmain h2", "Hello, casuser. You must change your password.");
 
     await cas.sleep(2000);
     await cas.goto(page, link);
     await cas.sleep(1000);
-    await cas.assertInnerText(page, "#content #pwdmain h3", "Hello, casuser. You must change your password.");
+    await cas.assertInnerText(page, "#content #pwdmain h2", "Hello, casuser. You must change your password.");
 
     await cas.sleep(2000);
     await cas.goto(page, link);

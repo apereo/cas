@@ -6,6 +6,7 @@ import org.apereo.cas.audit.RedisAuditTrailManager;
 import org.apereo.cas.authentication.CasSSLContext;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
+import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.redis.core.CasRedisTemplate;
 import org.apereo.cas.redis.core.RedisObjectFactory;
 import org.apereo.cas.util.spring.beans.BeanCondition;
@@ -48,7 +49,11 @@ public class CasSupportRedisAuditAutoConfiguration {
             .when(CONDITION.given(applicationContext.getEnvironment()))
             .supply(() -> {
                 val redis = casProperties.getAudit().getRedis();
-                return new RedisAuditTrailManager(auditRedisTemplate, redis.isAsynchronous());
+                val manager = new RedisAuditTrailManager(auditRedisTemplate, redis.isAsynchronous());
+                if (!Beans.isInfinitelyDurable(redis.getMaxAge())) {
+                    manager.setMaxAge(Beans.newDuration(redis.getMaxAge()));
+                }
+                return manager;
             })
             .otherwiseProxy()
             .get();

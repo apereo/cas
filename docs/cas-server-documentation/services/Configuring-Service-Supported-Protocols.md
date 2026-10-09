@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Configuring Service Protocols
+description: "Limit which CAS protocol versions a registered application may use to validate service tickets."
 category: Services
 ---
 

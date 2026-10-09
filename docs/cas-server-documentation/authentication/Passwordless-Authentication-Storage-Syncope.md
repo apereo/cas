@@ -1,6 +1,6 @@
 ---
 layout: default
-title: CAS - Passwordless Authentication
+title: CAS - Apache Syncope - Passwordless Authentication Storage
 category: Authentication
 ---
 {% include variables.html %}

@@ -1,25 +1,17 @@
-import groovy.io.FileType
-import groovy.json.JsonOutput
-import groovy.json.JsonSlurper
-import org.apereo.cas.gradle.CasBuildSettings
 import org.apereo.cas.gradle.TestCategories
+import org.apereo.cas.gradle.TestCategoryTagsValueSource
 import org.gradle.api.tasks.testing.Test
 
-import java.nio.charset.StandardCharsets
-import java.security.MessageDigest
-import java.util.concurrent.ConcurrentHashMap
-import java.util.Collections
-import java.util.regex.Pattern
-
-ext.testTagMap = new ConcurrentHashMap<String, Set<String>>()
+def categoryTags = providers.of(TestCategoryTagsValueSource) {
+    parameters.sourceDirectories.set(sourceSets.test.java.srcDirs.collect { it.absolutePath }.sort())
+}.get()
 
 TestCategories.values().each { testCategory ->
-    def sourceTestDirs = project.sourceSets.test.java.srcDirs
-    if (hasTestsOfCategory(sourceTestDirs, testCategory.name())) {
+    if (categoryTags.contains(testCategory.name())) {
         def taskName = "test${testCategory.name()}"
         if (!tasks.getNames().contains(taskName)) {
             def jacocoTestExecutionResultsFile = project.layout.buildDirectory.file("jacoco/jacoco-${taskName}.exec").get().asFile
-            def shouldWeTest = shouldTest(sourceTestDirs, testCategory.name())
+            def shouldWeTest = shouldTest(testCategory.name())
             def coverageEnabled = isCoverageEnabled()
             tasks.register(taskName, Test) {
                 description = "Run unit/integration tests to verify the test category: ${testCategory.name()}"
@@ -191,87 +183,16 @@ tasks.withType(Test).configureEach {
     }
 }
 
-def shouldTest(final Set sourceTestDirectories, final String category) {
-    def foundTest = gradle.startParameter.taskNames.any { task -> task.matches(/^test${category}$/) }
+def shouldTest(final String category) {
+    def taskName = "test${category}"
+    def foundTest = gradle.startParameter.taskNames.any { task -> task == taskName || task.endsWith(":${taskName}") }
     if (!foundTest) {
         logger.debug "No tests with category ${category} found"
     }
-    !providers.systemProperty('skipTests').present && foundTest && hasTestsOfCategory(sourceTestDirectories, category)
-}
-
-def hasTestsOfCategory(final Set sourceTestDirectories, final String category) {
-    def result = testTagMap.computeIfAbsent(testTagCacheKey(sourceTestDirectories)) {
-        loadTagsFromCache(sourceTestDirectories)
-    } as Set<String>
-    result.contains(category)
+    !providers.systemProperty('skipTests').present && foundTest
 }
 
 def isCoverageEnabled() {
     providers.systemProperty('enableJacocoAgent').orElse('false').get().toBoolean() ||
         gradle.startParameter.taskNames.any { it.toLowerCase(Locale.ENGLISH).contains('jacoco') }
-}
-
-static def testTagCacheKey(final Set sourceTestDirectories) {
-    def digest = MessageDigest.getInstance('SHA-256')
-    def keyMaterial = sourceTestDirectories
-        .findAll { it.exists() }
-        .collect { it.canonicalPath }
-        .sort()
-        .join('|')
-    digest.update(keyMaterial.getBytes(StandardCharsets.UTF_8))
-    digest.digest().encodeHex().toString()
-}
-
-def testTagCacheFile(final Set sourceTestDirectories) {
-    new File(project.rootDir, ".gradle/cas-test-tags/${testTagCacheKey(sourceTestDirectories)}.json")
-}
-
-static def collectTestFiles(final Set sourceTestDirectories) {
-    def files = []
-    sourceTestDirectories.each { src ->
-        if (src.exists()) {
-            src.traverse(type: FileType.FILES, nameFilter: ~/.*Tests\.\w+/) { file ->
-                files << file
-            }
-        }
-    }
-    files
-}
-
-def loadTagsFromCache(final Set sourceTestDirectories) {
-    def cacheFile = testTagCacheFile(sourceTestDirectories)
-    cacheFile.parentFile.mkdirs()
-
-    def testFiles = collectTestFiles(sourceTestDirectories)
-    def cacheFingerprint = testFiles
-        .collect { "${it.canonicalPath}:${it.length()}:${it.lastModified()}" }
-        .sort()
-        .join('|')
-
-    if (cacheFile.exists()) {
-        try {
-            def cache = new JsonSlurper().parse(cacheFile)
-            if (cache.fingerprint == cacheFingerprint) {
-                return new HashSet<String>(cache.tags ?: [])
-            }
-        } catch (ignored) {
-            cacheFile.delete()
-        }
-    }
-
-    def tagPattern = ~/^\s*@Tag\("(\w+)"\)\s*$/
-    def tags = Collections.synchronizedSet(new HashSet<String>())
-    testFiles.parallelStream().forEach { file ->
-        file.readLines().each { line ->
-            def match = line =~ tagPattern
-            if (match.find()) {
-                tags.add(match.group(1))
-            }
-        }
-    }
-    cacheFile.text = JsonOutput.toJson([
-        fingerprint: cacheFingerprint,
-        tags       : tags.toSorted()
-    ])
-    tags
 }

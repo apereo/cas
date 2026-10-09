@@ -1,12 +1,14 @@
 ---
 layout: default
-title: CAS - Metrics
+title: CAS - Amazon Cloudwatch Storage - CAS Metrics
 category: Monitoring & Statistics
 ---
 
 {% include variables.html %}
 
 # Amazon Cloudwatch Storage - CAS Metrics
+
+Export CAS metrics to Amazon CloudWatch for monitoring in AWS.
 
 [AWS CloudWatch](https://aws.amazon.com/cloudwatch/) is a monitoring and observability service in the AWS cloud platform. One of 
 its main features is collecting metrics and storing the metrics in a time-series database. It is a dimensional time-series service 

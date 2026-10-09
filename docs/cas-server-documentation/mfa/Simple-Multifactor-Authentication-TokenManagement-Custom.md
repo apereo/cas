@@ -1,12 +1,14 @@
 ---
 layout: default
-title: CAS - Simple Multifactor Authentication
+title: CAS - Simple Multifactor Authentication - Custom Token Management
 category: Multifactor Authentication
 ---
 
 {% include variables.html %}
 
 # Simple Multifactor Authentication - Custom Token Management
+
+Issue and validate CAS Simple multifactor tokens with your own implementation of `CasSimpleMultifactorAuthenticationService`.
 
 You may define your own multifactor authentication service using the following
 bean definition and by implementing `CasSimpleMultifactorAuthenticationService`:

@@ -58,8 +58,7 @@ public record SamlRegisteredServiceMetadataExpirationPolicy(Duration defaultExpi
         final @NonNull SamlRegisteredServiceCacheKey cacheKey,
         final @NonNull CachedMetadataResolverResult cacheResult,
         final long currentTime, final long currentDuration) {
-        LOGGER.trace("Cache expiration duration after updates is set to [{}] nanoseconds", currentDuration);
-        return currentDuration;
+        return expireAfterCreate(cacheKey, cacheResult, currentTime);
     }
 
     @Override

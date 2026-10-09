@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Notifications
+description: "Send platform notifications such as Slack, Firebase Cloud Messaging and Apple push notifications from CAS."
 category: Notifications
 ---
 

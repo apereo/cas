@@ -47,7 +47,7 @@ public class CasJaversAutoConfiguration {
 
         @Bean
         @ConditionalOnMissingBean(name = "javersMongoDatabaseFactory")
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public MongoDatabaseFactory javersMongoDatabaseFactory(
             final CasConfigurationProperties casProperties) {
             val factory = new MongoDbConnectionFactory();
@@ -72,7 +72,7 @@ public class CasJaversAutoConfiguration {
 
         @Bean
         @ConditionalOnMissingBean(name = "objectVersionRepository")
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public EntityHistoryRepository objectVersionRepository(
             @Qualifier("JaversFromStarter") final Javers javers) {
             return new JaversEntityHistoryRepository(javers);

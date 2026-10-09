@@ -1,12 +1,14 @@
 ---
 layout: default 
-title: CAS - Phone Calls 
+title: CAS - Phone Calls - Custom Operators
 category: Notifications
 ---
 
 {% include variables.html %}
 
 # Phone Calls - Custom Operators
+
+Make phone calls through an operator CAS does not support by implementing `PhoneCallOperator` and registering it with CAS.
 
 You may define your own phone operator that would be tasked to make calls, etc using the following
 bean definition and by implementing `PhoneCallOperator`:

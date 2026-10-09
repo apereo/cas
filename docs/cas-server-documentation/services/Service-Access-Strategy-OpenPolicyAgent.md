@@ -1,6 +1,7 @@
 ---
 layout: default
-title: CAS - Configuring Service Access Strategy
+title: CAS - Service Access Strategy - Open Policy Agent (OPA)
+description: "Authorize access to applications registered with CAS by evaluating Open Policy Agent policies."
 category: Services
 ---
 

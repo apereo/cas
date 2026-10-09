@@ -1,6 +1,7 @@
 package org.apereo.cas.nativex;
 
 import module java.base;
+import org.apereo.cas.oidc.federation.subordinate.OidcFederationSubordinate;
 import org.apereo.cas.oidc.jwks.generator.OidcJsonWebKeystoreEntity;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -19,9 +20,11 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Native")
 class OidcFederationRuntimeHintsTests {
     @Test
-    void verifyHints() {
+    void verifyHints() throws Exception {
         val hints = new RuntimeHints();
         new OidcFederationRuntimeHints().registerHints(hints, getClass().getClassLoader());
         assertTrue(RuntimeHintsPredicates.reflection().onType(OidcJsonWebKeystoreEntity.class).test(hints));
+        assertTrue(RuntimeHintsPredicates.reflection()
+            .onConstructorInvocation(OidcFederationSubordinate.class.getConstructor()).test(hints));
     }
 }

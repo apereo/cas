@@ -1,6 +1,7 @@
 ---
 layout: default
-title: CAS - Configuring Ticket Expiration Policy Components
+title: CAS - Ticket Expiration Policies
+description: "Expiration policies for ticket-granting, service, proxy and other tickets, globally or per application."
 category: Ticketing
 ---
 

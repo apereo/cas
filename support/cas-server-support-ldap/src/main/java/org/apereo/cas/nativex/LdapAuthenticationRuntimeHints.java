@@ -4,6 +4,7 @@ import module java.base;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import org.jspecify.annotations.Nullable;
 import org.springframework.aot.hint.RuntimeHints;
+import javax.security.auth.login.AccountLockedException;
 
 /**
  * This is {@link LdapAuthenticationRuntimeHints}.
@@ -14,5 +15,6 @@ import org.springframework.aot.hint.RuntimeHints;
 public class LdapAuthenticationRuntimeHints implements CasRuntimeHintsRegistrar {
     @Override
     public void registerHints(final RuntimeHints hints, final @Nullable ClassLoader classLoader) {
+        registerReflectionHints(hints, AccountLockedException.class);
     }
 }

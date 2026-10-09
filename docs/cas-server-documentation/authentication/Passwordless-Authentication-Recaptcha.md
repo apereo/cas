@@ -1,6 +1,6 @@
 ---
 layout: default
-title: CAS - Passwordless Authentication
+title: CAS - Passwordless Authentication - reCAPTCHA Integration
 category: Authentication
 ---
 {% include variables.html %}

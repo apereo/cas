@@ -1,12 +1,14 @@
 ---
 layout: default
-title: CAS - Delegate Authentication
+title: CAS - CAS Delegated Authentication
 category: Authentication
 ---
 
 {% include variables.html %}
 
 # CAS Delegated Authentication
+
+Let users log in through another CAS server, which acts as the external identity provider for this one.
 
 For an overview of the delegated authentication flow, please [see this guide](Delegate-Authentication.html).
 

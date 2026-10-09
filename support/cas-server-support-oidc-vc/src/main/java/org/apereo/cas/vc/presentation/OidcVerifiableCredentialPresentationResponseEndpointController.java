@@ -4,6 +4,7 @@ import module java.base;
 import org.apereo.cas.configuration.model.support.oidc.OidcVerifiableCredentialConfigurationProperties;
 import org.apereo.cas.oidc.OidcConfigurationContext;
 import org.apereo.cas.oidc.OidcConstants;
+import org.apereo.cas.oidc.vc.issuer.status.OidcVerifiableCredentialStatusListService;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
@@ -47,8 +48,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
-import tools.jackson.core.StreamReadFeature;
-import tools.jackson.core.json.JsonFactory;
 import tools.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -111,9 +110,7 @@ public class OidcVerifiableCredentialPresentationResponseEndpointController exte
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(false)
         .minimal(true)
-        .jsonFactory(JsonFactory.builder()
-            .enable(StreamReadFeature.STRICT_DUPLICATE_DETECTION)
-            .build())
+        .strictDuplicateDetection(true)
         .build()
         .toObjectMapper();
 
@@ -135,9 +132,13 @@ public class OidcVerifiableCredentialPresentationResponseEndpointController exte
 
     private static final int MAX_ERROR_DESCRIPTION_LENGTH = 1024;
 
+    private final OidcVerifiableCredentialStatusListService statusListService;
+
     public OidcVerifiableCredentialPresentationResponseEndpointController(
-        final OidcConfigurationContext configurationContext) {
+        final OidcConfigurationContext configurationContext,
+        final OidcVerifiableCredentialStatusListService statusListService) {
         super(configurationContext);
+        this.statusListService = statusListService;
     }
 
     /**
@@ -484,7 +485,7 @@ public class OidcVerifiableCredentialPresentationResponseEndpointController exte
         verifyCredentialSignature(credentialJwt);
         require(encodedClaims.containsKey("exp"), "Credential has no expiration time");
         validateTimeClaims(encodedClaims, true, null);
-        require(!encodedClaims.containsKey("status"), "Credential status validation is not supported");
+        validateCredentialStatus(encodedClaims.get("status"));
 
         val cnf = encodedClaims.get("cnf");
         require(cnf instanceof Map<?, ?>, "Credential has no holder binding key");
@@ -837,6 +838,27 @@ public class OidcVerifiableCredentialPresentationResponseEndpointController exte
             .cacheControl(CacheControl.noStore())
             .header(HttpHeaders.PRAGMA, "no-cache")
             .body(body);
+    }
+
+    /**
+     * A credential that carries a {@code status} claim must point, through {@code status_list}, to an unexpired entry of a
+     * status list CAS publishes, and that entry must be {@code VALID}. CAS only trusts credentials it issued itself, so the
+     * entry is read from its own records rather than fetched; a status the verifier cannot evaluate is refused.
+     *
+     * @param status the status claim, if any
+     */
+    private void validateCredentialStatus(final @Nullable Object status) {
+        if (status == null) {
+            return;
+        }
+        require(status instanceof final Map<?, ?> statusClaim && statusClaim.get("status_list") instanceof Map<?, ?>,
+            "Credential status is not a status list reference");
+        val statusList = (Map<?, ?>) ((Map<?, ?>) status).get("status_list");
+        require(statusList.get("uri") instanceof String && statusList.get("idx") instanceof final Number index
+            && index.longValue() >= 0, "Credential status list reference is invalid");
+        val credentialStatus = statusListService.getStatus((String) statusList.get("uri"), ((Number) statusList.get("idx")).longValue());
+        require(credentialStatus.isPresent() && credentialStatus.get() == OidcVerifiableCredentialStatusListService.StatusType.VALID,
+            "Credential is revoked, suspended or its status is unknown");
     }
 
     private static void require(final boolean condition, final String message) {

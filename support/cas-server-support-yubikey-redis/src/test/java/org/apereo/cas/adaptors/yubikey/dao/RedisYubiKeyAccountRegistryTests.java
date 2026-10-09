@@ -11,11 +11,13 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import lombok.Getter;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link RedisYubiKeyAccountRegistryTests}.
@@ -32,6 +34,8 @@ import org.springframework.boot.test.context.SpringBootTest;
     properties = {
         "cas.authn.mfa.yubikey.redis.host=localhost",
         "cas.authn.mfa.yubikey.redis.port=6379",
+        "cas.authn.mfa.yubikey.redis.pool.enabled=true",
+        "cas.authn.mfa.yubikey.redis.pool.max-active=4",
         "cas.authn.mfa.yubikey.client-id=18423",
         "cas.authn.mfa.yubikey.secret-key=zAIqhjui12mK8x82oe9qzBEb0As="
     })
@@ -47,4 +51,11 @@ class RedisYubiKeyAccountRegistryTests extends AbstractYubiKeyAccountRegistryTes
     @Autowired
     @Qualifier("yubiKeyAccountRegistry")
     private YubiKeyAccountRegistry yubiKeyAccountRegistry;
+
+    @Test
+    void verifyLoadingAccountsReturnsConnections() {
+        for (var i = 0; i < 10; i++) {
+            assertNotNull(yubiKeyAccountRegistry.getAccounts());
+        }
+    }
 }

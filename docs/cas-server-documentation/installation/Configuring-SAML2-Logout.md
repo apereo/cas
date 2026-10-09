@@ -1,6 +1,6 @@
 ---
 layout: default
-title: CAS - SAML2 NameID Configuration
+title: CAS - SAML2 Logout & SLO
 category: Protocols
 ---
 {% include variables.html %}

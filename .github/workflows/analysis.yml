@@ -55,6 +55,7 @@ jobs:
         uses: gradle/actions/setup-gradle@v6
         with:
           gradle-home-cache-excludes: caches/build-cache-1
+          cache-encryption-key: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
       - name: Initialize
         run: ls ./ci && find ./ci -type f -name "*.sh" -exec chmod +x "{}" \; && ./ci/init-build.sh
 
@@ -84,10 +85,11 @@ jobs:
         uses: gradle/actions/setup-gradle@v6
         with:
           gradle-home-cache-excludes: caches/build-cache-1
+          cache-encryption-key: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
       - name: Initialize
         run: find ./ci -type f -name "*.sh" -exec chmod +x "{}" \; && ./ci/init-build.sh
       - name: Run Analysis
-        run: ./gradlew --build-cache --quiet --no-watch-fs --configure-on-demand --parallel --no-daemon ${{ matrix.category }} -x test -x javadoc -DskipNestedConfigMetadataGen=true
+        run: ./gradlew --build-cache --quiet --no-watch-fs --configure-on-demand --parallel ${{ matrix.category }} -x test -x javadoc -DskipNestedConfigMetadataGen=true
 
 ##########################################################################
   codeql-analysis:
@@ -113,6 +115,7 @@ jobs:
         uses: gradle/actions/setup-gradle@v6
         with:
           gradle-home-cache-excludes: caches/build-cache-1
+          cache-encryption-key: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
           develocity-access-key: ${{ env.DEVELOCITY_ACCESS_KEY }}
           develocity-token-expiry: 4
       - name: Initialize CodeQL
@@ -121,7 +124,7 @@ jobs:
           languages: java
           queries: security-and-quality
       - name: Build
-        run: ./gradlew classes ${{ env.GRADLE_BUILD_OPTIONS }}
+        run: ./gradlew classes ${{ env.GRADLE_BUILD_OPTIONS }} --no-build-cache --rerun-tasks
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v4
 ##########################################################################
@@ -170,6 +173,7 @@ jobs:
         uses: gradle/actions/setup-gradle@v6
         with:
           gradle-home-cache-excludes: caches/build-cache-1
+          cache-encryption-key: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
       - name: Initialize
         run: find ./ci -type f -name "*.sh" -exec chmod +x "{}" \; && ./ci/init-build.sh
       - name: Validate Codebase
@@ -190,4 +194,4 @@ jobs:
         uses: codespell-project/actions-codespell@v2
         with:
           only_warn: 1
-          ignore_words_list: CONNEXION
+          ignore_words_list: CONNEXION,CrOS,Aother

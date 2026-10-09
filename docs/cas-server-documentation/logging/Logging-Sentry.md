@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Sentry Monitoring Integration
+description: "Report CAS errors, logs and performance data to Sentry."
 category: Logs & Audits
 ---
 

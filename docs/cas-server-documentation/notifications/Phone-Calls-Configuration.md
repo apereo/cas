@@ -1,6 +1,7 @@
 ---
 layout: default 
 title: CAS - Phone Calls
+description: "Deliver one-time tokens and alerts to users with automated phone calls."
 category: Notifications
 ---
 

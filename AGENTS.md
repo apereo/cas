@@ -96,8 +96,12 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
 - `import module java.base` makes `Signature` ambiguous (`java.security.Signature` vs `java.lang.classfile.Signature`); write `java.security.Signature`. Mapping to a `@SuperBuilder` result (`IntStream.mapToObj(i -> X.builder()...build())`) infers a capture type; give the stream a type witness (`.<X>mapToObj(...)`).
 - Lombok `val` cannot infer generic poly expressions: `val x = Objects.requireNonNullElse(list, List.of())` (or `...ElseGet(list, List::of)`) becomes `Object`. Assign the plain call to `val` and null-check separately, or declare the type.
 - Spring config classes generally use `@AutoConfiguration` or `@Configuration(proxyBeanMethods = false)`, `@EnableConfigurationProperties(CasConfigurationProperties.class)`, `@ConditionalOnFeatureEnabled`, and bean methods with `@RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)` plus `@ConditionalOnMissingBean`. See `support/cas-server-support-token-core/.../TokenCoreConfiguration.java`.
+- Configuration classes belong to an auto-configuration: prefer a static inner
+  `@Configuration(value = "...", proxyBeanMethods = false)` class nested in the module's main auto-configuration. A
+  configuration class kept outside it must follow the structure the sibling modules of that family already use; do not
+  introduce a new standalone `@Configuration` plus `@Import` where the family has none.
 - Configuration model classes usually live under `api/.../configuration/model/**`, use Lombok accessors, and carry `@RequiresModule(name = "...")`; example: `LdapAuthorizationProperties`.
-- Tests are organized by JUnit tags, not by the plain Gradle `test` task. The shared `buildSrc` test conventions disable `test` and generate tasks like `testAuthentication`, `testTickets`, etc. from `@Tag(...)` values found in `*Tests.java`.
+- Tests are organized by JUnit tags, not by the plain Gradle `test` task. The shared `buildSrc` test conventions disable `test` and register tasks like `testAuthentication` and `testTickets` for the tags discovered by `TestCategoryTagsValueSource` in `*Tests.java`. Both root category selectors and module-qualified category tasks execute tests; the plain `test` task never does.
 - Related test scenarios are often grouped with `@Nested`; example: `support/cas-server-support-token-core/.../JwtBuilderTests.java`.
 - Unalias Linux/macOS commands before you run them, specially `tree`, `find`, `grep`, `cat`, etc.
 - From a sandbox that cannot delete files, run read-only git commands with `GIT_OPTIONAL_LOCKS=0` (for example `GIT_OPTIONAL_LOCKS=0 git status`); otherwise git can leave a stale `.git/index.lock` that blocks the user's git.
@@ -119,14 +123,28 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
   ./testcas.sh --category tickets --with-coverage
   ./testcas.sh --category oidc --debug
   ```
+- `./testcas.sh --category changed` reads tags only from changed or untracked `*/src/test/java/*Tests.java` files.
+  It does not infer test categories from production-source changes; select the relevant categories explicitly for those.
 - Run one module or one class directly when narrowing a change:
   ```bash
-  ./gradlew :core:cas-server-core-authentication:test --tests "*AuthenticationHandlerTests"
+  ./gradlew :core:cas-server-core-authentication:testAuthenticationHandler --tests "*AcceptUsersAuthenticationHandlerTests"
   ```
-- Compile the tree without the expensive checks when you only need a fast validation pass:
+- Compile production sources without assembling archives or compiling tests when you only need a fast validation pass:
   ```bash
-  ./gradlew build --parallel -x test -x javadoc -x check
+  ./gradlew classes --parallel
+  ./gradlew :support:cas-server-support-json-service-registry:classes
   ```
+  Use `assemble` for artifacts and `testClasses` explicitly for test compilation. Ordinary `assemble` does not depend on
+  `testJar`; non-minimal publishing and consumers of the `tests` configuration still build it on demand.
+- Gradle 9.8.0 enables build caching, the configuration cache, parallel execution and Isolated Projects here.
+  Isolated Projects configures every project on a cache miss and ignores configuration on demand. Compare representative
+  scoped commands before changing either setting. User-home `gradle.properties` overrides the repository's JVM settings.
+- Test category discovery runs inside `TestCategoryTagsValueSource`: only its sorted tag list is a configuration input.
+  Implementation edits retain the cached graph; adding/removing categories invalidates it. Do not move source reads back
+  into the convention script or restore the old `.gradle/cas-test-tags` fingerprint cache.
+- An IDE `JetGradlePlugin` error about `setExcludedTaskNames` comes from the IDE integration, not category discovery.
+  Use `--no-isolated-projects` for the affected IDE invocation until that integration supports Isolated Projects; keep
+  configuration caching enabled and do not disable Isolated Projects globally to hide an IDE-only violation.
 - Many `./testcas.sh` categories shell out to `ci/tests/**/run-*.sh` and require Docker on Linux; the script will refuse those categories when that prerequisite is missing.
 
 ## Security-sensitive change discipline
@@ -166,8 +184,18 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
 - Keep diffs surgical: this codebase already has strong patterns, so the fastest path is usually “copy the nearest module family pattern and adapt it” rather than inventing a new abstraction.
 - Documentation pages on gh-pages are pre-rendered per version, but they load the stylesheet and script from the shared site root, and every publish overwrites those root files. The current design ships as `stylesheets/site.css`, `stylesheets/site-print.css` and `javascripts/site.js`; the root `stylesheet.css`, `print.css` and `main.js` belong to the released versions' old markup. A redesign that changes page markup must use new asset names, never replace the ones older versions link.
 - Unit-test matrix jobs (`tests.yml`) record JaCoCo data only (`testcas.sh --with-coverage` only turns on the agent) and upload the `.exec` files; the single `coverage` job builds `jacocoRootReport` and does every Sonar/Codecov/Coveralls/Codacy upload. Do not move `jacocoRootReport` or `sonar` back into the matrix: the root report compiles all ~430 projects and Sonar re-analyses the whole code base, which is what made each category job 17 minutes instead of 7.
-- Every `gradle/actions/setup-gradle` step sets `gradle-home-cache-excludes: caches/build-cache-1`; the local build cache duplicated the Develocity remote cache and alone filled the repository's 10 GB Actions cache, evicting everything else within the hour. Keep it on new setup-gradle steps.
-- The CodeQL job (`analysis.yml`) runs with Develocity and the remote cache, but `settings.gradle` makes every `JavaCompile` task non-cacheable and never up to date whenever CodeQL tracing env vars are present (`CODEQL_RUNNER`, `CODEQL_EXTRACTOR_JAVA_*`). CodeQL only extracts code it sees compiled, so a compile restored from cache empties the scan. Do not remove this, and do not add `JavaCompile` output caching that bypasses it.
+- Every `gradle/actions/setup-gradle` step sets `gradle-home-cache-excludes: caches/build-cache-1` and
+  `cache-encryption-key: ${{ secrets.GRADLE_ENCRYPTION_KEY }}`. Preserve both: the local build cache duplicates Develocity
+  outputs, and the encryption key enables saving/restoring the project configuration cache. Fork PRs without this secret
+  can still build, but cannot restore the encrypted configuration cache. Do not layer `setup-java` or GraalVM Gradle
+  caching over `setup-gradle` in the same job.
+- CI permits Gradle daemon reuse within a job; `ci/init-build.sh` must not append a disabling user-home property.
+  Release, documentation and scenario scripts preserve daemon reuse across their Gradle invocations. CodeQL keeps
+  `--no-daemon` for compiler tracing. Test categories and Puppeteer scenarios are fetched once per discovery
+  job; print the captured result and split scenario JSON with `jq`, preserving the existing matrix boundaries.
+- The CodeQL job (`analysis.yml`) applies `--no-build-cache --rerun-tasks` after its shared build options so traced
+  compilation actually runs. The current `settings.gradle` has no CodeQL-specific `JavaCompile` cache guard. Preserve
+  these workflow flags: CodeQL only extracts compilations it observes, so restored or up-to-date outputs empty the scan.
 - The documentation data generator (`docs/cas-server-documentation-processor`) runs as `java @build/casdocsgen.args ...`, an argument file written by its `docsGeneratorArguments` task from `sourceSets.main.runtimeClasspath`; `publish.sh` no longer builds the ~1 GB `casdocsgen.jar` boot jar. Its Gradle run adds `-DskipErrorProneCompiler=true` (override with `DOCS_GENERATOR_GRADLE_OPTIONS`, an empty value restores Error Prone). It still needs every CAS module compiled: actuators, feature toggles and shell commands are found by ClassGraph scans of the runtime classpath, and third-party settings come from the dependencies' metadata. Those lookups go through `CasDocumentationClassIndex`, one ClassGraph scan of `org` shared by the exporters; add new class lookups there rather than calling `ReflectionUtils`, which scans the whole classpath on every call.
 - `ci/docs/publish.sh` exit codes carry meaning for the workflow retry (`retry_on_exit_code: 1`): 1 is a failure worth another attempt, 3 is broken internal links/images/scripts (fails at once, nothing is published), 4 is broken external links only (the site is published first, then the job fails). Keep new failure paths on 1 unless a rerun cannot help. External links are checked only on the weekly schedule or when asked (`--proof-external`, the `proofReadExternal` input or `vars.DOCS_PROOF_EXTERNAL`), with successful results cached for 7 days in `build/htmlproofer`.
 - Actuator endpoint blocks (`_includes_site/actuators.html`) take their operations from the `cas_actuator_operations` filter in `_plugins/cas_actuators.rb` (sorted, parameters normalized, curl built there), and settings snippets from `cas_actuator_enable_snippet` / `cas_actuator_security_snippet` via `cas-actuator-snippet.html` in all three formats. Per operation, render only what differs (parameters, response, example); setup, security, settings and troubleshooting are rendered once per include in the shared tabs. The operations table is excluded from `responsiveTables()`.
@@ -175,9 +203,44 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
 - Feature toggles (`Configuration-Feature-Toggles.md`) render through `_includes_site/cas-feature-toggles.html` from the `cas_feature_catalog` filter in `_plugins/cas_features.rb`, which derives feature and module from the `CasFeatureModule.<Feature>[.<module>].enabled` property, groups features by area and links docs only when the target page exists for that version. Add title overrides, groups or docs links there, not in the include. The environment variable form maps both `.` and `-` to `_` (`CasFeatureEnabledCondition` reads through `Environment.getProperty`), unlike the relaxed-binding form used for regular settings.
 - Module dependency tabs (`_includes_site/casmodule.html`, included through `include_cached`) are plain Bootstrap tabs: no inline script, the default tab and pane are chosen together in Liquid, and pane ids use the full coordinates plus the variant options. Do not add per-include scripts or truncated ids; either one lets the selected tab and the visible pane drift apart.
 - Local serving (`publish.sh --serve true`) keeps the configured `baseurl: /cas`, so the site answers at `http://localhost:4000/cas/<version>/` exactly like production. `variables.html` always sets `basePath` to `/cas` and `site.js` has no localhost path branches; do not reintroduce `--baseurl ""` or localhost-specific paths.
+- Release notes (`release_notes/RC<n>.md`) carry a `release:` front matter block (summary, facts, upgrade notes, highlights, optional spotlight over a front matter image list) and open with `{% include release-digest.html %}` and end with `{% include release-footer.html %}`. Tag New & Noteworthy topics with a block IAL on the line after the heading and Other Stuff bullets with a list item IAL (`- {: .fixed} ...`): types are `new`, `changed`, `fixed`, `action`, `removed`; add `data-area="..."` only when the first link does not identify the area. `_plugins/cas_release_notes.rb` normalizes the tags, groups Other Stuff by area and resolves `section:` names to kramdown GFM heading ids before rendering; a `section:` that names no heading logs a warning. Upgrade notes may point at an Other Stuff area group by its label. `release_notes/RC.md` (front matter `release_aggregate:`) is generated from every RC page in the same folder: topics with the same title are merged and show each release candidate's notes, identical Other Stuff items are listed once with all their release candidates, and the `<!-- release-changes -->` marker is where the generated changes go. Never edit changes into that page by hand.
 - Section heading icons come from `CAS_SECTION_ICONS` in `site.js` and apply only to direct `h2` children of the article whose id is in that map; add an entry there rather than icons in markdown.
 - In the development docs, `site.js` wraps every table inside `#cas-docs-container` in a framed `.table-scroll` card, so do not use `<table>` for layout inside components (buttons, headers, badges); use flex markup instead.
 - Documentation property blocks get their settings from the `cas_properties` / `cas_third_party_properties` filters in `docs/cas-server-documentation/_plugins/cas_properties.rb`; do not loop over `site.data` in Liquid for this, it scans ~14k entries per block. Liquid `assign` inside an include writes to the page scope, so a `casproperties` include nested inside another block's panels must pass `topics="false"` (and usually `intro="false"`) or it resets the outer block's state. Their output is wrapped in `{::nomarkdown}`, so include them at the start of a line in markdown or pass the capture through `markdownify` (with `|`, not `||`). Catalog descriptions carry raw `<`/`>` (for example `management.endpoint.<id>.access`); the plugin escapes every tag outside `INLINE_TAGS` into `descriptionHtml` / `summaryText`, so print those fields and never unescape descriptions in Liquid: one stray tag inside the actuator modal makes kramdown drop the closing tags and everything after it on the page.
+- Documentation page titles must be unique: use `title: CAS - <page H1>`, and give overview pages a `description:`
+  front matter entry (under 160 characters). Pages without one get their meta description from the first paragraph in
+  `_layouts/default.html`, which skips dependency boilerplate, short or colon-ended lead-ins and "see this guide" lines.
+- The Versions menu lists `documentation_versions` from `docs/cas-server-documentation/_config.yml` (development plus
+  maintained releases); update it together with the EOL schedule in `developer/Maintenance-Policy.md`.
+- Third-party CSS and JS in `_layouts/default.html` are pinned to exact versions with `integrity` (sha384) and
+  `crossorigin="anonymous"`. Recompute the hash whenever a version changes; Google Fonts and the gtag script cannot carry one.
+  Analytics is the GA4 tag `G-W3M8JXP7GP`, loaded only on `apereo.github.io`.
+- Do not dim muted text with `opacity`: `--docs-muted` on its own meets 4.5:1 in both themes, and opacity drops it below.
+  `--docs-amber` is darker in light mode for the same reason.
+- In `casmodule.html`, only the tab links sit inside `role="tablist"`; the Resources dropdown is a sibling `<button>`.
+- Settings in docs (required, standing rule from the maintainer): never refer to a configuration setting by name in
+  documentation pages, neither inline nor in fenced `properties` blocks. Describe the feature, say that it is available,
+  and say that it is enabled, disabled or tuned through CAS settings; the page's `casproperties` include lists them. The
+  only exception is release notes, which may name CAS or other settings.
+- Setting links in release notes (required): every setting named in release notes must be marked so readers can look
+  it up in place. Inline, write `` `cas.server.name`{: .cas-setting} ``
+  (an assignment such as `` `cas.tgc.secure=false`{: .cas-setting} `` works too; the value is ignored for the lookup). For a
+  fenced `properties` block of settings, put `{: .cas-settings-linked}` on the line right after the closing fence. Mark only
+  real CAS or Spring setting names, not prefixes used as headings, removed settings, JSON fields or registered-service
+  properties. `initializeCasSettingLinks()` in `site.js` turns these into buttons that call `openCasSettingsPalette(name)`:
+  an exact match opens the setting's details inside the Shift-Shift palette, a partial name shows the matches; the page
+  never changes. Linked blocks are rebuilt line by line from their text (key, separator, value), because Rouge's
+  properties lexer splits keys with `[0]` into separate tokens. `casSettingsFlat()` drops anything in brackets and any
+  purely numeric name segment, so `[0]`, `[]`, the catalog's map notation `.[key]`, `.0.` and the environment variable form
+  `_0_` all match the same setting. No catalog name has a numeric segment of its own; recheck that if one is ever added. `planning/Quick-Start.md` is the reference page.
+- Every documentation page needs an opening paragraph right after the H1 that the layout can use as its description:
+  at least 40 characters, not ending in a colon, and not a "see this guide" or dependency lead-in.
+- On phones (`max-width: 760px`) the sticky header is offset by `--docs-masthead-height` so only the navigation bar
+  stays visible, and `site.js` sets `--docs-header-height` to that bar alone; keep both in step when changing the masthead.
+- The docs load two web fonts only, Bricolage Grotesque (headings) and DM Sans (everything else); `--font-mono` is the system
+  monospace stack. Do not add font families or hotlink images from third-party hosts; keep images under `images/`.
+- Large topics are split into one page per concern with a sidebar submenu (see `authorization/Heimdall-Authorization-*.md`
+  and `multitenancy/Multitenancy-*.md`); when moving a section, update cross-page anchors and links in release notes.
 
 ## OIDC verifiable credentials (OID4VCI / OID4VP)
 
@@ -194,7 +257,7 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
 - `script.json` `properties` is an array of command-line arguments, so every element must be a plain `--key=value` string. There is nowhere to put a JSON comment; explain scenario configuration here or in PLANS.md instead.
 - Wallet API v2 needs no account, database or front end in CI: authentication is off and persistence is SQLite in the shipped configuration, so the scenario creates a wallet over HTTP and drives `POST /wallet`, `credentials/receive` and `credentials/present` directly. That is why the walt.id scenario no longer opens a browser.
 - OID4VP delivery rules interlock rather than stacking: whether a request may be signed follows from the client identifier prefix, and whether it may be served by reference follows from whether it is signed. Check the prefix before reasoning about `request_uri`, and read the spec's own unsigned example, which passes every parameter by value.
-- The credential endpoint is a protected resource, not a token endpoint, and the two speak different error vocabularies. A token problem is a 401 with a `WWW-Authenticate` challenge (`invalid_token` per RFC 6750 section 3.1, and the challenge is mandatory on any 401 per RFC 9110 section 15.5.2, named only when a token was actually presented); a request problem is a 400 with one of OpenID4VCI's own codes -- `invalid_credential_request`, `unsupported_credential_type`, `credential_request_denied`, `invalid_proof`, `invalid_nonce`. Reaching for `OAuth20Constants.INVALID_REQUEST` here is the reflex to resist.
+- The credential endpoint is a protected resource, not a token endpoint, and the two speak different error vocabularies. A token problem is a 401 with a `WWW-Authenticate` challenge (`invalid_token` per RFC 6750 section 3.1, and the challenge is mandatory on any 401 per RFC 9110 section 15.5.2, named only when a token was actually presented); a request problem is a 400 with one of OpenID4VCI 1.0's own codes (section 8.3.1.2) -- `invalid_credential_request`, `unknown_credential_configuration`, `unknown_credential_identifier`, `credential_request_denied`, `invalid_proof`, `invalid_nonce`, `invalid_encryption_parameters`. Draft-era `unsupported_credential_type` / `unsupported_credential_format` are gone from 1.0; a `credential_identifier` is unknown when it is not among the identifiers of the token's authorization details. Which parameter a request uses follows the token response (section 8.2): once it returned `credential_identifiers` (authorization details on a non-pre-authorized token, mirroring `OidcVerifiableCredentialAccessTokenResponseCustomizer`), `credential_identifier` is required and `credential_configuration_id` refused; otherwise the reverse. A request naming neither is refused; there is no fallback to the configuration recorded on the token. Reaching for `OAuth20Constants.INVALID_REQUEST` here is the reflex to resist.
 - `invalid_proof` and `invalid_nonce` are not interchangeable: a wallet told its nonce is stale fetches a new one and retries, while a wallet told its proof is invalid stops. Carry the distinction on the exception (`OidcVerifiableCredentialProofException`), not in the message text, or it is lost the moment the exception crosses a layer.
 - An endpoint that answers the same error for a stolen token, an unknown credential type and a bad proof is not merely unhelpful; it is untestable from the client side, which is how these three defects survived together.
 - `getAccessTokenFromRequest` accepts the access token from an `access_token` or `token` request parameter as well as the authorization header, and that is deliberate. RFC 9700 section 4.3.2 forbids *clients* from using the query-parameter method; it places no requirement on the resource server, and the maintainer's position is that how a caller presents its token is the caller's business. Do not propose closing it as a CAS defect.
@@ -210,7 +273,7 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
 - Ask who is authorized for what. `cas.authn.oidc.vc.issuer.credential-configurations` says what the issuer can mint, never who may ask for it; a per-service policy is what ties the two together. `OidcRegisteredService.verifiableCredentialsPolicy` is now read through `OidcVerifiableCredentialPolicyUtils.resolveAllowedCredentialConfigurationIds` at all three points where a credential type is claimed -- offer transaction, authorization details, credential endpoint -- and the result is always an intersection with what the issuer publishes, so a policy can narrow a service but never widen it.
 - An unread field on a registered service is a finding, not a feature. `verifiableCredentialsPolicy` and `DefaultRegisteredServiceOidcVerifiableCredentialsPolicy` both existed and shipped in the schema while nothing in CAS ever called `getVerifiableCredentialsPolicy`, which reads from the outside exactly like an enforced authorization control. When a policy type exists, grep for its getter before assuming it does anything.
 - An empty policy means "no opinion", not "deny everything". Authorization policies here default open when unconfigured, because they are added to deployments that were already working; a policy that denied by default would break every existing service on upgrade.
-- CAS is both issuer and verifier here, and the verifier only trusts CAS-issued credentials: `iss` must equal the local issuer, `vct` must map to a local configuration, the signature is checked against CAS's own keystore, and a `status` claim is refused rather than ignored. That is a trust policy, not a defect -- OpenID4VP leaves issuer trust to the verifier ("Verifiers must verify that the issuer of a received presentation is trusted on their own"), and a verifier that cannot evaluate revocation must fail closed. Do not report it as a compliance gap. Widening it means external issuer trust, `x5c`, DID resolution, OpenID Federation and Token Status List fetching, which is a feature with its own configuration surface, not a fix.
+- CAS is both issuer and verifier here, and the verifier only trusts CAS-issued credentials: `iss` must equal the local issuer, `vct` must map to a local configuration, the signature is checked against CAS's own keystore, and a `status` claim must point into a status list CAS publishes with a `VALID` entry (read from the ticket registry, never fetched); any other status reference is refused rather than ignored. That is a trust policy, not a defect -- OpenID4VP leaves issuer trust to the verifier ("Verifiers must verify that the issuer of a received presentation is trusted on their own"), and a verifier that cannot evaluate revocation must fail closed. Do not report it as a compliance gap. Widening it means external issuer trust, `x5c`, DID resolution, OpenID Federation and fetching other issuers' status lists, which is a feature with its own configuration surface, not a fix.
 - Proof validation takes the credential configuration id (`OidcVerifiableCredentialProofValidator.validate(proof, configurationId, nonces)`)
   and enforces that configuration's `proof-signing-alg-values-supported` and `cryptographic-binding-methods-supported`; the
   one-argument overload names no configuration and accepts anything verifiable, which is what the unit tests rely on. Holder keys come
@@ -261,6 +324,25 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
 - Metadata is per format: `vct` belongs to `dc+sd-jwt` only, while `jwt_vc_json` and `jwt_vc_json-ld` need `credential_definition` (Appendix A.1). The type list and the JSON-LD context come from `BaseOidcVerifiableCredentialEncoder.resolveCredentialTypes` and `VCDM_V2_CONTEXT`, which both the metadata service and the encoders use; keep it that way so metadata and credential cannot drift. Never reference a JSON-LD context CAS does not serve; the VCDM 2.0 base context's `@vocab` already covers custom terms.
 - A credential is only portable if a third party can find the issuer key. CAS publishes `/.well-known/jwt-vc-issuer` (`issuer` + the OIDC `jwks_uri`, which carries the credential signing key under the `kid` in the credential header); it needs the same host-level rewrite as the other well-known documents. There is still no `x5c` on credentials, which HAIP requires. CAS verifying its own credentials in puppeteer proves nothing about third-party verification.
 - Wallets differ mostly at the edges: proof keys by `jwk`, `kid` (did:key, did:jwk) or `x5c`, EdDSA vs ES256, `redirect_uri` vs `x509_san_dns`/`x509_hash`, `direct_post` vs `direct_post.jwt`. The walt.id scenario pins P-256, `jwk` and `redirect_uri`, so it cannot catch regressions in the others.
+- Key attestations (OpenID4VCI 1.0 Appendix D) arrive two ways: the `key_attestation` header of a `jwt` proof (the proof key must be attested) and the `attestation` proof type (exactly one, its `nonce` must be a `c_nonce`, one credential per attested key). `key_attestations_required` means "required" by its mere presence, so an empty `{}` must still be written: the field overrides the class-level `NON_EMPTY` with `NON_NULL`. Trust anchors live under the issuer settings; wallet attestation (OAuth client attestation) is a different trust relationship and gets its own settings under client authentication.
+- `OidcVerifiableCredentialProofValidator` is a `@FunctionalInterface`: new operations on it must be `default` methods, or every lambda implementation breaks.
+- Client authentication at the token and PAR endpoints is a chain of pac4j direct clients (`requiresAuthenticationAccessTokenInterceptor` takes every `DirectClient` of `oauthSecConfig`); a new method is an `OAuth20AuthenticationClientProvider` bean, as `OidcClientAttestationAuthenticator` (`attest_jwt_client_auth`) is. The first client that yields a profile wins, so a service that must use one method sets `tokenEndpointAuthenticationMethod`; `OAuth20Utils.isTokenAuthenticationMethodSupportedFor` enforces it at the token endpoint only, never at PAR.
+- `x5c` trust for attestations goes through `CertUtils.readTrustAnchors` and `CertUtils.validateCertificateChain` (PKIX, no anchor in the chain, no self-issued certificate, as HAIP requires); key and client attestations share them. Under `import module java.base`, `CertificateException` is ambiguous with `javax.security.cert` and needs an explicit import, like `X509Certificate`.
+- OID4VCI notification ids are transient session tickets bound to the access token's client and principal (not the token itself, so a refreshed token still works) and marked by their own property, since nonces and offers are transient session tickets too; `OidcVerifiableCredentialNotificationService.notify` is audited (`OIDC_VERIFIABLE_CREDENTIAL_NOTIFICATION`), with its resolvers registered by the oidc-vc configuration. The notification endpoint reads its body as a string with `JacksonObjectMapperFactory.builder().strictDuplicateDetection(true)` (the factory flag, never a hand-built `JsonFactory`), so malformed JSON is `invalid_notification_request` rather than the controller-wide `invalid_credential_request`.
+- `OidcVerifiableCredentialEndpointControllerTests` is close to checkstyle's 2,500-line `FileLength` limit; keep additions compact or put them in another existing class.
+- Token Status List entries are transient session tickets (`TST-vcstatus-<list>-<index>`), one per credential, expiring with it; their properties are strings, because registries that serialize tickets, and the stateless compactor, do not keep `Long` or `Integer` types. The stateless registry is detected by the stored ticket being `isStateless()`, and credentials are then issued without status. The status list token is rebuilt by scanning the registry and cached per node for its `ttl`. The entry's principal is the credential's `sub` (the resolved principal), not the access token's authentication principal, which is `nobody` in the pre-authorized code tests.
+- `CharacterEncodingFilter` adds `;charset=UTF-8` to every response content type, `application/statuslist+jwt` included; assert media types with `contentTypeCompatibleWith`.
+- Deflate and inflate through `CompressionUtils.deflate(bytes, raw)` / `CompressionUtils.inflate(bytes, offset, raw)`: raw DEFLATE for the stateless ticket registry, ZLIB (`raw=false`) for Token Status Lists, whose spec test vectors `CompressionUtilsTests` checks. Do not add private `Deflater`/`Inflater` loops.
+- The VM test runner's copied build dirs predate any unpushed round: compile the Java files of the previous round's commit together with the current ones, or settings and methods added there are missing. `AbstractTicketRegistry.getTicket(id, type)` throws when the ticket is absent; use `getTicket(id)` to probe.
+- OID4VCI encryption (section 10): a request asking for an encrypted response MUST itself be encrypted, so response encryption cannot ship without request decryption. Requests decrypt with the current OIDC keystore keys whose `use` is `enc` (keys without `use` are not encryption keys); the published copies get a JWE `alg` (`RSA-OAEP-256` / `ECDH-ES`) because the keystore's `alg` is a signing algorithm. Never mutate the cached keystore keys. Check `credential_response_encryption` before issuing, so a bad key does not burn a nonce or a status index; errors are never encrypted.
+- OID4VCI deferred issuance: the credential endpoint validates proofs (consuming the nonce) before deciding to defer, and the transaction keeps only the holder public keys, client, principal and configuration as string properties of a transient ticket; credentials are encoded at delivery from the presenting token, through `OidcVerifiableCredentialIssuerService.validateProofs` + `encode` (the service is no longer a functional interface). Delivery re-runs `validateCredentialIssuance`, encodes the credentials, and only then deletes the transaction, using `deleteTicket(...) > 0` as the claim (exact for registries that report real deletion counts; Memcached, Cassandra and Geode always report 1): a failed encode (an attribute still missing) keeps the transaction, and of two concurrent requests only the one that deletes it gets the credentials. A delivered or denied transaction answers `invalid_transaction_id` afterwards. The compile script's `test` mode does not rebuild main classes: rerun `main` after any main edit, or tests run against stale code. A registry that cannot keep the ticket (stateless) means immediate issuance, decided like the status list by the stored ticket.
+- Nested `@Nested` test classes that extend `AbstractOidcTests` do not inherit the enclosing class's `@ImportAutoConfiguration` or `@TestPropertySource`: repeat what they need, including whatever the enclosing instance autowires (the outer instance is built from the nested context).
+- The openid.net spec pages are long: WebFetch summaries truncate and can invent text. Fetch the markdown source (`raw.githubusercontent.com/openid/OpenID4VCI/main/1.0/...`, `.../OpenID4VC-HAIP/main/1.0/...`) with curl and grep it instead.
+- The VM compile check can also run Error Prone, which `-Werror` turns every warning of into a build failure: add `-XDcompilePolicy=byfile -XDshould-stop.ifError=FLOW "-Xplugin:ErrorProne <the -Xep flags of project-conventions.gradle> -XepOpt:NullAway:OnlyNullMarked=true -XepOpt:NullAway:JSpecifyMode=true"`, the `-J--add-exports`/`--add-opens` of `jdk.compiler`'s `api, main, model, parser, processing, tree, util, code, comp, file` packages, and every cached jar on `-processorpath`. NullAway refuses to start without one of its package options. For the VM test runner, leave out every `spring-cloud-*` jar except `spring-cloud-commons` and `spring-cloud-context` (the Vault, Consul and Kubernetes bootstrap configurations otherwise start and fail).
+- Attestation-based client authentication (draft 11): an `HttpAction` thrown from a pac4j authenticator is adapted as is, so the `400 use_attestation_challenge` body and its `OAuth-Client-Attestation-Challenge` header survive; rethrow `HttpAction` before any generic `catch (Exception)` that would turn it into a `401`. Challenges are transient session tickets, opt-in and reusable until they expire, and only apply once offered (setting on and trust anchors present). In DPoP combined mode (`attest_jwt_client_auth_dpop`, no PoP header, one `DPoP` header) the authenticator verifies the DPoP proof itself with `DPoPTokenRequestVerifier`, checks its `jwk` thumbprint against the attestation `cnf` key, and records its `jti` under its own prefix; challenges do not apply there and DPoP nonces are not supported.
+- Issuer-signed JWTs (status list tokens, signed issuer metadata) go through `OidcVerifiableCredentialSigningUtils.sign`: issuer key, `kid`, `x5c` without the trust anchor. Do not copy the signing code into a new endpoint. Signed metadata is served when `Accept` names `application/jwt` with a quality at least that of JSON (wildcards count as JSON), so plain browsers and `*/*` clients still get JSON.
+- IETF drafts are blocked on ietf.org here: fetch the markdown source from the draft's GitHub repository at the published tag (`raw.githubusercontent.com/oauth-wg/<repo>/draft-ietf-oauth-<name>-NN/draft-ietf-oauth-<name>.md`), and confirm the number is the latest published one.
+- The compile script's `main` mode wipes `out/`, test classes included: run `test` mode again after every `main` run, or the runner falls back to stale prebuilt test classes and silently runs fewer tests.
 
 ## Parallel test execution and shared registries
 
@@ -314,6 +396,18 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
   is the giveaway that it is timing rather than logic. Moving the band fixed that class of failure
   wholesale; hardcoded 8080/8081 elsewhere in the tree is mostly harmless string-building and
   serialization anyway, and only tests that actually open a connection were ever exposed.
+- `ServicesManager.findServiceBy(Service)` matches against the services cache only while the background
+  reload is enabled and the cache size is above zero; it consults the registry on a miss only when the
+  scheduler is off or the cache is disabled. A test that writes straight to a `ServiceRegistry` and then
+  looks the service up by URL must call `servicesManager.load()` first. Lookups by id or name still fall back
+  to the registry. Registry events published by anything other than a services manager (the JSON/YAML
+  watchers, Redis, S3) update the cache through `DefaultRegisteredServicesEventListener`, synchronously.
+  `findServiceBy(Predicate)` reads the registry and must never write to the cache or index.
+- URL lookups match against `AbstractServicesManager.getSortedRegisteredServices`, a snapshot reused until the cache
+  version changes or the cache size differs from it. Any new code that adds or replaces entries in the services cache
+  must go through `cacheRegisteredService`/`cacheRegisteredServices` (or bump the version itself); a direct
+  `getServicesCache().put` leaves URL lookups on a stale snapshot. Read paths must not re-cache or re-index services
+  the cache already holds, and the returned list is shared and unmodifiable.
 
 ## Puppeteer scenario init scripts
 
@@ -324,6 +418,7 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
 - A container answering HTTP is not a container ready for setup calls. Apache Syncope's Tomcat answers `/syncope/` several seconds before its content loader populates the empty Master domain, and admin REST calls made in that window fail with `AuthorizationDeniedException` (seen once the build overlapped the init scripts and slowed startup). `ci/tests/syncope/run-syncope-server.sh` therefore waits for `Started SyncopeCoreApplication` in the container log; readiness waits in other init scripts should likewise key off the application's own started signal, bounded, with `exit 1` on timeout.
 - Scenario matrix jobs in `functional-tests.yml` restore the Gradle User Home with `cache-read-only: true` and do not set `cache: 'gradle'` on `setup-java`; saving from every one of the ~560 jobs cost ~12 s each and churned the Actions cache, and the two actions caching the same directory conflict.
 - The matrix jobs cache the Node.js install under `${{ runner.tool_cache }}/node/<NODE_VERSION_REQUIRED>` with a key that is that exact version, restored before `setup-node` and saved only from the default branch on a miss. A version change in `NODE_CURRENT` or a scenario's `requirements.nodejs` is a new key, so `setup-node` downloads the instructed version; keep those values exact versions (a range would never match the cached directory) and do not add `check-latest`.
+- The matrix jobs start `ci/tests/puppeteer/prefetch-docker-images.sh <scenario>` right after checkout (in `native-tests.yml`, after `Configure CI` and only when the scenario's native run is enabled, since init scripts run only in the `--nr` step and the pulls then finish during the native build): it finds the images the scenario's bootstrap, init and ready scripts need (their `docker run`/`pull`/`build` commands, `*_IMAGE` and `*COMPOSE_FILE` assignments, compose files, Dockerfile `FROM` lines, and the `ci/tests` scripts they call) and pulls them in the background while the job sets up, logging to `$RUNNER_TEMP/docker-prefetch.log` (printed by the `Docker Prefetch Summary` step). Images a script builds itself, compose services with `build:` and run.sh's own `cas-<scenario>` images are skipped, and so are scenarios that are disabled or miss a `conditions.env` variable (run.sh skips those too). It is best-effort: an image it misses or is still pulling is pulled by the init script as before, so new init scripts need no changes, but keep image references literal or in a plain `*_IMAGE=` assignment so they are found. `--list` prints what it would pull. Images are not stored in the Actions cache: it is already at its limit, and restoring a tarball is a download too.
 - Instances whose resolved dependencies are identical share one build: `run.sh` builds only the first instance of each dependency set and copies its artifact to the others. Only instance-specific `dependencies` cause another build. Instances still start one after another, because several multi-instance scenarios need instance 1 up before instance 2 starts (Spring Boot Admin client registration, passive service-registry replication, cas2cas delegation).
 - `run.sh` exit codes carry meaning for the `Run Tests` retry (`retry_on_exit_code: 1`): 1 is a setup failure worth another attempt (init scripts, containers, npm), 2 a failed build, 3 a build that exceeded `PUPPETEER_BUILD_CTR`, 4 a CAS instance that exited or did not answer its health check within `PUPPETEER_STARTUP_TIMEOUT` seconds (300 in CI, unlimited locally; a single probe may use the whole remaining budget, since some login pages take ~30 s to render, e.g. `thymeleaf-templates-rest` before its template server is up), and 5 a scenario script that still failed after its in-process attempts (3 in CI, against the running server). 2-5 fail at once; a whole-script retry cannot fix them and repeats the build and startup. Keep new failure paths on 1 only if a rerun can help.
 
@@ -339,6 +434,7 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
 - `ath` hashes the access token *as the client presented it*, not its decoded identifier. Pass `getAccessTokenFromRequest(...).getKey()`, never `getValue()`.
 - Before reporting a gap here, read the endpoint. The userinfo endpoint was already doing the resource verification correctly in an overridden `validateAccessToken`, and the defect worth reporting was the redundant second call beside it -- the opposite shape from the one first assumed. Grepping for the validator bean found the wrong call and missed the right one.
 - Identifiers that arrive on an unauthenticated request parameter are not identities. Under grants that carry their own proof of authorization -- the OpenID4VCI pre-authorized code above all -- `client_id` is whatever the wallet felt like sending. Resolve from the authenticated profile, then the token, then the parameter.
+- DPoP nonces (RFC 9449 sections 8 and 9) are transient session tickets, like attestation challenges, through `BaseTransientSessionNonceService` (one marker property per kind, so a challenge is never accepted as a nonce). Nimbus treats an empty set of accepted nonces as "a `nonce` claim is prohibited", so a verifier must be handed the proof's own nonce (`OAuth20DPoPNonceService.getAcceptedNonces`) and CAS checks it afterwards (`isAccepted`); the protected resource verifier's single-`Nonce` overload with `null` prohibits the claim too. On failure the fresh nonce goes on the servlet response before `InvalidDPoPNonceException` is thrown, and each endpoint maps it: `400 use_dpop_nonce` at the token endpoint and in combined mode, `OAuth20Utils.useDPoPNonceResponse()` (`401` + `WWW-Authenticate: DPoP error="use_dpop_nonce"`) at resources and Heimdall. The validator runs before the authorization code is consumed, so the client retries with the same code.
 
 ## Environment limits
 
@@ -440,6 +536,18 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
   template prefix directory is reachable over HTTP.
 - Test view components through `MockMvc` and the existing web-test infrastructure; use Lombok
   (`val`, `@RequiredArgsConstructor`, `@Slf4j`) and current Java features as the rest of the tree does.
+- Account profile and account-management flows share `static/css/account.css` and `static/js/account.js`. The profile is a
+  rail (`#navigationMenu`, one `#linkXxx` per `#divXxx` panel, `data-account-panel`) plus card lists with inline details;
+  the flows (sign-up, password reset, forgot username, must-change/expired password) render through
+  `fragments/accountflow :: shell(flow, step, steps, content)`, which owns the step trail (`screen.account.flow.<flow>.*`)
+  and keeps `h2`/`p` out of the brand panel so `#content h2` and `#content p` still hit the card. The strength meter
+  markup lives in `fragments/accountflow :: strengthMeter`; keep its ids, `passwordMeter.js` depends on them.
+- Puppeteer selectors for these pages are list-based now: `#mfaDevicesList [data-field=source|id|name|type|model|number]`,
+  `#mfaDevicesEmpty`, `#registrationOptions`, `#securityQuestionsList`, `#pwdmain h2`, `#reset #fm1 h2`. Do not
+  reintroduce DataTables there; filtering and paging come from `data-account-list`.
+- To try template changes without rebuilding the war, run the built war with
+  `spring.thymeleaf.prefix=file:<module>/src/main/resources/templates/`, static locations pointing at the module's
+  `static/`, the message bundle at the module's `messages`, and template caching off.
 
 ## CAS protocol (v1/v2/v3 + SAML 1.1) review discipline
 
@@ -941,11 +1049,54 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
   whenever new code addresses a map field by path.
 - `IDX_PRINCIPAL` is created on every ticket collection, not only on the ticket-granting ticket
   collection, because `deleteTicketsFor` and the principal criteria run against all of them.
+- Ticket reads project to `json` and `type` (`includeTicketContent`); `query(decode=false)` projects to `ticketId` and
+  `principal`. A new read path that needs another field must add it to the projection, or the field comes back null.
+- Registry-wide counts (`countTickets`, `sessionCount`, `serviceTicketCount`) use `estimatedCount`; filtered counts
+  keep `count(query)`. Removing a ticket-granting ticket deletes its `getServices()` tickets with one `$in` remove per
+  collection (`deleteServiceTickets` override) without reading them back; linked proxy-granting tickets still take
+  the inherited path because each needs its parent updated.
+- Which collection gets what is decided once, by `MongoDbTicketRegistry.getSessionTicketDefinitions` (the
+  ticket-granting ticket definition) and `getServiceTicketDefinitions` (`ServiceAwareTicket` implementations). The
+  registry writes `attributes` only into session collections and runs service lookups only against service
+  collections; the facilitator builds `IDX_ATTRIBUTES`/`IDX_SERVICE` on the same sets and drops them elsewhere. Change
+  readers, writers and indexes together, or a lookup ends up scanning an unindexed collection.
+- The ticket id is the document `_id` (`MongoDbTicketDocument.ticketId` is `@MongoId(FieldType.STRING)`, so a value
+  that happens to look like an ObjectId is never converted; `FIELD_NAME_ID` is `"_id"`). Pass `MongoDbTicketDocument.class`
+  to every `remove`/`updateFirst`/`find` that addresses the id, so the query is mapped with that field type. There is no
+  `IDX_ID` any more; the facilitator drops one it finds. `migrateTicketDocuments` (also run per collection at startup)
+  converts documents from earlier versions (`ObjectId` `_id` plus a `ticketId` field) with one `$merge` into the same
+  collection (`keepExisting`) followed by deleting the `ObjectId` documents; it touches nothing else, so tests may call
+  it on a shared database. Mixed-version clusters are not supported across this change.
+- `createOrUpdateIndexes` drops an index whose options changed before recreating it, and restores the dropped index when
+  the replacement fails, so a collection is never left without it.
+- `MongoDbServiceRegistry` applies post-load listeners on every read path (`load`, `findServiceById`, exact lookups,
+  `getServicesStream`); a new read path must do the same, or OIDC services lose their scope-based release policies.
+- `MongoDbServiceRegistry` exact lookups (`findServiceByExactServiceId`/`Name`) return the first match in natural
+  order, sorted in the JVM: the comparator leads with `getEvaluationPriority()`, which is type-derived and never
+  stored. `size()` is `estimatedCount`; `delete` is a single remove by id.
+- `MongoDbServiceRegistryChangeStreamWatcher` (bean in the inner `MongoDbServiceRegistryChangeStreamConfiguration` of `CasMongoDbServiceRegistryAutoConfiguration`) is a plain
+  singleton `SmartLifecycle`, deliberately not `@RefreshScope`: a refresh would dispose of it and, since scoped beans
+  are recreated only on access, nothing would start a new one. It listens for `RefreshScopeRefreshedEvent` and
+  restarts itself instead (stop, then `start()` re-reads the settings). `start()` checks `change-stream.enabled` and
+  `isReplicaSetDefined` (no I/O), then a virtual thread asks the server `hello` for `setName` and stops for good
+  without one. Activation is decided at runtime on purpose; a class-level `@Conditional` on properties is evaluated
+  at AOT build time for native images. It re-resolves `mongoDbServiceRegistryTemplate` from its `ObjectProvider` on
+  every poll and reopens the stream when a refresh produced a new instance. On change it calls
+  `ServicesManager.load()` after the quiet period rather than patching the cache, so templates, environment
+  filtering, expiration and registry post-load listeners all apply. Its own node's writes come back as events too;
+  the reload is idempotent. The scenario needs the replica set from `run-mongodb-server-clustered.sh` (ports 37017-37019).
+- `MongoDbConnectionFactory.getMappingBasePackages()` is empty by default, so building a template scans nothing; the
+  mapping context registers entity types on first use. Pool settings apply only to the host/port branch.
 - `casTicketRegistryLockRepository` exists for Redis and JPA and does not exist for Mongo, so
   `LockRepository` is JVM-local on a Mongo cluster. `updateTicket` is an unconditional `updateFirst`
   with no version check, so every read-modify-write invariant is last-writer-wins across nodes.
   (Still open.)
-- Puppeteer coverage is `mongodb-ticket-service-registry` only. It refreshes the context first, then
+- Scenario `mongodb-service-registry-change-stream` runs the service registry against the replica set
+  (`run-mongodb-server-clustered.sh`), with the scheduled reload an hour away, and creates, changes and deletes a definition
+  with `mongosh` inside the container (`execFileSync`, no shell, so `$set` survives); a URL is only accepted or refused
+  afterwards if the change stream reloaded. It does not initialize from JSON: the JSON registry would stay in the chain
+  and keep serving its own copy of the definition after Mongo changes. The rest of this paragraph is about the ticket registry.
+- Ticket registry puppeteer coverage is `mongodb-ticket-service-registry` only. It refreshes the context first, then
   clears sessions, logs in once and asserts exactly one ticket-granting ticket, the health indicator
   and the ticket-registry cleaner — so it exercises the refresh path but asserts nothing about what
   survives a refresh. There is no crypto-enabled variant, no TLS and no concurrency, so a change in
@@ -1076,7 +1227,10 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
   type-specific code). Fix call sites as scenarios need them, not all at once. Delegation: the webflow manager keeps the
   built transient ticket in the flow (it carries the request properties) and hands the stored ticket to
   `DelegatedClientSessionManager.trackIdentifier(WebContext, Ticket, Client)` and the CAS client session key. Still
-  open: password reset, account registration and others not in the scenarios.
+  open: account registration and others not in the scenarios. Password reset (`DefaultPasswordResetUrlBuilder` puts the
+  stored TST id in the link; scenario `forgot-password-stateless`) and dynamic client registration
+  (`OidcDynamicClientRegistrationEndpointController.generateRegistrationAccessToken` returns the stored token, resolved
+  through `resolveAccessToken`; scenario `oidc-client-registration-stateless`) are done. Reset links are not single-use.
 - Duo `TICKET_REGISTRY` session storage is unsupported with the stateless registry (maintainer decision: document only,
   no code). The TST holds the whole flow (authentication, result builder, all webflow scopes) as objects, Duo's SDK
   rejects a `state` over 1024 characters, and the Duo webflow is wired at startup by storage type, so a runtime fallback
@@ -1103,6 +1257,8 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
 - Scenarios that start an external SAML2 IdP from `readyScript` (after CAS is up) must call `/cas/sp/idp/metadata`
   before the first delegated login: the pac4j client failed to load the IdP metadata at startup, and redirecting to it
   fails with a `NullPointerException` in `ChainingMetadataResolver.setResolvers` until that endpoint forces a reload.
+- `addTicket` and `createTicketGrantingTicket` hand back a `DefaultEncodedTicket` here, which has no creation time and cannot be compacted again: `updateTicket` on it fails with a `NullPointerException` in `TicketCompactor.compact`. Guard updates of tickets that came back from the registry with `isStateless()`, as `OAuth20DefaultTokenGenerator` does for codes, refresh tokens and the parent ticket-granting ticket.
+- Test fixtures such as `AbstractOidcTests.getAccessToken` return Mockito mocks: `markTicketStateless()` does nothing on them, so stub `isStateless()` instead, and make the resolved ticket a different object than the stored one so the test can tell them apart.
 
 ## Passwordless authentication review discipline
 
@@ -1250,6 +1406,16 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
 - The VM test runner's copied build dirs go stale once Misagh commits: recompile every Java file touched by the commits of the current work (`git diff --name-only <first commit>^ HEAD`) plus the uncommitted ones, not just `git status`.
 - A webflow action that validates a GAuth token and then updates the device must read the device again after validation: the validator updates its own copy (used scratch code, last-used time), and updating an older copy undoes that.
 - Use `git --no-optional-locks` for every read-only git command in the device VM; a plain `git status` leaves `.git/index.lock` behind there.
+- DynamoDB-backed tests can run in the device VM against moto: `pip3 install --user "moto[server]"` works there (Maven Central and MongoDB downloads do not), then start `~/.local/bin/moto_server -p 8000` and run the suite in the same `device_bash` call. It is not DynamoDB Local, so CI can still differ.
+- `DynamoDbTableUtils.createTable(..., globalSecondaryIndexes)` creates GSIs with a new table and adds missing ones to an existing table with `UpdateTable`; pass every GSI key attribute in the attribute definitions.
+- MongoDB: a query with a collation uses only indexes with the same collation. Give such an index an explicit name, so it does not clash with a plain index on the same field. Avoid `MongoDbConnectionFactory.createOrUpdateIndexes` for collated indexes: the server returns the collation expanded, the options never compare equal, and the index is dropped and rebuilt at every startup.
+- Spring Data Redis with Lettuce: `executePipelined` opens a dedicated connection for the pipeline (a new TCP connection when there is no pool), so a pipeline is slower than a few plain commands on the shared connection. Pipeline only bulk work such as batched deletes, never a per-login write.
+- `CasRedisTemplate.scan(pattern, count)` treats `count` as a cap on the results, not as the `SCAN COUNT` hint; for a hint, use `RedisTemplate.scan(ScanOptions)` and close the cursor.
+- More services for the VM test runner: `pip3 install --user fakeredis` provides `fakeredis.TcpFakeServer`, a Redis emulator on 6379. An UnboundID `InMemoryDirectoryServer` on 10389, with base `dc=example,dc=org`, bind `cn=Directory Manager`/`password` and the schema turned off, runs the GAuth LDAP suite. Start either one in the background in the same `device_bash` call as the tests, and stop it by a PID file, not `pkill -f <name>`: that pattern also matches the calling shell and kills it.
+- To compile a Java file outside the repository with Lombok, copy the repo's `lombok.config` next to it; without it, `@Slf4j` creates `log` rather than `LOGGER`.
+- Hibernate 7 JPQL bulk deletes (`DELETE FROM Entity e WHERE ...`) also delete the matching rows of the entity's element-collection tables (`DELETE ... WHERE id IN (SELECT ...)`), so they need no native SQL. The physical naming strategy turns table names into snake case (`google_authenticator_registration_record`), so native SQL must not use the `@Table` name as written.
+- A Java `Stream` built with `onClose(...)` releases nothing unless it is closed: wrap any stream that holds a cursor or connection, such as `CasRedisTemplate.scan(...)`, in try-with-resources, even for a terminal `count()` or `collect()`. When pooling is enabled, CAS turns off Lettuce native-connection sharing, so every leaked Redis connection is a pooled one. To catch such a leak in a test, enable the pool with a small `max-active` and call the method more times than the pool allows. The fakeredis emulator in the VM cannot run the Redis ticket-registry suites that need RediSearch.
+- One puppeteer scenario can cover several storage backends: put every backend module in `dependencies`, list the init scripts comma-separated in `initScript`, and give each backend a `variations` entry that turns the others off with `--CasFeatureModule.<Feature>.<module>.enabled=false` (each backend auto-configuration carries `@ConditionalOnFeatureEnabled`). `SCENARIO_VARIATION` holds the variation name. `mfa-gauth-login-encrypted-stores` does this for GAuth on JPA and Redis, with encryption on.
 
 ## Google Authenticator Redis repository
 

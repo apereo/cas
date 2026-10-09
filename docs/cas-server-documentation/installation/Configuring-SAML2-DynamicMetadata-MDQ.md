@@ -1,6 +1,6 @@
 ---
 layout: default
-title: CAS - SAML2 Metadata Management
+title: CAS - Metadata Query Protocol - SAML2 Metadata Management
 category: Protocols
 ---
 

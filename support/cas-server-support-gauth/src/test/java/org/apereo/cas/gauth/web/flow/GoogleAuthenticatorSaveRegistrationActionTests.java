@@ -6,6 +6,7 @@ import org.apereo.cas.gauth.CasGoogleAuthenticator;
 import org.apereo.cas.gauth.credential.BaseGoogleAuthenticatorTokenCredentialRepository;
 import org.apereo.cas.gauth.credential.GoogleAuthenticatorAccount;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
+import org.apereo.cas.otp.repository.token.OneTimeTokenRepository;
 import org.apereo.cas.otp.web.flow.OneTimeTokenAccountCreateRegistrationAction;
 import org.apereo.cas.otp.web.flow.OneTimeTokenAccountSaveRegistrationAction;
 import org.apereo.cas.test.CasTestExtension;
@@ -56,6 +57,10 @@ class GoogleAuthenticatorSaveRegistrationActionTests {
     private OneTimeTokenCredentialRepository googleAuthenticatorAccountRegistry;
 
     @Autowired
+    @Qualifier(OneTimeTokenRepository.BEAN_NAME)
+    private OneTimeTokenRepository oneTimeTokenRepository;
+
+    @Autowired
     private ConfigurableApplicationContext applicationContext;
     
     @Nested
@@ -81,6 +86,53 @@ class GoogleAuthenticatorSaveRegistrationActionTests {
     @Nested
     @TestPropertySource(properties = "cas.authn.mfa.gauth.core.multiple-device-registration-enabled=true")
     class DefaultTests {
+        @Test
+        void verifyScratchCodeRegistration() throws Exception {
+            verifyRegistration(834251, List.of(834251, 223856));
+        }
+
+        @Test
+        void verifyTotpRegistration() throws Exception {
+            verifyRegistration(123456, List.of(834251, 223856));
+        }
+
+        private void verifyRegistration(final int token, final List<Number> scratchCodes) throws Exception {
+            val account = GoogleAuthenticatorAccount.builder()
+                .username(UUID.randomUUID().toString())
+                .name(UUID.randomUUID().toString())
+                .secretKey("secret")
+                .scratchCodes(scratchCodes)
+                .build();
+
+            val validationContext = registrationContext(account, token);
+            validationContext.setParameter(OneTimeTokenAccountSaveRegistrationAction.REQUEST_PARAMETER_VALIDATE, "true");
+            assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, googleSaveAccountRegistrationAction.execute(validationContext).getId());
+            assertEquals(0, googleAuthenticatorAccountRegistry.count(account.getUsername()));
+            assertFalse(oneTimeTokenRepository.exists(account.getUsername(), token));
+            assertEquals(scratchCodes, account.getScratchCodes());
+
+            val submissionContext = registrationContext(account, token);
+            assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, googleSaveAccountRegistrationAction.execute(submissionContext).getId());
+            assertEquals(1, googleAuthenticatorAccountRegistry.count(account.getUsername()));
+            val storedAccount = googleAuthenticatorAccountRegistry.get(account.getUsername()).iterator().next();
+            assertTrue(storedAccount.getId() > 0);
+            assertEquals(scratchCodes.stream().filter(code -> code.intValue() != token).toList(), storedAccount.getScratchCodes());
+            assertTrue(oneTimeTokenRepository.exists(account.getUsername(), token));
+
+            val replayContext = registrationContext(account, token);
+            assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, googleSaveAccountRegistrationAction.execute(replayContext).getId());
+            assertEquals(HttpStatus.UNAUTHORIZED.value(), replayContext.getHttpServletResponse().getStatus());
+            assertEquals(1, googleAuthenticatorAccountRegistry.count(account.getUsername()));
+        }
+
+        private MockRequestContext registrationContext(final GoogleAuthenticatorAccount account, final int token) throws Exception {
+            val context = MockRequestContext.create(applicationContext);
+            context.setParameter(GoogleAuthenticatorSaveRegistrationAction.REQUEST_PARAMETER_TOKEN, String.valueOf(token));
+            context.setParameter(OneTimeTokenAccountSaveRegistrationAction.REQUEST_PARAMETER_ACCOUNT_NAME, account.getName());
+            context.getFlowScope().put(OneTimeTokenAccountCreateRegistrationAction.FLOW_SCOPE_ATTR_ACCOUNT, account);
+            return context;
+        }
+
         @Test
         void verifyAccountValidationFails() throws Throwable {
             val acct = GoogleAuthenticatorAccount.builder()

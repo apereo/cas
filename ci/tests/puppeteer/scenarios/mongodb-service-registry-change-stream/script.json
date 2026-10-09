@@ -1,0 +1,18 @@
+{
+  "dependencies": "mongo-service-registry",
+  "conditions": {
+    "docker": "true"
+  },
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
+    "--cas.service-registry.schedule.start-delay=PT1H",
+    "--cas.service-registry.schedule.repeat-interval=PT1H",
+
+    "--cas.service-registry.mongo.client-uri=mongodb://root:secret@localhost:37017,localhost:37018,localhost:37019/cas?authSource=admin&replicaSet=rs0",
+    "--cas.service-registry.mongo.drop-collection=true",
+    "--cas.service-registry.mongo.change-stream.quiet-period=PT1S"
+  ],
+  "initScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/init.sh"
+}

@@ -1,6 +1,6 @@
 ---
 layout: default
-title: CAS - Passwordless Authentication
+title: CAS - JPA Passwordless Authentication Tokens
 category: Authentication
 ---
 {% include variables.html %}

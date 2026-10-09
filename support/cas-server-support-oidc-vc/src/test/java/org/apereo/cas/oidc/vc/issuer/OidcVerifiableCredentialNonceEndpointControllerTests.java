@@ -4,6 +4,7 @@ import module java.base;
 import org.apereo.cas.config.CasOidcVerifiableCredentialsAutoConfiguration;
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.oidc.OidcConstants;
+import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -37,6 +38,7 @@ class OidcVerifiableCredentialNonceEndpointControllerTests {
                     .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(header().string(HttpHeaders.CACHE_CONTROL, containsString("no-store")))
+                .andExpect(header().doesNotExist(OAuth20Constants.DPOP_NONCE))
                 .andExpect(jsonPath("$." + OidcConstants.C_NONCE).exists())
                 .andExpect(jsonPath("$." + OidcConstants.C_NONCE_EXPIRES_IN).doesNotExist());
         }

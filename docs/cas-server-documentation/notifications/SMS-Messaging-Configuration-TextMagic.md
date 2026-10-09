@@ -1,12 +1,14 @@
 ---
 layout: default
-title: CAS - SMS Messaging
+title: CAS - TextMagic SMS Messaging
 category: Notifications
 ---
 
 {% include variables.html %}
 
 # TextMagic SMS Messaging
+
+Send SMS messages from CAS through TextMagic.
 
 To learn more, [visit this site](https://www.textmagic.com/).
 

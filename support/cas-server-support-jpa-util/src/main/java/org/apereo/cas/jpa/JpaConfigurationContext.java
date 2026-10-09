@@ -33,4 +33,7 @@ public class JpaConfigurationContext {
 
     @Builder.Default
     private final Set<String> packagesToScan = new LinkedHashSet<>();
+
+    @Builder.Default
+    private final Set<String> managedClassNames = new LinkedHashSet<>();
 }

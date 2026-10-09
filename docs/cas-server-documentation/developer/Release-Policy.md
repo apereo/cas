@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Release Policy
+description: "The CAS release strategy: what major, minor, patch and security releases may contain and how lines of development are managed."
 ---
 
 # Release Policy

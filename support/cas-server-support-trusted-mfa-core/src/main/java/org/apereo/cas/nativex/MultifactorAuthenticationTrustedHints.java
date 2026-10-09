@@ -4,6 +4,7 @@ import module java.base;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecordKeyGenerator;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
+import org.apereo.cas.trusted.web.flow.MultifactorAuthenticationTrustBean;
 import org.apereo.cas.trusted.web.flow.fingerprint.DeviceFingerprintExtractor;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import org.jspecify.annotations.NonNull;
@@ -20,9 +21,10 @@ public class MultifactorAuthenticationTrustedHints implements CasRuntimeHintsReg
     @Override
     public void registerHints(final @NonNull RuntimeHints hints, final @Nullable ClassLoader classLoader) {
         registerSerializationHints(hints, MultifactorAuthenticationTrustRecord.class);
+        registerReflectionHints(hints, List.of(MultifactorAuthenticationTrustBean.class));
+        registerSerializationHints(hints, MultifactorAuthenticationTrustBean.class);
         registerProxyHints(hints, DeviceFingerprintExtractor.class,
             MultifactorAuthenticationTrustStorage.class,
             MultifactorAuthenticationTrustRecordKeyGenerator.class);
     }
 }
-

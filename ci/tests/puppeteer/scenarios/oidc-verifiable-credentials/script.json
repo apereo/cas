@@ -23,6 +23,16 @@
     "--cas.service-registry.core.init-from-json=true",
     "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services",
     
+    "--cas.authn.oidc.vc.issuer.status-list.enabled=true",
+    "--cas.authn.oidc.vc.issuer.encryption.enabled=true",
+    "--cas.authn.oidc.vc.issuer.credential-configurations.deferredorg.format=DC_SD_JWT",
+    "--cas.authn.oidc.vc.issuer.credential-configurations.deferredorg.scope=DeferredCredential",
+    "--cas.authn.oidc.vc.issuer.credential-configurations.deferredorg.deferred-issuance=true",
+
+    "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
+    "--management.endpoints.web.exposure.include=oidcVcDeferred",
+    "--management.endpoints.access.default=UNRESTRICTED",
+
     "--cas.authn.oidc.vc.issuer.credential-configurations.myorg.format=DC_SD_JWT",
     "--cas.authn.oidc.vc.issuer.credential-configurations.myorg.scope=SystemCredential",
     "--cas.authn.oidc.vc.issuer.credential-configurations.myorg.claims.roles.mandatory=true",

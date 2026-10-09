@@ -49,6 +49,27 @@ public class CompressionUtils {
     }
 
     /**
+     * Deflate bytes with the highest compression level, either as raw DEFLATE data (RFC 1951) or wrapped in the ZLIB
+     * format (RFC 1950), which carries a header and a checksum.
+     *
+     * @param content the content
+     * @param raw     true for raw DEFLATE data, false for the ZLIB format
+     * @return the deflated bytes
+     */
+    public static byte[] deflate(final byte[] content, final boolean raw) {
+        try (val deflater = new Deflater(Deflater.BEST_COMPRESSION, raw)) {
+            deflater.setInput(content);
+            deflater.finish();
+            val output = new ByteArrayOutputStream(content.length);
+            val buffer = new byte[BUFFER_LENGTH];
+            while (!deflater.finished()) {
+                output.write(buffer, 0, deflater.deflate(buffer));
+            }
+            return output.toByteArray();
+        }
+    }
+
+    /**
      * Deflate to byte array.
      *
      * @param data the data
@@ -95,6 +116,32 @@ public class CompressionUtils {
     public static @Nullable String inflateToString(final byte[] bytes) {
         val inflated = inflateToByteArray(bytes);
         return inflated != null ? new String(inflated, StandardCharsets.UTF_8) : null;
+    }
+
+    /**
+     * Inflate bytes deflated by {@link #deflate(byte[], boolean)}, starting at an offset. Content that ends before the
+     * compressed stream does is refused rather than returned partially.
+     *
+     * @param content the content
+     * @param offset  where the deflated bytes start
+     * @param raw     true for raw DEFLATE data, false for the ZLIB format
+     * @return the inflated bytes
+     * @throws DataFormatException when the content is not valid deflated data or is truncated
+     */
+    public static byte[] inflate(final byte[] content, final int offset, final boolean raw) throws DataFormatException {
+        try (val inflater = new Inflater(raw)) {
+            inflater.setInput(Arrays.copyOfRange(content, offset, content.length + 1));
+            val output = new ByteArrayOutputStream(Math.max(BUFFER_LENGTH, (content.length - offset) * 4));
+            val buffer = new byte[BUFFER_LENGTH];
+            while (!inflater.finished()) {
+                val count = inflater.inflate(buffer);
+                if (count == 0 && (inflater.needsInput() || inflater.needsDictionary())) {
+                    throw new DataFormatException("Deflated content is truncated");
+                }
+                output.write(buffer, 0, count);
+            }
+            return output.toByteArray();
+        }
     }
 
     /**

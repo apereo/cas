@@ -6,6 +6,8 @@
   "properties": [
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",
+    "--spring.cloud.bootstrap.enabled=false",
+    "--spring.config.import=zookeeper:",
     "--cas.service-registry.core.init-from-json=true",
 
     "--spring.cloud.zookeeper.config.watcher.enabled=true",

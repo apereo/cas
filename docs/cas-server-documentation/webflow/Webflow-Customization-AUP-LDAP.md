@@ -1,12 +1,14 @@
 ---
 layout: default
-title: CAS - Web Flow Acceptable Usage Policy
+title: CAS - LDAP Acceptable Usage Policy
 category: Acceptable Usage Policy
 ---
 
 {% include variables.html %}
 
 # LDAP Acceptable Usage Policy
+
+Read and record acceptance of the acceptable usage policy in an attribute of the user's LDAP entry.
 
 Alternatively, CAS can be configured to use LDAP as the storage mechanism. Upon
 accepting the policy, the result will be stored back into LDAP and remembered

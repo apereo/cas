@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Google Analytics
+description: "Send CAS login and user activity to Google Analytics 4."
 category: Integration
 ---
 

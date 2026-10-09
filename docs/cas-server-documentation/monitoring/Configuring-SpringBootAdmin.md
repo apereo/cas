@@ -1,6 +1,7 @@
 ---
 layout: default
-title: CAS - Monitoring
+title: CAS - CAS Spring Boot Administration
+description: "Monitor CAS visually with Spring Boot Admin by registering CAS as a Spring Boot Admin client."
 category: Monitoring & Statistics
 ---
 

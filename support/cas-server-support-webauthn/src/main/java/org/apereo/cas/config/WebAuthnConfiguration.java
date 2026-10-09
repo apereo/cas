@@ -159,11 +159,17 @@ class WebAuthnConfiguration {
 
                         LOGGER.debug("Starting to refresh/download FIDO metadata blob from [{}] and caching it at [{}]",
                             fidoProperties.getMetadataBlobUrl(), fidoProperties.getBlobCacheFile());
-                        val blob = refreshFidoMetadataBlob(downloader, fidoProperties);
-                        val fidoService = FidoMetadataService.builder()
-                            .useBlob(blob)
-                            .build();
-                        composite.addAttestationTrustSource(fidoService);
+                        try {
+                            val blob = refreshFidoMetadataBlob(downloader, fidoProperties);
+                            val fidoService = FidoMetadataService.builder()
+                                .useBlob(blob)
+                                .build();
+                            composite.addAttestationTrustSource(fidoService);
+                        } catch (final Exception e) {
+                            LOGGER.error("Unable to load the FIDO metadata blob from [{}]; the FIDO Metadata Service will not be used as an attestation trust source: [{}]",
+                                fidoProperties.getMetadataBlobUrl(), e.getMessage());
+                            LOGGER.debug(e.getMessage(), e);
+                        }
                     }
                     return composite;
                 }))

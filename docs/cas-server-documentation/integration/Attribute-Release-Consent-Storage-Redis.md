@@ -1,12 +1,14 @@
 ---
 layout: default
-title: CAS - Attribute Release Consent
+title: CAS - Redis - Attribute Consent Storage
 category: Attributes
 ---
 
 {% include variables.html %}
 
 # Redis - Attribute Consent Storage
+
+Keep the attribute consent decisions users make in Redis.
 
 Support is enabled by including the following module in the WAR Overlay:
 

@@ -1,12 +1,14 @@
 ---
 layout: default
-title: CAS - Delegate Authentication
+title: CAS - Keycloak - Delegated Authentication
 category: Authentication
 ---
 
 {% include variables.html %}
 
 # Keycloak
+
+Let users log in to CAS with an account managed by a Keycloak server, through OpenID Connect.
 
 For an overview of the delegated authentication flow, please [see this guide](Delegate-Authentication.html).
 

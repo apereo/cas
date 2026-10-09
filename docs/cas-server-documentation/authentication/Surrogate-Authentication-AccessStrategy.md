@@ -1,6 +1,7 @@
 ---
 layout: default
-title: CAS - Surrogate Authentication
+title: CAS - Access Strategy - Surrogate Authentication
+description: "Control which applications allow impersonation and who may impersonate whom."
 category: Authentication
 ---
 {% include variables.html %}

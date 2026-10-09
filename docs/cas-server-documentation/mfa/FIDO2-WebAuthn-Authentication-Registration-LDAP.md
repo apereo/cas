@@ -1,6 +1,6 @@
 ---
 layout: default
-title: CAS - FIDO2 WebAuthn Multifactor Authentication
+title: CAS - LDAP FIDO2 WebAuthn Multifactor Registration
 category: Multifactor Authentication
 ---
 

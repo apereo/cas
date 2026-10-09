@@ -22,4 +22,13 @@ class DefaultNativeImageFeatureTests {
         val results = new DefaultNativeImageFeature();
         assertDoesNotThrow(() -> results.afterRegistration(mock(Feature.AfterRegistrationAccess.class)));
     }
+
+    @Test
+    void verifyGroovyInitialization() throws Exception {
+        val access = mock(Feature.AfterRegistrationAccess.class);
+        doReturn(Class.forName("groovy.lang.GroovySystem", false, getClass().getClassLoader()))
+            .when(access).findClassByName("groovy.lang.GroovySystem");
+        val results = new DefaultNativeImageFeature();
+        assertDoesNotThrow(() -> results.afterRegistration(access));
+    }
 }

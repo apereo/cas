@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Configuring Principal Resolution
+description: "Principal resolution in CAS: turning credentials into a principal with an identifier and attributes from attribute repositories."
 category: Configuration
 ---
 {% include variables.html %}

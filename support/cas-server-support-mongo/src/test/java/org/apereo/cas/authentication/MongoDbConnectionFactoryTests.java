@@ -5,9 +5,13 @@ import org.apereo.cas.configuration.model.support.mongo.SingleCollectionMongoDbP
 import org.apereo.cas.mongo.MongoDbConnectionFactory;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.config.StringToWriteConcernConverter;
+import org.springframework.data.mongodb.core.MongoOperations;
+import org.springframework.data.mongodb.core.index.Index;
 import org.springframework.data.mongodb.core.mapping.Document;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -58,6 +62,60 @@ class MongoDbConnectionFactoryTests {
         };
         val template = factory.buildMongoTemplate(props);
         assertNotNull(template);
+    }
+
+    @Test
+    void verifyIndexReplacedWithUniqueIndex() {
+        val template = buildTemplate();
+        val collectionName = "IndexReplacement" + UUID.randomUUID().toString().replace("-", StringUtils.EMPTY);
+        MongoDbConnectionFactory.createCollection(template, collectionName, false);
+        template.getCollection(collectionName).insertMany(List.of(
+            new org.bson.Document("value", UUID.randomUUID().toString()),
+            new org.bson.Document("value", UUID.randomUUID().toString())));
+        try {
+            MongoDbConnectionFactory.createOrUpdateIndexes(template, template.getCollection(collectionName),
+                List.of(new Index().named("IDX_VALUE").on("value", Sort.Direction.ASC)));
+            MongoDbConnectionFactory.createOrUpdateIndexes(template, template.getCollection(collectionName),
+                List.of(new Index().named("IDX_VALUE").on("value", Sort.Direction.ASC).unique()));
+            assertEquals(Boolean.TRUE, getIndex(template, collectionName).get("unique"));
+        } finally {
+            template.dropCollection(collectionName);
+        }
+    }
+
+    @Test
+    void verifyFailedIndexReplacementRestoresIndex() {
+        val template = buildTemplate();
+        val collectionName = "IndexReplacement" + UUID.randomUUID().toString().replace("-", StringUtils.EMPTY);
+        MongoDbConnectionFactory.createCollection(template, collectionName, false);
+        template.getCollection(collectionName).insertMany(List.of(
+            new org.bson.Document("value", "duplicate"),
+            new org.bson.Document("value", "duplicate")));
+        try {
+            MongoDbConnectionFactory.createOrUpdateIndexes(template, template.getCollection(collectionName),
+                List.of(new Index().named("IDX_VALUE").on("value", Sort.Direction.ASC)));
+            MongoDbConnectionFactory.createOrUpdateIndexes(template, template.getCollection(collectionName),
+                List.of(new Index().named("IDX_VALUE").on("value", Sort.Direction.ASC).unique()));
+            val index = getIndex(template, collectionName);
+            assertEquals(new org.bson.Document("value", 1), index.get("key"));
+            assertNull(index.get("unique"));
+        } finally {
+            template.dropCollection(collectionName);
+        }
+    }
+
+    private static MongoOperations buildTemplate() {
+        val props = new SingleCollectionMongoDbProperties();
+        props.setClientUri(URI);
+        return new MongoDbConnectionFactory().buildMongoTemplate(props);
+    }
+
+    private static org.bson.Document getIndex(final MongoOperations template, final String collectionName) {
+        return template.getCollection(collectionName).listIndexes().into(new ArrayList<>())
+            .stream()
+            .filter(index -> "IDX_VALUE".equals(index.getString("name")))
+            .findFirst()
+            .orElseThrow();
     }
 
     @Document

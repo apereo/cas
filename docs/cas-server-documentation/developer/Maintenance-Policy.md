@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Maintenance Policy
+description: "Which CAS versions are maintained, for how long, and what kind of fixes each maintained release line receives until end of life."
 ---
 
 # Maintenance Policy

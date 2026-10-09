@@ -1,6 +1,6 @@
 ---
 layout: default
-title: CAS - SAML2 Delegated Authentication
+title: CAS - SAML2 Delegated Authentication - Amazon S3 Service Provider Metadata
 category: Authentication
 ---
 

@@ -1,12 +1,14 @@
 ---
 layout: default
-title: CAS - Delegate Authentication
+title: CAS - PayPal - Delegated Authentication
 category: Authentication
 ---
 
 {% include variables.html %}
 
 # PayPal
+
+Let users log in to CAS with their PayPal account.
 
 For an overview of the delegated authentication flow, please [see this guide](Delegate-Authentication.html).
 

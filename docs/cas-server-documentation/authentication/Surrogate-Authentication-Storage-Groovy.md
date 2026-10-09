@@ -1,11 +1,13 @@
 ---
 layout: default
-title: CAS - Surrogate Authentication
+title: CAS - Groovy Surrogate Authentication
 category: Authentication
 ---
 {% include variables.html %}
 
 # Groovy Surrogate Authentication
+
+Decide who may impersonate whom with a Groovy script that lists the accounts each user may log in as.
 
 Surrogate accounts may be defined in an external Groovy script whose path is 
 specified via the CAS configuration. The body of the script may be defined as such:

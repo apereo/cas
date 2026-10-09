@@ -1,6 +1,6 @@
 ---
 layout: default
-title: CAS - Authentication Interrupt
+title: CAS - REST Authentication Interrupt
 category: Webflow Management
 ---
 

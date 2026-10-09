@@ -1,6 +1,6 @@
 ---
 layout: default
-title: CAS - Delegate Authentication
+title: CAS - Custom - Delegated Authentication
 category: Authentication
 ---
 

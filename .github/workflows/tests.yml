@@ -75,6 +75,7 @@ jobs:
         uses: gradle/actions/setup-gradle@v6
         with:
           gradle-home-cache-excludes: caches/build-cache-1
+          cache-encryption-key: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
 
       - name: Initialize
         run: ls ./ci && find ./ci -type f -name "*.sh" -exec chmod +x "{}" \; && ./ci/init-build.sh
@@ -100,11 +101,14 @@ jobs:
         uses: gradle/actions/setup-gradle@v6
         with:
           gradle-home-cache-excludes: caches/build-cache-1
+          cache-encryption-key: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
 
-      - id: print-categories
-        run: ./gradlew --build-cache --configure-on-demand --no-daemon -q testCategories
       - id: get-categories
-        run: echo "categories=$(./gradlew --build-cache --configure-on-demand --no-daemon -q testCategories)" >> "$GITHUB_OUTPUT"
+        shell: bash
+        run: |
+          categories=$(./gradlew --build-cache --configure-on-demand -q testCategories)
+          echo "$categories" | jq .
+          echo "categories=$categories" >> "$GITHUB_OUTPUT"
   ##########################################################################
   
   tests:
@@ -131,6 +135,7 @@ jobs:
         uses: gradle/actions/setup-gradle@v6
         with:
           gradle-home-cache-excludes: caches/build-cache-1
+          cache-encryption-key: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
       - name: Initialize
         run: find ./ci -type f -name "*.sh" -exec chmod +x "{}" \; && ./ci/init-build.sh
         shell: bash
@@ -199,6 +204,7 @@ jobs:
         uses: gradle/actions/setup-gradle@v6
         with:
           gradle-home-cache-excludes: caches/build-cache-1
+          cache-encryption-key: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
       - name: Initialize
         run: find ./ci -type f -name "*.sh" -exec chmod +x "{}" \; && ./ci/init-build.sh
         shell: bash
@@ -216,7 +222,7 @@ jobs:
           for archive in "${archives[@]}"; do
             tar -xzf "$archive"
           done
-          ./gradlew jacocoRootReport --build-cache --configure-on-demand --no-daemon --parallel \
+          ./gradlew jacocoRootReport --build-cache --configure-on-demand --parallel \
             -x javadoc -x check -DskipNestedConfigMetadataGen=true --quiet
           echo "COVERAGE_REPORT=$PWD/build/reports/jacoco/jacocoRootReport/jacocoRootReport.xml" >> "$GITHUB_ENV"
       - name: Upload Coverage Report
@@ -230,7 +236,7 @@ jobs:
         run: |
           echo "Uploading coverage report to SonarCloud from $COVERAGE_REPORT"
           ./gradlew sonar --build-cache --configure-on-demand \
-            --no-daemon -DskipAot=true -q --parallel --no-isolated-projects \
+            -DskipAot=true -q --parallel --no-isolated-projects \
             -x javadoc -x test -DskipNestedConfigMetadataGen=true \
             -PsonarOrganization="${{ github.repository_owner }}" \
             -Dsonar.coverage.jacoco.xmlReportPaths="$COVERAGE_REPORT"

@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layout(mainContentClass='container-xxl')}">
+      layout:decorate="~{layout(mainContentClass='container-xxl py-3')}">
 
 <head>
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
@@ -10,50 +10,67 @@
     <script type="text/javascript" th:src="@{#{webjars.highlight.js}}"></script>
     <script type="text/javascript" th:src="@{#{webjars.sweet-alert.js}}"></script>
     <link rel="stylesheet" type="text/css" th:href="@{#{webjars.sweet-alert.css}}" />
-    <link rel="stylesheet" type="text/css" th:href="@{#{webjars.animate.css}}" />
+    <link rel="stylesheet" type="text/css" th:href="@{/css/account.css}" />
+    <script type="text/javascript" th:src="@{/js/account.js}"></script>
 </head>
 
 <body id="cas">
 <main class="container-xxl mt-3 mb-3">
     <div layout:fragment="content">
-        <script type="text/javascript">
-            document.addEventListener("DOMContentLoaded", (event) => {
-                if (window.location.hash) {
-                    showPanel(window.location.hash);
-                } else {
-                    let selectedTab = window.localStorage.getItem("AccountProfileSelectedTab");
-                    showPanel(selectedTab);
-                }
-            });
-
-            function showPanel(element) {
-                let effectiveElement = element;
-                if (element === null || element === '' || element === undefined) {
-                    effectiveElement = "#divOverview";
-                }
-                $('div.profile-content').hide();
-                $(effectiveElement).show();
-                $("#navigationMenu ul li").removeClass("active").removeAttr("aria-current");
-                const liElement = effectiveElement.replace("#div", "#link");
-                $(liElement).addClass("active").attr("aria-current", "page");
-                window.localStorage.setItem("AccountProfileSelectedTab", effectiveElement);
-            }
-        </script>
-
-
-        <div id="casAccountProfile">
+        <div id="casAccountProfile" class="cas-account"
+             th:with="displayNames=${authentication.principal.attributes['displayName']},
+                      fullName=${displayNames != null && !#lists.isEmpty(displayNames) && !#strings.isEmpty(displayNames[0]) ? displayNames[0] : authentication.principal.id},
+                      nameParts=${#strings.arraySplit(fullName, ' ')}">
             <div th:replace="~{fragments/accountprofile/accountprofilenavigation :: navigation}" />
-            <div class="mdc-card p-2 m-1" style="min-height: 100vh;">
-                <div th:replace="~{fragments/accountprofile/accountprofileoverview :: overview}" />
-                <div th:replace="~{fragments/accountprofile/accountprofilemfadevices :: mfadevices}"/>
-                <div th:replace="~{fragments/accountprofile/accountprofileauditlog :: auditlog}"/>
-                <div th:replace="~{fragments/accountprofile/accountprofilesecurityquestions :: securityquestions}" />
-                <div th:replace="~{fragments/accountprofile/accountprofileapplications :: applications}"/>
-                <div th:replace="~{fragments/accountprofile/accountprofilesessions :: sessions}"/>
-                <div th:replace="~{fragments/accountprofile/accountprofileconsent :: consent}"/>
-                <div th:replace="~{fragments/accountprofile/accountprofileattributes :: attributes}"/>
-                <div th:replace="~{fragments/accountprofile/accountprofiletrusteddevices :: trusteddevices}"/>
-                <div th:replace="~{fragments/accountprofile/accountprofileaccesstokens :: accesstokens}"/>
+
+            <div class="cas-account-main">
+                <section class="cas-account-banner" th:aria-label="#{screen.account.banner.label}">
+                    <div class="cas-account-banner-inner">
+                        <span class="cas-account-avatar" aria-hidden="true"
+                              th:text="${#strings.toUpperCase(#strings.substring(nameParts[0], 0, 1)
+                                        + (#arrays.length(nameParts) > 1 ? #strings.substring(nameParts[1], 0, 1) : ''))}">CU</span>
+                        <div class="cas-account-identity">
+                            <p id="accountTrail" class="cas-account-trail" th:text="#{screen.account.trail.root}">Account</p>
+                            <h1 th:text="${fullName}">CAS User</h1>
+                            <p>
+                                <span th:text="${authentication.principal.id}">casuser</span>
+                                <span th:if="${authentication.principal.attributes['mail'] != null && !#lists.isEmpty(authentication.principal.attributes['mail'])}"
+                                      th:text="${' · ' + authentication.principal.attributes['mail'][0]}"> · casuser@example.org</span>
+                            </p>
+                        </div>
+                        <button type="button" class="acct-btn acct-btn-on-brand cas-account-sections-toggle"
+                                data-account-action="sections" aria-expanded="false" aria-controls="navigationMenu">
+                            <i class="mdi mdi-menu" aria-hidden="true"></i>
+                            <span th:text="#{screen.account.nav.sections}">Sections</span>
+                        </button>
+                    </div>
+                </section>
+
+                <div class="cas-account-content">
+                    <div id="infoMessages" role="status" class="acct-banner"
+                         th:if="${flowRequestContext.messageContext.allMessages.length > 0}"
+                         th:classappend="${flowRequestContext.messageContext.hasErrorMessages()} ? 'acct-banner-error' : 'acct-banner-success'">
+                        <i class="mdi" aria-hidden="true"
+                           th:classappend="${flowRequestContext.messageContext.hasErrorMessages()} ? 'mdi-alert-circle-outline' : 'mdi-check-circle-outline'"></i>
+                        <div class="acct-banner-body">
+                            <p th:if="${flowRequestContext.messageContext.hasErrorMessages()}"><strong th:utext="#{screen.account.failure}">Operation Failure</strong></p>
+                            <p th:each="message : ${flowRequestContext.messageContext.allMessages}" th:text="${message.text}">Message Text</p>
+                        </div>
+                        <button type="button" class="acct-btn acct-btn-text" onclick="this.parentElement.hidden = true;"
+                                th:text="#{screen.account.dismiss}">Dismiss</button>
+                    </div>
+
+                    <div th:replace="~{fragments/accountprofile/accountprofileoverview :: overview}" />
+                    <div th:replace="~{fragments/accountprofile/accountprofileattributes :: attributes}"/>
+                    <div th:replace="~{fragments/accountprofile/accountprofilesessions :: sessions}"/>
+                    <div th:replace="~{fragments/accountprofile/accountprofileapplications :: applications}"/>
+                    <div th:replace="~{fragments/accountprofile/accountprofileaccesstokens :: accesstokens}"/>
+                    <div th:replace="~{fragments/accountprofile/accountprofilemfadevices :: mfadevices}"/>
+                    <div th:replace="~{fragments/accountprofile/accountprofiletrusteddevices :: trusteddevices}"/>
+                    <div th:replace="~{fragments/accountprofile/accountprofilesecurityquestions :: securityquestions}" />
+                    <div th:replace="~{fragments/accountprofile/accountprofileconsent :: consent}"/>
+                    <div th:replace="~{fragments/accountprofile/accountprofileauditlog :: auditlog}"/>
+                </div>
             </div>
         </div>
     </div>

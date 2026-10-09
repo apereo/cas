@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - JMX Integration
+description: "Expose CAS components and settings as JMX MBeans for monitoring and management."
 category: Integration
 ---
 

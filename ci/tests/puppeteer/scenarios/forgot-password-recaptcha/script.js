@@ -12,12 +12,12 @@ const cas = require("../../cas.js");
     await cas.click(page, "#forgotPasswordLink");
     await cas.sleep(1000);
 
-    await cas.assertTextContent(page, "#reset #fm1 h3", "Reset your password");
+    await cas.assertTextContent(page, "#reset #fm1 h2", "Reset your password");
     await cas.assertVisibility(page, "#username");
     await cas.type(page,"#username", "casuser");
     await cas.pressEnter(page);
     await cas.waitForNavigation(page);
     await cas.sleep(1000);
-    await cas.assertTextContent(page, "div .banner-danger p", "reCAPTCHA’s validation failed.");
+    await cas.assertTextContent(page, "div .acct-banner-error p", "reCAPTCHA’s validation failed.");
     await cas.closeBrowser(browser);
 })();

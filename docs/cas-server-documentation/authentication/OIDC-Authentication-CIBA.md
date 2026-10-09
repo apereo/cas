@@ -1,6 +1,6 @@
 ---
 layout: default
-title: CAS - OpenID Connect Authentication
+title: CAS - OpenID Connect - Client-Initiated Backchannel Authentication (CIBA)
 category: Protocols
 ---
 {% include variables.html %}

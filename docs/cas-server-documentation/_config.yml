@@ -22,6 +22,12 @@ exclude:
   - 4.2.x
   - 4.1.x
   - 4.0.x
+# Versions offered in the Versions menu: development plus the releases still under maintenance.
+# Keep in sync with the EOL schedule in developer/Maintenance-Policy.md.
+documentation_versions:
+  - development
+  - 8.0.x
+  - 7.3.x
 markdown: kramdown
 lsi: false
 plugins:

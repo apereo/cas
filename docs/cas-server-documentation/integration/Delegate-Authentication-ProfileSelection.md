@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Delegate Authentication Profile Selection
+description: "Let users pick which linked account or persona to use when a delegated login matches several CAS profiles."
 category: Authentication
 ---
 

@@ -1,6 +1,6 @@
 ---
 layout: default
-title: CAS - Configuration Server
+title: CAS - Configuration Server - Standalone Profile
 category: Configuration
 ---
 
@@ -25,13 +25,13 @@ Settings found in external configuration files are and will be able to override 
 provided by CAS. The naming of the configuration files inside the CAS configuration directory follows the below pattern:
 
 - An `application.(properties|yml|yaml)` file is always loaded, if found.
-- Settings located inside `properties|yml|yaml` files whose name matches the value of `spring.application.name` are loaded (i.e `cas.properties`) Note: `spring.application.name` defaults to uppercase `CAS` but the lowercase name will also be loaded.
-- Settings located inside `properties|yml|yaml` files whose name matches the value of `spring.profiles.active` are loaded (i.e `ldap.properties`).
+- Settings located inside `properties|yml|yaml` files whose name matches the value of `spring.application.name`{: .cas-setting} are loaded (i.e `cas.properties`) Note: `spring.application.name`{: .cas-setting} defaults to uppercase `CAS` but the lowercase name will also be loaded.
+- Settings located inside `properties|yml|yaml` files whose name matches the value of `spring.profiles.active`{: .cas-setting} are loaded (i.e `ldap.properties`).
 - Profile-specific application properties outside of your packaged web application (`application-{profile}.properties|yml|yaml`)
   This allows you to, if needed, split your settings into multiple property files and then locate them by assigning their name
-  to the list of active profiles (i.e. `spring.profiles.active=standalone,testldap,stagingMfa`)
+  to the list of active profiles (i.e. `spring.profiles.active=standalone,testldap,stagingMfa`{: .cas-setting})
 
-Configuration files are loaded in the following order where `spring.profiles.active=standalone,profile1,profile2`. Note
+Configuration files are loaded in the following order where `spring.profiles.active=standalone,profile1,profile2`{: .cas-setting}. Note
 that the last configuration file loaded will override any duplicate properties from configuration files loaded earlier:
 
 1. `application.(properties|yml|yaml) `

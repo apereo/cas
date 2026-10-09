@@ -1,6 +1,7 @@
 ---
 layout: default
-title: CAS - Password Management
+title: CAS - Forgot Username - Password Management
+description: "Let users retrieve a forgotten username by email using their registered contact details."
 category: Password Management
 ---
 

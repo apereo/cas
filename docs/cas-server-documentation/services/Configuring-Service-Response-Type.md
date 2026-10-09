@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Configuring Service Response Type
+description: "Choose how CAS returns to an application after login: browser redirect, POST, or header-based responses."
 category: Services
 ---
 

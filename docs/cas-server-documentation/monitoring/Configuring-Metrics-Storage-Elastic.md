@@ -1,6 +1,6 @@
 ---
 layout: default
-title: CAS - Metrics
+title: CAS - Elastic Storage - CAS Metrics
 category: Monitoring & Statistics
 ---
 

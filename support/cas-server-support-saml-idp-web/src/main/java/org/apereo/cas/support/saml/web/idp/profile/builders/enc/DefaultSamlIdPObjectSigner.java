@@ -17,12 +17,16 @@ import org.apereo.cas.util.RegexUtils;
 import org.apereo.cas.util.crypto.CertUtils;
 import org.apereo.cas.util.crypto.PrivateKeyFactoryBean;
 import org.apereo.cas.util.function.FunctionUtils;
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
 import com.google.common.collect.Sets;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import net.shibboleth.shared.resolver.CriteriaSet;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jspecify.annotations.Nullable;
@@ -54,6 +58,7 @@ import org.opensaml.xmlsec.config.impl.DefaultSecurityConfigurationBootstrap;
 import org.opensaml.xmlsec.context.SecurityParametersContext;
 import org.opensaml.xmlsec.criterion.SignatureSigningConfigurationCriterion;
 import org.opensaml.xmlsec.impl.BasicSignatureSigningConfiguration;
+import org.springframework.core.io.ByteArrayResource;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -67,11 +72,24 @@ import jakarta.servlet.http.HttpServletResponse;
 @RequiredArgsConstructor
 @Getter
 public class DefaultSamlIdPObjectSigner implements SamlIdPObjectSigner {
+    private static final int SIGNING_KEYS_CACHE_SIZE = 100;
+
+    private static final Duration SIGNING_KEYS_CACHE_EXPIRATION = Duration.ofHours(1);
+
     private final MetadataResolver samlIdPMetadataResolver;
 
     private final CasConfigurationProperties casProperties;
 
     private final SamlIdPMetadataLocator samlIdPMetadataLocator;
+
+    @Getter(AccessLevel.NONE)
+    private volatile @Nullable SamlIdPMetadataCredentialResolver signingCredentialResolver;
+
+    @Getter(AccessLevel.NONE)
+    private final Cache<String, PrivateKey> signingPrivateKeys = Caffeine.newBuilder()
+        .maximumSize(SIGNING_KEYS_CACHE_SIZE)
+        .expireAfterAccess(SIGNING_KEYS_CACHE_EXPIRATION)
+        .build();
 
     private static boolean doesCredentialFingerprintMatch(final AbstractCredential credential,
                                                           final SamlRegisteredService samlRegisteredService) {
@@ -243,17 +261,8 @@ public class DefaultSamlIdPObjectSigner implements SamlIdPObjectSigner {
     protected SignatureSigningConfiguration getSignatureSigningConfiguration(final SamlRegisteredService service) throws Throwable {
         val config = configureSignatureSigningSecurityConfiguration(service);
 
-        val samlIdp = casProperties.getAuthn().getSamlIdp();
         val privateKey = getSigningPrivateKey(service);
-
-        val mdCredentialResolver = new SamlIdPMetadataCredentialResolver();
-        val roleDescriptorResolver = SamlIdPUtils.getRoleDescriptorResolver(
-            samlIdPMetadataResolver,
-            samlIdp.getMetadata().getCore().isRequireValidMetadata());
-        mdCredentialResolver.setRoleDescriptorResolver(roleDescriptorResolver);
-        mdCredentialResolver.setKeyInfoCredentialResolver(
-            DefaultSecurityConfigurationBootstrap.buildBasicInlineKeyInfoCredentialResolver());
-        mdCredentialResolver.initialize();
+        val mdCredentialResolver = getSigningCredentialResolver();
 
         val criteriaSet = new CriteriaSet();
         criteriaSet.add(new SignatureSigningConfigurationCriterion(config));
@@ -291,26 +300,46 @@ public class DefaultSamlIdPObjectSigner implements SamlIdPObjectSigner {
     }
 
     /**
-     * Gets signing private key.
+     * The resolver only delegates to the IdP metadata resolver, which resolves per service on every call,
+     * so one instance serves every signature. Concurrent first calls may each build one; any of them will do.
+     *
+     * @return the signing credential resolver
+     * @throws Exception the exception
+     */
+    protected SamlIdPMetadataCredentialResolver getSigningCredentialResolver() throws Exception {
+        var resolver = signingCredentialResolver;
+        if (resolver == null) {
+            resolver = new SamlIdPMetadataCredentialResolver();
+            resolver.setRoleDescriptorResolver(SamlIdPUtils.getRoleDescriptorResolver(samlIdPMetadataResolver,
+                casProperties.getAuthn().getSamlIdp().getMetadata().getCore().isRequireValidMetadata()));
+            resolver.setKeyInfoCredentialResolver(DefaultSecurityConfigurationBootstrap.buildBasicInlineKeyInfoCredentialResolver());
+            resolver.initialize();
+            signingCredentialResolver = resolver;
+        }
+        return resolver;
+    }
+
+    /**
+     * Gets signing private key. Parsed keys are cached by algorithm and a digest of the key material,
+     * so a rotated key is parsed on first use without any invalidation.
      *
      * @param registeredService the registered service
      * @return the signing private key
      * @throws Throwable the throwable
      */
     protected PrivateKey getSigningPrivateKey(final SamlRegisteredService registeredService) throws Throwable {
-        val samlIdp = casProperties.getAuthn().getSamlIdp();
         val signingKey = samlIdPMetadataLocator.resolveSigningKey(Optional.of(registeredService));
-        val privateKeyFactoryBean = new PrivateKeyFactoryBean();
-        privateKeyFactoryBean.setLocation(signingKey);
-        if (StringUtils.isBlank(registeredService.getSigningKeyAlgorithm())) {
-            privateKeyFactoryBean.setAlgorithm(samlIdp.getAlgs().getPrivateKeyAlgName());
-        } else {
-            privateKeyFactoryBean.setAlgorithm(registeredService.getSigningKeyAlgorithm());
-        }
-        privateKeyFactoryBean.setSingleton(false);
-        LOGGER.debug("Locating signature signing key for [{}] using algorithm [{}]",
-            registeredService.getMetadataLocation(), privateKeyFactoryBean.getAlgorithm());
-        return privateKeyFactoryBean.getObject();
+        val algorithm = StringUtils.defaultIfBlank(registeredService.getSigningKeyAlgorithm(),
+            casProperties.getAuthn().getSamlIdp().getAlgs().getPrivateKeyAlgName());
+        LOGGER.debug("Locating signature signing key for [{}] using algorithm [{}]", registeredService.getMetadataLocation(), algorithm);
+        val keyContent = signingKey.exists() ? signingKey.getContentAsByteArray() : ArrayUtils.EMPTY_BYTE_ARRAY;
+        return signingPrivateKeys.get(algorithm + '|' + DigestUtils.sha256(keyContent), _ -> FunctionUtils.doUnchecked(() -> {
+            val privateKeyFactoryBean = new PrivateKeyFactoryBean();
+            privateKeyFactoryBean.setLocation(new ByteArrayResource(keyContent));
+            privateKeyFactoryBean.setAlgorithm(algorithm);
+            privateKeyFactoryBean.setSingleton(false);
+            return privateKeyFactoryBean.getObject();
+        }));
     }
 
     protected BasicSignatureSigningConfiguration configureSignatureSigningSecurityConfiguration(final SamlRegisteredService service) {

@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Passwordless Authentication
+description: "Passwordless authentication in CAS with one-time tokens sent by email or SMS, or passkeys, and the supported account and token stores."
 category: Authentication
 ---
 {% include variables.html %}

@@ -535,8 +535,6 @@ function prepareScenario() {
   if [[ "${CI}" == "true" ]]; then
     printgreen "DEBUG flag is turned off while running CI"
     DEBUG=""
-    printgreen "Gradle daemon is turned off while running CI"
-    DAEMON="--no-daemon"
 
     printgreen "Creating configuration directories.."
     sudo mkdir -p /etc/cas/config
@@ -658,7 +656,6 @@ function awaitCasBuild() {
         linesShown=${totalLines}
       fi
     fi
-    sleep 2
   done
   wait "${pid}"
   local buildResult=$?
@@ -683,13 +680,14 @@ function killPendingCasBuild() {
 
 function copyCasServerArtifact() {
   local instance="$1"
+  local reuseNativeArtifact="${2:-false}"
   local casServerArtifact="${casServerArtifacts[$instance]}"
   if [[ "${NATIVE_BUILD}" == "false" && "${NATIVE_RUN}" == "false" ]]; then
     if ! cp "${casWebApplicationFile}" "${casServerArtifact}"; then
       printred "Unable to build or locate the CAS web application file. Aborting test..."
       exit 1
     fi
-  elif [[ ${instances} -gt 1 ]]; then
+  elif [[ ${instances} -gt 1 && "${reuseNativeArtifact}" != "true" ]]; then
     if ! cp "${targetArtifact}" "${casServerArtifact}"; then
       printred "Unable to build or locate the CAS native image. Aborting test..."
       exit 1
@@ -743,6 +741,7 @@ function waitForCasInstance() {
   local exitCode
   local remaining
   local probeTimeoutArgs
+  local nativeStartupLog="${PUPPETEER_DIR}/overlay/cas-instance-${instance}.log"
   for url in "$@"; do
     printcyan "Checking healthcheck url: ${url}"
     while true; do
@@ -754,8 +753,13 @@ function waitForCasInstance() {
         fi
         probeTimeoutArgs=(--max-time "${remaining}")
       fi
-      if curl -I -k --connect-timeout 10 "${probeTimeoutArgs[@]}" --output /dev/null --silent --fail "${url}"; then
-        break
+      if [[ "${NATIVE_RUN}" != "true" ]] || {
+        grep -q 'Started CasNativeWebApplication in' "${nativeStartupLog}" 2>/dev/null &&
+          grep -q 'Ready to process requests' "${nativeStartupLog}" 2>/dev/null
+      }; then
+        if curl -I -k --connect-timeout 10 "${probeTimeoutArgs[@]}" --output /dev/null --silent --fail "${url}"; then
+          break
+        fi
       fi
       if [[ -n "${pid}" ]] && ! kill -0 "${pid}" >/dev/null 2>&1; then
         wait "${pid}"
@@ -849,6 +853,10 @@ function dockerImageNameForInstance() {
 }
 
 function buildAndRun() {
+  local reuseNativeArtifacts="false"
+  if [[ "${NATIVE_RUN}" == "true" && "${NATIVE_BUILD}" == "false" && "${REBUILD}" != "true" ]]; then
+    reuseNativeArtifacts="true"
+  fi
   createCasKeystore
 
   if [[ "${NATIVE_BUILD}" == "false" && "${NATIVE_RUN}" == "false" ]]; then
@@ -889,7 +897,7 @@ function buildAndRun() {
     targetArtifact="./webapp/cas-server-webapp${serverType:+-$serverType}/build/libs/cas-server-webapp${serverType:+-$serverType}-${casVersion}.${projectType}"
   else
     targetArtifact="./webapp/cas-server-webapp${serverType:+-$serverType}/build/${serverType}/nativeCompile/cas"
-    if [[ ! -f "$targetArtifact" ]]; then
+    if [[ ! -f "$targetArtifact" && "${NATIVE_RUN}" == "false" ]]; then
       NATIVE_BUILD="true"
     fi
   fi
@@ -912,7 +920,7 @@ function buildAndRun() {
   if [[ ${instances} -gt 1 || ${instanceDependencyCount} -gt 0 ]]; then
     printcyan "Preparing individual CAS server artifacts for ${instances} instance(s)."
   fi
-  if [[ ${instanceDependencyCount} -gt 0 ]]; then
+  if [[ ${instanceDependencyCount} -gt 0 && ("${NATIVE_BUILD}" == "true" || "${NATIVE_RUN}" == "false") ]]; then
     REBUILD="true"
   fi
 
@@ -944,6 +952,15 @@ function buildAndRun() {
       if [[ ${casServerBuildSources[$c]} -ne ${c} ]]; then
         printcyan "CAS instance #${c} has the same dependencies [${dependencies}] as instance #${casServerBuildSources[$c]} and reuses its artifact"
         continue
+      fi
+
+      if [[ "${reuseNativeArtifacts}" == "true" ]]; then
+        if [[ -x "${casServerArtifact}" ]]; then
+          printcyan "Reusing previously built native executable for CAS instance #${c}: ${casServerArtifact}"
+          copyCasServerArtifact "${c}" true
+          continue
+        fi
+        REBUILD="true"
       fi
 
       if [[ "${REBUILD}" == "true" ]]; then
@@ -994,9 +1011,10 @@ ${BUILD_SCRIPT:+ $BUILD_SCRIPT}${DAEMON:+ $DAEMON} \
           fi
         else
           printcyan "Launching CAS build in the foreground..."
-          $BUILD_COMMAND
-          pid=$!
-          wait $pid
+          if ! $BUILD_COMMAND; then
+            printred "Failed to build CAS web application. Examine the build output."
+            exit 2
+          fi
           if [[ ! -e "${targetArtifact}" ]]; then
             printred "Failed to build CAS web application: ${targetArtifact}."
             exit 2
@@ -1017,14 +1035,33 @@ ${BUILD_SCRIPT:+ $BUILD_SCRIPT}${DAEMON:+ $DAEMON} \
       dockerImageName=$(dockerImageNameForInstance "$c")
       docker rmi "${dockerImageName}":latest --force >/dev/null 2>&1
 
-      if [[ -f "$SCENARIO_FOLDER/docker/Dockerfile" ]]; then
+      nativeDockerContext=""
+      if [[ "${NATIVE_BUILD}" == "true" || "${NATIVE_RUN}" == "true" ]]; then
+        nativeDockerContext=$(mktemp -d "${PUPPETEER_DIR}/overlay/native-docker-${c}.XXXXXX")
+        dockerContextDirectory="${nativeDockerContext}"
+        nativeDockerfile="$PWD/ci/tests/puppeteer/docker/Dockerfile.native"
+        if [[ -f "$SCENARIO_FOLDER/docker/Dockerfile.native" ]]; then
+          nativeDockerfile="$SCENARIO_FOLDER/docker/Dockerfile.native"
+        fi
+        cp "${nativeDockerfile}" "$dockerContextDirectory/Dockerfile"
+        cp "$PWD/ci/tests/puppeteer/docker/entrypoint.sh" "$dockerContextDirectory/entrypoint.sh"
+        cp "${casServerArtifacts[$c]}" "$dockerContextDirectory/cas"
+        mkdir -p "$dockerContextDirectory/native-libs"
+        for library in "$PWD/webapp/cas-server-webapp-native/build/native/nativeCompile/"*.so "$(dirname "${casServerArtifacts[$c]}")/"*.so; do
+          if [[ -f "${library}" ]]; then
+            cp "${library}" "$dockerContextDirectory/native-libs/"
+          fi
+        done
+      elif [[ -f "$SCENARIO_FOLDER/docker/Dockerfile" ]]; then
         dockerContextDirectory="$SCENARIO_FOLDER/docker"
       else
         dockerContextDirectory="$PWD/ci/tests/puppeteer/docker"
       fi
       printcyan "Building Docker image ${dockerImageName} for scenario ${scenarioName} via $dockerContextDirectory"
 
-      cp "${casServerArtifacts[$c]}" "$dockerContextDirectory/cas.${projectType}"
+      if [[ -z "${nativeDockerContext}" ]]; then
+        cp "${casServerArtifacts[$c]}" "$dockerContextDirectory/cas.${projectType}"
+      fi
       cp $keystore "$dockerContextDirectory"
 
       javaVersion=($(cat $PWD/gradle.properties | grep "sourceCompatibility" | cut -d= -f2))
@@ -1048,8 +1085,12 @@ ${BUILD_SCRIPT:+ $BUILD_SCRIPT}${DAEMON:+ $DAEMON} \
         -t "${dockerImageName}":latest \
         "$dockerContextDirectory"
       RC=$?
-      rm "$dockerContextDirectory/cas.${projectType}"
-      rm "$dockerContextDirectory/thekeystore"
+      if [[ -n "${nativeDockerContext}" ]]; then
+        rm -rf "${nativeDockerContext}"
+      else
+        rm "$dockerContextDirectory/cas.${projectType}"
+        rm "$dockerContextDirectory/thekeystore"
+      fi
       if [ $RC -ne 0 ]; then
         printred "Unable to build CAS Docker image."
         exit 2
@@ -1184,13 +1225,19 @@ ${BUILD_SCRIPT:+ $BUILD_SCRIPT}${DAEMON:+ $DAEMON} \
         springAppJson=$(jq -j '.SPRING_APPLICATION_JSON // empty' "${config}")
         [ -n "${springAppJson}" ] && export SPRING_APPLICATION_JSON=${springAppJson}
 
-        printcyan "Cleaning leftover artifacts from previous runs..."
-        rm -rf "$TMPDIR/keystore.jwks"
-        rm -rf "$TMPDIR/cas"
+        # Instances started earlier in this loop are already running and watching these locations:
+        # removing them again would delete their embedded service definitions and shared keystore.
+        if [[ ${c} -eq 1 ]]; then
+          printcyan "Cleaning leftover artifacts from previous runs..."
+          rm -rf "$TMPDIR/keystore.jwks"
+          rm -rf "$TMPDIR/cas"
+        fi
 
         if [[ "${launchEnabled}" == "true" ]]; then
-          if [[ "${NATIVE_RUN}" == "true" ]]; then
+          if [[ "${NATIVE_RUN}" == "true" && "${buildDockerImage}" != "true" ]]; then
             printcyan "Launching CAS instance #${c} under port ${serverPort} from ${casArtifactToRun}"
+            nativeStartupLog="${PUPPETEER_DIR}/overlay/cas-instance-${c}.log"
+            : > "${nativeStartupLog}"
             ${casArtifactToRun} \
               -Dcom.sun.net.ssl.checkRevocation=false \
               -Dlog.console.stacktraces=true \
@@ -1202,7 +1249,10 @@ ${BUILD_SCRIPT:+ $BUILD_SCRIPT}${DAEMON:+ $DAEMON} \
               --management.endpoints.web.discovery.enabled=true \
               --server.port=${serverPort} \
               --spring.profiles.active=none \
-              --server.ssl.key-store="$keystore" ${properties} &
+              --server.ssl.key-store="$keystore" ${properties} \
+              --logging.level.org.apereo.cas.nativex.CasNativeWebApplication=info \
+              --logging.level.org.apereo.cas.web.CasWebApplicationReady=info \
+              > >(tee -a "${nativeStartupLog}") 2>&1 &
           elif [[ "${buildDockerImage}" == "true" ]]; then
             dockerImageName=$(dockerImageNameForInstance "$c")
             dockerHostDebugPort=$((5000 + c - 1))
@@ -1220,7 +1270,13 @@ ${BUILD_SCRIPT:+ $BUILD_SCRIPT}${DAEMON:+ $DAEMON} \
               -p ${dockerHostJavaDebugPort}:5005 \
               -p ${dockerHostHttpPort}:8080 \
               "${dockerImageName}":latest
-            docker logs -f "${dockerImageName}" 2>/dev/null &
+            if [[ "${NATIVE_RUN}" == "true" ]]; then
+              nativeStartupLog="${PUPPETEER_DIR}/overlay/cas-instance-${c}.log"
+              : > "${nativeStartupLog}"
+              docker logs -f "${dockerImageName}" > >(tee -a "${nativeStartupLog}") 2>&1 &
+            else
+              docker logs -f "${dockerImageName}" 2>/dev/null &
+            fi
           else
             if [[ "${aotEnabled}" == "true" && "${serverType:-external}" != "external" ]]; then
               printgreen "The scenario ${scenarioName} will run with AOT"
@@ -1284,9 +1340,9 @@ ${BUILD_SCRIPT:+ $BUILD_SCRIPT}${DAEMON:+ $DAEMON} \
                 -Dlog.console.stacktraces=true \
                 $systemProperties \
                 -jar "${casArtifactToRun}" \
+                --spring.main.lazy-initialization=false \
                 -Dcom.sun.net.ssl.checkRevocation=false \
                 --server.port=${serverPort} \
-                --spring.main.lazy-initialization=false \
                 --spring.profiles.active=none \
                 --spring.devtools.restart.enabled=false \
                 --management.endpoints.web.discovery.enabled=true \
@@ -1345,7 +1401,7 @@ ${BUILD_SCRIPT:+ $BUILD_SCRIPT}${DAEMON:+ $DAEMON} \
     done
 
     printgreen "Ready!"
-    if [[ "${INITONLY}" == "false" ]]; then
+    if [[ "${INITONLY}" == "false" && ("${NATIVE_RUN}" != "true" || "${launchEnabled}" != "true") ]]; then
       readyScript=$(jq -j '.readyScript // empty' <"${config}")
       readyScript="${readyScript//\$\{PWD\}/${PWD}}"
       readyScript="${readyScript//\$\{SCENARIO\}/${scenarioName}}"
@@ -1354,7 +1410,10 @@ ${BUILD_SCRIPT:+ $BUILD_SCRIPT}${DAEMON:+ $DAEMON} \
       for script in ${scripts}; do
         printgreen "Running ready script: ${script}"
         chmod +x "${script}"
-        eval "${script}"
+        if ! eval "${script}"; then
+          printred "Ready script [${script}] failed."
+          exit 4
+        fi
       done
     fi
   fi
@@ -1458,7 +1517,9 @@ ${BUILD_SCRIPT:+ $BUILD_SCRIPT}${DAEMON:+ $DAEMON} \
     [ -n "${projectType}" ] && rm -f "$PWD"/cas.${projectType} >/dev/null 2>&1
     for ((c = 1; c <= ${instances:-1}; c++)); do
       [ -n "${projectType}" ] && rm -f "$PWD"/cas-instance-${c}.${projectType} >/dev/null 2>&1
-      rm -f "$PWD"/cas-instance-${c} >/dev/null 2>&1
+      if [[ "${NATIVE_BUILD}" != "true" || "${NATIVE_RUN}" == "true" ]]; then
+        rm -f "$PWD"/cas-instance-${c} >/dev/null 2>&1
+      fi
       rm -Rf "$PWD"/cas-instance-${c}-aot >/dev/null 2>&1
     done
     rm -f "${public_cert}" >/dev/null 2>&1
@@ -1490,6 +1551,7 @@ trap killPendingCasBuild EXIT
 
 fetchCasVersion
 parseArguments "$@"
+export CAS_NATIVE_RUN="${NATIVE_RUN}"
 validateScenario
 prepareScenario
 

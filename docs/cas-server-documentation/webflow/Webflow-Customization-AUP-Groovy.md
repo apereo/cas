@@ -1,6 +1,6 @@
 ---
 layout: default
-title: CAS - Web Flow Acceptable Usage Policy
+title: CAS - Groovy Acceptable Usage Policy
 category: Webflow Management
 ---
 

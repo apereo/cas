@@ -1,6 +1,6 @@
 ---
 layout: default
-title: CAS - SAML2 Attribute Release
+title: CAS - SAML2 Attribute Name Formats
 category: Attributes
 ---
 {% include variables.html %}

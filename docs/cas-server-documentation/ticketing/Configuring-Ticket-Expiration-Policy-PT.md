@@ -1,6 +1,6 @@
 ---
 layout: default
-title: CAS - Configuring Ticket Expiration Policy Components
+title: CAS - Proxy Ticket Policies
 category: Ticketing
 ---
 

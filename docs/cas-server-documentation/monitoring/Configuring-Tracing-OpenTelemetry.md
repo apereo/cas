@@ -1,6 +1,7 @@
 ---
 layout: default
-title: CAS - Monitoring
+title: CAS - OpenTelemetry Distributed Tracing
+description: "Export CAS distributed traces with OpenTelemetry."
 category: Monitoring & Statistics
 ---
 

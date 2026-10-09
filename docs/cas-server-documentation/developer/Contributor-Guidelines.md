@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Contributor Guidelines
+description: "How to get involved with Apereo CAS: asking questions, reporting issues, submitting pull requests and working with the community."
 ---
 
 # Contributor Guidelines

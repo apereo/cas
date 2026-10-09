@@ -1,12 +1,14 @@
 ---
 layout: default
-title: CAS - Notifications
+title: CAS - Notifications - Custom
 category: Notifications
 ---
 
 {% include variables.html %}
 
 # Notifications - Custom
+
+Deliver notifications through a channel CAS does not support by implementing `NotificationSender` and registering it with CAS.
 
 You may define your own custom notification sender using the following
 bean definition and by implementing `NotificationSender`:

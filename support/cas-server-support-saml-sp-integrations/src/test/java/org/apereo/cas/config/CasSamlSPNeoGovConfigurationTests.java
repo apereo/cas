@@ -13,6 +13,7 @@ import org.springframework.test.context.TestPropertySource;
 @Tag("SAMLServiceProvider")
 @TestPropertySource(properties = {
     "cas.saml-sp.neo-gov.metadata=classpath:/metadata/sp-metadata.xml",
+    "cas.saml-sp.neo-gov.entity-ids=https://example.org/shibboleth",
     "cas.saml-sp.neo-gov.name-id-attribute=cn",
     "cas.saml-sp.neo-gov.name-id-format=transient"
 })

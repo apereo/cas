@@ -10,6 +10,8 @@ cp ${SCENARIO_FOLDER}/../../overlay/thekeystore ${SCENARIO_FOLDER}/k8config/thek
 echo "Copied keystore to ${SCENARIO_FOLDER}/k8config/thekeystore"
 
 chmod +x "${PWD}/ci/tests/kubernetes/run-kubernetes-server.sh"
-${PWD}/ci/tests/kubernetes/run-kubernetes-server.sh
+if ! "${PWD}/ci/tests/kubernetes/run-kubernetes-server.sh"; then
+  exit 1
+fi
 
 echo "Ready!"

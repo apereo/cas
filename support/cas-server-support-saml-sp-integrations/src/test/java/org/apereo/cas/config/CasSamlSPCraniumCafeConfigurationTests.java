@@ -13,6 +13,7 @@ import org.springframework.test.context.TestPropertySource;
 @Tag("SAMLServiceProvider")
 @TestPropertySource(properties = {
     "cas.saml-sp.cranium-cafe.metadata=classpath:/metadata/sp-metadata.xml",
+    "cas.saml-sp.cranium-cafe.entity-ids=https://example.org/shibboleth",
     "cas.saml-sp.cranium-cafe.name-id-attribute=cn",
     "cas.saml-sp.cranium-cafe.name-id-format=transient"
 })

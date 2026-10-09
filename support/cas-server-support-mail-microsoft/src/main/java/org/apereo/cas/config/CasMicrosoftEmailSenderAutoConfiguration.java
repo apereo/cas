@@ -11,6 +11,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 /**
  * This is {@link CasMicrosoftEmailSenderAutoConfiguration}.
@@ -25,7 +26,7 @@ public class CasMicrosoftEmailSenderAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "microsoftEmailSenderCustomizer")
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public EmailSenderCustomizer microsoftEmailSenderCustomizer(final CasConfigurationProperties casProperties) {
         return new MicrosoftEmailSenderCustomizer(casProperties);
     }

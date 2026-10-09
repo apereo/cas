@@ -4,10 +4,12 @@ import module java.base;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import lombok.val;
+import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.orm.jpa.EntityManagerFactoryUtils;
+import org.springframework.orm.jpa.EntityManagerFactoryInfo;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
 
 /**
  * This is {@link JpaPersistenceUnitProvider}.
@@ -39,7 +41,15 @@ public interface JpaPersistenceUnitProvider extends DisposableBean {
     default EntityManager recreateEntityManagerIfNecessary(final String persistenceUnitName) {
         val currentEntityManager = getEntityManager();
         return FunctionUtils.doIf(currentEntityManager == null && CasRuntimeHintsRegistrar.inNativeImage(), () -> {
-            val entityManagerFactory = EntityManagerFactoryUtils.findEntityManagerFactory(getApplicationContext().getBeanFactory(), persistenceUnitName);
+            val beanFactory = getApplicationContext().getBeanFactory();
+            val entityManagerFactory = Arrays.stream(BeanFactoryUtils.beanNamesForTypeIncludingAncestors(beanFactory, EntityManagerFactory.class))
+                .map(beanFactory::getBean)
+                .filter(EntityManagerFactoryInfo.class::isInstance)
+                .map(EntityManagerFactoryInfo.class::cast)
+                .filter(factory -> persistenceUnitName.equals(factory.getPersistenceUnitName()))
+                .map(EntityManagerFactory.class::cast)
+                .findFirst()
+                .orElseGet(() -> beanFactory.getBean(persistenceUnitName, EntityManagerFactory.class));
             return entityManagerFactory.createEntityManager();
         }, () -> currentEntityManager).get();
     }

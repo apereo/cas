@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Architecture
+description: "The building blocks of a CAS deployment: the CAS server, CAS clients, supported protocols and the web, ticketing and authentication subsystems."
 category: Planning
 ---
 
@@ -35,13 +36,12 @@ have been developed.
 
 Platforms:
 
-* Apache httpd Server ([mod_auth_cas module](https://github.com/Jasig/mod_auth_cas))
+* Apache httpd Server ([mod_auth_cas module](https://github.com/apereo/mod_auth_cas))
 * Java ([Java CAS Client](https://github.com/apereo/java-cas-client))
 * .NET ([.NET CAS Client](https://github.com/apereo/dotnet-cas-client))
-* PHP ([phpCAS](https://github.com/Jasig/phpCAS))
-* Perl (PerlCAS)
-* Python (pycas)
-* Ruby (rubycas-client)
+* PHP ([phpCAS](https://github.com/apereo/phpCAS))
+* Perl ([AuthCAS](https://metacpan.org/pod/AuthCAS), [Authen::CAS::Client](https://metacpan.org/pod/Authen::CAS::Client))
+* Python ([python-cas](https://github.com/python-cas/python-cas))
 
 Applications:
 

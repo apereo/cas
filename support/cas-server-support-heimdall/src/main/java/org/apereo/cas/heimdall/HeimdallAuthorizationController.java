@@ -7,8 +7,10 @@ import org.apereo.cas.heimdall.authzen.AuthZenEvaluationsSemantic;
 import org.apereo.cas.heimdall.authzen.AuthZenResponse;
 import org.apereo.cas.heimdall.engine.AuthorizationEngine;
 import org.apereo.cas.heimdall.engine.AuthorizationPrincipalParser;
+import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.http.HttpRequestUtils;
+import com.nimbusds.oauth2.sdk.dpop.verifiers.InvalidDPoPNonceException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -103,7 +105,7 @@ public class HeimdallAuthorizationController {
             requestToAuthorize = prepareAuthorizationRequest(authorizationRequest, request, response);
         } catch (final Throwable e) {
             LOGGER.debug("AuthZEN caller authentication failed", e);
-            return unauthenticated();
+            return unauthenticated(e);
         }
         try {
             requestToAuthorize.log();
@@ -147,7 +149,7 @@ public class HeimdallAuthorizationController {
             principalParser.authenticateCaller(authorizationHeader, new JEEContext(request, response));
         } catch (final Throwable e) {
             LOGGER.debug("AuthZEN caller authentication failed", e);
-            return unauthenticated();
+            return unauthenticated(e);
         }
         val semantic = evaluationsRequest.getEvaluationsSemantic();
         val decisions = new ArrayList<AuthZenResponse>();
@@ -202,7 +204,7 @@ public class HeimdallAuthorizationController {
             requestToAuthorize = prepareAuthorizationRequest(authorizationRequest, request, response);
         } catch (final Throwable e) {
             LOGGER.debug("Heimdall caller authentication failed", e);
-            return unauthenticated();
+            return unauthenticated(e);
         }
         try {
             requestToAuthorize.log();
@@ -265,7 +267,17 @@ public class HeimdallAuthorizationController {
         }
     }
 
-    private static ResponseEntity unauthenticated() {
+    /**
+     * The answer to a caller that failed to authenticate. A caller whose DPoP proof lacks the nonce CAS requires is asked
+     * for it with {@code use_dpop_nonce}, the fresh nonce being already in the {@code DPoP-Nonce} header of the response.
+     *
+     * @param e the authentication failure
+     * @return the response entity
+     */
+    private static ResponseEntity unauthenticated(final Throwable e) {
+        if (e instanceof InvalidDPoPNonceException) {
+            return OAuth20Utils.useDPoPNonceResponse();
+        }
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
             .header(HttpHeaders.WWW_AUTHENTICATE, "Bearer", "DPoP", "Basic realm=\"Heimdall\"")
             .build();

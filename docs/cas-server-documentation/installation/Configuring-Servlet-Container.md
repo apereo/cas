@@ -1,6 +1,7 @@
 ---
 layout: default
-title: CAS - Servlet Container
+title: CAS - Servlet Container Configuration
+description: "Choose and configure a servlet container for CAS: embedded Apache Tomcat or Jetty, or an external container."
 category: Installation
 ---
 {% include variables.html %}

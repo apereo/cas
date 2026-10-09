@@ -91,12 +91,13 @@ class SamlRegisteredServiceTests extends BaseSamlIdPConfigurationTests {
         registeredService.setId(RandomUtils.nextLong());
         registeredService.setName(SAML_SERVICE);
         registeredService.setServiceId("^http://.+");
-        registeredService.setMetadataLocation(METADATA_LOCATION);
+        registeredService.setMetadataLocation("classpath:/metadata/sp-metadata-pattern.xml");
         servicesManager.save(registeredService);
         val service = RegisteredServiceTestUtils.getService("http://mmoayyed.unicon.net:8081/sp/saml/SSO");
-        service.getAttributes().put(SamlProtocolConstants.PARAMETER_ENTITY_ID, List.of(registeredService.getServiceId()));
+        service.getAttributes().put(SamlProtocolConstants.PARAMETER_ENTITY_ID, List.of("http://mmoayyed.unicon.net:8081/sp/saml"));
         val foundService = servicesManager.findServiceBy(service);
         assertNotNull(foundService);
+        assertEquals(registeredService.getId(), foundService.getId());
     }
 
     @Test

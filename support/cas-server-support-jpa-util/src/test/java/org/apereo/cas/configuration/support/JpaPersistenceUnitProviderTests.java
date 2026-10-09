@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junitpioneer.jupiter.SetSystemProperty;
+import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -19,6 +20,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.orm.jpa.EntityManagerFactoryInfo;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
@@ -50,6 +52,27 @@ class JpaPersistenceUnitProviderTests {
         val entityManager = unitProvider.recreateEntityManagerIfNecessary("DummyUnit");
         assertNotNull(entityManager);
         unitProvider.destroy();
+    }
+
+    @Test
+    @SetSystemProperty(key = CasRuntimeHintsRegistrar.SYSTEM_PROPERTY_SPRING_AOT_PROCESSING, value = "true")
+    void verifyInactiveEntityManagerFactory() {
+        try (val context = new GenericApplicationContext()) {
+            context.registerBean("inactiveEntityManagerFactory", FactoryBean.class, () -> {
+                val factory = mock(FactoryBean.class);
+                when(factory.getObjectType()).thenReturn(EntityManagerFactory.class);
+                return factory;
+            });
+            context.registerBean("activeEntityManagerFactory", JpaTestConfiguration.DummyEntityManagerFactory.class, () -> {
+                val factory = mock(JpaTestConfiguration.DummyEntityManagerFactory.class);
+                when(factory.getPersistenceUnitName()).thenReturn("DummyUnit");
+                when(factory.createEntityManager()).thenReturn(mock(EntityManager.class));
+                return factory;
+            });
+            context.refresh();
+            val unitProvider = new DummyJpaPersistenceUnitProvider(context, null);
+            assertNotNull(unitProvider.recreateEntityManagerIfNecessary("DummyUnit"));
+        }
     }
 
 

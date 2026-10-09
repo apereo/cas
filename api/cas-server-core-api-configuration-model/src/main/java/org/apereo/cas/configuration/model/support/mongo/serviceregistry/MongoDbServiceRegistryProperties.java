@@ -6,6 +6,7 @@ import org.apereo.cas.configuration.support.RequiresModule;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.core.Ordered;
 
 /**
@@ -29,7 +30,13 @@ public class MongoDbServiceRegistryProperties extends SingleCollectionMongoDbPro
      * in case multiple registries are defined.
      */
     private int order = Ordered.LOWEST_PRECEDENCE;
-    
+
+    /**
+     * Settings for watching the service registry collection for changes.
+     */
+    @NestedConfigurationProperty
+    private MongoDbServiceRegistryChangeStreamProperties changeStream = new MongoDbServiceRegistryChangeStreamProperties();
+
     public MongoDbServiceRegistryProperties() {
         setCollection("cas-service-registry");
     }

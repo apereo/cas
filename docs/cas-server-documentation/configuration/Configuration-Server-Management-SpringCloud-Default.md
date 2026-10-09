@@ -1,6 +1,6 @@
 ---
 layout: default
-title: CAS - Configuration Server
+title: CAS - Spring Cloud Configuration Server - Spring Cloud Default
 category: Configuration
 ---
 
@@ -19,7 +19,7 @@ CAS deployment environment which is really no different than how one would norma
 
 
 Needless to say, the repositories could use both YAML and properties syntax to host configuration files.
-The default profile is activated using `spring.profiles.active=default`.
+The default profile is activated using `spring.profiles.active=default`{: .cas-setting}.
 
 <div class="alert alert-info">:information_source: <strong>Keep What You Need!</strong><p>Again, in all of the above strategies,
 an adopter is encouraged to only keep and maintain properties needed for their particular deployment. It is

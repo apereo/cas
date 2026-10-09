@@ -1,11 +1,13 @@
 ---
 layout: default
-title: CAS - Passwordless Authentication
+title: CAS - Custom Passwordless Authentication Tokens
 category: Authentication
 ---
 {% include variables.html %}
 
 # Custom Passwordless Authentication Tokens
+
+Keep passwordless one-time tokens in your own store by implementing `PasswordlessTokenRepository` and registering it with CAS.
 
 You may also define your own token management store using the following 
 bean definition and by implementing `PasswordlessTokenRepository`:

@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - ACME Integration
+description: "Obtain TLS certificates for CAS automatically with the ACME protocol, for example from Let's Encrypt. This feature is deprecated."
 category: Integration
 ---
 

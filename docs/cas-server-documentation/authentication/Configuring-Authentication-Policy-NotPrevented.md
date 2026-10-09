@@ -1,6 +1,6 @@
 ---
 layout: default
-title: CAS - Configuring Authentication Policy
+title: CAS - Not Prevented - Authentication Policy
 category: Authentication
 ---
 {% include variables.html %}

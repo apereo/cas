@@ -1,6 +1,6 @@
 ---
 layout: default
-title: CAS - X.509 Authentication
+title: CAS - X.509 Authentication - Certificate Extraction
 category: Authentication
 ---
 {% include variables.html %}

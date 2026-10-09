@@ -1,6 +1,6 @@
 ---
 layout: default
-title: CAS - X.509 Authentication
+title: CAS - X.509 Authentication - Web Server Configuration
 category: Authentication
 ---
 {% include variables.html %}

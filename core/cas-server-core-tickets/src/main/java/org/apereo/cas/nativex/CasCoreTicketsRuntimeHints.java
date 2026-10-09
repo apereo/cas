@@ -2,7 +2,9 @@ package org.apereo.cas.nativex;
 
 import module java.base;
 import org.apereo.cas.CentralAuthenticationService;
+import org.apereo.cas.ticket.ExpirableTicket;
 import org.apereo.cas.ticket.ExpirationPolicy;
+import org.apereo.cas.ticket.StatelessTicket;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketFactoryExecutionPlanConfigurer;
 import org.apereo.cas.ticket.registry.TicketRegistry;
@@ -36,8 +38,14 @@ public class CasCoreTicketsRuntimeHints implements CasRuntimeHintsRegistrar {
         registerSpringProxyHints(hints, PropertyBoundCipherExecutor.class, CipherExecutor.class);
         registerSpringProxyHints(hints, QueueableTicketRegistry.class, TicketRegistry.class);
         registerSpringProxyHints(hints, AutoCloseable.class, DisposableBean.class, TicketRegistry.class);
+        registerSpringProxyHints(hints, DisposableBean.class, TicketRegistry.class);
+        registerReflectionHintsForMethodsAndFields(hints,
+            List.of("org.apereo.cas.config.CasCoreTicketsSchedulingConfiguration$TicketRegistryCleanerScheduler"));
 
-        registerSerializationHints(hints, findSubclassesInPackage(Ticket.class, CentralAuthenticationService.NAMESPACE));
+        val ticketClasses = findSubclassesInPackage(Ticket.class, CentralAuthenticationService.NAMESPACE);
+        registerSerializationHints(hints, ticketClasses);
+        registerReflectionHints(hints, ticketClasses);
+        registerReflectionHints(hints, ExpirableTicket.class, StatelessTicket.class);
         val expirationPolicyClasses = findSubclassesInPackage(ExpirationPolicy.class, CentralAuthenticationService.NAMESPACE);
         registerSerializationHints(hints, expirationPolicyClasses);
         registerReflectionHints(hints, expirationPolicyClasses);

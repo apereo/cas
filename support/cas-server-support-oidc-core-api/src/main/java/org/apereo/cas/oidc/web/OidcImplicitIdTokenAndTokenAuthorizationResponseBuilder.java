@@ -3,6 +3,7 @@ package org.apereo.cas.oidc.web;
 import module java.base;
 import org.apereo.cas.oidc.OidcConfigurationContext;
 import org.apereo.cas.oidc.OidcConstants;
+import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.response.OAuth20AuthorizationRequest;
@@ -11,6 +12,7 @@ import org.apereo.cas.support.oauth.web.response.callback.OAuth20AuthorizationMo
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20TokenAuthorizationResponseBuilder;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.idtoken.IdTokenGenerationContext;
+import org.apereo.cas.util.function.FunctionUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.hc.core5.http.NameValuePair;
@@ -39,9 +41,11 @@ public class OidcImplicitIdTokenAndTokenAuthorizationResponseBuilder<T extends O
 
     @Override
     protected ModelAndView buildCallbackUrlResponseType(final AccessTokenRequestContext tokenRequestContext,
-                                                        final Ticket givenAccessToken, final Ticket givenRefreshToken,
+                                                        final Ticket givenAccessToken,
+                                                        final Ticket givenRefreshToken,
                                                         final List<NameValuePair> parameters) throws Throwable {
         val accessToken = resolveAccessToken(givenAccessToken);
+        val encodedAccessToken = encodeAccessTokenForResponse(tokenRequestContext, accessToken);
 
         val idTokenContext = IdTokenGenerationContext.builder()
             .accessToken(accessToken)
@@ -49,12 +53,14 @@ public class OidcImplicitIdTokenAndTokenAuthorizationResponseBuilder<T extends O
             .responseType(OAuth20ResponseTypes.IDTOKEN_TOKEN)
             .grantType(tokenRequestContext.getGrantType())
             .registeredService(tokenRequestContext.getRegisteredService())
+            .encodedAccessToken(encodedAccessToken)
             .build();
         val idToken = configurationContext.getIdTokenGeneratorService().generate(idTokenContext);
         if (idToken != null) {
             LOGGER.debug("Generated ID token [{}]", idToken);
             parameters.add(new BasicNameValuePair(OidcConstants.ID_TOKEN, idToken.token()));
         }
+        FunctionUtils.doIfNotBlank(encodedAccessToken, at -> parameters.add(new BasicNameValuePair(OAuth20Constants.ACCESS_TOKEN, at)));
         return super.buildCallbackUrlResponseType(tokenRequestContext, accessToken, givenRefreshToken, parameters);
     }
 }

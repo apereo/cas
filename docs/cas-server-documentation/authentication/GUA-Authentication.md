@@ -1,6 +1,7 @@
 ---
 layout: default
-title: CAS - GUA Authentication
+title: CAS - Graphical User Authentication
+description: "Graphical user authentication: show users a previously chosen image before they enter a password, as an anti-phishing measure."
 category: Authentication
 ---
 {% include variables.html %}
