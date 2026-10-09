@@ -104,11 +104,13 @@ public class TicketRegistrySessionRepository extends MapSessionRepository implem
 
     @Override
     public Map findByIndexNameAndIndexValue(final String indexName, final String indexValue) {
-        return ticketRegistry.getObject().getTickets(ticket -> ticket instanceof final TransientSessionTicket tst
-                && indexValue.equals(tst.getProperty(indexName, String.class)))
-            .map(TransientSessionTicket.class::cast)
-            .map(TicketRegistrySessionRepository::convertTicketToSession)
-            .collect(Collectors.toMap(MapSession::getId, Function.identity()));
+        try (val tickets = ticketRegistry.getObject().getTickets(ticket -> ticket instanceof final TransientSessionTicket tst
+            && indexValue.equals(tst.getProperty(indexName, String.class)))) {
+            return tickets
+                .map(TransientSessionTicket.class::cast)
+                .map(TicketRegistrySessionRepository::convertTicketToSession)
+                .collect(Collectors.toMap(MapSession::getId, Function.identity()));
+        }
     }
 
     private Map<String, Object> convertSessionAttributes(final MapSession session) {

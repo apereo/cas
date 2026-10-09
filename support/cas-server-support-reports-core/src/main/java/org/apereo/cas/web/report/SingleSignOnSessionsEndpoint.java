@@ -88,13 +88,15 @@ public class SingleSignOnSessionsEndpoint extends BaseCasRestActuatorEndpoint {
     @Operation(summary = "Get all single sign-on sessions for username. " + MESSAGE_FEATURE_SUPPORTED_TICKET_REGISTRY,
         parameters = @Parameter(name = "username", required = true, in = ParameterIn.PATH, description = "The username to look up"))
     public Map<String, Object> getSsoSessionsForUser(@PathVariable final String username) {
-        val activeSsoSessions = ticketRegistryProvider.getObject().getSessionsFor(username)
-            .sorted(Comparator.comparing(Ticket::getId))
-            .map(TicketGrantingTicket.class::cast)
-            .map(tgt -> buildSingleSignOnSessionFromTicketGrantingTicket(SsoSessionReportOptions.ALL, tgt))
-            .toList();
         val sessionsMap = new HashMap<String, Object>();
-        sessionsMap.put("activeSsoSessions", activeSsoSessions);
+        try (val sessions = ticketRegistryProvider.getObject().getSessionsFor(username)) {
+            val activeSsoSessions = sessions
+                .sorted(Comparator.comparing(Ticket::getId))
+                .map(TicketGrantingTicket.class::cast)
+                .map(tgt -> buildSingleSignOnSessionFromTicketGrantingTicket(SsoSessionReportOptions.ALL, tgt))
+                .toList();
+            sessionsMap.put("activeSsoSessions", activeSsoSessions);
+        }
         return sessionsMap;
     }
 
@@ -133,8 +135,9 @@ public class SingleSignOnSessionsEndpoint extends BaseCasRestActuatorEndpoint {
     public Map<String, Object> getSsoSessions(
         @ModelAttribute final @Valid SsoSessionsRequest ssoSessionsRequest) {
         val sessionsMap = new HashMap<String, Object>();
-        val activeSsoSessions = getActiveSsoSessions(ssoSessionsRequest).toList();
-        sessionsMap.put("activeSsoSessions", activeSsoSessions);
+        try (val sessions = getActiveSsoSessions(ssoSessionsRequest)) {
+            sessionsMap.put("activeSsoSessions", sessions.toList());
+        }
         sessionsMap.put("totalSsoSessions", ticketRegistryProvider.getObject().sessionCount());
         return sessionsMap;
     }
@@ -195,23 +198,27 @@ public class SingleSignOnSessionsEndpoint extends BaseCasRestActuatorEndpoint {
 
         if (StringUtils.isNotBlank(ssoSessionsRequest.getUsername())) {
             val sessionsMap = new HashMap<String, Object>();
-            var tickets = ticketRegistryProvider.getObject().getSessionsFor(ssoSessionsRequest.getUsername());
-            if (ssoSessionsRequest.getFrom() > 0) {
-                tickets = tickets.skip(ssoSessionsRequest.getFrom());
+            try (val sessions = ticketRegistryProvider.getObject().getSessionsFor(ssoSessionsRequest.getUsername())) {
+                var tickets = sessions;
+                if (ssoSessionsRequest.getFrom() > 0) {
+                    tickets = tickets.skip(ssoSessionsRequest.getFrom());
+                }
+                if (ssoSessionsRequest.getCount() > 0) {
+                    tickets = tickets.limit(ssoSessionsRequest.getCount());
+                }
+                tickets.forEach(ticket -> sessionsMap.put(ticket.getId(), destroySsoSession(ticket.getId(), request, response)));
             }
-            if (ssoSessionsRequest.getCount() > 0) {
-                tickets = tickets.limit(ssoSessionsRequest.getCount());
-            }
-            tickets.forEach(ticket -> sessionsMap.put(ticket.getId(), destroySsoSession(ticket.getId(), request, response)));
             val deletedCount = sessionsMap.size() + getTicketRegistryProvider().getObject().deleteTicketsFor(ssoSessionsRequest.getUsername());
             sessionsMap.put("deleted", deletedCount);
             return sessionsMap;
         }
 
         val sessionsMap = new HashMap<String, Object>();
-        getActiveSsoSessions(ssoSessionsRequest)
-            .map(sso -> sso.get(SsoSessionAttributeKeys.TICKET_GRANTING_TICKET_ID.getAttributeKey()).toString())
-            .forEach(ticketGrantingTicket -> destroySsoSession(ticketGrantingTicket, request, response));
+        try (val sessions = getActiveSsoSessions(ssoSessionsRequest)) {
+            sessions
+                .map(sso -> sso.get(SsoSessionAttributeKeys.TICKET_GRANTING_TICKET_ID.getAttributeKey()).toString())
+                .forEach(ticketGrantingTicket -> destroySsoSession(ticketGrantingTicket, request, response));
+        }
         sessionsMap.put(STATUS, HttpServletResponse.SC_OK);
         return sessionsMap;
     }

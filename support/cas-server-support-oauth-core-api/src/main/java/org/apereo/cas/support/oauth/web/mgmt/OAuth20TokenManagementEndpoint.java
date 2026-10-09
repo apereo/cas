@@ -51,9 +51,13 @@ public class OAuth20TokenManagementEndpoint extends BaseCasActuatorEndpoint {
     @ReadOperation
     @Operation(summary = "Get access and/or refresh tokens")
     public Collection<Ticket> getTokens() {
-        return ticketRegistry.getObject().getTickets(ticket -> (ticket instanceof OAuth20AccessToken || ticket instanceof OAuth20RefreshToken) && !ticket.isExpired())
-            .sorted(Comparator.comparing(Ticket::getId))
-            .collect(Collectors.toList());
+        try (val tokens = ticketRegistry
+            .getObject()
+            .getTickets(ticket -> (ticket instanceof OAuth20AccessToken || ticket instanceof OAuth20RefreshToken) && !ticket.isExpired())) {
+            return tokens
+                .sorted(Comparator.comparing(Ticket::getId))
+                .collect(Collectors.toList());
+        }
     }
 
 

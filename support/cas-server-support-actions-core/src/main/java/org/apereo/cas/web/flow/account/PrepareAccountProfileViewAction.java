@@ -70,17 +70,19 @@ public class PrepareAccountProfileViewAction extends BaseCasWebflowAction {
     }
 
     protected void buildActiveSingleSignOnSessions(final RequestContext requestContext, final TicketGrantingTicket ticket) {
-        val activeSessions = ticketRegistry.getSessionsFor(ticket.getAuthentication().getPrincipal().getId())
-            .map(TicketGrantingTicket.class::cast)
-            .map(tgt -> {
-                val ssoSession = new AccountSingleSignOnSession(tgt);
-                ssoSession.setGeoLocation(FunctionUtils.doIf(BeanSupplier.isNotProxy(geoLocationService),
-                    () -> geoLocationService.locate(ssoSession.getClientIpAddress()).build(), () -> "N/A").get());
-                ssoSession.setPayload(FunctionUtils.doUnchecked(() -> MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(ssoSession)));
-                return ssoSession;
-            })
-            .collect(Collectors.toList());
-        WebUtils.putSingleSignOnSessions(requestContext, activeSessions);
+        try (val sessions = ticketRegistry.getSessionsFor(ticket.getAuthentication().getPrincipal().getId())) {
+            val activeSessions = sessions
+                .map(TicketGrantingTicket.class::cast)
+                .map(tgt -> {
+                    val ssoSession = new AccountSingleSignOnSession(tgt);
+                    ssoSession.setGeoLocation(FunctionUtils.doIf(BeanSupplier.isNotProxy(geoLocationService),
+                        () -> geoLocationService.locate(ssoSession.getClientIpAddress()).build(), () -> "N/A").get());
+                    ssoSession.setPayload(FunctionUtils.doUnchecked(() -> MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(ssoSession)));
+                    return ssoSession;
+                })
+                .collect(Collectors.toList());
+            WebUtils.putSingleSignOnSessions(requestContext, activeSessions);
+        }
     }
 
     protected void buildAuthorizedServices(final RequestContext requestContext, final TicketGrantingTicket ticket,
