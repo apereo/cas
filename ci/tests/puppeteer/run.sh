@@ -753,8 +753,11 @@ function waitForCasInstance() {
         fi
         probeTimeoutArgs=(--max-time "${remaining}")
       fi
-      if [[ "${NATIVE_RUN}" != "true" ]] || {
-        grep -q 'Started CasNativeWebApplication in' "${nativeStartupLog}" 2>/dev/null &&
+      # The web server answers before the application context has finished starting, while refresh-scoped
+      # beans are still being created; a scenario that refreshes the context at that point tears them down
+      # under the startup thread. Where the instance's output is captured, wait until it reports ready.
+      if [[ ! -f "${nativeStartupLog}" ]] || {
+        { [[ "${NATIVE_RUN}" != "true" ]] || grep -q 'Started CasNativeWebApplication in' "${nativeStartupLog}" 2>/dev/null; } &&
           grep -q 'Ready to process requests' "${nativeStartupLog}" 2>/dev/null
       }; then
         if curl -I -k --connect-timeout 10 "${probeTimeoutArgs[@]}" --output /dev/null --silent --fail "${url}"; then
@@ -1234,6 +1237,7 @@ ${BUILD_SCRIPT:+ $BUILD_SCRIPT}${DAEMON:+ $DAEMON} \
         fi
 
         if [[ "${launchEnabled}" == "true" ]]; then
+          rm -f "${PUPPETEER_DIR}/overlay/cas-instance-${c}.log"
           if [[ "${NATIVE_RUN}" == "true" && "${buildDockerImage}" != "true" ]]; then
             printcyan "Launching CAS instance #${c} under port ${serverPort} from ${casArtifactToRun}"
             nativeStartupLog="${PUPPETEER_DIR}/overlay/cas-instance-${c}.log"
@@ -1335,6 +1339,8 @@ ${BUILD_SCRIPT:+ $BUILD_SCRIPT}${DAEMON:+ $DAEMON} \
             else
               rm -Rf ${PWD}/*.jfr
               printcyan "Launching CAS instance #${c} under port ${serverPort} from ${casArtifactToRun}"
+              casStartupLog="${PUPPETEER_DIR}/overlay/cas-instance-${c}.log"
+              : > "${casStartupLog}"
               java ${runArgs} \
                 ${JFR_ARGS} \
                 -Dlog.console.stacktraces=true \
@@ -1349,7 +1355,8 @@ ${BUILD_SCRIPT:+ $BUILD_SCRIPT}${DAEMON:+ $DAEMON} \
                 --server.ssl.key-store="$keystore" \
                 --cas.audit.engine.enabled=true \
                 --cas.audit.slf4j.use-single-line=true \
-                ${properties} &
+                --logging.level.org.apereo.cas.web.CasWebApplicationReady=info \
+                ${properties} > >(tee -a "${casStartupLog}") 2>&1 &
             fi
           fi
 
