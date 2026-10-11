@@ -1,9 +1,10 @@
 package org.apereo.cas.controller;
 
-import org.apereo.cas.CasLabels;
-import org.apereo.cas.MonitoredRepository;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apereo.cas.CasLabels;
+import org.apereo.cas.MonitoredRepository;
+import org.apereo.cas.github.PullRequest;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
+
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -68,6 +70,7 @@ public class RepositoryController {
     @PostMapping(value = "/repo/workflows/clean", produces = MediaType.APPLICATION_JSON_VALUE)
     @Secured({"ROLE_ADMIN"})
     public ResponseEntity cleanWorkflows() throws Exception {
+
         repository.removeCancelledWorkflowRuns();
         repository.removePullRequestWorkflowRunsForMissingBranches();
         repository.removeOldWorkflowRuns();
@@ -80,7 +83,7 @@ public class RepositoryController {
         return ResponseEntity.ok().build();
     }
 
-    
+
     @PostMapping(value = "/repo/pulls/{prNumber}/comments/clean", produces = MediaType.APPLICATION_JSON_VALUE)
     @Secured({"ROLE_ADMIN"})
     public ResponseEntity cleanComments(@PathVariable final String prNumber) throws Exception {
@@ -94,7 +97,7 @@ public class RepositoryController {
         repository.removeLabelFrom(pullRequest, CasLabels.LABEL_PROPOSAL_DECLINED);
         repository.removeLabelFrom(pullRequest, CasLabels.LABEL_PENDING_NEEDS_TESTS);
         repository.labelPullRequestAs(pullRequest, CasLabels.LABEL_UNDER_REVIEW);
-        
+
         if (pullRequest.isClosed()) {
             repository.open(pullRequest);
         }
@@ -123,16 +126,38 @@ public class RepositoryController {
     @Secured({"ROLE_ADMIN"})
     public List listPulls() {
         return repository.getOpenPullRequests()
-            .stream()
-            .map(pr -> {
-                val map = new LinkedHashMap<String, String>();
-                map.put("number", pr.getNumber());
-                map.put("title", pr.getTitle());
-                map.put("branch", pr.getBase().getLabel());
-                map.put("author", pr.getUser().getLogin());
-                return map;
-            })
-            .collect(Collectors.toList());
+                .stream()
+                .map(pr -> {
+                    val map = new LinkedHashMap<String, String>();
+                    map.put("number", pr.getNumber());
+                    map.put("title", pr.getTitle());
+                    map.put("branch", pr.getBase().getLabel());
+                    map.put("author", pr.getUser().getLogin());
+                    return map;
+                })
+                .collect(Collectors.toList());
+    }
+
+    @PostMapping(value = "/repo/pulls/bots/merge", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Secured({"ROLE_ADMIN"})
+    public List<String> mergeAll() {
+        return stagingRepository
+                .stream()
+                .map(repository -> {
+                    var prs = repository.getOpenPullRequests()
+                            .stream()
+                            .filter(PullRequest::isBot)
+                            .toList();
+                    prs.forEach(pr -> {
+                        repository.labelPullRequestAs(pr, CasLabels.LABEL_SKIP_CI);
+                        repository.removeAllApereoCasBotCommentsFrom(pr);
+                        repository.mergePullRequestIntoBase(pr);
+                    });
+                    return prs;
+                })
+                .flatMap(List::stream)
+                .map(PullRequest::toString)
+                .toList();
     }
 
     @PostMapping(value = "/repo/pulls/{prNumber}/labels/automerge", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -171,7 +196,7 @@ public class RepositoryController {
             return ResponseEntity.status(HttpStatus.LOCKED).build();
         }
         return ResponseEntity.ok(Map.of("approved",
-            repository.approvePullRequest(pullRequest, false)));
+                repository.approvePullRequest(pullRequest, false)));
     }
 
     @PostMapping(value = "/repo/pulls/{prNumber}/labels/runci", produces = MediaType.APPLICATION_JSON_VALUE)
