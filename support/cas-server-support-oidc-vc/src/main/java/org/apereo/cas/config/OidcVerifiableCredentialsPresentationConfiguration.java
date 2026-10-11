@@ -3,9 +3,13 @@ package org.apereo.cas.config;
 import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.oidc.OidcConfigurationContext;
+import org.apereo.cas.oidc.jwks.OidcJsonWebKeyCacheKey;
 import org.apereo.cas.oidc.vc.issuer.status.OidcVerifiableCredentialStatusListService;
+import org.apereo.cas.vc.presentation.OidcVerifiableCredentialMdocPresentationVerifier;
 import org.apereo.cas.vc.presentation.OidcVerifiableCredentialPresentationRequestEndpointController;
 import org.apereo.cas.vc.presentation.OidcVerifiableCredentialPresentationResponseEndpointController;
+import com.github.benmanes.caffeine.cache.LoadingCache;
+import org.jose4j.jwk.JsonWebKeySet;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -40,9 +44,22 @@ class OidcVerifiableCredentialsPresentationConfiguration {
         @Qualifier(OidcConfigurationContext.BEAN_NAME)
         final OidcConfigurationContext oidcConfigurationContext,
         @Qualifier(OidcVerifiableCredentialStatusListService.BEAN_NAME)
-        final OidcVerifiableCredentialStatusListService oidcVerifiableCredentialStatusListService) {
+        final OidcVerifiableCredentialStatusListService oidcVerifiableCredentialStatusListService,
+        @Qualifier("oidcVerifiableCredentialMdocPresentationVerifier")
+        final OidcVerifiableCredentialMdocPresentationVerifier oidcVerifiableCredentialMdocPresentationVerifier) {
         return new OidcVerifiableCredentialPresentationResponseEndpointController(oidcConfigurationContext,
-            oidcVerifiableCredentialStatusListService);
+            oidcVerifiableCredentialStatusListService, oidcVerifiableCredentialMdocPresentationVerifier);
+    }
+
+    @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    @ConditionalOnMissingBean(name = "oidcVerifiableCredentialMdocPresentationVerifier")
+    public OidcVerifiableCredentialMdocPresentationVerifier oidcVerifiableCredentialMdocPresentationVerifier(
+        @Qualifier(OidcConfigurationContext.BEAN_NAME)
+        final OidcConfigurationContext oidcConfigurationContext,
+        @Qualifier("oidcDefaultJsonWebKeystoreCache")
+        final LoadingCache<OidcJsonWebKeyCacheKey, JsonWebKeySet> oidcDefaultJsonWebKeystoreCache) {
+        return new OidcVerifiableCredentialMdocPresentationVerifier(oidcConfigurationContext, oidcDefaultJsonWebKeystoreCache);
     }
 
 }

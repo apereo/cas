@@ -11,6 +11,7 @@ import org.apereo.cas.oidc.vc.issuer.encryption.OidcVerifiableCredentialEncrypti
 import org.apereo.cas.oidc.vc.issuer.metadata.CredentialConfigurationDisplay.CredentialConfigurationDisplayLogo;
 import org.apereo.cas.oidc.vc.issuer.metadata.OidcCredentialConfigurationTypeMetadata.ClaimMetadata;
 import org.apereo.cas.oidc.vc.issuer.metadata.OidcCredentialIssuerMetadata.ClaimMetadata.ClaimDisplay;
+import com.authlete.cose.constants.COSEAlgorithms;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -25,6 +26,16 @@ import org.jspecify.annotations.Nullable;
  */
 @RequiredArgsConstructor
 public class OidcCredentialIssuerMetadataService {
+    /**
+     * An mdoc is bound to the holder's device key, a {@code COSE_Key} (OpenID4VCI 1.0, appendix A.2.2).
+     */
+    public static final String MDOC_CRYPTOGRAPHIC_BINDING_METHOD = "cose_key";
+
+    /**
+     * Algorithms an issuer may sign the mobile security object of an mdoc with (ISO/IEC 18013-5, section 9.1.2.4).
+     */
+    private static final Set<String> MDOC_SIGNING_ALGORITHMS = Set.of("ES256", "ES384", "ES512", "EdDSA");
+
     private final CasConfigurationProperties casProperties;
 
     private final OidcVerifiableCredentialEncryptionService encryptionService;
@@ -63,8 +74,11 @@ public class OidcCredentialIssuerMetadataService {
             val cfg = new OidcCredentialIssuerMetadata.CredentialConfiguration();
             cfg.setFormat(value.getFormat().getValue());
             cfg.setScope(value.getScope());
+            val mdoc = value.getFormat() == OidcVerifiableCredentialConfigurationProperties.CredentialConfigurationFormats.MSO_MDOC;
             if (value.getFormat() == OidcVerifiableCredentialConfigurationProperties.CredentialConfigurationFormats.DC_SD_JWT) {
                 cfg.setVct(issuer + '/' + OidcConstants.VC_CREDENTIAL_TYPE_URL + '/' + key);
+            } else if (mdoc) {
+                cfg.setDoctype(value.getDoctype());
             } else {
                 cfg.setCredentialDefinition(OidcCredentialIssuerMetadata.CredentialDefinition
                     .builder()
@@ -74,8 +88,13 @@ public class OidcCredentialIssuerMetadataService {
                     .type(BaseOidcVerifiableCredentialEncoder.resolveCredentialTypes(key, value))
                     .build());
             }
-            cfg.setCryptographicBindingMethodsSupported(value.getCryptographicBindingMethodsSupported());
-            cfg.setCredentialSigningAlgValuesSupported(value.getCredentialSigningAlgValuesSupported());
+            if (mdoc) {
+                cfg.setCryptographicBindingMethodsSupported(List.of(MDOC_CRYPTOGRAPHIC_BINDING_METHOD));
+                cfg.setCredentialSigningAlgValuesSupported(toCoseAlgorithms(value.getCredentialSigningAlgValuesSupported()));
+            } else {
+                cfg.setCryptographicBindingMethodsSupported(value.getCryptographicBindingMethodsSupported());
+                cfg.setCredentialSigningAlgValuesSupported(new ArrayList<>(value.getCredentialSigningAlgValuesSupported()));
+            }
 
             cfg.setProofTypesSupported(buildProofTypesSupported(value));
 
@@ -83,7 +102,9 @@ public class OidcCredentialIssuerMetadataService {
                 val claims = new ArrayList<OidcCredentialIssuerMetadata.ClaimMetadata>();
                 value.getClaims().forEach((claimName, claimProps) -> {
                     val claim = new OidcCredentialIssuerMetadata.ClaimMetadata();
-                    claim.setPath(List.of(claimName));
+                    claim.setPath(mdoc
+                        ? List.of(StringUtils.defaultIfBlank(claimProps.getNamespace(), value.getDoctype()), claimName)
+                        : List.of(claimName));
                     val displays = claimProps.getDisplay()
                         .stream()
                         .<ClaimDisplay>map(entry -> ClaimDisplay
@@ -105,6 +126,21 @@ public class OidcCredentialIssuerMetadataService {
 
         metadata.setCredentialConfigurationsSupported(supported);
         return metadata;
+    }
+
+    /**
+     * The signing algorithms of an mdoc are published as numeric COSE algorithm identifiers (OpenID4VCI 1.0, appendix
+     * A.2.2), and only those ISO/IEC 18013-5 allows for the mobile security object are kept.
+     *
+     * @param algorithms the configured algorithm names
+     * @return the COSE algorithm identifiers
+     */
+    private static List<Object> toCoseAlgorithms(final List<String> algorithms) {
+        return algorithms
+            .stream()
+            .filter(MDOC_SIGNING_ALGORITHMS::contains)
+            .<Object>map(COSEAlgorithms::getValueByName)
+            .toList();
     }
 
     private static List<CredentialConfigurationDisplay> buildIssuerDisplays(

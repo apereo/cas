@@ -134,11 +134,15 @@ public class OidcVerifiableCredentialPresentationResponseEndpointController exte
 
     private final OidcVerifiableCredentialStatusListService statusListService;
 
+    private final OidcVerifiableCredentialMdocPresentationVerifier mdocPresentationVerifier;
+
     public OidcVerifiableCredentialPresentationResponseEndpointController(
         final OidcConfigurationContext configurationContext,
-        final OidcVerifiableCredentialStatusListService statusListService) {
+        final OidcVerifiableCredentialStatusListService statusListService,
+        final OidcVerifiableCredentialMdocPresentationVerifier mdocPresentationVerifier) {
         super(configurationContext);
         this.statusListService = statusListService;
+        this.mdocPresentationVerifier = mdocPresentationVerifier;
     }
 
     /**
@@ -431,11 +435,15 @@ public class OidcVerifiableCredentialPresentationResponseEndpointController exte
         for (val credential : credentials) {
             require(credential != null && credential.getId() != null && !credential.getId().isBlank(),
                 "Credential query id is invalid");
-            require(OidcVerifiableCredentialConfigurationProperties.CredentialConfigurationFormats.DC_SD_JWT
-                .getValue().equals(credential.getFormat()), "Credential query format is not supported");
-            require(credential.getVctValues() != null && !credential.getVctValues().isEmpty()
-                    && credential.getVctValues().stream().allMatch(value -> value != null && !value.isBlank()),
-                "Credential query has no valid VCT values");
+            if (isMdocQuery(credential)) {
+                require(StringUtils.isNotBlank(credential.getDoctypeValue()), "Credential query has no document type");
+            } else {
+                require(OidcVerifiableCredentialConfigurationProperties.CredentialConfigurationFormats.DC_SD_JWT
+                    .getValue().equals(credential.getFormat()), "Credential query format is not supported");
+                require(credential.getVctValues() != null && !credential.getVctValues().isEmpty()
+                        && credential.getVctValues().stream().allMatch(value -> value != null && !value.isBlank()),
+                    "Credential query has no valid VCT values");
+            }
             require(credentialQueries.putIfAbsent(credential.getId(), credential) == null,
                 "Credential query ids must be unique");
         }
@@ -452,9 +460,48 @@ public class OidcVerifiableCredentialPresentationResponseEndpointController exte
             val presentation = ((List<?>) presentations).getFirst();
             require(presentation instanceof final String value && !value.isBlank(),
                 "Credential presentation is invalid");
-            disclosedClaims.put(entry.getKey(),
-                validateSdJwtPresentation((String) presentation, entry.getValue(), nonce, transientSessionTicket));
+            disclosedClaims.put(entry.getKey(), isMdocQuery(entry.getValue())
+                ? validateMdocPresentation((String) presentation, entry.getValue(), nonce, transientSessionTicket)
+                : validateSdJwtPresentation((String) presentation, entry.getValue(), nonce, transientSessionTicket));
         }
+        return disclosedClaims;
+    }
+
+    private static boolean isMdocQuery(final CredentialRequest credentialQuery) {
+        return OidcVerifiableCredentialConfigurationProperties.CredentialConfigurationFormats.MSO_MDOC
+            .getValue().equals(credentialQuery.getFormat());
+    }
+
+    /**
+     * Verify an mdoc presentation. Its device signature covers the session transcript of this request: the
+     * {@code client_id}, {@code nonce} and {@code response_uri} of the request, or the origin and {@code nonce} of a
+     * Digital Credentials API request, and the thumbprint of the key the response was encrypted to, if any
+     * (OpenID4VP 1.0, appendix B.2.6).
+     *
+     * @param presentation           the presentation
+     * @param credentialQuery        the credential query
+     * @param nonce                  the nonce of the request
+     * @param transientSessionTicket the presentation transaction
+     * @return the disclosed claims, by name space
+     * @throws Throwable the throwable
+     */
+    private Map<String, Object> validateMdocPresentation(final String presentation,
+                                                         final CredentialRequest credentialQuery,
+                                                         final String nonce,
+                                                         final TransientSessionTicket transientSessionTicket)
+            throws Throwable {
+        val responseEncryptionKey = transientSessionTicket.getPropertyAsString(PROPERTY_RESPONSE_ENCRYPTION_KEY);
+        val jwkThumbprint = responseEncryptionKey == null
+            ? null
+            : JWK.parse(responseEncryptionKey).computeThumbprint().decode();
+        val origin = transientSessionTicket.getPropertyAsString(PROPERTY_ORIGIN);
+        val handover = origin != null
+            ? OidcVerifiableCredentialMdocPresentationVerifier.buildDigitalCredentialsHandover(origin, nonce, jwkThumbprint)
+            : OidcVerifiableCredentialMdocPresentationVerifier.buildRedirectHandover(
+                OidcVerifiableCredentialPresentationRequestEndpointController.resolveClientIdentifier(configurationContext), nonce,
+                jwkThumbprint, OidcVerifiableCredentialPresentationRequestEndpointController.resolveResponseUri(configurationContext.getCasProperties()));
+        val disclosedClaims = mdocPresentationVerifier.verify(presentation, credentialQuery, handover);
+        validateRequestedClaims(disclosedClaims, credentialQuery.getClaims());
         return disclosedClaims;
     }
 

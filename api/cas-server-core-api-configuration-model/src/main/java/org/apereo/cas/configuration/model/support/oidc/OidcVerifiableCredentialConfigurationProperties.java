@@ -43,6 +43,13 @@ public class OidcVerifiableCredentialConfigurationProperties implements Serializ
     private String credentialValidity = "P30D";
 
     /**
+     * Document type of an ISO/IEC 18013-5 mdoc, required by the {@code mso_mdoc} format and ignored by the others,
+     * for example {@code org.iso.18013.5.1.mDL} for a mobile driving licence. It is published in issuer metadata
+     * as {@code doctype}, signed into the mobile security object, and is the default name space of the claims.
+     */
+    private String doctype;
+
+    /**
      * OAuth scope associated with this credential configuration.
      * This scope may be used during authorization and token issuance
      * to indicate that the client or wallet is requesting permission
@@ -154,7 +161,12 @@ public class OidcVerifiableCredentialConfigurationProperties implements Serializ
          * This format includes a {@code @context} URLs that maps data properties to universal schemas.
          * Every field has a strict, globally defined semantic meaning.
          */
-        JWT_VC_JSON_LD("jwt_vc_json-ld");
+        JWT_VC_JSON_LD("jwt_vc_json-ld"),
+        /**
+         * An ISO/IEC 18013-5 mdoc: CBOR claims grouped by name space, signed by the issuer through a mobile security
+         * object (a {@code COSE_Sign1} structure) and bound to the holder's device key.
+         */
+        MSO_MDOC("mso_mdoc");
 
         private final String value;
     }

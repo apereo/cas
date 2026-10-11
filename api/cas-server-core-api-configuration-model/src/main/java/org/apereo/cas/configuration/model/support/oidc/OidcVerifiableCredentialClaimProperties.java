@@ -34,6 +34,13 @@ public class OidcVerifiableCredentialClaimProperties implements Serializable {
     private boolean disclosable = true;
 
     /**
+     * Name space of this claim in an ISO/IEC 18013-5 mdoc, such as {@code org.iso.18013.5.1}. Only the
+     * {@code mso_mdoc} format uses it; when it is not set, the claim goes in the name space named after
+     * the credential configuration's document type.
+     */
+    private String namespace;
+
+    /**
      * Control display settings for this claim.
      */
     private List<CredentialClaimDisplay> display = new ArrayList<>();

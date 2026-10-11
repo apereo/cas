@@ -411,6 +411,13 @@ looking up audit records reads only the newest matching entries instead of loadi
   used to answer with `invalid_request`. The profile and userinfo endpoints now answer a missing or invalid proof with `401` and a
   `WWW-Authenticate: DPoP error="invalid_dpop_proof"` challenge, as the credential endpoint did, and every `DPoP` challenge,
   Heimdall's included, lists the algorithms accepted for DPoP proofs in its `algs` parameter.
+- CAS issues and verifies [ISO/IEC 18013-5 mdocs](../authentication/OIDC-Authentication-Verifiable-Credentials.html#iso-mdoc-credentials),
+  such as a mobile driving licence, in the `mso_mdoc` format of OpenID4VCI 1.0 and OpenID4VP 1.0, which HAIP also covers. A credential
+  configuration with the `MSO_MDOC` format names its document type with `cas.authn.oidc.vc.issuer.credential-configurations[].doctype`{: .cas-setting},
+  and each claim may name its name space with `cas.authn.oidc.vc.issuer.credential-configurations[].claims[].namespace`{: .cas-setting}. The
+  issuer signs the claims' digests and the wallet's device key in a mobile security object with an elliptic curve key that carries an
+  X.509 chain. A presented mdoc must be signed by one of CAS's keys and its device signature must cover the session transcript of the
+  request. CBOR and COSE are handled by the Authlete `cbor` library, from the same vendor as the SD-JWT library CAS already uses.
 
 ### Stateless Ticket Registry
 {: .action data-area="tickets"}

@@ -307,7 +307,7 @@ class OidcVerifiableCredentialEndpointControllerTests {
             val accessToken = getAccessToken(principal, clientId);
             when(accessToken.getGrantType()).thenReturn(OAuth20GrantTypes.PRE_AUTHORIZED_CODE);
             when(accessToken.getCredentialConfigurationIds())
-                .thenReturn(List.of("myorg", "employee", "jsonld", "strict"));
+                .thenReturn(List.of("myorg", "employee", "jsonld", "strict", "mdl"));
             ticketRegistry.addTicket(Objects.requireNonNull(accessToken.getTicketGrantingTicket()));
             ticketRegistry.addTicket(accessToken);
             return accessToken;

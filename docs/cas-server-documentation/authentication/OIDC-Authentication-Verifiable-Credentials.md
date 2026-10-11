@@ -19,7 +19,7 @@ nonce generation, and wallet-facing issuance flows.
 The following capabilities are in place:
 
 - Issuer metadata is published via the `.well-known/openid-credential-issuer` endpoint.
-- CAS may issue credentials formats such as `SD-JWT VC` (selective disclosure), etc.
+- CAS may issue credentials formats such as `SD-JWT VC` (selective disclosure) and ISO/IEC 18013-5 mdocs.
 - Dedicated endpoints for credential issuance and nonce generation are available.
 - Credential offers may be produced and shared with wallets.
 - Pre-authorized code flows may be used to obtain issuance-scoped access tokens.
@@ -31,6 +31,7 @@ Supported formats are:
 - `dc+sd-jwt`
 - `jwt_vc_json`
 - `jwt_vc_json-ld`
+- `mso_mdoc`
 
 ## Overview
 
@@ -611,6 +612,45 @@ there the pre-authorized code and the nonces handed out by the nonce endpoint ar
 stays usable until it expires, which departs from OpenID4VCI. Keep their expiration short. Verifiable
 presentations are not supported with that registry.
 
+## ISO mdoc Credentials
+
+CAS can issue ISO/IEC 18013-5 mdocs, such as a mobile driving licence, in the `mso_mdoc` format of
+[OpenID4VCI 1.0](https://openid.net/specs/openid-4-verifiable-credential-issuance-1_0.html), which the
+OpenID4VC High Assurance Interoperability Profile also covers. An mdoc credential configuration names its
+document type, such as `org.iso.18013.5.1.mDL`, and may place each claim in a name space, such as
+`org.iso.18013.5.1`; a claim without one goes in the name space named after the document type. Both are
+defined through CAS settings.
+
+The credential is the base64url-encoded CBOR `IssuerSigned` structure. Each claim is a salted item, and
+the issuer signs their digests, the document type, the validity period and the holder's device key in a
+mobile security object, a `COSE_Sign1` structure. The device key is the key the wallet's proof is signed
+with; it must be an elliptic curve or EdDSA key, and a proof made with an RSA key is refused with
+`invalid_proof`, since an mdoc cannot bind one.
+
+The signing key must be an elliptic curve key on `P-256`, `P-384` or `P-521`, whose curve sets the
+algorithm (`ES256`, `ES384` or `ES512`), which must be among the credential configuration's signing
+algorithms. It must also carry an `x5c` certificate chain, which goes in the `x5chain` header of the
+signature; a trailing self-signed trust anchor is left out, as for the other formats. A service may pick
+such a key from the keystore by its key id.
+
+The issuer metadata describes an mdoc configuration by its document type, with `cose_key` binding,
+signing algorithms as COSE algorithm identifiers, and claim paths made of the name space and the element:
+
+```json
+{
+  "format": "mso_mdoc",
+  "doctype": "org.iso.18013.5.1.mDL",
+  "cryptographic_binding_methods_supported": ["cose_key"],
+  "credential_signing_alg_values_supported": [-7],
+  "credential_metadata": {
+    "claims": [
+      { "path": ["org.iso.18013.5.1", "given_name"] },
+      { "path": ["org.iso.18013.5.1", "family_name"] }
+    ]
+  }
+}
+```
+
 ## Verifiable Presentations
 
 CAS can also act as a verifier and ask a wallet to present a credential. A relying party creates a
@@ -713,6 +753,40 @@ With the client identifier prefix set to `X509_HASH`, which HAIP requires of ver
 request object is signed and served by reference the same way, and the client identifier is `x509_hash:` followed by
 the base64url-encoded SHA-256 hash of the DER-encoded leaf certificate, so the leaf needs no particular name. The
 signing key must still carry an `x5c` certificate chain.
+
+### ISO mdoc Presentations
+
+An mdoc is requested by its document type, with claim paths made of the name space and the element:
+
+```json
+{
+  "credentials": [
+    {
+      "id": "mdl",
+      "format": "mso_mdoc",
+      "doctype_value": "org.iso.18013.5.1.mDL",
+      "claims": [
+        {
+          "path": [
+            "org.iso.18013.5.1",
+            "given_name"
+          ]
+        }
+      ]
+    }
+  ]
+}
+```
+
+The request then advertises `mso_mdoc` in its client metadata, with the COSE algorithms CAS accepts for the
+issuer and the device signatures. The wallet answers with a base64url-encoded CBOR `DeviceResponse`, as
+OpenID4VP 1.0 Appendix B.2 describes. CAS only accepts mdocs it issued: the leaf of the issuer signature's
+`x5chain` must be the certificate of one of its signing keys, and the issuer-signed items must match the
+digests of the mobile security object, which must be within its validity period. The device signature must
+verify with the device key the mobile security object binds, over a session transcript built from the
+request's client identifier, nonce and response URI, or from the origin and nonce of a Digital Credentials
+API request, and from the thumbprint of the key the response is encrypted to, if any. A presentation made
+for another request therefore does not verify. The disclosed claims are reported by name space.
 
 ### Digital Credentials API
 

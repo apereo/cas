@@ -2517,6 +2517,9 @@ ext.libraries = [
                 dependencies.create(libs.authlete.sd.jwt.get()) {
                     exclude(group: "com.google.code.gson", module: "gson")
                 },
+                dependencies.create(libs.authlete.cbor.get()) {
+                    exclude(group: "com.google.code.gson", module: "gson")
+                },
                 dependencies.create(libs.gson.get()) {
                 }
         ],

@@ -17,6 +17,7 @@ import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.crypto.CertUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
+import com.authlete.cose.constants.COSEAlgorithms;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.Operation;
@@ -510,16 +511,24 @@ public class OidcVerifiableCredentialPresentationRequestEndpointController exten
         val casProperties = configurationContext.getCasProperties();
         val responseEncryptionKey = transientSessionTicket.getPropertyAsString(
             OidcVerifiableCredentialPresentationResponseEndpointController.PROPERTY_RESPONSE_ENCRYPTION_KEY);
+        val vpFormats = new LinkedHashMap<String, OidcVerifiableCredentialPresentationClientMetadata.VpFormat>();
+        vpFormats.put(OidcVerifiableCredentialConfigurationProperties.CredentialConfigurationFormats.DC_SD_JWT.getValue(),
+            OidcVerifiableCredentialPresentationClientMetadata.VpFormat.builder()
+                .sdJwtAlgValues(resolveCredentialSigningAlgorithms())
+                .kbJwtAlgValues(OidcVerifiableCredentialPresentationResponseEndpointController.KEY_BINDING_ALGORITHMS_SUPPORTED)
+                .build());
+        val issuerAuthAlgorithms = resolveMdocSigningAlgorithms();
+        if (!issuerAuthAlgorithms.isEmpty()) {
+            vpFormats.put(OidcVerifiableCredentialConfigurationProperties.CredentialConfigurationFormats.MSO_MDOC.getValue(),
+                OidcVerifiableCredentialPresentationClientMetadata.VpFormat.builder()
+                    .issuerAuthAlgValues(issuerAuthAlgorithms)
+                    .deviceAuthAlgValues(OidcVerifiableCredentialMdocPresentationVerifier.DEVICE_SIGNING_ALGORITHMS)
+                    .build());
+        }
         final OidcVerifiableCredentialPresentationClientMetadata.OidcVerifiableCredentialPresentationClientMetadataBuilder<?, ?> clientMetadataBuilder =
             OidcVerifiableCredentialPresentationClientMetadata.builder()
                 .clientName("Apereo CAS")
-                .vpFormatsSupported(Map.of(
-                    OidcVerifiableCredentialConfigurationProperties.CredentialConfigurationFormats.DC_SD_JWT.getValue(),
-                    OidcVerifiableCredentialPresentationClientMetadata.VpFormat.builder()
-                        .sdJwtAlgValues(resolveCredentialSigningAlgorithms())
-                        .kbJwtAlgValues(OidcVerifiableCredentialPresentationResponseEndpointController.KEY_BINDING_ALGORITHMS_SUPPORTED)
-                        .build()
-                ));
+                .vpFormatsSupported(vpFormats);
         if (StringUtils.isNotBlank(responseEncryptionKey)) {
             val publicKey = PublicJsonWebKey.Factory.newPublicJwk(responseEncryptionKey)
                 .toParams(JsonWebKey.OutputControlLevel.PUBLIC_ONLY);
@@ -582,6 +591,26 @@ public class OidcVerifiableCredentialPresentationRequestEndpointController exten
     }
 
     /**
+     * Issuer signature algorithms the verifier accepts for an mdoc, advertised as {@code issuerauth_alg_values}: the COSE
+     * identifiers of those the {@code mso_mdoc} credential configurations advertise, since a presented mdoc is checked
+     * against the configuration its document type names. Empty when no configuration issues an mdoc.
+     *
+     * @return the COSE algorithm identifiers
+     */
+    protected List<Integer> resolveMdocSigningAlgorithms() {
+        return configurationContext.getCasProperties().getAuthn().getOidc().getVc().getIssuer().getCredentialConfigurations()
+            .values()
+            .stream()
+            .filter(configuration -> configuration.getFormat()
+                == OidcVerifiableCredentialConfigurationProperties.CredentialConfigurationFormats.MSO_MDOC)
+            .flatMap(configuration -> configuration.getCredentialSigningAlgValuesSupported().stream())
+            .filter(OidcVerifiableCredentialMdocPresentationVerifier.ISSUER_SIGNING_ALGORITHMS::contains)
+            .map(COSEAlgorithms::getValueByName)
+            .distinct()
+            .toList();
+    }
+
+    /**
      * DCQL credential query for one requested credential. DCQL has no per-claim {@code required} flag: when some
      * claims are optional, every claim gets an {@code id} and {@code claim_sets} lists the acceptable combinations
      * in order of preference, all claims first and then the required ones alone. When none is required, each claim
@@ -622,6 +651,7 @@ public class OidcVerifiableCredentialPresentationRequestEndpointController exten
             .format(credential.getFormat())
             .meta(OidcVerifiableCredentialDCQL.Meta.builder()
                 .vctValues(credential.getVctValues())
+                .doctypeValue(credential.getDoctypeValue())
                 .build())
             .claims(claimQueries)
             .claimSets(claimSets)
@@ -832,6 +862,12 @@ public class OidcVerifiableCredentialPresentationRequestEndpointController exten
             private List<String> vctValues;
 
             /**
+             * Document type of the mdoc for mso_mdoc, such as {@code org.iso.18013.5.1.mDL}.
+             */
+            @JsonProperty("doctype_value")
+            private String doctypeValue;
+
+            /**
              * Requested claims.
              */
             private List<ClaimRequest> claims;
@@ -846,7 +882,8 @@ public class OidcVerifiableCredentialPresentationRequestEndpointController exten
             private static final long serialVersionUID = 1203934733451522730L;
 
             /**
-             * Claim path, e.g. ["given_name"] or ["address","street"].
+             * Claim path, e.g. ["given_name"] or ["address","street"]; for mso_mdoc, the name space and the element,
+             * e.g. ["org.iso.18013.5.1","given_name"].
              */
             @NotEmpty
             private List<String> path;
@@ -971,6 +1008,18 @@ public class OidcVerifiableCredentialPresentationRequestEndpointController exten
              */
             @JsonProperty("kb-jwt_alg_values")
             private List<String> kbJwtAlgValues;
+
+            /**
+             * COSE algorithms supported for the issuer signature of an mdoc.
+             */
+            @JsonProperty("issuerauth_alg_values")
+            private List<Integer> issuerAuthAlgValues;
+
+            /**
+             * COSE algorithms supported for the device signature of an mdoc.
+             */
+            @JsonProperty("deviceauth_alg_values")
+            private List<Integer> deviceAuthAlgValues;
         }
     }
 
@@ -1022,6 +1071,12 @@ public class OidcVerifiableCredentialPresentationRequestEndpointController exten
              */
             @JsonProperty("vct_values")
             private List<String> vctValues;
+
+            /**
+             * Document type of the mdoc for mso_mdoc.
+             */
+            @JsonProperty("doctype_value")
+            private String doctypeValue;
         }
 
         @JsonInclude(JsonInclude.Include.NON_EMPTY)

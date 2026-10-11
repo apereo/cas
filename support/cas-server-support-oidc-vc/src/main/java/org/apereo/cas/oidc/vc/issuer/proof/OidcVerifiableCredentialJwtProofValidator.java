@@ -3,6 +3,7 @@ package org.apereo.cas.oidc.vc.issuer.proof;
 import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.oidc.OidcVerifiableCredentialConfigurationProperties;
+import org.apereo.cas.configuration.model.support.oidc.OidcVerifiableCredentialConfigurationProperties.CredentialConfigurationFormats;
 import org.apereo.cas.oidc.vc.issuer.nonce.OidcVerifiableCredentialNonceService;
 import org.apereo.cas.util.EncodingUtils;
 import com.nimbusds.jose.Algorithm;
@@ -279,8 +280,20 @@ public class OidcVerifiableCredentialJwtProofValidator implements OidcVerifiable
         return JWK.parse(new Base64URL(encodedKey).decodeToString());
     }
 
+    /**
+     * The proof's binding method must be one the credential configuration supports. An mdoc is always bound to a
+     * {@code COSE_Key}, as its issuer metadata says, and that key is the one the proof carries in its header, so a header
+     * key is the {@code cose_key} binding of an {@code mso_mdoc} configuration whatever its binding methods list.
+     *
+     * @param configuration the credential configuration
+     * @param bindingMethod the binding method of the proof
+     */
     protected void verifyBindingMethod(final @Nullable OidcVerifiableCredentialConfigurationProperties configuration,
                                        final String bindingMethod) {
+        if (configuration != null && configuration.getFormat() == CredentialConfigurationFormats.MSO_MDOC
+            && BINDING_METHOD_JWK.equals(bindingMethod)) {
+            return;
+        }
         if (configuration != null && !configuration.getCryptographicBindingMethodsSupported().contains(bindingMethod)) {
             throw OidcVerifiableCredentialProofException.invalidProof(
                 "Cryptographic binding method %s is not supported by this credential configuration".formatted(bindingMethod));
