@@ -4144,13 +4144,15 @@ select + span[role="combobox"] {
     box-shadow: none;
 }
 
-#dashboard .ui-tabs {
+#dashboard .ui-tabs,
+.ui-dialog.palantir-dialog .ui-tabs {
     padding: 0;
     border: 0;
     background: transparent;
 }
 
-#dashboard .ui-tabs .ui-tabs-nav {
+#dashboard .ui-tabs .ui-tabs-nav,
+.ui-dialog.palantir-dialog .ui-tabs .ui-tabs-nav {
     display: flex;
     flex-wrap: wrap;
     gap: 4px;
@@ -4162,11 +4164,14 @@ select + span[role="combobox"] {
 }
 
 #dashboard .ui-tabs .ui-tabs-nav::before,
-#dashboard .ui-tabs .ui-tabs-nav::after {
+#dashboard .ui-tabs .ui-tabs-nav::after,
+.ui-dialog.palantir-dialog .ui-tabs .ui-tabs-nav::before,
+.ui-dialog.palantir-dialog .ui-tabs .ui-tabs-nav::after {
     display: none;
 }
 
-#dashboard .ui-tabs .ui-tabs-nav li {
+#dashboard .ui-tabs .ui-tabs-nav li,
+.ui-dialog.palantir-dialog .ui-tabs .ui-tabs-nav li {
     float: none;
     margin: 0;
     padding: 0;
@@ -4176,27 +4181,32 @@ select + span[role="combobox"] {
     white-space: nowrap;
 }
 
-#dashboard .ui-tabs .ui-tabs-nav li.ui-tabs-active {
+#dashboard .ui-tabs .ui-tabs-nav li.ui-tabs-active,
+.ui-dialog.palantir-dialog .ui-tabs .ui-tabs-nav li.ui-tabs-active {
     background: var(--cas-ui-surface, #fff) !important;
     box-shadow: 0 1px 3px rgba(16, 40, 70, .16);
 }
 
-#dashboard .ui-tabs .ui-tabs-nav li .ui-tabs-anchor {
+#dashboard .ui-tabs .ui-tabs-nav li .ui-tabs-anchor,
+.ui-dialog.palantir-dialog .ui-tabs .ui-tabs-nav li .ui-tabs-anchor {
     padding: 8px 14px;
     color: var(--cas-ui-muted, #52606d);
     font-size: 14px;
     font-weight: 600;
 }
 
-#dashboard .ui-tabs .ui-tabs-nav li:not(.ui-tabs-active):hover {
+#dashboard .ui-tabs .ui-tabs-nav li:not(.ui-tabs-active):hover,
+.ui-dialog.palantir-dialog .ui-tabs .ui-tabs-nav li:not(.ui-tabs-active):hover {
     background: rgba(16, 40, 70, .06);
 }
 
-#dashboard .ui-tabs .ui-tabs-nav li.ui-tabs-active .ui-tabs-anchor {
+#dashboard .ui-tabs .ui-tabs-nav li.ui-tabs-active .ui-tabs-anchor,
+.ui-dialog.palantir-dialog .ui-tabs .ui-tabs-nav li.ui-tabs-active .ui-tabs-anchor {
     color: var(--cas-theme-primary, #114377);
 }
 
-#dashboard .ui-tabs .ui-tabs-panel {
+#dashboard .ui-tabs .ui-tabs-panel,
+.ui-dialog.palantir-dialog .ui-tabs .ui-tabs-panel {
     padding: 4px 0 0;
     border: 0;
     background: transparent;
@@ -4972,4 +4982,13 @@ table.dataTable > tbody > tr.palantir-table-group-row:hover > td {
     box-shadow: none !important;
     color: var(--cas-theme-primary, #114377) !important;
     font-weight: 600;
+}
+
+/* Settings dialog tabs keep one height so the dialog does not jump while switching between them. */
+#palantir-settings-tabs .ui-tabs-panel {
+    min-height: 320px;
+}
+
+#palantirEndpoints-tab #palantirActuatorsTable {
+    width: 100% !important;
 }
