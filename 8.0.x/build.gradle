@@ -1,0 +1,16 @@
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Builds the CAS documentation site used by deployers and contributors."
+
+javadoc {
+    enabled = false
+}
+
+compileJava {
+    enabled = false
+}
+
+test {
+    enabled = false
+}
+

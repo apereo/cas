@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="light dark">
+    
+    
+    
+
+
+
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <meta name="description" content="Principal resolution in CAS: turning credentials into a principal with an identifier and attributes from attribute repositories.">
+    <meta name="robots" content="index,follow">
+    <meta name="theme-color" content="#06304a">
+    <link rel="canonical" href="https://apereo.github.io/cas/development/installation/Configuring-Principal-Resolution.html">
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="en_US">
+    <meta property="og:site_name" content="Apereo CAS Documentation">
+    <meta property="og:title" content="CAS - Configuring Principal Resolution">
+    <meta property="og:description" content="Principal resolution in CAS: turning credentials into a principal with an identifier and attributes from attribute repositories.">
+    <meta property="og:url" content="https://apereo.github.io/cas/development/installation/Configuring-Principal-Resolution.html">
+    <meta property="og:image" content="https://apereo.github.io/cas/images/cas_logo.png">
+    <meta property="og:image:alt" content="Apereo CAS">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="CAS - Configuring Principal Resolution">
+    <meta name="twitter:description" content="Principal resolution in CAS: turning credentials into a principal with an identifier and attributes from attribute repositories.">
+    <meta name="twitter:image" content="https://apereo.github.io/cas/images/cas_logo.png">
+
+    
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "TechArticle",
+      "headline": "Configuring Principal Resolution",
+      "description": "Principal resolution in CAS: turning credentials into a principal with an identifier and attributes from attribute repositories.",
+      "url": "https://apereo.github.io/cas/development/installation/Configuring-Principal-Resolution.html",
+      "inLanguage": "en",
+      "isPartOf": {"@type": "WebSite", "name": "Apereo CAS Documentation",
+                   "url": "https://apereo.github.io/cas/"},
+      "author": {"@type": "Organization", "name": "Apereo Foundation", "url": "https://www.apereo.org/"},
+      "publisher": {"@type": "Organization", "name": "Apereo Foundation", "url": "https://www.apereo.org/"}
+    }
+    </script>
+    
+
+    <script>
+        if (window.location.hostname === "apereo.github.io") {
+            window.dataLayer = window.dataLayer || [];
+            window.gtag = function () {
+                window.dataLayer.push(arguments);
+            };
+            window.gtag("js", new Date());
+            window.gtag("config", "G-W3M8JXP7GP");
+            const analytics = document.createElement("script");
+            analytics.async = true;
+            analytics.src = "https://www.googletagmanager.com/gtag/js?id=G-W3M8JXP7GP";
+            document.head.appendChild(analytics);
+        }
+    </script>
+
+    <script>
+        function readThemePreference() {
+            try {
+                return localStorage.getItem('cas-docs-theme') || 'system';
+            } catch (error) {
+                return 'system';
+            }
+        }
+
+        function systemTheme() {
+            return window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+        }
+
+        function resolveTheme(preference) {
+            return preference === 'dark' || preference === 'light' ? preference : systemTheme();
+        }
+
+        function changeTheme(theme) {
+            if (theme !== 'dark' && theme !== 'light') {
+                return;
+            }
+
+            if (document.documentElement.getAttribute('data-bs-theme') !== theme) {
+                document.documentElement.setAttribute('data-bs-theme', theme);
+            }
+        }
+
+        (() => {
+            let preference = readThemePreference();
+            if (preference !== 'dark' && preference !== 'light') {
+                preference = 'system';
+
+            }
+
+            changeTheme(resolveTheme(preference));
+
+            if (window.matchMedia) {
+                window.matchMedia('(prefers-color-scheme: light)').addEventListener('change', () => {
+                    if (readThemePreference() !== 'system') {
+                        return;
+                    }
+                    const theme = systemTheme();
+                    changeTheme(theme);
+                });
+            }
+        })();
+    </script>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.2/css/all.min.css" integrity="sha384-PPIZEGYM1v8zp5Py7UjFb79S58UeqCL9pYVnVPURKEqvioPROaVAJKKLzvH2rDnI" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@docsearch/css@3.9.0/dist/style.css" integrity="sha384-cHiDHRyv+KTDBfpMqc3t2SeQYjfK05cReQA49eigiKoBzOMi9WIFsBsNfetC5n2a" crossorigin="anonymous"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.5/css/lightbox.min.css" integrity="sha384-9623XJODy0qDAl6X6Y9xTBSzYUxM0ixdjO8zqJQeGzDP2Uwo1PqAOq6gXkk2ul99" crossorigin="anonymous" />
+    
+    
+    <link rel="stylesheet" type="text/css" media="screen" href='/cas/stylesheets/site.css'>
+    <link rel="stylesheet" type="text/css" media="print" href='/cas/stylesheets/site-print.css'>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400..800;1,9..40,400..500&family=Bricolage+Grotesque:opsz,wght@12..96,400..800&display=swap" rel="stylesheet">
+    <link href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css" rel="stylesheet" integrity="sha384-yT2pwyD9a3Oee/HtjWTccnRmchDWH2EDHjzH7gwf8yAK0RilKFL164FCHX9fzlxh" crossorigin="anonymous">
+
+    <title>CAS - Configuring Principal Resolution · Apereo CAS Documentation</title>
+
+</head>
+
+<body class="" data-docs-base="/cas" data-docs-version="development" data-docs-build="20261011002700">
+    <a class="skip-link" href="#cas-docs-container">Skip to content</a>
+    <header class="site-header">
+        <div class="masthead">
+            <a class="cas-brand" href="../../index.html" aria-label="Apereo CAS home">
+                <img class="brand-logo" src="/cas/images/cas_logo.png" width="119" height="60" alt="CAS">
+                <span class="brand-caption">APEREO CAS<span>Documentation</span></span>
+            </a>
+            <div class="brand-mission">
+                <p>Enterprise Authentication <span class="brand-mission-accent">for All Earthlings and Beyond</span></p>
+                <span>Identity, Single Sign-On and Access Management</span>
+            </div>
+            <a id="forkme_banner" aria-label="View CAS on GitHub" href="https://github.com/apereo/cas"><i class="fab fa-github" aria-hidden="true"></i><span>View on GitHub</span><span aria-hidden="true">↗</span></a>
+        </div>
+        <div class="navigation-bar">
+            
+            <button onclick="navigateSidebar()" id="sidebarNavButton" class="icon-button" type="button" aria-controls="sidebar" aria-expanded="true" aria-label="Toggle documentation navigation" title="Toggle documentation navigation">
+                <i class="fa fa-bars" aria-hidden="true"></i>
+            </button>
+            
+            <nav class="primary-navigation" aria-label="Main navigation">
+                <a href="../../index.html">Home</a>
+                <a href="https://github.com/apereo/cas/releases">Releases</a>
+                <a href="../../Support.html">Support</a>
+                <a href="../../Mailing-Lists.html">Mailing Lists</a>
+                <div class="dropdown">
+                    <button class="dropdown-toggle" type="button" id="cas-versions" data-bs-toggle="dropdown" aria-expanded="false">Versions</button>
+                    <div class="dropdown-menu" aria-labelledby="cas-versions">
+                        
+                        
+                        
+                        
+                        <a class="dropdown-item cas-version-link" href="/cas/development/installation/Configuring-Principal-Resolution.html" data-version-home="/cas/development/">Development</a>
+                        
+                        
+                        
+                        
+                        <a class="dropdown-item cas-version-link" href="/cas/8.0.x/installation/Configuring-Principal-Resolution.html" data-version-home="/cas/8.0.x/">v8.0.x</a>
+                        
+                        
+                        
+                        
+                        <a class="dropdown-item cas-version-link" href="/cas/7.3.x/installation/Configuring-Principal-Resolution.html" data-version-home="/cas/7.3.x/">v7.3.x</a>
+                        
+                    </div>
+                </div>
+                <a href="https://apereo.github.io" target="_blank" rel="noopener">Blog <span aria-hidden="true">↗</span><span class="visually-hidden"> (opens in a new tab)</span></a>
+            </nav>
+            <div class="navigation-tools">
+                <div id="searchField"></div>
+                <button id="settingsSearchButton" class="icon-button" type="button" aria-label="Search configuration settings (press Shift twice)" title="Search configuration settings (Shift Shift)"><i class="fa fa-sliders" aria-hidden="true"></i></button>
+                <button id="themeToggle" class="icon-button" type="button" onclick="toggleDarkMode()" aria-label="Toggle color theme" title="Toggle color theme"><i class="fa fa-circle-half-stroke" aria-hidden="true"></i></button>
+            </div>
+        </div>
+        <div class="reading-progress" aria-hidden="true"><span id="readingProgress"></span></div>
+    </header>
+
+    <div class="docs-shell">
+        
+        <aside id="sidebar" class="docs-sidebar" aria-label="Documentation navigation">
+    <div class="sidebar-heading">
+<span class="eyebrow">APEREO CAS DOCUMENTATION</span><span class="sidebar-symbol" aria-hidden="true">✳</span>
+</div>
+    <nav id="sidebar-navigation" aria-label="Documentation topics"></nav>
+    <noscript><p>Browse the <a href="/cas/development/sidebar.html">documentation index</a>.</p></noscript>
+</aside>
+
+        
+        <main class="cas-docs-content">
+            
+            <div class="page-toolbar">
+                <nav id="docsNavBar" aria-label="Breadcrumb"></nav>
+                <div id="toolbarIcons" role="group" aria-label="Page tools"></div>
+            </div>
+            
+            
+            <aside id="dev-doc-info" aria-labelledby="dev-doc-title">
+                <span class="development-marker" aria-hidden="true"></span>
+                <div>
+                    <p id="dev-doc-title">WORKERS AHEAD!</p>
+                    <p class="dev-doc-summary">Development documentation for features that are
+                        <a href="https://github.com/apereo/cas/milestones">not released yet</a>.</p>
+                    <p class="dev-doc-details">You are viewing the <strong>development</strong> documentation for the Apereo CAS server. <strong>The
+                        functionality presented here <a href="https://github.com/apereo/cas/milestones">is not officially released yet</a></strong>.
+                        This is a work in progress and will be continually updated as development moves forward.
+                        <strong>You are most encouraged to test the changes presented.</strong>
+                    </p>
+                </div>
+            </aside>
+            
+            <article id="cas-docs-container" tabindex="-1">
+                
+<h1 id="principal-resolution">Principal Resolution</h1>
+
+<p>Principal resolution converts information in the authentication credential into a security principal
+that commonly contains additional attributes (i.e. user details such as affiliations, group membership, email, display name). 
+A CAS principal contains a unique identifier by which the authenticated user will be known to all requesting
+services. A principal also contains optional <a href="../integration/Attribute-Release.html">attributes that may be released</a>
+to services to support authorization and personalization. Principal resolution is a requisite part of the
+authentication process that happens after credential authentication.</p>
+
+<p>The attribute retrieval and resolution process that is carried out 
+by principal resolution is <a href="../integration/Attribute-Resolution.html">discussed here</a>.</p>
+
+<h2 id="configuration">Configuration</h2>
+
+<p>CAS uses the Person Directory library to provide a flexible principal resolution services against a number of data
+sources. The key to configuring <code class="language-plaintext highlighter-rouge">PersonDirectoryPrincipalResolver</code> is the definition of an <code class="language-plaintext highlighter-rouge">PersonAttributeDao</code> object.</p>
+
+<!-- fragment:keep -->
+
+<p>The following settings and properties are available from the CAS configuration catalog:</p>
+
+
+<div class="cas-properties">
+    <div class="cas-properties-list">
+<div class="cas-property" data-kind="required" data-name="cas.person-directory.principal-transformation.groovy.location" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.person-directory.principal-transformation.groovy.location</code><span class="cas-property-summary">The location of the resource.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-required"><i class="fa fa-asterisk" aria-hidden="true"></i>Required</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description">
+<p>The location of the resource. Resources can be URLs, or files found either on the classpath or outside somewhere in the file system.</p>
+<p>In the event the configured resource is a Groovy script, especially if the script is set to reload on changes, you may need to adjust the total number of <code>inotify</code> instances. On Linux, you may need to add the following line to <code>/etc/sysctl.conf</code>: <code>fs.inotify.max_user_instances = 256</code>.</p>
+<p>You can check the current value via <code>cat /proc/sys/fs/inotify/max_user_instances</code>.</p>
+<p>In situations and scenarios where CAS is able to automatically watch the underlying resource for changes and detect updates and modifications dynamically, you may be able to specify the following setting as either an environment variable or system property with a value of <code>false</code> to disable the resource watcher: <code>org.apereo.cas.util.io.PathWatcherService</code>.</p>
+</div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Resource</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.core.authentication.GroovyPrincipalTransformationProperties">GroovyPrincipalTransformationProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.person-directory.active-attribute-repository-ids" data-default="*">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.person-directory.active-attribute-repository-ids</code><span class="cas-property-summary">Activated attribute repository identifiers that should be used for fetching attributes if attribute resolution is enabled.</span>
+</div>
+        <div class="cas-property-default"><code>*</code></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Activated attribute repository identifiers that should be used for fetching attributes if attribute resolution is enabled. The list here may include identifiers separated by comma.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><code>*</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.core.authentication.PersonDirectoryPrincipalResolverProperties">PersonDirectoryPrincipalResolverProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.person-directory.attribute-repository-selection" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.person-directory.attribute-repository-selection</code><span class="cas-property-summary">Control the behavior of the attribute repository selection by authentication method or handler.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Control the behavior of the attribute repository selection by authentication method or handler. The map here is keyed by the authentication handler name, and the value is the attribute repository identifiers separated by comma. When the authentication handler is executed, the attribute repositories assigned to this handler will be selected to fetch attributes. Note that the resolution engine will always favor attribute repositories assigned to the service definition, if any and as part of its authentication policy, over this global setting.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Map&lt;String,String&gt;</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.core.authentication.PersonDirectoryPrincipalResolverProperties">PersonDirectoryPrincipalResolverProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.person-directory.attribute-resolution-enabled" data-default="undefined">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.person-directory.attribute-resolution-enabled</code><span class="cas-property-summary">Whether attribute repositories should be contacted to fetch person attributes.</span>
+</div>
+        <div class="cas-property-default"><code>undefined</code></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><div>Whether attribute repositories should be contacted to fetch person attributes. Defaults to true if not set. Available values are as follows: <ul>
+<li>
+<code>TRUE</code>: Constant to represent the true state.</li>
+<li>
+<code>FALSE</code>: Constant to represent the false state.</li>
+<li>
+<code>UNDEFINED</code>: Constant to represent the undefined state.</li>
+</ul>
+</div></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>TriStateBoolean</code></dd>
+<dt>Default</dt>
+<dd><code>undefined</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.core.authentication.PersonDirectoryPrincipalResolverProperties">PersonDirectoryPrincipalResolverProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.person-directory.principal-attribute" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.person-directory.principal-attribute</code><span class="cas-property-summary">Attribute name to use to indicate the identifier of the principal constructed.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Attribute name to use to indicate the identifier of the principal constructed. If the attribute is blank or has no values, the default principal id will be used determined by the underlying authentication engine. The principal id attribute usually is removed from the collection of attributes collected, though this behavior depends on the schematics of the underlying authentication strategy.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.core.authentication.PersonDirectoryPrincipalResolverProperties">PersonDirectoryPrincipalResolverProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.person-directory.principal-resolution-conflict-strategy" data-default="last">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.person-directory.principal-resolution-conflict-strategy</code><span class="cas-property-summary">In the event that the principal resolution engine resolves more than one principal, (especially if such principals in the chain have different identifiers), this setting determines strategy by which the principal id w...</span>
+</div>
+        <div class="cas-property-default"><code>last</code></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>In the event that the principal resolution engine resolves more than one principal, (especially if such principals in the chain have different identifiers), this setting determines strategy by which the principal id would be chosen from the chain. Accepted values are: <code>last</code>, <code>first</code>.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><code>last</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.core.authentication.PersonDirectoryPrincipalResolverProperties">PersonDirectoryPrincipalResolverProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.person-directory.principal-resolution-failure-fatal" data-default="undefined">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.person-directory.principal-resolution-failure-fatal</code><span class="cas-property-summary">When true, throws an error back indicating that principal resolution has failed and no principal can be found based on the authentication requirements.</span>
+</div>
+        <div class="cas-property-default"><code>undefined</code></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><div>When true, throws an error back indicating that principal resolution has failed and no principal can be found based on the authentication requirements. Otherwise, logs the condition as an error without raising a catastrophic error. Available values are as follows: <ul>
+<li>
+<code>TRUE</code>: Constant to represent the true state.</li>
+<li>
+<code>FALSE</code>: Constant to represent the false state.</li>
+<li>
+<code>UNDEFINED</code>: Constant to represent the undefined state.</li>
+</ul>
+</div></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>TriStateBoolean</code></dd>
+<dt>Default</dt>
+<dd><code>undefined</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.core.authentication.PersonDirectoryPrincipalResolverProperties">PersonDirectoryPrincipalResolverProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.person-directory.principal-transformation.blocking-pattern" data-default="" data-spel>
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.person-directory.principal-transformation.blocking-pattern</code><span class="cas-property-summary">A regular expression that will be used against the username to match for blocking/forbidden values.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag"><i class="fa fa-code" aria-hidden="true"></i>SpEL</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>A regular expression that will be used against the username to match for blocking/forbidden values. If a match is found, an exception will be thrown and principal transformation will fail.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties">PrincipalTransformationProperties</code></dd>
+<dt>Supports</dt>
+<dd><a href="/cas/development/configuration/Configuration-Spring-Expressions.html">Spring Expression Language</a></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.person-directory.principal-transformation.case-conversion" data-default="NONE">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.person-directory.principal-transformation.case-conversion</code><span class="cas-property-summary">Indicate whether the principal identifier should be transformed into upper-case, lower-case, etc.</span>
+</div>
+        <div class="cas-property-default"><code>NONE</code></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><div>Indicate whether the principal identifier should be transformed into upper-case, lower-case, etc. Available values are as follows: <ul>
+<li>
+<code>NONE</code>: No conversion.</li>
+<li>
+<code>LOWERCASE</code>: Lowercase conversion.</li>
+<li>
+<code>UPPERCASE</code>: Uppercase conversion.</li>
+</ul>
+</div></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>PrincipalTransformationProperties.CaseConversion</code></dd>
+<dt>Default</dt>
+<dd><code>NONE</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties">PrincipalTransformationProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.person-directory.principal-transformation.pattern" data-default="" data-spel>
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.person-directory.principal-transformation.pattern</code><span class="cas-property-summary">A regular expression that will be used against the provided username for username extractions.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag"><i class="fa fa-code" aria-hidden="true"></i>SpEL</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>A regular expression that will be used against the provided username for username extractions. On a successful match, the first matched group in the pattern will be used as the extracted username.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties">PrincipalTransformationProperties</code></dd>
+<dt>Supports</dt>
+<dd><a href="/cas/development/configuration/Configuration-Spring-Expressions.html">Spring Expression Language</a></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.person-directory.principal-transformation.prefix" data-default="" data-spel>
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.person-directory.principal-transformation.prefix</code><span class="cas-property-summary">Prefix to add to the principal id prior to authentication.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag"><i class="fa fa-code" aria-hidden="true"></i>SpEL</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Prefix to add to the principal id prior to authentication.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties">PrincipalTransformationProperties</code></dd>
+<dt>Supports</dt>
+<dd><a href="/cas/development/configuration/Configuration-Spring-Expressions.html">Spring Expression Language</a></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.person-directory.principal-transformation.suffix" data-default="" data-spel>
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.person-directory.principal-transformation.suffix</code><span class="cas-property-summary">Suffix to add to the principal id prior to authentication.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag"><i class="fa fa-code" aria-hidden="true"></i>SpEL</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Suffix to add to the principal id prior to authentication.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties">PrincipalTransformationProperties</code></dd>
+<dt>Supports</dt>
+<dd><a href="/cas/development/configuration/Configuration-Spring-Expressions.html">Spring Expression Language</a></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.person-directory.return-null" data-default="undefined">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.person-directory.return-null</code><span class="cas-property-summary">Return a null principal object if no attributes can be found for the principal.</span>
+</div>
+        <div class="cas-property-default"><code>undefined</code></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><div>Return a null principal object if no attributes can be found for the principal. Available values are as follows: <ul>
+<li>
+<code>TRUE</code>: Constant to represent the true state.</li>
+<li>
+<code>FALSE</code>: Constant to represent the false state.</li>
+<li>
+<code>UNDEFINED</code>: Constant to represent the undefined state.</li>
+</ul>
+</div></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>TriStateBoolean</code></dd>
+<dt>Default</dt>
+<dd><code>undefined</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.core.authentication.PersonDirectoryPrincipalResolverProperties">PersonDirectoryPrincipalResolverProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.person-directory.use-existing-principal-id" data-default="undefined">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.person-directory.use-existing-principal-id</code><span class="cas-property-summary">Uses an existing principal id that may have already been established in order to run person directory queries.</span>
+</div>
+        <div class="cas-property-default"><code>undefined</code></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><div>Uses an existing principal id that may have already been established in order to run person directory queries. This is generally useful in situations where authentication is delegated to an external identity provider and a principal is first established to then query an attribute source. Available values are as follows: <ul>
+<li>
+<code>TRUE</code>: Constant to represent the true state.</li>
+<li>
+<code>FALSE</code>: Constant to represent the false state.</li>
+<li>
+<code>UNDEFINED</code>: Constant to represent the undefined state.</li>
+</ul>
+</div></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>TriStateBoolean</code></dd>
+<dt>Default</dt>
+<dd><code>undefined</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.core.authentication.PersonDirectoryPrincipalResolverProperties">PersonDirectoryPrincipalResolverProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+</div>
+<p class="cas-properties-legend">
+        <strong>Required</strong> settings may be needed to activate or affect the feature; review them even when they have a default.
+        <strong>Optional</strong> settings only need to be set to change a default or to turn on the behavior they control.
+        <strong>Third party</strong> settings belong to libraries such as Spring Boot that CAS builds on; their own documentation may have more detail.
+    </p>
+<div class="cas-properties-topics">
+<details class="cas-properties-topic">
+            <summary><i class="fa fa-laptop-code" aria-hidden="true"></i>Groovy scripting</summary>
+            <div class="cas-properties-topic-body">
+                <p>CAS takes advantage of Apache Groovy in forms of either embedded or external scripts that allow one to, by default,
+                    dynamically build constructs, attributes, access strategies and a lot more. To activate the functionality
+                    described here, you may need to prepare CAS to support and integrate with Apache Groovy.</p>
+                <p>Please <a href="https://apereo.github.io/cas/development/integration/Apache-Groovy-Scripting.html">review this guide</a> to configure your build.</p>
+            </div>
+        </details><details class="cas-properties-topic">
+            <summary><i class="fa fa-person-booth" aria-hidden="true"></i>Principal transformation</summary>
+            <div class="cas-properties-topic-body">
+<!-- fragment:keep -->
+
+<p></p>
+
+<p>Authentication handlers that generally deal with username-password credentials can be configured to 
+transform the user id prior to executing the authentication sequence. Each authentication 
+strategy in CAS provides settings to properly transform the principal. Refer to the 
+relevant settings for the authentication strategy at hand to learn more.</p>
+
+<p>Authentication handlers as part of principal transformation may also be provided a path to a 
+Groovy script to transform the provided username. The outline of the script may take on the following form:</p>
+
+<div class="language-groovy highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+</pre></td>
+<td class="rouge-code"><pre><span class="n">String</span> <span class="nf">run</span><span class="o">(</span><span class="kd">final</span> <span class="n">Object</span><span class="o">...</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+    <span class="kt">def</span> <span class="o">(</span><span class="n">providedUsername</span><span class="o">,</span><span class="n">logger</span><span class="o">)</span> <span class="o">=</span> <span class="n">args</span>
+    <span class="k">return</span> <span class="n">providedUsername</span><span class="o">.</span><span class="na">concat</span><span class="o">(</span><span class="s2">"SomethingElse"</span><span class="o">)</span>
+<span class="o">}</span>
+</pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+<p>To prepare CAS to support and integrate with Apache Groovy, please <a href="https://apereo.github.io/cas/development//integration/Apache-Groovy-Scripting.html">review this guide</a>.</p>
+
+            </div>
+        </details><details class="cas-properties-topic">
+            <summary><i class="fa fa-newspaper" aria-hidden="true"></i>Notes on configuration</summary>
+            <div class="cas-properties-topic-body">
+<!-- fragment:keep -->
+
+<p></p>
+
+<p><strong>Configuration Metadata</strong></p>
+
+<p>The collection of configuration properties listed in this section are automatically generated from the CAS source and components that contain the actual field
+definitions, types, descriptions, modules, etc. This metadata may not always be 100% accurate, or could be lacking details and sufficient explanations.</p>
+
+<p><strong>Be Selective</strong></p>
+
+<p>This section is meant as a guide only. Do NOT copy/paste the entire collection of settings into your CAS configuration; rather pick only the properties that you
+need. Do NOT enable settings unless you are certain of their purpose and do NOT copy settings into your configuration only to keep them as reference. All these
+ideas lead to upgrade headaches, maintenance nightmares and premature aging.</p>
+
+<p><strong>YAGNI</strong></p>
+
+<p>Note that for nearly ALL use cases, declaring and configuring properties listed here is sufficient. You should NOT have to explicitly massage a CAS XML/Java/etc
+configuration file to design an authentication handler, create attribute release policies, etc. CAS at runtime will auto-configure all required changes for you.
+If you are unsure about the meaning of a given CAS setting, do NOT turn it on without hesitation. Review the codebase or better yet, ask questions to clarify
+the intended behavior.</p>
+
+<p><strong>Naming Convention</strong></p>
+
+<p>Property names can be specified in very relaxed terms. For instance <code class="language-plaintext highlighter-rouge">cas.someProperty</code>, <code class="language-plaintext highlighter-rouge">cas.some-property</code>, <code class="language-plaintext highlighter-rouge">cas.some_property</code> are all valid names. While all
+forms are accepted by CAS, there are certain components (in CAS and other frameworks used) whose activation at runtime is conditional on a property value, where
+this property is required to have been specified in CAS configuration using kebab case. This is both true for properties that are owned by CAS as well as those
+that might be presented to the system via an external library or framework such as Spring Boot, etc.</p>
+
+<div class="alert alert-info">
+<img class="emoji" title=":information_source:" alt=":information_source:" src="https://github.githubassets.com/images/icons/emoji/unicode/2139.png" height="20" width="20"> <strong>Note</strong> <p>
+When possible, properties should be stored in lower-case kebab format, such as <code>cas.property-name=value</code>.
+The only possible exception to this rule is when naming actuator endpoints; The name of the
+actuator endpoints (i.e. <code>ssoSessions</code>) <strong>MUST</strong> remain in camelCase mode. 
+</p>
+</div>
+
+<p>Settings and properties that are controlled by the CAS platform directly always begin with the prefix <code class="language-plaintext highlighter-rouge">cas</code>. All other settings are controlled and provided
+to CAS via other underlying frameworks and may have their own schemas and syntax. BE CAREFUL with
+the distinction. Unrecognized properties are rejected by CAS and/or frameworks upon which CAS depends. This means if you somehow misspell a property definition
+or fail to adhere to the dot-notation syntax and such, your setting is entirely refused by CAS and likely the feature it controls will never be activated in the
+way you intend.</p>
+
+<p><strong>Validation</strong></p>
+
+<p>Configuration properties are automatically validated on CAS startup to report issues with configuration binding, especially if defined CAS settings cannot be
+recognized or validated by the configuration schema. Additional validation processes are also handled
+via <a href="/cas/development/configuration/Configuration-Metadata-Repository.html">Configuration Metadata</a> and property migrations applied automatically on
+startup by Spring Boot and family.</p>
+
+<p><strong>Indexed Settings</strong></p>
+
+<p>CAS settings able to accept multiple values are typically documented with an index, such as <code class="language-plaintext highlighter-rouge">cas.some.setting[0]=value</code>. The index <code class="language-plaintext highlighter-rouge">[0]</code> is meant to be
+incremented by the adopter to allow for distinct multiple configuration blocks.</p>
+
+            </div>
+        </details>
+</div>
+</div>
+
+<h2 id="custom">Custom</h2>
+
+<p>You may also design and register your own principal resolution strategy by supplying an implementation of
+the <code class="language-plaintext highlighter-rouge">PrincipalResolver</code> component and registering it with the runtime context:</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+</pre></td>
+<td class="rouge-code"><pre><span class="nd">@AutoConfiguration</span>
+<span class="kd">public</span> <span class="kd">static</span> <span class="kd">class</span> <span class="nc">MyConfiguration</span> <span class="o">{</span>
+
+    <span class="nd">@Bean</span>
+    <span class="kd">public</span> <span class="nc">PrincipalResolver</span> <span class="nf">myPrincipalResolver</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="k">new</span> <span class="nf">MyPrincipalResolver</span><span class="o">();</span>
+    <span class="o">}</span>
+
+    <span class="nd">@Bean</span>
+    <span class="kd">public</span> <span class="nc">PrincipalResolutionExecutionPlanConfigurer</span> <span class="nf">myExecutionPlanConfigurer</span><span class="o">(</span>
+        <span class="nd">@Qualifier</span><span class="o">(</span><span class="s">"myPrincipalResolver"</span><span class="o">)</span>
+        <span class="kd">final</span> <span class="nc">PrincipalResolver</span> <span class="n">myPrincipalResolver</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">plan</span> <span class="o">-&gt;</span> <span class="o">{</span>
+            <span class="n">plan</span><span class="o">.</span><span class="na">registerPrincipalResolver</span><span class="o">(</span><span class="n">myPrincipalResolver</span><span class="o">);</span>
+        <span class="o">};</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+<p><a href="../configuration/Configuration-Management-Extensions.html">See this guide</a> to
+learn more about how to register configurations into the CAS runtime.</p>
+
+            </article>
+            <div class="article-end" aria-hidden="true">
+<span></span><span>CAS</span><span></span>
+</div>
+        </main>
+        
+        <aside class="docs-toc" aria-label="On this page">
+    <nav id="pageContents" aria-label="Table of contents">
+        <p class="eyebrow">ON THIS PAGE</p>
+        <ul class="section-nav"></ul>
+    </nav>
+    <a class="toc-top" href="#cas-docs-container">Back to top <span aria-hidden="true">↑</span></a>
+</aside>
+
+        
+    </div>
+
+    <footer class="site-footer">
+        <a class="footer-brand" href="../../index.html">APEREO <strong>CAS</strong></a>
+        <p>CAS is supported by the <a href="https://www.apereo.org/">Apereo Foundation</a>.</p>
+        <a href="#cas-docs-container">Back to top <span aria-hidden="true">↑</span></a>
+    </footer>
+    <div id="docs-status" class="visually-hidden" role="status" aria-live="polite"></div>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha384-1H217gwSVyLSIfaLxHbE7dRb3v4mYCKbpQvzx0cegeju1MVsGrX5xXxAvs/HgeFs" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.11/clipboard.min.js" integrity="sha384-J08i8An/QeARD9ExYpvphB8BsyOj3Gh2TSh1aLINKO3L0cMSH2dN3E22zFoXEi0Q" crossorigin="anonymous"></script>
+
+    <script src="/cas/javascripts/URI.js"></script>
+    <script src="/cas/javascripts/site.js"></script>
+
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@docsearch/js@3.9.0/dist/umd/index.js" integrity="sha384-QhsjJ84XKaqUeM7eZpvYApdPamFboJLQg4BD2CCCSiUOL4cWzLp5caae6oW/oAXh" crossorigin="anonymous"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js" integrity="sha384-ficRBwtap/VLzILv81vIvgp30PoJYnlCm96tPpNYHXAf+h9SIThOZxxIzRUzbpAh" crossorigin="anonymous"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.5/js/lightbox.min.js" integrity="sha384-bcXRY0im+IjB6RvmBpbgdkqjLV0pCTbaJRJ9IRPeQaWCYlzRn9pPaPmCvONr9h9z" crossorigin="anonymous"></script>
+
+    <script>
+        let pageSection = "Configuration";
+        let siteUrl = "https://apereo.github.io";
+        let basePath = "/cas";
+
+        
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="light dark">
+    
+    
+    
+
+
+
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <meta name="description" content="These changes alter existing behavior. Each one links to its full description below.">
+    <meta name="robots" content="index,follow">
+    <meta name="theme-color" content="#06304a">
+    <link rel="canonical" href="https://apereo.github.io/cas/development/release_notes/RC1.html">
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="en_US">
+    <meta property="og:site_name" content="Apereo CAS Documentation">
+    <meta property="og:title" content="CAS - 8.1.0-RC1 Release Notes">
+    <meta property="og:description" content="These changes alter existing behavior. Each one links to its full description below.">
+    <meta property="og:url" content="https://apereo.github.io/cas/development/release_notes/RC1.html">
+    <meta property="og:image" content="https://apereo.github.io/cas/images/cas_logo.png">
+    <meta property="og:image:alt" content="Apereo CAS">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="CAS - 8.1.0-RC1 Release Notes">
+    <meta name="twitter:description" content="These changes alter existing behavior. Each one links to its full description below.">
+    <meta name="twitter:image" content="https://apereo.github.io/cas/images/cas_logo.png">
+
+    
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "TechArticle",
+      "headline": "8.1.0-RC1 Release Notes",
+      "description": "These changes alter existing behavior. Each one links to its full description below.",
+      "url": "https://apereo.github.io/cas/development/release_notes/RC1.html",
+      "inLanguage": "en",
+      "isPartOf": {"@type": "WebSite", "name": "Apereo CAS Documentation",
+                   "url": "https://apereo.github.io/cas/"},
+      "author": {"@type": "Organization", "name": "Apereo Foundation", "url": "https://www.apereo.org/"},
+      "publisher": {"@type": "Organization", "name": "Apereo Foundation", "url": "https://www.apereo.org/"}
+    }
+    </script>
+    
+
+    <script>
+        if (window.location.hostname === "apereo.github.io") {
+            window.dataLayer = window.dataLayer || [];
+            window.gtag = function () {
+                window.dataLayer.push(arguments);
+            };
+            window.gtag("js", new Date());
+            window.gtag("config", "G-W3M8JXP7GP");
+            const analytics = document.createElement("script");
+            analytics.async = true;
+            analytics.src = "https://www.googletagmanager.com/gtag/js?id=G-W3M8JXP7GP";
+            document.head.appendChild(analytics);
+        }
+    </script>
+
+    <script>
+        function readThemePreference() {
+            try {
+                return localStorage.getItem('cas-docs-theme') || 'system';
+            } catch (error) {
+                return 'system';
+            }
+        }
+
+        function systemTheme() {
+            return window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+        }
+
+        function resolveTheme(preference) {
+            return preference === 'dark' || preference === 'light' ? preference : systemTheme();
+        }
+
+        function changeTheme(theme) {
+            if (theme !== 'dark' && theme !== 'light') {
+                return;
+            }
+
+            if (document.documentElement.getAttribute('data-bs-theme') !== theme) {
+                document.documentElement.setAttribute('data-bs-theme', theme);
+            }
+        }
+
+        (() => {
+            let preference = readThemePreference();
+            if (preference !== 'dark' && preference !== 'light') {
+                preference = 'system';
+
+            }
+
+            changeTheme(resolveTheme(preference));
+
+            if (window.matchMedia) {
+                window.matchMedia('(prefers-color-scheme: light)').addEventListener('change', () => {
+                    if (readThemePreference() !== 'system') {
+                        return;
+                    }
+                    const theme = systemTheme();
+                    changeTheme(theme);
+                });
+            }
+        })();
+    </script>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.2/css/all.min.css" integrity="sha384-PPIZEGYM1v8zp5Py7UjFb79S58UeqCL9pYVnVPURKEqvioPROaVAJKKLzvH2rDnI" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@docsearch/css@3.9.0/dist/style.css" integrity="sha384-cHiDHRyv+KTDBfpMqc3t2SeQYjfK05cReQA49eigiKoBzOMi9WIFsBsNfetC5n2a" crossorigin="anonymous"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.5/css/lightbox.min.css" integrity="sha384-9623XJODy0qDAl6X6Y9xTBSzYUxM0ixdjO8zqJQeGzDP2Uwo1PqAOq6gXkk2ul99" crossorigin="anonymous" />
+    
+    
+    <link rel="stylesheet" type="text/css" media="screen" href='/cas/stylesheets/site.css'>
+    <link rel="stylesheet" type="text/css" media="print" href='/cas/stylesheets/site-print.css'>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400..800;1,9..40,400..500&family=Bricolage+Grotesque:opsz,wght@12..96,400..800&display=swap" rel="stylesheet">
+    <link href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css" rel="stylesheet" integrity="sha384-yT2pwyD9a3Oee/HtjWTccnRmchDWH2EDHjzH7gwf8yAK0RilKFL164FCHX9fzlxh" crossorigin="anonymous">
+
+    <title>CAS - 8.1.0-RC1 Release Notes · Apereo CAS Documentation</title>
+
+</head>
+
+<body class="" data-docs-base="/cas" data-docs-version="development" data-docs-build="20261011002700">
+    <a class="skip-link" href="#cas-docs-container">Skip to content</a>
+    <header class="site-header">
+        <div class="masthead">
+            <a class="cas-brand" href="../../index.html" aria-label="Apereo CAS home">
+                <img class="brand-logo" src="/cas/images/cas_logo.png" width="119" height="60" alt="CAS">
+                <span class="brand-caption">APEREO CAS<span>Documentation</span></span>
+            </a>
+            <div class="brand-mission">
+                <p>Enterprise Authentication <span class="brand-mission-accent">for All Earthlings and Beyond</span></p>
+                <span>Identity, Single Sign-On and Access Management</span>
+            </div>
+            <a id="forkme_banner" aria-label="View CAS on GitHub" href="https://github.com/apereo/cas"><i class="fab fa-github" aria-hidden="true"></i><span>View on GitHub</span><span aria-hidden="true">↗</span></a>
+        </div>
+        <div class="navigation-bar">
+            
+            <button onclick="navigateSidebar()" id="sidebarNavButton" class="icon-button" type="button" aria-controls="sidebar" aria-expanded="true" aria-label="Toggle documentation navigation" title="Toggle documentation navigation">
+                <i class="fa fa-bars" aria-hidden="true"></i>
+            </button>
+            
+            <nav class="primary-navigation" aria-label="Main navigation">
+                <a href="../../index.html">Home</a>
+                <a href="https://github.com/apereo/cas/releases">Releases</a>
+                <a href="../../Support.html">Support</a>
+                <a href="../../Mailing-Lists.html">Mailing Lists</a>
+                <div class="dropdown">
+                    <button class="dropdown-toggle" type="button" id="cas-versions" data-bs-toggle="dropdown" aria-expanded="false">Versions</button>
+                    <div class="dropdown-menu" aria-labelledby="cas-versions">
+                        
+                        
+                        
+                        
+                        <a class="dropdown-item cas-version-link" href="/cas/development/release_notes/RC1.html" data-version-home="/cas/development/">Development</a>
+                        
+                        
+                        
+                        
+                        <a class="dropdown-item cas-version-link" href="/cas/8.0.x/release_notes/RC1.html" data-version-home="/cas/8.0.x/">v8.0.x</a>
+                        
+                        
+                        
+                        
+                        <a class="dropdown-item cas-version-link" href="/cas/7.3.x/release_notes/RC1.html" data-version-home="/cas/7.3.x/">v7.3.x</a>
+                        
+                    </div>
+                </div>
+                <a href="https://apereo.github.io" target="_blank" rel="noopener">Blog <span aria-hidden="true">↗</span><span class="visually-hidden"> (opens in a new tab)</span></a>
+            </nav>
+            <div class="navigation-tools">
+                <div id="searchField"></div>
+                <button id="settingsSearchButton" class="icon-button" type="button" aria-label="Search configuration settings (press Shift twice)" title="Search configuration settings (Shift Shift)"><i class="fa fa-sliders" aria-hidden="true"></i></button>
+                <button id="themeToggle" class="icon-button" type="button" onclick="toggleDarkMode()" aria-label="Toggle color theme" title="Toggle color theme"><i class="fa fa-circle-half-stroke" aria-hidden="true"></i></button>
+            </div>
+        </div>
+        <div class="reading-progress" aria-hidden="true"><span id="readingProgress"></span></div>
+    </header>
+
+    <div class="docs-shell">
+        
+        <aside id="sidebar" class="docs-sidebar" aria-label="Documentation navigation">
+    <div class="sidebar-heading"><span class="eyebrow">APEREO CAS DOCUMENTATION</span><span class="sidebar-symbol" aria-hidden="true">✳</span></div>
+    <nav id="sidebar-navigation" aria-label="Documentation topics"></nav>
+    <noscript><p>Browse the <a href="/cas/development/sidebar.html">documentation index</a>.</p></noscript>
+</aside>
+
+        
+        <main class="cas-docs-content">
+            
+            <div class="page-toolbar">
+                <nav id="docsNavBar" aria-label="Breadcrumb"></nav>
+                <div id="toolbarIcons" role="group" aria-label="Page tools"></div>
+            </div>
+            
+            
+            <aside id="dev-doc-info" aria-labelledby="dev-doc-title">
+                <span class="development-marker" aria-hidden="true"></span>
+                <div>
+                    <p id="dev-doc-title">WORKERS AHEAD!</p>
+                    <p class="dev-doc-summary">Development documentation for features that are
+                        <a href="https://github.com/apereo/cas/milestones">not released yet</a>.</p>
+                    <p class="dev-doc-details">You are viewing the <strong>development</strong> documentation for the Apereo CAS server. <strong>The
+                        functionality presented here <a href="https://github.com/apereo/cas/milestones">is not officially released yet</a></strong>.
+                        This is a work in progress and will be continually updated as development moves forward.
+                        <strong>You are most encouraged to test the changes presented.</strong>
+                    </p>
+                </div>
+            </aside>
+            
+            <article id="cas-docs-container" tabindex="-1">
+                
+<div class="cas-release" data-release="8.1.0-RC1">
+<header class="cas-release-hero">
+    <div class="cas-release-hero-text">
+        <p class="cas-release-eyebrow">Release notes · 8.1.0 development</p>
+        <h1 id="release-8-1-0-rc1">8.1.0-RC1</h1>
+        <p class="cas-release-lede">The first release candidate of the 8.1.0 line turns Palantir into a place to manage authorization policies, attribute repositories and cluster topology, and lets OAuth and OpenID Connect applications rotate multiple client secrets.</p>
+        <ul class="cas-release-facts" aria-label="At a glance">
+            <li><a href="../planning/Installation-Requirements.html"><span>Requires</span> <b>JDK 25</b></a></li>
+            <li><span>Built on</span> <b>Spring Boot 4.2</b></li>
+            <li><span>Built with</span> <b>Gradle 9.7</b></li>
+            <li><a href="../../developer/Test-Process.html"><b>556</b> <span>browser test scenarios</span></a></li>
+        </ul>
+    </div>
+    <nav class="cas-release-switcher" aria-label="Release candidates">
+        <a href="RC1.html" aria-current="page">RC1</a>
+        <a href="RC2.html">RC2</a>
+        <a href="RC3.html">RC3</a>
+        <a href="RC4.html">RC4</a>
+        <a href="RC.html" class="cas-release-switcher-all" title="Every change from all release candidates">All</a>
+    </nav>
+</header>
+
+<ul class="cas-release-stats" aria-label="In this release">
+    <li><b>15</b><span>New &amp; noteworthy topics</span></li>
+    <li class="cas-release-stat-attention"><b>5</b><span>Changes to review before upgrading</span></li>
+    <li><b>13</b><span>Other changes</span></li>
+    <li><b>0</b><span>Fixes</span></li>
+</ul>
+<section class="cas-release-upgrade" aria-labelledby="before-you-upgrade">
+    <h2 id="before-you-upgrade"><i class="fa fa-triangle-exclamation" aria-hidden="true"></i>Before You Upgrade</h2>
+    <p>These changes alter existing behavior. Each one links to its full description below.</p>
+    <ul>
+        <li>
+            <span class="cas-release-type" data-type="action">Action</span>
+            <div><a href="#palantir-user-vs-admin-roles"><b>Palantir admin functions</b></a> now require a released <code class="language-plaintext highlighter-rouge">role</code> attribute of <code class="language-plaintext highlighter-rouge">ADMIN</code> or <code class="language-plaintext highlighter-rouge">ROLE_ADMIN</code>; other users only manage registered applications.<span class="cas-release-note-area">Platform &amp; Operations</span>
+            </div>
+        </li>
+        <li>
+            <span class="cas-release-type" data-type="changed">Changed</span>
+            <div><a href="#tickets--sessions"><b>Transient session tickets</b></a> now live for <code class="language-plaintext highlighter-rouge">5</code> minutes by default instead of <code class="language-plaintext highlighter-rouge">15</code>.<span class="cas-release-note-area">Tickets &amp; Sessions</span>
+            </div>
+        </li>
+        <li>
+            <span class="cas-release-type" data-type="changed">Changed</span>
+            <div><a href="#general"><b>Date formatting</b></a> in a number of operations now uses <code class="language-plaintext highlighter-rouge">UTC</code> instead of the system default time zone.
+            </div>
+        </li>
+        <li>
+            <span class="cas-release-type" data-type="changed">Changed</span>
+            <div><a href="#cas--other-protocols"><b>CAS REST APIs</b></a> answer unauthorized application requests with <code class="language-plaintext highlighter-rouge">403</code> instead of a <code class="language-plaintext highlighter-rouge">500</code> error.<span class="cas-release-note-area">CAS &amp; Other Protocols</span>
+            </div>
+        </li>
+        <li>
+            <span class="cas-release-type" data-type="removed">Removed</span>
+            <div><a href="#tickets--sessions"><b>LettuceMod</b></a> is removed; Lettuce itself now provides its functionality.<span class="cas-release-note-area">Tickets &amp; Sessions</span>
+            </div>
+        </li>
+    </ul>
+</section><section class="cas-release-spotlight" aria-labelledby="release-spotlight">
+    <div class="cas-release-spotlight-shots">
+        <a href="img_1.png" data-lightbox="release-spotlight" data-title="Palantir scripting view"
+           class="cas-release-spotlight-main"
+           aria-label="Palantir scripting view"><img src="img_1.png" alt="Palantir scripting view" loading="lazy"></a>
+        <a href="img_2.png" data-lightbox="release-spotlight" data-title="Palantir applications view"
+           class="cas-release-spotlight-thumb"
+           aria-label="Palantir applications view"><img src="img_2.png" alt="Palantir applications view" loading="lazy"></a>
+        <a href="img_3.png" data-lightbox="release-spotlight" data-title="Palantir Heimdall authorization view"
+           class="cas-release-spotlight-thumb"
+           aria-label="Palantir Heimdall authorization view"><img src="img_3.png" alt="Palantir Heimdall authorization view" loading="lazy"><span>+11 more</span></a>
+        <a href="img_4.png" data-lightbox="release-spotlight" data-title="Palantir Heimdall authorization view"
+           class="cas-release-spotlight-rest"
+           aria-label="Palantir Heimdall authorization view"></a>
+        <a href="img_5.png" data-lightbox="release-spotlight" data-title="Palantir attribute repositories view"
+           class="cas-release-spotlight-rest"
+           aria-label="Palantir attribute repositories view"></a>
+        <a href="img.png" data-lightbox="release-spotlight" data-title="Palantir Groovy script view"
+           class="cas-release-spotlight-rest"
+           aria-label="Palantir Groovy script view"></a>
+        <a href="img_6.png" data-lightbox="release-spotlight" data-title="Palantir attribute repositories view"
+           class="cas-release-spotlight-rest"
+           aria-label="Palantir attribute repositories view"></a>
+        <a href="img_7.png" data-lightbox="release-spotlight" data-title="Palantir Groovy script view"
+           class="cas-release-spotlight-rest"
+           aria-label="Palantir Groovy script view"></a>
+        <a href="img_8.png" data-lightbox="release-spotlight" data-title="Palantir authorization simulation view"
+           class="cas-release-spotlight-rest"
+           aria-label="Palantir authorization simulation view"></a>
+        <a href="img_9.png" data-lightbox="release-spotlight" data-title="Palantir cluster topology view"
+           class="cas-release-spotlight-rest"
+           aria-label="Palantir cluster topology view"></a>
+        <a href="img_10.png" data-lightbox="release-spotlight" data-title="Palantir cluster topology view"
+           class="cas-release-spotlight-rest"
+           aria-label="Palantir cluster topology view"></a>
+        <a href="img_11.png" data-lightbox="release-spotlight" data-title="Palantir passwordless authentication view"
+           class="cas-release-spotlight-rest"
+           aria-label="Palantir passwordless authentication view"></a>
+        <a href="img_12.png" data-lightbox="release-spotlight" data-title="Palantir attribute repositories view"
+           class="cas-release-spotlight-rest"
+           aria-label="Palantir attribute repositories view"></a>
+        <a href="img_13.png" data-lightbox="release-spotlight" data-title="Palantir attribute repositories view"
+           class="cas-release-spotlight-rest"
+           aria-label="Palantir attribute repositories view"></a>
+    </div>
+    <div class="cas-release-spotlight-text">
+        <p class="cas-release-kicker">Spotlight · Palantir admin dashboard</p>
+        <h2 id="release-spotlight">Manage Authorization from the Dashboard</h2>
+        <ul>
+            <li>Create, edit and remove Heimdall authorization policies, and simulate authorization requests.</li>
+            <li>Right-click context menus replace inline table buttons.</li>
+            <li>View attribute repositories in detail and register LDAP, JDBC and stub repositories.</li>
+            <li>Inspect, remove or recompute cached scripted resources, and edit inline Groovy in a dedicated editor.</li>
+        </ul><a class="cas-release-more" href="#palantir-admin-dashboard">Read the full section <span aria-hidden="true">→</span></a>
+    </div>
+</section>
+<section class="cas-release-highlights" aria-labelledby="release-highlights">
+    <h2 id="release-highlights">Highlights</h2>
+    <ul>
+        <li data-area="oidc">
+            <p class="cas-release-card-top"><span class="cas-release-card-area">OAuth &amp; OpenID Connect</span><span class="cas-release-type" data-type="new">New</span></p>
+            <h3><a href="#oauth--openid-connect-client-secrets">Multiple Client Secrets</a></h3><p>Applications can hold several expiring client secrets for smooth rotation, managed through the <code class="language-plaintext highlighter-rouge">oauthClientSecrets</code> endpoint.</p>
+            <p class="cas-release-card-foot"><a href="#oauth--openid-connect-client-secrets" aria-hidden="true" tabindex="-1">Read more →</a></p>
+        </li>
+        <li data-area="operations">
+            <p class="cas-release-card-top"><span class="cas-release-card-area">Platform &amp; Operations</span><span class="cas-release-type" data-type="new">New</span></p>
+            <h3><a href="#cluster-topology">Cluster Topology</a></h3><p>A <code class="language-plaintext highlighter-rouge">clusterTopology</code> actuator endpoint reports every node and its status across eight ticket registries.</p>
+            <p class="cas-release-card-foot"><a href="#cluster-topology" aria-hidden="true" tabindex="-1">Read more →</a></p>
+        </li>
+        <li data-area="attributes">
+            <p class="cas-release-card-top"><span class="cas-release-card-area">Attributes &amp; Consent</span><span class="cas-release-type" data-type="new">New</span></p>
+            <h3><a href="#attribute-definition-dependencies">Attribute Definition Dependencies</a></h3><p>Attribute definitions can depend on other definitions, which are resolved first and available during resolution.</p>
+            <p class="cas-release-card-foot"><a href="#attribute-definition-dependencies" aria-hidden="true" tabindex="-1">Read more →</a></p>
+        </li>
+        <li data-area="oidc">
+            <p class="cas-release-card-top"><span class="cas-release-card-area">OAuth &amp; OpenID Connect</span><span class="cas-release-type" data-type="new">New</span></p>
+            <h3><a href="#openid-connect-verifiable-credentials">OpenID Connect Verifiable Credentials</a></h3><p>Credential issuance supports the authorization code flow, more formats and initial OpenID4VP support.</p>
+            <p class="cas-release-card-foot"><a href="#openid-connect-verifiable-credentials" aria-hidden="true" tabindex="-1">Read more →</a></p>
+        </li>
+        <li data-area="oidc">
+            <p class="cas-release-card-top"><span class="cas-release-card-area">OAuth &amp; OpenID Connect</span><span class="cas-release-type" data-type="changed">Changed</span></p>
+            <h3><a href="#openid-connect-federation">OpenID Connect Federation</a></h3><p>Federation support is roughly finalized, with remaining edge cases tracked for the next releases.</p>
+            <p class="cas-release-card-foot"><a href="#openid-connect-federation" aria-hidden="true" tabindex="-1">Read more →</a></p>
+        </li>
+        <li data-area="ui">
+            <p class="cas-release-card-top"><span class="cas-release-card-area">Interface &amp; Accounts</span><span class="cas-release-type" data-type="new">New</span></p>
+            <h3><a href="#acceptable-usage-policy--multitenancy">Acceptable Usage Policy &amp; Multitenancy</a></h3><p>Acceptable usage policies work per tenant, starting with MongoDb storage.</p>
+            <p class="cas-release-card-foot"><a href="#acceptable-usage-policy--multitenancy" aria-hidden="true" tabindex="-1">Read more →</a></p>
+        </li>
+    </ul>
+</section>
+<section class="cas-release-filter" aria-label="Filter changes" hidden>
+    <label class="cas-release-search">
+        <i class="fa fa-magnifying-glass" aria-hidden="true"></i>
+        <span class="visually-hidden">Filter changes</span>
+        <input type="search" autocomplete="off" spellcheck="false" placeholder="Filter changes, e.g. mongodb, passkey, cas.tgc">
+    </label>
+    <div class="cas-release-chips" role="group" aria-label="Change type">
+        <button type="button" data-type="" aria-pressed="true">All <span>28</span></button>
+        <button type="button" data-type="new" aria-pressed="false"><i aria-hidden="true"></i>New <span>13</span></button>
+        <button type="button" data-type="changed" aria-pressed="false"><i aria-hidden="true"></i>Changed <span>10</span></button>
+        <button type="button" data-type="action" aria-pressed="false"><i aria-hidden="true"></i>Action Required <span>1</span></button>
+        <button type="button" data-type="removed" aria-pressed="false"><i aria-hidden="true"></i>Removed <span>1</span></button>
+    </div>
+    <div class="cas-release-chips cas-release-areas" role="group" aria-label="Area">
+        <button type="button" data-area="" aria-pressed="true">All areas</button>
+        <button type="button" data-area="authentication" aria-pressed="false">Authentication <span>1</span></button>
+        <button type="button" data-area="passwordless" aria-pressed="false">Passwordless <span>1</span></button>
+        <button type="button" data-area="mfa" aria-pressed="false">Multifactor &amp; Passkeys <span>1</span></button>
+        <button type="button" data-area="oidc" aria-pressed="false">OAuth &amp; OpenID Connect <span>4</span></button>
+        <button type="button" data-area="protocols" aria-pressed="false">CAS &amp; Other Protocols <span>1</span></button>
+        <button type="button" data-area="attributes" aria-pressed="false">Attributes &amp; Consent <span>3</span></button>
+        <button type="button" data-area="tickets" aria-pressed="false">Tickets &amp; Sessions <span>3</span></button>
+        <button type="button" data-area="ui" aria-pressed="false">Interface &amp; Accounts <span>1</span></button>
+        <button type="button" data-area="operations" aria-pressed="false">Platform &amp; Operations <span>5</span></button>
+        <button type="button" data-area="project" aria-pressed="false">Build &amp; Project <span>7</span></button>
+        <button type="button" data-area="general" aria-pressed="false">General <span>1</span></button>
+    </div>
+    <p class="cas-release-status" role="status" aria-live="polite"></p>
+</section>
+</div>
+
+<h2 id="new--noteworthy">New &amp; Noteworthy</h2>
+
+<p>The following items are new improvements and enhancements presented in this release.</p>
+
+<h3 class="cas-change cas-change-topic" data-area="operations" data-area-label="Platform &amp; Operations" id="openrewrite-recipes">OpenRewrite Recipes</h3>
+
+<p>CAS continues to produce and publish <a href="https://docs.openrewrite.org/">OpenRewrite</a> recipes that allow the project to upgrade installations
+in place from one version to the next. <a href="../installation/OpenRewrite-Upgrade-Recipes.html">See this guide</a> to learn more.</p>
+
+<h3 class="cas-change cas-change-topic" data-area="operations" data-area-label="Platform &amp; Operations" id="graal-vm-native-images">Graal VM Native Images</h3>
+
+<p>A CAS server installation and deployment process can be tuned to build and run
+as a <a href="../installation/GraalVM-NativeImage-Installation.html">Graal VM native image</a>. We continue to polish native runtime hints.
+The collection of end-to-end <a href="../../developer/Test-Process.html">browser tests based on Puppeteer</a> have selectively switched
+to build and verify Graal VM native images and we plan to extend the coverage to all such scenarios in the coming releases.</p>
+
+<h3 class="cas-change cas-change-topic" data-area="project" data-area-label="Build &amp; Project" id="testing-strategy">Testing Strategy</h3>
+
+<p>The collection of end-to-end <a href="../../developer/Test-Process.html">browser tests based on Puppeteer</a> continue to grow to cover more use cases
+and scenarios. At the moment, total number of jobs stands at approximately <code class="language-plaintext highlighter-rouge">556</code> distinct scenarios. The overall
+test coverage of the CAS codebase is approximately <code class="language-plaintext highlighter-rouge">94%</code>.</p>
+
+<h3 class="cas-change cas-change-topic" data-type="changed" data-area="project" data-area-label="Build &amp; Project" data-type-label="Changed" id="gradle-97">Gradle 9.7</h3>
+
+<p>CAS is now built with Gradle 9.7 and the build process has been updated to use the 
+latest Gradle features and capabilities.</p>
+
+<h3 class="cas-change cas-change-topic" data-type="changed" data-area="project" data-area-label="Build &amp; Project" data-type-label="Changed" id="spring-boot-42">Spring Boot 4.2</h3>
+
+<p>CAS is now built on top of Spring Boot <code class="language-plaintext highlighter-rouge">4.2.x</code>. This is an in-progress ongoing minor platform upgrade that 
+affects almost all aspects of the codebase including many of the third-party core libraries used by CAS 
+as well as some CAS functionality.</p>
+
+<p>Please refer to the <a href="https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-4.2-Release-Notes">Spring Boot Wiki</a> 
+for more information on the changes and updates in this release. The biggest change to CAS would be support for AMQP 1.0.</p>
+
+<h3 class="cas-change cas-change-topic" data-type="new" data-area="project" data-area-label="Build &amp; Project" data-type-label="New" id="jspecify--nullaway">JSpecify &amp; NullAway</h3>
+
+<p>CAS codebase is now annotated with <a href="https://jspecify.dev/">JSpecify</a> annotations to indicate nullness contracts on method parameters,
+return types and fields. We will gradually extend the coverage of such annotations across the entire codebase in future releases
+and will integrate the Gradle build tool with tools such as <a href="https://github.com/uber/NullAway">NullAway</a> to prevent nullness contract violations
+during compile time.</p>
+
+<h3 class="cas-change cas-change-topic" data-type="new" data-area="oidc" data-area-label="OAuth &amp; OpenID Connect" data-type-label="New" id="oauth--openid-connect-client-secrets">OAuth &amp; OpenID Connect Client Secrets</h3>
+
+<p>OAuth and OIDC client applications may now define <a href="../authentication/OAuth-ClientSecret-Management.html">multiple client secrets</a>, 
+allowing deployments to support secret expiration and smoother secret rotation. Existing 
+single-secret configurations remain compatible, while new configurations can 
+include additional secrets with expiration metadata so clients can transition 
+to new secrets without immediate disruption. Client secret rotation may be carried out using
+a dedicated <code class="language-plaintext highlighter-rouge">oauthClientSecrets</code> actuator endpoint.</p>
+
+<h3 class="cas-change cas-change-topic" data-type="new" data-area="attributes" data-area-label="Attributes &amp; Consent" data-type-label="New" id="attribute-definition-dependencies">Attribute Definition Dependencies</h3>
+
+<p>Attribute definitions may now <a href="../integration/Attribute-Definitions.html">declare dependencies</a> on other attribute definitions. 
+When an attribute is resolved, its declared dependencies are resolved first and their results are made available 
+during resolution, allowing definitions to build on values produced by other definitions in a predictable, reusable way.</p>
+
+<h3 class="cas-change cas-change-topic" data-type="new" data-area="operations" data-area-label="Platform &amp; Operations" data-type-label="New" id="palantir-admin-dashboard">Palantir Admin Dashboard</h3>
+
+<p>Inlined table buttons in <a href="../installation/Admin-Dashboard.html">Palantir Admin Dashboard</a> are 
+replaced with proper context menus triggered by right clicks. The configuration tab is also extended 
+to display cached scripted resources with the ability to either remove or recompute the cache entry.</p>
+
+<p>Furthermore, <a href="../authorization/Heimdall-Authorization-Policies.html">Heimdall authorization policies</a>
+can now be created, edited and removed from the <a href="../installation/Admin-Dashboard.html">Palantir Admin Dashboard</a>.
+There is also dedicated simulation support to experiment with authorization requests.</p>
+
+<p>Configuration for almost all attribute repositories can also be viewed in better detail. The dashboard
+is also able to register new attribute repositories for LDAP, JDBC and Stub repositories.</p>
+
+<p>Finally, fields that do support <a href="../integration/Apache-Groovy-Scripting.html">inline Groovy scripts</a> are also allowed to better receive their value from a dedicated editor.</p>
+
+<h3 class="cas-change cas-change-topic" data-type="action" data-area="operations" data-area-label="Platform &amp; Operations" data-type-label="Action" id="palantir-user-vs-admin-roles">Palantir User vs. Admin Roles</h3>
+
+<p>The <a href="../installation/Admin-Dashboard.html">Palantir Admin Dashboard</a> now supports basic user roles and permissions. 
+By default, all authenticated users are assigned a <code class="language-plaintext highlighter-rouge">ROLE_USER</code> role/authority. To access critical functionality as an admin, 
+you will need to resolve and release a <code class="language-plaintext highlighter-rouge">role</code> attribute to Palantir with a value of <code class="language-plaintext highlighter-rouge">ADMIN</code> or <code class="language-plaintext highlighter-rouge">ROLE_ADMIN</code> if you are
+accessing Palantir via external CAS authentication, or your configuration needs to assign the authenticated user role
+via <code class="language-plaintext cas-setting highlighter-rouge">spring.security.user.roles=ADMIN</code>.</p>
+
+<p>At this moment, all Palantir functionality is disabled and hidden for non-admin users, except 
+for the ability to manage the list of registered applications.</p>
+
+<h3 class="cas-change cas-change-topic" data-type="new" data-area="operations" data-area-label="Platform &amp; Operations" data-type-label="New" id="cluster-topology">Cluster Topology</h3>
+
+<p>A new <code class="language-plaintext highlighter-rouge">clusterTopology</code> actuator endpoint is available to report on the current cluster topology 
+and the status of each node in the cluster, particularly relevant when CAS is running in high-availability mode.
+Cluster topology support is available for the following features:</p>
+
+<ul>
+  <li><a href="../ticketing/MongoDb-Ticket-Registry.html">MongoDb Ticket Registry</a></li>
+  <li><a href="../ticketing/Redis-Ticket-Registry.html">Redis Ticket Registry</a></li>
+  <li><a href="../ticketing/Hazelcast-Ticket-Registry.html">Hazelcast Ticket Registry</a></li>
+  <li><a href="../ticketing/Ignite-Ticket-Registry.html">Apache Ignite Ticket Registry</a></li>
+  <li><a href="../ticketing/Kafka-Ticket-Registry.html">Apache Kafka Ticket Registry</a></li>
+  <li><a href="../ticketing/Pulsar-Ticket-Registry.html">Apache Pulsar Ticket Registry</a></li>
+  <li><a href="../ticketing/Geode-Ticket-Registry.html">Apache Geode Ticket Registry</a></li>
+  <li><a href="../ticketing/Messaging-AMQP-Ticket-Registry.html">AMQP Ticket Registry</a></li>
+</ul>
+
+<p>This capability is also supported and available for the <a href="../installation/Admin-Dashboard.html">Palantir Admin Dashboard</a>.</p>
+
+<h3 class="cas-change cas-change-topic" data-type="new" data-area="passwordless" data-area-label="Passwordless" data-type-label="New" id="passwordless-authentication">Passwordless Authentication</h3>
+
+<p>A dedicated actuator endpoint, <code class="language-plaintext highlighter-rouge">passwordless</code>, is available to allows one to query a username
+and retrieve the associated <a href="../authentication/Passwordless-Authentication-Account-Storage.html">passwordless account</a> information. 
+This capability is also supported and available for the <a href="../installation/Admin-Dashboard.html">Palantir Admin Dashboard</a>.</p>
+
+<h3 class="cas-change cas-change-topic" data-type="new" data-area="oidc" data-area-label="OAuth &amp; OpenID Connect" data-type-label="New" id="openid-connect-verifiable-credentials">OpenID Connect Verifiable Credentials</h3>
+
+<p><a href="../authentication/OIDC-Authentication-Verifiable-Credentials.html">OpenID Connect with Verifiable Credentials</a> now 
+supports the authorization code flow. There are also significant changes in place to support more formats
+with additional bug fixes and enhancements, and an improved test suite to verify credential issuance.
+There is also initial support for OpenID Connect with Verifiable Presentations (OpenID4VP).</p>
+
+<h3 class="cas-change cas-change-topic" data-type="changed" data-area="oidc" data-area-label="OAuth &amp; OpenID Connect" data-type-label="Changed" id="openid-connect-federation">OpenID Connect Federation</h3>
+
+<p>Work on <a href="../authentication/OIDC-Authentication-Federation.html">OpenID Connect Federation</a> is now roughly finalized. A number of test scenarios and minor edge cases
+are still being worked on and should be resolved in the next few releases.</p>
+
+<h3 class="cas-change cas-change-topic" data-type="new" data-area="ui" data-area-label="Interface &amp; Accounts" data-type-label="New" id="acceptable-usage-policy--multitenancy">Acceptable Usage Policy &amp; Multitenancy</h3>
+
+<p><a href="../webflow/Webflow-Customization-AUP.html">Acceptable Usage Policy (AUP) support</a> has been extended to 
+support multitenancy. A number of storage mechanisms are now available to support multitenancy, specifically 
+<a href="../webflow/Webflow-Customization-AUP-MongoDb.html">MongoDb</a> and more will be added in the future.</p>
+
+<h2 class="cas-change-others" id="other-stuff">Other Stuff</h2>
+
+<h3 class="cas-change-group" data-area="authentication" id="authentication">Authentication</h3>
+
+<ul>
+  <li class="cas-change cas-change-item" data-type="changed" data-area="authentication" data-type-label="Changed">When removing cookies, particularly during logout, the existing cookie value is no longer echoed back for remove operations.</li>
+</ul>
+
+<h3 class="cas-change-group" data-area="mfa" id="multifactor--passkeys">Multifactor &amp; Passkeys</h3>
+
+<ul>
+  <li class="cas-change cas-change-item" data-type="new" data-area="mfa" data-type-label="New">Multifactor authentication may also be activated using <a href="../mfa/Configuring-Multifactor-Authentication-Triggers-EntityId.html">SAML2 metadata entity attributes</a>.</li>
+</ul>
+
+<h3 class="cas-change-group" data-area="oidc" id="oauth--openid-connect">OAuth &amp; OpenID Connect</h3>
+
+<ul>
+  <li class="cas-change cas-change-item" data-type="new" data-area="oidc" data-type-label="New">Custom ID token claims can also be constructed using <a href="../authentication/OIDC-Authentication-Claims-Custom.html">Apache Groovy</a>.</li>
+</ul>
+
+<h3 class="cas-change-group" data-area="protocols" id="cas--other-protocols">CAS &amp; Other Protocols</h3>
+
+<ul>
+  <li class="cas-change cas-change-item" data-type="changed" data-area="protocols" data-type-label="Changed"><a href="../protocol/REST-Protocol.html">CAS REST APIs</a> now return a <code class="language-plaintext highlighter-rouge">403</code> status code instead of a <code class="language-plaintext highlighter-rouge">500</code> type of error when unauthorized application requests are identified.</li>
+</ul>
+
+<h3 class="cas-change-group" data-area="attributes" id="attributes--consent">Attributes &amp; Consent</h3>
+
+<ul>
+  <li class="cas-change cas-change-item" data-type="new" data-area="attributes" data-type-label="New">Releasing attributes via <a href="../integration/Attribute-Release-Policy-PatternMatching.html">pattern matching</a> accepts Groovy transformation rules.</li>
+  <li class="cas-change cas-change-item" data-type="new" data-area="attributes" data-type-label="New">Attributes requested for <a href="../integration/Attribute-Release-Consent.html">Consent</a> may now be localized using language bundles and a prefixed language key that is <code class="language-plaintext highlighter-rouge">screen.consent.attributes.attribute.[attribute-name]</code>.</li>
+</ul>
+
+<h3 class="cas-change-group" data-area="tickets" id="tickets--sessions">Tickets &amp; Sessions</h3>
+
+<ul>
+  <li class="cas-change cas-change-item" data-type="new" data-area="tickets" data-type-label="New"><a href="../ticketing/Redis-Ticket-Registry-RediSearch.html">RediSearch</a> functionality now supports Redis clustering.</li>
+  <li class="cas-change cas-change-item" data-type="changed" data-area="tickets" data-type-label="Changed">The maximum lifetime of a transient session ticket (i.e. <code class="language-plaintext highlighter-rouge">TST</code>) is by default reduced from <code class="language-plaintext highlighter-rouge">15</code> minutes to <code class="language-plaintext highlighter-rouge">5</code> minutes.</li>
+  <li class="cas-change cas-change-item" data-type="removed" data-area="tickets" data-type-label="Removed"><a href="../ticketing/Redis-Ticket-Registry-RediSearch.html">LettuceMod</a> is removed from CAS and its functionality is directly provided by Lettuce itself.</li>
+</ul>
+
+<h3 class="cas-change-group" data-area="project" id="build--project">Build &amp; Project</h3>
+
+<ul>
+  <li class="cas-change cas-change-item" data-type="changed" data-area="project" data-type-label="Changed">A large number of dependencies and libraries have been updated to their latest versions.</li>
+  <li class="cas-change cas-change-item" data-type="changed" data-area="project" data-type-label="Changed">Groovy integration tests have now switched to use Groovy <code class="language-plaintext highlighter-rouge">5.1.x</code>.</li>
+  <li class="cas-change cas-change-item" data-type="changed" data-area="project" data-type-label="Changed">Redis integration tests have now switched to use Redis <code class="language-plaintext highlighter-rouge">8.10.x</code>.</li>
+</ul>
+
+<h3 class="cas-change-group" data-area="general" id="general">General</h3>
+
+<ul>
+  <li class="cas-change cas-change-item" data-type="changed" data-area="general" data-type-label="Changed">A number of date-formatting operations have switched their base timezone from system default to <code class="language-plaintext highlighter-rouge">UTC</code>.</li>
+</ul>
+
+<aside class="cas-release-footer" aria-label="About release candidates">
+    <div>
+        <h2 id="test-release-candidates">Test Release Candidates Early</h2>
+        <p>CAS releases are strictly time-based, and a <code>GA</code> release is
+            <a href="https://apereo.github.io/2017/03/08/the-myth-of-ga-rel/">a tag and nothing more</a>.
+            Trying each release candidate and the snapshots that follow it is the best way to gain confidence in an upgrade.</p>
+    </div>
+    <div>
+        <h3>Support the Project</h3>
+        <p>Development is almost entirely voluntary. If CAS serves you well,
+            <a href="https://www.apereo.org/content/apereo-membership">join the Apereo Foundation</a> to fund dedicated time for
+            long-term support, maintenance and timely security fixes.</p>
+    </div>
+    <div>
+        <h3>Get Involved</h3>
+        <ul>
+            <li><a href="/cas/Mailing-Lists.html">Share feedback</a> on the features you try</li>
+            <li><a href="/cas/developer/Contributor-Guidelines.html">Contribute patches</a> and documentation improvements</li>
+        </ul>
+    </div>
+    <div>
+        <h3>Resources</h3>
+        <ul>
+            <li><a href="https://github.com/apereo/cas/milestones">Release schedule</a></li>
+            <li><a href="/cas/developer/Release-Policy.html">Release policy</a></li>
+            <li><a href="/cas/developer/Maintenance-Policy.html">Maintenance policy</a></li>
+        </ul>
+    </div>
+</aside>
+
+
+            </article>
+            <div class="article-end" aria-hidden="true"><span></span><span>CAS</span><span></span></div>
+        </main>
+        
+        <aside class="docs-toc" aria-label="On this page">
+    <nav id="pageContents" aria-label="Table of contents">
+        <p class="eyebrow">ON THIS PAGE</p>
+        <ul class="section-nav"></ul>
+    </nav>
+    <a class="toc-top" href="#cas-docs-container">Back to top <span aria-hidden="true">↑</span></a>
+</aside>
+
+        
+    </div>
+
+    <footer class="site-footer">
+        <a class="footer-brand" href="../../index.html">APEREO <strong>CAS</strong></a>
+        <p>CAS is supported by the <a href="https://www.apereo.org/">Apereo Foundation</a>.</p>
+        <a href="#cas-docs-container">Back to top <span aria-hidden="true">↑</span></a>
+    </footer>
+    <div id="docs-status" class="visually-hidden" role="status" aria-live="polite"></div>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha384-1H217gwSVyLSIfaLxHbE7dRb3v4mYCKbpQvzx0cegeju1MVsGrX5xXxAvs/HgeFs" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.11/clipboard.min.js" integrity="sha384-J08i8An/QeARD9ExYpvphB8BsyOj3Gh2TSh1aLINKO3L0cMSH2dN3E22zFoXEi0Q" crossorigin="anonymous"></script>
+
+    <script src='/cas/javascripts/URI.js'></script>
+    <script src='/cas/javascripts/site.js'></script>
+
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@docsearch/js@3.9.0/dist/umd/index.js" integrity="sha384-QhsjJ84XKaqUeM7eZpvYApdPamFboJLQg4BD2CCCSiUOL4cWzLp5caae6oW/oAXh" crossorigin="anonymous"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js" integrity="sha384-ficRBwtap/VLzILv81vIvgp30PoJYnlCm96tPpNYHXAf+h9SIThOZxxIzRUzbpAh" crossorigin="anonymous"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.5/js/lightbox.min.js" integrity="sha384-bcXRY0im+IjB6RvmBpbgdkqjLV0pCTbaJRJ9IRPeQaWCYlzRn9pPaPmCvONr9h9z" crossorigin="anonymous"></script>
+
+    <script>
+        let pageSection = "Planning";
+        let siteUrl = "https://apereo.github.io";
+        let basePath = "/cas";
+
+        
+    </script>
+</body>
+
+</html>

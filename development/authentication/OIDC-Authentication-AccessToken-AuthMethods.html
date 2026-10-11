@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="light dark">
+    
+    
+    
+
+
+
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <meta name="description" content="If the tokenEndpointAuthenticationMethod field is left blank, all available authentication methods are evaluated for access token requests and authentication...">
+    <meta name="robots" content="index,follow">
+    <meta name="theme-color" content="#06304a">
+    <link rel="canonical" href="https://apereo.github.io/cas/development/authentication/OIDC-Authentication-AccessToken-AuthMethods.html">
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="en_US">
+    <meta property="og:site_name" content="Apereo CAS Documentation">
+    <meta property="og:title" content="CAS - OpenID Connect - Access Token Authentication Methods">
+    <meta property="og:description" content="If the tokenEndpointAuthenticationMethod field is left blank, all available authentication methods are evaluated for access token requests and authentication...">
+    <meta property="og:url" content="https://apereo.github.io/cas/development/authentication/OIDC-Authentication-AccessToken-AuthMethods.html">
+    <meta property="og:image" content="https://apereo.github.io/cas/images/cas_logo.png">
+    <meta property="og:image:alt" content="Apereo CAS">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="CAS - OpenID Connect - Access Token Authentication Methods">
+    <meta name="twitter:description" content="If the tokenEndpointAuthenticationMethod field is left blank, all available authentication methods are evaluated for access token requests and authentication...">
+    <meta name="twitter:image" content="https://apereo.github.io/cas/images/cas_logo.png">
+
+    
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "TechArticle",
+      "headline": "OpenID Connect - Access Token Authentication Methods",
+      "description": "If the tokenEndpointAuthenticationMethod field is left blank, all available authentication methods are evaluated for access token requests and authentication...",
+      "url": "https://apereo.github.io/cas/development/authentication/OIDC-Authentication-AccessToken-AuthMethods.html",
+      "inLanguage": "en",
+      "isPartOf": {"@type": "WebSite", "name": "Apereo CAS Documentation",
+                   "url": "https://apereo.github.io/cas/"},
+      "author": {"@type": "Organization", "name": "Apereo Foundation", "url": "https://www.apereo.org/"},
+      "publisher": {"@type": "Organization", "name": "Apereo Foundation", "url": "https://www.apereo.org/"}
+    }
+    </script>
+    
+
+    <script>
+        if (window.location.hostname === "apereo.github.io") {
+            window.dataLayer = window.dataLayer || [];
+            window.gtag = function () {
+                window.dataLayer.push(arguments);
+            };
+            window.gtag("js", new Date());
+            window.gtag("config", "G-W3M8JXP7GP");
+            const analytics = document.createElement("script");
+            analytics.async = true;
+            analytics.src = "https://www.googletagmanager.com/gtag/js?id=G-W3M8JXP7GP";
+            document.head.appendChild(analytics);
+        }
+    </script>
+
+    <script>
+        function readThemePreference() {
+            try {
+                return localStorage.getItem('cas-docs-theme') || 'system';
+            } catch (error) {
+                return 'system';
+            }
+        }
+
+        function systemTheme() {
+            return window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+        }
+
+        function resolveTheme(preference) {
+            return preference === 'dark' || preference === 'light' ? preference : systemTheme();
+        }
+
+        function changeTheme(theme) {
+            if (theme !== 'dark' && theme !== 'light') {
+                return;
+            }
+
+            if (document.documentElement.getAttribute('data-bs-theme') !== theme) {
+                document.documentElement.setAttribute('data-bs-theme', theme);
+            }
+        }
+
+        (() => {
+            let preference = readThemePreference();
+            if (preference !== 'dark' && preference !== 'light') {
+                preference = 'system';
+
+            }
+
+            changeTheme(resolveTheme(preference));
+
+            if (window.matchMedia) {
+                window.matchMedia('(prefers-color-scheme: light)').addEventListener('change', () => {
+                    if (readThemePreference() !== 'system') {
+                        return;
+                    }
+                    const theme = systemTheme();
+                    changeTheme(theme);
+                });
+            }
+        })();
+    </script>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.2/css/all.min.css" integrity="sha384-PPIZEGYM1v8zp5Py7UjFb79S58UeqCL9pYVnVPURKEqvioPROaVAJKKLzvH2rDnI" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@docsearch/css@3.9.0/dist/style.css" integrity="sha384-cHiDHRyv+KTDBfpMqc3t2SeQYjfK05cReQA49eigiKoBzOMi9WIFsBsNfetC5n2a" crossorigin="anonymous"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.5/css/lightbox.min.css" integrity="sha384-9623XJODy0qDAl6X6Y9xTBSzYUxM0ixdjO8zqJQeGzDP2Uwo1PqAOq6gXkk2ul99" crossorigin="anonymous" />
+    
+    
+    <link rel="stylesheet" type="text/css" media="screen" href='/cas/stylesheets/site.css'>
+    <link rel="stylesheet" type="text/css" media="print" href='/cas/stylesheets/site-print.css'>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400..800;1,9..40,400..500&family=Bricolage+Grotesque:opsz,wght@12..96,400..800&display=swap" rel="stylesheet">
+    <link href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css" rel="stylesheet" integrity="sha384-yT2pwyD9a3Oee/HtjWTccnRmchDWH2EDHjzH7gwf8yAK0RilKFL164FCHX9fzlxh" crossorigin="anonymous">
+
+    <title>CAS - OpenID Connect - Access Token Authentication Methods · Apereo CAS Documentation</title>
+
+</head>
+
+<body class="" data-docs-base="/cas" data-docs-version="development" data-docs-build="20261011002700">
+    <a class="skip-link" href="#cas-docs-container">Skip to content</a>
+    <header class="site-header">
+        <div class="masthead">
+            <a class="cas-brand" href="../../index.html" aria-label="Apereo CAS home">
+                <img class="brand-logo" src="/cas/images/cas_logo.png" width="119" height="60" alt="CAS">
+                <span class="brand-caption">APEREO CAS<span>Documentation</span></span>
+            </a>
+            <div class="brand-mission">
+                <p>Enterprise Authentication <span class="brand-mission-accent">for All Earthlings and Beyond</span></p>
+                <span>Identity, Single Sign-On and Access Management</span>
+            </div>
+            <a id="forkme_banner" aria-label="View CAS on GitHub" href="https://github.com/apereo/cas"><i class="fab fa-github" aria-hidden="true"></i><span>View on GitHub</span><span aria-hidden="true">↗</span></a>
+        </div>
+        <div class="navigation-bar">
+            
+            <button onclick="navigateSidebar()" id="sidebarNavButton" class="icon-button" type="button" aria-controls="sidebar" aria-expanded="true" aria-label="Toggle documentation navigation" title="Toggle documentation navigation">
+                <i class="fa fa-bars" aria-hidden="true"></i>
+            </button>
+            
+            <nav class="primary-navigation" aria-label="Main navigation">
+                <a href="../../index.html">Home</a>
+                <a href="https://github.com/apereo/cas/releases">Releases</a>
+                <a href="../../Support.html">Support</a>
+                <a href="../../Mailing-Lists.html">Mailing Lists</a>
+                <div class="dropdown">
+                    <button class="dropdown-toggle" type="button" id="cas-versions" data-bs-toggle="dropdown" aria-expanded="false">Versions</button>
+                    <div class="dropdown-menu" aria-labelledby="cas-versions">
+                        
+                        
+                        
+                        
+                        <a class="dropdown-item cas-version-link" href="/cas/development/authentication/OIDC-Authentication-AccessToken-AuthMethods.html" data-version-home="/cas/development/">Development</a>
+                        
+                        
+                        
+                        
+                        <a class="dropdown-item cas-version-link" href="/cas/8.0.x/authentication/OIDC-Authentication-AccessToken-AuthMethods.html" data-version-home="/cas/8.0.x/">v8.0.x</a>
+                        
+                        
+                        
+                        
+                        <a class="dropdown-item cas-version-link" href="/cas/7.3.x/authentication/OIDC-Authentication-AccessToken-AuthMethods.html" data-version-home="/cas/7.3.x/">v7.3.x</a>
+                        
+                    </div>
+                </div>
+                <a href="https://apereo.github.io" target="_blank" rel="noopener">Blog <span aria-hidden="true">↗</span><span class="visually-hidden"> (opens in a new tab)</span></a>
+            </nav>
+            <div class="navigation-tools">
+                <div id="searchField"></div>
+                <button id="settingsSearchButton" class="icon-button" type="button" aria-label="Search configuration settings (press Shift twice)" title="Search configuration settings (Shift Shift)"><i class="fa fa-sliders" aria-hidden="true"></i></button>
+                <button id="themeToggle" class="icon-button" type="button" onclick="toggleDarkMode()" aria-label="Toggle color theme" title="Toggle color theme"><i class="fa fa-circle-half-stroke" aria-hidden="true"></i></button>
+            </div>
+        </div>
+        <div class="reading-progress" aria-hidden="true"><span id="readingProgress"></span></div>
+    </header>
+
+    <div class="docs-shell">
+        
+        <aside id="sidebar" class="docs-sidebar" aria-label="Documentation navigation">
+    <div class="sidebar-heading">
+<span class="eyebrow">APEREO CAS DOCUMENTATION</span><span class="sidebar-symbol" aria-hidden="true">✳</span>
+</div>
+    <nav id="sidebar-navigation" aria-label="Documentation topics"></nav>
+    <noscript><p>Browse the <a href="/cas/development/sidebar.html">documentation index</a>.</p></noscript>
+</aside>
+
+        
+        <main class="cas-docs-content">
+            
+            <div class="page-toolbar">
+                <nav id="docsNavBar" aria-label="Breadcrumb"></nav>
+                <div id="toolbarIcons" role="group" aria-label="Page tools"></div>
+            </div>
+            
+            
+            <aside id="dev-doc-info" aria-labelledby="dev-doc-title">
+                <span class="development-marker" aria-hidden="true"></span>
+                <div>
+                    <p id="dev-doc-title">WORKERS AHEAD!</p>
+                    <p class="dev-doc-summary">Development documentation for features that are
+                        <a href="https://github.com/apereo/cas/milestones">not released yet</a>.</p>
+                    <p class="dev-doc-details">You are viewing the <strong>development</strong> documentation for the Apereo CAS server. <strong>The
+                        functionality presented here <a href="https://github.com/apereo/cas/milestones">is not officially released yet</a></strong>.
+                        This is a work in progress and will be continually updated as development moves forward.
+                        <strong>You are most encouraged to test the changes presented.</strong>
+                    </p>
+                </div>
+            </aside>
+            
+            <article id="cas-docs-container" tabindex="-1">
+                
+<h1 id="openid-connect---access-token-authentication-methods">OpenID Connect - Access Token Authentication Methods</h1>
+
+<p>Access token requests must be authenticated using any of the client authentication strategies
+specified in the <a href="OIDC-Authentication-Discovery.html">OpenID Connect discovery</a>. The following methods are supported by CAS:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Method</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">client_secret_basic</code></td>
+      <td>Default. The client id and client secret are used to create a HTTP Basic authentication scheme.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">client_secret_post</code></td>
+      <td>NOT RECOMMENDED. The <code class="language-plaintext highlighter-rouge">client_id</code> and <code class="language-plaintext highlighter-rouge">client_secret</code> are only supplied and accepted in the request body.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">client_secret_jwt</code></td>
+      <td>Clients with a client secret can create a JWT using an HMAC SHA algorithm, which is calculated using the client secret as the shared key. The JWT is passed as a <code class="language-plaintext highlighter-rouge">client_assertion</code> request parameter and <code class="language-plaintext highlighter-rouge">client_assertion_type</code> parameter MUST be <code class="language-plaintext highlighter-rouge">urn:ietf:params:oauth:client-assertion-type:jwt-bearer</code>.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">private_key_jwt</code></td>
+      <td>Clients with a registered public key build and sign a JWT using that key. The JWT is passed as a <code class="language-plaintext highlighter-rouge">client_assertion</code> request parameter and <code class="language-plaintext highlighter-rouge">client_assertion_type</code> parameter MUST be <code class="language-plaintext highlighter-rouge">urn:ietf:params:oauth:client-assertion-type:jwt-bearer</code>.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">tls_client_auth</code></td>
+      <td>Mutual TLS utilizing the PKI method of associating a certificate to a client.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">attest_jwt_client_auth</code></td>
+      <td>A client attestation, such as a wallet attestation, in the <code class="language-plaintext highlighter-rouge">OAuth-Client-Attestation</code> header with its proof of possession in the <code class="language-plaintext highlighter-rouge">OAuth-Client-Attestation-PoP</code> header. See <a href="#attestation-based-client-authentication">below</a>.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">attest_jwt_client_auth_dpop</code></td>
+      <td>A client attestation in the <code class="language-plaintext highlighter-rouge">OAuth-Client-Attestation</code> header, with a DPoP proof made with the attested key as its proof of possession (DPoP combined mode). See <a href="#attestation-based-client-authentication">below</a>.</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Please study <a href="https://openid.net/specs/openid-connect-core-1_0.html">the specification</a> to learn more.</p>
+
+<p>Enforced and required client authentication methods may be tuned and controlled for each relying party:</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+</pre></td>
+<td class="rouge-code"><pre><span class="p">{</span><span class="w">
+  </span><span class="nl">"@class"</span><span class="p">:</span><span class="w"> </span><span class="s2">"org.apereo.cas.services.OidcRegisteredService"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"clientId"</span><span class="p">:</span><span class="w"> </span><span class="s2">"client-id"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"clientSecret"</span><span class="p">:</span><span class="w"> </span><span class="s2">"secret"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"serviceId"</span><span class="p">:</span><span class="w"> </span><span class="s2">"^https://app.example.org/oidc"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"MyApplication"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"tokenEndpointAuthenticationMethod"</span><span class="p">:</span><span class="w"> </span><span class="s2">"client_secret_basic"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+<p>If the <code class="language-plaintext highlighter-rouge">tokenEndpointAuthenticationMethod</code> field is left blank, all available authentication methods are evaluated for access token requests
+and authentication method enforcement should effectively be disabled.</p>
+
+<h2 id="attestation-based-client-authentication">Attestation-Based Client Authentication</h2>
+
+<p>Clients such as native wallet apps may authenticate with a client attestation, following
+<a href="https://datatracker.ietf.org/doc/draft-ietf-oauth-attestation-based-client-auth/">OAuth 2.0 Attestation-Based Client Authentication</a>.
+This is how wallets authenticate with a wallet attestation, as described by
+<a href="https://openid.net/specs/openid-4-verifiable-credential-issuance-1_0.html#appendix-E">OpenID4VCI 1.0 Appendix E</a>
+and required by <a href="https://openid.net/specs/openid4vc-high-assurance-interoperability-profile-1_0.html">HAIP 1.0</a>,
+at the token and the <a href="OIDC-Authentication-PAR.html">pushed authorization request</a> endpoints.</p>
+
+<!-- fragment:keep -->
+
+<p>The following settings and properties are available from the CAS configuration catalog:</p>
+
+
+<div class="cas-properties">
+    <div class="cas-properties-list">
+<div class="cas-property" data-kind="optional" data-name="cas.authn.oidc.client-attestation.challenge.enabled" data-default="false">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.oidc.client-attestation.challenge.enabled</code><span class="cas-property-summary">Whether CAS hands out challenges at its challenge endpoint, advertised as challenge_endpoint , and requires the challenge claim of every client attestation proof of possession to carry one.</span>
+</div>
+        <div class="cas-property-default"><code>false</code></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Whether CAS hands out challenges at its challenge endpoint, advertised as <code>challenge_endpoint</code>, and requires the <code>challenge</code> claim of every client attestation proof of possession to carry one. A missing, unknown or expired challenge is answered with <code>use_attestation_challenge</code> and a fresh challenge in the <code>OAuth-Client-Attestation-Challenge</code> header.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Boolean</code></dd>
+<dt>Default</dt>
+<dd><code>false</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.oidc.OidcClientAttestationChallengeProperties">OidcClientAttestationChallengeProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.authn.oidc.client-attestation.challenge.time-to-live" data-default="PT5M" data-duration>
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.oidc.client-attestation.challenge.time-to-live</code><span class="cas-property-summary">How long a challenge may be used.</span>
+</div>
+        <div class="cas-property-default"><code>PT5M</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag"><i class="fa fa-clock" aria-hidden="true"></i>Duration</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>How long a challenge may be used. A challenge may be used more than once while it is valid; the <code>jti</code> of each proof of possession still prevents a proof from being replayed.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><code>PT5M</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.oidc.OidcClientAttestationChallengeProperties">OidcClientAttestationChallengeProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.authn.oidc.client-attestation.signing-alg-values-supported" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.oidc.client-attestation.signing-alg-values-supported</code><span class="cas-property-summary">Signing algorithms accepted for client attestations and their proofs of possession, advertised as client_attestation_signing_alg_values_supported and client_attestation_pop_signing_alg_values_supported .</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Signing algorithms accepted for client attestations and their proofs of possession, advertised as <code>client_attestation_signing_alg_values_supported</code> and <code>client_attestation_pop_signing_alg_values_supported</code>. Only the EC (<code>ES*</code>) and RSA (<code>RS*</code>, <code>PS*</code>) algorithms can be verified.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>List&lt;String&gt;</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.oidc.OidcClientAttestationProperties">OidcClientAttestationProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.authn.oidc.client-attestation.trust-anchors" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.oidc.client-attestation.trust-anchors</code><span class="cas-property-summary">Locations of PEM-encoded certificates of the trust anchors that client attestations must chain to, such as those of wallet providers.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Locations of PEM-encoded certificates of the trust anchors that client attestations must chain to, such as those of wallet providers. A client attestation carries its signing certificate, and any intermediate certificates, in its <code>x5c</code> header, which must lead to one of these anchors. Attestation-based client authentication is not accepted, nor advertised, until at least one trust anchor is configured.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>List&lt;String&gt;</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.oidc.OidcClientAttestationProperties">OidcClientAttestationProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+</div>
+<p class="cas-properties-legend">
+        <strong>Required</strong> settings may be needed to activate or affect the feature; review them even when they have a default.
+        <strong>Optional</strong> settings only need to be set to change a default or to turn on the behavior they control.
+        <strong>Third party</strong> settings belong to libraries such as Spring Boot that CAS builds on; their own documentation may have more detail.
+    </p>
+<div class="cas-properties-topics"><details class="cas-properties-topic">
+            <summary><i class="fa fa-newspaper" aria-hidden="true"></i>Notes on configuration</summary>
+            <div class="cas-properties-topic-body">
+<!-- fragment:keep -->
+
+<p></p>
+
+<p><strong>Configuration Metadata</strong></p>
+
+<p>The collection of configuration properties listed in this section are automatically generated from the CAS source and components that contain the actual field
+definitions, types, descriptions, modules, etc. This metadata may not always be 100% accurate, or could be lacking details and sufficient explanations.</p>
+
+<p><strong>Be Selective</strong></p>
+
+<p>This section is meant as a guide only. Do NOT copy/paste the entire collection of settings into your CAS configuration; rather pick only the properties that you
+need. Do NOT enable settings unless you are certain of their purpose and do NOT copy settings into your configuration only to keep them as reference. All these
+ideas lead to upgrade headaches, maintenance nightmares and premature aging.</p>
+
+<p><strong>YAGNI</strong></p>
+
+<p>Note that for nearly ALL use cases, declaring and configuring properties listed here is sufficient. You should NOT have to explicitly massage a CAS XML/Java/etc
+configuration file to design an authentication handler, create attribute release policies, etc. CAS at runtime will auto-configure all required changes for you.
+If you are unsure about the meaning of a given CAS setting, do NOT turn it on without hesitation. Review the codebase or better yet, ask questions to clarify
+the intended behavior.</p>
+
+<p><strong>Naming Convention</strong></p>
+
+<p>Property names can be specified in very relaxed terms. For instance <code class="language-plaintext highlighter-rouge">cas.someProperty</code>, <code class="language-plaintext highlighter-rouge">cas.some-property</code>, <code class="language-plaintext highlighter-rouge">cas.some_property</code> are all valid names. While all
+forms are accepted by CAS, there are certain components (in CAS and other frameworks used) whose activation at runtime is conditional on a property value, where
+this property is required to have been specified in CAS configuration using kebab case. This is both true for properties that are owned by CAS as well as those
+that might be presented to the system via an external library or framework such as Spring Boot, etc.</p>
+
+<div class="alert alert-info">
+<img class="emoji" title=":information_source:" alt=":information_source:" src="https://github.githubassets.com/images/icons/emoji/unicode/2139.png" height="20" width="20"> <strong>Note</strong> <p>
+When possible, properties should be stored in lower-case kebab format, such as <code>cas.property-name=value</code>.
+The only possible exception to this rule is when naming actuator endpoints; The name of the
+actuator endpoints (i.e. <code>ssoSessions</code>) <strong>MUST</strong> remain in camelCase mode. 
+</p>
+</div>
+
+<p>Settings and properties that are controlled by the CAS platform directly always begin with the prefix <code class="language-plaintext highlighter-rouge">cas</code>. All other settings are controlled and provided
+to CAS via other underlying frameworks and may have their own schemas and syntax. BE CAREFUL with
+the distinction. Unrecognized properties are rejected by CAS and/or frameworks upon which CAS depends. This means if you somehow misspell a property definition
+or fail to adhere to the dot-notation syntax and such, your setting is entirely refused by CAS and likely the feature it controls will never be activated in the
+way you intend.</p>
+
+<p><strong>Validation</strong></p>
+
+<p>Configuration properties are automatically validated on CAS startup to report issues with configuration binding, especially if defined CAS settings cannot be
+recognized or validated by the configuration schema. Additional validation processes are also handled
+via <a href="/cas/development/configuration/Configuration-Metadata-Repository.html">Configuration Metadata</a> and property migrations applied automatically on
+startup by Spring Boot and family.</p>
+
+<p><strong>Indexed Settings</strong></p>
+
+<p>CAS settings able to accept multiple values are typically documented with an index, such as <code class="language-plaintext highlighter-rouge">cas.some.setting[0]=value</code>. The index <code class="language-plaintext highlighter-rouge">[0]</code> is meant to be
+incremented by the adopter to allow for distinct multiple configuration blocks.</p>
+
+            </div>
+        </details></div>
+</div>
+
+<p>The client attestation is signed by the client attester, such as the wallet provider, and is sent in the
+<code class="language-plaintext highlighter-rouge">OAuth-Client-Attestation</code> header. It carries its signing certificate, and any intermediate certificates, in its <code class="language-plaintext highlighter-rouge">x5c</code>
+header; the chain must lead to one of the trust anchors defined in CAS settings, without including it, and the signer must
+not be self-signed. Its <code class="language-plaintext highlighter-rouge">sub</code> is the client identifier and must match the <code class="language-plaintext highlighter-rouge">client_id</code> request parameter when one is sent,
+it must carry an <code class="language-plaintext highlighter-rouge">exp</code> that has not passed, and its <code class="language-plaintext highlighter-rouge">cnf</code> claim names the key of the client instance. A <code class="language-plaintext highlighter-rouge">status</code> claim is
+accepted and logged as a warning, since its status is not checked.</p>
+
+<p>The proof of possession is sent in the <code class="language-plaintext highlighter-rouge">OAuth-Client-Attestation-PoP</code> header, signed by the key in <code class="language-plaintext highlighter-rouge">cnf</code>. Its <code class="language-plaintext highlighter-rouge">aud</code> must be
+the issuer, it must carry an <code class="language-plaintext highlighter-rouge">iat</code> within the last few minutes and a <code class="language-plaintext highlighter-rouge">jti</code> that may be used only once. Each header must be sent
+exactly once.</p>
+
+<p>Challenges may be turned on in CAS settings. The <a href="OIDC-Authentication-Discovery.html">discovery document</a> then lists a
+<code class="language-plaintext highlighter-rouge">challenge_endpoint</code>, where a client fetches a challenge to put in the <code class="language-plaintext highlighter-rouge">challenge</code> claim of its proof of possession:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td>
+<td class="rouge-code"><pre>POST /oidc/oidcAttestationChallenge
+</pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+</pre></td>
+<td class="rouge-code"><pre><span class="p">{</span><span class="w">
+  </span><span class="nl">"attestation_challenge"</span><span class="p">:</span><span class="w"> </span><span class="s2">"TST-1-..."</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+<p>Every proof of possession must then carry a challenge that CAS handed out and that has not expired; a challenge may be used
+more than once until it expires. A missing, unknown or expired challenge is answered with <code class="language-plaintext highlighter-rouge">400</code> and <code class="language-plaintext highlighter-rouge">use_attestation_challenge</code>,
+along with a fresh challenge in the <code class="language-plaintext highlighter-rouge">OAuth-Client-Attestation-Challenge</code> header for the client to retry with.</p>
+
+<p>In the DPoP combined mode (<code class="language-plaintext highlighter-rouge">attest_jwt_client_auth_dpop</code>), the request carries no <code class="language-plaintext highlighter-rouge">OAuth-Client-Attestation-PoP</code> header; a single
+<code class="language-plaintext highlighter-rouge">DPoP</code> proof stands for the proof of possession instead. It must be valid for the request per
+<a href="https://www.rfc-editor.org/rfc/rfc9449">RFC 9449</a>, signed with one of the <code class="language-plaintext highlighter-rouge">dpop_signing_alg_values_supported</code>, made with the key
+in the attestation’s <code class="language-plaintext highlighter-rouge">cnf</code> and not used before. Challenges do not apply to this mode; once <a href="OIDC-Authentication-DPoP.html#server-provided-nonces">DPoP nonces</a> are turned on,
+the proof must carry one instead, or the request is answered with <code class="language-plaintext highlighter-rouge">400</code> and <code class="language-plaintext highlighter-rouge">use_dpop_nonce</code>. A
+request that carries both headers is authenticated by the proof of possession; its DPoP proof, if any, is left to the endpoint,
+and binds the access token at the token endpoint.</p>
+
+<p>Once trust anchors are configured, the <a href="OIDC-Authentication-Discovery.html">discovery document</a> lists <code class="language-plaintext highlighter-rouge">attest_jwt_client_auth</code>
+and <code class="language-plaintext highlighter-rouge">attest_jwt_client_auth_dpop</code> among <code class="language-plaintext highlighter-rouge">token_endpoint_auth_methods_supported</code>, along with the accepted signing algorithms:</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+</pre></td>
+<td class="rouge-code"><pre><span class="p">{</span><span class="w">
+  </span><span class="nl">"token_endpoint_auth_methods_supported"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+    </span><span class="s2">"client_secret_basic"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"private_key_jwt"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"attest_jwt_client_auth"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"attest_jwt_client_auth_dpop"</span><span class="w">
+  </span><span class="p">],</span><span class="w">
+  </span><span class="nl">"client_attestation_signing_alg_values_supported"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+    </span><span class="s2">"ES256"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"ES384"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"ES512"</span><span class="w">
+  </span><span class="p">],</span><span class="w">
+  </span><span class="nl">"client_attestation_pop_signing_alg_values_supported"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+    </span><span class="s2">"ES256"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"ES384"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"ES512"</span><span class="w">
+  </span><span class="p">]</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+<p>A relying party that must authenticate this way at the token endpoint names the method, <code class="language-plaintext highlighter-rouge">attest_jwt_client_auth</code> or
+<code class="language-plaintext highlighter-rouge">attest_jwt_client_auth_dpop</code>:</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+</pre></td>
+<td class="rouge-code"><pre><span class="p">{</span><span class="w">
+  </span><span class="nl">"@class"</span><span class="p">:</span><span class="w"> </span><span class="s2">"org.apereo.cas.services.OidcRegisteredService"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"clientId"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://wallet.example.org"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"serviceId"</span><span class="p">:</span><span class="w"> </span><span class="s2">"^https://wallet.example.org/.*"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Wallet"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"tokenEndpointAuthenticationMethod"</span><span class="p">:</span><span class="w"> </span><span class="s2">"attest_jwt_client_auth"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+<h2 id="mutual-tls-client-authentication">Mutual TLS Client Authentication</h2>
+
+<p>In order to utilize TLS for client authentication, the TLS connection between the client and CAS MUST have been established 
+or re-established with mutual-TLS X.509 certificate authentication during the TLS handshake. For all requests to CAS 
+utilizing mutual-TLS client authentication, the client MUST include the <code class="language-plaintext highlighter-rouge">client_id</code> parameter which enables the 
+CAS server to easily identify the client independently from the content of the certificate and 
+locate the client configuration using the client identifier and check the certificate presented in 
+the TLS handshake against the expected credentials for that client.</p>
+
+<p>In order to convey the expected subject of the certificate and other validation requirements, 
+the following parameters can be assigned to a service definition in support of the PKI method of 
+mutual-TLS client authentication. Such parameters may also be passed at the time of registering the client
+dynamically via <a href="OIDC-Authentication-Dynamic-Registration.html">dynamic client registration</a>. A relying party 
+using the <code class="language-plaintext highlighter-rouge">tls_client_auth</code> authentication method MUST use exactly one of the below metadata parameters to 
+indicate the certificate subject value that the authorization server is to expect when authenticating the respective client.</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+</pre></td>
+<td class="rouge-code"><pre><span class="p">{</span><span class="w">
+  </span><span class="nl">"@class"</span><span class="p">:</span><span class="w"> </span><span class="s2">"org.apereo.cas.services.OidcRegisteredService"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"clientId"</span><span class="p">:</span><span class="w"> </span><span class="s2">"client-id"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"clientSecret"</span><span class="p">:</span><span class="w"> </span><span class="s2">"secret"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"serviceId"</span><span class="p">:</span><span class="w"> </span><span class="s2">"^https://app.example.org/oidc"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"MyApplication"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"tokenEndpointAuthenticationMethod"</span><span class="p">:</span><span class="w"> </span><span class="s2">"tls_client_auth"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"tlsClientAuthSubjectDn"</span><span class="p">:</span><span class="w"> </span><span class="s2">"..."</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"tlsClientAuthSanDns"</span><span class="p">:</span><span class="w"> </span><span class="s2">"..."</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"tlsClientAuthSanUri"</span><span class="p">:</span><span class="w"> </span><span class="s2">"..."</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"tlsClientAuthSanIp"</span><span class="p">:</span><span class="w"> </span><span class="s2">"..."</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"tlsClientAuthSanEmail"</span><span class="p">:</span><span class="w"> </span><span class="s2">"..."</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+<p>The following parameters are supported:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Field</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">tlsClientAuthSubjectDn</code></td>
+      <td>The expected subject distinguished name of the certificate that the client will use in mutual-TLS authentication.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">tlsClientAuthSanDns</code></td>
+      <td>The expected dNSName SAN entry in the certificate that the client will use in mutual-TLS authentication.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">tlsClientAuthSanUri</code></td>
+      <td>The expected uniformResourceIdentifier SAN entry in the certificate.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">tlsClientAuthSanIp</code></td>
+      <td>The expected iPAddress SAN entry in the certificate in either for IPv4 or IPv6.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">tlsClientAuthSanEmail</code></td>
+      <td>The expected rfc822Name SAN entry in the certificate.</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Access tokens issued to a client that authenticates with mutual TLS are bound to its certificate, as described
+in <a href="https://www.rfc-editor.org/rfc/rfc8705#section-3">RFC 8705</a>. JWT access tokens and introspection responses carry
+the certificate thumbprint in the <code class="language-plaintext highlighter-rouge">cnf</code> claim as <code class="language-plaintext highlighter-rouge">x5t#S256</code>, the base64url-encoded SHA-256 hash of the DER-encoded certificate.</p>
+
+<h3 id="spiffe">SPIFFE</h3>
+
+<p>CAS supports the SPIFFE standard for mutual TLS client authentication. To use SPIFFE, the client must present a certificate 
+with a URI SAN entry that follows the SPIFFE format, i.e. <code class="language-plaintext highlighter-rouge">spiffe://...</code>. CAS will validate the certificate and 
+extract the client identifier from the SPIFFE URI. The client identifier is then used to locate the service definition.</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+</pre></td>
+<td class="rouge-code"><pre><span class="p">{</span><span class="w">
+  </span><span class="nl">"@class"</span><span class="p">:</span><span class="w"> </span><span class="s2">"org.apereo.cas.services.OidcRegisteredService"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"clientId"</span><span class="p">:</span><span class="w"> </span><span class="s2">"spiffe://example.org/ns/payments/sa/service-sample"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"serviceId"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"^https://localhost:9859/anything/cas.*"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"MyApplication"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"tokenEndpointAuthenticationMethod"</span><span class="p">:</span><span class="w"> </span><span class="s2">"tls_client_auth"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"tlsClientAuthSubjectDn"</span><span class="p">:</span><span class="w"> </span><span class="s2">"(.+)"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"supportedGrantTypes"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="s2">"java.util.HashSet"</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="s2">"client_credentials"</span><span class="w"> </span><span class="p">]</span><span class="w"> </span><span class="p">]</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+<p>An example request with <code class="language-plaintext highlighter-rouge">curl</code> would look like the following:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+</pre></td>
+<td class="rouge-code"><pre>curl <span class="nt">--cert</span> /var/run/secrets/svid.pem <span class="se">\</span>
+     <span class="nt">--key</span> /var/run/secrets/key.pem <span class="se">\</span>
+     <span class="nt">--cacert</span> /var/run/secrets/bundle.pem <span class="se">\</span>
+     <span class="nt">-X</span> POST https://sso.example.org/cas/oidc/token <span class="se">\</span>
+     <span class="nt">-d</span> <span class="s2">"grant_type=client_credentials&amp;scope=xyz"</span>
+</pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+<p>You can verify SPIFFE ID is present in your certificate:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td>
+<td class="rouge-code"><pre>openssl x509 <span class="nt">-in</span> svid.pem <span class="nt">-text</span> <span class="nt">-noout</span>
+</pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+<p>Look for:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+2
+</pre></td>
+<td class="rouge-code"><pre>X509v3 Subject Alternative Name:
+    URI:spiffe://example.org/ns/payments/sa/service-sample
+</pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+            </article>
+            <div class="article-end" aria-hidden="true">
+<span></span><span>CAS</span><span></span>
+</div>
+        </main>
+        
+        <aside class="docs-toc" aria-label="On this page">
+    <nav id="pageContents" aria-label="Table of contents">
+        <p class="eyebrow">ON THIS PAGE</p>
+        <ul class="section-nav"></ul>
+    </nav>
+    <a class="toc-top" href="#cas-docs-container">Back to top <span aria-hidden="true">↑</span></a>
+</aside>
+
+        
+    </div>
+
+    <footer class="site-footer">
+        <a class="footer-brand" href="../../index.html">APEREO <strong>CAS</strong></a>
+        <p>CAS is supported by the <a href="https://www.apereo.org/">Apereo Foundation</a>.</p>
+        <a href="#cas-docs-container">Back to top <span aria-hidden="true">↑</span></a>
+    </footer>
+    <div id="docs-status" class="visually-hidden" role="status" aria-live="polite"></div>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha384-1H217gwSVyLSIfaLxHbE7dRb3v4mYCKbpQvzx0cegeju1MVsGrX5xXxAvs/HgeFs" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.11/clipboard.min.js" integrity="sha384-J08i8An/QeARD9ExYpvphB8BsyOj3Gh2TSh1aLINKO3L0cMSH2dN3E22zFoXEi0Q" crossorigin="anonymous"></script>
+
+    <script src="/cas/javascripts/URI.js"></script>
+    <script src="/cas/javascripts/site.js"></script>
+
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@docsearch/js@3.9.0/dist/umd/index.js" integrity="sha384-QhsjJ84XKaqUeM7eZpvYApdPamFboJLQg4BD2CCCSiUOL4cWzLp5caae6oW/oAXh" crossorigin="anonymous"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js" integrity="sha384-ficRBwtap/VLzILv81vIvgp30PoJYnlCm96tPpNYHXAf+h9SIThOZxxIzRUzbpAh" crossorigin="anonymous"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.5/js/lightbox.min.js" integrity="sha384-bcXRY0im+IjB6RvmBpbgdkqjLV0pCTbaJRJ9IRPeQaWCYlzRn9pPaPmCvONr9h9z" crossorigin="anonymous"></script>
+
+    <script>
+        let pageSection = "Protocols";
+        let siteUrl = "https://apereo.github.io";
+        let basePath = "/cas";
+
+        
+    </script>
+</body>
+
+</html>

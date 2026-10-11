@@ -1,0 +1,2129 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="light dark">
+    
+    
+    
+
+
+
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <meta name="description" content="Device registration records are kept inside a designated configurable multi-valued attribute as JSON blobs. The attribute values are parsed to load, save, up...">
+    <meta name="robots" content="index,follow">
+    <meta name="theme-color" content="#06304a">
+    <link rel="canonical" href="https://apereo.github.io/cas/development/mfa/FIDO2-WebAuthn-Authentication-Registration-LDAP.html">
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="en_US">
+    <meta property="og:site_name" content="Apereo CAS Documentation">
+    <meta property="og:title" content="CAS - LDAP FIDO2 WebAuthn Multifactor Registration">
+    <meta property="og:description" content="Device registration records are kept inside a designated configurable multi-valued attribute as JSON blobs. The attribute values are parsed to load, save, up...">
+    <meta property="og:url" content="https://apereo.github.io/cas/development/mfa/FIDO2-WebAuthn-Authentication-Registration-LDAP.html">
+    <meta property="og:image" content="https://apereo.github.io/cas/images/cas_logo.png">
+    <meta property="og:image:alt" content="Apereo CAS">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="CAS - LDAP FIDO2 WebAuthn Multifactor Registration">
+    <meta name="twitter:description" content="Device registration records are kept inside a designated configurable multi-valued attribute as JSON blobs. The attribute values are parsed to load, save, up...">
+    <meta name="twitter:image" content="https://apereo.github.io/cas/images/cas_logo.png">
+
+    
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "TechArticle",
+      "headline": "LDAP FIDO2 WebAuthn Multifactor Registration",
+      "description": "Device registration records are kept inside a designated configurable multi-valued attribute as JSON blobs. The attribute values are parsed to load, save, up...",
+      "url": "https://apereo.github.io/cas/development/mfa/FIDO2-WebAuthn-Authentication-Registration-LDAP.html",
+      "inLanguage": "en",
+      "isPartOf": {"@type": "WebSite", "name": "Apereo CAS Documentation",
+                   "url": "https://apereo.github.io/cas/"},
+      "author": {"@type": "Organization", "name": "Apereo Foundation", "url": "https://www.apereo.org/"},
+      "publisher": {"@type": "Organization", "name": "Apereo Foundation", "url": "https://www.apereo.org/"}
+    }
+    </script>
+    
+
+    <script>
+        if (window.location.hostname === "apereo.github.io") {
+            window.dataLayer = window.dataLayer || [];
+            window.gtag = function () {
+                window.dataLayer.push(arguments);
+            };
+            window.gtag("js", new Date());
+            window.gtag("config", "G-W3M8JXP7GP");
+            const analytics = document.createElement("script");
+            analytics.async = true;
+            analytics.src = "https://www.googletagmanager.com/gtag/js?id=G-W3M8JXP7GP";
+            document.head.appendChild(analytics);
+        }
+    </script>
+
+    <script>
+        function readThemePreference() {
+            try {
+                return localStorage.getItem('cas-docs-theme') || 'system';
+            } catch (error) {
+                return 'system';
+            }
+        }
+
+        function systemTheme() {
+            return window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+        }
+
+        function resolveTheme(preference) {
+            return preference === 'dark' || preference === 'light' ? preference : systemTheme();
+        }
+
+        function changeTheme(theme) {
+            if (theme !== 'dark' && theme !== 'light') {
+                return;
+            }
+
+            if (document.documentElement.getAttribute('data-bs-theme') !== theme) {
+                document.documentElement.setAttribute('data-bs-theme', theme);
+            }
+        }
+
+        (() => {
+            let preference = readThemePreference();
+            if (preference !== 'dark' && preference !== 'light') {
+                preference = 'system';
+
+            }
+
+            changeTheme(resolveTheme(preference));
+
+            if (window.matchMedia) {
+                window.matchMedia('(prefers-color-scheme: light)').addEventListener('change', () => {
+                    if (readThemePreference() !== 'system') {
+                        return;
+                    }
+                    const theme = systemTheme();
+                    changeTheme(theme);
+                });
+            }
+        })();
+    </script>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.2/css/all.min.css" integrity="sha384-PPIZEGYM1v8zp5Py7UjFb79S58UeqCL9pYVnVPURKEqvioPROaVAJKKLzvH2rDnI" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@docsearch/css@3.9.0/dist/style.css" integrity="sha384-cHiDHRyv+KTDBfpMqc3t2SeQYjfK05cReQA49eigiKoBzOMi9WIFsBsNfetC5n2a" crossorigin="anonymous"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.5/css/lightbox.min.css" integrity="sha384-9623XJODy0qDAl6X6Y9xTBSzYUxM0ixdjO8zqJQeGzDP2Uwo1PqAOq6gXkk2ul99" crossorigin="anonymous" />
+    
+    
+    <link rel="stylesheet" type="text/css" media="screen" href='/cas/stylesheets/site.css'>
+    <link rel="stylesheet" type="text/css" media="print" href='/cas/stylesheets/site-print.css'>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400..800;1,9..40,400..500&family=Bricolage+Grotesque:opsz,wght@12..96,400..800&display=swap" rel="stylesheet">
+    <link href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css" rel="stylesheet" integrity="sha384-yT2pwyD9a3Oee/HtjWTccnRmchDWH2EDHjzH7gwf8yAK0RilKFL164FCHX9fzlxh" crossorigin="anonymous">
+
+    <title>CAS - LDAP FIDO2 WebAuthn Multifactor Registration · Apereo CAS Documentation</title>
+
+</head>
+
+<body class="" data-docs-base="/cas" data-docs-version="development" data-docs-build="20261011002700">
+    <a class="skip-link" href="#cas-docs-container">Skip to content</a>
+    <header class="site-header">
+        <div class="masthead">
+            <a class="cas-brand" href="../../index.html" aria-label="Apereo CAS home">
+                <img class="brand-logo" src="/cas/images/cas_logo.png" width="119" height="60" alt="CAS">
+                <span class="brand-caption">APEREO CAS<span>Documentation</span></span>
+            </a>
+            <div class="brand-mission">
+                <p>Enterprise Authentication <span class="brand-mission-accent">for All Earthlings and Beyond</span></p>
+                <span>Identity, Single Sign-On and Access Management</span>
+            </div>
+            <a id="forkme_banner" aria-label="View CAS on GitHub" href="https://github.com/apereo/cas"><i class="fab fa-github" aria-hidden="true"></i><span>View on GitHub</span><span aria-hidden="true">↗</span></a>
+        </div>
+        <div class="navigation-bar">
+            
+            <button onclick="navigateSidebar()" id="sidebarNavButton" class="icon-button" type="button" aria-controls="sidebar" aria-expanded="true" aria-label="Toggle documentation navigation" title="Toggle documentation navigation">
+                <i class="fa fa-bars" aria-hidden="true"></i>
+            </button>
+            
+            <nav class="primary-navigation" aria-label="Main navigation">
+                <a href="../../index.html">Home</a>
+                <a href="https://github.com/apereo/cas/releases">Releases</a>
+                <a href="../../Support.html">Support</a>
+                <a href="../../Mailing-Lists.html">Mailing Lists</a>
+                <div class="dropdown">
+                    <button class="dropdown-toggle" type="button" id="cas-versions" data-bs-toggle="dropdown" aria-expanded="false">Versions</button>
+                    <div class="dropdown-menu" aria-labelledby="cas-versions">
+                        
+                        
+                        
+                        
+                        <a class="dropdown-item cas-version-link" href="/cas/development/mfa/FIDO2-WebAuthn-Authentication-Registration-LDAP.html" data-version-home="/cas/development/">Development</a>
+                        
+                        
+                        
+                        
+                        <a class="dropdown-item cas-version-link" href="/cas/8.0.x/mfa/FIDO2-WebAuthn-Authentication-Registration-LDAP.html" data-version-home="/cas/8.0.x/">v8.0.x</a>
+                        
+                        
+                        
+                        
+                        <a class="dropdown-item cas-version-link" href="/cas/7.3.x/mfa/FIDO2-WebAuthn-Authentication-Registration-LDAP.html" data-version-home="/cas/7.3.x/">v7.3.x</a>
+                        
+                    </div>
+                </div>
+                <a href="https://apereo.github.io" target="_blank" rel="noopener">Blog <span aria-hidden="true">↗</span><span class="visually-hidden"> (opens in a new tab)</span></a>
+            </nav>
+            <div class="navigation-tools">
+                <div id="searchField"></div>
+                <button id="settingsSearchButton" class="icon-button" type="button" aria-label="Search configuration settings (press Shift twice)" title="Search configuration settings (Shift Shift)"><i class="fa fa-sliders" aria-hidden="true"></i></button>
+                <button id="themeToggle" class="icon-button" type="button" onclick="toggleDarkMode()" aria-label="Toggle color theme" title="Toggle color theme"><i class="fa fa-circle-half-stroke" aria-hidden="true"></i></button>
+            </div>
+        </div>
+        <div class="reading-progress" aria-hidden="true"><span id="readingProgress"></span></div>
+    </header>
+
+    <div class="docs-shell">
+        
+        <aside id="sidebar" class="docs-sidebar" aria-label="Documentation navigation">
+    <div class="sidebar-heading">
+<span class="eyebrow">APEREO CAS DOCUMENTATION</span><span class="sidebar-symbol" aria-hidden="true">✳</span>
+</div>
+    <nav id="sidebar-navigation" aria-label="Documentation topics"></nav>
+    <noscript><p>Browse the <a href="/cas/development/sidebar.html">documentation index</a>.</p></noscript>
+</aside>
+
+        
+        <main class="cas-docs-content">
+            
+            <div class="page-toolbar">
+                <nav id="docsNavBar" aria-label="Breadcrumb"></nav>
+                <div id="toolbarIcons" role="group" aria-label="Page tools"></div>
+            </div>
+            
+            
+            <aside id="dev-doc-info" aria-labelledby="dev-doc-title">
+                <span class="development-marker" aria-hidden="true"></span>
+                <div>
+                    <p id="dev-doc-title">WORKERS AHEAD!</p>
+                    <p class="dev-doc-summary">Development documentation for features that are
+                        <a href="https://github.com/apereo/cas/milestones">not released yet</a>.</p>
+                    <p class="dev-doc-details">You are viewing the <strong>development</strong> documentation for the Apereo CAS server. <strong>The
+                        functionality presented here <a href="https://github.com/apereo/cas/milestones">is not officially released yet</a></strong>.
+                        This is a work in progress and will be continually updated as development moves forward.
+                        <strong>You are most encouraged to test the changes presented.</strong>
+                    </p>
+                </div>
+            </aside>
+            
+            <article id="cas-docs-container" tabindex="-1">
+                
+<h1 id="ldap-fido2-webauthn-multifactor-registration">LDAP FIDO2 WebAuthn Multifactor Registration</h1>
+
+<p>Device registrations may be kept inside LDAP directories by including the following module in the WAR overlay:</p>
+
+<div style="display: block">
+
+    <div class="cas-module-controls nav-pills">
+        <ul class="nav cas-modules" role="tablist" aria-label="Dependency format">
+            <li class="nav-item cas-module" role="presentation"><a class="nav-link" id="mavenorgapereocascasserversupportwebauthnldap-tab" data-bs-toggle="tab" href="#mavenorgapereocascasserversupportwebauthnldap" role="tab" aria-controls="mavenorgapereocascasserversupportwebauthnldap" aria-selected="false">Apache Maven</a></li>
+            <li class="nav-item cas-module" role="presentation"><a class="nav-link" id="gradleorgapereocascasserversupportwebauthnldap-tab" data-bs-toggle="tab" href="#gradleorgapereocascasserversupportwebauthnldap" role="tab" aria-controls="gradleorgapereocascasserversupportwebauthnldap" aria-selected="false">Gradle</a></li>
+<li class="nav-item cas-module" role="presentation"><a class="nav-link" id="bomorgapereocascasserversupportwebauthnldap-tab" data-bs-toggle="tab" href="#bomorgapereocascasserversupportwebauthnldap" role="tab" aria-controls="bomorgapereocascasserversupportwebauthnldap" aria-selected="false">BOM - Spring</a></li>
+            <li class="nav-item cas-module" role="presentation"><a class="nav-link active" id="bomGradleorgapereocascasserversupportwebauthnldap-tab" data-bs-toggle="tab" href="#bomGradleorgapereocascasserversupportwebauthnldap" role="tab" aria-controls="bomGradleorgapereocascasserversupportwebauthnldap" aria-selected="true">BOM - Gradle</a></li>
+</ul>
+        <div class="dropdown cas-module">
+            <button class="nav-link dropdown-toggle" data-bs-toggle="dropdown" type="button" aria-expanded="false">Resources<span class="caret"></span>
+            </button>
+            <div class="dropdown-menu">
+                <a class="dropdown-item" href="https://getcas.apereo.org?dependencies=webapp-tomcat,support-webauthn-ldap" target="_blank" rel="noopener">Show in CAS Initializr <span aria-hidden="true">↗</span><span class="visually-hidden"> (opens in a new tab)</span></a>
+                <a class="dropdown-item" href="javascript:generateOverlay('cas-server-support-webauthn-ldap',%20'cas-overlay');">Generate CAS Server WAR Overlay</a>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="cas-module-tabs tab-content clearfix">
+        <div class="tab-pane fade" id="mavenorgapereocascasserversupportwebauthnldap" role="tabpanel" aria-labelledby="mavenorgapereocascasserversupportwebauthnldap-tab">
+<span>
+      <div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+</pre></td>
+<td class="rouge-code"><pre><span class="nt">&lt;dependency&gt;</span>
+    <span class="nt">&lt;groupId&gt;</span>org.apereo.cas<span class="nt">&lt;/groupId&gt;</span>
+    <span class="nt">&lt;artifactId&gt;</span>cas-server-support-webauthn-ldap<span class="nt">&lt;/artifactId&gt;</span>
+    <span class="nt">&lt;version&gt;</span>${cas.version}<span class="nt">&lt;/version&gt;</span>
+<span class="nt">&lt;/dependency&gt;</span>
+</pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+    </span>
+
+        </div>
+
+
+        <div class="tab-pane fade" id="gradleorgapereocascasserversupportwebauthnldap" role="tabpanel" aria-labelledby="gradleorgapereocascasserversupportwebauthnldap-tab">
+
+            <span>
+    
+<div class="language-groovy highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td>
+<td class="rouge-code"><pre><span class="n">implementation</span> <span class="s2">"org.apereo.cas:cas-server-support-webauthn-ldap:${project.'cas.version'}"</span>
+</pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+  </span>
+
+        </div>
+
+        <div class="tab-pane fade" id="bomorgapereocascasserversupportwebauthnldap" role="tabpanel" aria-labelledby="bomorgapereocascasserversupportwebauthnldap-tab">
+<span>
+    <div class="language-groovy highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+</pre></td>
+<td class="rouge-code"><pre><span class="n">dependencyManagement</span> <span class="o">{</span>
+    <span class="n">imports</span> <span class="o">{</span>
+        <span class="n">mavenBom</span> <span class="s2">"org.apereo.cas:cas-server-support-bom:${project.'cas.version'}"</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+
+<span class="n">dependencies</span> <span class="o">{</span>
+    <span class="n">implementation</span> <span class="s2">"org.apereo.cas:cas-server-support-webauthn-ldap"</span>
+<span class="o">}</span>
+</pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+  </span>
+
+        </div>
+
+        <div class="tab-pane fade show active" id="bomGradleorgapereocascasserversupportwebauthnldap" role="tabpanel" aria-labelledby="bomGradleorgapereocascasserversupportwebauthnldap-tab">
+<span>
+    <div class="language-groovy highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+</pre></td>
+<td class="rouge-code"><pre><span class="n">dependencies</span> <span class="o">{</span>
+    <span class="cm">/*
+        The following platform references are included automatically and are listed for reference only.
+
+        implementation enforcedPlatform("org.apereo.cas:cas-server-support-bom:${project.'cas.version'}")
+        implementation platform(org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES)
+        
+    */</span>
+    <span class="n">implementation</span> <span class="s2">"org.apereo.cas:cas-server-support-webauthn-ldap"</span>
+<span class="o">}</span>
+</pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+  </span>
+
+        </div>
+
+    </div>
+
+</div>
+
+<p>Device registration records are kept inside a designated configurable multi-valued 
+attribute as JSON blobs. The attribute values are parsed
+to load, save, update or delete accounts. The content of each attribute
+value can be signed/encrypted if necessary.</p>
+
+<!-- fragment:keep -->
+
+<p>The following settings and properties are available from the CAS configuration catalog:</p>
+
+
+<div class="cas-properties">
+    <div class="cas-properties-list">
+<div class="cas-property" data-kind="required" data-name="cas.authn.mfa.web-authn.ldap.account-attribute-name" data-default="casWebAuthnRecord">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.mfa.web-authn.ldap.account-attribute-name</code><span class="cas-property-summary">Name of LDAP attribute that holds WebAuthn account/credential as JSON.</span>
+</div>
+        <div class="cas-property-default"><code>casWebAuthnRecord</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-required"><i class="fa fa-asterisk" aria-hidden="true"></i>Required</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Name of LDAP attribute that holds WebAuthn account/credential as JSON.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><code>casWebAuthnRecord</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.mfa.webauthn.WebAuthnLdapMultifactorProperties">WebAuthnLdapMultifactorProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="required" data-name="cas.authn.mfa.web-authn.ldap.base-dn" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.mfa.web-authn.ldap.base-dn</code><span class="cas-property-summary">Base DN to use.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-required"><i class="fa fa-asterisk" aria-hidden="true"></i>Required</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Base DN to use. There may be scenarios where different parts of a single LDAP tree could be considered as base-dns. Rather than duplicating the LDAP configuration block for each individual base-dn, each entry can be specified and joined together using a special delimiter character. The user DN is retrieved using the combination of all base-dn and DN resolvers in the order defined. DN resolution should fail if multiple DNs are found. Otherwise the first DN found is returned. Usual syntax is: <code>subtreeA,dc=example,dc=net|subtreeC,dc=example,dc=net</code>.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.mfa.webauthn.WebAuthnLdapMultifactorProperties">WebAuthnLdapMultifactorProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="required" data-name="cas.authn.mfa.web-authn.ldap.bind-credential" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.mfa.web-authn.ldap.bind-credential</code><span class="cas-property-summary">The bind credential to use when connecting to LDAP.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-required"><i class="fa fa-asterisk" aria-hidden="true"></i>Required</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>The bind credential to use when connecting to LDAP.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.mfa.webauthn.WebAuthnLdapMultifactorProperties">WebAuthnLdapMultifactorProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="required" data-name="cas.authn.mfa.web-authn.ldap.bind-dn" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.mfa.web-authn.ldap.bind-dn</code><span class="cas-property-summary">The bind DN to use when connecting to LDAP.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-required"><i class="fa fa-asterisk" aria-hidden="true"></i>Required</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><div>The bind DN to use when connecting to LDAP. LDAP connection configuration injected into the LDAP connection pool can be initialized with the following parameters: <ul> <li>
+<code>bindDn/bindCredential</code> provided - Use the provided credentials to bind when initializing connections.</li>
+<li>
+<code>bindDn/bindCredential</code> set to <code>*</code> - Use a fast-bind strategy to initialize the pool.</li>
+<li>
+<code>bindDn/bindCredential</code> set to blank - Skip connection initializing; perform operations anonymously.</li>
+<li>SASL mechanism provided - Use the given SASL mechanism to bind when initializing connections.</li>
+</ul>
+</div></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.mfa.webauthn.WebAuthnLdapMultifactorProperties">WebAuthnLdapMultifactorProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="required" data-name="cas.authn.mfa.web-authn.ldap.ldap-url" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.mfa.web-authn.ldap.ldap-url</code><span class="cas-property-summary">The LDAP url to the server.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-required"><i class="fa fa-asterisk" aria-hidden="true"></i>Required</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>The LDAP url to the server. More than one may be specified, separated by space and/or comma.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.mfa.webauthn.WebAuthnLdapMultifactorProperties">WebAuthnLdapMultifactorProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="required" data-name="cas.authn.mfa.web-authn.ldap.search-filter" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.mfa.web-authn.ldap.search-filter</code><span class="cas-property-summary">User filter to use for searching.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-required"><i class="fa fa-asterisk" aria-hidden="true"></i>Required</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description">
+<p>User filter to use for searching. Syntax is <code>cn={user}</code> or <code>cn={0}</code>.</p>
+<p>You may also provide an external groovy script in the syntax of <code>file:/path/to/GroovyScript.groovy</code> to fully build the final filter template dynamically.</p>
+</div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.mfa.webauthn.WebAuthnLdapMultifactorProperties">WebAuthnLdapMultifactorProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.authn.mfa.web-authn.ldap.allow-multiple-dns" data-default="false">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.mfa.web-authn.ldap.allow-multiple-dns</code><span class="cas-property-summary">Whether search/query results are allowed to match on multiple DNs, or whether a single unique DN is expected for the result.</span>
+</div>
+        <div class="cas-property-default"><code>false</code></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Whether search/query results are allowed to match on multiple DNs, or whether a single unique DN is expected for the result.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Boolean</code></dd>
+<dt>Default</dt>
+<dd><code>false</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.mfa.webauthn.WebAuthnLdapMultifactorProperties">WebAuthnLdapMultifactorProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.authn.mfa.web-authn.ldap.allow-multiple-entries" data-default="false">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.mfa.web-authn.ldap.allow-multiple-entries</code><span class="cas-property-summary">Set if multiple Entries are allowed.</span>
+</div>
+        <div class="cas-property-default"><code>false</code></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Set if multiple Entries are allowed.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Boolean</code></dd>
+<dt>Default</dt>
+<dd><code>false</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.mfa.webauthn.WebAuthnLdapMultifactorProperties">WebAuthnLdapMultifactorProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.authn.mfa.web-authn.ldap.binary-attributes" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.mfa.web-authn.ldap.binary-attributes</code><span class="cas-property-summary">Indicate the collection of attributes that are to be tagged and processed as binary attributes by the underlying search resolver.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Indicate the collection of attributes that are to be tagged and processed as binary attributes by the underlying search resolver.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>List&lt;String&gt;</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.mfa.webauthn.WebAuthnLdapMultifactorProperties">WebAuthnLdapMultifactorProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.authn.mfa.web-authn.ldap.block-wait-time" data-default="PT3S" data-duration>
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.mfa.web-authn.ldap.block-wait-time</code><span class="cas-property-summary">The length of time the pool will block.</span>
+</div>
+        <div class="cas-property-default"><code>PT3S</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag"><i class="fa fa-clock" aria-hidden="true"></i>Duration</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>The length of time the pool will block. By default the pool will block indefinitely and there is no guarantee that waiting threads will be serviced in the order in which they made their request. This option should be used with a blocking connection pool when you need to control the exact number of connections that can be created</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><code>PT3S</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.mfa.webauthn.WebAuthnLdapMultifactorProperties">WebAuthnLdapMultifactorProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.authn.mfa.web-authn.ldap.connect-timeout" data-default="PT5S" data-duration>
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.mfa.web-authn.ldap.connect-timeout</code><span class="cas-property-summary">Sets the maximum amount of time that connects will block.</span>
+</div>
+        <div class="cas-property-default"><code>PT5S</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag"><i class="fa fa-clock" aria-hidden="true"></i>Duration</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Sets the maximum amount of time that connects will block.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><code>PT5S</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.mfa.webauthn.WebAuthnLdapMultifactorProperties">WebAuthnLdapMultifactorProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.authn.mfa.web-authn.ldap.connection-strategy" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.mfa.web-authn.ldap.connection-strategy</code><span class="cas-property-summary">If multiple URLs are provided as the ldapURL this describes how each URL will be processed.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><div>If multiple URLs are provided as the ldapURL this describes how each URL will be processed. <ul> <li>
+<code>ACTIVE_PASSIVE</code> First LDAP will be used for every request unless it fails and then the next shall be used.</li>
+<li>
+<code>ROUND_ROBIN</code> For each new connection the next url in the list will be used.</li>
+<li>
+<code>RANDOM</code> For each new connection a random LDAP url will be selected.</li>
+<li>
+<code>DNS_SRV</code> LDAP urls based on DNS SRV records of the configured/given LDAP url will be used.</li>
+</ul>
+</div></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.mfa.webauthn.WebAuthnLdapMultifactorProperties">WebAuthnLdapMultifactorProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.authn.mfa.web-authn.ldap.disable-pooling" data-default="false">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.mfa.web-authn.ldap.disable-pooling</code><span class="cas-property-summary">Whether to use a pooled connection factory in components.</span>
+</div>
+        <div class="cas-property-default"><code>false</code></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Whether to use a pooled connection factory in components.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Boolean</code></dd>
+<dt>Default</dt>
+<dd><code>false</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.mfa.webauthn.WebAuthnLdapMultifactorProperties">WebAuthnLdapMultifactorProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.authn.mfa.web-authn.ldap.fail-fast" data-default="true">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.mfa.web-authn.ldap.fail-fast</code><span class="cas-property-summary">Attempt to populate the connection pool early on startup and fail quickly if something goes wrong.</span>
+</div>
+        <div class="cas-property-default"><code>true</code></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Attempt to populate the connection pool early on startup and fail quickly if something goes wrong.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Boolean</code></dd>
+<dt>Default</dt>
+<dd><code>true</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.mfa.webauthn.WebAuthnLdapMultifactorProperties">WebAuthnLdapMultifactorProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.authn.mfa.web-authn.ldap.follow-referrals" data-default="true">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.mfa.web-authn.ldap.follow-referrals</code><span class="cas-property-summary">Set if search referrals should be followed.</span>
+</div>
+        <div class="cas-property-default"><code>true</code></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Set if search referrals should be followed.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Boolean</code></dd>
+<dt>Default</dt>
+<dd><code>true</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.mfa.webauthn.WebAuthnLdapMultifactorProperties">WebAuthnLdapMultifactorProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.authn.mfa.web-authn.ldap.hostname-verifier" data-default="DEFAULT">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.mfa.web-authn.ldap.hostname-verifier</code><span class="cas-property-summary">Hostname verification options.</span>
+</div>
+        <div class="cas-property-default"><code>DEFAULT</code></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><div>Hostname verification options. Available values are as follows: <ul>
+<li>
+<code>DEFAULT</code>: Default option, forcing verification.</li>
+<li>
+<code>ANY</code>: Skip hostname verification and allow all.</li>
+</ul>
+</div></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>AbstractLdapProperties.LdapHostnameVerifierOptions</code></dd>
+<dt>Default</dt>
+<dd><code>DEFAULT</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.mfa.webauthn.WebAuthnLdapMultifactorProperties">WebAuthnLdapMultifactorProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.authn.mfa.web-authn.ldap.idle-time" data-default="PT10M" data-duration>
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.mfa.web-authn.ldap.idle-time</code><span class="cas-property-summary">Removes connections from the pool based on how long they have been idle in the available queue.</span>
+</div>
+        <div class="cas-property-default"><code>PT10M</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag"><i class="fa fa-clock" aria-hidden="true"></i>Duration</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Removes connections from the pool based on how long they have been idle in the available queue. Prunes connections that have been idle for more than the indicated amount.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><code>PT10M</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.mfa.webauthn.WebAuthnLdapMultifactorProperties">WebAuthnLdapMultifactorProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.authn.mfa.web-authn.ldap.keystore" data-default="" data-spel>
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.mfa.web-authn.ldap.keystore</code><span class="cas-property-summary">Path to the keystore used for SSL connections.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag"><i class="fa fa-code" aria-hidden="true"></i>SpEL</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Path to the keystore used for SSL connections. Typically contains SSL certificates for the LDAP server.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.mfa.webauthn.WebAuthnLdapMultifactorProperties">WebAuthnLdapMultifactorProperties</code></dd>
+<dt>Supports</dt>
+<dd><a href="/cas/development/configuration/Configuration-Spring-Expressions.html">Spring Expression Language</a></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.authn.mfa.web-authn.ldap.keystore-password" data-default="" data-spel>
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.mfa.web-authn.ldap.keystore-password</code><span class="cas-property-summary">Keystore password.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag"><i class="fa fa-code" aria-hidden="true"></i>SpEL</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Keystore password.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.mfa.webauthn.WebAuthnLdapMultifactorProperties">WebAuthnLdapMultifactorProperties</code></dd>
+<dt>Supports</dt>
+<dd><a href="/cas/development/configuration/Configuration-Spring-Expressions.html">Spring Expression Language</a></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.authn.mfa.web-authn.ldap.keystore-type" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.mfa.web-authn.ldap.keystore-type</code><span class="cas-property-summary">The type of keystore.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>The type of keystore. <code>PKCS12</code> or <code>JKS</code>. If left blank, defaults to the default keystore type indicated by the underlying Java platform.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.mfa.webauthn.WebAuthnLdapMultifactorProperties">WebAuthnLdapMultifactorProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.authn.mfa.web-authn.ldap.max-pool-size" data-default="10">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.mfa.web-authn.ldap.max-pool-size</code><span class="cas-property-summary">Maximum LDAP connection pool size which the pool can use to grow.</span>
+</div>
+        <div class="cas-property-default"><code>10</code></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Maximum LDAP connection pool size which the pool can use to grow.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Integer</code></dd>
+<dt>Default</dt>
+<dd><code>10</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.mfa.webauthn.WebAuthnLdapMultifactorProperties">WebAuthnLdapMultifactorProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.authn.mfa.web-authn.ldap.min-pool-size" data-default="3">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.mfa.web-authn.ldap.min-pool-size</code><span class="cas-property-summary">Minimum LDAP connection pool size.</span>
+</div>
+        <div class="cas-property-default"><code>3</code></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Minimum LDAP connection pool size. Size the pool should be initialized to and pruned to</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Integer</code></dd>
+<dt>Default</dt>
+<dd><code>3</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.mfa.webauthn.WebAuthnLdapMultifactorProperties">WebAuthnLdapMultifactorProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.authn.mfa.web-authn.ldap.name" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.mfa.web-authn.ldap.name</code><span class="cas-property-summary">Name of the LDAP handler.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Name of the LDAP handler.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.mfa.webauthn.WebAuthnLdapMultifactorProperties">WebAuthnLdapMultifactorProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.authn.mfa.web-authn.ldap.page-size" data-default="0">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.mfa.web-authn.ldap.page-size</code><span class="cas-property-summary">Request that the server return results in batches of a specific size.</span>
+</div>
+        <div class="cas-property-default"><code>0</code></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Request that the server return results in batches of a specific size. See <a href="http://www.ietf.org/rfc/rfc2696.txt">RFC 2696</a>. This control is often used to work around server result size limits. A negative/zero value disables paged requests.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Integer</code></dd>
+<dt>Default</dt>
+<dd><code>0</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.mfa.webauthn.WebAuthnLdapMultifactorProperties">WebAuthnLdapMultifactorProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.authn.mfa.web-authn.ldap.pool-passivator" data-default="BIND">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.mfa.web-authn.ldap.pool-passivator</code><span class="cas-property-summary">You may receive unexpected LDAP failures, when CAS is configured to authenticate using DIRECT or AUTHENTICATED types and LDAP is locked down to not allow anonymous binds/searches.</span>
+</div>
+        <div class="cas-property-default"><code>BIND</code></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><div>You may receive unexpected LDAP failures, when CAS is configured to authenticate using <code>DIRECT</code> or <code>AUTHENTICATED</code> types and LDAP is locked down to not allow anonymous binds/searches. Every second attempt with a given LDAP connection from the pool would fail if it was on the same connection as a failed login attempt, and the regular connection validator would similarly fail. When a connection is returned back to a pool, it still may contain the principal and credentials from the previous attempt. Before the next bind attempt using that connection, the validator tries to validate the connection again but fails because it’s no longer trying with the configured bind credentials but with whatever user DN was used in the previous step. Given the validation failure, the connection is closed and CAS would deny access by default. Passivators attempt to reconnect to LDAP with the configured bind credentials, effectively resetting the connection to what it should be after each bind request. Furthermore if you are seeing errors in the logs that resemble a 'Operation exception encountered, reopening connection' type of message, this usually is an indication that the connection pool’s validation timeout established and created by CAS is greater than the timeout configured in the LDAP server, or more likely, in the load balancer in front of the LDAP servers. You can adjust the LDAP server session’s timeout for connections, or you can teach CAS to use a validity period that is equal or less than the LDAP server session’s timeout. Accepted values are: <ul> <li>
+<code>NONE</code>: No passivation takes place.</li>
+<li>
+<code>BIND</code>: The default behavior which passivates a connection by performing a bind operation on it. This option requires the availability of bind credentials when establishing connections to LDAP.</li>
+</ul>
+</div></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><code>BIND</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.mfa.webauthn.WebAuthnLdapMultifactorProperties">WebAuthnLdapMultifactorProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.authn.mfa.web-authn.ldap.prune-period" data-default="PT2H" data-duration>
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.mfa.web-authn.ldap.prune-period</code><span class="cas-property-summary">Removes connections from the pool based on how long they have been idle in the available queue.</span>
+</div>
+        <div class="cas-property-default"><code>PT2H</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag"><i class="fa fa-clock" aria-hidden="true"></i>Duration</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Removes connections from the pool based on how long they have been idle in the available queue. Run the pruning process at the indicated interval.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><code>PT2H</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.mfa.webauthn.WebAuthnLdapMultifactorProperties">WebAuthnLdapMultifactorProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.authn.mfa.web-authn.ldap.response-timeout" data-default="PT5S" data-duration>
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.mfa.web-authn.ldap.response-timeout</code><span class="cas-property-summary">Duration of time to wait for responses.</span>
+</div>
+        <div class="cas-property-default"><code>PT5S</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag"><i class="fa fa-clock" aria-hidden="true"></i>Duration</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Duration of time to wait for responses.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><code>PT5S</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.mfa.webauthn.WebAuthnLdapMultifactorProperties">WebAuthnLdapMultifactorProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.authn.mfa.web-authn.ldap.sasl-authorization-id" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.mfa.web-authn.ldap.sasl-authorization-id</code><span class="cas-property-summary">SASL authorization id.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>SASL authorization id.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.mfa.webauthn.WebAuthnLdapMultifactorProperties">WebAuthnLdapMultifactorProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.authn.mfa.web-authn.ldap.sasl-mechanism" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.mfa.web-authn.ldap.sasl-mechanism</code><span class="cas-property-summary">The SASL mechanism.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>The SASL mechanism.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.mfa.webauthn.WebAuthnLdapMultifactorProperties">WebAuthnLdapMultifactorProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.authn.mfa.web-authn.ldap.sasl-mutual-auth" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.mfa.web-authn.ldap.sasl-mutual-auth</code><span class="cas-property-summary">Whether SASL mutual authentication is enabled.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Whether SASL mutual authentication is enabled.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Boolean</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.mfa.webauthn.WebAuthnLdapMultifactorProperties">WebAuthnLdapMultifactorProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.authn.mfa.web-authn.ldap.sasl-quality-of-protection" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.mfa.web-authn.ldap.sasl-quality-of-protection</code><span class="cas-property-summary">SASL quality of protected.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>SASL quality of protected.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.mfa.webauthn.WebAuthnLdapMultifactorProperties">WebAuthnLdapMultifactorProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.authn.mfa.web-authn.ldap.sasl-realm" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.mfa.web-authn.ldap.sasl-realm</code><span class="cas-property-summary">The SASL realm.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>The SASL realm.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.mfa.webauthn.WebAuthnLdapMultifactorProperties">WebAuthnLdapMultifactorProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.authn.mfa.web-authn.ldap.sasl-security-strength" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.mfa.web-authn.ldap.sasl-security-strength</code><span class="cas-property-summary">SASL security strength.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>SASL security strength.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.mfa.webauthn.WebAuthnLdapMultifactorProperties">WebAuthnLdapMultifactorProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.authn.mfa.web-authn.ldap.search-entry-handlers" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.mfa.web-authn.ldap.search-entry-handlers</code><span class="cas-property-summary">Search handlers.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Search handlers.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>List&lt;LdapSearchEntryHandlersProperties&gt;</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.mfa.webauthn.WebAuthnLdapMultifactorProperties">WebAuthnLdapMultifactorProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.authn.mfa.web-authn.ldap.search-entry-handlers[0].case-change.attribute-name-case-change" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.mfa.web-authn.ldap.search-entry-handlers[0].case-change.attribute-name-case-change</code><span class="cas-property-summary">The Attribute name case change.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>The Attribute name case change.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.ldap.CaseChangeSearchEntryHandlersProperties">CaseChangeSearchEntryHandlersProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.authn.mfa.web-authn.ldap.search-entry-handlers[0].case-change.attribute-names" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.mfa.web-authn.ldap.search-entry-handlers[0].case-change.attribute-names</code><span class="cas-property-summary">The Attribute names.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>The Attribute names.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>List&lt;String&gt;</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.ldap.CaseChangeSearchEntryHandlersProperties">CaseChangeSearchEntryHandlersProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.authn.mfa.web-authn.ldap.search-entry-handlers[0].case-change.attribute-value-case-change" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.mfa.web-authn.ldap.search-entry-handlers[0].case-change.attribute-value-case-change</code><span class="cas-property-summary">The Attribute value case change.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>The Attribute value case change.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.ldap.CaseChangeSearchEntryHandlersProperties">CaseChangeSearchEntryHandlersProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.authn.mfa.web-authn.ldap.search-entry-handlers[0].case-change.dn-case-change" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.mfa.web-authn.ldap.search-entry-handlers[0].case-change.dn-case-change</code><span class="cas-property-summary">The Dn case change.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>The Dn case change.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.ldap.CaseChangeSearchEntryHandlersProperties">CaseChangeSearchEntryHandlersProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.authn.mfa.web-authn.ldap.search-entry-handlers[0].dn-attribute.add-if-exists" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.mfa.web-authn.ldap.search-entry-handlers[0].dn-attribute.add-if-exists</code><span class="cas-property-summary">The Add if exists.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>The Add if exists.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>boolean</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.ldap.DnAttributeSearchEntryHandlersProperties">DnAttributeSearchEntryHandlersProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.authn.mfa.web-authn.ldap.search-entry-handlers[0].dn-attribute.dn-attribute-name" data-default="entryDN">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.mfa.web-authn.ldap.search-entry-handlers[0].dn-attribute.dn-attribute-name</code><span class="cas-property-summary">The Dn attribute name.</span>
+</div>
+        <div class="cas-property-default"><code>entryDN</code></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>The Dn attribute name.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><code>entryDN</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.ldap.DnAttributeSearchEntryHandlersProperties">DnAttributeSearchEntryHandlersProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.authn.mfa.web-authn.ldap.search-entry-handlers[0].merge-attribute.attribute-names" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.mfa.web-authn.ldap.search-entry-handlers[0].merge-attribute.attribute-names</code><span class="cas-property-summary">The Attribute names.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>The Attribute names.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>List&lt;String&gt;</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.ldap.MergeAttributesSearchEntryHandlersProperties">MergeAttributesSearchEntryHandlersProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.authn.mfa.web-authn.ldap.search-entry-handlers[0].merge-attribute.merge-attribute-name" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.mfa.web-authn.ldap.search-entry-handlers[0].merge-attribute.merge-attribute-name</code><span class="cas-property-summary">The Merge attribute name.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>The Merge attribute name.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.ldap.MergeAttributesSearchEntryHandlersProperties">MergeAttributesSearchEntryHandlersProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.authn.mfa.web-authn.ldap.search-entry-handlers[0].primary-group-id.base-dn" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.mfa.web-authn.ldap.search-entry-handlers[0].primary-group-id.base-dn</code><span class="cas-property-summary">The Base dn.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>The Base dn.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.ldap.PrimaryGroupIdSearchEntryHandlersProperties">PrimaryGroupIdSearchEntryHandlersProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.authn.mfa.web-authn.ldap.search-entry-handlers[0].primary-group-id.group-filter" data-default="(&amp;(objectClass=group)(objectSid={0}))">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.mfa.web-authn.ldap.search-entry-handlers[0].primary-group-id.group-filter</code><span class="cas-property-summary">The Group filter.</span>
+</div>
+        <div class="cas-property-default"><code>(&amp;(objectClass=group)(objectSid={0}))</code></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>The Group filter.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><code>(&amp;(objectClass=group)(objectSid={0}))</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.ldap.PrimaryGroupIdSearchEntryHandlersProperties">PrimaryGroupIdSearchEntryHandlersProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.authn.mfa.web-authn.ldap.search-entry-handlers[0].recursive.merge-attributes" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.mfa.web-authn.ldap.search-entry-handlers[0].recursive.merge-attributes</code><span class="cas-property-summary">The Merge attributes.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>The Merge attributes.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>List&lt;String&gt;</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.ldap.RecursiveSearchEntryHandlersProperties">RecursiveSearchEntryHandlersProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.authn.mfa.web-authn.ldap.search-entry-handlers[0].recursive.search-attribute" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.mfa.web-authn.ldap.search-entry-handlers[0].recursive.search-attribute</code><span class="cas-property-summary">The Search attribute.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>The Search attribute.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.ldap.RecursiveSearchEntryHandlersProperties">RecursiveSearchEntryHandlersProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.authn.mfa.web-authn.ldap.search-entry-handlers[0].search-referral.limit" data-default="10">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.mfa.web-authn.ldap.search-entry-handlers[0].search-referral.limit</code><span class="cas-property-summary">The default referral limit.</span>
+</div>
+        <div class="cas-property-default"><code>10</code></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>The default referral limit.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>int</code></dd>
+<dt>Default</dt>
+<dd><code>10</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.ldap.FollowReferralSearchEntryHandlersProperties">FollowReferralSearchEntryHandlersProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.authn.mfa.web-authn.ldap.search-entry-handlers[0].search-result.limit" data-default="10">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.mfa.web-authn.ldap.search-entry-handlers[0].search-result.limit</code><span class="cas-property-summary">The default referral limit.</span>
+</div>
+        <div class="cas-property-default"><code>10</code></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>The default referral limit.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>int</code></dd>
+<dt>Default</dt>
+<dd><code>10</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.ldap.FollowResultSearchEntryHandlersProperties">FollowResultSearchEntryHandlersProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.authn.mfa.web-authn.ldap.search-entry-handlers[0].type" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.mfa.web-authn.ldap.search-entry-handlers[0].type</code><span class="cas-property-summary">The type of search entry handler to choose.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><div>The type of search entry handler to choose. Available values are as follows: <ul>
+<li>
+<code>FOLLOW_SEARCH_REFERRAL</code>: Provides handling of an ldap referral for search operations.</li>
+<li>
+<code>FOLLOW_SEARCH_RESULT_REFERENCE</code>: Provides handling of an ldap continuation reference for search operations.</li>
+<li>
+<code>ACTIVE_DIRECTORY</code>: Process the entry results fetched from active directory and check for account status controls for disabled/expired accounts, etc.</li>
+<li>
+<code>OBJECT_GUID</code>: Object guid search entry handler. Handles the <code>objectGUID</code> attribute fetching and conversion.</li>
+<li>
+<code>OBJECT_SID</code>: Object sid search entry handler. Handles the <code>objectSid</code> attribute fetching and conversion.</li>
+<li>
+<code>CASE_CHANGE</code>: Case change search entry handler. Provides the ability to modify the case of search entry DNs, attribute names, and attribute values.</li>
+<li>
+<code>DN_ATTRIBUTE_ENTRY</code>: DN attribute entry handler. Adds the entry DN as an attribute to the result set. Provides a client side implementation of RFC 5020.</li>
+<li>
+<code>MERGE</code>: Merge search entry handler. Merges the values of one or more attributes into a single attribute.</li>
+<li>
+<code>PRIMARY_GROUP</code>: Primary group search handler. Constructs the primary group SID and then searches for that group and puts it's DN in the <code>memberOf</code> attribute of the original search entry.</li>
+<li>
+<code>RANGE_ENTRY</code>: Range entry search handler. Rewrites attributes returned from Active Directory to include all values by performing additional searches.</li>
+<li>
+<code>RECURSIVE_ENTRY</code>: Recursive entry search handler. This recursively searches based on a supplied attribute and merges those results into the original entry.</li>
+<li>
+<code>MERGE_ENTRIES</code>: Merge entries handler. Merges the values of one or more attributes in all entries into a single attribute. The merged attribute may or may not already exist on the entry. If it does exist it's existing values will remain intact.</li>
+</ul>
+</div></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>LdapSearchEntryHandlersProperties.SearchEntryHandlerTypes</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.ldap.LdapSearchEntryHandlersProperties">LdapSearchEntryHandlersProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.authn.mfa.web-authn.ldap.subtree-search" data-default="true">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.mfa.web-authn.ldap.subtree-search</code><span class="cas-property-summary">Whether subtree searching is allowed.</span>
+</div>
+        <div class="cas-property-default"><code>true</code></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Whether subtree searching is allowed.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Boolean</code></dd>
+<dt>Default</dt>
+<dd><code>true</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.mfa.webauthn.WebAuthnLdapMultifactorProperties">WebAuthnLdapMultifactorProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.authn.mfa.web-authn.ldap.trust-certificates" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.mfa.web-authn.ldap.trust-certificates</code><span class="cas-property-summary">Path of the trust certificates to use for the SSL connection.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Path of the trust certificates to use for the SSL connection. Ignores keystore-related settings when activated and used.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.mfa.webauthn.WebAuthnLdapMultifactorProperties">WebAuthnLdapMultifactorProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.authn.mfa.web-authn.ldap.trust-manager" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.mfa.web-authn.ldap.trust-manager</code><span class="cas-property-summary">Trust Manager options.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><div>Trust Manager options. Trust managers are responsible for managing the trust material that is used when making LDAP trust decisions, and for deciding whether credentials presented by a peer should be accepted. Accepted values are: <ul> <li>
+<code>DEFAULT</code>: Enable and force the default JVM trust managers.</li>
+<li>
+<code>ANY</code>: Trust any client or server.</li>
+</ul>
+</div></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.mfa.webauthn.WebAuthnLdapMultifactorProperties">WebAuthnLdapMultifactorProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.authn.mfa.web-authn.ldap.trust-store" data-default="" data-spel>
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.mfa.web-authn.ldap.trust-store</code><span class="cas-property-summary">Path to the keystore used to determine which certificates or certificate authorities should be trusted.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag"><i class="fa fa-code" aria-hidden="true"></i>SpEL</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Path to the keystore used to determine which certificates or certificate authorities should be trusted. Used when connecting to an LDAP server via LDAPS or startTLS connection. If left blank, the default truststore for the Java runtime is used.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.mfa.webauthn.WebAuthnLdapMultifactorProperties">WebAuthnLdapMultifactorProperties</code></dd>
+<dt>Supports</dt>
+<dd><a href="/cas/development/configuration/Configuration-Spring-Expressions.html">Spring Expression Language</a></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.authn.mfa.web-authn.ldap.trust-store-password" data-default="" data-spel>
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.mfa.web-authn.ldap.trust-store-password</code><span class="cas-property-summary">Password needed to open the truststore.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag"><i class="fa fa-code" aria-hidden="true"></i>SpEL</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Password needed to open the truststore.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.mfa.webauthn.WebAuthnLdapMultifactorProperties">WebAuthnLdapMultifactorProperties</code></dd>
+<dt>Supports</dt>
+<dd><a href="/cas/development/configuration/Configuration-Spring-Expressions.html">Spring Expression Language</a></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.authn.mfa.web-authn.ldap.trust-store-type" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.mfa.web-authn.ldap.trust-store-type</code><span class="cas-property-summary">The type of trust keystore that determines which certificates or certificate authorities are trusted.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>The type of trust keystore that determines which certificates or certificate authorities are trusted. Types depend on underlying java platform, typically <code>PKCS12</code> or <code>JKS</code>. If left blank, defaults to the default keystore type indicated by the underlying Java platform.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.mfa.webauthn.WebAuthnLdapMultifactorProperties">WebAuthnLdapMultifactorProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.authn.mfa.web-authn.ldap.use-start-tls" data-default="false">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.mfa.web-authn.ldap.use-start-tls</code><span class="cas-property-summary">Whether TLS should be used and enabled when establishing the connection.</span>
+</div>
+        <div class="cas-property-default"><code>false</code></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Whether TLS should be used and enabled when establishing the connection.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Boolean</code></dd>
+<dt>Default</dt>
+<dd><code>false</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.mfa.webauthn.WebAuthnLdapMultifactorProperties">WebAuthnLdapMultifactorProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.authn.mfa.web-authn.ldap.validate-on-checkout" data-default="true">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.mfa.web-authn.ldap.validate-on-checkout</code><span class="cas-property-summary">Whether connections should be validated when loaned out from the pool.</span>
+</div>
+        <div class="cas-property-default"><code>true</code></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Whether connections should be validated when loaned out from the pool.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Boolean</code></dd>
+<dt>Default</dt>
+<dd><code>true</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.mfa.webauthn.WebAuthnLdapMultifactorProperties">WebAuthnLdapMultifactorProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.authn.mfa.web-authn.ldap.validate-period" data-default="PT5M" data-duration>
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.mfa.web-authn.ldap.validate-period</code><span class="cas-property-summary">Period at which pool should be validated.</span>
+</div>
+        <div class="cas-property-default"><code>PT5M</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag"><i class="fa fa-clock" aria-hidden="true"></i>Duration</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Period at which pool should be validated.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><code>PT5M</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.mfa.webauthn.WebAuthnLdapMultifactorProperties">WebAuthnLdapMultifactorProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.authn.mfa.web-authn.ldap.validate-periodically" data-default="true">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.mfa.web-authn.ldap.validate-periodically</code><span class="cas-property-summary">Whether connections should be validated periodically when the pool is idle.</span>
+</div>
+        <div class="cas-property-default"><code>true</code></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Whether connections should be validated periodically when the pool is idle.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Boolean</code></dd>
+<dt>Default</dt>
+<dd><code>true</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.mfa.webauthn.WebAuthnLdapMultifactorProperties">WebAuthnLdapMultifactorProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.authn.mfa.web-authn.ldap.validate-timeout" data-default="PT5S" data-duration>
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.mfa.web-authn.ldap.validate-timeout</code><span class="cas-property-summary">Period at which validation operations may time out.</span>
+</div>
+        <div class="cas-property-default"><code>PT5S</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag"><i class="fa fa-clock" aria-hidden="true"></i>Duration</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Period at which validation operations may time out.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><code>PT5S</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.mfa.webauthn.WebAuthnLdapMultifactorProperties">WebAuthnLdapMultifactorProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.authn.mfa.web-authn.ldap.validator.attribute-name" data-default="objectClass">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.mfa.web-authn.ldap.validator.attribute-name</code><span class="cas-property-summary">Attribute name to use for the compare validator.</span>
+</div>
+        <div class="cas-property-default"><code>objectClass</code></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Attribute name to use for the compare validator.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><code>objectClass</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.ldap.LdapValidatorProperties">LdapValidatorProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.authn.mfa.web-authn.ldap.validator.attribute-value" data-default="top">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.mfa.web-authn.ldap.validator.attribute-value</code><span class="cas-property-summary">Attribute values to use for the compare validator.</span>
+</div>
+        <div class="cas-property-default"><code>top</code></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Attribute values to use for the compare validator.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><code>top</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.ldap.LdapValidatorProperties">LdapValidatorProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.authn.mfa.web-authn.ldap.validator.base-dn" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.mfa.web-authn.ldap.validator.base-dn</code><span class="cas-property-summary">Base DN to use for the search request of the search validator.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Base DN to use for the search request of the search validator.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.ldap.LdapValidatorProperties">LdapValidatorProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.authn.mfa.web-authn.ldap.validator.dn" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.mfa.web-authn.ldap.validator.dn</code><span class="cas-property-summary">DN to compare to use for the compare validator.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>DN to compare to use for the compare validator.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.ldap.LdapValidatorProperties">LdapValidatorProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.authn.mfa.web-authn.ldap.validator.scope" data-default="OBJECT">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.mfa.web-authn.ldap.validator.scope</code><span class="cas-property-summary">Search scope to use for the search request of the search validator.</span>
+</div>
+        <div class="cas-property-default"><code>OBJECT</code></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Search scope to use for the search request of the search validator.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><code>OBJECT</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.ldap.LdapValidatorProperties">LdapValidatorProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.authn.mfa.web-authn.ldap.validator.search-filter" data-default="(objectClass=*)">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.mfa.web-authn.ldap.validator.search-filter</code><span class="cas-property-summary">Search filter to use for the search request of the search validator.</span>
+</div>
+        <div class="cas-property-default"><code>(objectClass=*)</code></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Search filter to use for the search request of the search validator.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><code>(objectClass=*)</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.ldap.LdapValidatorProperties">LdapValidatorProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.authn.mfa.web-authn.ldap.validator.type" data-default="search">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.mfa.web-authn.ldap.validator.type</code><span class="cas-property-summary">Determine the LDAP validator type.</span>
+</div>
+        <div class="cas-property-default"><code>search</code></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description">
+<p>Determine the LDAP validator type.</p>
+<div>The following LDAP validators can be used to test connection health status: <ul> <li>
+<code>search</code>: Validates a connection is healthy by performing a search operation. Validation is considered successful if the search result size is greater than zero.</li>
+<li>
+<code>none</code>: No validation takes place.</li>
+<li>
+<code>compare</code>: Validates a connection is healthy by performing a compare operation.</li>
+</ul>
+</div>
+</div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><code>search</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.ldap.LdapValidatorProperties">LdapValidatorProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+</div>
+<p class="cas-properties-legend">
+        <strong>Required</strong> settings may be needed to activate or affect the feature; review them even when they have a default.
+        <strong>Optional</strong> settings only need to be set to change a default or to turn on the behavior they control.
+        <strong>Third party</strong> settings belong to libraries such as Spring Boot that CAS builds on; their own documentation may have more detail.
+    </p>
+<div class="cas-properties-topics">
+<details class="cas-properties-topic">
+            <summary><i class="fa fa-server" aria-hidden="true"></i>LDAP &amp; Active Directory</summary>
+            <div class="cas-properties-topic-body">
+<!-- fragment:keep -->
+
+<p></p>
+
+<p><strong>LDAP Scriptable Search Filter</strong></p>
+
+<p>LDAP search filters can point to an external Groovy script to dynamically construct the final filter template.</p>
+
+<p>The script itself may be designed as:</p>
+
+<div class="language-groovy highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+</pre></td>
+<td class="rouge-code"><pre><span class="kn">import</span> <span class="nn">org.ldaptive.*</span>
+<span class="kn">import</span> <span class="nn">org.springframework.context.*</span>
+
+<span class="kt">def</span> <span class="nf">run</span><span class="o">(</span><span class="n">Object</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+    <span class="kt">def</span> <span class="o">(</span><span class="n">filter</span><span class="o">,</span><span class="n">parameters</span><span class="o">,</span><span class="n">applicationContext</span><span class="o">,</span><span class="n">logger</span><span class="o">)</span> <span class="o">=</span> <span class="n">args</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="na">info</span><span class="o">(</span><span class="s2">"Configuring LDAP filter"</span><span class="o">)</span>
+    <span class="n">filter</span><span class="o">.</span><span class="na">setFilter</span><span class="o">(</span><span class="s2">"uid=something"</span><span class="o">)</span>
+<span class="o">}</span>
+</pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+<p>The following parameters are passed to the script:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Parameter</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">filter</code></td>
+      <td>
+<code class="language-plaintext highlighter-rouge">FilterTemplate</code> to be updated by the script and used for the LDAP query.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">parameters</code></td>
+      <td>Map of query parameters which may be used to construct the final filter.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">applicationContext</code></td>
+      <td>Reference to the Spring <code class="language-plaintext highlighter-rouge">ApplicationContext</code> reference.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">logger</code></td>
+      <td>The object responsible for issuing log messages such as <code class="language-plaintext highlighter-rouge">logger.info(...)</code>.</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>To prepare CAS to support and integrate with Apache Groovy, please <a href="https://apereo.github.io/cas/development//integration/Apache-Groovy-Scripting.html">review this guide</a>.</p>
+
+            </div>
+        </details><details class="cas-properties-topic">
+            <summary><i class="fa fa-newspaper" aria-hidden="true"></i>Notes on configuration</summary>
+            <div class="cas-properties-topic-body">
+<!-- fragment:keep -->
+
+<p></p>
+
+<p><strong>Configuration Metadata</strong></p>
+
+<p>The collection of configuration properties listed in this section are automatically generated from the CAS source and components that contain the actual field
+definitions, types, descriptions, modules, etc. This metadata may not always be 100% accurate, or could be lacking details and sufficient explanations.</p>
+
+<p><strong>Be Selective</strong></p>
+
+<p>This section is meant as a guide only. Do NOT copy/paste the entire collection of settings into your CAS configuration; rather pick only the properties that you
+need. Do NOT enable settings unless you are certain of their purpose and do NOT copy settings into your configuration only to keep them as reference. All these
+ideas lead to upgrade headaches, maintenance nightmares and premature aging.</p>
+
+<p><strong>YAGNI</strong></p>
+
+<p>Note that for nearly ALL use cases, declaring and configuring properties listed here is sufficient. You should NOT have to explicitly massage a CAS XML/Java/etc
+configuration file to design an authentication handler, create attribute release policies, etc. CAS at runtime will auto-configure all required changes for you.
+If you are unsure about the meaning of a given CAS setting, do NOT turn it on without hesitation. Review the codebase or better yet, ask questions to clarify
+the intended behavior.</p>
+
+<p><strong>Naming Convention</strong></p>
+
+<p>Property names can be specified in very relaxed terms. For instance <code class="language-plaintext highlighter-rouge">cas.someProperty</code>, <code class="language-plaintext highlighter-rouge">cas.some-property</code>, <code class="language-plaintext highlighter-rouge">cas.some_property</code> are all valid names. While all
+forms are accepted by CAS, there are certain components (in CAS and other frameworks used) whose activation at runtime is conditional on a property value, where
+this property is required to have been specified in CAS configuration using kebab case. This is both true for properties that are owned by CAS as well as those
+that might be presented to the system via an external library or framework such as Spring Boot, etc.</p>
+
+<div class="alert alert-info">
+<img class="emoji" title=":information_source:" alt=":information_source:" src="https://github.githubassets.com/images/icons/emoji/unicode/2139.png" height="20" width="20"> <strong>Note</strong> <p>
+When possible, properties should be stored in lower-case kebab format, such as <code>cas.property-name=value</code>.
+The only possible exception to this rule is when naming actuator endpoints; The name of the
+actuator endpoints (i.e. <code>ssoSessions</code>) <strong>MUST</strong> remain in camelCase mode. 
+</p>
+</div>
+
+<p>Settings and properties that are controlled by the CAS platform directly always begin with the prefix <code class="language-plaintext highlighter-rouge">cas</code>. All other settings are controlled and provided
+to CAS via other underlying frameworks and may have their own schemas and syntax. BE CAREFUL with
+the distinction. Unrecognized properties are rejected by CAS and/or frameworks upon which CAS depends. This means if you somehow misspell a property definition
+or fail to adhere to the dot-notation syntax and such, your setting is entirely refused by CAS and likely the feature it controls will never be activated in the
+way you intend.</p>
+
+<p><strong>Validation</strong></p>
+
+<p>Configuration properties are automatically validated on CAS startup to report issues with configuration binding, especially if defined CAS settings cannot be
+recognized or validated by the configuration schema. Additional validation processes are also handled
+via <a href="/cas/development/configuration/Configuration-Metadata-Repository.html">Configuration Metadata</a> and property migrations applied automatically on
+startup by Spring Boot and family.</p>
+
+<p><strong>Indexed Settings</strong></p>
+
+<p>CAS settings able to accept multiple values are typically documented with an index, such as <code class="language-plaintext highlighter-rouge">cas.some.setting[0]=value</code>. The index <code class="language-plaintext highlighter-rouge">[0]</code> is meant to be
+incremented by the adopter to allow for distinct multiple configuration blocks.</p>
+
+            </div>
+        </details>
+</div>
+</div>
+
+
+            </article>
+            <div class="article-end" aria-hidden="true">
+<span></span><span>CAS</span><span></span>
+</div>
+        </main>
+        
+        <aside class="docs-toc" aria-label="On this page">
+    <nav id="pageContents" aria-label="Table of contents">
+        <p class="eyebrow">ON THIS PAGE</p>
+        <ul class="section-nav"></ul>
+    </nav>
+    <a class="toc-top" href="#cas-docs-container">Back to top <span aria-hidden="true">↑</span></a>
+</aside>
+
+        
+    </div>
+
+    <footer class="site-footer">
+        <a class="footer-brand" href="../../index.html">APEREO <strong>CAS</strong></a>
+        <p>CAS is supported by the <a href="https://www.apereo.org/">Apereo Foundation</a>.</p>
+        <a href="#cas-docs-container">Back to top <span aria-hidden="true">↑</span></a>
+    </footer>
+    <div id="docs-status" class="visually-hidden" role="status" aria-live="polite"></div>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha384-1H217gwSVyLSIfaLxHbE7dRb3v4mYCKbpQvzx0cegeju1MVsGrX5xXxAvs/HgeFs" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.11/clipboard.min.js" integrity="sha384-J08i8An/QeARD9ExYpvphB8BsyOj3Gh2TSh1aLINKO3L0cMSH2dN3E22zFoXEi0Q" crossorigin="anonymous"></script>
+
+    <script src="/cas/javascripts/URI.js"></script>
+    <script src="/cas/javascripts/site.js"></script>
+
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@docsearch/js@3.9.0/dist/umd/index.js" integrity="sha384-QhsjJ84XKaqUeM7eZpvYApdPamFboJLQg4BD2CCCSiUOL4cWzLp5caae6oW/oAXh" crossorigin="anonymous"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js" integrity="sha384-ficRBwtap/VLzILv81vIvgp30PoJYnlCm96tPpNYHXAf+h9SIThOZxxIzRUzbpAh" crossorigin="anonymous"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.5/js/lightbox.min.js" integrity="sha384-bcXRY0im+IjB6RvmBpbgdkqjLV0pCTbaJRJ9IRPeQaWCYlzRn9pPaPmCvONr9h9z" crossorigin="anonymous"></script>
+
+    <script>
+        let pageSection = "Multifactor Authentication";
+        let siteUrl = "https://apereo.github.io";
+        let basePath = "/cas";
+
+        
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,1808 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="light dark">
+    
+    
+    
+
+
+
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <meta name="description" content="WebAuthn is an API that makes it very easy for a relying party, such as a web service, to integrate strong authentication into applications using support bui...">
+    <meta name="robots" content="index,follow">
+    <meta name="theme-color" content="#06304a">
+    <link rel="canonical" href="https://apereo.github.io/cas/development/mfa/FIDO2-WebAuthn-Authentication.html">
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="en_US">
+    <meta property="og:site_name" content="Apereo CAS Documentation">
+    <meta property="og:title" content="CAS - FIDO2 WebAuthn (Passkey) Multifactor Authentication">
+    <meta property="og:description" content="WebAuthn is an API that makes it very easy for a relying party, such as a web service, to integrate strong authentication into applications using support bui...">
+    <meta property="og:url" content="https://apereo.github.io/cas/development/mfa/FIDO2-WebAuthn-Authentication.html">
+    <meta property="og:image" content="https://apereo.github.io/cas/images/cas_logo.png">
+    <meta property="og:image:alt" content="Apereo CAS">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="CAS - FIDO2 WebAuthn (Passkey) Multifactor Authentication">
+    <meta name="twitter:description" content="WebAuthn is an API that makes it very easy for a relying party, such as a web service, to integrate strong authentication into applications using support bui...">
+    <meta name="twitter:image" content="https://apereo.github.io/cas/images/cas_logo.png">
+
+    
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "TechArticle",
+      "headline": "FIDO2 WebAuthn (Passkey) Multifactor Authentication",
+      "description": "WebAuthn is an API that makes it very easy for a relying party, such as a web service, to integrate strong authentication into applications using support bui...",
+      "url": "https://apereo.github.io/cas/development/mfa/FIDO2-WebAuthn-Authentication.html",
+      "inLanguage": "en",
+      "isPartOf": {"@type": "WebSite", "name": "Apereo CAS Documentation",
+                   "url": "https://apereo.github.io/cas/"},
+      "author": {"@type": "Organization", "name": "Apereo Foundation", "url": "https://www.apereo.org/"},
+      "publisher": {"@type": "Organization", "name": "Apereo Foundation", "url": "https://www.apereo.org/"}
+    }
+    </script>
+    
+
+    <script>
+        if (window.location.hostname === "apereo.github.io") {
+            window.dataLayer = window.dataLayer || [];
+            window.gtag = function () {
+                window.dataLayer.push(arguments);
+            };
+            window.gtag("js", new Date());
+            window.gtag("config", "G-W3M8JXP7GP");
+            const analytics = document.createElement("script");
+            analytics.async = true;
+            analytics.src = "https://www.googletagmanager.com/gtag/js?id=G-W3M8JXP7GP";
+            document.head.appendChild(analytics);
+        }
+    </script>
+
+    <script>
+        function readThemePreference() {
+            try {
+                return localStorage.getItem('cas-docs-theme') || 'system';
+            } catch (error) {
+                return 'system';
+            }
+        }
+
+        function systemTheme() {
+            return window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+        }
+
+        function resolveTheme(preference) {
+            return preference === 'dark' || preference === 'light' ? preference : systemTheme();
+        }
+
+        function changeTheme(theme) {
+            if (theme !== 'dark' && theme !== 'light') {
+                return;
+            }
+
+            if (document.documentElement.getAttribute('data-bs-theme') !== theme) {
+                document.documentElement.setAttribute('data-bs-theme', theme);
+            }
+        }
+
+        (() => {
+            let preference = readThemePreference();
+            if (preference !== 'dark' && preference !== 'light') {
+                preference = 'system';
+
+            }
+
+            changeTheme(resolveTheme(preference));
+
+            if (window.matchMedia) {
+                window.matchMedia('(prefers-color-scheme: light)').addEventListener('change', () => {
+                    if (readThemePreference() !== 'system') {
+                        return;
+                    }
+                    const theme = systemTheme();
+                    changeTheme(theme);
+                });
+            }
+        })();
+    </script>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.2/css/all.min.css" integrity="sha384-PPIZEGYM1v8zp5Py7UjFb79S58UeqCL9pYVnVPURKEqvioPROaVAJKKLzvH2rDnI" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@docsearch/css@3.9.0/dist/style.css" integrity="sha384-cHiDHRyv+KTDBfpMqc3t2SeQYjfK05cReQA49eigiKoBzOMi9WIFsBsNfetC5n2a" crossorigin="anonymous"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.5/css/lightbox.min.css" integrity="sha384-9623XJODy0qDAl6X6Y9xTBSzYUxM0ixdjO8zqJQeGzDP2Uwo1PqAOq6gXkk2ul99" crossorigin="anonymous" />
+    
+    
+    <link rel="stylesheet" type="text/css" media="screen" href='/cas/stylesheets/site.css'>
+    <link rel="stylesheet" type="text/css" media="print" href='/cas/stylesheets/site-print.css'>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400..800;1,9..40,400..500&family=Bricolage+Grotesque:opsz,wght@12..96,400..800&display=swap" rel="stylesheet">
+    <link href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css" rel="stylesheet" integrity="sha384-yT2pwyD9a3Oee/HtjWTccnRmchDWH2EDHjzH7gwf8yAK0RilKFL164FCHX9fzlxh" crossorigin="anonymous">
+
+    <title>CAS - FIDO2 WebAuthn (Passkey) Multifactor Authentication · Apereo CAS Documentation</title>
+
+</head>
+
+<body class="" data-docs-base="/cas" data-docs-version="development" data-docs-build="20261011002700">
+    <a class="skip-link" href="#cas-docs-container">Skip to content</a>
+    <header class="site-header">
+        <div class="masthead">
+            <a class="cas-brand" href="../../index.html" aria-label="Apereo CAS home">
+                <img class="brand-logo" src="/cas/images/cas_logo.png" width="119" height="60" alt="CAS">
+                <span class="brand-caption">APEREO CAS<span>Documentation</span></span>
+            </a>
+            <div class="brand-mission">
+                <p>Enterprise Authentication <span class="brand-mission-accent">for All Earthlings and Beyond</span></p>
+                <span>Identity, Single Sign-On and Access Management</span>
+            </div>
+            <a id="forkme_banner" aria-label="View CAS on GitHub" href="https://github.com/apereo/cas"><i class="fab fa-github" aria-hidden="true"></i><span>View on GitHub</span><span aria-hidden="true">↗</span></a>
+        </div>
+        <div class="navigation-bar">
+            
+            <button onclick="navigateSidebar()" id="sidebarNavButton" class="icon-button" type="button" aria-controls="sidebar" aria-expanded="true" aria-label="Toggle documentation navigation" title="Toggle documentation navigation">
+                <i class="fa fa-bars" aria-hidden="true"></i>
+            </button>
+            
+            <nav class="primary-navigation" aria-label="Main navigation">
+                <a href="../../index.html">Home</a>
+                <a href="https://github.com/apereo/cas/releases">Releases</a>
+                <a href="../../Support.html">Support</a>
+                <a href="../../Mailing-Lists.html">Mailing Lists</a>
+                <div class="dropdown">
+                    <button class="dropdown-toggle" type="button" id="cas-versions" data-bs-toggle="dropdown" aria-expanded="false">Versions</button>
+                    <div class="dropdown-menu" aria-labelledby="cas-versions">
+                        
+                        
+                        
+                        
+                        <a class="dropdown-item cas-version-link" href="/cas/development/mfa/FIDO2-WebAuthn-Authentication.html" data-version-home="/cas/development/">Development</a>
+                        
+                        
+                        
+                        
+                        <a class="dropdown-item cas-version-link" href="/cas/8.0.x/mfa/FIDO2-WebAuthn-Authentication.html" data-version-home="/cas/8.0.x/">v8.0.x</a>
+                        
+                        
+                        
+                        
+                        <a class="dropdown-item cas-version-link" href="/cas/7.3.x/mfa/FIDO2-WebAuthn-Authentication.html" data-version-home="/cas/7.3.x/">v7.3.x</a>
+                        
+                    </div>
+                </div>
+                <a href="https://apereo.github.io" target="_blank" rel="noopener">Blog <span aria-hidden="true">↗</span><span class="visually-hidden"> (opens in a new tab)</span></a>
+            </nav>
+            <div class="navigation-tools">
+                <div id="searchField"></div>
+                <button id="settingsSearchButton" class="icon-button" type="button" aria-label="Search configuration settings (press Shift twice)" title="Search configuration settings (Shift Shift)"><i class="fa fa-sliders" aria-hidden="true"></i></button>
+                <button id="themeToggle" class="icon-button" type="button" onclick="toggleDarkMode()" aria-label="Toggle color theme" title="Toggle color theme"><i class="fa fa-circle-half-stroke" aria-hidden="true"></i></button>
+            </div>
+        </div>
+        <div class="reading-progress" aria-hidden="true"><span id="readingProgress"></span></div>
+    </header>
+
+    <div class="docs-shell">
+        
+        <aside id="sidebar" class="docs-sidebar" aria-label="Documentation navigation">
+    <div class="sidebar-heading">
+<span class="eyebrow">APEREO CAS DOCUMENTATION</span><span class="sidebar-symbol" aria-hidden="true">✳</span>
+</div>
+    <nav id="sidebar-navigation" aria-label="Documentation topics"></nav>
+    <noscript><p>Browse the <a href="/cas/development/sidebar.html">documentation index</a>.</p></noscript>
+</aside>
+
+        
+        <main class="cas-docs-content">
+            
+            <div class="page-toolbar">
+                <nav id="docsNavBar" aria-label="Breadcrumb"></nav>
+                <div id="toolbarIcons" role="group" aria-label="Page tools"></div>
+            </div>
+            
+            
+            <aside id="dev-doc-info" aria-labelledby="dev-doc-title">
+                <span class="development-marker" aria-hidden="true"></span>
+                <div>
+                    <p id="dev-doc-title">WORKERS AHEAD!</p>
+                    <p class="dev-doc-summary">Development documentation for features that are
+                        <a href="https://github.com/apereo/cas/milestones">not released yet</a>.</p>
+                    <p class="dev-doc-details">You are viewing the <strong>development</strong> documentation for the Apereo CAS server. <strong>The
+                        functionality presented here <a href="https://github.com/apereo/cas/milestones">is not officially released yet</a></strong>.
+                        This is a work in progress and will be continually updated as development moves forward.
+                        <strong>You are most encouraged to test the changes presented.</strong>
+                    </p>
+                </div>
+            </aside>
+            
+            <article id="cas-docs-container" tabindex="-1">
+                
+<h1 id="fido2-webauthn-passkey-multifactor-authentication">FIDO2 WebAuthn (Passkey) Multifactor Authentication</h1>
+
+<p><a href="https://webauthn.io/">WebAuthn</a> is an API that makes it very easy 
+for a relying party, such as a web service, to integrate strong 
+authentication into applications using support built in to all leading browsers and platforms. This means 
+that web services can now easily offer their users strong authentication with a choice of authenticators 
+such as security keys or built-in platform authenticators such as biometric readers.</p>
+
+<div class="alert alert-warning">
+<img class="emoji" title=":warning:" alt=":warning:" src="https://github.githubassets.com/images/icons/emoji/unicode/26a0.png" height="20" width="20"> <strong>Usage Warning!</strong><p>To use WebAuthn support in a cluster,
+you must either enable session affinity (so that the same user always connects to the same node),
+or <a href="../webflow/Webflow-Customization-Sessions-ServerSide.html">replicate the web session</a> 
+across all nodes in the cluster.</p>
+</div>
+
+<p>Support is enabled by including the following module in the WAR overlay:</p>
+
+<div style="display: block">
+
+    <div class="cas-module-controls nav-pills">
+        <ul class="nav cas-modules" role="tablist" aria-label="Dependency format">
+            <li class="nav-item cas-module" role="presentation"><a class="nav-link" id="mavenorgapereocascasserversupportwebauthn-tab" data-bs-toggle="tab" href="#mavenorgapereocascasserversupportwebauthn" role="tab" aria-controls="mavenorgapereocascasserversupportwebauthn" aria-selected="false">Apache Maven</a></li>
+            <li class="nav-item cas-module" role="presentation"><a class="nav-link" id="gradleorgapereocascasserversupportwebauthn-tab" data-bs-toggle="tab" href="#gradleorgapereocascasserversupportwebauthn" role="tab" aria-controls="gradleorgapereocascasserversupportwebauthn" aria-selected="false">Gradle</a></li>
+<li class="nav-item cas-module" role="presentation"><a class="nav-link" id="bomorgapereocascasserversupportwebauthn-tab" data-bs-toggle="tab" href="#bomorgapereocascasserversupportwebauthn" role="tab" aria-controls="bomorgapereocascasserversupportwebauthn" aria-selected="false">BOM - Spring</a></li>
+            <li class="nav-item cas-module" role="presentation"><a class="nav-link active" id="bomGradleorgapereocascasserversupportwebauthn-tab" data-bs-toggle="tab" href="#bomGradleorgapereocascasserversupportwebauthn" role="tab" aria-controls="bomGradleorgapereocascasserversupportwebauthn" aria-selected="true">BOM - Gradle</a></li>
+</ul>
+        <div class="dropdown cas-module">
+            <button class="nav-link dropdown-toggle" data-bs-toggle="dropdown" type="button" aria-expanded="false">Resources<span class="caret"></span>
+            </button>
+            <div class="dropdown-menu">
+                <a class="dropdown-item" href="https://getcas.apereo.org?dependencies=webapp-tomcat,support-webauthn" target="_blank" rel="noopener">Show in CAS Initializr <span aria-hidden="true">↗</span><span class="visually-hidden"> (opens in a new tab)</span></a>
+                <a class="dropdown-item" href="javascript:generateOverlay('cas-server-support-webauthn',%20'cas-overlay');">Generate CAS Server WAR Overlay</a>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="cas-module-tabs tab-content clearfix">
+        <div class="tab-pane fade" id="mavenorgapereocascasserversupportwebauthn" role="tabpanel" aria-labelledby="mavenorgapereocascasserversupportwebauthn-tab">
+<span>
+      <div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+</pre></td>
+<td class="rouge-code"><pre><span class="nt">&lt;dependency&gt;</span>
+    <span class="nt">&lt;groupId&gt;</span>org.apereo.cas<span class="nt">&lt;/groupId&gt;</span>
+    <span class="nt">&lt;artifactId&gt;</span>cas-server-support-webauthn<span class="nt">&lt;/artifactId&gt;</span>
+    <span class="nt">&lt;version&gt;</span>${cas.version}<span class="nt">&lt;/version&gt;</span>
+<span class="nt">&lt;/dependency&gt;</span>
+</pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+    </span>
+
+        </div>
+
+
+        <div class="tab-pane fade" id="gradleorgapereocascasserversupportwebauthn" role="tabpanel" aria-labelledby="gradleorgapereocascasserversupportwebauthn-tab">
+
+            <span>
+    
+<div class="language-groovy highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td>
+<td class="rouge-code"><pre><span class="n">implementation</span> <span class="s2">"org.apereo.cas:cas-server-support-webauthn:${project.'cas.version'}"</span>
+</pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+  </span>
+
+        </div>
+
+        <div class="tab-pane fade" id="bomorgapereocascasserversupportwebauthn" role="tabpanel" aria-labelledby="bomorgapereocascasserversupportwebauthn-tab">
+<span>
+    <div class="language-groovy highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+</pre></td>
+<td class="rouge-code"><pre><span class="n">dependencyManagement</span> <span class="o">{</span>
+    <span class="n">imports</span> <span class="o">{</span>
+        <span class="n">mavenBom</span> <span class="s2">"org.apereo.cas:cas-server-support-bom:${project.'cas.version'}"</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+
+<span class="n">dependencies</span> <span class="o">{</span>
+    <span class="n">implementation</span> <span class="s2">"org.apereo.cas:cas-server-support-webauthn"</span>
+<span class="o">}</span>
+</pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+  </span>
+
+        </div>
+
+        <div class="tab-pane fade show active" id="bomGradleorgapereocascasserversupportwebauthn" role="tabpanel" aria-labelledby="bomGradleorgapereocascasserversupportwebauthn-tab">
+<span>
+    <div class="language-groovy highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+</pre></td>
+<td class="rouge-code"><pre><span class="n">dependencies</span> <span class="o">{</span>
+    <span class="cm">/*
+        The following platform references are included automatically and are listed for reference only.
+
+        implementation enforcedPlatform("org.apereo.cas:cas-server-support-bom:${project.'cas.version'}")
+        implementation platform(org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES)
+        
+    */</span>
+    <span class="n">implementation</span> <span class="s2">"org.apereo.cas:cas-server-support-webauthn"</span>
+<span class="o">}</span>
+</pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+  </span>
+
+        </div>
+
+    </div>
+
+</div>
+
+<div class="alert alert-info">
+<img class="emoji" title=":information_source:" alt=":information_source:" src="https://github.githubassets.com/images/icons/emoji/unicode/2139.png" height="20" width="20"> <strong>WebAuthn vs Passkeys</strong><p>
+<strong>WebAuthn (Web Authentication)</strong> is a W3C specification and browser API 
+that enables web applications to register 
+and authenticate users using public-key cryptography in a phishing-resistant way.
+<strong>Passkeys</strong> are a specific type of WebAuthn credential designed to replace 
+passwords by using asymmetric key pairs. During registration, an authenticator on 
+the user’s device generates a private-public key pair; the public key is sent to the 
+service, and the private key remains securely on the device (or synced via a cloud backup).
+In summary, WebAuthn is the underlying protocol/API that supports multiple authentication 
+methods (hardware keys, platform authenticators, etc.), whereas passkeys are a user-facing 
+credential format specifically built on WebAuthn for passwordless login.
+</p>
+</div>
+
+<!-- fragment:keep -->
+
+<p>The following settings and properties are available from the CAS configuration catalog:</p>
+
+
+<div class="cas-properties">
+    <div class="cas-properties-list">
+<div class="cas-property" data-kind="required" data-name="cas.authn.mfa.web-authn.core.application-id" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.mfa.web-authn.core.application-id</code><span class="cas-property-summary">The extension input to set for the appid extension when initiating authentication operations.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-required"><i class="fa fa-asterisk" aria-hidden="true"></i>Required</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>The extension input to set for the <code>appid</code> extension when initiating authentication operations. If this member is set, starting an assertion op will automatically set the <code>appid</code> extension input, and finish assertion op will adjust its verification logic to also accept this AppID as an alternative to the RP ID. By default, this is not set.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.mfa.webauthn.WebAuthnMultifactorAuthenticationCoreProperties">WebAuthnMultifactorAuthenticationCoreProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="required" data-name="cas.authn.mfa.web-authn.core.relying-party-id" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.mfa.web-authn.core.relying-party-id</code><span class="cas-property-summary">The id that will be set as the rp parameter when initiating registration operations, and which id hash will be compared against.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-required"><i class="fa fa-asterisk" aria-hidden="true"></i>Required</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>The id that will be set as the rp parameter when initiating registration operations, and which id hash will be compared against. This is a required parameter. A successful registration or authentication operation requires rp id hash to exactly equal the SHA-256 hash of this id member. Alternatively, it may instead equal the SHA-256 hash of application id if the latter is present.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.mfa.webauthn.WebAuthnMultifactorAuthenticationCoreProperties">WebAuthnMultifactorAuthenticationCoreProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="required" data-name="cas.authn.mfa.web-authn.core.relying-party-name" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.mfa.web-authn.core.relying-party-name</code><span class="cas-property-summary">The human-palatable name of the Relaying Party.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-required"><i class="fa fa-asterisk" aria-hidden="true"></i>Required</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>The human-palatable name of the Relaying Party.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.mfa.webauthn.WebAuthnMultifactorAuthenticationCoreProperties">WebAuthnMultifactorAuthenticationCoreProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="required" data-name="cas.authn.mfa.web-authn.crypto.encryption.key" data-default="" data-spel>
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.mfa.web-authn.crypto.encryption.key</code><span class="cas-property-summary">The encryption key is a string whose length is defined by the encryption key size setting.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags">
+<span class="cas-property-tag cas-property-tag-required"><i class="fa fa-asterisk" aria-hidden="true"></i>Required</span><span class="cas-property-tag"><i class="fa fa-code" aria-hidden="true"></i>SpEL</span>
+</div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>The encryption key is a string whose length is defined by the encryption key size setting.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.core.util.EncryptionJwtCryptoProperties">EncryptionJwtCryptoProperties</code></dd>
+<dt>Supports</dt>
+<dd><a href="/cas/development/configuration/Configuration-Spring-Expressions.html">Spring Expression Language</a></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="required" data-name="cas.authn.mfa.web-authn.crypto.signing.key" data-default="" data-spel>
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.mfa.web-authn.crypto.signing.key</code><span class="cas-property-summary">The signing key is a string whose length is defined by the signing key size setting.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags">
+<span class="cas-property-tag cas-property-tag-required"><i class="fa fa-asterisk" aria-hidden="true"></i>Required</span><span class="cas-property-tag"><i class="fa fa-code" aria-hidden="true"></i>SpEL</span>
+</div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>The signing key is a string whose length is defined by the signing key size setting.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.core.util.SigningJwtCryptoProperties">SigningJwtCryptoProperties</code></dd>
+<dt>Supports</dt>
+<dd><a href="/cas/development/configuration/Configuration-Spring-Expressions.html">Spring Expression Language</a></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.authn.mfa.web-authn.core.allow-primary-authentication" data-default="false">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.mfa.web-authn.core.allow-primary-authentication</code><span class="cas-property-summary">Configure the authentication flow to allow web-authn to be used as the first primary factor for authentication.</span>
+</div>
+        <div class="cas-property-default"><code>false</code></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Configure the authentication flow to allow web-authn to be used as the first primary factor for authentication. Registered accounts with a valid webauthn registration record can choose to login using their device as the first step.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Boolean</code></dd>
+<dt>Default</dt>
+<dd><code>false</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.mfa.webauthn.WebAuthnMultifactorAuthenticationCoreProperties">WebAuthnMultifactorAuthenticationCoreProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.authn.mfa.web-authn.core.allow-untrusted-attestation" data-default="false">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.mfa.web-authn.core.allow-untrusted-attestation</code><span class="cas-property-summary">If false finish registration op will only allow registrations where the attestation signature can be linked to a trusted attestation root.</span>
+</div>
+        <div class="cas-property-default"><code>false</code></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>If false finish registration op will only allow registrations where the attestation signature can be linked to a trusted attestation root. This excludes self attestation and none attestation. Regardless of the value of this option, invalid attestation statements of supported formats will always be rejected. For example, a "packed" attestation statement with an invalid signature will be rejected even if this option is set to true.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Boolean</code></dd>
+<dt>Default</dt>
+<dd><code>false</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.mfa.webauthn.WebAuthnMultifactorAuthenticationCoreProperties">WebAuthnMultifactorAuthenticationCoreProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.authn.mfa.web-authn.core.allowed-origins" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.mfa.web-authn.core.allowed-origins</code><span class="cas-property-summary">The allowed origins that returned authenticator responses will be compared against.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>The allowed origins that returned authenticator responses will be compared against. The default is set to the server name. A successful registration or authentication operation requires origins to exactly equal one of these values.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.mfa.webauthn.WebAuthnMultifactorAuthenticationCoreProperties">WebAuthnMultifactorAuthenticationCoreProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.authn.mfa.web-authn.core.attestation-conveyance-preference" data-default="DIRECT">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.mfa.web-authn.core.attestation-conveyance-preference</code><span class="cas-property-summary">Accepted values are: DIRECT , INDIRECT , NONE .</span>
+</div>
+        <div class="cas-property-default"><code>DIRECT</code></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Accepted values are: <code>DIRECT</code>, <code>INDIRECT</code>, <code>NONE</code>. The argument for the attestation parameter in registration operations. Unless your application has a concrete policy for authenticator attestation, it is recommended to leave this parameter undefined.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><code>DIRECT</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.mfa.webauthn.WebAuthnMultifactorAuthenticationCoreProperties">WebAuthnMultifactorAuthenticationCoreProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.authn.mfa.web-authn.core.authenticator-attachment" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.mfa.web-authn.core.authenticator-attachment</code><span class="cas-property-summary">Specifies the desired authenticator attachment modality during credential registration.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description">
+<p>Specifies the desired authenticator attachment modality during credential registration.</p>
+<p>This is used by the WebAuthn client/browser to select which type of authenticator may be used to create the credential.</p>
+<div><ul> <li>
+<code>PLATFORM</code>: an authenticator built into, or tightly bound to, the user's device, such as Touch ID, Windows Hello, Android/iOS passkeys.</li>
+<li>
+<code>CROSS_PLATFORM</code>: an external/roaming authenticator usable across multiple devices, such as a USB, NFC, or BLE security key like a YubiKey.</li>
+</ul></div>
+<p>If unset, the client may use any available authenticator.</p>
+</div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.mfa.webauthn.WebAuthnMultifactorAuthenticationCoreProperties">WebAuthnMultifactorAuthenticationCoreProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.authn.mfa.web-authn.core.display-name-attribute" data-default="displayName">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.mfa.web-authn.core.display-name-attribute</code><span class="cas-property-summary">Name of the principal attribute that indicates the principal's display name, primarily used for device registration.</span>
+</div>
+        <div class="cas-property-default"><code>displayName</code></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Name of the principal attribute that indicates the principal's display name, primarily used for device registration.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><code>displayName</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.mfa.webauthn.WebAuthnMultifactorAuthenticationCoreProperties">WebAuthnMultifactorAuthenticationCoreProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.authn.mfa.web-authn.core.enabled" data-default="true">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.mfa.web-authn.core.enabled</code><span class="cas-property-summary">Whether WebAuthn functionality should be activated and enabled.</span>
+</div>
+        <div class="cas-property-default"><code>true</code></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Whether WebAuthn functionality should be activated and enabled.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Boolean</code></dd>
+<dt>Default</dt>
+<dd><code>true</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.mfa.webauthn.WebAuthnMultifactorAuthenticationCoreProperties">WebAuthnMultifactorAuthenticationCoreProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.authn.mfa.web-authn.core.expire-devices" data-default="30">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.mfa.web-authn.core.expire-devices</code><span class="cas-property-summary">Expire and forget device registration records after this period.</span>
+</div>
+        <div class="cas-property-default"><code>30</code></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Expire and forget device registration records after this period.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Long</code></dd>
+<dt>Default</dt>
+<dd><code>30</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.mfa.webauthn.WebAuthnMultifactorAuthenticationCoreProperties">WebAuthnMultifactorAuthenticationCoreProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.authn.mfa.web-authn.core.expire-devices-time-unit" data-default="days">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.mfa.web-authn.core.expire-devices-time-unit</code><span class="cas-property-summary">Device registration record expiration time unit.</span>
+</div>
+        <div class="cas-property-default"><code>days</code></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Device registration record expiration time unit.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>TimeUnit</code></dd>
+<dt>Default</dt>
+<dd><code>days</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.mfa.webauthn.WebAuthnMultifactorAuthenticationCoreProperties">WebAuthnMultifactorAuthenticationCoreProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.authn.mfa.web-authn.core.hints" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.mfa.web-authn.core.hints</code><span class="cas-property-summary">User-agent hints, in descending order of preference, sent with registration and authentication requests to guide the browser towards the kind of authenticator to offer first.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description">
+<p>User-agent hints, in descending order of preference, sent with registration and authentication requests to guide the browser towards the kind of authenticator to offer first.</p>
+<p>Hints do not restrict which authenticator may be used, and where they conflict with the authenticator attachment, browsers that support them follow the hints.</p>
+<div><ul> <li>
+<code>security-key</code>: a physical security key, such as a USB or NFC key.</li>
+<li>
+<code>client-device</code>: an authenticator on the device in use, such as the platform passkey manager.</li>
+<li>
+<code>hybrid</code>: a phone or other general-purpose device, usually reached by scanning a QR code.</li>
+</ul></div>
+<p>If unset, no hints are sent.</p>
+</div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>List&lt;String&gt;</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.mfa.webauthn.WebAuthnMultifactorAuthenticationCoreProperties">WebAuthnMultifactorAuthenticationCoreProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.authn.mfa.web-authn.core.multiple-device-registration-enabled" data-default="false">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.mfa.web-authn.core.multiple-device-registration-enabled</code><span class="cas-property-summary">When enabled, allows the user/system to accept multiple accounts and device registrations per user, allowing one to switch between or register new devices/accounts automatically.</span>
+</div>
+        <div class="cas-property-default"><code>false</code></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>When enabled, allows the user/system to accept multiple accounts and device registrations per user, allowing one to switch between or register new devices/accounts automatically.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Boolean</code></dd>
+<dt>Default</dt>
+<dd><code>false</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.mfa.webauthn.WebAuthnMultifactorAuthenticationCoreProperties">WebAuthnMultifactorAuthenticationCoreProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.authn.mfa.web-authn.core.passkey-enroll-url" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.mfa.web-authn.core.passkey-enroll-url</code><span class="cas-property-summary">URL of the page where a user creates a passkey for the account, published as enroll in the passkey endpoints document at /.well-known/passkey-endpoints , so that password managers can send users straight to it.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>URL of the page where a user creates a passkey for the account, published as <code>enroll</code> in the passkey endpoints document at <code>/.well-known/passkey-endpoints</code>, so that password managers can send users straight to it. If unset and account management is enabled, the multifactor devices panel of the account profile is used; otherwise no enrollment page is published.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.mfa.webauthn.WebAuthnMultifactorAuthenticationCoreProperties">WebAuthnMultifactorAuthenticationCoreProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.authn.mfa.web-authn.core.passkey-manage-url" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.mfa.web-authn.core.passkey-manage-url</code><span class="cas-property-summary">URL of the page where a user manages the account's passkeys, published as manage in the passkey endpoints document at /.well-known/passkey-endpoints .</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>URL of the page where a user manages the account's passkeys, published as <code>manage</code> in the passkey endpoints document at <code>/.well-known/passkey-endpoints</code>. If unset and account management is enabled, the multifactor devices panel of the account profile is used; otherwise no management page is published.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.mfa.webauthn.WebAuthnMultifactorAuthenticationCoreProperties">WebAuthnMultifactorAuthenticationCoreProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.authn.mfa.web-authn.core.passkey-upgrade-enabled" data-default="false">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.mfa.web-authn.core.passkey-upgrade-enabled</code><span class="cas-property-summary">Offer a passkey right after a password login: CAS shows a short page that asks the browser's password manager to create a passkey for the account on its own (WebAuthn conditional create), then continues as usual.</span>
+</div>
+        <div class="cas-property-default"><code>false</code></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description">
+<p>Offer a passkey right after a password login: CAS shows a short page that asks the browser's password manager to create a passkey for the account on its own (WebAuthn conditional create), then continues as usual. Browsers and password managers that do not support it continue immediately.</p>
+<p>Takes effect only when <code>allow-primary-authentication</code> and <code>allow-untrusted-attestation</code> are also enabled, since such passkeys come without attestation and are meant for passkey login; otherwise this setting is ignored.</p>
+</div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Boolean</code></dd>
+<dt>Default</dt>
+<dd><code>false</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.mfa.webauthn.WebAuthnMultifactorAuthenticationCoreProperties">WebAuthnMultifactorAuthenticationCoreProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.authn.mfa.web-authn.core.qr-code-authentication-enabled" data-default="false">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.mfa.web-authn.core.qr-code-authentication-enabled</code><span class="cas-property-summary">When enabled, allows the user to a scan a QR code on an external device and authenticate later on the primary device.</span>
+</div>
+        <div class="cas-property-default"><code>false</code></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>When enabled, allows the user to a scan a QR code on an external device and authenticate later on the primary device. This is useful in scenarios where the primary authentication device is not registered with CAS and the user has a secondary device that is registered and does not wish to use the primary device to authenticate for security or other practical reasons.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Boolean</code></dd>
+<dt>Default</dt>
+<dd><code>false</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.mfa.webauthn.WebAuthnMultifactorAuthenticationCoreProperties">WebAuthnMultifactorAuthenticationCoreProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.authn.mfa.web-authn.core.trusted-device-enabled" data-default="false">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.mfa.web-authn.core.trusted-device-enabled</code><span class="cas-property-summary">Indicates whether this provider should support trusted devices.</span>
+</div>
+        <div class="cas-property-default"><code>false</code></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Indicates whether this provider should support trusted devices.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Boolean</code></dd>
+<dt>Default</dt>
+<dd><code>false</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.mfa.webauthn.WebAuthnMultifactorAuthenticationCoreProperties">WebAuthnMultifactorAuthenticationCoreProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.authn.mfa.web-authn.core.user-verification-requirement" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.mfa.web-authn.core.user-verification-requirement</code><span class="cas-property-summary">Specifies the relying party's requirement for user verification during credential registration and/or authentication.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description">
+<p>Specifies the relying party's requirement for user verification during credential registration and/or authentication.</p>
+<p>User verification means the authenticator verifies the user locally, for example with a PIN, fingerprint, face recognition, or device unlock. This is stronger than simple user presence, such as touching a security key.</p>
+<div><ul> <li>
+<code>REQUIRED</code>: user verification must be performed; the operation should fail if it is unavailable or not completed.</li>
+<li>
+<code>PREFERRED</code>: user verification should be performed if possible, but the operation may still succeed without it.</li>
+<li>
+<code>DISCOURAGED</code>: user verification is not requested, typically to reduce friction or avoid prompting for PIN/biometric verification.</li>
+</ul></div>
+<p>The server should validate the resulting authenticator data flags according to the configured requirement.</p>
+</div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.mfa.webauthn.WebAuthnMultifactorAuthenticationCoreProperties">WebAuthnMultifactorAuthenticationCoreProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.authn.mfa.web-authn.core.validate-signature-counter" data-default="true">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.mfa.web-authn.core.validate-signature-counter</code><span class="cas-property-summary">If true, finish assertion op will fail if the signature counter value in the response is not strictly greater than the stored signature counter value.</span>
+</div>
+        <div class="cas-property-default"><code>true</code></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>If true, finish assertion op will fail if the signature counter value in the response is not strictly greater than the stored signature counter value.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Boolean</code></dd>
+<dt>Default</dt>
+<dd><code>true</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.mfa.webauthn.WebAuthnMultifactorAuthenticationCoreProperties">WebAuthnMultifactorAuthenticationCoreProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.authn.mfa.web-authn.crypto.alg" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.mfa.web-authn.crypto.alg</code><span class="cas-property-summary">The signing/encryption algorithm to use.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>The signing/encryption algorithm to use.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties">EncryptionJwtSigningJwtCryptographyProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.authn.mfa.web-authn.crypto.enabled" data-default="true">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.mfa.web-authn.crypto.enabled</code><span class="cas-property-summary">Whether crypto operations are enabled.</span>
+</div>
+        <div class="cas-property-default"><code>true</code></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Whether crypto operations are enabled.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Boolean</code></dd>
+<dt>Default</dt>
+<dd><code>true</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties">EncryptionJwtSigningJwtCryptographyProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.authn.mfa.web-authn.crypto.encryption.key-size" data-default="512">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.mfa.web-authn.crypto.encryption.key-size</code><span class="cas-property-summary">The encryption key size.</span>
+</div>
+        <div class="cas-property-default"><code>512</code></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>The encryption key size.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Integer</code></dd>
+<dt>Default</dt>
+<dd><code>512</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.core.util.EncryptionJwtCryptoProperties">EncryptionJwtCryptoProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.authn.mfa.web-authn.crypto.signing.key-size" data-default="512">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.mfa.web-authn.crypto.signing.key-size</code><span class="cas-property-summary">The signing key size.</span>
+</div>
+        <div class="cas-property-default"><code>512</code></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>The signing key size.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Integer</code></dd>
+<dt>Default</dt>
+<dd><code>512</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.core.util.SigningJwtCryptoProperties">SigningJwtCryptoProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.authn.mfa.web-authn.crypto.strategy-type" data-default="ENCRYPT_AND_SIGN">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.mfa.web-authn.crypto.strategy-type</code><span class="cas-property-summary">Control the cipher sequence of operations.</span>
+</div>
+        <div class="cas-property-default"><code>ENCRYPT_AND_SIGN</code></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><div>Control the cipher sequence of operations. The accepted values are: <ul> <li>
+<code>ENCRYPT_AND_SIGN</code>: Encrypt the value first, and then sign.</li>
+<li>
+<code>SIGN_AND_ENCRYPT</code>: Sign the value first, and then encrypt.</li>
+</ul>
+</div></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><code>ENCRYPT_AND_SIGN</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties">EncryptionJwtSigningJwtCryptographyProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+</div>
+<p class="cas-properties-legend">
+        <strong>Required</strong> settings may be needed to activate or affect the feature; review them even when they have a default.
+        <strong>Optional</strong> settings only need to be set to change a default or to turn on the behavior they control.
+        <strong>Third party</strong> settings belong to libraries such as Spring Boot that CAS builds on; their own documentation may have more detail.
+    </p>
+<div class="cas-properties-topics">
+<details class="cas-properties-topic">
+            <summary><i class="fa fa-user-secret" aria-hidden="true"></i>Signing &amp; encryption</summary>
+            <div class="cas-properties-topic-body">
+<p></p>
+
+<p>This CAS feature is able to accept signing and encryption crypto keys. In most scenarios if keys are not provided, CAS will
+auto-generate them. The following instructions apply if you wish to manually and beforehand create the signing and encryption keys.</p>
+
+<p>Note that if you are asked to create a <a href="https://tools.ietf.org/html/rfc7517">JWK</a> of a certain size for the key, you are to use
+the following set of commands to generate the token:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+2
+</pre></td>
+<td class="rouge-code"><pre>wget https://raw.githubusercontent.com/apereo/cas/master/etc/jwk-gen.jar
+java <span class="nt">-jar</span> jwk-gen.jar <span class="nt">-t</span> oct <span class="nt">-s</span> <span class="o">[</span>size]
+</pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+<p>The outcome would be similar to:</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+</pre></td>
+<td class="rouge-code"><pre><span class="p">{</span><span class="w">
+  </span><span class="nl">"kty"</span><span class="p">:</span><span class="w"> </span><span class="s2">"oct"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"kid"</span><span class="p">:</span><span class="w"> </span><span class="s2">"..."</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"k"</span><span class="p">:</span><span class="w"> </span><span class="s2">"..."</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+<p>The generated value for <code class="language-plaintext highlighter-rouge">k</code> needs to be assigned to the relevant CAS settings. Note that keys generated via
+the above algorithm are processed by CAS using the Advanced Encryption Standard (<code class="language-plaintext highlighter-rouge">AES</code>) algorithm which is a
+specification for the encryption of electronic data established by the U.S. National Institute of Standards and Technology.</p>
+
+<hr>
+
+
+            </div>
+        </details><details class="cas-properties-topic">
+            <summary><i class="fa fa-newspaper" aria-hidden="true"></i>Notes on configuration</summary>
+            <div class="cas-properties-topic-body">
+<!-- fragment:keep -->
+
+<p></p>
+
+<p><strong>Configuration Metadata</strong></p>
+
+<p>The collection of configuration properties listed in this section are automatically generated from the CAS source and components that contain the actual field
+definitions, types, descriptions, modules, etc. This metadata may not always be 100% accurate, or could be lacking details and sufficient explanations.</p>
+
+<p><strong>Be Selective</strong></p>
+
+<p>This section is meant as a guide only. Do NOT copy/paste the entire collection of settings into your CAS configuration; rather pick only the properties that you
+need. Do NOT enable settings unless you are certain of their purpose and do NOT copy settings into your configuration only to keep them as reference. All these
+ideas lead to upgrade headaches, maintenance nightmares and premature aging.</p>
+
+<p><strong>YAGNI</strong></p>
+
+<p>Note that for nearly ALL use cases, declaring and configuring properties listed here is sufficient. You should NOT have to explicitly massage a CAS XML/Java/etc
+configuration file to design an authentication handler, create attribute release policies, etc. CAS at runtime will auto-configure all required changes for you.
+If you are unsure about the meaning of a given CAS setting, do NOT turn it on without hesitation. Review the codebase or better yet, ask questions to clarify
+the intended behavior.</p>
+
+<p><strong>Naming Convention</strong></p>
+
+<p>Property names can be specified in very relaxed terms. For instance <code class="language-plaintext highlighter-rouge">cas.someProperty</code>, <code class="language-plaintext highlighter-rouge">cas.some-property</code>, <code class="language-plaintext highlighter-rouge">cas.some_property</code> are all valid names. While all
+forms are accepted by CAS, there are certain components (in CAS and other frameworks used) whose activation at runtime is conditional on a property value, where
+this property is required to have been specified in CAS configuration using kebab case. This is both true for properties that are owned by CAS as well as those
+that might be presented to the system via an external library or framework such as Spring Boot, etc.</p>
+
+<div class="alert alert-info">
+<img class="emoji" title=":information_source:" alt=":information_source:" src="https://github.githubassets.com/images/icons/emoji/unicode/2139.png" height="20" width="20"> <strong>Note</strong> <p>
+When possible, properties should be stored in lower-case kebab format, such as <code>cas.property-name=value</code>.
+The only possible exception to this rule is when naming actuator endpoints; The name of the
+actuator endpoints (i.e. <code>ssoSessions</code>) <strong>MUST</strong> remain in camelCase mode. 
+</p>
+</div>
+
+<p>Settings and properties that are controlled by the CAS platform directly always begin with the prefix <code class="language-plaintext highlighter-rouge">cas</code>. All other settings are controlled and provided
+to CAS via other underlying frameworks and may have their own schemas and syntax. BE CAREFUL with
+the distinction. Unrecognized properties are rejected by CAS and/or frameworks upon which CAS depends. This means if you somehow misspell a property definition
+or fail to adhere to the dot-notation syntax and such, your setting is entirely refused by CAS and likely the feature it controls will never be activated in the
+way you intend.</p>
+
+<p><strong>Validation</strong></p>
+
+<p>Configuration properties are automatically validated on CAS startup to report issues with configuration binding, especially if defined CAS settings cannot be
+recognized or validated by the configuration schema. Additional validation processes are also handled
+via <a href="/cas/development/configuration/Configuration-Metadata-Repository.html">Configuration Metadata</a> and property migrations applied automatically on
+startup by Spring Boot and family.</p>
+
+<p><strong>Indexed Settings</strong></p>
+
+<p>CAS settings able to accept multiple values are typically documented with an index, such as <code class="language-plaintext highlighter-rouge">cas.some.setting[0]=value</code>. The index <code class="language-plaintext highlighter-rouge">[0]</code> is meant to be
+incremented by the adopter to allow for distinct multiple configuration blocks.</p>
+
+            </div>
+        </details>
+</div>
+</div>
+
+<h3 id="bypass">Bypass</h3>
+
+<!-- fragment:keep -->
+
+<p>The following settings and properties are available from the CAS configuration catalog:</p>
+
+
+<div class="cas-properties">
+    <div class="cas-properties-list">
+<div class="cas-property" data-kind="required" data-name="cas.authn.mfa.web-authn.bypass.groovy.location" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.mfa.web-authn.bypass.groovy.location</code><span class="cas-property-summary">The location of the resource.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-required"><i class="fa fa-asterisk" aria-hidden="true"></i>Required</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description">
+<p>The location of the resource. Resources can be URLs, or files found either on the classpath or outside somewhere in the file system.</p>
+<p>In the event the configured resource is a Groovy script, especially if the script is set to reload on changes, you may need to adjust the total number of <code>inotify</code> instances. On Linux, you may need to add the following line to <code>/etc/sysctl.conf</code>: <code>fs.inotify.max_user_instances = 256</code>.</p>
+<p>You can check the current value via <code>cat /proc/sys/fs/inotify/max_user_instances</code>.</p>
+<p>In situations and scenarios where CAS is able to automatically watch the underlying resource for changes and detect updates and modifications dynamically, you may be able to specify the following setting as either an environment variable or system property with a value of <code>false</code> to disable the resource watcher: <code>org.apereo.cas.util.io.PathWatcherService</code>.</p>
+</div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Resource</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.mfa.GroovyMultifactorAuthenticationProviderBypassProperties">GroovyMultifactorAuthenticationProviderBypassProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="required" data-name="cas.authn.mfa.web-authn.bypass.rest.url" data-default="" data-spel>
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.mfa.web-authn.bypass.rest.url</code><span class="cas-property-summary">The endpoint URL to contact and retrieve attributes.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags">
+<span class="cas-property-tag cas-property-tag-required"><i class="fa fa-asterisk" aria-hidden="true"></i>Required</span><span class="cas-property-tag"><i class="fa fa-code" aria-hidden="true"></i>SpEL</span>
+</div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>The endpoint URL to contact and retrieve attributes.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.mfa.RestfulMultifactorAuthenticationProviderBypassProperties">RestfulMultifactorAuthenticationProviderBypassProperties</code></dd>
+<dt>Supports</dt>
+<dd><a href="/cas/development/configuration/Configuration-Spring-Expressions.html">Spring Expression Language</a></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.authn.mfa.web-authn.bypass.authentication-attribute-name" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.mfa.web-authn.bypass.authentication-attribute-name</code><span class="cas-property-summary">Skip multifactor authentication based on designated authentication attribute names.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Skip multifactor authentication based on designated authentication attribute names.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProviderBypassProperties">MultifactorAuthenticationProviderBypassProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.authn.mfa.web-authn.bypass.authentication-attribute-value" data-default="" data-regex>
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.mfa.web-authn.bypass.authentication-attribute-value</code><span class="cas-property-summary">Optionally, skip multifactor authentication based on designated authentication attribute values.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag"><i class="fa fa-asterisk" aria-hidden="true"></i>Regex</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Optionally, skip multifactor authentication based on designated authentication attribute values. Multiple values may be separated by a comma.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProviderBypassProperties">MultifactorAuthenticationProviderBypassProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.authn.mfa.web-authn.bypass.authentication-handler-name" data-default="" data-regex>
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.mfa.web-authn.bypass.authentication-handler-name</code><span class="cas-property-summary">Skip multifactor authentication depending on form of primary authentication execution.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag"><i class="fa fa-asterisk" aria-hidden="true"></i>Regex</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Skip multifactor authentication depending on form of primary authentication execution. Specifically, skip multifactor if the a particular authentication handler noted by its name successfully is able to authenticate credentials in the primary factor. Multiple values may be separated by a comma.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProviderBypassProperties">MultifactorAuthenticationProviderBypassProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.authn.mfa.web-authn.bypass.authentication-method-name" data-default="" data-regex>
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.mfa.web-authn.bypass.authentication-method-name</code><span class="cas-property-summary">Skip multifactor authentication depending on method/form of primary authentication execution.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag"><i class="fa fa-asterisk" aria-hidden="true"></i>Regex</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Skip multifactor authentication depending on method/form of primary authentication execution. Specifically, skip multifactor if the authentication method attribute collected as part of authentication metadata matches a certain value. Multiple values may be separated by a comma.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProviderBypassProperties">MultifactorAuthenticationProviderBypassProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.authn.mfa.web-authn.bypass.credential-class-type" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.mfa.web-authn.bypass.credential-class-type</code><span class="cas-property-summary">Skip multifactor authentication depending on form of primary credentials.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Skip multifactor authentication depending on form of primary credentials. Value must equal the fully qualified class name of the credential type.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProviderBypassProperties">MultifactorAuthenticationProviderBypassProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.authn.mfa.web-authn.bypass.http-request-headers" data-default="" data-regex>
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.mfa.web-authn.bypass.http-request-headers</code><span class="cas-property-summary">Skip multifactor authentication if the http request contains the defined header names.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag"><i class="fa fa-asterisk" aria-hidden="true"></i>Regex</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Skip multifactor authentication if the http request contains the defined header names. Header names may be comma-separated and can be regular expressions; values are ignored.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProviderBypassProperties">MultifactorAuthenticationProviderBypassProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.authn.mfa.web-authn.bypass.http-request-remote-address" data-default="" data-regex>
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.mfa.web-authn.bypass.http-request-remote-address</code><span class="cas-property-summary">Skip multifactor authentication if the http request's remote address or host matches the value defined here.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag"><i class="fa fa-asterisk" aria-hidden="true"></i>Regex</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Skip multifactor authentication if the http request's remote address or host matches the value defined here. The value may be specified as a regular expression.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProviderBypassProperties">MultifactorAuthenticationProviderBypassProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.authn.mfa.web-authn.bypass.principal-attribute-name" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.mfa.web-authn.bypass.principal-attribute-name</code><span class="cas-property-summary">Skip multifactor authentication based on designated principal attribute names.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Skip multifactor authentication based on designated principal attribute names.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProviderBypassProperties">MultifactorAuthenticationProviderBypassProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.authn.mfa.web-authn.bypass.principal-attribute-value" data-default="" data-regex>
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.mfa.web-authn.bypass.principal-attribute-value</code><span class="cas-property-summary">Optionally, skip multifactor authentication based on designated principal attribute values.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag"><i class="fa fa-asterisk" aria-hidden="true"></i>Regex</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Optionally, skip multifactor authentication based on designated principal attribute values.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProviderBypassProperties">MultifactorAuthenticationProviderBypassProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.authn.mfa.web-authn.bypass.rest.basic-auth-password" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.mfa.web-authn.bypass.rest.basic-auth-password</code><span class="cas-property-summary">If REST endpoint is protected via basic authentication, specify the password for authentication.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>If REST endpoint is protected via basic authentication, specify the password for authentication.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.mfa.RestfulMultifactorAuthenticationProviderBypassProperties">RestfulMultifactorAuthenticationProviderBypassProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.authn.mfa.web-authn.bypass.rest.basic-auth-username" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.mfa.web-authn.bypass.rest.basic-auth-username</code><span class="cas-property-summary">If REST endpoint is protected via basic authentication, specify the username for authentication.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>If REST endpoint is protected via basic authentication, specify the username for authentication.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.mfa.RestfulMultifactorAuthenticationProviderBypassProperties">RestfulMultifactorAuthenticationProviderBypassProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.authn.mfa.web-authn.bypass.rest.headers" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.mfa.web-authn.bypass.rest.headers</code><span class="cas-property-summary">Headers, defined as a Map, to include in the request when making the REST call.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Headers, defined as a Map, to include in the request when making the REST call. Will overwrite any header that CAS is pre-defined to send and include in the request. Key in the map should be the header name and the value in the map should be the header value.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Map&lt;String,String&gt;</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.mfa.RestfulMultifactorAuthenticationProviderBypassProperties">RestfulMultifactorAuthenticationProviderBypassProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.authn.mfa.web-authn.bypass.rest.maximum-retry-attempts" data-default="3">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.mfa.web-authn.bypass.rest.maximum-retry-attempts</code><span class="cas-property-summary">When attempting to reach the endpoint, this setting controls the number of retry attempts that CAS should execute Setting this value to a zero or negative value will disable the retry policy.</span>
+</div>
+        <div class="cas-property-default"><code>3</code></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>When attempting to reach the endpoint, this setting controls the number of <strong>retry attempts</strong> that CAS should execute Setting this value to a zero or negative value will disable the retry policy.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Integer</code></dd>
+<dt>Default</dt>
+<dd><code>3</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.mfa.RestfulMultifactorAuthenticationProviderBypassProperties">RestfulMultifactorAuthenticationProviderBypassProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.authn.mfa.web-authn.bypass.rest.method" data-default="GET">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.authn.mfa.web-authn.bypass.rest.method</code><span class="cas-property-summary">HTTP method to use when contacting the rest endpoint.</span>
+</div>
+        <div class="cas-property-default"><code>GET</code></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>HTTP method to use when contacting the rest endpoint. Examples include <code>GET, POST</code>, etc.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><code>GET</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.mfa.RestfulMultifactorAuthenticationProviderBypassProperties">RestfulMultifactorAuthenticationProviderBypassProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+</div>
+<p class="cas-properties-legend">
+        <strong>Required</strong> settings may be needed to activate or affect the feature; review them even when they have a default.
+        <strong>Optional</strong> settings only need to be set to change a default or to turn on the behavior they control.
+        <strong>Third party</strong> settings belong to libraries such as Spring Boot that CAS builds on; their own documentation may have more detail.
+    </p>
+<div class="cas-properties-topics">
+<details class="cas-properties-topic">
+            <summary><i class="fa fa-laptop-code" aria-hidden="true"></i>Groovy scripting</summary>
+            <div class="cas-properties-topic-body">
+                <p>CAS takes advantage of Apache Groovy in forms of either embedded or external scripts that allow one to, by default,
+                    dynamically build constructs, attributes, access strategies and a lot more. To activate the functionality
+                    described here, you may need to prepare CAS to support and integrate with Apache Groovy.</p>
+                <p>Please <a href="https://apereo.github.io/cas/development/integration/Apache-Groovy-Scripting.html">review this guide</a> to configure your build.</p>
+            </div>
+        </details><details class="cas-properties-topic">
+            <summary><i class="fa fa-newspaper" aria-hidden="true"></i>Notes on configuration</summary>
+            <div class="cas-properties-topic-body">
+<!-- fragment:keep -->
+
+<p></p>
+
+<p><strong>Configuration Metadata</strong></p>
+
+<p>The collection of configuration properties listed in this section are automatically generated from the CAS source and components that contain the actual field
+definitions, types, descriptions, modules, etc. This metadata may not always be 100% accurate, or could be lacking details and sufficient explanations.</p>
+
+<p><strong>Be Selective</strong></p>
+
+<p>This section is meant as a guide only. Do NOT copy/paste the entire collection of settings into your CAS configuration; rather pick only the properties that you
+need. Do NOT enable settings unless you are certain of their purpose and do NOT copy settings into your configuration only to keep them as reference. All these
+ideas lead to upgrade headaches, maintenance nightmares and premature aging.</p>
+
+<p><strong>YAGNI</strong></p>
+
+<p>Note that for nearly ALL use cases, declaring and configuring properties listed here is sufficient. You should NOT have to explicitly massage a CAS XML/Java/etc
+configuration file to design an authentication handler, create attribute release policies, etc. CAS at runtime will auto-configure all required changes for you.
+If you are unsure about the meaning of a given CAS setting, do NOT turn it on without hesitation. Review the codebase or better yet, ask questions to clarify
+the intended behavior.</p>
+
+<p><strong>Naming Convention</strong></p>
+
+<p>Property names can be specified in very relaxed terms. For instance <code class="language-plaintext highlighter-rouge">cas.someProperty</code>, <code class="language-plaintext highlighter-rouge">cas.some-property</code>, <code class="language-plaintext highlighter-rouge">cas.some_property</code> are all valid names. While all
+forms are accepted by CAS, there are certain components (in CAS and other frameworks used) whose activation at runtime is conditional on a property value, where
+this property is required to have been specified in CAS configuration using kebab case. This is both true for properties that are owned by CAS as well as those
+that might be presented to the system via an external library or framework such as Spring Boot, etc.</p>
+
+<div class="alert alert-info">
+<img class="emoji" title=":information_source:" alt=":information_source:" src="https://github.githubassets.com/images/icons/emoji/unicode/2139.png" height="20" width="20"> <strong>Note</strong> <p>
+When possible, properties should be stored in lower-case kebab format, such as <code>cas.property-name=value</code>.
+The only possible exception to this rule is when naming actuator endpoints; The name of the
+actuator endpoints (i.e. <code>ssoSessions</code>) <strong>MUST</strong> remain in camelCase mode. 
+</p>
+</div>
+
+<p>Settings and properties that are controlled by the CAS platform directly always begin with the prefix <code class="language-plaintext highlighter-rouge">cas</code>. All other settings are controlled and provided
+to CAS via other underlying frameworks and may have their own schemas and syntax. BE CAREFUL with
+the distinction. Unrecognized properties are rejected by CAS and/or frameworks upon which CAS depends. This means if you somehow misspell a property definition
+or fail to adhere to the dot-notation syntax and such, your setting is entirely refused by CAS and likely the feature it controls will never be activated in the
+way you intend.</p>
+
+<p><strong>Validation</strong></p>
+
+<p>Configuration properties are automatically validated on CAS startup to report issues with configuration binding, especially if defined CAS settings cannot be
+recognized or validated by the configuration schema. Additional validation processes are also handled
+via <a href="/cas/development/configuration/Configuration-Metadata-Repository.html">Configuration Metadata</a> and property migrations applied automatically on
+startup by Spring Boot and family.</p>
+
+<p><strong>Indexed Settings</strong></p>
+
+<p>CAS settings able to accept multiple values are typically documented with an index, such as <code class="language-plaintext highlighter-rouge">cas.some.setting[0]=value</code>. The index <code class="language-plaintext highlighter-rouge">[0]</code> is meant to be
+incremented by the adopter to allow for distinct multiple configuration blocks.</p>
+
+            </div>
+        </details>
+</div>
+</div>
+
+<h2 id="discoverable-credentials">Discoverable Credentials</h2>
+
+<p>It is possible to allow WebAuthN to act as a standalone authentication strategy for primary authentication. Using this approach,
+user accounts and FIDO2-enabled devices that have already registered with 
+CAS are given the option to login using their FIDO2-enabled device for a passwordless authentication experience.</p>
+
+<blockquote>
+  <p>Discoverable Credential means that the private key and associated metadata is stored in persistent 
+memory on the authenticator, instead of encrypted and stored on the relying party server.</p>
+</blockquote>
+
+<p><a href="FIDO2-WebAuthn-Authentication-Registration.html">Device registration</a> can occur out of band using 
+available CAS APIs, or by allowing users to pass through the registration flow
+as part of the typical multifactor authentication.</p>
+
+<p>The same passkeys are also offered by <a href="../authentication/Passwordless-Authentication-Passkeys.html">passwordless authentication</a>,
+from the autofill menu of its username field and from its selection menu.</p>
+
+<h2 id="related-origins">Related Origins</h2>
+
+<p>A passkey is bound to the relying party identifier (<code class="language-plaintext cas-setting highlighter-rouge">cas.authn.mfa.web-authn.core.relying-party-id</code>, or the host of the
+CAS server name). When CAS is reached from origins whose domain differs from that identifier, list them under
+<code class="language-plaintext cas-setting highlighter-rouge">cas.authn.mfa.web-authn.core.allowed-origins</code>. CAS accepts assertions from those origins and publishes them for
+<a href="https://www.w3.org/TR/webauthn-3/#sctn-related-origins">WebAuthn related origin requests</a> at <code class="language-plaintext highlighter-rouge">/.well-known/webauthn</code>:</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+</pre></td>
+<td class="rouge-code"><pre><span class="p">{</span><span class="w">
+  </span><span class="nl">"origins"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+    </span><span class="s2">"https://sso.example.org"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"https://login.example.co.uk"</span><span class="w">
+  </span><span class="p">]</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+<p>Browsers fetch this document from <code class="language-plaintext highlighter-rouge">https://&lt;relying party identifier&gt;/.well-known/webauthn</code>, at the root of the host
+and outside the CAS context path, and they only honor a limited number of distinct registrable domains in it. When CAS
+runs under a context path such as <code class="language-plaintext highlighter-rouge">/cas</code>, route the document onto the path CAS serves, either in the proxy that fronts
+CAS or with the <a href="../installation/Servlet-Container-Embedded-Tomcat-RewriteValve.html">embedded Tomcat rewrite valve</a>
+registered on the engine:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td>
+<td class="rouge-code"><pre>RewriteRule ^/\.well-known/webauthn$ /cas/.well-known/webauthn [L]
+</pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+<h2 id="passkey-endpoints">Passkey Endpoints</h2>
+
+<p>CAS publishes the <a href="https://www.w3.org/TR/passkey-endpoints/">passkey endpoints metadata</a> at
+<code class="language-plaintext highlighter-rouge">/.well-known/passkey-endpoints</code>, which password managers and passkey providers read to send users to the pages
+where passkeys are created (<code class="language-plaintext highlighter-rouge">enroll</code>) and managed (<code class="language-plaintext highlighter-rouge">manage</code>):</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+</pre></td>
+<td class="rouge-code"><pre><span class="p">{</span><span class="w">
+  </span><span class="nl">"enroll"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://sso.example.org/cas/account"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"manage"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://sso.example.org/cas/account"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+<p>Each URL is taken from CAS settings. When one is not set and <a href="../registration/Account-Management-Overview.html">account management</a> is enabled, it points to the
+account profile, where WebAuthn devices are listed and registered; otherwise it is left out,
+and an empty document still tells clients that CAS supports passkeys. Like the related origins document, clients fetch it from
+the root of the relying party identifier’s host, so route it onto the CAS context path the same way:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td>
+<td class="rouge-code"><pre>RewriteRule ^/\.well-known/passkey-endpoints$ /cas/.well-known/passkey-endpoints [L]
+</pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+<h2 id="signal-api">Signal API</h2>
+
+<p>After a successful WebAuthn authentication, CAS uses the <a href="https://www.w3.org/TR/webauthn-3/#sctn-signal-methods">WebAuthn Signal API</a>,
+where the browser supports it, to report the passkeys it still accepts for the user and the user’s current name and
+display name. Password managers and platform authenticators can then stop offering passkeys that were removed from
+CAS and show the account as it is named in CAS. Browsers without the Signal API ignore this.</p>
+
+<h2 id="passkey-provider-names">Passkey Provider Names</h2>
+
+<p>Each registration keeps the AAGUID that identifies the authenticator or passkey provider that created it. When the
+attestation does not name the device, which is the case for synced passkeys, the
+<a href="../registration/Account-Management-Overview.html">account profile</a> shows the provider name, such as
+<em>Google Password Manager</em>, <em>1Password</em> or <em>Apple Passwords</em>, from a bundled snapshot of the community
+<a href="https://github.com/passkeydeveloper/passkey-authenticator-aaguids">passkey provider AAGUID list</a>. The registration
+page shows the same name, with the provider’s icon from that list, right after a passkey is registered. Providers that
+send an all-zero AAGUID, and devices registered before CAS kept the AAGUID, stay unnamed.</p>
+
+<h2 id="passkey-upgrades">Passkey Upgrades</h2>
+
+<p>CAS can offer a passkey to users who sign in with a username and password, without a separate enrollment step, using
+<a href="https://www.w3.org/TR/webauthn-3/#dom-credentialmediationrequirement-conditional">WebAuthn conditional create</a>.
+Right after the password login, CAS shows a short intermediate page that asks the browser to create a passkey for the account. If
+the browser’s password manager has just filled in the password for that account, it may create the passkey on its own,
+usually with no prompt; otherwise the request fails silently. Either way the page continues to the application within
+a few seconds, and browsers that do not support conditional create continue immediately.</p>
+
+<div class="alert alert-info">
+<img class="emoji" title=":information_source:" alt=":information_source:" src="https://github.githubassets.com/images/icons/emoji/unicode/2139.png" height="20" width="20"> <strong>Passkey Upgrades</strong><p>
+Passkey upgrades must be explicitly enabled in CAS configuration. Then, note that this feature also only takes effect when
+WebAuthn is allowed for primary authentication and when untrusted attestation is allowed. Review CAS settings to 
+ensure all features are correctly enabled.
+</p>
+</div>
+
+<p>The intermediate page is shown only when the login was completed with a password typed in that login, and the account may register
+another device: it has no device yet, or multiple registration is turned on. The
+passkey is named after the username that was typed, so that the password manager can match it with the saved password,
+and it belongs to the authenticated principal. It is listed with its provider’s name, such as <em>Google Password Manager</em>,
+or as <em>Passkey</em>.</p>
+
+<p>Conditional create is supported by recent versions of Chrome with Google Password Manager and Safari
+with iCloud Keychain, and by many third-party password managers.</p>
+
+            </article>
+            <div class="article-end" aria-hidden="true">
+<span></span><span>CAS</span><span></span>
+</div>
+        </main>
+        
+        <aside class="docs-toc" aria-label="On this page">
+    <nav id="pageContents" aria-label="Table of contents">
+        <p class="eyebrow">ON THIS PAGE</p>
+        <ul class="section-nav"></ul>
+    </nav>
+    <a class="toc-top" href="#cas-docs-container">Back to top <span aria-hidden="true">↑</span></a>
+</aside>
+
+        
+    </div>
+
+    <footer class="site-footer">
+        <a class="footer-brand" href="../../index.html">APEREO <strong>CAS</strong></a>
+        <p>CAS is supported by the <a href="https://www.apereo.org/">Apereo Foundation</a>.</p>
+        <a href="#cas-docs-container">Back to top <span aria-hidden="true">↑</span></a>
+    </footer>
+    <div id="docs-status" class="visually-hidden" role="status" aria-live="polite"></div>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha384-1H217gwSVyLSIfaLxHbE7dRb3v4mYCKbpQvzx0cegeju1MVsGrX5xXxAvs/HgeFs" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.11/clipboard.min.js" integrity="sha384-J08i8An/QeARD9ExYpvphB8BsyOj3Gh2TSh1aLINKO3L0cMSH2dN3E22zFoXEi0Q" crossorigin="anonymous"></script>
+
+    <script src="/cas/javascripts/URI.js"></script>
+    <script src="/cas/javascripts/site.js"></script>
+
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@docsearch/js@3.9.0/dist/umd/index.js" integrity="sha384-QhsjJ84XKaqUeM7eZpvYApdPamFboJLQg4BD2CCCSiUOL4cWzLp5caae6oW/oAXh" crossorigin="anonymous"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js" integrity="sha384-ficRBwtap/VLzILv81vIvgp30PoJYnlCm96tPpNYHXAf+h9SIThOZxxIzRUzbpAh" crossorigin="anonymous"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.5/js/lightbox.min.js" integrity="sha384-bcXRY0im+IjB6RvmBpbgdkqjLV0pCTbaJRJ9IRPeQaWCYlzRn9pPaPmCvONr9h9z" crossorigin="anonymous"></script>
+
+    <script>
+        let pageSection = "Multifactor Authentication";
+        let siteUrl = "https://apereo.github.io";
+        let basePath = "/cas";
+
+        
+    </script>
+</body>
+
+</html>

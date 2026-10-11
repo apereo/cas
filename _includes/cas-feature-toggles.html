@@ -1,0 +1,71 @@
+{%- assign featureGroups = site.data[siteDataVersion] | cas_feature_catalog: version -%}
+{%- assign featureCount = 0 -%}{%- assign featureToggleCount = 0 -%}{%- assign featureOffCount = 0 -%}
+{%- for featureGroup in featureGroups -%}
+{%- assign featureCount = featureCount | plus: featureGroup.features.size -%}
+{%- for feature in featureGroup.features -%}
+{%- assign featureToggleCount = featureToggleCount | plus: feature.toggles.size -%}
+{%- if feature.offByDefault > 0 -%}{%- assign featureOffCount = featureOffCount | plus: 1 -%}{%- endif -%}
+{%- endfor -%}
+{%- endfor %}
+{::nomarkdown}
+{%- if featureCount == 0 -%}
+<p class="cas-properties-none">The feature catalog is not available in this build of the documentation.</p>
+{%- else -%}
+<div class="cas-features" data-filter="all">
+    <div class="cas-features-toolbar">
+        <label class="cas-features-search"><i class="fa fa-magnifying-glass" aria-hidden="true"></i><span class="visually-hidden">Filter features</span><input type="search" placeholder="Filter features, integrations or toggles, e.g. redis"></label>
+        <div class="cas-features-filters" role="group" aria-label="Show">
+            <button type="button" class="cas-features-filter" data-filter="all" aria-pressed="true">All<b>{{ featureCount }}</b></button>
+            {%- if featureOffCount > 0 -%}<button type="button" class="cas-features-filter" data-filter="off" aria-pressed="false">Off by default<b>{{ featureOffCount }}</b></button>{%- endif -%}
+        </div>
+        <div class="cas-properties-format" role="group" aria-label="Copy settings as">
+            <button type="button" data-format="properties" aria-pressed="true">.properties</button>
+            <button type="button" data-format="yaml" aria-pressed="false">YAML</button>
+            <button type="button" data-format="env" aria-pressed="false">Env vars</button>
+        </div>
+    </div>
+    <div class="cas-features-summary">{{ featureCount }} features and {{ featureToggleCount }} toggles. Every toggle is on unless marked <em>off by default</em>; turning a feature off turns off all of its integrations.</div>
+    {%- for featureGroup in featureGroups -%}
+    <section class="cas-features-group">
+        <div class="cas-features-group-heading"><i class="fa fa-{{ featureGroup.icon }}" aria-hidden="true"></i>{{ featureGroup.name | escape }}<span>{{ featureGroup.features.size }} feature{% if featureGroup.features.size != 1 %}s{% endif %}</span></div>
+        {%- for feature in featureGroup.features -%}
+        <div class="cas-feature" id="{{ feature.anchor }}" data-text="{{ feature.searchText | escape }}"{% if feature.offByDefault > 0 %} data-off{% endif %}>
+            <button type="button" class="cas-feature-row" aria-expanded="false" aria-controls="{{ feature.anchor }}-toggles">
+                <span class="cas-feature-name"><span class="cas-feature-title">{{ feature.title }}</span><code class="cas-feature-id">{{ feature.id }}</code></span>
+                <span class="cas-feature-modules">
+                    {%- for toggle in feature.toggles -%}
+                    {%- if toggle.module.size > 0 -%}<span class="cas-feature-module{% unless toggle.enabledByDefault %} cas-feature-module-off{% endunless %}" data-module="{{ toggle.module }}">{{ toggle.module }}</span>
+                    {%- elsif toggle.enabledByDefault == false -%}<span class="cas-feature-module cas-feature-module-off">off by default</span>{%- endif -%}
+                    {%- endfor -%}
+                </span>
+                <span class="cas-feature-count">{{ feature.toggles.size }} toggle{% if feature.toggles.size != 1 %}s{% endif %}</span>
+                <i class="fa fa-chevron-down cas-feature-chevron" aria-hidden="true"></i>
+            </button>
+            <div class="cas-feature-detail" id="{{ feature.anchor }}-toggles" hidden>
+                <div class="cas-feature-meta">
+                    {%- if feature.docs -%}<a href="{{ feature.docs }}"><i class="fa fa-book-open" aria-hidden="true"></i>Documentation</a>{%- endif -%}
+                    {%- if feature.classes.size > 0 -%}<span title="{{ feature.classesTitle | escape }}"><i class="fa fa-gears" aria-hidden="true"></i>{{ feature.classes.size }} auto-configuration class{% if feature.classes.size != 1 %}es{% endif %}: <code>{{ feature.classes[0] }}</code>{% if feature.classes.size > 1 %} and {{ feature.classes.size | minus: 1 }} more{% endif %}</span>{%- endif -%}
+                    <a href="#{{ feature.anchor }}" aria-label="Link to {{ feature.title }}"><i class="fa fa-link" aria-hidden="true"></i></a>
+                </div>
+                <div class="cas-feature-toggles">
+                    {%- for toggle in feature.toggles -%}
+                    <div class="cas-feature-toggle" data-property="{{ toggle.property }}" data-on="{{ toggle.enabledByDefault }}"{% unless toggle.enabledByDefault %} data-off{% endunless %}>
+                        <code class="cas-feature-property">CasFeatureModule.<span class="cas-feature-property-feature">{{ feature.id }}</span>{% if toggle.module.size > 0 %}.<span class="cas-feature-property-module">{{ toggle.module }}</span>{% endif %}.enabled</code>
+                        {%- if toggle.enabledByDefault -%}
+                        <span class="cas-feature-state cas-feature-state-on"><i class="fa fa-toggle-on" aria-hidden="true"></i>On by default</span>
+                        {%- else -%}
+                        <span class="cas-feature-state cas-feature-state-off"><i class="fa fa-toggle-off" aria-hidden="true"></i>Off by default</span>
+                        {%- endif -%}
+                        <button type="button" class="cas-feature-copy"><i class="fa fa-copy" aria-hidden="true"></i><span>{% if toggle.enabledByDefault %}Copy to turn off{% else %}Copy to turn on{% endif %}</span></button>
+                    </div>
+                    {%- endfor -%}
+                </div>
+            </div>
+        </div>
+        {%- endfor -%}
+    </section>
+    {%- endfor -%}
+    <p class="cas-features-empty" hidden>No features match this filter.</p>
+</div>
+{%- endif -%}
+{:/nomarkdown}

@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="light dark">
+    
+    
+    
+
+
+
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <meta name="description" content="The policies Heimdall can attach to resources, from required attributes and scopes to Groovy, REST, JDBC and OpenFGA.">
+    <meta name="robots" content="index,follow">
+    <meta name="theme-color" content="#06304a">
+    <link rel="canonical" href="https://apereo.github.io/cas/development/authorization/Heimdall-Authorization-Policies.html">
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="en_US">
+    <meta property="og:site_name" content="Apereo CAS Documentation">
+    <meta property="og:title" content="CAS - Heimdall - Authorization Policies">
+    <meta property="og:description" content="The policies Heimdall can attach to resources, from required attributes and scopes to Groovy, REST, JDBC and OpenFGA.">
+    <meta property="og:url" content="https://apereo.github.io/cas/development/authorization/Heimdall-Authorization-Policies.html">
+    <meta property="og:image" content="https://apereo.github.io/cas/images/cas_logo.png">
+    <meta property="og:image:alt" content="Apereo CAS">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="CAS - Heimdall - Authorization Policies">
+    <meta name="twitter:description" content="The policies Heimdall can attach to resources, from required attributes and scopes to Groovy, REST, JDBC and OpenFGA.">
+    <meta name="twitter:image" content="https://apereo.github.io/cas/images/cas_logo.png">
+
+    
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "TechArticle",
+      "headline": "Heimdall - Authorization Policies",
+      "description": "The policies Heimdall can attach to resources, from required attributes and scopes to Groovy, REST, JDBC and OpenFGA.",
+      "url": "https://apereo.github.io/cas/development/authorization/Heimdall-Authorization-Policies.html",
+      "inLanguage": "en",
+      "isPartOf": {"@type": "WebSite", "name": "Apereo CAS Documentation",
+                   "url": "https://apereo.github.io/cas/"},
+      "author": {"@type": "Organization", "name": "Apereo Foundation", "url": "https://www.apereo.org/"},
+      "publisher": {"@type": "Organization", "name": "Apereo Foundation", "url": "https://www.apereo.org/"}
+    }
+    </script>
+    
+
+    <script>
+        if (window.location.hostname === "apereo.github.io") {
+            window.dataLayer = window.dataLayer || [];
+            window.gtag = function () {
+                window.dataLayer.push(arguments);
+            };
+            window.gtag("js", new Date());
+            window.gtag("config", "G-W3M8JXP7GP");
+            const analytics = document.createElement("script");
+            analytics.async = true;
+            analytics.src = "https://www.googletagmanager.com/gtag/js?id=G-W3M8JXP7GP";
+            document.head.appendChild(analytics);
+        }
+    </script>
+
+    <script>
+        function readThemePreference() {
+            try {
+                return localStorage.getItem('cas-docs-theme') || 'system';
+            } catch (error) {
+                return 'system';
+            }
+        }
+
+        function systemTheme() {
+            return window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+        }
+
+        function resolveTheme(preference) {
+            return preference === 'dark' || preference === 'light' ? preference : systemTheme();
+        }
+
+        function changeTheme(theme) {
+            if (theme !== 'dark' && theme !== 'light') {
+                return;
+            }
+
+            if (document.documentElement.getAttribute('data-bs-theme') !== theme) {
+                document.documentElement.setAttribute('data-bs-theme', theme);
+            }
+        }
+
+        (() => {
+            let preference = readThemePreference();
+            if (preference !== 'dark' && preference !== 'light') {
+                preference = 'system';
+
+            }
+
+            changeTheme(resolveTheme(preference));
+
+            if (window.matchMedia) {
+                window.matchMedia('(prefers-color-scheme: light)').addEventListener('change', () => {
+                    if (readThemePreference() !== 'system') {
+                        return;
+                    }
+                    const theme = systemTheme();
+                    changeTheme(theme);
+                });
+            }
+        })();
+    </script>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.2/css/all.min.css" integrity="sha384-PPIZEGYM1v8zp5Py7UjFb79S58UeqCL9pYVnVPURKEqvioPROaVAJKKLzvH2rDnI" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@docsearch/css@3.9.0/dist/style.css" integrity="sha384-cHiDHRyv+KTDBfpMqc3t2SeQYjfK05cReQA49eigiKoBzOMi9WIFsBsNfetC5n2a" crossorigin="anonymous"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.5/css/lightbox.min.css" integrity="sha384-9623XJODy0qDAl6X6Y9xTBSzYUxM0ixdjO8zqJQeGzDP2Uwo1PqAOq6gXkk2ul99" crossorigin="anonymous" />
+    
+    
+    <link rel="stylesheet" type="text/css" media="screen" href='/cas/stylesheets/site.css'>
+    <link rel="stylesheet" type="text/css" media="print" href='/cas/stylesheets/site-print.css'>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400..800;1,9..40,400..500&family=Bricolage+Grotesque:opsz,wght@12..96,400..800&display=swap" rel="stylesheet">
+    <link href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css" rel="stylesheet" integrity="sha384-yT2pwyD9a3Oee/HtjWTccnRmchDWH2EDHjzH7gwf8yAK0RilKFL164FCHX9fzlxh" crossorigin="anonymous">
+
+    <title>CAS - Heimdall - Authorization Policies · Apereo CAS Documentation</title>
+
+</head>
+
+<body class="" data-docs-base="/cas" data-docs-version="development" data-docs-build="20261011002700">
+    <a class="skip-link" href="#cas-docs-container">Skip to content</a>
+    <header class="site-header">
+        <div class="masthead">
+            <a class="cas-brand" href="../../index.html" aria-label="Apereo CAS home">
+                <img class="brand-logo" src="/cas/images/cas_logo.png" width="119" height="60" alt="CAS">
+                <span class="brand-caption">APEREO CAS<span>Documentation</span></span>
+            </a>
+            <div class="brand-mission">
+                <p>Enterprise Authentication <span class="brand-mission-accent">for All Earthlings and Beyond</span></p>
+                <span>Identity, Single Sign-On and Access Management</span>
+            </div>
+            <a id="forkme_banner" aria-label="View CAS on GitHub" href="https://github.com/apereo/cas"><i class="fab fa-github" aria-hidden="true"></i><span>View on GitHub</span><span aria-hidden="true">↗</span></a>
+        </div>
+        <div class="navigation-bar">
+            
+            <button onclick="navigateSidebar()" id="sidebarNavButton" class="icon-button" type="button" aria-controls="sidebar" aria-expanded="true" aria-label="Toggle documentation navigation" title="Toggle documentation navigation">
+                <i class="fa fa-bars" aria-hidden="true"></i>
+            </button>
+            
+            <nav class="primary-navigation" aria-label="Main navigation">
+                <a href="../../index.html">Home</a>
+                <a href="https://github.com/apereo/cas/releases">Releases</a>
+                <a href="../../Support.html">Support</a>
+                <a href="../../Mailing-Lists.html">Mailing Lists</a>
+                <div class="dropdown">
+                    <button class="dropdown-toggle" type="button" id="cas-versions" data-bs-toggle="dropdown" aria-expanded="false">Versions</button>
+                    <div class="dropdown-menu" aria-labelledby="cas-versions">
+                        
+                        
+                        
+                        
+                        <a class="dropdown-item cas-version-link" href="/cas/development/authorization/Heimdall-Authorization-Policies.html" data-version-home="/cas/development/">Development</a>
+                        
+                        
+                        
+                        
+                        <a class="dropdown-item cas-version-link" href="/cas/8.0.x/authorization/Heimdall-Authorization-Policies.html" data-version-home="/cas/8.0.x/">v8.0.x</a>
+                        
+                        
+                        
+                        
+                        <a class="dropdown-item cas-version-link" href="/cas/7.3.x/authorization/Heimdall-Authorization-Policies.html" data-version-home="/cas/7.3.x/">v7.3.x</a>
+                        
+                    </div>
+                </div>
+                <a href="https://apereo.github.io" target="_blank" rel="noopener">Blog <span aria-hidden="true">↗</span><span class="visually-hidden"> (opens in a new tab)</span></a>
+            </nav>
+            <div class="navigation-tools">
+                <div id="searchField"></div>
+                <button id="settingsSearchButton" class="icon-button" type="button" aria-label="Search configuration settings (press Shift twice)" title="Search configuration settings (Shift Shift)"><i class="fa fa-sliders" aria-hidden="true"></i></button>
+                <button id="themeToggle" class="icon-button" type="button" onclick="toggleDarkMode()" aria-label="Toggle color theme" title="Toggle color theme"><i class="fa fa-circle-half-stroke" aria-hidden="true"></i></button>
+            </div>
+        </div>
+        <div class="reading-progress" aria-hidden="true"><span id="readingProgress"></span></div>
+    </header>
+
+    <div class="docs-shell">
+        
+        <aside id="sidebar" class="docs-sidebar" aria-label="Documentation navigation">
+    <div class="sidebar-heading">
+<span class="eyebrow">APEREO CAS DOCUMENTATION</span><span class="sidebar-symbol" aria-hidden="true">✳</span>
+</div>
+    <nav id="sidebar-navigation" aria-label="Documentation topics"></nav>
+    <noscript><p>Browse the <a href="/cas/development/sidebar.html">documentation index</a>.</p></noscript>
+</aside>
+
+        
+        <main class="cas-docs-content">
+            
+            <div class="page-toolbar">
+                <nav id="docsNavBar" aria-label="Breadcrumb"></nav>
+                <div id="toolbarIcons" role="group" aria-label="Page tools"></div>
+            </div>
+            
+            
+            <aside id="dev-doc-info" aria-labelledby="dev-doc-title">
+                <span class="development-marker" aria-hidden="true"></span>
+                <div>
+                    <p id="dev-doc-title">WORKERS AHEAD!</p>
+                    <p class="dev-doc-summary">Development documentation for features that are
+                        <a href="https://github.com/apereo/cas/milestones">not released yet</a>.</p>
+                    <p class="dev-doc-details">You are viewing the <strong>development</strong> documentation for the Apereo CAS server. <strong>The
+                        functionality presented here <a href="https://github.com/apereo/cas/milestones">is not officially released yet</a></strong>.
+                        This is a work in progress and will be continually updated as development moves forward.
+                        <strong>You are most encouraged to test the changes presented.</strong>
+                    </p>
+                </div>
+            </aside>
+            
+            <article id="cas-docs-container" tabindex="-1">
+                
+<h1 id="authorization-policies---heimdall">Authorization Policies - Heimdall</h1>
+
+<p>Policies are the rules that decide whether a request for a resource is allowed. Each resource lists one or more policies, which Heimdall evaluates in order.</p>
+
+<p>Policies are the rules attached to resources to allow or deny access. Each authorizable resource may have one or more
+policies assigned to it. Policies are evaluated in the order in which they are defined for the resource.</p>
+
+<div class="alert alert-info">
+<img class="emoji" title=":information_source:" alt=":information_source:" src="https://github.githubassets.com/images/icons/emoji/unicode/2139.png" height="20" width="20"> <strong>Coverage</strong>
+<p>Please note that not all policies support the AuthZEN protocol. Support in this area will gradually 
+improve based on demand and use case discovery. YMMV.</p>
+</div>
+
+<p>The following policies are supported by CAS:</p>
+
+<ul id="heimdallauthzpolicies" class="tab" data-tab="23592767-8370-436b-8b48-9da727e90c39" data-name="heimdallauthzpolicies">
+  
+      <li class="active" id="heimdallauthzpolicies--i-class--fa-fa-code-px-1----i--groovy">
+          <a href="#"><i class="fa fa-code px-1"></i> Groovy </a>
+      </li>
+  
+      <li id="heimdallauthzpolicies--i-class--fa-fa-user-group-px-1----i--grouper-groups">
+          <a href="#"><i class="fa fa-user-group px-1"></i> Grouper Groups </a>
+      </li>
+  
+      <li id="heimdallauthzpolicies-grouper-permissions">
+          <a href="#">Grouper Permissions </a>
+      </li>
+  
+      <li id="heimdallauthzpolicies-required-attributes">
+          <a href="#">Required Attributes </a>
+      </li>
+  
+      <li id="heimdallauthzpolicies-rejected-attributes">
+          <a href="#">Rejected Attributes </a>
+      </li>
+  
+      <li id="heimdallauthzpolicies-required-acr">
+          <a href="#">Required ACR </a>
+      </li>
+  
+      <li id="heimdallauthzpolicies-required-amr">
+          <a href="#">Required AMR </a>
+      </li>
+  
+      <li id="heimdallauthzpolicies-required-audience">
+          <a href="#">Required Audience </a>
+      </li>
+  
+      <li id="heimdallauthzpolicies-required-issuer">
+          <a href="#">Required Issuer </a>
+      </li>
+  
+      <li id="heimdallauthzpolicies-required-scopes">
+          <a href="#">Required Scopes </a>
+      </li>
+  
+      <li id="heimdallauthzpolicies-rest-api">
+          <a href="#">Rest API </a>
+      </li>
+  
+      <li id="heimdallauthzpolicies-openfga">
+          <a href="#">OpenFGA </a>
+      </li>
+  
+      <li id="heimdallauthzpolicies-jdbc">
+          <a href="#">JDBC </a>
+      </li>
+  
+</ul>
+<ul class="tab-content" id="23592767-8370-436b-8b48-9da727e90c39" data-name="heimdallauthzpolicies">
+  
+      <li class="active">
+<p>An authorization policy that can accept an inline or external <a href="../integration/Apache-Groovy-Scripting.html">Groovy script</a> to make decisions:</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+</pre></td>
+<td class="rouge-code"><pre><span class="p">{</span><span class="w">
+  </span><span class="nl">"@class"</span><span class="p">:</span><span class="w"> </span><span class="s2">"org.apereo.cas.heimdall.authorizer.resource.policy.GroovyAuthorizationPolicy"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"script"</span><span class="w"> </span><span class="p">:</span><span class="w">
+    </span><span class="err">'''</span><span class="w">
+      </span><span class="err">groovy</span><span class="w"> </span><span class="p">{</span><span class="w">
+          </span><span class="err">def</span><span class="w"> </span><span class="err">iAllowThis</span><span class="w"> </span><span class="err">=</span><span class="w"> </span><span class="kc">true</span><span class="w">
+          </span><span class="err">return</span><span class="w"> </span><span class="err">iAllowThis</span><span class="w">
+            </span><span class="err">?</span><span class="w"> </span><span class="err">AuthorizationResult.granted(</span><span class="s2">"OK"</span><span class="err">)</span><span class="w">
+            </span><span class="err">:</span><span class="w"> </span><span class="err">AuthorizationResult.denied(</span><span class="s2">"NOPE"</span><span class="err">)</span><span class="w">
+      </span><span class="p">}</span><span class="w">
+    </span><span class="err">'''</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+<p>The following parameters are passed to the script:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Parameter</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">resource</code></td>
+      <td>The matched <code class="language-plaintext highlighter-rouge">AuthorizableResource</code> object.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">request</code></td>
+      <td>The supplied <code class="language-plaintext highlighter-rouge">AuthorizationRequest</code> object.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">applicationContext</code></td>
+      <td>Reference to the Spring <code class="language-plaintext highlighter-rouge">ApplicationContext</code> reference.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">logger</code></td>
+      <td>The object responsible for issuing log messages such as <code class="language-plaintext highlighter-rouge">logger.info(...)</code>.</td>
+    </tr>
+  </tbody>
+</table>
+
+</li>
+  
+      <li>
+<p>An authorization policy that fetches group memberships for the principal from 
+<a href="https://github.com/Internet2/grouper">Grouper</a> and makes decisions based on required groups:</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+</pre></td>
+<td class="rouge-code"><pre><span class="p">{</span><span class="w">
+  </span><span class="nl">"@class"</span><span class="p">:</span><span class="w"> </span><span class="s2">"org.apereo.cas.heimdall.authorizer.resource.policy.RequiredGrouperGroupsAuthorizationPolicy"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"groups"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="s2">"java.util.HashSet"</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="s2">"a:b:c"</span><span class="w"> </span><span class="p">]</span><span class="w"> </span><span class="p">]</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+</li>
+  
+      <li>
+<p>An authorization policy that fetches permissions for the principal from
+<a href="https://github.com/Internet2/grouper">Grouper</a> using attribute definitions or roles
+and allows or denied access based on whether permissions are found:</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+</pre></td>
+<td class="rouge-code"><pre><span class="p">{</span><span class="w">
+  </span><span class="nl">"@class"</span><span class="p">:</span><span class="w"> </span><span class="s2">"org.apereo.cas.heimdall.authorizer.resource.policy.RequiredGrouperPermissionsAuthorizationPolicy"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"attributeDefinition"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"a:b:c"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"roleName"</span><span class="p">:</span><span class="w"> </span><span class="s2">"..."</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+</li>
+  
+      <li>
+<p>An authorization policy that checks for the <strong>presence</strong> of required attributes in the authorization principal’s profile:</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+</pre></td>
+<td class="rouge-code"><pre><span class="p">{</span><span class="w">
+  </span><span class="nl">"@class"</span><span class="p">:</span><span class="w"> </span><span class="s2">"org.apereo.cas.heimdall.authorizer.resource.policy.RequiredAttributesAuthorizationPolicy"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"attributes"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"@class"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"java.util.HashMap"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"memberOf"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="s2">"java.util.HashSet"</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="s2">".*admin.*"</span><span class="w"> </span><span class="p">]</span><span class="w"> </span><span class="p">]</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+<p>Attribute names refer to the principal’s attributes, except for the following qualified names that read the authorization request:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Value</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>
+<code class="language-plaintext highlighter-rouge">subject.id</code>, <code class="language-plaintext highlighter-rouge">subject.type</code>
+</td>
+      <td>The AuthZEN subject identifier and type.</td>
+    </tr>
+    <tr>
+      <td>
+<code class="language-plaintext highlighter-rouge">resource.id</code>, <code class="language-plaintext highlighter-rouge">resource.type</code>
+</td>
+      <td>The AuthZEN resource identifier and type.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">action.name</code></td>
+      <td>The AuthZEN action name.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">subject.properties.&lt;name&gt;</code></td>
+      <td>A property of the AuthZEN subject, as supplied by the caller.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">resource.properties.&lt;name&gt;</code></td>
+      <td>A property of the AuthZEN resource, as supplied by the caller.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">action.properties.&lt;name&gt;</code></td>
+      <td>A property of the AuthZEN action, as supplied by the caller.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">context.&lt;name&gt;</code></td>
+      <td>An entry of the request <code class="language-plaintext highlighter-rouge">context</code>.</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>For example, <code class="language-plaintext highlighter-rouge">"subject.properties.department" : [ "java.util.HashSet", [ "^Finance$" ] ]</code> requires the caller to describe
+the subject as a member of the finance department. Properties are never merged into principal attributes, so a caller
+cannot override attributes that CAS resolves for the subject.</p>
+
+</li>
+  
+      <li>
+<p>An authorization policy that checks for the <strong>absence</strong> of indicated attributes in the authorization principal’s profile,
+using the same attribute names as the required attributes policy:</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+</pre></td>
+<td class="rouge-code"><pre><span class="p">{</span><span class="w">
+  </span><span class="nl">"@class"</span><span class="p">:</span><span class="w"> </span><span class="s2">"org.apereo.cas.heimdall.authorizer.resource.policy.RejectedAttributesAuthorizationPolicy"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"attributes"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"@class"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"java.util.HashMap"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"memberOf"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="s2">"java.util.HashSet"</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="s2">".*admin.*"</span><span class="w"> </span><span class="p">]</span><span class="w"> </span><span class="p">]</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+</li>
+  
+      <li>
+<p>An authorization policy that requires a specific <code class="language-plaintext highlighter-rouge">acr</code> claim in the principal’s profile:</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+</pre></td>
+<td class="rouge-code"><pre><span class="p">{</span><span class="w">
+  </span><span class="nl">"@class"</span><span class="p">:</span><span class="w"> </span><span class="s2">"org.apereo.cas.heimdall.authorizer.resource.policy.RequiredACRAuthorizationPolicy"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"acrs"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="s2">"java.util.HashSet"</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="s2">".*"</span><span class="w"> </span><span class="p">]</span><span class="w"> </span><span class="p">]</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+</li>
+  
+      <li>
+<p>An authorization policy that requires a specific <code class="language-plaintext highlighter-rouge">amr</code> claim in the principal’s profile:</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+</pre></td>
+<td class="rouge-code"><pre><span class="p">{</span><span class="w">
+  </span><span class="nl">"@class"</span><span class="p">:</span><span class="w"> </span><span class="s2">"org.apereo.cas.heimdall.authorizer.resource.policy.RequiredAMRAuthorizationPolicy"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"amrs"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="s2">"java.util.HashSet"</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="s2">".*"</span><span class="w"> </span><span class="p">]</span><span class="w"> </span><span class="p">]</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+</li>
+  
+      <li>
+<p>An authorization policy that requires a specific <code class="language-plaintext highlighter-rouge">aud</code> claim in the principal’s profile:</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+</pre></td>
+<td class="rouge-code"><pre><span class="p">{</span><span class="w">
+  </span><span class="nl">"@class"</span><span class="p">:</span><span class="w"> </span><span class="s2">"org.apereo.cas.heimdall.authorizer.resource.policy.RequiredAudienceAuthorizationPolicy"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"audience"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="s2">"java.util.HashSet"</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="s2">".*"</span><span class="w"> </span><span class="p">]</span><span class="w"> </span><span class="p">]</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+</li>
+  
+      <li>
+<p>An authorization policy that requires a specific <code class="language-plaintext highlighter-rouge">iss</code> claim in the principal’s profile:</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+</pre></td>
+<td class="rouge-code"><pre><span class="p">{</span><span class="w">
+  </span><span class="nl">"@class"</span><span class="p">:</span><span class="w"> </span><span class="s2">"org.apereo.cas.heimdall.authorizer.resource.policy.RequiredIssuerAuthorizationPolicy"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"issuer"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"^http://.*"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+</li>
+  
+      <li>
+<p>An authorization policy that requires the indicated scopes in the principal’s profile:</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+</pre></td>
+<td class="rouge-code"><pre><span class="p">{</span><span class="w">
+  </span><span class="nl">"@class"</span><span class="p">:</span><span class="w"> </span><span class="s2">"org.apereo.cas.heimdall.authorizer.resource.policy.RequiredScopesAuthorizationPolicy"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"scopes"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="s2">"java.util.HashSet"</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="s2">"profile"</span><span class="w"> </span><span class="p">]</span><span class="w"> </span><span class="p">]</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+</li>
+  
+      <li>
+<p>An authorization policy can be outsources to a REST API that can make decisions based on the request and the resource:</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+</pre></td>
+<td class="rouge-code"><pre><span class="p">{</span><span class="w">
+    </span><span class="nl">"@class"</span><span class="p">:</span><span class="w"> </span><span class="s2">"org.apereo.cas.heimdall.authorizer.resource.policy.RestfulAuthorizationPolicy"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://api.example.org"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"method"</span><span class="p">:</span><span class="w"> </span><span class="s2">"POST"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"headers"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+      </span><span class="nl">"@class"</span><span class="p">:</span><span class="w"> </span><span class="s2">"java.util.LinkedHashMap"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"header"</span><span class="p">:</span><span class="w"> </span><span class="s2">"value"</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+<ul>
+  <li>The request body will contain a map to present the <code class="language-plaintext highlighter-rouge">request</code> and the <code class="language-plaintext highlighter-rouge">resource</code> JSON payloads. The <code class="language-plaintext highlighter-rouge">resource</code> excludes its policies.</li>
+  <li>Authorized requests are expected to receive a <code class="language-plaintext highlighter-rouge">200</code> response code.</li>
+  <li>The <code class="language-plaintext highlighter-rouge">url</code> and header values can be constructed using the <a href="../configuration/Configuration-Spring-Expressions.html">Spring Expression Language</a>
+</li>
+</ul>
+
+</li>
+  
+      <li>
+<p>An authorization policy that passes the request to <a href="https://openfga.dev/">OpenFGA</a> to make decisions:</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+</pre></td>
+<td class="rouge-code"><pre><span class="p">{</span><span class="w">
+  </span><span class="nl">"@class"</span><span class="p">:</span><span class="w"> </span><span class="s2">"org.apereo.cas.heimdall.authorizer.resource.policy.OpenFGAAuthorizationPolicy"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"token"</span><span class="p">:</span><span class="w"> </span><span class="s2">"..."</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"apiUrl"</span><span class="p">:</span><span class="w"> </span><span class="s2">"..."</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"storeId"</span><span class="p">:</span><span class="w"> </span><span class="s2">"..."</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"relation"</span><span class="p">:</span><span class="w"> </span><span class="s2">"..."</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"userType"</span><span class="p">:</span><span class="w"> </span><span class="s2">"user"</span><span class="p">,</span><span class="w"> 
+</span><span class="p">}</span><span class="w">
+</span></pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+<p>The following parameters are passed to OpenFGA:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Parameter</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">token</code></td>
+      <td>
+<sup>[1]</sup> The bearer authorization token passed via the <code class="language-plaintext highlighter-rouge">Authorization</code> header.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">apiUrl</code></td>
+      <td>
+<sup>[1]</sup> OpenFGA base API endpoint that ultimately invokes the <code class="language-plaintext highlighter-rouge">check</code> API.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">storeId</code></td>
+      <td>
+<sup>[1]</sup> The authorization store identifier.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">relation</code></td>
+      <td>
+<sup>[1]</sup> The relation or the type of access in the authorization tuple; defaults to <code class="language-plaintext highlighter-rouge">owner</code>.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">userType</code></td>
+      <td>Indicates the type of principal. Defaults to <code class="language-plaintext highlighter-rouge">user</code>.</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>The <code class="language-plaintext highlighter-rouge">object</code> field in the API request is composed of the following elements:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td>
+<td class="rouge-code"><pre><span class="nv">$REQUEST_NAMESPACE</span> + <span class="s1">':'</span> + <span class="nv">$REQUEST_METHOD</span> + <span class="s1">':'</span> + <span class="nv">$REQUEST_URI</span>
+</pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+<p>For AuthZEN requests, the <code class="language-plaintext highlighter-rouge">object</code> field is composed of <code class="language-plaintext highlighter-rouge">$RESOURCE_TYPE + ':' + $RESOURCE_ID</code>, the <code class="language-plaintext highlighter-rouge">relation</code> defaults
+to the AuthZEN action name, and the <code class="language-plaintext highlighter-rouge">userType</code> defaults to the AuthZEN subject type.</p>
+
+<p><sub><i>[1] This field supports the <a href="../configuration/Configuration-Spring-Expressions.html">Spring Expression Language</a> syntax.</i></sub></p>
+
+</li>
+  
+      <li>
+<p>An authorization policy that executes a SQL query against a relation database. 
+The query is expected to return an <code class="language-plaintext highlighter-rouge">authorized</code> column of a <code class="language-plaintext highlighter-rouge">boolean</code> type.</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+</pre></td>
+<td class="rouge-code"><pre><span class="p">{</span><span class="w">
+  </span><span class="nl">"@class"</span><span class="p">:</span><span class="w"> </span><span class="s2">"org.apereo.cas.heimdall.authorizer.resource.policy.JdbcAuthorizationPolicy"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"query"</span><span class="p">:</span><span class="w"> </span><span class="s2">"..."</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"username"</span><span class="p">:</span><span class="w"> </span><span class="s2">"..."</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"password"</span><span class="p">:</span><span class="w"> </span><span class="s2">"..."</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"..."</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+<p>The following settings are available:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Parameter</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">query</code></td>
+      <td>The SQL query that is executed. Supports named parameters such as <code class="language-plaintext highlighter-rouge">parameter</code>. See below.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">url</code></td>
+      <td>
+<sup>[1]</sup> The database connection string, i.e. <code class="language-plaintext highlighter-rouge">jdbc:mysql://localhost:3306/cas</code>
+</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">username</code></td>
+      <td>
+<sup>[1]</sup> The username when building a database connection.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">password</code></td>
+      <td>
+<sup>[1]</sup> The password when building a database connection.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">dataSourceName</code></td>
+      <td>Optional name of the data source bean to use; see below.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">queryTimeout</code></td>
+      <td>Maximum time the query may run, i.e. <code class="language-plaintext highlighter-rouge">PT5S</code> (default). <code class="language-plaintext highlighter-rouge">0</code> or <code class="language-plaintext highlighter-rouge">INFINITE</code> disables it.</td>
+    </tr>
+  </tbody>
+</table>
+
+<p><sub><i>[1] This field supports the <a href="../configuration/Configuration-Spring-Expressions.html">Spring Expression Language</a> syntax.</i></sub></p>
+
+<p>The policy looks up its data source as a bean in the application context, named <code class="language-plaintext highlighter-rouge">dataSourceName</code> when defined or
+<code class="language-plaintext highlighter-rouge">heimdallJdbcDataSource-&lt;hash&gt;</code> derived from the URL and username otherwise. When no such bean exists, CAS creates a
+connection pool with default settings that keeps no idle connections, registers it under that name, and shares it
+across all policies with the same name until CAS shuts down. A deployment may define its own data source bean with that
+name to control pooling.</p>
+
+<div class="alert alert-info">
+<img class="emoji" title=":information_source:" alt=":information_source:" src="https://github.githubassets.com/images/icons/emoji/unicode/2139.png" height="20" width="20"> <strong>Note</strong><p>The connection pool is keyed by the URL and
+username only. A policy that changes only its <code>password</code> keeps using the existing pool, and its connections
+keep the old password until CAS restarts. To rotate a password without a restart, give the policy a new
+<code>dataSourceName</code>, or define and manage the data source bean yourself.</p>
+</div>
+
+<p>A query that runs longer than <code class="language-plaintext highlighter-rouge">queryTimeout</code> is cancelled and the policy fails. A request that fails is not
+authorized: the legacy endpoint returns <code class="language-plaintext highlighter-rouge">403</code> and the AuthZEN endpoint returns <code class="language-plaintext highlighter-rouge">500</code>. The timeout applies to the query only; waiting for a free
+pooled connection follows the pool’s own connection timeout.</p>
+
+<p>The SQL query is preprocessed to receive the following named parameters:</p>
+
+<ul>
+  <li>
+<code class="language-plaintext highlighter-rouge">method</code> from the authorization request.</li>
+  <li>
+<code class="language-plaintext highlighter-rouge">uri</code> from the authorization request.</li>
+  <li>
+<code class="language-plaintext highlighter-rouge">namespace</code> from the authorization request.</li>
+  <li>
+<code class="language-plaintext highlighter-rouge">principal</code> from the authorization request.</li>
+</ul>
+
+<p>For AuthZEN requests, the query also receives <code class="language-plaintext highlighter-rouge">subjectType</code>, <code class="language-plaintext highlighter-rouge">subjectId</code>, <code class="language-plaintext highlighter-rouge">resourceType</code>, <code class="language-plaintext highlighter-rouge">resourceId</code> and <code class="language-plaintext highlighter-rouge">action</code>.</p>
+
+<p>Furthermore, all context attributes from the authorization request as well as all principal attributes are passed as named parameters
+and can be used and referenced in the query. Context and principal attributes cannot replace any of the named parameters listed above.</p>
+
+</li>
+  
+</ul>
+
+
+            </article>
+            <div class="article-end" aria-hidden="true">
+<span></span><span>CAS</span><span></span>
+</div>
+        </main>
+        
+        <aside class="docs-toc" aria-label="On this page">
+    <nav id="pageContents" aria-label="Table of contents">
+        <p class="eyebrow">ON THIS PAGE</p>
+        <ul class="section-nav"></ul>
+    </nav>
+    <a class="toc-top" href="#cas-docs-container">Back to top <span aria-hidden="true">↑</span></a>
+</aside>
+
+        
+    </div>
+
+    <footer class="site-footer">
+        <a class="footer-brand" href="../../index.html">APEREO <strong>CAS</strong></a>
+        <p>CAS is supported by the <a href="https://www.apereo.org/">Apereo Foundation</a>.</p>
+        <a href="#cas-docs-container">Back to top <span aria-hidden="true">↑</span></a>
+    </footer>
+    <div id="docs-status" class="visually-hidden" role="status" aria-live="polite"></div>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha384-1H217gwSVyLSIfaLxHbE7dRb3v4mYCKbpQvzx0cegeju1MVsGrX5xXxAvs/HgeFs" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.11/clipboard.min.js" integrity="sha384-J08i8An/QeARD9ExYpvphB8BsyOj3Gh2TSh1aLINKO3L0cMSH2dN3E22zFoXEi0Q" crossorigin="anonymous"></script>
+
+    <script src="/cas/javascripts/URI.js"></script>
+    <script src="/cas/javascripts/site.js"></script>
+
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@docsearch/js@3.9.0/dist/umd/index.js" integrity="sha384-QhsjJ84XKaqUeM7eZpvYApdPamFboJLQg4BD2CCCSiUOL4cWzLp5caae6oW/oAXh" crossorigin="anonymous"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js" integrity="sha384-ficRBwtap/VLzILv81vIvgp30PoJYnlCm96tPpNYHXAf+h9SIThOZxxIzRUzbpAh" crossorigin="anonymous"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.5/js/lightbox.min.js" integrity="sha384-bcXRY0im+IjB6RvmBpbgdkqjLV0pCTbaJRJ9IRPeQaWCYlzRn9pPaPmCvONr9h9z" crossorigin="anonymous"></script>
+
+    <script>
+        let pageSection = "Authorization";
+        let siteUrl = "https://apereo.github.io";
+        let basePath = "/cas";
+
+        
+    </script>
+</body>
+
+</html>
