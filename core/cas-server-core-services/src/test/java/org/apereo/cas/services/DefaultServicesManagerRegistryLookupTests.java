@@ -87,6 +87,42 @@ class DefaultServicesManagerRegistryLookupTests {
         assertNotNull(servicesManager.findServiceBy(RegisteredServiceTestUtils.getService(second.getServiceId())));
     }
 
+    @Test
+    void verifyFailedLoadKeepsLoadedServices() {
+        val serviceRegistry = newServiceRegistry();
+        val servicesManager = newServicesManager(serviceRegistry, new CasConfigurationProperties());
+        val registeredService = serviceRegistry.save(newRegisteredService());
+        servicesManager.load();
+
+        doThrow(new IllegalStateException("Registry is unavailable")).when(serviceRegistry).load();
+        val results = servicesManager.load();
+        assertEquals(1, results.size());
+        assertTrue(servicesManager.getCachedRegisteredServices().containsKey(registeredService.getId()));
+        assertNotNull(servicesManager.findServiceBy(RegisteredServiceTestUtils.getService(registeredService.getServiceId())));
+    }
+
+    @Test
+    void verifySaveWaitsForLoadInsteadOfDropping() throws Throwable {
+        val serviceRegistry = newServiceRegistry();
+        val servicesManager = newServicesManager(serviceRegistry, new CasConfigurationProperties());
+        val loadStarted = new CountDownLatch(1);
+        val releaseLoad = new CountDownLatch(1);
+        doAnswer(invocation -> {
+            loadStarted.countDown();
+            assertTrue(releaseLoad.await(30, TimeUnit.SECONDS));
+            return invocation.callRealMethod();
+        }).when(serviceRegistry).load();
+
+        val loader = Thread.ofVirtual().start(servicesManager::load);
+        assertTrue(loadStarted.await(30, TimeUnit.SECONDS));
+        val saved = CompletableFuture.supplyAsync(() -> servicesManager.save(newRegisteredService()));
+        Thread.sleep(6000);
+        assertFalse(saved.isDone());
+        releaseLoad.countDown();
+        assertNotNull(saved.get(30, TimeUnit.SECONDS));
+        loader.join();
+    }
+
     private ServiceRegistry newServiceRegistry() {
         return spy(new InMemoryServiceRegistry(configurationContext.getApplicationContext()));
     }

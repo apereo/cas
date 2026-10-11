@@ -6,6 +6,7 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
+import org.apereo.cas.util.scripting.CachedScriptResources;
 import org.apereo.cas.util.scripting.ExecutableCompiledScript;
 import org.apereo.cas.util.scripting.ExecutableCompiledScriptFactory;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
@@ -74,7 +75,7 @@ public class RegisteredServiceScriptedAttributeFilter implements RegisteredServi
                     LOGGER.debug("Loading attribute filter groovy script from [{}]", scriptFile);
                     return ResourceUtils.getRawResourceFrom(scriptFile);
                 });
-                this.executableScript = scriptFactory.fromResource(resource);
+                this.executableScript = CachedScriptResources.fromResource(resource);
             } else if (scriptFactory.isInlineScript(script) && CasRuntimeHintsRegistrar.notInNativeImage()) {
                 this.executableScript = scriptFactory.fromScript(scriptFactory.getInlineScript(script).orElseThrow());
             }

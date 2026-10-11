@@ -465,6 +465,18 @@ authentication. See the [stateless ticket registry documentation](../ticketing/S
   [YAML](../services/YAML-Service-Management.html) registry watchers now update the cache right away, fetching services
   by type through the [`registeredServices` actuator endpoint](../services/Service-Management.html) no longer empties the cache, and CAS warns when the cache
   expires definitions before the scheduler reloads them. See [this guide](../services/Service-Management-Caching-Reloading.html).
+- {: .fixed} Saving or deleting a service definition while the service registry is being reloaded now waits for the reload
+  to finish. Previously, a save or delete that waited more than five seconds was dropped without an error; the
+  `registeredServices` actuator endpoint reported success and a dynamically registered client could receive credentials
+  that were never stored.
+- {: .fixed} A service registry that fails to load, such as a [REST service registry](../services/REST-Service-Management.html)
+  whose endpoint is unavailable or answers with an error, no longer empties the cache of service definitions; CAS logs the
+  failure and keeps the definitions it already loaded until a later reload succeeds.
+- {: .fixed} Groovy scripts referenced by service definitions as files, for [access strategies](../services/Service-Access-Strategy-Groovy.html),
+  their activation criteria, attribute release activation criteria, single sign-on participation policies, attribute
+  filters and surrogate access strategies, are now compiled and watched once per script location instead of once per
+  service definition on every reload or evaluation. Previously each reload leaked a file watcher, which could exhaust the
+  operating system's limit on file watchers.
 - {: .fixed} A `service` parameter that only resembles a number, such as `1.5`, `1e3`, `0x1F` or a value too large for an
   identifier, no longer fails the request while CAS applies the application's [HTTP security headers](../services/Configuring-Service-Http-Security-Headers.html);
   it is matched as a service URL instead.
@@ -492,6 +504,9 @@ authentication. See the [stateless ticket registry documentation](../ticketing/S
   waits for the metadata to be fetched, parsed and validated. The current metadata stays in use until the reload completes.
 - {: .changed} The [SAML2 identity provider](../authentication/Configuring-SAML2-Authentication.html) builds the resolver that
   locates its signing credentials once instead of for every signed response or assertion.
+- {: .changed data-area="saml"} The [SAML2 identity provider](../authentication/Configuring-SAML2-Authentication.html) decodes and
+  parses the incoming `SAMLRequest` or `SAMLResponse` once when matching it to a service provider, instead of once for every
+  SAML2 application definition it compares against.
 - {: .changed data-area="oidc"} JWT access tokens, JWT response modes and other tokens signed or encrypted with keys defined
   per application now reuse the prepared signing and encryption keys instead of parsing them again for every token issued
   or read; a changed application definition or a rotated key is picked up the first time it is used.

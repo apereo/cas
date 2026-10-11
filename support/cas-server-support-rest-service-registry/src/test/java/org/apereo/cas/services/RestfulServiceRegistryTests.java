@@ -6,7 +6,9 @@ import org.apereo.cas.config.CasRestServiceRegistryAutoConfiguration;
 import org.apereo.cas.config.CasThemesAutoConfiguration;
 import org.apereo.cas.config.CasWebAppAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.core.services.RestfulServiceRegistryProperties;
 import org.apereo.cas.test.CasTestExtension;
+import org.apereo.cas.util.MockWebServer;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import org.apereo.cas.web.CasWebSecurityConfigurer;
@@ -14,6 +16,7 @@ import lombok.Getter;
 import lombok.val;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -24,6 +27,7 @@ import org.springframework.boot.test.util.TestPropertyValues;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ContextConfiguration;
@@ -35,6 +39,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import tools.jackson.databind.ObjectMapper;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link RestfulServiceRegistryTests}.
@@ -85,6 +90,21 @@ class RestfulServiceRegistryTests extends AbstractServiceRegistryTests {
     @Autowired
     @Qualifier("restfulServiceRegistry")
     private ServiceRegistry newServiceRegistry;
+
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
+
+    @Test
+    void verifyFailedLoadIsReported() {
+        try (val webServer = new MockWebServer(HttpStatus.INTERNAL_SERVER_ERROR)) {
+            webServer.start();
+            val properties = new RestfulServiceRegistryProperties();
+            properties.setUrl("http://localhost:%s".formatted(webServer.getPort()));
+            properties.setMaximumRetryAttempts(0);
+            val registry = new RestfulServiceRegistry(applicationContext, List.of(), properties);
+            assertThrows(IllegalStateException.class, registry::load);
+        }
+    }
 
 
     @TestConfiguration(value = "RestfulServiceRegistryTestConfiguration", proxyBeanMethods = false)

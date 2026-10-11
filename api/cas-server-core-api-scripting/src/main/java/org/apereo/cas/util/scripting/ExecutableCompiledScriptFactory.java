@@ -87,7 +87,6 @@ public interface ExecutableCompiledScriptFactory {
     <T> @Nullable T newObjectInstance(Resource resource, Class[] ctorParameters,
                                       Object[] args, Class<T> clazz);
     
-
     /**
      * Find executable compiled script factory.
      *

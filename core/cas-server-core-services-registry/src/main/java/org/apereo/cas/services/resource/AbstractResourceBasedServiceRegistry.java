@@ -206,7 +206,7 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
 
     @Override
     public boolean delete(final RegisteredService service) {
-        return lock.tryLock(() -> FunctionUtils.doUnchecked(() -> {
+        return lock.executeAndThrow(() -> FunctionUtils.doUnchecked(() -> {
             val filename = getRegisteredServiceFileName(service);
             val clientInfo = ClientInfoHolder.getClientInfo();
             publishEvent(new CasRegisteredServicePreDeleteEvent(this, service, clientInfo));
@@ -230,7 +230,7 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
 
     @Override
     public Collection<RegisteredService> load() {
-        return lock.tryLock(() -> {
+        return lock.executeAndThrow(() -> {
             LOGGER.trace("Loading files from [{}]", this.serviceRegistryDirectory);
             val serviceRegistryDirectoryFile = serviceRegistryDirectory.toFile();
             val files = serviceRegistryDirectoryFile.exists()

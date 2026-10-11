@@ -152,12 +152,13 @@ public class RestfulServiceRegistry extends AbstractServiceRegistry {
                     return services;
                 }
             }
-        } catch (final Exception e) {
-            LoggingUtils.error(LOGGER, e);
+            throw new IllegalStateException("Unable to load services from %s; received status %s"
+                .formatted(exec.getUrl(), response != null ? response.getCode() : "none"));
+        } catch (final IOException e) {
+            throw new UncheckedIOException(e);
         } finally {
             HttpUtils.close(response);
         }
-        return new ArrayList<>();
     }
 
     @Override

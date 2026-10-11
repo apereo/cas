@@ -5,8 +5,8 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.util.scripting.CachedScriptResources;
 import org.apereo.cas.util.scripting.ExecutableCompiledScript;
-import org.apereo.cas.util.scripting.ExecutableCompiledScriptFactory;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.EqualsAndHashCode;
@@ -79,8 +79,7 @@ public class GroovyRegisteredServiceAccessStrategy extends BaseRegisteredService
             FunctionUtils.doAndHandle(_ -> {
                 val location = SpringExpressionLanguageValueResolver.getInstance().resolve(this.groovyScript);
                 val groovyResource = ResourceUtils.getResourceFrom(location);
-                val scriptFactory = ExecutableCompiledScriptFactory.getExecutableCompiledScriptFactory();
-                watchableScript = scriptFactory.fromResource(groovyResource).setFailOnError(false);
+                watchableScript = CachedScriptResources.fromResource(groovyResource, false);
             });
         }
     }

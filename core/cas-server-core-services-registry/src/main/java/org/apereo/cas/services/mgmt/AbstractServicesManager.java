@@ -16,6 +16,7 @@ import org.apereo.cas.support.events.service.CasRegisteredServicePreSaveEvent;
 import org.apereo.cas.support.events.service.CasRegisteredServiceSavedEvent;
 import org.apereo.cas.support.events.service.CasRegisteredServicesDeletedEvent;
 import org.apereo.cas.support.events.service.CasRegisteredServicesLoadedEvent;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.concurrent.CasReentrantLock;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -72,7 +73,7 @@ public abstract class AbstractServicesManager implements IndexableServicesManage
 
     @Override
     public @Nullable RegisteredService save(final RegisteredService registeredService, final boolean publishEvent) {
-        return lock.tryLock(() -> {
+        return lock.executeAndThrow(() -> {
             if (supports(registeredService)) {
                 val clientInfo = ClientInfoHolder.getClientInfo();
                 publishEvent(new CasRegisteredServicePreSaveEvent(this, registeredService, clientInfo));
@@ -114,11 +115,12 @@ public abstract class AbstractServicesManager implements IndexableServicesManage
 
     @Override
     public void removeRegisteredServicesFromCache() {
-        lock.tryLock(_ -> {
+        lock.executeAndThrow(() -> {
             configurationContext.getServicesCache().asMap().forEach((key, v) -> delete(v));
             configurationContext.getServicesCache().invalidateAll();
             val clientInfo = ClientInfoHolder.getClientInfo();
             publishEvent(new CasRegisteredServicesDeletedEvent(this, clientInfo));
+            return null;
         });
     }
 
@@ -129,7 +131,7 @@ public abstract class AbstractServicesManager implements IndexableServicesManage
 
     @Override
     public @Nullable RegisteredService delete(final long id) {
-        return lock.tryLock(() -> {
+        return lock.executeAndThrow(() -> {
             val service = findServiceBy(id);
             return delete(service);
         });
@@ -138,7 +140,7 @@ public abstract class AbstractServicesManager implements IndexableServicesManage
     @Override
     public @Nullable RegisteredService delete(
         @Nullable final RegisteredService service) {
-        return lock.tryLock(() -> {
+        return lock.executeAndThrow(() -> {
             if (service != null) {
                 val clientInfo = ClientInfoHolder.getClientInfo();
                 publishEvent(new CasRegisteredServicePreDeleteEvent(this, service, clientInfo));
@@ -328,10 +330,13 @@ public abstract class AbstractServicesManager implements IndexableServicesManage
      */
     @Override
     public Collection<RegisteredService> load() {
-        return lock.tryLock(() -> {
+        return lock.executeAndThrow(() -> {
             LOGGER.trace("Loading services from [{}]", configurationContext.getServiceRegistry().getName());
-            val servicesMap = configurationContext.getServiceRegistry()
-                .load()
+            val loadedServices = loadServicesFromRegistry();
+            if (loadedServices.isEmpty()) {
+                return getCachedRegisteredServices().values();
+            }
+            val servicesMap = loadedServices.get()
                 .stream()
                 .filter(this::supports)
                 .filter(this::validateAndFilterServiceByEnvironment)
@@ -368,6 +373,23 @@ public abstract class AbstractServicesManager implements IndexableServicesManage
             }
             return cachedServices.values();
         });
+    }
+
+    /**
+     * Load services from the registry. A registry that fails to load leaves the
+     * services already cached in place, rather than replacing them with nothing.
+     */
+    private Optional<Collection<RegisteredService>> loadServicesFromRegistry() {
+        val serviceRegistry = configurationContext.getServiceRegistry();
+        try {
+            return Optional.of(Objects.requireNonNull(serviceRegistry.load(),
+                () -> "Service registry " + serviceRegistry.getName() + " returned no services"));
+        } catch (final Exception e) {
+            LOGGER.error("Unable to load services from [{}]; keeping the [{}] service(s) already loaded",
+                serviceRegistry.getName(), getCachedRegisteredServices().size());
+            LoggingUtils.error(LOGGER, e);
+            return Optional.empty();
+        }
     }
 
     @Override

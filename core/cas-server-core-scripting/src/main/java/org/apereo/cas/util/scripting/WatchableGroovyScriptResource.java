@@ -54,11 +54,7 @@ public class WatchableGroovyScriptResource implements ExecutableCompiledScript {
             compileScriptResource(script);
         }
     }
-
-    public WatchableGroovyScriptResource(final Resource script) {
-        this(script, true);
-    }
-
+    
     @Override
     public <T> @Nullable T execute(final Object[] args, final Class<T> clazz) throws Throwable {
         return execute(args, clazz, failOnError);

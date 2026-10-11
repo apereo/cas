@@ -6,6 +6,7 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
+import org.apereo.cas.util.scripting.CachedScriptResources;
 import org.apereo.cas.util.scripting.ExecutableCompiledScript;
 import org.apereo.cas.util.scripting.ExecutableCompiledScriptFactory;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
@@ -73,7 +74,7 @@ public class GroovyRegisteredServiceAccessStrategyActivationCriteria implements 
             val script = SpringExpressionLanguageValueResolver.getInstance().resolve(
                 scriptFactoryInstance.getExternalScript(groovyScript).orElseThrow());
             val resource = FunctionUtils.doUnchecked(() -> ResourceUtils.getRawResourceFrom(script));
-            this.executableScript = scriptFactoryInstance.fromResource(resource);
+            this.executableScript = CachedScriptResources.fromResource(resource);
         }
         if (scriptFactoryInstance.isInlineScript(groovyScript) && CasRuntimeHintsRegistrar.notInNativeImage()) {
             val script = scriptFactoryInstance.getInlineScript(groovyScript).orElseThrow();
