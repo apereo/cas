@@ -46,8 +46,10 @@ public class RegisteredServiceAccessStrategyEvaluator implements Function<Regist
     private boolean caseInsensitive;
 
     /**
-     * Defines the attribute aggregation behavior when checking for required attributes.
-     * Default requires that all attributes be present and match the principal's.
+     * Defines the attribute aggregation behavior when checking for required and rejected attributes.
+     * Default requires that all attributes be present and match the principal's; for rejected attributes,
+     * access is refused only when all of them are present and match. Otherwise, any one matching
+     * required attribute grants access and any one matching rejected attribute refuses access.
      */
     @Builder.Default
     private boolean requireAllAttributes = true;
@@ -95,15 +97,7 @@ public class RegisteredServiceAccessStrategyEvaluator implements Function<Regist
      * @return true /false
      */
     protected boolean enoughAttributesAvailableToProcess(final RegisteredServiceAccessStrategyRequest request) {
-        if (!enoughRequiredAttributesAvailableToProcess(request.getAttributes(), this.requiredAttributes)) {
-            return false;
-        }
-        if (request.getAttributes().size() < this.rejectedAttributes.size()) {
-            LOGGER.debug("The size of the principal attributes that are [{}] does not match defined rejected attributes, "
-                         + "which means the principal is not carrying enough data to grant authorization", request.getAttributes());
-            return false;
-        }
-        return true;
+        return enoughRequiredAttributesAvailableToProcess(request.getAttributes(), this.requiredAttributes);
     }
 
     /**
@@ -120,7 +114,7 @@ public class RegisteredServiceAccessStrategyEvaluator implements Function<Regist
             LOGGER.debug("No principal attributes are found to satisfy defined attribute requirements");
             return false;
         }
-        if (principalAttributes.size() < requiredAttributes.size()) {
+        if (this.requireAllAttributes && principalAttributes.size() < requiredAttributes.size()) {
             LOGGER.debug("The size of the principal attributes that are [{}] does not match defined required attributes, "
                          + "which indicates the principal is not carrying enough data to grant authorization", principalAttributes);
             return false;

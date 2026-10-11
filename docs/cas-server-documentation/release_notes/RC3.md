@@ -477,6 +477,16 @@ authentication. See the [stateless ticket registry documentation](../ticketing/S
   filters and surrogate access strategies, are now compiled and watched once per script location instead of once per
   service definition on every reload or evaluation. Previously each reload leaked a file watcher, which could exhaust the
   operating system's limit on file watchers.
+- {: .fixed data-area="authorization"} [Attribute-based access strategies](../services/Service-Access-Strategy-ABAC.html) no longer deny a
+  principal only because it carries fewer attributes than the strategy lists as rejected, or, when `requireAllAttributes`
+  is `false`, fewer than it lists as required. The documentation now spells out that `requireAllAttributes` also governs
+  rejected attributes: by default access is refused only when every rejected attribute is present with a matching value,
+  so a strategy that should refuse access on any one rejected attribute must set `requireAllAttributes` to `false`.
+- {: .changed data-area="authorization"} The [HTTP request access strategy](../services/Service-Access-Strategy-Http.html) now denies
+  access when a configured header is missing from the request, matches header names case-insensitively, and requires the
+  IP address, user agent and header patterns to match the entire value. Previously a missing header satisfied its rule and
+  patterns matched any part of a value, so `10.0.0.1` also matched `110.0.0.15`. Patterns written to match only part of a
+  value, such as `Chrome.+` for a user agent, must now be written as `.*Chrome.+`.
 - {: .fixed} A `service` parameter that only resembles a number, such as `1.5`, `1e3`, `0x1F` or a value too large for an
   identifier, no longer fails the request while CAS applies the application's [HTTP security headers](../services/Configuring-Service-Http-Security-Headers.html);
   it is matched as a service URL instead.
