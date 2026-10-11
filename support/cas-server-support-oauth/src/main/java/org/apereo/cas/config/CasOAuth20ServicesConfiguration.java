@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.services.CasRegisteredService;
 import org.apereo.cas.services.DenyAllAttributeReleasePolicy;
+import org.apereo.cas.services.RegisteredServiceIndexService;
 import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
 import org.apereo.cas.services.ServicesManagerRegisteredServiceLocator;
 import org.apereo.cas.services.StartsWithRegisteredServiceMatchingStrategy;
@@ -13,6 +14,8 @@ import org.apereo.cas.support.oauth.services.OAuth20ServicesManagerRegisteredSer
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import lombok.val;
+import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -61,8 +64,11 @@ class CasOAuth20ServicesConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "oauthServicesManagerRegisteredServiceLocator")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public ServicesManagerRegisteredServiceLocator oauthServicesManagerRegisteredServiceLocator(final CasConfigurationProperties casProperties) {
-            return new OAuth20ServicesManagerRegisteredServiceLocator(casProperties);
+        public ServicesManagerRegisteredServiceLocator oauthServicesManagerRegisteredServiceLocator(
+            final CasConfigurationProperties casProperties,
+            @Qualifier(RegisteredServiceIndexService.BEAN_NAME)
+            final ObjectProvider<RegisteredServiceIndexService> registeredServiceIndexService) {
+            return new OAuth20ServicesManagerRegisteredServiceLocator(casProperties, registeredServiceIndexService);
         }
     }
 }

@@ -487,6 +487,24 @@ authentication. See the [stateless ticket registry documentation](../ticketing/S
   IP address, user agent and header patterns to match the entire value. Previously a missing header satisfied its rule and
   patterns matched any part of a value, so `10.0.0.1` also matched `110.0.0.15`. Patterns written to match only part of a
   value, such as `Chrome.+` for a user agent, must now be written as `.*Chrome.+`.
+- {: .changed} CAS no longer tries to match a service identifier, such as the `service` parameter, that is longer than
+  4096 characters against application definitions, which guards against expensive regular expression matching on oversized
+  input. The limit is controlled by `cas.service-registry.core.maximum-service-id-length`; zero or a negative value disables it.
+- {: .changed} Expired application definitions are processed once each time service definitions are loaded instead of on every
+  request. Contacts of an expired application are notified once per expiration date rather than on every request and every
+  reload, a request for an expired application no longer sends notifications, and definitions set to be deleted when they
+  expire are no longer found by requests and are deleted at the next load instead of on the request thread.
+- {: .fixed} Lookups in the [JSON](../services/JSON-Service-Management.html) and [YAML](../services/YAML-Service-Management.html)
+  service registries no longer read a map that a reload, a save or the file watcher is modifying at the same time.
+- {: .changed} New application definitions without an identifier receive a random positive identifier instead of one derived
+  from the system clock, so definitions created at the same time, on the same or different nodes, no longer collide.
+- {: .changed data-area="oidc"} OAuth and OpenID Connect requests find the application definition for a `client_id` through
+  the service index instead of examining every definition, falling back to examining them when the index has no match.
+- {: .changed} Checking access to an application now looks up the additional access strategy enforcers once instead of on every
+  request.
+- {: .fixed} Service registry listeners that replace a loaded application definition now take effect; the
+  [REST service registry](../services/REST-Service-Management.html), among others, used to return the definitions as they
+  were before the listeners ran. Single sign-on checks no longer fail with an error when no service is given.
 - {: .fixed} A `service` parameter that only resembles a number, such as `1.5`, `1e3`, `0x1F` or a value too large for an
   identifier, no longer fails the request while CAS applies the application's [HTTP security headers](../services/Configuring-Service-Http-Security-Headers.html);
   it is matched as a service URL instead.

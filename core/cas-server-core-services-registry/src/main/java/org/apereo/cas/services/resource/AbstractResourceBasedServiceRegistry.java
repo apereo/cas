@@ -59,7 +59,7 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
     protected Path serviceRegistryDirectory;
     
     @Getter
-    protected Map<Long, RegisteredService> services = new ConcurrentHashMap<>();
+    protected volatile Map<Long, RegisteredService> services = new ConcurrentHashMap<>();
 
     private final CasReentrantLock lock = new CasReentrantLock();
 
@@ -241,7 +241,7 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
                 Arrays.toString(getExtensions()), this.serviceRegistryDirectory, files);
             val clientInfo = ClientInfoHolder.getClientInfo();
 
-            this.services = files
+            val loadedServices = files
                 .stream()
                 .map(this::load)
                 .filter(Objects::nonNull)
@@ -253,7 +253,8 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
                         BaseResourceBasedRegisteredServiceWatcher.LOG_SERVICE_DUPLICATE.accept(s2);
                         return s1;
                     }, LinkedHashMap::new));
-            val listedServices = new ArrayList<>(this.services.values());
+            this.services = new ConcurrentHashMap<>(loadedServices);
+            val listedServices = new ArrayList<>(loadedServices.values());
             val results = registeredServiceReplicationStrategy.updateLoadedRegisteredServicesFromCache(listedServices, this);
             results.forEach(service -> publishEvent(new CasRegisteredServiceLoadedEvent(this, service, clientInfo)));
             return results;

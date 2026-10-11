@@ -7,6 +7,7 @@ import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.mgmt.DefaultServicesManager;
 import org.apereo.cas.services.query.DefaultRegisteredServiceIndexService;
 import org.apereo.cas.services.query.RegisteredServiceQuery;
+import org.apereo.cas.support.events.service.CasRegisteredServiceExpiredEvent;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.RandomUtils;
 import lombok.val;
@@ -16,6 +17,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.ApplicationEvent;
+import org.springframework.context.ApplicationListener;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -121,6 +124,66 @@ class DefaultServicesManagerRegistryLookupTests {
         releaseLoad.countDown();
         assertNotNull(saved.get(30, TimeUnit.SECONDS));
         loader.join();
+    }
+
+    @Test
+    void verifyExpiredServiceNotifiesOncePerExpiry() {
+        val serviceRegistry = newServiceRegistry();
+        val servicesManager = newServicesManager(serviceRegistry, new CasConfigurationProperties());
+        val registeredService = newRegisteredService();
+        val expirationPolicy = new DefaultRegisteredServiceExpirationPolicy();
+        expirationPolicy.setNotifyWhenExpired(true);
+        expirationPolicy.setExpirationDate(ZonedDateTime.now(ZoneOffset.UTC).minusDays(2).toString());
+        registeredService.setExpirationPolicy(expirationPolicy);
+        serviceRegistry.save(registeredService);
+
+        val notifications = new AtomicInteger();
+        configurationContext.getApplicationContext().addApplicationListener((ApplicationListener<ApplicationEvent>) event -> {
+            if (event instanceof final CasRegisteredServiceExpiredEvent expired
+                && expired.getRegisteredService().getId() == registeredService.getId()) {
+                notifications.incrementAndGet();
+            }
+        });
+        servicesManager.load();
+        servicesManager.load();
+        val service = RegisteredServiceTestUtils.getService(registeredService.getServiceId());
+        assertNotNull(servicesManager.findServiceBy(service));
+        assertNotNull(servicesManager.findServiceBy(service));
+        assertEquals(1, notifications.get());
+    }
+
+    @Test
+    void verifyExpiredServiceIsDeletedOnLoadNotLookup() {
+        val serviceRegistry = newServiceRegistry();
+        val servicesManager = newServicesManager(serviceRegistry, new CasConfigurationProperties());
+        servicesManager.load();
+        val registeredService = newRegisteredService();
+        val expirationPolicy = new DefaultRegisteredServiceExpirationPolicy();
+        expirationPolicy.setDeleteWhenExpired(true);
+        expirationPolicy.setExpirationDate(ZonedDateTime.now(ZoneOffset.UTC).minusDays(2).toString());
+        registeredService.setExpirationPolicy(expirationPolicy);
+        servicesManager.save(registeredService);
+
+        assertNull(servicesManager.findServiceBy(RegisteredServiceTestUtils.getService(registeredService.getServiceId())));
+        assertNotNull(serviceRegistry.findServiceById(registeredService.getId()));
+        servicesManager.load();
+        assertNull(serviceRegistry.findServiceById(registeredService.getId()));
+    }
+
+    @Test
+    void verifyOversizedServiceIdIsNotMatched() {
+        val casProperties = new CasConfigurationProperties();
+        casProperties.getServiceRegistry().getCore().setMaximumServiceIdLength(64);
+        val serviceRegistry = newServiceRegistry();
+        val servicesManager = newServicesManager(serviceRegistry, casProperties);
+        val registeredService = newRegisteredService();
+        registeredService.setServiceId("^https://.+");
+        serviceRegistry.save(registeredService);
+        servicesManager.load();
+
+        assertNotNull(servicesManager.findServiceBy(RegisteredServiceTestUtils.getService("https://app.example.org")));
+        val oversized = RegisteredServiceTestUtils.getService("https://app.example.org/" + "a".repeat(64));
+        assertNull(servicesManager.findServiceBy(oversized));
     }
 
     private ServiceRegistry newServiceRegistry() {

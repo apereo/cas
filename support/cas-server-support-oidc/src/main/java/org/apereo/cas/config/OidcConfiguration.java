@@ -89,6 +89,7 @@ import org.apereo.cas.oidc.web.response.OidcResponseModeFormPostJwtBuilder;
 import org.apereo.cas.oidc.web.response.OidcResponseModeFragmentJwtBuilder;
 import org.apereo.cas.oidc.web.response.OidcResponseModeQueryJwtBuilder;
 import org.apereo.cas.services.RegisteredServiceCipherExecutor;
+import org.apereo.cas.services.RegisteredServiceIndexService;
 import org.apereo.cas.services.ServiceRegistryListener;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.ServicesManagerRegisteredServiceLocator;
@@ -1040,8 +1041,11 @@ class OidcConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "oidcServicesManagerRegisteredServiceLocator")
-        public ServicesManagerRegisteredServiceLocator oidcServicesManagerRegisteredServiceLocator(final CasConfigurationProperties casProperties) {
-            return new OidcServicesManagerRegisteredServiceLocator(casProperties);
+        public ServicesManagerRegisteredServiceLocator oidcServicesManagerRegisteredServiceLocator(
+            final CasConfigurationProperties casProperties,
+            @Qualifier(RegisteredServiceIndexService.BEAN_NAME)
+            final ObjectProvider<RegisteredServiceIndexService> registeredServiceIndexService) {
+            return new OidcServicesManagerRegisteredServiceLocator(casProperties, registeredServiceIndexService);
         }
 
         @ConditionalOnMissingBean(name = "clientRegistrationRequestSerializer")

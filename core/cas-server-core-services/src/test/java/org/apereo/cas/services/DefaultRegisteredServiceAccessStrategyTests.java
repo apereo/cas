@@ -393,6 +393,11 @@ class DefaultRegisteredServiceAccessStrategyTests {
         authz.setRequiredAttributes(Map.of(CN, Set.of(CAS)));
         val request = RegisteredServiceAccessStrategyRequest.builder().applicationContext(applicationContext)
             .principalId(TEST).attributes(Map.of(CN, List.of(CAS))).build();
-        assertFalse(authz.authorizeRequest(request));
+        assertTrue(authz.authorizeRequest(request));
+
+        val rejectedRequest = RegisteredServiceAccessStrategyRequest.builder().applicationContext(applicationContext)
+            .principalId(TEST).attributes(Map.of(CN, List.of(CAS), "address", List.of("1234 Main Street"),
+                "role", List.of("staff"))).build();
+        assertFalse(authz.authorizeRequest(rejectedRequest));
     }
 }

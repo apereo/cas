@@ -143,12 +143,12 @@ public class RestfulServiceRegistry extends AbstractServiceRegistry {
             if (response != null && response.getCode() == HttpStatus.OK.value()) {
                 try (val content = ((HttpEntityContainer) response).getEntity().getContent()) {
                     val result = IOUtils.toString(content, StandardCharsets.UTF_8);
-                    val services = this.serializer.fromList(result);
-                    services
+                    val services = this.serializer.fromList(result)
                         .stream()
                         .map(this::invokeServiceRegistryListenerPostLoad)
                         .filter(Objects::nonNull)
-                        .forEach(s -> publishEvent(new CasRegisteredServiceLoadedEvent(this, s, clientInfo)));
+                        .collect(Collectors.toList());
+                    services.forEach(service -> publishEvent(new CasRegisteredServiceLoadedEvent(this, service, clientInfo)));
                     return services;
                 }
             }

@@ -12,13 +12,12 @@ import org.apereo.cas.authentication.PrincipalException;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apereo.inspektr.audit.annotation.Audit;
 import org.jooq.lambda.Unchecked;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 
 /**
  * This is {@link RegisteredServiceAccessStrategyAuditableEnforcer}.
@@ -27,12 +26,20 @@ import org.springframework.core.annotation.AnnotationAwareOrderComparator;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@RequiredArgsConstructor
 @Slf4j
 public class RegisteredServiceAccessStrategyAuditableEnforcer extends BaseAuditableExecution {
 
     private final ConfigurableApplicationContext applicationContext;
     private final RegisteredServicePrincipalAccessStrategyEnforcer principalAccessStrategyEnforcer;
+    private final ObjectProvider<RegisteredServiceAccessStrategyEnforcer> accessStrategyEnforcers;
+
+    public RegisteredServiceAccessStrategyAuditableEnforcer(
+        final ConfigurableApplicationContext applicationContext,
+        final RegisteredServicePrincipalAccessStrategyEnforcer principalAccessStrategyEnforcer) {
+        this.applicationContext = applicationContext;
+        this.principalAccessStrategyEnforcer = principalAccessStrategyEnforcer;
+        this.accessStrategyEnforcers = applicationContext.getBeanProvider(RegisteredServiceAccessStrategyEnforcer.class);
+    }
 
     private Optional<AuditableExecutionResult> byServiceTicketAndAuthnResultAndRegisteredService(final AuditableContext context) {
         val providedRegisteredService = context.getRegisteredService();
@@ -218,11 +225,9 @@ public class RegisteredServiceAccessStrategyAuditableEnforcer extends BaseAudita
     }
 
     protected Optional<AuditableExecutionResult> byExternalAccessStrategyEnforcers(final AuditableContext context) {
-        val enforcers = applicationContext.getBeansOfType(RegisteredServiceAccessStrategyEnforcer.class).values();
-        return enforcers
-            .stream()
+        return accessStrategyEnforcers
+            .orderedStream()
             .filter(BeanSupplier::isNotProxy)
-            .sorted(AnnotationAwareOrderComparator.INSTANCE)
             .map(Unchecked.function(enforcer -> enforcer.execute(context)))
             .filter(Objects::nonNull)
             .filter(AuditableExecutionResult::isExecutionFailure)

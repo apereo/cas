@@ -9,6 +9,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.services.RestfulServiceRegistryProperties;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.MockWebServer;
+import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import org.apereo.cas.web.CasWebSecurityConfigurer;
@@ -93,6 +94,37 @@ class RestfulServiceRegistryTests extends AbstractServiceRegistryTests {
 
     @Autowired
     private ConfigurableApplicationContext applicationContext;
+
+    @Test
+    void verifyLoadReturnsListenerResults() {
+        val registeredService = new CasRegisteredService();
+        registeredService.setId(RandomUtils.nextLong());
+        registeredService.setName(UUID.randomUUID().toString());
+        registeredService.setServiceId("https://" + registeredService.getName() + ".example.org");
+        newServiceRegistry.save(registeredService);
+
+        val listener = new ServiceRegistryListener() {
+            @Serial
+            private static final long serialVersionUID = 4515471049423402212L;
+
+            @Override
+            public RegisteredService postLoad(final RegisteredService loaded) {
+                val replacement = new CasRegisteredService();
+                replacement.setId(loaded.getId());
+                replacement.setName(loaded.getName());
+                replacement.setServiceId(loaded.getServiceId());
+                replacement.setDescription("reconciled");
+                return replacement;
+            }
+        };
+        val properties = applicationContext.getBean(CasConfigurationProperties.class).getServiceRegistry().getRest();
+        val registry = new RestfulServiceRegistry(applicationContext, List.of(listener), properties);
+        val loaded = registry.load().stream()
+            .filter(service -> service.getId() == registeredService.getId())
+            .findFirst()
+            .orElseThrow();
+        assertEquals("reconciled", loaded.getDescription());
+    }
 
     @Test
     void verifyFailedLoadIsReported() {

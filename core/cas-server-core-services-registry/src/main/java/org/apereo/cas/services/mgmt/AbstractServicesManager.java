@@ -46,6 +46,9 @@ public abstract class AbstractServicesManager implements IndexableServicesManage
     @Getter(AccessLevel.NONE)
     private volatile @Nullable SortedServicesSnapshot sortedServicesSnapshot;
 
+    @Getter(AccessLevel.NONE)
+    private final Set<String> notifiedExpiredServices = ConcurrentHashMap.newKeySet();
+
     protected AbstractServicesManager(final ServicesManagerConfigurationContext configurationContext) {
         this.configurationContext = configurationContext;
         configurationContext.getRegisteredServiceIndexService().initialize();
@@ -163,6 +166,12 @@ public abstract class AbstractServicesManager implements IndexableServicesManage
     @Override
     public @Nullable RegisteredService findServiceBy(@Nullable final Service service) {
         if (service == null) {
+            return null;
+        }
+        val maximumLength = configurationContext.getCasProperties().getServiceRegistry().getCore().getMaximumServiceIdLength();
+        if (maximumLength > 0 && StringUtils.length(service.getId()) > maximumLength) {
+            LOGGER.warn("Service identifier of length [{}] exceeds the maximum allowed length of [{}] and will not be matched",
+                StringUtils.length(service.getId()), maximumLength);
             return null;
         }
 
@@ -527,10 +536,15 @@ public abstract class AbstractServicesManager implements IndexableServicesManage
         return false;
     }
 
+    /**
+     * Notify and delete expired services once per load. Lookups only filter expired services,
+     * so that requests for an expired service do not notify contacts or delete definitions.
+     */
     private void evaluateExpiredServiceDefinitions() {
         getCacheableServicesStream()
             .get()
             .filter(RegisteredServiceAccessStrategyUtils.getRegisteredServiceExpirationPolicyPredicate().negate())
+            .toList()
             .forEach(this::processExpiredRegisteredService);
     }
 
@@ -548,14 +562,20 @@ public abstract class AbstractServicesManager implements IndexableServicesManage
         if (registeredService == null || RegisteredServiceAccessStrategyUtils.ensureServiceIsNotExpired(registeredService)) {
             return registeredService;
         }
-        return processExpiredRegisteredService(registeredService);
+        LOGGER.debug("Registered service [{}] has expired on [{}]", registeredService.getServiceId(),
+            registeredService.getExpirationPolicy().getExpirationDate());
+        return registeredService.getExpirationPolicy().isDeleteWhenExpired() ? null : registeredService;
     }
 
-    private @Nullable RegisteredService processExpiredRegisteredService(final RegisteredService registeredService) {
+    private void processExpiredRegisteredService(final RegisteredService registeredService) {
         val policy = registeredService.getExpirationPolicy();
-        LOGGER.warn("Registered service [{}] has expired on [{}]", registeredService.getServiceId(), policy.getExpirationDate());
+        val notificationKey = registeredService.getId() + ":" + policy.getExpirationDate();
+        val firstNotice = notifiedExpiredServices.add(notificationKey);
+        if (firstNotice) {
+            LOGGER.warn("Registered service [{}] has expired on [{}]", registeredService.getServiceId(), policy.getExpirationDate());
+        }
         val clientInfo = ClientInfoHolder.getClientInfo();
-        if (policy.isNotifyWhenExpired()) {
+        if (policy.isNotifyWhenExpired() && firstNotice) {
             LOGGER.debug("Contacts for registered service [{}] will be notified of service expiry", registeredService.getServiceId());
             publishEvent(new CasRegisteredServiceExpiredEvent(this, registeredService, false, clientInfo));
         }
@@ -567,9 +587,7 @@ public abstract class AbstractServicesManager implements IndexableServicesManage
                 publishEvent(new CasRegisteredServiceExpiredEvent(this, registeredService, true, clientInfo));
             }
             delete(registeredService);
-            return null;
         }
-        return registeredService;
     }
 
     private void publishEvent(final ApplicationEvent event) {
