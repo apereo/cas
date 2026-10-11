@@ -66,9 +66,6 @@ public class OidcPushedAuthorizeEndpointController extends OidcAuthorizeEndpoint
      */
     protected @Nullable ModelAndView verifyProofOfPossessionKey(final HttpServletRequest request, final HttpServletResponse response,
                                                                 final JEEContext webContext) {
-        if (Collections.list(request.getHeaders(OAuth20Constants.DPOP)).size() > 1) {
-            return OAuth20Utils.writeError(response, OAuth20Constants.INVALID_DPOP_PROOF, "Only one DPoP proof may be sent");
-        }
         try {
             val thumbprint = getConfigurationContext().getProofOfPossessionValidator().validateKeyBinding(webContext);
             if (thumbprint.isPresent()) {

@@ -249,6 +249,58 @@ class OAuth20ProofOfPossessionValidatorTests extends AbstractOidcTests {
     }
 
     @Test
+    void verifyMalformedOrRepeatedDPoPHeaderAtTokenEndpoint() throws Throwable {
+        val registeredService = getOidcRegisteredService(UUID.randomUUID().toString());
+        servicesManager.save(registeredService);
+        val code = addCode(CoreAuthenticationTestUtils.getPrincipal("casuser"), registeredService);
+        val proofFactory = new DefaultDPoPProofFactory(new ECKeyGenerator(Curve.P_256).generate(), JWSAlgorithm.ES256);
+
+        performTokenRequest(registeredService, code.getId(), "not-a-jwt")
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.error").value(OAuth20Constants.INVALID_DPOP_PROOF));
+        mockMvc.perform(codeRequest(registeredService, code.getId(), proofFactory.createDPoPJWT(HttpMethod.POST.name(), TOKEN_URI).serialize())
+                .header(OAuth20Constants.DPOP, proofFactory.createDPoPJWT(HttpMethod.POST.name(), TOKEN_URI).serialize()))
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.error").value(OAuth20Constants.INVALID_DPOP_PROOF));
+        performTokenRequest(registeredService, code.getId(), proofFactory.createDPoPJWT(HttpMethod.POST.name(), TOKEN_URI).serialize())
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.token_type").value(OAuth20Constants.TOKEN_TYPE_DPOP));
+    }
+
+    @Test
+    void verifyInvalidDPoPProofAtProfileEndpointIsChallenged() throws Throwable {
+        val registeredService = getOidcRegisteredService(UUID.randomUUID().toString());
+        servicesManager.save(registeredService);
+        val code = addCode(CoreAuthenticationTestUtils.getPrincipal("casuser"), registeredService);
+        val proofFactory = new DefaultDPoPProofFactory(new ECKeyGenerator(Curve.P_256).generate(), JWSAlgorithm.ES256);
+        val tokenResult = performTokenRequest(registeredService, code.getId(),
+                proofFactory.createDPoPJWT(HttpMethod.POST.name(), TOKEN_URI).serialize())
+            .andExpect(status().isOk())
+            .andReturn();
+        val accessToken = new DPoPAccessToken(JsonPath.read(tokenResult.getResponse().getContentAsString(), "$.access_token").toString());
+        val authorization = OAuth20Constants.TOKEN_TYPE_DPOP + ' ' + accessToken.getValue();
+        val algs = "algs=\"%s\"".formatted(String.join(" ", casProperties.getAuthn().getOidc().getDiscovery().getDpopSigningAlgValuesSupported()));
+
+        val withoutProof = post("/cas/" + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.PROFILE_URL)
+            .with(withHttpRequestProcessor())
+            .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+            .header(HttpHeaders.AUTHORIZATION, authorization);
+        val malformedProof = profileRequest("not-a-jwt").header(HttpHeaders.AUTHORIZATION, authorization);
+        val repeatedProof = profileRequest(proofFactory.createDPoPJWT(HttpMethod.POST.name(), PROFILE_URI, accessToken).serialize())
+            .header(OAuth20Constants.DPOP, proofFactory.createDPoPJWT(HttpMethod.POST.name(), PROFILE_URI, accessToken).serialize())
+            .header(HttpHeaders.AUTHORIZATION, authorization);
+        for (val request : List.of(withoutProof, malformedProof, repeatedProof)) {
+            mockMvc.perform(request)
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.error").value(OAuth20Constants.INVALID_DPOP_PROOF))
+                .andExpect(header().string(HttpHeaders.WWW_AUTHENTICATE, startsWith("DPoP error=\"invalid_dpop_proof\"")))
+                .andExpect(header().string(HttpHeaders.WWW_AUTHENTICATE, endsWith(", " + algs)));
+        }
+        performProfileRequest(accessToken, proofFactory.createDPoPJWT(HttpMethod.POST.name(), PROFILE_URI, accessToken).serialize())
+            .andExpect(status().isOk());
+    }
+
+    @Test
     void verifyRefreshTokenOfPublicClientBoundToDPoPKey() throws Throwable {
         val registeredService = getOidcRegisteredService(UUID.randomUUID().toString());
         registeredService.setClientSecrets(new ArrayList<>());
@@ -386,6 +438,8 @@ class OAuth20ProofOfPossessionValidatorTests extends AbstractOidcTests {
             val profileNonce = performProfileRequest(accessToken, proofFactory.createDPoPJWT(HttpMethod.POST.name(), profileUri, accessToken).serialize())
                 .andExpect(status().isUnauthorized())
                 .andExpect(header().string(HttpHeaders.WWW_AUTHENTICATE, containsString("error=\"use_dpop_nonce\"")))
+                .andExpect(header().string(HttpHeaders.WWW_AUTHENTICATE, containsString("algs=\"%s\"".formatted(
+                    String.join(" ", casProperties.getAuthn().getOidc().getDiscovery().getDpopSigningAlgValuesSupported())))))
                 .andExpect(jsonPath("$.error").value(OAuth20Constants.USE_DPOP_NONCE))
                 .andReturn().getResponse().getHeader(OAuth20Constants.DPOP_NONCE);
             assertNotNull(profileNonce);

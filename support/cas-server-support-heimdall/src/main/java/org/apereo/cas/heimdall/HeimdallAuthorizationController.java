@@ -7,9 +7,12 @@ import org.apereo.cas.heimdall.authzen.AuthZenEvaluationsSemantic;
 import org.apereo.cas.heimdall.authzen.AuthZenResponse;
 import org.apereo.cas.heimdall.engine.AuthorizationEngine;
 import org.apereo.cas.heimdall.engine.AuthorizationPrincipalParser;
+import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
+import org.apereo.cas.support.oauth.validator.OAuth20ProofOfPossessionValidator;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.http.HttpRequestUtils;
+import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.oauth2.sdk.dpop.verifiers.InvalidDPoPNonceException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -20,6 +23,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.pac4j.jee.context.JEEContext;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -70,6 +74,7 @@ public class HeimdallAuthorizationController {
 
     private final AuthorizationEngine authorizationEngine;
     private final AuthorizationPrincipalParser principalParser;
+    private final ObjectProvider<OAuth20ProofOfPossessionValidator> proofOfPossessionValidator;
 
     /**
      * AuthZen access evaluation API.
@@ -270,16 +275,23 @@ public class HeimdallAuthorizationController {
     /**
      * The answer to a caller that failed to authenticate. A caller whose DPoP proof lacks the nonce CAS requires is asked
      * for it with {@code use_dpop_nonce}, the fresh nonce being already in the {@code DPoP-Nonce} header of the response.
+     * The {@code DPoP} challenge lists the algorithms accepted for DPoP proofs (RFC 9449, section 7.1).
      *
      * @param e the authentication failure
      * @return the response entity
      */
-    private static ResponseEntity unauthenticated(final Throwable e) {
+    private ResponseEntity unauthenticated(final Throwable e) {
+        final Set<JWSAlgorithm> algorithms = Optional.ofNullable(proofOfPossessionValidator.getIfAvailable())
+            .map(OAuth20ProofOfPossessionValidator::getAcceptedSigningAlgorithms)
+            .orElseGet(Set::of);
         if (e instanceof InvalidDPoPNonceException) {
-            return OAuth20Utils.useDPoPNonceResponse();
+            return OAuth20Utils.useDPoPNonceResponse(algorithms);
         }
+        val dpopChallenge = OAuth20Utils.toDPoPAlgorithmsChallengeParameter(algorithms)
+            .map(algs -> OAuth20Constants.TOKEN_TYPE_DPOP + ' ' + algs)
+            .orElse(OAuth20Constants.TOKEN_TYPE_DPOP);
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-            .header(HttpHeaders.WWW_AUTHENTICATE, "Bearer", "DPoP", "Basic realm=\"Heimdall\"")
+            .header(HttpHeaders.WWW_AUTHENTICATE, "Bearer", dpopChallenge, "Basic realm=\"Heimdall\"")
             .build();
     }
 

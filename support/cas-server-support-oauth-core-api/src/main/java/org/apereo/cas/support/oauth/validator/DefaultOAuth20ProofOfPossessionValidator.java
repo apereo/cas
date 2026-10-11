@@ -43,6 +43,7 @@ import org.pac4j.core.context.HttpConstants;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.core.profile.ProfileManager;
+import org.pac4j.jee.context.JEEContext;
 
 /**
  * This is {@link DefaultOAuth20ProofOfPossessionValidator}.
@@ -64,7 +65,7 @@ public class DefaultOAuth20ProofOfPossessionValidator implements OAuth20ProofOfP
 
     @Override
     public void validate(final WebContext webContext, final OAuth20AccessToken accessToken) throws Throwable {
-        val result = webContext.getRequestHeader(OAuth20Constants.DPOP);
+        val result = getProofOfPossessionHeader(webContext);
         if (result.isPresent()) {
             val clientId = resolveClientId(webContext, accessToken).orElseThrow();
             val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, clientId);
@@ -86,7 +87,7 @@ public class DefaultOAuth20ProofOfPossessionValidator implements OAuth20ProofOfP
 
     @Override
     public void validateTokenRequest(final WebContext webContext, final OAuthRegisteredService registeredService) throws Throwable {
-        val dPopProof = webContext.getRequestHeader(OAuth20Constants.DPOP).filter(StringUtils::isNotBlank);
+        val dPopProof = getProofOfPossessionHeader(webContext).filter(StringUtils::isNotBlank);
         if (dPopProof.isPresent()) {
             val confirmation = verifyProofOfPossession(webContext, dPopProof.get(), registeredService.getClientId());
             webContext.setRequestAttribute(OAuth20Constants.DPOP, dPopProof.get());
@@ -94,6 +95,24 @@ public class DefaultOAuth20ProofOfPossessionValidator implements OAuth20ProofOfP
         } else {
             enforceProofOfPossession(registeredService);
         }
+    }
+
+    /**
+     * The {@code DPoP} header of the request. A request may carry only one (RFC 9449, section 4.3), and pac4j would
+     * otherwise return the first of several without a word.
+     *
+     * @param webContext the web context
+     * @return the header value, if any
+     * @throws InvalidDPoPProofException when the request carries more than one {@code DPoP} header
+     */
+    protected Optional<String> getProofOfPossessionHeader(final WebContext webContext) throws InvalidDPoPProofException {
+        if (webContext instanceof final JEEContext jeeContext) {
+            val headers = jeeContext.getNativeRequest().getHeaders(OAuth20Constants.DPOP);
+            if (headers != null && Collections.list(headers).size() > 1) {
+                throw new InvalidDPoPProofException("Only one DPoP proof may be sent");
+            }
+        }
+        return webContext.getRequestHeader(OAuth20Constants.DPOP);
     }
 
     /**
@@ -156,7 +175,7 @@ public class DefaultOAuth20ProofOfPossessionValidator implements OAuth20ProofOfP
             return;
         }
         verifyAuthorizationScheme(webContext, presentedAccessToken);
-        val dPopProof = webContext.getRequestHeader(OAuth20Constants.DPOP)
+        val dPopProof = getProofOfPossessionHeader(webContext)
             .filter(StringUtils::isNotBlank)
             .orElseThrow(() -> new InvalidDPoPProofException(
                 "Access token is DPoP-bound but the request carries no DPoP proof"));
@@ -192,7 +211,7 @@ public class DefaultOAuth20ProofOfPossessionValidator implements OAuth20ProofOfP
 
     @Override
     public Optional<String> validateKeyBinding(final WebContext webContext) throws Throwable {
-        val dPopProof = webContext.getRequestHeader(OAuth20Constants.DPOP).filter(StringUtils::isNotBlank);
+        val dPopProof = getProofOfPossessionHeader(webContext).filter(StringUtils::isNotBlank);
         if (dPopProof.isEmpty()) {
             return Optional.empty();
         }
@@ -234,11 +253,12 @@ public class DefaultOAuth20ProofOfPossessionValidator implements OAuth20ProofOfP
             .map(value -> new JWKThumbprintConfirmation(new Base64URL(value.toString())));
     }
 
-    protected Set<JWSAlgorithm> getAcceptedSigningAlgorithms() {
+    @Override
+    public Set<JWSAlgorithm> getAcceptedSigningAlgorithms() {
         return casProperties.getAuthn().getOidc().getDiscovery().getDpopSigningAlgValuesSupported()
             .stream()
             .map(JWSAlgorithm::parse)
-            .collect(Collectors.toSet());
+            .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
     protected long getMaximumAgeInSeconds() {
@@ -290,7 +310,19 @@ public class DefaultOAuth20ProofOfPossessionValidator implements OAuth20ProofOfP
         }));
     }
 
-    protected SignedJWT getSignedProofOfPosessionJwt(final String dPopProof) throws Throwable {
-        return SignedJWT.parse(dPopProof);
+    /**
+     * The proof must be a single well-formed JWS (RFC 9449, section 4.3). A value that does not parse is an invalid proof,
+     * answered with {@code invalid_dpop_proof} (RFC 9449, sections 5 and 7.1), not a malformed request.
+     *
+     * @param dPopProof the proof
+     * @return the signed proof
+     * @throws InvalidDPoPProofException when the proof is not a JWS
+     */
+    protected SignedJWT getSignedProofOfPosessionJwt(final String dPopProof) throws InvalidDPoPProofException {
+        try {
+            return SignedJWT.parse(dPopProof);
+        } catch (final ParseException e) {
+            throw new InvalidDPoPProofException("DPoP proof is not a well-formed JWS: " + e.getMessage());
+        }
     }
 }

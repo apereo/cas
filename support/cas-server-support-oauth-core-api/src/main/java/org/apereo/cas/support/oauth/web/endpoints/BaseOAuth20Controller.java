@@ -4,12 +4,15 @@ import module java.base;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
+import org.apereo.cas.support.oauth.validator.DPoPBoundAccessTokenDowngradeException;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20JwtAccessTokenEncoder;
 import org.apereo.cas.ticket.OAuth20Token;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshToken;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.web.AbstractController;
+import com.nimbusds.oauth2.sdk.dpop.verifiers.InvalidDPoPNonceException;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +25,7 @@ import org.jspecify.annotations.Nullable;
 import org.pac4j.core.context.HttpConstants;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.profile.ProfileManager;
+import org.pac4j.jee.context.JEEContext;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -155,7 +159,8 @@ public abstract class BaseOAuth20Controller<T extends OAuth20ConfigurationContex
      * section 3 says to name the error only when the request actually presented credentials -- a client that
      * sent none is told which scheme to use and nothing more. The challenge answers in whichever scheme the
      * client used, so a DPoP-bound token is not told to retry as a bearer token, and a DPoP-bound token sent
-     * as a bearer token is told so in the {@code Bearer} scheme (RFC 9449, section 7.2).
+     * as a bearer token is told so in the {@code Bearer} scheme (RFC 9449, section 7.2). A {@code DPoP} challenge lists the
+     * algorithms accepted for DPoP proofs in its {@code algs} parameter (RFC 9449, section 7.1).
      *
      * @param request     the request
      * @param error       the error code, or null when the request carried no token at all
@@ -165,18 +170,58 @@ public abstract class BaseOAuth20Controller<T extends OAuth20ConfigurationContex
     protected ResponseEntity unauthorized(final HttpServletRequest request,
                                           final @Nullable String error,
                                           final @Nullable String description) {
-        val challenge = new StringBuilder(resolveAuthorizationScheme(request));
+        val scheme = resolveAuthorizationScheme(request);
+        val parameters = new ArrayList<String>();
         if (StringUtils.isNotBlank(error)) {
-            challenge.append(" error=\"").append(error).append('"');
+            parameters.add("error=\"%s\"".formatted(error));
             if (StringUtils.isNotBlank(description)) {
-                challenge.append(", error_description=\"").append(toChallengeValue(description)).append('"');
+                parameters.add("error_description=\"%s\"".formatted(toChallengeValue(description)));
             }
         }
+        if (OAuth20Constants.TOKEN_TYPE_DPOP.equals(scheme)) {
+            OAuth20Utils.toDPoPAlgorithmsChallengeParameter(configurationContext.getProofOfPossessionValidator().getAcceptedSigningAlgorithms())
+                .ifPresent(parameters::add);
+        }
+        val challenge = parameters.isEmpty() ? scheme : scheme + ' ' + String.join(", ", parameters);
         val response = ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-            .header(HttpHeaders.WWW_AUTHENTICATE, challenge.toString());
+            .header(HttpHeaders.WWW_AUTHENTICATE, challenge);
         return StringUtils.isBlank(error)
             ? response.build()
             : response.body(OAuth20Utils.getErrorResponseBody(error, description));
+    }
+
+    /**
+     * Verify the DPoP proof of a request to a protected resource, when the access token is sender-constrained. The proof is
+     * bound to the presented token through its {@code ath} claim and to the confirmation recorded at issuance (RFC 9449,
+     * section 7.1); verifying it as a token request would check neither. A token with no confirmation is an ordinary bearer
+     * token and passes straight through.
+     * <p>
+     * A missing or invalid proof is answered with {@code invalid_dpop_proof}, and a bound token presented as a bearer token
+     * with {@code invalid_token}; each with a {@code 401} and a challenge (RFC 9449, sections 7.1 and 7.2).
+     *
+     * @param webContext           the web context
+     * @param presentedAccessToken the access token exactly as the client presented it
+     * @param accessToken          the access token ticket
+     * @return an error response when the proof is missing or does not verify, otherwise null
+     */
+    protected @Nullable ResponseEntity verifyProofOfPossession(final JEEContext webContext,
+                                                               final String presentedAccessToken,
+                                                               final OAuth20AccessToken accessToken) {
+        val validator = configurationContext.getProofOfPossessionValidator();
+        try {
+            validator.validateProtectedResourceRequest(webContext, presentedAccessToken, accessToken);
+            return null;
+        } catch (final InvalidDPoPNonceException e) {
+            LOGGER.info("DPoP proof of the request to [{}] carries no valid nonce; a fresh nonce is provided", webContext.getRequestURL());
+            return OAuth20Utils.useDPoPNonceResponse(validator.getAcceptedSigningAlgorithms());
+        } catch (final DPoPBoundAccessTokenDowngradeException e) {
+            LOGGER.warn(e.getMessage());
+            return unauthorized(webContext.getNativeRequest(), OAuth20Constants.INVALID_TOKEN, e.getMessage());
+        } catch (final Throwable e) {
+            LoggingUtils.warn(LOGGER, e);
+            return unauthorized(webContext.getNativeRequest(), OAuth20Constants.INVALID_DPOP_PROOF,
+                StringUtils.defaultIfBlank(e.getMessage(), "DPoP proof validation failed"));
+        }
     }
 
     /**

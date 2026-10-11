@@ -22,14 +22,12 @@ import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
-import org.apereo.cas.support.oauth.validator.DPoPBoundAccessTokenDowngradeException;
 import org.apereo.cas.support.oauth.web.endpoints.BaseOAuth20Controller;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.util.Couplet;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
-import com.nimbusds.oauth2.sdk.dpop.verifiers.InvalidDPoPNonceException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
@@ -37,7 +35,6 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.Nullable;
 import org.pac4j.jee.context.JEEContext;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -615,41 +612,6 @@ public class OidcVerifiableCredentialEndpointController extends BaseOAuth20Contr
 
     protected static ResponseEntity badRequest(final String error, final String description) {
         return ResponseEntity.badRequest().body(OAuth20Utils.getErrorResponseBody(error, description));
-    }
-
-    /**
-     * A credential request may carry a sender-constrained access token: OpenID4VCI 1.0, section 7.2
-     * speaks of the Wallet using a nonce "in the DPoP proof when presenting an access token at the
-     * Credential Endpoint". Accepting such a token on presentation alone would leave the constraint
-     * doing nothing, so the proof is verified here against the confirmation recorded at issuance.
-     * A token with no confirmation is an ordinary bearer token and passes straight through.
-     *
-     * @param webContext           the web context
-     * @param presentedAccessToken the access token exactly as the wallet presented it
-     * @param accessToken          the access token ticket
-     * @return an error response when the proof is missing or does not verify, otherwise null
-     */
-    protected @Nullable ResponseEntity verifyProofOfPossession(final JEEContext webContext,
-                                                               final String presentedAccessToken,
-                                                               final OAuth20AccessToken accessToken) {
-        try {
-            getConfigurationContext().getProofOfPossessionValidator()
-                .validateProtectedResourceRequest(webContext, presentedAccessToken, accessToken);
-            return null;
-        } catch (final InvalidDPoPNonceException e) {
-            LOGGER.info("DPoP proof of the credential request carries no valid nonce; a fresh nonce is provided");
-            return OAuth20Utils.useDPoPNonceResponse();
-        } catch (final DPoPBoundAccessTokenDowngradeException e) {
-            LOGGER.warn(e.getMessage());
-            return unauthorized(webContext.getNativeRequest(), OAuth20Constants.INVALID_TOKEN, e.getMessage());
-        } catch (final Throwable e) {
-            LoggingUtils.warn(LOGGER, e);
-            val description = StringUtils.defaultIfBlank(e.getMessage(), "DPoP proof validation failed");
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                .header(HttpHeaders.WWW_AUTHENTICATE, "%s error=\"%s\", error_description=\"%s\"".formatted(
-                    OAuth20Constants.TOKEN_TYPE_DPOP, OAuth20Constants.INVALID_DPOP_PROOF, toChallengeValue(description)))
-                .body(OAuth20Utils.getErrorResponseBody(OAuth20Constants.INVALID_DPOP_PROOF, description));
-        }
     }
 
     protected boolean validateAccessToken(@Nullable final OAuth20AccessToken accessToken) {

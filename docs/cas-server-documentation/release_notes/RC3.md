@@ -406,6 +406,11 @@ looking up audit records reads only the newest matching entries instead of loadi
   with the `DPoP` scheme; sent as a bearer token or as a request parameter, it is refused with `invalid_token`. Refresh tokens
   issued to public clients are bound to the [DPoP key](../authentication/OIDC-Authentication-DPoP.html#refresh-tokens), per
   RFC 9449, and the stateless ticket registry keeps the DPoP binding of access and refresh tokens.
+- [DPoP proofs](../authentication/OIDC-Authentication-DPoP.html) are checked as RFC 9449 requires at every endpoint: a request
+  with more than one `DPoP` header, or with one that is not a JWT, is refused with `invalid_dpop_proof`, which the token endpoint
+  used to answer with `invalid_request`. The profile and userinfo endpoints now answer a missing or invalid proof with `401` and a
+  `WWW-Authenticate: DPoP error="invalid_dpop_proof"` challenge, as the credential endpoint did, and every `DPoP` challenge,
+  Heimdall's included, lists the algorithms accepted for DPoP proofs in its `algs` parameter.
 
 ### Stateless Ticket Registry
 {: .action data-area="tickets"}

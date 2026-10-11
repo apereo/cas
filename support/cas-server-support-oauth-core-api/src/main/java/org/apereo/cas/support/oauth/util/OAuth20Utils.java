@@ -26,6 +26,7 @@ import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.web.flow.CasWebflowConstants;
+import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.oauth2.sdk.client.RedirectURIValidator;
 import com.nimbusds.oauth2.sdk.token.DPoPTokenError;
 import lombok.experimental.UtilityClass;
@@ -112,16 +113,30 @@ public class OAuth20Utils {
 
     /**
      * The answer of a protected resource that requires the server-provided nonce in DPoP proofs (RFC 9449, section 9):
-     * {@code 401} with a {@code WWW-Authenticate: DPoP} challenge carrying {@code use_dpop_nonce}. The fresh nonce is already
-     * in the {@code DPoP-Nonce} header of the response.
+     * {@code 401} with a {@code WWW-Authenticate: DPoP} challenge carrying {@code use_dpop_nonce} and the accepted
+     * algorithms. The fresh nonce is already in the {@code DPoP-Nonce} header of the response.
      *
+     * @param algorithms the JWS algorithms accepted for DPoP proofs
      * @return the response entity
      */
-    public static ResponseEntity useDPoPNonceResponse() {
-        val error = DPoPTokenError.USE_DPOP_NONCE;
+    public static ResponseEntity useDPoPNonceResponse(final Set<JWSAlgorithm> algorithms) {
+        val error = DPoPTokenError.USE_DPOP_NONCE.setJWSAlgorithms(algorithms.isEmpty() ? null : algorithms);
         return ResponseEntity.status(error.getHTTPStatusCode())
             .header(HttpHeaders.WWW_AUTHENTICATE, error.toWWWAuthenticateHeader())
             .body(getErrorResponseBody(error.getCode(), error.getDescription()));
+    }
+
+    /**
+     * The {@code algs} parameter of a {@code DPoP} challenge, which lists the JWS algorithms accepted for DPoP proofs
+     * (RFC 9449, section 7.1).
+     *
+     * @param algorithms the accepted algorithms
+     * @return the parameter, or empty when no algorithm is accepted
+     */
+    public static Optional<String> toDPoPAlgorithmsChallengeParameter(final Collection<JWSAlgorithm> algorithms) {
+        return algorithms.isEmpty()
+            ? Optional.empty()
+            : Optional.of("algs=\"%s\"".formatted(algorithms.stream().map(JWSAlgorithm::getName).collect(Collectors.joining(" "))));
     }
 
     /**

@@ -64,6 +64,16 @@ const jose = require("jose");
         assert(error.response.data.error === "invalid_dpop_proof");
     });
 
+    await cas.log("A DPoP header that is not a JWT is an invalid proof, not a malformed request");
+    await cas.doPost(accessTokenUrl, params, {
+        "DPoP": "not-a-jwt"
+    }, () => {
+        throw "Token request with a malformed DPoP proof must fail";
+    }, (error) => {
+        assert.equal(error.response.status, 400);
+        assert(error.response.data.error === "invalid_dpop_proof");
+    });
+
     await cas.log("The client requires DPoP-bound access tokens, so no grant is accepted without a DPoP proof");
     await cas.doPost(accessTokenUrl, "grant_type=client_credentials&client_id=client&client_secret=secret&scope=openid", {}, () => {
         throw "Client credentials request without a DPoP proof must fail";
@@ -125,6 +135,20 @@ const jose = require("jose");
     }, (error) => {
         assert.equal(error.response.status, 401);
         assert(error.response.data.error === "invalid_token");
+    });
+
+    await cas.log("A DPoP-bound access token presented without a DPoP proof is challenged");
+    await cas.doPost(profileUrl, "", {
+        "Content-Type": "application/json",
+        "Authorization": `DPoP ${accessToken}`
+    }, () => {
+        throw "DPoP-bound access token presented without a DPoP proof must be rejected";
+    }, (error) => {
+        assert.equal(error.response.status, 401);
+        assert(error.response.data.error === "invalid_dpop_proof");
+        const challenge = error.response.headers["www-authenticate"];
+        assert(challenge.startsWith("DPoP error=\"invalid_dpop_proof\""), challenge);
+        assert(challenge.includes("algs=\""), challenge);
     });
 
     await cas.log(`Calling user profile ${profileUrl}`);

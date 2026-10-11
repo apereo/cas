@@ -41,6 +41,17 @@ and `invalid_token`, as [RFC 9449](https://www.rfc-editor.org/rfc/rfc9449#sectio
 }
 ```
 
+A request carries exactly one `DPoP` header, holding a well-formed JWT, as
+[RFC 9449](https://www.rfc-editor.org/rfc/rfc9449#section-4.3) requires. A token request with several, or with one that is not
+a JWT, is answered with `400` and `invalid_dpop_proof`. A protected resource answers a DPoP-bound access token that comes with
+no proof, several proofs or a proof that does not verify with `401` and a `DPoP` challenge, whose `algs` parameter lists the
+algorithms CAS accepts for DPoP proofs, the same list the discovery document advertises as `dpop_signing_alg_values_supported`:
+
+```bash
+HTTP/1.1 401 Unauthorized
+WWW-Authenticate: DPoP error="invalid_dpop_proof", error_description="...", algs="RS256 RS384 RS512 ES256 ES384 ES512"
+```
+
 Note that there is no special configuration required in CAS to enable support for DPoP tokens.
 
 ## Refresh Tokens
@@ -131,7 +142,7 @@ Protected resources, such as the `profile` endpoint, the
 
 ```bash
 HTTP/1.1 401 Unauthorized
-WWW-Authenticate: DPoP error="use_dpop_nonce", error_description="Use of DPoP nonce required"
+WWW-Authenticate: DPoP error="use_dpop_nonce", error_description="Use of DPoP nonce required", algs="RS256 RS384 RS512 ES256 ES384 ES512"
 DPoP-Nonce: TST-1-mD3m...
 ```
 

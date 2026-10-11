@@ -3,6 +3,7 @@ package org.apereo.cas.support.oauth.validator;
 import module java.base;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
+import com.nimbusds.jose.JWSAlgorithm;
 import org.jspecify.annotations.Nullable;
 import org.pac4j.core.context.WebContext;
 
@@ -81,4 +82,12 @@ public interface OAuth20ProofOfPossessionValidator {
      * @throws Throwable when the proof does not verify
      */
     Optional<String> validateKeyBinding(WebContext webContext) throws Throwable;
+
+    /**
+     * The JWS algorithms accepted for DPoP proofs, which a protected resource lists in the {@code algs} parameter of its
+     * {@code DPoP} challenges (RFC 9449, section 7.1).
+     *
+     * @return the accepted signing algorithms
+     */
+    Set<JWSAlgorithm> getAcceptedSigningAlgorithms();
 }
