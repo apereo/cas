@@ -25,6 +25,7 @@ public class CasGroovyRuntimeHints implements CasRuntimeHintsRegistrar {
     @Override
     public void registerHints(final RuntimeHints hints, final @Nullable ClassLoader classLoader) {
         registerReflectionHints(hints, List.of(
+            Stack.class,
             GroovyClassLoader.class,
             JsonSlurper.class,
             StaticTypeCheckingSupport.ObjectArrayStaticTypesHelper.class,

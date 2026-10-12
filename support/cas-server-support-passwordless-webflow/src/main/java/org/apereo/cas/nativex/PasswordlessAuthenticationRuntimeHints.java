@@ -1,6 +1,7 @@
 package org.apereo.cas.nativex;
 
 import module java.base;
+import org.apereo.cas.api.PasswordlessAuthenticationRequest;
 import org.apereo.cas.api.PasswordlessUserAccount;
 import org.apereo.cas.authentication.PasswordlessTokenCredential;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
@@ -17,7 +18,7 @@ import org.springframework.aot.hint.RuntimeHints;
 public class PasswordlessAuthenticationRuntimeHints implements CasRuntimeHintsRegistrar {
     @Override
     public void registerHints(final @NonNull RuntimeHints hints, final @Nullable ClassLoader classLoader) {
-        registerReflectionHints(hints, List.of(PasswordlessUserAccount.class, PasswordlessTokenCredential.class));
+        registerReflectionHints(hints, List.of(PasswordlessAuthenticationRequest.class, PasswordlessUserAccount.class, PasswordlessTokenCredential.class));
         registerSerializationHints(hints, List.of(PasswordlessUserAccount.class, PasswordlessTokenCredential.class));
     }
 

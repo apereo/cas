@@ -63,7 +63,7 @@ public class DefaultChainingServiceRegistry extends AbstractServiceRegistry impl
     public RegisteredService findServiceById(final long id) {
         return serviceRegistries
             .stream()
-            .sorted(Comparator.comparing(ServiceRegistry::getOrder))
+            .sorted(Comparator.comparingInt(ServiceRegistry::getOrder))
             .map(registry -> registry.findServiceById(id))
             .filter(Objects::nonNull)
             .findFirst()
@@ -74,7 +74,7 @@ public class DefaultChainingServiceRegistry extends AbstractServiceRegistry impl
     public RegisteredService findServiceBy(final String id) {
         return serviceRegistries
             .stream()
-            .sorted(Comparator.comparing(ServiceRegistry::getOrder))
+            .sorted(Comparator.comparingInt(ServiceRegistry::getOrder))
             .map(registry -> registry.findServiceBy(id))
             .filter(Objects::nonNull)
             .findFirst()
@@ -85,7 +85,7 @@ public class DefaultChainingServiceRegistry extends AbstractServiceRegistry impl
     public RegisteredService findServiceByExactServiceId(final String id) {
         return serviceRegistries
             .stream()
-            .sorted(Comparator.comparing(ServiceRegistry::getOrder))
+            .sorted(Comparator.comparingInt(ServiceRegistry::getOrder))
             .map(registry -> registry.findServiceByExactServiceId(id))
             .filter(Objects::nonNull)
             .findFirst()
@@ -96,7 +96,7 @@ public class DefaultChainingServiceRegistry extends AbstractServiceRegistry impl
     public RegisteredService findServiceByExactServiceName(final String name) {
         return serviceRegistries
             .stream()
-            .sorted(Comparator.comparing(ServiceRegistry::getOrder))
+            .sorted(Comparator.comparingInt(ServiceRegistry::getOrder))
             .map(registry -> registry.findServiceByExactServiceName(name))
             .filter(Objects::nonNull)
             .findFirst()
@@ -108,7 +108,7 @@ public class DefaultChainingServiceRegistry extends AbstractServiceRegistry impl
         val filter = Predicates.not(Predicates.instanceOf(ImmutableServiceRegistry.class));
         return serviceRegistries
             .stream()
-            .sorted(Comparator.comparing(ServiceRegistry::getOrder))
+            .sorted(Comparator.comparingInt(ServiceRegistry::getOrder))
             .filter(filter)
             .map(ServiceRegistry::size)
             .mapToLong(Long::longValue)
@@ -120,7 +120,7 @@ public class DefaultChainingServiceRegistry extends AbstractServiceRegistry impl
         val filter = Predicates.not(Predicates.instanceOf(ImmutableServiceRegistry.class));
         val name = serviceRegistries
             .stream()
-            .sorted(Comparator.comparing(ServiceRegistry::getOrder))
+            .sorted(Comparator.comparingInt(ServiceRegistry::getOrder))
             .filter(filter)
             .map(ServiceRegistry::getName)
             .collect(Collectors.joining(","));
@@ -141,7 +141,7 @@ public class DefaultChainingServiceRegistry extends AbstractServiceRegistry impl
     public void synchronize(final RegisteredService service) {
         serviceRegistries
             .stream()
-            .sorted(Comparator.comparing(ServiceRegistry::getOrder))
+            .sorted(Comparator.comparingInt(ServiceRegistry::getOrder))
             .filter(serviceRegistry -> {
                 if (StringUtils.isNotBlank(service.getServiceId())) {
                     val match = serviceRegistry.findServiceByExactServiceId(service.getServiceId());

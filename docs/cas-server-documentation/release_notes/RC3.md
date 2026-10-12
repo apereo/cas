@@ -598,6 +598,12 @@ authentication. See the [stateless ticket registry documentation](../ticketing/S
   session it was issued from, which undid any change made to the session since, such as applications the user logged into
   afterwards. When a single sign-on session ends, it is no longer rewritten once for each of its proxy-granting tickets and
   once more right before it is removed.
+- {: .changed data-area="saml"} The [SAML2 identity provider](../authentication/Configuring-SAML2-Authentication.html) locates and
+  verifies the service provider behind an authentication request, and resolves its metadata, once per request instead of up to
+  four times while validating the request, choosing the binding and building the response.
+- {: .changed data-area="saml"} Templates the SAML2 identity provider loads from the classpath, such as the page that posts a
+  SAML2 response or logout request with the HTTP-POST binding, are now parsed once and cached instead of being read and parsed
+  for every response.
 - {: .changed data-area="project"} Almost all CAS unit tests are internally reworked to allow maximum parallelization and speed up the overall test execution time.
 - {: .fixed} [Delegated authentication](../integration/Delegate-Authentication.html) no longer fails intermittently when concurrent requests reach an identity provider that is still being initialized, typically right after startup. Such requests now wait for the initialization in progress instead of failing, which also affects [SAML2 identity providers](../integration/Delegate-Authentication-SAML2.html) when building SAML2 responses, metadata and logout requests.
 - {: .fixed} [WebAuthn](../mfa/FIDO2-WebAuthn-Authentication.html) registration and login pages no longer show a broken image when the device has no icon in its attestation metadata, and fall back to the credential nickname for the device name.

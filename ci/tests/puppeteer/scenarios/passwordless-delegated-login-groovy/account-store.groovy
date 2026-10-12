@@ -1,16 +1,6 @@
-class Payload {
-    String accountId
-    String accountName
-    String authType
-    String id
-    String mfaType
-    String serviceId
-    String userName
-}
-
 def run(Object[] args) {
     def request = args[0] as PasswordlessAuthenticationRequest
-    def logger = args[1]
+    def logger = args[1] as Logger
 
     def endpoint = "http://localhost:5432/${request.username}.json"
     logger.info("Locating user record for user $request.username @ $endpoint")
@@ -18,7 +8,7 @@ def run(Object[] args) {
     
     def slurper = new JsonSlurper()
     logger.info("Parsing results for $request.username")
-    def results = (List<Payload>) slurper.parseText(text)
+    def results = (List<Map<String, Object>>) slurper.parseText(text)
     logger.info("Results: {}", results)
     
     if (results.isEmpty()) {
@@ -36,8 +26,8 @@ def run(Object[] args) {
      * We assume certain fields of the user account
      * are the same for all entries, i.e. accountId, userName, etc.
      */
-    account.username = entry.userName
-    def attributes = [
+    account.username = entry.userName as String
+    Map<String, List<Object>> attributes = [
         accountName: [entry.accountName],
         accountId: [entry.accountId],
         id: [entry.id],
@@ -57,7 +47,7 @@ def run(Object[] args) {
             account.setRequestPassword(true)
         } else {
             account.setDelegatedAuthenticationEligible(TriStateBoolean.TRUE)
-            account.allowedDelegatedClients += rec.authType
+            account.allowedDelegatedClients.add(rec.authType as String)
         }
     }
 

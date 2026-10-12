@@ -23,6 +23,7 @@ class CasGroovyRuntimeHintsTests {
     void verifyHints() throws Exception {
         val hints = new RuntimeHints();
         new CasGroovyRuntimeHints().registerHints(hints, getClass().getClassLoader());
+        assertTrue(RuntimeHintsPredicates.reflection().onConstructorInvocation(Stack.class.getConstructor()).test(hints));
         assertTrue(RuntimeHintsPredicates.reflection().onConstructorInvocation(GroovyClassLoader.class.getConstructor()).test(hints));
         assertTrue(RuntimeHintsPredicates.reflection().onConstructorInvocation(JsonSlurper.class.getConstructor()).test(hints));
         assertTrue(RuntimeHintsPredicates.reflection()

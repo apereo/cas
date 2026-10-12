@@ -290,7 +290,7 @@ public abstract class AbstractSamlIdPProfileHandlerController extends AbstractCo
         val id = SamlIdPUtils.getIssuerFromSamlObject(authnRequest);
         val service = configurationContext.getWebApplicationServiceFactory().createService(id);
         service.getAttributes().put(SamlProtocolConstants.PARAMETER_ENTITY_ID, CollectionUtils.wrapList(id));
-        val registeredService = configurationContext.getServicesManager().findServiceBy(service, SamlRegisteredService.class);
+        val registeredService = getRegisteredServiceAndFacade(authnRequest, request).getKey();
 
         val audit = AuditableContext.builder()
             .service(service)
@@ -409,20 +409,9 @@ public abstract class AbstractSamlIdPProfileHandlerController extends AbstractCo
         final HttpServletRequest request)
             throws Throwable {
         val authnRequest = (AuthnRequest) authenticationContext.getKey();
-        val issuer = SamlIdPUtils.getIssuerFromSamlObject(authnRequest);
-        LOGGER.debug("Located issuer [{}] from authentication request", issuer);
-
-        val registeredService = verifySamlRegisteredService(issuer, request);
-        LOGGER.debug("Fetching SAML2 metadata adaptor for [{}]", issuer);
-        val adaptor = SamlRegisteredServiceMetadataAdaptor.get(
-            configurationContext.getSamlRegisteredServiceCachingMetadataResolver(), registeredService, authnRequest);
-
-        if (adaptor.isEmpty()) {
-            LOGGER.warn("No metadata could be found for [{}]", issuer);
-            throw UnauthorizedServiceException.denied("Cannot find metadata linked to %s".formatted(issuer));
-        }
-
-        val facade = adaptor.get();
+        val resolved = getRegisteredServiceAndFacade(authnRequest, request);
+        val registeredService = resolved.getKey();
+        val facade = resolved.getValue();
         verifyAuthenticationContextSignature(authenticationContext, request, authnRequest, facade, registeredService);
         val binding = determineProfileBinding(authenticationContext, request);
         val acs = SamlIdPUtils.determineEndpointForRequest(Pair.of(authnRequest, authenticationContext.getRight()), facade, binding);
@@ -540,9 +529,17 @@ public abstract class AbstractSamlIdPProfileHandlerController extends AbstractCo
         }
     }
 
+    /*
+     * The service provider and its metadata depend only on the issuer, so they are resolved once per HTTP request
+     * and reused by every later step of the same request.
+     */
     protected Pair<SamlRegisteredService, SamlRegisteredServiceMetadataAdaptor> getRegisteredServiceAndFacade(
         final AuthnRequest authnRequest, final HttpServletRequest httpServletRequest) {
         val issuer = SamlIdPUtils.getIssuerFromSamlObject(authnRequest);
+        if (httpServletRequest.getAttribute(ResolvedServiceProvider.class.getName()) instanceof final ResolvedServiceProvider resolved
+            && StringUtils.equals(resolved.issuer(), issuer)) {
+            return Pair.of(resolved.registeredService(), resolved.adaptor());
+        }
         LOGGER.debug("Located issuer [{}] from authentication context", issuer);
 
         val registeredService = verifySamlRegisteredService(issuer, httpServletRequest);
@@ -551,9 +548,12 @@ public abstract class AbstractSamlIdPProfileHandlerController extends AbstractCo
         val adaptor = getSamlMetadataFacadeFor(registeredService, authnRequest);
 
         if (adaptor.isEmpty()) {
+            LOGGER.warn("No metadata could be found for [{}]", issuer);
             throw UnauthorizedServiceException.denied("Cannot find metadata linked to %s".formatted(issuer));
         }
         val facade = adaptor.get();
+        httpServletRequest.setAttribute(ResolvedServiceProvider.class.getName(),
+            new ResolvedServiceProvider(issuer, registeredService, facade));
         return Pair.of(registeredService, facade);
     }
 
@@ -643,5 +643,9 @@ public abstract class AbstractSamlIdPProfileHandlerController extends AbstractCo
         val svc = facade.getAssertionConsumerService(binding);
         LOGGER.debug("Binding [{}] is supported by [{}]", svc.getBinding(), entityId);
         return binding;
+    }
+
+    private record ResolvedServiceProvider(String issuer, SamlRegisteredService registeredService,
+                                           SamlRegisteredServiceMetadataAdaptor adaptor) {
     }
 }
