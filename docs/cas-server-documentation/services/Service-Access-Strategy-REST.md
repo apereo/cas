@@ -38,3 +38,23 @@ Here is an example of the remote endpoint access strategy authorizing service ac
   }
 }
 ```
+
+The request sent to the remote endpoint carries the principal id as a `username` parameter, and its body is a JSON
+document that describes the principal and the requested application:
+
+```json
+{
+  "principalId": "casuser",
+  "attributes": { "role": [ "staff" ] },
+  "service": { "id": "https://app.example.org/login" },
+  "registeredService": {
+    "id": 1,
+    "name": "Example",
+    "serviceId": "^https://app.example.org",
+    "friendlyName": "CAS Client"
+  }
+}
+```
+
+The application definition itself is not sent, so that client secrets, keys and other credentials that it may
+carry are never disclosed to the remote endpoint.

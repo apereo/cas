@@ -487,6 +487,15 @@ authentication. See the [stateless ticket registry documentation](../ticketing/S
   IP address, user agent and header patterns to match the entire value. Previously a missing header satisfied its rule and
   patterns matched any part of a value, so `10.0.0.1` also matched `110.0.0.15`. Patterns written to match only part of a
   value, such as `Chrome.+` for a user agent, must now be written as `.*Chrome.+`.
+- {: .changed data-area="authorization"} [Attribute-based access strategies](../services/Service-Access-Strategy-ABAC.html), including
+  those used by [Grouper](../services/Service-Access-Strategy-Grouper.html) and SCIM access strategies, now require a required or
+  rejected attribute value pattern to match the entire attribute value. Previously a pattern matched any part of a value, so a
+  required `admin` also accepted `sysadmin-disabled`. Patterns written to match only part of a value must now be written as,
+  for example, `.*admin.*`.
+- {: .changed data-area="authorization"} The [REST access strategy](../services/Service-Access-Strategy-REST.html) no longer sends
+  the application definition to the remote endpoint, since it may carry client secrets, keys and other credentials. The
+  request body now carries the principal id and attributes, the requested service id and the id, name, service id and type of
+  the application definition.
 - {: .changed} CAS no longer tries to match a service identifier, such as the `service` parameter, that is longer than
   4096 characters against application definitions, which guards against expensive regular expression matching on oversized
   input. The limit is controlled by `cas.service-registry.core.maximum-service-id-length`{: .cas-setting}; zero or a negative value disables it.
@@ -516,6 +525,18 @@ authentication. See the [stateless ticket registry documentation](../ticketing/S
   are set to be deleted when they expire. A definition that is renewed and expires again notifies its contacts again.
 - {: .fixed} A [REST service registry](../services/REST-Service-Management.html) that fails to load no longer reports
   credentials or query parameters of its endpoint URL in the error.
+- {: .fixed} Queries against the service index return their results in full instead of reading from a result set that is
+  already closed.
+- {: .fixed} Reloading application definitions no longer empties the cache and the service index before filling them again.
+  New and updated definitions are added first and removed ones are dropped last, so requests that arrive during a reload no
+  longer miss an application, match a broader definition by mistake, or fail to find an OAuth or OpenID Connect client.
+- {: .fixed} Application definitions that CAS reads straight from the service registry, because they are not cached yet,
+  now get their [templates](../services/Configuring-Service-Template-Definitions.html) applied, like definitions that are
+  loaded in bulk. Previously settings that a template supplies, such as access or multifactor authentication rules, were
+  missing from such definitions until the next reload.
+- {: .changed} Looking up an application definition by name or by identifier and type no longer examines every cached
+  definition. A lookup by identifier for a different type of definition now finds nothing instead of returning the
+  definition of the other type.
 - {: .fixed} A `service` parameter that only resembles a number, such as `1.5`, `1e3`, `0x1F` or a value too large for an
   identifier, no longer fails the request while CAS applies the application's [HTTP security headers](../services/Configuring-Service-Http-Security-Headers.html);
   it is matched as a service URL instead.

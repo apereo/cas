@@ -44,7 +44,9 @@ Control access using a `Map` of required principal attribute names along with th
 
 <div class="alert alert-info">:information_source: <strong>Supported Syntax</strong><p>Required values for a given attribute support 
 regular expression patterns. For example, a <code>phone</code> attribute could
-require a value pattern of <code>\d\d\d-\d\d\d-\d\d\d\d</code>.</p></div>
+require a value pattern of <code>\d\d\d-\d\d\d-\d\d\d\d</code>. A pattern must match the entire attribute value,
+so <code>admin</code> matches only <code>admin</code> and not <code>sysadmin</code>; use <code>.*admin.*</code>
+to match part of a value.</p></div>
 
 To access the service, the principal must have a `cn` attribute with the value of `admin` **AND** a
 `givenName` attribute with the value of `Administrator`:
@@ -204,7 +206,8 @@ access on any one of several rejected attributes must set `requireAllAttributes`
 
 <div class="alert alert-info">:information_source: <strong>Supported Syntax</strong><p>Rejected values for a given attribute support regular 
 expression patterns. For example, a <code>role</code> attribute could
-be designed with a value pattern of <code>admin-.*</code>.</p></div>
+be designed with a value pattern of <code>admin-.*</code>. As with required values, a pattern must match the
+entire attribute value.</p></div>
 {% endtab %}
 
 {% endtabs %}

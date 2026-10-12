@@ -39,7 +39,7 @@ import tools.jackson.databind.ObjectMapper;
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public class RemoteEndpointServiceAccessStrategy extends BaseRegisteredServiceAccessStrategy {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
-        .defaultTypingEnabled(true).build().toObjectMapper();
+        .defaultTypingEnabled(false).build().toObjectMapper();
 
     @Serial
     private static final long serialVersionUID = -1108201604115278440L;
@@ -61,7 +61,7 @@ public class RemoteEndpointServiceAccessStrategy extends BaseRegisteredServiceAc
                 .url(SpringExpressionLanguageValueResolver.getInstance().resolve(endpointUrl))
                 .headers(headers)
                 .parameters(CollectionUtils.wrap("username", request.getPrincipalId()))
-                .entity(MAPPER.writeValueAsString(request))
+                .entity(MAPPER.writeValueAsString(buildRequestPayload(request)))
                 .build();
             val response = HttpUtils.execute(exec);
             try {
@@ -73,4 +73,28 @@ public class RemoteEndpointServiceAccessStrategy extends BaseRegisteredServiceAc
         }).get();
     }
 
+    /**
+     * Build the payload sent to the remote endpoint. Only identifying details of the service and
+     * the principal are sent; the registered service definition itself is never sent, since it may
+     * carry client secrets, keys and other credentials.
+     *
+     * @param request the request
+     * @return the payload
+     */
+    static Map<String, Object> buildRequestPayload(final RegisteredServiceAccessStrategyRequest request) {
+        val payload = new LinkedHashMap<String, Object>();
+        payload.put("principalId", request.getPrincipalId());
+        payload.put("attributes", request.getAttributes());
+        Optional.ofNullable(request.getService())
+            .ifPresent(service -> payload.put("service", Collections.singletonMap("id", service.getId())));
+        Optional.ofNullable(request.getRegisteredService()).ifPresent(registeredService -> {
+            val details = new LinkedHashMap<String, Object>();
+            details.put("id", registeredService.getId());
+            details.put("name", registeredService.getName());
+            details.put("serviceId", registeredService.getServiceId());
+            details.put("friendlyName", registeredService.getFriendlyName());
+            payload.put("registeredService", details);
+        });
+        return payload;
+    }
 }

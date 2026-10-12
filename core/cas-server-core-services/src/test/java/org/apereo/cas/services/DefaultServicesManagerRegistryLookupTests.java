@@ -10,6 +10,9 @@ import org.apereo.cas.services.query.RegisteredServiceQuery;
 import org.apereo.cas.support.events.service.CasRegisteredServiceExpiredEvent;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.RandomUtils;
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
+import com.github.benmanes.caffeine.cache.RemovalCause;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -244,18 +247,123 @@ class DefaultServicesManagerRegistryLookupTests {
         assertNull(servicesManager.findServiceBy(oversized));
     }
 
+    @Test
+    void verifyIndexQueryResultsOutliveIndexChanges() {
+        val casProperties = new CasConfigurationProperties();
+        val indexService = new DefaultRegisteredServiceIndexService(configurationContext.getRegisteredServiceLocators(), casProperties);
+        indexService.initialize();
+        val registeredService = newRegisteredService();
+        indexService.indexService(registeredService);
+
+        val results = indexService.findServiceBy(
+            RegisteredServiceQuery.of(CasRegisteredService.class, "id", registeredService.getId()));
+        indexService.clear();
+        assertEquals(List.of(registeredService), results.toList());
+    }
+
+    @Test
+    void verifyReloadKeepsRemainingServicesCached() {
+        val removedKeys = ConcurrentHashMap.<Long>newKeySet();
+        val servicesCache = Caffeine.newBuilder()
+            .executor(Runnable::run)
+            .removalListener((Long key, RegisteredService value, RemovalCause cause) -> {
+                if (cause == RemovalCause.EXPLICIT) {
+                    removedKeys.add(key);
+                }
+            })
+            .<Long, RegisteredService>build();
+        val serviceRegistry = newServiceRegistry();
+        val servicesManager = newServicesManager(serviceRegistry, new CasConfigurationProperties(),
+            servicesCache, configurationContext.getRegisteredServicesTemplatesManager());
+        val first = serviceRegistry.save(newRegisteredService());
+        val second = serviceRegistry.save(newRegisteredService());
+        servicesManager.load();
+        removedKeys.clear();
+
+        serviceRegistry.delete(first);
+        val third = serviceRegistry.save(newRegisteredService());
+        servicesManager.load();
+
+        assertEquals(Set.of(first.getId()), removedKeys);
+        assertEquals(Set.of(second.getId(), third.getId()), servicesManager.getCachedRegisteredServices().keySet());
+        assertEquals(1, servicesManager.findServicesBy(
+            RegisteredServiceQuery.of(CasRegisteredService.class, "id", second.getId())).count());
+        assertEquals(0, servicesManager.findServicesBy(
+            RegisteredServiceQuery.of(CasRegisteredService.class, "id", first.getId())).count());
+    }
+
+    @Test
+    void verifyRegistryFallbackAppliesTemplates() {
+        val casProperties = new CasConfigurationProperties();
+        casProperties.getServiceRegistry().getSchedule().setEnabled(false);
+        val templatesManager = mock(RegisteredServicesTemplatesManager.class);
+        when(templatesManager.apply(any())).thenAnswer(invocation -> {
+            val registeredService = invocation.getArgument(0, BaseRegisteredService.class);
+            registeredService.setDescription("templated");
+            return registeredService;
+        });
+        val serviceRegistry = newServiceRegistry();
+        val servicesManager = newServicesManager(serviceRegistry, casProperties,
+            Beans.newCacheBuilder(casProperties.getServiceRegistry().getCache()).build(), templatesManager);
+        serviceRegistry.save(newRegisteredService());
+        servicesManager.load();
+
+        val byUrl = serviceRegistry.save(newRegisteredService());
+        val found = servicesManager.findServiceBy(RegisteredServiceTestUtils.getService(byUrl.getServiceId()));
+        assertNotNull(found);
+        assertEquals("templated", found.getDescription());
+
+        val byId = serviceRegistry.save(newRegisteredService());
+        assertEquals("templated", servicesManager.findServiceBy(byId.getId()).getDescription());
+
+        val byName = serviceRegistry.save(newRegisteredService());
+        assertEquals("templated", servicesManager.findServiceByName(byName.getName()).getDescription());
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    void verifyLookupsByIdAndName() {
+        val serviceRegistry = newServiceRegistry();
+        val servicesManager = newServicesManager(serviceRegistry, new CasConfigurationProperties());
+        val registeredService = serviceRegistry.save(newRegisteredService());
+        servicesManager.load();
+
+        assertEquals(registeredService.getId(),
+            servicesManager.findServiceBy(registeredService.getId(), CasRegisteredService.class).getId());
+        val otherType = (Class<RegisteredService>) mock(RegisteredService.class).getClass();
+        assertNull(servicesManager.findServiceBy(registeredService.getId(), otherType));
+        assertEquals(registeredService.getId(), servicesManager.findServiceByName(registeredService.getName()).getId());
+        assertEquals(registeredService.getId(),
+            servicesManager.findServiceByName(registeredService.getName(), CasRegisteredService.class).getId());
+        assertNull(servicesManager.findServiceByName(UUID.randomUUID().toString()));
+
+        val renamed = servicesManager.findServiceBy(registeredService.getId());
+        renamed.setName(UUID.randomUUID().toString());
+        servicesManager.save(renamed);
+        assertEquals(registeredService.getId(), servicesManager.findServiceByName(renamed.getName()).getId());
+    }
+
     private ServiceRegistry newServiceRegistry() {
         return spy(new InMemoryServiceRegistry(configurationContext.getApplicationContext()));
     }
 
     private CacheableServicesManager newServicesManager(final ServiceRegistry serviceRegistry,
                                                       final CasConfigurationProperties casProperties) {
+        return newServicesManager(serviceRegistry, casProperties,
+            Beans.newCacheBuilder(casProperties.getServiceRegistry().getCache()).build(),
+            configurationContext.getRegisteredServicesTemplatesManager());
+    }
+
+    private CacheableServicesManager newServicesManager(final ServiceRegistry serviceRegistry,
+                                                      final CasConfigurationProperties casProperties,
+                                                      final Cache<Long, RegisteredService> servicesCache,
+                                                      final RegisteredServicesTemplatesManager templatesManager) {
         val locators = configurationContext.getRegisteredServiceLocators();
         val context = ServicesManagerConfigurationContext.builder()
             .serviceRegistry(serviceRegistry)
             .applicationContext(configurationContext.getApplicationContext())
-            .servicesCache(Beans.newCacheBuilder(casProperties.getServiceRegistry().getCache()).build())
-            .registeredServicesTemplatesManager(configurationContext.getRegisteredServicesTemplatesManager())
+            .servicesCache(servicesCache)
+            .registeredServicesTemplatesManager(templatesManager)
             .registeredServiceLocators(locators)
             .casProperties(casProperties)
             .tenantExtractor(configurationContext.getTenantExtractor())

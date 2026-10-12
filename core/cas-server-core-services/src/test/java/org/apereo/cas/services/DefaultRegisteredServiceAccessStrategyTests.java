@@ -49,7 +49,7 @@ class DefaultRegisteredServiceAccessStrategyTests {
         val map = new HashMap<String, Set<String>>();
         map.put(CN, Stream.of(CAS, "SSO").collect(Collectors.toSet()));
         map.put(GIVEN_NAME, Stream.of("CAS", KAZ).collect(Collectors.toSet()));
-        map.put(PHONE, Set.of("\\d\\d\\d-\\d\\d\\d-\\d\\d\\d"));
+        map.put(PHONE, Set.of("\\d\\d\\d-\\d\\d\\d-\\d\\d\\d\\d"));
         return map;
     }
 
@@ -147,6 +147,24 @@ class DefaultRegisteredServiceAccessStrategyTests {
         authz.setRequiredAttributes(getRequiredAttributes());
         assertTrue(authz.authorizeRequest(RegisteredServiceAccessStrategyRequest.builder().applicationContext(applicationContext)
             .principalId(TEST).attributes(getPrincipalAttributes()).build()));
+    }
+
+    @Test
+    void checkAttributeValuesMustMatchEntirely() throws Throwable {
+        val authz = new DefaultRegisteredServiceAccessStrategy();
+        authz.setRequiredAttributes(Map.of("role", Set.of("admin")));
+        val request = RegisteredServiceAccessStrategyRequest.builder().applicationContext(applicationContext)
+            .principalId(TEST).attributes(Map.of("role", List.of("sysadmin-disabled"))).build();
+        assertFalse(authz.authorizeRequest(request));
+        assertTrue(authz.authorizeRequest(request.withAttributes(Map.of("role", List.of("admin")))));
+
+        authz.setRequiredAttributes(Map.of("role", Set.of(".*admin.*")));
+        assertTrue(authz.authorizeRequest(request));
+
+        val rejecting = new DefaultRegisteredServiceAccessStrategy();
+        rejecting.setRejectedAttributes(Map.of("role", Set.of("staff")));
+        assertTrue(rejecting.authorizeRequest(request.withAttributes(Map.of("role", List.of("nonstaff")))));
+        assertFalse(rejecting.authorizeRequest(request.withAttributes(Map.of("role", List.of("staff")))));
     }
 
     @Test

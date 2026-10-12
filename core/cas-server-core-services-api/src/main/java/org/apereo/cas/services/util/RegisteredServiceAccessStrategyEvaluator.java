@@ -169,7 +169,7 @@ public class RegisteredServiceAccessStrategyEvaluator implements Function<Regist
                 if (pattern.equals(RegexUtils.MATCH_NOTHING_PATTERN)) {
                     results.add(availableValues.stream().anyMatch(requiredValues::contains));
                 } else {
-                    results.add(availableValues.stream().map(Object::toString).anyMatch(pattern.asPredicate()));
+                    results.add(availableValues.stream().map(Object::toString).anyMatch(pattern.asMatchPredicate()));
                 }
             }
         }

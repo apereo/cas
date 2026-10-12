@@ -54,6 +54,31 @@ class RemoteEndpointServiceAccessStrategyTests {
     }
 
     @Test
+    void verifyPayloadExcludesServiceDefinition() {
+        val registeredService = RegisteredServiceTestUtils.getRegisteredService("https://app.example.org.*");
+        registeredService.setDescription("secret-description");
+        registeredService.setProperties(Map.of("clientSecret",
+            new DefaultRegisteredServiceProperty("secret-value")));
+        val request = RegisteredServiceAccessStrategyRequest.builder()
+            .applicationContext(applicationContext)
+            .registeredService(registeredService)
+            .service(RegisteredServiceTestUtils.getService("https://app.example.org/login"))
+            .principalId("casuser")
+            .attributes(Map.of("role", List.of("staff")))
+            .build();
+        val payload = RemoteEndpointServiceAccessStrategy.buildRequestPayload(request);
+        assertEquals("casuser", payload.get("principalId"));
+        assertEquals(Map.of("role", List.of("staff")), payload.get("attributes"));
+        assertEquals(Map.of("id", "https://app.example.org/login"), payload.get("service"));
+        val details = (Map<?, ?>) payload.get("registeredService");
+        assertEquals(Set.of("id", "name", "serviceId", "friendlyName"), details.keySet());
+        assertEquals(registeredService.getServiceId(), details.get("serviceId"));
+        val json = JacksonObjectMapperFactory.builder().build().toObjectMapper().writeValueAsString(payload);
+        assertFalse(json.contains("secret-value"));
+        assertFalse(json.contains("secret-description"));
+    }
+
+    @Test
     void verifyFails() {
         val strategy = new RemoteEndpointServiceAccessStrategy();
         strategy.setEndpointUrl("http://localhost:1234");
