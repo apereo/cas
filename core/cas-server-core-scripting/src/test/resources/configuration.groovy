@@ -9,3 +9,5 @@ profiles {
 
 cas."service-registry".core."init-from-json"=true
 cas.authn.accept.name="Static"
+cas.custom.properties.profile=profile
+cas.custom.properties.environmentSize=env.size()

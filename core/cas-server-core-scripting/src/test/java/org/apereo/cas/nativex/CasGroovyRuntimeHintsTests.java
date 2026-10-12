@@ -3,6 +3,9 @@ package org.apereo.cas.nativex;
 import module java.base;
 import groovy.json.JsonSlurper;
 import groovy.lang.GroovyClassLoader;
+import groovy.transform.stc.FirstParam;
+import groovy.transform.stc.FromString;
+import groovy.transform.stc.MapEntryOrKeyValue;
 import lombok.val;
 import org.codehaus.groovy.transform.stc.StaticTypeCheckingSupport;
 import org.junit.jupiter.api.Tag;
@@ -26,6 +29,9 @@ class CasGroovyRuntimeHintsTests {
         assertTrue(RuntimeHintsPredicates.reflection().onConstructorInvocation(Stack.class.getConstructor()).test(hints));
         assertTrue(RuntimeHintsPredicates.reflection().onConstructorInvocation(GroovyClassLoader.class.getConstructor()).test(hints));
         assertTrue(RuntimeHintsPredicates.reflection().onConstructorInvocation(JsonSlurper.class.getConstructor()).test(hints));
+        assertTrue(RuntimeHintsPredicates.reflection().onConstructorInvocation(FirstParam.FirstGenericType.class.getConstructor()).test(hints));
+        assertTrue(RuntimeHintsPredicates.reflection().onConstructorInvocation(FromString.class.getConstructor()).test(hints));
+        assertTrue(RuntimeHintsPredicates.reflection().onConstructorInvocation(MapEntryOrKeyValue.class.getConstructor()).test(hints));
         assertTrue(RuntimeHintsPredicates.reflection()
             .onMethodInvocation(StaticTypeCheckingSupport.ObjectArrayStaticTypesHelper.class.getMethod("getAt", Object[].class, int.class)).test(hints));
     }

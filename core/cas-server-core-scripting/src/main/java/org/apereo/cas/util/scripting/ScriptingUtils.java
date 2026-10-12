@@ -353,6 +353,16 @@ public class ScriptingUtils {
         return new GroovyClassLoader(ScriptingUtils.class.getClassLoader(), createCompilerConfiguration());
     }
 
+    /**
+     * Create a class loader with an explicit compilation mode for scripts such as configuration DSLs.
+     *
+     * @param compileStatic whether to apply static compilation
+     * @return the groovy class loader
+     */
+    public static GroovyClassLoader newGroovyClassLoader(final boolean compileStatic) {
+        return new GroovyClassLoader(ScriptingUtils.class.getClassLoader(), createCompilerConfiguration(compileStatic));
+    }
+
     private @Nullable Class loadGroovyClass(final Resource groovyScript,
                                             final GroovyClassLoader loader)
             throws IOException {
@@ -465,9 +475,13 @@ public class ScriptingUtils {
     }
 
     private static CompilerConfiguration createCompilerConfiguration() {
-        val compilerConfiguration = new CompilerConfiguration();
         val isStaticCompilation = BooleanUtils.toBoolean(System.getProperty(ExecutableCompiledScriptFactory.SYSTEM_PROPERTY_GROOVY_COMPILE_STATIC));
-        if (CasRuntimeHintsRegistrar.inNativeImage() || isStaticCompilation) {
+        return createCompilerConfiguration(CasRuntimeHintsRegistrar.inNativeImage() || isStaticCompilation);
+    }
+
+    private static CompilerConfiguration createCompilerConfiguration(final boolean compileStatic) {
+        val compilerConfiguration = new CompilerConfiguration();
+        if (compileStatic) {
             compilerConfiguration.addCompilationCustomizers(new GroovyStaticCompilationCustomizer());
         }
         val imports = new ImportCustomizer();

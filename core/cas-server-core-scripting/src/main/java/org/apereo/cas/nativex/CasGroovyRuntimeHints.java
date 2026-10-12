@@ -5,6 +5,14 @@ import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import groovy.json.JsonSlurper;
 import groovy.lang.GroovyClassLoader;
 import groovy.lang.Script;
+import groovy.transform.stc.ClosureSignatureHint;
+import groovy.transform.stc.FirstParam;
+import groovy.transform.stc.FromAbstractTypeMethods;
+import groovy.transform.stc.FromString;
+import groovy.transform.stc.MapEntryOrKeyValue;
+import groovy.transform.stc.SecondParam;
+import groovy.transform.stc.SimpleType;
+import groovy.transform.stc.ThirdParam;
 import org.codehaus.groovy.runtime.BytecodeInterface8;
 import org.codehaus.groovy.transform.StaticTypesTransformation;
 import org.codehaus.groovy.transform.sc.StaticCompileTransformation;
@@ -34,6 +42,11 @@ public class CasGroovyRuntimeHints implements CasRuntimeHintsRegistrar {
             Script.class,
             BytecodeInterface8.class
         ));
+        Stream.of(FirstParam.class, SecondParam.class, ThirdParam.class, FromAbstractTypeMethods.class,
+                FromString.class, MapEntryOrKeyValue.class, SimpleType.class)
+            .flatMap(type -> Stream.concat(Stream.of(type), Arrays.stream(type.getDeclaredClasses())))
+            .filter(ClosureSignatureHint.class::isAssignableFrom)
+            .forEach(type -> hints.reflection().registerType(type, MemberCategory.INVOKE_DECLARED_CONSTRUCTORS));
         registerGroovyDGMClasses(hints, classLoader);
     }
 
