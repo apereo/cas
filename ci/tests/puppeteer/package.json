@@ -3,7 +3,7 @@
   "name": "functional-tests",
   "dependencies": {
     "@napi-rs/canvas": "1.0.11",
-    "@stomp/stompjs": "7.3.0",
+    "@stomp/stompjs": "7.4.0",
     "archiver": "8.0.0",
     "axios": "1.20.0",
     "basic-auth": "3.0.0",
