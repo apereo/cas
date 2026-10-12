@@ -43,6 +43,21 @@ public class RestfulServiceRegistry extends AbstractServiceRegistry {
         setOrder(properties.getOrder());
     }
 
+    /**
+     * Strip credentials, query and fragment from the given url so that it can be logged or reported.
+     *
+     * @param url the url
+     * @return the url without user info, query or fragment
+     */
+    static String sanitizeUrl(final String url) {
+        try {
+            val uri = new URI(url);
+            return new URI(uri.getScheme(), null, uri.getHost(), uri.getPort(), uri.getPath(), null, null).toString();
+        } catch (final Exception e) {
+            return "[unparsable url]";
+        }
+    }
+
     private static Map<String, String> getRequestHeaders(final RestfulServiceRegistryProperties properties) {
         val headers = new HashMap<String, String>();
         headers.put(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
@@ -153,7 +168,7 @@ public class RestfulServiceRegistry extends AbstractServiceRegistry {
                 }
             }
             throw new IllegalStateException("Unable to load services from %s; received status %s"
-                .formatted(exec.getUrl(), response != null ? response.getCode() : "none"));
+                .formatted(sanitizeUrl(exec.getUrl()), response != null ? response.getCode() : "none"));
         } catch (final IOException e) {
             throw new UncheckedIOException(e);
         } finally {

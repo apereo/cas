@@ -305,8 +305,8 @@ looking up audit records reads only the newest matching entries instead of loadi
 {: .new data-area="oidc"}
 
 - Credential proofs now follow what each [credential configuration](../authentication/OIDC-Authentication-Verifiable-Credentials.html)
-  advertises: a proof signed with an algorithm outside `proof-signing-alg-values-supported`, or naming its key by a binding
-  method outside `cryptographic-binding-methods-supported`, is refused with `invalid_proof`. Holder keys may now also be given
+  advertises: a proof signed with an algorithm outside `proof-signing-alg-values-supported`{: .cas-setting}, or naming its key by a binding
+  method outside `cryptographic-binding-methods-supported`{: .cas-setting}, is refused with `invalid_proof`. Holder keys may now also be given
   as an `x5c` certificate or a `did:jwk` key identifier, and Ed25519 (`EdDSA`) keys are accepted.
 - Authorization server metadata advertises `pre-authorized_grant_anonymous_access_supported` whenever the pre-authorized code
   grant is supported, so wallets without a client registration know they may redeem a pre-authorized code.
@@ -381,7 +381,7 @@ looking up audit records reads only the newest matching entries instead of loadi
 - Once the token response returns `credential_identifiers`, credential requests must use `credential_identifier`, as OpenID4VCI 1.0
   requires; a `credential_configuration_id` is then refused with `invalid_credential_request`. Otherwise a request must name a
   `credential_configuration_id`, and no longer falls back to the configuration recorded on the access token.
-- Credential configurations may defer issuance (`deferred-issuance`): credential requests are answered with a `transaction_id`,
+- Credential configurations may defer issuance (`deferred-issuance`{: .cas-setting}): credential requests are answered with a `transaction_id`,
   an `oidcVcDeferred` actuator endpoint approves or denies the pending transactions, and wallets collect the credentials from the
   new [deferred credential endpoint](../authentication/OIDC-Authentication-Verifiable-Credentials.html), per OpenID4VCI 1.0.
 - Client attestations may be bound to [short-lived challenges](../authentication/OIDC-Authentication-AccessToken-AuthMethods.html)
@@ -396,22 +396,22 @@ looking up audit records reads only the newest matching entries instead of loadi
   turned on with `cas.authn.oidc.dpop.nonce.enabled=true`{: .cas-setting}, the token endpoint and the DPoP combined mode answer
   with `400`, and protected resources with `401`, `use_dpop_nonce` and a fresh nonce in the `DPoP-Nonce` header. The OpenID4VCI
   nonce endpoint and the client attestation challenge endpoint hand out nonces as well.
-- Authorization codes can be bound to the client's [DPoP key](../authentication/OIDC-Authentication-DPoP.html#authorization-code-binding),
+- Authorization codes can be bound to the client's [DPoP key](../authentication/OIDC-Authentication-DPoP.html),
   per RFC 9449: with `dpop_jkt` at the authorization endpoint or in a pushed authorization request, or with a `DPoP` proof sent with
   the pushed authorization request. The token request must then carry a DPoP proof made with that key, or it is refused with `invalid_dpop_proof`.
-- Clients can be required to use [DPoP for every token request](../authentication/OIDC-Authentication-DPoP.html#dpop-bound-access-tokens),
+- Clients can be required to use [DPoP for every token request](../authentication/OIDC-Authentication-DPoP.html),
   per RFC 9449, with `dpopBoundAccessTokens` in the service definition or `dpop_bound_access_tokens` in a dynamic registration request.
   Polling with a device code and the JWT bearer grant now verify DPoP proofs too, and bind the tokens they issue.
 - A [DPoP-bound access token](../authentication/OIDC-Authentication-DPoP.html) is now accepted only in the `Authorization` header
   with the `DPoP` scheme; sent as a bearer token or as a request parameter, it is refused with `invalid_token`. Refresh tokens
-  issued to public clients are bound to the [DPoP key](../authentication/OIDC-Authentication-DPoP.html#refresh-tokens), per
+  issued to public clients are bound to the [DPoP key](../authentication/OIDC-Authentication-DPoP.html), per
   RFC 9449, and the stateless ticket registry keeps the DPoP binding of access and refresh tokens.
 - [DPoP proofs](../authentication/OIDC-Authentication-DPoP.html) are checked as RFC 9449 requires at every endpoint: a request
   with more than one `DPoP` header, or with one that is not a JWT, is refused with `invalid_dpop_proof`, which the token endpoint
   used to answer with `invalid_request`. The profile and userinfo endpoints now answer a missing or invalid proof with `401` and a
   `WWW-Authenticate: DPoP error="invalid_dpop_proof"` challenge, as the credential endpoint did, and every `DPoP` challenge,
   Heimdall's included, lists the algorithms accepted for DPoP proofs in its `algs` parameter.
-- CAS issues and verifies [ISO/IEC 18013-5 mdocs](../authentication/OIDC-Authentication-Verifiable-Credentials.html#iso-mdoc-credentials),
+- CAS issues and verifies [ISO/IEC 18013-5 mdocs](../authentication/OIDC-Authentication-Verifiable-Credentials.html),
   such as a mobile driving licence, in the `mso_mdoc` format of OpenID4VCI 1.0 and OpenID4VP 1.0, which HAIP also covers. A credential
   configuration with the `MSO_MDOC` format names its document type with `cas.authn.oidc.vc.issuer.credential-configurations[].doctype`{: .cas-setting},
   and each claim may name its name space with `cas.authn.oidc.vc.issuer.credential-configurations[].claims[].namespace`{: .cas-setting}. The
@@ -489,8 +489,8 @@ authentication. See the [stateless ticket registry documentation](../ticketing/S
   value, such as `Chrome.+` for a user agent, must now be written as `.*Chrome.+`.
 - {: .changed} CAS no longer tries to match a service identifier, such as the `service` parameter, that is longer than
   4096 characters against application definitions, which guards against expensive regular expression matching on oversized
-  input. The limit is controlled by `cas.service-registry.core.maximum-service-id-length`; zero or a negative value disables it.
-- {: .changed} Expired application definitions are processed once each time service definitions are loaded instead of on every
+  input. The limit is controlled by `cas.service-registry.core.maximum-service-id-length`{: .cas-setting}; zero or a negative value disables it.
+- {: .changed} [Expired application definitions](../services/Configuring-Service-Expiration-Policy.html) are processed once each time service definitions are loaded instead of on every
   request. Contacts of an expired application are notified once per expiration date rather than on every request and every
   reload, a request for an expired application no longer sends notifications, and definitions set to be deleted when they
   expire are no longer found by requests and are deleted at the next load instead of on the request thread.
@@ -505,6 +505,17 @@ authentication. See the [stateless ticket registry documentation](../ticketing/S
 - {: .fixed} Service registry listeners that replace a loaded application definition now take effect; the
   [REST service registry](../services/REST-Service-Management.html), among others, used to return the definitions as they
   were before the listeners ran. Single sign-on checks no longer fail with an error when no service is given.
+- {: .changed data-area="saml"} The [SAML2 identity provider](../authentication/Configuring-SAML2-Authentication.html) no longer
+  matches an entity id longer than `cas.service-registry.core.maximum-service-id-length`{: .cas-setting} against application definitions.
+- {: .changed} Inline Groovy scripts used by access strategy and attribute release activation criteria and by single sign-on
+  participation policies are compiled once and shared, instead of being compiled again on every evaluation. Groovy script
+  files used by service definitions resume picking up changes after the script cache expires them, and compiling one script
+  for the first time no longer holds up compiling a different one.
+- {: .fixed} Listing application definitions, for example through the `registeredServices` actuator endpoint or for the
+  [OpenID Connect JWKS endpoint](../authentication/OIDC-Authentication-JWKS.html), no longer includes expired definitions that
+  are set to be deleted when they expire. A definition that is renewed and expires again notifies its contacts again.
+- {: .fixed} A [REST service registry](../services/REST-Service-Management.html) that fails to load no longer reports
+  credentials or query parameters of its endpoint URL in the error.
 - {: .fixed} A `service` parameter that only resembles a number, such as `1.5`, `1e3`, `0x1F` or a value too large for an
   identifier, no longer fails the request while CAS applies the application's [HTTP security headers](../services/Configuring-Service-Http-Security-Headers.html);
   it is matched as a service URL instead.
@@ -514,7 +525,7 @@ authentication. See the [stateless ticket registry documentation](../ticketing/S
 - {: .changed} The [SAML2 identity provider](../authentication/Configuring-SAML2-Authentication.html) parses its signing key once
   instead of for every signed response or assertion; a rotated or replaced key is picked up the first time it is used.
 - {: .changed data-area="saml"} Back-channel [SAML2 single logout](../installation/Logout-Single-Signout.html) notifications sent with the HTTP-POST or
-  HTTP-Redirect bindings now honor `cas.slo.asynchronous` the way SOAP and CAS protocol notifications already did: by default
+  HTTP-Redirect bindings now honor `cas.slo.asynchronous`{: .cas-setting} the way SOAP and CAS protocol notifications already did: by default
   they are sent in the background, so one slow service provider no longer holds up the logout of the others, and the
   logout reports them as sent without waiting for a response. The incoming logout request is also parsed once per logout
   instead of once per service provider.
@@ -548,7 +559,7 @@ authentication. See the [stateless ticket registry documentation](../ticketing/S
   removes the session's service tickets with one statement instead of reading and deleting them one at a time. Service and
   OAuth tickets that were updated after they were issued, which lost the link to their session when ticket encryption was
   enabled, now keep it and are removed with the session.
-- {: .fixed data-area="tickets"} Validating a single-use service ticket now removes it in one step, and only the request that
+- {: .fixed data-area="tickets"} [Validating a single-use service ticket](../authentication/CAS-Protocol-TicketValidation.html) now removes it in one step, and only the request that
   actually removes it receives a successful response. Two requests validating the same ticket at the same moment, on the
   same node or on different nodes, could previously both succeed with ticket registries that store copies of tickets, such as
   JPA, MongoDB, Redis or Hazelcast, or with ticket encryption enabled. Each validation also costs fewer trips to the ticket
@@ -558,7 +569,7 @@ authentication. See the [stateless ticket registry documentation](../ticketing/S
   `response_type=id_token` no longer carry an `at_hash` claim, since no access token is issued with them. For
   `response_type=id_token token`, the `at_hash` claim is now computed over the access token returned in the same response;
   for JWT access tokens it used to be computed over a different token and did not match.
-- {: .fixed data-area="oidc"} An OAuth/OpenID Connect authorization code is now redeemed by removing it from the ticket
+- {: .fixed data-area="oidc"} An OAuth/OpenID Connect [authorization code](../authentication/OAuth-ProtocolFlow-AuthorizationCode.html) is now redeemed by removing it from the ticket
   registry before any token is issued, and only the request that removes it receives tokens. Two token requests presenting
   the same code at the same moment could previously both receive tokens. The code is also no longer written back to the
   ticket registry right before it is redeemed.
@@ -632,7 +643,7 @@ authentication. See the [stateless ticket registry documentation](../ticketing/S
   relying on the scheduled reload.
 - {: .changed} MongoDB connection pools now default to 100 connections, keep connections for 30 minutes and idle connections for
   5 minutes, and wait at most 10 seconds for a free connection instead of a minute. The server heartbeat uses the
-  driver's default instead of the connection `timeout`. Pool settings do not apply when `client-uri` is used; set the
+  driver's default instead of the connection `timeout`{: .cas-setting}. Pool settings do not apply when `client-uri`{: .cas-setting} is used; set the
   connection string's own options instead. If an index CAS replaces cannot be rebuilt, the previous index is restored
   instead of the collection being left without it.
 - {: .fixed} Redis-backed counts and key lookups, such as the [ticket](../ticketing/Redis-Ticket-Registry.html) and
@@ -652,19 +663,19 @@ authentication. See the [stateless ticket registry documentation](../ticketing/S
   labels sit above rounded inputs, buttons are pill-shaped and password fields get round reveal and generate buttons, matching
   the account screens and following the CAS theme colors. Alert boxes, tables and progress bars follow the same style, and
   page layouts stay as they were.
-- {: .changed data-area="ui"} WebAuthn and consent screens are redesigned. WebAuthn login, registration and QR code pages sit in a
+- {: .changed data-area="ui"} [WebAuthn](../mfa/FIDO2-WebAuthn-Authentication.html) and consent screens are redesigned. WebAuthn login, registration and QR code pages sit in a
   centered card with a status icon, and registration offers passkeys and security keys side by side. OpenID Connect, OAuth and
   CIBA consent show the application up front, list each scope and claim with its own icon, and show the CIBA binding message
   as a large code. Consent no longer shows two *Deny* buttons, CIBA lists scope names again, OAuth scopes without a
   description no longer show a raw message key, and the WebAuthn status heading now updates during login and registration.
-- {: .changed data-area="ui"} Interrupt and attribute consent screens follow the same style: a centered card with a status icon,
+- {: .changed data-area="ui"} [Interrupt](../webflow/Webflow-Customization-Interrupt.html) and [attribute consent](../integration/Attribute-Release-Consent.html) screens follow the same style: a centered card with a status icon,
   the interrupt message as a callout with its links, attribute consent tabs as a segmented control and consent options as
   selectable cards. Tabs no longer show a focus ring when a page loads.
 - {: .changed data-area="ui"} The rest of the CAS screens follow the same style: error, account status, logout and confirmation
   pages show a status icon in a centered card, multifactor, passwordless, delegated, surrogate and other sign-in steps show the
   provider's icon above their form, provider and option choices appear as cards, and the login card picks up the same surface.
   Palantir keeps its layout and colors with a rounded navigation rail, pill-style tabs and softer cards.
-- {: .changed data-area="ui"} Palantir dialogs, including the service wizard and editor, use the same look as the rest of CAS:
+- {: .changed data-area="ui"} [Palantir](../installation/Admin-Dashboard.html) dialogs, including the service wizard and editor, use the same look as the rest of CAS:
   rounded dialogs with a plain title bar, matching buttons (the main action highlighted), select menus and multi-value fields
   that look like the other inputs, round row buttons, and restyled menus, tooltips and confirmation prompts. Dialogs no
   longer fail to position themselves when opened before any right-click menu was set up.

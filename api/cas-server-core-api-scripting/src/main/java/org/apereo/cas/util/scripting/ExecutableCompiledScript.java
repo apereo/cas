@@ -64,6 +64,17 @@ public interface ExecutableCompiledScript extends AutoCloseable {
     }
 
     /**
+     * Whether this script has been closed, for example because it was evicted from a cache,
+     * so that it no longer picks up changes to its source. Holders of a closed script
+     * should resolve the script again.
+     *
+     * @return true if closed
+     */
+    default boolean isClosed() {
+        return false;
+    }
+
+    /**
      * Sets fail on error. When set, a failure to compile or run the script is reported to the
      * caller rather than swallowed and reported as a {@code null} result. Implementations are
      * expected to honor this; the default here is a no-op only so that an implementation which

@@ -38,6 +38,8 @@ public class WatchableGroovyScriptResource implements ExecutableCompiledScript {
     @Setter
     private boolean failOnError = true;
 
+    private volatile boolean closed;
+
     public WatchableGroovyScriptResource(final Resource script, final boolean enableWatcher) {
         this.resource = script;
         if (ResourceUtils.doesResourceExist(script)) {
@@ -109,7 +111,13 @@ public class WatchableGroovyScriptResource implements ExecutableCompiledScript {
     }
     
     @Override
+    public boolean isClosed() {
+        return closed;
+    }
+
+    @Override
     public void close() {
+        closed = true;
         if (watcherService != null) {
             LOGGER.trace("Shutting down watcher service for [{}]", this.resource);
             this.watcherService.close();

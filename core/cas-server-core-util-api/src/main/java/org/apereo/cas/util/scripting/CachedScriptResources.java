@@ -20,7 +20,7 @@ import org.springframework.core.io.Resource;
 @Slf4j
 @UtilityClass
 public class CachedScriptResources {
-    private static final CasReentrantLock LOCK = new CasReentrantLock();
+    private static final Map<String, CasReentrantLock> LOCKS = new ConcurrentHashMap<>();
 
     /**
      * Resolve the script backed by the given resource, failing on errors.
@@ -49,15 +49,50 @@ public class CachedScriptResources {
         }
         val manager = cacheManager.get();
         val key = manager.computeKey(resource.getDescription(), String.valueOf(failOnError));
-        return LOCK.execute(() -> {
-            val cached = manager.get(key);
-            if (cached != null) {
-                return cached;
-            }
+        return resolveCached(manager, key, () -> {
             LOGGER.trace("Caching script [{}] under key [{}]", resource, key);
-            val script = scriptFactory.fromResource(resource).setFailOnError(failOnError);
-            manager.put(key, script);
-            return script;
+            return scriptFactory.fromResource(resource).setFailOnError(failOnError);
         });
+    }
+
+    /**
+     * Resolve an inline script body through the shared cache, so that it is compiled once
+     * instead of on every evaluation. Inline scripts keep their variable bindings per thread,
+     * so a cached instance can be shared safely.
+     * Without a cache manager, the script is compiled for this caller only.
+     *
+     * @param script the inline script body
+     * @return the executable compiled script
+     */
+    public static ExecutableCompiledScript fromInlineScript(final String script) {
+        val scriptFactory = ExecutableCompiledScriptFactory.getExecutableCompiledScriptFactory();
+        return ApplicationContextProvider.getScriptResourceCacheManager()
+            .map(manager -> resolveCached(manager, manager.computeKey("inline", script),
+                () -> scriptFactory.fromScript(script)))
+            .orElseGet(() -> scriptFactory.fromScript(script));
+    }
+
+    private static ExecutableCompiledScript resolveCached(
+        final ScriptResourceCacheManager<String, ExecutableCompiledScript> manager,
+        final String key,
+        final Supplier<ExecutableCompiledScript> scriptSupplier) {
+        val cached = manager.get(key);
+        if (cached != null && !cached.isClosed()) {
+            return cached;
+        }
+        val keyLock = LOCKS.computeIfAbsent(key, _ -> new CasReentrantLock());
+        try {
+            return keyLock.execute(() -> {
+                val existing = manager.get(key);
+                if (existing != null && !existing.isClosed()) {
+                    return existing;
+                }
+                val script = scriptSupplier.get();
+                manager.put(key, script);
+                return script;
+            });
+        } finally {
+            LOCKS.remove(key, keyLock);
+        }
     }
 }

@@ -153,6 +153,64 @@ class DefaultServicesManagerRegistryLookupTests {
     }
 
     @Test
+    void verifyExpiredServiceNotifiesAgainAfterRenewal() {
+        val serviceRegistry = newServiceRegistry();
+        val servicesManager = newServicesManager(serviceRegistry, new CasConfigurationProperties());
+        val registeredService = newRegisteredService();
+        val expirationDate = ZonedDateTime.now(ZoneOffset.UTC).minusDays(2).toString();
+        val expirationPolicy = new DefaultRegisteredServiceExpirationPolicy();
+        expirationPolicy.setNotifyWhenExpired(true);
+        expirationPolicy.setExpirationDate(expirationDate);
+        registeredService.setExpirationPolicy(expirationPolicy);
+        serviceRegistry.save(registeredService);
+
+        val notifications = new AtomicInteger();
+        configurationContext.getApplicationContext().addApplicationListener((ApplicationListener<ApplicationEvent>) event -> {
+            if (event instanceof final CasRegisteredServiceExpiredEvent expired
+                && expired.getRegisteredService().getId() == registeredService.getId()) {
+                notifications.incrementAndGet();
+            }
+        });
+        servicesManager.load();
+        expirationPolicy.setExpirationDate(ZonedDateTime.now(ZoneOffset.UTC).plusDays(2).toString());
+        serviceRegistry.save(registeredService);
+        servicesManager.load();
+        expirationPolicy.setExpirationDate(expirationDate);
+        serviceRegistry.save(registeredService);
+        servicesManager.load();
+        assertEquals(2, notifications.get());
+    }
+
+    @Test
+    void verifyAllServicesExcludeServicesDeletedOnExpiry() {
+        val serviceRegistry = newServiceRegistry();
+        val servicesManager = newServicesManager(serviceRegistry, new CasConfigurationProperties());
+        servicesManager.load();
+        val expiredDate = ZonedDateTime.now(ZoneOffset.UTC).minusDays(2).toString();
+
+        val deletedOnExpiry = newRegisteredService();
+        val deletePolicy = new DefaultRegisteredServiceExpirationPolicy();
+        deletePolicy.setDeleteWhenExpired(true);
+        deletePolicy.setExpirationDate(expiredDate);
+        deletedOnExpiry.setExpirationPolicy(deletePolicy);
+        servicesManager.save(deletedOnExpiry);
+
+        val notifiedOnExpiry = newRegisteredService();
+        val notifyPolicy = new DefaultRegisteredServiceExpirationPolicy();
+        notifyPolicy.setNotifyWhenExpired(true);
+        notifyPolicy.setExpirationDate(expiredDate);
+        notifiedOnExpiry.setExpirationPolicy(notifyPolicy);
+        servicesManager.save(notifiedOnExpiry);
+
+        val allServiceIds = servicesManager.getAllServices().stream().map(RegisteredService::getId).toList();
+        assertFalse(allServiceIds.contains(deletedOnExpiry.getId()));
+        assertTrue(allServiceIds.contains(notifiedOnExpiry.getId()));
+        val servicesOfType = servicesManager.getAllServicesOfType(CasRegisteredService.class)
+            .stream().map(RegisteredService::getId).toList();
+        assertFalse(servicesOfType.contains(deletedOnExpiry.getId()));
+    }
+
+    @Test
     void verifyExpiredServiceIsDeletedOnLoadNotLookup() {
         val serviceRegistry = newServiceRegistry();
         val servicesManager = newServicesManager(serviceRegistry, new CasConfigurationProperties());

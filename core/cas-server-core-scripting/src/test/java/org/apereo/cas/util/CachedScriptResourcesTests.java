@@ -52,4 +52,29 @@ class CachedScriptResourcesTests {
         val missing = new FileSystemResource(new File(FileUtils.getTempDirectory(), UUID.randomUUID() + ".groovy"));
         assertNotSame(CachedScriptResources.fromResource(missing), CachedScriptResources.fromResource(missing));
     }
+
+    @Test
+    void verifyInlineScriptCompiledOnce() {
+        ApplicationContextProvider.holdApplicationContext(applicationContext);
+        val script = "return '%s'".formatted(UUID.randomUUID());
+        assertSame(CachedScriptResources.fromInlineScript(script), CachedScriptResources.fromInlineScript(script));
+        assertNotSame(CachedScriptResources.fromInlineScript(script),
+            CachedScriptResources.fromInlineScript(script + " // other"));
+    }
+
+    @Test
+    void verifyClosedScriptIsResolvedAgain() throws Throwable {
+        ApplicationContextProvider.holdApplicationContext(applicationContext);
+        val file = Files.createTempFile("closed", ".groovy").toFile();
+        FileUtils.writeStringToFile(file, "return 'hello'", StandardCharsets.UTF_8);
+
+        val first = CachedScriptResources.fromResource(new FileSystemResource(file));
+        assertFalse(first.isClosed());
+        first.close();
+        assertTrue(first.isClosed());
+        val second = CachedScriptResources.fromResource(new FileSystemResource(file));
+        assertNotSame(first, second);
+        assertFalse(second.isClosed());
+        assertSame(second, CachedScriptResources.fromResource(new FileSystemResource(file)));
+    }
 }

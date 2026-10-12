@@ -421,9 +421,11 @@ class SamlIdPEndpointsConfiguration {
         @ConditionalOnMissingBean(name = "samlIdPServicesManagerRegisteredServiceLocator")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public ServicesManagerRegisteredServiceLocator samlIdPServicesManagerRegisteredServiceLocator(
+            final CasConfigurationProperties casProperties,
             @Qualifier(SamlRegisteredServiceCachingMetadataResolver.BEAN_NAME)
             final SamlRegisteredServiceCachingMetadataResolver defaultSamlRegisteredServiceCachingMetadataResolver) {
-            return new SamlIdPServicesManagerRegisteredServiceLocator(defaultSamlRegisteredServiceCachingMetadataResolver);
+            return new SamlIdPServicesManagerRegisteredServiceLocator(defaultSamlRegisteredServiceCachingMetadataResolver,
+                casProperties.getServiceRegistry().getCore().getMaximumServiceIdLength());
         }
 
     }

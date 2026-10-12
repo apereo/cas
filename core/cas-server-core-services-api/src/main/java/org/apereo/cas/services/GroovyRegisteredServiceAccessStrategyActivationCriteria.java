@@ -78,7 +78,7 @@ public class GroovyRegisteredServiceAccessStrategyActivationCriteria implements 
         }
         if (scriptFactoryInstance.isInlineScript(groovyScript) && CasRuntimeHintsRegistrar.notInNativeImage()) {
             val script = scriptFactoryInstance.getInlineScript(groovyScript).orElseThrow();
-            this.executableScript = scriptFactoryInstance.fromScript(script);
+            this.executableScript = CachedScriptResources.fromInlineScript(script);
         }
     }
 }

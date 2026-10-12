@@ -75,7 +75,7 @@ public class GroovyRegisteredServiceAccessStrategy extends BaseRegisteredService
     }
 
     protected void buildGroovyAccessStrategyInstanceIfNeeded() {
-        if (watchableScript == null) {
+        if (watchableScript == null || watchableScript.isClosed()) {
             FunctionUtils.doAndHandle(_ -> {
                 val location = SpringExpressionLanguageValueResolver.getInstance().resolve(this.groovyScript);
                 val groovyResource = ResourceUtils.getResourceFrom(location);

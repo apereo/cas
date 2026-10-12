@@ -181,6 +181,25 @@ class SamlIdPServicesManagerRegisteredServiceLocatorTests extends BaseSamlIdPCon
     }
 
     @Test
+    void verifyOversizedEntityIdIsNotMatched() {
+        try (val mockFacade = mockStatic(SamlRegisteredServiceMetadataAdaptor.class)) {
+            mockFacade.when(() -> SamlRegisteredServiceMetadataAdaptor.get(any(), any(), anyString()))
+                .thenReturn(Optional.of(mock(SamlRegisteredServiceMetadataAdaptor.class)));
+            val locator = new SamlIdPServicesManagerRegisteredServiceLocator(samlRegisteredServiceCachingMetadataResolver, 64);
+            val candidateServices = CollectionUtils.wrapList(getSamlRegisteredServiceFor(false, false, false, ".+"));
+
+            val service = webApplicationServiceFactory.createService("https://sp.example.org/sp");
+            service.setAttributes(Map.of(SamlProtocolConstants.PARAMETER_ENTITY_ID, List.of("https://sp.example.org/sp")));
+            assertNotNull(locator.locate(candidateServices, service));
+
+            val oversizedEntityId = "https://sp.example.org/" + "a".repeat(64);
+            service.setAttributes(Map.of(SamlProtocolConstants.PARAMETER_ENTITY_ID, List.of(oversizedEntityId)));
+            assertNull(locator.locate(candidateServices, service));
+            mockFacade.verify(() -> SamlRegisteredServiceMetadataAdaptor.get(any(), any(), eq(oversizedEntityId)), never());
+        }
+    }
+
+    @Test
     void verifyProviderIdParam() {
         assertNotNull(samlIdPServicesManagerRegisteredServiceLocator);
         assertEquals(Ordered.HIGHEST_PRECEDENCE, samlIdPServicesManagerRegisteredServiceLocator.getOrder());

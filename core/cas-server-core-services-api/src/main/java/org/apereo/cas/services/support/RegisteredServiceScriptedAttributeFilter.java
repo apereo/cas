@@ -66,7 +66,7 @@ public class RegisteredServiceScriptedAttributeFilter implements RegisteredServi
 
     @PostLoad
     private void initializeWatchableScriptIfNeeded() {
-        if (this.executableScript == null) {
+        if (this.executableScript == null || this.executableScript.isClosed()) {
             val scriptFactory = ExecutableCompiledScriptFactory.getExecutableCompiledScriptFactory();
             if (scriptFactory.isExternalScript(script)) {
                 val resource = FunctionUtils.doUnchecked(() -> {
@@ -77,7 +77,7 @@ public class RegisteredServiceScriptedAttributeFilter implements RegisteredServi
                 });
                 this.executableScript = CachedScriptResources.fromResource(resource);
             } else if (scriptFactory.isInlineScript(script) && CasRuntimeHintsRegistrar.notInNativeImage()) {
-                this.executableScript = scriptFactory.fromScript(scriptFactory.getInlineScript(script).orElseThrow());
+                this.executableScript = CachedScriptResources.fromInlineScript(scriptFactory.getInlineScript(script).orElseThrow());
             }
         }
     }

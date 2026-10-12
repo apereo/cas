@@ -303,6 +303,7 @@ public abstract class AbstractServicesManager implements IndexableServicesManage
         return getCacheableServicesStream()
             .get()
             .filter(this::validateAndFilterServiceByEnvironment)
+            .filter(service -> checkServiceExpirationPolicyIfAny(service) != null)
             .filter(getRegisteredServicesFilteringPredicate())
             .sorted()
             .peek(RegisteredService::initialize)
@@ -317,6 +318,7 @@ public abstract class AbstractServicesManager implements IndexableServicesManage
                 .get()
                 .filter(service -> clazz.isAssignableFrom(service.getClass()))
                 .filter(this::validateAndFilterServiceByEnvironment)
+                .filter(service -> checkServiceExpirationPolicyIfAny(service) != null)
                 .filter(getRegisteredServicesFilteringPredicate())
                 .sorted()
                 .peek(RegisteredService::initialize)
@@ -541,11 +543,19 @@ public abstract class AbstractServicesManager implements IndexableServicesManage
      * so that requests for an expired service do not notify contacts or delete definitions.
      */
     private void evaluateExpiredServiceDefinitions() {
-        getCacheableServicesStream()
+        val expiredServices = getCacheableServicesStream()
             .get()
             .filter(RegisteredServiceAccessStrategyUtils.getRegisteredServiceExpirationPolicyPredicate().negate())
-            .toList()
-            .forEach(this::processExpiredRegisteredService);
+            .toList();
+        expiredServices.forEach(this::processExpiredRegisteredService);
+        val currentlyExpired = expiredServices.stream()
+            .map(AbstractServicesManager::getExpiryNotificationKey)
+            .collect(Collectors.toSet());
+        notifiedExpiredServices.retainAll(currentlyExpired);
+    }
+
+    private static String getExpiryNotificationKey(final RegisteredService registeredService) {
+        return registeredService.getId() + ":" + registeredService.getExpirationPolicy().getExpirationDate();
     }
 
     private @Nullable RegisteredService validateRegisteredService(
@@ -569,8 +579,7 @@ public abstract class AbstractServicesManager implements IndexableServicesManage
 
     private void processExpiredRegisteredService(final RegisteredService registeredService) {
         val policy = registeredService.getExpirationPolicy();
-        val notificationKey = registeredService.getId() + ":" + policy.getExpirationDate();
-        val firstNotice = notifiedExpiredServices.add(notificationKey);
+        val firstNotice = notifiedExpiredServices.add(getExpiryNotificationKey(registeredService));
         if (firstNotice) {
             LOGGER.warn("Registered service [{}] has expired on [{}]", registeredService.getServiceId(), policy.getExpirationDate());
         }

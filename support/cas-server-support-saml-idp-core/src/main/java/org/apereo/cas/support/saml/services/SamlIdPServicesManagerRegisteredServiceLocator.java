@@ -23,11 +23,25 @@ import org.springframework.core.Ordered;
 @Slf4j
 public class SamlIdPServicesManagerRegisteredServiceLocator extends BaseServicesManagerRegisteredServiceLocator {
 
+    /**
+     * Default maximum length of an entity id that is matched against service definitions.
+     */
+    public static final int DEFAULT_MAXIMUM_ENTITY_ID_LENGTH = 4096;
+
     private final SamlRegisteredServiceCachingMetadataResolver resolver;
+
+    private final int maximumEntityIdLength;
 
     public SamlIdPServicesManagerRegisteredServiceLocator(
         final SamlRegisteredServiceCachingMetadataResolver resolver) {
+        this(resolver, DEFAULT_MAXIMUM_ENTITY_ID_LENGTH);
+    }
+
+    public SamlIdPServicesManagerRegisteredServiceLocator(
+        final SamlRegisteredServiceCachingMetadataResolver resolver,
+        final int maximumEntityIdLength) {
         this.resolver = resolver;
+        this.maximumEntityIdLength = maximumEntityIdLength;
         setOrder(Ordered.HIGHEST_PRECEDENCE);
     }
 
@@ -54,6 +68,7 @@ public class SamlIdPServicesManagerRegisteredServiceLocator extends BaseServices
                 return attribute.getEntityIdFrom(resolver, attributeValue);
             })
             .filter(StringUtils::isNotBlank)
+            .filter(this::isEntityIdWithinLimit)
             .flatMap(entityId -> samlServices
                 .stream()
                 .filter(samlService -> samlService.matches(entityId))
@@ -63,6 +78,15 @@ public class SamlIdPServicesManagerRegisteredServiceLocator extends BaseServices
                 })
                 .findFirst())
             .orElse(null);
+    }
+
+    private boolean isEntityIdWithinLimit(final String entityId) {
+        if (maximumEntityIdLength > 0 && entityId.length() > maximumEntityIdLength) {
+            LOGGER.warn("Entity id of length [{}] exceeds the maximum allowed length of [{}] and will not be matched",
+                entityId.length(), maximumEntityIdLength);
+            return false;
+        }
+        return true;
     }
 
     @Override

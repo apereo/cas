@@ -54,7 +54,7 @@ public class GroovySurrogateRegisteredServiceAccessStrategy extends BaseSurrogat
     }
 
     protected void buildExecutableScriptIfNeeded() {
-        if (executableScript == null) {
+        if (executableScript == null || executableScript.isClosed()) {
             FunctionUtils.doAndHandle(_ -> {
                 val location = SpringExpressionLanguageValueResolver.getInstance().resolve(this.groovyScript);
                 val resource = ResourceUtils.getResourceFrom(location);

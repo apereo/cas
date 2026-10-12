@@ -127,6 +127,15 @@ class RestfulServiceRegistryTests extends AbstractServiceRegistryTests {
     }
 
     @Test
+    void verifyReportedUrlHasNoCredentials() {
+        assertEquals("https://registry.example.org/services",
+            RestfulServiceRegistry.sanitizeUrl("https://user:secret@registry.example.org/services?token=abc#frag"));
+        assertEquals("http://localhost:8080/casservices",
+            RestfulServiceRegistry.sanitizeUrl("http://localhost:8080/casservices"));
+        assertEquals("[unparsable url]", RestfulServiceRegistry.sanitizeUrl("http://bad url"));
+    }
+
+    @Test
     void verifyFailedLoadIsReported() {
         try (val webServer = new MockWebServer(HttpStatus.INTERNAL_SERVER_ERROR)) {
             webServer.start();
