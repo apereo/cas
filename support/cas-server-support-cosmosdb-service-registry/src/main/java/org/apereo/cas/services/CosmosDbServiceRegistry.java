@@ -10,8 +10,6 @@ import com.azure.cosmos.CosmosException;
 import com.azure.cosmos.models.CosmosItemRequestOptions;
 import com.azure.cosmos.models.CosmosQueryRequestOptions;
 import com.azure.cosmos.models.PartitionKey;
-import com.azure.cosmos.models.SqlParameter;
-import com.azure.cosmos.models.SqlQuerySpec;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -31,8 +29,6 @@ public class CosmosDbServiceRegistry extends AbstractServiceRegistry {
      * Partition key.
      */
     public static final String PARTITION_KEY = "id";
-
-    private static final char LIKE_ESCAPE_CHARACTER = '!';
 
     private final StringSerializer<RegisteredService> serializer;
 
@@ -91,27 +87,6 @@ public class CosmosDbServiceRegistry extends AbstractServiceRegistry {
     }
 
     @Override
-    public RegisteredService findServiceBy(final String id) {
-        val services = new ArrayList<RegisteredService>();
-        LOGGER.trace("Loading registered service by [{}] from container [{}]", id, container.getId());
-        val query = new SqlQuerySpec("SELECT * FROM c WHERE c.serviceId LIKE @serviceId ESCAPE '" + LIKE_ESCAPE_CHARACTER + "'",
-            new SqlParameter("@serviceId", '%' + escapeLikePattern(id) + '%'));
-        val items = container.queryItems(query, new CosmosQueryRequestOptions(), CosmosDbDocument.class);
-        items.iterableByPage()
-            .forEach(response -> response.getResults()
-                .stream()
-                .map(this::getRegisteredServiceFromDocumentBody)
-                .filter(registeredService -> registeredService.matches(id))
-                .forEach(services::add));
-        return services
-            .stream()
-            .sorted()
-            .findFirst()
-            .map(this::invokeServiceRegistryListenerPostLoad)
-            .orElse(null);
-    }
-
-    @Override
     public RegisteredService findServiceById(final long id) {
         try {
             val key = String.valueOf(id);
@@ -127,17 +102,6 @@ public class CosmosDbServiceRegistry extends AbstractServiceRegistry {
             }
         }
         return null;
-    }
-
-    private static String escapeLikePattern(final String value) {
-        val escaped = new StringBuilder(value.length());
-        value.chars().forEach(character -> {
-            if (character == LIKE_ESCAPE_CHARACTER || character == '%' || character == '_' || character == '[') {
-                escaped.append(LIKE_ESCAPE_CHARACTER);
-            }
-            escaped.append((char) character);
-        });
-        return escaped.toString();
     }
 
     private RegisteredService getRegisteredServiceFromDocumentBody(final CosmosDbDocument doc) {

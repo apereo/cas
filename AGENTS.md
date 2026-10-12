@@ -421,6 +421,13 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
   to the registry. Registry events published by anything other than a services manager (the JSON/YAML
   watchers, Redis, S3) update the cache through `DefaultRegisteredServicesEventListener`, synchronously.
   `findServiceBy(Predicate)` reads the registry and must never write to the cache or index.
+- `CacheableServicesManager.cacheRegisteredService` prepares a definition the way `load()` does (skips unsupported
+  types, applies templates) before caching it, for saves, registry watchers and change notifications alike. Inside
+  `AbstractServicesManager`, code that already ran `prepareServiceFromRegistry` caches through the private
+  `cachePreparedRegisteredService` so templates are not merged twice.
+- Do not override `ServiceRegistry.findServiceBy(String)` with a database filter on `serviceId`: definitions are regular
+  expressions or other matching strategies evaluated in Java, so a `LIKE` on the requested URL misses them. Override
+  `getServicesStream()` instead when the default `load()` is expensive or has side effects (events, a `git pull`).
 - URL lookups match against `AbstractServicesManager.getSortedRegisteredServices`, a snapshot reused until the cache
   version changes or the cache size differs from it. Any new code that adds or replaces entries in the services cache
   must go through `cacheRegisteredService`/`cacheRegisteredServices` (or bump the version itself); a direct

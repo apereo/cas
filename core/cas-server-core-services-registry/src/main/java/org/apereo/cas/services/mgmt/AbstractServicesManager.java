@@ -192,7 +192,7 @@ public abstract class AbstractServicesManager implements IndexableServicesManage
                     .findFirst()
                     .map(locator -> {
                         LOGGER.debug("Service [{}] is found in service registry and can be supported by [{}]", registeredService, locator.getName());
-                        cacheRegisteredService(registeredService);
+                        cachePreparedRegisteredService(registeredService);
                         LOGGER.trace("Service [{}] is now cached from [{}]", service, serviceRegistry.getName());
                         return registeredService;
                     }));
@@ -265,7 +265,7 @@ public abstract class AbstractServicesManager implements IndexableServicesManage
             LOGGER.trace("The service with name [{}] is not found in the cache; trying to find it from [{}]", name, registry.getName());
             service = prepareServiceFromRegistry(registry.findServiceByExactServiceName(name));
             if (service != null) {
-                cacheRegisteredService(service);
+                cachePreparedRegisteredService(service);
                 LOGGER.trace("The service is found in [{}] and populated to the cache [{}]", registry.getName(), service);
             }
         }
@@ -289,7 +289,7 @@ public abstract class AbstractServicesManager implements IndexableServicesManage
             name, clazz, configurationContext.getServiceRegistry().getName());
         service = prepareServiceFromRegistry(configurationContext.getServiceRegistry().findServiceByExactServiceName(name, clazz));
         if (service != null) {
-            cacheRegisteredService(service);
+            cachePreparedRegisteredService(service);
             LOGGER.trace("The service is found in [{}] and added to the cache [{}]",
                 configurationContext.getServiceRegistry().getName(), service);
         }
@@ -533,6 +533,13 @@ public abstract class AbstractServicesManager implements IndexableServicesManage
 
     @Override
     public void cacheRegisteredService(final RegisteredService service) {
+        val registeredService = prepareServiceFromRegistry(service);
+        if (registeredService != null) {
+            cachePreparedRegisteredService(registeredService);
+        }
+    }
+
+    private void cachePreparedRegisteredService(final RegisteredService service) {
         configurationContext.getServicesCache().put(service.getId(), service);
         configurationContext.getRegisteredServiceIndexService().indexService(service);
         servicesCacheVersion.incrementAndGet();

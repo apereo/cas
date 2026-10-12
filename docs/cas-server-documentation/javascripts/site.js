@@ -1056,7 +1056,7 @@ function initializeHomeTitle() {
             const target = nextPhrase();
             for (let i = 1; i <= target.length; i++) {
                 accent.textContent = target.slice(0, i);
-                await wait(35 + Math.random() * 40);
+                await wait(30 + Math.random() * 40);
             }
             title.classList.remove("home-title-typing");
             await wait(4400);

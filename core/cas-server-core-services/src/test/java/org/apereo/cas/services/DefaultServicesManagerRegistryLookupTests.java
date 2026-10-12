@@ -321,6 +321,32 @@ class DefaultServicesManagerRegistryLookupTests {
     }
 
     @Test
+    void verifyCachedServicesHaveTemplatesApplied() {
+        val casProperties = new CasConfigurationProperties();
+        val templatesManager = mock(RegisteredServicesTemplatesManager.class);
+        when(templatesManager.apply(any())).thenAnswer(invocation -> {
+            val registeredService = invocation.getArgument(0, BaseRegisteredService.class);
+            registeredService.setDescription("templated");
+            return registeredService;
+        });
+        val servicesManager = newServicesManager(newServiceRegistry(), casProperties,
+            Beans.newCacheBuilder(casProperties.getServiceRegistry().getCache()).build(), templatesManager);
+        servicesManager.load();
+        clearInvocations(templatesManager);
+
+        val registeredService = newRegisteredService();
+        servicesManager.cacheRegisteredService(registeredService);
+        verify(templatesManager, times(1)).apply(any());
+        val cached = servicesManager.getCachedRegisteredServices().get(registeredService.getId());
+        assertNotNull(cached);
+        assertEquals("templated", cached.getDescription());
+        assertNotNull(servicesManager.findServiceBy(RegisteredServiceTestUtils.getService(registeredService.getServiceId())));
+
+        val savedService = servicesManager.save(newRegisteredService());
+        assertEquals("templated", servicesManager.getCachedRegisteredServices().get(savedService.getId()).getDescription());
+    }
+
+    @Test
     @SuppressWarnings("unchecked")
     void verifyLookupsByIdAndName() {
         val serviceRegistry = newServiceRegistry();

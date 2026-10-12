@@ -544,9 +544,18 @@ authentication. See the [stateless ticket registry documentation](../ticketing/S
   instead of an identifier; the issue instant of an IdP-initiated SAML2 request, the WS-Federation `wfresh` parameter, the
   single sign-on revocation attribute, numeric durations, cookie lifetimes and the actuator endpoints that accept a service
   identifier handle such values the same way. Cookie lifetimes too large for a cookie are capped instead of overflowing.
-- {: .fixed} The deprecated [CosmosDb service registry](../services/CosmosDb-Service-Management.html) passes the requested
-  service to its query as an escaped parameter instead of placing it in the query text, and picks the highest-ranked
-  matching definition across all result pages.
+- {: .fixed} When the service registry is consulted for an application that matches no cached definition, the
+  [JPA](../services/JPA-Service-Management.html) and the deprecated [CosmosDb](../services/CosmosDb-Service-Management.html)
+  service registries now evaluate every definition the way other registries do. Both used to search for definitions whose
+  pattern contained the requested URL, which never found definitions written as regular expressions; CosmosDb also placed
+  the requested URL in its query text unescaped and no longer sends it to the database at all.
+- {: .fixed} Service lookups against the [Git service registry](../services/Git-Service-Management.html) use the definitions
+  from the last load instead of pulling from the remote repository on each lookup; definitions are pulled when service
+  definitions are reloaded.
+- {: .fixed} Application definitions that are saved through CAS, picked up by the JSON and YAML registry watchers, or
+  announced by [Google Cloud Storage](../services/GCP-Storage-Service-Management.html) change notifications now have their
+  [templates](../services/Configuring-Service-Template-Definitions.html) applied before they are cached, as they are when
+  definitions are loaded, instead of being matched without them until the next reload.
 - {: .changed} Matching a request to an application definition no longer sorts every cached definition on each lookup, and listing
   definitions, as the [OpenID Connect JWKS endpoint](../authentication/OIDC-Authentication-JWKS.html) and the `registeredServices` actuator endpoint do, no longer
   re-indexes every cached definition.
@@ -621,6 +630,9 @@ authentication. See the [stateless ticket registry documentation](../ticketing/S
   read from the ticket registry once per request instead of once by every authenticator and validator that inspects it.
 - {: .changed data-area="oidc"} A request object passed with the `request` parameter is now unpacked and verified once per
   request instead of once for every authorization parameter read from it.
+- {: .fixed data-area="oidc"} Changes to an [OpenID Connect keystore](../authentication/OIDC-Authentication-JWKS.html) file
+  are announced again once CAS notices them. The file watcher has never broadcast them, so CAS kept signing with the keys it had
+  loaded until its key cache expired.
 - {: .changed data-area="project"} Almost all CAS unit tests are internally reworked to allow maximum parallelization and speed up the overall test execution time.
 - {: .fixed} [Delegated authentication](../integration/Delegate-Authentication.html) no longer fails intermittently when concurrent requests reach an identity provider that is still being initialized, typically right after startup. Such requests now wait for the initialization in progress instead of failing, which also affects [SAML2 identity providers](../integration/Delegate-Authentication-SAML2.html) when building SAML2 responses, metadata and logout requests.
 - {: .fixed} [WebAuthn](../mfa/FIDO2-WebAuthn-Authentication.html) registration and login pages no longer show a broken image when the device has no icon in its attestation metadata, and fall back to the credential nickname for the device name.

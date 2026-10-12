@@ -37,7 +37,7 @@ public class GitServiceRegistry extends AbstractServiceRegistry {
 
     private final String rootDirectory;
 
-    private Collection<RegisteredService> registeredServices = new ArrayList<>();
+    private volatile Collection<RegisteredService> registeredServices = new ArrayList<>();
 
     public GitServiceRegistry(final ConfigurableApplicationContext applicationContext,
                               final GitRepository gitRepository,
@@ -102,6 +102,7 @@ public class GitServiceRegistry extends AbstractServiceRegistry {
             val message = "Deleted registered services from repository";
             commitAndPush(message);
         });
+        load();
     }
 
     @Override
@@ -170,6 +171,16 @@ public class GitServiceRegistry extends AbstractServiceRegistry {
     @Override
     public RegisteredService findServiceById(final long id) {
         return this.registeredServices.stream().filter(r -> r.getId() == id).findFirst().orElse(null);
+    }
+
+    @Override
+    public Stream<? extends RegisteredService> getServicesStream() {
+        return registeredServices.stream();
+    }
+
+    @Override
+    public long size() {
+        return registeredServices.size();
     }
 
     private Optional<File> locateExistingRegisteredServiceFile(final RegisteredService registeredService) {
