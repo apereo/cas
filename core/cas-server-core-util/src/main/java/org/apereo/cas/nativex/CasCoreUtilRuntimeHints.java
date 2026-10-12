@@ -51,6 +51,12 @@ public class CasCoreUtilRuntimeHints implements CasRuntimeHintsRegistrar {
     public void registerHints(final RuntimeHints hints, final @Nullable ClassLoader classLoader) {
         hints.resources().registerType(CasVersion.class);
 
+        registerReflectionHintsForConstructors(hints, List.of(
+            "sun.net.www.protocol.http.Handler",
+            "sun.net.www.protocol.https.Handler",
+            "sun.net.www.protocol.file.Handler",
+            "sun.net.www.protocol.jar.Handler"));
+
         registerReflectionHints(hints, findSubclassesInPackage(LZ4Compressor.class, LZ4Compressor.class.getPackageName()));
         registerReflectionHints(hints, findSubclassesInPackage(LZ4FastDecompressor.class, LZ4FastDecompressor.class.getPackageName()));
         registerReflectionHints(hints, findSubclassesInPackage(LZ4SafeDecompressor.class, LZ4SafeDecompressor.class.getPackageName()));

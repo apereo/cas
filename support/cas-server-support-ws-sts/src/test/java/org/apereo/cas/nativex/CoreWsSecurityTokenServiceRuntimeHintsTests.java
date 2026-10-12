@@ -27,6 +27,8 @@ class CoreWsSecurityTokenServiceRuntimeHintsTests {
     void verifyHints() throws Exception {
         val hints = new RuntimeHints();
         new CoreWsSecurityTokenServiceRuntimeHints().registerHints(hints, getClass().getClassLoader());
+        val domProvider = Class.forName("com.sun.org.apache.xerces.internal.dom.DOMXSImplementationSourceImpl");
+        assertTrue(RuntimeHintsPredicates.reflection().onConstructorInvocation(domProvider.getConstructor()).test(hints));
         assertTrue(RuntimeHintsPredicates.resource().forBundle("org.apache.cxf.bus.managers.Messages").test(hints));
         assertTrue(RuntimeHintsPredicates.resource().forBundle("messages.wss4j_errors").test(hints));
         assertTrue(RuntimeHintsPredicates.resource().forBundle("org.apache.xml.security.resource.xmlsecurity").test(hints));

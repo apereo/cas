@@ -28,6 +28,10 @@ class CasCoreUtilRuntimeHintsTests {
     void verifyHints() throws Exception {
         val hints = new RuntimeHints();
         new CasCoreUtilRuntimeHints().registerHints(hints, getClass().getClassLoader());
+        for (val protocol : List.of("http", "https", "file", "jar")) {
+            val handler = Class.forName("sun.net.www.protocol." + protocol + ".Handler");
+            assertTrue(RuntimeHintsPredicates.reflection().onConstructorInvocation(handler.getConstructor()).test(hints), protocol);
+        }
         assertTrue(RuntimeHintsPredicates.proxies().forInterfaces(ComponentSerializationPlanConfigurer.class).test(hints));
         assertTrue(RuntimeHintsPredicates.proxies().forInterfaces(Supplier.class).test(hints));
         assertTrue(RuntimeHintsPredicates.proxies().forInterfaces(BeanContainer.class).test(hints));
