@@ -260,10 +260,8 @@ plugins.withId("org.graalvm.buildtools.native") {
                 buildArgs.add('--enable-sbom')
                 buildArgs.add('--emit build-report')
 
-                def os = org.gradle.internal.os.OperatingSystem.current()
-                if (!os.isMacOsX()) {
-                    buildArgs.add('--gc=G1')
-                }
+                // Groovy runtime class loading requires metaspace support, which G1 does not provide.
+                buildArgs.add('--gc=serial')
                 buildArgs.add('--enable-monitoring=heapdump,jfr')
 
                 buildArgs.add('-march=native')
