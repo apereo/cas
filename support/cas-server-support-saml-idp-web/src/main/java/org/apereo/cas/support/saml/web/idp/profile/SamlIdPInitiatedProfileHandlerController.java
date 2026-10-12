@@ -7,12 +7,12 @@ import org.apereo.cas.support.saml.SamlIdPConstants;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceMetadataAdaptor;
 import org.apereo.cas.support.saml.util.Saml20HexRandomIdGenerator;
+import com.google.common.primitives.Longs;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.hc.core5.net.URIBuilder;
 import org.opensaml.messaging.context.MessageContext;
@@ -124,8 +124,9 @@ public class SamlIdPInitiatedProfileHandlerController extends AbstractSamlIdPPro
         nameIDPolicy.setAllowCreate(Boolean.TRUE);
         authnRequest.setNameIDPolicy(nameIDPolicy);
 
-        if (NumberUtils.isCreatable(time)) {
-            authnRequest.setIssueInstant(Instant.ofEpochMilli(Long.parseLong(time)));
+        val issueInstant = time != null ? Longs.tryParse(time) : null;
+        if (issueInstant != null) {
+            authnRequest.setIssueInstant(Instant.ofEpochMilli(issueInstant));
         } else {
             authnRequest.setIssueInstant(ZonedDateTime.now(ZoneOffset.UTC).toInstant());
         }

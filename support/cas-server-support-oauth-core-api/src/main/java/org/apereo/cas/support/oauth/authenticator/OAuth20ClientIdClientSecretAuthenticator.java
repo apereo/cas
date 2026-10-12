@@ -3,7 +3,6 @@ package org.apereo.cas.support.oauth.authenticator;
 import module java.base;
 import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.audit.AuditableExecution;
-import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
 import org.apereo.cas.authentication.principal.NullPrincipal;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
@@ -21,8 +20,6 @@ import org.apereo.cas.support.oauth.validator.OAuth20ClientSecretValidator;
 import org.apereo.cas.support.oauth.web.OAuth20RequestParameterResolver;
 import org.apereo.cas.ticket.OAuth20Token;
 import org.apereo.cas.ticket.TicketFactory;
-import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
-import org.apereo.cas.ticket.accesstoken.OAuth20AccessTokenFactory;
 import org.apereo.cas.ticket.code.OAuth20Code;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.EncodingUtils;
@@ -140,28 +137,17 @@ public class OAuth20ClientIdClientSecretAuthenticator implements Authenticator {
     protected Principal buildAuthenticatedPrincipal(final Principal resolvedPrincipal, final OAuthRegisteredService registeredService,
                                                     final WebApplicationService service, final CallContext callContext)
             throws Throwable {
-        val accessTokenFactory = (OAuth20AccessTokenFactory) ticketFactory.get(OAuth20AccessToken.class);
-        val scopes = resolveRequestedScopes(callContext);
-        val responseType = requestParameterResolver.resolveResponseType(callContext.webContext());
-        val grantType = requestParameterResolver.resolveGrantType(callContext.webContext());
-
+        val scopes = new LinkedHashSet<>(resolveRequestedScopes(callContext));
         val oauthCode = requestParameterResolver.resolveRequestParameter(callContext.webContext(), OAuth20Constants.CODE)
-            .stream()
-            .filter(StringUtils::isNotBlank)
-            .map(code -> FunctionUtils.doAndHandle(() -> ticketRegistry.getTicket(code, OAuth20Token.class)))
-            .filter(Objects::nonNull)
-            .findFirst()
+            .map(code -> OAuth20Utils.getRequestedOAuthToken(callContext.webContext(), ticketRegistry, code, OAuth20Token.class))
             .orElse(null);
 
         if (oauthCode != null && !oauthCode.isExpired()) {
             LOGGER.debug("Found OAuth code [{}] in the ticket registry", oauthCode.getId());
             scopes.addAll(oauthCode.getScopes());
         }
-        val authentication = DefaultAuthenticationBuilder.newInstance(resolvedPrincipal).build();
-        val accessToken = accessTokenFactory.create(service, authentication, null, scopes,
-            oauthCode, registeredService.getClientId(), new HashMap<>(), responseType, grantType);
-        LOGGER.debug("Created access token [{}] for service [{}] based on scopes [{}]", accessToken.getId(), service.getId(), scopes);
-        val finalPrincipal = profileScopeToAttributesFilter.filter(service, resolvedPrincipal, registeredService, accessToken);
+        LOGGER.debug("Filtering principal attributes for service [{}] based on scopes [{}]", service.getId(), scopes);
+        val finalPrincipal = profileScopeToAttributesFilter.filter(service, resolvedPrincipal, registeredService, scopes, null);
         LOGGER.debug("Built final principal [{}]", finalPrincipal);
         return finalPrincipal;
     }
@@ -203,12 +189,8 @@ public class OAuth20ClientIdClientSecretAuthenticator implements Authenticator {
         val code = context.getRequestParameter(OAuth20Constants.CODE);
         if (code.isPresent()) {
             LOGGER.debug("Checking if the OAuth code issued contains code challenge");
-            val token = FunctionUtils.doAndHandle(() -> {
-                val state = ticketRegistry.getTicket(code.get(), OAuth20Code.class);
-                return state == null || state.isExpired() ? null : state;
-            });
-
-            if (token != null && StringUtils.isNotEmpty(token.getCodeChallenge())) {
+            val token = OAuth20Utils.getRequestedOAuthToken(context, ticketRegistry, code.get(), OAuth20Code.class);
+            if (token != null && !token.isExpired() && StringUtils.isNotEmpty(token.getCodeChallenge())) {
                 LOGGER.debug("The OAuth code [{}] issued contains code challenge which requires PKCE Authentication", code.get());
                 return false;
             }

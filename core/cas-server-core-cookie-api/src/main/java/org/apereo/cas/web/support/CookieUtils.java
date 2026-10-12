@@ -11,11 +11,11 @@ import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.cookie.CookieGenerationContext;
 import org.apereo.cas.web.cookie.CookieValueManager;
 import org.apereo.cas.web.support.gen.CookieRetrievingCookieGenerator;
+import com.google.common.primitives.Ints;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.math.NumberUtils;
 import org.jspecify.annotations.Nullable;
 import org.springframework.http.ResponseCookie;
 import org.springframework.webflow.execution.RequestContext;
@@ -106,10 +106,8 @@ public class CookieUtils {
      * @return the cookie max age
      */
     public static int getCookieMaxAge(final String maxAge) {
-        if (NumberUtils.isCreatable(maxAge)) {
-            return Integer.parseInt(maxAge);
-        }
-        return (int) Beans.newDuration(maxAge).toSeconds();
+        val seconds = maxAge != null ? Ints.tryParse(maxAge) : null;
+        return seconds != null ? seconds : Math.clamp(Beans.newDuration(maxAge).toSeconds(), Integer.MIN_VALUE, Integer.MAX_VALUE);
     }
 
     private static CookieGenerationContext.CookieGenerationContextBuilder buildCookieGenerationContextBuilder(

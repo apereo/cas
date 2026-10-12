@@ -21,6 +21,7 @@ import org.apereo.cas.util.io.PathWatcherService;
 import org.apereo.cas.util.io.WatcherService;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import org.apereo.cas.util.serialization.StringSerializer;
+import com.google.common.primitives.Longs;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -29,7 +30,6 @@ import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.math.NumberUtils;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.DisposableBean;
@@ -357,8 +357,8 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
         val matcher = this.serviceFileNamePattern.matcher(fileName);
         if (matcher.find()) {
             val serviceId = matcher.group(2);
-            if (NumberUtils.isCreatable(serviceId)) {
-                val id = Long.parseLong(serviceId);
+            val id = serviceId != null ? Longs.tryParse(serviceId) : null;
+            if (id != null) {
                 return findServiceById(id);
             }
             val serviceName = matcher.group(1);

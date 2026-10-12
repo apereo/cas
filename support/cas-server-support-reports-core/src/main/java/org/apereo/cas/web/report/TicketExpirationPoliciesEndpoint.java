@@ -14,12 +14,12 @@ import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.apereo.cas.ticket.proxy.ProxyTicket;
 import org.apereo.cas.web.BaseCasActuatorEndpoint;
+import com.google.common.primitives.Longs;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.Getter;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.math.NumberUtils;
 import org.jooq.lambda.Unchecked;
 import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.ObjectProvider;
@@ -70,9 +70,10 @@ public class TicketExpirationPoliciesEndpoint extends BaseCasActuatorEndpoint {
         }));
 
         val servicesManager = servicesManagerProvider.getObject();
+        val registeredServiceId = StringUtils.isNotBlank(serviceId) ? Longs.tryParse(serviceId) : null;
         val registeredService = StringUtils.isNotBlank(serviceId)
-            ? NumberUtils.isCreatable(serviceId)
-            ? servicesManager.findServiceBy(Long.parseLong(serviceId))
+            ? registeredServiceId != null
+            ? servicesManager.findServiceBy(registeredServiceId)
             : servicesManager.findServiceBy(webApplicationServiceFactory.createService(serviceId))
             : null;
 

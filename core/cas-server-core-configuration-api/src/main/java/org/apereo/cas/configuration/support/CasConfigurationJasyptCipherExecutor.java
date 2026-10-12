@@ -3,11 +3,11 @@ package org.apereo.cas.configuration.support;
 import module java.base;
 import org.apereo.cas.util.RegexUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
+import com.google.common.primitives.Ints;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.math.NumberUtils;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
 import org.jasypt.iv.IvGenerator;
@@ -151,9 +151,10 @@ public class CasConfigurationJasyptCipherExecutor implements CipherExecutor<Stri
      * @param iter the iter
      */
     public void setKeyObtentionIterations(@Nullable final String iter) {
-        if (StringUtils.isNotBlank(iter) && NumberUtils.isCreatable(iter)) {
+        val iterations = StringUtils.isNotBlank(iter) ? Ints.tryParse(iter) : null;
+        if (iterations != null) {
             LOGGER.debug("Configured Jasypt iterations");
-            jasyptInstance.setKeyObtentionIterations(Integer.parseInt(iter));
+            jasyptInstance.setKeyObtentionIterations(iterations);
         }
     }
 

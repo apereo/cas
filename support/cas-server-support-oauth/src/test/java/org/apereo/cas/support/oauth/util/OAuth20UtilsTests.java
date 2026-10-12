@@ -15,7 +15,11 @@ import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.web.OAuth20RequestParameterResolver;
 import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20TokenGeneratedResult;
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20ResponseModeFactory;
+import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.OAuth20Token;
+import org.apereo.cas.ticket.code.OAuth20Code;
+import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshToken;
+import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.validation.Assertion;
 import com.nimbusds.jwt.JWTClaimsSet;
@@ -42,6 +46,23 @@ import static org.mockito.Mockito.*;
  */
 @Tag("OAuth")
 class OAuth20UtilsTests extends AbstractOAuth20Tests {
+    @Test
+    void verifyRequestedTokenReadOncePerRequest() throws Throwable {
+        val code = mock(OAuth20Code.class);
+        val registry = mock(TicketRegistry.class);
+        when(registry.getTicket("OC-1", OAuth20Token.class)).thenReturn(code);
+        val context = new JEEContext(new MockHttpServletRequest(), new MockHttpServletResponse());
+
+        assertSame(code, OAuth20Utils.getRequestedOAuthToken(context, registry, "OC-1", OAuth20Code.class));
+        assertSame(code, OAuth20Utils.getRequestedOAuthToken(context, registry, "OC-1", OAuth20Token.class));
+        assertNull(OAuth20Utils.getRequestedOAuthToken(context, registry, "OC-1", OAuth20RefreshToken.class));
+        verify(registry, times(1)).getTicket("OC-1", OAuth20Token.class);
+
+        when(registry.getTicket("OC-2", OAuth20Token.class)).thenThrow(new InvalidTicketException("OC-2"));
+        assertNull(OAuth20Utils.getRequestedOAuthToken(context, registry, "OC-2", OAuth20Code.class));
+        assertNull(OAuth20Utils.getRequestedOAuthToken(context, registry, " ", OAuth20Code.class));
+    }
+
     @Test
     void verifyRequestHeaderBad() {
         assertNull(OAuth20Utils.getClientIdFromAuthenticatedProfile(new CommonProfile()));

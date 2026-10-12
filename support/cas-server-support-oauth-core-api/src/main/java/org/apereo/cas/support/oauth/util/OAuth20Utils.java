@@ -19,6 +19,7 @@ import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.ticket.code.OAuth20Code;
 import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshToken;
+import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.DigestUtils;
@@ -365,6 +366,34 @@ public class OAuth20Utils {
      */
     public static Set<String> parseUserInfoRequestClaims(final OAuth20Token token) {
         return token != null ? token.getClaims().getOrDefault("userinfo", new HashMap<>()).keySet() : new HashSet<>();
+    }
+
+    /**
+     * Get the OAuth token named in the current request. The token is read from the ticket registry once per request
+     * and reused by every authenticator, validator and extractor that handles the same request.
+     *
+     * @param <T>            the token type
+     * @param context        the web context
+     * @param ticketRegistry the ticket registry
+     * @param tokenId        the token id
+     * @param clazz          the expected token type
+     * @return the token, or null if it cannot be found or is of another type
+     */
+    public static <T extends OAuth20Token> @Nullable T getRequestedOAuthToken(final WebContext context,
+                                                                              final TicketRegistry ticketRegistry,
+                                                                              final String tokenId,
+                                                                              final Class<T> clazz) {
+        if (StringUtils.isBlank(tokenId)) {
+            return null;
+        }
+        val attributeName = OAuth20Token.class.getName() + '.' + tokenId;
+        val token = context.getRequestAttribute(attributeName)
+            .or(() -> Optional.ofNullable(FunctionUtils.doAndHandle(() -> ticketRegistry.getTicket(tokenId, OAuth20Token.class))))
+            .orElse(null);
+        if (token != null) {
+            context.setRequestAttribute(attributeName, token);
+        }
+        return clazz.isInstance(token) ? clazz.cast(token) : null;
     }
 
 

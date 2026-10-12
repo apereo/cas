@@ -537,9 +537,16 @@ authentication. See the [stateless ticket registry documentation](../ticketing/S
 - {: .changed} Looking up an application definition by name or by identifier and type no longer examines every cached
   definition. A lookup by identifier for a different type of definition now finds nothing instead of returning the
   definition of the other type.
-- {: .fixed} A `service` parameter that only resembles a number, such as `1.5`, `1e3`, `0x1F` or a value too large for an
-  identifier, no longer fails the request while CAS applies the application's [HTTP security headers](../services/Configuring-Service-Http-Security-Headers.html);
-  it is matched as a service URL instead.
+- {: .fixed} Values that only resemble a whole number, such as `1.5`, `1e3`, `0x1F` or one too large to store, no longer fail
+  the request with a server error. A `service` parameter, including the one used to apply an application's
+  [HTTP security headers](../services/Configuring-Service-Http-Security-Headers.html) and to fetch
+  [SAML2 identity provider metadata](../authentication/Configuring-SAML2-Authentication.html), is matched as a service URL
+  instead of an identifier; the issue instant of an IdP-initiated SAML2 request, the WS-Federation `wfresh` parameter, the
+  single sign-on revocation attribute, numeric durations, cookie lifetimes and the actuator endpoints that accept a service
+  identifier handle such values the same way. Cookie lifetimes too large for a cookie are capped instead of overflowing.
+- {: .fixed} The deprecated [CosmosDb service registry](../services/CosmosDb-Service-Management.html) passes the requested
+  service to its query as an escaped parameter instead of placing it in the query text, and picks the highest-ranked
+  matching definition across all result pages.
 - {: .changed} Matching a request to an application definition no longer sorts every cached definition on each lookup, and listing
   definitions, as the [OpenID Connect JWKS endpoint](../authentication/OIDC-Authentication-JWKS.html) and the `registeredServices` actuator endpoint do, no longer
   re-indexes every cached definition.
@@ -604,6 +611,16 @@ authentication. See the [stateless ticket registry documentation](../ticketing/S
 - {: .changed data-area="saml"} Templates the SAML2 identity provider loads from the classpath, such as the page that posts a
   SAML2 response or logout request with the HTTP-POST binding, are now parsed once and cached instead of being read and parsed
   for every response.
+- {: .changed data-area="oidc"} The [OpenID Connect JWKS endpoint](../authentication/OIDC-Authentication-JWKS.html) now caches the
+  published key set instead of loading and parsing the keystore for every request, whichever keystore is used. The cached set
+  expires along with the keys CAS signs with (`cas.authn.oidc.jwks.core.jwks-cache-expiration`{: .cas-setting}), and never later
+  than a day. Rotating or revoking keys, or changing a keystore file, publishes the new key set right away on that CAS node;
+  other nodes publish it once their cached set expires.
+- {: .changed data-area="oidc"} OAuth and OpenID Connect client authentication at the token endpoint no longer builds a
+  throw-away access token to decide which claims to release, and the authorization code or refresh token in the request is
+  read from the ticket registry once per request instead of once by every authenticator and validator that inspects it.
+- {: .changed data-area="oidc"} A request object passed with the `request` parameter is now unpacked and verified once per
+  request instead of once for every authorization parameter read from it.
 - {: .changed data-area="project"} Almost all CAS unit tests are internally reworked to allow maximum parallelization and speed up the overall test execution time.
 - {: .fixed} [Delegated authentication](../integration/Delegate-Authentication.html) no longer fails intermittently when concurrent requests reach an identity provider that is still being initialized, typically right after startup. Such requests now wait for the initialization in progress instead of failing, which also affects [SAML2 identity providers](../integration/Delegate-Authentication-SAML2.html) when building SAML2 responses, metadata and logout requests.
 - {: .fixed} [WebAuthn](../mfa/FIDO2-WebAuthn-Authentication.html) registration and login pages no longer show a broken image when the device has no icon in its attestation metadata, and fall back to the credential nickname for the device name.

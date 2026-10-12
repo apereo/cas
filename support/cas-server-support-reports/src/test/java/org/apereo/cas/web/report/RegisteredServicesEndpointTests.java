@@ -7,6 +7,7 @@ import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
 import org.apereo.cas.services.util.RegisteredServiceYamlSerializer;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
@@ -25,50 +26,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Tag("ActuatorEndpoint")
 class RegisteredServicesEndpointTests extends AbstractCasEndpointTests {
     @Test
-    void verifyOperation() throws Throwable {
-        mockMvc.perform(delete("/actuator/registeredServices/cache")
-            .contentType(MediaType.APPLICATION_JSON)
-        ).andExpect(status().isOk());
-        mockMvc.perform(delete("/actuator/registeredServices")
-            .contentType(MediaType.APPLICATION_JSON)
-        ).andExpect(status().isOk());
-
-        val service1 = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString());
-        val service2 = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString());
-        servicesManager.save(service1, service2);
-
-        mockMvc.perform(get("/actuator/registeredServices")
-                .contentType(MediaType.APPLICATION_JSON))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.length()", greaterThan(0)));
-
-        mockMvc.perform(get("/actuator/registeredServices/type/{type}", CasRegisteredService.class.getSimpleName())
-                .contentType(MediaType.APPLICATION_JSON))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.length()", greaterThan(0)));
-
-        mockMvc.perform(get("/actuator/registeredServices/{id}", service1.getServiceId())
-                .contentType(MediaType.APPLICATION_JSON))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.length()", greaterThan(0)));
-
-        mockMvc.perform(delete("/actuator/registeredServices/{id}", service1.getServiceId())
-                .contentType(MediaType.APPLICATION_JSON)    
-                .accept(MediaType.APPLICATION_JSON))
-            .andExpect(status().isOk())
-            .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
-
-        mockMvc.perform(get("/actuator/registeredServices/{id}", service1.getId())
-                .contentType(MediaType.APPLICATION_JSON))
-            .andExpect(status().isNotFound());
-
-        mockMvc.perform(delete("/actuator/registeredServices/{id}", service2.getServiceId())
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON))
-            .andExpect(status().isOk())
-            .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
-
-        mockMvc.perform(get("/actuator/registeredServices/{id}", service2.getId())
+    void verifyServiceIdentifierTooLarge() throws Throwable {
+        mockMvc.perform(get("/actuator/registeredServices/{id}", "99999999999999999999")
                 .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isNotFound());
     }
@@ -176,5 +135,61 @@ class RegisteredServicesEndpointTests extends AbstractCasEndpointTests {
                 .andExpect(status().isOk());
         }
     }
-}
 
+    /*
+     * Deleting all services wipes every definition in the services manager, so it runs in its own
+     * application context and cannot remove services that concurrent tests in this class rely on.
+     */
+    @Nested
+    @TestPropertySource(properties = "spring.application.name=${random.uuid}")
+    class DeleteAllTests extends AbstractCasEndpointTests {
+        @Test
+        void verifyOperation() throws Throwable {
+            mockMvc.perform(delete("/actuator/registeredServices/cache")
+                .contentType(MediaType.APPLICATION_JSON)
+            ).andExpect(status().isOk());
+            mockMvc.perform(delete("/actuator/registeredServices")
+                .contentType(MediaType.APPLICATION_JSON)
+            ).andExpect(status().isOk());
+
+            val service1 = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString());
+            val service2 = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString());
+            servicesManager.save(service1, service2);
+
+            mockMvc.perform(get("/actuator/registeredServices")
+                    .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()", greaterThan(0)));
+
+            mockMvc.perform(get("/actuator/registeredServices/type/{type}", CasRegisteredService.class.getSimpleName())
+                    .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()", greaterThan(0)));
+
+            mockMvc.perform(get("/actuator/registeredServices/{id}", service1.getServiceId())
+                    .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()", greaterThan(0)));
+
+            mockMvc.perform(delete("/actuator/registeredServices/{id}", service1.getServiceId())
+                    .contentType(MediaType.APPLICATION_JSON)    
+                    .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
+
+            mockMvc.perform(get("/actuator/registeredServices/{id}", service1.getId())
+                    .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
+
+            mockMvc.perform(delete("/actuator/registeredServices/{id}", service2.getServiceId())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
+
+            mockMvc.perform(get("/actuator/registeredServices/{id}", service2.getId())
+                    .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
+        }
+    }
+}

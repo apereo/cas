@@ -19,11 +19,11 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.validation.DefaultAssertionBuilder;
 import org.apereo.cas.validation.ImmutableAssertion;
 import org.apereo.cas.web.BaseCasActuatorEndpoint;
+import com.google.common.primitives.Longs;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.math.NumberUtils;
 import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.actuate.endpoint.Access;
@@ -74,8 +74,9 @@ public class CasReleaseAttributesReportEndpoint extends BaseCasActuatorEndpoint 
             throws Throwable {
 
         val selectedService = serviceFactory.getObject().createService(service);
-        val registeredService = NumberUtils.isCreatable(service)
-            ? servicesManager.getObject().findServiceBy(Long.parseLong(service))
+        val registeredServiceId = Longs.tryParse(service);
+        val registeredService = registeredServiceId != null
+            ? servicesManager.getObject().findServiceBy(registeredServiceId)
             : servicesManager.getObject().findServiceBy(selectedService);
         RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(selectedService, registeredService);
 

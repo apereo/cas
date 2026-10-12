@@ -8,6 +8,7 @@ import org.apereo.cas.support.saml.SamlIdPConstants;
 import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataGenerator;
 import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPMetadataLocator;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
+import com.google.common.primitives.Longs;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -17,7 +18,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -117,8 +117,9 @@ public class SamlIdPMetadataController {
     }
 
     private Optional<SamlRegisteredService> getRegisteredServiceIfAny(final String service) {
-        if (NumberUtils.isDigits(service)) {
-            val svc = servicesManager.findServiceBy(Long.parseLong(service), SamlRegisteredService.class);
+        val registeredServiceId = service != null ? Longs.tryParse(service) : null;
+        if (registeredServiceId != null) {
+            val svc = servicesManager.findServiceBy(registeredServiceId, SamlRegisteredService.class);
             return Optional.ofNullable(svc);
         }
         val svc = StringUtils.isNotBlank(service) ? webApplicationServiceFactory.createService(service) : null;

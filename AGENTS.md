@@ -105,6 +105,10 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
 - Related test scenarios are often grouped with `@Nested`; example: `support/cas-server-support-token-core/.../JwtBuilderTests.java`.
 - Unalias Linux/macOS commands before you run them, specially `tree`, `find`, `grep`, `cat`, etc.
 - From a sandbox that cannot delete files, run read-only git commands with `GIT_OPTIONAL_LOCKS=0` (for example `GIT_OPTIONAL_LOCKS=0 git status`); otherwise git can leave a stale `.git/index.lock` that blocks the user's git.
+- Parse untrusted or configured numbers with Guava's `Longs.tryParse`/`Ints.tryParse` (null when the value is not a plain
+  integer that fits), never `NumberUtils.isCreatable`/`isParsable`/`isDigits` followed by `Long.parseLong`/`Integer.parseInt`:
+  those checks accept `1.5`, `1e3`, `0x1F` or overflowing values and the parse then throws. `tryParse` rejects null, so
+  guard nullable inputs first.
 - Consider using StringUtils.EMPTY instead of "" for empty strings, and StringUtils.isNotBlank() instead of != null && !isEmpty() for string checks.
 - Keep overloaded methods (same name, any parameters or visibility) next to each other, with no other method between
   them; Checkstyle's `OverloadMethodsDeclarationOrder` fails the build otherwise. Check this when adding a method whose

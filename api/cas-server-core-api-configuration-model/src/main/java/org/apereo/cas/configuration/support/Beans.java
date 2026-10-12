@@ -7,11 +7,11 @@ import org.apereo.cas.configuration.model.support.ConnectionPoolingProperties;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.Expiry;
+import com.google.common.primitives.Longs;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.math.NumberUtils;
 import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.scheduling.concurrent.ThreadPoolExecutorFactoryBean;
@@ -58,10 +58,8 @@ public class Beans {
         if (isInfinitelyDurable(value)) {
             return Duration.ofDays(Integer.MAX_VALUE);
         }
-        if (NumberUtils.isCreatable(value)) {
-            return Duration.ofSeconds(Long.parseLong(value));
-        }
-        return Duration.parse(value);
+        val seconds = Longs.tryParse(value);
+        return seconds != null ? Duration.ofSeconds(seconds) : Duration.parse(value);
     }
 
     /**

@@ -17,6 +17,7 @@ import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.io.TemporaryFileSystemResource;
 import org.apereo.cas.util.serialization.StringSerializer;
 import org.apereo.cas.web.BaseCasRestActuatorEndpoint;
+import com.google.common.primitives.Longs;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -25,7 +26,6 @@ import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
-import org.apache.commons.lang3.math.NumberUtils;
 import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.actuate.endpoint.Access;
@@ -115,8 +115,9 @@ public class RegisteredServicesEndpoint extends BaseCasRestActuatorEndpoint {
     })
     public ResponseEntity<String> fetchService(
         @PathVariable final String id) {
-        val service = NumberUtils.isDigits(id)
-            ? servicesManager.getObject().findServiceBy(Long.parseLong(id))
+        val registeredServiceId = Longs.tryParse(id);
+        val service = registeredServiceId != null
+            ? servicesManager.getObject().findServiceBy(registeredServiceId)
             : servicesManager.getObject().findServiceBy(configurationContext.getObject().getServiceFactory().createService(id));
         if (service == null) {
             return ResponseEntity.notFound().build();
@@ -213,8 +214,9 @@ public class RegisteredServicesEndpoint extends BaseCasRestActuatorEndpoint {
             MEDIA_TYPE_CAS_YAML
         })
     public ResponseEntity<String> deleteService(@PathVariable final String id) {
-        if (NumberUtils.isDigits(id)) {
-            val svc = servicesManager.getObject().findServiceBy(Long.parseLong(id));
+        val registeredServiceId = Longs.tryParse(id);
+        if (registeredServiceId != null) {
+            val svc = servicesManager.getObject().findServiceBy(registeredServiceId);
             if (svc != null) {
                 return ResponseEntity.ok(MAPPER.writeValueAsString(servicesManager.getObject().delete(svc)));
             }

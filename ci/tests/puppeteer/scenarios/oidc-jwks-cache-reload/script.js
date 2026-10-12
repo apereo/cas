@@ -21,7 +21,7 @@ const os = require("os");
     config.keys[0]["kid"] = kid;
     await cas.log(`Updated configuration:\n${JSON.stringify(config, undefined, 2)}`);
     await fs.writeFileSync(configFilePath, JSON.stringify(config, undefined, 2));
-    await cas.sleep(1000);
+    await cas.sleep(3000);
     await cas.doGet("https://localhost:8443/cas/oidc/jwks",
         (res) => {
             assert(res.status === 200);

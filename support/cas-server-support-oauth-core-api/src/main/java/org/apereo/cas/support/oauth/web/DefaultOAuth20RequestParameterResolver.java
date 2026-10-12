@@ -13,6 +13,7 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
+import com.nimbusds.jwt.JWTClaimsSet;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -21,6 +22,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.apache.hc.core5.net.URIBuilder;
 import org.hjson.JsonValue;
 import org.jooq.lambda.Unchecked;
+import org.jspecify.annotations.Nullable;
 import org.pac4j.core.context.CallContext;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.context.WebContextHelper;
@@ -92,24 +94,32 @@ public class DefaultOAuth20RequestParameterResolver implements OAuth20RequestPar
                                             final String name, final Class<T> clazz)
             throws Exception {
         val jwt = jwtBuilder.unpack(Optional.ofNullable(registeredService), jwtRequest);
-        if (jwt == null) {
-            return null;
-        }
-        if (clazz.isArray()) {
-            return clazz.cast(jwt.getStringArrayClaim(name));
-        }
-        if (Collection.class.isAssignableFrom(clazz)) {
-            return clazz.cast(jwt.getStringListClaim(name));
-        }
-        return clazz.cast(jwt.getStringClaim(name));
+        return jwt == null ? null : getJwtRequestClaim(jwt, name, clazz);
     }
 
+    /*
+     * The request object is unpacked and verified once per HTTP request; every parameter read after that
+     * comes from the same claims.
+     */
     @Override
     public <T> T resolveJwtRequestParameter(final WebContext context, final String jwtRequest,
                                             final String name, final Class<T> clazz) {
+        val jwt = unpackJwtRequest(context, jwtRequest);
+        return jwt == null ? null : FunctionUtils.doUnchecked(() -> getJwtRequestClaim(jwt, name, clazz));
+    }
+
+    private @Nullable JWTClaimsSet unpackJwtRequest(final WebContext context, final String jwtRequest) {
+        if (context.getRequestAttribute(UnpackedJwtRequest.class.getName()).orElse(null) instanceof final UnpackedJwtRequest unpacked
+            && unpacked.jwtRequest().equals(jwtRequest)) {
+            return unpacked.claims();
+        }
         val id = context.getRequestParameter(OAuth20Constants.CLIENT_ID).orElse(StringUtils.EMPTY);
         val service = OAuth20Utils.getRegisteredOAuthServiceByClientId(jwtBuilder.getServicesManager(), id);
-        return FunctionUtils.doUnchecked(() -> resolveJwtRequestParameter(jwtRequest, service, name, clazz));
+        val jwt = jwtBuilder.unpack(Optional.ofNullable(service), jwtRequest);
+        if (jwt != null) {
+            context.setRequestAttribute(UnpackedJwtRequest.class.getName(), new UnpackedJwtRequest(jwtRequest, jwt));
+        }
+        return jwt;
     }
 
     @Override
@@ -321,5 +331,18 @@ public class DefaultOAuth20RequestParameterResolver implements OAuth20RequestPar
 
     protected List<String> getPromptValuesSupported() {
         return List.of("*");
+    }
+
+    private static <T> T getJwtRequestClaim(final JWTClaimsSet jwt, final String name, final Class<T> clazz) throws Exception {
+        if (clazz.isArray()) {
+            return clazz.cast(jwt.getStringArrayClaim(name));
+        }
+        if (Collection.class.isAssignableFrom(clazz)) {
+            return clazz.cast(jwt.getStringListClaim(name));
+        }
+        return clazz.cast(jwt.getStringClaim(name));
+    }
+
+    private record UnpackedJwtRequest(String jwtRequest, JWTClaimsSet claims) {
     }
 }

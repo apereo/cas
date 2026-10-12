@@ -10,6 +10,7 @@ import org.apereo.cas.web.AbstractController;
 import org.apereo.cas.web.support.WebUtils;
 import org.apereo.cas.ws.idp.WSFederationConstants;
 import org.apereo.cas.ws.idp.services.WSFederationRegisteredService;
+import com.google.common.primitives.Longs;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +18,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
-import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.cxf.ws.security.tokenstore.SecurityToken;
 import org.apache.hc.core5.net.URIBuilder;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -100,11 +100,8 @@ public abstract class BaseWSFederationRequestController extends AbstractControll
 
     protected boolean shouldRenewAuthentication(final WSFederationRequest fedRequest,
                                                 final HttpServletRequest request) {
-        if (StringUtils.isBlank(fedRequest.wfresh()) || !NumberUtils.isCreatable(fedRequest.wfresh())) {
-            return false;
-        }
-        val ttl = Long.parseLong(fedRequest.wfresh().trim());
-        if (ttl == 0) {
+        val ttl = StringUtils.isNotBlank(fedRequest.wfresh()) ? Longs.tryParse(fedRequest.wfresh().trim()) : null;
+        if (ttl == null || ttl == 0) {
             return false;
         }
 

@@ -17,8 +17,6 @@ import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.validator.OAuth20ClientSecretValidator;
 import org.apereo.cas.support.oauth.web.OAuth20RequestParameterResolver;
 import org.apereo.cas.ticket.TicketFactory;
-import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
-import org.apereo.cas.ticket.accesstoken.OAuth20AccessTokenFactory;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
 import lombok.Getter;
@@ -131,13 +129,8 @@ public class OAuth20UsernamePasswordAuthenticator implements Authenticator {
         val id = registeredService.getUsernameAttributeProvider().resolveUsername(usernameContext);
         LOGGER.debug("Created profile id [{}]", id);
 
-        val accessTokenFactory = (OAuth20AccessTokenFactory) ticketFactory.get(OAuth20AccessToken.class);
-        val scopes = resolveRequestedScopes(callContext);
-        val responseType = requestParameterResolver.resolveResponseType(callContext.webContext());
-        val grantType = requestParameterResolver.resolveGrantType(callContext.webContext());
-        val accessToken = accessTokenFactory.create(service, authentication, scopes,
-            registeredService.getClientId(), responseType, grantType);
-        val finalPrincipal = profileScopeToAttributesFilter.filter(service, principal, registeredService, accessToken);
+        val scopes = new LinkedHashSet<>(resolveRequestedScopes(callContext));
+        val finalPrincipal = profileScopeToAttributesFilter.filter(service, principal, registeredService, scopes, null);
         LOGGER.debug("Built final principal [{}]", finalPrincipal);
         return finalPrincipal;
     }
