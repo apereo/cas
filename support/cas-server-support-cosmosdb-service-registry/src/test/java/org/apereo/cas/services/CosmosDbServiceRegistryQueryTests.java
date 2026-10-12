@@ -19,9 +19,10 @@ import static org.mockito.Mockito.*;
  *
  * @author Misagh Moayyed
  * @since 8.1.0
+ * @deprecated since 8.1.0
  */
 @Tag("Azure")
-@Deprecated(since = "8.0.0", forRemoval = true)
+@Deprecated(since = "8.1.0", forRemoval = true)
 class CosmosDbServiceRegistryQueryTests {
     @Test
     void verifyServiceIdIsPassedAsEscapedParameter() {
