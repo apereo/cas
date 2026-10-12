@@ -47,7 +47,7 @@ public class DefaultChainingServiceRegistry extends AbstractServiceRegistry impl
 
     @Override
     public void deleteAll() {
-        this.serviceRegistries.forEach(ServiceRegistry::deleteAll);
+        serviceRegistries.forEach(ServiceRegistry::deleteAll);
     }
 
     @Override
@@ -61,7 +61,9 @@ public class DefaultChainingServiceRegistry extends AbstractServiceRegistry impl
 
     @Override
     public RegisteredService findServiceById(final long id) {
-        return serviceRegistries.stream()
+        return serviceRegistries
+            .stream()
+            .sorted(Comparator.comparing(ServiceRegistry::getOrder))
             .map(registry -> registry.findServiceById(id))
             .filter(Objects::nonNull)
             .findFirst()
@@ -70,7 +72,9 @@ public class DefaultChainingServiceRegistry extends AbstractServiceRegistry impl
 
     @Override
     public RegisteredService findServiceBy(final String id) {
-        return serviceRegistries.stream()
+        return serviceRegistries
+            .stream()
+            .sorted(Comparator.comparing(ServiceRegistry::getOrder))
             .map(registry -> registry.findServiceBy(id))
             .filter(Objects::nonNull)
             .findFirst()
@@ -79,7 +83,9 @@ public class DefaultChainingServiceRegistry extends AbstractServiceRegistry impl
 
     @Override
     public RegisteredService findServiceByExactServiceId(final String id) {
-        return serviceRegistries.stream()
+        return serviceRegistries
+            .stream()
+            .sorted(Comparator.comparing(ServiceRegistry::getOrder))
             .map(registry -> registry.findServiceByExactServiceId(id))
             .filter(Objects::nonNull)
             .findFirst()
@@ -88,7 +94,9 @@ public class DefaultChainingServiceRegistry extends AbstractServiceRegistry impl
 
     @Override
     public RegisteredService findServiceByExactServiceName(final String name) {
-        return serviceRegistries.stream()
+        return serviceRegistries
+            .stream()
+            .sorted(Comparator.comparing(ServiceRegistry::getOrder))
             .map(registry -> registry.findServiceByExactServiceName(name))
             .filter(Objects::nonNull)
             .findFirst()
@@ -98,7 +106,9 @@ public class DefaultChainingServiceRegistry extends AbstractServiceRegistry impl
     @Override
     public long size() {
         val filter = Predicates.not(Predicates.instanceOf(ImmutableServiceRegistry.class));
-        return serviceRegistries.stream()
+        return serviceRegistries
+            .stream()
+            .sorted(Comparator.comparing(ServiceRegistry::getOrder))
             .filter(filter)
             .map(ServiceRegistry::size)
             .mapToLong(Long::longValue)
@@ -108,7 +118,9 @@ public class DefaultChainingServiceRegistry extends AbstractServiceRegistry impl
     @Override
     public String getName() {
         val filter = Predicates.not(Predicates.instanceOf(ImmutableServiceRegistry.class));
-        val name = serviceRegistries.stream()
+        val name = serviceRegistries
+            .stream()
+            .sorted(Comparator.comparing(ServiceRegistry::getOrder))
             .filter(filter)
             .map(ServiceRegistry::getName)
             .collect(Collectors.joining(","));
@@ -117,7 +129,7 @@ public class DefaultChainingServiceRegistry extends AbstractServiceRegistry impl
 
     @Override
     public long countServiceRegistries() {
-        return this.serviceRegistries.size();
+        return serviceRegistries.size();
     }
 
     @Override
@@ -127,8 +139,9 @@ public class DefaultChainingServiceRegistry extends AbstractServiceRegistry impl
 
     @Override
     public void synchronize(final RegisteredService service) {
-        this.serviceRegistries
+        serviceRegistries
             .stream()
+            .sorted(Comparator.comparing(ServiceRegistry::getOrder))
             .filter(serviceRegistry -> {
                 if (StringUtils.isNotBlank(service.getServiceId())) {
                     val match = serviceRegistry.findServiceByExactServiceId(service.getServiceId());

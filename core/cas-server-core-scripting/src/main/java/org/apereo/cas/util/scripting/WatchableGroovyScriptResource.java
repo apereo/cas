@@ -56,7 +56,7 @@ public class WatchableGroovyScriptResource implements ExecutableCompiledScript {
             compileScriptResource(script);
         }
     }
-    
+
     @Override
     public <T> @Nullable T execute(final Object[] args, final Class<T> clazz) throws Throwable {
         return execute(args, clazz, failOnError);
@@ -97,7 +97,7 @@ public class WatchableGroovyScriptResource implements ExecutableCompiledScript {
      * @return the t
      */
     public <T> @Nullable T execute(final String methodName, final Class<T> clazz, final boolean failOnError,
-                         final Object... args) {
+                                   final Object... args) {
         return lock.executeAndThrow(() -> {
             try {
                 LOGGER.trace("Beginning to execute script [{}]", this);
@@ -109,7 +109,7 @@ public class WatchableGroovyScriptResource implements ExecutableCompiledScript {
             }
         });
     }
-    
+
     @Override
     public boolean isClosed() {
         return closed;

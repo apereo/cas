@@ -129,6 +129,7 @@ public abstract class AbstractServicesManager implements IndexableServicesManage
 
     @Override
     public void deleteAll() {
+        configurationContext.getServiceRegistry().deleteAll();
         removeRegisteredServicesFromCache();
     }
 

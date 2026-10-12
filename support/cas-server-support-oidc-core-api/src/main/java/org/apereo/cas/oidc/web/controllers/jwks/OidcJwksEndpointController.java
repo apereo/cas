@@ -3,16 +3,13 @@ package org.apereo.cas.oidc.web.controllers.jwks;
 import module java.base;
 import org.apereo.cas.oidc.OidcConfigurationContext;
 import org.apereo.cas.oidc.OidcConstants;
-import org.apereo.cas.oidc.jwks.OidcJsonWebKeyStoreUtils;
 import org.apereo.cas.oidc.jwks.generator.OidcJsonWebKeystoreGeneratorService;
 import org.apereo.cas.oidc.jwks.rotation.OidcJsonWebKeystoreRotationService;
 import org.apereo.cas.oidc.web.controllers.BaseOidcController;
-import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
-import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -22,7 +19,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
 import org.jose4j.jwk.JsonWebKey;
 import org.jose4j.jwk.JsonWebKeySet;
-import org.jose4j.jwk.PublicJsonWebKey;
 import org.pac4j.jee.context.JEEContext;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
@@ -77,21 +73,6 @@ public class OidcJwksEndpointController extends BaseOidcController {
         return FunctionUtils.doAndHandle(() -> {
             val resource = oidcJsonWebKeystoreGeneratorService.generate();
             val jsonWebKeySet = getJsonWebKeySet(resource);
-            val servicesManager = getConfigurationContext().getServicesManager();
-            servicesManager.getAllServicesOfType(OidcRegisteredService.class)
-                .stream()
-                .filter(service -> {
-                    val serviceJwks = SpringExpressionLanguageValueResolver.getInstance().resolve(service.getJwks());
-                    return StringUtils.isNotBlank(serviceJwks);
-                })
-                .forEach(service -> {
-                    val set = OidcJsonWebKeyStoreUtils.getJsonWebKeySet(service,
-                        getConfigurationContext().getApplicationContext(), Optional.empty());
-                    set.ifPresent(keys -> keys.getJsonWebKeys()
-                        .stream()
-                        .filter(PublicJsonWebKey.class::isInstance)
-                        .forEach(jsonWebKeySet::addJsonWebKey));
-                });
 
             if (StringUtils.isNotBlank(kid)) {
                 jsonWebKeySet.getJsonWebKeys().removeIf(key -> !kid.equalsIgnoreCase(key.getKeyId()));
