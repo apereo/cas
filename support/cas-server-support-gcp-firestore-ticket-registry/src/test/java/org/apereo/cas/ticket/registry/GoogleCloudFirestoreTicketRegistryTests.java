@@ -30,6 +30,7 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.TestPropertySource;
+import org.springframework.transaction.support.TransactionOperations;
 import static org.awaitility.Awaitility.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -127,7 +128,8 @@ class GoogleCloudFirestoreTicketRegistryTests {
             }
             val newestTicket = lastTicket;
             await().atMost(Duration.ofSeconds(30)).until(newestTicket::isExpired);
-            val cleaner = new DefaultTicketRegistryCleaner(LockRepository.noOp(), applicationContext, getNewTicketRegistry());
+            val cleaner = new DefaultTicketRegistryCleaner(LockRepository.noOp(), applicationContext, getNewTicketRegistry(),
+                TransactionOperations.withoutTransaction());
             val cleaned = cleaner.clean();
             assertTrue(cleaned >= COUNT, () -> "Cleaned %s tickets, expected at least %s".formatted(cleaned, COUNT));
         }

@@ -604,6 +604,11 @@ authentication. See the [stateless ticket registry documentation](../ticketing/S
   a ticket was still present, the number of removed tickets reported for the session may include service tickets that were
   already validated. Removing a ticket that is already gone from the Apache Geode and the deprecated CosmosDb registries
   no longer fails.
+- {: .changed data-area="tickets"} The [ticket registry cleaner](../ticketing/Ticket-Registry-Cleaner.html) now looks for
+  expired tickets first, in batches of up to ten thousand so a large backlog is never held in memory at once, and then removes
+  up to eight of them at a time, where it used to remove them one by one while the scan was still running. With the [JPA ticket registry](../ticketing/JPA-Ticket-Registry.html), the database cursor,
+  connection and transaction used for the scan are released before any ticket is removed, and rows read by the scan are no
+  longer all kept in memory until it ends.
 - {: .fixed data-area="tickets"} [Validating a single-use service ticket](../authentication/CAS-Protocol-TicketValidation.html) now removes it in one step, and only the request that
   actually removes it receives a successful response. Two requests validating the same ticket at the same moment, on the
   same node or on different nodes, could previously both succeed with ticket registries that store copies of tickets, such as

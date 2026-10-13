@@ -16,6 +16,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.transaction.support.SimpleTransactionStatus;
+import org.springframework.transaction.support.TransactionCallback;
+import org.springframework.transaction.support.TransactionOperations;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -38,7 +41,7 @@ class DefaultTicketRegistryCleanerTests {
         tgt.setExpirationPolicy(new HardTimeoutExpirationPolicy(1));
         ticketRegistry.addTicket(tgt);
         assertEquals(1, ticketRegistry.getTickets().size());
-        val cleaner = new DefaultTicketRegistryCleaner(LockRepository.noOp(), applicationContext, ticketRegistry);
+        val cleaner = new DefaultTicketRegistryCleaner(LockRepository.noOp(), applicationContext, ticketRegistry, TransactionOperations.withoutTransaction());
         tgt.markTicketExpired();
         cleaner.clean();
         assertEquals(0, ticketRegistry.sessionCount());
@@ -56,7 +59,7 @@ class DefaultTicketRegistryCleanerTests {
             ticketRegistry.addTicket(tgt);
             tgt.markTicketExpired();
         }
-        val cleaner = new DefaultTicketRegistryCleaner(LockRepository.noOp(), applicationContext, ticketRegistry);
+        val cleaner = new DefaultTicketRegistryCleaner(LockRepository.noOp(), applicationContext, ticketRegistry, TransactionOperations.withoutTransaction());
         val cleaned = cleaner.clean();
         assertEquals(10_000, cleaned);
         assertEquals(0, ticketRegistry.sessionCount());
@@ -67,7 +70,7 @@ class DefaultTicketRegistryCleanerTests {
         val applicationContext = mock(ConfigurableApplicationContext.class);
         val ticketRegistry = mock(TicketRegistry.class);
         when(ticketRegistry.stream()).thenThrow(IllegalArgumentException.class);
-        val cleaner = new DefaultTicketRegistryCleaner(LockRepository.noOp(), applicationContext, ticketRegistry);
+        val cleaner = new DefaultTicketRegistryCleaner(LockRepository.noOp(), applicationContext, ticketRegistry, TransactionOperations.withoutTransaction());
         assertEquals(0, cleaner.clean());
     }
 
@@ -78,7 +81,7 @@ class DefaultTicketRegistryCleanerTests {
         val closed = new AtomicBoolean(false);
         val stream = Stream.<Ticket>empty().onClose(() -> closed.set(true));
         doReturn(stream).when(ticketRegistry).stream();
-        val cleaner = new DefaultTicketRegistryCleaner(LockRepository.noOp(), applicationContext, ticketRegistry);
+        val cleaner = new DefaultTicketRegistryCleaner(LockRepository.noOp(), applicationContext, ticketRegistry, TransactionOperations.withoutTransaction());
         cleaner.clean();
         assertTrue(closed.get());
     }
@@ -87,13 +90,117 @@ class DefaultTicketRegistryCleanerTests {
     void verifyNoCleaner() {
         val applicationContext = mock(ConfigurableApplicationContext.class);
         val ticketRegistry = newTicketRegistry();
-        val cleaner = new DefaultTicketRegistryCleaner(LockRepository.noOp(), applicationContext, ticketRegistry) {
+        val cleaner = new DefaultTicketRegistryCleaner(LockRepository.noOp(), applicationContext, ticketRegistry, TransactionOperations.withoutTransaction()) {
             @Override
             protected boolean isCleanerSupported() {
                 return false;
             }
         };
         assertEquals(0, cleaner.clean());
+    }
+
+    @Test
+    void verifyTicketsRemovedConcurrentlyOutsideScan() throws Throwable {
+        val scanning = new AtomicBoolean();
+        val removedDuringScan = new AtomicBoolean();
+        val running = new AtomicInteger();
+        val maximumRunning = new AtomicInteger();
+        val bothRunning = new CountDownLatch(2);
+        val ticketRegistry = new DefaultTicketRegistry(mock(TicketSerializationManager.class),
+            new DefaultTicketCatalog(), mock(ConfigurableApplicationContext.class)) {
+            @Override
+            public int deleteTicket(final Ticket ticket) throws Exception {
+                removedDuringScan.compareAndSet(false, scanning.get());
+                maximumRunning.accumulateAndGet(running.incrementAndGet(), Math::max);
+                try {
+                    bothRunning.countDown();
+                    bothRunning.await(5, TimeUnit.SECONDS);
+                    return super.deleteTicket(ticket);
+                } finally {
+                    running.decrementAndGet();
+                }
+            }
+        };
+        for (var i = 0; i < 50; i++) {
+            val tgt = new MockTicketGrantingTicket(i + "-" + UUID.randomUUID());
+            tgt.setExpirationPolicy(new HardTimeoutExpirationPolicy(1));
+            ticketRegistry.addTicket(tgt);
+            tgt.markTicketExpired();
+        }
+        val transactionOperations = new TransactionOperations() {
+            @Override
+            public <T> T execute(final TransactionCallback<T> action) {
+                scanning.set(true);
+                try {
+                    return action.doInTransaction(new SimpleTransactionStatus());
+                } finally {
+                    scanning.set(false);
+                }
+            }
+        };
+        val cleaner = new DefaultTicketRegistryCleaner(LockRepository.noOp(),
+            mock(ConfigurableApplicationContext.class), ticketRegistry, transactionOperations);
+        assertEquals(50, cleaner.clean());
+        assertEquals(0, ticketRegistry.sessionCount());
+        assertFalse(removedDuringScan.get());
+        assertTrue(maximumRunning.get() > 1);
+        assertTrue(maximumRunning.get() <= 8);
+    }
+
+    @Test
+    void verifyExpiredTicketsRemovedInBatches() throws Throwable {
+        val scans = new AtomicInteger();
+        val ticketRegistry = newScanCountingTicketRegistry(scans, false);
+        addExpiredTickets(ticketRegistry, 10);
+        val cleaner = newBatchingCleaner(ticketRegistry);
+        assertEquals(10, cleaner.clean());
+        assertEquals(4, scans.get());
+        assertEquals(0, ticketRegistry.sessionCount());
+    }
+
+    @Test
+    void verifyBatchesStopWhenNothingIsRemoved() throws Throwable {
+        val scans = new AtomicInteger();
+        val ticketRegistry = newScanCountingTicketRegistry(scans, true);
+        addExpiredTickets(ticketRegistry, 10);
+        val cleaner = newBatchingCleaner(ticketRegistry);
+        assertEquals(0, cleaner.clean());
+        assertEquals(1, scans.get());
+    }
+
+    private static DefaultTicketRegistry newScanCountingTicketRegistry(final AtomicInteger scans, final boolean failRemovals) {
+        return new DefaultTicketRegistry(mock(TicketSerializationManager.class),
+            new DefaultTicketCatalog(), mock(ConfigurableApplicationContext.class)) {
+            @Override
+            public Stream<? extends Ticket> stream(final TicketRegistryStreamCriteria criteria) {
+                scans.incrementAndGet();
+                return super.stream(criteria);
+            }
+
+            @Override
+            public int deleteTicket(final Ticket ticket) throws Exception {
+                return failRemovals ? 0 : super.deleteTicket(ticket);
+            }
+        };
+    }
+
+    private static DefaultTicketRegistryCleaner newBatchingCleaner(final TicketRegistry ticketRegistry) {
+        return new DefaultTicketRegistryCleaner(LockRepository.noOp(), mock(ConfigurableApplicationContext.class),
+            ticketRegistry, TransactionOperations.withoutTransaction()) {
+            @Override
+            protected int getMaximumExpiredTicketsPerScan() {
+                return 3;
+            }
+        };
+    }
+
+    private static void addExpiredTickets(final TicketRegistry ticketRegistry, final int count) throws Throwable {
+        for (var i = 0; i < count; i++) {
+            val tgt = new MockTicketGrantingTicket(i + "-" + UUID.randomUUID());
+            tgt.setExpirationPolicy(new HardTimeoutExpirationPolicy(1));
+            ticketRegistry.addTicket(tgt);
+            tgt.markTicketExpired();
+        }
     }
 
     private static TicketRegistry newTicketRegistry() {

@@ -27,8 +27,9 @@ import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionTemplate;
 
 /**
  * This is {@link CasCoreTicketsSchedulingConfiguration}.
@@ -52,8 +53,10 @@ class CasCoreTicketsSchedulingConfiguration {
         final CasConfigurationProperties casProperties,
         @Qualifier(LockRepository.BEAN_NAME) final LockRepository lockRepository,
         final ConfigurableApplicationContext applicationContext,
-        @Qualifier(TicketRegistry.BEAN_NAME) final TicketRegistry ticketRegistry) {
-        return new DefaultTicketRegistryCleaner(lockRepository, applicationContext, ticketRegistry);
+        @Qualifier(TicketRegistry.BEAN_NAME) final TicketRegistry ticketRegistry,
+        @Qualifier(TicketRegistry.TICKET_TRANSACTION_MANAGER) final PlatformTransactionManager ticketTransactionManager) {
+        return new DefaultTicketRegistryCleaner(lockRepository, applicationContext, ticketRegistry,
+            new TransactionTemplate(ticketTransactionManager));
     }
 
     @ConditionalOnMissingBean(name = "ticketRegistryCleanerScheduler")
@@ -79,11 +82,8 @@ class CasCoreTicketsSchedulingConfiguration {
 
 
     /**
-     * The Ticket registry cleaner scheduler. Because the cleaner itself is marked
-     * with {@link Transactional},
-     * we need to create a separate scheduler component that invokes it
-     * so that {@link Scheduled} annotations can be processed and not interfere
-     * with transaction semantics of the cleaner.
+     * The ticket registry cleaner scheduler, kept apart from the cleaner so that
+     * {@link Scheduled} annotations are processed on a component of its own.
      */
     @RequiredArgsConstructor
     static class TicketRegistryCleanerScheduler implements Runnable {
