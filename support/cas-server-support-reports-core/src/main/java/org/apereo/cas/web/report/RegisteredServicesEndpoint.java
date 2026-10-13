@@ -298,11 +298,13 @@ public class RegisteredServicesEndpoint extends BaseCasRestActuatorEndpoint {
     @ResponseBody
     @Operation(summary = "Export registered services as a single JSON file",
         parameters = @Parameter(name = "id", required = true, description = "The id of the registered service to export", in = ParameterIn.PATH))
-    public ResponseEntity<Resource> export(
-        @PathVariable final long id)
-        throws Exception {
+    public ResponseEntity<Resource> export(@PathVariable final long id)
+            throws Exception {
         val registeredServiceSerializer = new RegisteredServiceJsonSerializer(applicationContext);
         val registeredService = servicesManager.getObject().findServiceBy(id);
+        if (registeredService == null) {
+            return ResponseEntity.notFound().build();
+        }
         val fileName = String.format("%s-%s", registeredService.getName(), registeredService.getId());
         val serviceFile = Files.createTempFile(fileName, ".json").toFile();
         registeredServiceSerializer.to(serviceFile, registeredService);
@@ -361,12 +363,12 @@ public class RegisteredServicesEndpoint extends BaseCasRestActuatorEndpoint {
             MEDIA_TYPE_SPRING_BOOT_V3_JSON,
             MEDIA_TYPE_CAS_YAML
         }, produces = {
-        MediaType.APPLICATION_JSON_VALUE,
-        MediaType.APPLICATION_YAML_VALUE,
-        MEDIA_TYPE_SPRING_BOOT_V2_JSON,
-        MEDIA_TYPE_SPRING_BOOT_V3_JSON,
-        MEDIA_TYPE_CAS_YAML
-    })
+            MediaType.APPLICATION_JSON_VALUE,
+            MediaType.APPLICATION_YAML_VALUE,
+            MEDIA_TYPE_SPRING_BOOT_V2_JSON,
+            MEDIA_TYPE_SPRING_BOOT_V3_JSON,
+            MEDIA_TYPE_CAS_YAML
+        })
     @ResponseBody
     @Operation(summary = "Validate registered service supplied in the request body",
         parameters = @Parameter(name = "body", required = true, description = "The request body to contain service definition in JSON or YAML format"))

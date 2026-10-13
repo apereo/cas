@@ -23,6 +23,7 @@ public interface OAuth20RequestParameterResolver {
      * Default bean name.
      */
     String BEAN_NAME = "oauthRequestParameterResolver";
+    
     /**
      * Logger instance.
      */
@@ -123,6 +124,22 @@ public interface OAuth20RequestParameterResolver {
      */
     <T> T resolveJwtRequestParameter(WebContext context, String jwtRequest,
                                      String name, Class<T> clazz);
+
+    /**
+     * Resolve several parameters from the given request object, unpacking and verifying it once.
+     * Parameters the request object does not carry are left out of the result.
+     *
+     * @param <T>        the type parameter
+     * @param jwtRequest the jwt request
+     * @param service    the service
+     * @param names      the parameter names
+     * @param clazz      the clazz
+     * @return the parameter values by name
+     * @throws Exception the exception
+     */
+    <T> Map<String, T> resolveJwtRequestParameters(String jwtRequest, RegisteredService service,
+                                                   Collection<String> names, Class<T> clazz)
+            throws Exception;
 
     /**
      * Resolve request parameters map.

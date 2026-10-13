@@ -90,8 +90,8 @@ public class DefaultOAuth20RequestParameterResolver implements OAuth20RequestPar
     }
     
     @Override
-    public <T> T resolveJwtRequestParameter(final String jwtRequest, final RegisteredService registeredService,
-                                            final String name, final Class<T> clazz)
+    public <T> @Nullable T resolveJwtRequestParameter(final String jwtRequest, final RegisteredService registeredService,
+                                                      final String name, final Class<T> clazz)
             throws Exception {
         val jwt = jwtBuilder.unpack(Optional.ofNullable(registeredService), jwtRequest);
         return jwt == null ? null : getJwtRequestClaim(jwt, name, clazz);
@@ -102,16 +102,33 @@ public class DefaultOAuth20RequestParameterResolver implements OAuth20RequestPar
      * comes from the same claims.
      */
     @Override
-    public <T> T resolveJwtRequestParameter(final WebContext context, final String jwtRequest,
+    public <T> @Nullable T resolveJwtRequestParameter(final WebContext context, final String jwtRequest,
                                             final String name, final Class<T> clazz) {
         val jwt = unpackJwtRequest(context, jwtRequest);
         return jwt == null ? null : FunctionUtils.doUnchecked(() -> getJwtRequestClaim(jwt, name, clazz));
     }
 
+    @Override
+    public <T> Map<String, T> resolveJwtRequestParameters(final String jwtRequest, final RegisteredService registeredService,
+                                                          final Collection<String> names, final Class<T> clazz)
+            throws Exception {
+        val jwt = jwtBuilder.unpack(Optional.ofNullable(registeredService), jwtRequest);
+        val parameters = new LinkedHashMap<String, T>();
+        if (jwt != null) {
+            for (val name : names) {
+                val value = getJwtRequestClaim(jwt, name, clazz);
+                if (value != null) {
+                    parameters.put(name, value);
+                }
+            }
+        }
+        return parameters;
+    }
+
     private @Nullable JWTClaimsSet unpackJwtRequest(final WebContext context, final String jwtRequest) {
-        if (context.getRequestAttribute(UnpackedJwtRequest.class.getName()).orElse(null) instanceof final UnpackedJwtRequest unpacked
-            && unpacked.jwtRequest().equals(jwtRequest)) {
-            return unpacked.claims();
+        val unpackedRequest = context.getRequestAttribute(UnpackedJwtRequest.class.getName()).orElse(null);
+        if (unpackedRequest instanceof UnpackedJwtRequest(String request, JWTClaimsSet claims) && request.equals(jwtRequest)) {
+            return claims;
         }
         val id = context.getRequestParameter(OAuth20Constants.CLIENT_ID).orElse(StringUtils.EMPTY);
         val service = OAuth20Utils.getRegisteredOAuthServiceByClientId(jwtBuilder.getServicesManager(), id);

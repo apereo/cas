@@ -99,6 +99,13 @@ class RegisteredServicesEndpointTests extends AbstractCasEndpointTests {
             .andExpect(status().isOk());
     }
 
+    @Test
+    void verifyExportUnknownService() throws Throwable {
+        mockMvc.perform(get("/actuator/registeredServices/export/{id}", Long.MAX_VALUE)
+                .accept(MediaType.APPLICATION_OCTET_STREAM_VALUE))
+            .andExpect(status().isNotFound());
+    }
+
 
     @Test
     void verifyServiceUpdate() throws Exception {

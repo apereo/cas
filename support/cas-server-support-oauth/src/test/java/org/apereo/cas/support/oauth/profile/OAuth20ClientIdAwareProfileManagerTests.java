@@ -7,6 +7,8 @@ import org.apereo.cas.support.oauth.OAuth20ClientIdAwareProfileManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.util.EncodingUtils;
+import com.nimbusds.jwt.JWTClaimsSet;
+import com.nimbusds.jwt.PlainJWT;
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
@@ -107,5 +109,48 @@ class OAuth20ClientIdAwareProfileManagerTests extends AbstractOAuth20Tests {
         assertEquals(1, redirectProfileManager.getProfiles().size());
         assertEquals(1, redirectProfileManager.getProfiles().size());
         verify(manager, times(1)).getAllServicesOfType(OAuthRegisteredService.class);
+    }
+
+    @Test
+    void verifyClientIdFromClientAssertion() {
+        val manager = mock(ServicesManager.class);
+        val assertion = new PlainJWT(new JWTClaimsSet.Builder()
+            .issuer(registeredService.getClientId())
+            .subject(registeredService.getClientId())
+            .build()).serialize();
+        val assertionProfileManager = newProfileManagerWithAssertion(manager, assertion);
+        val profile = new CommonProfile();
+        profile.setId(ID);
+        profile.setClientName(registeredService.getClientId());
+        assertionProfileManager.save(false, profile, false);
+        assertEquals(registeredService.getClientId(), profile.getAttribute("oauthClientId"));
+        verify(manager, never()).getAllServicesOfType(any());
+    }
+
+    @Test
+    void verifyClientAssertionWithMismatchedIssuerIsIgnored() {
+        val manager = mock(ServicesManager.class);
+        when(manager.getAllServicesOfType(OAuthRegisteredService.class)).thenReturn(List.of(registeredService));
+        val assertion = new PlainJWT(new JWTClaimsSet.Builder()
+            .issuer("another-client")
+            .subject(registeredService.getClientId())
+            .build()).serialize();
+        val assertionProfileManager = newProfileManagerWithAssertion(manager, assertion);
+        val profile = new CommonProfile();
+        profile.setId(ID);
+        profile.setClientName(registeredService.getClientId());
+        assertionProfileManager.save(false, profile, false);
+        assertEquals(registeredService.getClientId(), profile.getAttribute("oauthClientId"));
+        verify(manager).getAllServicesOfType(OAuthRegisteredService.class);
+    }
+
+    private OAuth20ClientIdAwareProfileManager newProfileManagerWithAssertion(final ServicesManager manager, final String assertion) {
+        val request = new MockHttpServletRequest();
+        request.addParameter(OAuth20Constants.REDIRECT_URI, REDIRECT_URI);
+        request.addParameter(OAuth20Constants.CLIENT_ASSERTION_TYPE, OAuth20Constants.CLIENT_ASSERTION_TYPE_JWT_BEARER);
+        request.addParameter(OAuth20Constants.CLIENT_ASSERTION, assertion);
+        val assertionContext = new JEEContext(request, new MockHttpServletResponse());
+        return new OAuth20ClientIdAwareProfileManager(assertionContext, oauthDistributedSessionStore,
+            manager, oauthRequestParameterResolver);
     }
 }

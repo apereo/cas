@@ -469,6 +469,8 @@ authentication. See the [stateless ticket registry documentation](../ticketing/S
   [YAML](../services/YAML-Service-Management.html) registry watchers now update the cache right away, fetching services
   by type through the [`registeredServices` actuator endpoint](../services/Service-Management.html) no longer empties the cache, and CAS warns when the cache
   expires definitions before the scheduler reloads them. See [this guide](../services/Service-Management-Caching-Reloading.html).
+- {: .fixed} Exporting a single service definition through the [`registeredServices` actuator endpoint](../services/Service-Management.html)
+  now answers `404` for an unknown identifier instead of failing with an error.
 - {: .fixed} Saving or deleting a service definition while the service registry is being reloaded now waits for the reload
   to finish. Previously, a save or delete that waited more than five seconds was dropped without an error; the
   `registeredServices` actuator endpoint reported success and a dynamically registered client could receive credentials
@@ -659,6 +661,15 @@ authentication. See the [stateless ticket registry documentation](../ticketing/S
   whose redirect URI patterns overlap are no longer mistaken for one another in this case.
 - {: .changed data-area="oidc"} A request object passed with the `request` parameter is now unpacked and verified once per
   request instead of once for every authorization parameter read from it.
+- {: .changed data-area="oidc"} A client that authenticates at the token endpoint with `private_key_jwt` or `client_secret_jwt`
+  and sends no `client_id` parameter is now identified from its client assertion, whose issuer and subject are the client
+  identifier, instead of by matching the redirect URI against every OAuth application.
+- {: .changed data-area="oidc"} When CAS works out which application a login is for, a request object carried by the
+  OAuth or OpenID Connect authorization request is now unpacked and verified once, instead of once for each of the client
+  identifier, redirect URI and grant type read from it.
+- {: .changed data-area="oidc"} Rotating or revoking keys in the [OpenID Connect keystore](../authentication/OIDC-Authentication-JWKS.html)
+  now also clears the keys CAS signs with on that node, so the new current key is used and a revoked key stops being used right
+  away instead of once the cached keys expire.
 - {: .fixed data-area="oidc"} Changes to an [OpenID Connect keystore](../authentication/OIDC-Authentication-JWKS.html) file
   are announced again once CAS notices them. The file watcher has never broadcast them, so CAS kept signing with the keys it had
   loaded until its key cache expired.

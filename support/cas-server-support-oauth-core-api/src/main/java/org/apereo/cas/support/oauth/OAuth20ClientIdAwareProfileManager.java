@@ -4,6 +4,8 @@ import module java.base;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.OAuth20RequestParameterResolver;
+import com.nimbusds.jwt.JWTClaimsSet;
+import com.nimbusds.jwt.JWTParser;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -79,8 +81,9 @@ public class OAuth20ClientIdAwareProfileManager extends ProfileManager {
 
     /*
      * A client that authenticates with HTTP Basic, as a confidential client usually does at the token endpoint,
-     * sends no client_id parameter; its credentials name it. Only otherwise is the client looked up by matching the
-     * redirect URI against every OAuth application.
+     * sends no client_id parameter; its credentials name it, as does the assertion of a client that authenticates with
+     * private_key_jwt or client_secret_jwt. Only otherwise is the client looked up by matching the redirect URI against
+     * every OAuth application.
      */
     private String getClientIdFromRequest() {
         val clientId = requestParameterResolver.resolveRequestParameter(context, OAuth20Constants.CLIENT_ID)
@@ -95,7 +98,32 @@ public class OAuth20ClientIdAwareProfileManager extends ProfileManager {
         if (StringUtils.isNotBlank(authenticatedClientId)) {
             return authenticatedClientId;
         }
-        return getClientIdByRedirectUri(redirectUri);
+        return getClientIdFromAssertion().orElseGet(() -> getClientIdByRedirectUri(redirectUri));
+    }
+
+    /*
+     * RFC 7523 (section 3) and OpenID Connect Core (section 9): iss and sub of a client assertion are both the client_id,
+     * which is why the client_id parameter may be left out (RFC 7521, section 4.2). The assertion is only read here to
+     * name the client; the authenticator verifies it.
+     */
+    private Optional<String> getClientIdFromAssertion() {
+        val assertionType = requestParameterResolver.resolveRequestParameter(context, OAuth20Constants.CLIENT_ASSERTION_TYPE)
+            .map(String::valueOf).orElse(StringUtils.EMPTY);
+        val assertion = requestParameterResolver.resolveRequestParameter(context, OAuth20Constants.CLIENT_ASSERTION)
+            .map(String::valueOf).orElse(StringUtils.EMPTY);
+        if (!OAuth20Constants.CLIENT_ASSERTION_TYPE_JWT_BEARER.equals(assertionType) || StringUtils.isBlank(assertion)) {
+            return Optional.empty();
+        }
+        try {
+            val claims = JWTParser.parse(assertion).getJWTClaimsSet();
+            return Optional.ofNullable(claims)
+                .map(JWTClaimsSet::getSubject)
+                .filter(StringUtils::isNotBlank)
+                .filter(subject -> subject.equals(claims.getIssuer()));
+        } catch (final Exception e) {
+            LOGGER.debug("Unable to read the client assertion to determine the client: [{}]", e.getMessage());
+            return Optional.empty();
+        }
     }
 
     /*
