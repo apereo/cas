@@ -201,6 +201,56 @@ class GroovyShellScriptTests {
         }
 
         @Test
+        void verifyExecutionIsNotBlockedBySlowExecution() throws Exception {
+            val scriptFactory = ExecutableCompiledScriptFactory.getExecutableCompiledScriptFactory();
+            val script = """
+                def latches = binding.variables['latches']
+                if (latches) {
+                    latches[1].countDown()
+                    latches[0].await(30, java.util.concurrent.TimeUnit.SECONDS)
+                }
+                return 'done'
+                """;
+            try (val shellScript = scriptFactory.fromScript(script.stripIndent());
+                 val executor = Executors.newVirtualThreadPerTaskExecutor()) {
+                val release = new CountDownLatch(1);
+                val started = new CountDownLatch(1);
+                val holder = executor.submit(() -> {
+                    shellScript.setBinding(CollectionUtils.wrap("latches", List.of(release, started)));
+                    return shellScript.execute(ArrayUtils.EMPTY_OBJECT_ARRAY, String.class, true);
+                });
+                assertTrue(started.await(30, TimeUnit.SECONDS));
+                val concurrent = executor.submit(() -> shellScript.execute(ArrayUtils.EMPTY_OBJECT_ARRAY, String.class, true));
+                assertEquals("done", concurrent.get(30, TimeUnit.SECONDS));
+                assertFalse(holder.isDone());
+                release.countDown();
+                assertEquals("done", holder.get(30, TimeUnit.SECONDS));
+            }
+        }
+
+        @Test
+        void verifyStatefulScriptKeepsItsState() throws Exception {
+            val scriptFactory = ExecutableCompiledScriptFactory.getExecutableCompiledScriptFactory();
+            val script = """
+                import groovy.transform.Field
+                @Field int count = 0
+                count++
+                return count
+                """;
+            try (val shellScript = scriptFactory.fromScript(script.stripIndent());
+                 val executor = Executors.newVirtualThreadPerTaskExecutor()) {
+                val results = IntStream.range(0, 64)
+                    .mapToObj(_ -> executor.submit(() -> shellScript.execute(ArrayUtils.EMPTY_OBJECT_ARRAY, Integer.class, true)))
+                    .toList();
+                val observed = new HashSet<Integer>();
+                for (val result : results) {
+                    observed.add(result.get(60, TimeUnit.SECONDS));
+                }
+                assertEquals(IntStream.rangeClosed(1, 64).boxed().collect(Collectors.toSet()), observed);
+            }
+        }
+
+        @Test
         void verifyBindingDoesNotCarryOverBetweenAttemptsOnPooledThreads() throws Exception {
             val scriptFactory = ExecutableCompiledScriptFactory.getExecutableCompiledScriptFactory();
             try (val shellScript = scriptFactory.fromScript(SCRIPT)) {

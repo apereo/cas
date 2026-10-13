@@ -1,6 +1,7 @@
 package org.apereo.cas.util.scripting;
 
 import module java.base;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.concurrent.CasReentrantLock;
 import org.apereo.cas.util.function.FunctionUtils;
@@ -11,6 +12,7 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.jspecify.annotations.Nullable;
 import org.springframework.core.io.Resource;
 
@@ -33,7 +35,7 @@ public class WatchableGroovyScriptResource implements ExecutableCompiledScript {
     private FileWatcherService watcherService;
 
     @Nullable
-    private GroovyObject compiledScript;
+    private volatile CompiledGroovyScript<GroovyObject> compiledScript;
 
     @Setter
     private boolean failOnError = true;
@@ -74,16 +76,7 @@ public class WatchableGroovyScriptResource implements ExecutableCompiledScript {
 
     @Override
     public <T> @Nullable T execute(final Object[] args, final Class<T> clazz, final boolean failOnError) {
-        return lock.executeAndThrow(() -> {
-            try {
-                LOGGER.trace("Beginning to execute script [{}]", this);
-                return compiledScript != null
-                    ? ScriptingUtils.executeGroovyScript(this.compiledScript, args, clazz, failOnError)
-                    : null;
-            } finally {
-                LOGGER.trace("Completed script execution [{}]", this);
-            }
-        });
+        return execute("run", clazz, failOnError, args);
     }
 
     /**
@@ -98,16 +91,21 @@ public class WatchableGroovyScriptResource implements ExecutableCompiledScript {
      */
     public <T> @Nullable T execute(final String methodName, final Class<T> clazz, final boolean failOnError,
                                    final Object... args) {
-        return lock.executeAndThrow(() -> {
-            try {
-                LOGGER.trace("Beginning to execute script [{}]", this);
-                return compiledScript != null
-                    ? ScriptingUtils.executeGroovyScript(compiledScript, methodName, args, clazz, failOnError)
-                    : null;
-            } finally {
-                LOGGER.trace("Completed script execution [{}]", this);
-            }
-        });
+        val compiled = compiledScript;
+        if (compiled == null) {
+            return null;
+        }
+        val sharedInstance = compiled.sharedInstance();
+        if (sharedInstance != null) {
+            return lock.executeAndThrow(() -> executeScript(sharedInstance, methodName, clazz, failOnError, args));
+        }
+        try {
+            val groovyObject = compiled.newInstance(failOnError);
+            return groovyObject != null ? executeScript(groovyObject, methodName, clazz, failOnError, args) : null;
+        } catch (final Throwable e) {
+            LoggingUtils.error(LOGGER, e);
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
@@ -124,7 +122,19 @@ public class WatchableGroovyScriptResource implements ExecutableCompiledScript {
         }
     }
 
+    private <T> @Nullable T executeScript(final GroovyObject groovyObject, final String methodName,
+                                          final Class<T> clazz, final boolean failOnError,
+                                          final Object... args)
+            throws Throwable {
+        try {
+            LOGGER.trace("Beginning to execute script [{}]", this);
+            return ScriptingUtils.executeGroovyScript(groovyObject, methodName, args, clazz, failOnError);
+        } finally {
+            LOGGER.trace("Completed script execution [{}]", this);
+        }
+    }
+
     private void compileScriptResource(final Resource script) {
-        this.compiledScript = ScriptingUtils.parseGroovyScript(script, failOnError);
+        this.compiledScript = ScriptingUtils.compileGroovyScript(script, failOnError);
     }
 }

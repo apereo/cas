@@ -92,7 +92,7 @@ public interface ExecutableCompiledScript extends AutoCloseable {
      *
      * @return the compiled script
      */
-    Object getCompiledScript();
+    @Nullable Object getCompiledScript();
 
     /**
      * Gets resource.

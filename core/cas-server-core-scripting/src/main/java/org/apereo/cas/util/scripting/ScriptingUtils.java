@@ -293,6 +293,20 @@ public class ScriptingUtils {
     }
 
     /**
+     * Compile groovy shell script and determine whether its executions can run in parallel.
+     *
+     * @param script the script
+     * @return the compiled script
+     */
+    public static CompiledGroovyScript<Script> compileGroovyShellScript(final String script) {
+        val shell = new GroovyShell(createCompilerConfiguration());
+        LOGGER.debug("Parsing groovy script [{}]", script);
+        val prototype = shell.parse(script);
+        return CompiledGroovyScript.of(prototype.getClass(),
+            shell.getClassLoader().getLoadedClasses(), prototype);
+    }
+
+    /**
      * Parse groovy script groovy object.
      *
      * @param groovyScript the groovy script
@@ -306,6 +320,33 @@ public class ScriptingUtils {
             if (groovyClass != null) {
                 LOGGER.trace("Creating groovy object instance from class [{}]", groovyScript.getURI().getPath());
                 return (GroovyObject) groovyClass.getDeclaredConstructor().newInstance();
+            }
+            LOGGER.warn("Groovy script at [{}] does not exist", groovyScript.getURI().getPath());
+        } catch (final Exception e) {
+            if (failOnError) {
+                throw new RuntimeException(e);
+            }
+            LoggingUtils.error(LOGGER, e);
+        }
+        return null;
+    }
+
+    /**
+     * Compile the groovy script and determine whether its executions can run in parallel.
+     *
+     * @param groovyScript the groovy script
+     * @param failOnError  the fail on error
+     * @return the compiled script
+     */
+    public static @Nullable CompiledGroovyScript<GroovyObject> compileGroovyScript(final Resource groovyScript,
+                                                                                   final boolean failOnError) {
+        try (val loader = newGroovyClassLoader()) {
+            val groovyClass = loadGroovyClass(groovyScript, loader);
+            if (groovyClass != null) {
+                LOGGER.trace("Compiling groovy script [{}]", groovyScript.getURI().getPath());
+                val type = ((Class<?>) groovyClass).asSubclass(GroovyObject.class);
+                val prototype = type.getDeclaredConstructor().newInstance();
+                return CompiledGroovyScript.of(type, loader.getLoadedClasses(), prototype);
             }
             LOGGER.warn("Groovy script at [{}] does not exist", groovyScript.getURI().getPath());
         } catch (final Exception e) {

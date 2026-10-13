@@ -14,6 +14,7 @@ import lombok.ToString;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.codehaus.groovy.runtime.InvokerHelper;
 import org.jspecify.annotations.Nullable;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
@@ -37,10 +38,10 @@ public class GroovyShellScript implements ExecutableCompiledScript {
     private final long instanceId = INSTANCE_COUNTER.incrementAndGet();
 
     private final CasReentrantLock lock = new CasReentrantLock();
-    private final String script;
 
-    @Nullable
-    private Script compiledScript;
+    private final AtomicReference<@Nullable CompiledGroovyScript<Script>> compiledScript = new AtomicReference<>();
+
+    private final String script;
 
     /**
      * Unlike {@link WatchableGroovyScriptResource}, this defaults to {@code false} because that is the
@@ -65,34 +66,27 @@ public class GroovyShellScript implements ExecutableCompiledScript {
     @Override
     public <T> @Nullable T execute(final Object[] args, final Class<T> clazz, final boolean failOnError) {
         val binding = consumeBinding();
-        return lock.execute(() -> {
-            try {
-                LOGGER.trace("Beginning to execute script [{}]", this);
-                if (compiledScript == null) {
-                    compiledScript = ScriptingUtils.parseGroovyShellScript(binding, script);
-                }
-                val currentScript = Objects.requireNonNull(compiledScript);
-                if (binding != null && !binding.isEmpty()) {
-                    LOGGER.trace("Setting binding [{}]", binding);
-                    currentScript.setBinding(new Binding(binding));
-                }
-                LOGGER.trace("Current binding [{}]", currentScript.getBinding());
-                val result = ScriptingUtils.executeGroovyShellScript(currentScript, clazz, failOnError);
-                LOGGER.debug("Groovy script [{}] returns result [{}]", this, result);
-                return result;
-            } catch (final GroovyRuntimeException e) {
-                if (failOnError) {
-                    throw e;
-                }
-                LoggingUtils.error(LOGGER, e);
-                return null;
-            } finally {
-                if (compiledScript != null) {
-                    compiledScript.setBinding(new Binding());
-                }
-                LOGGER.trace("Completed script execution [{}]", this);
+        try {
+            val compiled = getOrCompileScript();
+            val sharedInstance = compiled.sharedInstance();
+            if (sharedInstance != null) {
+                return lock.execute(() -> {
+                    try {
+                        return executeScript(sharedInstance, binding, clazz, failOnError);
+                    } finally {
+                        sharedInstance.setBinding(new Binding());
+                    }
+                });
             }
-        });
+            val currentScript = InvokerHelper.createScript(compiled.type(), new Binding());
+            return executeScript(currentScript, binding, clazz, failOnError);
+        } catch (final GroovyRuntimeException e) {
+            if (failOnError) {
+                throw e;
+            }
+            LoggingUtils.error(LOGGER, e);
+            return null;
+        }
     }
 
     @Override
@@ -124,6 +118,34 @@ public class GroovyShellScript implements ExecutableCompiledScript {
         val assigned = BINDING_THREAD_LOCAL.get();
         BINDING_THREAD_LOCAL.remove();
         return assigned != null && assigned.owner() == instanceId ? assigned.variables() : null;
+    }
+
+    private <T> @Nullable T executeScript(final Script currentScript, @Nullable final Map<String, Object> binding,
+                                          final Class<T> clazz, final boolean failOnError) {
+        try {
+            LOGGER.trace("Beginning to execute script [{}]", this);
+            currentScript.setBinding(new Binding(binding != null ? new HashMap<>(binding) : new HashMap<>()));
+            val result = ScriptingUtils.executeGroovyShellScript(currentScript, clazz, failOnError);
+            LOGGER.debug("Groovy script [{}] returns result [{}]", this, result);
+            return result;
+        } finally {
+            LOGGER.trace("Completed script execution [{}]", this);
+        }
+    }
+
+    private CompiledGroovyScript<Script> getOrCompileScript() {
+        val existing = compiledScript.get();
+        if (existing != null) {
+            return existing;
+        }
+        val compiled = ScriptingUtils.compileGroovyShellScript(script);
+        val witness = compiledScript.compareAndExchange(null, compiled);
+        return witness != null ? witness : compiled;
+    }
+
+    @Override
+    public @Nullable CompiledGroovyScript<Script> getCompiledScript() {
+        return compiledScript.get();
     }
 
     private record ScriptBinding(long owner, Map<String, Object> variables) {

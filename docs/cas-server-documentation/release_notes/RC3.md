@@ -459,6 +459,10 @@ authentication. See the [stateless ticket registry documentation](../ticketing/S
 ## Other Stuff
 
 - {: .changed data-area="project"} A large number of dependencies and libraries have been updated to their latest versions.
+- {: .changed} [Groovy scripts](../integration/Apache-Groovy-Scripting.html), whether inline or in a file, that keep no state between
+  executions no longer run one request at a time: each execution gets its own instance of the compiled script, so concurrent
+  requests through the same script run in parallel. Scripts that declare fields other than `final` ones holding plain values,
+  such as counters or caches, still run one execution at a time so that their state stays consistent.
 - {: .changed} When the background reload is enabled, a request for an application that matches no cached service definition no longer
   reads the whole service registry; definitions added outside CAS, for example by another node, are recognized at the
   next scheduled reload. Changes picked up by the [JSON](../services/JSON-Service-Management.html) and
