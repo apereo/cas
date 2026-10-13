@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
+import org.pac4j.core.context.CallContext;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.core.profile.ProfileManager;
@@ -26,9 +27,13 @@ public class OAuth20ClientIdAwareProfileManager extends ProfileManager {
 
     private static final String SESSION_CLIENT_ID = "oauthClientId";
 
+    private static final String REQUEST_ATTRIBUTE_CLIENT_ID = OAuth20ClientIdAwareProfileManager.class.getName() + ".clientId";
+
     private final ServicesManager servicesManager;
 
     private final OAuth20RequestParameterResolver requestParameterResolver;
+
+    private final CallContext callContext;
 
     public OAuth20ClientIdAwareProfileManager(final WebContext context,
                                               final SessionStore sessionStore,
@@ -37,6 +42,7 @@ public class OAuth20ClientIdAwareProfileManager extends ProfileManager {
         super(context, sessionStore);
         this.servicesManager = servicesManager;
         this.requestParameterResolver = requestParameterResolver;
+        this.callContext = new CallContext(context, sessionStore);
     }
 
     @Override
@@ -71,16 +77,39 @@ public class OAuth20ClientIdAwareProfileManager extends ProfileManager {
         super.save(saveInSession, profile, multiProfile);
     }
 
+    /*
+     * A client that authenticates with HTTP Basic, as a confidential client usually does at the token endpoint,
+     * sends no client_id parameter; its credentials name it. Only otherwise is the client looked up by matching the
+     * redirect URI against every OAuth application.
+     */
     private String getClientIdFromRequest() {
-        var clientId = requestParameterResolver.resolveRequestParameter(context, OAuth20Constants.CLIENT_ID)
+        val clientId = requestParameterResolver.resolveRequestParameter(context, OAuth20Constants.CLIENT_ID)
             .map(String::valueOf).orElse(StringUtils.EMPTY);
-        if (StringUtils.isBlank(clientId)) {
-            val redirectUri = requestParameterResolver.resolveRequestParameter(context, OAuth20Constants.REDIRECT_URI)
-                .map(String::valueOf).orElse(StringUtils.EMPTY);
-            OAuth20Utils.validateRedirectUri(redirectUri, true);
-            val svc = OAuth20Utils.getRegisteredOAuthServiceByRedirectUri(this.servicesManager, redirectUri);
-            clientId = svc != null ? svc.getClientId() : StringUtils.EMPTY;
+        if (StringUtils.isNotBlank(clientId)) {
+            return clientId;
         }
+        val redirectUri = requestParameterResolver.resolveRequestParameter(context, OAuth20Constants.REDIRECT_URI)
+            .map(String::valueOf).orElse(StringUtils.EMPTY);
+        OAuth20Utils.validateRedirectUri(redirectUri, true);
+        val authenticatedClientId = requestParameterResolver.resolveClientIdAndClientSecret(callContext).getLeft();
+        if (StringUtils.isNotBlank(authenticatedClientId)) {
+            return authenticatedClientId;
+        }
+        return getClientIdByRedirectUri(redirectUri);
+    }
+
+    /*
+     * Profiles are read several times per request, so the lookup is kept for the request, keyed by the redirect URI.
+     */
+    private String getClientIdByRedirectUri(final String redirectUri) {
+        val attributeName = REQUEST_ATTRIBUTE_CLIENT_ID + ':' + redirectUri;
+        val resolvedClientId = context.getRequestAttribute(attributeName);
+        if (resolvedClientId.isPresent()) {
+            return resolvedClientId.get().toString();
+        }
+        val svc = OAuth20Utils.getRegisteredOAuthServiceByRedirectUri(this.servicesManager, redirectUri);
+        val clientId = svc != null ? svc.getClientId() : StringUtils.EMPTY;
+        context.setRequestAttribute(attributeName, clientId);
         return clientId;
     }
 }

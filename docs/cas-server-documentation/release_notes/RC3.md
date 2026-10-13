@@ -641,6 +641,11 @@ authentication. See the [stateless ticket registry documentation](../ticketing/S
 - {: .changed data-area="oidc"} OAuth and OpenID Connect client authentication at the token endpoint no longer builds a
   throw-away access token to decide which claims to release, and the authorization code or refresh token in the request is
   read from the ticket registry once per request instead of once by every authenticator and validator that inspects it.
+- {: .changed data-area="oidc"} When a request to an [OAuth](../authentication/OAuth-Authentication.html) endpoint carries
+  no `client_id` parameter, as when a client authenticates at the token endpoint with HTTP Basic, CAS now takes the client
+  from those credentials instead of matching the redirect URI against every OAuth application each time the
+  authenticated profile is read. Where the redirect URI still has to be matched, that happens once per request. Clients
+  whose redirect URI patterns overlap are no longer mistaken for one another in this case.
 - {: .changed data-area="oidc"} A request object passed with the `request` parameter is now unpacked and verified once per
   request instead of once for every authorization parameter read from it.
 - {: .fixed data-area="oidc"} Changes to an [OpenID Connect keystore](../authentication/OIDC-Authentication-JWKS.html) file
