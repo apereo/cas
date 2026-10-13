@@ -37,14 +37,7 @@ public class DefaultRedisTicketRegistryMessagePublisher implements RedisTicketRe
 
     @Override
     public void delete(final Ticket ticket) {
-        if (ticket != null) {
-            val generator = redisKeyGeneratorFactory.getRedisKeyGenerator(ticket.getPrefix()).orElseThrow();
-            val redisKey = generator.forPrefixAndId(ticket.getPrefix(), ticket.getId());
-            val cacheKey = ticketRegistry.digestIdentifier(ticket.getId());
-            val payload = getRedisMessagePayload(RedisMessagePayload.RedisMessageTypes.DELETE)
-                .withTicket(ticket).withRedisKey(redisKey).withCacheKey(cacheKey);
-            sendPayload(payload);
-        }
+        invalidate(ticket);
     }
 
     @Override
@@ -61,23 +54,25 @@ public class DefaultRedisTicketRegistryMessagePublisher implements RedisTicketRe
 
     @Override
     public void add(final Ticket ticket) {
-        if (ticket != null) {
-            val generator = redisKeyGeneratorFactory.getRedisKeyGenerator(ticket.getPrefix()).orElseThrow();
-            val redisKey = generator.forPrefixAndId(ticket.getPrefix(), ticket.getId());
-            val cacheKey = ticketRegistry.digestIdentifier(ticket.getId());
-            val payload = getRedisMessagePayload(RedisMessagePayload.RedisMessageTypes.ADD).withTicket(ticket)
-                .withRedisKey(redisKey).withCacheKey(cacheKey);
-            sendPayload(payload);
-        }
+        invalidate(ticket);
     }
 
     @Override
     public void update(final Ticket ticket) {
+        invalidate(ticket);
+    }
+
+    /*
+     * Other nodes only drop their copy and read the ticket from Redis when they next need it. The ticket itself is
+     * never sent: it would reach every node on every change, and unencrypted even when tickets are encrypted in Redis.
+     * The message is a delete, which nodes running an older version also handle by dropping their copy.
+     */
+    private void invalidate(final Ticket ticket) {
         if (ticket != null) {
             val generator = redisKeyGeneratorFactory.getRedisKeyGenerator(ticket.getPrefix()).orElseThrow();
             val redisKey = generator.forPrefixAndId(ticket.getPrefix(), ticket.getId());
             val cacheKey = ticketRegistry.digestIdentifier(ticket.getId());
-            val payload = getRedisMessagePayload(RedisMessagePayload.RedisMessageTypes.UPDATE).withTicket(ticket)
+            val payload = getRedisMessagePayload(RedisMessagePayload.RedisMessageTypes.DELETE)
                 .withRedisKey(redisKey).withCacheKey(cacheKey);
             sendPayload(payload);
         }

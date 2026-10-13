@@ -8,6 +8,7 @@ import org.apereo.cas.monitor.Monitorable;
 import org.apereo.cas.redis.core.CasRedisTemplate;
 import org.apereo.cas.redis.core.RedisModulesOperations;
 import org.apereo.cas.ticket.AuthenticationAwareTicket;
+import org.apereo.cas.ticket.EncodedTicket;
 import org.apereo.cas.ticket.IdleExpirationPolicy;
 import org.apereo.cas.ticket.ServiceAwareTicket;
 import org.apereo.cas.ticket.ServiceTicket;
@@ -637,35 +638,38 @@ public class RedisTicketRegistry extends AbstractTicketRegistry implements Clean
     protected @Nullable Ticket getTicketFromRedis(final Predicate<Ticket> predicate, final String redisKeyPattern,
                                                   final RedisKeyGenerator redisKeyGenerator) {
         val rawTicketId = redisKeyGenerator.rawKey(redisKeyPattern);
-        val cachedTicket = ticketCache.stream()
-            .map(cache -> cache.getIfPresent(rawTicketId))
-            .filter(Objects::nonNull)
-            .findFirst();
-
-        val ticket = cachedTicket
-            .map(this::decodeTicket)
-            .filter(predicate)
-            .orElseGet(() -> Stream.of(redisKeyPattern)
-                .map(key -> {
-                    val keyspace = redisKeyGenerator.getKeyspace();
-                    return redisKeyValueAdapter.get(rawTicketId, keyspace, RedisTicketDocument.class);
-                })
-                .filter(Objects::nonNull)
-                .map(this::deserializeTicket)
-                .map(this::decodeTicket)
-                .filter(predicate)
-                .findFirst()
-                .orElseGet(() -> handleMissingTicket(rawTicketId, redisKeyPattern)));
+        val cache = ticketCache.getIfAvailable();
+        final Ticket loadedTicket = cache != null
+            ? cache.get(rawTicketId, _ -> readTicketFromRedis(rawTicketId, redisKeyPattern, redisKeyGenerator))
+            : readTicketFromRedis(rawTicketId, redisKeyPattern, redisKeyGenerator);
+        final Ticket ticket = loadedTicket instanceof final EncodedTicket encodedTicket && !isCipherExecutorEnabled()
+            ? decodeTicket(encodedTicket)
+            : loadedTicket;
 
         if (ticket != null && predicate.test(ticket) && !ticket.isExpired()) {
-            ticketCache.ifAvailable(cache -> cache.put(rawTicketId, ticket));
             return ticket;
         }
-        ticketCache.ifAvailable(cache -> cache.invalidate(rawTicketId));
+        ticketCache.ifAvailable(c -> c.invalidate(rawTicketId));
         if (ticket != null) {
             messagePublisher.ifAvailable(publisher -> publisher.delete(ticket));
         }
         return null;
+    }
+
+    /*
+     * Runs as the cache's own loader, so a change announced by another node while the read is in flight removes
+     * the copy once the read completes instead of being overtaken by it. A ticket that cannot be decoded is
+     * removed by decodeTicket, which must not happen while the loader holds its cache entry, so it is returned as is.
+     */
+    private @Nullable Ticket readTicketFromRedis(final String rawTicketId, final String redisKeyPattern,
+                                                 final RedisKeyGenerator redisKeyGenerator) {
+        val keyspace = redisKeyGenerator.getKeyspace();
+        val document = redisKeyValueAdapter.get(rawTicketId, keyspace, RedisTicketDocument.class);
+        if (document == null) {
+            return handleMissingTicket(rawTicketId, redisKeyPattern);
+        }
+        val ticket = deserializeTicket(document);
+        return ticket instanceof EncodedTicket && !isCipherExecutorEnabled() ? ticket : decodeTicket(ticket);
     }
 
     protected Ticket handleMissingTicket(final String rawTicketId, final String redisKey) {

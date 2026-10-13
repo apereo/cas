@@ -729,6 +729,12 @@ authentication. See the [stateless ticket registry documentation](../ticketing/S
   connection pooling enabled, every call used to keep a pooled connection until the pool ran out.
 - {: .fixed} The [Redis ticket registry](../ticketing/Redis-Ticket-Registry.html) query for ticket ids and loading all
   [YubiKey](../mfa/YubiKey-Authentication.html) devices from Redis also return their connection when done.
+- {: .fixed data-area="tickets"} The in-memory cache of the [Redis ticket registry](../ticketing/Redis-Ticket-Registry.html)
+  no longer keeps tickets that have changed or been removed on another CAS node. A cached ticket used to stay cached for as
+  long as it was read, so a session ended on one node could stay valid on another and could even be written back to Redis.
+  Tickets are now kept for at most 30 seconds, a ticket read while another node announces a change to it is not kept, and
+  changes are announced to other nodes without the ticket itself, which used to be sent unencrypted to every node on every
+  change even with ticket encryption enabled. Nodes still on an earlier version handle the new notifications correctly.
 - {: .fixed} WebAuthn falls back to the cached [FIDO metadata BLOB](../mfa/FIDO2-WebAuthn-Authentication-Attestation.html) when
   downloading a fresh one fails at startup, for example when the FIDO metadata service rate-limits the request, instead of failing to start.
 - {: .changed data-area="project"} The project [README](https://github.com/apereo/cas) is reworked as a landing page, with a one-minute Docker try-out,
