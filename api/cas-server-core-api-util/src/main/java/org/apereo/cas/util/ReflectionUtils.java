@@ -2,12 +2,12 @@ package org.apereo.cas.util;
 
 import module java.base;
 import io.github.classgraph.ClassGraph;
-import io.github.classgraph.ClassInfo;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.ClassUtils;
 import java.lang.annotation.Annotation;
+import static org.springframework.util.ClassUtils.resolveClassName;
 
 /**
  * Reflection Utilities based on {@link ClassGraph}.
@@ -18,6 +18,8 @@ import java.lang.annotation.Annotation;
 @UtilityClass
 @Slf4j
 public class ReflectionUtils {
+
+    private static final ClassLoader[] EMPTY_CLASSLOADERS = new ClassLoader[0];
 
     /**
      * Finds all {@link Class classes} extending or implementing the given superclass below the given package.
@@ -33,14 +35,18 @@ public class ReflectionUtils {
             .enableClassInfo()
             .enableInterClassDependencies()
             .ignoreClassVisibility()
-            .enableSystemJarsAndModules()
-            .removeTemporaryFilesAfterScan()
+            .enableClasspath()
+            .enableSystemJars()
             .enableAnnotationInfo()
-            .disableModuleScanning()
             .scan()) {
-            return superclass.isInterface()
-                ? new ArrayList<>(scanResult.getClassesImplementing(superclass).loadClasses(superclass))
-                : new ArrayList<>(scanResult.getSubclasses(superclass).loadClasses(superclass));
+            val candidates = superclass.isInterface()
+                ? scanResult.getAllClassesImplementing(superclass)
+                : scanResult.getAllSubclasses(superclass);
+            return candidates
+                .stream()
+                .map(info -> resolveClassName(info.getName(), Thread.currentThread().getContextClassLoader()))
+                .map(clazz -> clazz.asSubclass(superclass))
+                .collect(Collectors.toCollection(ArrayList::new));
         }
     }
 
@@ -59,12 +65,15 @@ public class ReflectionUtils {
 
         var classGraph = new ClassGraph()
             .acceptPackages(packageName)
+            .enableClassInfo()
             .enableAnnotationInfo()
-            .ignoreClassVisibility()
-            .disableModuleScanning();
-        if (!classLoaders.isEmpty()) {
-            classGraph = classGraph.overrideClassLoaders(classLoaders.toArray(new ClassLoader[0]));
+            .ignoreClassVisibility();
+        if (classLoaders.isEmpty()) {
+            classGraph.enableClasspath();
+        } else {
+            classGraph.enableClassLoaders(classLoaders.toArray(EMPTY_CLASSLOADERS));
         }
+
         try (val scanResult = classGraph.scan()) {
             return annotations
                 .stream()
@@ -106,14 +115,15 @@ public class ReflectionUtils {
         try (val scanResult = new ClassGraph()
             .acceptPackages(packageName)
             .enableClassInfo()
-            .disableModuleScanning()
+            .enableClasspath()
             .scan()) {
 
-            return scanResult.getAllClasses()
+            return scanResult
+                .getAllClasses()
                 .stream()
                 .filter(classInfo -> classInfo.getSimpleName().equalsIgnoreCase(simpleName))
                 .findFirst()
-                .map(ClassInfo::loadClass);
+                .map(info -> resolveClassName(info.getName(), Thread.currentThread().getContextClassLoader()));
         }
     }
 }

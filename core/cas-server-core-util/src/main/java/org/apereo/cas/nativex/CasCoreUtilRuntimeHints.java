@@ -175,8 +175,8 @@ public class CasCoreUtilRuntimeHints implements CasRuntimeHintsRegistrar {
         registerCaffeineHints(hints);
         
         FunctionUtils.doAndHandle(_ -> {
-            val clazz = ClassUtils.getClass("nonapi.io.github.classgraph.classloaderhandler.ClassLoaderHandler", false);
-            registerReflectionHints(hints, findSubclassesInPackage(clazz, "nonapi.io.github.classgraph.classloaderhandler"));
+            val clazz = ClassUtils.getClass("io.github.classgraph.classpath.ClassLoaderHandler", false);
+            registerReflectionHints(hints, findSubclassesInPackage(clazz, "io.github.classgraph.classpath.internal.classloaderhandler"));
         });
     }
     
