@@ -6,10 +6,13 @@ import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
+import org.apereo.cas.support.oauth.OAuth20ClientAuthenticationMethods;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.authenticator.OAuth20AuthenticationClientProvider;
+import org.apereo.cas.support.oauth.services.OAuthRegisteredServiceClientSecret;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.EncodingUtils;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -105,6 +108,29 @@ class OidcJwtAuthenticatorHMacTests extends AbstractOidcTests {
         val replayContext = new JEEContext(replayRequest, new MockHttpServletResponse());
         auth.validate(new CallContext(replayContext, new JEESessionStore()), replayCredentials);
         assertNull(replayCredentials.getUserProfile());
+    }
+
+    @Test
+    void verifyClientSecretJwtIsVerifiedWithClientSecret() throws Throwable {
+        val auth = getAuthenticator();
+        val request = new MockHttpServletRequest();
+        val context = new JEEContext(request, new MockHttpServletResponse());
+        val registeredService = getOidcRegisteredService(UUID.randomUUID().toString());
+        registeredService.setTokenEndpointAuthenticationMethod(OAuth20ClientAuthenticationMethods.CLIENT_SECRET_JWT.getType());
+        val clientSecret = EncodingUtils.generateJsonWebKey(512);
+        registeredService.setClientSecrets(CollectionUtils.wrapList(OAuthRegisteredServiceClientSecret.withoutExpiration(clientSecret)));
+        servicesManager.save(registeredService);
+
+        val audience = casProperties.getServer().getPrefix().concat('/'
+            + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.ACCESS_TOKEN_URL);
+        val claims = getClaims(registeredService.getClientId(), registeredService.getClientId(),
+            registeredService.getClientId(), audience);
+        val jwt = EncodingUtils.signJwsHMACSha512(new AesKey(clientSecret.getBytes(StandardCharsets.UTF_8)),
+            claims.toJson().getBytes(StandardCharsets.UTF_8), Map.of());
+        val credentials = getCredentials(request, OAuth20Constants.CLIENT_ASSERTION_TYPE_JWT_BEARER,
+            new String(jwt, StandardCharsets.UTF_8), registeredService.getClientId());
+        auth.validate(new CallContext(context, new JEESessionStore()), credentials);
+        assertNotNull(credentials.getUserProfile());
     }
 
     @Test
