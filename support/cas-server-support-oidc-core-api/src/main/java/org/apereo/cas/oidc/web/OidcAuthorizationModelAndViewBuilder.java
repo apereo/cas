@@ -9,7 +9,6 @@ import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.web.response.callback.DefaultOAuth20AuthorizationModelAndViewBuilder;
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20ResponseModeFactory;
 import lombok.val;
-import org.apache.hc.core5.net.URIBuilder;
 
 /**
  * This is {@link OidcAuthorizationModelAndViewBuilder}.
@@ -38,12 +37,12 @@ public class OidcAuthorizationModelAndViewBuilder extends DefaultOAuth20Authoriz
             throws Exception {
         val discovery = casProperties.getAuthn().getOidc().getDiscovery();
         if (registeredService instanceof final OidcRegisteredService oidcService && discovery.isAuthorizationResponseIssuerParameterSupported()) {
-            val issuer = issuerService.determineIssuer(Optional.of(oidcService));
-            parameters.put(OidcConstants.ISS, issuer);
-            return new URIBuilder(redirectUrl)
-                .addParameter(OidcConstants.ISS, issuer)
-                .build()
-                .toString();
+            /*
+             * RFC 9207: iss travels with the other response parameters, so the response mode places it in the query,
+             * fragment, form or response JWT. Adding it to the redirect URL as well sent it twice in query mode and in
+             * the query of a fragment or form_post response.
+             */
+            parameters.put(OidcConstants.ISS, issuerService.determineIssuer(Optional.of(oidcService)));
         }
         return super.prepareRedirectUrl(registeredService, redirectUrl, parameters);
     }

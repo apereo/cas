@@ -97,7 +97,7 @@ public class OidcJwksEndpointController extends BaseOidcController {
             return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
         }
         return FunctionUtils.doAndHandle(() -> {
-            final String body = getPublishedJsonWebKeySet(kid, state);
+            val body = getPublishedJsonWebKeySet(kid, state);
             response.setContentType(MediaType.APPLICATION_JSON_VALUE);
             return new ResponseEntity<>(body, HttpStatus.OK);
         }, e -> {

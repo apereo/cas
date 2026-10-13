@@ -103,10 +103,14 @@ public class OAuth20TokenAuthorizationResponseBuilder<T extends OAuth20Configura
         if (includeAccessTokenInResponse(tokenRequestContext) && accessToken.getExpiresIn() > 0) {
             val cipher = OAuth20JwtAccessTokenEncoder.toEncodableCipher(configurationContext,
                 tokenRequestContext.getRegisteredService(), accessToken,
-                tokenRequestContext.getService(), false);
+                tokenRequestContext.getService(), determineAccessTokenIssuer(tokenRequestContext), false);
             return cipher.encode(accessToken.getId());
         }
         return null;
+    }
+
+    protected String determineAccessTokenIssuer(final AccessTokenRequestContext tokenRequestContext) {
+        return configurationContext.getCasProperties().getServer().getPrefix();
     }
 
     protected boolean includeAccessTokenInResponse(final AccessTokenRequestContext tokenRequestContext) {

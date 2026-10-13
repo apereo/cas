@@ -8,7 +8,6 @@ import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.response.OAuth20AuthorizationRequest;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestContext;
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20AuthorizationModelAndViewBuilder;
-import org.apereo.cas.support.oauth.web.response.callback.OAuth20TokenAuthorizationResponseBuilder;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.idtoken.IdTokenGenerationContext;
 import lombok.extern.slf4j.Slf4j;
@@ -24,7 +23,7 @@ import org.springframework.web.servlet.ModelAndView;
  * @since 5.2.0
  */
 @Slf4j
-public class OidcImplicitIdTokenAuthorizationResponseBuilder<T extends OidcConfigurationContext> extends OAuth20TokenAuthorizationResponseBuilder<T> {
+public class OidcImplicitIdTokenAuthorizationResponseBuilder<T extends OidcConfigurationContext> extends OidcTokenAuthorizationResponseBuilder<T> {
 
     public OidcImplicitIdTokenAuthorizationResponseBuilder(
         final T configurationContext,

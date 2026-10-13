@@ -645,6 +645,13 @@ authentication. See the [stateless ticket registry documentation](../ticketing/S
 - {: .changed data-area="oidc"} OAuth and OpenID Connect client authentication at the token endpoint no longer builds a
   throw-away access token to decide which claims to release, and the authorization code or refresh token in the request is
   read from the ticket registry once per request instead of once by every authenticator and validator that inspects it.
+- {: .fixed data-area="oidc"} Authorization responses that return their parameters in the URL fragment, such as those of the
+  implicit flow, no longer repeat every query parameter of the client's redirect URI. When CAS includes the issuer in
+  authorization responses (RFC 9207), it now sends it once, with the other response parameters: it used to be sent twice with
+  the `query` response mode, and also added to the query of `fragment` and `form_post` responses.
+- {: .fixed data-area="oidc"} JWT access tokens returned from the OpenID Connect authorization endpoint, with the `token` and
+  `id_token token` response types, now name the OpenID Connect issuer, as the ID token and the token endpoint do. They used
+  to name the CAS server, so resource servers that check the issuer of a JWT access token rejected them.
 - {: .changed data-area="oidc"} When a request to an [OAuth](../authentication/OAuth-Authentication.html) endpoint carries
   no `client_id` parameter, as when a client authenticates at the token endpoint with HTTP Basic, CAS now takes the client
   from those credentials instead of matching the redirect URI against every OAuth application each time the

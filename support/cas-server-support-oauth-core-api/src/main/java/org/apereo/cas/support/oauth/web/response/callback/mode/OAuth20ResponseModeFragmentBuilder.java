@@ -8,7 +8,6 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.hc.core5.net.URIBuilder;
 import org.jspecify.annotations.NonNull;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.servlet.ModelAndView;
@@ -36,21 +35,27 @@ public class OAuth20ResponseModeFragmentBuilder implements OAuth20ResponseModeBu
                               final Map<String, String> parameters)
             throws Exception {
 
-        val urlBuilder = new URIBuilder(redirectUrl);
-        val currentParams = urlBuilder.getQueryParams();
-        urlBuilder.removeQuery();
-        currentParams.removeIf(p -> parameters.containsKey(p.getName()));
         val fragment = parameters.entrySet()
             .stream()
             .map(entry -> entry.getKey() + '=' + entry.getValue())
             .collect(Collectors.joining("&"));
 
-        val queryParams = new LinkedMultiValueMap<String, @NonNull String>(currentParams.size());
-        currentParams.forEach(param -> queryParams.put(param.getName(), List.of(param.getValue())));
-        
-        val resultUrl = UriComponentsBuilder.fromUriString(redirectUrl)
+        /*
+         * The redirect URI keeps its own query, minus any parameter the response carries in the fragment. The query is
+         * replaced rather than added to, which used to repeat every parameter of the redirect URI, and its values are
+         * kept as they were encoded in the redirect URI.
+         */
+        val urlBuilder = UriComponentsBuilder.fromUriString(redirectUrl);
+        val queryParams = new LinkedMultiValueMap<String, @NonNull String>();
+        urlBuilder.build().getQueryParams().forEach((name, values) -> {
+            if (!parameters.containsKey(name)) {
+                queryParams.put(name, values);
+            }
+        });
+
+        val resultUrl = urlBuilder
+            .replaceQueryParams(queryParams)
             .fragment(fragment)
-            .queryParams(queryParams)
             .build()
             .toUriString();
         

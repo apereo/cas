@@ -13,6 +13,7 @@ import org.apereo.cas.support.oauth.authenticator.Authenticators;
 import org.apereo.cas.support.oauth.web.response.OAuth20AuthorizationRequest;
 import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20TokenHashGenerator;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestContext;
+import com.nimbusds.jwt.JWTParser;
 import lombok.val;
 import org.apache.hc.core5.net.URIBuilder;
 import org.jose4j.jws.AlgorithmIdentifiers;
@@ -119,5 +120,6 @@ class OidcImplicitIdTokenAndTokenAuthorizationResponseBuilderTests extends Abstr
             .build()
             .generate();
         assertEquals(expectedHash, claims.getClaimValue(OidcConstants.CLAIM_AT_HASH, String.class));
+        assertEquals(claims.getIssuer(), JWTParser.parse(accessToken).getJWTClaimsSet().getIssuer());
     }
 }

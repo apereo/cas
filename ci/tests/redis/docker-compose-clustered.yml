@@ -1,10 +1,23 @@
+# Each primary and replica has its own memory budget; see README.md.
+x-redis-server: &redis-server
+  volumes:
+    - ./redis.conf:/usr/local/etc/redis/redis.conf:ro
+  ulimits:
+    nofile:
+      soft: 65536
+      hard: 65536
+
 services:
   redis-1:
+    <<: *redis-server
     image: redis:8.10.2
     container_name: redis-1
     hostname: redis-1
     command:
       - redis-server
+      - /usr/local/etc/redis/redis.conf
+      - --maxmemory
+      - "${REDIS_CLUSTER_MAXMEMORY:-0}"
       - --port
       - "7001"
       - --cluster-enabled
@@ -21,8 +34,6 @@ services:
       - "17001"
       - --cluster-preferred-endpoint-type
       - hostname
-      - --appendonly
-      - "no"
       - --protected-mode
       - "no"
     ports:
@@ -32,11 +43,15 @@ services:
       - redis-cluster
 
   redis-2:
+    <<: *redis-server
     image: redis:8.10.2
     container_name: redis-2
     hostname: redis-2
     command:
       - redis-server
+      - /usr/local/etc/redis/redis.conf
+      - --maxmemory
+      - "${REDIS_CLUSTER_MAXMEMORY:-0}"
       - --port
       - "7002"
       - --cluster-enabled
@@ -53,8 +68,6 @@ services:
       - "17002"
       - --cluster-preferred-endpoint-type
       - hostname
-      - --appendonly
-      - "no"
       - --protected-mode
       - "no"
     ports:
@@ -64,11 +77,15 @@ services:
       - redis-cluster
 
   redis-3:
+    <<: *redis-server
     image: redis:8.10.2
     container_name: redis-3
     hostname: redis-3
     command:
       - redis-server
+      - /usr/local/etc/redis/redis.conf
+      - --maxmemory
+      - "${REDIS_CLUSTER_MAXMEMORY:-0}"
       - --port
       - "7003"
       - --cluster-enabled
@@ -85,8 +102,6 @@ services:
       - "17003"
       - --cluster-preferred-endpoint-type
       - hostname
-      - --appendonly
-      - "no"
       - --protected-mode
       - "no"
     ports:
@@ -96,11 +111,15 @@ services:
       - redis-cluster
 
   redis-4:
+    <<: *redis-server
     image: redis:8.10.2
     container_name: redis-4
     hostname: redis-4
     command:
       - redis-server
+      - /usr/local/etc/redis/redis.conf
+      - --maxmemory
+      - "${REDIS_CLUSTER_MAXMEMORY:-0}"
       - --port
       - "7004"
       - --cluster-enabled
@@ -117,8 +136,6 @@ services:
       - "17004"
       - --cluster-preferred-endpoint-type
       - hostname
-      - --appendonly
-      - "no"
       - --protected-mode
       - "no"
     ports:
@@ -128,11 +145,15 @@ services:
       - redis-cluster
 
   redis-5:
+    <<: *redis-server
     image: redis:8.10.2
     container_name: redis-5
     hostname: redis-5
     command:
       - redis-server
+      - /usr/local/etc/redis/redis.conf
+      - --maxmemory
+      - "${REDIS_CLUSTER_MAXMEMORY:-0}"
       - --port
       - "7005"
       - --cluster-enabled
@@ -149,8 +170,6 @@ services:
       - "17005"
       - --cluster-preferred-endpoint-type
       - hostname
-      - --appendonly
-      - "no"
       - --protected-mode
       - "no"
     ports:
@@ -160,11 +179,15 @@ services:
       - redis-cluster
 
   redis-6:
+    <<: *redis-server
     image: redis:8.10.2
     container_name: redis-6
     hostname: redis-6
     command:
       - redis-server
+      - /usr/local/etc/redis/redis.conf
+      - --maxmemory
+      - "${REDIS_CLUSTER_MAXMEMORY:-0}"
       - --port
       - "7006"
       - --cluster-enabled
@@ -181,8 +204,6 @@ services:
       - "17006"
       - --cluster-preferred-endpoint-type
       - hostname
-      - --appendonly
-      - "no"
       - --protected-mode
       - "no"
     ports:

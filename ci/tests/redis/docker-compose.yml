@@ -1,7 +1,18 @@
+# Memory limits are per Redis server; see README.md for large ticket datasets.
+x-redis-server: &redis-server
+  volumes:
+    - ./redis.conf:/usr/local/etc/redis/redis.conf:ro
+  ulimits:
+    nofile:
+      soft: 65536
+      hard: 65536
+
 services:
   redis-master:
+    <<: *redis-server
     image: redis:8.10.2
     container_name: redis_server_master
+    command: ["redis-server", "/usr/local/etc/redis/redis.conf", "--maxmemory", "${REDIS_MAXMEMORY:-0}"]
     ports:
       - "6379:6379"
       
@@ -10,10 +21,12 @@ services:
     image: local/redis-sentinel:8.4.0
 
   redis-ssl:
+    <<: *redis-server
     image: redis:8.10.2
     container_name: redis_server_ssl
     command: >
-      redis-server
+      redis-server /usr/local/etc/redis/redis.conf
+        --maxmemory ${REDIS_MAXMEMORY:-0}
         --port 0
         --tls-port          6669
         --tls-cert-file     /etc/ssl/certs/redis.crt
@@ -23,11 +36,14 @@ services:
     ports:
       - "16669:6669"
     volumes:
+      - ./redis.conf:/usr/local/etc/redis/redis.conf:ro
       - ./certs:/etc/ssl/certs
 
   redis-master2:
+    <<: *redis-server
     image: redis:8.10.2
     container_name: redis_server_master2
+    command: ["redis-server", "/usr/local/etc/redis/redis.conf", "--maxmemory", "${REDIS_MAXMEMORY:-0}"]
     # These envs were also Bitnami-specific; kept or removed won't affect tests.
     environment:
       - REDIS_PASSWORD=pAssw0rd123
