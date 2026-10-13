@@ -2,13 +2,17 @@ package org.apereo.cas.support.saml.services.idp.metadata;
 
 import module java.base;
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
+import org.apereo.cas.support.saml.SamlIdPUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.CachedMetadataResolverResult;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import lombok.val;
+import net.shibboleth.shared.resolver.CriteriaSet;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.opensaml.core.criterion.EntityIdCriterion;
 import org.opensaml.saml.common.xml.SAMLConstants;
+import org.opensaml.saml.criterion.EntityRoleCriterion;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
@@ -109,6 +113,32 @@ class SamlRegisteredServiceMetadataAdaptorTests extends BaseSamlIdPConfiguration
         val service = getSamlRegisteredServiceForTestShib();
         val authnRequest = getAuthnRequestFor(service);
         assertTrue(SamlRegisteredServiceMetadataAdaptor.get(resolver, service, authnRequest).isEmpty());
+    }
+
+    @Test
+    void verifyResolvedEntityDescriptorIsNotResolvedAgain() throws Throwable {
+        val entityDesc = mock(EntityDescriptor.class);
+        when(entityDesc.getSPSSODescriptor(SAMLConstants.SAML20P_NS)).thenReturn(mock(SPSSODescriptor.class));
+        val mdr = mock(MetadataResolver.class);
+        val resolver = mock(SamlRegisteredServiceCachingMetadataResolver.class);
+        when(resolver.resolve(any(SamlRegisteredService.class), any()))
+            .thenReturn(CachedMetadataResolverResult.builder().metadataResolver(mdr).entityDescriptor(entityDesc).build());
+        val service = getSamlRegisteredServiceForTestShib();
+        val authnRequest = getAuthnRequestFor(service);
+        assertTrue(SamlRegisteredServiceMetadataAdaptor.get(resolver, service, authnRequest).isPresent());
+        verify(mdr, never()).resolveSingle(any());
+    }
+
+    @Test
+    void verifyCachingResolverHandsOverEntityDescriptor() throws Throwable {
+        val service = getSamlRegisteredServiceForTestShib();
+        val entityId = SamlIdPUtils.getIssuerFromSamlObject(getAuthnRequestFor(service));
+        val criteria = new CriteriaSet(new EntityIdCriterion(entityId), new EntityRoleCriterion(SPSSODescriptor.DEFAULT_ELEMENT_NAME));
+        val result = samlRegisteredServiceCachingMetadataResolver.resolve(service, criteria);
+        assertEquals(entityId, result.getEntityDescriptor().orElseThrow().getEntityID());
+        val cached = samlRegisteredServiceCachingMetadataResolver.getIfPresent(service, criteria).orElseThrow();
+        assertTrue(cached.getEntityDescriptor().isEmpty());
+        assertSame(cached.getMetadataResolver(), result.getMetadataResolver());
     }
 
 }

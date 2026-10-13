@@ -16,6 +16,8 @@ import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20TokenGeneratedResult;
 import org.apereo.cas.ticket.OAuth20Token;
 import org.apereo.cas.ticket.Ticket;
+import org.apereo.cas.ticket.TransientSessionTicket;
+import org.apereo.cas.ticket.TransientSessionTicketFactory;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.ticket.code.OAuth20Code;
 import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshToken;
@@ -62,6 +64,11 @@ import java.security.cert.X509Certificate;
 @Slf4j
 @UtilityClass
 public class OAuth20Utils {
+    /**
+     * Property of the redeemed-code record that lists the tokens issued from the code.
+     */
+    public static final String REDEEMED_CODE_TOKENS = "oauthTokensIssuedFromCode";
+
     private static final JsonMapper MAPPER = JacksonObjectMapperFactory.builder()
         .singleArrayElementUnwrapped(true).build().toJsonMapper();
 
@@ -396,6 +403,56 @@ public class OAuth20Utils {
         return clazz.isInstance(token) ? clazz.cast(token) : null;
     }
 
+    /**
+     * The id of the ticket that records the tokens issued from an authorization code once it is redeemed.
+     * The code itself is removed when it is redeemed, so this record is what a later presentation of the code finds.
+     *
+     * @param code the authorization code
+     * @return the record ticket id
+     */
+    public static String getRedeemedCodeTicketId(final String code) {
+        return TransientSessionTicketFactory.normalizeTicketId(DigestUtils.sha256(code));
+    }
+
+    /**
+     * Revoke the tokens issued from an authorization code that is presented again after it was redeemed
+     * (RFC 6749, section 4.1.2): the access and refresh tokens recorded when the code was redeemed, and the access
+     * tokens later issued from that refresh token.
+     *
+     * @param ticketRegistry the ticket registry
+     * @param code           the authorization code presented again
+     * @return the number of tokens revoked
+     */
+    public static long revokeTokensIssuedFromCode(final TicketRegistry ticketRegistry, final String code) {
+        if (StringUtils.isBlank(code)) {
+            return 0;
+        }
+        return FunctionUtils.doAndHandle(() -> revokeRecordedTokens(ticketRegistry, code), e -> {
+            LOGGER.warn("Unable to revoke tokens issued from authorization code [{}]: [{}]", code, e.getMessage());
+            return 0L;
+        }).get();
+    }
+
+    private static long revokeRecordedTokens(final TicketRegistry ticketRegistry, final String code) throws Exception {
+        val recordId = getRedeemedCodeTicketId(code);
+        if (!(ticketRegistry.getTicket(recordId) instanceof final TransientSessionTicket redeemedCode)) {
+            return 0L;
+        }
+        val tokens = Objects.requireNonNullElseGet(redeemedCode.getProperty(REDEEMED_CODE_TOKENS, List.class), List::of);
+        var revoked = 0L;
+        for (val token : tokens) {
+            val tokenId = token.toString();
+            if (ticketRegistry.getTicket(tokenId) instanceof final OAuth20RefreshToken refreshToken) {
+                for (val accessTokenId : refreshToken.getAccessTokens()) {
+                    revoked += ticketRegistry.deleteTicket(accessTokenId);
+                }
+            }
+            revoked += ticketRegistry.deleteTicket(tokenId);
+        }
+        ticketRegistry.deleteTicket(recordId);
+        LOGGER.warn("Authorization code [{}] was presented again after it was redeemed; revoked [{}] token(s) issued from it", code, revoked);
+        return revoked;
+    }
 
     /**
      * Gets authenticated user profile.

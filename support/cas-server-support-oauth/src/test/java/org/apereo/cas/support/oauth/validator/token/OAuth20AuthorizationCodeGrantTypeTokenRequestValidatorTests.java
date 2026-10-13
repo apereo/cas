@@ -13,11 +13,14 @@ import org.apereo.cas.support.oauth.authenticator.Authenticators;
 import org.apereo.cas.support.oauth.authenticator.OAuth20DefaultCasAuthenticationBuilder;
 import org.apereo.cas.support.oauth.profile.DefaultOAuth20ProfileScopeToAttributesFilter;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
+import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
+import org.apereo.cas.ticket.TransientSessionTicketImpl;
 import org.apereo.cas.ticket.code.OAuth20Code;
 import org.apereo.cas.ticket.code.OAuth20CodeExpirationPolicy;
 import org.apereo.cas.ticket.code.OAuth20DefaultOAuthCodeFactory;
+import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
 import org.apereo.cas.ticket.tracking.TicketTrackingPolicy;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
@@ -76,7 +79,12 @@ class OAuth20AuthorizationCodeGrantTypeTokenRequestValidatorTests {
             assertNotNull(at1);
             val at2 = addAccessToken(principal, registeredService, code);
             assertNotNull(at2);
-            code.markTicketExpired();
+            val recordProperties = new HashMap<String, Serializable>();
+            recordProperties.put(OAuth20Utils.REDEEMED_CODE_TOKENS, new ArrayList<>(List.of(at1.getId(), at2.getId())));
+            val recordId = OAuth20Utils.getRedeemedCodeTicketId(code.getId());
+            ticketRegistry.addTicket(new TransientSessionTicketImpl(recordId, NeverExpiresExpirationPolicy.INSTANCE,
+                code.getService(), recordProperties));
+            ticketRegistry.deleteTicket(code);
 
             request.setParameter(OAuth20Constants.CODE, code.getId());
             profile.setId(registeredService.getClientId());
@@ -86,6 +94,7 @@ class OAuth20AuthorizationCodeGrantTypeTokenRequestValidatorTests {
             assertFalse(validator.validate(new JEEContext(request, response)));
             assertNull(ticketRegistry.getTicket(at1.getId()));
             assertNull(ticketRegistry.getTicket(at2.getId()));
+            assertNull(ticketRegistry.getTicket(recordId));
         }
     }
 

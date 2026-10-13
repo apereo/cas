@@ -2,11 +2,14 @@ package org.apereo.cas.support.saml.services.idp.metadata.cache;
 
 import module java.base;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.SuperBuilder;
+import org.jspecify.annotations.Nullable;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
+import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import jakarta.validation.constraints.NotNull;
 
 /**
@@ -29,6 +32,14 @@ public class CachedMetadataResolverResult implements Serializable {
     @NotNull
     private final MetadataResolver metadataResolver;
 
+    /*
+     * The entity descriptor already resolved for the request this result was handed to, so the caller does not resolve
+     * it again. It is set on a per-request copy and never on the cached entry.
+     */
+    @JsonIgnore
+    @Getter(AccessLevel.NONE)
+    private final transient @Nullable EntityDescriptor entityDescriptor;
+
     /**
      * Determines whether the metadata resolver is available.
      *
@@ -37,5 +48,10 @@ public class CachedMetadataResolverResult implements Serializable {
     @JsonIgnore
     public boolean isResolved() {
         return metadataResolver != null;
+    }
+
+    @JsonIgnore
+    public Optional<EntityDescriptor> getEntityDescriptor() {
+        return Optional.ofNullable(entityDescriptor);
     }
 }

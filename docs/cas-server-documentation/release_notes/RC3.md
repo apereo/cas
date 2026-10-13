@@ -641,6 +641,9 @@ authentication. See the [stateless ticket registry documentation](../ticketing/S
 - {: .changed data-area="saml"} The [SAML2 identity provider](../authentication/Configuring-SAML2-Authentication.html) locates and
   verifies the service provider behind an authentication request, and resolves its metadata, once per request instead of up to
   four times while validating the request, choosing the binding and building the response.
+- {: .changed data-area="saml"} The SAML2 identity provider now looks up a service provider's entity in its metadata once per
+  request: the entity found while checking that the cached metadata is still usable is handed to the request, instead of
+  being looked up a second time.
 - {: .changed data-area="saml"} Templates the SAML2 identity provider loads from the classpath, such as the page that posts a
   SAML2 response or logout request with the HTTP-POST binding, are now parsed once and cached instead of being read and parsed
   for every response.
@@ -666,6 +669,18 @@ authentication. See the [stateless ticket registry documentation](../ticketing/S
   whose redirect URI patterns overlap are no longer mistaken for one another in this case.
 - {: .changed data-area="oidc"} A request object passed with the `request` parameter is now unpacked and verified once per
   request instead of once for every authorization parameter read from it.
+- {: .fixed data-area="oidc"} With `cas.authn.oauth.code.remove-related-access-tokens`{: .cas-setting} enabled, presenting an
+  [authorization code](../authentication/OAuth-Authentication.html) again after it was redeemed now revokes the access and
+  refresh tokens issued from it, and the access tokens later issued from that refresh token, as RFC 6749 recommends.
+  Previously only access tokens were looked for, by searching every ticket in the registry for each unknown or expired code,
+  and a replay rejected during client authentication, such as with PKCE or `private_key_jwt`, revoked nothing. CAS now keeps
+  a short-lived record of the tokens issued from each redeemed code, for as long as transient session tickets live, and an
+  unknown code no longer triggers a search of the registry. This comes with trade-offs, which is why the setting remains off
+  by default: each code exchange writes one extra transient session ticket to the registry; a code presented again after
+  that record has expired revokes nothing, and the record's lifetime follows the transient session ticket expiration
+  settings shared with other transient session tickets; tokens issued before upgrading have no record and are not revoked,
+  where the previous search would have found their access tokens; and a code presented again while its first redemption is
+  still issuing tokens is rejected, but the tokens being issued at that moment are not revoked.
 - {: .changed data-area="oidc"} A client that authenticates at the token endpoint with `private_key_jwt` or `client_secret_jwt`
   and sends no `client_id` parameter is now identified from its client assertion, whose issuer and subject are the client
   identifier, instead of by matching the redirect URI against every OAuth application.

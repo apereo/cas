@@ -88,6 +88,7 @@ public class OAuth20ProofKeyCodeExchangeAuthenticator extends OAuth20ClientIdCli
         LOGGER.debug("Received PKCE code verifier [{}] along with code [{}]", codeVerifier, code);
         val token = OAuth20Utils.getRequestedOAuthToken(callContext.webContext(), getTicketRegistry(), code, OAuth20Code.class);
         if (token == null) {
+            OAuth20Utils.revokeTokensIssuedFromCode(getTicketRegistry(), code);
             throw new InvalidTicketException(code);
         }
         if (token.isExpired()) {

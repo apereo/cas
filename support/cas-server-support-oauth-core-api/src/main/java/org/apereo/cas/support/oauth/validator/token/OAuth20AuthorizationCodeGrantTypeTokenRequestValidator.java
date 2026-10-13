@@ -8,13 +8,10 @@ import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
-import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.ticket.code.OAuth20Code;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.ObjectUtils;
-import org.apache.commons.lang3.Strings;
-import org.jooq.lambda.Unchecked;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.core.profile.UserProfile;
@@ -60,18 +57,7 @@ public class OAuth20AuthorizationCodeGrantTypeTokenRequestValidator extends Base
         if (valid) {
             val oauthCode = OAuth20Utils.getRequestedOAuthToken(context, configurationContext.getTicketRegistry(), code.get(), OAuth20Code.class);
             if (oauthCode == null || oauthCode.isExpired()) {
-                val removeTokens = configurationContext.getCasProperties().getAuthn().getOauth().getCode().isRemoveRelatedAccessTokens();
-                if (removeTokens) {
-                    LOGGER.debug("Code [{}] is invalid or expired. Attempting to revoke access tokens issued to the code", code.get());
-                    try (val accessTokensByCode = configurationContext.getTicketRegistry().getTickets(ticket ->
-                        ticket instanceof final OAuth20AccessToken accessToken
-                        && Strings.CI.equals(accessToken.getToken(), code.get()))) {
-                        accessTokensByCode.forEach(Unchecked.consumer(ticket -> {
-                            LOGGER.debug("Removing access token [{}] issued via expired/unknown code [{}]", ticket.getId(), code.get());
-                            configurationContext.getTicketRegistry().deleteTicket(ticket);
-                        }));
-                    }
-                }
+                OAuth20Utils.revokeTokensIssuedFromCode(configurationContext.getTicketRegistry(), code.get());
                 LOGGER.warn("Provided OAuth code [{}] is not found or has expired", code.get());
                 return false;
             }

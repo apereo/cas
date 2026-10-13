@@ -24,6 +24,8 @@ import org.apereo.cas.ticket.AuthenticationAwareTicket;
 import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketFactory;
+import org.apereo.cas.ticket.TransientSessionTicket;
+import org.apereo.cas.ticket.TransientSessionTicketFactory;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessTokenFactory;
 import org.apereo.cas.ticket.device.OAuth20DeviceToken;
@@ -173,8 +175,7 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
         return authnBuilder;
     }
 
-    protected AccessAndRefreshTokens generateAccessTokenOAuthGrantTypes(
-        final AccessTokenRequestContext tokenRequestContext)
+    protected AccessAndRefreshTokens generateAccessTokenOAuthGrantTypes(final AccessTokenRequestContext tokenRequestContext)
             throws Throwable {
         LOGGER.debug("Creating access token for [{}]", tokenRequestContext.getService());
 
@@ -196,7 +197,44 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
         if (isAccessTokenStored(tokenRequestContext, accessToken) || isCodeTokenConsumed(tokenRequestContext) || refreshToken != null) {
             updateTicketGrantingTicket(tokenRequestContext.getTicketGrantingTicket());
         }
+        recordTokensIssuedFromCode(tokenRequestContext, isAccessTokenStored(tokenRequestContext, accessToken) ? accessToken : null, refreshToken);
         return new AccessAndRefreshTokens(addedAccessToken, refreshToken);
+    }
+
+    /*
+     * The code is removed once redeemed, so a record of the tokens issued from it is kept for a while; if the code is
+     * presented again, those tokens are revoked (RFC 6749, section 4.1.2) without searching the registry for them.
+     */
+    private void recordTokensIssuedFromCode(final AccessTokenRequestContext tokenRequestContext,
+                                            @Nullable final Ticket accessToken,
+                                            @Nullable final Ticket refreshToken)
+            throws Throwable {
+        if (!isCodeTokenConsumed(tokenRequestContext) || !casProperties.getAuthn().getOauth().getCode().isRemoveRelatedAccessTokens()) {
+            return;
+        }
+        val tokens = new ArrayList<String>();
+        if (accessToken != null) {
+            tokens.add(accessToken.getId());
+        }
+        if (refreshToken != null) {
+            tokens.add(refreshToken.getId());
+        }
+        if (!tokens.isEmpty()) {
+            val recordId = OAuth20Utils.getRedeemedCodeTicketId(tokenRequestContext.getToken().getId());
+            if (ticketRegistry.getTicket(recordId) instanceof final TransientSessionTicket existingRecord) {
+                val recorded = new ArrayList<String>();
+                Objects.requireNonNullElseGet(existingRecord.getProperty(OAuth20Utils.REDEEMED_CODE_TOKENS, List.class), List::of)
+                    .forEach(token -> recorded.add(token.toString()));
+                recorded.addAll(tokens);
+                existingRecord.putProperty(OAuth20Utils.REDEEMED_CODE_TOKENS, recorded);
+                ticketRegistry.updateTicket(existingRecord);
+            } else {
+                val factory = (TransientSessionTicketFactory) ticketFactory.get(TransientSessionTicket.class);
+                val properties = new HashMap<String, Serializable>();
+                properties.put(OAuth20Utils.REDEEMED_CODE_TOKENS, tokens);
+                ticketRegistry.addTicket(factory.create(recordId, tokenRequestContext.getService(), properties));
+            }
+        }
     }
 
     protected Authentication finalizeAuthentication(final AccessTokenRequestContext tokenRequestContext,
@@ -301,7 +339,7 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
     }
 
     protected void updateRefreshToken(final AccessTokenRequestContext tokenRequestContext,
-                                    final Ticket accessToken)
+                                      final Ticket accessToken)
             throws Exception {
         val trackAccessTokens = casProperties.getAuthn().getOauth().getRefreshToken().isTrackAccessTokens();
         if (tokenRequestContext.isRefreshToken() && !tokenRequestContext.getToken().isStateless() && trackAccessTokens) {
@@ -320,6 +358,7 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
             if (token.isExpired()) {
                 if (ticketRegistry.deleteTicket(token) == 0) {
                     LOGGER.warn("OAuth code [{}] was already redeemed by another token request", token.getId());
+                    OAuth20Utils.revokeTokensIssuedFromCode(ticketRegistry, token.getId());
                     throw new InvalidTicketException(token.getId());
                 }
             } else {
@@ -336,7 +375,7 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
         return tokenRequestContext.isCodeToken() && !tokenRequestContext.getToken().isStateless();
     }
 
-    protected Ticket addTicketToRegistry(final Ticket ticket) throws Exception {
+    protected @Nullable Ticket addTicketToRegistry(final Ticket ticket) throws Exception {
         LOGGER.debug("Adding ticket [{}] to registry", ticket);
         return ticketRegistry.addTicket(ticket);
     }
@@ -356,7 +395,7 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
             ticketRegistry.updateTicket(ticketGrantingTicket);
         }
     }
-    
+
     /**
      * Generate a refresh token for the access token. It keeps the authorization details of the code or refresh
      * token being exchanged (RFC 9396), so that access tokens it is later exchanged for are granted them again.
@@ -440,8 +479,7 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
             .get();
     }
 
-    private DeviceTokens createDeviceTokensInTicketRegistry(
-        final AccessTokenRequestContext tokenRequestContext)
+    private DeviceTokens createDeviceTokensInTicketRegistry(final AccessTokenRequestContext tokenRequestContext)
             throws Throwable {
 
         val deviceTokenFactory = (OAuth20DeviceTokenFactory) ticketFactory.get(OAuth20DeviceToken.class);
