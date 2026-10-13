@@ -128,9 +128,7 @@ public class RedisTicketRegistry extends AbstractTicketRegistry implements Clean
     public long deleteSingleTicket(final Ticket ticket) {
         val redisKeyGenerator = redisKeyGeneratorFactory.getRedisKeyGenerator(ticket.getPrefix()).orElseThrow();
         val redisTicketsKey = redisKeyGenerator.forPrefixAndId(ticket.getPrefix(), digestIdentifier(ticket.getId()));
-        val count = Stream.of(redisTicketsKey)
-            .mapToInt(id -> BooleanUtils.toBoolean(casRedisTemplates.getTicketsRedisTemplate().delete(id)) ? 1 : 0)
-            .sum();
+        val count = deleteTicketKey(redisTicketsKey);
 
         if (ticket instanceof TicketGrantingTicket) {
             redisKeyGeneratorFactory.getRedisKeyGenerator(Principal.class.getName())
@@ -148,6 +146,28 @@ public class RedisTicketRegistry extends AbstractTicketRegistry implements Clean
         ticketCache.ifAvailable(cache -> cache.invalidate(redisKeyGenerator.rawKey(redisTicketsKey)));
         messagePublisher.ifAvailable(publisher -> publisher.delete(ticket));
         return count;
+    }
+
+    /*
+     * Only for tickets that keep no entries beyond their own key, such as service and proxy tickets;
+     * a ticket-granting ticket also has to leave the sessions kept for its principal.
+     */
+    @Override
+    public long deleteSingleTicket(final String ticketId) {
+        val definition = ticketCatalog.find(ticketId);
+        if (definition == null) {
+            return 0;
+        }
+        val redisKeyGenerator = redisKeyGeneratorFactory.getRedisKeyGenerator(definition.getPrefix()).orElseThrow();
+        val redisTicketsKey = redisKeyGenerator.forPrefixAndId(definition.getPrefix(), digestIdentifier(ticketId));
+        val count = deleteTicketKey(redisTicketsKey);
+        ticketCache.ifAvailable(cache -> cache.invalidate(redisKeyGenerator.rawKey(redisTicketsKey)));
+        messagePublisher.ifAvailable(publisher -> publisher.deleteByKey(redisTicketsKey));
+        return count;
+    }
+
+    private int deleteTicketKey(final String redisTicketsKey) {
+        return BooleanUtils.toBoolean(casRedisTemplates.getTicketsRedisTemplate().delete(redisTicketsKey)) ? 1 : 0;
     }
 
     @Override

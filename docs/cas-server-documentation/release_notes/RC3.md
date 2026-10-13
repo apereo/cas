@@ -596,6 +596,14 @@ authentication. See the [stateless ticket registry documentation](../ticketing/S
   removes the session's service tickets with one statement instead of reading and deleting them one at a time. Service and
   OAuth tickets that were updated after they were issued, which lost the link to their session when ticket encryption was
   enabled, now keep it and are removed with the session.
+- {: .changed data-area="tickets"} When a single sign-on session ends, the remaining ticket registries, such as
+  [Redis](../ticketing/Redis-Ticket-Registry.html), [Hazelcast](../ticketing/Hazelcast-Ticket-Registry.html),
+  [DynamoDb](../ticketing/DynamoDb-Ticket-Registry.html), [Cassandra](../ticketing/Cassandra-Ticket-Registry.html),
+  [Memcached](../ticketing/Memcached-Ticket-Registry.html) and the default in-memory registry, remove the session's service and
+  proxy tickets by their identifier instead of reading and decoding each one first. With registries that cannot tell whether
+  a ticket was still present, the number of removed tickets reported for the session may include service tickets that were
+  already validated. Removing a ticket that is already gone from the Apache Geode and the deprecated CosmosDb registries
+  no longer fails.
 - {: .fixed data-area="tickets"} [Validating a single-use service ticket](../authentication/CAS-Protocol-TicketValidation.html) now removes it in one step, and only the request that
   actually removes it receives a successful response. Two requests validating the same ticket at the same moment, on the
   same node or on different nodes, could previously both succeed with ticket registries that store copies of tickets, such as

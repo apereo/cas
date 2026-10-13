@@ -290,6 +290,16 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
         return 0;
     }
 
+    /*
+     * Removes a ticket known only by its identifier, such as a service or proxy ticket listed by
+     * its ticket-granting ticket. Registries that can remove such a ticket without reading it first
+     * should override this; by default the ticket is read so it can be handed to the registry.
+     */
+    protected long deleteSingleTicket(final String ticketId) {
+        val ticket = getTicket(ticketId);
+        return ticket != null ? deleteSingleTicket(ticket) : 0;
+    }
+
     protected abstract Ticket addSingleTicket(Ticket ticket) throws Exception;
 
     protected int deleteTickets(final Set<String> tickets) {
@@ -307,24 +317,15 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
      * @return the count of tickets that were removed including child tickets and zero if the ticket was not deleted
      */
     protected int deleteServiceTickets(final TicketGrantingTicket ticket) {
-        val count = new AtomicLong(0);
         val services = ticket.getServices();
-        if (services != null && !services.isEmpty()) {
-            services.keySet()
-                .stream()
-                .map(this::getTicket)
-                .filter(Objects::nonNull)
-                .forEach(serviceTicket -> {
-                    val deleteCount = deleteSingleTicket(serviceTicket);
-                    if (deleteCount > 0) {
-                        LOGGER.debug("Removed ticket [{}]", serviceTicket.getId());
-                        count.getAndAdd(deleteCount);
-                    } else {
-                        LOGGER.debug("Unable to remove ticket [{}]", serviceTicket.getId());
-                    }
-                });
+        if (services == null || services.isEmpty()) {
+            return 0;
         }
-        return count.intValue();
+        val count = services.keySet()
+            .stream()
+            .mapToLong(this::deleteSingleTicket)
+            .sum();
+        return Math.toIntExact(count);
     }
 
     protected @Nullable Ticket encodeTicket(final Ticket ticket) throws Exception {

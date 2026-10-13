@@ -7,6 +7,7 @@ import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
 import com.azure.cosmos.CosmosContainer;
+import com.azure.cosmos.CosmosException;
 import com.azure.cosmos.models.CosmosBulkOperations;
 import com.azure.cosmos.models.CosmosItemOperation;
 import com.azure.cosmos.models.CosmosItemRequestOptions;
@@ -145,11 +146,24 @@ public class CosmosDbTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public long deleteSingleTicket(final Ticket ticketToDelete) {
-        val encTicketId = digestIdentifier(ticketToDelete.getId());
-        val metadata = ticketCatalog.find(ticketToDelete);
+        return deleteSingleTicket(ticketToDelete.getId());
+    }
+
+    @Override
+    public long deleteSingleTicket(final String ticketId) {
+        val encTicketId = digestIdentifier(ticketId);
+        val metadata = ticketCatalog.find(ticketId);
         val container = getTicketContainer(Objects.requireNonNull(metadata));
-        val result = container.deleteItem(encTicketId, new PartitionKey(metadata.getPrefix()), new CosmosItemRequestOptions());
-        return HttpStatus.valueOf(result.getStatusCode()).is2xxSuccessful() ? 1 : 0;
+        try {
+            val result = container.deleteItem(encTicketId, new PartitionKey(metadata.getPrefix()), new CosmosItemRequestOptions());
+            return HttpStatus.valueOf(result.getStatusCode()).is2xxSuccessful() ? 1 : 0;
+        } catch (final CosmosException e) {
+            if (e.getStatusCode() == HttpStatus.NOT_FOUND.value()) {
+                LOGGER.debug("Ticket [{}] is already removed", encTicketId);
+                return 0;
+            }
+            throw e;
+        }
     }
 
     @Override
