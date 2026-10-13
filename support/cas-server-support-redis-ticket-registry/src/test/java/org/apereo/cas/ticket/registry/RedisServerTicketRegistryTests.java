@@ -237,6 +237,30 @@ class RedisServerTicketRegistryTests {
             }
         }
 
+        @RepeatedTest(1)
+        void verifyScansDoNotFillCache() throws Throwable {
+            val authentication = CoreAuthenticationTestUtils.getAuthentication(UUID.randomUUID().toString());
+            val tgtId = new TicketGrantingTicketIdGenerator(10, StringUtils.EMPTY)
+                .getNewTicketId(TicketGrantingTicket.PREFIX);
+            val tgt = new TicketGrantingTicketImpl(tgtId, authentication, NeverExpiresExpirationPolicy.INSTANCE);
+            getNewTicketRegistry().addTicket(tgt);
+            try {
+                val cacheKey = getNewTicketRegistry().digestIdentifier(tgt.getId());
+                redisTicketRegistryCache.invalidate(cacheKey);
+                try (val tickets = getNewTicketRegistry().stream()) {
+                    assertTrue(tickets.anyMatch(ticket -> ticket.getId().equals(tgt.getId())));
+                }
+                val criteria = new TicketRegistryQueryCriteria()
+                    .setDecode(Boolean.TRUE)
+                    .setType(TicketGrantingTicket.PREFIX)
+                    .setPrincipal(authentication.getPrincipal().getId());
+                assertEquals(1, getNewTicketRegistry().query(criteria).size());
+                assertNull(redisTicketRegistryCache.getIfPresent(cacheKey));
+            } finally {
+                getNewTicketRegistry().deleteTicket(tgt.getId());
+            }
+        }
+
         @RepeatedTest(2)
         void verifyLargeDataset() {
             LOGGER.info("Current repetition: [{}]", useEncryption ? "Encrypted" : "Plain");

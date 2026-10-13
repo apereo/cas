@@ -615,6 +615,11 @@ authentication. See the [stateless ticket registry documentation](../ticketing/S
   up to eight of them at a time, where it used to remove them one by one while the scan was still running. With the [JPA ticket registry](../ticketing/JPA-Ticket-Registry.html), the database cursor,
   connection and transaction used for the scan are released before any ticket is removed, and rows read by the scan are no
   longer all kept in memory until it ends.
+- {: .fixed data-area="tickets"} A failed attempt to validate a service or proxy ticket for a different service, or for the
+  wrong tenant, now counts as a use of the ticket, as the [CAS protocol](../protocol/CAS-Protocol-Specification.html) expects.
+  Such an attempt used to leave the ticket untouched, so it could be presented again. The ticket's expiration policy still
+  decides what remains: a single-use ticket, the default, is removed, so a client that retries with a corrected service URL
+  needs a new ticket, while a ticket allowed several uses keeps the rest.
 - {: .fixed data-area="tickets"} [Validating a single-use service ticket](../authentication/CAS-Protocol-TicketValidation.html) now removes it in one step, and only the request that
   actually removes it receives a successful response. Two requests validating the same ticket at the same moment, on the
   same node or on different nodes, could previously both succeed with ticket registries that store copies of tickets, such as
@@ -752,7 +757,9 @@ authentication. See the [stateless ticket registry documentation](../ticketing/S
   long as it was read, so a session ended on one node could stay valid on another and could even be written back to Redis.
   Tickets are now kept for at most 30 seconds, a ticket read while another node announces a change to it is not kept, and
   changes are announced to other nodes without the ticket itself, which used to be sent unencrypted to every node on every
-  change even with ticket encryption enabled. Nodes still on an earlier version handle the new notifications correctly.
+  change even with ticket encryption enabled. Nodes still on an earlier version handle the new notifications correctly. Reading all tickets, as the ticket registry
+  cleaner does, or querying tickets no longer fills the cache with every ticket read; a ticket first seen by such a scan
+  is read from Redis the next time it is needed, instead of being served from the cache.
 - {: .fixed} WebAuthn falls back to the cached [FIDO metadata BLOB](../mfa/FIDO2-WebAuthn-Authentication-Attestation.html) when
   downloading a fresh one fails at startup, for example when the FIDO metadata service rate-limits the request, instead of failing to start.
 - {: .changed data-area="project"} The project [README](https://github.com/apereo/cas) is reworked as a landing page, with a one-minute Docker try-out,

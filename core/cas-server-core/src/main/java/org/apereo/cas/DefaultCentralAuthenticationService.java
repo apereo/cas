@@ -185,18 +185,21 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
                 if (!configurationContext.getServiceMatchingStrategy().matches(selectedService, resolvedService)) {
                     LOGGER.error("Service ticket [{}] with service [{}] does not match supplied service [{}]",
                         serviceTicketId, serviceTicket.getService().getId(), Objects.requireNonNull(resolvedService).getId());
+                    recordFailedValidationAttempt(serviceTicket);
                     throw new UnrecognizableServiceForServiceTicketValidationException(selectedService);
                 }
                 if (StringUtils.isNotBlank(serviceTicket.getTenantId())) {
                     if (!Strings.CI.equals(Objects.requireNonNull(resolvedService).getTenant(), serviceTicket.getTenantId())) {
                         LOGGER.warn("Service ticket [{}] is not assigned to the same tenant [{}] as the service [{}]",
                             serviceTicketId, serviceTicket.getTenantId(), resolvedService.getId());
+                        recordFailedValidationAttempt(serviceTicket);
                         throw new UnknownTenantException("Unknown tenant %s for service ticket %s"
                             .formatted(resolvedService.getTenant(), serviceTicketId));
                     }
                     if (configurationContext.getTenantExtractor().getTenantsManager().findTenant(serviceTicket.getTenantId()).isEmpty()) {
                         LOGGER.warn("Service ticket [{}] is not assigned to a known valid tenant [{}] for service [{}]",
                             serviceTicketId, serviceTicket.getTenantId(), resolvedService.getId());
+                        recordFailedValidationAttempt(serviceTicket);
                         throw new UnknownTenantException("Unknown tenant %s for service ticket %s"
                             .formatted(serviceTicket.getTenantId(), serviceTicketId));
                     }
@@ -297,6 +300,23 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
         val clientInfo = ClientInfoHolder.getClientInfo();
         doPublishEvent(new CasServiceTicketValidatedEvent(this, serviceTicket, assertion, clientInfo));
         return assertion;
+    }
+
+    /*
+     * CAS protocol: a service ticket is invalidated after a validation attempt whether or not it succeeds. A failed
+     * attempt therefore counts as a use, as a successful one does, and the ticket's expiration policy decides whether
+     * the ticket is left with any: a single-use ticket is removed, one allowed further uses keeps the rest.
+     * Runs under the ticket's lock so that concurrent attempts each count.
+     */
+    private void recordFailedValidationAttempt(final ServiceTicket serviceTicket) throws Exception {
+        if (!serviceTicket.isStateless()) {
+            serviceTicket.update();
+            if (serviceTicket.isExpired()) {
+                configurationContext.getTicketRegistry().deleteTicket(serviceTicket);
+            } else {
+                configurationContext.getTicketRegistry().updateTicket(serviceTicket);
+            }
+        }
     }
 
 

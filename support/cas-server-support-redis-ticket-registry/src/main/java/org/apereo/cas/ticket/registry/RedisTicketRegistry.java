@@ -234,14 +234,7 @@ public class RedisTicketRegistry extends AbstractTicketRegistry implements Clean
             .filter(Objects::nonNull)
             .map(this::deserializeTicket)
             .map(this::decodeTicket)
-            .filter(Objects::nonNull)
-            .peek(ticket -> {
-                if (!ticket.isExpired()) {
-                    val redisKeyGenerator = redisKeyGeneratorFactory.getRedisKeyGenerator(ticket.getPrefix()).orElseThrow();
-                    val redisTicketsKey = redisKeyGenerator.forPrefixAndId(ticket.getPrefix(), digestIdentifier(ticket.getId()));
-                    ticketCache.ifAvailable(cache -> cache.put(redisKeyGenerator.rawKey(redisTicketsKey), ticket));
-                }
-            });
+            .filter(Objects::nonNull);
     }
 
 
@@ -507,10 +500,6 @@ public class RedisTicketRegistry extends AbstractTicketRegistry implements Clean
                         || (ticket instanceof final AuthenticationAwareTicket aat
                         && Strings.CI.equals(queryCriteria.getPrincipal(), aat.getAuthentication().getPrincipal().getId())))
                     .filter(ticket -> !ticket.isExpired())
-                    .peek(ticket -> {
-                        val cacheKey = redisKeyGenerator.forPrefixAndId(ticket.getPrefix(), digestIdentifier(ticket.getId()));
-                        ticketCache.ifAvailable(c -> c.put(redisKeyGenerator.rawKey(cacheKey), ticket));
-                    })
                     .collect(Collectors.toList());
             }
         }
