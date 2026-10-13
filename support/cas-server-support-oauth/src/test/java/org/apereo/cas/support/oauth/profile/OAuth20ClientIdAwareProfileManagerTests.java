@@ -93,6 +93,16 @@ class OAuth20ClientIdAwareProfileManagerTests extends AbstractOAuth20Tests {
     }
 
     @Test
+    void verifyBearerAuthorizationHeaderIsIgnored() {
+        verifyAuthorizationHeaderFallsBackToRedirectUri("Bearer AT-1-123456");
+    }
+
+    @Test
+    void verifyMalformedBasicAuthorizationHeaderIsIgnored() {
+        verifyAuthorizationHeaderFallsBackToRedirectUri("Basic " + EncodingUtils.encodeBase64("no-separator"));
+    }
+
+    @Test
     void verifyRedirectUriLookupOncePerRequest() {
         val manager = mock(ServicesManager.class);
         when(manager.getAllServicesOfType(OAuthRegisteredService.class)).thenReturn(List.of(registeredService));
@@ -142,6 +152,23 @@ class OAuth20ClientIdAwareProfileManagerTests extends AbstractOAuth20Tests {
         assertionProfileManager.save(false, profile, false);
         assertEquals(registeredService.getClientId(), profile.getAttribute("oauthClientId"));
         verify(manager).getAllServicesOfType(OAuthRegisteredService.class);
+    }
+
+    private void verifyAuthorizationHeaderFallsBackToRedirectUri(final String authorization) {
+        val manager = mock(ServicesManager.class);
+        when(manager.getAllServicesOfType(OAuthRegisteredService.class)).thenReturn(List.of(registeredService));
+        val request = new MockHttpServletRequest();
+        request.addParameter(OAuth20Constants.REDIRECT_URI, REDIRECT_URI);
+        request.addHeader(HttpHeaders.AUTHORIZATION, authorization);
+        val headerContext = new JEEContext(request, new MockHttpServletResponse());
+        val headerProfileManager = new OAuth20ClientIdAwareProfileManager(headerContext, oauthDistributedSessionStore,
+            manager, oauthRequestParameterResolver);
+        val profile = new CommonProfile();
+        profile.setId(ID);
+        profile.setClientName(registeredService.getClientId());
+        headerProfileManager.save(false, profile, false);
+        assertEquals(registeredService.getClientId(), profile.getAttribute("oauthClientId"));
+        assertEquals(1, headerProfileManager.getProfiles().size());
     }
 
     private OAuth20ClientIdAwareProfileManager newProfileManagerWithAssertion(final ServicesManager manager, final String assertion) {

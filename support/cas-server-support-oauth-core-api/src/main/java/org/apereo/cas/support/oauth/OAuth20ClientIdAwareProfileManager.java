@@ -11,8 +11,10 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
 import org.pac4j.core.context.CallContext;
+import org.pac4j.core.context.HttpConstants;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.context.session.SessionStore;
+import org.pac4j.core.exception.CredentialsException;
 import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.core.profile.UserProfile;
 
@@ -94,11 +96,27 @@ public class OAuth20ClientIdAwareProfileManager extends ProfileManager {
         val redirectUri = requestParameterResolver.resolveRequestParameter(context, OAuth20Constants.REDIRECT_URI)
             .map(String::valueOf).orElse(StringUtils.EMPTY);
         OAuth20Utils.validateRedirectUri(redirectUri, true);
-        val authenticatedClientId = requestParameterResolver.resolveClientIdAndClientSecret(callContext).getLeft();
-        if (StringUtils.isNotBlank(authenticatedClientId)) {
-            return authenticatedClientId;
+        return getClientIdFromBasicAuthentication()
+            .or(this::getClientIdFromAssertion)
+            .orElseGet(() -> getClientIdByRedirectUri(redirectUri));
+    }
+
+    /*
+     * Endpoints such as dynamic client registration and user info carry a bearer token in the same header, and a
+     * malformed header is for the authenticator to reject; neither names a client here.
+     */
+    private Optional<String> getClientIdFromBasicAuthentication() {
+        val authorization = context.getRequestHeader(HttpConstants.AUTHORIZATION_HEADER).orElse(StringUtils.EMPTY);
+        if (!Strings.CI.startsWith(authorization, HttpConstants.BASIC_HEADER_PREFIX)) {
+            return Optional.empty();
         }
-        return getClientIdFromAssertion().orElseGet(() -> getClientIdByRedirectUri(redirectUri));
+        try {
+            return Optional.ofNullable(requestParameterResolver.resolveClientIdAndClientSecret(callContext).getLeft())
+                .filter(StringUtils::isNotBlank);
+        } catch (final CredentialsException e) {
+            LOGGER.debug("Unable to read client credentials from the authorization header: [{}]", e.getMessage());
+            return Optional.empty();
+        }
     }
 
     /*
