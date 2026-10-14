@@ -641,6 +641,13 @@ authentication. See the [stateless ticket registry documentation](../ticketing/S
   the token request that removes them from the ticket registry receives tokens. Two polls arriving at the same moment could
   previously both receive tokens. A CIBA request is now removed before its tokens are issued rather than after, and a
   request that lost the race gets `invalid_grant`, as CIBA Core 1.0 requires once the `auth_req_id` has been redeemed.
+- {: .fixed data-area="tickets"} The [Memcached](../ticketing/Memcached-Ticket-Registry.html),
+  [DynamoDB](../ticketing/DynamoDb-Ticket-Registry.html) and [Google Cloud Firestore](../ticketing/GCP-Firestore-Ticket-Registry.html)
+  ticket registries now report a ticket that was already gone when asked to remove it. Service tickets, authorization codes,
+  device codes and CIBA requests are redeemed by whichever request removes them, and these registries reported every removal
+  as successful, so two requests presenting the same ticket at the same moment could both succeed. A Memcached removal that
+  fails, such as on a timeout, is no longer counted as removed either. The [Cassandra](../ticketing/Cassandra-Ticket-Registry.html)
+  ticket registry still reports every removal as successful and keeps this limitation.
 - {: .fixed data-area="tickets"} Removing a proxy-granting ticket no longer writes back the copy of the single sign-on
   session it was issued from, which undid any change made to the session since, such as applications the user logged into
   afterwards. When a single sign-on session ends, it is no longer rewritten once for each of its proxy-granting tickets and

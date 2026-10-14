@@ -14,12 +14,16 @@ import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
 import com.google.api.core.ApiFuture;
+import com.google.api.gax.rpc.ApiException;
+import com.google.api.gax.rpc.StatusCode;
 import com.google.cloud.firestore.Filter;
 import com.google.cloud.firestore.Firestore;
+import com.google.cloud.firestore.Precondition;
 import com.google.cloud.firestore.WriteResult;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.hjson.JsonValue;
 import org.hjson.Stringify;
 import org.jooq.lambda.Unchecked;
@@ -173,9 +177,18 @@ public class GoogleCloudFirestoreTicketRegistry extends AbstractTicketRegistry {
                 return 0;
             }
             val collectionName = getTicketCollectionInstanceByMetadata(metadata);
-            val updateTime = firestore.collection(collectionName).document(digestedId).delete().get().getUpdateTime();
-            LOGGER.debug("Deleted ticket [{}] from [{}] @ [{}]", ticketId, collectionName, updateTime);
-            return 1;
+            try {
+                val updateTime = firestore.collection(collectionName).document(digestedId)
+                    .delete(Precondition.exists(true)).get().getUpdateTime();
+                LOGGER.debug("Deleted ticket [{}] from [{}] @ [{}]", ticketId, collectionName, updateTime);
+                return 1;
+            } catch (final ExecutionException e) {
+                if (isDocumentNotFound(e)) {
+                    LOGGER.debug("Ticket [{}] is already removed from [{}]", ticketId, collectionName);
+                    return 0;
+                }
+                throw e;
+            }
         });
     }
 
@@ -376,5 +389,18 @@ public class GoogleCloudFirestoreTicketRegistry extends AbstractTicketRegistry {
         }
         val exp = System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(ttl);
         return DateTimeUtils.dateOf(Instant.ofEpochMilli(exp));
+    }
+
+    /*
+     * The delete only applies while the document exists, so a ticket another request removed first is reported as not
+     * deleted instead of counting as a successful delete.
+     */
+    private static boolean isDocumentNotFound(final Throwable throwable) {
+        return ExceptionUtils.getThrowableList(throwable)
+            .stream()
+            .filter(ApiException.class::isInstance)
+            .map(ApiException.class::cast)
+            .map(apiException -> apiException.getStatusCode().getCode())
+            .anyMatch(code -> code == StatusCode.Code.NOT_FOUND || code == StatusCode.Code.FAILED_PRECONDITION);
     }
 }

@@ -97,16 +97,17 @@ public class MemcachedTicketRegistry extends AbstractTicketRegistry implements D
         val clientFromPool = getClientFromPool();
         val digestedId = digestIdentifier(ticketId);
         try {
-            if (!awaitCompletion(clientFromPool.delete(digestedId))) {
-                LOGGER.debug("Memcached held no entry for ticket [{}] to remove", digestedId);
+            if (awaitCompletion(clientFromPool.delete(digestedId))) {
+                return 1;
             }
+            LOGGER.debug("Memcached held no entry for ticket [{}] to remove", digestedId);
         } catch (final Exception e) {
             LOGGER.error("Ticket not found or is already removed. Failed deleting [{}]", digestedId);
             LoggingUtils.error(LOGGER, e);
         } finally {
             returnClientToPool(clientFromPool);
         }
-        return 1;
+        return 0;
     }
 
     @Override
