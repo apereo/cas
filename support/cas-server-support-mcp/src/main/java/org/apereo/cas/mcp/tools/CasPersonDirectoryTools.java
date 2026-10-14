@@ -4,6 +4,7 @@ import module java.base;
 import org.apereo.cas.authentication.credential.BasicIdentifiableCredential;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
+import org.apereo.cas.util.function.FunctionUtils;
 import lombok.RequiredArgsConstructor;
 import org.jspecify.annotations.Nullable;
 import org.springframework.ai.mcp.annotation.McpTool;
@@ -25,13 +26,15 @@ public class CasPersonDirectoryTools {
      *
      * @param username the username
      * @return the resolved principal
-     * @throws Throwable the throwable
      */
-    @McpTool(description = "Look up a person from the attribute repository store")
+    @McpTool(description = "Look up a person and their attributes from the CAS attribute repositories",
+        title = "Find Person",
+        annotations = @McpTool.McpAnnotations(readOnlyHint = true, destructiveHint = false,
+            idempotentHint = true, openWorldHint = false))
     @PreAuthorize("hasRole('MCP_ADMIN')")
     public @Nullable Principal findPerson(
-        @McpToolParam(description = "The username of the person to look up") final String username)
-            throws Throwable {
-        return principalResolver.resolve(new BasicIdentifiableCredential(username));
+        @McpToolParam(description = "The username of the person to look up")
+        final String username) {
+        return FunctionUtils.doUnchecked(() -> principalResolver.resolve(new BasicIdentifiableCredential(username)));
     }
 }

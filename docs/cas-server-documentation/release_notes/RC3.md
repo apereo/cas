@@ -240,6 +240,8 @@ It used to scan and load every audit record stored in Redis on each login attemp
 Failed attempts are now tracked in a small key per username and IP address that expires once outside the failure range.
 [Redis audit records](../audits/Audits-Redis.html) now expire after `cas.audit.redis.max-age`{: .cas-setting}, 180 days by default, and
 looking up audit records reads only the newest matching entries instead of loading every record.
+Audit events for the same principal within one second are now stored separately; previously, later events could overwrite
+earlier ones, including authentication successes immediately followed by ticket creation. Existing records remain readable.
 
 ### Passwordless Authentication
 {: .new data-area="passwordless"}
@@ -455,6 +457,19 @@ on while a signing key is defined). The cookie encryption is authenticated, so t
 about a quarter smaller. This is recommended with the stateless ticket registry, where the cookie carries the
 ticket-granting ticket and can otherwise exceed the `4096` bytes browsers accept, for example after Duo Security multifactor
 authentication. See the [stateless ticket registry documentation](../ticketing/Stateless-Ticket-Registry.html) for details.
+
+### MCP Server
+{: .new data-area="operations"}
+
+CAS can now act as a [Model Context Protocol (MCP) server](../installation/Admin-MCP-Server.html), so AI assistants and agents
+can examine a CAS deployment through read-only tools. They find the registered service that matches an application URL,
+evaluate whether a person may access an application and explain a denial, preview the username and attributes released to an
+application, determine which multifactor authentication provider is required and why, preview single logout notifications,
+search registered services, look up single sign-on sessions by person or attribute, tickets, tenants, audit records and
+people along with their resolved attributes. Tools that examine optional features are
+offered only when that feature is included in the build; these include attribute consent decisions, SAML2 service provider
+metadata resolution with certificate expiration dates, and OpenID Connect client registrations and keystore keys. The server uses the Streamable HTTP transport at `/cas/mcp`; every request must be authenticated with the
+same user stores that protect actuator endpoints, and tool calls require the `MCP_ADMIN` role.
 
 ## Other Stuff
 

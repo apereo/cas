@@ -1,0 +1,28 @@
+{
+  "dependencies": "mcp,json-service-registry,consent-webflow,audit-redis",
+  "conditions": {
+    "docker": "true"
+  },
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
+    "--cas.authn.attribute-repository.stub.attributes.mail=casuser@example.org",
+    "--cas.authn.attribute-repository.stub.attributes.cn=CAS",
+
+    "--cas.consent.core.crypto.alg=A128CBC-HS256",
+    "--cas.consent.core.crypto.encryption.key=J1UI2iqIRrzm_QiiM-N0axFLjqUds3FdyarSl1bZMFk",
+    "--cas.consent.core.crypto.signing.key=Culo3HdCFJIZCCNdg6SYD5Id1Ef-5bB0cvhcimbCj9k_gNXsTflTj1njpp92XISHZxDH4Qhla7mFFBb70ZcMLg",
+
+    "--cas.audit.slf4j.enabled=false",
+    "--cas.audit.redis.host=localhost",
+    "--cas.audit.redis.port=6379",
+    "--cas.audit.redis.asynchronous=false",
+
+    "--cas.service-registry.core.init-from-json=false",
+    "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services",
+
+    "--cas.monitor.endpoints.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/users.json"
+  ],
+  "initScript": "${PWD}/ci/tests/redis/run-redis-server.sh"
+}

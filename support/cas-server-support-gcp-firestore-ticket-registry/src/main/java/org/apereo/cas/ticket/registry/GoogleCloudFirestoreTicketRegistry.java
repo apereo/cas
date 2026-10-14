@@ -14,16 +14,12 @@ import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
 import com.google.api.core.ApiFuture;
-import com.google.api.gax.rpc.ApiException;
-import com.google.api.gax.rpc.StatusCode;
 import com.google.cloud.firestore.Filter;
 import com.google.cloud.firestore.Firestore;
-import com.google.cloud.firestore.Precondition;
 import com.google.cloud.firestore.WriteResult;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.hjson.JsonValue;
 import org.hjson.Stringify;
 import org.jooq.lambda.Unchecked;
@@ -174,21 +170,19 @@ public class GoogleCloudFirestoreTicketRegistry extends AbstractTicketRegistry {
             val metadata = ticketCatalog.find(ticketId);
             if (metadata == null) {
                 LOGGER.error("Could not locate ticket definition in the catalog for ticket [{}]", ticketId);
-                return 0;
+                return 0L;
             }
             val collectionName = getTicketCollectionInstanceByMetadata(metadata);
-            try {
-                val updateTime = firestore.collection(collectionName).document(digestedId)
-                    .delete(Precondition.exists(true)).get().getUpdateTime();
-                LOGGER.debug("Deleted ticket [{}] from [{}] @ [{}]", ticketId, collectionName, updateTime);
-                return 1;
-            } catch (final ExecutionException e) {
-                if (isDocumentNotFound(e)) {
-                    LOGGER.debug("Ticket [{}] is already removed from [{}]", ticketId, collectionName);
-                    return 0;
+            val document = firestore.collection(collectionName).document(digestedId);
+            val deleted = firestore.runTransaction(transaction -> {
+                if (!transaction.get(document).get().exists()) {
+                    return 0L;
                 }
-                throw e;
-            }
+                transaction.delete(document);
+                return 1L;
+            }).get();
+            LOGGER.debug("Deleted [{}] ticket(s) with id [{}] from [{}]", deleted, ticketId, collectionName);
+            return deleted;
         });
     }
 
@@ -210,11 +204,9 @@ public class GoogleCloudFirestoreTicketRegistry extends AbstractTicketRegistry {
                  * Counting inside a completion callback instead leaves the tally to whenever the
                  * callback happens to be dispatched, which is not before this method returns.
                  */
-                val futures = new ArrayList<ApiFuture<WriteResult>>();
+                var futures = new ArrayList<ApiFuture<WriteResult>>();
                 try (val bulkWriter = firestore.bulkWriter()) {
-                    for (val document : documents) {
-                        futures.add(bulkWriter.delete(document.getReference()));
-                    }
+                    futures = documents.stream().map(document -> bulkWriter.delete(document.getReference())).collect(Collectors.toCollection(ArrayList::new));
                 }
                 return futures
                     .stream()
@@ -389,18 +381,5 @@ public class GoogleCloudFirestoreTicketRegistry extends AbstractTicketRegistry {
         }
         val exp = System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(ttl);
         return DateTimeUtils.dateOf(Instant.ofEpochMilli(exp));
-    }
-
-    /*
-     * The delete only applies while the document exists, so a ticket another request removed first is reported as not
-     * deleted instead of counting as a successful delete.
-     */
-    private static boolean isDocumentNotFound(final Throwable throwable) {
-        return ExceptionUtils.getThrowableList(throwable)
-            .stream()
-            .filter(ApiException.class::isInstance)
-            .map(ApiException.class::cast)
-            .map(apiException -> apiException.getStatusCode().getCode())
-            .anyMatch(code -> code == StatusCode.Code.NOT_FOUND || code == StatusCode.Code.FAILED_PRECONDITION);
     }
 }

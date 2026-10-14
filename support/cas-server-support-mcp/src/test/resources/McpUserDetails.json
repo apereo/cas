@@ -1,0 +1,16 @@
+[
+  {
+    "username": "mcpadmin",
+    "password": "{noop}Mellon",
+    "authorities": [
+      "ROLE_MCP_ADMIN"
+    ]
+  },
+  {
+    "username": "casuser",
+    "password": "{noop}Mellon",
+    "authorities": [
+      "ROLE_USER"
+    ]
+  }
+]

@@ -107,7 +107,8 @@ public class RedisAuditTrailManager extends AbstractAuditTrailManager {
 
     @Override
     protected void saveAuditRecord(final AuditActionContext audit) {
-        val redisKey = getPatternAuditRedisKey(String.valueOf(audit.getWhenActionWasPerformed().toEpochSecond(ZoneOffset.UTC)), audit.getPrincipal());
+        val recordId = audit.getWhenActionWasPerformed().toEpochSecond(ZoneOffset.UTC) + ":" + UUID.randomUUID();
+        val redisKey = getPatternAuditRedisKey(recordId, audit.getPrincipal());
         val operations = redisTemplate.boundValueOps(redisKey);
         if (maxAge != null && maxAge.isPositive()) {
             operations.set(audit, maxAge);

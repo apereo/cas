@@ -1,0 +1,18 @@
+{
+  "dependencies": "mcp,json-service-registry,saml-idp,oidc",
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
+    "--cas.authn.saml-idp.core.entity-id=https://cas.apereo.org/saml/idp",
+    "--cas.authn.saml-idp.metadata.file-system.location=file:${#systemProperties['java.io.tmpdir']}/mcp-saml-md",
+
+    "--cas.authn.oidc.core.issuer=https://localhost:8443/cas/oidc",
+    "--cas.authn.oidc.jwks.file-system.jwks-file=file:${#systemProperties['java.io.tmpdir']}/mcp-oidc.jwks",
+
+    "--cas.service-registry.core.init-from-json=false",
+    "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services",
+
+    "--cas.monitor.endpoints.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/users.json"
+  ]
+}

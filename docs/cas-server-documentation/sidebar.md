@@ -54,6 +54,7 @@ layout: null
 
 * [Administration](#casdashboard)
     *   [Overview](/cas/{{ version }}/installation/Admin-Dashboard.html)  
+    *   [MCP Server](/cas/{{ version }}/installation/Admin-MCP-Server.html)
 
 * [Configuration](#casconfigmgmt)
     *   [Overview](/cas/{{ version }}/configuration/Configuration-Management.html)
