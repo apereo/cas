@@ -471,6 +471,10 @@ offered only when that feature is included in the build; these include attribute
 metadata resolution with certificate expiration dates, and OpenID Connect client registrations and keystore keys. The server uses the Streamable HTTP transport at `/cas/mcp`; every request must be authenticated with the
 same user stores that protect actuator endpoints, and tool calls require the `MCP_ADMIN` role.
 
+The server can also return the recorded authentication events of a person, with the client IP address, user agent and
+location of each, and, when those features are included in the build, the devices a person trusts for multifactor
+authentication and the accounts a person may impersonate. Device fingerprints are never returned.
+
 ## Other Stuff
 
 - {: .changed data-area="project"} A large number of dependencies and libraries have been updated to their latest versions.

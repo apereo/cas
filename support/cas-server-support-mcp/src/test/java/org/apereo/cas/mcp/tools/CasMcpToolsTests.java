@@ -10,20 +10,27 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ReturnAllAttributeReleasePolicy;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
+import org.apereo.cas.support.events.CasEventRepository;
+import org.apereo.cas.support.events.dao.CasEvent;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.serialization.TicketSerializationManager;
+import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
+import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
+import org.apereo.cas.util.spring.beans.BeanSupplier;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.support.StaticListableBeanFactory;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -87,6 +94,26 @@ class CasMcpToolsTests extends BaseCasMcpTests {
     private CasPersonDirectoryTools casPersonDirectoryTools;
 
     @Autowired
+    @Qualifier("casAuthenticationEventTools")
+    private CasAuthenticationEventTools casAuthenticationEventTools;
+
+    @Autowired
+    @Qualifier("casTrustedDeviceTools")
+    private CasTrustedDeviceTools casTrustedDeviceTools;
+
+    @Autowired
+    @Qualifier("casSurrogateTools")
+    private CasSurrogateTools casSurrogateTools;
+
+    @Autowired
+    @Qualifier(CasEventRepository.BEAN_NAME)
+    private CasEventRepository casEventRepository;
+
+    @Autowired
+    @Qualifier(MultifactorAuthenticationTrustStorage.BEAN_NAME)
+    private MultifactorAuthenticationTrustStorage mfaTrustEngine;
+
+    @Autowired
     @Qualifier(ServicesManager.BEAN_NAME)
     private ServicesManager servicesManager;
 
@@ -113,6 +140,9 @@ class CasMcpToolsTests extends BaseCasMcpTests {
         assertTrue(AopUtils.isAopProxy(casTenantTools));
         assertTrue(AopUtils.isAopProxy(casTicketRegistryTools));
         assertTrue(AopUtils.isAopProxy(casPersonDirectoryTools));
+        assertTrue(AopUtils.isAopProxy(casAuthenticationEventTools));
+        assertTrue(AopUtils.isAopProxy(casTrustedDeviceTools));
+        assertTrue(AopUtils.isAopProxy(casSurrogateTools));
     }
 
     @Test
@@ -300,6 +330,84 @@ class CasMcpToolsTests extends BaseCasMcpTests {
 
     @Test
     @WithMockUser(roles = "MCP_ADMIN")
+    void verifyFindAuthenticationEvents() throws Throwable {
+        val username = "casuser-" + UUID.randomUUID();
+        val now = Instant.now(Clock.systemUTC());
+        val recent = new CasEvent();
+        recent.setType("org.apereo.cas.support.events.ticket.CasTicketGrantingTicketCreatedEvent");
+        recent.setPrincipalId(username);
+        recent.setCreationTime(now.minus(Duration.ofHours(1)));
+        recent.putClientIpAddress("192.0.2.10");
+        recent.putAgent("Firefox");
+        recent.putDeviceFingerprint("secret-device-fingerprint");
+        casEventRepository.save(recent);
+        val old = new CasEvent();
+        old.setType("org.apereo.cas.support.events.authentication.CasAuthenticationTransactionFailureEvent");
+        old.setPrincipalId(username);
+        old.setCreationTime(now.minus(Duration.ofDays(10)));
+        casEventRepository.save(old);
+
+        val result = casAuthenticationEventTools.findAuthenticationEvents(username, null);
+        assertEquals(1, result.get("count"), result::toString);
+        val event = (Map<?, ?>) ((List<?>) result.get("events")).getFirst();
+        assertEquals("CasTicketGrantingTicketCreatedEvent", event.get("type"));
+        assertEquals("192.0.2.10", event.get("clientIpAddress"));
+        assertEquals("Firefox", event.get("userAgent"));
+        assertFalse(result.toString().contains("secret-device-fingerprint"));
+        assertEquals(2, casAuthenticationEventTools.findAuthenticationEvents(username, 30).get("count"));
+    }
+
+    @Test
+    void verifyFindAuthenticationEventsWhenEventsAreOff() {
+        val repository = BeanSupplier.of(CasEventRepository.class).neverMatch().otherwiseProxy().get();
+        val beanFactory = new StaticListableBeanFactory(Map.<String, Object>of(CasEventRepository.BEAN_NAME, repository));
+        val tools = new CasAuthenticationEventTools(beanFactory.getBeanProvider(CasEventRepository.class));
+        assertEquals("Authentication events are not recorded", tools.findAuthenticationEvents("casuser", null).get("reason"));
+    }
+
+    @Test
+    @WithMockUser(roles = "MCP_ADMIN")
+    void verifyFindTrustedDevices() {
+        val username = "casuser-" + UUID.randomUUID();
+        val trustRecord = MultifactorAuthenticationTrustRecord.newInstance(username, "Paris", "secret-device-fingerprint");
+        trustRecord.setId(ThreadLocalRandom.current().nextLong(1, Integer.MAX_VALUE));
+        trustRecord.setRecordKey("secret-record-key");
+        trustRecord.setMultifactorAuthenticationProvider(TestMultifactorAuthenticationProvider.ID);
+        trustRecord.expireIn(1, ChronoUnit.DAYS);
+        mfaTrustEngine.save(trustRecord);
+
+        val result = casTrustedDeviceTools.findTrustedDevices(username);
+        assertEquals(1, result.get("count"), result::toString);
+        val device = (Map<?, ?>) ((List<?>) result.get("devices")).getFirst();
+        assertEquals(trustRecord.getName(), device.get("name"));
+        assertEquals(TestMultifactorAuthenticationProvider.ID, device.get("multifactorAuthenticationProvider"));
+        assertEquals(Boolean.FALSE, device.get("expired"));
+        assertNotNull(device.get("expirationDate"));
+        assertFalse(result.toString().contains("secret-device-fingerprint"));
+        assertFalse(result.toString().contains("secret-record-key"));
+        assertEquals(0, casTrustedDeviceTools.findTrustedDevices("unknown-" + UUID.randomUUID()).get("count"));
+    }
+
+    @Test
+    @WithMockUser(roles = "MCP_ADMIN")
+    void verifyFindSurrogateAccounts() {
+        val result = casSurrogateTools.findSurrogateAccounts("casuser", null);
+        assertEquals(Boolean.FALSE, result.get("anyAccount"));
+        assertEquals(new TreeSet<>(Set.of("banderson", "jsmith")), result.get("accounts"));
+        assertFalse(result.containsKey("service"));
+
+        val serviceUrl = newServiceUrl();
+        val forService = casSurrogateTools.findSurrogateAccounts("casuser", serviceUrl);
+        assertEquals(serviceUrl, forService.get("service"));
+        assertEquals(1, forService.get("count"));
+
+        val wildcard = casSurrogateTools.findSurrogateAccounts("surrogate-admin", StringUtils.EMPTY);
+        assertEquals(Boolean.TRUE, wildcard.get("anyAccount"));
+        assertEquals(new TreeSet<>(Set.of("jsmith")), wildcard.get("accounts"));
+    }
+
+    @Test
+    @WithMockUser(roles = "MCP_ADMIN")
     void verifyFindUnknownTenant() {
         val result = casTenantTools.findTenant("unknown-" + UUID.randomUUID());
         assertTrue(result.containsKey("reason"));
@@ -325,6 +433,9 @@ class CasMcpToolsTests extends BaseCasMcpTests {
         assertThrows(AccessDeniedException.class, () -> casSingleLogoutTools.previewLogout("TGT-1"));
         assertThrows(AccessDeniedException.class, () -> casServerStatisticsTools.getRegistryStatistics());
         assertThrows(AccessDeniedException.class, () -> casTenantTools.findTenant("unknown"));
+        assertThrows(AccessDeniedException.class, () -> casAuthenticationEventTools.findAuthenticationEvents("casuser", null));
+        assertThrows(AccessDeniedException.class, () -> casTrustedDeviceTools.findTrustedDevices("casuser"));
+        assertThrows(AccessDeniedException.class, () -> casSurrogateTools.findSurrogateAccounts("casuser", null));
     }
 
     @Test

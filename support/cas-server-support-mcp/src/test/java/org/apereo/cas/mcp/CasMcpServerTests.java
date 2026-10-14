@@ -14,6 +14,8 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ReturnAllAttributeReleasePolicy;
 import org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.support.events.CasEventRepository;
+import org.apereo.cas.support.events.dao.CasEvent;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
@@ -49,7 +51,8 @@ class CasMcpServerTests {
         "findAuditRecords", "findConsentDecisions", "findPerson", "findService", "findSessions",
         "findSessionsWithAttribute", "findTenant", "findTicket", "getRegistryStatistics", "listMultifactorProviders",
         "matchService", "previewAttributeRelease", "previewLogout", "searchServices",
-        "resolveSamlMetadata", "findOidcClient", "listJwksKeys");
+        "resolveSamlMetadata", "findOidcClient", "listJwksKeys", "findAuthenticationEvents", "findTrustedDevices",
+        "findSurrogateAccounts");
 
     @Nested
     @SpringBootTest(classes = BaseCasMcpTests.SharedTestConfiguration.class,
@@ -78,6 +81,10 @@ class CasMcpServerTests {
         @Autowired
         @Qualifier(TenantsManager.BEAN_NAME)
         private TenantsManager tenantsManager;
+
+        @Autowired
+        @Qualifier(CasEventRepository.BEAN_NAME)
+        private CasEventRepository casEventRepository;
 
         @Test
         void verifyEndpointRequiresAuthentication() throws Throwable {
@@ -247,6 +254,28 @@ class CasMcpServerTests {
             val result = JsonPath.<String>read(response, "$.result.content[0].text");
             assertEquals(List.of(ticketId), JsonPath.read(result, "$.sessions[*].id"), result);
             assertEquals(List.of(username), JsonPath.read(result, "$.sessions[*].principal"), result);
+        }
+
+        @Test
+        void verifyFindAuthenticationEvents() throws Throwable {
+            val username = "casuser-" + UUID.randomUUID();
+            val event = new CasEvent();
+            event.setType("org.apereo.cas.support.events.ticket.CasTicketGrantingTicketCreatedEvent");
+            event.setPrincipalId(username);
+            event.setCreationTime(Instant.now(Clock.systemUTC()));
+            event.putClientIpAddress("192.0.2.10");
+            event.putGeoAddress("Paris");
+            event.putDeviceFingerprint("secret-device-fingerprint");
+            casEventRepository.save(event);
+            val sessionId = initialize(MCP_ADMIN);
+
+            val response = send(MCP_ADMIN, sessionId,
+                callToolRequest("findAuthenticationEvents", "{\"username\":\"%s\"}".formatted(username)));
+            assertFalse(isToolError(response), response);
+            val result = JsonPath.<String>read(response, "$.result.content[0].text");
+            assertEquals(List.of("CasTicketGrantingTicketCreatedEvent"), JsonPath.read(result, "$.events[*].type"), result);
+            assertEquals("Paris", JsonPath.read(result, "$.events[0].geoAddress"), result);
+            assertFalse(result.contains("secret-device-fingerprint"), result);
         }
 
         @Test
@@ -428,7 +457,10 @@ class CasMcpServerTests {
                 callToolRequest("evaluateMultifactorTriggers", "{\"username\":\"casuser\",\"service\":\"https://mcp.example.org\"}"),
                 callToolRequest("previewLogout", "{\"ticketId\":\"TGT-1\"}"),
                 callToolRequest("getRegistryStatistics", "{}"),
-                callToolRequest("findTenant", "{\"tenantId\":\"unknown\"}"));
+                callToolRequest("findTenant", "{\"tenantId\":\"unknown\"}"),
+                callToolRequest("findAuthenticationEvents", "{\"username\":\"casuser\"}"),
+                callToolRequest("findTrustedDevices", "{\"username\":\"casuser\"}"),
+                callToolRequest("findSurrogateAccounts", "{\"username\":\"casuser\"}"));
             for (val call : calls) {
                 val response = send(CAS_USER, sessionId, call);
                 assertTrue(isToolError(response), response);
@@ -455,6 +487,9 @@ class CasMcpServerTests {
             assertFalse(webApplicationContext.containsBean("casTenantTools"));
             assertFalse(webApplicationContext.containsBean("casSamlIdPMetadataTools"));
             assertFalse(webApplicationContext.containsBean("casOidcTools"));
+            assertFalse(webApplicationContext.containsBean("casAuthenticationEventTools"));
+            assertFalse(webApplicationContext.containsBean("casTrustedDeviceTools"));
+            assertFalse(webApplicationContext.containsBean("casSurrogateTools"));
             assertFalse(webApplicationContext.containsBean("casMcpEndpointConfigurer"));
         }
     }

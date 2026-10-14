@@ -6,6 +6,7 @@ import org.apereo.cas.audit.spi.MockAuditTrailManager;
 import org.apereo.cas.audit.spi.plan.DefaultAuditTrailExecutionPlan;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
+import org.apereo.cas.authentication.surrogate.SurrogateAuthenticationService;
 import org.apereo.cas.config.CasCoreAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasCoreAutoConfiguration;
 import org.apereo.cas.config.CasCoreCookieAutoConfiguration;
@@ -31,7 +32,11 @@ import org.apereo.cas.consent.InMemoryConsentRepository;
 import org.apereo.cas.services.CasRegisteredService;
 import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
 import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicy;
+import org.apereo.cas.support.events.CasEventRepository;
+import org.apereo.cas.support.events.dao.CasEvent;
 import org.apereo.cas.test.CasTestExtension;
+import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
+import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import com.jayway.jsonpath.JsonPath;
@@ -60,6 +65,7 @@ import org.springframework.test.web.servlet.request.RequestPostProcessor;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -261,6 +267,48 @@ public abstract class BaseCasMcpTests {
         @Bean(name = ConsentDecisionBuilder.BEAN_NAME)
         public ConsentDecisionBuilder consentDecisionBuilder() {
             return new DefaultConsentDecisionBuilder(CipherExecutor.noOpOfSerializableToString());
+        }
+
+        @Bean(name = CasEventRepository.BEAN_NAME)
+        public CasEventRepository casEventRepository() {
+            val events = new CopyOnWriteArrayList<CasEvent>();
+            return new CasEventRepository() {
+                @Override
+                public CasEvent save(final CasEvent event) {
+                    events.add(event);
+                    return event;
+                }
+
+                @Override
+                public Stream<? extends CasEvent> getEventsForPrincipal(final String id, final ZonedDateTime dateTime) {
+                    return events.stream().filter(event -> event.getPrincipalId().equals(id));
+                }
+            };
+        }
+
+        @Bean(name = MultifactorAuthenticationTrustStorage.BEAN_NAME)
+        public MultifactorAuthenticationTrustStorage mfaTrustEngine() {
+            val records = new CopyOnWriteArrayList<MultifactorAuthenticationTrustRecord>();
+            val storage = mock(MultifactorAuthenticationTrustStorage.class);
+            when(storage.save(any())).thenAnswer(invocation -> {
+                val trustRecord = invocation.getArgument(0, MultifactorAuthenticationTrustRecord.class);
+                records.add(trustRecord);
+                return trustRecord;
+            });
+            when(storage.get(anyString())).thenAnswer(invocation -> records.stream()
+                .filter(trustRecord -> trustRecord.getPrincipal().equals(invocation.getArgument(0)))
+                .collect(Collectors.toSet()));
+            return storage;
+        }
+
+        @Bean(name = SurrogateAuthenticationService.BEAN_NAME)
+        public SurrogateAuthenticationService surrogateAuthenticationService() {
+            return (username, service) -> {
+                if (username.startsWith("surrogate-admin")) {
+                    return List.of(SurrogateAuthenticationService.WILDCARD_ACCOUNT, "jsmith");
+                }
+                return service.isPresent() ? List.of("jsmith") : List.of("jsmith", "banderson");
+            };
         }
     }
 }

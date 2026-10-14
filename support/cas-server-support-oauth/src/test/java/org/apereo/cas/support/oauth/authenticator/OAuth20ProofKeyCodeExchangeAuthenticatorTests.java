@@ -6,6 +6,8 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
+import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
+import org.apereo.cas.support.oauth.services.OAuthRegisteredServiceClientSecret;
 import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.code.OAuth20DefaultCode;
 import org.apereo.cas.ticket.expiration.HardTimeoutExpirationPolicy;
@@ -13,6 +15,7 @@ import org.apereo.cas.util.DigestUtils;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.RandomUtils;
 import lombok.val;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.pac4j.core.context.CallContext;
@@ -40,11 +43,29 @@ class OAuth20ProofKeyCodeExchangeAuthenticatorTests extends BaseOAuth20Authentic
     @Qualifier("oauthProofKeyCodeExchangeAuthenticator")
     private Authenticator authenticator;
 
+    @BeforeEach
+    @Override
+    void initialize() {
+        service = new OAuthRegisteredService();
+        service.setId(RandomUtils.nextLong());
+        service.setName("PKCE-" + UUID.randomUUID());
+        service.setServiceId("https://" + UUID.randomUUID() + ".example.org");
+        service.setClientId(UUID.randomUUID().toString());
+        service.setClientSecrets(new ArrayList<>(List.of(OAuthRegisteredServiceClientSecret.withoutExpiration("secret"))));
+
+        serviceWithoutSecret = new OAuthRegisteredService();
+        serviceWithoutSecret.setId(RandomUtils.nextLong());
+        serviceWithoutSecret.setName("PKCE-" + UUID.randomUUID());
+        serviceWithoutSecret.setServiceId("https://" + UUID.randomUUID() + ".example.org");
+        serviceWithoutSecret.setClientId(UUID.randomUUID().toString());
+        servicesManager.save(service, serviceWithoutSecret);
+    }
+
     @Test
     void verifyNoToken() {
-        val credentials = new UsernamePasswordCredentials("clientWithoutSecret", "ABCD123");
+        val credentials = new UsernamePasswordCredentials(serviceWithoutSecret.getClientId(), "ABCD123");
         val request = new MockHttpServletRequest();
-        request.addParameter(OAuth20Constants.CLIENT_ID, "clientWithoutSecret");
+        request.addParameter(OAuth20Constants.CLIENT_ID, serviceWithoutSecret.getClientId());
         request.addParameter(OAuth20Constants.CODE_VERIFIER, "ABCD123");
         request.addParameter(OAuth20Constants.CODE, "CODE-UNKNOWN");
         val ctx = new JEEContext(request, new MockHttpServletResponse());
@@ -55,7 +76,7 @@ class OAuth20ProofKeyCodeExchangeAuthenticatorTests extends BaseOAuth20Authentic
 
     @Test
     void verifyAuthenticationPlainWithoutSecret() throws Throwable {
-        val credentials = new UsernamePasswordCredentials("clientWithoutSecret", "ABCD123");
+        val credentials = new UsernamePasswordCredentials(serviceWithoutSecret.getClientId(), "ABCD123");
         val request = new MockHttpServletRequest();
         val id = "CODE-%s".formatted(RandomUtils.randomAlphabetic(12));
         ticketRegistry.addTicket(new OAuth20DefaultCode(id,
@@ -65,18 +86,18 @@ class OAuth20ProofKeyCodeExchangeAuthenticatorTests extends BaseOAuth20Authentic
             new ArrayList<>(), "ABCD123",
             "plain", "clientid12345", new HashMap<>(),
             OAuth20ResponseTypes.CODE, OAuth20GrantTypes.AUTHORIZATION_CODE));
-        request.addParameter(OAuth20Constants.CLIENT_ID, "clientWithoutSecret");
+        request.addParameter(OAuth20Constants.CLIENT_ID, serviceWithoutSecret.getClientId());
         request.addParameter(OAuth20Constants.CODE_VERIFIER, "ABCD123");
         request.addParameter(OAuth20Constants.CODE, id);
         val ctx = new JEEContext(request, new MockHttpServletResponse());
         authenticator.validate(new CallContext(ctx, new JEESessionStore()), credentials);
         assertNotNull(credentials.getUserProfile());
-        assertEquals("clientWithoutSecret", credentials.getUserProfile().getId());
+        assertEquals(serviceWithoutSecret.getClientId(), credentials.getUserProfile().getId());
     }
 
     @Test
     void verifyAuthenticationPlainWithSecretTransmittedByFormAuthn() throws Throwable {
-        val credentials = new UsernamePasswordCredentials("client", "ABCD123");
+        val credentials = new UsernamePasswordCredentials(service.getClientId(), "ABCD123");
         val request = new MockHttpServletRequest();
         val id = "CODE-%s".formatted(RandomUtils.randomAlphabetic(12));
         ticketRegistry.addTicket(
@@ -86,19 +107,19 @@ class OAuth20ProofKeyCodeExchangeAuthenticatorTests extends BaseOAuth20Authentic
                 new ArrayList<>(), "ABCD123",
                 "plain", "clientid12345", new HashMap<>(),
                 OAuth20ResponseTypes.CODE, OAuth20GrantTypes.AUTHORIZATION_CODE));
-        request.addParameter(OAuth20Constants.CLIENT_ID, "client");
+        request.addParameter(OAuth20Constants.CLIENT_ID, service.getClientId());
         request.addParameter(OAuth20Constants.CODE_VERIFIER, "ABCD123");
         request.addParameter(OAuth20Constants.CLIENT_SECRET, "secret");
         request.addParameter(OAuth20Constants.CODE, id);
         val ctx = new JEEContext(request, new MockHttpServletResponse());
         authenticator.validate(new CallContext(ctx, new JEESessionStore()), credentials);
         assertNotNull(credentials.getUserProfile());
-        assertEquals("client", credentials.getUserProfile().getId());
+        assertEquals(service.getClientId(), credentials.getUserProfile().getId());
     }
 
     @Test
     void verifyAuthenticationPlainWithSecretTransmittedByBasicAuthn() throws Throwable {
-        val credentials = new UsernamePasswordCredentials("client", "secret");
+        val credentials = new UsernamePasswordCredentials(service.getClientId(), "secret");
         val request = new MockHttpServletRequest();
         val id = "CODE-%s".formatted(RandomUtils.randomAlphabetic(12));
         ticketRegistry.addTicket(
@@ -108,19 +129,19 @@ class OAuth20ProofKeyCodeExchangeAuthenticatorTests extends BaseOAuth20Authentic
                 new ArrayList<>(), "ABCD123",
                 "plain", "clientid12345", new HashMap<>(),
                 OAuth20ResponseTypes.CODE, OAuth20GrantTypes.AUTHORIZATION_CODE));
-        request.addHeader(HttpHeaders.AUTHORIZATION, "Basic " + EncodingUtils.encodeBase64("client:secret"));
+        request.addHeader(HttpHeaders.AUTHORIZATION, "Basic " + EncodingUtils.encodeBase64(service.getClientId() + ":secret"));
         request.addParameter(OAuth20Constants.CODE_VERIFIER, "ABCD123");
         request.addParameter(OAuth20Constants.CODE, id);
         val ctx = new JEEContext(request, new MockHttpServletResponse());
         authenticator.validate(new CallContext(ctx, new JEESessionStore()), credentials);
         assertNotNull(credentials.getUserProfile());
-        assertEquals("client", credentials.getUserProfile().getId());
+        assertEquals(service.getClientId(), credentials.getUserProfile().getId());
     }
 
     @Test
     void verifyAuthenticationHashedWithoutSecret() throws Throwable {
         val hash = EncodingUtils.encodeUrlSafeBase64(DigestUtils.rawDigestSha256("ABCD123"));
-        val credentials = new UsernamePasswordCredentials("clientWithoutSecret", "ABCD123");
+        val credentials = new UsernamePasswordCredentials(serviceWithoutSecret.getClientId(), "ABCD123");
         val request = new MockHttpServletRequest();
         val ticket = new OAuth20DefaultCode("CODE-%s".formatted(RandomUtils.randomAlphabetic(12)),
             RegisteredServiceTestUtils.getService(), RegisteredServiceTestUtils.getAuthentication(),
@@ -129,19 +150,19 @@ class OAuth20ProofKeyCodeExchangeAuthenticatorTests extends BaseOAuth20Authentic
             new ArrayList<>(), hash, "s256", "clientid12345", new HashMap<>(),
             OAuth20ResponseTypes.CODE, OAuth20GrantTypes.AUTHORIZATION_CODE);
         ticketRegistry.addTicket(ticket);
-        request.addParameter(OAuth20Constants.CLIENT_ID, "clientWithoutSecret");
+        request.addParameter(OAuth20Constants.CLIENT_ID, serviceWithoutSecret.getClientId());
         request.addParameter(OAuth20Constants.CODE_VERIFIER, "ABCD123");
         request.addParameter(OAuth20Constants.CODE, ticket.getId());
         val ctx = new JEEContext(request, new MockHttpServletResponse());
         authenticator.validate(new CallContext(ctx, new JEESessionStore()), credentials);
         assertNotNull(credentials.getUserProfile());
-        assertEquals("clientWithoutSecret", credentials.getUserProfile().getId());
+        assertEquals(serviceWithoutSecret.getClientId(), credentials.getUserProfile().getId());
     }
 
     @Test
     void verifyUnknownDigest() throws Throwable {
         val hash = EncodingUtils.encodeUrlSafeBase64(DigestUtils.rawDigestSha256("ABCD123"));
-        val credentials = new UsernamePasswordCredentials("clientWithoutSecret", "ABCD123");
+        val credentials = new UsernamePasswordCredentials(serviceWithoutSecret.getClientId(), "ABCD123");
         val request = new MockHttpServletRequest();
         val ticket = new OAuth20DefaultCode("CODE-%s".formatted(RandomUtils.randomAlphabetic(12)),
             RegisteredServiceTestUtils.getService(), RegisteredServiceTestUtils.getAuthentication(),
@@ -150,7 +171,7 @@ class OAuth20ProofKeyCodeExchangeAuthenticatorTests extends BaseOAuth20Authentic
             new ArrayList<>(), hash, "unknown", "clientid12345", new HashMap<>(),
             OAuth20ResponseTypes.CODE, OAuth20GrantTypes.AUTHORIZATION_CODE);
         ticketRegistry.addTicket(ticket);
-        request.addParameter(OAuth20Constants.CLIENT_ID, "clientWithoutSecret");
+        request.addParameter(OAuth20Constants.CLIENT_ID, serviceWithoutSecret.getClientId());
         request.addParameter(OAuth20Constants.CODE_VERIFIER, "ABCD123");
         request.addParameter(OAuth20Constants.CODE, ticket.getId());
         val ctx = new JEEContext(request, new MockHttpServletResponse());
@@ -161,7 +182,7 @@ class OAuth20ProofKeyCodeExchangeAuthenticatorTests extends BaseOAuth20Authentic
     @Test
     void verifyAuthenticationHashedWithSecretTransmittedByFormAuthn() throws Throwable {
         val hash = EncodingUtils.encodeUrlSafeBase64(DigestUtils.rawDigestSha256("ABCD123"));
-        val credentials = new UsernamePasswordCredentials("client", "ABCD123");
+        val credentials = new UsernamePasswordCredentials(service.getClientId(), "ABCD123");
         val request = new MockHttpServletRequest();
         val ticket = new OAuth20DefaultCode("CODE-%s".formatted(RandomUtils.randomAlphabetic(12)),
             RegisteredServiceTestUtils.getService(), RegisteredServiceTestUtils.getAuthentication(),
@@ -170,42 +191,40 @@ class OAuth20ProofKeyCodeExchangeAuthenticatorTests extends BaseOAuth20Authentic
             new ArrayList<>(), hash, "s256", "clientid12345", new HashMap<>(),
             OAuth20ResponseTypes.CODE, OAuth20GrantTypes.AUTHORIZATION_CODE);
         ticketRegistry.addTicket(ticket);
-        request.addParameter(OAuth20Constants.CLIENT_ID, "client");
+        request.addParameter(OAuth20Constants.CLIENT_ID, service.getClientId());
         request.addParameter(OAuth20Constants.CODE_VERIFIER, "ABCD123");
         request.addParameter(OAuth20Constants.CLIENT_SECRET, "secret");
         request.addParameter(OAuth20Constants.CODE, ticket.getId());
         val ctx = new JEEContext(request, new MockHttpServletResponse());
         authenticator.validate(new CallContext(ctx, new JEESessionStore()), credentials);
         assertNotNull(credentials.getUserProfile());
-        assertEquals("client", credentials.getUserProfile().getId());
+        assertEquals(service.getClientId(), credentials.getUserProfile().getId());
     }
 
     @Test
     void verifyAuthenticationHashedWithSecretTransmittedByBasicFormAuthn() throws Throwable {
         val hash = EncodingUtils.encodeUrlSafeBase64(DigestUtils.rawDigestSha256("ABCD123"));
-        val credentials = new UsernamePasswordCredentials("client", "ABCD123");
+        val credentials = new UsernamePasswordCredentials(service.getClientId(), "ABCD123");
         val request = new MockHttpServletRequest();
-        val ticket = new OAuth20DefaultCode("CODE-1234567890",
+        val ticket = new OAuth20DefaultCode("CODE-%s".formatted(RandomUtils.randomAlphabetic(12)),
             RegisteredServiceTestUtils.getService(), RegisteredServiceTestUtils.getAuthentication(),
             new HardTimeoutExpirationPolicy(10),
             new MockTicketGrantingTicket("casuser"),
             new ArrayList<>(), hash, "s256", "clientid12345", new HashMap<>(),
             OAuth20ResponseTypes.CODE, OAuth20GrantTypes.AUTHORIZATION_CODE);
         ticketRegistry.addTicket(ticket);
-        request.addHeader(HttpHeaders.AUTHORIZATION, "Basic " + EncodingUtils.encodeBase64("client:secret"));
+        request.addHeader(HttpHeaders.AUTHORIZATION, "Basic " + EncodingUtils.encodeBase64(service.getClientId() + ":secret"));
         request.addParameter(OAuth20Constants.CODE_VERIFIER, "ABCD123");
         request.addParameter(OAuth20Constants.CODE, ticket.getId());
         val ctx = new JEEContext(request, new MockHttpServletResponse());
         authenticator.validate(new CallContext(ctx, new JEESessionStore()), credentials);
         assertNotNull(credentials.getUserProfile());
-        assertEquals("client", credentials.getUserProfile().getId());
+        assertEquals(service.getClientId(), credentials.getUserProfile().getId());
     }
 
     @Test
     void verifyAuthenticationNotHashedCorrectly() throws Throwable {
-        servicesManager.save(service);
-        
-        val credentials = new UsernamePasswordCredentials("client", "ABCD123");
+        val credentials = new UsernamePasswordCredentials(service.getClientId(), "ABCD123");
         val request = new MockHttpServletRequest();
         val ticket = new OAuth20DefaultCode("CODE-%s".formatted(RandomUtils.randomAlphabetic(12)),
             RegisteredServiceTestUtils.getService(), RegisteredServiceTestUtils.getAuthentication(),
@@ -215,7 +234,7 @@ class OAuth20ProofKeyCodeExchangeAuthenticatorTests extends BaseOAuth20Authentic
             "something-else", "s256", "clientid12345", new HashMap<>(),
             OAuth20ResponseTypes.CODE, OAuth20GrantTypes.AUTHORIZATION_CODE);
         ticketRegistry.addTicket(ticket);
-        request.addParameter(OAuth20Constants.CLIENT_ID, "client");
+        request.addParameter(OAuth20Constants.CLIENT_ID, service.getClientId());
         request.addParameter(OAuth20Constants.CODE_VERIFIER, RandomUtils.randomAlphabetic(12));
         request.addParameter(OAuth20Constants.CLIENT_SECRET, "secret");
         request.addParameter(OAuth20Constants.CODE, ticket.getId());

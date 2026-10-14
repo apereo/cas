@@ -1,16 +1,22 @@
 package org.apereo.cas.config;
 
 import module java.base;
+import org.apereo.cas.authentication.principal.ServiceFactory;
+import org.apereo.cas.authentication.principal.WebApplicationService;
+import org.apereo.cas.authentication.surrogate.SurrogateAuthenticationService;
 import org.apereo.cas.consent.ConsentDecisionBuilder;
 import org.apereo.cas.consent.ConsentRepository;
 import org.apereo.cas.consent.InMemoryConsentRepository;
 import org.apereo.cas.mcp.tools.CasConsentTools;
 import org.apereo.cas.mcp.tools.CasOidcTools;
 import org.apereo.cas.mcp.tools.CasSamlIdPMetadataTools;
+import org.apereo.cas.mcp.tools.CasSurrogateTools;
+import org.apereo.cas.mcp.tools.CasTrustedDeviceTools;
 import org.apereo.cas.oidc.issuer.OidcIssuerService;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
+import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -105,6 +111,37 @@ class CasMcpAutoConfigurationTests {
         runner.run(context -> {
             val result = context.getBean(CasOidcTools.class).listJwksKeys();
             assertEquals("The OpenID Connect keystore is not available", result.get("reason"));
+        });
+    }
+
+    @Test
+    void verifyTrustedDeviceToolsActivation() {
+        val runner = new ApplicationContextRunner()
+            .withUserConfiguration(CasMcpAutoConfiguration.CasMcpTrustedDevicesConfiguration.class);
+        runner.run(context -> assertTrue(context.containsBean("casTrustedDeviceTools")));
+        runner.withClassLoader(new FilteredClassLoader(MultifactorAuthenticationTrustStorage.class))
+            .run(context -> assertFalse(context.containsBean("casTrustedDeviceTools")));
+        runner.withPropertyValues("CasFeatureModule.AI.mcp-trusted-mfa.enabled=false")
+            .run(context -> assertFalse(context.containsBean("casTrustedDeviceTools")));
+        runner.run(context -> {
+            val result = context.getBean(CasTrustedDeviceTools.class).findTrustedDevices("casuser");
+            assertEquals("Multifactor authentication trusted devices are not configured", result.get("reason"));
+        });
+    }
+
+    @Test
+    void verifySurrogateToolsActivation() {
+        val runner = new ApplicationContextRunner()
+            .withUserConfiguration(CasMcpAutoConfiguration.CasMcpSurrogateConfiguration.class)
+            .withBean(WebApplicationService.BEAN_NAME_FACTORY, ServiceFactory.class, () -> mock(ServiceFactory.class));
+        runner.run(context -> assertTrue(context.containsBean("casSurrogateTools")));
+        runner.withClassLoader(new FilteredClassLoader(SurrogateAuthenticationService.class))
+            .run(context -> assertFalse(context.containsBean("casSurrogateTools")));
+        runner.withPropertyValues("CasFeatureModule.AI.mcp-surrogate.enabled=false")
+            .run(context -> assertFalse(context.containsBean("casSurrogateTools")));
+        runner.run(context -> {
+            val result = context.getBean(CasSurrogateTools.class).findSurrogateAccounts("casuser", null);
+            assertEquals("Surrogate authentication is not configured", result.get("reason"));
         });
     }
 }

@@ -78,6 +78,21 @@
   `auth_request` maps any status other than 2xx/401/403 (such as Heimdall's 404) to 500. Validate edits with a local
   `nginx -t` and stub upstreams; the config resolves `host.docker.internal` at load time.
 
+## MCP server module (`support/cas-server-support-mcp`)
+
+- Tools are plain beans whose methods carry `@McpTool` plus `@PreAuthorize("hasRole('MCP_ADMIN')")`;
+  `CasMcpToolsTests.verifyToolsAreSecuredByProxies` asserts every such bean is an AOP proxy. All tools are read-only.
+- A tool over an optional feature follows the consent pattern: `compileOnly` (and `testImplementation`) on that module, a
+  nested `@Configuration` with `@ConditionalOnClass` and feature module `mcp-<group>`, an `ObjectProvider` for the backing
+  bean and a `reason` in the result when it is absent; test activation in `CasMcpAutoConfigurationTests`.
+- Never return secrets: device fingerprints, trusted-device record keys, client secrets, key material, setting values.
+  Tests assert the secret string is absent from the result.
+- A turned-off events repository is a `BeanSupplier` proxy, not null: check `BeanSupplier.isProxy`.
+- A new tool also goes into `CAS_TOOLS` (`CasMcpServerTests`, `mcp-server-tools/script.js` when core), the role-denial
+  lists, `FeatureDisabledTests`, and the tables and feature-toggle list in `Admin-MCP-Server.md`.
+- Claude's shells have no JDK 25 or Maven Central; `build/mcp-run.sh` compiles, runs checkstyle, the `RestfulApi` tests
+  and the MCP puppeteer scenarios on the Mac.
+
 Guidance for AI coding agents working in the Apereo CAS source tree.
 
 > This repository is for CAS contributors. If the task is deployment/configuration, prefer the WAR overlay approach instead of editing this repo.

@@ -7,12 +7,14 @@ import org.apereo.cas.authentication.MultifactorAuthenticationTriggerSelectionSt
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
+import org.apereo.cas.authentication.surrogate.SurrogateAuthenticationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.consent.ConsentDecisionBuilder;
 import org.apereo.cas.consent.ConsentRepository;
 import org.apereo.cas.logout.slo.SingleLogoutServiceLogoutUrlBuilder;
 import org.apereo.cas.mcp.tools.CasAuditTools;
+import org.apereo.cas.mcp.tools.CasAuthenticationEventTools;
 import org.apereo.cas.mcp.tools.CasConsentTools;
 import org.apereo.cas.mcp.tools.CasMultifactorAuthenticationTools;
 import org.apereo.cas.mcp.tools.CasOidcTools;
@@ -22,17 +24,21 @@ import org.apereo.cas.mcp.tools.CasServerStatisticsTools;
 import org.apereo.cas.mcp.tools.CasServiceAccessTools;
 import org.apereo.cas.mcp.tools.CasServiceManagementTools;
 import org.apereo.cas.mcp.tools.CasSingleLogoutTools;
+import org.apereo.cas.mcp.tools.CasSurrogateTools;
 import org.apereo.cas.mcp.tools.CasTenantTools;
 import org.apereo.cas.mcp.tools.CasTicketRegistryTools;
+import org.apereo.cas.mcp.tools.CasTrustedDeviceTools;
 import org.apereo.cas.multitenancy.TenantsManager;
 import org.apereo.cas.oidc.issuer.OidcIssuerService;
 import org.apereo.cas.oidc.jwks.generator.OidcJsonWebKeystoreGeneratorService;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
+import org.apereo.cas.support.events.CasEventRepository;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.serialization.TicketSerializationManager;
+import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.web.CasWebSecurityConfigurer;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
@@ -179,6 +185,14 @@ public class CasMcpAutoConfiguration {
     }
 
     @Bean
+    @ConditionalOnMissingBean(name = "casAuthenticationEventTools")
+    public CasAuthenticationEventTools casAuthenticationEventTools(
+        @Qualifier(CasEventRepository.BEAN_NAME)
+        final ObjectProvider<CasEventRepository> casEventRepository) {
+        return new CasAuthenticationEventTools(casEventRepository);
+    }
+
+    @Bean
     @ConditionalOnMissingBean(name = "casMcpEndpointConfigurer")
     public CasWebSecurityConfigurer<HttpSecurity> casMcpEndpointConfigurer(
         final McpServerStreamableHttpProperties mcpServerStreamableHttpProperties) {
@@ -242,6 +256,36 @@ public class CasMcpAutoConfiguration {
             @Qualifier("oidcJsonWebKeystoreGeneratorService")
             final ObjectProvider<OidcJsonWebKeystoreGeneratorService> oidcJsonWebKeystoreGeneratorService) {
             return new CasOidcTools(servicesManager, oidcIssuerService, oidcJsonWebKeystoreGeneratorService);
+        }
+    }
+
+    @ConditionalOnClass(MultifactorAuthenticationTrustStorage.class)
+    @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.AI, module = "mcp-trusted-mfa")
+    @Configuration(value = "CasMcpTrustedDevicesConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    static class CasMcpTrustedDevicesConfiguration {
+        @Bean
+        @ConditionalOnMissingBean(name = "casTrustedDeviceTools")
+        public CasTrustedDeviceTools casTrustedDeviceTools(
+            @Qualifier(MultifactorAuthenticationTrustStorage.BEAN_NAME)
+            final ObjectProvider<MultifactorAuthenticationTrustStorage> mfaTrustEngine) {
+            return new CasTrustedDeviceTools(mfaTrustEngine);
+        }
+    }
+
+    @ConditionalOnClass(SurrogateAuthenticationService.class)
+    @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.AI, module = "mcp-surrogate")
+    @Configuration(value = "CasMcpSurrogateConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    static class CasMcpSurrogateConfiguration {
+        @Bean
+        @ConditionalOnMissingBean(name = "casSurrogateTools")
+        public CasSurrogateTools casSurrogateTools(
+            @Qualifier(SurrogateAuthenticationService.BEAN_NAME)
+            final ObjectProvider<SurrogateAuthenticationService> surrogateAuthenticationService,
+            @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
+            final ServiceFactory<WebApplicationService> webApplicationServiceFactory) {
+            return new CasSurrogateTools(surrogateAuthenticationService, webApplicationServiceFactory);
         }
     }
 }

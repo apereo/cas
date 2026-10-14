@@ -67,6 +67,7 @@ The following tools are available. All tools are read-only and are advertised to
 | `getRegistryStatistics`       | none                                                | Report how many single sign-on sessions, service tickets and tickets the ticket registry holds, and how many registered services are loaded.                                                                             |
 | `findTenant`                  | `tenantId` (string)                                 | Look up a [tenant](../multitenancy/Multitenancy-Overview.html) and its policies, along with the names of the settings it overrides; setting values are never returned.                                                   |
 | `findAuditRecords`            | `username` (string), `days` and `action` (optional) | Return the most recent [audit records](../audits/Audits.html) of a person, optionally limited to a number of days and to actions that contain the given text.                                                            |
+| `findAuthenticationEvents`    | `username` (string), `days` (optional)              | Return the most recent recorded [authentication events](../authentication/Configuring-Authentication-Events.html) of a person, such as single sign-on sessions created and destroyed and authentication failures, with the client IP address, user agent and location of each. Device fingerprints are never returned. |
 
 The `service` parameter is the application URL, such as the `service` parameter an application sends to CAS at login.
 Access evaluations are recorded in the [audit log](../audits/Audits.html) like any other access strategy decision, and
@@ -81,6 +82,10 @@ Audit records can only be returned when CAS is configured with an audit storage 
 such as a database or Redis; the default audit log that is written to the CAS logs cannot be searched.
 Search results are limited to the first fifty matches, and audit lookups to the most recent hundred records.
 
+Authentication events are only returned when CAS records them in an
+[events repository](../authentication/Configuring-Authentication-Events.html), such as memory, a database or Redis;
+lookups are limited to the most recent hundred events.
+
 ### Optional Tools
 
 Additional tools become available when the feature they examine is included in the CAS build. They are listed by the MCP
@@ -92,8 +97,10 @@ server only when the corresponding module is present, and each group can be turn
 | `resolveSamlMetadata`  | [SAML2 identity provider](../authentication/Configuring-SAML2-Authentication.html) | `entityId` (string) | Resolve the metadata of a service provider the way CAS does, and report the matching registration and metadata source, the validity period, assertion consumer and single logout endpoints, name id formats and certificates with their expiration dates, or the error when resolution fails. |
 | `findOidcClient`       | [OpenID Connect](../authentication/OIDC-Authentication.html)                       | `clientId` (string) | Summarize an OAuth or OpenID Connect client registration: redirect URI pattern, grant and response types, scopes, client authentication, token settings, issuer and ID token settings. Client secrets are never returned.                                                                     |
 | `listJwksKeys`         | [OpenID Connect](../authentication/OIDC-Authentication.html)                       | none                | List the keys of the CAS OpenID Connect keystore with their key id, type, algorithm, use and rotation state. Key material is never returned.                                                                                                                                                  |
+| `findTrustedDevices`   | [Trusted devices](../mfa/Multifactor-TrustedDevice-Authentication.html)            | `username` (string) | Return the devices a person has registered as trusted for multifactor authentication: the device name, the multifactor authentication provider, when it was registered, when it expires and whether it has expired. Device fingerprints and record keys are never returned. |
+| `findSurrogateAccounts` | [Surrogate authentication](../authentication/Surrogate-Authentication.html)      | `username` (string), `service` (optional) | Return the accounts a person may impersonate, optionally for an application, and whether the person may impersonate any account. |
 
-{% include_cached featuretoggles.html features="AI.mcp-consent,AI.mcp-saml-idp,AI.mcp-oidc" %}
+{% include_cached featuretoggles.html features="AI.mcp-consent,AI.mcp-saml-idp,AI.mcp-oidc,AI.mcp-trusted-mfa,AI.mcp-surrogate" %}
 
 ## Client Configuration
 

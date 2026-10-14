@@ -6,7 +6,8 @@ const MCP_ADMIN = `Basic ${btoa("mcpadmin:Mellon")}`;
 const MCP_USER = `Basic ${btoa("mcpuser:Mellon")}`;
 const CAS_TOOLS = ["evaluateAccess", "evaluateMultifactorTriggers", "findAuditRecords", "findPerson", "findService",
     "findSessions", "findSessionsWithAttribute", "findTenant", "findTicket", "getRegistryStatistics",
-    "listMultifactorProviders", "matchService", "previewAttributeRelease", "previewLogout", "searchServices"];
+    "listMultifactorProviders", "matchService", "previewAttributeRelease", "previewLogout", "searchServices",
+    "findAuthenticationEvents", "findSurrogateAccounts"];
 
 let requestId = 0;
 
@@ -82,7 +83,7 @@ async function callTool(authorization, sessionId, name, args) {
     const tools = await send(MCP_ADMIN, sessionId, "tools/list", {});
     const names = tools.tools.map((tool) => tool.name);
     await cas.log(`Available tools: ${names}`);
-    for (const optional of ["findConsentDecisions", "resolveSamlMetadata", "findOidcClient", "listJwksKeys"]) {
+    for (const optional of ["findConsentDecisions", "resolveSamlMetadata", "findOidcClient", "listJwksKeys", "findTrustedDevices"]) {
         assert(!names.includes(optional), `Tool ${optional} must not be listed without its module`);
     }
     for (const tool of CAS_TOOLS) {
@@ -195,6 +196,12 @@ async function callTool(authorization, sessionId, name, args) {
     assert(logout.applications[0].notified === true);
     assert(logout.applications[0].logoutUrls[0].logoutType === "BACK_CHANNEL");
 
+    await cas.sleep(1000);
+    const events = JSON.parse((await callTool(MCP_ADMIN, sessionId, "findAuthenticationEvents", {username: "casuser"})).text);
+    assert(events.count >= 1);
+    assert(events.events.some((event) => event.type === "CasTicketGrantingTicketCreatedEvent"));
+    assert(events.events.every((event) => event.deviceFingerprint === undefined));
+
     const statistics = JSON.parse((await callTool(MCP_ADMIN, sessionId, "getRegistryStatistics", {})).text);
     assert(statistics.singleSignOnSessions >= 1);
     assert(statistics.registeredServices === 2);
@@ -211,6 +218,13 @@ async function callTool(authorization, sessionId, name, args) {
         });
     const removedTicket = await callTool(MCP_ADMIN, sessionId, "findTicket", {ticketId: ticketGrantingTicketId});
     assert(removedTicket.text === "null");
+
+    await cas.separator();
+    const surrogates = JSON.parse((await callTool(MCP_ADMIN, sessionId, "findSurrogateAccounts", {username: "casuser"})).text);
+    assert(surrogates.anyAccount === false);
+    assert(surrogates.accounts.join(",") === "banderson,jsmith");
+    const noSurrogates = JSON.parse((await callTool(MCP_ADMIN, sessionId, "findSurrogateAccounts", {username: "jsmith"})).text);
+    assert(noSurrogates.count === 0);
 
     await cas.separator();
     await cas.log("Users without the MCP_ADMIN role may list tools, but must not be able to call them");
@@ -232,7 +246,9 @@ async function callTool(authorization, sessionId, name, args) {
         {name: "evaluateMultifactorTriggers", args: {username: "casuser", service: "https://localhost:9859/anything/mcp"}},
         {name: "previewLogout", args: {ticketId: "TGT-1-unknown"}},
         {name: "getRegistryStatistics", args: {}},
-        {name: "findTenant", args: {tenantId: "unknown"}}
+        {name: "findTenant", args: {tenantId: "unknown"}},
+        {name: "findAuthenticationEvents", args: {username: "casuser"}},
+        {name: "findSurrogateAccounts", args: {username: "casuser"}}
     ]) {
         const denied = await callTool(MCP_USER, userSessionId, call.name, call.args);
         assert(denied.error, `Tool ${call.name} must be denied for users without the MCP_ADMIN role`);
