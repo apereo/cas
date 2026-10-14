@@ -6,9 +6,11 @@ import org.apereo.cas.mcp.McpFederationTestConfiguration;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
+import org.apereo.cas.test.CasTestExtension;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -25,6 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("RestfulApi")
 @SpringBootTest(classes = BaseCasMcpTests.SharedTestConfiguration.class,
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@ExtendWith(CasTestExtension.class)
 class CasMcpFederationToolsTests extends BaseCasMcpTests {
     @Autowired
     @Qualifier("casSamlIdPMetadataTools")

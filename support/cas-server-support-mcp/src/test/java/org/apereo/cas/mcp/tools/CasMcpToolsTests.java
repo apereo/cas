@@ -10,6 +10,7 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ReturnAllAttributeReleasePolicy;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
@@ -19,6 +20,7 @@ import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -42,6 +44,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("RestfulApi")
 @SpringBootTest(classes = BaseCasMcpTests.SharedTestConfiguration.class,
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@ExtendWith(CasTestExtension.class)
 class CasMcpToolsTests extends BaseCasMcpTests {
     @Autowired
     @Qualifier("casServiceManagementTools")

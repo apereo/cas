@@ -718,7 +718,9 @@ same user stores that protect actuator endpoints, and tool calls require the `MC
   with `private_key_jwt`, `client_secret_jwt` or mutual TLS could previously redeem a code issued with a `code_challenge`
   without a `code_verifier`, or with one that did not match. As RFC 7636 and RFC 9700 require, the code verifier is now
   compared exactly rather than ignoring case, and a `code_verifier` sent for a code that was issued without a challenge is
-  refused with `invalid_grant`.
+  refused with `invalid_grant`. A `code_challenge` and `code_challenge_method` sent inside a request object are now recorded
+  with the authorization code as well; previously only the query parameters were read, so the code was issued without the
+  challenge and its verifier was then refused.
 - {: .fixed data-area="oidc"} When an [OAuth application](../authentication/OAuth-Authentication-Clients.html) renews refresh
   tokens, the refresh token presented is now removed before new tokens are issued for it, and only the request that removes it
   is issued tokens. Concurrent requests presenting the same refresh token could previously each receive a new refresh token,
@@ -732,6 +734,8 @@ same user stores that protect actuator endpoints, and tool calls require the `MC
   secret, or none. Expired client secrets are now ignored when a request is authenticated, and removed from the application
   definition in the background each time CAS loads applications from the service registry. When all secrets of an application
   have expired, the one that expired last is kept, so the application keeps refusing requests until it is given a new secret.
+  Updating a [dynamically registered](../authentication/OIDC-Authentication-Dynamic-Registration.html) client now replaces an
+  expired client secret with a new one instead of extending the expiration of the expired secret.
 - {: .changed data-area="oidc"} When CAS works out which application a login is for, a request object carried by the
   OAuth or OpenID Connect authorization request is now unpacked and verified once, instead of once for each of the client
   identifier, redirect URI and grant type read from it.

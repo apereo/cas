@@ -335,7 +335,8 @@ class OAuth20AuthorizationCodeGrantTypeTokenRequestValidatorTests {
         }
 
         private OAuth20Code registerTicket(final OAuthRegisteredService service, @Nullable final String codeChallenge,
-                                           @Nullable final String codeChallengeMethod) throws Throwable {
+                                           @Nullable final String codeChallengeMethod)
+                throws Throwable {
             val builder = new OAuth20DefaultCasAuthenticationBuilder(
                 PrincipalFactoryUtils.newPrincipalFactory(),
                 serviceFactory,
