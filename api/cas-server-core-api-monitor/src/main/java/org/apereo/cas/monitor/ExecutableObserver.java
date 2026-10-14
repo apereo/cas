@@ -66,7 +66,8 @@ public interface ExecutableObserver {
      */
     static Object observe(final ObjectProvider<ExecutableObserver> observerProvider,
                           final ProceedingJoinPoint joinPoint,
-                          final Function<MonitorableTask, MonitorableTask> taskCustomizer) throws Throwable {
+                          final Function<MonitorableTask, MonitorableTask> taskCustomizer)
+            throws Throwable {
         val observer = observerProvider.getIfAvailable();
         if (observer != null) {
             val task = taskCustomizer.apply(MonitorableTask.from(joinPoint));
@@ -84,7 +85,8 @@ public interface ExecutableObserver {
      * @throws Throwable the throwable
      */
     static Object observe(final ObjectProvider<ExecutableObserver> observerProvider,
-                          final ProceedingJoinPoint joinPoint) throws Throwable {
+                          final ProceedingJoinPoint joinPoint)
+            throws Throwable {
         return observe(observerProvider, joinPoint, Function.identity());
     }
 

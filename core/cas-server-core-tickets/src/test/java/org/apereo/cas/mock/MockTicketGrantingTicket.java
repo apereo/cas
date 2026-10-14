@@ -122,7 +122,8 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket {
     }
 
     public ServiceTicket grantServiceTicket(final Service service,
-                                            final TicketTrackingPolicy trackingPolicy) throws Throwable {
+                                            final TicketTrackingPolicy trackingPolicy)
+            throws Throwable {
         return grantServiceTicket(ID_GENERATOR.getNewTicketId("ST"), service, null,
             false, trackingPolicy);
     }

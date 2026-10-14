@@ -137,7 +137,8 @@ public class AttributeConsentReportEndpoint extends BaseCasRestActuatorEndpoint 
     @PostMapping(path = "/import", consumes = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Import a consent decision as a JSON document")
     public ResponseEntity importAccount(final HttpServletRequest request,
-        @RequestHeader(value = TenantExtractor.HEADER_TENANT_ID, required = false) final String tenantId) throws Throwable {
+        @RequestHeader(value = TenantExtractor.HEADER_TENANT_ID, required = false) final String tenantId)
+            throws Throwable {
         try (val is = request.getInputStream()) {
             val requestBody = IOUtils.toString(is, StandardCharsets.UTF_8);
             LOGGER.trace("Submitted account: [{}]", requestBody);
@@ -164,7 +165,8 @@ public class AttributeConsentReportEndpoint extends BaseCasRestActuatorEndpoint 
     public boolean revokeConsents(
         @PathVariable final String principal,
         @PathVariable final long decisionId,
-        @RequestHeader(value = TenantExtractor.HEADER_TENANT_ID, required = false) final String tenantId) throws Throwable {
+        @RequestHeader(value = TenantExtractor.HEADER_TENANT_ID, required = false) final String tenantId)
+            throws Throwable {
         LOGGER.debug("Deleting consent decision for principal [{}].", principal);
         val effectiveRespository = consentEngine.getObject().toConsentRepository(tenantId);
         return effectiveRespository.deleteConsentDecision(decisionId, principal);
@@ -180,7 +182,8 @@ public class AttributeConsentReportEndpoint extends BaseCasRestActuatorEndpoint 
     @Operation(summary = "Delete consent decisions for principal",
         parameters = @Parameter(name = "principal", required = true, description = "The principal id to look up"))
     public boolean revokeAllConsents(@PathVariable final String principal,
-        @RequestHeader(value = TenantExtractor.HEADER_TENANT_ID, required = false) final String tenantId) throws Throwable {
+        @RequestHeader(value = TenantExtractor.HEADER_TENANT_ID, required = false) final String tenantId)
+            throws Throwable {
         LOGGER.debug("Deleting all consent decisions for principal [{}].", principal);
         val effectiveRespository = consentEngine.getObject().toConsentRepository(tenantId);
         return effectiveRespository.deleteConsentDecisions(principal);

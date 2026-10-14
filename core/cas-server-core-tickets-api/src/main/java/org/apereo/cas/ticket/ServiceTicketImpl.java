@@ -76,7 +76,8 @@ public class ServiceTicketImpl extends AbstractTicket
     public ProxyGrantingTicket grantProxyGrantingTicket(
         final @NonNull String id, final @NonNull Authentication authentication,
         final ExpirationPolicy expirationPolicy,
-        final TicketTrackingPolicy proxyGrantingTicketTrackingPolicy) throws AbstractTicketException {
+        final TicketTrackingPolicy proxyGrantingTicketTrackingPolicy)
+            throws AbstractTicketException {
         if (this.grantedTicketAlready) {
             LOGGER.warn("Service ticket [{}] issued for service [{}] has already allotted a proxy-granting ticket", getId(), service.getId());
             throw new InvalidProxyGrantingTicketForServiceTicketException(service);

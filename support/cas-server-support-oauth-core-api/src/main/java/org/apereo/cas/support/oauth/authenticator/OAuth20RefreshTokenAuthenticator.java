@@ -16,7 +16,6 @@ import org.apereo.cas.support.oauth.web.OAuth20RequestParameterResolver;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshToken;
 import org.apereo.cas.ticket.registry.TicketRegistry;
-import org.apereo.cas.util.function.FunctionUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.Strings;
@@ -78,10 +77,7 @@ public class OAuth20RefreshTokenAuthenticator extends OAuth20ClientIdClientSecre
         val token = credentials.getPassword();
         LOGGER.trace("Received refresh token [{}] for authentication", token);
 
-        val refreshToken = FunctionUtils.doAndHandle(() -> {
-            val state = getTicketRegistry().getTicket(token, OAuth20RefreshToken.class);
-            return state == null || state.isExpired() ? null : state;
-        });
+        val refreshToken = OAuth20Utils.getRequestedOAuthToken(callContext.webContext(), getTicketRegistry(), token, OAuth20RefreshToken.class);
         val clientId = credentials.getUsername();
         if (refreshToken == null || refreshToken.isExpired() || !Strings.CI.equals(refreshToken.getClientId(), clientId)) {
             LOGGER.error("Refresh token [{}] is either not found in the ticket registry, has expired or does not belong to the client [{}]", token, clientId);

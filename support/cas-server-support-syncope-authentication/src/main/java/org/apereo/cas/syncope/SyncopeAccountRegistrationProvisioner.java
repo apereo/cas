@@ -56,7 +56,8 @@ public class SyncopeAccountRegistrationProvisioner implements AccountRegistratio
     }
 
     private AccountRegistrationResponse submitRequest(final AccountRegistrationRequest request,
-                                                      final String domain) throws Exception {
+                                                      final String domain)
+            throws Exception {
         HttpResponse response = null;
         try {
             val syncopeRestUrl = Strings.CI.appendIfMissing(SpringExpressionLanguageValueResolver.getInstance().resolve(properties.getUrl()), "/rest/users");

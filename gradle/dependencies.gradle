@@ -809,6 +809,14 @@ ext.libraries = [
                     exclude(group: "org.hibernate", module: "hibernate-ant")
                 }
         ],
+        springai            : [
+                dependencies.create(libs.spring.ai.mcp.webmvc.get()) {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-logging")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-actuator")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter")
+                }
+        ],
         springbootjdbc            : [
                 dependencies.create(libs.spring.boot.starter.data.jdbc.get()) {
                     exclude(group: "org.slf4j", module: "slf4j-api")
@@ -2507,6 +2515,9 @@ ext.libraries = [
         ],
         authlete                     : [
                 dependencies.create(libs.authlete.sd.jwt.get()) {
+                    exclude(group: "com.google.code.gson", module: "gson")
+                },
+                dependencies.create(libs.authlete.cbor.get()) {
                     exclude(group: "com.google.code.gson", module: "gson")
                 },
                 dependencies.create(libs.gson.get()) {

@@ -199,7 +199,8 @@ public class ResponseHeadersEnforcementFilter extends AbstractSecurityFilter imp
     }
 
     protected Optional<RegisteredService> prepareFilterBeforeExecution(final HttpServletResponse httpServletResponse,
-                                                                       final HttpServletRequest httpServletRequest) throws Throwable {
+                                                                       final HttpServletRequest httpServletRequest)
+            throws Throwable {
         return Optional.empty();
     }
 

@@ -195,7 +195,8 @@ class GoogleCloudPubSubTicketRegistryTests extends BaseTicketRegistryTests {
 
         @Bean
         public TopicAdminSettings topicAdminSettings(
-            final GcpPubSubProperties properties) throws Exception {
+            final GcpPubSubProperties properties)
+                throws Exception {
             val channel = ManagedChannelBuilder.forTarget(properties.getEmulatorHost()).usePlaintext().build();
             val channelProvider = FixedTransportChannelProvider.create(GrpcTransportChannel.create(channel));
             return TopicAdminSettings.newBuilder()
@@ -206,7 +207,8 @@ class GoogleCloudPubSubTicketRegistryTests extends BaseTicketRegistryTests {
 
         @Bean
         public SubscriptionAdminClient subscriptionAdminClient(
-            final GcpPubSubProperties properties) throws Exception {
+            final GcpPubSubProperties properties)
+                throws Exception {
             val channel = ManagedChannelBuilder.forTarget(properties.getEmulatorHost()).usePlaintext().build();
             val channelProvider =
                 FixedTransportChannelProvider.create(GrpcTransportChannel.create(channel));

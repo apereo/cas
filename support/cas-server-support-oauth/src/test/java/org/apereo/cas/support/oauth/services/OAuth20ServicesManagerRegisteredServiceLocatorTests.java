@@ -5,10 +5,13 @@ import org.apereo.cas.AbstractOAuth20Tests;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.services.PartialRegexRegisteredServiceMatchingStrategy;
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.RegisteredServiceIndexService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManagerRegisteredServiceLocator;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.RandomUtils;
+import org.apereo.cas.util.spring.DirectObjectProvider;
 import lombok.val;
 import org.apache.hc.core5.net.URIBuilder;
 import org.junit.jupiter.api.Tag;
@@ -21,6 +24,7 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * This is {@link OAuth20ServicesManagerRegisteredServiceLocatorTests}.
@@ -92,4 +96,28 @@ class OAuth20ServicesManagerRegisteredServiceLocatorTests extends AbstractOAuth2
         assertEquals(registeredService.getServiceId(), result.getServiceId());
     }
 
+    @Test
+    void verifyLocateByIndexedClientId() {
+        val clientId = "client-" + RandomUtils.randomAlphabetic(8).toLowerCase(Locale.ENGLISH);
+        val indexedService = getRegisteredService(".+", clientId, "secret");
+        indexedService.setId(RandomUtils.nextLong());
+        indexedService.setEvaluationOrder(10);
+        val otherService = getRegisteredService(".+", clientId.toUpperCase(Locale.ENGLISH), "secret");
+        otherService.setId(RandomUtils.nextLong());
+        otherService.setEvaluationOrder(1);
+        val candidates = List.<RegisteredService>of(otherService, indexedService);
+
+        val indexService = mock(RegisteredServiceIndexService.class);
+        when(indexService.isEnabled()).thenReturn(true);
+        when(indexService.findServiceBy(any())).thenAnswer(_ -> Stream.of(indexedService));
+        val locator = new OAuth20ServicesManagerRegisteredServiceLocator(casProperties, new DirectObjectProvider<>(indexService));
+
+        val service = serviceFactory.createService(
+            String.format("https://oauth.example.org/whatever?%s=%s", OAuth20Constants.CLIENT_ID, clientId));
+        assertEquals(indexedService, locator.locate(candidates, service));
+        assertEquals(otherService, new OAuth20ServicesManagerRegisteredServiceLocator(casProperties).locate(candidates, service));
+
+        when(indexService.findServiceBy(any())).thenAnswer(_ -> Stream.empty());
+        assertEquals(otherService, locator.locate(candidates, service));
+    }
 }

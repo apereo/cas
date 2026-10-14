@@ -35,7 +35,8 @@ public interface DelegatedClientAuthenticationWebflowManager {
      * @throws Throwable the throwable
      */
     TransientSessionTicket store(RequestContext requestContext,
-                                 JEEContext webContext, Client client) throws Throwable;
+                                 JEEContext webContext, Client client)
+            throws Throwable;
 
     /**
      * Retrieve.

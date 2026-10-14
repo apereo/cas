@@ -138,7 +138,7 @@ function getEditServiceDialogInstance() {
                 closeOnEscape: true,
                 draggable: false,
                 resizable: false,
-                dialogClass: "registered-service-wizard-dialog",
+                classes: {"ui-dialog": "ui-corner-all registered-service-wizard-dialog"},
                 close: () => $(window).off("resize.serviceEditor")
             });
         }

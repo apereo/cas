@@ -33,7 +33,8 @@ public class OidcVerifiableCredentialSigningUtils {
      * @throws Throwable the throwable
      */
     public static String sign(final OidcConfigurationContext configurationContext, final JwtClaims claims,
-                              final String mediaType) throws Throwable {
+                              final String mediaType)
+            throws Throwable {
         val signingKey = Objects.requireNonNull(configurationContext.getIdTokenSigningAndEncryptionService()
             .getJsonWebKeySigningKey(Optional.empty()), "No issuer signing key is available");
         val algorithm = resolveSigningAlgorithm(signingKey);

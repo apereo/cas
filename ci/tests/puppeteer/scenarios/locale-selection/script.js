@@ -9,7 +9,7 @@ const cas = require("../../cas.js");
     });
     await cas.gotoLogin(page);
     await cas.sleep(1000);
-    await cas.assertInnerText(page, "#content #fm1 button[name=submitBtn]", "ANMELDEN");
+    await cas.assertInnerText(page, "#content #fm1 button[name=submitBtn]", "Anmelden");
     await cas.attributeValue(page, "html", "lang", "de");
     await cas.closeBrowser(browser);
 })();

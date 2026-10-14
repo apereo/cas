@@ -38,8 +38,10 @@ public class OAuthCodeProperties implements Serializable {
     private String storageName = "oauthCodesCache";
 
     /**
-     * Remove the related access tokens when trying to use a code
-     * which is expired or no longer exists.
+     * Revoke the access and refresh tokens issued from an authorization code
+     * when the code is presented again after it was redeemed, as RFC 6749 recommends.
+     * When enabled, CAS keeps a short-lived record of the tokens issued from each code it redeems,
+     * for as long as transient session tickets live, and revokes them when the code is presented again.
      */
     private boolean removeRelatedAccessTokens;
 }

@@ -98,7 +98,8 @@ class RegisteredServiceResourceTests {
     }
 
     private void runTest(final String attrName, final String attrValue, final String credentials,
-                         final ResultMatcher result) throws Throwable {
+                         final ResultMatcher result)
+            throws Throwable {
         val appCtx = new StaticApplicationContext();
         appCtx.refresh();
         val registeredServiceResource = getRegisteredServiceResource(attrName, attrValue);

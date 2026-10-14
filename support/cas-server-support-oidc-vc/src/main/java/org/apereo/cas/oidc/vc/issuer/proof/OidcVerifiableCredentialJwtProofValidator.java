@@ -3,6 +3,7 @@ package org.apereo.cas.oidc.vc.issuer.proof;
 import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.oidc.OidcVerifiableCredentialConfigurationProperties;
+import org.apereo.cas.configuration.model.support.oidc.OidcVerifiableCredentialConfigurationProperties.CredentialConfigurationFormats;
 import org.apereo.cas.oidc.vc.issuer.nonce.OidcVerifiableCredentialNonceService;
 import org.apereo.cas.util.EncodingUtils;
 import com.nimbusds.jose.Algorithm;
@@ -67,7 +68,8 @@ public class OidcVerifiableCredentialJwtProofValidator implements OidcVerifiable
     @Override
     public VerifiableCredentialProofResult validate(final String proofJwt,
                                                     final @Nullable String configurationId,
-                                                    final Set<String> consumedNonces) throws Exception {
+                                                    final Set<String> consumedNonces)
+            throws Exception {
         try {
             val signedJwt = SignedJWT.parse(proofJwt);
             val configuration = resolveConfiguration(configurationId);
@@ -118,7 +120,8 @@ public class OidcVerifiableCredentialJwtProofValidator implements OidcVerifiable
     @Override
     public List<VerifiableCredentialProofResult> validateAttestation(final String keyAttestation,
                                                                      final @Nullable String configurationId,
-                                                                     final Set<String> consumedNonces) throws Exception {
+                                                                     final Set<String> consumedNonces)
+            throws Exception {
         val configuration = resolveConfiguration(configurationId);
         val attestation = keyAttestationValidator.validate(keyAttestation, configuration);
         if (configuration != null && !configuration.getProofSigningAlgValuesSupported().contains(attestation.algorithm())) {
@@ -147,7 +150,8 @@ public class OidcVerifiableCredentialJwtProofValidator implements OidcVerifiable
      * @throws Exception the exception
      */
     protected void verifyKeyAttestation(final SignedJWT signedJwt, final JWK holderJwk,
-                                        final @Nullable OidcVerifiableCredentialConfigurationProperties configuration) throws Exception {
+                                        final @Nullable OidcVerifiableCredentialConfigurationProperties configuration)
+            throws Exception {
         val keyAttestation = signedJwt.getHeader().getCustomParam(KEY_ATTESTATION_HEADER);
         if (keyAttestation == null) {
             if (configuration != null && configuration.getKeyAttestations().isRequired()) {
@@ -215,7 +219,8 @@ public class OidcVerifiableCredentialJwtProofValidator implements OidcVerifiable
      * @throws Exception the exception
      */
     protected JWK resolveHolderKey(final SignedJWT signedJwt,
-                                   final @Nullable OidcVerifiableCredentialConfigurationProperties configuration) throws Exception {
+                                   final @Nullable OidcVerifiableCredentialConfigurationProperties configuration)
+            throws Exception {
         val header = signedJwt.getHeader();
         val embeddedKey = header.getJWK();
         val certificateChain = header.getX509CertChain();
@@ -275,8 +280,20 @@ public class OidcVerifiableCredentialJwtProofValidator implements OidcVerifiable
         return JWK.parse(new Base64URL(encodedKey).decodeToString());
     }
 
+    /**
+     * The proof's binding method must be one the credential configuration supports. An mdoc is always bound to a
+     * {@code COSE_Key}, as its issuer metadata says, and that key is the one the proof carries in its header, so a header
+     * key is the {@code cose_key} binding of an {@code mso_mdoc} configuration whatever its binding methods list.
+     *
+     * @param configuration the credential configuration
+     * @param bindingMethod the binding method of the proof
+     */
     protected void verifyBindingMethod(final @Nullable OidcVerifiableCredentialConfigurationProperties configuration,
                                        final String bindingMethod) {
+        if (configuration != null && configuration.getFormat() == CredentialConfigurationFormats.MSO_MDOC
+            && BINDING_METHOD_JWK.equals(bindingMethod)) {
+            return;
+        }
         if (configuration != null && !configuration.getCryptographicBindingMethodsSupported().contains(bindingMethod)) {
             throw OidcVerifiableCredentialProofException.invalidProof(
                 "Cryptographic binding method %s is not supported by this credential configuration".formatted(bindingMethod));

@@ -49,6 +49,8 @@ public class OAuthRegisteredService extends BaseWebBasedRegisteredService {
 
     private String jwtAccessTokenSigningAlg;
 
+    private boolean dpopBoundAccessTokens;
+
     private Set<String> audience = new HashSet<>();
     
     private RegisteredServiceOAuthCodeExpirationPolicy codeExpirationPolicy;

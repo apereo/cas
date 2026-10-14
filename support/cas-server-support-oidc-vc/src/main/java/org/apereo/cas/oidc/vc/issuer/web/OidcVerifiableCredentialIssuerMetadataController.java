@@ -68,7 +68,8 @@ public class OidcVerifiableCredentialIssuerMetadataController extends BaseOAuth2
     @Operation(summary = "Handle OIDC credential issuer metadata request",
         description = "Handles requests for well-known OIDC credential issuer metadata")
     public ResponseEntity handle(final HttpServletRequest request,
-                                 final HttpServletResponse response) throws Throwable {
+                                 final HttpServletResponse response)
+            throws Throwable {
         val webContext = new JEEContext(request, response);
         if (!getConfigurationContext().getIssuerService().validateIssuer(webContext, List.of(OidcConstants.WELL_KNOWN_OPENID_CREDENTIAL_ISSUER_URL))) {
             LOGGER.warn("CAS cannot accept the request given the issuer is invalid.");

@@ -107,7 +107,8 @@ class X509SubjectAlternativeNameRFC822EmailPrincipalResolverTests {
     void verifyResolvePrincipalInternal(final String certPath,
                                         final String expectedResult,
                                         final String alternatePrincipalAttribute,
-                                        final String requiredAttribute) throws Throwable {
+                                        final String requiredAttribute)
+            throws Throwable {
 
         val context = PrincipalResolutionContext.builder()
             .attributeDefinitionStore(attributeDefinitionStore)

@@ -75,7 +75,8 @@ public class OidcVerifiableCredentialDefaultDeferredIssuanceService implements O
 
     @Override
     public Optional<DeferredTransaction> defer(final OAuth20AccessToken accessToken, final String credentialConfigurationId,
-                                               final List<VerifiableCredentialProofResult> proofs) throws Throwable {
+                                               final List<VerifiableCredentialProofResult> proofs)
+            throws Throwable {
         val timeToLive = Beans.newDuration(configurationContext.getCasProperties().getAuthn().getOidc()
             .getVc().getIssuer().getDeferredIssuance().getTimeToLive());
         val properties = new HashMap<String, Serializable>();

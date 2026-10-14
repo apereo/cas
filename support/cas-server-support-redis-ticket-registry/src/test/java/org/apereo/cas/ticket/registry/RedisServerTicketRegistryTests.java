@@ -218,6 +218,49 @@ class RedisServerTicketRegistryTests {
             assertNull(getNewTicketRegistry().getTicket(tgt.getId()));
         }
 
+        @RepeatedTest(1)
+        void verifyCachedTicketExpiresWithinLimitAfterReads() throws Throwable {
+            val authentication = CoreAuthenticationTestUtils.getAuthentication(UUID.randomUUID().toString());
+            val tgtId = new TicketGrantingTicketIdGenerator(10, StringUtils.EMPTY)
+                .getNewTicketId(TicketGrantingTicket.PREFIX);
+            val tgt = new TicketGrantingTicketImpl(tgtId, authentication, NeverExpiresExpirationPolicy.INSTANCE);
+            getNewTicketRegistry().addTicket(tgt);
+            try {
+                assertNotNull(getNewTicketRegistry().getTicket(tgt.getId()));
+                assertNotNull(getNewTicketRegistry().getTicket(tgt.getId()));
+                val cacheKey = getNewTicketRegistry().digestIdentifier(tgt.getId());
+                val expiresAfter = redisTicketRegistryCache.policy().expireVariably().orElseThrow()
+                    .getExpiresAfter(cacheKey).orElseThrow();
+                assertTrue(expiresAfter.compareTo(Duration.ofSeconds(30)) <= 0);
+            } finally {
+                getNewTicketRegistry().deleteTicket(tgt.getId());
+            }
+        }
+
+        @RepeatedTest(1)
+        void verifyScansDoNotFillCache() throws Throwable {
+            val authentication = CoreAuthenticationTestUtils.getAuthentication(UUID.randomUUID().toString());
+            val tgtId = new TicketGrantingTicketIdGenerator(10, StringUtils.EMPTY)
+                .getNewTicketId(TicketGrantingTicket.PREFIX);
+            val tgt = new TicketGrantingTicketImpl(tgtId, authentication, NeverExpiresExpirationPolicy.INSTANCE);
+            getNewTicketRegistry().addTicket(tgt);
+            try {
+                val cacheKey = getNewTicketRegistry().digestIdentifier(tgt.getId());
+                redisTicketRegistryCache.invalidate(cacheKey);
+                try (val tickets = getNewTicketRegistry().stream()) {
+                    assertTrue(tickets.anyMatch(ticket -> ticket.getId().equals(tgt.getId())));
+                }
+                val criteria = new TicketRegistryQueryCriteria()
+                    .setDecode(Boolean.TRUE)
+                    .setType(TicketGrantingTicket.PREFIX)
+                    .setPrincipal(authentication.getPrincipal().getId());
+                assertEquals(1, getNewTicketRegistry().query(criteria).size());
+                assertNull(redisTicketRegistryCache.getIfPresent(cacheKey));
+            } finally {
+                getNewTicketRegistry().deleteTicket(tgt.getId());
+            }
+        }
+
         @RepeatedTest(2)
         void verifyLargeDataset() {
             LOGGER.info("Current repetition: [{}]", useEncryption ? "Encrypted" : "Plain");
@@ -275,11 +318,11 @@ class RedisServerTicketRegistryTests {
 
             ((Cleanable) getNewTicketRegistry()).clean();
             val criteria2 = new TicketRegistryQueryCriteria()
-                .setCount(5L)
                 .setDecode(Boolean.TRUE)
-                .setType(TicketGrantingTicket.PREFIX);
+                .setType(TicketGrantingTicket.PREFIX)
+                .setPrincipal(authentication.getPrincipal().getId());
             val queryResults = getNewTicketRegistry().query(criteria2);
-            assertEquals(criteria2.getCount(), queryResults.size());
+            assertEquals(5, queryResults.size());
         }
 
         @RepeatedTest(2)

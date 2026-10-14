@@ -162,7 +162,8 @@ class SamlIdPDelegatedClientAuthenticationRequestCustomizerTests extends BaseSam
     }
 
     private void setAuthnRequestFor(final JEEContext webContext,
-                                    final String... allowedIdps) throws Exception {
+                                    final String... allowedIdps)
+            throws Exception {
         val service = getSamlRegisteredServiceFor("https://cassp.example.org");
         service.setId(RandomUtils.nextInt());
 

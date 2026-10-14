@@ -59,7 +59,8 @@ public class CasGoogleCloudSecretsManagerCloudConfigBootstrapAutoConfiguration {
     public SecretManagerTemplate googleCloudSecretsManagerTemplate(
         @Qualifier("googleCloudSecretsManagerCredentialProvider")
         final CredentialsProvider googleCloudSecretsManagerCredentialProvider,
-        final GcpSecretManagerProperties properties) throws Exception {
+        final GcpSecretManagerProperties properties)
+            throws Exception {
         val settings = SecretManagerServiceSettings.newBuilder()
             .setCredentialsProvider(googleCloudSecretsManagerCredentialProvider)
             .setHeaderProvider(new UserAgentHeaderProvider(getClass()))

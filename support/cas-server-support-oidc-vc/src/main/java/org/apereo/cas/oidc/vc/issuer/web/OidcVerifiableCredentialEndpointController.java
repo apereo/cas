@@ -28,16 +28,13 @@ import org.apereo.cas.util.Couplet;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
-import com.nimbusds.oauth2.sdk.dpop.verifiers.InvalidDPoPNonceException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.Nullable;
-import org.pac4j.core.context.WebContext;
 import org.pac4j.jee.context.JEEContext;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -110,7 +107,8 @@ public class OidcVerifiableCredentialEndpointController extends BaseOAuth20Contr
     public ResponseEntity handle(
         @RequestBody final String body,
         final HttpServletRequest httpRequest,
-        final HttpServletResponse httpResponse) throws Throwable {
+        final HttpServletResponse httpResponse)
+            throws Throwable {
 
         val verified = verifyRequest(httpRequest, httpResponse, OidcConstants.VC_CREDENTIAL_URL);
         if (verified.getRight() != null) {
@@ -176,7 +174,8 @@ public class OidcVerifiableCredentialEndpointController extends BaseOAuth20Contr
     public ResponseEntity handleDeferred(
         @RequestBody final String body,
         final HttpServletRequest httpRequest,
-        final HttpServletResponse httpResponse) throws Throwable {
+        final HttpServletResponse httpResponse)
+            throws Throwable {
         val verified = verifyRequest(httpRequest, httpResponse, OidcConstants.VC_DEFERRED_CREDENTIAL_URL);
         if (verified.getRight() != null) {
             return verified.getRight();
@@ -223,7 +222,8 @@ public class OidcVerifiableCredentialEndpointController extends BaseOAuth20Contr
      */
     protected ResponseEntity deliverDeferredCredentials(final OAuth20AccessToken accessToken, final DeferredTransaction transaction,
                                                         final OidcVerifiableCredentialDeferredRequest request,
-                                                        final HttpServletRequest httpRequest) throws Throwable {
+                                                        final HttpServletRequest httpRequest)
+            throws Throwable {
         val credentialRequest = new OidcVerifiableCredentialRequest();
         credentialRequest.setCredentialConfigurationId(transaction.credentialConfigurationId());
         val issuanceContext = new OidcVerifiableCredentialValidationContext(accessToken, credentialRequest, httpRequest);
@@ -240,13 +240,15 @@ public class OidcVerifiableCredentialEndpointController extends BaseOAuth20Contr
 
     protected ResponseEntity issueCredentials(final OidcVerifiableCredentialValidationContext issuanceContext,
                                               final List<VerifiableCredentialProofResult> proofs,
-                                              final OidcVerifiableCredentialRequest.@Nullable CredentialResponseEncryption responseEncryption) throws Throwable {
+                                              final OidcVerifiableCredentialRequest.@Nullable CredentialResponseEncryption responseEncryption)
+            throws Throwable {
         return respondWithCredentials(issuanceContext, encodeCredentials(issuanceContext, proofs), responseEncryption);
     }
 
     protected List<OidcVerifiableCredentialResponse.IssuedCredential> encodeCredentials(
         final OidcVerifiableCredentialValidationContext issuanceContext,
-        final List<VerifiableCredentialProofResult> proofs) throws Throwable {
+        final List<VerifiableCredentialProofResult> proofs)
+            throws Throwable {
         return credentialIssuerService.encode(issuanceContext, proofs)
             .stream()
             .<OidcVerifiableCredentialResponse.IssuedCredential>map(issued -> OidcVerifiableCredentialResponse.IssuedCredential
@@ -258,7 +260,8 @@ public class OidcVerifiableCredentialEndpointController extends BaseOAuth20Contr
 
     protected ResponseEntity respondWithCredentials(final OidcVerifiableCredentialValidationContext issuanceContext,
                                                     final List<OidcVerifiableCredentialResponse.IssuedCredential> credentials,
-                                                    final OidcVerifiableCredentialRequest.@Nullable CredentialResponseEncryption responseEncryption) throws Throwable {
+                                                    final OidcVerifiableCredentialRequest.@Nullable CredentialResponseEncryption responseEncryption)
+            throws Throwable {
         val response = OidcVerifiableCredentialResponse.builder()
             .credentials(credentials)
             .notificationId(notificationService.register(issuanceContext.accessToken(), issuanceContext.resolveConfigurationId()))
@@ -607,85 +610,8 @@ public class OidcVerifiableCredentialEndpointController extends BaseOAuth20Contr
         return Couplet.left(decodedToken);
     }
 
-    /**
-     * The credential endpoint is an OAuth protected resource, so a token that cannot be accepted is a
-     * 401 carrying a {@code WWW-Authenticate} challenge, not a 400. RFC 9110, section 15.5.2 makes the
-     * challenge mandatory on a 401, and RFC 6750, section 3 says to name the error only when the
-     * request actually presented credentials -- a client that sent none is told which scheme to use
-     * and nothing more. The challenge answers in whichever scheme the client used, so a DPoP-bound
-     * token is not told to retry as a bearer token.
-     *
-     * @param request     the request
-     * @param error       the error code, or null when the request carried no token at all
-     * @param description the error description
-     * @return the response entity
-     */
-    protected ResponseEntity unauthorized(final HttpServletRequest request,
-                                          final @Nullable String error,
-                                          final @Nullable String description) {
-        val challenge = new StringBuilder(resolveAuthorizationScheme(request));
-        if (StringUtils.isNotBlank(error)) {
-            challenge.append(" error=\"").append(error).append('"');
-            if (StringUtils.isNotBlank(description)) {
-                challenge.append(", error_description=\"").append(toChallengeValue(description)).append('"');
-            }
-        }
-        val response = ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-            .header(HttpHeaders.WWW_AUTHENTICATE, challenge.toString());
-        return StringUtils.isBlank(error)
-            ? response.build()
-            : response.body(OAuth20Utils.getErrorResponseBody(error, description));
-    }
-
-    /**
-     * Challenge parameters are quoted strings, so anything that would end the quoted string early --
-     * a quote, a backslash or a control character -- is removed rather than escaped.
-     *
-     * @param value the value
-     * @return the sanitized value
-     */
-    protected static String toChallengeValue(final String value) {
-        return value
-            .chars()
-            .filter(character -> character >= ' ' && character != '"' && character != '\\' && !Character.isISOControl(character))
-            .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
-            .toString();
-    }
-
     protected static ResponseEntity badRequest(final String error, final String description) {
         return ResponseEntity.badRequest().body(OAuth20Utils.getErrorResponseBody(error, description));
-    }
-
-    /**
-     * A credential request may carry a sender-constrained access token: OpenID4VCI 1.0, section 7.2
-     * speaks of the Wallet using a nonce "in the DPoP proof when presenting an access token at the
-     * Credential Endpoint". Accepting such a token on presentation alone would leave the constraint
-     * doing nothing, so the proof is verified here against the confirmation recorded at issuance.
-     * A token with no confirmation is an ordinary bearer token and passes straight through.
-     *
-     * @param webContext           the web context
-     * @param presentedAccessToken the access token exactly as the wallet presented it
-     * @param accessToken          the access token ticket
-     * @return an error response when the proof is missing or does not verify, otherwise null
-     */
-    protected @Nullable ResponseEntity verifyProofOfPossession(final WebContext webContext,
-                                                               final String presentedAccessToken,
-                                                               final OAuth20AccessToken accessToken) {
-        try {
-            getConfigurationContext().getProofOfPossessionValidator()
-                .validateProtectedResourceRequest(webContext, presentedAccessToken, accessToken);
-            return null;
-        } catch (final InvalidDPoPNonceException e) {
-            LOGGER.info("DPoP proof of the credential request carries no valid nonce; a fresh nonce is provided");
-            return OAuth20Utils.useDPoPNonceResponse();
-        } catch (final Throwable e) {
-            LoggingUtils.warn(LOGGER, e);
-            val description = StringUtils.defaultIfBlank(e.getMessage(), "DPoP proof validation failed");
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                .header(HttpHeaders.WWW_AUTHENTICATE, "%s error=\"%s\", error_description=\"%s\"".formatted(
-                    OAuth20Constants.TOKEN_TYPE_DPOP, OAuth20Constants.INVALID_DPOP_PROOF, toChallengeValue(description)))
-                .body(OAuth20Utils.getErrorResponseBody(OAuth20Constants.INVALID_DPOP_PROOF, description));
-        }
     }
 
     protected boolean validateAccessToken(@Nullable final OAuth20AccessToken accessToken) {

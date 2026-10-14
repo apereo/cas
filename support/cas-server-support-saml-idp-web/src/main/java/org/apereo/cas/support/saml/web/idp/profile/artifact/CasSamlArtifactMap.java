@@ -41,7 +41,8 @@ public class CasSamlArtifactMap extends BasicSAMLArtifactMap {
         @NonNull final String artifact,
         @NonNull final String relyingPartyId,
         @NonNull final String issuerId,
-        @NonNull final SAMLObject samlMessage) throws IOException {
+        @NonNull final SAMLObject samlMessage)
+            throws IOException {
         super.put(artifact, relyingPartyId, issuerId, samlMessage);
 
         val request = HttpRequestUtils.getHttpServletRequestFromRequestAttributes();

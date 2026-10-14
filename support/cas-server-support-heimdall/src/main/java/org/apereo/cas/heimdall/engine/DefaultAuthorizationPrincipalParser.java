@@ -95,7 +95,8 @@ public class DefaultAuthorizationPrincipalParser implements AuthorizationPrincip
 
     @Override
     public @Nullable Principal parse(final String authorizationHeader, final AuthorizationRequest authorizationRequest,
-                                     final @Nullable WebContext webContext) throws Throwable {
+                                     final @Nullable WebContext webContext)
+            throws Throwable {
         val claims = parseAuthorizationHeader(authorizationHeader, authorizationRequest.isAuthZen(), webContext);
         val subject = authorizationRequest.getSubject();
         if (subject != null) {
@@ -120,7 +121,8 @@ public class DefaultAuthorizationPrincipalParser implements AuthorizationPrincip
     }
 
     protected JWTClaimsSet parseAuthorizationHeader(final String authorizationHeader, final boolean authZen,
-                                                    final @Nullable WebContext webContext) throws Throwable {
+                                                    final @Nullable WebContext webContext)
+            throws Throwable {
         if (Strings.CI.startsWith(authorizationHeader, "Basic ")) {
             val credentials = EncodingUtils.decodeBase64ToString(Strings.CI.removeStart(authorizationHeader, "Basic ").trim());
             FunctionUtils.throwIf(StringUtils.isBlank(credentials) || !credentials.contains(":"),

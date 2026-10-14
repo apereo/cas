@@ -7,6 +7,7 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
 import org.apereo.cas.support.saml.SamlIdPConstants;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
+import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceMetadataAdaptor;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.EncodingUtils;
@@ -50,6 +51,13 @@ class SamlIdPServicesManagerRegisteredServiceLocatorTests extends BaseSamlIdPCon
                                                        + ".0:assertion\">%s</saml2:Issuer><saml2:NameID xmlns:saml2=\"urn:oasis:names:tc:SAML:2.0:assertion\""
                                                        + " Format=\"urn:oasis:names:tc:SAML:2.0:nameid-format:persistent\">bellini</saml2:NameID><saml2p:SessionIndex>ST-1-7EEGV0DEBGW5I"
                                                        + "-FhzInvmTzVG8o</saml2p:SessionIndex></saml2p:LogoutRequest>";
+
+    private static final String SAML_LOGOUT_RESPONSE1 = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+                                                        + "<saml2p:LogoutResponse xmlns:saml2p=\"urn:oasis:names:tc:SAML:2.0:protocol\""
+                                                        + " ID=\"_5f1c9a0e7b2d4c8a9e3f6b1d0a7c2e4f\" IssueInstant=\"2021-04-06T12:22:57.210Z\" Version=\"2.0\">"
+                                                        + "<saml2:Issuer xmlns:saml2=\"urn:oasis:names:tc:SAML:2.0:assertion\">%s</saml2:Issuer>"
+                                                        + "<saml2p:Status><saml2p:StatusCode Value=\"urn:oasis:names:tc:SAML:2.0:status:Success\"/>"
+                                                        + "</saml2p:Status></saml2p:LogoutResponse>";
 
     private static final String SAML_AUTHN_REQUEST2 = "fVNdj9owEHyv1P9g+Z3E5OAoFlBR6AcShYjQPvSlMvbmsJTYrte5o/++ToATlVqeYtkzszO7mwmKunJ83"
                                                       + "oSj2cGvBjCQU10Z5N3DlDbecCtQIzeiBuRB8mL+dc2zhHHnbbDSVvSGcp8hEMEHbQ0lq+WUbjcf19vPq83Pd2w8YqOSsQcmhoqxx4z"
@@ -173,6 +181,25 @@ class SamlIdPServicesManagerRegisteredServiceLocatorTests extends BaseSamlIdPCon
     }
 
     @Test
+    void verifyOversizedEntityIdIsNotMatched() {
+        try (val mockFacade = mockStatic(SamlRegisteredServiceMetadataAdaptor.class)) {
+            mockFacade.when(() -> SamlRegisteredServiceMetadataAdaptor.get(any(), any(), anyString()))
+                .thenReturn(Optional.of(mock(SamlRegisteredServiceMetadataAdaptor.class)));
+            val locator = new SamlIdPServicesManagerRegisteredServiceLocator(samlRegisteredServiceCachingMetadataResolver, 64);
+            val candidateServices = CollectionUtils.wrapList(getSamlRegisteredServiceFor(false, false, false, ".+"));
+
+            val service = webApplicationServiceFactory.createService("https://sp.example.org/sp");
+            service.setAttributes(Map.of(SamlProtocolConstants.PARAMETER_ENTITY_ID, List.of("https://sp.example.org/sp")));
+            assertNotNull(locator.locate(candidateServices, service));
+
+            val oversizedEntityId = "https://sp.example.org/" + "a".repeat(64);
+            service.setAttributes(Map.of(SamlProtocolConstants.PARAMETER_ENTITY_ID, List.of(oversizedEntityId)));
+            assertNull(locator.locate(candidateServices, service));
+            mockFacade.verify(() -> SamlRegisteredServiceMetadataAdaptor.get(any(), any(), eq(oversizedEntityId)), never());
+        }
+    }
+
+    @Test
     void verifyProviderIdParam() {
         assertNotNull(samlIdPServicesManagerRegisteredServiceLocator);
         assertEquals(Ordered.HIGHEST_PRECEDENCE, samlIdPServicesManagerRegisteredServiceLocator.getOrder());
@@ -293,6 +320,29 @@ class SamlIdPServicesManagerRegisteredServiceLocatorTests extends BaseSamlIdPCon
             val service = RegisteredServiceTestUtils.getService(host);
             val res1 = servicesManager.findServiceBy(service);
             assertNull(res1);
+        }
+    }
+
+    @Test
+    void verifySamlMessageParsedOncePerLookup() {
+        val entityId = "https://sp.testshib.org/shibboleth-sp";
+        val service1 = getSamlRegisteredServiceFor("urn:%s:.+".formatted(RandomUtils.randomAlphabetic(8)));
+        service1.setEvaluationOrder(1);
+        val service2 = getSamlRegisteredServiceFor("urn:%s:.+".formatted(RandomUtils.randomAlphabetic(8)));
+        service2.setEvaluationOrder(2);
+        val service3 = getSamlRegisteredServiceFor(entityId);
+        service3.setEvaluationOrder(3);
+        val candidateServices = CollectionUtils.wrapList(service1, service2, service3);
+        Collections.sort(candidateServices);
+
+        val service = webApplicationServiceFactory.createService(entityId);
+        val samlResponse = EncodingUtils.encodeBase64(String.format(SAML_LOGOUT_RESPONSE1, entityId));
+        service.setAttributes(Map.of(SamlProtocolConstants.PARAMETER_SAML_RESPONSE, List.of(samlResponse)));
+
+        try (val mockUtils = mockStatic(SamlUtils.class, CALLS_REAL_METHODS)) {
+            val result = samlIdPServicesManagerRegisteredServiceLocator.locate(candidateServices, service);
+            assertEquals(service3, result);
+            mockUtils.verify(() -> SamlUtils.convertToSamlObject(any(), anyString(), any()), times(1));
         }
     }
 

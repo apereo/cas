@@ -237,7 +237,8 @@ public class CasValidationAutoConfiguration {
             final TenantExtractor tenantExtractor,
             final ConfigurableApplicationContext applicationContext,
             @Qualifier("casAlwaysSatisfiedProtocolValidationSpecification")
-            final CasProtocolValidationSpecification casAlwaysSatisfiedProtocolValidationSpecification) throws Exception {
+            final CasProtocolValidationSpecification casAlwaysSatisfiedProtocolValidationSpecification)
+                throws Exception {
             return BeanSupplier.of(CasProtocolValidationSpecification.class)
                 .when(CONDITION_PROXY_AUTHN.given(applicationContext.getEnvironment()))
                 .supply(() -> {
@@ -357,7 +358,8 @@ public class CasValidationAutoConfiguration {
             final ConfigurableApplicationContext applicationContext,
             @Qualifier(CasProtocolViewFactory.BEAN_NAME_MUSTACHE_VIEW_FACTORY)
             final CasProtocolViewFactory casProtocolMustacheViewFactory,
-            final CasConfigurationProperties casProperties) throws Exception {
+            final CasConfigurationProperties casProperties)
+                throws Exception {
             return casProtocolMustacheViewFactory.create(applicationContext,
                 casProperties.getView().getCas2().getFailure(), APPLICATION_XML_VALUE);
         }
@@ -409,7 +411,8 @@ public class CasValidationAutoConfiguration {
             final ConfigurableApplicationContext applicationContext,
             @Qualifier(CasProtocolViewFactory.BEAN_NAME_MUSTACHE_VIEW_FACTORY)
             final CasProtocolViewFactory casProtocolMustacheViewFactory,
-            final CasConfigurationProperties casProperties) throws Exception {
+            final CasConfigurationProperties casProperties)
+                throws Exception {
             return casProtocolMustacheViewFactory.create(applicationContext,
                 casProperties.getView().getCas3().getFailure(), APPLICATION_XML_VALUE);
         }

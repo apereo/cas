@@ -44,7 +44,8 @@ public class AtLeastOneCredentialValidatedAuthenticationPolicy extends BaseAuthe
     public AuthenticationPolicyExecutionResult isSatisfiedBy(@Nullable final Authentication authn,
                                                              final Set<AuthenticationHandler> authenticationHandlers,
                                                              final ConfigurableApplicationContext applicationContext,
-                                                             final Map<String, ? extends Serializable> context) throws Exception {
+                                                             final Map<String, ? extends Serializable> context)
+            throws Exception {
         if (authn == null) {
             LOGGER.warn("Authentication attempt is null and cannot satisfy policy");
             return AuthenticationPolicyExecutionResult.failure();

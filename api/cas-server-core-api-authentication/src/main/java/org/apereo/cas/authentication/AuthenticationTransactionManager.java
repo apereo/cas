@@ -21,5 +21,6 @@ public interface AuthenticationTransactionManager {
      * @throws Throwable the throwable
      */
     AuthenticationTransactionManager handle(AuthenticationTransaction authenticationTransaction,
-                                            AuthenticationResultBuilder authenticationResultBuilder) throws Throwable;
+                                            AuthenticationResultBuilder authenticationResultBuilder)
+            throws Throwable;
 }

@@ -5,10 +5,13 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.RegisteredServiceIndexService;
 import org.apereo.cas.support.oauth.services.OAuth20ServicesManagerRegisteredServiceLocator;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
+import org.jspecify.annotations.Nullable;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.core.Ordered;
 
 /**
@@ -25,7 +28,12 @@ public class OidcServicesManagerRegisteredServiceLocator extends OAuth20Services
     static final int DEFAULT_ORDER = Ordered.HIGHEST_PRECEDENCE + 1;
 
     public OidcServicesManagerRegisteredServiceLocator(final CasConfigurationProperties casProperties) {
-        super(casProperties);
+        this(casProperties, null);
+    }
+
+    public OidcServicesManagerRegisteredServiceLocator(final CasConfigurationProperties casProperties,
+                                                       final @Nullable ObjectProvider<RegisteredServiceIndexService> registeredServiceIndexService) {
+        super(casProperties, registeredServiceIndexService);
         setOrder(DEFAULT_ORDER);
         setRegisteredServiceFilter((registeredService, service) -> supports(registeredService, service)
             && doesClientIdBelongToRegisteredService((OAuthRegisteredService) registeredService, service));

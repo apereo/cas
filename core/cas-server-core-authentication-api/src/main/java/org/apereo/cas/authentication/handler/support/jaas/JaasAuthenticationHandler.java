@@ -92,7 +92,8 @@ public class JaasAuthenticationHandler extends AbstractUsernamePasswordAuthentic
     @Override
     protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(
         final UsernamePasswordCredential credential,
-        @Nullable final String originalPassword) throws Throwable {
+        @Nullable final String originalPassword)
+            throws Throwable {
         if (StringUtils.isNotBlank(this.kerberosKdcSystemProperty)) {
             LOGGER.debug("Configured kerberos system property [{}] to [{}]", SYS_PROP_KERB5_KDC, this.kerberosKdcSystemProperty);
             System.setProperty(SYS_PROP_KERB5_KDC, this.kerberosKdcSystemProperty);

@@ -91,7 +91,14 @@ public class SamlRegisteredServiceDefaultCachingMetadataResolver implements Saml
                         throw new SamlException("Unable to locate a valid SAML metadata resolver for "
                             + metadataLocation + " to locate " + criteriaSet);
                     }
-                    return queryResult.getResult();
+                    val cachedResult = queryResult.getResult();
+                    return result.getEntityDescriptor()
+                        .<CachedMetadataResolverResult>map(entityDescriptor -> CachedMetadataResolverResult.builder()
+                            .cachedInstant(cachedResult.getCachedInstant())
+                            .metadataResolver(cachedResult.getMetadataResolver())
+                            .entityDescriptor(entityDescriptor)
+                            .build())
+                        .orElse(cachedResult);
                 }
             },
             casProperties.getAuthn().getSamlIdp().getMetadata().getCore().getMaximumRetryAttempts());

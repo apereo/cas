@@ -38,7 +38,8 @@ public class TokenAuthenticationHandler extends AbstractPreAndPostProcessingAuth
 
     @Override
     protected AuthenticationHandlerExecutionResult doAuthentication(
-        final Credential credential, final Service service) throws PreventedException {
+        final Credential credential, final Service service)
+            throws PreventedException {
         try {
             val tokenCredential = (BasicIdentifiableCredential) credential;
             val registeredService = servicesManager.findServiceBy(service);

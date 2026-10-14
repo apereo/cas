@@ -35,7 +35,8 @@ class GroovySurrogateRegisteredServiceAccessStrategyTests {
     }
 
     private boolean executeStrategy(final String principal, final boolean surrogate,
-                                    final GroovySurrogateRegisteredServiceAccessStrategy strategy) throws Throwable {
+                                    final GroovySurrogateRegisteredServiceAccessStrategy strategy)
+            throws Throwable {
         val request = RegisteredServiceAccessStrategyRequest.builder().applicationContext(applicationContext).principalId(principal)
             .attributes(surrogate ? CollectionUtils.wrap(SurrogateAuthenticationService.AUTHENTICATION_ATTR_SURROGATE_ENABLED, true) : Map.of())
             .build();

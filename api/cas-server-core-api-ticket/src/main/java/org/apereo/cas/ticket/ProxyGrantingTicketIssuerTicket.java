@@ -30,5 +30,6 @@ public interface ProxyGrantingTicketIssuerTicket extends Ticket {
     ProxyGrantingTicket grantProxyGrantingTicket(
             String id, Authentication authentication,
             ExpirationPolicy expirationPolicy,
-            TicketTrackingPolicy proxyGrantingTicketTrackingPolicy) throws AbstractTicketException;
+            TicketTrackingPolicy proxyGrantingTicketTrackingPolicy)
+                    throws AbstractTicketException;
 }

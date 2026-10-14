@@ -90,7 +90,8 @@ public class RedisObjectFactory {
      * @return the redis connection factory
      */
     public static RedisConnectionFactory newRedisConnectionFactory(final BaseRedisProperties redis,
-                                                                   final CasSSLContext casSslContext) throws Exception {
+                                                                   final CasSSLContext casSslContext)
+            throws Exception {
         return newRedisConnectionFactory(redis, false, casSslContext);
     }
 
@@ -104,7 +105,8 @@ public class RedisObjectFactory {
      */
     public static RedisConnectionFactory newRedisConnectionFactory(final BaseRedisProperties redis,
                                                                    final boolean initialize,
-                                                                   final CasSSLContext casSslContext) throws Exception {
+                                                                   final CasSSLContext casSslContext)
+            throws Exception {
         var factory = (LettuceConnectionFactory) null;
         if (redis.getSentinel() != null && StringUtils.hasText(redis.getSentinel().getMaster())) {
             factory = new LettuceConnectionFactory(getSentinelConfig(redis), getRedisPoolClientConfig(redis, casSslContext));
@@ -169,7 +171,8 @@ public class RedisObjectFactory {
     }
 
     private static LettucePoolingClientConfiguration getRedisPoolClientConfig(final BaseRedisProperties redis,
-                                                                              final CasSSLContext casSslContext) throws Exception {
+                                                                              final CasSSLContext casSslContext)
+            throws Exception {
         var poolingClientConfig = LettucePoolingClientConfiguration.builder();
         if (redis.isUseSsl()) {
             val sslPoolingConfig = poolingClientConfig.useSsl();
@@ -234,7 +237,8 @@ public class RedisObjectFactory {
      * @throws Exception the exception
      */
     public static ClientOptions newClientOptions(final BaseRedisProperties redis,
-                                                 final CasSSLContext casSslContext) throws Exception {
+                                                 final CasSSLContext casSslContext)
+            throws Exception {
         val clientOptionsBuilder = initializeClientOptionsBuilder(redis);
         if (StringUtils.hasText(redis.getConnectTimeout())) {
             val connectTimeout = Beans.newDuration(redis.getConnectTimeout());

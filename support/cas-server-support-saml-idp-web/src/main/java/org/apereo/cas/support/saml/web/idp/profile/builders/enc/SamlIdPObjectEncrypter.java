@@ -293,7 +293,8 @@ public class SamlIdPObjectEncrypter {
     protected Credential configureKeyEncryptionCredential(final String peerEntityId,
                                                           final SamlRegisteredServiceMetadataAdaptor adaptor,
                                                           final SamlRegisteredService service,
-                                                          final BasicEncryptionConfiguration encryptionConfiguration) throws Exception {
+                                                          final BasicEncryptionConfiguration encryptionConfiguration)
+            throws Exception {
 
         val mdCredentialResolver = new SamlIdPMetadataCredentialResolver();
         val providers = new ArrayList<KeyInfoProvider>(5);
@@ -346,7 +347,7 @@ public class SamlIdPObjectEncrypter {
      */
     protected EncryptionParameters resolveEncryptionParameters(final SamlRegisteredService service,
                                                                final BasicEncryptionConfiguration encryptionConfiguration)
-        throws ResolverException {
+            throws ResolverException {
         val criteria = new CriteriaSet();
         criteria.add(new EncryptionConfigurationCriterion(encryptionConfiguration));
         criteria.add(new EncryptionOptionalCriterion(service.isEncryptionOptional()));
@@ -442,7 +443,8 @@ public class SamlIdPObjectEncrypter {
     protected Credential configureKeyDecryptionCredential(final String peerEntityId,
                                                           final SamlRegisteredServiceMetadataAdaptor adaptor,
                                                           final SamlRegisteredService service,
-                                                          final BasicDecryptionConfiguration decryptionConfiguration) throws Throwable {
+                                                          final BasicDecryptionConfiguration decryptionConfiguration)
+            throws Throwable {
         LOGGER.debug("Attempting to resolve the IdP decryption credential for inbound message from [{}]", peerEntityId);
         val registeredService = Optional.of(service);
         val encryptionCertificate = samlIdPMetadataLocator.resolveEncryptionCertificate(registeredService);
@@ -510,7 +512,7 @@ public class SamlIdPObjectEncrypter {
      */
     protected DecryptionParameters resolveDecryptionParameters(final SamlRegisteredService service,
                                                                final BasicDecryptionConfiguration decryptionConfiguration)
-        throws ResolverException {
+            throws ResolverException {
         val criteria = new CriteriaSet();
         criteria.add(new DecryptionConfigurationCriterion(decryptionConfiguration));
         return new BasicDecryptionParametersResolver().resolveSingle(criteria);

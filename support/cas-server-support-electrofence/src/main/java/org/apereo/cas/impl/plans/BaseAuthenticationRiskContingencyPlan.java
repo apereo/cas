@@ -38,7 +38,8 @@ public abstract class BaseAuthenticationRiskContingencyPlan implements Authentic
     public final AuthenticationRiskContingencyResponse execute(final Authentication authentication,
                                                                final RegisteredService service,
                                                                final AuthenticationRiskScore score,
-                                                               final HttpServletRequest request) throws Throwable {
+                                                               final HttpServletRequest request)
+            throws Throwable {
         LOGGER.debug("Executing [{}] to produce a risk response", getClass().getSimpleName());
         for (val notifier : notifiers) {
             notifier.setAuthentication(authentication);

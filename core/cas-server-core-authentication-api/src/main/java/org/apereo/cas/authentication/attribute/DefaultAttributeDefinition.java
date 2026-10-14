@@ -115,7 +115,8 @@ public class DefaultAttributeDefinition implements AttributeDefinition {
     private static @Nullable List<Object> fetchAttributeValueFromExternalGroovyScript(final String attributeName,
                                                                                       final List<Object> currentValues,
                                                                                       final String file,
-                                                                                      final AttributeDefinitionResolutionContext context) throws Throwable {
+                                                                                      final AttributeDefinitionResolutionContext context)
+            throws Throwable {
         val result = ApplicationContextProvider.getScriptResourceCacheManager();
         if (result.isPresent()) {
             val cacheMgr = result.get();
@@ -146,7 +147,8 @@ public class DefaultAttributeDefinition implements AttributeDefinition {
         final ExecutableCompiledScript scriptToExec,
         final String attributeKey,
         final List<Object> currentValues,
-        final AttributeDefinitionResolutionContext context) throws Throwable {
+        final AttributeDefinitionResolutionContext context)
+            throws Throwable {
         val args = CollectionUtils.<String, Object>wrap(
             "attributeName", Objects.requireNonNull(attributeKey),
             "attributeValues", currentValues,
@@ -246,7 +248,8 @@ public class DefaultAttributeDefinition implements AttributeDefinition {
 
     private @Nullable List<Object> getScriptedAttributeValue(final String attributeKey,
                                                              final List<Object> currentValues,
-                                                             final AttributeDefinitionResolutionContext context) throws Throwable {
+                                                             final AttributeDefinitionResolutionContext context)
+            throws Throwable {
         LOGGER.trace("Locating attribute value via script for definition [{}]", this);
 
         val scriptFactory = ExecutableCompiledScriptFactory.getExecutableCompiledScriptFactory();

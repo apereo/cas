@@ -41,7 +41,8 @@ public class DefaultSurrogateAuthenticationPrincipalBuilder implements Surrogate
 
     @Override
     public Principal buildSurrogatePrincipal(final Credential credential, final Principal primaryPrincipal,
-                                             @Nullable final RegisteredService registeredService) throws Throwable {
+                                             @Nullable final RegisteredService registeredService)
+            throws Throwable {
         val surrogate = extractSurrogateUser(credential);
         val activeAttributeRepositoryIdentifiers = PrincipalResolverUtils.buildActiveAttributeRepositoryIds(casProperties.getPersonDirectory());
         val query = AttributeRepositoryQuery.builder()
@@ -71,7 +72,8 @@ public class DefaultSurrogateAuthenticationPrincipalBuilder implements Surrogate
     public Optional<AuthenticationResultBuilder> buildSurrogateAuthenticationResult(
         final AuthenticationResultBuilder authenticationResultBuilder,
         final Credential mutableCredential,
-        @Nullable final RegisteredService registeredService) throws Throwable {
+        @Nullable final RegisteredService registeredService)
+            throws Throwable {
         val initialAuthentication = authenticationResultBuilder.getInitialAuthentication();
         if (initialAuthentication.isPresent()) {
             val authentication = initialAuthentication.get();

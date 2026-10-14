@@ -360,7 +360,7 @@ class OidcAccessTokenEndpointControllerTests {
                     .with(withHttpRequestProcessor())
                     .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                     .header(OAuth20Constants.DPOP, dpopProof.serialize())
-                    .param(OAuth20Constants.TOKEN, accessToken))
+                    .header(HttpHeaders.AUTHORIZATION, OAuth20Constants.TOKEN_TYPE_DPOP + ' ' + accessToken))
                 .andExpect(status().isOk());
         }
     }

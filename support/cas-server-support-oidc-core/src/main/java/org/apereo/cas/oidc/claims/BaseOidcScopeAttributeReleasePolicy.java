@@ -67,7 +67,8 @@ public abstract class BaseOidcScopeAttributeReleasePolicy extends AbstractRegist
 
     protected Pair<String, Object> mapClaimToAttribute(final String claim,
                                                        final RegisteredServiceAttributeReleasePolicyContext context,
-                                                       final Map<String, List<Object>> resolvedAttributes) throws Throwable {
+                                                       final Map<String, List<Object>> resolvedAttributes)
+            throws Throwable {
         val mappedClaimResult = getMappedClaim(claim, context);
         if (mappedClaimResult.isPresent()) {
             val mappedAttr = mappedClaimResult.get();

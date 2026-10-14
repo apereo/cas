@@ -55,7 +55,8 @@ public class AcceptUsersAuthenticationHandler extends AbstractUsernamePasswordAu
     @Override
     protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(
         final UsernamePasswordCredential credential,
-        @Nullable final String originalPassword) throws Throwable {
+        @Nullable final String originalPassword)
+            throws Throwable {
 
         if (this.users == null || this.users.isEmpty()) {
             throw new FailedLoginException("No user can be accepted because none is defined");

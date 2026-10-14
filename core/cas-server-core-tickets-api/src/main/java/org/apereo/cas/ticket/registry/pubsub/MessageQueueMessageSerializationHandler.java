@@ -23,7 +23,8 @@ public class MessageQueueMessageSerializationHandler implements Serializer<Objec
     @Override
     public void serialize(
         @NonNull
-        final Object object, final OutputStream outputStream) throws IOException {
+        final Object object, final OutputStream outputStream)
+            throws IOException {
         val result = serializeToByteArray(object);
         outputStream.write(result);
         outputStream.flush();

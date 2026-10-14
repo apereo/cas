@@ -84,7 +84,7 @@ public class PasswordlessDetermineDelegatedAuthenticationAction extends BasePass
     protected Optional<DelegatedClientIdentityProviderConfiguration> determineDelegatedAuthenticationProvider(
         final RequestContext requestContext, final PasswordlessUserAccount user,
         final Set<? extends DelegatedClientIdentityProviderConfiguration> clients)
-        throws Throwable {
+            throws Throwable {
         if (user.getAllowedDelegatedClients() != null && user.getAllowedDelegatedClients().size() == 1) {
             val clientName = user.getAllowedDelegatedClients().getFirst();
             return clients
@@ -98,7 +98,8 @@ public class PasswordlessDetermineDelegatedAuthenticationAction extends BasePass
 
     protected Optional<DelegatedClientIdentityProviderConfiguration> determineDelegatedIdentityProviderConfiguration(
         final RequestContext requestContext, final PasswordlessUserAccount user,
-        final Set<? extends DelegatedClientIdentityProviderConfiguration> clients) throws Throwable {
+        final Set<? extends DelegatedClientIdentityProviderConfiguration> clients)
+            throws Throwable {
         val selectorScriptResource = casProperties.getAuthn().getPasswordless().getCore()
             .getDelegatedAuthenticationSelectorScript().getLocation();
         return scriptResourceCacheManager

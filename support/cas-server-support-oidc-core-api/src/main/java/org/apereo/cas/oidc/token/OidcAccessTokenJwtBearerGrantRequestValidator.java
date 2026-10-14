@@ -2,6 +2,7 @@ package org.apereo.cas.oidc.token;
 
 import module java.base;
 import org.apereo.cas.oidc.OidcConfigurationContext;
+import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
@@ -32,7 +33,34 @@ public class OidcAccessTokenJwtBearerGrantRequestValidator implements OAuth20Tok
 
     @Override
     public boolean validate(final WebContext context) throws Throwable {
+        val assertion = getConfigurationContext().getObject().getRequestParameterResolver()
+            .resolveRequestParameter(context, OAuth20Constants.ASSERTION).orElse(StringUtils.EMPTY);
+        val registeredService = resolveRegisteredService(assertion);
+        if (registeredService.isPresent()) {
+            getConfigurationContext().getObject().getProofOfPossessionValidator().validateTokenRequest(context, registeredService.get());
+        }
         return true;
+    }
+
+    /**
+     * The client of the grant is named by the assertion. The assertion itself is verified once the request is
+     * extracted, and an assertion that names no known client is left for that step to refuse.
+     *
+     * @param assertion the assertion
+     * @return the registered service, or empty when the assertion names no known client
+     */
+    protected Optional<OidcRegisteredService> resolveRegisteredService(final String assertion) {
+        try {
+            val clientId = OAuth20Utils.extractClientIdFromToken(assertion);
+            if (StringUtils.isBlank(clientId)) {
+                return Optional.empty();
+            }
+            return Optional.ofNullable(OAuth20Utils.getRegisteredOAuthServiceByClientId(
+                getConfigurationContext().getObject().getServicesManager(), clientId, OidcRegisteredService.class));
+        } catch (final Exception e) {
+            LOGGER.debug("Unable to determine the client of the assertion: [{}]", e.getMessage());
+            return Optional.empty();
+        }
     }
 
     @Override

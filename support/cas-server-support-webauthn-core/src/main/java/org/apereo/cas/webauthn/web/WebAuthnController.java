@@ -74,7 +74,8 @@ public class WebAuthnController extends BaseWebAuthnController {
     }
 
     private static ResponseEntity<Object> finishResponse(final Either<List<String>, ?> result,
-                                                         final String responseJson) throws Exception {
+                                                         final String responseJson)
+            throws Exception {
         if (result.isRight()) {
             LOGGER.trace("Received: [{}]", responseJson);
             val json = writeJson(result.right().orElseThrow());
@@ -138,7 +139,7 @@ public class WebAuthnController extends BaseWebAuthnController {
         final Principal authenticatedPrincipal,
         final HttpServletRequest request,
         final HttpServletResponse response)
-        throws Exception {
+            throws Exception {
 
         val result = conditional
             ? server.startConditionalRegistration(request, authenticatedPrincipal.getName(),
@@ -168,7 +169,8 @@ public class WebAuthnController extends BaseWebAuthnController {
     @Operation(summary = "Finish registration")
     public ResponseEntity<Object> finishRegistration(
         final HttpServletRequest request,
-        @RequestBody final String responseJson) throws Exception {
+        @RequestBody final String responseJson)
+            throws Exception {
         val result = server.finishRegistration(request, responseJson);
         return finishResponse(result, responseJson);
     }
@@ -183,7 +185,8 @@ public class WebAuthnController extends BaseWebAuthnController {
     @Operation(summary = "Start authentication")
     public ResponseEntity<Object> startAuthentication(
         final HttpServletRequest request,
-        final Principal authenticatedPrincipal) throws Exception {
+        final Principal authenticatedPrincipal)
+            throws Exception {
 
         val result = server.startAuthentication(request, Optional.ofNullable(authenticatedPrincipal).map(Principal::getName));
         if (result.isRight()) {
@@ -206,7 +209,8 @@ public class WebAuthnController extends BaseWebAuthnController {
     @Operation(summary = "Finish authentication")
     public ResponseEntity<Object> finishAuthentication(
         final HttpServletRequest request,
-        @RequestBody final String responseJson) throws Exception {
+        @RequestBody final String responseJson)
+            throws Exception {
         val result = server.finishAuthentication(request, responseJson);
         if (result.isLeft()) {
             return ResponseEntity.badRequest().body(result.left().orElseThrow());

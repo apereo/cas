@@ -90,7 +90,8 @@ public class CasSimpleMultifactorAuthenticationEndpoint extends BaseCasRestActua
     }
 
     protected Ticket createAndStoreToken(final Service givenService,
-                                         final Authentication authentication) throws Throwable {
+                                         final Authentication authentication)
+            throws Throwable {
         val principal = authentication.getPrincipal();
         val mfaService = applicationContext.getBean(CasSimpleMultifactorAuthenticationService.BEAN_NAME, CasSimpleMultifactorAuthenticationService.class);
         val token = mfaService.generate(principal, givenService);

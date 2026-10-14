@@ -39,7 +39,8 @@ public class DefaultCasSSLContext implements CasSSLContext {
                                 final String trustStorePassword,
                                 final String trustStoreType,
                                 final HttpClientProperties httpClientProperties,
-                                final HostnameVerifier hostnameVerifier) throws Exception {
+                                final HostnameVerifier hostnameVerifier)
+            throws Exception {
 
         val disabled = "none".equalsIgnoreCase(httpClientProperties.getHostNameVerifier());
         if (disabled) {
@@ -78,14 +79,16 @@ public class DefaultCasSSLContext implements CasSSLContext {
     }
 
     private static KeyManagerFactory getKeyManagerFactory(final String algorithm, final @Nullable KeyStore keystore,
-                                                          final char @Nullable [] password) throws Exception {
+                                                          final char @Nullable [] password)
+            throws Exception {
         val factory = KeyManagerFactory.getInstance(algorithm);
         factory.init(keystore, password);
         return factory;
     }
 
     private static Collection<X509TrustManager> getTrustManager(final String algorithm,
-                                                                final @Nullable KeyStore keystore) throws Exception {
+                                                                final @Nullable KeyStore keystore)
+            throws Exception {
         val factory = TrustManagerFactory.getInstance(algorithm);
         factory.init(keystore);
         return Arrays.stream(factory.getTrustManagers())

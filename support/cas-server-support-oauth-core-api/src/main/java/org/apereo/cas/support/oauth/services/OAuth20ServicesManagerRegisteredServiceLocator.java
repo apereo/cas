@@ -6,7 +6,9 @@ import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.BaseServicesManagerRegisteredServiceLocator;
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.RegisteredServiceIndexService;
 import org.apereo.cas.services.query.BasicRegisteredServiceQueryIndex;
+import org.apereo.cas.services.query.RegisteredServiceQuery;
 import org.apereo.cas.services.query.RegisteredServiceQueryAttribute;
 import org.apereo.cas.services.query.RegisteredServiceQueryIndex;
 import org.apereo.cas.support.oauth.OAuth20Constants;
@@ -17,6 +19,8 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
 import org.apache.commons.lang3.tuple.Pair;
+import org.jspecify.annotations.Nullable;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.core.Ordered;
 
 /**
@@ -29,18 +33,62 @@ import org.springframework.core.Ordered;
 public class OAuth20ServicesManagerRegisteredServiceLocator extends BaseServicesManagerRegisteredServiceLocator {
     protected final CasConfigurationProperties casProperties;
 
+    private final @Nullable ObjectProvider<RegisteredServiceIndexService> registeredServiceIndexService;
+
     public OAuth20ServicesManagerRegisteredServiceLocator(final CasConfigurationProperties casProperties) {
+        this(casProperties, null);
+    }
+
+    public OAuth20ServicesManagerRegisteredServiceLocator(final CasConfigurationProperties casProperties,
+                                                          final @Nullable ObjectProvider<RegisteredServiceIndexService> registeredServiceIndexService) {
         this.casProperties = casProperties;
+        this.registeredServiceIndexService = registeredServiceIndexService;
         setOrder(Ordered.HIGHEST_PRECEDENCE);
         setRegisteredServiceFilter((registeredService, service) -> supports(registeredService, service)
             && doesClientIdBelongToRegisteredService((OAuthRegisteredService) registeredService, service));
     }
 
+    /**
+     * Locate the service through the {@code clientId} index when it has a match among the candidates,
+     * and fall back to examining every candidate otherwise.
+     */
+    @Override
+    public @Nullable RegisteredService locate(final Collection<? extends RegisteredService> candidates, final Service service) {
+        val indexedServiceIds = findIndexedServiceIdsByClientId(service);
+        if (!indexedServiceIds.isEmpty()) {
+            val indexedService = candidates
+                .stream()
+                .filter(registeredService -> indexedServiceIds.contains(registeredService.getId()))
+                .filter(registeredService -> getRegisteredServiceFilter().test(registeredService, service))
+                .findFirst();
+            if (indexedService.isPresent()) {
+                return indexedService.get();
+            }
+        }
+        return super.locate(candidates, service);
+    }
+
     protected boolean doesClientIdBelongToRegisteredService(final OAuthRegisteredService registeredService, final Service service) {
         LOGGER.trace("Attempting to locate service [{}] via [{}]", service, registeredService);
-        val clientIdAttribute = service.getAttributes().get(OAuth20Constants.CLIENT_ID);
-        val clientId = CollectionUtils.firstElement(clientIdAttribute).map(Object::toString).orElse(StringUtils.EMPTY);
+        val clientId = getClientIdFrom(service);
         return StringUtils.isNotBlank(clientId) && Strings.CI.equals(registeredService.getClientId(), clientId);
+    }
+
+    private static String getClientIdFrom(final Service service) {
+        val clientIdAttribute = service.getAttributes().get(OAuth20Constants.CLIENT_ID);
+        return CollectionUtils.firstElement(clientIdAttribute).map(Object::toString).orElse(StringUtils.EMPTY);
+    }
+
+    private Set<Long> findIndexedServiceIdsByClientId(final Service service) {
+        val clientId = getClientIdFrom(service);
+        val indexService = registeredServiceIndexService != null ? registeredServiceIndexService.getIfAvailable() : null;
+        if (StringUtils.isBlank(clientId) || indexService == null || !indexService.isEnabled()) {
+            return Set.of();
+        }
+        val query = RegisteredServiceQuery.of(getRegisteredServiceIndexedType().getValue(), "clientId", clientId, true);
+        return indexService.findServiceBy(query)
+            .map(RegisteredService::getId)
+            .collect(Collectors.toSet());
     }
 
     @Override

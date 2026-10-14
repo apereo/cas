@@ -42,7 +42,8 @@ public class GoogleCloudStorageSamlIdPMetadataGenerator extends BaseSamlIdPMetad
     @Override
     protected SamlIdPMetadataDocument finalizeMetadataDocument(
         final SamlIdPMetadataDocument doc,
-        final Optional<SamlRegisteredService> registeredService) throws Throwable {
+        final Optional<SamlRegisteredService> registeredService)
+            throws Throwable {
 
         doc.setAppliesTo(getAppliesToFor(registeredService));
         val bucket = createBucketIfNecessary(registeredService);

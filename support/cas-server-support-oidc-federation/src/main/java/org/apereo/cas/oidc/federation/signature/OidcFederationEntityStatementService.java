@@ -36,5 +36,6 @@ public interface OidcFederationEntityStatementService {
                                   String subject,
                                   JSONObject metadata,
                                   @Nullable JsonNode federationKeys,
-                                  @Nullable List<EntityID> authorityHints) throws Exception;
+                                  @Nullable List<EntityID> authorityHints)
+            throws Exception;
 }

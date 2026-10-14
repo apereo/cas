@@ -33,7 +33,8 @@ public interface MultifactorAuthenticationTrigger extends Ordered, NamedObject {
                                                             @Nullable RegisteredService registeredService,
                                                             HttpServletRequest httpServletRequest,
                                                             HttpServletResponse httpServletResponse,
-                                                            @Nullable Service service) throws Throwable;
+                                                            @Nullable Service service)
+            throws Throwable;
 
     /**
      * Supports.

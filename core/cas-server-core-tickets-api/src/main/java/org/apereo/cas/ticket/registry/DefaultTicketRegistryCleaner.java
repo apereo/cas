@@ -13,7 +13,7 @@ import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.jooq.lambda.Unchecked;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionOperations;
 
 /**
  * This is {@link DefaultTicketRegistryCleaner}.
@@ -23,13 +23,22 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Slf4j
 @RequiredArgsConstructor
-@Transactional(transactionManager = TicketRegistry.TICKET_TRANSACTION_MANAGER)
 public class DefaultTicketRegistryCleaner implements TicketRegistryCleaner {
+    /*
+     * Expired tickets are removed by this many workers at a time, each removal running in its own
+     * transaction, so a backlog neither runs one ticket at a time nor drains the registry's connection pool.
+     */
+    private static final int MAXIMUM_CONCURRENT_REMOVALS = 8;
+
+    private static final int MAXIMUM_EXPIRED_TICKETS_PER_SCAN = 1_000;
+
     private final LockRepository lockRepository;
 
     private final ConfigurableApplicationContext applicationContext;
 
     private final TicketRegistry ticketRegistry;
+
+    private final TransactionOperations transactionOperations;
 
     @Override
     public int clean() {
@@ -67,20 +76,63 @@ public class DefaultTicketRegistryCleaner implements TicketRegistryCleaner {
         }).orElse(0);
     }
 
+    /*
+     * Expired tickets are collected and removed in batches, so a large backlog is never held in memory at once.
+     * Another scan follows a full batch for as long as the previous one removed something; tickets that cannot be
+     * removed are left for the next run instead of being collected over and over.
+     */
     protected int cleanInternal() {
-        try (val executor = Executors.newVirtualThreadPerTaskExecutor();
-             val ticketStream = ticketRegistry.stream()) {
-            val ticketsDeleted = ticketStream
-                .unordered()
-                .filter(Objects::nonNull)
-                .filter(Ticket::isExpired)
-                .map(ticket -> executor.submit(() -> cleanTicket(ticket)))
-                .mapToInt(Unchecked.toIntFunction(Future::get))
-                .sum();
+        val threadFactory = Thread.ofVirtual().name("ticket-registry-cleaner-", 0).factory();
+        try (val executor = Executors.newFixedThreadPool(MAXIMUM_CONCURRENT_REMOVALS, threadFactory)) {
+            var ticketsDeleted = 0;
+            var expiredTickets = findExpiredTickets();
+            var removed = removeExpiredTickets(executor, expiredTickets);
+            ticketsDeleted += removed;
+            while (removed > 0 && expiredTickets.size() >= getMaximumExpiredTicketsPerScan()) {
+                expiredTickets = findExpiredTickets();
+                removed = removeExpiredTickets(executor, expiredTickets);
+                ticketsDeleted += removed;
+            }
             if (ticketsDeleted > 0) {
                 LOGGER.info("[{}] expired tickets removed.", ticketsDeleted);
             }
             return ticketsDeleted;
+        }
+    }
+
+    protected int getMaximumExpiredTicketsPerScan() {
+        return MAXIMUM_EXPIRED_TICKETS_PER_SCAN;
+    }
+
+    private int removeExpiredTickets(final ExecutorService executor, final List<Ticket> expiredTickets) {
+        val removals = expiredTickets
+            .stream()
+            .map(ticket -> executor.submit(() -> cleanTicket(ticket)))
+            .toList();
+        return removals
+            .stream()
+            .mapToInt(Unchecked.toIntFunction(Future::get))
+            .sum();
+    }
+
+    /*
+     * The scan is the only part that needs a transaction: streaming from a database keeps a cursor, a connection
+     * and every row read so far attached to it. Expired tickets are collected and that transaction ends before
+     * any of them is removed.
+     */
+    private List<Ticket> findExpiredTickets() {
+        val expiredTickets = transactionOperations.execute(_ -> streamExpiredTickets());
+        return expiredTickets != null ? expiredTickets : List.of();
+    }
+
+    private List<Ticket> streamExpiredTickets() {
+        try (val ticketStream = ticketRegistry.stream()) {
+            return ticketStream
+                .filter(Objects::nonNull)
+                .filter(Ticket::isExpired)
+                .limit(getMaximumExpiredTicketsPerScan())
+                .map(Ticket.class::cast)
+                .toList();
         }
     }
 

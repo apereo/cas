@@ -35,7 +35,8 @@ class SamlProfileSamlAuthNStatementBuilderTests {
         private SamlProfileObjectBuilder<AuthnStatement> samlProfileSamlAuthNStatementBuilder;
 
         void checkResultAndValidity(final SamlRegisteredService service,
-                                            final String expectedValidity) throws Exception {
+                                            final String expectedValidity)
+                throws Exception {
             val adaptor = SamlRegisteredServiceMetadataAdaptor.get(
                 samlRegisteredServiceCachingMetadataResolver,
                 service, service.getServiceId()).orElseThrow();

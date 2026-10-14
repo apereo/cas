@@ -101,7 +101,8 @@ public class AzureActiveDirectoryAuthenticationHandler extends AbstractUsernameP
 
     @Override
     protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential,
-                                                                                        final String originalPassword) throws Throwable {
+                                                                                        final String originalPassword)
+            throws Throwable {
 
         try {
             val username = credential.getUsername();

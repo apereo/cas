@@ -268,7 +268,8 @@ class OidcVerifiableCredentialOfferEndpointControllerTests {
         }
 
         private ResultActions performOfferTransaction(final OidcRegisteredService registeredService,
-                                                      final String... credentialConfigurationIds) throws Exception {
+                                                      final String... credentialConfigurationIds)
+                throws Exception {
             val requestBody = MAPPER.writeValueAsString(
                 Map.of("principal", "casuser",
                     "credentialConfigurationIds", List.of(credentialConfigurationIds)));
@@ -350,7 +351,8 @@ class OidcVerifiableCredentialOfferEndpointControllerTests {
 
         private ResultActions performOfferTransaction(
             final String username,
-            final OidcRegisteredService registeredService) throws Exception {
+            final OidcRegisteredService registeredService)
+                throws Exception {
             val requestBody = MAPPER.writeValueAsString(
                 Map.of("principal", username,
                     "credentialConfigurationIds", List.of("UniversityDegreeCredential")));

@@ -76,7 +76,8 @@ public class OAuth20IntrospectionEndpointController<T extends OAuth20Configurati
         produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Handle OAuth introspection request")
     public ResponseEntity<? extends @NonNull BaseOAuth20IntrospectionAccessTokenResponse> handleRequest(
-        final HttpServletRequest request, final HttpServletResponse response) throws Throwable {
+        final HttpServletRequest request, final HttpServletResponse response)
+            throws Throwable {
         return handlePostRequest(request, response);
     }
 
@@ -166,7 +167,8 @@ public class OAuth20IntrospectionEndpointController<T extends OAuth20Configurati
 
     private Optional<ResponseEntity<? extends @NonNull BaseOAuth20IntrospectionAccessTokenResponse>> validateIntrospectionRequest(
         final OAuthRegisteredService registeredService, final UsernamePasswordCredentials credentials,
-        final HttpServletRequest request) throws Throwable {
+        final HttpServletRequest request)
+            throws Throwable {
         val tokenExists = HttpRequestUtils.doesParameterExist(request, OAuth20Constants.TOKEN)
             || HttpRequestUtils.doesParameterExist(request, OAuth20Constants.ACCESS_TOKEN);
 

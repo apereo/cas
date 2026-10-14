@@ -30,6 +30,7 @@ import org.apereo.cas.oidc.web.OidcImplicitIdTokenAndTokenAuthorizationResponseB
 import org.apereo.cas.oidc.web.OidcImplicitIdTokenAuthorizationResponseBuilder;
 import org.apereo.cas.oidc.web.OidcPushedAuthorizationModelAndViewBuilder;
 import org.apereo.cas.oidc.web.OidcPushedAuthorizationRequestUriResponseBuilder;
+import org.apereo.cas.oidc.web.OidcTokenAuthorizationResponseBuilder;
 import org.apereo.cas.oidc.web.response.OidcIntrospectionResponseGenerator;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.validator.authorization.OAuth20AuthorizationRequestValidator;
@@ -42,7 +43,6 @@ import org.apereo.cas.support.oauth.web.response.callback.OAuth20AuthorizationMo
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20AuthorizationResponseBuilder;
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20ClientCredentialsResponseBuilder;
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20ResourceOwnerCredentialsResponseBuilder;
-import org.apereo.cas.support.oauth.web.response.callback.OAuth20TokenAuthorizationResponseBuilder;
 import org.apereo.cas.support.oauth.web.response.introspection.OAuth20IntrospectionResponseGenerator;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.TicketFactory;
@@ -151,7 +151,7 @@ class OidcResponseConfiguration {
             final OAuth20AuthorizationModelAndViewBuilder oauthAuthorizationModelAndViewBuilder,
             @Qualifier(OidcConfigurationContext.BEAN_NAME)
             final OidcConfigurationContext oidcConfigurationContext) {
-            return new OAuth20TokenAuthorizationResponseBuilder(
+            return new OidcTokenAuthorizationResponseBuilder(
                 oidcConfigurationContext,
                 oauthAuthorizationModelAndViewBuilder);
         }

@@ -86,7 +86,8 @@ public class OidcWellKnownEndpointController extends BaseOidcController {
     @Operation(summary = "Handle webfinger discovery request")
     public ResponseEntity<Map> getWebFingerResponse(
         @RequestParam("resource") final String resource,
-        @RequestParam(value = "rel", required = false) final String rel) throws Throwable {
+        @RequestParam(value = "rel", required = false) final String rel)
+            throws Throwable {
         return BeanSupplier.isNotProxy(webFingerDiscoveryService)
             ? webFingerDiscoveryService.handleRequest(resource, rel)
             : ResponseEntity.notFound().build();

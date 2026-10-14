@@ -158,7 +158,8 @@ class OAuth20JwtAccessTokenEncodableCipher implements EncodableCipher<String, St
     }
 
     private @Nullable Principal buildPrincipalForAttributeFilter(final OAuth20Token token,
-                                                                 final RegisteredService registeredService) throws Throwable {
+                                                                 final RegisteredService registeredService)
+            throws Throwable {
         val authentication = token.getAuthentication();
         val attributes = new HashMap<>(authentication.getPrincipal().getAttributes());
         val authnAttributes = configurationContext.getAuthenticationAttributeReleasePolicy()

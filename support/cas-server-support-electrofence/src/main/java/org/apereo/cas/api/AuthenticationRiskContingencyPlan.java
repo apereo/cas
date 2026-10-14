@@ -27,5 +27,6 @@ public interface AuthenticationRiskContingencyPlan {
     AuthenticationRiskContingencyResponse execute(Authentication authentication,
                                                   RegisteredService service,
                                                   AuthenticationRiskScore score,
-                                                  HttpServletRequest request) throws Throwable;
+                                                  HttpServletRequest request)
+            throws Throwable;
 }

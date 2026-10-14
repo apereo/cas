@@ -48,7 +48,8 @@ public class RegisteredServiceMultifactorAuthenticationTrigger implements Multif
                                                                    @Nullable final RegisteredService registeredService,
                                                                    final HttpServletRequest httpServletRequest,
                                                                    final HttpServletResponse response,
-                                                                   @Nullable final Service service) throws Throwable {
+                                                                   @Nullable final Service service)
+            throws Throwable {
         if (registeredService == null || authentication == null) {
             LOGGER.debug("No service or authentication is available to determine event for principal");
             return Optional.empty();

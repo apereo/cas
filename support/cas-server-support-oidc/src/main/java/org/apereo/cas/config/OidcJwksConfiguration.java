@@ -63,9 +63,10 @@ class OidcJwksConfiguration {
         public OidcJsonWebKeystoreRotationService oidcJsonWebKeystoreRotationService(
             @Qualifier("oidcJsonWebKeystoreGeneratorService")
             final OidcJsonWebKeystoreGeneratorService oidcJsonWebKeystoreGeneratorService,
+            final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties) {
             val oidc = casProperties.getAuthn().getOidc();
-            return new OidcDefaultJsonWebKeystoreRotationService(oidc, oidcJsonWebKeystoreGeneratorService);
+            return new OidcDefaultJsonWebKeystoreRotationService(oidc, oidcJsonWebKeystoreGeneratorService, applicationContext);
         }
 
         @ConditionalOnMissingBean(name = "oidcJsonWebKeystoreRotationScheduler")

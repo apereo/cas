@@ -230,7 +230,8 @@ public class SendPasswordResetInstructionsAction extends BaseCasWebflowAction {
 
     protected @Nullable MultifactorAuthenticationProvider selectMultifactorAuthenticationProvider(
         final RequestContext requestContext,
-        final Principal principal) throws Throwable {
+        final Principal principal)
+            throws Throwable {
         val applicationContext = requestContext.getActiveFlow().getApplicationContext();
         val providers = MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(applicationContext);
         val registeredService = WebUtils.getRegisteredService(requestContext);
@@ -257,7 +258,8 @@ public class SendPasswordResetInstructionsAction extends BaseCasWebflowAction {
     }
 
     protected boolean sendPasswordResetSmsToAccount(final RequestContext requestContext,
-                                                    final List<String> recipients, final URL url) throws Throwable {
+                                                    final List<String> recipients, final URL url)
+            throws Throwable {
         if (!recipients.isEmpty()) {
             LOGGER.debug("Sending password reset URL [{}] via SMS to [{}]", url.toExternalForm(), recipients);
             val reset = casProperties.getAuthn().getPm().getReset().getSms();
@@ -277,7 +279,8 @@ public class SendPasswordResetInstructionsAction extends BaseCasWebflowAction {
 
     protected EmailCommunicationResult sendPasswordResetEmailToAccount(
         final String username, final List<String> recipients, final URL url,
-        final RequestContext requestContext) throws Throwable {
+        final RequestContext requestContext)
+            throws Throwable {
         val reset = casProperties.getAuthn().getPm().getReset().getMail();
         val parameters = CollectionUtils.<String, Object>wrap("url", url.toExternalForm());
         if (!recipients.isEmpty()) {
@@ -318,7 +321,8 @@ public class SendPasswordResetInstructionsAction extends BaseCasWebflowAction {
     }
 
     protected URL buildPasswordResetUrl(final String username,
-                                        final WebApplicationService service) throws Throwable {
+                                        final WebApplicationService service)
+            throws Throwable {
         return passwordResetUrlBuilder.build(username, service);
     }
 }

@@ -111,7 +111,8 @@ public class SamlValidateEndpoint extends BaseCasRestActuatorEndpoint {
         final HttpServletRequest request,
         final String username,
         @RequestParam(required = false) final String password,
-        final String service) throws Throwable {
+        final String service)
+            throws Throwable {
         val selectedService = serviceFactory.getObject().createService(service);
         val authentication = buildAuthentication(username, password, selectedService);
 
@@ -172,7 +173,8 @@ public class SamlValidateEndpoint extends BaseCasRestActuatorEndpoint {
     }
 
     private Authentication buildAuthentication(final String username, final String password,
-                                               final WebApplicationService selectedService) throws Throwable {
+                                               final WebApplicationService selectedService)
+            throws Throwable {
         if (StringUtils.isNotBlank(password)) {
             val credential = new UsernamePasswordCredential(username, password);
             val result = authenticationSystemSupport.getObject().finalizeAuthenticationTransaction(selectedService, credential);

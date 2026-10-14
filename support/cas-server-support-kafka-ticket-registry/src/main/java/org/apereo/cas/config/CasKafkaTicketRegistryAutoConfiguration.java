@@ -156,7 +156,8 @@ public class CasKafkaTicketRegistryAutoConfiguration {
         @Qualifier("kafkaTicketRegistryConsumerFactory")
         final ConsumerFactory<String, BaseMessageQueueCommand> kafkaTicketRegistryConsumerFactory,
         @Qualifier(TicketCatalog.BEAN_NAME)
-        final TicketCatalog ticketCatalog) throws Exception {
+        final TicketCatalog ticketCatalog)
+            throws Exception {
         
         val kafka = casProperties.getTicket().getRegistry().getKafka();
 

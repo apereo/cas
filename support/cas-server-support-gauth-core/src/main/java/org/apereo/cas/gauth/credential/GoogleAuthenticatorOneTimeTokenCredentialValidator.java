@@ -55,7 +55,8 @@ public class GoogleAuthenticatorOneTimeTokenCredentialValidator implements
 
     @Override
     public @Nullable GoogleAuthenticatorToken validate(final Authentication authentication,
-                                                       final GoogleAuthenticatorTokenCredential tokenCredential) throws Throwable {
+                                                       final GoogleAuthenticatorTokenCredential tokenCredential)
+            throws Throwable {
 
         if (!StringUtils.isNumeric(tokenCredential.getToken())) {
             throw new PreventedException("Invalid non-numeric OTP format specified.");

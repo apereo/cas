@@ -88,7 +88,8 @@ class PersonDirectoryPrincipalResolverConcurrencyTests {
      * @throws InterruptedException interruption
      */
     private static void assertConcurrent(final String message, final List<? extends CheckedRunnable> runnables,
-                                         final int maxTimeoutSeconds) throws InterruptedException {
+                                         final int maxTimeoutSeconds)
+            throws InterruptedException {
         val numThreads = runnables.size();
         val exceptions = Collections.synchronizedList(new ArrayList<>());
         try (val threadPool = Executors.newFixedThreadPool(numThreads)) {

@@ -36,7 +36,8 @@ public class RejectUsersAuthenticationHandler extends AbstractUsernamePasswordAu
 
     @Override
     protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(
-        final UsernamePasswordCredential credential, final String originalPassword) throws Throwable {
+        final UsernamePasswordCredential credential, final String originalPassword)
+            throws Throwable {
         val username = credential.getUsername();
         if (this.users.contains(username)) {
             throw new FailedLoginException();

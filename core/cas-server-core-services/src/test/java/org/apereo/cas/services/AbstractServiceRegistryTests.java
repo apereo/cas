@@ -255,6 +255,20 @@ public abstract class AbstractServiceRegistryTests {
     }
 
     @Test
+    void verifyServiceLookupByRegexServiceId() {
+        getRegisteredServiceTypes().forEach(type -> {
+            val host = UUID.randomUUID().toString();
+            val registeredService = buildRegisteredServiceInstance(RandomUtils.nextInt(), type)
+                .setId(RegisteredServiceDefinition.INITIAL_IDENTIFIER_VALUE);
+            registeredService.setServiceId("^https://%s\\.example\\.org/.+".formatted(host));
+            serviceRegistry.save(registeredService);
+            val found = serviceRegistry.findServiceBy("https://%s.example.org/app".formatted(host));
+            assertNotNull(found);
+            assertEquals(registeredService.getServiceId(), found.getServiceId());
+        });
+    }
+
+    @Test
     void verifyExpiredServiceDisabled() {
         getRegisteredServiceTypes().forEach(type -> {
             val r = buildRegisteredServiceInstance(RandomUtils.nextInt(), type)

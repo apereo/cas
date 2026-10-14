@@ -63,7 +63,8 @@ public class OAuth20DefaultAccessTokenFactory implements OAuth20AccessTokenFacto
                                      final String clientId,
                                      final Map<String, Map<String, Object>> requestClaims,
                                      final OAuth20ResponseTypes responseType,
-                                     final OAuth20GrantTypes grantType) throws Throwable {
+                                     final OAuth20GrantTypes grantType)
+            throws Throwable {
         val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(jwtBuilder.getServicesManager(), clientId);
         var limitReached = false;
         if (ticketGrantingTicket != null) {

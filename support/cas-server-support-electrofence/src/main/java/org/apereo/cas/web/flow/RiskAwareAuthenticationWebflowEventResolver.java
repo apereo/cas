@@ -57,7 +57,8 @@ public class RiskAwareAuthenticationWebflowEventResolver extends AbstractCasWebf
     }
 
     protected Set<Event> handlePossibleSuspiciousAttempt(final HttpServletRequest request, final Authentication authentication,
-        final RegisteredService service) throws Throwable {
+        final RegisteredService service)
+            throws Throwable {
 
         val applicationContext = getConfigurationContext().getApplicationContext();
         val clientInfo = ClientInfoHolder.getClientInfo();

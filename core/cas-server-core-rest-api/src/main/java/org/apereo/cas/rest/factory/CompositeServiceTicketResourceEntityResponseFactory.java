@@ -27,7 +27,8 @@ public class CompositeServiceTicketResourceEntityResponseFactory implements Serv
         resourceResolverName = AuditResourceResolvers.REST_API_SERVICE_TICKET_RESOURCE_RESOLVER)
     @Override
     public ResponseEntity<String> build(final String ticketGrantingTicket, final WebApplicationService service,
-                                        final AuthenticationResult authenticationResult) throws Throwable {
+                                        final AuthenticationResult authenticationResult)
+            throws Throwable {
         val factory = chain.stream()
             .filter(responseFactory -> responseFactory.supports(service, authenticationResult))
             .findFirst()

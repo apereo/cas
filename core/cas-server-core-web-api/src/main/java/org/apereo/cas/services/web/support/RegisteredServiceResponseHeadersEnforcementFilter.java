@@ -71,7 +71,8 @@ public class RegisteredServiceResponseHeadersEnforcementFilter extends ResponseH
 
     @Override
     protected Optional<RegisteredService> prepareFilterBeforeExecution(final HttpServletResponse httpServletResponse,
-                                                                       final HttpServletRequest httpServletRequest) throws Throwable {
+                                                                       final HttpServletRequest httpServletRequest)
+            throws Throwable {
         val basePath = webEndpointProperties.getBasePath();
         if (httpServletRequest.getRequestURI().contains(basePath)) {
             return Optional.empty();

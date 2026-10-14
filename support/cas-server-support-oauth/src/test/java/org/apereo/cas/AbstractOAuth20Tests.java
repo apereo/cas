@@ -581,13 +581,15 @@ public abstract class AbstractOAuth20Tests {
     }
 
     protected Pair<String, String> assertClientOK(final OAuthRegisteredService service,
-                                                  final boolean refreshToken) throws Throwable {
+                                                  final boolean refreshToken)
+            throws Throwable {
         return assertClientOK(service, refreshToken, null);
     }
 
     protected Pair<String, String> assertClientOK(final OAuthRegisteredService service,
                                                   final boolean refreshToken,
-                                                  final String scopes) throws Throwable {
+                                                  final String scopes)
+            throws Throwable {
         val principal = createPrincipal();
         val code = addCode(principal, service,
             org.springframework.util.StringUtils.commaDelimitedListToSet(scopes));
@@ -641,18 +643,21 @@ public abstract class AbstractOAuth20Tests {
     }
 
     protected OAuth20Code addCode(final Principal principal, final OAuthRegisteredService registeredService,
-                                  final Collection<String> scopes) throws Throwable {
+                                  final Collection<String> scopes)
+            throws Throwable {
         return addCodeWithChallenge(principal, registeredService, null, null, scopes);
     }
 
     protected OAuth20Code addCodeWithChallenge(final Principal principal, final OAuthRegisteredService registeredService,
-                                               final String codeChallenge, final String codeChallengeMethod) throws Throwable {
+                                               final String codeChallenge, final String codeChallengeMethod)
+            throws Throwable {
         return addCodeWithChallenge(principal, registeredService, codeChallenge, codeChallengeMethod, new ArrayList<>());
     }
 
     protected OAuth20Code addCodeWithChallenge(final Principal principal, final OAuthRegisteredService registeredService,
                                                final String codeChallenge, final String codeChallengeMethod,
-                                               final Collection<String> scopes) throws Throwable {
+                                               final Collection<String> scopes)
+            throws Throwable {
         val authentication = getAuthentication(principal);
         val service = serviceFactory.createService(registeredService.getClientId());
 
@@ -671,7 +676,8 @@ public abstract class AbstractOAuth20Tests {
     }
 
     protected OAuth20RefreshToken addRefreshToken(final Principal principal,
-                                                  final OAuthRegisteredService registeredService) throws Throwable {
+                                                  final OAuthRegisteredService registeredService)
+            throws Throwable {
         val authentication = getAuthentication(principal);
         val service = serviceFactory.createService(registeredService.getServiceId());
         val refreshToken = defaultRefreshTokenFactory.create(service, authentication,
@@ -684,7 +690,8 @@ public abstract class AbstractOAuth20Tests {
 
     protected OAuth20RefreshToken addRefreshToken(final Principal principal,
                                                   final OAuthRegisteredService registeredService,
-                                                  final OAuth20AccessToken accessToken) throws Throwable {
+                                                  final OAuth20AccessToken accessToken)
+            throws Throwable {
         val authentication = getAuthentication(principal);
         val service = serviceFactory.createService(registeredService.getServiceId());
         val refreshToken = defaultRefreshTokenFactory.create(service, authentication,
@@ -696,14 +703,16 @@ public abstract class AbstractOAuth20Tests {
     }
 
     protected OAuth20AccessToken addAccessToken(final Principal principal,
-                                                final OAuthRegisteredService registeredService) throws Throwable {
+                                                final OAuthRegisteredService registeredService)
+            throws Throwable {
         val code = addCode(principal, registeredService);
         return addAccessToken(principal, registeredService, code);
     }
 
     protected OAuth20AccessToken addAccessToken(final Principal principal,
                                                 final OAuthRegisteredService registeredService,
-                                                final Ticket codeId) throws Throwable {
+                                                final Ticket codeId)
+            throws Throwable {
         val authentication = getAuthentication(principal);
         val service = serviceFactory.createService(registeredService.getServiceId());
         val accessToken = defaultAccessTokenFactory.create(service, authentication,
@@ -722,7 +731,8 @@ public abstract class AbstractOAuth20Tests {
 
     protected Pair<OAuth20AccessToken, OAuth20RefreshToken> assertRefreshTokenOk(final OAuthRegisteredService service,
                                                                                  final OAuth20RefreshToken refreshToken,
-                                                                                 final Principal principal) throws Throwable {
+                                                                                 final Principal principal)
+            throws Throwable {
         val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.ACCESS_TOKEN_URL);
         mockRequest.setParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.REFRESH_TOKEN.name().toLowerCase(Locale.ENGLISH));
         mockRequest.setParameter(OAuth20Constants.CLIENT_ID, service.getClientId());
@@ -769,7 +779,8 @@ public abstract class AbstractOAuth20Tests {
     protected ModelAndView generateAccessTokenResponseAndGetModelAndView(
         final OAuthRegisteredService registeredService,
         final Authentication authentication,
-        final OAuth20GrantTypes grantType) throws Throwable {
+        final OAuth20GrantTypes grantType)
+            throws Throwable {
 
         val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.ACCESS_TOKEN_URL);
         return generateAccessTokenResponseAndGetModelAndView(registeredService, authentication, grantType, mockRequest);
@@ -779,7 +790,8 @@ public abstract class AbstractOAuth20Tests {
         final OAuthRegisteredService registeredService,
         final Authentication authentication,
         final OAuth20GrantTypes grantType,
-        final HttpServletRequest mockRequest) throws Throwable {
+        final HttpServletRequest mockRequest)
+            throws Throwable {
 
         val service = RegisteredServiceTestUtils.getService(SERVICE_URL);
 
@@ -811,7 +823,8 @@ public abstract class AbstractOAuth20Tests {
                                                                        final Authentication authentication,
                                                                        final OAuth20GrantTypes grantType,
                                                                        final AbstractWebApplicationService service,
-                                                                       final JEEContext webContext) throws Exception {
+                                                                       final JEEContext webContext)
+            throws Exception {
         return buildAccessTokenRequestContext(registeredService, authentication, grantType, service,
             new MockTicketGrantingTicket(authentication.getPrincipal().getId()), webContext);
     }
@@ -821,7 +834,8 @@ public abstract class AbstractOAuth20Tests {
                                                                        final OAuth20GrantTypes grantType,
                                                                        final AbstractWebApplicationService service,
                                                                        final TicketGrantingTicket ticketGrantingTicket,
-                                                                       final JEEContext webContext) throws Exception {
+                                                                       final JEEContext webContext)
+            throws Exception {
         return AccessTokenRequestContext
             .builder()
             .clientId(registeredService.getClientId())

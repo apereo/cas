@@ -22,7 +22,8 @@ public interface OidcVerifiableCredentialIssuerService {
      * @throws Throwable the throwable
      */
     List<VerifiableCredentialProofResult> validateProofs(OidcVerifiableCredentialValidationContext context,
-                                                         Set<String> consumedNonces) throws Throwable;
+                                                         Set<String> consumedNonces)
+            throws Throwable;
 
     /**
      * Encode one credential per validated holder key.
@@ -33,7 +34,8 @@ public interface OidcVerifiableCredentialIssuerService {
      * @throws Throwable the throwable
      */
     List<OidcVerifiableCredentialIssuerResponse> encode(OidcVerifiableCredentialValidationContext context,
-                                                        List<VerifiableCredentialProofResult> proofs) throws Throwable;
+                                                        List<VerifiableCredentialProofResult> proofs)
+            throws Throwable;
 
     /**
      * Issue verifiable credential response.
@@ -44,7 +46,8 @@ public interface OidcVerifiableCredentialIssuerService {
      * @throws Throwable the throwable
      */
     default List<OidcVerifiableCredentialIssuerResponse> issue(final OidcVerifiableCredentialValidationContext context,
-                                                               final Set<String> consumedNonces) throws Throwable {
+                                                               final Set<String> consumedNonces)
+            throws Throwable {
         return encode(context, validateProofs(context, consumedNonces));
     }
 
@@ -56,7 +59,8 @@ public interface OidcVerifiableCredentialIssuerService {
      * @throws Throwable the throwable
      */
     default List<OidcVerifiableCredentialIssuerResponse> issue(
-        final OidcVerifiableCredentialValidationContext context) throws Throwable {
+        final OidcVerifiableCredentialValidationContext context)
+            throws Throwable {
         return issue(context, new HashSet<>());
     }
 }

@@ -35,7 +35,8 @@ public class OAuth20PasswordGrantTypeTokenRequestValidator extends BaseOAuth20To
 
     @Override
     protected boolean validateInternal(final WebContext context, final String grantType,
-                                       final ProfileManager manager, final UserProfile uProfile) throws Throwable {
+                                       final ProfileManager manager, final UserProfile uProfile)
+            throws Throwable {
 
         val configurationContext = getConfigurationContext().getObject();
         val callContext = new CallContext(context, configurationContext.getSessionStore());

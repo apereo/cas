@@ -26,6 +26,12 @@ class ReflectionUtilsTests {
     }
 
     @Test
+    void findInterfaceImplementationsInPackage() {
+        val implementations = ReflectionUtils.findSubclassesInPackage(ScannerContract.class, ReflectionUtils.class.getPackageName());
+        assertThat(implementations).contains(ScannerImplementation.class, ScannerSubclass.class);
+    }
+
+    @Test
     void findClassesWithAnnotationsInPackage() {
         val tagClasses = ReflectionUtils.findClassesWithAnnotationsInPackage(Set.of(FunctionalInterface.class), "org.apereo.cas");
         assertThat(tagClasses).contains(LogMessageSummarizer.class);
@@ -34,9 +40,25 @@ class ReflectionUtilsTests {
     }
 
     @Test
+    void findClassesWithAnnotationsUsingDefaultClasspath() {
+        val tagClasses = ReflectionUtils.findClassesWithAnnotationsInPackage(List.of(),
+            Set.of(FunctionalInterface.class), "org.apereo.cas.util");
+        assertThat(tagClasses).contains(LogMessageSummarizer.class, DecodableCipher.class, EncodableCipher.class);
+    }
+
+    @Test
     void findClassBySimpleNameInPackage() {
         val applicationContext = ReflectionUtils.findClassBySimpleNameInPackage(ApplicationContext.class.getSimpleName(), "org.springframework");
         assertThat(applicationContext).isPresent();
         assertThat(applicationContext).contains(ApplicationContext.class);
+    }
+
+    interface ScannerContract {
+    }
+
+    static class ScannerImplementation implements ScannerContract {
+    }
+
+    static class ScannerSubclass extends ScannerImplementation {
     }
 }

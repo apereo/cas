@@ -101,7 +101,8 @@ class MultifactorAuthenticationFailureActionTests {
 
         protected void executeAction(final MultifactorAuthenticationProvider provider,
                                      final MultifactorAuthenticationProviderFailureModes serviceMode,
-                                     final String transitionId) throws Exception {
+                                     final String transitionId)
+                throws Exception {
             val context = MockRequestContext.create(applicationContext);
             val service = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString());
 

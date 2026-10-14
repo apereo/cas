@@ -7,11 +7,13 @@ import org.apereo.cas.configuration.api.CasConfigurationPropertiesSourceLocator;
 import org.apereo.cas.configuration.loader.GroovyConfigurationPropertiesLoader;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.util.scripting.ExecutableCompiledScriptFactory;
 import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junitpioneer.jupiter.SetSystemProperty;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -36,6 +38,7 @@ class GroovyConfigurationPropertiesLoaderTests {
     private Environment environment;
     
     @Test
+    @SetSystemProperty(key = ExecutableCompiledScriptFactory.SYSTEM_PROPERTY_GROOVY_COMPILE_STATIC, value = "true")
     void verifyOperation() {
         val loaders = CasConfigurationPropertiesSourceLocator.getConfigurationPropertiesLoaders();
         val groovyLoader = loaders
@@ -50,6 +53,8 @@ class GroovyConfigurationPropertiesLoaderTests {
         assertEquals("test::alone", properties.getProperty("cas.authn.accept.users"));
         assertEquals("true", properties.getProperty("cas.service-registry.core.init-from-json"));
         assertEquals("Static", properties.getProperty("cas.authn.accept.name"));
+        assertEquals("test", properties.getProperty("cas.custom.properties.profile"));
+        assertEquals(Integer.toString(System.getenv().size()), properties.getProperty("cas.custom.properties.environmentSize"));
     }
     
 }

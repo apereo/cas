@@ -2,6 +2,7 @@ package org.apereo.cas.oidc.jwks;
 
 import module java.base;
 import org.apereo.cas.oidc.jwks.generator.OidcJsonWebKeystoreModifiedEvent;
+import org.apereo.cas.oidc.jwks.rotation.OidcJsonWebKeystoreRotatedEvent;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.val;
 import org.jose4j.jwk.JsonWebKeySet;
@@ -26,6 +27,17 @@ class OidcDefaultJsonWebKeyStoreListenerTests {
 
         val listener = new OidcDefaultJsonWebKeyStoreListener(cache);
         listener.handleOidcJsonWebKeystoreModifiedEvent(mock(OidcJsonWebKeystoreModifiedEvent.class));
+        assertNull(cache.getIfPresent(cacheKey));
+    }
+
+    @Test
+    void verifyRotation() {
+        val cache = Caffeine.newBuilder().<OidcJsonWebKeyCacheKey, JsonWebKeySet>build(_ -> mock(JsonWebKeySet.class));
+        val cacheKey = new OidcJsonWebKeyCacheKey(UUID.randomUUID().toString(), OidcJsonWebKeyUsage.SIGNING);
+        assertNotNull(cache.get(cacheKey));
+
+        val listener = new OidcDefaultJsonWebKeyStoreListener(cache);
+        listener.handleOidcJsonWebKeystoreRotatedEvent(mock(OidcJsonWebKeystoreRotatedEvent.class));
         assertNull(cache.getIfPresent(cacheKey));
     }
 }

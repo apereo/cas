@@ -53,7 +53,8 @@ public class JsonResourceAuthenticationHandler extends AbstractUsernamePasswordA
 
     @Override
     protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(
-        final UsernamePasswordCredential credential, final String originalPassword) throws Throwable {
+        final UsernamePasswordCredential credential, final String originalPassword)
+            throws Throwable {
 
         val map = readAccountsFromResource();
         val username = credential.getUsername();

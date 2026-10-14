@@ -25,7 +25,8 @@ public interface ServiceTicketResourceEntityResponseFactory extends Ordered {
      */
     ResponseEntity<String> build(String ticketGrantingTicket,
                                  WebApplicationService service,
-                                 AuthenticationResult authenticationResult) throws Throwable;
+                                 AuthenticationResult authenticationResult)
+            throws Throwable;
 
     /**
      * Supports boolean.

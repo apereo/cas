@@ -44,7 +44,8 @@ public class SamlValidateController extends AbstractServiceValidateController {
             @Parameter(name = "SAMLart", description = "The service ticket identifier")
         })
     public ModelAndView handleRequestInternal(final HttpServletRequest request,
-                                              final HttpServletResponse response) throws Exception {
+                                              final HttpServletResponse response)
+            throws Exception {
         return super.handleRequestInternal(request, response);
     }
 

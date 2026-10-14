@@ -93,7 +93,8 @@ public class SamlObjectSignatureValidator {
     public boolean verifySamlProfileRequest(final SignableSAMLObject profileRequest,
                                             final MetadataResolver resolver,
                                             final HttpServletRequest request,
-                                            final MessageContext context) throws Throwable {
+                                            final MessageContext context)
+            throws Throwable {
 
         val roleDescriptorResolver = getRoleDescriptorResolver(resolver, context, profileRequest);
         LOGGER.debug("Validating signature for [{}]", profileRequest.getClass().getName());
@@ -123,14 +124,16 @@ public class SamlObjectSignatureValidator {
     public boolean verifySamlProfileRequest(final SignableSAMLObject profileRequest,
                                          final SamlRegisteredServiceMetadataAdaptor adaptor,
                                          final HttpServletRequest request,
-                                         final MessageContext context) throws Throwable {
+                                         final MessageContext context)
+            throws Throwable {
 
         return verifySamlProfileRequest(profileRequest, adaptor.getMetadataResolver(), request, context);
     }
 
     protected RoleDescriptorResolver getRoleDescriptorResolver(final MetadataResolver resolver,
                                                                final MessageContext context,
-                                                               final SignableSAMLObject profileRequest) throws Exception {
+                                                               final SignableSAMLObject profileRequest)
+            throws Exception {
         val idp = casProperties.getAuthn().getSamlIdp();
         return SamlIdPUtils.getRoleDescriptorResolver(resolver, idp.getMetadata().getCore().isRequireValidMetadata());
     }
@@ -139,7 +142,8 @@ public class SamlObjectSignatureValidator {
                                                           final HttpServletRequest request,
                                                           final MessageContext context,
                                                           final RoleDescriptorResolver roleDescriptorResolver,
-                                                          final SignatureValidationParameters validationParameters) throws Throwable {
+                                                          final SignatureValidationParameters validationParameters)
+            throws Throwable {
         val peer = context.ensureSubcontext(SAMLPeerEntityContext.class);
         peer.setEntityId(SamlIdPUtils.getIssuerFromSamlObject(profileRequest));
         peer.setAuthenticated(false);
@@ -217,7 +221,8 @@ public class SamlObjectSignatureValidator {
     private boolean validateSignatureOnProfileRequest(final SignableSAMLObject profileRequest,
                                                    final Signature signature,
                                                    final RoleDescriptorResolver roleDescriptorResolver,
-                                                   final SignatureValidationParameters validationParameters) throws Throwable {
+                                                   final SignatureValidationParameters validationParameters)
+            throws Throwable {
         val validator = new SAMLSignatureProfileValidator();
         val issuer = SamlIdPUtils.getIssuerFromSamlObject(profileRequest);
         LOGGER.debug("Validating profile signature for [{}] via [{}]...", issuer,

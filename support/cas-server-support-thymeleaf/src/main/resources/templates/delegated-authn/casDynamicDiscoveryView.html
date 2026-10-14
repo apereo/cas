@@ -11,7 +11,8 @@
 
 <body>
 <main class="container mt-3 mb-3">
-    <div layout:fragment="content" class="mdc-card p-4 m-auto w-lg-66">
+    <div layout:fragment="content" class="mdc-card p-4 m-auto w-lg-66 cas-hero cas-hero-start">
+        <span class="cas-hero-icon" aria-hidden="true"><i class="mdi mdi-account-search-outline"></i></span>
         <div class="col-xs-6 col-xs-offset-2 col-sm-offset-3">
             <h2 th:utext="#{screen.pac4j.discovery.title}">Delegated Authentication Dynamic Discovery</h2>
             <p class="intro" th:utext="#{screen.pac4j.discovery.intro}">Please provide your user ID:</p>

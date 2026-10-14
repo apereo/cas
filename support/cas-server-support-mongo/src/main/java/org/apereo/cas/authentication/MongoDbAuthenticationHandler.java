@@ -36,7 +36,8 @@ public class MongoDbAuthenticationHandler extends AbstractUsernamePasswordAuthen
     @Override
     protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(
         final UsernamePasswordCredential transformedCredential,
-        @Nullable final String originalPassword) throws Throwable {
+        @Nullable final String originalPassword)
+            throws Throwable {
         val collection = mongoTemplate.getCollection(properties.getCollection());
         try (val it = collection.find(Filters.eq(properties.getUsernameAttribute(), transformedCredential.getUsername())).iterator()) {
             if (it.hasNext()) {

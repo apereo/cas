@@ -78,8 +78,11 @@
 
         <div id="webauthnContainer"
              class="text-justify d-flex justify-content-center flex-column p-4 m-auto"
-             th:classappend="${#cas.isTrue(primaryAuthentication) ? '' : 'mdc-card card'}">
+             th:classappend="${#cas.isTrue(primaryAuthentication) ? '' : 'mdc-card card cas-hero'}">
             <div class="d-flex justify-content-center flex-column align-items-center">
+                <span class="cas-hero-icon is-pulsing" th:unless="${#cas.isTrue(primaryAuthentication)}" aria-hidden="true">
+                    <i class="mdi mdi-fingerprint"></i>
+                </span>
                 <h2 id="status" th:text="#{screen.authentication.webauthn.login.title}" />
             </div>
             <p id="description" th:text="#{screen.authentication.webauthn.login.desc}">Login</p>
@@ -111,6 +114,7 @@
             </div>
 
             <div id="QRCodeSection" class="row mt-2" th:if="${QRCode}">
+                <div class="cas-hero-divider" th:text="#{screen.authentication.webauthn.qr.or}">or</div>
                 <p th:utext="#{screen.authentication.webauthn.qr.info}">Scan the QR code with your mobile device to authenticate.</p>
 
                 <div class="mt-2 text-center">

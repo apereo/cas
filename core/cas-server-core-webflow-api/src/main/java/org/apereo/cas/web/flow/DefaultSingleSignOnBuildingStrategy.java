@@ -50,7 +50,8 @@ public class DefaultSingleSignOnBuildingStrategy implements SingleSignOnBuilding
     }
 
     protected Ticket createTicketGrantingTicket(final AuthenticationResult authenticationResult,
-                                                final String ticketGrantingTicket) throws Throwable {
+                                                final String ticketGrantingTicket)
+            throws Throwable {
         if (StringUtils.isNotBlank(ticketGrantingTicket)) {
             removeTicketGrantingTicket(ticketGrantingTicket);
 
@@ -87,7 +88,8 @@ public class DefaultSingleSignOnBuildingStrategy implements SingleSignOnBuilding
     }
 
     protected boolean shouldIssueTicketGrantingTicket(final Authentication authentication,
-                                                      final String ticketGrantingTicket) throws Throwable {
+                                                      final String ticketGrantingTicket)
+            throws Throwable {
         LOGGER.trace("Located ticket-granting ticket in the context. Retrieving associated authentication");
         val authenticationFromTgt = ticketRegistrySupport.getAuthenticationFrom(ticketGrantingTicket);
 

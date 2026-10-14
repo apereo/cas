@@ -30,7 +30,8 @@ public class ThemeChangeInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(final HttpServletRequest request, final @NonNull HttpServletResponse response,
-                             final @NonNull Object handler) throws ServletException {
+                             final @NonNull Object handler)
+            throws ServletException {
 
         val newTheme = request.getParameter(this.paramName);
         if (newTheme != null) {

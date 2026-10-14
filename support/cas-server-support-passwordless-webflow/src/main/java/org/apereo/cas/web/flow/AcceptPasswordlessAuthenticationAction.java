@@ -81,7 +81,8 @@ public class AcceptPasswordlessAuthenticationAction extends AbstractAuthenticati
 
     protected void handlePasswordlessAuthenticationAttempt(final RequestContext requestContext, final PasswordlessUserAccount principal,
                                                            final String providedToken,
-                                                           @Nullable final PasswordlessAuthenticationToken passwordlessToken) throws Throwable {
+                                                           @Nullable final PasswordlessAuthenticationToken passwordlessToken)
+            throws Throwable {
         val credential = new PasswordlessTokenCredential(principal.getUsername(), providedToken);
         val service = WebUtils.getService(requestContext);
         var authenticationResultBuilder = authenticationSystemSupport.handleInitialAuthenticationTransaction(service, credential);

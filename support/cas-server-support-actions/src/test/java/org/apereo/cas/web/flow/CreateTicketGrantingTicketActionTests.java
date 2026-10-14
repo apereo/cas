@@ -79,7 +79,8 @@ class CreateTicketGrantingTicketActionTests extends AbstractWebflowActionsTests 
 
 
     private static void prepareRequestContextForAuthentication(final MockRequestContext context,
-                                                               final Authentication authentication) throws Throwable {
+                                                               final Authentication authentication)
+            throws Throwable {
         val builder = mock(AuthenticationResultBuilder.class);
         when(builder.getInitialAuthentication()).thenReturn(Optional.of(authentication));
         when(builder.collect(any(Authentication.class))).thenReturn(builder);

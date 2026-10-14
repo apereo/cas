@@ -21,7 +21,8 @@ public class DefaultUserAuthenticationResourceEntityResponseFactory implements U
 
     @Override
     public ResponseEntity<String> build(final AuthenticationResult result,
-                                        final HttpServletRequest request) throws Exception {
+                                        final HttpServletRequest request)
+            throws Exception {
         return new ResponseEntity<>(MAPPER.writeValueAsString(result), HttpStatus.OK);
     }
 }

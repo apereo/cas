@@ -13,47 +13,24 @@
         <p th:utext="#{screen.oidc.confirm.ciba.confirmed}" class="intro">Authentication request is now confirmed.</p>
     </div>
     
-    <div id="cibaContainer" class="banner mdc-card card p-4 m-auto w-lg-66">
-        <h1 th:text="#{screen.oidc.confirm.ciba.header}"/>
-        
-        <div class="d-flex flex-column align-items-center mb-2">
-            <img th:src="${registeredService.logo}" th:if="${registeredService.logo}" alt="Service logo"/>
-            <h2 th:text="${registeredService.name}"/>
-            <p th:text="${registeredService.description}"/>
+    <div id="cibaContainer" class="banner mdc-card card p-4 m-auto w-lg-66 cas-consent">
+        <div th:replace="~{fragments/consent :: appHeader(${registeredService.name}, ${registeredService.description}, ${registeredService.logo}, #{screen.oidc.confirm.ciba.header})}"/>
+
+        <div id="bindingMessageSection" class="cas-binding" th:if="${bindingMessage}">
+            <h3 class="cas-consent-eyebrow" th:utext="#{screen.oidc.confirm.bindingmessage.header}">Binding Message</h3>
+            <pre id="bindingMessage" class="cas-binding-code" th:text="${bindingMessage}"/>
+            <p class="cas-consent-hint" th:text="#{screen.oidc.confirm.bindingmessage.description}"/>
         </div>
 
-        <div id="scopes" th:unless="${#sets.isEmpty(cibaRequest.scopes)}">
-            <h3 class="border-bottom bg-primary p-2" th:text="#{screen.oidc.confirm.scopes}"/>
-            <p th:text="#{screen.oidc.confirm.asksinfo}"/>
+        <section id="scopes" class="cas-consent-section" th:unless="${#sets.isEmpty(cibaRequest.scopes)}">
+            <h3 th:text="#{screen.oidc.confirm.scopes}"/>
+            <p class="cas-consent-hint" th:text="#{screen.oidc.confirm.asksinfo}"/>
+            <ul class="cas-perm-list">
+                <th:block th:each="scope : ${cibaRequest.scopes}"><li th:replace="~{fragments/consent :: permission(${scope}, ${#messages.msgOrNull('screen.oidc.confirm.scope.' + scope)}, 'scope')}"/></th:block>
+            </ul>
+        </section>
 
-            <dl class="dl-class0 dl-class1">
-                <div th:each="scope : ${cibaRequest.scopes}">
-                    <span th:id="${scope}">
-                        <dt class="dt-class0 dt-class1 mdi mdi-cog"> <strong><code th:text="${claim}"/></strong></dt>
-                        <dd class="dd-class0 dd-class1" th:utext="#{screen.oidc.confirm.scope.__${scope}__}"/>
-                    </span>
-                </div>
-            </dl>
-        </div>
-    
-        <div th:if="${registeredService.informationUrl}" class="my-2">
-            <i class="mdi mdi-comment fas fa-comment" aria-hidden="true"></i>
-            <a id="informationUrl" th:href="${registeredService.informationUrl}"
-               th:utext="#{screen.oidc.confirm.infourl(${registeredService.name})}"/>
-        </div>
-        <div th:if="${registeredService.privacyUrl}" class="my-2">
-            <i class="mdi mdi-eye fas fa-eye" aria-hidden="true"></i>
-            <a id="privacyUrl" th:href="${registeredService.privacyUrl}"
-               th:utext="#{screen.oidc.confirm.privacyurl(${registeredService.name})}"/>
-        </div>
-
-        <span th:if="${bindingMessage}">
-            <h3 class="strong border-bottom pb-2 mt-4" th:utext="#{screen.oidc.confirm.bindingmessage.header}">Binding Message</h3>
-            <sub th:text="#{screen.oidc.confirm.bindingmessage.description}"/>
-            <pre id="bindingMessage" th:text="${bindingMessage}"/>
-        </span>
-
-        <div class="d-flex">
+        <div class="cas-ciba-form">
             <form id="fm1" method="post">
                 <section id="userCodeSection" th:if="${userCodeRequired}" class="cas-field my-3 mdc-input-group form-group">
                     <div class="mdc-input-group-field mdc-input-group-field-append">
@@ -94,8 +71,7 @@
                     <h2 th:utext="#{screen.oidc.confirm.ciba.header}">Error</h2>
                     <p th:utext="#{screen.oidc.confirm.ciba.failed}" class="intro mt-0">Failed to confirm authentication request.</p>
                 </div>
-                <br/>
-                <div class="d-flex">
+                <div class="cas-consent-actions">
                     <div th:replace="~{fragments/submitbutton :: submitButton (messageKey='screen.welcome.button.confirm', id='confirmButton')}"/>
                 </div>
                 <input type="hidden" id="loginCsrfToken" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
@@ -137,6 +113,16 @@
                     });
                 </script>
             </form>
+        </div>
+        <div class="cas-consent-links" th:if="${registeredService.informationUrl != null or registeredService.privacyUrl != null}">
+            <a th:if="${registeredService.informationUrl}" id="informationUrl" th:href="${registeredService.informationUrl}">
+                <i class="mdi mdi-information-outline" aria-hidden="true"></i>
+                <span th:utext="#{screen.oidc.confirm.infourl(${registeredService.name})}"/>
+            </a>
+            <a th:if="${registeredService.privacyUrl}" id="privacyUrl" th:href="${registeredService.privacyUrl}">
+                <i class="mdi mdi-shield-lock-outline" aria-hidden="true"></i>
+                <span th:utext="#{screen.oidc.confirm.privacyurl(${registeredService.name})}"/>
+            </a>
         </div>
     </div>
 </div>

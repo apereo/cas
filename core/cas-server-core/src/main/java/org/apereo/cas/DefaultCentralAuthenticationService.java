@@ -103,7 +103,8 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
         resourceResolverName = AuditResourceResolvers.GRANT_SERVICE_TICKET_RESOURCE_RESOLVER)
     @Override
     public Ticket grantServiceTicket(final String ticketGrantingTicketId, final Service service,
-                                     @Nullable final AuthenticationResult authenticationResult) throws Throwable {
+                                     @Nullable final AuthenticationResult authenticationResult)
+            throws Throwable {
         val grantor = new ServiceTicketGrantor(ticketGrantingTicketId, service, authenticationResult);
         return configurationContext.getLockRepository().execute(ticketGrantingTicketId, Unchecked.supplier(grantor))
             .orElseThrow(() -> new InvalidTicketException(ticketGrantingTicketId));
@@ -184,18 +185,21 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
                 if (!configurationContext.getServiceMatchingStrategy().matches(selectedService, resolvedService)) {
                     LOGGER.error("Service ticket [{}] with service [{}] does not match supplied service [{}]",
                         serviceTicketId, serviceTicket.getService().getId(), Objects.requireNonNull(resolvedService).getId());
+                    recordFailedValidationAttempt(serviceTicket);
                     throw new UnrecognizableServiceForServiceTicketValidationException(selectedService);
                 }
                 if (StringUtils.isNotBlank(serviceTicket.getTenantId())) {
                     if (!Strings.CI.equals(Objects.requireNonNull(resolvedService).getTenant(), serviceTicket.getTenantId())) {
                         LOGGER.warn("Service ticket [{}] is not assigned to the same tenant [{}] as the service [{}]",
                             serviceTicketId, serviceTicket.getTenantId(), resolvedService.getId());
+                        recordFailedValidationAttempt(serviceTicket);
                         throw new UnknownTenantException("Unknown tenant %s for service ticket %s"
                             .formatted(resolvedService.getTenant(), serviceTicketId));
                     }
                     if (configurationContext.getTenantExtractor().getTenantsManager().findTenant(serviceTicket.getTenantId()).isEmpty()) {
                         LOGGER.warn("Service ticket [{}] is not assigned to a known valid tenant [{}] for service [{}]",
                             serviceTicketId, serviceTicket.getTenantId(), resolvedService.getId());
+                        recordFailedValidationAttempt(serviceTicket);
                         throw new UnknownTenantException("Unknown tenant %s for service ticket %s"
                             .formatted(serviceTicket.getTenantId(), serviceTicketId));
                     }
@@ -298,6 +302,23 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
         return assertion;
     }
 
+    /*
+     * CAS protocol: a service ticket is invalidated after a validation attempt whether or not it succeeds. A failed
+     * attempt therefore counts as a use, as a successful one does, and the ticket's expiration policy decides whether
+     * the ticket is left with any: a single-use ticket is removed, one allowed further uses keeps the rest.
+     * Runs under the ticket's lock so that concurrent attempts each count.
+     */
+    private void recordFailedValidationAttempt(final ServiceTicket serviceTicket) throws Exception {
+        if (!serviceTicket.isStateless()) {
+            serviceTicket.update();
+            if (serviceTicket.isExpired()) {
+                configurationContext.getTicketRegistry().deleteTicket(serviceTicket);
+            } else {
+                configurationContext.getTicketRegistry().updateTicket(serviceTicket);
+            }
+        }
+    }
+
 
     @Audit(
         action = AuditableActions.PROXY_GRANTING_TICKET,
@@ -305,7 +326,8 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
         resourceResolverName = AuditResourceResolvers.CREATE_PROXY_GRANTING_TICKET_RESOURCE_RESOLVER)
     @Override
     public Ticket createProxyGrantingTicket(final String serviceTicketId,
-                                            final AuthenticationResult authenticationResult) throws Throwable {
+                                            final AuthenticationResult authenticationResult)
+            throws Throwable {
         val serviceTicket = configurationContext.getTicketRegistry().getTicket(serviceTicketId, ServiceTicket.class);
         if (serviceTicket == null || serviceTicket.isExpired()) {
             LOGGER.debug("ServiceTicket [{}] has expired or cannot be found in the ticket registry", serviceTicketId);
@@ -320,7 +342,8 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
         resourceResolverName = AuditResourceResolvers.CREATE_PROXY_GRANTING_TICKET_RESOURCE_RESOLVER)
     @Override
     public Ticket createProxyGrantingTicket(final ServiceTicket serviceTicket,
-                                            final AuthenticationResult authenticationResult) throws Throwable {
+                                            final AuthenticationResult authenticationResult)
+            throws Throwable {
         val registeredService = (CasModelRegisteredService) configurationContext.getServicesManager()
             .findServiceBy(serviceTicket.getService());
 
@@ -356,7 +379,8 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
     }
 
     private void enforceRegisteredServiceAccess(final Authentication authentication, @Nullable final Service service,
-                                                @Nullable final RegisteredService registeredService) throws Throwable {
+                                                @Nullable final RegisteredService registeredService)
+            throws Throwable {
 
         val attributeReleaseContext = RegisteredServiceAttributeReleasePolicyContext.builder()
             .registeredService(registeredService)
@@ -386,7 +410,8 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
     }
 
     private void enforceRegisteredServiceAccess(@Nullable final Service service, @Nullable final RegisteredService registeredService,
-                                                @Nullable final Principal principal) throws Throwable {
+                                                @Nullable final Principal principal)
+            throws Throwable {
         val audit = AuditableContext.builder()
             .service(service)
             .principal(principal)
@@ -396,7 +421,8 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
     }
 
     private void enforceRegisteredServiceAccess(@Nullable final Service service, final TicketGrantingTicket ticket,
-                                                @Nullable final RegisteredService registeredService) throws Throwable {
+                                                @Nullable final RegisteredService registeredService)
+            throws Throwable {
         val audit = AuditableContext.builder()
             .service(service)
             .ticketGrantingTicket(ticket)

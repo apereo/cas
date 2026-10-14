@@ -55,7 +55,8 @@ public class DefaultDelegatedAuthenticationNavigationController extends Abstract
     public View redirectResponseToFlow(
         @PathVariable final String clientName,
         final HttpServletRequest request,
-        final HttpServletResponse response) throws Exception {
+        final HttpServletResponse response)
+            throws Exception {
         return buildRedirectViewBackToFlow(clientName, request);
     }
 
@@ -75,7 +76,8 @@ public class DefaultDelegatedAuthenticationNavigationController extends Abstract
     public View postResponseToFlow(
         @PathVariable final String clientName,
         final HttpServletRequest request,
-        final HttpServletResponse response) throws Exception {
+        final HttpServletResponse response)
+            throws Exception {
         return buildRedirectViewBackToFlow(clientName, request);
     }
 

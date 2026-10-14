@@ -70,7 +70,8 @@ public class MockTicketGrantingTicketCreatedEventProducer {
     }
 
     public static CasEvent createEvent(final String user, final int i,
-                                       final CasEventRepository casEventRepository) throws Throwable {
+                                       final CasEventRepository casEventRepository)
+            throws Throwable {
         val dto = new CasEvent();
         dto.setType(CasTicketGrantingTicketCreatedEvent.class.getName());
         dto.putTimestamp(new Date().getTime());

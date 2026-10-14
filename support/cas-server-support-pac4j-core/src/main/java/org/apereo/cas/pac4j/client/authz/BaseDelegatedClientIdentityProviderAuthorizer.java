@@ -35,7 +35,8 @@ public abstract class BaseDelegatedClientIdentityProviderAuthorizer implements D
 
     @Override
     public boolean isDelegatedClientAuthorizedFor(final String clientName, final Service service,
-                                                  final RequestContext context) throws Throwable {
+                                                  final RequestContext context)
+            throws Throwable {
         val tenantDefinition = tenantExtractor.extract(context);
         return (tenantDefinition.isEmpty() || isDelegatedClientAuthorizedForTenant(clientName, tenantDefinition.get()))
             && handleAuthorizationForService(clientName, service);
@@ -43,7 +44,8 @@ public abstract class BaseDelegatedClientIdentityProviderAuthorizer implements D
 
     @Override
     public boolean isDelegatedClientAuthorizedFor(final String clientName, final Service service,
-                                                  final HttpServletRequest request) throws Throwable {
+                                                  final HttpServletRequest request)
+            throws Throwable {
         val tenantDefinition = tenantExtractor.extract(request);
         return (tenantDefinition.isEmpty() || isDelegatedClientAuthorizedForTenant(clientName, tenantDefinition.get()))
             && handleAuthorizationForService(clientName, service);

@@ -132,7 +132,8 @@ public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
                                            @Nullable
                                            final Service service,
                                            final RegisteredService registeredService,
-                                           final Authentication authentication) throws Throwable {
+                                           final Authentication authentication)
+            throws Throwable {
         val usernameContext = RegisteredServiceUsernameProviderContext.builder()
             .service(service)
             .principal(principal)

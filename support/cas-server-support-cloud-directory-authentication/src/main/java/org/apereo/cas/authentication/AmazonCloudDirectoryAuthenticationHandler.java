@@ -33,7 +33,8 @@ public class AmazonCloudDirectoryAuthenticationHandler extends AbstractUsernameP
 
     @Override
     protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential,
-                                                                                        @Nullable final String originalPassword) throws Throwable {
+                                                                                        @Nullable final String originalPassword)
+            throws Throwable {
 
         val username = credential.getUsername();
 

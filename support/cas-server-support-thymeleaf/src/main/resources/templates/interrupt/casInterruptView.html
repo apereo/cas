@@ -30,12 +30,20 @@
 
 <body>
 <main class="container mt-3 mb-3">
-    <div id="content" layout:fragment="content" class="mdc-card card p-4 m-auto w-lg-66">
-        <h1 th:text="#{screen.interrupt.title}">Authentication Interrupt</h1>
-        <p th:utext="#{screen.interrupt.message(${principal.id})}">The authentication flow has been interrupted.</p>
+    <div id="content" layout:fragment="content" class="mdc-card card p-4 m-auto w-lg-66 cas-hero cas-hero-start cas-interrupt">
+        <div class="cas-hero-head">
+            <span class="cas-hero-icon" th:classappend="${interrupt.block} ? 'is-danger'" aria-hidden="true">
+                <i class="mdi" th:classappend="${interrupt.block} ? 'mdi-hand-back-right-outline' : 'mdi-bell-ring-outline'"></i>
+            </span>
+            <h1 th:text="#{screen.interrupt.title}">Authentication Interrupt</h1>
+            <p th:utext="#{screen.interrupt.message(${principal.id})}">The authentication flow has been interrupted.</p>
+        </div>
 
         <div th:if="${not #strings.isEmpty(interrupt.message) || not #strings.isEmpty(interrupt.messageCode) }">
-            <div class="alert alert-info">
+            <div class="alert cas-callout" th:classappend="${interrupt.block} ? 'alert-danger' : 'alert-info'">
+                <i class="mdi cas-callout-icon" aria-hidden="true"
+                   th:classappend="${interrupt.block} ? 'mdi-alert-octagon-outline' : 'mdi-information-outline'"></i>
+                <div class="cas-callout-body">
                 <p id="interruptMessage" th:if="${interrupt.message}" th:utext="${interrupt.message}"> Interrupt message</p>
                 <p id="interruptMessage" th:unless="${interrupt.message}" th:utext="#{${interrupt.messageCode}}"> Interrupt message</p>
 
@@ -65,8 +73,9 @@
                      </span>
 
                 </div>
+                </div>
             </div>
-            <div class="mdc-data-table table-responsive mt-2 mb-4">
+            <div class="mdc-data-table table-responsive mt-2 mb-4" th:if="${interrupt.data} and ${#maps.size(interrupt.data) > 0}">
                 <table id="attributesTable"
                        th:if="${interrupt.data} and ${#maps.size(interrupt.data) > 0}"
                        class="table table-striped w-100 auto-init"
@@ -94,13 +103,13 @@
         <form method="post" id="fm1" th:unless="${interrupt.block}">
             <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
             <input type="hidden" name="_eventId" value="proceed"/>
-            <div class="form-actions d-flex align-items-center">
+            <div class="form-actions cas-hero-actions">
                 <div th:replace="~{fragments/submitbutton :: submitButton (messageKey='screen.interrupt.btn.proceed', id='proceed', name='proceed')}"/>
             </div>
         </form>
 
-        <div th:if="${interrupt.block}">
-            <a class="mdc-button mdc-button--raised me-2 btn btn-outline-secondary button-cancel" id="cancel" name="cancel" th:href="@{/login}">
+        <div class="cas-hero-actions" th:if="${interrupt.block}">
+            <a class="mdc-button mdc-button--raised btn btn-outline-secondary button-cancel" id="cancel" name="cancel" th:href="@{/login}">
                 <span th:if="${interruptTriggerMode == 'AFTER_AUTHENTICATION'}" class="mdc-button__label"
                       th:text="#{screen.interrupt.btn.cancel}">Cancel</span>
 

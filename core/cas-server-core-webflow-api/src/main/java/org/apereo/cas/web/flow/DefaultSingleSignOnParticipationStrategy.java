@@ -11,12 +11,12 @@ import org.apereo.cas.services.WebBasedRegisteredService;
 import org.apereo.cas.ticket.AuthenticationAwareTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketAwareTicket;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
+import com.google.common.primitives.Longs;
 import io.micrometer.common.util.StringUtils;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.core.Ordered;
 
 /**
@@ -100,8 +100,9 @@ public class DefaultSingleSignOnParticipationStrategy extends BaseSingleSignOnPa
                     .filter(StringUtils::isNotBlank)
                     .findFirst();
                 LOGGER.debug("Located revocation attribute value [{}] for authentication [{}]", revocationValue, authentication);
-                if (revocationValue.isPresent() && NumberUtils.isParsable(revocationValue.get())) {
-                    val revokedBefore = Instant.ofEpochSecond(Long.parseLong(revocationValue.get()));
+                val revokedBeforeSeconds = revocationValue.map(Longs::tryParse);
+                if (revokedBeforeSeconds.isPresent()) {
+                    val revokedBefore = Instant.ofEpochSecond(revokedBeforeSeconds.get());
                     val createdAt = authentication.getAuthenticationDate().toInstant();
                     if (createdAt.isBefore(revokedBefore) || createdAt.equals(revokedBefore)) {
                         LOGGER.debug("Authentication created at [{}] and revoked before [{}]", createdAt, revokedBefore);

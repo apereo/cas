@@ -156,8 +156,12 @@ public class DynamoDbTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public long deleteSingleTicket(final Ticket ticketToDelete) {
-        val ticketId = digestIdentifier(ticketToDelete.getId());
-        return dbTableService.delete(ticketToDelete.getId(), ticketId) ? 1 : 0;
+        return deleteSingleTicket(ticketToDelete.getId());
+    }
+
+    @Override
+    public long deleteSingleTicket(final String ticketId) {
+        return dbTableService.delete(ticketId, digestIdentifier(ticketId)) ? 1 : 0;
     }
 
     @Override

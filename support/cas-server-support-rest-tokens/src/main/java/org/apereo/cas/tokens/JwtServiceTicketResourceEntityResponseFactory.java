@@ -52,7 +52,8 @@ public class JwtServiceTicketResourceEntityResponseFactory extends CasProtocolSe
     @Override
     protected String grantServiceTicket(final String ticketGrantingTicket,
                                         final WebApplicationService webApplicationService,
-                                        final AuthenticationResult authenticationResult) throws Throwable {
+                                        final AuthenticationResult authenticationResult)
+            throws Throwable {
         val registeredService = this.servicesManager.findServiceBy(webApplicationService);
 
         LOGGER.debug("Located registered service [{}] for [{}]", registeredService, webApplicationService);

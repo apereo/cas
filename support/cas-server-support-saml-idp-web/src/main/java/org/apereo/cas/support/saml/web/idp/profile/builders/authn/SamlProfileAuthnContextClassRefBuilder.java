@@ -66,7 +66,8 @@ public class SamlProfileAuthnContextClassRefBuilder extends AbstractSaml20Object
     }
 
     protected void buildDefaultAuthenticatingAuthority(final SamlProfileBuilderContext context,
-                                                       final AuthnContext authnContext) throws Exception {
+                                                       final AuthnContext authnContext)
+            throws Exception {
         if (!context.getRegisteredService().isSkipGeneratingAuthenticatingAuthority()) {
             val entityIdCriteriaSet = new CriteriaSet(
                 new EvaluableEntityRoleEntityDescriptorCriterion(IDPSSODescriptor.DEFAULT_ELEMENT_NAME),

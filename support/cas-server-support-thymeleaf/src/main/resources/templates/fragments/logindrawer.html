@@ -13,50 +13,110 @@
 <body>
 <main class="container mt-3 mb-3">
     <div th:fragment="logindrawer" id="logindrawer">
+        <th:block th:if="${#cas.isTrue(#cas.theme('cas.drawer-menu.enabled'))}">
         <aside id="app-drawer"
-               th:if="${#cas.isTrue(#cas.theme('cas.drawer-menu.enabled'))}"
-               class="mdc-drawer mdc-drawer--dismissible mdc-drawer--modal offcanvas offcanvas-start">
-            
-            <div class="mdc-drawer__header offcanvas-header flex-column">
-                <h2 class="mdc-drawer__title offcanvas-title" th:text="${#strings.defaultString(#cas.theme('cas.theme.name'), 'CAS')}">CAS</h2>
-                <div class="mdc-drawer__subtitle offcanvas-title"
-                    th:text="${#strings.defaultString(#cas.theme('cas.theme.description'), 'Central Authentication Service')}">
-                    Central Authentication Service</div>
+               class="mdc-drawer mdc-drawer--modal offcanvas offcanvas-start cas-drawer cas-ui"
+               tabindex="-1"
+               aria-labelledby="app-drawer-title">
+
+            <div class="mdc-drawer__header offcanvas-header cas-drawer-header">
+                <div class="cas-drawer-brand">
+                    <span class="cas-drawer-mark mdi mdi-shield-key-outline fa fa-shield-alt" aria-hidden="true"></span>
+                    <div class="cas-drawer-heading">
+                        <h2 id="app-drawer-title" class="mdc-drawer__title offcanvas-title"
+                            th:text="${#strings.defaultString(#cas.theme('cas.theme.name'), 'CAS')}">CAS</h2>
+                        <p class="mdc-drawer__subtitle"
+                           th:text="${#strings.defaultString(#cas.theme('cas.theme.description'), 'Central Authentication Service')}">
+                            Central Authentication Service</p>
+                    </div>
+                </div>
+                <button type="button" id="drawerCloseButton"
+                        class="mdc-icon-button cas-drawer-close btn-close"
+                        data-bs-dismiss="offcanvas"
+                        th:attr="aria-label=#{screen.pm.button.close}"
+                        aria-label="Close">
+                    <span class="mdi mdi-close" aria-hidden="true"></span>
+                </button>
             </div>
-            <div class="mdc-drawer__content offcanvas-body">
-                <nav class="mdc-list list-group list-group-flush" th:with="serverprefix=${cas.server.prefix}">
-                    <a th:href="@{/actuator}" class="mdc-list-item list-group-item list-group-item-action">
-                        <i class="mdi mdi-cogs fa fa-cogs" aria-hidden="true"></i>&nbsp;
-                        <span class="mdc-list-item__text">[[#{cas.login.resources.endpoints}]]</span>
+            <div class="mdc-drawer__content offcanvas-body cas-drawer-body">
+                <nav class="mdc-list list-group list-group-flush cas-drawer-nav"
+                     th:attr="aria-label=#{cas.login.resources.header}" aria-label="Resources">
+                    <h3 class="cas-drawer-section">[[#{cas.login.resources.section.server}]]</h3>
+                    <a class="mdc-list-item list-group-item list-group-item-action cas-drawer-link is-primary"
+                       th:href="@{/actuator}">
+                        <span class="cas-drawer-icon mdi mdi-pulse fa fa-cogs" aria-hidden="true"></span>
+                        <span class="mdc-list-item__text cas-drawer-text">
+                            <span class="cas-drawer-label">[[#{cas.login.resources.endpoints}]]</span>
+                            <span class="cas-drawer-desc">[[#{cas.login.resources.endpoints.desc}]]</span>
+                        </span>
+                        <span class="cas-drawer-trail mdi mdi-chevron-right" aria-hidden="true"></span>
                     </a>
-                    <a class="mdc-list-item list-group-item list-group-item-action" href="https://apereo.github.io/cas">
-                        <i class="mdi mdi-file-code-outline fas fa-file-code" aria-hidden="true"></i>&nbsp;
-                        <span class="mdc-list-item__text">[[#{cas.login.resources.wiki}]]</span>
+                    <h3 class="cas-drawer-section">[[#{cas.login.resources.section.learn}]]</h3>
+                    <a class="mdc-list-item list-group-item list-group-item-action cas-drawer-link is-blue"
+                       href="https://apereo.github.io/cas">
+                        <span class="cas-drawer-icon mdi mdi-book-open-page-variant-outline fas fa-file-code" aria-hidden="true"></span>
+                        <span class="mdc-list-item__text cas-drawer-text">
+                            <span class="cas-drawer-label">[[#{cas.login.resources.wiki}]]</span>
+                            <span class="cas-drawer-desc">[[#{cas.login.resources.wiki.desc}]]</span>
+                        </span>
+                        <span class="cas-drawer-trail mdi mdi-open-in-new" aria-hidden="true"></span>
                     </a>
-                    <a class="mdc-list-item list-group-item list-group-item-action" href="https://github.com/apereo/cas/pulls">
-                        <i class="mdi mdi-call-merge fas fa-code-branch" aria-hidden="true"></i>&nbsp;
-                        <span class="mdc-list-item__text">[[#{cas.login.resources.pulls}]]</span>
-                    </a>
-                    <a class="mdc-list-item list-group-item list-group-item-action"
+                    <a class="mdc-list-item list-group-item list-group-item-action cas-drawer-link is-teal"
                        href="https://apereo.github.io/cas/developer/Contributor-Guidelines.html">
-                        <i class="mdi mdi-information fas fa-info-circle" aria-hidden="true"></i>&nbsp;
-                        <span class="mdc-list-item__text">[[#{cas.login.resources.contribguide}]]</span>
+                        <span class="cas-drawer-icon mdi mdi-hand-heart-outline fas fa-info-circle" aria-hidden="true"></span>
+                        <span class="mdc-list-item__text cas-drawer-text">
+                            <span class="cas-drawer-label">[[#{cas.login.resources.contribguide}]]</span>
+                            <span class="cas-drawer-desc">[[#{cas.login.resources.contribguide.desc}]]</span>
+                        </span>
+                        <span class="cas-drawer-trail mdi mdi-open-in-new" aria-hidden="true"></span>
                     </a>
-                    <a class="mdc-list-item list-group-item list-group-item-action" href="https://apereo.github.io/cas/Support.html">
-                        <i class="mdi mdi-help-circle fas fa-question-circle" aria-hidden="true"></i>&nbsp;
-                        <span class="mdc-list-item__text">[[#{cas.login.resources.support}]]</span>
+                    <h3 class="cas-drawer-section">[[#{cas.login.resources.section.community}]]</h3>
+                    <a class="mdc-list-item list-group-item list-group-item-action cas-drawer-link is-violet"
+                       href="https://apereo.github.io/cas/Support.html">
+                        <span class="cas-drawer-icon mdi mdi-lifebuoy fas fa-question-circle" aria-hidden="true"></span>
+                        <span class="mdc-list-item__text cas-drawer-text">
+                            <span class="cas-drawer-label">[[#{cas.login.resources.support}]]</span>
+                            <span class="cas-drawer-desc">[[#{cas.login.resources.support.desc}]]</span>
+                        </span>
+                        <span class="cas-drawer-trail mdi mdi-open-in-new" aria-hidden="true"></span>
                     </a>
-                    <a class="mdc-list-item list-group-item list-group-item-action" href="https://apereo.github.io/cas/Mailing-Lists.html">
-                        <i class="mdi mdi-email-newsletter fas fa-envelope-open-text" aria-hidden="true"></i>&nbsp;
-                        <span class="mdc-list-item__text">[[#{cas.login.resources.mailinglist}]]</span>
+                    <a class="mdc-list-item list-group-item list-group-item-action cas-drawer-link is-amber"
+                       href="https://apereo.github.io/cas/Mailing-Lists.html">
+                        <span class="cas-drawer-icon mdi mdi-email-newsletter fas fa-envelope-open-text" aria-hidden="true"></span>
+                        <span class="mdc-list-item__text cas-drawer-text">
+                            <span class="cas-drawer-label">[[#{cas.login.resources.mailinglist}]]</span>
+                            <span class="cas-drawer-desc">[[#{cas.login.resources.mailinglist.desc}]]</span>
+                        </span>
+                        <span class="cas-drawer-trail mdi mdi-open-in-new" aria-hidden="true"></span>
                     </a>
-                    <a class="mdc-list-item list-group-item list-group-item-action" href="https://apereo.github.io/">
-                        <i class="mdi mdi-post fas fa-newspaper" aria-hidden="true"></i>&nbsp;
-                        <span class="mdc-list-item__text">[[#{cas.login.resources.blog}]]</span>
+                    <a class="mdc-list-item list-group-item list-group-item-action cas-drawer-link is-rose"
+                       href="https://apereo.github.io/">
+                        <span class="cas-drawer-icon mdi mdi-post-outline fas fa-newspaper" aria-hidden="true"></span>
+                        <span class="mdc-list-item__text cas-drawer-text">
+                            <span class="cas-drawer-label">[[#{cas.login.resources.blog}]]</span>
+                            <span class="cas-drawer-desc">[[#{cas.login.resources.blog.desc}]]</span>
+                        </span>
+                        <span class="cas-drawer-trail mdi mdi-open-in-new" aria-hidden="true"></span>
+                    </a>
+                    <a class="mdc-list-item list-group-item list-group-item-action cas-drawer-link is-slate"
+                       href="https://github.com/apereo/cas/pulls">
+                        <span class="cas-drawer-icon mdi mdi-source-pull fas fa-code-branch" aria-hidden="true"></span>
+                        <span class="mdc-list-item__text cas-drawer-text">
+                            <span class="cas-drawer-label">[[#{cas.login.resources.pulls}]]</span>
+                            <span class="cas-drawer-desc">[[#{cas.login.resources.pulls.desc}]]</span>
+                        </span>
+                        <span class="cas-drawer-trail mdi mdi-open-in-new" aria-hidden="true"></span>
                     </a>
                 </nav>
             </div>
+            <div class="cas-drawer-footer">
+                <span class="mdi mdi-github fab fa-github" aria-hidden="true"></span>
+                <span th:utext="#{poweredBy}">Powered by</span>
+                <a href="https://github.com/apereo/cas">Apereo CAS</a>
+            </div>
         </aside>
+        <div class="mdc-drawer-scrim"></div>
+        </th:block>
     </div>
 </main>
 </body>

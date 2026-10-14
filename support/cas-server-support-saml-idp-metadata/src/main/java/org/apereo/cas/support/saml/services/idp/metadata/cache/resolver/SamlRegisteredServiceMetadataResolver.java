@@ -25,7 +25,8 @@ public interface SamlRegisteredServiceMetadataResolver extends NamedObject {
      * @throws Exception the exception
      */
     Collection<? extends MetadataResolver> resolve(@Nullable SamlRegisteredService service,
-                                                   CriteriaSet criteriaSet) throws Exception;
+                                                   CriteriaSet criteriaSet)
+            throws Exception;
 
     /**
      * Resolve list.

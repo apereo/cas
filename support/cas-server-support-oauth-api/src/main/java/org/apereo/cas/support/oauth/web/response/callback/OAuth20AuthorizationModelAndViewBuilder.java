@@ -26,5 +26,6 @@ public interface OAuth20AuthorizationModelAndViewBuilder {
     ModelAndView build(OAuthRegisteredService registeredService,
                        OAuth20ResponseModeTypes responseMode,
                        String redirectUrl,
-                       Map<String, String> parameters) throws Exception;
+                       Map<String, String> parameters)
+            throws Exception;
 }

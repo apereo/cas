@@ -96,7 +96,8 @@ class OidcVerifiableCredentialPresentationRequestEndpointControllerTests {
         }
 
         protected OidcVerifiableCredentialPresentationResponse createPresentationRequest(
-            final OidcVerifiableCredentialPresentationRequest request) throws Exception {
+            final OidcVerifiableCredentialPresentationRequest request)
+                throws Exception {
             val responseBody = performPresentationRequest(request)
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
@@ -244,6 +245,7 @@ class OidcVerifiableCredentialPresentationRequestEndpointControllerTests {
             assertEquals(List.of("ES256", "RS256"), sdJwtFormat.get("sd-jwt_alg_values"));
             assertEquals(OidcVerifiableCredentialPresentationResponseEndpointController.KEY_BINDING_ALGORITHMS_SUPPORTED,
                 sdJwtFormat.get("kb-jwt_alg_values"));
+            assertNull(vpFormats.get("mso_mdoc"), "No mdoc format is advertised when no configuration issues one");
 
             assertEquals(getOidcRegisteredService().getClientId(),
                 ticket.getPropertyAsString(OidcVerifiableCredentialPresentationResponseEndpointController.PROPERTY_CLIENT_ID));
@@ -318,6 +320,40 @@ class OidcVerifiableCredentialPresentationRequestEndpointControllerTests {
      * HAIP 1.0 section 5: the wallet encrypts its response ({@code direct_post.jwt}) to an ephemeral key generated for
      * each request and published in its client metadata.
      */
+    @Nested
+    @TestPropertySource(properties = {
+        "cas.authn.oidc.vc.issuer.credential-configurations.mdl.format=MSO_MDOC",
+        "cas.authn.oidc.vc.issuer.credential-configurations.mdl.doctype=org.iso.18013.5.1.mDL",
+        "cas.authn.oidc.vc.issuer.credential-configurations.mdl.credential-signing-alg-values-supported=ES256,ES384,RS256"
+    })
+    class MsoMdocRequestTests extends BaseTests {
+        @Test
+        void verifyMdocIsRequestedByDocumentType() throws Throwable {
+            val claimRequest = new OidcVerifiableCredentialPresentationRequest.ClaimRequest();
+            claimRequest.setPath(List.of("org.iso.18013.5.1", "given_name"));
+            val credentialRequest = new OidcVerifiableCredentialPresentationRequest.CredentialRequest();
+            credentialRequest.setId("mdl");
+            credentialRequest.setFormat("mso_mdoc");
+            credentialRequest.setDoctypeValue("org.iso.18013.5.1.mDL");
+            credentialRequest.setClaims(List.of(claimRequest));
+            val request = new OidcVerifiableCredentialPresentationRequest();
+            request.setCredentials(List.of(credentialRequest));
+
+            val parameters = parseQueryParameters(URI.create(createPresentationRequest(request).getAuthorizationRequest()));
+            val credential = assertInstanceOf(Map.class, assertInstanceOf(List.class,
+                MAPPER.readValue(parameters.get("dcql_query"), Map.class).get("credentials")).getFirst());
+            assertEquals("mso_mdoc", credential.get("format"));
+            assertEquals(Map.of("doctype_value", "org.iso.18013.5.1.mDL"), credential.get("meta"));
+            assertEquals(List.of("org.iso.18013.5.1", "given_name"),
+                assertInstanceOf(Map.class, assertInstanceOf(List.class, credential.get("claims")).getFirst()).get("path"));
+
+            val vpFormats = assertInstanceOf(Map.class, MAPPER.readValue(parameters.get("client_metadata"), Map.class).get("vp_formats_supported"));
+            val mdocFormat = assertInstanceOf(Map.class, vpFormats.get("mso_mdoc"));
+            assertEquals(List.of(-7, -35), mdocFormat.get("issuerauth_alg_values"));
+            assertEquals(List.of(-7, -35, -36, -8), mdocFormat.get("deviceauth_alg_values"));
+        }
+    }
+
     @Nested
     @TestPropertySource(properties = "cas.authn.oidc.vc.presentation.response-mode=DIRECT_POST_JWT")
     class EncryptedResponseTests extends BaseTests {

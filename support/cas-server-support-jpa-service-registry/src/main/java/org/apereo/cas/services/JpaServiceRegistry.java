@@ -90,6 +90,21 @@ public class JpaServiceRegistry extends AbstractServiceRegistry implements JpaPe
     }
 
     @Override
+    public Stream<? extends RegisteredService> getServicesStream() {
+        final List<RegisteredService> services = transactionTemplate.execute(_ -> {
+            val query = String.format("SELECT r FROM %s r", JpaRegisteredServiceEntity.ENTITY_NAME);
+            return entityManager.createQuery(query, JpaRegisteredServiceEntity.class)
+                .getResultList()
+                .stream()
+                .map(this::toRegisteredService)
+                .map(this::invokeServiceRegistryListenerPostLoad)
+                .filter(Objects::nonNull)
+                .toList();
+        });
+        return Objects.requireNonNullElse(services, List.<RegisteredService>of()).stream();
+    }
+
+    @Override
     public Long save(final Supplier<RegisteredService> supplier,
                      final Consumer<RegisteredService> andThenConsume,
                      final long countExclusive) {
@@ -115,24 +130,6 @@ public class JpaServiceRegistry extends AbstractServiceRegistry implements JpaPe
                 .map(this::toRegisteredService)
                 .map(this::invokeServiceRegistryListenerPostLoad)
                 .orElse(null));
-    }
-
-    @Override
-    public RegisteredService findServiceBy(final String id) {
-        return transactionTemplate.execute(_ -> {
-            val query = String.format("SELECT r FROM %s r WHERE r.serviceId LIKE :serviceId", JpaRegisteredServiceEntity.ENTITY_NAME);
-            val results = entityManager.createQuery(query, JpaRegisteredServiceEntity.class)
-                .setParameter("serviceId", '%' + id + '%')
-                .getResultList();
-            return results
-                .stream()
-                .map(this::toRegisteredService)
-                .sorted()
-                .filter(r -> r.matches(id))
-                .peek(this::invokeServiceRegistryListenerPostLoad)
-                .findFirst()
-                .orElse(null);
-        });
     }
 
     @Override

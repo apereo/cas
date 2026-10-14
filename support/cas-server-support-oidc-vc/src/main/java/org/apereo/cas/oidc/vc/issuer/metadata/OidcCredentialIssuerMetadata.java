@@ -159,6 +159,9 @@ public class OidcCredentialIssuerMetadata implements Serializable {
         @JsonProperty("vct")
         private String vct;
 
+        @JsonProperty("doctype")
+        private String doctype;
+
         @JsonProperty("credential_definition")
         private CredentialDefinition credentialDefinition;
 
@@ -166,7 +169,7 @@ public class OidcCredentialIssuerMetadata implements Serializable {
         private List<String> cryptographicBindingMethodsSupported = Stream.of("jwk").toList();
 
         @JsonProperty("credential_signing_alg_values_supported")
-        private List<String> credentialSigningAlgValuesSupported = Stream.of("ES256", "RS256").toList();
+        private List<Object> credentialSigningAlgValuesSupported = Stream.<Object>of("ES256", "RS256").toList();
 
         @JsonProperty("proof_types_supported")
         private Map<String, ProofTypeSupported> proofTypesSupported = new LinkedHashMap<>();

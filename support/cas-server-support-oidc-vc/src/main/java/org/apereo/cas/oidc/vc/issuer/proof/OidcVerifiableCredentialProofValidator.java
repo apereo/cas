@@ -26,7 +26,8 @@ public interface OidcVerifiableCredentialProofValidator {
      * @throws Exception the exception
      */
     VerifiableCredentialProofResult validate(String proofJwt, @Nullable String configurationId,
-                                             Set<String> consumedNonces) throws Exception;
+                                             Set<String> consumedNonces)
+            throws Exception;
 
     /**
      * Validate verifiable credential proof result.
@@ -53,7 +54,8 @@ public interface OidcVerifiableCredentialProofValidator {
      */
     default List<VerifiableCredentialProofResult> validateAttestation(final String keyAttestation,
                                                                       final @Nullable String configurationId,
-                                                                      final Set<String> consumedNonces) throws Exception {
+                                                                      final Set<String> consumedNonces)
+            throws Exception {
         throw OidcVerifiableCredentialProofException.invalidProof("Attestation proofs are not supported");
     }
 

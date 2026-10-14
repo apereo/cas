@@ -50,7 +50,8 @@ public class FileAuthenticationHandler extends AbstractUsernamePasswordAuthentic
 
     @Override
     protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential transformedCredential,
-                                                                                        final String originalPassword) throws Throwable {
+                                                                                        final String originalPassword)
+            throws Throwable {
         try {
             if (this.fileName == null) {
                 throw new FileNotFoundException("Filename does not exist");

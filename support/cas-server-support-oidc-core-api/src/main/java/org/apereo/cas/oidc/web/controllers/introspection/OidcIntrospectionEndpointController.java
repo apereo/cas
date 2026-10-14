@@ -116,7 +116,8 @@ public class OidcIntrospectionEndpointController extends OAuth20IntrospectionEnd
 
     protected ResponseEntity<String> buildPlainIntrospectionClaims(final WebContext context,
                                                                             final OAuth20IntrospectionAccessTokenResponse introspect,
-                                                                            final OAuthRegisteredService registeredService) throws Exception {
+                                                                            final OAuthRegisteredService registeredService)
+            throws Exception {
         val claims = convertIntrospectionIntoClaims(introspect, registeredService);
         val jwt = new PlainJWT(JWTClaimsSet.parse(claims.getClaimsMap()));
         val jwtRequest = jwt.serialize();
@@ -137,7 +138,8 @@ public class OidcIntrospectionEndpointController extends OAuth20IntrospectionEnd
 
     protected ResponseEntity<String> signAndEncryptIntrospection(final WebContext context,
                                                                           final OAuth20IntrospectionAccessTokenResponse introspect,
-                                                                          final OAuthRegisteredService registeredService) throws Throwable {
+                                                                          final OAuthRegisteredService registeredService)
+            throws Throwable {
         val claims = convertIntrospectionIntoClaims(introspect, registeredService);
         LOGGER.debug("Collected introspection claims, before cipher operations, are [{}]", claims);
         val signingAndEncryptionService = getConfigurationContext().getIntrospectionSigningAndEncryptionService();

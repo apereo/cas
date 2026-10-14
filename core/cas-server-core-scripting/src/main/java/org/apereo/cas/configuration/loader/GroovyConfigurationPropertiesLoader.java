@@ -31,7 +31,7 @@ public class GroovyConfigurationPropertiesLoader extends BaseConfigurationProper
                                final CipherExecutor<String, String> configurationCipherExecutor) {
         val properties = new LinkedHashMap<>();
         val configSlurper = new ConfigSlurper();
-        configSlurper.setClassLoader(ScriptingUtils.newGroovyClassLoader());
+        configSlurper.setClassLoader(ScriptingUtils.newGroovyClassLoader(false));
 
         val applicationProfiles = getApplicationProfiles(environment);
         applicationProfiles.forEach(Unchecked.consumer(profile -> {

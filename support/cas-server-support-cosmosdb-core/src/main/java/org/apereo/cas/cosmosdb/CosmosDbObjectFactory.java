@@ -41,7 +41,8 @@ public class CosmosDbObjectFactory {
     private final CosmosClient client;
 
     public CosmosDbObjectFactory(final BaseCosmosDbProperties properties,
-                                 final CasSSLContext casSSLContext) throws Exception {
+                                 final CasSSLContext casSSLContext)
+            throws Exception {
         this.properties = properties;
         val throttlingRetryOptions = new ThrottlingRetryOptions()
             .setMaxRetryAttemptsOnThrottledRequests(properties.getMaxRetryAttemptsOnThrottledRequests())

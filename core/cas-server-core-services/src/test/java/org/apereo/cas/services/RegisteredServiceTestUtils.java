@@ -147,7 +147,8 @@ public class RegisteredServiceTestUtils {
 
     public static <T extends BaseRegisteredService> T getRegisteredService(
         final String id, final Class<T> clazz,
-        final boolean uniq, final Map requiredAttributes) throws Exception {
+        final boolean uniq, final Map requiredAttributes)
+            throws Exception {
         val baseRegisteredService = (BaseRegisteredService) clazz.getDeclaredConstructor().newInstance();
         baseRegisteredService.setServiceId(id);
         baseRegisteredService.setEvaluationOrder(1);

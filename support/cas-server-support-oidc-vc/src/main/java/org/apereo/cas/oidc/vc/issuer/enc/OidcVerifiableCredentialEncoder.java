@@ -29,5 +29,6 @@ public interface OidcVerifiableCredentialEncoder {
      * @throws Throwable the throwable
      */
     String encode(OidcVerifiableCredentialValidationContext context,
-                  OidcVerifiableCredentialProofValidator.VerifiableCredentialProofResult proof) throws Throwable;
+                  OidcVerifiableCredentialProofValidator.VerifiableCredentialProofResult proof)
+            throws Throwable;
 }

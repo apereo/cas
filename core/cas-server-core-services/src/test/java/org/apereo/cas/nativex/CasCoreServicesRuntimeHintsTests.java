@@ -2,6 +2,7 @@ package org.apereo.cas.nativex;
 
 import module java.base;
 import org.apereo.cas.authentication.principal.SimpleWebApplicationServiceImpl;
+import org.apereo.cas.services.BaseMappedAttributeReleasePolicy;
 import org.apereo.cas.services.BaseRegisteredService;
 import org.apereo.cas.services.CasRegisteredService;
 import org.apereo.cas.services.ResourceBasedServiceRegistry;
@@ -31,6 +32,8 @@ class CasCoreServicesRuntimeHintsTests {
     void verifyHints() throws Exception {
         val hints = new RuntimeHints();
         new CasCoreServicesRuntimeHints().registerHints(hints, getClass().getClassLoader());
+        assertTrue(RuntimeHintsPredicates.reflection()
+            .onMethodInvocation(BaseMappedAttributeReleasePolicy.class.getDeclaredMethod("setAllowedAttributes", Map.class)).test(hints));
         assertTrue(RuntimeHintsPredicates.reflection()
             .onMethodInvocation(ServicesManagerScheduledLoader.class.getDeclaredMethod("run")).test(hints));
         assertTrue(RuntimeHintsPredicates.resource().forResource("services/Simple-12345.json").test(hints));

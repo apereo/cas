@@ -129,7 +129,8 @@ public class HttpRequestUtils {
      * @throws IOException when the body runs past the ceiling
      */
     private static void copyBounded(final InputStream input, final OutputStream output,
-                                    final long maximumSize) throws IOException {
+                                    final long maximumSize)
+            throws IOException {
         val buffer = new byte[COPY_BUFFER_SIZE];
         var total = 0L;
         while (total < maximumSize) {

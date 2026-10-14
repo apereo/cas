@@ -12,7 +12,8 @@
 <body>
 
 <main class="container mt-3 mb-3">
-    <div layout:fragment="content" id="login" class="mdc-card mdc-card-content card w-lg-50 p-4 m-auto">
+    <div layout:fragment="content" id="login" class="mdc-card mdc-card-content card w-lg-50 p-4 m-auto cas-hero cas-hero-start">
+        <span class="cas-hero-icon" aria-hidden="true"><i class="mdi mdi-email-edit-outline"></i></span>
         <form method="post" id="fm1" th:action="@{/login}">
             <div class="banner banner-info alert alert-info my-2">
                 <p th:utext="#{cas.mfa.simple.registration.email.sent}">Message Text</p>

@@ -177,7 +177,7 @@ function rejected(err) {
 }
 
 function setStatus(statusText) {
-    $("#status").val(statusText);
+    $("#status").text(statusText);
 }
 
 function addDeviceAttributeAsRow(name, value) {
@@ -227,6 +227,7 @@ function showServerResponse(data) {
 
 function hideDeviceInfo() {
     $("#device-info").hide();
+    $("#registrationChoices").show();
     $("#registerButton").show();
     $("#registerDiscoverableCredentialButton").show();
 }
@@ -247,6 +248,7 @@ function showDeviceInfo(params) {
     }
     $("#registerButton").hide();
     $("#deviceNamePanel").hide();
+    $("#registrationChoices").hide();
 
     $("#registerDiscoverableCredentialButton").hide();
     $("#residentKeysPanel").hide();

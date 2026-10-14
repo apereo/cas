@@ -103,7 +103,8 @@ public class CasAmazonCognitoAuthenticationAutoConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public ConfigurableJWTProcessor amazonCognitoAuthenticationJwtProcessor(
-        final CasConfigurationProperties casProperties) throws Exception {
+        final CasConfigurationProperties casProperties)
+            throws Exception {
         val cognito = casProperties.getAuthn().getCognito();
         val resourceRetriever = new DefaultResourceRetriever(
             (int) Beans.newDuration(cognito.getConnectionTimeout()).toMillis(),

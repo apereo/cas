@@ -97,7 +97,8 @@ public class AmazonS3SamlIdPMetadataUtils {
      * @throws Exception the exception
      */
     public static SamlIdPMetadataDocument readMetadataDocumentFromBucket(final ResponseInputStream<GetObjectResponse> object,
-                                                                         final String bucketToUse) throws Exception {
+                                                                         final String bucketToUse)
+            throws Exception {
         val metadataObject = MAPPER.readValue(IOUtils.toString(object, StandardCharsets.UTF_8), new TypeReference<Map<String, String>>() {
         });
         val metadataDocument = new SamlIdPMetadataDocument();

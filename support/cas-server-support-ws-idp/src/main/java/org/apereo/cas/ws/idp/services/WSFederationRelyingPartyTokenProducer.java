@@ -28,5 +28,6 @@ public interface WSFederationRelyingPartyTokenProducer {
      */
     String produce(SecurityToken securityToken, WSFederationRegisteredService service,
                    WSFederationRequest fedRequest, HttpServletRequest servletRequest,
-                   TicketValidationResult assertion) throws Exception;
+                   TicketValidationResult assertion)
+            throws Exception;
 }

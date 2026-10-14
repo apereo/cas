@@ -136,7 +136,8 @@ public class TicketGrantingTicketResource {
 
     protected Ticket createTicketGrantingTicketForRequest(final MultiValueMap<String, String> requestBody,
                                                           final HttpServletRequest request,
-                                                          final HttpServletResponse response) throws Throwable {
+                                                          final HttpServletResponse response)
+            throws Throwable {
         val authenticationResult = authenticationService.authenticate(requestBody, request, response);
         val result = authenticationResult.orElseThrow(FailedLoginException::new);
         return centralAuthenticationService.createTicketGrantingTicket(result);

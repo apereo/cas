@@ -60,7 +60,8 @@ public class OAuth20ConsentApprovalViewResolver implements ConsentApprovalViewRe
     }
 
     protected ModelAndView redirectToApproveView(final WebContext context,
-                                                 final OAuthRegisteredService service) throws Exception {
+                                                 final OAuthRegisteredService service)
+            throws Exception {
         val callbackUrl = context.getFullRequestURL();
         LOGGER.trace("Requesting URL to call back: [{}]", callbackUrl);
 
@@ -120,7 +121,8 @@ public class OAuth20ConsentApprovalViewResolver implements ConsentApprovalViewRe
 
     protected void prepareApprovalViewModel(final Map<String, Object> model,
                                             final WebContext context,
-                                            final OAuthRegisteredService service) throws Exception {
+                                            final OAuthRegisteredService service)
+            throws Exception {
     }
 
     private record ApprovalEntry(String recordKey, String approvalKey) {

@@ -36,7 +36,8 @@ public class WsFederationRequestBuilder {
 
     private static String getRelativeRedirectUrlFor(final WsFederationConfiguration config,
                                                     final WebApplicationService service,
-                                                    final HttpServletRequest request) throws Exception {
+                                                    final HttpServletRequest request)
+            throws Exception {
         val builder = new URIBuilder(WsFederationNavigationController.ENDPOINT_REDIRECT);
         builder.addParameter(WsFederationNavigationController.PARAMETER_NAME, config.getId());
         if (service != null) {

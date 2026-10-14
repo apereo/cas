@@ -114,7 +114,8 @@ public class CibaPushTokenDeliveryHandler implements CibaTokenDeliveryHandler {
 
     protected OAuth20TokenGeneratedResult generateAccessToken(final OidcRegisteredService registeredService,
                                                               final OidcCibaRequest cibaRequest,
-                                                              final WebApplicationService service) throws Throwable {
+                                                              final WebApplicationService service)
+            throws Throwable {
         val tokenRequestContext = AccessTokenRequestContext
             .builder()
             .scopes(cibaRequest.getScopes())

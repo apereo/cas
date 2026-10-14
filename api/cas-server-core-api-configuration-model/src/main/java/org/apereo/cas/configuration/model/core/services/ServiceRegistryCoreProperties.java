@@ -60,4 +60,12 @@ public class ServiceRegistryCoreProperties implements Serializable {
      * The indexes allow CAS to execute a direct query on loaded service objects to find the relevant definition.
      */
     private boolean indexServices = true;
+
+    /**
+     * Maximum length of a service identifier, such as the {@code service} parameter, that CAS
+     * will try to match against registered service definitions. Longer identifiers are rejected
+     * before any pattern is evaluated, which guards against expensive regular expression matching
+     * on oversized input. Zero or a negative value disables the check.
+     */
+    private int maximumServiceIdLength = 4096;
 }

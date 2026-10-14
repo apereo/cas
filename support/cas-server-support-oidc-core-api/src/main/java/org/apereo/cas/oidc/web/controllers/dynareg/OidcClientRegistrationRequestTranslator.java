@@ -22,5 +22,6 @@ public interface OidcClientRegistrationRequestTranslator {
      */
     OidcRegisteredService translate(
         OidcClientRegistrationRequest registrationRequest,
-        Optional<OidcRegisteredService> givenService) throws Exception;
+        Optional<OidcRegisteredService> givenService)
+            throws Exception;
 }

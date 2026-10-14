@@ -25,7 +25,8 @@ public class EntityDescriptorCertificatesExpirationFilter extends AbstractMetada
 
     @Override
     public XMLObject filter(@Nullable final XMLObject metadata,
-                            @NonNull final MetadataFilterContext context) throws FilterException {
+                            @NonNull final MetadataFilterContext context)
+            throws FilterException {
 
         if (metadata instanceof final EntityDescriptor ed) {
             for (val role : ed.getRoleDescriptors()) {

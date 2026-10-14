@@ -160,7 +160,8 @@ public class SamlIdPMetadataResolver extends BaseElementMetadataResolver {
      * @throws Throwable the throwable
      */
     private @Nullable List<EntityDescriptor> resolveMetadata(final CriteriaSet criteria,
-                                                             final Optional<SamlRegisteredService> registeredService) throws Throwable {
+                                                             final Optional<SamlRegisteredService> registeredService)
+            throws Throwable {
         if (!locator.exists(registeredService) && locator.shouldGenerateMetadataFor(registeredService)) {
             generator.generate(registeredService);
         }

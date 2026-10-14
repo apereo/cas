@@ -69,7 +69,8 @@ public class RestfulAuthenticationPolicy extends BaseAuthenticationPolicy {
     public AuthenticationPolicyExecutionResult isSatisfiedBy(@Nullable final Authentication authentication,
                                                              final Set<AuthenticationHandler> authenticationHandlers,
                                                              final ConfigurableApplicationContext applicationContext,
-                                                             final Map<String, ? extends Serializable> context) throws Exception {
+                                                             final Map<String, ? extends Serializable> context)
+            throws Exception {
         if (authentication == null) {
             LOGGER.warn("Authentication attempt is null and cannot satisfy policy");
             return AuthenticationPolicyExecutionResult.failure();

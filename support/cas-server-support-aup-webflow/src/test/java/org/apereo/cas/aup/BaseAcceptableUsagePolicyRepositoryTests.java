@@ -76,7 +76,8 @@ public abstract class BaseAcceptableUsagePolicyRepositoryTests {
     }
 
     protected void verifyFetchingPolicy(final RegisteredService service,
-                                        final Authentication authentication, final boolean expectPolicyFound) throws Exception {
+                                        final Authentication authentication, final boolean expectPolicyFound)
+            throws Exception {
         val context = MockRequestContext.create(applicationContext);
         val flowDefinition = mock(Flow.class);
         when(flowDefinition.getApplicationContext()).thenReturn(applicationContext);
@@ -88,7 +89,8 @@ public abstract class BaseAcceptableUsagePolicyRepositoryTests {
     }
 
     protected void verifyRepositoryAction(final String actualPrincipalId,
-                                          final Map<String, List<Object>> profileAttributes) throws Throwable {
+                                          final Map<String, List<Object>> profileAttributes)
+            throws Throwable {
         val credential = getCredential(actualPrincipalId);
         val context = getRequestContext(actualPrincipalId, profileAttributes, credential);
 
@@ -105,7 +107,8 @@ public abstract class BaseAcceptableUsagePolicyRepositoryTests {
 
     protected MockRequestContext getRequestContext(final String actualPrincipalId,
                                                    final Map<String, List<Object>> profileAttributes,
-                                                   final Credential credential) throws Throwable {
+                                                   final Credential credential)
+            throws Throwable {
         val context = MockRequestContext.create(applicationContext);
         val tgt = new MockTicketGrantingTicket(actualPrincipalId, credential, profileAttributes);
         ticketRegistry.addTicket(tgt);

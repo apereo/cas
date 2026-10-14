@@ -33,7 +33,8 @@ public class JsonYubiKeyAccountRegistry extends PermissiveYubiKeyAccountRegistry
     
     public JsonYubiKeyAccountRegistry(final Resource jsonResource,
                                       final boolean watchResource,
-                                      final YubiKeyAccountValidator validator) throws Exception {
+                                      final YubiKeyAccountValidator validator)
+            throws Exception {
         super(getDevicesFromJsonResource(jsonResource), validator);
         this.jsonResource = jsonResource;
         

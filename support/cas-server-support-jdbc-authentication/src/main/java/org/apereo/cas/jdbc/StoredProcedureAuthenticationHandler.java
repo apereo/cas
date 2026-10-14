@@ -29,7 +29,8 @@ public class StoredProcedureAuthenticationHandler extends AbstractJdbcUsernamePa
 
     @Override
     protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(
-        final UsernamePasswordCredential credential, final String originalPassword) throws Throwable {
+        final UsernamePasswordCredential credential, final String originalPassword)
+            throws Throwable {
         val username = credential.getUsername();
         val password = credential.toPassword();
 

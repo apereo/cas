@@ -126,6 +126,26 @@ class GitServiceRegistryTests extends AbstractServiceRegistryTests {
     }
 
     @Test
+    void verifyLookupsUseLoadedServicesWithoutPulling() throws Throwable {
+        val id = RandomUtils.nextLong();
+        val service = buildRegisteredServiceInstance(id, CasRegisteredService.class);
+        val serializer = new RegisteredServiceJsonSerializer(applicationContext);
+        val gitRepository = mock(GitRepository.class);
+        when(gitRepository.pull()).thenReturn(true);
+        when(gitRepository.getObjectsInRepository(any())).thenReturn(List.of(GitRepository.GitObject.builder()
+            .content(serializer.toString(service)).path("svc.json").build()));
+        val registry = new GitServiceRegistry(applicationContext, gitRepository,
+            CollectionUtils.wrapList(serializer), false, null, List.of(), List.of());
+
+        assertEquals(1, registry.load().size());
+        assertNotNull(registry.findServiceBy("http://www.serviceid%s.org".formatted(id)));
+        assertNull(registry.findServiceBy("https://unknown.example.org"));
+        assertNotNull(registry.findServiceByExactServiceName(service.getName()));
+        assertEquals(1, registry.size());
+        verify(gitRepository, times(1)).pull();
+    }
+
+    @Test
     void verifyPullFails() throws Throwable {
         val gitRepository = mock(GitRepository.class);
         when(gitRepository.getObjectsInRepository()).thenThrow(new JGitInternalException("error"));

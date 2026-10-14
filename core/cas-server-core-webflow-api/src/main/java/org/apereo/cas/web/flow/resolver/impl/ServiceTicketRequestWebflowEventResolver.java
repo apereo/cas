@@ -117,7 +117,8 @@ public class ServiceTicketRequestWebflowEventResolver extends AbstractCasWebflow
     }
 
     private boolean validateExistingAuthentication(final Authentication authentication,
-                                                   final RequestContext requestContext) throws Throwable {
+                                                   final RequestContext requestContext)
+            throws Throwable {
         if (authentication != null) {
             val configContext = getConfigurationContext();
             val ssoStrategy = configContext.getSingleSignOnParticipationStrategy();
@@ -139,7 +140,8 @@ public class ServiceTicketRequestWebflowEventResolver extends AbstractCasWebflow
 
     protected Principal getActivePrincipal(final List<Credential> credential,
                                            final WebApplicationService service,
-                                           final Authentication authentication) throws Throwable {
+                                           final Authentication authentication)
+            throws Throwable {
         if (credential != null && !credential.isEmpty()) {
             LOGGER.trace("Finalizing authentication transaction for [{}]", credential);
             val authenticationResult = getConfigurationContext().getAuthenticationSystemSupport()

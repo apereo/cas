@@ -366,7 +366,8 @@ class SamlProfileSaml2ResponseBuilderTests extends BaseSamlIdPConfigurationTests
                                    final SamlRegisteredServiceMetadataAdaptor adaptor,
                                    final AuthnRequest authnRequest,
                                    final AuthenticatedAssertionContext assertion,
-                                   final String binding) throws Exception {
+                                   final String binding)
+            throws Exception {
         val buildContext = SamlProfileBuilderContext.builder()
             .samlRequest(authnRequest)
             .httpRequest(request)

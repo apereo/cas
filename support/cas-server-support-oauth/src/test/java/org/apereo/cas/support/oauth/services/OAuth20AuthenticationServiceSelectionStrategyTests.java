@@ -8,6 +8,7 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
+import org.apereo.cas.support.oauth.web.OAuth20RequestParameterResolver;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.PlainJWT;
 import lombok.val;
@@ -76,6 +77,40 @@ class OAuth20AuthenticationServiceSelectionStrategyTests extends AbstractOAuth20
 
         assertNotNull(service);
         assertTrue(service.getAttributes().containsKey(OAuth20Constants.CLIENT_ID));
+    }
+
+    @Test
+    void verifyJwtRequestUnpackedOnce() throws Throwable {
+        val registeredService = addRegisteredService();
+        val jwtRequest = new PlainJWT(new JWTClaimsSet.Builder().subject("cas")
+            .claim("redirect_uri", REDIRECT_URI)
+            .claim("client_id", registeredService.getClientId())
+            .build()).serialize();
+        val resolver = mock(OAuth20RequestParameterResolver.class);
+        when(resolver.resolveJwtRequestParameters(eq(jwtRequest), any(), anyCollection(), eq(String.class)))
+            .thenReturn(Map.of(OAuth20Constants.CLIENT_ID, registeredService.getClientId(), OAuth20Constants.REDIRECT_URI, REDIRECT_URI));
+        val selectionStrategy = new OAuth20AuthenticationServiceSelectionStrategy(servicesManager, serviceFactory,
+            "https://sso.example.org/cas/oauth2.0/callbackAuthorize", resolver);
+        val service = RegisteredServiceTestUtils.getService("https://example.org");
+        service.getAttributes().put(OAuth20Constants.REQUEST, List.of(jwtRequest));
+
+        val resolved = selectionStrategy.resolveServiceFrom(service);
+        assertEquals(REDIRECT_URI, resolved.getId());
+        verify(resolver, times(1)).resolveJwtRequestParameters(eq(jwtRequest), any(), anyCollection(), eq(String.class));
+        verify(resolver, never()).resolveJwtRequestParameter(anyString(), any(), anyString(), any());
+    }
+
+    @Test
+    void verifyJwtRequestParametersOnly() throws Throwable {
+        val registeredService = addRegisteredService();
+        val jwtRequest = new PlainJWT(new JWTClaimsSet.Builder().subject("cas")
+            .claim("client_id", registeredService.getClientId())
+            .build()).serialize();
+        val service = RegisteredServiceTestUtils.getService("https://example.org?" + OAuth20Constants.REDIRECT_URI + '=' + REDIRECT_URI);
+        service.getAttributes().put(OAuth20Constants.REQUEST, List.of(jwtRequest));
+        val resolved = strategy.resolveServiceFrom(service);
+        assertSame(service, resolved);
+        assertEquals(List.of(registeredService.getClientId()), resolved.getAttributes().get(OAuth20Constants.CLIENT_ID));
     }
 
     @Test

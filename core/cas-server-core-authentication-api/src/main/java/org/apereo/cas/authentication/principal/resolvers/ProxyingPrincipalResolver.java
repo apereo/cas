@@ -30,7 +30,8 @@ public class ProxyingPrincipalResolver implements PrincipalResolver {
     public @Nullable Principal resolve(final Credential credential,
                                        final Optional<Principal> currentPrincipal,
                                        final Optional<AuthenticationHandler> handler,
-                                       final Optional<Service> service) throws Throwable {
+                                       final Optional<Service> service)
+            throws Throwable {
         val id = currentPrincipal.map(Principal::getId).orElseGet(credential::getId);
         val attributes = CollectionUtils.<String, List<Object>>wrap(
             HttpBasedServiceCredential.class.getName(), CollectionUtils.wrapList(credential.getId()));

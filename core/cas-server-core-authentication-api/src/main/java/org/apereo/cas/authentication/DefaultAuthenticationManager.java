@@ -149,7 +149,8 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
                                                    final Credential credential,
                                                    @Nullable final PrincipalResolver principalResolver,
                                                    final AuthenticationHandler handler,
-                                                   final Service service) throws Throwable {
+                                                   final Service service)
+            throws Throwable {
         val clientInfo = ClientInfoHolder.getClientInfo();
         publishEvent(new CasAuthenticationTransactionStartedEvent(this, credential, clientInfo));
 
@@ -270,7 +271,8 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
 
     protected void evaluateFinalAuthentication(final AuthenticationBuilder builder,
                                                final AuthenticationTransaction transaction,
-                                               final Set<AuthenticationHandler> authenticationHandlers) throws Throwable {
+                                               final Set<AuthenticationHandler> authenticationHandlers)
+            throws Throwable {
         val clientInfo = ClientInfoHolder.getClientInfo();
         if (builder.getSuccesses().isEmpty()) {
             if (builder.getFailures().isEmpty()) {
@@ -303,7 +305,8 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
 
     protected ChainingAuthenticationPolicyExecutionResult evaluateAuthenticationPolicies(final Authentication authentication,
                                                                                          final AuthenticationTransaction transaction,
-                                                                                         final Set<AuthenticationHandler> authenticationHandlers) throws Throwable {
+                                                                                         final Set<AuthenticationHandler> authenticationHandlers)
+            throws Throwable {
         val policies = authenticationEventExecutionPlan.getAuthenticationPolicies(transaction);
         val executionResult = new ChainingAuthenticationPolicyExecutionResult();
 

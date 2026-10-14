@@ -50,7 +50,7 @@ public class AmazonCognitoAuthenticationAuthenticationHandler extends AbstractUs
     protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(
         final UsernamePasswordCredential credential,
         @Nullable final String originalPassword)
-        throws GeneralSecurityException {
+            throws GeneralSecurityException {
         try {
             val authParams = new HashMap<String, String>();
             authParams.put("USERNAME", credential.getUsername());

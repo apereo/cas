@@ -148,7 +148,8 @@ class QRAuthenticationChannelControllerTests {
 
     private List<Message<?>> sendAndCaptureBrokerMessages(final String payload,
                                                           @Nullable final String channelId,
-                                                          @Nullable final String deviceId) throws Exception {
+                                                          @Nullable final String deviceId)
+            throws Exception {
         val brokerMessages = new CopyOnWriteArrayList<Message<?>>();
         val handled = new CountDownLatch(1);
         val interceptor = new ChannelInterceptor() {

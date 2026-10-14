@@ -38,7 +38,8 @@ public class CompositeProviderSelectionMultifactorWebflowEventResolver extends S
     protected Optional<Pair<Collection<Event>, Collection<MultifactorAuthenticationProvider>>> filterEventsByMultifactorAuthenticationProvider(
         final Collection<Event> resolveEvents, final Authentication authentication,
         @Nullable final RegisteredService registeredService, final HttpServletRequest request,
-        @Nullable final Service service) throws Throwable {
+        @Nullable final Service service)
+            throws Throwable {
 
         val composite = resolveEvents
             .stream()

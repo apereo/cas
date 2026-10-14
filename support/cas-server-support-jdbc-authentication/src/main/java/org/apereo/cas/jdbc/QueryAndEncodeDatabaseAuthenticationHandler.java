@@ -48,7 +48,8 @@ public class QueryAndEncodeDatabaseAuthenticationHandler extends AbstractJdbcUse
 
     @Override
     protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(
-        final UsernamePasswordCredential transformedCredential, final String originalPassword) throws Throwable {
+        final UsernamePasswordCredential transformedCredential, final String originalPassword)
+            throws Throwable {
         val username = transformedCredential.getUsername();
         try {
             val sqlQueryResults = performSqlQuery(username);

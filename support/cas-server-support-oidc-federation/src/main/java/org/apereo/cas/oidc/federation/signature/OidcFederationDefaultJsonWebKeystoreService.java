@@ -29,7 +29,8 @@ public class OidcFederationDefaultJsonWebKeystoreService implements OidcFederati
     private JsonWebKey jsonWebKey;
 
     public OidcFederationDefaultJsonWebKeystoreService(
-        final OidcProperties oidcProperties) throws Exception {
+        final OidcProperties oidcProperties)
+            throws Exception {
         val jwksFile = SpringExpressionLanguageValueResolver.getInstance()
             .resolve(oidcProperties.getFederation().getJwksFile());
         val resource = ResourceUtils.getRawResourceFrom(jwksFile);

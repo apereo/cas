@@ -105,7 +105,8 @@ class YubiKeyAuthenticationEventExecutionPlanConfiguration {
             @Qualifier("yubicoClient")
             final YubicoClient yubicoClient,
             @Qualifier("yubikeyAccountCipherExecutor")
-            final CipherExecutor yubikeyAccountCipherExecutor) throws Exception {
+            final CipherExecutor yubikeyAccountCipherExecutor)
+                throws Exception {
             val yubi = casProperties.getAuthn().getMfa().getYubikey();
             if (yubi.getJson().getLocation() != null) {
                 LOGGER.debug("Using JSON resource [{}] as the YubiKey account registry", yubi.getJson().getLocation());

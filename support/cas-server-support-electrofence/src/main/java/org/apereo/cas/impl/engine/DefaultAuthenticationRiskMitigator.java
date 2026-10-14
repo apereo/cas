@@ -31,7 +31,8 @@ public class DefaultAuthenticationRiskMitigator implements AuthenticationRiskMit
         resourceResolverName = AuditResourceResolvers.ADAPTIVE_RISKY_AUTHENTICATION_RESOURCE_RESOLVER)
     @Override
     public AuthenticationRiskContingencyResponse mitigate(final Authentication authentication, final RegisteredService service,
-                                                          final AuthenticationRiskScore score, final HttpServletRequest request) throws Throwable {
+                                                          final AuthenticationRiskScore score, final HttpServletRequest request)
+            throws Throwable {
         return this.contingencyPlan.execute(authentication, service, score, request);
     }
 }

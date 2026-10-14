@@ -105,7 +105,8 @@ class FileSystemSamlIdPMetadataLocatorTests {
         }
 
         private static void assertArtifacts(final Path metadata, final SamlRegisteredService service,
-                                            final String prefix) throws Throwable {
+                                            final String prefix)
+                throws Throwable {
             val locator = new FileSystemSamlIdPMetadataLocator(CipherExecutor.noOpOfStringToString(),
                 metadata.toFile(), mock(Cache.class), mock(ConfigurableApplicationContext.class));
             val registeredService = Optional.of(service);

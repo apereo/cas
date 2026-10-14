@@ -24,7 +24,8 @@ public class OidcTokenExchangeGrantTypeTokenRequestValidator extends OAuth20Toke
 
     @Override
     protected OAuthRegisteredService extractRegisteredService(final String subjectTokenType,
-                                                              final String subjectToken) throws Exception {
+                                                              final String subjectToken)
+            throws Exception {
         val configurationContext = getConfigurationContext().getObject();
 
         if (configurationContext.getDiscoverySettings().isNativeSsoSupported()

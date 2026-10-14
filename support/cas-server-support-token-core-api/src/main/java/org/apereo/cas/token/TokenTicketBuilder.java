@@ -79,5 +79,6 @@ public interface TokenTicketBuilder {
     String build(@Nullable Authentication authentication,
                  @Nullable RegisteredService registeredService,
                  String jwtIdentifier,
-                 Map<String, List<Object>> claims) throws Throwable;
+                 Map<String, List<Object>> claims)
+            throws Throwable;
 }

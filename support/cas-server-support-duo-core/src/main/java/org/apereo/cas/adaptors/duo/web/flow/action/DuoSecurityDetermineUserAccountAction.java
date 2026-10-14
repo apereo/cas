@@ -88,7 +88,8 @@ public class DuoSecurityDetermineUserAccountAction extends AbstractMultifactorAu
 
     protected String buildDuoRegistrationUrlFor(final RequestContext requestContext,
                                                 final DuoSecurityMultifactorAuthenticationProvider provider,
-                                                final Principal principal) throws Throwable {
+                                                final Principal principal)
+            throws Throwable {
         val applicationContext = requestContext.getActiveFlow().getApplicationContext();
         val cipher = CipherExecutorUtils.newStringCipherExecutor(provider.getRegistration().getCrypto(),
             DuoSecurityAuthenticationRegistrationCipherExecutor.class);

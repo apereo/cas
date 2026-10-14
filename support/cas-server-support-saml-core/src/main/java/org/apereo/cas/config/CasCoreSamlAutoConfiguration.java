@@ -56,6 +56,8 @@ public class CasCoreSamlAutoConfiguration {
         properties.put(RuntimeConstants.FILE_RESOURCE_LOADER_PATH, FileUtils.getTempDirectory().getAbsolutePath());
         properties.put(RuntimeConstants.FILE_RESOURCE_LOADER_CACHE, Boolean.FALSE);
         properties.put(String.format("%s.classpath.class", RuntimeConstants.RESOURCE_LOADER), ClasspathResourceLoader.class.getName());
+        properties.put(String.format("%s.classpath.cache", RuntimeConstants.RESOURCE_LOADER), Boolean.TRUE);
+        properties.put(String.format("%s.classpath.modification_check_interval", RuntimeConstants.RESOURCE_LOADER), "0");
         properties.put(String.format("%s.string.class", RuntimeConstants.RESOURCE_LOADER), StringResourceLoader.class.getName());
         properties.put(String.format("%s.file.class", RuntimeConstants.RESOURCE_LOADER), FileResourceLoader.class.getName());
         return new VelocityEngine(properties);

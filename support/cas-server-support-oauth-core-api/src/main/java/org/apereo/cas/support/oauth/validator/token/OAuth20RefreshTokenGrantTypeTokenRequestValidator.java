@@ -6,7 +6,6 @@ import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
-import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshToken;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -31,7 +30,8 @@ public class OAuth20RefreshTokenGrantTypeTokenRequestValidator extends BaseOAuth
 
     @Override
     protected boolean validateInternal(final WebContext context, final String grantType,
-                                       final ProfileManager manager, final UserProfile uProfile) throws Throwable {
+                                       final ProfileManager manager, final UserProfile uProfile)
+            throws Throwable {
         val configurationContext = getConfigurationContext().getObject();
         val callContext = new CallContext(context, configurationContext.getSessionStore());
         val clientId = configurationContext.getRequestParameterResolver()
@@ -42,20 +42,19 @@ public class OAuth20RefreshTokenGrantTypeTokenRequestValidator extends BaseOAuth
             return false;
         }
 
-        var refreshToken = (OAuth20RefreshToken) null;
         val token = refreshTokenResult.get();
-        try {
-            refreshToken = configurationContext.getTicketRegistry().getTicket(token, OAuth20RefreshToken.class);
-            LOGGER.trace("Found valid refresh token [{}] in the registry", refreshToken);
-        } catch (final InvalidTicketException e) {
+        val refreshToken = OAuth20Utils.getRequestedOAuthToken(context, configurationContext.getTicketRegistry(), token, OAuth20RefreshToken.class);
+        if (refreshToken == null || refreshToken.isExpired()) {
             LOGGER.warn("Provided refresh token [{}] cannot be found in the registry or has expired", token);
             return false;
         }
+        LOGGER.trace("Found valid refresh token [{}] in the registry", refreshToken);
 
         LOGGER.debug("Received grant type [{}] with client id [{}]", grantType, clientId);
         val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(
             configurationContext.getServicesManager(), clientId);
-        val audit = AuditableContext.builder()
+        val audit = AuditableContext
+            .builder()
             .registeredService(registeredService)
             .build();
         val accessResult = configurationContext.getRegisteredServiceAccessStrategyEnforcer().execute(audit);
@@ -67,11 +66,11 @@ public class OAuth20RefreshTokenGrantTypeTokenRequestValidator extends BaseOAuth
             return false;
         }
 
-        if (refreshToken != null && !Strings.CI.equals(refreshToken.getClientId(), clientId)) {
+        if (!Strings.CI.equals(refreshToken.getClientId(), clientId)) {
             LOGGER.warn("Provided refresh token [{}] does not belong to client [{}]", refreshToken.getId(), clientId);
             return false;
         }
-
+        verifyBoundProofOfPossessionKey(refreshToken, OAuth20Constants.DPOP_CONFIRMATION, manager);
         return true;
     }
 

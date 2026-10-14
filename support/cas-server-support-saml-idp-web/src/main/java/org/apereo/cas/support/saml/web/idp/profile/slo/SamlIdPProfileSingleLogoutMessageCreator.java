@@ -127,7 +127,8 @@ public class SamlIdPProfileSingleLogoutMessageCreator extends AbstractSaml20Obje
                                           final TicketRegistry ticketRegistry,
                                           final Service service,
                                           final LogoutRequest logoutRequest,
-                                          final String relyingParty) throws Exception {
+                                          final String relyingParty)
+            throws Exception {
         val factory = (TransientSessionTicketFactory) ticketFactory.get(TransientSessionTicket.class);
         val ticket = factory.create(logoutRequest.getID(), service,
             Map.of(PROPERTY_NAME_RELYING_PARTY, relyingParty));

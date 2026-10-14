@@ -71,7 +71,8 @@ public abstract class AbstractConsentAction extends BaseCasWebflowAction {
      * @throws Throwable the throwable
      */
     protected void prepareConsentForRequestContext(final RequestContext requestContext,
-                                                   final ConsentQueryResult queryResult) throws Throwable {
+                                                   final ConsentQueryResult queryResult)
+            throws Throwable {
         val consentProperties = casProperties.getConsent().getCore();
 
         val originalService = WebUtils.getService(requestContext);

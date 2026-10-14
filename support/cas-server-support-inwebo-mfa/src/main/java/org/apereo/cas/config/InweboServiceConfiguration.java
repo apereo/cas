@@ -40,7 +40,8 @@ class InweboServiceConfiguration {
     public InweboConsoleAdmin inweboConsoleAdmin(
         @Qualifier(CasSSLContext.BEAN_NAME)
         final ObjectProvider<CasSSLContext> casSslContext,
-        final CasConfigurationProperties casProperties) throws Exception {
+        final CasConfigurationProperties casProperties)
+            throws Exception {
         val inwebo = casProperties.getAuthn().getMfa().getInwebo();
 
         val marshaller = new Jaxb2Marshaller();
@@ -70,7 +71,8 @@ class InweboServiceConfiguration {
     public InweboService inweboService(
         @Qualifier("inweboConsoleAdmin")
         final InweboConsoleAdmin inweboConsoleAdmin,
-        final CasConfigurationProperties casProperties) throws Exception {
+        final CasConfigurationProperties casProperties)
+            throws Exception {
         val inwebo = casProperties.getAuthn().getMfa().getInwebo();
         val sslContext = SSLUtils.buildSSLContext(inwebo.getClientCertificate());
         return new InweboService(casProperties, inweboConsoleAdmin, sslContext);

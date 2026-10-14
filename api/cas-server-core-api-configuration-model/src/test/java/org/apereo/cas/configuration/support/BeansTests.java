@@ -21,4 +21,12 @@ class BeansTests {
         assertNotNull(Beans.newDuration("infinite"));
         assertNotNull(Beans.newDuration("-1"));
     }
+
+    @Test
+    void verifyNumericDurations() {
+        assertEquals(Duration.ofSeconds(30), Beans.newDuration("30"));
+        assertEquals(Duration.ofMinutes(1), Beans.newDuration("PT1M"));
+        assertThrows(DateTimeParseException.class, () -> Beans.newDuration("1.5"));
+        assertThrows(DateTimeParseException.class, () -> Beans.newDuration("99999999999999999999"));
+    }
 }

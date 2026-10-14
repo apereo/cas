@@ -54,7 +54,8 @@ public class UniquePrincipalAuthenticationPolicy extends BaseAuthenticationPolic
     public AuthenticationPolicyExecutionResult isSatisfiedBy(@Nullable final Authentication authentication,
                                                              final Set<AuthenticationHandler> authenticationHandlers,
                                                              final ConfigurableApplicationContext applicationContext,
-                                                             final Map<String, ? extends Serializable> context) throws Throwable {
+                                                             final Map<String, ? extends Serializable> context)
+            throws Throwable {
         if (authentication == null) {
             LOGGER.warn("Authentication attempt is null and cannot satisfy policy");
             return AuthenticationPolicyExecutionResult.failure();

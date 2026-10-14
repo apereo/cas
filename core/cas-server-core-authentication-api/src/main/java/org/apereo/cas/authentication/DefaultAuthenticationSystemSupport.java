@@ -54,7 +54,8 @@ public class DefaultAuthenticationSystemSupport implements AuthenticationSystemS
 
     @Override
     public AuthenticationResultBuilder handleInitialAuthenticationTransaction(@Nullable final Service service,
-                                                                              @Nullable final Credential... credential) throws Throwable {
+                                                                              @Nullable final Credential... credential)
+            throws Throwable {
         val builder = authenticationResultBuilderFactory.newBuilder();
         if (credential != null) {
             Stream.of(credential).filter(Objects::nonNull).forEach(builder::collect);
@@ -66,7 +67,8 @@ public class DefaultAuthenticationSystemSupport implements AuthenticationSystemS
     public AuthenticationResultBuilder handleAuthenticationTransaction(
         @Nullable final Service service,
         final AuthenticationResultBuilder authenticationResultBuilder,
-        @Nullable final Credential... credentials) throws Throwable {
+        @Nullable final Credential... credentials)
+            throws Throwable {
 
         val transaction = authenticationTransactionFactory.newTransaction(service, credentials)
             .collect(authenticationResultBuilder.getAuthentications());
@@ -76,7 +78,8 @@ public class DefaultAuthenticationSystemSupport implements AuthenticationSystemS
 
     @Override
     public @Nullable AuthenticationResult finalizeAllAuthenticationTransactions(final AuthenticationResultBuilder authenticationResultBuilder,
-                                                                                @Nullable final Service service) throws Throwable {
+                                                                                @Nullable final Service service)
+            throws Throwable {
         return authenticationResultBuilder.build(service);
     }
 

@@ -39,7 +39,8 @@ public interface OAuth20RefreshTokenFactory extends TicketFactory {
                                String accessToken,
                                Map<String, Map<String, Object>> requestClaims,
                                OAuth20ResponseTypes responseType,
-                               OAuth20GrantTypes grantType) throws Throwable;
+                               OAuth20GrantTypes grantType)
+            throws Throwable;
 
     /**
      * Create refresh token without authentication.
@@ -56,7 +57,8 @@ public interface OAuth20RefreshTokenFactory extends TicketFactory {
                                        final Ticket ticketGrantingTicket,
                                        final String clientId,
                                        final OAuth20ResponseTypes responseType,
-                                       final OAuth20GrantTypes grantType) throws Throwable {
+                                       final OAuth20GrantTypes grantType)
+            throws Throwable {
         return create(service, null,
             ticketGrantingTicket, new ArrayList<>(),
             clientId, StringUtils.EMPTY, new HashMap<>(),

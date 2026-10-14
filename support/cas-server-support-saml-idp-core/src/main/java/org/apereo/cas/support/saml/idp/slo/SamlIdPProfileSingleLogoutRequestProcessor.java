@@ -39,7 +39,8 @@ public interface SamlIdPProfileSingleLogoutRequestProcessor {
      * @throws Exception the exception
      */
     void receive(HttpServletRequest request, HttpServletResponse response,
-                 LogoutRequest logoutRequest, MessageContext messageContext) throws Exception;
+                 LogoutRequest logoutRequest, MessageContext messageContext)
+            throws Exception;
 
     /**
      * Restore.

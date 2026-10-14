@@ -139,27 +139,31 @@ public abstract class BaseUmaEndpointControllerTests extends AbstractOAuth20Test
     }
 
     protected MvcResult performUmaRequest(final HttpMethod method, final String path,
-                                          final String body) throws Throwable {
+                                          final String body)
+            throws Throwable {
         return performUmaRequest(method, path, body, null, new MockHttpServletRequest(), new MockHttpServletResponse());
     }
 
     protected MvcResult performUmaRequest(final HttpMethod method, final String path,
                                           final HttpServletRequest request,
-                                          final HttpServletResponse response) throws Throwable {
+                                          final HttpServletResponse response)
+            throws Throwable {
         return performUmaRequest(method, path, null, null, request, response);
     }
 
     protected MvcResult performUmaRequest(final HttpMethod method, final String path,
                                           final String body,
                                           final HttpServletRequest request,
-                                          final HttpServletResponse response) throws Throwable {
+                                          final HttpServletResponse response)
+            throws Throwable {
         return performUmaRequest(method, path, body, null, request, response);
     }
 
     protected MvcResult performUmaRequest(final HttpMethod method, final String path,
                                           final Map<String, String> parameters,
                                           final HttpServletRequest request,
-                                          final HttpServletResponse response) throws Throwable {
+                                          final HttpServletResponse response)
+            throws Throwable {
         return performUmaRequest(method, path, null, parameters, request, response);
     }
 
@@ -167,7 +171,8 @@ public abstract class BaseUmaEndpointControllerTests extends AbstractOAuth20Test
                                         @Nullable final String body,
                                         final Map<String, String> parameters,
                                         final HttpServletRequest request,
-                                        final HttpServletResponse response) throws Throwable {
+                                        final HttpServletResponse response)
+            throws Throwable {
         val builder = MockMvcRequestBuilders
             .request(method, "/cas" + CONTEXT + path)
             .with(mockRequest -> {
@@ -213,7 +218,8 @@ public abstract class BaseUmaEndpointControllerTests extends AbstractOAuth20Test
     }
     
     private Triple<HttpServletRequest, HttpServletResponse, String> authenticateUmaRequestWithScope(
-        final String scope, final SecurityLogicInterceptor interceptor) throws Throwable {
+        final String scope, final SecurityLogicInterceptor interceptor)
+            throws Throwable {
         val service = addRegisteredService();
         val pair = assertClientOK(service, false, scope);
         assertNotNull(pair.getKey());

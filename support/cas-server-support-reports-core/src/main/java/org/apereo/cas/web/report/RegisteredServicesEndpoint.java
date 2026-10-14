@@ -2,6 +2,8 @@ package org.apereo.cas.web.report;
 
 import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.services.CacheableServicesManager;
+import org.apereo.cas.services.ChainingServicesManager;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceProperty;
 import org.apereo.cas.services.ServicesManager;
@@ -15,6 +17,7 @@ import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.io.TemporaryFileSystemResource;
 import org.apereo.cas.util.serialization.StringSerializer;
 import org.apereo.cas.web.BaseCasRestActuatorEndpoint;
+import com.google.common.primitives.Longs;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -23,7 +26,6 @@ import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
-import org.apache.commons.lang3.math.NumberUtils;
 import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.actuate.endpoint.Access;
@@ -113,8 +115,9 @@ public class RegisteredServicesEndpoint extends BaseCasRestActuatorEndpoint {
     })
     public ResponseEntity<String> fetchService(
         @PathVariable final String id) {
-        val service = NumberUtils.isDigits(id)
-            ? servicesManager.getObject().findServiceBy(Long.parseLong(id))
+        val registeredServiceId = Longs.tryParse(id);
+        val service = registeredServiceId != null
+            ? servicesManager.getObject().findServiceBy(registeredServiceId)
             : servicesManager.getObject().findServiceBy(configurationContext.getObject().getServiceFactory().createService(id));
         if (service == null) {
             return ResponseEntity.notFound().build();
@@ -138,8 +141,7 @@ public class RegisteredServicesEndpoint extends BaseCasRestActuatorEndpoint {
         MEDIA_TYPE_CAS_YAML
     })
     public ResponseEntity<String> fetchServicesByType(
-        @PathVariable
-        final String type) {
+        @PathVariable final String type) {
         val services = servicesManager.getObject().findServiceBy(registeredService ->
             registeredService.getClass().getSimpleName().equalsIgnoreCase(type));
         return ResponseEntity.ok(MAPPER.writeValueAsString(services));
@@ -182,11 +184,20 @@ public class RegisteredServicesEndpoint extends BaseCasRestActuatorEndpoint {
             MEDIA_TYPE_CAS_YAML
         })
     public ResponseEntity<String> deleteAllServices() {
-        configurationContext.getObject().getServicesCache().invalidateAll();
-        servicesManager.getObject().deleteAll();
+        val manager = servicesManager.getObject();
+        val effectiveManagers = manager instanceof final ChainingServicesManager chain
+            ? List.copyOf(chain.getServiceManagers())
+            : List.of(manager);
+
+        effectiveManagers
+            .stream()
+            .filter(CacheableServicesManager.class::isInstance)
+            .map(CacheableServicesManager.class::cast)
+            .forEach(CacheableServicesManager::removeRegisteredServicesFromCache);
+        manager.deleteAll();
         return ResponseEntity.ok().build();
     }
-    
+
     /**
      * Delete registered service.
      *
@@ -203,8 +214,9 @@ public class RegisteredServicesEndpoint extends BaseCasRestActuatorEndpoint {
             MEDIA_TYPE_CAS_YAML
         })
     public ResponseEntity<String> deleteService(@PathVariable final String id) {
-        if (NumberUtils.isDigits(id)) {
-            val svc = servicesManager.getObject().findServiceBy(Long.parseLong(id));
+        val registeredServiceId = Longs.tryParse(id);
+        if (registeredServiceId != null) {
+            val svc = servicesManager.getObject().findServiceBy(registeredServiceId);
             if (svc != null) {
                 return ResponseEntity.ok(MAPPER.writeValueAsString(servicesManager.getObject().delete(svc)));
             }
@@ -286,10 +298,13 @@ public class RegisteredServicesEndpoint extends BaseCasRestActuatorEndpoint {
     @ResponseBody
     @Operation(summary = "Export registered services as a single JSON file",
         parameters = @Parameter(name = "id", required = true, description = "The id of the registered service to export", in = ParameterIn.PATH))
-    public ResponseEntity<Resource> export(
-        @PathVariable final long id) throws Exception {
+    public ResponseEntity<Resource> export(@PathVariable final long id)
+            throws Exception {
         val registeredServiceSerializer = new RegisteredServiceJsonSerializer(applicationContext);
         val registeredService = servicesManager.getObject().findServiceBy(id);
+        if (registeredService == null) {
+            return ResponseEntity.notFound().build();
+        }
         val fileName = String.format("%s-%s", registeredService.getName(), registeredService.getId());
         val serviceFile = Files.createTempFile(fileName, ".json").toFile();
         registeredServiceSerializer.to(serviceFile, registeredService);
@@ -324,8 +339,7 @@ public class RegisteredServicesEndpoint extends BaseCasRestActuatorEndpoint {
     @Operation(summary = "Save registered service supplied in the request body",
         parameters = @Parameter(name = "body", required = true, description = "The request body to contain service definition"))
     public ResponseEntity saveService(
-        @RequestBody
-        final String registeredServiceBody) {
+        @RequestBody final String registeredServiceBody) {
         val registeredServiceSerializer = new RegisteredServiceJsonSerializer(applicationContext);
         val registeredService = registeredServiceSerializer.from(registeredServiceBody);
         registeredService.setId(RandomUtils.nextInt());
@@ -360,14 +374,13 @@ public class RegisteredServicesEndpoint extends BaseCasRestActuatorEndpoint {
         parameters = @Parameter(name = "body", required = true, description = "The request body to contain service definition in JSON or YAML format"))
     public ResponseEntity validateService(
         @RequestHeader(HttpHeaders.CONTENT_TYPE) final String contentType,
-        @RequestBody
-        final String registeredServiceBody) {
+        @RequestBody final String registeredServiceBody) {
         try {
             val isYaml = MediaType.APPLICATION_YAML.isCompatibleWith(MediaType.valueOf(contentType))
                 || MediaType.parseMediaType(MEDIA_TYPE_CAS_YAML).isCompatibleWith(MediaType.valueOf(contentType));
             val registeredServiceSerializer = isYaml
-                    ? new RegisteredServiceYamlSerializer(applicationContext)
-                    : new RegisteredServiceJsonSerializer(applicationContext);
+                ? new RegisteredServiceYamlSerializer(applicationContext)
+                : new RegisteredServiceJsonSerializer(applicationContext);
             val registeredService = registeredServiceSerializer.from(registeredServiceBody);
             return ResponseEntity.ok(registeredService != null);
         } catch (final Exception e) {
@@ -400,8 +413,7 @@ public class RegisteredServicesEndpoint extends BaseCasRestActuatorEndpoint {
     @Operation(summary = "Update registered service supplied in the request body",
         parameters = @Parameter(name = "body", required = true, description = "The request body to contain service definition"))
     public ResponseEntity updateService(
-        @RequestBody
-        final String registeredServiceBody) {
+        @RequestBody final String registeredServiceBody) {
         val registeredServiceSerializer = new RegisteredServiceJsonSerializer(applicationContext);
         val registeredService = registeredServiceSerializer.from(registeredServiceBody);
         val result = servicesManager.getObject().save(registeredService);

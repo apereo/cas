@@ -70,7 +70,8 @@ public class WSFederationValidateRequestCallbackController extends BaseWSFederat
     @GetMapping(path = WSFederationConstants.ENDPOINT_FEDERATION_REQUEST_CALLBACK)
     @Operation(summary = "Handle WS-Federation request callback")
     protected ModelAndView handleFederationRequest(final HttpServletResponse response,
-                                                   final HttpServletRequest request) throws Throwable {
+                                                   final HttpServletRequest request)
+            throws Throwable {
         val fedRequest = WSFederationRequest.of(request);
         LOGGER.debug("Received callback profile request [{}]", request.getRequestURI());
 
@@ -114,7 +115,8 @@ public class WSFederationValidateRequestCallbackController extends BaseWSFederat
     }
 
     private void addSecurityTokenTicketToRegistry(final HttpServletRequest request,
-                                                  final SecurityToken securityToken) throws Throwable {
+                                                  final SecurityToken securityToken)
+            throws Throwable {
         LOGGER.trace("Creating security token as a ticket to CAS ticket registry...");
         val ticketRegistry = getConfigContext().getTicketRegistry();
         val tgt = CookieUtils.getTicketGrantingTicketFromRequest(getConfigContext().getTicketGrantingTicketCookieGenerator(),
@@ -131,7 +133,8 @@ public class WSFederationValidateRequestCallbackController extends BaseWSFederat
 
     private String produceRelyingPartyToken(final HttpServletRequest request, final Service targetService,
                                             final WSFederationRequest fedRequest, final SecurityToken securityToken,
-                                            final TicketValidationResult assertion) throws Exception {
+                                            final TicketValidationResult assertion)
+            throws Exception {
         val service = findAndValidateFederationRequestForRegisteredService(targetService, fedRequest);
         LOGGER.debug("Located registered service [{}] to create relying-party tokens...", service);
         return getConfigContext().getRelyingPartyTokenProducer().produce(securityToken, service, fedRequest, request, assertion);
@@ -139,7 +142,8 @@ public class WSFederationValidateRequestCallbackController extends BaseWSFederat
 
     private TicketValidationResult validateRequestAndBuildCasAssertion(final HttpServletResponse response,
                                                                        final HttpServletRequest request,
-                                                                       final WSFederationRequest fedRequest) throws Throwable {
+                                                                       final WSFederationRequest fedRequest)
+            throws Throwable {
         val ticket = request.getParameter(CasProtocolConstants.PARAMETER_TICKET);
         val serviceUrl = constructServiceUrl(request, response, fedRequest);
         LOGGER.trace("Created service url for validation: [{}]", serviceUrl);

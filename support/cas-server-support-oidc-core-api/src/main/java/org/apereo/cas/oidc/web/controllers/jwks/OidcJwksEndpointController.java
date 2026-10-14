@@ -1,18 +1,20 @@
 package org.apereo.cas.oidc.web.controllers.jwks;
 
 import module java.base;
+import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.oidc.OidcConfigurationContext;
 import org.apereo.cas.oidc.OidcConstants;
-import org.apereo.cas.oidc.jwks.OidcJsonWebKeyStoreUtils;
 import org.apereo.cas.oidc.jwks.generator.OidcJsonWebKeystoreGeneratorService;
+import org.apereo.cas.oidc.jwks.generator.OidcJsonWebKeystoreModifiedEvent;
+import org.apereo.cas.oidc.jwks.rotation.OidcJsonWebKeystoreRotatedEvent;
 import org.apereo.cas.oidc.jwks.rotation.OidcJsonWebKeystoreRotationService;
 import org.apereo.cas.oidc.web.controllers.BaseOidcController;
-import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
-import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -22,9 +24,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
 import org.jose4j.jwk.JsonWebKey;
 import org.jose4j.jwk.JsonWebKeySet;
-import org.jose4j.jwk.PublicJsonWebKey;
 import org.pac4j.jee.context.JEEContext;
-import org.springframework.core.io.Resource;
+import org.springframework.context.event.EventListener;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -42,12 +43,33 @@ import jakarta.servlet.http.HttpServletResponse;
 @Slf4j
 @Tag(name = "OpenID Connect")
 public class OidcJwksEndpointController extends BaseOidcController {
+    private static final String JSON_WEB_KEYSET_CACHE_KEY = "jwks";
+
+    private static final Duration JSON_WEB_KEYSET_CACHE_EXPIRATION = Duration.ofDays(1);
+
     private final OidcJsonWebKeystoreGeneratorService oidcJsonWebKeystoreGeneratorService;
+
+    private final Cache<String, PublishedJsonWebKeySet> jsonWebKeySetCache;
 
     public OidcJwksEndpointController(final OidcConfigurationContext configurationContext,
                                       final OidcJsonWebKeystoreGeneratorService oidcJsonWebKeystoreGeneratorService) {
         super(configurationContext);
         this.oidcJsonWebKeystoreGeneratorService = oidcJsonWebKeystoreGeneratorService;
+        this.jsonWebKeySetCache = Caffeine.newBuilder()
+            .maximumSize(1)
+            .expireAfterWrite(getJsonWebKeySetCacheExpiration(configurationContext))
+            .build();
+    }
+
+    /*
+     * Signing reloads its keys when the keystore cache expires, so the published key set expires no later than that.
+     */
+    private static Duration getJsonWebKeySetCacheExpiration(final OidcConfigurationContext configurationContext) {
+        val signingKeysExpiration = Beans.newDuration(configurationContext.getCasProperties()
+            .getAuthn().getOidc().getJwks().getCore().getJwksCacheExpiration());
+        return signingKeysExpiration.isNegative() || signingKeysExpiration.compareTo(JSON_WEB_KEYSET_CACHE_EXPIRATION) > 0
+            ? JSON_WEB_KEYSET_CACHE_EXPIRATION
+            : signingKeysExpiration;
     }
 
     /**
@@ -75,35 +97,7 @@ public class OidcJwksEndpointController extends BaseOidcController {
             return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
         }
         return FunctionUtils.doAndHandle(() -> {
-            val resource = oidcJsonWebKeystoreGeneratorService.generate();
-            val jsonWebKeySet = getJsonWebKeySet(resource);
-            val servicesManager = getConfigurationContext().getServicesManager();
-            servicesManager.getAllServicesOfType(OidcRegisteredService.class)
-                .stream()
-                .filter(service -> {
-                    val serviceJwks = SpringExpressionLanguageValueResolver.getInstance().resolve(service.getJwks());
-                    return StringUtils.isNotBlank(serviceJwks);
-                })
-                .forEach(service -> {
-                    val set = OidcJsonWebKeyStoreUtils.getJsonWebKeySet(service,
-                        getConfigurationContext().getApplicationContext(), Optional.empty());
-                    set.ifPresent(keys -> keys.getJsonWebKeys()
-                        .stream()
-                        .filter(PublicJsonWebKey.class::isInstance)
-                        .forEach(jsonWebKeySet::addJsonWebKey));
-                });
-
-            if (StringUtils.isNotBlank(kid)) {
-                jsonWebKeySet.getJsonWebKeys().removeIf(key -> !kid.equalsIgnoreCase(key.getKeyId()));
-            }
-            if (StringUtils.isNotBlank(state)) {
-                jsonWebKeySet.getJsonWebKeys()
-                    .removeIf(key -> {
-                        val st = OidcJsonWebKeystoreRotationService.JsonWebKeyLifecycleStates.getJsonWebKeyState(key).name();
-                        return !state.equalsIgnoreCase(st);
-                    });
-            }
-            val body = jsonWebKeySet.toJson(JsonWebKey.OutputControlLevel.PUBLIC_ONLY);
+            val body = getPublishedJsonWebKeySet(kid, state);
             response.setContentType(MediaType.APPLICATION_JSON_VALUE);
             return new ResponseEntity<>(body, HttpStatus.OK);
         }, e -> {
@@ -112,7 +106,49 @@ public class OidcJwksEndpointController extends BaseOidcController {
         }).get();
     }
 
-    private static JsonWebKeySet getJsonWebKeySet(final Resource resource) throws Exception {
-        return OidcJsonWebKeystoreGeneratorService.toJsonWebKeyStore(resource);
+    /**
+     * Drop the published key set once the keystore is known to have changed.
+     *
+     * @param event the event
+     */
+    @EventListener
+    public void handleOidcJsonWebKeystoreModifiedEvent(final OidcJsonWebKeystoreModifiedEvent event) {
+        LOGGER.debug("Detected change in [{}]; the published JSON web keystore will be reloaded", event.getFile());
+        jsonWebKeySetCache.invalidateAll();
+    }
+
+    /**
+     * Drop the published key set once keys are rotated or revoked.
+     *
+     * @param event the event
+     */
+    @EventListener
+    public void handleOidcJsonWebKeystoreRotatedEvent(final OidcJsonWebKeystoreRotatedEvent event) {
+        LOGGER.debug("Keys in the JSON web keystore are rotated or revoked; the published JSON web keystore will be reloaded");
+        jsonWebKeySetCache.invalidateAll();
+    }
+
+    private String getPublishedJsonWebKeySet(final String kid, final String state) {
+        val published = Objects.requireNonNull(jsonWebKeySetCache.get(JSON_WEB_KEYSET_CACHE_KEY, _ -> loadJsonWebKeySet()));
+        if (StringUtils.isBlank(kid) && StringUtils.isBlank(state)) {
+            return published.body();
+        }
+        val keys = published.keys()
+            .stream()
+            .filter(key -> StringUtils.isBlank(kid) || kid.equalsIgnoreCase(key.getKeyId()))
+            .filter(key -> StringUtils.isBlank(state) || state.equalsIgnoreCase(
+                OidcJsonWebKeystoreRotationService.JsonWebKeyLifecycleStates.getJsonWebKeyState(key).name()))
+            .toList();
+        return new JsonWebKeySet(keys).toJson(JsonWebKey.OutputControlLevel.PUBLIC_ONLY);
+    }
+
+    private PublishedJsonWebKeySet loadJsonWebKeySet() {
+        final JsonWebKeySet jsonWebKeySet = FunctionUtils.doUnchecked(
+            () -> OidcJsonWebKeystoreGeneratorService.toJsonWebKeyStore(oidcJsonWebKeystoreGeneratorService.generate()));
+        return new PublishedJsonWebKeySet(List.copyOf(jsonWebKeySet.getJsonWebKeys()),
+            jsonWebKeySet.toJson(JsonWebKey.OutputControlLevel.PUBLIC_ONLY));
+    }
+
+    private record PublishedJsonWebKeySet(List<JsonWebKey> keys, String body) {
     }
 }

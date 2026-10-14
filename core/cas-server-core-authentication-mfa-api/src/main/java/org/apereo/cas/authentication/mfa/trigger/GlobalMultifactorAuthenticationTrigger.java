@@ -52,7 +52,8 @@ public class GlobalMultifactorAuthenticationTrigger implements MultifactorAuthen
                                                                    @Nullable final RegisteredService registeredService,
                                                                    final HttpServletRequest request,
                                                                    final HttpServletResponse response,
-                                                                   @Nullable final Service service) throws Throwable {
+                                                                   @Nullable final Service service)
+            throws Throwable {
 
         if (authentication == null) {
             LOGGER.debug("No authentication is available to determine event for principal");
@@ -127,7 +128,8 @@ public class GlobalMultifactorAuthenticationTrigger implements MultifactorAuthen
     protected Optional<MultifactorAuthenticationProvider> resolveMultifactorProvider(
         final Authentication authentication,
         final RegisteredService registeredService,
-        final List<MultifactorAuthenticationProvider> resolvedProviders) throws Throwable {
+        final List<MultifactorAuthenticationProvider> resolvedProviders)
+            throws Throwable {
         val principal = authentication.getPrincipal();
         val provider = multifactorAuthenticationProviderSelector.resolve(resolvedProviders, registeredService, principal);
         LOGGER.debug("Selected multifactor authentication provider for this transaction is [{}]", provider);

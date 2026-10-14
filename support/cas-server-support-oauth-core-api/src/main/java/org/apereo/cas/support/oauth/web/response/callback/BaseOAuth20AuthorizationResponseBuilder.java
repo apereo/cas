@@ -42,7 +42,8 @@ public abstract class BaseOAuth20AuthorizationResponseBuilder<T extends OAuth20C
     public ModelAndView build(final OAuthRegisteredService registeredService,
                               final OAuth20ResponseModeTypes responseMode,
                               final String redirectUrl,
-                              final Map<String, String> parameters) throws Exception {
+                              final Map<String, String> parameters)
+            throws Exception {
         return authorizationModelAndViewBuilder.build(registeredService, responseMode, redirectUrl, parameters);
     }
 

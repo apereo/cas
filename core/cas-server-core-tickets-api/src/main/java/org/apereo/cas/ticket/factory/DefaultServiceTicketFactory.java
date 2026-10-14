@@ -51,7 +51,8 @@ public class DefaultServiceTicketFactory implements ServiceTicketFactory {
 
     @Override
     public <T extends Ticket> T create(final Service service, final Authentication authentication,
-                                       final boolean credentialsProvided, final Class<T> clazz) throws Throwable {
+                                       final boolean credentialsProvided, final Class<T> clazz)
+            throws Throwable {
         val expirationPolicyToUse = determineExpirationPolicyForService(service);
         val ticketId = produceTicketIdentifier(service, null, credentialsProvided);
         val result = new ServiceTicketImpl(ticketId, null, service, credentialsProvided, expirationPolicyToUse).setAuthentication(authentication);
@@ -67,7 +68,8 @@ public class DefaultServiceTicketFactory implements ServiceTicketFactory {
     public <T extends Ticket> T create(final TicketGrantingTicket ticketGrantingTicket,
                                        @Nullable final Service service,
                                        final boolean credentialProvided,
-                                       final Class<T> clazz) throws Throwable {
+                                       final Class<T> clazz)
+            throws Throwable {
         val ticketId = produceTicketIdentifier(service, ticketGrantingTicket, credentialProvided);
         var result = FunctionUtils.doIf(cipherExecutor.isEnabled(), () -> {
             LOGGER.trace("Attempting to encode service ticket [{}]", ticketId);
@@ -103,7 +105,8 @@ public class DefaultServiceTicketFactory implements ServiceTicketFactory {
 
     protected String produceTicketIdentifier(@Nullable final Service service,
                                              @Nullable final TicketGrantingTicket ticketGrantingTicket,
-                                             final boolean credentialProvided) throws Throwable {
+                                             final boolean credentialProvided)
+            throws Throwable {
         val uniqueTicketIdGenKey = Objects.requireNonNull(service).getClass().getName();
         var serviceTicketUniqueTicketIdGenerator = (UniqueTicketIdGenerator) null;
         if (uniqueTicketIdGeneratorsForService != null && !uniqueTicketIdGeneratorsForService.isEmpty()) {

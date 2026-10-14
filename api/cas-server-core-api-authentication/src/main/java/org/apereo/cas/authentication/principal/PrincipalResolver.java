@@ -75,7 +75,8 @@ public interface PrincipalResolver extends Ordered, NamedObject {
      */
     @Nullable Principal resolve(Credential credential, Optional<Principal> principal,
                                 Optional<AuthenticationHandler> handler,
-                                Optional<Service> service) throws Throwable;
+                                Optional<Service> service)
+            throws Throwable;
 
     /**
      * Determines whether this instance supports principal resolution from the given credential. This method SHOULD

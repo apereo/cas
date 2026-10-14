@@ -505,7 +505,8 @@ public abstract class AbstractOidcTests {
     }
 
     protected OAuth20AccessToken getAccessToken(final Principal principal, final String idToken,
-                                                final String clientId) throws Throwable {
+                                                final String clientId)
+            throws Throwable {
         return getAccessToken(principal, idToken, clientId,
             Set.of(OidcConstants.StandardScopes.EMAIL.getScope(),
                 OidcConstants.StandardScopes.PROFILE.getScope(),
@@ -513,7 +514,8 @@ public abstract class AbstractOidcTests {
     }
 
     protected OAuth20AccessToken getAccessToken(final Principal principal, final String idToken,
-                                                final String clientId, final Set<String> scopes) throws Throwable {
+                                                final String clientId, final Set<String> scopes)
+            throws Throwable {
         val code = addCode(principal, getOidcRegisteredService(clientId));
         val accessToken = mock(OAuth20AccessToken.class);
         when(accessToken.getAuthentication()).thenReturn(RegisteredServiceTestUtils.getAuthentication(principal));
@@ -543,7 +545,8 @@ public abstract class AbstractOidcTests {
     }
 
     protected OAuth20Code addCode(final Principal principal,
-                                  final OAuthRegisteredService registeredService) throws Throwable {
+                                  final OAuthRegisteredService registeredService)
+            throws Throwable {
         val ticketGrantingTicket = new MockTicketGrantingTicket("casuser");
         val authentication = RegisteredServiceTestUtils.getAuthentication(principal);
         val service = webApplicationServiceFactory.createService(registeredService.getClientId());
@@ -556,7 +559,8 @@ public abstract class AbstractOidcTests {
     }
 
     protected OAuth20Code addCode(final TicketGrantingTicket ticketGrantingTicket,
-                                  final OAuthRegisteredService registeredService) throws Throwable {
+                                  final OAuthRegisteredService registeredService)
+            throws Throwable {
         val authentication = ticketGrantingTicket.getAuthentication();
         val service = webApplicationServiceFactory.createService(registeredService.getClientId());
         val scopes = List.of(OidcConstants.StandardScopes.OPENID.getScope());
@@ -568,7 +572,8 @@ public abstract class AbstractOidcTests {
     }
 
     protected OidcCibaRequest newCibaRequest(final OidcRegisteredService registeredService,
-                                             final Principal principal) throws Throwable {
+                                             final Principal principal)
+            throws Throwable {
         val cibaRequestContext = CibaRequestContext.builder()
             .clientNotificationToken(UUID.randomUUID().toString())
             .clientId(registeredService.getClientId())
@@ -604,7 +609,8 @@ public abstract class AbstractOidcTests {
      * @throws Exception the exception
      */
     protected static String buildClientAttestation(final String clientId, final JWK instanceKey,
-                                                   final boolean includeTrustAnchor) throws Exception {
+                                                   final boolean includeTrustAnchor)
+            throws Exception {
         val providerKey = (ECKey) JWKSet.load(new ClassPathResource("client-attestation-x5c.jwks").getInputStream())
             .getKeyByKeyId("wallet-provider");
         val certificateChain = providerKey.getX509CertChain();
@@ -647,7 +653,8 @@ public abstract class AbstractOidcTests {
      * @throws Exception the exception
      */
     protected static String buildClientAttestationProof(final ECKey instanceKey, final String audience,
-                                                        final String challenge) throws Exception {
+                                                        final String challenge)
+            throws Exception {
         val header = new JWSHeader.Builder(JWSAlgorithm.ES256)
             .type(new JOSEObjectType("oauth-client-attestation-pop+jwt"))
             .build();

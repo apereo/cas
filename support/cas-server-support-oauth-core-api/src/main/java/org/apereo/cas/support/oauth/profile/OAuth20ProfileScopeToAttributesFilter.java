@@ -39,7 +39,8 @@ public interface OAuth20ProfileScopeToAttributesFilter {
                              final Principal principal,
                              final RegisteredService registeredService,
                              final Set<String> scopes,
-                             final OAuth20AccessToken accessToken) throws Throwable {
+                             final OAuth20AccessToken accessToken)
+            throws Throwable {
         return principal;
     }
 
@@ -56,7 +57,8 @@ public interface OAuth20ProfileScopeToAttributesFilter {
     default Principal filter(final Service service,
                              final Principal principal,
                              final RegisteredService registeredService,
-                             final OAuth20AccessToken accessToken) throws Throwable {
+                             final OAuth20AccessToken accessToken)
+            throws Throwable {
         val scopes = accessToken != null ? new LinkedHashSet<>(accessToken.getScopes()) : Set.<String>of();
         return filter(service, principal, registeredService, scopes, accessToken);
     }
@@ -72,7 +74,8 @@ public interface OAuth20ProfileScopeToAttributesFilter {
      */
     default Principal filter(final Service service,
                              final Principal profile,
-                             final RegisteredService registeredService) throws Throwable {
+                             final RegisteredService registeredService)
+            throws Throwable {
         return filter(service, profile, registeredService, null);
     }
 }

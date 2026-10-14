@@ -37,7 +37,8 @@ public class OidcFederationDefaultEntityStatementService implements OidcFederati
                                          final String subject,
                                          final JSONObject metadata,
                                          @Nullable final JsonNode federationKeys,
-                                         @Nullable final List<EntityID> authorityHints) throws Exception {
+                                         @Nullable final List<EntityID> authorityHints)
+            throws Exception {
         val iss = new EntityID(issuer);
         val sub = new EntityID(subject);
 

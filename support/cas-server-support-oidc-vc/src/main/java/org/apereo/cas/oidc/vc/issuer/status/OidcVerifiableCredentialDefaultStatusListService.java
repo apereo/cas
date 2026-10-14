@@ -65,7 +65,8 @@ public class OidcVerifiableCredentialDefaultStatusListService implements OidcVer
     @Override
     public Optional<StatusReference> allocate(final OAuth20AccessToken accessToken, final String principal,
                                               final String credentialConfigurationId, final String credentialId,
-                                              final Duration validity) throws Throwable {
+                                              final Duration validity)
+            throws Throwable {
         val properties = configurationContext.getCasProperties().getAuthn().getOidc().getVc().getIssuer().getStatusList();
         if (!properties.isEnabled()) {
             return Optional.empty();
@@ -175,7 +176,8 @@ public class OidcVerifiableCredentialDefaultStatusListService implements OidcVer
     protected Optional<StatusReference> createEntry(final String ticketId, final String statusListId, final long index,
                                                     final OAuth20AccessToken accessToken, final String principal,
                                                     final String credentialConfigurationId, final String credentialId,
-                                                    final Duration validity) throws Throwable {
+                                                    final Duration validity)
+            throws Throwable {
         val properties = new HashMap<String, Serializable>();
         properties.put(PROPERTY_STATUS_LIST, statusListId);
         properties.put(PROPERTY_INDEX, String.valueOf(index));

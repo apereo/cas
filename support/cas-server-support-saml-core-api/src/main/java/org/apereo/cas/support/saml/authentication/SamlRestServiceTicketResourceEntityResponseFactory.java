@@ -25,7 +25,8 @@ public class SamlRestServiceTicketResourceEntityResponseFactory implements Servi
     @Override
     public ResponseEntity<String> build(final String ticketGrantingTicket,
                                                  final WebApplicationService service,
-                                                 final AuthenticationResult authenticationResult) throws Throwable {
+                                                 final AuthenticationResult authenticationResult)
+            throws Throwable {
         val serviceTicketId = uniqueTicketIdGenerator.getNewTicketId(ServiceTicket.PREFIX);
         return new ResponseEntity<>(serviceTicketId, HttpStatus.OK);
     }

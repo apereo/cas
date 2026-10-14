@@ -76,7 +76,8 @@ public class SendTicketGrantingTicketAction extends BaseCasWebflowAction {
     }
 
     protected boolean shouldCreateSingleSignOnCookie(final SingleSignOnParticipationRequest ssoRequest,
-                                                     final String ticketGrantingTicketId) throws Throwable {
+                                                     final String ticketGrantingTicketId)
+            throws Throwable {
         return singleSignOnParticipationStrategy.isCreateCookieOnRenewedAuthentication(ssoRequest) == TriStateBoolean.TRUE
             || singleSignOnParticipationStrategy.isParticipating(ssoRequest);
     }

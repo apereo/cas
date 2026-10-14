@@ -47,7 +47,8 @@ public class GroovySurrogateAuthenticationService extends BaseSurrogateAuthentic
 
     @Override
     public boolean isWildcardedAccount(final String surrogate, final Principal principal,
-                                       final Optional<? extends Service> service) throws Throwable {
+                                       final Optional<? extends Service> service)
+            throws Throwable {
         val args = new Object[]{surrogate, principal, service.orElse(null), LOGGER};
         return super.isWildcardedAccount(surrogate, principal, service)
             && Boolean.TRUE.equals(watchableScript.execute("isWildcardAuthorized", Boolean.class, args));

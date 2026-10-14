@@ -28,7 +28,8 @@ public abstract class BaseSurrogateAuthenticationService implements SurrogateAut
 
     @Override
     public final boolean canImpersonate(final String surrogate, final Principal principal,
-                                        final Optional<? extends Service> service) throws Throwable {
+                                        final Optional<? extends Service> service)
+            throws Throwable {
         val serviceAuthorized = isServiceAuthorizedForImpersonation(principal, service);
         return serviceAuthorized && (surrogate.equalsIgnoreCase(principal.getId())
             || isPrincipalAuthorizedForImpersonation(surrogate, principal, service)

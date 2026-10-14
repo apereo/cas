@@ -79,7 +79,8 @@ public class LettuceRedisModulesOperations implements RedisModulesOperations {
      * @throws Exception the exception
      */
     public static RediSearchCommands<String> newRediSearchCommands(
-        final BaseRedisProperties redis, final CasSSLContext casSslContext) throws Exception {
+        final BaseRedisProperties redis, final CasSSLContext casSslContext)
+            throws Exception {
 
         if (redis.getCluster() != null && !redis.getCluster().getNodes().isEmpty()) {
             return newClusterRediSearchCommands(redis, casSslContext);
@@ -140,7 +141,8 @@ public class LettuceRedisModulesOperations implements RedisModulesOperations {
     }
 
     private static RediSearchCommands<String> newClusterRediSearchCommands(
-        final BaseRedisProperties redis, final CasSSLContext casSslContext) throws Exception {
+        final BaseRedisProperties redis, final CasSSLContext casSslContext)
+            throws Exception {
         val redisUris = redis.getCluster()
             .getNodes()
             .stream()

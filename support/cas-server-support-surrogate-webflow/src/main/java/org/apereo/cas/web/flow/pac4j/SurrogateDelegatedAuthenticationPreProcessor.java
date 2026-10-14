@@ -26,7 +26,8 @@ public class SurrogateDelegatedAuthenticationPreProcessor implements DelegatedAu
 
     @Override
     public Principal process(final Principal principal, final BaseClient client, final Credential credential,
-                             final Service service) throws Throwable {
+                             final Service service)
+            throws Throwable {
         val surrogateTrait = credential.getCredentialMetadata().getTrait(SurrogateCredentialTrait.class);
         if (surrogateTrait.isPresent()) {
             val surrogateUsername = surrogateTrait.get().getSurrogateUsername();

@@ -36,7 +36,8 @@ public class JsonResourceSurrogateAuthenticationService extends SimpleSurrogateA
     public JsonResourceSurrogateAuthenticationService(final ServicesManager servicesManager,
                                                       final CasConfigurationProperties casProperties,
                                                       final RegisteredServicePrincipalAccessStrategyEnforcer principalAccessStrategyEnforcer,
-                                                      final ConfigurableApplicationContext applicationContext) throws Exception {
+                                                      final ConfigurableApplicationContext applicationContext)
+            throws Exception {
         this(casProperties.getAuthn().getSurrogate().getJson().getLocation().getFile(), servicesManager, casProperties,
             principalAccessStrategyEnforcer, applicationContext);
     }

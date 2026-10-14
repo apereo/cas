@@ -14,9 +14,9 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
-import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
+import org.jspecify.annotations.Nullable;
 
 /**
  * This is {@link HttpRequestRegisteredServiceAccessStrategy} that reaches out
@@ -57,25 +57,29 @@ public class HttpRequestRegisteredServiceAccessStrategy extends BaseRegisteredSe
                 if (StringUtils.isNoneBlank(this.ipAddress)) {
                     LOGGER.debug("Evaluating IP address [{}] against pattern [{}]",
                         info.getClientIpAddress(), this.ipAddress);
-                    match = RegexUtils.find(this.ipAddress, info.getClientIpAddress());
+                    match = matchesCompletely(this.ipAddress, info.getClientIpAddress());
                 }
                 if (match && StringUtils.isNoneBlank(this.userAgent)) {
                     LOGGER.debug("Evaluating user agent [{}] against pattern [{}]",
                         info.getUserAgent(), this.userAgent);
-                    match = RegexUtils.find(this.userAgent, info.getUserAgent());
+                    match = matchesCompletely(this.userAgent, info.getUserAgent());
                 }
                 if (match && !headers.isEmpty()) {
                     LOGGER.debug("Evaluating request headers [{}] against pattern [{}]",
                         info.getHeaders(), this.headers);
                     match = headers.entrySet()
                         .stream()
-                        .filter(header -> info.getHeaders().containsKey(header.getKey()))
-                        .allMatch(header -> {
-                            val headerValue = info.getHeaders().get(header.getKey());
-                            return RegexUtils.find(header.getValue(), headerValue.toString());
-                        });
+                        .allMatch(header -> info.getHeaders().entrySet()
+                            .stream()
+                            .filter(entry -> entry.getKey().equalsIgnoreCase(header.getKey()))
+                            .anyMatch(entry -> entry.getValue() != null
+                                && matchesCompletely(header.getValue(), entry.getValue().toString())));
                 }
                 return match;
             });
+    }
+
+    private static boolean matchesCompletely(final String pattern, @Nullable final String value) {
+        return StringUtils.isNotBlank(value) && RegexUtils.matches(RegexUtils.createPattern(pattern), value);
     }
 }

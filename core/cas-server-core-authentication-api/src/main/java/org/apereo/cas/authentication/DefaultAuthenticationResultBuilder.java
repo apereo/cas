@@ -38,7 +38,8 @@ public class DefaultAuthenticationResultBuilder implements AuthenticationResultB
      */
     private static @Nullable Principal getPrimaryPrincipal(final PrincipalElectionStrategy principalElectionStrategy,
                                                  final Set<Authentication> authentications,
-                                                 final Map<String, List<Object>> principalAttributes) throws Throwable {
+                                                 final Map<String, List<Object>> principalAttributes)
+            throws Throwable {
         return principalElectionStrategy.nominate(new LinkedHashSet<>(authentications), principalAttributes);
     }
 

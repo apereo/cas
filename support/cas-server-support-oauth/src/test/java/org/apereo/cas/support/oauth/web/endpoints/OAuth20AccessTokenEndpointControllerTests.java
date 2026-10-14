@@ -24,7 +24,11 @@ import org.apereo.cas.util.crypto.CertUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.http.HttpUtils;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
+import com.nimbusds.jose.JWSAlgorithm;
+import com.nimbusds.jose.jwk.Curve;
+import com.nimbusds.jose.jwk.gen.ECKeyGenerator;
 import com.nimbusds.jose.util.X509CertUtils;
+import com.nimbusds.oauth2.sdk.dpop.DefaultDPoPProofFactory;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.hc.core5.http.HttpStatus;
@@ -640,6 +644,34 @@ class OAuth20AccessTokenEndpointControllerTests {
         @Test
         void verifyDeviceFlowGeneratesCode() throws Throwable {
             val service = addRegisteredService();
+            val result = performOAuthRequest(approveDeviceCode(service));
+            val mvApproved = getModelAndView(result);
+            assertTrue(mvApproved.getModel().containsKey(OAuth20Constants.ACCESS_TOKEN));
+            assertEquals(getDefaultAccessTokenExpiration(), mvApproved.getModel().get(OAuth20Constants.EXPIRES_IN));
+            assertTrue(mvApproved.getModel().containsKey(OAuth20Constants.TOKEN_TYPE));
+        }
+
+        @Test
+        void verifyDeviceFlowBindsTokenToDPoPKey() throws Throwable {
+            val service = addRegisteredService();
+            service.setDpopBoundAccessTokens(true);
+            servicesManager.save(service);
+            val pollRequest = approveDeviceCode(service);
+            pollRequest.setMethod(HttpMethod.POST.name());
+            val rejected = performOAuthRequest(pollRequest);
+            assertEquals(HttpStatus.SC_BAD_REQUEST, rejected.getResponse().getStatus());
+            assertEquals(OAuth20Constants.INVALID_DPOP_PROOF, getModelAndView(rejected).getModel().get(OAuth20Constants.ERROR));
+
+            val tokenUri = new URI(CAS_SCHEME + "://" + CAS_SERVER + "/cas" + CONTEXT + OAuth20Constants.ACCESS_TOKEN_URL);
+            val proof = new DefaultDPoPProofFactory(new ECKeyGenerator(Curve.P_256).generate(), JWSAlgorithm.ES256)
+                .createDPoPJWT(HttpMethod.POST.name(), tokenUri);
+            pollRequest.addHeader(OAuth20Constants.DPOP, proof.serialize());
+            val model = getModelAndView(performOAuthRequest(pollRequest)).getModel();
+            assertTrue(model.containsKey(OAuth20Constants.ACCESS_TOKEN));
+            assertEquals(OAuth20Constants.TOKEN_TYPE_DPOP, model.get(OAuth20Constants.TOKEN_TYPE));
+        }
+
+        private MockHttpServletRequest approveDeviceCode(final OAuthRegisteredService service) throws Throwable {
             val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.ACCESS_TOKEN_URL);
             val session = new MockHttpSession();
             mockRequest.setSession(session);
@@ -658,8 +690,7 @@ class OAuth20AccessTokenEndpointControllerTests {
             assertNotNull(cookie);
             mockRequest.setCookies(mockResponse.getCookies());
 
-            var result = performOAuthRequest(mockRequest);
-            var mv = getModelAndView(result);
+            val mv = getModelAndView(performOAuthRequest(mockRequest));
             val model = mv.getModel();
             assertTrue(model.containsKey(OAuth20Constants.DEVICE_CODE));
             assertTrue(model.containsKey(OAuth20Constants.DEVICE_VERIFICATION_URI));
@@ -675,8 +706,7 @@ class OAuth20AccessTokenEndpointControllerTests {
             devReq.setCookies(mockResponse.getCookies());
             devReq.addHeader(HttpHeaders.USER_AGENT, "MSIE");
             devReq.setParameter(OAuth20DeviceUserCodeApprovalEndpointController.PARAMETER_USER_CODE, userCode);
-            result = performOAuthRequest(devReq);
-            val devResponse = result.getResponse();
+            val devResponse = performOAuthRequest(devReq).getResponse();
             assertEquals(org.springframework.http.HttpStatus.FOUND.value(), devResponse.getStatus());
             assertNotNull(devResponse.getRedirectedUrl());
             assertTrue(devResponse.getRedirectedUrl().contains(OAuth20Constants.CALLBACK_AUTHORIZE_URL));
@@ -690,11 +720,7 @@ class OAuth20AccessTokenEndpointControllerTests {
             mockRequest.setParameter(OAuth20Constants.CLIENT_ID, service.getClientId());
             mockRequest.setParameter(OAuth20Constants.RESPONSE_TYPE, OAuth20ResponseTypes.DEVICE_CODE.getType());
             mockRequest.setParameter(OAuth20Constants.DEVICE_CODE, devCode);
-            result = performOAuthRequest(mockRequest);
-            val mvApproved = getModelAndView(result);
-            assertTrue(mvApproved.getModel().containsKey(OAuth20Constants.ACCESS_TOKEN));
-            assertEquals(getDefaultAccessTokenExpiration(), mvApproved.getModel().get(OAuth20Constants.EXPIRES_IN));
-            assertTrue(mvApproved.getModel().containsKey(OAuth20Constants.TOKEN_TYPE));
+            return mockRequest;
         }
 
         @ParameterizedTest
@@ -1069,7 +1095,8 @@ class OAuth20AccessTokenEndpointControllerTests {
         }
 
         private void assertUserAuth(final boolean refreshToken, final boolean withClientSecret,
-                                    final OAuthRegisteredService registeredService) throws Throwable {
+                                    final OAuthRegisteredService registeredService)
+                throws Throwable {
             val mockRequest = new MockHttpServletRequest(HttpMethod.POST.name(), CONTEXT + OAuth20Constants.ACCESS_TOKEN_URL);
             mockRequest.setParameter(OAuth20Constants.CLIENT_ID, registeredService.getClientId());
             if (withClientSecret) {
@@ -1100,7 +1127,8 @@ class OAuth20AccessTokenEndpointControllerTests {
 
         private OAuth20RefreshToken addRefreshTokenWithScope(
             final Principal principal, final List<String> scopes,
-            final OAuthRegisteredService registeredService) throws Throwable {
+            final OAuthRegisteredService registeredService)
+                throws Throwable {
             val authentication = getAuthentication(principal);
             val service = serviceFactory.createService(registeredService.getServiceId());
             val refreshToken = defaultRefreshTokenFactory.create(service, authentication,

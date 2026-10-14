@@ -55,7 +55,8 @@ public class CasLdapMonitorAutoConfiguration {
     public CompositeHealthContributor pooledLdapConnectionFactoryHealthIndicator(
         final CasConfigurationProperties casProperties,
         @Qualifier("pooledLdapConnectionFactoryHealthIndicatorListFactoryBean")
-        final ListFactoryBean factoryBean) throws Exception {
+        final ListFactoryBean factoryBean)
+            throws Exception {
         val ldaps = casProperties.getMonitor().getLdap();
         val connectionFactoryList = Objects.requireNonNull(factoryBean.getObject());
         val contributors = new LinkedHashMap<>();

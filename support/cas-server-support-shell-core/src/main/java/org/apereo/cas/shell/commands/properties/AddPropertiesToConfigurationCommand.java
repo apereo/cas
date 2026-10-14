@@ -44,7 +44,8 @@ public class AddPropertiesToConfigurationCommand implements CasShellCommand {
             description = "Group/module whose associated settings should be added to the CAS configuration file"
         )
         final String group
-    ) throws Exception {
+    )
+            throws Exception {
 
         if (StringUtils.isBlank(file)) {
             LOGGER.warn("Configuration file must be specified");
@@ -78,7 +79,8 @@ public class AddPropertiesToConfigurationCommand implements CasShellCommand {
 
     private static void writeYamlConfigurationPropertiesToFile(final File filePath,
                                                                final Map<String, ConfigurationMetadataProperty> results,
-                                                               final Map<String, Object> yamlProps) throws Exception {
+                                                               final Map<String, Object> yamlProps)
+            throws Exception {
         val options = new DumperOptions();
         options.setDefaultFlowStyle(DumperOptions.FlowStyle.AUTO);
         options.setDefaultScalarStyle(DumperOptions.ScalarStyle.PLAIN);
@@ -92,7 +94,8 @@ public class AddPropertiesToConfigurationCommand implements CasShellCommand {
     }
 
     private static void writeConfigurationPropertiesToFile(final File filePath, final Map<String, ConfigurationMetadataProperty> results,
-                                                           final Map<String, Object> p) throws Exception {
+                                                           final Map<String, Object> p)
+            throws Exception {
         LOGGER.info("Located [{}] properties in configuration file [{}]", results.size(), filePath.getCanonicalPath());
         putResultsIntoProperties(results, p);
         val lines = p.keySet().stream().map(s -> s + '=' + p.get(s))

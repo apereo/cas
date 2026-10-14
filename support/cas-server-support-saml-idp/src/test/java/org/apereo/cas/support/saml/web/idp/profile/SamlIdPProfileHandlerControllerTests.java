@@ -7,6 +7,7 @@ import org.apereo.cas.support.saml.SamlIdPConstants;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
+import org.apereo.cas.support.saml.web.idp.profile.sso.SSOSamlIdPPostProfileHandlerController;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import lombok.val;
@@ -14,8 +15,11 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.opensaml.saml.common.SAMLException;
 import org.opensaml.saml.saml2.core.AuthnRequest;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MvcResult;
 import static org.junit.jupiter.api.Assertions.*;
@@ -30,6 +34,23 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @Tag("SAML2Web")
 @TestPropertySource(properties = "cas.authn.saml-idp.metadata.file-system.location=file:src/test/resources/metadata")
 class SamlIdPProfileHandlerControllerTests extends BaseSamlIdPConfigurationTests {
+    @Autowired
+    @Qualifier("ssoPostProfileHandlerController")
+    private SSOSamlIdPPostProfileHandlerController ssoPostProfileHandlerController;
+
+    @Test
+    void verifyServiceProviderResolvedOncePerRequest() {
+        val service = getSamlRegisteredServiceForTestShib();
+        servicesManager.save(service);
+        val authnRequest = getAuthnRequestFor(service);
+
+        val request = new MockHttpServletRequest();
+        val resolved = ssoPostProfileHandlerController.getRegisteredServiceAndFacade(authnRequest, request);
+        assertSame(resolved.getValue(), ssoPostProfileHandlerController.getRegisteredServiceAndFacade(authnRequest, request).getValue());
+        assertNotSame(resolved.getValue(),
+            ssoPostProfileHandlerController.getRegisteredServiceAndFacade(authnRequest, new MockHttpServletRequest()).getValue());
+    }
+
     @Test
     void verifyNoMetadataForRequest() throws Exception {
         val service = new SamlRegisteredService();

@@ -19,6 +19,12 @@ import org.springframework.core.Ordered;
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 public interface RegisteredService extends RegisteredServiceDefinition, Comparable<RegisteredService> {
     /**
+     * Exclusive upper bound of identifiers assigned to new services, 2^53,
+     * the largest range of integers a double-precision value represents exactly.
+     */
+    long MAXIMUM_GENERATED_IDENTIFIER = 1L << 53;
+
+    /**
      * Get the expiration policy rules for this service.
      *
      * @return the proxy policy
@@ -216,14 +222,16 @@ public interface RegisteredService extends RegisteredServiceDefinition, Comparab
     }
 
     /**
-     * Assign id if undefined.
+     * Assign id if undefined. The id is a random positive value, so that definitions created
+     * concurrently or on different nodes do not collide. It stays below 2^53 so that it survives
+     * JSON parsers and clients that read numbers as double-precision values, such as Hjson.
      *
      * @return the registered service
      */
     @CanIgnoreReturnValue
     default RegisteredService assignIdIfNecessary() {
         if (getId() == RegisteredServiceDefinition.INITIAL_IDENTIFIER_VALUE) {
-            setId(System.nanoTime());
+            setId(ThreadLocalRandom.current().nextLong(1, MAXIMUM_GENERATED_IDENTIFIER));
         }
         return this;
     }

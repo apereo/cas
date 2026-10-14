@@ -23,7 +23,8 @@ public class DefaultSecurityTokenTicketFactory implements SecurityTokenTicketFac
 
     @Override
     public SecurityTokenTicket create(final TicketGrantingTicket ticket,
-                                      final byte[] securityTokenSerialized) throws Throwable {
+                                      final byte[] securityTokenSerialized)
+            throws Throwable {
         val token = EncodingUtils.encodeBase64(securityTokenSerialized);
         val id = ticketIdGenerator.getNewTicketId(SecurityTokenTicket.PREFIX);
         val stt = new DefaultSecurityTokenTicket(id, ticket, this.expirationPolicyBuilder.buildTicketExpirationPolicy(), token);

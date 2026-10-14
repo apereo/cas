@@ -48,5 +48,6 @@ public interface TenantConsentRepositoryBuilder {
      */
     List<ConsentRepository> buildInternal(
         TenantDefinition tenantDefinition,
-        ConfigurationPropertiesBindingContext<CasConfigurationProperties> bindingContext) throws Exception;
+        ConfigurationPropertiesBindingContext<CasConfigurationProperties> bindingContext)
+            throws Exception;
 }

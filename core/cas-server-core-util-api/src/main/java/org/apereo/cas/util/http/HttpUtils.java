@@ -219,7 +219,8 @@ public class HttpUtils {
      * @return http execution request
      */
     private static CloseableHttpClient getHttpClient(final HttpExecutionRequest execution,
-                                                     final boolean shared) throws Exception {
+                                                     final boolean shared)
+            throws Exception {
         val builder = getHttpClientBuilder(execution, shared);
         if (StringUtils.isNotBlank(execution.getProxyUrl())) {
             val proxyEndpoint = new URI(execution.getProxyUrl()).toURL();

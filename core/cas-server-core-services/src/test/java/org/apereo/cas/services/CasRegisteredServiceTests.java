@@ -116,6 +116,16 @@ class CasRegisteredServiceTests {
     }
 
     @Test
+    void verifyAssignedIdentifierIsExactAsDouble() {
+        for (var i = 0; i < 1000; i++) {
+            val service = new CasRegisteredService().assignIdIfNecessary();
+            assertTrue(service.getId() > 0);
+            assertTrue(service.getId() < RegisteredService.MAXIMUM_GENERATED_IDENTIFIER);
+            assertEquals(service.getId(), (long) (double) service.getId());
+        }
+    }
+
+    @Test
     void verifyDefaultMatchingStrategy() {
         val service = new CasRegisteredService();
         service.setMatchingStrategy(null);

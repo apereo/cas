@@ -75,7 +75,8 @@ public class DefaultMultifactorAuthenticationProviderWebflowEventResolver extend
         final Authentication authentication,
         final HttpServletRequest request,
         final HttpServletResponse response,
-        @Nullable final Service service) throws Throwable {
+        @Nullable final Service service)
+            throws Throwable {
         if (registeredService != null && registeredService.getMultifactorAuthenticationPolicy().isBypassEnabled()) {
             return Optional.empty();
         }

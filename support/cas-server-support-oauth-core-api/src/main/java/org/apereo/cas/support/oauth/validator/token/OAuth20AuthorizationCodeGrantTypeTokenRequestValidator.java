@@ -8,14 +8,10 @@ import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
-import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.ticket.code.OAuth20Code;
-import org.apereo.cas.util.function.FunctionUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.ObjectUtils;
-import org.apache.commons.lang3.Strings;
-import org.jooq.lambda.Unchecked;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.core.profile.UserProfile;
@@ -40,7 +36,8 @@ public class OAuth20AuthorizationCodeGrantTypeTokenRequestValidator extends Base
 
     @Override
     protected boolean validateInternal(final WebContext context, final String grantType,
-                                       final ProfileManager manager, final UserProfile uProfile) throws Throwable {
+                                       final ProfileManager manager, final UserProfile uProfile)
+            throws Throwable {
         val configurationContext = getConfigurationContext().getObject();
         val redirectUri = configurationContext.getRequestParameterResolver()
             .resolveRequestParameter(context, OAuth20Constants.REDIRECT_URI);
@@ -58,23 +55,9 @@ public class OAuth20AuthorizationCodeGrantTypeTokenRequestValidator extends Base
         val valid = redirectUri.isPresent() && code.isPresent() && OAuth20Utils.checkCallbackValid(registeredService, redirectUri.get());
 
         if (valid) {
-            val oauthCode = FunctionUtils.doAndHandle(() -> {
-                val state = configurationContext.getTicketRegistry().getTicket(code.get(), OAuth20Code.class);
-                return state == null || state.isExpired() ? null : state;
-            });
+            val oauthCode = OAuth20Utils.getRequestedOAuthToken(context, configurationContext.getTicketRegistry(), code.get(), OAuth20Code.class);
             if (oauthCode == null || oauthCode.isExpired()) {
-                val removeTokens = configurationContext.getCasProperties().getAuthn().getOauth().getCode().isRemoveRelatedAccessTokens();
-                if (removeTokens) {
-                    LOGGER.debug("Code [{}] is invalid or expired. Attempting to revoke access tokens issued to the code", code.get());
-                    try (val accessTokensByCode = configurationContext.getTicketRegistry().getTickets(ticket ->
-                        ticket instanceof final OAuth20AccessToken accessToken
-                        && Strings.CI.equals(accessToken.getToken(), code.get()))) {
-                        accessTokensByCode.forEach(Unchecked.consumer(ticket -> {
-                            LOGGER.debug("Removing access token [{}] issued via expired/unknown code [{}]", ticket.getId(), code.get());
-                            configurationContext.getTicketRegistry().deleteTicket(ticket);
-                        }));
-                    }
-                }
+                OAuth20Utils.revokeTokensIssuedFromCode(configurationContext.getTicketRegistry(), code.get());
                 LOGGER.warn("Provided OAuth code [{}] is not found or has expired", code.get());
                 return false;
             }
@@ -108,6 +91,7 @@ public class OAuth20AuthorizationCodeGrantTypeTokenRequestValidator extends Base
                 LOGGER.warn("Requested grant type [{}] is not authorized by service definition [{}]", grantType, registeredService.getServiceId());
                 return false;
             }
+            verifyBoundProofOfPossessionKey(oauthCode, OAuth20Constants.DPOP_JKT, manager);
             return true;
         }
         LOGGER.warn("Access token request cannot be validated for grant type [{}] and client id [{}] given the redirect URI [{}]", grantType, clientId, redirectUri);

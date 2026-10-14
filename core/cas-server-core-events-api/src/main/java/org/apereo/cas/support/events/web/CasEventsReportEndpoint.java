@@ -80,7 +80,8 @@ public class CasEventsReportEndpoint extends BaseCasRestActuatorEndpoint {
     public ResponseBodyEmitter events(
         final HttpServletResponse response,
         @RequestParam(required = false, defaultValue = "1000")
-        final int limit) throws Exception {
+        final int limit)
+            throws Exception {
         val emitter = new ResponseBodyEmitter();
 
         executor.submit(() ->

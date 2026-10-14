@@ -22,7 +22,8 @@ public class OidcDefaultVerifiableCredentialIssuerService implements OidcVerifia
 
     @Override
     public List<VerifiableCredentialProofResult> validateProofs(final OidcVerifiableCredentialValidationContext context,
-                                                                final Set<String> consumedNonces) throws Throwable {
+                                                                final Set<String> consumedNonces)
+            throws Throwable {
         val configuration = context.resolveConfigurationId();
         val attestationProof = context.resolveAttestationProof();
         if (attestationProof != null) {
@@ -37,7 +38,8 @@ public class OidcDefaultVerifiableCredentialIssuerService implements OidcVerifia
 
     @Override
     public List<OidcVerifiableCredentialIssuerResponse> encode(final OidcVerifiableCredentialValidationContext context,
-                                                               final List<VerifiableCredentialProofResult> proofs) throws Throwable {
+                                                               final List<VerifiableCredentialProofResult> proofs)
+            throws Throwable {
         val encoder = credentialEncoderFactory.findByConfiguration(context.resolveConfigurationId());
         val responses = new ArrayList<OidcVerifiableCredentialIssuerResponse>();
         for (val proof : proofs) {

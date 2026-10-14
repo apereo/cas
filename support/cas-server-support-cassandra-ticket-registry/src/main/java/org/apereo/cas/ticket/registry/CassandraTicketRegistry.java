@@ -128,12 +128,17 @@ public class CassandraTicketRegistry extends AbstractTicketRegistry implements D
 
     @Override
     public long deleteSingleTicket(final Ticket ticketToDelete) {
-        val ticketId = digestIdentifier(ticketToDelete.getId());
-        LOGGER.debug("Deleting ticket [{}]", ticketId);
-        val definition = ticketCatalog.find(ticketToDelete);
+        return deleteSingleTicket(ticketToDelete.getId());
+    }
+
+    @Override
+    public long deleteSingleTicket(final String ticketId) {
+        val digestedId = digestIdentifier(ticketId);
+        LOGGER.debug("Deleting ticket [{}]", digestedId);
+        val definition = ticketCatalog.find(ticketId);
         val delete = QueryBuilder
             .deleteFrom(properties.getKeyspace(), definition.getProperties().getStorageName())
-            .whereColumn("id").isEqualTo(QueryBuilder.literal(ticketId))
+            .whereColumn("id").isEqualTo(QueryBuilder.literal(digestedId))
             .build()
             .setConsistencyLevel(DefaultConsistencyLevel.valueOf(properties.getConsistencyLevel()))
             .setSerialConsistencyLevel(DefaultConsistencyLevel.valueOf(properties.getSerialConsistencyLevel()))

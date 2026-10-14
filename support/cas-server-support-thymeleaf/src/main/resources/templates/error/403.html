@@ -12,9 +12,9 @@
 
 <body>
 <main class="container mt-3 mb-3">
-    <div layout:fragment="content" class="mdc-card card p-4 w-lg-66 m-auto">
+    <div layout:fragment="content" class="mdc-card card p-4 w-lg-66 m-auto cas-hero">
+        <span class="cas-hero-icon is-danger" aria-hidden="true"><i class="mdi mdi-cancel"></i></span>
         <h2>
-            <i class="mdi mdi-close-box" aria-hidden="true"></i>
             <span th:utext="#{screen.error.page.authdenied}">Authorization Denied</span>
         </h2>
 

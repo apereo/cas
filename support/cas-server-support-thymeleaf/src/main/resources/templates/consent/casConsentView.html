@@ -28,10 +28,13 @@
 
 <body>
 <main class="container mt-3 mb-3">
-    <div id="content" layout:fragment="content">
-        <h2 th:text="#{screen.consent.title}" class="text-center mb-2">Attribute Consent</h2>
+    <div id="content" layout:fragment="content" class="mdc-card card p-4 m-auto cas-hero cas-hero-start cas-hero-wide cas-attribute-consent">
+        <div class="cas-hero-head">
+            <span class="cas-hero-icon" aria-hidden="true"><i class="mdi mdi-account-arrow-right-outline"></i></span>
+            <h2 th:text="#{screen.consent.title}">Attribute Consent</h2>
+        </div>
 
-        <div id="consent-tabs" class="mdc-tab-bar" role="tablist">
+        <div id="consent-tabs" class="mdc-tab-bar cas-segmented" role="tablist">
             <div class="mdc-tab-scroller">
                 <div class="mdc-tab-scroller__scroll-area">
                     <div class="mdc-tab-scroller__scroll-content">
@@ -62,7 +65,7 @@
         <form method="post"
               id="fm1"
               th:action="@{${(tenantPath ?: '') + '/login'}}"
-              class="mdc-card card p-4 m-auto d-block mb-4">
+              class="d-block">
             
             <section id="consent-tab-0" class="consent-tab">
                 <div class="" id="attributesPanel" role="tabpanel" aria-labelledby="attributsButton">
@@ -99,11 +102,11 @@
 
             <section id="consent-tab-1" class="d-none consent-tab" role="tabpanel" aria-labelledby="optionsButton">
                 <div class="mb-4">
-                    <h3 class="bg-primary p-2 mdc-typography mdc-typography--headline6 mb-2"
+                    <h3 class="cas-section-title"
                         th:text="#{screen.consent.options.header}">
                         How should I be prompted for consent again?
                     </h3>
-                    <div class="mdc-check-help">
+                    <div class="mdc-check-help cas-option">
                         <div class="mdc-form-field">
                             <div class="mdc-radio form-check">
                                 <input class="mdc-radio__native-control form-check-input"
@@ -126,7 +129,7 @@
                             This will be displayed on your public profile
                         </div>
                     </div>
-                    <div class="mdc-check-help">
+                    <div class="mdc-check-help cas-option">
                         <div class="mdc-form-field">
                             <div class="mdc-radio form-check">
                                 <input class="mdc-radio__native-control form-check-input"
@@ -149,7 +152,7 @@
                             This will be displayed on your public profile
                         </div>
                     </div>
-                    <div class="mdc-check-help">
+                    <div class="mdc-check-help cas-option">
                         <div class="mdc-form-field">
                             <div class="mdc-radio form-check">
                                 <input class="mdc-radio__native-control form-check-input"
@@ -175,18 +178,18 @@
                                 #{screen.consent.options.desc.attributevalue.second(${service.id})} +
                                 '</li><li>' +
                                 #{screen.consent.options.desc.attributevalue.third(${service.id})} +
-                                '</li><ul>'">
+                                '</li></ul>'">
                             This will be displayed on your public profile
                         </div>
                     </div>
 
                 </div>
                 <div id="reminderPanel">
-                    <h3 id="reminderTitle" class="bg-primary p-2 mdc-typography mdc-typography--headline6 mb-2"
+                    <h3 id="reminderTitle" class="cas-section-title"
                         th:text="#{screen.consent.options.reminder.header}">
                         How often should I be reminded to consent again?
                     </h3>
-                    <p class="mdc-typography mdc-typography--body2 mb-4" th:text="#{screen.consent.options.reminder.expl(${service.id})}">
+                    <p class="cas-option-hint" th:text="#{screen.consent.options.reminder.expl(${service.id})}">
                         Show the consent screen, as a reminder, in the event that there is no change to the collection of attributes released to {0}.
                     </p>
                     <div class="d-flex mt-2">
@@ -239,19 +242,18 @@
                             </option>
                         </select>
                     </div>
-            </section>
+                </div>
             </section>
             <section class="cas-section">
                 <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
                 <input type="hidden" name="_eventId" value="confirm"/>
             </section>
-            <hr class="my-4"/>
-            <section class="cas-section form-actions mt-4 d-flex justify-content-center">
-                <div th:replace="~{fragments/submitbutton :: submitButton (messageKey='screen.consent.confirm', id='confirm', name='confirm')}"/>
+            <section class="cas-section cas-consent-actions">
                 <a class="mdc-button mdc-button--raised btn btn-outline-secondary button-cancel"
                    id="cancel" name="cancel" th:href="@{${(tenantPath ?: '') + '/login'}}">
                     <span class="mdc-button__label" th:text="#{screen.consent.cancel}">Cancel</span>
                 </a>
+                <div th:replace="~{fragments/submitbutton :: submitButton (messageKey='screen.consent.confirm', id='confirm', name='confirm')}"/>
             </section>
         </form>
     </div>

@@ -56,7 +56,8 @@ class DependenciesEndpointTests extends AbstractCasEndpointTests {
     private static Path createDependencyJar(final Path directory,
                                             final String groupId,
                                             final String artifactId,
-                                            final String version) throws IOException {
+                                            final String version)
+            throws IOException {
         val jar = directory.resolve(artifactId + '-' + version + ".jar");
         try (val output = new JarOutputStream(Files.newOutputStream(jar))) {
             val entry = new JarEntry("META-INF/maven/%s/%s/pom.properties".formatted(groupId, artifactId));
@@ -73,7 +74,8 @@ class DependenciesEndpointTests extends AbstractCasEndpointTests {
     }
 
     private static void withRuntimeClasspath(final String classpath,
-                                             final CheckedRunnable runnable) throws Throwable {
+                                             final CheckedRunnable runnable)
+            throws Throwable {
         val originalClasspath = System.getProperty(JAVA_CLASS_PATH);
         val originalClassLoader = Thread.currentThread().getContextClassLoader();
         try {

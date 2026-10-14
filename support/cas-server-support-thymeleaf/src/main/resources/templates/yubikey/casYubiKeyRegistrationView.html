@@ -11,7 +11,8 @@
 
 <body>
 <main class="container mt-3 mb-3">
-    <div layout:fragment="content" id="login" class="mdc-card mdc-card-content w-lg-50 p-4 m-auto">
+    <div layout:fragment="content" id="login" class="mdc-card mdc-card-content w-lg-50 p-4 m-auto cas-hero cas-hero-start">
+        <span class="cas-hero-icon" aria-hidden="true"><i class="mdi mdi-usb-flash-drive-outline"></i></span>
         <form method="post" id="yubiKeyForm">
             <div class="banner banner-danger my-2" th:if="${flowRequestContext.messageContext.hasErrorMessages()}">
                 <p th:each="message : ${flowRequestContext.messageContext.allMessages}"

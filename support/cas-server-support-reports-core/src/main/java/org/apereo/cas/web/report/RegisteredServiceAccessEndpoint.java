@@ -122,7 +122,8 @@ public class RegisteredServiceAccessEndpoint extends BaseCasRestActuatorEndpoint
     }
 
     private Authentication buildAuthentication(final String username, final String password,
-                                               final Service selectedService) throws Throwable {
+                                               final Service selectedService)
+            throws Throwable {
         if (StringUtils.isNotBlank(password)) {
             val credential = new UsernamePasswordCredential(username, password);
             val result = authenticationSystemSupport.getObject().finalizeAuthenticationTransaction(selectedService, credential);

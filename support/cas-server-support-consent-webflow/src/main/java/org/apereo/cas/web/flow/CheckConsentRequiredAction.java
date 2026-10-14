@@ -81,7 +81,8 @@ public class CheckConsentRequiredAction extends AbstractConsentAction {
     protected ConsentQueryResult isConsentRequired(final Service service,
                                                    final RegisteredService registeredService,
                                                    final Authentication authentication,
-                                                   final RequestContext requestContext) throws Throwable {
+                                                   final RequestContext requestContext)
+            throws Throwable {
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
         return consentActivationStrategy.isConsentRequired(service, registeredService, authentication, request);
     }

@@ -67,9 +67,9 @@
                             aria-label="Notifications"
                             data-bs-toggle="modal"
                             data-bs-target="#cas-notification-dialog">
-                        <span class="mdi mdi-bell-alert fa fa-bell" aria-hidden="true"></span>
+                        <span class="mdi mdi-bell-outline fa fa-bell" aria-hidden="true"></span>
                         <span class="visually-hidden">notifications</span>
-                        <i id="notifications-count" class="notifications-count count">2</i>
+                        <span id="notifications-count" class="notifications-count count" aria-hidden="true"></span>
                     </button>
 
                     <a id="cas-user-account"
@@ -89,55 +89,73 @@
 
     <div th:replace="~{fragments/logindrawer :: logindrawer}"/>
 
-    <script>let countMessages = 0;</script>
     <div
             th:if="${#cas.isTrue(#cas.theme('cas.notifications-menu.enabled'))}"
-            class="mdc-dialog cas-notification-dialog modal"
-            id="cas-notification-dialog" role="alertdialog"
-            aria-modal="true" aria-label="Notifications"
+            class="mdc-dialog cas-notification-dialog modal fade"
+            id="cas-notification-dialog" role="alertdialog" tabindex="-1"
+            aria-modal="true" aria-labelledby="cas-notification-dialog-title"
             aria-describedby="notif-dialog-content">
-        <div class="mdc-dialog__container modal-dialog">
-            <div class="mdc-dialog__surface modal-content">
-                <div class="mdc-dialog__content modal-body" id="notif-dialog-content">
-                    <div class="cas-notification-message mdc-typography--body1" th:if="${staticAuthentication}">
-                        <script>countMessages++;</script>
-                        <h3 class="mdc-typography--headline6 mdi mdi-alert-circle fas fa-exclamation-circle"
-                            th:utext="#{screen.defaultauthn.title}"/>
-                        <p class="text text-wrap small text-justify" th:utext="#{screen.defaultauthn.heading}">
-                            <i class="mdi mdi-google fas fa-google" aria-hidden="true"></i>
-                            Static AuthN is ONLY useful for demo purposes. It is recommended that you connect CAS to
-                            LDAP,
-                            JDBC, etc
-                            instead.
+        <div class="mdc-dialog__container modal-dialog modal-dialog-centered">
+            <div class="mdc-dialog__surface modal-content cas-ui">
+                <div class="cas-notification-head modal-header">
+                    <span class="cas-notification-head-icon mdi mdi-bell-ring-outline fa fa-bell" aria-hidden="true"></span>
+                    <div class="cas-notification-heading">
+                        <h2 id="cas-notification-dialog-title" class="mdc-dialog__title modal-title"
+                            th:utext="#{screen.notifications.title}">Notifications</h2>
+                        <p class="cas-notification-summary" th:utext="#{screen.notifications.summary}">
+                            Worth knowing about this CAS server before you continue.
                         </p>
                     </div>
-                    <div class="cas-notification-message mdc-typography--body1"
-                         th:unless="${httpRequestSecure}">
-                        <h3 class="mdc-typography--headline6 mdi mdi-alert-circle fas fa-exclamation-circle"
-                            th:utext="#{screen.nonsecure.title}"/>
-                        <script>countMessages++;</script>
-                        <p class="text-wrap small text-justify" th:utext="#{screen.nonsecure.message}">
-                            Unsure Connection
-                        </p>
-                    </div>
-
-                    <div id="cookiesSupportedDiv" class="cas-notification-message mdc-typography--body1" style="display: none">
-                        <h3 class="mdc-typography--headline6 mdi mdi-alert-circle fas fa-exclamation-circle"
-                            th:utext="#{screen.cookies.disabled.title}"></h3>
-                        <p class="text-wrap small text-justify" th:utext="#{screen.cookies.disabled.message}">
-                            Cookies are not supported by this browser.
-                        </p>
-                    </div>
-
+                    <button type="button" class="mdc-icon-button cas-notification-close btn-close"
+                            data-mdc-dialog-action="close"
+                            data-bs-dismiss="modal"
+                            th:attr="aria-label=#{screen.pm.button.close}"
+                            aria-label="Close">
+                        <span class="mdi mdi-close" aria-hidden="true"></span>
+                    </button>
                 </div>
-                <footer class="mdc-dialog__actions modal-footer">
-                    <button type="button" class="mdc-button mdc-button--raised mdc-dialog__button btn btn-primary drop-button"
+                <div class="mdc-dialog__content modal-body" id="notif-dialog-content">
+                    <ul class="cas-notification-list">
+                        <li class="cas-notification-message is-warning" th:if="${staticAuthentication}">
+                            <span class="cas-notification-icon mdi mdi-account-alert-outline fas fa-user-shield"
+                                  aria-hidden="true"></span>
+                            <div class="cas-notification-body">
+                                <h3 th:utext="#{screen.defaultauthn.title}">Static Authentication</h3>
+                                <p th:utext="#{screen.defaultauthn.heading}">
+                                    Static AuthN is ONLY useful for demo purposes. It is recommended that you connect
+                                    CAS to LDAP, JDBC, etc instead.
+                                </p>
+                            </div>
+                        </li>
+                        <li class="cas-notification-message is-danger" th:unless="${httpRequestSecure}">
+                            <span class="cas-notification-icon mdi mdi-lock-open-alert-outline fas fa-unlock"
+                                  aria-hidden="true"></span>
+                            <div class="cas-notification-body">
+                                <h3 th:utext="#{screen.nonsecure.title}">Non-secure Connection</h3>
+                                <p th:utext="#{screen.nonsecure.message}">Insecure Connection</p>
+                            </div>
+                        </li>
+                        <li id="cookiesSupportedDiv" class="cas-notification-message is-warning" hidden>
+                            <span class="cas-notification-icon mdi mdi-cookie-alert-outline fas fa-cookie-bite"
+                                  aria-hidden="true"></span>
+                            <div class="cas-notification-body">
+                                <h3 th:utext="#{screen.cookies.disabled.title}">Cookies Disabled</h3>
+                                <p th:utext="#{screen.cookies.disabled.message}">
+                                    Cookies are not supported by this browser.
+                                </p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                <div class="mdc-dialog__actions modal-footer">
+                    <button type="button" class="mdc-button mdc-button--raised mdc-dialog__button btn btn-primary"
                             data-mdc-dialog-action="accept"
                             data-mdc-dialog-button-default
+                            data-mdc-dialog-initial-focus
                             data-bs-dismiss="modal">
-                        <span class="mdc-button__label">OK</span>
+                        <span class="mdc-button__label" th:utext="#{screen.notifications.dismiss}">Got it</span>
                     </button>
-                </footer>
+                </div>
             </div>
         </div>
         <div class="mdc-dialog__scrim"></div>
@@ -156,16 +174,20 @@
             }
         }
         document.addEventListener('DOMContentLoaded', () => {
-            if (!supportsCookies()) {
-                countMessages++;
-                window.jQuery('#cookiesSupportedDiv').show();
+            const cookiesMessage = document.getElementById('cookiesSupportedDiv');
+            if (cookiesMessage !== null && !supportsCookies()) {
+                cookiesMessage.hidden = false;
             }
 
-            if (countMessages === 0) {
-                window.jQuery('#notifications-count').remove();
-                window.jQuery('#cas-notifications-menu').remove();
-            } else {
-                window.jQuery('#notifications-count').text(`(${countMessages})`)
+            const menu = document.getElementById('cas-notifications-menu');
+            const count = document.querySelectorAll('#cas-notification-dialog .cas-notification-message:not([hidden])').length;
+            if (menu !== null) {
+                if (count === 0) {
+                    menu.remove();
+                } else {
+                    document.getElementById('notifications-count').textContent = `${count}`;
+                    menu.setAttribute('aria-label', `${menu.getAttribute('aria-label')} (${count})`);
+                }
             }
         });
     </script>

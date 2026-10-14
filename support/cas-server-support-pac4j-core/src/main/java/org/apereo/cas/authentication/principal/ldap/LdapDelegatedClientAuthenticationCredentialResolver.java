@@ -53,7 +53,8 @@ public class LdapDelegatedClientAuthenticationCredentialResolver extends BaseDel
     }
 
     protected List<DelegatedAuthenticationCandidateProfile> queryLdap(final Pac4jDelegatedAuthenticationLdapProfileSelectionProperties ldap,
-                                                                      final UserProfile profile) throws Exception {
+                                                                      final UserProfile profile)
+            throws Exception {
 
         LOGGER.debug("Configured LDAP delegated authentication profile selection via [{}]", ldap.getLdapUrl());
         val factory = connectionFactories.get(ldap.toStableIdentifier());

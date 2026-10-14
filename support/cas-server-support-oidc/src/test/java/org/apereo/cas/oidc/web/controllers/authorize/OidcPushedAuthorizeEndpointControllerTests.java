@@ -4,8 +4,10 @@ import module java.base;
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.authn.OidcClientAttestationAuthenticator;
+import org.apereo.cas.oidc.ticket.OidcPushedAuthorizationRequest;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
+import org.apereo.cas.util.CollectionUtils;
 import com.jayway.jsonpath.JsonPath;
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.jwk.Curve;
@@ -170,8 +172,67 @@ class OidcPushedAuthorizeEndpointControllerTests extends AbstractOidcTests {
             .andExpect(status().isNotFound());
     }
 
+    @Test
+    void verifyPostBindsAuthorizationCodeToDPoPKey() throws Throwable {
+        val id = UUID.randomUUID().toString();
+        val service = getOidcRegisteredService(id);
+        service.setBypassApprovalPrompt(true);
+        servicesManager.save(service);
+        val secret = service.getClientSecrets().getFirst().getValue();
+        val key = new ECKeyGenerator(Curve.P_256).generate();
+        val thumbprint = key.computeThumbprint().toString();
+
+        assertNull(findBoundKey(performKeyBoundPushedAuthorizationRequest(id, secret, null)
+            .andExpect(status().isCreated())));
+        assertEquals(thumbprint, findBoundKey(performKeyBoundPushedAuthorizationRequest(id, secret, thumbprint)
+            .andExpect(status().isCreated())));
+        assertEquals(thumbprint, findBoundKey(performKeyBoundPushedAuthorizationRequest(id, secret, null, buildDPoPProof(key))
+            .andExpect(status().isCreated())));
+        assertEquals(thumbprint, findBoundKey(performKeyBoundPushedAuthorizationRequest(id, secret, thumbprint, buildDPoPProof(key))
+            .andExpect(status().isCreated())));
+
+        val otherThumbprint = new ECKeyGenerator(Curve.P_256).generate().computeThumbprint().toString();
+        val proofForAnotherEndpoint = new DefaultDPoPProofFactory(key, JWSAlgorithm.ES256)
+            .createDPoPJWT("POST", new URI("https://sso.example.org/cas/oidc/" + OidcConstants.TOKEN_URL)).serialize();
+        for (val actions : List.of(
+            performKeyBoundPushedAuthorizationRequest(id, secret, otherThumbprint, buildDPoPProof(key)),
+            performKeyBoundPushedAuthorizationRequest(id, secret, null, proofForAnotherEndpoint),
+            performKeyBoundPushedAuthorizationRequest(id, secret, null, buildDPoPProof(key), buildDPoPProof(key)))) {
+            actions.andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error").value(OAuth20Constants.INVALID_DPOP_PROOF));
+        }
+    }
+
+    private ResultActions performKeyBoundPushedAuthorizationRequest(final String clientId, final String clientSecret,
+                                                                    @Nullable final String thumbprint,
+                                                                    final String... dpopProofs)
+            throws Exception {
+        val request = post("/cas/oidc/" + OidcConstants.PUSHED_AUTHORIZE_URL)
+            .param(OAuth20Constants.CLIENT_ID, clientId)
+            .param(OAuth20Constants.CLIENT_SECRET, clientSecret)
+            .param(OAuth20Constants.REDIRECT_URI, "https://oauth.example.org/")
+            .param(OAuth20Constants.RESPONSE_TYPE, OAuth20ResponseTypes.CODE.name().toLowerCase(Locale.ENGLISH))
+            .with(withHttpRequestProcessor());
+        if (thumbprint != null) {
+            request.param(OAuth20Constants.DPOP_JKT, thumbprint);
+        }
+        for (val proof : dpopProofs) {
+            request.header(OAuth20Constants.DPOP, proof);
+        }
+        return mockMvc.perform(request);
+    }
+
+    private @Nullable String findBoundKey(final ResultActions actions) throws Exception {
+        val requestUri = JsonPath.read(actions.andReturn().getResponse().getContentAsString(), "$.request_uri").toString();
+        val request = ticketRegistry.getTicket(requestUri, OidcPushedAuthorizationRequest.class);
+        return CollectionUtils.firstElement(request.getAuthentication().getAttributes().get(OAuth20Constants.DPOP_JKT))
+            .map(Object::toString)
+            .orElse(null);
+    }
+
     private ResultActions performPushedAuthorizationRequest(final String clientId, final String attestation,
-                                                            final String proof) throws Exception {
+                                                            final String proof)
+            throws Exception {
         return mockMvc.perform(post("/cas/oidc/" + OidcConstants.PUSHED_AUTHORIZE_URL)
             .param(OAuth20Constants.CLIENT_ID, clientId)
             .param(OAuth20Constants.REDIRECT_URI, "https://oauth.example.org/")
@@ -182,7 +243,8 @@ class OidcPushedAuthorizeEndpointControllerTests extends AbstractOidcTests {
     }
 
     private ResultActions performPushedAuthorizationRequestWithDPoP(final String clientId, final String attestation,
-                                                                    final String dpopProof) throws Exception {
+                                                                    final String dpopProof)
+            throws Exception {
         return mockMvc.perform(post("/cas/oidc/" + OidcConstants.PUSHED_AUTHORIZE_URL)
             .param(OAuth20Constants.CLIENT_ID, clientId)
             .param(OAuth20Constants.REDIRECT_URI, "https://oauth.example.org/")
@@ -278,6 +340,25 @@ class OidcPushedAuthorizeEndpointControllerTests extends AbstractOidcTests {
                 performPushedAuthorizationRequestWithDPoP(id, attestation, buildDPoPProof(instanceKey, provided))
                     .andExpect(status().isCreated());
             }
+        }
+
+        @Test
+        void verifyPostBindsAuthorizationCodeToDPoPKeyWithNonce() throws Throwable {
+            val id = UUID.randomUUID().toString();
+            val service = getOidcRegisteredService(id);
+            service.setBypassApprovalPrompt(true);
+            servicesManager.save(service);
+            val secret = service.getClientSecrets().getFirst().getValue();
+            val key = new ECKeyGenerator(Curve.P_256).generate();
+
+            val nonce = performKeyBoundPushedAuthorizationRequest(id, secret, null, buildDPoPProof(key))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error").value(OAuth20Constants.USE_DPOP_NONCE))
+                .andReturn().getResponse().getHeader(OAuth20Constants.DPOP_NONCE);
+            assertNotNull(nonce);
+            assertEquals(key.computeThumbprint().toString(),
+                findBoundKey(performKeyBoundPushedAuthorizationRequest(id, secret, null, buildDPoPProof(key, nonce))
+                    .andExpect(status().isCreated())));
         }
     }
 }

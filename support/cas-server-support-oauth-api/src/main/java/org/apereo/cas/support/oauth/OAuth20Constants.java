@@ -449,6 +449,12 @@ public interface OAuth20Constants {
     String DPOP_NONCE = "DPoP-Nonce";
 
     /**
+     * Authorization request parameter that binds the authorization code to the SHA-256 JWK thumbprint of a DPoP key
+     * (RFC 9449, section 10).
+     */
+    String DPOP_JKT = "dpop_jkt";
+
+    /**
      * resource parameter.
      */
     String RESOURCE = "resource";

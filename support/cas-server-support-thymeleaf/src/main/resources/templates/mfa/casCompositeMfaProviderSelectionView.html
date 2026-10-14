@@ -11,7 +11,8 @@
 
 <body>
     <main class="container mt-3 mb-3">
-        <div layout:fragment="content" class="mdc-card card mdc-card-content w-lg-66 p-4 m-auto">
+        <div layout:fragment="content" class="mdc-card card mdc-card-content w-lg-66 p-4 m-auto cas-hero cas-hero-start">
+            <span class="cas-hero-icon" aria-hidden="true"><i class="mdi mdi-shield-key-outline"></i></span>
             <h2 class="card-title" th:utext="#{cas.mfa.providerselection.title}">
                 Multifactor Authentication Provider Selection</h2>
             <hr>
@@ -19,7 +20,9 @@
                 <div th:id="${provider}" th:each="provider: ${mfaSelectableProviders}" class="border-bottom py-4">
                     <form th:name="${'fm-' + provider}" th:id="${'fm-' + provider}" method="post" th:action="@{/login}">
                         <h3 class="d-flex align-items-center">
-                            <i class="mdi mdi-laptop fas fa-laptop me-2" aria-hidden="true"></i>
+                            <i class="mdi fas fa-laptop me-2" aria-hidden="true"
+                               th:with="providerIcons=${ {'mfa-gauth':'mdi-cellphone-key','mfa-webauthn':'mdi-fingerprint','mfa-simple':'mdi-message-text-lock-outline','mfa-yubikey':'mdi-usb-flash-drive-outline','mfa-duo':'mdi-cellphone-check','mfa-radius':'mdi-key-chain-variant','mfa-twilio':'mdi-cellphone-message','mfa-inwebo':'mdi-cellphone-key','mfa-swivel':'mdi-cellphone-key','mfa-authy':'mdi-cellphone-key','mfa-acceptto':'mdi-cellphone-check'} }"
+                               th:classappend="${providerIcons.get(provider) ?: 'mdi-shield-key-outline'}"></i>
                             <span th:utext="#{'cas.mfa.providerselection.' + ${provider}}">Provider name</span>
                         </h3>
                         <p th:utext="#{'cas.mfa.providerselection.' + ${provider} + '.notes'}">Provider description</p>

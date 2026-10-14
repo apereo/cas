@@ -6,7 +6,8 @@
 </head>
 
 <body id="cas">
-<div layout:fragment="content" class="mdc-card card p-4 m-auto w-lg-66">
+<div layout:fragment="content" class="mdc-card card p-4 m-auto w-lg-66 cas-hero cas-hero-start">
+    <span class="cas-hero-icon" aria-hidden="true"><i class="mdi mdi-cellphone-link"></i></span>
     <h2 th:text="#{cas.oauth.device.confirm.header}"/>
     <p class="my-2" th:text="#{cas.oauth.device.confirm.message}"/>
     <div class="banner banner-danger alert alert-danger my-2" th:if="${error}">

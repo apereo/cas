@@ -70,128 +70,280 @@ function getActiveDocumentationVersionInView(returnBlankIfNoVersion) {
 }
 
 
+const CAS_SIDEBAR_GROUPS = [
+    {label: "Start", sections: ["#planning", "#casinstallation", "#casconfigmgmt", "#casdashboard", "#developer", "#projectpolicy"]},
+    {label: "Sign-in", sections: ["#casauthentication", "#mfaauthn", "#delegationauthn", "#surrogacy", "#pswmgmt", "#acctregistration"]},
+    {label: "Protocols & Apps", sections: ["#protocols", "#service_management", "#ssoandslo", "#appintegration"]},
+    {label: "Identity Data & Access", sections: ["#casattributes", "#casauthorization", "#multitenancy"]},
+    {label: "Experience", sections: ["#user_interface", "#webflowmgmt", "#aup", "#interrupt_notifications", "#casnotifications"]},
+    {label: "Operations", sections: ["#ticketingconfig", "#highavailability", "#logs_audits", "#monitoroverview"]}
+];
+
 function loadSidebarForActiveVersion() {
     if (!document.getElementById("sidebar")) {
         return;
     }
-    let prefix = "/cas/";
-    $.get(`${prefix + getActiveDocumentationVersionInView()}/sidebar.html`, data => {
-        const menu = $(data);
-
-        if (menu.first().is("ul")) {
-
-            menu.addClass("nav flex-column").attr("id", "sidebarTopics");
-
-            const topLevel = menu.find("> li>a");
-
-            const topLevelUl = menu.find("> li>ul");
-
-            const subLevel = menu.find("> li ul");
-
-            const nestedMenu = menu.find("ul li").has("ul").children("a");
-
-            topLevel.each(function () {
-                const el = $(this);
-                sidebarTopNav(el);
-                const icon = CAS_SIDEBAR_ICONS[el.attr("href")];
-                if (icon) {
-                    el.prepend(`<i class="fa fa-${icon} cas-sidebar-icon" aria-hidden="true"></i>`);
-                }
-            });
-
-            topLevelUl.each(function () {
-                const el = $(this);
-                el.attr({
-                    "data-bs-parent": "#sidebarTopics"
-                });
-
-                if (!el.prev().hasClass("collapsed")) {
-                    el.addClass("show");
-                }
-            });
-
-            subLevel.each(function () {
-                sidebarSubNav($(this));
-            });
-
-            nestedMenu.each(function () {
-                sidebarTopNav($(this));
-            });
-
-            $("#sidebar-navigation").append(menu);
-
-            generateSidebarLinksForActiveVersion();
-
-            const uri = new URI(document.location);
-            if (uri.filename() === "index.html" || uri.filename() === "") {
-                return;
-            }
-
-            let count = 0;
-            let element = $(`#sidebarTopics a[href*='/${uri.filename()}']`);
-            let parent = element.parent();
-            while (parent !== null && parent !== undefined) {
-                let id = parent.attr("id");
-                if (id === "sidebarTopics" || count >= 10) {
-                    break;
-                }
-                if (id !== undefined) {
-                    parent.collapse("show");
-                    parent.prev("a").removeClass("collapsed").attr("aria-expanded", "true");
-                }
-                count++;
-                parent = parent.parent();
-            }
-            element.attr("aria-current", "page");
-
-            if (element.length && window.matchMedia("(min-width: 761px)").matches) {
-                const sidebar = document.getElementById("sidebar");
-                sidebar.scrollTop = Math.max(0, element[0].offsetTop - sidebar.clientHeight / 3);
-            }
+    $.get(`/cas/${getActiveDocumentationVersionInView()}/sidebar.html`, data => {
+        const menu = $(data).filter("ul").first();
+        if (!menu.length) {
+            return;
         }
+        $("#sidebar-navigation").append(menu);
+        generateSidebarLinksForActiveVersion();
+        buildSidebarTree(menu[0]);
     });
 }
 
-function sidebarTopNav(el) {
-    if (el.attr("href").search(/(?:^|)#/g) >= 0) {
-        el.attr({
-            "data-bs-toggle": "collapse",
-            "aria-expanded": "false",
-            "aria-controls": el.attr("href").substring(1),
-            role: "button",
-            title: el.text(),
-            class: "collapsed"
-        })
-            .append("<i class=\"expand\" aria-hidden=\"true\"></i>");
-        el.on("keydown", event => {
-            if (event.key === " ") {
-                event.preventDefault();
-                el[0].click();
-            }
-        });
-    }
-
-    if (pageSection && el.text() === pageSection) {
-        el.removeClass("collapsed").attr("aria-expanded", "true");
-    }
-
+function sidebarLabel(text) {
+    const label = document.createElement("span");
+    label.className = "sidebar-text";
+    label.textContent = text;
+    label.dataset.label = text;
+    return label;
 }
 
+function sidebarChevron() {
+    const chevron = document.createElement("i");
+    chevron.className = "expand";
+    chevron.setAttribute("aria-hidden", "true");
+    return chevron;
+}
 
-function sidebarSubNav(el) {
-    let prevId = $(el).prev("a").attr("href");
-
-    if (prevId.search(/^#.*$/) >= 0) {
-        prevId = prevId.substr(1);
-    } else {
-        prevId = "";
+function sidebarDecorateNode(item, depth) {
+    item.classList.add("sidebar-node");
+    item.style.setProperty("--depth", depth);
+    const link = item.querySelector(":scope > a");
+    const children = item.querySelector(":scope > ul");
+    if (!link) {
+        return;
     }
-
-    if (prevId === "") {
-        $(el).addClass("nav flex-column subnav ms-3");
-    } else {
-        $(el).addClass("nav flex-column collapse subnav ms-3").attr("id", prevId);
+    const text = link.textContent.trim();
+    if (!children) {
+        link.classList.add("sidebar-link");
+        link.replaceChildren(sidebarLabel(text));
+        return;
     }
+    const anchor = link.getAttribute("href") || "";
+    const id = `sidebar-${anchor.startsWith("#") ? anchor.substring(1) : Math.random().toString(36).slice(2)}`;
+    const first = children.querySelector(":scope > li:first-child");
+    const firstLink = first?.querySelector(":scope > a");
+    let target = anchor.startsWith("#") ? "" : anchor;
+    if (!target && first && !first.querySelector(":scope > ul") && /^overview$/i.test(firstLink?.textContent.trim() || "")) {
+        target = firstLink.getAttribute("href");
+        first.remove();
+    }
+    if (target && !children.querySelector(":scope > li")) {
+        children.remove();
+        link.setAttribute("href", target);
+        link.classList.add("sidebar-link");
+        link.replaceChildren(sidebarLabel(text));
+        return;
+    }
+    children.id = id;
+    children.hidden = true;
+    children.classList.add("sidebar-children");
+    item.classList.add("sidebar-parent");
+    const row = document.createElement("div");
+    row.className = "sidebar-row";
+    const toggle = document.createElement("button");
+    toggle.type = "button";
+    toggle.className = "sidebar-toggle";
+    toggle.setAttribute("aria-expanded", "false");
+    toggle.setAttribute("aria-controls", id);
+    const count = children.querySelectorAll("a[href]:not([href^='#'])").length;
+    const badge = document.createElement("span");
+    badge.className = "sidebar-count";
+    badge.textContent = String(count);
+    if (target) {
+        const page = document.createElement("a");
+        page.className = "sidebar-link";
+        page.href = target;
+        page.append(sidebarLabel(text));
+        toggle.setAttribute("aria-label", `${text}: show or hide ${count} pages`);
+        toggle.append(badge, sidebarChevron());
+        row.append(page, toggle);
+    } else {
+        toggle.classList.add("sidebar-label");
+        toggle.append(sidebarLabel(text), badge, sidebarChevron());
+        row.append(toggle);
+    }
+    const icon = depth === 0 ? CAS_SIDEBAR_ICONS[anchor] : undefined;
+    if (icon) {
+        row.querySelector(".sidebar-text").insertAdjacentHTML("beforebegin", `<i class="fa fa-${icon} cas-sidebar-icon" aria-hidden="true"></i>`);
+    }
+    link.replaceWith(row);
+    children.querySelectorAll(":scope > li").forEach(child => sidebarDecorateNode(child, depth + 1));
+}
+
+function setSidebarNodeOpen(item, open) {
+    const children = item.querySelector(":scope > .sidebar-children");
+    if (!children) {
+        return;
+    }
+    children.hidden = !open;
+    item.classList.toggle("is-open", open);
+    item.querySelector(":scope > .sidebar-row .sidebar-toggle").setAttribute("aria-expanded", String(open));
+}
+
+function buildSidebarTree(menu) {
+    menu.id = "sidebarTopics";
+    menu.className = "sidebar-tree";
+    const sections = [...menu.querySelectorAll(":scope > li")];
+    const byAnchor = new Map(sections.map(item => [item.querySelector(":scope > a")?.getAttribute("href"), item]));
+    sections.forEach(item => sidebarDecorateNode(item, 0));
+    const grouped = new Set();
+    CAS_SIDEBAR_GROUPS.forEach((group, index) => {
+        const members = group.sections.map(anchor => byAnchor.get(anchor)).filter(Boolean);
+        if (!members.length) {
+            return;
+        }
+        const groupItem = document.createElement("li");
+        groupItem.className = "sidebar-group";
+        const heading = document.createElement("span");
+        heading.className = "sidebar-group-label";
+        heading.id = `sidebar-group-${index}`;
+        heading.textContent = group.label;
+        const list = document.createElement("ul");
+        list.setAttribute("aria-labelledby", heading.id);
+        members.forEach(member => {
+            list.append(member);
+            grouped.add(member);
+        });
+        groupItem.append(heading, list);
+        menu.append(groupItem);
+    });
+    sections.filter(item => !grouped.has(item)).forEach(item => {
+        const groupItem = menu.querySelector(".sidebar-group:last-child ul");
+        groupItem?.append(item);
+    });
+
+    menu.addEventListener("click", event => {
+        const toggle = event.target.closest(".sidebar-toggle");
+        if (!toggle) {
+            return;
+        }
+        const item = toggle.closest(".sidebar-node");
+        const open = toggle.getAttribute("aria-expanded") !== "true";
+        if (open && !menu.classList.contains("is-filtering")) {
+            const siblings = item.parentElement.parentElement.classList.contains("sidebar-group")
+                ? menu.querySelectorAll(".sidebar-group > ul > .sidebar-node.is-open")
+                : item.parentElement.querySelectorAll(":scope > .sidebar-node.is-open");
+            siblings.forEach(sibling => setSidebarNodeOpen(sibling, false));
+        }
+        setSidebarNodeOpen(item, open);
+    });
+
+    const pages = [...menu.querySelectorAll("a.sidebar-link")].filter(link => link.pathname === window.location.pathname);
+    const current = pages.find(link => link.closest(".sidebar-group > ul > .sidebar-node")?.querySelector(".sidebar-text")?.dataset.label === pageSection) || pages[0];
+    if (current) {
+        current.setAttribute("aria-current", "page");
+        let item = current.closest(".sidebar-node");
+        if (item?.querySelector(":scope > .sidebar-row > .sidebar-link") === current) {
+            setSidebarNodeOpen(item, true);
+        }
+        for (item = item?.parentElement.closest(".sidebar-node"); item; item = item.parentElement.closest(".sidebar-node")) {
+            setSidebarNodeOpen(item, true);
+            item.classList.add("is-current-path");
+        }
+    }
+    initializeSidebarFilter(menu);
+    const sidebar = document.getElementById("sidebar");
+    if (current && window.matchMedia("(min-width: 761px)").matches) {
+        const offset = current.getBoundingClientRect().top - sidebar.getBoundingClientRect().top;
+        sidebar.scrollTop = Math.max(0, offset - sidebar.clientHeight / 2);
+    }
+}
+
+function initializeSidebarFilter(menu) {
+    const total = new Set([...menu.querySelectorAll("a.sidebar-link")].map(link => link.pathname)).size;
+    const box = document.createElement("div");
+    box.className = "sidebar-filter";
+    box.innerHTML = `<label><i class="fa fa-filter" aria-hidden="true"></i><span class="visually-hidden">Filter the documentation pages</span>
+        <input type="search" autocomplete="off" spellcheck="false" placeholder="Filter ${total} pages" aria-controls="sidebarTopics"></label>
+        <span class="sidebar-filter-status" role="status"></span>`;
+    menu.before(box);
+    new ResizeObserver(() => menu.style.setProperty("--sidebar-filter-h", `${box.offsetHeight}px`)).observe(box);
+    const input = box.querySelector("input");
+    const status = box.querySelector(".sidebar-filter-status");
+    const nodes = [...menu.querySelectorAll(".sidebar-node")];
+    let saved = null;
+    let timer;
+
+    const paint = (label, query) => {
+        const text = label.dataset.label;
+        const index = query ? text.toLowerCase().indexOf(query) : -1;
+        if (index < 0) {
+            label.textContent = text;
+            return;
+        }
+        const mark = document.createElement("mark");
+        mark.textContent = text.slice(index, index + query.length);
+        label.replaceChildren(text.slice(0, index), mark, text.slice(index + query.length));
+    };
+
+    const apply = () => {
+        const query = input.value.trim().toLowerCase();
+        if (!query) {
+            if (saved) {
+                menu.classList.remove("is-filtering");
+                nodes.forEach(item => {
+                    item.hidden = false;
+                    setSidebarNodeOpen(item, saved.has(item));
+                });
+                menu.querySelectorAll(".sidebar-group").forEach(group => group.hidden = false);
+                menu.querySelectorAll(".sidebar-text").forEach(label => paint(label, ""));
+                saved = null;
+            }
+            status.textContent = "";
+            return;
+        }
+        if (!saved) {
+            saved = new Set(nodes.filter(item => item.classList.contains("is-open")));
+        }
+        menu.classList.add("is-filtering");
+        const matches = new Set();
+        nodes.forEach(item => {
+            const label = item.querySelector(":scope > .sidebar-link .sidebar-text, :scope > .sidebar-row .sidebar-text");
+            if (label && label.dataset.label.toLowerCase().includes(query)) {
+                matches.add(item);
+            }
+        });
+        const visible = new Set();
+        matches.forEach(item => {
+            for (let node = item; node; node = node.parentElement.closest(".sidebar-node")) {
+                visible.add(node);
+            }
+        });
+        nodes.forEach(item => {
+            item.hidden = !visible.has(item);
+            const showsMatchBelow = [...visible].some(other => other !== item && item.contains(other));
+            setSidebarNodeOpen(item, visible.has(item) && showsMatchBelow);
+        });
+        menu.querySelectorAll(".sidebar-group").forEach(group => {
+            group.hidden = !group.querySelector(":scope > ul > .sidebar-node:not([hidden])");
+        });
+        menu.querySelectorAll(".sidebar-text").forEach(label => paint(label, query));
+        const pages = [...matches].filter(item => item.querySelector(":scope > .sidebar-link, :scope > .sidebar-row > .sidebar-link")).length;
+        status.textContent = matches.size ? `${pages} matching ${pages === 1 ? "page" : "pages"}` : "No matching pages";
+    };
+
+    input.addEventListener("input", () => {
+        clearTimeout(timer);
+        timer = setTimeout(apply, 120);
+    });
+    input.addEventListener("keydown", event => {
+        if (event.key === "Escape" && input.value) {
+            event.preventDefault();
+            event.stopPropagation();
+            input.value = "";
+            apply();
+        } else if (event.key === "Enter") {
+            event.preventDefault();
+            clearTimeout(timer);
+            apply();
+            menu.querySelector(".sidebar-node:not([hidden]) .sidebar-link mark")?.closest("a")?.click();
+        }
+    });
 }
 
 function generateSidebarLinksForActiveVersion() {
@@ -788,7 +940,24 @@ const CAS_HOME_TITLE_PHRASES = [
     "It Costs $0 Per Active User",
     "Zero Invoices, No XML Psychological Warfare",
     "The Chicken Soup For The Identity's Soul",
-    "Open Source That isn't From 2004"
+    "Open Source That isn't From 2004",
+    "For Those With Major Trust Issues",
+    "Authenticating Humans, Bots, and Suspicious Printers",
+    "One Login, Fewer Existential Crises",
+    "Because “admin/admin” Is Not a Security Policy",
+    "Your Session Expires Before Your Technical Debt",
+    "Making Legacy Apps Feel Young Again",
+    "Less Login Friction, More Time to Blame DNS",
+    "Proof of Identity, Not Proof of Sanity",
+    "Even Your Cron Jobs Need Boundaries",
+    "Keeping Tokens Fresher Than the Office Coffee",
+    "Making “Access Denied” Feel Less Personal",
+    "No, Your Cat Does Not Need Administrator Access",
+    "Because Incognito Mode Isn't an Access Strategy",
+    "Your Browser Remembers. We Still Check.",
+    "Yelling at the Monitor Won't Fix Your Login",
+    "Entra Your Credit Card, Yet?",
+    "Turning “Contact Sales” into “git clone”"
 ];
 
 function initializeHomeTitle() {
@@ -887,7 +1056,7 @@ function initializeHomeTitle() {
             const target = nextPhrase();
             for (let i = 1; i <= target.length; i++) {
                 accent.textContent = target.slice(0, i);
-                await wait(55 + Math.random() * 50);
+                await wait(30 + Math.random() * 40);
             }
             title.classList.remove("home-title-typing");
             await wait(4400);

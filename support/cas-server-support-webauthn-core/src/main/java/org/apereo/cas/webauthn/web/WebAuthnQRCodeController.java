@@ -75,7 +75,8 @@ public class WebAuthnQRCodeController extends BaseWebAuthnController {
         final HttpServletRequest request,
         final HttpServletResponse response,
         @PathVariable final String ticketId,
-        final CsrfToken csrfToken) throws Throwable {
+        final CsrfToken csrfToken)
+            throws Throwable {
         try {
             verifyQRCodeAuthenticationIsEnabled();
             val transientTicket = ticketRegistry.getTicket(ticketId, TransientSessionTicket.class);
@@ -109,7 +110,8 @@ public class WebAuthnQRCodeController extends BaseWebAuthnController {
     @ResponseBody
     public ResponseEntity checkQRTicketStatus(
         final HttpServletRequest request,
-        @PathVariable final String ticketId) throws Throwable {
+        @PathVariable final String ticketId)
+            throws Throwable {
         try {
             verifyQRCodeAuthenticationIsEnabled();
             val transientTicket = ticketRegistry.getTicket(ticketId, TransientSessionTicket.class);
@@ -155,7 +157,8 @@ public class WebAuthnQRCodeController extends BaseWebAuthnController {
         final HttpServletRequest request,
         @RequestParam("token") final String sessionToken,
         @RequestParam("ticket") final String ticketId,
-        @RequestParam("principal") final String principalId) throws Throwable {
+        @RequestParam("principal") final String principalId)
+            throws Throwable {
         try {
             verifyQRCodeAuthenticationIsEnabled();
             val transientTicket = ticketRegistry.getTicket(ticketId, TransientSessionTicket.class);

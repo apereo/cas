@@ -84,7 +84,8 @@ public abstract class BaseJdbcAcceptableUsagePolicyRepositoryTests extends BaseA
     protected TransactionOperations jdbcAcceptableUsagePolicyTransactionTemplate;
 
     protected String determinePrincipalId(final String actualPrincipalId,
-                                          final Map<String, List<Object>> profileAttributes) throws Exception {
+                                          final Map<String, List<Object>> profileAttributes)
+            throws Exception {
         val aupProperties = casProperties.getAcceptableUsagePolicy();
         val jdbcAupRepository = new JdbcAcceptableUsagePolicyRepository(
             aupProperties, acceptableUsagePolicyDataSource,

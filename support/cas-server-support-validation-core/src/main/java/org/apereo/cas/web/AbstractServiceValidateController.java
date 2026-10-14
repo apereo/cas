@@ -84,7 +84,8 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
 
     @Override
     public ModelAndView handleRequestInternal(final HttpServletRequest request,
-                                              final HttpServletResponse response) throws Exception {
+                                              final HttpServletResponse response)
+            throws Exception {
         val service = serviceValidateConfigurationContext.getArgumentExtractor().extractService(request);
         val serviceTicketId = Optional.ofNullable(service).map(WebApplicationService::getArtifactId).orElse(null);
         if (service == null || StringUtils.isBlank(serviceTicketId)) {
@@ -161,7 +162,8 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
 
     protected ModelAndView handleTicketValidation(final HttpServletRequest request,
                                                   final HttpServletResponse response,
-                                                  final WebApplicationService service, final String serviceTicketId) throws Throwable {
+                                                  final WebApplicationService service, final String serviceTicketId)
+            throws Throwable {
         val serviceCredential = getServiceCredentialsFromRequest(service, request);
         /*
          * Hold on to the service ticket before it is validated. Validation consumes the ticket, so a

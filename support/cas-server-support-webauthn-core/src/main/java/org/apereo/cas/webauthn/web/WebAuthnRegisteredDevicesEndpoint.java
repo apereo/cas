@@ -79,7 +79,8 @@ public class WebAuthnRegisteredDevicesEndpoint extends BaseCasRestActuatorEndpoi
             @Parameter(name = "record", required = true, description = "The device registration record")})
     public boolean write(
         @PathVariable final String username,
-        @RequestParam final String record) throws Exception {
+        @RequestParam final String record)
+            throws Exception {
         val json = EncodingUtils.decodeBase64ToString(record);
         val registration = WebAuthnUtils.getObjectMapper().readValue(json, CredentialRegistration.class);
         return registrationStorage.getObject().addRegistrationByUsername(username, registration);

@@ -75,7 +75,8 @@ public class CasSpringBootAdminAutoConfiguration {
         @ConditionalOnMissingBean(name = "springBootAdminWebClientCustomizer")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public InstanceWebClientCustomizer springBootAdminWebClientCustomizer(
-            @Qualifier(HttpClient.BEAN_NAME_HTTPCLIENT) final HttpClient httpClient) throws Exception {
+            @Qualifier(HttpClient.BEAN_NAME_HTTPCLIENT) final HttpClient httpClient)
+                throws Exception {
             val sslContext = SslContextBuilder
                 .forClient()
                 .trustManager(httpClient.httpClientFactory().getTrustManagers()[0])

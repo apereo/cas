@@ -17,6 +17,14 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Cookie")
 class CookieUtilsTests {
     @Test
+    void verifyCookieMaxAge() {
+        assertEquals(-1, CookieUtils.getCookieMaxAge("-1"));
+        assertEquals(10, CookieUtils.getCookieMaxAge("10"));
+        assertEquals(60, CookieUtils.getCookieMaxAge("PT1M"));
+        assertEquals(Integer.MAX_VALUE, CookieUtils.getCookieMaxAge("99999999999"));
+    }
+
+    @Test
     void verifyCookieHeader() {
         val results = CookieUtils.createSetCookieHeader("value",
             new CookieProperties().withName("testCookie").withMaxAge("1"));

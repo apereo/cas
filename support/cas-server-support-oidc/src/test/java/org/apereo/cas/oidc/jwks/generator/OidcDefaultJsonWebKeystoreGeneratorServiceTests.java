@@ -127,6 +127,31 @@ class OidcDefaultJsonWebKeystoreGeneratorServiceTests {
             }
         }
 
+        @Test
+        void verifyModifiedEventWhenKeystoreChanges() throws Throwable {
+            val file = new File(FileUtils.getTempDirectoryPath(), RandomUtils.randomAlphabetic(8) + ".jwks");
+            val properties = new OidcProperties();
+            properties.getJwks().getFileSystem().setJwksFile("file:" + file.getAbsolutePath());
+            properties.getJwks().getFileSystem().setWatcherEnabled(false);
+            assertTrue(new OidcDefaultJsonWebKeystoreGeneratorService(properties, mock(ConfigurableApplicationContext.class)).generate().exists());
+
+            properties.getJwks().getFileSystem().setWatcherEnabled(true);
+            val context = mock(ConfigurableApplicationContext.class);
+            when(context.isActive()).thenReturn(Boolean.TRUE);
+            val service = new OidcDefaultJsonWebKeystoreGeneratorService(properties, context);
+            try {
+                assertTrue(service.generate().exists());
+                verify(context, never()).publishEvent(any(OidcJsonWebKeystoreModifiedEvent.class));
+                val jwks = FileUtils.readFileToString(file, StandardCharsets.UTF_8);
+                FileUtils.writeStringToFile(file, jwks, StandardCharsets.UTF_8);
+                Awaitility.await().atMost(Duration.ofSeconds(15)).untilAsserted(
+                    () -> verify(context, atLeastOnce()).publishEvent(any(OidcJsonWebKeystoreModifiedEvent.class)));
+            } finally {
+                service.destroy();
+                FileUtils.deleteQuietly(file);
+            }
+        }
+
         private static File deleteSharedKeystore() {
             val keystore = new File(FileUtils.getTempDirectoryPath(), "something.jwks");
             if (keystore.exists()) {

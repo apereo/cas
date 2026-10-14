@@ -46,7 +46,8 @@ public class Cas10ResponseView extends AbstractCasView {
         final Map model, @NonNull
         final HttpServletRequest request,
         @NonNull
-        final HttpServletResponse response) throws Exception {
+        final HttpServletResponse response)
+            throws Exception {
         try (val writer = new StringWriter()) {
             if (this.successResponse) {
                 prepareViewModelWithAuthenticationPrincipal(model);

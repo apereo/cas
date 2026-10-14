@@ -513,7 +513,8 @@ public class FunctionUtils {
      * @throws Exception the exception
      */
     public static <T> T doAndRetry(final Retryable<T> callback,
-                                   final long maximumAttempts) throws Exception {
+                                   final long maximumAttempts)
+            throws Exception {
         val retryTemplate = new RetryTemplate();
         val defaultRetryPolicy = RetryPolicy.withMaxRetries(Math.max(maximumAttempts, 0));
         retryTemplate.setRetryPolicy(defaultRetryPolicy);

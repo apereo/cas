@@ -62,7 +62,8 @@ public class OAuth20HandlerInterceptorAdapter implements AsyncHandlerInterceptor
     public boolean preHandle(
         final HttpServletRequest request,
         final HttpServletResponse response,
-        final Object handler) throws Exception {
+        final Object handler)
+            throws Exception {
         configurationContext.ifAvailable(context -> context.configureSessionReplicationCookiePath(request));
         if (requestRequiresAuthentication(request, response)) {
             return requiresAuthenticationAccessTokenInterceptor.getObject().preHandle(request, response, handler);

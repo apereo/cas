@@ -199,7 +199,8 @@ class OidcVerifiableCredentialIssuanceTests extends AbstractOidcTests {
     }
 
     private static String obtainAccessToken(final MockMvc mockMvc, final String clientId, final String clientSecret,
-                                            final String credentialConfigurationId) throws Exception {
+                                            final String credentialConfigurationId)
+            throws Exception {
         val transaction = createOfferTransaction(mockMvc, clientId, clientSecret, "casuser", List.of(credentialConfigurationId));
         val preAuthorizedCode = fetchPreAuthorizedCode(mockMvc, transaction.transactionId());
         val tokenResponseBody = mockMvc.perform(tokenExchangeRequest(clientId, clientSecret, preAuthorizedCode, transaction.txCode()))
@@ -216,7 +217,8 @@ class OidcVerifiableCredentialIssuanceTests extends AbstractOidcTests {
     }
 
     private static OidcVerifiableCredentialRequest buildCredentialRequest(final String nonce, final JWK responseEncryptionKey,
-                                                                          final String encryptionMethod) throws Exception {
+                                                                          final String encryptionMethod)
+            throws Exception {
         val credentialRequest = buildCredentialRequest(nonce, null);
         val responseEncryption = new OidcVerifiableCredentialRequest.CredentialResponseEncryption();
         responseEncryption.setJwk(responseEncryptionKey.toPublicJWK().toJSONObject());
@@ -226,7 +228,8 @@ class OidcVerifiableCredentialIssuanceTests extends AbstractOidcTests {
     }
 
     private static OidcVerifiableCredentialRequest buildCredentialRequest(final String nonce,
-        final OidcVerifiableCredentialRequest.CredentialResponseEncryption responseEncryption) throws Exception {
+        final OidcVerifiableCredentialRequest.CredentialResponseEncryption responseEncryption)
+            throws Exception {
         val credentialRequest = new OidcVerifiableCredentialRequest();
         credentialRequest.setCredentialConfigurationId("UniversityDegreeCredential");
         credentialRequest.setProofs(buildProofs(buildProofJwt(nonce)));
@@ -235,7 +238,8 @@ class OidcVerifiableCredentialIssuanceTests extends AbstractOidcTests {
     }
 
     private static String encryptRequest(final OidcVerifiableCredentialRequest request, final JWK issuerKey,
-                                         final EncryptionMethod encryptionMethod) throws Exception {
+                                         final EncryptionMethod encryptionMethod)
+            throws Exception {
         val header = new JWEHeader.Builder(JWEAlgorithm.parse(issuerKey.getAlgorithm().getName()), encryptionMethod)
             .keyID(issuerKey.getKeyID())
             .build();
@@ -260,12 +264,14 @@ class OidcVerifiableCredentialIssuanceTests extends AbstractOidcTests {
     }
 
     private static ResultActions postCredentialRequest(final MockMvc mockMvc, final String accessToken,
-                                                       final MediaType contentType, final String body) throws Exception {
+                                                       final MediaType contentType, final String body)
+            throws Exception {
         return postCredentialRequest(mockMvc, accessToken, contentType, body, CREDENTIAL_URL);
     }
 
     private static ResultActions postCredentialRequest(final MockMvc mockMvc, final String accessToken,
-                                                       final MediaType contentType, final String body, final String url) throws Exception {
+                                                       final MediaType contentType, final String body, final String url)
+            throws Exception {
         return mockMvc.perform(post(url)
             .with(withHttpRequestProcessor())
             .contentType(contentType)
@@ -669,7 +675,8 @@ class OidcVerifiableCredentialIssuanceTests extends AbstractOidcTests {
     }
 
     private static OfferTransaction createOfferTransaction(final MockMvc mockMvc, final String clientId, final String clientSecret,
-                                                           final String principal, final List<String> credentialConfigurationIds) throws Exception {
+                                                           final String principal, final List<String> credentialConfigurationIds)
+            throws Exception {
         val requestBody = MAPPER.writeValueAsString(
             Map.of("principal", principal, "credentialConfigurationIds", credentialConfigurationIds));
         val responseBody = mockMvc.perform(post(TRANSACTIONS_URL)
@@ -696,7 +703,8 @@ class OidcVerifiableCredentialIssuanceTests extends AbstractOidcTests {
     }
 
     private static String createOfferAndFetchPreAuthorizedCode(final MockMvc mockMvc, final String clientId, final String clientSecret,
-                                                               final String principal, final List<String> credentialConfigurationIds) throws Exception {
+                                                               final String principal, final List<String> credentialConfigurationIds)
+            throws Exception {
         val transaction = createOfferTransaction(mockMvc, clientId, clientSecret, principal, credentialConfigurationIds);
         return fetchPreAuthorizedCode(mockMvc, transaction.transactionId());
     }

@@ -11,7 +11,8 @@
 
 <body>
 <main class="container mt-3 mb-3">
-    <div layout:fragment="content" class="banner banner-message mdc-card card p-4 m-auto w-lg-66">
+    <div layout:fragment="content" class="banner banner-message mdc-card card p-4 m-auto w-lg-66 cas-hero cas-hero-start">
+        <span class="cas-hero-icon" aria-hidden="true"><i class="mdi mdi-cellphone-key"></i></span>
         <h2 th:utext="#{cas.inwebo.browser.heading}">Fill in your PIN code:</h2>
         <script src="https://ult-inwebo.com/neon/3.6.0/simple-neon-lib.js " type="text/javascript"></script>
         <form id="inweboErrorForm" method="POST">

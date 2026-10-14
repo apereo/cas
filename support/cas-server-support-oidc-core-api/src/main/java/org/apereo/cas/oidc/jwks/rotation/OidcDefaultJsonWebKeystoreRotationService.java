@@ -8,8 +8,10 @@ import org.apereo.cas.util.function.FunctionUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.jooq.lambda.Unchecked;
 import org.jose4j.jwk.JsonWebKeySet;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.core.io.Resource;
 
 /**
@@ -24,6 +26,8 @@ public class OidcDefaultJsonWebKeystoreRotationService implements OidcJsonWebKey
     private final OidcProperties oidcProperties;
 
     private final OidcJsonWebKeystoreGeneratorService generatorService;
+
+    private final ApplicationEventPublisher eventPublisher;
 
     @Override
     public JsonWebKeySet rotate() {
@@ -48,7 +52,7 @@ public class OidcDefaultJsonWebKeystoreRotationService implements OidcJsonWebKey
                 generateFutureKeys(jsonWebKeySet);
                 generateCurrentKeys(jsonWebKeySet);
 
-                return generatorService.store(jsonWebKeySet);
+                return storeAndAnnounce(jsonWebKeySet);
             }))
             .orElse(null);
     }
@@ -92,9 +96,15 @@ public class OidcDefaultJsonWebKeystoreRotationService implements OidcJsonWebKey
                     val state = JsonWebKeyLifecycleStates.getJsonWebKeyState(key);
                     return state == JsonWebKeyLifecycleStates.PREVIOUS;
                 });
-                return generatorService.store(jsonWebKeySet);
+                return storeAndAnnounce(jsonWebKeySet);
             }))
             .orElse(null);
+    }
+
+    private JsonWebKeySet storeAndAnnounce(final JsonWebKeySet jsonWebKeySet) throws Throwable {
+        val stored = generatorService.store(jsonWebKeySet);
+        eventPublisher.publishEvent(new OidcJsonWebKeystoreRotatedEvent(this, ClientInfoHolder.getClientInfo()));
+        return stored;
     }
 
     private Optional<Resource> whenKeystoreResourceExists() {

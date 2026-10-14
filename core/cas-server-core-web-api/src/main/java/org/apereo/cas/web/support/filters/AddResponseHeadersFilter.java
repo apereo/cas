@@ -48,7 +48,8 @@ public class AddResponseHeadersFilter extends AbstractSecurityFilter implements 
 
     @Override
     public void doFilter(final ServletRequest servletRequest, final ServletResponse servletResponse,
-                         final FilterChain filterChain) throws IOException, ServletException {
+                         final FilterChain filterChain)
+            throws IOException, ServletException {
         if (servletResponse instanceof final HttpServletResponse httpServletResponse) {
             for (val entry : this.headersMap.entrySet()) {
                 LOGGER.debug("Adding parameter [{}] with value [{}]", entry.getKey(), entry.getValue());

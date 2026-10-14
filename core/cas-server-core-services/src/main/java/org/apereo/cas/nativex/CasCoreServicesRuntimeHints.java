@@ -16,6 +16,7 @@ import org.apereo.cas.services.AnyAuthenticationHandlerRegisteredServiceAuthenti
 import org.apereo.cas.services.AttributeBasedRegisteredServiceAccessStrategyActivationCriteria;
 import org.apereo.cas.services.AttributeBasedRegisteredServiceAttributeReleaseActivationCriteria;
 import org.apereo.cas.services.AttributeBasedRegisteredServiceSingleSignOnParticipationPolicy;
+import org.apereo.cas.services.BaseMappedAttributeReleasePolicy;
 import org.apereo.cas.services.BaseRegisteredService;
 import org.apereo.cas.services.BaseRegisteredServiceAccessStrategy;
 import org.apereo.cas.services.BaseRegisteredServiceUsernameAttributeProvider;
@@ -205,6 +206,7 @@ public class CasCoreServicesRuntimeHints implements CasRuntimeHintsRegistrar {
             ));
         }
         registerReflectionHintsForDeclaredAndPublicElements(hints, List.of(
+            BaseMappedAttributeReleasePolicy.class,
             UnauthorizedServiceException.class,
             RegisteredServiceQuery.class,
             RegisteredServiceQueryIndex.class,

@@ -106,7 +106,8 @@ public class OidcClientConfigurationEndpointController extends BaseOidcControlle
     public ResponseEntity<?> handleUpdates(
         @RequestParam(name = OAuth20Constants.CLIENT_ID) final String clientId,
         @RequestBody(required = false) final String jsonInput,
-        final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+        final HttpServletRequest request, final HttpServletResponse response)
+            throws Exception {
 
         val webContext = new JEEContext(request, response);
         if (!getConfigurationContext().getIssuerService().validateIssuer(webContext, List.of(OidcConstants.CLIENT_CONFIGURATION_URL))) {

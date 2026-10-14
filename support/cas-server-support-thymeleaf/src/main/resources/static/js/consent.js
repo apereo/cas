@@ -14,7 +14,9 @@ function tabify(material) {
         $(`#consent-tab-${index}`).removeClass('d-none');
     });
 
+    tabs.focusOnActivate = false;
     tabs.foundation.adapter.activateTabAtIndex(0);
+    tabs.focusOnActivate = true;
 
     return tabs;
 }

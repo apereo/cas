@@ -3,6 +3,7 @@ package org.apereo.cas.support.oauth.web.endpoints;
 import module java.base;
 import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.authentication.Authentication;
+import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
@@ -71,7 +72,8 @@ public class OAuth20AuthorizeEndpointController<T extends OAuth20ConfigurationCo
     @GetMapping(path = OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.AUTHORIZE_URL)
     @Operation(summary = "Handle OAuth authorization request")
     public @Nullable ModelAndView handleRequest(final HttpServletRequest request,
-                                                final HttpServletResponse response) throws Throwable {
+                                                final HttpServletResponse response)
+            throws Throwable {
         val requestParameterResolver = getConfigurationContext().getRequestParameterResolver();
 
         val webContext = new JEEContext(request, response);
@@ -138,14 +140,15 @@ public class OAuth20AuthorizeEndpointController<T extends OAuth20ConfigurationCo
 
     protected @Nullable ModelAndView redirectToCallbackRedirectUrl(final ProfileManager manager,
                                                                    final OAuthRegisteredService registeredService,
-                                                                   final JEEContext context) throws Throwable {
+                                                                   final JEEContext context)
+            throws Throwable {
         val profile = verifyAndReturnAuthenticatedProfile(manager, context);
         val service = getConfigurationContext().getAuthenticationBuilder()
             .buildService(registeredService, context, false);
         LOGGER.trace("Created service [{}] based on registered service [{}]", service, registeredService);
 
-        val authentication = getConfigurationContext().getAuthenticationBuilder()
-            .build(profile, registeredService, context, service);
+        val authentication = bindProofOfPossessionKey(context, getConfigurationContext().getAuthenticationBuilder()
+            .build(profile, registeredService, context, service));
         LOGGER.trace("Created OAuth authentication [{}] for service [{}]", authentication, service);
 
         try {
@@ -168,6 +171,27 @@ public class OAuth20AuthorizeEndpointController<T extends OAuth20ConfigurationCo
             LoggingUtils.error(LOGGER, e);
             return OAuth20Utils.produceUnauthorizedErrorView(HttpStatus.FORBIDDEN);
         }
+    }
+
+    /**
+     * Bind the authorization request to a DPoP key (RFC 9449, section 10): the {@code dpop_jkt} thumbprint, or the key of a
+     * verified DPoP proof that came with a pushed authorization request, is kept as an authentication attribute and travels
+     * with the authorization code, whose token request must then carry a DPoP proof made with that key.
+     *
+     * @param context        the context
+     * @param authentication the authentication of the authorization request
+     * @return the authentication, with the thumbprint when one was given
+     */
+    protected Authentication bindProofOfPossessionKey(final JEEContext context, final Authentication authentication) {
+        val requestParameterResolver = getConfigurationContext().getRequestParameterResolver();
+        final Optional<String> thumbprint = context.getRequestAttribute(OAuth20Constants.DPOP_JKT).map(Object::toString)
+            .or(() -> requestParameterResolver.resolveRequestParameter(context, OAuth20Constants.DPOP_JKT).map(String::valueOf));
+        return thumbprint
+            .filter(StringUtils::isNotBlank)
+            .map(value -> DefaultAuthenticationBuilder.newInstance(authentication)
+                .addAttribute(OAuth20Constants.DPOP_JKT, value)
+                .build())
+            .orElse(authentication);
     }
 
     private UserProfile verifyAndReturnAuthenticatedProfile(final ProfileManager manager, final JEEContext context) {
@@ -246,7 +270,8 @@ public class OAuth20AuthorizeEndpointController<T extends OAuth20ConfigurationCo
         final OAuthRegisteredService registeredService,
         final JEEContext context,
         final Service service,
-        final Authentication authentication) throws Exception {
+        final Authentication authentication)
+            throws Exception {
 
         var payloadBuilder = AccessTokenRequestContext.builder();
         if (authzRequest.isSingleSignOnSessionRequired()) {

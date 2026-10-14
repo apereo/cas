@@ -24,6 +24,8 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.pac4j.core.context.WebContext;
+import org.pac4j.core.profile.CommonProfile;
+import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.jee.context.JEEContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -102,9 +104,16 @@ class OidcAccessTokenJwtBearerGrantRequestExtractorTests {
             val signAssertion = EncodingUtils.signJwsRSASha512(jsonWebKey.getPrivateKey(),
                 claims.toString().getBytes(StandardCharsets.UTF_8), Map.of());
             request.setParameter(OAuth20Constants.ASSERTION, new String(signAssertion, StandardCharsets.UTF_8));
+            val staleProfile = new CommonProfile();
+            staleProfile.setId("casuser");
+            staleProfile.addAttribute(OAuth20Constants.DPOP_CONFIRMATION, "stale-thumbprint");
+            new ProfileManager(webContext, oidcConfigurationContext.getSessionStore()).save(true, staleProfile, false);
+            request.setAttribute(OAuth20Constants.DPOP_CONFIRMATION, "thumbprint");
             val tokenRequestContext = extractor.extract(webContext);
             assertNotNull(tokenRequestContext);
             assertNotNull(tokenRequestContext.getAuthentication());
+            assertEquals(staleProfile.getId(), tokenRequestContext.getUserProfile().getId());
+            assertEquals("thumbprint", tokenRequestContext.getDpopConfirmation());
         }
     }
 

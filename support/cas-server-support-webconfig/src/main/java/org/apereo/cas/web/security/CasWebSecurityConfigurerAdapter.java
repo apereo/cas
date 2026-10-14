@@ -90,7 +90,8 @@ public class CasWebSecurityConfigurerAdapter {
     }
 
     private static void configureJaasAuthenticationProvider(final HttpSecurity http,
-                                                            final JaasSecurityActuatorEndpointsMonitorProperties jaas) throws Exception {
+                                                            final JaasSecurityActuatorEndpointsMonitorProperties jaas)
+            throws Exception {
         val provider = new JaasAuthenticationProvider();
         provider.setLoginConfig(jaas.getLoginConfig());
         provider.setLoginContextName(jaas.getLoginContextName());
@@ -247,7 +248,8 @@ public class CasWebSecurityConfigurerAdapter {
 
     protected void configureEndpointAccess(final HttpSecurity httpSecurity,
                                            final ActuatorEndpointProperties properties,
-                                           final EndpointRequest.EndpointRequestMatcher endpoint) throws Exception {
+                                           final EndpointRequest.EndpointRequestMatcher endpoint)
+            throws Exception {
         switch (properties.getAccess()) {
             case AUTHORITY -> configureEndpointAccessByAuthority(httpSecurity, properties, endpoint);
             case ROLE -> configureEndpointAccessByRole(httpSecurity, properties, endpoint);

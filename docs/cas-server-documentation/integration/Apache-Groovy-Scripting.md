@@ -74,11 +74,21 @@ if ((attributes.get('entitlement') as List).contains('admin')) {
 
 ## Script Execution
 
-A compiled script is cached and shared by every request that uses it, and CAS runs one execution of that
-script at a time. An execution that arrives while the script is busy waits for its turn rather than being
-abandoned, so a script that performs slow work such as an HTTP call or a directory lookup becomes a
-bottleneck for every request that depends on it. Keep scripts short, and give any remote call its own
-timeout.
+A script is compiled once and cached. How its executions run depends on whether the script keeps state
+between them:
+
+- A script that only declares methods, or whose fields are all `final` and hold plain values such as
+  strings, numbers, enum constants or a logger, runs each execution on its own instance of the compiled
+  script. Concurrent requests that use the script run in parallel.
+- A script that declares any other field, such as a counter, a non-final logger or a cache, keeps one shared
+  instance so that this state stays consistent, and CAS runs one execution of it at a time. An execution
+  that arrives while the script is busy waits for its turn, so a slow script of this kind becomes a
+  bottleneck for every request that depends on it. The same applies when a class defined in the script
+  keeps such state in a static field.
+
+To let a script run in parallel, declare its fields as `final`, for example `@Field final logger = LoggerFactory.getLogger("MyScript")`,
+and keep state that must outlive an execution outside of the script. In either case, give any remote call a
+script makes its own timeout.
 
 Variables that CAS passes to an *inline* script belong to the request that supplied them. They are visible
 only to that execution and are discarded once it completes, which means a script cannot observe the

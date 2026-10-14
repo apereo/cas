@@ -116,7 +116,8 @@ class OidcAuthorizeEndpointControllerTests {
         }
 
         private MvcResult performRequest(final MockHttpServletRequest request,
-                                         final MockHttpServletResponse response) throws Exception {
+                                         final MockHttpServletResponse response)
+                throws Exception {
             val builder = request(HttpMethod.valueOf(request.getMethod()), request.getRequestURI())
                 .with(mockRequest -> {
                     mockRequest.setScheme(request.getScheme());
@@ -146,7 +147,8 @@ class OidcAuthorizeEndpointControllerTests {
         }
 
         private MvcResult performAuthorizeFlow(final MockHttpServletRequest request,
-                                               final MockHttpServletResponse response) throws Exception {
+                                               final MockHttpServletResponse response)
+                throws Exception {
             var currentRequest = request;
             var currentResponse = response;
             var result = performRequest(currentRequest, currentResponse);

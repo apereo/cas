@@ -286,7 +286,8 @@ class StatelessTicketRegistryTests extends BaseTicketRegistryTests {
     }
 
     private RenewableServiceTicket grantAndRetrieveServiceTicket(final String principalId,
-                                                                 final Service service) throws Exception {
+                                                                 final Service service)
+            throws Exception {
         val authentication = RegisteredServiceTestUtils.getAuthentication(RegisteredServiceTestUtils.getPrincipal(principalId));
         val ticketGrantingTicket = new TicketGrantingTicketImpl(TestTicketIdentifiers.generate().ticketGrantingTicketId(),
             authentication, new TicketGrantingTicketExpirationPolicy(5000, 2000));

@@ -59,7 +59,8 @@ public class MetadataQueryProtocolMetadataResolver extends UrlResourceMetadataRe
 
     @Override
     protected AbstractMetadataResolver getMetadataResolverFromResponse(final @Nullable HttpResponse response,
-                                                                       final File backupFile) throws Exception {
+                                                                       final File backupFile)
+            throws Exception {
         val status = response != null ? HttpStatus.resolve(response.getCode()) : null;
         if (status == null || !status.is2xxSuccessful()) {
             if (Files.exists(backupFile.toPath())) {

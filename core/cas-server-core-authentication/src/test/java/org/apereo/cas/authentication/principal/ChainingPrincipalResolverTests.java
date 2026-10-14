@@ -51,7 +51,8 @@ class ChainingPrincipalResolverTests {
 
     private Principal mergeAndResolve(final Principal principal, final Credential credential,
                                       final PrincipalResolver resolver1, final PrincipalResolver resolver2,
-                                      final PrincipalAttributesCoreProperties.MergingStrategyTypes mergerType) throws Throwable {
+                                      final PrincipalAttributesCoreProperties.MergingStrategyTypes mergerType)
+            throws Throwable {
         val props = new CasConfigurationProperties();
         props
             .getAuthn()

@@ -507,11 +507,13 @@ async function initializeSystemOperations() {
                 $("#casVulnerabilitiesStatus").text(errors.length > 0 ? errors.join("; ") : "");
                 vulnerabilitiesLoaded = true;
                 Swal.close();
+                updateNavigationSidebar();
                 resolve();
             }).fail((xhr, status, error) => {
                 console.error("Error fetching dependency vulnerability data:", error);
                 hideVulnerabilitiesTab();
                 Swal.close();
+                updateNavigationSidebar();
                 resolve();
             });
         });
@@ -2557,6 +2559,7 @@ async function initializeSystemOperations() {
 
             if (allEvents.length === 0) {
                 $("#startupTimelineList").html('<p class="text-muted p-3">No startup steps available. Ensure <code>BufferingApplicationStartup</code> is configured.</p>');
+                updateNavigationSidebar();
                 return;
             }
 
@@ -2569,10 +2572,12 @@ async function initializeSystemOperations() {
 
             renderAll();
             attachControls();
+            updateNavigationSidebar();
         }).fail((xhr, status, error) => {
             console.error("Error fetching startup data:", error);
             $("#startupTimelineList").html('<p class="text-muted p-3">Could not load startup timeline data.</p>');
             displayBanner(xhr);
+            updateNavigationSidebar();
         });
     }
 

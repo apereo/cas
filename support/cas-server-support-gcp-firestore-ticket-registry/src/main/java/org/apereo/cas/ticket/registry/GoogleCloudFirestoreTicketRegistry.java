@@ -159,17 +159,22 @@ public class GoogleCloudFirestoreTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public long deleteSingleTicket(final Ticket ticketToDelete) {
+        return deleteSingleTicket(ticketToDelete.getId());
+    }
+
+    @Override
+    public long deleteSingleTicket(final String ticketId) {
         return FunctionUtils.doUnchecked(() -> {
-            val ticketId = digestIdentifier(ticketToDelete.getId());
-            LOGGER.debug("Deleting ticket [{}]", ticketId);
-            val metadata = ticketCatalog.find(ticketToDelete);
+            val digestedId = digestIdentifier(ticketId);
+            LOGGER.debug("Deleting ticket [{}]", digestedId);
+            val metadata = ticketCatalog.find(ticketId);
             if (metadata == null) {
-                LOGGER.error("Could not locate ticket definition in the catalog for ticket [{}]", ticketToDelete.getId());
+                LOGGER.error("Could not locate ticket definition in the catalog for ticket [{}]", ticketId);
                 return 0;
             }
             val collectionName = getTicketCollectionInstanceByMetadata(metadata);
-            val updateTime = firestore.collection(collectionName).document(ticketId).delete().get().getUpdateTime();
-            LOGGER.debug("Deleted ticket [{}] from [{}] @ [{}]", ticketToDelete.getId(), collectionName, updateTime);
+            val updateTime = firestore.collection(collectionName).document(digestedId).delete().get().getUpdateTime();
+            LOGGER.debug("Deleted ticket [{}] from [{}] @ [{}]", ticketId, collectionName, updateTime);
             return 1;
         });
     }

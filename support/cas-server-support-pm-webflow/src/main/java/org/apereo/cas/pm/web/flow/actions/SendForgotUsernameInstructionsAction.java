@@ -88,7 +88,8 @@ public class SendForgotUsernameInstructionsAction extends BaseCasWebflowAction {
     }
 
     protected Event locateUserAndProcess(final RequestContext requestContext,
-                                         final PasswordManagementQuery query) throws Throwable {
+                                         final PasswordManagementQuery query)
+            throws Throwable {
         val result = sendForgotUsernameEmailToAccount(query, requestContext);
         return FunctionUtils.doIf(result.isSuccess(),
                 () -> success(result),
@@ -97,7 +98,8 @@ public class SendForgotUsernameInstructionsAction extends BaseCasWebflowAction {
     }
 
     protected EmailCommunicationResult sendForgotUsernameEmailToAccount(final PasswordManagementQuery query,
-                                                                        final RequestContext requestContext) throws Throwable {
+                                                                        final RequestContext requestContext)
+            throws Throwable {
         val parameters = CollectionUtils.wrap("username", query.getUsername(), "email", query.getEmail());
         val credential = new BasicIdentifiableCredential();
         credential.setId(query.getUsername());

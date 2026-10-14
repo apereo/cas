@@ -168,7 +168,8 @@ class CasCoreAuthenticationPrincipalConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AttributeDefinitionStore attributeDefinitionStore(
             final ConfigurableApplicationContext applicationContext,
-            final CasConfigurationProperties casProperties) throws Exception {
+            final CasConfigurationProperties casProperties)
+                throws Exception {
             
             val builders = applicationContext.getBeansOfType(AttributeDefinitionStoreConfigurer.class).values();
             val loadedDefinitions = builders

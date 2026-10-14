@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Consent fragments</title>
+</head>
+<body>
+
+<!--/* Application identity shown at the top of a consent screen: logo or monogram linked to the CAS shield. */-->
+<div th:fragment="appHeader(name, description, logo, eyebrow)" class="cas-consent-head">
+    <div class="cas-consent-pair" aria-hidden="true">
+        <span class="cas-app-badge">
+            <img th:if="${logo}" th:src="${logo}" alt=""/>
+            <span th:unless="${logo}" th:text="${#strings.toUpperCase(#strings.substring(#strings.defaultString(name, '?'), 0, 1))}">A</span>
+        </span>
+        <span class="cas-consent-link"><i class="mdi mdi-check-bold"></i></span>
+        <span class="cas-app-badge cas-app-badge-cas"><i class="mdi mdi-shield-account"></i></span>
+    </div>
+    <h1 class="cas-consent-eyebrow" th:text="${eyebrow}">Authorization</h1>
+    <p class="cas-consent-title" th:text="${name}">Example App</p>
+    <p class="cas-consent-lead" th:if="${description}" th:text="${description}">Description</p>
+</div>
+
+<!--/* One permission row; kind picks the icon set (scope or claim). */-->
+<li th:fragment="permission(name, text, kind)" class="cas-perm" th:id="${name}"
+    th:with="scopeIcons=${ {'openid':'mdi-account-key-outline','profile':'mdi-card-account-details-outline','email':'mdi-email-outline','address':'mdi-map-marker-outline','phone':'mdi-phone-outline','offline_access':'mdi-refresh','read':'mdi-eye-outline','write':'mdi-pencil-outline'} },
+             claimIcons=${ {'name':'mdi-account-outline','given_name':'mdi-account-outline','family_name':'mdi-account-outline','middle_name':'mdi-account-outline','nickname':'mdi-account-outline','preferred_username':'mdi-at','email':'mdi-email-outline','email_verified':'mdi-email-check-outline','phone_number':'mdi-phone-outline','address':'mdi-map-marker-outline','picture':'mdi-image-outline','profile':'mdi-link-variant','website':'mdi-link-variant','birthdate':'mdi-cake-variant-outline','locale':'mdi-earth','zoneinfo':'mdi-earth','updated_at':'mdi-update'} },
+             icon=${kind == 'claim' ? (claimIcons.get(name) ?: 'mdi-tag-outline') : (scopeIcons.get(name) ?: 'mdi-shield-check-outline')}">
+    <span class="cas-perm-icon mdi" th:classappend="${icon}" aria-hidden="true"></span>
+    <span class="cas-perm-body">
+        <span class="cas-perm-name"><code th:text="${name}">scope</code></span>
+        <span class="cas-perm-desc" th:if="${text}" th:utext="${text}">Description</span>
+    </span>
+</li>
+
+</body>
+</html>

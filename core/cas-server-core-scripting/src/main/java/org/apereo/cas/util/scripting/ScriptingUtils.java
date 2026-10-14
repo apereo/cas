@@ -11,7 +11,6 @@ import groovy.lang.GroovyObject;
 import groovy.lang.GroovyShell;
 import groovy.lang.MissingMethodException;
 import groovy.lang.Script;
-import groovy.transform.CompileStatic;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -21,7 +20,6 @@ import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.codehaus.groovy.control.CompilerConfiguration;
 import org.codehaus.groovy.control.SourceUnit;
-import org.codehaus.groovy.control.customizers.ASTTransformationCustomizer;
 import org.codehaus.groovy.control.customizers.ImportCustomizer;
 import org.codehaus.groovy.runtime.InvokerInvocationException;
 import org.jspecify.annotations.Nullable;
@@ -163,7 +161,8 @@ public class ScriptingUtils {
      */
     public static <T> @Nullable T executeGroovyScript(final GroovyObject groovyObject,
                                                       final Object[] args, final Class<T> clazz,
-                                                      final boolean failOnError) throws Throwable {
+                                                      final boolean failOnError)
+            throws Throwable {
         return executeGroovyScript(groovyObject, "run", args, clazz, failOnError);
     }
 
@@ -245,7 +244,8 @@ public class ScriptingUtils {
                                                       final String methodName,
                                                       final Object[] args,
                                                       final Class<T> clazz,
-                                                      final boolean failOnError) throws Throwable {
+                                                      final boolean failOnError)
+            throws Throwable {
         try {
             LOGGER.trace("Executing groovy script's [{}] method, with parameters [{}]", methodName, args);
             val result = groovyObject.invokeMethod(methodName, args);
@@ -293,6 +293,20 @@ public class ScriptingUtils {
     }
 
     /**
+     * Compile groovy shell script and determine whether its executions can run in parallel.
+     *
+     * @param script the script
+     * @return the compiled script
+     */
+    public static CompiledGroovyScript<Script> compileGroovyShellScript(final String script) {
+        val shell = new GroovyShell(createCompilerConfiguration());
+        LOGGER.debug("Parsing groovy script [{}]", script);
+        val prototype = shell.parse(script);
+        return CompiledGroovyScript.of(prototype.getClass(),
+            shell.getClassLoader().getLoadedClasses(), prototype);
+    }
+
+    /**
      * Parse groovy script groovy object.
      *
      * @param groovyScript the groovy script
@@ -306,6 +320,33 @@ public class ScriptingUtils {
             if (groovyClass != null) {
                 LOGGER.trace("Creating groovy object instance from class [{}]", groovyScript.getURI().getPath());
                 return (GroovyObject) groovyClass.getDeclaredConstructor().newInstance();
+            }
+            LOGGER.warn("Groovy script at [{}] does not exist", groovyScript.getURI().getPath());
+        } catch (final Exception e) {
+            if (failOnError) {
+                throw new RuntimeException(e);
+            }
+            LoggingUtils.error(LOGGER, e);
+        }
+        return null;
+    }
+
+    /**
+     * Compile the groovy script and determine whether its executions can run in parallel.
+     *
+     * @param groovyScript the groovy script
+     * @param failOnError  the fail on error
+     * @return the compiled script
+     */
+    public static @Nullable CompiledGroovyScript<GroovyObject> compileGroovyScript(final Resource groovyScript,
+                                                                                   final boolean failOnError) {
+        try (val loader = newGroovyClassLoader()) {
+            val groovyClass = loadGroovyClass(groovyScript, loader);
+            if (groovyClass != null) {
+                LOGGER.trace("Compiling groovy script [{}]", groovyScript.getURI().getPath());
+                val type = ((Class<?>) groovyClass).asSubclass(GroovyObject.class);
+                val prototype = type.getDeclaredConstructor().newInstance();
+                return CompiledGroovyScript.of(type, loader.getLoadedClasses(), prototype);
             }
             LOGGER.warn("Groovy script at [{}] does not exist", groovyScript.getURI().getPath());
         } catch (final Exception e) {
@@ -353,8 +394,19 @@ public class ScriptingUtils {
         return new GroovyClassLoader(ScriptingUtils.class.getClassLoader(), createCompilerConfiguration());
     }
 
+    /**
+     * Create a class loader with an explicit compilation mode for scripts such as configuration DSLs.
+     *
+     * @param compileStatic whether to apply static compilation
+     * @return the groovy class loader
+     */
+    public static GroovyClassLoader newGroovyClassLoader(final boolean compileStatic) {
+        return new GroovyClassLoader(ScriptingUtils.class.getClassLoader(), createCompilerConfiguration(compileStatic));
+    }
+
     private @Nullable Class loadGroovyClass(final Resource groovyScript,
-                                            final GroovyClassLoader loader) throws IOException {
+                                            final GroovyClassLoader loader)
+            throws IOException {
         if (ResourceUtils.isJarResource(groovyScript)) {
             try (val groovyReader = new BufferedReader(new InputStreamReader(groovyScript.getInputStream(), StandardCharsets.UTF_8))) {
                 return loader.parseClass(groovyReader, groovyScript.getFilename());
@@ -372,7 +424,8 @@ public class ScriptingUtils {
                                                    final String methodName,
                                                    final Object[] args,
                                                    final Class<T> clazz,
-                                                   final boolean failOnError) throws Throwable {
+                                                   final boolean failOnError)
+            throws Throwable {
         try {
             val groovyObject = parseGroovyScript(groovyScript, failOnError);
             if (groovyObject == null) {
@@ -463,10 +516,14 @@ public class ScriptingUtils {
     }
 
     private static CompilerConfiguration createCompilerConfiguration() {
-        val compilerConfiguration = new CompilerConfiguration();
         val isStaticCompilation = BooleanUtils.toBoolean(System.getProperty(ExecutableCompiledScriptFactory.SYSTEM_PROPERTY_GROOVY_COMPILE_STATIC));
-        if (CasRuntimeHintsRegistrar.inNativeImage() || isStaticCompilation) {
-            compilerConfiguration.addCompilationCustomizers(new ASTTransformationCustomizer(CompileStatic.class));
+        return createCompilerConfiguration(CasRuntimeHintsRegistrar.inNativeImage() || isStaticCompilation);
+    }
+
+    private static CompilerConfiguration createCompilerConfiguration(final boolean compileStatic) {
+        val compilerConfiguration = new CompilerConfiguration();
+        if (compileStatic) {
+            compilerConfiguration.addCompilationCustomizers(new GroovyStaticCompilationCustomizer());
         }
         val imports = new ImportCustomizer();
         imports.addStarImports(

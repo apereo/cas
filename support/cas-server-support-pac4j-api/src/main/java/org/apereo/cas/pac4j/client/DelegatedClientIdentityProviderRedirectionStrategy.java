@@ -26,7 +26,8 @@ public interface DelegatedClientIdentityProviderRedirectionStrategy extends Orde
     Optional<DelegatedClientIdentityProviderConfiguration> select(
         RequestContext context,
         WebApplicationService service,
-        Set<DelegatedClientIdentityProviderConfiguration> provider) throws Throwable;
+        Set<DelegatedClientIdentityProviderConfiguration> provider)
+            throws Throwable;
 
     @Override
     default int getOrder() {

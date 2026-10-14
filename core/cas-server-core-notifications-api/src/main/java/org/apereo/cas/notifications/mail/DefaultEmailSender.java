@@ -66,7 +66,8 @@ public class DefaultEmailSender implements EmailSender {
     }
 
     protected MimeMessage createEmailMessage(final EmailMessageRequest emailRequest,
-                                             final JavaMailSender mailSender) throws Exception {
+                                             final JavaMailSender mailSender)
+            throws Exception {
         val recipients = emailRequest.getRecipients();
         val message = mailSender.createMimeMessage();
         val messageHelper = new MimeMessageHelper(message);

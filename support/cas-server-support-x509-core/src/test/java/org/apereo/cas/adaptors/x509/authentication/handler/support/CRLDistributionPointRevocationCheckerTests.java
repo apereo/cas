@@ -164,7 +164,8 @@ class CRLDistributionPointRevocationCheckerTests extends BaseCRLRevocationChecke
         final CRLDistributionPointRevocationChecker checker,
         final String[] certFiles,
         final String crlFile,
-        final GeneralSecurityException expected) throws Exception {
+        final GeneralSecurityException expected)
+            throws Exception {
 
         val file = new File(FileUtils.getTempDirectory(), "ca.crl");
         try (val out = new FileOutputStream(file)) {

@@ -57,7 +57,8 @@ public abstract class AbstractSaml10ResponseView extends AbstractCasView {
     protected void renderMergedOutputModel(
         @NonNull final Map<String, Object> model,
         @NonNull final HttpServletRequest request,
-        @NonNull final HttpServletResponse response) throws Exception {
+        @NonNull final HttpServletResponse response)
+            throws Exception {
         try {
             response.setCharacterEncoding(StandardCharsets.UTF_8.name());
             val service = this.samlArgumentExtractor.extractService(request);
@@ -82,7 +83,8 @@ public abstract class AbstractSaml10ResponseView extends AbstractCasView {
      * @throws Exception the exception
      */
     protected void finalizeSamlResponse(final HttpServletRequest request, final HttpServletResponse response,
-                                        final @Nullable String recipient, final Response samlResponse) throws Exception {
+                                        final @Nullable String recipient, final Response samlResponse)
+            throws Exception {
         if (request != null && response != null) {
             LOGGER.debug("Starting to encode SAML response for recipient [{}]", recipient);
             samlResponseBuilder.encodeSamlResponse(samlResponse, request, response);

@@ -92,7 +92,8 @@ public class OidcAccessTokenJwtBearerGrantRequestExtractor extends BaseAccessTok
     }
 
     protected CommonProfile createAuthenticationProfile(final JwtClaims claims, final Set<String> requestedScopes,
-                                                        final OAuthRegisteredService registeredService) throws Throwable {
+                                                        final OAuthRegisteredService registeredService)
+            throws Throwable {
         val profile = new CommonProfile();
         profile.setId(claims.getSubject());
         profile.addRoles(requestedScopes);

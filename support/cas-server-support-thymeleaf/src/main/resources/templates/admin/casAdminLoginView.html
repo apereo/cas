@@ -15,7 +15,8 @@
 <main class="container mt-3 mb-3">
     <div layout:fragment="content" style="box-shadow: none;">
         <section class="col-lg-6 offset-lg-3 col-xs-12">
-            <div class="card mdc-card px-3 py-3">
+            <div class="card mdc-card px-3 py-3 cas-hero cas-hero-start">
+                <span class="cas-hero-icon" aria-hidden="true"><i class="mdi mdi-shield-account-outline"></i></span>
                 <form name="fm1" th:action="@{/adminlogin}" method="post">
                     <h3 th:utext="#{screen.welcome.instructions}">Enter your Username and Password</h3>
                     <div th:if="${param.error}" id="errorPanel" role="alert" class="banner banner-danger alert alert-danger banner-dismissible">Invalid credentials.</div>

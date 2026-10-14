@@ -25,7 +25,8 @@ public record DynamicHtmlView(String html) implements View {
     public void render(final Map<String, ?> model,
                        @NonNull
                        final HttpServletRequest request,
-                       final HttpServletResponse response) throws Exception {
+                       final HttpServletResponse response)
+            throws Exception {
         response.setContentType(this.getContentType());
         if (StringUtils.hasText(this.html)) {
             FileCopyUtils.copy(this.html, response.getWriter());

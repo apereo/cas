@@ -32,7 +32,8 @@ public class GeoLocationDeviceFingerprintExtractor implements DeviceFingerprintE
     @Override
     public Optional<String> extract(final Authentication authentication,
                                     final HttpServletRequest request,
-                                    final HttpServletResponse response) throws Throwable {
+                                    final HttpServletResponse response)
+            throws Throwable {
         val loc = WebUtils.getHttpServletRequestGeoLocation(request);
 
         if (loc != null && loc.isValid()) {

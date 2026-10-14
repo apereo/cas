@@ -78,7 +78,8 @@ abstract class BaseGoogleCloudStorageSamlMetadataTests {
         @Bean
         public Storage storage(final GcpProjectIdProvider gcpProjectIdProvider,
                                final CredentialsProvider googleCredentialsProvider,
-                               final GcpStorageProperties properties) throws IOException {
+                               final GcpStorageProperties properties)
+                throws IOException {
             val storageOptionsBuilder = StorageOptions.newBuilder()
                 .setHeaderProvider(new UserAgentHeaderProvider(GcpStorageAutoConfiguration.class))
                 .setProjectId(gcpProjectIdProvider.getProjectId())

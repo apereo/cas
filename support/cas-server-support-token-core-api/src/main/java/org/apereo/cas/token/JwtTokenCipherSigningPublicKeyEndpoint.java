@@ -55,7 +55,8 @@ public class JwtTokenCipherSigningPublicKeyEndpoint extends BaseCasActuatorEndpo
     @Operation(summary = "Get public key for signing operations", parameters = @Parameter(name = "service", required = false, description = "The service to look up"))
     public String fetchPublicKey(
         @Nullable
-        final String service) throws Exception {
+        final String service)
+            throws Exception {
         var signingKey = tokenCipherExecutor.getSigningKey();
 
         if (StringUtils.isNotBlank(service)) {

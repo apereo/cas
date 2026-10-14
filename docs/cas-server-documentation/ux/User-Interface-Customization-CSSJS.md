@@ -32,6 +32,19 @@ CSS media queries bring responsive design features to CAS which would allow the 
 on one theme for all appropriate devices and platforms. These queries are defined in the 
 same `cas.css` file. They follow the Bootstrap breakpoints and grid.
 
+## Buttons, Fields, Alerts & Tables
+
+Every page that renders through the common `layout.html` marks its main element with the `cas-ui` class. Under that class, 
+the end of `cas.css` gives page elements one look without moving them around on the page:
+
+- Text fields put the label above a rounded input; buttons are pill-shaped, with round icon buttons for actions such as revealing a password.
+- Alert boxes (`banner-*` and `alert-*`) get rounded corners and soft tones for information, success, warning and errors.
+- Tables get a rounded frame with a quiet header row, and their search, page-size and paging controls match the fields and buttons.
+- Progress bars use the same rounded track as the password strength meter.
+
+Colors come from the `--cas-theme-*` variables declared at the top of `cas.css`, so overriding those in `custom.css` 
+recolors every page, the Palantir admin dashboard included.
+
 # JavaScript
 
 If you need to add some JavaScript, feel free to append to `src/main/resources/static/js/cas.js`.

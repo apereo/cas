@@ -79,7 +79,9 @@ let cas = {
                 $('.attribute-tab').addClass('d-none');
                 $(`#attribute-tab-${index}`).removeClass('d-none');
             });
+            tabs.focusOnActivate = false;
             tabs.foundation.adapter.activateTabAtIndex(0);
+            tabs.focusOnActivate = true;
         }
 
         for (const el of document.querySelectorAll(`${selector} .mdc-fab`)) {
@@ -114,6 +116,10 @@ let header = {
                 drawer.open = false;
             };
             drawer.foundation.handleScrimClick = closeDrawer;
+            let closeButton = document.getElementById('drawerCloseButton');
+            if (closeButton != null) {
+                closeButton.addEventListener('click', closeDrawer);
+            }
             document.onkeydown = evt => {
                 evt = evt || window.event;
                 if (evt.keyCode === 27) {

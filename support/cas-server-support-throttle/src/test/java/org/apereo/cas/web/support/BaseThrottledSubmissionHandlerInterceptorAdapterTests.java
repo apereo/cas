@@ -123,7 +123,8 @@ public abstract class BaseThrottledSubmissionHandlerInterceptorAdapterTests {
     }
 
     protected MockHttpServletResponse login(final String username, final String password,
-                                            final String fromAddress) throws Exception {
+                                            final String fromAddress)
+            throws Exception {
         val context = MockRequestContext.create();
         val request = context.getHttpServletRequest();
         val response = context.getHttpServletResponse();

@@ -102,6 +102,11 @@
         
         <div th:replace="~{fragments/palantir/navigationsidebar :: main}"/>
         <div class="mdc-card p-2 m-1" id="palantirMainPanel" tabindex="-1" style="min-height: 100vh;">
+            <button type="button" class="palantir-sections-toggle" data-palantir-action="sections"
+                    aria-expanded="false" aria-controls="palantirNavigation">
+                <i class="mdi mdi-menu" aria-hidden="true"></i>
+                <span>Sections</span>
+            </button>
             <div th:replace="~{fragments/palantir/dashboardtabs :: main}"/>
             <div th:replace="~{fragments/palantir/servicestab :: main}"/>
             <div th:if="${isRoleAdmin}" th:replace="~{fragments/palantir/systemtab :: main}"/>

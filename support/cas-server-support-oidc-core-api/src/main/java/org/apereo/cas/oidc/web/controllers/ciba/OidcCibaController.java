@@ -132,7 +132,8 @@ public class OidcCibaController extends BaseOidcController {
         @RequestParam(value = "userCode", required = false)
         final String userCode,
         @PathVariable final String clientId,
-        @PathVariable final String requestId) throws Throwable {
+        @PathVariable final String requestId)
+            throws Throwable {
         try {
             val registeredService = findRegisteredService(clientId);
             val cibaRequest = fetchOidcCibaRequest(requestId);
@@ -336,7 +337,8 @@ public class OidcCibaController extends BaseOidcController {
     }
 
     protected @Nullable Principal determineCibaRequestPrincipal(final CibaRequestContext cibaRequest,
-                                                                final OidcRegisteredService registeredService) throws Throwable {
+                                                                final OidcRegisteredService registeredService)
+            throws Throwable {
         var subject = cibaRequest.getLoginHint();
         if (StringUtils.isNotBlank(cibaRequest.getIdTokenHint())) {
             val claims = configurationContext.getIdTokenSigningAndEncryptionService()

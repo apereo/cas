@@ -928,9 +928,7 @@ async function initializeConfigurationOperations() {
                 .each((group, i) => {
                     if (last !== group) {
                         $(rows).eq(i).before(
-                            `<tr style='font-weight: bold; background-color:var(--cas-theme-primary); color:var(--mdc-text-button-label-text-color);'>
-                                <td colspan="2">${group}</td>
-                            </tr>`.trim());
+                            palantirTableGroupRow(group, 2));
                         last = group;
                     }
                 });
@@ -1019,9 +1017,7 @@ async function initializeConfigurationOperations() {
                 .each((group, i) => {
                     if (last !== group) {
                         $(rows).eq(i).before(
-                            `<tr style='font-weight: bold; background-color:var(--cas-theme-primary); color:var(--mdc-text-button-label-text-color);'>
-                                <td colspan="2">${group}</td>
-                            </tr>`.trim());
+                            palantirTableGroupRow(group, 2));
                         last = group;
                     }
                 });
@@ -1126,8 +1122,7 @@ async function initializeConfigurationOperations() {
                 .each((group, i) => {
                     if (last !== group) {
                         $(rows).eq(i).before(
-                            `<tr style='font-weight: bold; background-color:var(--cas-theme-primary); color:var(--mdc-text-button-label-text-color);'>
-                                            <td colspan="2">${group}</td></tr>`.trim());
+                            palantirTableGroupRow(group, 2));
                         last = group;
                     }
                 });

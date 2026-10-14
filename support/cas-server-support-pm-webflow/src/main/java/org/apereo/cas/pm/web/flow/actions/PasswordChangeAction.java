@@ -135,7 +135,8 @@ public class PasswordChangeAction extends BaseCasWebflowAction {
     }
 
     protected EmailCommunicationResult sendPasswordResetConfirmationEmailToAccount(
-        final String username, final List<String> emails, final RequestContext requestContext) throws Throwable {
+        final String username, final List<String> emails, final RequestContext requestContext)
+            throws Throwable {
         val reset = casProperties.getAuthn().getPm().getReset().getConfirmationMail();
         val person = resolvedPrincipal(username);
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);

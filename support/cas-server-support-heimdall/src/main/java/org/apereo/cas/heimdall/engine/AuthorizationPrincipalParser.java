@@ -37,7 +37,8 @@ public interface AuthorizationPrincipalParser {
      */
     default @Nullable Principal parse(final String authorizationHeader,
                                       final AuthorizationRequest authorizationRequest,
-                                      final WebContext webContext) throws Throwable {
+                                      final WebContext webContext)
+            throws Throwable {
         return parse(authorizationHeader, authorizationRequest);
     }
 

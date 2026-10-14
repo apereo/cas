@@ -46,7 +46,8 @@ public class ReturnAllowedAttributeReleasePolicy extends AbstractRegisteredServi
     @Override
     public Map<String, List<Object>> getAttributesInternal(
         final RegisteredServiceAttributeReleasePolicyContext context,
-        final Map<String, List<Object>> attributes) throws Throwable {
+        final Map<String, List<Object>> attributes)
+            throws Throwable {
         return authorizeReleaseOfAllowedAttributes(context, attributes);
     }
 

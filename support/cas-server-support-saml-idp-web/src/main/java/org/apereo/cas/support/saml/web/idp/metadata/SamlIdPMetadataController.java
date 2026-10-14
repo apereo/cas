@@ -8,6 +8,7 @@ import org.apereo.cas.support.saml.SamlIdPConstants;
 import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataGenerator;
 import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPMetadataLocator;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
+import com.google.common.primitives.Longs;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -17,7 +18,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -59,7 +59,8 @@ public class SamlIdPMetadataController {
     @GetMapping(path = SamlIdPConstants.ENDPOINT_IDP_METADATA, produces = CONTENT_TYPE)
     public void generateMetadataForIdp(
         @RequestParam(value = "service", required = false) final String service,
-        final HttpServletResponse response) throws Throwable {
+        final HttpServletResponse response)
+            throws Throwable {
 
         val registeredService = getRegisteredServiceIfAny(service);
         metadataAndCertificatesGenerationService.generate(registeredService);
@@ -87,7 +88,8 @@ public class SamlIdPMetadataController {
     @Operation(summary = "Get IdP signing certificate",
         parameters = @Parameter(name = "service", in = ParameterIn.QUERY, required = false, description = "Service identifier"))
     public String idpSigningCertificate(
-        @RequestParam(value = "service", required = false) final String service) throws Throwable {
+        @RequestParam(value = "service", required = false) final String service)
+            throws Throwable {
         val registeredService = getRegisteredServiceIfAny(service);
         metadataAndCertificatesGenerationService.generate(registeredService);
         try (val md = samlIdPMetadataLocator.resolveSigningCertificate(registeredService).getInputStream()) {
@@ -105,7 +107,8 @@ public class SamlIdPMetadataController {
         parameters = @Parameter(name = "service", in = ParameterIn.QUERY, required = false, description = "Service identifier"))
     @GetMapping(path = SamlIdPConstants.ENDPOINT_IDP_METADATA + "/encryptionCertificate", produces = MediaType.TEXT_PLAIN_VALUE)
     public String idpEncryptionCertificate(
-        @RequestParam(value = "service", required = false) final String service) throws Throwable {
+        @RequestParam(value = "service", required = false) final String service)
+            throws Throwable {
         val registeredService = getRegisteredServiceIfAny(service);
         metadataAndCertificatesGenerationService.generate(registeredService);
         try (val md = samlIdPMetadataLocator.resolveEncryptionCertificate(registeredService).getInputStream()) {
@@ -114,8 +117,9 @@ public class SamlIdPMetadataController {
     }
 
     private Optional<SamlRegisteredService> getRegisteredServiceIfAny(final String service) {
-        if (NumberUtils.isDigits(service)) {
-            val svc = servicesManager.findServiceBy(Long.parseLong(service), SamlRegisteredService.class);
+        val registeredServiceId = service != null ? Longs.tryParse(service) : null;
+        if (registeredServiceId != null) {
+            val svc = servicesManager.findServiceBy(registeredServiceId, SamlRegisteredService.class);
             return Optional.ofNullable(svc);
         }
         val svc = StringUtils.isNotBlank(service) ? webApplicationServiceFactory.createService(service) : null;

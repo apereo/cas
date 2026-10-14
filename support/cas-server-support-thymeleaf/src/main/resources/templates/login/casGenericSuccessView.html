@@ -11,9 +11,9 @@
 <body>
 <main class="container mt-3 mb-3">
     <div layout:fragment="content" class="row">
-        <div class="w-100 m-auto mdc-card card p-4">
+        <div class="w-100 m-auto mdc-card card p-4 cas-hero cas-hero-start cas-hero-wide">
+            <span class="cas-hero-icon is-success" aria-hidden="true"><i class="mdi mdi-check-decagram-outline"></i></span>
             <h2>
-                <i class="mdi mdi-door-open fas fa-door-open" aria-hidden="true"></i>
                 <span th:utext="#{screen.success.header}">Log In Successful</span>
                 <span id="principalId" th:utext="${authentication.principal.id}" style="display:none;"/>
             </h2>
@@ -32,7 +32,7 @@
                 <p th:unless="${#maps.isEmpty(authentication.principal.attributes)}">
                     The following attributes and services are resolved and available for <strong th:utext="${authentication.principal.id}"/>:
 
-                    <div id="attribute-tabs" class="mdc-tab-bar" role="tablist">
+                    <div id="attribute-tabs" class="mdc-tab-bar cas-segmented" role="tablist">
                         <div class="mdc-tab-scroller">
                             <div class="mdc-tab-scroller__scroll-area">
                                 <nav class="nav nav-tabs mdc-tab-scroller__scroll-content">

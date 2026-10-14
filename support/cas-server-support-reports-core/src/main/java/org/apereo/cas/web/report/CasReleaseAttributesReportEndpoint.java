@@ -19,11 +19,11 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.validation.DefaultAssertionBuilder;
 import org.apereo.cas.validation.ImmutableAssertion;
 import org.apereo.cas.web.BaseCasActuatorEndpoint;
+import com.google.common.primitives.Longs;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.math.NumberUtils;
 import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.actuate.endpoint.Access;
@@ -70,11 +70,13 @@ public class CasReleaseAttributesReportEndpoint extends BaseCasActuatorEndpoint 
     protected Map<String, Object> releasePrincipalAttributes(
         final String username,
         @Nullable final String password,
-        final String service) throws Throwable {
+        final String service)
+            throws Throwable {
 
         val selectedService = serviceFactory.getObject().createService(service);
-        val registeredService = NumberUtils.isCreatable(service)
-            ? servicesManager.getObject().findServiceBy(Long.parseLong(service))
+        val registeredServiceId = Longs.tryParse(service);
+        val registeredService = registeredServiceId != null
+            ? servicesManager.getObject().findServiceBy(registeredServiceId)
             : servicesManager.getObject().findServiceBy(selectedService);
         RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(selectedService, registeredService);
 
@@ -115,7 +117,8 @@ public class CasReleaseAttributesReportEndpoint extends BaseCasActuatorEndpoint 
     }
 
     private Authentication buildAuthentication(final String username, final String password,
-                                               final WebApplicationService selectedService) throws Throwable {
+                                               final WebApplicationService selectedService)
+            throws Throwable {
         if (StringUtils.isNotBlank(password)) {
             val credential = new UsernamePasswordCredential(username, password);
             val result = authenticationSystemSupport.getObject().finalizeAuthenticationTransaction(selectedService, credential);
@@ -146,7 +149,8 @@ public class CasReleaseAttributesReportEndpoint extends BaseCasActuatorEndpoint 
             @Parameter(name = "service", required = true, description = "May be the service id or its numeric identifier")
         })
     public Map<String, Object> releaseAttributes(final String username, @Nullable final String password,
-                                                 final String service) throws Throwable {
+                                                 final String service)
+            throws Throwable {
         val map = releasePrincipalAttributes(username, password, service);
         val assertion = (ImmutableAssertion) map.get("assertion");
         return Map.of("username", username, "attributes", assertion.getPrimaryAuthentication().getPrincipal().getAttributes());

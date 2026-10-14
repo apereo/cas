@@ -105,7 +105,8 @@ class OAuth20IntrospectionEndpointControllerTests extends AbstractOAuth20Tests {
     }
 
     protected BaseOAuth20IntrospectionAccessTokenResponse internalVerifyOperation(final String auth,
-                                                                                  final OAuthRegisteredService registeredService) throws Throwable {
+                                                                                  final OAuthRegisteredService registeredService)
+            throws Throwable {
         val request = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.INTROSPECTION_URL);
 
         val value = EncodingUtils.encodeBase64(auth.getBytes(StandardCharsets.UTF_8));

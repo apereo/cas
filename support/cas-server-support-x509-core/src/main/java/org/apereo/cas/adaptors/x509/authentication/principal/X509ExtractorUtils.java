@@ -79,7 +79,7 @@ public class X509ExtractorUtils {
     }
 
     private boolean isTokenEDIPI(final String inToken) {
-        return inToken.length() == EDIPI_LENGTH && NumberUtils.isCreatable(inToken);
+        return inToken.length() == EDIPI_LENGTH && NumberUtils.isDigits(inToken);
     }
 
     /**

@@ -107,7 +107,8 @@ public class SamlProfileSamlAttributeStatementBuilder extends AbstractSaml20Obje
      */
     public AttributeStatement newAttributeStatement(final SamlProfileBuilderContext context,
                                                     final Map<String, Object> attributes,
-                                                    final Saml20AttributeBuilder builder) throws Exception {
+                                                    final Saml20AttributeBuilder builder)
+            throws Exception {
         val attrStatement = SamlUtils.newSamlObject(AttributeStatement.class);
 
         val resp = casProperties.getAuthn().getSamlIdp().getResponse();

@@ -25,5 +25,6 @@ public interface MultifactorAuthenticationTrustedDeviceBypassEvaluator {
      */
     boolean shouldBypassTrustedDevice(RegisteredService registeredService,
                                       Service service,
-                                      Authentication authentication) throws Throwable;
+                                      Authentication authentication)
+            throws Throwable;
 }

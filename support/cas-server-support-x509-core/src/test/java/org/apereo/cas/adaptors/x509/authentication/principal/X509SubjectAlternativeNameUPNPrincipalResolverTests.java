@@ -103,7 +103,8 @@ class X509SubjectAlternativeNameUPNPrincipalResolverTests {
     @MethodSource("getTestParameters")
     void verifyResolvePrincipalInternal(final String certPath,
                                         final String expectedResult,
-                                        final String alternatePrincipalAttribute) throws Throwable {
+                                        final String alternatePrincipalAttribute)
+            throws Throwable {
 
         val context = PrincipalResolutionContext.builder()
             .attributeDefinitionStore(attributeDefinitionStore)

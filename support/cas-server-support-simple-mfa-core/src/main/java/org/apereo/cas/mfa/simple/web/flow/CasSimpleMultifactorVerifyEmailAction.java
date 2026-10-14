@@ -103,7 +103,8 @@ public class CasSimpleMultifactorVerifyEmailAction extends AbstractMultifactorAu
      * @throws Throwable the throwable
      */
     protected CasSimpleMultifactorAuthenticationTicket createToken(final RequestContext requestContext,
-                                                                   final Principal principal) throws Throwable {
+                                                                   final Principal principal)
+            throws Throwable {
         MultifactorAuthenticationWebflowUtils.removeSimpleMultifactorAuthenticationToken(requestContext);
         val service = WebUtils.getService(requestContext);
         return multifactorAuthenticationService.generate(principal, service);

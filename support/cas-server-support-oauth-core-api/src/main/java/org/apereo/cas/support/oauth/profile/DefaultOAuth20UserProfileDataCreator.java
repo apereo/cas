@@ -60,7 +60,8 @@ public class DefaultOAuth20UserProfileDataCreator<T extends OAuth20Configuration
     }
 
     protected Principal getAccessTokenAuthenticationPrincipal(final OAuth20AccessToken accessToken,
-                                                              final RegisteredService registeredService) throws Throwable {
+                                                              final RegisteredService registeredService)
+            throws Throwable {
         val authentication = accessToken.getAuthentication();
         val attributes = new HashMap<>(authentication.getPrincipal().getAttributes());
         val authnAttributes = getConfigurationContext().getObject().getAuthenticationAttributeReleasePolicy()

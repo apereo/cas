@@ -99,7 +99,8 @@ class OidcFederationDefaultTrustChainResolverTests {
             public TrustChainResolver mockTrustChainResolver(
                 @Qualifier(OidcFederationEntityStatementService.BEAN_NAME)
                 final OidcFederationEntityStatementService oidcFederationEntityStatementService,
-                final CasConfigurationProperties casProperties) throws Exception {
+                final CasConfigurationProperties casProperties)
+                    throws Exception {
 
                 val issuer = casProperties.getAuthn().getOidc().getCore().getIssuer();
                 val metadata = new JSONObject();

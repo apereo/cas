@@ -87,7 +87,8 @@ class OAuth20TokenExchangeGrantTypeTokenRequestValidatorTests extends AbstractOA
     @ParameterizedTest
     void verifyServicePassingWithTicket(final Object subject, final OAuth20TokenExchangeTypes type,
                                         final OAuthRegisteredService registeredService,
-                                        final Boolean expectation) throws Throwable {
+                                        final Boolean expectation)
+            throws Throwable {
         request.setParameter(OAuth20Constants.SUBJECT_TOKEN, subject.toString());
         if (subject instanceof final Ticket at) {
             ticketRegistry.addTicket(at);

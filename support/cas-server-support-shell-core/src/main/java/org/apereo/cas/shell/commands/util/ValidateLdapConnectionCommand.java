@@ -94,7 +94,8 @@ public class ValidateLdapConnectionCommand implements CasShellCommand {
                                    final String baseDn,
                                    final String searchFilter,
                                    final String userAttributes,
-                                   final String userPassword) throws Exception {
+                                   final String userPassword)
+            throws Exception {
         val pair = getContext(ldapUrl, bindDn, bindCredential);
         if (pair == null) {
             LOGGER.error("Could not connect to any of the provided LDAP urls based on the given credentials.");

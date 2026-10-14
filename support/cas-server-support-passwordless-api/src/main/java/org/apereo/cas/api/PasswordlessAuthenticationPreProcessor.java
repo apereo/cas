@@ -30,7 +30,8 @@ public interface PasswordlessAuthenticationPreProcessor extends Ordered {
                                         PasswordlessUserAccount principal,
                                         Service service,
                                         Credential credential,
-                                        PasswordlessAuthenticationToken token) throws Throwable;
+                                        PasswordlessAuthenticationToken token)
+            throws Throwable;
 
     @Override
     default int getOrder() {

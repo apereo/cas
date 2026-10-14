@@ -354,20 +354,30 @@ public interface CasRuntimeHintsRegistrar extends RuntimeHintsRegistrar {
         val results = (Collection<Class>) ReflectionUtils.findSubclassesInPackage(superClass, packages);
         val filteredResults = results
             .stream()
-            .filter(clazz -> {
-                var host = clazz.getCanonicalName();
-                if (clazz.isMemberClass() && clazz.getPackageName().startsWith("org.apereo.cas")) {
-                    var entry = clazz;
-                    while (entry.isMemberClass()) {
-                        entry = clazz.getNestHost();
-                    }
-                    host = entry.getCanonicalName();
-                }
-                return StringUtils.isNotBlank(host) && !host.endsWith("Tests");
-            })
+            .filter(CasRuntimeHintsRegistrar::isEligibleForRuntimeHints)
             .collect(Collectors.toList());
         filteredResults.add(superClass);
         return filteredResults;
+    }
+
+    /*
+     * A nested class whose enclosing class cannot be loaded, such as a JSP tag in a library whose JSP API is not on
+     * the classpath, cannot be used at runtime either and is left out.
+     */
+    private static boolean isEligibleForRuntimeHints(final Class clazz) {
+        try {
+            var host = clazz.getCanonicalName();
+            if (clazz.isMemberClass() && clazz.getPackageName().startsWith("org.apereo.cas")) {
+                var entry = clazz;
+                while (entry.isMemberClass()) {
+                    entry = clazz.getNestHost();
+                }
+                host = entry.getCanonicalName();
+            }
+            return StringUtils.isNotBlank(host) && !host.endsWith("Tests");
+        } catch (final LinkageError e) {
+            return false;
+        }
     }
 
     /**

@@ -100,7 +100,8 @@ class SSOSamlIdPProfileCallbackHandlerControllerWithBrowserStorageTests extends 
     }
 
     private MvcResult performCallbackGet(final MockHttpServletRequest request, final MockHttpServletResponse response,
-                                         final String ticketId) throws Exception {
+                                         final String ticketId)
+            throws Exception {
         val builder = callbackRequest(request, response, get(SamlIdPConstants.ENDPOINT_SAML2_SSO_PROFILE_CALLBACK)
             .param(SamlIdPConstants.AUTHN_REQUEST_ID, request.getParameter(SamlIdPConstants.AUTHN_REQUEST_ID))
             .param(CasProtocolConstants.PARAMETER_TICKET, ticketId));
@@ -108,7 +109,8 @@ class SSOSamlIdPProfileCallbackHandlerControllerWithBrowserStorageTests extends 
     }
 
     private MvcResult performCallbackPost(final MockHttpServletRequest request, final MockHttpServletResponse response,
-                                          final String ticketId, final String browserStorage) throws Exception {
+                                          final String ticketId, final String browserStorage)
+            throws Exception {
         val builder = callbackRequest(request, response, post(SamlIdPConstants.ENDPOINT_SAML2_SSO_PROFILE_CALLBACK)
             .contentType(MediaType.APPLICATION_FORM_URLENCODED)
             .param(SamlIdPConstants.AUTHN_REQUEST_ID, request.getParameter(SamlIdPConstants.AUTHN_REQUEST_ID))
@@ -130,7 +132,8 @@ class SSOSamlIdPProfileCallbackHandlerControllerWithBrowserStorageTests extends 
     }
 
     private void storeAuthnRequest(final MockHttpServletRequest request, final MockHttpServletResponse response,
-                                   final AuthnRequest authnRequest) throws Throwable {
+                                   final AuthnRequest authnRequest)
+            throws Throwable {
         val context = new MessageContext();
         context.setMessage(authnRequest);
         request.addParameter(SamlIdPConstants.AUTHN_REQUEST_ID, authnRequest.getID());

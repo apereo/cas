@@ -74,7 +74,8 @@ public class DefaultRequestedAuthenticationContextValidator implements Requested
     @Override
     public AuthenticationContextValidationResult validateAuthenticationContext(final Assertion assertion,
                                                                                final HttpServletRequest request,
-                                                                               final HttpServletResponse response) throws Throwable {
+                                                                               final HttpServletResponse response)
+            throws Throwable {
         LOGGER.trace("Locating the primary authentication associated with this service request [{}]", assertion.getService());
         val registeredService = servicesManager.findServiceBy(assertion.getService());
         val authentication = assertion.getPrimaryAuthentication();
@@ -87,7 +88,8 @@ public class DefaultRequestedAuthenticationContextValidator implements Requested
         final HttpServletResponse response,
         @Nullable final RegisteredService registeredService,
         final Authentication authentication,
-        final Service service) throws Throwable {
+        final Service service)
+            throws Throwable {
 
         if (registeredService != null && registeredService.getMultifactorAuthenticationPolicy().isBypassEnabled()) {
             LOGGER.debug("Multifactor authentication execution is ignored for [{}]", registeredService.getName());

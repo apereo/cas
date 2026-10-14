@@ -59,7 +59,8 @@ class SamlIdPDynamoDbRegisteredServiceMetadataConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "amazonDynamoDbSamlRegisteredServiceMetadataClient")
     public DynamoDbClient amazonDynamoDbSamlRegisteredServiceMetadataClient(
-        final CasConfigurationProperties casProperties) throws Exception {
+        final CasConfigurationProperties casProperties)
+            throws Exception {
         val dynamoDbProperties = casProperties.getAuthn().getSamlIdp().getMetadata().getDynamoDb();
         val factory = new AmazonDynamoDbClientFactory();
         val client = factory.createAmazonDynamoDb(dynamoDbProperties);

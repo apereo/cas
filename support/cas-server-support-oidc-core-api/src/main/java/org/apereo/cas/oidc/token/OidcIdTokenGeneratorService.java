@@ -276,7 +276,8 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
     }
 
     private @Nullable Principal buildPrincipalForAttributeFilter(final OAuth20AccessToken accessToken,
-                                                                 final RegisteredService registeredService) throws Throwable {
+                                                                 final RegisteredService registeredService)
+            throws Throwable {
         val authentication = accessToken.getAuthentication();
         val attributes = new HashMap<>(authentication.getPrincipal().getAttributes());
         val authnAttributes = getConfigurationContext().getAuthenticationAttributeReleasePolicy()
@@ -392,7 +393,8 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
      */
     protected void generateAccessTokenHash(final IdTokenGenerationContext context,
                                            final OidcRegisteredService registeredService,
-                                           final JwtClaims claims) throws Throwable {
+                                           final JwtClaims claims)
+            throws Throwable {
         if (context.getResponseType() == OAuth20ResponseTypes.ID_TOKEN) {
             LOGGER.trace("No access token is issued for response type [{}]; the ID token carries no access token hash", context.getResponseType());
             return;

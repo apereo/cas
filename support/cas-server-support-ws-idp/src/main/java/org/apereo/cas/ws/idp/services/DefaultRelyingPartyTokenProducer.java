@@ -50,7 +50,8 @@ public class DefaultRelyingPartyTokenProducer implements WSFederationRelyingPart
     @Override
     public String produce(final SecurityToken securityToken, final WSFederationRegisteredService service,
                           final WSFederationRequest fedRequest, final HttpServletRequest request,
-                          final TicketValidationResult assertion) throws Exception {
+                          final TicketValidationResult assertion)
+            throws Exception {
         val sts = clientBuilder.buildClientForRelyingPartyTokenResponses(securityToken, service);
         mapAttributesToRequestedClaims(service, sts, assertion);
         val rpToken = requestSecurityTokenResponse(service, sts, assertion);
@@ -60,7 +61,8 @@ public class DefaultRelyingPartyTokenProducer implements WSFederationRelyingPart
 
     protected void mapAttributesToRequestedClaims(final WSFederationRegisteredService service,
                                                   final SecurityTokenServiceClient sts,
-                                                  final TicketValidationResult assertion) throws Exception {
+                                                  final TicketValidationResult assertion)
+            throws Exception {
         val writer = new W3CDOMStreamWriter();
         writer.writeStartElement("wst", "Claims", STSUtils.WST_NS_05_12);
         writer.writeNamespace("wst", STSUtils.WST_NS_05_12);
