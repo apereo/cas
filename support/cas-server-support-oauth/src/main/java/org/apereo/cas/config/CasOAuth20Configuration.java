@@ -47,9 +47,11 @@ import org.apereo.cas.support.oauth.profile.OAuth20UserProfileDataCreator;
 import org.apereo.cas.support.oauth.services.OAuth20RegisteredServiceCipherExecutor;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.validator.CASOAuth20TicketValidator;
+import org.apereo.cas.support.oauth.validator.DefaultOAuth20ClientSecretExpirationListener;
 import org.apereo.cas.support.oauth.validator.DefaultOAuth20ClientSecretValidator;
 import org.apereo.cas.support.oauth.validator.DefaultOAuth20DPoPNonceService;
 import org.apereo.cas.support.oauth.validator.DefaultOAuth20ProofOfPossessionValidator;
+import org.apereo.cas.support.oauth.validator.OAuth20ClientSecretExpirationListener;
 import org.apereo.cas.support.oauth.validator.OAuth20ClientSecretValidator;
 import org.apereo.cas.support.oauth.validator.OAuth20DPoPNonceService;
 import org.apereo.cas.support.oauth.validator.OAuth20ProofOfPossessionValidator;
@@ -207,6 +209,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.scheduling.TaskScheduler;
@@ -1061,6 +1064,18 @@ class CasOAuth20Configuration {
                 @Qualifier("oauthRegisteredServiceCipherExecutor")
                 final CipherExecutor oauthRegisteredServiceCipherExecutor) {
                 return new DefaultOAuth20ClientSecretValidator(context, oauthRegisteredServiceCipherExecutor);
+            }
+
+            @Bean
+            @ConditionalOnMissingBean(name = OAuth20ClientSecretExpirationListener.BEAN_NAME)
+            @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+            @Lazy(false)
+            public OAuth20ClientSecretExpirationListener oauth20ClientSecretExpirationListener(
+                @Qualifier(ServicesManager.BEAN_NAME)
+                final ServicesManager servicesManager,
+                @Qualifier(OAuth20ClientSecretValidator.BEAN_NAME)
+                final OAuth20ClientSecretValidator oauth20ClientSecretValidator) {
+                return new DefaultOAuth20ClientSecretExpirationListener(servicesManager, oauth20ClientSecretValidator);
             }
 
             @Bean

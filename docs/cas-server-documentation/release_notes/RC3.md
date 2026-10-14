@@ -704,6 +704,19 @@ authentication. See the [stateless ticket registry documentation](../ticketing/S
   without a `code_verifier`, or with one that did not match. As RFC 7636 and RFC 9700 require, the code verifier is now
   compared exactly rather than ignoring case, and a `code_verifier` sent for a code that was issued without a challenge is
   refused with `invalid_grant`.
+- {: .fixed data-area="oidc"} When an [OAuth application](../authentication/OAuth-Authentication-Clients.html) renews refresh
+  tokens, the refresh token presented is now removed before new tokens are issued for it, and only the request that removes it
+  is issued tokens. Concurrent requests presenting the same refresh token could previously each receive a new refresh token,
+  so one refresh token turned into several valid ones. A client that sends the same refresh token in parallel now receives
+  `invalid_grant` for all but one request. The refresh token being renewed is also no longer written back to the ticket registry
+  during the request. Tokens already issued from a refresh token presented again are not revoked.
+- {: .fixed data-area="oidc"} [Client secrets](../authentication/OAuth-ClientSecret-Management.html) are now compared in
+  constant time, and expired client secrets are no longer removed while a request is authenticated: CAS used to change the
+  shared application definition and save it to the service registry during the request, and once every secret of an
+  application had expired and been removed, the application was treated as having no client secret and was accepted with any
+  secret, or none. Expired client secrets are now ignored when a request is authenticated, and removed from the application
+  definition in the background each time CAS loads applications from the service registry. When all secrets of an application
+  have expired, the one that expired last is kept, so the application keeps refusing requests until it is given a new secret.
 - {: .changed data-area="oidc"} When CAS works out which application a login is for, a request object carried by the
   OAuth or OpenID Connect authorization request is now unpacked and verified once, instead of once for each of the client
   identifier, redirect URI and grant type read from it.

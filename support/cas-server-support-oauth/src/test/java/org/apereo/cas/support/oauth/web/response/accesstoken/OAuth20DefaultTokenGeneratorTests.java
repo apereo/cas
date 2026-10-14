@@ -368,19 +368,16 @@ class OAuth20DefaultTokenGeneratorTests {
             val requests = 8;
             val start = new CountDownLatch(1);
             try (val executor = Executors.newVirtualThreadPerTaskExecutor()) {
-                final List<Future<?>> results = new ArrayList<>();
-                for (var i = 0; i < requests; i++) {
-                    results.add(executor.submit(Unchecked.callable(() -> {
-                        start.await();
-                        try {
-                            oauthTokenGenerator.generate(tokenRequestContext);
-                            issued.incrementAndGet();
-                        } catch (final InvalidOAuth20DeviceTokenException e) {
-                            rejected.incrementAndGet();
-                        }
-                        return null;
-                    })));
-                }
+                val results = IntStream.range(0, requests).mapToObj(i -> executor.submit(Unchecked.callable(() -> {
+                    start.await();
+                    try {
+                        oauthTokenGenerator.generate(tokenRequestContext);
+                        issued.incrementAndGet();
+                    } catch (final InvalidOAuth20DeviceTokenException e) {
+                        rejected.incrementAndGet();
+                    }
+                    return null;
+                }))).collect(Collectors.toCollection(() -> new ArrayList<Future<?>>()));
                 start.countDown();
                 for (final Future<?> result : results) {
                     result.get();
@@ -389,6 +386,51 @@ class OAuth20DefaultTokenGeneratorTests {
             assertEquals(1, issued.get());
             assertEquals(requests - 1, rejected.get());
             assertNull(ticketRegistry.getTicket(deviceCode.getId()));
+        }
+
+        @Test
+        void verifyRotatedRefreshTokenRedeemedOnceUnderConcurrency() throws Throwable {
+            val registeredService = getRegisteredService(SERVICE_URL, UUID.randomUUID().toString(), "secret");
+            registeredService.setGenerateRefreshToken(true);
+            registeredService.setRenewRefreshToken(true);
+            servicesManager.save(registeredService);
+            val refreshToken = addRefreshToken(createPrincipal(), registeredService);
+
+            val tokenRequestContext = AccessTokenRequestContext.builder()
+                .clientId(registeredService.getClientId())
+                .service(refreshToken.getService())
+                .authentication(refreshToken.getAuthentication())
+                .registeredService(registeredService)
+                .grantType(OAuth20GrantTypes.REFRESH_TOKEN)
+                .generateRefreshToken(true)
+                .expireOldRefreshToken(true)
+                .token(refreshToken)
+                .build();
+
+            val issued = new CopyOnWriteArrayList<String>();
+            val rejected = new AtomicInteger();
+            val requests = 8;
+            val start = new CountDownLatch(1);
+            try (val executor = Executors.newVirtualThreadPerTaskExecutor()) {
+                val results = IntStream.range(0, requests).mapToObj(i -> executor.submit(Unchecked.callable(() -> {
+                    start.await();
+                    try {
+                        val result = oauthTokenGenerator.generate(tokenRequestContext);
+                        issued.add(result.getRefreshToken().orElseThrow().getId());
+                    } catch (final InvalidTicketException e) {
+                        rejected.incrementAndGet();
+                    }
+                    return null;
+                }))).collect(Collectors.toCollection(() -> new ArrayList<Future<?>>()));
+                start.countDown();
+                for (final Future<?> result : results) {
+                    result.get();
+                }
+            }
+            assertEquals(1, issued.size());
+            assertEquals(requests - 1, rejected.get());
+            assertNull(ticketRegistry.getTicket(refreshToken.getId()));
+            assertNotNull(ticketRegistry.getTicket(issued.getFirst(), OAuth20RefreshToken.class));
         }
 
         @Test

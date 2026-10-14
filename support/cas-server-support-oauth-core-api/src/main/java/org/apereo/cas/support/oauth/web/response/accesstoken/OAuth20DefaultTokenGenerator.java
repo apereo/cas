@@ -187,6 +187,7 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
         }
 
         consumeOAuthCode(tokenRequestContext);
+        consumeRefreshToken(tokenRequestContext);
         val authentication = finalizeAuthentication(tokenRequestContext, prepareAuthentication(tokenRequestContext));
         LOGGER.debug("Creating access token for [{}]", tokenRequestContext);
         val accessToken = createAccessToken(tokenRequestContext, authentication);
@@ -345,7 +346,8 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
                                       final Ticket accessToken)
             throws Exception {
         val trackAccessTokens = casProperties.getAuthn().getOauth().getRefreshToken().isTrackAccessTokens();
-        if (tokenRequestContext.isRefreshToken() && !tokenRequestContext.getToken().isStateless() && trackAccessTokens) {
+        if (tokenRequestContext.isRefreshToken() && !tokenRequestContext.getToken().isStateless()
+            && !tokenRequestContext.isExpireOldRefreshToken() && trackAccessTokens) {
             val refreshToken = (OAuth20RefreshToken) tokenRequestContext.getToken();
             LOGGER.trace("Tracking access token [{}] linked to refresh token [{}]", accessToken.getId(), refreshToken.getId());
             refreshToken.getAccessTokens().add(accessToken.getId());
@@ -367,6 +369,22 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
             } else {
                 ticketRegistry.updateTicket(token);
             }
+        }
+    }
+
+    /*
+     * A refresh token that is rotated is removed before new tokens are issued for it, so that of the requests that
+     * present it at the same time only one is issued tokens and the others are refused (RFC 9700, section 4.14.2).
+     */
+    private void consumeRefreshToken(final AccessTokenRequestContext tokenRequestContext) throws Exception {
+        val refreshToken = tokenRequestContext.getToken();
+        if (tokenRequestContext.isRefreshToken() && tokenRequestContext.isExpireOldRefreshToken() && !refreshToken.isStateless()) {
+            refreshToken.markTicketExpired();
+            if (ticketRegistry.deleteTicket(refreshToken) == 0) {
+                LOGGER.warn("Refresh token [{}] was already rotated by another token request", refreshToken.getId());
+                throw new InvalidTicketException(refreshToken.getId());
+            }
+            LOGGER.debug("Removed rotated refresh token [{}]", refreshToken.getId());
         }
     }
 
@@ -430,11 +448,7 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
 
         if (refreshToken.getExpirationPolicy().getTimeToLive() > 0) {
             LOGGER.debug("Adding refresh token [{}] to the registry", refreshToken);
-            val addedRefreshToken = addTicketToRegistry(refreshToken);
-            if (tokenRequestContext.isExpireOldRefreshToken()) {
-                expireOldRefreshToken(tokenRequestContext);
-            }
-            return addedRefreshToken;
+            return addTicketToRegistry(refreshToken);
         }
         LOGGER.debug("Refresh token expiration policy for [{}] does not allow refresh tokens to be added to the registry",
             refreshToken.getId());
@@ -503,15 +517,6 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
         LOGGER.debug("Added device token [{}] to registry", addedDeviceToken);
 
         return new DeviceTokens(addedDeviceToken, addedDeviceUserCode);
-    }
-
-    private void expireOldRefreshToken(final AccessTokenRequestContext tokenRequestContext) throws Exception {
-        val oldRefreshToken = tokenRequestContext.getToken();
-        if (!oldRefreshToken.isStateless()) {
-            LOGGER.debug("Expiring old refresh token [{}]", oldRefreshToken);
-            oldRefreshToken.markTicketExpired();
-            ticketRegistry.deleteTicket(oldRefreshToken);
-        }
     }
 
     protected record AccessAndRefreshTokens(Ticket accessToken, Ticket refreshToken) {

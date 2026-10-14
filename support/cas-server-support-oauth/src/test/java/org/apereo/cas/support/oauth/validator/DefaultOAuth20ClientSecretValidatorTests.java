@@ -2,11 +2,14 @@ package org.apereo.cas.support.oauth.validator;
 
 import module java.base;
 import org.apereo.cas.AbstractOAuth20Tests;
+import org.apereo.cas.support.events.service.CasRegisteredServicesLoadedEvent;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredServiceClientSecret;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
+import org.apereo.inspektr.common.web.ClientInfoHolder;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -102,35 +105,93 @@ class DefaultOAuth20ClientSecretValidatorTests extends AbstractOAuth20Tests {
     }
 
     @Test
-    void verifyExpiredClientSecretsAreRemoved() {
+    void verifyExpiredClientSecretsAreIgnored() {
         val registeredService = getRegisteredService();
         val expiredSecret = new OAuthRegisteredServiceClientSecret(
             RandomUtils.randomAlphanumeric(12), ZonedDateTime.now(ZoneOffset.UTC).minusMinutes(5));
         val activeSecret = OAuthRegisteredServiceClientSecret.withoutExpiration(RandomUtils.randomAlphanumeric(12));
         val expiringSecret = new OAuthRegisteredServiceClientSecret(
             RandomUtils.randomAlphanumeric(12), ZonedDateTime.now(ZoneOffset.UTC).plusMinutes(5));
-        registeredService.setClientSecrets(new ArrayList<>(List.of(expiredSecret, activeSecret, expiringSecret)));
+        val secrets = List.of(expiredSecret, activeSecret, expiringSecret);
+        registeredService.setClientSecrets(new ArrayList<>(secrets));
 
-        val result = oauth20ClientSecretValidator.validate(registeredService, activeSecret.getValue());
-
-        assertTrue(result);
-        assertEquals(List.of(activeSecret, expiringSecret), registeredService.getClientSecrets());
-        assertFalse(registeredService.getClientSecrets().contains(expiredSecret));
+        assertTrue(oauth20ClientSecretValidator.validate(registeredService, activeSecret.getValue()));
+        assertTrue(oauth20ClientSecretValidator.validate(registeredService, expiringSecret.getValue()));
+        assertFalse(oauth20ClientSecretValidator.validate(registeredService, expiredSecret.getValue()));
+        assertEquals(secrets, registeredService.getClientSecrets());
     }
 
     @Test
-    void verifyAllExpiredClientSecretsAreRemoved() {
+    void verifyAllExpiredClientSecretsAreRefused() {
         val registeredService = getRegisteredService();
         val expiredSecret = new OAuthRegisteredServiceClientSecret(
             RandomUtils.randomAlphanumeric(12), ZonedDateTime.now(ZoneOffset.UTC).minusMinutes(5));
         val expiredSecretWithMatchingValue = new OAuthRegisteredServiceClientSecret(
             RandomUtils.randomAlphanumeric(12), ZonedDateTime.now(ZoneOffset.UTC).minusMinutes(10));
-        registeredService.setClientSecrets(new ArrayList<>(List.of(expiredSecret, expiredSecretWithMatchingValue)));
+        val secrets = List.of(expiredSecret, expiredSecretWithMatchingValue);
+        registeredService.setClientSecrets(new ArrayList<>(secrets));
 
-        val result = oauth20ClientSecretValidator.validate(registeredService, expiredSecretWithMatchingValue.getValue());
+        assertFalse(oauth20ClientSecretValidator.validate(registeredService, expiredSecretWithMatchingValue.getValue()));
+        assertFalse(oauth20ClientSecretValidator.validate(registeredService, expiredSecretWithMatchingValue.getValue()));
+        assertFalse(oauth20ClientSecretValidator.validate(registeredService, RandomUtils.randomAlphanumeric(12)));
+        assertEquals(secrets, registeredService.getClientSecrets());
+    }
 
-        assertFalse(result);
-        assertTrue(registeredService.getClientSecrets().isEmpty());
+    @Test
+    void verifyBlankClientSecretIsRefused() {
+        val registeredService = getRegisteredService();
+        registeredService.setClientSecrets(List.of(OAuthRegisteredServiceClientSecret.withoutExpiration(RandomUtils.randomAlphanumeric(12))));
+        assertFalse(oauth20ClientSecretValidator.validate(registeredService, StringUtils.EMPTY));
+    }
+
+    @Test
+    void verifyExpiredClientSecretsRemoved() {
+        val registeredService = getRegisteredService();
+        val expiredSecret = new OAuthRegisteredServiceClientSecret(
+            RandomUtils.randomAlphanumeric(12), ZonedDateTime.now(ZoneOffset.UTC).minusMinutes(5));
+        val activeSecret = OAuthRegisteredServiceClientSecret.withoutExpiration(RandomUtils.randomAlphanumeric(12));
+        val expiringSecret = new OAuthRegisteredServiceClientSecret(
+            RandomUtils.randomAlphanumeric(12), ZonedDateTime.now(ZoneOffset.UTC).plusMinutes(5));
+        val secrets = new ArrayList<>(List.of(expiredSecret, activeSecret, expiringSecret));
+        registeredService.setClientSecrets(secrets);
+
+        assertTrue(oauth20ClientSecretValidator.removeExpiredClientSecrets(registeredService));
+        assertEquals(List.of(activeSecret, expiringSecret), registeredService.getClientSecrets());
+        assertEquals(3, secrets.size());
+        assertFalse(oauth20ClientSecretValidator.removeExpiredClientSecrets(registeredService));
+    }
+
+    @Test
+    void verifyClientSecretExpiredLastIsKept() {
+        val registeredService = getRegisteredService();
+        val expiredSecret = new OAuthRegisteredServiceClientSecret(
+            RandomUtils.randomAlphanumeric(12), ZonedDateTime.now(ZoneOffset.UTC).minusMinutes(10));
+        val lastExpiredSecret = new OAuthRegisteredServiceClientSecret(
+            RandomUtils.randomAlphanumeric(12), ZonedDateTime.now(ZoneOffset.UTC).minusMinutes(5));
+        registeredService.setClientSecrets(new ArrayList<>(List.of(lastExpiredSecret, expiredSecret)));
+
+        assertTrue(oauth20ClientSecretValidator.removeExpiredClientSecrets(registeredService));
+        assertEquals(List.of(lastExpiredSecret), registeredService.getClientSecrets());
+        assertFalse(oauth20ClientSecretValidator.removeExpiredClientSecrets(registeredService));
+        assertFalse(oauth20ClientSecretValidator.validate(registeredService, lastExpiredSecret.getValue()));
+        assertFalse(oauth20ClientSecretValidator.validate(registeredService, RandomUtils.randomAlphanumeric(12)));
+    }
+
+    @Test
+    void verifyExpiredClientSecretsRemovedOnceServicesAreLoaded() {
+        val registeredService = getRegisteredService();
+        val expiredSecret = new OAuthRegisteredServiceClientSecret(
+            RandomUtils.randomAlphanumeric(12), ZonedDateTime.now(ZoneOffset.UTC).minusMinutes(5));
+        val activeSecret = OAuthRegisteredServiceClientSecret.withoutExpiration(RandomUtils.randomAlphanumeric(12));
+        registeredService.setClientSecrets(new ArrayList<>(List.of(expiredSecret, activeSecret)));
+        val savedService = (OAuthRegisteredService) servicesManager.save(registeredService);
+
+        val listener = new DefaultOAuth20ClientSecretExpirationListener(servicesManager, oauth20ClientSecretValidator);
+        listener.handleRegisteredServicesLoadedEvent(new CasRegisteredServicesLoadedEvent(this,
+            List.of(savedService), ClientInfoHolder.getClientInfo()));
+        val loadedService = servicesManager.findServiceBy(savedService.getId(), OAuthRegisteredService.class);
+        assertNotNull(loadedService);
+        assertEquals(List.of(activeSecret), loadedService.getClientSecrets());
     }
 
     private static OAuthRegisteredService getRegisteredService() {

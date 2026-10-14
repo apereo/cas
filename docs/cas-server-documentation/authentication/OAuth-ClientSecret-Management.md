@@ -66,6 +66,10 @@ Unix epoch timestamp in seconds. The timestamp is converted into a `UTC` timezon
 and truncated to second precision if needed. The current `UTC` time is also truncated to second 
 precision so both values are compared consistently. If the current time is after the configured 
 expiration time, the client secret is considered expired and rejected. 
+
+Expired client secrets are removed from the application definition each time CAS loads applications from the service registry.
+When all client secrets of an application have expired, the one that expired last is kept so the application continues to be 
+treated as a confidential client and its requests are refused until a new client secret is assigned.
                              
 A shortcut for calculating a client secret set to expire `2` weeks from now would be:
 
