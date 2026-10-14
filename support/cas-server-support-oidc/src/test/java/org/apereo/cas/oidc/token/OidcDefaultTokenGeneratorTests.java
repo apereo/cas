@@ -16,6 +16,7 @@ import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.ticket.idtoken.IdTokenGenerationContext;
 import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshToken;
 import lombok.val;
+import org.jooq.lambda.Unchecked;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.pac4j.core.profile.CommonProfile;
@@ -131,7 +132,7 @@ class OidcDefaultTokenGeneratorTests extends AbstractOidcTests {
         try (val executor = Executors.newVirtualThreadPerTaskExecutor()) {
             final List<Future<?>> results = new ArrayList<>();
             for (var i = 0; i < requests; i++) {
-                results.add(executor.submit(() -> {
+                results.add(executor.submit(Unchecked.callable(() -> {
                     start.await();
                     try {
                         oauthTokenGenerator.generate(accessTokenContext);
@@ -140,7 +141,7 @@ class OidcDefaultTokenGeneratorTests extends AbstractOidcTests {
                         rejected.incrementAndGet();
                     }
                     return null;
-                }));
+                })));
             }
             start.countDown();
             for (final Future<?> result : results) {

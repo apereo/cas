@@ -26,6 +26,7 @@ import org.apereo.cas.ticket.expiration.TimeoutExpirationPolicy;
 import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshToken;
 import org.apereo.cas.util.EncodingUtils;
 import lombok.val;
+import org.jooq.lambda.Unchecked;
 import org.jose4j.jwe.ContentEncryptionAlgorithmIdentifiers;
 import org.jose4j.jwt.JwtClaims;
 import org.junit.jupiter.api.Nested;
@@ -369,7 +370,7 @@ class OAuth20DefaultTokenGeneratorTests {
             try (val executor = Executors.newVirtualThreadPerTaskExecutor()) {
                 final List<Future<?>> results = new ArrayList<>();
                 for (var i = 0; i < requests; i++) {
-                    results.add(executor.submit(() -> {
+                    results.add(executor.submit(Unchecked.callable(() -> {
                         start.await();
                         try {
                             oauthTokenGenerator.generate(tokenRequestContext);
@@ -378,7 +379,7 @@ class OAuth20DefaultTokenGeneratorTests {
                             rejected.incrementAndGet();
                         }
                         return null;
-                    }));
+                    })));
                 }
                 start.countDown();
                 for (final Future<?> result : results) {
