@@ -168,11 +168,11 @@ public class OidcJwtAuthenticator implements Authenticator {
                     .filter(StringUtils::isNotBlank)
                     .map(secret -> new OctetSequenceJsonWebKey(new HmacKey(secret.getBytes(StandardCharsets.UTF_8))))
                     .forEach(keys::addJsonWebKey);
-            } else {
-                OidcJsonWebKeyStoreUtils.getJsonWebKeySet(registeredService,
-                        applicationContext, Optional.of(OidcJsonWebKeyUsage.SIGNING))
-                    .ifPresent(set -> set.getJsonWebKeys().forEach(keys::addJsonWebKey));
             }
+
+            OidcJsonWebKeyStoreUtils.getJsonWebKeySet(registeredService,
+                    applicationContext, Optional.of(OidcJsonWebKeyUsage.SIGNING))
+                .ifPresent(set -> set.getJsonWebKeys().forEach(keys::addJsonWebKey));
 
             val baseUrl = casProperties.getServer().getPrefix().concat('/' + OidcConstants.BASE_OIDC_URL + '/');
             val audience = new String[]{
