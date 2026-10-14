@@ -49,7 +49,7 @@ function generateNavigationBarAndCrumbs() {
         if (current) {
             link.setAttribute("aria-current", "page");
         } else {
-            link.href = "/" + segments.slice(0, start + index + 1).join("/") + "/";
+            link.href = `/${segments.slice(0, start + index + 1).join("/")}/`;
             link.className = "capitalize";
         }
         item.append(link);
@@ -460,7 +460,7 @@ function generatePageTOC() {
         const item = document.createElement("li");
         item.className = `toc-entry toc-${heading.tagName.toLowerCase()}`;
         const link = document.createElement("a");
-        link.href = "#" + heading.id;
+        link.href = `#${heading.id}`;
         link.textContent = heading.textContent;
         item.append(link);
         contents.append(item);
@@ -475,8 +475,8 @@ function generatePageTOC() {
         const visibleHeadings = headings.filter(heading => heading.getClientRects().length > 0);
         const active = visibleHeadings.filter(heading => heading.getBoundingClientRect().top <= header).at(-1) || visibleHeadings[0];
         contents.querySelectorAll("a").forEach(link => {
-            link.parentElement.hidden = !visibleHeadings.some(heading => link.hash === "#" + heading.id);
-            if (active && link.hash === "#" + active.id) {
+            link.parentElement.hidden = !visibleHeadings.some(heading => link.hash === `#${heading.id}`);
+            if (active && link.hash === `#${active.id}`) {
                 link.setAttribute("aria-current", "location");
             } else {
                 link.removeAttribute("aria-current");
@@ -952,12 +952,17 @@ const CAS_HOME_TITLE_PHRASES = [
     "Even Your Cron Jobs Need Boundaries",
     "Keeping Tokens Fresher Than the Office Coffee",
     "Making “Access Denied” Feel Less Personal",
-    "No, Your Cat Does Not Need Administrator Access",
+    "No, Your Cat Does Not Need Admin Access",
     "Because Incognito Mode Isn't an Access Strategy",
     "Your Browser Remembers. We Still Check.",
     "Yelling at the Monitor Won't Fix Your Login",
     "Entra Your Credit Card, Yet?",
-    "Turning “Contact Sales” into “git clone”"
+    "Turning “Contact Sales” into “git clone”",
+    "“We Trust Dave” Does Not Scale",
+    "Pull Requests Welcome. Login Requests Reviewed.",
+    "Because Bob Left in March",
+    "Single Sign-On, Multiple Meetings to Approve It",
+    "\"Give Everyone Admin\" Is a Great Podcast"
 ];
 
 function initializeHomeTitle() {

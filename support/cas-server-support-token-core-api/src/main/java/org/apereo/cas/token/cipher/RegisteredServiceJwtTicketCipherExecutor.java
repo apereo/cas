@@ -37,37 +37,65 @@ public class RegisteredServiceJwtTicketCipherExecutor extends JwtTicketCipherExe
 
     @Override
     public @Nullable String decode(final String data, final Optional<RegisteredService> service) {
-        if (service.isPresent()) {
-            val registeredService = service.get();
-            if (supports(registeredService)) {
-                LOGGER.debug("Found signing and/or encryption keys for [{}] in service registry to decode", registeredService.getServiceId());
-                val cipher = getTokenTicketCipherExecutorForService(registeredService);
-                if (cipher.isEnabled()) {
-                    return cipher.decode(data, new Object[]{registeredService});
-                }
-            }
-        }
-        return decode(data, ArrayUtils.EMPTY_BOOLEAN_OBJECT_ARRAY);
+        final Optional<Function<String, @Nullable String>> decoder = service.flatMap(this::findDecoderFor);
+        return decoder.isPresent() ? decoder.get().apply(data) : decode(data, ArrayUtils.EMPTY_BOOLEAN_OBJECT_ARRAY);
     }
 
     @Override
     public String encode(final String data, final Optional<RegisteredService> service) {
-        if (service.isPresent()) {
-            val registeredService = service.get();
-            if (supports(registeredService)) {
-                LOGGER.debug("Found signing and/or encryption keys for [{}] in service registry to encode", registeredService.getServiceId());
-                val cipher = getTokenTicketCipherExecutorForService(registeredService);
-                if (cipher.isEnabled()) {
-                    return cipher.encode(data);
-                }
-            }
-        }
-        return encode(data, ArrayUtils.EMPTY_BOOLEAN_OBJECT_ARRAY);
+        final Optional<UnaryOperator<String>> encoder = service.flatMap(this::findEncoderFor);
+        return encoder.isPresent() ? encoder.get().apply(data) : encode(data, ArrayUtils.EMPTY_BOOLEAN_OBJECT_ARRAY);
+    }
+
+    @Override
+    public Optional<UnaryOperator<String>> findEncoderFor(final RegisteredService registeredService) {
+        return findTokenTicketCipherExecutorForService(registeredService).map(this::encoderFor);
+    }
+
+    @Override
+    public Optional<Function<String, @Nullable String>> findDecoderFor(final RegisteredService registeredService) {
+        return findTokenTicketCipherExecutorForService(registeredService).map(cipher -> decoderFor(cipher, registeredService));
     }
 
     @Override
     public boolean supports(@Nullable final RegisteredService registeredService) {
-        return getSigningKey(registeredService).isPresent() || getEncryptionKey(registeredService).isPresent();
+        return supports(registeredService, getSigningKey(registeredService), getEncryptionKey(registeredService));
+    }
+
+    /*
+     * Decides support from keys already looked up, so that encoding and decoding look them up once; the keys of an
+     * OpenID Connect service are read from its keystore and serialized each time.
+     */
+    protected boolean supports(@Nullable final RegisteredService registeredService,
+                               final Optional<String> signingKey, final Optional<String> encryptionKey) {
+        return signingKey.isPresent() || encryptionKey.isPresent();
+    }
+
+    /**
+     * Find the token ticket cipher executor for the service, looking up its keys once.
+     *
+     * @param registeredService the registered service
+     * @return the cipher, or empty when the service has no keys of its own
+     */
+    public Optional<JwtTicketCipherExecutor> findTokenTicketCipherExecutorForService(final RegisteredService registeredService) {
+        val signingKey = getSigningKey(registeredService);
+        val encryptionKey = getEncryptionKey(registeredService);
+        if (!supports(registeredService, signingKey, encryptionKey)) {
+            return Optional.empty();
+        }
+        LOGGER.debug("Found signing and/or encryption keys for [{}] in service registry", registeredService.getServiceId());
+        return Optional.of(getTokenTicketCipherExecutorForService(registeredService,
+            encryptionKey.orElse(StringUtils.EMPTY), signingKey.orElse(StringUtils.EMPTY)));
+    }
+
+    private UnaryOperator<String> encoderFor(final JwtTicketCipherExecutor cipher) {
+        return data -> cipher.isEnabled() ? cipher.encode(data) : encode(data, ArrayUtils.EMPTY_BOOLEAN_OBJECT_ARRAY);
+    }
+
+    private Function<String, @Nullable String> decoderFor(final JwtTicketCipherExecutor cipher, final RegisteredService registeredService) {
+        return data -> cipher.isEnabled()
+            ? cipher.decode(data, new Object[]{registeredService})
+            : decode(data, ArrayUtils.EMPTY_BOOLEAN_OBJECT_ARRAY);
     }
 
     /**
@@ -78,8 +106,12 @@ public class RegisteredServiceJwtTicketCipherExecutor extends JwtTicketCipherExe
      * @return the token ticket cipher executor for service
      */
     public JwtTicketCipherExecutor getTokenTicketCipherExecutorForService(final RegisteredService registeredService) {
-        val encryptionKey = getEncryptionKey(registeredService).orElse(StringUtils.EMPTY);
-        val signingKey = getSigningKey(registeredService).orElse(StringUtils.EMPTY);
+        return getTokenTicketCipherExecutorForService(registeredService,
+            getEncryptionKey(registeredService).orElse(StringUtils.EMPTY), getSigningKey(registeredService).orElse(StringUtils.EMPTY));
+    }
+
+    private JwtTicketCipherExecutor getTokenTicketCipherExecutorForService(final RegisteredService registeredService,
+                                                                          final String encryptionKey, final String signingKey) {
         val cacheKey = new TokenCipherExecutorKey(registeredService.getId(), registeredService, encryptionKey, signingKey);
         return tokenCipherExecutors.get(cacheKey, _ -> buildTokenTicketCipherExecutor(encryptionKey, signingKey, registeredService));
     }

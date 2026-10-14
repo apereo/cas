@@ -2,12 +2,14 @@ package org.apereo.cas.token.cipher;
 
 import module java.base;
 import org.apereo.cas.services.DefaultRegisteredServiceProperty;
+import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceProperty.RegisteredServiceProperties;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.cipher.BaseStringCipherExecutor;
 import lombok.val;
 import org.jose4j.jwe.ContentEncryptionAlgorithmIdentifiers;
+import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
@@ -57,5 +59,30 @@ class RegisteredServiceJwtTicketCipherExecutorTests {
         service.getProperties().put(RegisteredServiceProperties.TOKEN_AS_SERVICE_TICKET_SIGNING_KEY.getPropertyName(),
             new DefaultRegisteredServiceProperty(EncodingUtils.generateJsonWebKey(512)));
         assertNotSame(cipher, executor.getTokenTicketCipherExecutorForService(service));
+    }
+
+    @Test
+    void verifyKeysLookedUpOncePerOperation() {
+        val service = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString());
+        service.getProperties().put(RegisteredServiceProperties.TOKEN_AS_SERVICE_TICKET_SIGNING_KEY.getPropertyName(),
+            new DefaultRegisteredServiceProperty(EncodingUtils.generateJsonWebKey(512)));
+        service.getProperties().put(RegisteredServiceProperties.TOKEN_AS_SERVICE_TICKET_ENCRYPTION_KEY.getPropertyName(),
+            new DefaultRegisteredServiceProperty(EncodingUtils.generateJsonWebKey(256)));
+        service.getProperties().put(RegisteredServiceProperties.TOKEN_AS_SERVICE_TICKET_ENCRYPTION_ALG.getPropertyName(),
+            new DefaultRegisteredServiceProperty(ContentEncryptionAlgorithmIdentifiers.AES_128_CBC_HMAC_SHA_256));
+
+        val signingKeyLookups = new AtomicInteger();
+        final RegisteredServiceJwtTicketCipherExecutor executor = new RegisteredServiceJwtTicketCipherExecutor() {
+            @Override
+            public Optional<String> getSigningKey(@Nullable final RegisteredService registeredService) {
+                signingKeyLookups.incrementAndGet();
+                return super.getSigningKey(registeredService);
+            }
+        };
+        val token = executor.encode("Value", Optional.of(service));
+        assertEquals(1, signingKeyLookups.get());
+        signingKeyLookups.set(0);
+        assertEquals("Value", executor.decode(token, Optional.of(service)));
+        assertEquals(1, signingKeyLookups.get());
     }
 }

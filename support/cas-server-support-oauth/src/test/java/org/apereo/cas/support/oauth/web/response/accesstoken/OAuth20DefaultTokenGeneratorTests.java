@@ -343,6 +343,54 @@ class OAuth20DefaultTokenGeneratorTests {
         }
 
         @Test
+        void verifyDeviceCodeRedeemedOnceUnderConcurrency() throws Throwable {
+            val clientId = UUID.randomUUID().toString();
+            val service = RegisteredServiceTestUtils.getService("https://device.oauth.org");
+            val deviceCode = defaultDeviceTokenFactory.createDeviceCode(service, List.of(), clientId);
+            val userCode = defaultDeviceUserCodeFactory.createDeviceUserCode(deviceCode.getService());
+            userCode.setUserCodeApproved(true);
+            userCode.setAuthentication(RegisteredServiceTestUtils.getAuthentication());
+            ticketRegistry.addTicket(userCode);
+            deviceCode.setUserCode(userCode.getId());
+            ticketRegistry.addTicket(deviceCode);
+
+            val tokenRequestContext = AccessTokenRequestContext.builder()
+                .responseType(OAuth20ResponseTypes.DEVICE_CODE)
+                .deviceCode(deviceCode.getId())
+                .service(service)
+                .authentication(RegisteredServiceTestUtils.getAuthentication())
+                .registeredService(getRegisteredService(clientId, "secret"))
+                .build();
+
+            val issued = new AtomicInteger();
+            val rejected = new AtomicInteger();
+            val requests = 8;
+            val start = new CountDownLatch(1);
+            try (val executor = Executors.newVirtualThreadPerTaskExecutor()) {
+                final List<Future<?>> results = new ArrayList<>();
+                for (var i = 0; i < requests; i++) {
+                    results.add(executor.submit(() -> {
+                        start.await();
+                        try {
+                            oauthTokenGenerator.generate(tokenRequestContext);
+                            issued.incrementAndGet();
+                        } catch (final InvalidOAuth20DeviceTokenException e) {
+                            rejected.incrementAndGet();
+                        }
+                        return null;
+                    }));
+                }
+                start.countDown();
+                for (final Future<?> result : results) {
+                    result.get();
+                }
+            }
+            assertEquals(1, issued.get());
+            assertEquals(requests - 1, rejected.get());
+            assertNull(ticketRegistry.getTicket(deviceCode.getId()));
+        }
+
+        @Test
         void verifyStatelessTicketGrantingTicketIsNotUpdated() throws Throwable {
             val registeredService = getRegisteredService(SERVICE_URL, UUID.randomUUID().toString(), "secret");
             servicesManager.save(registeredService);

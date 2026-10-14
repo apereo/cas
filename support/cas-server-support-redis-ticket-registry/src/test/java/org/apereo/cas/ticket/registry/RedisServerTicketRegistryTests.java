@@ -428,6 +428,8 @@ class RedisServerTicketRegistryTests {
         "cas.ticket.tgt.core.service-tracking-policy=MOST_RECENT",
         "cas.ticket.registry.redis.host=localhost",
         "cas.ticket.registry.redis.port=6379",
+        "cas.ticket.registry.redis.database=8",
+        "cas.ticket.registry.redis.enable-redis-search=false",
         "cas.ticket.registry.redis.pool.max-active=20",
         "cas.ticket.registry.redis.pool.enabled=true",
         "cas.ticket.registry.redis.crypto.enabled=true",
@@ -464,6 +466,8 @@ class RedisServerTicketRegistryTests {
         "cas.ticket.tgt.core.service-tracking-policy=ALL",
         "cas.ticket.registry.redis.host=localhost",
         "cas.ticket.registry.redis.port=6379",
+        "cas.ticket.registry.redis.database=9",
+        "cas.ticket.registry.redis.enable-redis-search=false",
         "cas.ticket.registry.redis.crypto.enabled=false"
     })
     @ExtendWith(CasTestExtension.class)
@@ -665,6 +669,8 @@ class RedisServerTicketRegistryTests {
             "cas.ticket.tgt.core.service-tracking-policy=MOST_RECENT",
             "cas.ticket.registry.redis.host=localhost",
             "cas.ticket.registry.redis.port=6379",
+            "cas.ticket.registry.redis.database=10",
+            "cas.ticket.registry.redis.enable-redis-search=false",
             "cas.slo.disabled=true",
             "cas.ticket.registry.redis.crypto.encryption.key=BXRiSBWJcRksTizjdaCoLw",
             "cas.ticket.registry.redis.crypto.signing.key=cAPyoHMrOMWrwydOXzBA-ufZQM-TilnLjbRgMQWlUlwFmy07bOtAgCIdNBma3c5P4ae_JV6n1OpOAYqSh2NkmQ"

@@ -35,6 +35,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @TestPropertySource(properties = {
     "management.endpoint.redisTicketsCache.access=UNRESTRICTED",
     "cas.ticket.registry.core.enable-locking=false",
+    "cas.ticket.registry.redis.database=12",
+    "cas.ticket.registry.redis.enable-redis-search=false",
     "cas.ticket.registry.redis.crypto.encryption.key=BXRiSBWJcRksTizjdaCoLw",
     "cas.ticket.registry.redis.crypto.signing.key=cAPyoHMrOMWrwydOXzBA-ufZQM-TilnLjbRgMQWlUlwFmy07bOtAgCIdNBma3c5P4ae_JV6n1OpOAYqSh2NkmQ"
 })

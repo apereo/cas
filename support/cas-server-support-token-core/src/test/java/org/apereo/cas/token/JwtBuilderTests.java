@@ -1,13 +1,29 @@
 package org.apereo.cas.token;
 
 import module java.base;
+import org.apereo.cas.authentication.principal.PrincipalResolver;
+import org.apereo.cas.authentication.principal.ServiceFactory;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
+import org.apereo.cas.services.DefaultRegisteredServiceProperty;
+import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.RegisteredServiceProperty.RegisteredServiceProperties;
+import org.apereo.cas.services.RegisteredServiceTestUtils;
+import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.token.cipher.RegisteredServiceJwtTicketCipherExecutor;
+import org.apereo.cas.util.EncodingUtils;
+import org.apereo.cas.util.crypto.CipherExecutor;
+import com.nimbusds.jwt.JWTClaimsSet;
 import lombok.val;
+import org.jose4j.jwe.ContentEncryptionAlgorithmIdentifiers;
+import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.context.ApplicationContext;
 import org.springframework.test.context.TestPropertySource;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * This is {@link JwtBuilderTests}.
@@ -17,6 +33,36 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("Tickets")
 class JwtBuilderTests {
+
+    @Test
+    void verifyServiceKeysLookedUpOncePerToken() {
+        val service = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString());
+        service.getProperties().put(RegisteredServiceProperties.TOKEN_AS_SERVICE_TICKET_SIGNING_KEY.getPropertyName(),
+            new DefaultRegisteredServiceProperty(EncodingUtils.generateJsonWebKey(512)));
+        service.getProperties().put(RegisteredServiceProperties.TOKEN_AS_SERVICE_TICKET_ENCRYPTION_KEY.getPropertyName(),
+            new DefaultRegisteredServiceProperty(EncodingUtils.generateJsonWebKey(256)));
+        service.getProperties().put(RegisteredServiceProperties.TOKEN_AS_SERVICE_TICKET_ENCRYPTION_ALG.getPropertyName(),
+            new DefaultRegisteredServiceProperty(ContentEncryptionAlgorithmIdentifiers.AES_128_CBC_HMAC_SHA_256));
+
+        val signingKeyLookups = new AtomicInteger();
+        final RegisteredServiceJwtTicketCipherExecutor serviceCipher = new RegisteredServiceJwtTicketCipherExecutor() {
+            @Override
+            public Optional<String> getSigningKey(@Nullable final RegisteredService registeredService) {
+                signingKeyLookups.incrementAndGet();
+                return super.getSigningKey(registeredService);
+            }
+        };
+        val builder = new JwtBuilder(CipherExecutor.noOpOfSerializableToString(), mock(ApplicationContext.class),
+            mock(ServicesManager.class), mock(PrincipalResolver.class), serviceCipher, mock(ServiceFactory.class),
+            new CasConfigurationProperties());
+
+        val jwt = builder.build(service, new JWTClaimsSet.Builder().subject("casuser").build());
+        assertEquals(1, signingKeyLookups.get());
+        signingKeyLookups.set(0);
+        val claims = builder.unpack(Optional.of(service), jwt);
+        assertEquals(1, signingKeyLookups.get());
+        assertEquals("casuser", Objects.requireNonNull(claims).getSubject());
+    }
 
     @Nested
     class DefaultTests extends BaseJwtTokenTicketBuilderTests {

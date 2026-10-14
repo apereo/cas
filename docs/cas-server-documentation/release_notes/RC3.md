@@ -591,7 +591,9 @@ authentication. See the [stateless ticket registry documentation](../ticketing/S
   SAML2 application definition it compares against.
 - {: .changed data-area="oidc"} JWT access tokens, JWT response modes and other tokens signed or encrypted with keys defined
   per application now reuse the prepared signing and encryption keys instead of parsing them again for every token issued
-  or read; a changed application definition or a rotated key is picked up the first time it is used.
+  or read; a changed application definition or a rotated key is picked up the first time it is used. Each such token also
+  looks up the application's keys once instead of three times; for an OpenID Connect application, a look-up reads its
+  keystore and serializes the keys.
 - {: .fixed data-area="tickets"} Ticket registries that replicate tickets through a message queue, such as
   [Kafka](../ticketing/Kafka-Ticket-Registry.html), [AMQP](../ticketing/Messaging-AMQP-Ticket-Registry.html),
   [Pulsar](../ticketing/Pulsar-Ticket-Registry.html) and [Google Cloud Pub/Sub](../ticketing/GCP-PubSub-Ticket-Registry.html),
@@ -634,6 +636,11 @@ authentication. See the [stateless ticket registry documentation](../ticketing/S
   registry before any token is issued, and only the request that removes it receives tokens. Two token requests presenting
   the same code at the same moment could previously both receive tokens. The code is also no longer written back to the
   ticket registry right before it is redeemed.
+- {: .fixed data-area="oidc"} An approved [device code](../authentication/OAuth-ProtocolFlow-DeviceAuthorization.html) and a
+  [CIBA](../authentication/OIDC-Authentication-CIBA.html) request in poll or ping mode are now redeemed the same way: only
+  the token request that removes them from the ticket registry receives tokens. Two polls arriving at the same moment could
+  previously both receive tokens. A CIBA request is now removed before its tokens are issued rather than after, and a
+  request that lost the race gets `invalid_grant`, as CIBA Core 1.0 requires once the `auth_req_id` has been redeemed.
 - {: .fixed data-area="tickets"} Removing a proxy-granting ticket no longer writes back the copy of the single sign-on
   session it was issued from, which undid any change made to the session since, such as applications the user logged into
   afterwards. When a single sign-on session ends, it is no longer rewritten once for each of its proxy-granting tickets and

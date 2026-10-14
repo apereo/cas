@@ -102,4 +102,54 @@ class OidcDefaultTokenGeneratorTests extends AbstractOidcTests {
         assertThrows(InvalidTicketException.class,
             () -> ticketRegistry.getTicket(cibaRequest.getId(), OidcCibaRequest.class));
     }
+
+    @Test
+    void verifyCibaPollRequestRedeemedOnceUnderConcurrency() throws Throwable {
+        val registeredService = getOidcRegisteredService(UUID.randomUUID().toString());
+        registeredService.setBackchannelTokenDeliveryMode(OidcBackchannelTokenDeliveryModes.POLL.getMode());
+        registeredService.setSupportedGrantTypes(Set.of(OAuth20GrantTypes.CIBA.getType()));
+        registeredService.setBackchannelClientNotificationEndpoint("https://localhost:1234");
+        servicesManager.save(registeredService);
+
+        val cibaRequest = newCibaRequest(registeredService,
+            RegisteredServiceTestUtils.getPrincipal(UUID.randomUUID().toString()));
+        ticketRegistry.updateTicket(cibaRequest.markTicketReady());
+        val accessTokenContext = AccessTokenRequestContext.builder()
+            .grantType(OAuth20GrantTypes.CIBA)
+            .responseType(OAuth20ResponseTypes.NONE)
+            .registeredService(registeredService)
+            .cibaRequestId(cibaRequest.getEncodedId())
+            .authentication(cibaRequest.getAuthentication())
+            .service(RegisteredServiceTestUtils.getService())
+            .scopes(Set.of(OidcConstants.StandardScopes.OPENID.getScope()))
+            .build();
+
+        val issued = new AtomicInteger();
+        val rejected = new AtomicInteger();
+        val requests = 8;
+        val start = new CountDownLatch(1);
+        try (val executor = Executors.newVirtualThreadPerTaskExecutor()) {
+            final List<Future<?>> results = new ArrayList<>();
+            for (var i = 0; i < requests; i++) {
+                results.add(executor.submit(() -> {
+                    start.await();
+                    try {
+                        oauthTokenGenerator.generate(accessTokenContext);
+                        issued.incrementAndGet();
+                    } catch (final InvalidTicketException e) {
+                        rejected.incrementAndGet();
+                    }
+                    return null;
+                }));
+            }
+            start.countDown();
+            for (final Future<?> result : results) {
+                result.get();
+            }
+        }
+        assertEquals(1, issued.get());
+        assertEquals(requests - 1, rejected.get());
+        assertThrows(InvalidTicketException.class,
+            () -> ticketRegistry.getTicket(cibaRequest.getId(), OidcCibaRequest.class));
+    }
 }

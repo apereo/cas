@@ -108,7 +108,10 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
 
             if (deviceUserCode.isUserCodeApproved()) {
                 LOGGER.debug("Provided user code [{}] linked to device code [{}] is approved", deviceCodeTicket.getId(), deviceCode);
-                ticketRegistry.deleteTicket(deviceCode);
+                if (ticketRegistry.deleteTicket(deviceCodeTicket) == 0) {
+                    LOGGER.warn("Device code [{}] was already redeemed by another token request", deviceCode);
+                    throw new InvalidOAuth20DeviceTokenException(deviceCode);
+                }
 
                 val deviceResult = AccessTokenRequestContext
                     .builder()

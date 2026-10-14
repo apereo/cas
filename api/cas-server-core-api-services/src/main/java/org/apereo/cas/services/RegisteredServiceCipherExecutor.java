@@ -95,4 +95,29 @@ public interface RegisteredServiceCipherExecutor {
     default boolean supports(@Nullable final RegisteredService registeredService) {
         return true;
     }
+
+    /**
+     * Find the encoder bound to the given service's own keys.
+     *
+     * @param registeredService the registered service
+     * @return the encoder, or empty when the service is not supported
+     */
+    default Optional<UnaryOperator<String>> findEncoderFor(final RegisteredService registeredService) {
+        return supports(registeredService)
+            ? Optional.of(data -> encode(data, Optional.of(registeredService)))
+            : Optional.empty();
+    }
+
+    /**
+     * Find the decoder bound to the given service's own keys. The decoder returns null for data the keys reject;
+     * callers must not try other keys then.
+     *
+     * @param registeredService the registered service
+     * @return the decoder, or empty when the service is not supported
+     */
+    default Optional<Function<String, @Nullable String>> findDecoderFor(final RegisteredService registeredService) {
+        return supports(registeredService)
+            ? Optional.of(data -> decode(data, Optional.of(registeredService)))
+            : Optional.empty();
+    }
 }
