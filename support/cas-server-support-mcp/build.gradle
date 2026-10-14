@@ -41,6 +41,8 @@ dependencies {
     compileOnly project(":support:cas-server-support-oidc-core-api")
     compileOnly project(":support:cas-server-support-trusted-mfa-core")
     compileOnly project(":support:cas-server-support-surrogate-api")
+    compileOnly project(":support:cas-server-support-interrupt-api")
+    compileOnly project(":support:cas-server-support-electrofence")
     
     compileOnly libraries.opensaml
     compileOnly libraries.shibutiljavasupport
@@ -57,6 +59,8 @@ dependencies {
     testImplementation project(":support:cas-server-support-oidc-core-api")
     testImplementation project(":support:cas-server-support-trusted-mfa-core")
     testImplementation project(":support:cas-server-support-surrogate-api")
+    testImplementation project(":support:cas-server-support-interrupt-api")
+    testImplementation project(":support:cas-server-support-electrofence")
     testImplementation project(":support:cas-server-support-webconfig")
     testImplementation project(":support:cas-server-support-themes")
     testImplementation project(":support:cas-server-support-thymeleaf")

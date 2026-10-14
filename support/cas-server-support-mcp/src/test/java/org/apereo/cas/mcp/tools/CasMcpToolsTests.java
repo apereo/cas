@@ -4,6 +4,7 @@ import module java.base;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
 import org.apereo.cas.mcp.BaseCasMcpTests;
+import org.apereo.cas.mcp.CasMcpEvaluationContextFactory;
 import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
 import org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
@@ -12,6 +13,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
 import org.apereo.cas.support.events.CasEventRepository;
 import org.apereo.cas.support.events.dao.CasEvent;
+import org.apereo.cas.support.events.ticket.CasTicketGrantingTicketCreatedEvent;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
@@ -40,6 +42,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
+import jakarta.servlet.http.Cookie;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -114,6 +117,18 @@ class CasMcpToolsTests extends BaseCasMcpTests {
     private MultifactorAuthenticationTrustStorage mfaTrustEngine;
 
     @Autowired
+    @Qualifier("casInterruptTools")
+    private CasInterruptTools casInterruptTools;
+
+    @Autowired
+    @Qualifier("casAuthenticationRiskTools")
+    private CasAuthenticationRiskTools casAuthenticationRiskTools;
+
+    @Autowired
+    @Qualifier("casMcpEvaluationContextFactory")
+    private CasMcpEvaluationContextFactory casMcpEvaluationContextFactory;
+
+    @Autowired
     @Qualifier(ServicesManager.BEAN_NAME)
     private ServicesManager servicesManager;
 
@@ -143,6 +158,8 @@ class CasMcpToolsTests extends BaseCasMcpTests {
         assertTrue(AopUtils.isAopProxy(casAuthenticationEventTools));
         assertTrue(AopUtils.isAopProxy(casTrustedDeviceTools));
         assertTrue(AopUtils.isAopProxy(casSurrogateTools));
+        assertTrue(AopUtils.isAopProxy(casInterruptTools));
+        assertTrue(AopUtils.isAopProxy(casAuthenticationRiskTools));
     }
 
     @Test
@@ -407,6 +424,109 @@ class CasMcpToolsTests extends BaseCasMcpTests {
     }
 
     @Test
+    void verifyEvaluationContext() {
+        val serviceUrl = newServiceUrl();
+        val registeredService = newRegisteredService(serviceUrl, Map.of(), new ReturnAllAttributeReleasePolicy());
+        servicesManager.save(registeredService);
+        val context = casMcpEvaluationContextFactory.build("casuser", serviceUrl + "/login");
+        assertEquals(serviceUrl + "/login", context.service().getId());
+        assertEquals(registeredService.getId(), Objects.requireNonNull(context.registeredService()).getId());
+        assertEquals("casuser", context.principal().getId());
+        assertEquals(List.of("casuser@apereo.org"), context.principal().getAttributes().get("mail"));
+        assertEquals("casuser", context.authentication().getPrincipal().getId());
+        assertEquals("casuser", context.credential().getId());
+        assertNull(casMcpEvaluationContextFactory.build("casuser", "https://unknown.example.net/" + UUID.randomUUID()).registeredService());
+    }
+
+    @Test
+    @WithMockUser(roles = "MCP_ADMIN")
+    void verifyPreviewInterrupt() {
+        val serviceUrl = newServiceUrl();
+        servicesManager.save(newRegisteredService(serviceUrl, Map.of(), new ReturnAllAttributeReleasePolicy()));
+        val username = "interrupted-" + UUID.randomUUID();
+        assertThrows(IllegalStateException.class, () -> casInterruptTools.previewInterrupt(username, serviceUrl));
+        RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(new MockHttpServletRequest(), new MockHttpServletResponse()));
+        try {
+            val interrupted = casInterruptTools.previewInterrupt(username, serviceUrl);
+            val outcomes = ((List<?>) interrupted.get("inquirers")).stream().map(outcome -> (Map<?, ?>) outcome).toList();
+            assertEquals(List.of("FailingInquirer", "TermsInquirer"), outcomes.stream().map(outcome -> outcome.get("inquirer")).toList());
+            assertEquals(List.of("FAILED", "INTERRUPT"), outcomes.stream().map(outcome -> outcome.get("outcome")).toList());
+            assertEquals("Interrupt endpoint is unavailable", outcomes.getFirst().get("error"));
+            val interrupt = (Map<?, ?>) interrupted.get("interrupt");
+            assertEquals("Accept the terms of " + serviceUrl + " as " + username, interrupt.get("message"));
+            assertEquals(Boolean.TRUE, interrupt.get("block"));
+            assertEquals(Map.of("Terms", "https://terms.example.org"), interrupt.get("links"));
+            assertEquals(Boolean.TRUE, ((Map<?, ?>) interrupted.get("interruptPolicy")).get("enabled"));
+
+            val quiet = casInterruptTools.previewInterrupt("casuser", serviceUrl);
+            assertNull(quiet.get("interrupt"));
+            assertEquals(List.of("FAILED", "NO_INTERRUPT", "NO_INTERRUPT"),
+                ((List<?>) quiet.get("inquirers")).stream().map(outcome -> ((Map<?, ?>) outcome).get("outcome")).toList());
+        } finally {
+            RequestContextHolder.resetRequestAttributes();
+        }
+    }
+
+    @Test
+    @WithMockUser(roles = "MCP_ADMIN")
+    void verifyEvaluateAuthenticationRisk() throws Throwable {
+        val username = "casuser-" + UUID.randomUUID();
+        for (var i = 0; i < 2; i++) {
+            val event = new CasEvent();
+            event.setType(CasTicketGrantingTicketCreatedEvent.class.getName());
+            event.setPrincipalId(username);
+            event.setCreationTime(Instant.now(Clock.systemUTC()).minus(Duration.ofHours(i + 1)));
+            event.putClientIpAddress("192.0.2.10");
+            event.putAgent("Firefox");
+            casEventRepository.save(event);
+        }
+        val serviceUrl = newServiceUrl();
+        val familiar = casAuthenticationRiskTools.evaluateAuthenticationRisk(username, serviceUrl, "192.0.2.10", "Firefox", null);
+        assertEquals(0, BigDecimal.ZERO.compareTo((BigDecimal) familiar.get("score")), familiar::toString);
+        assertEquals(Boolean.FALSE, familiar.get("risky"));
+        assertEquals(0.6, familiar.get("threshold"));
+        assertEquals(List.of("IpAddressAuthenticationRequestRiskCalculator", "UserAgentAuthenticationRequestRiskCalculator"),
+            ((List<?>) familiar.get("calculators")).stream().map(calculator -> ((Map<?, ?>) calculator).get("calculator")).toList());
+
+        val unfamiliar = casAuthenticationRiskTools.evaluateAuthenticationRisk(username, serviceUrl, "198.51.100.7", "curl", "48.85,2.35");
+        assertEquals(0, BigDecimal.ONE.compareTo((BigDecimal) unfamiliar.get("score")), unfamiliar::toString);
+        assertEquals(Boolean.TRUE, unfamiliar.get("risky"));
+        assertEquals("48.85,2.35", unfamiliar.get("geoLocation"));
+
+        val unknown = casAuthenticationRiskTools.evaluateAuthenticationRisk("unknown-" + UUID.randomUUID(), serviceUrl, "192.0.2.10", "Firefox", null);
+        assertEquals(Boolean.TRUE, unknown.get("risky"));
+    }
+
+    @Test
+    void verifyHttpExchangeHidesCallerInput() {
+        assertThrows(IllegalStateException.class, () -> casMcpEvaluationContextFactory.currentHttpExchange());
+        val request = new MockHttpServletRequest();
+        request.addParameter("authn_method", "mfa-duo");
+        request.addHeader("X-MFA-Provider", "mfa-duo");
+        request.setCookies(new Cookie("TGC", "cookie-value"));
+        request.setQueryString("authn_method=mfa-duo");
+        val response = new MockHttpServletResponse();
+        RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request, response));
+        try {
+            val exchange = casMcpEvaluationContextFactory.currentHttpExchange();
+            assertSame(response, exchange.response());
+            val stripped = exchange.request();
+            assertNull(stripped.getParameter("authn_method"));
+            assertTrue(stripped.getParameterMap().isEmpty());
+            assertFalse(stripped.getParameterNames().hasMoreElements());
+            assertNull(stripped.getParameterValues("authn_method"));
+            assertNull(stripped.getHeader("X-MFA-Provider"));
+            assertFalse(stripped.getHeaders("X-MFA-Provider").hasMoreElements());
+            assertFalse(stripped.getHeaderNames().hasMoreElements());
+            assertEquals(-1, stripped.getIntHeader("X-MFA-Provider"));
+            assertNull(stripped.getCookies());
+            assertNull(stripped.getQueryString());
+        } finally {
+            RequestContextHolder.resetRequestAttributes();
+        }
+    }
+
+    @Test
     @WithMockUser(roles = "MCP_ADMIN")
     void verifyFindUnknownTenant() {
         val result = casTenantTools.findTenant("unknown-" + UUID.randomUUID());
@@ -436,6 +556,9 @@ class CasMcpToolsTests extends BaseCasMcpTests {
         assertThrows(AccessDeniedException.class, () -> casAuthenticationEventTools.findAuthenticationEvents("casuser", null));
         assertThrows(AccessDeniedException.class, () -> casTrustedDeviceTools.findTrustedDevices("casuser"));
         assertThrows(AccessDeniedException.class, () -> casSurrogateTools.findSurrogateAccounts("casuser", null));
+        assertThrows(AccessDeniedException.class, () -> casInterruptTools.previewInterrupt("casuser", "https://mcp.example.org"));
+        assertThrows(AccessDeniedException.class,
+            () -> casAuthenticationRiskTools.evaluateAuthenticationRisk("casuser", "https://mcp.example.org", "192.0.2.10", "Firefox", null));
     }
 
     @Test

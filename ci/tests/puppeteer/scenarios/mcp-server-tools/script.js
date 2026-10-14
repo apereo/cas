@@ -83,7 +83,8 @@ async function callTool(authorization, sessionId, name, args) {
     const tools = await send(MCP_ADMIN, sessionId, "tools/list", {});
     const names = tools.tools.map((tool) => tool.name);
     await cas.log(`Available tools: ${names}`);
-    for (const optional of ["findConsentDecisions", "resolveSamlMetadata", "findOidcClient", "listJwksKeys", "findTrustedDevices"]) {
+    for (const optional of ["findConsentDecisions", "resolveSamlMetadata", "findOidcClient", "listJwksKeys", "findTrustedDevices",
+        "previewInterrupt", "evaluateAuthenticationRisk"]) {
         assert(!names.includes(optional), `Tool ${optional} must not be listed without its module`);
     }
     for (const tool of CAS_TOOLS) {

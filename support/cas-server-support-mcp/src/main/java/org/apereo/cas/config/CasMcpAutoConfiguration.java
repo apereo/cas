@@ -1,6 +1,7 @@
 package org.apereo.cas.config;
 
 import module java.base;
+import org.apereo.cas.api.AuthenticationRiskEvaluator;
 import org.apereo.cas.audit.AuditTrailExecutionPlan;
 import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.MultifactorAuthenticationTriggerSelectionStrategy;
@@ -12,10 +13,15 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.consent.ConsentDecisionBuilder;
 import org.apereo.cas.consent.ConsentRepository;
+import org.apereo.cas.interrupt.InterruptInquirer;
+import org.apereo.cas.interrupt.InterruptInquiryExecutionPlan;
 import org.apereo.cas.logout.slo.SingleLogoutServiceLogoutUrlBuilder;
+import org.apereo.cas.mcp.CasMcpEvaluationContextFactory;
 import org.apereo.cas.mcp.tools.CasAuditTools;
 import org.apereo.cas.mcp.tools.CasAuthenticationEventTools;
+import org.apereo.cas.mcp.tools.CasAuthenticationRiskTools;
 import org.apereo.cas.mcp.tools.CasConsentTools;
+import org.apereo.cas.mcp.tools.CasInterruptTools;
 import org.apereo.cas.mcp.tools.CasMultifactorAuthenticationTools;
 import org.apereo.cas.mcp.tools.CasOidcTools;
 import org.apereo.cas.mcp.tools.CasPersonDirectoryTools;
@@ -96,19 +102,26 @@ public class CasMcpAutoConfiguration {
     }
 
     @Bean
-    @ConditionalOnMissingBean(name = "casServiceAccessTools")
-    public CasServiceAccessTools casServiceAccessTools(
-        final ConfigurableApplicationContext applicationContext,
+    @ConditionalOnMissingBean(name = "casMcpEvaluationContextFactory")
+    public CasMcpEvaluationContextFactory casMcpEvaluationContextFactory(
         @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager,
         @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
         final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
         @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
-        final PrincipalResolver principalResolver,
+        final PrincipalResolver principalResolver) {
+        return new CasMcpEvaluationContextFactory(servicesManager, webApplicationServiceFactory, principalResolver);
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(name = "casServiceAccessTools")
+    public CasServiceAccessTools casServiceAccessTools(
+        final ConfigurableApplicationContext applicationContext,
+        @Qualifier("casMcpEvaluationContextFactory")
+        final CasMcpEvaluationContextFactory casMcpEvaluationContextFactory,
         @Qualifier(AuditableExecution.AUDITABLE_EXECUTION_REGISTERED_SERVICE_ACCESS)
         final AuditableExecution registeredServiceAccessStrategyEnforcer) {
-        return new CasServiceAccessTools(servicesManager, webApplicationServiceFactory,
-            principalResolver, registeredServiceAccessStrategyEnforcer, applicationContext);
+        return new CasServiceAccessTools(casMcpEvaluationContextFactory, registeredServiceAccessStrategyEnforcer, applicationContext);
     }
 
     @Bean
@@ -133,16 +146,11 @@ public class CasMcpAutoConfiguration {
     @ConditionalOnMissingBean(name = "casMultifactorAuthenticationTools")
     public CasMultifactorAuthenticationTools casMultifactorAuthenticationTools(
         final ConfigurableApplicationContext applicationContext,
-        @Qualifier(ServicesManager.BEAN_NAME)
-        final ServicesManager servicesManager,
-        @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
-        final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
-        @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
-        final PrincipalResolver principalResolver,
+        @Qualifier("casMcpEvaluationContextFactory")
+        final CasMcpEvaluationContextFactory casMcpEvaluationContextFactory,
         @Qualifier(MultifactorAuthenticationTriggerSelectionStrategy.BEAN_NAME)
         final ObjectProvider<MultifactorAuthenticationTriggerSelectionStrategy> triggerSelectionStrategy) {
-        return new CasMultifactorAuthenticationTools(servicesManager, webApplicationServiceFactory,
-            principalResolver, triggerSelectionStrategy, applicationContext);
+        return new CasMultifactorAuthenticationTools(casMcpEvaluationContextFactory, triggerSelectionStrategy, applicationContext);
     }
 
     @Bean
@@ -286,6 +294,39 @@ public class CasMcpAutoConfiguration {
             @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
             final ServiceFactory<WebApplicationService> webApplicationServiceFactory) {
             return new CasSurrogateTools(surrogateAuthenticationService, webApplicationServiceFactory);
+        }
+    }
+
+    @ConditionalOnClass(InterruptInquiryExecutionPlan.class)
+    @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.AI, module = "mcp-interrupt")
+    @Configuration(value = "CasMcpInterruptConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    static class CasMcpInterruptConfiguration {
+        @Bean
+        @ConditionalOnMissingBean(name = "casInterruptTools")
+        public CasInterruptTools casInterruptTools(
+            @Qualifier("casMcpEvaluationContextFactory")
+            final CasMcpEvaluationContextFactory casMcpEvaluationContextFactory,
+            @Qualifier(InterruptInquirer.BEAN_NAME)
+            final ObjectProvider<InterruptInquiryExecutionPlan> interruptInquiryExecutionPlan) {
+            return new CasInterruptTools(casMcpEvaluationContextFactory, interruptInquiryExecutionPlan);
+        }
+    }
+
+    @ConditionalOnClass(AuthenticationRiskEvaluator.class)
+    @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.AI, module = "mcp-electrofence")
+    @Configuration(value = "CasMcpAuthenticationRiskConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    static class CasMcpAuthenticationRiskConfiguration {
+        @Bean
+        @ConditionalOnMissingBean(name = "casAuthenticationRiskTools")
+        public CasAuthenticationRiskTools casAuthenticationRiskTools(
+            final CasConfigurationProperties casProperties,
+            @Qualifier("casMcpEvaluationContextFactory")
+            final CasMcpEvaluationContextFactory casMcpEvaluationContextFactory,
+            @Qualifier("authenticationRiskEvaluator")
+            final ObjectProvider<AuthenticationRiskEvaluator> authenticationRiskEvaluator) {
+            return new CasAuthenticationRiskTools(casMcpEvaluationContextFactory, authenticationRiskEvaluator, casProperties);
         }
     }
 }

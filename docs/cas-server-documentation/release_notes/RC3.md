@@ -474,6 +474,8 @@ same user stores that protect actuator endpoints, and tool calls require the `MC
 The server can also return the recorded authentication events of a person, with the client IP address, user agent and
 location of each, and, when those features are included in the build, the devices a person trusts for multifactor
 authentication and the accounts a person may impersonate. Device fingerprints are never returned.
+It can also preview the interrupt notification a person would see after logging into an application, and score how
+risky a login attempt from a given client IP address and user agent would be.
 
 ## Other Stuff
 

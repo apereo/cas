@@ -3,15 +3,12 @@ package org.apereo.cas.mcp.tools;
 import module java.base;
 import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.audit.AuditableExecution;
-import org.apereo.cas.authentication.credential.BasicIdentifiableCredential;
 import org.apereo.cas.authentication.principal.Principal;
-import org.apereo.cas.authentication.principal.PrincipalResolver;
-import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
+import org.apereo.cas.mcp.CasMcpEvaluationContextFactory;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicyContext;
 import org.apereo.cas.services.RegisteredServiceUsernameProviderContext;
-import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.function.FunctionUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
@@ -29,11 +26,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
  */
 @RequiredArgsConstructor
 public class CasServiceAccessTools {
-    private final ServicesManager servicesManager;
-
-    private final ServiceFactory<WebApplicationService> serviceFactory;
-
-    private final PrincipalResolver principalResolver;
+    private final CasMcpEvaluationContextFactory evaluationContextFactory;
 
     private final AuditableExecution registeredServiceAccessStrategyEnforcer;
 
@@ -104,12 +97,10 @@ public class CasServiceAccessTools {
     }
 
     private AccessEvaluation evaluate(final String username, final String serviceUrl) {
-        val service = Objects.requireNonNull(serviceFactory.createService(serviceUrl),
-            () -> "Unable to build a service for " + serviceUrl);
-        val registeredService = servicesManager.findServiceBy(service);
-        val principal = Objects.requireNonNull(FunctionUtils.doUnchecked(() -> principalResolver.resolve(
-                new BasicIdentifiableCredential(username), Optional.empty(), Optional.empty(), Optional.of(service))),
-            () -> "Unable to resolve a principal for " + username);
+        val evaluationContext = evaluationContextFactory.build(username, serviceUrl);
+        val service = evaluationContext.service();
+        val registeredService = evaluationContext.registeredService();
+        val principal = evaluationContext.principal();
         if (registeredService == null) {
             return new AccessEvaluation(service, null, principal, "No registered service matches " + service.getId());
         }

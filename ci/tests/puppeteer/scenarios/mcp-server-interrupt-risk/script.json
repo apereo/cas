@@ -1,0 +1,17 @@
+{
+  "dependencies": "mcp,json-service-registry,rest,events-memory,electrofence,geolocation,interrupt-webflow",
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
+    "--cas.authn.adaptive.risk.ip.enabled=true",
+    "--cas.authn.adaptive.risk.agent.enabled=true",
+
+    "--cas.interrupt.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/interrupt.json",
+
+    "--cas.service-registry.core.init-from-json=false",
+    "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services",
+
+    "--cas.monitor.endpoints.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/users.json"
+  ]
+}

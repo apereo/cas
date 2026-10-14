@@ -2,18 +2,13 @@ package org.apereo.cas.mcp.tools;
 
 import module java.base;
 import org.apereo.cas.authentication.Authentication;
-import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.MultifactorAuthenticationTrigger;
 import org.apereo.cas.authentication.MultifactorAuthenticationTriggerSelectionStrategy;
 import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
-import org.apereo.cas.authentication.credential.BasicIdentifiableCredential;
-import org.apereo.cas.authentication.principal.PrincipalResolver;
-import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
+import org.apereo.cas.mcp.CasMcpEvaluationContextFactory;
 import org.apereo.cas.services.RegisteredService;
-import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
@@ -24,10 +19,7 @@ import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.Ordered;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletRequestWrapper;
 import jakarta.servlet.http.HttpServletResponse;
 
 /**
@@ -38,11 +30,7 @@ import jakarta.servlet.http.HttpServletResponse;
  */
 @RequiredArgsConstructor
 public class CasMultifactorAuthenticationTools {
-    private final ServicesManager servicesManager;
-
-    private final ServiceFactory<WebApplicationService> serviceFactory;
-
-    private final PrincipalResolver principalResolver;
+    private final CasMcpEvaluationContextFactory evaluationContextFactory;
 
     private final ObjectProvider<MultifactorAuthenticationTriggerSelectionStrategy> triggerSelectionStrategy;
 
@@ -93,20 +81,17 @@ public class CasMultifactorAuthenticationTools {
         @McpToolParam(description = "The application URL, such as the service parameter sent to CAS at login")
         final String service) {
         val strategy = triggerSelectionStrategy.getIfAvailable();
-        val requestAttributes = RequestContextHolder.getRequestAttributes() instanceof final ServletRequestAttributes attributes
-            ? attributes : null;
-        val response = requestAttributes != null ? requestAttributes.getResponse() : null;
-        if (strategy == null || requestAttributes == null || response == null) {
-            throw new IllegalStateException("Multifactor authentication triggers cannot be evaluated outside of an HTTP request");
+        if (strategy == null) {
+            throw new IllegalStateException("Multifactor authentication triggers are not available");
         }
-        val webApplicationService = Objects.requireNonNull(serviceFactory.createService(service),
-            () -> "Unable to build a service for " + service);
-        val registeredService = servicesManager.findServiceBy(webApplicationService);
-        val principal = Objects.requireNonNull(FunctionUtils.doUnchecked(() -> principalResolver.resolve(
-                new BasicIdentifiableCredential(username), Optional.empty(), Optional.empty(), Optional.of(webApplicationService))),
-            () -> "Unable to resolve a principal for " + username);
-        val authentication = DefaultAuthenticationBuilder.newInstance().setPrincipal(principal).build();
-        val request = new EmptyHttpServletRequest(requestAttributes.getRequest());
+        val exchange = evaluationContextFactory.currentHttpExchange();
+        val context = evaluationContextFactory.build(username, service);
+        val webApplicationService = context.service();
+        val registeredService = context.registeredService();
+        val principal = context.principal();
+        val authentication = context.authentication();
+        val request = exchange.request();
+        val response = exchange.response();
 
         val result = new LinkedHashMap<String, Object>();
         result.put("service", webApplicationService.getId());
@@ -170,46 +155,5 @@ public class CasMultifactorAuthenticationTools {
         summary.put("order", provider.getOrder());
         summary.put("failureMode", String.valueOf(provider.getFailureMode()));
         return summary;
-    }
-
-    private static final class EmptyHttpServletRequest extends HttpServletRequestWrapper {
-        EmptyHttpServletRequest(final HttpServletRequest request) {
-            super(request);
-        }
-
-        @Override
-        public @Nullable String getParameter(final String name) {
-            return null;
-        }
-
-        @Override
-        public Map<String, String[]> getParameterMap() {
-            return Map.of();
-        }
-
-        @Override
-        public Enumeration<String> getParameterNames() {
-            return Collections.emptyEnumeration();
-        }
-
-        @Override
-        public String @Nullable [] getParameterValues(final String name) {
-            return null;
-        }
-
-        @Override
-        public @Nullable String getHeader(final String name) {
-            return null;
-        }
-
-        @Override
-        public Enumeration<String> getHeaders(final String name) {
-            return Collections.emptyEnumeration();
-        }
-
-        @Override
-        public Enumeration<String> getHeaderNames() {
-            return Collections.emptyEnumeration();
-        }
     }
 }

@@ -88,6 +88,14 @@
 - Never return secrets: device fingerprints, trusted-device record keys, client secrets, key material, setting values.
   Tests assert the secret string is absent from the result.
 - A turned-off events repository is a `BeanSupplier` proxy, not null: check `BeanSupplier.isProxy`.
+- `DefaultAuthenticationRiskEvaluator` is `@Transactional` on `transactionManagerEvents`; test contexts that use a real
+  evaluator need that bean (`PseudoTransactionManager`, as `CasCoreEventsAutoConfiguration` registers it).
+- Tools that evaluate a person at an application build their subject with `CasMcpEvaluationContextFactory.build`
+  (service, matching registered service, resolved principal, `authentication()`); request-aware components get
+  `currentHttpExchange()`, the live request with parameters, headers, cookies and query string hidden, or
+  `newWebflowRequestContext(context)`, a webflow request context over it with service, registered service, credential
+  and authentication in scope. Do not resolve services or principals by hand in a tool. Tools that need client details
+  (IP address, user agent) take them as parameters: `ClientInfoHolder` describes the MCP operator.
 - A new tool also goes into `CAS_TOOLS` (`CasMcpServerTests`, `mcp-server-tools/script.js` when core), the role-denial
   lists, `FeatureDisabledTests`, and the tables and feature-toggle list in `Admin-MCP-Server.md`.
 - Claude's shells have no JDK 25 or Maven Central; `build/mcp-run.sh` compiles, runs checkstyle, the `RestfulApi` tests

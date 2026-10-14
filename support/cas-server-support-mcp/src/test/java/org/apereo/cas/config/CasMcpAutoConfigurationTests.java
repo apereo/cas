@@ -1,13 +1,18 @@
 package org.apereo.cas.config;
 
 import module java.base;
+import org.apereo.cas.api.AuthenticationRiskEvaluator;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.authentication.surrogate.SurrogateAuthenticationService;
 import org.apereo.cas.consent.ConsentDecisionBuilder;
 import org.apereo.cas.consent.ConsentRepository;
 import org.apereo.cas.consent.InMemoryConsentRepository;
+import org.apereo.cas.interrupt.InterruptInquiryExecutionPlan;
+import org.apereo.cas.mcp.CasMcpEvaluationContextFactory;
+import org.apereo.cas.mcp.tools.CasAuthenticationRiskTools;
 import org.apereo.cas.mcp.tools.CasConsentTools;
+import org.apereo.cas.mcp.tools.CasInterruptTools;
 import org.apereo.cas.mcp.tools.CasOidcTools;
 import org.apereo.cas.mcp.tools.CasSamlIdPMetadataTools;
 import org.apereo.cas.mcp.tools.CasSurrogateTools;
@@ -142,6 +147,39 @@ class CasMcpAutoConfigurationTests {
         runner.run(context -> {
             val result = context.getBean(CasSurrogateTools.class).findSurrogateAccounts("casuser", null);
             assertEquals("Surrogate authentication is not configured", result.get("reason"));
+        });
+    }
+
+    @Test
+    void verifyInterruptToolsActivation() {
+        val runner = new ApplicationContextRunner()
+            .withUserConfiguration(CasMcpAutoConfiguration.CasMcpInterruptConfiguration.class)
+            .withBean("casMcpEvaluationContextFactory", CasMcpEvaluationContextFactory.class, () -> mock(CasMcpEvaluationContextFactory.class));
+        runner.run(context -> assertTrue(context.containsBean("casInterruptTools")));
+        runner.withClassLoader(new FilteredClassLoader(InterruptInquiryExecutionPlan.class))
+            .run(context -> assertFalse(context.containsBean("casInterruptTools")));
+        runner.withPropertyValues("CasFeatureModule.AI.mcp-interrupt.enabled=false")
+            .run(context -> assertFalse(context.containsBean("casInterruptTools")));
+        runner.run(context -> {
+            val result = context.getBean(CasInterruptTools.class).previewInterrupt("casuser", "https://mcp.example.org");
+            assertEquals("Authentication interrupts are not configured", result.get("reason"));
+        });
+    }
+
+    @Test
+    void verifyAuthenticationRiskToolsActivation() {
+        val runner = new ApplicationContextRunner()
+            .withUserConfiguration(CasMcpAutoConfiguration.CasMcpAuthenticationRiskConfiguration.class)
+            .withBean("casMcpEvaluationContextFactory", CasMcpEvaluationContextFactory.class, () -> mock(CasMcpEvaluationContextFactory.class));
+        runner.run(context -> assertTrue(context.containsBean("casAuthenticationRiskTools")));
+        runner.withClassLoader(new FilteredClassLoader(AuthenticationRiskEvaluator.class))
+            .run(context -> assertFalse(context.containsBean("casAuthenticationRiskTools")));
+        runner.withPropertyValues("CasFeatureModule.AI.mcp-electrofence.enabled=false")
+            .run(context -> assertFalse(context.containsBean("casAuthenticationRiskTools")));
+        runner.run(context -> {
+            val result = context.getBean(CasAuthenticationRiskTools.class)
+                .evaluateAuthenticationRisk("casuser", "https://mcp.example.org", "192.0.2.10", "Firefox", null);
+            assertEquals("Risk-based authentication is not configured", result.get("reason"));
         });
     }
 }

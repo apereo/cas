@@ -50,7 +50,7 @@ public class CasServerStatisticsTools {
                 result.put(name, count);
             }
         } catch (final Throwable e) {
-            result.put(name + "Error", Objects.requireNonNullElse(e.getMessage(), e.getClass().getSimpleName()));
+            result.put(name + "Error", Objects.requireNonNullElseGet(e.getMessage(), () -> e.getClass().getSimpleName()));
         }
     }
 }

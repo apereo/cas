@@ -52,7 +52,7 @@ class CasMcpServerTests {
         "findSessionsWithAttribute", "findTenant", "findTicket", "getRegistryStatistics", "listMultifactorProviders",
         "matchService", "previewAttributeRelease", "previewLogout", "searchServices",
         "resolveSamlMetadata", "findOidcClient", "listJwksKeys", "findAuthenticationEvents", "findTrustedDevices",
-        "findSurrogateAccounts");
+        "findSurrogateAccounts", "previewInterrupt", "evaluateAuthenticationRisk");
 
     @Nested
     @SpringBootTest(classes = BaseCasMcpTests.SharedTestConfiguration.class,
@@ -279,6 +279,22 @@ class CasMcpServerTests {
         }
 
         @Test
+        void verifyPreviewInterrupt() throws Throwable {
+            val serviceUrl = newServiceUrl();
+            servicesManager.save(newRegisteredService(serviceUrl, Map.of(), new ReturnAllAttributeReleasePolicy()));
+            val username = "interrupted-" + UUID.randomUUID();
+            val sessionId = initialize(MCP_ADMIN);
+            val response = send(MCP_ADMIN, sessionId, callToolRequest("previewInterrupt",
+                "{\"username\":\"%s\",\"service\":\"%s\"}".formatted(username, serviceUrl)));
+            assertFalse(isToolError(response), response);
+            val result = JsonPath.<String>read(response, "$.result.content[0].text");
+            assertEquals("Accept the terms of %s as %s".formatted(serviceUrl, username), JsonPath.read(result, "$.interrupt.message"), result);
+            assertEquals(List.of("FAILED", "INTERRUPT"), JsonPath.read(result, "$.inquirers[*].outcome"), result);
+            val definition = send(MCP_ADMIN, sessionId, jsonRpcRequest("tools/list", "{}"));
+            assertEquals(List.of(true), JsonPath.read(definition, "$.result.tools[?(@.name == 'previewInterrupt')].annotations.openWorldHint"));
+        }
+
+        @Test
         void verifyFindAuditRecords() throws Throwable {
             val username = "casuser-" + UUID.randomUUID();
             val clientInfo = new ClientInfo("192.0.2.10", "192.0.2.1", "Firefox", "Earth");
@@ -460,7 +476,10 @@ class CasMcpServerTests {
                 callToolRequest("findTenant", "{\"tenantId\":\"unknown\"}"),
                 callToolRequest("findAuthenticationEvents", "{\"username\":\"casuser\"}"),
                 callToolRequest("findTrustedDevices", "{\"username\":\"casuser\"}"),
-                callToolRequest("findSurrogateAccounts", "{\"username\":\"casuser\"}"));
+                callToolRequest("findSurrogateAccounts", "{\"username\":\"casuser\"}"),
+                callToolRequest("previewInterrupt", "{\"username\":\"casuser\",\"service\":\"https://mcp.example.org\"}"),
+                callToolRequest("evaluateAuthenticationRisk",
+                    "{\"username\":\"casuser\",\"service\":\"https://mcp.example.org\",\"clientIpAddress\":\"192.0.2.10\",\"userAgent\":\"Firefox\"}"));
             for (val call : calls) {
                 val response = send(CAS_USER, sessionId, call);
                 assertTrue(isToolError(response), response);
@@ -490,6 +509,9 @@ class CasMcpServerTests {
             assertFalse(webApplicationContext.containsBean("casAuthenticationEventTools"));
             assertFalse(webApplicationContext.containsBean("casTrustedDeviceTools"));
             assertFalse(webApplicationContext.containsBean("casSurrogateTools"));
+            assertFalse(webApplicationContext.containsBean("casInterruptTools"));
+            assertFalse(webApplicationContext.containsBean("casAuthenticationRiskTools"));
+            assertFalse(webApplicationContext.containsBean("casMcpEvaluationContextFactory"));
             assertFalse(webApplicationContext.containsBean("casMcpEndpointConfigurer"));
         }
     }

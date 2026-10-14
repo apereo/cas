@@ -1,11 +1,15 @@
 package org.apereo.cas.mcp;
 
 import module java.base;
+import org.apereo.cas.api.AuthenticationRiskEvaluator;
 import org.apereo.cas.audit.AuditTrailExecutionPlan;
 import org.apereo.cas.audit.spi.MockAuditTrailManager;
 import org.apereo.cas.audit.spi.plan.DefaultAuditTrailExecutionPlan;
+import org.apereo.cas.authentication.Authentication;
+import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.surrogate.SurrogateAuthenticationService;
 import org.apereo.cas.config.CasCoreAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasCoreAutoConfiguration;
@@ -29,8 +33,15 @@ import org.apereo.cas.consent.ConsentDecisionBuilder;
 import org.apereo.cas.consent.ConsentRepository;
 import org.apereo.cas.consent.DefaultConsentDecisionBuilder;
 import org.apereo.cas.consent.InMemoryConsentRepository;
+import org.apereo.cas.impl.calcs.IpAddressAuthenticationRequestRiskCalculator;
+import org.apereo.cas.impl.calcs.UserAgentAuthenticationRequestRiskCalculator;
+import org.apereo.cas.impl.engine.DefaultAuthenticationRiskEvaluator;
+import org.apereo.cas.interrupt.InterruptInquirer;
+import org.apereo.cas.interrupt.InterruptInquiryExecutionPlan;
+import org.apereo.cas.interrupt.InterruptResponse;
 import org.apereo.cas.services.CasRegisteredService;
 import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
+import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicy;
 import org.apereo.cas.support.events.CasEventRepository;
 import org.apereo.cas.support.events.dao.CasEvent;
@@ -39,7 +50,10 @@ import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustR
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
+import org.apereo.cas.web.support.WebUtils;
 import com.jayway.jsonpath.JsonPath;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apereo.inspektr.audit.AuditActionContext;
 import org.apereo.inspektr.audit.AuditTrailManager;
@@ -59,11 +73,14 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
+import org.springframework.integration.transaction.PseudoTransactionManager;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.RequestPostProcessor;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.web.context.WebApplicationContext;
+import org.springframework.webflow.execution.RequestContext;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
@@ -283,6 +300,12 @@ public abstract class BaseCasMcpTests {
                 public Stream<? extends CasEvent> getEventsForPrincipal(final String id, final ZonedDateTime dateTime) {
                     return events.stream().filter(event -> event.getPrincipalId().equals(id));
                 }
+
+                @Override
+                public Stream<? extends CasEvent> getEventsOfTypeForPrincipal(final String type, final String principal,
+                                                                              final ZonedDateTime dateTime) {
+                    return events.stream().filter(event -> event.getPrincipalId().equals(principal) && event.getType().equals(type));
+                }
             };
         }
 
@@ -301,6 +324,53 @@ public abstract class BaseCasMcpTests {
             return storage;
         }
 
+        @Bean(name = InterruptInquirer.BEAN_NAME)
+        public InterruptInquiryExecutionPlan interruptInquirer() {
+            val inquirers = new CopyOnWriteArrayList<InterruptInquirer>();
+            val plan = new InterruptInquiryExecutionPlan() {
+                @Override
+                public void registerInterruptInquirer(final InterruptInquirer inquirer) {
+                    inquirers.add(inquirer);
+                }
+
+                @Override
+                public List<InterruptInquirer> getInterruptInquirers() {
+                    return List.copyOf(inquirers);
+                }
+            };
+            plan.registerInterruptInquirer(new McpTestInterruptInquirer("FailingInquirer", (authentication, requestContext) -> {
+                throw new IllegalStateException("Interrupt endpoint is unavailable");
+            }));
+            plan.registerInterruptInquirer(new McpTestInterruptInquirer("TermsInquirer", (authentication, requestContext) -> {
+                if (!authentication.getPrincipal().getId().startsWith("interrupted-")) {
+                    return InterruptResponse.none();
+                }
+                val service = Objects.requireNonNull(WebUtils.getService(requestContext));
+                val credential = Objects.requireNonNull(WebUtils.getCredential(requestContext));
+                return new InterruptResponse("Accept the terms of " + service.getId() + " as " + credential.getId())
+                    .setLinks(Map.of("Terms", "https://terms.example.org"))
+                    .setBlock(true)
+                    .setInterrupt(true);
+            }));
+            plan.registerInterruptInquirer(new McpTestInterruptInquirer("QuietInquirer", (authentication, requestContext) -> InterruptResponse.none()));
+            return plan;
+        }
+
+        @Bean(name = CasEventRepository.TRANSACTION_MANAGER_EVENTS)
+        public PlatformTransactionManager transactionManagerEvents() {
+            return new PseudoTransactionManager();
+        }
+
+        @Bean(name = "authenticationRiskEvaluator")
+        public AuthenticationRiskEvaluator authenticationRiskEvaluator(
+            final CasConfigurationProperties casProperties,
+            @Qualifier(CasEventRepository.BEAN_NAME)
+            final CasEventRepository casEventRepository) {
+            return new DefaultAuthenticationRiskEvaluator(List.of(
+                new IpAddressAuthenticationRequestRiskCalculator(casEventRepository, casProperties),
+                new UserAgentAuthenticationRequestRiskCalculator(casEventRepository, casProperties)), casProperties, casEventRepository);
+        }
+
         @Bean(name = SurrogateAuthenticationService.BEAN_NAME)
         public SurrogateAuthenticationService surrogateAuthenticationService() {
             return (username, service) -> {
@@ -309,6 +379,20 @@ public abstract class BaseCasMcpTests {
                 }
                 return service.isPresent() ? List.of("jsmith") : List.of("jsmith", "banderson");
             };
+        }
+    }
+
+    @RequiredArgsConstructor
+    private static final class McpTestInterruptInquirer implements InterruptInquirer {
+        @Getter
+        private final String name;
+
+        private final BiFunction<Authentication, RequestContext, InterruptResponse> inquiry;
+
+        @Override
+        public InterruptResponse inquire(final Authentication authentication, final RegisteredService registeredService,
+                                         final Service service, final Credential credential, final RequestContext requestContext) {
+            return inquiry.apply(authentication, requestContext);
         }
     }
 }
