@@ -91,6 +91,12 @@ public class OAuth20AuthorizationCodeGrantTypeTokenRequestValidator extends Base
                 LOGGER.warn("Requested grant type [{}] is not authorized by service definition [{}]", grantType, registeredService.getServiceId());
                 return false;
             }
+            val codeVerifier = configurationContext.getRequestParameterResolver()
+                .resolveRequestParameter(context, OAuth20Constants.CODE_VERIFIER).orElse(null);
+            if (!OAuth20Utils.isCodeVerifierValidFor(oauthCode, codeVerifier)) {
+                LOGGER.warn("Code verifier does not match the code challenge of OAuth code [{}], or no challenge was issued with the code", code.get());
+                return false;
+            }
             verifyBoundProofOfPossessionKey(oauthCode, OAuth20Constants.DPOP_JKT, manager);
             return true;
         }

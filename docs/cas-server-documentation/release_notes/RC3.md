@@ -698,6 +698,12 @@ authentication. See the [stateless ticket registry documentation](../ticketing/S
 - {: .changed data-area="oidc"} A client that authenticates at the token endpoint with `private_key_jwt` or `client_secret_jwt`
   and sends no `client_id` parameter is now identified from its client assertion, whose issuer and subject are the client
   identifier, instead of by matching the redirect URI against every OAuth application.
+- {: .fixed data-area="oidc"} [PKCE](../authentication/OAuth-ProtocolFlow-AuthorizationCode.html) is now verified for every
+  authorization code exchange, whatever the client authentication method. A client that authenticated at the token endpoint
+  with `private_key_jwt`, `client_secret_jwt` or mutual TLS could previously redeem a code issued with a `code_challenge`
+  without a `code_verifier`, or with one that did not match. As RFC 7636 and RFC 9700 require, the code verifier is now
+  compared exactly rather than ignoring case, and a `code_verifier` sent for a code that was issued without a challenge is
+  refused with `invalid_grant`.
 - {: .changed data-area="oidc"} When CAS works out which application a login is for, a request object carried by the
   OAuth or OpenID Connect authorization request is now unpacked and verified once, instead of once for each of the client
   identifier, redirect URI and grant type read from it.
