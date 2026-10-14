@@ -36,7 +36,8 @@ public interface OAuth20AuthorizationResponseBuilder extends Ordered {
     ModelAndView build(OAuthRegisteredService registeredService,
                        OAuth20ResponseModeTypes responseMode,
                        String redirectUrl,
-                       Map<String, String> parameters) throws Throwable;
+                       Map<String, String> parameters)
+            throws Throwable;
 
     /**
      * Build.

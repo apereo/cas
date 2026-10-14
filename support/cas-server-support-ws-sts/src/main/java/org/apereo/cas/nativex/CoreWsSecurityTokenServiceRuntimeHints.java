@@ -44,6 +44,7 @@ public class CoreWsSecurityTokenServiceRuntimeHints implements CasRuntimeHintsRe
         registerReflectionHintsForConstructors(hints,
             findSubclassesInPackage(Object.class, "org.apache.wss4j.stax.impl", "org.apache.xml.security.stax.impl"));
         registerReflectionHintsForConstructors(hints, List.of(W3CDomHandler.class));
+        registerReflectionHintsForConstructors(hints, List.of("com.sun.org.apache.xerces.internal.dom.DOMXSImplementationSourceImpl"));
         registerReflectionHints(hints, OpenSAMLUtil.class);
         hints.resources().registerPattern("META-INF/cxf/**");
         hints.resources().registerPattern("wsdl/**");

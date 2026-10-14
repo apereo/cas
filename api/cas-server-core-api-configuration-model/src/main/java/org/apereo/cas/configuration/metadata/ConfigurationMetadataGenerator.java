@@ -322,7 +322,8 @@ public class ConfigurationMetadataGenerator {
     }
 
     protected void processNestedEnumProperties(final List<ConfigurationMetadataProperty> properties,
-                                               final List<ConfigurationMetadataProperty> groups) throws Exception {
+                                               final List<ConfigurationMetadataProperty> groups)
+            throws Exception {
         val propertiesToProcess = properties.stream()
             .filter(e -> {
                 val matcher = NESTED_CLASS_PATTERN.matcher(e.getType());
@@ -456,7 +457,8 @@ public class ConfigurationMetadataGenerator {
     }
 
     protected void processNestedTypes(final List<ConfigurationMetadataProperty> properties,
-                                      final List<ConfigurationMetadataProperty> groups) throws Exception {
+                                      final List<ConfigurationMetadataProperty> groups)
+            throws Exception {
         val pendingProperties = new ArrayDeque<>(properties);
         val propertyNames = properties.stream()
             .map(ConfigurationMetadataProperty::getName)

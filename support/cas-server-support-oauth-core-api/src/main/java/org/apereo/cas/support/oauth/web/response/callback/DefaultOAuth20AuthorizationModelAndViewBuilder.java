@@ -22,14 +22,16 @@ public class DefaultOAuth20AuthorizationModelAndViewBuilder implements OAuth20Au
     @Override
     public ModelAndView build(final OAuthRegisteredService registeredService,
                               final OAuth20ResponseModeTypes responseMode,
-                              final String url, final Map<String, String> parameters) throws Exception {
+                              final String url, final Map<String, String> parameters)
+            throws Exception {
         val redirectUrl = prepareRedirectUrl(registeredService, url, parameters);
         val builder = responseModeFactory.getBuilder(registeredService, responseMode);
         return builder.build(registeredService, redirectUrl, parameters);
     }
 
     protected String prepareRedirectUrl(final OAuthRegisteredService registeredService,
-                                        final String redirectUrl, final Map<String, String> parameters) throws Exception {
+                                        final String redirectUrl, final Map<String, String> parameters)
+            throws Exception {
         return redirectUrl;
     }
 }

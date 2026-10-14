@@ -60,7 +60,8 @@ public abstract class BaseHttpServletAwareSamlObjectEncoder<T extends SAMLObject
      */
     public final T encode(final RequestAbstractType request, final T samlObject,
                           final String relayState,
-                          final MessageContext messageContext) throws SamlException {
+                          final MessageContext messageContext)
+            throws SamlException {
         if (httpResponse != null) {
             val encoder = getMessageEncoderInstance();
             encoder.setHttpServletResponseSupplier(() -> httpResponse);

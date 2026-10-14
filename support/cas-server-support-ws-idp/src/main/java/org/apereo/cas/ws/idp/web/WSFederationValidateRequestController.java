@@ -42,7 +42,8 @@ public class WSFederationValidateRequestController extends BaseWSFederationReque
     @GetMapping(path = WSFederationConstants.ENDPOINT_FEDERATION_REQUEST)
     @Operation(summary = "Handle federation request")
     public void handleFederationRequest(final HttpServletResponse response,
-                                        final HttpServletRequest request) throws Exception {
+                                        final HttpServletRequest request)
+            throws Exception {
         val fedRequest = WSFederationRequest.of(request);
         val wa = fedRequest.wa();
         if (StringUtils.isBlank(wa)) {
@@ -57,7 +58,8 @@ public class WSFederationValidateRequestController extends BaseWSFederationReque
     }
 
     protected void handleLogoutRequest(final WSFederationRequest fedRequest, final HttpServletRequest request,
-                                       final HttpServletResponse response) throws Exception {
+                                       final HttpServletResponse response)
+            throws Exception {
 
         val logoutUrl = FunctionUtils.doIf(StringUtils.isNotBlank(fedRequest.wreply()),
                 () -> {
@@ -77,7 +79,8 @@ public class WSFederationValidateRequestController extends BaseWSFederationReque
     private void handleInitialAuthenticationRequest(
         final WSFederationRequest fedRequest,
         final HttpServletResponse response,
-        final HttpServletRequest request) throws Exception {
+        final HttpServletRequest request)
+            throws Exception {
 
         val targetService = createService(fedRequest);
         val registeredService = findAndValidateFederationRequestForRegisteredService(targetService, fedRequest);
@@ -98,7 +101,8 @@ public class WSFederationValidateRequestController extends BaseWSFederationReque
         final HttpServletResponse response,
         final HttpServletRequest request,
         final WebApplicationService service,
-        final WSFederationRegisteredService registeredService) throws Exception {
+        final WSFederationRegisteredService registeredService)
+            throws Exception {
         val serviceUrl = constructServiceUrl(request, response, fedRequest);
         LOGGER.debug("Created service url [{}] mapped to [{}]", serviceUrl, registeredService);
         val renew = shouldRenewAuthentication(fedRequest, request);

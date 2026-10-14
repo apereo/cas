@@ -134,11 +134,15 @@ public class OidcVerifiableCredentialPresentationResponseEndpointController exte
 
     private final OidcVerifiableCredentialStatusListService statusListService;
 
+    private final OidcVerifiableCredentialMdocPresentationVerifier mdocPresentationVerifier;
+
     public OidcVerifiableCredentialPresentationResponseEndpointController(
         final OidcConfigurationContext configurationContext,
-        final OidcVerifiableCredentialStatusListService statusListService) {
+        final OidcVerifiableCredentialStatusListService statusListService,
+        final OidcVerifiableCredentialMdocPresentationVerifier mdocPresentationVerifier) {
         super(configurationContext);
         this.statusListService = statusListService;
+        this.mdocPresentationVerifier = mdocPresentationVerifier;
     }
 
     /**
@@ -316,7 +320,8 @@ public class OidcVerifiableCredentialPresentationResponseEndpointController exte
      * @throws Exception the exception
      */
     protected @Nullable String readDigitalCredentialsPresentation(final TransientSessionTicket transaction,
-                                                                  final Map<String, Object> data) throws Exception {
+                                                                  final Map<String, Object> data)
+            throws Exception {
         if (transaction.getPropertyAsString(PROPERTY_RESPONSE_ENCRYPTION_KEY) == null) {
             require(!data.containsKey("response"), "Presentation transaction did not ask for an encrypted response");
             return toVpToken(data.get("vp_token"));
@@ -337,7 +342,8 @@ public class OidcVerifiableCredentialPresentationResponseEndpointController exte
      * @throws Throwable the throwable
      */
     protected Map<String, Map<String, Object>> verifyPresentation(final String vpToken,
-                                                                  final TransientSessionTicket transientSessionTicket) throws Throwable {
+                                                                  final TransientSessionTicket transientSessionTicket)
+            throws Throwable {
         val nonce = transientSessionTicket.getPropertyAsString("nonce");
         require(nonce != null && !nonce.isBlank(), "Presentation transaction has no nonce");
         val credentials = (List<CredentialRequest>) transientSessionTicket.getProperty("credentials", List.class);
@@ -379,7 +385,8 @@ public class OidcVerifiableCredentialPresentationResponseEndpointController exte
      */
     protected Map<String, Object> recordPresentationResult(final TransientSessionTicket transaction,
                                                            final Map<String, Object> outcome,
-                                                           final String resultId) throws Exception {
+                                                           final String resultId)
+            throws Exception {
         val result = new LinkedHashMap<String, Object>(outcome);
         val clientId = transaction.getPropertyAsString(PROPERTY_CLIENT_ID);
         if (clientId != null) {
@@ -422,16 +429,21 @@ public class OidcVerifiableCredentialPresentationResponseEndpointController exte
     private Map<String, Map<String, Object>> validatePresentation(final String vpToken,
                                       final List<CredentialRequest> credentials,
                                       final String nonce,
-                                      final TransientSessionTicket transientSessionTicket) throws Throwable {
+                                      final TransientSessionTicket transientSessionTicket)
+            throws Throwable {
         val credentialQueries = new LinkedHashMap<String, CredentialRequest>();
         for (val credential : credentials) {
             require(credential != null && credential.getId() != null && !credential.getId().isBlank(),
                 "Credential query id is invalid");
-            require(OidcVerifiableCredentialConfigurationProperties.CredentialConfigurationFormats.DC_SD_JWT
-                .getValue().equals(credential.getFormat()), "Credential query format is not supported");
-            require(credential.getVctValues() != null && !credential.getVctValues().isEmpty()
-                    && credential.getVctValues().stream().allMatch(value -> value != null && !value.isBlank()),
-                "Credential query has no valid VCT values");
+            if (isMdocQuery(credential)) {
+                require(StringUtils.isNotBlank(credential.getDoctypeValue()), "Credential query has no document type");
+            } else {
+                require(OidcVerifiableCredentialConfigurationProperties.CredentialConfigurationFormats.DC_SD_JWT
+                    .getValue().equals(credential.getFormat()), "Credential query format is not supported");
+                require(credential.getVctValues() != null && !credential.getVctValues().isEmpty()
+                        && credential.getVctValues().stream().allMatch(value -> value != null && !value.isBlank()),
+                    "Credential query has no valid VCT values");
+            }
             require(credentialQueries.putIfAbsent(credential.getId(), credential) == null,
                 "Credential query ids must be unique");
         }
@@ -448,16 +460,56 @@ public class OidcVerifiableCredentialPresentationResponseEndpointController exte
             val presentation = ((List<?>) presentations).getFirst();
             require(presentation instanceof final String value && !value.isBlank(),
                 "Credential presentation is invalid");
-            disclosedClaims.put(entry.getKey(),
-                validateSdJwtPresentation((String) presentation, entry.getValue(), nonce, transientSessionTicket));
+            disclosedClaims.put(entry.getKey(), isMdocQuery(entry.getValue())
+                ? validateMdocPresentation((String) presentation, entry.getValue(), nonce, transientSessionTicket)
+                : validateSdJwtPresentation((String) presentation, entry.getValue(), nonce, transientSessionTicket));
         }
+        return disclosedClaims;
+    }
+
+    private static boolean isMdocQuery(final CredentialRequest credentialQuery) {
+        return OidcVerifiableCredentialConfigurationProperties.CredentialConfigurationFormats.MSO_MDOC
+            .getValue().equals(credentialQuery.getFormat());
+    }
+
+    /**
+     * Verify an mdoc presentation. Its device signature covers the session transcript of this request: the
+     * {@code client_id}, {@code nonce} and {@code response_uri} of the request, or the origin and {@code nonce} of a
+     * Digital Credentials API request, and the thumbprint of the key the response was encrypted to, if any
+     * (OpenID4VP 1.0, appendix B.2.6).
+     *
+     * @param presentation           the presentation
+     * @param credentialQuery        the credential query
+     * @param nonce                  the nonce of the request
+     * @param transientSessionTicket the presentation transaction
+     * @return the disclosed claims, by name space
+     * @throws Throwable the throwable
+     */
+    private Map<String, Object> validateMdocPresentation(final String presentation,
+                                                         final CredentialRequest credentialQuery,
+                                                         final String nonce,
+                                                         final TransientSessionTicket transientSessionTicket)
+            throws Throwable {
+        val responseEncryptionKey = transientSessionTicket.getPropertyAsString(PROPERTY_RESPONSE_ENCRYPTION_KEY);
+        val jwkThumbprint = responseEncryptionKey == null
+            ? null
+            : JWK.parse(responseEncryptionKey).computeThumbprint().decode();
+        val origin = transientSessionTicket.getPropertyAsString(PROPERTY_ORIGIN);
+        val handover = origin != null
+            ? OidcVerifiableCredentialMdocPresentationVerifier.buildDigitalCredentialsHandover(origin, nonce, jwkThumbprint)
+            : OidcVerifiableCredentialMdocPresentationVerifier.buildRedirectHandover(
+                OidcVerifiableCredentialPresentationRequestEndpointController.resolveClientIdentifier(configurationContext), nonce,
+                jwkThumbprint, OidcVerifiableCredentialPresentationRequestEndpointController.resolveResponseUri(configurationContext.getCasProperties()));
+        val disclosedClaims = mdocPresentationVerifier.verify(presentation, credentialQuery, handover);
+        validateRequestedClaims(disclosedClaims, credentialQuery.getClaims());
         return disclosedClaims;
     }
 
     private Map<String, Object> validateSdJwtPresentation(final String presentation,
                                            final CredentialRequest credentialQuery,
                                            final String nonce,
-                                           final TransientSessionTicket transientSessionTicket) throws Throwable {
+                                           final TransientSessionTicket transientSessionTicket)
+            throws Throwable {
         val sdJwt = SDJWT.parse(presentation);
         require(sdJwt != null && "sha-256".equals(sdJwt.getHashAlgorithm()), "SD-JWT hash algorithm is not supported");
         require(sdJwt.getBindingJwt() != null && !sdJwt.getBindingJwt().isBlank(),
@@ -540,7 +592,8 @@ public class OidcVerifiableCredentialPresentationResponseEndpointController exte
                                               final JWK holderJwk,
                                               final String nonce,
                                               final List<String> expectedAudiences,
-                                              final TransientSessionTicket transientSessionTicket) throws Exception {
+                                              final TransientSessionTicket transientSessionTicket)
+            throws Exception {
         val bindingJwt = parseSignedJwt(sdJwt.getBindingJwt());
         require(bindingJwt.getHeader().getType() != null
                 && "kb+jwt".equals(bindingJwt.getHeader().getType().toString()),
@@ -566,7 +619,8 @@ public class OidcVerifiableCredentialPresentationResponseEndpointController exte
 
     private static Map<String, Object> decodeDisclosures(final Map<String, Object> encodedClaims,
                                                          final List<Disclosure> disclosures,
-                                                         final String hashAlgorithm) throws Exception {
+                                                         final String hashAlgorithm)
+            throws Exception {
         val disclosuresByDigest = new LinkedHashMap<String, Disclosure>();
         val disclosureValues = new HashSet<String>();
         for (val disclosure : disclosures) {

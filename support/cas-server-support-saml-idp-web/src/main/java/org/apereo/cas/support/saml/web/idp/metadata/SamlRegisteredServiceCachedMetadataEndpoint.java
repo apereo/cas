@@ -15,6 +15,7 @@ import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredSer
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.BaseCasRestActuatorEndpoint;
+import com.google.common.primitives.Longs;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -22,7 +23,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import net.shibboleth.shared.resolver.CriteriaSet;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.lang3.time.StopWatch;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jooq.lambda.Unchecked;
@@ -93,7 +93,8 @@ public class SamlRegisteredServiceCachedMetadataEndpoint extends BaseCasRestActu
         @Nullable
         @RequestParam(required = false) final String serviceId,
         @Nullable
-        @RequestParam(required = false) final String entityId) throws Throwable {
+        @RequestParam(required = false) final String entityId)
+            throws Throwable {
 
         if (StringUtils.isBlank(serviceId)) {
             cachingMetadataResolver.getObject().invalidate();
@@ -196,8 +197,8 @@ public class SamlRegisteredServiceCachedMetadataEndpoint extends BaseCasRestActu
 
     protected SamlRegisteredService findRegisteredService(final String serviceId) throws Throwable {
         var matchedServices = (Collection<RegisteredService>) null;
-        if (NumberUtils.isCreatable(serviceId)) {
-            val id = Long.parseLong(serviceId);
+        val id = serviceId != null ? Longs.tryParse(serviceId) : null;
+        if (id != null) {
             val samlService = servicesManager.getObject().findServiceBy(id, SamlRegisteredService.class);
             matchedServices = samlService != null ? List.of(samlService) : List.of();
         } else {

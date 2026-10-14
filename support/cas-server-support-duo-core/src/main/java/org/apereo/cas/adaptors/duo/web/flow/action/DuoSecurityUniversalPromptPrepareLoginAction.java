@@ -121,7 +121,8 @@ public class DuoSecurityUniversalPromptPrepareLoginAction extends AbstractMultif
     protected Pair<String, String> createAuthUrlWithState(final DuoSecurityMultifactorAuthenticationProvider provider,
                                                           final Map<String, Object> properties,
                                                           final RequestContext requestContext,
-                                                          final String state) throws Exception {
+                                                          final String state)
+            throws Exception {
         val authentication = WebUtils.getAuthentication(requestContext);
         val principal = resolvePrincipal(authentication.getPrincipal(), requestContext);
         LOGGER.debug("Principal resolved for Duo Security as [{}]", principal);

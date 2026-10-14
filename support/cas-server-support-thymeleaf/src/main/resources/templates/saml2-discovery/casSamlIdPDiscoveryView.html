@@ -15,7 +15,8 @@
 
 <body>
 <main class="container mt-3 mb-3">
-    <div layout:fragment="content" class="mdc-card card p-4 m-auto w-lg-66">
+    <div layout:fragment="content" class="mdc-card card p-4 m-auto w-lg-66 cas-hero cas-hero-start cas-hero-wide">
+        <span class="cas-hero-icon" aria-hidden="true"><i class="mdi mdi-lan-connect"></i></span>
         <h2 th:utext="#{screen.saml.idp.discovery}">SAML Identity Provider Discovery</h2>
         <div id="errorDiv" class="banner banner-danger alert alert-danger" role="alert" style="display:none;"></div>
         <div id="idpSelect"></div>

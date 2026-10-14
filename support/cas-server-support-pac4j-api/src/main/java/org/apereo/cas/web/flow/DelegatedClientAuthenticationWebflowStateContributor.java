@@ -25,7 +25,8 @@ public interface DelegatedClientAuthenticationWebflowStateContributor {
      * @throws Throwable the throwable
      */
     Map<String, ? extends Serializable> store(RequestContext requestContext,
-                                    WebContext webContext, Client client) throws Throwable;
+                                    WebContext webContext, Client client)
+            throws Throwable;
 
     /**
      * Restore.

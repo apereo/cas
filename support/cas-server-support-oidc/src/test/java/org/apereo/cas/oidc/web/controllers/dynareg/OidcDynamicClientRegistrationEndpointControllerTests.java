@@ -6,10 +6,12 @@ import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.dynareg.OidcClientRegistrationRequest;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeyStoreUtils;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeyUsage;
+import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.MockWebServer;
+import com.jayway.jsonpath.JsonPath;
 import lombok.val;
 import org.jose4j.jwk.JsonWebKey;
 import org.jose4j.jwk.JsonWebKeySet;
@@ -174,11 +176,12 @@ class OidcDynamicClientRegistrationEndpointControllerTests {
                         "id_token_encrypted_response_alg": "RSA1_5",
                         "id_token_encrypted_response_enc": "A128CBC-HS256",
                         "userinfo_encrypted_response_alg": "RSA1_5",
+                        "dpop_bound_access_tokens": true,
                         "contacts": ["ve7jtb@example.org", "mary@example.org"]
                     }
                 """;
 
-            mockMvc
+            val result = mockMvc
                 .perform(post("/cas/oidc/" + OidcConstants.REGISTRATION_URL)
                     .accept(MediaType.APPLICATION_JSON)
                     .contentType(MediaType.APPLICATION_JSON)
@@ -186,7 +189,11 @@ class OidcDynamicClientRegistrationEndpointControllerTests {
                     .header(HttpHeaders.AUTHORIZATION, "Bearer %s".formatted(accessToken.getId()))
                     .content(registrationReq)
                 )
-                .andExpect(status().isCreated());
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.dpop_bound_access_tokens").value(true))
+                .andReturn();
+            val registeredClientId = JsonPath.read(result.getResponse().getContentAsString(), "$.client_id").toString();
+            assertTrue(OAuth20Utils.getRegisteredOAuthServiceByClientId(servicesManager, registeredClientId).isDpopBoundAccessTokens());
         }
 
         @Test

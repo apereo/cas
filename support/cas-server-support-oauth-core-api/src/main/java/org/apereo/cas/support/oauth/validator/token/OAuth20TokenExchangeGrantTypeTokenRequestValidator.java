@@ -39,7 +39,8 @@ public class OAuth20TokenExchangeGrantTypeTokenRequestValidator<T extends OAuth2
 
     @Override
     protected boolean validateInternal(final WebContext webContext, final String grantType,
-                                       final ProfileManager manager, final UserProfile uProfile) throws Throwable {
+                                       final ProfileManager manager, final UserProfile uProfile)
+            throws Throwable {
         val configurationContext = getConfigurationContext().getObject();
         val requestParameterResolver = configurationContext.getRequestParameterResolver();
         val subjectTokenType = requestParameterResolver.resolveRequestParameter(webContext, OAuth20Constants.SUBJECT_TOKEN_TYPE)
@@ -90,7 +91,8 @@ public class OAuth20TokenExchangeGrantTypeTokenRequestValidator<T extends OAuth2
     }
 
     protected @Nullable OAuthRegisteredService extractRegisteredService(final String subjectTokenType,
-                                                                        final String subjectToken) throws Exception {
+                                                                        final String subjectToken)
+            throws Exception {
         val configurationContext = getConfigurationContext().getObject();
         return switch (OAuth20TokenExchangeTypes.from(subjectTokenType)) {
             case ACCESS_TOKEN -> {

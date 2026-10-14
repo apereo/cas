@@ -12,7 +12,8 @@
 <body>
 
 <main class="container mt-3 mb-3">
-    <div layout:fragment="content" id="login" class="mdc-card mdc-card-content card w-lg-50 p-4 m-auto">
+    <div layout:fragment="content" id="login" class="mdc-card mdc-card-content card w-lg-50 p-4 m-auto cas-hero cas-hero-start">
+        <span class="cas-hero-icon" aria-hidden="true"><i class="mdi mdi-message-text-lock-outline"></i></span>
         <form method="post" id="fm1" th:object="${credential}" th:action="@{/login}">
 
             <div id="errorPanel" class="banner banner-danger alert alert-danger my-2" th:if="${flowRequestContext.messageContext.hasErrorMessages()}">

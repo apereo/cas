@@ -34,7 +34,8 @@ public class SearchModeSearchDatabaseAuthenticationHandler extends AbstractJdbcU
 
     @Override
     protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(
-        final UsernamePasswordCredential credential, final String originalPassword) throws Throwable {
+        final UsernamePasswordCredential credential, final String originalPassword)
+            throws Throwable {
         val sql = "SELECT COUNT('x') FROM ".concat(properties.getTableUsers())
             .concat(" WHERE ")
             .concat(properties.getFieldUser())

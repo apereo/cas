@@ -60,7 +60,8 @@ public class GenerateOidcJsonWebKeystoreCommand implements CasShellCommand {
             defaultValue = "RSA"
         )
         final String jwksKeyType
-    ) throws Exception {
+    )
+            throws Exception {
         val properties = new OidcProperties();
         properties.getJwks().getCore().setJwksKeyId(jwksKeyId);
         properties.getJwks().getCore().setJwksKeySize(jwksKeySize);

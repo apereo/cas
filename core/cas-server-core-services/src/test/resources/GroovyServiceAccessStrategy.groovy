@@ -3,7 +3,7 @@ import org.apereo.cas.services.*
 import groovy.transform.*
 import org.slf4j.*
 
-@Field def logger = LoggerFactory.getLogger("GroovyServiceAccessStrategy")
+@Field final logger = LoggerFactory.getLogger("GroovyServiceAccessStrategy")
 
 def isServiceAccessAllowed(RegisteredService registeredService, Service service) {
     if (registeredService == null) {

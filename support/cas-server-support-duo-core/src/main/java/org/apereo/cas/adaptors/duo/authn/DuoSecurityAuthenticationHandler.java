@@ -98,7 +98,8 @@ public class DuoSecurityAuthenticationHandler extends AbstractPreAndPostProcessi
     }
 
     private AuthenticationHandlerExecutionResult authenticateDuoPasscodeCredential(
-        final DuoSecurityPasscodeCredential credential) throws Exception {
+        final DuoSecurityPasscodeCredential credential)
+            throws Exception {
         try {
             val duoAuthenticationService = multifactorAuthenticationProvider.getObject().getDuoAuthenticationService();
             if (duoAuthenticationService.authenticate(credential).isSuccess()) {
@@ -112,7 +113,8 @@ public class DuoSecurityAuthenticationHandler extends AbstractPreAndPostProcessi
     }
 
     private AuthenticationHandlerExecutionResult authenticateDuoUniversalPromptCredential(
-        final DuoSecurityUniversalPromptCredential credential) throws Exception {
+        final DuoSecurityUniversalPromptCredential credential)
+            throws Exception {
         try {
             val duoAuthenticationService = multifactorAuthenticationProvider.getObject().getDuoAuthenticationService();
             val result = duoAuthenticationService.authenticate(credential);
@@ -128,7 +130,8 @@ public class DuoSecurityAuthenticationHandler extends AbstractPreAndPostProcessi
     }
 
     private AuthenticationHandlerExecutionResult authenticateDuoApiCredential(
-        final DuoSecurityDirectCredential credential) throws FailedLoginException {
+        final DuoSecurityDirectCredential credential)
+            throws FailedLoginException {
         try {
             val duoAuthenticationService = multifactorAuthenticationProvider.getObject().getDuoAuthenticationService();
             if (duoAuthenticationService.authenticate(credential).isSuccess()) {

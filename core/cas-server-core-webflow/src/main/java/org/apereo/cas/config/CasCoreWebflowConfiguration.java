@@ -320,7 +320,8 @@ class CasCoreWebflowConfiguration {
         @ConditionalOnMissingGraalVMNativeImage
         public CasWebflowExceptionHandler<Exception> groovyCasWebflowAuthenticationExceptionHandler(
             final ConfigurableApplicationContext applicationContext,
-            final CasConfigurationProperties casProperties) throws Exception {
+            final CasConfigurationProperties casProperties)
+                throws Exception {
             return BeanSupplier.of(CasWebflowExceptionHandler.class)
                 .when(BeanCondition.on("cas.authn.errors.groovy.location").exists().given(applicationContext.getEnvironment()))
                 .supply(() -> new GroovyCasWebflowAuthenticationExceptionHandler(

@@ -29,7 +29,8 @@ public interface DelegatedClientUserProfileProvisioner {
      * @throws Throwable the throwable
      */
     default void execute(final Principal principal, final UserProfile profile,
-                         final BaseClient client, final Credential credential) throws Throwable {
+                         final BaseClient client, final Credential credential)
+            throws Throwable {
     }
 
     /**

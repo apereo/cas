@@ -68,7 +68,8 @@ public class CasCoreValidationAutoConfiguration {
         public ProxyHandler proxy20Handler(
             @Qualifier("proxy20TicketUniqueIdGenerator") final UniqueTicketIdGenerator proxy20TicketUniqueIdGenerator,
             @Qualifier(HttpClient.BEAN_NAME_HTTPCLIENT_TRUST_STORE) final HttpClient httpClient,
-            final ConfigurableApplicationContext applicationContext) throws Exception {
+            final ConfigurableApplicationContext applicationContext)
+                throws Exception {
             return BeanSupplier.of(ProxyHandler.class)
                 .when(CONDITION_PROXY_AUTHN.given(applicationContext.getEnvironment()))
                 .supply(() -> new Cas20ProxyHandler(httpClient, proxy20TicketUniqueIdGenerator))

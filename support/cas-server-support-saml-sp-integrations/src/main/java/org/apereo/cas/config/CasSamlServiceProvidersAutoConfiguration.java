@@ -36,14 +36,16 @@ public class CasSamlServiceProvidersAutoConfiguration {
 
     private static void processSamlServiceProvider(final AbstractSamlSPProperties provider,
                                                    final ServicesManager servicesManager,
-                                                   final SamlRegisteredServiceCachingMetadataResolver resolver) throws Exception {
+                                                   final SamlRegisteredServiceCachingMetadataResolver resolver)
+            throws Exception {
         processSamlServiceProvider(provider, servicesManager, resolver, _ -> null, _ -> null);
     }
 
     private static void processSamlServiceProvider(final AbstractSamlSPProperties provider,
                                                    final ServicesManager servicesManager,
                                                    final SamlRegisteredServiceCachingMetadataResolver resolver,
-                                                   final Function<SamlRegisteredService, Void> afterSave) throws Exception {
+                                                   final Function<SamlRegisteredService, Void> afterSave)
+            throws Exception {
         processSamlServiceProvider(provider, servicesManager, resolver, _ -> null, afterSave);
     }
 
@@ -52,7 +54,8 @@ public class CasSamlServiceProvidersAutoConfiguration {
         final ServicesManager servicesManager,
         final SamlRegisteredServiceCachingMetadataResolver samlRegisteredServiceCachingMetadataResolver,
         final Function<SamlRegisteredService, Void> beforeSave,
-        final Function<SamlRegisteredService, Void> afterSave) throws Exception {
+        final Function<SamlRegisteredService, Void> afterSave)
+            throws Exception {
         val service = SamlSPUtils.newSamlServiceProviderService(provider, samlRegisteredServiceCachingMetadataResolver);
         if (service != null) {
             LOGGER.trace("Constructed service definition [{}]", service);

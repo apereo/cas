@@ -75,7 +75,8 @@ public class OidcJwksRegistrationEndpointController extends BaseOidcController {
         ))
     public ResponseEntity handleRegistration(
         final HttpServletRequest request,
-        @RequestBody final ClientJwksRegistrationRequest registrationRequest) throws Throwable {
+        @RequestBody final ClientJwksRegistrationRequest registrationRequest)
+            throws Throwable {
         val accessToken = getAccessTokenFromRequest(request).getValue();
         val accessTokenTicket = FunctionUtils.doAndHandle(() -> {
             val decodedToken = getConfigurationContext().getTicketRegistry().getTicket(accessToken, OAuth20AccessToken.class);

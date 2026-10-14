@@ -54,7 +54,8 @@ public interface DelegatedClientAuthenticationRequestCustomizer extends Ordered 
     default boolean isAuthorized(final WebContext webContext,
                                  final IndirectClient client,
                                  final WebApplicationService currentService,
-                                 final RequestContext requestContext) throws Throwable {
+                                 final RequestContext requestContext)
+            throws Throwable {
         return true;
     }
 }

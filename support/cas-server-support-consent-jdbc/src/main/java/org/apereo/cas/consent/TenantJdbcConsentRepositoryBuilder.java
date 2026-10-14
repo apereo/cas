@@ -29,7 +29,8 @@ public class TenantJdbcConsentRepositoryBuilder implements TenantConsentReposito
     @Override
     public List<ConsentRepository> buildInternal(
         final TenantDefinition tenantDefinition,
-        final ConfigurationPropertiesBindingContext<CasConfigurationProperties> bindingContext) throws Exception {
+        final ConfigurationPropertiesBindingContext<CasConfigurationProperties> bindingContext)
+            throws Exception {
         if (bindingContext.containsBindingFor(JpaConsentProperties.class)) {
             val dataSource = JpaBeans.newDataSource(bindingContext.value().getConsent().getJpa());
             val ctx = JpaConfigurationContext.builder()

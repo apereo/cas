@@ -27,7 +27,8 @@ public class GitSamlIdPMetadataGenerator extends FileSystemSamlIdPMetadataGenera
 
     @Override
     protected SamlIdPMetadataDocument finalizeMetadataDocument(final SamlIdPMetadataDocument doc,
-                                                               final Optional<SamlRegisteredService> registeredService) throws Throwable {
+                                                               final Optional<SamlRegisteredService> registeredService)
+            throws Throwable {
         val appliesTo = getAppliesToFor(registeredService);
         doc.setAppliesTo(appliesTo);
         gitRepository.commitAll("Generated metadata for " + appliesTo);

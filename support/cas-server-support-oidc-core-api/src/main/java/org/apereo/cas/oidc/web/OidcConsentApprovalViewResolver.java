@@ -63,7 +63,8 @@ public class OidcConsentApprovalViewResolver extends OAuth20ConsentApprovalViewR
     @Override
     protected void prepareApprovalViewModel(final Map<String, Object> model,
                                             final WebContext context,
-                                            final OAuthRegisteredService service) throws Exception {
+                                            final OAuthRegisteredService service)
+            throws Exception {
         super.prepareApprovalViewModel(model, context, service);
         if (service instanceof final OidcRegisteredService oidcRegisteredService) {
 

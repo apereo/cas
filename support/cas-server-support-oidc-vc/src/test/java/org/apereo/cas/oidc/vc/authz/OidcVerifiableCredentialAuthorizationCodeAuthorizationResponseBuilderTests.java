@@ -133,7 +133,8 @@ class OidcVerifiableCredentialAuthorizationCodeAuthorizationResponseBuilderTests
     }
 
     private String authorizeForCode(final OidcRegisteredService registeredService,
-                                    @Nullable final String codeChallenge) throws Exception {
+                                    @Nullable final String codeChallenge)
+            throws Exception {
         val redirectedUrl = authorize(registeredService, codeChallenge);
         val code = UriComponentsBuilder.fromUri(URI.create(redirectedUrl))
             .build()
@@ -144,7 +145,8 @@ class OidcVerifiableCredentialAuthorizationCodeAuthorizationResponseBuilderTests
     }
 
     private String authorize(final OidcRegisteredService registeredService,
-                             @Nullable final String codeChallenge) throws Exception {
+                             @Nullable final String codeChallenge)
+            throws Exception {
         val profile = new CasProfile();
         profile.setId("casuser");
         profile.setClientName(Authenticators.CAS_OAUTH_CLIENT);
@@ -186,7 +188,8 @@ class OidcVerifiableCredentialAuthorizationCodeAuthorizationResponseBuilderTests
     }
 
     private ResultActions exchangeForToken(final OidcRegisteredService registeredService,
-                                           final String code, @Nullable final String codeVerifier) throws Exception {
+                                           final String code, @Nullable final String codeVerifier)
+            throws Exception {
         val builder = post("/cas/oidc/" + OidcConstants.TOKEN_URL)
             .param(OAuth20Constants.CLIENT_ID, registeredService.getClientId())
             .param(OAuth20Constants.CODE, code)

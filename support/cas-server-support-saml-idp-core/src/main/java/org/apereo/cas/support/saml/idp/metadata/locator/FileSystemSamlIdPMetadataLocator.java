@@ -33,7 +33,8 @@ public class FileSystemSamlIdPMetadataLocator extends AbstractSamlIdPMetadataLoc
 
     public FileSystemSamlIdPMetadataLocator(final CipherExecutor cipherExecutor,
                                             final Resource resource, final Cache<String, SamlIdPMetadataDocument> metadataCache,
-                                            final ConfigurableApplicationContext applicationContext) throws Exception {
+                                            final ConfigurableApplicationContext applicationContext)
+            throws Exception {
         this(cipherExecutor, resource.getFile(), metadataCache, applicationContext);
     }
 

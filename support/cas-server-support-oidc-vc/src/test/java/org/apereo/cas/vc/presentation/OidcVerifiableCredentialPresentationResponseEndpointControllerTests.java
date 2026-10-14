@@ -10,9 +10,34 @@ import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.ticket.TransientSessionTicket;
 import org.apereo.cas.ticket.TransientSessionTicketFactory;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.vc.presentation.OidcVerifiableCredentialPresentationRequestEndpointController.OidcVerifiableCredentialPresentationRequest.ClaimRequest;
 import org.apereo.cas.vc.presentation.OidcVerifiableCredentialPresentationRequestEndpointController.OidcVerifiableCredentialPresentationRequest.CredentialRequest;
+import com.authlete.cbor.CBORByteArray;
+import com.authlete.cbor.CBORItem;
+import com.authlete.cbor.CBORItemList;
+import com.authlete.cbor.CBORNull;
+import com.authlete.cbor.CBORString;
+import com.authlete.cbor.CBORTaggedItem;
+import com.authlete.cose.COSEEC2Key;
+import com.authlete.cose.COSEKey;
+import com.authlete.cose.COSEProtectedHeaderBuilder;
+import com.authlete.cose.COSESign1;
+import com.authlete.cose.COSESign1Builder;
+import com.authlete.cose.COSESigner;
+import com.authlete.cose.SigStructureBuilder;
+import com.authlete.cose.constants.COSEAlgorithms;
+import com.authlete.mdoc.DeviceAuth;
+import com.authlete.mdoc.DeviceNameSpaces;
+import com.authlete.mdoc.DeviceNameSpacesBytes;
+import com.authlete.mdoc.DeviceResponse;
+import com.authlete.mdoc.DeviceSigned;
+import com.authlete.mdoc.Document;
+import com.authlete.mdoc.IssuerNameSpaces;
+import com.authlete.mdoc.IssuerSigned;
+import com.authlete.mdoc.IssuerSignedBuilder;
+import com.authlete.mdoc.ValidityInfo;
 import com.authlete.sd.Disclosure;
 import com.authlete.sd.SDJWT;
 import com.authlete.sd.SDObjectBuilder;
@@ -24,6 +49,7 @@ import com.nimbusds.jose.crypto.ECDSASigner;
 import com.nimbusds.jose.crypto.RSASSASigner;
 import com.nimbusds.jose.jwk.Curve;
 import com.nimbusds.jose.jwk.ECKey;
+import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.gen.ECKeyGenerator;
 import com.nimbusds.jose.jwk.gen.RSAKeyGenerator;
 import com.nimbusds.jose.util.Base64URL;
@@ -41,11 +67,13 @@ import org.jose4j.jwt.JwtClaims;
 import org.jose4j.keys.EllipticCurves;
 import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.TestPropertySource;
@@ -320,7 +348,8 @@ class OidcVerifiableCredentialPresentationResponseEndpointControllerTests extend
     }
 
     private ResultActions fetchResult(final String requestId, final OidcRegisteredService client,
-                                      final @Nullable String responseCode) throws Exception {
+                                      final @Nullable String responseCode)
+            throws Exception {
         val request = get(PRESENTATION_RESULT_ENDPOINT_URL)
             .with(withHttpRequestProcessor())
             .param(OAuth20Constants.CLIENT_ID, client.getClientId())
@@ -507,12 +536,239 @@ class OidcVerifiableCredentialPresentationResponseEndpointControllerTests extend
             issueCredential(claims -> claims.setClaim("status", reference.toClaim())), revoked.nonce()))));
     }
 
+    /**
+     * ISO/IEC 18013-5 mdoc presentations, in the {@code mso_mdoc} format of OpenID4VP 1.0, appendix B.2.
+     */
+    @Nested
+    @ImportAutoConfiguration(CasOidcVerifiableCredentialsAutoConfiguration.class)
+    @TestPropertySource(properties = {
+        "cas.authn.oidc.jwks.file-system.jwks-file=classpath:vc-issuer-x5c.jwks",
+        "cas.authn.oidc.vc.issuer.credential-configurations.mdl.format=MSO_MDOC",
+        "cas.authn.oidc.vc.issuer.credential-configurations.mdl.doctype=org.iso.18013.5.1.mDL",
+        "cas.authn.oidc.vc.issuer.credential-configurations.mdl.credential-signing-alg-values-supported=ES256"
+    })
+    class MsoMdocPresentationTests extends AbstractOidcTests {
+        private static final String DOCTYPE = "org.iso.18013.5.1.mDL";
+
+        private static final String NAMESPACE = "org.iso.18013.5.1";
+
+        private static final String MDOC_QUERY_ID = "mdl";
+
+        @Autowired
+        @Qualifier("oidcVerifiableCredentialMdocPresentationVerifier")
+        private OidcVerifiableCredentialMdocPresentationVerifier mdocPresentationVerifier;
+
+        @Test
+        void verifyMdocPresentationAndReplayProtection() throws Throwable {
+            val transaction = createMdocTransaction(List.of(NAMESPACE, "given_name"));
+            val deviceKey = new ECKeyGenerator(Curve.P_256).generate();
+            val vpToken = buildMdocVpToken(present(issueMdoc(deviceKey, loadIssuerKey()), deviceKey, redirectHandover(transaction.nonce(), null)));
+
+            submitMdocPresentation(transaction.ticket().getId(), vpToken)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("verified"));
+            assertNull(ticketRegistry.getTicket(transaction.ticket().getId()));
+            assertInvalid(submitMdocPresentation(transaction.ticket().getId(), vpToken));
+        }
+
+        @Test
+        void verifyDeviceSignatureMustCoverThisRequest() throws Throwable {
+            val transaction = createMdocTransaction(List.of(NAMESPACE, "given_name"));
+            val deviceKey = new ECKeyGenerator(Curve.P_256).generate();
+            val issuerSigned = issueMdoc(deviceKey, loadIssuerKey());
+            val otherNonce = present(issuerSigned, deviceKey, redirectHandover(UUID.randomUUID().toString(), null));
+            val otherDevice = present(issuerSigned, new ECKeyGenerator(Curve.P_256).generate(), redirectHandover(transaction.nonce(), null));
+            for (val presentation : List.of(otherNonce, otherDevice)) {
+                assertRejected(presentation, transaction, "Device signature is invalid");
+                assertInvalid(submitMdocPresentation(transaction.ticket().getId(), buildMdocVpToken(presentation)));
+            }
+            assertNotNull(ticketRegistry.getTicket(transaction.ticket().getId()));
+        }
+
+        @Test
+        void verifyIssuerSignedItemsMustMatchTheirDigests() throws Throwable {
+            val transaction = createMdocTransaction(List.of(NAMESPACE, "given_name"));
+            val deviceKey = new ECKeyGenerator(Curve.P_256).generate();
+            val issuerKey = loadIssuerKey();
+            val genuine = issueMdoc(deviceKey, issuerKey);
+            val forged = issueMdoc(deviceKey, issuerKey, Map.of("given_name", "Mallory"));
+            val swapped = new IssuerSigned((IssuerNameSpaces) forged.findByKey("nameSpaces").getValue(),
+                (COSESign1) genuine.findByKey("issuerAuth").getValue());
+            val presentation = present(swapped, deviceKey, redirectHandover(transaction.nonce(), null));
+            assertRejected(presentation, transaction, "Issuer-signed item does not match its digest");
+            assertInvalid(submitMdocPresentation(transaction.ticket().getId(), buildMdocVpToken(presentation)));
+        }
+
+        @Test
+        void verifyMdocMustBeIssuedByThisIssuer() throws Throwable {
+            val transaction = createMdocTransaction(List.of(NAMESPACE, "given_name"));
+            val deviceKey = new ECKeyGenerator(Curve.P_256).generate();
+            val foreignKey = new ECKeyGenerator(Curve.P_256).generate();
+            val foreignCertificate = loadIssuerKey().getParsedX509CertChain().getFirst();
+            val foreign = new IssuerSignedBuilder()
+                .setDocType(DOCTYPE)
+                .setClaims(Map.of(NAMESPACE, Map.of("given_name", "Alice")))
+                .setValidityInfo(validityInfo())
+                .setDeviceKey(COSEKey.fromJwk(deviceKey.toPublicJWK().toJSONObject()))
+                .setIssuerKey((COSEEC2Key) COSEKey.fromJwk(foreignKey.toJSONObject()))
+                .setIssuerCertChain(List.of(foreignCertificate))
+                .build();
+            val presentation = present(foreign, deviceKey, redirectHandover(transaction.nonce(), null));
+            assertRejected(presentation, transaction, "Issuer signature is invalid");
+            assertInvalid(submitMdocPresentation(transaction.ticket().getId(), buildMdocVpToken(presentation)));
+        }
+
+        @Test
+        void verifyRequestedClaimMustBePresented() throws Throwable {
+            val transaction = createMdocTransaction(List.of(NAMESPACE, "birth_date"));
+            val deviceKey = new ECKeyGenerator(Curve.P_256).generate();
+            assertInvalid(submitMdocPresentation(transaction.ticket().getId(), buildMdocVpToken(
+                present(issueMdoc(deviceKey, loadIssuerKey()), deviceKey, redirectHandover(transaction.nonce(), null)))));
+        }
+
+        @Test
+        void verifyEncryptedDigitalCredentialsApiMdocPresentation() throws Throwable {
+            val transaction = createMdocTransaction(List.of(NAMESPACE, "given_name"));
+            transaction.ticket().putProperty(OidcVerifiableCredentialPresentationResponseEndpointController.PROPERTY_RESPONSE_MODE, "dc_api.jwt");
+            transaction.ticket().putProperty(OidcVerifiableCredentialPresentationResponseEndpointController.PROPERTY_ORIGIN, DIGITAL_CREDENTIALS_ORIGIN);
+            val encryptionKey = EcJwkGenerator.generateJwk(EllipticCurves.P256);
+            encryptionKey.setKeyId(transaction.ticket().getId());
+            encryptionKey.setAlgorithm(KeyManagementAlgorithmIdentifiers.ECDH_ES);
+            transaction.ticket().putProperty(OidcVerifiableCredentialPresentationResponseEndpointController.PROPERTY_RESPONSE_ENCRYPTION_KEY,
+                encryptionKey.toJson(JsonWebKey.OutputControlLevel.INCLUDE_PRIVATE));
+            ticketRegistry.updateTicket(transaction.ticket());
+
+            val deviceKey = new ECKeyGenerator(Curve.P_256).generate();
+            val issuerSigned = issueMdoc(deviceKey, loadIssuerKey());
+            val thumbprint = encryptionKey.calculateThumbprint("SHA-256");
+            val redirectBound = present(issuerSigned, deviceKey, redirectHandover(transaction.nonce(), thumbprint));
+            assertInvalid(submitDigitalCredentialsMdocResponse(transaction.ticket().getId(), encryptResponse(encryptionKey,
+                ContentEncryptionAlgorithmIdentifiers.AES_256_GCM, Map.of("vp_token", Map.of(MDOC_QUERY_ID, List.of(redirectBound))))));
+
+            val presentation = present(issuerSigned, deviceKey, handover("OpenID4VPDCAPIHandover",
+                new CBORString(DIGITAL_CREDENTIALS_ORIGIN), new CBORString(transaction.nonce()), new CBORByteArray(thumbprint)));
+            submitDigitalCredentialsMdocResponse(transaction.ticket().getId(), encryptResponse(encryptionKey,
+                    ContentEncryptionAlgorithmIdentifiers.AES_256_GCM, Map.of("vp_token", Map.of(MDOC_QUERY_ID, List.of(presentation)))))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("verified"))
+                .andExpect(jsonPath("$.claims." + MDOC_QUERY_ID + "['" + NAMESPACE + "'].given_name").value("Alice"));
+        }
+
+        private void assertRejected(final String presentation, final PresentationTransaction transaction, final String reason) {
+            val credentialQuery = (CredentialRequest) transaction.ticket().getProperty("credentials", List.class).getFirst();
+            val error = assertThrows(IllegalArgumentException.class,
+                () -> mdocPresentationVerifier.verify(presentation, credentialQuery, redirectHandover(transaction.nonce(), null)));
+            assertEquals(reason, error.getMessage());
+        }
+
+        private PresentationTransaction createMdocTransaction(final List<String> claimPath) throws Throwable {
+            val nonce = UUID.randomUUID().toString();
+            val claimRequest = new ClaimRequest();
+            claimRequest.setPath(claimPath);
+            val credentialRequest = new CredentialRequest();
+            credentialRequest.setId(MDOC_QUERY_ID);
+            credentialRequest.setFormat("mso_mdoc");
+            credentialRequest.setDoctypeValue(DOCTYPE);
+            credentialRequest.setClaims(List.of(claimRequest));
+
+            val factory = (TransientSessionTicketFactory) defaultTicketFactory.get(TransientSessionTicket.class);
+            val ticket = factory.create(CollectionUtils.wrap("nonce", nonce, "credentials", List.of(credentialRequest)));
+            ticket.putProperty("state", ticket.getId());
+            ticket.putProperty(OidcVerifiableCredentialPresentationResponseEndpointController.PROPERTY_CLIENT_ID, CREDENTIAL_CLIENT_ID);
+            ticketRegistry.addTicket(ticket);
+            return new PresentationTransaction(ticket, nonce);
+        }
+
+        private static ECKey loadIssuerKey() throws Exception {
+            return (ECKey) JWKSet.load(new ClassPathResource("vc-issuer-x5c.jwks").getInputStream()).getKeyByKeyId("vc-issuer");
+        }
+
+        private static ValidityInfo validityInfo() {
+            val now = ZonedDateTime.now(ZoneOffset.UTC).truncatedTo(ChronoUnit.SECONDS);
+            return new ValidityInfo(now, now, now.plusDays(1));
+        }
+
+        private static IssuerSigned issueMdoc(final ECKey deviceKey, final ECKey issuerKey) throws Exception {
+            return issueMdoc(deviceKey, issuerKey, Map.of("given_name", "Alice"));
+        }
+
+        private static IssuerSigned issueMdoc(final ECKey deviceKey, final ECKey issuerKey,
+                                              final Map<String, Object> claims)
+                throws Exception {
+            return new IssuerSignedBuilder()
+                .setDocType(DOCTYPE)
+                .setClaims(Map.of(NAMESPACE, claims))
+                .setValidityInfo(validityInfo())
+                .setDeviceKey(COSEKey.fromJwk(deviceKey.toPublicJWK().toJSONObject()))
+                .setIssuerKey((COSEEC2Key) COSEKey.fromJwk(issuerKey.toJSONObject()))
+                .setIssuerCertChain(List.of(issuerKey.getParsedX509CertChain().getFirst()))
+                .build();
+        }
+
+        /**
+         * What a wallet returns: a {@code DeviceResponse} whose device signature covers the session transcript built from
+         * the handover (ISO/IEC 18013-5, section 9.1.3.4).
+         */
+        private static String present(final IssuerSigned issuerSigned, final ECKey deviceKey, final CBORItem handover) throws Exception {
+            val deviceNameSpacesBytes = new DeviceNameSpacesBytes(new DeviceNameSpaces(List.of()));
+            val deviceAuthentication = new CBORItemList(new CBORString("DeviceAuthentication"),
+                new CBORItemList(CBORNull.INSTANCE, CBORNull.INSTANCE, handover), new CBORString(DOCTYPE), deviceNameSpacesBytes);
+            val protectedHeader = new COSEProtectedHeaderBuilder().alg(COSEAlgorithms.ES256).build();
+            val toBeSigned = new SigStructureBuilder()
+                .signature1()
+                .bodyAttributes(protectedHeader)
+                .payload(new CBORTaggedItem(24, new CBORByteArray(deviceAuthentication.encode())).encode())
+                .build();
+            val deviceSignature = new COSESign1Builder()
+                .protectedHeader(protectedHeader)
+                .signature(new COSESigner(deviceKey.toECPrivateKey()).sign(toBeSigned, COSEAlgorithms.ES256))
+                .build();
+            val document = new Document(DOCTYPE, issuerSigned, new DeviceSigned(deviceNameSpacesBytes, new DeviceAuth(deviceSignature)), null);
+            return new DeviceResponse(List.of(document)).encodeToBase64Url();
+        }
+
+        private CBORItem redirectHandover(final String nonce, final byte @Nullable [] jwkThumbprint) {
+            return handover("OpenID4VPHandover", new CBORString(verifierClientId()), new CBORString(nonce),
+                jwkThumbprint == null ? CBORNull.INSTANCE : new CBORByteArray(jwkThumbprint),
+                new CBORString(issuer() + '/' + OidcConstants.VC_PRESENTATION_RESPONSE_URL));
+        }
+
+        private static CBORItem handover(final String type, final CBORItem... handoverInfo) {
+            return FunctionUtils.doUnchecked(() -> new CBORItemList(new CBORString(type),
+                new CBORByteArray(MessageDigest.getInstance("SHA-256").digest(new CBORItemList(handoverInfo).encode()))));
+        }
+
+        private static String buildMdocVpToken(final String presentation) throws Exception {
+            return MAPPER.writeValueAsString(Map.of(MDOC_QUERY_ID, List.of(presentation)));
+        }
+
+        private ResultActions submitMdocPresentation(final String state, final String vpToken) throws Exception {
+            return mockMvc.perform(post(PRESENTATION_RESPONSE_ENDPOINT_URL)
+                .with(withHttpRequestProcessor())
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .param("vp_token", vpToken)
+                .param("state", state));
+        }
+
+        private ResultActions submitDigitalCredentialsMdocResponse(final String requestId, final String response) throws Exception {
+            val client = getOidcRegisteredService(CREDENTIAL_CLIENT_ID, "https://wallet\\.example\\.org/.*", true, false);
+            servicesManager.save(client);
+            return mockMvc.perform(post(PRESENTATION_RESULT_ENDPOINT_URL)
+                .with(withHttpRequestProcessor())
+                .param(OAuth20Constants.CLIENT_ID, client.getClientId())
+                .param(OAuth20Constants.CLIENT_SECRET, client.getClientSecrets().getFirst().getValue())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(MAPPER.writeValueAsString(Map.of("request_id", requestId, "data", Map.of("response", response)))));
+        }
+    }
+
     private PresentationTransaction createTransaction() throws Throwable {
         return createTransaction(List.of(claimRequest("given_name", true)), null);
     }
 
     private PresentationTransaction createTransaction(final List<ClaimRequest> claimRequests,
-                                                      final @Nullable String redirectUri) throws Throwable {
+                                                      final @Nullable String redirectUri)
+            throws Throwable {
         val nonce = UUID.randomUUID().toString();
         val credentialRequest = new CredentialRequest();
         credentialRequest.setId(CREDENTIAL_QUERY_ID);
@@ -584,7 +840,8 @@ class OidcVerifiableCredentialPresentationResponseEndpointControllerTests extend
     }
 
     private String bindCredential(final CredentialMaterial material, final String nonce,
-                                  final JWSAlgorithm algorithm, final JWSSigner signer) throws Exception {
+                                  final JWSAlgorithm algorithm, final JWSSigner signer)
+            throws Exception {
         val header = new JWSHeader.Builder(algorithm)
             .type(new JOSEObjectType("kb+jwt"))
             .build();
@@ -594,7 +851,8 @@ class OidcVerifiableCredentialPresentationResponseEndpointControllerTests extend
     }
 
     private String bindCredentialWithEd25519(final CredentialMaterial material, final String nonce,
-                                             final String algorithm, final KeyPair holderKey) throws Exception {
+                                             final String algorithm, final KeyPair holderKey)
+            throws Exception {
         val header = Base64URL.encode("{\"alg\":\"%s\",\"typ\":\"kb+jwt\"}".formatted(algorithm));
         val payload = Base64URL.encode(keyBindingClaims(material, nonce).toString());
         val signingInput = header + "." + payload;
@@ -647,7 +905,8 @@ class OidcVerifiableCredentialPresentationResponseEndpointControllerTests extend
     }
 
     private static String encryptResponse(final PublicJsonWebKey key, final String contentEncryption,
-                                          final Map<String, Object> parameters) throws Exception {
+                                          final Map<String, Object> parameters)
+            throws Exception {
         val jwe = new JsonWebEncryption();
         jwe.setAlgorithmHeaderValue(KeyManagementAlgorithmIdentifiers.ECDH_ES);
         jwe.setEncryptionMethodHeaderParameter(contentEncryption);
@@ -666,7 +925,8 @@ class OidcVerifiableCredentialPresentationResponseEndpointControllerTests extend
     }
 
     private ResultActions submitDigitalCredentialsResponse(final String requestId, final Map<String, Object> data,
-                                                           final OidcRegisteredService client) throws Exception {
+                                                           final OidcRegisteredService client)
+            throws Exception {
         return mockMvc.perform(post(PRESENTATION_RESULT_ENDPOINT_URL)
             .with(withHttpRequestProcessor())
             .param(OAuth20Constants.CLIENT_ID, client.getClientId())

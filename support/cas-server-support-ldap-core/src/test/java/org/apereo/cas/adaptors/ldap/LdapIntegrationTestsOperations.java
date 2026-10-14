@@ -40,7 +40,8 @@ public final class LdapIntegrationTestsOperations {
      * @throws Exception the exception
      */
     public static void populateEntries(final LDAPConnection connection, final InputStream rs,
-                                       final String baseDn, final BindConnectionInitializer connInit) throws Exception {
+                                       final String baseDn, final BindConnectionInitializer connInit)
+            throws Exception {
         LdapTestUtils.createLdapEntries(connection, LdapTestUtils.readLdif(rs, baseDn), connInit);
     }
 

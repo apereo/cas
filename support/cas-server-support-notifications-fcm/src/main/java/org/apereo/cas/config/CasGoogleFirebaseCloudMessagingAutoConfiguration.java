@@ -45,7 +45,8 @@ public class CasGoogleFirebaseCloudMessagingAutoConfiguration {
     static class GoogleFirebaseCloudMessagingInternalConfiguration {
 
         private static GoogleCredentials getCredentials(
-            final CasConfigurationProperties casProperties) throws Exception {
+            final CasConfigurationProperties casProperties)
+                throws Exception {
             val firebase = casProperties.getGoogleFirebaseMessaging();
             if (firebase.getServiceAccountKey().getLocation() != null) {
                 val keyPath = firebase.getServiceAccountKey().getLocation().getFile().getCanonicalPath();
@@ -60,7 +61,8 @@ public class CasGoogleFirebaseCloudMessagingAutoConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "firebaseCloudMessagingNotificationSender")
         public NotificationSender firebaseCloudMessagingNotificationSender(
-            final CasConfigurationProperties casProperties) throws Exception {
+            final CasConfigurationProperties casProperties)
+                throws Exception {
             val firebase = casProperties.getGoogleFirebaseMessaging();
             val options = FirebaseOptions.builder()
                 .setCredentials(getCredentials(casProperties))

@@ -36,7 +36,8 @@ public class Cas20ResponseView extends AbstractDelegatingCasView {
 
     @Override
     protected void prepareMergedOutputModel(final Map<String, Object> model, final HttpServletRequest request,
-                                            final HttpServletResponse response) throws Exception {
+                                            final HttpServletResponse response)
+            throws Exception {
         prepareViewModelWithAuthenticationPrincipal(model);
     }
 

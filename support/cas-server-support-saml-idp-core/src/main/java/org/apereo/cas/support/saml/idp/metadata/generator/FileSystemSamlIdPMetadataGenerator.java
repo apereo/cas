@@ -77,7 +77,8 @@ public class FileSystemSamlIdPMetadataGenerator extends BaseSamlIdPMetadataGener
     }
 
     private byte[] sign(final byte[] metadata, final X509Certificate signingCertificate,
-                        final PrivateKey privateKey) throws Exception {
+                        final PrivateKey privateKey)
+            throws Exception {
         try (var is = new ByteArrayInputStream(metadata)) {
             val document = getConfigurationContext().getOpenSamlConfigBean().getParserPool().parse(is);
             val documentElement = document.getDocumentElement();
@@ -103,7 +104,8 @@ public class FileSystemSamlIdPMetadataGenerator extends BaseSamlIdPMetadataGener
     }
 
     protected void writeCertificateAndKey(final File certificate, final File key,
-                                          final Optional<SamlRegisteredService> registeredService) throws Exception {
+                                          final Optional<SamlRegisteredService> registeredService)
+            throws Exception {
         if (certificate.exists()) {
             LOGGER.info("Certificate file [{}] already exists, and will be deleted", certificate.getCanonicalPath());
             FileUtils.forceDelete(certificate);

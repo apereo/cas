@@ -94,7 +94,8 @@ public class CompactTicketAuthentication {
      * @throws Throwable the throwable
      */
     public static Authentication expand(final PrincipalFactory principalFactory,
-                                        final List<String> fields, final int start) throws Throwable {
+                                        final List<String> fields, final int start)
+            throws Throwable {
         val principal = Objects.requireNonNull(principalFactory.createPrincipal(fields.get(start)));
         val authenticationDate = DateTimeUtils.zonedDateTimeOf(Instant.ofEpochSecond(Long.parseLong(fields.get(start + 1))));
         val handlers = new LinkedHashSet<>(CompactTicketCodec.decodeValues(fields.get(start + 2)));

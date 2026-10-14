@@ -45,7 +45,8 @@ public class DelegatedClientOidcLogoutRedirectionStrategy implements LogoutRedir
 
     @Override
     public LogoutRedirectionResponse handle(final HttpServletRequest request,
-                                            final HttpServletResponse response) throws Exception {
+                                            final HttpServletResponse response)
+            throws Exception {
         val logoutRequest = DelegationWebflowUtils.getDelegatedAuthenticationLogoutRequest(
             request, DelegatedAuthenticationClientLogoutRequest.class).orElseThrow();
         val redirectionResponseBuilder = LogoutRedirectionResponse.builder();

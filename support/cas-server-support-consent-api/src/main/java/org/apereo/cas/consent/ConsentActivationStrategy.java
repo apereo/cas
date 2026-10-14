@@ -33,5 +33,6 @@ public interface ConsentActivationStrategy {
     ConsentQueryResult isConsentRequired(Service service,
                               RegisteredService registeredService,
                               Authentication authentication,
-                              @Nullable HttpServletRequest request) throws Throwable;
+                              @Nullable HttpServletRequest request)
+            throws Throwable;
 }

@@ -46,7 +46,8 @@ public abstract class AbstractX509PrincipalResolver extends PersonDirectoryPrinc
                                                                  final Optional<Principal> currentPrincipal,
                                                                  final Map<String, List<Object>> queryAttributes,
                                                                  final Optional<Service> service,
-                                                                 final Optional<AuthenticationHandler> handler) throws Throwable {
+                                                                 final Optional<AuthenticationHandler> handler)
+            throws Throwable {
         val certificate = ((X509CertificateCredential) credential).getCertificate();
         val certificateAttributes = extractPersonAttributes(certificate);
         queryAttributes.putAll(certificateAttributes);

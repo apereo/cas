@@ -70,7 +70,8 @@ class FileTrustStoreSslSocketFactoryTests {
         private static final ClassPathResource RESOURCE_P12 = new ClassPathResource("truststore.p12");
 
         private static SSLConnectionSocketFactory sslFactory(final Resource resource, final String password,
-                                                             final String trustStoreType) throws Exception {
+                                                             final String trustStoreType)
+                throws Exception {
             val sslContext = new DefaultCasSSLContext(resource, password, trustStoreType,
                 new HttpClientProperties(), NoopHostnameVerifier.INSTANCE);
             return new SSLConnectionSocketFactory(sslContext.getSslContext());

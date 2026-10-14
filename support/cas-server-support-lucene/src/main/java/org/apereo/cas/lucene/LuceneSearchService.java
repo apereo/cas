@@ -91,7 +91,8 @@ public class LuceneSearchService {
      * @throws Exception the exception
      */
     public List<SearchResult> search(final List<String> searchFields,
-                                     final String searchTerm, final int count) throws Exception {
+                                     final String searchTerm, final int count)
+            throws Exception {
         val results = new ArrayList<SearchResult>();
         try (val directory = FSDirectory.open(indexDirectory.toPath());
              val reader = DirectoryReader.open(directory)) {

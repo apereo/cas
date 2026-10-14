@@ -113,7 +113,8 @@ class CasServiceRegistryInitializationConfiguration {
     static class CasServiceRegistryEmbeddedConfiguration {
         private static Resource getServiceRegistryInitializerServicesDirectoryResource(
             final CasConfigurationProperties casProperties,
-            final ConfigurableApplicationContext applicationContext) throws IOException {
+            final ConfigurableApplicationContext applicationContext)
+                throws IOException {
             val registry = casProperties.getServiceRegistry().getJson();
             if (ResourceUtils.doesResourceExist(registry.getLocation())
                 || (ResourceUtils.isJarResource(registry.getLocation()) && !registry.isUsingDefaultLocation())) {
@@ -148,7 +149,8 @@ class CasServiceRegistryInitializationConfiguration {
          * @throws IOException the io exception
          */
         private static File getEmbeddedServicesDirectory(final ConfigurableApplicationContext applicationContext,
-                                                         final List<String> patterns) throws IOException {
+                                                         final List<String> patterns)
+                throws IOException {
             val identity = String.join(",", patterns)
                 + '|' + applicationContext.getApplicationName()
                 + '|' + Objects.toString(System.getProperty("java.class.path"), StringUtils.EMPTY);

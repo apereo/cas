@@ -152,8 +152,8 @@
 .cas-flow .acct-input {
     width: 100%;
     min-width: 0;
-    min-height: 46px;
-    padding: 10px 14px;
+    min-height: 52px;
+    padding: 12px 16px;
     border: 1px solid #8a9aab;
     border-radius: 12px;
     background: var(--acct-surface);
@@ -1084,8 +1084,8 @@
 
 .cas-flow .acct-btn-icon {
     flex-shrink: 0;
-    width: 46px;
-    min-height: 46px;
+    width: 52px;
+    min-height: 52px;
     padding: 0;
 }
 

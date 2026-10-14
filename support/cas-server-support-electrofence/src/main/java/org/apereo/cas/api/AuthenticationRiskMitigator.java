@@ -33,5 +33,6 @@ public interface AuthenticationRiskMitigator {
     AuthenticationRiskContingencyResponse mitigate(Authentication authentication,
                                                    RegisteredService service,
                                                    AuthenticationRiskScore score,
-                                                   HttpServletRequest request) throws Throwable;
+                                                   HttpServletRequest request)
+            throws Throwable;
 }

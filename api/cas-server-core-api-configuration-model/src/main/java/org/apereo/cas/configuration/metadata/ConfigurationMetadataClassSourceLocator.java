@@ -3,8 +3,8 @@ package org.apereo.cas.configuration.metadata;
 import module java.base;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import io.github.classgraph.ClassGraph;
-import io.github.classgraph.ClassInfo;
 import lombok.val;
+import org.springframework.util.ClassUtils;
 
 /**
  * This is {@link ConfigurationMetadataClassSourceLocator}.
@@ -16,7 +16,7 @@ public class ConfigurationMetadataClassSourceLocator {
 
     private static final Pattern GENERIC_TYPED_CLASS = Pattern.compile("\\w+<(\\w+)>");
 
-    private static final Map<List<String>, Map<String, ClassInfo>> CLASSES_BY_SIMPLE_NAME = new ConcurrentHashMap<>();
+    private static final Map<List<String>, Map<String, String>> CLASSES_BY_SIMPLE_NAME = new ConcurrentHashMap<>();
 
     private static ConfigurationMetadataClassSourceLocator INSTANCE;
 
@@ -82,16 +82,21 @@ public class ConfigurationMetadataClassSourceLocator {
     static Optional<Class<?>> findClassBySimpleNameInPackage(final String simpleName, final String... packageName) {
         val index = CLASSES_BY_SIMPLE_NAME.computeIfAbsent(List.of(packageName),
             ConfigurationMetadataClassSourceLocator::indexClassesBySimpleName);
-        return Optional.ofNullable(index.get(simpleName.toLowerCase(Locale.ROOT))).map(ClassInfo::loadClass);
+        return Optional.ofNullable(index.get(simpleName.toLowerCase(Locale.ROOT)))
+            .map(name -> ClassUtils.resolveClassName(name, Thread.currentThread().getContextClassLoader()));
     }
 
-    private static Map<String, ClassInfo> indexClassesBySimpleName(final List<String> packageNames) {
-        val scanResult = new ClassGraph()
+    private static Map<String, String> indexClassesBySimpleName(final List<String> packageNames) {
+        try (val scanResult = new ClassGraph()
+            .enableClasspath()
+            .enableNonSystemModules()
             .acceptPackages(packageNames.toArray(String[]::new))
             .enableClassInfo()
-            .scan();
-        val index = new HashMap<String, ClassInfo>();
-        scanResult.getAllClasses().forEach(classInfo -> index.putIfAbsent(classInfo.getSimpleName().toLowerCase(Locale.ROOT), classInfo));
-        return index;
+            .scan()) {
+            val index = new HashMap<String, String>();
+            scanResult.getAllClasses().forEach(classInfo ->
+                index.putIfAbsent(classInfo.getSimpleName().toLowerCase(Locale.ROOT), classInfo.getName()));
+            return index;
+        }
     }
 }

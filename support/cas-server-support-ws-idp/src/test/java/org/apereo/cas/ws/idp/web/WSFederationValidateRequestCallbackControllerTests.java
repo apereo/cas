@@ -153,7 +153,8 @@ class WSFederationValidateRequestCallbackControllerTests extends BaseCoreWsSecur
     }
 
     private MvcResult performFederationRequest(final Map<String, String[]> parameters,
-                                               final Cookie[] cookies) throws Throwable {
+                                               final Cookie[] cookies)
+            throws Throwable {
         val builder = get(WSFederationConstants.ENDPOINT_FEDERATION_REQUEST_CALLBACK);
         if (cookies != null && cookies.length > 0) {
             builder.cookie(cookies);

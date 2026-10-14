@@ -50,7 +50,8 @@ public class SamlProfileSaml2ResponseBuilder extends BaseSamlProfileSamlResponse
 
     @Override
     public Response buildResponse(final Optional<Assertion> assertion,
-                                  final SamlProfileBuilderContext context) throws Exception {
+                                  final SamlProfileBuilderContext context)
+            throws Exception {
         val id = '_' + String.valueOf(RandomUtils.nextLong());
 
         val entityId = getConfigurationContext().getCasProperties().getAuthn().getSamlIdp().getCore().getEntityId();

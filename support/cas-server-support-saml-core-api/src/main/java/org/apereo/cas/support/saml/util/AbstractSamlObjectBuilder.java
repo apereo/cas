@@ -162,7 +162,8 @@ public abstract class AbstractSamlObjectBuilder {
     }
 
     private static SignatureMethod getSignatureMethodFromPublicKey(final PublicKey pubKey,
-                                                                   final XMLSignatureFactory sigFactory) throws Exception {
+                                                                   final XMLSignatureFactory sigFactory)
+            throws Exception {
         val algorithm = pubKey.getAlgorithm();
         if ("DSA".equalsIgnoreCase(algorithm)) {
             return sigFactory.newSignatureMethod(SignatureMethod.DSA_SHA1, null);

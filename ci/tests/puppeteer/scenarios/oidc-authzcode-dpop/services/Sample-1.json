@@ -7,6 +7,7 @@
   "id": 1,
   "description": "Sample Service",
   "scopes" : [ "java.util.HashSet", [ "openid", "profile" ] ],
-  "supportedGrantTypes": [ "java.util.HashSet", [ "authorization_code" ] ],
-  "supportedResponseTypes": [ "java.util.HashSet", [ "code" ] ]
+  "supportedGrantTypes": [ "java.util.HashSet", [ "authorization_code", "client_credentials" ] ],
+  "supportedResponseTypes": [ "java.util.HashSet", [ "code" ] ],
+  "dpopBoundAccessTokens": true
 }

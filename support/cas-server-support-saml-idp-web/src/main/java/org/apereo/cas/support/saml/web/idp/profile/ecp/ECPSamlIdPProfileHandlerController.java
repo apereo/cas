@@ -55,7 +55,8 @@ public class ECPSamlIdPProfileHandlerController extends AbstractSamlIdPProfileHa
         produces = {MediaType.TEXT_XML_VALUE, SamlIdPConstants.ECP_SOAP_PAOS_CONTENT_TYPE})
     @Operation(summary = "Handle SAML ECP request")
     public void handleEcpRequest(final HttpServletResponse response,
-                                 final HttpServletRequest request) throws Exception {
+                                 final HttpServletRequest request)
+            throws Exception {
         val soapContext = decodeSoapRequest(request);
         val credential = extractBasicAuthenticationCredential(request);
 
@@ -123,7 +124,8 @@ public class ECPSamlIdPProfileHandlerController extends AbstractSamlIdPProfileHa
     }
 
     protected Authentication authenticateEcpRequest(final Credential credential,
-                                                    final Pair<AuthnRequest, MessageContext> authnRequest) throws Throwable {
+                                                    final Pair<AuthnRequest, MessageContext> authnRequest)
+            throws Throwable {
         val issuer = SamlIdPUtils.getIssuerFromSamlObject(authnRequest.getKey());
         LOGGER.debug("Located issuer [{}] from request prior to authenticating [{}]", issuer, credential.getId());
 

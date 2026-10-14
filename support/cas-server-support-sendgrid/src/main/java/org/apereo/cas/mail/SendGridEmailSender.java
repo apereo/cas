@@ -57,7 +57,8 @@ public class SendGridEmailSender implements EmailSender {
     }
 
     protected Response sendEmailWithSendGrid(final EmailMessageRequest emailRequest,
-                                             final String recipient) throws Exception {
+                                             final String recipient)
+            throws Exception {
         val request = new Request();
         request.setMethod(Method.POST);
         request.setEndpoint("mail/send");
@@ -66,7 +67,8 @@ public class SendGridEmailSender implements EmailSender {
     }
 
     protected String buildRequestBody(final EmailMessageRequest emailRequest,
-                                      final String recipient) throws Exception {
+                                      final String recipient)
+            throws Exception {
         val from = new Email(emailRequest.getEmailProperties().getFrom());
         val subject = determineEmailSubject(emailRequest, messageSource);
 

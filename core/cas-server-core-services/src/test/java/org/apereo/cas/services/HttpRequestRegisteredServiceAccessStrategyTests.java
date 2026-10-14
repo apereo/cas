@@ -8,6 +8,7 @@ import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfo;
+import org.apereo.inspektr.common.web.ClientInfoExtractionOptions;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
@@ -36,7 +37,8 @@ class HttpRequestRegisteredServiceAccessStrategyTests {
         request.setRemoteAddr("192.861.151.163");
         request.addHeader(HttpHeaders.USER_AGENT, "Chrome/Mozilla");
         request.addHeader("CustomHeader", "abcd-12-xyz#");
-        ClientInfoHolder.setClientInfo(ClientInfo.from(request));
+        ClientInfoHolder.setClientInfo(ClientInfo.from(request,
+            ClientInfoExtractionOptions.builder().httpRequestHeaders(List.of("*")).build()));
     }
 
     @Test
@@ -93,5 +95,32 @@ class HttpRequestRegisteredServiceAccessStrategyTests {
         policy.setUserAgent(".*moz.*");
         policy.setIpAddress(".*861.*");
         assertTrue(policy.isServiceAccessAllowed(RegisteredServiceTestUtils.getRegisteredService(), CoreAuthenticationTestUtils.getService()));
+    }
+
+    @Test
+    void verifyMissingHeaderDeniesAccess() {
+        val policy = new HttpRequestRegisteredServiceAccessStrategy();
+        policy.setHeaders(Map.of("MissingHeader", ".+"));
+        assertFalse(policy.isServiceAccessAllowed(RegisteredServiceTestUtils.getRegisteredService(), CoreAuthenticationTestUtils.getService()));
+    }
+
+    @Test
+    void verifyHeaderNameIsCaseInsensitive() {
+        val policy = new HttpRequestRegisteredServiceAccessStrategy();
+        policy.setHeaders(Map.of("customheader", "abcd-\\d\\d-.+#"));
+        assertTrue(policy.isServiceAccessAllowed(RegisteredServiceTestUtils.getRegisteredService(), CoreAuthenticationTestUtils.getService()));
+    }
+
+    @Test
+    void verifyPartialMatchesDenyAccess() {
+        val policy = new HttpRequestRegisteredServiceAccessStrategy();
+        policy.setIpAddress("92.861.151.16");
+        assertFalse(policy.isServiceAccessAllowed(RegisteredServiceTestUtils.getRegisteredService(), CoreAuthenticationTestUtils.getService()));
+        policy.setIpAddress(null);
+        policy.setUserAgent("Mozilla");
+        assertFalse(policy.isServiceAccessAllowed(RegisteredServiceTestUtils.getRegisteredService(), CoreAuthenticationTestUtils.getService()));
+        policy.setUserAgent(null);
+        policy.setHeaders(Map.of("CustomHeader", "abcd"));
+        assertFalse(policy.isServiceAccessAllowed(RegisteredServiceTestUtils.getRegisteredService(), CoreAuthenticationTestUtils.getService()));
     }
 }

@@ -55,7 +55,8 @@ public class OidcFetchFederationEndpointController extends AbstractOidcFederatio
             @Parameter(name = "sub", description = "entityId", required = true)
         })
     public ResponseEntity fetchEntityStatement(@RequestParam(value = "sub", required = false) final String sub,
-        final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+        final HttpServletRequest request, final HttpServletResponse response)
+            throws Exception {
 
         LOGGER.info("Building entity statement for subordinate: [{}]", sub);
 

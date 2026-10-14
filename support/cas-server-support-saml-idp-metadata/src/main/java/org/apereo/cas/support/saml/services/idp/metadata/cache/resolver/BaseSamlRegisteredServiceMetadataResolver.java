@@ -134,7 +134,8 @@ public abstract class BaseSamlRegisteredServiceMetadataResolver implements SamlR
     }
 
     private static void buildPredicateFilterIfNeeded(final SamlRegisteredService service,
-                                                     final List<MetadataFilter> metadataFilterList) throws Exception {
+                                                     final List<MetadataFilter> metadataFilterList)
+            throws Exception {
         if (StringUtils.isNotBlank(service.getMetadataCriteriaDirection())
             && StringUtils.isNotBlank(service.getMetadataCriteriaPattern())
             && RegexUtils.isValidRegex(service.getMetadataCriteriaPattern())) {
@@ -188,7 +189,8 @@ public abstract class BaseSamlRegisteredServiceMetadataResolver implements SamlR
      */
     private static void addSignatureValidationFilterIfNeeded(final SamlRegisteredService service,
                                                              @Nullable final SignatureValidationFilter signatureValidationFilter,
-                                                             final List<MetadataFilter> metadataFilterList) throws Exception {
+                                                             final List<MetadataFilter> metadataFilterList)
+            throws Exception {
         if (signatureValidationFilter == null) {
             throw new SamlException(("Metadata signature validation is required for service [%s], but the signature "
                 + "cannot be located or read. Metadata will not be loaded, since it cannot be verified.")
@@ -204,7 +206,8 @@ public abstract class BaseSamlRegisteredServiceMetadataResolver implements SamlR
 
     protected static void buildEntityDescriptorCertificatesExpirationFilterIfNeeded(
         final SamlRegisteredService service,
-        final List<MetadataFilter> metadataFilterList) throws Exception {
+        final List<MetadataFilter> metadataFilterList)
+            throws Exception {
         if (service.isValidateMetadataCertificates()) {
             val filter = new EntityDescriptorCertificatesExpirationFilter();
             filter.initialize();
@@ -215,7 +218,7 @@ public abstract class BaseSamlRegisteredServiceMetadataResolver implements SamlR
 
     protected static void buildSignatureValidationFilterIfNeeded(final SamlRegisteredService service,
                                                                  final List<MetadataFilter> metadataFilterList)
-        throws Exception {
+            throws Exception {
         if (StringUtils.isBlank(service.getMetadataSignatureLocation())) {
             LOGGER.info("Metadata signature location is undefined for [{}]; metadata signature validation will not be invoked",
                 service.getMetadataLocation());
@@ -227,7 +230,8 @@ public abstract class BaseSamlRegisteredServiceMetadataResolver implements SamlR
 
     protected static void buildSignatureValidationFilterIfNeeded(final SamlRegisteredService service,
                                                                  final List<MetadataFilter> metadataFilterList,
-                                                                 final String metadataSignatureResource) throws Exception {
+                                                                 final String metadataSignatureResource)
+            throws Exception {
         LOGGER.debug("Building SAML2 signature validation filter based on [{}]", metadataSignatureResource);
         val signatureValidationFilter = SamlUtils.buildSignatureValidationFilter(metadataSignatureResource);
         addSignatureValidationFilterIfNeeded(service, signatureValidationFilter, metadataFilterList);
@@ -235,7 +239,8 @@ public abstract class BaseSamlRegisteredServiceMetadataResolver implements SamlR
 
     protected static void buildSignatureValidationFilterIfNeeded(final SamlRegisteredService service,
                                                                  final List<MetadataFilter> metadataFilterList,
-                                                                 final Resource metadataSignatureResource) throws Exception {
+                                                                 final Resource metadataSignatureResource)
+            throws Exception {
         val signatureValidationFilter = SamlUtils.buildSignatureValidationFilter(metadataSignatureResource);
         addSignatureValidationFilterIfNeeded(service, signatureValidationFilter, metadataFilterList);
     }
@@ -274,7 +279,8 @@ public abstract class BaseSamlRegisteredServiceMetadataResolver implements SamlR
 
     protected void configureAndInitializeSingleMetadataResolver(final AbstractMetadataResolver metadataProvider,
                                                                 final SamlRegisteredService service,
-                                                                final List<MetadataFilter> metadataFilterList) throws Exception {
+                                                                final List<MetadataFilter> metadataFilterList)
+            throws Exception {
         val md = samlIdPProperties.getMetadata();
         metadataProvider.setParserPool(this.configBean.getParserPool());
         metadataProvider.setFailFastInitialization(md.getCore().isFailFast());
@@ -289,12 +295,14 @@ public abstract class BaseSamlRegisteredServiceMetadataResolver implements SamlR
     }
 
     protected void configureAndInitializeSingleMetadataResolver(final AbstractMetadataResolver metadataProvider,
-                                                                final SamlRegisteredService service) throws Exception {
+                                                                final SamlRegisteredService service)
+            throws Exception {
         configureAndInitializeSingleMetadataResolver(metadataProvider, service, new ArrayList<>());
     }
 
     protected void buildMetadataFilters(final SamlRegisteredService service, final AbstractMetadataResolver metadataProvider,
-                                        final List<MetadataFilter> metadataFilterList) throws Exception {
+                                        final List<MetadataFilter> metadataFilterList)
+            throws Exception {
         buildRequiredValidUntilFilterIfNeeded(service, metadataFilterList);
         buildEntityDescriptorCertificatesExpirationFilterIfNeeded(service, metadataFilterList);
         buildSignatureValidationFilterIfNeeded(service, metadataFilterList);
@@ -328,7 +336,8 @@ public abstract class BaseSamlRegisteredServiceMetadataResolver implements SamlR
      * @param metadataFilterList the metadata filter list
      */
     protected void buildRequiredValidUntilFilterIfNeeded(final SamlRegisteredService service,
-                                                         final List<MetadataFilter> metadataFilterList) throws Exception {
+                                                         final List<MetadataFilter> metadataFilterList)
+            throws Exception {
         if (service.getMetadataMaxValidity() > 0) {
             val filter = new RequiredValidUntilFilter();
             filter.setMaxValidityInterval(Duration.ofSeconds(service.getMetadataMaxValidity()));

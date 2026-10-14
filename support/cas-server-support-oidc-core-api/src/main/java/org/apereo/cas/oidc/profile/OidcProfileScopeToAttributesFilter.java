@@ -47,7 +47,8 @@ public class OidcProfileScopeToAttributesFilter extends DefaultOAuth20ProfileSco
                                       final Principal givenPrincipal,
                                       final RegisteredService registeredService,
                                       final Set<String> scopes,
-                                      final OAuth20AccessToken accessToken) throws Throwable {
+                                      final OAuth20AccessToken accessToken)
+            throws Throwable {
         val principal = super.filter(service, givenPrincipal, registeredService, scopes, accessToken);
         if (registeredService instanceof final OidcRegisteredService oidcService) {
             return filterClaimsForOidcService(service, givenPrincipal, accessToken, principal, scopes, oidcService);
@@ -60,7 +61,8 @@ public class OidcProfileScopeToAttributesFilter extends DefaultOAuth20ProfileSco
                                                              final OAuth20AccessToken accessToken,
                                                              final Principal filteredPrincipal,
                                                              final Set<String> scopes,
-                                                             final OidcRegisteredService oidcService) throws Throwable {
+                                                             final OidcRegisteredService oidcService)
+            throws Throwable {
         scopes.retainAll(casProperties.getAuthn().getOidc().getDiscovery().getScopes());
         LOGGER.debug("Collection of scopes filtered based on discovery settings are [{}]", scopes);
 
@@ -146,7 +148,8 @@ public class OidcProfileScopeToAttributesFilter extends DefaultOAuth20ProfileSco
         final Principal principal,
         final Service service,
         final OidcRegisteredService oidcService,
-        final OAuth20AccessToken accessToken) throws Throwable {
+        final OAuth20AccessToken accessToken)
+            throws Throwable {
         val serviceScopes = oidcService.getScopes();
         LOGGER.trace("Scopes assigned to service definition [{}] are [{}]", oidcService.getName(), serviceScopes);
         val scopeFree = serviceScopes.isEmpty() || (serviceScopes.size() == 1

@@ -103,7 +103,8 @@ public abstract class BaseCasSimpleMultifactorSendTokenActionTests {
     }
 
     protected MockRequestContext buildRequestContextFor(final String user, final String email,
-                                                        final String phone) throws Exception {
+                                                        final String phone)
+            throws Exception {
         val attributes = new HashMap<String, List<Object>>();
         if (StringUtils.isNotBlank(email)) {
             attributes.put("mail", CollectionUtils.wrap(email));

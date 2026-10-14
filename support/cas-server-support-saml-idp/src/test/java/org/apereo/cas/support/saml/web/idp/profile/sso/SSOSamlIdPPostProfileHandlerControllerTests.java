@@ -207,7 +207,8 @@ class SSOSamlIdPPostProfileHandlerControllerTests extends BaseSamlIdPConfigurati
 
     private MvcResult performPostProfileRequest(final MockHttpServletRequest request,
                                                 final MockHttpServletResponse response,
-                                                final String samlRequest) throws Exception {
+                                                final String samlRequest)
+            throws Exception {
         val builder = prepareRequest(request, response, post(SamlIdPConstants.ENDPOINT_SAML2_SSO_PROFILE_POST)
             .contentType(MediaType.APPLICATION_FORM_URLENCODED)
             .param(SamlProtocolConstants.PARAMETER_SAML_REQUEST, samlRequest));
@@ -216,7 +217,8 @@ class SSOSamlIdPPostProfileHandlerControllerTests extends BaseSamlIdPConfigurati
 
     private MvcResult performRedirectProfileRequest(final MockHttpServletRequest request,
                                                     final MockHttpServletResponse response,
-                                                    final String redirectUrl) throws Exception {
+                                                    final String redirectUrl)
+            throws Exception {
         val queryStrings = Strings.CI.remove(redirectUrl, "https://cas.example.org/login?");
         val builder = prepareRequest(request, response, get(SamlIdPConstants.ENDPOINT_SAML2_SSO_PROFILE_REDIRECT));
         new URLBuilder(redirectUrl)
@@ -230,7 +232,8 @@ class SSOSamlIdPPostProfileHandlerControllerTests extends BaseSamlIdPConfigurati
     }
 
     private MvcResult performRedirectHeadRequest(final MockHttpServletRequest request,
-                                                 final MockHttpServletResponse response) throws Exception {
+                                                 final MockHttpServletResponse response)
+            throws Exception {
         return mockMvc.perform(prepareRequest(request, response, head(SamlIdPConstants.ENDPOINT_SAML2_SSO_PROFILE_REDIRECT))).andReturn();
     }
 
@@ -253,7 +256,8 @@ class SSOSamlIdPPostProfileHandlerControllerTests extends BaseSamlIdPConfigurati
 
     private AuthnRequest signAuthnRequest(final HttpServletRequest request,
                                           final HttpServletResponse response,
-                                          final AuthnRequest authnRequest) throws Exception {
+                                          final AuthnRequest authnRequest)
+            throws Exception {
         val adaptor = SamlRegisteredServiceMetadataAdaptor
             .get(samlRegisteredServiceCachingMetadataResolver, samlRegisteredService,
                 samlRegisteredService.getServiceId()).orElseThrow();

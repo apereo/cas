@@ -1,16 +1,20 @@
 package org.apereo.cas.oidc.jwks.rotation;
 
 import module java.base;
+import org.apereo.cas.configuration.model.support.oidc.OidcProperties;
 import org.apereo.cas.oidc.AbstractOidcTests;
+import org.apereo.cas.oidc.jwks.generator.OidcJsonWebKeystoreGeneratorService;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.jose4j.jwk.JsonWebKeySet;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.test.context.TestPropertySource;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * This is {@link OidcDefaultJsonWebKeystoreRotationServiceTests}.
@@ -53,6 +57,19 @@ class OidcDefaultJsonWebKeystoreRotationServiceTests {
             .stream()
             .filter(key -> OidcJsonWebKeystoreRotationService.JsonWebKeyLifecycleStates.getJsonWebKeyState(key).isFuture())
             .count();
+    }
+
+    @Test
+    void verifyRotationAndRevocationAreAnnounced() throws Throwable {
+        val generatorService = mock(OidcJsonWebKeystoreGeneratorService.class);
+        when(generatorService.find()).thenReturn(Optional.of(new ClassPathResource("current.jwks")));
+        when(generatorService.store(any())).thenAnswer(invocation -> invocation.getArgument(0));
+        val eventPublisher = mock(ApplicationEventPublisher.class);
+        val rotationService = new OidcDefaultJsonWebKeystoreRotationService(new OidcProperties(), generatorService, eventPublisher);
+
+        assertNotNull(rotationService.rotate());
+        assertNotNull(rotationService.revoke());
+        verify(eventPublisher, times(2)).publishEvent(any(OidcJsonWebKeystoreRotatedEvent.class));
     }
 
     @TestPropertySource(properties = "cas.authn.oidc.jwks.file-system.jwks-file=file:${#systemProperties['java.io.tmpdir']}/rotation.jwks")

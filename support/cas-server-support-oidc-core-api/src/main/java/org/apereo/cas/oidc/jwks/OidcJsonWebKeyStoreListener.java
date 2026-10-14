@@ -2,6 +2,7 @@ package org.apereo.cas.oidc.jwks;
 
 import module java.base;
 import org.apereo.cas.oidc.jwks.generator.OidcJsonWebKeystoreModifiedEvent;
+import org.apereo.cas.oidc.jwks.rotation.OidcJsonWebKeystoreRotatedEvent;
 import org.apereo.cas.util.spring.CasEventListener;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
@@ -11,7 +12,6 @@ import org.springframework.scheduling.annotation.Async;
  * @author Hal Deadman
  * @since 6.5.0
  */
-@FunctionalInterface
 public interface OidcJsonWebKeyStoreListener extends CasEventListener {
 
     /**
@@ -22,4 +22,13 @@ public interface OidcJsonWebKeyStoreListener extends CasEventListener {
     @EventListener
     @Async
     void handleOidcJsonWebKeystoreModifiedEvent(OidcJsonWebKeystoreModifiedEvent event);
+
+    /**
+     * Handle oidc json web keystore rotated event, published when keys are rotated or revoked.
+     *
+     * @param event the event
+     */
+    @EventListener
+    @Async
+    void handleOidcJsonWebKeystoreRotatedEvent(OidcJsonWebKeystoreRotatedEvent event);
 }

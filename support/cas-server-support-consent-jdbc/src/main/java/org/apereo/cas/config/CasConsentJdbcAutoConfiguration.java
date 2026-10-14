@@ -95,7 +95,8 @@ public class CasConsentJdbcAutoConfiguration {
             @Qualifier("dataSourceConsent") final CloseableDataSource dataSourceConsent,
             @Qualifier("jpaConsentPackagesToScan") final BeanContainer<String> jpaConsentPackagesToScan,
             @Qualifier(JpaBeanFactory.DEFAULT_BEAN_NAME) final JpaBeanFactory jpaBeanFactory,
-            final CasConfigurationProperties casProperties) throws Exception {
+            final CasConfigurationProperties casProperties)
+                throws Exception {
 
             return BeanSupplier.of(EntityManagerFactory.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))

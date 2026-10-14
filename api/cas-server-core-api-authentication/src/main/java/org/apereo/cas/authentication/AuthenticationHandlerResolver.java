@@ -51,7 +51,8 @@ public interface AuthenticationHandlerResolver extends Ordered {
      * @throws Throwable the throwable
      */
     default @Nullable Set<AuthenticationHandler> resolve(final Set<AuthenticationHandler> candidateHandlers,
-                                                         final AuthenticationTransaction transaction) throws Throwable {
+                                                         final AuthenticationTransaction transaction)
+            throws Throwable {
         val handlers = candidateHandlers
             .stream()
             .filter(handler -> handler.getState() == AuthenticationHandlerStates.ACTIVE)

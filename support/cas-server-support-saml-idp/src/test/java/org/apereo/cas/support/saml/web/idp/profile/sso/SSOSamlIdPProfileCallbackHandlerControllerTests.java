@@ -176,7 +176,8 @@ class SSOSamlIdPProfileCallbackHandlerControllerTests {
 
         private MvcResult performCallbackGet(final MockHttpServletRequest request,
                                              final MockHttpServletResponse response,
-                                             final String ticket) throws Exception {
+                                             final String ticket)
+                throws Exception {
             val builder = callbackRequest(request, response, get(SamlIdPConstants.ENDPOINT_SAML2_SSO_PROFILE_CALLBACK)
                 .param(SamlIdPConstants.AUTHN_REQUEST_ID, request.getParameter(SamlIdPConstants.AUTHN_REQUEST_ID)));
             if (ticket != null) {
@@ -199,7 +200,8 @@ class SSOSamlIdPProfileCallbackHandlerControllerTests {
 
         private AuthnRequest signAuthnRequest(final HttpServletRequest request,
                                               final HttpServletResponse response,
-                                              final AuthnRequest authnRequest) throws Throwable {
+                                              final AuthnRequest authnRequest)
+                throws Throwable {
             val adaptor = SamlRegisteredServiceMetadataAdaptor
                 .get(samlRegisteredServiceCachingMetadataResolver, samlRegisteredService,
                     samlRegisteredService.getServiceId()).orElseThrow();
@@ -239,7 +241,8 @@ class SSOSamlIdPProfileCallbackHandlerControllerTests {
         }
 
         private void storeAuthnRequest(final MockHttpServletRequest request, final MockHttpServletResponse response,
-                                       final AuthnRequest authnRequest, final MessageContext context) throws Throwable {
+                                       final AuthnRequest authnRequest, final MessageContext context)
+                throws Throwable {
             request.addParameter(SamlIdPConstants.AUTHN_REQUEST_ID, authnRequest.getID());
             SamlIdPSessionManager.of(openSamlConfigBean, samlIdPDistributedSessionStore)
                 .store(new JEEContext(request, response), Pair.of(authnRequest, context));

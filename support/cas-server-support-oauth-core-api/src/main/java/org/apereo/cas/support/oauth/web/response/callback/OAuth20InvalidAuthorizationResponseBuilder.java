@@ -86,7 +86,8 @@ public class OAuth20InvalidAuthorizationResponseBuilder {
                                                   final ServicesManager servicesManager,
                                                   final String clientId,
                                                   final String redirectUrl,
-                                                  final Map<String, String> parameters) throws Exception {
+                                                  final Map<String, String> parameters)
+            throws Exception {
         OAuth20Utils.validateRedirectUri(redirectUrl, true);
 
         val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(servicesManager, clientId);

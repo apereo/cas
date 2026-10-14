@@ -128,7 +128,8 @@ class CasGoogleCloudStorageServiceRegistryListenerTests {
     private static void publishEventForType(final String bucket,
                                             final String name,
                                             final Publisher publisher,
-                                            final EventTypes type) throws Exception {
+                                            final EventTypes type)
+            throws Exception {
         val message = PubsubMessage.newBuilder()
             .setData(ByteString.copyFromUtf8("""
                 {
@@ -157,7 +158,8 @@ class CasGoogleCloudStorageServiceRegistryListenerTests {
         @Bean
         public Storage storage(final GcpProjectIdProvider gcpProjectIdProvider,
                                @Qualifier("googleCredentialsProvider") final CredentialsProvider googleCredentialsProvider,
-                               final GcpStorageProperties properties) throws IOException {
+                               final GcpStorageProperties properties)
+                throws IOException {
             val storageOptionsBuilder = StorageOptions.newBuilder()
                 .setHeaderProvider(new UserAgentHeaderProvider(GcpStorageAutoConfiguration.class))
                 .setProjectId(gcpProjectIdProvider.getProjectId())
@@ -192,7 +194,8 @@ class CasGoogleCloudStorageServiceRegistryListenerTests {
 
         @Bean
         public TopicAdminSettings topicAdminSettings(
-            @Qualifier("googleCloudTransportChannelProvider") final TransportChannelProvider googleCloudTransportChannelProvider) throws Exception {
+            @Qualifier("googleCloudTransportChannelProvider") final TransportChannelProvider googleCloudTransportChannelProvider)
+                throws Exception {
             return TopicAdminSettings.newBuilder()
                 .setCredentialsProvider(NoCredentialsProvider.create())
                 .setTransportChannelProvider(googleCloudTransportChannelProvider)
@@ -201,7 +204,8 @@ class CasGoogleCloudStorageServiceRegistryListenerTests {
 
         @Bean
         public SubscriptionAdminSettings subscriptionAdminSettings(
-            @Qualifier("googleCloudTransportChannelProvider") final TransportChannelProvider googleCloudTransportChannelProvider) throws Exception {
+            @Qualifier("googleCloudTransportChannelProvider") final TransportChannelProvider googleCloudTransportChannelProvider)
+                throws Exception {
             return SubscriptionAdminSettings.newBuilder()
                 .setCredentialsProvider(NoCredentialsProvider.create())
                 .setTransportChannelProvider(googleCloudTransportChannelProvider)

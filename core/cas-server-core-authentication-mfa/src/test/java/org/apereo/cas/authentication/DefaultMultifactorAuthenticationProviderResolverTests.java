@@ -32,7 +32,8 @@ import static org.junit.jupiter.api.Assertions.*;
 class DefaultMultifactorAuthenticationProviderResolverTests {
     private static void assertProviderResolutionFromManyProviders(final MultifactorAuthenticationTrigger trigger,
                                                                   final ConfigurableApplicationContext applicationContext,
-                                                                  final boolean assertPresence) throws Throwable {
+                                                                  final boolean assertPresence)
+            throws Throwable {
         val context = MockRequestContext.create(applicationContext);
 
         val provider1 = new TestMultifactorAuthenticationProvider();

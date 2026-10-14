@@ -35,7 +35,9 @@ public interface RegisteredServiceIndexService {
     void initialize();
 
     /**
-     * Index services.
+     * Index services, replacing the services indexed so far. Implementations should add or
+     * update the given services before removing the ones that are gone, so that queries
+     * running at the same time do not miss services that remain.
      *
      * @param values the values
      */

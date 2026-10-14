@@ -5,6 +5,7 @@ import org.apereo.cas.AbstractOAuth20Tests;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
+import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.ticket.registry.compact.TicketCompactor;
@@ -33,7 +34,8 @@ class OAuth20RefreshTokenCompactorTests extends AbstractOAuth20Tests {
     @MethodSource("codeProvider")
     void verifyOperation(final Service service, final Authentication authentication,
                          final Set scopes, final String clientId, final OAuth20ResponseTypes responseType,
-                         final OAuth20GrantTypes grantType) throws Throwable {
+                         final OAuth20GrantTypes grantType)
+            throws Throwable {
         val registeredService = getRegisteredService("https://code.oauth.org", clientId, "secret-at");
         servicesManager.save(registeredService);
         val token = defaultRefreshTokenFactory.create(service, authentication, null, scopes,
@@ -52,6 +54,8 @@ class OAuth20RefreshTokenCompactorTests extends AbstractOAuth20Tests {
         assertEquals(result.getGrantType(), token.getGrantType());
         assertEquals(result.getAuthentication().getPrincipal(), token.getAuthentication().getPrincipal());
         assertEquals(authorizationDetails, result.getAuthorizationDetails());
+        assertEquals(token.getAuthentication().getAttributes().get(OAuth20Constants.DPOP_CONFIRMATION),
+            result.getAuthentication().getAttributes().get(OAuth20Constants.DPOP_CONFIRMATION));
     }
 
     static Stream<Arguments> codeProvider() {
@@ -60,6 +64,10 @@ class OAuth20RefreshTokenCompactorTests extends AbstractOAuth20Tests {
         return Stream.of(
             Arguments.of(service, authentication,
                 Set.of("Scope1", "Scope2"), "clientid-code",
+                OAuth20ResponseTypes.CODE, OAuth20GrantTypes.AUTHORIZATION_CODE),
+            Arguments.of(service, RegisteredServiceTestUtils.getAuthentication("casuser",
+                    Map.of(OAuth20Constants.DPOP_CONFIRMATION, List.of("NzbLsXh8uDCcd-6MNwXF4W_7noWXFZAfHkxZsRGC9Xs"))),
+                Set.of("Scope1"), "clientid-dpop",
                 OAuth20ResponseTypes.CODE, OAuth20GrantTypes.AUTHORIZATION_CODE)
         );
     }

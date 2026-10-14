@@ -219,7 +219,8 @@ public class DuoSecurityUniversalPromptValidateLoginAction extends DuoSecurityAu
     }
 
     protected void populateContextWithAuthentication(final RequestContext requestContext,
-                                                     final BrowserWebStorageSessionStore sessionStorage) throws Throwable {
+                                                     final BrowserWebStorageSessionStore sessionStorage)
+            throws Throwable {
         val webContext = toWebContext(requestContext);
         val authenticationResultBuilder = (AuthenticationResultBuilder) sessionStorage.getSessionAttributes(webContext)
             .get(AuthenticationResultBuilder.class.getSimpleName());
@@ -228,7 +229,8 @@ public class DuoSecurityUniversalPromptValidateLoginAction extends DuoSecurityAu
     }
 
     protected void populateContextWithAuthentication(final RequestContext requestContext,
-                                                     final TransientSessionTicket ticket) throws Throwable {
+                                                     final TransientSessionTicket ticket)
+            throws Throwable {
         val authenticationResultBuilder = ticket.getProperty(
             AuthenticationResultBuilder.class.getSimpleName(),
             AuthenticationResultBuilder.class);
@@ -238,7 +240,8 @@ public class DuoSecurityUniversalPromptValidateLoginAction extends DuoSecurityAu
 
     protected void populateContextWithAuthentication(final RequestContext requestContext,
                                                      final AuthenticationResultBuilder authenticationResultBuilder,
-                                                     @Nullable final Service service) throws Throwable {
+                                                     @Nullable final Service service)
+            throws Throwable {
         WebUtils.putAuthenticationResultBuilder(Objects.requireNonNull(authenticationResultBuilder), requestContext);
         val authenticationResult = authenticationResultBuilder.build(service);
         WebUtils.putAuthenticationResult(Objects.requireNonNull(authenticationResult), requestContext);

@@ -34,7 +34,8 @@ public class OidcVerifiableCredentialDcSdJwtEncoder extends BaseOidcVerifiableCr
 
     @Override
     public String encode(final OidcVerifiableCredentialValidationContext context,
-                         final OidcVerifiableCredentialProofValidator.VerifiableCredentialProofResult proof) throws Throwable {
+                         final OidcVerifiableCredentialProofValidator.VerifiableCredentialProofResult proof)
+            throws Throwable {
         val authentication = Objects.requireNonNull(context.accessToken().getAuthentication());
         val principal = configurationContext.getPrincipalResolver().resolve(
             new BasicIdentifiableCredential(authentication.getPrincipal().getId()));

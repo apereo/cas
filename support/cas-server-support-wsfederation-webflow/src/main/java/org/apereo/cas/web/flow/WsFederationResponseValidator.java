@@ -75,7 +75,8 @@ public class WsFederationResponseValidator {
 
     private void buildCredentialsFromAssertion(final RequestContext context,
                                                final Pair<Assertion, WsFederationConfiguration> assertion,
-                                               final Service service) throws Throwable {
+                                               final Service service)
+            throws Throwable {
         try {
             LOGGER.debug("Creating credential based on the provided assertion");
             val credential = wsFederationHelper.createCredentialFromToken(assertion.getKey());

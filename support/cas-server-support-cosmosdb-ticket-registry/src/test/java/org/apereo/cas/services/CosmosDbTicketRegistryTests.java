@@ -4,6 +4,7 @@ import module java.base;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.config.CasCosmosDbTicketRegistryAutoConfiguration;
 import org.apereo.cas.cosmosdb.CosmosDbObjectFactory;
+import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
@@ -28,6 +29,11 @@ import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link CosmosDbTicketRegistryTests}.
+ * <p>
+ * Test methods share the registry and run concurrently. Encryption is therefore settled by the
+ * registry's own configuration rather than installed on the shared registry before every test,
+ * and the registry is not emptied before every test either: both would pull the rug from under
+ * whatever other test is running at the same time.
  *
  * @author Misagh Moayyed
  * @since 7.0.0
@@ -44,8 +50,11 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.ticket.registry.cosmos-db.database-throughput=1000",
     "cas.ticket.registry.cosmos-db.max-retry-attempts-on-throttled-requests=10",
     "cas.ticket.registry.cosmos-db.max-retry-wait-time=PT60S",
-    "cas.ticket.registry.cosmos-db.indexing-mode=CONSISTENT"
+    "cas.ticket.registry.cosmos-db.indexing-mode=CONSISTENT",
+    "cas.ticket.registry.cosmos-db.crypto.enabled=true"
 })
+@Tag("TicketRegistryTestWithEncryption")
+@Tag("SkipClearingTicketRegistry")
 @ResourceLock("cosmosdb-tickets")
 @Getter
 @EnabledIfEnvironmentVariable(named = "COSMOS_DB_URL", matches = ".+")
@@ -59,22 +68,30 @@ class CosmosDbTicketRegistryTests extends BaseTicketRegistryTests {
     @Qualifier(TicketRegistry.BEAN_NAME)
     private TicketRegistry newTicketRegistry;
 
+    @Override
+    protected boolean isCipherExecutorOwnedByContext() {
+        return true;
+    }
+
+    /**
+     * Every ticket added here must come back from a retrieval of all tickets. Other tests share
+     * the registry, so what is asserted is that these tickets are present, not how many there are.
+     */
     @RepeatedTest(1)
-    @Tag("TicketRegistryTestWithEncryption")
     void verifyLargeDataset() {
         val ticketGrantingTickets = Stream.generate(() -> {
             val tgtId = new TicketGrantingTicketIdGenerator(10, StringUtils.EMPTY)
                 .getNewTicketId(TicketGrantingTicket.PREFIX);
             return new TicketGrantingTicketImpl(tgtId,
                 CoreAuthenticationTestUtils.getAuthentication(), NeverExpiresExpirationPolicy.INSTANCE);
-        }).limit(COUNT);
+        }).limit(COUNT).toList();
 
         var stopwatch = new StopWatch();
         stopwatch.start();
-        newTicketRegistry.addTicket(ticketGrantingTickets);
-        val size = newTicketRegistry.getTickets().size();
+        newTicketRegistry.addTicket(ticketGrantingTickets.stream());
+        val ticketIds = newTicketRegistry.getTickets().stream().map(Ticket::getId).collect(Collectors.toSet());
         stopwatch.stop();
-        assertEquals(COUNT, size);
+        ticketGrantingTickets.forEach(ticket -> assertTrue(ticketIds.contains(ticket.getId())));
         var time = stopwatch.getTime(TimeUnit.SECONDS);
         assertTrue(time <= 20);
     }

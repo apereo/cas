@@ -37,7 +37,8 @@ public class SurrogatePasswordlessAuthenticationPreProcessor implements Password
                                                final PasswordlessUserAccount passwordlessUserAccount,
                                                final Service service,
                                                final Credential credential,
-                                               final PasswordlessAuthenticationToken token) throws Throwable {
+                                               final PasswordlessAuthenticationToken token)
+            throws Throwable {
         LOGGER.debug("Evaluating passwordless authentication token [{}] issued for [{}]", token, passwordlessUserAccount);
         if (token.getProperties().containsKey(SurrogatePasswordlessAuthenticationRequestParser.PROPERTY_SURROGATE_USERNAME)
             && credential instanceof final MutableCredential mutableCredential) {

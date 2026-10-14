@@ -159,6 +159,39 @@ class DefaultTicketRegistryTests {
             proxyGrantingTickets.forEach(id -> assertNull(registry.getTicket(id)));
         }
 
+        @RepeatedTest(1)
+        void verifyServiceTicketsDeletedWithoutReading() throws Throwable {
+            val reads = new CopyOnWriteArrayList<String>();
+            val cipher = CoreTicketUtils.newTicketRegistryCipherExecutor(
+                new EncryptionRandomizedSigningJwtCryptographyProperties(), true, "[tests]");
+            val registry = new DefaultTicketRegistry(cipher, mock(TicketSerializationManager.class), new DefaultTicketCatalog(),
+                mock(ConfigurableApplicationContext.class)) {
+                @Override
+                public Ticket getTicket(final String ticketId, final Predicate<Ticket> predicate) {
+                    reads.add(ticketId);
+                    return super.getTicket(ticketId, predicate);
+                }
+            };
+            val service = RegisteredServiceTestUtils.getService(UUID.randomUUID().toString());
+            val tgt = new TicketGrantingTicketImpl(TestTicketIdentifiers.generate().ticketGrantingTicketId(),
+                CoreAuthenticationTestUtils.getAuthentication(), NeverExpiresExpirationPolicy.INSTANCE);
+            val serviceTickets = new ArrayList<String>();
+            for (var i = 0; i < 3; i++) {
+                val st = tgt.grantServiceTicket(TestTicketIdentifiers.generate().serviceTicketId(), service,
+                    NeverExpiresExpirationPolicy.INSTANCE, false, TicketTrackingPolicy.noOp());
+                tgt.getServices().put(st.getId(), service);
+                registry.addTicket(st);
+                serviceTickets.add(st.getId());
+            }
+            registry.addTicket(tgt);
+            assertEquals(1, registry.deleteTicket(serviceTickets.getFirst()));
+            reads.clear();
+
+            assertEquals(3, registry.deleteTicket(tgt.getId()));
+            assertEquals(List.of(tgt.getId()), reads);
+            serviceTickets.forEach(id -> assertNull(registry.getMapInstance().get(registry.digestIdentifier(id))));
+        }
+
         private static DefaultTicketRegistry newEncryptedTicketRegistry(final AtomicInteger updates) {
             val cipher = CoreTicketUtils.newTicketRegistryCipherExecutor(
                 new EncryptionRandomizedSigningJwtCryptographyProperties(), true, "[tests]");

@@ -75,7 +75,8 @@ public class JwtTicketBuilder implements TokenTicketBuilder {
     public String build(@Nullable final Authentication authentication,
                         @Nullable final RegisteredService registeredService,
                         final String jwtIdentifier,
-                        final Map<String, List<Object>> claims) throws Throwable {
+                        final Map<String, List<Object>> claims)
+            throws Throwable {
         val attributes = new HashMap<>(Objects.requireNonNull(authentication).getAttributes());
         attributes.putAll(authentication.getPrincipal().getAttributes());
         attributes.putAll(claims);

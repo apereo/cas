@@ -356,6 +356,21 @@ class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Tests {
     }
 
     @Test
+    void verifyAuthorizationRequestIsBoundToDPoPKey() throws Throwable {
+        val controller = new OAuth20AuthorizeEndpointController<>(configurationContext);
+        val authentication = RegisteredServiceTestUtils.getAuthentication();
+        val request = new MockHttpServletRequest();
+        val context = new JEEContext(request, new MockHttpServletResponse());
+        assertFalse(controller.bindProofOfPossessionKey(context, authentication).containsAttribute(OAuth20Constants.DPOP_JKT));
+        request.setParameter(OAuth20Constants.DPOP_JKT, "requested-thumbprint");
+        assertEquals(List.of("requested-thumbprint"),
+            controller.bindProofOfPossessionKey(context, authentication).getAttributes().get(OAuth20Constants.DPOP_JKT));
+        request.setAttribute(OAuth20Constants.DPOP_JKT, "proven-thumbprint");
+        assertEquals(List.of("proven-thumbprint"),
+            controller.bindProofOfPossessionKey(context, authentication).getAttributes().get(OAuth20Constants.DPOP_JKT));
+    }
+
+    @Test
     void verifyCodeRedirectToClientWithState() throws Throwable {
 
 

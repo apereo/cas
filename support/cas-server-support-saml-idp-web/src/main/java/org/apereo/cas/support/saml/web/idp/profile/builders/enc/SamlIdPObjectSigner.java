@@ -44,7 +44,8 @@ public interface SamlIdPObjectSigner {
                                     HttpServletRequest request,
                                     String binding,
                                     RequestAbstractType authnRequest,
-                                    MessageContext messageContext) throws Exception;
+                                    MessageContext messageContext)
+            throws Exception;
 
     /**
      * Gets saml idp metadata resolver.

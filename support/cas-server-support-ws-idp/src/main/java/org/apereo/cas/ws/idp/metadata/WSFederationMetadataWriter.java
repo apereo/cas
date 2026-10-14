@@ -70,7 +70,8 @@ public class WSFederationMetadataWriter {
     }
 
     private static void writeFederationMetadata(final XMLStreamWriter writer, final String idpEntityId,
-                                                final String ststUrl, final Crypto crypto) throws Exception {
+                                                final String ststUrl, final Crypto crypto)
+            throws Exception {
         writer.writeStartElement("md", "RoleDescriptor", WS_FEDERATION_NS);
         writer.writeAttribute(SCHEMA_INSTANCE_NS, "type", "fed:SecurityTokenServiceType");
         writer.writeAttribute("protocolSupportEnumeration", WS_FEDERATION_NS);

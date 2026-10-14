@@ -107,7 +107,8 @@ public class DelegatedClientAuthenticationRedirectAction extends BaseCasWebflowA
     }
 
     protected void configureWebContextForRegisteredService(final WebContext webContext,
-                                                           final TransientSessionTicket ticket) throws Throwable {
+                                                           final TransientSessionTicket ticket)
+            throws Throwable {
         val registeredService = configContext.getServicesManager().findServiceBy(ticket.getService());
         val audit = AuditableContext.builder()
             .service(ticket.getService())
@@ -160,7 +161,8 @@ public class DelegatedClientAuthenticationRedirectAction extends BaseCasWebflowA
 
     protected void handleIdentityProviderWithDynamicContent(final RequestContext requestContext,
                                                             final IndirectClient client,
-                                                            final RedirectionAction action) throws Exception {
+                                                            final RedirectionAction action)
+            throws Exception {
         val seeOtherAction = (WithContentAction) action;
         val view = new DynamicHtmlView(seeOtherAction.getContent());
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
@@ -172,7 +174,8 @@ public class DelegatedClientAuthenticationRedirectAction extends BaseCasWebflowA
 
     protected void handleIdentityProviderWithExternalRedirect(final RequestContext requestContext,
                                                               final IndirectClient client,
-                                                              final RedirectionAction action) throws Exception {
+                                                              final RedirectionAction action)
+            throws Exception {
         val foundAction = (WithLocationAction) action;
         val builder = new URIBuilder(foundAction.getLocation());
         val url = builder.toString();

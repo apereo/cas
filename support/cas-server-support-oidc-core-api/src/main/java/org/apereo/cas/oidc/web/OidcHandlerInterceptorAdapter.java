@@ -59,7 +59,8 @@ public class OidcHandlerInterceptorAdapter extends OAuth20HandlerInterceptorAdap
 
     @Override
     public boolean preHandle(final HttpServletRequest request, final HttpServletResponse response,
-                             final Object handler) throws Exception {
+                             final Object handler)
+            throws Exception {
 
         LOGGER.trace("Attempting to pre-handle OIDC request at [{}] with parameters [{}]",
             request.getRequestURI(), request.getParameterMap().keySet());

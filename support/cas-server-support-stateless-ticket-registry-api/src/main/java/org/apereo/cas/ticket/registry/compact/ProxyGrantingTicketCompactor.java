@@ -68,7 +68,8 @@ public class ProxyGrantingTicketCompactor implements TicketCompactor<ProxyGranti
      * @throws Throwable the throwable
      */
     static ProxyGrantingTicket newProxyGrantingTicket(final TicketFactory ticketFactory, final Service service,
-                                                      final Authentication authentication) throws Throwable {
+                                                      final Authentication authentication)
+            throws Throwable {
         val serviceTicket = ServiceTicketCompactor.newServiceTicket(ticketFactory, service, authentication, false);
         val factory = (ProxyGrantingTicketFactory<?>) ticketFactory.get(ProxyGrantingTicket.class);
         return factory.create(serviceTicket, authentication);

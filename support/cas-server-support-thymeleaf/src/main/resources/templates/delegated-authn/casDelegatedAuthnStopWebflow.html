@@ -12,7 +12,8 @@
 <body>
     <main class="container mt-3 mb-3">
         <div id="content" layout:fragment="content"
-             class="mdc-card card p-4 m-auto w-lg-66">
+             class="mdc-card card p-4 m-auto w-lg-66 cas-hero cas-hero-start cas-hero-wide">
+            <span class="cas-hero-icon is-danger" aria-hidden="true"><i class="mdi mdi-account-cancel-outline"></i></span>
             <div class="banner banner-danger alert alert-danger">
                 <h2 th:utext="#{screen.pac4j.unauthz.heading}">Unauthorized Access</h2>
                 <p th:utext="#{screen.pac4j.unauthz.message}">Either the authentication request was rejected/cancelled,

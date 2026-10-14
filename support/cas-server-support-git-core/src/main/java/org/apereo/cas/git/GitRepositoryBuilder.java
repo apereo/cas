@@ -178,7 +178,8 @@ public class GitRepositoryBuilder {
     }
 
     private GitRepository cloneGitRepository(final TransportConfigCallback transportCallback,
-                                             final CredentialsProvider[] providers) throws Exception {
+                                             final CredentialsProvider[] providers)
+            throws Exception {
         val cloneCommand = Git.cloneRepository()
             .setProgressMonitor(new LoggingGitProgressMonitor())
             .setURI(repositoryUri)

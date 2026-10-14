@@ -134,6 +134,8 @@ function resolveInitialDashboardTab() {
  */
 async function initializePalantir() {
     try {
+        installJQueryCompatibility();
+        applySharedDialogStyle();
         await initializeCasFeatures();
         showElements("#dashboard");
         const visibleCount = processNavigationTabs();
@@ -163,6 +165,56 @@ async function initializePalantir() {
     }
 }
 
+/**
+ * Close the rail overlay used on narrow screens, as the account profile does with its sections.
+ *
+ * @param {boolean} restoreFocus whether focus returns to the toggle that opened the overlay
+ */
+function closeSidebarSections(restoreFocus) {
+    const dashboard = document.getElementById("dashboard");
+    if (!dashboard || !dashboard.classList.contains("is-nav-open")) {
+        return;
+    }
+    dashboard.classList.remove("is-nav-open");
+    const toggle = dashboard.querySelector("[data-palantir-action='sections']");
+    if (toggle) {
+        toggle.setAttribute("aria-expanded", "false");
+        if (restoreFocus) {
+            toggle.focus();
+        }
+    }
+}
+
+function openSidebarSections() {
+    const dashboard = document.getElementById("dashboard");
+    dashboard.classList.add("is-nav-open");
+    const toggle = dashboard.querySelector("[data-palantir-action='sections']");
+    if (toggle) {
+        toggle.setAttribute("aria-expanded", "true");
+    }
+    const current = dashboard.querySelector("nav.sidebar-navigation [aria-current='page']")
+        || dashboard.querySelector("nav.sidebar-navigation .sidebar-navigation-button");
+    if (current) {
+        current.focus();
+    }
+}
+
+function initializeSidebarSections() {
+    $("#dashboard [data-palantir-action='sections']").off("click").on("click", () => {
+        if ($("#dashboard").hasClass("is-nav-open")) {
+            closeSidebarSections(true);
+        } else {
+            openSidebarSections();
+        }
+    });
+    $("#dashboard [data-palantir-action='close-sections']").off("click").on("click", () => closeSidebarSections(true));
+    document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape" && $("#dashboard").hasClass("is-nav-open")) {
+            closeSidebarSections(true);
+        }
+    });
+}
+
 document.addEventListener("DOMContentLoaded", () => {
     initializeAccordionAccessibility();
     initializePalantirInputIcons();
@@ -170,7 +222,9 @@ document.addEventListener("DOMContentLoaded", () => {
     initializePalantirWidgets();
     initializeTooltips();
 
+    initializeSidebarSections();
     $("nav.sidebar-navigation ul li").off().on("click", function () {
+        closeSidebarSections(false);
         hideBanner();
         const index = selectSidebarMenuButton(this);
         activateDashboardTab(index);

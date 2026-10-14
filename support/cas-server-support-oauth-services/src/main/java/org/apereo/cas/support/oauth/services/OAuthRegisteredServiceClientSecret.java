@@ -5,6 +5,7 @@ import org.apereo.cas.util.DateTimeUtils;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.google.common.primitives.Longs;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -15,7 +16,6 @@ import lombok.With;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.math.NumberUtils;
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -99,8 +99,9 @@ public class OAuthRegisteredServiceClientSecret implements Serializable {
      */
     @JsonIgnore
     public ZonedDateTime toEffectiveExpiration() {
-        if (NumberUtils.isParsable(expiration)) {
-            return DateTimeUtils.zonedDateTimeOf(Instant.ofEpochSecond(Long.parseLong(expiration))).truncatedTo(ChronoUnit.SECONDS);
+        val expirationSeconds = expiration != null ? Longs.tryParse(expiration) : null;
+        if (expirationSeconds != null) {
+            return DateTimeUtils.zonedDateTimeOf(Instant.ofEpochSecond(expirationSeconds)).truncatedTo(ChronoUnit.SECONDS);
         }
         if (!expiration.contains(":") && !expiration.contains("T")) {
             val localDate = expiration.contains("/")

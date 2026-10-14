@@ -142,7 +142,8 @@ public class CertUtils {
      * @throws GeneralSecurityException when the chain is empty, carries a self-issued certificate or does not validate
      */
     public static X509Certificate validateCertificateChain(final List<X509Certificate> certificateChain,
-                                                           final Set<TrustAnchor> trustAnchors) throws GeneralSecurityException {
+                                                           final Set<TrustAnchor> trustAnchors)
+            throws GeneralSecurityException {
         if (certificateChain.isEmpty() || certificateChain.stream().anyMatch(CertUtils::isSelfIssued)) {
             throw new CertificateException("Certificate chain must not be empty or carry a trust anchor or a self-signed certificate");
         }

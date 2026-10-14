@@ -21,9 +21,11 @@ import org.apereo.cas.ticket.AbstractTicket;
 import org.apereo.cas.ticket.AbstractTicketException;
 import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.ServiceAwareTicket;
+import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.ServiceTicketImpl;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.UnrecognizableServiceForServiceTicketValidationException;
+import org.apereo.cas.ticket.expiration.MultiTimeUseOrTimeoutExpirationPolicy;
 import org.apereo.cas.ticket.proxy.ProxyTicket;
 import org.apereo.cas.validation.DefaultCasProtocolValidationSpecification;
 import lombok.val;
@@ -70,11 +72,15 @@ class DefaultCentralAuthenticationServiceTests {
 
             assertThrows(UnknownTenantException.class,
                 () -> getCentralAuthenticationService().validateServiceTicket(serviceTicket.getId(), service2));
+            assertNull(getTicketRegistry().getTicket(serviceTicket.getId()));
 
-            serviceTicket.setTenantId(UUID.randomUUID().toString());
-            service2.setTenant(serviceTicket.getTenantId());
+            val unknownTenantTicket = (AbstractTicket) getCentralAuthenticationService().grantServiceTicket(ticketGrantingTicket.getId(), service1, ctx);
+            unknownTenantTicket.setTenantId(UUID.randomUUID().toString());
+            getTicketRegistry().updateTicket(unknownTenantTicket);
+            service2.setTenant(unknownTenantTicket.getTenantId());
             assertThrows(UnknownTenantException.class,
-                () -> getCentralAuthenticationService().validateServiceTicket(serviceTicket.getId(), service2));
+                () -> getCentralAuthenticationService().validateServiceTicket(unknownTenantTicket.getId(), service2));
+            assertNull(getTicketRegistry().getTicket(unknownTenantTicket.getId()));
         }
     }
 
@@ -293,6 +299,38 @@ class DefaultCentralAuthenticationServiceTests {
             assertThrows(UnrecognizableServiceForServiceTicketValidationException.class,
                 () -> getCentralAuthenticationService().validateServiceTicket(serviceTicket.getId(),
                     RegisteredServiceTestUtils.getService(id)));
+        }
+
+        @Test
+        void verifyServiceTicketInvalidatedAfterFailedValidation() throws Throwable {
+            val ctx = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport());
+            val ticketGrantingTicket = getCentralAuthenticationService().createTicketGrantingTicket(ctx);
+            val serviceTicket = getCentralAuthenticationService().grantServiceTicket(ticketGrantingTicket.getId(), getService(), ctx);
+            assertThrows(UnrecognizableServiceForServiceTicketValidationException.class,
+                () -> getCentralAuthenticationService().validateServiceTicket(serviceTicket.getId(),
+                    RegisteredServiceTestUtils.getService(UUID.randomUUID().toString())));
+            assertNull(getTicketRegistry().getTicket(serviceTicket.getId()));
+            assertThrows(InvalidTicketException.class,
+                () -> getCentralAuthenticationService().validateServiceTicket(serviceTicket.getId(), getService()));
+        }
+
+        @Test
+        void verifyFailedValidationCountsAsUseOfMultiUseServiceTicket() throws Throwable {
+            val ctx = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport());
+            val ticketGrantingTicket = getCentralAuthenticationService().createTicketGrantingTicket(ctx);
+            val serviceTicket = getCentralAuthenticationService().grantServiceTicket(ticketGrantingTicket.getId(), getService(), ctx);
+            val storedTicket = (AbstractTicket) getTicketRegistry().getTicket(serviceTicket.getId(), ServiceTicket.class);
+            storedTicket.setExpirationPolicy(new MultiTimeUseOrTimeoutExpirationPolicy(3, 60));
+            getTicketRegistry().updateTicket(storedTicket);
+
+            val otherService = RegisteredServiceTestUtils.getService(UUID.randomUUID().toString());
+            assertThrows(UnrecognizableServiceForServiceTicketValidationException.class,
+                () -> getCentralAuthenticationService().validateServiceTicket(serviceTicket.getId(), otherService));
+            assertEquals(1, getTicketRegistry().getTicket(serviceTicket.getId(), ServiceTicket.class).getCountOfUses());
+            assertNotNull(getCentralAuthenticationService().validateServiceTicket(serviceTicket.getId(), getService()));
+            assertThrows(UnrecognizableServiceForServiceTicketValidationException.class,
+                () -> getCentralAuthenticationService().validateServiceTicket(serviceTicket.getId(), otherService));
+            assertNull(getTicketRegistry().getTicket(serviceTicket.getId()));
         }
 
         @Test

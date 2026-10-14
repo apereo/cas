@@ -71,7 +71,8 @@ public class MultifactorAuthenticationDevicesEndpoint extends BaseCasRestActuato
         })
     public void removeMfaDeviceForUser(@PathVariable final String username,
                                        @PathVariable final String key,
-                                       @PathVariable final String providerId) throws Throwable {
+                                       @PathVariable final String providerId)
+            throws Throwable {
         val principal = PrincipalFactoryUtils.newPrincipalFactory().createPrincipal(username);
         val providers = MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(applicationContext).values();
         providers

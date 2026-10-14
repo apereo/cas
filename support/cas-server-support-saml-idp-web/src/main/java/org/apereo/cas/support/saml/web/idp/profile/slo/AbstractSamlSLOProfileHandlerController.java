@@ -56,7 +56,8 @@ public abstract class AbstractSamlSLOProfileHandlerController extends AbstractSa
     }
 
     private void handleLogoutResponse(final HttpServletRequest request,
-                                      final Pair<? extends SignableSAMLObject, MessageContext> pair) throws Throwable {
+                                      final Pair<? extends SignableSAMLObject, MessageContext> pair)
+            throws Throwable {
         val logoutResponse = (LogoutResponse) pair.getKey();
         val issuer = SamlIdPUtils.getIssuerFromSamlObject(logoutResponse);
         val registeredService = verifySamlRegisteredService(issuer, request);
@@ -90,7 +91,8 @@ public abstract class AbstractSamlSLOProfileHandlerController extends AbstractSa
 
     private void handleLogoutRequest(final HttpServletResponse response, final HttpServletRequest request,
                                      final Pair<? extends SignableSAMLObject, MessageContext> pair,
-                                     final String logoutRequestBinding) throws Throwable {
+                                     final String logoutRequestBinding)
+            throws Throwable {
         val logoutRequest = (LogoutRequest) pair.getKey();
         val messageContext = pair.getValue();
 
@@ -165,7 +167,8 @@ public abstract class AbstractSamlSLOProfileHandlerController extends AbstractSa
     protected void handleSloProfileRequest(final HttpServletResponse response,
                                            final HttpServletRequest request,
                                            final BaseHttpServletRequestXMLMessageDecoder decoder,
-                                           final String logoutRequestBinding) throws Throwable {
+                                           final String logoutRequestBinding)
+            throws Throwable {
         val logout = getConfigurationContext().getCasProperties().getAuthn().getSamlIdp().getLogout();
         if (logout.isSingleLogoutCallbacksDisabled()) {
             LOGGER.info("Processing SAML2 IdP SLO requests is disabled");

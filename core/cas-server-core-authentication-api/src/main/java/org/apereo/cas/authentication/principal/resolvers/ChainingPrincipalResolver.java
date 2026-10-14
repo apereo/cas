@@ -53,7 +53,8 @@ public class ChainingPrincipalResolver implements PrincipalResolver {
 
     @Override
     public @Nullable Principal resolve(final Credential credential, final Optional<Principal> principal,
-                                       final Optional<AuthenticationHandler> handler, final Optional<Service> service) throws Throwable {
+                                       final Optional<AuthenticationHandler> handler, final Optional<Service> service)
+            throws Throwable {
         val principalResolvers = determinePrincipalResolvers(credential);
         val principals = resolvePrincipals(principalResolvers, credential, principal, handler, service);
         if (principals.isEmpty()) {

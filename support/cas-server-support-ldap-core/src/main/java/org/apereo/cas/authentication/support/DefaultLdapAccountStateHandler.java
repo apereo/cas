@@ -79,7 +79,8 @@ public class DefaultLdapAccountStateHandler implements AuthenticationAccountStat
 
     @Override
     public List<MessageDescriptor> handle(@Nullable final AuthenticationResponse response,
-                                          final PasswordPolicyContext configuration) throws LoginException {
+                                          final PasswordPolicyContext configuration)
+            throws LoginException {
         LOGGER.debug("Attempting to handle LDAP account state for [{}]", response);
         if (!this.attributesToErrorMap.isEmpty() && Objects.requireNonNull(response).isSuccess()) {
             LOGGER.debug("Handling policy based on pre-defined attributes");
@@ -110,7 +111,8 @@ public class DefaultLdapAccountStateHandler implements AuthenticationAccountStat
      * @throws LoginException the login exception
      */
     protected void handleFailingResponse(final AuthenticationResponse response,
-                                         final PasswordPolicyContext configuration) throws LoginException {
+                                         final PasswordPolicyContext configuration)
+            throws LoginException {
         val error = ActiveDirectoryAccountState.Error.parse(response.getDiagnosticMessage());
         handleError(error, response, configuration, new ArrayList<>());
     }
@@ -127,7 +129,8 @@ public class DefaultLdapAccountStateHandler implements AuthenticationAccountStat
      * @throws LoginException On errors that should be communicated as login exceptions.
      */
     protected void handleError(final AccountState.Error error, final AuthenticationResponse response,
-                               final PasswordPolicyContext configuration, final List<MessageDescriptor> messages) throws LoginException {
+                               final PasswordPolicyContext configuration, final List<MessageDescriptor> messages)
+            throws LoginException {
 
         LOGGER.debug("Handling LDAP account state error [{}]", error);
         if (error != null && errorMap.containsKey(error)) {

@@ -48,7 +48,8 @@ public class DefaultPrincipalElectionStrategy implements PrincipalElectionStrate
 
     @Override
     public @Nullable Principal nominate(final Collection<Authentication> authentications,
-                                        final Map<String, List<Object>> principalAttributes) throws Throwable {
+                                        final Map<String, List<Object>> principalAttributes)
+            throws Throwable {
         val principal = getPrincipalFromAuthentication(authentications);
         val attributes = getPrincipalAttributesForPrincipal(authentications, principal, principalAttributes);
         val finalPrincipal = principalFactory.createPrincipal(principal.getId(), attributes);

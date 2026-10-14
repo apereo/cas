@@ -66,7 +66,8 @@ public class UserAuthenticationResource {
         parameters = @Parameter(name = "requestBody", required = true, description = "Username and password values"))
     public ResponseEntity<String> authenticateRequest(@RequestBody final MultiValueMap<String, String> requestBody,
                                                       final HttpServletRequest request,
-                                                      final HttpServletResponse response) throws Throwable {
+                                                      final HttpServletResponse response)
+            throws Throwable {
         try {
             val authenticationResult = authenticationService.authenticate(requestBody, request, response);
             val result = authenticationResult.orElseThrow(AuthenticationException::new);

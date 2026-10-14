@@ -58,7 +58,8 @@ public class DefaultConsentEngine implements ConsentEngine {
                                                 final Authentication authentication,
                                                 final long reminder,
                                                 final ChronoUnit reminderTimeUnit,
-                                                final ConsentReminderOptions options) throws Throwable {
+                                                final ConsentReminderOptions options)
+            throws Throwable {
         val attributes = resolveConsentableAttributesFrom(authentication, service, registeredService);
         attributes.replaceAll((key, value) -> {
             var attr = CasConsentableAttribute.builder()
@@ -92,7 +93,8 @@ public class DefaultConsentEngine implements ConsentEngine {
     @Override
     public ConsentDecision findConsentDecision(final Service service,
                                                final RegisteredService registeredService,
-                                               final Authentication authentication) throws Throwable {
+                                               final Authentication authentication)
+            throws Throwable {
         return executeRepositoryOperation(service, registeredService, authentication, repository ->
             repository.findConsentDecision(service, registeredService, authentication));
     }
@@ -101,7 +103,8 @@ public class DefaultConsentEngine implements ConsentEngine {
     public Map<String, List<Object>> resolveConsentableAttributesFrom(
         final Authentication authentication,
         final Service service,
-        final RegisteredService registeredService) throws Throwable {
+        final RegisteredService registeredService)
+            throws Throwable {
         LOGGER.debug("Retrieving consentable attributes for [{}]", registeredService);
         val policy = registeredService.getAttributeReleasePolicy();
         if (policy != null) {
@@ -134,7 +137,8 @@ public class DefaultConsentEngine implements ConsentEngine {
     @Override
     public ConsentQueryResult isConsentRequiredFor(final Service service,
                                                    final RegisteredService registeredService,
-                                                   final Authentication authentication) throws Throwable {
+                                                   final Authentication authentication)
+            throws Throwable {
         val attributes = resolveConsentableAttributesFrom(authentication, service, registeredService);
         if (attributes == null || attributes.isEmpty()) {
             LOGGER.debug("Consent is conditionally ignored for service [{}] given no consentable attributes are found", registeredService.getName());
@@ -225,7 +229,8 @@ public class DefaultConsentEngine implements ConsentEngine {
         final Service service,
         final RegisteredService registeredService,
         final Authentication authentication,
-        final CheckedFunction<ConsentRepository, ConsentDecision> executor) throws Throwable {
+        final CheckedFunction<ConsentRepository, ConsentDecision> executor)
+            throws Throwable {
         val effectiveRepository = toConsentRepository(service.getTenant());
         try {
             return executor.apply(effectiveRepository);

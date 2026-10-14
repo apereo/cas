@@ -14,11 +14,11 @@ import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.token.authentication.TokenAuthenticationSecurity;
 import org.apereo.cas.util.CollectionUtils;
+import com.google.common.primitives.Longs;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import lombok.val;
-import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.actuate.endpoint.Access;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
@@ -74,10 +74,12 @@ public class TokenAuthenticationEndpoint extends BaseCasActuatorEndpoint {
         @Parameter(name = "service", required = true, in = ParameterIn.QUERY, description = "May be the service id or its numeric identifier")
     })
     public Map<?, ?> produceToken(@Selector final String username,
-                                  final String service) throws Throwable {
+                                  final String service)
+            throws Throwable {
         val selectedService = serviceFactory.getObject().createService(service);
-        val registeredService = NumberUtils.isCreatable(service)
-            ? servicesManager.getObject().findServiceBy(Long.parseLong(service))
+        val registeredServiceId = Longs.tryParse(service);
+        val registeredService = registeredServiceId != null
+            ? servicesManager.getObject().findServiceBy(registeredServiceId)
             : servicesManager.getObject().findServiceBy(selectedService);
         val givenPrincipal = principalFactory.getObject().createPrincipal(username);
         val principal = principalResolver.getObject().resolve(new BasicIdentifiableCredential(username),
@@ -109,10 +111,12 @@ public class TokenAuthenticationEndpoint extends BaseCasActuatorEndpoint {
         @Parameter(name = "service", required = true, in = ParameterIn.QUERY, description = "May be the service id or its numeric identifier")
     })
     public Map<?, ?> validateToken(@Selector final String token,
-                                  final String service) throws Throwable {
+                                  final String service)
+            throws Throwable {
         val selectedService = serviceFactory.getObject().createService(service);
-        val registeredService = NumberUtils.isCreatable(service)
-            ? servicesManager.getObject().findServiceBy(Long.parseLong(service))
+        val registeredServiceId = Longs.tryParse(service);
+        val registeredService = registeredServiceId != null
+            ? servicesManager.getObject().findServiceBy(registeredServiceId)
             : servicesManager.getObject().findServiceBy(selectedService);
         RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(registeredService);
         val profile = TokenAuthenticationSecurity.forRegisteredService(Objects.requireNonNull(registeredService)).validateToken(token);

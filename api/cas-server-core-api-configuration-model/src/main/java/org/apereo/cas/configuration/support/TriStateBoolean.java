@@ -98,7 +98,8 @@ public enum TriStateBoolean {
 
         @Override
         public TriStateBoolean deserialize(final JsonParser jsonParser,
-                                           final DeserializationContext deserializationContext) throws JacksonException {
+                                           final DeserializationContext deserializationContext)
+                throws JacksonException {
             val value = jsonParser.getString();
             if (Strings.CI.equals(value, Boolean.TRUE.toString())) {
                 return TriStateBoolean.TRUE;

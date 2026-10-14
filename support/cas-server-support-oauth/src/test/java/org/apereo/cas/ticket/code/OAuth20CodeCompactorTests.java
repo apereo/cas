@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
+import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.ticket.Ticket;
@@ -38,7 +39,8 @@ class OAuth20CodeCompactorTests extends AbstractOAuth20Tests {
                          final String codeChallengeMethod,
                          final String clientId, final Map claims,
                          final OAuth20ResponseTypes responseType,
-                         final OAuth20GrantTypes grantType) throws Throwable {
+                         final OAuth20GrantTypes grantType)
+            throws Throwable {
         val registeredService = getRegisteredService("https://code.oauth.org", clientId, "secret-at");
         servicesManager.save(registeredService);
         val token = defaultOAuthCodeFactory.create(service, authentication, tgt,
@@ -60,6 +62,8 @@ class OAuth20CodeCompactorTests extends AbstractOAuth20Tests {
         assertEquals(result.getGrantType(), token.getGrantType());
         assertEquals(result.getAuthentication().getPrincipal(), token.getAuthentication().getPrincipal());
         assertEquals(authorizationDetails, result.getAuthorizationDetails());
+        assertEquals(token.getAuthentication().getAttributes().get(OAuth20Constants.DPOP_JKT),
+            result.getAuthentication().getAttributes().get(OAuth20Constants.DPOP_JKT));
 
     }
 
@@ -69,7 +73,8 @@ class OAuth20CodeCompactorTests extends AbstractOAuth20Tests {
         val authentication = RegisteredServiceTestUtils.getAuthentication();
 
         return Stream.of(
-            Arguments.of(service, authentication,
+            Arguments.of(service, RegisteredServiceTestUtils.getAuthentication("casuser",
+                    Map.of(OAuth20Constants.DPOP_JKT, List.of("NzbLsXh8uDCcd-6MNwXF4W_7noWXFZAfHkxZsRGC9Xs"))),
                 tgt, Set.of("Scope1", "Scope2"), "code-challenge", "plain",
                 "clientid-code", Map.of(), OAuth20ResponseTypes.CODE, OAuth20GrantTypes.AUTHORIZATION_CODE),
             Arguments.of(service, authentication,

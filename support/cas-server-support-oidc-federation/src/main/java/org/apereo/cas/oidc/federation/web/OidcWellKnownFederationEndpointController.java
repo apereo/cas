@@ -53,7 +53,8 @@ public class OidcWellKnownFederationEndpointController extends AbstractOidcFeder
     @Operation(summary = "Handle OIDC discovery federation request",
         description = "Handles requests for well-known OIDC discovery federation configuration")
     public ResponseEntity getWellKnownDiscoveryConfiguration(
-        final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+        final HttpServletRequest request, final HttpServletResponse response)
+            throws Exception {
 
         LOGGER.info("Generating federation entity statement");
 

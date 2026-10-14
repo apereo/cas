@@ -103,7 +103,8 @@ public class OidcDynamicClientRegistrationEndpointController extends BaseOidcCon
         final HttpServletRequest request,
         final HttpServletResponse response,
         final OidcRegisteredService registeredService,
-        final OidcClientRegistrationRequest registrationRequest) throws Throwable {
+        final OidcClientRegistrationRequest registrationRequest)
+            throws Throwable {
 
         val principal = PrincipalFactoryUtils.newPrincipalFactory().createPrincipal(registeredService.getClientId());
         val authn = DefaultAuthenticationBuilder.newInstance().setPrincipal(principal).build();

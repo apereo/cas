@@ -48,7 +48,8 @@ public interface AuthenticationPolicy extends Ordered, Serializable, NamedObject
     AuthenticationPolicyExecutionResult isSatisfiedBy(@Nullable Authentication authentication,
                                                       Set<AuthenticationHandler> authenticationHandlers,
                                                       ConfigurableApplicationContext applicationContext,
-                                                      Map<String, ? extends Serializable> context) throws Throwable;
+                                                      Map<String, ? extends Serializable> context)
+            throws Throwable;
 
     /**
      * Is satisfied by authentication policy.
@@ -62,7 +63,8 @@ public interface AuthenticationPolicy extends Ordered, Serializable, NamedObject
     default AuthenticationPolicyExecutionResult isSatisfiedBy(
         @Nullable final Authentication authentication,
         final Set<AuthenticationHandler> authenticationHandlers,
-        final ConfigurableApplicationContext applicationContext) throws Throwable {
+        final ConfigurableApplicationContext applicationContext)
+            throws Throwable {
         return isSatisfiedBy(authentication, authenticationHandlers, applicationContext, Map.of());
     }
 
@@ -78,7 +80,8 @@ public interface AuthenticationPolicy extends Ordered, Serializable, NamedObject
     default AuthenticationPolicyExecutionResult isSatisfiedBy(
         @Nullable final Authentication authentication,
         final ConfigurableApplicationContext applicationContext,
-        final Map<String, ? extends Serializable> context) throws Throwable {
+        final Map<String, ? extends Serializable> context)
+            throws Throwable {
         return isSatisfiedBy(authentication, Set.of(), applicationContext, context);
     }
 
@@ -92,7 +95,8 @@ public interface AuthenticationPolicy extends Ordered, Serializable, NamedObject
      */
     default AuthenticationPolicyExecutionResult isSatisfiedBy(
         @Nullable final Authentication authentication,
-        final ConfigurableApplicationContext applicationContext) throws Throwable {
+        final ConfigurableApplicationContext applicationContext)
+            throws Throwable {
         return isSatisfiedBy(authentication, Set.of(), applicationContext, Map.of());
     }
 

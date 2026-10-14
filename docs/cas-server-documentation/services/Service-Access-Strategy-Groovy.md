@@ -64,7 +64,7 @@ import org.apereo.cas.authentication.principal.*
 import org.slf4j.*
 import groovy.transform.*
 
-@Field def logger = LoggerFactory.getLogger("GroovyServiceAccessStrategy")
+@Field final logger = LoggerFactory.getLogger("GroovyServiceAccessStrategy")
 
 def isServiceAccessAllowed(RegisteredService registeredService, Service service) {
     logger.info("Checking access for ${registeredService} and service ${service}")

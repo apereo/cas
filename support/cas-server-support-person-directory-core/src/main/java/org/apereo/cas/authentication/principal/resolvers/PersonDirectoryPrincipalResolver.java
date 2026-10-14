@@ -59,7 +59,8 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
 
     @Override
     public @Nullable Principal resolve(final Credential credential, final Optional<Principal> currentPrincipal,
-                             final Optional<AuthenticationHandler> handler, final Optional<Service> service) throws Throwable {
+                             final Optional<AuthenticationHandler> handler, final Optional<Service> service)
+            throws Throwable {
 
         LOGGER.trace("Attempting to resolve a principal via [{}]", getName());
         var principalId = extractPrincipalId(credential, currentPrincipal);
@@ -109,7 +110,8 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
 
     protected @Nullable Principal buildResolvedPrincipal(final String id, final Map<String, List<Object>> attributes,
                                                final Credential credential, final Optional<Principal> currentPrincipal,
-                                               final Optional<AuthenticationHandler> handler) throws Throwable {
+                                               final Optional<AuthenticationHandler> handler)
+            throws Throwable {
         return context.getPrincipalFactory().createPrincipal(id, attributes);
     }
 
@@ -169,7 +171,8 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
                                                                  final Optional<Principal> currentPrincipal,
                                                                  final Map<String, List<Object>> queryAttributes,
                                                                  final Optional<Service> givenService,
-                                                                 final Optional<AuthenticationHandler> handler) throws Throwable {
+                                                                 final Optional<AuthenticationHandler> handler)
+            throws Throwable {
 
         queryAttributes.computeIfAbsent("credentialId", _ -> CollectionUtils.wrapList(credential.getId()));
         queryAttributes.computeIfAbsent("credentialClass", _ -> CollectionUtils.wrapList(credential.getClass().getSimpleName()));

@@ -54,7 +54,8 @@ public class HeapDumpAnalysisEndpoint extends BaseCasRestActuatorEndpoint {
     @Operation(summary = "Analyze the provided file")
     public ResponseEntity<HeapDumpAnalysis> analyze(
         @RequestParam(defaultValue = "100") final int top,
-        @RequestPart("file") final MultipartFile file) throws Exception {
+        @RequestPart("file") final MultipartFile file)
+            throws Exception {
         val hprof = Files.createTempFile(UUID.randomUUID().toString(), ".hprof");
         try (val inputStream = file.getInputStream()) {
             Files.copy(inputStream, hprof, StandardCopyOption.REPLACE_EXISTING);

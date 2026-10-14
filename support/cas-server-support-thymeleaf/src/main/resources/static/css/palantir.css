@@ -4057,59 +4057,6 @@ select + span[role="combobox"] {
    Accessibility
    ========================================================================== */
 
-/* The rail's label is the accessible name of its button, so it has to stay in
-   the accessibility tree while the rail is collapsed. cas.css hides it with
-   visibility:hidden, which would leave all eighteen buttons nameless until the
-   pointer is over them; opacity plus the rail's own overflow hides it just as
-   well and keeps the name. */
-/* Each of the rail rules below overrides a selector of identical specificity in
-   cas.css. At a tie the later stylesheet wins, and this one is not reliably
-   later, so every selector here carries the nav element to outrank its
-   counterpart whatever the load order turns out to be.
-
-   Getting this wrong is what left both paddings applying at once: the item kept
-   cas.css's 16px/28px and the button added its own on top, so every rail entry
-   was double height and every icon sat 28px right of centre. */
-nav.sidebar-navigation ul li .tooltip {
-    visibility: visible;
-    opacity: 0;
-}
-
-nav.sidebar-navigation:hover ul li .tooltip,
-nav.sidebar-navigation:focus-within ul li .tooltip {
-    visibility: visible;
-    opacity: 1;
-}
-
-/* Keyboard focus should open the rail exactly as hover does. */
-nav.sidebar-navigation:focus-within {
-    width: 260px;
-}
-
-/* The padding moves to the button so the whole row is the click target. The
-   item must give it up, or the two stack. */
-nav.sidebar-navigation ul li {
-    padding: 0;
-}
-
-nav.sidebar-navigation ul li > .sidebar-navigation-button {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    width: 100%;
-    padding: 16px 0 16px 28px;
-    margin: 0;
-    border: 0;
-    background: transparent;
-    color: inherit;
-    font: inherit;
-    text-align: left;
-    cursor: pointer;
-    border-radius: inherit;
-    -webkit-appearance: none;
-    appearance: none;
-}
-
 /* The first tab stop on the dashboard, so a keyboard user can reach the working
    area without walking the whole rail. */
 .palantir-skip-link {
@@ -4140,13 +4087,6 @@ nav.sidebar-navigation ul li > .sidebar-navigation-button {
     outline: 3px solid var(--cas-theme-button-bg-lite, #1e78d0);
     outline-offset: 2px;
     border-radius: 4px;
-}
-
-/* The rail is a dark slab, where the ring above would disappear. */
-nav.sidebar-navigation :focus-visible,
-#dashboard nav.sidebar-navigation :focus-visible {
-    outline: 3px solid #7fd6ef;
-    outline-offset: -3px;
 }
 
 /* Metric tiles.
@@ -4189,4 +4129,866 @@ nav.sidebar-navigation :focus-visible,
     .palantir-skip-link {
         transition: none;
     }
+}
+
+/* Shared CAS look for Palantir: pill tabs, softer cards. Layout and colors stay as they are. */
+#dashboard #palantirMainPanel {
+    border: 1px solid var(--cas-ui-divider, #dfe6ee);
+    border-radius: 20px;
+    box-shadow: 0 1px 2px rgba(16, 40, 70, .06), 0 12px 32px rgba(16, 40, 70, .12);
+}
+
+#dashboard .mdc-card:not(#palantirMainPanel) {
+    border: 1px solid var(--cas-ui-divider, #dfe6ee);
+    border-radius: 16px;
+    box-shadow: none;
+}
+
+#dashboard .ui-tabs,
+.ui-dialog.palantir-dialog .ui-tabs {
+    padding: 0;
+    border: 0;
+    background: transparent;
+}
+
+#dashboard .ui-tabs .ui-tabs-nav,
+.ui-dialog.palantir-dialog .ui-tabs .ui-tabs-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin: 0 0 12px;
+    padding: 4px;
+    border: 0;
+    border-radius: 14px;
+    background: var(--cas-ui-subtle, #f3f6f9);
+}
+
+#dashboard .ui-tabs .ui-tabs-nav::before,
+#dashboard .ui-tabs .ui-tabs-nav::after,
+.ui-dialog.palantir-dialog .ui-tabs .ui-tabs-nav::before,
+.ui-dialog.palantir-dialog .ui-tabs .ui-tabs-nav::after {
+    display: none;
+}
+
+#dashboard .ui-tabs .ui-tabs-nav li,
+.ui-dialog.palantir-dialog .ui-tabs .ui-tabs-nav li {
+    float: none;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    border-radius: 10px;
+    background: transparent;
+    white-space: nowrap;
+}
+
+#dashboard .ui-tabs .ui-tabs-nav li.ui-tabs-active,
+.ui-dialog.palantir-dialog .ui-tabs .ui-tabs-nav li.ui-tabs-active {
+    background: var(--cas-ui-surface, #fff) !important;
+    box-shadow: 0 1px 3px rgba(16, 40, 70, .16);
+}
+
+#dashboard .ui-tabs .ui-tabs-nav li .ui-tabs-anchor,
+.ui-dialog.palantir-dialog .ui-tabs .ui-tabs-nav li .ui-tabs-anchor {
+    padding: 8px 14px;
+    color: var(--cas-ui-muted, #52606d);
+    font-size: 14px;
+    font-weight: 600;
+}
+
+#dashboard .ui-tabs .ui-tabs-nav li:not(.ui-tabs-active):hover,
+.ui-dialog.palantir-dialog .ui-tabs .ui-tabs-nav li:not(.ui-tabs-active):hover {
+    background: rgba(16, 40, 70, .06);
+}
+
+#dashboard .ui-tabs .ui-tabs-nav li.ui-tabs-active .ui-tabs-anchor,
+.ui-dialog.palantir-dialog .ui-tabs .ui-tabs-nav li.ui-tabs-active .ui-tabs-anchor {
+    color: var(--cas-theme-primary, #114377);
+}
+
+#dashboard .ui-tabs .ui-tabs-panel,
+.ui-dialog.palantir-dialog .ui-tabs .ui-tabs-panel {
+    padding: 4px 0 0;
+    border: 0;
+    background: transparent;
+}
+
+#dashboard pre {
+    border-radius: 12px;
+    box-shadow: none;
+}
+
+#dashboard pre code {
+    border-radius: 12px;
+}
+
+#dashboard pre code,
+#dashboard pre code.border-rounded {
+    box-shadow: none !important;
+}
+
+/* ==========================================================================
+   Dialogs and the service wizard in the shared CAS look.
+
+   jQuery UI moves dialogs to the end of the body, outside #main-content, so
+   palantir-utils.js adds cas-ui and palantir-dialog to every dialog when it is
+   created. The rules below replace the Cupertino theme chrome, so they are
+   qualified enough to win over the theme; the per-dialog title accents
+   (cluster health, policy details) are restated after them.
+   ========================================================================== */
+.ui-dialog.palantir-dialog.ui-widget.ui-widget-content {
+    padding: 0;
+    overflow: hidden;
+    border: 1px solid var(--cas-ui-divider, #dfe6ee);
+    border-radius: 20px;
+    background: var(--cas-ui-surface, #fff);
+    box-shadow: 0 24px 64px rgba(16, 40, 70, .28);
+}
+
+.ui-dialog.palantir-dialog .ui-dialog-titlebar.ui-widget-header {
+    padding: 14px 64px 14px 20px;
+    border: 0;
+    border-bottom: 1px solid var(--cas-ui-divider, #dfe6ee);
+    border-radius: 0;
+    background: var(--cas-ui-surface, #fff);
+    color: var(--cas-ui-text, #1b2733);
+}
+
+.ui-dialog.palantir-dialog .ui-dialog-title {
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.ui-dialog.palantir-dialog .ui-dialog-titlebar .ui-dialog-titlebar-close.ui-button {
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+    font-size: 0;
+    text-indent: 0;
+    right: 14px;
+    width: 36px;
+    height: 36px;
+    margin-top: -18px;
+    padding: 0;
+    border: 1px solid var(--cas-ui-border, #c3ccd6);
+    border-radius: 50%;
+    background: var(--cas-ui-surface, #fff);
+}
+
+.ui-dialog.palantir-dialog .ui-dialog-titlebar .ui-dialog-titlebar-close.ui-button:hover {
+    border-color: var(--cas-ui-focus, #1678d8);
+    background: var(--cas-ui-subtle, #f3f6f9);
+}
+
+.ui-dialog.palantir-dialog .ui-dialog-titlebar-close .ui-icon.ui-icon {
+    position: static;
+    width: auto;
+    height: auto;
+    margin: 0;
+    background: none;
+    color: var(--cas-ui-text, #1b2733);
+    text-indent: 0;
+}
+
+.ui-dialog.palantir-dialog .ui-dialog-titlebar-close .ui-button-icon-space {
+    display: none;
+}
+
+.ui-dialog.palantir-dialog .ui-dialog-titlebar-close .ui-icon.ui-icon::before {
+    content: "\F0156";
+    font: normal normal normal 20px/1 "Material Design Icons";
+}
+
+.ui-dialog.palantir-dialog .ui-dialog-buttonpane.ui-widget-content {
+    margin: 0;
+    padding: 12px 20px;
+    border-top: 1px solid var(--cas-ui-divider, #dfe6ee);
+    background: var(--cas-ui-subtle, #f3f6f9);
+}
+
+.ui-dialog.palantir-dialog.cluster-member-dialog-healthy .ui-dialog-titlebar {
+    border-left: 6px solid #3f9f82;
+}
+
+.ui-dialog.palantir-dialog.cluster-member-dialog-unhealthy .ui-dialog-titlebar {
+    border-left: 6px solid var(--mdc-theme-error, #a20323);
+}
+
+.ui-dialog.palantir-dialog.authentication-policy-details-dialog-shell .ui-dialog-titlebar {
+    border-left: 6px solid #4f8fd9;
+}
+
+.ui-widget-overlay {
+    opacity: .55;
+}
+
+/* jQuery UI select menus and Tom Select fields look like the other inputs. */
+.cas-ui .ui-selectmenu-button.ui-button {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0 12px 0 16px;
+    border: 1px solid var(--cas-ui-border, #c3ccd6);
+    border-radius: 12px;
+    background: var(--cas-ui-surface, #fff);
+    color: var(--cas-ui-text, #1b2733);
+    font-family: var(--mdc-typography-font-family);
+    font-size: 15px;
+    font-weight: 500;
+    letter-spacing: normal;
+    text-transform: none;
+    box-shadow: none;
+}
+
+.cas-ui .ui-selectmenu-button.ui-button:hover,
+.cas-ui .ui-selectmenu-button.ui-button.ui-selectmenu-button-open {
+    border-color: var(--cas-ui-focus, #1678d8);
+}
+
+.cas-ui .ui-selectmenu-button .ui-selectmenu-text {
+    order: 1;
+    flex: 1 1 auto;
+    margin-right: 8px;
+    color: inherit;
+}
+
+.cas-ui .ui-selectmenu-button .ui-selectmenu-icon.ui-icon {
+    order: 2;
+    float: none;
+    position: static;
+    width: auto;
+    height: auto;
+    margin: 0;
+    background: none;
+    color: var(--cas-ui-muted, #52606d);
+    text-indent: 0;
+}
+
+.cas-ui .ui-selectmenu-button .ui-selectmenu-icon.ui-icon::before {
+    content: "\F0140";
+    font: normal normal normal 20px/1 "Material Design Icons";
+}
+
+.ui-selectmenu-menu .ui-menu {
+    padding: 4px;
+    border: 1px solid var(--cas-ui-divider, #dfe6ee);
+    border-radius: 12px;
+    background: var(--cas-ui-surface, #fff);
+    box-shadow: 0 12px 32px rgba(16, 40, 70, .16);
+}
+
+.ui-selectmenu-menu .ui-menu .ui-menu-item-wrapper {
+    padding: 8px 12px;
+    border: 0;
+    border-radius: 8px;
+    color: var(--cas-ui-text, #1b2733);
+    font-size: 14px;
+}
+
+.ui-selectmenu-menu .ui-menu .ui-menu-item-wrapper.ui-state-active {
+    margin: 0;
+    border: 0;
+    background: color-mix(in srgb, var(--cas-ui-focus, #1678d8) 10%, #fff);
+    color: var(--cas-theme-primary, #114377);
+}
+
+.cas-ui .ts-wrapper {
+    background: transparent !important;
+    box-shadow: none !important;
+}
+
+.cas-ui .ts-wrapper .ts-control,
+.cas-ui .ts-wrapper.single .ts-control {
+    min-height: 44px;
+    padding: 6px 12px !important;
+    border: 1px solid var(--cas-ui-border, #c3ccd6) !important;
+    border-radius: 12px !important;
+    background: var(--cas-ui-surface, #fff) !important;
+    box-shadow: none !important;
+}
+
+.cas-ui .ts-wrapper.focus .ts-control {
+    border-color: var(--cas-ui-focus, #1678d8) !important;
+    box-shadow: 0 0 0 3px var(--cas-ui-ring, rgba(22, 120, 216, .3)) !important;
+}
+
+.cas-ui .ts-wrapper .ts-control > div {
+    height: 28px !important;
+    border-radius: 999px !important;
+    padding: 0 10px !important;
+}
+
+.ts-dropdown {
+    border: 1px solid var(--cas-ui-divider, #dfe6ee) !important;
+    border-radius: 12px !important;
+    background: var(--cas-ui-surface, #fff) !important;
+    box-shadow: 0 12px 32px rgba(16, 40, 70, .16) !important;
+}
+
+/* Rich text description editor */
+.cas-ui .trumbowyg-box {
+    overflow: hidden;
+    border: 1px solid var(--cas-ui-border, #c3ccd6);
+    border-radius: 12px;
+}
+
+.cas-ui .trumbowyg-box .trumbowyg-button-pane {
+    border-bottom: 1px solid var(--cas-ui-divider, #dfe6ee);
+    background-color: var(--cas-ui-subtle, #f3f6f9) !important;
+}
+
+.cas-ui .trumbowyg-box .trumbowyg-button-pane::after {
+    display: none;
+}
+
+.cas-ui .trumbowyg-box .trumbowyg-button-pane button {
+    border-radius: 8px;
+}
+
+.cas-ui .trumbowyg-box .trumbowyg-button-pane button.trumbowyg-active,
+.cas-ui .trumbowyg-box .trumbowyg-button-pane button:hover {
+    background-color: color-mix(in srgb, var(--cas-ui-focus, #1678d8) 12%, #fff) !important;
+}
+
+/* Tooltips: compact and readable instead of a heavy shadowed bubble */
+.ui-tooltip {
+    padding: 8px 12px !important;
+    border: 0 !important;
+    border-radius: 10px !important;
+    /* The shorthand clears the Cupertino .ui-widget-content background image, which otherwise paints
+       a near-white gradient over the color and leaves white text on white. */
+    background: #1b2733 !important;
+    color: #fff !important;
+    font-size: 13px !important;
+    line-height: 1.45;
+    box-shadow: 0 8px 24px rgba(16, 40, 70, .24) !important;
+}
+
+/* Service wizard body */
+.registered-service-wizard-dialog [role="region"] p {
+    color: var(--cas-ui-muted, #52606d);
+    font-size: 14px;
+    line-height: 1.55;
+}
+
+.registered-service-wizard-dialog [role="region"] h3:not([id$="-header"]) {
+    margin: 18px 0 6px !important;
+    color: var(--cas-ui-text, #1b2733);
+    font-size: 15px;
+    font-weight: 600;
+}
+
+/* Row buttons: remove, add and remove-all are the same round icon buttons */
+.cas-ui .registered-service-wizard-dialog .mdc-button--inline-row,
+.cas-ui .registered-service-wizard-dialog .mdc-button--round.add-row,
+.ui-dialog.cas-ui.registered-service-wizard-dialog .mdc-button--inline-row,
+.ui-dialog.cas-ui.registered-service-wizard-dialog .mdc-button--round.add-row {
+    display: inline-grid;
+    flex: 0 0 44px;
+    place-items: center;
+    width: 44px;
+    min-width: 44px;
+    height: 44px !important;
+    min-height: 44px;
+    margin: 0 0 4px 8px !important;
+    padding: 0 !important;
+    border: 1px solid var(--cas-ui-border, #c3ccd6) !important;
+    border-radius: 50% !important;
+    background: var(--cas-ui-surface, #fff) !important;
+    color: var(--cas-theme-primary, #114377) !important;
+    box-shadow: none !important;
+}
+
+.ui-dialog.cas-ui.registered-service-wizard-dialog .mdc-button--round.add-row {
+    margin: 8px 8px 0 0 !important;
+}
+
+.ui-dialog.cas-ui.registered-service-wizard-dialog .mdc-button--inline-row,
+.ui-dialog.cas-ui.registered-service-wizard-dialog .mdc-button--round.add-row[id$="DeleteAllButton"] {
+    color: var(--cas-ui-danger, #a20323) !important;
+}
+
+.ui-dialog.cas-ui.registered-service-wizard-dialog .mdc-button--inline-row {
+    align-self: flex-end;
+}
+
+.ui-dialog.cas-ui.registered-service-wizard-dialog :is(.mdc-button--inline-row, .mdc-button--round.add-row):hover {
+    border-color: currentColor !important;
+    background: var(--cas-ui-subtle, #f3f6f9) !important;
+}
+
+.ui-dialog.cas-ui.registered-service-wizard-dialog :is(.mdc-button--inline-row, .mdc-button--round.add-row) .mdc-button__label {
+    display: grid;
+    place-items: center;
+    margin: 0;
+}
+
+.ui-dialog.cas-ui.registered-service-wizard-dialog :is(.mdc-button--inline-row, .mdc-button--round.add-row) .mdi::before {
+    font-size: 20px;
+}
+
+/* Footer: Save is the primary action, the rest are secondary */
+.ui-dialog.cas-ui .registered-service-wizard__actions {
+    gap: 10px;
+    padding: 12px 20px;
+    border-top-color: var(--cas-ui-divider, #dfe6ee);
+    background: var(--cas-ui-subtle, #f3f6f9);
+}
+
+.ui-dialog.cas-ui .registered-service-wizard__actions .mdc-button--lg {
+    width: auto;
+    min-width: 128px;
+    height: 48px;
+    margin: 0;
+    padding: 0 22px;
+}
+
+.ui-dialog.cas-ui .registered-service-wizard__actions .mdc-button__label {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.ui-dialog.cas-ui .registered-service-wizard__actions .mdc-tab__icon {
+    width: auto;
+    height: auto;
+    margin: 0;
+}
+
+.ui-dialog.cas-ui .registered-service-wizard__actions .mdc-tab__icon::before {
+    font-size: 18px;
+}
+
+.ui-dialog.cas-ui .registered-service-wizard__actions :is(#copyServiceDefinitionWizard, #validateServiceWizard, #cancelServiceWizard, #cancelService) {
+    border: 1px solid var(--cas-ui-border, #c3ccd6) !important;
+    background: var(--cas-ui-surface, #fff) !important;
+    color: var(--cas-theme-primary, #114377) !important;
+    box-shadow: none !important;
+}
+
+.ui-dialog.cas-ui .registered-service-wizard__actions :is(#cancelServiceWizard, #cancelService) {
+    color: var(--cas-ui-text, #1b2733) !important;
+}
+
+.ui-dialog.cas-ui .registered-service-wizard__actions :is(#copyServiceDefinitionWizard, #validateServiceWizard, #cancelServiceWizard, #cancelService):hover {
+    border-color: var(--cas-ui-focus, #1678d8) !important;
+    background: color-mix(in srgb, var(--cas-ui-focus, #1678d8) 8%, #fff) !important;
+}
+
+.ui-dialog.cas-ui .registered-service-wizard__actions :is(#saveServiceWizard, #saveService) {
+    order: 3;
+}
+
+.ui-dialog.cas-ui .registered-service-wizard__actions :is(#cancelServiceWizard, #cancelService) {
+    order: 2;
+}
+
+/* An open select menu sits above Tom Select fields, which carry z-index 10000. */
+.ui-selectmenu-menu.ui-selectmenu-open {
+    z-index: 10001 !important;
+}
+
+/* Menus: the New application picker and right-click menus */
+#dashboard .mdc-menu.mdc-menu-surface {
+    overflow: hidden;
+    border: 1px solid var(--cas-ui-divider, #dfe6ee);
+    border-radius: 16px;
+    background: var(--cas-ui-surface, #fff);
+    box-shadow: 0 12px 32px rgba(16, 40, 70, .16);
+}
+
+#dashboard .mdc-menu .mdc-list {
+    padding: 6px;
+}
+
+#dashboard .mdc-menu .mdc-list-item {
+    height: auto;
+    padding: 14px 16px;
+    border-radius: 12px;
+}
+
+#dashboard .mdc-menu .mdc-list-item:hover,
+#dashboard .mdc-menu .mdc-list-item:focus-within {
+    background: color-mix(in srgb, var(--cas-ui-focus, #1678d8) 6%, #fff);
+}
+
+#dashboard .mdc-menu .mdc-list-item .text-justify {
+    color: var(--cas-ui-muted, #52606d);
+    font-size: 14px;
+    line-height: 1.5;
+    text-align: start !important;
+}
+
+.context-menu-list {
+    padding: 6px;
+    border: 1px solid var(--cas-ui-divider, #dfe6ee);
+    border-radius: 12px;
+    box-shadow: 0 12px 32px rgba(16, 40, 70, .16);
+}
+
+.context-menu-list .context-menu-item {
+    border-radius: 8px;
+}
+
+.context-menu-list .context-menu-item.context-menu-hover {
+    background: color-mix(in srgb, var(--cas-ui-focus, #1678d8) 10%, #fff);
+    color: var(--cas-theme-primary, #114377);
+}
+
+/* SweetAlert prompts and confirmations */
+.swal2-popup {
+    border-radius: 20px;
+}
+
+.swal2-actions {
+    gap: 10px;
+}
+
+.swal2-actions .swal2-styled {
+    min-height: 44px;
+    margin: 0;
+    padding: 0 22px;
+    border-radius: 999px;
+    font-size: 15px;
+    font-weight: 500;
+    box-shadow: none !important;
+}
+
+.swal2-actions .swal2-styled.swal2-confirm {
+    background-color: var(--cas-theme-button-bg, #26418f);
+}
+
+.swal2-actions .swal2-styled.swal2-confirm:hover {
+    background-color: var(--cas-theme-button-bg-hover, #1678d8);
+    background-image: none;
+}
+
+.swal2-actions .swal2-styled:is(.swal2-cancel, .swal2-deny) {
+    border: 1px solid var(--cas-ui-border, #c3ccd6);
+    background: #fff;
+    color: var(--cas-ui-text, #1b2733);
+}
+
+.swal2-actions .swal2-styled:is(.swal2-cancel, .swal2-deny):hover {
+    border-color: var(--cas-ui-focus, #1678d8);
+    background: var(--cas-ui-subtle, #f3f6f9);
+}
+
+.swal2-popup :is(.swal2-select, .swal2-input, .swal2-textarea) {
+    min-height: 44px;
+    border: 1px solid var(--cas-ui-border, #c3ccd6);
+    border-radius: 12px;
+    box-shadow: none;
+    font-size: 15px;
+}
+
+/* jQuery UI dialog buttons: pill buttons, the first one is the primary action */
+.ui-dialog.palantir-dialog .ui-dialog-buttonpane .ui-dialog-buttonset {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.ui-dialog.palantir-dialog .ui-dialog-buttonpane .ui-dialog-buttonset .ui-button {
+    min-height: 44px;
+    margin: 0;
+    padding: 0 22px;
+    border: 1px solid var(--cas-ui-border, #c3ccd6);
+    border-radius: 999px;
+    background: var(--cas-ui-surface, #fff);
+    color: var(--cas-ui-text, #1b2733);
+    font-family: var(--mdc-typography-font-family);
+    font-size: 15px;
+    font-weight: 500;
+    box-shadow: none;
+}
+
+.ui-dialog.palantir-dialog .ui-dialog-buttonpane .ui-dialog-buttonset .ui-button:hover {
+    border-color: var(--cas-ui-focus, #1678d8);
+    background: color-mix(in srgb, var(--cas-ui-focus, #1678d8) 8%, #fff);
+}
+
+.ui-dialog.palantir-dialog .ui-dialog-buttonpane .ui-dialog-buttonset .ui-button:first-child {
+    border-color: var(--cas-theme-button-bg, #26418f);
+    background: var(--cas-theme-button-bg, #26418f);
+    color: #fff;
+}
+
+.ui-dialog.palantir-dialog .ui-dialog-buttonpane .ui-dialog-buttonset .ui-button:first-child:hover {
+    border-color: var(--cas-theme-button-bg-hover, #1678d8);
+    background: var(--cas-theme-button-bg-hover, #1678d8);
+}
+
+/* ==========================================================================
+   Navigation rail
+
+   Mirrors the account profile rail (.cas-account-rail in account.css): a fixed
+   100px column of icon-over-label destinations on the darkened brand color, the
+   selected one a white pill, settings and sign-out pinned to the bottom. Below
+   768px it turns into a full-screen grid opened from .palantir-sections-toggle.
+
+   Every selector carries #dashboard so it outranks the generic rail in cas.css
+   (hover-to-expand, deepskyblue/steelblue items) whatever the load order.
+   ========================================================================== */
+#dashboard nav.sidebar-navigation {
+    --palantir-rail-primary: var(--cas-theme-primary, #114377);
+    --palantir-rail-muted: color-mix(in srgb, #fff 78%, var(--palantir-rail-primary));
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    width: 100px;
+    margin: 4px 4px 4px 0;
+    padding: 12px 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    border-radius: 16px;
+    background: color-mix(in srgb, var(--palantir-rail-primary) 78%, #000);
+    white-space: normal;
+    transition: none;
+}
+
+#dashboard nav.sidebar-navigation:hover,
+#dashboard nav.sidebar-navigation:focus-within {
+    width: 100px;
+}
+
+#dashboard nav.sidebar-navigation .sidebar-navigation-head {
+    display: none;
+}
+
+#dashboard nav.sidebar-navigation ul {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    height: auto;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+#dashboard nav.sidebar-navigation ul li {
+    display: block;
+    margin: 0;
+    padding: 0;
+    border-radius: 0;
+    background: transparent;
+    transition: none;
+}
+
+#dashboard nav.sidebar-navigation ul li:hover,
+#dashboard nav.sidebar-navigation ul li:focus-within,
+#dashboard nav.sidebar-navigation ul li.active {
+    background: transparent;
+    box-shadow: none;
+}
+
+/* The divider after Applications, as the account rail has after Overview. It lives on the
+   item rather than in a list item of its own: the scripts treat every rail <li> as a destination. */
+#dashboard nav.sidebar-navigation ul li#applicationsTabButton::after {
+    content: "";
+    display: block;
+    width: 40px;
+    height: 1px;
+    margin: 6px auto 4px;
+    background: rgba(255, 255, 255, .15);
+}
+
+#dashboard nav.sidebar-navigation ul li > .sidebar-navigation-button {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    width: 84px;
+    min-height: 60px;
+    margin: 0 auto;
+    padding: 6px 4px;
+    border: 0;
+    border-radius: 12px;
+    background: transparent;
+    color: var(--palantir-rail-muted);
+    font: inherit;
+    font-family: var(--mdc-typography-font-family);
+    font-size: 11.5px;
+    line-height: 1.2;
+    text-align: center;
+    cursor: pointer;
+    -webkit-appearance: none;
+    appearance: none;
+}
+
+#dashboard nav.sidebar-navigation ul li > .sidebar-navigation-button .mdi,
+#dashboard nav.sidebar-navigation ul li.active > .sidebar-navigation-button .mdi {
+    min-width: 0;
+    color: inherit;
+    font-size: 22px;
+    line-height: 1;
+    transition: none;
+}
+
+#dashboard nav.sidebar-navigation ul li > .sidebar-navigation-button .mdi::before {
+    font-size: 22px;
+}
+
+/* Labels may wrap between words but never inside one: keep them short enough to fit 76px. */
+#dashboard nav.sidebar-navigation .sidebar-navigation-label {
+    max-width: 100%;
+    overflow-wrap: normal;
+    word-break: normal;
+    hyphens: none;
+}
+
+#dashboard nav.sidebar-navigation ul li > .sidebar-navigation-button:hover {
+    background: rgba(255, 255, 255, .1);
+    color: #fff;
+}
+
+#dashboard nav.sidebar-navigation ul li > .sidebar-navigation-button[aria-current="page"] {
+    background: #fff;
+    color: var(--palantir-rail-primary);
+    font-weight: 500;
+}
+
+#dashboard nav.sidebar-navigation :focus-visible {
+    outline: 2px solid #fff;
+    outline-offset: -2px;
+}
+
+#dashboard nav.sidebar-navigation ul li > .sidebar-navigation-button[aria-current="page"]:focus-visible {
+    outline-color: var(--palantir-rail-primary);
+}
+
+#dashboard nav.sidebar-navigation ul.sidebar-navigation-actions {
+    margin-top: auto;
+    padding-top: 8px;
+    border-top: 1px solid rgba(255, 255, 255, .15);
+}
+
+#dashboard nav.sidebar-navigation ul li.bottom {
+    margin-top: 0;
+}
+
+#dashboard .palantir-sections-toggle,
+#dashboard nav.sidebar-navigation .sidebar-navigation-close {
+    display: none;
+    align-items: center;
+    gap: 6px;
+    min-height: 36px;
+    padding: 0 14px;
+    border-radius: 999px;
+    font-family: var(--mdc-typography-font-family);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+#dashboard .palantir-sections-toggle {
+    align-self: flex-start;
+    margin: 4px 4px 8px;
+    border: 1px solid var(--cas-ui-border, #c3ccd6);
+    background: var(--cas-ui-surface, #fff);
+    color: var(--cas-theme-primary, #114377);
+}
+
+#dashboard nav.sidebar-navigation .sidebar-navigation-close {
+    display: inline-flex;
+    border: 1px solid rgba(255, 255, 255, .6);
+    background: transparent;
+    color: #fff;
+}
+
+#dashboard nav.sidebar-navigation .sidebar-navigation-close:hover {
+    border-color: #fff;
+    background: rgba(255, 255, 255, .12);
+}
+
+/* The closed overlay is hidden with visibility rather than display: the scripts count and pick
+   rail entries with jQuery's :visible, which a display:none rail would empty. */
+@media (max-width: 767px) {
+    #dashboard nav.sidebar-navigation,
+    #dashboard nav.sidebar-navigation:hover,
+    #dashboard nav.sidebar-navigation:focus-within {
+        position: fixed;
+        inset: 0;
+        z-index: 1100;
+        float: none;
+        display: block;
+        width: auto;
+        height: auto !important;
+        min-height: 0;
+        margin: 0;
+        padding: 16px;
+        border-radius: 0;
+        visibility: hidden;
+    }
+
+    #dashboard.is-nav-open nav.sidebar-navigation {
+        visibility: visible;
+    }
+
+    #dashboard nav.sidebar-navigation .sidebar-navigation-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 12px;
+        color: #fff;
+        font-family: var(--mdc-typography-font-family);
+        font-size: 16px;
+        font-weight: 500;
+    }
+
+    #dashboard nav.sidebar-navigation ul {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 8px;
+    }
+
+    #dashboard nav.sidebar-navigation ul li#applicationsTabButton::after {
+        display: none;
+    }
+
+    #dashboard nav.sidebar-navigation ul li > .sidebar-navigation-button {
+        width: 100%;
+        min-height: 72px;
+        background: rgba(255, 255, 255, .08);
+        color: #fff;
+        font-size: 13px;
+    }
+
+    #dashboard nav.sidebar-navigation ul.sidebar-navigation-actions {
+        margin-top: 8px;
+        padding-top: 0;
+        border-top: 0;
+    }
+
+    #dashboard .palantir-sections-toggle {
+        display: inline-flex;
+    }
+}
+
+@media (forced-colors: active) {
+    #dashboard nav.sidebar-navigation ul li > .sidebar-navigation-button[aria-current="page"] {
+        border: 2px solid Highlight;
+    }
+}
+
+/* Group header rows that DataTables draw callbacks insert (palantirTableGroupRow). A light brand tint
+   with brand-colored text, beating the striping and hover shading DataTables applies to body rows. */
+table.dataTable > tbody > tr.palantir-table-group-row > td,
+table.dataTable > tbody > tr.palantir-table-group-row:hover > td {
+    padding: 8px 12px;
+    border-top: 1px solid color-mix(in srgb, var(--cas-theme-primary, #114377) 20%, #fff);
+    background: color-mix(in srgb, var(--cas-theme-primary, #114377) 10%, #fff) !important;
+    box-shadow: none !important;
+    color: var(--cas-theme-primary, #114377) !important;
+    font-weight: 600;
+}
+
+/* Settings dialog tabs keep one height so the dialog does not jump while switching between them. */
+#palantir-settings-tabs .ui-tabs-panel {
+    min-height: 320px;
+}
+
+#palantirEndpoints-tab #palantirActuatorsTable {
+    width: 100% !important;
 }

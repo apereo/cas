@@ -182,6 +182,10 @@ public interface CasFeatureModule {
          */
         Authentication,
         /**
+         * AI and machine learning.
+         */
+        AI,
+        /**
          * MFA.
          */
         MultifactorAuthentication,

@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.Ordered;
@@ -49,9 +50,12 @@ public abstract class AbstractServiceRegistry implements ServiceRegistry {
     }
 
     protected RegisteredService invokeServiceRegistryListenerPostLoad(final RegisteredService registeredService) {
+        var result = registeredService;
         if (serviceRegistryListeners != null) {
-            serviceRegistryListeners.forEach(listener -> listener.postLoad(registeredService));
+            for (val listener : serviceRegistryListeners) {
+                result = listener.postLoad(result);
+            }
         }
-        return registeredService;
+        return result;
     }
 }

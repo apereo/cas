@@ -90,14 +90,16 @@ public class DefaultAcmeCertificateManager implements AcmeCertificateManager {
     }
 
     private Order getCertificateOrder(final Collection<String> domains, final CSRBuilder csrb,
-                                      final Account acct) throws Exception {
+                                      final Account acct)
+            throws Exception {
         val order = acct.newOrder().domains(domains).create();
         order.getAuthorizations().forEach(Unchecked.consumer(this::authorize));
         return locator.execute(order, csrb);
     }
 
     private void fetchStatusAndUpdate(final AcmeJsonResource resource,
-                                      final Supplier<Status> statusSupplier) throws Exception {
+                                      final Supplier<Status> statusSupplier)
+            throws Exception {
         val acme = casProperties.getAcme();
         var attempts = acme.getRetryAttempts();
         val timeout = Beans.newDuration(acme.getRetryInternal()).toMillis();

@@ -53,7 +53,8 @@ public class SyncopeAuthenticationHandler extends AbstractUsernamePasswordAuthen
 
     @Override
     protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(
-        final UsernamePasswordCredential credential, @Nullable final String originalPassword) throws Throwable {
+        final UsernamePasswordCredential credential, @Nullable final String originalPassword)
+            throws Throwable {
         val result = authenticateSyncopeUser(credential);
         if (result.isPresent()) {
             val user = result.get();

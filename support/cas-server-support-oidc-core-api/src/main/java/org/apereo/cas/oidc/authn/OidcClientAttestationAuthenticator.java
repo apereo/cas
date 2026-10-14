@@ -242,7 +242,8 @@ public class OidcClientAttestationAuthenticator implements Authenticator {
      * @throws Throwable the throwable
      */
     protected void verifyProofOfPossession(final WebContext webContext, final String proofOfPossession,
-                                           final JWK key, final String clientId) throws Throwable {
+                                           final JWK key, final String clientId)
+            throws Throwable {
         val signedJwt = SignedJWT.parse(proofOfPossession);
         verifyHeader(signedJwt, CLIENT_ATTESTATION_POP_TYPE);
         verifySignature(signedJwt, key);

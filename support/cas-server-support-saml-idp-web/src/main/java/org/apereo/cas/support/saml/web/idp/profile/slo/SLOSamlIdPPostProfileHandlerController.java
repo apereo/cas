@@ -36,7 +36,8 @@ public class SLOSamlIdPPostProfileHandlerController extends AbstractSamlSLOProfi
     @PostMapping(path = SamlIdPConstants.ENDPOINT_SAML2_SLO_PROFILE_POST)
     @Operation(summary = "Handle SAML2 SLO POST Profile Request")
     protected void handleSaml2ProfileSLOPostRequest(final HttpServletResponse response,
-                                                    final HttpServletRequest request) throws Throwable {
+                                                    final HttpServletRequest request)
+            throws Throwable {
         val decoder = getConfigurationContext().getSamlMessageDecoders().getInstance(HttpMethod.POST);
         handleSloProfileRequest(response, request, decoder, SAMLConstants.SAML2_POST_BINDING_URI);
     }

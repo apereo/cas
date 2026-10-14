@@ -87,23 +87,6 @@ public class CosmosDbServiceRegistry extends AbstractServiceRegistry {
     }
 
     @Override
-    public RegisteredService findServiceBy(final String id) {
-        val services = new ArrayList<RegisteredService>();
-        val queryOptions = new CosmosQueryRequestOptions();
-        LOGGER.trace("Loading registered service by [{}] from container [{}]", id, container.getId());
-        val query = String.format("SELECT * FROM %s r WHERE r.serviceId LIKE '%s'", container.getId(), '%' + id + '%');
-        val items = container.queryItems(query, queryOptions, CosmosDbDocument.class);
-        items.iterableByPage()
-            .forEach(response -> services.addAll(response.getResults()
-                .stream()
-                .map(this::getRegisteredServiceFromDocumentBody)
-                .sorted()
-                .filter(r -> r.matches(id))
-                .peek(this::invokeServiceRegistryListenerPostLoad).toList()));
-        return services.isEmpty() ? null : services.getFirst();
-    }
-
-    @Override
     public RegisteredService findServiceById(final long id) {
         try {
             val key = String.valueOf(id);

@@ -18,6 +18,7 @@ import org.apereo.cas.oidc.vc.issuer.enc.OidcVerifiableCredentialEncoder;
 import org.apereo.cas.oidc.vc.issuer.enc.OidcVerifiableCredentialEncoderFactory;
 import org.apereo.cas.oidc.vc.issuer.enc.OidcVerifiableCredentialJwtVcJsonEncoder;
 import org.apereo.cas.oidc.vc.issuer.enc.OidcVerifiableCredentialJwtVcJsonLdEncoder;
+import org.apereo.cas.oidc.vc.issuer.enc.OidcVerifiableCredentialMsoMdocEncoder;
 import org.apereo.cas.oidc.vc.issuer.encryption.OidcVerifiableCredentialDefaultEncryptionService;
 import org.apereo.cas.oidc.vc.issuer.encryption.OidcVerifiableCredentialEncryptionService;
 import org.apereo.cas.oidc.vc.issuer.metadata.OidcCredentialIssuerMetadataService;
@@ -114,6 +115,14 @@ class OidcVerifiableCredentialsIssuerConfiguration {
     public OidcVerifiableCredentialEncoder oidcVerifiableCredentialJwtVcJsonLdEncoder(
         @Qualifier(OidcConfigurationContext.BEAN_NAME) final OidcConfigurationContext oidcConfigurationContext) {
         return new OidcVerifiableCredentialJwtVcJsonLdEncoder(oidcConfigurationContext);
+    }
+
+    @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    @ConditionalOnMissingBean(name = "oidcVerifiableCredentialMsoMdocEncoder")
+    public OidcVerifiableCredentialEncoder oidcVerifiableCredentialMsoMdocEncoder(
+        @Qualifier(OidcConfigurationContext.BEAN_NAME) final OidcConfigurationContext oidcConfigurationContext) {
+        return new OidcVerifiableCredentialMsoMdocEncoder(oidcConfigurationContext);
     }
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

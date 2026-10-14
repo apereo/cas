@@ -78,7 +78,8 @@ class UniversalPromptDuoSecurityAuthenticationServiceTests {
     }
 
     private static UniversalPromptDuoSecurityAuthenticationService buildAuthenticationService(
-        final Token token, final DuoSecurityMultifactorAuthenticationProperties duoProperties) throws DuoException {
+        final Token token, final DuoSecurityMultifactorAuthenticationProperties duoProperties)
+            throws DuoException {
         val duoClient = mock(Client.class);
         when(duoClient.exchangeAuthorizationCodeFor2FAResult(anyString(), anyString())).thenReturn(token);
         val client = mock(DuoSecurityClient.class);

@@ -16,9 +16,12 @@ import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20TokenGeneratedResult;
 import org.apereo.cas.ticket.OAuth20Token;
 import org.apereo.cas.ticket.Ticket;
+import org.apereo.cas.ticket.TransientSessionTicket;
+import org.apereo.cas.ticket.TransientSessionTicketFactory;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.ticket.code.OAuth20Code;
 import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshToken;
+import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.DigestUtils;
@@ -26,6 +29,7 @@ import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.web.flow.CasWebflowConstants;
+import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.oauth2.sdk.client.RedirectURIValidator;
 import com.nimbusds.oauth2.sdk.token.DPoPTokenError;
 import lombok.experimental.UtilityClass;
@@ -60,6 +64,11 @@ import java.security.cert.X509Certificate;
 @Slf4j
 @UtilityClass
 public class OAuth20Utils {
+    /**
+     * Property of the redeemed-code record that lists the tokens issued from the code.
+     */
+    public static final String REDEEMED_CODE_TOKENS = "oauthTokensIssuedFromCode";
+
     private static final JsonMapper MAPPER = JacksonObjectMapperFactory.builder()
         .singleArrayElementUnwrapped(true).build().toJsonMapper();
 
@@ -112,16 +121,30 @@ public class OAuth20Utils {
 
     /**
      * The answer of a protected resource that requires the server-provided nonce in DPoP proofs (RFC 9449, section 9):
-     * {@code 401} with a {@code WWW-Authenticate: DPoP} challenge carrying {@code use_dpop_nonce}. The fresh nonce is already
-     * in the {@code DPoP-Nonce} header of the response.
+     * {@code 401} with a {@code WWW-Authenticate: DPoP} challenge carrying {@code use_dpop_nonce} and the accepted
+     * algorithms. The fresh nonce is already in the {@code DPoP-Nonce} header of the response.
      *
+     * @param algorithms the JWS algorithms accepted for DPoP proofs
      * @return the response entity
      */
-    public static ResponseEntity useDPoPNonceResponse() {
-        val error = DPoPTokenError.USE_DPOP_NONCE;
+    public static ResponseEntity useDPoPNonceResponse(final Set<JWSAlgorithm> algorithms) {
+        val error = DPoPTokenError.USE_DPOP_NONCE.setJWSAlgorithms(algorithms.isEmpty() ? null : algorithms);
         return ResponseEntity.status(error.getHTTPStatusCode())
             .header(HttpHeaders.WWW_AUTHENTICATE, error.toWWWAuthenticateHeader())
             .body(getErrorResponseBody(error.getCode(), error.getDescription()));
+    }
+
+    /**
+     * The {@code algs} parameter of a {@code DPoP} challenge, which lists the JWS algorithms accepted for DPoP proofs
+     * (RFC 9449, section 7.1).
+     *
+     * @param algorithms the accepted algorithms
+     * @return the parameter, or empty when no algorithm is accepted
+     */
+    public static Optional<String> toDPoPAlgorithmsChallengeParameter(final Collection<JWSAlgorithm> algorithms) {
+        return algorithms.isEmpty()
+            ? Optional.empty()
+            : Optional.of("algs=\"%s\"".formatted(algorithms.stream().map(JWSAlgorithm::getName).collect(Collectors.joining(" "))));
     }
 
     /**
@@ -352,6 +375,84 @@ public class OAuth20Utils {
         return token != null ? token.getClaims().getOrDefault("userinfo", new HashMap<>()).keySet() : new HashSet<>();
     }
 
+    /**
+     * Get the OAuth token named in the current request. The token is read from the ticket registry once per request
+     * and reused by every authenticator, validator and extractor that handles the same request.
+     *
+     * @param <T>            the token type
+     * @param context        the web context
+     * @param ticketRegistry the ticket registry
+     * @param tokenId        the token id
+     * @param clazz          the expected token type
+     * @return the token, or null if it cannot be found or is of another type
+     */
+    public static <T extends OAuth20Token> @Nullable T getRequestedOAuthToken(final WebContext context,
+                                                                              final TicketRegistry ticketRegistry,
+                                                                              final String tokenId,
+                                                                              final Class<T> clazz) {
+        if (StringUtils.isBlank(tokenId)) {
+            return null;
+        }
+        val attributeName = OAuth20Token.class.getName() + '.' + tokenId;
+        val token = context.getRequestAttribute(attributeName)
+            .or(() -> Optional.ofNullable(FunctionUtils.doAndHandle(() -> ticketRegistry.getTicket(tokenId, OAuth20Token.class))))
+            .orElse(null);
+        if (token != null) {
+            context.setRequestAttribute(attributeName, token);
+        }
+        return clazz.isInstance(token) ? clazz.cast(token) : null;
+    }
+
+    /**
+     * The id of the ticket that records the tokens issued from an authorization code once it is redeemed.
+     * The code itself is removed when it is redeemed, so this record is what a later presentation of the code finds.
+     *
+     * @param code the authorization code
+     * @return the record ticket id
+     */
+    public static String getRedeemedCodeTicketId(final String code) {
+        return TransientSessionTicketFactory.normalizeTicketId(DigestUtils.sha256(code));
+    }
+
+    /**
+     * Revoke the tokens issued from an authorization code that is presented again after it was redeemed
+     * (RFC 6749, section 4.1.2): the access and refresh tokens recorded when the code was redeemed, and the access
+     * tokens later issued from that refresh token.
+     *
+     * @param ticketRegistry the ticket registry
+     * @param code           the authorization code presented again
+     * @return the number of tokens revoked
+     */
+    public static long revokeTokensIssuedFromCode(final TicketRegistry ticketRegistry, final String code) {
+        if (StringUtils.isBlank(code)) {
+            return 0;
+        }
+        return FunctionUtils.doAndHandle(() -> revokeRecordedTokens(ticketRegistry, code), e -> {
+            LOGGER.warn("Unable to revoke tokens issued from authorization code [{}]: [{}]", code, e.getMessage());
+            return 0L;
+        }).get();
+    }
+
+    private static long revokeRecordedTokens(final TicketRegistry ticketRegistry, final String code) throws Exception {
+        val recordId = getRedeemedCodeTicketId(code);
+        if (!(ticketRegistry.getTicket(recordId) instanceof final TransientSessionTicket redeemedCode)) {
+            return 0L;
+        }
+        val tokens = Objects.requireNonNullElseGet(redeemedCode.getProperty(REDEEMED_CODE_TOKENS, List.class), List::of);
+        var revoked = 0L;
+        for (val token : tokens) {
+            val tokenId = token.toString();
+            if (ticketRegistry.getTicket(tokenId) instanceof final OAuth20RefreshToken refreshToken) {
+                for (val accessTokenId : refreshToken.getAccessTokens()) {
+                    revoked += ticketRegistry.deleteTicket(accessTokenId);
+                }
+            }
+            revoked += ticketRegistry.deleteTicket(tokenId);
+        }
+        ticketRegistry.deleteTicket(recordId);
+        LOGGER.warn("Authorization code [{}] was presented again after it was redeemed; revoked [{}] token(s) issued from it", code, revoked);
+        return revoked;
+    }
 
     /**
      * Gets authenticated user profile.
@@ -376,6 +477,20 @@ public class OAuth20Utils {
         return registeredService.getClientSecrets() != null
             && !registeredService.getClientSecrets().isEmpty()
             && registeredService.getClientSecrets().stream().anyMatch(secret -> StringUtils.isNotBlank(secret.getValue()));
+    }
+
+    /**
+     * A public client has no means of authenticating at the token endpoint: no client secret, and no token endpoint
+     * authentication method other than {@code none}.
+     *
+     * @param registeredService the registered service
+     * @return true when the client is public
+     */
+    public boolean isPublicClient(final OAuthRegisteredService registeredService) {
+        val authenticationMethod = registeredService.getTokenEndpointAuthenticationMethod();
+        return !doesServiceNeedAuthentication(registeredService)
+            && (StringUtils.isBlank(authenticationMethod)
+            || Strings.CI.equals(authenticationMethod, OAuth20ClientAuthenticationMethods.NONE.getType()));
     }
 
     /**

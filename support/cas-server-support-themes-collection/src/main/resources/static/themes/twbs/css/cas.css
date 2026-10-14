@@ -46,3 +46,127 @@ label.mdc-text-field {
 .caps-check .btn {
     align-self: end;
 }
+
+/* Header panels: notifications modal and resources offcanvas */
+.cas-notification-toggle {
+    position: relative;
+}
+
+.notifications-count:not(:empty) {
+    margin-left: .35rem;
+    padding: .1rem .4rem;
+    border-radius: 1rem;
+    background: var(--bs-danger);
+    color: #fff;
+    font-size: .75rem;
+    font-weight: 600;
+}
+
+:is(.cas-notification-head, .cas-drawer-brand, .cas-notification-message, .cas-drawer-link, .cas-drawer-footer) {
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+}
+
+.cas-notification-head-icon,
+.cas-drawer-mark,
+.cas-notification-icon,
+.cas-drawer-icon {
+    display: grid;
+    flex: 0 0 2.5rem;
+    place-items: center;
+    height: 2.5rem;
+    border-radius: .75rem;
+    background: var(--bs-primary-bg-subtle);
+    color: var(--bs-primary);
+}
+
+.cas-notification-head .modal-title,
+.cas-drawer .offcanvas-title {
+    font-size: 1.15rem;
+    font-weight: 600;
+}
+
+.cas-notification-summary,
+.cas-drawer .mdc-drawer__subtitle,
+.cas-drawer-desc {
+    margin: 0;
+    color: var(--bs-secondary-color);
+    font-size: .85rem;
+}
+
+.cas-notification-list {
+    display: flex;
+    flex-direction: column;
+    gap: .75rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.cas-notification-message {
+    align-items: flex-start;
+    padding: .875rem 1rem;
+    border: 1px solid var(--bs-warning-border-subtle);
+    border-left-width: .25rem;
+    border-radius: .75rem;
+    background: var(--bs-warning-bg-subtle);
+}
+
+.cas-notification-message.is-danger {
+    border-color: var(--bs-danger-border-subtle);
+    background: var(--bs-danger-bg-subtle);
+}
+
+.cas-notification-message .cas-notification-icon {
+    background: var(--bs-body-bg);
+    color: var(--bs-warning-text-emphasis);
+}
+
+.cas-notification-message.is-danger .cas-notification-icon {
+    color: var(--bs-danger-text-emphasis);
+}
+
+.cas-notification-body h3 {
+    margin-bottom: .25rem;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.cas-notification-body p {
+    margin: 0;
+    font-size: .9rem;
+}
+
+.cas-drawer-section {
+    margin: 1rem .75rem .5rem;
+    color: var(--bs-secondary-color);
+    font-size: .75rem;
+    font-weight: 600;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+}
+
+.cas-drawer .list-group-item.cas-drawer-link {
+    border: 0;
+    border-radius: .75rem;
+}
+
+.cas-drawer-text {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.cas-drawer-label {
+    font-weight: 600;
+}
+
+.cas-drawer-footer {
+    gap: .4rem;
+    padding: .875rem 1rem;
+    border-top: 1px solid var(--bs-border-color);
+    color: var(--bs-secondary-color);
+    font-size: .85rem;
+}

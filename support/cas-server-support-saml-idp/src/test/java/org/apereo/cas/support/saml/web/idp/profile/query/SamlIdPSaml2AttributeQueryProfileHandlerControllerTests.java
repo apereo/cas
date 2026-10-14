@@ -316,7 +316,8 @@ class SamlIdPSaml2AttributeQueryProfileHandlerControllerTests {
         }
 
         private AttributeQuery getSignedAttributeQuery(final String nameIdFormat,
-                                                       final String nameIdValue) throws Exception {
+                                                       final String nameIdValue)
+                throws Exception {
             val query = getAttributeQuery(nameIdFormat, nameIdValue);
             return signSamlObject(new MockHttpServletRequest(), new MockHttpServletResponse(),
                 query, samlRegisteredService, SAMLConstants.SAML2_SOAP11_BINDING_URI, query.getDestination());

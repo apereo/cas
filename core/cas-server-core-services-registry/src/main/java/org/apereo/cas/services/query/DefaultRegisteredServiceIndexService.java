@@ -67,8 +67,12 @@ public class DefaultRegisteredServiceIndexService extends BaseRegisteredServiceI
     @Override
     public void indexServices(final Collection<RegisteredService> services) {
         if (isEnabled()) {
-            indexedRegisteredServices.clear();
-            indexedRegisteredServices.addAll(services);
+            services.forEach(this::indexService);
+            val serviceIds = services.stream().map(RegisteredService::getId).collect(Collectors.toSet());
+            val staleServices = indexedRegisteredServices.stream()
+                .filter(service -> !serviceIds.contains(service.getId()))
+                .toList();
+            indexedRegisteredServices.removeAll(staleServices);
         }
     }
 
@@ -95,13 +99,13 @@ public class DefaultRegisteredServiceIndexService extends BaseRegisteredServiceI
 
             if (serviceQueries.size() == 1) {
                 try (val results = indexedRegisteredServices.retrieve(serviceQueries.getFirst())) {
-                    return results.stream();
+                    return results.stream().toList().stream();
                 }
             }
             val subQueries = serviceQueries.subList(2, serviceQueries.size());
             val query = QueryFactory.and(serviceQueries.getFirst(), serviceQueries.get(1), (Collection) subQueries);
             try (val results = indexedRegisteredServices.retrieve(query)) {
-                return results.stream();
+                return results.stream().toList().stream();
             }
         }
         return Stream.empty();

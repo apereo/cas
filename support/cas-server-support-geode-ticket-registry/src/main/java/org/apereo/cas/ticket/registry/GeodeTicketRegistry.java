@@ -15,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.geode.cache.EntryNotFoundException;
 import org.apache.geode.cache.query.SelectResults;
 import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.DisposableBean;
@@ -89,12 +90,22 @@ public class GeodeTicketRegistry extends AbstractTicketRegistry implements Dispo
     }
 
     @Override
-    public long deleteSingleTicket(final Ticket ticketId) {
+    public long deleteSingleTicket(final Ticket ticket) {
+        return deleteSingleTicket(ticket.getId());
+    }
+
+    @Override
+    public long deleteSingleTicket(final String ticketId) {
         val metadata = ticketCatalog.find(ticketId);
         if (metadata != null) {
             val cache = getCacheFromMetadata(metadata);
-            val encTicketId = digestIdentifier(ticketId.getId());
-            cache.region().destroy(encTicketId);
+            val encTicketId = digestIdentifier(ticketId);
+            try {
+                cache.region().destroy(encTicketId);
+            } catch (final EntryNotFoundException e) {
+                LOGGER.debug("Ticket [{}] is already removed from [{}]", encTicketId, cache.region().getName());
+                return 0;
+            }
         }
         return 1;
     }
@@ -248,7 +259,8 @@ public class GeodeTicketRegistry extends AbstractTicketRegistry implements Dispo
     }
 
     private Integer countTicketsFor(final Class<? extends Ticket> clazz,
-                                    final String where, final Object[] parameters) throws Exception {
+                                    final String where, final Object[] parameters)
+            throws Exception {
         val metadata = ticketCatalog.findTicketDefinition(clazz).orElseThrow();
         val cache = getCacheFromMetadata(metadata);
         val queryString = "SELECT COUNT(t.id) FROM /%s t WHERE %s"

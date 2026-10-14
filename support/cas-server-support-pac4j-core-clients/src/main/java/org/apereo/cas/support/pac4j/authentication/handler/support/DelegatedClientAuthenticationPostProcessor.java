@@ -70,7 +70,8 @@ public class DelegatedClientAuthenticationPostProcessor implements Authenticatio
     }
 
     protected void collectAuthenticationContext(final AuthenticationBuilder builder,
-                                                final AuthenticationTransaction transaction) throws Throwable {
+                                                final AuthenticationTransaction transaction)
+            throws Throwable {
         val request = HttpRequestUtils.getHttpServletRequestFromRequestAttributes();
         val response = HttpRequestUtils.getHttpServletResponseFromRequestAttributes();
 

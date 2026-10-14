@@ -72,13 +72,18 @@ async function expectNonceRequired(url, params, headers, status) {
         throw `Operation failed: ${error}`;
     });
 
-    const profileNonce = await expectNonceRequired(`${profileUrl}?token=${accessToken}`, "",
-        {"DPoP": await buildProof(privateKeyPem, publicJwk, profileUrl, undefined, accessToken)}, 401);
-    await cas.doPost(`${profileUrl}?token=${accessToken}`, "",
-        {"DPoP": await buildProof(privateKeyPem, publicJwk, profileUrl, profileNonce, accessToken)}, (res) => {
-            assert(res.data.sub !== undefined);
-        }, (error) => {
-            throw `Operation failed: ${error}`;
-        });
+    const authorization = `DPoP ${accessToken}`;
+    const profileNonce = await expectNonceRequired(profileUrl, "", {
+        "Authorization": authorization,
+        "DPoP": await buildProof(privateKeyPem, publicJwk, profileUrl, undefined, accessToken)
+    }, 401);
+    await cas.doPost(profileUrl, "", {
+        "Authorization": authorization,
+        "DPoP": await buildProof(privateKeyPem, publicJwk, profileUrl, profileNonce, accessToken)
+    }, (res) => {
+        assert(res.data.sub !== undefined);
+    }, (error) => {
+        throw `Operation failed: ${error}`;
+    });
     await cas.closeBrowser(browser);
 })();

@@ -35,7 +35,8 @@ public class SamlIdPObjectSignatureValidator extends SamlObjectSignatureValidato
 
     @Override
     protected RoleDescriptorResolver getRoleDescriptorResolver(final MetadataResolver resolver, final MessageContext context,
-                                                               final SignableSAMLObject profileRequest) throws Exception {
+                                                               final SignableSAMLObject profileRequest)
+            throws Exception {
 
         val idp = casProperties.getAuthn().getSamlIdp();
         return SamlIdPUtils.getRoleDescriptorResolver(casSamlIdPMetadataResolver, idp.getMetadata().getCore().isRequireValidMetadata());

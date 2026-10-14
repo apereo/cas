@@ -26,7 +26,8 @@ public class SamlIdPMetadataCredentialResolver extends MetadataCredentialResolve
     @Override
     protected Iterable<RoleDescriptor> getRoleDescriptors(
         final CriteriaSet criteriaSet, @NonNull final String entityID,
-        @NonNull final QName role, final String protocol) throws ResolverException {
+        @NonNull final QName role, final String protocol)
+            throws ResolverException {
         return Objects.requireNonNull(getRoleDescriptorResolver()).resolve(criteriaSet);
     }
 }

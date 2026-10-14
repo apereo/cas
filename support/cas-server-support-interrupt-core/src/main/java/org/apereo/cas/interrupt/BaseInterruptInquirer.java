@@ -23,7 +23,8 @@ public abstract class BaseInterruptInquirer implements InterruptInquirer {
                                            final RegisteredService registeredService,
                                            final Service service,
                                            final Credential credential,
-                                           final RequestContext requestContext) throws Throwable {
+                                           final RequestContext requestContext)
+            throws Throwable {
         if (shouldSkipInterruptForRegisteredService(registeredService)) {
             return InterruptResponse.none();
         }
@@ -49,5 +50,6 @@ public abstract class BaseInterruptInquirer implements InterruptInquirer {
                                                          RegisteredService registeredService,
                                                          Service service,
                                                          Credential credential,
-                                                         RequestContext requestContext) throws Throwable;
+                                                         RequestContext requestContext)
+            throws Throwable;
 }

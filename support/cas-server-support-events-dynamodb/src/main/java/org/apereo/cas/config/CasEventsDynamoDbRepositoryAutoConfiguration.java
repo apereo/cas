@@ -52,7 +52,8 @@ public class CasEventsDynamoDbRepositoryAutoConfiguration {
     public DynamoDbCasEventsFacilitator dynamoDbCasEventsFacilitator(
         @Qualifier("dynamoDbEventRepositoryClient")
         final DynamoDbClient dynamoDbEventRepositoryClient,
-        final CasConfigurationProperties casProperties) throws Exception {
+        final CasConfigurationProperties casProperties)
+            throws Exception {
         val db = casProperties.getEvents().getDynamoDb();
         val facilitator = new DynamoDbCasEventsFacilitator(db, dynamoDbEventRepositoryClient);
         if (!db.isPreventTableCreationOnStartup()) {

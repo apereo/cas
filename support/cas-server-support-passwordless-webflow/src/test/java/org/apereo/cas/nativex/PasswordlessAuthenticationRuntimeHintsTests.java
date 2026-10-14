@@ -1,6 +1,7 @@
 package org.apereo.cas.nativex;
 
 import module java.base;
+import org.apereo.cas.api.PasswordlessAuthenticationRequest;
 import org.apereo.cas.api.PasswordlessUserAccount;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -18,9 +19,11 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Native")
 class PasswordlessAuthenticationRuntimeHintsTests {
     @Test
-    void verifyHints() {
+    void verifyHints() throws Exception {
         val hints = new RuntimeHints();
         new PasswordlessAuthenticationRuntimeHints().registerHints(hints, getClass().getClassLoader());
         assertTrue(RuntimeHintsPredicates.reflection().onType(PasswordlessUserAccount.class).test(hints));
+        assertTrue(RuntimeHintsPredicates.reflection()
+            .onMethodInvocation(PasswordlessAuthenticationRequest.class.getMethod("getUsername")).test(hints));
     }
 }

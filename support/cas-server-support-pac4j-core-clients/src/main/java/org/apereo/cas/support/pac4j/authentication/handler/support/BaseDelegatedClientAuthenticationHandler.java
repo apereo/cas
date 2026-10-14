@@ -50,7 +50,8 @@ public abstract class BaseDelegatedClientAuthenticationHandler extends AbstractP
     protected AuthenticationHandlerExecutionResult createResult(final ClientCredential credentials,
                                                                 final UserProfile profile,
                                                                 final BaseClient client,
-                                                                final Service service) throws Throwable {
+                                                                final Service service)
+            throws Throwable {
         if (profile == null) {
             throw new FailedLoginException("Authentication did not produce a user profile for: " + credentials);
         }
@@ -74,7 +75,8 @@ public abstract class BaseDelegatedClientAuthenticationHandler extends AbstractP
     }
 
     protected Principal finalizeAuthenticationPrincipal(final Principal initialPrincipal, final BaseClient client,
-                                                        final ClientCredential credentials, final Service service) throws Throwable {
+                                                        final ClientCredential credentials, final Service service)
+            throws Throwable {
         return initialPrincipal;
     }
 
@@ -82,7 +84,8 @@ public abstract class BaseDelegatedClientAuthenticationHandler extends AbstractP
                                                                                        final Principal principal,
                                                                                        final UserProfile profile,
                                                                                        final BaseClient client,
-                                                                                       final Service service) throws Throwable {
+                                                                                       final Service service)
+            throws Throwable {
         preFinalizeAuthenticationHandlerResult(credentials, principal, profile, client, service);
         val result = createHandlerResult(credentials, principal, new ArrayList<>());
         return postFinalizeAuthenticationHandlerResult(result, credentials, principal, client, service);
@@ -98,7 +101,8 @@ public abstract class BaseDelegatedClientAuthenticationHandler extends AbstractP
 
     protected void preFinalizeAuthenticationHandlerResult(final ClientCredential credentials, final Principal principal,
                                                           final UserProfile profile, final BaseClient client,
-                                                          final Service service) throws Throwable {
+                                                          final Service service)
+            throws Throwable {
     }
 
     protected String determinePrincipalIdFrom(final UserProfile profile, final BaseClient client) {

@@ -95,7 +95,8 @@ class CasCoreAuthenticationSupportConfiguration {
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties,
             @Qualifier(ServicesManager.BEAN_NAME)
-            final ServicesManager servicesManager) throws Exception {
+            final ServicesManager servicesManager)
+                throws Exception {
             return BeanSupplier.of(AuthenticationHandlerResolver.class)
                 .when(BeanCondition.on("cas.authn.core.groovy-authentication-resolution.location").exists()
                     .given(applicationContext.getEnvironment()))
@@ -111,7 +112,8 @@ class CasCoreAuthenticationSupportConfiguration {
         @ConditionalOnMissingBean(name = "byCredentialSourceAuthenticationHandlerResolver")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AuthenticationHandlerResolver byCredentialSourceAuthenticationHandlerResolver(
-            final ConfigurableApplicationContext applicationContext) throws Exception {
+            final ConfigurableApplicationContext applicationContext)
+                throws Exception {
             return BeanSupplier.of(AuthenticationHandlerResolver.class)
                 .when(BeanCondition.on("cas.authn.policy.source-selection-enabled").isTrue().given(applicationContext.getEnvironment()))
                 .supply(ByCredentialSourceAuthenticationHandlerResolver::new)

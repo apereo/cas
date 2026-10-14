@@ -35,7 +35,8 @@ public class ProxyValidateController extends AbstractServiceValidateController {
             @Parameter(name = "ticket", description = "The service ticket identifier")
         })
     public ModelAndView handleRequestInternal(final HttpServletRequest request,
-                                              final HttpServletResponse response) throws Exception {
+                                              final HttpServletResponse response)
+            throws Exception {
         return getServiceValidateConfigurationContext().getCasProperties().getSso().isProxyAuthnEnabled()
             ? super.handleRequestInternal(request, response)
             : null;

@@ -20,8 +20,8 @@
 <main class="container mt-3 mb-3">
     <div layout:fragment="content" id="passkeyUpgrade">
         <div id="passkeyUpgradePanel" style="max-width: 40rem"
-             class="d-flex justify-content-center flex-column align-items-center mdc-card card p-4 m-auto w-100">
-            <span class="mdi mdi-fingerprint mdi-48px" style="color: var(--cas-theme-primary)" aria-hidden="true"></span>
+             class="d-flex justify-content-center flex-column align-items-center mdc-card card p-4 m-auto w-100 cas-hero">
+            <span class="cas-hero-icon is-pulsing" aria-hidden="true"><i class="mdi mdi-fingerprint"></i></span>
             <h2 id="passkeyUpgradeTitle" class="text-center" th:utext="#{screen.authentication.webauthn.upgrade.title}">
                 Finishing your sign-in
             </h2>

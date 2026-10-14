@@ -541,8 +541,11 @@ class HeimdallAuthorizationControllerTests {
 
     @Test
     void verifyAuthZenMissingAuthentication() throws Throwable {
+        val algs = String.join(" ", casProperties.getAuthn().getOidc().getDiscovery().getDpopSigningAlgValuesSupported());
         mockMvc.perform(post("/heimdall/authzen").contentType(MediaType.APPLICATION_JSON).content(authZenRequest().toJson()))
-            .andExpect(status().isUnauthorized()).andExpect(header().exists(HttpHeaders.WWW_AUTHENTICATE));
+            .andExpect(status().isUnauthorized())
+            .andExpect(header().stringValues(HttpHeaders.WWW_AUTHENTICATE,
+                org.hamcrest.Matchers.hasItem("%s algs=\"%s\"".formatted(OAuth20Constants.TOKEN_TYPE_DPOP, algs))));
     }
 
     @Test
@@ -683,7 +686,8 @@ class HeimdallAuthorizationControllerTests {
         "document,doc-9,can_read,false"
     })
     void verifyAuthZenResourcesAcrossNamespaces(final String type, final String id,
-                                                final String action, final boolean decision) throws Throwable {
+                                                final String action, final boolean decision)
+            throws Throwable {
         val request = authZenRequest()
             .withResource(AuthZenResource.builder().type(type).id(id).build())
             .withAction(AuthZenAction.builder().name(action).build());
@@ -827,7 +831,8 @@ class HeimdallAuthorizationControllerTests {
         "unguarded,anything,can_read,no_policies"
     })
     void verifyAuthZenDecisionContext(final String type, final String id, final String action,
-                                      final @Nullable String reason) throws Throwable {
+                                      final @Nullable String reason)
+            throws Throwable {
         val request = authZenRequest()
             .withResource(AuthZenResource.builder().type(type).id(id).build())
             .withAction(AuthZenAction.builder().name(action).build());
@@ -1019,6 +1024,8 @@ class HeimdallAuthorizationControllerTests {
                     .andExpect(status().isUnauthorized())
                     .andExpect(header().string(HttpHeaders.WWW_AUTHENTICATE,
                         org.hamcrest.Matchers.containsString("error=\"" + OAuth20Constants.USE_DPOP_NONCE + '"')))
+                    .andExpect(header().string(HttpHeaders.WWW_AUTHENTICATE, org.hamcrest.Matchers.containsString("algs=\"%s\"".formatted(
+                        String.join(" ", casProperties.getAuthn().getOidc().getDiscovery().getDpopSigningAlgValuesSupported())))))
                     .andReturn().getResponse().getHeader(OAuth20Constants.DPOP_NONCE);
                 assertNotNull(nonce);
                 mockMvc.perform(authZenRequest("DPoP " + token.getId())

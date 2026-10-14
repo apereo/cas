@@ -136,7 +136,8 @@ public class UmaAuthorizationRequestEndpointController extends BaseUmaEndpointCo
     protected ResponseEntity generateRequestingPartyToken(
         final HttpServletRequest request, final HttpServletResponse response,
         final UserProfile profileResult, final UmaAuthorizationRequest umaRequest,
-        final UmaPermissionTicket permissionTicket) throws Throwable {
+        final UmaPermissionTicket permissionTicket)
+            throws Throwable {
         val currentAat = (OAuth20AccessToken) profileResult.getAttribute(OAuth20AccessToken.class.getName());
         val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(getUmaConfigurationContext().getServicesManager(),
             OAuth20Utils.getClientIdFromAuthenticatedProfile(profileResult));

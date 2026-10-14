@@ -161,7 +161,8 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
     }
 
     private void removeTicketGrantingTicketIfAny(final RequestContext context, final String clientName,
-                                                 @Nullable final Service resolvedService) throws Exception {
+                                                 @Nullable final Service resolvedService)
+            throws Exception {
         val tgt = WebUtils.getTicketGrantingTicketId(context);
         if (tgt != null) {
             configContext.getTicketRegistry().deleteTicket(tgt);
@@ -190,7 +191,8 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
     }
 
     protected @Nullable Event finalizeDelegatedClientAuthentication(final RequestContext context,
-                                                          final ClientCredential credentials) throws Throwable {
+                                                          final ClientCredential credentials)
+            throws Throwable {
         val strategies = new ArrayList<>(configContext.getApplicationContext()
             .getBeansOfType(DelegatedClientAuthenticationCredentialResolver.class).values());
         AnnotationAwareOrderComparator.sortIfNecessary(strategies);
@@ -234,7 +236,8 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
     }
 
     protected @Nullable Service populateContextWithService(final RequestContext context,
-                                                 @Nullable final Service service) throws Throwable {
+                                                 @Nullable final Service service)
+            throws Throwable {
         if (service != null) {
             val resolvedService = configContext.getAuthenticationRequestServiceSelectionStrategies().resolveService(service);
             LOGGER.trace("Authentication is resolved by service request from [{}]", service);

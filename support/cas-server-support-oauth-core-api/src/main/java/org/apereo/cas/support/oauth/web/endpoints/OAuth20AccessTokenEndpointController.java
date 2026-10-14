@@ -170,7 +170,8 @@ public class OAuth20AccessTokenEndpointController<T extends OAuth20Configuration
 
     private AccessTokenRequestContext examineAndExtractAccessTokenGrantRequest(
         final HttpServletRequest request,
-        final HttpServletResponse response) throws Throwable {
+        final HttpServletResponse response)
+            throws Throwable {
         val audit = AuditableContext
             .builder()
             .httpRequest(request)

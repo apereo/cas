@@ -112,7 +112,8 @@ public class InitPasswordResetAction extends BaseCasWebflowAction {
 
 
     protected MultifactorAuthenticationProvider selectMultifactorAuthenticationProvider(final RequestContext requestContext,
-                                                                                        final Principal principal) throws Throwable {
+                                                                                        final Principal principal)
+            throws Throwable {
         val applicationContext = requestContext.getActiveFlow().getApplicationContext();
         val providers = MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(applicationContext);
         val registeredService = WebUtils.getRegisteredService(requestContext);

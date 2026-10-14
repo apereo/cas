@@ -199,7 +199,8 @@ class CasWebSecurityConfiguration {
             final ManagementServerProperties managementServerProperties,
             final SecurityProperties securityProperties,
             final CasConfigurationProperties casProperties,
-            final WebProperties webProperties) throws Exception {
+            final WebProperties webProperties)
+                throws Exception {
             val adapter = new CasWebSecurityConfigurerAdapter(casProperties,
                 webEndpointProperties, managementServerProperties,
                 pathMappedEndpoints, configurersList, securityContextRepository, webProperties);

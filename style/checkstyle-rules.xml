@@ -16,9 +16,22 @@
         <property name="tabWidth" value="4"/>
         <module name="SuppressionCommentFilter"/>
 
+        <module name="UnnecessaryPermitsClause">
+            <property name="severity" value="error"/>
+        </module>
+
+        <module name="JavadocSeeTagOrder">
+            <property name="severity" value="error"/>
+        </module>
         <module name="JavadocContentLocationCheck">
             <property name="severity" value="error"/>
             <property name="location" value="SECOND_LINE"/>
+        </module>
+        <module name="OpenjdkMethodThrowsAlignment">
+            <property name="severity" value="error"/>
+        </module>
+        <module name="ExpressionOverBlockLambda">
+            <property name="severity" value="error"/>
         </module>
         <module name="NoEnumTrailingComma">
             <property name="severity" value="error"/>
@@ -647,7 +660,7 @@
             <property name="id" value="useLombokValForFinalVar"/>
             <metadata name="net.sf.eclipsecs.core.comment" value="Using val for variable definitions"/>
             <property name="severity" value="error"/>
-            <property name="format" value="(final\s+var\s+)|(^\s*final\s*\w+\[\]\s*\w+\s*=)"/>
+            <property name="format" value="(?&lt;!\()(final\s+var\s+)|(^\s*final\s*\w+\[\]\s*\w+\s*=)"/>
             <property name="message" value="Use lombok.val when declaring final variable definitions."/>
         </module>
 

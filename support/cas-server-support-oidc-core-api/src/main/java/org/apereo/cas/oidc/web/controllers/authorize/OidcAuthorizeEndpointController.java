@@ -68,7 +68,8 @@ public class OidcAuthorizeEndpointController extends OAuth20AuthorizeEndpointCon
     @Override
     @Operation(summary = "Handle OIDC authorization request")
     public ModelAndView handleRequestPost(final HttpServletRequest request,
-                                          final HttpServletResponse response) throws Throwable {
+                                          final HttpServletResponse response)
+            throws Throwable {
         return handleRequest(request, response);
     }
 }

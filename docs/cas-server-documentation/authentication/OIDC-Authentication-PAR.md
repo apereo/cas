@@ -25,6 +25,9 @@ typically would produce a `request_uri` as such:
 
 The `request_uri` parameter could then be submitted back to CAS' authorization endpoint to restore and resume the request.
 
+A pushed authorization request may bind the authorization code to the client's DPoP key, with the `dpop_jkt` parameter or a
+`DPoP` proof header. See [DPoP authorization code binding](OIDC-Authentication-DPoP.html#authorization-code-binding).
+
 ## Configuration
 
 {% include_cached casproperties.html properties="cas.authn.oidc.par" %}

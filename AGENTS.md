@@ -105,6 +105,10 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
 - Related test scenarios are often grouped with `@Nested`; example: `support/cas-server-support-token-core/.../JwtBuilderTests.java`.
 - Unalias Linux/macOS commands before you run them, specially `tree`, `find`, `grep`, `cat`, etc.
 - From a sandbox that cannot delete files, run read-only git commands with `GIT_OPTIONAL_LOCKS=0` (for example `GIT_OPTIONAL_LOCKS=0 git status`); otherwise git can leave a stale `.git/index.lock` that blocks the user's git.
+- Parse untrusted or configured numbers with Guava's `Longs.tryParse`/`Ints.tryParse` (null when the value is not a plain
+  integer that fits), never `NumberUtils.isCreatable`/`isParsable`/`isDigits` followed by `Long.parseLong`/`Integer.parseInt`:
+  those checks accept `1.5`, `1e3`, `0x1F` or overflowing values and the parse then throws. `tryParse` rejects null, so
+  guard nullable inputs first.
 - Consider using StringUtils.EMPTY instead of "" for empty strings, and StringUtils.isNotBlank() instead of != null && !isEmpty() for string checks.
 - Keep overloaded methods (same name, any parameters or visibility) next to each other, with no other method between
   them; Checkstyle's `OverloadMethodsDeclarationOrder` fails the build otherwise. Check this when adding a method whose
@@ -218,6 +222,17 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
 - Do not dim muted text with `opacity`: `--docs-muted` on its own meets 4.5:1 in both themes, and opacity drops it below.
   `--docs-amber` is darker in light mode for the same reason.
 - In `casmodule.html`, only the tab links sit inside `role="tablist"`; the Resources dropdown is a sibling `<button>`.
+- Mobile layout: content must never run past the 1.25rem gutter. A flex or grid child that holds long inline `code` needs
+  `min-width: 0`, and the code needs `overflow-wrap: anywhere` (`break-word` does not lower the min-content width, so the
+  item still overflows). Bootstrap `.row` blocks in content lose their negative margins below 760px. To check, load pages in
+  375px iframes and look for elements whose right edge passes `#cas-docs-container` outside a scrolling ancestor.
+- Release notes pages carry `docs-release-notes` on `<body>` (set in `_layouts/default.html` from the page URL); their prose,
+  footer included, is justified and hyphenated, while stats, facts, the release switcher and inline code are left alone.
+- Docs sidebar: `sidebar.md` stays a plain nested list; `buildSidebarTree()` in `site.js` turns it into the grouped tree. A
+  section's group comes from `CAS_SIDEBAR_GROUPS` (by the section's `#anchor`), so add a new top-level section there too; one
+  left out lands in the last group. A parent whose first child is an `Overview` link becomes that link (the row is dropped);
+  other parents only toggle. Only the current path opens, siblings close as another opens, open rows are sticky at
+  `--sidebar-filter-h + depth × --sidebar-row-h`, and `.docs-sidebar` has no top padding so the filter can pin at the very top.
 - Settings in docs (required, standing rule from the maintainer): never refer to a configuration setting by name in
   documentation pages, neither inline nor in fenced `properties` blocks. Describe the feature, say that it is available,
   and say that it is enabled, disabled or tuned through CAS settings; the page's `casproperties` include lists them. The
@@ -343,6 +358,9 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
 - Issuer-signed JWTs (status list tokens, signed issuer metadata) go through `OidcVerifiableCredentialSigningUtils.sign`: issuer key, `kid`, `x5c` without the trust anchor. Do not copy the signing code into a new endpoint. Signed metadata is served when `Accept` names `application/jwt` with a quality at least that of JSON (wildcards count as JSON), so plain browsers and `*/*` clients still get JSON.
 - IETF drafts are blocked on ietf.org here: fetch the markdown source from the draft's GitHub repository at the published tag (`raw.githubusercontent.com/oauth-wg/<repo>/draft-ietf-oauth-<name>-NN/draft-ietf-oauth-<name>.md`), and confirm the number is the latest published one.
 - The compile script's `main` mode wipes `out/`, test classes included: run `test` mode again after every `main` run, or the runner falls back to stale prebuilt test classes and silently runs fewer tests.
+- ISO mdoc (`mso_mdoc`) uses Authlete's `com.authlete:cbor`, from the vendor of the SD-JWT library: `IssuerSignedBuilder` builds the salted items, digests and mobile security object, and signs it with a `COSEEC2Key` only (ISO/IEC 18013-5 allows EC or EdDSA, never RSA), the curve setting the algorithm; the `x5chain` header is mandatory, so the issuer key needs an `x5c` chain. The device key is the proof's JWK as a `COSE_Key`; an RSA one is refused as `invalid_proof`. Issuer metadata publishes `doctype`, `cose_key` and numeric COSE algorithms (hence `List<Object>` in the metadata model), and claim paths `[namespace, element]`.
+- mdoc presentations (`OidcVerifiableCredentialMdocPresentationVerifier`): digests cover each `IssuerSignedItemBytes` exactly as received, tag 24 included, so hash `CBORTaggedItem.encode()` of the decoded item, never a re-encoding of parsed values. The device signature has a detached payload, the encoded `#6.24(DeviceAuthentication)`, built into the `Sig_structure` by hand. The session transcript is `[null, null, handover]` with the OpenID4VP 1.0 B.2.6 handovers, checked against the specification's vectors in `OidcVerifiableCredentialMdocPresentationVerifierTests`. COSE headers carry no `kid`, so the issuer key is the CAS signing key whose certificate is the `x5chain` leaf. The OpenID4VP source is `raw.githubusercontent.com/openid/OpenID4VP/main/1.0/openid-4-verifiable-presentations-1_0.md`.
+- A process a `device_bash` call starts in the background dies when the call returns, `setsid` and `nohup` included, so a test batch left running there leaves an empty log. Run each batch in the foreground under `timeout 170` with `timeout_ms` at 180000, splitting the classes when they take longer.
 
 ## Parallel test execution and shared registries
 
@@ -403,6 +421,13 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
   to the registry. Registry events published by anything other than a services manager (the JSON/YAML
   watchers, Redis, S3) update the cache through `DefaultRegisteredServicesEventListener`, synchronously.
   `findServiceBy(Predicate)` reads the registry and must never write to the cache or index.
+- `CacheableServicesManager.cacheRegisteredService` prepares a definition the way `load()` does (skips unsupported
+  types, applies templates) before caching it, for saves, registry watchers and change notifications alike. Inside
+  `AbstractServicesManager`, code that already ran `prepareServiceFromRegistry` caches through the private
+  `cachePreparedRegisteredService` so templates are not merged twice.
+- Do not override `ServiceRegistry.findServiceBy(String)` with a database filter on `serviceId`: definitions are regular
+  expressions or other matching strategies evaluated in Java, so a `LIKE` on the requested URL misses them. Override
+  `getServicesStream()` instead when the default `load()` is expensive or has side effects (events, a `git pull`).
 - URL lookups match against `AbstractServicesManager.getSortedRegisteredServices`, a snapshot reused until the cache
   version changes or the cache size differs from it. Any new code that adds or replaces entries in the services cache
   must go through `cacheRegisteredService`/`cacheRegisteredServices` (or bump the version itself); a direct
@@ -434,12 +459,22 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
 - `ath` hashes the access token *as the client presented it*, not its decoded identifier. Pass `getAccessTokenFromRequest(...).getKey()`, never `getValue()`.
 - Before reporting a gap here, read the endpoint. The userinfo endpoint was already doing the resource verification correctly in an overridden `validateAccessToken`, and the defect worth reporting was the redundant second call beside it -- the opposite shape from the one first assumed. Grepping for the validator bean found the wrong call and missed the right one.
 - Identifiers that arrive on an unauthenticated request parameter are not identities. Under grants that carry their own proof of authorization -- the OpenID4VCI pre-authorized code above all -- `client_id` is whatever the wallet felt like sending. Resolve from the authenticated profile, then the token, then the parameter.
-- DPoP nonces (RFC 9449 sections 8 and 9) are transient session tickets, like attestation challenges, through `BaseTransientSessionNonceService` (one marker property per kind, so a challenge is never accepted as a nonce). Nimbus treats an empty set of accepted nonces as "a `nonce` claim is prohibited", so a verifier must be handed the proof's own nonce (`OAuth20DPoPNonceService.getAcceptedNonces`) and CAS checks it afterwards (`isAccepted`); the protected resource verifier's single-`Nonce` overload with `null` prohibits the claim too. On failure the fresh nonce goes on the servlet response before `InvalidDPoPNonceException` is thrown, and each endpoint maps it: `400 use_dpop_nonce` at the token endpoint and in combined mode, `OAuth20Utils.useDPoPNonceResponse()` (`401` + `WWW-Authenticate: DPoP error="use_dpop_nonce"`) at resources and Heimdall. The validator runs before the authorization code is consumed, so the client retries with the same code.
+- DPoP nonces (RFC 9449 sections 8 and 9) are transient session tickets, like attestation challenges, through `BaseTransientSessionNonceService` (one marker property per kind, so a challenge is never accepted as a nonce). Nimbus treats an empty set of accepted nonces as "a `nonce` claim is prohibited", so a verifier must be handed the proof's own nonce (`OAuth20DPoPNonceService.getAcceptedNonces`) and CAS checks it afterwards (`isAccepted`); the protected resource verifier's single-`Nonce` overload with `null` prohibits the claim too. On failure the fresh nonce goes on the servlet response before `InvalidDPoPNonceException` is thrown, and each endpoint maps it: `400 use_dpop_nonce` at the token endpoint and in combined mode, `OAuth20Utils.useDPoPNonceResponse(algs)` (`401` + `WWW-Authenticate: DPoP error="use_dpop_nonce"`) at resources and Heimdall. The validator runs before the authorization code is consumed, so the client retries with the same code.
+- `dpop_jkt` (RFC 9449 section 10) is an authentication attribute of the authorization request, like `state` and `nonce`: `OAuth20AuthorizeEndpointController.bindProofOfPossessionKey` adds it, the pushed authorization request keeps all authentication attributes and merges them into the authorization at `/authorize`, and the stateless code compactor retains it explicitly. A `DPoP` header at PAR goes through `OAuth20ProofOfPossessionValidator.validateKeyBinding`, which verifies without touching the profile (`validate` copies the proof's claims onto it), and its thumbprint is passed on as a request attribute. The token endpoint compares the code's `dpop_jkt` with the `DPoPConfirmation` the validator put on the profile.
+- `dpop_bound_access_tokens` (RFC 9449 section 5.2) is `dpopBoundAccessTokens` on the service. With no `DPoP` header, `validate` resolves the client as it would for a proof (profile, then token, then `client_id`) and throws `InvalidDPoPProofException`, which the token endpoint answers with `400 invalid_dpop_proof` before any grant is redeemed. Grants with no authenticated client profile (device code polling, JWT bearer) call `validateTokenRequest(webContext, service)` instead, which hands the proof and its thumbprint to the extractor as request attributes; `BaseAccessTokenGrantRequestExtractor` lets them win over the profile's, which may be a stale one kept in the session. `DPoPTokenRequestVerifier` requires `htm` to be `POST`, so a device poll by `GET` cannot be bound. The device token generator rebuilds its request context, so a new context field must be copied there too. Do not wrap a call that throws `InvalidDPoP*Exception` in jOOλ `Unchecked`: it comes out as `UncheckedException`, the endpoint's catch misses it, and the client gets `invalid_request`.
+- A DPoP-bound access token is accepted at a protected resource only as `Authorization: DPoP <token>` (RFC 9449 section 7.2). `validateProtectedResourceRequest` checks the scheme itself, before the proof, and throws `DPoPBoundAccessTokenDowngradeException`; the profile and VC endpoints answer `401 invalid_token` through `BaseOAuth20Controller.unauthorized`, whose challenge uses the scheme the client sent. `getAccessTokenFromRequest` prefers the `access_token`/`token` parameters over the header, so the check compares the presented token with the header's. Tests and puppeteer scenarios that present a bound token at a resource must send it in that header.
+- Refresh tokens of public clients (`OAuth20Utils.isPublicClient`: no secret, auth method unset or `none`) carry `DPoPConfirmation` in their authentication (`OAuth20DefaultTokenGenerator.bindRefreshTokenToProofOfPossessionKey`). The refresh grant's authentication is the refresh token's, so its access tokens inherit the confirmation; `BaseOAuth20TokenRequestValidator.verifyBoundProofOfPossessionKey(token, attribute, manager)` makes the proof match first, for codes (`dpop_jkt`) and refresh tokens alike. A refresh token built from a ticket-granting ticket alone has no authentication, so read it null-safely. A public client redeems a code only with PKCE.
+- Stateless compactors keep only the authentication attributes they are told to retain. `DPoPConfirmation` is retained for access and refresh tokens (`dpop_jkt` for codes); without it a DPoP-bound token expands as a plain bearer token. A new binding attribute must be added there too.
+- The validator owns the header checks of RFC 9449 section 4.3. `getProofOfPossessionHeader` refuses a second `DPoP` header (pac4j's `getRequestHeader` silently returns the first), and `getSignedProofOfPosessionJwt` turns a parse failure into `InvalidDPoPProofException`, so a value that is not a JWS is `invalid_dpop_proof` rather than `invalid_request`. Read the header through the former, never with `getRequestHeader(DPOP)`; PAR has no check of its own any more.
+- Protected resources map proof failures in one place, `BaseOAuth20Controller.verifyProofOfPossession` (profile/userinfo and VC): `use_dpop_nonce`, `invalid_token` for a downgrade, `invalid_dpop_proof` for anything else, each a `401` with a challenge. A `DPoP` challenge carries `algs` (RFC 9449 section 7.1) from `OAuth20ProofOfPossessionValidator.getAcceptedSigningAlgorithms()`, which is the discovery `dpop_signing_alg_values_supported` in order: `unauthorized` adds it whenever the scheme is `DPoP`, and `useDPoPNonceResponse` and Heimdall's `unauthenticated` take it as an argument.
+- A Lombok `val` holding `Optional.or(...)` over pac4j's `Optional<Object>` request attribute is inferred as `Optional<Object>`; declare such locals with an explicit type.
+- Upstream commits since the compile script's base can touch modules whose prebuilt classes are stale: restrict its file list with `include.txt` (module paths) rather than compiling every changed file.
 
 ## Environment limits
 
 - Leave no `.git/index.lock` behind. `git status` and `git diff` take that lock to refresh the index, and in a remote environment that cannot delete files the lock survives the command and blocks every subsequent git operation the maintainer runs. Read git state with `git --no-optional-locks status` / `git --no-optional-locks diff`, which never takes it, and before finishing check `ls .git/*.lock` and clear anything left. If deletion is refused, request it rather than leaving the repository wedged.
 - The remote shell has no git identity. To bring a contributor's PR onto a local branch, fetch each non-merge commit as a patch from `https://api.github.com/repos/apereo/cas/commits/<sha>` with `Accept: application/vnd.github.patch` and apply it with `git -c user.name=... -c user.email=... am --3way`, which keeps the contributor as author. Skip the "Merge branch 'master'" commits; the local branch is cut from master already.
+- A remote container may lack JDK 25: `apt-get install openjdk-25-jdk-headless` provides it, and `CI=true` drops the JetBrains vendor requirement of the toolchain. When Maven Central answers `429`, route resolution through `maven-central.storage-download.googleapis.com` with a Gradle init script kept outside the repository; that mirror lags new releases by a day or so, so leave Central in place, restricted to the groups the mirror does not have yet.
 - Gradle may be unavailable in a sandboxed or remote review environment because the wrapper cannot download its distribution. When that happens, say the verification was not run instead of implying a test result, and fall back to static review such as `git diff --check` and targeted reading.
 - Maintainer: run Checkstyle on every changed Java file before handing work off, even without Gradle. Use the version in
   `gradle/libs.versions.toml` (`checkstyle-<version>-all.jar` from the Checkstyle GitHub releases; 14.x needs Java 21+) as
@@ -548,6 +583,36 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
 - To try template changes without rebuilding the war, run the built war with
   `spring.thymeleaf.prefix=file:<module>/src/main/resources/templates/`, static locations pointing at the module's
   `static/`, the message bundle at the module's `messages`, and template caching off.
+- WebAuthn and consent screens use `.cas-hero` (centered card with `.cas-hero-icon`) and `fragments/consent.html`
+  (`appHeader`, `permission`). Puppeteer relies on `#cibaContainer h1` reading the CIBA header text, `#status` holding the
+  WebAuthn title, and the ids `#allow`, `#deny`, `#cancel`, `#scopes`, `#userInfoClaims`, `#informationUrl`, `#privacyUrl`,
+  per-scope/claim ids, `#registerButton`, `#registerDiscoverableCredentialButton`, `#residentKeysPanel`, `#device-*`; keep
+  them. Iterate with `th:block th:each` around a `th:replace` (replace runs before each on the same element), and index SpEL
+  maps with `.get(key)`: `map[key]` treats `key` as a literal. Global `.mdi:before` pins icons to 20px, so size icons on `::before`.
+- Interrupt and attribute consent use `.cas-hero.cas-hero-start` with a `.cas-hero-head`. Puppeteer reads `#content h1`/`#content h2`
+  and the first `#content p` as the title and intro, so keep the heading first and no `<p>` before the intro. `div#content`
+  carries a global shadow; hero cards that are `#content` themselves override it. `MDCTabBar` focuses the tab it activates, so
+  initial activation (material.js, consent.js) runs with `focusOnActivate` off.
+- Every page card is a `.cas-hero`: a `<span class="cas-hero-icon [is-danger|is-warning|is-success]">` with an `mdi` icon goes
+  first, then the existing heading. Use `cas-hero-start` for forms and lists, `cas-hero-wide` for tables. Never add a heading or
+  `<p>` before the existing ones and never remove a wrapping `div`: puppeteer asserts `#content div h2`, `#content h2`,
+  first `#content p`, `#login h2/h3/p` and `#main-content h2`. Banner root cards turn neutral under `.cas-hero`. Login gets
+  `.cas-login-card` (surface only). Palantir polish lives at the end of `palantir.css`, scoped to `#dashboard`.
+- Palantir's rail (`fragments/palantir/navigationsidebar.html`, styled at the end of `palantir.css`) mirrors the account
+  profile rail: change both together. Only destinations may be `<li>` (scripts treat every `nav.sidebar-navigation ul li`
+  as one, and count them with `:visible`), so the narrow-screen overlay hides with `visibility`, never `display: none`.
+  DataTables group header rows come from `palantirTableGroupRow(label, columns)` (palantir-utils.js); never inline-style them.
+- Palantir dialogs sit outside `#main-content`, so `applySharedDialogStyle()` (palantir-utils.js, called from
+  `initializePalantir`) adds `cas-ui palantir-dialog` on `dialogcreate`; style dialogs through those classes, qualified enough
+  to beat the Cupertino theme (`.ui-dialog.palantir-dialog …`). Use the `classes` option, not the deprecated `dialogClass`.
+  jQuery 4 dropped `isWindow`/`isFunction`, which the jQuery UI 1.12 position plugin shipped with contextMenu still calls and
+  which replaces jQuery UI's own position: `installJQueryCompatibility()` must run before any dialog, menu or tooltip opens.
+  Tom Select wrappers carry `z-index: 10000`; open select menus are raised above them.
+- Header panels (`fragments/header.html`, `fragments/logindrawer.html`) carry `.cas-ui` and serve both themes: MDC
+  (`MDCDialog`, modal `MDCDrawer` with its `.mdc-drawer-scrim` as the next sibling) and Bootstrap (`modal`, `offcanvas`), so
+  keep both class sets. The notification count is the number of `.cas-notification-message` items not `[hidden]`; an item
+  shown client-side starts `hidden`. The twbs theme does not load `cas.css` and styles them in its own `cas.css`. Puppeteer
+  uses `#drawerButton`; `#drawerCloseButton` and `#cas-notifications-menu` are wired in `material.js`.
 
 ## CAS protocol (v1/v2/v3 + SAML 1.1) review discipline
 

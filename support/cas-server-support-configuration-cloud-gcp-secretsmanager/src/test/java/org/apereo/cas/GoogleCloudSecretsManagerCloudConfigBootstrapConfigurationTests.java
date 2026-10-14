@@ -57,7 +57,8 @@ class GoogleCloudSecretsManagerCloudConfigBootstrapConfigurationTests {
             @Bean
             public SecretManagerTemplate googleCloudSecretsManagerTemplate(
                 @Qualifier("googleCloudSecretsManagerCredentialProvider")
-                final CredentialsProvider credentialsProvider) throws Exception {
+                final CredentialsProvider credentialsProvider)
+                    throws Exception {
                 val settings = SecretManagerServiceSettings.newBuilder()
                     .setCredentialsProvider(credentialsProvider)
                     .setTransportChannelProvider(

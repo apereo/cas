@@ -187,7 +187,8 @@ class OidcJwtAuthenticatorHMacTests extends AbstractOidcTests {
 
     private UsernamePasswordCredentials getCredentials(final MockHttpServletRequest request,
                                                        final String uid, final String password,
-                                                       final String clientId) throws Throwable {
+                                                       final String clientId)
+            throws Throwable {
         val credentials = new UsernamePasswordCredentials(uid, password);
         val code = defaultOAuthCodeFactory.create(RegisteredServiceTestUtils.getService(),
             RegisteredServiceTestUtils.getAuthentication(),

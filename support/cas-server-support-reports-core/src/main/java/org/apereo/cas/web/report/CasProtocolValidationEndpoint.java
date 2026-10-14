@@ -113,7 +113,8 @@ public class CasProtocolValidationEndpoint extends BaseCasRestActuatorEndpoint {
 
     protected ModelAndView renderValidationView(final HttpServletRequest request,
                                                 final HttpServletResponse response,
-                                                final Class viewClass) throws Throwable {
+                                                final Class viewClass)
+            throws Throwable {
         val selectedService = (WebApplicationService) configurationContext.getServiceFactory()
             .createService(request, WebApplicationService.class);
         Assert.notNull(selectedService, "Service is missing and must be specified");
@@ -170,7 +171,8 @@ public class CasProtocolValidationEndpoint extends BaseCasRestActuatorEndpoint {
     }
 
     protected Authentication buildAuthentication(final HttpServletRequest request,
-                                                 final WebApplicationService selectedService) throws Throwable {
+                                                 final WebApplicationService selectedService)
+            throws Throwable {
         val password = request.getParameter("password");
         val username = FunctionUtils.throwIfBlank(request.getParameter("username"));
         if (StringUtils.isNotBlank(password)) {

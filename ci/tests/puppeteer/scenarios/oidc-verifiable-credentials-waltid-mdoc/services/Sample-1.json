@@ -1,0 +1,10 @@
+{
+  "@class" : "org.apereo.cas.services.OidcRegisteredService",
+  "clientId": "wallet-client",
+  "serviceId" : "^http://localhost:7104.*",
+  "clientSecret": "wallet-secret",
+  "name": "Sample",
+  "id": 1,
+  "bypassApprovalPrompt": true,
+  "scopes" : [ "java.util.HashSet", ["openid"]]
+}

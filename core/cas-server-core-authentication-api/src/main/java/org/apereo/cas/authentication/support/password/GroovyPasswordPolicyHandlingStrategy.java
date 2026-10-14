@@ -35,7 +35,8 @@ public class GroovyPasswordPolicyHandlingStrategy<AuthenticationResponse> implem
 
     @Override
     public @Nullable List<MessageDescriptor> handle(@Nullable final AuthenticationResponse response,
-                                                    final PasswordPolicyContext configuration) throws Throwable {
+                                                    final PasswordPolicyContext configuration)
+            throws Throwable {
         val args = new Object[]{Objects.requireNonNull(response), configuration, LOGGER, applicationContext};
         return watchableScript.execute(args, List.class);
     }

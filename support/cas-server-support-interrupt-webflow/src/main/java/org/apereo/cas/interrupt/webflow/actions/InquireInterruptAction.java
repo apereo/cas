@@ -93,7 +93,8 @@ public class InquireInterruptAction extends BaseCasWebflowAction {
 
     protected boolean shouldSkipInterruptForGroovyScript(final RequestContext requestContext,
                                                          final WebBasedRegisteredService registeredService,
-                                                         final Authentication authentication) throws Throwable {
+                                                         final Authentication authentication)
+            throws Throwable {
         val policy = registeredService.getWebflowInterruptPolicy();
         if (StringUtils.isBlank(policy.getGroovyScript())) {
             return false;

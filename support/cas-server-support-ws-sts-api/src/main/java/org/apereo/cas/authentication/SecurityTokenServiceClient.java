@@ -31,7 +31,8 @@ public class SecurityTokenServiceClient extends STSClient {
     }
 
     private Element requestSecurityTokenResponse(final String appliesTo, @Nullable final String action,
-                                                 final String requestType) throws Exception {
+                                                 final String requestType)
+            throws Exception {
         val response = issue(appliesTo, action, requestType, null);
         return getDocumentElement(response.getResponse());
     }

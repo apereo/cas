@@ -41,7 +41,8 @@ public interface OAuth20CodeFactory extends TicketFactory {
                        String clientId,
                        Map<String, Map<String, Object>> requestClaims,
                        OAuth20ResponseTypes responseType,
-                       OAuth20GrantTypes grantType) throws Throwable;
+                       OAuth20GrantTypes grantType)
+            throws Throwable;
 
     /**
      * Create OAuth code without code challenge or method.
@@ -62,7 +63,8 @@ public interface OAuth20CodeFactory extends TicketFactory {
                                final Collection<String> scopes,
                                final String clientId,
                                final OAuth20ResponseTypes responseType,
-                               final OAuth20GrantTypes grantType) throws Throwable {
+                               final OAuth20GrantTypes grantType)
+            throws Throwable {
         return create(service, authentication, ticketGrantingTicket, scopes,
             null, null, clientId, new HashMap<>(), responseType, grantType);
     }

@@ -78,7 +78,8 @@ public class SamlIdPUtils {
     public static void preparePeerEntitySamlEndpointContext(final Pair<? extends RequestAbstractType, MessageContext> authnContext,
                                                             final MessageContext outboundContext,
                                                             final SamlRegisteredServiceMetadataAdaptor adaptor,
-                                                            final String binding) throws SamlException {
+                                                            final String binding)
+            throws SamlException {
         val entityId = adaptor.getEntityId();
         if (!adaptor.containsAssertionConsumerServices()) {
             throw new SamlException("No assertion consumer service could be found for entity " + entityId);
@@ -238,7 +239,8 @@ public class SamlIdPUtils {
      * @throws Exception the exception
      */
     public static RoleDescriptorResolver getRoleDescriptorResolver(final SamlRegisteredServiceMetadataAdaptor adaptor,
-                                                                   final boolean requireValidMetadata) throws Exception {
+                                                                   final boolean requireValidMetadata)
+            throws Exception {
         return getRoleDescriptorResolver(adaptor.getMetadataResolver(), requireValidMetadata);
     }
 
@@ -251,7 +253,8 @@ public class SamlIdPUtils {
      * @throws Exception the exception
      */
     public static RoleDescriptorResolver getRoleDescriptorResolver(final MetadataResolver metadata,
-                                                                   final boolean requireValidMetadata) throws Exception {
+                                                                   final boolean requireValidMetadata)
+            throws Exception {
         val roleDescriptorResolver = new PredicateRoleDescriptorResolver(metadata);
         roleDescriptorResolver.setSatisfyAnyPredicates(true);
         roleDescriptorResolver.setUseDefaultPredicateRegistry(true);

@@ -18,7 +18,8 @@ public class DefaultPasswordPolicyHandlingStrategy<AuthnResponse> implements Aut
 
     @Override
     public @Nullable List<MessageDescriptor> handle(@Nullable final AuthnResponse response,
-                                                    @Nullable final PasswordPolicyContext configuration) throws Throwable {
+                                                    @Nullable final PasswordPolicyContext configuration)
+            throws Throwable {
         if (configuration == null) {
             LOGGER.debug("No password policy configuration is defined");
             return new ArrayList<>();

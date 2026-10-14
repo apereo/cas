@@ -34,7 +34,8 @@ public interface DelegatedClientIdentityProviderAuthorizer {
      * @throws Throwable the throwable
      */
     default boolean isDelegatedClientAuthorizedForService(final Client client, final Service service,
-                                                          final HttpServletRequest context) throws Throwable {
+                                                          final HttpServletRequest context)
+            throws Throwable {
         return isDelegatedClientAuthorizedFor(client.getName(), service, context);
     }
 
@@ -48,7 +49,8 @@ public interface DelegatedClientIdentityProviderAuthorizer {
      * @throws Throwable the throwable
      */
     default boolean isDelegatedClientAuthorizedForService(final Client client, final Service service,
-                                                          final RequestContext context) throws Throwable {
+                                                          final RequestContext context)
+            throws Throwable {
         return isDelegatedClientAuthorizedFor(client.getName(), service, context);
     }
 
@@ -63,7 +65,8 @@ public interface DelegatedClientIdentityProviderAuthorizer {
      */
     default boolean isDelegatedClientAuthorizedForAuthentication(final Authentication authentication,
                                                                  final Service service,
-                                                                 final RequestContext context) throws Throwable {
+                                                                 final RequestContext context)
+            throws Throwable {
         val clientName = getClientNameFromAuthentication(authentication);
         return isDelegatedClientAuthorizedFor(clientName, service, context);
     }
@@ -90,7 +93,8 @@ public interface DelegatedClientIdentityProviderAuthorizer {
      * @throws Throwable the throwable
      */
     boolean isDelegatedClientAuthorizedFor(String clientName, Service service,
-                                           RequestContext context) throws Throwable;
+                                           RequestContext context)
+            throws Throwable;
 
     /**
      * Is delegated client authorized for.
@@ -102,5 +106,6 @@ public interface DelegatedClientIdentityProviderAuthorizer {
      * @throws Throwable the throwable
      */
     boolean isDelegatedClientAuthorizedFor(String clientName, Service service,
-                                           HttpServletRequest request) throws Throwable;
+                                           HttpServletRequest request)
+            throws Throwable;
 }

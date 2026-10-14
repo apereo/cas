@@ -64,7 +64,8 @@ public class OAuth20DefaultRefreshTokenFactory implements OAuth20RefreshTokenFac
                                       final String accessToken,
                                       final Map<String, Map<String, Object>> requestClaims,
                                       final OAuth20ResponseTypes responseType,
-                                      final OAuth20GrantTypes grantType) throws Throwable {
+                                      final OAuth20GrantTypes grantType)
+            throws Throwable {
         val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(servicesManager, clientId);
 
         var limitReached = false;

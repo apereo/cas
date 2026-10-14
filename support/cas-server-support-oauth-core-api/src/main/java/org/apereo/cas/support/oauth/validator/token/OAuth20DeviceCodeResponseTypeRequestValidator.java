@@ -9,6 +9,7 @@ import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
+import org.apereo.cas.support.oauth.validator.OAuth20ProofOfPossessionValidator;
 import org.apereo.cas.support.oauth.web.OAuth20RequestParameterResolver;
 import org.apereo.cas.util.function.FunctionUtils;
 import lombok.Getter;
@@ -37,10 +38,12 @@ public class OAuth20DeviceCodeResponseTypeRequestValidator implements OAuth20Tok
 
     private final OAuth20RequestParameterResolver requestParameterResolver;
 
+    private final OAuth20ProofOfPossessionValidator proofOfPossessionValidator;
+
     private int order = Ordered.LOWEST_PRECEDENCE;
 
     @Override
-    public boolean validate(final WebContext context) {
+    public boolean validate(final WebContext context) throws Throwable {
         val responseType = requestParameterResolver.resolveRequestParameter(context, OAuth20Constants.RESPONSE_TYPE)
             .map(String::valueOf).orElse(StringUtils.EMPTY);
         val grantType = requestParameterResolver.resolveRequestParameter(context, OAuth20Constants.GRANT_TYPE)
@@ -54,7 +57,7 @@ public class OAuth20DeviceCodeResponseTypeRequestValidator implements OAuth20Tok
         }
 
         val clientId = requestParameterResolver.resolveRequestParameter(context, OAuth20Constants.CLIENT_ID).orElse(StringUtils.EMPTY);
-        return FunctionUtils.doAndHandle(() -> {
+        val authorized = FunctionUtils.doAndHandle(() -> {
             val registeredService = Objects.requireNonNull(OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, clientId));
             RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(registeredService);
             return (validResponseType && requestParameterResolver.isAuthorizedResponseTypeForService(context, registeredService))
@@ -63,6 +66,27 @@ public class OAuth20DeviceCodeResponseTypeRequestValidator implements OAuth20Tok
             LOGGER.warn("Registered service access is not allowed for service definition for client id [{}]", clientId);
             return false;
         }).get();
+        if (authorized) {
+            validateProofOfPossession(context, clientId);
+        }
+        return authorized;
+    }
+
+    /**
+     * Polling for the token with the device code is a token request, so its DPoP proof is verified and handed over for
+     * the token to be bound to the proof's key (RFC 9449, section 5). The device authorization request that hands out
+     * the device code is not, and is left alone.
+     *
+     * @param context  the context
+     * @param clientId the client id
+     * @throws Throwable when the proof does not verify, or is missing for a client that must present one
+     */
+    protected void validateProofOfPossession(final WebContext context, final String clientId) throws Throwable {
+        val deviceCode = requestParameterResolver.resolveRequestParameter(context, OAuth20Constants.DEVICE_CODE);
+        if (deviceCode.filter(StringUtils::isNotBlank).isPresent()) {
+            val registeredService = Objects.requireNonNull(OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, clientId));
+            proofOfPossessionValidator.validateTokenRequest(context, registeredService);
+        }
     }
 
     @Override

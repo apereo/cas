@@ -9,7 +9,10 @@ import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.OAuth20RequestParameterResolver;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 import org.apereo.cas.ticket.AuthenticationAwareTicket;
+import org.apereo.cas.ticket.OAuth20Token;
 import org.apereo.cas.ticket.code.OAuth20Code;
+import org.apereo.cas.util.CollectionUtils;
+import com.nimbusds.oauth2.sdk.dpop.verifiers.InvalidDPoPProofException;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -77,6 +80,30 @@ public abstract class BaseOAuth20TokenRequestValidator<T extends OAuth20Configur
         return validateInternal(webContext, grantType, manager, userProfile);
     }
     
+    /**
+     * A grant bound to a DPoP key, such as a code bound with {@code dpop_jkt} or by the DPoP proof of a pushed authorization
+     * request (RFC 9449, section 10) or a refresh token issued to a public client (RFC 9449, section 5), may only be used with a
+     * DPoP proof made with that key. The proof itself was verified before, and its key thumbprint recorded on the profile.
+     * The grant is not redeemed when the keys do not match.
+     *
+     * @param token         the code or token presented as the grant
+     * @param attributeName the authentication attribute of the token that names the bound key
+     * @param manager       the profile manager
+     * @throws InvalidDPoPProofException when the request carries no DPoP proof, or one made with another key
+     */
+    protected void verifyBoundProofOfPossessionKey(final OAuth20Token token, final String attributeName,
+                                                   final ProfileManager manager)
+            throws InvalidDPoPProofException {
+        val boundKey = Optional.ofNullable(token.getAuthentication())
+            .flatMap(authentication -> CollectionUtils.firstElement(authentication.getAttributes().get(attributeName)));
+        if (boundKey.isPresent()) {
+            val presentedKey = manager.getProfile().map(profile -> profile.getAttribute(OAuth20Constants.DPOP_CONFIRMATION));
+            if (presentedKey.isEmpty() || !boundKey.get().toString().equals(presentedKey.get().toString())) {
+                throw new InvalidDPoPProofException("The grant is bound to a DPoP key that the request does not prove possession of");
+            }
+        }
+    }
+
     protected Optional<UserProfile> extractUserProfile(final WebContext context, final ProfileManager manager) {
         return manager.getProfile();
     }
@@ -99,7 +126,8 @@ public abstract class BaseOAuth20TokenRequestValidator<T extends OAuth20Configur
     protected boolean validateInternal(final WebContext context,
                                        final String grantType,
                                        final ProfileManager manager,
-                                       final UserProfile userProfile) throws Throwable {
+                                       final UserProfile userProfile)
+            throws Throwable {
         return false;
     }
 

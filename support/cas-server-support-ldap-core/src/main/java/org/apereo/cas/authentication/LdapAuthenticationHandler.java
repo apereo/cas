@@ -115,7 +115,8 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
 
     @Override
     protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential upc,
-                                                                                        @Nullable final String originalPassword) throws Throwable {
+                                                                                        @Nullable final String originalPassword)
+            throws Throwable {
         val response = getLdapAuthenticationResponse(upc);
         LOGGER.debug("LDAP response: [{}]", response);
         if (!passwordPolicyHandlingStrategy.supports(response)) {

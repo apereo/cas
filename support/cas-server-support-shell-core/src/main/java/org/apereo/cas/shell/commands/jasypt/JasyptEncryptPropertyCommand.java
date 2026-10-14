@@ -82,7 +82,8 @@ public class JasyptEncryptPropertyCommand implements CasShellCommand {
             description = "Key obtention iterations to encrypt, default 1000"
         )
         final String iterations
-    ) throws Exception {
+    )
+            throws Exception {
 
         val cipher = new CasConfigurationJasyptCipherExecutor(environment);
         cipher.setAlgorithm(alg);
@@ -98,7 +99,8 @@ public class JasyptEncryptPropertyCommand implements CasShellCommand {
     }
 
     private static String doEncrypt(final String value, final String file,
-                                    final CasConfigurationJasyptCipherExecutor cipher) throws IOException {
+                                    final CasConfigurationJasyptCipherExecutor cipher)
+            throws IOException {
         if (StringUtils.isNotBlank(file)) {
             val contents = FileUtils.readFileToString(new File(file), StandardCharsets.UTF_8);
             return cipher.encryptValue(contents);

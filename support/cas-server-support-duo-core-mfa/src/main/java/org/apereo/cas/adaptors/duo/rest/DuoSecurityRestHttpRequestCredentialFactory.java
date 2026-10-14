@@ -45,7 +45,8 @@ public class DuoSecurityRestHttpRequestCredentialFactory implements RestHttpRequ
     
     @Override
     public List<Credential> fromRequest(final HttpServletRequest request,
-                                        final MultiValueMap<String, String> requestBody) throws Throwable {
+                                        final MultiValueMap<String, String> requestBody)
+            throws Throwable {
         if (requestBody == null || requestBody.isEmpty()) {
             LOGGER.debug("Skipping [{}] because the request body is null or empty", getClass().getSimpleName());
             return new ArrayList<>();

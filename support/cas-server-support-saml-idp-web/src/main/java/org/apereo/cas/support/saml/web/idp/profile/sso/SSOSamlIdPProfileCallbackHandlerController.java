@@ -55,7 +55,8 @@ public class SSOSamlIdPProfileCallbackHandlerController extends AbstractSamlIdPP
     @GetMapping(path = SamlIdPConstants.ENDPOINT_SAML2_SSO_PROFILE_CALLBACK)
     @Operation(summary = "Handle SAML2 SSO Callback Profile Request")
     protected ModelAndView handleCallbackProfileRequestGet(final HttpServletResponse response,
-                                                           final HttpServletRequest request) throws Throwable {
+                                                           final HttpServletRequest request)
+            throws Throwable {
         autoConfigureCookiePath(request);
         val properties = configurationContext.getCasProperties();
         val type = properties.getAuthn().getSamlIdp().getCore().getSessionStorageType();
@@ -74,7 +75,8 @@ public class SSOSamlIdPProfileCallbackHandlerController extends AbstractSamlIdPP
     @PostMapping(path = SamlIdPConstants.ENDPOINT_SAML2_SSO_PROFILE_CALLBACK)
     @Operation(summary = "Handle SAML2 SSO Callback Profile Request")
     protected ModelAndView handleCallbackProfileRequestPost(final HttpServletResponse response,
-                                                            final HttpServletRequest request) throws Throwable {
+                                                            final HttpServletRequest request)
+            throws Throwable {
         autoConfigureCookiePath(request);
         val properties = configurationContext.getCasProperties();
         val type = properties.getAuthn().getSamlIdp().getCore().getSessionStorageType();
@@ -115,7 +117,7 @@ public class SSOSamlIdPProfileCallbackHandlerController extends AbstractSamlIdPP
         final HttpServletResponse response,
         final HttpServletRequest request,
         final Pair<? extends RequestAbstractType, MessageContext> authnContext)
-        throws Throwable {
+            throws Throwable {
 
         val ticket = request.getParameter(CasProtocolConstants.PARAMETER_TICKET);
         if (StringUtils.isBlank(ticket) && authnContext.getKey() instanceof final AuthnRequest authnRequest

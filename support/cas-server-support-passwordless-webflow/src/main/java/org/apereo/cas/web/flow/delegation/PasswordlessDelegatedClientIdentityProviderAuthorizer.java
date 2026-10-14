@@ -28,7 +28,8 @@ public class PasswordlessDelegatedClientIdentityProviderAuthorizer extends BaseD
 
     @Override
     public boolean isDelegatedClientAuthorizedFor(final String clientName, final Service service,
-                                                  final RequestContext requestContext) throws Throwable {
+                                                  final RequestContext requestContext)
+            throws Throwable {
         val account = PasswordlessWebflowUtils.getPasswordlessAuthenticationAccount(requestContext, PasswordlessUserAccount.class);
         return account == null
             || (super.isDelegatedClientAuthorizedFor(clientName, service, requestContext)

@@ -1213,9 +1213,7 @@ async function initializeHeimdallOperations() {
                 .each((group, i) => {
                     if (last !== group) {
                         $(rows).eq(i).before(
-                            `<tr style='font-weight: bold; background-color:var(--cas-theme-primary); color:var(--mdc-text-button-label-text-color);'>
-                                            <td colspan="4">Namespace: ${escapeHeimdallHtml(group)}</td>
-                                        </tr>`.trim());
+                            palantirTableGroupRow(`Namespace: ${group}`, 4));
                         last = group;
                     }
                 });

@@ -52,7 +52,8 @@ public class DefaultRestAuthenticationService implements RestAuthenticationServi
 
     @Override
     public Optional<AuthenticationResult> authenticate(final MultiValueMap<String, String> requestBody,
-                                                       final HttpServletRequest request, final HttpServletResponse response) throws Throwable {
+                                                       final HttpServletRequest request, final HttpServletResponse response)
+            throws Throwable {
         val credentials = credentialFactory.fromRequest(request, requestBody);
         if (credentials == null || credentials.isEmpty()) {
             throw new BadRestRequestException("No credentials can be extracted to authenticate the REST request");

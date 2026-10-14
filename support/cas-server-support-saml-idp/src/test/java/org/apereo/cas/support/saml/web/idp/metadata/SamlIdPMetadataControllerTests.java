@@ -38,6 +38,13 @@ class SamlIdPMetadataControllerTests extends BaseSamlIdPConfigurationTests {
     }
 
     @Test
+    void verifyServiceIdentifierTooLarge() throws Throwable {
+        mockMvc.perform(get(SamlIdPConstants.ENDPOINT_IDP_METADATA)
+                .param("service", "99999999999999999999"))
+            .andExpect(status().isOk());
+    }
+
+    @Test
     void verifyNoServiceOperation() throws Throwable {
         mockMvc.perform(get(SamlIdPConstants.ENDPOINT_IDP_METADATA)).andExpect(status().isOk());
     }

@@ -31,5 +31,6 @@ public interface MultifactorAuthenticationProviderSelector {
      * @throws Throwable the throwable
      */
     @Nullable MultifactorAuthenticationProvider resolve(Collection<MultifactorAuthenticationProvider> providers,
-                                                        @Nullable RegisteredService service, Principal principal) throws Throwable;
+                                                        @Nullable RegisteredService service, Principal principal)
+            throws Throwable;
 }

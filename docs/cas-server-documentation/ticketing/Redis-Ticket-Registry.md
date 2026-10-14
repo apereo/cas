@@ -33,9 +33,10 @@ See [this guide](Redis-Ticket-Registry-RediSearch.html) for more information.
 The Redis ticket registry layers an in-memory cache on top of Redis to assist with performance, particularly
 when it comes to fetching ticket objects from Redis using `SCAN` or `KEYS` operations that execute pattern matching.
 This cache is specific and isolated to the CAS server node's memory, and is able to clean up after itself with a dedicated
-expiration policy that is constructed off of the ticket's expiration policy. Each cache inside an individual CAS server node
-will attempt to synchronize ticket changes and updates with other CAS server nodes via a message-based mechanism backed by 
-Redis itself. Note that you can always entirely disable the caching mechanism by forcing its maximum capacity to be at zero
+expiration policy that is constructed off of the ticket's expiration policy. A ticket is kept in the cache for no longer
+than 30 seconds, or less if the ticket expires sooner. Each cache inside an individual CAS server node is told about ticket
+changes made by other CAS server nodes via a message-based mechanism backed by Redis itself, and drops its copy of a ticket
+that has changed. Note that you can always entirely disable the caching mechanism by forcing its maximum capacity to be at zero
 via dedicated CAS settings.
 
 {% include_cached casproperties.html properties="cas.ticket.registry.redis.cache" %}
@@ -63,15 +64,18 @@ encrypted/digested cache entries and can leave stale tickets alive on other node
 
 Cluster cache coherence is handled through Redis-backed pub/sub messages. When one CAS node adds, 
 updates, deletes, or clears tickets, it publishes a notification. Other CAS nodes receive that 
-notification and update or invalidate their local cache. Nodes should ignore their own messages 
-because the local registry operation has already updated the local cache directly. For deletes, 
-the notification does not need to carry the full ticket object; it only needs enough information 
-to identify the local cache entry, such as the Redis key or derived cache key. This avoids 
-unnecessary Redis fetches, deserialization, and decryption during delete-heavy operations.
+notification and invalidate their local cache; the ticket is read from Redis again when it is next needed. 
+Nodes ignore their own messages because the local registry operation has already updated the local cache 
+directly. Notifications never carry the ticket object; they only carry enough information to identify the 
+local cache entry, such as the Redis key or derived cache key. Tickets therefore do not travel over the 
+pub/sub channel, unencrypted or otherwise, and a change does not cost every node a deserialization.
+
+Pub/sub messages are not delivered again to a node that missed them while disconnected, which is why 
+cached tickets are only kept for a short time. A ticket read from Redis while another node announces a 
+change to it is not kept either, so a session ended on one node is not kept alive by the cache of another.
 
 From a performance perspective, the important distinction is between operations that need 
-the ticket body and operations that only need to remove state. Add and update messages naturally 
-carry a ticket because peer caches may be populated with that object. Delete messages should avoid 
+the ticket body and operations that only need to remove state. Delete messages should avoid 
 materializing the ticket when the registry already knows the Redis key being removed. Bulk user/session 
 deletion paths are especially sensitive: scanning Redis, fetching each ticket, deserializing it, 
 and decrypting it just to publish a cache invalidation can be very expensive. A better design is to 

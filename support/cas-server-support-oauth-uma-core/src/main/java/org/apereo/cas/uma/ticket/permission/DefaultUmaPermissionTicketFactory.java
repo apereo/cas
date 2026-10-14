@@ -24,7 +24,8 @@ public class DefaultUmaPermissionTicketFactory implements UmaPermissionTicketFac
 
     @Override
     public UmaPermissionTicket create(final ResourceSet resourceSet, final Collection<String> scopes,
-                                      final Map<String, Object> claims) throws Throwable {
+                                      final Map<String, Object> claims)
+            throws Throwable {
         val codeId = ticketIdGenerator.getNewTicketId(UmaPermissionTicket.PREFIX);
         return new DefaultUmaPermissionTicket(codeId, resourceSet, expirationPolicyBuilder.buildTicketExpirationPolicy(), scopes, claims);
     }

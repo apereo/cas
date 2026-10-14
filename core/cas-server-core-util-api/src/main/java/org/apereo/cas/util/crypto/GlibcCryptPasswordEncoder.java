@@ -1,7 +1,7 @@
 package org.apereo.cas.util.crypto;
 
 import module java.base;
-import org.apereo.cas.util.gen.HexRandomStringGenerator;
+import org.apereo.cas.util.RandomUtils;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -20,13 +20,17 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @Slf4j
 @AllArgsConstructor
 public class GlibcCryptPasswordEncoder implements PasswordEncoder {
-    private static final int SALT_LENGTH = 8;
+    private static final Pattern CRYPT_SALT_PATTERN = Pattern.compile("[./0-9A-Za-z]+");
+
+    private static final int MD5_SALT_LENGTH = 8;
+
+    private static final int SHA_SALT_LENGTH = 16;
 
     private final String encodingAlgorithm;
 
     private final int strength;
 
-    private String secret;
+    private final String secret;
 
     @Override
     public String encode(final CharSequence password) {
@@ -80,29 +84,34 @@ public class GlibcCryptPasswordEncoder implements PasswordEncoder {
 
     private String generateCryptSalt() {
         val cryptSalt = new StringBuilder();
+        var saltLength = MD5_SALT_LENGTH;
         if ("1".equals(this.encodingAlgorithm) || "MD5".equalsIgnoreCase(this.encodingAlgorithm)) {
             cryptSalt.append("$1$");
             LOGGER.debug("Encoding with MD5 algorithm");
         } else if ("5".equals(this.encodingAlgorithm) || "SHA-256".equalsIgnoreCase(this.encodingAlgorithm)) {
             cryptSalt.append("$5$rounds=").append(this.strength).append('$');
+            saltLength = SHA_SALT_LENGTH;
             LOGGER.debug("Encoding with SHA-256 algorithm and [{}] rounds", this.strength);
         } else if ("6".equals(this.encodingAlgorithm) || "SHA-512".equalsIgnoreCase(this.encodingAlgorithm)) {
             cryptSalt.append("$6$rounds=").append(this.strength).append('$');
+            saltLength = SHA_SALT_LENGTH;
             LOGGER.debug("Encoding with SHA-512 algorithm and [{}] rounds", this.strength);
         } else {
             cryptSalt.append(this.encodingAlgorithm);
             LOGGER.debug("Encoding with DES UnixCrypt algorithm as no indicator for another algorithm was found.");
         }
+        return cryptSalt.append(resolveSaltValue(saltLength)).toString();
+    }
 
-        if (StringUtils.isBlank(this.secret)) {
-            LOGGER.debug("No secret was found. Generating a salt with length [{}]", SALT_LENGTH);
-            val keygen = new HexRandomStringGenerator(SALT_LENGTH);
-            this.secret = keygen.getNewString();
-        } else {
+    private String resolveSaltValue(final int saltLength) {
+        if (StringUtils.isNotBlank(this.secret) && CRYPT_SALT_PATTERN.matcher(this.secret).matches()) {
             LOGGER.trace("The provided secret is used as a salt");
+            return this.secret;
         }
-        cryptSalt.append(this.secret);
-        return cryptSalt.toString();
+        if (StringUtils.isNotBlank(this.secret)) {
+            LOGGER.debug("The provided secret contains characters outside [./0-9A-Za-z] and cannot be used as a crypt salt; generating a random salt");
+        }
+        return RandomUtils.randomAlphanumeric(saltLength);
     }
 
 }

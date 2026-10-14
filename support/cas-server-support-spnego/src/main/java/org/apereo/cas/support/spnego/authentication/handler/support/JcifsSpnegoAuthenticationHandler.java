@@ -70,7 +70,8 @@ public class JcifsSpnegoAuthenticationHandler extends AbstractPreAndPostProcessi
     }
 
     protected AuthenticationHandlerExecutionResult doInternalAuthentication(final List<Authentication> authentications,
-                                                                            final SpnegoCredential spnegoCredential, final Service service) throws Throwable {
+                                                                            final SpnegoCredential spnegoCredential, final Service service)
+            throws Throwable {
         var principal = (java.security.Principal) null;
         var nextToken = (byte[]) null;
         val it = authentications.iterator();

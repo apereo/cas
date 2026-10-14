@@ -37,7 +37,7 @@ public class OktaAuthenticationHandler extends AbstractUsernamePasswordAuthentic
     @Override
     protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential,
                                                                                         final String originalPassword)
-        throws GeneralSecurityException {
+            throws GeneralSecurityException {
 
         try {
             val username = credential.getUsername();

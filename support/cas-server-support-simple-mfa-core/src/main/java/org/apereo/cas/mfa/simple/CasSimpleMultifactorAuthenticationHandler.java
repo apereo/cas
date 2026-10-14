@@ -61,7 +61,8 @@ public class CasSimpleMultifactorAuthenticationHandler extends AbstractPreAndPos
 
     @Override
     protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential,
-                                                                    final Service service) throws Exception {
+                                                                    final Service service)
+            throws Exception {
         return FunctionUtils.doAndThrow(() -> {
             val tokenCredential = (CasSimpleMultifactorTokenCredential) credential;
             val credentialPrincipal = multifactorAuthenticationService.fetch(tokenCredential);

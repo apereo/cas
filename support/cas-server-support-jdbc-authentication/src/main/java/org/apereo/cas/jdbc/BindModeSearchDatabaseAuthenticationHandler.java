@@ -33,7 +33,8 @@ public class BindModeSearchDatabaseAuthenticationHandler extends AbstractJdbcUse
 
     @Override
     protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(
-        final UsernamePasswordCredential credential, final String originalPassword) throws Throwable {
+        final UsernamePasswordCredential credential, final String originalPassword)
+            throws Throwable {
         val username = credential.getUsername();
         val password = credential.toPassword();
         try (val connection = getDataSource().getConnection(username, password)) {

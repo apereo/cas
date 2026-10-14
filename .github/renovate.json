@@ -134,6 +134,13 @@
         "io.permit:permit-sdk-java"
       ],
       "allowedVersions": "!/^[0-9a-f]{7,40}$/"
+    },
+    {
+      "description": "commons-codec 1.23 strict Base64 decoding breaks Shibboleth Base64Support (OpenSAML/pac4j); hold until Shibboleth supports it",
+      "matchPackageNames": [
+        "commons-codec:commons-codec"
+      ],
+      "allowedVersions": "<1.23.0"
     }
   ]
 }

@@ -1101,12 +1101,14 @@ class CasOAuth20Configuration {
                 @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
                 final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
                 @Qualifier(ServicesManager.BEAN_NAME)
-                final ServicesManager servicesManager) {
+                final ServicesManager servicesManager,
+                @Qualifier("oauthProofOfPossessionValidator")
+                final OAuth20ProofOfPossessionValidator oauthProofOfPossessionValidator) {
                 val responseTypesSupported = casProperties.getAuthn().getOidc().getDiscovery().getResponseTypesSupported();
                 return BeanSupplier.of(OAuth20TokenRequestValidator.class)
                     .when(responseTypesSupported.contains(OAuth20ResponseTypes.DEVICE_CODE.getType()))
                     .supply(() -> new OAuth20DeviceCodeResponseTypeRequestValidator(servicesManager,
-                        webApplicationServiceFactory, oauthRequestParameterResolver))
+                        webApplicationServiceFactory, oauthRequestParameterResolver, oauthProofOfPossessionValidator))
                     .otherwiseProxy()
                     .get();
             }
@@ -1848,8 +1850,9 @@ class CasOAuth20Configuration {
                 final PrincipalFactory principalFactory,
                 @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
                 final ServiceFactory serviceFactory) {
-                return new OAuth20CodeCompactor(ticketFactory, serviceFactory, principalFactory,
-                    CompactTicketAuthentication.getRetainedAuthenticationAttributes(casProperties));
+                val retainedAttributes = new LinkedHashSet<>(CompactTicketAuthentication.getRetainedAuthenticationAttributes(casProperties));
+                retainedAttributes.add(OAuth20Constants.DPOP_JKT);
+                return new OAuth20CodeCompactor(ticketFactory, serviceFactory, principalFactory, retainedAttributes);
             }
 
             @Bean
@@ -1863,8 +1866,9 @@ class CasOAuth20Configuration {
                 final PrincipalFactory principalFactory,
                 @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
                 final ServiceFactory serviceFactory) {
-                return new OAuth20AccessTokenCompactor(ticketFactory, serviceFactory, principalFactory,
-                    CompactTicketAuthentication.getRetainedAuthenticationAttributes(casProperties));
+                val retainedAttributes = new LinkedHashSet<>(CompactTicketAuthentication.getRetainedAuthenticationAttributes(casProperties));
+                retainedAttributes.add(OAuth20Constants.DPOP_CONFIRMATION);
+                return new OAuth20AccessTokenCompactor(ticketFactory, serviceFactory, principalFactory, retainedAttributes);
             }
 
             @Bean
@@ -1878,8 +1882,9 @@ class CasOAuth20Configuration {
                 final PrincipalFactory principalFactory,
                 @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
                 final ServiceFactory serviceFactory) {
-                return new OAuth20RefreshTokenCompactor(ticketFactory, serviceFactory, principalFactory,
-                    CompactTicketAuthentication.getRetainedAuthenticationAttributes(casProperties));
+                val retainedAttributes = new LinkedHashSet<>(CompactTicketAuthentication.getRetainedAuthenticationAttributes(casProperties));
+                retainedAttributes.add(OAuth20Constants.DPOP_CONFIRMATION);
+                return new OAuth20RefreshTokenCompactor(ticketFactory, serviceFactory, principalFactory, retainedAttributes);
             }
 
             @Bean

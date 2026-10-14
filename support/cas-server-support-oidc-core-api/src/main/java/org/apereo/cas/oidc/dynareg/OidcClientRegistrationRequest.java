@@ -136,5 +136,8 @@ public class OidcClientRegistrationRequest implements Serializable {
 
     @JsonProperty("backchannel_user_code_parameter")
     private boolean backchannelUserCodeParameterSupported;
+
+    @JsonProperty("dpop_bound_access_tokens")
+    private boolean dpopBoundAccessTokens;
     
 }

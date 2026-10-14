@@ -65,7 +65,8 @@ public class LdapConsentRepository extends BaseConsentRepository implements Disp
      * @throws Exception the exception
      */
     private static Set<String> mergeDecision(final LdapAttribute ldapConsent,
-                                             final ConsentDecision decision) throws Exception {
+                                             final ConsentDecision decision)
+            throws Exception {
         if (decision.getId() <= 0) {
             decision.setId(System.currentTimeMillis());
         }

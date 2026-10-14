@@ -31,5 +31,8 @@ class OidcClientRegistrationResponseTests extends AbstractOidcTests {
         assertNotNull(input.getResponseTypes());
         assertNotNull(input.getRedirectUris());
         assertNotNull(input.getContacts());
+        assertNull(input.getDpopBoundAccessTokens());
+        service.setDpopBoundAccessTokens(true);
+        assertEquals(Boolean.TRUE, OidcClientRegistrationUtils.getClientRegistrationResponse(service, oidcConfigurationContext).getDpopBoundAccessTokens());
     }
 }

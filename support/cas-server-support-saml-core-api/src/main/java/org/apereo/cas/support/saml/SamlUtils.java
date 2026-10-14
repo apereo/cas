@@ -221,7 +221,8 @@ public class SamlUtils {
      * @throws SamlException the saml exception
      */
     public static StringWriter transformSamlObject(final OpenSamlConfigBean configBean, final XMLObject samlObject,
-                                                   final boolean indent) throws SamlException {
+                                                   final boolean indent)
+            throws SamlException {
         val writer = new StringWriter();
         try {
             val marshaller = configBean.getMarshallerFactory().getMarshaller(samlObject.getElementQName());

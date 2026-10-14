@@ -91,7 +91,8 @@ public class OidcLogoutEndpointController extends BaseOidcController {
         final String givenClientId,
         @RequestParam(value = OidcConstants.ID_TOKEN_HINT, required = false)
         final String idToken,
-        final HttpServletRequest request, final HttpServletResponse response) throws Throwable {
+        final HttpServletRequest request, final HttpServletResponse response)
+            throws Throwable {
 
         if (StringUtils.isNotBlank(idToken)) {
             LOGGER.trace("Decoding logout ID token [{}]", idToken);
@@ -178,7 +179,8 @@ public class OidcLogoutEndpointController extends BaseOidcController {
                                                    final Optional<String> redirectUrl,
                                                    final Optional<String> clientId,
                                                    final HttpServletRequest request,
-                                                   final HttpServletResponse response) throws Exception {
+                                                   final HttpServletResponse response)
+            throws Exception {
         redirectUrl.ifPresent(url -> {
             val builder = UriComponentsBuilder.fromUriString(url);
             state.ifPresent(st -> builder.queryParam(OAuth20Constants.STATE, st));

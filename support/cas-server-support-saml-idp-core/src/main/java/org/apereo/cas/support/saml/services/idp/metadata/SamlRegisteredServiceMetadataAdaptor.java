@@ -103,7 +103,10 @@ public class SamlRegisteredServiceMetadataAdaptor {
             LOGGER.debug("Resolved metadata chain from [{}] using [{}]. Filtering the chain by entity ID [{}]",
                 registeredService.getMetadataLocation(), cachedMetadataResolver.getId(), entityID);
 
-            val entityDescriptor = cachedMetadataResolver.resolveSingle(criteriaSet);
+            var entityDescriptor = cachedResult.getEntityDescriptor().orElse(null);
+            if (entityDescriptor == null) {
+                entityDescriptor = cachedMetadataResolver.resolveSingle(criteriaSet);
+            }
             if (entityDescriptor == null) {
                 LOGGER.warn("Cannot find entity [{}] in metadata provider for criteria [{}]", entityID, criteriaSet);
                 return Optional.empty();

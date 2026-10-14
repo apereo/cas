@@ -9,8 +9,10 @@ import org.apereo.cas.support.oauth.OAuth20ClientAuthenticationMethods;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
+import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.validator.OAuth20ClientSecretValidator;
 import org.apereo.cas.support.oauth.web.OAuth20RequestParameterResolver;
+import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.code.OAuth20Code;
 import org.apereo.cas.ticket.registry.TicketRegistry;
@@ -84,8 +86,12 @@ public class OAuth20ProofKeyCodeExchangeAuthenticator extends OAuth20ClientIdCli
             .map(String::valueOf).orElse(StringUtils.EMPTY);
 
         LOGGER.debug("Received PKCE code verifier [{}] along with code [{}]", codeVerifier, code);
-        val token = getTicketRegistry().getTicket(code, OAuth20Code.class);
-        if (token == null || token.isExpired()) {
+        val token = OAuth20Utils.getRequestedOAuthToken(callContext.webContext(), getTicketRegistry(), code, OAuth20Code.class);
+        if (token == null) {
+            OAuth20Utils.revokeTokensIssuedFromCode(getTicketRegistry(), code);
+            throw new InvalidTicketException(code);
+        }
+        if (token.isExpired()) {
             LOGGER.error("Provided code [{}] is either not found in the ticket registry or has expired", code);
             throw new CredentialsException("Invalid token: " + code);
         }

@@ -75,7 +75,8 @@ public class DecodableCipherExecutorMapModule extends SimpleModule {
 
         @Override
         public Map<String, Object> deserialize(final JsonParser jsonParser,
-                                               final DeserializationContext deserializationContext) throws JacksonException {
+                                               final DeserializationContext deserializationContext)
+                throws JacksonException {
             val properties = defaultDeserializer.deserialize(jsonParser, deserializationContext);
             val resolver = SpringExpressionLanguageValueResolver.getInstance();
             val effectiveMap = properties.entrySet()

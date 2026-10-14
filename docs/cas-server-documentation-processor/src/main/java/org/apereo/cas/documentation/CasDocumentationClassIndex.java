@@ -8,6 +8,7 @@ import org.apache.commons.lang3.ClassUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.lang.annotation.Annotation;
+import static org.springframework.util.ClassUtils.resolveClassName;
 
 /**
  * One classpath scan shared by every exporter, answering the lookups that
@@ -24,16 +25,18 @@ final class CasDocumentationClassIndex implements AutoCloseable {
             .enableClassInfo()
             .enableAnnotationInfo()
             .ignoreClassVisibility()
-            .removeTemporaryFilesAfterScan()
-            .disableModuleScanning()
+            .enableClasspath()
             .scan();
     }
 
     <T> List<Class<? extends T>> findSubclassesInPackage(final Class<T> superclass, final String packageName) {
         var candidates = superclass.isInterface()
-            ? scanResult.getClassesImplementing(superclass)
-            : scanResult.getSubclasses(superclass);
-        return new ArrayList<>(inPackage(candidates, packageName).loadClasses(superclass));
+            ? scanResult.getAllClassesImplementing(superclass)
+            : scanResult.getAllSubclasses(superclass);
+        return inPackage(candidates, packageName).stream()
+            .map(info -> resolveClassName(info.getName(), Thread.currentThread().getContextClassLoader()))
+            .map(clazz -> clazz.asSubclass(superclass))
+            .collect(Collectors.toCollection(ArrayList::new));
     }
 
     List<Class<?>> findClassesWithAnnotationsInPackage(final Collection<Class<? extends Annotation>> annotations,

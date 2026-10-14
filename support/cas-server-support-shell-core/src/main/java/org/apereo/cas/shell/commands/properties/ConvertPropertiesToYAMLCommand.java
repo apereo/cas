@@ -31,7 +31,8 @@ public class ConvertPropertiesToYAMLCommand implements CasShellCommand {
             longName = "properties",
             description = "Path to a properties file that contains CAS settings",
             defaultValue = "/etc/cas/config/cas.properties")
-        final String propertiesFile) throws Exception {
+        final String propertiesFile)
+            throws Exception {
         val output = FilenameUtils.removeExtension(propertiesFile) + ".yml";
         convertAndSaveToYaml(loadProperties(propertiesFile), output);
         LOGGER.info("Converted configuration properties to [{}]", output);
@@ -65,7 +66,8 @@ public class ConvertPropertiesToYAMLCommand implements CasShellCommand {
     }
 
     private static void convertAndSaveToYaml(final Map<String, Object> properties,
-                                             final String outputPath) throws Exception {
+                                             final String outputPath)
+            throws Exception {
         val options = new DumperOptions();
         options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
         options.setDefaultScalarStyle(DumperOptions.ScalarStyle.PLAIN);

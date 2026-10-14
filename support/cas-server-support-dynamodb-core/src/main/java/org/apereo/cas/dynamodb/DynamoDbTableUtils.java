@@ -128,7 +128,8 @@ public class DynamoDbTableUtils {
                                                final String tableName,
                                                final boolean deleteTable,
                                                final List<AttributeDefinition> attributeDefinitions,
-                                               final List<KeySchemaElement> keySchemaElements) throws Exception {
+                                               final List<KeySchemaElement> keySchemaElements)
+            throws Exception {
         return createTable(dynamoDbClient, dynamoDbProperties, tableName, deleteTable,
             attributeDefinitions, keySchemaElements, List.of());
     }
@@ -152,7 +153,8 @@ public class DynamoDbTableUtils {
                                                final boolean deleteTable,
                                                final List<AttributeDefinition> attributeDefinitions,
                                                final List<KeySchemaElement> keySchemaElements,
-                                               final List<GlobalSecondaryIndex> globalSecondaryIndexes) throws Exception {
+                                               final List<GlobalSecondaryIndex> globalSecondaryIndexes)
+            throws Exception {
 
         val provisionedThroughput = getProvisionedThroughput(dynamoDbProperties);
         val requestBuilder = CreateTableRequest.builder()

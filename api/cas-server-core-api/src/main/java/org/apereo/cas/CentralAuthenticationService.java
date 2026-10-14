@@ -126,7 +126,8 @@ public interface CentralAuthenticationService {
      * @throws Throwable the throwable
      */
     default Ticket createProxyGrantingTicket(final ServiceTicket serviceTicket,
-                                             final AuthenticationResult authenticationResult) throws Throwable {
+                                             final AuthenticationResult authenticationResult)
+            throws Throwable {
         return createProxyGrantingTicket(serviceTicket.getId(), authenticationResult);
     }
 

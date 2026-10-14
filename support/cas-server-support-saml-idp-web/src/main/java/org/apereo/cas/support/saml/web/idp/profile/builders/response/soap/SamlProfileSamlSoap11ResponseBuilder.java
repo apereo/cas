@@ -32,7 +32,8 @@ public class SamlProfileSamlSoap11ResponseBuilder extends BaseSamlProfileSamlRes
 
     @Override
     protected Envelope buildResponse(final Optional<Assertion> assertion,
-                                     final SamlProfileBuilderContext context) throws Exception {
+                                     final SamlProfileBuilderContext context)
+            throws Exception {
         LOGGER.debug("Locating the assertion consumer service url for binding [{}]", context.getBinding());
         val acs = context.getAdaptor().getAssertionConsumerService(context.getBinding());
         LOGGER.debug("Located assertion consumer service url [{}]", acs);
@@ -63,7 +64,8 @@ public class SamlProfileSamlSoap11ResponseBuilder extends BaseSamlProfileSamlRes
     @Override
     protected Envelope encode(final SamlProfileBuilderContext context,
                               final Envelope envelope,
-                              final String relayState) throws Exception {
+                              final String relayState)
+            throws Exception {
         val ctx = context.getMessageContext().ensureSubcontext(SOAP11Context.class);
         Objects.requireNonNull(ctx).setEnvelope(envelope);
         val encoder = new HTTPSOAP11Encoder();

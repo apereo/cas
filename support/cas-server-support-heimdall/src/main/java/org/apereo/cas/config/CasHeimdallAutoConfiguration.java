@@ -92,8 +92,10 @@ public class CasHeimdallAutoConfiguration {
         @Qualifier("authorizationPrincipalParser")
         final AuthorizationPrincipalParser authorizationPrincipalParser,
         @Qualifier("heimdallAuthorizationEngine")
-        final AuthorizationEngine heimdallAuthorizationEngine) {
-        return new HeimdallAuthorizationController(heimdallAuthorizationEngine, authorizationPrincipalParser);
+        final AuthorizationEngine heimdallAuthorizationEngine,
+        @Qualifier("oauthProofOfPossessionValidator")
+        final ObjectProvider<OAuth20ProofOfPossessionValidator> proofOfPossessionValidator) {
+        return new HeimdallAuthorizationController(heimdallAuthorizationEngine, authorizationPrincipalParser, proofOfPossessionValidator);
     }
 
     @Bean

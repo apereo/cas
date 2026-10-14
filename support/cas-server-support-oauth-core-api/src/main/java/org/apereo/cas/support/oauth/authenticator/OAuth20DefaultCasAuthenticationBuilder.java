@@ -67,7 +67,8 @@ public class OAuth20DefaultCasAuthenticationBuilder implements OAuth20CasAuthent
     public Authentication build(final UserProfile profile,
                                 final OAuthRegisteredService registeredService,
                                 final WebContext context,
-                                final Service service) throws Throwable {
+                                final Service service)
+            throws Throwable {
 
         val attrs = new HashMap<>(profile.getAttributes());
         val profileAttributes = CollectionUtils.toMultiValuedMap(attrs);

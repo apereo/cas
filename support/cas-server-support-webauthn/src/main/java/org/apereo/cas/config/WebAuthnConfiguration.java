@@ -187,7 +187,8 @@ class WebAuthnConfiguration {
          * @throws Exception when neither a download nor the cache yields a valid BLOB
          */
         private static MetadataBLOB refreshFidoMetadataBlob(final FidoMetadataDownloader downloader,
-                                                            final WebAuthnMultifactorAttestationTrustSourceFidoProperties fidoProperties) throws Exception {
+                                                            final WebAuthnMultifactorAttestationTrustSourceFidoProperties fidoProperties)
+                throws Exception {
             try {
                 return downloader.refreshBlob();
             } catch (final IOException e) {
@@ -309,7 +310,8 @@ class WebAuthnConfiguration {
             @Qualifier("webAuthnRegisterRequestStorageCache")
             final WebAuthnCache<RegistrationRequest> webAuthnRegisterRequestStorageCache,
             @Qualifier("webAuthnAssertionRequestStorageCache")
-            final WebAuthnCache<AssertionRequestWrapper> webAuthnAssertionRequestStorageCache) throws Exception {
+            final WebAuthnCache<AssertionRequestWrapper> webAuthnAssertionRequestStorageCache)
+                throws Exception {
 
             val webAuthn = casProperties.getAuthn().getMfa().getWebAuthn().getCore();
             val serverName = casProperties.getServer().getName();

@@ -22,7 +22,8 @@ public class CasMustacheView extends MustacheView {
 
     @Override
     protected void renderMergedTemplateModel(final Map<String, Object> model, final HttpServletRequest request,
-                                             final HttpServletResponse response) throws Exception {
+                                             final HttpServletResponse response)
+            throws Exception {
         val resource = Objects.requireNonNull(getApplicationContext()).getResource(Objects.requireNonNull(getUrl()));
         try (val reader = new InputStreamReader(resource.getInputStream(), StandardCharsets.UTF_8);
              val writer = new StringWriter()) {

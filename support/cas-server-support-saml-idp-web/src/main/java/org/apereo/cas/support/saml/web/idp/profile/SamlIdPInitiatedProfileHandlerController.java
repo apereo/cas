@@ -7,12 +7,12 @@ import org.apereo.cas.support.saml.SamlIdPConstants;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceMetadataAdaptor;
 import org.apereo.cas.support.saml.util.Saml20HexRandomIdGenerator;
+import com.google.common.primitives.Longs;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.hc.core5.net.URIBuilder;
 import org.opensaml.messaging.context.MessageContext;
@@ -61,7 +61,8 @@ public class SamlIdPInitiatedProfileHandlerController extends AbstractSamlIdPPro
     @GetMapping(path = SamlIdPConstants.ENDPOINT_SAML2_IDP_INIT_PROFILE_SSO)
     @Operation(summary = "Handle SAML IdP initiated SSO request")
     protected ModelAndView handleIdPInitiatedSsoRequest(final HttpServletResponse response,
-                                                        final HttpServletRequest request) throws Throwable {
+                                                        final HttpServletRequest request)
+            throws Throwable {
         val providerId = extractProviderId(request);
         val registeredService = verifySamlRegisteredService(providerId, request);
         val adaptor = getSamlMetadataFacadeFor(registeredService, providerId);
@@ -123,8 +124,9 @@ public class SamlIdPInitiatedProfileHandlerController extends AbstractSamlIdPPro
         nameIDPolicy.setAllowCreate(Boolean.TRUE);
         authnRequest.setNameIDPolicy(nameIDPolicy);
 
-        if (NumberUtils.isCreatable(time)) {
-            authnRequest.setIssueInstant(Instant.ofEpochMilli(Long.parseLong(time)));
+        val issueInstant = time != null ? Longs.tryParse(time) : null;
+        if (issueInstant != null) {
+            authnRequest.setIssueInstant(Instant.ofEpochMilli(issueInstant));
         } else {
             authnRequest.setIssueInstant(ZonedDateTime.now(ZoneOffset.UTC).toInstant());
         }
@@ -147,7 +149,7 @@ public class SamlIdPInitiatedProfileHandlerController extends AbstractSamlIdPPro
 
     protected String extractShire(final HttpServletRequest request, final String providerId,
                                   final SamlRegisteredServiceMetadataAdaptor facade)
-        throws MessageDecodingException {
+            throws MessageDecodingException {
         var shire = request.getParameter(SamlIdPConstants.SHIRE);
         if (StringUtils.isNotBlank(shire)) {
             val locations = facade.getAssertionConsumerServiceLocations(SAMLConstants.SAML2_POST_BINDING_URI);

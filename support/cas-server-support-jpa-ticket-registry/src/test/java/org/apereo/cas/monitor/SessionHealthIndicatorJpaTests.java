@@ -63,7 +63,8 @@ class SessionHealthIndicatorJpaTests {
     private TicketRegistry jpaRegistry;
 
     private void addTicketsToRegistry(final TicketRegistry registry,
-                                      final int tgtCount, final int stCount) throws Throwable {
+                                      final int tgtCount, final int stCount)
+            throws Throwable {
         for (var i = 0; i < tgtCount; i++) {
             val ticket = new TicketGrantingTicketImpl(GENERATOR.getNewTicketId("TGT"),
                 CoreAuthenticationTestUtils.getAuthentication(), TEST_EXP_POLICY);

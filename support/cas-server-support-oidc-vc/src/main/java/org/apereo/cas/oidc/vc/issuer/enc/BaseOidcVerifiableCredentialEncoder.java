@@ -116,7 +116,8 @@ public abstract class BaseOidcVerifiableCredentialEncoder implements OidcVerifia
     protected String sign(
         final String sub, final OidcVerifiableCredentialValidationContext context,
         final OidcVerifiableCredentialProofValidator.VerifiableCredentialProofResult proof,
-        final CheckedConsumer<JwtClaims> claimsConsumer) throws Throwable {
+        final CheckedConsumer<JwtClaims> claimsConsumer)
+            throws Throwable {
         val oidc = configurationContext.getCasProperties().getAuthn().getOidc();
         val configurationId = context.resolveConfigurationId();
 
@@ -163,7 +164,8 @@ public abstract class BaseOidcVerifiableCredentialEncoder implements OidcVerifia
      * @throws Throwable the throwable
      */
     protected String signCredential(final JwtClaims claims, final String configurationId,
-                                    final OidcRegisteredService registeredService) throws Throwable {
+                                    final OidcRegisteredService registeredService)
+            throws Throwable {
         val configuration = resolveConfiguration(configurationId);
         val signingKey = configurationContext.getIdTokenSigningAndEncryptionService()
             .getJsonWebKeySigningKey(Optional.of(registeredService));

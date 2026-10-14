@@ -73,7 +73,8 @@ public class RestAuthenticationHandler extends AbstractUsernamePasswordAuthentic
     @Override
     protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(
         final UsernamePasswordCredential credential,
-        final String originalPassword) throws Throwable {
+        final String originalPassword)
+            throws Throwable {
 
         var response = (HttpResponse) null;
         try {
@@ -105,7 +106,8 @@ public class RestAuthenticationHandler extends AbstractUsernamePasswordAuthentic
 
     protected AuthenticationHandlerExecutionResult buildPrincipalFromResponse(
         final UsernamePasswordCredential credential,
-        final HttpResponse response) throws Throwable {
+        final HttpResponse response)
+            throws Throwable {
         try {
             try (val content = ((HttpEntityContainer) response).getEntity().getContent()) {
                 val result = IOUtils.toString(content, StandardCharsets.UTF_8);

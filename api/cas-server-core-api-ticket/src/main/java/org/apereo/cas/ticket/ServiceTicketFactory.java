@@ -26,7 +26,8 @@ public interface ServiceTicketFactory extends TicketFactory {
      * @throws Throwable the throwable
      */
     <T extends Ticket> T create(TicketGrantingTicket ticketGrantingTicket, @Nullable Service service,
-                                boolean credentialProvided, Class<T> clazz) throws Throwable;
+                                boolean credentialProvided, Class<T> clazz)
+            throws Throwable;
 
     /**
      * Create service ticket.
@@ -40,5 +41,6 @@ public interface ServiceTicketFactory extends TicketFactory {
      * @throws Throwable the throwable
      */
     <T extends Ticket> T create(Service service, Authentication authentication,
-                                boolean credentialsProvided, Class<T> serviceTicketClass) throws Throwable;
+                                boolean credentialsProvided, Class<T> serviceTicketClass)
+            throws Throwable;
 }

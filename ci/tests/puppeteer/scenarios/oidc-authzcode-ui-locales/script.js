@@ -7,11 +7,11 @@ const cas = require("../../cas.js");
     await cas.log(`Navigating to ${url}`);
     await cas.goto(page, url);
 
-    await cas.assertInnerText(page, "#content #fm1 button[name=submitBtn]", "ANMELDEN");
+    await cas.assertInnerText(page, "#content #fm1 button[name=submitBtn]", "Anmelden");
     
     await cas.loginWith(page);
-    await cas.assertInnerText(page, "#allow", "ERLAUBEN");
-    await cas.assertInnerText(page, "#cancel", "LEUGNEN");
+    await cas.assertInnerText(page, "#allow", "Erlauben");
+    await cas.assertInnerText(page, "#cancel", "Leugnen");
 
     await cas.closeBrowser(browser);
 })();

@@ -63,7 +63,8 @@ public class SelectiveMultifactorAuthenticationProviderWebflowEventResolver
                                                @Nullable final RegisteredService registeredService,
                                                final HttpServletRequest request,
                                                final RequestContext context,
-                                               @Nullable final Service service) throws Throwable {
+                                               @Nullable final Service service)
+            throws Throwable {
         if (resolveEvents.isEmpty()) {
             LOGGER.trace("No events resolved for authentication transaction [{}] and service [{}]",
                 authentication, registeredService);
@@ -84,7 +85,8 @@ public class SelectiveMultifactorAuthenticationProviderWebflowEventResolver
         final Authentication authentication,
         @Nullable final RegisteredService registeredService,
         final HttpServletRequest request,
-        @Nullable final Service service) throws Throwable {
+        @Nullable final Service service)
+            throws Throwable {
 
         LOGGER.debug("Locating multifactor providers to determine support for this authentication sequence");
         val providers = MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(

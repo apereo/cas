@@ -22,7 +22,8 @@ public abstract class BaseTicketCatalogConfigurer implements TicketCatalogConfig
     }
 
     protected TicketDefinition buildTicketDefinition(final TicketCatalog plan, final String prefix,
-                                                     final Class impl, final Class api) throws Throwable {
+                                                     final Class impl, final Class api)
+            throws Throwable {
         if (plan.contains(prefix)) {
             return Objects.requireNonNull(plan.find(prefix));
         }

@@ -263,7 +263,8 @@ public class DependenciesEndpoint extends BaseCasRestActuatorEndpoint {
 
     private static void scanJarEntries(final JarFile jarFile,
                                        final String source,
-                                       final Set<Dependency> dependencies) throws IOException {
+                                       final Set<Dependency> dependencies)
+            throws IOException {
         val entries = jarFile.entries();
         while (entries.hasMoreElements()) {
             val entry = entries.nextElement();
@@ -276,7 +277,8 @@ public class DependenciesEndpoint extends BaseCasRestActuatorEndpoint {
     }
 
     private static void scanNestedSpringBootLibraries(final JarFile jarFile,
-                                                      final Set<Dependency> dependencies) throws IOException {
+                                                      final Set<Dependency> dependencies)
+            throws IOException {
         val entries = jarFile.entries();
         while (entries.hasMoreElements()) {
             val entry = entries.nextElement();
@@ -292,7 +294,8 @@ public class DependenciesEndpoint extends BaseCasRestActuatorEndpoint {
 
     private static void scanNestedJar(final InputStream inputStream,
                                       final String source,
-                                      final Set<Dependency> dependencies) throws IOException {
+                                      final Set<Dependency> dependencies)
+            throws IOException {
         try (val jarInputStream = new JarInputStream(inputStream)) {
             for (var entry = jarInputStream.getNextJarEntry();
                  entry != null;
@@ -316,7 +319,8 @@ public class DependenciesEndpoint extends BaseCasRestActuatorEndpoint {
     }
 
     private static Optional<Dependency> readMavenDependency(final InputStream inputStream,
-                                                            final String source) throws IOException {
+                                                            final String source)
+            throws IOException {
         val properties = new Properties();
         properties.load(inputStream);
 

@@ -102,7 +102,8 @@ public class OidcVerifiableCredentialOfferEndpointController extends BaseOAuth20
     public ResponseEntity handle(
         @RequestBody final OidcVerifiableCredentialTransactionRequest request,
         final HttpServletRequest httpRequest,
-        final HttpServletResponse httpResponse) throws Throwable {
+        final HttpServletResponse httpResponse)
+            throws Throwable {
         val context = new JEEContext(httpRequest, httpResponse);
         val profile = OAuth20Utils.getAuthenticatedUserProfile(context, getConfigurationContext().getSessionStore());
         LOGGER.debug("Checking credential configuration IDs for [{}]", profile.getId());

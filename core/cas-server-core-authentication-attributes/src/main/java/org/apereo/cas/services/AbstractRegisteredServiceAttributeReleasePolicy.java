@@ -191,7 +191,8 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
 
     protected abstract Map<String, List<Object>> getAttributesInternal(
         RegisteredServiceAttributeReleasePolicyContext context,
-        Map<String, List<Object>> attributes) throws Throwable;
+        Map<String, List<Object>> attributes)
+            throws Throwable;
 
     protected boolean supports(final RegisteredServiceAttributeReleasePolicyContext context) {
         val criteria = getActivationCriteria();
@@ -245,7 +246,8 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
     }
 
     protected void insertPrincipalIdAsAttributeIfNeeded(final RegisteredServiceAttributeReleasePolicyContext context,
-                                                        final Map<String, List<Object>> attributesToRelease) throws Throwable {
+                                                        final Map<String, List<Object>> attributesToRelease)
+            throws Throwable {
         if (StringUtils.isNotBlank(getPrincipalIdAttribute()) && !attributesToRelease.containsKey(getPrincipalIdAttribute())) {
             LOGGER.debug("Attempting to resolve the principal id for service [{}]", context.getRegisteredService().getServiceId());
             val usernameProvider = context.getRegisteredService().getUsernameAttributeProvider();

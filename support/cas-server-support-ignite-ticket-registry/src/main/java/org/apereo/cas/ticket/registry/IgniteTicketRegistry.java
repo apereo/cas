@@ -98,8 +98,13 @@ public class IgniteTicketRegistry extends AbstractTicketRegistry implements Disp
     }
 
     @Override
-    public long deleteSingleTicket(final Ticket ticketId) {
-        val encTicketId = digestIdentifier(ticketId.getId());
+    public long deleteSingleTicket(final Ticket ticket) {
+        return deleteSingleTicket(ticket.getId());
+    }
+
+    @Override
+    public long deleteSingleTicket(final String ticketId) {
+        val encTicketId = digestIdentifier(ticketId);
         val metadata = ticketCatalog.find(ticketId);
         if (metadata != null) {
             val sql = "DELETE FROM %s where id=?".formatted(metadata.getProperties().getStorageName());

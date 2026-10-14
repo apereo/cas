@@ -129,7 +129,8 @@ public class LdapConnectionFactory implements Closeable {
         final String baseDn,
         final FilterTemplate filter,
         final int pageSize,
-        final String... returnAttributes) throws LdapException {
+        final String... returnAttributes)
+            throws LdapException {
         return executeSearchOperation(baseDn, filter, pageSize, ArrayUtils.EMPTY_STRING_ARRAY, returnAttributes);
     }
 
@@ -150,7 +151,8 @@ public class LdapConnectionFactory implements Closeable {
         final int pageSize,
         @Nullable
         final String[] binaryAttributes,
-        final String[] returnAttributes) throws LdapException {
+        final String[] returnAttributes)
+            throws LdapException {
         try {
             val request = LdapUtils.newLdaptiveSearchRequest(baseDn, filter, binaryAttributes, returnAttributes);
             if (pageSize <= 0) {
@@ -181,7 +183,8 @@ public class LdapConnectionFactory implements Closeable {
     public SearchResponse executeSearchOperation(
         final String baseDn,
         final FilterTemplate filter,
-        final int pageSize) throws LdapException {
+        final int pageSize)
+            throws LdapException {
         return executeSearchOperation(baseDn, filter, pageSize,
             ReturnAttributes.ALL_USER.value(), ReturnAttributes.ALL_USER.value());
     }

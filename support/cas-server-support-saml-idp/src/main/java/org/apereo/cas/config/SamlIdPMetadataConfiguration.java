@@ -333,7 +333,8 @@ class SamlIdPMetadataConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public SamlIdPCertificateAndKeyWriter samlSelfSignedCertificateWriter(
-            final CasConfigurationProperties casProperties) throws Exception {
+            final CasConfigurationProperties casProperties)
+                throws Exception {
             val properties = casProperties.getAuthn().getSamlIdp().getMetadata().getCore();
             val url = new URI(casProperties.getServer().getPrefix());
             val generator = new DefaultSamlIdPCertificateAndKeyWriter(url.getHost());
@@ -364,7 +365,8 @@ class SamlIdPMetadataConfiguration {
             final CipherExecutor samlIdPMetadataGeneratorCipherExecutor,
             final CasConfigurationProperties casProperties,
             @Qualifier("samlIdPMetadataCache")
-            final Cache<String, SamlIdPMetadataDocument> samlIdPMetadataCache) throws Exception {
+            final Cache<String, SamlIdPMetadataDocument> samlIdPMetadataCache)
+                throws Exception {
             val idp = casProperties.getAuthn().getSamlIdp();
             val location = SpringExpressionLanguageValueResolver.getInstance()
                 .resolve(idp.getMetadata().getFileSystem().getLocation());

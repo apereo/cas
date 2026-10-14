@@ -201,12 +201,14 @@ class CompositeProviderSelectionMultifactorWebflowEventResolverTests {
         }
 
         private Set<Event> assertCompositeProvider(final Set<Event> resolvedEvents,
-                                                   final Authentication authentication) throws Throwable {
+                                                   final Authentication authentication)
+                throws Throwable {
             return assertCompositeProvider(MockRequestContext.create(applicationContext), resolvedEvents, authentication);
         }
 
         private Set<Event> assertCompositeProvider(final MockRequestContext context, final Set<Event> resolvedEvents,
-                                                   final Authentication authentication) throws Throwable {
+                                                   final Authentication authentication)
+                throws Throwable {
             val service = RegisteredServiceTestUtils.getRegisteredService();
             servicesManager.save(service);
             WebUtils.putRegisteredService(context, service);

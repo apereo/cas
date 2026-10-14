@@ -26,7 +26,8 @@ public class DefaultConsentActivationStrategy implements ConsentActivationStrate
     @Override
     public ConsentQueryResult isConsentRequired(final Service service, final RegisteredService registeredService,
                                                 final Authentication authentication,
-                                                final HttpServletRequest requestContext) throws Throwable {
+                                                final HttpServletRequest requestContext)
+            throws Throwable {
         val consentPolicy = registeredService.getAttributeReleasePolicy().getConsentPolicy();
         if (consentPolicy != null) {
             switch (consentPolicy.getStatus()) {

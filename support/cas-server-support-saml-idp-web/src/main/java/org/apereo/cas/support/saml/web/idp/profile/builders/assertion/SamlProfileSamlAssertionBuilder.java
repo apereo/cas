@@ -115,7 +115,8 @@ public class SamlProfileSamlAssertionBuilder extends AbstractSaml20ObjectBuilder
      * @throws Exception the exception
      */
     protected void signAssertion(final Assertion assertion,
-                                 final SamlProfileBuilderContext context) throws Exception {
+                                 final SamlProfileBuilderContext context)
+            throws Exception {
         var signAssertions = (context.getRegisteredService().getSignAssertions() == TriStateBoolean.UNDEFINED && context.getAdaptor().isWantAssertionsSigned())
                              || context.getRegisteredService().getSignAssertions().isTrue();
         if (!signAssertions) {

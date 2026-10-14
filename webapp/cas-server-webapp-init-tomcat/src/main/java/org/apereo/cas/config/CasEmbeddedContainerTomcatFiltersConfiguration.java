@@ -117,7 +117,8 @@ class CasEmbeddedContainerTomcatFiltersConfiguration {
         @Override
         public void doFilter(final ServletRequest request,
                              final ServletResponse response,
-                             final FilterChain filterChain) throws ServletException, IOException {
+                             final FilterChain filterChain)
+                throws ServletException, IOException {
             val remoteAddress = Optional.ofNullable(ClientInfoHolder.getClientInfo())
                 .map(ClientInfo::getClientIpAddress)
                 .orElseGet(request::getRemoteAddr);

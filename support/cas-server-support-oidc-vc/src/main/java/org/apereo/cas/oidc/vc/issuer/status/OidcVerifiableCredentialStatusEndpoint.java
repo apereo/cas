@@ -64,7 +64,8 @@ public class OidcVerifiableCredentialStatusEndpoint extends BaseCasActuatorEndpo
             @Parameter(name = "status", required = true, in = ParameterIn.QUERY, description = "VALID, INVALID or SUSPENDED")
         })
     public WebEndpointResponse<OidcVerifiableCredentialStatusListService.StatusEntry> updateStatus(
-        @Selector final String statusListId, @Selector final long index, final String status) throws Throwable {
+        @Selector final String statusListId, @Selector final long index, final String status)
+            throws Throwable {
         val statusType = EnumUtils.getEnum(OidcVerifiableCredentialStatusListService.StatusType.class,
             StringUtils.upperCase(status, Locale.ENGLISH));
         if (statusType == null) {

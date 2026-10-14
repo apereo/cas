@@ -5,6 +5,8 @@ import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeyCacheKey;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeyUsage;
 import org.apereo.cas.support.oauth.OAuth20Constants;
+import org.apereo.cas.support.oauth.web.DefaultOAuth20RequestParameterResolver;
+import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.util.jwt.JsonWebTokenSigner;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.PlainJWT;
@@ -17,6 +19,7 @@ import org.pac4j.jee.context.JEEContext;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * This is {@link DefaultOAuth20RequestParameterResolverTests}.
@@ -39,6 +42,24 @@ class DefaultOAuth20RequestParameterResolverTests extends AbstractOidcTests {
         request.removeAllParameters();
         request.addParameter(OAuth20Constants.REQUEST, jwtString);
         return request;
+    }
+
+    @Test
+    void verifyRequestObjectUnpackedOncePerRequest() throws Throwable {
+        val request = getJwtRequest();
+        val claims = PlainJWT.parse(request.getParameter(OAuth20Constants.REQUEST)).getJWTClaimsSet();
+        val jwtBuilder = mock(JwtBuilder.class);
+        when(jwtBuilder.getServicesManager()).thenReturn(servicesManager);
+        when(jwtBuilder.unpack(any(Optional.class), anyString())).thenReturn(claims);
+        val resolver = new DefaultOAuth20RequestParameterResolver(jwtBuilder);
+
+        val context = new JEEContext(request, new MockHttpServletResponse());
+        assertTrue(resolver.resolveRequestParameter(context, OAuth20Constants.SCOPE, List.class).orElseThrow().contains("openid"));
+        assertEquals("code", resolver.resolveRequestParameter(context, "response").orElseThrow());
+        verify(jwtBuilder, times(1)).unpack(any(Optional.class), anyString());
+
+        resolver.resolveRequestParameter(new JEEContext(getJwtRequest(), new MockHttpServletResponse()), "response");
+        verify(jwtBuilder, times(2)).unpack(any(Optional.class), anyString());
     }
 
     @Test

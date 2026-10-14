@@ -46,7 +46,8 @@ public class DelegatedAuthenticationSamlIdPSingleLogoutRequestProcessor implemen
 
     @Override
     public void receive(final HttpServletRequest request, final HttpServletResponse response,
-                        final LogoutRequest logoutRequest, final MessageContext messageContext) throws Exception {
+                        final LogoutRequest logoutRequest, final MessageContext messageContext)
+            throws Exception {
         autoConfigureCookieIfNecessary(request);
         createSamlLogoutRequestCookie(request, response, logoutRequest, messageContext);
     }

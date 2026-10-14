@@ -1192,8 +1192,7 @@ async function initializeAuthenticationOperations() {
                 .each((group, i) => {
                     if (last !== group) {
                         $(rows).eq(i).before(
-                            `<tr style='font-weight: bold; background-color:var(--cas-theme-primary); color:var(--mdc-text-button-label-text-color);'>
-                                            <td colspan="3">${group}</td></tr>`.trim());
+                            palantirTableGroupRow(group, 3));
                         last = group;
                     }
                 });

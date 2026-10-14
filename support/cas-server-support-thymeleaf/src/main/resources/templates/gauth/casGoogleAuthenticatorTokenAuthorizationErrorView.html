@@ -11,7 +11,8 @@
 
 <body id="cas">
 <main class="container mt-3 mb-3">
-    <div layout:fragment="content" id="login" class="mdc-card card p-4 m-auto w-lg-66">
+    <div layout:fragment="content" id="login" class="mdc-card card p-4 m-auto w-lg-66 cas-hero cas-hero-start">
+        <span class="cas-hero-icon is-danger" aria-hidden="true"><i class="mdi mdi-cellphone-lock"></i></span>
         <div class="banner banner-danger alert alert-danger">
             <h2 th:text="#{screen.authentication.gauth.blocked.title}">Blocked</h2>
             <p th:utext="#{screen.authentication.gauth.blocked.desc}">Authentication attempt is now blocked.</p>

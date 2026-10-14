@@ -89,7 +89,8 @@ public class DefaultCasSimpleMultifactorAuthenticationService extends BaseCasSim
 
     @Override
     public Principal validate(final Principal resolvedPrincipal,
-                              final CasSimpleMultifactorTokenCredential credential) throws Exception {
+                              final CasSimpleMultifactorTokenCredential credential)
+            throws Exception {
         val result = bucketConsumer.consume(resolvedPrincipal.getId());
         if (!result.isConsumed()) {
             throw new FailedLoginException("Validation attempt for principal " + resolvedPrincipal.getId() + " is throttled");

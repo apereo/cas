@@ -27,6 +27,16 @@ import org.springframework.beans.factory.ObjectProvider;
 public abstract class BaseAccessTokenGrantRequestExtractor<T extends OAuth20ConfigurationContext> implements AccessTokenGrantRequestExtractor {
     private final ObjectProvider<T> configurationContext;
 
+    /**
+     * The DPoP proof that binds the token comes from the authenticated profile, or, for grants whose client is not that
+     * profile (device code polling, the JWT bearer grant), from the request attributes that
+     * {@code OAuth20ProofOfPossessionValidator.validateTokenRequest} sets. The request attributes always belong to the
+     * current request, so they win over a profile that may have been kept in the session from an earlier one.
+     *
+     * @param webContext the web context
+     * @return the access token request context
+     * @throws Throwable the throwable
+     */
     @Override
     public AccessTokenRequestContext extract(final WebContext webContext) throws Throwable {
         val tokenRequestContext = extractRequest(webContext);
@@ -39,6 +49,10 @@ public abstract class BaseAccessTokenGrantRequestExtractor<T extends OAuth20Conf
             }
             tokenRequestContext.setUserProfile(profile);
         });
+        webContext.getRequestAttribute(OAuth20Constants.DPOP_CONFIRMATION)
+            .ifPresent(confirmation -> tokenRequestContext.setDpopConfirmation(confirmation.toString()));
+        webContext.getRequestAttribute(OAuth20Constants.DPOP)
+            .ifPresent(proof -> tokenRequestContext.setDpop(proof.toString()));
         return tokenRequestContext;
     }
 

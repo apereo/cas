@@ -63,7 +63,8 @@ abstract class AbstractOidcFederationEndpointController extends AbstractControll
     protected ResponseEntity buildEntityStatement(
         final String issuer, final String subject, final JSONObject metadata,
         @Nullable final JsonNode federationKeys,
-        @Nullable final List<EntityID> authorityHints) throws Exception {
+        @Nullable final List<EntityID> authorityHints)
+            throws Exception {
         val entityStatement = federationEntityStatementService.createAndSign(
             issuer, subject, metadata, federationKeys, authorityHints);
         return ResponseEntity.ok()

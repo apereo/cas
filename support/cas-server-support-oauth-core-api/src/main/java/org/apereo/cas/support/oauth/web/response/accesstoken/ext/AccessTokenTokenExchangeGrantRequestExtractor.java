@@ -159,7 +159,8 @@ public class AccessTokenTokenExchangeGrantRequestExtractor<T extends OAuth20Conf
 
     protected Authentication buildActorTokenAuthentication(final WebContext webContext,
                                                            final OAuth20TokenExchangeTypes actorTokenType,
-                                                           final String actorToken) throws Throwable {
+                                                           final String actorToken)
+            throws Throwable {
         val configurationContext = getConfigurationContext().getObject();
         return switch (actorTokenType) {
             case ACCESS_TOKEN -> {

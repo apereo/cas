@@ -35,7 +35,8 @@ public class RadiusUtils {
                                                                             final List<RadiusServer> servers,
                                                                             final boolean failoverOnAuthenticationFailure,
                                                                             final boolean failoverOnException,
-                                                                            final Optional state) throws Exception {
+                                                                            final Optional state)
+            throws Exception {
         for (val radiusServer : servers) {
             LOGGER.debug("Attempting to authenticate [{}] at [{}]", username, radiusServer);
             try {

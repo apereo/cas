@@ -124,7 +124,8 @@ public class UrlResourceMetadataResolver extends BaseSamlRegisteredServiceMetada
     protected Collection<? extends MetadataResolver> resolveMetadataLocation(
         final SamlRegisteredService service,
         final CriteriaSet criteriaSet,
-        final String metadataLocation) throws Exception {
+        final String metadataLocation)
+            throws Exception {
 
         LOGGER.info("Loading SAML metadata from [{}]", metadataLocation);
         val backupFile = getMetadataBackupFile(service);
@@ -252,7 +253,8 @@ public class UrlResourceMetadataResolver extends BaseSamlRegisteredServiceMetada
     }
 
     protected AbstractMetadataResolver getMetadataResolverFromResponse(final HttpResponse response,
-                                                                       final File backupFile) throws Exception {
+                                                                       final File backupFile)
+            throws Exception {
         val entity = ((HttpEntityContainer) response).getEntity();
         val result = IOUtils.toString(entity.getContent(), StandardCharsets.UTF_8);
         writeMetadataToBackupFile(result, backupFile);

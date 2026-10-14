@@ -1,6 +1,5 @@
 const cas = require("../../cas.js");
 const SockJS = require("sockjs-client");
-const StompJS = require("@stomp/stompjs");
 const querystring = require("querystring");
 
 (async () => {
@@ -21,7 +20,8 @@ const querystring = require("querystring");
 })();
 
 async function connectAndLogin(channelId, page) {
-    const client = new StompJS.Client({
+    const {Client} = await import("@stomp/stompjs");
+    const client = new Client({
         brokerURL: "ws://localhost:8443/cas/qr-websocket",
         debug: (str) => cas.log(str),
         reconnectDelay: 5000,

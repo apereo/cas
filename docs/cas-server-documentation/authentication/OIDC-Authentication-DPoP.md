@@ -30,8 +30,82 @@ To access a protected resource with a DPoP token (such as the `profile` endpoint
 to generate a new DPoP proof, with one additional string claim - `ath`, set to the BASE64URL-encoded 
 SHA-256 hash of the access token value. The `htm` (HTTP method) and `htu` (HTTP URI) claims must match those of the resource.
 
-Note that there is no special configuration required in CAS to enable support for DPoP tokens; however you should note that at this time,
-support for DPoP only covers access tokens. Support for refresh tokens may be worked out in future versions.
+A DPoP-bound access token must be sent in the `Authorization` header with the `DPoP` scheme, as in `Authorization: DPoP <token>`.
+Sent any other way, whether as a bearer token in the `Authorization` header or as a request parameter, it is refused with `401`
+and `invalid_token`, as [RFC 9449](https://www.rfc-editor.org/rfc/rfc9449#section-7.2) requires, even when a valid proof comes with it:
+
+```json
+{
+  "error": "invalid_token",
+  "error_description": "DPoP-bound access token must be presented in the Authorization header with the DPoP scheme"
+}
+```
+
+A request carries exactly one `DPoP` header, holding a well-formed JWT, as
+[RFC 9449](https://www.rfc-editor.org/rfc/rfc9449#section-4.3) requires. A token request with several, or with one that is not
+a JWT, is answered with `400` and `invalid_dpop_proof`. A protected resource answers a DPoP-bound access token that comes with
+no proof, several proofs or a proof that does not verify with `401` and a `DPoP` challenge, whose `algs` parameter lists the
+algorithms CAS accepts for DPoP proofs, the same list the discovery document advertises as `dpop_signing_alg_values_supported`:
+
+```bash
+HTTP/1.1 401 Unauthorized
+WWW-Authenticate: DPoP error="invalid_dpop_proof", error_description="...", algs="RS256 RS384 RS512 ES256 ES384 ES512"
+```
+
+Note that there is no special configuration required in CAS to enable support for DPoP tokens.
+
+## Refresh Tokens
+
+A refresh token issued to a public client, one with no client secret and no token endpoint authentication method other
+than `none`, is bound to the key of the DPoP proof that came with the token request, as
+[RFC 9449](https://www.rfc-editor.org/rfc/rfc9449#section-5) requires. Every request that uses it must carry a DPoP proof made
+with that key, or it is answered with `400` and `invalid_dpop_proof`, and the refresh token is not used up. A renewed refresh
+token stays bound to the same key. Refresh tokens issued to confidential clients are not bound, since client authentication
+already ties them to the client, and such a client may change its DPoP key without losing them.
+
+## DPoP-Bound Access Tokens
+
+A client may be required to always use DPoP, as the `dpop_bound_access_tokens` client metadata of
+[RFC 9449](https://www.rfc-editor.org/rfc/rfc9449#section-5.2) defines. Every token request from such a client must carry a `DPoP`
+proof header, whatever the grant; one that does not is answered with `400` and `invalid_dpop_proof`, and the grant it presents,
+such as an authorization code, is not redeemed. The setting is turned on in the client's service definition:
+
+```json
+{
+  "@class": "org.apereo.cas.services.OidcRegisteredService",
+  "clientId": "client",
+  "clientSecret": "secret",
+  "serviceId": "^https://app.example.org/.*",
+  "name": "Sample",
+  "id": 1,
+  "dpopBoundAccessTokens": true
+}
+```
+
+A client may also ask for it by sending `"dpop_bound_access_tokens": true` in its
+[dynamic registration request](OIDC-Authentication-Dynamic-Registration.html); the registration response echoes the setting
+when it is on. Token requests made by polling with a device code and with the JWT bearer grant verify their proofs as well, and
+the access tokens they issue are bound to the proof's key.
+
+## Authorization Code Binding
+
+An authorization request may bind the authorization code to the client's DPoP key with the `dpop_jkt` parameter, the
+base64url-encoded SHA-256 [JWK thumbprint](https://www.rfc-editor.org/rfc/rfc7638) of its public key, as
+[RFC 9449](https://www.rfc-editor.org/rfc/rfc9449#section-10) defines. The parameter is accepted at the authorization endpoint
+and in the body of a [pushed authorization request](OIDC-Authentication-PAR.html). A pushed authorization request may carry a
+`DPoP` proof header instead: CAS verifies it as it would at the token endpoint, nonce included, and binds the code to its key as if
+its thumbprint had been sent as `dpop_jkt`. When both are sent, they must name the same key, or the request is refused with
+`invalid_dpop_proof`.
+
+The token request that redeems a bound code must carry a DPoP proof made with that key. Otherwise it is answered with `400`:
+
+```json
+{
+  "error": "invalid_dpop_proof"
+}
+```
+
+The code is not redeemed by such a request, so the client that holds the key can still use it.
 
 ## Single-Use Checking
 
@@ -68,7 +142,7 @@ Protected resources, such as the `profile` endpoint, the
 
 ```bash
 HTTP/1.1 401 Unauthorized
-WWW-Authenticate: DPoP error="use_dpop_nonce", error_description="Use of DPoP nonce required"
+WWW-Authenticate: DPoP error="use_dpop_nonce", error_description="Use of DPoP nonce required", algs="RS256 RS384 RS512 ES256 ES384 ES512"
 DPoP-Nonce: TST-1-mD3m...
 ```
 

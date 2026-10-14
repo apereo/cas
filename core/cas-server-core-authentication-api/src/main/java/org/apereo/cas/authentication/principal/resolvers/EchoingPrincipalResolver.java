@@ -31,7 +31,8 @@ public class EchoingPrincipalResolver implements PrincipalResolver {
 
     @Override
     public @Nullable Principal resolve(final Credential credential, final Optional<Principal> principal,
-                                       final Optional<AuthenticationHandler> handler, final Optional<Service> service) throws Throwable {
+                                       final Optional<AuthenticationHandler> handler, final Optional<Service> service)
+            throws Throwable {
         LOGGER.debug("Echoing back the authenticated principal [{}]", principal);
         return principal.orElse(null);
     }

@@ -93,7 +93,8 @@ public class GenerateSamlIdPMetadataCommand implements CasShellCommand {
             defaultValue = StringUtils.EMPTY
         )
         final String subjectAltNames
-    ) throws Throwable {
+    )
+            throws Throwable {
 
         val locator = new FileSystemSamlIdPMetadataLocator(CipherExecutor.noOpOfStringToString(),
             new File(metadataLocation),

@@ -112,7 +112,8 @@ public class SamlIdPSingleLogoutRedirectionStrategy implements LogoutRedirection
                                                                              final SamlRegisteredService samlRegisteredService,
                                                                              final SamlRegisteredServiceMetadataAdaptor adaptor,
                                                                              final HttpServletRequest request,
-                                                                             final HttpServletResponse response) throws Exception {
+                                                                             final HttpServletResponse response)
+            throws Exception {
         val sloService = adaptor.getSingleLogoutService(SAMLConstants.SAML2_REDIRECT_BINDING_URI);
         return produceSamlLogoutResponseRedirect(adaptor, sloService, samlRegisteredService, samlLogoutRequest, request, response);
     }
@@ -121,7 +122,8 @@ public class SamlIdPSingleLogoutRedirectionStrategy implements LogoutRedirection
                                                                          final SamlRegisteredService samlRegisteredService,
                                                                          final SamlRegisteredServiceMetadataAdaptor adaptor,
                                                                          final HttpServletRequest request,
-                                                                         final HttpServletResponse response) throws Exception {
+                                                                         final HttpServletResponse response)
+            throws Exception {
         val sloService = adaptor.getSingleLogoutService(SAMLConstants.SAML2_POST_BINDING_URI);
         return produceSamlLogoutResponsePost(adaptor, sloService, samlRegisteredService, samlLogoutRequest, request, response);
     }
@@ -131,7 +133,8 @@ public class SamlIdPSingleLogoutRedirectionStrategy implements LogoutRedirection
                                                                           final SamlRegisteredService registeredService,
                                                                           final LogoutRequest logoutRequest,
                                                                           final HttpServletRequest request,
-                                                                          final HttpServletResponse response) throws Exception {
+                                                                          final HttpServletResponse response)
+            throws Exception {
         val logoutResponse = buildSamlLogoutResponse(adaptor, sloService, registeredService, logoutRequest, request, response);
         val location = StringUtils.isBlank(sloService.getResponseLocation())
             ? sloService.getLocation()
@@ -152,7 +155,8 @@ public class SamlIdPSingleLogoutRedirectionStrategy implements LogoutRedirection
                                                                       final SamlRegisteredService registeredService,
                                                                       final LogoutRequest logoutRequest,
                                                                       final HttpServletRequest request,
-                                                                      final HttpServletResponse response) throws Exception {
+                                                                      final HttpServletResponse response)
+            throws Exception {
         val logoutResponse = buildSamlLogoutResponse(adaptor, sloService, registeredService, logoutRequest, request, response);
         val location = StringUtils.isBlank(sloService.getResponseLocation())
             ? sloService.getLocation()
@@ -182,7 +186,8 @@ public class SamlIdPSingleLogoutRedirectionStrategy implements LogoutRedirection
                                                      final SamlRegisteredService registeredService,
                                                      final LogoutRequest logoutRequest,
                                                      final HttpServletRequest request,
-                                                     final HttpServletResponse response) throws Exception {
+                                                     final HttpServletResponse response)
+            throws Exception {
         val id = '_' + String.valueOf(RandomUtils.nextLong());
         val builder = configurationContext.getLogoutResponseBuilder();
         val status = builder.newStatus(StatusCode.SUCCESS, "Success");

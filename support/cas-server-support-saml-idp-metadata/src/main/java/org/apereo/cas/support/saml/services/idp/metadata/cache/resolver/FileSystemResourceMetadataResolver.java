@@ -105,7 +105,8 @@ public class FileSystemResourceMetadataResolver extends BaseSamlRegisteredServic
     }
 
     private AbstractMetadataResolver getMetadataResolver(final AbstractResource metadataResource,
-                                                         final File metadataFile) throws Exception {
+                                                         final File metadataFile)
+            throws Exception {
         if (metadataFile.isDirectory()) {
             val sourceStrategy = new DefaultLocalDynamicSourceKeyGenerator(StringUtils.EMPTY, ".xml", StringUtils.EMPTY);
             val manager = new FilesystemLoadSaveManager<>(metadataFile, configBean.getParserPool());

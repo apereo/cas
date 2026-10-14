@@ -2,15 +2,24 @@ package org.apereo.cas.oidc.token;
 
 import module java.base;
 import org.apereo.cas.oidc.AbstractOidcTests;
+import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.validator.token.OAuth20TokenRequestValidator;
+import org.apereo.cas.token.JwtBuilder;
+import com.nimbusds.jose.JWSAlgorithm;
+import com.nimbusds.jose.jwk.Curve;
+import com.nimbusds.jose.jwk.gen.ECKeyGenerator;
+import com.nimbusds.jwt.JWTClaimsSet;
+import com.nimbusds.oauth2.sdk.dpop.DefaultDPoPProofFactory;
+import com.nimbusds.oauth2.sdk.dpop.verifiers.InvalidDPoPProofException;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.pac4j.jee.context.JEEContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpMethod;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import static org.junit.jupiter.api.Assertions.*;
@@ -36,5 +45,29 @@ class OidcAccessTokenJwtBearerGrantRequestValidatorTests extends AbstractOidcTes
         request.addParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.JWT_BEARER.getType());
         assertTrue(validator.supports(context));
         assertTrue(validator.validate(context));
+    }
+
+    @Test
+    void verifyClientWithDPoPBoundAccessTokens() throws Throwable {
+        val registeredService = getOidcRegisteredService(UUID.randomUUID().toString());
+        registeredService.setDpopBoundAccessTokens(true);
+        servicesManager.save(registeredService);
+        val request = new MockHttpServletRequest(HttpMethod.POST.name(), "/cas/" + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.TOKEN_URL);
+        request.setScheme("https");
+        request.setServerName("sso.example.org");
+        request.setServerPort(443);
+        val context = new JEEContext(request, new MockHttpServletResponse());
+        val claims = JWTClaimsSet.parse(Map.of(OAuth20Constants.CLIENT_ID, registeredService.getClientId()));
+        request.addParameter(OAuth20Constants.ASSERTION, JwtBuilder.buildPlain(claims, Optional.of(registeredService)));
+        request.addParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.JWT_BEARER.getType());
+        assertThrows(InvalidDPoPProofException.class, () -> validator.validate(context));
+
+        val key = new ECKeyGenerator(Curve.P_256).generate();
+        val proof = new DefaultDPoPProofFactory(key, JWSAlgorithm.ES256)
+            .createDPoPJWT(HttpMethod.POST.name(), new URI(request.getRequestURL().toString()));
+        request.addHeader(OAuth20Constants.DPOP, proof.serialize());
+        assertTrue(validator.validate(context));
+        assertEquals(key.computeThumbprint().toString(), request.getAttribute(OAuth20Constants.DPOP_CONFIRMATION));
+        assertEquals(proof.serialize(), request.getAttribute(OAuth20Constants.DPOP));
     }
 }

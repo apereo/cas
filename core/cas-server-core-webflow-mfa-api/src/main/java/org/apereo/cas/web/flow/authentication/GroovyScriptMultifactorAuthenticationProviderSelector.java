@@ -30,7 +30,8 @@ public class GroovyScriptMultifactorAuthenticationProviderSelector implements Mu
 
     @Override
     public @Nullable MultifactorAuthenticationProvider resolve(final Collection<MultifactorAuthenticationProvider> providers,
-                                                               @Nullable final RegisteredService service, final Principal principal) throws Throwable {
+                                                               @Nullable final RegisteredService service, final Principal principal)
+            throws Throwable {
         val args = new Object[]{Objects.requireNonNull(service), principal, providers, LOGGER};
         LOGGER.debug("Invoking Groovy script with service=[{}], principal=[{}], providers=[{}]", service, principal, providers);
         val provider = watchableScript.execute(args, String.class);

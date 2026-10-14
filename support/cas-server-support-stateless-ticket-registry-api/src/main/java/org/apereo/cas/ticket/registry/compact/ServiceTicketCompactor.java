@@ -80,7 +80,8 @@ public class ServiceTicketCompactor implements TicketCompactor<ServiceTicket> {
      * @throws Throwable the throwable
      */
     static ServiceTicket newServiceTicket(final TicketFactory ticketFactory, final Service service,
-                                          final Authentication authentication, final boolean fromNewLogin) throws Throwable {
+                                          final Authentication authentication, final boolean fromNewLogin)
+            throws Throwable {
         val factory = (ServiceTicketFactory) ticketFactory.get(ServiceTicket.class);
         return factory.create(service, authentication, fromNewLogin, ServiceTicket.class);
     }

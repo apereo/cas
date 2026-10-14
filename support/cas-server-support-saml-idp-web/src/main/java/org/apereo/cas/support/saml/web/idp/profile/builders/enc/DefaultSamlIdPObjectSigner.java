@@ -120,7 +120,8 @@ public class DefaultSamlIdPObjectSigner implements SamlIdPObjectSigner {
                                            final HttpServletRequest request,
                                            final String binding,
                                            final RequestAbstractType authnRequest,
-                                           final MessageContext messageContext) throws Exception {
+                                           final MessageContext messageContext)
+            throws Exception {
         LOGGER.trace("Attempting to encode [{}] for [{}]", samlObject.getClass().getName(), adaptor.getEntityId());
         prepareOutboundContext(samlObject, adaptor, messageContext, binding, authnRequest);
         prepareSecurityParametersContext(adaptor, messageContext, service);
@@ -202,7 +203,8 @@ public class DefaultSamlIdPObjectSigner implements SamlIdPObjectSigner {
         final SamlRegisteredServiceMetadataAdaptor adaptor,
         final MessageContext outboundContext,
         final String binding,
-        final RequestAbstractType authnRequest) throws SamlException {
+        final RequestAbstractType authnRequest)
+            throws SamlException {
 
         LOGGER.trace("Outbound saml object to use is [{}]", samlObject.getClass().getName());
         outboundContext.setMessage(samlObject);

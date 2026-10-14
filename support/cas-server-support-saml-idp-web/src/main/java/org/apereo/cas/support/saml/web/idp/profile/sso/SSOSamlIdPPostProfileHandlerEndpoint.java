@@ -163,7 +163,8 @@ public class SSOSamlIdPPostProfileHandlerEndpoint extends BaseCasRestActuatorEnd
                parameters = @Parameter(name = SamlProtocolConstants.PARAMETER_ENTITY_ID, required = true, description = "The entity id"))
     public ResponseEntity<Object> produceLogoutRequestPost(
         @RequestParam(SamlProtocolConstants.PARAMETER_ENTITY_ID) final String entityId,
-        final HttpServletResponse response) throws Exception {
+        final HttpServletResponse response)
+            throws Exception {
         val selectedService = serviceFactory.createService(entityId);
         val registeredService = servicesManager.findServiceBy(selectedService, SamlRegisteredService.class);
         RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(selectedService, registeredService);

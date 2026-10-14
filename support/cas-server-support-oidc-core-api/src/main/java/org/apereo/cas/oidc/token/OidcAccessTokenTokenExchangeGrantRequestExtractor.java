@@ -111,7 +111,8 @@ public class OidcAccessTokenTokenExchangeGrantRequestExtractor extends AccessTok
     @Override
     protected Authentication buildActorTokenAuthentication(final WebContext webContext,
                                                            final OAuth20TokenExchangeTypes actorTokenType,
-                                                           final String actorToken) throws Throwable {
+                                                           final String actorToken)
+            throws Throwable {
         val configurationContext = getConfigurationContext().getObject();
         if (actorTokenType == OAuth20TokenExchangeTypes.ID_TOKEN) {
             val userProfile = extractUserProfile(webContext).orElseThrow();

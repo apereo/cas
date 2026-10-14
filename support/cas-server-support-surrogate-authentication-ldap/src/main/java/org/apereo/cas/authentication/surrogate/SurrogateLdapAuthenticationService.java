@@ -137,7 +137,8 @@ public class SurrogateLdapAuthenticationService extends BaseSurrogateAuthenticat
 
     protected boolean doesSurrogateAccountExistInLdap(final String surrogate,
                                                       final LdapConnectionFactory connectionFactory,
-                                                      final SurrogateLdapAuthenticationProperties ldap) throws Throwable {
+                                                      final SurrogateLdapAuthenticationProperties ldap)
+            throws Throwable {
         if (StringUtils.isBlank(ldap.getSurrogateValidationFilter())) {
             return true;
         }

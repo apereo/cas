@@ -1,0 +1,46 @@
+{
+  "dependencies": "oidc-vc",
+  "conditions": {
+    "docker": "true"
+  },
+  "properties": [
+    "--logging.level.org.springframework.web=warn",
+
+    "--cas.server.tomcat.http[0].enabled=true",
+    "--cas.server.tomcat.http[0].port=8080",
+
+    "--cas.server.name=http://host.docker.internal:8080",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
+    "--cas.authn.attribute-repository.stub.attributes.given_name=CAS",
+    "--cas.authn.attribute-repository.stub.attributes.family_name=User",
+    "--cas.authn.attribute-repository.stub.attributes.document_number=S12345",
+
+    "--cas.authn.oidc.vc.offer.transaction-code-enabled=false",
+
+    "--cas.authn.oidc.discovery.token-endpoint-auth-methods-supported=none,client_secret_basic,client_secret_post",
+
+    "--cas.server.tomcat.rewrite-valve.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/rewrite.config",
+    "--cas.server.tomcat.rewrite-valve.valve-type=ENGINE",
+
+    "--cas.authn.oidc.core.accepted-issuers-pattern=.*",
+    "--cas.authn.oidc.core.issuer=http://host.docker.internal:8080/cas/oidc",
+    "--cas.authn.oidc.jwks.file-system.jwks-file=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/keystore.json",
+
+    "--cas.service-registry.core.init-from-json=true",
+    "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services",
+
+    "--cas.authn.oidc.vc.issuer.credential-configurations.mdl.format=MSO_MDOC",
+    "--cas.authn.oidc.vc.issuer.credential-configurations.mdl.doctype=org.iso.18013.5.1.mDL",
+    "--cas.authn.oidc.vc.issuer.credential-configurations.mdl.scope=MobileDrivingLicence",
+    "--cas.authn.oidc.vc.issuer.credential-configurations.mdl.credential-signing-alg-values-supported=ES256",
+    "--cas.authn.oidc.vc.issuer.credential-configurations.mdl.proof-signing-alg-values-supported=ES256",
+    "--cas.authn.oidc.vc.issuer.credential-configurations.mdl.claims.given_name.mandatory=true",
+    "--cas.authn.oidc.vc.issuer.credential-configurations.mdl.claims.given_name.namespace=org.iso.18013.5.1",
+    "--cas.authn.oidc.vc.issuer.credential-configurations.mdl.claims.family_name.mandatory=true",
+    "--cas.authn.oidc.vc.issuer.credential-configurations.mdl.claims.family_name.namespace=org.iso.18013.5.1",
+    "--cas.authn.oidc.vc.issuer.credential-configurations.mdl.claims.document_number.mandatory=true",
+    "--cas.authn.oidc.vc.issuer.credential-configurations.mdl.claims.document_number.namespace=org.iso.18013.5.1"
+  ],
+  "initScript": "${PWD}/ci/tests/waltid/run-waltid-server.sh"
+}

@@ -125,7 +125,8 @@ class OidcJwtAuthenticatorRsaTests extends AbstractOidcTests {
 
     private UsernamePasswordCredentials getCredential(final MockHttpServletRequest request,
                                                       final String uid, final String password,
-                                                      final String clientId) throws Throwable {
+                                                      final String clientId)
+            throws Throwable {
         val credentials = new UsernamePasswordCredentials(uid, password);
 
         val code = defaultOAuthCodeFactory.create(RegisteredServiceTestUtils.getService(),

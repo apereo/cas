@@ -66,7 +66,8 @@ public class WsFederationCredentialsToPrincipalResolver extends PersonDirectoryP
                                                                  final Optional<Principal> currentPrincipal,
                                                                  final Map<String, List<Object>> queryAttributes,
                                                                  final Optional<Service> service,
-                                                                 final Optional<AuthenticationHandler> handler) throws Throwable {
+                                                                 final Optional<AuthenticationHandler> handler)
+            throws Throwable {
         val wsFedCredentials = (WsFederationCredential) credential;
         if (this.configuration.getAttributesType() == WsFederationConfiguration.WsFedPrincipalResolutionAttributesType.WSFED) {
             return wsFedCredentials.getAttributes();

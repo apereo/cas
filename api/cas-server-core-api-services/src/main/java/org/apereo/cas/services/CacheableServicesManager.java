@@ -31,7 +31,7 @@ public interface CacheableServicesManager extends ServicesManager {
     void cleanRegisteredServicesCache();
 
     /**
-     * Cache service.
+     * Cache a service, preparing it the way a load would: unsupported types are skipped and templates are applied.
      *
      * @param service the service
      */

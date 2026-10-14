@@ -298,7 +298,8 @@ class CoreWsSecuritySecurityTokenServiceConfiguration {
         @Bean
         public SecurityTokenServiceProvider transportSTSProviderBean(
             @Qualifier("transportIssueDelegate") final IssueOperation transportIssueDelegate,
-            @Qualifier("transportValidateDelegate") final ValidateOperation transportValidateDelegate) throws Exception {
+            @Qualifier("transportValidateDelegate") final ValidateOperation transportValidateDelegate)
+                throws Exception {
             val provider = new SecurityTokenServiceProvider();
             provider.setIssueOperation(transportIssueDelegate);
             provider.setValidateOperation(transportValidateDelegate);

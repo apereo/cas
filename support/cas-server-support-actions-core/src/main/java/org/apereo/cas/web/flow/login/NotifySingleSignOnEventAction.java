@@ -62,7 +62,8 @@ public class NotifySingleSignOnEventAction extends BaseCasWebflowAction {
     }
 
     protected void sendSingleSignOnEventSms(
-        final RequestContext context, final AuthenticationAwareTicket aat) throws Throwable {
+        final RequestContext context, final AuthenticationAwareTicket aat)
+            throws Throwable {
         val message = SmsBodyBuilder.builder()
             .properties(casProperties.getSso().getSms())
             .parameters(buildCommunicationParameters(context, aat))
@@ -83,7 +84,8 @@ public class NotifySingleSignOnEventAction extends BaseCasWebflowAction {
     }
 
     protected void sendSingleSignOnEventEmail(
-        final RequestContext context, final AuthenticationAwareTicket aat) throws Throwable {
+        final RequestContext context, final AuthenticationAwareTicket aat)
+            throws Throwable {
         val clientInfo = ClientInfoHolder.getClientInfo();
         val body = EmailMessageBodyBuilder.builder()
             .properties(casProperties.getSso().getMail())
@@ -105,7 +107,8 @@ public class NotifySingleSignOnEventAction extends BaseCasWebflowAction {
     }
 
     protected Map<String, Object> buildCommunicationParameters(
-        final RequestContext context, final AuthenticationAwareTicket aat) throws Throwable {
+        final RequestContext context, final AuthenticationAwareTicket aat)
+            throws Throwable {
         val principal = aat.getAuthentication().getPrincipal();
         val expiration = DateTimeUtils.dateOf(LocalDateTime.now(Clock.systemUTC())
             .plusSeconds(aat.getExpirationPolicy().getTimeToLive()));

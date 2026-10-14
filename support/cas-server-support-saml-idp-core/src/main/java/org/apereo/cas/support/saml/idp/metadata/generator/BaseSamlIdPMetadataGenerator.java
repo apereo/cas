@@ -120,7 +120,8 @@ public abstract class BaseSamlIdPMetadataGenerator implements SamlIdPMetadataGen
      * @throws Exception the exception
      */
     protected SamlIdPMetadataDocument finalizeMetadataDocument(final SamlIdPMetadataDocument doc,
-                                                               final Optional<SamlRegisteredService> registeredService) throws Throwable {
+                                                               final Optional<SamlRegisteredService> registeredService)
+            throws Throwable {
         return doc;
     }
 
@@ -203,7 +204,8 @@ public abstract class BaseSamlIdPMetadataGenerator implements SamlIdPMetadataGen
      */
     private String buildMetadataGeneratorParameters(final Pair<String, String> signing,
                                                     final Pair<String, String> encryption,
-                                                    final Optional<SamlRegisteredService> registeredService) throws Throwable {
+                                                    final Optional<SamlRegisteredService> registeredService)
+            throws Throwable {
 
         val signingCert = SamlIdPMetadataGenerator.cleanCertificate(signing.getKey());
         val encryptionCert = SamlIdPMetadataGenerator.cleanCertificate(encryption.getKey());

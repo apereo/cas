@@ -158,7 +158,7 @@
 
 </head>
 
-<body class="{% if page.title == 'CAS - Home' %}docs-home{% endif %}{% unless showNavigation %} docs-standalone{% endunless %}" data-docs-base="{{ basePath }}" data-docs-version="{{ navigationVersion }}" data-docs-build="{{ site.time | date: '%Y%m%d%H%M%S' }}">
+<body class="{% if page.title == 'CAS - Home' %}docs-home{% endif %}{% unless showNavigation %} docs-standalone{% endunless %}{% if page.url contains '/release_notes/' %} docs-release-notes{% endif %}" data-docs-base="{{ basePath }}" data-docs-version="{{ navigationVersion }}" data-docs-build="{{ site.time | date: '%Y%m%d%H%M%S' }}">
     <a class="skip-link" href="#cas-docs-container">Skip to content</a>
     <header class="site-header">
         <div class="masthead">

@@ -11,14 +11,16 @@
 <body>
 <main class="container mt-3 mb-3">
     <div layout:fragment="content" id="content">
-        <div class="mdc-card card p-4 m-auto w-100 banner banner-success" th:if="${success}">
+        <div class="mdc-card card p-4 m-auto cas-hero d-flex flex-column" th:if="${success}">
+            <span class="cas-hero-icon is-success" aria-hidden="true"><i class="mdi mdi-check-bold"></i></span>
             <h2 th:utext="#{screen.authentication.webauthn.qr.success.title}">Successful Authentication</h2>
-            <p th:utext="#{screen.authentication.webauthn.qr.success.desc}">Authentication attempt is successful.</p>
+            <p class="cas-hero-lead" th:utext="#{screen.authentication.webauthn.qr.success.desc}">Authentication attempt is successful.</p>
         </div>
 
-        <div class="mdc-card card p-4 m-auto w-100 banner banner-danger" th:unless="${success}">
+        <div class="mdc-card card p-4 m-auto cas-hero d-flex flex-column" th:unless="${success}">
+            <span class="cas-hero-icon is-danger" aria-hidden="true"><i class="mdi mdi-close-thick"></i></span>
             <h2 th:utext="#{screen.authentication.webauthn.qr.fail.title}">Authentication Failed</h2>
-            <p th:utext="#{screen.authentication.webauthn.qr.fail.desc}">Authentication attempt has failed.</p>
+            <p class="cas-hero-lead" th:utext="#{screen.authentication.webauthn.qr.fail.desc}">Authentication attempt has failed.</p>
         </div>
     </div>
 </main>

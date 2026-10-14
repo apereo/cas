@@ -61,7 +61,8 @@ public class OidcVerifiableCredentialNonceEndpointController extends BaseOAuth20
     }, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity handle(
         final HttpServletRequest httpRequest,
-        final HttpServletResponse httpResponse) throws Throwable {
+        final HttpServletResponse httpResponse)
+            throws Throwable {
 
         val webContext = new JEEContext(httpRequest, httpResponse);
         if (!getConfigurationContext().getIssuerService().validateIssuer(webContext, List.of(OidcConstants.VC_NONCE_URL))) {

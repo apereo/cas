@@ -35,7 +35,8 @@ public interface ConfigurableDelegatedClientBuilder extends NamedObject {
      */
     default List<? extends BaseClient> configure(final BaseClient client,
                                                  final Pac4jBaseClientProperties clientProperties,
-                                                 final CasConfigurationProperties properties) throws Exception {
+                                                 final CasConfigurationProperties properties)
+            throws Exception {
         return List.of(client);
     }
 }

@@ -72,7 +72,8 @@ public class SamlIdPSingleSignOnParticipationStrategy extends BaseSingleSignOnPa
     protected Optional<MultifactorAuthenticationProvider> resolveMultifactorAuthenticationTrigger(
         final Service service, final RegisteredService registeredService,
         final Authentication authentication, final HttpServletRequest request,
-        final HttpServletResponse response) throws Throwable {
+        final HttpServletResponse response)
+            throws Throwable {
         return multifactorTriggerSelectionStrategy.resolve(request, response,
             registeredService, authentication, service);
     }

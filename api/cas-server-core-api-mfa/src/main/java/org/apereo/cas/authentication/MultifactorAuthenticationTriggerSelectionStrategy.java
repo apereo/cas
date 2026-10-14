@@ -35,7 +35,8 @@ public interface MultifactorAuthenticationTriggerSelectionStrategy {
                                                         @Nullable HttpServletResponse response,
                                                         @Nullable RegisteredService registeredService,
                                                         Authentication authentication,
-                                                        @Nullable Service service) throws Throwable;
+                                                        @Nullable Service service)
+            throws Throwable;
 
     /**
      * Gets multifactor authentication triggers.

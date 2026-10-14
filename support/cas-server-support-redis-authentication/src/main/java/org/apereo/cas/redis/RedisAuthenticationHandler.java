@@ -31,7 +31,8 @@ public class RedisAuthenticationHandler extends AbstractUsernamePasswordAuthenti
     @Override
     protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(
         final UsernamePasswordCredential credential,
-        final String originalPassword) throws Throwable {
+        final String originalPassword)
+            throws Throwable {
         val account = (RedisUserAccount) redisTemplate.opsForValue().get(credential.getUsername());
         if (account == null) {
             throw new AccountNotFoundException();

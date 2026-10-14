@@ -124,8 +124,29 @@ public class OAuth20JwtAccessTokenEncoder {
                                                                     final OAuth20Token token,
                                                                     final Service service,
                                                                     final boolean forceEncodeAsJwt) {
+        return toEncodableCipher(configurationContext, registeredService, token, service,
+            configurationContext.getCasProperties().getServer().getPrefix(), forceEncodeAsJwt);
+    }
+
+    /**
+     * To encodable cipher.
+     *
+     * @param configurationContext the configuration context
+     * @param registeredService    the registered service
+     * @param token                the access token
+     * @param service              the service
+     * @param issuer               the issuer
+     * @param forceEncodeAsJwt     the force encode as jwt
+     * @return the encodable cipher
+     */
+    public static EncodableCipher<String, String> toEncodableCipher(final OAuth20ConfigurationContext configurationContext,
+                                                                    final RegisteredService registeredService,
+                                                                    final OAuth20Token token,
+                                                                    final Service service,
+                                                                    final String issuer,
+                                                                    final boolean forceEncodeAsJwt) {
         return new OAuth20JwtAccessTokenEncodableCipher(configurationContext, registeredService,
-            token, service, configurationContext.getCasProperties().getServer().getPrefix(), forceEncodeAsJwt);
+            token, service, issuer, forceEncodeAsJwt);
     }
 
     /**

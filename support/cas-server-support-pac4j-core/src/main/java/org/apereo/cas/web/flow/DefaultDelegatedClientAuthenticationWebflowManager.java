@@ -43,7 +43,8 @@ public class DefaultDelegatedClientAuthenticationWebflowManager implements Deleg
 
     @Override
     public TransientSessionTicket store(final RequestContext requestContext,
-                                        final JEEContext webContext, final Client client) throws Throwable {
+                                        final JEEContext webContext, final Client client)
+            throws Throwable {
         val ticket = buildDelegatedClientAuthenticationRequest(webContext, requestContext, client);
         val storedTicket = storeDelegatedClientAuthenticationRequest(webContext, ticket);
         rememberSelectedClientIfNecessary(webContext, client);
@@ -75,7 +76,8 @@ public class DefaultDelegatedClientAuthenticationWebflowManager implements Deleg
     }
 
     protected TransientSessionTicket buildDelegatedClientAuthenticationRequest(
-        final JEEContext webContext, final RequestContext requestContext, final Client client) throws Throwable {
+        final JEEContext webContext, final RequestContext requestContext, final Client client)
+            throws Throwable {
         val originalService = Optional.ofNullable(configContext.getArgumentExtractor().extractService(webContext.getNativeRequest()))
             .orElseGet(() -> WebUtils.getService(requestContext));
 
@@ -108,7 +110,8 @@ public class DefaultDelegatedClientAuthenticationWebflowManager implements Deleg
      * @throws Exception the exception
      */
     protected Ticket storeDelegatedClientAuthenticationRequest(final JEEContext webContext,
-                                                               final TransientSessionTicket ticket) throws Exception {
+                                                               final TransientSessionTicket ticket)
+            throws Exception {
         LOGGER.debug("Storing delegated authentication request ticket [{}] for service [{}] with properties [{}]",
             ticket.getId(), ticket.getService(), ticket.getProperties());
         val storedTicket = Objects.requireNonNull(configContext.getTicketRegistry().addTicket(ticket),

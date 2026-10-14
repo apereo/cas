@@ -5,8 +5,8 @@ import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.util.scripting.CachedScriptResources;
 import org.apereo.cas.util.scripting.ExecutableCompiledScript;
-import org.apereo.cas.util.scripting.ExecutableCompiledScriptFactory;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.EqualsAndHashCode;
@@ -54,12 +54,11 @@ public class GroovySurrogateRegisteredServiceAccessStrategy extends BaseSurrogat
     }
 
     protected void buildExecutableScriptIfNeeded() {
-        if (executableScript == null) {
+        if (executableScript == null || executableScript.isClosed()) {
             FunctionUtils.doAndHandle(_ -> {
                 val location = SpringExpressionLanguageValueResolver.getInstance().resolve(this.groovyScript);
                 val resource = ResourceUtils.getResourceFrom(location);
-                val scriptFactory = ExecutableCompiledScriptFactory.getExecutableCompiledScriptFactory();
-                executableScript = scriptFactory.fromResource(resource);
+                executableScript = CachedScriptResources.fromResource(resource);
             });
         }
     }

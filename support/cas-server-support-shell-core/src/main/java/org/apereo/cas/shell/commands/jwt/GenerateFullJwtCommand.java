@@ -6,6 +6,7 @@ import org.apereo.cas.shell.commands.CasShellCommand;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
+import com.google.common.primitives.Longs;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.PlainJWT;
 import lombok.extern.slf4j.Slf4j;
@@ -13,7 +14,6 @@ import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
-import org.apache.commons.lang3.math.NumberUtils;
 import org.hjson.JsonValue;
 import org.jose4j.jwk.JsonWebKeySet;
 import org.jose4j.jwk.PublicJsonWebKey;
@@ -88,15 +88,16 @@ public class GenerateFullJwtCommand implements CasShellCommand {
             description = "Subject"
         )
         final String sub
-    ) throws Exception {
+    )
+            throws Exception {
 
         val jwtClaims = new JwtClaims();
         jwtClaims.setJwtId(RandomUtils.randomAlphanumeric(8));
         jwtClaims.setIssuer(iss);
         jwtClaims.setAudience(aud);
 
-        if (NumberUtils.isParsable(exp)) {
-            val expireInSeconds = Long.parseLong(exp);
+        val expireInSeconds = exp != null ? Longs.tryParse(exp) : null;
+        if (expireInSeconds != null) {
             if (expireInSeconds > 0) {
                 val expirationDate = NumericDate.now();
                 expirationDate.addSeconds(expireInSeconds);

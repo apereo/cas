@@ -72,7 +72,8 @@ class OAuth20DefaultAccessTokenFactoryTests extends AbstractOAuth20Tests {
 
         private OAuth20AccessToken createAccessToken(
             final TicketGrantingTicket ticketGrantingTicket,
-            final OAuthRegisteredService registeredService) throws Throwable {
+            final OAuthRegisteredService registeredService)
+                throws Throwable {
             return defaultAccessTokenFactory.create(
                 RegisteredServiceTestUtils.getService(registeredService.getServiceId()),
                 RegisteredServiceTestUtils.getAuthentication(),

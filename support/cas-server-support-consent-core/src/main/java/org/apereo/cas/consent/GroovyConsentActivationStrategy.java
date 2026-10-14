@@ -42,7 +42,8 @@ public class GroovyConsentActivationStrategy implements ConsentActivationStrateg
     @Override
     public ConsentQueryResult isConsentRequired(final Service service, final RegisteredService registeredService,
                                      final Authentication authentication,
-                                     final HttpServletRequest requestContext) throws Throwable {
+                                     final HttpServletRequest requestContext)
+            throws Throwable {
         val args = new Object[]{consentEngine, casProperties, service,
             registeredService, authentication, requestContext, LOGGER};
         return watchableScript.execute(args, ConsentQueryResult.class);

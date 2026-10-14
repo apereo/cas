@@ -4,7 +4,8 @@
 <main class="container mt-3 mb-3">
     <div layout:fragment="content" id="login">
         <span th:remove="tag" th:if="${#cas.isTrue(#cas.theme('cas.browser-storage.show-progress'))}">
-            <div id="mainPanel" class="mdc-card p-4 m-auto w-lg-50">
+            <div id="mainPanel" class="mdc-card p-4 m-auto w-lg-50 cas-hero">
+                <span class="cas-hero-icon" aria-hidden="true"><i class="mdi mdi-database-sync-outline"></i></span>
                 <h2 id="processingTitle" th:utext="#{screen.processing.title}"></h2>
                 <p id="processingText" th:utext="#{screen.processing.text}"></p>
                 <div id="progressBar" role="progressbar" class="mdc-linear-progress mdc-linear-progress--indeterminate">

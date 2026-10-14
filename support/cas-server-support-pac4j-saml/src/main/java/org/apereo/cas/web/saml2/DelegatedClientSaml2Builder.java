@@ -214,7 +214,8 @@ public class DelegatedClientSaml2Builder implements ConfigurableDelegatedClientB
     @Override
     public List<? extends BaseClient> configure(final BaseClient client,
                                                 final Pac4jBaseClientProperties clientProperties,
-                                                final CasConfigurationProperties properties) throws Exception {
+                                                final CasConfigurationProperties properties)
+            throws Exception {
         if (client instanceof final SAML2Client saml2Client
             && clientProperties instanceof Pac4jSamlClientProperties saml2Properties
             && saml2Properties.getMetadata().isIdentityProviderMetadataAggregate()) {

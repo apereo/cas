@@ -172,8 +172,18 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
             .skip(criteria.getFrom())
             .limit(criteria.getCount())
             .map(BaseTicketEntity.class::cast)
-            .map(ticketEntityFactory::toTicket)
+            .map(this::toDetachedTicket)
             .map(this::decodeTicket);
+    }
+
+    /*
+     * Rows read through the stream stay in the persistence context until the transaction ends, so a scan of the
+     * whole table would otherwise keep every row in memory.
+     */
+    private Ticket toDetachedTicket(final BaseTicketEntity entity) {
+        val ticket = ticketEntityFactory.toTicket(entity);
+        entityManager.detach(entity);
+        return ticket;
     }
 
     @Override

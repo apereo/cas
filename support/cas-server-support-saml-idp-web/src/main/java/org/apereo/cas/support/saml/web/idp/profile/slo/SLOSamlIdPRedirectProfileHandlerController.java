@@ -28,7 +28,8 @@ public class SLOSamlIdPRedirectProfileHandlerController extends AbstractSamlSLOP
     @GetMapping(path = SamlIdPConstants.ENDPOINT_SAML2_SLO_PROFILE_REDIRECT)
     @Operation(summary = "Handle SAML2 SLO Redirect Profile Request")
     protected void handleSaml2ProfileSLORedirectRequest(final HttpServletResponse response,
-                                                        final HttpServletRequest request) throws Throwable {
+                                                        final HttpServletRequest request)
+            throws Throwable {
         val decoder = getConfigurationContext().getSamlMessageDecoders().getInstance(HttpMethod.GET);
         handleSloProfileRequest(response, request, decoder, SAMLConstants.SAML2_REDIRECT_BINDING_URI);
     }

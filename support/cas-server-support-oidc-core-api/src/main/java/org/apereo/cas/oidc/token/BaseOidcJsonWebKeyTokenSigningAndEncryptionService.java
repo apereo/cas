@@ -99,7 +99,8 @@ public abstract class BaseOidcJsonWebKeyTokenSigningAndEncryptionService extends
     }
 
     protected PublicJsonWebKey getJsonWebKeySigningKeyFrom(final JsonWebKeySet jwks,
-                                                           final Optional<OAuthRegisteredService> serviceResult) throws Throwable {
+                                                           final Optional<OAuthRegisteredService> serviceResult)
+            throws Throwable {
         FunctionUtils.throwIfNull(jwks,
             () -> new IllegalArgumentException("JSON web keystore is empty and contains no keys"));
         val jsonWebKeys = jwks.getJsonWebKeys();

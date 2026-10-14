@@ -51,7 +51,8 @@ class CasCoreAuthenticationMetadataConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CipherExecutor cacheCredentialsCipherExecutor(
             final ConfigurableApplicationContext applicationContext,
-            final CasConfigurationProperties casProperties) throws Exception {
+            final CasConfigurationProperties casProperties)
+                throws Exception {
             return BeanSupplier.of(CipherExecutor.class)
                 .when(CONDITION_CLEARPASS.given(applicationContext.getEnvironment()))
                 .and(BeanCondition.on("cas.clearpass.crypto.enabled").isTrue().given(applicationContext.getEnvironment()))
@@ -121,7 +122,8 @@ class CasCoreAuthenticationMetadataConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AuthenticationMetaDataPopulator cacheCredentialsMetaDataPopulator(
             final ConfigurableApplicationContext applicationContext,
-            @Qualifier("cacheCredentialsCipherExecutor") final CipherExecutor cacheCredentialsCipherExecutor) throws Exception {
+            @Qualifier("cacheCredentialsCipherExecutor") final CipherExecutor cacheCredentialsCipherExecutor)
+                throws Exception {
             return BeanSupplier.of(AuthenticationMetaDataPopulator.class)
                 .when(CONDITION_CLEARPASS.given(applicationContext.getEnvironment()))
                 .supply(() -> {

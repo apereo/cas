@@ -321,7 +321,8 @@ public abstract class BaseSamlIdPConfigurationTests {
     }
 
     protected AuthnRequest signAuthnRequest(final HttpServletRequest request, final HttpServletResponse response,
-                                            final AuthnRequest authnRequest, final SamlRegisteredService samlRegisteredService) throws Exception {
+                                            final AuthnRequest authnRequest, final SamlRegisteredService samlRegisteredService)
+            throws Exception {
         val adaptor = SamlRegisteredServiceMetadataAdaptor.get(samlRegisteredServiceCachingMetadataResolver,
             samlRegisteredService, samlRegisteredService.getServiceId()).orElseThrow();
         return samlIdPObjectSigner.encode(authnRequest, samlRegisteredService,
@@ -333,7 +334,8 @@ public abstract class BaseSamlIdPConfigurationTests {
                                                       final T samlObject,
                                                       final SamlRegisteredService samlRegisteredService,
                                                       final String binding,
-                                                      final String destination) throws Exception {
+                                                      final String destination)
+            throws Exception {
         val adaptor = SamlRegisteredServiceMetadataAdaptor.get(samlRegisteredServiceCachingMetadataResolver,
             samlRegisteredService, samlRegisteredService.getServiceId()).orElseThrow();
         val authnRequest = getAuthnRequestFor(samlRegisteredService);

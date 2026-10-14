@@ -70,7 +70,8 @@ class CasCoreAuthenticationHandlersConfiguration {
             @Qualifier("proxyPrincipalFactory")
             final PrincipalFactory proxyPrincipalFactory,
             @Qualifier(HttpClient.BEAN_NAME_HTTPCLIENT_TRUST_STORE)
-            final HttpClient supportsTrustStoreSslSocketFactoryHttpClient) throws Exception {
+            final HttpClient supportsTrustStoreSslSocketFactoryHttpClient)
+                throws Exception {
             return BeanSupplier.of(AuthenticationHandler.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
                 .supply(() -> new ProxyAuthenticationHandler(null,
@@ -97,7 +98,8 @@ class CasCoreAuthenticationHandlersConfiguration {
         public PrincipalResolver proxyPrincipalResolver(
             final ConfigurableApplicationContext applicationContext,
             @Qualifier("proxyPrincipalFactory")
-            final PrincipalFactory proxyPrincipalFactory) throws Exception {
+            final PrincipalFactory proxyPrincipalFactory)
+                throws Exception {
             return BeanSupplier.of(PrincipalResolver.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
                 .supply(() -> new ProxyingPrincipalResolver(proxyPrincipalFactory))
@@ -113,7 +115,8 @@ class CasCoreAuthenticationHandlersConfiguration {
             @Qualifier("proxyAuthenticationHandler")
             final AuthenticationHandler proxyAuthenticationHandler,
             @Qualifier("proxyPrincipalResolver")
-            final PrincipalResolver proxyPrincipalResolver) throws Exception {
+            final PrincipalResolver proxyPrincipalResolver)
+                throws Exception {
             return BeanSupplier.of(AuthenticationEventExecutionPlanConfigurer.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
                 .supply(() -> plan -> plan.registerAuthenticationHandlerWithPrincipalResolver(proxyAuthenticationHandler, proxyPrincipalResolver))

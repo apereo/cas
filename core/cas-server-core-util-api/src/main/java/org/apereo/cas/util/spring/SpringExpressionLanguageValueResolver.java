@@ -240,7 +240,8 @@ public class SpringExpressionLanguageValueResolver implements Function {
                     @Override
                     public @Nullable MethodExecutor resolve(final EvaluationContext context,
                                                             final Object targetObject, final String name,
-                                                            final List<TypeDescriptor> argumentTypes) throws AccessException {
+                                                            final List<TypeDescriptor> argumentTypes)
+                            throws AccessException {
                         val targetType = targetObject instanceof final Class<?> clazz ? clazz : targetObject.getClass();
                         if (type.clazz().equals(targetType)) {
                             return super.resolve(context, targetObject, name, argumentTypes);

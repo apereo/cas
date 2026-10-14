@@ -23,6 +23,7 @@ import org.apereo.cas.util.TicketGrantingTicketIdGenerator;
 import lombok.Getter;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.hibernate.Session;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,8 +32,11 @@ import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.integration.autoconfigure.IntegrationProperties;
 import org.springframework.context.annotation.Import;
+import org.springframework.orm.jpa.EntityManagerFactoryUtils;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionOperations;
+import jakarta.persistence.EntityManagerFactory;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -65,6 +69,14 @@ public abstract class BaseJpaTicketRegistryTests extends BaseTicketRegistryTests
     @Autowired
     @Qualifier("dataSourceTicket")
     protected CloseableDataSource dataSourceTicket;
+
+    @Autowired
+    @Qualifier("ticketEntityManagerFactory")
+    protected EntityManagerFactory ticketEntityManagerFactory;
+
+    @Autowired
+    @Qualifier("jpaTicketRegistryTransactionTemplate")
+    protected TransactionOperations jpaTicketRegistryTransactionTemplate;
 
     @Override
     protected boolean isCipherExecutorOwnedByContext() {
@@ -99,6 +111,26 @@ public abstract class BaseJpaTicketRegistryTests extends BaseTicketRegistryTests
             .getNewTicketId(TicketGrantingTicket.PREFIX);
         newTicketRegistry.addTicket(new TicketGrantingTicketImpl(ticketGrantingTicketId,
             CoreAuthenticationTestUtils.getAuthentication(principal), NeverExpiresExpirationPolicy.INSTANCE));
+    }
+
+    @RepeatedTest(1)
+    void verifyStreamedTicketsAreDetached() throws Throwable {
+        val principal = UUID.randomUUID().toString();
+        addSessionFor(principal);
+        try {
+            val managedEntities = jpaTicketRegistryTransactionTemplate.execute(_ -> countManagedEntitiesAfterStream());
+            assertEquals(0L, managedEntities);
+        } finally {
+            newTicketRegistry.deleteTicketsFor(principal);
+        }
+    }
+
+    private long countManagedEntitiesAfterStream() {
+        try (val tickets = newTicketRegistry.stream()) {
+            assertTrue(tickets.count() > 0);
+        }
+        val entityManager = EntityManagerFactoryUtils.getTransactionalEntityManager(ticketEntityManagerFactory);
+        return Objects.requireNonNull(entityManager).unwrap(Session.class).getStatistics().getEntityCount();
     }
 
     @RepeatedTest(2)

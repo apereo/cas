@@ -23,7 +23,8 @@ public interface OAuth20ResponseModeBuilder {
      * @throws Exception the exception
      */
     ModelAndView build(RegisteredService registeredService, String redirectUrl,
-                       Map<String, String> parameters) throws Exception;
+                       Map<String, String> parameters)
+            throws Exception;
 
     /**
      * Gets response mode.

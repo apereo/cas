@@ -59,7 +59,8 @@ public class GroovyScriptAttributeReleasePolicy extends AbstractRegisteredServic
 
     @Override
     public Map<String, List<Object>> getAttributesInternal(final RegisteredServiceAttributeReleasePolicyContext context,
-                                                           final Map<String, List<Object>> attributes) throws Throwable {
+                                                           final Map<String, List<Object>> attributes)
+            throws Throwable {
         try {
             LOGGER.debug("Invoking Groovy script with attributes=[{}], principal=[{}], service=[{}] and default logger",
                 attributes, context.getPrincipal(), context.getRegisteredService());

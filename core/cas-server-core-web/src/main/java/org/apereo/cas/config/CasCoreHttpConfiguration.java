@@ -77,7 +77,8 @@ class CasCoreHttpConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasSSLContext casSslContext(
             @Qualifier("hostnameVerifier") final HostnameVerifier hostnameVerifier,
-            final CasConfigurationProperties casProperties) throws Exception {
+            final CasConfigurationProperties casProperties)
+                throws Exception {
             val client = casProperties.getHttpClient().getTruststore();
             if (client.getFile() != null && client.getFile().exists() && StringUtils.isNotBlank(client.getPsw())) {
                 return new DefaultCasSSLContext(client.getFile(), client.getPsw(),

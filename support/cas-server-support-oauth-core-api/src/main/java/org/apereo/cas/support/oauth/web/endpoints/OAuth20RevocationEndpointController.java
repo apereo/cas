@@ -52,7 +52,8 @@ public class OAuth20RevocationEndpointController<T extends OAuth20ConfigurationC
         produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Handle OAuth token revocation request")
     public ModelAndView handleRequest(final HttpServletRequest request,
-                                      final HttpServletResponse response) throws Throwable {
+                                      final HttpServletResponse response)
+            throws Throwable {
         val context = new JEEContext(request, response);
 
         if (!verifyRevocationRequest(context)) {
@@ -92,7 +93,8 @@ public class OAuth20RevocationEndpointController<T extends OAuth20ConfigurationC
 
     protected ModelAndView generateRevocationResponse(final String token,
                                                       final String clientId,
-                                                      final HttpServletResponse response) throws Exception {
+                                                      final HttpServletResponse response)
+            throws Exception {
         val registryToken = FunctionUtils.doAndHandle(() -> {
             val state = getConfigurationContext().getTicketRegistry().getTicket(token, OAuth20Token.class);
             return state == null || state.isExpired() ? null : state;

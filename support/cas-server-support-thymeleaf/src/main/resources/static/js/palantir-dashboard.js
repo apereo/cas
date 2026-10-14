@@ -151,6 +151,15 @@ function activateDashboardTab(idx) {
                         }
                     },
                     open: function () {
+                        initializePalantirWidgets(this);
+                        $("#palantir-settings-tabs")
+                            .off("tabsactivate.palantirSettings")
+                            .on("tabsactivate.palantirSettings", (event, ui) => {
+                                if (ui.newPanel.is("#palantirEndpoints-tab")
+                                    && $.fn.dataTable.isDataTable("#palantirActuatorsTable")) {
+                                    $("#palantirActuatorsTable").DataTable().columns.adjust();
+                                }
+                            });
                         initializePalantirActuatorsTable();
                         cas.init("#palantirSettingsDialog");
                         try {

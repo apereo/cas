@@ -81,4 +81,25 @@ class GlibcCryptPasswordEncoderTests {
         assertNotNull(encoder.encode("value"));
     }
 
+    @Test
+    void verifySecretOutsideCryptSaltAlphabet() {
+        val secret = UUID.randomUUID().toString();
+        for (val algorithm : List.of("MD5", "SHA-256", "SHA-512")) {
+            val encoder = new GlibcCryptPasswordEncoder(algorithm, 16, secret);
+            val passwordHash = encoder.encode(PASSWORD_CLEAR);
+            assertFalse(passwordHash.contains(secret));
+            assertTrue(encoder.matches(PASSWORD_CLEAR, passwordHash));
+        }
+    }
+
+    @Test
+    void verifyRandomSaltPerPassword() {
+        val encoder = new GlibcCryptPasswordEncoder("SHA-512", 1000, null);
+        val firstHash = encoder.encode(PASSWORD_CLEAR);
+        val secondHash = encoder.encode(PASSWORD_CLEAR);
+        assertNotEquals(firstHash, secondHash);
+        assertTrue(encoder.matches(PASSWORD_CLEAR, firstHash));
+        assertTrue(encoder.matches(PASSWORD_CLEAR, secondHash));
+    }
+
 }

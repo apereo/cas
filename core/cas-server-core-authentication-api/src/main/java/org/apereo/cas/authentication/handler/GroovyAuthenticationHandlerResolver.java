@@ -43,7 +43,8 @@ public class GroovyAuthenticationHandlerResolver implements AuthenticationHandle
 
     @Override
     public @Nullable Set<AuthenticationHandler> resolve(final Set<AuthenticationHandler> candidateHandlers,
-                                                        final AuthenticationTransaction transaction) throws Throwable {
+                                                        final AuthenticationTransaction transaction)
+            throws Throwable {
         val args = new Object[]{candidateHandlers, transaction, servicesManager, LOGGER};
         return watchableScript.execute(args, Set.class);
     }

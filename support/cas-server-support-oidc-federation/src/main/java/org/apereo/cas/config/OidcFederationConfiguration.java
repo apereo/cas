@@ -121,7 +121,8 @@ class OidcFederationConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = OidcFederationJsonWebKeystoreService.BEAN_NAME)
     public OidcFederationJsonWebKeystoreService oidcFederationWebKeystoreService(
-        final CasConfigurationProperties casProperties) throws Exception {
+        final CasConfigurationProperties casProperties)
+            throws Exception {
         return new OidcFederationDefaultJsonWebKeystoreService(casProperties.getAuthn().getOidc());
     }
 

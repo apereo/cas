@@ -83,6 +83,9 @@ public class OidcClientRegistrationResponse implements Serializable {
     @JsonProperty("token_endpoint_auth_method")
     private String tokenEndpointAuthMethod;
 
+    @JsonProperty("dpop_bound_access_tokens")
+    private Boolean dpopBoundAccessTokens;
+
     @JsonProperty("registration_access_token")
     private String registrationAccessToken;
 

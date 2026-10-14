@@ -101,7 +101,8 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends Abst
      */
     protected abstract AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(
         UsernamePasswordCredential credential,
-        @Nullable String originalPassword) throws Throwable;
+        @Nullable String originalPassword)
+            throws Throwable;
 
     /**
      * Used in case passwordEncoder is used to match raw password with encoded password. Mainly for BCRYPT password encoders where each encoded

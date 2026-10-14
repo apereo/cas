@@ -64,7 +64,8 @@ public class SamlIdPSessionManager {
      */
     @CanIgnoreReturnValue
     public SamlIdPSessionManager store(final WebContext webContext,
-                                       final Pair<? extends SignableSAMLObject, MessageContext> context) throws Exception {
+                                       final Pair<? extends SignableSAMLObject, MessageContext> context)
+            throws Exception {
         val authnRequest = (AuthnRequest) context.getLeft();
         val messageContext = context.getValue();
         try (val writer = SamlUtils.transformSamlObject(openSamlConfigBean, authnRequest)) {

@@ -28,7 +28,8 @@ public class OAuth20TicketCatalogConfigurer extends BaseTicketCatalogConfigurer 
 
     @Override
     public void configureTicketCatalog(final TicketCatalog plan,
-                                       final CasConfigurationProperties casProperties) throws Throwable {
+                                       final CasConfigurationProperties casProperties)
+            throws Throwable {
         LOGGER.trace("Registering OAuth protocol ticket definitions...");
         buildAndRegisterOAuthCodeDefinition(plan, buildTicketDefinition(plan, OAuth20Code.PREFIX,
             OAuth20Code.class, OAuth20DefaultCode.class, Ordered.HIGHEST_PRECEDENCE), casProperties);

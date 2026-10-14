@@ -57,7 +57,8 @@ public class DisplayBeforePasswordlessAuthenticationAction extends BasePasswordl
 
 
     protected Optional<? extends PasswordlessUserAccount> findPasswordlessUserAccount(
-        final RequestContext requestContext) throws Throwable {
+        final RequestContext requestContext)
+            throws Throwable {
         val username = requestContext.getRequestParameters().get(PasswordlessRequestParser.PARAMETER_USERNAME);
         if (StringUtils.isNotBlank(username)) {
             val passwordlessRequest = passwordlessRequestParser.parse(username);

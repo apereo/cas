@@ -36,7 +36,8 @@ public class OidcVerifiableCredentialsPreAuthorizationCodeGrantRequestValidator 
 
     @Override
     protected boolean validateInternal(final WebContext context, final String grantType, final ProfileManager manager,
-                                       final UserProfile userProfile) throws Throwable {
+                                       final UserProfile userProfile)
+            throws Throwable {
         val requestParameterResolver = getConfigurationContext().getObject().getRequestParameterResolver();
         val preAuthCode = requestParameterResolver.resolveRequestParameter(context, OidcConstants.PRE_AUTHORIZED_CODE);
         if (preAuthCode.isEmpty()) {

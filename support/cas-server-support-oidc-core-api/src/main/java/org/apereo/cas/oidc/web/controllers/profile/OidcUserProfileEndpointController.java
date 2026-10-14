@@ -41,7 +41,8 @@ public class OidcUserProfileEndpointController extends OAuth20UserProfileEndpoin
         parameters = @Parameter(name = "access_token", in = ParameterIn.QUERY, required = true, description = "Access token"))
     @Override
     public ResponseEntity handleGetRequest(final HttpServletRequest request,
-                                           final HttpServletResponse response) throws Exception {
+                                           final HttpServletResponse response)
+            throws Exception {
         val webContext = new JEEContext(request, response);
         if (!getConfigurationContext().getIssuerService().validateIssuer(webContext, List.of(OidcConstants.PROFILE_URL, OAuth20Constants.PROFILE_URL))) {
             val body = OAuth20Utils.getErrorResponseBody(OAuth20Constants.INVALID_REQUEST, "Invalid issuer");
@@ -58,7 +59,8 @@ public class OidcUserProfileEndpointController extends OAuth20UserProfileEndpoin
         parameters = @Parameter(name = "access_token", in = ParameterIn.QUERY, required = true, description = "Access token"))
     @Override
     public ResponseEntity<String> handlePostRequest(final HttpServletRequest request,
-                                                             final HttpServletResponse response) throws Exception {
+                                                             final HttpServletResponse response)
+            throws Exception {
         return handleGetRequest(request, response);
     }
 }

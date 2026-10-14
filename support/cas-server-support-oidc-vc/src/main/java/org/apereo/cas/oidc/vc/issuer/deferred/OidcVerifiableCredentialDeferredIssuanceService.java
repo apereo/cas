@@ -47,7 +47,8 @@ public interface OidcVerifiableCredentialDeferredIssuanceService {
      * @throws Throwable the throwable
      */
     Optional<DeferredTransaction> defer(OAuth20AccessToken accessToken, String credentialConfigurationId,
-                                        List<VerifiableCredentialProofResult> proofs) throws Throwable;
+                                        List<VerifiableCredentialProofResult> proofs)
+            throws Throwable;
 
     /**
      * Find a transaction that is not expired and was started for the client and the user of the access token.

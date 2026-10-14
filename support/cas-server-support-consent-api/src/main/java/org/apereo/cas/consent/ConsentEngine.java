@@ -35,7 +35,8 @@ public interface ConsentEngine extends Serializable {
                                          Authentication authentication,
                                          long reminder,
                                          ChronoUnit reminderTimeUnit,
-                                         ConsentReminderOptions options) throws Throwable;
+                                         ConsentReminderOptions options)
+            throws Throwable;
 
     /**
      * Find consent decision consent decision.
@@ -48,7 +49,8 @@ public interface ConsentEngine extends Serializable {
      */
     ConsentDecision findConsentDecision(Service service,
                                         RegisteredService registeredService,
-                                        Authentication authentication) throws Throwable;
+                                        Authentication authentication)
+            throws Throwable;
 
     /**
      * Gets consentable attributes.
@@ -61,7 +63,8 @@ public interface ConsentEngine extends Serializable {
      */
     Map<String, List<Object>> resolveConsentableAttributesFrom(Authentication authentication,
                                                                Service service,
-                                                               RegisteredService registeredService) throws Throwable;
+                                                               RegisteredService registeredService)
+            throws Throwable;
 
     /**
      * Gets consentable attributes from an existing consent decision.

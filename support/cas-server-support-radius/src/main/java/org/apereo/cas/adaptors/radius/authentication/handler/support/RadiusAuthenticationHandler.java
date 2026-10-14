@@ -48,7 +48,8 @@ public class RadiusAuthenticationHandler extends AbstractUsernamePasswordAuthent
 
     @Override
     protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential,
-                                                                                        final String originalPassword) throws GeneralSecurityException {
+                                                                                        final String originalPassword)
+            throws GeneralSecurityException {
 
         try {
             val username = credential.getUsername();

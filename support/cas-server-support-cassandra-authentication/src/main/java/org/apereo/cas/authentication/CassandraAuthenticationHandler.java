@@ -32,7 +32,8 @@ public class CassandraAuthenticationHandler extends AbstractUsernamePasswordAuth
 
     @Override
     protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential,
-                                                                                        @Nullable final String originalPassword) throws Throwable {
+                                                                                        @Nullable final String originalPassword)
+            throws Throwable {
         val username = credential.getUsername();
         val attributes = this.cassandraRepository.getUser(username);
 

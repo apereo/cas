@@ -55,7 +55,8 @@ public class SamlIdPSaml2AttributeQueryProfileHandlerController extends Abstract
     @PostMapping(path = SamlIdPConstants.ENDPOINT_SAML2_SOAP_ATTRIBUTE_QUERY)
     @Operation(summary = "Handle SAML2 SOAP Attribute Query Request")
     protected void handlePostRequest(final HttpServletResponse response,
-                                     final HttpServletRequest request) throws Exception {
+                                     final HttpServletRequest request)
+            throws Exception {
         val enabled = configurationContext.getCasProperties().getAuthn().getSamlIdp().getCore().isAttributeQueryProfileEnabled();
         if (!enabled) {
             LOGGER.warn("SAML2 attribute query profile is not enabled");
@@ -141,7 +142,8 @@ public class SamlIdPSaml2AttributeQueryProfileHandlerController extends Abstract
     }
 
     private Principal resolvePrincipalForAttributeQuery(final Authentication authentication,
-                                                        final RegisteredService registeredService) throws Throwable {
+                                                        final RegisteredService registeredService)
+            throws Throwable {
         val repositories = new HashSet<String>();
         if (registeredService != null) {
             repositories.addAll(registeredService.getAttributeReleasePolicy()

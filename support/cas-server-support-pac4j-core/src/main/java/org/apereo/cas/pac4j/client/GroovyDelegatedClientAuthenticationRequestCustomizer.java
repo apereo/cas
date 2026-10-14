@@ -39,7 +39,8 @@ public class GroovyDelegatedClientAuthenticationRequestCustomizer implements Del
 
     @Override
     public boolean isAuthorized(final WebContext webContext, final IndirectClient client,
-                                final WebApplicationService currentService, final RequestContext requestContext) throws Throwable {
+                                final WebApplicationService currentService, final RequestContext requestContext)
+            throws Throwable {
         val args = new Object[]{client, webContext, currentService, applicationContext, LOGGER};
         return Boolean.TRUE.equals(watchableScript.execute("isAuthorized", Boolean.class, args));
     }

@@ -26,7 +26,8 @@ public class ClientInfoThreadLocalFilter implements Filter {
     
     @Override
     public void doFilter(final ServletRequest request, final ServletResponse response,
-                         final FilterChain filterChain) throws IOException, ServletException {
+                         final FilterChain filterChain)
+            throws IOException, ServletException {
         try {
             if (request instanceof final HttpServletRequest httpServletRequest) {
                 val tenantId = tenantExtractor.extract(httpServletRequest).map(TenantDefinition::getId).orElse(null);

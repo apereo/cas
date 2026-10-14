@@ -126,7 +126,8 @@ public interface AuthenticationSystemSupport {
      */
     AuthenticationResultBuilder handleAuthenticationTransaction(@Nullable Service service,
                                                                 AuthenticationResultBuilder authenticationResultBuilder,
-                                                                Credential... credential) throws Throwable;
+                                                                Credential... credential)
+            throws Throwable;
 
     /**
      * Finalize all authentication transactions processed and collected for this authentication event.
@@ -160,7 +161,8 @@ public interface AuthenticationSystemSupport {
      * @since 5.3.0
      */
     default @Nullable AuthenticationResult finalizeAuthenticationTransaction(@Nullable final Service service,
-                                                                   final Collection<Credential> credentials) throws Throwable {
+                                                                   final Collection<Credential> credentials)
+            throws Throwable {
         return finalizeAuthenticationTransaction(service, credentials.toArray(Credential[]::new));
     }
 

@@ -31,7 +31,7 @@ public final class DefaultAuthenticationTransactionManager implements Authentica
     public AuthenticationTransactionManager handle(
         @NonNull final AuthenticationTransaction authenticationTransaction,
         @NonNull final AuthenticationResultBuilder authenticationResult)
-        throws Throwable {
+            throws Throwable {
         if (authenticationTransaction.getCredentials().isEmpty()) {
             LOGGER.debug("Transaction ignored since there are no credentials to authenticate");
         } else {

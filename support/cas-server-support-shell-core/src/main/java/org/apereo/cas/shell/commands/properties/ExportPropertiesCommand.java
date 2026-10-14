@@ -66,7 +66,8 @@ public class ExportPropertiesCommand implements CasShellCommand {
             longName = "dir",
             description = "Path to a directory where reference configuration files would be exported.",
             defaultValue = "./etc/cas/config")
-        final String dir) throws Exception {
+        final String dir)
+            throws Exception {
 
         val allProps = CasConfigurationMetadataCatalog.query(
             ConfigurationMetadataCatalogQuery.builder()

@@ -31,7 +31,8 @@ public interface OidcVerifiableCredentialStatusListService {
      * @throws Throwable the throwable
      */
     Optional<StatusReference> allocate(OAuth20AccessToken accessToken, String principal, String credentialConfigurationId,
-                                       String credentialId, Duration validity) throws Throwable;
+                                       String credentialId, Duration validity)
+            throws Throwable;
 
     /**
      * Build the signed status list token of a status list.

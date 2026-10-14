@@ -68,7 +68,8 @@ public class OAuth20AuthorizationCodeAuthorizationResponseBuilder extends BaseOA
     }
 
     protected ModelAndView buildCallbackViewViaRedirectUri(final AccessTokenRequestContext holder,
-                                                           final Ticket code) throws Exception {
+                                                           final Ticket code)
+            throws Exception {
         val attributes = holder.getAuthentication().getAttributes();
         LOGGER.debug("Authorize request successful for client [{}] with redirect uri [{}]", holder.getClientId(), holder.getRedirectUri());
         val params = new LinkedHashMap<String, String>();

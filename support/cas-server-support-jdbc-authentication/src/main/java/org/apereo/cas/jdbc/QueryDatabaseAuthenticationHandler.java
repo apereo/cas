@@ -49,7 +49,8 @@ public class QueryDatabaseAuthenticationHandler extends AbstractJdbcUsernamePass
 
     @Override
     protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(
-        final UsernamePasswordCredential credential, final String originalPassword) throws Throwable {
+        final UsernamePasswordCredential credential, final String originalPassword)
+            throws Throwable {
         val username = credential.getUsername();
         val password = credential.toPassword();
         try {

@@ -6,7 +6,8 @@
 </head>
 
 <body id="cas">
-    <div layout:fragment="content" class="banner banner-success mdc-card card my-2 p-4 m-auto w-lg-66">
+    <div layout:fragment="content" class="banner banner-success mdc-card card my-2 p-4 m-auto w-lg-66 cas-hero">
+        <span class="cas-hero-icon is-success" aria-hidden="true"><i class="mdi mdi-check-bold"></i></span>
         <h2 th:text="#{cas.oauth.device.confirmed.header}" />
         <p th:text="#{cas.oauth.device.confirmed.message}" />
     </div>

@@ -61,7 +61,8 @@ public class UmaRequestingPartyClaimsCollectionEndpointController extends BaseUm
                           @RequestParam("redirect_uri") final String redirectUri,
                           @RequestParam("ticket") final String ticketId,
                           @RequestParam(value = "state", required = false) final String state,
-                          final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+                          final HttpServletRequest request, final HttpServletResponse response)
+            throws Exception {
 
         val profileResult = getAuthenticatedProfile(request, response, OAuth20Constants.UMA_PROTECTION_SCOPE);
 

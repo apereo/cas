@@ -124,7 +124,8 @@ public class RestfulCasSimpleMultifactorAuthenticationService extends BaseCasSim
 
     @Override
     public Principal validate(final Principal resolvedPrincipal,
-                              final CasSimpleMultifactorTokenCredential credential) throws Exception {
+                              final CasSimpleMultifactorTokenCredential credential)
+            throws Exception {
         HttpResponse response = null;
         try (val writer = new StringWriter()) {
             MAPPER.writer().with(new MinimalPrettyPrinter()).writeValue(writer, resolvedPrincipal);

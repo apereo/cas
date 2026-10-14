@@ -45,7 +45,8 @@ public class GroovyRegisteredServiceUsernameProvider extends BaseRegisteredServi
     }
 
     private static String fetchAttributeValue(final RegisteredServiceUsernameProviderContext context,
-                                              final String groovyScript) throws Throwable {
+                                              final String groovyScript)
+            throws Throwable {
         val cacheMgr = ApplicationContextProvider.getScriptResourceCacheManager()
             .orElseThrow(() -> new RuntimeException("No groovy script cache manager is available to execute username provider"));
         val script = cacheMgr.resolveScriptableResource(groovyScript,
@@ -70,7 +71,8 @@ public class GroovyRegisteredServiceUsernameProvider extends BaseRegisteredServi
     }
 
     private static Object fetchAttributeValueFromScript(final ExecutableCompiledScript script,
-                                                        final Principal principal, final Service service) throws Throwable {
+                                                        final Principal principal, final Service service)
+            throws Throwable {
         val args = CollectionUtils.<String, Object>wrap("attributes", principal.getAttributes(),
             "id", principal.getId(),
             "service", service,
