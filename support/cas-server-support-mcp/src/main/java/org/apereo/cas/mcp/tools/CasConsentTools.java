@@ -4,6 +4,7 @@ import module java.base;
 import org.apereo.cas.consent.ConsentDecision;
 import org.apereo.cas.consent.ConsentDecisionBuilder;
 import org.apereo.cas.consent.ConsentRepository;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.jspecify.annotations.Nullable;
@@ -28,23 +29,21 @@ public class CasConsentTools {
      * Find the attribute consent decisions of a person.
      *
      * @param username the username
-     * @return the consent decisions
+     * @return the consent decisions, newest first
      */
     @McpTool(description = "Find the attribute consent decisions a person has made: the application, when consent was given, "
         + "how often the person is reminded and the names of the attributes consented to",
         title = "Find Consent Decisions",
+        generateOutputSchema = true,
         annotations = @McpTool.McpAnnotations(readOnlyHint = true, destructiveHint = false,
             idempotentHint = true, openWorldHint = false))
     @PreAuthorize("hasRole('MCP_ADMIN')")
-    public Map<String, Object> findConsentDecisions(
+    public ConsentDecisions findConsentDecisions(
         @McpToolParam(description = "The username (principal id) of the person")
         final String username) {
-        val result = new LinkedHashMap<String, Object>();
-        result.put("username", username);
         val repository = consentRepository.getIfAvailable();
         if (repository == null) {
-            result.put("reason", "Attribute consent is not configured");
-            return result;
+            return new ConsentDecisions(username, 0, List.of(), "Attribute consent is not configured");
         }
         val builder = consentDecisionBuilder.getIfAvailable();
         val decisions = repository.findConsentDecisions(username)
@@ -52,22 +51,25 @@ public class CasConsentTools {
             .sorted(Comparator.comparing(ConsentDecision::getCreatedDate, Comparator.nullsLast(Comparator.<LocalDateTime>reverseOrder())))
             .map(decision -> summarize(decision, builder))
             .toList();
-        result.put("count", decisions.size());
-        result.put("decisions", decisions);
-        return result;
+        return new ConsentDecisions(username, decisions.size(), decisions, null);
     }
 
-    private static Map<String, Object> summarize(final ConsentDecision decision,
-                                                 final @Nullable ConsentDecisionBuilder builder) {
-        val summary = new LinkedHashMap<String, Object>();
-        summary.put("id", String.valueOf(decision.getId()));
-        summary.put("service", decision.getService());
-        summary.put("createdDate", String.valueOf(decision.getCreatedDate()));
-        summary.put("options", String.valueOf(decision.getOptions()));
-        summary.put("reminder", decision.getReminder() + " " + decision.getReminderTimeUnit());
-        if (builder != null) {
-            summary.put("attributes", new TreeSet<>(builder.getConsentableAttributesFrom(decision).keySet()));
-        }
-        return summary;
+    private static ConsentDecisionSummary summarize(final ConsentDecision decision,
+                                                    final @Nullable ConsentDecisionBuilder builder) {
+        val attributes = builder != null
+            ? new TreeSet<>(builder.getConsentableAttributesFrom(decision).keySet()).stream().toList()
+            : null;
+        return new ConsentDecisionSummary(String.valueOf(decision.getId()), decision.getService(),
+            String.valueOf(decision.getCreatedDate()), String.valueOf(decision.getOptions()),
+            decision.getReminder() + " " + decision.getReminderTimeUnit(), attributes);
+    }
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    public record ConsentDecisions(String username, int count, List<ConsentDecisionSummary> decisions, @Nullable String reason) {
+    }
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    public record ConsentDecisionSummary(String id, @Nullable String service, String createdDate, String options, String reminder,
+                                         @Nullable List<String> attributes) {
     }
 }

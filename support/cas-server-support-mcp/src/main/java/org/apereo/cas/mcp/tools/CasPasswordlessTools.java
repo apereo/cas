@@ -5,6 +5,7 @@ import org.apereo.cas.api.PasswordlessAuthenticationRequest;
 import org.apereo.cas.api.PasswordlessUserAccount;
 import org.apereo.cas.api.PasswordlessUserAccountStore;
 import org.apereo.cas.util.function.FunctionUtils;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -38,39 +39,30 @@ public class CasPasswordlessTools {
         + "may pick from a selection menu, is eligible for multifactor or delegated authentication and which identity "
         + "providers it may use, and where the account comes from.",
         title = "Find Passwordless Account",
+        generateOutputSchema = true,
         annotations = @McpTool.McpAnnotations(readOnlyHint = true, destructiveHint = false,
             idempotentHint = true, openWorldHint = false))
     @PreAuthorize("hasRole('MCP_ADMIN')")
-    public Map<String, Object> findPasswordlessAccount(
+    public PasswordlessAccountLookup findPasswordlessAccount(
         @McpToolParam(description = "The username of the person")
         final String username) {
-        val result = new LinkedHashMap<String, Object>();
-        result.put("username", username);
         val store = passwordlessUserAccountStore.getIfAvailable();
         if (store == null) {
-            result.put("reason", "Passwordless authentication is not configured");
-            return result;
+            return new PasswordlessAccountLookup(username, null, "Passwordless authentication is not configured");
         }
         val request = PasswordlessAuthenticationRequest.builder().username(username).build();
         val account = FunctionUtils.<Optional<? extends PasswordlessUserAccount>>doUnchecked(() -> store.findUser(request));
-        account.ifPresentOrElse(found -> result.put("account", summarize(found)),
-            () -> result.put("reason", "No passwordless account is found for " + username));
-        return result;
+        return account
+            .<PasswordlessAccountLookup>map(found -> new PasswordlessAccountLookup(username, summarize(found), null))
+            .orElseGet(() -> new PasswordlessAccountLookup(username, null, "No passwordless account is found for " + username));
     }
 
-    private static Map<String, Object> summarize(final PasswordlessUserAccount account) {
-        val summary = new LinkedHashMap<String, Object>();
-        summary.put("username", account.getUsername());
-        summary.put("name", account.getName());
-        summary.put("email", maskEmail(account.getEmail()));
-        summary.put("phone", maskPhone(account.getPhone()));
-        summary.put("requestPassword", account.isRequestPassword());
-        summary.put("allowSelectionMenu", account.isAllowSelectionMenu());
-        summary.put("multifactorAuthenticationEligible", String.valueOf(account.getMultifactorAuthenticationEligible()));
-        summary.put("delegatedAuthenticationEligible", String.valueOf(account.getDelegatedAuthenticationEligible()));
-        summary.put("allowedDelegatedClients", account.getAllowedDelegatedClients());
-        summary.put("source", account.getSource());
-        return summary;
+    private static PasswordlessAccount summarize(final PasswordlessUserAccount account) {
+        return new PasswordlessAccount(account.getUsername(), account.getName(), maskEmail(account.getEmail()),
+            maskPhone(account.getPhone()), account.isRequestPassword(), account.isAllowSelectionMenu(),
+            String.valueOf(account.getMultifactorAuthenticationEligible()), String.valueOf(account.getDelegatedAuthenticationEligible()),
+            account.getAllowedDelegatedClients() != null ? List.copyOf(account.getAllowedDelegatedClients()) : List.of(),
+            account.getSource());
     }
 
     private static @Nullable String maskEmail(final @Nullable String email) {
@@ -90,5 +82,16 @@ public class CasPasswordlessTools {
         }
         val shown = Math.min(PHONE_DIGITS_SHOWN, phone.length());
         return "*".repeat(phone.length() - shown) + phone.substring(phone.length() - shown);
+    }
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    public record PasswordlessAccountLookup(String username, @Nullable PasswordlessAccount account, @Nullable String reason) {
+    }
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    public record PasswordlessAccount(String username, @Nullable String name, @Nullable String email, @Nullable String phone,
+                                      boolean requestPassword, boolean allowSelectionMenu, String multifactorAuthenticationEligible,
+                                      String delegatedAuthenticationEligible, List<String> allowedDelegatedClients,
+                                      @Nullable String source) {
     }
 }

@@ -68,7 +68,7 @@ class OidcDefaultTokenGeneratorTests extends AbstractOidcTests {
             .registeredService(registeredService)
             .refreshToken((OAuth20RefreshToken) result.getRefreshToken().orElseThrow())
             .build();
-        
+
         val oidcIdToken = oidcIdTokenGenerator.generate(idTokenContext);
         assertNotNull(oidcIdToken);
         assertEquals(cibaRequest.getEncodedId(), oidcIdToken.claims().getStringClaimValue(OidcConstants.CLAIM_AUTH_REQ_ID));
@@ -130,9 +130,8 @@ class OidcDefaultTokenGeneratorTests extends AbstractOidcTests {
         val requests = 8;
         val start = new CountDownLatch(1);
         try (val executor = Executors.newVirtualThreadPerTaskExecutor()) {
-            final List<Future<?>> results = new ArrayList<>();
-            for (var i = 0; i < requests; i++) {
-                results.add(executor.submit(Unchecked.callable(() -> {
+            val results = IntStream.range(0, requests)
+                .mapToObj(i -> executor.submit(Unchecked.callable(() -> {
                     start.await();
                     try {
                         oauthTokenGenerator.generate(accessTokenContext);
@@ -141,8 +140,8 @@ class OidcDefaultTokenGeneratorTests extends AbstractOidcTests {
                         rejected.incrementAndGet();
                     }
                     return null;
-                })));
-            }
+                })))
+                .collect(Collectors.toCollection(() -> new ArrayList<Future<?>>()));
             start.countDown();
             for (final Future<?> result : results) {
                 result.get();

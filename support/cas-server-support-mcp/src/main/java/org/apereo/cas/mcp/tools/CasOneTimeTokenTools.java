@@ -3,8 +3,10 @@ package org.apereo.cas.mcp.tools;
 import module java.base;
 import org.apereo.cas.authentication.OneTimeTokenAccount;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
+import org.jspecify.annotations.Nullable;
 import org.springframework.ai.mcp.annotation.McpTool;
 import org.springframework.ai.mcp.annotation.McpToolParam;
 import org.springframework.beans.factory.ObjectProvider;
@@ -22,7 +24,7 @@ public class CasOneTimeTokenTools {
     private final ObjectProvider<OneTimeTokenCredentialRepository> credentialRepository;
 
     /**
-     * Find the one-time password devices a person has registered.
+     * Find the one-time password devices of a person. Secret keys, validation and scratch codes are never returned.
      *
      * @param username the username
      * @return the registered devices, newest first
@@ -31,18 +33,16 @@ public class CasOneTimeTokenTools {
         + "multifactor authentication, newest first: the device name, when it was registered and last used, where the "
         + "registration came from and how many scratch codes are left. Secret keys and codes are never returned.",
         title = "Find One-Time Password Devices",
+        generateOutputSchema = true,
         annotations = @McpTool.McpAnnotations(readOnlyHint = true, destructiveHint = false,
             idempotentHint = true, openWorldHint = false))
     @PreAuthorize("hasRole('MCP_ADMIN')")
-    public Map<String, Object> findOneTimeTokenAccounts(
+    public OneTimeTokenAccounts findOneTimeTokenAccounts(
         @McpToolParam(description = "The username (principal id) of the person")
         final String username) {
-        val result = new LinkedHashMap<String, Object>();
-        result.put("username", username);
         val repository = credentialRepository.getIfAvailable();
         if (repository == null) {
-            result.put("reason", "One-time password multifactor authentication is not configured");
-            return result;
+            return new OneTimeTokenAccounts(username, 0, List.of(), "One-time password multifactor authentication is not configured");
         }
         val accounts = repository.get(username)
             .stream()
@@ -50,20 +50,21 @@ public class CasOneTimeTokenTools {
                 Comparator.nullsLast(Comparator.<ZonedDateTime>reverseOrder())))
             .map(CasOneTimeTokenTools::summarize)
             .toList();
-        result.put("count", accounts.size());
-        result.put("accounts", accounts);
-        return result;
+        return new OneTimeTokenAccounts(username, accounts.size(), accounts, null);
     }
 
-    private static Map<String, Object> summarize(final OneTimeTokenAccount account) {
-        val summary = new LinkedHashMap<String, Object>();
-        summary.put("id", account.getId());
-        summary.put("name", account.getName());
-        summary.put("registrationDate", String.valueOf(account.getRegistrationDate()));
-        summary.put("lastUsed", account.getLastUsedDateTime());
-        summary.put("source", account.getSource());
-        summary.put("tenant", account.getTenant());
-        summary.put("scratchCodesLeft", account.getScratchCodes() != null ? account.getScratchCodes().size() : 0);
-        return summary;
+    private static OneTimeTokenDevice summarize(final OneTimeTokenAccount account) {
+        return new OneTimeTokenDevice(account.getId(), account.getName(), String.valueOf(account.getRegistrationDate()),
+            account.getLastUsedDateTime(), account.getSource(), account.getTenant(),
+            account.getScratchCodes() != null ? account.getScratchCodes().size() : 0);
+    }
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    public record OneTimeTokenAccounts(String username, int count, List<OneTimeTokenDevice> accounts, @Nullable String reason) {
+    }
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    public record OneTimeTokenDevice(long id, @Nullable String name, String registrationDate, @Nullable String lastUsed,
+                                     @Nullable String source, @Nullable String tenant, int scratchCodesLeft) {
     }
 }

@@ -58,10 +58,16 @@ import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicy;
 import org.apereo.cas.support.events.CasEventRepository;
 import org.apereo.cas.support.events.dao.CasEvent;
 import org.apereo.cas.test.CasTestExtension;
+import org.apereo.cas.throttle.AuthenticationThrottlingExecutionPlan;
+import org.apereo.cas.throttle.ConcurrentThrottledSubmissionsStore;
+import org.apereo.cas.throttle.DefaultAuthenticationThrottlingExecutionPlan;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
+import org.apereo.cas.web.support.InMemoryThrottledSubmissionHandlerInterceptor;
+import org.apereo.cas.web.support.ThrottledSubmission;
+import org.apereo.cas.web.support.ThrottledSubmissionsStore;
 import org.apereo.cas.web.support.WebUtils;
 import org.apereo.cas.webauthn.storage.WebAuthnCredentialRepository;
 import com.jayway.jsonpath.JsonPath;
@@ -118,10 +124,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
     "spring.ai.mcp.server.protocol=STREAMABLE",
     "spring.ai.mcp.server.capabilities.resource=true",
     "spring.ai.mcp.server.capabilities.prompt=false",
-    "spring.ai.mcp.server.capabilities.completion=false",
+    "spring.ai.mcp.server.capabilities.completion=true",
     "cas.monitor.endpoints.json.location=classpath:/McpUserDetails.json",
     "cas.authn.attribute-repository.stub.attributes.mail=casuser@apereo.org",
-    "cas.authn.adaptive.policy.require-multifactor.mfa-dummy=198[.]51[.]100[.][0-9]+"
+    "cas.authn.adaptive.policy.require-multifactor.mfa-dummy=198[.]51[.]100[.][0-9]+",
+    "cas.authn.throttle.failure.threshold=3",
+    "cas.authn.throttle.failure.range-seconds=10",
+    "cas.authn.throttle.failure.throttle-window-seconds=PT5M"
 })
 public abstract class BaseCasMcpTests {
     protected static final String MCP_ENDPOINT = "/mcp";
@@ -466,6 +475,18 @@ public abstract class BaseCasMcpTests {
             try (val in = new ClassPathResource("McpSettingsMetadata.json").getInputStream()) {
                 return new CasConfigurationMetadataRepository(List.of(in.readAllBytes()));
             }
+        }
+
+        @Bean(name = ThrottledSubmissionsStore.BEAN_NAME)
+        public ThrottledSubmissionsStore<ThrottledSubmission> throttleSubmissionStore(final CasConfigurationProperties casProperties) {
+            return new ConcurrentThrottledSubmissionsStore(casProperties);
+        }
+
+        @Bean(name = AuthenticationThrottlingExecutionPlan.BEAN_NAME)
+        public AuthenticationThrottlingExecutionPlan authenticationThrottlingExecutionPlan() {
+            val plan = new DefaultAuthenticationThrottlingExecutionPlan();
+            plan.registerAuthenticationThrottleInterceptor((InMemoryThrottledSubmissionHandlerInterceptor) request -> request.getRemoteAddr());
+            return plan;
         }
 
         @Bean(name = "casMcpAuditor")

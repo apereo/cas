@@ -6,6 +6,8 @@ import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
 import org.apereo.cas.authentication.credential.BasicIdentifiableCredential;
 import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
@@ -47,6 +49,8 @@ public class CasMcpEvaluationContextFactory {
 
     private static final String UNKNOWN_CLIENT = "unknown";
 
+    private static final PrincipalFactory PRINCIPAL_FACTORY = PrincipalFactoryUtils.newPrincipalFactory();
+
     private final ServicesManager servicesManager;
 
     private final ServiceFactory<WebApplicationService> serviceFactory;
@@ -54,7 +58,9 @@ public class CasMcpEvaluationContextFactory {
     private final PrincipalResolver principalResolver;
 
     /**
-     * Build the evaluation context for a person signing in to an application.
+     * Build the evaluation context for a person signing in to an application. The username is handed to the principal
+     * resolvers as the current principal, the way an authentication handler hands over the principal it authenticated,
+     * so that a deployment without attribute repositories still resolves the person rather than an unknown principal.
      *
      * @param username   the username of the person
      * @param serviceUrl the application URL
@@ -65,8 +71,8 @@ public class CasMcpEvaluationContextFactory {
             () -> "Unable to build a service for " + serviceUrl);
         val registeredService = servicesManager.findServiceBy(service);
         val credential = new BasicIdentifiableCredential(username);
-        val principal = Objects.requireNonNull(FunctionUtils.doUnchecked(() -> principalResolver.resolve(
-                credential, Optional.empty(), Optional.empty(), Optional.of(service))),
+        val principal = Objects.requireNonNull(FunctionUtils.doUnchecked(() -> principalResolver.resolve(credential,
+                Optional.ofNullable(PRINCIPAL_FACTORY.createPrincipal(username)), Optional.empty(), Optional.of(service))),
             () -> "Unable to resolve a principal for " + username);
         val authentication = DefaultAuthenticationBuilder.newInstance().setPrincipal(principal).build();
         return new CasMcpEvaluationContext(service, registeredService, principal, credential, authentication);

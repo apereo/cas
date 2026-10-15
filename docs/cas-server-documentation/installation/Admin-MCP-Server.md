@@ -53,8 +53,9 @@ endpoint on a protected network and always use TLS.
 
 ## Tools
 
-The following tools are available. All tools are read-only and are advertised to clients with the 
-`readOnlyHint` annotation; nothing is returned when the requested object cannot be found.
+The following tools are available. All tools are read-only and are advertised to clients with the
+`readOnlyHint` annotation. When the requested object cannot be found, the result says why in a `reason` field, except for
+`findService` and `matchService`, which return nothing.
 
 | Tool                          | Parameters                                                                               | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
 |-------------------------------|------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -74,6 +75,12 @@ The following tools are available. All tools are read-only and are advertised to
 | `findTenant`                  | `tenantId` (string)                                                                      | Look up a [tenant](../multitenancy/Multitenancy-Overview.html) and its policies, along with the names of the settings it overrides; setting values are never returned.                                                                                                                                                                                                                                                                                                                                                                                                           |
 | `findAuditRecords`            | `username` (string), `days` and `action` (optional)                                      | Return the most recent [audit records](../audits/Audits.html) of a person, optionally limited to a number of days and to actions that contain the given text.                                                                                                                                                                                                                                                                                                                                                                                                                    |
 | `findAuthenticationEvents`    | `username` (string), `days` (optional)                                                   | Return the most recent recorded [authentication events](../authentication/Configuring-Authentication-Events.html) of a person, such as single sign-on sessions created and destroyed and authentication failures, with the client IP address, user agent and location of each. Device fingerprints are never returned.                                                                                                                                                                                                                                                           |
+| `describeDeployment`          | none                                                                                     | Describe the deployment: CAS version, server name and prefix, active profiles, the feature modules that are turned on, the CAS modules on the classpath, ticket and service registry types, authentication handlers and policies, attribute repositories, and which optional MCP tool groups are active along with the setting that turns each one on.                                                                                                                                                                                                                           |
+| `explainLogin`                | `username`, `service` (string), `clientIpAddress`, `userAgent`, `geoLocation` (optional) | Walk through a login in one call, in the order CAS applies each step: the registered service and its access strategy, the risk of the attempt, the multifactor authentication provider, the interrupt and the released username and attributes. Returns the outcome and, for each step, its status and the result of the tool that evaluates it. Passwords are not checked.                                                                                                                                                                                                      |
+| `validateServiceDefinition`   | `definition` (string), `urls` (optional list)                                            | Check a proposed registered service definition, given as JSON, without saving it: whether CAS can read it, whether its service id pattern is valid, whether its id or name collides with an existing service, and for each URL whether it matches, which existing service matches today and which of the two CAS would pick by evaluation priority and order. The definition is not returned.                                                                                                                                                                                    |
+| `findThrottledLogins`         | `username`, `clientIpAddress` (optional)                                                 | Return the failed login attempts that [authentication throttling](../authentication/Configuring-Authentication-Throttling.html) tracks, with the username, client IP address, last failure, end of the lock and whether each is throttled now, along with the failure threshold, range and lock window.                                                                                                                                                                                                                                                                          |
+| `findAttributeSources`        | `username` (string)                                                                      | Ask each [attribute repository](../integration/Attribute-Resolution.html) separately which attributes it returns for a person, and report the attribute names and any error per repository. Attribute values are not returned; `findPerson` has them.                                                                                                                                                                                                                                                                                                                            |
+| `findAttributeDefinitions`    | `query` (optional)                                                                       | List the [attribute definitions](../integration/Attribute-Definitions.html) whose key, name or source attribute contains the text, with their type, scoping, encryption, canonicalization and hashing settings. Scripts are not returned, only whether a definition is scripted.                                                                                                                                                                                                                                                                                                 |
 
 The `service` parameter is the application URL, such as the `service` parameter an application sends to CAS at login.
 Access evaluations are recorded in the [audit log](../audits/Audits.html) like any other access strategy decision, and
@@ -99,6 +106,24 @@ Search results are limited to the first fifty matches, and audit lookups to the 
 Authentication events are only returned when CAS records them in an
 [events repository](../authentication/Configuring-Authentication-Events.html), such as memory, a database or Redis;
 lookups are limited to the most recent hundred events.
+
+`explainLogin` runs `evaluateAccess`, `evaluateAuthenticationRisk`, `evaluateMultifactorTriggers`, `previewInterrupt` and
+`previewAttributeRelease` in turn and stops at the first step that denies the login, with the outcome `SERVICE_NOT_REGISTERED`,
+`ACCESS_DENIED`, `BLOCKED_AS_RISKY`, `BLOCKED_BY_INTERRUPT` or `LOGIN_SUCCEEDS`. Each step has the status `PASSED`, `TRIGGERED`
+(a requirement such as multifactor authentication is added), `BLOCKED`, `SKIPPED` or `FAILED`. Risk is evaluated only when a
+client IP address and user agent are given and risk-based authentication is installed, and a step whose module is not installed
+is skipped. The call is recorded once in the audit log as `explainLogin`; the tools it runs are not recorded separately.
+
+`findThrottledLogins` reads the throttling records that CAS keeps in memory or in Hazelcast. Throttling backed by a database,
+MongoDB or Redis keeps its records in the audit trail instead, which `findAuditRecords` returns with the action
+`THROTTLED_LOGIN_ATTEMPT`; the `auditBased` field of the result says when that is the case. At most a hundred records are returned,
+most recent first.
+
+### Structured Output
+
+Every tool except `findService` and `matchService`, whose definitions are free-form, advertises an `outputSchema` in `tools/list`
+and returns its result as `structuredContent`, along with the same JSON as text for clients that do not read structured content.
+Fields without a value are left out of the result rather than set to `null`.
 
 ### Optional Tools
 
@@ -140,8 +165,17 @@ To find the name of a setting, the `searchSettings` tool takes a `query` of at l
 setting names and descriptions (every word must match), and an optional CAS `module` such as `cas-server-support-ldap`. It returns up to
 fifty settings with their name, a short description, module, type, deprecation and the `cas://settings/{name}` URI to read.
 
+Registered services are offered as the resource template `cas://services/{id}`, such as `cas://services/1001`, which returns
+the definition as JSON with the same secret redaction as `findService`.
+
 Resources are advertised only when the resource capability of the MCP server is turned on, which CAS does by default with
 `spring.ai.mcp.server.capabilities.resource=true`{: .cas-setting}.
+
+Clients that support [argument completion](https://modelcontextprotocol.io/specification/2025-11-25/server/utilities/completion)
+can complete the setting name of `cas://settings/{name}` from at least two typed characters, and the service id of
+`cas://services/{id}` from the first digits of the id or part of the service name. MCP completion applies to resource
+templates and prompts only, not to tool parameters. Completion is turned on by default with
+`spring.ai.mcp.server.capabilities.completion=true`{: .cas-setting}, and requires the `ROLE_MCP_ADMIN` role/authority.
 
 {% include_cached featuretoggles.html features="AI.mcp-settings" %}
 

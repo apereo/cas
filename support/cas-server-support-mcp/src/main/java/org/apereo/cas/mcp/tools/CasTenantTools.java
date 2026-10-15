@@ -3,8 +3,10 @@ package org.apereo.cas.mcp.tools;
 import module java.base;
 import org.apereo.cas.multitenancy.TenantDefinition;
 import org.apereo.cas.multitenancy.TenantsManager;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
+import org.jspecify.annotations.Nullable;
 import org.springframework.ai.mcp.annotation.McpTool;
 import org.springframework.ai.mcp.annotation.McpToolParam;
 import org.springframework.beans.factory.ObjectProvider;
@@ -21,43 +23,46 @@ public class CasTenantTools {
     private final ObjectProvider<TenantsManager> tenantsManager;
 
     /**
-     * Find a tenant definition.
+     * Find a tenant.
      *
      * @param tenantId the tenant id
-     * @return the tenant definition, or the ids of the known tenants when it cannot be found
+     * @return the tenant, or the known tenant ids when it cannot be found
      */
     @McpTool(description = "Look up a tenant in a multitenant CAS deployment: its description, its authentication, "
         + "user interface and delegated authentication policies, and the names of the settings it overrides. "
         + "Setting values are never returned. When the tenant cannot be found, the ids of the known tenants are listed.",
         title = "Find Tenant",
+        generateOutputSchema = true,
         annotations = @McpTool.McpAnnotations(readOnlyHint = true, destructiveHint = false,
             idempotentHint = true, openWorldHint = false))
     @PreAuthorize("hasRole('MCP_ADMIN')")
-    public Map<String, Object> findTenant(
+    public TenantLookup findTenant(
         @McpToolParam(description = "The id of the tenant")
         final String tenantId) {
-        val result = new LinkedHashMap<String, Object>();
-        result.put("tenantId", tenantId);
         val manager = tenantsManager.getIfAvailable();
         if (manager == null) {
-            result.put("reason", "Multitenancy is not configured");
-            return result;
+            return new TenantLookup(tenantId, null, null, "Multitenancy is not configured");
         }
-        manager.findTenant(tenantId).ifPresentOrElse(tenant -> result.put("tenant", summarize(tenant)), () -> {
-            result.put("reason", "No tenant matches " + tenantId);
-            result.put("knownTenants", manager.findTenants().stream().map(TenantDefinition::getId).sorted().toList());
-        });
-        return result;
+        return manager.findTenant(tenantId)
+            .map(tenant -> new TenantLookup(tenantId, summarize(tenant), null, null))
+            .orElseGet(() -> new TenantLookup(tenantId, null,
+                manager.findTenants().stream().map(TenantDefinition::getId).sorted().toList(), "No tenant matches " + tenantId));
     }
 
-    private static Map<String, Object> summarize(final TenantDefinition tenant) {
-        val summary = new LinkedHashMap<String, Object>();
-        summary.put("id", tenant.getId());
-        summary.put("description", tenant.getDescription());
-        summary.put("overriddenSettings", new TreeSet<>(tenant.getProperties().keySet()));
-        summary.put("authenticationPolicy", tenant.getAuthenticationPolicy());
-        summary.put("userInterfacePolicy", tenant.getUserInterfacePolicy());
-        summary.put("delegatedAuthenticationPolicy", tenant.getDelegatedAuthenticationPolicy());
-        return summary;
+    private static TenantSummary summarize(final TenantDefinition tenant) {
+        return new TenantSummary(tenant.getId(), tenant.getDescription(),
+            new TreeSet<>(tenant.getProperties().keySet()).stream().toList(),
+            tenant.getAuthenticationPolicy(), tenant.getUserInterfacePolicy(), tenant.getDelegatedAuthenticationPolicy());
+    }
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    public record TenantLookup(String tenantId, @Nullable TenantSummary tenant, @Nullable List<String> knownTenants,
+                               @Nullable String reason) {
+    }
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    public record TenantSummary(String id, @Nullable String description, List<String> overriddenSettings,
+                                @Nullable Object authenticationPolicy, @Nullable Object userInterfacePolicy,
+                                @Nullable Object delegatedAuthenticationPolicy) {
     }
 }

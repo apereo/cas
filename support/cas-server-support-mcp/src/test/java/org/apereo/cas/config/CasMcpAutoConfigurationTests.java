@@ -7,6 +7,7 @@ import org.apereo.cas.audit.AuditTrailRecordResolutionPlan;
 import org.apereo.cas.audit.AuditTrailRecordResolutionPlanConfigurer;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
+import org.apereo.cas.authentication.principal.resolvers.EchoingPrincipalResolver;
 import org.apereo.cas.authentication.surrogate.SurrogateAuthenticationService;
 import org.apereo.cas.consent.ConsentDecisionBuilder;
 import org.apereo.cas.consent.ConsentRepository;
@@ -67,7 +68,7 @@ class CasMcpAutoConfigurationTests {
             assertNull(context.getStartupFailure());
             assertTrue(context.containsBean("casConsentTools"));
             val result = context.getBean(CasConsentTools.class).findConsentDecisions("casuser");
-            assertEquals(0, result.get("count"));
+            assertEquals(0, result.count());
         });
     }
 
@@ -98,7 +99,7 @@ class CasMcpAutoConfigurationTests {
             .run(context -> {
                 assertNull(context.getStartupFailure());
                 val result = context.getBean(CasConsentTools.class).findConsentDecisions("casuser");
-                assertEquals("Attribute consent is not configured", result.get("reason"));
+                assertEquals("Attribute consent is not configured", result.reason());
             });
     }
 
@@ -114,7 +115,7 @@ class CasMcpAutoConfigurationTests {
             .run(context -> assertFalse(context.containsBean("casSamlIdPMetadataTools")));
         runner.run(context -> {
             val result = context.getBean(CasSamlIdPMetadataTools.class).resolveSamlMetadata("https://sp.example.org");
-            assertEquals("The SAML2 identity provider is not configured", result.get("reason"));
+            assertEquals("The SAML2 identity provider is not configured", result.reason());
         });
     }
 
@@ -132,7 +133,7 @@ class CasMcpAutoConfigurationTests {
             .run(context -> assertFalse(context.containsBean("casOidcTools")));
         runner.run(context -> {
             val result = context.getBean(CasOidcTools.class).listJwksKeys();
-            assertEquals("The OpenID Connect keystore is not available", result.get("reason"));
+            assertEquals("The OpenID Connect keystore is not available", result.reason());
         });
     }
 
@@ -147,7 +148,7 @@ class CasMcpAutoConfigurationTests {
             .run(context -> assertFalse(context.containsBean("casTrustedDeviceTools")));
         runner.run(context -> {
             val result = context.getBean(CasTrustedDeviceTools.class).findTrustedDevices("casuser");
-            assertEquals("Multifactor authentication trusted devices are not configured", result.get("reason"));
+            assertEquals("Multifactor authentication trusted devices are not configured", result.reason());
         });
     }
 
@@ -163,7 +164,7 @@ class CasMcpAutoConfigurationTests {
             .run(context -> assertFalse(context.containsBean("casSurrogateTools")));
         runner.run(context -> {
             val result = context.getBean(CasSurrogateTools.class).findSurrogateAccounts("casuser", null);
-            assertEquals("Surrogate authentication is not configured", result.get("reason"));
+            assertEquals("Surrogate authentication is not configured", result.reason());
         });
     }
 
@@ -179,8 +180,18 @@ class CasMcpAutoConfigurationTests {
             .run(context -> assertFalse(context.containsBean("casInterruptTools")));
         runner.run(context -> {
             val result = context.getBean(CasInterruptTools.class).previewInterrupt("casuser", "https://mcp.example.org");
-            assertEquals("Authentication interrupts are not configured", result.get("reason"));
+            assertEquals("Authentication interrupts are not configured", result.reason());
         });
+    }
+
+    @Test
+    void verifyEvaluationContextWithoutAttributeRepositories() {
+        val serviceFactory = mock(ServiceFactory.class);
+        when(serviceFactory.createService(anyString())).thenReturn(mock(WebApplicationService.class));
+        val factory = new CasMcpEvaluationContextFactory(mock(ServicesManager.class), serviceFactory, new EchoingPrincipalResolver());
+        val context = factory.build("casuser", "https://mcp.example.org");
+        assertEquals("casuser", context.principal().getId());
+        assertEquals("casuser", context.authentication().getPrincipal().getId());
     }
 
     @Test
@@ -196,7 +207,7 @@ class CasMcpAutoConfigurationTests {
         runner.run(context -> {
             val result = context.getBean(CasAuthenticationRiskTools.class)
                 .evaluateAuthenticationRisk("casuser", "https://mcp.example.org", "192.0.2.10", "Firefox", null);
-            assertEquals("Risk-based authentication is not configured", result.get("reason"));
+            assertEquals("Risk-based authentication is not configured", result.reason());
         });
     }
 
@@ -211,7 +222,7 @@ class CasMcpAutoConfigurationTests {
             .run(context -> assertFalse(context.containsBean("casOneTimeTokenTools")));
         runner.run(context -> {
             val result = context.getBean(CasOneTimeTokenTools.class).findOneTimeTokenAccounts("casuser");
-            assertEquals("One-time password multifactor authentication is not configured", result.get("reason"));
+            assertEquals("One-time password multifactor authentication is not configured", result.reason());
         });
     }
 
@@ -226,7 +237,7 @@ class CasMcpAutoConfigurationTests {
             .run(context -> assertFalse(context.containsBean("casWebAuthnTools")));
         runner.run(context -> {
             val result = context.getBean(CasWebAuthnTools.class).findWebAuthnDevices("casuser");
-            assertEquals("WebAuthn multifactor authentication is not configured", result.get("reason"));
+            assertEquals("WebAuthn multifactor authentication is not configured", result.reason());
         });
     }
 
@@ -240,7 +251,7 @@ class CasMcpAutoConfigurationTests {
         runner.withPropertyValues("CasFeatureModule.AI.mcp-passwordless.enabled=false")
             .run(context -> assertFalse(context.containsBean("casPasswordlessTools")));
         runner.run(context -> assertEquals("Passwordless authentication is not configured",
-            context.getBean(CasPasswordlessTools.class).findPasswordlessAccount("casuser").get("reason")));
+            context.getBean(CasPasswordlessTools.class).findPasswordlessAccount("casuser").reason()));
     }
 
     @Test
@@ -254,7 +265,7 @@ class CasMcpAutoConfigurationTests {
         runner.withPropertyValues("CasFeatureModule.AI.mcp-delegated.enabled=false")
             .run(context -> assertFalse(context.containsBean("casDelegatedAuthenticationTools")));
         runner.run(context -> assertEquals("Delegated authentication is not configured",
-            context.getBean(CasDelegatedAuthenticationTools.class).listIdentityProviders().get("reason")));
+            context.getBean(CasDelegatedAuthenticationTools.class).listIdentityProviders().reason()));
     }
 
     @Test
@@ -267,7 +278,7 @@ class CasMcpAutoConfigurationTests {
         runner.withPropertyValues("CasFeatureModule.AI.mcp-heimdall.enabled=false")
             .run(context -> assertFalse(context.containsBean("casHeimdallTools")));
         runner.run(context -> assertEquals("Heimdall is not configured",
-            context.getBean(CasHeimdallTools.class).findAuthorizableResources("API").get("reason")));
+            context.getBean(CasHeimdallTools.class).findAuthorizableResources("API").reason()));
     }
 
     @Test

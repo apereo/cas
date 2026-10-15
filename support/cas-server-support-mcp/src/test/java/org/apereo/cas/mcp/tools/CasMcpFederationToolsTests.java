@@ -61,18 +61,18 @@ class CasMcpFederationToolsTests extends BaseCasMcpTests {
         val entityId = "https://sp-" + UUID.randomUUID() + ".example.org";
         val service = saveSamlService(entityId, "https://md.example.org/" + UUID.randomUUID());
         val result = casSamlIdPMetadataTools.resolveSamlMetadata(entityId);
-        assertEquals(Boolean.TRUE, result.get("resolved"), result::toString);
-        assertEquals(service.getId(), ((Map<?, ?>) result.get("registeredService")).get("id"));
-        assertEquals(Boolean.FALSE, result.get("expired"));
-        val sp = (Map<?, ?>) result.get("serviceProvider");
-        assertEquals(Boolean.TRUE, sp.get("wantAssertionsSigned"));
-        val acs = (Map<?, ?>) ((List<?>) sp.get("assertionConsumerServices")).getFirst();
-        assertEquals(entityId + "/acs", acs.get("location"));
-        val key = (Map<?, ?>) ((List<?>) sp.get("keys")).getFirst();
-        assertEquals("SIGNING", key.get("use"));
-        val certificate = (Map<?, ?>) ((List<?>) key.get("certificates")).getFirst();
-        assertTrue(certificate.get("subject").toString().contains("CN=sp.example.org"), certificate::toString);
-        assertEquals(Boolean.FALSE, certificate.get("expired"));
+        assertTrue(result.resolved(), result::toString);
+        assertEquals(service.getId(), Objects.requireNonNull(result.registeredService()).id());
+        assertEquals(Boolean.FALSE, result.expired());
+        val sp = Objects.requireNonNull(result.serviceProvider());
+        assertTrue(sp.wantAssertionsSigned());
+        val acs = sp.assertionConsumerServices().getFirst();
+        assertEquals(entityId + "/acs", acs.location());
+        val key = sp.keys().getFirst();
+        assertEquals("SIGNING", key.use());
+        val certificate = Objects.requireNonNull(key.certificates()).getFirst();
+        assertTrue(certificate.subject().contains("CN=sp.example.org"), certificate::toString);
+        assertFalse(certificate.expired());
     }
 
     @Test
@@ -81,18 +81,18 @@ class CasMcpFederationToolsTests extends BaseCasMcpTests {
         val brokenEntityId = "https://broken-" + UUID.randomUUID() + ".example.org";
         saveSamlService(brokenEntityId, "https://md.example.org/broken/" + UUID.randomUUID());
         val broken = casSamlIdPMetadataTools.resolveSamlMetadata(brokenEntityId);
-        assertEquals(Boolean.FALSE, broken.get("resolved"));
-        assertTrue(broken.get("error").toString().contains("Unable to fetch metadata"), broken::toString);
+        assertFalse(broken.resolved());
+        assertTrue(Objects.requireNonNull(broken.error()).contains("Unable to fetch metadata"), broken::toString);
 
         val expiredEntityId = "https://expired-" + UUID.randomUUID() + ".example.org";
         saveSamlService(expiredEntityId, "https://md.example.org/expired/" + UUID.randomUUID());
         val expired = casSamlIdPMetadataTools.resolveSamlMetadata(expiredEntityId);
-        assertEquals(Boolean.FALSE, expired.get("resolved"));
-        assertEquals(Boolean.TRUE, expired.get("expired"));
+        assertFalse(expired.resolved());
+        assertEquals(Boolean.TRUE, expired.expired());
 
         val unknown = casSamlIdPMetadataTools.resolveSamlMetadata("https://unknown-" + UUID.randomUUID() + ".example.net");
-        assertEquals(Boolean.FALSE, unknown.get("resolved"));
-        assertTrue(unknown.get("reason").toString().startsWith("No SAML2 service provider registration"));
+        assertFalse(unknown.resolved());
+        assertTrue(Objects.requireNonNull(unknown.reason()).startsWith("No SAML2 service provider registration"));
     }
 
     @Test
@@ -110,28 +110,29 @@ class CasMcpFederationToolsTests extends BaseCasMcpTests {
         servicesManager.save(service);
 
         val result = casOidcTools.findOidcClient(clientId);
-        assertEquals(service.getId(), result.get("id"));
-        assertEquals(Boolean.TRUE, result.get("clientSecretConfigured"));
-        assertEquals(new TreeSet<>(Set.of("openid", "profile")), result.get("scopes"));
-        assertEquals(McpFederationTestConfiguration.OIDC_ISSUER, result.get("issuer"));
+        assertEquals(service.getId(), result.id());
+        assertEquals(Boolean.TRUE, result.clientSecretConfigured());
+        assertEquals(List.of("openid", "profile"), result.scopes());
+        assertEquals(McpFederationTestConfiguration.OIDC_ISSUER, result.issuer());
         assertFalse(result.toString().contains("very-secret-client-secret"));
         val definition = casServiceManagementTools.findService(service.getId());
         assertNotNull(definition);
         assertFalse(definition.contains("very-secret-client-secret"), definition);
-        assertTrue(definition.contains("\"clientSecret\":\"<redacted>\""), definition);
+        assertTrue(definition.contains("\"clientSecrets\":\"<redacted>\""), definition);
         assertTrue(definition.contains(clientId), definition);
-        assertTrue(casOidcTools.findOidcClient("unknown-" + UUID.randomUUID()).containsKey("reason"));
+        assertNotNull(casOidcTools.findOidcClient("unknown-" + UUID.randomUUID()).reason());
     }
 
     @Test
     @WithMockUser(roles = "MCP_ADMIN")
     void verifyListJwksKeys() {
         val result = casOidcTools.listJwksKeys();
-        assertEquals(McpFederationTestConfiguration.OIDC_ISSUER, result.get("issuer"));
-        val keys = (List<?>) result.get("keys");
+        assertEquals(McpFederationTestConfiguration.OIDC_ISSUER, result.issuer());
+        val keys = result.keys();
         assertEquals(4, keys.size());
-        assertTrue(keys.stream().map(Map.class::cast).anyMatch(key -> "CURRENT".equals(key.get("state"))));
-        assertTrue(keys.stream().map(Map.class::cast).allMatch(key -> key.keySet().equals(Set.of("keyId", "keyType", "algorithm", "use", "state"))));
+        assertTrue(keys.stream().anyMatch(key -> "CURRENT".equals(key.state())));
+        assertEquals(List.of("keyId", "keyType", "algorithm", "use", "state"),
+            Arrays.stream(CasOidcTools.JwksKey.class.getRecordComponents()).map(RecordComponent::getName).toList());
     }
 
     @Test

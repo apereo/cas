@@ -9,6 +9,7 @@ import org.apereo.cas.services.RegisteredServiceLogoutType;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.jspecify.annotations.Nullable;
@@ -44,21 +45,19 @@ public class CasSingleLogoutTools {
         + "Accepts the ticket-granting ticket id, or a session reference returned by findSessions together with the "
         + "person's username. Nothing is logged out.",
         title = "Preview Single Logout",
+        generateOutputSchema = true,
         annotations = @McpTool.McpAnnotations(readOnlyHint = true, destructiveHint = false,
             idempotentHint = true, openWorldHint = false))
     @PreAuthorize("hasRole('MCP_ADMIN')")
-    public Map<String, Object> previewLogout(
+    public LogoutPreview previewLogout(
         @McpToolParam(description = "The ticket-granting ticket id, or a session reference returned by findSessions")
         final String ticketId,
         @McpToolParam(description = "The username of the person, required when ticketId is a session reference", required = false)
         final @Nullable String username) {
-        val result = new LinkedHashMap<String, Object>();
-        result.put("ticketId", ticketId);
-        result.put("singleLogoutDisabled", casProperties.getSlo().isDisabled());
+        val sloDisabled = casProperties.getSlo().isDisabled();
         val ticket = CasMcpSessionReferences.resolve(ticketRegistry, ticketId, username).orElse(null);
         if (!(ticket instanceof final TicketGrantingTicket ticketGrantingTicket)) {
-            result.put("reason", "No active single sign-on session matches " + ticketId);
-            return result;
+            return new LogoutPreview(ticketId, sloDisabled, 0, List.of(), "No active single sign-on session matches " + ticketId);
         }
         val applications = ticketGrantingTicket.getServices().values()
             .stream()
@@ -69,32 +68,34 @@ public class CasSingleLogoutTools {
             .stream()
             .map(this::describe)
             .toList();
-        result.put("count", applications.size());
-        result.put("applications", applications);
-        return result;
+        return new LogoutPreview(ticketId, sloDisabled, applications.size(), applications, null);
     }
 
-    private Map<String, Object> describe(final WebApplicationService service) {
-        val application = new LinkedHashMap<String, Object>();
-        application.put("service", service.getId());
+    private LogoutApplication describe(final WebApplicationService service) {
         val registeredService = servicesManager.findServiceBy(service);
         if (registeredService == null) {
-            application.put("notified", false);
-            application.put("reason", "No registered service matches this application");
-            return application;
+            return new LogoutApplication(service.getId(), null, false, List.of(), "No registered service matches this application");
         }
-        application.put("registeredService", registeredService.getName());
         val logoutUrls = singleLogoutServiceLogoutUrlBuilder.determineLogoutUrl(registeredService, service)
             .stream()
             .filter(url -> url.getLogoutType() != RegisteredServiceLogoutType.NONE)
-            .map(url -> Map.<String, Object>of("url", url.getUrl(), "logoutType", String.valueOf(url.getLogoutType())))
+            .map(url -> new LogoutUrl(url.getUrl(), String.valueOf(url.getLogoutType())))
             .toList();
         val sloDisabled = casProperties.getSlo().isDisabled();
-        application.put("notified", !sloDisabled && !logoutUrls.isEmpty());
-        application.put("logoutUrls", logoutUrls);
-        if (logoutUrls.isEmpty()) {
-            application.put("reason", "Single logout is turned off for this application or it has no valid logout URL");
-        }
-        return application;
+        return new LogoutApplication(service.getId(), registeredService.getName(), !sloDisabled && !logoutUrls.isEmpty(), logoutUrls,
+            logoutUrls.isEmpty() ? "Single logout is turned off for this application or it has no valid logout URL" : null);
+    }
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    public record LogoutPreview(String ticketId, boolean singleLogoutDisabled, int count, List<LogoutApplication> applications,
+                                @Nullable String reason) {
+    }
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    public record LogoutApplication(String service, @Nullable String registeredService, boolean notified, List<LogoutUrl> logoutUrls,
+                                    @Nullable String reason) {
+    }
+
+    public record LogoutUrl(String url, String logoutType) {
     }
 }

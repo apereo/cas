@@ -2,6 +2,7 @@ package org.apereo.cas.mcp.tools;
 
 import module java.base;
 import org.apereo.cas.audit.AuditTrailExecutionPlan;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -38,10 +39,11 @@ public class CasAuditTools {
     @McpTool(description = "Find the audit records of a person, newest first, such as authentication failures, "
         + "ticket validations and access denials. At most " + MAX_RECORDS + " records are returned.",
         title = "Find Audit Records",
+        generateOutputSchema = true,
         annotations = @McpTool.McpAnnotations(readOnlyHint = true, destructiveHint = false,
             idempotentHint = true, openWorldHint = false))
     @PreAuthorize("hasRole('MCP_ADMIN')")
-    public Map<String, Object> findAuditRecords(
+    public AuditRecords findAuditRecords(
         @McpToolParam(description = "The username (principal) recorded in the audit log")
         final String username,
         @McpToolParam(description = "How many days to look back; defaults to " + DEFAULT_DAYS, required = false)
@@ -64,26 +66,23 @@ public class CasAuditTools {
             .limit(MAX_RECORDS)
             .map(CasAuditTools::summarize)
             .toList();
-        val result = new LinkedHashMap<String, Object>();
-        result.put("username", username);
-        result.put("since", since.toString());
-        result.put("count", records.size());
-        result.put("records", records);
-        return result;
+        return new AuditRecords(username, since.toString(), records.size(), records);
     }
 
-    private static Map<String, Object> summarize(final AuditActionContext record) {
-        val summary = new LinkedHashMap<String, Object>();
-        summary.put("when", String.valueOf(record.getWhenActionWasPerformed()));
-        summary.put("action", record.getActionPerformed());
-        summary.put("resource", record.getResourceOperatedUpon());
-        summary.put("application", record.getApplicationCode());
+    private static AuditRecord summarize(final AuditActionContext record) {
         val clientInfo = record.getClientInfo();
-        if (clientInfo != null) {
-            summary.put("clientIpAddress", clientInfo.getClientIpAddress());
-            summary.put("userAgent", clientInfo.getUserAgent());
-            summary.put("geoLocation", clientInfo.getGeoLocation());
-        }
-        return summary;
+        return new AuditRecord(String.valueOf(record.getWhenActionWasPerformed()), record.getActionPerformed(),
+            record.getResourceOperatedUpon(), record.getApplicationCode(),
+            clientInfo != null ? clientInfo.getClientIpAddress() : null,
+            clientInfo != null ? clientInfo.getUserAgent() : null,
+            clientInfo != null ? clientInfo.getGeoLocation() : null);
+    }
+
+    public record AuditRecords(String username, String since, int count, List<AuditRecord> records) {
+    }
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    public record AuditRecord(String when, @Nullable String action, @Nullable String resource, @Nullable String application,
+                              @Nullable String clientIpAddress, @Nullable String userAgent, @Nullable String geoLocation) {
     }
 }

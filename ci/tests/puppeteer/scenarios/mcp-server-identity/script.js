@@ -81,7 +81,7 @@ async function callTool(sessionId, name, args) {
     const providers = await callTool(sessionId, "listIdentityProviders", {});
     const client = providers.identityProviders.find((provider) => provider.name === "CASServerOne");
     assert(client !== undefined);
-    assert(client.displayName === "My CAS One");
+    assert(client.displayName === "MyCASOne");
     assert(client.callbackUrl.startsWith("https://localhost:8443/cas/login"));
 
     await cas.separator();

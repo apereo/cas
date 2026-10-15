@@ -18,7 +18,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 /**
  * This is {@link CasMcpAuditInterceptor}. It wraps every MCP tool and resource method, outside method security so that
  * denied calls are recorded too, and hands each call to the {@link CasMcpAuditor}: who called, which operation, with which
- * arguments, and whether it succeeded, was denied or failed.
+ * arguments, and whether it succeeded, was denied or failed. A tool that calls other tools, such as explainLogin, is
+ * recorded once: calls made while an audited call is running on the same thread are not recorded again.
  *
  * @author Misagh Moayyed
  * @since 8.1.0
@@ -27,10 +28,19 @@ import org.springframework.security.core.context.SecurityContextHolder;
 public class CasMcpAuditInterceptor implements MethodInterceptor {
     private static final int MAX_ARGUMENT_LENGTH = 256;
 
+    private static final ScopedValue<Boolean> AUDITED_CALL = ScopedValue.newInstance();
+
     private final ObjectProvider<CasMcpAuditor> auditor;
 
     @Override
     public @Nullable Object invoke(final MethodInvocation invocation) throws Throwable {
+        if (AUDITED_CALL.isBound()) {
+            return invocation.proceed();
+        }
+        return ScopedValue.where(AUDITED_CALL, Boolean.TRUE).call(() -> audit(invocation));
+    }
+
+    private @Nullable Object audit(final MethodInvocation invocation) throws Throwable {
         try {
             val result = invocation.proceed();
             record(invocation, CasMcpOperation.Outcome.SUCCESS);

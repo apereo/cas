@@ -382,10 +382,12 @@ class OidcVerifiableCredentialEndpointControllerTests {
 
             assertNull(metadata.get("myorg").getCredentialDefinition());
             assertNotNull(metadata.get("myorg").getVct());
+            assertEquals(metadata.get("myorg").getVct(), issueCredentialClaims("myorg").getStringClaim("vct"));
 
             for (val claims : List.of(jsonLd, employee)) {
                 assertNull(claims.getClaim(OAuth20Constants.CLIENT_ID));
                 assertNull(claims.getClaim("credential_configuration_id"));
+                assertNull(claims.getClaim("vct"));
             }
         }
 

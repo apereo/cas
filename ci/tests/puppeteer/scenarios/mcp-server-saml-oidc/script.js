@@ -106,7 +106,7 @@ async function callTool(sessionId, name, args) {
     const definition = await send(sessionId, "tools/call", {name: "findService", arguments: {serviceId: 2003}});
     const definitionText = definition.content[0].text;
     assert(!definitionText.includes("mcp-client-secret-value"), "Client secrets must be redacted from service definitions");
-    assert(JSON.parse(definitionText).clientSecret === "<redacted>");
+    assert(JSON.parse(definitionText).clientSecrets === "<redacted>");
     const missingClient = await callTool(sessionId, "findOidcClient", {clientId: "unknown"});
     assert(missingClient.reason !== undefined);
 

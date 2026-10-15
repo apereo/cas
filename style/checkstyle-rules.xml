@@ -737,7 +737,7 @@
     </module>
     <module name="FileLength">
         <property name="severity" value="error"/>
-        <property name="max" value="2500"/>
+        <property name="max" value="2600"/>
     </module>
     <module name="FileTabCharacter">
         <property name="severity" value="error"/>

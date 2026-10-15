@@ -10,6 +10,7 @@ import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.mcp.CasMcpEvaluationContextFactory;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.jspecify.annotations.Nullable;
@@ -44,10 +45,11 @@ public class CasMultifactorAuthenticationTools {
     @McpTool(description = "List the multifactor authentication providers configured in CAS, "
         + "with their ids, names, order and failure modes",
         title = "List Multifactor Providers",
+        generateOutputSchema = true,
         annotations = @McpTool.McpAnnotations(readOnlyHint = true, destructiveHint = false,
             idempotentHint = true, openWorldHint = false))
     @PreAuthorize("hasRole('MCP_ADMIN')")
-    public Map<String, Object> listMultifactorProviders() {
+    public MultifactorProviders listMultifactorProviders() {
         val providers = MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(applicationContext)
             .values()
             .stream()
@@ -55,10 +57,7 @@ public class CasMultifactorAuthenticationTools {
             .sorted(Comparator.comparingInt(MultifactorAuthenticationProvider::getOrder))
             .map(CasMultifactorAuthenticationTools::summarize)
             .toList();
-        val result = new LinkedHashMap<String, Object>();
-        result.put("count", providers.size());
-        result.put("providers", providers);
-        return result;
+        return new MultifactorProviders(providers.size(), providers);
     }
 
     /**
@@ -77,10 +76,11 @@ public class CasMultifactorAuthenticationTools {
         + "except for the optional client IP address, user agent and location of the login attempt, which adaptive "
         + "triggers match against; without them the client is unknown.",
         title = "Evaluate Multifactor Triggers",
+        generateOutputSchema = true,
         annotations = @McpTool.McpAnnotations(readOnlyHint = true, destructiveHint = false,
             idempotentHint = true, openWorldHint = false))
     @PreAuthorize("hasRole('MCP_ADMIN')")
-    public Map<String, Object> evaluateMultifactorTriggers(
+    public MultifactorEvaluation evaluateMultifactorTriggers(
         @McpToolParam(description = "The username of the person")
         final String username,
         @McpToolParam(description = "The application URL, such as the service parameter sent to CAS at login")
@@ -104,19 +104,12 @@ public class CasMultifactorAuthenticationTools {
         val authentication = context.authentication();
         val request = exchange.request();
         val response = exchange.response();
+        val registeredServiceName = registeredService != null ? registeredService.getName() : null;
 
-        val result = new LinkedHashMap<String, Object>();
-        result.put("service", webApplicationService.getId());
-        result.put("principal", principal.getId());
-        result.put("registeredService", registeredService != null ? registeredService.getName() : null);
-        result.put("client", client.describe());
-
-        val evaluated = new ArrayList<Map<String, Object>>();
-        result.put("triggers", evaluated);
+        val evaluated = new ArrayList<TriggerOutcome>();
         if (registeredService != null && registeredService.getMultifactorAuthenticationPolicy().isBypassEnabled()) {
-            result.put("bypassedByService", true);
-            result.put("provider", null);
-            return result;
+            return new MultifactorEvaluation(webApplicationService.getId(), principal.getId(), registeredServiceName,
+                client.describe(), evaluated, true, null);
         }
         val triggers = strategy.getMultifactorAuthenticationTriggers()
             .stream()
@@ -124,29 +117,29 @@ public class CasMultifactorAuthenticationTools {
             .sorted(Comparator.comparingInt(Ordered::getOrder))
             .toList();
         for (val trigger : triggers) {
-            val outcome = new LinkedHashMap<String, Object>();
-            outcome.put("trigger", trigger.getName());
-            evaluated.add(outcome);
             val supported = evaluationContextFactory.<Boolean>withClientInfo(client,
                 () -> trigger.supports(request, registeredService, authentication, webApplicationService));
             if (!supported) {
-                outcome.put("outcome", "NOT_SUPPORTED");
+                evaluated.add(new TriggerOutcome(trigger.getName(), "NOT_SUPPORTED", null));
                 continue;
             }
+            val failure = new AtomicReference<String>();
             val activated = evaluationContextFactory.<MultifactorAuthenticationProvider>withClientInfo(client,
-                () -> evaluate(trigger, authentication, registeredService, request, response, webApplicationService, outcome));
+                () -> evaluate(trigger, authentication, registeredService, request, response, webApplicationService, failure));
             if (activated != null) {
-                outcome.put("outcome", "ACTIVATED");
-                result.put("provider", summarize(activated));
-                return result;
+                evaluated.add(new TriggerOutcome(trigger.getName(), "ACTIVATED", null));
+                return new MultifactorEvaluation(webApplicationService.getId(), principal.getId(), registeredServiceName,
+                    client.describe(), evaluated, null, summarize(activated));
             }
-            if (outcome.containsKey("error")) {
-                return result;
+            if (failure.get() != null) {
+                evaluated.add(new TriggerOutcome(trigger.getName(), "FAILED", failure.get()));
+                return new MultifactorEvaluation(webApplicationService.getId(), principal.getId(), registeredServiceName,
+                    client.describe(), evaluated, null, null);
             }
-            outcome.put("outcome", "NOT_ACTIVATED");
+            evaluated.add(new TriggerOutcome(trigger.getName(), "NOT_ACTIVATED", null));
         }
-        result.put("provider", null);
-        return result;
+        return new MultifactorEvaluation(webApplicationService.getId(), principal.getId(), registeredServiceName,
+            client.describe(), evaluated, null, null);
     }
 
     private static @Nullable MultifactorAuthenticationProvider evaluate(
@@ -154,22 +147,34 @@ public class CasMultifactorAuthenticationTools {
         final Authentication authentication,
         final @Nullable RegisteredService registeredService,
         final HttpServletRequest request, final HttpServletResponse response,
-        final WebApplicationService service, final Map<String, Object> outcome) {
+        final WebApplicationService service, final AtomicReference<String> failure) {
         try {
             return trigger.isActivated(authentication, registeredService, request, response, service).orElse(null);
         } catch (final Throwable e) {
-            outcome.put("outcome", "FAILED");
-            outcome.put("error", Objects.requireNonNullElseGet(e.getMessage(), () -> e.getClass().getSimpleName()));
+            failure.set(Objects.requireNonNullElseGet(e.getMessage(), () -> e.getClass().getSimpleName()));
             return null;
         }
     }
 
-    private static Map<String, Object> summarize(final MultifactorAuthenticationProvider provider) {
-        val summary = new LinkedHashMap<String, Object>();
-        summary.put("id", provider.getId());
-        summary.put("name", provider.getFriendlyName());
-        summary.put("order", provider.getOrder());
-        summary.put("failureMode", String.valueOf(provider.getFailureMode()));
-        return summary;
+    private static MultifactorProvider summarize(final MultifactorAuthenticationProvider provider) {
+        return new MultifactorProvider(provider.getId(), provider.getFriendlyName(), provider.getOrder(),
+            String.valueOf(provider.getFailureMode()));
+    }
+
+    public record MultifactorProviders(int count, List<MultifactorProvider> providers) {
+    }
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    public record MultifactorProvider(String id, @Nullable String name, int order, String failureMode) {
+    }
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    public record MultifactorEvaluation(String service, String principal, @Nullable String registeredService, Map<String, Object> client,
+                                        List<TriggerOutcome> triggers, @Nullable Boolean bypassedByService,
+                                        @Nullable MultifactorProvider provider) {
+    }
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    public record TriggerOutcome(String trigger, String outcome, @Nullable String error) {
     }
 }

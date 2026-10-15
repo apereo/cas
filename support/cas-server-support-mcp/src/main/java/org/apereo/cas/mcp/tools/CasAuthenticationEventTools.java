@@ -4,6 +4,7 @@ import module java.base;
 import org.apereo.cas.support.events.CasEventRepository;
 import org.apereo.cas.support.events.dao.CasEvent;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.ClassUtils;
@@ -39,23 +40,20 @@ public class CasAuthenticationEventTools {
         + "address, user agent and location of each. Events are only recorded when an events repository is configured. "
         + "At most " + MAX_EVENTS + " events are returned.",
         title = "Find Authentication Events",
+        generateOutputSchema = true,
         annotations = @McpTool.McpAnnotations(readOnlyHint = true, destructiveHint = false,
             idempotentHint = true, openWorldHint = false))
     @PreAuthorize("hasRole('MCP_ADMIN')")
-    public Map<String, Object> findAuthenticationEvents(
+    public AuthenticationEvents findAuthenticationEvents(
         @McpToolParam(description = "The username (principal id) of the person")
         final String username,
         @McpToolParam(description = "How many days to look back; defaults to " + DEFAULT_DAYS, required = false)
         final @Nullable Integer days) {
         val lookBack = days != null && days > 0 ? days : DEFAULT_DAYS;
         val since = ZonedDateTime.now(Clock.systemUTC()).minusDays(lookBack);
-        val result = new LinkedHashMap<String, Object>();
-        result.put("username", username);
-        result.put("since", since.toString());
         val repository = casEventRepository.getIfAvailable();
         if (repository == null || BeanSupplier.isProxy(repository)) {
-            result.put("reason", "Authentication events are not recorded");
-            return result;
+            return new AuthenticationEvents(username, since.toString(), 0, List.of(), "Authentication events are not recorded");
         }
         try (val stream = repository.getEventsForPrincipal(username, since)) {
             val events = stream
@@ -64,24 +62,25 @@ public class CasAuthenticationEventTools {
                 .limit(MAX_EVENTS)
                 .map(CasAuthenticationEventTools::summarize)
                 .toList();
-            result.put("count", events.size());
-            result.put("events", events);
+            return new AuthenticationEvents(username, since.toString(), events.size(), events, null);
         }
-        return result;
     }
 
-    private static Map<String, Object> summarize(final CasEvent event) {
-        val summary = new LinkedHashMap<String, Object>();
-        summary.put("when", event.getCreationTime().toString());
-        summary.put("type", ClassUtils.getShortClassName(event.getType()));
-        summary.put("eventId", event.getEventId());
-        summary.put("clientIpAddress", event.getClientIpAddress());
-        summary.put("serverIpAddress", event.getServerIpAddress());
-        summary.put("userAgent", event.getAgent());
-        summary.put("geoAddress", event.get(CasEvent.FIELD_GEO_ADDRESS));
-        summary.put("geoLatitude", event.get(CasEvent.FIELD_GEO_LATITUDE));
-        summary.put("geoLongitude", event.get(CasEvent.FIELD_GEO_LONGITUDE));
-        summary.put("tenant", event.getTenant());
-        return summary;
+    private static AuthenticationEvent summarize(final CasEvent event) {
+        return new AuthenticationEvent(event.getCreationTime().toString(), ClassUtils.getShortClassName(event.getType()),
+            event.getEventId(), event.getClientIpAddress(), event.getServerIpAddress(), event.getAgent(),
+            event.get(CasEvent.FIELD_GEO_ADDRESS), event.get(CasEvent.FIELD_GEO_LATITUDE), event.get(CasEvent.FIELD_GEO_LONGITUDE),
+            event.getTenant());
+    }
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    public record AuthenticationEvents(String username, String since, int count, List<AuthenticationEvent> events,
+                                       @Nullable String reason) {
+    }
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    public record AuthenticationEvent(String when, String type, @Nullable String eventId, @Nullable String clientIpAddress,
+                                      @Nullable String serverIpAddress, @Nullable String userAgent, @Nullable String geoAddress,
+                                      @Nullable String geoLatitude, @Nullable String geoLongitude, @Nullable String tenant) {
     }
 }

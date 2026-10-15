@@ -6,6 +6,7 @@ import org.apereo.cas.metadata.CasConfigurationMetadataCatalog;
 import org.apereo.cas.metadata.CasConfigurationMetadataRepository;
 import org.apereo.cas.metadata.CasReferenceProperty;
 import org.apereo.cas.metadata.ConfigurationMetadataCatalogQuery;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -45,27 +46,23 @@ public class CasSettingTools {
         + "description, module, type and deprecation, with the cas://settings/{name} resource URI that describes each "
         + "in full. At most " + MAX_RESULTS + " settings are returned. Setting values are never returned.",
         title = "Search Settings",
+        generateOutputSchema = true,
         annotations = @McpTool.McpAnnotations(readOnlyHint = true, destructiveHint = false,
             idempotentHint = true, openWorldHint = false))
     @PreAuthorize("hasRole('MCP_ADMIN')")
-    public Map<String, Object> searchSettings(
+    public SettingSearch searchSettings(
         @McpToolParam(description = "The text to look for in setting names and descriptions, at least "
             + MIN_QUERY_LENGTH + " characters, such as ldap url or ticket timeout")
         final String query,
         @McpToolParam(description = "The CAS module that provides the settings, such as cas-server-support-ldap", required = false)
         final @Nullable String module) {
-        val result = new LinkedHashMap<String, Object>();
-        result.put("query", query);
-        result.put("module", module);
         val text = StringUtils.trimToEmpty(query);
         if (text.length() < MIN_QUERY_LENGTH) {
-            result.put("reason", "Search for at least " + MIN_QUERY_LENGTH + " characters");
-            return result;
+            return new SettingSearch(query, module, 0, false, List.of(), "Search for at least " + MIN_QUERY_LENGTH + " characters");
         }
         val repository = configurationMetadataRepository.getIfAvailable();
         if (repository == null) {
-            result.put("reason", "The CAS settings catalog is not available");
-            return result;
+            return new SettingSearch(query, module, 0, false, List.of(), "The CAS settings catalog is not available");
         }
         val terms = Arrays.stream(StringUtils.split(text)).toList();
         val builder = ConfigurationMetadataCatalogQuery.builder()
@@ -76,25 +73,29 @@ public class CasSettingTools {
             builder.modules(List.of(module.trim()));
         }
         val settings = CasConfigurationMetadataCatalog.query(builder.build(), repository).properties();
-        result.put("count", settings.size());
-        result.put("truncated", settings.size() > MAX_RESULTS);
-        result.put("settings", settings
+        val summaries = settings
             .stream()
             .limit(MAX_RESULTS)
             .map(CasSettingTools::summarize)
-            .toList());
-        return result;
+            .toList();
+        return new SettingSearch(query, module, settings.size(), settings.size() > MAX_RESULTS, summaries, null);
     }
 
-    private static Map<String, Object> summarize(final CasReferenceProperty property) {
-        val summary = new LinkedHashMap<String, Object>();
-        summary.put("name", property.getName());
+    private static SettingSummary summarize(final CasReferenceProperty property) {
         val description = StringUtils.defaultIfBlank(property.getShortDescription(), property.getDescription());
-        summary.put("description", StringUtils.abbreviate(StringUtils.normalizeSpace(description), MAX_DESCRIPTION_LENGTH));
-        summary.put("module", property.getModule());
-        summary.put("type", property.getType());
-        summary.put("deprecated", StringUtils.isNotBlank(property.getDeprecationLevel()));
-        summary.put("uri", StringUtils.replace(CasSettingResources.SETTING_URI_TEMPLATE, "{name}", property.getName()));
-        return summary;
+        return new SettingSummary(property.getName(),
+            StringUtils.abbreviate(StringUtils.normalizeSpace(description), MAX_DESCRIPTION_LENGTH),
+            property.getModule(), property.getType(), StringUtils.isNotBlank(property.getDeprecationLevel()),
+            StringUtils.replace(CasSettingResources.SETTING_URI_TEMPLATE, "{name}", property.getName()));
+    }
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    public record SettingSearch(String query, @Nullable String module, int count, boolean truncated, List<SettingSummary> settings,
+                                @Nullable String reason) {
+    }
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    public record SettingSummary(String name, @Nullable String description, @Nullable String module, @Nullable String type,
+                                 boolean deprecated, String uri) {
     }
 }

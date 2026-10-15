@@ -53,7 +53,10 @@ class CasMcpServerTests {
         "matchService", "previewAttributeRelease", "previewLogout", "searchServices",
         "resolveSamlMetadata", "findOidcClient", "listJwksKeys", "findAuthenticationEvents", "findTrustedDevices",
         "findSurrogateAccounts", "previewInterrupt", "evaluateAuthenticationRisk", "findOneTimeTokenAccounts", "findWebAuthnDevices",
-        "findPasswordlessAccount", "listIdentityProviders", "findAuthorizableResources", "searchSettings");
+        "findPasswordlessAccount", "listIdentityProviders", "findAuthorizableResources", "searchSettings", "describeDeployment",
+        "findThrottledLogins", "findAttributeSources", "findAttributeDefinitions", "validateServiceDefinition", "explainLogin");
+
+    private static final List<String> FREE_FORM_TOOLS = List.of("findService", "matchService");
 
     @Nested
     @SpringBootTest(classes = BaseCasMcpTests.SharedTestConfiguration.class,
@@ -109,6 +112,75 @@ class CasMcpServerTests {
             }
             val inputSchema = "$.result.tools[?(@.name == 'findService')].inputSchema.properties.serviceId.type";
             assertTrue(JsonPath.<List<String>>read(response, inputSchema).getFirst().matches("integer|number"), response);
+            for (val tool : CAS_TOOLS) {
+                val outputSchema = JsonPath.<List<Object>>read(response, "$.result.tools[?(@.name == '%s')].outputSchema".formatted(tool));
+                assertEquals(FREE_FORM_TOOLS.contains(tool), outputSchema.isEmpty(), () -> tool + " output schema: " + outputSchema);
+            }
+            val required = "$.result.tools[?(@.name == 'findSessions')].outputSchema.required[*]";
+            assertTrue(JsonPath.<List<String>>read(response, required).containsAll(List.of("username", "count", "sessions")), response);
+        }
+
+        @Test
+        void verifyStructuredContent() throws Throwable {
+            val username = "casuser-" + UUID.randomUUID();
+            val response = send(MCP_ADMIN, initialize(MCP_ADMIN), callToolRequest("findSessions", "{\"username\":\"%s\"}".formatted(username)));
+            assertFalse(isToolError(response), response);
+            assertEquals(username, JsonPath.read(response, "$.result.structuredContent.username"), response);
+            assertEquals(0, JsonPath.<Number>read(response, "$.result.structuredContent.count").intValue(), response);
+            val text = JsonPath.<String>read(response, "$.result.content[0].text");
+            assertEquals(username, JsonPath.read(text, "$.username"), text);
+        }
+
+        @Test
+        void verifyDeploymentAndLoginExplanation() throws Throwable {
+            val serviceUrl = newServiceUrl();
+            servicesManager.save(newRegisteredService(serviceUrl, Map.of(), new ReturnAllAttributeReleasePolicy()));
+            val sessionId = initialize(MCP_ADMIN);
+
+            val deployment = send(MCP_ADMIN, sessionId, callToolRequest("describeDeployment", "{}"));
+            assertFalse(isToolError(deployment), deployment);
+            assertTrue(JsonPath.<List<String>>read(deployment, "$.result.structuredContent.mcpToolGroups[*].feature").contains("mcp-settings"), deployment);
+
+            val explanation = toolResult(sessionId, "explainLogin", serviceUrl);
+            assertEquals("LOGIN_SUCCEEDS", JsonPath.read(explanation, "$.outcome"), explanation);
+            assertEquals("access", JsonPath.read(explanation, "$.steps[0].step"), explanation);
+            assertEquals("PASSED", JsonPath.read(explanation, "$.steps[0].status"), explanation);
+
+            val validation = send(MCP_ADMIN, sessionId, callToolRequest("validateServiceDefinition",
+                "{\"definition\":\"{}\",\"urls\":[\"%s\"]}".formatted(serviceUrl)));
+            assertFalse(isToolError(validation), validation);
+            assertEquals(Boolean.FALSE, JsonPath.read(validation, "$.result.structuredContent.valid"), validation);
+        }
+
+        @Test
+        void verifyCompletions() throws Throwable {
+            val registeredService = newRegisteredService(newServiceUrl(), Map.of(), new ReturnAllAttributeReleasePolicy());
+            servicesManager.save(registeredService);
+            mockMvc.perform(post(MCP_ENDPOINT)
+                    .with(MCP_ADMIN)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .accept(MediaType.APPLICATION_JSON, MediaType.TEXT_EVENT_STREAM)
+                    .content(jsonRpcRequest("initialize", """
+                        {"protocolVersion":"2025-11-25","capabilities":{},"clientInfo":{"name":"cas-tests","version":"1.0.0"}}
+                        """)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.result.capabilities.completions").exists());
+            val sessionId = initialize(MCP_ADMIN);
+
+            val settings = send(MCP_ADMIN, sessionId, jsonRpcRequest("completion/complete", """
+                {"ref":{"type":"ref/resource","uri":"cas://settings/{name}"},"argument":{"name":"name","value":"server.na"}}
+                """));
+            assertTrue(JsonPath.<List<String>>read(settings, "$.result.completion.values").contains("cas.server.name"), settings);
+
+            val services = send(MCP_ADMIN, sessionId, jsonRpcRequest("completion/complete", """
+                {"ref":{"type":"ref/resource","uri":"cas://services/{id}"},"argument":{"name":"id","value":"%s"}}
+                """.formatted(registeredService.getName())));
+            assertTrue(JsonPath.<List<String>>read(services, "$.result.completion.values").contains(String.valueOf(registeredService.getId())), services);
+
+            val read = send(MCP_ADMIN, sessionId, jsonRpcRequest("resources/read",
+                "{\"uri\":\"cas://services/%s\"}".formatted(registeredService.getId())));
+            val definition = JsonPath.<String>read(read, "$.result.contents[0].text");
+            assertEquals(registeredService.getServiceId(), JsonPath.read(definition, "$.serviceId"), definition);
         }
 
         @Test
@@ -310,8 +382,9 @@ class CasMcpServerTests {
                 .andExpect(jsonPath("$.result.capabilities.resources").exists());
             val sessionId = initialize(MCP_ADMIN);
             val templates = send(MCP_ADMIN, sessionId, jsonRpcRequest("resources/templates/list", "{}"));
-            assertEquals(List.of("cas://settings/{name}"), JsonPath.read(templates, "$.result.resourceTemplates[*].uriTemplate"), templates);
-            assertEquals(List.of("application/json"), JsonPath.read(templates, "$.result.resourceTemplates[*].mimeType"), templates);
+            assertEquals(Set.of("cas://settings/{name}", "cas://services/{id}"),
+                Set.copyOf(JsonPath.<List<String>>read(templates, "$.result.resourceTemplates[*].uriTemplate")), templates);
+            assertEquals(List.of("application/json", "application/json"), JsonPath.read(templates, "$.result.resourceTemplates[*].mimeType"), templates);
 
             val known = send(MCP_ADMIN, sessionId, jsonRpcRequest("resources/read", "{\"uri\":\"cas://settings/cas.server.name\"}"));
             assertEquals("cas://settings/cas.server.name", JsonPath.read(known, "$.result.contents[0].uri"), known);
@@ -409,10 +482,10 @@ class CasMcpServerTests {
 
             val bypassed = toolResult(sessionId, "evaluateMultifactorTriggers", bypassUrl);
             assertTrue(JsonPath.<Boolean>read(bypassed, "$.bypassedByService"), bypassed);
-            assertNull(JsonPath.read(bypassed, "$.provider"), bypassed);
+            assertFalse(JsonPath.<Map<String, Object>>read(bypassed, "$").containsKey("provider"), bypassed);
 
             val notRequired = toolResult(sessionId, "evaluateMultifactorTriggers", plainUrl);
-            assertNull(JsonPath.read(notRequired, "$.provider"), notRequired);
+            assertFalse(JsonPath.<Map<String, Object>>read(notRequired, "$").containsKey("provider"), notRequired);
             assertTrue(JsonPath.<List<String>>read(notRequired, "$.triggers[*].outcome").stream()
                 .noneMatch("ACTIVATED"::equals), notRequired);
             assertNull(JsonPath.read(notRequired, "$.client.clientIpAddress"), notRequired);
@@ -530,7 +603,13 @@ class CasMcpServerTests {
                 callToolRequest("searchSettings", "{\"query\":\"server\"}"),
                 callToolRequest("previewInterrupt", "{\"username\":\"casuser\",\"service\":\"https://mcp.example.org\"}"),
                 callToolRequest("evaluateAuthenticationRisk",
-                    "{\"username\":\"casuser\",\"service\":\"https://mcp.example.org\",\"clientIpAddress\":\"192.0.2.10\",\"userAgent\":\"Firefox\"}"));
+                    "{\"username\":\"casuser\",\"service\":\"https://mcp.example.org\",\"clientIpAddress\":\"192.0.2.10\",\"userAgent\":\"Firefox\"}"),
+                callToolRequest("describeDeployment", "{}"),
+                callToolRequest("findThrottledLogins", "{}"),
+                callToolRequest("findAttributeSources", "{\"username\":\"casuser\"}"),
+                callToolRequest("findAttributeDefinitions", "{}"),
+                callToolRequest("validateServiceDefinition", "{\"definition\":\"{}\"}"),
+                callToolRequest("explainLogin", "{\"username\":\"casuser\",\"service\":\"https://mcp.example.org\"}"));
             for (val call : calls) {
                 val response = send(CAS_USER, sessionId, call);
                 assertTrue(isToolError(response), response);
@@ -572,6 +651,11 @@ class CasMcpServerTests {
             assertFalse(webApplicationContext.containsBean("casAuthenticationRiskTools"));
             assertFalse(webApplicationContext.containsBean("casMcpEvaluationContextFactory"));
             assertFalse(webApplicationContext.containsBean("casMcpEndpointConfigurer"));
+            assertFalse(webApplicationContext.containsBean("casDeploymentTools"));
+            assertFalse(webApplicationContext.containsBean("casThrottleTools"));
+            assertFalse(webApplicationContext.containsBean("casAttributeTools"));
+            assertFalse(webApplicationContext.containsBean("casLoginExplanationTools"));
+            assertFalse(webApplicationContext.containsBean("casServiceResources"));
         }
     }
 }

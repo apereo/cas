@@ -78,7 +78,7 @@ async function callTool(sessionId, name, args) {
     assert(interrupted.interrupt.links["Terms of use"] === "https://localhost:9859/anything/terms");
     assert(interrupted.inquirers.some((inquirer) => inquirer.outcome === "INTERRUPT"));
     const quiet = await callTool(sessionId, "previewInterrupt", {username: "someone-else", service: SERVICE});
-    assert(quiet.interrupt === null);
+    assert(quiet.interrupt === undefined);
 
     await cas.separator();
     const unknown = await callTool(sessionId, "evaluateAuthenticationRisk",

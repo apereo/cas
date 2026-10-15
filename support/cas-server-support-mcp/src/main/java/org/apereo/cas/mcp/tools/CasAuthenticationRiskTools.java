@@ -5,6 +5,7 @@ import org.apereo.cas.api.AuthenticationRequestRiskCalculator;
 import org.apereo.cas.api.AuthenticationRiskEvaluator;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.mcp.CasMcpEvaluationContextFactory;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.jspecify.annotations.Nullable;
@@ -44,10 +45,11 @@ public class CasAuthenticationRiskTools {
         + "Reports the score of each risk calculator, the overall score, the configured threshold and whether CAS would "
         + "treat the attempt as risky. Each evaluation is recorded in the audit log.",
         title = "Evaluate Authentication Risk",
+        generateOutputSchema = true,
         annotations = @McpTool.McpAnnotations(readOnlyHint = true, destructiveHint = false,
             idempotentHint = true, openWorldHint = false))
     @PreAuthorize("hasRole('MCP_ADMIN')")
-    public Map<String, Object> evaluateAuthenticationRisk(
+    public RiskEvaluation evaluateAuthenticationRisk(
         @McpToolParam(description = "The username of the person")
         final String username,
         @McpToolParam(description = "The application URL, such as the service parameter sent to CAS at login")
@@ -58,40 +60,40 @@ public class CasAuthenticationRiskTools {
         final String userAgent,
         @McpToolParam(description = "The location of the login attempt as latitude,longitude", required = false)
         final @Nullable String geoLocation) {
-        val result = new LinkedHashMap<String, Object>();
+        val client = CasMcpEvaluationContextFactory.CasMcpClient.of(clientIpAddress, userAgent, geoLocation);
         val evaluator = authenticationRiskEvaluator.getIfAvailable();
         if (evaluator == null) {
-            result.put("reason", "Risk-based authentication is not configured");
-            return result;
+            return new RiskEvaluation(service, null, null, client.describe(), List.of(), null, null, null,
+                "Risk-based authentication is not configured");
         }
         val context = evaluationContextFactory.build(username, service);
         val registeredService = context.registeredService();
-        val client = CasMcpEvaluationContextFactory.CasMcpClient.of(clientIpAddress, userAgent, geoLocation);
         val clientInfo = evaluationContextFactory.newClientInfo(client);
-        result.put("service", context.service().getId());
-        result.put("principal", context.principal().getId());
-        result.put("registeredService", registeredService != null ? registeredService.getName() : null);
-        result.put("client", client.describe());
-
         val calculators = evaluator.getCalculators()
             .stream()
             .map(calculator -> {
                 val score = calculator.calculate(context.authentication(), registeredService, clientInfo);
-                val summary = new LinkedHashMap<String, Object>();
-                summary.put("calculator", calculatorName(calculator));
-                summary.put("score", score != null ? score.getScore() : null);
-                return summary;
+                return new CalculatorScore(calculatorName(calculator), score != null ? score.getScore() : null);
             })
             .toList();
-        result.put("calculators", calculators);
         val score = evaluator.evaluate(context.authentication(), registeredService, clientInfo);
-        result.put("score", score.getScore());
-        result.put("threshold", casProperties.getAuthn().getAdaptive().getRisk().getCore().getThreshold());
-        result.put("risky", evaluator.isRiskyAuthenticationScore(score, context.authentication(), registeredService));
-        return result;
+        return new RiskEvaluation(context.service().getId(), context.principal().getId(),
+            registeredService != null ? registeredService.getName() : null, client.describe(), calculators, score.getScore(),
+            casProperties.getAuthn().getAdaptive().getRisk().getCore().getThreshold(),
+            evaluator.isRiskyAuthenticationScore(score, context.authentication(), registeredService), null);
     }
 
     private static String calculatorName(final AuthenticationRequestRiskCalculator calculator) {
         return AopUtils.getTargetClass(calculator).getSimpleName();
+    }
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    public record RiskEvaluation(String service, @Nullable String principal, @Nullable String registeredService,
+                                 Map<String, Object> client, List<CalculatorScore> calculators, @Nullable BigDecimal score,
+                                 @Nullable Double threshold, @Nullable Boolean risky, @Nullable String reason) {
+    }
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    public record CalculatorScore(String calculator, @Nullable BigDecimal score) {
     }
 }

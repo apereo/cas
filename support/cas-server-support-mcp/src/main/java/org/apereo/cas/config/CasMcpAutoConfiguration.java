@@ -6,7 +6,9 @@ import org.apereo.cas.api.PasswordlessUserAccountStore;
 import org.apereo.cas.audit.AuditTrailExecutionPlan;
 import org.apereo.cas.audit.AuditTrailRecordResolutionPlanConfigurer;
 import org.apereo.cas.audit.AuditableExecution;
+import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.MultifactorAuthenticationTriggerSelectionStrategy;
+import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
@@ -24,14 +26,18 @@ import org.apereo.cas.mcp.audit.CasMcpAuditInterceptor;
 import org.apereo.cas.mcp.audit.CasMcpAuditor;
 import org.apereo.cas.mcp.audit.CasMcpOperationAuditActionResolver;
 import org.apereo.cas.mcp.audit.CasMcpOperationAuditResourceResolver;
+import org.apereo.cas.mcp.resources.CasServiceResources;
 import org.apereo.cas.mcp.resources.CasSettingResources;
+import org.apereo.cas.mcp.tools.CasAttributeTools;
 import org.apereo.cas.mcp.tools.CasAuditTools;
 import org.apereo.cas.mcp.tools.CasAuthenticationEventTools;
 import org.apereo.cas.mcp.tools.CasAuthenticationRiskTools;
 import org.apereo.cas.mcp.tools.CasConsentTools;
 import org.apereo.cas.mcp.tools.CasDelegatedAuthenticationTools;
+import org.apereo.cas.mcp.tools.CasDeploymentTools;
 import org.apereo.cas.mcp.tools.CasHeimdallTools;
 import org.apereo.cas.mcp.tools.CasInterruptTools;
+import org.apereo.cas.mcp.tools.CasLoginExplanationTools;
 import org.apereo.cas.mcp.tools.CasMultifactorAuthenticationTools;
 import org.apereo.cas.mcp.tools.CasOidcTools;
 import org.apereo.cas.mcp.tools.CasOneTimeTokenTools;
@@ -45,6 +51,7 @@ import org.apereo.cas.mcp.tools.CasSettingTools;
 import org.apereo.cas.mcp.tools.CasSingleLogoutTools;
 import org.apereo.cas.mcp.tools.CasSurrogateTools;
 import org.apereo.cas.mcp.tools.CasTenantTools;
+import org.apereo.cas.mcp.tools.CasThrottleTools;
 import org.apereo.cas.mcp.tools.CasTicketRegistryTools;
 import org.apereo.cas.mcp.tools.CasTrustedDeviceTools;
 import org.apereo.cas.mcp.tools.CasWebAuthnTools;
@@ -54,16 +61,20 @@ import org.apereo.cas.oidc.issuer.OidcIssuerService;
 import org.apereo.cas.oidc.jwks.generator.OidcJsonWebKeystoreGeneratorService;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
 import org.apereo.cas.pac4j.client.DelegatedIdentityProviders;
+import org.apereo.cas.persondir.PersonDirectoryAttributeRepositoryPlan;
 import org.apereo.cas.services.OidcRegisteredService;
+import org.apereo.cas.services.ServiceRegistry;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
 import org.apereo.cas.support.events.CasEventRepository;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
+import org.apereo.cas.throttle.AuthenticationThrottlingExecutionPlan;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
+import org.apereo.cas.util.feature.CasRuntimeModuleLoader;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.util.text.MessageSanitizer;
 import org.apereo.cas.web.CasWebSecurityConfigurer;
+import org.apereo.cas.web.support.ThrottledSubmissionsStore;
 import org.apereo.cas.webauthn.storage.WebAuthnCredentialRepository;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import io.modelcontextprotocol.server.McpAsyncServer;
@@ -126,7 +137,7 @@ public class CasMcpAutoConfiguration {
         @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
         final ServiceFactory<WebApplicationService> webApplicationServiceFactory) {
         return new CasServiceManagementTools(servicesManager, webApplicationServiceFactory,
-            new RegisteredServiceJsonSerializer(applicationContext));
+            new CasServiceManagementTools.RegisteredServiceParser(applicationContext));
     }
 
     @Bean
@@ -224,6 +235,72 @@ public class CasMcpAutoConfiguration {
         @Qualifier(CasEventRepository.BEAN_NAME)
         final ObjectProvider<CasEventRepository> casEventRepository) {
         return new CasAuthenticationEventTools(casEventRepository);
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(name = "casDeploymentTools")
+    public CasDeploymentTools casDeploymentTools(
+        final CasConfigurationProperties casProperties,
+        final ConfigurableApplicationContext applicationContext,
+        @Qualifier(TicketRegistry.BEAN_NAME)
+        final TicketRegistry ticketRegistry,
+        @Qualifier(ServiceRegistry.BEAN_NAME)
+        final ObjectProvider<ServiceRegistry> serviceRegistry,
+        @Qualifier(AuthenticationEventExecutionPlan.DEFAULT_BEAN_NAME)
+        final ObjectProvider<AuthenticationEventExecutionPlan> authenticationEventExecutionPlan,
+        @Qualifier(PersonDirectoryAttributeRepositoryPlan.BEAN_NAME)
+        final ObjectProvider<PersonDirectoryAttributeRepositoryPlan> attributeRepositoryPlan,
+        @Qualifier("casRuntimeModuleLoader")
+        final ObjectProvider<CasRuntimeModuleLoader> casRuntimeModuleLoader) {
+        return new CasDeploymentTools(casProperties, applicationContext, ticketRegistry, serviceRegistry,
+            authenticationEventExecutionPlan, attributeRepositoryPlan, casRuntimeModuleLoader);
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(name = "casThrottleTools")
+    public CasThrottleTools casThrottleTools(
+        final CasConfigurationProperties casProperties,
+        @Qualifier(ThrottledSubmissionsStore.BEAN_NAME)
+        final ObjectProvider<ThrottledSubmissionsStore> throttledSubmissionsStore,
+        @Qualifier(AuthenticationThrottlingExecutionPlan.BEAN_NAME)
+        final ObjectProvider<AuthenticationThrottlingExecutionPlan> authenticationThrottlingExecutionPlan) {
+        return new CasThrottleTools(casProperties, throttledSubmissionsStore, authenticationThrottlingExecutionPlan);
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(name = "casAttributeTools")
+    public CasAttributeTools casAttributeTools(
+        @Qualifier(PersonDirectoryAttributeRepositoryPlan.BEAN_NAME)
+        final ObjectProvider<PersonDirectoryAttributeRepositoryPlan> attributeRepositoryPlan,
+        @Qualifier(AttributeDefinitionStore.BEAN_NAME)
+        final ObjectProvider<AttributeDefinitionStore> attributeDefinitionStore) {
+        return new CasAttributeTools(attributeRepositoryPlan, attributeDefinitionStore);
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(name = "casLoginExplanationTools")
+    public CasLoginExplanationTools casLoginExplanationTools(
+        final CasConfigurationProperties casProperties,
+        @Qualifier("casServiceAccessTools")
+        final ObjectProvider<CasServiceAccessTools> casServiceAccessTools,
+        @Qualifier("casMultifactorAuthenticationTools")
+        final ObjectProvider<CasMultifactorAuthenticationTools> casMultifactorAuthenticationTools,
+        @Qualifier("casAuthenticationRiskTools")
+        final ObjectProvider<CasAuthenticationRiskTools> casAuthenticationRiskTools,
+        @Qualifier("casInterruptTools")
+        final ObjectProvider<CasInterruptTools> casInterruptTools) {
+        return new CasLoginExplanationTools(casProperties, casServiceAccessTools, casMultifactorAuthenticationTools,
+            casAuthenticationRiskTools, casInterruptTools);
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(name = "casServiceResources")
+    public CasServiceResources casServiceResources(
+        @Qualifier(ServicesManager.BEAN_NAME)
+        final ServicesManager servicesManager,
+        @Qualifier("casServiceManagementTools")
+        final ObjectProvider<CasServiceManagementTools> casServiceManagementTools) {
+        return new CasServiceResources(servicesManager, casServiceManagementTools);
     }
 
     @Bean

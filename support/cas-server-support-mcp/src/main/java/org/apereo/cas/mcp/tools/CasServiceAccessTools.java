@@ -10,6 +10,7 @@ import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicyContext;
 import org.apereo.cas.services.RegisteredServiceUsernameProviderContext;
 import org.apereo.cas.util.function.FunctionUtils;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.jspecify.annotations.Nullable;
@@ -42,15 +43,16 @@ public class CasServiceAccessTools {
     @McpTool(description = "Evaluate whether a person is allowed to access an application, applying the access strategy "
         + "of the matching registered service to the person's resolved attributes, and explain why access is denied",
         title = "Evaluate Application Access",
+        generateOutputSchema = true,
         annotations = @McpTool.McpAnnotations(readOnlyHint = true, destructiveHint = false,
             idempotentHint = true, openWorldHint = false))
     @PreAuthorize("hasRole('MCP_ADMIN')")
-    public Map<String, Object> evaluateAccess(
+    public AccessEvaluation evaluateAccess(
         @McpToolParam(description = "The username of the person")
         final String username,
         @McpToolParam(description = "The application URL, such as the service parameter sent to CAS at login")
         final String service) {
-        return evaluate(username, service).describe();
+        return evaluate(username, service).describe(null, null);
     }
 
     /**
@@ -63,46 +65,45 @@ public class CasServiceAccessTools {
     @McpTool(description = "Preview the username and attributes CAS would release to an application for a person, "
         + "applying the attribute release policy and username provider of the matching registered service",
         title = "Preview Attribute Release",
+        generateOutputSchema = true,
         annotations = @McpTool.McpAnnotations(readOnlyHint = true, destructiveHint = false,
             idempotentHint = true, openWorldHint = false))
     @PreAuthorize("hasRole('MCP_ADMIN')")
-    public Map<String, Object> previewAttributeRelease(
+    public AccessEvaluation previewAttributeRelease(
         @McpToolParam(description = "The username of the person")
         final String username,
         @McpToolParam(description = "The application URL, such as the service parameter sent to CAS at login")
         final String service) {
         val access = evaluate(username, service);
-        val result = access.describe();
         val registeredService = access.registeredService();
-        if (registeredService != null) {
-            val releaseContext = RegisteredServiceAttributeReleasePolicyContext.builder()
-                .registeredService(registeredService)
-                .service(access.service())
-                .principal(access.principal())
-                .applicationContext(applicationContext)
-                .build();
-            val attributes = FunctionUtils.doUnchecked(() -> registeredService.getAttributeReleasePolicy().getAttributes(releaseContext));
-            val usernameContext = RegisteredServiceUsernameProviderContext.builder()
-                .registeredService(registeredService)
-                .service(access.service())
-                .principal(access.principal())
-                .releasingAttributes(attributes)
-                .applicationContext(applicationContext)
-                .build();
-            result.put("releasedUsername", FunctionUtils.doUnchecked(
-                () -> registeredService.getUsernameAttributeProvider().resolveUsername(usernameContext)));
-            result.put("releasedAttributes", new TreeMap<>(attributes));
+        if (registeredService == null) {
+            return access.describe(null, null);
         }
-        return result;
+        val releaseContext = RegisteredServiceAttributeReleasePolicyContext.builder()
+            .registeredService(registeredService)
+            .service(access.service())
+            .principal(access.principal())
+            .applicationContext(applicationContext)
+            .build();
+        val attributes = FunctionUtils.doUnchecked(() -> registeredService.getAttributeReleasePolicy().getAttributes(releaseContext));
+        val usernameContext = RegisteredServiceUsernameProviderContext.builder()
+            .registeredService(registeredService)
+            .service(access.service())
+            .principal(access.principal())
+            .releasingAttributes(attributes)
+            .applicationContext(applicationContext)
+            .build();
+        val releasedUsername = FunctionUtils.doUnchecked(() -> registeredService.getUsernameAttributeProvider().resolveUsername(usernameContext));
+        return access.describe(releasedUsername, new TreeMap<>(attributes));
     }
 
-    private AccessEvaluation evaluate(final String username, final String serviceUrl) {
+    private Evaluation evaluate(final String username, final String serviceUrl) {
         val evaluationContext = evaluationContextFactory.build(username, serviceUrl);
         val service = evaluationContext.service();
         val registeredService = evaluationContext.registeredService();
         val principal = evaluationContext.principal();
         if (registeredService == null) {
-            return new AccessEvaluation(service, null, principal, "No registered service matches " + service.getId());
+            return new Evaluation(service, null, principal, "No registered service matches " + service.getId());
         }
         val context = AuditableContext.builder()
             .service(service)
@@ -113,28 +114,28 @@ public class CasServiceAccessTools {
             .getException()
             .map(exception -> Objects.requireNonNullElseGet(exception.getMessage(), () -> exception.getClass().getSimpleName()))
             .orElse(null);
-        return new AccessEvaluation(service, registeredService, principal, denialReason);
+        return new Evaluation(service, registeredService, principal, denialReason);
     }
 
-    private record AccessEvaluation(WebApplicationService service, @Nullable RegisteredService registeredService,
-                                    Principal principal, @Nullable String denialReason) {
-        Map<String, Object> describe() {
-            val result = new LinkedHashMap<String, Object>();
-            result.put("service", service.getId());
-            result.put("principal", principal.getId());
-            if (registeredService != null) {
-                val summary = new LinkedHashMap<String, Object>();
-                summary.put("id", registeredService.getId());
-                summary.put("name", registeredService.getName());
-                summary.put("serviceId", registeredService.getServiceId());
-                summary.put("type", registeredService.getFriendlyName());
-                result.put("registeredService", summary);
-            }
-            result.put("accessAllowed", denialReason == null);
-            if (denialReason != null) {
-                result.put("reason", denialReason);
-            }
-            return result;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    public record AccessEvaluation(String service, String principal, @Nullable RegisteredServiceSummary registeredService,
+                                   boolean accessAllowed, @Nullable String reason, @Nullable String releasedUsername,
+                                   @Nullable Map<String, List<Object>> releasedAttributes) {
+    }
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    public record RegisteredServiceSummary(long id, @Nullable String name, @Nullable String serviceId, @Nullable String type) {
+    }
+
+    private record Evaluation(WebApplicationService service, @Nullable RegisteredService registeredService,
+                              Principal principal, @Nullable String denialReason) {
+        AccessEvaluation describe(@Nullable final String releasedUsername, @Nullable final Map<String, List<Object>> releasedAttributes) {
+            val summary = registeredService != null
+                ? new RegisteredServiceSummary(registeredService.getId(), registeredService.getName(),
+                    registeredService.getServiceId(), registeredService.getFriendlyName())
+                : null;
+            return new AccessEvaluation(service.getId(), principal.getId(), summary, denialReason == null, denialReason,
+                releasedUsername, releasedAttributes);
         }
     }
 }
