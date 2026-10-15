@@ -596,6 +596,7 @@ function preparePuppeteerModules() {
   else
     printgreen "Using existing Puppeteer modules..."
   fi
+  installPuppeteerBrowser
 
   if [[ "${DISABLE_LINTER}" == "false" ]]; then
     printgreen "Running ESLint on scenario [${scenarioName}] from ${PUPPETEER_DIR}..."
@@ -614,6 +615,22 @@ function preparePuppeteerModules() {
     popd || exit 1
   fi
   PUPPETEER_MODULES_READY="true"
+}
+
+function installPuppeteerBrowser() {
+  pushd "$PUPPETEER_DIR" >/dev/null || exit 1
+  local attempt
+  for attempt in 1 2 3; do
+    if npx --no-install puppeteer browsers install chrome >/dev/null; then
+      popd >/dev/null || exit 1
+      return 0
+    fi
+    printyellow "Unable to install the Chrome build Puppeteer expects (attempt ${attempt}); retrying..."
+    sleep 5
+  done
+  popd >/dev/null || exit 1
+  printred "Unable to install the Chrome build Puppeteer expects"
+  exit 1
 }
 
 function startCasBuild() {

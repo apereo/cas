@@ -426,6 +426,9 @@ earlier ones, including authentication successes immediately followed by ticket 
   issuer signs the claims' digests and the wallet's device key in a mobile security object with an elliptic curve key that carries an
   X.509 chain. A presented mdoc must be signed by one of CAS's keys and its device signature must cover the session transcript of the
   request. CBOR and COSE are handled by the Authlete `cbor` library, from the same vendor as the SD-JWT library CAS already uses.
+- [Verifiable credentials](../authentication/OIDC-Authentication-Verifiable-Credentials.html) issued as `jwt_vc_json` or
+  `jwt_vc_json-ld` no longer carry a `vct` claim, which belongs to SD-JWT VC; wallets such as walt.id classified such a
+  credential as an SD-JWT VC and refused it as not matching the requested format. `dc+sd-jwt` credentials keep their `vct`.
 
 ### Stateless Ticket Registry
 {: .action data-area="tickets"}
@@ -492,6 +495,15 @@ description. Tickets are now summarized rather than returned in full, so attribu
 MCP server, and every MCP tool call and resource read is recorded in the audit log under the MCP user who made it.
 Single sign-on sessions are identified by a one-way session reference rather than their ticket-granting ticket id, and service
 definitions are returned with client secrets, passwords and keys redacted.
+
+Agents can now start with `describeDeployment`, which reports the CAS version, enabled features, registries, authentication
+handlers, attribute repositories and active MCP tool groups, and use `explainLogin` to walk through access, risk, multifactor
+authentication, interrupts and attribute release for a person and an application in one call. `validateServiceDefinition`
+checks a proposed service definition and which service would win for given URLs without saving it, `findThrottledLogins`
+shows throttled login attempts, and `findAttributeSources` and `findAttributeDefinitions` show which attribute repository
+returns which attribute and how attribute definitions transform them. Tools now publish an output schema and return
+structured content, registered services are offered as the resource `cas://services/{id}`, and setting names and service ids
+can be completed by clients, with `spring.ai.mcp.server.capabilities.completion=true`{: .cas-setting}.
 
 ## Other Stuff
 
