@@ -1,0 +1,18 @@
+{
+  "dependencies": "mcp,passwordless-webflow,pac4j-webflow,pac4j-cas,heimdall",
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
+    "--cas.authn.passwordless.accounts.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/accounts.json",
+
+    "--cas.authn.pac4j.cas[0].login-url=https://localhost:8444/cas/login",
+    "--cas.authn.pac4j.cas[0].protocol=CAS30",
+    "--cas.authn.pac4j.cas[0].client-name=CASServerOne",
+    "--cas.authn.pac4j.cas[0].display-name=My CAS One",
+
+    "--cas.heimdall.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/policies",
+
+    "--cas.monitor.endpoints.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/users.json"
+  ]
+}

@@ -43,6 +43,13 @@ dependencies {
     compileOnly project(":support:cas-server-support-surrogate-api")
     compileOnly project(":support:cas-server-support-interrupt-api")
     compileOnly project(":support:cas-server-support-electrofence")
+    compileOnly project(":support:cas-server-support-otp-mfa-core")
+    compileOnly project(":support:cas-server-support-webauthn-core")
+    compileOnly project(":support:cas-server-support-passwordless-api")
+    compileOnly project(":support:cas-server-support-pac4j-api")
+    compileOnly project(":support:cas-server-support-heimdall")
+    compileOnly project(":support:cas-server-support-configuration-metadata-repository")
+    compileOnly libraries.springbootconfigmetadata
     
     compileOnly libraries.opensaml
     compileOnly libraries.shibutiljavasupport
@@ -61,6 +68,13 @@ dependencies {
     testImplementation project(":support:cas-server-support-surrogate-api")
     testImplementation project(":support:cas-server-support-interrupt-api")
     testImplementation project(":support:cas-server-support-electrofence")
+    testImplementation project(":support:cas-server-support-otp-mfa-core")
+    testImplementation project(":support:cas-server-support-webauthn-core")
+    testImplementation project(":support:cas-server-support-passwordless-api")
+    testImplementation project(":support:cas-server-support-pac4j-api")
+    testImplementation project(":support:cas-server-support-heimdall")
+    testImplementation project(":support:cas-server-support-configuration-metadata-repository")
+    testImplementation libraries.springbootconfigmetadata
     testImplementation project(":support:cas-server-support-webconfig")
     testImplementation project(":support:cas-server-support-themes")
     testImplementation project(":support:cas-server-support-thymeleaf")

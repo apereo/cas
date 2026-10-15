@@ -2,6 +2,7 @@ package org.apereo.cas.config;
 
 import module java.base;
 import org.apereo.cas.api.AuthenticationRiskEvaluator;
+import org.apereo.cas.api.PasswordlessUserAccountStore;
 import org.apereo.cas.audit.AuditTrailExecutionPlan;
 import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.MultifactorAuthenticationTriggerSelectionStrategy;
@@ -13,17 +14,23 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.consent.ConsentDecisionBuilder;
 import org.apereo.cas.consent.ConsentRepository;
+import org.apereo.cas.heimdall.authorizer.repository.AuthorizableResourceRepository;
 import org.apereo.cas.interrupt.InterruptInquirer;
 import org.apereo.cas.interrupt.InterruptInquiryExecutionPlan;
 import org.apereo.cas.logout.slo.SingleLogoutServiceLogoutUrlBuilder;
 import org.apereo.cas.mcp.CasMcpEvaluationContextFactory;
+import org.apereo.cas.mcp.resources.CasSettingResources;
 import org.apereo.cas.mcp.tools.CasAuditTools;
 import org.apereo.cas.mcp.tools.CasAuthenticationEventTools;
 import org.apereo.cas.mcp.tools.CasAuthenticationRiskTools;
 import org.apereo.cas.mcp.tools.CasConsentTools;
+import org.apereo.cas.mcp.tools.CasDelegatedAuthenticationTools;
+import org.apereo.cas.mcp.tools.CasHeimdallTools;
 import org.apereo.cas.mcp.tools.CasInterruptTools;
 import org.apereo.cas.mcp.tools.CasMultifactorAuthenticationTools;
 import org.apereo.cas.mcp.tools.CasOidcTools;
+import org.apereo.cas.mcp.tools.CasOneTimeTokenTools;
+import org.apereo.cas.mcp.tools.CasPasswordlessTools;
 import org.apereo.cas.mcp.tools.CasPersonDirectoryTools;
 import org.apereo.cas.mcp.tools.CasSamlIdPMetadataTools;
 import org.apereo.cas.mcp.tools.CasServerStatisticsTools;
@@ -34,9 +41,13 @@ import org.apereo.cas.mcp.tools.CasSurrogateTools;
 import org.apereo.cas.mcp.tools.CasTenantTools;
 import org.apereo.cas.mcp.tools.CasTicketRegistryTools;
 import org.apereo.cas.mcp.tools.CasTrustedDeviceTools;
+import org.apereo.cas.mcp.tools.CasWebAuthnTools;
+import org.apereo.cas.metadata.CasConfigurationMetadataRepository;
 import org.apereo.cas.multitenancy.TenantsManager;
 import org.apereo.cas.oidc.issuer.OidcIssuerService;
 import org.apereo.cas.oidc.jwks.generator.OidcJsonWebKeystoreGeneratorService;
+import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
+import org.apereo.cas.pac4j.client.DelegatedIdentityProviders;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
@@ -47,6 +58,7 @@ import org.apereo.cas.ticket.serialization.TicketSerializationManager;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.web.CasWebSecurityConfigurer;
+import org.apereo.cas.webauthn.storage.WebAuthnCredentialRepository;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import io.modelcontextprotocol.server.McpAsyncServer;
 import io.modelcontextprotocol.server.McpSyncServer;
@@ -65,6 +77,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.core.env.Environment;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.servlet.util.matcher.PathPatternRequestMatcher;
@@ -327,6 +340,93 @@ public class CasMcpAutoConfiguration {
             @Qualifier("authenticationRiskEvaluator")
             final ObjectProvider<AuthenticationRiskEvaluator> authenticationRiskEvaluator) {
             return new CasAuthenticationRiskTools(casMcpEvaluationContextFactory, authenticationRiskEvaluator, casProperties);
+        }
+    }
+
+    @ConditionalOnClass(OneTimeTokenCredentialRepository.class)
+    @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.AI, module = "mcp-otp")
+    @Configuration(value = "CasMcpOneTimeTokenConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    static class CasMcpOneTimeTokenConfiguration {
+        @Bean
+        @ConditionalOnMissingBean(name = "casOneTimeTokenTools")
+        public CasOneTimeTokenTools casOneTimeTokenTools(
+            @Qualifier("googleAuthenticatorAccountRegistry")
+            final ObjectProvider<OneTimeTokenCredentialRepository> googleAuthenticatorAccountRegistry) {
+            return new CasOneTimeTokenTools(googleAuthenticatorAccountRegistry);
+        }
+    }
+
+    @ConditionalOnClass(WebAuthnCredentialRepository.class)
+    @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.AI, module = "mcp-webauthn")
+    @Configuration(value = "CasMcpWebAuthnConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    static class CasMcpWebAuthnConfiguration {
+        @Bean
+        @ConditionalOnMissingBean(name = "casWebAuthnTools")
+        public CasWebAuthnTools casWebAuthnTools(
+            @Qualifier(WebAuthnCredentialRepository.BEAN_NAME)
+            final ObjectProvider<WebAuthnCredentialRepository> webAuthnCredentialRepository) {
+            return new CasWebAuthnTools(webAuthnCredentialRepository);
+        }
+    }
+
+    @ConditionalOnClass(PasswordlessUserAccountStore.class)
+    @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.AI, module = "mcp-passwordless")
+    @Configuration(value = "CasMcpPasswordlessConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    static class CasMcpPasswordlessConfiguration {
+        @Bean
+        @ConditionalOnMissingBean(name = "casPasswordlessTools")
+        public CasPasswordlessTools casPasswordlessTools(
+            @Qualifier(PasswordlessUserAccountStore.BEAN_NAME)
+            final ObjectProvider<PasswordlessUserAccountStore> passwordlessUserAccountStore) {
+            return new CasPasswordlessTools(passwordlessUserAccountStore);
+        }
+    }
+
+    @ConditionalOnClass(DelegatedIdentityProviders.class)
+    @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.AI, module = "mcp-delegated")
+    @Configuration(value = "CasMcpDelegatedAuthenticationConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    static class CasMcpDelegatedAuthenticationConfiguration {
+        @Bean
+        @ConditionalOnMissingBean(name = "casDelegatedAuthenticationTools")
+        public CasDelegatedAuthenticationTools casDelegatedAuthenticationTools(
+            @Qualifier("casMcpEvaluationContextFactory")
+            final CasMcpEvaluationContextFactory casMcpEvaluationContextFactory,
+            @Qualifier(DelegatedIdentityProviders.BEAN_NAME)
+            final ObjectProvider<DelegatedIdentityProviders> delegatedIdentityProviders) {
+            return new CasDelegatedAuthenticationTools(casMcpEvaluationContextFactory, delegatedIdentityProviders);
+        }
+    }
+
+    @ConditionalOnClass(AuthorizableResourceRepository.class)
+    @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.AI, module = "mcp-heimdall")
+    @Configuration(value = "CasMcpHeimdallConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    static class CasMcpHeimdallConfiguration {
+        @Bean
+        @ConditionalOnMissingBean(name = "casHeimdallTools")
+        public CasHeimdallTools casHeimdallTools(
+            @Qualifier(AuthorizableResourceRepository.BEAN_NAME)
+            final ObjectProvider<AuthorizableResourceRepository> authorizableResourceRepository) {
+            return new CasHeimdallTools(authorizableResourceRepository);
+        }
+    }
+
+    @ConditionalOnClass(CasConfigurationMetadataRepository.class)
+    @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.AI, module = "mcp-settings")
+    @Configuration(value = "CasMcpSettingsConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    static class CasMcpSettingsConfiguration {
+        @Bean
+        @ConditionalOnMissingBean(name = "casSettingResources")
+        public CasSettingResources casSettingResources(
+            final Environment environment,
+            @Qualifier(CasConfigurationMetadataRepository.BEAN_NAME)
+            final ObjectProvider<CasConfigurationMetadataRepository> configurationMetadataRepository) {
+            return new CasSettingResources(configurationMetadataRepository, environment);
         }
     }
 }

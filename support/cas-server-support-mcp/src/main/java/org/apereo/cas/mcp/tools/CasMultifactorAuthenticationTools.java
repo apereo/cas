@@ -64,13 +64,18 @@ public class CasMultifactorAuthenticationTools {
     /**
      * Evaluate which multifactor authentication provider CAS would require for a person and an application.
      *
-     * @param username the username
-     * @param service  the application URL
+     * @param username        the username
+     * @param service         the application URL
+     * @param clientIpAddress the optional client IP address of the login attempt
+     * @param userAgent       the optional user agent of the login attempt
+     * @param geoLocation     the optional location of the login attempt, as latitude,longitude
      * @return the triggers that were evaluated and the provider they selected
      */
     @McpTool(description = "Evaluate which multifactor authentication provider, if any, CAS would require for a person "
         + "logging into an application, running the multifactor authentication triggers in order and reporting which one "
-        + "selected the provider. Triggers that depend on the HTTP request see a request without parameters or headers.",
+        + "selected the provider. Triggers that depend on the HTTP request see a request without parameters or headers, "
+        + "except for the optional client IP address, user agent and location of the login attempt, which adaptive "
+        + "triggers match against; without them the client is unknown.",
         title = "Evaluate Multifactor Triggers",
         annotations = @McpTool.McpAnnotations(readOnlyHint = true, destructiveHint = false,
             idempotentHint = true, openWorldHint = false))
@@ -79,12 +84,19 @@ public class CasMultifactorAuthenticationTools {
         @McpToolParam(description = "The username of the person")
         final String username,
         @McpToolParam(description = "The application URL, such as the service parameter sent to CAS at login")
-        final String service) {
+        final String service,
+        @McpToolParam(description = "The client IP address the login attempt comes from", required = false)
+        final @Nullable String clientIpAddress,
+        @McpToolParam(description = "The user agent (browser) of the login attempt", required = false)
+        final @Nullable String userAgent,
+        @McpToolParam(description = "The location of the login attempt as latitude,longitude", required = false)
+        final @Nullable String geoLocation) {
         val strategy = triggerSelectionStrategy.getIfAvailable();
         if (strategy == null) {
             throw new IllegalStateException("Multifactor authentication triggers are not available");
         }
-        val exchange = evaluationContextFactory.currentHttpExchange();
+        val client = CasMcpEvaluationContextFactory.CasMcpClient.of(clientIpAddress, userAgent, geoLocation);
+        val exchange = evaluationContextFactory.currentHttpExchange(client);
         val context = evaluationContextFactory.build(username, service);
         val webApplicationService = context.service();
         val registeredService = context.registeredService();
@@ -97,6 +109,7 @@ public class CasMultifactorAuthenticationTools {
         result.put("service", webApplicationService.getId());
         result.put("principal", principal.getId());
         result.put("registeredService", registeredService != null ? registeredService.getName() : null);
+        result.put("client", client.describe());
 
         val evaluated = new ArrayList<Map<String, Object>>();
         result.put("triggers", evaluated);
@@ -114,11 +127,14 @@ public class CasMultifactorAuthenticationTools {
             val outcome = new LinkedHashMap<String, Object>();
             outcome.put("trigger", trigger.getName());
             evaluated.add(outcome);
-            if (!trigger.supports(request, registeredService, authentication, webApplicationService)) {
+            val supported = evaluationContextFactory.<Boolean>withClientInfo(client,
+                () -> trigger.supports(request, registeredService, authentication, webApplicationService));
+            if (!supported) {
                 outcome.put("outcome", "NOT_SUPPORTED");
                 continue;
             }
-            val activated = evaluate(trigger, authentication, registeredService, request, response, webApplicationService, outcome);
+            val activated = evaluationContextFactory.<MultifactorAuthenticationProvider>withClientInfo(client,
+                () -> evaluate(trigger, authentication, registeredService, request, response, webApplicationService, outcome));
             if (activated != null) {
                 outcome.put("outcome", "ACTIVATED");
                 result.put("provider", summarize(activated));

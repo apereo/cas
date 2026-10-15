@@ -84,7 +84,8 @@ async function callTool(authorization, sessionId, name, args) {
     const names = tools.tools.map((tool) => tool.name);
     await cas.log(`Available tools: ${names}`);
     for (const optional of ["findConsentDecisions", "resolveSamlMetadata", "findOidcClient", "listJwksKeys", "findTrustedDevices",
-        "previewInterrupt", "evaluateAuthenticationRisk"]) {
+        "previewInterrupt", "evaluateAuthenticationRisk", "findOneTimeTokenAccounts", "findWebAuthnDevices",
+        "findPasswordlessAccount", "listIdentityProviders", "findAuthorizableResources"]) {
         assert(!names.includes(optional), `Tool ${optional} must not be listed without its module`);
     }
     for (const tool of CAS_TOOLS) {

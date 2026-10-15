@@ -88,6 +88,10 @@
 - Never return secrets: device fingerprints, trusted-device record keys, client secrets, key material, setting values.
   Tests assert the secret string is absent from the result.
 - A turned-off events repository is a `BeanSupplier` proxy, not null: check `BeanSupplier.isProxy`.
+- MCP capabilities are set in `webapp/cas-server-webapp-resources/src/main/resources/application.properties`
+  (`spring.ai.mcp.server.capabilities.*`) and mirrored in `BaseCasMcpTests`; a `@McpResource` or `@McpPrompt` bean is
+  silently not advertised while its capability is false. Resources (`org.apereo.cas.mcp.resources`) return JSON built
+  with a plain `JsonMapper`: CAS's `JacksonObjectMapperFactory` mappers use `NON_DEFAULT` inclusion and drop `false`/`0`.
 - `DefaultAuthenticationRiskEvaluator` is `@Transactional` on `transactionManagerEvents`; test contexts that use a real
   evaluator need that bean (`PseudoTransactionManager`, as `CasCoreEventsAutoConfiguration` registers it).
 - Tools that evaluate a person at an application build their subject with `CasMcpEvaluationContextFactory.build`
@@ -95,7 +99,11 @@
   `currentHttpExchange()`, the live request with parameters, headers, cookies and query string hidden, or
   `newWebflowRequestContext(context)`, a webflow request context over it with service, registered service, credential
   and authentication in scope. Do not resolve services or principals by hand in a tool. Tools that need client details
-  (IP address, user agent) take them as parameters: `ClientInfoHolder` describes the MCP operator.
+  (IP address, user agent, location) take them as parameters and wrap them in `CasMcpClient`: `ClientInfoHolder`
+  describes the MCP operator. `currentHttpExchange(client)` exposes them as remote address, `User-Agent` and the
+  `geolocation` parameter; `withClientInfo(client, ...)` swaps `ClientInfoHolder` only around components that read it
+  (MFA triggers). Do not swap it around audited calls such as the risk evaluator, or the audit trail records the
+  supplied address instead of the operator's.
 - A new tool also goes into `CAS_TOOLS` (`CasMcpServerTests`, `mcp-server-tools/script.js` when core), the role-denial
   lists, `FeatureDisabledTests`, and the tables and feature-toggle list in `Admin-MCP-Server.md`.
 - Claude's shells have no JDK 25 or Maven Central; `build/mcp-run.sh` compiles, runs checkstyle, the `RestfulApi` tests

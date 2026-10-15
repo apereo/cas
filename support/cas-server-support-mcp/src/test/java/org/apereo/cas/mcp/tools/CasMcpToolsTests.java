@@ -2,9 +2,12 @@ package org.apereo.cas.mcp.tools;
 
 import module java.base;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.authentication.OneTimeTokenAccount;
 import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
 import org.apereo.cas.mcp.BaseCasMcpTests;
 import org.apereo.cas.mcp.CasMcpEvaluationContextFactory;
+import org.apereo.cas.mcp.resources.CasSettingResources;
+import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
 import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
 import org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
@@ -24,8 +27,16 @@ import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustR
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
+import org.apereo.cas.webauthn.storage.WebAuthnCredentialRepository;
+import com.yubico.data.CredentialRegistration;
+import com.yubico.webauthn.RegisteredCredential;
+import com.yubico.webauthn.data.AuthenticatorTransport;
+import com.yubico.webauthn.data.ByteArray;
+import com.yubico.webauthn.data.UserIdentity;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.inspektr.common.web.ClientInfo;
+import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -125,6 +136,38 @@ class CasMcpToolsTests extends BaseCasMcpTests {
     private CasAuthenticationRiskTools casAuthenticationRiskTools;
 
     @Autowired
+    @Qualifier("casPasswordlessTools")
+    private CasPasswordlessTools casPasswordlessTools;
+
+    @Autowired
+    @Qualifier("casDelegatedAuthenticationTools")
+    private CasDelegatedAuthenticationTools casDelegatedAuthenticationTools;
+
+    @Autowired
+    @Qualifier("casHeimdallTools")
+    private CasHeimdallTools casHeimdallTools;
+
+    @Autowired
+    @Qualifier("casSettingResources")
+    private CasSettingResources casSettingResources;
+
+    @Autowired
+    @Qualifier("casOneTimeTokenTools")
+    private CasOneTimeTokenTools casOneTimeTokenTools;
+
+    @Autowired
+    @Qualifier("casWebAuthnTools")
+    private CasWebAuthnTools casWebAuthnTools;
+
+    @Autowired
+    @Qualifier("googleAuthenticatorAccountRegistry")
+    private OneTimeTokenCredentialRepository oneTimeTokenCredentialRepository;
+
+    @Autowired
+    @Qualifier(WebAuthnCredentialRepository.BEAN_NAME)
+    private WebAuthnCredentialRepository webAuthnCredentialRepository;
+
+    @Autowired
     @Qualifier("casMcpEvaluationContextFactory")
     private CasMcpEvaluationContextFactory casMcpEvaluationContextFactory;
 
@@ -160,6 +203,12 @@ class CasMcpToolsTests extends BaseCasMcpTests {
         assertTrue(AopUtils.isAopProxy(casSurrogateTools));
         assertTrue(AopUtils.isAopProxy(casInterruptTools));
         assertTrue(AopUtils.isAopProxy(casAuthenticationRiskTools));
+        assertTrue(AopUtils.isAopProxy(casOneTimeTokenTools));
+        assertTrue(AopUtils.isAopProxy(casWebAuthnTools));
+        assertTrue(AopUtils.isAopProxy(casPasswordlessTools));
+        assertTrue(AopUtils.isAopProxy(casDelegatedAuthenticationTools));
+        assertTrue(AopUtils.isAopProxy(casHeimdallTools));
+        assertTrue(AopUtils.isAopProxy(casSettingResources));
     }
 
     @Test
@@ -314,12 +363,12 @@ class CasMcpToolsTests extends BaseCasMcpTests {
         servicesManager.save(registeredService);
 
         assertThrows(IllegalStateException.class,
-            () -> casMultifactorAuthenticationTools.evaluateMultifactorTriggers("casuser", serviceUrl));
+            () -> casMultifactorAuthenticationTools.evaluateMultifactorTriggers("casuser", serviceUrl, null, null, null));
         val request = new MockHttpServletRequest();
         request.addParameter("authn_method", "something-else");
         RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request, new MockHttpServletResponse()));
         try {
-            val result = casMultifactorAuthenticationTools.evaluateMultifactorTriggers("casuser", serviceUrl);
+            val result = casMultifactorAuthenticationTools.evaluateMultifactorTriggers("casuser", serviceUrl, null, null, null);
             assertEquals(TestMultifactorAuthenticationProvider.ID, ((Map<?, ?>) result.get("provider")).get("id"));
             assertFalse(((List<?>) result.get("triggers")).isEmpty());
         } finally {
@@ -327,6 +376,169 @@ class CasMcpToolsTests extends BaseCasMcpTests {
         }
         val providers = (List<?>) casMultifactorAuthenticationTools.listMultifactorProviders().get("providers");
         assertTrue(providers.stream().anyMatch(provider -> TestMultifactorAuthenticationProvider.ID.equals(((Map<?, ?>) provider).get("id"))));
+    }
+
+    @Test
+    @WithMockUser(roles = "MCP_ADMIN")
+    void verifyEvaluateMultifactorTriggersForClient() {
+        val serviceUrl = newServiceUrl();
+        servicesManager.save(newRegisteredService(serviceUrl, Map.of(), new ReturnAllAttributeReleasePolicy()));
+        val operator = new ClientInfo().setClientIpAddress("203.0.113.99");
+        ClientInfoHolder.setClientInfo(operator);
+        RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(new MockHttpServletRequest(), new MockHttpServletResponse()));
+        try {
+            val adaptive = casMultifactorAuthenticationTools.evaluateMultifactorTriggers("casuser", serviceUrl, "198.51.100.7", "Firefox", null);
+            assertEquals(TestMultifactorAuthenticationProvider.ID, ((Map<?, ?>) adaptive.get("provider")).get("id"), adaptive::toString);
+            val activated = ((List<?>) adaptive.get("triggers")).stream()
+                .map(trigger -> (Map<?, ?>) trigger)
+                .filter(trigger -> "ACTIVATED".equals(trigger.get("outcome")))
+                .map(trigger -> String.valueOf(trigger.get("trigger")))
+                .toList();
+            assertEquals(1, activated.size(), adaptive::toString);
+            assertTrue(activated.getFirst().startsWith("AdaptiveMultifactorAuthenticationTrigger"), adaptive::toString);
+            assertEquals("Firefox", ((Map<?, ?>) adaptive.get("client")).get("userAgent"));
+            assertSame(operator, ClientInfoHolder.getClientInfo());
+
+            val unknown = casMultifactorAuthenticationTools.evaluateMultifactorTriggers("casuser", serviceUrl, " ", null, null);
+            assertNull(unknown.get("provider"), unknown::toString);
+            assertNull(((Map<?, ?>) unknown.get("client")).get("clientIpAddress"));
+            assertSame(operator, ClientInfoHolder.getClientInfo());
+        } finally {
+            RequestContextHolder.resetRequestAttributes();
+            ClientInfoHolder.clear();
+        }
+    }
+
+    @Test
+    @WithMockUser(roles = "MCP_ADMIN")
+    void verifyFindOneTimeTokenAccounts() {
+        val username = "casuser-" + UUID.randomUUID();
+        oneTimeTokenCredentialRepository.save(OneTimeTokenAccount.builder()
+            .id(ThreadLocalRandom.current().nextLong(1, Integer.MAX_VALUE))
+            .username(username)
+            .name("Work phone")
+            .secretKey("secret-otp-key")
+            .validationCode(918273)
+            .scratchCodes(List.<Number>of(55667788, 99887766))
+            .source("JSON")
+            .registrationDate(ZonedDateTime.now(Clock.systemUTC()).minusDays(1))
+            .build());
+        val result = casOneTimeTokenTools.findOneTimeTokenAccounts(username);
+        assertEquals(1, result.get("count"), result::toString);
+        val account = (Map<?, ?>) ((List<?>) result.get("accounts")).getFirst();
+        assertEquals("Work phone", account.get("name"));
+        assertEquals(2, account.get("scratchCodesLeft"));
+        assertEquals("JSON", account.get("source"));
+        assertNoSecrets(result, "secret-otp-key", "918273", "55667788", "99887766");
+        assertEquals(0, casOneTimeTokenTools.findOneTimeTokenAccounts("unknown-" + UUID.randomUUID()).get("count"));
+    }
+
+    @Test
+    @WithMockUser(roles = "MCP_ADMIN")
+    void verifyFindWebAuthnDevices() throws Exception {
+        val username = "casuser-" + UUID.randomUUID();
+        val credentialId = "ibE9wQddsF806g8uL9hDzgwLJipKhS9esD07Jmj0N98";
+        val userHandle = "dXNlci1oYW5kbGUtc2VjcmV0";
+        val publicKey = "cHVibGljLWtleS1zZWNyZXQ";
+        webAuthnCredentialRepository.addRegistrationByUsername(username, CredentialRegistration.builder()
+            .registrationTime(Instant.now(Clock.systemUTC()))
+            .credentialNickname("YubiKey 5")
+            .transports(new TreeSet<>(Set.of(AuthenticatorTransport.USB)))
+            .discoverable(Boolean.TRUE)
+            .aaguid("ea9b8d66-4d01-1d21-3ce4-b6b48cb575d4")
+            .credential(RegisteredCredential.builder()
+                .credentialId(ByteArray.fromBase64Url(credentialId))
+                .userHandle(ByteArray.fromBase64Url(userHandle))
+                .publicKeyCose(ByteArray.fromBase64Url(publicKey))
+                .signatureCount(7)
+                .build())
+            .userIdentity(UserIdentity.builder()
+                .name(username)
+                .displayName("CAS")
+                .id(ByteArray.fromBase64Url(userHandle))
+                .build())
+            .build());
+        val result = casWebAuthnTools.findWebAuthnDevices(username);
+        assertEquals(1, result.get("count"), result::toString);
+        val device = (Map<?, ?>) ((List<?>) result.get("devices")).getFirst();
+        assertEquals("YubiKey 5", device.get("nickname"));
+        assertEquals(List.of("usb"), device.get("transports"));
+        assertEquals(Boolean.TRUE, device.get("discoverable"));
+        assertEquals(7L, device.get("signatureCount"));
+        assertNoSecrets(result, credentialId, userHandle, publicKey);
+        assertEquals(0, casWebAuthnTools.findWebAuthnDevices("unknown-" + UUID.randomUUID()).get("count"));
+    }
+
+    @Test
+    @WithMockUser(roles = "MCP_ADMIN")
+    void verifyFindPasswordlessAccount() {
+        val username = "passwordless-" + UUID.randomUUID();
+        val result = casPasswordlessTools.findPasswordlessAccount(username);
+        val account = (Map<?, ?>) result.get("account");
+        assertNotNull(account, result::toString);
+        assertEquals("j*****@example.org", account.get("email"));
+        assertEquals("********23", account.get("phone"));
+        assertEquals(Boolean.TRUE, account.get("requestPassword"));
+        assertEquals(List.of("Okta"), account.get("allowedDelegatedClients"));
+        assertNoSecrets(result, "jsmith@example.org", "3477464523", "attribute-secret");
+        assertTrue(casPasswordlessTools.findPasswordlessAccount("casuser").containsKey("reason"));
+    }
+
+    @Test
+    @WithMockUser(roles = "MCP_ADMIN")
+    void verifyListIdentityProviders() {
+        assertThrows(IllegalStateException.class, () -> casDelegatedAuthenticationTools.listIdentityProviders());
+        RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(new MockHttpServletRequest(), new MockHttpServletResponse()));
+        try {
+            val result = casDelegatedAuthenticationTools.listIdentityProviders();
+            assertEquals(2, result.get("count"), result::toString);
+            val providers = ((List<?>) result.get("identityProviders")).stream().map(provider -> (Map<?, ?>) provider).toList();
+            assertEquals(List.of("AnonymousClient", "Okta"), providers.stream().map(provider -> provider.get("name")).toList());
+            val okta = providers.getLast();
+            assertEquals("Okta Workforce", okta.get("displayName"));
+            assertEquals("CLIENT", okta.get("autoRedirectType"));
+            assertEquals("https://sso.example.org/cas/login?client_name=Okta", okta.get("callbackUrl"));
+            assertTrue(okta.get("type").toString().startsWith("IndirectClient"), okta::toString);
+            assertNoSecrets(result, "delegated-client-secret");
+        } finally {
+            RequestContextHolder.resetRequestAttributes();
+        }
+    }
+
+    @Test
+    @WithMockUser(roles = "MCP_ADMIN")
+    void verifyFindAuthorizableResources() {
+        val result = casHeimdallTools.findAuthorizableResources("API");
+        assertEquals(1, result.get("count"), result::toString);
+        val resource = (Map<?, ?>) ((List<?>) result.get("resources")).getFirst();
+        assertEquals("/api/.*", resource.get("pattern"));
+        assertEquals("GET", resource.get("method"));
+        assertEquals(new TreeSet<>(Set.of("read")), resource.get("actions"));
+        assertEquals(List.of("JdbcAuthorizationPolicy"), resource.get("policies"));
+        assertEquals(new TreeSet<>(Set.of("owner")), resource.get("propertyNames"));
+        assertNoSecrets(result, "jdbc-secret", "jdbc:hsqldb:mem:heimdall", "owner-secret");
+
+        val unknown = casHeimdallTools.findAuthorizableResources("unknown");
+        assertTrue(unknown.containsKey("reason"));
+        assertEquals(new TreeSet<>(Set.of("API")), unknown.get("knownNamespaces"));
+        assertFalse(casHeimdallTools.findAuthorizableResources(null).containsKey("reason"));
+    }
+
+    @Test
+    @WithMockUser(roles = "MCP_ADMIN")
+    void verifyDescribeSetting() {
+        val setting = casSettingResources.describeSetting("cas.server.name");
+        assertTrue(setting.contains("\"module\":\"cas-server-core\""), setting);
+        assertTrue(setting.contains("\"defined\":false"), setting);
+        assertTrue(setting.contains("\"required\":true"), setting);
+        assertTrue(casSettingResources.describeSetting("cas.unknown.setting").contains("No setting is named"));
+    }
+
+    private static void assertNoSecrets(final Map<String, Object> result, final String... secrets) {
+        val rendered = result.toString();
+        for (val secret : secrets) {
+            assertFalse(rendered.contains(secret), () -> "Tool result must not contain " + secret + ": " + rendered);
+        }
     }
 
     @Test
@@ -491,7 +703,7 @@ class CasMcpToolsTests extends BaseCasMcpTests {
         val unfamiliar = casAuthenticationRiskTools.evaluateAuthenticationRisk(username, serviceUrl, "198.51.100.7", "curl", "48.85,2.35");
         assertEquals(0, BigDecimal.ONE.compareTo((BigDecimal) unfamiliar.get("score")), unfamiliar::toString);
         assertEquals(Boolean.TRUE, unfamiliar.get("risky"));
-        assertEquals("48.85,2.35", unfamiliar.get("geoLocation"));
+        assertEquals("48.85,2.35", ((Map<?, ?>) unfamiliar.get("client")).get("geoLocation"));
 
         val unknown = casAuthenticationRiskTools.evaluateAuthenticationRisk("unknown-" + UUID.randomUUID(), serviceUrl, "192.0.2.10", "Firefox", null);
         assertEquals(Boolean.TRUE, unknown.get("risky"));
@@ -521,6 +733,18 @@ class CasMcpToolsTests extends BaseCasMcpTests {
             assertEquals(-1, stripped.getIntHeader("X-MFA-Provider"));
             assertNull(stripped.getCookies());
             assertNull(stripped.getQueryString());
+            assertEquals("unknown", stripped.getRemoteAddr());
+
+            val client = CasMcpEvaluationContextFactory.CasMcpClient.of("198.51.100.7", "Firefox", "48.85,2.35");
+            val forClient = casMcpEvaluationContextFactory.currentHttpExchange(client).request();
+            assertEquals("Firefox", forClient.getHeader("user-agent"));
+            assertEquals(List.of("User-Agent"), Collections.list(forClient.getHeaderNames()));
+            assertNull(forClient.getHeader("X-MFA-Provider"));
+            assertEquals("48.85,2.35", forClient.getParameter("geolocation"));
+            assertNull(forClient.getParameter("authn_method"));
+            assertEquals(Set.of("geolocation"), forClient.getParameterMap().keySet());
+            assertEquals("198.51.100.7", forClient.getRemoteAddr());
+            assertNull(forClient.getCookies());
         } finally {
             RequestContextHolder.resetRequestAttributes();
         }
@@ -549,7 +773,14 @@ class CasMcpToolsTests extends BaseCasMcpTests {
         assertThrows(AccessDeniedException.class, () -> casAuditTools.findAuditRecords("casuser", null, null));
         assertThrows(AccessDeniedException.class, () -> casConsentTools.findConsentDecisions("casuser"));
         assertThrows(AccessDeniedException.class, () -> casMultifactorAuthenticationTools.listMultifactorProviders());
-        assertThrows(AccessDeniedException.class, () -> casMultifactorAuthenticationTools.evaluateMultifactorTriggers("casuser", "https://mcp.example.org"));
+        assertThrows(AccessDeniedException.class,
+            () -> casMultifactorAuthenticationTools.evaluateMultifactorTriggers("casuser", "https://mcp.example.org", null, null, null));
+        assertThrows(AccessDeniedException.class, () -> casOneTimeTokenTools.findOneTimeTokenAccounts("casuser"));
+        assertThrows(AccessDeniedException.class, () -> casWebAuthnTools.findWebAuthnDevices("casuser"));
+        assertThrows(AccessDeniedException.class, () -> casPasswordlessTools.findPasswordlessAccount("casuser"));
+        assertThrows(AccessDeniedException.class, () -> casDelegatedAuthenticationTools.listIdentityProviders());
+        assertThrows(AccessDeniedException.class, () -> casHeimdallTools.findAuthorizableResources("API"));
+        assertThrows(AccessDeniedException.class, () -> casSettingResources.describeSetting("cas.server.name"));
         assertThrows(AccessDeniedException.class, () -> casSingleLogoutTools.previewLogout("TGT-1"));
         assertThrows(AccessDeniedException.class, () -> casServerStatisticsTools.getRegistryStatistics());
         assertThrows(AccessDeniedException.class, () -> casTenantTools.findTenant("unknown"));

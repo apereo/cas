@@ -2,26 +2,38 @@ package org.apereo.cas.config;
 
 import module java.base;
 import org.apereo.cas.api.AuthenticationRiskEvaluator;
+import org.apereo.cas.api.PasswordlessUserAccountStore;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.authentication.surrogate.SurrogateAuthenticationService;
 import org.apereo.cas.consent.ConsentDecisionBuilder;
 import org.apereo.cas.consent.ConsentRepository;
 import org.apereo.cas.consent.InMemoryConsentRepository;
+import org.apereo.cas.heimdall.authorizer.repository.AuthorizableResourceRepository;
 import org.apereo.cas.interrupt.InterruptInquiryExecutionPlan;
 import org.apereo.cas.mcp.CasMcpEvaluationContextFactory;
+import org.apereo.cas.mcp.resources.CasSettingResources;
 import org.apereo.cas.mcp.tools.CasAuthenticationRiskTools;
 import org.apereo.cas.mcp.tools.CasConsentTools;
+import org.apereo.cas.mcp.tools.CasDelegatedAuthenticationTools;
+import org.apereo.cas.mcp.tools.CasHeimdallTools;
 import org.apereo.cas.mcp.tools.CasInterruptTools;
 import org.apereo.cas.mcp.tools.CasOidcTools;
+import org.apereo.cas.mcp.tools.CasOneTimeTokenTools;
+import org.apereo.cas.mcp.tools.CasPasswordlessTools;
 import org.apereo.cas.mcp.tools.CasSamlIdPMetadataTools;
 import org.apereo.cas.mcp.tools.CasSurrogateTools;
 import org.apereo.cas.mcp.tools.CasTrustedDeviceTools;
+import org.apereo.cas.mcp.tools.CasWebAuthnTools;
+import org.apereo.cas.metadata.CasConfigurationMetadataRepository;
 import org.apereo.cas.oidc.issuer.OidcIssuerService;
+import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
+import org.apereo.cas.pac4j.client.DelegatedIdentityProviders;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
+import org.apereo.cas.webauthn.storage.WebAuthnCredentialRepository;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -181,5 +193,88 @@ class CasMcpAutoConfigurationTests {
                 .evaluateAuthenticationRisk("casuser", "https://mcp.example.org", "192.0.2.10", "Firefox", null);
             assertEquals("Risk-based authentication is not configured", result.get("reason"));
         });
+    }
+
+    @Test
+    void verifyOneTimeTokenToolsActivation() {
+        val runner = new ApplicationContextRunner()
+            .withUserConfiguration(CasMcpAutoConfiguration.CasMcpOneTimeTokenConfiguration.class);
+        runner.run(context -> assertTrue(context.containsBean("casOneTimeTokenTools")));
+        runner.withClassLoader(new FilteredClassLoader(OneTimeTokenCredentialRepository.class))
+            .run(context -> assertFalse(context.containsBean("casOneTimeTokenTools")));
+        runner.withPropertyValues("CasFeatureModule.AI.mcp-otp.enabled=false")
+            .run(context -> assertFalse(context.containsBean("casOneTimeTokenTools")));
+        runner.run(context -> {
+            val result = context.getBean(CasOneTimeTokenTools.class).findOneTimeTokenAccounts("casuser");
+            assertEquals("One-time password multifactor authentication is not configured", result.get("reason"));
+        });
+    }
+
+    @Test
+    void verifyWebAuthnToolsActivation() {
+        val runner = new ApplicationContextRunner()
+            .withUserConfiguration(CasMcpAutoConfiguration.CasMcpWebAuthnConfiguration.class);
+        runner.run(context -> assertTrue(context.containsBean("casWebAuthnTools")));
+        runner.withClassLoader(new FilteredClassLoader(WebAuthnCredentialRepository.class))
+            .run(context -> assertFalse(context.containsBean("casWebAuthnTools")));
+        runner.withPropertyValues("CasFeatureModule.AI.mcp-webauthn.enabled=false")
+            .run(context -> assertFalse(context.containsBean("casWebAuthnTools")));
+        runner.run(context -> {
+            val result = context.getBean(CasWebAuthnTools.class).findWebAuthnDevices("casuser");
+            assertEquals("WebAuthn multifactor authentication is not configured", result.get("reason"));
+        });
+    }
+
+    @Test
+    void verifyPasswordlessToolsActivation() {
+        val runner = new ApplicationContextRunner()
+            .withUserConfiguration(CasMcpAutoConfiguration.CasMcpPasswordlessConfiguration.class);
+        runner.run(context -> assertTrue(context.containsBean("casPasswordlessTools")));
+        runner.withClassLoader(new FilteredClassLoader(PasswordlessUserAccountStore.class))
+            .run(context -> assertFalse(context.containsBean("casPasswordlessTools")));
+        runner.withPropertyValues("CasFeatureModule.AI.mcp-passwordless.enabled=false")
+            .run(context -> assertFalse(context.containsBean("casPasswordlessTools")));
+        runner.run(context -> assertEquals("Passwordless authentication is not configured",
+            context.getBean(CasPasswordlessTools.class).findPasswordlessAccount("casuser").get("reason")));
+    }
+
+    @Test
+    void verifyDelegatedAuthenticationToolsActivation() {
+        val runner = new ApplicationContextRunner()
+            .withUserConfiguration(CasMcpAutoConfiguration.CasMcpDelegatedAuthenticationConfiguration.class)
+            .withBean("casMcpEvaluationContextFactory", CasMcpEvaluationContextFactory.class, () -> mock(CasMcpEvaluationContextFactory.class));
+        runner.run(context -> assertTrue(context.containsBean("casDelegatedAuthenticationTools")));
+        runner.withClassLoader(new FilteredClassLoader(DelegatedIdentityProviders.class))
+            .run(context -> assertFalse(context.containsBean("casDelegatedAuthenticationTools")));
+        runner.withPropertyValues("CasFeatureModule.AI.mcp-delegated.enabled=false")
+            .run(context -> assertFalse(context.containsBean("casDelegatedAuthenticationTools")));
+        runner.run(context -> assertEquals("Delegated authentication is not configured",
+            context.getBean(CasDelegatedAuthenticationTools.class).listIdentityProviders().get("reason")));
+    }
+
+    @Test
+    void verifyHeimdallToolsActivation() {
+        val runner = new ApplicationContextRunner()
+            .withUserConfiguration(CasMcpAutoConfiguration.CasMcpHeimdallConfiguration.class);
+        runner.run(context -> assertTrue(context.containsBean("casHeimdallTools")));
+        runner.withClassLoader(new FilteredClassLoader(AuthorizableResourceRepository.class))
+            .run(context -> assertFalse(context.containsBean("casHeimdallTools")));
+        runner.withPropertyValues("CasFeatureModule.AI.mcp-heimdall.enabled=false")
+            .run(context -> assertFalse(context.containsBean("casHeimdallTools")));
+        runner.run(context -> assertEquals("Heimdall is not configured",
+            context.getBean(CasHeimdallTools.class).findAuthorizableResources("API").get("reason")));
+    }
+
+    @Test
+    void verifySettingResourcesActivation() {
+        val runner = new ApplicationContextRunner()
+            .withUserConfiguration(CasMcpAutoConfiguration.CasMcpSettingsConfiguration.class);
+        runner.run(context -> assertTrue(context.containsBean("casSettingResources")));
+        runner.withClassLoader(new FilteredClassLoader(CasConfigurationMetadataRepository.class))
+            .run(context -> assertFalse(context.containsBean("casSettingResources")));
+        runner.withPropertyValues("CasFeatureModule.AI.mcp-settings.enabled=false")
+            .run(context -> assertFalse(context.containsBean("casSettingResources")));
+        runner.run(context -> assertTrue(context.getBean(CasSettingResources.class).describeSetting("cas.server.name")
+            .contains("The CAS settings catalog is not available")));
     }
 }

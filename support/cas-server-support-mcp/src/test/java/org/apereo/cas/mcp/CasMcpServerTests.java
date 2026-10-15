@@ -52,7 +52,8 @@ class CasMcpServerTests {
         "findSessionsWithAttribute", "findTenant", "findTicket", "getRegistryStatistics", "listMultifactorProviders",
         "matchService", "previewAttributeRelease", "previewLogout", "searchServices",
         "resolveSamlMetadata", "findOidcClient", "listJwksKeys", "findAuthenticationEvents", "findTrustedDevices",
-        "findSurrogateAccounts", "previewInterrupt", "evaluateAuthenticationRisk");
+        "findSurrogateAccounts", "previewInterrupt", "evaluateAuthenticationRisk", "findOneTimeTokenAccounts", "findWebAuthnDevices",
+        "findPasswordlessAccount", "listIdentityProviders", "findAuthorizableResources");
 
     @Nested
     @SpringBootTest(classes = BaseCasMcpTests.SharedTestConfiguration.class,
@@ -295,6 +296,40 @@ class CasMcpServerTests {
         }
 
         @Test
+        void verifySettingResource() throws Throwable {
+            mockMvc.perform(post(MCP_ENDPOINT)
+                    .with(MCP_ADMIN)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .accept(MediaType.APPLICATION_JSON, MediaType.TEXT_EVENT_STREAM)
+                    .content(jsonRpcRequest("initialize", """
+                        {"protocolVersion":"2025-11-25","capabilities":{},"clientInfo":{"name":"cas-tests","version":"1.0.0"}}
+                        """)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.result.capabilities.resources").exists());
+            val sessionId = initialize(MCP_ADMIN);
+            val templates = send(MCP_ADMIN, sessionId, jsonRpcRequest("resources/templates/list", "{}"));
+            assertEquals(List.of("cas://settings/{name}"), JsonPath.read(templates, "$.result.resourceTemplates[*].uriTemplate"), templates);
+            assertEquals(List.of("application/json"), JsonPath.read(templates, "$.result.resourceTemplates[*].mimeType"), templates);
+
+            val known = send(MCP_ADMIN, sessionId, jsonRpcRequest("resources/read", "{\"uri\":\"cas://settings/cas.server.name\"}"));
+            assertEquals("cas://settings/cas.server.name", JsonPath.read(known, "$.result.contents[0].uri"), known);
+            val setting = JsonPath.<String>read(known, "$.result.contents[0].text");
+            assertEquals("cas-server-core", JsonPath.read(setting, "$.setting.module"), setting);
+            assertEquals(Boolean.TRUE, JsonPath.read(setting, "$.setting.required"), setting);
+            assertEquals("https://cas.example.org:8443", JsonPath.read(setting, "$.setting.defaultValue"), setting);
+            assertEquals(Boolean.FALSE, JsonPath.read(setting, "$.defined"), setting);
+
+            val defined = send(MCP_ADMIN, sessionId, jsonRpcRequest("resources/read", "{\"uri\":\"cas://settings/spring.ai.mcp.server.name\"}"));
+            val definedSetting = JsonPath.<String>read(defined, "$.result.contents[0].text");
+            assertEquals(Boolean.TRUE, JsonPath.read(definedSetting, "$.defined"), definedSetting);
+            assertFalse(definedSetting.contains("Apereo CAS MCP Server"), definedSetting);
+
+            val unknown = send(MCP_ADMIN, sessionId, jsonRpcRequest("resources/read", "{\"uri\":\"cas://settings/cas.unknown.setting\"}"));
+            val unknownSetting = JsonPath.<String>read(unknown, "$.result.contents[0].text");
+            assertEquals("No setting is named cas.unknown.setting", JsonPath.read(unknownSetting, "$.reason"), unknownSetting);
+        }
+
+        @Test
         void verifyFindAuditRecords() throws Throwable {
             val username = "casuser-" + UUID.randomUUID();
             val clientInfo = new ClientInfo("192.0.2.10", "192.0.2.1", "Firefox", "Earth");
@@ -378,6 +413,14 @@ class CasMcpServerTests {
             assertNull(JsonPath.read(notRequired, "$.provider"), notRequired);
             assertTrue(JsonPath.<List<String>>read(notRequired, "$.triggers[*].outcome").stream()
                 .noneMatch("ACTIVATED"::equals), notRequired);
+            assertNull(JsonPath.read(notRequired, "$.client.clientIpAddress"), notRequired);
+
+            val adaptive = send(MCP_ADMIN, sessionId, callToolRequest("evaluateMultifactorTriggers",
+                "{\"username\":\"casuser\",\"service\":\"%s\",\"clientIpAddress\":\"198.51.100.7\"}".formatted(plainUrl)));
+            assertFalse(isToolError(adaptive), adaptive);
+            val adaptiveResult = JsonPath.<String>read(adaptive, "$.result.content[0].text");
+            assertEquals(TestMultifactorAuthenticationProvider.ID, JsonPath.read(adaptiveResult, "$.provider.id"), adaptiveResult);
+            assertEquals("198.51.100.7", JsonPath.read(adaptiveResult, "$.client.clientIpAddress"), adaptiveResult);
         }
 
         @Test
@@ -477,6 +520,11 @@ class CasMcpServerTests {
                 callToolRequest("findAuthenticationEvents", "{\"username\":\"casuser\"}"),
                 callToolRequest("findTrustedDevices", "{\"username\":\"casuser\"}"),
                 callToolRequest("findSurrogateAccounts", "{\"username\":\"casuser\"}"),
+                callToolRequest("findOneTimeTokenAccounts", "{\"username\":\"casuser\"}"),
+                callToolRequest("findWebAuthnDevices", "{\"username\":\"casuser\"}"),
+                callToolRequest("findPasswordlessAccount", "{\"username\":\"casuser\"}"),
+                callToolRequest("listIdentityProviders", "{}"),
+                callToolRequest("findAuthorizableResources", "{\"namespace\":\"API\"}"),
                 callToolRequest("previewInterrupt", "{\"username\":\"casuser\",\"service\":\"https://mcp.example.org\"}"),
                 callToolRequest("evaluateAuthenticationRisk",
                     "{\"username\":\"casuser\",\"service\":\"https://mcp.example.org\",\"clientIpAddress\":\"192.0.2.10\",\"userAgent\":\"Firefox\"}"));
@@ -510,6 +558,12 @@ class CasMcpServerTests {
             assertFalse(webApplicationContext.containsBean("casTrustedDeviceTools"));
             assertFalse(webApplicationContext.containsBean("casSurrogateTools"));
             assertFalse(webApplicationContext.containsBean("casInterruptTools"));
+            assertFalse(webApplicationContext.containsBean("casOneTimeTokenTools"));
+            assertFalse(webApplicationContext.containsBean("casWebAuthnTools"));
+            assertFalse(webApplicationContext.containsBean("casPasswordlessTools"));
+            assertFalse(webApplicationContext.containsBean("casDelegatedAuthenticationTools"));
+            assertFalse(webApplicationContext.containsBean("casHeimdallTools"));
+            assertFalse(webApplicationContext.containsBean("casSettingResources"));
             assertFalse(webApplicationContext.containsBean("casAuthenticationRiskTools"));
             assertFalse(webApplicationContext.containsBean("casMcpEvaluationContextFactory"));
             assertFalse(webApplicationContext.containsBean("casMcpEndpointConfigurer"));

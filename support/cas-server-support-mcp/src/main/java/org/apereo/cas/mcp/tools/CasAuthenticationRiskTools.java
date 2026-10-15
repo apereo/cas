@@ -7,8 +7,6 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.mcp.CasMcpEvaluationContextFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
-import org.apereo.inspektr.common.web.ClientInfo;
 import org.jspecify.annotations.Nullable;
 import org.springframework.ai.mcp.annotation.McpTool;
 import org.springframework.ai.mcp.annotation.McpToolParam;
@@ -68,17 +66,12 @@ public class CasAuthenticationRiskTools {
         }
         val context = evaluationContextFactory.build(username, service);
         val registeredService = context.registeredService();
-        val location = StringUtils.isNotBlank(geoLocation) ? geoLocation : null;
-        val clientInfo = new ClientInfo()
-            .setClientIpAddress(clientIpAddress)
-            .setUserAgent(userAgent)
-            .setGeoLocation(location);
+        val client = CasMcpEvaluationContextFactory.CasMcpClient.of(clientIpAddress, userAgent, geoLocation);
+        val clientInfo = evaluationContextFactory.newClientInfo(client);
         result.put("service", context.service().getId());
         result.put("principal", context.principal().getId());
         result.put("registeredService", registeredService != null ? registeredService.getName() : null);
-        result.put("clientIpAddress", clientIpAddress);
-        result.put("userAgent", userAgent);
-        result.put("geoLocation", location);
+        result.put("client", client.describe());
 
         val calculators = evaluator.getCalculators()
             .stream()

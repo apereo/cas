@@ -93,4 +93,13 @@ async function callTool(sessionId, name, args) {
     assert(device.expired === false);
     assert(device.deviceFingerprint === undefined && device.recordKey === undefined,
         "Device fingerprints and record keys must not be returned");
+
+    await cas.separator();
+    const otp = await callTool(sessionId, "findOneTimeTokenAccounts", {username: "casuser"});
+    assert(otp.count === 1);
+    assert(otp.accounts[0].name === "RecordName");
+    assert(otp.accounts[0].scratchCodesLeft > 0);
+    const rendered = JSON.stringify(otp);
+    assert(!rendered.includes("S3cr3t198$") && !rendered.includes(scratch) && !rendered.includes("999666"),
+        "Secret keys, validation codes and scratch codes must not be returned");
 })();

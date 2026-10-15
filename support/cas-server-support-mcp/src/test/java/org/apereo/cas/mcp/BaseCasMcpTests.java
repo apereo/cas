@@ -2,13 +2,17 @@ package org.apereo.cas.mcp;
 
 import module java.base;
 import org.apereo.cas.api.AuthenticationRiskEvaluator;
+import org.apereo.cas.api.PasswordlessUserAccount;
+import org.apereo.cas.api.PasswordlessUserAccountStore;
 import org.apereo.cas.audit.AuditTrailExecutionPlan;
 import org.apereo.cas.audit.spi.MockAuditTrailManager;
 import org.apereo.cas.audit.spi.plan.DefaultAuditTrailExecutionPlan;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
+import org.apereo.cas.authentication.OneTimeTokenAccount;
 import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
+import org.apereo.cas.authentication.principal.ClientCustomPropertyConstants;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.surrogate.SurrogateAuthenticationService;
 import org.apereo.cas.config.CasCoreAuthenticationAutoConfiguration;
@@ -33,12 +37,18 @@ import org.apereo.cas.consent.ConsentDecisionBuilder;
 import org.apereo.cas.consent.ConsentRepository;
 import org.apereo.cas.consent.DefaultConsentDecisionBuilder;
 import org.apereo.cas.consent.InMemoryConsentRepository;
+import org.apereo.cas.heimdall.authorizer.repository.AuthorizableResourceRepository;
+import org.apereo.cas.heimdall.authorizer.resource.AuthorizableResource;
+import org.apereo.cas.heimdall.authorizer.resource.policy.JdbcAuthorizationPolicy;
 import org.apereo.cas.impl.calcs.IpAddressAuthenticationRequestRiskCalculator;
 import org.apereo.cas.impl.calcs.UserAgentAuthenticationRequestRiskCalculator;
 import org.apereo.cas.impl.engine.DefaultAuthenticationRiskEvaluator;
 import org.apereo.cas.interrupt.InterruptInquirer;
 import org.apereo.cas.interrupt.InterruptInquiryExecutionPlan;
 import org.apereo.cas.interrupt.InterruptResponse;
+import org.apereo.cas.metadata.CasConfigurationMetadataRepository;
+import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
+import org.apereo.cas.pac4j.client.DelegatedIdentityProviders;
 import org.apereo.cas.services.CasRegisteredService;
 import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
 import org.apereo.cas.services.RegisteredService;
@@ -51,7 +61,9 @@ import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustS
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import org.apereo.cas.web.support.WebUtils;
+import org.apereo.cas.webauthn.storage.WebAuthnCredentialRepository;
 import com.jayway.jsonpath.JsonPath;
+import com.yubico.data.CredentialRegistration;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
@@ -59,6 +71,8 @@ import org.apereo.inspektr.audit.AuditActionContext;
 import org.apereo.inspektr.audit.AuditTrailManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.pac4j.core.client.IndirectClient;
+import org.pac4j.core.client.direct.AnonymousClient;
 import org.springframework.ai.mcp.server.common.autoconfigure.McpServerAutoConfiguration;
 import org.springframework.ai.mcp.server.common.autoconfigure.McpServerJsonMapperAutoConfiguration;
 import org.springframework.ai.mcp.server.common.autoconfigure.annotations.McpServerAnnotationScannerAutoConfiguration;
@@ -72,6 +86,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.MediaType;
 import org.springframework.integration.transaction.PseudoTransactionManager;
 import org.springframework.test.context.TestPropertySource;
@@ -99,11 +114,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @TestPropertySource(properties = {
     "spring.ai.mcp.server.name=Apereo CAS MCP Server",
     "spring.ai.mcp.server.protocol=STREAMABLE",
-    "spring.ai.mcp.server.capabilities.resource=false",
+    "spring.ai.mcp.server.capabilities.resource=true",
     "spring.ai.mcp.server.capabilities.prompt=false",
     "spring.ai.mcp.server.capabilities.completion=false",
     "cas.monitor.endpoints.json.location=classpath:/McpUserDetails.json",
-    "cas.authn.attribute-repository.stub.attributes.mail=casuser@apereo.org"
+    "cas.authn.attribute-repository.stub.attributes.mail=casuser@apereo.org",
+    "cas.authn.adaptive.policy.require-multifactor.mfa-dummy=198[.]51[.]100[.][0-9]+"
 })
 public abstract class BaseCasMcpTests {
     protected static final String MCP_ENDPOINT = "/mcp";
@@ -369,6 +385,85 @@ public abstract class BaseCasMcpTests {
             return new DefaultAuthenticationRiskEvaluator(List.of(
                 new IpAddressAuthenticationRequestRiskCalculator(casEventRepository, casProperties),
                 new UserAgentAuthenticationRequestRiskCalculator(casEventRepository, casProperties)), casProperties, casEventRepository);
+        }
+
+        @Bean(name = "googleAuthenticatorAccountRegistry")
+        public OneTimeTokenCredentialRepository googleAuthenticatorAccountRegistry() {
+            val accounts = new CopyOnWriteArrayList<OneTimeTokenAccount>();
+            val repository = mock(OneTimeTokenCredentialRepository.class);
+            when(repository.save(any())).thenAnswer(invocation -> {
+                val account = invocation.getArgument(0, OneTimeTokenAccount.class);
+                accounts.add(account);
+                return account;
+            });
+            when(repository.get(anyString())).thenAnswer(invocation -> accounts.stream()
+                .filter(account -> account.getUsername().equals(invocation.getArgument(0)))
+                .toList());
+            return repository;
+        }
+
+        @Bean(name = WebAuthnCredentialRepository.BEAN_NAME)
+        public WebAuthnCredentialRepository webAuthnCredentialRepository() {
+            val registrations = new CopyOnWriteArrayList<CredentialRegistration>();
+            val repository = mock(WebAuthnCredentialRepository.class);
+            when(repository.addRegistrationByUsername(anyString(), any())).thenAnswer(invocation ->
+                registrations.add(invocation.getArgument(1, CredentialRegistration.class)));
+            when(repository.getRegistrationsByUsername(anyString())).thenAnswer(invocation -> registrations.stream()
+                .filter(registration -> registration.getUsername().equals(invocation.getArgument(0)))
+                .toList());
+            return repository;
+        }
+
+        @Bean(name = PasswordlessUserAccountStore.BEAN_NAME)
+        public PasswordlessUserAccountStore passwordlessUserAccountStore() {
+            return request -> request.getUsername().startsWith("passwordless-")
+                ? Optional.of(PasswordlessUserAccount.builder()
+                    .username(request.getUsername())
+                    .name("Passwordless User")
+                    .email("jsmith@example.org")
+                    .phone("3477464523")
+                    .requestPassword(true)
+                    .allowedDelegatedClients(List.of("Okta"))
+                    .attributes(Map.of("secretAttribute", List.<Object>of("attribute-secret")))
+                    .source("JSON")
+                    .build())
+                : Optional.empty();
+        }
+
+        @Bean(name = DelegatedIdentityProviders.BEAN_NAME)
+        public DelegatedIdentityProviders delegatedIdentityProviders() {
+            val okta = mock(IndirectClient.class);
+            when(okta.getName()).thenReturn("Okta");
+            when(okta.getCallbackUrl()).thenReturn("https://sso.example.org/cas/login?client_name=Okta");
+            when(okta.getCustomProperties()).thenReturn(Map.of(
+                ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_DISPLAY_NAME, "Okta Workforce",
+                ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_AUTO_REDIRECT_TYPE, "CLIENT",
+                "clientSecret", "delegated-client-secret"));
+            return (service, webContext) -> List.of(okta, new AnonymousClient());
+        }
+
+        @Bean(name = AuthorizableResourceRepository.BEAN_NAME)
+        public AuthorizableResourceRepository authorizableResourceRepository() {
+            val resource = new AuthorizableResource()
+                .setId(1)
+                .setPattern(Pattern.compile("/api/.*"))
+                .setMethod("GET")
+                .setActions(Set.of("read"))
+                .setEnforceAllPolicies(true)
+                .setPolicies(List.of(new JdbcAuthorizationPolicy().setUrl("jdbc:hsqldb:mem:heimdall")
+                    .setUsername("sa").setPassword("jdbc-secret").setQuery("select 1")))
+                .setProperties(Map.of("owner", "owner-secret"));
+            val repository = mock(AuthorizableResourceRepository.class);
+            when(repository.find("API")).thenReturn(List.of(resource));
+            when(repository.findAll()).thenReturn(Map.of("API", List.of(resource)));
+            return repository;
+        }
+
+        @Bean(name = CasConfigurationMetadataRepository.BEAN_NAME)
+        public CasConfigurationMetadataRepository casConfigurationMetadataRepository() throws Exception {
+            try (val in = new ClassPathResource("McpSettingsMetadata.json").getInputStream()) {
+                return new CasConfigurationMetadataRepository(List.of(in.readAllBytes()));
+            }
         }
 
         @Bean(name = SurrogateAuthenticationService.BEAN_NAME)
