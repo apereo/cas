@@ -44,6 +44,7 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
 import org.jooq.lambda.Unchecked;
+import org.jose4j.jwk.JsonWebKey;
 import org.jose4j.jwk.JsonWebKeySet;
 import org.jose4j.jwk.OctetSequenceJsonWebKey;
 import org.jose4j.jwt.consumer.JwtConsumer;
@@ -158,8 +159,9 @@ public class OidcJwtAuthenticator implements Authenticator {
                 }
             }));
 
-            if (Strings.CI.equals(registeredService.getTokenEndpointAuthenticationMethod(),
-                OAuth20ClientAuthenticationMethods.CLIENT_SECRET_JWT.getType())) {
+            val authenticationMethod = registeredService.getTokenEndpointAuthenticationMethod();
+            if (StringUtils.isBlank(authenticationMethod)
+                || Strings.CI.equals(authenticationMethod, OAuth20ClientAuthenticationMethods.CLIENT_SECRET_JWT.getType())) {
                 registeredService.getClientSecrets()
                     .stream()
                     .filter(secret -> !secret.hasClientSecretExpired(registeredService))
@@ -180,8 +182,12 @@ public class OidcJwtAuthenticator implements Authenticator {
                 baseUrl + OAuth20Constants.ACCESS_TOKEN_URL,
                 baseUrl + OAuth20Constants.TOKEN_URL
             };
-            for (var i = 0; credentials.getUserProfile() == null && i < keys.getJsonWebKeys().size(); i++) {
-                val jsonWebKey = keys.getJsonWebKeys().get(i);
+            val verificationKeys = keys.getJsonWebKeys()
+                .stream()
+                .filter(jsonWebKey -> isVerificationKeyUsable(jwt, jsonWebKey, registeredService))
+                .toList();
+            for (var i = 0; credentials.getUserProfile() == null && i < verificationKeys.size(); i++) {
+                val jsonWebKey = verificationKeys.get(i);
                 val consumer = new JwtConsumerBuilder()
                     .setVerificationKey(jsonWebKey.getKey())
                     .setRequireJwtId()
@@ -256,6 +262,35 @@ public class OidcJwtAuthenticator implements Authenticator {
         val factory = (TransientSessionTicketFactory) ticketFactory.get(TransientSessionTicket.class);
         val ticket = factory.create(ticketId, properties);
         FunctionUtils.doUnchecked(_ -> ticketRegistry.addTicket(ticket));
+        return true;
+    }
+
+    /**
+     * Determine whether a key can verify the client assertion.
+     * An HMAC-signed assertion needs a shared key at least as long as the hash output
+     * of its algorithm, i.e. 32 bytes for {@code HS256}, 48 for {@code HS384} and 64 for {@code HS512}
+     * (RFC 7518, section 3.2). The verifier rejects a shorter key, so it is skipped with a warning
+     * that names the application instead of failing deep inside the verification.
+     * Keys of any other type, and keys for assertions signed with any other algorithm, are left to the verifier.
+     *
+     * @param jwt               the client assertion
+     * @param jsonWebKey        the candidate verification key
+     * @param registeredService the registered service
+     * @return true if the key may be used to verify the assertion
+     */
+    protected boolean isVerificationKeyUsable(final JWT jwt, final JsonWebKey jsonWebKey,
+                                              final OidcRegisteredService registeredService) {
+        val algorithm = JWSAlgorithm.parse(jwt.getHeader().getAlgorithm().getName());
+        if (!JWSAlgorithm.Family.HMAC_SHA.contains(algorithm) || !(jsonWebKey instanceof final OctetSequenceJsonWebKey sharedKey)) {
+            return true;
+        }
+        val requiredLength = Integer.parseInt(algorithm.getName().substring(2)) / Byte.SIZE;
+        val keyLength = sharedKey.getOctetSequence().length;
+        if (keyLength < requiredLength) {
+            LOGGER.warn("Skipping a shared key of [{}] bytes for [{}]: [{}] requires a client secret of at least [{}] bytes",
+                keyLength, registeredService.getName(), algorithm.getName(), requiredLength);
+            return false;
+        }
         return true;
     }
 

@@ -2,7 +2,7 @@ const assert = require("assert");
 const cas = require("../../cas.js");
 
 (async () => {
-    const privateKey = "enTHR15K28p0N6f404HaC9Vp1cfIBgQiHhmbgBiO7UHEnSiNJudxtDhPQNFjFQtOVSjEYu0pr5yxEeBAiO6IlA";
+    const clientSecret = "enTHR15K28p0N6f404HaC9Vp1cfIBgQiHhmbgBiO7UHEnSiNJudxtDhPQNFjFQtOVSjEYu0pr5yxEeBAiO6IlA";
     const jwt = await cas.createJwt({
         "jti": "THJZGsQDP26OuwQn",
         "iss": "client",
@@ -12,7 +12,7 @@ const cas = require("../../cas.js");
         "nbf": 1653737573,
         "sub": "client",
         "client_id": "client"
-    }, privateKey, "HS512");
+    }, clientSecret, "HS512");
 
     let params = "client_assertion_type=urn:ietf:params:oauth:client-assertion-type:jwt-bearer&";
     params += `client_assertion=${jwt}&client_id=client&grant_type=client_credentials&scope=openid`;

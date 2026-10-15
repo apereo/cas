@@ -684,6 +684,11 @@ authentication. See the [stateless ticket registry documentation](../ticketing/S
 - {: .changed data-area="oidc"} A client that authenticates at the token endpoint with `private_key_jwt` or `client_secret_jwt`
   and sends no `client_id` parameter is now identified from its client assertion, whose issuer and subject are the client
   identifier, instead of by matching the redirect URI against every OAuth application.
+- {: .changed data-area="oidc"} A client that authenticates at the token endpoint with [`client_secret_jwt`](../authentication/OIDC-Authentication-AccessToken-AuthMethods.html)
+  is now verified with its `clientSecret`, as OpenID Connect requires, whenever the application's `tokenEndpointAuthenticationMethod`
+  is `client_secret_jwt` or left blank. A raw secret in the application's `jwks` is still accepted, but that fallback is deprecated
+  for removal. A secret shorter than the signing algorithm requires (32 bytes for `HS256`, 64 for `HS512`) is skipped with a
+  warning that names the application.
 - {: .changed data-area="oidc"} When CAS works out which application a login is for, a request object carried by the
   OAuth or OpenID Connect authorization request is now unpacked and verified once, instead of once for each of the client
   identifier, redirect URI and grant type read from it.

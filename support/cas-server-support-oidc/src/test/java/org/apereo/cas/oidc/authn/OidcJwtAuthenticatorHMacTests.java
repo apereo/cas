@@ -6,7 +6,6 @@ import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
-import org.apereo.cas.support.oauth.OAuth20ClientAuthenticationMethods;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
@@ -14,11 +13,17 @@ import org.apereo.cas.support.oauth.authenticator.OAuth20AuthenticationClientPro
 import org.apereo.cas.support.oauth.services.OAuthRegisteredServiceClientSecret;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.EncodingUtils;
+import com.nimbusds.jwt.JWTParser;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.jose4j.jwk.OctetSequenceJsonWebKey;
 import org.jose4j.keys.AesKey;
+import org.jose4j.keys.HmacKey;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullAndEmptySource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.pac4j.core.client.BaseClient;
 import org.pac4j.core.context.CallContext;
 import org.pac4j.core.credentials.UsernamePasswordCredentials;
@@ -110,13 +115,15 @@ class OidcJwtAuthenticatorHMacTests extends AbstractOidcTests {
         assertNull(replayCredentials.getUserProfile());
     }
 
-    @Test
-    void verifyClientSecretJwtIsVerifiedWithClientSecret() throws Throwable {
+    @ParameterizedTest
+    @NullAndEmptySource
+    @ValueSource(strings = "client_secret_jwt")
+    void verifyClientSecretJwtIsVerifiedWithClientSecret(final String authenticationMethod) throws Throwable {
         val auth = getAuthenticator();
         val request = new MockHttpServletRequest();
         val context = new JEEContext(request, new MockHttpServletResponse());
         val registeredService = getOidcRegisteredService(UUID.randomUUID().toString());
-        registeredService.setTokenEndpointAuthenticationMethod(OAuth20ClientAuthenticationMethods.CLIENT_SECRET_JWT.getType());
+        registeredService.setTokenEndpointAuthenticationMethod(authenticationMethod);
         val clientSecret = EncodingUtils.generateJsonWebKey(512);
         registeredService.setClientSecrets(CollectionUtils.wrapList(OAuthRegisteredServiceClientSecret.withoutExpiration(clientSecret)));
         servicesManager.save(registeredService);
@@ -131,6 +138,23 @@ class OidcJwtAuthenticatorHMacTests extends AbstractOidcTests {
             new String(jwt, StandardCharsets.UTF_8), registeredService.getClientId());
         auth.validate(new CallContext(context, new JEESessionStore()), credentials);
         assertNotNull(credentials.getUserProfile());
+    }
+
+    @Test
+    void verifySharedKeyShorterThanAlgorithmRequiresIsSkipped() throws Throwable {
+        val auth = (OidcJwtAuthenticator) getAuthenticator();
+        val registeredService = getOidcRegisteredService(UUID.randomUUID().toString());
+        val claims = getClaims(registeredService.getClientId(), registeredService.getClientId(),
+            registeredService.getClientId(), casProperties.getServer().getPrefix());
+        val sharedKey = EncodingUtils.generateJsonWebKey(512);
+        val jwt = JWTParser.parse(new String(EncodingUtils.signJwsHMACSha512(new AesKey(sharedKey.getBytes(StandardCharsets.UTF_8)),
+            claims.toJson().getBytes(StandardCharsets.UTF_8), Map.of()), StandardCharsets.UTF_8));
+        assertTrue(auth.isVerificationKeyUsable(jwt,
+            new OctetSequenceJsonWebKey(new HmacKey(sharedKey.getBytes(StandardCharsets.UTF_8))), registeredService));
+        assertFalse(auth.isVerificationKeyUsable(jwt,
+            new OctetSequenceJsonWebKey(new HmacKey("secret".repeat(10).getBytes(StandardCharsets.UTF_8))), registeredService));
+        assertTrue(auth.isVerificationKeyUsable(jwt,
+            new OctetSequenceJsonWebKey(new HmacKey("secret".repeat(11).getBytes(StandardCharsets.UTF_8))), registeredService));
     }
 
     @Test
