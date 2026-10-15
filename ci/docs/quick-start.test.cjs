@@ -40,14 +40,24 @@ const root = path.resolve(process.argv[2]);
         assert.equal(await page.$$eval(".quick-start-step:not([hidden])",(els)=>els.length),1);
         await click(".quick-start-controls button:last-child");
         assert.equal(await page.$eval("[aria-current=\"step\"]",(el)=>el.textContent),"2. Create an Overlay");
-        for (const name of ["ldap", "oidc", "saml2", "gauth", "webauthn", "duo", "interrupt", "redis", "palantir"]) {
+        await click(".quick-start-selection button:first-child");
+        assert.equal(await page.$$eval(".quick-start-features input:checked", (inputs) => inputs.length), 11);
+        assert.equal(await page.$$eval("[data-quick-feature][hidden]", (blocks) => blocks.length), 0);
+        assert.equal(new URL(page.url()).searchParams.get("features").split(",").length, 11);
+        assert(await page.$eval(".quick-start-selection button:first-child", (button) => button.disabled));
+        await click(".quick-start-selection button:nth-child(2)");
+        assert.equal(await page.$$eval(".quick-start-features input:checked", (inputs) => inputs.length), 0);
+        assert.equal(await page.$$eval("[data-quick-feature]:not([hidden])", (blocks) => blocks.length), 0);
+        assert.equal(new URL(page.url()).searchParams.has("features"), false);
+        assert(await page.$eval(".quick-start-selection button:nth-child(2)", (button) => button.disabled));
+        for (const name of ["ldap", "oidc", "saml2", "gauth", "webauthn", "duo", "passwordless", "delegation", "interrupt", "redis", "palantir"]) {
             await click(`.quick-start-features input[value="${name}"]`);
         }
         await click(".quick-start-controls button:last-child");
         assert.equal(await page.$$eval("[data-quick-feature][hidden]",(els)=>els.length),0);
         assert.equal(await page.$$eval(".quick-start-step:not([hidden]) [data-quick-feature] h3",(els)=>els.length),4);
         await page.reload({waitUntil:"networkidle2"});
-        assert.equal(await page.$$eval(".quick-start-features input:checked",(els)=>els.length),9);
+        assert.equal(await page.$$eval(".quick-start-features input:checked",(els)=>els.length),11);
         await click("#cas-quick-start li:nth-child(6) button");
         assert.match(await page.$eval(".quick-start-summary",(el)=>el.textContent),/OpenID Connect.*Interrupt.*Redis tickets.*Palantir/);
         await page.goBack();
@@ -60,7 +70,8 @@ const root = path.resolve(process.argv[2]);
         assert.match(await page.$eval("[aria-current=\"step\"]",(el)=>el.textContent),/^7\./);
         assert(await page.$eval("[value=\"oidc\"]",(el)=>el.checked));
         for (const [feature, heading] of [["saml2", "verify-saml2"], ["gauth", "verify-mfa-with-google-authenticator"],
-            ["webauthn", "verify-mfa-with-webauthn"], ["duo", "verify-mfa-with-duo-security"]]) {
+            ["webauthn", "verify-mfa-with-webauthn"], ["duo", "verify-mfa-with-duo-security"], ["passwordless", "verify-passwordless-authentication"],
+            ["delegation", "verify-delegated-authentication"]]) {
             await page.goto(`${base}#${heading}`, {waitUntil: "networkidle2"});
             assert(await page.$eval(`[value="${feature}"]`, (input) => input.checked));
             assert.match(await page.$eval("[aria-current='step']", (el) => el.textContent), /^7\./);
@@ -97,7 +108,7 @@ const root = path.resolve(process.argv[2]);
         assert.deepEqual(errors, [], "Documentation scripts must run without browser errors");
         await page.setJavaScriptEnabled(false);
         await page.reload({waitUntil: "networkidle2"});
-        assert.equal(await page.$$eval("[data-quick-feature]",(els)=>els.filter((el)=>getComputedStyle(el).display!=="none").length),19);
+        assert.equal(await page.$$eval("[data-quick-feature]",(els)=>els.filter((el)=>getComputedStyle(el).display!=="none").length),23);
         console.log(JSON.stringify({passed:"8 steps, feature selection, URL restoration, browser back, deep links, print, mobile overflow, no-JS, all individual features, pairs and full selection",errors}));
     } finally {
         await browser?.close();

@@ -42,11 +42,19 @@
     steps.at(-1).after(footer);
     const [back, next] = footer.querySelectorAll("button");
     const choices = Array.from(document.querySelectorAll(".quick-start-features input"));
+    const selectionControls = document.createElement("div");
+    selectionControls.className = "quick-start-selection";
+    selectionControls.innerHTML = "<button type=\"button\">Check All</button><button type=\"button\">Uncheck All</button><span role=\"status\" aria-live=\"polite\"></span>";
+    document.querySelector(".quick-start-features").before(selectionControls);
+    const [checkAll, uncheckAll] = selectionControls.querySelectorAll("button");
     const features = Array.from(document.querySelectorAll("[data-quick-feature]"));
     let current = 0;
     let showAll = false;
     const updateFeatures = () => {
         const selected = choices.filter((input) => input.checked).map((input) => input.value);
+        checkAll.disabled = selected.length === choices.length;
+        uncheckAll.disabled = selected.length === 0;
+        selectionControls.querySelector("span").textContent = `${selected.length} of ${choices.length} features selected`;
         features.forEach((block) => { block.hidden = !selected.includes(block.dataset.quickFeature); });
         const summary = document.querySelector(".quick-start-summary");
         summary.hidden = false;
@@ -100,6 +108,10 @@
         target?.scrollIntoView({block: "start"});
     };
     choices.forEach((input) => input.addEventListener("change", updateFeatures));
+    [checkAll, uncheckAll].forEach((button) => button.addEventListener("click", () => {
+        choices.forEach((input) => { input.checked = button === checkAll; });
+        updateFeatures();
+    }));
     back.addEventListener("click", () => show(Math.max(0, current - 1), true));
     next.addEventListener("click", () => show(Math.min(7, current + 1), true));
     wizard.querySelector(".quick-start-view").addEventListener("click", (event) => {

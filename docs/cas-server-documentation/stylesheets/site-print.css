@@ -158,6 +158,6 @@ blockquote, #dev-doc-info {
 }
 
 @media print {
-    #cas-quick-start, .quick-start-controls { display: none !important; }
+    #cas-quick-start, .quick-start-controls, .quick-start-selection { display: none !important; }
     .quick-start-step[hidden], [data-quick-feature][hidden] { display: block !important; }
 }

@@ -5657,7 +5657,7 @@ h4.cas-change-topic {
     margin: 0;
     gap: .5rem;
 }
-#cas-quick-start button, .quick-start-controls button {
+#cas-quick-start button, .quick-start-controls button, .quick-start-selection button {
     color: var(--docs-text);
     background: var(--docs-surface);
     border: 1px solid var(--docs-line);
@@ -5672,10 +5672,11 @@ h4.cas-change-topic {
     color: var(--docs-bg);
     border-color: var(--docs-accent);
 }
-#cas-quick-start button:focus-visible, .quick-start-controls button:focus-visible,
+#cas-quick-start button:focus-visible, .quick-start-controls button:focus-visible, .quick-start-selection button:focus-visible,
 .quick-start-features label:focus-within { outline: 3px solid var(--docs-cyan); outline-offset: 3px; }
 .quick-start-controls { margin: 2rem 0; }
-.quick-start-controls button:disabled { opacity: .45; cursor: default; }
+.quick-start-controls button:disabled, .quick-start-selection button:disabled { opacity: .45; cursor: default; }
+.quick-start-selection { display: flex; flex-wrap: wrap; align-items: center; gap: .75rem; margin-bottom: 1rem; }
 .quick-start-features { border: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .75rem; }
 .quick-start-features legend { grid-column: 1 / -1; font-size: 1rem; font-weight: 700; }
 .quick-start-features label {

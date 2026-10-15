@@ -1,7 +1,7 @@
 ---
 layout: default
 title: CAS - Quick Start
-description: "Build a local CAS server in eight guided steps, with LDAP, OIDC, SAML2, MFA, authentication interrupt, Redis tickets and Palantir."
+description: "Build CAS in eight guided steps with passwordless and delegated login, SAML2, OIDC, MFA, LDAP, Redis, interrupt and Palantir."
 quickStart: true
 category: Planning
 ---
@@ -60,15 +60,17 @@ Without JavaScript, all optional recipes are shown.
 
 <fieldset class="quick-start-features">
 <legend>Add to your overlay</legend>
-<label><input type="checkbox" value="ldap"> <span><strong>LDAP</strong>Authenticate against your directory</span></label>
-<label><input type="checkbox" value="oidc"> <span><strong>OpenID Connect</strong>Use CAS as an OpenID Provider</span></label>
-<label><input type="checkbox" value="saml2"> <span><strong>SAML2</strong>Use CAS as a SAML identity provider</span></label>
-<label><input type="checkbox" value="gauth"> <span><strong>MFA with GAUTH</strong>Verify a time-based authenticator code</span></label>
+<label><input type="checkbox" value="ldap"> <span><strong>LDAP Authentication</strong>Authenticate against your directory</span></label>
+<label><input type="checkbox" value="oidc"> <span><strong>OpenID Connect Provider</strong>Use CAS as an OpenID Provider</span></label>
+<label><input type="checkbox" value="saml2"> <span><strong>SAML2 Identity Provider</strong>Use CAS as a SAML identity provider</span></label>
+<label><input type="checkbox" value="gauth"> <span><strong>MFA with Google Authenticator</strong>Verify a time-based authenticator code</span></label>
 <label><input type="checkbox" value="webauthn"> <span><strong>MFA with WebAuthn</strong>Use a security key or platform authenticator</span></label>
 <label><input type="checkbox" value="duo"> <span><strong>MFA with Duo Security</strong>Authenticate through Duo Universal Prompt</span></label>
-<label><input type="checkbox" value="interrupt"> <span><strong>Interrupt</strong>Show a notice during login</span></label>
-<label><input type="checkbox" value="redis"> <span><strong>Redis tickets</strong>Store tickets outside the CAS process</span></label>
-<label><input type="checkbox" value="palantir"> <span><strong>Palantir</strong>Explore the administration console</span></label>
+<label><input type="checkbox" value="passwordless"> <span><strong>Passwordless Authentication</strong>Sign in with an emailed one-time code</span></label>
+<label><input type="checkbox" value="delegation"> <span><strong>Delegated Authentication</strong>Sign in through an external identity provider</span></label>
+<label><input type="checkbox" value="interrupt"> <span><strong>Interrupt Notifications</strong>Show a notice during login</span></label>
+<label><input type="checkbox" value="redis"> <span><strong>Redis Ticket Registry</strong>Store tickets outside the CAS process</span></label>
+<label><input type="checkbox" value="palantir"> <span><strong>Palantir Admin Console</strong>Explore the administration console</span></label>
 </fieldset>
 
 ## 3. Configure CAS
@@ -233,9 +235,24 @@ Keep the CAS example above and add `/etc/cas/services/OidcExample-2.json`:
   "id": 2,
   "clientId": "quickstart-client",
   "clientSecret": "replace-with-your-own-client-secret",
-  "scopes": ["java.util.HashSet", ["openid"]],
-  "supportedGrantTypes": ["java.util.HashSet", ["authorization_code"]],
-  "supportedResponseTypes": ["java.util.HashSet", ["code"]]
+  "scopes": [
+    "java.util.HashSet",
+    [
+      "openid"
+    ]
+  ],
+  "supportedGrantTypes": [
+    "java.util.HashSet",
+    [
+      "authorization_code"
+    ]
+  ],
+  "supportedResponseTypes": [
+    "java.util.HashSet",
+    [
+      "code"
+    ]
+  ]
 }
 ```
 
@@ -332,6 +349,112 @@ Create `/etc/cas/config/interrupt.json`. If using LDAP, replace `casuser` with y
 This notice allows the user to continue. [Authentication Interrupt](../webflow/Webflow-Customization-Interrupt.html)
 explains blocking policies and other sources; the [JSON strategy](../webflow/Webflow-Customization-Interrupt-JSON.html)
 is intended for demos and testing.
+
+</div>
+
+<div data-quick-feature="passwordless" markdown="1">
+
+### Passwordless Authentication
+
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-passwordless-webflow" %}
+
+For a local demo, start the same mail catcher used by the CAS browser scenarios. It captures mail without
+sending it to a real recipient:
+
+```bash
+docker run --rm --name cas-quickstart-mail -p 127.0.0.1:25000:25000 -p 127.0.0.1:8282:8282 mmoayyed/mockmock:latest
+```
+
+Append to `cas.properties`:
+
+```properties
+spring.mail.host=localhost
+spring.mail.port=25000
+cas.authn.passwordless.tokens.mail.from=cas@example.org
+cas.authn.passwordless.tokens.mail.subject=CAS sign-in code
+cas.authn.passwordless.tokens.mail.html=false
+cas.authn.passwordless.tokens.mail.text=Your sign-in code is ${token}
+cas.authn.passwordless.accounts.json.location=file:/etc/cas/config/passwordless-accounts.json
+```
+{: .cas-settings-linked}
+
+Create `/etc/cas/config/passwordless-accounts.json`:
+
+```json
+{
+  "@class": "java.util.LinkedHashMap",
+  "casuser": {
+    "@class": "org.apereo.cas.api.PasswordlessUserAccount",
+    "username": "casuser",
+    "email": "cas@example.org",
+    "name": "CAS Demo",
+    "delegatedAuthenticationEligible": "FALSE",
+    "requestPassword": false
+  }
+}
+```
+
+With this module enabled, eligible applications use the passwordless login flow: enter `casuser` and the emailed
+code instead of `Mellon`. LDAP credentials are not used for this JSON-backed account. The explicit delegation
+setting keeps this account on the email-code path even when you also install an external provider.
+Use an account store with verified contact details and a real, secured mail transport for deployment.
+See [Passwordless Authentication](../authentication/Passwordless-Authentication.html) and
+[per-application controls](../authentication/Passwordless-Authentication-PerApplication.html) to retain password login
+for selected applications. Installing the Redis ticket registry does not by itself persist passwordless accounts
+or configure a shared [passwordless token store](../authentication/Passwordless-Authentication-Tokens.html).
+
+</div>
+
+<div data-quick-feature="delegation" markdown="1">
+
+### Delegated Authentication
+
+This recipe makes CAS an OIDC client of an external identity provider. The separate OpenID Connect feature in
+this wizard makes CAS the provider for your applications; either or both may be installed.
+
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-pac4j-oidc" %}
+
+Register CAS as a confidential client at your external OIDC provider. Allow the callback
+`http://localhost:8080/cas/login?client_name=ExternalOidc` (use your actual HTTPS CAS origin when configured).
+Append to `cas.properties` with the client credentials and discovery URL supplied by that provider:
+
+```properties
+cas.authn.pac4j.oidc[0].generic.client-name=ExternalOidc
+cas.authn.pac4j.oidc[0].generic.id=replace-with-external-client-id
+cas.authn.pac4j.oidc[0].generic.secret=replace-with-external-client-secret
+cas.authn.pac4j.oidc[0].generic.discovery-uri=https://idp.example.org/.well-known/openid-configuration
+cas.authn.pac4j.oidc[0].generic.scope=openid profile email
+```
+{: .cas-settings-linked}
+
+You need a reachable provider and a user allowed to sign in there; the discovery URL above is a placeholder.
+The callback must match the provider's registered redirect URI exactly. See
+[generic OIDC delegation](../integration/Delegate-Authentication-Generic-OpenID-Connect.html) for provider-specific settings,
+and [Delegated Authentication](../integration/Delegate-Authentication.html) for SAML2, CAS and other providers.
+
+If you also select passwordless authentication, add this second entry alongside `casuser` in
+`passwordless-accounts.json` to route a separate demo account to the external provider:
+
+```json
+{
+  "delegateduser": {
+    "@class": "org.apereo.cas.api.PasswordlessUserAccount",
+    "username": "delegateduser",
+    "email": "delegateduser@example.org",
+    "delegatedAuthenticationEligible": "TRUE",
+    "allowedDelegatedClients": [
+      "java.util.ArrayList",
+      [
+        "ExternalOidc"
+      ]
+    ]
+  }
+}
+```
+
+Merge the `delegateduser` entry into the existing JSON object; do not replace the `casuser` entry.
+The external provider still authenticates the user and determines the resulting identity.
+See [passwordless delegation](../authentication/Passwordless-Authentication-Delegation.html).
 
 </div>
 
@@ -617,6 +740,29 @@ Validate it using step 7's `p3/serviceValidate` command with `service=https://du
 
 </div>
 
+<div data-quick-feature="passwordless" markdown="1">
+
+### Verify Passwordless Authentication
+
+Log out, then open `http://localhost:8080/cas/login?service=https://app.example.org/` (or your configured HTTPS origin).
+Enter `casuser`. Open the local mail catcher at `http://localhost:8282`, read the newest sign-in code and enter it
+at CAS. Confirm CAS issues a service ticket without asking for `Mellon`. When trying the MFA demo applications, follow the additional provider prompt required by their application policy.
+Keep the mail catcher running while testing and replace it with a real mail service before deployment.
+
+</div>
+
+<div data-quick-feature="delegation" markdown="1">
+
+### Verify Delegated Authentication
+
+Log out and open `http://localhost:8080/cas/login?service=https://app.example.org/`, using your configured CAS origin.
+Choose `ExternalOidc`, authenticate at the external provider and confirm you return through CAS to the application
+with a service ticket. If passwordless authentication is also selected, enter `delegateduser` from the combined
+account example instead to start delegation. Validate the ticket as shown above and confirm the returned principal
+is the identity expected from your external provider.
+
+</div>
+
 ## 8. Before Production
 
 - Set your own signing and encryption keys for the single sign-on cookie and the login flow:
@@ -631,7 +777,7 @@ Validate it using step 7's `p3/serviceValidate` command with `service=https://du
 
 Also replace demo accounts and client secrets, protect the OIDC keystore, secure and persist Redis, and restrict
 Palantir and actuator access when you enable these features. Protect SAML signing keys, persist MFA device
-registrations, keep GAUTH encryption keys stable and configure your WebAuthn attestation and Duo access policies.
+registrations, keep Google Authenticator encryption keys stable and configure your WebAuthn attestation and Duo access policies.
 
 ## Next Steps
 

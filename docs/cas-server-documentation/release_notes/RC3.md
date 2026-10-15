@@ -475,7 +475,13 @@ The server can also return the recorded authentication events of a person, with 
 location of each, and, when those features are included in the build, the devices a person trusts for multifactor
 authentication and the accounts a person may impersonate. Device fingerprints are never returned.
 It can also preview the interrupt notification a person would see after logging into an application, and score how
-risky a login attempt from a given client IP address and user agent would be.
+risky a login attempt from a given client IP address and user agent would be. It lists the one-time password devices
+and WebAuthn security keys or passkeys a person has registered, without secret keys, codes or key material, and the
+multifactor authentication trigger evaluation now accepts the client IP address, user agent and location of the login
+attempt so that adaptive triggers can be checked. Passwordless accounts (with masked contact details), delegated identity
+providers and Heimdall resources can be looked up as well, and the CAS settings catalog is offered as the MCP resource
+`cas://settings/{name}`, which describes a setting without revealing its value; the resource capability is now turned on with
+`spring.ai.mcp.server.capabilities.resource=true`{: .cas-setting}.
 
 ## Other Stuff
 
