@@ -26,10 +26,17 @@ env:
   RETRY_ATTEMPTS: 2
   RETRY_MINUTES: 45
   CATEGORY_REGEX: ".*"
+  RETRY_FAILED_JOBS: ${{ inputs.retryFailedScenarios == true }}
 ##########################################################################
 
 on:
   workflow_dispatch:
+    inputs:
+      retryFailedScenarios:
+        description: 'Retry Failed Runs'
+        required: false
+        default: false
+        type: boolean
   schedule:
     - cron: '0 17 * * *'
     - cron: '0 10 * * *'  # This needs to match the condition below that disables PTS mode.
@@ -85,6 +92,9 @@ jobs:
   testcategories:
     needs: [ initialize ]
     runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
     outputs:
       categories: ${{ steps.get-categories.outputs.categories }}
     steps:
@@ -103,16 +113,24 @@ jobs:
           gradle-home-cache-excludes: caches/build-cache-1
           cache-encryption-key: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
 
+      - name: List Categories
+        shell: bash
+        run: ./gradlew --build-cache --configure-on-demand -q testCategories > "$RUNNER_TEMP/test-categories.json"
+      - name: Select Previously Failed Jobs
+        if: ${{ inputs.retryFailedScenarios }}
+        shell: bash
+        run: bash ./ci/tests/select-failed-jobs.sh "$RUNNER_TEMP/test-categories.json"
       - id: get-categories
         shell: bash
         run: |
-          categories=$(./gradlew --build-cache --configure-on-demand -q testCategories)
+          categories=$(jq -c . "$RUNNER_TEMP/test-categories.json")
           echo "$categories" | jq .
           echo "categories=$categories" >> "$GITHUB_OUTPUT"
   ##########################################################################
   
   tests:
     needs: [ testcategories ]
+    if: ${{ needs.testcategories.outputs.categories != '[]' }}
     continue-on-error: false
     strategy:
       fail-fast: false
@@ -150,10 +168,13 @@ jobs:
           command: |
             chmod +x ./testcas.sh
             coverage=""
-            if [[ "${{ github.event_name }}" != "pull_request" ]]; then
+            if [[ "${{ github.event_name }}" != "pull_request" ]] && [[ "${RETRY_FAILED_JOBS}" != "true" ]]; then
               coverage="--with-coverage"
             fi
-            if [[ "${{ github.event_name }}" == "schedule" ]] && [[ "${{ github.event.schedule }}" == "0 10 * * *" ]]; then
+            if [[ "${RETRY_FAILED_JOBS}" == "true" ]]; then
+              echo "Retrying a category that failed in the last failed run, without PTS mode"
+              ./testcas.sh --no-watch --category ${{ matrix.category }} --events FAILED --no-pts
+            elif [[ "${{ github.event_name }}" == "schedule" ]] && [[ "${{ github.event.schedule }}" == "0 10 * * *" ]]; then
               echo "Running tests without PTS mode"
               ./testcas.sh --no-watch --category ${{ matrix.category }} --events FAILED --no-pts $coverage
             else 
@@ -189,7 +210,7 @@ jobs:
   coverage:
     runs-on: ubuntu-latest
     needs: [ tests ]
-    if: ${{ !cancelled() && needs.tests.result != 'skipped' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch' || github.event_name == 'schedule') }}
+    if: ${{ !cancelled() && needs.tests.result != 'skipped' && !inputs.retryFailedScenarios && (github.event_name == 'push' || github.event_name == 'workflow_dispatch' || github.event_name == 'schedule') }}
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v7

@@ -508,6 +508,8 @@ can be completed by clients, with `spring.ai.mcp.server.capabilities.completion=
 ## Other Stuff
 
 - {: .changed data-area="project"} A large number of dependencies and libraries have been updated to their latest versions.
+- {: .changed data-area="project"} The unit, integration and functional test workflows, like the native image tests, can be started manually to run only the
+  test categories or browser scenarios that failed in the previous run, against the latest changes. See [this guide](../developer/Test-Process.html).
 - {: .changed} [Groovy scripts](../integration/Apache-Groovy-Scripting.html), whether inline or in a file, that keep no state between
   executions no longer run one request at a time: each execution gets its own instance of the compiled script, so concurrent
   requests through the same script run in parallel. Scripts that declare fields other than `final` ones holding plain values,

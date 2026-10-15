@@ -37,14 +37,14 @@ public class RegisteredServiceJwtTicketCipherExecutor extends JwtTicketCipherExe
 
     @Override
     public @Nullable String decode(final String data, final Optional<RegisteredService> service) {
-        final Optional<Function<String, @Nullable String>> decoder = service.flatMap(this::findDecoderFor);
+        val decoder = service.flatMap(this::findDecoderFor);
         return decoder.isPresent() ? decoder.get().apply(data) : decode(data, ArrayUtils.EMPTY_BOOLEAN_OBJECT_ARRAY);
     }
 
     @Override
     public String encode(final String data, final Optional<RegisteredService> service) {
-        final Optional<UnaryOperator<String>> encoder = service.flatMap(this::findEncoderFor);
-        return encoder.isPresent() ? encoder.get().apply(data) : encode(data, ArrayUtils.EMPTY_BOOLEAN_OBJECT_ARRAY);
+        val encoder = service.flatMap(this::findEncoderFor);
+        return encoder.map(op -> op.apply(data)).orElseGet(() -> encode(data, ArrayUtils.EMPTY_BOOLEAN_OBJECT_ARRAY));
     }
 
     @Override

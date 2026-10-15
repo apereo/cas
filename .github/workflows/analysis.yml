@@ -197,4 +197,4 @@ jobs:
           # Preserve the config's exclusions instead of overriding them with the action default.
           skip: ''
           only_warn: 1
-          ignore_words_list: CONNEXION,CrOS,Aother
+          ignore_words_list: CONNEXION,CrOS,Aother,Connexion

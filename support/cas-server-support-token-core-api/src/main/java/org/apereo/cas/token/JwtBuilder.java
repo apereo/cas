@@ -172,7 +172,7 @@ public class JwtBuilder {
                 if (service.isPresent()) {
                     val registeredService = service.get();
                     LOGGER.trace("Locating service signing and encryption keys for [{}]", registeredService.getServiceId());
-                    final Optional<Function<String, @Nullable String>> decoder = registeredServiceCipherExecutor.findDecoderFor(registeredService);
+                    val decoder = registeredServiceCipherExecutor.findDecoderFor(registeredService);
                     if (decoder.isPresent()) {
                         LOGGER.trace("Decoding JWT based on keys provided by service [{}]", registeredService.getServiceId());
                         return parse(decoder.get().apply(jwtJson));
@@ -259,7 +259,7 @@ public class JwtBuilder {
         LOGGER.debug("Generated JWT [{}]", jwtJson);
 
         if (registeredService != null) {
-            final Optional<UnaryOperator<String>> encoder = registeredServiceCipherExecutor.findEncoderFor(registeredService);
+            val encoder = registeredServiceCipherExecutor.findEncoderFor(registeredService);
             if (encoder.isPresent()) {
                 LOGGER.trace("Encoding JWT based on keys provided by service [{}]", registeredService.getServiceId());
                 RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(registeredService);
