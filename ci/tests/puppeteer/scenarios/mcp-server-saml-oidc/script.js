@@ -103,6 +103,10 @@ async function callTool(sessionId, name, args) {
     assert(client.supportedGrantTypes.includes("authorization_code"));
     assert(client.idTokenSigningAlg === "RS256");
     assert(!JSON.stringify(client).includes("mcp-client-secret-value"), "Client secrets must not be returned");
+    const definition = await send(sessionId, "tools/call", {name: "findService", arguments: {serviceId: 2003}});
+    const definitionText = definition.content[0].text;
+    assert(!definitionText.includes("mcp-client-secret-value"), "Client secrets must be redacted from service definitions");
+    assert(JSON.parse(definitionText).clientSecret === "<redacted>");
     const missingClient = await callTool(sessionId, "findOidcClient", {clientId: "unknown"});
     assert(missingClient.reason !== undefined);
 

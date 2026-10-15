@@ -481,7 +481,11 @@ multifactor authentication trigger evaluation now accepts the client IP address,
 attempt so that adaptive triggers can be checked. Passwordless accounts (with masked contact details), delegated identity
 providers and Heimdall resources can be looked up as well, and the CAS settings catalog is offered as the MCP resource
 `cas://settings/{name}`, which describes a setting without revealing its value; the resource capability is now turned on with
-`spring.ai.mcp.server.capabilities.resource=true`{: .cas-setting}.
+`spring.ai.mcp.server.capabilities.resource=true`{: .cas-setting}. A `searchSettings` tool finds settings by name or
+description. Tickets are now summarized rather than returned in full, so attribute values no longer leave CAS through the
+MCP server, and every MCP tool call and resource read is recorded in the audit log under the MCP user who made it.
+Single sign-on sessions are identified by a one-way session reference rather than their ticket-granting ticket id, and service
+definitions are returned with client secrets, passwords and keys redacted.
 
 ## Other Stuff
 

@@ -1,15 +1,23 @@
 package org.apereo.cas.mcp.tools;
 
 import module java.base;
+import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.mcp.CasMcpSessionReferences;
+import org.apereo.cas.ticket.AuthenticationAwareTicket;
+import org.apereo.cas.ticket.PropertiesAwareTicket;
+import org.apereo.cas.ticket.RenewableServiceTicket;
+import org.apereo.cas.ticket.ServiceAwareTicket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
+import org.apereo.cas.ticket.TicketGrantingTicketAwareTicket;
 import org.apereo.cas.ticket.registry.TicketRegistry;
-import org.apereo.cas.ticket.serialization.TicketSerializationManager;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.Nullable;
 import org.springframework.ai.mcp.annotation.McpTool;
 import org.springframework.ai.mcp.annotation.McpToolParam;
+import org.springframework.aop.support.AopUtils;
 import org.springframework.security.access.prepost.PreAuthorize;
 
 /**
@@ -24,24 +32,76 @@ public class CasTicketRegistryTools {
 
     private final TicketRegistry ticketRegistry;
 
-    private final TicketSerializationManager ticketSerializationManager;
-
     /**
-     * Find a ticket and return its JSON representation.
+     * Find a ticket and summarize it. Attribute values and the serialized ticket are never returned.
      *
-     * @param ticketId the ticket id
-     * @return the ticket, or null if it cannot be found or has expired
+     * @param ticketId the ticket id, or a session reference returned by findSessions
+     * @param username the username of the person, needed when the ticket id is a session reference
+     * @return the ticket summary, or a reason when it cannot be found or has expired
      */
-    @McpTool(description = "Look up a ticket by its id in the ticket registry and return it as JSON",
+    @McpTool(description = "Look up a ticket by its id in the ticket registry and summarize it: its type, when it was "
+        + "created and last used, how often it was used, its expiration policy, the principal and the names of the "
+        + "principal and authentication attributes, the application of a service ticket, the parent ticket, and for a "
+        + "single sign-on session the applications accessed. Accepts a ticket id, or a session reference returned by "
+        + "findSessions together with the person's username. Single sign-on session ids and attribute values are never "
+        + "returned; use findPerson or previewAttributeRelease for attribute values.",
         title = "Find Ticket",
         annotations = @McpTool.McpAnnotations(readOnlyHint = true, destructiveHint = false,
             idempotentHint = true, openWorldHint = false))
     @PreAuthorize("hasRole('MCP_ADMIN')")
-    public @Nullable String findTicket(
-        @McpToolParam(description = "The id of the ticket to look up")
-        final String ticketId) {
-        val ticket = ticketRegistry.getTicket(ticketId);
-        return ticket != null ? ticketSerializationManager.serializeTicket(ticket) : null;
+    public Map<String, Object> findTicket(
+        @McpToolParam(description = "The id of the ticket to look up, or a session reference returned by findSessions")
+        final String ticketId,
+        @McpToolParam(description = "The username of the person, required when ticketId is a session reference", required = false)
+        final @Nullable String username) {
+        val result = new LinkedHashMap<String, Object>();
+        result.put("ticketId", ticketId);
+        val found = CasMcpSessionReferences.resolve(ticketRegistry, ticketId, username);
+        if (found.isEmpty()) {
+            result.put("reason", CasMcpSessionReferences.isReference(ticketId) && StringUtils.isBlank(username)
+                ? "A session reference can only be looked up with the username of the person"
+                : "No ticket is found for " + ticketId + "; it may have expired");
+            return result;
+        }
+        val ticket = found.get();
+        result.put("type", AopUtils.getTargetClass(ticket).getSimpleName());
+        result.put("prefix", ticket.getPrefix());
+        result.put("tenantId", ticket.getTenantId());
+        result.put("creationTime", String.valueOf(ticket.getCreationTime()));
+        result.put("lastTimeUsed", String.valueOf(ticket.getLastTimeUsed()));
+        result.put("countOfUses", ticket.getCountOfUses());
+        result.put("expired", ticket.isExpired());
+        val expirationPolicy = ticket.getExpirationPolicy();
+        if (expirationPolicy != null) {
+            result.put("expirationPolicy", expirationPolicy.getName());
+            result.put("timeToLive", expirationPolicy.getTimeToLive(ticket));
+        }
+        if (ticket instanceof final AuthenticationAwareTicket authenticationAware && authenticationAware.getAuthentication() != null) {
+            result.put("authentication", summarize(Objects.requireNonNull(authenticationAware.getAuthentication())));
+        }
+        if (ticket instanceof final ServiceAwareTicket serviceAware && serviceAware.getService() != null) {
+            result.put("service", serviceAware.getService().getId());
+        }
+        if (ticket instanceof final RenewableServiceTicket renewable) {
+            result.put("fromNewLogin", renewable.isFromNewLogin());
+        }
+        if (ticket instanceof final TicketGrantingTicket ticketGrantingTicket) {
+            result.put("sessionReference", CasMcpSessionReferences.of(ticketGrantingTicket.getId()));
+            result.put("root", ticketGrantingTicket.isRoot());
+            result.put("services", ticketGrantingTicket.getServices().values()
+                .stream()
+                .map(Service::getId)
+                .collect(Collectors.toCollection(TreeSet::new)));
+            val proxiedBy = ticketGrantingTicket.getProxiedBy();
+            result.put("proxiedBy", proxiedBy != null ? proxiedBy.getId() : null);
+            result.put("descendantTickets", ticketGrantingTicket.getDescendantTickets().size());
+        } else if (ticket instanceof final TicketGrantingTicketAwareTicket parentAware && parentAware.getTicketGrantingTicket() != null) {
+            result.put("sessionReference", CasMcpSessionReferences.of(Objects.requireNonNull(parentAware.getTicketGrantingTicket()).getId()));
+        }
+        if (ticket instanceof final PropertiesAwareTicket propertiesAware) {
+            result.put("propertyNames", new TreeSet<>(propertiesAware.getProperties().keySet()));
+        }
+        return result;
     }
 
     /**
@@ -52,7 +112,7 @@ public class CasTicketRegistryTools {
      */
     @McpTool(description = "Find the active single sign-on sessions (ticket-granting tickets) of a person, "
         + "with when each was created and last used, the authentication handlers and the applications accessed. "
-        + "At most " + MAX_SESSIONS + " sessions are summarized; use findTicket with a session id for its full details.",
+        + "At most " + MAX_SESSIONS + " sessions are summarized; use findTicket with a session reference and the username for more details.",
         title = "Find SSO Sessions",
         annotations = @McpTool.McpAnnotations(readOnlyHint = true, destructiveHint = false,
             idempotentHint = true, openWorldHint = false))
@@ -111,10 +171,20 @@ public class CasTicketRegistryTools {
         }
     }
 
+    private static Map<String, Object> summarize(final Authentication authentication) {
+        val summary = new LinkedHashMap<String, Object>();
+        summary.put("principal", authentication.getPrincipal().getId());
+        summary.put("authenticationDate", String.valueOf(authentication.getAuthenticationDate()));
+        summary.put("authenticationHandlers", new TreeSet<>(authentication.getSuccesses().keySet()));
+        summary.put("principalAttributeNames", new TreeSet<>(authentication.getPrincipal().getAttributes().keySet()));
+        summary.put("authenticationAttributeNames", new TreeSet<>(authentication.getAttributes().keySet()));
+        return summary;
+    }
+
     private static Map<String, Object> summarize(final TicketGrantingTicket ticketGrantingTicket) {
         val authentication = ticketGrantingTicket.getAuthentication();
         val summary = new LinkedHashMap<String, Object>();
-        summary.put("id", ticketGrantingTicket.getId());
+        summary.put("sessionReference", CasMcpSessionReferences.of(ticketGrantingTicket.getId()));
         summary.put("creationTime", String.valueOf(ticketGrantingTicket.getCreationTime()));
         summary.put("lastTimeUsed", String.valueOf(ticketGrantingTicket.getLastTimeUsed()));
         summary.put("countOfUses", ticketGrantingTicket.getCountOfUses());

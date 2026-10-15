@@ -46,6 +46,8 @@ import org.apereo.cas.impl.engine.DefaultAuthenticationRiskEvaluator;
 import org.apereo.cas.interrupt.InterruptInquirer;
 import org.apereo.cas.interrupt.InterruptInquiryExecutionPlan;
 import org.apereo.cas.interrupt.InterruptResponse;
+import org.apereo.cas.mcp.audit.CasMcpAuditor;
+import org.apereo.cas.mcp.audit.CasMcpOperation;
 import org.apereo.cas.metadata.CasConfigurationMetadataRepository;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
 import org.apereo.cas.pac4j.client.DelegatedIdentityProviders;
@@ -466,6 +468,11 @@ public abstract class BaseCasMcpTests {
             }
         }
 
+        @Bean(name = "casMcpAuditor")
+        public RecordingCasMcpAuditor casMcpAuditor() {
+            return new RecordingCasMcpAuditor();
+        }
+
         @Bean(name = SurrogateAuthenticationService.BEAN_NAME)
         public SurrogateAuthenticationService surrogateAuthenticationService() {
             return (username, service) -> {
@@ -474,6 +481,17 @@ public abstract class BaseCasMcpTests {
                 }
                 return service.isPresent() ? List.of("jsmith") : List.of("jsmith", "banderson");
             };
+        }
+    }
+
+    @Getter
+    public static class RecordingCasMcpAuditor extends CasMcpAuditor {
+        private final List<CasMcpOperation> operations = new CopyOnWriteArrayList<>();
+
+        @Override
+        public CasMcpOperation record(final CasMcpOperation operation) {
+            operations.add(operation);
+            return super.record(operation);
         }
     }
 

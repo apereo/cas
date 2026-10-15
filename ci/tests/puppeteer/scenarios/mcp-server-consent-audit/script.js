@@ -99,4 +99,11 @@ async function callTool(sessionId, name, args) {
     assert(actions.some((action) => action.startsWith("AUTHENTICATION_SUCCESS")));
     const filtered = await callTool(sessionId, "findAuditRecords", {username: "casuser", action: "AUTHENTICATION_SUCCESS"});
     assert(filtered.count > 0 && filtered.records.every((record) => record.action.includes("AUTHENTICATION_SUCCESS")));
+
+    await cas.separator();
+    await cas.log("Every MCP call is recorded in the audit trail under the MCP user who made it");
+    const mcpCalls = await callTool(sessionId, "findAuditRecords", {username: "mcpadmin", action: "MCP_TOOL_CALL"});
+    assert(mcpCalls.count > 0);
+    assert(mcpCalls.records.some((record) => record.action === "MCP_TOOL_CALL_SUCCESS"
+        && String(record.resource).includes("operation=findConsentDecisions")));
 })();

@@ -6,10 +6,16 @@ import org.apereo.cas.authentication.OneTimeTokenAccount;
 import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
 import org.apereo.cas.mcp.BaseCasMcpTests;
 import org.apereo.cas.mcp.CasMcpEvaluationContextFactory;
+import org.apereo.cas.mcp.CasMcpSessionReferences;
+import org.apereo.cas.mcp.audit.CasMcpAuditor;
+import org.apereo.cas.mcp.audit.CasMcpOperation;
+import org.apereo.cas.mcp.audit.CasMcpOperationAuditActionResolver;
+import org.apereo.cas.mcp.audit.CasMcpOperationAuditResourceResolver;
 import org.apereo.cas.mcp.resources.CasSettingResources;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
 import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
 import org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy;
+import org.apereo.cas.services.DefaultRegisteredServiceProperty;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ReturnAllAttributeReleasePolicy;
 import org.apereo.cas.services.ServicesManager;
@@ -22,12 +28,13 @@ import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
 import org.apereo.cas.ticket.registry.TicketRegistry;
-import org.apereo.cas.ticket.serialization.TicketSerializationManager;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
+import org.apereo.cas.util.text.MessageSanitizer;
 import org.apereo.cas.webauthn.storage.WebAuthnCredentialRepository;
+import com.jayway.jsonpath.JsonPath;
 import com.yubico.data.CredentialRegistration;
 import com.yubico.webauthn.RegisteredCredential;
 import com.yubico.webauthn.data.AuthenticatorTransport;
@@ -35,8 +42,10 @@ import com.yubico.webauthn.data.ByteArray;
 import com.yubico.webauthn.data.UserIdentity;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.inspektr.audit.annotation.Audit;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
+import org.aspectj.lang.JoinPoint;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -55,6 +64,7 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import jakarta.servlet.http.Cookie;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * This is {@link CasMcpToolsTests}.
@@ -152,6 +162,14 @@ class CasMcpToolsTests extends BaseCasMcpTests {
     private CasSettingResources casSettingResources;
 
     @Autowired
+    @Qualifier("casSettingTools")
+    private CasSettingTools casSettingTools;
+
+    @Autowired
+    @Qualifier("casMcpAuditor")
+    private BaseCasMcpTests.RecordingCasMcpAuditor casMcpAuditor;
+
+    @Autowired
     @Qualifier("casOneTimeTokenTools")
     private CasOneTimeTokenTools casOneTimeTokenTools;
 
@@ -180,10 +198,6 @@ class CasMcpToolsTests extends BaseCasMcpTests {
     private TicketRegistry ticketRegistry;
 
     @Autowired
-    @Qualifier(TicketSerializationManager.BEAN_NAME)
-    private TicketSerializationManager ticketSerializationManager;
-
-    @Autowired
     private ConfigurableApplicationContext applicationContext;
 
     @Test
@@ -209,19 +223,23 @@ class CasMcpToolsTests extends BaseCasMcpTests {
         assertTrue(AopUtils.isAopProxy(casDelegatedAuthenticationTools));
         assertTrue(AopUtils.isAopProxy(casHeimdallTools));
         assertTrue(AopUtils.isAopProxy(casSettingResources));
+        assertTrue(AopUtils.isAopProxy(casSettingTools));
     }
 
     @Test
     @WithMockUser(roles = "MCP_ADMIN")
     void verifyFindService() {
         val registeredService = RegisteredServiceTestUtils.getRegisteredService("https://tools.example.org/" + UUID.randomUUID());
+        registeredService.getProperties().put("jwtAsServiceTicketSigningKey", new DefaultRegisteredServiceProperty("secret-signing-key"));
+        registeredService.getProperties().put("accessTokenAsJwtSigningKeyEnabled", new DefaultRegisteredServiceProperty("true"));
         servicesManager.save(registeredService);
         val result = casServiceManagementTools.findService(registeredService.getId());
         assertNotNull(result);
-        val serializer = new RegisteredServiceJsonSerializer(applicationContext);
-        val definition = serializer.from(result);
-        assertEquals(registeredService.getId(), definition.getId());
-        assertEquals(registeredService.getServiceId(), definition.getServiceId());
+        assertFalse(result.contains("secret-signing-key"), result);
+        assertTrue(result.contains("<redacted>"), result);
+        assertTrue(result.contains("accessTokenAsJwtSigningKeyEnabled"), result);
+        assertEquals(registeredService.getId(), JsonPath.<Number>read(result, "$.id").longValue());
+        assertEquals(registeredService.getServiceId(), JsonPath.read(result, "$.serviceId"));
         assertNull(casServiceManagementTools.findService(-1));
     }
 
@@ -230,14 +248,22 @@ class CasMcpToolsTests extends BaseCasMcpTests {
     void verifyFindTicket() throws Throwable {
         val ticketId = new DefaultUniqueTicketIdGenerator().getNewTicketId(TicketGrantingTicket.PREFIX);
         val ticketGrantingTicket = new TicketGrantingTicketImpl(ticketId,
-            CoreAuthenticationTestUtils.getAuthentication("casuser"), NeverExpiresExpirationPolicy.INSTANCE);
+            CoreAuthenticationTestUtils.getAuthentication("casuser", Map.<String, List<Object>>of("memberOf", List.of("secret-group"))),
+            NeverExpiresExpirationPolicy.INSTANCE);
         ticketRegistry.addTicket(ticketGrantingTicket);
-        val result = casTicketRegistryTools.findTicket(ticketId);
-        assertNotNull(result);
-        val ticket = ticketSerializationManager.deserializeTicket(result, TicketGrantingTicket.class);
-        assertEquals(ticketId, ticket.getId());
-        assertEquals("casuser", ticket.getAuthentication().getPrincipal().getId());
-        assertNull(casTicketRegistryTools.findTicket(UUID.randomUUID().toString()));
+        val result = casTicketRegistryTools.findTicket(ticketId, null);
+        assertEquals("TicketGrantingTicketImpl", result.get("type"), result::toString);
+        assertEquals(TicketGrantingTicket.PREFIX, result.get("prefix"));
+        assertEquals(Boolean.FALSE, result.get("expired"));
+        assertEquals(Boolean.TRUE, result.get("root"));
+        assertEquals(CasMcpSessionReferences.of(ticketId), result.get("sessionReference"));
+        val authentication = (Map<?, ?>) result.get("authentication");
+        assertEquals("casuser", authentication.get("principal"));
+        val attributeNames = new HashSet<Object>((Collection<?>) authentication.get("principalAttributeNames"));
+        attributeNames.addAll((Collection<?>) authentication.get("authenticationAttributeNames"));
+        assertTrue(attributeNames.contains("memberOf"), result::toString);
+        assertNoSecrets(result, "secret-group");
+        assertTrue(casTicketRegistryTools.findTicket(UUID.randomUUID().toString(), null).containsKey("reason"));
     }
 
     @Test
@@ -277,8 +303,19 @@ class CasMcpToolsTests extends BaseCasMcpTests {
         assertEquals(username, result.get("username"));
         assertEquals(2L, result.get("count"));
         val sessions = (List<?>) result.get("sessions");
-        assertEquals(ticketIds, sessions.stream().map(session -> ((Map<?, ?>) session).get("id")).collect(Collectors.toSet()));
+        val references = ticketIds.stream().map(CasMcpSessionReferences::of).collect(Collectors.toSet());
+        assertEquals(references, sessions.stream().map(session -> ((Map<?, ?>) session).get("sessionReference")).collect(Collectors.toSet()));
         assertTrue(((Map<?, ?>) sessions.getFirst()).containsKey("authenticationHandlers"));
+        assertTrue(ticketIds.stream().noneMatch(result.toString()::contains), result::toString);
+
+        val reference = references.iterator().next();
+        val byReference = casTicketRegistryTools.findTicket(reference, username);
+        assertEquals(reference, byReference.get("sessionReference"), byReference::toString);
+        assertTrue(ticketIds.stream().noneMatch(byReference.toString()::contains), byReference::toString);
+        assertEquals("A session reference can only be looked up with the username of the person",
+            casTicketRegistryTools.findTicket(reference, null).get("reason"));
+        assertTrue(casTicketRegistryTools.findTicket(reference, "someone-else").containsKey("reason"));
+        assertFalse(casSingleLogoutTools.previewLogout(reference, username).containsKey("reason"));
         assertEquals(0L, casTicketRegistryTools.findSessions("unknown-" + UUID.randomUUID()).get("count"));
     }
 
@@ -534,6 +571,84 @@ class CasMcpToolsTests extends BaseCasMcpTests {
         assertTrue(casSettingResources.describeSetting("cas.unknown.setting").contains("No setting is named"));
     }
 
+    @Test
+    @WithMockUser(roles = "MCP_ADMIN")
+    void verifySearchSettings() {
+        val all = casSettingTools.searchSettings("Server NAME", null);
+        assertEquals(2, all.get("count"), all::toString);
+        assertEquals(Boolean.FALSE, all.get("truncated"));
+        val names = ((List<?>) all.get("settings")).stream().map(setting -> ((Map<?, ?>) setting).get("name")).toList();
+        assertEquals(List.of("cas.server.name", "spring.ai.mcp.server.name"), names);
+
+        val core = casSettingTools.searchSettings("server name", "cas-server-core");
+        assertEquals(1, core.get("count"), core::toString);
+        val setting = (Map<?, ?>) ((List<?>) core.get("settings")).getFirst();
+        assertEquals("cas://settings/cas.server.name", setting.get("uri"));
+        assertEquals("cas-server-core", setting.get("module"));
+        assertEquals("Full name of the CAS server.", setting.get("description"));
+
+        assertTrue(casSettingTools.searchSettings("ab", null).containsKey("reason"));
+        assertEquals(0, casSettingTools.searchSettings("no-such-setting", null).get("count"));
+    }
+
+    @Test
+    @WithMockUser(username = "operator", roles = "MCP_ADMIN")
+    void verifyCallsAreAudited() {
+        val username = "audited-" + UUID.randomUUID();
+        casPersonDirectoryTools.findPerson(username);
+        val success = findAuditedOperation("username", username);
+        assertEquals("findPerson", success.operation());
+        assertEquals("operator", success.operator());
+        assertEquals(CasMcpOperation.Outcome.SUCCESS, success.outcome());
+
+        val serviceUrl = newServiceUrl();
+        assertThrows(IllegalStateException.class,
+            () -> casMultifactorAuthenticationTools.evaluateMultifactorTriggers(username, serviceUrl, null, null, null));
+        val failure = findAuditedOperation("service", serviceUrl);
+        assertEquals("evaluateMultifactorTriggers", failure.operation());
+        assertEquals(CasMcpOperation.Outcome.FAILED, failure.outcome());
+
+        val settingName = "cas.audited." + UUID.randomUUID();
+        casSettingResources.describeSetting(settingName);
+        assertEquals(CasSettingResources.SETTING_URI_TEMPLATE, findAuditedOperation("name", settingName).operation());
+    }
+
+    @Test
+    @WithMockUser(username = "intruder", roles = "USER")
+    void verifyDeniedCallsAreAudited() {
+        val username = "denied-" + UUID.randomUUID();
+        assertThrows(AccessDeniedException.class, () -> casPersonDirectoryTools.findPerson(username));
+        val denied = findAuditedOperation("username", username);
+        assertEquals("intruder", denied.operator());
+        assertEquals(CasMcpOperation.Outcome.DENIED, denied.outcome());
+    }
+
+    @Test
+    void verifyAuditResolvers() {
+        val operation = new CasMcpOperation("operator", "findPerson", Map.of("username", "casuser"), CasMcpOperation.Outcome.DENIED);
+        assertEquals("operator", operation.getAuditablePrincipal());
+        val audit = mock(Audit.class);
+        when(audit.action()).thenReturn(CasMcpAuditor.AUDIT_ACTION);
+        val joinPoint = mock(JoinPoint.class);
+        when(joinPoint.getArgs()).thenReturn(new Object[]{operation});
+        val actionResolver = new CasMcpOperationAuditActionResolver();
+        assertEquals("MCP_TOOL_CALL_DENIED", actionResolver.resolveFrom(joinPoint, operation, audit));
+        assertEquals("MCP_TOOL_CALL_FAILED", actionResolver.resolveFrom(joinPoint, new IllegalStateException(), audit));
+        val resourceResolver = new CasMcpOperationAuditResourceResolver(MessageSanitizer.disabled());
+        assertEquals("operation=findPerson, arguments={username=casuser}", resourceResolver.resolveFrom(joinPoint, operation)[0]);
+        assertEquals("operation=findPerson, arguments={username=casuser}", resourceResolver.resolveFrom(joinPoint, new IllegalStateException())[0]);
+        val sanitizing = new CasMcpOperationAuditResourceResolver(message -> message.replace("casuser", "*******"));
+        assertEquals("operation=findPerson, arguments={username=*******}", sanitizing.resolveFrom(joinPoint, operation)[0]);
+    }
+
+    private CasMcpOperation findAuditedOperation(final String argument, final String value) {
+        return casMcpAuditor.getOperations()
+            .stream()
+            .filter(operation -> value.equals(operation.arguments().get(argument)))
+            .reduce((first, second) -> second)
+            .orElseThrow(() -> new AssertionError("No audited MCP call has " + argument + '=' + value));
+    }
+
     private static void assertNoSecrets(final Map<String, Object> result, final String... secrets) {
         val rendered = result.toString();
         for (val secret : secrets) {
@@ -547,10 +662,10 @@ class CasMcpToolsTests extends BaseCasMcpTests {
         val ticketId = new DefaultUniqueTicketIdGenerator().getNewTicketId(TicketGrantingTicket.PREFIX);
         ticketRegistry.addTicket(new TicketGrantingTicketImpl(ticketId,
             CoreAuthenticationTestUtils.getAuthentication("casuser-" + UUID.randomUUID()), NeverExpiresExpirationPolicy.INSTANCE));
-        val logout = casSingleLogoutTools.previewLogout(ticketId);
+        val logout = casSingleLogoutTools.previewLogout(ticketId, null);
         assertEquals(0, logout.get("count"));
         assertEquals(Boolean.FALSE, logout.get("singleLogoutDisabled"));
-        assertTrue(casSingleLogoutTools.previewLogout("TGT-" + UUID.randomUUID()).containsKey("reason"));
+        assertTrue(casSingleLogoutTools.previewLogout("TGT-" + UUID.randomUUID(), null).containsKey("reason"));
 
         val statistics = casServerStatisticsTools.getRegistryStatistics();
         assertTrue(((Number) statistics.get("singleSignOnSessions")).longValue() >= 1);
@@ -762,7 +877,7 @@ class CasMcpToolsTests extends BaseCasMcpTests {
     @WithMockUser(roles = "USER")
     void verifyToolsDenyUsersWithoutRole() {
         assertThrows(AccessDeniedException.class, () -> casServiceManagementTools.findService(1));
-        assertThrows(AccessDeniedException.class, () -> casTicketRegistryTools.findTicket("TGT-1"));
+        assertThrows(AccessDeniedException.class, () -> casTicketRegistryTools.findTicket("TGT-1", null));
         assertThrows(AccessDeniedException.class, () -> casPersonDirectoryTools.findPerson("casuser"));
         assertThrows(AccessDeniedException.class, () -> casServiceManagementTools.matchService("https://mcp.example.org"));
         assertThrows(AccessDeniedException.class, () -> casTicketRegistryTools.findSessions("casuser"));
@@ -781,7 +896,8 @@ class CasMcpToolsTests extends BaseCasMcpTests {
         assertThrows(AccessDeniedException.class, () -> casDelegatedAuthenticationTools.listIdentityProviders());
         assertThrows(AccessDeniedException.class, () -> casHeimdallTools.findAuthorizableResources("API"));
         assertThrows(AccessDeniedException.class, () -> casSettingResources.describeSetting("cas.server.name"));
-        assertThrows(AccessDeniedException.class, () -> casSingleLogoutTools.previewLogout("TGT-1"));
+        assertThrows(AccessDeniedException.class, () -> casSettingTools.searchSettings("server", null));
+        assertThrows(AccessDeniedException.class, () -> casSingleLogoutTools.previewLogout("TGT-1", null));
         assertThrows(AccessDeniedException.class, () -> casServerStatisticsTools.getRegistryStatistics());
         assertThrows(AccessDeniedException.class, () -> casTenantTools.findTenant("unknown"));
         assertThrows(AccessDeniedException.class, () -> casAuthenticationEventTools.findAuthenticationEvents("casuser", null));
@@ -795,7 +911,7 @@ class CasMcpToolsTests extends BaseCasMcpTests {
     @Test
     void verifyToolsRequireAuthentication() {
         assertThrows(AuthenticationException.class, () -> casServiceManagementTools.findService(1));
-        assertThrows(AuthenticationException.class, () -> casTicketRegistryTools.findTicket("TGT-1"));
+        assertThrows(AuthenticationException.class, () -> casTicketRegistryTools.findTicket("TGT-1", null));
         assertThrows(AuthenticationException.class, () -> casPersonDirectoryTools.findPerson("casuser"));
         assertThrows(AuthenticationException.class, () -> casServiceAccessTools.evaluateAccess("casuser", "https://mcp.example.org"));
     }

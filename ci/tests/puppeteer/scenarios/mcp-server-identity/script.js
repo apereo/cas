@@ -94,6 +94,11 @@ async function callTool(sessionId, name, args) {
     assert(!JSON.stringify(resources).includes("analysts"), "Policy definitions must not be returned");
 
     await cas.separator();
+    const search = await callTool(sessionId, "searchSettings", {query: "server name", module: "cas-server-core"});
+    const found = search.settings.find((entry) => entry.name === "cas.server.name");
+    assert(found !== undefined && found.uri === "cas://settings/cas.server.name");
+    assert(!JSON.stringify(search).includes("https://localhost:8443"), "Setting values must not be returned");
+
     const templates = await send(sessionId, "resources/templates/list", {});
     assert(templates.resourceTemplates.some((template) => template.uriTemplate === "cas://settings/{name}"));
     const read = await send(sessionId, "resources/read", {uri: "cas://settings/cas.server.name"});

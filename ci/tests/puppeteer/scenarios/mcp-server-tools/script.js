@@ -7,7 +7,7 @@ const MCP_USER = `Basic ${btoa("mcpuser:Mellon")}`;
 const CAS_TOOLS = ["evaluateAccess", "evaluateMultifactorTriggers", "findAuditRecords", "findPerson", "findService",
     "findSessions", "findSessionsWithAttribute", "findTenant", "findTicket", "getRegistryStatistics",
     "listMultifactorProviders", "matchService", "previewAttributeRelease", "previewLogout", "searchServices",
-    "findAuthenticationEvents", "findSurrogateAccounts"];
+    "findAuthenticationEvents", "findSurrogateAccounts", "searchSettings"];
 
 let requestId = 0;
 
@@ -168,17 +168,27 @@ async function callTool(authorization, sessionId, name, args) {
 
     const ticketGrantingTicket = await callTool(MCP_ADMIN, sessionId, "findTicket", {ticketId: ticketGrantingTicketId});
     assert(!ticketGrantingTicket.error);
-    assert(ticketGrantingTicket.text.includes(ticketGrantingTicketId));
-    assert(ticketGrantingTicket.text.includes("casuser"));
-    assert(ticketGrantingTicket.text.includes("casuser@example.org"));
+    const ticketSummary = JSON.parse(ticketGrantingTicket.text);
+    assert(ticketSummary.ticketId === ticketGrantingTicketId);
+    assert(ticketSummary.authentication.principal === "casuser");
+    assert(ticketSummary.authentication.principalAttributeNames.includes("mail"));
+    assert(!ticketGrantingTicket.text.includes("casuser@example.org"), "Attribute values must not be returned");
+    const sessionReference = ticketSummary.sessionReference;
+    assert(sessionReference.startsWith("session:"));
 
     const sessions = JSON.parse((await callTool(MCP_ADMIN, sessionId, "findSessions", {username: "casuser"})).text);
     assert(sessions.count >= 1);
-    assert(sessions.sessions.some((session) => session.id === ticketGrantingTicketId));
+    assert(sessions.sessions.some((session) => session.sessionReference === sessionReference));
+    assert(!JSON.stringify(sessions).includes(ticketGrantingTicketId), "Session ids must not be returned");
+    const byReference = JSON.parse((await callTool(MCP_ADMIN, sessionId, "findTicket",
+        {ticketId: sessionReference, username: "casuser"})).text);
+    assert(byReference.sessionReference === sessionReference && byReference.authentication.principal === "casuser");
+    const withoutUsername = JSON.parse((await callTool(MCP_ADMIN, sessionId, "findTicket", {ticketId: sessionReference})).text);
+    assert(withoutUsername.reason !== undefined);
 
     const byAttribute = JSON.parse((await callTool(MCP_ADMIN, sessionId, "findSessionsWithAttribute",
         {attributeName: "mail", attributeValue: "casuser@example.org"})).text);
-    assert(byAttribute.sessions.some((session) => session.id === ticketGrantingTicketId && session.principal === "casuser"));
+    assert(byAttribute.sessions.some((session) => session.sessionReference === sessionReference && session.principal === "casuser"));
     const noneByAttribute = JSON.parse((await callTool(MCP_ADMIN, sessionId, "findSessionsWithAttribute",
         {attributeName: "mail", attributeValue: "nobody@example.org"})).text);
     assert(noneByAttribute.count === 0);
@@ -190,7 +200,12 @@ async function callTool(authorization, sessionId, name, args) {
         "Content-Length": Buffer.byteLength(serviceTicketBody)
     }, 200, serviceTicketBody);
     assert(serviceTicket.startsWith("ST-"));
-    const logout = JSON.parse((await callTool(MCP_ADMIN, sessionId, "previewLogout", {ticketId: ticketGrantingTicketId})).text);
+    const serviceTicketSummary = JSON.parse((await callTool(MCP_ADMIN, sessionId, "findTicket", {ticketId: serviceTicket})).text);
+    assert(serviceTicketSummary.service === "https://localhost:9859/anything/mcp");
+    assert(serviceTicketSummary.sessionReference === sessionReference);
+    assert(!JSON.stringify(serviceTicketSummary).includes(ticketGrantingTicketId), "Session ids must not be returned");
+    const logout = JSON.parse((await callTool(MCP_ADMIN, sessionId, "previewLogout",
+        {ticketId: sessionReference, username: "casuser"})).text);
     assert(logout.singleLogoutDisabled === false);
     assert(logout.count === 1);
     assert(logout.applications[0].service === "https://localhost:9859/anything/mcp");
@@ -219,7 +234,7 @@ async function callTool(authorization, sessionId, name, args) {
             throw error;
         });
     const removedTicket = await callTool(MCP_ADMIN, sessionId, "findTicket", {ticketId: ticketGrantingTicketId});
-    assert(removedTicket.text === "null");
+    assert(JSON.parse(removedTicket.text).reason !== undefined);
 
     await cas.separator();
     const surrogates = JSON.parse((await callTool(MCP_ADMIN, sessionId, "findSurrogateAccounts", {username: "casuser"})).text);

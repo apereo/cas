@@ -38,6 +38,10 @@ class CasMcpFederationToolsTests extends BaseCasMcpTests {
     private CasOidcTools casOidcTools;
 
     @Autowired
+    @Qualifier("casServiceManagementTools")
+    private CasServiceManagementTools casServiceManagementTools;
+
+    @Autowired
     @Qualifier(ServicesManager.BEAN_NAME)
     private ServicesManager servicesManager;
 
@@ -111,6 +115,11 @@ class CasMcpFederationToolsTests extends BaseCasMcpTests {
         assertEquals(new TreeSet<>(Set.of("openid", "profile")), result.get("scopes"));
         assertEquals(McpFederationTestConfiguration.OIDC_ISSUER, result.get("issuer"));
         assertFalse(result.toString().contains("very-secret-client-secret"));
+        val definition = casServiceManagementTools.findService(service.getId());
+        assertNotNull(definition);
+        assertFalse(definition.contains("very-secret-client-secret"), definition);
+        assertTrue(definition.contains("\"clientSecret\":\"<redacted>\""), definition);
+        assertTrue(definition.contains(clientId), definition);
         assertTrue(casOidcTools.findOidcClient("unknown-" + UUID.randomUUID()).containsKey("reason"));
     }
 

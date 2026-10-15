@@ -3,6 +3,8 @@ package org.apereo.cas.config;
 import module java.base;
 import org.apereo.cas.api.AuthenticationRiskEvaluator;
 import org.apereo.cas.api.PasswordlessUserAccountStore;
+import org.apereo.cas.audit.AuditTrailRecordResolutionPlan;
+import org.apereo.cas.audit.AuditTrailRecordResolutionPlanConfigurer;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.authentication.surrogate.SurrogateAuthenticationService;
@@ -12,6 +14,9 @@ import org.apereo.cas.consent.InMemoryConsentRepository;
 import org.apereo.cas.heimdall.authorizer.repository.AuthorizableResourceRepository;
 import org.apereo.cas.interrupt.InterruptInquiryExecutionPlan;
 import org.apereo.cas.mcp.CasMcpEvaluationContextFactory;
+import org.apereo.cas.mcp.audit.CasMcpAuditor;
+import org.apereo.cas.mcp.audit.CasMcpOperationAuditActionResolver;
+import org.apereo.cas.mcp.audit.CasMcpOperationAuditResourceResolver;
 import org.apereo.cas.mcp.resources.CasSettingResources;
 import org.apereo.cas.mcp.tools.CasAuthenticationRiskTools;
 import org.apereo.cas.mcp.tools.CasConsentTools;
@@ -269,12 +274,32 @@ class CasMcpAutoConfigurationTests {
     void verifySettingResourcesActivation() {
         val runner = new ApplicationContextRunner()
             .withUserConfiguration(CasMcpAutoConfiguration.CasMcpSettingsConfiguration.class);
-        runner.run(context -> assertTrue(context.containsBean("casSettingResources")));
+        runner.run(context -> assertTrue(context.containsBean("casSettingResources") && context.containsBean("casSettingTools")));
         runner.withClassLoader(new FilteredClassLoader(CasConfigurationMetadataRepository.class))
             .run(context -> assertFalse(context.containsBean("casSettingResources")));
         runner.withPropertyValues("CasFeatureModule.AI.mcp-settings.enabled=false")
-            .run(context -> assertFalse(context.containsBean("casSettingResources")));
+            .run(context -> assertFalse(context.containsBean("casSettingResources") || context.containsBean("casSettingTools")));
         runner.run(context -> assertTrue(context.getBean(CasSettingResources.class).describeSetting("cas.server.name")
             .contains("The CAS settings catalog is not available")));
+    }
+
+    @Test
+    void verifyAuditConfigurationActivation() {
+        val runner = new ApplicationContextRunner()
+            .withUserConfiguration(CasMcpAutoConfiguration.CasMcpAuditConfiguration.class);
+        runner.run(context -> {
+            assertTrue(context.containsBean("casMcpAuditor"));
+            assertTrue(context.containsBean("casMcpAuditAdvisor"));
+            val plan = mock(AuditTrailRecordResolutionPlan.class);
+            context.getBean("casMcpAuditTrailRecordResolutionPlanConfigurer", AuditTrailRecordResolutionPlanConfigurer.class)
+                .configureAuditTrailRecordResolutionPlan(plan);
+            verify(plan).registerAuditActionResolver(eq(CasMcpAuditor.AUDIT_ACTION_RESOLVER), any(CasMcpOperationAuditActionResolver.class));
+            verify(plan).registerAuditResourceResolver(eq(CasMcpAuditor.AUDIT_RESOURCE_RESOLVER), any(CasMcpOperationAuditResourceResolver.class));
+        });
+        runner.withPropertyValues("CasFeatureModule.AI.mcp-audit.enabled=false")
+            .run(context -> {
+                assertFalse(context.containsBean("casMcpAuditor"));
+                assertFalse(context.containsBean("casMcpAuditAdvisor"));
+            });
     }
 }

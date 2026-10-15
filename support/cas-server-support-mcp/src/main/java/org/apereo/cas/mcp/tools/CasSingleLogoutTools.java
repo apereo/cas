@@ -4,12 +4,14 @@ import module java.base;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logout.slo.SingleLogoutServiceLogoutUrlBuilder;
+import org.apereo.cas.mcp.CasMcpSessionReferences;
 import org.apereo.cas.services.RegisteredServiceLogoutType;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
+import org.jspecify.annotations.Nullable;
 import org.springframework.ai.mcp.annotation.McpTool;
 import org.springframework.ai.mcp.annotation.McpToolParam;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -33,23 +35,27 @@ public class CasSingleLogoutTools {
     /**
      * Preview which applications would be notified if a single sign-on session ended.
      *
-     * @param ticketId the ticket-granting ticket id
+     * @param ticketId the ticket-granting ticket id, or a session reference returned by findSessions
+     * @param username the username of the person, needed when the ticket id is a session reference
      * @return the applications and how each would be notified
      */
     @McpTool(description = "Preview which applications would receive a single logout notification if a single sign-on "
         + "session (ticket-granting ticket) ended now, with the logout URL and channel (back or front channel) of each. "
-        + "Nothing is logged out.",
+        + "Accepts the ticket-granting ticket id, or a session reference returned by findSessions together with the "
+        + "person's username. Nothing is logged out.",
         title = "Preview Single Logout",
         annotations = @McpTool.McpAnnotations(readOnlyHint = true, destructiveHint = false,
             idempotentHint = true, openWorldHint = false))
     @PreAuthorize("hasRole('MCP_ADMIN')")
     public Map<String, Object> previewLogout(
-        @McpToolParam(description = "The id of the ticket-granting ticket of the single sign-on session")
-        final String ticketId) {
+        @McpToolParam(description = "The ticket-granting ticket id, or a session reference returned by findSessions")
+        final String ticketId,
+        @McpToolParam(description = "The username of the person, required when ticketId is a session reference", required = false)
+        final @Nullable String username) {
         val result = new LinkedHashMap<String, Object>();
         result.put("ticketId", ticketId);
         result.put("singleLogoutDisabled", casProperties.getSlo().isDisabled());
-        val ticket = ticketRegistry.getTicket(ticketId);
+        val ticket = CasMcpSessionReferences.resolve(ticketRegistry, ticketId, username).orElse(null);
         if (!(ticket instanceof final TicketGrantingTicket ticketGrantingTicket)) {
             result.put("reason", "No active single sign-on session matches " + ticketId);
             return result;

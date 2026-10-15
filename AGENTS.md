@@ -88,6 +88,12 @@
 - Never return secrets: device fingerprints, trusted-device record keys, client secrets, key material, setting values.
   Tests assert the secret string is absent from the result.
 - A turned-off events repository is a `BeanSupplier` proxy, not null: check `BeanSupplier.isProxy`.
+- Every `@McpTool`/`@McpResource` call is audited by one infrastructure advisor (`CasMcpAuditInterceptor`, ordered before
+  method security so denials are recorded) that hands a `CasMcpOperation` (an `AuditableEntity`, principal = the MCP
+  user) to the `@Audit`-annotated `CasMcpAuditor`. New tools are covered automatically; never add `@Audit` to tool
+  methods (the default audit principal resolver would take the first argument, the person being looked up).
+- Tools summarize; they never return serialized CAS objects (tickets, services' secrets) or attribute values outside
+  findPerson/previewAttributeRelease.
 - MCP capabilities are set in `webapp/cas-server-webapp-resources/src/main/resources/application.properties`
   (`spring.ai.mcp.server.capabilities.*`) and mirrored in `BaseCasMcpTests`; a `@McpResource` or `@McpPrompt` bean is
   silently not advertised while its capability is false. Resources (`org.apereo.cas.mcp.resources`) return JSON built

@@ -14,6 +14,9 @@ import org.jspecify.annotations.Nullable;
 import org.springframework.ai.mcp.annotation.McpTool;
 import org.springframework.ai.mcp.annotation.McpToolParam;
 import org.springframework.security.access.prepost.PreAuthorize;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.json.JsonMapper;
+import tools.jackson.databind.node.ObjectNode;
 
 /**
  * This is {@link CasServiceManagementTools}.
@@ -24,6 +27,15 @@ import org.springframework.security.access.prepost.PreAuthorize;
 @RequiredArgsConstructor
 public class CasServiceManagementTools {
     private static final int MAX_SERVICES = 50;
+
+    private static final String REDACTED = "<redacted>";
+
+    private static final Pattern SECRET_PROPERTY = Pattern.compile(
+        "(?i).*(secret|password|apikey|accesskey|privatekey|secretkey|signingkey|encryptionkey)$");
+
+    private static final String JWKS_PROPERTY = "jwks";
+
+    private static final JsonMapper MAPPER = JsonMapper.builder().build();
 
     private final ServicesManager servicesManager;
 
@@ -37,7 +49,8 @@ public class CasServiceManagementTools {
      * @param serviceId the service id
      * @return the registered service definition, or null if none is found
      */
-    @McpTool(description = "Look up a registered service (application) by its numeric id and return its definition as JSON",
+    @McpTool(description = "Look up a registered service (application) by its numeric id and return its definition as JSON. "
+        + "Client secrets, passwords, keys and inline key sets are replaced with " + REDACTED + ".",
         title = "Find Registered Service",
         annotations = @McpTool.McpAnnotations(readOnlyHint = true, destructiveHint = false,
             idempotentHint = true, openWorldHint = false))
@@ -46,7 +59,7 @@ public class CasServiceManagementTools {
         @McpToolParam(description = "The numeric id of the registered service to look up")
         final long serviceId) {
         val registeredService = servicesManager.findServiceBy(serviceId);
-        return registeredService != null ? registeredServiceSerializer.toString(registeredService) : null;
+        return registeredService != null ? toRedactedJson(registeredService) : null;
     }
 
     /**
@@ -56,7 +69,8 @@ public class CasServiceManagementTools {
      * @return the matching registered service definition, or null if no registration matches
      */
     @McpTool(description = "Find the registered service (application) that matches an application URL, "
-        + "the way CAS does during login, and return its definition as JSON",
+        + "the way CAS does during login, and return its definition as JSON. "
+        + "Client secrets, passwords, keys and inline key sets are replaced with " + REDACTED + ".",
         title = "Match Registered Service",
         annotations = @McpTool.McpAnnotations(readOnlyHint = true, destructiveHint = false,
             idempotentHint = true, openWorldHint = false))
@@ -67,7 +81,7 @@ public class CasServiceManagementTools {
         val webApplicationService = Objects.requireNonNull(serviceFactory.createService(service),
             () -> "Unable to build a service for " + service);
         val registeredService = servicesManager.findServiceBy(webApplicationService);
-        return registeredService != null ? registeredServiceSerializer.toString(registeredService) : null;
+        return registeredService != null ? toRedactedJson(registeredService) : null;
     }
 
     /**
@@ -100,6 +114,39 @@ public class CasServiceManagementTools {
         result.put("count", matches.size());
         result.put("services", matches.stream().limit(MAX_SERVICES).map(CasServiceManagementTools::summarize).toList());
         return result;
+    }
+
+    private String toRedactedJson(final RegisteredService registeredService) {
+        val definition = MAPPER.readTree(registeredServiceSerializer.toString(registeredService));
+        redact(definition);
+        return MAPPER.writeValueAsString(definition);
+    }
+
+    private static void redact(final JsonNode node) {
+        if (node instanceof final ObjectNode objectNode) {
+            val names = objectNode.properties().stream().map(Map.Entry::getKey).toList();
+            for (val name : names) {
+                val value = objectNode.get(name);
+                if (isSecret(name, value)) {
+                    objectNode.put(name, REDACTED);
+                } else {
+                    redact(value);
+                }
+            }
+        } else if (node.isArray()) {
+            node.values().forEach(CasServiceManagementTools::redact);
+        }
+    }
+
+    private static boolean isSecret(final String name, final JsonNode value) {
+        if (value.isNull() || value.isBoolean() || value.isNumber() || (value.isString() && StringUtils.isBlank(value.asString()))) {
+            return false;
+        }
+        if (SECRET_PROPERTY.matcher(name).matches()) {
+            return true;
+        }
+        return JWKS_PROPERTY.equalsIgnoreCase(name) && value.isString()
+            && !Strings.CI.startsWithAny(value.asString(), "http://", "https://", "file:", "classpath:");
     }
 
     private static Map<String, Object> summarize(final RegisteredService registeredService) {

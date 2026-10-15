@@ -4,6 +4,7 @@ import module java.base;
 import org.apereo.cas.api.AuthenticationRiskEvaluator;
 import org.apereo.cas.api.PasswordlessUserAccountStore;
 import org.apereo.cas.audit.AuditTrailExecutionPlan;
+import org.apereo.cas.audit.AuditTrailRecordResolutionPlanConfigurer;
 import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.MultifactorAuthenticationTriggerSelectionStrategy;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
@@ -19,6 +20,10 @@ import org.apereo.cas.interrupt.InterruptInquirer;
 import org.apereo.cas.interrupt.InterruptInquiryExecutionPlan;
 import org.apereo.cas.logout.slo.SingleLogoutServiceLogoutUrlBuilder;
 import org.apereo.cas.mcp.CasMcpEvaluationContextFactory;
+import org.apereo.cas.mcp.audit.CasMcpAuditInterceptor;
+import org.apereo.cas.mcp.audit.CasMcpAuditor;
+import org.apereo.cas.mcp.audit.CasMcpOperationAuditActionResolver;
+import org.apereo.cas.mcp.audit.CasMcpOperationAuditResourceResolver;
 import org.apereo.cas.mcp.resources.CasSettingResources;
 import org.apereo.cas.mcp.tools.CasAuditTools;
 import org.apereo.cas.mcp.tools.CasAuthenticationEventTools;
@@ -36,6 +41,7 @@ import org.apereo.cas.mcp.tools.CasSamlIdPMetadataTools;
 import org.apereo.cas.mcp.tools.CasServerStatisticsTools;
 import org.apereo.cas.mcp.tools.CasServiceAccessTools;
 import org.apereo.cas.mcp.tools.CasServiceManagementTools;
+import org.apereo.cas.mcp.tools.CasSettingTools;
 import org.apereo.cas.mcp.tools.CasSingleLogoutTools;
 import org.apereo.cas.mcp.tools.CasSurrogateTools;
 import org.apereo.cas.mcp.tools.CasTenantTools;
@@ -54,20 +60,27 @@ import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
 import org.apereo.cas.support.events.CasEventRepository;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.apereo.cas.ticket.registry.TicketRegistry;
-import org.apereo.cas.ticket.serialization.TicketSerializationManager;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
+import org.apereo.cas.util.text.MessageSanitizer;
 import org.apereo.cas.web.CasWebSecurityConfigurer;
 import org.apereo.cas.webauthn.storage.WebAuthnCredentialRepository;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import io.modelcontextprotocol.server.McpAsyncServer;
 import io.modelcontextprotocol.server.McpSyncServer;
 import lombok.val;
+import org.springframework.ai.mcp.annotation.McpResource;
+import org.springframework.ai.mcp.annotation.McpTool;
 import org.springframework.ai.mcp.server.common.autoconfigure.McpServerAutoConfiguration;
 import org.springframework.ai.mcp.server.common.autoconfigure.annotations.McpServerSpecificationFactoryAutoConfiguration;
 import org.springframework.ai.mcp.server.common.autoconfigure.properties.McpServerStreamableHttpProperties;
+import org.springframework.aop.Advisor;
+import org.springframework.aop.support.ComposablePointcut;
+import org.springframework.aop.support.DefaultPointcutAdvisor;
+import org.springframework.aop.support.annotation.AnnotationMatchingPointcut;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.boot.LazyInitializationExcludeFilter;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -77,6 +90,8 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.context.annotation.Role;
+import org.springframework.core.Ordered;
 import org.springframework.core.env.Environment;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -141,10 +156,8 @@ public class CasMcpAutoConfiguration {
     @ConditionalOnMissingBean(name = "casTicketRegistryTools")
     public CasTicketRegistryTools casTicketRegistryTools(
         @Qualifier(TicketRegistry.BEAN_NAME)
-        final TicketRegistry ticketRegistry,
-        @Qualifier(TicketSerializationManager.BEAN_NAME)
-        final TicketSerializationManager ticketSerializationManager) {
-        return new CasTicketRegistryTools(ticketRegistry, ticketSerializationManager);
+        final TicketRegistry ticketRegistry) {
+        return new CasTicketRegistryTools(ticketRegistry);
     }
 
     @Bean
@@ -427,6 +440,50 @@ public class CasMcpAutoConfiguration {
             @Qualifier(CasConfigurationMetadataRepository.BEAN_NAME)
             final ObjectProvider<CasConfigurationMetadataRepository> configurationMetadataRepository) {
             return new CasSettingResources(configurationMetadataRepository, environment);
+        }
+
+        @Bean
+        @ConditionalOnMissingBean(name = "casSettingTools")
+        public CasSettingTools casSettingTools(
+            @Qualifier(CasConfigurationMetadataRepository.BEAN_NAME)
+            final ObjectProvider<CasConfigurationMetadataRepository> configurationMetadataRepository) {
+            return new CasSettingTools(configurationMetadataRepository);
+        }
+    }
+
+    @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.AI, module = "mcp-audit")
+    @Configuration(value = "CasMcpAuditConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    static class CasMcpAuditConfiguration {
+        @Bean
+        @ConditionalOnMissingBean(name = "casMcpAuditor")
+        public CasMcpAuditor casMcpAuditor() {
+            return new CasMcpAuditor();
+        }
+
+        @Bean
+        @Role(BeanDefinition.ROLE_INFRASTRUCTURE)
+        @ConditionalOnMissingBean(name = "casMcpAuditAdvisor")
+        public static Advisor casMcpAuditAdvisor(
+            @Qualifier("casMcpAuditor")
+            final ObjectProvider<CasMcpAuditor> casMcpAuditor) {
+            val pointcut = new ComposablePointcut(new AnnotationMatchingPointcut(null, McpTool.class, true))
+                .union(new AnnotationMatchingPointcut(null, McpResource.class, true));
+            val advisor = new DefaultPointcutAdvisor(pointcut, new CasMcpAuditInterceptor(casMcpAuditor));
+            advisor.setOrder(Ordered.HIGHEST_PRECEDENCE);
+            return advisor;
+        }
+
+        @Bean
+        @ConditionalOnMissingBean(name = "casMcpAuditTrailRecordResolutionPlanConfigurer")
+        public AuditTrailRecordResolutionPlanConfigurer casMcpAuditTrailRecordResolutionPlanConfigurer(
+            @Qualifier(MessageSanitizer.BEAN_NAME)
+            final ObjectProvider<MessageSanitizer> messageSanitizer) {
+            return plan -> {
+                plan.registerAuditActionResolver(CasMcpAuditor.AUDIT_ACTION_RESOLVER, new CasMcpOperationAuditActionResolver());
+                plan.registerAuditResourceResolver(CasMcpAuditor.AUDIT_RESOURCE_RESOLVER,
+                    new CasMcpOperationAuditResourceResolver(messageSanitizer.getIfAvailable(MessageSanitizer::disabled)));
+            };
         }
     }
 }

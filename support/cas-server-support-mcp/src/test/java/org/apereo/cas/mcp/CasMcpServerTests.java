@@ -53,7 +53,7 @@ class CasMcpServerTests {
         "matchService", "previewAttributeRelease", "previewLogout", "searchServices",
         "resolveSamlMetadata", "findOidcClient", "listJwksKeys", "findAuthenticationEvents", "findTrustedDevices",
         "findSurrogateAccounts", "previewInterrupt", "evaluateAuthenticationRisk", "findOneTimeTokenAccounts", "findWebAuthnDevices",
-        "findPasswordlessAccount", "listIdentityProviders", "findAuthorizableResources");
+        "findPasswordlessAccount", "listIdentityProviders", "findAuthorizableResources", "searchSettings");
 
     @Nested
     @SpringBootTest(classes = BaseCasMcpTests.SharedTestConfiguration.class,
@@ -139,12 +139,12 @@ class CasMcpServerTests {
             val response = send(MCP_ADMIN, sessionId, callToolRequest("findTicket", "{\"ticketId\":\"%s\"}".formatted(ticketId)));
             assertFalse(isToolError(response), response);
             val text = JsonPath.<String>read(response, "$.result.content[0].text");
-            assertTrue(text.contains(ticketId), text);
-            assertTrue(text.contains("casuser"), text);
+            assertEquals(ticketId, JsonPath.read(text, "$.ticketId"), text);
+            assertEquals("casuser", JsonPath.read(text, "$.authentication.principal"), text);
 
             val missing = send(MCP_ADMIN, sessionId,
                 callToolRequest("findTicket", "{\"ticketId\":\"%s\"}".formatted(UUID.randomUUID())));
-            assertEquals("null", JsonPath.read(missing, "$.result.content[0].text"), missing);
+            assertNotNull(JsonPath.read(JsonPath.<String>read(missing, "$.result.content[0].text"), "$.reason"), missing);
         }
 
         @Test
@@ -188,7 +188,8 @@ class CasMcpServerTests {
             assertFalse(isToolError(response), response);
             val sessions = JsonPath.<String>read(response, "$.result.content[0].text");
             assertEquals(1, JsonPath.<Number>read(sessions, "$.count").intValue(), sessions);
-            assertEquals(List.of(ticketId), JsonPath.read(sessions, "$.sessions[*].id"), sessions);
+            assertEquals(List.of(CasMcpSessionReferences.of(ticketId)), JsonPath.read(sessions, "$.sessions[*].sessionReference"), sessions);
+            assertFalse(sessions.contains(ticketId), sessions);
         }
 
         @Test
@@ -253,7 +254,8 @@ class CasMcpServerTests {
                 "{\"attributeName\":\"department\",\"attributeValue\":\"%s\"}".formatted(department)));
             assertFalse(isToolError(response), response);
             val result = JsonPath.<String>read(response, "$.result.content[0].text");
-            assertEquals(List.of(ticketId), JsonPath.read(result, "$.sessions[*].id"), result);
+            assertEquals(List.of(CasMcpSessionReferences.of(ticketId)), JsonPath.read(result, "$.sessions[*].sessionReference"), result);
+            assertFalse(result.contains(ticketId), result);
             assertEquals(List.of(username), JsonPath.read(result, "$.sessions[*].principal"), result);
         }
 
@@ -525,6 +527,7 @@ class CasMcpServerTests {
                 callToolRequest("findPasswordlessAccount", "{\"username\":\"casuser\"}"),
                 callToolRequest("listIdentityProviders", "{}"),
                 callToolRequest("findAuthorizableResources", "{\"namespace\":\"API\"}"),
+                callToolRequest("searchSettings", "{\"query\":\"server\"}"),
                 callToolRequest("previewInterrupt", "{\"username\":\"casuser\",\"service\":\"https://mcp.example.org\"}"),
                 callToolRequest("evaluateAuthenticationRisk",
                     "{\"username\":\"casuser\",\"service\":\"https://mcp.example.org\",\"clientIpAddress\":\"192.0.2.10\",\"userAgent\":\"Firefox\"}"));
@@ -564,6 +567,8 @@ class CasMcpServerTests {
             assertFalse(webApplicationContext.containsBean("casDelegatedAuthenticationTools"));
             assertFalse(webApplicationContext.containsBean("casHeimdallTools"));
             assertFalse(webApplicationContext.containsBean("casSettingResources"));
+            assertFalse(webApplicationContext.containsBean("casSettingTools"));
+            assertFalse(webApplicationContext.containsBean("casMcpAuditAdvisor"));
             assertFalse(webApplicationContext.containsBean("casAuthenticationRiskTools"));
             assertFalse(webApplicationContext.containsBean("casMcpEvaluationContextFactory"));
             assertFalse(webApplicationContext.containsBean("casMcpEndpointConfigurer"));
