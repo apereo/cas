@@ -1,7 +1,8 @@
 ---
 layout: default
 title: CAS - Quick Start
-description: "A short recipe to run CAS on your machine: try the Docker image, build a WAR overlay, set the essential settings, register an application, connect LDAP and log in."
+description: "Build a local CAS server in eight guided steps, with LDAP, OIDC, SAML2, MFA, authentication interrupt, Redis tickets and Palantir."
+quickStart: true
 category: Planning
 ---
 
@@ -19,6 +20,8 @@ default value, module and other formats right here, without leaving the page. Pr
 anywhere in the documentation to search all settings.
 </p></div>
 
+<div id="cas-quick-start" aria-label="Quick-start wizard"></div>
+
 ## 1. Try It With Docker
 
 If you only want to see CAS running, start the official image. Replace `${tag}` with a CAS version listed on
@@ -34,6 +37,9 @@ Open `http://localhost:8080/cas/login` and log in as `casuser` with the password
 are `server.ssl.enabled`{: .cas-setting} and `server.port`{: .cas-setting} written as environment variables;
 every setting can be passed this way. See [Docker Installation](../installation/Docker-Installation.html) for more.
 
+The Docker image is a standalone preview. The remaining steps build your own overlay with the features you choose.
+Stop the preview with <kbd>Ctrl</kbd>+<kbd>C</kbd> before starting your overlay on the same port.
+
 ## 2. Create an Overlay
 
 A real deployment is built from a WAR overlay: a small Gradle project that pulls in CAS and holds only what you add or
@@ -45,6 +51,25 @@ cd cas
 ```
 
 The [CAS Initializr](../installation/WAR-Overlay-Initializr.html) can also select the CAS version and modules for you.
+
+### Choose Your Features
+
+CAS login and a JSON service registry are included in this guide. Select any additions below; their instructions
+will appear in the following steps. You can return here and change your choices at any time.
+Without JavaScript, all optional recipes are shown.
+
+<fieldset class="quick-start-features">
+<legend>Add to your overlay</legend>
+<label><input type="checkbox" value="ldap"> <span><strong>LDAP</strong>Authenticate against your directory</span></label>
+<label><input type="checkbox" value="oidc"> <span><strong>OpenID Connect</strong>Use CAS as an OpenID Provider</span></label>
+<label><input type="checkbox" value="saml2"> <span><strong>SAML2</strong>Use CAS as a SAML identity provider</span></label>
+<label><input type="checkbox" value="gauth"> <span><strong>MFA with GAUTH</strong>Verify a time-based authenticator code</span></label>
+<label><input type="checkbox" value="webauthn"> <span><strong>MFA with WebAuthn</strong>Use a security key or platform authenticator</span></label>
+<label><input type="checkbox" value="duo"> <span><strong>MFA with Duo Security</strong>Authenticate through Duo Universal Prompt</span></label>
+<label><input type="checkbox" value="interrupt"> <span><strong>Interrupt</strong>Show a notice during login</span></label>
+<label><input type="checkbox" value="redis"> <span><strong>Redis tickets</strong>Store tickets outside the CAS process</span></label>
+<label><input type="checkbox" value="palantir"> <span><strong>Palantir</strong>Explore the administration console</span></label>
+</fieldset>
 
 ## 3. Configure CAS
 
@@ -67,6 +92,103 @@ server.ssl.enabled=false
 
 `cas.server.name`{: .cas-setting} is the address users reach CAS at, and `cas.server.prefix`{: .cas-setting} adds
 the `/cas` context path. Plain HTTP is only for trying CAS locally; a deployment must use HTTPS.
+
+<div data-quick-feature="oidc" markdown="1">
+
+### OpenID Connect Provider
+
+Add the OIDC module to the `dependencies` block in `build.gradle`:
+
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-oidc" %}
+
+Append to `/etc/cas/config/cas.properties`:
+
+```properties
+cas.authn.oidc.core.issuer=http://localhost:8080/cas/oidc
+cas.authn.oidc.jwks.file-system.jwks-file=file:/etc/cas/config/oidc.jwks
+```
+{: .cas-settings-linked}
+
+CAS creates the signing keystore if it is missing; keep this directory writable by CAS and protect the generated
+private keys. See [OIDC](../authentication/OIDC-Authentication.html) and
+[JWKS storage](../authentication/OIDC-Authentication-JWKS-Storage.html).
+
+</div>
+
+<div data-quick-feature="saml2" markdown="1">
+
+### SAML2 Identity Provider
+
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-saml-idp" %}
+
+Create a directory owned by the CAS process for its generated metadata, certificates and private keys:
+
+```bash
+mkdir -p /etc/cas/config/saml
+```
+
+Append to `cas.properties`:
+
+```properties
+cas.authn.saml-idp.core.entity-id=http://localhost:8080/cas/idp
+cas.authn.saml-idp.metadata.file-system.location=file:/etc/cas/config/saml
+```
+{: .cas-settings-linked}
+
+Keep the generated files across restarts. The entity id is CAS's stable SAML identifier; the IdP metadata endpoint
+is `http://localhost:8080/cas/idp/metadata`. Register your service provider in step 4 before attempting SSO.
+See [SAML2 Identity Provider](../authentication/Configuring-SAML2-Authentication.html).
+
+</div>
+
+<div data-quick-feature="redis" markdown="1">
+
+### Redis Ticket Registry
+
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-redis-ticket-registry" %}
+
+Start a local Redis instance in a separate terminal (port 6379 must be free):
+
+```bash
+docker run --rm --name cas-quickstart-redis -p 127.0.0.1:6379:6379 redis:7-alpine redis-server --maxmemory-policy noeviction
+```
+
+Append to `cas.properties`:
+
+```properties
+cas.ticket.registry.redis.host=localhost
+cas.ticket.registry.redis.port=6379
+```
+{: .cas-settings-linked}
+
+Keep Redis running while using CAS. This disposable container loses its data when removed. For a deployment,
+configure persistence, authentication, TLS and shared ticket encryption keys; see
+[Redis Ticket Registry](../ticketing/Redis-Ticket-Registry.html).
+
+</div>
+
+<div data-quick-feature="palantir" markdown="1">
+
+### Palantir Admin Console
+
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-palantir" %}
+
+Append to `cas.properties`, replacing the example password before starting CAS:
+
+```properties
+spring.security.user.name=casadmin
+spring.security.user.password=replace-with-your-own-password
+spring.security.user.roles=ADMIN
+management.endpoints.web.exposure.include=*
+management.endpoints.access.default=UNRESTRICTED
+cas.monitor.endpoints.endpoint.defaults.access=AUTHENTICATED
+```
+{: .cas-settings-linked}
+
+These are separate administrator credentials, not the `casuser` login. Palantir uses actuator endpoints;
+keep them authenticated and restrict exposure before deployment. See the [Admin Console](../installation/Admin-Dashboard.html).
+
+</div>
 
 ## 4. Register an Application
 
@@ -97,7 +219,65 @@ matched against the address the application sends to CAS:
 See [JSON Service Registry](../services/JSON-Service-Management.html) for file naming and reloading, and
 [Service Management](../services/Service-Management.html) for the policies an application can carry.
 
-## 5. Connect Your Directory
+<div data-quick-feature="oidc" markdown="1">
+
+### Register an OIDC Client
+
+Keep the CAS example above and add `/etc/cas/services/OidcExample-2.json`:
+
+```json
+{
+  "@class": "org.apereo.cas.services.OidcRegisteredService",
+  "serviceId": "^http://localhost:9000/callback$",
+  "name": "OidcExample",
+  "id": 2,
+  "clientId": "quickstart-client",
+  "clientSecret": "replace-with-your-own-client-secret",
+  "scopes": ["java.util.HashSet", ["openid"]],
+  "supportedGrantTypes": ["java.util.HashSet", ["authorization_code"]],
+  "supportedResponseTypes": ["java.util.HashSet", ["code"]]
+}
+```
+
+Replace the secret and configure your OIDC client with the same value. The callback must match your application's
+actual redirect URI. This local HTTP example is for evaluation; use HTTPS in deployment.
+See [OIDC Clients](../authentication/OIDC-Authentication-Clients.html).
+
+</div>
+
+<div data-quick-feature="saml2" markdown="1">
+
+### Register a SAML2 Service Provider
+
+Export metadata from your SAML application and save it as `/etc/cas/config/saml/sp-metadata.xml`.
+Use metadata obtained from the application administrator; it supplies the trusted assertion consumer endpoints
+and certificates. Replace the example entity id below with the exact SP entity id, escaped as a regular expression.
+Create `/etc/cas/services/SamlExample-3.json`:
+
+```json
+{
+  "@class": "org.apereo.cas.support.saml.services.SamlRegisteredService",
+  "serviceId": "^https://saml[.]example[.]org/sp$",
+  "name": "SamlExample",
+  "id": 3,
+  "metadataLocation": "file:/etc/cas/config/saml/sp-metadata.xml"
+}
+```
+
+Import CAS's IdP metadata into the application and configure it to trust CAS's signing certificate.
+The example entity id is a placeholder; you need a running SP to complete this recipe.
+See [SAML2 Service Management](../services/SAML2-Service-Management.html).
+
+</div>
+
+## 5. Customize Login
+
+Keep the built-in `casuser` / `Mellon` account for a first run, or select LDAP in step 2.
+The interrupt option can be used with either authentication source.
+
+<div data-quick-feature="ldap" markdown="1">
+
+### Connect Your Directory
 
 This step is optional. Out of the box, CAS accepts the single account set in
 `cas.authn.accept.users`{: .cas-setting}. To log in with LDAP accounts instead, add the LDAP module:
@@ -120,7 +300,199 @@ cas.authn.ldap[0].bind-credential=changeit
 [LDAP Authentication](../authentication/LDAP-Authentication.html) covers Active Directory, direct binds and
 attribute retrieval.
 
+</div>
+
+<div data-quick-feature="interrupt" markdown="1">
+
+### Show an Authentication Interrupt
+
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-interrupt-webflow" %}
+
+Append to `cas.properties`:
+
+```properties
+cas.interrupt.core.trigger-mode=AFTER_AUTHENTICATION
+cas.interrupt.json.location=file:/etc/cas/config/interrupt.json
+```
+{: .cas-settings-linked}
+
+Create `/etc/cas/config/interrupt.json`. If using LDAP, replace `casuser` with your resolved principal id:
+
+```json
+{
+  "casuser": {
+    "message": "Welcome to your CAS evaluation. Continue to your application when ready.",
+    "interrupt": true,
+    "block": false,
+    "ssoEnabled": true
+  }
+}
+```
+
+This notice allows the user to continue. [Authentication Interrupt](../webflow/Webflow-Customization-Interrupt.html)
+explains blocking policies and other sources; the [JSON strategy](../webflow/Webflow-Customization-Interrupt-JSON.html)
+is intended for demos and testing.
+
+</div>
+
+### Try MFA Per Application
+
+Each selected MFA recipe below registers its own demo application. You can enable several providers together
+and test each separately without changing the baseline `Example-1.json` application. Adding a module alone does
+not require MFA: the application's `multifactorPolicy` activates it. See
+[per-application MFA triggers](../mfa/Configuring-Multifactor-Authentication-Triggers-PerApplication.html).
+
+<div data-quick-feature="gauth" markdown="1">
+
+### MFA with Google Authenticator
+
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-gauth" %}
+
+Use Google Authenticator or another TOTP application. The default device repository is in memory, suitable for
+this local demo; registrations disappear when CAS restarts. Keep credential encryption enabled (the default).
+For deployment, configure persistent [device storage](../mfa/GoogleAuthenticator-Authentication.html) and stable
+`cas.authn.mfa.gauth.crypto.encryption.key`{: .cas-setting} and
+`cas.authn.mfa.gauth.crypto.signing.key`{: .cas-setting} values.
+
+Create `/etc/cas/services/GAUTHExample-4.json`:
+
+```json
+{
+  "@class": "org.apereo.cas.services.CasRegisteredService",
+  "serviceId": "^https://gauth[.]example[.]org/$",
+  "name": "GAUTHExample",
+  "id": 4,
+  "multifactorPolicy": {
+    "@class": "org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy",
+    "multifactorAuthenticationProviders": [
+      "java.util.LinkedHashSet",
+      [
+        "mfa-gauth"
+      ]
+    ],
+    "bypassEnabled": false,
+    "forceExecution": true
+  }
+}
+```
+
+This policy requires `mfa-gauth` for this demo application's URL. Test it in step 7.
+
+</div>
+
+<div data-quick-feature="webauthn" markdown="1">
+
+### MFA with WebAuthn
+
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-webauthn" %}
+
+Append to `cas.properties`:
+
+```properties
+cas.authn.mfa.web-authn.core.application-id=https://localhost:8443
+cas.authn.mfa.web-authn.core.relying-party-id=localhost
+cas.authn.mfa.web-authn.core.relying-party-name=CAS Quick Start
+cas.authn.mfa.web-authn.core.allowed-origins=https://localhost:8443
+cas.authn.mfa.web-authn.core.allow-primary-authentication=false
+cas.authn.mfa.web-authn.core.allow-untrusted-attestation=true
+```
+{: .cas-settings-linked}
+
+Use a WebAuthn-capable browser and a security key or platform authenticator. For this recipe, first configure
+CAS at `https://localhost:8443` with a certificate trusted by your browser, following the
+[HTTPS configuration guide](../installation/Configuring-Servlet-Container-Embedded.html). Set
+`cas.server.name=https://localhost:8443`, `server.port=8443` and `server.ssl.enabled=true`, together with the
+keystore settings from that guide. Replace the HTTP CAS origin in this wizard's login URLs, OIDC issuer and SAML
+metadata as applicable. Keep the browser origin and relying-party id consistent when registering
+and using credentials. The demo explicitly accepts untrusted attestation so authenticators without a trusted
+attestation chain can enroll; choose an [attestation policy](../mfa/FIDO2-WebAuthn-Authentication-Attestation.html)
+for deployment. Default registrations are in memory and disappear on restart; configure
+[persistent registration storage](../mfa/FIDO2-WebAuthn-Authentication-Registration.html) for a deployment.
+This recipe uses WebAuthn as a second factor after the password.
+
+Create `/etc/cas/services/WebAuthnExample-5.json`:
+
+```json
+{
+  "@class": "org.apereo.cas.services.CasRegisteredService",
+  "serviceId": "^https://webauthn[.]example[.]org/$",
+  "name": "WebAuthnExample",
+  "id": 5,
+  "multifactorPolicy": {
+    "@class": "org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy",
+    "multifactorAuthenticationProviders": [
+      "java.util.LinkedHashSet",
+      [
+        "mfa-webauthn"
+      ]
+    ],
+    "bypassEnabled": false,
+    "forceExecution": true
+  }
+}
+```
+
+This policy requires `mfa-webauthn` for this demo application's URL. Test it in step 7.
+
+</div>
+
+<div data-quick-feature="duo" markdown="1">
+
+### MFA with Duo Security
+
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-duo" %}
+
+Create a Duo application for Universal Prompt and obtain its client id, client secret and API hostname.
+Use a CAS URL and callback accepted by your Duo application's configuration. For a deployment, configure a trusted
+HTTPS endpoint using the [servlet container guide](../installation/Configuring-Servlet-Container-Embedded.html).
+If changing the CAS origin, update `cas.server.name`, OIDC issuer, WebAuthn origins/relying-party id and SAML metadata
+as applicable, and use the new origin for every login URL in this guide.
+
+Append to `cas.properties`, replacing the placeholders with your Duo application's values:
+
+```properties
+cas.authn.mfa.duo[0].duo-integration-key=replace-with-duo-client-id
+cas.authn.mfa.duo[0].duo-secret-key=replace-with-duo-client-secret
+cas.authn.mfa.duo[0].duo-api-host=api-example.duosecurity.com
+```
+{: .cas-settings-linked}
+
+The primary CAS username must match a user allowed by your Duo policy. Enroll that user's device in Duo;
+CAS needs network access to the Duo API. These are Universal Prompt credentials, not Duo Admin API credentials.
+See [Duo Security](../mfa/DuoSecurity-Authentication.html).
+
+Create `/etc/cas/services/DuoExample-6.json`:
+
+```json
+{
+  "@class": "org.apereo.cas.services.CasRegisteredService",
+  "serviceId": "^https://duo[.]example[.]org/$",
+  "name": "DuoExample",
+  "id": 6,
+  "multifactorPolicy": {
+    "@class": "org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy",
+    "multifactorAuthenticationProviders": [
+      "java.util.LinkedHashSet",
+      [
+        "mfa-duo"
+      ]
+    ],
+    "bypassEnabled": false,
+    "forceExecution": true
+  }
+}
+```
+
+This policy requires `mfa-duo` for this demo application's URL. Test it in step 7.
+
+</div>
+
 ## 6. Build and Run
+
+Before building, check that you added the modules and files for every selected feature. All property snippets
+belong in the same `/etc/cas/config/cas.properties` file; all module snippets belong in the overlay's `dependencies` block.
+
+<div class="quick-start-summary" hidden></div>
 
 ```bash
 ./gradlew clean build
@@ -143,6 +515,108 @@ The response names the user in `<cas:user>`. A service ticket works once and onl
 `cas.ticket.st.time-to-kill-in-seconds`{: .cas-setting}; log in again if CAS reports it as invalid. The
 [CAS Protocol](../protocol/CAS-Protocol.html) describes this exchange in full.
 
+<div data-quick-feature="oidc" markdown="1">
+
+### Verify OpenID Connect
+
+Check discovery:
+
+```bash
+curl --fail http://localhost:8080/cas/oidc/.well-known/openid-configuration
+```
+
+The `issuer` should be `http://localhost:8080/cas/oidc`. Configure an OIDC application with that issuer,
+client id `quickstart-client`, your chosen secret, redirect URI `http://localhost:9000/callback`, scope `openid`
+and authorization-code flow. Start login from that application and confirm it receives and validates an ID token.
+Discovery alone does not test a full login; the callback must be served by your OIDC application.
+
+</div>
+
+<div data-quick-feature="interrupt" markdown="1">
+
+### Verify the Notice
+
+Log out at `http://localhost:8080/cas/logout`, then log in again as the user named in `interrupt.json`.
+Confirm the notice appears and that Continue lets you proceed to the application.
+
+</div>
+
+<div data-quick-feature="redis" markdown="1">
+
+### Verify Redis Tickets
+
+After logging in, inspect ticket keys without displaying ticket contents:
+
+```bash
+docker exec cas-quickstart-redis redis-cli --scan --pattern 'CAS_TICKET:*'
+```
+
+Expect ticket keys while the login session is active. Check the CAS startup logs if no keys appear.
+
+</div>
+
+<div data-quick-feature="palantir" markdown="1">
+
+### Open Palantir
+
+Open `http://localhost:8080/cas/palantir` and sign in as `casadmin` with the administrator password you chose.
+Confirm the dashboard loads and inspect your registered applications. Available panels depend on the modules installed.
+
+</div>
+
+<div data-quick-feature="saml2" markdown="1">
+
+### Verify SAML2
+
+```bash
+curl --fail http://localhost:8080/cas/idp/metadata
+```
+
+Confirm the metadata contains your configured entity id. Start an SP-initiated login from the application
+registered in step 4, authenticate at CAS and confirm the SP accepts the signed response and establishes a
+session. Downloading metadata alone does not verify SSO.
+
+</div>
+
+<div data-quick-feature="gauth" markdown="1">
+
+### Verify MFA with Google Authenticator
+
+Log out of CAS, then open `http://localhost:8080/cas/login?service=https://gauth.example.org/` and enter your
+primary credentials. On first use, scan the enrollment QR code with your authenticator application and confirm a current code.
+Log out and log in again; verify that CAS requires a new TOTP code from the registered device.
+
+The demo application URL is a placeholder: a redirect carrying a `ticket` shows that CAS completed login.
+Validate it using step 7's `p3/serviceValidate` command with `service=https://gauth.example.org/` and the new ticket.
+
+</div>
+
+<div data-quick-feature="webauthn" markdown="1">
+
+### Verify MFA with WebAuthn
+
+Log out of CAS, then open `https://localhost:8443/cas/login?service=https://webauthn.example.org/` and enter your
+primary credentials. On first use, complete device registration using the browser prompt. Log out and log in again; verify that
+CAS asks you to use the registered authenticator after your password. Use the HTTPS CAS origin for ticket validation too.
+
+The demo application URL is a placeholder: a redirect carrying a `ticket` shows that CAS completed login.
+Validate it using step 7's `p3/serviceValidate` command with `service=https://webauthn.example.org/` and the new ticket.
+
+</div>
+
+<div data-quick-feature="duo" markdown="1">
+
+### Verify MFA with Duo Security
+
+Log out of CAS, then open `http://localhost:8080/cas/login?service=https://duo.example.org/` and enter your
+primary credentials. Confirm CAS redirects to Duo Universal Prompt. Complete an enrolled factor and verify that Duo returns you
+to CAS and CAS issues the service ticket. Use your configured CAS origin if it differs from localhost.
+
+The demo application URL is a placeholder: a redirect carrying a `ticket` shows that CAS completed login.
+Validate it using step 7's `p3/serviceValidate` command with `service=https://duo.example.org/` and the new ticket.
+
+</div>
+
 ## 8. Before Production
 
 - Set your own signing and encryption keys for the single sign-on cookie and the login flow:
@@ -154,6 +628,10 @@ The response names the user in `<cas:user>`. A service ticket works once and onl
 - With more than one node, choose a shared [ticket registry](../ticketing/Configuring-Ticketing-Components.html)
   and keep the service definitions identical on every node.
 - Read the [Security Guide](Security-Guide.html).
+
+Also replace demo accounts and client secrets, protect the OIDC keystore, secure and persist Redis, and restrict
+Palantir and actuator access when you enable these features. Protect SAML signing keys, persist MFA device
+registrations, keep GAUTH encryption keys stable and configure your WebAuthn attestation and Duo access policies.
 
 ## Next Steps
 

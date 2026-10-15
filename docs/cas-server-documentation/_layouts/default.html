@@ -259,6 +259,9 @@
 
     <script src='{{basePath}}/javascripts/URI.js'></script>
     <script src='{{basePath}}/javascripts/site.js'></script>
+    {% if page.quickStart %}
+    <script src='{{basePath}}/javascripts/quick-start.js'></script>
+    {% endif %}
 
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@docsearch/js@3.9.0/dist/umd/index.js" integrity="sha384-QhsjJ84XKaqUeM7eZpvYApdPamFboJLQg4BD2CCCSiUOL4cWzLp5caae6oW/oAXh" crossorigin="anonymous"></script>
     <script type="text/javascript" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js" integrity="sha384-ficRBwtap/VLzILv81vIvgp30PoJYnlCm96tPpNYHXAf+h9SIThOZxxIzRUzbpAh" crossorigin="anonymous"></script>

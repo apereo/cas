@@ -156,3 +156,8 @@ blockquote, #dev-doc-info {
     color: black !important;
     background: none !important;
 }
+
+@media print {
+    #cas-quick-start, .quick-start-controls { display: none !important; }
+    .quick-start-step[hidden], [data-quick-feature][hidden] { display: block !important; }
+}
