@@ -810,6 +810,11 @@ The documentation now explains how to let browser-based MCP clients reach the se
   have expired, the one that expired last is kept, so the application keeps refusing requests until it is given a new secret.
   Updating a [dynamically registered](../authentication/OIDC-Authentication-Dynamic-Registration.html) client now replaces an
   expired client secret with a new one instead of extending the expiration of the expired secret.
+- {: .changed data-area="oidc"} A client that authenticates at the token endpoint with [`client_secret_jwt`](../authentication/OIDC-Authentication-AccessToken-AuthMethods.html)
+  is now verified with its `clientSecret`, as OpenID Connect requires, whenever the application's `tokenEndpointAuthenticationMethod`
+  is `client_secret_jwt` or left blank. A raw secret in the application's `jwks` is still accepted, but that fallback is deprecated
+  for removal. A secret shorter than the signing algorithm requires (32 bytes for `HS256`, 64 for `HS512`) is skipped with a
+  warning that names the application.
 - {: .changed data-area="oidc"} When CAS works out which application a login is for, a request object carried by the
   OAuth or OpenID Connect authorization request is now unpacked and verified once, instead of once for each of the client
   identifier, redirect URI and grant type read from it.

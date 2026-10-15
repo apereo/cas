@@ -9,6 +9,6 @@
   "generateRefreshToken": true,
   "scopes" : [ "java.util.HashSet", [ "profile", "email", "address", "phone" ] ],
   "supportedGrantTypes": [ "java.util.HashSet", [ "client_credentials" ] ],
-  "tokenEndpointAuthenticationMethod": "client_secret_jwt",
+  "tokenEndpointAuthenticationMethod": "private_key_jwt",
   "jwks": "file:${#env['PWD']}/ci/tests/puppeteer/scenarios/${#env['SCENARIO']}/keystore.json"
 }
