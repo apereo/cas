@@ -93,7 +93,9 @@
   user) to the `@Audit`-annotated `CasMcpAuditor`. New tools are covered automatically; never add `@Audit` to tool
   methods (the default audit principal resolver would take the first argument, the person being looked up).
 - Tools summarize; they never return serialized CAS objects (tickets, services' secrets) or attribute values outside
-  findPerson/previewAttributeRelease.
+  findPerson/previewAttributeRelease. Ticket-granting ticket ids are bearer tokens: return
+  `CasMcpSessionReferences.of(id)` and accept references back through `CasMcpSessionReferences.resolve` (with the
+  username). Service JSON from findService/matchService goes through the secret redaction in `CasServiceManagementTools`.
 - MCP capabilities are set in `webapp/cas-server-webapp-resources/src/main/resources/application.properties`
   (`spring.ai.mcp.server.capabilities.*`) and mirrored in `BaseCasMcpTests`; a `@McpResource` or `@McpPrompt` bean is
   silently not advertised while its capability is false. Resources (`org.apereo.cas.mcp.resources`) return JSON built
@@ -285,6 +287,19 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
   properties lexer splits keys with `[0]` into separate tokens. `casSettingsFlat()` drops anything in brackets and any
   purely numeric name segment, so `[0]`, `[]`, the catalog's map notation `.[key]`, `.0.` and the environment variable form
   `_0_` all match the same setting. No catalog name has a numeric segment of its own; recheck that if one is ever added. `planning/Quick-Start.md` is the reference page.
+- Quick Start wizard (`planning/Quick-Start.md`, `javascripts/quick-start.js`): the page needs exactly eight `## N. ` steps;
+  anything else on the page is an `###` inside one of them, or it shows on every step. `data-quick-feature` takes a
+  space-separated list and shows the section when any listed feature is selected. Each checkbox's `data-module` must match
+  the `casmodule` include in its recipe (the fieldset's `data-modules` holds the always-included ones): step 2's
+  Initializr command and step 6's `dependencies` block are built from them, and step 6's `cas.properties` from every
+  visible `.cas-settings-linked` block in steps 3–5, in page order, under the nearest heading. Generated blocks are
+  plain fenced blocks inside `[data-quick-output]`; the script rewrites their text and gutter and calls
+  `linkCasSettingsBlock()` from `site.js` again. The selection is page state: popstate restores the step only, and a link
+  into a recipe selects its first feature with a notice. Checkboxes may declare `data-requires` and `data-excludes`
+  (space-separated feature values; Interrupt requires Groovy, Redis and Hazelcast exclude each other, declared on both
+  sides): checking selects requirements and clears conflicts, clearing a feature clears its dependents, Check All adds
+  only what fits, and a selection from the address is normalized with earlier features winning. Test the wizard in
+  headless Chromium against a rendered copy (Back/Forward, deep links, rules, Check All output) after changes.
 - Every documentation page needs an opening paragraph right after the H1 that the layout can use as its description:
   at least 40 characters, not ending in a colon, and not a "see this guide" or dependency lead-in.
 - On phones (`max-width: 760px`) the sticky header is offset by `--docs-masthead-height` so only the navigation bar

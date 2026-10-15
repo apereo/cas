@@ -5657,7 +5657,7 @@ h4.cas-change-topic {
     margin: 0;
     gap: .5rem;
 }
-#cas-quick-start button, .quick-start-controls button, .quick-start-selection button {
+#cas-quick-start button, .quick-start-controls button, .quick-start-selection button, .quick-start-summary button {
     color: var(--docs-text);
     background: var(--docs-surface);
     border: 1px solid var(--docs-line);
@@ -5673,6 +5673,7 @@ h4.cas-change-topic {
     border-color: var(--docs-accent);
 }
 #cas-quick-start button:focus-visible, .quick-start-controls button:focus-visible, .quick-start-selection button:focus-visible,
+.quick-start-summary button:focus-visible,
 .quick-start-features label:focus-within { outline: 3px solid var(--docs-cyan); outline-offset: 3px; }
 .quick-start-controls { margin: 2rem 0; }
 .quick-start-controls button:disabled, .quick-start-selection button:disabled { opacity: .45; cursor: default; }
@@ -5692,7 +5693,30 @@ h4.cas-change-topic {
 .quick-start-features label:has(:checked) { border-color: var(--docs-accent); background: var(--docs-accent-soft); }
 .quick-start-features input { margin-top: .3rem; accent-color: var(--docs-accent); }
 .quick-start-features strong { display: block; color: var(--docs-heading); }
-.quick-start-summary { padding: 1rem; background: var(--docs-soft); border-radius: var(--docs-radius); }
+.quick-start-summary {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: .75rem;
+    padding: 1rem;
+    background: var(--docs-soft);
+    border-radius: var(--docs-radius);
+}
+.quick-start-summary p, .quick-start-notice p { margin: 0; }
+.quick-start-notice {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: .75rem;
+    margin-top: 1rem;
+    padding: .75rem 1rem;
+    border: 1px solid var(--docs-accent);
+    border-radius: var(--docs-radius-sm);
+    background: var(--docs-accent-soft);
+}
+.quick-start-notice[hidden], .quick-start-output[hidden] { display: none !important; }
 .quick-start-step[hidden], [data-quick-feature][hidden] { display: none !important; }
 @media (max-width: 760px) {
     #cas-quick-start ol { grid-template-columns: repeat(2, minmax(0, 1fr)); }

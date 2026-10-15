@@ -169,6 +169,12 @@ The CAS documentation site has received a visual and functional overhaul. Notabl
   opens its description, default value, module and `.properties`, YAML or environment variable form in place, without
   leaving the page. Settings mentioned throughout the documentation and release notes are marked the same way, and the <kbd>Shift</kbd> <kbd>Shift</kbd> search shows a
   setting's details directly instead of moving to the configuration catalog.
+  Features are chosen before the overlay is generated: the Initializr command, pinned to the same release as the
+  Docker preview, carries the selected modules, and the build step assembles the overlay's `dependencies` block and the
+  complete `cas.properties` for the selection. The selection now survives the browser's Back button, and WebAuthn runs
+  on the same `http://localhost:8080` server as every other recipe. New recipes cover Groovy scripting and the
+  Hazelcast ticket registry, and interrupt notifications now come from a Groovy script. The wizard keeps the selection
+  consistent: interrupt notifications bring in Groovy, and Redis and Hazelcast replace each other.
 - The site loads two web fonts instead of four; code and the sidebar use the system monospace font. Images hosted on
   third-party sites are removed, and the [logout](../installation/Logout-Single-Signout.html) session example is now a table.
 - Release notes open with a digest of each release candidate: what to review before upgrading, the highlights and,

@@ -2092,6 +2092,30 @@ function openCasSettingsPalette(query) {
     });
 }
 
+/**
+ * Turns each setting name in a rendered properties block into a button that opens the settings palette.
+ * Safe to call again after the block's text changes, as the Quick Start wizard does.
+ *
+ * @param block the element marked with cas-settings-linked
+ */
+function linkCasSettingsBlock(block) {
+    const code = block.querySelector(".rouge-code pre") || block.querySelector("pre code");
+    if (!code) {
+        return;
+    }
+    code.innerHTML = code.textContent.split("\n").map(line => {
+        const setting = line.match(/^(\s*)([^\s#!=:][^\s=:]*)(\s*[=:]\s*)(.*)$/);
+        if (/^\s*[#!]/.test(line)) {
+            return `<span class="c">${casSettingsEscape(line)}</span>`;
+        }
+        if (!setting) {
+            return casSettingsEscape(line);
+        }
+        const [, indent, name, separator, value] = setting;
+        return `${indent}<button type="button" class="cas-setting-link cas-setting-link-code" data-setting="${casSettingsEscape(name)}" title="Look up this setting" aria-haspopup="dialog">${casSettingsEscape(name)}</button><span class="p">${casSettingsEscape(separator)}</span><span class="s">${casSettingsEscape(value)}</span>`;
+    }).join("\n");
+}
+
 function initializeCasSettingLinks() {
     const container = document.getElementById("cas-docs-container") || document.body;
     const attach = (element, name) => {
@@ -2108,23 +2132,7 @@ function initializeCasSettingLinks() {
     container.querySelectorAll("code.cas-setting").forEach(code => {
         attach(code, code.textContent.trim().replace(/\s*[=:].*$/, "")).insertAdjacentHTML("beforeend", "<i class=\"fa fa-sliders\" aria-hidden=\"true\"></i>");
     });
-    container.querySelectorAll(".cas-settings-linked").forEach(block => {
-        const code = block.querySelector(".rouge-code pre") || block.querySelector("pre code");
-        if (!code) {
-            return;
-        }
-        code.innerHTML = code.textContent.split("\n").map(line => {
-            const setting = line.match(/^(\s*)([^\s#!=:][^\s=:]*)(\s*[=:]\s*)(.*)$/);
-            if (/^\s*[#!]/.test(line)) {
-                return `<span class="c">${casSettingsEscape(line)}</span>`;
-            }
-            if (!setting) {
-                return casSettingsEscape(line);
-            }
-            const [, indent, name, separator, value] = setting;
-            return `${indent}<button type="button" class="cas-setting-link cas-setting-link-code" data-setting="${casSettingsEscape(name)}" title="Look up this setting" aria-haspopup="dialog">${casSettingsEscape(name)}</button><span class="p">${casSettingsEscape(separator)}</span><span class="s">${casSettingsEscape(value)}</span>`;
-        }).join("\n");
-    });
+    container.querySelectorAll(".cas-settings-linked").forEach(linkCasSettingsBlock);
     document.addEventListener("click", event => {
         const link = event.target.closest(".cas-setting-link");
         if (link) {

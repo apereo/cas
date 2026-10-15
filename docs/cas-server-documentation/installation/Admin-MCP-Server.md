@@ -127,8 +127,6 @@ Risk is scored for the client details passed to `evaluateAuthenticationRisk`, ne
 the operator; a person with no recorded sign-ins is always regarded as risky, and each evaluation is recorded in the
 [audit log](../audits/Audits.html).
 
-{% include_cached featuretoggles.html features="AI.mcp-consent,AI.mcp-saml-idp,AI.mcp-oidc,AI.mcp-trusted-mfa,AI.mcp-surrogate,AI.mcp-interrupt,AI.mcp-electrofence,AI.mcp-otp,AI.mcp-webauthn,AI.mcp-passwordless,AI.mcp-delegated,AI.mcp-heimdall" %}
-
 ## Resources
 
 The MCP server offers the CAS settings catalog as an [MCP resource](https://modelcontextprotocol.io/specification/2025-11-25/server/resources)

@@ -24,13 +24,15 @@ anywhere in the documentation to search all settings.
 
 ## 1. Try It With Docker
 
-If you only want to see CAS running, start the official image. Replace `${tag}` with a CAS version listed on
-[Docker Hub](https://hub.docker.com/r/apereo/cas/tags):
+If you only want to see CAS running, start the official image. Set `CAS_VERSION` to a CAS release listed on
+[Docker Hub](https://hub.docker.com/r/apereo/cas/tags), such as `8.0.2`; step 2 builds your overlay from the same
+release:
 
 ```bash
+export CAS_VERSION=8.0.2
 docker run --rm -p 8080:8080 \
   -e SERVER_SSL_ENABLED=false -e SERVER_PORT=8080 \
-  apereo/cas:${tag}
+  "apereo/cas:${CAS_VERSION}"
 ```
 
 Open `http://localhost:8080/cas/login` and log in as `casuser` with the password `Mellon`. The two variables
@@ -43,35 +45,51 @@ Stop the preview with <kbd>Ctrl</kbd>+<kbd>C</kbd> before starting your overlay 
 ## 2. Create an Overlay
 
 A real deployment is built from a WAR overlay: a small Gradle project that pulls in CAS and holds only what you add or
-change. With a JDK installed (see [Installation Requirements](Installation-Requirements.html)), generate one:
-
-```bash
-curl https://getcas.apereo.org/starter.tgz -d type=cas-overlay -d baseDir=cas | tar -xzvf -
-cd cas
-```
-
-The [CAS Initializr](../installation/WAR-Overlay-Initializr.html) can also select the CAS version and modules for you.
+change. Choose your features first, then generate the overlay.
 
 ### Choose Your Features
 
 CAS login and a JSON service registry are included in this guide. Select any additions below; their instructions
 will appear in the following steps. You can return here and change your choices at any time.
-Without JavaScript, all optional recipes are shown.
+Interrupt notifications use Groovy Scripting, and CAS uses one ticket registry, so Redis and Hazelcast exclude each
+other; the wizard adjusts your selection and tells you when it does. Without JavaScript, all optional recipes are shown.
 
-<fieldset class="quick-start-features">
+<fieldset class="quick-start-features" data-modules="cas-server-support-json-service-registry">
 <legend>Add to your overlay</legend>
-<label><input type="checkbox" value="ldap"> <span><strong>LDAP Authentication</strong>Authenticate against your directory</span></label>
-<label><input type="checkbox" value="oidc"> <span><strong>OpenID Connect Provider</strong>Use CAS as an OpenID Provider</span></label>
-<label><input type="checkbox" value="saml2"> <span><strong>SAML2 Identity Provider</strong>Use CAS as a SAML identity provider</span></label>
-<label><input type="checkbox" value="gauth"> <span><strong>MFA with Google Authenticator</strong>Verify a time-based authenticator code</span></label>
-<label><input type="checkbox" value="webauthn"> <span><strong>MFA with WebAuthn</strong>Use a security key or platform authenticator</span></label>
-<label><input type="checkbox" value="duo"> <span><strong>MFA with Duo Security</strong>Authenticate through Duo Universal Prompt</span></label>
-<label><input type="checkbox" value="passwordless"> <span><strong>Passwordless Authentication</strong>Sign in with an emailed one-time code</span></label>
-<label><input type="checkbox" value="delegation"> <span><strong>Delegated Authentication</strong>Sign in through an external identity provider</span></label>
-<label><input type="checkbox" value="interrupt"> <span><strong>Interrupt Notifications</strong>Show a notice during login</span></label>
-<label><input type="checkbox" value="redis"> <span><strong>Redis Ticket Registry</strong>Store tickets outside the CAS process</span></label>
-<label><input type="checkbox" value="palantir"> <span><strong>Palantir Admin Console</strong>Explore the administration console</span></label>
+<label><input type="checkbox" value="ldap" data-module="cas-server-support-ldap"> <span><strong>LDAP Authentication</strong>Authenticate against your directory</span></label>
+<label><input type="checkbox" value="oidc" data-module="cas-server-support-oidc"> <span><strong>OpenID Connect Provider</strong>Use CAS as an OpenID Provider</span></label>
+<label><input type="checkbox" value="saml2" data-module="cas-server-support-saml-idp"> <span><strong>SAML2 Identity Provider</strong>Use CAS as a SAML identity provider</span></label>
+<label><input type="checkbox" value="gauth" data-module="cas-server-support-gauth"> <span><strong>MFA with Google Authenticator</strong>Verify a time-based authenticator code</span></label>
+<label><input type="checkbox" value="webauthn" data-module="cas-server-support-webauthn"> <span><strong>MFA with WebAuthn</strong>Use a security key or platform authenticator</span></label>
+<label><input type="checkbox" value="duo" data-module="cas-server-support-duo"> <span><strong>MFA with Duo Security</strong>Authenticate through Duo Universal Prompt</span></label>
+<label><input type="checkbox" value="passwordless" data-module="cas-server-support-passwordless-webflow"> <span><strong>Passwordless Authentication</strong>Sign in with an emailed one-time code</span></label>
+<label><input type="checkbox" value="delegation" data-module="cas-server-support-pac4j-oidc"> <span><strong>Delegated Authentication</strong>Sign in through an external identity provider</span></label>
+<label><input type="checkbox" value="groovy" data-module="cas-server-core-scripting"> <span><strong>Groovy Scripting</strong>Customize CAS with Apache Groovy scripts</span></label>
+<label><input type="checkbox" value="interrupt" data-module="cas-server-support-interrupt-webflow" data-requires="groovy"> <span><strong>Interrupt Notifications</strong>Show a notice during login from a Groovy script</span></label>
+<label><input type="checkbox" value="redis" data-module="cas-server-support-redis-ticket-registry" data-excludes="hazelcast"> <span><strong>Redis Ticket Registry</strong>Store tickets outside the CAS process</span></label>
+<label><input type="checkbox" value="hazelcast" data-module="cas-server-support-hazelcast-ticket-registry" data-excludes="redis"> <span><strong>Hazelcast Ticket Registry</strong>Share tickets in an embedded Hazelcast cluster</span></label>
+<label><input type="checkbox" value="palantir" data-module="cas-server-support-palantir"> <span><strong>Palantir Admin Console</strong>Explore the administration console</span></label>
 </fieldset>
+
+### Generate the Overlay
+
+With a JDK installed (see [Installation Requirements](Installation-Requirements.html)), generate the overlay from the
+[CAS Initializr](../installation/WAR-Overlay-Initializr.html) for the release in `CAS_VERSION` from step 1:
+
+<div data-quick-output="overlay" markdown="1">
+
+```bash
+curl https://getcas.apereo.org/starter.tgz -d type=cas-overlay -d baseDir=cas \
+  -d casVersion="${CAS_VERSION:?set CAS_VERSION as in step 1}" \
+  -d dependencies=webapp-tomcat,support-json-service-registry | tar -xzvf -
+cd cas
+```
+
+</div>
+
+The command includes the modules of the features you selected, and step 6 lists them again with all of your
+settings. The module snippets in the next steps show what each feature adds; you need them only to extend an overlay
+you already have. Without JavaScript, the command includes the JSON service registry alone.
 
 ## 3. Configure CAS
 
@@ -143,6 +161,20 @@ See [SAML2 Identity Provider](../authentication/Configuring-SAML2-Authentication
 
 </div>
 
+<div data-quick-feature="groovy" markdown="1">
+
+### Groovy Scripting
+
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-core-scripting" %}
+
+Many CAS features accept [Apache Groovy](../integration/Apache-Groovy-Scripting.html) scripts: attribute release,
+access strategies, interrupt notifications and more. This module adds the Groovy runtime; without it, any configured
+script fails when CAS runs it. CAS compiles a script once, caches it and reloads a script file when it changes.
+Scripts run with the full privileges of the CAS process, so keep them in a directory only administrators can write,
+such as `/etc/cas/config`. The interrupt recipe in step 5 uses a Groovy script.
+
+</div>
+
 <div data-quick-feature="redis" markdown="1">
 
 ### Redis Ticket Registry
@@ -165,7 +197,34 @@ cas.ticket.registry.redis.port=6379
 
 Keep Redis running while using CAS. This disposable container loses its data when removed. For a deployment,
 configure persistence, authentication, TLS and shared ticket encryption keys; see
-[Redis Ticket Registry](../ticketing/Redis-Ticket-Registry.html).
+[Redis Ticket Registry](../ticketing/Redis-Ticket-Registry.html). CAS uses one ticket registry: choose Redis or
+Hazelcast, not both.
+
+</div>
+
+<div data-quick-feature="hazelcast" markdown="1">
+
+### Hazelcast Ticket Registry
+
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-hazelcast-ticket-registry" %}
+
+Hazelcast runs inside the CAS process: each CAS node is a cluster member, so there is no separate server to start.
+Port 5701 must be free. Append to `cas.properties` to keep this single node in a cluster of its own:
+
+```properties
+cas.ticket.registry.hazelcast.cluster.network.members=127.0.0.1
+cas.ticket.registry.hazelcast.cluster.network.port=5701
+```
+{: .cas-settings-linked}
+
+Tickets live in memory and survive only while at least one member runs; a single node loses them on restart.
+CAS signs and encrypts tickets in Hazelcast, generating keys at startup when none are set. For a cluster, list every
+node in `cas.ticket.registry.hazelcast.cluster.network.members`{: .cas-setting} or use
+[auto discovery](../ticketing/Hazelcast-Ticket-Registry-AutoDiscovery-Multicast.html), and give every node the same
+`cas.ticket.registry.hazelcast.crypto.encryption.key`{: .cas-setting} and
+`cas.ticket.registry.hazelcast.crypto.signing.key`{: .cas-setting}; see
+[Hazelcast Ticket Registry](../ticketing/Hazelcast-Ticket-Registry.html). CAS uses one ticket registry: choose
+Hazelcast or Redis, not both.
 
 </div>
 
@@ -290,7 +349,7 @@ See [SAML2 Service Management](../services/SAML2-Service-Management.html).
 ## 5. Customize Login
 
 Keep the built-in `casuser` / `Mellon` account for a first run, or select LDAP in step 2.
-The interrupt option can be used with either authentication source.
+The interrupt notification works with either authentication source.
 
 <div data-quick-feature="ldap" markdown="1">
 
@@ -325,30 +384,34 @@ attribute retrieval.
 
 {% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-interrupt-webflow" %}
 
+This recipe decides with a Groovy script, so it needs the Groovy Scripting module from step 3 as well.
 Append to `cas.properties`:
 
 ```properties
 cas.interrupt.core.trigger-mode=AFTER_AUTHENTICATION
-cas.interrupt.json.location=file:/etc/cas/config/interrupt.json
+cas.interrupt.groovy.location=file:/etc/cas/config/interrupt.groovy
 ```
 {: .cas-settings-linked}
 
-Create `/etc/cas/config/interrupt.json`. If using LDAP, replace `casuser` with your resolved principal id:
+Create `/etc/cas/config/interrupt.groovy`. CAS runs it after every successful authentication and passes the
+principal, its attributes, the requesting service and its registration, the webflow context and a logger:
 
-```json
-{
-  "casuser": {
-    "message": "Welcome to your CAS evaluation. Continue to your application when ready.",
-    "interrupt": true,
-    "block": false,
-    "ssoEnabled": true
-  }
+```groovy
+import org.apereo.cas.interrupt.InterruptResponse
+
+def run(final Object... args) {
+    def (principal, attributes, service, registeredService, requestContext, logger) = args
+    logger.info("Showing the quick-start notice to [{}]", principal.id)
+    def message = "Welcome to your CAS evaluation, ${principal.id}. Continue to your application when ready."
+    return new InterruptResponse(message.toString(), [:], false, true)
 }
 ```
 
-This notice allows the user to continue. [Authentication Interrupt](../webflow/Webflow-Customization-Interrupt.html)
-explains blocking policies and other sources; the [JSON strategy](../webflow/Webflow-Customization-Interrupt-JSON.html)
-is intended for demos and testing.
+The script greets whoever signs in, whether from the built-in account, LDAP or another source. The last two
+arguments keep the notice non-blocking and single sign-on enabled. Return `InterruptResponse.none()` to let a login
+through without a notice, for example after checking `attributes` or `service`. CAS reloads the file when it
+changes. [Authentication Interrupt](../webflow/Webflow-Customization-Interrupt.html) explains blocking policies and
+other sources; see the [Groovy strategy](../webflow/Webflow-Customization-Interrupt-Groovy.html) for its arguments.
 
 </div>
 
@@ -458,12 +521,16 @@ See [passwordless delegation](../authentication/Passwordless-Authentication-Dele
 
 </div>
 
+<div data-quick-feature="gauth webauthn duo" markdown="1">
+
 ### Try MFA Per Application
 
 Each selected MFA recipe below registers its own demo application. You can enable several providers together
 and test each separately without changing the baseline `Example-1.json` application. Adding a module alone does
 not require MFA: the application's `multifactorPolicy` activates it. See
 [per-application MFA triggers](../mfa/Configuring-Multifactor-Authentication-Triggers-PerApplication.html).
+
+</div>
 
 <div data-quick-feature="gauth" markdown="1">
 
@@ -512,25 +579,22 @@ This policy requires `mfa-gauth` for this demo application's URL. Test it in ste
 Append to `cas.properties`:
 
 ```properties
-cas.authn.mfa.web-authn.core.application-id=https://localhost:8443
-cas.authn.mfa.web-authn.core.relying-party-id=localhost
 cas.authn.mfa.web-authn.core.relying-party-name=CAS Quick Start
-cas.authn.mfa.web-authn.core.allowed-origins=https://localhost:8443
-cas.authn.mfa.web-authn.core.allow-primary-authentication=false
 cas.authn.mfa.web-authn.core.allow-untrusted-attestation=true
 ```
 {: .cas-settings-linked}
 
-Use a WebAuthn-capable browser and a security key or platform authenticator. For this recipe, first configure
-CAS at `https://localhost:8443` with a certificate trusted by your browser, following the
-[HTTPS configuration guide](../installation/Configuring-Servlet-Container-Embedded.html). Set
-`cas.server.name=https://localhost:8443`, `server.port=8443` and `server.ssl.enabled=true`, together with the
-keystore settings from that guide. Replace the HTTP CAS origin in this wizard's login URLs, OIDC issuer and SAML
-metadata as applicable. Keep the browser origin and relying-party id consistent when registering
-and using credentials. The demo explicitly accepts untrusted attestation so authenticators without a trusted
+Use a WebAuthn-capable browser and a security key or platform authenticator. Browsers treat `http://localhost` as a
+secure context, so this recipe works with the HTTP server from step 3. CAS derives the relying-party id, the allowed
+origins and the application id from `cas.server.name`{: .cas-setting}; set
+`cas.authn.mfa.web-authn.core.relying-party-id`{: .cas-setting} and
+`cas.authn.mfa.web-authn.core.allowed-origins`{: .cas-setting} only when they must differ. Credentials are bound to
+the relying-party id, so always open CAS at `http://localhost:8080`, not `127.0.0.1`, when registering and using them.
+The demo explicitly accepts untrusted attestation so authenticators without a trusted
 attestation chain can enroll; choose an [attestation policy](../mfa/FIDO2-WebAuthn-Authentication-Attestation.html)
 for deployment. Default registrations are in memory and disappear on restart; configure
-[persistent registration storage](../mfa/FIDO2-WebAuthn-Authentication-Registration.html) for a deployment.
+[persistent registration storage](../mfa/FIDO2-WebAuthn-Authentication-Registration.html) for a deployment, served over
+[HTTPS](../installation/Configuring-Servlet-Container-Embedded.html).
 This recipe uses WebAuthn as a second factor after the password.
 
 Create `/etc/cas/services/WebAuthnExample-5.json`:
@@ -568,7 +632,7 @@ This policy requires `mfa-webauthn` for this demo application's URL. Test it in 
 Create a Duo application for Universal Prompt and obtain its client id, client secret and API hostname.
 Use a CAS URL and callback accepted by your Duo application's configuration. For a deployment, configure a trusted
 HTTPS endpoint using the [servlet container guide](../installation/Configuring-Servlet-Container-Embedded.html).
-If changing the CAS origin, update `cas.server.name`, OIDC issuer, WebAuthn origins/relying-party id and SAML metadata
+If you serve CAS from another origin, update `cas.server.name`{: .cas-setting}, the OIDC issuer and the SAML entity id
 as applicable, and use the new origin for every login URL in this guide.
 
 Append to `cas.properties`, replacing the placeholders with your Duo application's values:
@@ -615,7 +679,36 @@ This policy requires `mfa-duo` for this demo application's URL. Test it in step 
 Before building, check that you added the modules and files for every selected feature. All property snippets
 belong in the same `/etc/cas/config/cas.properties` file; all module snippets belong in the overlay's `dependencies` block.
 
-<div class="quick-start-summary" hidden></div>
+<div class="quick-start-output" hidden markdown="1">
+
+<div class="quick-start-summary"><p role="status" aria-live="polite"></p></div>
+
+Both are assembled below for your selection; the JSON and Groovy files from steps 4 and 5 are created separately.
+
+Your overlay's `dependencies` block in `build.gradle`:
+
+<div data-quick-output="dependencies" markdown="1">
+
+```groovy
+dependencies {
+    implementation "org.apereo.cas:cas-server-support-json-service-registry"
+}
+```
+
+</div>
+
+Your `/etc/cas/config/cas.properties`:
+
+<div data-quick-output="properties" markdown="1">
+
+```properties
+cas.server.name=http://localhost:8080
+```
+{: .cas-settings-linked}
+
+</div>
+
+</div>
 
 ```bash
 ./gradlew clean build
@@ -659,8 +752,9 @@ Discovery alone does not test a full login; the callback must be served by your 
 
 ### Verify the Notice
 
-Log out at `http://localhost:8080/cas/logout`, then log in again as the user named in `interrupt.json`.
-Confirm the notice appears and that Continue lets you proceed to the application.
+Log out at `http://localhost:8080/cas/logout`, then log in again as any user. Confirm the notice greets that user
+by name and that Continue lets you proceed to the application. The CAS log shows the script's
+`Showing the quick-start notice` line for each login.
 
 </div>
 
@@ -675,6 +769,22 @@ docker exec cas-quickstart-redis redis-cli --scan --pattern 'CAS_TICKET:*'
 ```
 
 Expect ticket keys while the login session is active. Check the CAS startup logs if no keys appear.
+
+</div>
+
+<div data-quick-feature="hazelcast" markdown="1">
+
+### Verify Hazelcast Tickets
+
+While CAS runs, its embedded Hazelcast member listens on port 5701:
+
+```bash
+lsof -nP -iTCP:5701 -sTCP:LISTEN
+```
+
+Expect one `java` process. Log in, then stop and start CAS and open `http://localhost:8080/cas/login` again: CAS asks
+you to log in, because a single member keeps tickets only in memory. Tickets survive the loss of a node only in a
+cluster of two or more.
 
 </div>
 
@@ -718,9 +828,9 @@ Validate it using step 7's `p3/serviceValidate` command with `service=https://ga
 
 ### Verify MFA with WebAuthn
 
-Log out of CAS, then open `https://localhost:8443/cas/login?service=https://webauthn.example.org/` and enter your
+Log out of CAS, then open `http://localhost:8080/cas/login?service=https://webauthn.example.org/` and enter your
 primary credentials. On first use, complete device registration using the browser prompt. Log out and log in again; verify that
-CAS asks you to use the registered authenticator after your password. Use the HTTPS CAS origin for ticket validation too.
+CAS asks you to use the registered authenticator after your password.
 
 The demo application URL is a placeholder: a redirect carrying a `ticket` shows that CAS completed login.
 Validate it using step 7's `p3/serviceValidate` command with `service=https://webauthn.example.org/` and the new ticket.
@@ -775,11 +885,12 @@ is the identity expected from your external provider.
   and keep the service definitions identical on every node.
 - Read the [Security Guide](Security-Guide.html).
 
-Also replace demo accounts and client secrets, protect the OIDC keystore, secure and persist Redis, and restrict
+Also replace demo accounts and client secrets, protect the OIDC keystore, secure and persist Redis, configure Hazelcast
+cluster membership with shared ticket keys, keep Groovy scripts writable only by administrators, and restrict
 Palantir and actuator access when you enable these features. Protect SAML signing keys, persist MFA device
 registrations, keep Google Authenticator encryption keys stable and configure your WebAuthn attestation and Duo access policies.
 
-## Next Steps
+### Next Steps
 
 - [Getting Started](Getting-Started.html): plan a deployment and gather use cases.
 - [Configuration Properties](../configuration/Configuration-Properties.html): search every setting.
