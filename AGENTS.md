@@ -125,6 +125,9 @@
   record accessors.
 - A tool that combines others (explainLogin) calls the other tool beans and converts their records to maps with a plain
   `JsonMapper`. `CasMcpAuditInterceptor` binds a `ScopedValue` for the outermost call, so nested tool calls are not audited.
+- Puppeteer builds CAS with `-DskipNestedConfigMetadataGen=true`, so the settings catalog at runtime holds only third-party
+  (Spring) settings and no `cas.*` ones. Scenarios exercise settings tools with a Spring setting such as
+  `spring.ai.mcp.server.name`; `cas.*` settings and the `module` filter are covered by unit tests (`McpSettingsMetadata.json`).
 - MCP completion (`@McpComplete`) only completes resource-template and prompt arguments, never tool parameters. Completion
   methods carry `@PreAuthorize` like tools and are not audited; `spring.ai.mcp.server.capabilities.completion` must be true.
 - Claude's shells have no JDK 25 or Maven Central; `build/mcp-run.sh` compiles, runs checkstyle, the `RestfulApi` tests

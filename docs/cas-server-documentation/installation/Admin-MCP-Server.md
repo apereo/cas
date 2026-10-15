@@ -197,6 +197,27 @@ Most MCP clients can connect to a remote Streamable HTTP server using a configur
 }
 ```
 
+### Browser Clients
+
+MCP clients that run in a web browser, such as web-based MCP inspectors and playgrounds, call the MCP endpoint from another
+origin, so the browser first sends a CORS preflight request. CAS does not answer cross-origin requests unless
+[CORS](../planning/Security-Guide.html#cors) is turned on; without it, such clients report a CORS or network error even though
+the server is reachable. Clients that do not run in a browser, such as desktop applications and command-line tools,
+are not affected.
+
+When CORS is turned on for a browser client, allow the origin of that client, the `POST`, `GET`, `DELETE` and `OPTIONS`
+methods, and the `Authorization`, `Content-Type`, `Accept`, `Mcp-Session-Id`, `MCP-Protocol-Version` and `Last-Event-ID`
+request headers. The `Mcp-Session-Id` response header must also be exposed; otherwise the browser hides the session id
+returned by `initialize` and every later call fails.
+
+{% include_cached casproperties.html properties="cas.http-web-request.cors" %}
+
+<div class="alert alert-warning">:warning: <strong>Usage Warning!</strong><p>
+CORS settings apply to every CAS endpoint, not only to the MCP endpoint. Allow only the exact origins of the clients you trust,
+never all origins, and do not allow credentials: browser clients send their credentials in the <code>Authorization</code>
+header, and allowing credentials would let other origins use a CAS session cookie of the browser.
+</p></div>
+
 ## Feature Toggle
 
 The MCP server tools are enabled by default when the module is present, and can be turned off via feature toggles.

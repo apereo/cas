@@ -2,6 +2,34 @@
 layout: default
 title: CAS - 8.1.0-RC3 Release Notes
 category: Planning
+interface_images:
+  - src: img_15.png
+    alt: An MCP client listing the read-only tools of the CAS MCP server
+    title: An MCP client listing the read-only tools of the CAS MCP server
+  - src: img_16.png
+    alt: Account profile overview with its section rail and summary cards
+    title: Account profile overview with its section rail and summary cards
+  - src: img_17.png
+    alt: Notifications dialog shown before continuing to CAS
+    title: Notifications dialog shown before continuing to CAS
+  - src: img_18.png
+    alt: CAS menu with links to this server, documentation and the community
+    title: CAS menu with links to this server, documentation and the community
+  - src: img_19.png
+    alt: Palantir applications tab with the rounded navigation rail
+    title: Palantir applications tab with the rounded navigation rail
+  - src: img_20.png
+    alt: Palantir settings dialog listing keyboard shortcuts
+    title: Palantir settings dialog listing keyboard shortcuts
+  - src: img_21.png
+    alt: Palantir service wizard for a SAML2 service provider
+    title: Palantir service wizard for a SAML2 service provider
+  - src: img_22.png
+    alt: Palantir scheduled tasks with JVM thread charts
+    title: Palantir scheduled tasks with JVM thread charts
+  - src: img_23.png
+    alt: Palantir service wizard for an OpenID Connect relying party
+    title: Palantir service wizard for an OpenID Connect relying party
 release:
   line: 8.1.0 development
   summary: >-
@@ -64,6 +92,15 @@ release:
       text: needs a new `useridIndex` global secondary index; create it yourself if tables are not created at startup.
       section: Multifactor & Passkeys
       area: mfa
+  spotlight:
+    section: Interface & Accounts
+    kicker: User interface
+    title: A Refreshed Look Across CAS
+    images: interface_images
+    points:
+      - The account profile gets a section rail, an overview with summary cards and lists with inline details.
+      - Login, multifactor, consent, interrupt and error screens share one style, with pill-shaped buttons and rounded inputs.
+      - Palantir keeps its layout with a rounded navigation rail, pill-style tabs, softer cards and restyled dialogs.
   highlights:
     - section: Heimdall AuthZEN
       summary: Follows the AuthZEN Authorization API 1.0, with resource instances, the access evaluations API, decision point metadata and decision context.
@@ -504,6 +541,7 @@ shows throttled login attempts, and `findAttributeSources` and `findAttributeDef
 returns which attribute and how attribute definitions transform them. Tools now publish an output schema and return
 structured content, registered services are offered as the resource `cas://services/{id}`, and setting names and service ids
 can be completed by clients, with `spring.ai.mcp.server.capabilities.completion=true`{: .cas-setting}.
+The documentation now explains how to let browser-based MCP clients reach the server through CAS CORS support.
 
 ## Other Stuff
 

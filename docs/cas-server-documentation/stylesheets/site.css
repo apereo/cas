@@ -160,6 +160,93 @@ button, a {
     box-shadow: 0 1px 0 #ffffff12, 0 10px 34px #00121e40;
 }
 
+/* A quiet floating control that returns to the top; it appears only after the reader scrolls down,
+   and its hairline ring doubles as a reading-progress dial. */
+.back-to-top {
+    position: fixed;
+    right: max(1.25rem, env(safe-area-inset-right));
+    bottom: max(1.25rem, env(safe-area-inset-bottom));
+    z-index: 1020;
+    display: grid;
+    place-items: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: color-mix(in srgb, var(--docs-surface) 88%, transparent);
+    color: var(--docs-muted);
+    box-shadow: var(--docs-shadow);
+    backdrop-filter: blur(8px);
+    cursor: pointer;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(.5rem);
+    transition: opacity .2s ease, transform .2s ease, visibility 0s linear .2s, color .18s ease;
+}
+
+.back-to-top.is-visible {
+    opacity: .85;
+    visibility: visible;
+    transform: none;
+    transition: opacity .2s ease, transform .2s ease, visibility 0s, color .18s ease;
+}
+
+.back-to-top:hover, .back-to-top:focus-visible {
+    opacity: 1;
+    color: var(--docs-accent);
+}
+
+.back-to-top svg:first-child {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    transform: rotate(-90deg);
+    pointer-events: none;
+}
+
+.back-to-top circle {
+    fill: none;
+    stroke-width: 1.5;
+}
+
+.back-to-top-track {
+    stroke: var(--docs-line);
+}
+
+.back-to-top-arrow {
+    width: .95rem;
+    height: .95rem;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.75;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.back-to-top-ring {
+    stroke: var(--docs-accent);
+    stroke-dasharray: 100;
+    stroke-dashoffset: 100;
+    stroke-linecap: round;
+}
+
+@media (max-width: 760px) {
+    .back-to-top {
+        right: max(.85rem, env(safe-area-inset-right));
+        bottom: max(.85rem, env(safe-area-inset-bottom));
+        width: 2.25rem;
+        height: 2.25rem;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .back-to-top, .back-to-top.is-visible {
+        transform: none;
+    }
+}
+
 .reading-progress {
     position: absolute;
     inset: auto 0 0;

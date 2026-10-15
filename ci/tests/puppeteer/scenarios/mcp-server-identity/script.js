@@ -94,18 +94,23 @@ async function callTool(sessionId, name, args) {
     assert(!JSON.stringify(resources).includes("analysts"), "Policy definitions must not be returned");
 
     await cas.separator();
-    const search = await callTool(sessionId, "searchSettings", {query: "server name", module: "cas-server-core"});
-    const found = search.settings.find((entry) => entry.name === "cas.server.name");
-    assert(found !== undefined && found.uri === "cas://settings/cas.server.name");
-    assert(!JSON.stringify(search).includes("https://localhost:8443"), "Setting values must not be returned");
+    await cas.log("Puppeteer builds skip the CAS settings metadata, so only Spring settings are in the catalog here");
+    const search = await callTool(sessionId, "searchSettings", {query: "mcp server name"});
+    const found = search.settings.find((entry) => entry.name === "spring.ai.mcp.server.name");
+    assert(found !== undefined && found.uri === "cas://settings/spring.ai.mcp.server.name");
+    assert(!JSON.stringify(search).includes("Apereo CAS MCP Server"), "Setting values must not be returned");
 
     const templates = await send(sessionId, "resources/templates/list", {});
     assert(templates.resourceTemplates.some((template) => template.uriTemplate === "cas://settings/{name}"));
-    const read = await send(sessionId, "resources/read", {uri: "cas://settings/cas.server.name"});
+    const read = await send(sessionId, "resources/read", {uri: "cas://settings/spring.ai.mcp.server.name"});
     const setting = JSON.parse(read.contents[0].text);
     await cas.log(`Setting: ${JSON.stringify(setting)}`);
-    assert(setting.name === "cas.server.name");
+    assert(setting.name === "spring.ai.mcp.server.name");
     assert(setting.defined === true);
-    assert(setting.setting.module === "cas-server-core");
-    assert(!read.contents[0].text.includes("https://localhost:8443"), "Setting values must not be returned");
+    assert(setting.setting !== undefined);
+    assert(!read.contents[0].text.includes("Apereo CAS MCP Server"), "Setting values must not be returned");
+
+    const completion = await send(sessionId, "completion/complete",
+        {ref: {type: "ref/resource", uri: "cas://settings/{name}"}, argument: {name: "name", value: "mcp.server.na"}});
+    assert(completion.completion.values.includes("spring.ai.mcp.server.name"));
 })();

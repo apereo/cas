@@ -1126,6 +1126,42 @@ $(() => {
     update();
 });
 
+// A small floating button returns to the top once the reader has scrolled down; its ring shows how far they have read.
+$(() => {
+    const button = document.getElementById("backToTop");
+    if (!button) {
+        return;
+    }
+    const ring = button.querySelector(".back-to-top-ring");
+    let scheduled = false;
+    const update = () => {
+        const span = document.documentElement.scrollHeight - window.innerHeight;
+        const read = span > 0 ? Math.min(1, Math.max(0, window.scrollY / span)) : 0;
+        button.classList.toggle("is-visible", window.scrollY > Math.min(480, window.innerHeight * .6));
+        if (ring) {
+            ring.style.strokeDashoffset = `${100 - read * 100}`;
+        }
+        scheduled = false;
+    };
+    const schedule = () => {
+        if (!scheduled) {
+            scheduled = true;
+            requestAnimationFrame(update);
+        }
+    };
+    button.addEventListener("click", () => {
+        const smooth = !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        window.scrollTo({top: 0, behavior: smooth ? "smooth" : "auto"});
+        const article = document.getElementById("cas-docs-container");
+        if (article) {
+            article.focus({preventScroll: true});
+        }
+    });
+    window.addEventListener("scroll", schedule, {passive: true});
+    window.addEventListener("resize", schedule, {passive: true});
+    update();
+});
+
 const CAS_PROPERTY_FORMATS = {properties: ".properties", yaml: "YAML", env: "Env vars"};
 const CAS_PROPERTY_FORMAT_KEY = "cas-docs-property-format";
 
