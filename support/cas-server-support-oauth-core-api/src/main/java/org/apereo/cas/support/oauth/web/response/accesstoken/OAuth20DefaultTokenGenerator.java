@@ -16,6 +16,7 @@ import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
+import org.apereo.cas.support.oauth.validator.token.OAuth20ExpiredTokenException;
 import org.apereo.cas.support.oauth.validator.token.device.InvalidOAuth20DeviceTokenException;
 import org.apereo.cas.support.oauth.validator.token.device.ThrottledOAuth20DeviceUserCodeApprovalException;
 import org.apereo.cas.support.oauth.validator.token.device.UnapprovedOAuth20DeviceUserCodeException;
@@ -475,25 +476,52 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
         return authentication;
     }
 
+    /**
+     * Locate the user code linked to the device code. User codes are never redeemed on their own, so a user code
+     * that is gone has expired and the end-user can no longer approve the request; that is reported as
+     * {@code expired_token} (RFC 8628, section 3.5).
+     *
+     * @param deviceCodeTicket the device code
+     * @return the user code
+     */
     private OAuth20DeviceUserCode getDeviceUserCodeFromRegistry(final OAuth20DeviceToken deviceCodeTicket) {
         return FunctionUtils.doAndHandle(
                 () -> ticketRegistry.getTicket(deviceCodeTicket.getUserCode(), OAuth20DeviceUserCode.class),
                 throwable -> {
                     LOGGER.error("Provided user code [{}] is invalid or expired and cannot be found in the ticket registry",
                         deviceCodeTicket.getUserCode());
-                    throw new InvalidOAuth20DeviceTokenException(deviceCodeTicket.getUserCode());
+                    throw new OAuth20ExpiredTokenException(deviceCodeTicket.getUserCode());
                 })
             .get();
     }
 
-    private OAuth20DeviceToken getDeviceTokenFromTicketRegistry(final String deviceCode) {
-        return FunctionUtils.doAndHandle(
-                () -> ticketRegistry.getTicket(deviceCode, OAuth20DeviceToken.class),
+    /**
+     * Locate the device code in the ticket registry. The lookup does not filter out expired tickets, so that an expired
+     * device code that is still held by CAS is removed and reported as {@code expired_token} (RFC 8628, section 3.5);
+     * an unknown or already redeemed device code is reported as {@code invalid_grant}.
+     *
+     * @param deviceCode the device code
+     * @return the device token
+     * @throws Exception the exception
+     */
+    private OAuth20DeviceToken getDeviceTokenFromTicketRegistry(final String deviceCode) throws Exception {
+        val ticket = FunctionUtils.doAndHandle(
+                () -> ticketRegistry.getTicket(deviceCode, _ -> true),
                 throwable -> {
                     LoggingUtils.error(LOGGER, throwable);
-                    throw new InvalidOAuth20DeviceTokenException(deviceCode);
+                    return null;
                 })
             .get();
+        if (ticket instanceof final OAuth20DeviceToken deviceToken) {
+            if (deviceToken.isExpired()) {
+                LOGGER.warn("Device code [{}] has expired", deviceCode);
+                ticketRegistry.deleteTicket(deviceToken);
+                throw new OAuth20ExpiredTokenException(deviceCode);
+            }
+            return deviceToken;
+        }
+        LOGGER.warn("Device code [{}] cannot be found; it may be unknown or already redeemed", deviceCode);
+        throw new InvalidOAuth20DeviceTokenException(deviceCode);
     }
 
     private DeviceTokens createDeviceTokensInTicketRegistry(final AccessTokenRequestContext tokenRequestContext)

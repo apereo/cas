@@ -9,7 +9,8 @@ import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.authenticator.Authenticators;
-import org.apereo.cas.support.oauth.validator.token.device.UnapprovedOAuth20DeviceUserCodeException;
+import org.apereo.cas.support.oauth.validator.token.OAuth20AuthorizationPendingException;
+import org.apereo.cas.support.oauth.validator.token.OAuth20ExpiredTokenException;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenGrantRequestExtractor;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -81,11 +82,15 @@ class AccessTokenCibaGrantRequestExtractorTests extends AbstractOidcTests {
         val canGrantTokens = mode.equalsIgnoreCase(OidcBackchannelTokenDeliveryModes.POLL.name())
             || mode.equalsIgnoreCase(OidcBackchannelTokenDeliveryModes.PING.name());
         if (canGrantTokens) {
-            assertThrows(UnapprovedOAuth20DeviceUserCodeException.class, () -> oidcCibaAccessTokenGrantRequestExtractor.extract(context));
+            assertThrows(OAuth20AuthorizationPendingException.class, () -> oidcCibaAccessTokenGrantRequestExtractor.extract(context));
             ticketRegistry.updateTicket(cibaRequest.markTicketReady());
             val result = oidcCibaAccessTokenGrantRequestExtractor.extract(context);
             assertNotNull(result);
             assertEquals(cibaRequest.getEncodedId(), result.getCibaRequestId());
+
+            cibaRequest.markTicketExpired();
+            assertThrows(OAuth20ExpiredTokenException.class, () -> oidcCibaAccessTokenGrantRequestExtractor.extract(context));
+            assertThrows(InvalidCibaRequestException.class, () -> oidcCibaAccessTokenGrantRequestExtractor.extract(context));
         } else {
             assertThrows(InvalidCibaRequestException.class, () -> oidcCibaAccessTokenGrantRequestExtractor.extract(context));
         }

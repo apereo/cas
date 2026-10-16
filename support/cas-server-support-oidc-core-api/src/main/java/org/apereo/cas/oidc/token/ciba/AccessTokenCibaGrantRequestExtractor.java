@@ -13,7 +13,8 @@ import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
-import org.apereo.cas.support.oauth.validator.token.device.UnapprovedOAuth20DeviceUserCodeException;
+import org.apereo.cas.support.oauth.validator.token.OAuth20AuthorizationPendingException;
+import org.apereo.cas.support.oauth.validator.token.OAuth20ExpiredTokenException;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestContext;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.BaseAccessTokenGrantRequestExtractor;
 import lombok.extern.slf4j.Slf4j;
@@ -35,6 +36,15 @@ public class AccessTokenCibaGrantRequestExtractor extends BaseAccessTokenGrantRe
         super(configurationContext);
     }
 
+    /**
+     * Extract the CIBA grant request. An expired request still held by CAS is removed and reported as
+     * {@code expired_token}, and a request the end-user has not approved yet as {@code authorization_pending}
+     * (CIBA Core 1.0, section 11).
+     *
+     * @param context the context
+     * @return the access token request context
+     * @throws Throwable the throwable
+     */
     @Override
     protected AccessTokenRequestContext extractRequest(final WebContext context) throws Throwable {
         val configurationContext = getConfigurationContext().getObject();
@@ -53,9 +63,14 @@ public class AccessTokenCibaGrantRequestExtractor extends BaseAccessTokenGrantRe
 
         val cibaFactory = (OidcCibaRequestFactory) configurationContext.getTicketFactory().get(OidcCibaRequest.class);
         val decodedId = cibaFactory.decodeId(authRequestId);
-        val cibaRequest = configurationContext.getTicketRegistry().getTicket(decodedId, OidcCibaRequest.class);
-        if (cibaRequest == null || !Objects.equals(cibaRequest.getClientId(), clientId)) {
+        val ticket = configurationContext.getTicketRegistry().getTicket(decodedId, _ -> true);
+        if (!(ticket instanceof final OidcCibaRequest cibaRequest) || !Objects.equals(cibaRequest.getClientId(), clientId)) {
             throw new InvalidCibaRequestException("CIBA request does not belong to the authenticated client");
+        }
+        if (cibaRequest.isExpired()) {
+            LOGGER.debug("CIBA request [{}] has expired", authRequestId);
+            configurationContext.getTicketRegistry().deleteTicket(cibaRequest);
+            throw new OAuth20ExpiredTokenException(decodedId);
         }
 
         val audit = AuditableContext.builder()
@@ -77,7 +92,7 @@ public class AccessTokenCibaGrantRequestExtractor extends BaseAccessTokenGrantRe
         }
         if (!cibaRequest.isReady()) {
             LOGGER.debug("CIBA request [{}] is not yet approved by the end-user", authRequestId);
-            throw new UnapprovedOAuth20DeviceUserCodeException(decodedId);
+            throw new OAuth20AuthorizationPendingException(decodedId);
         }
         
         return AccessTokenRequestContext.builder()

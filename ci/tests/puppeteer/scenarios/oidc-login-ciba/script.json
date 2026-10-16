@@ -16,6 +16,7 @@
     "--management.endpoints.web.exposure.include=*",
     "--management.endpoints.access.default=UNRESTRICTED",
     
+    "--cas.ticket.registry.cleaner.schedule.enabled=false",
     "--cas.authn.oidc.ciba.max-time-to-live-in-seconds=PT10M",
     "--cas.authn.oidc.ciba.verification.delay=PT1S",
     "--cas.authn.oidc.ciba.verification.mail.html=false",

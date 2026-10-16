@@ -1,10 +1,12 @@
 const assert = require("assert");
 const cas = require("../../cas.js");
 
-(async () => {
+const DEVICE_CODE_TTL_SECONDS = 45;
+
+async function requestDeviceCode() {
     const scopes = `${encodeURIComponent("read write create")}`;
     const url = `https://localhost:8443/cas/oauth2.0/accessToken?response_type=device_code&client_id=client&scope=${scopes}`;
-    await cas.doPost(url, "", {
+    return cas.doPost(url, "", {
         "Content-Type": "application/json"
     }, (res) => {
         assert(res.data.device_code !== undefined);
@@ -12,19 +14,50 @@ const cas = require("../../cas.js");
         assert(res.data.verification_uri !== undefined);
         assert(res.data.interval !== undefined);
         assert(res.data.expires_in !== undefined);
-
-        verifyDeviceCode(res.data);
+        return res.data;
     }, (error) => {
         throw `Operation failed to obtain device token: ${error}`;
     });
-})();
+}
 
-async function verifyDeviceCode(data) {
+function deviceCodeTokenUrl(data) {
     const params = new URLSearchParams();
     params.append("grant_type", "urn:ietf:params:oauth:grant-type:device_code");
     params.append("client_id", "client");
     params.append("device_code", data.device_code);
-    const url = `https://localhost:8443/cas/oauth2.0/accessToken?${params.toString()}`;
+    return `https://localhost:8443/cas/oauth2.0/accessToken?${params.toString()}`;
+}
+
+async function verifyExpiredDeviceCode(data, issuedAt) {
+    const remaining = issuedAt + (DEVICE_CODE_TTL_SECONDS + 2) * 1000 - Date.now();
+    if (remaining > 0) {
+        await cas.log(`Waiting ${remaining}ms for device code to expire`);
+        await cas.sleep(remaining);
+    }
+    const url = deviceCodeTokenUrl(data);
+    for (const expected of ["expired_token", "invalid_grant"]) {
+        await cas.doPost(url, "", {
+            "Content-Type": "application/json"
+        }, (res) => {
+            throw `An expired device code must not grant tokens: ${JSON.stringify(res.data)}`;
+        }, (error) => {
+            assert(error.response.status === 400);
+            assert(error.response.data.error === expected, `Expected ${expected} but got ${error.response.data.error}`);
+        });
+    }
+}
+
+(async () => {
+    const expiring = await requestDeviceCode();
+    const issuedAt = Date.now();
+    await verifyDeviceCode(await requestDeviceCode());
+    await cas.separator();
+    await cas.log("An expired device code must be refused with expired_token, and then be gone");
+    await verifyExpiredDeviceCode(expiring, issuedAt);
+})();
+
+async function verifyDeviceCode(data) {
+    const url = deviceCodeTokenUrl(data);
     await cas.doPost(url, "", {
         "Content-Type": "application/json"
     }, () => {
@@ -50,10 +83,28 @@ async function verifyDeviceCode(data) {
     await cas.sleep(1000);
     await cas.logPage(page);
     await cas.loginWith(page);
+
+    await cas.log("An unknown user code must be refused");
+    await cas.type(page, "#usercode", "UNKNOWNCODE");
+    await cas.pressEnter(page);
+    await cas.waitForNavigation(page);
+    await cas.sleep(1000);
+    await cas.assertVisibility(page, "div.banner-danger");
+
     await cas.type(page, "#usercode", data.user_code);
     await cas.pressEnter(page);
     await cas.waitForNavigation(page);
     await cas.sleep(2000);
+    await cas.assertInvisibility(page, "div.banner-danger");
+
+    await cas.log("A user code that is already approved must not be approved again");
+    await page.goto(data.verification_uri);
+    await cas.sleep(1000);
+    await cas.type(page, "#usercode", data.user_code);
+    await cas.pressEnter(page);
+    await cas.waitForNavigation(page);
+    await cas.sleep(1000);
+    await cas.assertVisibility(page, "div.banner-danger");
     await cas.closeBrowser(browser);
     
     const payload = await cas.doPost(url, "", {
@@ -76,7 +127,7 @@ async function verifyDeviceCode(data) {
         throw `Device code was redeemed twice: ${JSON.stringify(res.data)}`;
     }, (error) => {
         assert(error.response.status === 400);
-        assert(error.response.data.error === "access_denied");
+        assert(error.response.data.error === "invalid_grant");
         assert(error.response.data.access_token === undefined);
     });
 

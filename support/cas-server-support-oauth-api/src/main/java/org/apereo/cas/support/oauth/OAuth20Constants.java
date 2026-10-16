@@ -299,6 +299,11 @@ public interface OAuth20Constants {
     String SLOW_DOWN = "slow_down";
 
     /**
+     * Expired device code or authentication request error.
+     */
+    String EXPIRED_TOKEN = "expired_token";
+
+    /**
      * The authorize url.
      */
     String AUTHORIZE_URL = "authorize";

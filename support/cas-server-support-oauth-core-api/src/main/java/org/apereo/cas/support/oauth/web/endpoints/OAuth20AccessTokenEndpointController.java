@@ -6,6 +6,8 @@ import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.events.OAuth20AccessTokenRequestEvent;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
+import org.apereo.cas.support.oauth.validator.token.OAuth20AuthorizationPendingException;
+import org.apereo.cas.support.oauth.validator.token.OAuth20ExpiredTokenException;
 import org.apereo.cas.support.oauth.validator.token.device.InvalidOAuth20DeviceTokenException;
 import org.apereo.cas.support.oauth.validator.token.device.ThrottledOAuth20DeviceUserCodeApprovalException;
 import org.apereo.cas.support.oauth.validator.token.device.UnapprovedOAuth20DeviceUserCodeException;
@@ -49,12 +51,20 @@ import jakarta.servlet.http.HttpServletResponse;
 public class OAuth20AccessTokenEndpointController<T extends OAuth20ConfigurationContext> extends BaseOAuth20Controller<T> {
     private static final Map<String, AccessTokenExceptionResponses> ACCESS_TOKEN_RESPONSE_EXCEPTIONS = Map.of(
         InvalidOAuth20DeviceTokenException.class.getName(),
-        new AccessTokenExceptionResponses(OAuth20Constants.ACCESS_DENIED,
-            "Could not identify and extract device token request for device token"),
+        new AccessTokenExceptionResponses(OAuth20Constants.INVALID_GRANT,
+            "Device code is invalid, already redeemed or was issued to another client"),
 
         UnapprovedOAuth20DeviceUserCodeException.class.getName(),
         new AccessTokenExceptionResponses(OAuth20Constants.AUTHORIZATION_PENDING,
+            "User code is not yet approved for the device token request"),
+
+        OAuth20AuthorizationPendingException.class.getName(),
+        new AccessTokenExceptionResponses(OAuth20Constants.AUTHORIZATION_PENDING,
             "The authorization request is still pending approval by the end-user"),
+
+        OAuth20ExpiredTokenException.class.getName(),
+        new AccessTokenExceptionResponses(OAuth20Constants.EXPIRED_TOKEN,
+            "The device code or authentication request has expired"),
 
         ThrottledOAuth20DeviceUserCodeApprovalException.class.getName(),
         new AccessTokenExceptionResponses(OAuth20Constants.SLOW_DOWN,

@@ -117,6 +117,42 @@ async function verifyDeliveryMode(clientId = "client", deliveryMode = "push", us
     return authRequestId;
 }
 
+async function verifyExpiredRequest(clientId = "clientpoll", clientSecret = "secret") {
+    const expiration = 2;
+    const scopes = `${encodeURIComponent("openid profile")}`;
+    let url = `https://localhost:8443/cas/oidc/oidcCiba?scope=${scopes}`;
+    url += "&client_notification_token=8d67dc78-7faa-4d41-aabd-67707b374255";
+    url += `&login_hint=${encodeURIComponent("casuser@apereo.org")}`;
+    url += `&binding_message=HelloFromCAS&requested_expiry=${expiration}`;
+    const authzHeader = `Basic ${Buffer.from(`${clientId}:${clientSecret}`).toString("base64")}`;
+    const headers = {
+        "Authorization": authzHeader,
+        "Content-Type": "application/x-www-form-urlencoded"
+    };
+    const authRequestId = await cas.doPost(url, "", headers,
+        (res) => res.data.auth_req_id,
+        (error) => {
+            throw `CIBA operation failed: ${error}`;
+        });
+    await cas.log(`Waiting for CIBA request ${authRequestId} to expire`);
+    await cas.sleep((expiration + 2) * 1000);
+    const accessTokenUrl = `https://localhost:8443/cas/oidc/token?scope=${scopes}&grant_type=urn:openid:params:grant-type:ciba&auth_req_id=${authRequestId}`;
+    await cas.doPost(accessTokenUrl, "", headers,
+        (res) => {
+            throw `An expired CIBA request must not grant tokens: ${JSON.stringify(res.data)}`;
+        }, (error) => {
+            assert(error.response.status === 400);
+            assert(error.response.data.error === "expired_token");
+        });
+    await cas.doPost(accessTokenUrl, "", headers,
+        (res) => {
+            throw `An expired CIBA request must not grant tokens: ${JSON.stringify(res.data)}`;
+        }, (error) => {
+            assert(error.response.status === 400);
+            assert(error.response.data.error === "invalid_grant");
+        });
+}
+
 (async () => {
     const app = express();
     app.use(express.json());
@@ -162,7 +198,11 @@ async function verifyDeliveryMode(clientId = "client", deliveryMode = "push", us
         await verifyDeliveryMode("clientpoll", "poll");
         await cas.separator();
         await verifyDeliveryMode("clientpoll", "poll", "");
-        
+        await cas.separator();
+
+        await cas.log("An expired CIBA request must be refused with expired_token");
+        await verifyExpiredRequest();
+
         server.close(() => cas.log("Exiting server..."));
     });
 

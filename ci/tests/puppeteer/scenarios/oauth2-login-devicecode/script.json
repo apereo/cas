@@ -16,6 +16,8 @@
     "--cas.http-web-request.cors.allow-headers[0]=*",
 
     "--cas.authn.oauth.device-token.refresh-interval=PT2S",
+    "--cas.authn.oauth.device-token.max-time-to-live-in-seconds=PT45S",
+    "--cas.ticket.registry.cleaner.schedule.enabled=false",
     
     "--cas.service-registry.core.init-from-json=true",
     "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services"

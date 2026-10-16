@@ -74,6 +74,8 @@ class OidcAccessTokenCibaGrantRequestValidatorTests extends AbstractOidcTests {
         profile.setId(registeredService.getClientId());
         profile.addAttribute(OAuth20Constants.CLIENT_ID, registeredService.getClientId());
         profileManager.save(true, profile, false);
+        cibaRequest.markTicketExpired();
+        assertEquals(mode != OidcBackchannelTokenDeliveryModes.PUSH, oidcAccessTokenCibaGrantRequestValidator.validate(context));
         ticketRegistry.deleteTicket(cibaRequest.getId());
         assertFalse(oidcAccessTokenCibaGrantRequestValidator.validate(context));
         request.setParameter(OidcConstants.AUTH_REQ_ID, "not-a-ciba-request");
