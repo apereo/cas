@@ -10,7 +10,6 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.lang3.Strings;
 import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.ObjectProvider;
 
@@ -34,22 +33,9 @@ public class DefaultOAuth20ClientSecretValidator implements OAuth20ClientSecretV
             return true;
         }
 
-        val secretsByExpiration = registeredService.getClientSecrets()
+        val secretIsValid = registeredService.getClientSecrets()
             .stream()
-            .collect(Collectors.partitioningBy(
-                secret -> isClientSecretExpired(secret, registeredService),
-                Collectors.toList()));
-
-        val expiredSecrets = secretsByExpiration.getOrDefault(Boolean.TRUE, List.of());
-        if (!expiredSecrets.isEmpty()) {
-            expiredSecrets.forEach(secret -> registeredService.getClientSecrets().remove(secret));
-            configurationContext.getObject().getServicesManager().save(registeredService);
-        }
-        
-        val candidateSecrets = secretsByExpiration.getOrDefault(Boolean.FALSE, List.of());
-
-        val secretIsValid = candidateSecrets
-            .stream()
+            .filter(secret -> !isClientSecretExpired(secret, registeredService))
             .map(secret -> SpringExpressionLanguageValueResolver.getInstance().resolve(secret.getValue()))
             .map(secretValue -> cipherExecutor.decode(secretValue, new Object[]{registeredService}))
             .filter(Objects::nonNull)
@@ -76,7 +62,8 @@ public class DefaultOAuth20ClientSecretValidator implements OAuth20ClientSecretV
             && (registeredService.getClientSecrets() == null || registeredService.getClientSecrets().isEmpty());
     }
 
-    protected boolean isClientSecretCorrect(@Nullable final String definedSecret, final String clientSecret) {
-        return Strings.CS.equals(definedSecret, clientSecret);
+    protected boolean isClientSecretCorrect(@Nullable final String definedSecret, @Nullable final String clientSecret) {
+        return definedSecret != null && clientSecret != null && MessageDigest.isEqual(
+            clientSecret.getBytes(StandardCharsets.UTF_8), definedSecret.getBytes(StandardCharsets.UTF_8));
     }
 }

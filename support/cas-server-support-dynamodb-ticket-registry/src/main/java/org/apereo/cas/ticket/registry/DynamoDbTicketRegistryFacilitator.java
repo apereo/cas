@@ -27,6 +27,7 @@ import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 import software.amazon.awssdk.services.dynamodb.model.AttributeDefinition;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.BatchWriteItemRequest;
+import software.amazon.awssdk.services.dynamodb.model.ConditionalCheckFailedException;
 import software.amazon.awssdk.services.dynamodb.model.DeleteItemRequest;
 import software.amazon.awssdk.services.dynamodb.model.DeleteRequest;
 import software.amazon.awssdk.services.dynamodb.model.GetItemRequest;
@@ -131,11 +132,19 @@ public class DynamoDbTicketRegistryFacilitator {
         val metadata = this.ticketCatalog.find(ticketId);
         if (metadata != null) {
             val del = DeleteItemRequest.builder().tableName(metadata.getProperties().getStorageName())
-                .key(CollectionUtils.wrap(ColumnNames.ID.getColumnName(), AttributeValue.builder().s(encodedTicketId).build())).build();
+                .key(CollectionUtils.wrap(ColumnNames.ID.getColumnName(), AttributeValue.builder().s(encodedTicketId).build()))
+                .conditionExpression("attribute_exists(#id)")
+                .expressionAttributeNames(Map.of("#id", ColumnNames.ID.getColumnName()))
+                .build();
             LOGGER.debug("Submitting delete request [{}] for ticket [{}]", del, ticketId);
-            val res = amazonDynamoDBClient.deleteItem(del);
-            LOGGER.debug("Delete request came back with result [{}]", res);
-            return res != null;
+            try {
+                val res = amazonDynamoDBClient.deleteItem(del);
+                LOGGER.debug("Delete request came back with result [{}]", res);
+                return res != null;
+            } catch (final ConditionalCheckFailedException e) {
+                LOGGER.debug("Ticket [{}] is already removed", ticketId);
+                return false;
+            }
         }
         return false;
     }

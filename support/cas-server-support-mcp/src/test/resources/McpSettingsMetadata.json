@@ -1,0 +1,33 @@
+{
+  "groups": [],
+  "properties": [
+    {
+      "name": "cas.server.name",
+      "type": "java.lang.String",
+      "description": "Full name of the CAS server.",
+      "defaultValue": "https://cas.example.org:8443",
+      "sourceType": "org.apereo.cas.configuration.model.core.CasServerProperties"
+    },
+    {
+      "name": "spring.ai.mcp.server.name",
+      "type": "java.lang.String",
+      "description": "The name of the MCP server.",
+      "sourceType": "org.springframework.ai.mcp.server.common.autoconfigure.properties.McpServerProperties"
+    }
+  ],
+  "hints": [
+    {
+      "name": "cas.server.name",
+      "values": [
+        {
+          "value": "{\"automated\":true,\"module\":\"cas-server-core\"}",
+          "description": "org.apereo.cas.configuration.support.RequiresModule"
+        },
+        {
+          "value": "{\"owner\":\"org.apereo.cas.configuration.model.core.CasServerProperties\"}",
+          "description": "org.apereo.cas.configuration.support.RequiredProperty"
+        }
+      ]
+    }
+  ]
+}

@@ -16,8 +16,6 @@ import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.code.OAuth20Code;
 import org.apereo.cas.ticket.registry.TicketRegistry;
-import org.apereo.cas.util.DigestUtils;
-import org.apereo.cas.util.EncodingUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -49,17 +47,6 @@ public class OAuth20ProofKeyCodeExchangeAuthenticator extends OAuth20ClientIdCli
         super(servicesManager, webApplicationServiceFactory, registeredServiceAccessStrategyEnforcer,
             ticketRegistry, principalResolver, requestParameterResolver, clientSecretValidator,
             profileScopeToAttributesFilter, ticketFactory, applicationContext);
-    }
-
-    private static String calculateCodeVerifierHash(final String method, final String codeVerifier) {
-        if ("plain".equalsIgnoreCase(method)) {
-            return codeVerifier;
-        }
-        if ("S256".equalsIgnoreCase(method)) {
-            val sha256 = DigestUtils.rawDigestSha256(codeVerifier);
-            return EncodingUtils.encodeUrlSafeBase64(sha256);
-        }
-        throw new CredentialsException("Code verification method is unrecognized: " + method);
     }
 
     @Override
@@ -96,12 +83,10 @@ public class OAuth20ProofKeyCodeExchangeAuthenticator extends OAuth20ClientIdCli
             throw new CredentialsException("Invalid token: " + code);
         }
 
-        val method = StringUtils.defaultIfEmpty(token.getCodeChallengeMethod(), "plain");
-        val hash = calculateCodeVerifierHash(method, codeVerifier);
-        if (!hash.equalsIgnoreCase(token.getCodeChallenge())) {
-            LOGGER.error("Code verifier [{}] does not match the challenge [{}]", hash, token.getCodeChallenge());
+        if (!OAuth20Utils.isCodeVerifierValidFor(token, codeVerifier)) {
+            LOGGER.error("Code verifier does not match the challenge of code [{}] using method [{}]", code, token.getCodeChallengeMethod());
             throw new CredentialsException("Code verification does not match the challenge assigned to: " + token.getId());
         }
-        LOGGER.debug("Validated code verifier using verification method [{}]", method);
+        LOGGER.debug("Validated code verifier using verification method [{}]", token.getCodeChallengeMethod());
     }
 }

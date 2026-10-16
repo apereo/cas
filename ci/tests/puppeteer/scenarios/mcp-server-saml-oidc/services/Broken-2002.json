@@ -1,0 +1,7 @@
+{
+  "@class": "org.apereo.cas.support.saml.services.SamlRegisteredService",
+  "serviceId": "https://broken.example.org/mcp",
+  "name": "Broken",
+  "id": 2002,
+  "metadataLocation": "file://${#environmentVariables['PWD']}/ci/tests/puppeteer/scenarios/${#environmentVariables['SCENARIO']}/missing-metadata.xml"
+}

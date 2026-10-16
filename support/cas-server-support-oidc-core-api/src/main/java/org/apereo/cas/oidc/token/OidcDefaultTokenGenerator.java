@@ -15,6 +15,7 @@ import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilte
 import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20DefaultTokenGenerator;
 import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20TokenGeneratedResult;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestContext;
+import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.function.FunctionUtils;
@@ -43,7 +44,15 @@ public class OidcDefaultTokenGenerator extends OAuth20DefaultTokenGenerator {
 
     @Override
     public OAuth20TokenGeneratedResult generate(final AccessTokenRequestContext tokenRequestContext) throws Throwable {
-        val result = super.generate(tokenRequestContext);
+        consumeCibaRequest(tokenRequestContext);
+        return super.generate(tokenRequestContext);
+    }
+
+    /*
+     * CIBA Core 1.0, section 10.1.1: once redeemed, the auth_req_id is no longer valid. The request is removed before
+     * tokens are issued, and only the token request whose delete removed it gets them; the others fail with invalid_grant.
+     */
+    private void consumeCibaRequest(final AccessTokenRequestContext tokenRequestContext) throws Exception {
         if (tokenRequestContext.getGrantType() == OAuth20GrantTypes.CIBA
             && StringUtils.isNotBlank(tokenRequestContext.getCibaRequestId())
             && tokenRequestContext.getRegisteredService() instanceof final OidcRegisteredService registeredService) {
@@ -52,10 +61,13 @@ public class OidcDefaultTokenGenerator extends OAuth20DefaultTokenGenerator {
             if (deliveryMode == OidcBackchannelTokenDeliveryModes.POLL
                 || deliveryMode == OidcBackchannelTokenDeliveryModes.PING) {
                 val cibaFactory = (OidcCibaRequestFactory) ticketFactory.get(OidcCibaRequest.class);
-                ticketRegistry.deleteTicket(cibaFactory.decodeId(tokenRequestContext.getCibaRequestId()));
+                val cibaRequestId = cibaFactory.decodeId(tokenRequestContext.getCibaRequestId());
+                if (ticketRegistry.deleteTicket(cibaRequestId) == 0) {
+                    LOGGER.warn("CIBA request [{}] was already redeemed by another token request", cibaRequestId);
+                    throw new InvalidTicketException(cibaRequestId);
+                }
             }
         }
-        return result;
     }
 
     @Override

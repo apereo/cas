@@ -55,6 +55,49 @@ class RedisAuditTrailManagerTests extends BaseAuditConfigurationTests {
     }
 
     @Test
+    void verifyRecordsAtSameInstantArePreserved() {
+        val principal = RandomUtils.randomAlphanumeric(12);
+        val when = LocalDateTime.now(Clock.systemUTC());
+        val actions = Set.of("AUTHENTICATION_SUCCESS", "TICKET_GRANTING_TICKET_CREATED", "SERVICE_TICKET_CREATED");
+        try {
+            for (val action : actions) {
+                val record = new AuditActionContext(principal, "TEST", action, "CAS", when,
+                    new ClientInfo("127.0.0.1", "127.0.0.1", "MCP", "unknown"));
+                auditTrailManager.record(record);
+            }
+            val results = auditTrailManager.getAuditRecords(Map.of(
+                AuditTrailManager.WhereClauseFields.DATE, when.minusSeconds(1),
+                AuditTrailManager.WhereClauseFields.PRINCIPAL, principal));
+            assertEquals(actions.size(), results.size());
+            assertEquals(actions, results.stream().map(AuditActionContext::getActionPerformed).collect(Collectors.toSet()));
+        } finally {
+            try (val keys = auditRedisTemplate.scan(RedisAuditTrailManager.CAS_AUDIT_CONTEXT_PREFIX + "*:" + principal)) {
+                keys.forEach(auditRedisTemplate::delete);
+            }
+        }
+    }
+
+    @Test
+    void verifyLegacyRecordsRemainReadable() {
+        val principal = RandomUtils.randomAlphanumeric(12);
+        val when = LocalDateTime.now(Clock.systemUTC());
+        val legacyKey = RedisAuditTrailManager.CAS_AUDIT_CONTEXT_PREFIX + when.toEpochSecond(ZoneOffset.UTC) + ':' + principal;
+        try {
+            auditRedisTemplate.opsForValue().set(legacyKey, newAuditRecord(principal, when));
+            auditTrailManager.record(newAuditRecord(principal, when));
+            val results = auditTrailManager.getAuditRecords(Map.of(
+                AuditTrailManager.WhereClauseFields.DATE, when.minusSeconds(1),
+                AuditTrailManager.WhereClauseFields.PRINCIPAL, principal));
+            assertEquals(2, results.size());
+            assertTrue(results.stream().allMatch(record -> principal.equals(record.getPrincipal())));
+        } finally {
+            try (val keys = auditRedisTemplate.scan(RedisAuditTrailManager.CAS_AUDIT_CONTEXT_PREFIX + "*:" + principal)) {
+                keys.forEach(auditRedisTemplate::delete);
+            }
+        }
+    }
+
+    @Test
     void verifyRecordsExpire() {
         val principal = RandomUtils.randomAlphanumeric(12);
         auditTrailManager.record(newAuditRecord(principal, LocalDateTime.now(Clock.systemUTC())));

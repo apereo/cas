@@ -172,9 +172,10 @@ public class JwtBuilder {
                 if (service.isPresent()) {
                     val registeredService = service.get();
                     LOGGER.trace("Locating service signing and encryption keys for [{}]", registeredService.getServiceId());
-                    if (registeredServiceCipherExecutor.supports(registeredService)) {
+                    val decoder = registeredServiceCipherExecutor.findDecoderFor(registeredService);
+                    if (decoder.isPresent()) {
                         LOGGER.trace("Decoding JWT based on keys provided by service [{}]", registeredService.getServiceId());
-                        return parse(registeredServiceCipherExecutor.decode(jwtJson, Optional.of(registeredService)));
+                        return parse(decoder.get().apply(jwtJson));
                     }
                 }
 
@@ -257,10 +258,13 @@ public class JwtBuilder {
         val jwtJson = claimsSet.toString();
         LOGGER.debug("Generated JWT [{}]", jwtJson);
 
-        if (registeredService != null && registeredServiceCipherExecutor.supports(registeredService)) {
-            LOGGER.trace("Encoding JWT based on keys provided by service [{}]", registeredService.getServiceId());
-            RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(registeredService);
-            return registeredServiceCipherExecutor.encode(jwtJson, Optional.of(registeredService));
+        if (registeredService != null) {
+            val encoder = registeredServiceCipherExecutor.findEncoderFor(registeredService);
+            if (encoder.isPresent()) {
+                LOGGER.trace("Encoding JWT based on keys provided by service [{}]", registeredService.getServiceId());
+                RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(registeredService);
+                return encoder.get().apply(jwtJson);
+            }
         }
 
         if (defaultTokenCipherExecutor.isEnabled()) {

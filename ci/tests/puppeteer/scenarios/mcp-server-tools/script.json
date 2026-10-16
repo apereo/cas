@@ -1,0 +1,20 @@
+{
+  "dependencies": "mcp,json-service-registry,rest,events-memory,surrogate-webflow,throttle",
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
+    "--cas.authn.attribute-repository.stub.attributes.mail=casuser@example.org",
+    "--cas.authn.surrogate.simple.surrogates.casuser=jsmith,banderson",
+
+    "--cas.authn.throttle.core.username-parameter=username",
+    "--cas.authn.throttle.failure.threshold=2",
+    "--cas.authn.throttle.failure.range-seconds=10",
+    "--cas.authn.throttle.schedule.enabled=false",
+
+    "--cas.service-registry.core.init-from-json=false",
+    "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services",
+
+    "--cas.monitor.endpoints.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/users.json"
+  ]
+}

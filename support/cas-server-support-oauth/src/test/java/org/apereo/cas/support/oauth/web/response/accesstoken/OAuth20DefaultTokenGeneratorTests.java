@@ -26,6 +26,7 @@ import org.apereo.cas.ticket.expiration.TimeoutExpirationPolicy;
 import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshToken;
 import org.apereo.cas.util.EncodingUtils;
 import lombok.val;
+import org.jooq.lambda.Unchecked;
 import org.jose4j.jwe.ContentEncryptionAlgorithmIdentifiers;
 import org.jose4j.jwt.JwtClaims;
 import org.junit.jupiter.api.Nested;
@@ -340,6 +341,96 @@ class OAuth20DefaultTokenGeneratorTests {
             assertTrue(oauthTokenGenerator.generate(tokenRequestContext).getAccessToken().isPresent());
             assertNull(ticketRegistry.getTicket(code.getId()));
             assertThrows(InvalidTicketException.class, () -> oauthTokenGenerator.generate(tokenRequestContext));
+        }
+
+        @Test
+        void verifyDeviceCodeRedeemedOnceUnderConcurrency() throws Throwable {
+            val clientId = UUID.randomUUID().toString();
+            val service = RegisteredServiceTestUtils.getService("https://device.oauth.org");
+            val deviceCode = defaultDeviceTokenFactory.createDeviceCode(service, List.of(), clientId);
+            val userCode = defaultDeviceUserCodeFactory.createDeviceUserCode(deviceCode.getService());
+            userCode.setUserCodeApproved(true);
+            userCode.setAuthentication(RegisteredServiceTestUtils.getAuthentication());
+            ticketRegistry.addTicket(userCode);
+            deviceCode.setUserCode(userCode.getId());
+            ticketRegistry.addTicket(deviceCode);
+
+            val tokenRequestContext = AccessTokenRequestContext.builder()
+                .responseType(OAuth20ResponseTypes.DEVICE_CODE)
+                .deviceCode(deviceCode.getId())
+                .service(service)
+                .authentication(RegisteredServiceTestUtils.getAuthentication())
+                .registeredService(getRegisteredService(clientId, "secret"))
+                .build();
+
+            val issued = new AtomicInteger();
+            val rejected = new AtomicInteger();
+            val requests = 8;
+            val start = new CountDownLatch(1);
+            try (val executor = Executors.newVirtualThreadPerTaskExecutor()) {
+                val results = IntStream.range(0, requests).mapToObj(i -> executor.submit(Unchecked.callable(() -> {
+                    start.await();
+                    try {
+                        oauthTokenGenerator.generate(tokenRequestContext);
+                        issued.incrementAndGet();
+                    } catch (final InvalidOAuth20DeviceTokenException e) {
+                        rejected.incrementAndGet();
+                    }
+                    return null;
+                }))).collect(Collectors.toCollection(() -> new ArrayList<Future<?>>()));
+                start.countDown();
+                for (final Future<?> result : results) {
+                    result.get();
+                }
+            }
+            assertEquals(1, issued.get());
+            assertEquals(requests - 1, rejected.get());
+            assertNull(ticketRegistry.getTicket(deviceCode.getId()));
+        }
+
+        @Test
+        void verifyRotatedRefreshTokenRedeemedOnceUnderConcurrency() throws Throwable {
+            val registeredService = getRegisteredService(SERVICE_URL, UUID.randomUUID().toString(), "secret");
+            registeredService.setGenerateRefreshToken(true);
+            registeredService.setRenewRefreshToken(true);
+            servicesManager.save(registeredService);
+            val refreshToken = addRefreshToken(createPrincipal(), registeredService);
+
+            val tokenRequestContext = AccessTokenRequestContext.builder()
+                .clientId(registeredService.getClientId())
+                .service(refreshToken.getService())
+                .authentication(refreshToken.getAuthentication())
+                .registeredService(registeredService)
+                .grantType(OAuth20GrantTypes.REFRESH_TOKEN)
+                .generateRefreshToken(true)
+                .expireOldRefreshToken(true)
+                .token(refreshToken)
+                .build();
+
+            val issued = new CopyOnWriteArrayList<String>();
+            val rejected = new AtomicInteger();
+            val requests = 8;
+            val start = new CountDownLatch(1);
+            try (val executor = Executors.newVirtualThreadPerTaskExecutor()) {
+                val results = IntStream.range(0, requests).mapToObj(i -> executor.submit(Unchecked.callable(() -> {
+                    start.await();
+                    try {
+                        val result = oauthTokenGenerator.generate(tokenRequestContext);
+                        issued.add(result.getRefreshToken().orElseThrow().getId());
+                    } catch (final InvalidTicketException e) {
+                        rejected.incrementAndGet();
+                    }
+                    return null;
+                }))).collect(Collectors.toCollection(() -> new ArrayList<Future<?>>()));
+                start.countDown();
+                for (final Future<?> result : results) {
+                    result.get();
+                }
+            }
+            assertEquals(1, issued.size());
+            assertEquals(requests - 1, rejected.get());
+            assertNull(ticketRegistry.getTicket(refreshToken.getId()));
+            assertNotNull(ticketRegistry.getTicket(issued.getFirst(), OAuth20RefreshToken.class));
         }
 
         @Test

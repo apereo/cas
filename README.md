@@ -84,7 +84,7 @@ deployment stories.
 
 If you have identified an enhancement or a bug, please submit a pull request for it. There is no need to open a separate
 issue first: the pull request *is* the issue, and it is tracked and tagged as such. The [contributor guide][contribute]
-explains how the project works, and the [build guide][casbuildprocess] shows how to build CAS from source with JDK 25.
+explains how the project works, and the [build guide][casbuildprocess] shows how to build CAS from source.
 
 <a href="https://github.com/apereo/cas/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=apereo/cas" alt="Contributors to Apereo CAS" />

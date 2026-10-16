@@ -7,6 +7,7 @@ import org.apereo.cas.util.function.FunctionUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Default cipher implementation based on public keys.
@@ -25,7 +26,7 @@ public class RegisteredServicePublicKeyCipherExecutor implements RegisteredServi
         Security.addProvider(new BouncyCastleProvider());
     }
 
-    protected static byte[] encodeInternal(final String data, final RegisteredService registeredService) {
+    protected static byte @Nullable [] encodeInternal(final String data, final RegisteredService registeredService) {
         val publicKey = registeredService.getPublicKey();
         if (publicKey == null) {
             LOGGER.error("No public key is defined for service [{}]. No attributes will be released", registeredService);
@@ -41,7 +42,7 @@ public class RegisteredServicePublicKeyCipherExecutor implements RegisteredServi
     }
 
     @Override
-    public String encode(final String data, final Optional<RegisteredService> service) {
+    public @Nullable String encode(final String data, final Optional<RegisteredService> service) {
         try {
             if (service.isPresent()) {
                 val registeredService = service.get();
@@ -57,7 +58,7 @@ public class RegisteredServicePublicKeyCipherExecutor implements RegisteredServi
     }
 
     @Override
-    public String decode(final String data, final Optional<RegisteredService> service) {
+    public @Nullable String decode(final String data, final Optional<RegisteredService> service) {
         LOGGER.warn("Operation is not supported by this cipher");
         return null;
     }

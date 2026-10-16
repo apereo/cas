@@ -178,6 +178,7 @@ class OidcClientConfigurationEndpointControllerTests {
             val clientSecretExpiration = ZonedDateTime.now(ZoneOffset.UTC).minusDays(1);
             service.getClientSecrets().forEach(secret -> secret.expireAt(clientSecretExpiration));
             servicesManager.save(service);
+            val originalSecret = oauthRegisteredServiceCipherExecutor.decode(service.getClientSecrets().getFirst().getValue());
 
             val jsonBody = """
                 {"redirect_uris": ["https://apereo.github.io"],
@@ -203,6 +204,10 @@ class OidcClientConfigurationEndpointControllerTests {
 
             service = servicesManager.findServiceBy(service.getId(), OidcRegisteredService.class);
             service.getClientSecrets().forEach(secret -> assertNotEquals(secret.getExpiration(), clientSecretExpiration));
+            assertEquals(1, service.getClientSecrets().size());
+            val renewedSecret = service.getClientSecrets().getFirst();
+            assertNotEquals(originalSecret, oauthRegisteredServiceCipherExecutor.decode(renewedSecret.getValue()));
+            assertFalse(renewedSecret.hasClientSecretExpired(service));
         }
 
     }    

@@ -612,6 +612,30 @@ public class OAuth20Utils {
     }
 
     /**
+     * Verify the PKCE code verifier presented for an authorization code, per RFC 7636 section 4.6. A code issued
+     * with a challenge requires a verifier that matches it exactly; a code issued without one refuses any verifier,
+     * which RFC 9700 section 2.1.1 requires against downgrade attacks.
+     *
+     * @param code         the authorization code
+     * @param codeVerifier the code verifier presented in the token request, if any
+     * @return true if the code verifier is acceptable for the code
+     */
+    public static boolean isCodeVerifierValidFor(final OAuth20Code code, @Nullable final String codeVerifier) {
+        val codeChallenge = code.getCodeChallenge();
+        if (StringUtils.isBlank(codeChallenge) || StringUtils.isBlank(codeVerifier)) {
+            return StringUtils.isAllBlank(codeChallenge, codeVerifier);
+        }
+        val method = StringUtils.defaultIfBlank(code.getCodeChallengeMethod(), "plain");
+        val computedChallenge = switch (method.toUpperCase(Locale.ENGLISH)) {
+            case "S256" -> EncodingUtils.encodeUrlSafeBase64(DigestUtils.rawDigestSha256(codeVerifier));
+            case "PLAIN" -> codeVerifier;
+            default -> null;
+        };
+        return computedChallenge != null && MessageDigest.isEqual(
+            computedChallenge.getBytes(StandardCharsets.UTF_8), codeChallenge.getBytes(StandardCharsets.UTF_8));
+    }
+
+    /**
      * Authorization details a token was granted with, per RFC 9396: those an authorization code carries, or a
      * refresh token carries from the code it was issued for. Other tokens contribute none.
      *

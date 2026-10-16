@@ -15,6 +15,8 @@ import org.springframework.test.context.TestPropertySource;
     "cas.ticket.registry.redis.protocol-version=RESP2",
     "cas.ticket.registry.redis.host=localhost",
     "cas.ticket.registry.redis.port=6379",
+    "cas.ticket.registry.redis.database=11",
+    "cas.ticket.registry.redis.enable-redis-search=false",
     "cas.ticket.registry.redis.read-from=MASTER",
 
     "cas.ticket.registry.redis.pool.max-active=20",

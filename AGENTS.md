@@ -78,9 +78,66 @@
   `auth_request` maps any status other than 2xx/401/403 (such as Heimdall's 404) to 500. Validate edits with a local
   `nginx -t` and stub upstreams; the config resolves `host.docker.internal` at load time.
 
+## MCP server module (`support/cas-server-support-mcp`)
+
+- Tools are plain beans whose methods carry `@McpTool` plus `@PreAuthorize("hasRole('MCP_ADMIN')")`;
+  `CasMcpToolsTests.verifyToolsAreSecuredByProxies` asserts every such bean is an AOP proxy. All tools are read-only.
+- A tool over an optional feature follows the consent pattern: `compileOnly` (and `testImplementation`) on that module, a
+  nested `@Configuration` with `@ConditionalOnClass` and feature module `mcp-<group>`, an `ObjectProvider` for the backing
+  bean and a `reason` in the result when it is absent; test activation in `CasMcpAutoConfigurationTests`.
+- Never return secrets: device fingerprints, trusted-device record keys, client secrets, key material, setting values.
+  Tests assert the secret string is absent from the result.
+- A turned-off events repository is a `BeanSupplier` proxy, not null: check `BeanSupplier.isProxy`.
+- Every `@McpTool`/`@McpResource` call is audited by one infrastructure advisor (`CasMcpAuditInterceptor`, ordered before
+  method security so denials are recorded) that hands a `CasMcpOperation` (an `AuditableEntity`, principal = the MCP
+  user) to the `@Audit`-annotated `CasMcpAuditor`. New tools are covered automatically; never add `@Audit` to tool
+  methods (the default audit principal resolver would take the first argument, the person being looked up).
+- Tools summarize; they never return serialized CAS objects (tickets, services' secrets) or attribute values outside
+  findPerson/previewAttributeRelease. Ticket-granting ticket ids are bearer tokens: return
+  `CasMcpSessionReferences.of(id)` and accept references back through `CasMcpSessionReferences.resolve` (with the
+  username). Service JSON from findService/matchService goes through the secret redaction in `CasServiceManagementTools`.
+- MCP capabilities are set in `webapp/cas-server-webapp-resources/src/main/resources/application.properties`
+  (`spring.ai.mcp.server.capabilities.*`) and mirrored in `BaseCasMcpTests`; a `@McpResource` or `@McpPrompt` bean is
+  silently not advertised while its capability is false. Resources (`org.apereo.cas.mcp.resources`) return JSON built
+  with a plain `JsonMapper`: CAS's `JacksonObjectMapperFactory` mappers use `NON_DEFAULT` inclusion and drop `false`/`0`.
+- `DefaultAuthenticationRiskEvaluator` is `@Transactional` on `transactionManagerEvents`; test contexts that use a real
+  evaluator need that bean (`PseudoTransactionManager`, as `CasCoreEventsAutoConfiguration` registers it).
+- Tools that evaluate a person at an application build their subject with `CasMcpEvaluationContextFactory.build`
+  (service, matching registered service, resolved principal, `authentication()`); request-aware components get
+  `currentHttpExchange()`, the live request with parameters, headers, cookies and query string hidden, or
+  `newWebflowRequestContext(context)`, a webflow request context over it with service, registered service, credential
+  and authentication in scope. Do not resolve services or principals by hand in a tool. Tools that need client details
+  (IP address, user agent, location) take them as parameters and wrap them in `CasMcpClient`: `ClientInfoHolder`
+  describes the MCP operator. `currentHttpExchange(client)` exposes them as remote address, `User-Agent` and the
+  `geolocation` parameter; `withClientInfo(client, ...)` swaps `ClientInfoHolder` only around components that read it
+  (MFA triggers). Do not swap it around audited calls such as the risk evaluator, or the audit trail records the
+  supplied address instead of the operator's.
+- A new tool also goes into `CAS_TOOLS` (`CasMcpServerTests`, `mcp-server-tools/script.js` when core), the role-denial
+  lists, `FeatureDisabledTests`, and the tables and feature-toggle list in `Admin-MCP-Server.md`. A new optional group also
+  goes into `CasDeploymentTools.MCP_TOOL_GROUPS` (feature module to bean name), which `describeDeployment` reports.
+- Tools return typed records with `@McpTool(generateOutputSchema = true)` (only findService/matchService return free-form
+  JSON strings): tools/list then carries an `outputSchema` and calls return `structuredContent`, which the MCP SDK validates
+  against the schema and copies into the text content. Mark optional components `@Nullable` (jspecify) and annotate the
+  record `@JsonInclude(NON_NULL)`: non-null components are `required` in the schema and a `null` fails validation. Never
+  return `null` from a typed tool; return the record with a `reason`. Keep JSON names stable (puppeteer reads them), use
+  `String` for dates, `Object` for nested CAS objects whose shape should not become schema, `@JsonProperty` for Java
+  keywords such as `default`, and Lombok `@Builder` for records with many optional components. Bean-level tests use the
+  record accessors.
+- A tool that combines others (explainLogin) calls the other tool beans and converts their records to maps with a plain
+  `JsonMapper`. `CasMcpAuditInterceptor` binds a `ScopedValue` for the outermost call, so nested tool calls are not audited.
+- Puppeteer builds CAS with `-DskipNestedConfigMetadataGen=true`, so the settings catalog at runtime holds only third-party
+  (Spring) settings and no `cas.*` ones. Scenarios exercise settings tools with a Spring setting such as
+  `spring.ai.mcp.server.name`; `cas.*` settings and the `module` filter are covered by unit tests (`McpSettingsMetadata.json`).
+- MCP completion (`@McpComplete`) only completes resource-template and prompt arguments, never tool parameters. Completion
+  methods carry `@PreAuthorize` like tools and are not audited; `spring.ai.mcp.server.capabilities.completion` must be true.
+- Claude's shells have no JDK 25 or Maven Central; `build/mcp-run.sh` compiles, runs checkstyle, the `RestfulApi` tests
+  and the MCP puppeteer scenarios on the Mac.
+
 Guidance for AI coding agents working in the Apereo CAS source tree.
 
 > This repository is for CAS contributors. If the task is deployment/configuration, prefer the WAR overlay approach instead of editing this repo.
+- `CasMcpEvaluationContextFactory` hands the username to the principal resolvers as the current principal. Without attribute repositories the chain holds only `EchoingPrincipalResolver`, which echoes the current principal, so resolving without one yields `NullPrincipal` (`nobody`).
+- OAuth/OIDC services serialize their secret as `clientSecrets` (a list of objects with `value`); `getClientSecret()` is `@JsonIgnore`. Redaction of service definitions must cover the plural property, which `SECRET_PROPERTY` in `CasServiceManagementTools` does with `secrets?`.
 
 ## Big picture
 
@@ -248,6 +305,19 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
   properties lexer splits keys with `[0]` into separate tokens. `casSettingsFlat()` drops anything in brackets and any
   purely numeric name segment, so `[0]`, `[]`, the catalog's map notation `.[key]`, `.0.` and the environment variable form
   `_0_` all match the same setting. No catalog name has a numeric segment of its own; recheck that if one is ever added. `planning/Quick-Start.md` is the reference page.
+- Quick Start wizard (`planning/Quick-Start.md`, `javascripts/quick-start.js`): the page needs exactly eight `## N. ` steps;
+  anything else on the page is an `###` inside one of them, or it shows on every step. `data-quick-feature` takes a
+  space-separated list and shows the section when any listed feature is selected. Each checkbox's `data-module` must match
+  the `casmodule` include in its recipe (the fieldset's `data-modules` holds the always-included ones): step 2's
+  Initializr command and step 6's `dependencies` block are built from them, and step 6's `cas.properties` from every
+  visible `.cas-settings-linked` block in steps 3–5, in page order, under the nearest heading. Generated blocks are
+  plain fenced blocks inside `[data-quick-output]`; the script rewrites their text and gutter and calls
+  `linkCasSettingsBlock()` from `site.js` again. The selection is page state: popstate restores the step only, and a link
+  into a recipe selects its first feature with a notice. Checkboxes may declare `data-requires` and `data-excludes`
+  (space-separated feature values; Interrupt requires Groovy, Redis and Hazelcast exclude each other, declared on both
+  sides): checking selects requirements and clears conflicts, clearing a feature clears its dependents, Check All adds
+  only what fits, and a selection from the address is normalized with earlier features winning. Test the wizard in
+  headless Chromium against a rendered copy (Back/Forward, deep links, rules, Check All output) after changes.
 - Every documentation page needs an opening paragraph right after the H1 that the layout can use as its description:
   at least 40 characters, not ending in a colon, and not a "see this guide" or dependency lead-in.
 - On phones (`max-width: 760px`) the sticky header is offset by `--docs-masthead-height` so only the navigation bar
@@ -361,6 +431,7 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
 - ISO mdoc (`mso_mdoc`) uses Authlete's `com.authlete:cbor`, from the vendor of the SD-JWT library: `IssuerSignedBuilder` builds the salted items, digests and mobile security object, and signs it with a `COSEEC2Key` only (ISO/IEC 18013-5 allows EC or EdDSA, never RSA), the curve setting the algorithm; the `x5chain` header is mandatory, so the issuer key needs an `x5c` chain. The device key is the proof's JWK as a `COSE_Key`; an RSA one is refused as `invalid_proof`. Issuer metadata publishes `doctype`, `cose_key` and numeric COSE algorithms (hence `List<Object>` in the metadata model), and claim paths `[namespace, element]`.
 - mdoc presentations (`OidcVerifiableCredentialMdocPresentationVerifier`): digests cover each `IssuerSignedItemBytes` exactly as received, tag 24 included, so hash `CBORTaggedItem.encode()` of the decoded item, never a re-encoding of parsed values. The device signature has a detached payload, the encoded `#6.24(DeviceAuthentication)`, built into the `Sig_structure` by hand. The session transcript is `[null, null, handover]` with the OpenID4VP 1.0 B.2.6 handovers, checked against the specification's vectors in `OidcVerifiableCredentialMdocPresentationVerifierTests`. COSE headers carry no `kid`, so the issuer key is the CAS signing key whose certificate is the `x5chain` leaf. The OpenID4VP source is `raw.githubusercontent.com/openid/OpenID4VP/main/1.0/openid-4-verifiable-presentations-1_0.md`.
 - A process a `device_bash` call starts in the background dies when the call returns, `setsid` and `nohup` included, so a test batch left running there leaves an empty log. Run each batch in the foreground under `timeout 170` with `timeout_ms` at 180000, splitting the classes when they take longer.
+- Only `dc+sd-jwt` credentials carry `vct`. walt.id (wallet-api2 1.2.0 and later) classifies any JWT with `@context` and `vct` as an SD-JWT VC and refuses it for a `jwt_vc_json`/`jwt_vc_json-ld` request (502, stage `RESPONSE`); `OidcVerifiableCredentialDcSdJwtEncoder` adds `vct`, the shared `sign` does not.
 
 ## Parallel test execution and shared registries
 
@@ -446,6 +517,18 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
 - The matrix jobs start `ci/tests/puppeteer/prefetch-docker-images.sh <scenario>` right after checkout (in `native-tests.yml`, after `Configure CI` and only when the scenario's native run is enabled, since init scripts run only in the `--nr` step and the pulls then finish during the native build): it finds the images the scenario's bootstrap, init and ready scripts need (their `docker run`/`pull`/`build` commands, `*_IMAGE` and `*COMPOSE_FILE` assignments, compose files, Dockerfile `FROM` lines, and the `ci/tests` scripts they call) and pulls them in the background while the job sets up, logging to `$RUNNER_TEMP/docker-prefetch.log` (printed by the `Docker Prefetch Summary` step). Images a script builds itself, compose services with `build:` and run.sh's own `cas-<scenario>` images are skipped, and so are scenarios that are disabled or miss a `conditions.env` variable (run.sh skips those too). It is best-effort: an image it misses or is still pulling is pulled by the init script as before, so new init scripts need no changes, but keep image references literal or in a plain `*_IMAGE=` assignment so they are found. `--list` prints what it would pull. Images are not stored in the Actions cache: it is already at its limit, and restoring a tarball is a download too.
 - Instances whose resolved dependencies are identical share one build: `run.sh` builds only the first instance of each dependency set and copies its artifact to the others. Only instance-specific `dependencies` cause another build. Instances still start one after another, because several multi-instance scenarios need instance 1 up before instance 2 starts (Spring Boot Admin client registration, passive service-registry replication, cas2cas delegation).
 - `run.sh` exit codes carry meaning for the `Run Tests` retry (`retry_on_exit_code: 1`): 1 is a setup failure worth another attempt (init scripts, containers, npm), 2 a failed build, 3 a build that exceeded `PUPPETEER_BUILD_CTR`, 4 a CAS instance that exited or did not answer its health check within `PUPPETEER_STARTUP_TIMEOUT` seconds (300 in CI, unlimited locally; a single probe may use the whole remaining budget, since some login pages take ~30 s to render, e.g. `thymeleaf-templates-rest` before its template server is up), and 5 a scenario script that still failed after its in-process attempts (3 in CI, against the running server). 2-5 fail at once; a whole-script retry cannot fix them and repeats the build and startup. Keep new failure paths on 1 only if a rerun can help.
+- `tests.yml`, `functional-tests.yml` and `native-tests.yml` retry failures the same way: a boolean `retryFailedScenarios`
+  dispatch input gates a step that runs `ci/tests/select-failed-jobs.sh <list.json>`, which narrows the listed
+  categories/scenarios in place to the jobs that failed, timed out or were cancelled in the latest attempt of the
+  workflow's previous completed run, and writes a step summary. Call that script from any other matrix workflow; do not
+  inline the logic. It matches job names, so a matrix job's `name:` must stay exactly the category or scenario, and the
+  listing job needs `permissions: actions: read`. No matching job leaves `[]`, so every matrix job that consumes the list is
+  skipped when it is empty (an empty matrix fails the job). A category retry disables PTS and coverage and skips the
+  `coverage` job, which would otherwise upload a partial report.
+- `run.sh` joins a scenario's `properties` with spaces and passes them unquoted, so a value containing a space is cut at the space (`display-name=My CAS One` arrives as `My`). Use values without spaces in `script.json`.
+- `ci/tests/keycloak/run-keycloak-server.sh` polls the `cas` realm's discovery document; Keycloak answers HTTP well before the realm import finishes, and a pac4j OIDC client that fetched its metadata in that window stays broken for every later in-process attempt.
+- `run.sh` installs the Chrome build Puppeteer pins (`npx puppeteer browsers install chrome`) after `npm install`, because npm can finish without puppeteer's postinstall having downloaded it, which only shows up later as `Could not find Chrome`.
+- A scenario that navigates to `https://localhost:9859/anything/...` needs `ci/tests/httpbin/run-httpbin-server.sh` among its init scripts; without it the redirect lands on `chrome-error://` and the ticket assertion fails.
 
 ## OpenID Connect discovery metadata
 
@@ -462,6 +545,12 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
 - DPoP nonces (RFC 9449 sections 8 and 9) are transient session tickets, like attestation challenges, through `BaseTransientSessionNonceService` (one marker property per kind, so a challenge is never accepted as a nonce). Nimbus treats an empty set of accepted nonces as "a `nonce` claim is prohibited", so a verifier must be handed the proof's own nonce (`OAuth20DPoPNonceService.getAcceptedNonces`) and CAS checks it afterwards (`isAccepted`); the protected resource verifier's single-`Nonce` overload with `null` prohibits the claim too. On failure the fresh nonce goes on the servlet response before `InvalidDPoPNonceException` is thrown, and each endpoint maps it: `400 use_dpop_nonce` at the token endpoint and in combined mode, `OAuth20Utils.useDPoPNonceResponse(algs)` (`401` + `WWW-Authenticate: DPoP error="use_dpop_nonce"`) at resources and Heimdall. The validator runs before the authorization code is consumed, so the client retries with the same code.
 - `dpop_jkt` (RFC 9449 section 10) is an authentication attribute of the authorization request, like `state` and `nonce`: `OAuth20AuthorizeEndpointController.bindProofOfPossessionKey` adds it, the pushed authorization request keeps all authentication attributes and merges them into the authorization at `/authorize`, and the stateless code compactor retains it explicitly. A `DPoP` header at PAR goes through `OAuth20ProofOfPossessionValidator.validateKeyBinding`, which verifies without touching the profile (`validate` copies the proof's claims onto it), and its thumbprint is passed on as a request attribute. The token endpoint compares the code's `dpop_jkt` with the `DPoPConfirmation` the validator put on the profile.
 - `dpop_bound_access_tokens` (RFC 9449 section 5.2) is `dpopBoundAccessTokens` on the service. With no `DPoP` header, `validate` resolves the client as it would for a proof (profile, then token, then `client_id`) and throws `InvalidDPoPProofException`, which the token endpoint answers with `400 invalid_dpop_proof` before any grant is redeemed. Grants with no authenticated client profile (device code polling, JWT bearer) call `validateTokenRequest(webContext, service)` instead, which hands the proof and its thumbprint to the extractor as request attributes; `BaseAccessTokenGrantRequestExtractor` lets them win over the profile's, which may be a stale one kept in the session. `DPoPTokenRequestVerifier` requires `htm` to be `POST`, so a device poll by `GET` cannot be bound. The device token generator rebuilds its request context, so a new context field must be copied there too. Do not wrap a call that throws `InvalidDPoP*Exception` in jOOλ `Unchecked`: it comes out as `UncheckedException`, the endpoint's catch misses it, and the client gets `invalid_request`.
+- `OidcJwtAuthenticator` verifies a `client_secret_jwt` assertion with the application's unexpired client secrets (SpEL, then
+  `oauthRegisteredServiceCipherExecutor`, UTF-8 bytes as the HMAC key per OIDC Core 10.1) when `tokenEndpointAuthenticationMethod`
+  is `client_secret_jwt` or blank, and still adds the `jwks` keys (a raw secret there is the deprecated fallback). An HMAC key shorter
+  than the algorithm's hash output is skipped in `isVerificationKeyUsable` with a warning naming the application; jose4j would reject it
+  anyway, only with a generic warning. Puppeteer: `oidc-login-jwt-hmac-metadata-cors` covers `clientSecret` with `client_secret_jwt`,
+  `oidc-login-jwt-rsa` covers `private_key_jwt`; keep each service's method matching how its script signs.
 - A DPoP-bound access token is accepted at a protected resource only as `Authorization: DPoP <token>` (RFC 9449 section 7.2). `validateProtectedResourceRequest` checks the scheme itself, before the proof, and throws `DPoPBoundAccessTokenDowngradeException`; the profile and VC endpoints answer `401 invalid_token` through `BaseOAuth20Controller.unauthorized`, whose challenge uses the scheme the client sent. `getAccessTokenFromRequest` prefers the `access_token`/`token` parameters over the header, so the check compares the presented token with the header's. Tests and puppeteer scenarios that present a bound token at a resource must send it in that header.
 - Refresh tokens of public clients (`OAuth20Utils.isPublicClient`: no secret, auth method unset or `none`) carry `DPoPConfirmation` in their authentication (`OAuth20DefaultTokenGenerator.bindRefreshTokenToProofOfPossessionKey`). The refresh grant's authentication is the refresh token's, so its access tokens inherit the confirmation; `BaseOAuth20TokenRequestValidator.verifyBoundProofOfPossessionKey(token, attribute, manager)` makes the proof match first, for codes (`dpop_jkt`) and refresh tokens alike. A refresh token built from a ticket-granting ticket alone has no authentication, so read it null-safely. A public client redeems a code only with PKCE.
 - Stateless compactors keep only the authentication attributes they are told to retain. `DPoPConfirmation` is retained for access and refresh tokens (`dpop_jkt` for codes); without it a DPoP-bound token expands as a plain bearer token. A new binding attribute must be added there too.

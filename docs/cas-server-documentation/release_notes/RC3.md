@@ -2,6 +2,34 @@
 layout: default
 title: CAS - 8.1.0-RC3 Release Notes
 category: Planning
+interface_images:
+  - src: img_15.png
+    alt: An MCP client listing the read-only tools of the CAS MCP server
+    title: An MCP client listing the read-only tools of the CAS MCP server
+  - src: img_16.png
+    alt: Account profile overview with its section rail and summary cards
+    title: Account profile overview with its section rail and summary cards
+  - src: img_17.png
+    alt: Notifications dialog shown before continuing to CAS
+    title: Notifications dialog shown before continuing to CAS
+  - src: img_18.png
+    alt: CAS menu with links to this server, documentation and the community
+    title: CAS menu with links to this server, documentation and the community
+  - src: img_19.png
+    alt: Palantir applications tab with the rounded navigation rail
+    title: Palantir applications tab with the rounded navigation rail
+  - src: img_20.png
+    alt: Palantir settings dialog listing keyboard shortcuts
+    title: Palantir settings dialog listing keyboard shortcuts
+  - src: img_21.png
+    alt: Palantir service wizard for a SAML2 service provider
+    title: Palantir service wizard for a SAML2 service provider
+  - src: img_22.png
+    alt: Palantir scheduled tasks with JVM thread charts
+    title: Palantir scheduled tasks with JVM thread charts
+  - src: img_23.png
+    alt: Palantir service wizard for an OpenID Connect relying party
+    title: Palantir service wizard for an OpenID Connect relying party
 release:
   line: 8.1.0 development
   summary: >-
@@ -64,6 +92,15 @@ release:
       text: needs a new `useridIndex` global secondary index; create it yourself if tables are not created at startup.
       section: Multifactor & Passkeys
       area: mfa
+  spotlight:
+    section: Interface & Accounts
+    kicker: User interface
+    title: A Refreshed Look Across CAS
+    images: interface_images
+    points:
+      - The account profile gets a section rail, an overview with summary cards and lists with inline details.
+      - Login, multifactor, consent, interrupt and error screens share one style, with pill-shaped buttons and rounded inputs.
+      - Palantir keeps its layout with a rounded navigation rail, pill-style tabs, softer cards and restyled dialogs.
   highlights:
     - section: Heimdall AuthZEN
       summary: Follows the AuthZEN Authorization API 1.0, with resource instances, the access evaluations API, decision point metadata and decision context.
@@ -169,6 +206,12 @@ The CAS documentation site has received a visual and functional overhaul. Notabl
   opens its description, default value, module and `.properties`, YAML or environment variable form in place, without
   leaving the page. Settings mentioned throughout the documentation and release notes are marked the same way, and the <kbd>Shift</kbd> <kbd>Shift</kbd> search shows a
   setting's details directly instead of moving to the configuration catalog.
+  Features are chosen before the overlay is generated: the Initializr command, pinned to the same release as the
+  Docker preview, carries the selected modules, and the build step assembles the overlay's `dependencies` block and the
+  complete `cas.properties` for the selection. The selection now survives the browser's Back button, and WebAuthn runs
+  on the same `http://localhost:8080` server as every other recipe. New recipes cover Groovy scripting and the
+  Hazelcast ticket registry, and interrupt notifications now come from a Groovy script. The wizard keeps the selection
+  consistent: interrupt notifications bring in Groovy, and Redis and Hazelcast replace each other.
 - The site loads two web fonts instead of four; code and the sidebar use the system monospace font. Images hosted on
   third-party sites are removed, and the [logout](../installation/Logout-Single-Signout.html) session example is now a table.
 - Release notes open with a digest of each release candidate: what to review before upgrading, the highlights and,
@@ -240,6 +283,8 @@ It used to scan and load every audit record stored in Redis on each login attemp
 Failed attempts are now tracked in a small key per username and IP address that expires once outside the failure range.
 [Redis audit records](../audits/Audits-Redis.html) now expire after `cas.audit.redis.max-age`{: .cas-setting}, 180 days by default, and
 looking up audit records reads only the newest matching entries instead of loading every record.
+Audit events for the same principal within one second are now stored separately; previously, later events could overwrite
+earlier ones, including authentication successes immediately followed by ticket creation. Existing records remain readable.
 
 ### Passwordless Authentication
 {: .new data-area="passwordless"}
@@ -418,6 +463,9 @@ looking up audit records reads only the newest matching entries instead of loadi
   issuer signs the claims' digests and the wallet's device key in a mobile security object with an elliptic curve key that carries an
   X.509 chain. A presented mdoc must be signed by one of CAS's keys and its device signature must cover the session transcript of the
   request. CBOR and COSE are handled by the Authlete `cbor` library, from the same vendor as the SD-JWT library CAS already uses.
+- [Verifiable credentials](../authentication/OIDC-Authentication-Verifiable-Credentials.html) issued as `jwt_vc_json` or
+  `jwt_vc_json-ld` no longer carry a `vct` claim, which belongs to SD-JWT VC; wallets such as walt.id classified such a
+  credential as an SD-JWT VC and refused it as not matching the requested format. `dc+sd-jwt` credentials keep their `vct`.
 
 ### Stateless Ticket Registry
 {: .action data-area="tickets"}
@@ -456,9 +504,50 @@ about a quarter smaller. This is recommended with the stateless ticket registry,
 ticket-granting ticket and can otherwise exceed the `4096` bytes browsers accept, for example after Duo Security multifactor
 authentication. See the [stateless ticket registry documentation](../ticketing/Stateless-Ticket-Registry.html) for details.
 
+### MCP Server
+{: .new data-area="operations"}
+
+CAS can now act as a [Model Context Protocol (MCP) server](../installation/Admin-MCP-Server.html), so AI assistants and agents
+can examine a CAS deployment through read-only tools. They find the registered service that matches an application URL,
+evaluate whether a person may access an application and explain a denial, preview the username and attributes released to an
+application, determine which multifactor authentication provider is required and why, preview single logout notifications,
+search registered services, look up single sign-on sessions by person or attribute, tickets, tenants, audit records and
+people along with their resolved attributes. Tools that examine optional features are
+offered only when that feature is included in the build; these include attribute consent decisions, SAML2 service provider
+metadata resolution with certificate expiration dates, and OpenID Connect client registrations and keystore keys. The server uses the Streamable HTTP transport at `/cas/mcp`; every request must be authenticated with the
+same user stores that protect actuator endpoints, and tool calls require the `MCP_ADMIN` role.
+
+The server can also return the recorded authentication events of a person, with the client IP address, user agent and
+location of each, and, when those features are included in the build, the devices a person trusts for multifactor
+authentication and the accounts a person may impersonate. Device fingerprints are never returned.
+It can also preview the interrupt notification a person would see after logging into an application, and score how
+risky a login attempt from a given client IP address and user agent would be. It lists the one-time password devices
+and WebAuthn security keys or passkeys a person has registered, without secret keys, codes or key material, and the
+multifactor authentication trigger evaluation now accepts the client IP address, user agent and location of the login
+attempt so that adaptive triggers can be checked. Passwordless accounts (with masked contact details), delegated identity
+providers and Heimdall resources can be looked up as well, and the CAS settings catalog is offered as the MCP resource
+`cas://settings/{name}`, which describes a setting without revealing its value; the resource capability is now turned on with
+`spring.ai.mcp.server.capabilities.resource=true`{: .cas-setting}. A `searchSettings` tool finds settings by name or
+description. Tickets are now summarized rather than returned in full, so attribute values no longer leave CAS through the
+MCP server, and every MCP tool call and resource read is recorded in the audit log under the MCP user who made it.
+Single sign-on sessions are identified by a one-way session reference rather than their ticket-granting ticket id, and service
+definitions are returned with client secrets, passwords and keys redacted.
+
+Agents can now start with `describeDeployment`, which reports the CAS version, enabled features, registries, authentication
+handlers, attribute repositories and active MCP tool groups, and use `explainLogin` to walk through access, risk, multifactor
+authentication, interrupts and attribute release for a person and an application in one call. `validateServiceDefinition`
+checks a proposed service definition and which service would win for given URLs without saving it, `findThrottledLogins`
+shows throttled login attempts, and `findAttributeSources` and `findAttributeDefinitions` show which attribute repository
+returns which attribute and how attribute definitions transform them. Tools now publish an output schema and return
+structured content, registered services are offered as the resource `cas://services/{id}`, and setting names and service ids
+can be completed by clients, with `spring.ai.mcp.server.capabilities.completion=true`{: .cas-setting}.
+The documentation now explains how to let browser-based MCP clients reach the server through CAS CORS support.
+
 ## Other Stuff
 
 - {: .changed data-area="project"} A large number of dependencies and libraries have been updated to their latest versions.
+- {: .changed data-area="project"} The unit, integration and functional test workflows, like the native image tests, can be started manually to run only the
+  test categories or browser scenarios that failed in the previous run, against the latest changes. See [this guide](../../developer/Test-Process.html).
 - {: .changed} [Groovy scripts](../integration/Apache-Groovy-Scripting.html), whether inline or in a file, that keep no state between
   executions no longer run one request at a time: each execution gets its own instance of the compiled script, so concurrent
   requests through the same script run in parallel. Scripts that declare fields other than `final` ones holding plain values,
@@ -591,7 +680,9 @@ authentication. See the [stateless ticket registry documentation](../ticketing/S
   SAML2 application definition it compares against.
 - {: .changed data-area="oidc"} JWT access tokens, JWT response modes and other tokens signed or encrypted with keys defined
   per application now reuse the prepared signing and encryption keys instead of parsing them again for every token issued
-  or read; a changed application definition or a rotated key is picked up the first time it is used.
+  or read; a changed application definition or a rotated key is picked up the first time it is used. Each such token also
+  looks up the application's keys once instead of three times; for an OpenID Connect application, a look-up reads its
+  keystore and serializes the keys.
 - {: .fixed data-area="tickets"} Ticket registries that replicate tickets through a message queue, such as
   [Kafka](../ticketing/Kafka-Ticket-Registry.html), [AMQP](../ticketing/Messaging-AMQP-Ticket-Registry.html),
   [Pulsar](../ticketing/Pulsar-Ticket-Registry.html) and [Google Cloud Pub/Sub](../ticketing/GCP-PubSub-Ticket-Registry.html),
@@ -634,6 +725,18 @@ authentication. See the [stateless ticket registry documentation](../ticketing/S
   registry before any token is issued, and only the request that removes it receives tokens. Two token requests presenting
   the same code at the same moment could previously both receive tokens. The code is also no longer written back to the
   ticket registry right before it is redeemed.
+- {: .fixed data-area="oidc"} An approved [device code](../authentication/OAuth-ProtocolFlow-DeviceAuthorization.html) and a
+  [CIBA](../authentication/OIDC-Authentication-CIBA.html) request in poll or ping mode are now redeemed the same way: only
+  the token request that removes them from the ticket registry receives tokens. Two polls arriving at the same moment could
+  previously both receive tokens. A CIBA request is now removed before its tokens are issued rather than after, and a
+  request that lost the race gets `invalid_grant`, as CIBA Core 1.0 requires once the `auth_req_id` has been redeemed.
+- {: .fixed data-area="tickets"} The [Memcached](../ticketing/Memcached-Ticket-Registry.html),
+  [DynamoDB](../ticketing/DynamoDb-Ticket-Registry.html) and [Google Cloud Firestore](../ticketing/GCP-Firestore-Ticket-Registry.html)
+  ticket registries now report a ticket that was already gone when asked to remove it. Service tickets, authorization codes,
+  device codes and CIBA requests are redeemed by whichever request removes them, and these registries reported every removal
+  as successful, so two requests presenting the same ticket at the same moment could both succeed. A Memcached removal that
+  fails, such as on a timeout, is no longer counted as removed either. The [Cassandra](../ticketing/Cassandra-Ticket-Registry.html)
+  ticket registry still reports every removal as successful and keeps this limitation.
 - {: .fixed data-area="tickets"} Removing a proxy-granting ticket no longer writes back the copy of the single sign-on
   session it was issued from, which undid any change made to the session since, such as applications the user logged into
   afterwards. When a single sign-on session ends, it is no longer rewritten once for each of its proxy-granting tickets and
@@ -684,6 +787,34 @@ authentication. See the [stateless ticket registry documentation](../ticketing/S
 - {: .changed data-area="oidc"} A client that authenticates at the token endpoint with `private_key_jwt` or `client_secret_jwt`
   and sends no `client_id` parameter is now identified from its client assertion, whose issuer and subject are the client
   identifier, instead of by matching the redirect URI against every OAuth application.
+- {: .fixed data-area="oidc"} [PKCE](../authentication/OAuth-ProtocolFlow-AuthorizationCode.html) is now verified for every
+  authorization code exchange, whatever the client authentication method. A client that authenticated at the token endpoint
+  with `private_key_jwt`, `client_secret_jwt` or mutual TLS could previously redeem a code issued with a `code_challenge`
+  without a `code_verifier`, or with one that did not match. As RFC 7636 and RFC 9700 require, the code verifier is now
+  compared exactly rather than ignoring case, and a `code_verifier` sent for a code that was issued without a challenge is
+  refused with `invalid_grant`. A `code_challenge` and `code_challenge_method` sent inside a request object are now recorded
+  with the authorization code as well; previously only the query parameters were read, so the code was issued without the
+  challenge and its verifier was then refused.
+- {: .fixed data-area="oidc"} When an [OAuth application](../authentication/OAuth-Authentication-Clients.html) renews refresh
+  tokens, the refresh token presented is now removed before new tokens are issued for it, and only the request that removes it
+  is issued tokens. Concurrent requests presenting the same refresh token could previously each receive a new refresh token,
+  so one refresh token turned into several valid ones. A client that sends the same refresh token in parallel now receives
+  `invalid_grant` for all but one request. The refresh token being renewed is also no longer written back to the ticket registry
+  during the request. Tokens already issued from a refresh token presented again are not revoked.
+- {: .fixed data-area="oidc"} [Client secrets](../authentication/OAuth-ClientSecret-Management.html) are now compared in
+  constant time, and expired client secrets are no longer removed while a request is authenticated: CAS used to change the
+  shared application definition and save it to the service registry during the request, and once every secret of an
+  application had expired and been removed, the application was treated as having no client secret and was accepted with any
+  secret, or none. Expired client secrets are now ignored when a request is authenticated, and removed from the application
+  definition in the background each time CAS loads applications from the service registry. When all secrets of an application
+  have expired, the one that expired last is kept, so the application keeps refusing requests until it is given a new secret.
+  Updating a [dynamically registered](../authentication/OIDC-Authentication-Dynamic-Registration.html) client now replaces an
+  expired client secret with a new one instead of extending the expiration of the expired secret.
+- {: .changed data-area="oidc"} A client that authenticates at the token endpoint with [`client_secret_jwt`](../authentication/OIDC-Authentication-AccessToken-AuthMethods.html)
+  is now verified with its `clientSecret`, as OpenID Connect requires, whenever the application's `tokenEndpointAuthenticationMethod`
+  is `client_secret_jwt` or left blank. A raw secret in the application's `jwks` is still accepted, but that fallback is deprecated
+  for removal. A secret shorter than the signing algorithm requires (32 bytes for `HS256`, 64 for `HS512`) is skipped with a
+  warning that names the application.
 - {: .changed data-area="oidc"} When CAS works out which application a login is for, a request object carried by the
   OAuth or OpenID Connect authorization request is now unpacked and verified once, instead of once for each of the client
   identifier, redirect URI and grant type read from it.

@@ -4,6 +4,7 @@ import module java.base;
 import org.apereo.cas.authentication.credential.BasicIdentifiableCredential;
 import org.apereo.cas.configuration.model.support.oidc.OidcVerifiableCredentialConfigurationProperties;
 import org.apereo.cas.oidc.OidcConfigurationContext;
+import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.vc.issuer.OidcVerifiableCredentialValidationContext;
 import org.apereo.cas.oidc.vc.issuer.proof.OidcVerifiableCredentialProofValidator;
 import org.apereo.cas.oidc.vc.issuer.status.OidcVerifiableCredentialStatusListService;
@@ -45,7 +46,9 @@ public class OidcVerifiableCredentialDcSdJwtEncoder extends BaseOidcVerifiableCr
         val configuration = resolveConfiguration(configurationId);
 
         val disclosures = new ArrayList<Disclosure>();
+        val issuer = configurationContext.getCasProperties().getAuthn().getOidc().getCore().getIssuer();
         val signedClaims = sign(principal.getId(), context, proof, jwtClaims -> {
+            jwtClaims.setClaim("vct", issuer + '/' + OidcConstants.VC_CREDENTIAL_TYPE_URL + '/' + configurationId);
             val sdBuilder = new SDObjectBuilder();
             verifiableClaims.forEach((claimName, claimValue) -> {
                 val claimDefn = configuration.getClaims().get(claimName);

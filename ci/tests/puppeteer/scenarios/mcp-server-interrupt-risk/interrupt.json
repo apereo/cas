@@ -1,0 +1,10 @@
+{
+  "casuser": {
+    "message": "Accept the updated terms of use",
+    "links": {
+      "Terms of use": "https://localhost:9859/anything/terms"
+    },
+    "block": true,
+    "interrupt": true
+  }
+}

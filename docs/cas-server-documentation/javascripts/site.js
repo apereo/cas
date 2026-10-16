@@ -49,7 +49,7 @@ function generateNavigationBarAndCrumbs() {
         if (current) {
             link.setAttribute("aria-current", "page");
         } else {
-            link.href = "/" + segments.slice(0, start + index + 1).join("/") + "/";
+            link.href = `/${segments.slice(0, start + index + 1).join("/")}/`;
             link.className = "capitalize";
         }
         item.append(link);
@@ -460,7 +460,7 @@ function generatePageTOC() {
         const item = document.createElement("li");
         item.className = `toc-entry toc-${heading.tagName.toLowerCase()}`;
         const link = document.createElement("a");
-        link.href = "#" + heading.id;
+        link.href = `#${heading.id}`;
         link.textContent = heading.textContent;
         item.append(link);
         contents.append(item);
@@ -475,8 +475,8 @@ function generatePageTOC() {
         const visibleHeadings = headings.filter(heading => heading.getClientRects().length > 0);
         const active = visibleHeadings.filter(heading => heading.getBoundingClientRect().top <= header).at(-1) || visibleHeadings[0];
         contents.querySelectorAll("a").forEach(link => {
-            link.parentElement.hidden = !visibleHeadings.some(heading => link.hash === "#" + heading.id);
-            if (active && link.hash === "#" + active.id) {
+            link.parentElement.hidden = !visibleHeadings.some(heading => link.hash === `#${heading.id}`);
+            if (active && link.hash === `#${active.id}`) {
                 link.setAttribute("aria-current", "location");
             } else {
                 link.removeAttribute("aria-current");
@@ -914,8 +914,8 @@ const CAS_HOME_TITLE_PHRASES = [
     "No Matter Your Solar System",
     "For Liberty and Pursuit of Root Access",
     "Where No Session Token Has Gone Before",
-    "Connecting Everyone Except the Guy on Internet Explorer",
-    "Authenticating Humans, and Your Family's Smart Fridge",
+    "For Everyone Except the Guy on Internet Explorer",
+    "Authenticating Humans, and Your Smart Fridge",
     "Keeping the Hackers Out and the Coffee Brewing",
     "Keeping Your Boss's Session Alive Since 1776",
     "\"123456\" Isn't an Enterprise Security Strategy",
@@ -949,15 +949,26 @@ const CAS_HOME_TITLE_PHRASES = [
     "Making Legacy Apps Feel Young Again",
     "Less Login Friction, More Time to Blame DNS",
     "Proof of Identity, Not Proof of Sanity",
+    "For the Group Named “DoNotUse_FINAL_v7”",
+    "Because Everyone Needs MFA, Including the CEO",
     "Even Your Cron Jobs Need Boundaries",
     "Keeping Tokens Fresher Than the Office Coffee",
     "Making “Access Denied” Feel Less Personal",
-    "No, Your Cat Does Not Need Administrator Access",
+    "No, Your Cat Does Not Need Admin Access",
     "Because Incognito Mode Isn't an Access Strategy",
+    "Your Security Plan Can Not Just Be Steve",
+    "Read the Source, Not the Sales Deck",
+    "Free and Open Source. No Plot Twists.",
+    "“Temporary Access” Has Celebrated Three Birthdays?",
     "Your Browser Remembers. We Still Check.",
     "Yelling at the Monitor Won't Fix Your Login",
     "Entra Your Credit Card, Yet?",
-    "Turning “Contact Sales” into “git clone”"
+    "Turning “Contact Sales” into “git clone”",
+    "“We Trust Dave” Does Not Scale",
+    "Pull Requests Welcome. Login Requests Reviewed.",
+    "Because Bob Left in March",
+    "Single Sign-On, Multiple Meetings to Approve It",
+    "\"Give Everyone Admin\" Is a Great Podcast"
 ];
 
 function initializeHomeTitle() {
@@ -1110,6 +1121,42 @@ $(() => {
             requestAnimationFrame(update);
         }
     };
+    window.addEventListener("scroll", schedule, {passive: true});
+    window.addEventListener("resize", schedule, {passive: true});
+    update();
+});
+
+// A small floating button returns to the top once the reader has scrolled down; its ring shows how far they have read.
+$(() => {
+    const button = document.getElementById("backToTop");
+    if (!button) {
+        return;
+    }
+    const ring = button.querySelector(".back-to-top-ring");
+    let scheduled = false;
+    const update = () => {
+        const span = document.documentElement.scrollHeight - window.innerHeight;
+        const read = span > 0 ? Math.min(1, Math.max(0, window.scrollY / span)) : 0;
+        button.classList.toggle("is-visible", window.scrollY > Math.min(480, window.innerHeight * .6));
+        if (ring) {
+            ring.style.strokeDashoffset = `${100 - read * 100}`;
+        }
+        scheduled = false;
+    };
+    const schedule = () => {
+        if (!scheduled) {
+            scheduled = true;
+            requestAnimationFrame(update);
+        }
+    };
+    button.addEventListener("click", () => {
+        const smooth = !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        window.scrollTo({top: 0, behavior: smooth ? "smooth" : "auto"});
+        const article = document.getElementById("cas-docs-container");
+        if (article) {
+            article.focus({preventScroll: true});
+        }
+    });
     window.addEventListener("scroll", schedule, {passive: true});
     window.addEventListener("resize", schedule, {passive: true});
     update();
@@ -2081,6 +2128,30 @@ function openCasSettingsPalette(query) {
     });
 }
 
+/**
+ * Turns each setting name in a rendered properties block into a button that opens the settings palette.
+ * Safe to call again after the block's text changes, as the Quick Start wizard does.
+ *
+ * @param block the element marked with cas-settings-linked
+ */
+function linkCasSettingsBlock(block) {
+    const code = block.querySelector(".rouge-code pre") || block.querySelector("pre code");
+    if (!code) {
+        return;
+    }
+    code.innerHTML = code.textContent.split("\n").map(line => {
+        const setting = line.match(/^(\s*)([^\s#!=:][^\s=:]*)(\s*[=:]\s*)(.*)$/);
+        if (/^\s*[#!]/.test(line)) {
+            return `<span class="c">${casSettingsEscape(line)}</span>`;
+        }
+        if (!setting) {
+            return casSettingsEscape(line);
+        }
+        const [, indent, name, separator, value] = setting;
+        return `${indent}<button type="button" class="cas-setting-link cas-setting-link-code" data-setting="${casSettingsEscape(name)}" title="Look up this setting" aria-haspopup="dialog">${casSettingsEscape(name)}</button><span class="p">${casSettingsEscape(separator)}</span><span class="s">${casSettingsEscape(value)}</span>`;
+    }).join("\n");
+}
+
 function initializeCasSettingLinks() {
     const container = document.getElementById("cas-docs-container") || document.body;
     const attach = (element, name) => {
@@ -2097,23 +2168,7 @@ function initializeCasSettingLinks() {
     container.querySelectorAll("code.cas-setting").forEach(code => {
         attach(code, code.textContent.trim().replace(/\s*[=:].*$/, "")).insertAdjacentHTML("beforeend", "<i class=\"fa fa-sliders\" aria-hidden=\"true\"></i>");
     });
-    container.querySelectorAll(".cas-settings-linked").forEach(block => {
-        const code = block.querySelector(".rouge-code pre") || block.querySelector("pre code");
-        if (!code) {
-            return;
-        }
-        code.innerHTML = code.textContent.split("\n").map(line => {
-            const setting = line.match(/^(\s*)([^\s#!=:][^\s=:]*)(\s*[=:]\s*)(.*)$/);
-            if (/^\s*[#!]/.test(line)) {
-                return `<span class="c">${casSettingsEscape(line)}</span>`;
-            }
-            if (!setting) {
-                return casSettingsEscape(line);
-            }
-            const [, indent, name, separator, value] = setting;
-            return `${indent}<button type="button" class="cas-setting-link cas-setting-link-code" data-setting="${casSettingsEscape(name)}" title="Look up this setting" aria-haspopup="dialog">${casSettingsEscape(name)}</button><span class="p">${casSettingsEscape(separator)}</span><span class="s">${casSettingsEscape(value)}</span>`;
-        }).join("\n");
-    });
+    container.querySelectorAll(".cas-settings-linked").forEach(linkCasSettingsBlock);
     document.addEventListener("click", event => {
         const link = event.target.closest(".cas-setting-link");
         if (link) {

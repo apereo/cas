@@ -50,6 +50,11 @@ class CassandraTicketRegistryTests extends BaseTicketRegistryTests {
         return true;
     }
 
+    @Override
+    protected boolean canTicketRegistryReportMissingTicketOnDelete() {
+        return false;
+    }
+
     @RepeatedTest(1)
     void verifyFails() {
         assertDoesNotThrow(() -> newTicketRegistry.addTicket((Ticket) null));

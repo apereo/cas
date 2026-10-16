@@ -232,7 +232,12 @@ public class OidcDefaultClientRegistrationRequestTranslator implements OidcClien
             val secrets = registeredService.getClientSecrets()
                 .stream()
                 .map(secret -> {
-                    if (secret.isWithoutExpiration() || secret.hasClientSecretExpired(registeredService)) {
+                    if (secret.hasClientSecretExpired(registeredService)) {
+                        val clientSecret = context.getClientSecretGenerator().getNewString();
+                        val encodedSecret = context.getRegisteredServiceCipherExecutor().encode(clientSecret);
+                        return new OAuthRegisteredServiceClientSecret(encodedSecret, expirationDate);
+                    }
+                    if (secret.isWithoutExpiration()) {
                         return secret.expireAt(expirationDate);
                     }
                     return secret;

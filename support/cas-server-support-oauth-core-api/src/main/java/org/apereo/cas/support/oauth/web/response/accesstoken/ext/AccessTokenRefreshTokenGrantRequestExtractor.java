@@ -7,6 +7,7 @@ import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
+import org.apereo.cas.ticket.OAuth20Token;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -51,12 +52,17 @@ public class AccessTokenRefreshTokenGrantRequestExtractor extends AccessTokenAut
         if (registeredService == null) {
             throw UnauthorizedServiceException.denied("Unable to locate service in registry");
         }
-        val shouldRenewRefreshToken = registeredService.isGenerateRefreshToken() && registeredService.isRenewRefreshToken();
+        val shouldRenewRefreshToken = isTokenRedeemedOnce(accessTokenRequestContext.getToken(), registeredService);
         return super.extractInternal(context, accessTokenRequestContext
             .withGenerateRefreshToken(shouldRenewRefreshToken)
             .withExpireOldRefreshToken(shouldRenewRefreshToken));
     }
     
+    @Override
+    protected boolean isTokenRedeemedOnce(final OAuth20Token token, final OAuthRegisteredService registeredService) {
+        return registeredService.isGenerateRefreshToken() && registeredService.isRenewRefreshToken();
+    }
+
     @Override
     protected OAuthRegisteredService getOAuthRegisteredServiceBy(final WebContext context) {
         val clientId = getRegisteredServiceIdentifierFromRequest(context);

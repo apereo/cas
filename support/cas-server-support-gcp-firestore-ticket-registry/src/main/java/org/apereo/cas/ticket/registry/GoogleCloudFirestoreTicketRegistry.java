@@ -170,12 +170,19 @@ public class GoogleCloudFirestoreTicketRegistry extends AbstractTicketRegistry {
             val metadata = ticketCatalog.find(ticketId);
             if (metadata == null) {
                 LOGGER.error("Could not locate ticket definition in the catalog for ticket [{}]", ticketId);
-                return 0;
+                return 0L;
             }
             val collectionName = getTicketCollectionInstanceByMetadata(metadata);
-            val updateTime = firestore.collection(collectionName).document(digestedId).delete().get().getUpdateTime();
-            LOGGER.debug("Deleted ticket [{}] from [{}] @ [{}]", ticketId, collectionName, updateTime);
-            return 1;
+            val document = firestore.collection(collectionName).document(digestedId);
+            val deleted = firestore.runTransaction(transaction -> {
+                if (!transaction.get(document).get().exists()) {
+                    return 0L;
+                }
+                transaction.delete(document);
+                return 1L;
+            }).get();
+            LOGGER.debug("Deleted [{}] ticket(s) with id [{}] from [{}]", deleted, ticketId, collectionName);
+            return deleted;
         });
     }
 
@@ -197,11 +204,9 @@ public class GoogleCloudFirestoreTicketRegistry extends AbstractTicketRegistry {
                  * Counting inside a completion callback instead leaves the tally to whenever the
                  * callback happens to be dispatched, which is not before this method returns.
                  */
-                val futures = new ArrayList<ApiFuture<WriteResult>>();
+                var futures = new ArrayList<ApiFuture<WriteResult>>();
                 try (val bulkWriter = firestore.bulkWriter()) {
-                    for (val document : documents) {
-                        futures.add(bulkWriter.delete(document.getReference()));
-                    }
+                    futures = documents.stream().map(document -> bulkWriter.delete(document.getReference())).collect(Collectors.toCollection(ArrayList::new));
                 }
                 return futures
                     .stream()

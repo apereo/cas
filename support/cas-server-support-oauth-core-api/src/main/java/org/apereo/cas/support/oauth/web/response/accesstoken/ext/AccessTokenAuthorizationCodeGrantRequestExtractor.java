@@ -66,7 +66,7 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAcces
             .generateRefreshToken(generateRefreshToken)
             .token(token)
             .claims(token.getClaims())
-            .ticketGrantingTicket(fetchTicketGrantingTicket(token));
+            .ticketGrantingTicket(fetchTicketGrantingTicket(token, registeredService));
         return extractInternal(context, builder.build());
     }
 
@@ -131,7 +131,20 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAcces
         return registeredService;
     }
 
-    protected Ticket fetchTicketGrantingTicket(final OAuth20Token token) {
+    /**
+     * Whether the token is removed once it is exchanged, as an authorization code is. Such a token is not written back
+     * to the registry while the request is extracted, so that a concurrent request that already removed it does not
+     * find it again.
+     *
+     * @param token             the token being exchanged
+     * @param registeredService the registered service
+     * @return true if the token is removed once exchanged
+     */
+    protected boolean isTokenRedeemedOnce(final OAuth20Token token, final OAuthRegisteredService registeredService) {
+        return token.isCode();
+    }
+
+    protected Ticket fetchTicketGrantingTicket(final OAuth20Token token, final OAuthRegisteredService registeredService) {
         try {
             if (token.getTicketGrantingTicket() != null) {
                 val id = token.getTicketGrantingTicket().getId();
@@ -140,7 +153,7 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAcces
 
                 FunctionUtils.doUnchecked(_ -> {
                     token.assignTicketGrantingTicket(ticketGrantingTicket);
-                    if (!token.isCode()) {
+                    if (!isTokenRedeemedOnce(token, registeredService)) {
                         configurationContext.getTicketRegistry().updateTicket(token);
                     }
                 });

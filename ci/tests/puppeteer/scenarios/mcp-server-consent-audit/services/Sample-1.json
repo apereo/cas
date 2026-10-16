@@ -1,0 +1,10 @@
+{
+  "@class": "org.apereo.cas.services.CasRegisteredService",
+  "serviceId": "^https://localhost:9859/anything/consent.*",
+  "name": "Sample",
+  "id": 1,
+  "description": "Application that asks for attribute consent",
+  "attributeReleasePolicy": {
+    "@class": "org.apereo.cas.services.ReturnAllAttributeReleasePolicy"
+  }
+}
