@@ -6,10 +6,12 @@ import org.apereo.cas.ticket.registry.pubsub.commands.BaseMessageQueueCommand;
 import org.apereo.cas.ticket.registry.pubsub.commands.TicketAwareQueueCommand;
 import org.apereo.cas.ticket.registry.pubsub.queue.QueueableTicketRegistryMessagePublisher;
 import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.pulsar.core.PulsarTemplate;
+import tools.jackson.databind.json.JsonMapper;
 
 /**
  * This is {@link PulsarTicketRegistryPublisher}.
@@ -20,6 +22,14 @@ import org.springframework.pulsar.core.PulsarTemplate;
 @RequiredArgsConstructor
 @Slf4j
 public class PulsarTicketRegistryPublisher implements QueueableTicketRegistryMessagePublisher {
+    /**
+     * Writes and reads ticket registry commands. Commands travel as JSON strings carrying their own types,
+     * the way the Kafka ticket registry sends them, because Pulsar's JSON schema cannot describe a command
+     * whose ticket is only known at runtime.
+     */
+    public static final JsonMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .defaultTypingEnabled(true).minimal(true).build().toJsonMapper();
+
     private final TicketCatalog ticketCatalog;
     private final PulsarTemplate pulsarTemplate;
 
@@ -40,7 +50,7 @@ public class PulsarTicketRegistryPublisher implements QueueableTicketRegistryMes
 
     private void publishMessage(final BaseMessageQueueCommand cmd, final String topic) {
         LOGGER.debug("[{}] is publishing message [{}]", cmd.getPublisherIdentifier().getId(), cmd);
-        val id = pulsarTemplate.send(topic, cmd);
+        val id = pulsarTemplate.send(topic, MAPPER.writeValueAsString(cmd));
         LOGGER.debug("Sent message with id [{}] [{}] from ticket registry id [{}]", id, cmd, cmd.getPublisherIdentifier());
     }
 }

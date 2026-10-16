@@ -1,5 +1,5 @@
 {
-  "dependencies": "reports,metrics,monitor",
+  "dependencies": "reports,metrics,monitor,scripting,surrogate-webflow,oauth-webflow,saml",
   "properties": [
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",
@@ -19,8 +19,6 @@
     "--cas.monitor.endpoints.endpoint.defaults.access=ROLE",
     "--cas.monitor.endpoints.endpoint.defaults.requiredRoles=ADMIN",
 
-    "--spring.security.user.name=casadmin",
-    "--spring.security.user.password=pa$$w0rd",
-    "--spring.security.user.roles=ADMIN"
+    "--cas.monitor.endpoints.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/users.json"
   ]
 }

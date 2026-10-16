@@ -23,6 +23,13 @@ In Apache Pulsar, topics do not need to be created beforehand. They are created 
 - The namespace exists, and
 - Auto-creation is enabled in the broker configuration (it is enabled by default in most local/docker setups).
 
+Every CAS node must receive every change, so each node subscribes to these topics under a subscription of its own,
+named after the configured subscription name followed by the node's queue identifier. Subscriptions are durable in Pulsar:
+give every node a stable queue identifier, otherwise each restart leaves an abandoned subscription behind for which the
+broker keeps retaining messages.
+
+{% include_cached casproperties.html properties="cas.ticket.registry.core.queue-identifier" %}
+
 Support is enabled by including the following dependency in the overlay:
 
 {% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-pulsar-ticket-registry" %}

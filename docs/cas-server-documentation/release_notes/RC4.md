@@ -47,8 +47,5 @@ test coverage of the CAS codebase is approximately `94%`.
 
 ## Other Stuff
 - {: .changed data-area="project"} A large number of dependencies and libraries have been updated to their latest versions.
-- {: .fixed data-area="oidc"} CIBA token requests answer `authorization_pending` while the user has not yet approved the request, `expired_token` for an expired `auth_req_id`, and `invalid_grant` for one that is unknown or already redeemed, as CIBA Core 1.0 requires; they used to return `invalid_grant` and `invalid_request`.
-- {: .fixed data-area="oidc"} Device code token requests answer `expired_token` for an expired device or user code, and `invalid_grant` for a device code that is unknown, already redeemed or issued to another client, as RFC 8628 requires; they used to return `access_denied`, which RFC 8628 reserves for a user who denied the request.
-- {: .fixed data-area="oidc"} Approving consent for an authorization request with `prompt=consent` now completes the request instead of showing the consent screen again.
 
 {% include release-footer.html %}

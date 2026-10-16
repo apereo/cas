@@ -613,6 +613,56 @@ exports.assertTicketParameter = async (page, found = true) => {
     return null;
 };
 
+/**
+ * Verifies that two CAS nodes share ticket state, whether the registry is a shared store or replicates by messaging:
+ * a service ticket issued by the first node validates on the second and only once, the single sign-on session of the
+ * first node is honored by the second, and logging out on the second node ends the session on the first node, even
+ * when the browser presents the old ticket-granting cookie again.
+ *
+ * @param nodes the ports of the two CAS nodes
+ * @param service the service to log into
+ * @param replicationDelay milliseconds to allow for replication between steps
+ */
+exports.verifyTicketRegistryAcrossNodes = async (nodes = [8443, 8444], service = "https://localhost:9859/anything/cluster", replicationDelay = 2000) => {
+    const [first, second] = nodes;
+    const browser = await this.newBrowser(this.browserOptions());
+    try {
+        const page = await this.newPage(browser);
+        await this.log(`Logging in on node ${first}`);
+        await this.gotoLogin(page, service, first);
+        await this.loginWith(page);
+        await this.sleep(replicationDelay);
+        const ticket = await this.assertTicketParameter(page);
+
+        await this.log(`Validating service ticket ${ticket} on node ${second}`);
+        let payload = await this.validateTicket(service, ticket, "JSON", second);
+        assert(payload.serviceResponse.authenticationSuccess?.user === "casuser", "Service ticket must validate on the other node");
+        await this.sleep(replicationDelay);
+        payload = await this.validateTicket(service, ticket, "JSON", first);
+        assert(payload.serviceResponse.authenticationFailure?.code === "INVALID_TICKET", "Service ticket must not validate twice");
+
+        await this.log(`Single sign-on session from node ${first} must be honored by node ${second}`);
+        await this.gotoLogin(page, undefined, first);
+        const ticketGrantingCookie = await this.assertCookie(page);
+        await this.gotoLogin(page, service, second);
+        await this.sleep(replicationDelay);
+        const secondTicket = await this.assertTicketParameter(page);
+        payload = await this.validateTicket(service, secondTicket, "JSON", first);
+        assert(payload.serviceResponse.authenticationSuccess?.user === "casuser", "Service ticket from the other node must validate");
+
+        await this.log(`Logging out on node ${second} must end the session on node ${first}`);
+        await this.goto(page, `https://localhost:${second}/cas/logout`);
+        await this.sleep(replicationDelay);
+        await page.setCookie(ticketGrantingCookie);
+        await this.gotoLogin(page, service, first);
+        await this.sleep(1000);
+        await this.assertTicketParameter(page, false);
+        await this.assertVisibility(page, "#username");
+    } finally {
+        await this.closeBrowser(browser);
+    }
+};
+
 exports.validateTicket = async (service, ticket, format = "JSON", port = 8443) => {
     const body = await this.doRequest(`https://localhost:${port}/cas/p3/serviceValidate?service=${service}&ticket=${ticket}&format=${format}`);
     await this.log(body);

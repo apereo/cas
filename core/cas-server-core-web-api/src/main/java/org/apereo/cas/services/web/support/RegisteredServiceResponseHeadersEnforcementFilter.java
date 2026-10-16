@@ -83,10 +83,7 @@ public class RegisteredServiceResponseHeadersEnforcementFilter extends ResponseH
             LOGGER.trace("Attempting to resolve service for [{}]", service);
             val resolved = authenticationRequestServiceSelectionStrategies.getObject().resolveService(service);
             val servicesManager = servicesManagerProvider.getObject();
-            val registeredServiceId = Longs.tryParse(resolved.getId());
-            val registeredService = registeredServiceId != null
-                ? servicesManager.findServiceBy(registeredServiceId)
-                : servicesManager.findServiceBy(resolved);
+            val registeredService = servicesManager.findServiceBy(resolved);
             val audit = AuditableContext
                 .builder()
                 .registeredService(registeredService)
@@ -94,12 +91,12 @@ public class RegisteredServiceResponseHeadersEnforcementFilter extends ResponseH
                 .build();
             val accessResult = registeredServiceAccessStrategyEnforcer.getObject().execute(audit);
             if (accessResult.isExecutionFailure()) {
-                LOGGER.warn("Service [{}] is not authorized", resolved);
+                LOGGER.warn("Service [{}] is not authorized", resolved.getId());
                 httpServletResponse.setStatus(HttpStatus.FORBIDDEN.value());
                 httpServletRequest.setAttribute(RequestDispatcher.ERROR_EXCEPTION, accessResult.getException().orElse(null));
                 return Optional.empty();
             }
-            return Optional.of(registeredService);
+            return Optional.ofNullable(registeredService);
         }
         return Optional.empty();
     }

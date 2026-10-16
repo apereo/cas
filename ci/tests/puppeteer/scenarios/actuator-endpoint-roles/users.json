@@ -1,0 +1,16 @@
+[
+  {
+    "username": "casadmin",
+    "password": "{noop}pa$$w0rd",
+    "authorities": [
+      "ROLE_ADMIN"
+    ]
+  },
+  {
+    "username": "casviewer",
+    "password": "{noop}Mellon",
+    "authorities": [
+      "ROLE_USER"
+    ]
+  }
+]

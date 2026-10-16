@@ -20,12 +20,17 @@ docker stop pulsar-server || true
 docker run --quiet  --rm -d --name "pulsar-server" \
   -p 6650:6650 -p 9988:8080 \
   ${DOCKER_IMAGE} bin/pulsar standalone -a 127.0.0.1
-sleep 5
-docker ps | grep "pulsar-server"
-retVal=$?
-if [ $retVal == 0 ]; then
+
+printgreen "Waiting for the Pulsar broker to report itself healthy..."
+for _ in $(seq 1 60); do
+  if curl -sf "http://localhost:9988/admin/v2/brokers/health" > /dev/null; then
     printgreen "Pulsar docker container is running."
-else
-    printred "Pulsar docker container failed to start."
-    exit $retVal
+    break
+  fi
+  sleep 2
+done
+if ! curl -sf "http://localhost:9988/admin/v2/brokers/health" > /dev/null; then
+  printred "Pulsar broker did not become healthy in time."
+  docker logs pulsar-server | tail -50
+  exit 1
 fi

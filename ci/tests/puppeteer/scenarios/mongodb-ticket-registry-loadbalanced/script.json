@@ -1,0 +1,36 @@
+{
+  "dependencies": "mongo-ticket-registry",
+  "conditions": {
+    "docker": "true"
+  },
+  "properties": [
+    "--cas.server.prefix=${cas.server.name}/cas",
+    "--cas.service-registry.core.init-from-json=true",
+    "--cas.ticket.st.time-to-kill-in-seconds=30",
+    "--cas.tgc.crypto.alg=A128CBC-HS256",
+    "--cas.tgc.crypto.encryption.key=u696jJnPvm1DHLR7yVCSKMMzzoPoFxJZW4-MP1CkM5w",
+    "--cas.tgc.crypto.signing.key=zPdNCd0R1oMR0ClzEqZzapkte8rO0tNvygYjmHoUhitAu6CBscwMC3ZTKy8tleTKiQ6GVcuiQQgxfd1nSKxf7w",
+    "--cas.webflow.crypto.signing.key=Q4tQGAuJSmuJ5WA0zByB9P6hYr5dpTd2JJifyy6Tm_CJ35pkbdhFvcgG-3igDjA4CTjau6Z0yMft-dhVUbRnPQ",
+    "--cas.webflow.crypto.encryption.key=g-Rk2ZvexS6tdooIiDh0IQ",
+    "--cas.ticket.registry.mongo.database-name=ticket-registry",
+    "--cas.ticket.registry.mongo.authentication-database-name=admin",
+    "--cas.ticket.registry.mongo.host=localhost",
+    "--cas.ticket.registry.mongo.port=27017",
+    "--cas.ticket.registry.mongo.user-id=root",
+    "--cas.ticket.registry.mongo.password=secret"
+  ],
+  "bootstrapScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/bootstrap.sh",
+  "instances": 2,
+  "instance1": {
+    "properties": [
+      "--cas.server.name=https://localhost:8443",
+      "--cas.host.name=cas-instance-8443"
+    ]
+  },
+  "instance2": {
+    "properties": [
+      "--cas.server.name=https://localhost:8444",
+      "--cas.host.name=cas-instance-8444"
+    ]
+  }
+}

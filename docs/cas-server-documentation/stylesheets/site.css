@@ -1532,6 +1532,32 @@ table td code {
     overflow-wrap: anywhere;
 }
 
+.cas-mcp-tools :is(th, td) {
+    text-align: left;
+}
+
+.cas-mcp-tools :is(th, td):first-child {
+    width: 1%;
+    white-space: nowrap;
+}
+
+.cas-mcp-tools :is(th, td):nth-last-child(2) {
+    width: 40%;
+}
+
+.cas-mcp-tools :is(th, td):nth-child(2):nth-last-child(3) {
+    min-width: 9rem;
+}
+
+.cas-mcp-tools td:nth-last-child(2) code {
+    white-space: nowrap;
+    overflow-wrap: normal;
+}
+
+.cas-mcp-tools :is(th, td):last-child {
+    min-width: 14rem;
+}
+
 table tr:last-child td {
     border-bottom: 0;
 }

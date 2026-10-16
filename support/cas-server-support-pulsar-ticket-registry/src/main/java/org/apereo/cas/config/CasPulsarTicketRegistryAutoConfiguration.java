@@ -7,8 +7,8 @@ import org.apereo.cas.ha.ClusterTopologyManager;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.catalog.CasTicketCatalogConfigurationValuesProvider;
 import org.apereo.cas.ticket.registry.PulsarClusterTopologyManager;
+import org.apereo.cas.ticket.registry.PulsarTicketRegistryMessageListener;
 import org.apereo.cas.ticket.registry.publisher.PulsarTicketRegistryPublisher;
-import org.apereo.cas.ticket.registry.pubsub.commands.BaseMessageQueueCommand;
 import org.apereo.cas.ticket.registry.pubsub.queue.QueueableTicketRegistryMessagePublisher;
 import org.apereo.cas.ticket.registry.pubsub.queue.QueueableTicketRegistryMessageReceiver;
 import org.apereo.cas.util.PublisherIdentifier;
@@ -83,7 +83,9 @@ public class CasPulsarTicketRegistryAutoConfiguration {
         final QueueableTicketRegistryMessageReceiver messageQueueTicketRegistryReceiver,
         final CasConfigurationProperties casProperties,
         @Qualifier(TicketCatalog.BEAN_NAME)
-        final TicketCatalog ticketCatalog) {
+        final TicketCatalog ticketCatalog,
+        @Qualifier(PublisherIdentifier.DEFAULT_BEAN_NAME)
+        final PublisherIdentifier messageQueueTicketRegistryIdentifier) {
         return registrar -> {
             val pulsarListenerEndpoint = new MethodPulsarListenerEndpoint<>();
             val topics = ticketCatalog.findAll()
@@ -97,10 +99,10 @@ public class CasPulsarTicketRegistryAutoConfiguration {
             val pulsarProperties = casProperties.getTicket().getRegistry().getPulsar();
             pulsarListenerEndpoint.setAckMode(AckMode.RECORD);
             pulsarListenerEndpoint.setConcurrency(pulsarProperties.getConcurrency());
-            pulsarListenerEndpoint.setSubscriptionName(pulsarProperties.getSubscriptionName());
-            pulsarListenerEndpoint.setSchemaType(SchemaType.JSON);
-            pulsarListenerEndpoint.setBean(messageQueueTicketRegistryReceiver);
-            val listenerMethod = ReflectionUtils.findMethod(messageQueueTicketRegistryReceiver.getClass(), "receive", BaseMessageQueueCommand.class);
+            pulsarListenerEndpoint.setSubscriptionName(subscriptionNameFor(pulsarProperties.getSubscriptionName(), messageQueueTicketRegistryIdentifier));
+            pulsarListenerEndpoint.setSchemaType(SchemaType.STRING);
+            pulsarListenerEndpoint.setBean(new PulsarTicketRegistryMessageListener(messageQueueTicketRegistryReceiver));
+            val listenerMethod = ReflectionUtils.findMethod(PulsarTicketRegistryMessageListener.class, "receive", String.class);
             pulsarListenerEndpoint.setMethod(Objects.requireNonNull(listenerMethod));
             pulsarListenerEndpoint.setMessageHandlerMethodFactory(messageHandlerMethodFactory);
             registrar.registerEndpoint(pulsarListenerEndpoint, pulsarListenerContainerFactory);
@@ -124,5 +126,19 @@ public class CasPulsarTicketRegistryAutoConfiguration {
         @Qualifier("pulsarAdministration")
         final PulsarAdministration pulsarAdministration) {
         return new PulsarClusterTopologyManager(pulsarAdministration);
+    }
+
+    /**
+     * The subscription of this node. Every node keeps its own copy of the registry and must see every change, so each
+     * subscribes under a name of its own: nodes that share an exclusive subscription cannot all attach to it, and nodes that
+     * share a shared subscription split the messages between them, so each change reaches one node rather than all of them.
+     * The node is told apart by its publisher identifier, as the Kafka registry names its consumer group.
+     *
+     * @param subscriptionName the configured subscription name, used as a prefix
+     * @param identifier       the identifier of this node
+     * @return the subscription name of this node
+     */
+    public static String subscriptionNameFor(final String subscriptionName, final PublisherIdentifier identifier) {
+        return "%s-%s".formatted(subscriptionName, identifier.getId());
     }
 }

@@ -934,5 +934,10 @@ The documentation now explains how to let browser-based MCP clients reach the se
   rounded dialogs with a plain title bar, matching buttons (the main action highlighted), select menus and multi-value fields
   that look like the other inputs, round row buttons, and restyled menus, tooltips and confirmation prompts. Dialogs no
   longer fail to position themselves when opened before any right-click menu was set up.
+- {: .fixed data-area="oidc"} CIBA token requests answer `authorization_pending` while the user has not yet approved the request, `expired_token` for an expired `auth_req_id`, and `invalid_grant` for one that is unknown or already redeemed, as CIBA Core 1.0 requires; they used to return `invalid_grant` and `invalid_request`.
+- {: .fixed data-area="oidc"} Device code token requests answer `expired_token` for an expired device or user code, and `invalid_grant` for a device code that is unknown, already redeemed or issued to another client, as RFC 8628 requires; they used to return `access_denied`, which RFC 8628 reserves for a user who denied the request.
+- {: .fixed data-area="oidc"} Approving consent for an authorization request with `prompt=consent` now completes the request instead of showing the consent screen again.
+- {: .fixed data-area="tickets"} The Apache Pulsar ticket registry subscribes each CAS node under a subscription of its own, named after `cas.ticket.registry.pulsar.subscription-name`{: .cas-setting} and the node's `cas.ticket.registry.core.queue-identifier`{: .cas-setting}, so every node receives every ticket change; nodes used to share one subscription. Ticket registry commands now travel as JSON strings written by CAS, as they do with the Kafka ticket registry, rather than through Pulsar's JSON schema, which could not carry them.
+- {: .fixed data-area="ui"} A login form submitted with a malformed `execution` value now restarts the login flow instead of failing with a server error.
 
 {% include release-footer.html %}
