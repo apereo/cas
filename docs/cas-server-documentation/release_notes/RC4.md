@@ -47,5 +47,7 @@ test coverage of the CAS codebase is approximately `94%`.
 
 ## Other Stuff
 - {: .changed data-area="project"} A large number of dependencies and libraries have been updated to their latest versions.
+- {: .fixed data-area="oidc"} CIBA token requests answer `authorization_pending` while the user has not yet approved the request, and `invalid_grant` for an `auth_req_id` that is unknown or already redeemed, as CIBA Core 1.0 requires; they used to return `invalid_grant` and `invalid_request`.
+- {: .fixed data-area="oidc"} Approving consent for an authorization request with `prompt=consent` now completes the request instead of showing the consent screen again.
 
 {% include release-footer.html %}

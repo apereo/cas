@@ -40,6 +40,15 @@ public class OidcConsentApprovalViewResolver extends OAuth20ConsentApprovalViewR
         this.ticketFactory = ticketFactory;
     }
 
+    /**
+     * Consent is bypassed for pushed authorization requests. With {@code prompt=consent} the end-user must consent
+     * even when the service or CAS bypasses the approval prompt, so only the approval just submitted on the consent
+     * view lets the request through; the callback URL of that view still carries {@code prompt=consent}.
+     *
+     * @param context the context
+     * @param service the service
+     * @return true if consent approval is bypassed
+     */
     @Override
     protected boolean isConsentApprovalBypassed(final WebContext context, final OAuthRegisteredService service) {
         if (service instanceof OidcRegisteredService) {
@@ -49,7 +58,7 @@ public class OidcConsentApprovalViewResolver extends OAuth20ConsentApprovalViewR
             }
             val prompts = oauthRequestParameterResolver.resolveSupportedPromptValues(context);
             if (prompts.contains(OidcConstants.PROMPT_CONSENT)) {
-                return false;
+                return isConsentApprovalSubmitted(context, service);
             }
         }
         return super.isConsentApprovalBypassed(context, service);

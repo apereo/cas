@@ -1,11 +1,64 @@
 
 const path = require("path");
+const zlib = require("zlib");
 const cas = require("../../cas.js");
 const assert = require("assert");
+
+const TAMPERED_ACS = "https://localhost:9859/anything/tampered-acs";
 
 async function cleanUp() {
     await cas.removeDirectoryOrFile(path.join(__dirname, "/saml-md"));
     await cas.removeDirectoryOrFile(path.join(__dirname, "/saml-sp"));
+}
+
+function tamperAssertionConsumerService(xml) {
+    return xml.replace(/AssertionConsumerServiceURL="[^"]+"/, `AssertionConsumerServiceURL="${TAMPERED_ACS}"`);
+}
+
+async function submitTamperedAuthnRequest(browser) {
+    const page = await cas.newPage(browser);
+    let handled = false;
+    let tampered = false;
+    let tamperedRedirectUrl = undefined;
+    await page.setRequestInterception(true);
+    page.on("request", (request) => {
+        const url = new URL(request.url());
+        const post = request.method() === "POST";
+        const form = new URLSearchParams(post ? request.postData() ?? "" : url.search);
+        const samlRequest = form.get("SAMLRequest");
+        if (handled || samlRequest === null || !url.pathname.startsWith("/cas/idp/profile/SAML2/") || !url.pathname.endsWith("/SSO")) {
+            request.continue();
+            return;
+        }
+        handled = true;
+        const encoded = Buffer.from(samlRequest, "base64");
+        const xml = post ? encoded.toString("utf8") : zlib.inflateRawSync(encoded).toString("utf8");
+        const altered = tamperAssertionConsumerService(xml);
+        tampered = altered !== xml;
+        cas.log(`Tampered with ${request.method()} authentication request: ${tampered}`);
+        if (post) {
+            form.set("SAMLRequest", Buffer.from(altered, "utf8").toString("base64"));
+            request.continue({postData: form.toString()});
+        } else {
+            url.searchParams.set("SAMLRequest", zlib.deflateRawSync(Buffer.from(altered, "utf8")).toString("base64"));
+            tamperedRedirectUrl = url.toString();
+            request.abort();
+        }
+    });
+    await cas.goto(page, "https://localhost:9876/sp");
+    await cas.sleep(3000);
+    await page.waitForSelector("#idpForm", {visible: true});
+    await cas.submitForm(page, "#idpForm");
+    await cas.sleep(4000);
+    if (tamperedRedirectUrl !== undefined) {
+        await cas.goto(page, tamperedRedirectUrl);
+        await cas.sleep(2000);
+    }
+    await cas.logPage(page);
+    assert(tampered, "The signed authentication request must carry an AssertionConsumerServiceURL to tamper with");
+    assert(!page.url().startsWith(TAMPERED_ACS), "No response may be delivered to the tampered ACS");
+    await cas.assertInnerText(page, "#content h2", "Application Not Authorized to Use CAS");
+    await page.close();
 }
 
 (async () => {
@@ -16,6 +69,9 @@ async function cleanUp() {
     assert(response.ok());
     
     await cas.waitFor("https://localhost:9876/sp/saml/status", async () => {
+        await cas.log("Trying with a signed authentication request whose ACS is altered in transit...");
+        await submitTamperedAuthnRequest(browser);
+
         await cas.log("Trying without an existing SSO session...");
         await cas.goto(page, "https://localhost:9876/sp");
         await cas.sleep(3000);

@@ -69,6 +69,17 @@ async function verifyDeviceCode(data) {
         throw `Operation failed ${error}`;
     });
 
+    await cas.log("A redeemed device code must not be redeemed again");
+    await cas.doPost(url, "", {
+        "Content-Type": "application/json"
+    }, (res) => {
+        throw `Device code was redeemed twice: ${JSON.stringify(res.data)}`;
+    }, (error) => {
+        assert(error.response.status === 400);
+        assert(error.response.data.error === "access_denied");
+        assert(error.response.data.access_token === undefined);
+    });
+
     await cas.log(`Introspecting access token ${payload.access_token}`);
     const value = "client:secret";
     const buff = Buffer.alloc(value.length, value);

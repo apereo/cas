@@ -51,6 +51,9 @@ You may turn off scope approval requests per client application by using the `by
 }
 ```
 
+An authorization request that carries `prompt=consent` still asks the user for consent, even when approvals are bypassed for the
+application or globally.
+
 ## Custom
 
 For more advanced scenarios, you can design your own resolver and register it with the CAS at runtime:

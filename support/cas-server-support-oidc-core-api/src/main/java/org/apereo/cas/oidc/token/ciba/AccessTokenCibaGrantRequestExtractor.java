@@ -13,6 +13,7 @@ import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
+import org.apereo.cas.support.oauth.validator.token.device.UnapprovedOAuth20DeviceUserCodeException;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestContext;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.BaseAccessTokenGrantRequestExtractor;
 import lombok.extern.slf4j.Slf4j;
@@ -75,7 +76,8 @@ public class AccessTokenCibaGrantRequestExtractor extends BaseAccessTokenGrantRe
             throw new InvalidCibaRequestException("Backchannel token delivery mode cannot grant access tokens");
         }
         if (!cibaRequest.isReady()) {
-            throw new InvalidCibaRequestException("CIBA request %s is not ready to grant access tokens".formatted(authRequestId));
+            LOGGER.debug("CIBA request [{}] is not yet approved by the end-user", authRequestId);
+            throw new UnapprovedOAuth20DeviceUserCodeException(decodedId);
         }
         
         return AccessTokenRequestContext.builder()

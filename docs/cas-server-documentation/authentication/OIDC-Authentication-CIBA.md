@@ -50,7 +50,8 @@ established when the relying party is registered with CAS.
 - Poll Mode
 
 When configured in Poll mode, the Client will poll the token endpoint to get a response with the tokens. That is, the authentication result is retrieved by 
-the Client by polling the CAS token endpoint using the CIBA grant type.
+the Client by polling the CAS token endpoint using the CIBA grant type. Until the user approves the request, the token endpoint
+answers with `authorization_pending`. An `auth_req_id` that is unknown or has already been redeemed is refused with `invalid_grant`.
 
 - Ping Mode
 

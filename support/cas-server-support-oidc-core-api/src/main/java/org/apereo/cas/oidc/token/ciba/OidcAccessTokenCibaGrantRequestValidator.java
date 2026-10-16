@@ -11,6 +11,7 @@ import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.validator.token.BaseOAuth20TokenRequestValidator;
+import org.apereo.cas.util.function.FunctionUtils;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -36,16 +37,30 @@ public class OidcAccessTokenCibaGrantRequestValidator extends BaseOAuth20TokenRe
         super(configurationContext);
     }
 
+    /**
+     * Validate the CIBA grant request. The {@code auth_req_id} must refer to an unexpired CIBA request issued to the
+     * authenticated client; a missing, undecodable or already redeemed request fails validation, which the token endpoint reports as
+     * {@code invalid_grant} (CIBA Core 1.0, section 11). Whether the end-user has approved the request yet is not checked
+     * here: a request that is still pending is valid and is reported as {@code authorization_pending} when the grant
+     * request is extracted.
+     *
+     * @param context     the context
+     * @param grantType   the grant type
+     * @param manager     the profile manager
+     * @param userProfile the authenticated client profile
+     * @return true if the request may proceed
+     */
     @Override
     protected boolean validateInternal(final WebContext context, final String grantType,
                                        final ProfileManager manager, final UserProfile userProfile) {
         val configurationContext = getConfigurationContext().getObject();
         val authRequestId = configurationContext.getRequestParameterResolver().resolveRequestParameter(context, OidcConstants.AUTH_REQ_ID).orElseThrow();
         val cibaFactory = (OidcCibaRequestFactory) configurationContext.getTicketFactory().get(OidcCibaRequest.class);
-        val decodedId = cibaFactory.decodeId(authRequestId);
-        val ticket = configurationContext.getTicketRegistry().getTicket(decodedId, OidcCibaRequest.class);
+        val ticket = FunctionUtils.doAndHandle(
+            () -> configurationContext.getTicketRegistry().getTicket(cibaFactory.decodeId(authRequestId), OidcCibaRequest.class),
+            _ -> null).get();
         val authenticatedClientId = userProfile.getAttribute(OAuth20Constants.CLIENT_ID);
-        val result = ticket != null && !ticket.isExpired() && ticket.isReady()
+        val result = ticket != null && !ticket.isExpired()
             && authenticatedClientId != null && Objects.equals(ticket.getClientId(), authenticatedClientId.toString());
         LOGGER.debug("CIBA authentication request is [{}]", BooleanUtils.toString(result, "valid", "invalid"));
 

@@ -54,7 +54,7 @@ public class OAuth20AccessTokenEndpointController<T extends OAuth20Configuration
 
         UnapprovedOAuth20DeviceUserCodeException.class.getName(),
         new AccessTokenExceptionResponses(OAuth20Constants.AUTHORIZATION_PENDING,
-            "User code is not yet approved for the device token request"),
+            "The authorization request is still pending approval by the end-user"),
 
         ThrottledOAuth20DeviceUserCodeApprovalException.class.getName(),
         new AccessTokenExceptionResponses(OAuth20Constants.SLOW_DOWN,

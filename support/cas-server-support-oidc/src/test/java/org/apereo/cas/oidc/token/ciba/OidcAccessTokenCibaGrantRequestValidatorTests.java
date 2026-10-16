@@ -62,13 +62,21 @@ class OidcAccessTokenCibaGrantRequestValidatorTests extends AbstractOidcTests {
         val profileManager = new ProfileManager(context, oauthDistributedSessionStore);
         profileManager.save(true, profile, false);
 
-        assertFalse(oidcAccessTokenCibaGrantRequestValidator.validate(context));
+        assertEquals(mode != OidcBackchannelTokenDeliveryModes.PUSH, oidcAccessTokenCibaGrantRequestValidator.validate(context));
         ticketRegistry.updateTicket(cibaRequest.markTicketReady());
         assertEquals(mode != OidcBackchannelTokenDeliveryModes.PUSH, oidcAccessTokenCibaGrantRequestValidator.validate(context));
 
         profile.setId("other-client");
         profile.addAttribute(OAuth20Constants.CLIENT_ID, "other-client");
         profileManager.save(true, profile, false);
+        assertFalse(oidcAccessTokenCibaGrantRequestValidator.validate(context));
+
+        profile.setId(registeredService.getClientId());
+        profile.addAttribute(OAuth20Constants.CLIENT_ID, registeredService.getClientId());
+        profileManager.save(true, profile, false);
+        ticketRegistry.deleteTicket(cibaRequest.getId());
+        assertFalse(oidcAccessTokenCibaGrantRequestValidator.validate(context));
+        request.setParameter(OidcConstants.AUTH_REQ_ID, "not-a-ciba-request");
         assertFalse(oidcAccessTokenCibaGrantRequestValidator.validate(context));
     }
 }

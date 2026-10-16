@@ -26,5 +26,13 @@ const cas = require("../../cas.js");
     const json = await cas.validateTicket(service2, ticket);
     const authenticationSuccess = json.serviceResponse.authenticationSuccess;
     assert(authenticationSuccess.user === "CAS_USER_APEREO@APEREO.ORG");
+
+    await cas.log("A service ticket validated for another service must fail and be invalidated");
+    await cas.gotoLogin(page, service1);
+    ticket = await cas.assertTicketParameter(page);
+    const mismatched = await cas.validateTicket(service2, ticket);
+    assert(mismatched.serviceResponse.authenticationFailure.code === "INVALID_SERVICE");
+    const retried = await cas.validateTicket(service1, ticket);
+    assert(retried.serviceResponse.authenticationFailure.code === "INVALID_TICKET");
     await cas.closeBrowser(browser);
 })();

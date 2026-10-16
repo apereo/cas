@@ -51,7 +51,11 @@ async function verifyDeliveryMode(clientId = "client", deliveryMode = "push", us
             },
             (res) => {
                 throw `CIBA operation MUST fail but instead it passed incorrectly: ${res.data}`;
-            }, (error) => cas.log(`CIBA operation failed correctly: ${error}`));
+            }, (error) => {
+                cas.log(`CIBA operation failed correctly: ${error}`);
+                assert(error.response.status === 400);
+                assert(error.response.data.error === "authorization_pending");
+            });
     }
     await cas.sleep(3000);
     const browser = await cas.newBrowser(cas.browserOptions());
@@ -94,6 +98,19 @@ async function verifyDeliveryMode(clientId = "client", deliveryMode = "push", us
                 assert(res.data.scope === "openid profile");
             }, (error) => {
                 throw `CIBA operation MUST failed to obtain tokens: ${error}`;
+            });
+
+        await cas.log("A redeemed CIBA request must not be redeemed again");
+        await cas.doPost(accessTokenUrl, "",
+            {
+                "Authorization": authzHeader,
+                "Content-Type": "application/x-www-form-urlencoded"
+            },
+            (res) => {
+                throw `CIBA request was redeemed twice: ${JSON.stringify(res.data)}`;
+            }, (error) => {
+                assert(error.response.status === 400);
+                assert(error.response.data.error === "invalid_grant");
             });
     }
     await cas.sleep(3000);
