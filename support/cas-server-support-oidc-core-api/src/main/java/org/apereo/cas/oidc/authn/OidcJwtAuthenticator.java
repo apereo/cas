@@ -23,7 +23,9 @@ import org.apereo.cas.ticket.code.OAuth20Code;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import com.nimbusds.jose.Algorithm;
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jwt.JWT;
@@ -36,8 +38,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
 import org.jooq.lambda.Unchecked;
 import org.jose4j.jwk.JsonWebKeySet;
+import org.jose4j.jwk.OctetSequenceJsonWebKey;
 import org.jose4j.jwt.consumer.JwtConsumer;
 import org.jose4j.jwt.consumer.JwtConsumerBuilder;
+import org.jose4j.keys.HmacKey;
 import org.jspecify.annotations.Nullable;
 import org.pac4j.core.context.CallContext;
 import org.pac4j.core.context.WebContext;
@@ -74,6 +78,8 @@ public class OidcJwtAuthenticator implements Authenticator {
     protected final OidcServerDiscoverySettings oidcServerDiscoverySettings;
 
     protected final ObjectProvider<ClientJwksRegistrationStore> clientJwksRegistrationStore;
+
+    protected final CipherExecutor<Serializable, String> registeredServiceCipherExecutor;
 
     protected @Nullable JWT verifyCredentials(final UsernamePasswordCredentials credentials,
                                               final WebContext webContext) {
@@ -142,6 +148,16 @@ public class OidcJwtAuthenticator implements Authenticator {
                         });
                 }
             }));
+
+            if (Strings.CI.equals(registeredService.getTokenEndpointAuthenticationMethod(),
+                OAuth20ClientAuthenticationMethods.CLIENT_SECRET_JWT.getType())) {
+                Optional.ofNullable(registeredService.getClientSecret())
+                    .map(secret -> SpringExpressionLanguageValueResolver.getInstance().resolve(secret))
+                    .map(secret -> registeredServiceCipherExecutor.decode(secret, new Object[]{registeredService}))
+                    .filter(StringUtils::isNotBlank)
+                    .map(secret -> new OctetSequenceJsonWebKey(new HmacKey(secret.getBytes(StandardCharsets.UTF_8))))
+                    .ifPresent(keys::addJsonWebKey);
+            }
 
             OidcJsonWebKeyStoreUtils.getJsonWebKeySet(registeredService,
                     applicationContext, Optional.of(OidcJsonWebKeyUsage.SIGNING))

@@ -647,13 +647,16 @@ class OidcConfiguration {
             @Qualifier(OidcServerDiscoverySettings.BEAN_NAME_FACTORY)
             final OidcServerDiscoverySettings oidcServerDiscoverySettings,
             @Qualifier("clientJwksRegistrationStore")
-            final ObjectProvider<ClientJwksRegistrationStore> clientJwksRegistrationStore) {
+            final ObjectProvider<ClientJwksRegistrationStore> clientJwksRegistrationStore,
+            @Qualifier("oauthRegisteredServiceCipherExecutor")
+            final CipherExecutor oauthRegisteredServiceCipherExecutor) {
             return () -> {
                 val authenticator = new OidcJwtAuthenticator(oidcIssuerService,
                     servicesManager, registeredServiceAccessStrategyEnforcer,
                     ticketRegistry, webApplicationServiceFactory,
                     casProperties, applicationContext,
-                    oidcServerDiscoverySettings, clientJwksRegistrationStore);
+                    oidcServerDiscoverySettings, clientJwksRegistrationStore,
+                    oauthRegisteredServiceCipherExecutor);
                 val privateKeyJwtClient = new DirectFormClient(authenticator);
                 privateKeyJwtClient.setName(OidcConstants.CAS_OAUTH_CLIENT_PRIVATE_KEY_JWT_AUTHN);
                 privateKeyJwtClient.setUsernameParameter(OAuth20Constants.CLIENT_ASSERTION_TYPE);
