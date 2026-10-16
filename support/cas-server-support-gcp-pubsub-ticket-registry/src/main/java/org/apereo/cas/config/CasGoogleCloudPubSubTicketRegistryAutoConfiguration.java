@@ -76,6 +76,8 @@ public class CasGoogleCloudPubSubTicketRegistryAutoConfiguration {
         final PubSubMessageConverter pubSubMessageConverter,
         @Qualifier("messageQueueTicketRegistryReceiver")
         final QueueableTicketRegistryMessageReceiver messageQueueTicketRegistryReceiver,
+        @Qualifier(PublisherIdentifier.DEFAULT_BEAN_NAME)
+        final PublisherIdentifier messageQueueTicketRegistryIdentifier,
         final PubSubTemplate pubSubTemplate,
         final PubSubAdmin pubSubAdmin) {
 
@@ -86,7 +88,7 @@ public class CasGoogleCloudPubSubTicketRegistryAutoConfiguration {
         val subscriptions = pubSubAdmin.listSubscriptions();
 
         val topicName = GoogleCloudTicketRegistryQueuePublisher.QUEUE_TOPIC;
-        val subscriptionName = topicName.concat("Subscription");
+        val subscriptionName = subscriptionNameFor(messageQueueTicketRegistryIdentifier);
 
         val deadLetterTopic = findTopicByName(allTopics, GoogleCloudTicketRegistryQueuePublisher.DEAD_LETTER_TOPIC)
             .orElseGet(() -> pubSubAdmin.createTopic(GoogleCloudTicketRegistryQueuePublisher.DEAD_LETTER_TOPIC));
@@ -98,6 +100,19 @@ public class CasGoogleCloudPubSubTicketRegistryAutoConfiguration {
         val context = new GoogleCloudPubSubMessageContext(topic, subscription, subscriber);
         googleCloudTopics.put(context.topic().getName(), context);
         return googleCloudTopics;
+    }
+
+    /**
+     * The subscription of this node. Every node keeps its own copy of the registry and must see every change,
+     * but Pub/Sub delivers each message once per subscription, sharing it out among the subscribers attached to it;
+     * nodes on one subscription would each receive only part of the changes. Each node therefore subscribes under a
+     * name of its own, told apart by its publisher identifier, as the Kafka registry names its consumer group.
+     *
+     * @param identifier the identifier of this node
+     * @return the subscription name of this node
+     */
+    public static String subscriptionNameFor(final PublisherIdentifier identifier) {
+        return "%sSubscription-%s".formatted(GoogleCloudTicketRegistryQueuePublisher.QUEUE_TOPIC, identifier.getId());
     }
 
     private static Optional<Topic> findTopicByName(final List<Topic> allTopics, final String topicName) {
@@ -124,7 +139,7 @@ public class CasGoogleCloudPubSubTicketRegistryAutoConfiguration {
                                                         final Topic deadLetterTopic) {
         return allSubcriptions
             .stream()
-            .filter(sub -> sub.getName().contains(subscriptionName))
+            .filter(sub -> sub.getName().equals(subscriptionName) || sub.getName().endsWith("/subscriptions/" + subscriptionName))
             .findFirst()
             .orElseGet(() -> {
                 val deadLetterPolicy = DeadLetterPolicy

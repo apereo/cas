@@ -10,6 +10,7 @@
     "--CasFeatureModule.AccountManagement.enabled=true",
     "--cas.jdbc.show-sql=false",
     "--cas.ticket.registry.core.enable-locking=true",
+    "--spring.integration.jdbc.initialize-schema=always",
 
     "--cas.standalone.configuration-file=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/config.yml",
 

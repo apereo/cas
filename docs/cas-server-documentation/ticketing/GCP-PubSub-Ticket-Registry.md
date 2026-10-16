@@ -15,6 +15,12 @@ Each node keeps copies of ticket state on its own and only instructs others to k
 Each message and ticket registry instance running inside a CAS node in the cluster is tagged with a unique 
 identifier in order to avoid endless looping behavior and recursive needless inbound operations.
 
+Every CAS node must receive every change, so each node creates and listens on a subscription of its own,
+`CasTicketRegistryTopicSubscription-` followed by the node's queue identifier. Give every node a stable queue identifier;
+otherwise each restart creates a new subscription, and the previous one lingers until Pub/Sub expires it for inactivity.
+
+{% include_cached casproperties.html properties="cas.ticket.registry.core.queue-identifier" %}
+
 <div class="alert alert-info">:information_source: <strong>Message Ordering</strong>
 <p>This registry implementation requires you to enable message ordering via CAS settings.</p>
 </div>

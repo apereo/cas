@@ -35,6 +35,8 @@ public class DefaultCasCookieValueManager extends EncryptedCookieValueManager {
 
     private static final int COOKIE_FIELDS_LENGTH = 3;
 
+    private static final String UNKNOWN_USER_AGENT = "UnknownUserAgent";
+
     @Serial
     private static final long serialVersionUID = -2696352696382374584L;
 
@@ -64,16 +66,24 @@ public class DefaultCasCookieValueManager extends EncryptedCookieValueManager {
                     : clientInfo.getClientIpAddress();
                 builder.append(COOKIE_FIELD_SEPARATOR).append(clientLocation);
             }
-            val userAgent = HttpRequestUtils.getHttpServletRequestUserAgent(request);
-            if (StringUtils.isBlank(userAgent)) {
-                throw new IllegalStateException("Request does not specify a user-agent");
-            }
-            builder.append(COOKIE_FIELD_SEPARATOR).append(userAgent);
+            builder.append(COOKIE_FIELD_SEPARATOR).append(getUserAgent(request));
         } else {
             LOGGER.trace("Cookie session-pinning is disabled");
         }
 
         return builder.toString();
+    }
+
+    /**
+     * Get the user agent the cookie is pinned to. A request that does not
+     * send a user agent is pinned to a fixed placeholder instead, so the cookie
+     * is only accepted again on requests that also send no user agent.
+     *
+     * @param request the request
+     * @return the user agent, or the placeholder when the request sends none
+     */
+    private static String getUserAgent(final HttpServletRequest request) {
+        return StringUtils.defaultIfBlank(HttpRequestUtils.getHttpServletRequestUserAgent(request), UNKNOWN_USER_AGENT);
     }
 
     private String getClientGeoLocation(final ClientInfo clientInfo) {
@@ -142,7 +152,7 @@ public class DefaultCasCookieValueManager extends EncryptedCookieValueManager {
             }
         }
 
-        val agent = HttpRequestUtils.getHttpServletRequestUserAgent(request);
+        val agent = getUserAgent(request);
         if (!cookieUserAgent.equals(agent)) {
             val message = "Invalid cookie %s. Required user-agent %s does not match %s"
                 .formatted(cookieProperties.getName(), cookieUserAgent, agent);
