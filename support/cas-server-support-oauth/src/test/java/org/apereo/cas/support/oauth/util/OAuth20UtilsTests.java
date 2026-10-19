@@ -133,6 +133,17 @@ class OAuth20UtilsTests extends AbstractOAuth20Tests {
     }
 
     @Test
+    void verifyRequestedResources() {
+        val request = new MockHttpServletRequest();
+        val response = new MockHttpServletResponse();
+        val context = new JEEContext(request, response);
+        request.addParameter(OAuth20Constants.RESOURCE, "https://api.example.org/one", "https://api.example.org/two");
+
+        assertEquals(Set.of("https://api.example.org/one", "https://api.example.org/two"),
+            oauthRequestParameterResolver.resolveRequestedResources(context));
+    }
+
+    @Test
     void verifyPostResponse() {
         val registeredService = new OAuthRegisteredService();
         registeredService.setClientId("clientid");

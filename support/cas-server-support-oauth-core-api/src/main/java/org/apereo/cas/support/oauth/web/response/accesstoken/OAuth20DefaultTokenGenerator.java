@@ -22,6 +22,7 @@ import org.apereo.cas.support.oauth.validator.token.device.UnapprovedOAuth20Devi
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestContext;
 import org.apereo.cas.ticket.AuthenticationAwareTicket;
 import org.apereo.cas.ticket.InvalidTicketException;
+import org.apereo.cas.ticket.BaseOAuth20Token;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.TransientSessionTicket;
@@ -286,6 +287,9 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
             tokenRequestContext.getClaims(),
             tokenRequestContext.getResponseType(),
             tokenRequestContext.getGrantType());
+        if (accessToken instanceof BaseOAuth20Token oauthToken) {
+            oauthToken.setResources(tokenRequestContext.getResources());
+        }
         val customizers = new ArrayList<>(applicationContext.getBeansOfType(OAuth20AccessTokenGeneratorCustomizer.class).values());
         AnnotationAwareOrderComparator.sortIfNecessary(customizers);
         customizers.forEach(customizer -> customizer.customize(tokenRequestContext, accessToken));
@@ -317,7 +321,7 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
         val accessTokenFactory = (OAuth20AccessTokenFactory) ticketFactory.get(OAuth20AccessToken.class);
         val ticketGrantingTicket = tokenRequestContext.getTicketGrantingTicket() == null || tokenRequestContext.getTicketGrantingTicket().isExpired()
             ? null : tokenRequestContext.getTicketGrantingTicket();
-        return accessTokenFactory.create(
+        val exchangedToken = accessTokenFactory.create(
             service,
             exchangedAuthentication.build(),
             ticketGrantingTicket,
@@ -327,6 +331,10 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
             accessToken.getClaims(),
             accessToken.getResponseType(),
             accessToken.getGrantType());
+        if (exchangedToken instanceof BaseOAuth20Token oauthToken) {
+            oauthToken.setResources(accessToken.getResources());
+        }
+        return exchangedToken;
     }
 
     protected Ticket addAccessToken(final AccessTokenRequestContext tokenRequestContext,
@@ -444,6 +452,10 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
             tokenRequestContext.getClaims(),
             tokenRequestContext.getResponseType(),
             tokenRequestContext.getGrantType());
+        if (refreshToken instanceof BaseOAuth20Token oauthToken) {
+            oauthToken.setResources(tokenRequestContext.getResources());
+        }
+
         refreshToken.setAuthorizationDetails(OAuth20Utils.getAuthorizationDetails(tokenRequestContext.getToken()));
 
         if (refreshToken.getExpirationPolicy().getTimeToLive() > 0) {

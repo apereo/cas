@@ -52,7 +52,9 @@ public class OAuthRegisteredService extends BaseWebBasedRegisteredService {
     private boolean dpopBoundAccessTokens;
 
     private Set<String> audience = new HashSet<>();
-    
+
+    private Set<String> allowedResources = new HashSet<>();
+
     private RegisteredServiceOAuthCodeExpirationPolicy codeExpirationPolicy;
 
     private RegisteredServiceOAuthAccessTokenExpirationPolicy accessTokenExpirationPolicy;
@@ -125,12 +127,37 @@ public class OAuthRegisteredService extends BaseWebBasedRegisteredService {
         getScopes().addAll(scopes);
     }
 
+    /**
+     * Gets allowed resources.
+     *
+     * @return the allowed resources
+     */
+    public Set<String> getAllowedResources() {
+        if (this.allowedResources == null) {
+            this.allowedResources = new HashSet<>();
+        }
+        return allowedResources;
+    }
+
+    /**
+     * Sets allowed resources.
+     *
+     * @param allowedResources the allowed resources
+     */
+    public void setAllowedResources(final Set<String> allowedResources) {
+        getAllowedResources().clear();
+        if (allowedResources != null) {
+            getAllowedResources().addAll(allowedResources);
+        }
+    }
+
     @Override
     public void initialize() {
         super.initialize();
         scopes = ObjectUtils.getIfNull(scopes, new HashSet<>());
         audience = ObjectUtils.getIfNull(audience, new HashSet<>());
         clientSecrets = ObjectUtils.getIfNull(clientSecrets, new ArrayList<>());
+        allowedResources = ObjectUtils.getIfNull(allowedResources, new HashSet<>());
     }
 
     /**

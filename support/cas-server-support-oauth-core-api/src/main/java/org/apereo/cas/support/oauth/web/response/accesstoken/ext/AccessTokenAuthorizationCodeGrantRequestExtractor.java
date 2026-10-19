@@ -65,6 +65,7 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAcces
             .grantType(getGrantType())
             .generateRefreshToken(generateRefreshToken)
             .token(token)
+            .resources(token.getResources())
             .claims(token.getClaims())
             .ticketGrantingTicket(fetchTicketGrantingTicket(token, registeredService));
         return extractInternal(context, builder.build());

@@ -288,6 +288,7 @@ public class OAuth20AuthorizeEndpointController<T extends OAuth20ConfigurationCo
             .orElseGet(OAuth20GrantTypes.AUTHORIZATION_CODE::getType)
             .toUpperCase(Locale.ENGLISH);
         val scopes = requestParameterResolver.resolveRequestScopes(context);
+        val resources = requestParameterResolver.resolveRequestedResources(context);
         val codeChallenge = requestParameterResolver.resolveRequestParameter(context, OAuth20Constants.CODE_CHALLENGE)
             .map(String::valueOf).orElse(StringUtils.EMPTY);
 
@@ -309,6 +310,7 @@ public class OAuth20AuthorizeEndpointController<T extends OAuth20ConfigurationCo
             .codeChallenge(codeChallenge)
             .codeChallengeMethod(codeChallengeMethod)
             .scopes(scopes)
+            .resources(resources)
             .clientId(authzRequest.getClientId())
             .redirectUri(redirectUri)
             .userProfile(userProfile)

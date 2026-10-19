@@ -133,14 +133,19 @@ class OAuth20JwtAccessTokenEncodableCipher implements EncodableCipher<String, St
     }
 
     protected Set<String> determineServiceAudience() {
+        val audience = new LinkedHashSet<String>();
         if (StringUtils.isNotBlank(tokenAudience)) {
-            return Set.of(tokenAudience);
+            audience.add(tokenAudience);
+        } else {
+            val oauthRegisteredService = (OAuthRegisteredService) registeredService;
+            if (oauthRegisteredService.getAudience().isEmpty()) {
+                audience.add(token.getClientId());
+            } else {
+                audience.addAll(oauthRegisteredService.getAudience());
+            }
         }
-        val oauthRegisteredService = (OAuthRegisteredService) registeredService;
-        if (oauthRegisteredService.getAudience().isEmpty()) {
-            return Set.of(token.getClientId());
-        }
-        return oauthRegisteredService.getAudience();
+        audience.addAll(token.getResources());
+        return audience;
     }
 
     protected boolean shouldEncodeAsJwt() {

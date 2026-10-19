@@ -11,6 +11,7 @@ import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 import org.apereo.cas.support.oauth.web.response.OAuth20AuthorizationRequest;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestContext;
 import org.apereo.cas.ticket.Ticket;
+import org.apereo.cas.ticket.BaseOAuth20Token;
 import org.apereo.cas.ticket.code.OAuth20Code;
 import org.apereo.cas.ticket.code.OAuth20CodeFactory;
 import org.apereo.cas.util.CollectionUtils;
@@ -58,6 +59,9 @@ public class OAuth20AuthorizationCodeAuthorizationResponseBuilder extends BaseOA
             tokenRequestContext.getCodeChallenge(), tokenRequestContext.getCodeChallengeMethod(),
             tokenRequestContext.getClientId(), tokenRequestContext.getClaims(),
             tokenRequestContext.getResponseType(), tokenRequestContext.getGrantType());
+        if (code instanceof BaseOAuth20Token oauthToken) {
+            oauthToken.setResources(tokenRequestContext.getResources());
+        }
         LOGGER.debug("Generated OAuth code: [{}]", code);
         return code;
     }

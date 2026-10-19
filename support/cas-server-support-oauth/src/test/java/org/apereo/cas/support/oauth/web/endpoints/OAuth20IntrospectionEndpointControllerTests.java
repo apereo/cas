@@ -16,6 +16,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletRequest;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * This is {@link OAuth20IntrospectionEndpointControllerTests}.
@@ -43,7 +44,18 @@ class OAuth20IntrospectionEndpointControllerTests extends AbstractOAuth20Tests {
 
         assertNotNull(body);
         assertEquals(service.getClientId(), body.getClientId());
-        assertEquals(SERVICE_URL, body.getAud());
+        assertEquals(service.getClientId(), body.getAud());
+    }
+
+    @Test
+    void verifyResourceAudience() throws Throwable {
+        val accessToken = getAccessToken();
+        val resource = "https://api.example.org/";
+        when(accessToken.getResources()).thenReturn(Set.of(resource));
+        val response = new org.apereo.cas.support.oauth.web.response.introspection.OAuth20DefaultIntrospectionResponseGenerator()
+            .generate(accessToken.getId(), accessToken);
+
+        assertEquals(List.of(accessToken.getClientId(), resource), response.getAud());
     }
 
     @Test

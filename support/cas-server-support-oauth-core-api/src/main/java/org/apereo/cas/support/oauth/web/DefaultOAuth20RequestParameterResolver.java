@@ -216,6 +216,31 @@ public class DefaultOAuth20RequestParameterResolver implements OAuth20RequestPar
     }
 
     @Override
+    public Set<String> resolveRequestedResources(final WebContext context) {
+        return resolveRequestParameter(context, OAuth20Constants.RESOURCE, String[].class)
+            .map(Arrays::stream)
+            .orElseGet(Stream::empty)
+            .collect(Collectors.toCollection(LinkedHashSet::new));
+    }
+
+    @Override
+    public boolean isAuthorizedResourceForService(final WebContext context,
+                                                  final OAuthRegisteredService registeredService) {
+        return resolveRequestedResources(context).stream().allMatch(resource -> {
+            try {
+                val uri = new URI(resource);
+                if (uri.isAbsolute() && uri.getFragment() == null && registeredService.getAllowedResources().contains(resource)) {
+                    return true;
+                }
+            } catch (final URISyntaxException e) {
+                LOGGER.debug(e.getMessage(), e);
+            }
+            LOGGER.warn("Resource [{}] is invalid or not allowed for service [{}]", resource, registeredService.getName());
+            return false;
+        });
+    }
+
+    @Override
     public boolean isAuthorizedGrantTypeForService(final WebContext context,
                                                    final OAuthRegisteredService registeredService) {
         val grantType = resolveRequestParameter(context, OAuth20Constants.GRANT_TYPE)
