@@ -265,7 +265,8 @@ class OidcVerifiableCredentialPresentationRequestEndpointControllerTests {
             credential.setFormat("dc+sd-jwt");
             credential.setClaims(List.of(required, optional));
             val query = OidcVerifiableCredentialPresentationRequestEndpointController.toCredentialQuery(credential);
-            assertEquals(List.of("claim-0", "claim-1"), query.getClaims().stream().map(claim -> claim.getId()).toList());
+            assertEquals(List.of("claim-0", "claim-1"), query.getClaims().stream().map(
+                OidcVerifiableCredentialPresentationRequestEndpointController.OidcVerifiableCredentialDCQL.DCQLCredentialClaimRequest::getId).toList());
             assertEquals(List.of(List.of("claim-0", "claim-1"), List.of("claim-0")), query.getClaimSets());
 
             required.setRequired(false);

@@ -126,6 +126,7 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
                     .generateRefreshToken(tokenRequestContext.getRegisteredService() != null && tokenRequestContext.isGenerateRefreshToken())
                     .dpop(tokenRequestContext.getDpop())
                     .dpopConfirmation(tokenRequestContext.getDpopConfirmation())
+                    .x509CertificateDigest(tokenRequestContext.getX509CertificateDigest())
                     .build();
 
                 val ticketPair = generateAccessTokenOAuthGrantTypes(deviceResult);
@@ -176,6 +177,8 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
             _ -> authnBuilder.addAttribute(OAuth20Constants.DPOP, tokenRequestContext.getDpop()));
         FunctionUtils.doIfNotNull(tokenRequestContext.getDpopConfirmation(),
             _ -> authnBuilder.addAttribute(OAuth20Constants.DPOP_CONFIRMATION, tokenRequestContext.getDpopConfirmation()));
+        FunctionUtils.doIfNotNull(tokenRequestContext.getX509CertificateDigest(),
+            _ -> authnBuilder.addAttribute(OAuth20Constants.X509_CERTIFICATE_DIGEST, tokenRequestContext.getX509CertificateDigest()));
         return authnBuilder;
     }
 

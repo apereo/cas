@@ -13,6 +13,7 @@ import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.OAuth20TokenExchangeTypes;
 import org.apereo.cas.support.oauth.authenticator.Authenticators;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
+import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.ticket.code.OAuth20DefaultOAuthCodeFactory;
 import org.apereo.cas.ticket.device.OAuth20DeviceUserCode;
@@ -98,6 +99,42 @@ class OAuth20AccessTokenEndpointControllerTests {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.access_token").exists())
                 .andReturn();
+        }
+
+        @Test
+        void verifyAuthorizationCodeWithTlsIsCertificateBound() throws Throwable {
+            val service = getRegisteredService(OAuth20GrantTypes.AUTHORIZATION_CODE);
+            service.setTokenEndpointAuthenticationMethod(OAuth20ClientAuthenticationMethods.TLS_CLIENT_AUTH.getType());
+            servicesManager.save(service);
+            val certificate = CertUtils.readCertificate(new ClassPathResource("RSA1024x509Cert.pem").getInputStream());
+            val certificates = new X509Certificate[]{certificate};
+            val code = addCode(createPrincipal(), service);
+            val accessToken = mvc.perform(post("/cas" + CONTEXT + OAuth20Constants.ACCESS_TOKEN_URL)
+                    .queryParam(OAuth20Constants.CLIENT_ID, service.getClientId())
+                    .queryParam(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.AUTHORIZATION_CODE.getType())
+                    .queryParam(OAuth20Constants.REDIRECT_URI, service.getServiceId())
+                    .queryParam(OAuth20Constants.CODE, code.getId())
+                    .requestAttr("jakarta.servlet.request.X509Certificate", certificates))
+                .andExpect(status().isOk())
+                .andReturn().getModelAndView().getModel().get(OAuth20Constants.ACCESS_TOKEN).toString();
+            val ticket = ticketRegistry.getTicket(accessToken, OAuth20AccessToken.class);
+            val thumbprint = X509CertUtils.computeSHA256Thumbprint(certificate).toString();
+            assertEquals(thumbprint, OAuth20Utils.getBoundCertificateThumbprint(ticket).orElseThrow());
+            mvc.perform(post("/cas" + CONTEXT + OAuth20Constants.INTROSPECTION_URL)
+                    .param(OAuth20Constants.TOKEN, accessToken)
+                    .headers(HttpUtils.createBasicAuthHeaders(service.getClientId(), service.getClientSecrets().getFirst().getValue())))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.cnf.x5t#S256").value(thumbprint));
+
+            mvc.perform(post("/cas" + CONTEXT + OAuth20Constants.PROFILE_URL)
+                    .header(HttpHeaders.AUTHORIZATION, OAuth20Constants.TOKEN_TYPE_BEARER + ' ' + accessToken))
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.error").value(OAuth20Constants.INVALID_TOKEN))
+                .andExpect(header().string(HttpHeaders.WWW_AUTHENTICATE, org.hamcrest.Matchers.startsWith("Bearer error=\"invalid_token\"")));
+            mvc.perform(post("/cas" + CONTEXT + OAuth20Constants.PROFILE_URL)
+                    .header(HttpHeaders.AUTHORIZATION, OAuth20Constants.TOKEN_TYPE_BEARER + ' ' + accessToken)
+                    .requestAttr("jakarta.servlet.request.X509Certificate", certificates))
+                .andExpect(status().isOk());
         }
 
         @Test

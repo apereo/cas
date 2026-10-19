@@ -69,6 +69,8 @@ public class OAuth20Utils {
      */
     public static final String REDEEMED_CODE_TOKENS = "oauthTokensIssuedFromCode";
 
+    private static final String X509_CERTIFICATE_REQUEST_ATTRIBUTE = "jakarta.servlet.request.X509Certificate";
+
     private static final JsonMapper MAPPER = JacksonObjectMapperFactory.builder()
         .singleArrayElementUnwrapped(true).build().toJsonMapper();
 
@@ -609,6 +611,41 @@ public class OAuth20Utils {
      */
     public static String computeCertificateThumbprint(final X509Certificate certificate) {
         return FunctionUtils.doUnchecked(() -> EncodingUtils.encodeUrlSafeBase64(DigestUtils.rawDigest("SHA-256", certificate.getEncoded())));
+    }
+
+    /**
+     * The thumbprint of the client certificate an access token is bound to (RFC 8705, section 3). It is recorded on the
+     * token's authentication, and, for tokens issued before that or to the client itself, on its principal.
+     *
+     * @param accessToken the access token
+     * @return the certificate thumbprint, empty when the token is not certificate-bound
+     */
+    public static Optional<String> getBoundCertificateThumbprint(final OAuth20Token accessToken) {
+        val authentication = accessToken.getAuthentication();
+        return Stream.of(authentication.getAttributes(), authentication.getPrincipal().getAttributes())
+            .map(attributes -> attributes.get(OAuth20Constants.X509_CERTIFICATE_DIGEST))
+            .filter(Objects::nonNull)
+            .map(CollectionUtils::firstElement)
+            .flatMap(Optional::stream)
+            .map(Object::toString)
+            .findFirst();
+    }
+
+    /**
+     * Whether the request presents, over mutual TLS, the client certificate with the given thumbprint. The certificate is
+     * the one the TLS layer exposes on the request, the same one client authentication at the token endpoint uses.
+     *
+     * @param webContext            the web context
+     * @param certificateThumbprint the thumbprint of the bound certificate
+     * @return true when the presented certificate matches
+     */
+    public static boolean isBoundCertificatePresented(final WebContext webContext, final String certificateThumbprint) {
+        return webContext.getRequestAttribute(X509_CERTIFICATE_REQUEST_ATTRIBUTE, X509Certificate[].class)
+            .filter(certificates -> certificates.length > 0)
+            .map(certificates -> computeCertificateThumbprint(certificates[0]))
+            .filter(thumbprint -> MessageDigest.isEqual(thumbprint.getBytes(StandardCharsets.UTF_8),
+                certificateThumbprint.getBytes(StandardCharsets.UTF_8)))
+            .isPresent();
     }
 
     /**

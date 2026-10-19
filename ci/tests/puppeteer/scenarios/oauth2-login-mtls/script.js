@@ -42,14 +42,22 @@ async function verifyFlowWithMutualTls() {
         }),
         {
             "Content-Type": "application/x-www-form-urlencoded"
-        }, (res) => {
+        }, async (res) => {
             const accessToken = res.data.access_token;
             assert(accessToken !== undefined);
 
             const params = new URLSearchParams();
             params.append("access_token", accessToken);
 
-            cas.doPost(`${baseUrl}/profile`, params, {},
+            await cas.log("The access token is bound to the client certificate and cannot be used without it");
+            await cas.doPost(`${baseUrl}/profile`, params, {}, () => {
+                throw "Certificate-bound access token used without the client certificate must be rejected";
+            }, (error) => {
+                assert.equal(error.response.status, 401);
+                assert(error.response.data.error === "invalid_token");
+            });
+
+            await cas.doPost(`${baseUrl}/profile`, params, {},
                 (res) => {
                     const result = res.data;
                     assert(result.client_id === "client");
@@ -59,7 +67,7 @@ async function verifyFlowWithMutualTls() {
                     assert(result.attributes.email === "casuser@apereo.org");
                 }, (error) => {
                     throw error;
-                });
+                }, true, httpsAgent);
         }, (error) => {
             throw error;
         }, true, httpsAgent);
@@ -93,7 +101,7 @@ async function verifyFlowWithSpiffe() {
             const params = new URLSearchParams();
             params.append("access_token", accessToken);
 
-            cas.doPost("https://localhost:8443/cas/oauth2.0/profile", params, {},
+            await cas.doPost("https://localhost:8443/cas/oauth2.0/profile", params, {},
                 (res) => {
                     const result = res.data;
                     assert(result.attributes["x509-issuerX500"] === "CN=example.org,O=Example SPIFFE CA,ST=CA,C=US");
@@ -104,7 +112,7 @@ async function verifyFlowWithSpiffe() {
                     assert(result.client_id === "spiffe://example.org/ns/payments/sa/service-sample");
                 }, (error) => {
                     throw error;
-                });
+                }, true, httpsAgent);
         },
         (error) => {
             throw error;

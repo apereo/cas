@@ -12,6 +12,8 @@ import org.apereo.cas.util.function.FunctionUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.ObjectUtils;
+import org.jspecify.annotations.Nullable;
+import org.springframework.data.redis.connection.RedisConnectionCommands;
 import org.springframework.data.redis.core.RedisCallback;
 
 /**
@@ -113,24 +115,8 @@ public class RedisMultifactorAuthenticationTrustStorage extends BaseMultifactorA
         }, e -> new HashSet<MultifactorAuthenticationTrustRecord>()).get();
     }
 
-    /**
-     * Whether Redis answers a ping. The trusted device webflow actions skip verifying and registering devices when
-     * the storage is unavailable.
-     *
-     * @return true if Redis answers
-     */
     @Override
-    public boolean isAvailable() {
-        try {
-            return redisTemplate.execute((RedisCallback<String>) connection -> connection.ping()) != null;
-        } catch (final Exception e) {
-            LoggingUtils.error(LOGGER, e);
-            return false;
-        }
-    }
-
-    @Override
-    public MultifactorAuthenticationTrustRecord get(final long id) {
+    public @Nullable MultifactorAuthenticationTrustRecord get(final long id) {
         try (val keys = redisTemplate.scan(buildRedisKeyForRecord(id))) {
             return keys
                 .findFirst()
@@ -142,6 +128,22 @@ public class RedisMultifactorAuthenticationTrustStorage extends BaseMultifactorA
                     return null;
                 })
                 .orElse(null);
+        }
+    }
+
+    /**
+     * Whether Redis answers a ping. The trusted device webflow actions skip verifying and registering devices when
+     * the storage is unavailable.
+     *
+     * @return true if Redis answers
+     */
+    @Override
+    public boolean isAvailable() {
+        try {
+            return redisTemplate.execute((RedisCallback<String>) RedisConnectionCommands::ping) != null;
+        } catch (final Exception e) {
+            LoggingUtils.error(LOGGER, e);
+            return false;
         }
     }
 

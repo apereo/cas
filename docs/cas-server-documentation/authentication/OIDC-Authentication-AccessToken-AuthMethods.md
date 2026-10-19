@@ -167,9 +167,21 @@ The following parameters are supported:
 | `tlsClientAuthSanIp`     | The expected iPAddress SAN entry in the certificate in either for IPv4 or IPv6.                                   |
 | `tlsClientAuthSanEmail`  | The expected rfc822Name SAN entry in the certificate.                                                             |
 
-Access tokens issued to a client that authenticates with mutual TLS are bound to its certificate, as described
+Access tokens issued to a client that authenticates with mutual TLS are bound to its certificate, whatever the grant, as described
 in [RFC 8705](https://www.rfc-editor.org/rfc/rfc8705#section-3). JWT access tokens and introspection responses carry
 the certificate thumbprint in the `cnf` claim as `x5t#S256`, the base64url-encoded SHA-256 hash of the DER-encoded certificate.
+The profile and userinfo endpoints, the verifiable credential endpoint and Heimdall accept such a token only over a connection that
+presents the same client certificate; otherwise the request is answered with `401` and `invalid_token`:
+
+```json
+{
+  "error": "invalid_token",
+  "error_description": "Access token is bound to a client certificate that the request does not present"
+}
+```
+
+A refresh token is not bound to the certificate itself: the client authenticates with mutual TLS when it uses it, and the access
+token it receives is bound to the certificate presented then.
                
 ### SPIFFE
 

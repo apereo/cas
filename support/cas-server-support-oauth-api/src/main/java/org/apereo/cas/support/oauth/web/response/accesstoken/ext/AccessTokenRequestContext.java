@@ -106,6 +106,9 @@ public class AccessTokenRequestContext implements Serializable {
     @Setter
     private String dpop;
 
+    @Setter
+    private String x509CertificateDigest;
+
     private final String cibaRequestId;
 
     private final String authorizationDetails;

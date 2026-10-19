@@ -1883,6 +1883,7 @@ class CasOAuth20Configuration {
                 final ServiceFactory serviceFactory) {
                 val retainedAttributes = new LinkedHashSet<>(CompactTicketAuthentication.getRetainedAuthenticationAttributes(casProperties));
                 retainedAttributes.add(OAuth20Constants.DPOP_CONFIRMATION);
+                retainedAttributes.add(OAuth20Constants.X509_CERTIFICATE_DIGEST);
                 return new OAuth20AccessTokenCompactor(ticketFactory, serviceFactory, principalFactory, retainedAttributes);
             }
 

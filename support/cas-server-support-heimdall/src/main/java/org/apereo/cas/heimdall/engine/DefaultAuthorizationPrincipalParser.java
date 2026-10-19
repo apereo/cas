@@ -60,7 +60,6 @@ import org.jspecify.annotations.Nullable;
 import org.pac4j.core.context.WebContext;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.http.HttpHeaders;
-import java.security.cert.X509Certificate;
 
 /**
  * This is {@link DefaultAuthorizationPrincipalParser}.
@@ -71,7 +70,6 @@ import java.security.cert.X509Certificate;
 @RequiredArgsConstructor
 @Slf4j
 public class DefaultAuthorizationPrincipalParser implements AuthorizationPrincipalParser {
-    private static final String X509_CERTIFICATE_REQUEST_ATTRIBUTE = "jakarta.servlet.request.X509Certificate";
 
     private static final String RESOLVED_SUBJECT_TYPE = "user";
 
@@ -147,9 +145,9 @@ public class DefaultAuthorizationPrincipalParser implements AuthorizationPrincip
                     FunctionUtils.throwIf(webContext == null, () -> new AuthenticationException("DPoP requires an HTTP request"));
                     proofOfPossessionValidator.getObject().validateProtectedResourceRequest(webContext, token, ticket);
                 }
-                val certificateBinding = findCertificateBinding(ticket);
+                val certificateBinding = OAuth20Utils.getBoundCertificateThumbprint(ticket);
                 FunctionUtils.throwIf(certificateBinding.isPresent()
-                        && (webContext == null || !isBoundClientCertificatePresented(webContext, certificateBinding.get())),
+                        && (webContext == null || !OAuth20Utils.isBoundCertificatePresented(webContext, certificateBinding.get())),
                     () -> new AuthenticationException("Access token is bound to a client certificate that was not presented"));
                 val claims = buildClaimsFromAuthentication(ticket.getAuthentication());
                 claims.putAll(ticket.getClaims());
@@ -176,25 +174,6 @@ public class DefaultAuthorizationPrincipalParser implements AuthorizationPrincip
         val accessStrategy = determineHeimdallAccessStrategy(registeredService);
         FunctionUtils.throwIf(accessStrategy != null && !accessStrategy.isAllowed(),
             () -> new AuthenticationException("Heimdall access strategy is not allowed for service " + registeredService.getName()));
-    }
-
-    protected Optional<String> findCertificateBinding(final OAuth20AccessToken accessToken) {
-        val authentication = accessToken.getAuthentication();
-        return Stream.of(authentication.getAttributes(), authentication.getPrincipal().getAttributes())
-            .map(attributes -> attributes.get(OAuth20Constants.X509_CERTIFICATE_DIGEST))
-            .filter(Objects::nonNull)
-            .map(CollectionUtils::firstElement)
-            .flatMap(Optional::stream)
-            .map(Object::toString)
-            .findFirst();
-    }
-
-    protected boolean isBoundClientCertificatePresented(final WebContext webContext, final String certificateDigest) {
-        return webContext.getRequestAttribute(X509_CERTIFICATE_REQUEST_ATTRIBUTE, X509Certificate[].class)
-            .filter(certificates -> certificates.length > 0)
-            .map(certificates -> OAuth20Utils.computeCertificateThumbprint(certificates[0]))
-            .filter(digest -> MessageDigest.isEqual(digest.getBytes(StandardCharsets.UTF_8), certificateDigest.getBytes(StandardCharsets.UTF_8)))
-            .isPresent();
     }
 
     private static @Nullable HeimdallRegisteredServiceAccessStrategy determineHeimdallAccessStrategy(

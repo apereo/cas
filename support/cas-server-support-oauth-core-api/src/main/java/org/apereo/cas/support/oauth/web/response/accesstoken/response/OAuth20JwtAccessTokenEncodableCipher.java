@@ -7,6 +7,7 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
+import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 import org.apereo.cas.ticket.OAuth20Token;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
@@ -110,15 +111,11 @@ class OAuth20JwtAccessTokenEncodableCipher implements EncodableCipher<String, St
             attributesToRelease.put(OAuth20Constants.CLAIM_ACT, originalAttributes.get(OAuth20Constants.CLAIM_ACT));
         }
 
-        if (originalAttributes.containsKey(OAuth20Constants.X509_CERTIFICATE_DIGEST)) {
-            CollectionUtils.firstElement(originalAttributes.get(OAuth20Constants.X509_CERTIFICATE_DIGEST))
-                .ifPresent(conf -> {
-                    val confirmation = new X509CertificateConfirmation(new Base64URL(conf.toString()));
-                    val claim = confirmation.toJWTClaim();
-                    attributesToRelease.put(claim.getKey(), List.of(claim.getValue()));
-                });
-            attributesToRelease.put(OAuth20Constants.X509_CERTIFICATE_DIGEST, originalAttributes.get(OAuth20Constants.X509_CERTIFICATE_DIGEST));
-        }
+        OAuth20Utils.getBoundCertificateThumbprint(token).ifPresent(thumbprint -> {
+            val claim = new X509CertificateConfirmation(new Base64URL(thumbprint)).toJWTClaim();
+            attributesToRelease.put(claim.getKey(), List.of(claim.getValue()));
+            attributesToRelease.put(OAuth20Constants.X509_CERTIFICATE_DIGEST, List.of(thumbprint));
+        });
         FunctionUtils.doIfNotNull(token.getGrantType(), type ->
             attributesToRelease.put(OAuth20Constants.GRANT_TYPE, List.of(type.getType())));
         FunctionUtils.doIfNotNull(token.getResponseType(), type ->

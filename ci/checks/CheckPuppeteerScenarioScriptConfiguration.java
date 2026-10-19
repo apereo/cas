@@ -43,8 +43,8 @@ public class CheckPuppeteerScenarioScriptConfiguration {
             .forEach(file -> {
 //                print(file.toFile().getAbsolutePath());
                 var text = readFile(file);
-                var property = Pattern.compile("\"(?:[^\"\\\\]|\\\\.)*\"");
-                var matcher = Pattern.compile("\"properties\"\\s*:\\s*\\[((?:\\s|,|" + property.pattern() + ")*)\\]").matcher(text);
+                var property = Pattern.compile("\"(?:[^\"\\\\]|\\\\.)*+\"");
+                var matcher = Pattern.compile("\"properties\"\\s*:\\s*\\[((?:\\s|,|" + property.pattern() + ")*+)\\]").matcher(text);
                 while (matcher.find()) {
                     var properties = property.matcher(matcher.group(1)).results()
                         .map(MatchResult::group).collect(Collectors.toList());

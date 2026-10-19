@@ -105,7 +105,7 @@ class Cas10ResponseViewTests {
 
         val output = response.getContentAsString();
         assertTrue(output.startsWith("yes\ncasuser\n"));
-        assertTrue(output.lines().noneMatch(line -> "administrator=true".equals(line)));
+        assertTrue(output.lines().noneMatch("administrator=true"::equals));
         assertTrue(output.lines().anyMatch(line -> line.contains("staffadministrator=true")));
     }
 

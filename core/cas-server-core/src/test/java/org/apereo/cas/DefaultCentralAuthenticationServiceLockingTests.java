@@ -56,7 +56,7 @@ class DefaultCentralAuthenticationServiceLockingTests {
             }
             start.countDown();
         }
-        assertTrue(failures.isEmpty(), () -> failures.toString());
+        assertTrue(failures.isEmpty(), failures::toString);
         assertEquals(REQUEST_IN_BROWSER_CONCURRENCY, validated.get() + rejected.get());
         assertNull(tests.getTicketRegistry().getTicket(serviceTicket.getId()));
         return validated.get();
