@@ -4,24 +4,26 @@ const cas = require("../../cas.js");
 const DEVICES = "https://localhost:8443/cas/actuator/webAuthnDevices/casuser";
 
 /**
- * Reads what the repository of the current variation keeps for casuser, straight from the backend. Registration
- * records are stored unencrypted in this scenario, so a stored registration shows its credentialId.
+ * Whether the repository of the current variation keeps a registration for casuser, read straight from the backend.
+ * Registration records are stored unencrypted in this scenario, so a stored registration shows its credentialId;
+ * Redis values are compressed, so there only the key is checked, which the repository deletes with the last device.
  */
-async function storedRecords() {
+async function hasStoredRegistration() {
     switch (process.env.SCENARIO_VARIATION) {
     case "jpa": {
         const table = await cas.dockerExec("mariadb", ["mariadb", "-uroot", "-pmypass", "-N", "-e",
             "SELECT TABLE_NAME FROM information_schema.COLUMNS WHERE TABLE_SCHEMA='mysql' AND COLUMN_NAME='records' AND TABLE_NAME LIKE '%web%authn%'"]);
         assert(table.length > 0, "WebAuthn table must exist");
-        return cas.dockerExec("mariadb", ["mariadb", "-uroot", "-pmypass", "-N", "-D", "mysql", "-e",
+        const records = await cas.dockerExec("mariadb", ["mariadb", "-uroot", "-pmypass", "-N", "-D", "mysql", "-e",
             `SELECT records FROM ${table.split("\n")[0]} WHERE username='casuser'`]);
+        return records.includes("credentialId");
     }
     case "mongo":
-        return cas.dockerExec("mongodb-server", ["mongosh", "--quiet",
+        return (await cas.dockerExec("mongodb-server", ["mongosh", "--quiet",
             "mongodb://root:secret@localhost:27017/webauthn?authSource=admin", "--eval",
-            "EJSON.stringify(db.MongoDbWebAuthnRepository.find({username: 'casuser'}).toArray())"]);
+            "EJSON.stringify(db.MongoDbWebAuthnRepository.find({username: 'casuser'}).toArray())"])).includes("credentialId");
     case "redis":
-        return cas.dockerExec("redis_server_master", ["redis-cli", "GET", "RedisWebAuthnCredentialRepository:casuser"]);
+        return (await cas.dockerExec("redis_server_master", ["redis-cli", "EXISTS", "RedisWebAuthnCredentialRepository:casuser"])) === "1";
     default:
         throw new Error(`Unknown variation ${process.env.SCENARIO_VARIATION}`);
     }
@@ -30,7 +32,7 @@ async function storedRecords() {
 (async () => {
     await cas.log(`Running with the ${process.env.SCENARIO_VARIATION} repository`);
     await cas.doRequest(DEVICES, "DELETE", {"Accept": "application/json"}, 200);
-    assert(!(await storedRecords()).includes("credentialId"));
+    assert(!(await hasStoredRegistration()));
 
     const browser = await cas.newBrowser(cas.browserOptions());
     const page = await cas.newPage(browser);
@@ -75,7 +77,7 @@ async function storedRecords() {
     const devices = await cas.doRequest(DEVICES, "GET", {"Accept": "application/json"}, 200);
     await cas.log(devices);
     assert(devices.includes("credentialId"), "The registered device must be listed");
-    assert((await storedRecords()).includes("credentialId"), "The registration must be kept in the backend");
+    assert(await hasStoredRegistration(), "The registration must be kept in the backend");
 
     await cas.gotoLogout(page);
 
@@ -104,7 +106,7 @@ async function storedRecords() {
 
     await cas.doRequest(DEVICES, "DELETE", {"Accept": "application/json"}, 200);
     assert(!(await cas.doRequest(DEVICES, "GET", {"Accept": "application/json"}, 200)).includes("credentialId"));
-    assert(!(await storedRecords()).includes("credentialId"), "Removing the device must remove it from the backend");
+    assert(!(await hasStoredRegistration()), "Removing the device must remove it from the backend");
 
     await cas.sleep(2000);
     await cas.removeWebAuthnVirtualAuthenticator(virtualAuthenticator);

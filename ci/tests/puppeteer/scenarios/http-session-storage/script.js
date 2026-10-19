@@ -2,7 +2,20 @@
 const cas = require("../../cas.js");
 const assert = require("assert");
 
+/**
+ * Whether the current variation's backend holds the HTTP session, read straight from it.
+ */
+async function sessionInBackend(sessionId) {
+    if (process.env.SCENARIO_VARIATION === "redis") {
+        return (await cas.dockerExec("redis_server_master", ["redis-cli", "EXISTS", `spring:session:sessions:${sessionId}`])) === "1";
+    }
+    return Number((await cas.dockerExec("mongodb-server", ["mongosh", "--quiet",
+        "mongodb://root:secret@localhost:27017/sessions?authSource=admin", "--eval",
+        `db.MongoDbSessionRepository.countDocuments({_id: '${sessionId}'})`])).split("\n").pop()) === 1;
+}
+
 (async () => {
+    await cas.log(`Running with the ${process.env.SCENARIO_VARIATION} session repository`);
     await cas.refreshContext();
 
     const browser = await cas.newBrowser(cas.browserOptions());
@@ -28,6 +41,8 @@ const assert = require("assert");
         }, (error) => {
             throw error;
         }, { "Content-Type": "application/json" });
+
+    assert(await sessionInBackend(cookieValue), "The HTTP session must be kept in the backend");
 
     await cas.closeBrowser(browser);
 })();

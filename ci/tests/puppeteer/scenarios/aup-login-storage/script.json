@@ -1,0 +1,70 @@
+{
+  "dependencies": "aup-webflow,aup-jdbc,aup-ldap,aup-mongo,aup-redis",
+  "conditions": {
+    "docker": "true"
+  },
+  "environmentVariables": [
+    "CAS_LDAP_BIND_DN=cn=Directory Manager"
+  ],
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+    "--cas.service-registry.core.init-from-json=true"
+  ],
+  "variations": [
+    {
+      "name": "jdbc",
+      "properties": [
+        "--CasFeatureModule.AcceptableUsagePolicy.ldap.enabled=false",
+        "--CasFeatureModule.AcceptableUsagePolicy.mongo.enabled=false",
+        "--CasFeatureModule.AcceptableUsagePolicy.redis.enabled=false",
+        "--cas.acceptable-usage-policy.jdbc.url=jdbc:postgresql://localhost:5432/postgres",
+        "--cas.acceptable-usage-policy.jdbc.user=postgres",
+        "--cas.acceptable-usage-policy.jdbc.password=password",
+        "--cas.acceptable-usage-policy.jdbc.driver-class=org.postgresql.Driver",
+        "--cas.acceptable-usage-policy.jdbc.dialect=org.hibernate.dialect.PostgreSQLDialect",
+        "--cas.acceptable-usage-policy.jdbc.table-name=aup_users"
+      ]
+    },
+    {
+      "name": "ldap",
+      "properties": [
+        "--CasFeatureModule.AcceptableUsagePolicy.jdbc.enabled=false",
+        "--CasFeatureModule.AcceptableUsagePolicy.mongo.enabled=false",
+        "--CasFeatureModule.AcceptableUsagePolicy.redis.enabled=false",
+        "--cas.acceptable-usage-policy.core.aup-attribute-name=carLicense",
+        "--cas.acceptable-usage-policy.ldap[0].ldap-url=ldap://localhost:10389",
+        "--cas.acceptable-usage-policy.ldap[0].base-dn=ou=aup,dc=example,dc=org",
+        "--cas.acceptable-usage-policy.ldap[0].search-filter=cn={0}",
+        "--cas.acceptable-usage-policy.ldap[0].bind-dn=${CAS_LDAP_BIND_DN}",
+        "--cas.acceptable-usage-policy.ldap[0].bind-credential=password"
+      ]
+    },
+    {
+      "name": "mongo",
+      "properties": [
+        "--CasFeatureModule.AcceptableUsagePolicy.jdbc.enabled=false",
+        "--CasFeatureModule.AcceptableUsagePolicy.ldap.enabled=false",
+        "--CasFeatureModule.AcceptableUsagePolicy.redis.enabled=false",
+        "--cas.acceptable-usage-policy.mongo.host=localhost",
+        "--cas.acceptable-usage-policy.mongo.port=27017",
+        "--cas.acceptable-usage-policy.mongo.user-id=root",
+        "--cas.acceptable-usage-policy.mongo.password=secret",
+        "--cas.acceptable-usage-policy.mongo.authentication-database-name=admin",
+        "--cas.acceptable-usage-policy.mongo.database-name=aup",
+        "--cas.acceptable-usage-policy.mongo.drop-collection=true"
+      ]
+    },
+    {
+      "name": "redis",
+      "properties": [
+        "--CasFeatureModule.AcceptableUsagePolicy.jdbc.enabled=false",
+        "--CasFeatureModule.AcceptableUsagePolicy.ldap.enabled=false",
+        "--CasFeatureModule.AcceptableUsagePolicy.mongo.enabled=false",
+        "--cas.acceptable-usage-policy.redis.host=localhost",
+        "--cas.acceptable-usage-policy.redis.port=6379"
+      ]
+    }
+  ],
+  "initScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/init.sh"
+}

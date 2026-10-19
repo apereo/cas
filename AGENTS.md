@@ -545,13 +545,23 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
   (Google Authenticator `jpa/redis/mongo/ldap`, trusted devices `jdbc/redis`, consent `ldap/mongo/redis`, WebAuthn
   `jpa/mongo/redis/ldap/dynamodb/rest`); the init scripts start every backend. Examples:
   `mfa-webauthn-register-logout-login`, `mfa-gauth-login-encrypted`, `mfa-gauth-login-trusted-devices-storage`
-  (formerly `-jdbc`), `attribute-consent-storage`. Storage modules that share a bean name without a module toggle cannot
+  (formerly `-jdbc`), `attribute-consent-storage`, `aup-login-storage`, `authn-throttle-storage` (formerly
+  `authn-throttle-with-jdbc`; each throttle reads its own store, so the audit module it needs stays on: JDBC and
+  MongoDb throttles read the audit trail), `passwordless-login-storage` (formerly `passwordless-login-jpa`; the mongo
+  variation also keeps the account in MongoDb), `http-session-storage` (formerly `http-session-mongodb`). Storage modules that share a bean name without a module toggle cannot
   ship together; WebAuthn's had none until its storage auto-configurations got `module = "..."`.
 - Each such scenario also reads the backend directly with `cas.dockerExec(container, args)` (containers: `mariadb`,
   `postgres-server`, `mongodb-server`, `redis_server_master`, `ldap-server`, `localstack`), so a variation that silently
   fell back to the in-memory default fails. LDAP-backed repositories that keep records in an attribute of the user's
   entry (Google Authenticator, consent: `description`, `search-filter=cn={0}`) need the entry first:
-  `ci/tests/ldap/add-ldap-entries.sh <ldif>` waits for `ldap-server` and adds it.
+  `ci/tests/ldap/add-ldap-entries.sh <ldif>` waits for `ldap-server` and adds it. The 389ds schema has no CAS
+  attributes, so point the attribute setting at a standard one the entry's object classes allow (`description`,
+  `carLicense`, `postalCode` on `inetOrgPerson`).
+- CAS Redis templates write values LZ4-compressed and JDK-serialized, so `redis-cli GET` shows nothing readable;
+  check `EXISTS` or `--scan` for keys instead.
+- Storage tests that extend `BaseAcceptableUsagePolicyRepositoryTests` only check that a submitted decision is read back
+  when `hasLiveUpdates()` is true; the MongoDb and Redis repositories stored decisions without ever reading them, and
+  their tests did not notice. Use a random principal there, since the backend outlives the test.
 - `cas.doDelete(url)` swallows failures unless a failure handler is given; assert a status with
   `cas.doRequest(url, "DELETE", headers, status)`.
 - Read JPA tables by looking their names up (`information_schema`), not by entity name: CAS's physical naming

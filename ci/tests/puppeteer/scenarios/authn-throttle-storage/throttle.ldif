@@ -1,0 +1,13 @@
+dn: ou=throttle,dc=example,dc=org
+objectClass: top
+objectClass: organizationalUnit
+ou: throttle
+
+dn: cn=casuser,ou=throttle,dc=example,dc=org
+objectClass: top
+objectClass: person
+objectClass: organizationalPerson
+objectClass: inetOrgPerson
+cn: casuser
+sn: casuser
+uid: casuser

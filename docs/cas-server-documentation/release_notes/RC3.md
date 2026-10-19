@@ -41,7 +41,7 @@ release:
       url: ../planning/Installation-Requirements.html
     - label: Built on
       value: Spring Boot 4.2
-    - value: "572"
+    - value: "587"
       suffix: browser test scenarios
       url: ../../developer/Test-Process.html
     - value: "94%"
@@ -142,7 +142,7 @@ to build and verify Graal VM native images and we plan to extend the coverage to
 {: data-area="project"}
 
 The collection of end-to-end [browser tests based on Puppeteer](../../developer/Test-Process.html) continue to grow to cover more use cases
-and scenarios. At the moment, total number of jobs stands at approximately `572` distinct scenarios. The overall
+and scenarios. At the moment, total number of jobs stands at approximately `587` distinct scenarios. The overall
 test coverage of the CAS codebase is approximately `94%`.
 
 ### JSpecify & NullAway
@@ -946,5 +946,7 @@ The documentation now explains how to let browser-based MCP clients reach the se
 - {: .changed data-area="mfa"} Each [WebAuthn](../mfa/FIDO2-WebAuthn-Authentication.html) storage module (JPA, MongoDb, Redis, LDAP, DynamoDb, REST) can now be switched off with `CasFeatureModule.WebAuthn.<module>.enabled=false`, as the Google Authenticator, trusted device and consent storage modules already could, so that several can ship in one build while only one keeps device registrations.
 - {: .fixed data-area="saml"} With identity provider metadata kept in [Redis](../installation/Configuring-SAML2-DynamicMetadata-Redis.html), service providers without metadata of their own use the identity provider's global metadata and keys, as with the other metadata stores; SAML2 responses used to fail with "Unable to locate signing credentials".
 - {: .fixed data-area="mfa"} With [trusted devices kept in Redis](../mfa/Multifactor-TrustedDevice-Authentication-Storage-Redis.html), logins continue with multifactor authentication while Redis cannot be reached, as with the JDBC storage, instead of failing with a server error.
+- {: .fixed data-area="authentication"} With the [acceptable usage policy](../webflow/Webflow-Customization-AUP.html) kept in [MongoDb](../webflow/Webflow-Customization-AUP-MongoDb.html) or [Redis](../webflow/Webflow-Customization-AUP-Redis.html), an accepted policy is remembered at later logins; the decision used to be stored but never read back, so the policy was asked for at every login. MongoDb now creates the user's document when there is none.
+- {: .fixed data-area="saml"} With identity provider metadata kept in [DynamoDb](../installation/Configuring-SAML2-DynamicMetadata-DynamoDb.html) or [Google Cloud Storage](../installation/Configuring-SAML2-DynamicMetadata-GCP-Storage.html), service providers without metadata of their own use the identity provider's global metadata and keys, as with Redis, JPA and MongoDb.
 
 {% include release-footer.html %}

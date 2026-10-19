@@ -43,7 +43,12 @@ class MongoDbAcceptableUsagePolicyRepositoryTests extends BaseAcceptableUsagePol
     @Test
     void verifyOperation() throws Throwable {
         assertNotNull(acceptableUsagePolicyRepository);
-        verifyRepositoryAction("casuser",
+        verifyRepositoryAction(UUID.randomUUID().toString(),
             CollectionUtils.wrap("accepted", List.of("false"), "email", List.of("CASuser@example.org")));
+    }
+
+    @Override
+    public boolean hasLiveUpdates() {
+        return true;
     }
 }

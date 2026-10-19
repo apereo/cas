@@ -2,6 +2,8 @@ package org.apereo.cas.support.saml.idp.metadata;
 
 import module java.base;
 import org.apereo.cas.support.saml.BaseDynamoDbSamlMetadataTests;
+import org.apereo.cas.support.saml.services.SamlRegisteredService;
+import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -25,5 +27,19 @@ class DynamoDbSamlIdPMetadataLocatorTests extends BaseDynamoDbSamlMetadataTests 
     void verifySigningKeyWithoutService() throws Throwable {
         val resource = samlIdPMetadataLocator.resolveSigningKey(Optional.empty());
         assertNotNull(resource);
+    }
+
+    @Test
+    void verifyServiceWithoutOwnMetadataUsesGlobalDocument() throws Throwable {
+        val service = new SamlRegisteredService();
+        service.setId(RandomUtils.nextLong());
+        service.setName("ServiceWithoutMetadata");
+        service.setServiceId("https://sp.example.org");
+        val global = samlIdPMetadataLocator.fetch(Optional.empty());
+        assertNotNull(global);
+        val document = samlIdPMetadataLocator.fetch(Optional.of(service));
+        assertNotNull(document);
+        assertEquals(global.getSigningKey(), document.getSigningKey());
+        assertTrue(samlIdPMetadataLocator.resolveSigningKey(Optional.of(service)).contentLength() > 0);
     }
 }
