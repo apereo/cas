@@ -182,6 +182,26 @@ presents the same client certificate; otherwise the request is answered with `40
 
 A refresh token is not bound to the certificate itself: the client authenticates with mutual TLS when it uses it, and the access
 token it receives is bound to the certificate presented then.
+
+A client may also be required to always receive certificate-bound access tokens, as the `tls_client_certificate_bound_access_tokens`
+client metadata of [RFC 8705](https://www.rfc-editor.org/rfc/rfc8705#section-3.4) defines. Every token request from such a client
+must then be authenticated with mutual TLS, whatever the grant; one that is not is answered with `400` and `invalid_request`, and
+the grant it presents, such as an authorization code, is not redeemed. The setting is turned on in the client's service definition:
+
+```json
+{
+  "@class": "org.apereo.cas.services.OidcRegisteredService",
+  "clientId": "client",
+  "serviceId": "^https://app.example.org/.*",
+  "name": "Sample",
+  "id": 1,
+  "tokenEndpointAuthenticationMethod": "tls_client_auth",
+  "tlsClientCertificateBoundAccessTokens": true
+}
+```
+
+A client may also ask for it by sending `"tls_client_certificate_bound_access_tokens": true` in its
+[dynamic registration request](OIDC-Authentication-Dynamic-Registration.html); the registration response echoes the setting when it is on.
                
 ### SPIFFE
 

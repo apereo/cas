@@ -6,6 +6,7 @@ import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.events.OAuth20AccessTokenRequestEvent;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
+import org.apereo.cas.support.oauth.validator.CertificateBoundAccessTokenRequiredException;
 import org.apereo.cas.support.oauth.validator.token.OAuth20AuthorizationPendingException;
 import org.apereo.cas.support.oauth.validator.token.OAuth20ExpiredTokenException;
 import org.apereo.cas.support.oauth.validator.token.device.InvalidOAuth20DeviceTokenException;
@@ -116,6 +117,9 @@ public class OAuth20AccessTokenEndpointController<T extends OAuth20Configuration
         } catch (final InvalidDPoPProofException e) {
             LoggingUtils.error(LOGGER, e);
             return OAuth20Utils.writeError(response, OAuth20Constants.INVALID_DPOP_PROOF);
+        } catch (final CertificateBoundAccessTokenRequiredException e) {
+            LOGGER.warn(e.getMessage());
+            return OAuth20Utils.writeError(response, OAuth20Constants.INVALID_REQUEST, e.getMessage());
         } catch (final Throwable e) {
             LoggingUtils.error(LOGGER, e);
             return OAuth20Utils.writeError(response, OAuth20Constants.INVALID_REQUEST);

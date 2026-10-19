@@ -138,6 +138,32 @@ class OAuth20AccessTokenEndpointControllerTests {
         }
 
         @Test
+        void verifyClientWithCertificateBoundAccessTokensRequiresTls() throws Throwable {
+            val service = getRegisteredService(OAuth20GrantTypes.AUTHORIZATION_CODE);
+            service.setTlsClientCertificateBoundAccessTokens(true);
+            servicesManager.save(service);
+            val code = addCode(createPrincipal(), service);
+            mvc.perform(post("/cas" + CONTEXT + OAuth20Constants.ACCESS_TOKEN_URL)
+                    .queryParam(OAuth20Constants.CLIENT_ID, service.getClientId())
+                    .queryParam(OAuth20Constants.CLIENT_SECRET, service.getClientSecrets().getFirst().getValue())
+                    .queryParam(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.AUTHORIZATION_CODE.getType())
+                    .queryParam(OAuth20Constants.REDIRECT_URI, service.getServiceId())
+                    .queryParam(OAuth20Constants.CODE, code.getId()))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error").value(OAuth20Constants.INVALID_REQUEST));
+
+            val certificate = CertUtils.readCertificate(new ClassPathResource("RSA1024x509Cert.pem").getInputStream());
+            mvc.perform(post("/cas" + CONTEXT + OAuth20Constants.ACCESS_TOKEN_URL)
+                    .queryParam(OAuth20Constants.CLIENT_ID, service.getClientId())
+                    .queryParam(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.AUTHORIZATION_CODE.getType())
+                    .queryParam(OAuth20Constants.REDIRECT_URI, service.getServiceId())
+                    .queryParam(OAuth20Constants.CODE, code.getId())
+                    .requestAttr("jakarta.servlet.request.X509Certificate", new X509Certificate[]{certificate}))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.access_token").exists());
+        }
+
+        @Test
         void verifyClientCredentialsWithTlsUnknown() throws Throwable {
             val service = getRegisteredService(OAuth20GrantTypes.CLIENT_CREDENTIALS);
             service.setTokenEndpointAuthenticationMethod("unknown");

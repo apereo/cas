@@ -5,6 +5,7 @@ import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
+import org.apereo.cas.support.oauth.validator.CertificateBoundAccessTokenRequiredException;
 import org.apereo.cas.support.oauth.validator.token.OAuth20TokenRequestValidator;
 import org.apereo.cas.token.JwtBuilder;
 import com.nimbusds.jose.JWSAlgorithm;
@@ -69,5 +70,18 @@ class OidcAccessTokenJwtBearerGrantRequestValidatorTests extends AbstractOidcTes
         assertTrue(validator.validate(context));
         assertEquals(key.computeThumbprint().toString(), request.getAttribute(OAuth20Constants.DPOP_CONFIRMATION));
         assertEquals(proof.serialize(), request.getAttribute(OAuth20Constants.DPOP));
+    }
+
+    @Test
+    void verifyClientWithCertificateBoundAccessTokensRequiresTls() throws Throwable {
+        val registeredService = getOidcRegisteredService(UUID.randomUUID().toString());
+        registeredService.setTlsClientCertificateBoundAccessTokens(true);
+        servicesManager.save(registeredService);
+        val request = new MockHttpServletRequest();
+        val context = new JEEContext(request, new MockHttpServletResponse());
+        val claims = JWTClaimsSet.parse(Map.of(OAuth20Constants.CLIENT_ID, registeredService.getClientId()));
+        request.addParameter(OAuth20Constants.ASSERTION, JwtBuilder.buildPlain(claims, Optional.of(registeredService)));
+        request.addParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.JWT_BEARER.getType());
+        assertThrows(CertificateBoundAccessTokenRequiredException.class, () -> validator.validate(context));
     }
 }
