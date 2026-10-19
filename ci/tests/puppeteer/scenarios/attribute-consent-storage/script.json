@@ -1,0 +1,63 @@
+{
+  "dependencies": "consent-webflow,consent-ldap,consent-mongo,consent-redis",
+  "conditions": {
+    "docker": "true"
+  },
+  "environmentVariables": [
+    "CAS_LDAP_BIND_DN=cn=Directory Manager"
+  ],
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
+    "--cas.service-registry.core.init-from-json=true",
+    "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services",
+
+    "--cas.authn.attribute-repository.stub.attributes.first-name=Apereo",
+    "--cas.authn.attribute-repository.stub.attributes.last-name=CAS",
+    "--cas.authn.attribute-repository.stub.attributes.email=casuser@example.org",
+
+    "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
+    "--management.endpoints.web.exposure.include=attributeConsent",
+    "--management.endpoints.access.default=UNRESTRICTED"
+  ],
+  "variations": [
+    {
+      "name": "ldap",
+      "properties": [
+        "--CasFeatureModule.Consent.mongo.enabled=false",
+        "--CasFeatureModule.Consent.redis.enabled=false",
+        "--cas.consent.ldap.ldap-url=ldap://localhost:10389",
+        "--cas.consent.ldap.base-dn=ou=consent,dc=example,dc=org",
+        "--cas.consent.ldap.search-filter=cn={0}",
+        "--cas.consent.ldap.consent-attribute-name=description",
+        "--cas.consent.ldap.bind-dn=${CAS_LDAP_BIND_DN}",
+        "--cas.consent.ldap.bind-credential=password"
+      ]
+    },
+    {
+      "name": "mongo",
+      "properties": [
+        "--CasFeatureModule.Consent.ldap.enabled=false",
+        "--CasFeatureModule.Consent.redis.enabled=false",
+        "--cas.consent.mongo.host=localhost",
+        "--cas.consent.mongo.port=27017",
+        "--cas.consent.mongo.user-id=root",
+        "--cas.consent.mongo.password=secret",
+        "--cas.consent.mongo.authentication-database-name=admin",
+        "--cas.consent.mongo.database-name=consent",
+        "--cas.consent.mongo.drop-collection=true"
+      ]
+    },
+    {
+      "name": "redis",
+      "properties": [
+        "--CasFeatureModule.Consent.ldap.enabled=false",
+        "--CasFeatureModule.Consent.mongo.enabled=false",
+        "--cas.consent.redis.host=localhost",
+        "--cas.consent.redis.port=6379"
+      ]
+    }
+  ],
+  "initScript": "${PWD}/ci/tests/httpbin/run-httpbin-server.sh,${PWD}/ci/tests/mongodb/run-mongodb-server.sh,${PWD}/ci/tests/redis/run-redis-server.sh,${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/init.sh"
+}

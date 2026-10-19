@@ -29,6 +29,37 @@ async function fetchAccounts(url, usedScratchCodes, authenticated = true) {
         });
 }
 
+/*
+ * Confirms the device was written to the backend of the current variation, read straight from it, and that the
+ * backend never holds the secret in the clear.
+ */
+async function readStoredAccount() {
+    switch (process.env.SCENARIO_VARIATION) {
+    case "jpa":
+        return cas.dockerExec("mariadb", ["mariadb", "-uroot", "-pmypass", "-N", "-D", "mysql", "-e",
+            "SELECT secretKey FROM GoogleAuthenticatorRegistrationRecord WHERE username='casuser'"]);
+    case "redis":
+        return cas.dockerExec("redis_server_master", ["redis-cli", "--scan", "--pattern", "CAS_TOKEN_ACCOUNT*"]);
+    case "mongo":
+        return cas.dockerExec("mongodb-server", ["mongosh", "--quiet",
+            "mongodb://root:secret@localhost:27017/gauth?authSource=admin", "--eval",
+            "EJSON.stringify(db.MongoDbGoogleAuthenticatorRepository.find({username: 'casuser'}).toArray())"]);
+    case "ldap": {
+        const entry = await cas.dockerExec("ldap-server", ["ldapsearch", "-LLL", "-o", "ldif-wrap=no", "-x", "-D", "cn=Directory Manager",
+            "-w", "password", "-H", "ldap://", "-b", "cn=casuser,ou=gauth,dc=example,dc=org", "description"]);
+        return entry.split("\n").filter((line) => line.startsWith("description")).join("\n");
+    }
+    default:
+        throw new Error(`Unknown variation ${process.env.SCENARIO_VARIATION}`);
+    }
+}
+
+async function assertStoredInBackend(secretKey) {
+    const stored = await readStoredAccount();
+    assert(stored.length > 0 && stored !== "[]", "The device must be kept in the backend");
+    assert(!stored.includes(secretKey), "The backend must not hold the secret in the clear");
+}
+
 async function loginWithToken(page, token) {
     await cas.gotoLoginWithAuthnMethod(page, undefined, "GoogleAuth");
     await cas.loginWith(page);
@@ -70,6 +101,8 @@ async function loginWithToken(page, token) {
      */
     await cas.waitForElement(page, "#fm1");
     await fetchAccounts(`${ENDPOINT}/casuser`, [scratchCodes[0]], false);
+    const registered = JSON.parse(await cas.doRequest(`${ENDPOINT}/casuser`, "GET", {"Content-Type": "application/json"}));
+    await assertStoredInBackend(registered[0].secretKey);
 
     await cas.type(page, "#token", scratchCodes[1]);
     await cas.sleep(2000);

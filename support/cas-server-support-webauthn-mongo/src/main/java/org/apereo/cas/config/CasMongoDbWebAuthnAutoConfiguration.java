@@ -27,7 +27,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
  * @since 6.3.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.WebAuthn)
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.WebAuthn, module = "mongo")
 @AutoConfiguration
 public class CasMongoDbWebAuthnAutoConfiguration {
 

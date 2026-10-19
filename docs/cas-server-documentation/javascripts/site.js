@@ -966,7 +966,7 @@ const CAS_HOME_TITLE_PHRASES = [
     "Turning “Contact Sales” into “git clone”",
     "“We Trust Dave” Does Not Scale",
     "Pull Requests Welcome. Login Requests Reviewed.",
-    "Because Bob Left in March",
+    "Because Bob, the Security Guy, Left in March",
     "Single Sign-On, Multiple Meetings to Approve It",
     "\"Give Everyone Admin\" Is a Great Podcast"
 ];

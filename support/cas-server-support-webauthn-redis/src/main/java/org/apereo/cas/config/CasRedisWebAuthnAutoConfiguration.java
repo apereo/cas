@@ -32,7 +32,7 @@ import org.springframework.data.redis.connection.RedisConnectionFactory;
  * @since 6.3.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.WebAuthn)
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.WebAuthn, module = "redis")
 @AutoConfiguration
 public class CasRedisWebAuthnAutoConfiguration {
     private static final BeanCondition CONDITION = BeanCondition.on("cas.authn.mfa.web-authn.redis.enabled").isTrue().evenIfMissing();

@@ -536,6 +536,57 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
 - To prove CAS refuses a tampered SAML2 AuthnRequest, intercept the browser hop from the SP to `/cas/idp/profile/SAML2/*/SSO` with `page.setRequestInterception(true)` (see `saml2-idp-login-acs-signed`). POST binding: rewrite `SAMLRequest` in `postData` and `request.continue({postData})`. Redirect binding: inflate with `zlib.inflateRawSync`, alter, deflate, then `request.abort()` and `cas.goto` the altered URL rather than overriding `url` on a redirected request. Assert that the tampering really happened, otherwise a request without the attribute passes for the wrong reason.
 - Before writing a negative assertion, read the server code for the exact error. Each token-endpoint failure surfaces differently: device code reuse → `access_denied` (`InvalidOAuth20DeviceTokenException`), a mismatched ST service → `INVALID_SERVICE` and the ticket is consumed. Where the specification names the error (CIBA Core §11: `authorization_pending`, `invalid_grant`), the scenario asserts the specification even when the current code differs, and the hand-off says so.
 
+## Storage backend scenarios (service registry, SAML2 metadata, MFA devices, consent)
+
+- One scenario covers several storage backends of a feature through `variations` in `script.json`: `run.sh` runs the
+  scenario once per variation, adding its properties and exporting `SCENARIO_VARIATION`. The build carries every
+  backend module, and each variation switches the others off with `CasFeatureModule.<Feature>.<module>.enabled=false`
+  (Google Authenticator `jpa/redis/mongo/ldap`, trusted devices `jdbc/redis`, consent `ldap/mongo/redis`, WebAuthn
+  `jpa/mongo/redis/ldap/dynamodb/rest`); the init scripts start every backend. Examples:
+  `mfa-webauthn-register-logout-login`, `mfa-gauth-login-encrypted`, `mfa-gauth-login-trusted-devices-storage`
+  (formerly `-jdbc`), `attribute-consent-storage`. Storage modules that share a bean name without a module toggle cannot
+  ship together; WebAuthn's had none until its storage auto-configurations got `module = "..."`.
+- Each such scenario also reads the backend directly with `cas.dockerExec(container, args)` (containers: `mariadb`,
+  `postgres-server`, `mongodb-server`, `redis_server_master`, `ldap-server`, `localstack`), so a variation that silently
+  fell back to the in-memory default fails. LDAP-backed repositories that keep records in an attribute of the user's
+  entry (Google Authenticator, consent: `description`, `search-filter=cn={0}`) need the entry first:
+  `ci/tests/ldap/add-ldap-entries.sh <ldif>` waits for `ldap-server` and adds it.
+- `cas.doDelete(url)` swallows failures unless a failure handler is given; assert a status with
+  `cas.doRequest(url, "DELETE", headers, status)`.
+
+- Service registry scenarios call `cas.verifyServiceRegistry(backend)` (in `cas.js`), passing `insert(definition)` (write
+  straight into the backend, bypassing CAS) and `contains(id)`. It checks load (scheduled reload picks up the external
+  definition), save through the `registeredServices` actuator, rename, and delete, each confirmed in the backend and after a
+  reload. Such a scenario needs `cas.service-registry.core.init-from-json=false`, because with it on the embedded JSON
+  registry joins the chain and answers in place of the backend, plus a 2 s `cas.service-registry.schedule` and httpbin.
+  `service-registry-ldap` (389ds `ldap-server`, `ou=services`, object class `account`) and `service-registry-aws-s3`
+  (localstack, `docker exec localstack awslocal s3api`) are the examples.
+- A property value with a space (`cn=Directory Manager`) goes through `environmentVariables` and `${VAR}` in
+  `script.json`, as `password-sync-ldap` does.
+- localstack accepts bucket names real S3 rejects, so a scenario cannot catch an invalid bucket name; assert names in a unit
+  test. `AmazonS3ServiceRegistry.determineBucketName` keeps `[a-z0-9.-]`, collapses `..`, and caps the name at 63 characters
+  with `-<id>` last. Object metadata is built only from non-null values (`Map.of` rejects null).
+- SAML2 metadata source scenarios (`saml2-idp-login-metadata-redis`, `saml2-idp-login-metadata-git`, and the older
+  `saml2-idp-login-sp-metadata-mongodb`) keep IdP metadata in the backend, fetch it with `curl` in `ready.sh` before
+  starting SimpleSAMLphp, and manage SP metadata through
+  `samlIdPRegisteredServiceMetadata/managers/<ResolverSimpleClassName>`; its `DELETE` consumes form-encoded requests and
+  answers 204. The Git scenario uses a local bare remote under `/tmp/cas-saml-metadata-git` (`push-changes=true`, or the
+  IdP metadata is only committed locally) and commits SP metadata to it by hand, the way the docs describe.
+- `GitSamlRegisteredServiceMetadataResolver` reads `sp-metadata/<id>-<name>.xml` (written by CAS) and `<name>.xml` (by hand):
+  the id prefix counts only when numeric, and a hand-committed file's id is derived from its name, so it is stable across
+  loads.
+
+## Actuator endpoint coverage in scenarios
+
+- `samlIdPRegisteredServiceMetadata`: every operation in `saml2-idp-login-metadata-redis` (and `-git`); `oidcVcStatus`:
+  `oidc-verifiable-credentials`, reading the published status list back (2 bits per entry, LSB first, zlib, base64url);
+  `redisTicketsCache`: `redis-ticket-registry-loadbalanced` (the cache is per node; another node's delete evicts it);
+  `qrDevices`: `qrauthn-login`, which needs `cas.authn.qr.json.location` (without it every device is authorized and
+  nothing is stored); `passwordless`: `passwordless-delegated-login`; `duoPing`, `duoAccountStatus`, `duoAdmin`:
+  `mfa-duo-universal-login` (runs only where the Duo secrets exist) and, without providers, `actuator-endpoint-roles`.
+- `gcpLogs` calls the real Cloud Logging API and no emulator exists, so it is only checked for security in
+  `actuator-endpoint-roles` (`expect: "secured"`).
+
 ## OAuth/OIDC token endpoint error mapping
 
 - `OAuth20AccessTokenEndpointController` turns failures into OAuth errors in two places. A validator returning `false` is `invalid_grant`, but a validator that *throws* lands in the generic catch as `invalid_request`. So a validator must catch its own lookups: `TicketRegistry.getTicket(id, type)` throws `InvalidTicketException` for a missing ticket rather than returning `null`. Exceptions from extractors and generators go through `ACCESS_TOKEN_RESPONSE_EXCEPTIONS`, which is keyed by the exact class name (subclasses do not match) and defaults to `invalid_grant`.

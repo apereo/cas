@@ -1,6 +1,23 @@
 const cas = require("../../cas.js");
 const assert = require("assert");
 
+async function verifyDuoEndpoints(duoUser) {
+    const json = {"Accept": "application/json"};
+    const actuator = "https://localhost:8443/cas/actuator";
+    const ping = JSON.parse(await cas.doRequest(`${actuator}/duoPing`, "GET", json, 200));
+    assert(ping["mfa-duo"].availability === true);
+    assert(ping["mfa-duo"].duoApiHost === process.env.DUO_SECURITY_API_HOST);
+    assert(Object.keys(JSON.parse(await cas.doRequest(`${actuator}/duoPing?providerId=unknown`, "GET", json, 200))).length === 0);
+
+    const status = JSON.parse(await cas.doRequest(`${actuator}/duoAccountStatus/${duoUser}?providerId=mfa-duo`, "GET", json, 200));
+    assert(status["mfa-duo"].accountStatus.username === duoUser);
+    assert(status["mfa-duo"].accountStatus.status !== undefined);
+
+    const admin = JSON.parse(await cas.doRequest(`${actuator}/duoAdmin/${duoUser}`, "GET", json, 200));
+    assert(admin["mfa-duo"].username === duoUser);
+    assert(admin["mfa-duo"].userId !== undefined && admin["mfa-duo"].userId.length > 0);
+}
+
 (async () => {
     let failed = false;
     const browser = await cas.newBrowser(cas.browserOptions());
@@ -9,6 +26,7 @@ const assert = require("assert");
     try {
         const page = await cas.newPage(context);
         await cas.updateDuoSecurityUserStatus(duoUser);
+        await verifyDuoEndpoints(duoUser);
 
         const service = "https://localhost:9859/anything/attributes";
         await cas.gotoLoginWithAuthnMethod(page, service, "mfa-duo");

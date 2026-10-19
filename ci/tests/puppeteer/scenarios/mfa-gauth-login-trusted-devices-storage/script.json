@@ -1,0 +1,47 @@
+{
+  "dependencies": "gauth,trusted-mfa-jdbc,trusted-mfa-redis",
+  "conditions": {
+    "docker": "true"
+  },
+  "properties": [
+    "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
+    "--management.endpoints.web.exposure.include=*",
+    "--management.endpoints.access.default=UNRESTRICTED",
+
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
+    "--cas.authn.mfa.gauth.core.trusted-device-enabled=true",
+    "--cas.authn.mfa.gauth.crypto.enabled=false",
+    "--cas.authn.mfa.gauth.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/accounts.json",
+
+    "--cas.jdbc.show-sql=false"
+  ],
+  "variations": [
+    {
+      "name": "jdbc",
+      "properties": [
+        "--CasFeatureModule.MultifactorAuthenticationTrustedDevices.redis.enabled=false",
+        "--cas.authn.mfa.trusted.jpa.properties.socketTimeout=2",
+        "--cas.authn.mfa.trusted.jpa.connection-timeout=PT2S",
+        "--cas.authn.mfa.trusted.jpa.leak-threshold=PT30S",
+        "--cas.authn.mfa.trusted.jpa.ddl-auto=create-drop",
+        "--cas.authn.mfa.trusted.jpa.user=postgres",
+        "--cas.authn.mfa.trusted.jpa.password=password",
+        "--cas.authn.mfa.trusted.jpa.driver-class=org.postgresql.Driver",
+        "--cas.authn.mfa.trusted.jpa.url=jdbc:postgresql://localhost:5432/mfa",
+        "--cas.authn.mfa.trusted.jpa.dialect=org.hibernate.dialect.PostgreSQLDialect"
+      ]
+    },
+    {
+      "name": "redis",
+      "properties": [
+        "--CasFeatureModule.MultifactorAuthenticationTrustedDevices.jdbc.enabled=false",
+        "--cas.authn.mfa.trusted.redis.host=localhost",
+        "--cas.authn.mfa.trusted.redis.port=6379",
+        "--cas.authn.mfa.trusted.redis.timeout=PT2S"
+      ]
+    }
+  ],
+  "initScript": "${PWD}/ci/tests/postgres/run-postgres-server.sh,${PWD}/ci/tests/redis/run-redis-server.sh"
+}

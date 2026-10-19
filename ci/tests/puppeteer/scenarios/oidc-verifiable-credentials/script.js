@@ -4,6 +4,7 @@ const fs = require("fs");
 const path = require("path");
 const jwkToPem = require("jwk-to-pem");
 const jose = require("jose");
+const zlib = require("zlib");
 
 const key = JSON.parse(fs.readFileSync(path.join(__dirname, "/keystore.json"))).keys[0];
 const privateKey = jwkToPem(key, {private: true});
@@ -214,7 +215,51 @@ async function createPublicKey() {
 
     await verifyEncryptedIssuance(url, accessToken);
     await verifyDeferredIssuance(url, accessToken);
+    await verifyStatusManagement(decoded);
 })();
+
+/**
+ * Reads the status of a credential from its published status list: two bits per entry, least significant first,
+ * zlib-compressed and base64url-encoded.
+ */
+async function publishedStatusOf(uri, index) {
+    const token = await cas.doRequest(uri, "GET", {"Accept": "application/statuslist+jwt"}, 200);
+    const list = await cas.decodeJwt(token, true);
+    const bytes = zlib.inflateSync(Buffer.from(list.payload.status_list.lst, "base64url"));
+    return (bytes[Math.floor(index / 4)] >> ((index % 4) * 2)) & 0x03;
+}
+
+/**
+ * Suspends and then revokes the credential through the oidcVcStatus endpoint, checking that the published status list
+ * follows each change. This revokes the credential, so it runs last.
+ */
+async function verifyStatusManagement(decoded) {
+    const uri = decoded.status.status_list.uri;
+    const index = decoded.status.status_list.idx;
+    const statusListId = uri.substring(uri.lastIndexOf("/") + 1);
+    const endpoint = "https://localhost:8443/cas/actuator/oidcVcStatus";
+    const headers = {"Content-Type": "application/json", "Accept": "application/json"};
+
+    const entries = JSON.parse(await cas.doRequest(`${endpoint}/casuser`, "GET", headers, 200));
+    const entry = entries.find((e) => e.uri === uri && e.index === index);
+    assert(entry !== undefined && entry.status === "VALID");
+    assert(entry.principal === "casuser" && entry.statusListId === statusListId);
+    assert(await publishedStatusOf(uri, index) === 0);
+
+    const suspended = JSON.parse(await cas.doRequest(`${endpoint}/${statusListId}/${index}`, "POST", headers, 200,
+        JSON.stringify({status: "SUSPENDED"})));
+    assert(suspended.status === "SUSPENDED");
+    assert(await publishedStatusOf(uri, index) === 2);
+
+    const revoked = JSON.parse(await cas.doRequest(`${endpoint}/${statusListId}/${index}`, "POST", headers, 200,
+        JSON.stringify({status: "invalid"})));
+    assert(revoked.status === "INVALID");
+    assert(await publishedStatusOf(uri, index) === 1);
+
+    await cas.doRequest(`${endpoint}/${statusListId}/${index}`, "POST", headers, 400, JSON.stringify({status: "bogus"}));
+    await cas.doRequest(`${endpoint}/999999/0`, "POST", headers, 404, JSON.stringify({status: "VALID"}));
+    assert(JSON.parse(await cas.doRequest(`${endpoint}/unknown-user`, "GET", headers, 200)).length === 0);
+}
 
 async function verifyDeferredIssuance(url, accessToken) {
     const metadata = await cas.doGet("https://localhost:8443/cas/oidc/.well-known/openid-credential-issuer",

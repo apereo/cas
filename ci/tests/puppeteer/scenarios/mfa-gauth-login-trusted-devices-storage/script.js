@@ -2,7 +2,25 @@
 const cas = require("../../cas.js");
 const assert = require("assert");
 
+const BACKENDS = {
+    jdbc: {
+        container: "postgres-server",
+        read: async () => {
+            const psql = (sql) => cas.dockerExec("postgres-server", ["psql", "-U", "postgres", "-d", "mfa", "-tA", "-c", sql]);
+            const table = await psql("SELECT table_name FROM information_schema.tables WHERE lower(table_name)='jpamultifactorauthenticationtrustrecord'");
+            const count = await psql(`SELECT COUNT(*) FROM "${table}" WHERE principal='casuser'`);
+            return Number(count) > 0 ? count : "";
+        }
+    },
+    redis: {
+        container: "redis_server_master",
+        read: () => cas.dockerExec("redis_server_master", ["redis-cli", "--scan", "--pattern", "RedisMultifactorAuthenticationTrustStorage:*"])
+    }
+};
+
 (async () => {
+    const backend = BACKENDS[process.env.SCENARIO_VARIATION];
+    await cas.log(`Running with the ${process.env.SCENARIO_VARIATION} trusted device storage`);
     const browser = await cas.newBrowser(cas.browserOptions());
     const page = await cas.newPage(browser);
     await cas.gotoLoginWithAuthnMethod(page, undefined, "mfa-gauth");
@@ -32,11 +50,21 @@ const assert = require("assert");
     const record = JSON.parse(response)[0];
     console.dir(record, {depth: null, colors: true});
     assert(record.id !== undefined);
-    assert(record.name !== undefined);
+    assert(record.name === "My Trusted Device");
+    assert((await backend.read()).length > 0, "The trusted device must be kept in the backend");
 
-    const postgres = await cas.dockerContainer("postgres-server");
-    await cas.log("Pausing postgres server...");
-    await postgres.pause();
+    await cas.log("A trusted device skips multifactor authentication on the next login");
+    await cas.gotoLoginWithAuthnMethod(page, undefined, "mfa-gauth");
+    await cas.loginWith(page);
+    await cas.sleep(3000);
+    await cas.assertInvisibility(page, "#token");
+    await cas.assertInnerText(page, "#content div h2", "Log In Successful");
+    await cas.gotoLogout(page);
+    await cas.sleep(1000);
+
+    const container = await cas.dockerContainer(backend.container);
+    await cas.log(`Pausing ${backend.container}...`);
+    await container.pause();
 
     await cas.gotoLoginWithAuthnMethod(page, undefined, "mfa-gauth");
     await cas.loginWith(page);
@@ -48,7 +76,7 @@ const assert = require("assert");
     await cas.sleep(3000);
     await cas.assertInnerText(page, "#content div h2", "Log In Successful");
     await cas.assertCookie(page);
-    await cas.log("Resuming postgres server...");
-    await postgres.unpause();
+    await cas.log(`Resuming ${backend.container}...`);
+    await container.unpause();
     await cas.closeBrowser(browser);
 })();

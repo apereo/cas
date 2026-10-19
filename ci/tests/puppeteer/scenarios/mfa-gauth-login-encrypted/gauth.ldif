@@ -1,0 +1,12 @@
+dn: ou=gauth,dc=example,dc=org
+objectClass: top
+objectClass: organizationalUnit
+ou: gauth
+
+dn: cn=casuser,ou=gauth,dc=example,dc=org
+objectClass: organizationalRole
+objectClass: person
+objectClass: account
+cn: casuser
+sn: casuser
+uid: casuser

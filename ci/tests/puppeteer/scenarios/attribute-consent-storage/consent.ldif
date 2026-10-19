@@ -1,0 +1,12 @@
+dn: ou=consent,dc=example,dc=org
+objectClass: top
+objectClass: organizationalUnit
+ou: consent
+
+dn: cn=casuser,ou=consent,dc=example,dc=org
+objectClass: organizationalRole
+objectClass: person
+objectClass: account
+cn: casuser
+sn: casuser
+uid: casuser

@@ -1,5 +1,8 @@
 {
-  "dependencies": "session-hazelcast,webauthn",
+  "dependencies": "session-hazelcast,webauthn,webauthn-jpa,webauthn-mongo,webauthn-redis",
+  "conditions": {
+    "docker": "true"
+  },
   "properties": [
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",
@@ -9,6 +12,50 @@
     "--cas.authn.mfa.web-authn.core.allowed-origins=https://localhost:8443",
     "--cas.authn.mfa.web-authn.core.application-id=https://localhost:8443",
     "--cas.authn.mfa.web-authn.core.relying-party-name=CAS WebAuthn Demo",
-    "--cas.authn.mfa.web-authn.core.allow-primary-authentication=false"
-  ]
+    "--cas.authn.mfa.web-authn.core.allow-primary-authentication=false",
+    "--cas.authn.mfa.web-authn.crypto.enabled=false",
+
+    "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
+    "--management.endpoints.web.exposure.include=webAuthnDevices",
+    "--management.endpoints.access.default=UNRESTRICTED"
+  ],
+  "variations": [
+    {
+      "name": "jpa",
+      "properties": [
+        "--CasFeatureModule.WebAuthn.mongo.enabled=false",
+        "--CasFeatureModule.WebAuthn.redis.enabled=false",
+        "--cas.authn.mfa.web-authn.jpa.ddl-auto=create",
+        "--cas.authn.mfa.web-authn.jpa.user=root",
+        "--cas.authn.mfa.web-authn.jpa.password=mypass",
+        "--cas.authn.mfa.web-authn.jpa.driver-class=org.mariadb.jdbc.Driver",
+        "--cas.authn.mfa.web-authn.jpa.url=jdbc:mariadb://localhost:3306/mysql?allowPublicKeyRetrieval=true&characterEncoding=UTF-8&useSSL=FALSE",
+        "--cas.authn.mfa.web-authn.jpa.dialect=org.hibernate.dialect.MariaDBDialect"
+      ]
+    },
+    {
+      "name": "mongo",
+      "properties": [
+        "--CasFeatureModule.WebAuthn.jpa.enabled=false",
+        "--CasFeatureModule.WebAuthn.redis.enabled=false",
+        "--cas.authn.mfa.web-authn.mongo.host=localhost",
+        "--cas.authn.mfa.web-authn.mongo.port=27017",
+        "--cas.authn.mfa.web-authn.mongo.user-id=root",
+        "--cas.authn.mfa.web-authn.mongo.password=secret",
+        "--cas.authn.mfa.web-authn.mongo.authentication-database-name=admin",
+        "--cas.authn.mfa.web-authn.mongo.database-name=webauthn",
+        "--cas.authn.mfa.web-authn.mongo.drop-collection=true"
+      ]
+    },
+    {
+      "name": "redis",
+      "properties": [
+        "--CasFeatureModule.WebAuthn.jpa.enabled=false",
+        "--CasFeatureModule.WebAuthn.mongo.enabled=false",
+        "--cas.authn.mfa.web-authn.redis.host=localhost",
+        "--cas.authn.mfa.web-authn.redis.port=6379"
+      ]
+    }
+  ],
+  "initScript": "${PWD}/ci/tests/mariadb/run-mariadb-server.sh,${PWD}/ci/tests/mongodb/run-mongodb-server.sh,${PWD}/ci/tests/redis/run-redis-server.sh"
 }

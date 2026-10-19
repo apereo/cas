@@ -2,7 +2,7 @@ const assert = require("assert");
 const axios = require("axios");
 const http = require("http");
 const https = require("https");
-const {spawn} = require("child_process");
+const {spawn, execFileSync} = require("child_process");
 const waitOn = require("wait-on");
 const JwtOps = require("jsonwebtoken");
 const colors = require("colors");
@@ -663,6 +663,92 @@ exports.verifyTicketRegistryAcrossNodes = async (nodes = [8443, 8444], service =
     }
 };
 
+/**
+ * Verifies a service registry backend from both sides of CAS. A definition written straight into the backend is picked
+ * up by the scheduled reload; a definition imported through the registeredServices actuator endpoint lands in the backend
+ * and still authorizes after a reload; renaming it leaves a single definition behind; deleting it removes it from the
+ * backend and rejects the service, again even after a reload. The scenario must run the reload every few seconds
+ * (cas.service-registry.schedule), start httpbin, and turn off cas.service-registry.core.init-from-json so that no
+ * embedded JSON registry answers in place of the backend.
+ *
+ * @param backend the backend, as {insert: async (definition) => void, contains: async (id) => boolean}
+ * @param reloadDelay milliseconds that cover at least one scheduled reload
+ */
+exports.verifyServiceRegistry = async (backend, reloadDelay = 6000) => {
+    const actuator = "https://localhost:8443/cas/actuator/registeredServices";
+    const headers = {"Accept": "application/json", "Content-Type": "application/json"};
+    const definition = (id, path, name) => ({
+        "@class": "org.apereo.cas.services.CasRegisteredService",
+        "serviceId": `^https://localhost:9859/anything/${path}.*`,
+        "name": name,
+        "id": id,
+        "evaluationOrder": id
+    });
+    const definitionsWithId = async (id) => {
+        const services = JSON.parse(await this.doRequest(actuator, "GET", headers))[1];
+        return services.filter((service) => service.id === id);
+    };
+
+    const browser = await this.newBrowser(this.browserOptions());
+    try {
+        const page = await this.newPage(browser);
+        const verifyAccess = async (path, authorized) => {
+            const service = `https://localhost:9859/anything/${path}`;
+            for (let attempt = 1; attempt <= 20; attempt++) {
+                await this.gotoLogin(page, service);
+                await this.sleep(500);
+                const ticket = new URL(page.url()).searchParams.get("ticket");
+                if ((ticket !== null) === authorized) {
+                    if (authorized) {
+                        const payload = await this.validateTicket(service, ticket);
+                        assert(payload.serviceResponse.authenticationSuccess?.user === "casuser");
+                    } else {
+                        await this.assertInnerText(page, "#content h2", "Application Not Authorized to Use CAS");
+                    }
+                    await this.log(`Service ${service} is ${authorized ? "authorized" : "rejected"} after ${attempt} attempt(s)`);
+                    return;
+                }
+                await this.sleep(1000);
+            }
+            throw new Error(`Service ${service} was expected to be ${authorized ? "authorized" : "rejected"}`);
+        };
+
+        await this.gotoLogin(page);
+        await this.loginWith(page);
+        await this.assertCookie(page);
+
+        await this.logg("A definition written straight into the backend is loaded by CAS");
+        await backend.insert(definition(1001, "external", "External Service"));
+        await verifyAccess("external", true);
+
+        await this.logg("A definition imported through CAS lands in the backend and survives a reload");
+        await this.doRequest(`${actuator}/import`, "POST", headers, 201,
+            JSON.stringify(definition(1002, "imported", "Imported Service")));
+        assert(await backend.contains(1002), "Imported definition must be found in the backend");
+        await this.sleep(reloadDelay);
+        await verifyAccess("imported", true);
+
+        await this.logg("Renaming a definition leaves a single definition behind");
+        await this.doRequest(`${actuator}/import`, "POST", headers, 201,
+            JSON.stringify(definition(1002, "renamed", "Renamed Service")));
+        await this.sleep(reloadDelay);
+        await verifyAccess("renamed", true);
+        await verifyAccess("imported", false);
+        const renamed = await definitionsWithId(1002);
+        assert(renamed.length === 1 && renamed[0].name === "Renamed Service", "Renamed definition must replace the original");
+
+        await this.logg("Deleting a definition through CAS removes it from the backend");
+        await this.doRequest(`${actuator}/1002`, "DELETE", headers, 200);
+        assert(!(await backend.contains(1002)), "Deleted definition must be gone from the backend");
+        await this.sleep(reloadDelay);
+        await verifyAccess("renamed", false);
+        assert((await definitionsWithId(1002)).length === 0);
+        await verifyAccess("external", true);
+    } finally {
+        await this.closeBrowser(browser);
+    }
+};
+
 exports.validateTicket = async (service, ticket, format = "JSON", port = 8443) => {
     const body = await this.doRequest(`https://localhost:${port}/cas/p3/serviceValidate?service=${service}&ticket=${ticket}&format=${format}`);
     await this.log(body);
@@ -763,7 +849,7 @@ exports.doDelete = async (url, statusCode = 0, successHandler = undefined,
             if (statusCode > 0) {
                 assert.equal(res.status, statusCode);
             } else {
-                assert(statusCode === 200 || statusCode === 204, `Unexpected status code: ${res.status}`);
+                assert(res.status === 200 || res.status === 204, `Unexpected status code: ${res.status}`);
             }
             this.log(`DELETE response status: ${res.status}`);
             return successHandler === undefined ? undefined : successHandler(res);
@@ -1398,6 +1484,22 @@ exports.createWebAuthnVirtualAuthenticator = async (page, protocol = "u2f", hasR
         authenticator: authenticator,
         client: client
     };
+};
+
+/**
+ * Runs a command inside a running docker container and returns what it prints, trimmed. Scenarios use it to look at
+ * a backend directly, bypassing CAS, e.g. to count the records a repository wrote.
+ *
+ * @param container the container name
+ * @param args the command and its arguments
+ * @param input optional text to feed the command on its standard input
+ * @returns the standard output of the command
+ */
+exports.dockerExec = async (container, args, input = undefined) => {
+    await this.log(`Running in ${container}: ${args.join(" ")}`);
+    const output = execFileSync("docker", ["exec", "-i", container, ...args], {input: input}).toString().trim();
+    await this.log(output);
+    return output;
 };
 
 exports.dockerContainer = async (name) => {

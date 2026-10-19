@@ -19,6 +19,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.apereo.inspektr.audit.annotation.Audit;
 import org.jspecify.annotations.Nullable;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
@@ -183,11 +184,8 @@ public class GitSamlRegisteredServiceMetadataResolver extends BaseSamlRegistered
     }
 
     private static void removeDocumentFiles(final File repoDirectory, final String name) throws IOException {
-        val files = repoDirectory.listFiles((dir, fileName) -> {
-            val baseName = FilenameUtils.removeExtension(fileName);
-            val parsed = baseName.indexOf(SEPARATOR);
-            return parsed > 0 && baseName.substring(parsed + 1).equalsIgnoreCase(name);
-        });
+        val files = repoDirectory.listFiles((dir, fileName) ->
+            getDocumentName(FilenameUtils.removeExtension(fileName)).equalsIgnoreCase(name));
         if (files != null) {
             for (val file : files) {
                 removeFile(file);
@@ -195,12 +193,52 @@ public class GitSamlRegisteredServiceMetadataResolver extends BaseSamlRegistered
         }
     }
 
+    /**
+     * Get the numeric prefix of a metadata file name, as in {@code 1234-SP}, when there is one.
+     *
+     * @param baseName the file name without its extension
+     * @return the numeric prefix, or empty when the file name does not start with one
+     */
+    private static Optional<String> getDocumentIdPrefix(final String baseName) {
+        val separatorIndex = baseName.indexOf(SEPARATOR);
+        return separatorIndex > 0 && NumberUtils.isDigits(baseName.substring(0, separatorIndex))
+            ? Optional.of(baseName.substring(0, separatorIndex))
+            : Optional.empty();
+    }
+
+    /**
+     * Get the identifier of the metadata document kept in a file. Files stored by CAS are named
+     * {@code <id>-<name>}. A file committed to the repository by hand, such as {@code SP.xml},
+     * gets an identifier derived from its name, so the same file keeps the same identifier on every load
+     * and can be found and removed by it.
+     *
+     * @param baseName the file name without its extension
+     * @return the document identifier
+     */
+    private static long getDocumentId(final String baseName) {
+        return getDocumentIdPrefix(baseName)
+            .map(Long::parseLong)
+            .orElseGet(() -> Integer.toUnsignedLong(baseName.hashCode()));
+    }
+
+    /**
+     * Get the name of the metadata document kept in a file: the file name without its numeric prefix, if any.
+     * A name that itself carries the separator, such as {@code default-sp}, is kept whole.
+     *
+     * @param baseName the file name without its extension
+     * @return the document name
+     */
+    private static String getDocumentName(final String baseName) {
+        return getDocumentIdPrefix(baseName)
+            .map(prefix -> baseName.substring(prefix.length() + 1))
+            .orElse(baseName);
+    }
+
     private static @Nullable SamlMetadataDocument parseFileIntoSamlMetadataDocument(final File metadataFile) {
         try {
             val baseName = FilenameUtils.removeExtension(metadataFile.getName());
-            val separatorIndex = baseName.indexOf(SEPARATOR);
-            val id = separatorIndex > 0 ? Long.parseLong(baseName.substring(0, separatorIndex)) : System.nanoTime();
-            val name = separatorIndex > 0 ? baseName.substring(separatorIndex + 1) : baseName;
+            val id = getDocumentId(baseName);
+            val name = getDocumentName(baseName);
 
             val value = FileUtils.readFileToString(metadataFile, StandardCharsets.UTF_8);
             val signatureFile = new File(metadataFile.getParentFile(), baseName + ".pem");

@@ -30,7 +30,7 @@
     "--cas.authn.oidc.vc.issuer.credential-configurations.deferredorg.deferred-issuance=true",
 
     "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
-    "--management.endpoints.web.exposure.include=oidcVcDeferred",
+    "--management.endpoints.web.exposure.include=oidcVcDeferred,oidcVcStatus",
     "--management.endpoints.access.default=UNRESTRICTED",
 
     "--cas.authn.oidc.vc.issuer.credential-configurations.myorg.format=DC_SD_JWT",

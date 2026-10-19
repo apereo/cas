@@ -24,7 +24,7 @@ import org.springframework.dao.annotation.PersistenceExceptionTranslationPostPro
  * @since 6.3.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.WebAuthn)
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.WebAuthn, module = "ldap")
 @AutoConfiguration
 public class CasLdapWebAuthnAutoConfiguration {
 
