@@ -543,8 +543,8 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
 - One scenario covers several storage backends of a feature through `variations` in `script.json`: `run.sh` runs the
   scenario once per variation, adding its properties and exporting `SCENARIO_VARIATION`. The build carries every
   backend module, and each variation switches the others off with `CasFeatureModule.<Feature>.<module>.enabled=false`
-  (Google Authenticator `jpa/redis/mongo/ldap`, trusted devices `jdbc/redis`, consent `ldap/mongo/redis`, WebAuthn
-  `jpa/mongo/redis/ldap/dynamodb/rest`); the init scripts start every backend. Examples:
+  (Google Authenticator `jpa/redis/mongo/ldap/dynamodb`, trusted devices `jdbc/redis/rest/dynamodb`, consent
+  `ldap/mongo/redis/rest/dynamodb`, WebAuthn `jpa/mongo/redis/ldap/dynamodb/rest`); the init scripts start every backend. Examples:
   `mfa-webauthn-register-logout-login`, `mfa-gauth-login-encrypted`, `mfa-gauth-login-trusted-devices-storage`
   (formerly `-jdbc`), `attribute-consent-storage`, `aup-login-storage`, `authn-throttle-storage` (formerly
   `authn-throttle-with-jdbc`; each throttle reads its own store, so the audit module it needs stays on: JDBC and
@@ -593,6 +593,29 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
 - `GitSamlRegisteredServiceMetadataResolver` reads `sp-metadata/<id>-<name>.xml` (written by CAS) and `<name>.xml` (by hand):
   the id prefix counts only when numeric, and a hand-committed file's id is derived from its name, so it is stable across
   loads.
+
+- DynamoDB variations and scenarios read DynamoDB Local (`dynamodb-server`, port 8000, no CLI inside) over HTTP with
+  `cas.dynamoDbScan(table)` and `cas.dynamoDbRequest(operation, payload)` in `cas.js`, which sign requests with SigV4.
+  DynamoDB Local keeps one database per access key and region, so give CAS explicit
+  `credential-access-key=AKIAIPPIGGUNIO74C63Z`, the matching secret key and `region=us-east-1` (not `local-instance=true`,
+  which takes credentials from the environment), plus `drop-tables-on-startup=true`. Items come back in the wire format
+  (`item.principal.S`). For an outage (`docker pause dynamodb-server`) set `connection-timeout`, `socket-timeout` and
+  `client-execution-timeout` to about `1000`, or each SDK call retries for many seconds.
+- REST backends in scenarios use an in-script Express server (`aup-login-rest`, `attribute-consent-storage`'s `rest`
+  variation, `audit-rest`, ports 5611-5618). A REST configuration source must answer before CAS boots, so
+  `configuration-properties-rest` starts `config-server.js` from `init.sh` and stops it in `exit.sh`.
+- localstack scenarios (`configuration-properties-aws`, `simple-mfa-login-aws-ses`, `logging-config-sqs`,
+  `audit-aws-firehose`) seed and read AWS resources with `docker exec localstack awslocal ...`; SES mail is read from
+  `http://localhost:4566/_aws/ses`.
+- `template-accessibility` runs axe-core (`@axe-core/puppeteer`) and fails on serious or critical WCAG 2.1 A/AA
+  violations only. Element ids must be unique per page: a duplicate id referenced by `aria-describedby` or `label for`
+  is a critical violation (the Google Authenticator page with multiple-device registration on still has two `#token`).
+  `layout.html` fades the page content in (`.fade-in`, 0.7 s, opacity and blur), so axe run right after a navigation
+  reports `color-contrast` on everything in the card; wait for `document.getAnimations()` that end (skip infinite ones,
+  such as the notification bell) before analyzing.
+- Spring Cloud closes the bootstrap context once a refresh is done, so a `PropertySourceLocator` that closes its client
+  in `destroy()` leaves the located property source with a closed client. The AWS configuration sources take a
+  `Supplier` of clients and open and close one per refresh or change.
 
 ## Actuator endpoint coverage in scenarios
 

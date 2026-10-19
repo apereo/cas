@@ -1502,6 +1502,73 @@ exports.dockerExec = async (container, args, input = undefined) => {
     return output;
 };
 
+/**
+ * Sends one request to the DynamoDB Local container on port 8000, signed the way the AWS SDK signs it. DynamoDB Local
+ * keeps a separate database per access key and region, so the request must carry the same credentials the scenario
+ * hands to CAS. Attribute values use the DynamoDB wire format, e.g. {"userid": {"S": "casuser"}}.
+ *
+ * @param operation the DynamoDB operation, e.g. Scan or PutItem
+ * @param payload the request body
+ * @param accessKey the access key CAS was configured with
+ * @param secretKey the secret key CAS was configured with
+ * @param region the region CAS was configured with
+ * @returns the parsed response
+ */
+exports.dynamoDbRequest = async (operation, payload, accessKey = "AKIAIPPIGGUNIO74C63Z",
+    secretKey = "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", region = "us-east-1") => {
+    const nodeCrypto = require("crypto");
+    const hmac = (key, data) => nodeCrypto.createHmac("sha256", key).update(data, "utf8").digest();
+    const hash = (data) => nodeCrypto.createHash("sha256").update(data, "utf8").digest("hex");
+    const body = JSON.stringify(payload);
+    const amzDate = new Date().toISOString().replace(/[:-]|\.\d{3}/g, "");
+    const date = amzDate.slice(0, 8);
+    const target = `DynamoDB_20120810.${operation}`;
+    const canonicalHeaders = `content-type:application/x-amz-json-1.0\nhost:localhost:8000\nx-amz-date:${amzDate}\nx-amz-target:${target}\n`;
+    const signedHeaders = "content-type;host;x-amz-date;x-amz-target";
+    const canonicalRequest = `POST\n/\n\n${canonicalHeaders}\n${signedHeaders}\n${hash(body)}`;
+    const scope = `${date}/${region}/dynamodb/aws4_request`;
+    const stringToSign = `AWS4-HMAC-SHA256\n${amzDate}\n${scope}\n${hash(canonicalRequest)}`;
+    const signingKey = hmac(hmac(hmac(hmac(`AWS4${secretKey}`, date), region), "dynamodb"), "aws4_request");
+    const signature = nodeCrypto.createHmac("sha256", signingKey).update(stringToSign, "utf8").digest("hex");
+    const response = await axios.post("http://localhost:8000/", body, {
+        headers: {
+            "Content-Type": "application/x-amz-json-1.0",
+            "X-Amz-Date": amzDate,
+            "X-Amz-Target": target,
+            "Authorization": `AWS4-HMAC-SHA256 Credential=${accessKey}/${scope}, SignedHeaders=${signedHeaders}, Signature=${signature}`
+        },
+        transformResponse: [(data) => data]
+    });
+    return JSON.parse(response.data);
+};
+
+/**
+ * Reads every item of a table from the DynamoDB Local container, following the pages of the scan.
+ *
+ * @param table the table name
+ * @returns the items of the table in the DynamoDB wire format, or an empty list when the table does not exist
+ */
+exports.dynamoDbScan = async (table) => {
+    const items = [];
+    let startKey = undefined;
+    do {
+        const payload = startKey === undefined ? {TableName: table} : {TableName: table, ExclusiveStartKey: startKey};
+        try {
+            const page = await this.dynamoDbRequest("Scan", payload);
+            items.push(...page.Items);
+            startKey = page.LastEvaluatedKey;
+        } catch (e) {
+            if (String(e.response?.data).includes("ResourceNotFoundException")) {
+                await this.log(`DynamoDb table ${table} does not exist`);
+                return [];
+            }
+            throw e;
+        }
+    } while (startKey !== undefined);
+    await this.log(`DynamoDb table ${table} holds ${items.length} item(s)`);
+    return items;
+};
+
 exports.dockerContainer = async (name) => {
     const containers = await docker.container.list();
     const results = containers.filter((c) => c.data.Names[0].slice(1) === name);

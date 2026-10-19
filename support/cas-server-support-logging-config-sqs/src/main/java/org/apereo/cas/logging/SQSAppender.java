@@ -6,7 +6,7 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.lang3.Strings;
 import org.apache.logging.log4j.core.Layout;
 import org.apache.logging.log4j.core.LogEvent;
 import org.apache.logging.log4j.core.appender.AbstractAppender;
@@ -31,6 +31,13 @@ import software.amazon.awssdk.services.sqs.model.SendMessageRequest;
 @Plugin(name = "SQSAppender", category = "Core", elementType = "appender", printObject = true)
 @SuppressWarnings("NullAway.Init")
 public class SQSAppender extends AbstractAppender {
+    /**
+     * The most message attributes SQS accepts on a single message.
+     */
+    public static final int MAX_MESSAGE_ATTRIBUTES = 10;
+
+    private static final Pattern ATTRIBUTE_NAME_PATTERN = Pattern.compile("^[A-Za-z0-9_-][A-Za-z0-9_.-]{0,254}[A-Za-z0-9_-]$|^[A-Za-z0-9_-]$");
+
     private final SqsAsyncClient sqsAsyncClient;
 
     private final String queueName;
@@ -125,14 +132,24 @@ public class SQSAppender extends AbstractAppender {
         super.start();
     }
 
+    /**
+     * Sends the event to the queue. Entries of the logging context travel as message attributes, typed as strings
+     * since SQS rejects an attribute without a data type. Only names SQS accepts and non-blank values are kept,
+     * and no more than {@value #MAX_MESSAGE_ATTRIBUTES} of them, the most SQS allows on a single message.
+     *
+     * @param event the log event
+     */
     @Override
     public void append(final LogEvent event) {
         val context = event.getContextData()
             .toMap()
             .entrySet()
             .stream()
-            .map(entry -> Pair.of(entry.getKey(), MessageAttributeValue.builder().stringValue(entry.getValue()).build()))
-            .collect(Collectors.toMap(Pair::getKey, Pair::getValue));
+            .filter(entry -> StringUtils.isNotBlank(entry.getValue()) && isValidAttributeName(entry.getKey()))
+            .sorted(Map.Entry.comparingByKey())
+            .limit(MAX_MESSAGE_ATTRIBUTES)
+            .collect(Collectors.toMap(Map.Entry::getKey,
+                entry -> MessageAttributeValue.builder().dataType("String").stringValue(entry.getValue()).build()));
         val message = new String(getLayout().toByteArray(event), StandardCharsets.UTF_8);
         val request = SendMessageRequest.builder()
             .queueUrl(queueUrl)
@@ -140,6 +157,12 @@ public class SQSAppender extends AbstractAppender {
             .messageAttributes(context)
             .build();
         FunctionUtils.doUnchecked(_ -> sqsAsyncClient.sendMessage(request).get());
+    }
+
+    private static boolean isValidAttributeName(final String name) {
+        return ATTRIBUTE_NAME_PATTERN.matcher(name).matches()
+            && !name.contains("..")
+            && !Strings.CI.startsWithAny(name, "aws.", "amazon.");
     }
 
     @Override

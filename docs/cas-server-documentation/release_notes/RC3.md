@@ -41,7 +41,7 @@ release:
       url: ../planning/Installation-Requirements.html
     - label: Built on
       value: Spring Boot 4.2
-    - value: "587"
+    - value: "602"
       suffix: browser test scenarios
       url: ../../developer/Test-Process.html
     - value: "94%"
@@ -142,7 +142,7 @@ to build and verify Graal VM native images and we plan to extend the coverage to
 {: data-area="project"}
 
 The collection of end-to-end [browser tests based on Puppeteer](../../developer/Test-Process.html) continue to grow to cover more use cases
-and scenarios. At the moment, total number of jobs stands at approximately `587` distinct scenarios. The overall
+and scenarios. At the moment, total number of jobs stands at approximately `602` distinct scenarios. The overall
 test coverage of the CAS codebase is approximately `94%`.
 
 ### JSpecify & NullAway
@@ -954,3 +954,15 @@ The documentation now explains how to let browser-based MCP clients reach the se
 - {: .fixed data-area="saml"} With identity provider metadata kept in [DynamoDb](../installation/Configuring-SAML2-DynamicMetadata-DynamoDb.html) or [Google Cloud Storage](../installation/Configuring-SAML2-DynamicMetadata-GCP-Storage.html), service providers without metadata of their own use the identity provider's global metadata and keys, as with Redis, JPA and MongoDb.
 
 {% include release-footer.html %}
+- {: .fixed data-area="operations"} [DynamoDb audit records](../audits/Audits-DynamoDb.html) are kept one per entry instead of one per principal, so a user's earlier records are no longer replaced by the latest one, and the time of each record is kept in milliseconds; records used to read back with dates in 1970 and to match date filters only by accident. Tables created by earlier versions are keyed by principal and must be dropped, for example with `cas.audit.dynamo-db.drop-tables-on-startup`{: .cas-setting}, to keep every record.
+- {: .fixed data-area="operations"} The [DynamoDb configuration source](../configuration/Configuration-Server-Management-SpringCloud-DynamoDb.html) reads its settings under `cas.spring.cloud.dynamo-db`, as documented, and creates its table on startup unless `cas.spring.cloud.dynamo-db.prevent-table-creation-on-startup`{: .cas-setting} is turned on; CAS used to fail to start when the table did not exist yet. Large tables are read page by page.
+- {: .fixed data-area="mfa"} With [trusted devices kept in DynamoDb](../mfa/Multifactor-TrustedDevice-Authentication-Storage-DynamoDb.html), each device remembers the multifactor provider it was trusted for, and logins continue with multifactor authentication while DynamoDb cannot be reached instead of failing with a server error.
+- {: .fixed data-area="mfa"} [YubiKey devices kept in DynamoDb](../mfa/YubiKey-Authentication-Registration-DynamoDb.html) keep the tenant of the account they were first registered for.
+- {: .fixed data-area="operations"} The [Amazon S3 configuration source](../configuration/Configuration-Server-Management-SpringCloud-AmazonS3.html) keeps the other settings of an S3 object when one of them is changed or removed, instead of overwriting or deleting the whole object.
+- {: .fixed data-area="operations"} The [AWS Secrets Manager configuration source](../configuration/Configuration-Server-Management-SpringCloud-AmazonSecretManager.html) loads every secret rather than only the first page of the listing, and removing all settings no longer fails when there is more than one secret. Settings from [AWS Secrets Manager](../configuration/Configuration-Server-Management-SpringCloud-AmazonSecretManager.html) and [AWS SSM](../configuration/Configuration-Server-Management-SpringCloud-AmazonSSM.html) are loaded once per refresh and kept in memory, so lookups no longer call AWS each time and keep working after a refresh.
+- {: .fixed data-area="operations"} [Logging to SQS](../logging/Logging-SQS.html) sends the logging context as typed message attributes, within the SQS limit of 10, so messages written while a request is handled are no longer rejected.
+- {: .fixed data-area="operations"} [Audit records sent to Firehose](../audits/Audits-AWS-Firehose.html) end with a newline, so delivered objects can be read as newline-delimited JSON.
+- {: .fixed data-area="authentication"} [Password management over REST](../password_management/Password-Management-REST.html) sends the email address when looking up a forgotten username, so the forgot-username flow can find the account.
+- {: .fixed data-area="ui"} The notifications dialog no longer shares an element id with the Google Authenticator confirmation dialog, which left the dialog descriptions ambiguous to screen readers.
+- {: .fixed data-area="operations"} The [AWS Secrets Manager](../configuration/Configuration-Server-Management-SpringCloud-AmazonSecretManager.html), [AWS SSM](../configuration/Configuration-Server-Management-SpringCloud-AmazonSSM.html) and [Amazon S3](../configuration/Configuration-Server-Management-SpringCloud-AmazonS3.html) configuration sources open a client for each refresh or change and close it afterwards, so settings can still be changed through CAS after a refresh; the client they used to share was closed when the refresh finished. A new SSM parameter written with no active profile is named `/cas/<setting>` rather than `/cas//<setting>`.
+- {: .fixed data-area="operations"} [REST audit](../audits/Audits-REST.html) records handed back by the endpoint as CAS posted them, with type information, are read back correctly; records without type information are still accepted.

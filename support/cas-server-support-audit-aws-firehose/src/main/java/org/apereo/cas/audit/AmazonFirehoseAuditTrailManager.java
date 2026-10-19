@@ -34,9 +34,16 @@ public class AmazonFirehoseAuditTrailManager extends AbstractAuditTrailManager {
         this.properties = properties;
     }
 
+    /**
+     * Sends the audit record to the delivery stream as a single line of JSON. Firehose concatenates
+     * the records it delivers, so each one ends with a newline to keep the delivered objects
+     * readable as newline-delimited JSON.
+     *
+     * @param audit the audit record
+     */
     @Override
     protected void saveAuditRecord(final AuditActionContext audit) {
-        val eventJson = serializer.toString(audit);
+        val eventJson = serializer.toString(audit).strip() + '\n';
         val record = Record.builder()
             .data(SdkBytes.fromUtf8String(eventJson))
             .build();

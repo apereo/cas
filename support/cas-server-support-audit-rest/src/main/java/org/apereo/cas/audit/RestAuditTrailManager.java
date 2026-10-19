@@ -21,7 +21,6 @@ import org.hjson.JsonValue;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
-import tools.jackson.core.type.TypeReference;
 import tools.jackson.databind.ObjectMapper;
 
 /**
@@ -94,9 +93,7 @@ public class RestAuditTrailManager extends AbstractAuditTrailManager {
             if (response != null && response.getCode() == HttpStatus.SC_OK) {
                 try (val content = ((HttpEntityContainer) response).getEntity().getContent()) {
                     val result = IOUtils.toString(content, StandardCharsets.UTF_8);
-                    val values = new TypeReference<List<AuditActionContext>>() {
-                    };
-                    return MAPPER.readValue(JsonValue.readHjson(result).toString(), values);
+                    return readAuditRecords(JsonValue.readHjson(result).toString());
                 }
             }
         } catch (final Exception e) {
@@ -105,6 +102,25 @@ public class RestAuditTrailManager extends AbstractAuditTrailManager {
             HttpUtils.close(response);
         }
         return List.of();
+    }
+
+    /**
+     * Reads the audit records the endpoint returned. Records are posted with type information, so a backend that hands
+     * them back as it received them returns {@code @class} properties and typed collections; those are read with the
+     * serializer that wrote them. Records without type information, and a list wrapped as
+     * {@code ["java.util.ArrayList", [...]]}, are read as well.
+     *
+     * @param json the response body
+     * @return the audit records
+     */
+    protected List<AuditActionContext> readAuditRecords(final String json) {
+        val root = MAPPER.readTree(json);
+        val typedList = root.isArray() && root.size() == 2 && root.get(0).isString() && root.get(1).isArray();
+        val records = new ArrayList<AuditActionContext>();
+        (typedList ? root.get(1) : root).values().forEach(node -> records.add(node.has("@class")
+            ? serializer.from(node.toString())
+            : MAPPER.readValue(node.toString(), AuditActionContext.class)));
+        return records;
     }
 
     @Override

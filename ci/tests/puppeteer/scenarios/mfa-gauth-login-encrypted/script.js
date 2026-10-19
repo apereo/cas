@@ -49,6 +49,10 @@ async function readStoredAccount() {
             "-w", "password", "-H", "ldap://", "-b", "cn=casuser,ou=gauth,dc=example,dc=org", "description"]);
         return entry.split("\n").filter((line) => line.startsWith("description")).join("\n");
     }
+    case "dynamodb": {
+        const items = await cas.dynamoDbScan("DynamoDbGoogleAuthenticatorRepository");
+        return JSON.stringify(items.filter((item) => item.userid.S === "casuser"));
+    }
     default:
         throw new Error(`Unknown variation ${process.env.SCENARIO_VARIATION}`);
     }

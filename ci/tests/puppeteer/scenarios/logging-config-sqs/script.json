@@ -1,0 +1,15 @@
+{
+  "dependencies": "logging-config-sqs",
+  "conditions": {
+    "docker": "true"
+  },
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
+    "--cas.logging.mdc.enabled=true",
+    "--cas.audit.slf4j.use-single-line=true",
+    "--logging.config=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/log4j2.xml"
+  ],
+  "initScript": "${PWD}/ci/tests/aws/run-aws-server.sh"
+}

@@ -1,0 +1,30 @@
+{
+  "dependencies": "pm-webflow,pm-rest",
+  "conditions": {
+    "docker": "true"
+  },
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
+    "--cas.authn.pm.core.enabled=true",
+    "--cas.authn.pm.core.password-policy-pattern=.+",
+
+    "--cas.authn.pm.rest.endpoint-url-user=http://localhost:5615/pm/user",
+    "--cas.authn.pm.rest.endpoint-url-email=http://localhost:5615/pm/email",
+    "--cas.authn.pm.rest.endpoint-url-security-questions=http://localhost:5615/pm/questions",
+    "--cas.authn.pm.rest.endpoint-url-change=http://localhost:5615/pm/change",
+
+    "--cas.authn.pm.forgot-username.mail.from=cas@apereo.org",
+    "--cas.authn.pm.forgot-username.mail.text=Your username is ${username}",
+    "--cas.authn.pm.forgot-username.mail.subject=Your username",
+
+    "--cas.authn.pm.reset.mail.from=cas@apereo.org",
+    "--cas.authn.pm.reset.mail.text=${url}",
+    "--cas.authn.pm.reset.mail.subject=Reset",
+
+    "--spring.mail.host=localhost",
+    "--spring.mail.port=25000"
+  ],
+  "initScript": "${PWD}/ci/tests/mail/run-mail-server.sh"
+}

@@ -36,7 +36,7 @@ public class CasAmazonSecretsManagerCloudConfigBootstrapAutoConfiguration {
     public PropertySourceLocator amazonSecretsManagerPropertySourceLocator(
         final ConfigurableEnvironment environment) {
         val builder = new AmazonEnvironmentAwareClientBuilder(CAS_CONFIGURATION_PREFIX, environment);
-        val secretsManager = builder.build(SecretsManagerClient.builder(), SecretsManagerClient.class);
-        return new AmazonSecretsManagerPropertySourceLocator(secretsManager);
+        return new AmazonSecretsManagerPropertySourceLocator(
+            () -> builder.build(SecretsManagerClient.builder(), SecretsManagerClient.class));
     }
 }

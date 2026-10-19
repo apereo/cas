@@ -94,7 +94,7 @@
             class="mdc-dialog cas-notification-dialog modal fade"
             id="cas-notification-dialog" role="alertdialog" tabindex="-1"
             aria-modal="true" aria-labelledby="cas-notification-dialog-title"
-            aria-describedby="notif-dialog-content">
+            aria-describedby="cas-notification-dialog-content">
         <div class="mdc-dialog__container modal-dialog modal-dialog-centered">
             <div class="mdc-dialog__surface modal-content cas-ui">
                 <div class="cas-notification-head modal-header">
@@ -114,7 +114,7 @@
                         <span class="mdi mdi-close" aria-hidden="true"></span>
                     </button>
                 </div>
-                <div class="mdc-dialog__content modal-body" id="notif-dialog-content">
+                <div class="mdc-dialog__content modal-body" id="cas-notification-dialog-content">
                     <ul class="cas-notification-list">
                         <li class="cas-notification-message is-warning" th:if="${staticAuthentication}">
                             <span class="cas-notification-icon mdi mdi-account-alert-outline fas fa-user-shield"

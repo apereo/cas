@@ -25,6 +25,11 @@ public class DynamoDbMultifactorAuthenticationTrustStorage extends BaseMultifact
     }
 
     @Override
+    public boolean isAvailable() {
+        return dynamoDbFacilitator.isAvailable();
+    }
+
+    @Override
     protected MultifactorAuthenticationTrustRecord saveInternal(final MultifactorAuthenticationTrustRecord record) {
         if (record.getId() <= 0) {
             record.setId(RandomUtils.nextLong(1, Long.MAX_VALUE));

@@ -30,7 +30,7 @@ public class DynamoDbPropertySourceLocator implements PropertySourceLocator {
     /**
      * Configuration prefix.
      */
-    public static final String CAS_CONFIGURATION_PREFIX = "cas.spring.cloud.dynamoDb";
+    public static final String CAS_CONFIGURATION_PREFIX = "cas.spring.cloud.dynamo-db";
 
     private static final long PROVISIONED_THROUGHPUT = 10;
 
@@ -39,11 +39,22 @@ public class DynamoDbPropertySourceLocator implements PropertySourceLocator {
         val sourceName = DynamoDbPropertySource.class.getSimpleName();
         val builder = new AmazonEnvironmentAwareClientBuilder(CAS_CONFIGURATION_PREFIX, environment);
         val amazonDynamoDBClient = builder.build(DynamoDbClient.builder(), DynamoDbClient.class);
-        val preventTableCreationOnStartup = builder.getSetting("prevent-table-creation-on-startup", Boolean.class);
-        if (Boolean.FALSE.equals(preventTableCreationOnStartup)) {
+        if (isTableCreationAllowed(environment)) {
             createSettingsTable(amazonDynamoDBClient, false);
         }
         return new DynamoDbPropertySource(sourceName, amazonDynamoDBClient);
+    }
+
+    /**
+     * Whether the settings table may be created on startup. It is created unless that is explicitly prevented, so that
+     * a fresh deployment does not fail to start because the table it scans does not exist yet.
+     *
+     * @param environment the environment
+     * @return true unless {@code prevent-table-creation-on-startup} is turned on
+     */
+    public static boolean isTableCreationAllowed(final Environment environment) {
+        val builder = new AmazonEnvironmentAwareClientBuilder(CAS_CONFIGURATION_PREFIX, environment);
+        return !Boolean.TRUE.equals(builder.getSetting("prevent-table-creation-on-startup", Boolean.class));
     }
 
     /**

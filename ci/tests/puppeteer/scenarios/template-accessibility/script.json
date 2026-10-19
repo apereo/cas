@@ -1,0 +1,18 @@
+{
+  "dependencies": "gauth,consent-webflow",
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
+    "--cas.service-registry.core.init-from-json=true",
+    "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services",
+
+    "--cas.authn.attribute-repository.stub.attributes.first-name=Apereo",
+    "--cas.authn.attribute-repository.stub.attributes.last-name=CAS",
+    "--cas.authn.attribute-repository.stub.attributes.email=casuser@example.org",
+
+    "--cas.authn.mfa.gauth.id=GoogleAuth",
+    "--cas.authn.mfa.gauth.crypto.enabled=false",
+    "--cas.authn.mfa.gauth.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/accounts.json"
+  ]
+}

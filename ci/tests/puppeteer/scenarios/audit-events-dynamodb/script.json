@@ -1,0 +1,30 @@
+{
+  "dependencies": "audit-dynamodb,events-dynamodb,reports",
+  "conditions": {
+    "docker": "true"
+  },
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
+    "--cas.audit.slf4j.enabled=false",
+
+    "--cas.audit.dynamo-db.endpoint=http://localhost:8000",
+    "--cas.audit.dynamo-db.region=us-east-1",
+    "--cas.audit.dynamo-db.credential-access-key=AKIAIPPIGGUNIO74C63Z",
+    "--cas.audit.dynamo-db.credential-secret-key=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",
+    "--cas.audit.dynamo-db.drop-tables-on-startup=true",
+    "--cas.audit.dynamo-db.asynchronous=false",
+
+    "--cas.events.dynamo-db.endpoint=http://localhost:8000",
+    "--cas.events.dynamo-db.region=us-east-1",
+    "--cas.events.dynamo-db.credential-access-key=AKIAIPPIGGUNIO74C63Z",
+    "--cas.events.dynamo-db.credential-secret-key=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",
+    "--cas.events.dynamo-db.drop-tables-on-startup=true",
+
+    "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
+    "--management.endpoints.web.exposure.include=auditLog,events",
+    "--management.endpoints.access.default=UNRESTRICTED"
+  ],
+  "initScript": "${PWD}/ci/tests/dynamodb/run-dynamodb-server.sh"
+}

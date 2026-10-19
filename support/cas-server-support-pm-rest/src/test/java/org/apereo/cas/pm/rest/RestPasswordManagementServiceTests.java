@@ -163,10 +163,14 @@ class RestPasswordManagementServiceTests {
                 webServer.start();
                 val props = new CasConfigurationProperties();
                 props.getAuthn().getPm().getRest().setEndpointUrlUser("http://localhost:" + webServer.getPort());
+                val requestLines = new CopyOnWriteArrayList<String>();
+                webServer.requestLineConsumer(requestLines::add);
                 val username = getRestPasswordManagementService(props)
                     .findUsername(PasswordManagementQuery.builder().email("casuser@example.org").build());
                 assertNotNull(username);
                 assertEquals(data, username);
+                assertEquals(1, requestLines.size());
+                assertTrue(requestLines.getFirst().contains("email=casuser@example.org"));
             }
 
             try (val webServer = new MockWebServer(HttpStatus.NO_CONTENT)) {

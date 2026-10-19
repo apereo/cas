@@ -1,5 +1,5 @@
 {
-  "dependencies": "gauth,gauth-jpa,gauth-redis,gauth-mongo,gauth-ldap,reports",
+  "dependencies": "gauth,gauth-jpa,gauth-redis,gauth-mongo,gauth-ldap,gauth-dynamodb,reports",
   "conditions": {
     "docker": "true"
   },
@@ -27,6 +27,7 @@
         "--CasFeatureModule.GoogleAuthenticator.redis.enabled=false",
         "--CasFeatureModule.GoogleAuthenticator.mongo.enabled=false",
         "--CasFeatureModule.GoogleAuthenticator.ldap.enabled=false",
+        "--CasFeatureModule.GoogleAuthenticator.dynamodb.enabled=false",
         "--cas.authn.mfa.gauth.jpa.ddl-auto=create",
         "--cas.authn.mfa.gauth.jpa.user=root",
         "--cas.authn.mfa.gauth.jpa.password=mypass",
@@ -41,6 +42,7 @@
         "--CasFeatureModule.GoogleAuthenticator.jpa.enabled=false",
         "--CasFeatureModule.GoogleAuthenticator.mongo.enabled=false",
         "--CasFeatureModule.GoogleAuthenticator.ldap.enabled=false",
+        "--CasFeatureModule.GoogleAuthenticator.dynamodb.enabled=false",
         "--cas.authn.mfa.gauth.redis.host=localhost",
         "--cas.authn.mfa.gauth.redis.port=6379"
       ]
@@ -51,6 +53,7 @@
         "--CasFeatureModule.GoogleAuthenticator.jpa.enabled=false",
         "--CasFeatureModule.GoogleAuthenticator.redis.enabled=false",
         "--CasFeatureModule.GoogleAuthenticator.ldap.enabled=false",
+        "--CasFeatureModule.GoogleAuthenticator.dynamodb.enabled=false",
         "--cas.authn.mfa.gauth.mongo.host=localhost",
         "--cas.authn.mfa.gauth.mongo.port=27017",
         "--cas.authn.mfa.gauth.mongo.user-id=root",
@@ -66,6 +69,7 @@
         "--CasFeatureModule.GoogleAuthenticator.jpa.enabled=false",
         "--CasFeatureModule.GoogleAuthenticator.redis.enabled=false",
         "--CasFeatureModule.GoogleAuthenticator.mongo.enabled=false",
+        "--CasFeatureModule.GoogleAuthenticator.dynamodb.enabled=false",
         "--cas.authn.mfa.gauth.ldap.ldap-url=ldap://localhost:10389",
         "--cas.authn.mfa.gauth.ldap.base-dn=ou=gauth,dc=example,dc=org",
         "--cas.authn.mfa.gauth.ldap.search-filter=cn={0}",
@@ -73,7 +77,21 @@
         "--cas.authn.mfa.gauth.ldap.bind-dn=${CAS_LDAP_BIND_DN}",
         "--cas.authn.mfa.gauth.ldap.bind-credential=password"
       ]
+    },
+    {
+      "name": "dynamodb",
+      "properties": [
+        "--CasFeatureModule.GoogleAuthenticator.jpa.enabled=false",
+        "--CasFeatureModule.GoogleAuthenticator.redis.enabled=false",
+        "--CasFeatureModule.GoogleAuthenticator.mongo.enabled=false",
+        "--CasFeatureModule.GoogleAuthenticator.ldap.enabled=false",
+        "--cas.authn.mfa.gauth.dynamo-db.endpoint=http://localhost:8000",
+        "--cas.authn.mfa.gauth.dynamo-db.region=us-east-1",
+        "--cas.authn.mfa.gauth.dynamo-db.credential-access-key=AKIAIPPIGGUNIO74C63Z",
+        "--cas.authn.mfa.gauth.dynamo-db.credential-secret-key=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",
+        "--cas.authn.mfa.gauth.dynamo-db.drop-tables-on-startup=true"
+      ]
     }
   ],
-  "initScript": "${PWD}/ci/tests/mariadb/run-mariadb-server.sh,${PWD}/ci/tests/redis/run-redis-server.sh,${PWD}/ci/tests/mongodb/run-mongodb-server.sh,${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/init.sh"
+  "initScript": "${PWD}/ci/tests/mariadb/run-mariadb-server.sh,${PWD}/ci/tests/redis/run-redis-server.sh,${PWD}/ci/tests/mongodb/run-mongodb-server.sh,${PWD}/ci/tests/dynamodb/run-dynamodb-server.sh,${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/init.sh"
 }

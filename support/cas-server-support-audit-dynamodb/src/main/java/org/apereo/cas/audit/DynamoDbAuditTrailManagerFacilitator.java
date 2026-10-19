@@ -46,6 +46,7 @@ public class DynamoDbAuditTrailManagerFacilitator {
      */
     private static Map<String, AttributeValue> buildTableAttributeValuesMap(final AuditActionContext record) {
         val values = new HashMap<String, AttributeValue>();
+        values.put(ColumnNames.ID.getColumnName(), AttributeValue.builder().s(UUID.randomUUID().toString()).build());
         values.put(ColumnNames.PRINCIPAL.getColumnName(), AttributeValue.builder().s(record.getPrincipal()).build());
         values.put(ColumnNames.CLIENT_IP_ADDRESS.getColumnName(), AttributeValue.builder().s(record.getClientInfo().getClientIpAddress()).build());
         values.put(ColumnNames.SERVER_IP_ADDRESS.getColumnName(), AttributeValue.builder().s(record.getClientInfo().getServerIpAddress()).build());
@@ -56,25 +57,26 @@ public class DynamoDbAuditTrailManagerFacilitator {
         values.put(ColumnNames.GEO_LOCATION.getColumnName(), AttributeValue.builder().s(StringUtils.defaultIfBlank(record.getClientInfo().getGeoLocation(), "N/A")).build());
         values.put(ColumnNames.TENANT.getColumnName(), AttributeValue.builder().s(StringUtils.defaultIfBlank(record.getClientInfo().getTenant(), "N/A")).build());
 
-        val time = record.getWhenActionWasPerformed().toEpochSecond(ZoneOffset.UTC);
+        val time = record.getWhenActionWasPerformed().toInstant(ZoneOffset.UTC).toEpochMilli();
         values.put(ColumnNames.WHEN_ACTION_PERFORMED.getColumnName(), AttributeValue.builder().s(String.valueOf(time)).build());
         LOGGER.debug("Created attribute values [{}] based on [{}]", values, record);
         return values;
     }
 
     /**
-     * Create tables.
+     * Create tables. Each record gets its own random identifier as the hash key, so that the records of a principal
+     * accumulate instead of replacing each other.
      *
      * @param deleteTables the delete tables
      */
     public void createTable(final boolean deleteTables) {
         FunctionUtils.doUnchecked(param -> {
             val attributes = List.of(AttributeDefinition.builder()
-                .attributeName(ColumnNames.PRINCIPAL.getColumnName())
+                .attributeName(ColumnNames.ID.getColumnName())
                 .attributeType(ScalarAttributeType.S)
                 .build());
             val schema = List.of(KeySchemaElement.builder()
-                .attributeName(ColumnNames.PRINCIPAL.getColumnName())
+                .attributeName(ColumnNames.ID.getColumnName())
                 .keyType(KeyType.HASH)
                 .build());
             DynamoDbTableUtils.createTable(amazonDynamoDBClient, dynamoDbProperties,
@@ -104,14 +106,15 @@ public class DynamoDbAuditTrailManagerFacilitator {
 
 
     /**
-     * Gets audit records.
+     * Gets audit records. The time of each record is kept in epoch milliseconds, so it is compared with, and read back
+     * as, milliseconds.
      *
      * @param whereClause the where clause
      * @return the audit records
      */
     public List<? extends AuditActionContext> getAuditRecords(final Map<AuditTrailManager.WhereClauseFields, Object> whereClause) {
         val localDate = (LocalDateTime) whereClause.get(AuditTrailManager.WhereClauseFields.DATE);
-        val time = DateTimeUtils.dateOf(localDate).getTime();
+        val time = Objects.requireNonNull(localDate).toInstant(ZoneOffset.UTC).toEpochMilli();
         val queryKeys = CollectionUtils.<DynamoDbQueryBuilder>wrap(DynamoDbQueryBuilder.builder()
             .key(ColumnNames.WHEN_ACTION_PERFORMED.getColumnName())
             .attributeValue(List.of(AttributeValue.builder().s(String.valueOf(time)).build()))
@@ -156,6 +159,10 @@ public class DynamoDbAuditTrailManagerFacilitator {
     @Getter
     @RequiredArgsConstructor
     public enum ColumnNames {
+        /**
+         * id column.
+         */
+        ID("id"),
         /**
          * principal column.
          */

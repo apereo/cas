@@ -82,6 +82,16 @@ class DynamoDbCloudConfigBootstrapConfigurationTests {
     }
 
     @Test
+    void verifyTableIsCreatedUnlessPrevented() {
+        val mockEnvironment = new MockEnvironment();
+        assertTrue(DynamoDbPropertySourceLocator.isTableCreationAllowed(mockEnvironment));
+        mockEnvironment.setProperty(getPropertyName("prevent-table-creation-on-startup"), "false");
+        assertTrue(DynamoDbPropertySourceLocator.isTableCreationAllowed(mockEnvironment));
+        mockEnvironment.setProperty(getPropertyName("prevent-table-creation-on-startup"), "true");
+        assertFalse(DynamoDbPropertySourceLocator.isTableCreationAllowed(mockEnvironment));
+    }
+
+    @Test
     void verifyOperation() {
         assertEquals(STATIC_AUTHN_USERS, casProperties.getAuthn().getAccept().getUsers());
 

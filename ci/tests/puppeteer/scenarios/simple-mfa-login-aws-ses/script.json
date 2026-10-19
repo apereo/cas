@@ -1,0 +1,24 @@
+{
+  "dependencies": "simple-mfa,aws-ses",
+  "conditions": {
+    "docker": "true"
+  },
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
+    "--cas.authn.attribute-repository.stub.attributes.mail=casuser@example.org",
+
+    "--cas.email-provider.ses.endpoint=http://localhost:4566",
+    "--cas.email-provider.ses.region=us-east-1",
+    "--cas.email-provider.ses.credential-access-key=test",
+    "--cas.email-provider.ses.credential-secret-key=test",
+
+    "--cas.authn.mfa.simple.token.core.time-to-kill-in-seconds=60",
+    "--cas.authn.mfa.simple.mail.html=false",
+    "--cas.authn.mfa.simple.mail.from=hello@example.com",
+    "--cas.authn.mfa.simple.mail.subject=Token",
+    "--cas.authn.mfa.simple.mail.text=${token}"
+  ],
+  "initScript": "${PWD}/ci/tests/aws/run-aws-server.sh"
+}

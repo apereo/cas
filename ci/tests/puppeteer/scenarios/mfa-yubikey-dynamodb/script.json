@@ -1,0 +1,29 @@
+{
+  "dependencies": "yubikey,yubikey-dynamodb",
+  "conditions": {
+    "docker": "true"
+  },
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
+    "--cas.authn.mfa.yubikey.crypto.enabled=false",
+    "--cas.authn.mfa.yubikey.client-id=18421",
+    "--cas.authn.mfa.yubikey.secret-key=aBIehjui12aK8x82oe5qzGeb0As=",
+    "--cas.authn.mfa.yubikey.multiple-device-registration-enabled=true",
+    "--cas.authn.mfa.yubikey.validator=SKIP",
+
+    "--cas.authn.mfa.yubikey.dynamo-db.endpoint=http://localhost:8000",
+    "--cas.authn.mfa.yubikey.dynamo-db.region=us-east-1",
+    "--cas.authn.mfa.yubikey.dynamo-db.credential-access-key=AKIAIPPIGGUNIO74C63Z",
+    "--cas.authn.mfa.yubikey.dynamo-db.credential-secret-key=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",
+    "--cas.authn.mfa.yubikey.dynamo-db.drop-tables-on-startup=true",
+
+    "--cas.service-registry.core.init-from-json=true",
+
+    "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
+    "--management.endpoints.web.exposure.include=yubikeyAccountRepository",
+    "--management.endpoints.access.default=UNRESTRICTED"
+  ],
+  "initScript": "${PWD}/ci/tests/dynamodb/run-dynamodb-server.sh"
+}

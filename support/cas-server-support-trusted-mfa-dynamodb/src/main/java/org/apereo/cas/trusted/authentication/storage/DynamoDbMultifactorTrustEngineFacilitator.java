@@ -7,16 +7,19 @@ import org.apereo.cas.dynamodb.DynamoDbTableUtils;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.DateTimeUtils;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 import software.amazon.awssdk.services.dynamodb.model.AttributeDefinition;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.ComparisonOperator;
 import software.amazon.awssdk.services.dynamodb.model.DeleteItemRequest;
+import software.amazon.awssdk.services.dynamodb.model.DescribeTableRequest;
 import software.amazon.awssdk.services.dynamodb.model.KeySchemaElement;
 import software.amazon.awssdk.services.dynamodb.model.KeyType;
 import software.amazon.awssdk.services.dynamodb.model.PutItemRequest;
@@ -41,6 +44,9 @@ public record DynamoDbMultifactorTrustEngineFacilitator(DynamoDbTrustedDevicesMu
         record.setRecordDate(DateTimeUtils.zonedDateTimeOf(Instant.ofEpochMilli(time)));
         val expTime = Long.parseLong(item.get(ColumnNames.EXPIRATION_DATE.getColumnName()).s());
         record.setExpirationDate(new Date(expTime));
+        Optional.ofNullable(item.get(ColumnNames.MULTIFACTOR_AUTHENTICATION_PROVIDER.getColumnName()))
+            .map(AttributeValue::s)
+            .ifPresent(record::setMultifactorAuthenticationProvider);
         return record;
     }
 
@@ -63,6 +69,10 @@ public record DynamoDbMultifactorTrustEngineFacilitator(DynamoDbTrustedDevicesMu
 
         val expDate = record.getExpirationDate().getTime();
         values.put(ColumnNames.EXPIRATION_DATE.getColumnName(), AttributeValue.builder().s(String.valueOf(expDate)).build());
+        if (StringUtils.isNotBlank(record.getMultifactorAuthenticationProvider())) {
+            values.put(ColumnNames.MULTIFACTOR_AUTHENTICATION_PROVIDER.getColumnName(),
+                AttributeValue.builder().s(record.getMultifactorAuthenticationProvider()).build());
+        }
 
         LOGGER.debug("Created attribute values [{}] based on [{}]", values, record);
         return values;
@@ -78,6 +88,22 @@ public record DynamoDbMultifactorTrustEngineFacilitator(DynamoDbTrustedDevicesMu
             dynamoDbProperties.getTableName(), deleteTables,
             List.of(AttributeDefinition.builder().attributeName(ColumnNames.ID.getColumnName()).attributeType(ScalarAttributeType.S).build()),
             List.of(KeySchemaElement.builder().attributeName(ColumnNames.ID.getColumnName()).keyType(KeyType.HASH).build())));
+    }
+
+    /**
+     * Whether the table can be described. The trusted device webflow actions skip verifying and registering devices
+     * when the storage is unavailable, so an outage does not break the login.
+     *
+     * @return true if DynamoDb answers
+     */
+    public boolean isAvailable() {
+        try {
+            val request = DescribeTableRequest.builder().tableName(dynamoDbProperties.getTableName()).build();
+            return amazonDynamoDBClient.describeTable(request).table() != null;
+        } catch (final Exception e) {
+            LoggingUtils.error(LOGGER, e);
+            return false;
+        }
     }
 
     /**
@@ -229,7 +255,11 @@ public record DynamoDbMultifactorTrustEngineFacilitator(DynamoDbTrustedDevicesMu
         /**
          * name column.
          */
-        NAME("name");
+        NAME("name"),
+        /**
+         * multifactor authentication provider column.
+         */
+        MULTIFACTOR_AUTHENTICATION_PROVIDER("multifactorAuthenticationProvider");
 
         private final String columnName;
 

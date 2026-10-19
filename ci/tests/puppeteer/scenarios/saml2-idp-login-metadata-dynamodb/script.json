@@ -1,0 +1,32 @@
+{
+  "dependencies": "saml-idp,saml-idp-metadata-dynamodb",
+  "conditions": {
+    "docker": "true"
+  },
+  "properties": [
+    "--cas.authn.saml-idp.core.entity-id=https://cas.apereo.org/saml/idp",
+
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=https://localhost:8443/cas",
+    "--cas.server.scope=example.net",
+
+    "--cas.authn.attribute-repository.stub.attributes.phone=13477464523",
+    "--cas.authn.attribute-repository.stub.attributes.mail=casuser@example.org",
+
+    "--cas.service-registry.core.init-from-json=true",
+    "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services",
+
+    "--cas.authn.saml-idp.metadata.dynamo-db.endpoint=http://localhost:8000",
+    "--cas.authn.saml-idp.metadata.dynamo-db.region=us-east-1",
+    "--cas.authn.saml-idp.metadata.dynamo-db.credential-access-key=AKIAIPPIGGUNIO74C63Z",
+    "--cas.authn.saml-idp.metadata.dynamo-db.credential-secret-key=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",
+    "--cas.authn.saml-idp.metadata.dynamo-db.drop-tables-on-startup=true",
+    "--cas.authn.saml-idp.metadata.dynamo-db.idp-metadata-table-name=DynamoDbCasSamlIdPMetadata",
+
+    "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
+    "--management.endpoints.web.exposure.include=*",
+    "--management.endpoints.access.default=UNRESTRICTED"
+  ],
+  "initScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/init.sh",
+  "readyScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/ready.sh"
+}

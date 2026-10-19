@@ -1,0 +1,21 @@
+{
+  "@class": "org.apereo.cas.services.CasRegisteredService",
+  "serviceId": "^https://localhost:9859/anything/signed.*",
+  "name": "Signed",
+  "id": 1,
+  "properties": {
+    "@class": "java.util.HashMap",
+    "jwtSigningSecret": {
+      "@class": "org.apereo.cas.services.DefaultRegisteredServiceProperty",
+      "values": [ "java.util.HashSet", [ "Jq3wB7zH5nVxR2kP9cTfL4mYsD8gE6aU1oWiN0bQhZrXtKvCjMeSpFyGdAlOuI2w" ] ]
+    },
+    "jwtSigningSecretAlg": {
+      "@class": "org.apereo.cas.services.DefaultRegisteredServiceProperty",
+      "values": [ "java.util.HashSet", [ "HS256" ] ]
+    },
+    "jwtSecretsAreBase64Encoded": {
+      "@class": "org.apereo.cas.services.DefaultRegisteredServiceProperty",
+      "values": [ "java.util.HashSet", [ "false" ] ]
+    }
+  }
+}

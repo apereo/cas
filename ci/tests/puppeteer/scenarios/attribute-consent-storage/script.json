@@ -1,5 +1,5 @@
 {
-  "dependencies": "consent-webflow,consent-ldap,consent-mongo,consent-redis",
+  "dependencies": "consent-webflow,consent-ldap,consent-mongo,consent-redis,consent-rest,consent-dynamodb",
   "conditions": {
     "docker": "true"
   },
@@ -27,6 +27,8 @@
       "properties": [
         "--CasFeatureModule.Consent.mongo.enabled=false",
         "--CasFeatureModule.Consent.redis.enabled=false",
+        "--CasFeatureModule.Consent.rest.enabled=false",
+        "--CasFeatureModule.Consent.dynamodb.enabled=false",
         "--cas.consent.ldap.ldap-url=ldap://localhost:10389",
         "--cas.consent.ldap.base-dn=ou=consent,dc=example,dc=org",
         "--cas.consent.ldap.search-filter=cn={0}",
@@ -40,6 +42,8 @@
       "properties": [
         "--CasFeatureModule.Consent.ldap.enabled=false",
         "--CasFeatureModule.Consent.redis.enabled=false",
+        "--CasFeatureModule.Consent.rest.enabled=false",
+        "--CasFeatureModule.Consent.dynamodb.enabled=false",
         "--cas.consent.mongo.host=localhost",
         "--cas.consent.mongo.port=27017",
         "--cas.consent.mongo.user-id=root",
@@ -54,10 +58,36 @@
       "properties": [
         "--CasFeatureModule.Consent.ldap.enabled=false",
         "--CasFeatureModule.Consent.mongo.enabled=false",
+        "--CasFeatureModule.Consent.rest.enabled=false",
+        "--CasFeatureModule.Consent.dynamodb.enabled=false",
         "--cas.consent.redis.host=localhost",
         "--cas.consent.redis.port=6379"
       ]
+    },
+    {
+      "name": "rest",
+      "properties": [
+        "--CasFeatureModule.Consent.ldap.enabled=false",
+        "--CasFeatureModule.Consent.mongo.enabled=false",
+        "--CasFeatureModule.Consent.redis.enabled=false",
+        "--CasFeatureModule.Consent.dynamodb.enabled=false",
+        "--cas.consent.rest.url=http://localhost:5611/consent"
+      ]
+    },
+    {
+      "name": "dynamodb",
+      "properties": [
+        "--CasFeatureModule.Consent.ldap.enabled=false",
+        "--CasFeatureModule.Consent.mongo.enabled=false",
+        "--CasFeatureModule.Consent.redis.enabled=false",
+        "--CasFeatureModule.Consent.rest.enabled=false",
+        "--cas.consent.dynamo-db.endpoint=http://localhost:8000",
+        "--cas.consent.dynamo-db.region=us-east-1",
+        "--cas.consent.dynamo-db.credential-access-key=AKIAIPPIGGUNIO74C63Z",
+        "--cas.consent.dynamo-db.credential-secret-key=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",
+        "--cas.consent.dynamo-db.drop-tables-on-startup=true"
+      ]
     }
   ],
-  "initScript": "${PWD}/ci/tests/httpbin/run-httpbin-server.sh,${PWD}/ci/tests/mongodb/run-mongodb-server.sh,${PWD}/ci/tests/redis/run-redis-server.sh,${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/init.sh"
+  "initScript": "${PWD}/ci/tests/httpbin/run-httpbin-server.sh,${PWD}/ci/tests/mongodb/run-mongodb-server.sh,${PWD}/ci/tests/redis/run-redis-server.sh,${PWD}/ci/tests/dynamodb/run-dynamodb-server.sh,${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/init.sh"
 }

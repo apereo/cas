@@ -1,5 +1,5 @@
 {
-  "dependencies": "gauth,trusted-mfa-jdbc,trusted-mfa-redis",
+  "dependencies": "gauth,trusted-mfa-jdbc,trusted-mfa-redis,trusted-mfa-rest,trusted-mfa-dynamodb",
   "conditions": {
     "docker": "true"
   },
@@ -22,6 +22,8 @@
       "name": "jdbc",
       "properties": [
         "--CasFeatureModule.MultifactorAuthenticationTrustedDevices.redis.enabled=false",
+        "--CasFeatureModule.MultifactorAuthenticationTrustedDevices.rest.enabled=false",
+        "--CasFeatureModule.MultifactorAuthenticationTrustedDevices.dynamodb.enabled=false",
         "--cas.authn.mfa.trusted.jpa.properties.socketTimeout=2",
         "--cas.authn.mfa.trusted.jpa.connection-timeout=PT2S",
         "--cas.authn.mfa.trusted.jpa.leak-threshold=PT30S",
@@ -37,11 +39,38 @@
       "name": "redis",
       "properties": [
         "--CasFeatureModule.MultifactorAuthenticationTrustedDevices.jdbc.enabled=false",
+        "--CasFeatureModule.MultifactorAuthenticationTrustedDevices.rest.enabled=false",
+        "--CasFeatureModule.MultifactorAuthenticationTrustedDevices.dynamodb.enabled=false",
         "--cas.authn.mfa.trusted.redis.host=localhost",
         "--cas.authn.mfa.trusted.redis.port=6379",
         "--cas.authn.mfa.trusted.redis.timeout=PT2S"
       ]
+    },
+    {
+      "name": "rest",
+      "properties": [
+        "--CasFeatureModule.MultifactorAuthenticationTrustedDevices.jdbc.enabled=false",
+        "--CasFeatureModule.MultifactorAuthenticationTrustedDevices.redis.enabled=false",
+        "--CasFeatureModule.MultifactorAuthenticationTrustedDevices.dynamodb.enabled=false",
+        "--cas.authn.mfa.trusted.rest.url=http://localhost:5612/trusted"
+      ]
+    },
+    {
+      "name": "dynamodb",
+      "properties": [
+        "--CasFeatureModule.MultifactorAuthenticationTrustedDevices.jdbc.enabled=false",
+        "--CasFeatureModule.MultifactorAuthenticationTrustedDevices.redis.enabled=false",
+        "--CasFeatureModule.MultifactorAuthenticationTrustedDevices.rest.enabled=false",
+        "--cas.authn.mfa.trusted.dynamo-db.endpoint=http://localhost:8000",
+        "--cas.authn.mfa.trusted.dynamo-db.region=us-east-1",
+        "--cas.authn.mfa.trusted.dynamo-db.credential-access-key=AKIAIPPIGGUNIO74C63Z",
+        "--cas.authn.mfa.trusted.dynamo-db.credential-secret-key=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",
+        "--cas.authn.mfa.trusted.dynamo-db.drop-tables-on-startup=true",
+        "--cas.authn.mfa.trusted.dynamo-db.connection-timeout=1000",
+        "--cas.authn.mfa.trusted.dynamo-db.socket-timeout=1000",
+        "--cas.authn.mfa.trusted.dynamo-db.client-execution-timeout=1000"
+      ]
     }
   ],
-  "initScript": "${PWD}/ci/tests/postgres/run-postgres-server.sh,${PWD}/ci/tests/redis/run-redis-server.sh"
+  "initScript": "${PWD}/ci/tests/postgres/run-postgres-server.sh,${PWD}/ci/tests/redis/run-redis-server.sh,${PWD}/ci/tests/dynamodb/run-dynamodb-server.sh"
 }

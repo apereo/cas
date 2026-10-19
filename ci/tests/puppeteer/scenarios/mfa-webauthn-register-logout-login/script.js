@@ -1,7 +1,42 @@
 const assert = require("assert");
 const cas = require("../../cas.js");
+const express = require("express");
 
 const DEVICES = "https://localhost:8443/cas/actuator/webAuthnDevices/casuser";
+
+/*
+ * The rest variation keeps, per user, the whole collection of registrations CAS last posted with ?username=.
+ * A GET with ?username= returns that collection and a GET without it returns every registration.
+ */
+const restRegistrations = new Map();
+
+/**
+ * Starts the REST WebAuthn backend the rest variation points CAS at.
+ *
+ * @returns the running server, or undefined for other variations
+ */
+async function startRestBackend() {
+    if (process.env.SCENARIO_VARIATION !== "rest") {
+        return undefined;
+    }
+    const app = express();
+    app.use(express.text({type: "*/*"}));
+    app.get("/webauthn", (req, res) => {
+        const username = req.query.username;
+        const records = username === undefined
+            ? [...restRegistrations.values()].flatMap((raw) => JSON.parse(raw))
+            : JSON.parse(restRegistrations.get(username) ?? "[]");
+        res.status(200).type("application/json").send(JSON.stringify(records));
+    });
+    app.post("/webauthn", (req, res) => {
+        cas.log(`Storing WebAuthn registrations for ${req.query.username}: ${req.body}`);
+        restRegistrations.set(req.query.username, req.body);
+        res.sendStatus(200);
+    });
+    return new Promise((resolve) => {
+        const server = app.listen(5613, () => resolve(server));
+    });
+}
 
 /**
  * Whether the repository of the current variation keeps a registration for casuser, read straight from the backend.
@@ -24,6 +59,12 @@ async function hasStoredRegistration() {
             "EJSON.stringify(db.MongoDbWebAuthnRepository.find({username: 'casuser'}).toArray())"])).includes("credentialId");
     case "redis":
         return (await cas.dockerExec("redis_server_master", ["redis-cli", "EXISTS", "RedisWebAuthnCredentialRepository:casuser"])) === "1";
+    case "dynamodb": {
+        const items = await cas.dynamoDbScan("DynamoDbCasWebAuthnRecords");
+        return JSON.stringify(items.filter((item) => item.principal.S === "casuser")).includes("credentialId");
+    }
+    case "rest":
+        return (restRegistrations.get("casuser") ?? "").includes("credentialId");
     default:
         throw new Error(`Unknown variation ${process.env.SCENARIO_VARIATION}`);
     }
@@ -31,6 +72,7 @@ async function hasStoredRegistration() {
 
 (async () => {
     await cas.log(`Running with the ${process.env.SCENARIO_VARIATION} repository`);
+    const restBackend = await startRestBackend();
     await cas.doRequest(DEVICES, "DELETE", {"Accept": "application/json"}, 200);
     assert(!(await hasStoredRegistration()));
 
@@ -111,4 +153,5 @@ async function hasStoredRegistration() {
     await cas.sleep(2000);
     await cas.removeWebAuthnVirtualAuthenticator(virtualAuthenticator);
     await cas.closeBrowser(browser);
+    restBackend?.close();
 })();
