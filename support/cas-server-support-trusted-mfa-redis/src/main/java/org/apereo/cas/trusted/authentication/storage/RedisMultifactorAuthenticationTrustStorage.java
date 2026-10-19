@@ -6,7 +6,10 @@ import org.apereo.cas.redis.core.CasRedisTemplate;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecordKeyGenerator;
 import org.apereo.cas.util.DateTimeUtils;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.util.function.FunctionUtils;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.data.redis.core.RedisCallback;
@@ -17,6 +20,7 @@ import org.springframework.data.redis.core.RedisCallback;
  * @author Misagh Moayyed
  * @since 6.4.0
  */
+@Slf4j
 public class RedisMultifactorAuthenticationTrustStorage extends BaseMultifactorAuthenticationTrustStorage {
     /**
      * Redis key prefix.
@@ -93,10 +97,35 @@ public class RedisMultifactorAuthenticationTrustStorage extends BaseMultifactorA
             .collect(Collectors.toSet());
     }
 
+    /**
+     * Get the trust records of a principal. When Redis cannot be reached the principal has no trusted device, as with
+     * the JPA storage, so login continues with multifactor authentication instead of failing.
+     *
+     * @param principal the principal
+     * @return the trust records, or none when Redis cannot be reached
+     */
     @Override
     public Set<? extends MultifactorAuthenticationTrustRecord> get(final String principal) {
-        try (val keys = redisTemplate.scan(buildRedisKeyForRecord(principal))) {
-            return getFromRedisKeys(keys);
+        return FunctionUtils.doAndHandle(() -> {
+            try (val keys = redisTemplate.scan(buildRedisKeyForRecord(principal))) {
+                return getFromRedisKeys(keys);
+            }
+        }, e -> new HashSet<MultifactorAuthenticationTrustRecord>()).get();
+    }
+
+    /**
+     * Whether Redis answers a ping. The trusted device webflow actions skip verifying and registering devices when
+     * the storage is unavailable.
+     *
+     * @return true if Redis answers
+     */
+    @Override
+    public boolean isAvailable() {
+        try {
+            return redisTemplate.execute((RedisCallback<String>) connection -> connection.ping()) != null;
+        } catch (final Exception e) {
+            LoggingUtils.error(LOGGER, e);
+            return false;
         }
     }
 

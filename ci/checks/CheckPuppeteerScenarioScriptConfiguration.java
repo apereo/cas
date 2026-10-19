@@ -2,7 +2,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -44,10 +43,11 @@ public class CheckPuppeteerScenarioScriptConfiguration {
             .forEach(file -> {
 //                print(file.toFile().getAbsolutePath());
                 var text = readFile(file);
-                var matcher = Pattern.compile("\"properties\": \\[(.+)\\]", Pattern.DOTALL).matcher(text);
-                if (matcher.find()) {
-                    var properties = Arrays.stream(matcher.group(1)
-                        .trim().split("\",")).map(String::trim).collect(Collectors.toList());
+                var property = Pattern.compile("\"(?:[^\"\\\\]|\\\\.)*\"");
+                var matcher = Pattern.compile("\"properties\"\\s*:\\s*\\[((?:\\s|,|" + property.pattern() + ")*)\\]").matcher(text);
+                while (matcher.find()) {
+                    var properties = property.matcher(matcher.group(1)).results()
+                        .map(MatchResult::group).collect(Collectors.toList());
                     var unique = new HashSet<>(properties);
                     if (unique.size() != properties.size()) {
                         print("%s contains duplicate configuration settings.", file);
@@ -55,7 +55,6 @@ public class CheckPuppeteerScenarioScriptConfiguration {
                         var dups = properties.stream()
                             .filter(e -> Collections.frequency(properties, e) > 1)
                             .distinct()
-                            .map(e -> e + '"')
                             .collect(Collectors.toList());
                         print("\t- %s %n", dups);
                         failBuild.set(true);

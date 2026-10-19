@@ -13,12 +13,11 @@ const assert = require("assert");
     await cas.assertTicketParameter(page);
 
     await cas.log("Replaying a flow execution that has already completed must not log the user in");
-    await cas.deleteCookies(page, "TGC");
-    await cas.gotoLogin(page);
+    await page.deleteCookie({name: "TGC", url: "https://localhost:8443/cas/"});
     await page.evaluate((execution, target) => {
         const form = document.createElement("form");
         form.method = "post";
-        form.action = `/cas/login?service=${encodeURIComponent(target)}`;
+        form.action = `https://localhost:8443/cas/login?service=${encodeURIComponent(target)}`;
         const fields = {username: "casuser", password: "Mellon", execution: execution, _eventId: "submit", geolocation: ""};
         Object.entries(fields).forEach(([name, value]) => {
             const input = document.createElement("input");

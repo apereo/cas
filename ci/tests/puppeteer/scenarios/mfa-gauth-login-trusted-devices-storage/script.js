@@ -7,7 +7,8 @@ const BACKENDS = {
         container: "postgres-server",
         read: async () => {
             const psql = (sql) => cas.dockerExec("postgres-server", ["psql", "-U", "postgres", "-d", "mfa", "-tA", "-c", sql]);
-            const table = await psql("SELECT table_name FROM information_schema.tables WHERE lower(table_name)='jpamultifactorauthenticationtrustrecord'");
+            const table = (await psql("SELECT table_name FROM information_schema.tables WHERE table_schema='public' AND lower(table_name) LIKE '%trust%'")).split("\n")[0];
+            assert(table.length > 0, "The trusted device table must exist");
             const count = await psql(`SELECT COUNT(*) FROM "${table}" WHERE principal='casuser'`);
             return Number(count) > 0 ? count : "";
         }

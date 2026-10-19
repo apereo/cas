@@ -3,7 +3,9 @@ package org.apereo.cas.support.saml.idp.metadata;
 import module java.base;
 import org.apereo.cas.redis.core.CasRedisTemplate;
 import org.apereo.cas.support.saml.BaseRedisSamlMetadataTests;
+import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument;
+import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -37,5 +39,19 @@ class RedisSamlIdPMetadataLocatorTests extends BaseRedisSamlMetadataTests {
         assertNotNull(redisSamlIdPMetadataTemplate);
         val resource = samlIdPMetadataLocator.resolveSigningKey(Optional.empty());
         assertNotNull(resource);
+    }
+
+    @Test
+    void verifyServiceWithoutOwnMetadataUsesGlobalDocument() throws Throwable {
+        val service = new SamlRegisteredService();
+        service.setId(RandomUtils.nextLong());
+        service.setName("ServiceWithoutMetadata");
+        service.setServiceId("https://sp.example.org");
+        val global = samlIdPMetadataLocator.fetch(Optional.empty());
+        assertNotNull(global);
+        val document = samlIdPMetadataLocator.fetch(Optional.of(service));
+        assertNotNull(document);
+        assertEquals(global.getSigningKey(), document.getSigningKey());
+        assertTrue(samlIdPMetadataLocator.resolveSigningKey(Optional.of(service)).contentLength() > 0);
     }
 }

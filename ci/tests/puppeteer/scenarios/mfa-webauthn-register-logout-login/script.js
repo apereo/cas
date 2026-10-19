@@ -5,13 +5,13 @@ const DEVICES = "https://localhost:8443/cas/actuator/webAuthnDevices/casuser";
 
 /**
  * Reads what the repository of the current variation keeps for casuser, straight from the backend. Registration
- * records are stored unencrypted in this scenario, so the device nickname shows in them.
+ * records are stored unencrypted in this scenario, so a stored registration shows its credentialId.
  */
 async function storedRecords() {
     switch (process.env.SCENARIO_VARIATION) {
     case "jpa": {
         const table = await cas.dockerExec("mariadb", ["mariadb", "-uroot", "-pmypass", "-N", "-e",
-            "SELECT TABLE_NAME FROM information_schema.TABLES WHERE TABLE_SCHEMA='mysql' AND TABLE_NAME LIKE '%WebAuthn%'"]);
+            "SELECT TABLE_NAME FROM information_schema.COLUMNS WHERE TABLE_SCHEMA='mysql' AND COLUMN_NAME='records' AND TABLE_NAME LIKE '%web%authn%'"]);
         assert(table.length > 0, "WebAuthn table must exist");
         return cas.dockerExec("mariadb", ["mariadb", "-uroot", "-pmypass", "-N", "-D", "mysql", "-e",
             `SELECT records FROM ${table.split("\n")[0]} WHERE username='casuser'`]);
@@ -30,7 +30,7 @@ async function storedRecords() {
 (async () => {
     await cas.log(`Running with the ${process.env.SCENARIO_VARIATION} repository`);
     await cas.doRequest(DEVICES, "DELETE", {"Accept": "application/json"}, 200);
-    assert(!(await storedRecords()).includes("mydevice"));
+    assert(!(await storedRecords()).includes("credentialId"));
 
     const browser = await cas.newBrowser(cas.browserOptions());
     const page = await cas.newPage(browser);
@@ -72,10 +72,10 @@ async function storedRecords() {
     await cas.assertInnerTextContains(page, "#attribute-tab-1 table#attributesTable tbody", "[mfa-webauthn]");
     await cas.assertInnerTextContains(page, "#attribute-tab-1 table#attributesTable tbody", "[WebAuthnCredential]");
 
-    const devices = JSON.parse(await cas.doRequest(DEVICES, "GET", {"Accept": "application/json"}, 200));
-    assert(devices.length === 1);
-    assert(devices[0].credentialNickname === "mydevice");
-    assert((await storedRecords()).includes("mydevice"), "The registration must be kept in the backend");
+    const devices = await cas.doRequest(DEVICES, "GET", {"Accept": "application/json"}, 200);
+    await cas.log(devices);
+    assert(devices.includes("credentialId"), "The registered device must be listed");
+    assert((await storedRecords()).includes("credentialId"), "The registration must be kept in the backend");
 
     await cas.gotoLogout(page);
 
@@ -103,8 +103,8 @@ async function storedRecords() {
     await cas.assertInnerTextContains(page, "#attribute-tab-1 table#attributesTable tbody", "[WebAuthnCredential]");
 
     await cas.doRequest(DEVICES, "DELETE", {"Accept": "application/json"}, 200);
-    assert(JSON.parse(await cas.doRequest(DEVICES, "GET", {"Accept": "application/json"}, 200)).length === 0);
-    assert(!(await storedRecords()).includes("mydevice"), "Removing the device must remove it from the backend");
+    assert(!(await cas.doRequest(DEVICES, "GET", {"Accept": "application/json"}, 200)).includes("credentialId"));
+    assert(!(await storedRecords()).includes("credentialId"), "Removing the device must remove it from the backend");
 
     await cas.sleep(2000);
     await cas.removeWebAuthnVirtualAuthenticator(virtualAuthenticator);

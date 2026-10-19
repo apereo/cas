@@ -1,5 +1,5 @@
 {
-  "dependencies": "reports,metrics,monitor,scripting,surrogate-webflow,oauth-webflow,saml,duo,qr-authentication,gcp-logging",
+  "dependencies": "reports,metrics,monitor,scripting,surrogate-webflow,oauth-webflow,saml,duo,qr-authentication",
   "properties": [
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",
@@ -9,7 +9,6 @@
     "--cas.tgc.pin-to-session=false",
 
     "--logging.level.org.springframework.security=info",
-    "--cas.logging.gcp.project-id=cas-puppeteer",
 
     "--cas.authn.attribute-repository.stub.attributes.phone=13477464523",
     "--cas.authn.attribute-repository.stub.attributes.mail=casuser@example.org",

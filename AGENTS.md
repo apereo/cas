@@ -531,9 +531,10 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
 - `ci/tests/keycloak/run-keycloak-server.sh` polls the `cas` realm's discovery document; Keycloak answers HTTP well before the realm import finishes, and a pac4j OIDC client that fetched its metadata in that window stays broken for every later in-process attempt.
 - `run.sh` installs the Chrome build Puppeteer pins (`npx puppeteer browsers install chrome`) after `npm install`, because npm can finish without puppeteer's postinstall having downloaded it, which only shows up later as `Could not find Chrome`.
 - A scenario that navigates to `https://localhost:9859/anything/...` needs `ci/tests/httpbin/run-httpbin-server.sh` among its init scripts; without it the redirect lands on `chrome-error://` and the ticket assertion fails.
-- Webflow executions are client-side by default (`cas.webflow.session.storage=false`): the `execution` value is the signed and encrypted flow state, so replaying one simply resumes that state, and "reusing a consumed execution" is only meaningful with server-side storage (`http-session-ticket-registry` covers it). A well-formed but altered execution fails decoding with `ClientFlowExecutionRepositoryException`, and `FlowExecutionExceptionResolver` redirects to a fresh flow (302). A malformed one (no `uuid_data` shape) raises `BadlyFormattedFlowExecutionKeyException`, which the resolver now also restarts; it drops any `execution` query parameter from the redirect, which is what avoids the redirect loop that once made it skip this exception. `webflow-clientside-sessions` exercises all three cases plus a double submit and the back button. The ticket-granting cookie value embeds the `User-Agent` when `cas.tgc.pin-to-session` is on; a request without one is pinned to a placeholder (`DefaultCasCookieValueManager`), so the cookie only matches later requests that also send none. It used to throw and answer 500.
+- Webflow executions are client-side by default (`cas.webflow.session.storage=false`): the `execution` value is the signed and encrypted flow state, so replaying one simply resumes that state, and "reusing a consumed execution" is only meaningful with server-side storage (`http-session-ticket-registry` covers it). Server-side keys are numbered per session (`e1s1`, `e2s1`, ...), and a new HTTP session numbers from `e1` again, so opening the login page before the replay hands out the very key being replayed and the "replay" logs in. Replay from a non-CAS page, after deleting the TGC with `page.deleteCookie({name: "TGC", url: "https://localhost:8443/cas/"})` (`cas.deleteCookies(page)` only sees cookies of the page's current URL, which on httpbin excludes the `/cas` path). A well-formed but altered execution fails decoding with `ClientFlowExecutionRepositoryException`, and `FlowExecutionExceptionResolver` redirects to a fresh flow (302). A malformed one (no `uuid_data` shape) raises `BadlyFormattedFlowExecutionKeyException`, which the resolver now also restarts; it drops any `execution` query parameter from the redirect, which is what avoids the redirect loop that once made it skip this exception. `webflow-clientside-sessions` exercises all three cases plus a double submit and the back button. The ticket-granting cookie value embeds the `User-Agent` when `cas.tgc.pin-to-session` is on; a request without one is pinned to a placeholder (`DefaultCasCookieValueManager`), so the cookie only matches later requests that also send none. It used to throw and answer 500.
 - `actuator-endpoint-roles` is the table-driven check of endpoint security: every row is called anonymously (401), as `casviewer` without `ADMIN` (403) and as `casadmin` (2xx, or "reachable" for operations needing a payload). Users come from its `users.json` (`cas.monitor.endpoints.json.location`). Add a row there when adding an actuator endpoint whose module needs no external service; rows default to `Content-Type: application/json`, so give operations that consume form parameters (the `casValidate` ones) `contentType: FORM`, or they answer 415.
 - To prove CAS refuses a tampered SAML2 AuthnRequest, intercept the browser hop from the SP to `/cas/idp/profile/SAML2/*/SSO` with `page.setRequestInterception(true)` (see `saml2-idp-login-acs-signed`). POST binding: rewrite `SAMLRequest` in `postData` and `request.continue({postData})`. Redirect binding: inflate with `zlib.inflateRawSync`, alter, deflate, then `request.abort()` and `cas.goto` the altered URL rather than overriding `url` on a redirected request. Assert that the tampering really happened, otherwise a request without the attribute passes for the wrong reason.
+- `cas.newPage(browser)` returns the browser's first tab when one exists; it opens a new one only with `cas.newPage(browser, true)`. A helper that takes a page, intercepts its requests and closes it must force a new page, or it closes the scenario's main page and later calls fail with "Attempted to use detached Frame" (`saml2-idp-login-acs-signed`).
 - Before writing a negative assertion, read the server code for the exact error. Each token-endpoint failure surfaces differently: device code reuse → `access_denied` (`InvalidOAuth20DeviceTokenException`), a mismatched ST service → `INVALID_SERVICE` and the ticket is consumed. Where the specification names the error (CIBA Core §11: `authorization_pending`, `invalid_grant`), the scenario asserts the specification even when the current code differs, and the hand-off says so.
 
 ## Storage backend scenarios (service registry, SAML2 metadata, MFA devices, consent)
@@ -553,6 +554,12 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
   `ci/tests/ldap/add-ldap-entries.sh <ldif>` waits for `ldap-server` and adds it.
 - `cas.doDelete(url)` swallows failures unless a failure handler is given; assert a status with
   `cas.doRequest(url, "DELETE", headers, status)`.
+- Read JPA tables by looking their names up (`information_schema`), not by entity name: CAS's physical naming
+  strategy turns `JpaMultifactorAuthenticationTrustRecord` into `jpa_multifactor_authentication_trust_record`, and a
+  `LIKE '%WebAuthn%'` also matches the `webauthn_sequence` table. MariaDB `LIKE` ignores case.
+- The `mfa-gauth-login-trusted-devices-storage` outage check needs the storage to report itself unavailable when its
+  backend is down (`MultifactorAuthenticationTrustStorage.isAvailable`): the webflow then skips trusted devices and asks
+  for the token. JPA checks a connection; Redis pings.
 
 - Service registry scenarios call `cas.verifyServiceRegistry(backend)` (in `cas.js`), passing `insert(definition)` (write
   straight into the backend, bypassing CAS) and `contains(id)`. It checks load (scheduled reload picks up the external
@@ -584,8 +591,11 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
   `qrDevices`: `qrauthn-login`, which needs `cas.authn.qr.json.location` (without it every device is authorized and
   nothing is stored); `passwordless`: `passwordless-delegated-login`; `duoPing`, `duoAccountStatus`, `duoAdmin`:
   `mfa-duo-universal-login` (runs only where the Duo secrets exist) and, without providers, `actuator-endpoint-roles`.
-- `gcpLogs` calls the real Cloud Logging API and no emulator exists, so it is only checked for security in
-  `actuator-endpoint-roles` (`expect: "secured"`).
+- `gcpLogs` has no scenario: it calls the real Cloud Logging API, no emulator exists, and adding
+  `gcp-logging` to a build pulls in Spring Cloud GCP's Stackdriver trace auto-configuration, which stops CAS
+  from starting without Google credentials (exit code 4 in `actuator-endpoint-roles`).
+- `qrauthn-login` logs in over a STOMP callback; `connectAndLogin` returns a promise that settles when that
+  callback's assertions finish, and the browser is closed only after it, or the assertions hit a detached frame.
 
 ## OAuth/OIDC token endpoint error mapping
 
@@ -1013,8 +1023,10 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
   directory named by `idpMetadataLocation` for the file-system locator, or rows and documents
   inserted directly for JDBC and MongoDB.
 - The guard in front of generation reinforces that. `AbstractSamlIdPMetadataLocator.exists` calls
-  `fetch`, and every per-service `fetchInternal` falls back to the global document when the service
-  has none, so `exists(service)` is true as soon as the *global* document exists. Both
+  `fetch`, and a per-service `fetchInternal` must fall back to the global document when the service
+  has none (JPA, MongoDB, Git and, since `saml2-idp-login-metadata-redis` showed every SAML2 response
+  failing with "Unable to locate signing credentials", Redis; DynamoDB and Google Cloud Storage still
+  look up only `appliesTo`), so `exists(service)` is true as soon as the *global* document exists. Both
   `BaseSamlIdPMetadataGenerator.generate` and `SamlIdPMetadataResolver.resolveMetadata` check
   `exists` before `shouldGenerateMetadataFor`, which means `generate(Optional.of(service))` is a
   no-op in a normally-started deployment and returns the global document. That fallback is the

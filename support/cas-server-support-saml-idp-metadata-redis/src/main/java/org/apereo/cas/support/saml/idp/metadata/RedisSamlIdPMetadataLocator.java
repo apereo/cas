@@ -35,8 +35,27 @@ public class RedisSamlIdPMetadataLocator extends AbstractSamlIdPMetadataLocator 
         this.redisTemplate = redisTemplate;
     }
 
+    /**
+     * Fetch the metadata document for the service, or the global document when the service has none of its own.
+     * Metadata is only generated per service when asked for, so a service without its own document must use the
+     * identity provider's global metadata and keys, as the JPA and MongoDb locators do; without this fallback the
+     * signing key of every service provider resolves to nothing and SAML2 responses cannot be signed.
+     *
+     * @param registeredService the registered service
+     * @return the metadata document, or null if there is none
+     */
     @Override
     public @Nullable SamlIdPMetadataDocument fetchInternal(final Optional<SamlRegisteredService> registeredService) {
+        if (registeredService.isPresent()) {
+            val document = findDocumentFor(registeredService);
+            if (document != null && document.isValid()) {
+                return document;
+            }
+        }
+        return findDocumentFor(Optional.empty());
+    }
+
+    private @Nullable SamlIdPMetadataDocument findDocumentFor(final Optional<SamlRegisteredService> registeredService) {
         val appliesTo = getAppliesToFor(registeredService);
         try (val keys = redisTemplate.scan(CAS_PREFIX + appliesTo + ":*")) {
             return keys.findFirst()

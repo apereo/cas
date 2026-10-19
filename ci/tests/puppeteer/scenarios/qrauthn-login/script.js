@@ -38,10 +38,21 @@ async function registerDevices() {
     await connectAndLogin(channelId, page);
 
     await cas.closeBrowser(browser);
+    process.exit(0);
 })();
 
+/**
+ * Logs in through the QR channel with the registered device. Resolves once the browser shows the login as successful
+ * and the device has been removed again, so the browser is not closed while the page is still in use.
+ */
 async function connectAndLogin(channelId, page) {
     const {Client} = await import("@stomp/stompjs");
+    let done = undefined;
+    let failed = undefined;
+    const finished = new Promise((resolve, reject) => {
+        done = resolve;
+        failed = reject;
+    });
     const client = new Client({
         brokerURL: "ws://localhost:8443/cas/qr-websocket",
         debug: (str) => cas.log(str),
@@ -82,10 +93,10 @@ async function connectAndLogin(channelId, page) {
                 await cas.assertCookie(page);
                 await cas.doRequest(`${DEVICES}/QRDevicePuppeteer`, "DELETE", JSON_HEADERS, 204);
                 assert(JSON.parse(await cas.doRequest(`${DEVICES}/casuser`, "GET", JSON_HEADERS, 200)).length === 0);
-                client.deactivate();
                 client.forceDisconnect();
-                process.exit(0);
-            });
+                await client.deactivate();
+            })
+            .then(done, failed);
     };
 
     client.onStompError = (frame) => {
@@ -94,6 +105,7 @@ async function connectAndLogin(channelId, page) {
     };
 
     client.activate();
+    return finished;
 }
 
 async function executeRequest(url, statusCode, requestBody) {

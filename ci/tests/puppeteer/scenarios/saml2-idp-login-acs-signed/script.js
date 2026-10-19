@@ -16,7 +16,7 @@ function tamperAssertionConsumerService(xml) {
 }
 
 async function submitTamperedAuthnRequest(browser) {
-    const page = await cas.newPage(browser);
+    const page = await cas.newPage(browser, true);
     let handled = false;
     let tampered = false;
     let tamperedRedirectUrl = undefined;
