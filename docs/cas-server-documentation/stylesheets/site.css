@@ -2770,6 +2770,9 @@ ul.tab-content > li:not(.active):not(.property-name):not(.property-tab):not(.cas
     .home-intro > p {
         font-size: .94rem;
     }
+    .home-intro > p, .home-intro > p:first-of-type {
+        padding-right: 1.1rem;
+    }
     .home-paths {
         grid-template-columns: 1fr;
         gap: .6rem;
