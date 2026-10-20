@@ -19,7 +19,7 @@
             <div id="casprotocol-tab">
               <section id="casProtocolContainer">
                 <p>You can simulate CAS protocol validation responses for CAS-enabled client applications.</p>
-                <form id="fmCasProtocol" class="d-block">
+                <form id="fmCasProtocol" class="d-block" onsubmit="return false;">
                     <section class="cas-field form-group my-3 mdc-input-group d-flex">
                         <div class="mdc-input-group-field mdc-input-group-field-append w-100">
                             <label for="casProtocolService"
@@ -84,7 +84,7 @@
                             <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-check-all"
                                                                aria-hidden="true"></i>V2 Protocol</span>
                         </button>
-                        <button type="button" name="casProtocolV3Button" id="casProtocolV3Button"
+                        <button type="submit" name="casProtocolV3Button" id="casProtocolV3Button"
                                 class="mdc-button mdc-button--raised mr-8">
                             <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-check-all"
                                                                aria-hidden="true"></i>V3 Protocol</span>
@@ -128,7 +128,7 @@
 
                         <div id="saml2requests-tab">
                             <p>You can simulate SAML2 responses for SAML2 service providers.</p>
-                            <form id="fmSaml2Protocol" class="d-block">
+                            <form id="fmSaml2Protocol" class="d-block" onsubmit="return false;">
                                 <section class="saml2-field form-group my-3 mdc-input-group d-flex">
                                     <div class="mdc-input-group-field mdc-input-group-field-append w-100">
                                         <label for="saml2ProtocolEntityId"
@@ -182,7 +182,7 @@
 
                                 </section>
                                 <div class="d-flex">
-                                    <button type="button" name="saml2ProtocolPostButton"
+                                    <button type="submit" name="saml2ProtocolPostButton"
                                             title="Simulate a SAML2 POST Response"
                                             id="saml2ProtocolPostButton"
                                             class="mdc-button mdc-button--raised">
@@ -211,7 +211,7 @@
                                 SAML2 service provider within that aggregate. If you do not specify a service, all entries in
                                 the SAML2 metadata cache will be invalidated.</p>
 
-                            <form id="fmSaml2MetadataCache" class="d-block">
+                            <form id="fmSaml2MetadataCache" class="d-block" onsubmit="return false;">
                                 <section class="saml2-field form-group my-3 mdc-input-group d-flex">
                                     <div class="mdc-input-group-field mdc-input-group-field-append w-100">
                                         <label for="saml2MetadataCacheService"
@@ -244,7 +244,7 @@
 
                                 </section>
                                 <div class="d-flex">
-                                    <button type="button" name="saml2MetadataCacheFetchButton"
+                                    <button type="submit" name="saml2MetadataCacheFetchButton"
                                             title="Fetch SAML2 Metadata Cache Entry"
                                             id="saml2MetadataCacheFetchButton"
                                             class="mdc-button mdc-button--raised">
@@ -281,7 +281,7 @@
                             </div>
 
                             <div id="saml2MetadataUploadDialog" title="Upload Metadata" class="hide">
-                                <form id="saml2MetadataUploadForm">
+                                <form id="saml2MetadataUploadForm" onsubmit="return false;">
                                     <section class="cas-field form-group my-3 mdc-input-group d-flex">
                                         <div class="mdc-input-group-field mdc-input-group-field-append w-100">
                                             <label for="saml2MetadataUploadName"
@@ -365,7 +365,7 @@
                                         Configuration Properties
                                     </h3>
                                 </div>
-                                <div class="p-2" style="background: white;">
+                                <div class="p-2 palantir-card-body">
                                     <table id="saml2ConfigurationPropsTable" class="mdc-data-table__table table table-striped noborder">
                                         <thead>
                                         <tr class="mdc-data-table__header-row">
@@ -402,7 +402,7 @@
                 <section id="saml1ProtocolContainer">
                     <p>You can simulate SAML1 responses for SAML1 service providers.</p>
 
-                    <form id="fmSaml1Protocol" class="d-block">
+                    <form id="fmSaml1Protocol" class="d-block" onsubmit="return false;">
                         <section class="saml1-field form-group my-3 mdc-input-group d-flex">
                             <div class="mdc-input-group-field mdc-input-group-field-append w-100">
                                 <label for="saml1ProtocolService"
@@ -459,7 +459,7 @@
 
                         </section>
                         <div class="d-flex">
-                            <button type="button" name="saml1ProtocolButton" id="saml1ProtocolButton"
+                            <button type="submit" name="saml1ProtocolButton" id="saml1ProtocolButton"
                                     class="mdc-button mdc-button--raised">
                                 <span class="mdc-button__label">
                                     <i class="mdc-tab__icon mdi mdi-check-all" aria-hidden="true"></i>Submit</span>
@@ -495,7 +495,7 @@
                         <div id="oidcclientsecretrotation-tab">
                             <p>You can rotate client secrets for OAuth and OpenID Connect relying party applications.</p>
 
-                            <form id="fmOidcClientSecretRotation" class="d-block">
+                            <form id="fmOidcClientSecretRotation" class="d-block" onsubmit="return false;">
                                 <section class="oidc-field form-group my-3 mdc-input-group d-flex">
                                     <div class="mdc-input-group-field mdc-input-group-field-append w-100">
                                         <label for="oidcClientSecretRotationClientId"
@@ -542,7 +542,7 @@
                                     </div>
                                 </section>
                                 <div class="d-flex">
-                                    <button type="button" name="oidcClientSecretRotationButton"
+                                    <button type="submit" name="oidcClientSecretRotationButton"
                                             id="oidcClientSecretRotationButton"
                                             class="mdc-button mdc-button--raised">
                                         <span class="mdc-button__label">
@@ -559,7 +559,7 @@
                         <div id="oidctokenexchange-tab">
                             <p>You can simulate OpenID connect responses to relying party applications and clients.</p>
 
-                            <form id="fmOidcProtocol" class="d-block">
+                            <form id="fmOidcProtocol" class="d-block" onsubmit="return false;">
                                 <section class="oidc-field form-group my-3 mdc-input-group d-flex">
                                     <div class="mdc-input-group-field mdc-input-group-field-append w-100">
                                         <label for="oidcProtocolClientId"
@@ -624,7 +624,7 @@
 
                                 </section>
                                 <div class="d-flex">
-                                    <button type="button" name="oidcProtocolButton" id="oidcProtocolButton"
+                                    <button type="submit" name="oidcProtocolButton" id="oidcProtocolButton"
                                             class="mdc-button mdc-button--raised">
                                         <span class="mdc-button__label">
                                             <i class="mdc-tab__icon mdi mdi-swap-horizontal"
@@ -704,7 +704,7 @@
                                         Configuration Properties
                                     </h3>
                                 </div>
-                                <div class="p-2" style="background: white;">
+                                <div class="p-2 palantir-card-body">
                                     <table id="oidcConfigurationPropsTable" class="mdc-data-table__table table table-striped noborder">
                                         <thead>
                                         <tr class="mdc-data-table__header-row">

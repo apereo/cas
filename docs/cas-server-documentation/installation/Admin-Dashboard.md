@@ -56,6 +56,10 @@ and expose all actuator endpoints and certainly require authentication access fo
 
 Once enabled, Palantir is available at `/cas/palantir`.
 
+Palantir follows the light or dark appearance of the operating system. The theme button in its navigation
+bar switches between light and dark, and the settings dialog can return Palantir to the operating system's choice;
+the choice is remembered by the browser.
+
 {% endtab %}
 
 {% tab casadminoptions Spring Boot Admin %}

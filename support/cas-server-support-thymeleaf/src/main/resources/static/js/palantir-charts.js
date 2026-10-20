@@ -216,6 +216,13 @@ async function initializeApplicationsCharts() {
                     "limegreen",
                     "slategrey"
                 ],
+                borderColor: [
+                    "deepskyblue",
+                    "indianred",
+                    "mediumpurple",
+                    "limegreen",
+                    "slategrey"
+                ],
                 borderWidth: 1
             }]
         },
@@ -258,7 +265,7 @@ async function initializeSystemCharts() {
                 label: "Memory (GB)",
                 data: [0, 0, 0],
                 fill: true,
-                backgroundColor: ["rgba(54, 162, 235, 0.2)", "rgba(75, 192, 192, 0.2)", "rgba(255, 99, 132, 0.2)"],
+                backgroundColor: ["rgba(54, 162, 235, 0.5)", "rgba(75, 192, 192, 0.5)", "rgba(255, 99, 132, 0.5)"],
                 borderColor: ["rgba(54, 162, 235, 1)", "rgba(75, 192, 192, 1)", "rgba(255, 99, 132, 1)"],
                 borderWidth: 2
             }]
@@ -287,7 +294,7 @@ async function initializeSystemCharts() {
                 label: "Ticket Registry",
                 data: [0, 0],
                 fill: true,
-                backgroundColor: ["rgba(75, 192, 192, 0.2)", "rgba(255, 99, 132, 0.2)"],
+                backgroundColor: ["rgba(75, 192, 192, 0.5)", "rgba(255, 99, 132, 0.5)"],
                 borderColor: ["rgba(75, 192, 192, 1)", "rgba(255, 99, 132, 1)"],
                 borderWidth: 2
             }]
@@ -571,7 +578,7 @@ function createPrometheusChart(metricName, metricData) {
             datasets: [{
                 label: metricName,
                 data: values,
-                backgroundColor: colors.map(c => c.replace("1)", "0.2)")),
+                backgroundColor: colors.map(c => c.replace("1)", "0.5)")),
                 borderColor: colors[0],
                 borderWidth: 2,
                 fill: true,
@@ -650,7 +657,7 @@ function showMaximizedChart(chartConfig) {
                         datasets: [{
                             label: chartConfig.metricName,
                             data: chartConfig.values,
-                            backgroundColor: chartConfig.colors.map(c => c.replace("1)", "0.2)")),
+                            backgroundColor: chartConfig.colors.map(c => c.replace("1)", "0.5)")),
                             borderColor: chartConfig.colors[0],
                             borderWidth: 2,
                             fill: true,

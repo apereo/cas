@@ -66,7 +66,7 @@ async function populateMultifactorProviderTables() {
                                     <sup class="mr-2">${key}</sup>
                                 </h3>
                             </div>
-                            <div class="p-2 m-auto min-height-90" style="background: white;">
+                            <div class="p-2 m-auto min-height-90 palantir-card-body">
                                 <table id="mfaTable-${key}" class="mdc-data-table__table table table-striped noborder mfa-provider-table">
                                     <thead>
                                     <tr class="mdc-data-table__header-row">

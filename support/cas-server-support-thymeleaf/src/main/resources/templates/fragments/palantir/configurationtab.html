@@ -41,7 +41,7 @@
                         style="display: none;">
                 
                 <div id="newConfigurationDialog" title="New Configuration Property" class="hide">
-                  <form id="newConfigurationForm">
+                  <form id="newConfigurationForm" onsubmit="return false;">
                         <section class="cas-field form-group my-3 mdc-input-group d-flex">
                             <div id="newConfigurationMainPanel"
                                  class="mdc-input-group-field mdc-input-group-field-append w-100">
@@ -251,7 +251,7 @@
                         </div>
                     </section>
                     <div class="d-flex">
-                        <button type="button" id="encryptConfigButton" class="mdc-button mdc-button--raised">
+                        <button type="submit" id="encryptConfigButton" class="mdc-button mdc-button--raised">
                             <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-lock"
                                                                aria-hidden="true"></i>Encrypt</span>
                         </button>

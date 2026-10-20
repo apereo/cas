@@ -29,7 +29,10 @@ function palantirWizardField(builder) {
  * Build the wizard's fields, once.
  *
  * A builder that throws is logged and skipped: one section that cannot be built must not leave the
- * rest of the wizard empty.
+ * rest of the wizard empty. The fields are built after the Applications panel has had its widgets
+ * set up, so the form's widgets are initialized here once the builders are done: a dropdown that the
+ * wizard later turns into a bare selectmenu would carry no change handler, and picking a type in it
+ * would not reveal that type's fields.
  *
  * @returns {Promise<void>} resolved when every registered builder has run
  */
@@ -43,6 +46,7 @@ function buildRegisteredServiceWizardFields() {
                     console.error("Unable to build a service wizard section:", e);
                 }
             }
+            initializePalantirWidgets(document.getElementById("editServiceWizardForm"));
         })();
     }
     return palantirWizardFieldsBuilt;
@@ -3963,7 +3967,10 @@ async function openRegisteredServiceWizardDialog(existingService = null) {
             createOidcRegisteredServiceFields();
             break;
         }
-        RegisteredServiceSections.refresh();
+        RegisteredServiceSections.start();
+        const protocol = applicationProtocolOf(serviceClass);
+        $(editServiceWizardDialogElement).dialog("option", "title",
+            isNewService ? `New ${protocol.label}` : `Edit ${serviceData.name ?? protocol.label}`);
         setTimeout(function () {
             $("#editServiceWizardForm input[data-param-name]:visible:enabled").first().focus();
         }, 200);
@@ -3981,16 +3988,95 @@ async function openRegisteredServiceWizardDialog(existingService = null) {
                 acc[key] = PalantirDashboardConfiguration.supportedServiceTypes()[key];
                 return acc;
             }, {});
-        Swal.fire({
-            title: "What type of application do you want to add?",
-            input: "select",
-            icon: "question",
-            inputOptions: sortedServiceTypes,
-            showCancelButton: true
-        }).then((result) => {
-            if (result.isConfirmed) {
-                openWizardDialog(result.value);
+        chooseRegisteredServiceType(sortedServiceTypes).then(serviceClass => {
+            if (serviceClass) {
+                openWizardDialog(serviceClass);
             }
         });
     }
+}
+
+/**
+ * Ask which type of application to create, as a set of described cards.
+ *
+ * @param serviceTypes the supported registered service classes, mapped to their friendly names
+ * @returns {Promise<string|null>} the chosen class, or null when the operator cancels
+ */
+async function chooseRegisteredServiceType(serviceTypes) {
+    const descriptions = {
+        cas: "Web applications that validate service tickets over the CAS protocol.",
+        saml: "Service providers that consume SAML2 assertions, configured from their metadata.",
+        oidc: "Applications that sign users in with ID tokens, scopes and claims.",
+        oauth: "Clients that obtain access tokens for APIs, without an OpenID Connect sign-in.",
+        wsfed: "Relying parties that use passive WS-Federation requests."
+    };
+    const needs = {
+        cas: "the service URL pattern",
+        saml: "the entity ID and a metadata location",
+        oidc: "a redirect URI, client ID and secret",
+        oauth: "a redirect URI, client ID and grant types",
+        wsfed: "the realm and reply URL"
+    };
+    const cards = Object.entries(serviceTypes).map(([serviceClass, friendlyName]) => {
+        const protocol = applicationProtocolOf(serviceClass);
+        return `
+            <button type="button" class="palantir-type-card" role="radio" aria-checked="false"
+                    data-service-class="${escapePalantirMarkup(serviceClass)}">
+                <span class="palantir-type-card-head">
+                    <span class="palantir-protocol-badge is-${protocol.key}" aria-hidden="true">${escapePalantirMarkup(protocol.short)}</span>
+                    <span class="palantir-type-card-name">
+                        <span>${escapePalantirMarkup(friendlyName || protocol.label)}</span>
+                        <code>${escapePalantirMarkup(serviceClass.split(".").pop())}</code>
+                    </span>
+                </span>
+                <span class="palantir-type-card-description">${escapePalantirMarkup(descriptions[protocol.key] ?? "Applications of this registered service type.")}</span>
+                ${needs[protocol.key] ? `<span class="palantir-type-card-needs">You will need ${needs[protocol.key]}.</span>` : ""}
+            </button>`;
+    }).join("");
+    let chosen = null;
+    const result = await Swal.fire({
+        title: "What type of application do you want to add?",
+        html: `
+            <p class="palantir-type-picker-intro">The type decides which protocol settings the wizard shows.</p>
+            <div class="palantir-type-picker" role="radiogroup" aria-label="Application type">${cards}</div>`,
+        width: 920,
+        showCancelButton: true,
+        confirmButtonText: "Continue",
+        customClass: {popup: "palantir-type-picker-popup"},
+        didOpen: popup => {
+            const choose = card => {
+                chosen = card.dataset.serviceClass;
+                popup.querySelectorAll(".palantir-type-card").forEach(entry => {
+                    entry.setAttribute("aria-checked", String(entry === card));
+                });
+                Swal.resetValidationMessage();
+            };
+            const cards = [...popup.querySelectorAll(".palantir-type-card")];
+            cards.forEach((card, index) => {
+                card.addEventListener("click", () => choose(card));
+                card.addEventListener("dblclick", () => {
+                    choose(card);
+                    Swal.clickConfirm();
+                });
+                card.addEventListener("keydown", event => {
+                    const step = {ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1}[event.key];
+                    if (step) {
+                        event.preventDefault();
+                        const next = cards[(index + step + cards.length) % cards.length];
+                        choose(next);
+                        next.focus();
+                    }
+                });
+            });
+            cards[0]?.focus();
+        },
+        preConfirm: () => {
+            if (!chosen) {
+                Swal.showValidationMessage("Choose the type of application to continue.");
+                return false;
+            }
+            return chosen;
+        }
+    });
+    return result.isConfirmed ? result.value : null;
 }

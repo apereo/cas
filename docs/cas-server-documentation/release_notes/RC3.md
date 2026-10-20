@@ -946,7 +946,17 @@ The documentation now explains how to let browser-based MCP clients reach the se
   follows the light or dark appearance of the operating system until another is chosen from the navigation bar or the
   settings dialog. The service wizard starts from a choice of described application types and then walks the definition
   in steps (Basics, Protocol, Access & attributes, Policies) to a review of what the definition holds: each step shows
-  its sections as tiles that say whether they hold values, with Back and Next to move along.
+  its sections as tiles that say whether they hold values, with Back and Next to move along. Choosing the Policies
+  step, whose sections are all advanced options, shows the advanced options. The *Feature Catalog* lists each feature
+  as a card with its modules, with a search over feature and module names.
+- {: .fixed data-area="ui"} [Palantir](../installation/Admin-Dashboard.html) shows its *SAML2 Metadata Sources* tab whenever a SAML2
+  service provider is registered; the tab stayed hidden, or appeared only when the last definition read was a SAML2 one.
+- {: .fixed data-area="ui"} [Palantir](../installation/Admin-Dashboard.html) service wizard dropdowns react to a choice again:
+  picking a username attribute provider, attribute release policy or another type now shows that type's fields and adds it
+  to the definition.
+- {: .fixed data-area="ui"} Pressing Enter in a [Palantir](../installation/Admin-Dashboard.html) search or test form, such as
+  surrogate accounts or trusted multifactor devices, runs the form's main action; some forms used to ignore it and others
+  reloaded the dashboard.
 - {: .fixed data-area="oidc"} CIBA token requests answer `authorization_pending` while the user has not yet approved the request, `expired_token` for an expired `auth_req_id`, and `invalid_grant` for one that is unknown or already redeemed, as CIBA Core 1.0 requires; they used to return `invalid_grant` and `invalid_request`.
 - {: .fixed data-area="oidc"} Device code token requests answer `expired_token` for an expired device or user code, and `invalid_grant` for a device code that is unknown, already redeemed or issued to another client, as RFC 8628 requires; they used to return `access_denied`, which RFC 8628 reserves for a user who denied the request.
 - {: .fixed data-area="oidc"} Approving consent for an authorization request with `prompt=consent` now completes the request instead of showing the consent screen again.

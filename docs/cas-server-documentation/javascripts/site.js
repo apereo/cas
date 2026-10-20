@@ -1126,6 +1126,32 @@ $(() => {
     update();
 });
 
+// Swiping left or right on an open lightbox image moves to the next or previous image in the gallery.
+$(() => {
+    let start = null;
+    document.addEventListener("touchstart", event => {
+        start = event.touches.length === 1 && event.target.closest("#lightbox")
+            ? {x: event.touches[0].clientX, y: event.touches[0].clientY}
+            : null;
+    }, {passive: true});
+    document.addEventListener("touchend", event => {
+        if (!start) {
+            return;
+        }
+        const touch = event.changedTouches[0];
+        const dx = touch.clientX - start.x;
+        const dy = touch.clientY - start.y;
+        start = null;
+        if (Math.abs(dx) < 40 || Math.abs(dx) < Math.abs(dy) * 1.5) {
+            return;
+        }
+        const link = document.querySelector(dx < 0 ? "#lightbox .lb-next" : "#lightbox .lb-prev");
+        if (link && getComputedStyle(link).display !== "none") {
+            link.click();
+        }
+    }, {passive: true});
+});
+
 // A small floating button returns to the top once the reader has scrolled down; its ring shows how far they have read.
 $(() => {
     const button = document.getElementById("backToTop");

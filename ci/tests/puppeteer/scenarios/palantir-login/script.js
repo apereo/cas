@@ -139,6 +139,44 @@ async function verifyTabs(page) {
 }
 
 /**
+ * Assert the feature catalog draws a card per feature and that its search narrows the cards.
+ *
+ * Searching for one of the modules on screen must keep only cards that name it, and a query nothing
+ * matches must leave no card and show the empty state.
+ *
+ * @param page the puppeteer page
+ */
+async function verifyFeatureCatalog(page) {
+    if (!await page.evaluate(() => Boolean(CasActuatorEndpoints.casFeatures()))) {
+        await cas.logy("Feature catalog endpoint is not available; skipping");
+        return;
+    }
+    await page.evaluate(() => {
+        $("#systemTabButton").trigger("click");
+        $("#casfeaturestab").trigger("click");
+    });
+    await page.waitForFunction(() => $("#casFeaturesCatalog .palantir-feature-card").length > 0, {timeout: 30000});
+    const total = await page.evaluate(() => $("#casFeaturesCatalog .palantir-feature-card").length);
+    const module = await page.evaluate(() => $("#casFeaturesCatalog .palantir-feature-card__modules li").first().text().trim());
+    await cas.logg(`Feature catalog shows ${total} features`);
+
+    if (module) {
+        await cas.type(page, "#casFeaturesSearch", module);
+        const matches = await page.evaluate((query) => $("#casFeaturesCatalog .palantir-feature-card").toArray()
+            .map((card) => card.textContent.toLowerCase().includes(query.toLowerCase())), module);
+        await cas.logg(`Searching for ${module} keeps ${matches.length} of ${total} features`);
+        assert(matches.length > 0 && matches.length <= total && matches.every(Boolean));
+    }
+
+    await cas.type(page, "#casFeaturesSearch", "no-such-feature-or-module");
+    assert(await page.evaluate(() => $("#casFeaturesCatalog .palantir-feature-card").length === 0
+        && $("#casFeaturesEmpty").is(":visible")));
+    await page.evaluate(() => $("#casFeaturesSearch").val("").trigger("input"));
+    assert(await page.evaluate((count) => $("#casFeaturesCatalog .palantir-feature-card").length === count, total));
+    await page.evaluate(() => $("#applicationsTabButton").trigger("click"));
+}
+
+/**
  * Assert the applications tab loaded and drew the service registry, and that its toolbar works.
  *
  * The row count is reported rather than asserted: the registry this scenario starts from is not
@@ -325,6 +363,50 @@ async function inspectWizard(page, serviceClass, hideAdvanced) {
 }
 
 /**
+ * Pick an entry in a jQuery UI selectmenu the way an operator does, by opening it and clicking the item.
+ *
+ * @param page the puppeteer page
+ * @param selectId the id of the underlying select element
+ * @param text the label of the entry to choose
+ */
+async function chooseDropdownOption(page, selectId, text) {
+    await page.evaluate((id) => $(`#${id}`).selectmenu("open"), selectId);
+    const index = await page.evaluate((entry) => $(`#${entry.selectId}`).selectmenu("menuWidget").find("li")
+        .toArray().findIndex((item) => item.textContent.trim() === entry.text), {selectId, text});
+    assert(index >= 0, `${selectId} has no ${text} entry`);
+    await page.click(`#${selectId}-menu li:nth-child(${index + 1})`);
+}
+
+/**
+ * Assert the wizard's type dropdowns react to a choice.
+ *
+ * The wizard's fields are built after the Applications panel has set up its widgets, so each dropdown
+ * that declares change handlers must still carry them; choosing a username attribute provider type
+ * must reveal that type's fields, and going back to the default must hide them again.
+ *
+ * @param page the puppeteer page
+ * @param name the registered service type under test, for the log
+ */
+async function verifyWizardDropdowns(page, name) {
+    const unbound = await page.evaluate(() => {
+        RegisteredServiceSections.activate("editServiceWizardMenuItemUsernameAttribute");
+        return $("#editServiceWizardForm select.jqueryui-selectmenu")
+            .filter((_, select) => $(select).data("change-handler")
+                && typeof $(select).selectmenu("option", "change") !== "function")
+            .map((_, select) => select.id)
+            .get();
+    });
+    assert(unbound.length === 0, `${name}: dropdowns without change handlers: ${unbound.join(", ")}`);
+
+    const staticFields = "#editServiceWizardMenuItemUsernameAttribute .StaticRegisteredServiceUsernameProvider";
+    await chooseDropdownOption(page, "registeredServiceUsernameAttributeProvider", "STATIC");
+    assert(await page.evaluate((selector) => $(selector).is(":visible"), staticFields));
+    await chooseDropdownOption(page, "registeredServiceUsernameAttributeProvider", "DEFAULT");
+    assert(await page.evaluate((selector) => !$(selector).is(":visible"), staticFields));
+    await cas.logg(`${name}: wizard dropdowns reveal the fields of the chosen type`);
+}
+
+/**
  * Exercise the service wizard for each service type it models.
  *
  * The wizard's fields are built when the dialog is first opened rather than while the page parses,
@@ -376,6 +458,8 @@ async function verifyServiceWizard(page) {
             }
             assert(errors.length === 0, `${name}: ${errors.join(", ")}`);
         }
+
+        await verifyWizardDropdowns(page, name);
 
         const steps = await walkWizardSteps(page);
         await cas.logg(`${name} steps: ${steps.join(" > ")}`);
@@ -452,6 +536,7 @@ async function verifySettingsDialog(page) {
     await verifyPlainEditorDialog(page);
     await verifyTheme(page);
     await verifyTabs(page);
+    await verifyFeatureCatalog(page);
     await verifyServiceWizard(page);
     await verifySettingsDialog(page);
 

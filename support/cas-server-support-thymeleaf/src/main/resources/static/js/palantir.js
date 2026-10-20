@@ -139,6 +139,7 @@ async function initializePalantir() {
         await initializeCasFeatures();
         showElements("#dashboard");
         const visibleCount = processNavigationTabs();
+        updatePalantirNavigationGroups();
         const selectedTab = resolveInitialDashboardTab();
         if (visibleCount === 0 || selectedTab < 0) {
             $("#dashboard").hide();
@@ -156,7 +157,6 @@ async function initializePalantir() {
 
         await initializeHotKeyOperations();
         await initializePalantirSession();
-        window.addEventListener("resize", updateNavigationSidebar, {passive: true});
 
         $(`nav.sidebar-navigation ul li[data-tab-index=${selectedTab}]`).click();
         await initializeDashboardTab(selectedTab);
@@ -199,6 +199,122 @@ function openSidebarSections() {
     }
 }
 
+/**
+ * Close every open menu of the navigation bar.
+ *
+ * @param {Element|null} restoreFocusTo the element that receives focus afterwards, if any
+ */
+function closePalantirNavigationMenus(restoreFocusTo = null) {
+    document.querySelectorAll("#palantirNavigation .palantir-nav-group.is-open").forEach(group => {
+        group.classList.remove("is-open");
+        group.querySelector(".palantir-nav-group-toggle")?.setAttribute("aria-expanded", "false");
+    });
+    restoreFocusTo?.focus();
+}
+
+/**
+ * Open one menu of the navigation bar and close the others.
+ *
+ * Focus moves into the menu once the menu is drawn: the browser refuses focus to an element whose
+ * visibility has just changed, for a frame or more, so the first destination is tried frame by frame.
+ *
+ * @param {Element} group the .palantir-nav-group to open
+ * @param {boolean} focusFirst whether the first destination in the menu receives focus
+ */
+function openPalantirNavigationMenu(group, focusFirst) {
+    closePalantirNavigationMenus();
+    group.classList.add("is-open");
+    group.querySelector(".palantir-nav-group-toggle")?.setAttribute("aria-expanded", "true");
+    if (focusFirst) {
+        const first = $(group).find("ul li:not(.hide) .sidebar-navigation-button").get(0);
+        const focusWhenDrawn = attempts => {
+            first?.focus();
+            if (first && document.activeElement !== first && attempts > 0 && group.classList.contains("is-open")) {
+                requestAnimationFrame(() => focusWhenDrawn(attempts - 1));
+            }
+        };
+        requestAnimationFrame(() => focusWhenDrawn(20));
+    }
+}
+
+/**
+ * Keep the grouped menus in step with their destinations, and name the page after the current one.
+ *
+ * A group is hidden when the deployment hides all of its destinations, and marked when it holds the
+ * current destination. The page heading shows the current destination's label and, when it sits in
+ * a group, the group's name above it.
+ */
+function updatePalantirNavigationGroups() {
+    document.querySelectorAll("#palantirNavigation .palantir-nav-group").forEach(group => {
+        const destinations = [...group.querySelectorAll("ul li")];
+        const available = destinations.filter(item => !item.classList.contains("hide") && !item.classList.contains("d-none"));
+        group.classList.toggle("d-none", available.length === 0);
+        group.classList.toggle("has-active", destinations.some(item => item.classList.contains("active")));
+    });
+    const active = document.querySelector("#palantirNavigation ul li.active");
+    if (active) {
+        const label = active.querySelector(".sidebar-navigation-label")?.textContent.trim() ?? "";
+        const group = active.closest(".palantir-nav-group")?.querySelector(".palantir-nav-group-name")?.textContent.trim() ?? "";
+        $("#palantirPageTitle").text(label);
+        $("#palantirPageGroup").text(group).toggleClass("d-none", group === "");
+    }
+}
+
+/**
+ * Wire the menus of the navigation bar: toggles, outside clicks, Escape and the arrow keys.
+ */
+function initializePalantirNavigationMenus() {
+    const navigation = document.getElementById("palantirNavigation");
+    if (!navigation) {
+        return;
+    }
+    navigation.addEventListener("click", event => {
+        const toggle = event.target.closest(".palantir-nav-group-toggle");
+        if (toggle) {
+            const group = toggle.closest(".palantir-nav-group");
+            if (group.classList.contains("is-open")) {
+                closePalantirNavigationMenus();
+            } else {
+                openPalantirNavigationMenu(group, false);
+            }
+        }
+    });
+    navigation.addEventListener("keydown", event => {
+        const toggle = event.target.closest(".palantir-nav-group-toggle");
+        if (toggle && event.key === "ArrowDown") {
+            event.preventDefault();
+            openPalantirNavigationMenu(toggle.closest(".palantir-nav-group"), true);
+            return;
+        }
+        const menu = event.target.closest(".palantir-nav-menu");
+        if (menu && (event.key === "ArrowDown" || event.key === "ArrowUp")) {
+            event.preventDefault();
+            const buttons = $(menu).find("ul li:not(.hide) .sidebar-navigation-button").get();
+            const index = buttons.indexOf(event.target.closest(".sidebar-navigation-button"));
+            const next = event.key === "ArrowDown" ? index + 1 : index - 1;
+            buttons[(next + buttons.length) % buttons.length]?.focus();
+        }
+    });
+    document.addEventListener("click", event => {
+        if (!event.target.closest("#palantirNavigation .palantir-nav-group")) {
+            closePalantirNavigationMenus();
+        }
+    });
+    document.addEventListener("keydown", event => {
+        const open = document.querySelector("#palantirNavigation .palantir-nav-group.is-open");
+        if (event.key === "Escape" && open) {
+            closePalantirNavigationMenus(open.querySelector(".palantir-nav-group-toggle"));
+        }
+    });
+    navigation.addEventListener("focusout", event => {
+        const group = event.target.closest(".palantir-nav-group");
+        if (group && !group.contains(event.relatedTarget)) {
+            group.classList.remove("is-open");
+            group.querySelector(".palantir-nav-group-toggle")?.setAttribute("aria-expanded", "false");
+        }
+    });
+}
+
 function initializeSidebarSections() {
     $("#dashboard [data-palantir-action='sections']").off("click").on("click", () => {
         if ($("#dashboard").hasClass("is-nav-open")) {
@@ -222,9 +338,12 @@ document.addEventListener("DOMContentLoaded", () => {
     initializePalantirWidgets();
     initializeTooltips();
 
+    PalantirTheme.initialize();
     initializeSidebarSections();
+    initializePalantirNavigationMenus();
     $("nav.sidebar-navigation ul li").off().on("click", function () {
         closeSidebarSections(false);
+        closePalantirNavigationMenus();
         hideBanner();
         const index = selectSidebarMenuButton(this);
         activateDashboardTab(index);

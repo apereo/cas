@@ -617,6 +617,23 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
   in `destroy()` leaves the located property source with a closed client. The AWS configuration sources take a
   `Supplier` of clients and open and close one per refresh or change.
 
+- CAS reads a plain number in a `@DurationCapable` setting as seconds (`Beans.newDuration`), so `socket-timeout=1000`
+  means 1000 seconds; write durations as `PT1S`.
+- Every CAS MongoDb module pulls in Spring Boot's MongoDb data auto-configuration, whose `gridFsTemplate` needs exactly
+  one injectable `MongoTemplate`. A module with zero (only `MongoOperations` beans) or two `MongoTemplate` beans breaks
+  startup unless its templates are `@Bean(defaultCandidate = false)` and injected by `@Qualifier`; Boot then creates
+  its own template. AUP and passwordless MongoDb do this; other pairs of MongoDb modules in one build can still clash.
+- The Google Authenticator JSON repository writes used scratch codes back to its file, so a scenario with variations or
+  retries runs out of codes. Copy the account file to `${TMPDIR}` from an init script (runs per variation) and point
+  `cas.authn.mfa.gauth.json.location` at the copy, as `mfa-gauth-login-trusted-devices-storage` does; unpause paused
+  containers in a `finally`.
+- Scenarios that change a backend must put it back at the start, because `run.sh` retries a failed script against the
+  same CAS instance and containers (`configuration-properties-aws` does this). Keep property values free of spaces
+  (`run.sh` cuts them), e.g. `mail.text=Username:${username}`.
+- A SAML2 metadata module with `SAMLIdentityProviderMetadata` on replaces the file-system IdP metadata beans even when
+  its own IdP metadata is off; scenarios that keep IdP metadata on disk switch it off with
+  `CasFeatureModule.SAMLIdentityProviderMetadata.<module>.enabled=false`.
+
 ## Actuator endpoint coverage in scenarios
 
 - `samlIdPRegisteredServiceMetadata`: every operation in `saml2-idp-login-metadata-redis` (and `-git`); `oidcVcStatus`:
@@ -796,11 +813,44 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
   first, then the existing heading. Use `cas-hero-start` for forms and lists, `cas-hero-wide` for tables. Never add a heading or
   `<p>` before the existing ones and never remove a wrapping `div`: puppeteer asserts `#content div h2`, `#content h2`,
   first `#content p`, `#login h2/h3/p` and `#main-content h2`. Banner root cards turn neutral under `.cas-hero`. Login gets
-  `.cas-login-card` (surface only). Palantir polish lives at the end of `palantir.css`, scoped to `#dashboard`.
-- Palantir's rail (`fragments/palantir/navigationsidebar.html`, styled at the end of `palantir.css`) mirrors the account
-  profile rail: change both together. Only destinations may be `<li>` (scripts treat every `nav.sidebar-navigation ul li`
-  as one, and count them with `:visible`), so the narrow-screen overlay hides with `visibility`, never `display: none`.
+  `.cas-login-card` (surface only).
+- Palantir's layout and themes live in `palantir-meridian.css` (loaded after `palantir.css`): `--palantir-*` tokens are defined
+  for light and for dark on `html.palantir-page[data-theme]`, and the shared `--cas-ui-*`/`--cas-theme-*` variables are pointed
+  at them inside Palantir. Color new rules with the tokens (`var(--palantir-surface, #fff)` in `palantir.css`), never a bare
+  light color; where the brand color sits behind white text, dark needs `--palantir-brand-fill`. The page head applies the
+  stored theme (`PalantirTheme` in localStorage: system, light, dark) before first paint; `palantir-theme.js` owns the toggle,
+  the settings choice, Chart.js defaults and the `palantir:theme-changed` event. Never set `Chart.defaults.borderColor` or
+  `backgroundColor`: Chart.js only applies its dataset palette while both keep their stock values; theme the grid through
+  `Chart.defaults.scale.grid.color` and `Chart.defaults.scale.border.color`.
+- Palantir forms: Enter submits through the form's primary button, which is `type="submit"` while the form keeps
+  `onsubmit="return false;"` (the button's click handler does the work); every dashboard form needs that attribute, since a
+  form with one text field and no handler reloads the page on Enter. Don't add per-input Enter key handlers.
+- The service wizard's fields are built on first open (`palantirWizardField` builders), after the Applications panel ran
+  `initializePalantirWidgets`; `buildRegisteredServiceWizardFields` initializes the form's widgets afterwards, so dropdowns
+  get the change callback that runs their `data-change-handler` functions. A bare `.selectmenu()` has no such callback.
+- Palantir's navigation (`fragments/palantir/navigationsidebar.html`) is a top bar: Applications, grouped menus (Identity,
+  Sessions, Platform) and the theme, settings and sign-out buttons. Only destinations may be `<li>` (scripts treat every
+  `nav.sidebar-navigation ul li` as one and count them with `:visible`; polling also stops when a destination is not
+  `:visible`), so closed menus and the narrow-screen overlay hide with `visibility`, never `display: none`.
+  `updatePalantirNavigationGroups()` hides empty groups, marks the active one and writes the page heading.
+  A row of inner jQuery UI tabs with one visible tab is clipped out of sight, not hidden, for the same reason.
   DataTables group header rows come from `palantirTableGroupRow(label, columns)` (palantir-utils.js); never inline-style them.
+- Palantir applications: the card view (`#applicationsCards`) is drawn from the DataTable's filtered current page on every
+  draw and when a row's class changes, so search, paging and the selected row apply to both views; card buttons call
+  `applicationActionHandler(key, context)`, the same handler as the row context menu, with `applicationRowContext(id)`.
+- Palantir's service wizard (`palantir-services-sections.js`) maps section groups to `STEPS` (Basics, Protocol,
+  Access & attributes, Policies) plus a review. Every available section keeps a tile with `data-section-key` even when its
+  step is not shown (the `palantir-login` scenario clicks them by key), and `activate(key)` leaves the review. The type is
+  chosen in `chooseRegisteredServiceType()` (SweetAlert with cards), not a select. Every Policies section is an
+  `advanced-option`: `advancedSectionsOf(step)` keeps that step clickable while advanced options are hidden, and
+  `showStep` turns them on through `#hideAdvancedOptionsButton`. Footer buttons are in DOM order (Cancel, Validate, Copy,
+  Save); don't reorder them with CSS `order`, which leaves the keyboard order behind.
+- Palantir's feature catalog (`palantir-cas-features.js`) groups `CasFeatureModule.<Feature>[.<module>]` names into one
+  card per feature; `CAS_FEATURE_TITLES` holds titles the casing can't split. `CAS_FEATURES` stays the flat name list
+  other scripts read.
+- To look at Palantir without a running CAS: render `palantir/casPalantirDashboardView` with Thymeleaf, the layout dialect,
+  OGNL and a stub `#cas` expression object (jars from a built war; SpEL `?:` inside `${}` and `T(...)` need rewriting for
+  OGNL), serve `static/` with the webjars (npm for those not in the war), and stub the actuator URLs in Playwright.
 - Palantir dialogs sit outside `#main-content`, so `applySharedDialogStyle()` (palantir-utils.js, called from
   `initializePalantir`) adds `cas-ui palantir-dialog` on `dialogcreate`; style dialogs through those classes, qualified enough
   to beat the Cupertino theme (`.ui-dialog.palantir-dialog …`). Use the `classes` option, not the deprecated `dialogClass`.

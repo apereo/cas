@@ -143,6 +143,7 @@ function activateDashboardTab(idx) {
                             const palantirSettings = storedSettings ? JSON.parse(storedSettings) : {};
                             palantirSettings.refreshInterval = Number($("#palantirRefreshInterval").val());
                             localStorage.setItem("PalantirSettings", JSON.stringify(palantirSettings));
+                            PalantirTheme.apply($("#palantirTheme").val());
                             $(this).dialog("close");
                             location.reload(true);
                         },
@@ -173,6 +174,15 @@ function activateDashboardTab(idx) {
                                 .val(palantirSettings().refreshInterval / 1000)
                                 .selectmenu("refresh");
                         }
+                        if ($("#palantirTheme").selectmenu("instance")) {
+                            $("#palantirTheme").selectmenu("destroy");
+                        }
+                        $("#palantirTheme").selectmenu({
+                            appendTo: $(this).closest(".ui-dialog")
+                        });
+                        $("#palantirTheme")
+                            .val(PalantirTheme.preference())
+                            .selectmenu("refresh");
                     },
                     close: function () {
                         $(this).dialog("destroy");
@@ -234,6 +244,7 @@ function selectSidebarMenuButton(selectedItem) {
         item.addClass("active");
         item.find(".sidebar-navigation-button").attr("aria-current", "page");
         window.localStorage.setItem("PalantirSelectedTab", index);
+        updatePalantirNavigationGroups();
     }
     return index;
 }
@@ -434,7 +445,7 @@ async function restoreActiveTabs() {
 }
 
 async function updateNavigationSidebar() {
-    $("nav.sidebar-navigation").css("height", $("#dashboard .mdc-card").css("height"));
+    updatePalantirNavigationGroups();
 }
 
 function selectSidebarMenuTab(tab) {

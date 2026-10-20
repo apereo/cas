@@ -8,134 +8,227 @@
 <body>
 <span th:fragment="main">
     <!--/*
-        The rail mirrors the account profile's (fragments/accountprofile/accountprofilenavigation.html):
-        a fixed column of icon-over-label destinations, the selected one a white pill, and the
-        settings and sign-out actions pinned to the bottom. On narrow screens it becomes a full-screen
-        grid opened from the "Sections" button on the main panel.
+        The navigation bar: Applications, three grouped menus (Identity, Sessions, Platform) and the
+        theme, settings and sign-out actions. On narrow screens it becomes a full-screen panel opened
+        from the "Sections" button on the main panel, with every group listed under its name.
 
         Each destination is a real <button> inside its list item. The list item keeps the id, the
         data-tab-index and the active class, so every existing selector and hideElements(...) call
-        still resolves. The visible label is the button's accessible name; a shortened label carries
-        the full section name as its title. Only destinations live in list items: the scripts treat
-        every "nav.sidebar-navigation ul li" as one.
+        still resolves. Only destinations live in list items: the scripts treat every
+        "nav.sidebar-navigation ul li" as one and count them with :visible, so a closed menu hides
+        with visibility, never display: none. A group whose destinations are all hidden is hidden
+        with them (updatePalantirNavigationGroups in palantir.js).
     */-->
-    <nav id="palantirNavigation" class="sidebar-navigation" aria-label="Palantir sections">
+    <nav id="palantirNavigation" class="sidebar-navigation palantir-nav" aria-label="Palantir sections">
         <div class="sidebar-navigation-head">
             <span>Palantir sections</span>
             <button type="button" class="sidebar-navigation-close" data-palantir-action="close-sections">Close</button>
         </div>
-        <ul>
-            <li id="applicationsTabButton" class="active" data-tab-index="0">
-                <button type="button" class="sidebar-navigation-button" aria-current="page">
-                    <i class="mdi mdi-apps" aria-hidden="true"></i>
-                    <span class="sidebar-navigation-label">Applications</span>
+        <div class="palantir-nav-brand">
+            <span class="palantir-nav-mark" aria-hidden="true">CAS</span>
+            <span class="palantir-nav-name">Palantir</span>
+        </div>
+        <div class="palantir-nav-primary">
+            <ul class="palantir-nav-direct">
+                <li id="applicationsTabButton" class="active" data-tab-index="0">
+                    <button type="button" class="sidebar-navigation-button" aria-current="page">
+                        <i class="mdi mdi-apps" aria-hidden="true"></i>
+                        <span class="sidebar-navigation-text">
+                            <span class="sidebar-navigation-label">Applications</span>
+                            <span class="sidebar-navigation-description" aria-hidden="true">Registered services and SAML2 metadata sources</span>
+                        </span>
+                    </button>
+                </li>
+            </ul>
+            <div th:if="${isRoleAdmin}" class="palantir-nav-group" data-palantir-nav-group="identity">
+                <button type="button" class="palantir-nav-group-toggle" aria-expanded="false" aria-controls="palantirNavGroupIdentity">
+                    <span class="palantir-nav-group-name">Identity</span>
+                    <i class="mdi mdi-chevron-down" aria-hidden="true"></i>
                 </button>
-            </li>
-            <li th:if="${isRoleAdmin}" id="systemTabButton" data-tab-index="1">
-                <button type="button" class="sidebar-navigation-button">
-                    <i class="mdi mdi-laptop" aria-hidden="true"></i>
-                    <span class="sidebar-navigation-label">System</span>
+                <div class="palantir-nav-menu" id="palantirNavGroupIdentity">
+                    <p class="palantir-nav-menu-title" aria-hidden="true">Identity</p>
+                    <ul>
+                        <li th:if="${isRoleAdmin}" id="authenticationTabButton" data-tab-index="9">
+                            <button type="button" class="sidebar-navigation-button" title="Authentication">
+                                <i class="mdi mdi-account-check" aria-hidden="true"></i>
+                                <span class="sidebar-navigation-text">
+                                    <span class="sidebar-navigation-label">Authentication</span>
+                                    <span class="sidebar-navigation-description" aria-hidden="true">Handlers, policies and providers</span>
+                                </span>
+                            </button>
+                        </li>
+                        <li th:if="${isRoleAdmin}" id="personDirectoryTabButton" data-tab-index="8">
+                            <button type="button" class="sidebar-navigation-button" title="Attribute Resolution">
+                                <i class="mdi mdi-card-account-details" aria-hidden="true"></i>
+                                <span class="sidebar-navigation-text">
+                                    <span class="sidebar-navigation-label">Attributes</span>
+                                    <span class="sidebar-navigation-description" aria-hidden="true">Attribute definitions and repositories</span>
+                                </span>
+                            </button>
+                        </li>
+                        <li th:if="${isRoleAdmin}" id="mfaTabButton" data-tab-index="13">
+                            <button type="button" class="sidebar-navigation-button" title="Multifactor Authentication">
+                                <i class="mdi mdi-two-factor-authentication" aria-hidden="true"></i>
+                                <span class="sidebar-navigation-text">
+                                    <span class="sidebar-navigation-label">MFA</span>
+                                    <span class="sidebar-navigation-description" aria-hidden="true">Registered devices and trusted browsers</span>
+                                </span>
+                            </button>
+                        </li>
+                        <li th:if="${isRoleAdmin}" id="consentTabButton" data-tab-index="10">
+                            <button type="button" class="sidebar-navigation-button" title="Attribute Consent">
+                                <i class="mdi mdi-checkerboard" aria-hidden="true"></i>
+                                <span class="sidebar-navigation-text">
+                                    <span class="sidebar-navigation-label">Consent</span>
+                                    <span class="sidebar-navigation-description" aria-hidden="true">Attribute consent decisions</span>
+                                </span>
+                            </button>
+                        </li>
+                        <li th:if="${isRoleAdmin}" id="accessStrategyTabButton" data-tab-index="4">
+                            <button type="button" class="sidebar-navigation-button" title="Access Strategy">
+                                <i class="mdi mdi-shield-check" aria-hidden="true"></i>
+                                <span class="sidebar-navigation-text">
+                                    <span class="sidebar-navigation-label">Access</span>
+                                    <span class="sidebar-navigation-description" aria-hidden="true">Access strategies and authorization</span>
+                                </span>
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div th:if="${isRoleAdmin}" class="palantir-nav-group" data-palantir-nav-group="sessions">
+                <button type="button" class="palantir-nav-group-toggle" aria-expanded="false" aria-controls="palantirNavGroupSessions">
+                    <span class="palantir-nav-group-name">Sessions</span>
+                    <i class="mdi mdi-chevron-down" aria-hidden="true"></i>
                 </button>
-            </li>
-            <li th:if="${isRoleAdmin}" id="ticketsTabButton" data-tab-index="2">
-                <button type="button" class="sidebar-navigation-button">
-                    <i class="mdi mdi-database" aria-hidden="true"></i>
-                    <span class="sidebar-navigation-label">Tickets</span>
+                <div class="palantir-nav-menu" id="palantirNavGroupSessions">
+                    <p class="palantir-nav-menu-title" aria-hidden="true">Sessions</p>
+                    <ul>
+                        <li th:if="${isRoleAdmin}" id="ssoSessionsTabButton" data-tab-index="6">
+                            <button type="button" class="sidebar-navigation-button">
+                                <i class="mdi mdi-account-multiple" aria-hidden="true"></i>
+                                <span class="sidebar-navigation-text">
+                                    <span class="sidebar-navigation-label">SSO Sessions</span>
+                                    <span class="sidebar-navigation-description" aria-hidden="true">Single sign-on and HTTP sessions</span>
+                                </span>
+                            </button>
+                        </li>
+                        <li th:if="${isRoleAdmin}" id="ticketsTabButton" data-tab-index="2">
+                            <button type="button" class="sidebar-navigation-button">
+                                <i class="mdi mdi-database" aria-hidden="true"></i>
+                                <span class="sidebar-navigation-text">
+                                    <span class="sidebar-navigation-label">Tickets</span>
+                                    <span class="sidebar-navigation-description" aria-hidden="true">Tickets in the ticket registry</span>
+                                </span>
+                            </button>
+                        </li>
+                        <li th:if="${isRoleAdmin}" id="throttlesTabButton" data-tab-index="12">
+                            <button type="button" class="sidebar-navigation-button" title="Throttled Authentication">
+                                <i class="mdi mdi-account-lock" aria-hidden="true"></i>
+                                <span class="sidebar-navigation-text">
+                                    <span class="sidebar-navigation-label">Throttles</span>
+                                    <span class="sidebar-navigation-description" aria-hidden="true">Throttled authentication attempts</span>
+                                </span>
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div th:if="${isRoleAdmin}" class="palantir-nav-group" data-palantir-nav-group="platform">
+                <button type="button" class="palantir-nav-group-toggle" aria-expanded="false" aria-controls="palantirNavGroupPlatform">
+                    <span class="palantir-nav-group-name">Platform</span>
+                    <i class="mdi mdi-chevron-down" aria-hidden="true"></i>
                 </button>
-            </li>
-            <li th:if="${isRoleAdmin}" id="tasksTabButton" data-tab-index="3">
-                <button type="button" class="sidebar-navigation-button">
-                    <i class="mdi mdi-tire" aria-hidden="true"></i>
-                    <span class="sidebar-navigation-label">Tasks</span>
-                </button>
-            </li>
-            <li th:if="${isRoleAdmin}" id="accessStrategyTabButton" data-tab-index="4">
-                <button type="button" class="sidebar-navigation-button" title="Access Strategy">
-                    <i class="mdi mdi-shield-check" aria-hidden="true"></i>
-                    <span class="sidebar-navigation-label">Access</span>
-                </button>
-            </li>
-            <li th:if="${isRoleAdmin}" id="loggingTabButton" data-tab-index="5">
-                <button type="button" class="sidebar-navigation-button">
-                    <i class="mdi mdi-text" aria-hidden="true"></i>
-                    <span class="sidebar-navigation-label">Logs &amp; Audits</span>
-                </button>
-            </li>
-            <li th:if="${isRoleAdmin}" id="ssoSessionsTabButton" data-tab-index="6">
-                <button type="button" class="sidebar-navigation-button">
-                    <i class="mdi mdi-account-multiple" aria-hidden="true"></i>
-                    <span class="sidebar-navigation-label">SSO Sessions</span>
-                </button>
-            </li>
-            <li th:if="${isRoleAdmin}" id="configurationTabButton" data-tab-index="7">
-                <button type="button" class="sidebar-navigation-button" title="CAS Configuration">
-                    <i class="mdi mdi-wrench" aria-hidden="true"></i>
-                    <span class="sidebar-navigation-label">Configuration</span>
-                </button>
-            </li>
-            <li th:if="${isRoleAdmin}" id="personDirectoryTabButton" data-tab-index="8">
-                <button type="button" class="sidebar-navigation-button" title="Attribute Resolution">
-                    <i class="mdi mdi-card-account-details" aria-hidden="true"></i>
-                    <span class="sidebar-navigation-label">Attributes</span>
-                </button>
-            </li>
-            <li th:if="${isRoleAdmin}" id="authenticationTabButton" data-tab-index="9">
-                <button type="button" class="sidebar-navigation-button" title="Authentication">
-                    <i class="mdi mdi-account-check" aria-hidden="true"></i>
-                    <span class="sidebar-navigation-label">Auth</span>
-                </button>
-            </li>
-            <li th:if="${isRoleAdmin}" id="consentTabButton" data-tab-index="10">
-                <button type="button" class="sidebar-navigation-button" title="Attribute Consent">
-                    <i class="mdi mdi-checkerboard" aria-hidden="true"></i>
-                    <span class="sidebar-navigation-label">Consent</span>
-                </button>
-            </li>
-            <li th:if="${isRoleAdmin}" id="protocolsTabButton" data-tab-index="11">
-                <button type="button" class="sidebar-navigation-button" title="Authentication Protocols">
-                    <i class="mdi mdi-protocol" aria-hidden="true"></i>
-                    <span class="sidebar-navigation-label">Protocols</span>
-                </button>
-            </li>
-            <li th:if="${isRoleAdmin}" id="throttlesTabButton" data-tab-index="12">
-                <button type="button" class="sidebar-navigation-button" title="Throttled Authentication">
-                    <i class="mdi mdi-account-lock" aria-hidden="true"></i>
-                    <span class="sidebar-navigation-label">Throttles</span>
-                </button>
-            </li>
-            <li th:if="${isRoleAdmin}" id="mfaTabButton" data-tab-index="13">
-                <button type="button" class="sidebar-navigation-button" title="Multifactor Authentication">
-                    <i class="mdi mdi-two-factor-authentication" aria-hidden="true"></i>
-                    <span class="sidebar-navigation-label">MFA</span>
-                </button>
-            </li>
-            <li th:if="${isRoleAdmin}" id="tenantsTabButton" data-tab-index="14">
-                <button type="button" class="sidebar-navigation-button" title="Multitenancy">
-                    <i class="mdi mdi-home-circle" aria-hidden="true"></i>
-                    <span class="sidebar-navigation-label">Tenants</span>
-                </button>
-            </li>
-            <li th:if="${isRoleAdmin}" id="clusterTabButton" data-tab-index="15">
-                <button type="button" class="sidebar-navigation-button" title="Cluster &amp; High Availability">
-                    <i class="mdi mdi-server" aria-hidden="true"></i>
-                    <span class="sidebar-navigation-label">Cluster</span>
-                </button>
-            </li>
-        </ul>
-        <ul class="sidebar-navigation-actions">
-            <li th:if="${isRoleAdmin}" id="palantirSettingsTabButton" data-tab-index="100">
-                <button type="button" class="sidebar-navigation-button" title="Palantir Settings">
-                    <i class="mdi mdi-cog-outline" aria-hidden="true"></i>
-                    <span class="sidebar-navigation-label">Settings</span>
-                </button>
-            </li>
-            <li id="palantirLogoutButton" data-tab-index="200">
-                <button type="button" class="sidebar-navigation-button">
-                    <i class="mdi mdi-logout-variant" aria-hidden="true"></i>
-                    <span class="sidebar-navigation-label">Sign out</span>
-                </button>
-            </li>
-        </ul>
+                <div class="palantir-nav-menu" id="palantirNavGroupPlatform">
+                    <p class="palantir-nav-menu-title" aria-hidden="true">Platform</p>
+                    <ul>
+                        <li th:if="${isRoleAdmin}" id="systemTabButton" data-tab-index="1">
+                            <button type="button" class="sidebar-navigation-button">
+                                <i class="mdi mdi-laptop" aria-hidden="true"></i>
+                                <span class="sidebar-navigation-text">
+                                    <span class="sidebar-navigation-label">System</span>
+                                    <span class="sidebar-navigation-description" aria-hidden="true">Health, metrics, JVM and environment</span>
+                                </span>
+                            </button>
+                        </li>
+                        <li th:if="${isRoleAdmin}" id="configurationTabButton" data-tab-index="7">
+                            <button type="button" class="sidebar-navigation-button" title="CAS Configuration">
+                                <i class="mdi mdi-wrench" aria-hidden="true"></i>
+                                <span class="sidebar-navigation-text">
+                                    <span class="sidebar-navigation-label">Configuration</span>
+                                    <span class="sidebar-navigation-description" aria-hidden="true">Properties and property sources</span>
+                                </span>
+                            </button>
+                        </li>
+                        <li th:if="${isRoleAdmin}" id="loggingTabButton" data-tab-index="5">
+                            <button type="button" class="sidebar-navigation-button">
+                                <i class="mdi mdi-text" aria-hidden="true"></i>
+                                <span class="sidebar-navigation-text">
+                                    <span class="sidebar-navigation-label">Logs &amp; Audits</span>
+                                    <span class="sidebar-navigation-description" aria-hidden="true">Loggers, audit trail and events</span>
+                                </span>
+                            </button>
+                        </li>
+                        <li th:if="${isRoleAdmin}" id="tasksTabButton" data-tab-index="3">
+                            <button type="button" class="sidebar-navigation-button">
+                                <i class="mdi mdi-tire" aria-hidden="true"></i>
+                                <span class="sidebar-navigation-text">
+                                    <span class="sidebar-navigation-label">Tasks</span>
+                                    <span class="sidebar-navigation-description" aria-hidden="true">Scheduled tasks and thread dump</span>
+                                </span>
+                            </button>
+                        </li>
+                        <li th:if="${isRoleAdmin}" id="protocolsTabButton" data-tab-index="11">
+                            <button type="button" class="sidebar-navigation-button" title="Authentication Protocols">
+                                <i class="mdi mdi-protocol" aria-hidden="true"></i>
+                                <span class="sidebar-navigation-text">
+                                    <span class="sidebar-navigation-label">Protocols</span>
+                                    <span class="sidebar-navigation-description" aria-hidden="true">Try CAS, SAML and OpenID Connect</span>
+                                </span>
+                            </button>
+                        </li>
+                        <li th:if="${isRoleAdmin}" id="tenantsTabButton" data-tab-index="14">
+                            <button type="button" class="sidebar-navigation-button" title="Multitenancy">
+                                <i class="mdi mdi-home-circle" aria-hidden="true"></i>
+                                <span class="sidebar-navigation-text">
+                                    <span class="sidebar-navigation-label">Tenants</span>
+                                    <span class="sidebar-navigation-description" aria-hidden="true">Multitenancy definitions</span>
+                                </span>
+                            </button>
+                        </li>
+                        <li th:if="${isRoleAdmin}" id="clusterTabButton" data-tab-index="15">
+                            <button type="button" class="sidebar-navigation-button" title="Cluster &amp; High Availability">
+                                <i class="mdi mdi-server" aria-hidden="true"></i>
+                                <span class="sidebar-navigation-text">
+                                    <span class="sidebar-navigation-label">Cluster</span>
+                                    <span class="sidebar-navigation-description" aria-hidden="true">Nodes and cache topology</span>
+                                </span>
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="palantir-nav-actions">
+            <button type="button" id="palantirThemeToggle" class="palantir-nav-icon-button"
+                    aria-label="Switch to dark theme" title="Switch to dark theme">
+                <i class="mdi mdi-weather-night" aria-hidden="true"></i>
+            </button>
+            <ul class="sidebar-navigation-actions">
+                <li th:if="${isRoleAdmin}" id="palantirSettingsTabButton" data-tab-index="100">
+                    <button type="button" class="sidebar-navigation-button" title="Palantir Settings">
+                        <i class="mdi mdi-cog-outline" aria-hidden="true"></i>
+                        <span class="sidebar-navigation-label">Settings</span>
+                    </button>
+                </li>
+                <li id="palantirLogoutButton" data-tab-index="200">
+                    <button type="button" class="sidebar-navigation-button" title="Sign out">
+                        <i class="mdi mdi-logout-variant" aria-hidden="true"></i>
+                        <span class="sidebar-navigation-label">Sign out</span>
+                    </button>
+                </li>
+            </ul>
+        </div>
     </nav>
 </span>
 </body>

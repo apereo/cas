@@ -5307,6 +5307,14 @@ ul.tab-content > li:not(.active):not(.property-name):not(.property-tab):not(.cas
     line-height: 1.55;
 }
 
+/* Lightbox only reveals its previous and next arrows on hover, which touch screens never have,
+   so keep them visible there; site.js adds swiping between images. */
+@media (hover: none) {
+    #lightbox .lb-nav a.lb-prev, #lightbox .lb-nav a.lb-next {
+        opacity: .85;
+    }
+}
+
 .cas-release-more {
     font-size: .85rem;
     text-decoration: none;

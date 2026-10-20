@@ -468,10 +468,22 @@
             </div>
 
             <div id="casfeaturestab-tab">
-                <div class="d-flex align-items-start mb-4">
-                    <div id="casFeaturesChipset" class="mdc-chip-set" role="grid">
+                <section class="palantir-feature-catalog" aria-labelledby="casFeaturesHeading">
+                    <div class="palantir-feature-catalog__toolbar">
+                        <div>
+                            <h3 id="casFeaturesHeading">Features present in this deployment</h3>
+                            <p id="casFeaturesSummary" class="palantir-feature-catalog__summary" role="status" aria-live="polite"></p>
+                        </div>
+                        <label class="registered-service-sections__search palantir-feature-catalog__search" for="casFeaturesSearch">
+                            <i class="mdi mdi-magnify" aria-hidden="true"></i>
+                            <span class="palantir-sr-only">Search features and modules</span>
+                            <input type="search" id="casFeaturesSearch" autocomplete="off"
+                                   placeholder="Search features and modules">
+                        </label>
                     </div>
-                </div>
+                    <div id="casFeaturesCatalog" class="palantir-feature-catalog__grid" role="list"></div>
+                    <p id="casFeaturesEmpty" class="palantir-empty-state hide">No feature or module matches your search.</p>
+                </section>
             </div>
 
             <div id="caswebflowtab-tab">

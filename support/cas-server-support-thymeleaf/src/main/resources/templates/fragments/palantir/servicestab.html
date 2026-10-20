@@ -9,29 +9,18 @@
 <span th:fragment="main">
     <div class="attribute-tab w-100 mdc-data-table table-responsive noborder" id="attribute-tab-0">
 
-        <div class="jqueryui-tabs" id="applications-tabs">
-              <ul>
-                <li><a id="applications" href="#applications-tab">Applications</a></li>
-                <li><a id="saml2metadataproviders" href="#saml2metadataproviders-tab" class="hide">SAML2 Metadata Sources</a></li>
-              </ul>
-
-            <div id="applications-tab">
-
-                <table id="applicationsTable" class="mdc-data-table__table table table-striped noborder">
-                    <thead>
-                    <tr class="mdc-data-table__header-row">
-	                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col"></th>
-	                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Service</th>
-	                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">URL Pattern</th>
-	                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Description</th>
-	                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col"></th>
-	                    </tr>
-	                    </thead>
-	                    <tbody class="mdc-data-table__content">
-	                    </tbody>
-	                </table>
-
-	                <div width="10%">
+        <section class="palantir-applications-toolbar" aria-label="Applications toolbar">
+            <p class="palantir-applications-summary" id="applicationsSummary" aria-live="polite"></p>
+            <div class="palantir-applications-actions">
+                <div class="palantir-view-switch" role="group" aria-label="Show applications as">
+                    <button type="button" id="applicationsCardsView" data-applications-view="cards" aria-pressed="true">
+                        <i class="mdi mdi-view-grid-outline" aria-hidden="true"></i>Cards
+                    </button>
+                    <button type="button" id="applicationsTableView" data-applications-view="table" aria-pressed="false">
+                        <i class="mdi mdi-table" aria-hidden="true"></i>Table
+                    </button>
+                </div>
+                <div class="palantir-applications-buttons">
                     <div class="mdc-touch-target-wrapper">
                         <span class="mdc-menu-surface--anchor">
                             <button name="newService" id="newService"
@@ -103,9 +92,47 @@
                         </button>
                     </div>
                 </div>
-                <div class="w-50 mx-auto">
-                  <canvas id="servicesChart" role="img" aria-label="Registered services by type"></canvas>
-                </div>
+            </div>
+        </section>
+
+        <div class="jqueryui-tabs" id="applications-tabs">
+              <ul>
+                <li><a id="applications" href="#applications-tab">Applications</a></li>
+                <li><a id="saml2metadataproviders" href="#saml2metadataproviders-tab" class="hide">SAML2 Metadata Sources</a></li>
+              </ul>
+
+            <div id="applications-tab">
+
+                <table id="applicationsTable" class="mdc-data-table__table table table-striped noborder">
+                    <thead>
+                    <tr class="mdc-data-table__header-row">
+	                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col"></th>
+	                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Service</th>
+	                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">URL Pattern</th>
+	                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Description</th>
+	                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col"></th>
+	                    </tr>
+	                    </thead>
+	                    <tbody class="mdc-data-table__content">
+	                    </tbody>
+	                </table>
+
+                <!--/*
+                    The card view of the table above, drawn by palantir-services.js from the rows the table
+                    currently shows, so the table's search, paging and selection apply to both views.
+                */-->
+                <div id="applicationsCards" class="palantir-application-cards"></div>
+                <p class="palantir-applications-hint">
+                    <i class="mdi mdi-information-outline" aria-hidden="true"></i>
+                    Right-click a row, or use a card's menu, for more actions.
+                </p>
+
+                <section class="palantir-chart-card" aria-labelledby="servicesChartTitle">
+                    <h3 id="servicesChartTitle">Applications by type</h3>
+                    <div class="palantir-chart-frame">
+                        <canvas id="servicesChart" role="img" aria-label="Registered services by type"></canvas>
+                    </div>
+                </section>
 
                 <!--/*
                     A jQuery UI dialog, like every other dialog in Palantir. The widget
@@ -125,28 +152,38 @@
                                     <pre><code id="serviceClassType" class="border-rounded language-html"></code></pre>
                                 </span>
 
-                                <div class="d-flex align-items-center">
-                                    <div th:replace="~{fragments/switchbutton :: switchbutton (id='hideAdvancedOptions',
-                                        label='#Hide Advanced Options', cssClass='pb-2 pt-2', selected=true, dataAttrs='changeEventHandler=hideAdvancedRegisteredServiceOptions')}"/>
-                                    <div th:replace="~{fragments/switchbutton :: switchbutton (id='showJsonEditor',
-                                        label='#Show JSON Editor', cssClass='pb-2 pt-2 pl-2', selected=true, dataAttrs='changeEventHandler=toggleJsonEditorVisibility')}"/>
+                                <div class="registered-service-wizard__header">
+                                    <div class="registered-service-wizard__identity">
+                                        <span class="palantir-protocol-badge" id="editServiceWizardTypeBadge" aria-hidden="true"></span>
+                                        <div>
+                                            <p class="registered-service-wizard__type" id="editServiceWizardTypeName"></p>
+                                            <p class="registered-service-wizard__name" id="editServiceWizardServiceName"></p>
+                                        </div>
+                                    </div>
+                                    <div class="registered-service-wizard__options d-flex align-items-center">
+                                        <div th:replace="~{fragments/switchbutton :: switchbutton (id='hideAdvancedOptions',
+                                            label='#Hide Advanced Options', cssClass='pb-2 pt-2', selected=true, dataAttrs='changeEventHandler=hideAdvancedRegisteredServiceOptions')}"/>
+                                        <div th:replace="~{fragments/switchbutton :: switchbutton (id='showJsonEditor',
+                                            label='#Show JSON Editor', cssClass='pb-2 pt-2 pl-2', selected=true, dataAttrs='changeEventHandler=toggleJsonEditorVisibility')}"/>
+                                    </div>
                                 </div>
+
+                                <!--/* The step bar, drawn by palantir-services-sections.js over the section groups. */-->
+                                <ol id="editServiceWizardSteps" class="registered-service-steps" aria-label="Wizard steps"></ol>
 
                                 <form id="editServiceWizardForm">
                                     <div id="editServiceWizardContainer" class="d-flex">
                                         <div id="editServiceWizardMenu" class="registered-service-sections mr-2 mmw-45">
                                             <!--/*
-                                                The sections below are navigated by a rail rather than an accordion.
-                                                palantir-services-sections.js reads every direct-child h3 of the
-                                                panels container, groups it by data-section-group, and shows one
-                                                section at a time.
+                                                The sections below are walked as steps. palantir-services-sections.js
+                                                reads every direct-child h3 of the panels container, groups it by
+                                                data-section-group, puts each group under a step (STEPS) and shows one
+                                                section at a time, with the step's sections as tiles above it.
 
                                                 A new section is a new h3 plus its panel div, with a
                                                 data-section-group naming one of the groups in GROUP_ORDER.
-                                                Nothing else is needed; an unknown or missing group falls into Other.
-
-                                                The panels are not re-indented, only wrapped, so this stays a
-                                                readable diff against the accordion version.
+                                                Nothing else is needed; an unknown or missing group falls into Other,
+                                                which belongs to the Policies step.
                                             */-->
                                             <nav id="editServiceWizardSectionNav"
                                                  class="registered-service-sections__nav"
@@ -790,6 +827,8 @@
                                                         dataAttrs='param-skip-false=true,param-name=surrogatePolicy.enabled,param-type=org.apereo.cas.services.DefaultRegisteredServiceSurrogatePolicy')}"/>
                                               </div>
                                         </div>
+                                            <section id="editServiceWizardReview" class="registered-service-review hide"
+                                                     aria-labelledby="editServiceWizardReviewTitle"></section>
                                         </div>
                                         <div id="wizardJsonEditorContainer" class="registered-service-wizard__json">
                                             <pre class="ace-editor ace-relative w-100 h-100 mb-0 mt-0"
@@ -806,26 +845,33 @@
                             </div>
 
                             <footer class="registered-service-wizard__actions">
-                                <button id="copyServiceDefinitionWizard" name="copyServiceDefinitionWizard"
-                                        type="button"
+                                <button id="previousServiceWizardStep" type="button" class="palantir-button registered-service-wizard__back">
+                                    <i class="mdi mdi-chevron-left" aria-hidden="true"></i><span>Back</span>
+                                </button>
+                                <button id="nextServiceWizardStep" type="button" class="palantir-button is-primary registered-service-wizard__next">
+                                    <span>Next</span><i class="mdi mdi-chevron-right" aria-hidden="true"></i>
+                                </button>
+                                <span class="registered-service-wizard__spacer"></span>
+                                <button id="cancelServiceWizard" name="cancelServiceWizard" type="button"
                                         class="mdc-button mdc-button--raised btn mdc-button--lg">
-                                    <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-content-copy"
-                                                                       aria-hidden="true"></i>Copy</span>
+                                    <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-close"
+                                                                       aria-hidden="true"></i>Cancel</span>
                                 </button>
                                 <button id="validateServiceWizard" name="validateServiceWizard" type="button"
                                         class="mdc-button mdc-button--raised btn mdc-button--lg">
                                     <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-check-all"
                                                                        aria-hidden="true"></i>Validate</span>
                                 </button>
+                                <button id="copyServiceDefinitionWizard" name="copyServiceDefinitionWizard"
+                                        type="button"
+                                        class="mdc-button mdc-button--raised btn mdc-button--lg">
+                                    <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-content-copy"
+                                                                       aria-hidden="true"></i>Copy</span>
+                                </button>
                                 <button id="saveServiceWizard" name="saveServiceWizard" type="button"
                                         class="mdc-button mdc-button--raised btn mdc-button--lg">
                                     <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-content-save"
                                                                        aria-hidden="true"></i>Save</span>
-                                </button>
-                                <button id="cancelServiceWizard" name="cancelServiceWizard" type="button"
-                                        class="mdc-button mdc-button--raised btn mdc-button--lg">
-                                    <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-close"
-                                                                       aria-hidden="true"></i>Cancel</span>
                                 </button>
                             </footer>
                 </div>
@@ -852,15 +898,15 @@
                     </div>
 
                     <footer class="registered-service-wizard__actions">
-                        <button id="saveService" name="saveService" type="button"
-                                class="mdc-button mdc-button--raised btn mdc-button--lg">
-                            <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-content-save"
-                                                               aria-hidden="true"></i>Save</span>
-                        </button>
                         <button id="cancelService" name="cancelService" type="button"
                                 class="mdc-button mdc-button--raised btn mdc-button--lg">
                             <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-close"
                                                                aria-hidden="true"></i>Cancel</span>
+                        </button>
+                        <button id="saveService" name="saveService" type="button"
+                                class="mdc-button mdc-button--raised btn mdc-button--lg">
+                            <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-content-save"
+                                                               aria-hidden="true"></i>Save</span>
                         </button>
                     </footer>
                 </div>
