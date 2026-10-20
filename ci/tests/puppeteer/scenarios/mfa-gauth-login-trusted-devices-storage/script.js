@@ -146,18 +146,20 @@ const BACKENDS = {
     const container = await cas.dockerContainer(backend.container);
     await cas.log(`Pausing ${backend.container}...`);
     await container.pause();
-
-    await cas.gotoLoginWithAuthnMethod(page, undefined, "mfa-gauth");
-    await cas.loginWith(page);
-    await cas.sleep(3000);
-    await cas.log("Using scratch code to login...");
-    scratch = await cas.fetchGoogleAuthenticatorScratchCode();
-    await cas.type(page,"#token", scratch);
-    await cas.submitForm(page, "#fm1");
-    await cas.sleep(3000);
-    await cas.assertInnerText(page, "#content div h2", "Log In Successful");
-    await cas.assertCookie(page);
-    await cas.log(`Resuming ${backend.container}...`);
-    await container.unpause();
-    await cas.closeBrowser(browser);
+    try {
+        await cas.gotoLoginWithAuthnMethod(page, undefined, "mfa-gauth");
+        await cas.loginWith(page);
+        await cas.sleep(3000);
+        await cas.log("Using scratch code to login...");
+        scratch = await cas.fetchGoogleAuthenticatorScratchCode();
+        await cas.type(page,"#token", scratch);
+        await cas.submitForm(page, "#fm1");
+        await cas.sleep(3000);
+        await cas.assertInnerText(page, "#content div h2", "Log In Successful");
+        await cas.assertCookie(page);
+    } finally {
+        await cas.log(`Resuming ${backend.container}...`);
+        await container.unpause();
+        await cas.closeBrowser(browser);
+    }
 })();

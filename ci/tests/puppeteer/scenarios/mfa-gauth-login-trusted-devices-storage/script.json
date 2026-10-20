@@ -13,7 +13,7 @@
 
     "--cas.authn.mfa.gauth.core.trusted-device-enabled=true",
     "--cas.authn.mfa.gauth.crypto.enabled=false",
-    "--cas.authn.mfa.gauth.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/accounts.json",
+    "--cas.authn.mfa.gauth.json.location=file:${TMPDIR}/${SCENARIO}-accounts.json",
 
     "--cas.jdbc.show-sql=false"
   ],
@@ -72,5 +72,5 @@
       ]
     }
   ],
-  "initScript": "${PWD}/ci/tests/postgres/run-postgres-server.sh,${PWD}/ci/tests/redis/run-redis-server.sh,${PWD}/ci/tests/dynamodb/run-dynamodb-server.sh"
+  "initScript": "${PWD}/ci/tests/postgres/run-postgres-server.sh,${PWD}/ci/tests/redis/run-redis-server.sh,${PWD}/ci/tests/dynamodb/run-dynamodb-server.sh,${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/init.sh"
 }

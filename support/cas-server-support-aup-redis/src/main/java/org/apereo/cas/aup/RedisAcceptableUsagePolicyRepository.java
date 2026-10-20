@@ -33,16 +33,16 @@ public class RedisAcceptableUsagePolicyRepository extends BaseAcceptableUsagePol
 
     private final CasRedisTemplate redisTemplate;
 
-    private String getRedisKey(final String principalId) {
-        return CAS_AUP_PREFIX + principalId + ':' + aupProperties.getCore().getAupAttributeName();
-    }
-
     public RedisAcceptableUsagePolicyRepository(final AcceptableUsagePolicyProperties aupProperties,
                                                 final CasRedisTemplate redisTemplate) {
         super(aupProperties);
         this.redisTemplate = redisTemplate;
     }
 
+    private String getRedisKey(final String principalId) {
+        return CAS_AUP_PREFIX + principalId + ':' + aupProperties.getCore().getAupAttributeName();
+    }
+    
     /**
      * Verify the policy through the principal attributes first and, failing that, through the decision kept in
      * Redis, so an acceptance recorded at an earlier login is honored.
