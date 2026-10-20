@@ -12,8 +12,10 @@ import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
+import org.apereo.cas.support.events.dao.AbstractCasEventRepository;
 import org.apereo.cas.support.events.dao.CasEvent;
 import org.apereo.cas.support.events.ticket.CasTicketGrantingTicketCreatedEvent;
+import org.apereo.cas.util.DateTimeUtils;
 import lombok.val;
 import org.jooq.lambda.Unchecked;
 import org.junit.jupiter.api.Test;
@@ -104,6 +106,25 @@ public abstract class AbstractCasEventRepositoryTests {
                 }
             });
         }));
+    }
+
+    @Test
+    protected void verifyEventsOfTypeAreFilteredByDate() {
+        val event = getCasEvent(UUID.randomUUID().toString());
+        val repository = new AbstractCasEventRepository(CasEventRepositoryFilter.noOp()) {
+            @Override
+            protected CasEvent saveInternal(final CasEvent casEvent) {
+                return casEvent;
+            }
+
+            @Override
+            public Stream<? extends CasEvent> load() {
+                return Stream.of(event);
+            }
+        };
+        val created = DateTimeUtils.zonedDateTimeOf(event.getCreationTime());
+        assertEquals(1, repository.getEventsOfType(event.getType(), created.minusDays(1)).count());
+        assertEquals(0, repository.getEventsOfType(event.getType(), created.plusDays(1)).count());
     }
 
     public abstract CasEventRepository getEventRepository();

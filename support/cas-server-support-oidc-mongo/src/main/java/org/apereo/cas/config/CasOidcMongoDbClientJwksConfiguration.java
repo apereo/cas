@@ -48,7 +48,7 @@ class CasOidcMongoDbClientJwksConfiguration {
     }
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @ConditionalOnMissingBean(name = "mongoOidcClientJwksRegistrationStore")
+    @ConditionalOnMissingBean(name = "clientJwksRegistrationStore")
     @Bean
     public ClientJwksRegistrationStore clientJwksRegistrationStore(
         final CasConfigurationProperties casProperties,

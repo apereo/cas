@@ -77,10 +77,22 @@ public class MongoDbYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
         return mongoTemplate.save(result, this.collectionName);
     }
 
+    /**
+     * Save the account. When the user already has an account, its document is replaced under the same identifier
+     * rather than a second document being added for the same user.
+     *
+     * @param account the account
+     * @return the saved account
+     */
     @Override
     public YubiKeyAccount save(final YubiKeyAccount account) {
+        val existing = getAccountInternal(account.getUsername());
+        val id = Optional.ofNullable(existing)
+            .map(YubiKeyAccount::getId)
+            .or(() -> Optional.of(account.getId()).filter(value -> value > 0))
+            .orElseGet(System::currentTimeMillis);
         val result = MongoDbYubiKeyAccount.builder()
-            .id(System.currentTimeMillis())
+            .id(id)
             .username(account.getUsername())
             .devices(account.getDevices())
             .tenant(account.getTenant())
