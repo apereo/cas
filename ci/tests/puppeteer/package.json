@@ -2,7 +2,7 @@
   "type": "commonjs",
   "name": "functional-tests",
   "dependencies": {
-    "@axe-core/puppeteer": "4.13.0",
+    "@axe-core/puppeteer": "4.14.0",
     "@napi-rs/canvas": "1.0.11",
     "@stomp/stompjs": "7.5.0",
     "archiver": "8.0.0",
