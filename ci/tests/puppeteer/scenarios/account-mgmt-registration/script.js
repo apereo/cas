@@ -27,13 +27,16 @@ async function verifyAccountRegistrationWithOidcService() {
     await cas.closeBrowser(browser);
 }
 
-async function submitAccountRegistrationRequest(page, browser) {
+async function submitAccountRegistrationRequest(page, browser, checkAccessibility = false) {
     await cas.sleep(2000);
     await cas.assertTextContent(page, "#accountSignUpLink", "Sign Up");
     await cas.submitForm(page, "#accountMgmtSignupForm");
     await cas.sleep(1000);
 
     await cas.assertInnerText(page, "#content h2", "Account Registration");
+    if (checkAccessibility) {
+        await cas.assertAccessibility(page, "Account sign-up");
+    }
     await cas.type(page, "#username", "casuser");
     await cas.type(page, "#firstName", "CAS");
     await cas.type(page, "#lastName", "Person");
@@ -44,6 +47,9 @@ async function submitAccountRegistrationRequest(page, browser) {
     await cas.waitForNavigation(page);
     await cas.assertInnerText(page, "#content h2", "Account Registration");
     await cas.assertInnerTextStartsWith(page, "#content p", "Account activation instructions are successfully sent");
+    if (checkAccessibility) {
+        await cas.assertAccessibility(page, "Account sign-up instructions sent");
+    }
 
     const link = await cas.extractFromEmail(browser);
     assert(link !== undefined);
@@ -51,6 +57,9 @@ async function submitAccountRegistrationRequest(page, browser) {
     await cas.sleep(1000);
     await cas.assertInnerText(page, "#content h2", "Account Registration");
     await cas.assertInnerTextStartsWith(page, "#content p", "Welcome back!");
+    if (checkAccessibility) {
+        await cas.assertAccessibility(page, "Account sign-up completion");
+    }
 
     await typePassword(page, "EaP8R&iX$eK4nb8eAI", "EaP8R&iX$eK4nb8eAI");
     await cas.sleep(1000);
@@ -63,6 +72,9 @@ async function submitAccountRegistrationRequest(page, browser) {
     await cas.sleep(500);
     await cas.assertInnerText(page, "#content h2", "Account Registration");
     await cas.assertInnerTextStartsWith(page, "#content p", "Thank you! Your account is now activated");
+    if (checkAccessibility) {
+        await cas.assertAccessibility(page, "Account sign-up completed");
+    }
     await cas.sleep(5000);
     await cas.logPage(page);
 }
@@ -73,7 +85,7 @@ async function verifyAccountRegistrationWithCasService() {
     const page = await cas.newPage(browser);
     await cas.gotoLogout(page);
     await cas.gotoLogin(page, service);
-    await submitAccountRegistrationRequest(page, browser);
+    await submitAccountRegistrationRequest(page, browser, true);
     await cas.assertPageUrlStartsWith(page, service);
     await cas.assertTicketParameter(page);
     await cas.gotoLogin(page);

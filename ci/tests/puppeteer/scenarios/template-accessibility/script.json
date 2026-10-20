@@ -1,5 +1,8 @@
 {
-  "dependencies": "gauth,consent-webflow",
+  "dependencies": "generic,gauth,trusted-mfa,consent-webflow,pm-webflow",
+  "conditions": {
+    "docker": "true"
+  },
   "properties": [
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",
@@ -7,12 +10,32 @@
     "--cas.service-registry.core.init-from-json=true",
     "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services",
 
+    "--cas.authn.accept.enabled=false",
+    "--cas.authn.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/users.json",
+
     "--cas.authn.attribute-repository.stub.attributes.first-name=Apereo",
     "--cas.authn.attribute-repository.stub.attributes.last-name=CAS",
     "--cas.authn.attribute-repository.stub.attributes.email=casuser@example.org",
 
+    "--cas.logout.confirm-logout=true",
+
     "--cas.authn.mfa.gauth.id=GoogleAuth",
     "--cas.authn.mfa.gauth.crypto.enabled=false",
-    "--cas.authn.mfa.gauth.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/accounts.json"
-  ]
+    "--cas.authn.mfa.gauth.core.trusted-device-enabled=true",
+    "--cas.authn.mfa.gauth.json.location=file:${TMPDIR}/${SCENARIO}-accounts.json",
+
+    "--cas.authn.pm.core.enabled=true",
+    "--cas.authn.pm.forgot-username.enabled=true",
+    "--cas.authn.pm.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/pm.json",
+    "--cas.authn.pm.reset.mail.from=cas@apereo.org",
+    "--cas.authn.pm.reset.mail.subject=Reset",
+    "--cas.authn.pm.reset.mail.text=${url}",
+    "--cas.authn.pm.forgot-username.mail.from=cas@apereo.org",
+    "--cas.authn.pm.forgot-username.mail.subject=Username",
+    "--cas.authn.pm.forgot-username.mail.text=${username}",
+
+    "--spring.mail.host=localhost",
+    "--spring.mail.port=25000"
+  ],
+  "initScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/init.sh"
 }

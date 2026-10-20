@@ -954,6 +954,7 @@ const CAS_HOME_TITLE_PHRASES = [
     "Even Your Cron Jobs Need Boundaries",
     "Keeping Tokens Fresher Than the Office Coffee",
     "Making “Access Denied” Feel Less Personal",
+    "“It's Just a Glorified Login Form”",
     "No, Your Cat Does Not Need Admin Access",
     "Because Incognito Mode Isn't an Access Strategy",
     "Your Security Plan Can Not Just Be Steve",
@@ -963,11 +964,18 @@ const CAS_HOME_TITLE_PHRASES = [
     "Your Browser Remembers. We Still Check.",
     "Yelling at the Monitor Won't Fix Your Login",
     "Entra Your Credit Card, Yet?",
+    "100% Compatible, Until Kevin Returns from Vacation",
+    "For SAML2: An Entire Tree Died to Say You're Bob",
     "Turning “Contact Sales” into “git clone”",
+    "Your “Tiny Patch” Has an On-Call Rotation?",
     "“We Trust Dave” Does Not Scale",
+    "Marketing Discovered Passwordless on Thursday?",
     "Pull Requests Welcome. Login Requests Reviewed.",
     "Because Bob, the Security Guy, Left in March",
     "Single Sign-On, Multiple Meetings to Approve It",
+    "Because “We'll Fix It Later” Was 10 Years Ago",
+    "Single Logout, Subject to Everyone's Interpretation",
+    "SSO Cookie Has Outlived the Original Architect?",
     "\"Give Everyone Admin\" Is a Great Podcast"
 ];
 

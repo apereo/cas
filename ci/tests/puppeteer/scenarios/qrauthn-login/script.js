@@ -31,6 +31,7 @@ async function registerDevices() {
     await cas.assertTextContent(page, "#qrlogin .card-title span", "Login with QR Code");
     await cas.assertVisibility(page, "#qrlogin .card-text img");
     await cas.assertVisibility(page, "#qrchannel");
+    await cas.assertAccessibility(page, "QR code login");
 
     const qrCode = await cas.parseQRCode(page, "#qrcode");
     const channelId = qrCode.data;

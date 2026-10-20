@@ -1,78 +1,122 @@
 const cas = require("../../cas.js");
 const assert = require("assert");
-const {AxePuppeteer} = require("@axe-core/puppeteer");
+const fs = require("fs");
+const path = require("path");
 
-const BLOCKING_IMPACTS = ["serious", "critical"];
-const WCAG_TAGS = ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"];
-const TAGS = [...WCAG_TAGS, "best-practice"];
-
-const isBlocking = (violation) => BLOCKING_IMPACTS.includes(violation.impact)
-    && violation.tags.some((tag) => WCAG_TAGS.includes(tag));
+const ACCOUNT_STATUS_PAGES = [
+    {user: "locked", password: "locked", name: "Account locked"},
+    {user: "disabled", password: "disabled", name: "Account disabled"},
+    {user: "expired", password: "expired", name: "Password expired"},
+    {user: "mustchange", password: "mustchange", name: "Password must change"},
+    {user: "invalidtime", password: "invalidtime", name: "Bad hours"},
+    {user: "invalidlocation", password: "invalidlocation", name: "Bad workstation"}
+];
 
 /*
- * Waits for the animations that end, such as the fade-in of the page content, so that axe measures colors at full
- * opacity. Infinite ones, such as the notification bell, are left running.
+ * Reads a scratch code that is still unused from the copy of the Google Authenticator accounts that init.sh made,
+ * since the JSON repository writes used codes back to that file.
  */
-async function waitForAnimations(page) {
-    await page.evaluate(() => Promise.all(document.getAnimations()
-        .filter((animation) => animation.effect?.getComputedTiming().endTime !== Infinity)
-        .map((animation) => animation.finished.catch(() => undefined))));
+function unusedScratchCode() {
+    const file = path.join(process.env.TMPDIR ?? "/tmp", "template-accessibility-accounts.json");
+    const accounts = JSON.parse(fs.readFileSync(file, "utf8"));
+    return String(accounts.casuser[1][0].scratchCodes[1][0]);
 }
 
 /*
- * Runs axe-core over the page as it stands and logs every violation with the elements it found.
- * Serious and critical violations of WCAG 2.1 A/AA are returned so the scenario can fail on them
- * once every page has been checked; best-practice findings and lesser impacts are only reported.
+ * Ends the single sign-on session, confirming the logout when CAS asks for it.
  */
-async function audit(page, name) {
-    await waitForAnimations(page);
-    await cas.screenshot(page);
-    const results = await new AxePuppeteer(page).withTags(TAGS).analyze();
-    await cas.log(`${name}: ${results.violations.length} violation(s), ${results.passes.length} rule(s) passed`);
-    for (const violation of results.violations) {
-        const targets = violation.nodes.map((node) => node.target.join(" ")).join(", ");
-        const message = `[${violation.impact}] ${violation.id}: ${violation.help} -> ${targets}`;
-        if (isBlocking(violation)) {
-            await cas.logr(`${name} ${message}`);
-        } else {
-            await cas.logy(`${name} ${message}`);
-        }
+async function logout(page) {
+    await cas.gotoLogout(page);
+    if (await page.$("#logoutButton") !== null) {
+        await cas.submitForm(page, "#fm1");
     }
-    return results.violations
-        .filter(isBlocking)
-        .map((violation) => `${name}: ${violation.id}`);
+    await cas.assertCookie(page, false);
 }
 
 (async () => {
     const browser = await cas.newBrowser(cas.browserOptions());
     const page = await cas.newPage(browser);
     const blocking = [];
+    const audit = async (name) => blocking.push(...await cas.auditAccessibility(page, name));
 
-    await cas.gotoLogout(page);
+    await cas.logg("Login, login errors and account status pages");
     await cas.gotoLogin(page);
     await cas.assertVisibility(page, "#username");
-    blocking.push(...await audit(page, "Login"));
+    await audit("Login");
 
     await cas.loginWith(page, "casuser", "BadPassword");
     await cas.assertVisibility(page, "#loginErrorsPanel");
-    blocking.push(...await audit(page, "Login error"));
+    await audit("Login error");
 
+    for (const status of ACCOUNT_STATUS_PAGES) {
+        await cas.gotoLogin(page);
+        await cas.loginWith(page, status.user, status.password);
+        await cas.assertCookie(page, false);
+        await audit(status.name);
+    }
+
+    await cas.logg("Password management pages");
+    await cas.gotoLogin(page);
+    await cas.click(page, "#forgotPasswordLink");
+    await cas.waitForElement(page, "#reset #fm1");
+    await audit("Forgot password");
+    await cas.type(page, "#username", "casuser");
+    await cas.pressEnter(page);
+    await cas.waitForNavigation(page);
+    await audit("Password reset instructions sent");
+
+    await cas.gotoLogin(page);
+    await cas.click(page, "#forgotUsernameLink");
+    await cas.waitForElement(page, "#reset #fm1");
+    await audit("Forgot username");
+    await cas.type(page, "#email", "casuser@example.org");
+    await cas.pressEnter(page);
+    await cas.waitForNavigation(page);
+    await audit("Username instructions sent");
+
+    await cas.logg("Error pages");
+    await cas.gotoLogin(page, "https://unknown.example.net");
+    await cas.assertTextContent(page, "#content h2", "Application Not Authorized to Use CAS");
+    await audit("Unauthorized service");
+    await cas.goto(page, "https://localhost:8443/cas/unknown-page");
+    await audit("Page not found");
+
+    await cas.logg("Single sign-on, attribute consent and logout");
+    await cas.gotoLogin(page);
     await cas.loginWith(page);
     await cas.assertCookie(page);
+    await audit("Login success");
+
     await cas.gotoLogin(page, "https://example.org");
     await cas.sleep(1000);
     await cas.assertTextContent(page, "#content h2", "Attribute Consent");
-    blocking.push(...await audit(page, "Attribute consent"));
+    await audit("Attribute consent");
 
     await cas.gotoLogout(page);
+    await cas.assertVisibility(page, "#logoutButton");
+    await audit("Logout confirmation");
+    await cas.submitForm(page, "#fm1");
     await cas.assertCookie(page, false);
-    blocking.push(...await audit(page, "Logout"));
+    await audit("Logout");
+
+    await cas.logg("Google Authenticator registration, token and trusted device pages");
+    await cas.gotoLoginWithAuthnMethod(page, undefined, "GoogleAuth");
+    await cas.loginWith(page, "gauthuser", "Mellon");
+    await cas.sleep(2000);
+    await cas.assertVisibility(page, "#confirm");
+    await audit("Google Authenticator registration");
+    await logout(page);
 
     await cas.gotoLoginWithAuthnMethod(page, undefined, "GoogleAuth");
     await cas.loginWith(page);
     await cas.sleep(2000);
     await cas.assertVisibility(page, "#token");
-    blocking.push(...await audit(page, "Google Authenticator"));
+    await audit("Google Authenticator");
+    await cas.type(page, "#token", unusedScratchCode());
+    await cas.submitForm(page, "#fm1");
+    await cas.waitForElement(page, "#deviceName");
+    await audit("Trusted device registration");
+    await logout(page);
 
     await cas.closeBrowser(browser);
     assert(blocking.length === 0, `Serious or critical accessibility violations found: ${blocking.join(", ")}`);

@@ -1503,6 +1503,66 @@ exports.dockerExec = async (container, args, input = undefined) => {
 };
 
 /**
+ * WCAG 2.1 A and AA rules, the level CAS pages are held to.
+ */
+const ACCESSIBILITY_WCAG_TAGS = ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"];
+
+/**
+ * Violation impacts that fail an accessibility check; lesser impacts and best-practice findings are only logged.
+ */
+const ACCESSIBILITY_BLOCKING_IMPACTS = ["serious", "critical"];
+
+/**
+ * Runs axe-core over the page as it stands, once the animations that end (such as the fade-in of the page content) are
+ * done, so that colors are measured at full opacity. Every violation is logged with the elements it found; serious and
+ * critical violations of WCAG 2.1 A/AA are returned as "name: rule" entries, so that a scenario can check several pages
+ * and fail once at the end.
+ *
+ * @param page the page to check
+ * @param name a short name of the page, used in the log and in the returned entries
+ * @param options optional settings: exclude, a list of CSS selectors axe should skip
+ * @returns the blocking violations, as "name: rule" entries
+ */
+exports.auditAccessibility = async (page, name, options = {}) => {
+    const {AxePuppeteer} = require("@axe-core/puppeteer");
+    await page.evaluate(() => Promise.all(document.getAnimations()
+        .filter((animation) => animation.effect?.getComputedTiming().endTime !== Infinity)
+        .map((animation) => animation.finished.catch(() => undefined))));
+    await this.screenshot(page);
+    const axe = new AxePuppeteer(page).withTags([...ACCESSIBILITY_WCAG_TAGS, "best-practice"]);
+    (options.exclude ?? []).forEach((selector) => axe.exclude(selector));
+    const results = await axe.analyze();
+    await this.log(`Accessibility of ${name}: ${results.violations.length} violation(s), ${results.passes.length} rule(s) passed`);
+    const blocking = [];
+    for (const violation of results.violations) {
+        const targets = violation.nodes.map((node) => node.target.join(" ")).join(", ");
+        const message = `${name} [${violation.impact}] ${violation.id}: ${violation.help} -> ${targets}`;
+        if (ACCESSIBILITY_BLOCKING_IMPACTS.includes(violation.impact)
+            && violation.tags.some((tag) => ACCESSIBILITY_WCAG_TAGS.includes(tag))) {
+            await this.logr(message);
+            blocking.push(`${name}: ${violation.id}`);
+        } else {
+            await this.logy(message);
+        }
+    }
+    return blocking;
+};
+
+/**
+ * Runs axe-core over the page and fails right away on serious or critical violations of WCAG 2.1 A/AA. Feature
+ * scenarios call this on the pages they already open; template-accessibility collects the results of
+ * auditAccessibility over many pages instead.
+ *
+ * @param page the page to check
+ * @param name a short name of the page
+ * @param options optional settings, as for auditAccessibility
+ */
+exports.assertAccessibility = async (page, name, options = {}) => {
+    const blocking = await this.auditAccessibility(page, name, options);
+    assert(blocking.length === 0, `Serious or critical accessibility violations found: ${blocking.join(", ")}`);
+};
+
+/**
  * Sends one request to the DynamoDB Local container on port 8000, signed the way the AWS SDK signs it. DynamoDB Local
  * keeps a separate database per access key and region, so the request must carry the same credentials the scenario
  * hands to CAS. The connection is closed after each request, so that no pooled socket keeps the scenario from exiting. Attribute values use the DynamoDB wire format, e.g. {"userid": {"S": "casuser"}}.
