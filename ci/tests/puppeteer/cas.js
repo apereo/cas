@@ -1505,7 +1505,7 @@ exports.dockerExec = async (container, args, input = undefined) => {
 /**
  * Sends one request to the DynamoDB Local container on port 8000, signed the way the AWS SDK signs it. DynamoDB Local
  * keeps a separate database per access key and region, so the request must carry the same credentials the scenario
- * hands to CAS. Attribute values use the DynamoDB wire format, e.g. {"userid": {"S": "casuser"}}.
+ * hands to CAS. The connection is closed after each request, so that no pooled socket keeps the scenario from exiting. Attribute values use the DynamoDB wire format, e.g. {"userid": {"S": "casuser"}}.
  *
  * @param operation the DynamoDB operation, e.g. Scan or PutItem
  * @param payload the request body
@@ -1531,6 +1531,8 @@ exports.dynamoDbRequest = async (operation, payload, accessKey = "AKIAIPPIGGUNIO
     const signingKey = hmac(hmac(hmac(hmac(`AWS4${secretKey}`, date), region), "dynamodb"), "aws4_request");
     const signature = nodeCrypto.createHmac("sha256", signingKey).update(stringToSign, "utf8").digest("hex");
     const response = await axios.post("http://localhost:8000/", body, {
+        httpAgent: new http.Agent({keepAlive: false}),
+        timeout: 10000,
         headers: {
             "Content-Type": "application/x-amz-json-1.0",
             "X-Amz-Date": amzDate,

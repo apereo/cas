@@ -32,7 +32,7 @@ const assert = require("assert");
         const captureOrigin = "http://127.0.0.1:8081";
         const captureRequests = [];
         await page.setRequestInterception(true);
-        page.on("request", async request => {
+        page.on("request", async (request) => {
             if (new URL(request.url()).origin === captureOrigin) {
                 captureRequests.push(request.url());
                 await request.respond({status: 200, body: "Unexpected service redirect"});

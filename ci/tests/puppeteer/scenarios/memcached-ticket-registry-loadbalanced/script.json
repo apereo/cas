@@ -1,5 +1,5 @@
 {
-  "dependencies": "memcached-ticket-registry",
+  "dependencies": "memcached-ticket-registry,memcached-spy",
   "conditions": {
     "docker": "true"
   },

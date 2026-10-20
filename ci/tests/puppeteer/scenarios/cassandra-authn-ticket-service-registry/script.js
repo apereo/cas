@@ -12,7 +12,7 @@ async function countRows(query) {
 }
 
 async function storedTicketGrantingTickets() {
-    return countRows("SELECT count(*) FROM cas.ticketgrantingticketscache;");
+    return countRows("SELECT count(*) FROM cas.ticketgrantingticketstable;");
 }
 
 async function assertLogin(page, username, password, success) {

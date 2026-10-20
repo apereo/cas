@@ -627,7 +627,7 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
 - The Cassandra and Memcached ticket registries encrypt by default with random keys, so multi-node scenarios set shared
   `cas.ticket.registry.<registry>.crypto.encryption.key`/`signing.key`. Cassandra in CI uses client TLS: set
   `cas.http-client.host-name-verifier=none` and `ssl-protocols=TLSv1.2`, and read it with
-  `docker exec cassandra cqlsh --ssl -e "<query>"` (unquoted table names are lowercase). Memcached: `stats` over `nc`.
+  `docker exec cassandra cqlsh --ssl -e "<query>"` (unquoted table names are lowercase: the TGT table is `cas.ticketgrantingticketstable`). Memcached: `stats` over `nc`; the ticket registry also needs `memcached-spy` (or `memcached-aws-elasticache`) in `dependencies`.
 - CAS Redis values are a 4-byte big-endian length followed by an LZ4 block of the Java-serialized object; a fixture such as
   `redis-authentication-login/accounts.json` must be regenerated when the serialized class changes.
 - The Kafka console consumer can exit non-zero on `--timeout-ms`; read its output with `spawnSync`. The RADIUS test server
