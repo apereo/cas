@@ -61,7 +61,7 @@ public class RestMultifactorAuthenticationTrustStorage extends BaseMultifactorAu
     public void remove(final ZonedDateTime expirationDate) {
         restClient.method(HttpMethod.DELETE).uri(getEndpointUrl(null))
             .headers(headers -> headers.addAll(getHttpHeaders())).body(expirationDate)
-            .retrieve().toEntity(Object.class);
+            .retrieve().toBodilessEntity();
     }
 
     @Override
@@ -96,7 +96,7 @@ public class RestMultifactorAuthenticationTrustStorage extends BaseMultifactorAu
     protected MultifactorAuthenticationTrustRecord saveInternal(final MultifactorAuthenticationTrustRecord record) {
         val response = restClient.post().uri(getEndpointUrl(null))
             .headers(headers -> headers.addAll(getHttpHeaders())).body(record)
-            .retrieve().toEntity(Object.class);
+            .retrieve().toBodilessEntity();
         return response.getStatusCode() == HttpStatus.OK ? record : null;
     }
 }

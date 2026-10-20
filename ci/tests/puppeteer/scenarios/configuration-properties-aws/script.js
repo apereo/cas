@@ -37,7 +37,27 @@ async function assertLogoutRedirect(page, followed) {
     await cas.assertPageUrlStartsWith(page, followed ? SERVICE : "https://localhost:8443/cas/logout");
 }
 
+/*
+ * Puts the settings back the way init.sh stored them, so that a retry of the scenario against the same CAS instance
+ * and localstack container starts from the same state.
+ */
+async function resetSettings() {
+    await awslocal(["ssm", "put-parameter", "--name", "/cas/cas.authn.accept.users",
+        "--value", "awsuser::Mellon", "--type", "String", "--overwrite"]);
+    await awslocal(["secretsmanager", "put-secret-value", "--secret-id", "cas.server.scope", "--secret-string", "example.com"]);
+    await awslocal(["s3", "cp", "-", "s3://cas-config/cas.properties"],
+        "cas.logout.follow-service-redirects=false\ncas.audit.engine.enabled=false\n");
+    try {
+        await awslocal(["secretsmanager", "delete-secret", "--secret-id", "cas.authn.accept.users", "--force-delete-without-recovery"]);
+    } catch {
+        await cas.log("No secret for cas.authn.accept.users to remove");
+    }
+    await cas.refreshContext();
+    await cas.sleep(2000);
+}
+
 (async () => {
+    await resetSettings();
     await assertSetting("cas.authn.accept.users", SSM, "awsuser::Mellon");
     await assertSetting("cas.server.scope", SECRETS_MANAGER, "example.com");
     await assertSetting("cas.logout.follow-service-redirects", S3, "false");

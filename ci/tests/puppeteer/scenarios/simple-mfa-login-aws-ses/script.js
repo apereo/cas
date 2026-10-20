@@ -49,7 +49,8 @@ async function waitForToken(recipient, previousCount) {
     await cas.click(page, "#resendButton");
     await cas.sleep(1000);
     const second = await waitForToken(recipient, first.count);
-    assert(second.token !== first.token);
+    await cas.log("A token that has not expired yet is sent again rather than replaced");
+    assert(second.token === first.token);
 
     await cas.type(page, "#token", second.token);
     await cas.submitForm(page, "#fm1");

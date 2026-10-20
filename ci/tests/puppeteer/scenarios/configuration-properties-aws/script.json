@@ -11,7 +11,7 @@
 
     "--management.endpoint.env.show-values=ALWAYS",
     "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
-    "--management.endpoints.web.exposure.include=env,refresh",
+    "--management.endpoints.web.exposure.include=env,refresh,casConfig",
     "--management.endpoints.access.default=UNRESTRICTED",
 
     "--cas.spring.cloud.aws.ssm.endpoint=http://localhost:4566",

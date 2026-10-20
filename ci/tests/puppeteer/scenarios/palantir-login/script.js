@@ -157,10 +157,58 @@ async function verifyRegisteredServices(page) {
         await cas.assertVisibility(page, `#${button}`);
     }
 
+    const views = await page.evaluate(() => ({
+        cards: $("#applicationsCards .palantir-application-card").length,
+        rows: $("#applicationsTable").DataTable().rows({search: "applied", page: "current"}).count()
+    }));
+    await cas.logg(`Card view shows ${views.cards} cards for ${views.rows} rows on the table's page`);
+    assert(views.cards === views.rows);
+
     await cas.click(page, "#newService");
     await page.waitForFunction(() => $("#newServicePlain").is(":visible")
         && $("#newServiceWizard").is(":visible"), {timeout: 15000});
     await cas.logg("New application menu offers both the editor and the wizard");
+}
+
+/**
+ * Switch the theme from the navigation bar and back, and check that each choice is applied and remembered.
+ *
+ * @param page the puppeteer page
+ */
+async function verifyTheme(page) {
+    await cas.separator();
+    const readTheme = () => page.evaluate(() => ({
+        theme: document.documentElement.getAttribute("data-theme"),
+        stored: localStorage.getItem("PalantirTheme")
+    }));
+    const initial = await readTheme();
+    await cas.click(page, "#palantirThemeToggle");
+    const switched = await readTheme();
+    await cas.logg(`Theme switched from ${initial.theme} to ${switched.theme}`);
+    assert(switched.theme !== initial.theme);
+    assert(switched.stored === switched.theme);
+    await cas.click(page, "#palantirThemeToggle");
+    const restored = await readTheme();
+    assert(restored.theme === initial.theme);
+    assert(restored.stored === initial.theme);
+}
+
+/**
+ * Walk the wizard's steps with Next, from the first step to the review.
+ *
+ * @param page the puppeteer page
+ * @returns {Promise<string[]>} the steps visited, in order
+ */
+async function walkWizardSteps(page) {
+    return page.evaluate(() => {
+        RegisteredServiceSections.start();
+        const visited = [RegisteredServiceSections.currentStepKey()];
+        while (!$("#nextServiceWizardStep").hasClass("hide") && visited.length < 10) {
+            $("#nextServiceWizardStep").trigger("click");
+            visited.push(RegisteredServiceSections.currentStepKey());
+        }
+        return visited;
+    });
 }
 
 /**
@@ -329,6 +377,10 @@ async function verifyServiceWizard(page) {
             assert(errors.length === 0, `${name}: ${errors.join(", ")}`);
         }
 
+        const steps = await walkWizardSteps(page);
+        await cas.logg(`${name} steps: ${steps.join(" > ")}`);
+        assert(steps[0] === "basics" && steps.at(-1) === "review" && new Set(steps).size === steps.length);
+
         await cas.logg(`Wizard verified for ${name}`);
         await page.evaluate(() => $("#cancelServiceWizard").trigger("click"));
         await page.waitForFunction(() => $("#editServiceWizardDialog").hasClass("ui-dialog-content")
@@ -398,6 +450,7 @@ async function verifySettingsDialog(page) {
     await waitForDashboard(page);
     await verifyRegisteredServices(page);
     await verifyPlainEditorDialog(page);
+    await verifyTheme(page);
     await verifyTabs(page);
     await verifyServiceWizard(page);
     await verifySettingsDialog(page);

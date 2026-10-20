@@ -53,7 +53,7 @@ const EMAIL = "casuser@example.org";
         await cas.assertInnerTextStartsWith(page, "#content h2", "Instructions Sent Successfully.");
         assert(lookups.includes(`user:${EMAIL}`), "The email address must be sent to look up the username");
         const usernameEmail = await cas.extractFromEmail(browser);
-        assert(usernameEmail.includes(`Your username is ${USERNAME}`));
+        assert(usernameEmail.includes(`Username:${USERNAME}`), `Unexpected email ${usernameEmail}`);
 
         await cas.logg("The password is reset through the REST backend");
         await cas.gotoLogin(page);

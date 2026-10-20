@@ -125,6 +125,27 @@ class RestMultifactorAuthenticationTrustStorageTests {
     }
 
     @Test
+    void verifySaveWithPlainTextResponse() {
+        val builder = RestClient.builder();
+        val server = MockRestServiceServer.bindTo(builder).build();
+        val properties = new TrustedDevicesMultifactorProperties();
+        properties.getRest().setUrl("https://localhost/trusted");
+        val storage = new RestMultifactorAuthenticationTrustStorage(properties, CipherExecutor.noOpOfSerializableToString(),
+            mock(MultifactorAuthenticationTrustRecordKeyGenerator.class), builder.build());
+        val record = MultifactorAuthenticationTrustRecord.newInstance("casuser", "geography", "fingerprint");
+        record.setRecordKey(UUID.randomUUID().toString());
+        server.expect(requestTo("https://localhost/trusted/"))
+            .andExpect(method(HttpMethod.POST))
+            .andRespond(withSuccess("OK", MediaType.TEXT_PLAIN));
+        server.expect(requestTo("https://localhost/trusted/"))
+            .andExpect(method(HttpMethod.DELETE))
+            .andRespond(withSuccess("OK", MediaType.TEXT_PLAIN));
+        assertNotNull(storage.save(record));
+        assertDoesNotThrow(() -> storage.remove(ZonedDateTime.now(ZoneOffset.UTC)));
+        server.verify();
+    }
+
+    @Test
     void verifyRemovalByKey() {
         val port = URI.create(casProperties.getAuthn().getMfa().getTrusted().getRest().getUrl()).getPort();
 

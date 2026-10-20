@@ -66,9 +66,9 @@
         "--cas.authn.mfa.trusted.dynamo-db.credential-access-key=AKIAIPPIGGUNIO74C63Z",
         "--cas.authn.mfa.trusted.dynamo-db.credential-secret-key=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",
         "--cas.authn.mfa.trusted.dynamo-db.drop-tables-on-startup=true",
-        "--cas.authn.mfa.trusted.dynamo-db.connection-timeout=1000",
-        "--cas.authn.mfa.trusted.dynamo-db.socket-timeout=1000",
-        "--cas.authn.mfa.trusted.dynamo-db.client-execution-timeout=1000"
+        "--cas.authn.mfa.trusted.dynamo-db.connection-timeout=PT1S",
+        "--cas.authn.mfa.trusted.dynamo-db.socket-timeout=PT1S",
+        "--cas.authn.mfa.trusted.dynamo-db.client-execution-timeout=PT1S"
       ]
     }
   ],

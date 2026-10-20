@@ -40,7 +40,7 @@ function findRecord(records, action) {
     let records = [];
     for (let attempt = 1; attempt <= 15; attempt++) {
         records = await deliveredRecords();
-        if (findRecord(records, "AUTHENTICATION_SUCCESS") !== undefined && findRecord(records, "TICKET_GRANTING_TICKET_DESTROYED") !== undefined) {
+        if (findRecord(records, "AUTHENTICATION_SUCCESS") !== undefined && findRecord(records, "LOGOUT_SUCCESS") !== undefined) {
             break;
         }
         await cas.sleep(2000);
@@ -51,5 +51,5 @@ function findRecord(records, action) {
     await cas.log(login);
     assert(login.principal === "casuser");
     assert(login.applicationCode === "CAS");
-    assert(findRecord(records, "TICKET_GRANTING_TICKET_DESTROYED") !== undefined, "The logout must be audited through Firehose");
+    assert(findRecord(records, "LOGOUT_SUCCESS") !== undefined, "The logout must be audited through Firehose");
 })();

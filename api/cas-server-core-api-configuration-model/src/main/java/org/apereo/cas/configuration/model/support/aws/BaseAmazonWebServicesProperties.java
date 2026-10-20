@@ -69,19 +69,19 @@ public abstract class BaseAmazonWebServicesProperties implements CasFeatureModul
      * Connection timeout.
      */
     @DurationCapable
-    private String connectionTimeout = "5000";
+    private String connectionTimeout = "PT5S";
 
     /**
      * Socket timeout.
      */
     @DurationCapable
-    private String socketTimeout = "5000";
+    private String socketTimeout = "PT5S";
 
     /**
      * Client execution timeout.
      */
     @DurationCapable
-    private String clientExecutionTimeout = "10000";
+    private String clientExecutionTimeout = "PT10S";
 
     /**
      * Flag that indicates whether to use reaper.

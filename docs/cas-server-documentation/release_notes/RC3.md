@@ -16,20 +16,20 @@ interface_images:
     alt: CAS menu with links to this server, documentation and the community
     title: CAS menu with links to this server, documentation and the community
   - src: img_19.png
-    alt: Palantir applications tab with the rounded navigation rail
-    title: Palantir applications tab with the rounded navigation rail
+    alt: Palantir applications as cards under the navigation bar with grouped menus
+    title: Palantir applications as cards under the navigation bar with grouped menus
   - src: img_20.png
     alt: Palantir settings dialog listing keyboard shortcuts
     title: Palantir settings dialog listing keyboard shortcuts
   - src: img_21.png
-    alt: Palantir service wizard for a SAML2 service provider
-    title: Palantir service wizard for a SAML2 service provider
+    alt: Palantir service wizard for a SAML2 service provider in the dark theme
+    title: Palantir service wizard for a SAML2 service provider in the dark theme
   - src: img_22.png
     alt: Palantir scheduled tasks with JVM thread charts
     title: Palantir scheduled tasks with JVM thread charts
   - src: img_23.png
-    alt: Palantir service wizard for an OpenID Connect relying party
-    title: Palantir service wizard for an OpenID Connect relying party
+    alt: Palantir service wizard on the policies step for an OpenID Connect relying party
+    title: Palantir service wizard on the policies step for an OpenID Connect relying party
 release:
   line: 8.1.0 development
   summary: >-
@@ -100,7 +100,7 @@ release:
     points:
       - The account profile gets a section rail, an overview with summary cards and lists with inline details.
       - Login, multifactor, consent, interrupt and error screens share one style, with pill-shaped buttons and rounded inputs.
-      - Palantir keeps its layout with a rounded navigation rail, pill-style tabs, softer cards and restyled dialogs.
+      - Palantir gets a navigation bar with grouped menus, application cards, a step-by-step service wizard and a dark theme.
   highlights:
     - section: Heimdall AuthZEN
       summary: Follows the AuthZEN Authorization API 1.0, with resource instances, the access evaluations API, decision point metadata and decision context.
@@ -936,11 +936,17 @@ The documentation now explains how to let browser-based MCP clients reach the se
 - {: .changed data-area="ui"} The rest of the CAS screens follow the same style: error, account status, logout and confirmation
   pages show a status icon in a centered card, multifactor, passwordless, delegated, surrogate and other sign-in steps show the
   provider's icon above their form, provider and option choices appear as cards, and the login card picks up the same surface.
-  Palantir keeps its layout and colors with a rounded navigation rail, pill-style tabs and softer cards.
 - {: .changed data-area="ui"} [Palantir](../installation/Admin-Dashboard.html) dialogs, including the service wizard and editor, use the same look as the rest of CAS:
   rounded dialogs with a plain title bar, matching buttons (the main action highlighted), select menus and multi-value fields
   that look like the other inputs, round row buttons, and restyled menus, tooltips and confirmation prompts. Dialogs no
   longer fail to position themselves when opened before any right-click menu was set up.
+- {: .changed data-area="ui"} [Palantir](../installation/Admin-Dashboard.html) has a navigation bar with grouped menus
+  (Identity, Sessions, Platform) in place of the side rail, and each page is headed by the section it shows. Applications
+  can be shown as cards or as the table, and a card's menu offers the same actions as right-clicking a row. Palantir
+  follows the light or dark appearance of the operating system until another is chosen from the navigation bar or the
+  settings dialog. The service wizard starts from a choice of described application types and then walks the definition
+  in steps (Basics, Protocol, Access & attributes, Policies) to a review of what the definition holds: each step shows
+  its sections as tiles that say whether they hold values, with Back and Next to move along.
 - {: .fixed data-area="oidc"} CIBA token requests answer `authorization_pending` while the user has not yet approved the request, `expired_token` for an expired `auth_req_id`, and `invalid_grant` for one that is unknown or already redeemed, as CIBA Core 1.0 requires; they used to return `invalid_grant` and `invalid_request`.
 - {: .fixed data-area="oidc"} Device code token requests answer `expired_token` for an expired device or user code, and `invalid_grant` for a device code that is unknown, already redeemed or issued to another client, as RFC 8628 requires; they used to return `access_denied`, which RFC 8628 reserves for a user who denied the request.
 - {: .fixed data-area="oidc"} Approving consent for an authorization request with `prompt=consent` now completes the request instead of showing the consent screen again.
@@ -969,3 +975,6 @@ The documentation now explains how to let browser-based MCP clients reach the se
 - {: .fixed data-area="ui"} The notifications dialog no longer shares an element id with the Google Authenticator confirmation dialog, which left the dialog descriptions ambiguous to screen readers.
 - {: .fixed data-area="operations"} The [AWS Secrets Manager](../configuration/Configuration-Server-Management-SpringCloud-AmazonSecretManager.html), [AWS SSM](../configuration/Configuration-Server-Management-SpringCloud-AmazonSSM.html) and [Amazon S3](../configuration/Configuration-Server-Management-SpringCloud-AmazonS3.html) configuration sources open a client for each refresh or change and close it afterwards, so settings can still be changed through CAS after a refresh; the client they used to share was closed when the refresh finished. A new SSM parameter written with no active profile is named `/cas/<setting>` rather than `/cas//<setting>`.
 - {: .fixed data-area="operations"} [REST audit](../audits/Audits-REST.html) records handed back by the endpoint as CAS posted them, with type information, are read back correctly; records without type information are still accepted.
+- {: .fixed data-area="operations"} The connection, socket and client execution timeouts of AWS clients (DynamoDb, S3, SQS, SES, Firehose and the rest) default to 5, 5 and 10 seconds. The defaults were written as `5000` and `10000`, which CAS reads as seconds, so a backend that stopped answering held a request for well over an hour. Values given as plain numbers are still read as seconds; prefer the duration syntax, such as `PT5S`.
+- {: .fixed data-area="mfa"} [Trusted devices kept behind a REST API](../mfa/Multifactor-TrustedDevice-Authentication-Storage-Rest.html) are saved when the endpoint answers with a plain-text or empty body; registering a device used to fail with a server error unless the response was JSON.
+- {: .fixed data-area="authentication"} The MongoDb modules for the [acceptable usage policy](../webflow/Webflow-Customization-AUP-MongoDb.html) and [passwordless authentication](../authentication/Passwordless-Authentication-Storage-MongoDb.html) no longer stop CAS from starting: their templates are only injected by name, so they no longer clash with the template Spring Boot's MongoDb support expects.
