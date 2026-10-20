@@ -52,6 +52,9 @@ class RedisSamlIdPMetadataLocatorTests extends BaseRedisSamlMetadataTests {
         val document = samlIdPMetadataLocator.fetch(Optional.of(service));
         assertNotNull(document);
         assertEquals(global.getSigningKey(), document.getSigningKey());
-        assertTrue(samlIdPMetadataLocator.resolveSigningKey(Optional.of(service)).contentLength() > 0);
+        val signingKey = samlIdPMetadataLocator.resolveSigningKey(Optional.of(service));
+        assertTrue(signingKey.contentLength() > 0);
+        assertArrayEquals(samlIdPMetadataLocator.resolveSigningKey(Optional.empty()).getContentAsByteArray(),
+            signingKey.getContentAsByteArray());
     }
 }
