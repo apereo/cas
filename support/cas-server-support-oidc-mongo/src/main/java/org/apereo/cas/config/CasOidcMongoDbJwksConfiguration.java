@@ -36,7 +36,7 @@ class CasOidcMongoDbJwksConfiguration {
     private static final BeanCondition CONDITION_COLLECTION = BeanCondition.on("cas.authn.oidc.jwks.mongo.collection");
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Bean
+    @Bean(defaultCandidate = false)
     @ConditionalOnMissingBean(name = "mongoOidcJsonWebKeystoreTemplate")
     public MongoOperations mongoOidcJsonWebKeystoreTemplate(
         final ConfigurableApplicationContext applicationContext,

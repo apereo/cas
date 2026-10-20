@@ -1,8 +1,11 @@
 {
-  "dependencies": "session-hazelcast,webauthn,webauthn-jpa,webauthn-mongo,webauthn-redis,webauthn-rest,webauthn-dynamodb",
+  "dependencies": "session-hazelcast,webauthn,webauthn-jpa,webauthn-mongo,webauthn-redis,webauthn-rest,webauthn-dynamodb,webauthn-ldap",
   "conditions": {
     "docker": "true"
   },
+  "environmentVariables": [
+    "CAS_LDAP_BIND_DN=cn=Directory Manager"
+  ],
   "properties": [
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",
@@ -27,6 +30,7 @@
         "--CasFeatureModule.WebAuthn.redis.enabled=false",
         "--CasFeatureModule.WebAuthn.rest.enabled=false",
         "--CasFeatureModule.WebAuthn.dynamodb.enabled=false",
+        "--CasFeatureModule.WebAuthn.ldap.enabled=false",
         "--cas.authn.mfa.web-authn.jpa.ddl-auto=create",
         "--cas.authn.mfa.web-authn.jpa.user=root",
         "--cas.authn.mfa.web-authn.jpa.password=mypass",
@@ -42,6 +46,7 @@
         "--CasFeatureModule.WebAuthn.redis.enabled=false",
         "--CasFeatureModule.WebAuthn.rest.enabled=false",
         "--CasFeatureModule.WebAuthn.dynamodb.enabled=false",
+        "--CasFeatureModule.WebAuthn.ldap.enabled=false",
         "--cas.authn.mfa.web-authn.mongo.host=localhost",
         "--cas.authn.mfa.web-authn.mongo.port=27017",
         "--cas.authn.mfa.web-authn.mongo.user-id=root",
@@ -58,6 +63,7 @@
         "--CasFeatureModule.WebAuthn.mongo.enabled=false",
         "--CasFeatureModule.WebAuthn.rest.enabled=false",
         "--CasFeatureModule.WebAuthn.dynamodb.enabled=false",
+        "--CasFeatureModule.WebAuthn.ldap.enabled=false",
         "--cas.authn.mfa.web-authn.redis.host=localhost",
         "--cas.authn.mfa.web-authn.redis.port=6379"
       ]
@@ -69,6 +75,7 @@
         "--CasFeatureModule.WebAuthn.mongo.enabled=false",
         "--CasFeatureModule.WebAuthn.redis.enabled=false",
         "--CasFeatureModule.WebAuthn.dynamodb.enabled=false",
+        "--CasFeatureModule.WebAuthn.ldap.enabled=false",
         "--cas.authn.mfa.web-authn.rest.url=http://localhost:5613/webauthn"
       ]
     },
@@ -79,13 +86,30 @@
         "--CasFeatureModule.WebAuthn.mongo.enabled=false",
         "--CasFeatureModule.WebAuthn.redis.enabled=false",
         "--CasFeatureModule.WebAuthn.rest.enabled=false",
+        "--CasFeatureModule.WebAuthn.ldap.enabled=false",
         "--cas.authn.mfa.web-authn.dynamo-db.endpoint=http://localhost:8000",
         "--cas.authn.mfa.web-authn.dynamo-db.region=us-east-1",
         "--cas.authn.mfa.web-authn.dynamo-db.credential-access-key=AKIAIPPIGGUNIO74C63Z",
         "--cas.authn.mfa.web-authn.dynamo-db.credential-secret-key=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",
         "--cas.authn.mfa.web-authn.dynamo-db.drop-tables-on-startup=true"
       ]
+    },
+    {
+      "name": "ldap",
+      "properties": [
+        "--CasFeatureModule.WebAuthn.jpa.enabled=false",
+        "--CasFeatureModule.WebAuthn.mongo.enabled=false",
+        "--CasFeatureModule.WebAuthn.redis.enabled=false",
+        "--CasFeatureModule.WebAuthn.rest.enabled=false",
+        "--CasFeatureModule.WebAuthn.dynamodb.enabled=false",
+        "--cas.authn.mfa.web-authn.ldap.ldap-url=ldap://localhost:10389",
+        "--cas.authn.mfa.web-authn.ldap.base-dn=ou=webauthn,dc=example,dc=org",
+        "--cas.authn.mfa.web-authn.ldap.search-filter=cn={0}",
+        "--cas.authn.mfa.web-authn.ldap.account-attribute-name=description",
+        "--cas.authn.mfa.web-authn.ldap.bind-dn=${CAS_LDAP_BIND_DN}",
+        "--cas.authn.mfa.web-authn.ldap.bind-credential=password"
+      ]
     }
   ],
-  "initScript": "${PWD}/ci/tests/mariadb/run-mariadb-server.sh,${PWD}/ci/tests/mongodb/run-mongodb-server.sh,${PWD}/ci/tests/redis/run-redis-server.sh,${PWD}/ci/tests/dynamodb/run-dynamodb-server.sh"
+  "initScript": "${PWD}/ci/tests/mariadb/run-mariadb-server.sh,${PWD}/ci/tests/mongodb/run-mongodb-server.sh,${PWD}/ci/tests/redis/run-redis-server.sh,${PWD}/ci/tests/dynamodb/run-dynamodb-server.sh,${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/init.sh"
 }

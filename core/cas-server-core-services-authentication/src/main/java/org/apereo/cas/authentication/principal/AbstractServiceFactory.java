@@ -5,6 +5,7 @@ import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.multitenancy.TenantDefinition;
 import org.apereo.cas.multitenancy.TenantExtractor;
+import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.http.HttpRequestUtils;
@@ -52,7 +53,6 @@ public abstract class AbstractServiceFactory<T extends Service> implements Servi
 
     private int order = Ordered.LOWEST_PRECEDENCE;
 
-
     /**
      * Cleanup the url. Removes jsession ids and query strings.
      *
@@ -74,6 +74,20 @@ public abstract class AbstractServiceFactory<T extends Service> implements Servi
         return url.substring(0, jsessionPosition) + url.substring(questionMarkPosition);
     }
 
+    protected static String validateServiceUrl(final String serviceUrl) {
+        if (Strings.CI.startsWithAny(serviceUrl.strip(), "http:", "https:")) {
+            try {
+                val uri = URI.create(serviceUrl).parseServerAuthority();
+                if (uri.getRawUserInfo() != null || StringUtils.isBlank(uri.getHost())) {
+                    throw UnauthorizedServiceException.denied("HTTP service URLs must have a host and must not contain user information");
+                }
+            } catch (final IllegalArgumentException | URISyntaxException e) {
+                throw UnauthorizedServiceException.denied("Invalid HTTP service URL");
+            }
+        }
+        return serviceUrl;
+    }
+    
     protected static @Nullable String getSourceParameter(@Nullable final HttpServletRequest request, final String... paramNames) {
         if (request != null) {
             val parameterMap = request.getParameterMap();

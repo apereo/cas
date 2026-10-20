@@ -38,7 +38,7 @@ public class CasMongoDbWebAuthnAutoConfiguration {
     }
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Bean
+    @Bean(defaultCandidate = false)
     public MongoTemplate mongoWebAuthnTemplate(
         final CasConfigurationProperties casProperties,
         @Qualifier(CasSSLContext.BEAN_NAME)

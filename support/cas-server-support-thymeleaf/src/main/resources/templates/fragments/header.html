@@ -64,12 +64,11 @@
                             th:if="${#cas.isTrue(#cas.theme('cas.notifications-menu.enabled'))}"
                             class="mdc-icon-button mdc-top-app-bar__action-item cas-notification-toggle btn btn-outline-light"
                             type="button"
-                            aria-label="Notifications"
                             data-bs-toggle="modal"
                             data-bs-target="#cas-notification-dialog">
                         <span class="mdi mdi-bell-outline fa fa-bell" aria-hidden="true"></span>
-                        <span class="visually-hidden">notifications</span>
-                        <span id="notifications-count" class="notifications-count count" aria-hidden="true"></span>
+                        <span class="visually-hidden">Notifications</span>
+                        <span id="notifications-count" class="notifications-count count"></span>
                     </button>
 
                     <a id="cas-user-account"
@@ -186,7 +185,6 @@
                     menu.remove();
                 } else {
                     document.getElementById('notifications-count').textContent = `${count}`;
-                    menu.setAttribute('aria-label', `${menu.getAttribute('aria-label')} (${count})`);
                 }
             }
         });

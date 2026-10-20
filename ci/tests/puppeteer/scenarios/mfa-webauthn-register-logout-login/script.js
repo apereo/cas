@@ -63,6 +63,11 @@ async function hasStoredRegistration() {
         const items = await cas.dynamoDbScan("DynamoDbCasWebAuthnRecords");
         return JSON.stringify(items.filter((item) => item.principal.S === "casuser")).includes("credentialId");
     }
+    case "ldap": {
+        const entry = await cas.dockerExec("ldap-server", ["ldapsearch", "-LLL", "-o", "ldif-wrap=no", "-x", "-D", "cn=Directory Manager",
+            "-w", "password", "-H", "ldap://", "-b", "cn=casuser,ou=webauthn,dc=example,dc=org", "description"]);
+        return entry.split("\n").filter((line) => line.startsWith("description")).length > 0;
+    }
     case "rest":
         return (restRegistrations.get("casuser") ?? "").includes("credentialId");
     default:

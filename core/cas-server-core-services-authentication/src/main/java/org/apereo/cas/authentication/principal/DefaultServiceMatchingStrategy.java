@@ -36,9 +36,9 @@ public class DefaultServiceMatchingStrategy implements ServiceMatchingStrategy {
     }
 
     protected boolean compareServices(final Service service, final Service serviceToMatch) throws Exception {
-        val thisUrl = removeFragmentFrom(URLDecoder.decode(service.getId(), StandardCharsets.UTF_8));
-        val serviceUrl = removeFragmentFrom(URLDecoder.decode(serviceToMatch.getId(), StandardCharsets.UTF_8));
-        LOGGER.debug("Decoded urls and comparing [{}] with [{}]", thisUrl, serviceUrl);
+        val thisUrl = removeFragmentFrom(service.getId());
+        val serviceUrl = removeFragmentFrom(serviceToMatch.getId());
+        LOGGER.debug("Comparing service urls [{}] with [{}]", thisUrl, serviceUrl);
         return thisUrl.equalsIgnoreCase(serviceUrl);
     }
 

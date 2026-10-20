@@ -4,12 +4,14 @@ import module java.base;
 import org.apereo.cas.adaptors.yubikey.AbstractYubiKeyAccountRegistryTests;
 import org.apereo.cas.adaptors.yubikey.BaseYubiKeyTests;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccountRegistry;
+import org.apereo.cas.adaptors.yubikey.YubiKeyDeviceRegistrationRequest;
 import org.apereo.cas.config.CasRedisYubiKeyAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import lombok.Getter;
+import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -57,5 +59,17 @@ class RedisYubiKeyAccountRegistryTests extends AbstractYubiKeyAccountRegistryTes
         for (var i = 0; i < 10; i++) {
             assertNotNull(yubiKeyAccountRegistry.getAccounts());
         }
+    }
+
+    @Test
+    void verifyTenantIsKept() {
+        val username = UUID.randomUUID().toString();
+        val request = YubiKeyDeviceRegistrationRequest.builder().username(username)
+            .token(OTP).name(UUID.randomUUID().toString()).tenant("shire").build();
+        assertTrue(yubiKeyAccountRegistry.registerAccountFor(request));
+        val account = yubiKeyAccountRegistry.getAccount(username).orElseThrow();
+        assertEquals("shire", account.getTenant());
+        assertEquals("shire", account.getDevices().getFirst().getTenant());
+        yubiKeyAccountRegistry.delete(username);
     }
 }

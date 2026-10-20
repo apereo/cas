@@ -48,7 +48,7 @@ public class MongoDbYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
     @Override
     public void delete(final String username, final long deviceId) {
         val account = getAccountInternal(username);
-        if (account.getDevices().removeIf(device -> device.getId() == deviceId)) {
+        if (account != null && account.getDevices().removeIf(device -> device.getId() == deviceId)) {
             update(account);
         }
     }

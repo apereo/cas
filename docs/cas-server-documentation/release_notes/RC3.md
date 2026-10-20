@@ -41,7 +41,7 @@ release:
       url: ../planning/Installation-Requirements.html
     - label: Built on
       value: Spring Boot 4.2
-    - value: "602"
+    - value: "609"
       suffix: browser test scenarios
       url: ../../developer/Test-Process.html
     - value: "94%"
@@ -142,7 +142,7 @@ to build and verify Graal VM native images and we plan to extend the coverage to
 {: data-area="project"}
 
 The collection of end-to-end [browser tests based on Puppeteer](../../developer/Test-Process.html) continue to grow to cover more use cases
-and scenarios. At the moment, total number of jobs stands at approximately `602` distinct scenarios. The overall
+and scenarios. At the moment, total number of jobs stands at approximately `609` distinct scenarios. The overall
 test coverage of the CAS codebase is approximately `94%`.
 
 ### JSpecify & NullAway
@@ -982,9 +982,14 @@ The documentation now explains how to let browser-based MCP clients reach the se
 - {: .fixed data-area="operations"} [Logging to SQS](../logging/Logging-SQS.html) sends the logging context as typed message attributes, within the SQS limit of 10, so messages written while a request is handled are no longer rejected.
 - {: .fixed data-area="operations"} [Audit records sent to Firehose](../audits/Audits-AWS-Firehose.html) end with a newline, so delivered objects can be read as newline-delimited JSON.
 - {: .fixed data-area="authentication"} [Password management over REST](../password_management/Password-Management-REST.html) sends the email address when looking up a forgotten username, so the forgot-username flow can find the account.
-- {: .fixed data-area="ui"} The notifications dialog no longer shares an element id with the Google Authenticator confirmation dialog, which left the dialog descriptions ambiguous to screen readers.
+- {: .fixed data-area="ui"} The notifications dialog no longer shares an element id with the Google Authenticator confirmation dialog, which left the dialog descriptions ambiguous to screen readers. The notifications button takes its accessible name from its own text, "Notifications" and the visible count, rather than from a separate label that did not contain the count as shown.
 - {: .fixed data-area="operations"} The [AWS Secrets Manager](../configuration/Configuration-Server-Management-SpringCloud-AmazonSecretManager.html), [AWS SSM](../configuration/Configuration-Server-Management-SpringCloud-AmazonSSM.html) and [Amazon S3](../configuration/Configuration-Server-Management-SpringCloud-AmazonS3.html) configuration sources open a client for each refresh or change and close it afterwards, so settings can still be changed through CAS after a refresh; the client they used to share was closed when the refresh finished. A new SSM parameter written with no active profile is named `/cas/<setting>` rather than `/cas//<setting>`.
 - {: .fixed data-area="operations"} [REST audit](../audits/Audits-REST.html) records handed back by the endpoint as CAS posted them, with type information, are read back correctly; records without type information are still accepted.
 - {: .fixed data-area="operations"} The connection, socket and client execution timeouts of AWS clients (DynamoDb, S3, SQS, SES, Firehose and the rest) default to 5, 5 and 10 seconds. The defaults were written as `5000` and `10000`, which CAS reads as seconds, so a backend that stopped answering held a request for well over an hour. Values given as plain numbers are still read as seconds; prefer the duration syntax, such as `PT5S`.
 - {: .fixed data-area="mfa"} [Trusted devices kept behind a REST API](../mfa/Multifactor-TrustedDevice-Authentication-Storage-Rest.html) are saved when the endpoint answers with a plain-text or empty body; registering a device used to fail with a server error unless the response was JSON.
 - {: .fixed data-area="authentication"} The MongoDb modules for the [acceptable usage policy](../webflow/Webflow-Customization-AUP-MongoDb.html) and [passwordless authentication](../authentication/Passwordless-Authentication-Storage-MongoDb.html) no longer stop CAS from starting: their templates are only injected by name, so they no longer clash with the template Spring Boot's MongoDb support expects.
+- {: .fixed data-area="operations"} The Google Authenticator, trusted device, WebAuthn, YubiKey, event, service registry, SAML2 metadata and OpenID Connect keystore MongoDb modules can be used together and with the others: their templates are only injected by name, so Spring Boot's MongoDb support no longer finds none or several candidates and stops CAS from starting. Only the MongoDb ticket registry template stays the primary one.
+- {: .fixed data-area="mfa"} YubiKey devices kept in Redis keep the tenant of the account they were first registered for, and removing a device for an unknown account in MongoDb no longer fails.
+- {: .fixed data-area="authentication"} [Cassandra authentication](../authentication/Cassandra-Authentication.html) no longer releases the stored password as a principal attribute.
+- {: .fixed data-area="tickets"} The [Cassandra ticket registry](../ticketing/Cassandra-Ticket-Registry.html) creates its secondary indexes only when they are missing, instead of dropping and recreating them each time a node starts, so a node joining a cluster no longer removes the indexes the other nodes are querying.
+- {: .fixed data-area="operations"} Authentication events sent to [Kafka](../authentication/Configuring-Authentication-Events-Kafka.html) are keyed by their id, so the compacted events topic accepts them; records without a key used to be rejected.

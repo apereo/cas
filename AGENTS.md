@@ -622,7 +622,18 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
 - Every CAS MongoDb module pulls in Spring Boot's MongoDb data auto-configuration, whose `gridFsTemplate` needs exactly
   one injectable `MongoTemplate`. A module with zero (only `MongoOperations` beans) or two `MongoTemplate` beans breaks
   startup unless its templates are `@Bean(defaultCandidate = false)` and injected by `@Qualifier`; Boot then creates
-  its own template. AUP and passwordless MongoDb do this; other pairs of MongoDb modules in one build can still clash.
+  its own template. Every CAS MongoDb template is a non-default candidate except the ticket registry's (`@Primary`);
+  keep it that way for new ones. `mfa-gauth-trusted-devices-mongo` builds two MongoDb modules together.
+- The Cassandra and Memcached ticket registries encrypt by default with random keys, so multi-node scenarios set shared
+  `cas.ticket.registry.<registry>.crypto.encryption.key`/`signing.key`. Cassandra in CI uses client TLS: set
+  `cas.http-client.host-name-verifier=none` and `ssl-protocols=TLSv1.2`, and read it with
+  `docker exec cassandra cqlsh --ssl -e "<query>"` (unquoted table names are lowercase). Memcached: `stats` over `nc`.
+- CAS Redis values are a 4-byte big-endian length followed by an LZ4 block of the Java-serialized object; a fixture such as
+  `redis-authentication-login/accounts.json` must be regenerated when the serialized class changes.
+- The Kafka console consumer can exit non-zero on `--timeout-ms`; read its output with `spawnSync`. The RADIUS test server
+  takes `casuser`/`Mellon`, secret `testing123`, PAP; both RADIUS modules need `client.inet-address` set.
+- WebAuthn LDAP keeps registrations in an attribute of the user's entry (`description` on 389ds). The OIDC MongoDb
+  keystore needs both `cas.authn.oidc.jwks.mongo.host` and `.collection`; client JWKS go to `<collection>-ClientJwksStore`.
 - The Google Authenticator JSON repository writes used scratch codes back to its file, so a scenario with variations or
   retries runs out of codes. Copy the account file to `${TMPDIR}` from an init script (runs per variation) and point
   `cas.authn.mfa.gauth.json.location` at the copy, as `mfa-gauth-login-trusted-devices-storage` does; unpause paused

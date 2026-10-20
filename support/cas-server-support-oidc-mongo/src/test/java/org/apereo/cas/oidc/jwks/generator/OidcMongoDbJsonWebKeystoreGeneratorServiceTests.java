@@ -62,4 +62,10 @@ class OidcMongoDbJsonWebKeystoreGeneratorServiceTests extends AbstractOidcTests 
         val keys3 = new ObjectMapper().readTree(json3).get("keys");
         assertEquals(set1.getJsonWebKeys().size(), keys3.size());
     }
+
+    @Test
+    void verifyTemplateIsInjectedOnlyByName() {
+        val definition = applicationContext.getBeanFactory().getBeanDefinition("mongoOidcJsonWebKeystoreTemplate");
+        assertFalse(definition.isDefaultCandidate());
+    }
 }

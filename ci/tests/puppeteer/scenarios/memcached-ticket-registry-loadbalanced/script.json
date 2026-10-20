@@ -1,0 +1,35 @@
+{
+  "dependencies": "memcached-ticket-registry",
+  "conditions": {
+    "docker": "true"
+  },
+  "properties": [
+    "--cas.server.prefix=${cas.server.name}/cas",
+    "--cas.service-registry.core.init-from-json=true",
+    "--cas.ticket.st.time-to-kill-in-seconds=30",
+
+    "--cas.ticket.registry.memcached.servers=localhost:11211",
+    "--cas.ticket.registry.memcached.crypto.encryption.key=7CITiW3O2dOpUYOwHJX3-w",
+    "--cas.ticket.registry.memcached.crypto.signing.key=CYPAXgmLzDnPjWEdCMeP360LorQjurUFtUgJGvBLdctpGgUDK1NjTnfjEmHJpnQHwQ52KYWpmQ4GlAmsxlDjiQ",
+
+    "--cas.tgc.crypto.alg=A128CBC-HS256",
+    "--cas.tgc.crypto.encryption.key=u696jJnPvm1DHLR7yVCSKMMzzoPoFxJZW4-MP1CkM5w",
+    "--cas.tgc.crypto.signing.key=zPdNCd0R1oMR0ClzEqZzapkte8rO0tNvygYjmHoUhitAu6CBscwMC3ZTKy8tleTKiQ6GVcuiQQgxfd1nSKxf7w",
+    "--cas.webflow.crypto.signing.key=Q4tQGAuJSmuJ5WA0zByB9P6hYr5dpTd2JJifyy6Tm_CJ35pkbdhFvcgG-3igDjA4CTjau6Z0yMft-dhVUbRnPQ",
+    "--cas.webflow.crypto.encryption.key=g-Rk2ZvexS6tdooIiDh0IQ"
+  ],
+  "bootstrapScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/bootstrap.sh",
+  "instances": 2,
+  "instance1": {
+    "properties": [
+      "--cas.server.name=https://localhost:8443",
+      "--cas.host.name=cas-instance-8443"
+    ]
+  },
+  "instance2": {
+    "properties": [
+      "--cas.server.name=https://localhost:8444",
+      "--cas.host.name=cas-instance-8444"
+    ]
+  }
+}

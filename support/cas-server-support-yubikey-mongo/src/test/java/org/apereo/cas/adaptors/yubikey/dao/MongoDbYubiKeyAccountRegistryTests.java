@@ -11,11 +11,13 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import lombok.Getter;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link MongoDbYubiKeyAccountRegistryTests}.
@@ -51,4 +53,9 @@ class MongoDbYubiKeyAccountRegistryTests extends AbstractYubiKeyAccountRegistryT
     @Autowired
     @Qualifier("yubiKeyAccountRegistry")
     private YubiKeyAccountRegistry yubiKeyAccountRegistry;
+
+    @Test
+    void verifyDeviceRemovalForUnknownAccount() {
+        assertDoesNotThrow(() -> yubiKeyAccountRegistry.delete(UUID.randomUUID().toString(), 1L));
+    }
 }
