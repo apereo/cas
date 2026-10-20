@@ -6,7 +6,7 @@
     "@napi-rs/canvas": "1.0.11",
     "@stomp/stompjs": "7.5.0",
     "archiver": "8.0.0",
-    "axe-core": "4.13.0",
+    "axe-core": "4.14.0",
     "axios": "1.20.0",
     "basic-auth": "3.0.0",
     "cfonts": "^3.3.1",
