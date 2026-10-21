@@ -23,14 +23,16 @@ async function submitLogin(execution) {
     });
     let status = 0;
     let cookies = [];
+    let location = undefined;
     await cas.doRequest(LOGIN_URL, "POST", {"Content-Type": "application/x-www-form-urlencoded", "User-Agent": USER_AGENT}, 0, form.toString(),
         (res) => {
             status = res.statusCode;
             cookies = res.headers["set-cookie"] ?? [];
+            location = res.headers.location;
         });
     const ticketGrantingCookie = cookies.some((cookie) => cookie.startsWith("TGC="));
     await cas.log(`Login submission answered ${status}; ticket-granting cookie issued: ${ticketGrantingCookie}`);
-    return {status, ticketGrantingCookie};
+    return {status, ticketGrantingCookie, location};
 }
 
 function tamper(execution) {
@@ -56,8 +58,20 @@ async function verifyRobustness() {
     await cas.separator();
     await cas.log("A badly formatted flow execution must be refused without a server error");
     const malformed = await submitLogin("not-a-flow-execution");
-    assert(malformed.status > 0 && malformed.status < 500, `Badly formatted execution answered ${malformed.status}`);
+    assert(malformed.status === 302, `Badly formatted execution answered ${malformed.status}`);
+    assert(new URL(malformed.location, LOGIN_URL).pathname === "/cas/login", `Badly formatted execution redirected to ${malformed.location}`);
     assert(!malformed.ticketGrantingCookie, "Badly formatted execution must not log the user in");
+
+    await cas.log("A badly formatted flow execution in the query string restarts the flow without it");
+    const encodedService = encodeURIComponent("https://localhost:9859/anything/cas");
+    let restart = undefined;
+    await cas.doRequest(`${LOGIN_URL}?service=${encodedService}&execution=not-a-flow-execution`, "GET", {"User-Agent": USER_AGENT}, 302, undefined,
+        (res) => {
+            restart = new URL(res.headers.location, LOGIN_URL);
+        });
+    assert(restart.pathname === "/cas/login", `Query string execution redirected to ${restart}`);
+    assert(!restart.searchParams.has("execution"), `Redirect keeps the execution: ${restart}`);
+    assert(restart.searchParams.get("service") === "https://localhost:9859/anything/cas", `Redirect lost the service: ${restart}`);
 
     await cas.separator();
     await cas.log("Going back to the login page after logging into a service must issue a new service ticket");
