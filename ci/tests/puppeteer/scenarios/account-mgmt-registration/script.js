@@ -73,7 +73,9 @@ async function submitAccountRegistrationRequest(page, browser, checkAccessibilit
     await cas.assertInnerText(page, "#content h2", "Account Registration");
     await cas.assertInnerTextStartsWith(page, "#content p", "Thank you! Your account is now activated");
     if (checkAccessibility) {
+        await page.evaluate(() => window.Swal.stopTimer());
         await cas.assertAccessibility(page, "Account sign-up completed");
+        await page.evaluate(() => window.Swal.resumeTimer());
     }
     await cas.sleep(5000);
     await cas.logPage(page);

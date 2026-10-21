@@ -128,16 +128,40 @@ exports.newBrowser = async (options) => {
     throw "Failed to launch browser after multiple attempts";
 };
 
+/**
+ * Waits for an operation for a bounded time, so a browser that stops answering cannot keep the scenario alive.
+ *
+ * @param operation the promise to wait for
+ * @param description what the operation does, for the log
+ * @param timeout how long to wait, in milliseconds
+ * @returns true if the operation finished in time
+ */
+async function finishesWithin(operation, description, timeout = 15000) {
+    let timer = undefined;
+    const expired = new Promise((resolve) => {
+        timer = setTimeout(() => resolve(false), timeout);
+    });
+    const finished = await Promise.race([operation.then(() => true), expired]);
+    clearTimeout(timer);
+    if (!finished) {
+        await exports.logr(`${description} did not finish within ${timeout / 1000} second(s)`);
+    }
+    return finished;
+}
+
 exports.closeBrowser = async (browser, preClose = () => {}, postClose = () => {}) => {
     try {
         preClose(browser);
         const pages = await browser.pages();
-        await Promise.all(
+        const pagesClosed = await finishesWithin(Promise.all(
             pages
-                .filter(page => !page.isClosed())
-                .map(page => page.close())
-        );
-        await browser.close();
+                .filter((page) => !page.isClosed())
+                .map((page) => page.close())
+        ), "Closing browser pages");
+        const browserClosed = pagesClosed && await finishesWithin(browser.close(), "Closing the browser");
+        if (!browserClosed) {
+            browser.process()?.kill("SIGKILL");
+        }
     } finally {
         postClose(browser);
     }

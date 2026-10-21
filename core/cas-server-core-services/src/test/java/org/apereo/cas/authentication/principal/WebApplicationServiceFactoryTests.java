@@ -45,7 +45,10 @@ class WebApplicationServiceFactoryTests {
         "HTTPS://trusted.example%23@attacker.example/capture",
         "https://trusted.example%23@attacker.example:invalid/capture",
         "https:///capture",
-        "https://trusted.example\\@attacker.example/capture"
+        "https://trusted.example\\@attacker.example/capture",
+        "https://trusted.example:80x/capture",
+        "https:trusted.example/capture",
+        "https://[::1/capture"
     })
     void verifyRejectsUnsafeServiceUrls(final String url) {
         assertThrows(UnauthorizedServiceException.class, () -> serviceFactory.createService(url));
@@ -63,6 +66,8 @@ class WebApplicationServiceFactoryTests {
         "http://localhost:8080/callback",
         "https://[::1]:8443/callback",
         "https://trusted.example/callback%23@name?email=user@example.org#fragment",
+        "http://www.example.org?param=hello world",
+        "http://test_service.example.org/login",
         "testservice",
         "urn:example:service"
     })

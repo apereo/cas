@@ -613,6 +613,11 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
   `layout.html` fades the page content in (`.fade-in`, 0.7 s, opacity and blur), so axe run right after a navigation
   reports `color-contrast` on everything in the card; wait for `document.getAnimations()` that end (skip infinite ones,
   such as the notification bell) before analyzing.
+- The puppeteer webapp runs without `--add-opens java.base/java.util`, but Gradle tests open it. Code that reflects on
+  private JDK fields (Kryo serializers in the Memcached registry) passes unit tests and fails in scenarios and plain
+  `java -jar` deployments.
+- Servlet filters that extract the service treat `UnauthorizedServiceException` as an unauthorized service (status 403,
+  `RequestDispatcher.ERROR_EXCEPTION`, continue the chain); an exception thrown from a filter ends in an empty body.
 - Spring Cloud closes the bootstrap context once a refresh is done, so a `PropertySourceLocator` that closes its client
   in `destroy()` leaves the located property source with a closed client. The AWS configuration sources take a
   `Supplier` of clients and open and close one per refresh or change.

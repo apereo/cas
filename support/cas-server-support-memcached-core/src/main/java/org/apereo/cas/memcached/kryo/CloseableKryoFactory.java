@@ -1,27 +1,24 @@
 package org.apereo.cas.memcached.kryo;
 
 import module java.base;
+import org.apereo.cas.memcached.kryo.serial.EnumMapSerializer;
 import org.apereo.cas.memcached.kryo.serial.ImmutableNativeJavaListSerializer;
 import org.apereo.cas.memcached.kryo.serial.ImmutableNativeJavaMapSerializer;
 import org.apereo.cas.memcached.kryo.serial.ImmutableNativeJavaSetSerializer;
 import org.apereo.cas.memcached.kryo.serial.ThrowableSerializer;
 import org.apereo.cas.memcached.kryo.serial.URLSerializer;
+import org.apereo.cas.memcached.kryo.serial.UnmodifiableCollectionsSerializer;
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.serializers.DefaultSerializers;
 import com.esotericsoftware.kryo.serializers.TimeSerializers;
 import com.esotericsoftware.kryo.util.DefaultInstantiatorStrategy;
-import de.javakaffee.kryoserializers.ArraysAsListSerializer;
 import de.javakaffee.kryoserializers.CollectionsEmptyListSerializer;
 import de.javakaffee.kryoserializers.CollectionsEmptyMapSerializer;
 import de.javakaffee.kryoserializers.CollectionsEmptySetSerializer;
 import de.javakaffee.kryoserializers.DateSerializer;
-import de.javakaffee.kryoserializers.EnumMapSerializer;
-import de.javakaffee.kryoserializers.EnumSetSerializer;
-import de.javakaffee.kryoserializers.GregorianCalendarSerializer;
 import de.javakaffee.kryoserializers.RegexSerializer;
 import de.javakaffee.kryoserializers.URISerializer;
 import de.javakaffee.kryoserializers.UUIDSerializer;
-import de.javakaffee.kryoserializers.UnmodifiableCollectionsSerializer;
 import de.javakaffee.kryoserializers.guava.ImmutableListSerializer;
 import de.javakaffee.kryoserializers.guava.ImmutableMapSerializer;
 import de.javakaffee.kryoserializers.guava.ImmutableMultimapSerializer;
@@ -138,7 +135,7 @@ public class CloseableKryoFactory implements FactoryBean<CloseableKryo> {
         kryo.register(singletonList.getClass());
 
         val list = Arrays.asList("key");
-        kryo.register(list.getClass(), new ArraysAsListSerializer());
+        kryo.register(list.getClass(), new DefaultSerializers.ArraysAsListSerializer());
 
         kryo.register(String.CASE_INSENSITIVE_ORDER.getClass());
     }
@@ -160,7 +157,7 @@ public class CloseableKryoFactory implements FactoryBean<CloseableKryo> {
         kryo.register(TreeSet.class, new DefaultSerializers.TreeSetSerializer());
         kryo.register(HashSet.class);
         kryo.register(EnumMap.class, new EnumMapSerializer());
-        kryo.register(EnumSet.class, new EnumSetSerializer());
+        kryo.register(EnumSet.class, new DefaultSerializers.EnumSetSerializer());
 
         kryo.register(Object[].class);
         kryo.register(String[].class);
@@ -182,8 +179,8 @@ public class CloseableKryoFactory implements FactoryBean<CloseableKryo> {
         kryo.register(UUID.class, new UUIDSerializer());
 
         kryo.register(Date.class, new DateSerializer(Date.class));
-        kryo.register(Calendar.class, new GregorianCalendarSerializer());
-        kryo.register(GregorianCalendar.class, new GregorianCalendarSerializer());
+        kryo.register(Calendar.class, new DefaultSerializers.CalendarSerializer());
+        kryo.register(GregorianCalendar.class, new DefaultSerializers.CalendarSerializer());
 
         kryo.register(Duration.class, new TimeSerializers.DurationSerializer());
         kryo.register(Period.class, new TimeSerializers.PeriodSerializer());
@@ -199,6 +196,6 @@ public class CloseableKryoFactory implements FactoryBean<CloseableKryo> {
         kryo.register(ZoneId.class, new TimeSerializers.ZoneIdSerializer());
         
         kryo.register(Clock.systemUTC().getClass());
-        kryo.register(EnumSet.class, new EnumSetSerializer());
+        kryo.register(EnumSet.class, new DefaultSerializers.EnumSetSerializer());
     }
 }

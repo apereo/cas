@@ -4,9 +4,11 @@ import module java.base;
 import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
+import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceProperty.RegisteredServiceProperties;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.web.support.ArgumentExtractor;
 import org.apereo.cas.web.support.filters.ResponseHeadersEnforcementFilter;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointProperties;
 import org.springframework.http.HttpStatus;
@@ -68,6 +71,28 @@ public class RegisteredServiceResponseHeadersEnforcementFilter extends ResponseH
         return Optional.empty();
     }
 
+    /**
+     * Extract the service from the request. A service the argument extractor refuses, such as an HTTP URL
+     * with user information, is handled like an unauthorized service: the response is marked as forbidden,
+     * the exception is recorded as the error of the request and the chain goes on so the request is answered
+     * with the CAS error view rather than an empty error response.
+     *
+     * @param httpServletResponse the response
+     * @param httpServletRequest  the request
+     * @return the service, or null when the request has none or it is refused
+     */
+    private @Nullable WebApplicationService extractService(final HttpServletResponse httpServletResponse,
+                                                           final HttpServletRequest httpServletRequest) {
+        try {
+            return argumentExtractor.getObject().extractService(httpServletRequest);
+        } catch (final UnauthorizedServiceException e) {
+            LOGGER.warn("Service in the request is not accepted: [{}]", e.getMessage());
+            httpServletResponse.setStatus(HttpStatus.FORBIDDEN.value());
+            httpServletRequest.setAttribute(RequestDispatcher.ERROR_EXCEPTION, e);
+            return null;
+        }
+    }
+
     @Override
     protected Optional<RegisteredService> prepareFilterBeforeExecution(final HttpServletResponse httpServletResponse,
                                                                        final HttpServletRequest httpServletRequest)
@@ -77,7 +102,7 @@ public class RegisteredServiceResponseHeadersEnforcementFilter extends ResponseH
             return Optional.empty();
         }
         
-        val service = argumentExtractor.getObject().extractService(httpServletRequest);
+        val service = extractService(httpServletResponse, httpServletRequest);
         if (service != null) {
             LOGGER.trace("Attempting to resolve service for [{}]", service);
             val resolved = authenticationRequestServiceSelectionStrategies.getObject().resolveService(service);
