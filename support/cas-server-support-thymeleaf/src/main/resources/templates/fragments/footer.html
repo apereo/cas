@@ -1,4 +1,6 @@
-<footer th:if="${#cas.isTrue(#cas.theme('cas.footer.show'))}"
+<footer th:if="${#cas.themeBuilderEnabled or #cas.isTrue(#cas.theme('cas.footer.show'))}"
+        th:classappend="${!#cas.isTrue(#cas.theme('cas.footer.show'))} ? 'cas-theme-builder-off'"
+        data-cas-theme-builder-toggle="cas.footer.show"
         class="py-3 d-flex justify-content-center align-items-center cas-footer"
         id="casFooter" role="contentinfo">
     <span id="copyright" th:utext="#{copyright}" class="me-2 d-inline-block">Copyright Apereo, Inc</span>
@@ -7,16 +9,22 @@
         <a href="https://github.com/apereo/cas">Apereo CAS</a>
     </span>
     <code class="version"
-          th:if="${#cas.isTrue(#cas.theme('cas.footer.show-version'))}"
+          th:if="${#cas.themeBuilderEnabled or #cas.isTrue(#cas.theme('cas.footer.show-version'))}"
+          th:classappend="${!#cas.isTrue(#cas.theme('cas.footer.show-version'))} ? 'cas-theme-builder-off'"
+          data-cas-theme-builder-toggle="cas.footer.show-version"
           th:text="${T(org.apereo.cas.util.CasVersion).getVersion() + ' ' + T(org.apereo.cas.util.CasVersion).getDateTime()}">
     </code>
     <code class="host pl-2"
-          th:if="${#cas.isTrue(#cas.theme('cas.footer.show-host'))}"
+          th:if="${#cas.themeBuilderEnabled or #cas.isTrue(#cas.theme('cas.footer.show-host'))}"
+          th:classappend="${!#cas.isTrue(#cas.theme('cas.footer.show-host'))} ? 'cas-theme-builder-off'"
+          data-cas-theme-builder-toggle="cas.footer.show-host"
           th:text="${'🖥️ ' + host}">
     </code>
     <span th:remove="tag" th:if="${clientInfo}">
         <code id="clientIpAddress" class="clientIpAddress pl-2"
-              th:if="${#cas.isTrue(#cas.theme('cas.footer.show-client-ip'))}"
+              th:if="${#cas.themeBuilderEnabled or #cas.isTrue(#cas.theme('cas.footer.show-client-ip'))}"
+              th:classappend="${!#cas.isTrue(#cas.theme('cas.footer.show-client-ip'))} ? 'cas-theme-builder-off'"
+              data-cas-theme-builder-toggle="cas.footer.show-client-ip"
               th:text="${'🌍 ' + clientInfo.clientIpAddress}">
         </code>
     </span>

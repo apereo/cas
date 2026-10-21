@@ -909,6 +909,20 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
   `ticket-validation-saml1` always supplies a `RequestID`, so the SAML 1.1 default `InResponseTo`
   path is untested.
 
+- Theme builder (`fragments/themebuilder.html`, `static/js/theme-builder.js`, `static/css/theme-builder.css`): on when the
+  theme property `cas.theme-builder.enabled` is true (default). Its property list is `#cas.themeBuilder`
+  (`CasThymeleafTemplatesDirector`), parsed from the comments and declarations of `cas-theme-default.properties`, so a new
+  theme property needs its comment there and shows up in the builder (and the docs) on its own; give it a preview in
+  `PREVIEWS` or a `data-cas-theme-builder-toggle` element, otherwise it is marked "after deployment".
+- A theme property that removes a presentational element must, for the builder, render it while `#cas.themeBuilderEnabled`
+  with `th:classappend="... ? 'cas-theme-builder-off'"` and `data-cas-theme-builder-toggle="<property>"`. Never do this for
+  form inputs or scripts (fingerprinting, remember-username, public workstation, warn-on-redirect): those stay deploy-only.
+- Static resources are content-versioned (`custom-<md5>.css`), so match file names with an optional `-[0-9a-f]{32}` suffix.
+  Logout clears session storage, which drops the builder draft. Puppeteer: `#cas-theme-builder-menu`,
+  `#cas-theme-builder.is-open`, `#ctb-tab-*`, `#ctb-prop-<property with dots as dashes>`, `#ctb-style-<variable>`,
+  `#ctb-output-properties`, `#ctb-output-css`, `#ctb-reset`, `#cas-theme-builder-close`; the panel slides out, so wait
+  before asserting it is gone. `login-success` and `template-accessibility` cover it.
+
 ## Interrupt notifications
 
 - Review the whole webflow path in `InterruptWebflowConfigurer`, not a single action: inquiry is wired at several

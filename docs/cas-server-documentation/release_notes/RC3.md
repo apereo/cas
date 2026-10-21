@@ -88,6 +88,11 @@ release:
       section: Passwordless Authentication
       area: passwordless
     - type: action
+      title: Theme builder
+      text: is turned on by default; turn it off for production with `cas.theme-builder.enabled=false` in theme properties.
+      section: Theme Builder
+      area: ui
+    - type: action
       title: Google Authenticator on DynamoDB
       text: needs a new `useridIndex` global secondary index; create it yourself if tables are not created at startup.
       section: Multifactor & Passkeys
@@ -549,6 +554,18 @@ returns which attribute and how attribute definitions transform them. Tools now 
 structured content, registered services are offered as the resource `cas://services/{id}`, and setting names and service ids
 can be completed by clients, with `spring.ai.mcp.server.capabilities.completion=true`{: .cas-setting}.
 The documentation now explains how to let browser-based MCP clients reach the server through CAS CORS support.
+
+### Theme Builder
+{: .new data-area="ui"}
+
+The CAS header has a new palette button, next to the notifications button, that opens a
+[theme builder](../ux/User-Interface-Customization-CSSJS.html#theme-builder). It lists every theme property with its
+description and current value, and edits the colors, shapes, font, header, footer and background that `custom.css` usually
+controls. Changes are previewed live on the page without a reload, including elements that a theme property would turn off,
+and the result downloads as a `cas-theme-custom.properties` file and a `custom.css` file ready for an overlay. When the builder
+opens on a server that already serves such a `custom.css`, it reads its own block back so the file can keep evolving.
+Nothing is saved on the server; the builder is turned on by default and is controlled by the `cas.theme-builder.enabled`
+theme property.
 
 ## Other Stuff
 
