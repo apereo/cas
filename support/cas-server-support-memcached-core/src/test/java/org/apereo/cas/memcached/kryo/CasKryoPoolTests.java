@@ -28,6 +28,7 @@ class CasKryoPoolTests {
     }
 
     @Test
+    @SuppressWarnings("JdkObsolete")
     void verifyJdkCollectionsWithoutReflection() {
         val pool = new CasKryoPool(List.of(TimeUnit.class), true, true, false, false);
         val emptyEnumMap = new EnumMap<TimeUnit, String>(TimeUnit.class);

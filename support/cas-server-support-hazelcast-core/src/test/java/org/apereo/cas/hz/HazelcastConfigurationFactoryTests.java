@@ -4,6 +4,7 @@ import module java.base;
 import org.apereo.cas.configuration.model.support.hazelcast.BaseHazelcastProperties;
 import org.apereo.cas.configuration.model.support.hazelcast.HazelcastWANReplicationTargetClusterProperties;
 import org.apereo.cas.test.CasTestExtension;
+import com.hazelcast.config.ReplicatedMapConfig;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -22,11 +23,14 @@ class HazelcastConfigurationFactoryTests {
     @Test
     void verifyReplicationMaps() {
         val hz = new BaseHazelcastProperties();
-        hz.getCluster().getCore().setReplicated(true);
         hz.getCluster().getCore().setPartitionMemberGroupType("ZONE_AWARE");
-        val mapConfig = HazelcastConfigurationFactory.buildMapConfig(hz, "mapName", 10);
-        assertNotNull(mapConfig);
-        assertNotNull(HazelcastConfigurationFactory.build(hz, mapConfig));
+        val config = HazelcastConfigurationFactory.build(hz, new ReplicatedMapConfig("mapName"));
+        assertTrue(config.getReplicatedMapConfigs().containsKey("mapName"));
+        HazelcastConfigurationFactory.setConfigMap(new ReplicatedMapConfig("mapName").setAsyncFillup(false), config);
+        assertTrue(config.getReplicatedMapConfig("mapName").isAsyncFillup());
+        val mapConfig = HazelcastConfigurationFactory.buildMapConfig(hz, "otherMap", 10);
+        HazelcastConfigurationFactory.setConfigMap(mapConfig, config);
+        assertEquals(10, config.getMapConfig("otherMap").getMaxIdleSeconds());
     }
 
     @Test

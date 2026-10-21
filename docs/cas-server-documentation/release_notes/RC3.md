@@ -724,6 +724,11 @@ The documentation now explains how to let browser-based MCP clients reach the se
   JPA, MongoDB, Redis or Hazelcast, or with ticket encryption enabled. Each validation also costs fewer trips to the ticket
   registry, and a validation that cannot obtain the ticket's lock is now rejected instead of being allowed without
   consuming the ticket.
+- {: .fixed data-area="tickets"} When a [ticket is validated](../authentication/CAS-Protocol-TicketValidation.html), the
+  service URL must match the one the ticket was issued for exactly up to its query, so an encoded character, such as an
+  encoded `#` that hides user information in the host, no longer makes two different URLs match. The query is compared
+  once decoded, so a parameter that the application and the validating client encode differently, such as a space sent as
+  `+` or as `%20`, still matches.
 - {: .fixed data-area="oidc"} [OpenID Connect](../authentication/OIDC-Authentication.html) ID tokens issued for
   `response_type=id_token` no longer carry an `at_hash` claim, since no access token is issued with them. For
   `response_type=id_token token`, the `at_hash` claim is now computed over the access token returned in the same response;
@@ -748,6 +753,19 @@ The documentation now explains how to let browser-based MCP clients reach the se
   session it was issued from, which undid any change made to the session since, such as applications the user logged into
   afterwards. When a single sign-on session ends, it is no longer rewritten once for each of its proxy-granting tickets and
   once more right before it is removed.
+- {: .fixed data-area="tickets"} The [Hazelcast ticket registry](../ticketing/Hazelcast-Ticket-Registry.html) keeps each ticket
+  for as long as the expiration policy that applies to it, so remember-me single sign-on sessions are no longer removed after
+  the default session lifetime, and updating a session no longer restarts its lifetime in Hazelcast. Looking up sessions by
+  attribute, such as for logout requests sent by external identity providers, no longer builds a query from the attribute
+  values, so values that contain quotes are matched instead of failing. Listing tickets page by page, such as through the
+  `ssoSessions` actuator endpoint, now skips and counts tickets across the whole registry rather than within each ticket map,
+  and the registry no longer shuts down the Hazelcast instance it shares with other modules, such as authentication throttling.
+- {: .changed data-area="tickets"} The `cluster.core.replicated` and `cluster.core.async-fillup` Hazelcast settings, such as
+  `cas.ticket.registry.hazelcast.cluster.core.replicated`, are removed from every Hazelcast module: no module
+  ever used a Hazelcast replicated map, so turning them on only left the actual map, such as that of the
+  [Hazelcast ticket registry](../ticketing/Hazelcast-Ticket-Registry.html), authentication throttling or Spring Session,
+  without its expiration, eviction, backup settings and indexes. Remove them from your configuration; CAS refuses to start
+  with settings it does not recognize.
 - {: .changed data-area="saml"} The [SAML2 identity provider](../authentication/Configuring-SAML2-Authentication.html) locates and
   verifies the service provider behind an authentication request, and resolves its metadata, once per request instead of up to
   four times while validating the request, choosing the binding and building the response.

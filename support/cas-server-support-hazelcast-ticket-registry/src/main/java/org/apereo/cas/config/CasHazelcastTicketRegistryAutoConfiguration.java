@@ -22,7 +22,6 @@ import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import com.hazelcast.config.AttributeConfig;
 import com.hazelcast.config.IndexConfig;
 import com.hazelcast.config.IndexType;
-import com.hazelcast.config.MapConfig;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.instance.impl.HazelcastInstanceFactory;
 import lombok.extern.slf4j.Slf4j;
@@ -104,20 +103,18 @@ public class CasHazelcastTicketRegistryAutoConfiguration {
             .map(defn -> {
                 LOGGER.debug("Creating Hazelcast map configuration for [{}]", defn.getProperties());
                 val props = defn.getProperties();
-                val config = HazelcastConfigurationFactory.buildMapConfig(hz, props.getStorageName(), props.getStorageTimeout());
-                if (config instanceof final MapConfig mapConfig) {
-                    mapConfig.addIndexConfig(new IndexConfig(IndexType.HASH, "id"));
-                    mapConfig.addIndexConfig(new IndexConfig(IndexType.HASH, "type"));
-                    mapConfig.addIndexConfig(new IndexConfig(IndexType.HASH, "principal"));
-                    mapConfig.addIndexConfig(new IndexConfig(IndexType.HASH, "service"));
-                    mapConfig.addIndexConfig(new IndexConfig(IndexType.HASH, "prefix"));
+                val mapConfig = HazelcastConfigurationFactory.buildMapConfig(hz, props.getStorageName(), props.getStorageTimeout());
+                mapConfig.addIndexConfig(new IndexConfig(IndexType.HASH, "id"));
+                mapConfig.addIndexConfig(new IndexConfig(IndexType.HASH, "type"));
+                mapConfig.addIndexConfig(new IndexConfig(IndexType.HASH, "principal"));
+                mapConfig.addIndexConfig(new IndexConfig(IndexType.HASH, "service"));
+                mapConfig.addIndexConfig(new IndexConfig(IndexType.HASH, "prefix"));
 
-                    val attributeConfig = new AttributeConfig();
-                    attributeConfig.setName("attributes");
-                    attributeConfig.setExtractorClassName(MapAttributeValueExtractor.class.getName());
-                    mapConfig.addAttributeConfig(attributeConfig);
-                }
-                return config;
+                val attributeConfig = new AttributeConfig();
+                attributeConfig.setName("attributes");
+                attributeConfig.setExtractorClassName(MapAttributeValueExtractor.class.getName());
+                mapConfig.addAttributeConfig(attributeConfig);
+                return mapConfig;
             })
             .peek(map -> {
                 val customizers = new ArrayList<>(applicationContext.getBeansOfType(HazelcastMapCustomizer.class).values());

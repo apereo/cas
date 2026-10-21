@@ -64,7 +64,7 @@ public class HazelcastConfigurationFactory {
             FunctionUtils.doIf(!config.getMapConfigs().containsKey(namedConfig.getName()),
                 _ -> config.addMapConfig(mappedConfig)).accept(mappedConfig);
         } else if (namedConfig instanceof final ReplicatedMapConfig replicatedConfig) {
-            FunctionUtils.doIf(!config.getReliableTopicConfigs().containsKey(namedConfig.getName()),
+            FunctionUtils.doIf(!config.getReplicatedMapConfigs().containsKey(namedConfig.getName()),
                 _ -> config.addReplicatedMapConfig(replicatedConfig)).accept(replicatedConfig);
         }
     }
@@ -288,17 +288,27 @@ public class HazelcastConfigurationFactory {
      * @param timeoutSeconds the timeoutSeconds
      * @return the map config
      */
-    public static NamedConfig buildMapConfig(final BaseHazelcastProperties hz,
-                                             final String mapName, final long timeoutSeconds) {
+    public static MapConfig buildMapConfig(final BaseHazelcastProperties hz,
+                                           final String mapName, final long timeoutSeconds) {
         val cluster = hz.getCluster();
-
-        val evictionPolicy = EvictionPolicy.valueOf(cluster.getCore().getEvictionPolicy());
-
         val evictionConfig = new EvictionConfig();
-        evictionConfig.setEvictionPolicy(evictionPolicy);
+        evictionConfig.setEvictionPolicy(EvictionPolicy.valueOf(cluster.getCore().getEvictionPolicy()));
         evictionConfig.setMaxSizePolicy(MaxSizePolicy.valueOf(cluster.getCore().getMaxSizePolicy()));
         evictionConfig.setSize(cluster.getCore().getMaxSize());
 
+        return new MapConfig()
+            .setName(mapName)
+            .setStatisticsEnabled(true)
+            .setMergePolicyConfig(buildMergePolicyConfig(hz))
+            .setMaxIdleSeconds((int) timeoutSeconds)
+            .setInMemoryFormat(InMemoryFormat.BINARY)
+            .setBackupCount(cluster.getCore().getBackupCount())
+            .setAsyncBackupCount(cluster.getCore().getAsyncBackupCount())
+            .setEvictionConfig(evictionConfig);
+    }
+
+    private static MergePolicyConfig buildMergePolicyConfig(final BaseHazelcastProperties hz) {
+        val cluster = hz.getCluster();
         val mergePolicyConfig = new MergePolicyConfig();
         if (StringUtils.hasText(cluster.getCore().getMapMergePolicy())) {
             switch (cluster.getCore().getMapMergePolicy().trim().toLowerCase(Locale.ENGLISH)) {
@@ -311,25 +321,6 @@ public class HazelcastConfigurationFactory {
                 case "put_if_absent" -> mergePolicyConfig.setPolicy(PutIfAbsentMergePolicy.class.getName());
             }
         }
-
-        if (cluster.getCore().isReplicated()) {
-            return new ReplicatedMapConfig()
-                .setName(mapName)
-                .setStatisticsEnabled(true)
-                .setAsyncFillup(cluster.getCore().isAsyncFillup())
-                .setInMemoryFormat(InMemoryFormat.BINARY)
-                .setSplitBrainProtectionName(mapName.concat("-SplitBrainProtection"))
-                .setMergePolicyConfig(mergePolicyConfig);
-        }
-
-        return new MapConfig()
-            .setName(mapName)
-            .setStatisticsEnabled(true)
-            .setMergePolicyConfig(mergePolicyConfig)
-            .setMaxIdleSeconds((int) timeoutSeconds)
-            .setInMemoryFormat(InMemoryFormat.BINARY)
-            .setBackupCount(cluster.getCore().getBackupCount())
-            .setAsyncBackupCount(cluster.getCore().getAsyncBackupCount())
-            .setEvictionConfig(evictionConfig);
+        return mergePolicyConfig;
     }
 }
