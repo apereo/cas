@@ -43,7 +43,7 @@ class CasKryoPoolTests {
             Collections.unmodifiableSortedSet(new TreeSet<>(Set.of("b", "a"))),
             Collections.unmodifiableMap(new HashMap<>(Map.of("a", "b"))),
             Collections.unmodifiableSortedMap(new TreeMap<>(Map.of("a", "b"))),
-            Arrays.asList("a", "b"), calendar);
+            Arrays.asList("a", "b"), calendar, Clock.systemUTC());
         try (val kryo = pool.borrow()) {
             for (val value : values) {
                 val output = new Output(4096, -1);

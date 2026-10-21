@@ -617,7 +617,8 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
   private JDK fields (Kryo serializers in the Memcached registry) passes unit tests and fails in scenarios and plain
   `java -jar` deployments.
 - Servlet filters that extract the service treat `UnauthorizedServiceException` as an unauthorized service (status 403,
-  `RequestDispatcher.ERROR_EXCEPTION`, continue the chain); an exception thrown from a filter ends in an empty body.
+  `RequestDispatcher.ERROR_EXCEPTION`, continue the chain), and MVC interceptors ignore it, leaving the refusal to the
+  login flow. Thrown from either, its `@ResponseStatus` sends a 403 whose error dispatch fails the same way: empty body.
 - Spring Cloud closes the bootstrap context once a refresh is done, so a `PropertySourceLocator` that closes its client
   in `destroy()` leaves the located property source with a closed client. The AWS configuration sources take a
   `Supplier` of clients and open and close one per refresh or change.
