@@ -1390,29 +1390,29 @@ class CasOAuth20Configuration {
             @Bean
             @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
             @ConditionalOnMissingBean(name = "oAuthCodeIdGenerator")
-            public UniqueTicketIdGenerator oAuthCodeIdGenerator() {
-                return new HostNameBasedUniqueTicketIdGenerator();
+            public UniqueTicketIdGenerator oAuthCodeIdGenerator(final CasConfigurationProperties casProperties) {
+                return new HostNameBasedUniqueTicketIdGenerator(casProperties.getHost().getName());
             }
 
             @Bean
             @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
             @ConditionalOnMissingBean(name = "refreshTokenIdGenerator")
-            public UniqueTicketIdGenerator refreshTokenIdGenerator() {
-                return new HostNameBasedUniqueTicketIdGenerator();
+            public UniqueTicketIdGenerator refreshTokenIdGenerator(final CasConfigurationProperties casProperties) {
+                return new HostNameBasedUniqueTicketIdGenerator(casProperties.getHost().getName());
             }
 
             @ConditionalOnMissingBean(name = "accessTokenIdGenerator")
             @Bean
             @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-            public UniqueTicketIdGenerator accessTokenIdGenerator() {
-                return new HostNameBasedUniqueTicketIdGenerator();
+            public UniqueTicketIdGenerator accessTokenIdGenerator(final CasConfigurationProperties casProperties) {
+                return new HostNameBasedUniqueTicketIdGenerator(casProperties.getHost().getName());
             }
 
             @ConditionalOnMissingBean(name = "deviceTokenIdGenerator")
             @Bean
             @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-            public UniqueTicketIdGenerator deviceTokenIdGenerator() {
-                return new HostNameBasedUniqueTicketIdGenerator();
+            public UniqueTicketIdGenerator deviceTokenIdGenerator(final CasConfigurationProperties casProperties) {
+                return new HostNameBasedUniqueTicketIdGenerator(casProperties.getHost().getName());
             }
 
             @Bean

@@ -11,7 +11,7 @@ import lombok.val;
 /**
  * Kryo serializer for {@link EnumMap} that does not reflect on the private key type of the map,
  * so it works without opening {@code java.util} to the application. A map with entries is written
- * as the key enum type followed by the ordinal and value of each entry. An empty map carries its key type
+ * as the key enum type followed by the name and value of each entry. An empty map carries its key type
  * only in its Java serialized form, so it is written that way and read back through a filter that accepts
  * nothing but the map and its key enum type.
  *
@@ -51,7 +51,7 @@ public class EnumMapSerializer extends Serializer<EnumMap> {
         kryo.writeClass(output, entries.iterator().next().getKey().getDeclaringClass());
         output.writeVarInt(map.size(), true);
         for (val entry : entries) {
-            output.writeVarInt(entry.getKey().ordinal(), true);
+            output.writeString(entry.getKey().name());
             kryo.writeClassAndObject(output, entry.getValue());
         }
     }
@@ -68,12 +68,11 @@ public class EnumMapSerializer extends Serializer<EnumMap> {
             });
         }
         val keyType = (Class<Enum>) kryo.readClass(input).getType();
-        val constants = keyType.getEnumConstants();
         val result = new EnumMap(keyType);
         kryo.reference(result);
         val size = input.readVarInt(true);
         for (var i = 0; i < size; i++) {
-            val key = constants[input.readVarInt(true)];
+            val key = Enum.valueOf((Class) keyType, input.readString());
             result.put(key, kryo.readClassAndObject(input));
         }
         return result;
