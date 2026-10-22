@@ -63,6 +63,7 @@ public class WebApplicationServiceFactory extends AbstractServiceFactory<WebAppl
 
     protected WebApplicationService newWebApplicationService(
         @Nullable final HttpServletRequest request, final String serviceToUse) {
+        validateServiceUrl(serviceToUse);
         val artifactId = Optional.ofNullable(request)
             .map(httpServletRequest -> httpServletRequest.getParameter(CasProtocolConstants.PARAMETER_TICKET))
             .orElse(null);

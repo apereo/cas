@@ -30,9 +30,10 @@ SAML service definitions must then be designed as follows to allow CAS to fetch 
 }
 ```
 
-Give the above definition, the expectation is that the git repository
-contains a `SAMLService.xml` file which may optionally also be accompanied 
-by a `SAMLService.pem` file. Such artifacts are generally expected to be found under a `sp-metadata` directory.
+Given the above definition, CAS looks for metadata documents under the `sp-metadata` directory of the repository
+and picks the one whose entity id matches the service provider. A document may be committed to the repository by hand,
+such as `sp-metadata/SAMLService.xml`, optionally accompanied by its signing certificate in `sp-metadata/SAMLService.pem`.
+Documents that CAS stores itself, for example via the actuator endpoint below, are named `<id>-<name>.xml`.
 
 <div class="alert alert-info">:information_source: <strong>Metadata Location</strong><p>
 The metadata location in the registration record above needs to be specified as <code>git://</code> to signal to CAS that 

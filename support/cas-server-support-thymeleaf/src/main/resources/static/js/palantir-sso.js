@@ -260,17 +260,6 @@ async function initializeSsoSessionOperations() {
         }
     });
 
-    $("#ssoSessionUsername").on("keypress", e => {
-        if (e.which === 13) {
-            $("#ssoSessionButton").click();
-        }
-    });
-    $("#springSessionUsername").on("keypress", e => {
-        if (e.which === 13) {
-            $("#springSessionsButton").click();
-        }
-    });
-
     $("#springSessionsButton").off().on("click", () => {
         if (CasActuatorEndpoints.sessions()) {
             const form = document.getElementById("fmSpringSessions");

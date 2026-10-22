@@ -71,9 +71,17 @@ class OidcConsentApprovalViewResolverTests extends AbstractOidcTests {
         profileManager.save(true, profile, false);
 
         val service = getOidcRegisteredService(UUID.randomUUID().toString(), randomServiceUrl());
+        service.setBypassApprovalPrompt(true);
         servicesManager.save(service);
         val mv = consentApprovalViewResolver.resolve(context, service);
         assertTrue(mv.hasView());
+
+        request.addParameter(OAuth20Constants.BYPASS_APPROVAL_PROMPT, Boolean.TRUE.toString());
+        request.addParameter(OAuth20Constants.SCOPES_APPROVAL_KEY, "unknown-approval-key");
+        assertTrue(consentApprovalViewResolver.resolve(context, service).hasView());
+
+        request.setParameter(OAuth20Constants.SCOPES_APPROVAL_KEY, mv.getModel().get("approvalKey").toString());
+        assertFalse(consentApprovalViewResolver.resolve(context, service).hasView());
     }
 
     @Test

@@ -1,0 +1,94 @@
+{
+  "dependencies": "throttle,throttle-jdbc,throttle-redis,throttle-mongo,throttle-ldap,audit-jdbc,audit-mongo,reports",
+  "conditions": {
+    "docker": "true"
+  },
+  "environmentVariables": [
+    "CAS_LDAP_BIND_DN=cn=Directory Manager"
+  ],
+  "properties": [
+    "--cas.jdbc.show-sql=false",
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
+    "--cas.authn.throttle.failure.threshold=2",
+    "--cas.authn.throttle.failure.range-seconds=90",
+    "--cas.authn.throttle.failure.code=AUTHENTICATION_FAILED",
+    "--cas.authn.throttle.schedule.enabled=false",
+
+    "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
+    "--management.endpoints.web.exposure.include=*",
+    "--management.endpoints.access.default=UNRESTRICTED"
+  ],
+  "variations": [
+    {
+      "name": "jdbc",
+      "properties": [
+        "--CasFeatureModule.Throttling.redis.enabled=false",
+        "--CasFeatureModule.Throttling.mongo.enabled=false",
+        "--CasFeatureModule.Throttling.ldap.enabled=false",
+        "--CasFeatureModule.Audit.mongo.enabled=false",
+        "--cas.audit.jdbc.leak-threshold=PT10S",
+        "--cas.audit.jdbc.user=postgres",
+        "--cas.audit.jdbc.password=password",
+        "--cas.audit.jdbc.driver-class=org.postgresql.Driver",
+        "--cas.audit.jdbc.url=jdbc:postgresql://localhost:5432/audit",
+        "--cas.audit.jdbc.dialect=org.hibernate.dialect.PostgreSQLDialect",
+        "--cas.authn.throttle.jdbc.leak-threshold=PT10S",
+        "--cas.authn.throttle.jdbc.user=postgres",
+        "--cas.authn.throttle.jdbc.password=password",
+        "--cas.authn.throttle.jdbc.driver-class=org.postgresql.Driver",
+        "--cas.authn.throttle.jdbc.url=jdbc:postgresql://localhost:5432/audit",
+        "--cas.authn.throttle.jdbc.dialect=org.hibernate.dialect.PostgreSQLDialect"
+      ]
+    },
+    {
+      "name": "redis",
+      "properties": [
+        "--CasFeatureModule.Throttling.jdbc.enabled=false",
+        "--CasFeatureModule.Throttling.mongo.enabled=false",
+        "--CasFeatureModule.Throttling.ldap.enabled=false",
+        "--CasFeatureModule.Audit.jdbc.enabled=false",
+        "--CasFeatureModule.Audit.mongo.enabled=false",
+        "--cas.audit.redis.host=localhost",
+        "--cas.audit.redis.port=6379"
+      ]
+    },
+    {
+      "name": "mongo",
+      "properties": [
+        "--CasFeatureModule.Throttling.jdbc.enabled=false",
+        "--CasFeatureModule.Throttling.redis.enabled=false",
+        "--CasFeatureModule.Throttling.ldap.enabled=false",
+        "--CasFeatureModule.Audit.jdbc.enabled=false",
+        "--cas.audit.mongo.host=localhost",
+        "--cas.audit.mongo.port=27017",
+        "--cas.audit.mongo.user-id=root",
+        "--cas.audit.mongo.password=secret",
+        "--cas.audit.mongo.authentication-database-name=admin",
+        "--cas.audit.mongo.database-name=audit",
+        "--cas.audit.mongo.collection=MongoDbCasAuditRepository",
+        "--cas.audit.mongo.drop-collection=true",
+        "--cas.audit.mongo.asynchronous=false"
+      ]
+    },
+    {
+      "name": "ldap",
+      "properties": [
+        "--CasFeatureModule.Throttling.jdbc.enabled=false",
+        "--CasFeatureModule.Throttling.redis.enabled=false",
+        "--CasFeatureModule.Throttling.mongo.enabled=false",
+        "--CasFeatureModule.Audit.jdbc.enabled=false",
+        "--CasFeatureModule.Audit.mongo.enabled=false",
+        "--cas.authn.throttle.ldap.ldap-url=ldap://localhost:10389",
+        "--cas.authn.throttle.ldap.base-dn=ou=throttle,dc=example,dc=org",
+        "--cas.authn.throttle.ldap.search-filter=cn={0}",
+        "--cas.authn.throttle.ldap.bind-dn=${CAS_LDAP_BIND_DN}",
+        "--cas.authn.throttle.ldap.bind-credential=password",
+        "--cas.authn.throttle.ldap.account-locked-attribute=postalCode"
+      ]
+    }
+  ],
+  "initScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/init.sh",
+  "jvmArgs": "-Djava.net.preferIPv4Stack=true -Djava.net.preferIPv4Addresses=true"
+}

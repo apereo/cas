@@ -139,5 +139,8 @@ public class OidcClientRegistrationRequest implements Serializable {
 
     @JsonProperty("dpop_bound_access_tokens")
     private boolean dpopBoundAccessTokens;
+
+    @JsonProperty("tls_client_certificate_bound_access_tokens")
+    private boolean tlsClientCertificateBoundAccessTokens;
     
 }

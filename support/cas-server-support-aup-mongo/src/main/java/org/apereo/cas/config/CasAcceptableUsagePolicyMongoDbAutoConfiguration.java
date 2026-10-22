@@ -40,7 +40,7 @@ public class CasAcceptableUsagePolicyMongoDbAutoConfiguration {
     @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.AcceptableUsagePolicy, module = "mongo")
     static class CasAcceptableUsagePolicyMongoDbRepositoryConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Bean
+        @Bean(defaultCandidate = false)
         @ConditionalOnMissingBean(name = "mongoAcceptableUsagePolicyTemplate")
         public MongoOperations mongoAcceptableUsagePolicyTemplate(
             final ConfigurableApplicationContext applicationContext,

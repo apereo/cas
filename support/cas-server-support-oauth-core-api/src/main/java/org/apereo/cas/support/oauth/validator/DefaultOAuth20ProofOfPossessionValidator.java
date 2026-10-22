@@ -75,18 +75,22 @@ public class DefaultOAuth20ProofOfPossessionValidator implements OAuth20ProofOfP
                 .build();
             val accessResult = registeredServiceAccessStrategyEnforcer.execute(audit);
             accessResult.throwExceptionIfNeeded();
+            enforceCertificateBinding(webContext, registeredService);
             val confirmation = verifyProofOfPossession(webContext, result.get(), clientId);
             adjustUserProfile(webContext, result.get(), clientId, confirmation);
         } else {
             val clientId = resolveClientId(webContext, accessToken);
             if (clientId.isPresent()) {
-                enforceProofOfPossession(OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, clientId.get()));
+                val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, clientId.get());
+                enforceCertificateBinding(webContext, registeredService);
+                enforceProofOfPossession(registeredService);
             }
         }
     }
 
     @Override
     public void validateTokenRequest(final WebContext webContext, final OAuthRegisteredService registeredService) throws Throwable {
+        enforceCertificateBinding(webContext, registeredService);
         val dPopProof = getProofOfPossessionHeader(webContext).filter(StringUtils::isNotBlank);
         if (dPopProof.isPresent()) {
             val confirmation = verifyProofOfPossession(webContext, dPopProof.get(), registeredService.getClientId());
@@ -113,6 +117,30 @@ public class DefaultOAuth20ProofOfPossessionValidator implements OAuth20ProofOfP
             }
         }
         return webContext.getRequestHeader(OAuth20Constants.DPOP);
+    }
+
+    /**
+     * A client registered with {@code tls_client_certificate_bound_access_tokens} must authenticate every token request with
+     * mutual TLS, so that the token it receives is bound to its certificate; it never receives an unbound token
+     * (RFC 8705, section 3.4).
+     *
+     * @param webContext        the web context
+     * @param registeredService the client that makes the token request, if known
+     * @throws CertificateBoundAccessTokenRequiredException when the request is not authenticated with mutual TLS
+     */
+    protected void enforceCertificateBinding(final WebContext webContext, final @Nullable OAuthRegisteredService registeredService)
+        throws CertificateBoundAccessTokenRequiredException {
+        if (registeredService != null && registeredService.isTlsClientCertificateBoundAccessTokens()) {
+            val authenticatedWithCertificate = new ProfileManager(webContext, this.sessionStore).getProfile()
+                .filter(profile -> registeredService.getClientId().equals(OAuth20Utils.getClientIdFromAuthenticatedProfile(profile)))
+                .map(profile -> profile.getAttribute(OAuth20Constants.X509_CERTIFICATE_DIGEST))
+                .isPresent();
+            if (!authenticatedWithCertificate) {
+                throw new CertificateBoundAccessTokenRequiredException(
+                    "Client %s requires certificate-bound access tokens but the token request is not authenticated with mutual TLS"
+                        .formatted(registeredService.getClientId()));
+            }
+        }
     }
 
     /**

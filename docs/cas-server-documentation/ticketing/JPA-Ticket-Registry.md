@@ -26,7 +26,15 @@ Support is enabled by adding the following module into the overlay:
 ## Ticket Registry Locking
 
 This ticket registry implementation automatically supports [distributed locking](../ticketing/Ticket-Registry-Locking.html).
-The database schemas and tables that track locking operations should be automatically created by CAS using
-[Spring Integration](https://spring.io/projects/spring-integration) JDBC support.
+The tables that track locking operations come from [Spring Integration](https://spring.io/projects/spring-integration) JDBC support.
+Spring Integration only creates them on its own for embedded databases; for any other database, either create them
+up front from the schema scripts that ship with Spring Integration, or let CAS create them on startup with:
+
+```properties
+spring.integration.jdbc.initialize-schema=always
+```
+{: .cas-settings-linked}
+
+Without these tables, every attempt to lock a ticket fails, and CAS cannot issue service tickets.
 
 {% include_cached casproperties.html thirdPartyStartsWith="spring.integration.jdbc" %}

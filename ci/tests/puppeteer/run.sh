@@ -42,8 +42,10 @@ JFR_ARGS=""
 PUPPETEER_BUILD_OVERLAP="${PUPPETEER_BUILD_OVERLAP:-true}"
 if [[ "${CI}" == "true" ]]; then
   PUPPETEER_STARTUP_TIMEOUT="${PUPPETEER_STARTUP_TIMEOUT:-300}"
+  PUPPETEER_SCRIPT_TIMEOUT="${PUPPETEER_SCRIPT_TIMEOUT:-420}"
 else
   PUPPETEER_STARTUP_TIMEOUT="${PUPPETEER_STARTUP_TIMEOUT:-0}"
+  PUPPETEER_SCRIPT_TIMEOUT="${PUPPETEER_SCRIPT_TIMEOUT:-0}"
 fi
 PUPPETEER_MODULES_READY="false"
 pendingBuildPid=""
@@ -1464,8 +1466,16 @@ ${BUILD_SCRIPT:+ $BUILD_SCRIPT}${DAEMON:+ $DAEMON} \
       while [ $retry_count -lt $max_retries ]; do
         echo -e "**************************************************************************"
         echo -e "Attempt: #${retry_count}: Running ${scriptPath}\n"
-        node --unhandled-rejections=strict ${nodeArgs} ${scriptPath} ${config}
-        RC=$?
+        if (( PUPPETEER_SCRIPT_TIMEOUT > 0 )); then
+          timeout --kill-after=10 "${PUPPETEER_SCRIPT_TIMEOUT}" node --unhandled-rejections=strict ${nodeArgs} ${scriptPath} ${config}
+          RC=$?
+          if [[ $RC -eq 124 || $RC -eq 137 ]]; then
+            printred "Script: ${scriptPath} did not exit within ${PUPPETEER_SCRIPT_TIMEOUT} seconds"
+          fi
+        else
+          node --unhandled-rejections=strict ${nodeArgs} ${scriptPath} ${config}
+          RC=$?
+        fi
 
         if [[ $RC -ne 0 ]]; then
           printred "Script: ${scriptPath} with config: ${config} failed with return code ${RC}"

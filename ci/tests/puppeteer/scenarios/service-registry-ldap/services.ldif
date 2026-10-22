@@ -1,0 +1,4 @@
+dn: ou=services,dc=example,dc=org
+objectClass: top
+objectClass: organizationalUnit
+ou: services

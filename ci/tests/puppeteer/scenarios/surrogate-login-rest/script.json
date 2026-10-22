@@ -1,0 +1,17 @@
+{
+  "dependencies": "surrogate-webflow,surrogate-authentication-rest",
+  "conditions": {
+    "docker": "true"
+  },
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
+    "--cas.service-registry.core.init-from-json=true",
+    "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services",
+
+    "--cas.authn.surrogate.rest.url=http://localhost:5616/surrogate",
+    "--cas.authn.surrogate.rest.method=GET"
+  ],
+  "initScript": "${PWD}/ci/tests/httpbin/run-httpbin-server.sh"
+}

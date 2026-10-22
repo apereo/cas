@@ -9,6 +9,7 @@ import org.apereo.cas.config.CasKafkaEventsAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.support.events.CasEventRepository;
+import org.apereo.cas.support.events.CasEventRepositoryFilter;
 import org.apereo.cas.support.events.dao.CasEvent;
 import org.apereo.cas.support.events.ticket.CasTicketGrantingTicketCreatedEvent;
 import org.apereo.cas.test.CasTestExtension;
@@ -24,7 +25,9 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.web.WebProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.kafka.core.KafkaOperations;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * This is {@link KafkaCasEventRepositoryTests}.
@@ -50,6 +53,9 @@ class KafkaCasEventRepositoryTests {
     @Qualifier(CasEventRepository.BEAN_NAME)
     private CasEventRepository eventRepository;
 
+    @Autowired
+    private CasConfigurationProperties casProperties;
+
     @Test
     void verifySave() throws Throwable {
         getEventRepository().removeAll();
@@ -64,6 +70,17 @@ class KafkaCasEventRepositoryTests {
         assertTrue(col.isEmpty());
     }
 
+
+    @Test
+    @SuppressWarnings("unchecked")
+    void verifyEventsAreKeyedById() throws Throwable {
+        val template = (KafkaOperations<String, CasEvent>) mock(KafkaOperations.class);
+        when(template.send(anyString(), anyString(), any(CasEvent.class))).thenReturn(new CompletableFuture<>());
+        val repository = new KafkaCasEventRepository(CasEventRepositoryFilter.noOp(), template, casProperties);
+        val saved = repository.save(getCasEvent("casuser3"));
+        verify(template).send(eq(casProperties.getEvents().getKafka().getTopic().getName()),
+            eq(String.valueOf(saved.getId())), any(CasEvent.class));
+    }
 
     private CasEvent getCasEvent(final String user) {
         val ticket = new MockTicketGrantingTicket(user);

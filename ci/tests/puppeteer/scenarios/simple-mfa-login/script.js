@@ -10,6 +10,7 @@ const cas = require("../../cas.js");
     await cas.sleep(1000);
     await cas.assertVisibility(page, "#token");
     await cas.attributeValue(page, "html", "lang", "en");
+    await cas.assertAccessibility(page, "Simple MFA token");
 
     let code = await cas.extractFromEmail(browser);
 

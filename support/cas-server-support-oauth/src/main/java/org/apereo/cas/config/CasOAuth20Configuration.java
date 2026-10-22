@@ -1390,29 +1390,29 @@ class CasOAuth20Configuration {
             @Bean
             @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
             @ConditionalOnMissingBean(name = "oAuthCodeIdGenerator")
-            public UniqueTicketIdGenerator oAuthCodeIdGenerator() {
-                return new HostNameBasedUniqueTicketIdGenerator();
+            public UniqueTicketIdGenerator oAuthCodeIdGenerator(final CasConfigurationProperties casProperties) {
+                return new HostNameBasedUniqueTicketIdGenerator(casProperties.getHost().getName());
             }
 
             @Bean
             @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
             @ConditionalOnMissingBean(name = "refreshTokenIdGenerator")
-            public UniqueTicketIdGenerator refreshTokenIdGenerator() {
-                return new HostNameBasedUniqueTicketIdGenerator();
+            public UniqueTicketIdGenerator refreshTokenIdGenerator(final CasConfigurationProperties casProperties) {
+                return new HostNameBasedUniqueTicketIdGenerator(casProperties.getHost().getName());
             }
 
             @ConditionalOnMissingBean(name = "accessTokenIdGenerator")
             @Bean
             @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-            public UniqueTicketIdGenerator accessTokenIdGenerator() {
-                return new HostNameBasedUniqueTicketIdGenerator();
+            public UniqueTicketIdGenerator accessTokenIdGenerator(final CasConfigurationProperties casProperties) {
+                return new HostNameBasedUniqueTicketIdGenerator(casProperties.getHost().getName());
             }
 
             @ConditionalOnMissingBean(name = "deviceTokenIdGenerator")
             @Bean
             @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-            public UniqueTicketIdGenerator deviceTokenIdGenerator() {
-                return new HostNameBasedUniqueTicketIdGenerator();
+            public UniqueTicketIdGenerator deviceTokenIdGenerator(final CasConfigurationProperties casProperties) {
+                return new HostNameBasedUniqueTicketIdGenerator(casProperties.getHost().getName());
             }
 
             @Bean
@@ -1883,6 +1883,7 @@ class CasOAuth20Configuration {
                 final ServiceFactory serviceFactory) {
                 val retainedAttributes = new LinkedHashSet<>(CompactTicketAuthentication.getRetainedAuthenticationAttributes(casProperties));
                 retainedAttributes.add(OAuth20Constants.DPOP_CONFIRMATION);
+                retainedAttributes.add(OAuth20Constants.X509_CERTIFICATE_DIGEST);
                 return new OAuth20AccessTokenCompactor(ticketFactory, serviceFactory, principalFactory, retainedAttributes);
             }
 

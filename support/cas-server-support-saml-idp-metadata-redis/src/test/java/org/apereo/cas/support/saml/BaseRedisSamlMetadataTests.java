@@ -16,6 +16,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 /**
  * This is {@link BaseRedisSamlMetadataTests}.
+ * Every test context shares the same Redis server, where the identity provider's global metadata document is
+ * generated once by whichever context starts first and then used by all of them; the crypto keys are fixed so
+ * that every context can decrypt the keys of that document, which random keys per context would not allow. The encryption
+ * key is 512 bits, which the default {@code A256CBC-HS512} content encryption requires.
  *
  * @author Misagh Moayyed
  * @since 6.4.0
@@ -23,6 +27,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 @SpringBootTest(classes = {
     CasSamlIdPRedisIdPMetadataAutoConfiguration.class,
     BaseSamlIdPMetadataTests.SharedTestConfiguration.class
+}, properties = {
+    "cas.authn.saml-idp.metadata.redis.crypto.encryption.key=s1dTziPX0P81q2CDpI0FVHyWk8lLp5imghC_QfueIXCM4pAPjkMK-Nwg484fPqxaWy8FukJOAR2Zhwse4KdVFg",
+    "cas.authn.saml-idp.metadata.redis.crypto.signing.key=cAPyoHMrOMWrwydOXzBA-ufZQM-TilnLjbRgMQWlUlwFmy07bOtAgCIdNBma3c5P4ae_JV6n1OpOAYqSh2NkmQ"
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ExtendWith(CasTestExtension.class)

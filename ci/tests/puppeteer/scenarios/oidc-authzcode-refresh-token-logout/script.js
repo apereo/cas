@@ -70,7 +70,7 @@ async function exchangeToken(refreshToken, clientId, successHandler, errorHandle
     const baseUrl = "https://localhost:8443/cas/actuator";
 
     await cas.logg("Removing all SSO Sessions");
-    await cas.doDelete(`${baseUrl}/ssoSessions?type=ALL&from=1&count=1000`);
+    await cas.doDelete(`${baseUrl}/ssoSessions?type=ALL&from=0&count=1000`);
 
     const browser = await cas.newBrowser(cas.browserOptions());
     const page = await cas.newPage(browser);

@@ -13,6 +13,7 @@ import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.OAuth20TokenExchangeTypes;
 import org.apereo.cas.support.oauth.services.DefaultRegisteredServiceOAuthAccessTokenExpirationPolicy;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
+import org.apereo.cas.support.oauth.validator.token.OAuth20ExpiredTokenException;
 import org.apereo.cas.support.oauth.validator.token.device.InvalidOAuth20DeviceTokenException;
 import org.apereo.cas.support.oauth.validator.token.device.ThrottledOAuth20DeviceUserCodeApprovalException;
 import org.apereo.cas.support.oauth.validator.token.device.UnapprovedOAuth20DeviceUserCodeException;
@@ -250,7 +251,7 @@ class OAuth20DefaultTokenGeneratorTests {
                 .registeredService(getRegisteredService(token.getService().getId(), "secret"))
                 .build();
             userCode.markTicketExpired();
-            assertThrows(InvalidOAuth20DeviceTokenException.class, () -> oauthTokenGenerator.generate(holder));
+            assertThrows(OAuth20ExpiredTokenException.class, () -> oauthTokenGenerator.generate(holder));
         }
 
         @Test
@@ -268,6 +269,8 @@ class OAuth20DefaultTokenGeneratorTests {
                 .registeredService(getRegisteredService(token.getService().getId(), "secret"))
                 .build();
             token.markTicketExpired();
+            assertThrows(OAuth20ExpiredTokenException.class, () -> oauthTokenGenerator.generate(holder));
+            assertNull(ticketRegistry.getTicket(token.getId(), _ -> true));
             assertThrows(InvalidOAuth20DeviceTokenException.class, () -> oauthTokenGenerator.generate(holder));
         }
 

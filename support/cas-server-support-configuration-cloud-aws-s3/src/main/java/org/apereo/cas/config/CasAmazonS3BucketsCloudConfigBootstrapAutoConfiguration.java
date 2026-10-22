@@ -32,13 +32,12 @@ public class CasAmazonS3BucketsCloudConfigBootstrapAutoConfiguration {
     public static final String CAS_CONFIGURATION_PREFIX = "cas.spring.cloud.aws.s3";
 
     @Bean
-    @ConditionalOnMissingBean(name = "s3BucketPropertySourceLocator")
+    @ConditionalOnMissingBean(name = "amazonS3BucketPropertySourceLocator")
     public PropertySourceLocator amazonS3BucketPropertySourceLocator(final Environment environment) {
         val builder = new AmazonEnvironmentAwareClientBuilder(CAS_CONFIGURATION_PREFIX, environment);
-        val clientBuilder = S3Client.builder().serviceConfiguration(S3Configuration.Builder::pathStyleAccessEnabled)
-            .forcePathStyle(true);
-        val s3Client = builder.build(clientBuilder, S3Client.class);
         val bucketName = builder.getSetting("bucket-name", "cas-properties");
-        return new AmazonS3PropertySourceLocator(s3Client, bucketName);
+        return new AmazonS3PropertySourceLocator(() -> builder.build(S3Client.builder()
+            .serviceConfiguration(S3Configuration.Builder::pathStyleAccessEnabled)
+            .forcePathStyle(true), S3Client.class), bucketName);
     }
 }
