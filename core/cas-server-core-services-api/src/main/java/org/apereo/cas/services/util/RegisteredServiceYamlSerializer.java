@@ -27,7 +27,7 @@ public class RegisteredServiceYamlSerializer extends RegisteredServiceJsonSerial
     @Override
     public boolean supports(final File file) {
         try {
-            val contents = FileUtils.readFileToString(file, StandardCharsets.UTF_8.name()).trim();
+            val contents = FileUtils.readFileToString(file, StandardCharsets.UTF_8).trim();
             return supports(contents);
         } catch (final Exception e) {
             LOGGER.trace(e.getMessage(), e);

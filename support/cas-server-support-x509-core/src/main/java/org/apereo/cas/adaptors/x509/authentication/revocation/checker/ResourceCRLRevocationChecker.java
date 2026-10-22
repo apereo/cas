@@ -125,12 +125,15 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker i
         val results = FunctionUtils.doUnchecked(() -> this.fetcher.fetch(getResources()));
         this.addCrls(results);
 
-        final Runnable scheduledFetcher = () -> {
-            try {
-                val fetchedResults = getFetcher().fetch(getResources());
-                this.addCrls(fetchedResults);
-            } catch (final Exception e) {
-                LOGGER.debug(e.getMessage(), e);
+        val scheduledFetcher = new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    val fetchedResults = getFetcher().fetch(getResources());
+                    addCrls(fetchedResults);
+                } catch (final Exception e) {
+                    LOGGER.debug(e.getMessage(), e);
+                }
             }
         };
 

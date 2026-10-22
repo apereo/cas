@@ -1,0 +1,16 @@
+{
+  "dependencies": "audit-rest,reports",
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
+    "--cas.audit.slf4j.enabled=false",
+
+    "--cas.audit.rest.url=http://localhost:5614/audit",
+    "--cas.audit.rest.asynchronous=false",
+
+    "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
+    "--management.endpoints.web.exposure.include=auditLog",
+    "--management.endpoints.access.default=UNRESTRICTED"
+  ]
+}

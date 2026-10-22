@@ -38,7 +38,9 @@ public interface OAuth20ProofOfPossessionValidator {
      * Verify the DPoP proof of a token request whose client is not the authenticated profile, such as device code
      * polling or the JWT bearer grant. A verified proof and the SHA-256 JWK thumbprint of its key are put on the request,
      * under {@code DPoP} and {@code DPoPConfirmation}, for the token to be bound to that key. A request without a proof
-     * from a client registered with {@code dpop_bound_access_tokens} is refused (RFC 9449, section 5.2).
+     * from a client registered with {@code dpop_bound_access_tokens} is refused (RFC 9449, section 5.2), and so is one from a
+     * client registered with {@code tls_client_certificate_bound_access_tokens} that is not authenticated with mutual TLS
+     * (RFC 8705, section 3.4).
      *
      * @param webContext        the web context
      * @param registeredService the client that makes the token request

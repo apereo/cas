@@ -7,6 +7,8 @@ import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
+import org.apereo.cas.support.oauth.services.OAuthRegisteredServiceClientSecret;
+import org.apereo.cas.util.CollectionUtils;
 import lombok.val;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
@@ -79,6 +81,23 @@ class OAuth20ClientIdClientSecretAuthenticatorTests {
             oauthClientAuthenticator.validate(new CallContext(ctx, new JEESessionStore()), credentials);
             assertNotNull(credentials.getUserProfile());
             assertEquals("client", credentials.getUserProfile().getId());
+        }
+
+        @Test
+        void verifyAuthenticationWithServiceIdPattern() {
+            val registeredService = new OAuthRegisteredService();
+            registeredService.setClientId(UUID.randomUUID().toString());
+            registeredService.setName(UUID.randomUUID().toString());
+            registeredService.setServiceId("https://app.example.org.*|https://github.com/apereo/cas");
+            registeredService.setClientSecrets(CollectionUtils.wrapList(OAuthRegisteredServiceClientSecret.withoutExpiration("secret")));
+            servicesManager.save(registeredService);
+
+            val credentials = new UsernamePasswordCredentials(registeredService.getClientId(), "secret");
+            val request = new MockHttpServletRequest();
+            request.addParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.CLIENT_CREDENTIALS.name().toLowerCase(Locale.ENGLISH));
+            val ctx = new JEEContext(request, new MockHttpServletResponse());
+            oauthClientAuthenticator.validate(new CallContext(ctx, new JEESessionStore()), credentials);
+            assertNotNull(credentials.getUserProfile());
         }
 
         @Test

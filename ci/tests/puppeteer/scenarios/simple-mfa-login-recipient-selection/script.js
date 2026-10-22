@@ -11,6 +11,7 @@ const cas = require("../../cas.js");
     await cas.screenshot(page);
 
     await cas.assertVisibility(page, "#continueButton");
+    await cas.assertAccessibility(page, "Simple MFA recipient selection");
     await cas.log("Checking all emails");
     await page.evaluate(() => {
         const emails = document.querySelectorAll("input[type=checkbox]");

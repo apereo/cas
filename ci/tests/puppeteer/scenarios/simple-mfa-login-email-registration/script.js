@@ -9,6 +9,7 @@ const cas = require("../../cas.js");
     await cas.screenshot(page);
     await cas.assertInnerText(page, "#content h2", "Account Registration");
     await cas.assertVisibility(page, "#fmRegister");
+    await cas.assertAccessibility(page, "Simple MFA email registration");
 
     await cas.logb("Registering invalid account...");
     await cas.type(page, "#email", "bob@unknown.com");

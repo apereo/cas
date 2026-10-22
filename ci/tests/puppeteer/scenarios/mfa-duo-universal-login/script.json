@@ -31,7 +31,7 @@
     "--cas.ticket.tst.time-to-kill-in-seconds=60",
     
     "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
-    "--management.endpoints.web.exposure.include=duoAdmin",
+    "--management.endpoints.web.exposure.include=duoAdmin,duoPing,duoAccountStatus",
     "--management.endpoints.access.default=UNRESTRICTED"
   ],
   "initScript": "${PWD}/ci/tests/httpbin/run-httpbin-server.sh"

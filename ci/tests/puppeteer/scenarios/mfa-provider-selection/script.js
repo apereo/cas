@@ -13,6 +13,7 @@ const assert = require("assert");
     await cas.assertVisibility(page, "#mfa-gauth");
     await cas.assertVisibility(page, "#mfa-yubikey");
     await cas.assertVisibility(page, "#mfaOptional");
+    await cas.assertAccessibility(page, "Multifactor provider selection");
     await cas.click(page, "#btnMfaOptional");
     await cas.sleep(2000);
     const ticket = await cas.assertTicketParameter(page);

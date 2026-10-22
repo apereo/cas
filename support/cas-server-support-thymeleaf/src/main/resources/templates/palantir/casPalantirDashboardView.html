@@ -7,6 +7,29 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
     <title th:text="#{cas.login.pagetitle}">CAS Admin UI</title>
 
+    <!--/*
+        Applies the stored theme before anything paints, so a dark dashboard does not flash light.
+        palantir-theme.js takes over once the scripts have loaded. It also opts the page out of the
+        shared autofocus in cas.js, which would otherwise put focus in the first search box and keep
+        the keyboard shortcuts from working until the operator clicked elsewhere.
+    */-->
+    <script>
+        (() => {
+            let preference = "system";
+            try {
+                preference = window.localStorage.getItem("PalantirTheme") || "system";
+            } catch (e) {
+                preference = "system";
+            }
+            const dark = preference === "dark" || (preference !== "light"
+                && window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches);
+            document.documentElement.setAttribute("data-theme", dark ? "dark" : "light");
+            document.documentElement.setAttribute("data-theme-preference", preference);
+            document.documentElement.classList.add("palantir-page");
+            document.documentElement.dataset.casAutofocus = "false";
+        })();
+    </script>
+
     <link rel="stylesheet" type="text/css" th:href="@{#{webjars.highlight.css}}"/>
     <link rel="stylesheet" type="text/css" th:href="@{#{webjars.jqueryui.css}}" />
     
@@ -30,6 +53,7 @@
     <link rel="stylesheet" type="text/css" th:href="@{#{webjars.contextmenu.css}}" />
 
     <link rel="stylesheet" type="text/css" th:href="@{/css/palantir.css}" />
+    <link rel="stylesheet" type="text/css" th:href="@{/css/palantir-meridian.css}" />
 
     <script th:inline="javascript">
         /*<![CDATA[*/
@@ -51,6 +75,7 @@
         })();
         /*]]>*/
     </script>
+    <script type="text/javascript" th:src="@{/js/palantir-theme.js}"></script>
     <script type="text/javascript" th:src="@{/js/palantir.js}"></script>
     <script type="text/javascript" th:src="@{/js/palantir-dashboard.js}"></script>
     <script type="text/javascript" th:src="@{/js/palantir-endpoints.js}"></script>
@@ -101,12 +126,18 @@
         <script type="text/javascript" th:src="@{#{webjars.contextmenu.position.js}}"></script>
         
         <div th:replace="~{fragments/palantir/navigationsidebar :: main}"/>
-        <div class="mdc-card p-2 m-1" id="palantirMainPanel" tabindex="-1" style="min-height: 100vh;">
-            <button type="button" class="palantir-sections-toggle" data-palantir-action="sections"
-                    aria-expanded="false" aria-controls="palantirNavigation">
-                <i class="mdi mdi-menu" aria-hidden="true"></i>
-                <span>Sections</span>
-            </button>
+        <div class="mdc-card p-2 m-1" id="palantirMainPanel" tabindex="-1">
+            <header class="palantir-page-header">
+                <button type="button" class="palantir-sections-toggle" data-palantir-action="sections"
+                        aria-expanded="false" aria-controls="palantirNavigation">
+                    <i class="mdi mdi-menu" aria-hidden="true"></i>
+                    <span>Sections</span>
+                </button>
+                <div class="palantir-page-heading">
+                    <p class="palantir-page-group" id="palantirPageGroup"></p>
+                    <h2 class="palantir-page-title" id="palantirPageTitle" aria-live="polite">Applications</h2>
+                </div>
+            </header>
             <div th:replace="~{fragments/palantir/dashboardtabs :: main}"/>
             <div th:replace="~{fragments/palantir/servicestab :: main}"/>
             <div th:if="${isRoleAdmin}" th:replace="~{fragments/palantir/systemtab :: main}"/>

@@ -3,6 +3,7 @@ package org.apereo.cas.aws.s3.services;
 import module java.base;
 import org.apereo.cas.config.CasAmazonS3ServiceRegistryAutoConfiguration;
 import org.apereo.cas.services.AbstractServiceRegistryTests;
+import org.apereo.cas.services.CasRegisteredService;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServiceRegistry;
 import org.apereo.cas.test.CasTestExtension;
@@ -21,6 +22,7 @@ import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.CreateBucketRequest;
 import software.amazon.awssdk.services.s3.model.DeleteBucketRequest;
 import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
+import software.amazon.awssdk.services.s3.model.ListBucketsRequest;
 import software.amazon.awssdk.services.s3.model.ListObjectsV2Request;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import static org.junit.jupiter.api.Assertions.*;
@@ -63,6 +65,50 @@ class AmazonS3ServiceRegistryTests extends AbstractServiceRegistryTests {
         val res = newServiceRegistry.save(service);
         assertEquals(res, service);
         assertFalse(newServiceRegistry.delete(service));
+    }
+
+    @Test
+    void verifyBucketNamesAreValid() {
+        val validBucketName = Pattern.compile("^[a-z0-9][a-z0-9.-]{1,61}[a-z0-9]$");
+        Stream.of("Sample Service", "^https://app.example.org/.*", "Service_Name..With Spaces!", "x".repeat(100))
+            .map(name -> {
+                val service = new CasRegisteredService();
+                service.setId(RandomUtils.nextLong(1, Long.MAX_VALUE));
+                service.setName(name);
+                return service;
+            })
+            .forEach(service -> {
+                val bucketName = AmazonS3ServiceRegistry.determineBucketName(service);
+                assertTrue(validBucketName.matcher(bucketName).matches(), bucketName);
+                assertFalse(bucketName.contains(".."), bucketName);
+                assertTrue(bucketName.endsWith("-" + service.getId()), bucketName);
+            });
+        val service = new CasRegisteredService();
+        service.setId(10);
+        service.setName("sample.app-1");
+        assertEquals("cas-sample.app-1-10", AmazonS3ServiceRegistry.determineBucketName(service));
+    }
+
+    @Test
+    void verifyRenamedServiceWithoutDescription() {
+        val service = new CasRegisteredService();
+        service.setId(RandomUtils.nextLong(100_000, 1_000_000));
+        service.setServiceId("^https://app.example.org/.*");
+        service.setName("Sample Service");
+        newServiceRegistry.save(service);
+        assertEquals("Sample Service", newServiceRegistry.findServiceById(service.getId()).getName());
+
+        service.setName("Renamed Service");
+        newServiceRegistry.save(service);
+        val buckets = amazonS3ServiceRegistryClient.listBuckets(ListBucketsRequest.builder().build()).buckets()
+            .stream()
+            .filter(bucket -> bucket.name().endsWith("-" + service.getId()))
+            .toList();
+        assertEquals(1, buckets.size());
+        assertEquals("Renamed Service", newServiceRegistry.findServiceById(service.getId()).getName());
+
+        assertTrue(newServiceRegistry.delete(service));
+        assertNull(newServiceRegistry.findServiceById(service.getId()));
     }
 
     @Test

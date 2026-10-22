@@ -68,6 +68,8 @@ async function verifyAccountManagementFlow(browser) {
 
     await cas.goto(page, "https://localhost:8443/cas/account");
     await cas.sleep(1000);
+    await cas.assertVisibility(page, "#linkOverview");
+    await cas.assertAccessibility(page, "Account profile");
 
     await cas.click(page, "#linkOverview");
     await cas.sleep(1000);

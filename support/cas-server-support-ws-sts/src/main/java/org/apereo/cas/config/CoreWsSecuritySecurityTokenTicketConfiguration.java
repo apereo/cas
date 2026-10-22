@@ -46,8 +46,8 @@ class CoreWsSecuritySecurityTokenTicketConfiguration {
         @ConditionalOnMissingBean(name = "securityTokenTicketIdGenerator")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public UniqueTicketIdGenerator securityTokenTicketIdGenerator() {
-            return new HostNameBasedUniqueTicketIdGenerator();
+        public UniqueTicketIdGenerator securityTokenTicketIdGenerator(final CasConfigurationProperties casProperties) {
+            return new HostNameBasedUniqueTicketIdGenerator(casProperties.getHost().getName());
         }
 
     }

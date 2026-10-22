@@ -51,6 +51,8 @@ public class OAuthRegisteredService extends BaseWebBasedRegisteredService {
 
     private boolean dpopBoundAccessTokens;
 
+    private boolean tlsClientCertificateBoundAccessTokens;
+
     private Set<String> audience = new HashSet<>();
     
     private RegisteredServiceOAuthCodeExpirationPolicy codeExpirationPolicy;

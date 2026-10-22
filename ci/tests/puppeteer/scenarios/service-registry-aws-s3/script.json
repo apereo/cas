@@ -1,0 +1,25 @@
+{
+  "dependencies": "reports,aws-s3-service-registry",
+  "conditions": {
+    "docker": "true"
+  },
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
+    "--cas.service-registry.core.init-from-json=false",
+    "--cas.service-registry.schedule.start-delay=PT2S",
+    "--cas.service-registry.schedule.repeat-interval=PT2S",
+
+    "--cas.service-registry.amazon-s3.endpoint=http://127.0.0.1:4566",
+    "--cas.service-registry.amazon-s3.region=us-east-1",
+    "--cas.service-registry.amazon-s3.credential-access-key=test",
+    "--cas.service-registry.amazon-s3.credential-secret-key=test",
+    "--cas.service-registry.amazon-s3.path-style-enabled=true",
+
+    "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
+    "--management.endpoints.web.exposure.include=*",
+    "--management.endpoints.access.default=UNRESTRICTED"
+  ],
+  "initScript": "${PWD}/ci/tests/aws/run-aws-server.sh,${PWD}/ci/tests/httpbin/run-httpbin-server.sh"
+}

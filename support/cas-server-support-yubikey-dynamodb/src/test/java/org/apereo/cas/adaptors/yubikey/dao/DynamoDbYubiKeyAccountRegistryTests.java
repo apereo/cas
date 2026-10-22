@@ -4,19 +4,23 @@ import module java.base;
 import org.apereo.cas.adaptors.yubikey.AbstractYubiKeyAccountRegistryTests;
 import org.apereo.cas.adaptors.yubikey.BaseYubiKeyTests;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccountRegistry;
+import org.apereo.cas.adaptors.yubikey.YubiKeyDeviceRegistrationRequest;
 import org.apereo.cas.config.CasDynamoDbYubiKeyAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import lombok.Getter;
+import lombok.val;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import software.amazon.awssdk.core.SdkSystemSetting;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link DynamoDbYubiKeyAccountRegistryTests}.
@@ -56,5 +60,15 @@ class DynamoDbYubiKeyAccountRegistryTests extends AbstractYubiKeyAccountRegistry
     @Qualifier("yubikeyAccountCipherExecutor")
     private CipherExecutor yubikeyAccountCipherExecutor;
 
-
+    @Test
+    void verifyTenantIsKept() {
+        val username = UUID.randomUUID().toString();
+        val request = YubiKeyDeviceRegistrationRequest.builder().username(username)
+            .token(OTP).name(UUID.randomUUID().toString()).tenant("shire").build();
+        assertTrue(yubiKeyAccountRegistry.registerAccountFor(request));
+        val account = yubiKeyAccountRegistry.getAccount(username).orElseThrow();
+        assertEquals("shire", account.getTenant());
+        assertEquals("shire", account.getDevices().getFirst().getTenant());
+        yubiKeyAccountRegistry.delete(username);
+    }
 }

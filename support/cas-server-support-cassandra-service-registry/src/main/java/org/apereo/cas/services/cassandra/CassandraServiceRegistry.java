@@ -15,6 +15,7 @@ import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.DisposableBean;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.data.cassandra.core.InsertOptions;
 import org.springframework.data.cassandra.core.query.Query;
@@ -27,7 +28,7 @@ import org.springframework.data.cassandra.core.query.Query;
  */
 @Slf4j
 @ToString
-public class CassandraServiceRegistry extends AbstractServiceRegistry implements DisposableBean {
+public class CassandraServiceRegistry extends AbstractServiceRegistry implements DisposableBean, InitializingBean {
     private final StringSerializer<RegisteredService> serializer;
 
     private final CassandraSessionFactory cassandraSessionFactory;
@@ -102,10 +103,22 @@ public class CassandraServiceRegistry extends AbstractServiceRegistry implements
     public RegisteredService findServiceById(final long id) {
         val holder = cassandraSessionFactory.getCassandraTemplate()
             .selectOneById(id, CassandraRegisteredServiceHolder.class);
-        if (holder != null) {
-            return serializer.from(holder.getData());
-        }
-        return null;
+        return Optional.ofNullable(holder)
+            .map(entry -> serializer.from(entry.getData()))
+            .map(this::invokeServiceRegistryListenerPostLoad)
+            .orElse(null);
+    }
+
+    /**
+     * Create the table that holds service definitions when it does not exist yet, so that a new keyspace works without
+     * the table having been created by hand.
+     */
+    @Override
+    public void afterPropertiesSet() {
+        val createTable = "CREATE TABLE IF NOT EXISTS %s.%s (id bigint PRIMARY KEY, data text);"
+            .formatted(properties.getKeyspace(), CassandraRegisteredServiceHolder.TABLE_NAME);
+        LOGGER.trace("Creating Cassandra table with query [{}]", createTable);
+        cassandraSessionFactory.getCqlTemplate().execute(createTable);
     }
 
     @Override

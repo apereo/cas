@@ -51,7 +51,9 @@ public class CassandraAuthenticationHandler extends AbstractUsernamePasswordAuth
             LOGGER.warn("Account password on record for [{}] does not match the given password", username);
             throw new FailedLoginException();
         }
-        val principal = this.principalFactory.createPrincipal(username, attributes);
+        val principalAttributes = new HashMap<>(attributes);
+        principalAttributes.remove(cassandraAuthenticationProperties.getPasswordAttribute());
+        val principal = this.principalFactory.createPrincipal(username, principalAttributes);
         return createHandlerResult(credential, principal, new ArrayList<>());
     }
 }

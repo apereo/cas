@@ -2,16 +2,23 @@ package org.apereo.cas.trusted.authentication.storage;
 
 import module java.base;
 import org.apereo.cas.config.CasRedisMultifactorAuthenticationTrustAutoConfiguration;
+import org.apereo.cas.configuration.model.support.mfa.trusteddevice.TrustedDevicesMultifactorProperties;
+import org.apereo.cas.redis.core.CasRedisTemplate;
 import org.apereo.cas.trusted.AbstractMultifactorAuthenticationTrustStorageTests;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
+import org.apereo.cas.trusted.authentication.keys.DefaultMultifactorAuthenticationTrustRecordKeyGenerator;
+import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import lombok.Getter;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
+import org.springframework.data.redis.RedisConnectionFailureException;
+import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.test.context.TestPropertySource;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * This is {@link RedisMultifactorAuthenticationTrustStorageTests}.
@@ -41,6 +48,18 @@ class RedisMultifactorAuthenticationTrustStorageTests extends AbstractMultifacto
         assertEquals(1, records.size());
         getMfaTrustEngine().remove(records.stream().findFirst().get().getRecordKey());
         assertTrue(getMfaTrustEngine().get(user).isEmpty());
+    }
+
+    @Test
+    void verifyUnavailableRedis() {
+        assertTrue(getMfaTrustEngine().isAvailable());
+        val redisTemplate = mock(CasRedisTemplate.class);
+        when(redisTemplate.execute(any(RedisCallback.class))).thenThrow(new RedisConnectionFailureException("down"));
+        when(redisTemplate.scan(anyString())).thenThrow(new RedisConnectionFailureException("down"));
+        val storage = new RedisMultifactorAuthenticationTrustStorage(new TrustedDevicesMultifactorProperties(),
+            CipherExecutor.noOpOfSerializableToString(), redisTemplate, new DefaultMultifactorAuthenticationTrustRecordKeyGenerator());
+        assertFalse(storage.isAvailable());
+        assertTrue(storage.get("casuser").isEmpty());
     }
 
     @Test

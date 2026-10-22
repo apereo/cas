@@ -1,14 +1,19 @@
 package org.apereo.cas.adaptors.cassandra.services;
 
 import module java.base;
+import org.apereo.cas.cassandra.CassandraSessionFactory;
 import org.apereo.cas.config.CassandraServiceRegistryAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.AbstractServiceRegistryTests;
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServiceRegistry;
+import org.apereo.cas.services.ServiceRegistryListener;
+import org.apereo.cas.services.cassandra.CassandraServiceRegistry;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import lombok.Getter;
+import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -17,12 +22,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.test.context.TestContext;
 import org.springframework.test.context.TestExecutionListener;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * This is {@link CassandraServiceRegistryTests}.
@@ -54,6 +61,30 @@ class CassandraServiceRegistryTests extends AbstractServiceRegistryTests {
     @Autowired
     @Qualifier("cassandraServiceRegistry")
     private ServiceRegistry newServiceRegistry;
+
+    @Autowired
+    @Qualifier("cassandraServiceRegistrySessionFactory")
+    private CassandraSessionFactory cassandraServiceRegistrySessionFactory;
+
+    @Autowired
+    private CasConfigurationProperties casProperties;
+
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
+
+    @Test
+    void verifyServiceFoundByIdIsPostLoaded() {
+        val listener = mock(ServiceRegistryListener.class);
+        when(listener.preSave(any())).thenAnswer(invocation -> invocation.getArgument(0));
+        when(listener.postLoad(any())).thenAnswer(invocation -> invocation.getArgument(0));
+        val registry = new CassandraServiceRegistry(cassandraServiceRegistrySessionFactory,
+            casProperties.getServiceRegistry().getCassandra(), applicationContext, List.of(listener));
+        assertDoesNotThrow(registry::afterPropertiesSet);
+        val service = registry.save(RegisteredServiceTestUtils.getRegisteredService("https://example.org/" + UUID.randomUUID()));
+        assertNotNull(registry.findServiceById(service.getId()));
+        verify(listener).postLoad(any());
+        registry.delete(service);
+    }
 
     @Test
     void verifyFailOps() {

@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.util.AopTestUtils;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -38,6 +39,11 @@ class MongoDbClientJwksRegistrationStoreTests extends AbstractOidcTests {
     @Autowired
     @Qualifier("clientJwksRegistrationStore")
     private ClientJwksRegistrationStore clientJwksRegistrationStore;
+
+    @Test
+    void verifyMongoDbStoreReplacesInMemoryStore() {
+        assertInstanceOf(MongoDbClientJwksRegistrationStore.class, AopTestUtils.getUltimateTargetObject(clientJwksRegistrationStore));
+    }
 
     @Test
     void verifyOperation() {

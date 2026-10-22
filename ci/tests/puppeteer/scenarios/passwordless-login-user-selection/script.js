@@ -94,6 +94,7 @@ async function authenticateWithMfa(browser) {
     await cas.assertVisibility(page, "#fmPasswordlessMfa");
     await cas.assertInvisibility(page, "#fmPassword");
     await cas.assertInvisibility(page, "#fmDelegation");
+    await cas.assertAccessibility(page, "Passwordless authentication selection");
 
     await cas.submitForm(page, "#fmMfa");
     await cas.sleep(2000);

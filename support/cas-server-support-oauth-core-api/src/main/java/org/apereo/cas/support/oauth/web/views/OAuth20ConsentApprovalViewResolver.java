@@ -44,19 +44,29 @@ public class OAuth20ConsentApprovalViewResolver implements ConsentApprovalViewRe
     }
 
     protected boolean isConsentApprovalBypassed(final WebContext context, final OAuthRegisteredService service) {
-        var bypass = service.isBypassApprovalPrompt() || casProperties.getAuthn().getOauth().getCore().isBypassApprovalPrompt();
-        if (!bypass) {
-            val approvalSubmitted = context.getRequestParameter(OAuth20Constants.BYPASS_APPROVAL_PROMPT)
-                .map(BooleanUtils::toBoolean).orElse(Boolean.FALSE);
-            if (approvalSubmitted) {
-                val approvalKey = context.getRequestParameter(OAuth20Constants.SCOPES_APPROVAL_KEY)
-                    .orElseThrow(() -> new IllegalArgumentException("Unknown approval key"));
-                val supportedScopes = resolveSupportedScopes(context, service);
-                val approvalEntry = buildApprovalEntry(context, service, supportedScopes);
-                bypass = Strings.CS.equals(approvalEntry.approvalKey(), approvalKey);
-            }
+        val bypass = service.isBypassApprovalPrompt() || casProperties.getAuthn().getOauth().getCore().isBypassApprovalPrompt();
+        return bypass || isConsentApprovalSubmitted(context, service);
+    }
+
+    /**
+     * Whether the request carries the approval the end-user just gave on the consent view,
+     * that is the approval flag together with the approval key computed for this client, user and scopes.
+     *
+     * @param context the context
+     * @param service the service
+     * @return true if consent was submitted for this request
+     */
+    protected boolean isConsentApprovalSubmitted(final WebContext context, final OAuthRegisteredService service) {
+        val approvalSubmitted = context.getRequestParameter(OAuth20Constants.BYPASS_APPROVAL_PROMPT)
+            .map(BooleanUtils::toBoolean).orElse(Boolean.FALSE);
+        if (approvalSubmitted) {
+            val approvalKey = context.getRequestParameter(OAuth20Constants.SCOPES_APPROVAL_KEY)
+                .orElseThrow(() -> new IllegalArgumentException("Unknown approval key"));
+            val supportedScopes = resolveSupportedScopes(context, service);
+            val approvalEntry = buildApprovalEntry(context, service, supportedScopes);
+            return Strings.CS.equals(approvalEntry.approvalKey(), approvalKey);
         }
-        return bypass;
+        return false;
     }
 
     protected ModelAndView redirectToApproveView(final WebContext context,

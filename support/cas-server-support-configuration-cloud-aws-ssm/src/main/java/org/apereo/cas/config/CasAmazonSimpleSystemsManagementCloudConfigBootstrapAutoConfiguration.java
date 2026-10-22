@@ -36,7 +36,6 @@ public class CasAmazonSimpleSystemsManagementCloudConfigBootstrapAutoConfigurati
     public PropertySourceLocator amazonSimpleSystemsManagementPropertySourceLocator(
         final Environment environment) {
         val builder = new AmazonEnvironmentAwareClientBuilder(CAS_CONFIGURATION_PREFIX, environment);
-        val ssmClient = builder.build(SsmClient.builder(), SsmClient.class);
-        return new AmazonSimpleSystemsManagementPropertySourceLocator(ssmClient);
+        return new AmazonSimpleSystemsManagementPropertySourceLocator(() -> builder.build(SsmClient.builder(), SsmClient.class));
     }
 }

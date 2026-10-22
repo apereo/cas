@@ -198,7 +198,7 @@ public class ConfigurationMetadataPropertyCreator {
 
         @Override
         public int hashCode() {
-            return Objects.hash(getId());
+            return Objects.hashCode(getId());
         }
 
         @Override

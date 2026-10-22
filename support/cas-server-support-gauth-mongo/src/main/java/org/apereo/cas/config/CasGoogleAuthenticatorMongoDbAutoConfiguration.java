@@ -46,7 +46,7 @@ public class CasGoogleAuthenticatorMongoDbAutoConfiguration {
     }
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Bean
+    @Bean(defaultCandidate = false)
     public MongoTemplate mongoDbGoogleAuthenticatorTemplate(
         final CasConfigurationProperties casProperties,
         @Qualifier(CasSSLContext.BEAN_NAME)

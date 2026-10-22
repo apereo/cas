@@ -954,6 +954,7 @@ const CAS_HOME_TITLE_PHRASES = [
     "Even Your Cron Jobs Need Boundaries",
     "Keeping Tokens Fresher Than the Office Coffee",
     "Making “Access Denied” Feel Less Personal",
+    "“It's Just a Glorified Login Form”",
     "No, Your Cat Does Not Need Admin Access",
     "Because Incognito Mode Isn't an Access Strategy",
     "Your Security Plan Can Not Just Be Steve",
@@ -963,11 +964,18 @@ const CAS_HOME_TITLE_PHRASES = [
     "Your Browser Remembers. We Still Check.",
     "Yelling at the Monitor Won't Fix Your Login",
     "Entra Your Credit Card, Yet?",
+    "100% Compatible, Until Kevin Returns from Vacation",
+    "For SAML2: An Entire Tree Died to Say You're Bob",
     "Turning “Contact Sales” into “git clone”",
+    "Your “Tiny Patch” Has an On-Call Rotation?",
     "“We Trust Dave” Does Not Scale",
+    "Marketing Discovered Passwordless on Thursday?",
     "Pull Requests Welcome. Login Requests Reviewed.",
-    "Because Bob Left in March",
+    "Because Bob, the Security Guy, Left in March",
     "Single Sign-On, Multiple Meetings to Approve It",
+    "Because “We'll Fix It Later” Was 10 Years Ago",
+    "Single Logout, Subject to Everyone's Interpretation",
+    "SSO Cookie Has Outlived the Original Architect?",
     "\"Give Everyone Admin\" Is a Great Podcast"
 ];
 
@@ -1124,6 +1132,32 @@ $(() => {
     window.addEventListener("scroll", schedule, {passive: true});
     window.addEventListener("resize", schedule, {passive: true});
     update();
+});
+
+// Swiping left or right on an open lightbox image moves to the next or previous image in the gallery.
+$(() => {
+    let start = null;
+    document.addEventListener("touchstart", event => {
+        start = event.touches.length === 1 && event.target.closest("#lightbox")
+            ? {x: event.touches[0].clientX, y: event.touches[0].clientY}
+            : null;
+    }, {passive: true});
+    document.addEventListener("touchend", event => {
+        if (!start) {
+            return;
+        }
+        const touch = event.changedTouches[0];
+        const dx = touch.clientX - start.x;
+        const dy = touch.clientY - start.y;
+        start = null;
+        if (Math.abs(dx) < 40 || Math.abs(dx) < Math.abs(dy) * 1.5) {
+            return;
+        }
+        const link = document.querySelector(dx < 0 ? "#lightbox .lb-next" : "#lightbox .lb-prev");
+        if (link && getComputedStyle(link).display !== "none") {
+            link.click();
+        }
+    }, {passive: true});
 });
 
 // A small floating button returns to the top once the reader has scrolled down; its ring shows how far they have read.

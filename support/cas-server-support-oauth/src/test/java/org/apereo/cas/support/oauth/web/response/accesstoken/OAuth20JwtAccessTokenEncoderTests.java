@@ -4,6 +4,7 @@ import module java.base;
 import org.apereo.cas.AbstractOAuth20Tests;
 import org.apereo.cas.services.DefaultRegisteredServiceProperty;
 import org.apereo.cas.services.RegisteredServiceProperty;
+import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
@@ -147,6 +148,20 @@ class OAuth20JwtAccessTokenEncoderTests {
             assertNotNull(encodedAccessToken1);
             val encodedAccessToken2 = OAuth20JwtAccessTokenEncoder.toEncodableCipher(configurationContext, registeredService, accessToken).encode(accessToken.getId());
             assertEquals(encodedAccessToken1, encodedAccessToken2);
+        }
+
+        @Test
+        void verifyCertificateBoundAccessTokenCarriesThumbprint() throws Throwable {
+            val thumbprint = "bwcK0esc3ACC3DB2Y5_lESsXE8o9ltc05O89jdN-dg2";
+            val authentication = RegisteredServiceTestUtils.getAuthentication(RegisteredServiceTestUtils.getPrincipal("casuser"),
+                Map.of(OAuth20Constants.X509_CERTIFICATE_DIGEST, List.of(thumbprint)));
+            val accessToken = getAccessToken(authentication, RegisteredServiceTestUtils.CONST_TEST_URL, UUID.randomUUID().toString());
+            when(accessToken.getAuthentication()).thenReturn(authentication);
+            val registeredService = getRegisteredServiceForJwtAccessTokenWithoutKeys(accessToken);
+            val encodedAccessToken = OAuth20JwtAccessTokenEncoder.toEncodableCipher(configurationContext, registeredService, accessToken)
+                .encode(accessToken.getId());
+            val claims = JwtClaims.parse(JwtBuilder.parse(encodedAccessToken).toString());
+            assertEquals(thumbprint, ((Map<?, ?>) claims.getClaimValue("cnf")).get("x5t#S256"));
         }
     }
 
