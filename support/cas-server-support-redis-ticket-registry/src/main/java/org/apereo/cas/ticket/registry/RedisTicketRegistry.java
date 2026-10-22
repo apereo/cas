@@ -628,10 +628,10 @@ public class RedisTicketRegistry extends AbstractTicketRegistry implements Clean
                                                   final RedisKeyGenerator redisKeyGenerator) {
         val rawTicketId = redisKeyGenerator.rawKey(redisKeyPattern);
         val cache = ticketCache.getIfAvailable();
-        final Ticket loadedTicket = cache != null
+        val loadedTicket = cache != null
             ? cache.get(rawTicketId, _ -> readTicketFromRedis(rawTicketId, redisKeyPattern, redisKeyGenerator))
             : readTicketFromRedis(rawTicketId, redisKeyPattern, redisKeyGenerator);
-        final Ticket ticket = loadedTicket instanceof final EncodedTicket encodedTicket && !isCipherExecutorEnabled()
+        val ticket = loadedTicket instanceof final EncodedTicket encodedTicket && !isCipherExecutorEnabled()
             ? decodeTicket(encodedTicket)
             : loadedTicket;
 

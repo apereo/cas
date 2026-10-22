@@ -7,7 +7,6 @@ import org.apereo.cas.hz.HazelcastConfigurationFactory;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import com.hazelcast.config.IndexConfig;
 import com.hazelcast.config.IndexType;
-import com.hazelcast.config.MapConfig;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.instance.impl.HazelcastInstanceFactory;
 import com.hazelcast.spring.session.HazelcastIndexedSessionRepository;
@@ -54,12 +53,10 @@ public class CasHazelcastSessionAutoConfiguration {
         val hazelcastInstance = HazelcastInstanceFactory.getOrCreateHazelcastInstance(config);
         val mapConfig = HazelcastConfigurationFactory.buildMapConfig(hz,
             HazelcastIndexedSessionRepository.DEFAULT_SESSION_MAP_NAME, duration.toSeconds());
-        if (mapConfig instanceof final MapConfig finalConfig) {
-            finalConfig.addIndexConfig(new IndexConfig(
-                IndexType.HASH,
-                HazelcastIndexedSessionRepository.PRINCIPAL_NAME_ATTRIBUTE
-            ));
-        }
+        mapConfig.addIndexConfig(new IndexConfig(
+            IndexType.HASH,
+            HazelcastIndexedSessionRepository.PRINCIPAL_NAME_ATTRIBUTE
+        ));
         HazelcastConfigurationFactory.setConfigMap(mapConfig, hazelcastInstance.getConfig());
         return hazelcastInstance;
     }

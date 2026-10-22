@@ -25,8 +25,14 @@ import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.secretsmanager.SecretsManagerClient;
 import software.amazon.awssdk.services.secretsmanager.model.CreateSecretRequest;
 import software.amazon.awssdk.services.secretsmanager.model.DeleteSecretRequest;
+import software.amazon.awssdk.services.secretsmanager.model.GetSecretValueRequest;
+import software.amazon.awssdk.services.secretsmanager.model.GetSecretValueResponse;
+import software.amazon.awssdk.services.secretsmanager.model.ListSecretsRequest;
+import software.amazon.awssdk.services.secretsmanager.model.ListSecretsResponse;
 import software.amazon.awssdk.services.secretsmanager.model.PutSecretValueRequest;
+import software.amazon.awssdk.services.secretsmanager.model.SecretListEntry;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * This is {@link CasAmazonSecretsManagerCloudConfigBootstrapAutoConfigurationTests}.
@@ -106,7 +112,47 @@ class CasAmazonSecretsManagerCloudConfigBootstrapAutoConfigurationTests {
         assertEquals("https://apereo.org/cas", prefix);
         propertySource.removeProperty("cas.server.prefix");
         assertNull(environment.getProperty("cas.server.prefix"));
+        propertySource.setProperty("cas.server.name", "https://apereo.org");
+        assertTrue(propertySource.getPropertyNames().length > 1);
         propertySource.removeAll();
         assertEquals(0, propertySource.getPropertyNames().length);
+    }
+
+    @Test
+    void verifyAllPagesOfSecretsAreLoaded() {
+        val client = mock(SecretsManagerClient.class);
+        when(client.listSecrets(any(ListSecretsRequest.class)))
+            .thenReturn(ListSecretsResponse.builder().secretList(SecretListEntry.builder().name("cas.server.name").build()).nextToken("page-2").build())
+            .thenReturn(ListSecretsResponse.builder().secretList(SecretListEntry.builder().name("cas.server.prefix").build()).build());
+        when(client.getSecretValue(any(GetSecretValueRequest.class))).thenAnswer(invocation -> {
+            val request = invocation.getArgument(0, GetSecretValueRequest.class);
+            return GetSecretValueResponse.builder().name(request.secretId()).secretString("value-" + request.secretId()).build();
+        });
+        val source = new AmazonSecretsManagerPropertySource("secrets", () -> client);
+        assertEquals(Set.of("cas.server.name", "cas.server.prefix"), Set.of(source.getPropertyNames()));
+        assertEquals("value-cas.server.name", source.getProperty("cas.server.name"));
+        assertEquals("value-cas.server.prefix", source.getProperty("cas.server.prefix"));
+        assertEquals("value-cas.server.prefix", source.getProperty("cas.server.prefix"));
+        verify(client, times(2)).getSecretValue(any(GetSecretValueRequest.class));
+    }
+
+    @Test
+    void verifyEachOperationUsesAClientOfItsOwn() {
+        val clients = new ArrayList<SecretsManagerClient>();
+        val source = new AmazonSecretsManagerPropertySource("secrets", () -> {
+            val client = mock(SecretsManagerClient.class);
+            when(client.listSecrets(any(ListSecretsRequest.class))).thenReturn(ListSecretsResponse.builder().build());
+            clients.add(client);
+            return client;
+        });
+        source.setProperty("cas.server.name", "https://apereo.org");
+        source.setProperty("cas.server.name", "https://apereo.org/cas");
+        source.removeAll();
+        assertEquals(4, clients.size());
+        verify(clients.get(1)).createSecret(any(CreateSecretRequest.class));
+        verify(clients.get(2)).putSecretValue(any(PutSecretValueRequest.class));
+        verify(clients.get(3)).deleteSecret(any(DeleteSecretRequest.class));
+        clients.forEach(client -> verify(client).close());
+        assertEquals(0, source.getPropertyNames().length);
     }
 }

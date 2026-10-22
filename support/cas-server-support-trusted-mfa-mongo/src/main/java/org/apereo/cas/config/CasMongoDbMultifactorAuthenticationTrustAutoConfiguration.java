@@ -40,7 +40,7 @@ public class CasMongoDbMultifactorAuthenticationTrustAutoConfiguration {
     }
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Bean
+    @Bean(defaultCandidate = false)
     @ConditionalOnMissingBean(name = "mongoMfaTrustedAuthnTemplate")
     public MongoTemplate mongoMfaTrustedAuthnTemplate(final CasConfigurationProperties casProperties,
                                                       @Qualifier(CasSSLContext.BEAN_NAME)

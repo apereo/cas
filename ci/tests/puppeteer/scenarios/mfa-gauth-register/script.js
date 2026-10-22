@@ -28,6 +28,7 @@ const querystring = require("querystring");
     await cas.assertVisibility(page, "#confirm-reg-dialog #notif-dialog-title");
     await cas.assertVisibility(page, "#token");
     await cas.assertVisibility(page, "#accountName");
+    await cas.assertAccessibility(page, "Google Authenticator registration confirmation");
 
     const otpConfig = await cas.parseOtpAuthenticationUrl(qrCode.data);
     await cas.logg(otpConfig);

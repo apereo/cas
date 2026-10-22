@@ -13,6 +13,9 @@ definition is managed inside its own separate bucket and the body of the service
 as a JSON blob, similar to that of [JSON service registry](JSON-Service-Management.html). The bucket name
 for each service definition is determined based on the service numeric identifier and its name, which makes it
 **IMPORTANT** for you to ensure that service definitions do not have duplicate values in such fields.
+The bucket is named `cas-<name>-<id>`: the name is lowercased, every character that S3 does not allow in bucket names
+becomes a hyphen, and the name is shortened as needed so that the bucket name fits the 63 character limit. Renaming
+a service definition moves it to a new bucket and removes the old one.
 
 Support is enabled by adding the following module into the overlay:
 

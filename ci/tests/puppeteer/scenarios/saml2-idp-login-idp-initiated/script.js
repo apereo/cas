@@ -1,5 +1,6 @@
 
 const path = require("path");
+const assert = require("assert");
 const cas = require("../../cas.js");
 
 async function getActuatorEndpoint(entityId, password = "Mellon") {
@@ -24,6 +25,23 @@ async function getActuatorEndpoint(entityId, password = "Mellon") {
     await cas.screenshot(page);
     await cas.sleep(4000);
     await cas.loginWith(page);
+    await cas.sleep(4000);
+    await cas.assertPageTitle(page, "CAS - Central Authentication Service Log In Successful");
+    await cas.assertInnerText(page, "#content div h2", "Log In Successful");
+
+    await cas.separator();
+    await cas.log("Unsolicited SSO must refuse an assertion consumer service that is not in the service provider metadata");
+    const unregisteredAcs = "https://localhost:9859/anything/unregistered-acs";
+    const refused = await cas.goto(page, `${url}&shire=${encodeURIComponent(unregisteredAcs)}`);
+    await cas.sleep(2000);
+    await cas.logPage(page);
+    assert(refused.status() >= 400, `Unregistered ACS must be refused, but got ${refused.status()}`);
+    assert(!page.url().startsWith("https://localhost:9859"), "No response may be delivered to an unregistered ACS");
+
+    await cas.separator();
+    await cas.log("Unsolicited SSO must accept the assertion consumer service listed in the service provider metadata");
+    const registeredAcs = "http://localhost:9443/simplesaml/module.php/saml/sp/saml2-acs.php/default-sp";
+    await cas.goto(page, `${url}&shire=${encodeURIComponent(registeredAcs)}`);
     await cas.sleep(4000);
     await cas.assertPageTitle(page, "CAS - Central Authentication Service Log In Successful");
     await cas.assertInnerText(page, "#content div h2", "Log In Successful");

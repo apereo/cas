@@ -30,6 +30,13 @@ async function loginAndVerify(browser) {
     assert(now.getDate() === date.getDate());
     await cas.assertPageTitle(page, "CAS - Central Authentication Service Log In Successful");
     await cas.assertInnerText(page, "#content div h2", "Log In Successful");
+
+    await cas.log("Waiting past the default hard timeout; the remember-me session must outlive it");
+    await cas.sleep(4000);
+    const page3 = await cas.newPage(browser);
+    await cas.gotoLogin(page3);
+    await cas.assertCookie(page3);
+    await cas.assertPageTitle(page3, "CAS - Central Authentication Service Log In Successful");
 }
 
 async function executeRequest(url, method, statusCode, contentType = "application/x-www-form-urlencoded", requestBody = undefined) {
@@ -44,7 +51,7 @@ async function executeRequest(url, method, statusCode, contentType = "applicatio
 
 async function fetchSsoSessions() {
     await cas.logg("Removing all SSO Sessions");
-    await cas.doDelete("https://localhost:8443/cas/actuator/ssoSessions?type=ALL&from=1&count=100000");
+    await cas.doDelete("https://localhost:8443/cas/actuator/ssoSessions?type=ALL&from=0&count=100000");
     
     const formData = {
         username: "casuser",

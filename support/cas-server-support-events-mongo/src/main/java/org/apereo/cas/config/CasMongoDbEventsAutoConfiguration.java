@@ -40,7 +40,7 @@ public class CasMongoDbEventsAutoConfiguration {
     }
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Bean
+    @Bean(defaultCandidate = false)
     @ConditionalOnMissingBean(name = "mongoEventsTemplate")
     public MongoTemplate mongoEventsTemplate(final CasConfigurationProperties casProperties,
                                              @Qualifier(CasSSLContext.BEAN_NAME)

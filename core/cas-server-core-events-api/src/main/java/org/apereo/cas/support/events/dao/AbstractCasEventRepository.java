@@ -100,7 +100,7 @@ public abstract class AbstractCasEventRepository implements CasEventRepository, 
         return getEventsOfType(type)
             .filter(e -> {
                 val dt = convertEventCreationTime(e);
-                return dt.isEqual(dt) || dt.isAfter(dt);
+                return dt.isEqual(dateTime) || dt.isAfter(dateTime);
             });
     }
 

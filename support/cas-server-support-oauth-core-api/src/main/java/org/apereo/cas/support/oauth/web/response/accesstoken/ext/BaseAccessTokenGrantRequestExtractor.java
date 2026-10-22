@@ -31,7 +31,9 @@ public abstract class BaseAccessTokenGrantRequestExtractor<T extends OAuth20Conf
      * The DPoP proof that binds the token comes from the authenticated profile, or, for grants whose client is not that
      * profile (device code polling, the JWT bearer grant), from the request attributes that
      * {@code OAuth20ProofOfPossessionValidator.validateTokenRequest} sets. The request attributes always belong to the
-     * current request, so they win over a profile that may have been kept in the session from an earlier one.
+     * current request, so they win over a profile that may have been kept in the session from an earlier one. A client
+     * that authenticated with mutual TLS leaves the thumbprint of its certificate on the profile, and the token is bound
+     * to that certificate (RFC 8705, section 3).
      *
      * @param webContext the web context
      * @return the access token request context
@@ -46,6 +48,9 @@ public abstract class BaseAccessTokenGrantRequestExtractor<T extends OAuth20Conf
             }
             if (profile.containsAttribute(OAuth20Constants.DPOP)) {
                 tokenRequestContext.setDpop(profile.getAttribute(OAuth20Constants.DPOP).toString());
+            }
+            if (profile.containsAttribute(OAuth20Constants.X509_CERTIFICATE_DIGEST)) {
+                tokenRequestContext.setX509CertificateDigest(profile.getAttribute(OAuth20Constants.X509_CERTIFICATE_DIGEST).toString());
             }
             tokenRequestContext.setUserProfile(profile);
         });

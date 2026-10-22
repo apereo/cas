@@ -27,7 +27,7 @@ public class RegisteredServiceJsonSerializer extends BaseJacksonSerializer<Regis
     @Override
     public boolean supports(final File file) {
         try {
-            val content = FileUtils.readFileToString(file, StandardCharsets.UTF_8.name());
+            val content = FileUtils.readFileToString(file, StandardCharsets.UTF_8);
             return supports(content);
         } catch (final Exception e) {
             return false;

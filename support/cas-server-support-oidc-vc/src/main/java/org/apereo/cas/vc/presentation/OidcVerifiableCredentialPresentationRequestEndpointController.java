@@ -383,7 +383,7 @@ public class OidcVerifiableCredentialPresentationRequestEndpointController exten
                     .build()
             );
         }
-        final String requestUri = isRequestObjectSigned()
+        val requestUri = isRequestObjectSigned()
             ? configurationContext.getCasProperties().getAuthn().getOidc().getCore().getIssuer()
               + '/' + OidcConstants.VC_PRESENTATION_REQUEST_URL + '/' + addedTicket.getId()
             : null;
@@ -547,7 +547,7 @@ public class OidcVerifiableCredentialPresentationRequestEndpointController exten
             .toList();
 
         val parameters = new LinkedHashMap<String, Object>();
-        final String responseMode = Objects.requireNonNullElseGet(
+        val responseMode = Objects.requireNonNullElseGet(
             transientSessionTicket.getPropertyAsString(OidcVerifiableCredentialPresentationResponseEndpointController.PROPERTY_RESPONSE_MODE),
             () -> StringUtils.isNotBlank(responseEncryptionKey)
                 ? OidcVerifiableCredentialsPresentationProperties.ResponseModes.DIRECT_POST_JWT.getValue()

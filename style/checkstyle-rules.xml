@@ -383,6 +383,14 @@
         </module>
          -->
 
+        <!-- Lombok @Value makes instance fields without explicit visibility private. -->
+        <module name="SuppressionXpathSingleFilter">
+            <property name="checks" value="VisibilityModifier"/>
+            <property name="query"
+                      value="//CLASS_DEF[MODIFIERS/ANNOTATION[IDENT[@text='Value'] or DOT[IDENT[@text='lombok'] and IDENT[@text='Value']]]]
+                             /OBJBLOCK/VARIABLE_DEF[not(MODIFIERS/LITERAL_STATIC or MODIFIERS/LITERAL_PUBLIC or MODIFIERS/LITERAL_PROTECTED)
+                             and not(MODIFIERS/ANNOTATION[IDENT[@text='PackagePrivate'] or DOT/IDENT[@text='PackagePrivate']])]/IDENT"/>
+        </module>
         <module name="VisibilityModifier">
             <property name="severity" value="error"/>
             <property name="protectedAllowed" value="true"/>
@@ -664,13 +672,24 @@
             <property name="message" value="Use lombok.val when declaring final variable definitions."/>
         </module>
 
-        <module name="RegexpSinglelineJava">
+        <!-- Keep @Value fields out of the local variable declaration check. -->
+        <module name="SuppressionXpathSingleFilter">
+            <property name="id" value="useLombokVar"/>
+            <property name="query"
+                      value="//CLASS_DEF[MODIFIERS/ANNOTATION[IDENT[@text='Value'] or DOT[IDENT[@text='lombok'] and IDENT[@text='Value']]]]
+                             /OBJBLOCK/VARIABLE_DEF[not(MODIFIERS/LITERAL_STATIC or MODIFIERS/LITERAL_PUBLIC or MODIFIERS/LITERAL_PROTECTED)
+                             and not(MODIFIERS/ANNOTATION[IDENT[@text='PackagePrivate'] or DOT/IDENT[@text='PackagePrivate']])]/IDENT"/>
+        </module>
+        <module name="MatchXpath">
             <property name="id" value="useLombokVar"/>
             <metadata name="net.sf.eclipsecs.core.comment" value="Using val for variable definitions"/>
             <property name="severity" value="error"/>
-            <property name="format"
-                      value="^\s*(?!return|throw|private|public|protected|val|yield)(final\s+)*\b(?!var)\w+\b\s*(\b[a-z]\w*\b)(\s*=\s+(?!null).+)*;"/>
-            <property name="message" value="Use lombok.val or JDK var keyword when declaring variable definitions."/>
+            <property name="query"
+                      value="//VARIABLE_DEF[not(MODIFIERS/*[not(self::FINAL or self::ANNOTATION)])
+                             and TYPE[count(*) = 1 and not(ARRAY_DECLARATOR or DOT or TYPE_ARGUMENTS or IDENT[@text='val' or @text='var'])]
+                             and IDENT[matches(@text, '^[a-z]')]
+                             and not(ASSIGN/EXPR/LITERAL_NULL or parent::FOR_INIT or parent::FOR_EACH_CLAUSE)]/IDENT"/>
+            <message key="matchxpath.match" value="Use lombok.val or JDK var keyword when declaring variable definitions."/>
         </module>
 
         <module name="RegexpSinglelineJava">

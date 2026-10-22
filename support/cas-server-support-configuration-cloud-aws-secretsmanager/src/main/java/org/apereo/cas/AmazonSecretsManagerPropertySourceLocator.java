@@ -3,7 +3,6 @@ package org.apereo.cas;
 import module java.base;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
-import org.springframework.beans.factory.DisposableBean;
 import org.springframework.cloud.bootstrap.config.PropertySourceLocator;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
@@ -19,18 +18,13 @@ import software.amazon.awssdk.services.secretsmanager.SecretsManagerClient;
  */
 @RequiredArgsConstructor
 @Order(Ordered.HIGHEST_PRECEDENCE)
-public class AmazonSecretsManagerPropertySourceLocator implements PropertySourceLocator, DisposableBean {
-    private final SecretsManagerClient secretsManagerClient;
+public class AmazonSecretsManagerPropertySourceLocator implements PropertySourceLocator {
+    private final Supplier<SecretsManagerClient> secretsManagerClientFactory;
 
     @Override
     public PropertySource<?> locate(final Environment environment) {
         val sourceName = AmazonSecretsManagerPropertySource.class.getSimpleName();
-        return new AmazonSecretsManagerPropertySource(sourceName, secretsManagerClient);
-    }
-
-    @Override
-    public void destroy() {
-        secretsManagerClient.close();
+        return new AmazonSecretsManagerPropertySource(sourceName, secretsManagerClientFactory);
     }
 }
 

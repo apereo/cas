@@ -19,6 +19,9 @@ async function verifyWebAuthnLogin(browser, contextPath) {
     await cas.assertVisibility(page, "#messages");
     await cas.assertInvisibility(page, "#deviceTable");
     await cas.assertVisibility(page, "#authnButton");
+    if (process.env.SCENARIO_VARIATION === "WithContextPath") {
+        await cas.assertAccessibility(page, "WebAuthn login");
+    }
 
     await page.on("response", (response) => {
         const url = response.url();

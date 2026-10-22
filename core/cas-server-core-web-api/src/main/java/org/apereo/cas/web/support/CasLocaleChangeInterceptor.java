@@ -1,8 +1,10 @@
 package org.apereo.cas.web.support;
 
 import module java.base;
+import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.services.WebBasedRegisteredService;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import lombok.RequiredArgsConstructor;
@@ -10,6 +12,7 @@ import lombok.Setter;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import org.springframework.web.servlet.support.RequestContextUtils;
@@ -50,6 +53,22 @@ public class CasLocaleChangeInterceptor extends LocaleChangeInterceptor {
         }
     }
 
+    /**
+     * Extract the service from the request to look up its locale. A service the argument extractor refuses
+     * carries no locale; the refusal is left to the flow that handles the request, which answers it with the
+     * service error view. Throwing here would turn into an error response that cannot render a page.
+     *
+     * @param request the request
+     * @return the service, or null when the request has none or it is refused
+     */
+    private @Nullable WebApplicationService extractService(final HttpServletRequest request) {
+        try {
+            return argumentExtractor.getObject().extractService(request);
+        } catch (final UnauthorizedServiceException e) {
+            return null;
+        }
+    }
+
     private static boolean isLocaleConfigured(final HttpServletRequest request) {
         return request.getAttribute(Locale.class.getName()) == null;
     }
@@ -64,7 +83,7 @@ public class CasLocaleChangeInterceptor extends LocaleChangeInterceptor {
             configureLocale(request, response, locale);
             return true;
         }
-        val service = argumentExtractor.getObject().extractService(request);
+        val service = extractService(request);
         if (service != null) {
             val registeredService = servicesManager.getObject().findServiceBy(service);
             if (registeredService instanceof final WebBasedRegisteredService webRegisteredService

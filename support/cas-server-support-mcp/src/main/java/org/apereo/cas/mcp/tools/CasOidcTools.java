@@ -81,7 +81,8 @@ public class CasOidcTools {
             .bypassApprovalPrompt(client.isBypassApprovalPrompt())
             .generateRefreshToken(client.isGenerateRefreshToken())
             .jwtAccessToken(client.isJwtAccessToken())
-            .dpopBoundAccessTokens(client.isDpopBoundAccessTokens());
+            .dpopBoundAccessTokens(client.isDpopBoundAccessTokens())
+            .tlsClientCertificateBoundAccessTokens(client.isTlsClientCertificateBoundAccessTokens());
         if (client instanceof final OidcRegisteredService oidcClient) {
             val issuerService = oidcIssuerService.getIfAvailable();
             if (issuerService != null) {
@@ -149,7 +150,8 @@ public class CasOidcTools {
                              @Nullable List<String> supportedResponseTypes, @Nullable List<String> scopes,
                              @Nullable String tokenEndpointAuthenticationMethod, @Nullable Boolean clientSecretConfigured,
                              @Nullable Boolean bypassApprovalPrompt, @Nullable Boolean generateRefreshToken,
-                             @Nullable Boolean jwtAccessToken, @Nullable Boolean dpopBoundAccessTokens, @Nullable String issuer,
+                             @Nullable Boolean jwtAccessToken, @Nullable Boolean dpopBoundAccessTokens,
+                             @Nullable Boolean tlsClientCertificateBoundAccessTokens, @Nullable String issuer,
                              @Nullable String applicationType, @Nullable String subjectType, @Nullable String sectorIdentifierUri,
                              @Nullable Boolean signIdToken, @Nullable String idTokenSigningAlg, @Nullable Boolean encryptIdToken,
                              @Nullable String idTokenEncryptionAlg, @Nullable String jwks, @Nullable String reason) {

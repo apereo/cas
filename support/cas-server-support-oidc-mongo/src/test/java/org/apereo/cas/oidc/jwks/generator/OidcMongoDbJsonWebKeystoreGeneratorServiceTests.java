@@ -10,6 +10,7 @@ import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import tools.jackson.databind.ObjectMapper;
@@ -61,5 +62,11 @@ class OidcMongoDbJsonWebKeystoreGeneratorServiceTests extends AbstractOidcTests 
         val json3 = IOUtils.toString(resource3.get().getInputStream(), StandardCharsets.UTF_8);
         val keys3 = new ObjectMapper().readTree(json3).get("keys");
         assertEquals(set1.getJsonWebKeys().size(), keys3.size());
+    }
+
+    @Test
+    void verifyTemplateIsInjectedOnlyByName() {
+        val definition = (AbstractBeanDefinition) applicationContext.getBeanFactory().getBeanDefinition("mongoOidcJsonWebKeystoreTemplate");
+        assertFalse(definition.isDefaultCandidate());
     }
 }

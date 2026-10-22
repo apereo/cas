@@ -52,7 +52,7 @@ public class SimplePrincipal implements Principal {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id.toLowerCase(Locale.ENGLISH));
+        return Objects.hashCode(id.toLowerCase(Locale.ENGLISH));
     }
 
     @Override

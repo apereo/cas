@@ -11,6 +11,7 @@
     "--cas.server.prefix=${cas.server.name}/cas",
 
     "--cas.ticket.registry.core.enable-locking=true",
+    "--spring.integration.jdbc.initialize-schema=always",
     "--cas.ticket.registry.jpa.driver-class=org.postgresql.Driver",
     "--cas.ticket.registry.jpa.ddl-auto=update",
     "--cas.ticket.registry.jpa.dialect=org.hibernate.dialect.PostgreSQLDialect",
