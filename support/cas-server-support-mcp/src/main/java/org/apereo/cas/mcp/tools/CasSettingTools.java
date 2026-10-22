@@ -86,7 +86,7 @@ public class CasSettingTools {
         return new SettingSummary(property.getName(),
             StringUtils.abbreviate(StringUtils.normalizeSpace(description), MAX_DESCRIPTION_LENGTH),
             property.getModule(), property.getType(), StringUtils.isNotBlank(property.getDeprecationLevel()),
-            StringUtils.replace(CasSettingResources.SETTING_URI_TEMPLATE, "{name}", property.getName()));
+            Strings.CI.replace(CasSettingResources.SETTING_URI_TEMPLATE, "{name}", property.getName()));
     }
 
     @JsonInclude(JsonInclude.Include.NON_NULL)

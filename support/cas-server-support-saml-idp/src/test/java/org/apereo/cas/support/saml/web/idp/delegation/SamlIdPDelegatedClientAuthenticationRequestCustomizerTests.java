@@ -29,6 +29,8 @@ import org.opensaml.saml.saml2.core.IDPEntry;
 import org.opensaml.saml.saml2.core.IDPList;
 import org.opensaml.saml.saml2.core.RequestedAuthnContext;
 import org.opensaml.saml.saml2.core.Scoping;
+import org.pac4j.core.config.properties.KeystoreProperties;
+import org.pac4j.core.config.properties.ResourceProperties;
 import org.pac4j.http.client.indirect.FormClient;
 import org.pac4j.jee.context.JEEContext;
 import org.pac4j.saml.client.SAML2Client;
@@ -218,12 +220,15 @@ class SamlIdPDelegatedClientAuthenticationRequestCustomizerTests extends BaseSam
         FileUtils.deleteQuietly(new File(keystorePath));
         val spMetadataPath = new File(FileUtils.getTempDirectory(), "sp-metadata-%s.xml".formatted(RandomUtils.nextInt())).getCanonicalPath();
         FileUtils.deleteQuietly(new File(spMetadataPath));
-        val saml2Config = new SAML2Configuration(keystorePath, "changeit", "changeit", idpMetadata);
+        val saml2Config = new SAML2Configuration(new KeystoreProperties(keystorePath)
+            .setKeystorePassword("changeit")
+            .setPrivateKeyPassword("changeit"),
+            new ResourceProperties(idpMetadata));
         saml2Config.getKeystore().setForceKeystoreGeneration(true);
 
         saml2Config.setForceServiceProviderMetadataGeneration(true);
         saml2Config.setServiceProviderEntityId("cas:example:sp");
-        saml2Config.setServiceProviderMetadataPath(spMetadataPath);
+        saml2Config.getServiceProviderMetadata().setPath(spMetadataPath);
         saml2Config.setAuthnRequestBindingType("urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST");
         saml2Config.init(true);
         return saml2Config;

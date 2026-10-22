@@ -7,6 +7,7 @@ import org.apereo.cas.util.DigestUtils;
 import lombok.experimental.UtilityClass;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -43,7 +44,7 @@ public class CasMcpSessionReferences {
      * @return true if the value is a session reference
      */
     public static boolean isReference(final @Nullable String value) {
-        return StringUtils.startsWith(value, PREFIX);
+        return Strings.CI.startsWith(value, PREFIX);
     }
 
     /**

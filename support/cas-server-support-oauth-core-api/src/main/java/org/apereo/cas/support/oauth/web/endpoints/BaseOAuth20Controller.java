@@ -19,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jooq.lambda.Unchecked;
 import org.jspecify.annotations.Nullable;
@@ -132,7 +133,7 @@ public abstract class BaseOAuth20Controller<T extends OAuth20ConfigurationContex
             return Optional.empty();
         }
         return Stream.of(OAuth20Constants.TOKEN_TYPE_BEARER, OAuth20Constants.TOKEN_TYPE_DPOP)
-            .filter(scheme -> StringUtils.startsWithIgnoreCase(authHeader, scheme + ' '))
+            .filter(scheme -> Strings.CI.startsWith(authHeader, scheme + ' '))
             .findFirst()
             .map(scheme -> StringUtils.trimToNull(authHeader.substring(scheme.length() + 1)));
     }
@@ -148,7 +149,7 @@ public abstract class BaseOAuth20Controller<T extends OAuth20ConfigurationContex
      */
     protected String resolveAuthorizationScheme(final HttpServletRequest request) {
         val authHeader = request.getHeader(HttpConstants.AUTHORIZATION_HEADER);
-        return StringUtils.startsWithIgnoreCase(authHeader, OAuth20Constants.TOKEN_TYPE_DPOP + ' ')
+        return Strings.CI.startsWith(authHeader, OAuth20Constants.TOKEN_TYPE_DPOP + ' ')
             ? OAuth20Constants.TOKEN_TYPE_DPOP
             : OAuth20Constants.TOKEN_TYPE_BEARER;
     }

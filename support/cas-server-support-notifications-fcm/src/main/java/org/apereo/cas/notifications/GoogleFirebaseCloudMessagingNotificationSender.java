@@ -28,7 +28,8 @@ public class GoogleFirebaseCloudMessagingNotificationSender implements Notificat
     @Override
     public boolean notify(final Principal principal, final Map<String, String> messageData) {
         try {
-            val deviceToken = principal.getSingleValuedAttribute(properties.getRegistrationTokenAttributeName(), String.class);
+            val deviceToken = principal.getSingleValuedAttribute(
+                properties.getRegistrationTokenAttributeName(), String.class);
             val message = Message.builder()
                 .putAllData(messageData)
                 .setToken(deviceToken)

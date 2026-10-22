@@ -187,7 +187,7 @@ class DefaultDelegatedIdentityProviderFactoryOidcTests {
             val privateKeyJwtConfig = config.getPrivateKeyJwtClientAuthnMethodConfig();
             assertTrue(privateKeyJwtConfig instanceof PrivateKeyJwtClientAuthnMethodConfig);
             val castedPrivateKeyJwtClient = (PrivateKeyJwtClientAuthnMethodConfig) privateKeyJwtConfig;
-            assertEquals("class path resource [private-key-jwt.jwks]", castedPrivateKeyJwtClient.getJwks().getJwksResource().toString());
+            assertEquals("class path resource [private-key-jwt.jwks]", castedPrivateKeyJwtClient.getJwks().getResource().toString());
         }
     }
 
@@ -221,7 +221,7 @@ class DefaultDelegatedIdentityProviderFactoryOidcTests {
             val federation = config.getFederation();
             assertTrue(config.isFederation());
             assertEquals("https://target-op.example.org", federation.getTargetOp());
-            assertEquals("class path resource [federation.jwks]", federation.getJwks().getJwksResource().toString());
+            assertEquals("class path resource [federation.jwks]", federation.getJwks().getResource().toString());
             assertEquals("fedekey-federatedOidcClient", federation.getJwks().getKid());
             assertEquals(1, federation.getTrustAnchors().size());
             assertEquals(30, federation.getValidityInDays());
