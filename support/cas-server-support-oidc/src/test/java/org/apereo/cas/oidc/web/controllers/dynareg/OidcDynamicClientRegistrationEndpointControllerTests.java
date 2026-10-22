@@ -177,6 +177,7 @@ class OidcDynamicClientRegistrationEndpointControllerTests {
                         "id_token_encrypted_response_enc": "A128CBC-HS256",
                         "userinfo_encrypted_response_alg": "RSA1_5",
                         "dpop_bound_access_tokens": true,
+                        "tls_client_certificate_bound_access_tokens": true,
                         "contacts": ["ve7jtb@example.org", "mary@example.org"]
                     }
                 """;
@@ -191,9 +192,12 @@ class OidcDynamicClientRegistrationEndpointControllerTests {
                 )
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.dpop_bound_access_tokens").value(true))
+                .andExpect(jsonPath("$.tls_client_certificate_bound_access_tokens").value(true))
                 .andReturn();
             val registeredClientId = JsonPath.read(result.getResponse().getContentAsString(), "$.client_id").toString();
-            assertTrue(OAuth20Utils.getRegisteredOAuthServiceByClientId(servicesManager, registeredClientId).isDpopBoundAccessTokens());
+            val registeredClient = OAuth20Utils.getRegisteredOAuthServiceByClientId(servicesManager, registeredClientId);
+            assertTrue(registeredClient.isDpopBoundAccessTokens());
+            assertTrue(registeredClient.isTlsClientCertificateBoundAccessTokens());
         }
 
         @Test

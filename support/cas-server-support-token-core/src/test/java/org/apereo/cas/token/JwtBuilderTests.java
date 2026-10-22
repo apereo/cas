@@ -45,7 +45,7 @@ class JwtBuilderTests {
             new DefaultRegisteredServiceProperty(ContentEncryptionAlgorithmIdentifiers.AES_128_CBC_HMAC_SHA_256));
 
         val signingKeyLookups = new AtomicInteger();
-        final RegisteredServiceJwtTicketCipherExecutor serviceCipher = new RegisteredServiceJwtTicketCipherExecutor() {
+        val serviceCipher = new RegisteredServiceJwtTicketCipherExecutor() {
             @Override
             public Optional<String> getSigningKey(@Nullable final RegisteredService registeredService) {
                 signingKeyLookups.incrementAndGet();

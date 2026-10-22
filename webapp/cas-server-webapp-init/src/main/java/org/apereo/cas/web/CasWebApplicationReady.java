@@ -30,7 +30,7 @@ public class CasWebApplicationReady implements CasApplicationReadyListener {
 
     @Override
     public void handleApplicationReadyEvent(final ApplicationReadyEvent event) {
-        AsciiArtUtils.printAsciiArtReady(LOGGER, "CAS is now running at " + properties.getServer().getPrefix());
+        AsciiArtUtils.printAsciiArtReady(LOGGER, "Apereo CAS is now running at " + properties.getServer().getPrefix());
 
         LOGGER.info("Ready to process requests @ [{}]", DateTimeUtils.zonedDateTimeOf(Instant.ofEpochMilli(event.getTimestamp())));
         val validator = new CasConfigurationPropertiesValidator(applicationContext);

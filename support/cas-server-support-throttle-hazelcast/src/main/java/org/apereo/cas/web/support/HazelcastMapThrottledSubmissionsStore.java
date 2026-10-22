@@ -18,9 +18,19 @@ public class HazelcastMapThrottledSubmissionsStore<T extends ThrottledSubmission
         super(backingMap, casProperties);
     }
 
+    /**
+     * Removes the submissions that match the condition. The condition is evaluated here rather than sent to the
+     * members that own the entries, since it is a plain Java predicate that cannot be serialized to them.
+     *
+     * @param condition the condition
+     */
     @Override
     public void removeIf(final Predicate<T> condition) {
         val hzMap = (IMap<String, T>) backingMap;
-        hzMap.removeAll((com.hazelcast.query.Predicate<String, T>) entry -> condition.test(entry.getValue()));
+        hzMap.entrySet()
+            .stream()
+            .filter(entry -> condition.test(entry.getValue()))
+            .map(Map.Entry::getKey)
+            .forEach(hzMap::delete);
     }
 }

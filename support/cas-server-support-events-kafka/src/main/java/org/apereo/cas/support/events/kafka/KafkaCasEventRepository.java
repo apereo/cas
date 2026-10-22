@@ -30,12 +30,19 @@ public class KafkaCasEventRepository extends AbstractCasEventRepository {
         this.casProperties = casProperties;
     }
 
+    /**
+     * Publishes the event keyed by its identifier. The events topic is created as a compacted topic, and Kafka
+     * rejects records without a key on a compacted topic.
+     *
+     * @param event the event
+     * @return the event that was sent
+     */
     @Override
     @SuppressWarnings("FutureReturnValueIgnored")
     public CasEvent saveInternal(final CasEvent event) {
         val eventToSend = event.assignIdIfNecessary();
         val topic = casProperties.getEvents().getKafka().getTopic().getName();
-        val future = kafkaEventRepositoryTemplate.send(topic, eventToSend);
+        val future = kafkaEventRepositoryTemplate.send(topic, String.valueOf(eventToSend.getId()), eventToSend);
         future.whenComplete((result, ex) -> {
             LOGGER.trace("Published [{}]", result);
             LoggingUtils.error(LOGGER, ex);

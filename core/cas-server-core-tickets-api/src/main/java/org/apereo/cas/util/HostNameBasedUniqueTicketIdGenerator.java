@@ -27,6 +27,10 @@ public class HostNameBasedUniqueTicketIdGenerator extends DefaultUniqueTicketIdG
         this(UniqueTicketIdGenerator.TICKET_SIZE, StringUtils.EMPTY);
     }
 
+    public HostNameBasedUniqueTicketIdGenerator(final String suffix) {
+        this(UniqueTicketIdGenerator.TICKET_SIZE, suffix);
+    }
+
     public HostNameBasedUniqueTicketIdGenerator(final long maxLength, final String suffix) {
         super(maxLength, determineTicketSuffixByHostName(suffix));
     }

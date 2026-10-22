@@ -1532,6 +1532,32 @@ table td code {
     overflow-wrap: anywhere;
 }
 
+.cas-mcp-tools :is(th, td) {
+    text-align: left;
+}
+
+.cas-mcp-tools :is(th, td):first-child {
+    width: 1%;
+    white-space: nowrap;
+}
+
+.cas-mcp-tools :is(th, td):nth-last-child(2) {
+    width: 40%;
+}
+
+.cas-mcp-tools :is(th, td):nth-child(2):nth-last-child(3) {
+    min-width: 9rem;
+}
+
+.cas-mcp-tools td:nth-last-child(2) code {
+    white-space: nowrap;
+    overflow-wrap: normal;
+}
+
+.cas-mcp-tools :is(th, td):last-child {
+    min-width: 14rem;
+}
+
 table tr:last-child td {
     border-bottom: 0;
 }
@@ -2743,6 +2769,9 @@ ul.tab-content > li:not(.active):not(.property-name):not(.property-tab):not(.cas
     }
     .home-intro > p {
         font-size: .94rem;
+    }
+    .home-intro > p, .home-intro > p:first-of-type {
+        padding-right: 1.1rem;
     }
     .home-paths {
         grid-template-columns: 1fr;
@@ -5279,6 +5308,14 @@ ul.tab-content > li:not(.active):not(.property-name):not(.property-tab):not(.cas
     padding-left: 1.1rem;
     font-size: .88rem;
     line-height: 1.55;
+}
+
+/* Lightbox only reveals its previous and next arrows on hover, which touch screens never have,
+   so keep them visible there; site.js adds swiping between images. */
+@media (hover: none) {
+    #lightbox .lb-nav a.lb-prev, #lightbox .lb-nav a.lb-next {
+        opacity: .85;
+    }
 }
 
 .cas-release-more {

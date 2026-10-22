@@ -2,6 +2,7 @@ package org.apereo.cas.aws;
 
 import module java.base;
 import org.apereo.cas.configuration.model.support.dynamodb.AbstractDynamoDbProperties;
+import org.apereo.cas.configuration.support.Beans;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -36,6 +37,17 @@ class AmazonClientConfigurationBuilderTests {
         when(clientBuilder.httpClientBuilder(any())).thenReturn(httpClientBuilder);
         assertDoesNotThrow(() -> AmazonClientConfigurationBuilder.prepareSyncClientBuilder(clientBuilder,
             StaticCredentialsProvider.create(AwsBasicCredentials.create("key", "secret")), properties));
+    }
+
+    @Test
+    void verifyDefaultTimeoutsAreSeconds() {
+        val properties = new AbstractDynamoDbProperties() {
+            @Serial
+            private static final long serialVersionUID = 2190402374853467521L;
+        };
+        assertEquals(Duration.ofSeconds(5), Beans.newDuration(properties.getConnectionTimeout()));
+        assertEquals(Duration.ofSeconds(5), Beans.newDuration(properties.getSocketTimeout()));
+        assertEquals(Duration.ofSeconds(10), Beans.newDuration(properties.getClientExecutionTimeout()));
     }
 
     private interface SampleClientBuilder extends AwsClientBuilder, AwsSyncClientBuilder {

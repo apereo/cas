@@ -19,6 +19,7 @@ const assert = require("assert");
     await cas.log(`${response.status()} ${response.statusText()}`);
     assert(response.ok());
     await cas.assertInnerText(page, "#content h2", "Risky Authentication attempt is confirmed.");
+    await cas.assertAccessibility(page, "Risky authentication verification");
 
     await cas.gotoLogout(page);
     await cas.gotoLogin(page, service);

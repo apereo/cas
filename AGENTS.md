@@ -151,6 +151,7 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
 
 - Java 25 is required (`gradle.properties`); many sources use `import module java.base;`, Lombok `val`, and package-level `@NullMarked` via `package-info.java`.
 - `import module java.base` makes `Signature` ambiguous (`java.security.Signature` vs `java.lang.classfile.Signature`); write `java.security.Signature`. Mapping to a `@SuperBuilder` result (`IntStream.mapToObj(i -> X.builder()...build())`) infers a capture type; give the stream a type witness (`.<X>mapToObj(...)`).
+- `assertThrows(cond ? A.class : B.class, ...)` does not compile: the conditional infers two conflicting `T`s, and the lambda is then reported as throwing an unreported `Throwable`. Use an `if`/`else` with one `assertThrows` per branch.
 - Lombok `val` cannot infer generic poly expressions: `val x = Objects.requireNonNullElse(list, List.of())` (or `...ElseGet(list, List::of)`) becomes `Object`. Assign the plain call to `val` and null-check separately, or declare the type.
 - Spring config classes generally use `@AutoConfiguration` or `@Configuration(proxyBeanMethods = false)`, `@EnableConfigurationProperties(CasConfigurationProperties.class)`, `@ConditionalOnFeatureEnabled`, and bean methods with `@RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)` plus `@ConditionalOnMissingBean`. See `support/cas-server-support-token-core/.../TokenCoreConfiguration.java`.
 - Configuration classes belong to an auto-configuration: prefer a static inner
@@ -235,6 +236,10 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
 - When the work is done, end the hand-off with a ready-to-use commit message covering only the uncommitted changes
   (`git --no-optional-locks status`): a conventional subject (`fix:`, `feat:`, ... as in `git log`) and a short body.
   The maintainer commits; do not commit yourself.
+- Test sources compile with Error Prone and `-Werror`, so a warning such as `JdkObsolete` fails `compileTestJava`. When a test needs the flagged type on purpose (an unmodifiable `LinkedList` to get the non-`RandomAccess` wrapper), put `@SuppressWarnings("JdkObsolete")` on that test method.
+- `WebApplicationServiceFactory` validates HTTP service URLs (a host, no user information, no backslash), so never hand a registered service's regex `serviceId` such as `https://oauth\.example\.org.*` to `RegisteredServiceTestUtils.getService`; use a concrete URL that the pattern matches.
+- A fixed cipher key in a test must have the size the cipher expects: stringable encryption keys default to 512 bits (86 base64url characters) for `A256CBC-HS512`, and a shorter key fails with `DecryptionException`.
+- `DefaultServiceMatchingStrategy` compares service URLs verbatim up to the query and decodes only the query, so `+` and `%20` in parameters still match while an encoded `#` or `/` before the query never does.
 
 ## Practical boundaries
 
@@ -264,7 +269,7 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
 - Feature toggles (`Configuration-Feature-Toggles.md`) render through `_includes_site/cas-feature-toggles.html` from the `cas_feature_catalog` filter in `_plugins/cas_features.rb`, which derives feature and module from the `CasFeatureModule.<Feature>[.<module>].enabled` property, groups features by area and links docs only when the target page exists for that version. Add title overrides, groups or docs links there, not in the include. The environment variable form maps both `.` and `-` to `_` (`CasFeatureEnabledCondition` reads through `Environment.getProperty`), unlike the relaxed-binding form used for regular settings.
 - Module dependency tabs (`_includes_site/casmodule.html`, included through `include_cached`) are plain Bootstrap tabs: no inline script, the default tab and pane are chosen together in Liquid, and pane ids use the full coordinates plus the variant options. Do not add per-include scripts or truncated ids; either one lets the selected tab and the visible pane drift apart.
 - Local serving (`publish.sh --serve true`) keeps the configured `baseurl: /cas`, so the site answers at `http://localhost:4000/cas/<version>/` exactly like production. `variables.html` always sets `basePath` to `/cas` and `site.js` has no localhost path branches; do not reintroduce `--baseurl ""` or localhost-specific paths.
-- Release notes (`release_notes/RC<n>.md`) carry a `release:` front matter block (summary, facts, upgrade notes, highlights, optional spotlight over a front matter image list) and open with `{% include release-digest.html %}` and end with `{% include release-footer.html %}`. Tag New & Noteworthy topics with a block IAL on the line after the heading and Other Stuff bullets with a list item IAL (`- {: .fixed} ...`): types are `new`, `changed`, `fixed`, `action`, `removed`; add `data-area="..."` only when the first link does not identify the area. `_plugins/cas_release_notes.rb` normalizes the tags, groups Other Stuff by area and resolves `section:` names to kramdown GFM heading ids before rendering; a `section:` that names no heading logs a warning. Upgrade notes may point at an Other Stuff area group by its label. `release_notes/RC.md` (front matter `release_aggregate:`) is generated from every RC page in the same folder: topics with the same title are merged and show each release candidate's notes, identical Other Stuff items are listed once with all their release candidates, and the `<!-- release-changes -->` marker is where the generated changes go. Never edit changes into that page by hand.
+- Release notes (`release_notes/RC<n>.md`) carry a `release:` front matter block (summary, facts, upgrade notes, highlights, optional spotlight over a front matter image list) and open with `{% include release-digest.html %}` and end with `{% include release-footer.html %}`. Tag New & Noteworthy topics with a block IAL on the line after the heading and Other Stuff bullets with a list item IAL (`- {: .fixed} ...`): types are `new`, `changed`, `fixed`, `action`, `removed`; add `data-area="..."` only when the first link does not identify the area. The area must be a key of `AREAS` in `_plugins/cas_release_notes.rb` (SSO cookies and sessions are `tickets`; there is no `sso`). `_plugins/cas_release_notes.rb` normalizes the tags, groups Other Stuff by area and resolves `section:` names to kramdown GFM heading ids before rendering; a `section:` that names no heading logs a warning. Upgrade notes may point at an Other Stuff area group by its label. `release_notes/RC.md` (front matter `release_aggregate:`) is generated from every RC page in the same folder: topics with the same title are merged and show each release candidate's notes, identical Other Stuff items are listed once with all their release candidates, and the `<!-- release-changes -->` marker is where the generated changes go. Never edit changes into that page by hand.
 - Section heading icons come from `CAS_SECTION_ICONS` in `site.js` and apply only to direct `h2` children of the article whose id is in that map; add an entry there rather than icons in markdown.
 - In the development docs, `site.js` wraps every table inside `#cas-docs-container` in a framed `.table-scroll` card, so do not use `<table>` for layout inside components (buttons, headers, badges); use flex markup instead.
 - Documentation property blocks get their settings from the `cas_properties` / `cas_third_party_properties` filters in `docs/cas-server-documentation/_plugins/cas_properties.rb`; do not loop over `site.data` in Liquid for this, it scans ~14k entries per block. Liquid `assign` inside an include writes to the page scope, so a `casproperties` include nested inside another block's panels must pass `topics="false"` (and usually `intro="false"`) or it resets the outer block's state. Their output is wrapped in `{::nomarkdown}`, so include them at the start of a line in markdown or pass the capture through `markdownify` (with `|`, not `||`). Catalog descriptions carry raw `<`/`>` (for example `management.endpoint.<id>.access`); the plugin escapes every tag outside `INLINE_TAGS` into `descriptionHtml` / `summaryText`, so print those fields and never unescape descriptions in Liquid: one stray tag inside the actuator modal makes kramdown drop the closing tags and everything after it on the page.
@@ -431,6 +436,7 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
 - ISO mdoc (`mso_mdoc`) uses Authlete's `com.authlete:cbor`, from the vendor of the SD-JWT library: `IssuerSignedBuilder` builds the salted items, digests and mobile security object, and signs it with a `COSEEC2Key` only (ISO/IEC 18013-5 allows EC or EdDSA, never RSA), the curve setting the algorithm; the `x5chain` header is mandatory, so the issuer key needs an `x5c` chain. The device key is the proof's JWK as a `COSE_Key`; an RSA one is refused as `invalid_proof`. Issuer metadata publishes `doctype`, `cose_key` and numeric COSE algorithms (hence `List<Object>` in the metadata model), and claim paths `[namespace, element]`.
 - mdoc presentations (`OidcVerifiableCredentialMdocPresentationVerifier`): digests cover each `IssuerSignedItemBytes` exactly as received, tag 24 included, so hash `CBORTaggedItem.encode()` of the decoded item, never a re-encoding of parsed values. The device signature has a detached payload, the encoded `#6.24(DeviceAuthentication)`, built into the `Sig_structure` by hand. The session transcript is `[null, null, handover]` with the OpenID4VP 1.0 B.2.6 handovers, checked against the specification's vectors in `OidcVerifiableCredentialMdocPresentationVerifierTests`. COSE headers carry no `kid`, so the issuer key is the CAS signing key whose certificate is the `x5chain` leaf. The OpenID4VP source is `raw.githubusercontent.com/openid/OpenID4VP/main/1.0/openid-4-verifiable-presentations-1_0.md`.
 - A process a `device_bash` call starts in the background dies when the call returns, `setsid` and `nohup` included, so a test batch left running there leaves an empty log. Run each batch in the foreground under `timeout 170` with `timeout_ms` at 180000, splitting the classes when they take longer.
+- Refreshing the VM build after upstream moves on: copy each module's `build/classes/java/{main,test}` and `build/resources/{main,test}` from the maintainer's Gradle build into `cls/` and `res/` (`refresh-cls.sh`), take the latest jar of each artifact from the connected Gradle cache (`files-2.1`) and rewrite the class paths in place (`refresh-jars.py`, then `addnew.py` for artifacts the class paths never had, leaving out Gradle plugins and CAS's own published jars), and set the compile base (`base.txt`) to a commit older than that build. Split artifacts replace a jar outright (ClassGraph 6 is `classgraph` plus `-base`, `-classpath` and `-vfs`): drop the old version rather than keeping both.
 - Only `dc+sd-jwt` credentials carry `vct`. walt.id (wallet-api2 1.2.0 and later) classifies any JWT with `@context` and `vct` as an SD-JWT VC and refuses it for a `jwt_vc_json`/`jwt_vc_json-ld` request (502, stage `RESPONSE`); `OidcVerifiableCredentialDcSdJwtEncoder` adds `vct`, the shared `sign` does not.
 
 ## Parallel test execution and shared registries
@@ -515,6 +521,7 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
 - Scenario matrix jobs in `functional-tests.yml` restore the Gradle User Home with `cache-read-only: true` and do not set `cache: 'gradle'` on `setup-java`; saving from every one of the ~560 jobs cost ~12 s each and churned the Actions cache, and the two actions caching the same directory conflict.
 - The matrix jobs cache the Node.js install under `${{ runner.tool_cache }}/node/<NODE_VERSION_REQUIRED>` with a key that is that exact version, restored before `setup-node` and saved only from the default branch on a miss. A version change in `NODE_CURRENT` or a scenario's `requirements.nodejs` is a new key, so `setup-node` downloads the instructed version; keep those values exact versions (a range would never match the cached directory) and do not add `check-latest`.
 - The matrix jobs start `ci/tests/puppeteer/prefetch-docker-images.sh <scenario>` right after checkout (in `native-tests.yml`, after `Configure CI` and only when the scenario's native run is enabled, since init scripts run only in the `--nr` step and the pulls then finish during the native build): it finds the images the scenario's bootstrap, init and ready scripts need (their `docker run`/`pull`/`build` commands, `*_IMAGE` and `*COMPOSE_FILE` assignments, compose files, Dockerfile `FROM` lines, and the `ci/tests` scripts they call) and pulls them in the background while the job sets up, logging to `$RUNNER_TEMP/docker-prefetch.log` (printed by the `Docker Prefetch Summary` step). Images a script builds itself, compose services with `build:` and run.sh's own `cas-<scenario>` images are skipped, and so are scenarios that are disabled or miss a `conditions.env` variable (run.sh skips those too). It is best-effort: an image it misses or is still pulling is pulled by the init script as before, so new init scripts need no changes, but keep image references literal or in a plain `*_IMAGE=` assignment so they are found. `--list` prints what it would pull. Images are not stored in the Actions cache: it is already at its limit, and restoring a tarball is a download too.
+- `initScript` entries run once *per instance*, right before that instance starts; `bootstrapScript` runs once for the scenario. A multi-instance scenario whose nodes share a backend (Pulsar, MySQL, MongoDB, Kafka, Redis) must start it from `bootstrapScript`: as an init script it is restarted under the first node before the second one starts, which wipes its state and leaves node 1's connections to reconnect (or not) to a fresh server. The symptom is node 1 silently missing everything node 2 publishes.
 - Instances whose resolved dependencies are identical share one build: `run.sh` builds only the first instance of each dependency set and copies its artifact to the others. Only instance-specific `dependencies` cause another build. Instances still start one after another, because several multi-instance scenarios need instance 1 up before instance 2 starts (Spring Boot Admin client registration, passive service-registry replication, cas2cas delegation).
 - `run.sh` exit codes carry meaning for the `Run Tests` retry (`retry_on_exit_code: 1`): 1 is a setup failure worth another attempt (init scripts, containers, npm), 2 a failed build, 3 a build that exceeded `PUPPETEER_BUILD_CTR`, 4 a CAS instance that exited or did not answer its health check within `PUPPETEER_STARTUP_TIMEOUT` seconds (300 in CI, unlimited locally; a single probe may use the whole remaining budget, since some login pages take ~30 s to render, e.g. `thymeleaf-templates-rest` before its template server is up), and 5 a scenario script that still failed after its in-process attempts (3 in CI, against the running server). 2-5 fail at once; a whole-script retry cannot fix them and repeats the build and startup. Keep new failure paths on 1 only if a rerun can help.
 - `tests.yml`, `functional-tests.yml` and `native-tests.yml` retry failures the same way: a boolean `retryFailedScenarios`
@@ -529,6 +536,147 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
 - `ci/tests/keycloak/run-keycloak-server.sh` polls the `cas` realm's discovery document; Keycloak answers HTTP well before the realm import finishes, and a pac4j OIDC client that fetched its metadata in that window stays broken for every later in-process attempt.
 - `run.sh` installs the Chrome build Puppeteer pins (`npx puppeteer browsers install chrome`) after `npm install`, because npm can finish without puppeteer's postinstall having downloaded it, which only shows up later as `Could not find Chrome`.
 - A scenario that navigates to `https://localhost:9859/anything/...` needs `ci/tests/httpbin/run-httpbin-server.sh` among its init scripts; without it the redirect lands on `chrome-error://` and the ticket assertion fails.
+- Webflow executions are client-side by default (`cas.webflow.session.storage=false`): the `execution` value is the signed and encrypted flow state, so replaying one simply resumes that state, and "reusing a consumed execution" is only meaningful with server-side storage (`http-session-ticket-registry` covers it). Server-side keys are numbered per session (`e1s1`, `e2s1`, ...), and a new HTTP session numbers from `e1` again, so opening the login page before the replay hands out the very key being replayed and the "replay" logs in. Replay from a non-CAS page, after deleting the TGC with `page.deleteCookie({name: "TGC", url: "https://localhost:8443/cas/"})` (`cas.deleteCookies(page)` only sees cookies of the page's current URL, which on httpbin excludes the `/cas` path). A well-formed but altered execution fails decoding with `ClientFlowExecutionRepositoryException`, and `FlowExecutionExceptionResolver` redirects to a fresh flow (302). A malformed one (no `uuid_data` shape) raises `BadlyFormattedFlowExecutionKeyException`, which the resolver now also restarts; it drops any `execution` query parameter from the redirect, which is what avoids the redirect loop that once made it skip this exception. `webflow-clientside-sessions` exercises all three cases plus a double submit and the back button. The ticket-granting cookie value embeds the `User-Agent` when `cas.tgc.pin-to-session` is on; a request without one is pinned to a placeholder (`DefaultCasCookieValueManager`), so the cookie only matches later requests that also send none. It used to throw and answer 500.
+- `actuator-endpoint-roles` is the table-driven check of endpoint security: every row is called anonymously (401), as `casviewer` without `ADMIN` (403) and as `casadmin` (2xx, or "reachable" for operations needing a payload). Users come from its `users.json` (`cas.monitor.endpoints.json.location`). Add a row there when adding an actuator endpoint whose module needs no external service; rows default to `Content-Type: application/json`, so give operations that consume form parameters (the `casValidate` ones) `contentType: FORM`, or they answer 415.
+- To prove CAS refuses a tampered SAML2 AuthnRequest, intercept the browser hop from the SP to `/cas/idp/profile/SAML2/*/SSO` with `page.setRequestInterception(true)` (see `saml2-idp-login-acs-signed`). POST binding: rewrite `SAMLRequest` in `postData` and `request.continue({postData})`. Redirect binding: inflate with `zlib.inflateRawSync`, alter, deflate, then `request.abort()` and `cas.goto` the altered URL rather than overriding `url` on a redirected request. Assert that the tampering really happened, otherwise a request without the attribute passes for the wrong reason.
+- `cas.newPage(browser)` returns the browser's first tab when one exists; it opens a new one only with `cas.newPage(browser, true)`. A helper that takes a page, intercepts its requests and closes it must force a new page, or it closes the scenario's main page and later calls fail with "Attempted to use detached Frame" (`saml2-idp-login-acs-signed`).
+- Before writing a negative assertion, read the server code for the exact error. Each token-endpoint failure surfaces differently: device code reuse → `access_denied` (`InvalidOAuth20DeviceTokenException`), a mismatched ST service → `INVALID_SERVICE` and the ticket is consumed. Where the specification names the error (CIBA Core §11: `authorization_pending`, `invalid_grant`), the scenario asserts the specification even when the current code differs, and the hand-off says so.
+- `from` in actuator and ticket registry queries (`ssoSessions?from=`, `TicketRegistryStreamCriteria`) is a 0-based offset in every registry. A scenario that deletes all SSO sessions passes `from=0` (or omits it); `from=1` leaves the first session alive, which only shows once that session outlives the scenario's other timeouts, such as a remember-me TGT in a browser profile that later browsers share.
+- In CI, `run.sh` bounds each script attempt with `PUPPETEER_SCRIPT_TIMEOUT` (420 seconds; 0 locally, meaning no limit). A script whose steps all finish but whose node process never exits then fails that attempt and is retried, instead of running into the 20 minute job timeout.
+
+## Storage backend scenarios (service registry, SAML2 metadata, MFA devices, consent)
+
+- One scenario covers several storage backends of a feature through `variations` in `script.json`: `run.sh` runs the
+  scenario once per variation, adding its properties and exporting `SCENARIO_VARIATION`. The build carries every
+  backend module, and each variation switches the others off with `CasFeatureModule.<Feature>.<module>.enabled=false`
+  (Google Authenticator `jpa/redis/mongo/ldap/dynamodb`, trusted devices `jdbc/redis/rest/dynamodb`, consent
+  `ldap/mongo/redis/rest/dynamodb`, WebAuthn `jpa/mongo/redis/ldap/dynamodb/rest`); the init scripts start every backend. Examples:
+  `mfa-webauthn-register-logout-login`, `mfa-gauth-login-encrypted`, `mfa-gauth-login-trusted-devices-storage`
+  (formerly `-jdbc`), `attribute-consent-storage`, `aup-login-storage`, `authn-throttle-storage` (formerly
+  `authn-throttle-with-jdbc`; each throttle reads its own store, so the audit module it needs stays on: JDBC and
+  MongoDb throttles read the audit trail), `passwordless-login-storage` (formerly `passwordless-login-jpa`; the mongo
+  variation also keeps the account in MongoDb), `http-session-storage` (formerly `http-session-mongodb`). Storage modules that share a bean name without a module toggle cannot
+  ship together; WebAuthn's had none until its storage auto-configurations got `module = "..."`.
+- Each such scenario also reads the backend directly with `cas.dockerExec(container, args)` (containers: `mariadb`,
+  `postgres-server`, `mongodb-server`, `redis_server_master`, `ldap-server`, `localstack`), so a variation that silently
+  fell back to the in-memory default fails. LDAP-backed repositories that keep records in an attribute of the user's
+  entry (Google Authenticator, consent: `description`, `search-filter=cn={0}`) need the entry first:
+  `ci/tests/ldap/add-ldap-entries.sh <ldif>` waits for `ldap-server` and adds it. The 389ds schema has no CAS
+  attributes, so point the attribute setting at a standard one the entry's object classes allow (`description`,
+  `carLicense`, `postalCode` on `inetOrgPerson`).
+- CAS Redis templates write values LZ4-compressed and JDK-serialized, so `redis-cli GET` shows nothing readable;
+  check `EXISTS` or `--scan` for keys instead.
+- Storage tests that extend `BaseAcceptableUsagePolicyRepositoryTests` only check that a submitted decision is read back
+  when `hasLiveUpdates()` is true; the MongoDb and Redis repositories stored decisions without ever reading them, and
+  their tests did not notice. Use a random principal there, since the backend outlives the test.
+- `cas.doDelete(url)` swallows failures unless a failure handler is given; assert a status with
+  `cas.doRequest(url, "DELETE", headers, status)`.
+- Read JPA tables by looking their names up (`information_schema`), not by entity name: CAS's physical naming
+  strategy turns `JpaMultifactorAuthenticationTrustRecord` into `jpa_multifactor_authentication_trust_record`, and a
+  `LIKE '%WebAuthn%'` also matches the `webauthn_sequence` table. MariaDB `LIKE` ignores case.
+- The `mfa-gauth-login-trusted-devices-storage` outage check needs the storage to report itself unavailable when its
+  backend is down (`MultifactorAuthenticationTrustStorage.isAvailable`): the webflow then skips trusted devices and asks
+  for the token. JPA checks a connection; Redis pings.
+
+- Service registry scenarios call `cas.verifyServiceRegistry(backend)` (in `cas.js`), passing `insert(definition)` (write
+  straight into the backend, bypassing CAS) and `contains(id)`. It checks load (scheduled reload picks up the external
+  definition), save through the `registeredServices` actuator, rename, and delete, each confirmed in the backend and after a
+  reload. Such a scenario needs `cas.service-registry.core.init-from-json=false`, because with it on the embedded JSON
+  registry joins the chain and answers in place of the backend, plus a 2 s `cas.service-registry.schedule` and httpbin.
+  `service-registry-ldap` (389ds `ldap-server`, `ou=services`, object class `account`) and `service-registry-aws-s3`
+  (localstack, `docker exec localstack awslocal s3api`) are the examples.
+- A property value with a space (`cn=Directory Manager`) goes through `environmentVariables` and `${VAR}` in
+  `script.json`, as `password-sync-ldap` does.
+- localstack accepts bucket names real S3 rejects, so a scenario cannot catch an invalid bucket name; assert names in a unit
+  test. `AmazonS3ServiceRegistry.determineBucketName` keeps `[a-z0-9.-]`, collapses `..`, and caps the name at 63 characters
+  with `-<id>` last. Object metadata is built only from non-null values (`Map.of` rejects null).
+- SAML2 metadata source scenarios (`saml2-idp-login-metadata-redis`, `saml2-idp-login-metadata-git`, and the older
+  `saml2-idp-login-sp-metadata-mongodb`) keep IdP metadata in the backend, fetch it with `curl` in `ready.sh` before
+  starting SimpleSAMLphp, and manage SP metadata through
+  `samlIdPRegisteredServiceMetadata/managers/<ResolverSimpleClassName>`; its `DELETE` consumes form-encoded requests and
+  answers 204. The Git scenario uses a local bare remote under `/tmp/cas-saml-metadata-git` (`push-changes=true`, or the
+  IdP metadata is only committed locally) and commits SP metadata to it by hand, the way the docs describe.
+- `GitSamlRegisteredServiceMetadataResolver` reads `sp-metadata/<id>-<name>.xml` (written by CAS) and `<name>.xml` (by hand):
+  the id prefix counts only when numeric, and a hand-committed file's id is derived from its name, so it is stable across
+  loads.
+
+- DynamoDB variations and scenarios read DynamoDB Local (`dynamodb-server`, port 8000, no CLI inside) over HTTP with
+  `cas.dynamoDbScan(table)` and `cas.dynamoDbRequest(operation, payload)` in `cas.js`, which sign requests with SigV4.
+  DynamoDB Local keeps one database per access key and region, so give CAS explicit
+  `credential-access-key=AKIAIPPIGGUNIO74C63Z`, the matching secret key and `region=us-east-1` (not `local-instance=true`,
+  which takes credentials from the environment), plus `drop-tables-on-startup=true`. Items come back in the wire format
+  (`item.principal.S`). For an outage (`docker pause dynamodb-server`) set `connection-timeout`, `socket-timeout` and
+  `client-execution-timeout` to about `1000`, or each SDK call retries for many seconds.
+- REST backends in scenarios use an in-script Express server (`aup-login-rest`, `attribute-consent-storage`'s `rest`
+  variation, `audit-rest`, ports 5611-5618). A REST configuration source must answer before CAS boots, so
+  `configuration-properties-rest` starts `config-server.js` from `init.sh` and stops it in `exit.sh`.
+- localstack scenarios (`configuration-properties-aws`, `simple-mfa-login-aws-ses`, `logging-config-sqs`,
+  `audit-aws-firehose`) seed and read AWS resources with `docker exec localstack awslocal ...`; SES mail is read from
+  `http://localhost:4566/_aws/ses`.
+- `template-accessibility` runs axe-core (`@axe-core/puppeteer`) and fails on serious or critical WCAG 2.1 A/AA
+  violations only. Element ids must be unique per page: a duplicate id referenced by `aria-describedby` or `label for`
+  is a critical violation (the Google Authenticator page with multiple-device registration on still has two `#token`).
+  `layout.html` fades the page content in (`.fade-in`, 0.7 s, opacity and blur), so axe run right after a navigation
+  reports `color-contrast` on everything in the card; wait for `document.getAnimations()` that end (skip infinite ones,
+  such as the notification bell) before analyzing.
+- The puppeteer webapp runs without `--add-opens java.base/java.util`, but Gradle tests open it. Code that reflects on
+  private JDK fields (Kryo serializers in the Memcached registry) passes unit tests and fails in scenarios and plain
+  `java -jar` deployments.
+- Servlet filters that extract the service treat `UnauthorizedServiceException` as an unauthorized service (status 403,
+  `RequestDispatcher.ERROR_EXCEPTION`, continue the chain), and MVC interceptors ignore it, leaving the refusal to the
+  login flow. Thrown from either, its `@ResponseStatus` sends a 403 whose error dispatch fails the same way: empty body.
+- Spring Cloud closes the bootstrap context once a refresh is done, so a `PropertySourceLocator` that closes its client
+  in `destroy()` leaves the located property source with a closed client. The AWS configuration sources take a
+  `Supplier` of clients and open and close one per refresh or change.
+
+- CAS reads a plain number in a `@DurationCapable` setting as seconds (`Beans.newDuration`), so `socket-timeout=1000`
+  means 1000 seconds; write durations as `PT1S`.
+- Every CAS MongoDb module pulls in Spring Boot's MongoDb data auto-configuration, whose `gridFsTemplate` needs exactly
+  one injectable `MongoTemplate`. A module with zero (only `MongoOperations` beans) or two `MongoTemplate` beans breaks
+  startup unless its templates are `@Bean(defaultCandidate = false)` and injected by `@Qualifier`; Boot then creates
+  its own template. Every CAS MongoDb template is a non-default candidate except the ticket registry's (`@Primary`);
+  keep it that way for new ones. `mfa-gauth-trusted-devices-mongo` builds two MongoDb modules together.
+- The Cassandra and Memcached ticket registries encrypt by default with random keys, so multi-node scenarios set shared
+  `cas.ticket.registry.<registry>.crypto.encryption.key`/`signing.key`. Cassandra in CI uses client TLS: set
+  `cas.http-client.host-name-verifier=none` and `ssl-protocols=TLSv1.2`, and read it with
+  `docker exec cassandra cqlsh --ssl -e "<query>"` (unquoted table names are lowercase: the TGT table is `cas.ticketgrantingticketstable`). Memcached: `stats` over `nc`; the ticket registry also needs `memcached-spy` (or `memcached-aws-elasticache`) in `dependencies`.
+- CAS Redis values are a 4-byte big-endian length followed by an LZ4 block of the Java-serialized object; a fixture such as
+  `redis-authentication-login/accounts.json` must be regenerated when the serialized class changes.
+- The Kafka console consumer can exit non-zero on `--timeout-ms`; read its output with `spawnSync`. The RADIUS test server
+  takes `casuser`/`Mellon`, secret `testing123`, PAP; both RADIUS modules need `client.inet-address` set.
+- WebAuthn LDAP keeps registrations in an attribute of the user's entry (`description` on 389ds). The OIDC MongoDb
+  keystore needs both `cas.authn.oidc.jwks.mongo.host` and `.collection`; client JWKS go to `<collection>-ClientJwksStore`.
+- The Google Authenticator JSON repository writes used scratch codes back to its file, so a scenario with variations or
+  retries runs out of codes. Copy the account file to `${TMPDIR}` from an init script (runs per variation) and point
+  `cas.authn.mfa.gauth.json.location` at the copy, as `mfa-gauth-login-trusted-devices-storage` does; unpause paused
+  containers in a `finally`.
+- Scenarios that change a backend must put it back at the start, because `run.sh` retries a failed script against the
+  same CAS instance and containers (`configuration-properties-aws` does this). Keep property values free of spaces
+  (`run.sh` cuts them), e.g. `mail.text=Username:${username}`.
+- A SAML2 metadata module with `SAMLIdentityProviderMetadata` on replaces the file-system IdP metadata beans even when
+  its own IdP metadata is off; scenarios that keep IdP metadata on disk switch it off with
+  `CasFeatureModule.SAMLIdentityProviderMetadata.<module>.enabled=false`.
+
+## Actuator endpoint coverage in scenarios
+
+- `samlIdPRegisteredServiceMetadata`: every operation in `saml2-idp-login-metadata-redis` (and `-git`); `oidcVcStatus`:
+  `oidc-verifiable-credentials`, reading the published status list back (2 bits per entry, LSB first, zlib, base64url);
+  `redisTicketsCache`: `redis-ticket-registry-loadbalanced` (the cache is per node; another node's delete evicts it);
+  `qrDevices`: `qrauthn-login`, which needs `cas.authn.qr.json.location` (without it every device is authorized and
+  nothing is stored); `passwordless`: `passwordless-delegated-login`; `duoPing`, `duoAccountStatus`, `duoAdmin`:
+  `mfa-duo-universal-login` (runs only where the Duo secrets exist) and, without providers, `actuator-endpoint-roles`.
+- `gcpLogs` has no scenario: it calls the real Cloud Logging API, no emulator exists, and adding
+  `gcp-logging` to a build pulls in Spring Cloud GCP's Stackdriver trace auto-configuration, which stops CAS
+  from starting without Google credentials (exit code 4 in `actuator-endpoint-roles`).
+- `qrauthn-login` logs in over a STOMP callback; `connectAndLogin` returns a promise that settles when that
+  callback's assertions finish, and the browser is closed only after it, or the assertions hit a detached frame.
+
+## OAuth/OIDC token endpoint error mapping
+
+- `OAuth20AccessTokenEndpointController` turns failures into OAuth errors in two places. A validator returning `false` is `invalid_grant`, but a validator that *throws* lands in the generic catch as `invalid_request`. So a validator must catch its own lookups: `TicketRegistry.getTicket(id, type)` throws `InvalidTicketException` for a missing ticket rather than returning `null`. Exceptions from extractors and generators go through `ACCESS_TOKEN_RESPONSE_EXCEPTIONS`, which is keyed by the exact class name (subclasses do not match) and defaults to `invalid_grant`.
+- Grant-neutral exceptions in `org.apereo.cas.support.oauth.validator.token` map to the RFC 8628 / CIBA Core 1.0 polling errors: `OAuth20AuthorizationPendingException` → `authorization_pending`, `OAuth20ExpiredTokenException` → `expired_token`. Use these for any new polling grant rather than the device-code ones (`UnapprovedOAuth20DeviceUserCodeException`, `ThrottledOAuth20DeviceUserCodeApprovalException`, `InvalidOAuth20DeviceTokenException` → `invalid_grant`). The CIBA validator therefore lets expired and unapproved requests through; the extractor reports them.
+- `TicketRegistry.getTicket(id)` and `getTicket(id, type)` delete an expired ticket and return nothing, so expired and unknown look the same. To report `expired_token`, look the ticket up with `getTicket(id, _ -> true)`, check `isExpired()`, and delete it yourself. That works only while the registry still holds the ticket: the registry cleaner, or a store with native TTL such as Redis, removes it, and from then on it is reported as unknown. Scenarios that assert `expired_token` set `cas.ticket.registry.cleaner.schedule.enabled=false`.
+- `OidcConsentApprovalViewResolver` and `prompt=consent`: the consent view's Allow link is the original authorize URL plus `bypass_approval_prompt` and the approval key, so it still carries `prompt=consent`. Under that prompt, only `isConsentApprovalSubmitted` (a valid approval key) may let the request through; the service-level or global bypass may not. Returning a plain `false` there loops the consent screen forever.
 
 ## OpenID Connect discovery metadata
 
@@ -554,6 +702,8 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
 - A DPoP-bound access token is accepted at a protected resource only as `Authorization: DPoP <token>` (RFC 9449 section 7.2). `validateProtectedResourceRequest` checks the scheme itself, before the proof, and throws `DPoPBoundAccessTokenDowngradeException`; the profile and VC endpoints answer `401 invalid_token` through `BaseOAuth20Controller.unauthorized`, whose challenge uses the scheme the client sent. `getAccessTokenFromRequest` prefers the `access_token`/`token` parameters over the header, so the check compares the presented token with the header's. Tests and puppeteer scenarios that present a bound token at a resource must send it in that header.
 - Refresh tokens of public clients (`OAuth20Utils.isPublicClient`: no secret, auth method unset or `none`) carry `DPoPConfirmation` in their authentication (`OAuth20DefaultTokenGenerator.bindRefreshTokenToProofOfPossessionKey`). The refresh grant's authentication is the refresh token's, so its access tokens inherit the confirmation; `BaseOAuth20TokenRequestValidator.verifyBoundProofOfPossessionKey(token, attribute, manager)` makes the proof match first, for codes (`dpop_jkt`) and refresh tokens alike. A refresh token built from a ticket-granting ticket alone has no authentication, so read it null-safely. A public client redeems a code only with PKCE.
 - Stateless compactors keep only the authentication attributes they are told to retain. `DPoPConfirmation` is retained for access and refresh tokens (`dpop_jkt` for codes); without it a DPoP-bound token expands as a plain bearer token. A new binding attribute must be added there too.
+- Certificate-bound tokens (RFC 8705): `OAuth20X509Authenticator` leaves the certificate thumbprint (`x509_digest`) on the client's profile; the extractor copies it to `AccessTokenRequestContext.x509CertificateDigest` and the token generator puts it on the access token's authentication, so every grant is bound, not only `client_credentials` (whose principal is the client profile). `OAuth20Utils.getBoundCertificateThumbprint` and `isBoundCertificatePresented` (the `jakarta.servlet.request.X509Certificate` request attribute, as pac4j uses at the token endpoint) are shared by `BaseOAuth20Controller.verifyProofOfPossession` and Heimdall. A test or puppeteer call that presents a certificate-bound token at a resource must also present the client certificate (`requestAttr` in MockMvc, the `httpsAgent` argument of `cas.doPost`).
+- `tls_client_certificate_bound_access_tokens` (RFC 8705 section 3.4) is `tlsClientCertificateBoundAccessTokens` on the service, enforced next to `dpopBoundAccessTokens` in `DefaultOAuth20ProofOfPossessionValidator` (`validate` for profile-authenticated grants, `validateTokenRequest` for device code polling and the JWT bearer grant): the request's authenticated profile must be this client's and carry `x509_digest`, or `CertificateBoundAccessTokenRequiredException` becomes `400 invalid_request` before any grant is redeemed. A new service flag also belongs in dynamic registration (request, translator, response utils), the Palantir switch list in `servicestab.html` and the MCP `CasOidcTools.OidcClient` summary.
 - The validator owns the header checks of RFC 9449 section 4.3. `getProofOfPossessionHeader` refuses a second `DPoP` header (pac4j's `getRequestHeader` silently returns the first), and `getSignedProofOfPosessionJwt` turns a parse failure into `InvalidDPoPProofException`, so a value that is not a JWS is `invalid_dpop_proof` rather than `invalid_request`. Read the header through the former, never with `getRequestHeader(DPOP)`; PAR has no check of its own any more.
 - Protected resources map proof failures in one place, `BaseOAuth20Controller.verifyProofOfPossession` (profile/userinfo and VC): `use_dpop_nonce`, `invalid_token` for a downgrade, `invalid_dpop_proof` for anything else, each a `401` with a challenge. A `DPoP` challenge carries `algs` (RFC 9449 section 7.1) from `OAuth20ProofOfPossessionValidator.getAcceptedSigningAlgorithms()`, which is the discovery `dpop_signing_alg_values_supported` in order: `unauthorized` adds it whenever the scheme is `DPoP`, and `useDPoPNonceResponse` and Heimdall's `unauthenticated` take it as an argument.
 - A Lombok `val` holding `Optional.or(...)` over pac4j's `Optional<Object>` request attribute is inferred as `Optional<Object>`; declare such locals with an explicit type.
@@ -686,11 +836,44 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
   first, then the existing heading. Use `cas-hero-start` for forms and lists, `cas-hero-wide` for tables. Never add a heading or
   `<p>` before the existing ones and never remove a wrapping `div`: puppeteer asserts `#content div h2`, `#content h2`,
   first `#content p`, `#login h2/h3/p` and `#main-content h2`. Banner root cards turn neutral under `.cas-hero`. Login gets
-  `.cas-login-card` (surface only). Palantir polish lives at the end of `palantir.css`, scoped to `#dashboard`.
-- Palantir's rail (`fragments/palantir/navigationsidebar.html`, styled at the end of `palantir.css`) mirrors the account
-  profile rail: change both together. Only destinations may be `<li>` (scripts treat every `nav.sidebar-navigation ul li`
-  as one, and count them with `:visible`), so the narrow-screen overlay hides with `visibility`, never `display: none`.
+  `.cas-login-card` (surface only).
+- Palantir's layout and themes live in `palantir-meridian.css` (loaded after `palantir.css`): `--palantir-*` tokens are defined
+  for light and for dark on `html.palantir-page[data-theme]`, and the shared `--cas-ui-*`/`--cas-theme-*` variables are pointed
+  at them inside Palantir. Color new rules with the tokens (`var(--palantir-surface, #fff)` in `palantir.css`), never a bare
+  light color; where the brand color sits behind white text, dark needs `--palantir-brand-fill`. The page head applies the
+  stored theme (`PalantirTheme` in localStorage: system, light, dark) before first paint; `palantir-theme.js` owns the toggle,
+  the settings choice, Chart.js defaults and the `palantir:theme-changed` event. Never set `Chart.defaults.borderColor` or
+  `backgroundColor`: Chart.js only applies its dataset palette while both keep their stock values; theme the grid through
+  `Chart.defaults.scale.grid.color` and `Chart.defaults.scale.border.color`.
+- Palantir forms: Enter submits through the form's primary button, which is `type="submit"` while the form keeps
+  `onsubmit="return false;"` (the button's click handler does the work); every dashboard form needs that attribute, since a
+  form with one text field and no handler reloads the page on Enter. Don't add per-input Enter key handlers.
+- The service wizard's fields are built on first open (`palantirWizardField` builders), after the Applications panel ran
+  `initializePalantirWidgets`; `buildRegisteredServiceWizardFields` initializes the form's widgets afterwards, so dropdowns
+  get the change callback that runs their `data-change-handler` functions. A bare `.selectmenu()` has no such callback.
+- Palantir's navigation (`fragments/palantir/navigationsidebar.html`) is a top bar: Applications, grouped menus (Identity,
+  Sessions, Platform) and the theme, settings and sign-out buttons. Only destinations may be `<li>` (scripts treat every
+  `nav.sidebar-navigation ul li` as one and count them with `:visible`; polling also stops when a destination is not
+  `:visible`), so closed menus and the narrow-screen overlay hide with `visibility`, never `display: none`.
+  `updatePalantirNavigationGroups()` hides empty groups, marks the active one and writes the page heading.
+  A row of inner jQuery UI tabs with one visible tab is clipped out of sight, not hidden, for the same reason.
   DataTables group header rows come from `palantirTableGroupRow(label, columns)` (palantir-utils.js); never inline-style them.
+- Palantir applications: the card view (`#applicationsCards`) is drawn from the DataTable's filtered current page on every
+  draw and when a row's class changes, so search, paging and the selected row apply to both views; card buttons call
+  `applicationActionHandler(key, context)`, the same handler as the row context menu, with `applicationRowContext(id)`.
+- Palantir's service wizard (`palantir-services-sections.js`) maps section groups to `STEPS` (Basics, Protocol,
+  Access & attributes, Policies) plus a review. Every available section keeps a tile with `data-section-key` even when its
+  step is not shown (the `palantir-login` scenario clicks them by key), and `activate(key)` leaves the review. The type is
+  chosen in `chooseRegisteredServiceType()` (SweetAlert with cards), not a select. Every Policies section is an
+  `advanced-option`: `advancedSectionsOf(step)` keeps that step clickable while advanced options are hidden, and
+  `showStep` turns them on through `#hideAdvancedOptionsButton`. Footer buttons are in DOM order (Cancel, Validate, Copy,
+  Save); don't reorder them with CSS `order`, which leaves the keyboard order behind.
+- Palantir's feature catalog (`palantir-cas-features.js`) groups `CasFeatureModule.<Feature>[.<module>]` names into one
+  card per feature; `CAS_FEATURE_TITLES` holds titles the casing can't split. `CAS_FEATURES` stays the flat name list
+  other scripts read.
+- To look at Palantir without a running CAS: render `palantir/casPalantirDashboardView` with Thymeleaf, the layout dialect,
+  OGNL and a stub `#cas` expression object (jars from a built war; SpEL `?:` inside `${}` and `T(...)` need rewriting for
+  OGNL), serve `static/` with the webjars (npm for those not in the war), and stub the actuator URLs in Playwright.
 - Palantir dialogs sit outside `#main-content`, so `applySharedDialogStyle()` (palantir-utils.js, called from
   `initializePalantir`) adds `cas-ui palantir-dialog` on `dialogcreate`; style dialogs through those classes, qualified enough
   to beat the Cupertino theme (`.ui-dialog.palantir-dialog …`). Use the `classes` option, not the deprecated `dialogClass`.
@@ -949,8 +1132,10 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
   directory named by `idpMetadataLocation` for the file-system locator, or rows and documents
   inserted directly for JDBC and MongoDB.
 - The guard in front of generation reinforces that. `AbstractSamlIdPMetadataLocator.exists` calls
-  `fetch`, and every per-service `fetchInternal` falls back to the global document when the service
-  has none, so `exists(service)` is true as soon as the *global* document exists. Both
+  `fetch`, and a per-service `fetchInternal` must fall back to the global document when the service
+  has none (JPA, MongoDB, Git and, since `saml2-idp-login-metadata-redis` showed every SAML2 response
+  failing with "Unable to locate signing credentials", Redis; DynamoDB and Google Cloud Storage still
+  look up only `appliesTo`), so `exists(service)` is true as soon as the *global* document exists. Both
   `BaseSamlIdPMetadataGenerator.generate` and `SamlIdPMetadataResolver.resolveMetadata` check
   `exists` before `shouldGenerateMetadataFor`, which means `generate(Optional.of(service))` is a
   no-op in a normally-started deployment and returns the global document. That fallback is the
@@ -1526,8 +1711,26 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
   (`cas.ticket.registry.core.queue-identifier`, random when unset). A name shared by the nodes turns the
   broadcast into load balancing: each change reaches one node. The AMQP registry (a queue per identifier) and
   the Kafka service registry stream (`groupId` = identifier) do it right, and the Kafka ticket registry now
-  consumes in `<group-id>-<queue-identifier>`. Pulsar (`subscription-name`) and GCP Pub/Sub
-  (`<topic>Subscription`) still share one name across nodes and have no two-instance scenario.
+  consumes in `<group-id>-<queue-identifier>`. Pulsar subscribes as `<subscription-name>-<queue-identifier>`
+  (`CasPulsarTicketRegistryAutoConfiguration.subscriptionNameFor`, covered by the two-instance `pulsar-ticket-registry`
+  scenario). Pulsar subscriptions are durable, so nodes need a stable queue identifier or every restart leaves an abandoned
+  subscription accumulating backlog. GCP Pub/Sub subscribes as `<topic>Subscription-<queue-identifier>`
+  (`CasGoogleCloudPubSubTicketRegistryAutoConfiguration.subscriptionNameFor`, matched by exact name, never by
+  prefix, since every node's name shares the prefix) and has no two-instance scenario, since no emulator runs in CI.
+- Pulsar commands travel as `String` (`SchemaType.STRING`) written and read with `PulsarTicketRegistryPublisher.MAPPER`
+  (default typing on, as the Kafka registry's mapper), received by `PulsarTicketRegistryMessageListener`. Pulsar's
+  `SchemaType.JSON` derives a schema from the declared class, which cannot describe `BaseMessageQueueCommand` subclasses
+  carrying a `Ticket` known only at runtime. Any new broker-backed registry should ship its own JSON the same way.
+- JPA ticket registry locking needs Spring Integration's `INT_LOCK` tables, which Spring only creates for embedded
+  databases. Scenarios on MySQL/PostgreSQL with `cas.ticket.registry.core.enable-locking=true` must set
+  `spring.integration.jdbc.initialize-schema=always`, or every lock fails ("Failed to lock for: TGT-...") and no service
+  ticket is issued; a scenario that never asks for a service ticket will not notice.
+- Two-node scenarios for any ticket registry call `cas.verifyTicketRegistryAcrossNodes()` (in `cas.js`): ST from node 1
+  validates once on node 2, SSO is honored across nodes, and logout on node 2 ends the session on node 1 even when the old
+  TGC is replayed. `pulsar-ticket-registry`, `kafka-ticket-registry`, `jpa-ticket-registry-loadbalanced` and
+  `mongodb-ticket-registry-loadbalanced` are only that call plus `script.json` (`amqp-ticket-registry` adds its SAML2 login after it);
+  the helper needs `cas.service-registry.core.init-from-json=true`, httpbin from the `bootstrapScript`, and a per-instance
+  `cas.server.name`; give a new registry the same shape rather than a bespoke script.
 - The symptom is a two-instance puppeteer scenario that fails about half its CI runs, with every in-process
   attempt of a failing run failing alike: partitions are assigned once when the instances start and the
   attempts reuse the running servers. `ci/tests/kafka/docker-compose.yml` sets `KAFKA_NUM_PARTITIONS=1`, so in
@@ -1577,3 +1780,18 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
 - Reads must not repair the index. A read that removes set members whose record "does not exist" acts on whatever the read saw; with `read-from` sending reads to replicas, and the record and the set on different cluster slots, a lagging replica makes a live device look orphaned and the removal on the primary is permanent. Repair belongs on the explicit `delete(id)`: when the record is missing the owner is unknown, so it scans `CAS_TOKEN_PRINCIPAL:*` in batches and removes members with that id.
 - Remove set members by the raw bytes Redis returned (`executePipelined(..., RedisSerializer.byteArray())` then `sRem`), not by re-serializing a deserialized account; the value serializer is LZ4 over JDK serialization, and a removal only matches if the bytes are identical.
 - Spring Data Redis pipelining works on Lettuce cluster connections (`LettuceClusterConnection` does not override `openPipeline`) and key `SCAN` spans all nodes, so pipelines and scans here are cluster-safe.
+
+## Hazelcast ticket registry
+
+- Entry lifetime comes from `ExpirationPolicy.getTimeToLive(ticket)`, never the no-argument `getTimeToLive()`: on delegating policies (remember-me) the latter is the default policy's value. The time-to-live is capped by `toMaximumExpirationTime(ticket)` so an update does not restart it. Write with the six-argument `IMap.set(key, value, ttl, unit, maxIdle, unit)`: the four-argument form keeps the map's max-idle, which is the default lifetime of the ticket type (the catalog's storage timeout) and evicts longer-lived tickets.
+- The registry does not own `casTicketRegistryHazelcastInstance`; throttling and the Hazelcast monitor share it. Keep public `close()`/`shutdown()` methods and `DisposableBean`/`AutoCloseable` off the registry: Spring infers them as destroy methods of the `@Bean` and a registry refresh would shut the shared instance down. A mocked `HazelcastInstance` returns a `null` config, so a test that verifies `shutdown()` is not called must stub `getConfig()`, or the old code's NPE is swallowed and the test passes anyway.
+- No CAS module uses Hazelcast replicated maps; every module opens its maps with `getMap()`. `HazelcastConfigurationFactory.buildMapConfig` always returns a `MapConfig`, and the `cluster.core.replicated`/`async-fillup` settings were removed (they only produced a `ReplicatedMapConfig` nobody opened, leaving the real map on defaults). Replicated maps would not suit the ticket registry or sessions anyway: they have no predicates, indexes, SQL or paging.
+- `stream(criteria)` pages over the whole registry (maps in catalog order, keys within a map), not per map. Attribute queries use `Predicates.in("attributes[<digested key>]", values)` combined with `Predicates.or`; never build a `Predicates.sql` string from attribute values (crypto is off by default, so values arrive raw).
+- The Gradle build runs Error Prone with warnings as errors on main and test sources (e.g. `CanonicalDuration`: `Duration.ofMinutes(-1)`, not `ofSeconds(-60)`); compile-check tests with Error Prone too, not only main. NullAway reports the same pre-existing errors on `HazelcastTicketRegistry` before and after a change, so compare against the old sources rather than expecting zero.
+- Principal lookups (`countSessionsFor`, `getSessionsFor`, `deleteTicketsFor`) go through the `principal` index, which holds the digest of the lower-cased principal id (`digestPrincipal`). The registry runs no SQL and Hazelcast Jet is off: every query is an `IMap` predicate, aggregation or entry processor, and the `core.enable-jet` setting and the SQL mappings were removed (the `hazelcast-sql` dependency and its native hints are gone too). Bulk removal is `executeOnEntries(new HazelcastTicketDocumentRemovalProcessor(), predicate)` over the maps whose implementation class is authentication-aware, and the count is the processor's `true` results. Counts use `IMap.size()` or `aggregate(Aggregators.count(), predicate)`. Indexes exist only for what is queried: `principal` on authentication-aware ticket maps, `service` on service-aware ones; a new query on another field needs its index added in `CasHazelcastTicketRegistryAutoConfiguration`. Spring's `RuntimeHintsPredicates.reflection().onType(...)` is the check for `registerSerializationHints`, which registers Java serialization as a reflection hint.
+- The ticket registry's map configs are part of the `Config` the instance is created with (static config); other modules sharing `casTicketRegistryHazelcastInstance`, such as throttling, still add theirs as dynamic config. A test can tell them apart through `((DynamicConfigurationAwareConfig) instance.getConfig()).getStaticConfig()`. Unbounded `stream()` reads keys and then `getAll` in batches; do not use `IMap.iterator(fetchSize)`, which fetches values one call at a time. A TGT's service tickets are removed with `executeOnKeys` per map (`deleteServiceTickets` override).
+- `HazelcastTicketDocument` is stored with compact serialization (`HazelcastTicketDocumentSerializer`, registered on the ticket registry's `Config` before the instance starts) and is not `Serializable`: fields are `principal` and `service` (both digested like ticket ids when encryption is on), `ticket` (bytes of `SerializationUtils.serialize` of the possibly encoded ticket; read back through `toTicket`) and `attributes`, an array of `HazelcastTicketDocument.toAttributeEntry(name, value)` strings kept only for TGTs and queried with `Predicates.in("attributes[any]", ...)`. Adding a field means changing the serializer; stored entries from older versions are not readable. `hazelcast-sql` is no longer a dependency, so nothing may use Hazelcast SQL or Jet.
+- `core.enable-compression` stays: it still compresses what other modules keep with Java serialization (throttling records on the shared ticket registry instance, streamed service definitions); tickets are compact and never compressed.
+- Hazelcast map defaults: eviction `NONE` (size eviction silently logs users out), merge `LATEST_UPDATE`. Merge policies that compare per-entry statistics (`LATEST_UPDATE`, `LATEST_ACCESS`, `HIGHER_HITS`, `EXPIRATION_TIME`) need `MapConfig.setPerEntryStatsEnabled(true)`, or the member fails to start; `buildMapConfig` sets it. A config-only test does not catch that; start an instance. Expired TGTs reach `HazelcastTicketRegistry.handleExpiredTicket` through `HazelcastTicketExpirationListener`, a local entry listener with values registered on the TGT map config, so single logout happens once on the owning member; the listener looks the registry up lazily so a refreshed registry is used.
+- Hazelcast test members set `tcpip-enabled=false` to stay alone; that only works because `HazelcastConfigurationFactory` turns auto-detection off. With auto-detection on, Hazelcast falls back to multicast and members of different test contexts and Gradle JVMs on a developer machine form one cluster (the VM has no multicast, so it never shows there). A member without a joiner also rejects members that join it ("Incompatible joiners"); a test that needs two members builds both itself with TCP/IP and its own cluster name. Never send a Java lambda as a Hazelcast `Predicate` or processor unless it is `Serializable` and only captures serializable state; evaluate plain `java.util.function.Predicate`s locally.
+- In the VM test runner, leave `cas-server-*` jars of the Gradle cache off the classpath: released CAS jars such as `cas-server-webapp-resources` bring their own `application.properties` (`spring.mvc.pathmatch.matching-strategy=ant-path-matcher`) and the context fails to start. Processes started in the background are killed when the `device_bash` call returns, even with `setsid nohup`; run each suite in the foreground under the call's time limit, one nested class at a time if needed. To run in parallel like CI, pass all of CI's settings, `junit.jupiter.execution.parallel.config.executor-service=WORKER_THREAD_POOL` included: without it, work stealing runs `@Transactional` base tests on a thread that already holds a test transaction (`Cannot start new transaction without ending existing transaction`), before and after any change. The Hazelcast suites run there (embedded members); modules without prebuilt test classes need their tests compiled first.

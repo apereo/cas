@@ -21,6 +21,7 @@ const assert = require("assert");
     await cas.assertVisibility(page, "#field1-value");
     await cas.assertVisibility(page, "#field2");
     await cas.assertVisibility(page, "#field2-value");
+    await cas.assertAccessibility(page, "Authentication interrupt");
 
     await cas.assertInvisibility(page, "#cancel");
     await cas.submitForm(page, "#fm1");

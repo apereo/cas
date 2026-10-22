@@ -2,6 +2,7 @@ package org.apereo.cas.trusted.authentication.storage;
 
 import module java.base;
 import org.apereo.cas.config.CasDynamoDbMultifactorAuthenticationTrustAutoConfiguration;
+import org.apereo.cas.configuration.model.support.dynamodb.DynamoDbTrustedDevicesMultifactorProperties;
 import org.apereo.cas.trusted.AbstractMultifactorAuthenticationTrustStorageTests;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
@@ -11,7 +12,12 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import software.amazon.awssdk.core.SdkSystemSetting;
+import software.amazon.awssdk.core.exception.SdkClientException;
+import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
+import software.amazon.awssdk.services.dynamodb.model.DescribeTableRequest;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 
 /**
  * This is {@link DynamoDbMultifactorAuthenticationTrustStorageTests}.
@@ -66,6 +72,26 @@ class DynamoDbMultifactorAuthenticationTrustStorageTests extends AbstractMultifa
         assertFalse(getMfaTrustEngine().get(r.getPrincipal()).isEmpty());
         assertEquals(1, countRecordsFor(r.getPrincipal(), now.minusDays(30)));
         assertEquals(0, countRecordsFor(r.getPrincipal(), now.minusDays(1)));
+    }
+
+    @Test
+    void verifyProviderIsKept() {
+        val record = MultifactorAuthenticationTrustRecord.newInstance(UUID.randomUUID().toString(), "geography", "fingerprint");
+        record.setMultifactorAuthenticationProvider("mfa-gauth");
+        getMfaTrustEngine().save(record);
+        val found = getMfaTrustEngine().get(record.getPrincipal());
+        assertEquals(1, found.size());
+        assertEquals("mfa-gauth", found.iterator().next().getMultifactorAuthenticationProvider());
+    }
+
+    @Test
+    void verifyAvailability() {
+        assertTrue(getMfaTrustEngine().isAvailable());
+        val properties = new DynamoDbTrustedDevicesMultifactorProperties();
+        properties.setTableName(UUID.randomUUID().toString());
+        val client = mock(DynamoDbClient.class);
+        when(client.describeTable(any(DescribeTableRequest.class))).thenThrow(SdkClientException.create("unavailable"));
+        assertFalse(new DynamoDbMultifactorTrustEngineFacilitator(properties, client).isAvailable());
     }
 
     private long countRecordsFor(final String principal, final ZonedDateTime onOrAfterDate) {

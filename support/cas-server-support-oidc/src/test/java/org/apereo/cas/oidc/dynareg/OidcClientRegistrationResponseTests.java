@@ -32,7 +32,11 @@ class OidcClientRegistrationResponseTests extends AbstractOidcTests {
         assertNotNull(input.getRedirectUris());
         assertNotNull(input.getContacts());
         assertNull(input.getDpopBoundAccessTokens());
+        assertNull(input.getTlsClientCertificateBoundAccessTokens());
         service.setDpopBoundAccessTokens(true);
-        assertEquals(Boolean.TRUE, OidcClientRegistrationUtils.getClientRegistrationResponse(service, oidcConfigurationContext).getDpopBoundAccessTokens());
+        service.setTlsClientCertificateBoundAccessTokens(true);
+        val response = OidcClientRegistrationUtils.getClientRegistrationResponse(service, oidcConfigurationContext);
+        assertEquals(Boolean.TRUE, response.getDpopBoundAccessTokens());
+        assertEquals(Boolean.TRUE, response.getTlsClientCertificateBoundAccessTokens());
     }
 }

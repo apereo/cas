@@ -66,7 +66,7 @@ class SamlIdPMongoDbIdPMetadataConfiguration {
     }
 
     @ConditionalOnMissingBean(name = "mongoDbSamlIdPMetadataTemplate")
-    @Bean
+    @Bean(defaultCandidate = false)
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public MongoOperations mongoDbSamlIdPMetadataTemplate(
         final ConfigurableApplicationContext applicationContext,
