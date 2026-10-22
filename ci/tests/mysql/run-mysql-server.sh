@@ -15,7 +15,7 @@ function printred() {
 }
 
 printgreen "Running MySQL docker container..."
-export DOCKER_IMAGE="mysql:26.7"
+export DOCKER_IMAGE="mysql:26.10"
 docker stop mysql-server || true
 # InnoDB's default REPEATABLE READ takes next-key locks, so a delete by a secondary key locks the gaps
 # around the rows it matches and blocks inserts of neighbouring keys. Tests that delete by principal while

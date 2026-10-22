@@ -69,7 +69,7 @@ class OidcIdTokenSigningAndEncryptionServiceTests {
                 .responseType(OAuth20ResponseTypes.NONE)
                 .registeredService(registeredService)
                 .generateRefreshToken(true)
-                .service(RegisteredServiceTestUtils.getService(registeredService.getServiceId()))
+                .service(RegisteredServiceTestUtils.getService("https://oauth.example.org"))
                 .authentication(RegisteredServiceTestUtils.getAuthentication(UUID.randomUUID().toString()))
                 .scopes(Set.of(OidcConstants.StandardScopes.OPENID.getScope()))
                 .build();

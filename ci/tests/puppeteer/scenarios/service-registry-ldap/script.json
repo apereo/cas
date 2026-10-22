@@ -1,0 +1,28 @@
+{
+  "dependencies": "reports,ldap-service-registry",
+  "conditions": {
+    "docker": "true"
+  },
+  "environmentVariables": [
+    "CAS_LDAP_BIND_DN=cn=Directory Manager"
+  ],
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
+    "--cas.service-registry.core.init-from-json=false",
+    "--cas.service-registry.schedule.start-delay=PT2S",
+    "--cas.service-registry.schedule.repeat-interval=PT2S",
+
+    "--cas.service-registry.ldap.ldap-url=ldap://localhost:10389",
+    "--cas.service-registry.ldap.base-dn=ou=services,dc=example,dc=org",
+    "--cas.service-registry.ldap.bind-dn=${CAS_LDAP_BIND_DN}",
+    "--cas.service-registry.ldap.bind-credential=password",
+    "--cas.service-registry.ldap.object-class=account",
+
+    "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
+    "--management.endpoints.web.exposure.include=*",
+    "--management.endpoints.access.default=UNRESTRICTED"
+  ],
+  "initScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/init.sh"
+}

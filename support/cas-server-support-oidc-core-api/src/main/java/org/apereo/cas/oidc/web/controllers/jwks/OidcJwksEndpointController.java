@@ -143,7 +143,7 @@ public class OidcJwksEndpointController extends BaseOidcController {
     }
 
     private PublishedJsonWebKeySet loadJsonWebKeySet() {
-        final JsonWebKeySet jsonWebKeySet = FunctionUtils.doUnchecked(
+        val jsonWebKeySet = FunctionUtils.doUnchecked(
             () -> OidcJsonWebKeystoreGeneratorService.toJsonWebKeyStore(oidcJsonWebKeystoreGeneratorService.generate()));
         return new PublishedJsonWebKeySet(List.copyOf(jsonWebKeySet.getJsonWebKeys()),
             jsonWebKeySet.toJson(JsonWebKey.OutputControlLevel.PUBLIC_ONLY));

@@ -4,6 +4,9 @@ import module java.base;
 import org.apereo.cas.configuration.model.support.hazelcast.BaseHazelcastProperties;
 import org.apereo.cas.configuration.model.support.hazelcast.HazelcastWANReplicationTargetClusterProperties;
 import org.apereo.cas.test.CasTestExtension;
+import com.hazelcast.config.EvictionPolicy;
+import com.hazelcast.config.ReplicatedMapConfig;
+import com.hazelcast.spi.merge.LatestUpdateMergePolicy;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -22,11 +25,35 @@ class HazelcastConfigurationFactoryTests {
     @Test
     void verifyReplicationMaps() {
         val hz = new BaseHazelcastProperties();
-        hz.getCluster().getCore().setReplicated(true);
         hz.getCluster().getCore().setPartitionMemberGroupType("ZONE_AWARE");
-        val mapConfig = HazelcastConfigurationFactory.buildMapConfig(hz, "mapName", 10);
-        assertNotNull(mapConfig);
-        assertNotNull(HazelcastConfigurationFactory.build(hz, mapConfig));
+        val config = HazelcastConfigurationFactory.build(hz, new ReplicatedMapConfig("mapName"));
+        assertTrue(config.getReplicatedMapConfigs().containsKey("mapName"));
+        HazelcastConfigurationFactory.setConfigMap(new ReplicatedMapConfig("mapName").setAsyncFillup(false), config);
+        assertTrue(config.getReplicatedMapConfig("mapName").isAsyncFillup());
+        val mapConfig = HazelcastConfigurationFactory.buildMapConfig(hz, "otherMap", 10);
+        HazelcastConfigurationFactory.setConfigMap(mapConfig, config);
+        assertEquals(10, config.getMapConfig("otherMap").getMaxIdleSeconds());
+    }
+
+    @Test
+    void verifyMembersJoinOnlyAsConfigured() {
+        val hz = new BaseHazelcastProperties();
+        hz.getCluster().getNetwork().setTcpipEnabled(false);
+        val join = HazelcastConfigurationFactory.build(hz).getNetworkConfig().getJoin();
+        assertFalse(join.isAutoDetectionEnabled());
+        assertFalse(join.getMulticastConfig().isEnabled());
+        assertFalse(join.getTcpIpConfig().isEnabled());
+    }
+
+    @Test
+    void verifyMapDefaults() {
+        val mapConfig = HazelcastConfigurationFactory.buildMapConfig(new BaseHazelcastProperties(), "mapName", 10);
+        assertEquals(EvictionPolicy.NONE, mapConfig.getEvictionConfig().getEvictionPolicy());
+        assertEquals(LatestUpdateMergePolicy.class.getName(), mapConfig.getMergePolicyConfig().getPolicy());
+        assertTrue(mapConfig.isPerEntryStatsEnabled());
+        val hz = new BaseHazelcastProperties();
+        hz.getCluster().getCore().setMapMergePolicy("put_if_absent");
+        assertFalse(HazelcastConfigurationFactory.buildMapConfig(hz, "mapName", 10).isPerEntryStatsEnabled());
     }
 
     @Test

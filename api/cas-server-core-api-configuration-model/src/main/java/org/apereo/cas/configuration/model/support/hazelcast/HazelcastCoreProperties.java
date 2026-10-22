@@ -27,6 +27,9 @@ public class HazelcastCoreProperties implements Serializable {
 
     /**
      * Enables compression when default java serialization is used.
+     * This applies to values Hazelcast stores with Java serialization, such as authentication throttling
+     * records and streamed service definitions. Tickets of the Hazelcast ticket registry are stored with
+     * compact serialization and are not compressed.
      */
     private boolean enableCompression;
 
@@ -34,12 +37,4 @@ public class HazelcastCoreProperties implements Serializable {
      * Enables scripting from Management Center.
      */
     private boolean enableManagementCenterScripting = true;
-
-    /**
-     * Enable Jet configuration/service on the hazelcast instance.
-     * Hazelcast Jet is a distributed batch and stream processing system
-     * that can do stateful computations over massive amounts of data with consistent low latency.
-     * Jet service is required when executing SQL queries with the SQL service.
-     */
-    private boolean enableJet = true;
 }

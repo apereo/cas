@@ -1,6 +1,7 @@
 package org.apereo.cas.config;
 
 import module java.base;
+import org.apereo.cas.AmazonSimpleSystemsManagementPropertySource;
 import org.apereo.cas.aws.AmazonEnvironmentAwareClientBuilder;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.api.MutablePropertySource;
@@ -8,6 +9,7 @@ import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -21,9 +23,14 @@ import org.springframework.mock.env.MockEnvironment;
 import org.springframework.test.context.ActiveProfiles;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.ssm.SsmClient;
+import software.amazon.awssdk.services.ssm.model.GetParameterRequest;
+import software.amazon.awssdk.services.ssm.model.GetParametersByPathRequest;
+import software.amazon.awssdk.services.ssm.model.GetParametersByPathResponse;
+import software.amazon.awssdk.services.ssm.model.Parameter;
 import software.amazon.awssdk.services.ssm.model.ParameterType;
 import software.amazon.awssdk.services.ssm.model.PutParameterRequest;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * This is {@link CasAmazonSimpleSystemsManagementCloudConfigBootstrapAutoConfigurationTests}.
@@ -108,5 +115,40 @@ class CasAmazonSimpleSystemsManagementCloudConfigBootstrapAutoConfigurationTests
         assertNull(environment.getProperty("cas.server.prefix"));
         propertySource.removeAll();
         assertEquals(0, propertySource.getPropertyNames().length);
+    }
+
+    @Test
+    void verifyParametersAreLoadedOnce() {
+        val client = mock(SsmClient.class);
+        when(client.getParametersByPath(any(GetParametersByPathRequest.class)))
+            .thenReturn(GetParametersByPathResponse.builder()
+                .parameters(Parameter.builder().name("/cas/cas.server.name").value("https://apereo.org").build())
+                .nextToken("page-2").build())
+            .thenReturn(GetParametersByPathResponse.builder()
+                .parameters(Parameter.builder().name("/cas/cas.server.prefix").value("https://apereo.org/cas").build())
+                .build());
+        val source = new AmazonSimpleSystemsManagementPropertySource("ssm", () -> client, List.of(StringUtils.EMPTY));
+        assertEquals(Set.of("cas.server.name", "cas.server.prefix"), Set.of(source.getPropertyNames()));
+        assertEquals("https://apereo.org", source.getProperty("cas.server.name"));
+        assertEquals("https://apereo.org/cas", source.getProperty("cas.server.prefix"));
+        verify(client, never()).getParameter(any(GetParameterRequest.class));
+    }
+
+    @Test
+    void verifyEachOperationUsesAClientOfItsOwn() {
+        val clients = new ArrayList<SsmClient>();
+        val source = new AmazonSimpleSystemsManagementPropertySource("ssm", () -> {
+            val client = mock(SsmClient.class);
+            when(client.getParametersByPath(any(GetParametersByPathRequest.class)))
+                .thenReturn(GetParametersByPathResponse.builder().build());
+            clients.add(client);
+            return client;
+        }, List.of(StringUtils.EMPTY));
+        source.setProperty("cas.server.name", "https://apereo.org");
+        source.refresh();
+        source.removeProperty("cas.server.name");
+        assertEquals(4, clients.size());
+        verify(clients.get(1)).putParameter(any(PutParameterRequest.class));
+        clients.forEach(client -> verify(client).close());
     }
 }

@@ -49,9 +49,9 @@ import static org.mockito.Mockito.*;
  * Encryption is settled here by the context rather than being written onto the registry bean before
  * every test method: the bean is shared, so methods running side by side would otherwise disagree
  * about the keys in force and could not read back what they wrote. Unlike the other registries this
- * one is not split into an encrypted and an unencrypted run, because the topic and subscription
- * names are fixed constants: two contexts would share one subscription, which Pub/Sub load-balances,
- * so each would take delivery of messages meant for the other. The single run is the encrypted one,
+ * one is not split into an encrypted and an unencrypted run, because the topic name is a fixed constant:
+ * two contexts would publish to one topic, each receiving the other's messages on its own subscription,
+ * encrypted with keys it may not hold. The single run is the encrypted one,
  * which also covers the encrypted message envelope in {@link GoogleCloudPubSubMessageConverter} —
  * the converter and the registry share one cipher bean, so nothing exercised it while the cipher was
  * being swapped on the registry alone.
@@ -97,9 +97,33 @@ class GoogleCloudPubSubTicketRegistryTests extends BaseTicketRegistryTests {
     @Qualifier("messageQueueTicketRegistryReceiver")
     private QueueableTicketRegistryMessageReceiver messageQueueTicketRegistryReceiver;
 
+    @Autowired
+    @Qualifier(PublisherIdentifier.DEFAULT_BEAN_NAME)
+    private PublisherIdentifier messageQueueTicketRegistryIdentifier;
+
+    @Autowired
+    @Qualifier("googleCloudPubSubTopics")
+    private Map<String, GoogleCloudPubSubMessageContext> googleCloudPubSubTopics;
+
     @Override
     protected boolean isCipherExecutorOwnedByContext() {
         return true;
+    }
+
+    /**
+     * Each node must subscribe under a name of its own. Pub/Sub shares a subscription's messages out
+     * among its subscribers, so nodes on one subscription would each see only part of the changes.
+     */
+    @RepeatedTest(1)
+    void verifyEachNodeSubscribesOnItsOwn() {
+        val first = CasGoogleCloudPubSubTicketRegistryAutoConfiguration.subscriptionNameFor(new PublisherIdentifier("node-1"));
+        val second = CasGoogleCloudPubSubTicketRegistryAutoConfiguration.subscriptionNameFor(new PublisherIdentifier("node-2"));
+        assertEquals("CasTicketRegistryTopicSubscription-node-1", first);
+        assertNotEquals(first, second);
+        val expected = CasGoogleCloudPubSubTicketRegistryAutoConfiguration.subscriptionNameFor(messageQueueTicketRegistryIdentifier);
+        assertTrue(googleCloudPubSubTopics.values().stream()
+            .allMatch(context -> context.subscription().getName().endsWith("/subscriptions/" + expected)
+                || context.subscription().getName().equals(expected)));
     }
 
     @RepeatedTest(1)

@@ -43,7 +43,7 @@
                                    autocapitalize="none"
                                    th:title="#{${entry.title}}"
                                    spellcheck="false"
-                                   th:autocomplete="${entry.name}"/>
+                                   th:autocomplete="${ {'username':'username','firstName':'given-name','lastName':'family-name','email':'email','phone':'tel'}.get(entry.name) ?: 'off'}"/>
                             <select class="acct-input form-control"
                                     th:if="${entry.type == 'select'}"
                                     th:id="${entry.name}"

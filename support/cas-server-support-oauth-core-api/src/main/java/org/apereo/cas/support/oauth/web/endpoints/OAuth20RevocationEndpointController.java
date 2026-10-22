@@ -75,7 +75,7 @@ public class OAuth20RevocationEndpointController<T extends OAuth20ConfigurationC
             }
         } else {
             val service = getConfigurationContext().getWebApplicationServiceServiceFactory()
-                .createService(registeredService.getServiceId());
+                .createService(registeredService.getClientId());
             val audit = AuditableContext.builder()
                 .service(service)
                 .registeredService(registeredService)

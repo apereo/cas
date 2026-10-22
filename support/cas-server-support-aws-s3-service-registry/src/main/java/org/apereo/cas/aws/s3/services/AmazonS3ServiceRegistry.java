@@ -11,6 +11,7 @@ import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.serialization.StringSerializer;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.MediaType;
@@ -40,6 +41,12 @@ public class AmazonS3ServiceRegistry extends AbstractServiceRegistry {
 
     private static final Pattern REGISTERED_SERVICE_BUCKET_PATTERN = Pattern.compile(BUCKET_NAME_PREFIX + "-.*-\\d+");
 
+    private static final Pattern INVALID_BUCKET_NAME_CHARACTERS = Pattern.compile("[^a-z0-9.-]+");
+
+    private static final Pattern ADJACENT_DOTS = Pattern.compile("\\.{2,}");
+
+    private static final int MAX_BUCKET_NAME_LENGTH = 63;
+
     private final S3Client s3Client;
 
     private final StringSerializer<RegisteredService> registeredServiceSerializer;
@@ -59,25 +66,33 @@ public class AmazonS3ServiceRegistry extends AbstractServiceRegistry {
             LOGGER.trace("Saving registered service [{}]", rs);
             invokeServiceRegistryListenerPreSave(rs);
             val bucketNameToUse = determineBucketName(rs);
-            if (s3Client.listBuckets(ListBucketsRequest.builder().build())
-                .buckets().stream().noneMatch(b -> b.name().equalsIgnoreCase(bucketNameToUse))) {
+            val buckets = s3Client.listBuckets(ListBucketsRequest.builder().build()).buckets();
+            if (buckets.stream().noneMatch(b -> b.name().equalsIgnoreCase(bucketNameToUse))) {
                 LOGGER.trace("Bucket [{}] does not exist. Creating...", bucketNameToUse);
                 val bucket = s3Client.createBucket(CreateBucketRequest.builder().bucket(bucketNameToUse).build());
                 LOGGER.debug("Created bucket [{}]", bucket.location());
             }
 
+            val metadata = new HashMap<String, String>();
+            metadata.put("id", String.valueOf(rs.getId()));
+            metadata.put("name", rs.getName());
+            if (StringUtils.isNotBlank(rs.getDescription())) {
+                metadata.put("description", rs.getDescription());
+            }
             val request = PutObjectRequest.builder()
                 .key(String.valueOf(rs.getId()))
                 .bucket(bucketNameToUse)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .metadata(Map.of(
-                    "name", rs.getName(),
-                    "id", String.valueOf(rs.getId()),
-                    "description", rs.getDescription()))
+                .metadata(metadata)
                 .build();
             val body = registeredServiceSerializer.toString(rs);
             val clientInfo = ClientInfoHolder.getClientInfo();
             s3Client.putObject(request, RequestBody.fromString(body));
+            buckets
+                .stream()
+                .filter(getRegisteredServiceBucketPredicate(rs.getId()))
+                .filter(bucket -> !bucket.name().equalsIgnoreCase(bucketNameToUse))
+                .forEach(this::deleteBucket);
             LOGGER.trace("Saved registered service [{}]", rs);
             publishEvent(new CasRegisteredServiceSavedEvent(this, rs, clientInfo));
         } catch (final Exception e) {
@@ -91,14 +106,7 @@ public class AmazonS3ServiceRegistry extends AbstractServiceRegistry {
         val buckets = s3Client.listBuckets(ListBucketsRequest.builder().build()).buckets();
         buckets.stream()
             .filter(AmazonS3ServiceRegistry::getRegisteredServiceBucketPredicate)
-            .forEach(bucket -> {
-                val objects = s3Client.listObjectsV2(ListObjectsV2Request.builder().bucket(bucket.name()).build());
-                objects.contents().forEach(object -> s3Client.deleteObject(DeleteObjectRequest.builder()
-                    .bucket(bucket.name())
-                    .key(object.key())
-                    .build()));
-                s3Client.deleteBucket(DeleteBucketRequest.builder().bucket(bucket.name()).build());
-            });
+            .forEach(this::deleteBucket);
     }
 
     @Override
@@ -109,17 +117,10 @@ public class AmazonS3ServiceRegistry extends AbstractServiceRegistry {
             val result = buckets
                 .stream()
                 .filter(getRegisteredServiceBucketPredicate(registeredService.getId()))
-                .findFirst();
-            if (result.isPresent()) {
-                val bucket = result.get();
-                val objects = s3Client.listObjectsV2(ListObjectsV2Request.builder().bucket(bucket.name()).build());
-                objects.contents().forEach(object -> s3Client.deleteObject(DeleteObjectRequest.builder()
-                    .bucket(bucket.name())
-                    .key(object.key())
-                    .build()));
-                val bucketName = determineBucketName(registeredService);
+                .toList();
+            if (!result.isEmpty()) {
+                result.forEach(this::deleteBucket);
                 val clientInfo = ClientInfoHolder.getClientInfo();
-                s3Client.deleteBucket(DeleteBucketRequest.builder().bucket(bucketName).build());
                 LOGGER.trace("Deleted registered service [{}]", registeredService);
                 publishEvent(new CasRegisteredServiceDeletedEvent(this, registeredService, clientInfo));
                 return true;
@@ -160,6 +161,15 @@ public class AmazonS3ServiceRegistry extends AbstractServiceRegistry {
             .count();
     }
 
+    private void deleteBucket(final Bucket bucket) {
+        val objects = s3Client.listObjectsV2(ListObjectsV2Request.builder().bucket(bucket.name()).build());
+        objects.contents().forEach(object -> s3Client.deleteObject(DeleteObjectRequest.builder()
+            .bucket(bucket.name())
+            .key(object.key())
+            .build()));
+        s3Client.deleteBucket(DeleteBucketRequest.builder().bucket(bucket.name()).build());
+    }
+
     private RegisteredService fetchRegisteredServiceFromBucket(final Bucket bucket) {
         val result = s3Client.listObjectsV2(ListObjectsV2Request.builder().bucket(bucket.name()).build());
         val objects = result.contents();
@@ -198,7 +208,21 @@ public class AmazonS3ServiceRegistry extends AbstractServiceRegistry {
         return bucket -> getRegisteredServiceBucketPredicate(bucket) && bucket.name().endsWith("-" + id);
     }
 
-    private static String determineBucketName(final RegisteredService registeredService) {
-        return (BUCKET_NAME_PREFIX + '-' + registeredService.getName() + '-' + registeredService.getId()).toLowerCase(Locale.ENGLISH);
+    /**
+     * Determine the bucket name for a registered service, as {@code cas-<name>-<id>}.
+     * <p>
+     * S3 bucket names allow only lowercase letters, digits, dots and hyphens, no two adjacent dots,
+     * and at most 63 characters. Every other run of characters in the service name becomes a hyphen,
+     * and the name is shortened so the identifier always survives as the last segment. A service name
+     * that is already a valid bucket name segment is kept as it is, so existing buckets keep their names.
+     *
+     * @param registeredService the registered service
+     * @return the bucket name
+     */
+    static String determineBucketName(final RegisteredService registeredService) {
+        val suffix = "-" + registeredService.getId();
+        val name = StringUtils.defaultString(registeredService.getName()).toLowerCase(Locale.ENGLISH);
+        val validName = ADJACENT_DOTS.matcher(INVALID_BUCKET_NAME_CHARACTERS.matcher(name).replaceAll("-")).replaceAll(".");
+        return StringUtils.truncate(BUCKET_NAME_PREFIX + '-' + validName, MAX_BUCKET_NAME_LENGTH - suffix.length()) + suffix;
     }
 }

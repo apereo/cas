@@ -178,7 +178,7 @@ public class OAuth20IntrospectionEndpointController<T extends OAuth20Configurati
         }
 
         if (getConfigurationContext().getClientSecretValidator().validate(registeredService, credentials.getPassword())) {
-            val service = getConfigurationContext().getWebApplicationServiceServiceFactory().createService(registeredService.getServiceId());
+            val service = getConfigurationContext().getWebApplicationServiceServiceFactory().createService(registeredService.getClientId());
             val audit = AuditableContext.builder()
                 .service(service)
                 .registeredService(registeredService)

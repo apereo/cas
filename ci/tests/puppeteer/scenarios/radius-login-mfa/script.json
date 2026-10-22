@@ -1,0 +1,21 @@
+{
+  "dependencies": "radius,radius-mfa",
+  "conditions": {
+    "docker": "true"
+  },
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
+    "--cas.authn.accept.enabled=false",
+
+    "--cas.authn.radius.server.protocol=PAP",
+    "--cas.authn.radius.client.shared-secret=testing123",
+    "--cas.authn.radius.client.inet-address=localhost",
+
+    "--cas.authn.mfa.radius.server.protocol=PAP",
+    "--cas.authn.mfa.radius.client.shared-secret=testing123",
+    "--cas.authn.mfa.radius.client.inet-address=localhost"
+  ],
+  "initScript": "${PWD}/ci/tests/radius/run-radius-server.sh"
+}

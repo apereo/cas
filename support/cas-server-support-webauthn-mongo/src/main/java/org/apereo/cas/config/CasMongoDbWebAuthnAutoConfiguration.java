@@ -27,7 +27,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
  * @since 6.3.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.WebAuthn)
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.WebAuthn, module = "mongo")
 @AutoConfiguration
 public class CasMongoDbWebAuthnAutoConfiguration {
 
@@ -38,7 +38,7 @@ public class CasMongoDbWebAuthnAutoConfiguration {
     }
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Bean
+    @Bean(defaultCandidate = false)
     public MongoTemplate mongoWebAuthnTemplate(
         final CasConfigurationProperties casProperties,
         @Qualifier(CasSSLContext.BEAN_NAME)

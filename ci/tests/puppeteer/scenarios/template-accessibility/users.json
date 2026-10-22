@@ -1,0 +1,45 @@
+{
+  "@class" : "java.util.LinkedHashMap",
+  "casuser" : {
+    "@class" : "org.apereo.cas.adaptors.generic.CasUserAccount",
+    "password" : "Mellon",
+    "status" : "OK"
+  },
+  "gauthuser" : {
+    "@class" : "org.apereo.cas.adaptors.generic.CasUserAccount",
+    "password" : "Mellon",
+    "status" : "OK"
+  },
+  "locked" : {
+    "@class" : "org.apereo.cas.adaptors.generic.CasUserAccount",
+    "password" : "locked",
+    "status" : "LOCKED"
+  },
+  "disabled" : {
+    "@class" : "org.apereo.cas.adaptors.generic.CasUserAccount",
+    "password" : "disabled",
+    "status" : "DISABLED"
+  },
+  "expired" : {
+    "@class" : "org.apereo.cas.adaptors.generic.CasUserAccount",
+    "password" : "expired",
+    "status" : "EXPIRED"
+  },
+  "mustchange" : {
+    "@class" : "org.apereo.cas.adaptors.generic.CasUserAccount",
+    "password" : "mustchange",
+    "status" : "MUST_CHANGE_PASSWORD"
+  },
+  "invalidtime" : {
+    "@class" : "org.apereo.cas.adaptors.generic.CasUserAccount",
+    "password" : "invalidtime",
+    "status" : "OK",
+    "availability" : "2020-10-20~2020-11-20"
+  },
+  "invalidlocation" : {
+    "@class" : "org.apereo.cas.adaptors.generic.CasUserAccount",
+    "password" : "invalidlocation",
+    "status" : "OK",
+    "location" : "nowhere"
+  }
+}

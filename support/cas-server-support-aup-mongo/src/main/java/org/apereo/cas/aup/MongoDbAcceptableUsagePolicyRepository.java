@@ -35,13 +35,41 @@ public class MongoDbAcceptableUsagePolicyRepository extends BaseAcceptableUsageP
         this.mongoTemplate = mongoTemplate;
     }
 
+    /**
+     * Verify the policy through the principal attributes first and, failing that, through the decision kept in
+     * the collection, so an acceptance recorded at an earlier login is honored.
+     *
+     * @param requestContext the request context
+     * @return the policy status
+     * @throws Throwable the throwable
+     */
+    @Override
+    public AcceptableUsagePolicyStatus verify(final RequestContext requestContext) throws Throwable {
+        val status = super.verify(requestContext);
+        if (status.isDenied()) {
+            val principal = status.getPrincipal();
+            val query = new Query(Criteria.where("username").is(principal.getId())
+                .and(aupProperties.getCore().getAupAttributeName()).is(Boolean.TRUE));
+            if (mongoTemplate.exists(query, aupProperties.getMongo().getCollection())) {
+                return AcceptableUsagePolicyStatus.accepted(principal);
+            }
+        }
+        return status;
+    }
+
+    /**
+     * Record the acceptance for the principal, creating the principal's document when there is none yet.
+     *
+     * @param requestContext the request context
+     * @return true if the decision was recorded
+     */
     @Override
     public boolean submit(final RequestContext requestContext) {
         try {
             val principal = WebUtils.getAuthentication(requestContext).getPrincipal();
             val update = Update.update(aupProperties.getCore().getAupAttributeName(), Boolean.TRUE);
             val query = new Query(Criteria.where("username").is(principal.getId()));
-            this.mongoTemplate.updateFirst(query, update, aupProperties.getMongo().getCollection());
+            this.mongoTemplate.upsert(query, update, aupProperties.getMongo().getCollection());
             return true;
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);

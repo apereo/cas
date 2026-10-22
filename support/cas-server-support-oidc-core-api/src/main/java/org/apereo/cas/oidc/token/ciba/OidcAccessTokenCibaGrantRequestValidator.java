@@ -11,6 +11,7 @@ import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.validator.token.BaseOAuth20TokenRequestValidator;
+import org.apereo.cas.util.function.FunctionUtils;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -36,22 +37,35 @@ public class OidcAccessTokenCibaGrantRequestValidator extends BaseOAuth20TokenRe
         super(configurationContext);
     }
 
+    /**
+     * Validate the CIBA grant request. The {@code auth_req_id} must refer to a CIBA request issued to the
+     * authenticated client; a missing, undecodable or already redeemed request fails validation, which the token endpoint reports as
+     * {@code invalid_grant} (CIBA Core 1.0, section 11). Expiry and approval are not checked here: the lookup keeps expired
+     * requests so that the grant request extractor can report {@code expired_token} or {@code authorization_pending}.
+     *
+     * @param context     the context
+     * @param grantType   the grant type
+     * @param manager     the profile manager
+     * @param userProfile the authenticated client profile
+     * @return true if the request may proceed
+     */
     @Override
     protected boolean validateInternal(final WebContext context, final String grantType,
                                        final ProfileManager manager, final UserProfile userProfile) {
         val configurationContext = getConfigurationContext().getObject();
         val authRequestId = configurationContext.getRequestParameterResolver().resolveRequestParameter(context, OidcConstants.AUTH_REQ_ID).orElseThrow();
         val cibaFactory = (OidcCibaRequestFactory) configurationContext.getTicketFactory().get(OidcCibaRequest.class);
-        val decodedId = cibaFactory.decodeId(authRequestId);
-        val ticket = configurationContext.getTicketRegistry().getTicket(decodedId, OidcCibaRequest.class);
+        val ticket = FunctionUtils.doAndHandle(
+            () -> configurationContext.getTicketRegistry().getTicket(cibaFactory.decodeId(authRequestId), _ -> true),
+            _ -> null).get();
         val authenticatedClientId = userProfile.getAttribute(OAuth20Constants.CLIENT_ID);
-        val result = ticket != null && !ticket.isExpired() && ticket.isReady()
-            && authenticatedClientId != null && Objects.equals(ticket.getClientId(), authenticatedClientId.toString());
+        val result = ticket instanceof final OidcCibaRequest cibaRequest
+            && authenticatedClientId != null && Objects.equals(cibaRequest.getClientId(), authenticatedClientId.toString());
         LOGGER.debug("CIBA authentication request is [{}]", BooleanUtils.toString(result, "valid", "invalid"));
 
         if (result) {
             val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(
-                configurationContext.getServicesManager(), ticket.getClientId(), OidcRegisteredService.class);
+                configurationContext.getServicesManager(), String.valueOf(authenticatedClientId), OidcRegisteredService.class);
             val deliveryMode = OidcBackchannelTokenDeliveryModes.valueOf(registeredService.getBackchannelTokenDeliveryMode().toUpperCase(Locale.ENGLISH));
             if (deliveryMode != OidcBackchannelTokenDeliveryModes.POLL && deliveryMode != OidcBackchannelTokenDeliveryModes.PING) {
                 LOGGER.warn("Backchannel token delivery mode cannot grant access tokens");

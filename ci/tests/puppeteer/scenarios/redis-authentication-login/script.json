@@ -1,0 +1,21 @@
+{
+  "dependencies": "redis-authentication",
+  "conditions": {
+    "docker": "true"
+  },
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
+    "--cas.service-registry.core.init-from-json=true",
+    "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services",
+
+    "--cas.authn.accept.enabled=false",
+
+    "--cas.authn.redis.host=localhost",
+    "--cas.authn.redis.port=6379",
+    "--cas.authn.redis.password-encoder.type=DEFAULT",
+    "--cas.authn.redis.password-encoder.encoding-algorithm=SHA-512"
+  ],
+  "initScript": "${PWD}/ci/tests/httpbin/run-httpbin-server.sh,${PWD}/ci/tests/redis/run-redis-server.sh"
+}

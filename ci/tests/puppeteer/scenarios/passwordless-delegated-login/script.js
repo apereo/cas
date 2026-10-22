@@ -55,4 +55,19 @@ async function startAuthFlow(page, username) {
         await context.close();
     }
     await cas.closeBrowser(browser);
+    await verifyPasswordlessAccountEndpoint();
 })();
+
+async function verifyPasswordlessAccountEndpoint() {
+    const url = "https://localhost:8443/cas/actuator/passwordless";
+    const headers = {"Accept": "application/json"};
+    const account = JSON.parse(await cas.doRequest(`${url}?username=casuser-saml`, "GET", headers, 200));
+    assert(account.username === "casuser-saml");
+    assert(account.email === "cas@example.org");
+    assert(account.phoneNumber === "1234567890");
+    assert(account.name === "CAS");
+    assert(account.attributes.lastname.includes("User"));
+    assert(account.attributes.firstname.includes("CAS"));
+    await cas.doRequest(`${url}?username=unknown-user`, "GET", headers, 404);
+    await cas.doRequest(url, "GET", headers, 404);
+}

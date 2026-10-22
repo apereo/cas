@@ -48,7 +48,7 @@ class SamlIdPMongoDbRegisteredServiceMetadataConfiguration {
     }
 
     @ConditionalOnMissingBean(name = "mongoDbSamlMetadataResolverTemplate")
-    @Bean
+    @Bean(defaultCandidate = false)
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public MongoTemplate mongoDbSamlMetadataResolverTemplate(
         final CasConfigurationProperties casProperties,

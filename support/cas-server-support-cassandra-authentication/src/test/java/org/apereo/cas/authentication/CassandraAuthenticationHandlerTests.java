@@ -85,5 +85,7 @@ class CassandraAuthenticationHandlerTests {
         val result = cassandraAuthenticationHandler.authenticate(c, mock(Service.class));
         assertNotNull(result);
         assertEquals("casuser", result.getPrincipal().getId());
+        assertTrue(result.getPrincipal().getAttributes().containsKey("user_attr"));
+        assertFalse(result.getPrincipal().getAttributes().containsKey("pwd_attr"));
     }
 }

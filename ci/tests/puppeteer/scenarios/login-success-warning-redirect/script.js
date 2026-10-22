@@ -14,6 +14,7 @@ const cas = require("../../cas.js");
     await cas.gotoLogin(page, "https://localhost:9859/anything/2");
     await cas.assertCookie(page, true, "CASPRIVACY");
     await cas.assertVisibility(page, "#ignorewarnButton");
+    await cas.assertAccessibility(page, "Service access warning");
     await cas.sleep(1000);
     await cas.submitForm(page, "#fm1");
     await cas.assertTicketParameter(page);

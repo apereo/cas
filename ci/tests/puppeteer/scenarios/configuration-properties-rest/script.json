@@ -1,0 +1,21 @@
+{
+  "dependencies": "configuration-cloud-rest,reports",
+  "conditions": {
+    "docker": "true"
+  },
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
+    "--cas.service-registry.core.init-from-json=true",
+
+    "--management.endpoint.env.show-values=ALWAYS",
+    "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
+    "--management.endpoints.web.exposure.include=env,refresh,casConfig",
+    "--management.endpoints.access.default=UNRESTRICTED",
+
+    "--cas.spring.cloud.rest.url=http://localhost:5618/config"
+  ],
+  "initScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/init.sh",
+  "exitScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/exit.sh"
+}

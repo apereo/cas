@@ -1,8 +1,29 @@
+const assert = require("assert");
 const cas = require("../../cas.js");
 const SockJS = require("sockjs-client");
 const querystring = require("querystring");
 
+const DEVICES = "https://localhost:8443/cas/actuator/qrDevices";
+const JSON_HEADERS = {"Accept": "application/json", "Content-Type": "application/json"};
+
+/**
+ * Only devices registered for the principal may log in, so the device is registered through the qrDevices endpoint
+ * before the login, and a second device is registered and removed again to check the endpoint keeps them apart.
+ */
+async function registerDevices() {
+    assert(JSON.parse(await cas.doRequest(`${DEVICES}/casuser`, "GET", JSON_HEADERS, 200)).length === 0);
+    await cas.doRequest(`${DEVICES}/casuser/QRDevicePuppeteer`, "POST", JSON_HEADERS, 204);
+    await cas.doRequest(`${DEVICES}/casuser/QRDeviceRemoved`, "POST", JSON_HEADERS, 204);
+    let registered = JSON.parse(await cas.doRequest(`${DEVICES}/casuser`, "GET", JSON_HEADERS, 200));
+    assert(registered.length === 2 && registered.includes("QRDevicePuppeteer") && registered.includes("QRDeviceRemoved"));
+    await cas.doRequest(`${DEVICES}/QRDeviceRemoved`, "DELETE", JSON_HEADERS, 204);
+    registered = JSON.parse(await cas.doRequest(`${DEVICES}/casuser`, "GET", JSON_HEADERS, 200));
+    assert(registered.length === 1 && registered[0] === "QRDevicePuppeteer");
+    assert(JSON.parse(await cas.doRequest(`${DEVICES}/someoneelse`, "GET", JSON_HEADERS, 200)).length === 0);
+}
+
 (async () => {
+    await registerDevices();
     const browser = await cas.newBrowser(cas.browserOptions());
     const page = await cas.newPage(browser);
     await cas.gotoLogin(page);
@@ -10,6 +31,7 @@ const querystring = require("querystring");
     await cas.assertTextContent(page, "#qrlogin .card-title span", "Login with QR Code");
     await cas.assertVisibility(page, "#qrlogin .card-text img");
     await cas.assertVisibility(page, "#qrchannel");
+    await cas.assertAccessibility(page, "QR code login");
 
     const qrCode = await cas.parseQRCode(page, "#qrcode");
     const channelId = qrCode.data;
@@ -17,10 +39,21 @@ const querystring = require("querystring");
     await connectAndLogin(channelId, page);
 
     await cas.closeBrowser(browser);
+    process.exit(0);
 })();
 
+/**
+ * Logs in through the QR channel with the registered device. Resolves once the browser shows the login as successful
+ * and the device has been removed again, so the browser is not closed while the page is still in use.
+ */
 async function connectAndLogin(channelId, page) {
     const {Client} = await import("@stomp/stompjs");
+    let done = undefined;
+    let failed = undefined;
+    const finished = new Promise((resolve, reject) => {
+        done = resolve;
+        failed = reject;
+    });
     const client = new Client({
         brokerURL: "ws://localhost:8443/cas/qr-websocket",
         debug: (str) => cas.log(str),
@@ -45,7 +78,7 @@ async function connectAndLogin(channelId, page) {
         };
         const postData = querystring.stringify(formData);
         executeRequest("https://localhost:8443/cas/v1/tickets", 201, postData)
-            .then((token) => {
+            .then(async (token) => {
                 cas.log(`Received token ${token}`);
                 const payload = JSON.stringify({"token": token});
                 client.publish({
@@ -56,12 +89,15 @@ async function connectAndLogin(channelId, page) {
                     },
                     body: payload
                 });
-                cas.assertInnerText(page, "#content div h2", "Log In Successful");
-                cas.assertCookie(page);
-                client.deactivate();
+                await cas.sleep(3000);
+                await cas.assertInnerText(page, "#content div h2", "Log In Successful");
+                await cas.assertCookie(page);
+                await cas.doRequest(`${DEVICES}/QRDevicePuppeteer`, "DELETE", JSON_HEADERS, 204);
+                assert(JSON.parse(await cas.doRequest(`${DEVICES}/casuser`, "GET", JSON_HEADERS, 200)).length === 0);
                 client.forceDisconnect();
-                process.exit(0);
-            });
+                await client.deactivate();
+            })
+            .then(done, failed);
     };
 
     client.onStompError = (frame) => {
@@ -70,6 +106,7 @@ async function connectAndLogin(channelId, page) {
     };
 
     client.activate();
+    return finished;
 }
 
 async function executeRequest(url, statusCode, requestBody) {
