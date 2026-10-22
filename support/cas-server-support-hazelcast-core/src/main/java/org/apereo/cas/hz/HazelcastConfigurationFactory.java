@@ -54,6 +54,16 @@ import org.springframework.util.StringUtils;
 @UtilityClass
 public class HazelcastConfigurationFactory {
     /**
+     * Merge policies that compare per-entry statistics (hits, access, update or expiration times),
+     * which Hazelcast keeps only when per-entry statistics are turned on for the map.
+     */
+    private static final Set<String> MERGE_POLICIES_WITH_ENTRY_STATISTICS = Set.of(
+        ExpirationTimeMergePolicy.class.getName(),
+        HigherHitsMergePolicy.class.getName(),
+        LatestUpdateMergePolicy.class.getName(),
+        LatestAccessMergePolicy.class.getName());
+
+    /**
      * Sets config map.
      *
      * @param namedConfig the map config
@@ -64,7 +74,7 @@ public class HazelcastConfigurationFactory {
             FunctionUtils.doIf(!config.getMapConfigs().containsKey(namedConfig.getName()),
                 _ -> config.addMapConfig(mappedConfig)).accept(mappedConfig);
         } else if (namedConfig instanceof final ReplicatedMapConfig replicatedConfig) {
-            FunctionUtils.doIf(!config.getReliableTopicConfigs().containsKey(namedConfig.getName()),
+            FunctionUtils.doIf(!config.getReplicatedMapConfigs().containsKey(namedConfig.getName()),
                 _ -> config.addReplicatedMapConfig(replicatedConfig)).accept(replicatedConfig);
         }
     }
@@ -93,7 +103,6 @@ public class HazelcastConfigurationFactory {
         val config = new Config();
 
         config.setLicenseKey(hz.getCore().getLicenseKey());
-        config.getJetConfig().setEnabled(hz.getCore().isEnableJet());
 
         if (cluster.getCore().getCpMemberCount() > 0) {
             config.getCPSubsystemConfig().setCPMemberCount(cluster.getCore().getCpMemberCount());
@@ -217,6 +226,7 @@ public class HazelcastConfigurationFactory {
         LOGGER.trace("Disabling multicast and TCP/IP configuration for discovery");
         joinConfig.getMulticastConfig().setEnabled(false);
         joinConfig.getTcpIpConfig().setEnabled(false);
+        joinConfig.getAutoDetectionConfig().setEnabled(false);
 
         val discoveryConfig = new DiscoveryConfig();
         val strategyConfig = locateDiscoveryStrategyConfig(cluster, joinConfig, config, networkConfig);
@@ -264,9 +274,11 @@ public class HazelcastConfigurationFactory {
             LOGGER.debug("Skipped Hazelcast Multicast configuration since feature is disabled");
         }
 
-        return new JoinConfig()
+        val joinConfig = new JoinConfig()
             .setMulticastConfig(multicastConfig)
             .setTcpIpConfig(tcpIpConfig);
+        joinConfig.getAutoDetectionConfig().setEnabled(false);
+        return joinConfig;
     }
 
     private static Config finalizeConfig(final Config config, final BaseHazelcastProperties hz) {
@@ -288,17 +300,29 @@ public class HazelcastConfigurationFactory {
      * @param timeoutSeconds the timeoutSeconds
      * @return the map config
      */
-    public static NamedConfig buildMapConfig(final BaseHazelcastProperties hz,
-                                             final String mapName, final long timeoutSeconds) {
+    public static MapConfig buildMapConfig(final BaseHazelcastProperties hz,
+                                           final String mapName, final long timeoutSeconds) {
         val cluster = hz.getCluster();
-
-        val evictionPolicy = EvictionPolicy.valueOf(cluster.getCore().getEvictionPolicy());
-
         val evictionConfig = new EvictionConfig();
-        evictionConfig.setEvictionPolicy(evictionPolicy);
+        evictionConfig.setEvictionPolicy(EvictionPolicy.valueOf(cluster.getCore().getEvictionPolicy()));
         evictionConfig.setMaxSizePolicy(MaxSizePolicy.valueOf(cluster.getCore().getMaxSizePolicy()));
         evictionConfig.setSize(cluster.getCore().getMaxSize());
 
+        val mergePolicyConfig = buildMergePolicyConfig(hz);
+        return new MapConfig()
+            .setName(mapName)
+            .setStatisticsEnabled(true)
+            .setPerEntryStatsEnabled(MERGE_POLICIES_WITH_ENTRY_STATISTICS.contains(mergePolicyConfig.getPolicy()))
+            .setMergePolicyConfig(mergePolicyConfig)
+            .setMaxIdleSeconds((int) timeoutSeconds)
+            .setInMemoryFormat(InMemoryFormat.BINARY)
+            .setBackupCount(cluster.getCore().getBackupCount())
+            .setAsyncBackupCount(cluster.getCore().getAsyncBackupCount())
+            .setEvictionConfig(evictionConfig);
+    }
+
+    private static MergePolicyConfig buildMergePolicyConfig(final BaseHazelcastProperties hz) {
+        val cluster = hz.getCluster();
         val mergePolicyConfig = new MergePolicyConfig();
         if (StringUtils.hasText(cluster.getCore().getMapMergePolicy())) {
             switch (cluster.getCore().getMapMergePolicy().trim().toLowerCase(Locale.ENGLISH)) {
@@ -311,25 +335,6 @@ public class HazelcastConfigurationFactory {
                 case "put_if_absent" -> mergePolicyConfig.setPolicy(PutIfAbsentMergePolicy.class.getName());
             }
         }
-
-        if (cluster.getCore().isReplicated()) {
-            return new ReplicatedMapConfig()
-                .setName(mapName)
-                .setStatisticsEnabled(true)
-                .setAsyncFillup(cluster.getCore().isAsyncFillup())
-                .setInMemoryFormat(InMemoryFormat.BINARY)
-                .setSplitBrainProtectionName(mapName.concat("-SplitBrainProtection"))
-                .setMergePolicyConfig(mergePolicyConfig);
-        }
-
-        return new MapConfig()
-            .setName(mapName)
-            .setStatisticsEnabled(true)
-            .setMergePolicyConfig(mergePolicyConfig)
-            .setMaxIdleSeconds((int) timeoutSeconds)
-            .setInMemoryFormat(InMemoryFormat.BINARY)
-            .setBackupCount(cluster.getCore().getBackupCount())
-            .setAsyncBackupCount(cluster.getCore().getAsyncBackupCount())
-            .setEvictionConfig(evictionConfig);
+        return mergePolicyConfig;
     }
 }

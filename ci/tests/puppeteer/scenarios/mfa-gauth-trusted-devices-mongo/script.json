@@ -1,0 +1,33 @@
+{
+  "dependencies": "gauth,gauth-mongo,trusted-mfa-mongo",
+  "conditions": {
+    "docker": "true"
+  },
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
+    "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
+    "--management.endpoints.web.exposure.include=gauthCredentialRepository,multifactorTrustedDevices",
+    "--management.endpoints.access.default=UNRESTRICTED",
+
+    "--cas.authn.mfa.gauth.core.trusted-device-enabled=true",
+    "--cas.authn.mfa.gauth.crypto.enabled=false",
+    "--cas.authn.mfa.gauth.mongo.host=localhost",
+    "--cas.authn.mfa.gauth.mongo.port=27017",
+    "--cas.authn.mfa.gauth.mongo.user-id=root",
+    "--cas.authn.mfa.gauth.mongo.password=secret",
+    "--cas.authn.mfa.gauth.mongo.authentication-database-name=admin",
+    "--cas.authn.mfa.gauth.mongo.database-name=gauth",
+    "--cas.authn.mfa.gauth.mongo.drop-collection=true",
+
+    "--cas.authn.mfa.trusted.mongo.host=localhost",
+    "--cas.authn.mfa.trusted.mongo.port=27017",
+    "--cas.authn.mfa.trusted.mongo.user-id=root",
+    "--cas.authn.mfa.trusted.mongo.password=secret",
+    "--cas.authn.mfa.trusted.mongo.authentication-database-name=admin",
+    "--cas.authn.mfa.trusted.mongo.database-name=trusted",
+    "--cas.authn.mfa.trusted.mongo.drop-collection=true"
+  ],
+  "initScript": "${PWD}/ci/tests/mongodb/run-mongodb-server.sh"
+}

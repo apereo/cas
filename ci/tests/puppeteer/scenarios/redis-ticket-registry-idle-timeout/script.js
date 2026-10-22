@@ -3,7 +3,7 @@ const assert = require("assert");
 
 async function removeAllSessions() {
     await cas.logg("Removing all SSO Sessions");
-    await cas.doDelete("https://localhost:8443/cas/actuator/ssoSessions?type=ALL&from=1&count=100000");
+    await cas.doDelete("https://localhost:8443/cas/actuator/ssoSessions?type=ALL&from=0&count=100000");
 }
 
 async function verifyTicketGrantingTicketCount(count = 0) {

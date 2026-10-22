@@ -656,7 +656,7 @@ function resourceLoadedSuccessfully() {
             requestGeoPosition();
         }
 
-        if ($(":focus").length === 0) {
+        if ($(":focus").length === 0 && document.documentElement.dataset.casAutofocus !== "false") {
             $("input:visible:enabled:first").focus();
         }
 

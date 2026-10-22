@@ -11,6 +11,7 @@ const cas = require("../../cas.js");
     await cas.assertVisibility(page, "li #TwitterClient");
     await cas.assertVisibility(page, "li #CasClient");
     await cas.assertVisibility(page, "li #GitHubClient");
+    await cas.assertAccessibility(page, "Identity provider selection");
 
     await cas.goto(page, "https://localhost:8443/cas/login?error=Fail&error_description=Error&error_code=400&error_reason=Reason");
     await cas.sleep(1000);
@@ -20,6 +21,7 @@ const cas = require("../../cas.js");
     await cas.assertVisibility(page, "#errorTable");
     await cas.assertVisibility(page, "#loginLink");
     await cas.assertVisibility(page, "#appLink");
+    await cas.assertAccessibility(page, "Delegated authentication error");
 
     await cas.closeBrowser(browser);
 })();

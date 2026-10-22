@@ -222,6 +222,32 @@ class GitSamlRegisteredServiceMetadataResolverTests extends BaseGitSamlMetadataT
     }
 
     @Test
+    void verifyDocumentsCommittedByHand() throws Throwable {
+        val metadataManager = resolver.getMetadataManager().orElseThrow();
+        metadataManager.removeAll();
+        val metadata = IOUtils.toString(new ClassPathResource("sp-metadata.xml").getInputStream(), StandardCharsets.UTF_8);
+        val metadataDirectory = new File(FileUtils.getTempDirectory(), "cas-saml-metadata-cloned/sp-metadata");
+        FileUtils.writeStringToFile(new File(metadataDirectory, "SP.xml"), metadata, StandardCharsets.UTF_8);
+        FileUtils.writeStringToFile(new File(metadataDirectory, "SP.pem"), "signature", StandardCharsets.UTF_8);
+        FileUtils.writeStringToFile(new File(metadataDirectory, "default-sp.xml"), metadata, StandardCharsets.UTF_8);
+
+        val documents = metadataManager.load();
+        assertEquals(Set.of("SP", "default-sp"), documents.stream().map(SamlMetadataDocument::getName).collect(Collectors.toSet()));
+        val document = metadataManager.findByName("SP").orElseThrow();
+        assertEquals("signature", document.getSignature());
+        assertEquals(document.getId(), metadataManager.findByName("SP").orElseThrow().getId());
+        assertTrue(metadataManager.findById(document.getId()).isPresent());
+
+        metadataManager.removeById(document.getId());
+        assertTrue(metadataManager.findByName("SP").isEmpty());
+        assertFalse(new File(metadataDirectory, "SP.xml").exists());
+        assertFalse(new File(metadataDirectory, "SP.pem").exists());
+        assertTrue(metadataManager.findByName("default-sp").isPresent());
+        metadataManager.removeByName("default-sp");
+        assertTrue(metadataManager.load().isEmpty());
+    }
+
+    @Test
     void verifyRemoveAll() throws Throwable {
         val metadataManager = resolver.getMetadataManager().orElseThrow();
         metadataManager.removeAll();

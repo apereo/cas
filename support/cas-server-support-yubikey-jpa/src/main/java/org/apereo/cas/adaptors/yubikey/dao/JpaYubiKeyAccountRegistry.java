@@ -57,9 +57,9 @@ public class JpaYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
 
     @Override
     public void delete(final String uid) {
-        val account = fetchSingleYubiKeyAccount(uid);
-        entityManager.remove(account);
-        LOGGER.debug("Deleted [{}] record(s)", account);
+        val accounts = fetchYubiKeyAccounts(uid);
+        accounts.forEach(entityManager::remove);
+        LOGGER.debug("Deleted [{}] record(s) for [{}]", accounts.size(), uid);
     }
 
     @Override
@@ -89,8 +89,22 @@ public class JpaYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
         return this.entityManager.merge(jpaAccount);
     }
 
+    /**
+     * Save the account. When the user already has an account, that record is updated with the given devices and tenant
+     * rather than a second record being added for the same user.
+     *
+     * @param account the account
+     * @return the saved account
+     */
     @Override
     public YubiKeyAccount save(final YubiKeyAccount account) {
+        val existing = fetchYubiKeyAccounts(account.getUsername()).stream().findFirst();
+        if (existing.isPresent()) {
+            val jpaAccount = existing.get();
+            jpaAccount.setDevices(new ArrayList<>(account.getDevices()));
+            jpaAccount.setTenant(account.getTenant());
+            return this.entityManager.merge(jpaAccount);
+        }
         val jpaAccount = JpaYubiKeyAccount.builder()
             .username(account.getUsername())
             .devices(account.getDevices())
@@ -102,6 +116,12 @@ public class JpaYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
     @Override
     public boolean update(final YubiKeyAccount account) {
         return this.entityManager.merge(account) != null;
+    }
+
+    private List<JpaYubiKeyAccount> fetchYubiKeyAccounts(final String username) {
+        return this.entityManager.createQuery(SELECT_ACCOUNT_QUERY, JpaYubiKeyAccount.class)
+            .setParameter("username", username)
+            .getResultList();
     }
 
     private JpaYubiKeyAccount fetchSingleYubiKeyAccount(final String username) {

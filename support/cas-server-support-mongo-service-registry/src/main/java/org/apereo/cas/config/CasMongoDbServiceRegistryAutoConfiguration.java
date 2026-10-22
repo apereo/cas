@@ -42,7 +42,7 @@ import org.springframework.data.mongodb.core.index.Index;
 public class CasMongoDbServiceRegistryAutoConfiguration {
 
     @ConditionalOnMissingBean(name = "mongoDbServiceRegistryTemplate")
-    @Bean
+    @Bean(defaultCandidate = false)
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public MongoTemplate mongoDbServiceRegistryTemplate(
         final CasConfigurationProperties casProperties,

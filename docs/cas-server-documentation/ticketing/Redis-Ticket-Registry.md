@@ -78,9 +78,13 @@ From a performance perspective, the important distinction is between operations 
 the ticket body and operations that only need to remove state. Delete messages should avoid 
 materializing the ticket when the registry already knows the Redis key being removed. Bulk user/session 
 deletion paths are especially sensitive: scanning Redis, fetching each ticket, deserializing it, 
-and decrypting it just to publish a cache invalidation can be very expensive. A better design is to 
-scan only the required metadata, unlink matching Redis keys in batches, invalidate the local cache by 
-canonical key, and publish delete notifications by key.
+and decrypting it just to publish a cache invalidation can be very expensive. For this reason, the registry 
+keeps a per-user index of ticket keys, a sorted set under `CAS_PRINCIPAL_TICKETS:` scored by each ticket's 
+expiration and updated in the same pipelined batch that writes the ticket. Removing all tickets of a user 
+reads that index, unlinks the listed keys in batches, invalidates the local cache by canonical key and 
+publishes delete notifications by key, so its cost depends on that user's tickets and not on the size of 
+the registry. The index expires with the user's longest-lived ticket, and entries of expired tickets are 
+dropped as new tickets are written. 
 
 There are several operational caveats. Redis pub/sub is not durable; a node that is down, 
 disconnected, or misconfigured when a message is published can miss the notification and retain 

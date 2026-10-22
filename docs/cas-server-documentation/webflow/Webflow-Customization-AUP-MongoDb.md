@@ -8,7 +8,7 @@ category: Acceptable Usage Policy
 
 # MongoDb Acceptable Usage Policy
 
-CAS can be configured to use a MongoDb instance as the storage mechanism. Upon accepting the policy, the adopter is expected to provide a collection name where the decision is kept and the document is assumed to contain a `username` column as well as one that matches the AUP attribute name defined.
+CAS can be configured to use a MongoDb instance as the storage mechanism. Upon accepting the policy, the decision is kept in the configured collection, in a document with a `username` field and a field that matches the AUP attribute name defined; the document is created if the user does not have one yet. The decision is read back at later logins when the principal does not carry the AUP attribute itself.
 
 Support is enabled by including the following dependency in the WAR overlay:
 

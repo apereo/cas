@@ -14,6 +14,7 @@ const cas = require("../../cas.js");
     await cas.sleep(1000);
     await cas.assertTextContent(page, "#content h2", "Authentication attempt is blocked.");
     await cas.assertTextContent(page, "#content p", "Your authentication attempt is untrusted and unauthorized from your current workstation.");
+    await cas.assertAccessibility(page, "Risk-based authentication blocked");
 
     await cas.closeBrowser(browser);
 })();

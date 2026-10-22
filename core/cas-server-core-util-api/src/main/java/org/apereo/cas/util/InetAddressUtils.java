@@ -6,6 +6,7 @@ import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jooq.lambda.Unchecked;
+import org.jspecify.annotations.Nullable;
 
 /**
  * This is {@link InetAddressUtils}.
@@ -32,7 +33,7 @@ public class InetAddressUtils {
      * @param urlAddr the host
      * @return the by name
      */
-    public static InetAddress getByName(final String urlAddr) {
+    public static @Nullable InetAddress getByName(final String urlAddr) {
         return FunctionUtils.doAndHandle(() -> {
             val url = new URI(urlAddr).toURL();
             return InetAddress.getAllByName(url.getHost())[0];
@@ -58,7 +59,7 @@ public class InetAddressUtils {
      * @param name the name
      * @return the cas server host address
      */
-    public static String getCasServerHostAddress(final String name) {
+    public static @Nullable String getCasServerHostAddress(final String name) {
         return Unchecked.supplier(() -> {
             val host = getByName(name);
             return Optional.ofNullable(host).map(InetAddress::getHostAddress).orElse(null);

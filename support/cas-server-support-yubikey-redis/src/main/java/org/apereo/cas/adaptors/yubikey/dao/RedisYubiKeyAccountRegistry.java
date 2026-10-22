@@ -94,6 +94,7 @@ public class RedisYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
         val account = YubiKeyAccount.builder()
             .username(request.getUsername())
             .devices(Arrays.stream(device).collect(Collectors.toList()))
+            .tenant(request.getTenant())
             .build();
         return save(account);
     }

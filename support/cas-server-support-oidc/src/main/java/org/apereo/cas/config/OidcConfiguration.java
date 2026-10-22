@@ -1159,8 +1159,8 @@ class OidcConfiguration {
         @ConditionalOnMissingBean(name = "pushedAuthorizationIdGenerator")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public UniqueTicketIdGenerator pushedAuthorizationIdGenerator() {
-            return new HostNameBasedUniqueTicketIdGenerator();
+        public UniqueTicketIdGenerator pushedAuthorizationIdGenerator(final CasConfigurationProperties casProperties) {
+            return new HostNameBasedUniqueTicketIdGenerator(casProperties.getHost().getName());
         }
 
         @ConditionalOnMissingBean(name = "oidcPushedAuthorizationUriFactory")
@@ -1206,8 +1206,8 @@ class OidcConfiguration {
         @ConditionalOnMissingBean(name = "cibaRequestIdGenerator")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public UniqueTicketIdGenerator cibaRequestIdGenerator() {
-            return new HostNameBasedUniqueTicketIdGenerator();
+        public UniqueTicketIdGenerator cibaRequestIdGenerator(final CasConfigurationProperties casProperties) {
+            return new HostNameBasedUniqueTicketIdGenerator(casProperties.getHost().getName());
         }
 
 

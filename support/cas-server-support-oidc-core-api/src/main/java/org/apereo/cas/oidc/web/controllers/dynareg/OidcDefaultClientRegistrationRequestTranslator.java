@@ -100,6 +100,7 @@ public class OidcDefaultClientRegistrationRequestTranslator implements OidcClien
         FunctionUtils.doIfNotBlank(registrationRequest.getTokenEndpointAuthMethod(),
             _ -> registeredService.setTokenEndpointAuthenticationMethod(registrationRequest.getTokenEndpointAuthMethod()));
         registeredService.setDpopBoundAccessTokens(registrationRequest.isDpopBoundAccessTokens());
+        registeredService.setTlsClientCertificateBoundAccessTokens(registrationRequest.isTlsClientCertificateBoundAccessTokens());
 
         if (StringUtils.isBlank(registeredService.getClientId())) {
             registeredService.setClientId(context.getClientIdGenerator().getNewString());

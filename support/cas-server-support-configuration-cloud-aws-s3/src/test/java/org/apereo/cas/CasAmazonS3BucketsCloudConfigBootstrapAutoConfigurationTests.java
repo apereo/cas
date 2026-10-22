@@ -2,6 +2,7 @@ package org.apereo.cas;
 
 import module java.base;
 import org.apereo.cas.aws.AmazonEnvironmentAwareClientBuilder;
+import org.apereo.cas.config.AmazonS3BucketPropertySource;
 import org.apereo.cas.config.CasAmazonS3BucketsCloudConfigBootstrapAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.api.MutablePropertySource;
@@ -70,14 +71,7 @@ class CasAmazonS3BucketsCloudConfigBootstrapAutoConfigurationTests {
     
     @BeforeAll
     public static void initialize() {
-        val environment = new MockEnvironment();
-        environment.setProperty(CasAmazonS3BucketsCloudConfigBootstrapAutoConfiguration.CAS_CONFIGURATION_PREFIX + '.' + "endpoint", ENDPOINT);
-        environment.setProperty(CasAmazonS3BucketsCloudConfigBootstrapAutoConfiguration.CAS_CONFIGURATION_PREFIX + '.' + "region", Region.US_EAST_1.id());
-        environment.setProperty(CasAmazonS3BucketsCloudConfigBootstrapAutoConfiguration.CAS_CONFIGURATION_PREFIX + '.' + "credential-access-key", CREDENTIAL_ACCESS_KEY);
-        environment.setProperty(CasAmazonS3BucketsCloudConfigBootstrapAutoConfiguration.CAS_CONFIGURATION_PREFIX + '.' + "credential-secret-key", CREDENTIAL_SECRET_KEY);
-        val clientBuilder = S3Client.builder().serviceConfiguration(S3Configuration.Builder::pathStyleAccessEnabled).forcePathStyle(true);
-        val builder = new AmazonEnvironmentAwareClientBuilder(CasAmazonS3BucketsCloudConfigBootstrapAutoConfiguration.CAS_CONFIGURATION_PREFIX, environment);
-        val s3Client = builder.build(clientBuilder, S3Client.class);
+        val s3Client = buildS3Client();
         deleteBucket(s3Client);
         s3Client.createBucket(CreateBucketRequest.builder().bucket(BUCKET_NAME).build());
         val properties = "cas.authn.accept.users=" + STATIC_AUTHN_USERS;
@@ -109,10 +103,33 @@ class CasAmazonS3BucketsCloudConfigBootstrapAutoConfigurationTests {
         propertySource.refresh();
         val prefix = environment.getProperty("cas.server.prefix");
         assertEquals("https://example.org/cas", prefix);
+        propertySource.removeProperty("spring.security.user.roles[0]");
+
+        val storedSource = new AmazonS3BucketPropertySource("stored",
+            CasAmazonS3BucketsCloudConfigBootstrapAutoConfigurationTests::buildS3Client, BUCKET_NAME);
+        assertEquals(STATIC_AUTHN_USERS, storedSource.getProperty("cas.authn.accept.users"));
+        assertEquals("https://example.org/cas", storedSource.getProperty("cas.server.prefix"));
+        assertNull(storedSource.getProperty("spring.security.user.roles[0]"));
+        assertEquals(9090, Integer.parseInt(storedSource.getProperty("server.port").toString()));
+        storedSource.setProperty("cas.server.name", "https://example.org");
+        storedSource.refresh();
+        assertEquals("https://example.org", storedSource.getProperty("cas.server.name"));
+        storedSource.removeProperty("cas.server.name");
         propertySource.removeProperty("server.port");
         assertNull(environment.getProperty("server.port"));
         propertySource.removeAll();
         assertEquals(0, propertySource.getPropertyNames().length);
+    }
+
+    private static S3Client buildS3Client() {
+        val environment = new MockEnvironment();
+        environment.setProperty(CasAmazonS3BucketsCloudConfigBootstrapAutoConfiguration.CAS_CONFIGURATION_PREFIX + '.' + "endpoint", ENDPOINT);
+        environment.setProperty(CasAmazonS3BucketsCloudConfigBootstrapAutoConfiguration.CAS_CONFIGURATION_PREFIX + '.' + "region", Region.US_EAST_1.id());
+        environment.setProperty(CasAmazonS3BucketsCloudConfigBootstrapAutoConfiguration.CAS_CONFIGURATION_PREFIX + '.' + "credential-access-key", CREDENTIAL_ACCESS_KEY);
+        environment.setProperty(CasAmazonS3BucketsCloudConfigBootstrapAutoConfiguration.CAS_CONFIGURATION_PREFIX + '.' + "credential-secret-key", CREDENTIAL_SECRET_KEY);
+        val clientBuilder = S3Client.builder().serviceConfiguration(S3Configuration.Builder::pathStyleAccessEnabled).forcePathStyle(true);
+        val builder = new AmazonEnvironmentAwareClientBuilder(CasAmazonS3BucketsCloudConfigBootstrapAutoConfiguration.CAS_CONFIGURATION_PREFIX, environment);
+        return builder.build(clientBuilder, S3Client.class);
     }
 
     private static void deleteBucket(final S3Client s3Client) {

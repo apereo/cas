@@ -62,8 +62,13 @@ class DefaultCasCookieValueManagerTests {
     void verifySessionPinning() {
         httpServletRequest.removeHeader(HttpHeaders.USER_AGENT);
         val props = new TicketGrantingCookieProperties().setPinToSession(true);
-        assertThrows(IllegalStateException.class,
-            () -> getCookieValueManager(props).buildCookieValue(VALUE, httpServletRequest));
+        val mgr = getCookieValueManager(props);
+        val encoded = mgr.buildCookieValue(VALUE, httpServletRequest);
+        assertNotNull(encoded);
+        assertEquals(VALUE, mgr.obtainCookieValue(encoded, httpServletRequest));
+        val requestWithAgent = new MockHttpServletRequest();
+        requestWithAgent.addHeader(HttpHeaders.USER_AGENT, USER_AGENT);
+        assertThrows(InvalidCookieException.class, () -> mgr.obtainCookieValue(encoded, requestWithAgent));
         props.setPinToSession(false);
         assertNotNull(getCookieValueManager(props).buildCookieValue(VALUE, httpServletRequest));
     }

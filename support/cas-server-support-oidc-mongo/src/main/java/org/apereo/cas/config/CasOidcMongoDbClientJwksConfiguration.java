@@ -32,7 +32,7 @@ import org.springframework.data.mongodb.core.MongoOperations;
 class CasOidcMongoDbClientJwksConfiguration {
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Bean
+    @Bean(defaultCandidate = false)
     @ConditionalOnMissingBean(name = "mongoOidcClientJsonWebKeystoreTemplate")
     public MongoOperations mongoOidcClientJsonWebKeystoreTemplate(
         final ConfigurableApplicationContext applicationContext,
@@ -48,7 +48,7 @@ class CasOidcMongoDbClientJwksConfiguration {
     }
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @ConditionalOnMissingBean(name = "mongoOidcClientJwksRegistrationStore")
+    @ConditionalOnMissingBean(name = "clientJwksRegistrationStore")
     @Bean
     public ClientJwksRegistrationStore clientJwksRegistrationStore(
         final CasConfigurationProperties casProperties,

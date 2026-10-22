@@ -30,16 +30,25 @@ import jakarta.servlet.http.HttpServletResponse;
 @Slf4j
 @Getter
 public class FlowExecutionExceptionResolver implements HandlerExceptionResolver {
+    private static final String PARAMETER_EXECUTION = "execution";
+
     private final String modelKey = "exception.message";
 
     /**
      * Since FlowExecutionRepositoryException is a common ancestor to these exceptions and other
      * error cases we would likely want to hide from the user, it seems reasonable to check for
-     * FlowExecutionRepositoryException.
+     * FlowExecutionRepositoryException, and restart the flow by redirecting to the requested URI.
      * <p>
-     * BadlyFormattedFlowExecutionKeyException is specifically ignored by this handler
-     * because redirecting to the requested URI with this exception may cause an infinite
-     * redirect loop (i.e. when invalid "execution" parameter exists as part of the query string
+     * The {@code execution} parameter is dropped from the query string of that redirect. The execution
+     * it carries could not be used, and keeping it would send a badly formatted key straight back,
+     * redirecting forever; dropping it lets {@link BadlyFormattedFlowExecutionKeyException} restart the
+     * flow like any other repository error instead of surfacing as a server error.
+     *
+     * @param request   the request
+     * @param response  the response
+     * @param handler   the handler
+     * @param exception the exception
+     * @return the redirect that restarts the flow, or null if the exception is not handled here
      */
     @Override
     public ModelAndView resolveException(
@@ -50,14 +59,17 @@ public class FlowExecutionExceptionResolver implements HandlerExceptionResolver 
         @NonNull
         final Exception exception) {
 
-        if (!(exception instanceof FlowExecutionRepositoryException) || exception instanceof BadlyFormattedFlowExecutionKeyException) {
+        if (!(exception instanceof FlowExecutionRepositoryException)) {
             LOGGER.debug("Ignoring the received exception [{}] due to a type mismatch with handler [{}]", exception, handler);
             return null;
         }
 
-        val urlToRedirectTo = request.getRequestURI()
-            + (request.getQueryString() != null ? '?'
-            + request.getQueryString() : StringUtils.EMPTY);
+        val queryString = Optional.ofNullable(request.getQueryString())
+            .stream()
+            .flatMap(query -> Arrays.stream(query.split("&")))
+            .filter(parameter -> !parameter.equals(PARAMETER_EXECUTION) && !parameter.startsWith(PARAMETER_EXECUTION + '='))
+            .collect(Collectors.joining("&"));
+        val urlToRedirectTo = request.getRequestURI() + (queryString.isEmpty() ? StringUtils.EMPTY : '?' + queryString);
 
         LOGGER.debug("Error getting flow information for URL [{}]", urlToRedirectTo, exception);
         val model = new HashMap<String, Object>();

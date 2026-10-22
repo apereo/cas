@@ -48,6 +48,7 @@ async function initializeServicesOperations() {
         }
     });
 
+    initializeApplicationCards();
     await fetchServices();
     await initializeFooterButtons();
 
@@ -414,23 +415,25 @@ async function initializeServiceButtons() {
                 visible: () => CasActuatorEndpoints.entityHistory()
             }
         },
-        callback: (key, context) => {
-            const serviceId = context.rowData.serviceId;
-            if (key === "editPlain") {
-                editService(serviceId, false);
-            } else if (key === "editWizard") {
-                editService(serviceId, true);
-            } else if (key === "copy") {
-                copyService(serviceId);
-            } else if (key === "delete") {
-                deleteService(context);
-            } else if (key === "history") {
-                viewEntityHistory(serviceId);
-            } else if (key === "changelog") {
-                viewEntityChangelog(serviceId);
-            }
-        }
+        callback: (key, context) => applicationActionHandler(key, context)
     });
+
+    applicationActionHandler = (key, context) => {
+        const serviceId = context.rowData.serviceId;
+        if (key === "editPlain") {
+            editService(serviceId, false);
+        } else if (key === "editWizard") {
+            editService(serviceId, true);
+        } else if (key === "copy") {
+            copyService(serviceId);
+        } else if (key === "delete") {
+            deleteService(context);
+        } else if (key === "history") {
+            viewEntityHistory(serviceId);
+        } else if (key === "changelog") {
+            viewEntityChangelog(serviceId);
+        }
+    };
 }
 
 async function fetchServices(callback) {
@@ -439,11 +442,14 @@ async function fetchServices(callback) {
             let serviceCountByType = [0, 0, 0, 0, 0];
             let applicationsTable = $("#applicationsTable").DataTable();
             applicationsTable.clear();
+            registeredServicesById.clear();
+            let metadataSourcesCount = 0;
 
             let saml2MetadataProvidersTable = $("#saml2MetadataProvidersTable").DataTable();
             saml2MetadataProvidersTable.clear();
 
             for (const service of response[1]) {
+                registeredServicesById.set(String(service.id), service);
                 let icon = "mdi-web-box";
                 const serviceClass = service["@class"];
                 if (serviceClass.includes("CasRegisteredService")) {
@@ -486,7 +492,6 @@ async function fetchServices(callback) {
                     serviceId: service.id
                 });
 
-                let metadataSourcesCount = 0;
                 if (serviceClass.includes("SamlRegisteredService")) {
                     const metadataLocation = service.metadataLocation;
                     saml2MetadataProvidersTable.row.add({
@@ -496,11 +501,12 @@ async function fetchServices(callback) {
                     });
                     metadataSourcesCount++;
                 }
-                if (metadataSourcesCount > 0) {
-                    showElements($("#saml2metadataproviders").parent());
-                } else {
-                    hideElements($("#saml2metadataproviders").parent());
-                }
+            }
+            const metadataSourcesTab = $("#saml2metadataproviders").parent().add("#saml2metadataproviders");
+            if (metadataSourcesCount > 0) {
+                showElements(metadataSourcesTab);
+            } else {
+                hideElements(metadataSourcesTab);
             }
 
             applicationsTable.on("draw", async () => {
@@ -548,6 +554,7 @@ async function initializeFooterButtons() {
     $("button[name=validateServiceWizard]").off().on("click", () => {
         let valid = true;
         const originalKey = RegisteredServiceSections.currentKey();
+        const wasReviewing = RegisteredServiceSections.reviewing;
         RegisteredServiceSections.eachAvailableSection(section => {
             $(section.panel).find("input:visible").each(function () {
                 const input = $(this);
@@ -563,6 +570,7 @@ async function initializeFooterButtons() {
             if (RegisteredServiceSections.currentKey() !== originalKey) {
                 RegisteredServiceSections.activate(originalKey);
             }
+            RegisteredServiceSections.setReviewing(wasReviewing);
             RegisteredServiceSections.render();
             if (CasActuatorEndpoints.registeredServices()) {
                 const editor = initializeAceEditor("wizardServiceEditor");
@@ -683,4 +691,269 @@ async function initializeFooterButtons() {
                 .catch(error => console.error("Error fetching file:", error));
         }
     });
+}
+
+let applicationActionHandler = null;
+
+const registeredServicesById = new Map();
+
+const APPLICATIONS_VIEW_STORAGE_KEY = "PalantirApplicationsView";
+
+let applicationCardsSelection = "";
+
+/**
+ * The ids of the selected rows on the table's current page, as one string.
+ *
+ * @returns {string} the selected service ids, comma separated
+ */
+function selectedApplicationRows() {
+    if (!$.fn.dataTable.isDataTable("#applicationsTable")) {
+        return "";
+    }
+    const table = $("#applicationsTable").DataTable();
+    return table.rows({search: "applied", page: "current"}).indexes().toArray()
+        .filter(index => table.row(index).node()?.classList.contains("selected"))
+        .map(index => table.row(index).data().serviceId)
+        .join(",");
+}
+
+/**
+ * Escape text for insertion into markup built as a string.
+ *
+ * @param value the text to escape
+ * @returns {string} the escaped text
+ */
+function escapePalantirMarkup(value) {
+    return String(value ?? "").replace(/[&<>"']/g, character => ({
+        "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;", "'": "&#39;"
+    })[character]);
+}
+
+/**
+ * Describe the protocol of a registered service class for badges and summaries.
+ *
+ * @param serviceClass the fully qualified registered service class
+ * @returns {{key: string, short: string, label: string}} the badge key, its short text and a readable name
+ */
+function applicationProtocolOf(serviceClass) {
+    const friendly = PalantirDashboardConfiguration.supportedServiceTypes()[serviceClass];
+    const name = String(serviceClass ?? "");
+    const protocols = [
+        {match: "CasRegisteredService", key: "cas", short: "CAS", label: "CAS"},
+        {match: "SamlRegisteredService", key: "saml", short: "SAML", label: "SAML2 Service Provider"},
+        {match: "OidcRegisteredService", key: "oidc", short: "OIDC", label: "OpenID Connect Relying Party"},
+        {match: "OAuthRegisteredService", key: "oauth", short: "OAuth", label: "OAuth Client"},
+        {match: "WSFederationRegisteredService", key: "wsfed", short: "WS", label: "WS-Federation Relying Party"}
+    ];
+    const protocol = protocols.find(entry => name.includes(entry.match));
+    if (protocol) {
+        return {key: protocol.key, short: protocol.short, label: friendly || protocol.label};
+    }
+    return {key: "other", short: name.split(".").pop().replace("RegisteredService", "").slice(0, 5) || "App", label: friendly || name.split(".").pop()};
+}
+
+/**
+ * The view the operator last chose for the applications: cards or table.
+ *
+ * @returns {string} cards or table
+ */
+function applicationsView() {
+    try {
+        return window.localStorage.getItem(APPLICATIONS_VIEW_STORAGE_KEY) === "table" ? "table" : "cards";
+    } catch (error) {
+        return "cards";
+    }
+}
+
+/**
+ * Show the applications as cards or as the table, and remember the choice.
+ *
+ * @param view cards or table
+ */
+function showApplicationsView(view) {
+    const cards = view !== "table";
+    try {
+        window.localStorage.setItem(APPLICATIONS_VIEW_STORAGE_KEY, cards ? "cards" : "table");
+    } catch (error) {
+        console.debug("Palantir could not persist the applications view", error);
+    }
+    $("#applications-tab").toggleClass("is-cards-view", cards);
+    $("#applicationsCardsView").attr("aria-pressed", String(cards));
+    $("#applicationsTableView").attr("aria-pressed", String(!cards));
+    if (cards) {
+        renderApplicationCards();
+    } else if ($.fn.dataTable.isDataTable("#applicationsTable")) {
+        $("#applicationsTable").DataTable().columns.adjust();
+    }
+}
+
+/**
+ * Summarize the registry above the applications: how many there are and of how many types.
+ *
+ * The rows of the table are counted, so a definition deleted from the table drops out at once.
+ */
+function updateApplicationsSummary() {
+    const table = $.fn.dataTable.isDataTable("#applicationsTable") ? $("#applicationsTable").DataTable() : null;
+    const services = table
+        ? table.rows().data().toArray().map(row => registeredServicesById.get(String(row.serviceId)) ?? {})
+        : [...registeredServicesById.values()];
+    const types = new Set(services.map(service => applicationProtocolOf(service["@class"]).label));
+    const count = services.length;
+    const text = count === 0
+        ? "No applications are registered yet."
+        : `${count} application${count === 1 ? "" : "s"} · ${types.size} type${types.size === 1 ? "" : "s"}`;
+    const summary = $("#applicationsSummary");
+    if (summary.text() !== text) {
+        summary.text(text);
+    }
+}
+
+/**
+ * Draw the card view from the rows the applications table currently shows.
+ *
+ * The table stays the source: its search, paging and the selected row decide which cards appear
+ * and which one is marked, so both views always agree.
+ */
+function renderApplicationCards() {
+    const container = $("#applicationsCards");
+    if (container.length === 0 || !$.fn.dataTable.isDataTable("#applicationsTable")) {
+        return;
+    }
+    const table = $("#applicationsTable").DataTable();
+    applicationCardsSelection = selectedApplicationRows();
+    const indexes = table.rows({search: "applied", page: "current"}).indexes().toArray();
+    const cards = indexes.map(index => {
+        const rowData = table.row(index).data();
+        const node = table.row(index).node();
+        const service = registeredServicesById.get(String(rowData.serviceId)) || {};
+        const protocol = applicationProtocolOf(service["@class"]);
+        const name = service.name ?? String(rowData.serviceId);
+        const links = [];
+        if (service.informationUrl) {
+            links.push(`<a href="${escapePalantirMarkup(service.informationUrl)}" target="_blank" rel="noopener">Information URL</a>`);
+        }
+        if (service.privacyUrl) {
+            links.push(`<a href="${escapePalantirMarkup(service.privacyUrl)}" target="_blank" rel="noopener">Privacy URL</a>`);
+        }
+        if (service.metadataLocation) {
+            links.push(`<a href="${escapePalantirMarkup(service.metadataLocation)}" target="_blank" rel="noopener">Metadata Location</a>`);
+        }
+        const tags = [];
+        if (service.evaluationOrder !== undefined && service.evaluationOrder !== null) {
+            tags.push(`<span class="palantir-tag">Order ${escapePalantirMarkup(service.evaluationOrder)}</span>`);
+        }
+        if (service.clientId) {
+            tags.push(`<span class="palantir-tag">Client ${escapePalantirMarkup(service.clientId)}</span>`);
+        }
+        const selected = node && node.classList.contains("selected");
+        return `
+            <article class="palantir-application-card${selected ? " is-selected" : ""}" data-service-id="${escapePalantirMarkup(rowData.serviceId)}">
+                <header class="palantir-application-card-header">
+                    <span class="palantir-protocol-badge is-${protocol.key}" title="${escapePalantirMarkup(service["@class"])}">${escapePalantirMarkup(protocol.short)}</span>
+                    <div class="palantir-application-card-title">
+                        <h4>${escapePalantirMarkup(name)}</h4>
+                        <p>${escapePalantirMarkup(protocol.label)} · ID ${escapePalantirMarkup(rowData.serviceId)}</p>
+                    </div>
+                    <button type="button" class="palantir-icon-button" data-application-action="menu"
+                            aria-label="More actions for ${escapePalantirMarkup(name)}" title="More actions">
+                        <i class="mdi mdi-dots-horizontal" aria-hidden="true"></i>
+                    </button>
+                </header>
+                <code class="palantir-application-card-pattern" title="${escapePalantirMarkup(service.serviceId)}">${escapePalantirMarkup(service.serviceId)}</code>
+                ${service.description ? `<p class="palantir-application-card-description">${escapePalantirMarkup(service.description)}</p>` : ""}
+                ${tags.length > 0 || links.length > 0 ? `<div class="palantir-application-card-tags">${tags.join("")}${links.join("")}</div>` : ""}
+                <footer class="palantir-application-card-actions">
+                    <button type="button" class="palantir-button is-primary" data-application-action="editWizard">
+                        <i class="mdi mdi-wizard-hat" aria-hidden="true"></i>Open in wizard
+                    </button>
+                    <button type="button" class="palantir-button" data-application-action="editPlain">
+                        <i class="mdi mdi-code-json" aria-hidden="true"></i>JSON
+                    </button>
+                </footer>
+            </article>`;
+    });
+    if (cards.length === 0) {
+        const searching = table.search() !== "";
+        container.html(`<p class="palantir-empty-state">${searching ? "No application matches that search." : "No applications are registered yet."}</p>`);
+    } else {
+        container.html(cards.join(""));
+    }
+}
+
+/**
+ * Find the table row behind a card, in the shape the row context menu hands its callback.
+ *
+ * @param serviceId the registered service id the card shows
+ * @returns {object|null} the row, its data and its node, or null when the row is not drawn
+ */
+function applicationRowContext(serviceId) {
+    const table = $("#applicationsTable").DataTable();
+    const index = table.rows().indexes().toArray()
+        .find(rowIndex => String(table.row(rowIndex).data().serviceId) === String(serviceId));
+    if (index === undefined) {
+        return null;
+    }
+    const row = table.row(index);
+    return {row: row, rowData: row.data(), $row: $(row.node())};
+}
+
+/**
+ * Wire the card view: the view switch, the card buttons, and redrawing whenever the table redraws or
+ * the selected row changes. Other class changes on the rows, such as the highlight a context menu
+ * puts on its row, leave the cards alone, so a card keeps focus while its menu is open.
+ */
+function initializeApplicationCards() {
+    const tableRow = $("#applicationsTable").closest(".dt-layout-row");
+    if (tableRow.length > 0) {
+        $("#applicationsCards").insertAfter(tableRow);
+    }
+    $("#applicationsCardsView, #applicationsTableView").off("click").on("click", event => {
+        showApplicationsView($(event.currentTarget).data("applications-view"));
+    });
+
+    $("#applications-tabs").off("tabsactivate.palantirCards").on("tabsactivate.palantirCards", (event, ui) => {
+        $(".palantir-view-switch").toggleClass("d-none", !ui.newPanel.is("#applications-tab"));
+    });
+
+    $("#applicationsCards").off("click").on("click", "[data-application-action]", event => {
+        const button = event.currentTarget;
+        const card = $(button).closest(".palantir-application-card");
+        const context = applicationRowContext(card.data("service-id"));
+        if (!context) {
+            return;
+        }
+        const action = $(button).data("application-action");
+        if (action === "menu") {
+            const bounds = button.getBoundingClientRect();
+            context.$row.contextMenu({x: bounds.left + window.scrollX, y: bounds.bottom + window.scrollY});
+        } else if (applicationActionHandler) {
+            applicationActionHandler(action, context);
+        }
+        event.preventDefault();
+    });
+
+    const table = $("#applicationsTable").DataTable();
+    table.off("draw.palantirCards").on("draw.palantirCards", () => {
+        updateApplicationsSummary();
+        renderApplicationCards();
+    });
+
+    const body = document.querySelector("#applicationsTable tbody");
+    if (body && !body.dataset.cardsObserved) {
+        body.dataset.cardsObserved = "true";
+        let scheduled = false;
+        new MutationObserver(() => {
+            if (!scheduled) {
+                scheduled = true;
+                requestAnimationFrame(() => {
+                    scheduled = false;
+                    if ($("#applications-tab").hasClass("is-cards-view")
+                        && selectedApplicationRows() !== applicationCardsSelection) {
+                        renderApplicationCards();
+                    }
+                });
+            }
+        }).observe(body, {subtree: true, attributes: true, attributeFilter: ["class"]});
+    }
+    showApplicationsView(applicationsView());
 }

@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import static org.junit.jupiter.api.Assertions.*;
@@ -57,5 +58,11 @@ class MongoDbMultifactorAuthenticationTrustStorageTests extends AbstractMultifac
         getMfaTrustEngine().save(r);
         assertEquals(1, getMfaTrustEngine().get(principal, now.minusDays(30)).size());
         assertEquals(0, getMfaTrustEngine().get(principal, now.minusDays(1)).size());
+    }
+
+    @Test
+    void verifyTemplateIsInjectedOnlyByName() {
+        val definition = (AbstractBeanDefinition) applicationContext.getBeanFactory().getBeanDefinition("mongoMfaTrustedAuthnTemplate");
+        assertFalse(definition.isDefaultCandidate());
     }
 }

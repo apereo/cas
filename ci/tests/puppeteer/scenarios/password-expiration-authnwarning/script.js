@@ -10,6 +10,7 @@ const cas = require("../../cas.js");
     await cas.sleep(1000);
     await cas.assertTextContent(page, "#content h1", "Authentication Succeeded with Warnings");
     await cas.assertVisibility(page, "#changePassword");
+    await cas.assertAccessibility(page, "Authentication warnings");
     await cas.submitForm(page, "#changePasswordForm");
     await cas.assertTextContent(page, "#pwdmain h2", "Hello, casuser. You must change your password.");
     await cas.sleep(2000);
@@ -29,6 +30,7 @@ const cas = require("../../cas.js");
     await cas.screenshot(page);
     await cas.assertVisibility(page, "#password-strength-msg");
     await cas.assertVisibility(page, "#password-strength-notes");
+    await cas.assertAccessibility(page, "Password strength feedback");
 
     await typePassword(page, "EaP8R&iX$eK4nb8eAI", "EaP8R&iX$eK4nb8eAI");
     await cas.sleep(2000);

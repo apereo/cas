@@ -13,6 +13,7 @@ async function verifyAccountSelection(browser) {
     await cas.assertVisibility(page, "#submit");
     await cas.assertInvisibility(page, "#cancel");
     await cas.assertVisibility(page, "#login");
+    await cas.assertAccessibility(page, "Surrogate account selection");
     await cas.assertCookie(page, false);
     await context.close();
 }

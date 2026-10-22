@@ -78,11 +78,10 @@ public class DynamoDbPropertySource extends EnumerablePropertySource<DynamoDbCli
     public void refresh() {
         val scan = ScanRequest.builder().tableName(TABLE_NAME).build();
         LOGGER.debug("Scanning table with request [{}]", scan);
-        val result = getSource().scan(scan);
+        val items = getSource().scanPaginator(scan).items();
         LOGGER.debug("Scanned table with result [{}]", scan);
         propertyNames.clear();
-        propertyNames.addAll(result
-            .items()
+        propertyNames.addAll(items
             .stream()
             .filter(entry -> entry.containsKey(DynamoDbColumnNames.VALUE.getColumnName())
                 && entry.containsKey(DynamoDbColumnNames.NAME.getColumnName()))
@@ -101,8 +100,7 @@ public class DynamoDbPropertySource extends EnumerablePropertySource<DynamoDbCli
     @Override
     public void removeAll() {
         val scan = ScanRequest.builder().tableName(TABLE_NAME).build();
-        val result = getSource().scan(scan);
-        result.items().forEach(item -> {
+        getSource().scanPaginator(scan).items().forEach(item -> {
             val key = Map.of(DynamoDbColumnNames.NAME.getColumnName(),
                 item.get(DynamoDbColumnNames.NAME.getColumnName()));
             getSource().deleteItem(DeleteItemRequest.builder().tableName(TABLE_NAME).key(key).build());

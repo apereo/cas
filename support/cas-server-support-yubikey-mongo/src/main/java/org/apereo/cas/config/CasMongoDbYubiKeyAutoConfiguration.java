@@ -39,7 +39,7 @@ public class CasMongoDbYubiKeyAutoConfiguration {
     }
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Bean
+    @Bean(defaultCandidate = false)
     public MongoTemplate mongoYubiKeyTemplate(
         @Qualifier(CasSSLContext.BEAN_NAME)
         final CasSSLContext casSslContext,

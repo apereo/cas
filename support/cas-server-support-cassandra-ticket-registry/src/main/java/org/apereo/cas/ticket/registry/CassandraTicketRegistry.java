@@ -344,30 +344,27 @@ public class CassandraTicketRegistry extends AbstractTicketRegistry implements D
                 LOGGER.trace("Creating Cassandra table with query [{}]", createTable);
                 cassandraSessionFactory.getCqlTemplate().execute(createTable);
 
-                cassandraSessionFactory.getCqlTemplate().execute("DROP INDEX IF EXISTS " + metadata.getProperties().getStorageName() + "_entries_index");
-                var createIndex = "CREATE INDEX " + metadata.getProperties().getStorageName() + "_entries_index ON "
-                    + properties.getKeyspace() + '.' + metadata.getProperties().getStorageName() + " (ENTRIES(attributes));";
-                LOGGER.trace("Creating Cassandra index with query [{}]", createIndex);
-                cassandraSessionFactory.getCqlTemplate().execute(createIndex);
-
-                cassandraSessionFactory.getCqlTemplate().execute("DROP INDEX IF EXISTS " + metadata.getProperties().getStorageName() + "_values_index");
-                createIndex = "CREATE INDEX " + metadata.getProperties().getStorageName() + "_values_index ON "
-                    + properties.getKeyspace() + '.' + metadata.getProperties().getStorageName() + " (VALUES(attributes));";
-                LOGGER.trace("Creating Cassandra index with query [{}]", createIndex);
-                cassandraSessionFactory.getCqlTemplate().execute(createIndex);
-
-                cassandraSessionFactory.getCqlTemplate().execute("DROP INDEX IF EXISTS " + metadata.getProperties().getStorageName() + "_keys_index");
-                createIndex = "CREATE INDEX " + metadata.getProperties().getStorageName() + "_keys_index ON "
-                    + properties.getKeyspace() + '.' + metadata.getProperties().getStorageName() + " (KEYS(attributes));";
-                LOGGER.trace("Creating Cassandra index with query [{}]", createIndex);
-                cassandraSessionFactory.getCqlTemplate().execute(createIndex);
-
-                cassandraSessionFactory.getCqlTemplate().execute("DROP INDEX IF EXISTS " + metadata.getProperties().getStorageName() + "_principal_index");
-                createIndex = "CREATE INDEX " + metadata.getProperties().getStorageName() + "_principal_index ON "
-                    + properties.getKeyspace() + '.' + metadata.getProperties().getStorageName() + " (principal);";
-                LOGGER.trace("Creating Cassandra index with query [{}]", createIndex);
-                cassandraSessionFactory.getCqlTemplate().execute(createIndex);
+                createIndexIfNecessary(metadata, "entries_index", "ENTRIES(attributes)");
+                createIndexIfNecessary(metadata, "values_index", "VALUES(attributes)");
+                createIndexIfNecessary(metadata, "keys_index", "KEYS(attributes)");
+                createIndexIfNecessary(metadata, "principal_index", "principal");
             });
+    }
+
+    /**
+     * Creates a secondary index on the ticket table unless it already exists. Existing indexes are left alone, so a CAS
+     * node that starts while other nodes are serving requests neither drops the indexes they query nor fails on an index
+     * another node has just created.
+     *
+     * @param metadata the ticket definition whose table is indexed
+     * @param suffix   the suffix of the index name
+     * @param target   the indexed column or collection
+     */
+    private void createIndexIfNecessary(final TicketDefinition metadata, final String suffix, final String target) {
+        val storageName = metadata.getProperties().getStorageName();
+        val createIndex = "CREATE INDEX IF NOT EXISTS %s_%s ON %s.%s (%s);".formatted(storageName, suffix, properties.getKeyspace(), storageName, target);
+        LOGGER.trace("Creating Cassandra index with query [{}]", createIndex);
+        cassandraSessionFactory.getCqlTemplate().execute(createIndex);
     }
 
     private Ticket addTicketToCassandra(final Ticket ticket, final boolean inserting) throws Exception {
