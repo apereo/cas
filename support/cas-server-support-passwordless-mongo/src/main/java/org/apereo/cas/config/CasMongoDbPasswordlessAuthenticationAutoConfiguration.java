@@ -49,7 +49,7 @@ public class CasMongoDbPasswordlessAuthenticationAutoConfiguration {
     static class MongoDbPasswordlessAuthenticationAccountsConfiguration {
 
         @ConditionalOnMissingBean(name = "mongoDbPasswordlessAuthenticationTemplate")
-        @Bean
+        @Bean(defaultCandidate = false)
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public MongoTemplate mongoDbPasswordlessAuthenticationTemplate(
             final CasConfigurationProperties casProperties,
@@ -83,7 +83,7 @@ public class CasMongoDbPasswordlessAuthenticationAutoConfiguration {
     static class MongoDbPasswordlessAuthenticationRepositoryConfiguration {
 
         @ConditionalOnMissingBean(name = "mongoDbPasswordlessAuthenticationTokensTemplate")
-        @Bean
+        @Bean(defaultCandidate = false)
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public MongoTemplate mongoDbPasswordlessAuthenticationTokensTemplate(
             final CasConfigurationProperties casProperties,

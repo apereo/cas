@@ -18,7 +18,7 @@
             <div id="accessstrategy-tab">
                 <p>You can verify whether a user is authorized to access a registered application with CAS.</p>
 
-                <form id="fmAccessStrategy" class="d-block">
+                <form id="fmAccessStrategy" class="d-block" onsubmit="return false;">
                     <section class="cas-field form-group my-3 mdc-input-group d-flex">
                         <div class="mdc-input-group-field mdc-input-group-field-append w-100">
                             <label for="accessService"
@@ -103,7 +103,7 @@
 
                     </section>
                     <div class="d-flex">
-                        <button type="button" name="accessStrategyButton" id="accessStrategyButton"
+                        <button type="submit" name="accessStrategyButton" id="accessStrategyButton"
                                 class="mdc-button mdc-button--raised">
                             <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-check-all" aria-hidden="true"></i>Verify</span>
                         </button>

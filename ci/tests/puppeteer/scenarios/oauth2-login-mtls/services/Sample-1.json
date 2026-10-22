@@ -9,6 +9,7 @@
     "@class" : "org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy"
   },
   "tokenEndpointAuthenticationMethod": "tls_client_auth",
+  "tlsClientCertificateBoundAccessTokens": true,
   "tlsClientAuthSubjectDn": "^CN=(\\w+)",
   "supportedGrantTypes": [ "java.util.HashSet", [ "authorization_code" ] ],
   "supportedResponseTypes": [ "java.util.HashSet", [ "code" ] ]

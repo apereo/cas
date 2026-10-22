@@ -62,6 +62,8 @@ class OAuth20AccessTokenCompactorTests extends AbstractOAuth20Tests {
         assertEquals(List.of("SAML2Client"), result.getAuthentication().getAttributes().get(CompactTicketAuthentication.CLIENT_NAME_ATTRIBUTE));
         assertEquals(List.of("NzbLsXh8uDCcd-6MNwXF4W_7noWXFZAfHkxZsRGC9Xs"),
             result.getAuthentication().getAttributes().get(OAuth20Constants.DPOP_CONFIRMATION));
+        assertEquals(List.of("bwcK0esc3ACC3DB2Y5_lESsXE8o9ltc05O89jdN-dg2"),
+            result.getAuthentication().getAttributes().get(OAuth20Constants.X509_CERTIFICATE_DIGEST));
         assertEquals(token.getCreationTime().toEpochSecond(), result.getCreationTime().toEpochSecond());
         assertEquals(token.getExpirationPolicy().toMaximumExpirationTime(token).toEpochSecond(),
             result.getExpirationPolicy().toMaximumExpirationTime(result).toEpochSecond());
@@ -71,7 +73,8 @@ class OAuth20AccessTokenCompactorTests extends AbstractOAuth20Tests {
         val service = RegisteredServiceTestUtils.getService("https://code.oauth.org");
         val authentication = RegisteredServiceTestUtils.getAuthentication(RegisteredServiceTestUtils.getPrincipal("casuser"),
             new HashMap<>(Map.of(CompactTicketAuthentication.CLIENT_NAME_ATTRIBUTE, List.of("SAML2Client"),
-                OAuth20Constants.DPOP_CONFIRMATION, List.of("NzbLsXh8uDCcd-6MNwXF4W_7noWXFZAfHkxZsRGC9Xs"))));
+                OAuth20Constants.DPOP_CONFIRMATION, List.of("NzbLsXh8uDCcd-6MNwXF4W_7noWXFZAfHkxZsRGC9Xs"),
+                OAuth20Constants.X509_CERTIFICATE_DIGEST, List.of("bwcK0esc3ACC3DB2Y5_lESsXE8o9ltc05O89jdN-dg2"))));
         return Stream.of(
             Arguments.of(service, authentication,
                 Set.of("Scope1", "Scope2"), "clientid-code",

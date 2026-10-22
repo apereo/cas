@@ -21,7 +21,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  * @since 6.4.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.WebAuthn)
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.WebAuthn, module = "rest")
 @AutoConfiguration
 public class CasRestfulWebAuthnAutoConfiguration {
 

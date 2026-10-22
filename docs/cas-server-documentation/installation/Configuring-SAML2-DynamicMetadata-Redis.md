@@ -16,7 +16,7 @@ Support is enabled by including the following module in the overlay:
 
 {% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-saml-idp-metadata-redis" %}
 
-SAML service definitions must then be designed as follows to allow CAS to fetch metadata documents from MongoDb instances:
+SAML service definitions must then be designed as follows to allow CAS to fetch metadata documents from Redis instances:
 
 ```json
 {

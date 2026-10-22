@@ -1,7 +1,8 @@
 package org.apereo.cas.nativex;
 
 import module java.base;
-import org.apereo.cas.ticket.registry.MapAttributeValueExtractor;
+import org.apereo.cas.ticket.registry.HazelcastTicketDocumentRemovalProcessor;
+import org.apereo.cas.ticket.registry.HazelcastTicketDocumentSerializer;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -21,6 +22,7 @@ class HazelcastTicketRegistryRuntimeHintsTests {
     void verifyHints() {
         val hints = new RuntimeHints();
         new HazelcastTicketRegistryRuntimeHints().registerHints(hints, getClass().getClassLoader());
-        assertTrue(RuntimeHintsPredicates.reflection().onType(MapAttributeValueExtractor.class).test(hints));
+        assertTrue(RuntimeHintsPredicates.reflection().onType(HazelcastTicketDocumentSerializer.class).test(hints));
+        assertTrue(RuntimeHintsPredicates.reflection().onType(HazelcastTicketDocumentRemovalProcessor.class).test(hints));
     }
 }

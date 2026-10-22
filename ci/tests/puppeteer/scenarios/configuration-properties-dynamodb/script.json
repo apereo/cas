@@ -1,0 +1,24 @@
+{
+  "dependencies": "configuration-cloud-dynamodb,reports",
+  "conditions": {
+    "docker": "true"
+  },
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
+    "--cas.service-registry.core.init-from-json=true",
+    "--cas.logout.follow-service-redirects=false",
+
+    "--management.endpoint.env.show-values=ALWAYS",
+    "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
+    "--management.endpoints.web.exposure.include=*",
+    "--management.endpoints.access.default=UNRESTRICTED",
+
+    "--cas.spring.cloud.dynamo-db.endpoint=http://localhost:8000",
+    "--cas.spring.cloud.dynamo-db.region=us-east-1",
+    "--cas.spring.cloud.dynamo-db.credential-access-key=AKIAIPPIGGUNIO74C63Z",
+    "--cas.spring.cloud.dynamo-db.credential-secret-key=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"
+  ],
+  "initScript": "${PWD}/ci/tests/dynamodb/run-dynamodb-server.sh,${PWD}/ci/tests/httpbin/run-httpbin-server.sh"
+}

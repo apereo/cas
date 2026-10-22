@@ -4,7 +4,6 @@ import module java.base;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.DisposableBean;
 import org.springframework.cloud.bootstrap.config.PropertySourceLocator;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
@@ -20,8 +19,8 @@ import software.amazon.awssdk.services.ssm.SsmClient;
  */
 @RequiredArgsConstructor
 @Order(Ordered.HIGHEST_PRECEDENCE)
-public class AmazonSimpleSystemsManagementPropertySourceLocator implements PropertySourceLocator, DisposableBean {
-    private final SsmClient ssmClient;
+public class AmazonSimpleSystemsManagementPropertySourceLocator implements PropertySourceLocator {
+    private final Supplier<SsmClient> ssmClientFactory;
 
     @Override
     public PropertySource<?> locate(final Environment environment) {
@@ -29,11 +28,6 @@ public class AmazonSimpleSystemsManagementPropertySourceLocator implements Prope
         val profiles = new ArrayList<String>();
         profiles.add(StringUtils.EMPTY);
         profiles.addAll(List.of(environment.getActiveProfiles()));
-        return new AmazonSimpleSystemsManagementPropertySource(sourceName, ssmClient, profiles);
-    }
-
-    @Override
-    public void destroy() {
-        ssmClient.close();
+        return new AmazonSimpleSystemsManagementPropertySource(sourceName, ssmClientFactory, profiles);
     }
 }

@@ -13,6 +13,7 @@ const cas = require("../../cas.js");
     await cas.attributeValue(page, "#username", "autocapitalize", "none");
     await cas.attributeValue(page, "#username", "spellcheck", "false");
     await cas.attributeValue(page, "#username", "autocomplete", "username");
+    await cas.assertAccessibility(page, "Passwordless user id");
 
     await cas.type(page,"#username", "casuser");
     await cas.pressEnter(page);
@@ -22,6 +23,7 @@ const cas = require("../../cas.js");
     await cas.assertVisibility(page, "#token");
     await cas.attributeValue(page, "#token", "autocomplete", "one-time-code");
     await cas.attributeValue(page, "#token", "type", "text");
+    await cas.assertAccessibility(page, "Passwordless token");
 
     const code = await cas.extractFromEmail(browser);
 

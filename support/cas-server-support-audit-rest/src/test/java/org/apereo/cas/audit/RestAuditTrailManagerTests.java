@@ -87,6 +87,25 @@ class RestAuditTrailManagerTests {
         }
     }
 
+    @Test
+    void verifyRecordsReadBackAsPosted() {
+        val audit = new AuditActionContext("casuser", "resource", "action",
+            "CAS", LocalDateTime.now(Clock.systemUTC()),
+            new ClientInfo("123.456.789.000", "123.456.789.000", "GoogleChrome", "London")
+                .setHeaders(Map.of("H1", "V1")));
+        val serializer = new AuditActionContextJsonSerializer(applicationContext);
+        val posted = serializer.toString(audit);
+        val manager = new RestAuditTrailManager(serializer, new AuditRestProperties());
+        val records = manager.readAuditRecords("[%s]".formatted(posted));
+        assertEquals(1, records.size());
+        assertEquals("casuser", records.getFirst().getPrincipal());
+        assertEquals("V1", records.getFirst().getClientInfo().getHeaders().get("H1"));
+        val wrapped = manager.readAuditRecords("[\"java.util.ArrayList\",[%s]]".formatted(posted));
+        assertEquals(1, wrapped.size());
+        val plain = manager.readAuditRecords(MAPPER.writeValueAsString(List.of(audit)));
+        assertEquals("resource", plain.getFirst().getResourceOperatedUpon());
+    }
+
     private AuditTrailManager managerFor(final MockWebServer webServer) {
         val properties = new AuditRestProperties();
         properties.setAsynchronous(false);

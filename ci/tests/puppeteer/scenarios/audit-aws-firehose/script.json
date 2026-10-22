@@ -1,0 +1,18 @@
+{
+  "dependencies": "audit-aws-firehose",
+  "conditions": {
+    "docker": "true"
+  },
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
+    "--cas.audit.amazon-firehose.endpoint=http://localhost:4566",
+    "--cas.audit.amazon-firehose.region=us-east-1",
+    "--cas.audit.amazon-firehose.credential-access-key=test",
+    "--cas.audit.amazon-firehose.credential-secret-key=test",
+    "--cas.audit.amazon-firehose.delivery-stream-name=security-lake-stream",
+    "--cas.audit.amazon-firehose.asynchronous=false"
+  ],
+  "initScript": "${PWD}/ci/tests/aws/run-aws-server.sh"
+}
