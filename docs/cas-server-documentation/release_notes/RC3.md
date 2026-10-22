@@ -777,7 +777,9 @@ The documentation now explains how to let browser-based MCP clients reach the se
   smaller format: entries use Hazelcast compact serialization, so looking up tickets by user, by service or by attribute reads
   only those fields instead of deserializing every ticket, and authentication attributes are kept only with single sign-on
   sessions rather than with every ticket. Nodes running this version cannot read tickets stored by earlier versions, so
-  upgrade the whole cluster at once; existing tickets and single sign-on sessions are not carried over. Since tickets no longer
+  upgrade the whole cluster at once; existing tickets and single sign-on sessions are not carried over. With encryption turned on,
+  the application a ticket was issued for is now stored as a digest too, like the ticket id, user and attributes, instead of
+  as its plain URL. Since tickets no longer
   go through Hazelcast's Java serialization, `cas.ticket.registry.hazelcast.core.enable-compression`{: .cas-setting} no longer
   applies to them.
 - {: .changed data-area="tickets"} When Hazelcast expires a single sign-on session of the
@@ -791,6 +793,11 @@ The documentation now explains how to let browser-based MCP clients reach the se
   (`cas.ticket.registry.hazelcast.cluster.core.map-merge-policy`{: .cas-setting} defaults to `LATEST_UPDATE`), so changes made
   on either side, such as applications added to a session, are kept. Choosing a merge policy that compares update, access or
   expiration times or hits no longer stops the Hazelcast member from starting.
+- {: .changed} A CAS Hazelcast member with TCP/IP and multicast turned off no longer joins other Hazelcast members on the network
+  through Hazelcast's auto-detection, which fell back to multicast; it runs on its own, and other members can join it only
+  through the TCP/IP, multicast or discovery settings CAS exposes. Removing failed login records of
+  [authentication throttling with Hazelcast](../authentication/Configuring-Authentication-Throttling-Hazelcast.html) no longer
+  fails when some of the records are kept on another member of the cluster.
 - {: .changed data-area="tickets"} The `cluster.core.replicated` and `cluster.core.async-fillup` Hazelcast settings, such as
   `cas.ticket.registry.hazelcast.cluster.core.replicated`, are removed from every Hazelcast module: no module
   ever used a Hazelcast replicated map, so turning them on only left the actual map, such as that of the

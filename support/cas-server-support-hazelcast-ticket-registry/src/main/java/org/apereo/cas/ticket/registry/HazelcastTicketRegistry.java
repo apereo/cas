@@ -88,7 +88,7 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry {
                 .builder()
                 .principal(digestPrincipal(getPrincipalIdFrom(ticket)))
                 .ticket(SerializationUtils.serialize(encTicket))
-                .service(ticket instanceof final ServiceAwareTicket sat && Objects.nonNull(sat.getService()) ? sat.getService().getId() : null)
+                .service(ticket instanceof final ServiceAwareTicket sat && Objects.nonNull(sat.getService()) ? digestIdentifier(sat.getService().getId()) : null)
                 .attributes(TicketGrantingTicket.PREFIX.equals(metadata.getPrefix()) ? collectAttributeEntries(ticket) : ArrayUtils.EMPTY_STRING_ARRAY)
                 .build();
             ticketMap.set(encTicket.getId(), holder, ttl, TimeUnit.SECONDS, maxIdle, TimeUnit.SECONDS);
@@ -179,7 +179,7 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry {
     @Override
     public long countTicketsFor(final Service service) {
         return getTicketMapInstances(ServiceAwareTicket.class)
-            .mapToLong(ticketMap -> ticketMap.aggregate(Aggregators.count(), Predicates.equal("service", service.getId())))
+            .mapToLong(ticketMap -> ticketMap.aggregate(Aggregators.count(), Predicates.equal("service", digestIdentifier(service.getId()))))
             .sum();
     }
 

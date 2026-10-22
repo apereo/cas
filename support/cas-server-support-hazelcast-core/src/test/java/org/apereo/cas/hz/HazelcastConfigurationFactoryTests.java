@@ -36,6 +36,16 @@ class HazelcastConfigurationFactoryTests {
     }
 
     @Test
+    void verifyMembersJoinOnlyAsConfigured() {
+        val hz = new BaseHazelcastProperties();
+        hz.getCluster().getNetwork().setTcpipEnabled(false);
+        val join = HazelcastConfigurationFactory.build(hz).getNetworkConfig().getJoin();
+        assertFalse(join.isAutoDetectionEnabled());
+        assertFalse(join.getMulticastConfig().isEnabled());
+        assertFalse(join.getTcpIpConfig().isEnabled());
+    }
+
+    @Test
     void verifyMapDefaults() {
         val mapConfig = HazelcastConfigurationFactory.buildMapConfig(new BaseHazelcastProperties(), "mapName", 10);
         assertEquals(EvictionPolicy.NONE, mapConfig.getEvictionConfig().getEvictionPolicy());

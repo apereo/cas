@@ -226,6 +226,7 @@ public class HazelcastConfigurationFactory {
         LOGGER.trace("Disabling multicast and TCP/IP configuration for discovery");
         joinConfig.getMulticastConfig().setEnabled(false);
         joinConfig.getTcpIpConfig().setEnabled(false);
+        joinConfig.getAutoDetectionConfig().setEnabled(false);
 
         val discoveryConfig = new DiscoveryConfig();
         val strategyConfig = locateDiscoveryStrategyConfig(cluster, joinConfig, config, networkConfig);
@@ -273,9 +274,11 @@ public class HazelcastConfigurationFactory {
             LOGGER.debug("Skipped Hazelcast Multicast configuration since feature is disabled");
         }
 
-        return new JoinConfig()
+        val joinConfig = new JoinConfig()
             .setMulticastConfig(multicastConfig)
             .setTcpIpConfig(tcpIpConfig);
+        joinConfig.getAutoDetectionConfig().setEnabled(false);
+        return joinConfig;
     }
 
     private static Config finalizeConfig(final Config config, final BaseHazelcastProperties hz) {

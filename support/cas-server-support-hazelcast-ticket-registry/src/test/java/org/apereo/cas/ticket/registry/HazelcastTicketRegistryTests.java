@@ -270,14 +270,18 @@ class HazelcastTicketRegistryTests {
                 .getNewTicketId(TicketGrantingTicket.PREFIX), CoreAuthenticationTestUtils.getAuthentication(UUID.randomUUID().toString(),
                 Map.of("sid", List.of(UUID.randomUUID().toString()))), NeverExpiresExpirationPolicy.INSTANCE);
             val serviceTicket = ticketGrantingTicket.grantServiceTicket(ServiceTicket.PREFIX + '-' + UUID.randomUUID(),
-                RegisteredServiceTestUtils.getService(), NeverExpiresExpirationPolicy.INSTANCE, false, serviceTicketSessionTrackingPolicy);
+                RegisteredServiceTestUtils.getService("https://app.example.org/" + UUID.randomUUID()), NeverExpiresExpirationPolicy.INSTANCE, false, serviceTicketSessionTrackingPolicy);
             newTicketRegistry.addTicket(ticketGrantingTicket);
             newTicketRegistry.addTicket(serviceTicket);
 
             val document = getTicketEntry(ticketGrantingTicket).getValue();
             assertTrue(((SerializationServiceSupport) hazelcastInstance).getSerializationService().toData(document).isCompact());
             assertNotEquals(0, document.getAttributes().length);
-            assertEquals(0, getTicketEntry(serviceTicket).getValue().getAttributes().length);
+            val serviceTicketDocument = getTicketEntry(serviceTicket).getValue();
+            assertEquals(0, serviceTicketDocument.getAttributes().length);
+            assertEquals(newTicketRegistry.digestIdentifier(serviceTicket.getService().getId()), serviceTicketDocument.getService());
+            assertNotEquals(serviceTicket.getService().getId(), serviceTicketDocument.getService());
+            assertEquals(1, newTicketRegistry.countTicketsFor(serviceTicket.getService()));
             assertEquals(serviceTicket.getId(), newTicketRegistry.getTicket(serviceTicket.getId()).getId());
             assertEquals(2, newTicketRegistry.deleteTicket(ticketGrantingTicket));
         }
