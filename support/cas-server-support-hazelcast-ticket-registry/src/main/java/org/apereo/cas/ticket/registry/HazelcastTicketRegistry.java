@@ -2,8 +2,11 @@ package org.apereo.cas.ticket.registry;
 
 import module java.base;
 import org.apereo.cas.authentication.principal.Service;
-import org.apereo.cas.configuration.model.support.hazelcast.HazelcastTicketRegistryProperties;
 import org.apereo.cas.monitor.Monitorable;
+import org.apereo.cas.support.events.logout.CasRequestSingleLogoutEvent;
+import org.apereo.cas.support.events.ticket.CasTicketGrantingTicketDestroyedEvent;
+import org.apereo.cas.ticket.AuthenticationAwareTicket;
+import org.apereo.cas.ticket.EncodedTicket;
 import org.apereo.cas.ticket.ServiceAwareTicket;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.Ticket;
@@ -11,14 +14,19 @@ import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketDefinition;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.serialization.TicketSerializationManager;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.util.serialization.SerializationUtils;
+import com.hazelcast.aggregation.Aggregators;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.map.IMap;
 import com.hazelcast.query.Predicates;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -37,19 +45,17 @@ import org.springframework.context.ConfigurableApplicationContext;
 @Slf4j
 @Monitorable
 public class HazelcastTicketRegistry extends AbstractTicketRegistry {
-    private final HazelcastInstance hazelcastInstance;
+    private static final int STREAM_BATCH_SIZE = 500;
 
-    private final HazelcastTicketRegistryProperties properties;
+    private final HazelcastInstance hazelcastInstance;
 
     public HazelcastTicketRegistry(final CipherExecutor cipherExecutor,
                                    final TicketSerializationManager ticketSerializationManager,
                                    final TicketCatalog ticketCatalog,
                                    final ConfigurableApplicationContext applicationContext,
-                                   final HazelcastInstance hazelcastInstance,
-                                   final HazelcastTicketRegistryProperties properties) {
+                                   final HazelcastInstance hazelcastInstance) {
         super(cipherExecutor, ticketSerializationManager, ticketCatalog, applicationContext);
         this.hazelcastInstance = hazelcastInstance;
-        this.properties = properties;
     }
 
     @Override
@@ -75,19 +81,15 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry {
         val encTicket = encodeTicket(ticket);
 
         val metadata = ticketCatalog.find(ticket);
-        val ticketMap = getTicketMapInstanceByMetadata(metadata);
+        val ticketMap = metadata != null ? getTicketMapInstanceByMetadata(metadata) : null;
 
         if (ticketMap != null) {
             val holder = HazelcastTicketDocument
                 .builder()
-                .id(encTicket.getId())
-                .type(metadata.getImplementationClass().getName())
-                .principal(digestIdentifier(getPrincipalIdFrom(ticket)))
-                .timeToLive(ttl)
-                .ticket(encTicket)
-                .prefix(metadata.getPrefix())
+                .principal(digestPrincipal(getPrincipalIdFrom(ticket)))
+                .ticket(SerializationUtils.serialize(encTicket))
                 .service(ticket instanceof final ServiceAwareTicket sat && Objects.nonNull(sat.getService()) ? sat.getService().getId() : null)
-                .attributes(collectAndDigestTicketAttributes(ticket))
+                .attributes(TicketGrantingTicket.PREFIX.equals(metadata.getPrefix()) ? collectAttributeEntries(ticket) : ArrayUtils.EMPTY_STRING_ARRAY)
                 .build();
             ticketMap.set(encTicket.getId(), holder, ttl, TimeUnit.SECONDS, maxIdle, TimeUnit.SECONDS);
             LOGGER.debug("Added ticket [{}] with ttl [{}s]", encTicket.getId(), ttl);
@@ -108,9 +110,9 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry {
             val map = getTicketMapInstanceByMetadata(metadata);
             if (map != null) {
                 val document = map.get(encTicketId);
-                if (document != null && document.getTicket() != null) {
-                    val result = decodeTicket(document.getTicket());
-                    if (predicate != null && predicate.test(result)) {
+                if (document != null) {
+                    val result = toTicket(document);
+                    if (result != null && predicate != null && predicate.test(result)) {
                         return result;
                     }
                 }
@@ -123,17 +125,24 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry {
         return null;
     }
 
+    /**
+     * Deletes the ticket. An encoded ticket is found in the map of its prefix under its own id, which is
+     * already digested, such as one read back after encryption was turned off.
+     *
+     * @param ticketToDelete the ticket to delete
+     * @return the number of tickets deleted
+     */
     @Override
     public long deleteSingleTicket(final Ticket ticketToDelete) {
+        if (ticketToDelete instanceof final EncodedTicket encodedTicket) {
+            return removeTicketDocument(ticketCatalog.find(encodedTicket.getPrefix()), encodedTicket.getId());
+        }
         return deleteSingleTicket(ticketToDelete.getId());
     }
 
     @Override
     public long deleteSingleTicket(final String ticketId) {
-        val encTicketId = digestIdentifier(ticketId);
-        val metadata = ticketCatalog.find(ticketId);
-        val map = getTicketMapInstanceByMetadata(metadata);
-        return map != null && map.remove(encTicketId) != null ? 1 : 0;
+        return removeTicketDocument(ticketCatalog.find(ticketId), digestIdentifier(ticketId));
     }
 
     @Override
@@ -155,88 +164,77 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry {
         return stream().collect(Collectors.toSet());
     }
 
+    /**
+     * Counts the sessions of the principal through the principal index, matching the principal id regardless of case.
+     *
+     * @param principalId the principal id
+     * @return the number of sessions
+     */
     @Override
     public long countSessionsFor(final String principalId) {
-        if (properties.getCore().isEnableJet()) {
-            val md = ticketCatalog.find(TicketGrantingTicket.PREFIX);
-            val sql = String.format("SELECT COUNT(*) FROM %s WHERE principal=?", md.getProperties().getStorageName());
-            LOGGER.debug("Executing SQL query [{}]", sql);
-            try (val results = hazelcastInstance.getSql().execute(sql, digestIdentifier(principalId))) {
-                return results.iterator().next().getObject(0);
-            }
-        }
-        return super.countSessionsFor(principalId);
+        val ticketMap = getTicketMapInstanceByPrefix(TicketGrantingTicket.PREFIX);
+        return ticketMap != null ? ticketMap.aggregate(Aggregators.count(), Predicates.equal("principal", digestPrincipal(principalId))) : 0;
     }
 
     @Override
     public long countTicketsFor(final Service service) {
-        if (properties.getCore().isEnableJet()) {
-            return ticketCatalog.findAll()
-                .stream()
-                .mapToLong(ticketDefinition -> {
-                    val sql = String.format("SELECT COUNT(*) FROM %s WHERE service=?",
-                        ticketDefinition.getProperties().getStorageName());
-                    LOGGER.debug("Executing SQL query [{}]", sql);
-                    try (val results = hazelcastInstance.getSql().execute(sql, service.getId())) {
-                        return results.iterator().next().getObject(0);
-                    }
-                })
-                .sum();
-        }
-        return super.countTicketsFor(service);
+        return getTicketMapInstances(ServiceAwareTicket.class)
+            .mapToLong(ticketMap -> ticketMap.aggregate(Aggregators.count(), Predicates.equal("service", service.getId())))
+            .sum();
     }
 
     @Override
     public long sessionCount() {
-        if (properties.getCore().isEnableJet()) {
-            val md = ticketCatalog.find(TicketGrantingTicket.PREFIX);
-            val sql = String.format("SELECT COUNT(*) FROM %s", md.getProperties().getStorageName());
-            LOGGER.debug("Executing SQL query [{}]", sql);
-            try (val results = hazelcastInstance.getSql().execute(sql)) {
-                return results.iterator().next().getObject(0);
-            }
-        }
-        return super.sessionCount();
+        val ticketMap = getTicketMapInstanceByPrefix(TicketGrantingTicket.PREFIX);
+        return ticketMap != null ? ticketMap.size() : 0;
     }
 
     @Override
     public long serviceTicketCount() {
-        if (properties.getCore().isEnableJet()) {
-            val md = ticketCatalog.find(ServiceTicket.PREFIX);
-            val sql = String.format("SELECT COUNT(*) FROM %s", md.getProperties().getStorageName());
-            LOGGER.debug("Executing SQL query [{}]", sql);
-            try (val results = hazelcastInstance.getSql().execute(sql)) {
-                return results.iterator().next().getObject(0);
-            }
-        }
-        return super.serviceTicketCount();
+        val ticketMap = getTicketMapInstanceByPrefix(ServiceTicket.PREFIX);
+        return ticketMap != null ? ticketMap.size() : 0;
     }
 
+    /**
+     * Removes every ticket of the principal, matching the principal id regardless of case, in one indexed pass
+     * over each map of authentication-aware tickets. The count is the number of tickets actually removed.
+     *
+     * @param principalId the principal id
+     * @return the number of tickets removed
+     */
     @Override
     public long deleteTicketsFor(final String principalId) {
-        if (properties.getCore().isEnableJet()) {
-            return ticketCatalog.findAll()
-                .stream()
-                .mapToLong(ticketDefinition -> {
-                    val storageName = ticketDefinition.getProperties().getStorageName();
-                    val digestedPrincipal = digestIdentifier(principalId);
-                    val countSql = String.format("SELECT COUNT(*) FROM %s WHERE principal=?", storageName);
-                    LOGGER.debug("Executing SQL count query [{}]", countSql);
-                    try (val countResult = hazelcastInstance.getSql().execute(countSql, digestedPrincipal)) {
-                        val toBeDeleted = countResult.iterator().next().<Long>getObject(0);
-                        if (toBeDeleted > 0) {
-                            val deleteSql = String.format("DELETE FROM %s WHERE principal=?", storageName);
-                            LOGGER.debug("Executing SQL delete query [{}]", deleteSql);
-                            try (val _ = hazelcastInstance.getSql().execute(deleteSql, digestedPrincipal)) {
-                                LOGGER.debug("Total tickets deleted are [{}]", toBeDeleted);
-                            }
-                        }
-                        return toBeDeleted;
-                    }
-                })
-                .sum();
+        val predicate = Predicates.<String, HazelcastTicketDocument>equal("principal", digestPrincipal(principalId));
+        return getTicketMapInstances(AuthenticationAwareTicket.class)
+            .mapToLong(ticketMap -> countRemovals(ticketMap.executeOnEntries(new HazelcastTicketDocumentRemovalProcessor(), predicate)))
+            .sum();
+    }
+
+    /**
+     * Removes the service and proxy tickets of the ticket-granting ticket with one call per ticket map,
+     * instead of one removal per ticket that also returns the removed document.
+     *
+     * @param ticket the ticket-granting ticket
+     * @return the number of tickets removed
+     */
+    @Override
+    protected int deleteServiceTickets(final TicketGrantingTicket ticket) {
+        val services = ticket.getServices();
+        if (services == null || services.isEmpty()) {
+            return 0;
         }
-        return super.deleteTicketsFor(principalId);
+        val keysByDefinition = services.keySet()
+            .stream()
+            .filter(ticketId -> ticketCatalog.find(ticketId) != null)
+            .collect(Collectors.groupingBy(ticketCatalog::find, Collectors.mapping(this::digestIdentifier, Collectors.toSet())));
+        val count = keysByDefinition.entrySet()
+            .stream()
+            .mapToLong(entry -> {
+                val ticketMap = getTicketMapInstanceByMetadata(entry.getKey());
+                return ticketMap != null ? countRemovals(ticketMap.executeOnKeys(entry.getValue(), new HazelcastTicketDocumentRemovalProcessor())) : 0;
+            })
+            .sum();
+        return Math.toIntExact(count);
     }
 
     /**
@@ -248,53 +246,42 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry {
      */
     @Override
     public Stream<? extends Ticket> getSessionsWithAttributes(final Map<String, List<Object>> queryAttributes) {
-        if (properties.getCore().isEnableJet()) {
-            if (queryAttributes.isEmpty()) {
-                return Stream.empty();
-            }
-            val md = ticketCatalog.find(TicketGrantingTicket.PREFIX);
-            val ticketMapInstance = getTicketMapInstance(md.getProperties().getStorageName());
-            val predicates = queryAttributes.entrySet()
-                .stream()
-                .map(entry -> Predicates.<String, HazelcastTicketDocument>in(
-                    "attributes[%s]".formatted(digestIdentifier(entry.getKey())),
-                    entry.getValue().stream().map(Object::toString).map(this::digestIdentifier).toArray(String[]::new)))
-                .toList();
-            LOGGER.debug("Querying sessions by attributes [{}]", queryAttributes.keySet());
-            val results = ticketMapInstance.values(Predicates.or(predicates.toArray(com.hazelcast.query.Predicate[]::new)));
-            return results.stream()
-                .map(row -> decodeTicket(row.getTicket()))
-                .filter(Objects::nonNull)
-                .filter(ticket -> !ticket.isExpired());
+        val ticketMap = getTicketMapInstanceByPrefix(TicketGrantingTicket.PREFIX);
+        if (queryAttributes.isEmpty() || ticketMap == null) {
+            return Stream.empty();
         }
-        return super.getSessionsWithAttributes(queryAttributes);
+        val entries = queryAttributes.entrySet()
+            .stream()
+            .flatMap(entry -> entry.getValue()
+                .stream()
+                .map(value -> HazelcastTicketDocument.toAttributeEntry(digestIdentifier(entry.getKey()), digestIdentifier(value.toString()))))
+            .toArray(String[]::new);
+        if (entries.length == 0) {
+            return Stream.empty();
+        }
+        LOGGER.debug("Querying sessions by attributes [{}]", queryAttributes.keySet());
+        return ticketMap.values(Predicates.in("attributes[any]", entries))
+            .stream()
+            .map(this::toTicket)
+            .filter(Objects::nonNull)
+            .filter(ticket -> !ticket.isExpired());
     }
 
+    /**
+     * Finds the sessions of the principal through the principal index, matching the principal id regardless of case.
+     *
+     * @param principalId the principal id
+     * @return the sessions
+     */
     @Override
     public Stream<? extends Ticket> getSessionsFor(final String principalId) {
-        if (properties.getCore().isEnableJet()) {
-            val md = ticketCatalog.find(TicketGrantingTicket.PREFIX);
-            val sql = String.format("SELECT * FROM %s WHERE principal=?", md.getProperties().getStorageName());
-            LOGGER.debug("Executing SQL query [{}]", sql);
-            try (val results = hazelcastInstance.getSql().execute(sql, digestIdentifier(principalId))) {
-                return StreamSupport.stream(results.spliterator(), false)
-                    .map(row -> {
-                        val ticket = (Ticket) row.getObject("ticket");
-                        return decodeTicket(ticket);
-                    })
-                    .filter(ticket -> !ticket.isExpired())
-                    .toList()
-                    .stream();
-            }
+        val ticketMap = getTicketMapInstanceByPrefix(TicketGrantingTicket.PREFIX);
+        if (ticketMap == null) {
+            return Stream.empty();
         }
-        val ticketDefinitions = ticketCatalog.findTicketDefinition(TicketGrantingTicket.class);
-        val digestedPrincipal = digestIdentifier(principalId);
-        return ticketDefinitions
+        return ticketMap.values(Predicates.equal("principal", digestPrincipal(principalId)))
             .stream()
-            .map(this::getTicketMapInstanceByMetadata)
-            .filter(Objects::nonNull)
-            .flatMap(ticketMap -> ticketMap.values(Predicates.equal("principal", digestedPrincipal)).stream())
-            .map(doc -> decodeTicket(doc.getTicket()))
+            .map(this::toTicket)
             .filter(Objects::nonNull)
             .filter(ticket -> !ticket.isExpired());
     }
@@ -316,11 +303,11 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry {
             .filter(Objects::nonNull)
             .toList();
         val documents = criteria.isInfiniteCount()
-            ? ticketMaps.stream().flatMap(ticketMap -> ticketMap.values().stream()).skip(Math.max(criteria.getFrom(), 0L))
+            ? ticketMaps.stream().flatMap(HazelcastTicketRegistry::streamTicketDocuments).skip(Math.max(criteria.getFrom(), 0L))
             : pageTicketDocuments(ticketMaps, Math.max(criteria.getFrom(), 0L), Math.toIntExact(Math.min(criteria.getCount(), Integer.MAX_VALUE)));
         return documents
-            .map(HazelcastTicketDocument::getTicket)
-            .map(this::decodeTicket);
+            .map(this::toTicket)
+            .filter(Objects::nonNull);
     }
 
     /**
@@ -384,6 +371,96 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry {
             }
         }
         return documents.stream();
+    }
+
+    /**
+     * Digest of the principal id in lower case, so principals are stored and looked up regardless of case.
+     *
+     * @param principalId the principal id
+     * @return the digested principal id
+     */
+    private String digestPrincipal(final String principalId) {
+        return digestIdentifier(StringUtils.lowerCase(principalId, Locale.ENGLISH));
+    }
+
+    /**
+     * Streams the documents of a ticket map in batches: the keys are read first and the documents are fetched
+     * a batch at a time as the stream is consumed, so the whole map is never held in memory at once.
+     * Documents removed in the meantime are skipped.
+     *
+     * @param ticketMap the ticket map
+     * @return the ticket documents
+     */
+    private static Stream<HazelcastTicketDocument> streamTicketDocuments(final IMap<String, HazelcastTicketDocument> ticketMap) {
+        val keys = List.copyOf(ticketMap.keySet());
+        val batches = (keys.size() + STREAM_BATCH_SIZE - 1) / STREAM_BATCH_SIZE;
+        return IntStream.range(0, batches)
+            .<List<String>>mapToObj(batch -> keys.subList(batch * STREAM_BATCH_SIZE, Math.min(keys.size(), (batch + 1) * STREAM_BATCH_SIZE)))
+            .flatMap(batch -> ticketMap.getAll(new HashSet<>(batch)).values().stream());
+    }
+
+    private static long countRemovals(final Map<String, Boolean> results) {
+        return results.values().stream().filter(Boolean.TRUE::equals).count();
+    }
+
+    /**
+     * Logs out a single sign-on session that Hazelcast expired, as the ticket registry cleaner does for registries
+     * that cannot expire tickets themselves: single logout is requested, the tickets the session still holds are
+     * removed, and the session is reported as destroyed.
+     *
+     * @param document the document of the expired ticket
+     */
+    public void handleExpiredTicket(final HazelcastTicketDocument document) {
+        if (toTicket(document) instanceof final TicketGrantingTicket ticketGrantingTicket) {
+            val clientInfo = ClientInfoHolder.getClientInfo();
+            applicationContext.publishEvent(new CasRequestSingleLogoutEvent(this, ticketGrantingTicket, clientInfo));
+            FunctionUtils.doAndHandle(_ -> deleteTicket(ticketGrantingTicket));
+            applicationContext.publishEvent(new CasTicketGrantingTicketDestroyedEvent(this, ticketGrantingTicket, clientInfo));
+        }
+    }
+
+    private @Nullable Ticket toTicket(final HazelcastTicketDocument document) {
+        return decodeTicket(SerializationUtils.deserialize(document.getTicket(), Ticket.class));
+    }
+
+    /**
+     * Attribute entries of the ticket as kept in the document, one per attribute value; names and values are
+     * digested when encryption is on, the same way query attributes are.
+     *
+     * @param ticket the ticket
+     * @return the attribute entries
+     */
+    private String[] collectAttributeEntries(final Ticket ticket) {
+        val attributes = (Map<String, Object>) collectAndDigestTicketAttributes(ticket);
+        return attributes.entrySet()
+            .stream()
+            .flatMap(entry -> CollectionUtils.toCollection(entry.getValue())
+                .stream()
+                .filter(Objects::nonNull)
+                .map(value -> HazelcastTicketDocument.toAttributeEntry(entry.getKey(), value.toString())))
+            .toArray(String[]::new);
+    }
+
+    private long removeTicketDocument(final @Nullable TicketDefinition metadata, final String key) {
+        if (metadata == null) {
+            LOGGER.debug("No ticket definition could be found in the catalog for ticket [{}]", key);
+            return 0;
+        }
+        val map = getTicketMapInstanceByMetadata(metadata);
+        return map != null && map.remove(key) != null ? 1 : 0;
+    }
+
+    private Stream<IMap<String, HazelcastTicketDocument>> getTicketMapInstances(final Class<?> ticketType) {
+        return ticketCatalog.findAll()
+            .stream()
+            .filter(definition -> ticketType.isAssignableFrom(definition.getImplementationClass()))
+            .map(this::getTicketMapInstanceByMetadata)
+            .filter(Objects::nonNull);
+    }
+
+    private @Nullable IMap<String, HazelcastTicketDocument> getTicketMapInstanceByPrefix(final String prefix) {
+        val metadata = ticketCatalog.find(prefix);
+        return metadata != null ? getTicketMapInstanceByMetadata(metadata) : null;
     }
 
     private @Nullable IMap<String, HazelcastTicketDocument> getTicketMapInstanceByMetadata(final TicketDefinition metadata) {

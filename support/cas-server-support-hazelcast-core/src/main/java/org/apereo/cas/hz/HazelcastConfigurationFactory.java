@@ -54,6 +54,16 @@ import org.springframework.util.StringUtils;
 @UtilityClass
 public class HazelcastConfigurationFactory {
     /**
+     * Merge policies that compare per-entry statistics (hits, access, update or expiration times),
+     * which Hazelcast keeps only when per-entry statistics are turned on for the map.
+     */
+    private static final Set<String> MERGE_POLICIES_WITH_ENTRY_STATISTICS = Set.of(
+        ExpirationTimeMergePolicy.class.getName(),
+        HigherHitsMergePolicy.class.getName(),
+        LatestUpdateMergePolicy.class.getName(),
+        LatestAccessMergePolicy.class.getName());
+
+    /**
      * Sets config map.
      *
      * @param namedConfig the map config
@@ -93,7 +103,6 @@ public class HazelcastConfigurationFactory {
         val config = new Config();
 
         config.setLicenseKey(hz.getCore().getLicenseKey());
-        config.getJetConfig().setEnabled(hz.getCore().isEnableJet());
 
         if (cluster.getCore().getCpMemberCount() > 0) {
             config.getCPSubsystemConfig().setCPMemberCount(cluster.getCore().getCpMemberCount());
@@ -296,10 +305,12 @@ public class HazelcastConfigurationFactory {
         evictionConfig.setMaxSizePolicy(MaxSizePolicy.valueOf(cluster.getCore().getMaxSizePolicy()));
         evictionConfig.setSize(cluster.getCore().getMaxSize());
 
+        val mergePolicyConfig = buildMergePolicyConfig(hz);
         return new MapConfig()
             .setName(mapName)
             .setStatisticsEnabled(true)
-            .setMergePolicyConfig(buildMergePolicyConfig(hz))
+            .setPerEntryStatsEnabled(MERGE_POLICIES_WITH_ENTRY_STATISTICS.contains(mergePolicyConfig.getPolicy()))
+            .setMergePolicyConfig(mergePolicyConfig)
             .setMaxIdleSeconds((int) timeoutSeconds)
             .setInMemoryFormat(InMemoryFormat.BINARY)
             .setBackupCount(cluster.getCore().getBackupCount())

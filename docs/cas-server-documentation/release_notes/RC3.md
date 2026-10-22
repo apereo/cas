@@ -760,6 +760,37 @@ The documentation now explains how to let browser-based MCP clients reach the se
   values, so values that contain quotes are matched instead of failing. Listing tickets page by page, such as through the
   `ssoSessions` actuator endpoint, now skips and counts tickets across the whole registry rather than within each ticket map,
   and the registry no longer shuts down the Hazelcast instance it shares with other modules, such as authentication throttling.
+- {: .changed data-area="tickets"} The [Hazelcast ticket registry](../ticketing/Hazelcast-Ticket-Registry.html) counts, finds and removes
+  the tickets of a user through its indexes in one pass, with or without Jet, instead of running two SQL statements for each
+  ticket map or reading the whole registry, and reports the number of tickets it actually removed. Users are matched regardless
+  of case, like the other ticket registries; tickets stored before the upgrade for user names that are not in lower case are
+  found again once they are renewed or expire. Session and service ticket counts read the size of their maps, only the
+  indexes the registry queries are kept, and an encrypted ticket read back after encryption is turned off is removed instead
+  of failing. Ending a single sign-on session removes its service tickets with one call per ticket map, listing all tickets
+  reads them in batches instead of copying each ticket map into memory at once, and the ticket maps are configured before
+  the Hazelcast member starts rather than added to the running cluster afterwards.
+- {: .changed data-area="tickets"} The [Hazelcast ticket registry](../ticketing/Hazelcast-Ticket-Registry.html) no longer runs SQL
+  queries, so Hazelcast Jet is no longer started by any CAS Hazelcast module and the `core.enable-jet` Hazelcast setting, such as
+  `cas.ticket.registry.hazelcast.core.enable-jet`, is removed. Remove it from your configuration; CAS refuses to start with
+  settings it does not recognize. The `hazelcast-sql` library is no longer included.
+- {: .action data-area="tickets"} The [Hazelcast ticket registry](../ticketing/Hazelcast-Ticket-Registry.html) stores tickets in a new,
+  smaller format: entries use Hazelcast compact serialization, so looking up tickets by user, by service or by attribute reads
+  only those fields instead of deserializing every ticket, and authentication attributes are kept only with single sign-on
+  sessions rather than with every ticket. Nodes running this version cannot read tickets stored by earlier versions, so
+  upgrade the whole cluster at once; existing tickets and single sign-on sessions are not carried over. Since tickets no longer
+  go through Hazelcast's Java serialization, `cas.ticket.registry.hazelcast.core.enable-compression`{: .cas-setting} no longer
+  applies to them.
+- {: .changed data-area="tickets"} When Hazelcast expires a single sign-on session of the
+  [Hazelcast ticket registry](../ticketing/Hazelcast-Ticket-Registry.html), CAS now sends single logout requests, removes the
+  tickets the session still holds and reports the session as destroyed, like the ticket registry cleaner does for other ticket
+  registries; expired sessions used to disappear silently. Each expired session is handled once, by the node that owns it.
+- {: .changed} Hazelcast maps of all CAS modules no longer evict entries to make room by default:
+  `cas.ticket.registry.hazelcast.cluster.core.eviction-policy`{: .cas-setting} and its counterparts now default to `NONE`, since
+  evicting a ticket or session that is still valid logs its user out without notice; entries leave when they expire. After a
+  network split heals, the copy of an entry that was updated last now wins
+  (`cas.ticket.registry.hazelcast.cluster.core.map-merge-policy`{: .cas-setting} defaults to `LATEST_UPDATE`), so changes made
+  on either side, such as applications added to a session, are kept. Choosing a merge policy that compares update, access or
+  expiration times or hits no longer stops the Hazelcast member from starting.
 - {: .changed data-area="tickets"} The `cluster.core.replicated` and `cluster.core.async-fillup` Hazelcast settings, such as
   `cas.ticket.registry.hazelcast.cluster.core.replicated`, are removed from every Hazelcast module: no module
   ever used a Hazelcast replicated map, so turning them on only left the actual map, such as that of the

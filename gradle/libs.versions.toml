@@ -414,7 +414,6 @@ h2 = { module = "com.h2database:h2", version.ref = "h2" }
 hazelcast-sdk = { module = "com.hazelcast:hazelcast", version.ref = "hazelcast" }
 hazelcast-spring-session = { module = "com.hazelcast.spring:hazelcast-spring-session", version.ref = "hazelcastSession" }
 hazelcast-jclouds = { module = "com.hazelcast:hazelcast-jclouds", version.ref = "hazelcastJClouds" }
-hazelcast-sql = { module = "com.hazelcast:hazelcast-sql", version.ref = "hazelcast" }
 hazelcast-zookeeper = { module = "com.hazelcast:hazelcast-zookeeper", version.ref = "hazelcastZooKeeper" }
 hibernate-ant = { module = "org.hibernate.orm:hibernate-ant", version.ref = "hibernate" }
 hibernate-community-dialects = { module = "org.hibernate.orm:hibernate-community-dialects", version.ref = "hibernate" }

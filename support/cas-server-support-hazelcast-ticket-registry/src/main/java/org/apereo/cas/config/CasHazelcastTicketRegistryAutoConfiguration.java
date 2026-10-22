@@ -7,19 +7,21 @@ import org.apereo.cas.ha.ClusterTopologyManager;
 import org.apereo.cas.hz.HazelcastClusterTopologyManager;
 import org.apereo.cas.hz.HazelcastConfigurationFactory;
 import org.apereo.cas.hz.HazelcastMapCustomizer;
+import org.apereo.cas.ticket.AuthenticationAwareTicket;
+import org.apereo.cas.ticket.ServiceAwareTicket;
 import org.apereo.cas.ticket.TicketCatalog;
-import org.apereo.cas.ticket.TicketDefinition;
+import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.catalog.CasTicketCatalogConfigurationValuesProvider;
-import org.apereo.cas.ticket.registry.HazelcastTicketDocument;
+import org.apereo.cas.ticket.registry.HazelcastTicketDocumentSerializer;
+import org.apereo.cas.ticket.registry.HazelcastTicketExpirationListener;
 import org.apereo.cas.ticket.registry.HazelcastTicketRegistry;
-import org.apereo.cas.ticket.registry.MapAttributeValueExtractor;
 import org.apereo.cas.ticket.registry.NoOpTicketRegistryCleaner;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistryCleaner;
 import org.apereo.cas.ticket.serialization.TicketSerializationManager;
 import org.apereo.cas.util.CoreTicketUtils;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
-import com.hazelcast.config.AttributeConfig;
+import com.hazelcast.config.EntryListenerConfig;
 import com.hazelcast.config.IndexConfig;
 import com.hazelcast.config.IndexType;
 import com.hazelcast.core.HazelcastInstance;
@@ -83,7 +85,7 @@ public class CasHazelcastTicketRegistryAutoConfiguration {
         val hz = casProperties.getTicket().getRegistry().getHazelcast();
         val cipher = CoreTicketUtils.newTicketRegistryCipherExecutor(hz.getCrypto(), "hazelcast");
         return new HazelcastTicketRegistry(cipher, ticketSerializationManager, ticketCatalog, applicationContext,
-            casTicketRegistryHazelcastInstance, hz);
+            casTicketRegistryHazelcastInstance);
     }
 
     @Bean(destroyMethod = "shutdown")
@@ -95,25 +97,24 @@ public class CasHazelcastTicketRegistryAutoConfiguration {
         final CasConfigurationProperties casProperties) {
         val hz = casProperties.getTicket().getRegistry().getHazelcast();
         LOGGER.debug("Creating Hazelcast instance for members [{}]", hz.getCluster().getNetwork().getMembers());
-        val hazelcastInstance = HazelcastInstanceFactory.getOrCreateHazelcastInstance(HazelcastConfigurationFactory.build(hz));
-        val ticketDefinitions = ticketCatalog.findAll();
-
-        ticketDefinitions
+        val config = HazelcastConfigurationFactory.build(hz);
+        config.getSerializationConfig().getCompactSerializationConfig().addSerializer(new HazelcastTicketDocumentSerializer());
+        ticketCatalog.findAll()
             .stream()
             .map(defn -> {
                 LOGGER.debug("Creating Hazelcast map configuration for [{}]", defn.getProperties());
                 val props = defn.getProperties();
                 val mapConfig = HazelcastConfigurationFactory.buildMapConfig(hz, props.getStorageName(), props.getStorageTimeout());
-                mapConfig.addIndexConfig(new IndexConfig(IndexType.HASH, "id"));
-                mapConfig.addIndexConfig(new IndexConfig(IndexType.HASH, "type"));
-                mapConfig.addIndexConfig(new IndexConfig(IndexType.HASH, "principal"));
-                mapConfig.addIndexConfig(new IndexConfig(IndexType.HASH, "service"));
-                mapConfig.addIndexConfig(new IndexConfig(IndexType.HASH, "prefix"));
-
-                val attributeConfig = new AttributeConfig();
-                attributeConfig.setName("attributes");
-                attributeConfig.setExtractorClassName(MapAttributeValueExtractor.class.getName());
-                mapConfig.addAttributeConfig(attributeConfig);
+                if (AuthenticationAwareTicket.class.isAssignableFrom(defn.getImplementationClass())) {
+                    mapConfig.addIndexConfig(new IndexConfig(IndexType.HASH, "principal"));
+                }
+                if (ServiceAwareTicket.class.isAssignableFrom(defn.getImplementationClass())) {
+                    mapConfig.addIndexConfig(new IndexConfig(IndexType.HASH, "service"));
+                }
+                if (TicketGrantingTicket.PREFIX.equals(defn.getPrefix())) {
+                    mapConfig.addEntryListenerConfig(new EntryListenerConfig(
+                        new HazelcastTicketExpirationListener(applicationContext.getBeanProvider(HazelcastTicketRegistry.class)), true, true));
+                }
                 return mapConfig;
             })
             .peek(map -> {
@@ -121,30 +122,8 @@ public class CasHazelcastTicketRegistryAutoConfiguration {
                 AnnotationAwareOrderComparator.sortIfNecessary(customizers);
                 customizers.forEach(customizer -> customizer.customize(map));
             })
-            .forEach(map -> HazelcastConfigurationFactory.setConfigMap(map, hazelcastInstance.getConfig()));
-
-        if (hz.getCore().isEnableJet()) {
-            ticketDefinitions.forEach(defn -> {
-                val query = buildCreateMappingQuery(defn);
-                LOGGER.trace("Creating mapping for [{}] via [{}]", defn.getPrefix(), query);
-                try (val _ = hazelcastInstance.getSql().execute(query)) {
-                    LOGGER.info("Created Hazelcast SQL mapping for [{}]", defn.getPrefix());
-                }
-            });
-        }
-        return hazelcastInstance;
-    }
-
-    private static String buildCreateMappingQuery(final TicketDefinition defn) {
-        val builder = new StringBuilder(String.format("CREATE MAPPING IF NOT EXISTS \"%s\" ", defn.getProperties().getStorageName()));
-        builder.append("TYPE IMap ");
-        builder.append("OPTIONS (");
-        builder.append("'keyFormat' = 'java',");
-        builder.append("'keyJavaClass' = 'java.lang.String',");
-        builder.append("'valueFormat' = 'java',");
-        builder.append(String.format("'valueJavaClass' = '%s'", HazelcastTicketDocument.class.getName()));
-        builder.append(')');
-        return builder.toString();
+            .forEach(map -> HazelcastConfigurationFactory.setConfigMap(map, config));
+        return HazelcastInstanceFactory.getOrCreateHazelcastInstance(config);
     }
 
     @Bean

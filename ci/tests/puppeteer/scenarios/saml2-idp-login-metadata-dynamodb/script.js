@@ -13,6 +13,7 @@ async function metadataDocuments() {
 }
 
 (async () => {
+    let failed = false;
     await cas.logg("Identity provider and service provider metadata are kept in DynamoDb");
     const idpItems = await cas.dynamoDbScan(IDP_TABLE);
     assert(idpItems.length > 0, "The identity provider metadata must be kept in DynamoDb");
@@ -51,8 +52,12 @@ async function metadataDocuments() {
         await cas.sleep(3000);
         await cas.assertPageTitle(page, "CAS - Central Authentication Service Log In Successful");
         await cas.assertInnerText(page, "#content div h2", "Log In Successful");
+    } catch (e) {
+        failed = true;
+        throw e;
     } finally {
         await cas.closeBrowser(browser);
+        process.exit(failed ? 1 : 0);
     }
 
     await cas.logg("Removing the service provider metadata document removes it from DynamoDb");
