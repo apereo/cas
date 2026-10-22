@@ -3,11 +3,14 @@ package org.apereo.cas.authentication.principal;
 import module java.base;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.config.BaseAutoConfigurationTests;
+import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.test.CasTestExtension;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -32,6 +35,61 @@ class WebApplicationServiceFactoryTests {
     @Autowired
     @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
     protected ServiceFactory<WebApplicationService> serviceFactory;
+
+    @ParameterizedTest
+    @ValueSource(strings = {
+        "https://trusted.example;jsessionid=x@attacker.example/capture",
+        "https://trusted.example;jsessionid=x@attacker.example/capture?continue=true",
+        "https://trusted.example%23@attacker.example/capture",
+        "https://trusted.example@attacker.example/capture",
+        "http://user:password@attacker.example/capture",
+        "https://@attacker.example/capture",
+        "HTTPS://trusted.example%23@attacker.example/capture",
+        "https://trusted.example%23@attacker.example:invalid/capture",
+        "https:///capture",
+        "https://trusted.example\\@attacker.example/capture",
+        "https://trusted.example:80x/capture",
+        "https:trusted.example/capture",
+        "https://[::1/capture"
+    })
+    void verifyRejectsUnsafeServiceUrls(final String url) {
+        assertThrows(UnauthorizedServiceException.class, () -> serviceFactory.createService(url));
+        for (val parameter : List.of(CasProtocolConstants.PARAMETER_SERVICE, CasProtocolConstants.PARAMETER_TARGET_SERVICE)) {
+            val request = new MockHttpServletRequest();
+            request.addParameter(parameter, url);
+            assertThrows(UnauthorizedServiceException.class, () -> serviceFactory.createService(request));
+        }
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {
+        "https://trusted.example",
+        "https://trusted.example:8443/callback",
+        "http://localhost:8080/callback",
+        "https://[::1]:8443/callback",
+        "https://trusted.example/callback%23@name?email=user@example.org#fragment",
+        "http://www.example.org?param=hello world",
+        "http://test_service.example.org/login",
+        "testservice",
+        "urn:example:service"
+    })
+    void verifyPreservesValidServiceUrls(final String url) {
+        val request = new MockHttpServletRequest();
+        request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, url);
+        val service = serviceFactory.createService(request);
+        assertNotNull(service);
+        assertEquals(url, service.getId());
+        assertEquals(url, service.getOriginalUrl());
+    }
+
+    @Test
+    void verifyPreservesSessionTrackingInServicePath() {
+        val url = "https://trusted.example/callback;jsessionid=abc?continue=true";
+        val service = serviceFactory.createService(url);
+        assertNotNull(service);
+        assertEquals("https://trusted.example/callback?continue=true", service.getId());
+        assertEquals(url, service.getOriginalUrl());
+    }
 
     @Test
     void verifyServiceAttributes() {

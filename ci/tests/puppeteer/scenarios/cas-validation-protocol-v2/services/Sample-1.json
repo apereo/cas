@@ -1,6 +1,6 @@
 {
   "@class": "org.apereo.cas.services.CasRegisteredService",
-  "serviceId": "^http://localhost.*",
+  "serviceId": "^http://localhost(?::8080(?:/.*)?)?$",
   "name": "Sample",
   "id": 1,
   "description": "Sample Service",

@@ -1,15 +1,21 @@
 package org.apereo.cas.authentication;
 
 import module java.base;
+import org.apereo.cas.authentication.principal.Response;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.authentication.principal.SimpleWebApplicationServiceImpl;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.authentication.principal.WebApplicationServiceResponseBuilder;
 import org.apereo.cas.services.CasModelRegisteredService;
+import org.apereo.cas.services.CasRegisteredService;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.web.SimpleUrlValidator;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -21,6 +27,37 @@ import static org.mockito.Mockito.*;
  */
 @Tag("Authentication")
 class WebApplicationServiceResponseBuilderTests {
+
+    @ParameterizedTest
+    @EnumSource(Response.ResponseType.class)
+    void verifyRejectsUserInfoInResponseDestinations(final Response.ResponseType responseType) {
+        val serviceUrl = "https://trusted.example/callback";
+        val unsafeUrl = "https://trusted.example;jsessionid=x@attacker.example/capture";
+        val registeredService = new CasRegisteredService();
+        registeredService.setResponseType(responseType.name());
+        val service = new SimpleWebApplicationServiceImpl();
+        service.setId(serviceUrl);
+        service.setOriginalUrl(unsafeUrl);
+        val servicesManager = mock(ServicesManager.class);
+        when(servicesManager.findServiceBy(service)).thenReturn(registeredService);
+        val builder = new WebApplicationServiceResponseBuilder(servicesManager, SimpleUrlValidator.getInstance());
+        val authentication = mock(Authentication.class);
+
+        assertThrows(UnauthorizedServiceException.class, () -> builder.build(service, "ST-test", authentication));
+
+        service.setOriginalUrl(serviceUrl);
+        service.getAttributes().put(Service.class.getName(), List.of(unsafeUrl));
+        assertThrows(UnauthorizedServiceException.class, () -> builder.build(service, "ST-test", authentication));
+
+        service.getAttributes().clear();
+        registeredService.setRedirectUrl(unsafeUrl);
+        assertThrows(UnauthorizedServiceException.class, () -> builder.build(service, "ST-test", authentication));
+
+        registeredService.setRedirectUrl("https://example.org/callback%23@name");
+        val response = builder.build(service, "ST-test", authentication);
+        assertNotNull(response);
+        assertTrue(response.url().startsWith(registeredService.getRedirectUrl()));
+    }
 
     @Test
     void verifyServiceUrlRedirectOverride() {

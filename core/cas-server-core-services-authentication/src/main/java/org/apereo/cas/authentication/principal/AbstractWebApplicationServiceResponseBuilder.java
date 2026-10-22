@@ -44,12 +44,13 @@ public abstract class AbstractWebApplicationServiceResponseBuilder implements Re
         val registeredService = servicesManager.findServiceBy(service);
         if (registeredService instanceof final CasModelRegisteredService casService
             && StringUtils.isNotBlank(casService.getRedirectUrl())
-            && getUrlValidator().isValid(casService.getRedirectUrl())) {
+            && getUrlValidator().isValid(AbstractServiceFactory.validateServiceUrl(casService.getRedirectUrl()))) {
             return casService.getRedirectUrl();
         }
-        return CollectionUtils.firstElement(service.getAttributes().get(Service.class.getName()))
+        val responseUrl = CollectionUtils.firstElement(service.getAttributes().get(Service.class.getName()))
             .map(Object::toString)
             .orElseGet(service::getOriginalUrl);
+        return AbstractServiceFactory.validateServiceUrl(responseUrl);
     }
 
     protected Response buildHeader(final WebApplicationService service, final Map<String, String> parameters) {
