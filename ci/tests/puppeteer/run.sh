@@ -865,6 +865,12 @@ function casServerArtifactForInstance() {
   fi
 }
 
+function nativeFeatureModulesForInstance() {
+  jq -r --argjson variation "${element:-[]}" --arg instance "instance$1" '
+    [(.properties // [])[], (.[$instance].properties // [])[], $variation[]]
+    | map(select(test("^--CasFeatureModule\\.[A-Za-z0-9_.-]+=(true|false)$"))) | join(",")' "${config}"
+}
+
 function dockerImageNameForInstance() {
   local instance="$1"
   if [[ ${instances:-1} -gt 1 ]]; then
@@ -948,14 +954,19 @@ function buildAndRun() {
 
   casServerArtifacts=()
   casServerDependencies=()
+  casServerAotFeatures=()
   casServerBuildSources=()
   lastBuildInstance=1
   for ((c = 1; c <= instances; c++)); do
     casServerDependencies[$c]=$(dependenciesForInstance "$c")
+    if [[ "${NATIVE_BUILD}" == "true" || "${NATIVE_RUN}" == "true" ]]; then
+      casServerAotFeatures[$c]=$(nativeFeatureModulesForInstance "$c")
+    fi
     casServerArtifacts[$c]=$(casServerArtifactForInstance "$c")
     casServerBuildSources[$c]=$c
     for ((k = 1; k < c; k++)); do
-      if [[ "${casServerDependencies[$k]}" == "${casServerDependencies[$c]}" ]]; then
+      if [[ "${casServerDependencies[$k]}" == "${casServerDependencies[$c]}" &&
+        "${casServerAotFeatures[$k]}" == "${casServerAotFeatures[$c]}" ]]; then
         casServerBuildSources[$c]=$k
         break
       fi
@@ -1014,15 +1025,26 @@ function buildAndRun() {
 
         if [[ "${NATIVE_BUILD}" == "true" || "${NATIVE_RUN}" == "true" ]]; then
           BUILD_TASKS="${BUILD_TASKS} ${WEBAPP_PROJECT}:nativeCompile -DaotSpringActiveProfiles=none"
+          local aotFeatureModules="${casServerAotFeatures[$c]}"
+          if [[ -n "${aotFeatureModules}" ]]; then
+            BUILD_TASKS="${BUILD_TASKS} -DaotFeatureModules=${aotFeatureModules}"
+          fi
         fi
 
-        rm -rf "${targetArtifact}"
         BUILD_COMMAND=$(printf '%s' \
           "./gradlew ${BUILD_TASKS} -DskipErrorProneCompiler=true -DskipSpringBootDevTools=true -DskipNestedConfigMetadataGen=true \
 -x check -x test -x javadoc --quiet --build-cache --configure-on-demand --parallel\
 ${BUILD_SCRIPT:+ $BUILD_SCRIPT}${DAEMON:+ $DAEMON} \
 -DcasModules="${dependencies}" --no-watch-fs ${BUILDFLAGS:+ $BUILDFLAGS}")
         printcyan "Executing build command in the ${BUILD_SPAWN}:\n➡️  ${BUILD_COMMAND}"
+
+        if [[ "${NATIVE_BUILD}" == "true" && -z "${BUILD_SCRIPT}" && -x "${targetArtifact}" &&
+          "${BUILD_COMMAND}" == "${completedNativeBuildCommand:-}" ]]; then
+          printcyan "Reusing the native executable: this variation has the same AOT feature modules and dependencies"
+          copyCasServerArtifact "${c}"
+          continue
+        fi
+        rm -rf "${targetArtifact}"
 
         if [[ "${BUILD_SPAWN}" == "background" ]]; then
           startCasBuild "${c}"
@@ -1040,6 +1062,9 @@ ${BUILD_SCRIPT:+ $BUILD_SCRIPT}${DAEMON:+ $DAEMON} \
           if [[ ! -e "${targetArtifact}" ]]; then
             printred "Failed to build CAS web application: ${targetArtifact}."
             exit 2
+          fi
+          if [[ "${NATIVE_BUILD}" == "true" ]]; then
+            completedNativeBuildCommand="${BUILD_COMMAND}"
           fi
         fi
       fi

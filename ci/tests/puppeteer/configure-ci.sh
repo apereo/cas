@@ -20,8 +20,9 @@ echo "Checking scenario configuration file: ${SCENARIO_CONFIG_FILE}"
 
 NODE_VERSION_REQUIRED=$(cat "$SCENARIO_CONFIG_FILE" | jq -j '.requirements.nodejs // empty')
 
-NATIVE_BUILD_ENABLED=$(cat "$SCENARIO_CONFIG_FILE" | jq -j '.requirements.graalvm.build // true')
-NATIVE_RUN_ENABLED=$(cat "$SCENARIO_CONFIG_FILE" | jq -j '.requirements.graalvm.run // true')
+NATIVE_BUILD_ENABLED=$(jq -r 'if .requirements.graalvm.build == null then true else .requirements.graalvm.build end' "$SCENARIO_CONFIG_FILE")
+NATIVE_RUN_ENABLED=$(jq -r 'if .requirements.graalvm.run == null then true else .requirements.graalvm.run end' "$SCENARIO_CONFIG_FILE")
+NATIVE_TEST_TIMEOUT=$(jq '([(.variations // [] | length), 1] | max) * 45 + 10' "$SCENARIO_CONFIG_FILE")
 
 if [[ -z $NODE_VERSION_REQUIRED ]]; then
   echo "Scenario configuration does not specify a Node.js version"
@@ -42,3 +43,4 @@ echo "Finalizing GitHub environment variables..."
 echo "NODE_VERSION_REQUIRED=$(echo $NODE_VERSION_REQUIRED)" >> $GITHUB_ENV
 echo "NATIVE_BUILD_ENABLED=$(echo $NATIVE_BUILD_ENABLED)" >> $GITHUB_ENV
 echo "NATIVE_RUN_ENABLED=$(echo $NATIVE_RUN_ENABLED)" >> $GITHUB_ENV
+echo "NATIVE_TEST_TIMEOUT=${NATIVE_TEST_TIMEOUT}" >> "$GITHUB_ENV"

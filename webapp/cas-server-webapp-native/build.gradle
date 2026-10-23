@@ -145,6 +145,7 @@ plugins.withId("org.graalvm.buildtools.native") {
         }
 
         dependencies {
+            aotCompileOnly libraries.jakartapersistence
             processAotClasspath libraries.graalvmsdk
             processAotClasspath libraries.graalvmpolyglot
             processTestAotClasspath libraries.graalvmsdk
@@ -186,6 +187,11 @@ plugins.withId("org.graalvm.buildtools.native") {
 
             def aotSpringActiveProfiles = providers.systemProperty("aotSpringActiveProfiles").getOrElse("native")
             logger.info "AOT processing spring active profile: ${aotSpringActiveProfiles}"
+
+            def aotFeatureModules = providers.systemProperty("aotFeatureModules").getOrElse("")
+            if (!aotFeatureModules.isBlank()) {
+                args(aotFeatureModules.split(","))
+            }
 
             args(
                 "--spring.profiles.active=${aotSpringActiveProfiles}",
