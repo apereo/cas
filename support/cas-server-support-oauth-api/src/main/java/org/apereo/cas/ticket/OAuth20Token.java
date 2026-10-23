@@ -24,6 +24,15 @@ public interface OAuth20Token extends TicketGrantingTicketAwareTicket {
     Set<String> getScopes();
 
     /**
+     * Get authorized resource indicators associated with this token.
+     *
+     * @return resources
+     */
+    default Set<String> getResources() {
+        return Set.of();
+    }
+
+    /**
      * Collection of requested claims, if any.
      *
      * @return map of requested claims.

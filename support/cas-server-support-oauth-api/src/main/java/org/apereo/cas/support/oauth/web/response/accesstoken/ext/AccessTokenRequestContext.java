@@ -63,6 +63,9 @@ public class AccessTokenRequestContext implements Serializable {
     private final Set<String> scopes = new LinkedHashSet<>();
 
     @Builder.Default
+    private final Set<String> resources = new LinkedHashSet<>();
+
+    @Builder.Default
     private final Map<String, Map<String, Object>> claims = new HashMap<>();
 
     @Builder.Default

@@ -255,6 +255,46 @@ class OAuth20AccessTokenEndpointControllerTests {
         }
 
         @Test
+        void verifyClientCredentialsWithResource() throws Throwable {
+            val service = getRegisteredService(OAuth20GrantTypes.CLIENT_CREDENTIALS);
+            val resource = "https://api.example.org/";
+            service.setAllowedResources(Set.of(resource));
+            servicesManager.save(service);
+            val accessToken = mvc.perform(post("/cas" + CONTEXT + OAuth20Constants.ACCESS_TOKEN_URL)
+                    .headers(HttpUtils.createBasicAuthHeaders(service.getClientId(), service.getClientSecret()))
+                    .queryParam(OAuth20Constants.CLIENT_ID, service.getClientId())
+                    .queryParam(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.CLIENT_CREDENTIALS.name())
+                    .queryParam(OAuth20Constants.RESOURCE, resource))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.access_token").exists())
+                .andReturn()
+                .getModelAndView()
+                .getModel()
+                .get("access_token");
+
+            mvc.perform(post("/cas" + CONTEXT + OAuth20Constants.INTROSPECTION_URL)
+                    .param(OAuth20Constants.TOKEN, accessToken.toString())
+                    .headers(HttpUtils.createBasicAuthHeaders(service.getClientId(), service.getClientSecret())))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.aud[0]").value(service.getClientId()))
+                .andExpect(jsonPath("$.aud[1]").value(resource));
+        }
+
+        @Test
+        void verifyClientCredentialsWithUnauthorizedResource() throws Throwable {
+            val service = getRegisteredService(OAuth20GrantTypes.CLIENT_CREDENTIALS);
+            service.setAllowedResources(Set.of("https://api.example.org/"));
+            servicesManager.save(service);
+            mvc.perform(post("/cas" + CONTEXT + OAuth20Constants.ACCESS_TOKEN_URL)
+                    .headers(HttpUtils.createBasicAuthHeaders(service.getClientId(), service.getClientSecret()))
+                    .queryParam(OAuth20Constants.CLIENT_ID, service.getClientId())
+                    .queryParam(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.CLIENT_CREDENTIALS.name())
+                    .queryParam(OAuth20Constants.RESOURCE, "https://other.example.org/"))
+                .andExpect(status().is4xxClientError())
+                .andExpect(jsonPath("$.access_token").doesNotExist());
+        }
+
+        @Test
         void verifyClientCredentialsUnauthorized() throws Throwable {
             val service = getRegisteredService(OAuth20GrantTypes.CLIENT_CREDENTIALS);
             service.setJwtAccessToken(true);

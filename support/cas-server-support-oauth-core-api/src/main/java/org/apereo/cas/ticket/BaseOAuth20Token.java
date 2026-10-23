@@ -32,6 +32,9 @@ public abstract class BaseOAuth20Token extends AbstractTicket implements OAuth20
     private Set<String> scopes = new HashSet<>();
 
     @JsonSetter(nulls = Nulls.AS_EMPTY)
+    private Set<String> resources = new LinkedHashSet<>();
+
+    @JsonSetter(nulls = Nulls.AS_EMPTY)
     private Map<String, Map<String, Object>> claims = new HashMap<>();
 
     private Ticket ticketGrantingTicket;
@@ -93,6 +96,15 @@ public abstract class BaseOAuth20Token extends AbstractTicket implements OAuth20
     @Override
     public Set<String> getScopes() {
         return ObjectUtils.getIfNull(this.scopes, new HashSet<>());
+    }
+
+    @Override
+    public Set<String> getResources() {
+        return ObjectUtils.getIfNull(this.resources, new LinkedHashSet<>());
+    }
+
+    public void setResources(final Collection<String> resources) {
+        this.resources = resources == null ? new LinkedHashSet<>() : new LinkedHashSet<>(resources);
     }
 
     @Override

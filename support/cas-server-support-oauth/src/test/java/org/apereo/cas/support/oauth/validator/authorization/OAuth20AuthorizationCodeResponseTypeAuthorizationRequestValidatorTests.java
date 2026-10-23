@@ -56,6 +56,30 @@ class OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidatorTests ext
     }
 
     @Test
+    void verifyRequestedResources() throws Throwable {
+        val service = addRegisteredService("https://.+", UUID.randomUUID().toString());
+        val allowedResource = "https://api.example.org/";
+        service.setAllowedResources(Set.of(allowedResource));
+        val validator = getValidator(servicesManager);
+        val request = new MockHttpServletRequest();
+        request.addParameter(OAuth20Constants.CLIENT_ID, service.getClientId());
+        request.addParameter(OAuth20Constants.REDIRECT_URI, "https://oauth.example.org");
+        request.addParameter(OAuth20Constants.RESPONSE_TYPE, OAuth20ResponseTypes.CODE.getType());
+        request.addParameter(OAuth20Constants.RESOURCE, allowedResource);
+        val context = new JEEContext(request, new MockHttpServletResponse());
+
+        assertTrue(validator.supports(context));
+
+        request.setParameter(OAuth20Constants.RESOURCE, "https://other.example.org/");
+        assertFalse(validator.supports(context));
+        assertEquals(OAuth20Constants.INVALID_TARGET, context.getRequestAttribute(OAuth20Constants.ERROR).orElseThrow().toString());
+
+        request.setParameter(OAuth20Constants.RESOURCE, "https://api.example.org/#fragment");
+        assertFalse(validator.supports(context));
+        assertEquals(OAuth20Constants.INVALID_TARGET, context.getRequestAttribute(OAuth20Constants.ERROR).orElseThrow().toString());
+    }
+
+    @Test
     void verifyValidator() throws Throwable {
         val service = addRegisteredService("https://.+", UUID.randomUUID().toString());
         val validator = getValidator(servicesManager);

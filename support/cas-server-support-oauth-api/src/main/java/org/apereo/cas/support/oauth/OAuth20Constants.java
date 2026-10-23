@@ -444,6 +444,11 @@ public interface OAuth20Constants {
     String UNAUTHORIZED_CLIENT = "unauthorized_client";
 
     /**
+     * The requested resource is invalid, missing, unknown, or malformed.
+     */
+    String INVALID_TARGET = "invalid_target";
+
+    /**
      * DPoP header.
      */
     String DPOP = "DPoP";

@@ -95,6 +95,31 @@ class OAuth20PasswordGrantTypeTokenRequestValidatorTests extends AbstractOAuth20
         assertTrue(validator.validate(context));
     }
 
+    @Test
+    void verifyRequestedResources() throws Throwable {
+        val request = new MockHttpServletRequest();
+        val context = new JEEContext(request, new MockHttpServletResponse());
+        val profile = new CommonProfile();
+        profile.setClientName(Authenticators.CAS_OAUTH_CLIENT_BASIC_AUTHN);
+        profile.setId(supportingService.getClientId());
+        storeProfileIntoSession(request, profile);
+
+        val allowedResource = "https://api.example.org/";
+        supportingService.setAllowedResources(Set.of(allowedResource));
+        servicesManager.save(supportingService);
+        request.setParameter(OAuth20Constants.GRANT_TYPE, getGrantType().getType());
+        request.setParameter(OAuth20Constants.CLIENT_ID, supportingService.getClientId());
+
+        request.setParameter(OAuth20Constants.RESOURCE, allowedResource);
+        assertTrue(validator.validate(context));
+
+        request.setParameter(OAuth20Constants.RESOURCE, "https://other.example.org/");
+        assertFalse(validator.validate(context));
+
+        request.setParameter(OAuth20Constants.RESOURCE, allowedResource + "#fragment");
+        assertFalse(validator.validate(context));
+    }
+
     protected OAuth20GrantTypes getGrantType() {
         return OAuth20GrantTypes.PASSWORD;
     }

@@ -64,8 +64,21 @@ public abstract class BaseOAuth20AuthorizationRequestValidator implements OAuth2
             return false;
         }
 
+        if (!verifyRequestedResources(context, registeredService)) {
+            return false;
+        }
+
         val responseType = getResponseTypeFromRequest(context);
         return verifyResponseType(context, responseType);
+    }
+
+    private boolean verifyRequestedResources(final WebContext context, final OAuthRegisteredService registeredService) {
+        if (!requestParameterResolver.isAuthorizedResourceForService(context, registeredService)) {
+            setErrorDetails(context, OAuth20Constants.INVALID_TARGET,
+                "Requested resource is invalid or not authorized for this service", true);
+            return false;
+        }
+        return true;
     }
 
     protected String getResponseTypeFromRequest(final WebContext context) {

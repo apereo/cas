@@ -8,6 +8,7 @@ import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
+import org.apereo.cas.support.oauth.web.OAuth20RequestParameterResolver;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -32,7 +33,8 @@ public class AccessTokenPasswordGrantRequestExtractor extends BaseAccessTokenGra
         val configurationContext = getConfigurationContext().getObject();
         val callContext = new CallContext(context, configurationContext.getSessionStore());
         val profile = OAuth20Utils.getAuthenticatedUserProfile(context, configurationContext.getSessionStore());
-        val clientId = StringUtils.defaultIfBlank(configurationContext.getRequestParameterResolver()
+      OAuth20RequestParameterResolver requestParameterResolver = configurationContext.getRequestParameterResolver();
+      val clientId = StringUtils.defaultIfBlank(requestParameterResolver
             .resolveClientIdAndClientSecret(callContext).getKey(), (String) profile.getAttribute(OAuth20Constants.CLIENT_ID));
 
         LOGGER.debug("Locating OAuth registered service by client id [{}]", clientId);
@@ -59,7 +61,7 @@ public class AccessTokenPasswordGrantRequestExtractor extends BaseAccessTokenGra
         val result = new DefaultAuthenticationResult(authentication, requireServiceHeader ? service : null);
         val ticketGrantingTicket = configurationContext.getCentralAuthenticationService().createTicketGrantingTicket(result);
 
-        val scopes = configurationContext.getRequestParameterResolver().resolveRequestScopes(context);
+        val scopes = requestParameterResolver.resolveRequestScopes(context);
         scopes.retainAll(Objects.requireNonNull(registeredService).getScopes());
 
         return AccessTokenRequestContext.builder()
@@ -68,6 +70,7 @@ public class AccessTokenPasswordGrantRequestExtractor extends BaseAccessTokenGra
             .authentication(authentication)
             .registeredService(registeredService)
             .grantType(getGrantType())
+            .resources(requestParameterResolver.resolveRequestedResources(context))
             .ticketGrantingTicket(ticketGrantingTicket)
             .generateRefreshToken(registeredService.isGenerateRefreshToken())
             .build();

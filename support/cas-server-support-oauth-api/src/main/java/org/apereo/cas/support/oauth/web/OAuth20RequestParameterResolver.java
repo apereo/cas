@@ -189,6 +189,23 @@ public interface OAuth20RequestParameterResolver {
     Collection<String> resolveRequestedScopes(WebContext context);
 
     /**
+     * Resolve requested resource indicators.
+     *
+     * @param context the context
+     * @return the resources
+     */
+    Set<String> resolveRequestedResources(WebContext context);
+
+    /**
+     * Is every requested resource an absolute URI without fragment that the service allows?
+     *
+     * @param context           the context
+     * @param registeredService the registered service
+     * @return true/false
+     */
+    boolean isAuthorizedResourceForService(WebContext context, OAuthRegisteredService registeredService);
+
+    /**
      * Is authorized response type for service.
      *
      * @param context           the context
