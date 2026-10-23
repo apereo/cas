@@ -16,7 +16,11 @@ function printred() {
 
 export DOCKER_IMAGE="localstack/localstack:4.14.0"
 printgreen "Running localstack docker container..."
-docker stop localstack || true && docker rm localstack || true
+docker rm -f localstack >/dev/null 2>&1 || true
+for i in {1..30}; do
+  docker ps -a --format '{{.Names}}' | grep -qx "localstack" || break
+  sleep 2
+done
 docker run --quiet --rm -d -e 'DEBUG=1' -e 'SERVICES=kinesis,firehose,ses,ssm,events,cloudwatch,logs,s3,s3api,secretsmanager,sqs,sts' \
   -p 4560-4599:4560-4599 \
   -p 8080:8080 \
@@ -24,10 +28,26 @@ docker run --quiet --rm -d -e 'DEBUG=1' -e 'SERVICES=kinesis,firehose,ses,ssm,ev
   -e PROVIDER_OVERRIDE_CLOUDWATCH=v2 \
   -e DOCKER_HOST=unix:///var/run/docker.sock \
   ${DOCKER_IMAGE}
-sleep 2
 docker ps | grep "localstack"
 retVal=$?
 if [ $retVal == 0 ]; then
+    printgreen "Waiting for localstack services to become available..."
+    services=(kinesis firehose ses ssm events cloudwatch logs s3 secretsmanager sqs sts)
+    for i in {1..150}; do
+      health=$(curl -s http://localhost:4566/_localstack/health)
+      pending=()
+      for service in "${services[@]}"; do
+        echo "${health}" | grep -Eq "\"${service}\": *\"(available|running)\"" || pending+=("${service}")
+      done
+      [[ ${#pending[@]} -eq 0 ]] && break
+      sleep 2
+    done
+    if [[ ${#pending[@]} -ne 0 ]]; then
+      printred "localstack services did not become available: ${pending[*]}"
+      docker logs localstack 2>&1 | tail -50
+      exit 1
+    fi
+    printgreen "localstack services are available."
 
     printgreen "Creating S3 bucket for Security Lake..."
     export AWS_ENDPOINT_URL="http://localhost:4566"
