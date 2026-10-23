@@ -1327,15 +1327,20 @@ ${BUILD_SCRIPT:+ $BUILD_SCRIPT}${DAEMON:+ $DAEMON} \
                 printred "Failed to extract CAS artifact ${aotArchiveToExtract} for AOT."
                 exit 1
               fi
-              if [[ ! -f "${aotCasDirectory}/cas.${projectType}" ]]; then
-                printred "CAS AOT extraction did not produce ${aotCasDirectory}/cas.${projectType}."
+              aotLauncher="${aotCasDirectory}/cas.jar"
+              if [[ ! -f "${aotLauncher}" ]]; then
+                aotLauncher="${aotCasDirectory}/cas.${projectType}"
+              fi
+              if [[ ! -f "${aotLauncher}" ]]; then
+                printred "CAS AOT extraction did not produce ${aotCasDirectory}/cas.jar or ${aotCasDirectory}/cas.${projectType}."
+                ls -la "${aotCasDirectory}" 2>/dev/null
                 exit 1
               fi
-              printcyan "Launching CAS from ${aotCasDirectory}/cas.${projectType} to perform a training run"
-              java ${aotArgs} -XX:AOTCacheOutput=${aotCasDirectory}/cas.aot -Dspring.context.exit=onRefresh -jar "${aotCasDirectory}/cas.${projectType}" >/dev/null 2>&1
+              printcyan "Launching CAS from ${aotLauncher} to perform a training run"
+              java ${aotArgs} -XX:AOTCacheOutput=${aotCasDirectory}/cas.aot -Dspring.context.exit=onRefresh -jar "${aotLauncher}" >/dev/null 2>&1
               printcyan "Generated archive cache file ${aotCasDirectory}/cas.aot"
               runArgs="${runArgs} -XX:AOTCache=${aotCasDirectory}/cas.aot"
-              casArtifactToRun="${aotCasDirectory}/cas.${projectType}"
+              casArtifactToRun="${aotLauncher}"
               rm -Rf ${PWD}/*.jfr
               sleep 2
             else

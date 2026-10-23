@@ -356,7 +356,7 @@ public class DelegatedClientOidcBuilder implements ConfigurableDelegatedClientBu
                 cfg.setClientAuthenticationMethod(clientAuth);
                 if (ClientAuthenticationMethod.PRIVATE_KEY_JWT.equals(clientAuth)) {
                     val privateKeyJwtJwks = new JwksProperties();
-                    privateKeyJwtJwks.setJwksResource(oidc.getPrivateKeyJwt().getJwks().getLocation());
+                    privateKeyJwtJwks.setResource(oidc.getPrivateKeyJwt().getJwks().getLocation());
                     privateKeyJwtJwks.setKid(oidc.getPrivateKeyJwt().getJwks().getKid());
                     cfg.setPrivateKeyJwtClientAuthnMethodConfig(new PrivateKeyJwtClientAuthnMethodConfig(privateKeyJwtJwks));
                 }
@@ -380,7 +380,7 @@ public class DelegatedClientOidcBuilder implements ConfigurableDelegatedClientBu
             val cfgFede = cfg.getFederation();
 
             val jwks = new JwksProperties();
-            jwks.setJwksResource(oidcFede.getJwks().getLocation());
+            jwks.setResource(oidcFede.getJwks().getLocation());
             jwks.setKid(oidcFede.getJwks().getKid());
             cfgFede.setJwks(jwks);
             cfgFede.setValidityInDays(oidcFede.getValidityInDays());
@@ -390,8 +390,10 @@ public class DelegatedClientOidcBuilder implements ConfigurableDelegatedClientBu
             cfgFede.setScopes(oidcFede.getScopes());
             cfgFede.setClientRegistrationTypes(oidcFede.getClientRegistrationTypes());
             cfgFede.setTargetOp(oidcFede.getTargetOp());
-            oidcFede.getTrustAnchors().entrySet().stream()
-                .map(e -> new OidcTrustAnchorProperties(e.getKey(), e.getValue()))
+            oidcFede.getTrustAnchors()
+                .entrySet()
+                .stream()
+                .map(e -> new OidcTrustAnchorProperties(e.getKey(), new JwksProperties(e.getValue())))
                 .forEach(cfgFede.getTrustAnchors()::add);
             cfgFede.setContactName(oidcFede.getContactName());
             cfgFede.setContactEmails(oidcFede.getContactEmails());

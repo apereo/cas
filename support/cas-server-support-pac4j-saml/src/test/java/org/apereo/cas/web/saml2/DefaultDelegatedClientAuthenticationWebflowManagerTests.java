@@ -35,6 +35,8 @@ import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
 import org.pac4j.cas.client.CasClient;
 import org.pac4j.cas.config.CasConfiguration;
 import org.pac4j.core.client.Client;
+import org.pac4j.core.config.properties.KeystoreProperties;
+import org.pac4j.core.config.properties.ResourceProperties;
 import org.pac4j.core.context.CallContext;
 import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.jee.context.JEEContext;
@@ -231,9 +233,14 @@ class DefaultDelegatedClientAuthenticationWebflowManagerTests {
     private Pair<SAML2Client, SAML2MessageContext> setupTestContextFor(final String spMetadataPath, final String spEntityId) throws Throwable {
         val idpMetadata = new File("src/test/resources/idp-metadata.xml").getCanonicalPath();
         val keystorePath = new File(FileUtils.getTempDirectory(), "keystore%s".formatted(RandomUtils.randomAlphabetic(4))).getCanonicalPath();
-        val saml2ClientConfiguration = new SAML2Configuration(keystorePath, "changeit", "changeit", idpMetadata);
+
+        val saml2ClientConfiguration = new SAML2Configuration(
+            new KeystoreProperties(keystorePath)
+            .setKeystorePassword("changeit")
+            .setPrivateKeyPassword("changeit"),
+            new ResourceProperties(idpMetadata));
         saml2ClientConfiguration.setServiceProviderEntityId(spEntityId);
-        saml2ClientConfiguration.setServiceProviderMetadataPath(spMetadataPath);
+        saml2ClientConfiguration.getServiceProviderMetadata().setPath(spMetadataPath);
         saml2ClientConfiguration.getKeystore().setForceKeystoreGeneration(true);
         saml2ClientConfiguration.setForceServiceProviderMetadataGeneration(true);
         saml2ClientConfiguration.init();

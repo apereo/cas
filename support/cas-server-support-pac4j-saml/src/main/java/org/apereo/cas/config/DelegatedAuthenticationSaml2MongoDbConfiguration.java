@@ -54,7 +54,7 @@ class DelegatedAuthenticationSaml2MongoDbConfiguration {
                         val metadataGenerator = new SAML2MongoMetadataGenerator(mongoClient, configuration.getServiceProviderEntityId());
                         metadataGenerator.setMetadataCollection(mongo.getCollection());
                         metadataGenerator.setMetadataDatabase(mongo.getDatabaseName());
-                        configuration.setServiceProviderMetadataResource(ResourceUtils.NULL_RESOURCE);
+                        configuration.getServiceProviderMetadata().setResource(ResourceUtils.NULL_RESOURCE);
                         configuration.setMetadataGenerator(metadataGenerator);
                     });
             }

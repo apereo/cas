@@ -543,6 +543,16 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
 - Before writing a negative assertion, read the server code for the exact error. Each token-endpoint failure surfaces differently: device code reuse → `access_denied` (`InvalidOAuth20DeviceTokenException`), a mismatched ST service → `INVALID_SERVICE` and the ticket is consumed. Where the specification names the error (CIBA Core §11: `authorization_pending`, `invalid_grant`), the scenario asserts the specification even when the current code differs, and the hand-off says so.
 - `from` in actuator and ticket registry queries (`ssoSessions?from=`, `TicketRegistryStreamCriteria`) is a 0-based offset in every registry. A scenario that deletes all SSO sessions passes `from=0` (or omits it); `from=1` leaves the first session alive, which only shows once that session outlives the scenario's other timeouts, such as a remember-me TGT in a browser profile that later browsers share.
 - In CI, `run.sh` bounds each script attempt with `PUPPETEER_SCRIPT_TIMEOUT` (420 seconds; 0 locally, meaning no limit). A script whose steps all finish but whose node process never exits then fails that attempt and is retried, instead of running into the 20 minute job timeout.
+- AOT training runs extract the built artifact with `-Djarmode=tools extract` and launch what it produces. Since Spring Boot
+  4.2 (gh-51372) extracting a war writes `cas/cas.jar` (root web content moved to `META-INF/resources/`), no longer
+  `cas/cas.war`; `run.sh` launches `cas/cas.jar` and falls back to `cas/cas.<projectType>`. When a Spring Boot bump fails
+  every AOT scenario at once, diff `loader/spring-boot-jarmode-tools/.../ExtractCommand.java` between the two tags first.
+- `ci/tests/aws/run-aws-server.sh` serves the `AmazonWebServices` unit test category, not only scenarios: tests start as
+  soon as it returns, and `@EnabledIfListeningOnPort(port = 4566)` passes while localstack's services are still starting.
+  Components that create their AWS resources while starting (the log4j2 `SQSAppender` creates its queue in `start()`, and
+  log4j drops an appender whose start fails) then fail the test. The script removes any previous container with
+  `docker rm -f`, waits until it is gone (a `--rm` container still being removed makes `docker run --name` conflict), and
+  polls `/_localstack/health` until every service it enables is `available` or `running`, bounded, `exit 1` on timeout.
 
 ## Storage backend scenarios (service registry, SAML2 metadata, MFA devices, consent)
 
@@ -720,6 +730,10 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
   `java -Dcheckstyle.suppressions.file=style/checkstyle-suppressions.xml -Dcheckstyle.importcontrol.file=style/import-control.xml
   -jar checkstyle.jar -c style/checkstyle-rules.xml <files>`. When the workspace JDK is older, tar the files and `style/` into
   `build/` (deletable without asking) and run it where Java 21 is available.
+- NullAway (JSpecify mode) does not carry a `containsKey` check over to `get`. Once a package is `@NullMarked`, a map
+  whose values are `@Nullable` (Spring Boot's `AuditEvent.getData()`) fails `compileJava` on `map.get(key).toString()`.
+  Read the value once and handle null, e.g. `Objects.toString(map.get(key), null)`; null-marking a package surfaces these
+  in code nobody touched, so compile the module after adding a `package-info.java`.
 
 
 ## LDAP review discipline

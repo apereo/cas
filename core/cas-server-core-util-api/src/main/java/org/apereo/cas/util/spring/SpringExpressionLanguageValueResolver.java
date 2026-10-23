@@ -57,7 +57,7 @@ public class SpringExpressionLanguageValueResolver implements Function {
     private static final ParserContext PARSER_CONTEXT = new TemplateParserContext("${", "}");
 
     private static final SpelExpressionParser EXPRESSION_PARSER = new SpelExpressionParser(
-        new SpelParserConfiguration(SpelCompilerMode.OFF, null)
+        SpelParserConfiguration.builder().compilerMode(SpelCompilerMode.OFF).compilerClassLoader(null).build()
     );
 
     private static SpringExpressionLanguageValueResolver INSTANCE;
@@ -65,6 +65,7 @@ public class SpringExpressionLanguageValueResolver implements Function {
     private final StandardEvaluationContext evaluationContext = new StandardEvaluationContext();
 
     protected SpringExpressionLanguageValueResolver() {
+        
         val systemProperties = System.getProperties();
         evaluationContext.setVariable("systemProperties", systemProperties);
         evaluationContext.setVariable("sysProps", systemProperties);

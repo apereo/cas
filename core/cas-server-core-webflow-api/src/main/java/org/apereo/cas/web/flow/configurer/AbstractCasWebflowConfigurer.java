@@ -719,7 +719,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
      * @return the spring expression parser
      */
     public SpringELExpressionParser getSpringExpressionParser() {
-        val configuration = new SpelParserConfiguration();
+        val configuration = SpelParserConfiguration.withDefaults();
         val spelExpressionParser = new SpelExpressionParser(configuration);
         val parser = new SpringELExpressionParser(spelExpressionParser, this.flowBuilderServices.getConversionService());
         parser.addPropertyAccessor(new ActionPropertyAccessor());

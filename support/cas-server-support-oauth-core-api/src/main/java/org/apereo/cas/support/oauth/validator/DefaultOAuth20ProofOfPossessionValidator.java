@@ -37,6 +37,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.jooq.lambda.Unchecked;
 import org.jspecify.annotations.Nullable;
 import org.pac4j.core.context.HttpConstants;
@@ -230,7 +231,7 @@ public class DefaultOAuth20ProofOfPossessionValidator implements OAuth20ProofOfP
         throws DPoPBoundAccessTokenDowngradeException {
         val scheme = OAuth20Constants.TOKEN_TYPE_DPOP + ' ';
         val authorization = webContext.getRequestHeader(HttpConstants.AUTHORIZATION_HEADER).orElse(StringUtils.EMPTY);
-        if (!StringUtils.startsWithIgnoreCase(authorization, scheme)
+        if (!Strings.CI.startsWith(authorization, scheme)
             || !presentedAccessToken.equals(authorization.substring(scheme.length()).trim())) {
             throw new DPoPBoundAccessTokenDowngradeException(
                 "DPoP-bound access token must be presented in the Authorization header with the DPoP scheme");

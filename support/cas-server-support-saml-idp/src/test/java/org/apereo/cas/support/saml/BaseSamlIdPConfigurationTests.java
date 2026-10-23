@@ -82,6 +82,8 @@ import org.opensaml.saml.saml2.metadata.IDPSSODescriptor;
 import org.opensaml.saml.saml2.metadata.Organization;
 import org.opensaml.saml.saml2.metadata.OrganizationName;
 import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
+import org.pac4j.core.config.properties.KeystoreProperties;
+import org.pac4j.core.config.properties.ResourceProperties;
 import org.pac4j.core.context.CallContext;
 import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.jee.context.JEEContext;
@@ -352,10 +354,13 @@ public abstract class BaseSamlIdPConfigurationTests {
         val keystorePath = new File(FileUtils.getTempDirectory(), "keystore-%s".formatted(UUID.randomUUID())).getCanonicalPath();
         val spMetadataPath = new File(FileUtils.getTempDirectory(), "sp-metadata-%s.xml".formatted(UUID.randomUUID())).getCanonicalPath();
 
-        val saml2Configuration = new SAML2Configuration(keystorePath,
-            "changeit", "changeit", idpMetadata);
+       
+        val saml2Configuration = new SAML2Configuration(new KeystoreProperties(keystorePath)
+            .setKeystorePassword("changeit")
+            .setPrivateKeyPassword("changeit"),
+            new ResourceProperties(idpMetadata));
         saml2Configuration.setServiceProviderEntityId("cas:example:sp");
-        saml2Configuration.setServiceProviderMetadataPath(spMetadataPath);
+        saml2Configuration.getServiceProviderMetadata().setPath(spMetadataPath);
         saml2Configuration.init();
 
         val saml2Client = new SAML2Client(saml2Configuration);
