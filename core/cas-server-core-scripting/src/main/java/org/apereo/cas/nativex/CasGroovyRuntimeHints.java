@@ -18,8 +18,10 @@ import org.codehaus.groovy.transform.StaticTypesTransformation;
 import org.codehaus.groovy.transform.sc.StaticCompileTransformation;
 import org.codehaus.groovy.transform.stc.StaticTypeCheckingSupport;
 import org.jspecify.annotations.Nullable;
+import org.springframework.aot.hint.ExecutableMode;
 import org.springframework.aot.hint.MemberCategory;
 import org.springframework.aot.hint.RuntimeHints;
+import org.springframework.aot.hint.TypeReference;
 
 /**
  * This is {@link CasGroovyRuntimeHints}.
@@ -32,6 +34,10 @@ public class CasGroovyRuntimeHints implements CasRuntimeHintsRegistrar {
     
     @Override
     public void registerHints(final RuntimeHints hints, final @Nullable ClassLoader classLoader) {
+        hints.reflection().registerType(Class.class, hint -> hint.withMethod("getConstructor",
+            List.of(TypeReference.of(Class[].class)), ExecutableMode.INVOKE));
+        hints.reflection().registerType(Constructor.class, hint -> hint.withMethod("newInstance",
+            List.of(TypeReference.of(Object[].class)), ExecutableMode.INVOKE));
         registerReflectionHints(hints, List.of(
             Stack.class,
             GroovyClassLoader.class,

@@ -11,17 +11,17 @@ import org.springframework.aot.hint.predicate.RuntimeHintsPredicates;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * This is {@link GitServiceRegistryRuntimeHintsTests}.
+ * This is {@link GitCoreRuntimeHintsTests}.
  *
  * @author Misagh Moayyed
  * @since 7.0.0
  */
 @Tag("Native")
-class GitServiceRegistryRuntimeHintsTests {
+class GitCoreRuntimeHintsTests {
     @Test
     void verifyHints() throws Exception {
         val hints = new RuntimeHints();
-        new GitServiceRegistryRuntimeHints().registerHints(hints, getClass().getClassLoader());
+        new GitCoreRuntimeHints().registerHints(hints, getClass().getClassLoader());
         assertTrue(RuntimeHintsPredicates.reflection().onType(JGitText.class).test(hints));
         assertTrue(RuntimeHintsPredicates.reflection().onMethod(GcConfig.PackRefsMode.class.getMethod("values")).invoke().test(hints));
     }
