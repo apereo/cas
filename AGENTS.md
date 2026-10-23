@@ -730,6 +730,10 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
   `java -Dcheckstyle.suppressions.file=style/checkstyle-suppressions.xml -Dcheckstyle.importcontrol.file=style/import-control.xml
   -jar checkstyle.jar -c style/checkstyle-rules.xml <files>`. When the workspace JDK is older, tar the files and `style/` into
   `build/` (deletable without asking) and run it where Java 21 is available.
+- NullAway (JSpecify mode) does not carry a `containsKey` check over to `get`. Once a package is `@NullMarked`, a map
+  whose values are `@Nullable` (Spring Boot's `AuditEvent.getData()`) fails `compileJava` on `map.get(key).toString()`.
+  Read the value once and handle null, e.g. `Objects.toString(map.get(key), null)`; null-marking a package surfaces these
+  in code nobody touched, so compile the module after adding a `package-info.java`.
 
 
 ## LDAP review discipline
