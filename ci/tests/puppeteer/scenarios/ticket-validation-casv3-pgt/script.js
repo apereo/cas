@@ -3,7 +3,7 @@ const assert = require("assert");
 const cas = require("../../cas.js");
 
 async function validateTicket(service, ticket, format = "JSON") {
-    const body = await cas.doRequest(`https://localhost:8443/cas/p3/proxyValidate?service=${service}&ticket=${ticket}&format=${format}&pgtUrl=https://github.com/apereo/cas`);
+    const body = await cas.doRequest(`https://localhost:8443/cas/p3/proxyValidate?service=${service}&ticket=${ticket}&format=${format}&pgtUrl=https://localhost:9859/anything/pgt`);
     await cas.log(body);
     return body;
 }

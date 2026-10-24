@@ -553,6 +553,14 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
   log4j drops an appender whose start fails) then fail the test. The script removes any previous container with
   `docker rm -f`, waits until it is gone (a `--rm` container still being removed makes `docker run --name` conflict), and
   polls `/_localstack/health` until every service it enables is `available` or `running`, bounded, `exit 1` on timeout.
+- A proxy callback (`pgtUrl`) is contacted by CAS itself (`ProxyAuthenticationHandler` expects an acceptable status), so
+  it must be a local endpoint: GitHub stopped answering requests from the CI runners with an acceptable status, which
+  failed `ticket-validation-casv3-pgt` and the `cas` unit tests using `https://www.github.com`. Scenarios use httpbin
+  (`https://localhost:9859/anything/...`, with `--cas.http-client.host-name-verifier=none` for its certificate); unit
+  tests use `new MockWebServer(true)` with `cas.http-client.host-name-verifier=none`, which covers the context's http
+  client only: a `Cas20ProxyHandler` built in the test (delivers the PGT IOU) needs its own client on
+  `CasSSLContext.disabled()`, or the IOU callback fails with PKIX path errors. A public URL is fine only where
+  nothing contacts it (a redirect target, a service id, a failure path).
 
 ## Storage backend scenarios (service registry, SAML2 metadata, MFA devices, consent)
 

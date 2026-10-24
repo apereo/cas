@@ -3,6 +3,7 @@ package org.apereo.cas.web;
 import module java.base;
 import org.apereo.cas.AbstractCentralAuthenticationServiceTests;
 import org.apereo.cas.CasProtocolConstants;
+import org.apereo.cas.authentication.CasSSLContext;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.config.CasThemesAutoConfiguration;
@@ -15,6 +16,7 @@ import org.apereo.cas.ticket.proxy.support.Cas10ProxyHandler;
 import org.apereo.cas.ticket.proxy.support.Cas20ProxyHandler;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 import org.apereo.cas.util.MockRequestContext;
+import org.apereo.cas.util.MockWebServer;
 import org.apereo.cas.util.http.SimpleHttpClientFactoryBean;
 import org.apereo.cas.validation.CasProtocolValidationSpecification;
 import org.apereo.cas.validation.DefaultCasProtocolValidationSpecification;
@@ -27,6 +29,7 @@ import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.web.servlet.ModelAndView;
 import jakarta.servlet.http.HttpServletRequest;
 import static org.junit.jupiter.api.Assertions.*;
@@ -38,6 +41,7 @@ import static org.mockito.Mockito.*;
  */
 @ExtendWith(CasTestExtension.class)
 @ImportAutoConfiguration(CasThemesAutoConfiguration.class)
+@TestPropertySource(properties = "cas.http-client.host-name-verifier=none")
 public abstract class AbstractServiceValidateControllerTests extends AbstractCentralAuthenticationServiceTests {
     protected static final String SUCCESS = "Success";
 
@@ -54,8 +58,17 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
             input -> input.getChainedAuthentications().size() == 1);
     }
 
+    /**
+     * Build a proxy handler whose http client accepts the self-signed certificate of the local
+     * proxy callback server that {@link #getModelAndViewUponServiceValidationWithSecurePgtUrl(Service)} starts.
+     *
+     * @return the proxy handler
+     */
     protected static ProxyHandler getProxyHandler() {
-        return new Cas20ProxyHandler(new SimpleHttpClientFactoryBean().getObject(), new DefaultUniqueTicketIdGenerator());
+        val httpClientFactory = new SimpleHttpClientFactoryBean();
+        httpClientFactory.setSslContext(CasSSLContext.disabled().getSslContext());
+        httpClientFactory.setHostnameVerifier(CasSSLContext.disabled().getHostnameVerifier());
+        return new Cas20ProxyHandler(httpClientFactory.getObject(), new DefaultUniqueTicketIdGenerator());
     }
 
     @BeforeEach
@@ -356,20 +369,28 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
         assertNull(modelAndView.getModel().get(CasProtocolConstants.PARAMETER_PROXY_GRANTING_TICKET_IOU));
     }
 
-    /*
-    Helper methods.
+    /**
+     * Validate a service ticket with an {@code https} proxy callback url. The callback is a local TLS server
+     * rather than a public site, since proxy authentication contacts it and expects an acceptable status code;
+     * its self-signed certificate is accepted because the test disables the http client's host name verifier.
+     *
+     * @param service the service
+     * @return the model and view
+     * @throws Throwable the throwable
      */
     protected ModelAndView getModelAndViewUponServiceValidationWithSecurePgtUrl(final Service service) throws Throwable {
-        val ctx = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport(), service);
-        val tId = getCentralAuthenticationService().createTicketGrantingTicket(ctx);
-        val sId = getCentralAuthenticationService().grantServiceTicket(tId.getId(), service, ctx);
+        try (val webServer = new MockWebServer(true)) {
+            webServer.start();
+            val ctx = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport(), service);
+            val tId = getCentralAuthenticationService().createTicketGrantingTicket(ctx);
+            val sId = getCentralAuthenticationService().grantServiceTicket(tId.getId(), service, ctx);
 
-        val request = new MockHttpServletRequest();
-        request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, service.getId());
-        request.addParameter(CasProtocolConstants.PARAMETER_TICKET, sId.getId());
-        request.addParameter(CasProtocolConstants.PARAMETER_PROXY_GRANTING_TICKET_URL, GITHUB_URL);
-
-        return serviceValidateController.handleRequestInternal(request, new MockHttpServletResponse());
+            val request = new MockHttpServletRequest();
+            request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, service.getId());
+            request.addParameter(CasProtocolConstants.PARAMETER_TICKET, sId.getId());
+            request.addParameter(CasProtocolConstants.PARAMETER_PROXY_GRANTING_TICKET_URL, "https://localhost:%s".formatted(webServer.getPort()));
+            return serviceValidateController.handleRequestInternal(request, new MockHttpServletResponse());
+        }
     }
 
     public abstract AbstractServiceValidateController getServiceValidateControllerInstance();
