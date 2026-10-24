@@ -29,8 +29,8 @@
                                     .catch(err => console.debug("WebAuthn signal was not delivered", err));
                             }
                             Swal.fire({
-                                title: `Multifactor Device Removed`,
-                                text: `Multifactor authentication device ${name} has been removed.`,
+                                title: /*[[#{screen.account.mfadevices.removed.title}]]*/ "Multifactor Device Removed",
+                                text: (/*[[#{screen.account.mfadevices.removed.text}]]*/ "Multifactor authentication device {0} has been removed.").replace("{0}", () => name),
                                 icon: "info",
                                 showConfirmButton: false
                             });
@@ -41,7 +41,7 @@
                         error: (xhr, status, error) => {
                             const errorResponse = JSON.parse(xhr.responseText);
                             Swal.fire({
-                                title: `Request Failed: ${xhr.status}`,
+                                title: (/*[[#{screen.account.mfadevices.failed}]]*/ "Request Failed: {0}").replace("{0}", () => xhr.status),
                                 text: errorResponse.message,
                                 icon: "warning",
                                 showConfirmButton: false
@@ -53,7 +53,8 @@
         });
 
         function submitRegistrationRequest(type) {
-            document.forms.fm2["_eventId"].value = type === "gauth" ? "registerGauth" : "registerWebAuthn";
+            const events = {gauth: "registerGauth", webauthn: "registerWebAuthn", yubikey: "registerYubiKey"};
+            document.forms.fm2["_eventId"].value = events[type];
             document.forms.fm2.type.value = type;
             document.forms.fm2.submit();
         }
@@ -64,7 +65,7 @@
             <p th:utext="#{screen.account.mfadevices.subtitle}">MFA Devices are listed here</p>
         </div>
         <button id="register" name="register" type="button" class="acct-btn acct-btn-primary"
-                th:if="${#cas.isTrue(gauthAccountProfileRegistrationEnabled) || #cas.isTrue(webauthnAccountProfileRegistrationEnabled)}"
+                th:if="${#cas.isTrue(gauthAccountProfileRegistrationEnabled) || #cas.isTrue(webauthnAccountProfileRegistrationEnabled) || #cas.isTrue(yubikeyAccountProfileRegistrationEnabled)}"
                 data-account-action="register" aria-expanded="false" aria-controls="registrationOptions">
             <i class="mdi mdi-plus" aria-hidden="true"></i>
             <span th:text="#{screen.account.mfadevices.register}">Register a device</span>
@@ -72,7 +73,7 @@
     </header>
 
     <form method="post" id="fm2" th:action="@{${'/' + activeFlowId}}"
-          th:if="${#cas.isTrue(gauthAccountProfileRegistrationEnabled) || #cas.isTrue(webauthnAccountProfileRegistrationEnabled)}">
+          th:if="${#cas.isTrue(gauthAccountProfileRegistrationEnabled) || #cas.isTrue(webauthnAccountProfileRegistrationEnabled) || #cas.isTrue(yubikeyAccountProfileRegistrationEnabled)}">
         <div id="registrationOptions" class="cas-account-register" hidden>
             <p class="visually-hidden" th:utext="#{screen.authentication.gauth.reganotherdevice}">You can also register another device.</p>
             <section class="cas-account-register-option" th:if="${gauthAccountProfileRegistrationEnabled}" aria-labelledby="gauthRegistrationTitle">
@@ -94,6 +95,16 @@
                 <button id="webauthnRegistrationLink" type="button" class="acct-btn acct-btn-primary"
                         aria-describedby="webauthnRegistrationTitle"
                         onclick="submitRegistrationRequest('webauthn');" th:text="#{screen.welcome.button.register}">Register</button>
+            </section>
+            <section class="cas-account-register-option" th:if="${yubikeyAccountProfileRegistrationEnabled}" aria-labelledby="yubikeyRegistrationTitle">
+                <h3 id="yubikeyRegistrationTitle">
+                    <i class="mdi mdi-usb-flash-drive" aria-hidden="true"></i>
+                    <span th:utext="#{cas.mfa.providerselection.mfa-yubikey}">YubiKey</span>
+                </h3>
+                <p th:text="#{screen.account.mfadevices.register.yubikey}">Touch your YubiKey to register it as a second factor.</p>
+                <button id="yubikeyRegistrationLink" type="button" class="acct-btn acct-btn-primary"
+                        aria-describedby="yubikeyRegistrationTitle"
+                        onclick="submitRegistrationRequest('yubikey');" th:text="#{screen.welcome.button.register}">Register</button>
             </section>
         </div>
         <input type="hidden" name="type" value=""/>

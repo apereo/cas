@@ -14,7 +14,7 @@
 <main class="container mt-3 mb-3">
     <div layout:fragment="content" id="login" class="mdc-card mdc-card-content card w-lg-50 p-4 m-auto cas-hero cas-hero-start">
         <span class="cas-hero-icon" aria-hidden="true"><i class="mdi mdi-email-edit-outline"></i></span>
-        <form method="post" id="fm1" th:action="@{/login}">
+        <form method="post" id="fm1" th:action="${activeFlowId == 'account'} ? @{/account} : @{/login}">
             <div class="banner banner-info alert alert-info my-2">
                 <p th:utext="#{cas.mfa.simple.registration.email.sent}">Message Text</p>
             </div>
@@ -63,6 +63,10 @@
                 <button id="registerButton" class="mdc-button mdc-button--raised me-2">
                     <span class="mdc-button__label" th:text="#{screen.welcome.button.register}">Register</span>
                 </button>
+                <a class="mdc-button mdc-button--outline btn btn-outline-secondary button-cancel" id="cancel"
+                   th:if="${activeFlowId == 'account'}" th:href="@{/account#divContactMethods}">
+                    <span class="mdc-button__label" th:text="#{screen.pm.button.cancel}">Cancel</span>
+                </a>
             </div>
             <input type="hidden" id="eventId" name="_eventId" value="submit"/>
             <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>

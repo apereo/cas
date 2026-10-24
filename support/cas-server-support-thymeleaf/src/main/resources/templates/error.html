@@ -12,12 +12,12 @@
         /*<![CDATA[*/
 
         function showErrorDetails() {
-            const errorTrace = "" // /*[[${#strings.escapeXml(trace)}]]*/ ;
-
+            const errorTrace = /*[[${#cas.isTrue(#cas.theme('cas.error.show-details')) ? trace : ''}]]*/ "";
+            const details = document.createElement("pre");
+            details.style.whiteSpace = "pre-wrap";
+            details.textContent = errorTrace;
             $("#errorMsg").hide();
-            $("#errorDetails")
-                .empty()
-                .append(`<p><pre style='white-space: pre-wrap;'>${errorTrace}</pre></p>`);
+            $("#errorDetails").empty().append(details);
         }
         /*]]>*/
     </script>
@@ -30,11 +30,18 @@
         <span class="cas-hero-icon is-danger" aria-hidden="true"><i class="mdi mdi-alert-circle-outline"></i></span>
         <h2 th:utext="#{screen.unavailable.heading(${status},${error})}">CAS is unable to process this request: "{0}:{1}"</h2>
         <div th:utext="#{screen.unavailable.message}">screen.unavailable.message would go here</div>
-        <pre id="errorMsg" class="mt-4" style="white-space: pre-wrap;" th:text="${'Error: ' + message}">error message would go here</pre>
-        <p id="errorDetails" class="word-break-all" th:if="${trace}">
+        <pre id="errorMsg" class="mt-4" style="white-space: pre-wrap;"
+             th:if="${#cas.themeBuilderEnabled or #cas.isTrue(#cas.theme('cas.error.show-message'))}"
+             th:classappend="${!#cas.isTrue(#cas.theme('cas.error.show-message'))} ? 'cas-theme-builder-off'"
+             data-cas-theme-builder-toggle="cas.error.show-message"
+             th:text="#{screen.error.message(${message})}">error message would go here</pre>
+        <p id="errorDetails" class="word-break-all"
+           th:if="${trace != null and (#cas.themeBuilderEnabled or #cas.isTrue(#cas.theme('cas.error.show-details')))}"
+           th:classappend="${!#cas.isTrue(#cas.theme('cas.error.show-details'))} ? 'cas-theme-builder-off'"
+           data-cas-theme-builder-toggle="cas.error.show-details">
             <button type="button" class="mdc-button mdc-button--raised btn btn-primary drop-button"
                     onclick="showErrorDetails();">
-                <span class="mdc-button__label">View Details</span>
+                <span class="mdc-button__label" th:utext="#{screen.error.details}">View Details</span>
             </button>
         </p>
     </div>

@@ -18,8 +18,11 @@
                 <p th:each="message : ${flowRequestContext.messageContext.allMessages}"
                    th:utext="#{${message.text}}">Message Text</p>
             </div>
-            <div class="alert alert-info" th:text="#{cas.mfa.yubikey.register}">
+            <div class="alert alert-info" th:unless="${activeFlowId == 'account'}" th:text="#{cas.mfa.yubikey.register}">
                 Your device is not yet registered. Use the below form to register your device with CAS.
+            </div>
+            <div class="alert alert-info" th:if="${activeFlowId == 'account'}" th:text="#{cas.mfa.yubikey.register.account}">
+                Register another YubiKey with your account.
             </div>
             <section class="cas-field my-3 mdc-input-group">
                 <div class="mdc-input-group-field mdc-input-group-field-append">
@@ -70,12 +73,18 @@
                             size="50"
                             autocomplete="off" required />
                 </label>
-                <script>document.getElementById("accountName").value = randomWord();</script>
+                <script th:replace="~{fragments/deviceName :: prefill(field='accountName')}"></script>
             </div>
             <br>
-            <button class="mdc-button mdc-button--raised btn btn-primary drop-button">
-                <span class="mdc-button__label" th:text="#{screen.welcome.button.register}">Register</span>
-            </button>
+            <div class="d-flex gap-2">
+                <button class="mdc-button mdc-button--raised btn btn-primary drop-button" id="register">
+                    <span class="mdc-button__label" th:text="#{screen.welcome.button.register}">Register</span>
+                </button>
+                <a class="mdc-button mdc-button--outline btn btn-outline-secondary button-cancel" id="cancel"
+                   th:if="${activeFlowId == 'account'}" th:href="@{/account#divMfaRegisteredAccounts}">
+                    <span class="mdc-button__label" th:text="#{screen.pm.button.cancel}">Cancel</span>
+                </a>
+            </div>
             <input type="hidden" name="_eventId_submit" value="Register" />
             <input type="hidden" name="execution" th:value="${flowExecutionKey}" />
         </form>

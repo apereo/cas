@@ -7,6 +7,7 @@ import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
 import org.apereo.cas.web.support.WebUtils;
 import org.apereo.cas.web.theme.ThemeResolver;
 import org.apereo.cas.web.theme.ThemeSource;
+import com.google.common.primitives.Ints;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -163,6 +164,18 @@ public class CasThymeleafTemplatesDirector {
         val request = HttpRequestUtils.getHttpServletRequestFromRequestAttributes();
         Objects.requireNonNull(request, "Http request cannot be null or undefined");
         return themeMessageSource(request).getMessage(code, null, StringUtils.EMPTY, request.getLocale());
+    }
+
+    /**
+     * Read a theme property as a whole number.
+     *
+     * @param code         the code
+     * @param defaultValue the value used when the property is blank or not a whole number
+     * @return the number
+     */
+    public int themeInteger(final String code, final int defaultValue) {
+        val value = Ints.tryParse(StringUtils.trimToEmpty(theme(code)));
+        return value != null ? value : defaultValue;
     }
 
     /**

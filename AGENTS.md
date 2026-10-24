@@ -626,8 +626,17 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
   (`item.principal.S`). For an outage (`docker pause dynamodb-server`) set `connection-timeout`, `socket-timeout` and
   `client-execution-timeout` to about `1000`, or each SDK call retries for many seconds.
 - REST backends in scenarios use an in-script Express server (`aup-login-rest`, `attribute-consent-storage`'s `rest`
-  variation, `audit-rest`, ports 5611-5618). A REST configuration source must answer before CAS boots, so
+  variation, `audit-rest`, ports 5611-5619; 5619 is the REST multifactor trigger of `mfa-provider-selection-trigger-groovy`). A REST configuration source must answer before CAS boots, so
   `configuration-properties-rest` starts `config-server.js` from `init.sh` and stops it in `exit.sh`.
+- Service ids in scenario JSON are regular expressions: `^https://localhost:9859/anything/1` also matches `/anything/10`,
+  so give new services distinct path names. A scenario that sets `cas.service-registry.json.location` has no catch-all
+  service, which is what lets it assert that a URL is refused.
+- The login page is a webflow response, which sets its own cache headers; check per-service security headers on
+  `/cas/p3/serviceValidate?service=...` instead (`service-security-headers`).
+- A ticket-granting ticket's last used time changes only when a ticket is issued from it, not when the login page is shown;
+  time-based SSO participation and throttled timeouts are measured from that.
+- Values encrypted with a service public key use RSA with PKCS#1 v1.5 padding, which Node no longer decrypts: decrypt with
+  `RSA_NO_PADDING` and drop everything up to the first zero byte after the second byte.
 - localstack scenarios (`configuration-properties-aws`, `simple-mfa-login-aws-ses`, `logging-config-sqs`,
   `audit-aws-firehose`) seed and read AWS resources with `docker exec localstack awslocal ...`; SES mail is read from
   `http://localhost:4566/_aws/ses`.
@@ -951,6 +960,29 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
   `#cas-theme-builder.is-open`, `#ctb-tab-*`, `#ctb-prop-<property with dots as dashes>`, `#ctb-style-<variable>`,
   `#ctb-output-properties`, `#ctb-output-css`, `#ctb-reset`, `#cas-theme-builder-close`; the panel slides out, so wait
   before asserting it is gone. `login-success` and `template-accessibility` cover it.
+
+- Enumerated theme properties need their values in `CHOICES` (theme-builder.js) so the builder offers a dropdown; layout
+  variants are a container class (`cas-providers-<layout>`, `cas-mfa-layout-<layout>`, `cas-consent-list`,
+  `cas-scratch-codes-list`) styled in cas.css, never different markup, so scenario selectors keep working and the
+  builder can preview them by swapping the class. Bootstrap utilities (`w-100`, `flex-column`, `mmw-15`) win with
+  `!important`/max-width, so drop them from markup a layout must override.
+- Java code that needs a theme property outside templates resolves it like `QRUtils.generateQRCode(requestContext, ...)`:
+  the `themeResolver` and `themeSource` beans from the flow's application context, falling back to defaults when absent.
+- To preview a view without its feature module (MFA, consent, delegation), render it with `SpringTemplateEngine`, the
+  layout dialect, a stub `#cas` expression object, a link builder that returns `/cas` as context path and a proxied
+  `IThymeleafRequestContext` (bind status from the model) so `th:field`/`#fields` work; serve the output from
+  `static/themes/` of a running CAS so `/cas/...` assets resolve.
+- Theme sources (`support/cas-server-support-themes-core`): every theme resolves `<theme>` (template-prefix file or classpath
+  bundle) → `cas-theme-custom` → `cas-theme-default`, for the default, aggregate, per-service and per-tenant themes alike.
+  Files read from template prefixes go in as `StaticMessageSource#setCommonMessages`, never `addMessage` per locale: the
+  lookup uses the browser's `Accept-Language`, and per-locale entries silently drop the file for other languages.
+- No English in templates or inline scripts: use `#{...}` for markup and natural JS inlining (`/*[[#{key}]]*/ "fallback"`) in
+  `th:inline="javascript"` scripts; substitute client-side values with `.replace("{0}", () => value)` (function form, so `$`
+  in the value is literal). `webauthn.js` reads its strings from `window.casWebAuthnMessages`, set by
+  `fragments/webAuthnMessages :: messages`, which every template must include before loading the script.
+- Random values in the UI (passwords, client secrets) come from `crypto.getRandomValues` with rejection sampling, never
+  `Math.random()`. Page-level CSS tokens (`--acct-*`, light `--palantir-*`) derive from `--cas-ui-*` / `--cas-theme-*` so the
+  theme builder and `custom.css` reach them.
 
 ## Interrupt notifications
 

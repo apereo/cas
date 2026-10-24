@@ -62,6 +62,10 @@ class CasThymeleafTemplatesDirectorTests {
         val themeMessage = director.theme("cas.theme.description");
         assertEquals("Central Authentication Service", themeMessage);
         assertTrue(director.isThemeBuilderEnabled());
+        assertEquals(10, director.themeInteger("cas.login-providers.select-threshold", 5));
+        assertEquals(250, director.themeInteger("cas.qr-code.size", 100));
+        assertEquals(7, director.themeInteger("cas.theme.description", 7));
+        assertEquals(3, director.themeInteger("cas.unknown.property", 3));
 
         val themeBuilder = director.getThemeBuilder();
         assertEquals("cas-theme-default", themeBuilder.get("theme"));

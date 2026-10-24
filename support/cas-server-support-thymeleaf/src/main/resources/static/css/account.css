@@ -10,21 +10,21 @@
     --acct-button: var(--cas-theme-button-bg, #26418f);
     --acct-button-hover: var(--cas-theme-button-bg-hover, #1678d8);
     --acct-focus: var(--cas-theme-button-bg-hover, #1678d8);
-    --acct-surface: #fff;
-    --acct-background: #f3f5f8;
-    --acct-text: #1b2733;
-    --acct-muted: #52606d;
-    --acct-border: #dfe6ee;
+    --acct-surface: var(--cas-ui-surface, #fff);
+    --acct-background: var(--cas-ui-subtle, #f3f5f8);
+    --acct-text: var(--cas-ui-text, #1b2733);
+    --acct-muted: var(--cas-ui-muted, #52606d);
+    --acct-border: var(--cas-ui-divider, #dfe6ee);
     --acct-tint: color-mix(in srgb, var(--acct-primary) 8%, #fff);
     --acct-on-brand: #fff;
     --acct-on-brand-muted: color-mix(in srgb, #fff 78%, var(--acct-primary));
     --acct-danger: var(--mdc-theme-error, #a20323);
-    --acct-danger-bg: #fbe9eb;
+    --acct-danger-bg: color-mix(in srgb, var(--acct-danger) 9%, #fff);
     --acct-success: #015e58;
     --acct-success-bg: #dff0ee;
     --acct-warning: var(--cas-theme-warning, #664d03);
     --acct-warning-bg: var(--cas-theme-warning-bg, #fff3cd);
-    --acct-card-shadow: 0 1px 2px rgba(16, 40, 70, .08), 0 0 0 1px #e1e7ee;
+    --acct-card-shadow: 0 1px 2px rgba(16, 40, 70, .08), 0 0 0 1px var(--acct-border);
     --acct-radius: 16px;
     color: var(--acct-text);
     font-size: 15px;
@@ -655,6 +655,16 @@
 .cas-account-tag.is-failure {
     background: var(--acct-danger-bg);
     color: #8a0b1f;
+}
+
+.cas-account-tag.is-info {
+    background: var(--acct-tint);
+    color: var(--acct-primary);
+}
+
+.cas-account-tag.is-warning {
+    background: var(--acct-warning-bg);
+    color: var(--acct-warning);
 }
 
 .cas-account-item-details {

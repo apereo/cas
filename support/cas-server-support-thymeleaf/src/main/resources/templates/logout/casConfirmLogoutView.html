@@ -25,14 +25,14 @@
         </p>
 
         <span th:if="${ticketGrantingTicket != null and #maps.size(ticketGrantingTicket.services) > 0}">
-            <span>The following applications are tied to your single sign-on session:</span>
+            <span th:utext="#{screen.logout.confirm.services}">The following applications are tied to your single sign-on session:</span>
             <div class="w-100 mdc-data-table table-responsive mx-auto my-4" id="divServices"
-                 role="region" aria-label="Single sign-on session services">
+                 role="region" aria-label="Single sign-on session services" th:attr="aria-label=#{screen.logout.confirm.services.label}">
                 <table id="servicesTable" class="table table-striped auto-init" style="white-space: unset">
                     <thead>
                     <tr class="mdc-data-table__header-row">
-                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Session Id</th>
-                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Service</th>
+                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col" th:utext="#{screen.logout.confirm.column.session}">Session Id</th>
+                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col" th:utext="#{screen.logout.confirm.column.service}">Service</th>
                     </tr>
                     </thead>
                     <tbody class="mdc-data-table__content">

@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <title>WebAuthn Messages Fragment</title>
+</head>
+<body>
+<script th:fragment="messages" type="text/javascript" th:inline="javascript">
+    window.casWebAuthnMessages = {
+        registrationInit: /*[[#{screen.authentication.webauthn.status.registration.init}]]*/ "",
+        registrationRequest: /*[[#{screen.authentication.webauthn.status.registration.request}]]*/ "",
+        registrationSuccess: /*[[#{screen.authentication.webauthn.status.registration.success}]]*/ "",
+        authenticationInit: /*[[#{screen.authentication.webauthn.status.authentication.init}]]*/ "",
+        authenticationRequest: /*[[#{screen.authentication.webauthn.status.authentication.request}]]*/ "",
+        authenticationSuccess: /*[[#{screen.authentication.webauthn.status.authentication.success}]]*/ "",
+        serverRequest: /*[[#{screen.authentication.webauthn.status.server}]]*/ "",
+        finalizingTitle: /*[[#{screen.authentication.webauthn.finalizing.title}]]*/ "",
+        finalizingText: /*[[#{screen.authentication.webauthn.finalizing.text}]]*/ ""
+    };
+</script>
+</body>
+</html>

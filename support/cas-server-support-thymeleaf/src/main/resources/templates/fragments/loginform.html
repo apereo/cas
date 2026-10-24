@@ -124,6 +124,9 @@
                                        aria-describedby="passwordValidationMessage"
                                        autocomplete="current-password"/>
                                 <button
+                                        th:if="${#cas.themeBuilderEnabled or #cas.isTrue(#cas.theme('cas.login-form.password-reveal.enabled'))}"
+                                        th:classappend="${!#cas.isTrue(#cas.theme('cas.login-form.password-reveal.enabled'))} ? 'cas-theme-builder-off'"
+                                        data-cas-theme-builder-toggle="cas.login-form.password-reveal.enabled"
                                         class="reveal-password mdc-button mdc-button--unelevated mdc-input-group-append mdc-icon-button btn btn-primary"
                                         type="button" th:title="#{screen.pm.password.toggle}" aria-pressed="false">
                                     <i class="mdi mdi-eye reveal-password-icon fas fa-eye" aria-hidden="true"></i>
@@ -139,7 +142,10 @@
 
                         </div>
 
-                        <div class="mdc-text-field-helper-line invalid-feedback caps-warn">
+                        <div class="mdc-text-field-helper-line invalid-feedback caps-warn"
+                             th:if="${#cas.themeBuilderEnabled or #cas.isTrue(#cas.theme('cas.login-form.caps-lock-warning.enabled'))}"
+                             th:classappend="${!#cas.isTrue(#cas.theme('cas.login-form.caps-lock-warning.enabled'))} ? 'cas-theme-builder-off'"
+                             data-cas-theme-builder-toggle="cas.login-form.caps-lock-warning.enabled">
                             <div class="mdc-text-field-helper-text mdc-text-field-helper-text--persistent mdc-text-field-helper-text--validation-msg text-danger">
                                 <span th:utext="#{screen.capslock.on}"/>
                             </div>

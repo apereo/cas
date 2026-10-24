@@ -20,7 +20,10 @@
     const GROUPS = [
         {key: "branding", title: "Branding", pattern: /^cas\.(theme\.|logo\.|favicon\.|hero-banner\.)/},
         {key: "header", title: "Header", pattern: /^cas\.(drawer-menu|notifications-menu|theme-builder|locale-selection)\./},
-        {key: "login", title: "Login", pattern: /^cas\.(login-form|pm-links|public-workstation|warn-on-redirect|login-side-panel|service-ui|successful-login)\./},
+        {key: "login", title: "Login", pattern: /^cas\.(login-form|pm-links|public-workstation|warn-on-redirect|login-side-panel|login-providers|service-ui|successful-login)\./},
+        {key: "mfa", title: "Multifactor", pattern: /^cas\.(mfa|webauthn|gauth|qr-code)\./},
+        {key: "consent", title: "Consent", pattern: /^cas\.consent\./},
+        {key: "errors", title: "Errors", pattern: /^cas\.error\./},
         {key: "footer", title: "Footer", pattern: /^cas\.footer\./},
         {key: "resources", title: "Resources", pattern: /^cas\.(standard|css|js|browser-storage)\./},
         {key: "other", title: "Other", pattern: /./}
@@ -35,6 +38,19 @@
         {label: "Georgia (serif)", value: "Georgia, \"Times New Roman\", serif"},
         {label: "Monospace", value: "ui-monospace, SFMono-Regular, Menlo, Consolas, monospace"}
     ];
+
+    const VALUE_TOGGLES = new Set(["cas.hero-banner.file", "cas.pm-links.forgot-password.url"]);
+
+    const CHOICES = {
+        "cas.login-side-panel.position": ["start", "end"],
+        "cas.login-providers.position": ["after", "before"],
+        "cas.login-providers.layout": ["stacked", "grid", "inline"],
+        "cas.webauthn.registration.recommended": ["passkey", "security-key", "none"],
+        "cas.gauth.registration.scratch-codes": ["chips", "list"],
+        "cas.mfa.selection.layout": ["list", "grid", "cards"],
+        "cas.mfa.device-name.prefill": ["random", "empty", "username"],
+        "cas.consent.layout": ["table", "list"]
+    };
 
     const ACRONYMS = new Set(["pm", "ui", "ip", "css", "js"]);
 
@@ -238,6 +254,42 @@
                 hero.setAttribute("src", resolveUrl(file));
             }
         },
+        "cas.pm-links.forgot-password.url": (value) => {
+            const url = value.trim();
+            setShown("cas.pm-links.forgot-password.url", url.length > 0);
+            document.querySelectorAll("#forgotPasswordExternal a").forEach((link) => link.setAttribute("href", url));
+        },
+        "cas.login-side-panel.position": (value) => {
+            document.querySelectorAll(".cas-login-card").forEach((card) =>
+                card.classList.toggle("cas-side-panel-end", value.trim().toLowerCase() === "end"));
+        },
+        "cas.login-providers.position": (value) => {
+            document.querySelectorAll(".cas-login-card").forEach((card) =>
+                card.classList.toggle("cas-providers-before", value.trim().toLowerCase() === "before"));
+        },
+        "cas.login-providers.layout": (value) => swapClass("#identityProvidersPanel", "cas-providers-", value, "stacked"),
+        "cas.login-providers.sort": (value) => {
+            document.querySelectorAll("#identityProvidersPanel .cas-providers-list").forEach((list) => {
+                const items = Array.from(list.children);
+                items.forEach((item, index) => {
+                    item.dataset.ctbOrder ??= String(index);
+                });
+                const label = (item) => item.querySelector(".mdc-button__label")?.textContent.trim() ?? "";
+                items.sort(isTrue(value)
+                    ? (a, b) => label(a).localeCompare(label(b))
+                    : (a, b) => Number(a.dataset.ctbOrder) - Number(b.dataset.ctbOrder));
+                list.append(...items);
+            });
+        },
+        "cas.mfa.selection.layout": (value) => swapClass(".cas-mfa-providers", "cas-mfa-layout-", value, "list"),
+        "cas.gauth.registration.scratch-codes": (value) => {
+            document.querySelectorAll("#scratchcodes").forEach((codes) =>
+                codes.classList.toggle("cas-scratch-codes-list", value.trim().toLowerCase() === "list"));
+        },
+        "cas.consent.layout": (value) => {
+            document.querySelectorAll("#divAttributes").forEach((attributes) =>
+                attributes.classList.toggle("cas-consent-list", value.trim().toLowerCase() === "list"));
+        },
         "cas.locale-selection.languages": (value) => {
             const selector = document.getElementById("languageSelector");
             if (!selector) {
@@ -255,9 +307,30 @@
         }
     };
 
+    function swapClass(selector, prefix, value, fallback) {
+        const choice = (value.trim().toLowerCase() || fallback).replace(/[^a-z0-9-]/g, "");
+        document.querySelectorAll(selector).forEach((target) => {
+            Array.from(target.classList).filter((name) => name.startsWith(prefix)).forEach((name) => target.classList.remove(name));
+            target.classList.add(prefix + choice);
+        });
+    }
+
+    const PREVIEW_TARGETS = {
+        "cas.login-side-panel.position": "#loginSidePanel",
+        "cas.login-providers.position": "#loginProviders",
+        "cas.login-providers.layout": "#identityProvidersPanel",
+        "cas.login-providers.sort": "#identityProvidersPanel .cas-providers-list",
+        "cas.mfa.selection.layout": ".cas-mfa-providers",
+        "cas.gauth.registration.scratch-codes": "#scratchcodes",
+        "cas.consent.layout": "#divAttributes"
+    };
+
     function hasPreview(name) {
+        if (PREVIEW_TARGETS[name]) {
+            return document.querySelector(PREVIEW_TARGETS[name]) !== null;
+        }
         if (PREVIEWS[name]) {
-            return name !== "cas.hero-banner.file" || toggleTargets(name).length > 0;
+            return !VALUE_TOGGLES.has(name) || toggleTargets(name).length > 0;
         }
         return toggleTargets(name).length > 0;
     }
@@ -597,9 +670,16 @@
         const live = hasPreview(property.name);
         const booleanProperty = isBooleanProperty(property);
         let input;
+        const choices = CHOICES[property.name];
         if (booleanProperty) {
             input = element("input", {type: "checkbox", role: "switch", id, className: "ctb-switch", "aria-describedby": descriptionId});
             input.checked = isTrue(state.properties.get(property.name));
+        } else if (choices) {
+            input = element("select", {id, className: "ctb-input", "aria-describedby": descriptionId});
+            const current = state.properties.get(property.name) ?? "";
+            const values = choices.includes(current) || current === "" ? choices : [...choices, current];
+            input.append(...values.map((value) => element("option", {value, text: value})));
+            input.value = current || property.defaultValue || choices[0];
         } else {
             input = element("input", {
                 type: "text", id, className: "ctb-input", spellcheck: "false", autocomplete: "off",
@@ -631,7 +711,7 @@
             ])
         ]);
         row.append(meta, element("div", {className: "ctb-control"}, [input]));
-        input.addEventListener(booleanProperty ? "change" : "input", () => {
+        input.addEventListener(booleanProperty || choices ? "change" : "input", () => {
             setProperty(property.name, booleanProperty ? String(input.checked) : input.value);
         });
         updateRow(row, property.name, reset);
