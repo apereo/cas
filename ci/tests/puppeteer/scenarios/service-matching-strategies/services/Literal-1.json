@@ -1,0 +1,10 @@
+{
+  "@class": "org.apereo.cas.services.CasRegisteredService",
+  "serviceId": "https://localhost:9859/anything/literal",
+  "name": "Literal",
+  "id": 1,
+  "matchingStrategy": {
+    "@class": "org.apereo.cas.services.LiteralRegisteredServiceMatchingStrategy",
+    "caseInsensitive": false
+  }
+}
