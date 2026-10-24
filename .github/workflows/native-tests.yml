@@ -30,7 +30,7 @@ env:
   JDK_CURRENT: 25
   GRAALVM_VERSION: '25.4'
   JDK_DISTRIBUTION: "corretto"
-  NODE_CURRENT: '26.12.0'
+  NODE_CURRENT: '26.12.1'
   MAX_ATTEMPTS: 1
   RETRY_MINUTES: 45
   SCENARIO_REGEX: ${{ github.event.inputs.scenarioRegex || '.*' }}
@@ -171,26 +171,20 @@ jobs:
           cache: 'npm'
           cache-dependency-path: ./ci/tests/puppeteer/package.json
           check-latest: true
-      - name: Build Native Tests
+      - name: Build and Run Native Tests
         uses: nick-fields/retry@v4
         if: ${{ env.NATIVE_BUILD_ENABLED == 'true' }}
         with:
           max_attempts: ${{ env.MAX_ATTEMPTS }}
-          timeout_minutes: ${{ env.RETRY_MINUTES }}
+          timeout_minutes: ${{ env.NATIVE_TEST_TIMEOUT }}
           retry_on: error
           shell: bash
           command: |
-            ./ci/tests/puppeteer/run.sh --nb --scenario $PWD/ci/tests/puppeteer/scenarios/${{matrix.scenario}}
-      - name: Run Native Tests
-        uses: nick-fields/retry@v4
-        if: ${{ env.NATIVE_RUN_ENABLED == 'true' }}
-        with:
-          max_attempts: ${{ env.MAX_ATTEMPTS }}
-          timeout_minutes: 10
-          retry_on: error
-          shell: bash
-          command: |
-            ./ci/tests/puppeteer/run.sh --nr --scenario $PWD/ci/tests/puppeteer/scenarios/${{matrix.scenario}}
+            native_mode=--nb
+            if [[ "${NATIVE_RUN_ENABLED}" == "true" ]]; then
+              native_mode=--nbr
+            fi
+            ./ci/tests/puppeteer/run.sh "$native_mode" --scenario $PWD/ci/tests/puppeteer/scenarios/${{matrix.scenario}}
       - name: Docker Prefetch Summary
         if: ${{ always() && env.NATIVE_RUN_ENABLED == 'true' }}
         continue-on-error: true
@@ -239,28 +233,21 @@ jobs:
           node-version: ${{ env.NODE_VERSION_REQUIRED }}
           cache: 'npm'
           cache-dependency-path: ./ci/tests/puppeteer/package.json
-      - name: Build Native Tests
+      - name: Build and Run Native Tests
         uses: nick-fields/retry@v4
         if: ${{ env.NATIVE_BUILD_ENABLED == 'true' }}
         with:
           max_attempts: ${{ env.MAX_ATTEMPTS }}
-          timeout_minutes: ${{ env.RETRY_MINUTES }}
+          timeout_minutes: ${{ env.NATIVE_TEST_TIMEOUT }}
           retry_on: error
           shell: bash
           command: |
             export RUNNER_OS=${{ runner.os }}
-            ./ci/tests/puppeteer/run.sh --nb --scenario $PWD/ci/tests/puppeteer/scenarios/${{matrix.scenario}}
-      - name: Run Native Tests
-        uses: nick-fields/retry@v4
-        if: ${{ env.NATIVE_RUN_ENABLED == 'true' }}
-        with:
-          max_attempts: ${{ env.MAX_ATTEMPTS }}
-          timeout_minutes: 10
-          retry_on: error
-          shell: bash
-          command: |
-            export RUNNER_OS=${{ runner.os }}
-            ./ci/tests/puppeteer/run.sh --nr --scenario $PWD/ci/tests/puppeteer/scenarios/${{matrix.scenario}}
+            native_mode=--nb
+            if [[ "${NATIVE_RUN_ENABLED}" == "true" ]]; then
+              native_mode=--nbr
+            fi
+            ./ci/tests/puppeteer/run.sh "$native_mode" --scenario $PWD/ci/tests/puppeteer/scenarios/${{matrix.scenario}}
       - name: Docker Prefetch Summary
         if: ${{ always() && env.NATIVE_RUN_ENABLED == 'true' }}
         continue-on-error: true
@@ -309,28 +296,21 @@ jobs:
           node-version: ${{ env.NODE_VERSION_REQUIRED }}
           cache: 'npm'
           cache-dependency-path: ./ci/tests/puppeteer/package.json
-      - name: Build Native Tests
+      - name: Build and Run Native Tests
         uses: nick-fields/retry@v4
         if: ${{ env.NATIVE_BUILD_ENABLED == 'true' }}
         with:
           max_attempts: ${{ env.MAX_ATTEMPTS }}
-          timeout_minutes: ${{ env.RETRY_MINUTES }}
+          timeout_minutes: ${{ env.NATIVE_TEST_TIMEOUT }}
           retry_on: error
           shell: bash
           command: |
             export RUNNER_OS=${{ runner.os }}
-            ./ci/tests/puppeteer/run.sh --nb --scenario $PWD/ci/tests/puppeteer/scenarios/${{matrix.scenario}}
-      - name: Run Native Tests
-        uses: nick-fields/retry@v4
-        if: ${{ env.NATIVE_RUN_ENABLED == 'true' }}
-        with:
-          max_attempts: ${{ env.MAX_ATTEMPTS }}
-          timeout_minutes: 10
-          retry_on: error
-          shell: bash
-          command: |
-            export RUNNER_OS=${{ runner.os }}
-            ./ci/tests/puppeteer/run.sh --nr --scenario $PWD/ci/tests/puppeteer/scenarios/${{matrix.scenario}}
+            native_mode=--nb
+            if [[ "${NATIVE_RUN_ENABLED}" == "true" ]]; then
+              native_mode=--nbr
+            fi
+            ./ci/tests/puppeteer/run.sh "$native_mode" --scenario $PWD/ci/tests/puppeteer/scenarios/${{matrix.scenario}}
       - name: Docker Prefetch Summary
         if: ${{ always() && env.NATIVE_RUN_ENABLED == 'true' }}
         continue-on-error: true

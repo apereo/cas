@@ -14,6 +14,7 @@ import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.jose4j.jwk.JsonWebKey;
 import org.jose4j.jwk.JsonWebKeySet;
@@ -97,7 +98,7 @@ public class OidcDefaultJsonWebKeystoreGeneratorService implements OidcJsonWebKe
         val file = SpringExpressionLanguageValueResolver.getInstance()
             .resolve(oidcProperties.getJwks().getFileSystem().getJwksFile());
         try {
-            if (StringUtils.startsWith(StringUtils.trim(file), "{")) {
+            if (Strings.CI.startsWith(StringUtils.trim(file), "{")) {
                 val jsonKeys = new JsonWebKeySet(file).toJson(JsonWebKey.OutputControlLevel.INCLUDE_PRIVATE);
                 return new ByteArrayResource(jsonKeys.getBytes(StandardCharsets.UTF_8), "OpenID Connect Keystore");
             }

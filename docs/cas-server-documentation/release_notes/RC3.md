@@ -741,6 +741,11 @@ theme property.
   JPA, MongoDB, Redis or Hazelcast, or with ticket encryption enabled. Each validation also costs fewer trips to the ticket
   registry, and a validation that cannot obtain the ticket's lock is now rejected instead of being allowed without
   consuming the ticket.
+- {: .fixed data-area="tickets"} When a [ticket is validated](../authentication/CAS-Protocol-TicketValidation.html), the
+  service URL must match the one the ticket was issued for exactly up to its query, so an encoded character, such as an
+  encoded `#` that hides user information in the host, no longer makes two different URLs match. The query is compared
+  once decoded, so a parameter that the application and the validating client encode differently, such as a space sent as
+  `+` or as `%20`, still matches.
 - {: .fixed data-area="oidc"} [OpenID Connect](../authentication/OIDC-Authentication.html) ID tokens issued for
   `response_type=id_token` no longer carry an `at_hash` claim, since no access token is issued with them. For
   `response_type=id_token token`, the `at_hash` claim is now computed over the access token returned in the same response;
@@ -765,6 +770,57 @@ theme property.
   session it was issued from, which undid any change made to the session since, such as applications the user logged into
   afterwards. When a single sign-on session ends, it is no longer rewritten once for each of its proxy-granting tickets and
   once more right before it is removed.
+- {: .fixed data-area="tickets"} The [Hazelcast ticket registry](../ticketing/Hazelcast-Ticket-Registry.html) keeps each ticket
+  for as long as the expiration policy that applies to it, so remember-me single sign-on sessions are no longer removed after
+  the default session lifetime, and updating a session no longer restarts its lifetime in Hazelcast. Looking up sessions by
+  attribute, such as for logout requests sent by external identity providers, no longer builds a query from the attribute
+  values, so values that contain quotes are matched instead of failing. Listing tickets page by page, such as through the
+  `ssoSessions` actuator endpoint, now skips and counts tickets across the whole registry rather than within each ticket map,
+  and the registry no longer shuts down the Hazelcast instance it shares with other modules, such as authentication throttling.
+- {: .changed data-area="tickets"} The [Hazelcast ticket registry](../ticketing/Hazelcast-Ticket-Registry.html) counts, finds and removes
+  the tickets of a user through its indexes in one pass, with or without Jet, instead of running two SQL statements for each
+  ticket map or reading the whole registry, and reports the number of tickets it actually removed. Users are matched regardless
+  of case, like the other ticket registries; tickets stored before the upgrade for user names that are not in lower case are
+  found again once they are renewed or expire. Session and service ticket counts read the size of their maps, only the
+  indexes the registry queries are kept, and an encrypted ticket read back after encryption is turned off is removed instead
+  of failing. Ending a single sign-on session removes its service tickets with one call per ticket map, listing all tickets
+  reads them in batches instead of copying each ticket map into memory at once, and the ticket maps are configured before
+  the Hazelcast member starts rather than added to the running cluster afterwards.
+- {: .changed data-area="tickets"} The [Hazelcast ticket registry](../ticketing/Hazelcast-Ticket-Registry.html) no longer runs SQL
+  queries, so Hazelcast Jet is no longer started by any CAS Hazelcast module and the `core.enable-jet` Hazelcast setting, such as
+  `cas.ticket.registry.hazelcast.core.enable-jet`, is removed. Remove it from your configuration; CAS refuses to start with
+  settings it does not recognize. The `hazelcast-sql` library is no longer included.
+- {: .action data-area="tickets"} The [Hazelcast ticket registry](../ticketing/Hazelcast-Ticket-Registry.html) stores tickets in a new,
+  smaller format: entries use Hazelcast compact serialization, so looking up tickets by user, by service or by attribute reads
+  only those fields instead of deserializing every ticket, and authentication attributes are kept only with single sign-on
+  sessions rather than with every ticket. Nodes running this version cannot read tickets stored by earlier versions, so
+  upgrade the whole cluster at once; existing tickets and single sign-on sessions are not carried over. With encryption turned on,
+  the application a ticket was issued for is now stored as a digest too, like the ticket id, user and attributes, instead of
+  as its plain URL. Since tickets no longer
+  go through Hazelcast's Java serialization, `cas.ticket.registry.hazelcast.core.enable-compression`{: .cas-setting} no longer
+  applies to them.
+- {: .changed data-area="tickets"} When Hazelcast expires a single sign-on session of the
+  [Hazelcast ticket registry](../ticketing/Hazelcast-Ticket-Registry.html), CAS now sends single logout requests, removes the
+  tickets the session still holds and reports the session as destroyed, like the ticket registry cleaner does for other ticket
+  registries; expired sessions used to disappear silently. Each expired session is handled once, by the node that owns it.
+- {: .changed} Hazelcast maps of all CAS modules no longer evict entries to make room by default:
+  `cas.ticket.registry.hazelcast.cluster.core.eviction-policy`{: .cas-setting} and its counterparts now default to `NONE`, since
+  evicting a ticket or session that is still valid logs its user out without notice; entries leave when they expire. After a
+  network split heals, the copy of an entry that was updated last now wins
+  (`cas.ticket.registry.hazelcast.cluster.core.map-merge-policy`{: .cas-setting} defaults to `LATEST_UPDATE`), so changes made
+  on either side, such as applications added to a session, are kept. Choosing a merge policy that compares update, access or
+  expiration times or hits no longer stops the Hazelcast member from starting.
+- {: .changed} A CAS Hazelcast member with TCP/IP and multicast turned off no longer joins other Hazelcast members on the network
+  through Hazelcast's auto-detection, which fell back to multicast; it runs on its own, and other members can join it only
+  through the TCP/IP, multicast or discovery settings CAS exposes. Removing failed login records of
+  [authentication throttling with Hazelcast](../authentication/Configuring-Authentication-Throttling-Hazelcast.html) no longer
+  fails when some of the records are kept on another member of the cluster.
+- {: .changed data-area="tickets"} The `cluster.core.replicated` and `cluster.core.async-fillup` Hazelcast settings, such as
+  `cas.ticket.registry.hazelcast.cluster.core.replicated`, are removed from every Hazelcast module: no module
+  ever used a Hazelcast replicated map, so turning them on only left the actual map, such as that of the
+  [Hazelcast ticket registry](../ticketing/Hazelcast-Ticket-Registry.html), authentication throttling or Spring Session,
+  without its expiration, eviction, backup settings and indexes. Remove them from your configuration; CAS refuses to start
+  with settings it does not recognize.
 - {: .changed data-area="saml"} The [SAML2 identity provider](../authentication/Configuring-SAML2-Authentication.html) locates and
   verifies the service provider behind an authentication request, and resolves its metadata, once per request instead of up to
   four times while validating the request, choosing the binding and building the response.
@@ -1019,7 +1075,8 @@ theme property.
 - {: .changed data-area="project"} Accessibility checks with axe-core now cover the login, login error, account status (locked, disabled, expired and must-change password, bad hours, bad workstation), password reset and forgot-username, unauthorized service, page not found, login success, attribute consent, logout confirmation and logout, Google Authenticator registration and token, and trusted device registration pages in one scenario, and the interrupt, simple MFA, passwordless, WebAuthn, YubiKey, graphical user authentication, acceptable usage policy, delegated provider selection and error, MFA provider selection and unavailable, surrogate selection, account sign-up, account profile, risk-blocked, QR code login, security questions, password reset and change, weak password, authentication warnings, service access warning, risky authentication verification, simple MFA recipient selection and email registration, passwordless method selection and Google Authenticator registration confirmation pages in the scenarios that test those features. Each fails on serious or critical WCAG 2.1 A/AA violations.
 - {: .fixed data-area="ui"} The account sign-up form gives its fields valid `autocomplete` values (`given-name`, `email` and so on) instead of their field names, and the QR code login field's label points at the field it describes.
 - {: .fixed data-area="ui"} The Palantir SAML2 metadata and OpenID Connect configuration dialogs have accessible names and descriptions; they referred to element ids that did not exist. The account unlock field uses a valid `autocomplete="off"` instead of `false`.
-- {: .fixed data-area="tickets"} The Memcached ticket registry no longer needs `java.util` opened to the application (`--add-opens java.base/java.util=ALL-UNNAMED`). Its Kryo serializers for `EnumMap`, `EnumSet`, calendars, `Arrays.asList` and the unmodifiable collection views read private JDK fields through reflection, which a plain `java -jar` launch refuses, so no ticket-granting ticket could be stored and every login failed. They are replaced by serializers that do not use reflection.
-- {: .fixed data-area="services"} A request whose `service` is refused outright, such as an HTTP URL with user information, is answered with the CAS service error page and a `403` status. The response headers filter used to let the refusal escape, which left the browser with an empty error response. The check reads the host and user information of the URL directly instead of parsing it as a `java.net.URI`, so service URLs CAS has always accepted, such as a space in the query or an underscore in a host name, are not refused.
+- {: .fixed data-area="tickets"} The Memcached ticket registry no longer needs `java.util` opened to the application (`--add-opens java.base/java.util=ALL-UNNAMED`). Its Kryo serializers for `EnumMap`, `EnumSet`, calendars, `Arrays.asList` and the unmodifiable collection views read private JDK fields through reflection, which a plain `java -jar` launch refuses, so no ticket-granting ticket could be stored and every login failed. They are replaced by serializers that do not use reflection, and the system clock is written as its zone instead of through its private field, which needed `java.time` opened.
+- {: .fixed data-area="services"} A request whose `service` is refused outright, such as an HTTP URL with user information, is answered with the CAS service error page and a `403` status. The response headers filter and the locale interceptor used to let the refusal escape, which left the browser with an empty error response. The check reads the host and user information of the URL directly instead of parsing it as a `java.net.URI`, so service URLs CAS has always accepted, such as a space in the query or an underscore in a host name, are not refused.
 - {: .fixed data-area="ui"} The tabs on the login success page sit directly in their tab list, so screen readers announce them as tabs. The default account sign-up patterns for email and phone are valid in browsers that compile the `pattern` attribute with the `v` flag; they were ignored with a console error, so the fields were not checked before submitting.
+- {: .fixed data-area="ui"} A request that carries a badly formatted webflow `execution`, in the form or in the query string, restarts the flow like any other execution CAS cannot use: it is redirected to the same page with the `execution` parameter removed and its other parameters, such as `service`, kept. It used to end in a server error, because the redirect kept the bad key and would have looped.
 - {: .changed data-area="project"} Browser tests close the browser within a bounded time and kill it when it stops answering, so a stuck browser fails the scenario instead of holding the job until its timeout.

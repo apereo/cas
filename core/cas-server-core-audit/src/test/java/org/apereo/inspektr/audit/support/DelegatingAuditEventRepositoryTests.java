@@ -11,6 +11,7 @@ import org.apereo.cas.support.events.CasEventRepositoryFilter;
 import org.apereo.cas.support.events.dao.AbstractCasEventRepository;
 import org.apereo.cas.support.events.dao.CasEvent;
 import org.apereo.cas.test.CasTestExtension;
+import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -45,6 +46,10 @@ class DelegatingAuditEventRepositoryTests {
     @Qualifier("auditEventRepository")
     private AuditEventRepository auditEventRepository;
 
+    @Autowired
+    @Qualifier(CasEventRepository.BEAN_NAME)
+    private CasEventRepository casEventRepository;
+
     @BeforeEach
     void setup() {
         val request = new MockHttpServletRequest();
@@ -66,6 +71,19 @@ class DelegatingAuditEventRepositoryTests {
         assertEquals(2, auditEventRepository.find("casuser", null, null).size());
         assertEquals(1, auditEventRepository.find(null, null, "success").size());
         assertTrue(auditEventRepository.find("unknown", null, "success").isEmpty());
+    }
+
+    @Test
+    void verifyEventSource() {
+        val data = new HashMap<String, @Nullable Object>();
+        data.put(CasEventRepository.PARAM_SOURCE, null);
+        auditEventRepository.add(new AuditEvent("nosource", "eventsource", data));
+        auditEventRepository.add(new AuditEvent("othersource", "eventsource", Map.of(CasEventRepository.PARAM_SOURCE, "Spring")));
+        auditEventRepository.add(new AuditEvent("cassource", "eventsource", Map.of(CasEventRepository.PARAM_SOURCE, "cas")));
+        assertEquals(1, casEventRepository.load().filter(event -> "nosource".equals(event.getPrincipalId())).count());
+        assertEquals(1, casEventRepository.load().filter(event -> "othersource".equals(event.getPrincipalId())).count());
+        assertEquals(0, casEventRepository.load().filter(event -> "cassource".equals(event.getPrincipalId())).count());
+        assertEquals(1, auditEventRepository.find("cassource", null, null).size());
     }
 
     @TestConfiguration(value = "AuditEventRepositoryTestConfiguration", proxyBeanMethods = false)

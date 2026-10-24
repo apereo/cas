@@ -46,6 +46,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.hc.core5.net.URIBuilder;
 import org.jooq.lambda.fi.util.function.CheckedSupplier;
@@ -489,7 +490,7 @@ public abstract class AbstractSamlIdPProfileHandlerController extends AbstractCo
                                           final boolean signatureRequired)
             throws Throwable {
         val issuer = SamlIdPUtils.getIssuerFromSamlObject(profileMessage);
-        if (!StringUtils.equals(issuer, adaptor.getEntityId())) {
+        if (!Strings.CS.equals(issuer, adaptor.getEntityId())) {
             throw new SAMLException("SAML profile message issuer does not match the resolved metadata entity");
         }
         if (StringUtils.isBlank(messageId)) {
@@ -499,7 +500,7 @@ public abstract class AbstractSamlIdPProfileHandlerController extends AbstractCo
             throw new SAMLException("SAML profile message must contain an IssueInstant");
         }
         if (StringUtils.isBlank(destination)
-            || !StringUtils.equals(destination, request.getRequestURL().toString())) {
+            || !Strings.CS.equals(destination, request.getRequestURL().toString())) {
             throw new SAMLException("SAML profile message Destination does not match the receiving endpoint");
         }
 
@@ -514,13 +515,13 @@ public abstract class AbstractSamlIdPProfileHandlerController extends AbstractCo
             throw new SAMLException("SAML profile message IssueInstant is outside the accepted time window");
         }
 
-        if (!SAMLBindingSupport.isMessageSigned(messageContext)) {
+        if (SAMLBindingSupport.isMessageSigned(messageContext)) {
+            configurationContext.getSamlObjectSignatureValidator()
+                .verifySamlProfileRequest(profileMessage, adaptor, request, messageContext);
+        } else {
             if (signatureRequired) {
                 throw new SAMLException("SAML profile message must be signed");
             }
-        } else {
-            configurationContext.getSamlObjectSignatureValidator()
-                .verifySamlProfileRequest(profileMessage, adaptor, request, messageContext);
         }
 
         val replayKey = "%s:%s:%s".formatted(profileMessage.getElementQName(), issuer, messageId);
@@ -536,9 +537,10 @@ public abstract class AbstractSamlIdPProfileHandlerController extends AbstractCo
     protected Pair<SamlRegisteredService, SamlRegisteredServiceMetadataAdaptor> getRegisteredServiceAndFacade(
         final AuthnRequest authnRequest, final HttpServletRequest httpServletRequest) {
         val issuer = SamlIdPUtils.getIssuerFromSamlObject(authnRequest);
-        if (httpServletRequest.getAttribute(ResolvedServiceProvider.class.getName()) instanceof final ResolvedServiceProvider resolved
-            && StringUtils.equals(resolved.issuer(), issuer)) {
-            return Pair.of(resolved.registeredService(), resolved.adaptor());
+        if (httpServletRequest.getAttribute(ResolvedServiceProvider.class.getName()) instanceof ResolvedServiceProvider(
+            String iss, SamlRegisteredService service, SamlRegisteredServiceMetadataAdaptor adapt)
+            && Strings.CS.equals(iss, issuer)) {
+            return Pair.of(service, adapt);
         }
         LOGGER.debug("Located issuer [{}] from authentication context", issuer);
 

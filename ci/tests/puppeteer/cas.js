@@ -152,12 +152,10 @@ async function finishesWithin(operation, description, timeout = 15000) {
 exports.closeBrowser = async (browser, preClose = () => {}, postClose = () => {}) => {
     try {
         preClose(browser);
-        const pages = await browser.pages();
-        const pagesClosed = await finishesWithin(Promise.all(
-            pages
+        const pagesClosed = await finishesWithin(browser.pages()
+            .then((pages) => Promise.all(pages
                 .filter((page) => !page.isClosed())
-                .map((page) => page.close())
-        ), "Closing browser pages");
+                .map((page) => page.close()))), "Closing browser pages");
         const browserClosed = pagesClosed && await finishesWithin(browser.close(), "Closing the browser");
         if (!browserClosed) {
             browser.process()?.kill("SIGKILL");

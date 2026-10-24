@@ -10,6 +10,8 @@ import org.apereo.cas.util.RandomUtils;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.opensaml.saml.common.xml.SAMLConstants;
+import org.pac4j.core.config.properties.KeystoreProperties;
+import org.pac4j.core.config.properties.ResourceProperties;
 import org.pac4j.saml.client.SAML2Client;
 import org.pac4j.saml.config.SAML2Configuration;
 
@@ -58,11 +60,14 @@ public final class Saml2TestClientsBuilder implements ConfigurableDelegatedClien
         FileUtils.deleteQuietly(new File(keystorePath));
         val spMetadataPath = new File(FileUtils.getTempDirectory(), "sp-metadata-%s.xml".formatted(RandomUtils.nextInt())).getCanonicalPath();
         FileUtils.deleteQuietly(new File(spMetadataPath));
-        val saml2Config = new SAML2Configuration(keystorePath, "changeit", "changeit", idpMetadata);
+        val saml2Config = new SAML2Configuration(new KeystoreProperties(keystorePath)
+            .setKeystorePassword("changeit")
+            .setPrivateKeyPassword("changeit"),
+            new ResourceProperties(idpMetadata));
         saml2Config.getKeystore().setForceKeystoreGeneration(true);
         saml2Config.setForceServiceProviderMetadataGeneration(true);
         saml2Config.setServiceProviderEntityId("cas:example:sp");
-        saml2Config.setServiceProviderMetadataPath(spMetadataPath);
+        saml2Config.getServiceProviderMetadata().setPath(spMetadataPath);
         saml2Config.setAuthnRequestBindingType("urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST");
         saml2Config.init();
         return saml2Config;

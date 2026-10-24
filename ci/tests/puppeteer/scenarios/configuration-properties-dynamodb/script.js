@@ -33,6 +33,7 @@ async function assertLogin(page, user, password, success) {
     const table = await cas.dynamoDbRequest("DescribeTable", {TableName: TABLE});
     assert(table.Table.TableName === TABLE);
 
+    let failed = false;
     const browser = await cas.newBrowser(cas.browserOptions());
     try {
         const page = await cas.newPage(browser);
@@ -71,7 +72,11 @@ async function assertLogin(page, user, password, success) {
         await cas.gotoLogout(page, SERVICE);
         await cas.sleep(1000);
         await cas.assertPageUrlStartsWith(page, SERVICE);
+    } catch (e) {
+        failed = true;
+        throw e;
     } finally {
         await cas.closeBrowser(browser);
+        process.exit(failed ? 1 : 0);
     }
 })();

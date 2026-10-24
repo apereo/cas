@@ -753,10 +753,6 @@ ext.libraries = [
         hazelcast                  : [
                 dependencies.create(libs.hazelcast.sdk.get()) {
                 },
-                dependencies.create(libs.hazelcast.sql.get()) {
-                    exclude(group: "com.hazelcast", module: "hazelcast")
-                    exclude(group: "org.slf4j", module: "slf4j-api")
-                },
                 dependencies.create(libs.apiguardian.api.get()) {
                 }
         ],

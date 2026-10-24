@@ -5,6 +5,7 @@ import org.apereo.cas.memcached.kryo.serial.EnumMapSerializer;
 import org.apereo.cas.memcached.kryo.serial.ImmutableNativeJavaListSerializer;
 import org.apereo.cas.memcached.kryo.serial.ImmutableNativeJavaMapSerializer;
 import org.apereo.cas.memcached.kryo.serial.ImmutableNativeJavaSetSerializer;
+import org.apereo.cas.memcached.kryo.serial.SystemClockSerializer;
 import org.apereo.cas.memcached.kryo.serial.ThrowableSerializer;
 import org.apereo.cas.memcached.kryo.serial.URLSerializer;
 import org.apereo.cas.memcached.kryo.serial.UnmodifiableCollectionsSerializer;
@@ -195,7 +196,7 @@ public class CloseableKryoFactory implements FactoryBean<CloseableKryo> {
         kryo.register(ZoneOffset.class, new TimeSerializers.ZoneOffsetSerializer());
         kryo.register(ZoneId.class, new TimeSerializers.ZoneIdSerializer());
         
-        kryo.register(Clock.systemUTC().getClass());
+        kryo.register(Clock.systemUTC().getClass(), new SystemClockSerializer());
         kryo.register(EnumSet.class, new DefaultSerializers.EnumSetSerializer());
     }
 }

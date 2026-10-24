@@ -15,6 +15,7 @@ import org.apereo.cas.util.LoggingUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 
 /**
  * This is {@link OpenIdFederationAuthorizationCodeResponseTypeAuthorizationRequestValidator}.
@@ -107,6 +108,6 @@ public class OpenIdFederationAuthorizationCodeResponseTypeAuthorizationRequestVa
             return false;
         }
         val normalized = StringUtils.lowerCase(clientId, Locale.ENGLISH);
-        return StringUtils.startsWith(normalized, "http://") || StringUtils.startsWith(normalized, "https://");
+        return Strings.CI.startsWith(normalized, "http://") || Strings.CI.startsWith(normalized, "https://");
     }
 }

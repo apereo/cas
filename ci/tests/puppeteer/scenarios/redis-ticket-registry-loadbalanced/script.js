@@ -154,7 +154,7 @@ async function checkRedisTicketsCache(browser) {
 
 async function checkSsoSessionsWithActuator(browser) {
     await cas.logg("Removing all SSO Sessions");
-    await cas.doDelete("https://localhost:8443/cas/actuator/ssoSessions?type=ALL&from=1&count=1000");
+    await cas.doDelete("https://localhost:8443/cas/actuator/ssoSessions?type=ALL&from=0&count=1000");
     const page = await cas.newPage(browser);
     await logoutEverywhere(page);
 

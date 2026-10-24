@@ -32,6 +32,7 @@ import lombok.extern.jackson.Jacksonized;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.jose4j.jwe.KeyManagementAlgorithmIdentifiers;
 import org.jose4j.jwk.EcJwkGenerator;
 import org.jose4j.jwk.EllipticCurveJsonWebKey;
@@ -383,7 +384,7 @@ public class OidcVerifiableCredentialPresentationRequestEndpointController exten
                     .build()
             );
         }
-        final String requestUri = isRequestObjectSigned()
+        val requestUri = isRequestObjectSigned()
             ? configurationContext.getCasProperties().getAuthn().getOidc().getCore().getIssuer()
               + '/' + OidcConstants.VC_PRESENTATION_REQUEST_URL + '/' + addedTicket.getId()
             : null;
@@ -439,7 +440,7 @@ public class OidcVerifiableCredentialPresentationRequestEndpointController exten
      * @return the origin, without a trailing slash
      */
     protected String verifyOrigin(final OidcVerifiableCredentialPresentationRequest request, final String clientId) {
-        val origin = StringUtils.removeEnd(StringUtils.trimToEmpty(request.getOrigin()), "/");
+        val origin = Strings.CI.removeEnd(StringUtils.trimToEmpty(request.getOrigin()), "/");
         val uri = StringUtils.isBlank(origin) ? null : URI.create(origin);
         if (uri == null || uri.getScheme() == null || uri.getHost() == null || StringUtils.isNotBlank(uri.getRawPath())
             || uri.getRawQuery() != null || uri.getRawFragment() != null || uri.getRawUserInfo() != null) {
@@ -547,7 +548,7 @@ public class OidcVerifiableCredentialPresentationRequestEndpointController exten
             .toList();
 
         val parameters = new LinkedHashMap<String, Object>();
-        final String responseMode = Objects.requireNonNullElseGet(
+        val responseMode = Objects.requireNonNullElseGet(
             transientSessionTicket.getPropertyAsString(OidcVerifiableCredentialPresentationResponseEndpointController.PROPERTY_RESPONSE_MODE),
             () -> StringUtils.isNotBlank(responseEncryptionKey)
                 ? OidcVerifiableCredentialsPresentationProperties.ResponseModes.DIRECT_POST_JWT.getValue()

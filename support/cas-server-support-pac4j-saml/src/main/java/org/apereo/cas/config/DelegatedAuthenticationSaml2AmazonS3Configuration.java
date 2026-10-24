@@ -51,7 +51,7 @@ class DelegatedAuthenticationSaml2AmazonS3Configuration {
                     val s3Client = builder.build();
                     val metadataGenerator = new SAML2S3MetadataGenerator(s3Client, configuration.getServiceProviderEntityId());
                     
-                    configuration.setServiceProviderMetadataResource(ResourceUtils.NULL_RESOURCE);
+                    configuration.getServiceProviderMetadata().setResource(ResourceUtils.NULL_RESOURCE);
                     configuration.setMetadataGenerator(metadataGenerator);
                 });
             }

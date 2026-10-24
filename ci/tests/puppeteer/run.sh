@@ -42,8 +42,10 @@ JFR_ARGS=""
 PUPPETEER_BUILD_OVERLAP="${PUPPETEER_BUILD_OVERLAP:-true}"
 if [[ "${CI}" == "true" ]]; then
   PUPPETEER_STARTUP_TIMEOUT="${PUPPETEER_STARTUP_TIMEOUT:-300}"
+  PUPPETEER_SCRIPT_TIMEOUT="${PUPPETEER_SCRIPT_TIMEOUT:-420}"
 else
   PUPPETEER_STARTUP_TIMEOUT="${PUPPETEER_STARTUP_TIMEOUT:-0}"
+  PUPPETEER_SCRIPT_TIMEOUT="${PUPPETEER_SCRIPT_TIMEOUT:-0}"
 fi
 PUPPETEER_MODULES_READY="false"
 pendingBuildPid=""
@@ -863,6 +865,12 @@ function casServerArtifactForInstance() {
   fi
 }
 
+function nativeFeatureModulesForInstance() {
+  jq -r --argjson variation "${element:-[]}" --arg instance "instance$1" '
+    [(.properties // [])[], (.[$instance].properties // [])[], $variation[]]
+    | map(select(test("^--CasFeatureModule\\.[A-Za-z0-9_.-]+=(true|false)$"))) | join(",")' "${config}"
+}
+
 function dockerImageNameForInstance() {
   local instance="$1"
   if [[ ${instances:-1} -gt 1 ]]; then
@@ -946,14 +954,19 @@ function buildAndRun() {
 
   casServerArtifacts=()
   casServerDependencies=()
+  casServerAotFeatures=()
   casServerBuildSources=()
   lastBuildInstance=1
   for ((c = 1; c <= instances; c++)); do
     casServerDependencies[$c]=$(dependenciesForInstance "$c")
+    if [[ "${NATIVE_BUILD}" == "true" || "${NATIVE_RUN}" == "true" ]]; then
+      casServerAotFeatures[$c]=$(nativeFeatureModulesForInstance "$c")
+    fi
     casServerArtifacts[$c]=$(casServerArtifactForInstance "$c")
     casServerBuildSources[$c]=$c
     for ((k = 1; k < c; k++)); do
-      if [[ "${casServerDependencies[$k]}" == "${casServerDependencies[$c]}" ]]; then
+      if [[ "${casServerDependencies[$k]}" == "${casServerDependencies[$c]}" &&
+        "${casServerAotFeatures[$k]}" == "${casServerAotFeatures[$c]}" ]]; then
         casServerBuildSources[$c]=$k
         break
       fi
@@ -1012,15 +1025,26 @@ function buildAndRun() {
 
         if [[ "${NATIVE_BUILD}" == "true" || "${NATIVE_RUN}" == "true" ]]; then
           BUILD_TASKS="${BUILD_TASKS} ${WEBAPP_PROJECT}:nativeCompile -DaotSpringActiveProfiles=none"
+          local aotFeatureModules="${casServerAotFeatures[$c]}"
+          if [[ -n "${aotFeatureModules}" ]]; then
+            BUILD_TASKS="${BUILD_TASKS} -DaotFeatureModules=${aotFeatureModules}"
+          fi
         fi
 
-        rm -rf "${targetArtifact}"
         BUILD_COMMAND=$(printf '%s' \
           "./gradlew ${BUILD_TASKS} -DskipErrorProneCompiler=true -DskipSpringBootDevTools=true -DskipNestedConfigMetadataGen=true \
 -x check -x test -x javadoc --quiet --build-cache --configure-on-demand --parallel\
 ${BUILD_SCRIPT:+ $BUILD_SCRIPT}${DAEMON:+ $DAEMON} \
 -DcasModules="${dependencies}" --no-watch-fs ${BUILDFLAGS:+ $BUILDFLAGS}")
         printcyan "Executing build command in the ${BUILD_SPAWN}:\n➡️  ${BUILD_COMMAND}"
+
+        if [[ "${NATIVE_BUILD}" == "true" && -z "${BUILD_SCRIPT}" && -x "${targetArtifact}" &&
+          "${BUILD_COMMAND}" == "${completedNativeBuildCommand:-}" ]]; then
+          printcyan "Reusing the native executable: this variation has the same AOT feature modules and dependencies"
+          copyCasServerArtifact "${c}"
+          continue
+        fi
+        rm -rf "${targetArtifact}"
 
         if [[ "${BUILD_SPAWN}" == "background" ]]; then
           startCasBuild "${c}"
@@ -1038,6 +1062,9 @@ ${BUILD_SCRIPT:+ $BUILD_SCRIPT}${DAEMON:+ $DAEMON} \
           if [[ ! -e "${targetArtifact}" ]]; then
             printred "Failed to build CAS web application: ${targetArtifact}."
             exit 2
+          fi
+          if [[ "${NATIVE_BUILD}" == "true" ]]; then
+            completedNativeBuildCommand="${BUILD_COMMAND}"
           fi
         fi
       fi
@@ -1325,15 +1352,20 @@ ${BUILD_SCRIPT:+ $BUILD_SCRIPT}${DAEMON:+ $DAEMON} \
                 printred "Failed to extract CAS artifact ${aotArchiveToExtract} for AOT."
                 exit 1
               fi
-              if [[ ! -f "${aotCasDirectory}/cas.${projectType}" ]]; then
-                printred "CAS AOT extraction did not produce ${aotCasDirectory}/cas.${projectType}."
+              aotLauncher="${aotCasDirectory}/cas.jar"
+              if [[ ! -f "${aotLauncher}" ]]; then
+                aotLauncher="${aotCasDirectory}/cas.${projectType}"
+              fi
+              if [[ ! -f "${aotLauncher}" ]]; then
+                printred "CAS AOT extraction did not produce ${aotCasDirectory}/cas.jar or ${aotCasDirectory}/cas.${projectType}."
+                ls -la "${aotCasDirectory}" 2>/dev/null
                 exit 1
               fi
-              printcyan "Launching CAS from ${aotCasDirectory}/cas.${projectType} to perform a training run"
-              java ${aotArgs} -XX:AOTCacheOutput=${aotCasDirectory}/cas.aot -Dspring.context.exit=onRefresh -jar "${aotCasDirectory}/cas.${projectType}" >/dev/null 2>&1
+              printcyan "Launching CAS from ${aotLauncher} to perform a training run"
+              java ${aotArgs} -XX:AOTCacheOutput=${aotCasDirectory}/cas.aot -Dspring.context.exit=onRefresh -jar "${aotLauncher}" >/dev/null 2>&1
               printcyan "Generated archive cache file ${aotCasDirectory}/cas.aot"
               runArgs="${runArgs} -XX:AOTCache=${aotCasDirectory}/cas.aot"
-              casArtifactToRun="${aotCasDirectory}/cas.${projectType}"
+              casArtifactToRun="${aotLauncher}"
               rm -Rf ${PWD}/*.jfr
               sleep 2
             else
@@ -1464,8 +1496,16 @@ ${BUILD_SCRIPT:+ $BUILD_SCRIPT}${DAEMON:+ $DAEMON} \
       while [ $retry_count -lt $max_retries ]; do
         echo -e "**************************************************************************"
         echo -e "Attempt: #${retry_count}: Running ${scriptPath}\n"
-        node --unhandled-rejections=strict ${nodeArgs} ${scriptPath} ${config}
-        RC=$?
+        if (( PUPPETEER_SCRIPT_TIMEOUT > 0 )); then
+          timeout --kill-after=10 "${PUPPETEER_SCRIPT_TIMEOUT}" node --unhandled-rejections=strict ${nodeArgs} ${scriptPath} ${config}
+          RC=$?
+          if [[ $RC -eq 124 || $RC -eq 137 ]]; then
+            printred "Script: ${scriptPath} did not exit within ${PUPPETEER_SCRIPT_TIMEOUT} seconds"
+          fi
+        else
+          node --unhandled-rejections=strict ${nodeArgs} ${scriptPath} ${config}
+          RC=$?
+        fi
 
         if [[ $RC -ne 0 ]]; then
           printred "Script: ${scriptPath} with config: ${config} failed with return code ${RC}"

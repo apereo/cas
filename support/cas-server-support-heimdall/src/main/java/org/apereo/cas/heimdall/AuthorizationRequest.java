@@ -16,6 +16,7 @@ import lombok.NoArgsConstructor;
 import lombok.SuperBuilder;
 import lombok.ToString;
 import lombok.With;
+import lombok.val;
 import org.jspecify.annotations.Nullable;
 import org.springframework.validation.annotation.Validated;
 
@@ -81,7 +82,7 @@ public class AuthorizationRequest extends BaseHeimdallEntity {
      */
     @JsonIgnore
     public Collection<Object> resolveAttributeValues(final String name) {
-        final Object value = switch (name) {
+        val value = switch (name) {
             case "subject.id" -> subject == null ? null : subject.getId();
             case "subject.type" -> subject == null ? null : subject.getType();
             case "resource.id" -> resource == null ? null : resource.getId();

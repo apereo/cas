@@ -67,6 +67,15 @@ class DefaultServiceMatchingStrategyTests {
     }
 
     @Test
+    void verifyServicesMatchByQueryEncoding() {
+        val service1 = getService("https://google.org/app?param=hello+world");
+        val service2 = getService("https://google.org/app?param=hello%20world");
+        assertTrue(strategy.matches(service1, service2));
+        assertTrue(strategy.matches(service2, service1));
+        assertFalse(strategy.matches(getService("https://google.org%2Fapp?param=hello"), getService("https://google.org/app?param=hello")));
+    }
+
+    @Test
     void verifyServicesMatchByFragmentDecoded() {
         val service1 = getService("https://google.org");
         val service2 = getService("https://google.org#/A/B/C");

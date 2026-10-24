@@ -28,6 +28,7 @@ class CasKryoPoolTests {
     }
 
     @Test
+    @SuppressWarnings("JdkObsolete")
     void verifyJdkCollectionsWithoutReflection() {
         val pool = new CasKryoPool(List.of(TimeUnit.class), true, true, false, false);
         val emptyEnumMap = new EnumMap<TimeUnit, String>(TimeUnit.class);
@@ -43,7 +44,7 @@ class CasKryoPoolTests {
             Collections.unmodifiableSortedSet(new TreeSet<>(Set.of("b", "a"))),
             Collections.unmodifiableMap(new HashMap<>(Map.of("a", "b"))),
             Collections.unmodifiableSortedMap(new TreeMap<>(Map.of("a", "b"))),
-            Arrays.asList("a", "b"), calendar);
+            Arrays.asList("a", "b"), calendar, Clock.systemUTC());
         try (val kryo = pool.borrow()) {
             for (val value : values) {
                 val output = new Output(4096, -1);

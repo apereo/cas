@@ -32,6 +32,8 @@ import org.opensaml.saml.ext.saml2mdui.UIInfo;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.opensaml.saml.saml2.metadata.IDPSSODescriptor;
 import org.pac4j.core.client.BaseClient;
+import org.pac4j.core.config.properties.KeystoreProperties;
+import org.pac4j.core.config.properties.ResourceProperties;
 import org.pac4j.core.profile.converter.AttributeConverter;
 import org.pac4j.saml.client.SAML2Client;
 import org.pac4j.saml.config.SAML2Configuration;
@@ -85,8 +87,10 @@ public class DelegatedClientSaml2Builder implements ConfigurableDelegatedClientB
                 LOGGER.debug("Creating SAML2 identity provider [{}] with identity provider metadata [{}]",
                     saml.getClientName(), identityProviderMetadataPath);
 
-                val configuration = new SAML2Configuration(keystorePath, saml.getKeystorePassword(),
-                    saml.getPrivateKeyPassword(), identityProviderMetadataPath);
+                val configuration = new SAML2Configuration(new KeystoreProperties(keystorePath)
+                    .setKeystorePassword(saml.getKeystorePassword())
+                    .setPrivateKeyPassword(saml.getPrivateKeyPassword()),
+                    new ResourceProperties(identityProviderMetadataPath));
                 configuration.getKeystore().setForceKeystoreGeneration(saml.isForceKeystoreGeneration());
 
                 FunctionUtils.doIf(saml.getCertificateExpirationDays() > 0,
@@ -112,7 +116,7 @@ public class DelegatedClientSaml2Builder implements ConfigurableDelegatedClientB
                 FunctionUtils.doIfNotNull(samlSpMetadata, location -> {
                     val resource = ResourceUtils.getRawResourceFrom(location);
                     LOGGER.debug("Service provider metadata is located at [{}] with entity id [{}]", resource, serviceProviderEntityId);
-                    configuration.setServiceProviderMetadataResource(resource);
+                    configuration.getServiceProviderMetadata().setResource(resource);
                 });
 
                 configuration.setAuthnRequestBindingType(saml.getDestinationBinding());
@@ -304,7 +308,7 @@ public class DelegatedClientSaml2Builder implements ConfigurableDelegatedClientB
         val contextProvider = new SAML2ContextProvider(singleConfiguration.getIdentityProviderMetadataResolver(),
             saml2Client.getServiceProviderMetadataResolver(), saml2Client.getConfiguration().getSamlMessageStoreFactory());
         singleClient.setContextProvider(contextProvider);
-        
+
         singleClient.setSignatureSigningParametersProvider(saml2Client.getSignatureSigningParametersProvider());
         singleClient.setReplayCache(saml2Client.getReplayCache());
         singleClient.setAuthnResponseValidator(saml2Client.getAuthnResponseValidator());
