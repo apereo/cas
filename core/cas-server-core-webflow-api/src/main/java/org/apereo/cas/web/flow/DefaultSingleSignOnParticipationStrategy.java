@@ -120,7 +120,7 @@ public class DefaultSingleSignOnParticipationStrategy extends BaseSingleSignOnPa
         val registeredService = (WebBasedRegisteredService) getRegisteredService(context);
         if (registeredService != null) {
             val ssoPolicy = registeredService.getSingleSignOnParticipationPolicy();
-            if (ssoPolicy != null) {
+            if (ssoPolicy != null && ssoPolicy.getCreateCookieOnRenewedAuthentication() != null) {
                 return ssoPolicy.getCreateCookieOnRenewedAuthentication();
             }
         }

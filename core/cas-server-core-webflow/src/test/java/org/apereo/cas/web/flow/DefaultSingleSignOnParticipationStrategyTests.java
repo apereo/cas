@@ -131,6 +131,27 @@ class DefaultSingleSignOnParticipationStrategyTests {
     }
 
     @Test
+    void verifyCreateCookieOnRenewedAuthenticationWithoutPolicyValue() throws Throwable {
+        val mgr = mock(ServicesManager.class);
+        val registeredService = RegisteredServiceTestUtils.getRegisteredService("https://sso-policy.example.org");
+        registeredService.setSingleSignOnParticipationPolicy(new DefaultRegisteredServiceSingleSignOnParticipationPolicy());
+        when(mgr.findServiceBy(any(Service.class))).thenReturn(registeredService);
+
+        val context = MockRequestContext.create(applicationContext);
+        WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService(registeredService.getServiceId()));
+        val sso = new SingleSignOnProperties().setCreateSsoCookieOnRenewAuthn(false);
+        val plan = new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy());
+        val strategy = new DefaultSingleSignOnParticipationStrategy(mgr, sso,
+            mock(TicketRegistrySupport.class), authenticationSystemSupport, plan);
+
+        val ssoRequest = getSingleSignOnParticipationRequest(context);
+        assertEquals(TriStateBoolean.FALSE, strategy.isCreateCookieOnRenewedAuthentication(ssoRequest));
+        val chain = new ChainingSingleSignOnParticipationStrategy();
+        chain.addStrategy(strategy);
+        assertEquals(TriStateBoolean.FALSE, chain.isCreateCookieOnRenewedAuthentication(ssoRequest));
+    }
+
+    @Test
     void verifyParticipationForRevocationAttribute() throws Throwable {
         val mgr = mock(ServicesManager.class);
         val context = MockRequestContext.create(applicationContext);

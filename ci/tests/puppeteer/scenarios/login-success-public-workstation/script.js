@@ -11,7 +11,7 @@ const cas = require("../../cas.js");
     await cas.assertVisibility(page, "#publicWorkstationButton");
 
     await cas.log("Theme properties from the template prefix apply in every browser language");
-    const germanPage = await cas.newPage(browser);
+    const germanPage = await cas.newPage(browser, true);
     await germanPage.setExtraHTTPHeaders({"Accept-Language": "de-DE,de;q=0.9"});
     await cas.gotoLogin(germanPage, "https://localhost:9859/anything/cas");
     await cas.sleep(1000);

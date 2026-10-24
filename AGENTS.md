@@ -577,6 +577,17 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
   (public clients presenting a JWT refresh token) still does, because it has no `JwtBuilder`.
 - `.gitignore` drops every `ci/tests/puppeteer/**/*.jwks`: client key sets a scenario ships must use another extension
   (`client-public.json`), or the scenario passes locally and fails in CI with a missing file.
+- The REST multifactor trigger (`cas.authn.mfa.triggers.rest`) sends a GET with a JSON body unless `method` is set; a mock
+  endpoint registered with `app.post` never sees it. Set `cas.authn.mfa.triggers.rest.method=POST`.
+- `WebAuthn.getCredentials` omits `rpId` for non-resident credentials, and `WebAuthn.addCredential` refuses a credential
+  without one; `cas.setWebAuthnSignCount` passes the relying party (default `localhost`).
+- Navigating to the page already shown plus a `#fragment` does not reload it: to see data imported through an actuator,
+  `cas.goto` the page without the fragment, then click the tab.
+- The OIDC per-service "signing" key set (`fetchJsonWebKeySetForSigning`, `InternalJwtAccessTokenCipherExecutor`) also
+  verifies what the application signs (request objects via `DefaultOAuth20RequestParameterResolver`), so public-only keys
+  must stay in it; only keys marked `use=enc` may be dropped.
+- Mockito: never call another mock inside `thenReturn(...)` (`thenReturn(accessToken.getAuthentication())` with a mocked
+  token is an UnfinishedStubbingException); read the values into locals first.
 - SPNEGO scenarios get a real KDC from `ci/tests/kerberos/run-kerberos-server.sh` (port 10088, not 88: macOS runs its own
   KDC on 88). Chrome sends Negotiate tokens only with `--auth-server-allowlist=localhost`; it reads `KRB5_CONFIG` and
   `KRB5CCNAME` from the environment given to `cas.newBrowser` (a missing cache makes it show the 401 body, which is the

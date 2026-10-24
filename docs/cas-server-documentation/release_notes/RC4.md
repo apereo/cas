@@ -250,5 +250,14 @@ one-time codes can be added when `cas.authn.mfa.simple.mail.accepted-email-patte
   `cas.authn.spnego.properties[0].jcifs-service-password`{: .cas-setting} is only used when
   `cas.authn.spnego.system.use-subject-creds-only`{: .cas-setting} is `true` (otherwise the service keys come from a keytab),
   and that setting both the Kerberos KDC and realm makes the JDK ignore the Kerberos configuration file.
+- {: .fixed data-area="services"} A service whose single sign-on participation policy does not set
+  `createCookieOnRenewedAuthentication` (for example the last-used-time and authentication-date policies) no longer
+  fails the login flow; the global `cas.sso.create-sso-cookie-on-renew-authn`{: .cas-setting} setting applies instead.
+- {: .fixed data-area="oidc"} JWT access tokens are no longer signed with keys from the application's own `jwks` that
+  are marked for encryption (`"use": "enc"`); when the application publishes only encryption keys, CAS signs with its own
+  keys. `jwtAccessTokenSigningAlg` is honored as documented: CAS picks a signing key whose type fits the algorithm,
+  and the key's own algorithm only applies when none is configured or the configured one does not fit the key.
+- {: .fixed data-area="attributes"} The [return linked attribute release policy](../integration/Attribute-Release-Policy-ReturnLinked.html)
+  releases the values of the first linked attribute that has a value, as documented; it used to release the last one.
 
 {% include release-footer.html %}

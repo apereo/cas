@@ -71,8 +71,13 @@ async function verifyYubiKeyRegistration(page) {
 
 async function verifyWebAuthnDeviceRename(page) {
     await importWebAuthnDevice();
-    await cas.goto(page, "https://localhost:8443/cas/account#divMfaRegisteredAccounts");
+    await cas.goto(page, "https://localhost:8443/cas/account");
     await cas.sleep(1000);
+    await cas.click(page, "#linkMfaRegisteredAccounts");
+    await cas.sleep(1000);
+    const sources = await page.$$eval("#mfaDevicesList [data-field=source]", (items) => items.map((item) => item.innerText.trim()));
+    await cas.logg(sources);
+    assert(sources.includes("Web Authn"), "The imported WebAuthn device must be listed");
     await cas.click(page, "button[name=renameMfaDevice]");
     await cas.sleep(500);
     await cas.type(page, "form.cas-account-inline-form input[name=name]", "Puppeteer Key");

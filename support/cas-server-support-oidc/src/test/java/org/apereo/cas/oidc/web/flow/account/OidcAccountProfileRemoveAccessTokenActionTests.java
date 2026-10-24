@@ -61,20 +61,24 @@ class OidcAccountProfileRemoveAccessTokenActionTests extends AbstractOidcTests {
         val principal = RegisteredServiceTestUtils.getPrincipal(UUID.randomUUID().toString());
         val accessToken = getAccessToken(principal);
         ticketRegistry.addTicket(accessToken);
+        val authentication = accessToken.getAuthentication();
+        val accessTokenId = accessToken.getId();
+        val refreshTokenId = OAuth20RefreshToken.PREFIX + '-' + UUID.randomUUID();
         val refreshToken = mock(OAuth20RefreshToken.class);
-        when(refreshToken.getId()).thenReturn(OAuth20RefreshToken.PREFIX + '-' + UUID.randomUUID());
+        when(refreshToken.getId()).thenReturn(refreshTokenId);
         when(refreshToken.getPrefix()).thenReturn(OAuth20RefreshToken.PREFIX);
-        when(refreshToken.getAuthentication()).thenReturn(accessToken.getAuthentication());
+        when(refreshToken.getAuthentication()).thenReturn(authentication);
         when(refreshToken.getExpirationPolicy()).thenReturn(NeverExpiresExpirationPolicy.INSTANCE);
-        when(refreshToken.getAccessTokens()).thenReturn(new HashSet<>(Set.of(accessToken.getId())));
+        when(refreshToken.getCreationTime()).thenReturn(ZonedDateTime.now(Clock.systemUTC()));
+        when(refreshToken.getAccessTokens()).thenReturn(new HashSet<>(Set.of(accessTokenId)));
         ticketRegistry.addTicket(refreshToken);
 
         val context = MockRequestContext.create(applicationContext);
         WebUtils.putTicketGrantingTicketInScopes(context, new MockTicketGrantingTicket(accessToken.getAuthentication()));
-        context.setParameter("id", refreshToken.getId());
+        context.setParameter("id", refreshTokenId);
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS,
             oidcAccountProfileRemoveAccessTokensAction.execute(context).getId());
-        assertNull(ticketRegistry.getTicket(refreshToken.getId()));
+        assertNull(ticketRegistry.getTicket(refreshTokenId));
         assertNull(ticketRegistry.getTicket(accessToken.getId()));
     }
 }

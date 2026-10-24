@@ -20,7 +20,8 @@
       "name": "rest",
       "properties": [
         "--cas.authn.accept.users=casuser::Mellon,casnomfa::Mellon",
-        "--cas.authn.mfa.triggers.rest.url=http://localhost:5619/mfa"
+        "--cas.authn.mfa.triggers.rest.url=http://localhost:5619/mfa",
+        "--cas.authn.mfa.triggers.rest.method=POST"
       ]
     }
   ],

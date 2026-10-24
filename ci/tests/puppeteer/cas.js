@@ -1510,15 +1510,16 @@ exports.generateOtp = async (otpConfig, stepOffset = 0) => {
  *
  * @param device the virtual authenticator
  * @param signCount the new counter
+ * @param rpId the relying party of the credentials; the authenticator does not report it for non-resident credentials
  * @returns the counters the credentials had before
  */
-exports.setWebAuthnSignCount = async (device, signCount) => {
+exports.setWebAuthnSignCount = async (device, signCount, rpId = "localhost") => {
     const authenticatorId = device.authenticator.authenticatorId;
     const {credentials} = await device.client.send("WebAuthn.getCredentials", {authenticatorId});
     for (const credential of credentials) {
         await this.log(`Credential ${credential.credentialId} has signature counter ${credential.signCount}; setting it to ${signCount}`);
         await device.client.send("WebAuthn.removeCredential", {authenticatorId, credentialId: credential.credentialId});
-        await device.client.send("WebAuthn.addCredential", {authenticatorId, credential: {...credential, signCount}});
+        await device.client.send("WebAuthn.addCredential", {authenticatorId, credential: {rpId, ...credential, signCount}});
     }
     return credentials.map((credential) => credential.signCount);
 };

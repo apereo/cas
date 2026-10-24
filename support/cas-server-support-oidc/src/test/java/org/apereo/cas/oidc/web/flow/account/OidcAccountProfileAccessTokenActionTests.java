@@ -48,15 +48,18 @@ class OidcAccountProfileAccessTokenActionTests extends AbstractOidcTests {
     void verifyRefreshTokensAreListed() throws Throwable {
         val principal = RegisteredServiceTestUtils.getPrincipal(UUID.randomUUID().toString());
         val accessToken = getAccessToken(principal);
+        val authentication = accessToken.getAuthentication();
+        val service = accessToken.getService();
+        val accessTokenId = accessToken.getId();
         val refreshToken = mock(OAuth20RefreshToken.class);
         when(refreshToken.getId()).thenReturn(OAuth20RefreshToken.PREFIX + '-' + UUID.randomUUID());
         when(refreshToken.getPrefix()).thenReturn(OAuth20RefreshToken.PREFIX);
-        when(refreshToken.getAuthentication()).thenReturn(accessToken.getAuthentication());
-        when(refreshToken.getService()).thenReturn(accessToken.getService());
+        when(refreshToken.getAuthentication()).thenReturn(authentication);
+        when(refreshToken.getService()).thenReturn(service);
         when(refreshToken.getClientId()).thenReturn("clientid");
         when(refreshToken.getScopes()).thenReturn(Set.of("openid", "offline_access"));
         when(refreshToken.getExpirationPolicy()).thenReturn(NeverExpiresExpirationPolicy.INSTANCE);
-        when(refreshToken.getAccessTokens()).thenReturn(Set.of(accessToken.getId()));
+        when(refreshToken.getAccessTokens()).thenReturn(Set.of(accessTokenId));
         ticketRegistry.addTicket(refreshToken);
 
         val context = MockRequestContext.create(applicationContext);
