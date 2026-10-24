@@ -29,6 +29,7 @@ public class QRAuthenticationAccountProfileRemoveDeviceAction extends BaseCasWeb
         val principal = WebUtils.getAuthentication(requestContext).getPrincipal();
         if (!repository.getAuthorizedDevicesFor(principal.getId()).contains(deviceId)) {
             LOGGER.warn("Device [{}] is not authorized for [{}] and cannot be removed", deviceId, principal.getId());
+            WebUtils.addErrorMessageToContext(requestContext, "screen.account.qrdevices.failed");
             return error();
         }
         repository.removeDevice(deviceId);

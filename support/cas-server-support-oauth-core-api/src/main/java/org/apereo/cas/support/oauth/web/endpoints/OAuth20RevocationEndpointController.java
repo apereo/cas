@@ -96,7 +96,7 @@ public class OAuth20RevocationEndpointController<T extends OAuth20ConfigurationC
                                                       final HttpServletResponse response)
             throws Exception {
         val registryToken = FunctionUtils.doAndHandle(() -> {
-            val state = getConfigurationContext().getTicketRegistry().getTicket(token, OAuth20Token.class);
+            val state = getConfigurationContext().getTicketRegistry().getTicket(extractAccessTokenFrom(token), OAuth20Token.class);
             return state == null || state.isExpired() ? null : state;
         });
         if (registryToken == null) {

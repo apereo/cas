@@ -46,7 +46,7 @@ public class SurrogateAccountProfileAction extends BaseCasWebflowAction {
     protected @Nullable Event doExecuteInternal(final RequestContext requestContext) {
         val authentication = WebUtils.getAuthentication(requestContext);
         val attributes = authentication.getAttributes();
-        val impersonatedBy = CollectionUtils.firstElement(attributes.get(SurrogateAuthenticationService.AUTHENTICATION_ATTR_SURROGATE_PRINCIPAL))
+        val impersonatedBy = CollectionUtils.firstElement(attributes.getOrDefault(SurrogateAuthenticationService.AUTHENTICATION_ATTR_SURROGATE_PRINCIPAL, List.of()))
             .map(Object::toString);
         impersonatedBy.ifPresent(primary -> requestContext.getFlowScope().put(FLOW_SCOPE_ATTR_IMPERSONATED_BY, primary));
         val username = impersonatedBy.orElseGet(() -> authentication.getPrincipal().getId());

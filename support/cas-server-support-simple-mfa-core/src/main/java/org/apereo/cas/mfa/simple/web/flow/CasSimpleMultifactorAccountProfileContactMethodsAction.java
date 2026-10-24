@@ -51,9 +51,7 @@ public class CasSimpleMultifactorAccountProfileContactMethodsAction extends Base
         attributeNames
             .stream()
             .filter(StringUtils::isNotBlank)
-            .map(attributes::get)
-            .filter(Objects::nonNull)
-            .flatMap(List::stream)
+            .flatMap(name -> attributes.getOrDefault(name, List.of()).stream())
             .map(Object::toString)
             .filter(StringUtils::isNotBlank)
             .distinct()

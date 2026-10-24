@@ -112,6 +112,17 @@
         <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
     </form>
 
+    <div id="gauthScratchCodes" class="cas-account-callout" role="status" th:if="${gauthScratchCodes}">
+        <h3>
+            <i class="mdi mdi-lock-reset" aria-hidden="true"></i>
+            <span th:text="#{screen.account.mfadevices.scratchcodes.title(${gauthScratchCodesDevice})}">New scratch codes for My phone</span>
+        </h3>
+        <p th:text="#{screen.account.mfadevices.scratchcodes.notice}">Keep these codes somewhere safe; they are shown only once.</p>
+        <ol class="cas-account-codes">
+            <li th:each="code : ${gauthScratchCodes}" class="acct-mono" th:text="${code}">12345678</li>
+        </ol>
+    </div>
+
     <ul id="mfaDevicesList" class="cas-account-list" data-account-list
         th:unless="${#lists.isEmpty(multifactorRegisteredAccounts)}"
         th:attr="data-filter-label=#{screen.account.list.filter},data-more-label=#{screen.account.list.more},data-count-label=#{screen.account.list.count}">
@@ -145,12 +156,34 @@
                             data-account-toggle aria-expanded="false"
                             th:attr="aria-controls=${'mfaDeviceDetails' + iter.index},aria-describedby=${'mfaDeviceTitle' + iter.index},data-label-show=#{screen.account.item.details},data-label-hide=#{screen.account.item.hide}"
                             th:text="#{screen.account.item.details}">Details</button>
+                    <button type="button" name="renameMfaDevice" class="acct-btn acct-btn-text" th:if="${entry.source == 'Web Authn'}"
+                            data-account-toggle aria-expanded="false"
+                            th:attr="aria-controls=${'mfaDeviceRename' + iter.index},aria-describedby=${'mfaDeviceTitle' + iter.index},data-label-show=#{screen.account.mfadevices.rename},data-label-hide=#{screen.account.cancel}"
+                            th:text="#{screen.account.mfadevices.rename}">Rename</button>
+                    <form method="post" th:action="@{/account#divMfaRegisteredAccounts}" th:if="${entry.source == 'Google Authenticator'}">
+                        <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
+                        <input type="hidden" name="id" th:value="${entry.id}"/>
+                        <input type="hidden" name="_eventId" value="regenerateGauthScratchCodes"/>
+                        <button type="button" name="regenerateScratchCodes" class="acct-btn acct-btn-text" data-account-action="confirm-submit"
+                                th:attr="aria-describedby=${'mfaDeviceTitle' + iter.index},data-confirm-title=#{screen.account.mfadevices.scratchcodes.confirm.title},data-confirm-text=#{screen.account.mfadevices.scratchcodes.confirm},data-confirm-button=#{screen.account.continue},data-cancel-button=#{screen.account.cancel}"
+                            th:text="#{screen.account.mfadevices.scratchcodes}">New scratch codes</button>
+                    </form>
                     <button type="button" name="deleteMfaDevice" class="acct-btn acct-btn-text acct-btn-danger"
                             th:attr="data-name=${entry.name},data-id=${entry.id},data-source=${entry.source},data-number=${entry.number},data-type=${entry.type},aria-describedby=${'mfaDeviceTitle' + iter.index}"
                             th:data-rp-id="${entry.details != null ? entry.details['relyingPartyId'] : null}"
                             th:text="#{screen.account.mfadevices.remove}">Remove</button>
                 </div>
             </div>
+            <form class="cas-account-item-details cas-account-inline-form" method="post" th:action="@{/account#divMfaRegisteredAccounts}"
+                  th:if="${entry.source == 'Web Authn'}" th:id="${'mfaDeviceRename' + iter.index}" hidden>
+                <label th:for="${'mfaDeviceName' + iter.index}" th:text="#{screen.account.mfadevices.rename.label}">New name</label>
+                <input type="text" name="name" class="acct-input" maxlength="100" required
+                       th:id="${'mfaDeviceName' + iter.index}" th:value="${entry.name}"/>
+                <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
+                <input type="hidden" name="id" th:value="${entry.id}"/>
+                <input type="hidden" name="_eventId" value="renameWebAuthnDevice"/>
+                <button type="submit" class="acct-btn acct-btn-primary" th:text="#{screen.account.mfadevices.rename.save}">Save</button>
+            </form>
             <div class="cas-account-item-details" th:if="${entry.payload}" th:id="${'mfaDeviceDetails' + iter.index}" hidden>
                 <pre data-account-json th:text="${entry.payload}">{}</pre>
             </div>

@@ -21,6 +21,22 @@ interface_images:
   - src: img_29.png
     alt: Attribute consent listing released attributes as cards
     title: Attribute consent with the list layout
+account_profile_images:
+  - src: img_30.png
+    alt: Account profile overview with a banner saying the password expires in five days
+    title: The overview warns before the password expires, with a shortcut to change it
+  - src: img_31.png
+    alt: Multifactor devices with Google Authenticator, WebAuthn and YubiKey registration options and new scratch codes
+    title: YubiKey registration from the profile, and new Google Authenticator scratch codes shown once
+  - src: img_32.png
+    alt: Recent sign-ins listing a failed attempt, a successful sign-in and a risky attempt with location and browser
+    title: Recent sign-ins from the authentication events
+  - src: img_33.png
+    alt: Contact methods listing the email address and phone number for one-time codes and passwordless sign-in
+    title: Contact methods for one-time codes and passwordless sign-in
+  - src: img_34.png
+    alt: Tokens listing an access token and a refresh token with the number of access tokens issued from it
+    title: Refresh tokens next to access tokens
 release:
   line: 8.1.0 development
   summary: >-
@@ -31,7 +47,7 @@ release:
       url: ../planning/Installation-Requirements.html
     - label: Built on
       value: Spring Boot 4.2
-    - value: "611"
+    - value: "614"
       suffix: browser test scenarios
       url: ../../developer/Test-Process.html
     - value: "94%"
@@ -68,6 +84,8 @@ release:
       summary: Edit theme properties and custom.css from the CAS header, preview live and download both files for an overlay.
     - section: Theme Properties
       summary: Over twenty new theme properties for the login form, identity providers, errors, multifactor, QR codes and consent.
+    - section: Account Profile
+      summary: Sign-in activity, contact methods, refresh tokens, usage policy, impersonation, QR devices and password expiry in the profile.
 ---
 
 {% include variables.html %}
@@ -96,7 +114,7 @@ to build and verify Graal VM native images and we plan to extend the coverage to
 {: data-area="project"}
 
 The collection of end-to-end [browser tests based on Puppeteer](../../developer/Test-Process.html) continue to grow to cover more use cases
-and scenarios. At the moment, total number of jobs stands at approximately `611` distinct scenarios. The overall
+and scenarios. At the moment, total number of jobs stands at approximately `614` distinct scenarios. The overall
 test coverage of the CAS codebase is approximately `94%`.
 
 ### JSpecify & NullAway
@@ -158,8 +176,32 @@ background falls back to black on white so the code remains scannable. Device an
 registering trusted devices, Google Authenticator, YubiKey or WebAuthn devices can start empty, random or with the
 username.
 
+### Account Profile
+{: .new data-area="ui"}
+
+The [account profile](../registration/Account-Management-Overview.html) shows more of what CAS knows about the user:
+
+| Section                    | What it shows                                                                                          |
+|----------------------------|--------------------------------------------------------------------------------------------------------|
+| Overview                   | Days left before the password expires, from the password policy warning, with a shortcut to change it. |
+| Sign-ins                   | Successful, failed and risky sign-in attempts of the last 30 days from the authentication events.      |
+| Contact                    | Email addresses and phone numbers for one-time codes and for passwordless sign-in.                     |
+| Tokens                     | Refresh tokens (offline access) next to access tokens; revoking one revokes its access tokens.         |
+| Usage policy               | Whether the acceptable usage policy is accepted, and the policy terms.                                 |
+| Impersonation              | Accounts the user may impersonate, and on whose behalf an impersonation session runs.                  |
+| QR devices                 | Devices authorized for QR code login, which the user can remove.                                       |
+| MFA devices                | YubiKey registration, new Google Authenticator scratch codes, renaming WebAuthn passkeys.              |
+
+YubiKey registration is offered when the user has no device yet or when
+`cas.authn.mfa.yubikey.multiple-device-registration-enabled`{: .cas-setting} is turned on, and an email address for
+one-time codes can be added when `cas.authn.mfa.simple.mail.accepted-email-pattern`{: .cas-setting} is set.
+
+{% include imagegallery.html images=page.account_profile_images gallery_id="account-profile" %}
+
 ## Other Stuff
 - {: .changed data-area="project"} A large number of dependencies and libraries have been updated to their latest versions.
+- {: .fixed data-area="ui"} The account profile only ends single sign-on sessions, revokes OpenID Connect tokens and removes
+  trusted devices that belong to the signed-in user; it used to act on any session, token or device whose identifier was submitted.
 - {: .fixed data-area="ui"} [Themes](../ux/User-Interface-Customization-Themes.html) other than the default one, including themes chosen per
   application or per tenant, now inherit `cas-theme-custom.properties` before falling back to `cas-theme-default.properties`.
   Theme files found under the template prefixes now apply regardless of the browser language; they used to be ignored for
@@ -186,5 +228,27 @@ username.
   security headers, encrypted, pattern matching, linked, environment and Groovy script attribute release policies, the
   anonymous username provider, multifactor bypass by remote address, request header and credential type, and the REST
   multifactor trigger (`cas.authn.mfa.triggers.rest.url`{: .cas-setting}).
+
+- {: .fixed data-area="oidc"} [Front-channel logout](../authentication/OIDC-Authentication-Logout.html) requests now carry the same
+  `sid` as the ID token and the back-channel logout token; the session identifier used to be computed differently, so
+  applications could not match it to the session they had recorded.
+- {: .fixed data-area="oidc"} Access tokens issued as JWTs can be revoked through the revocation endpoint, and refresh tokens issued as
+  JWTs can be redeemed with the `refresh_token` grant; both used to be looked up in the ticket registry without being decoded
+  first, so revocation silently did nothing and the refresh request was refused.
+- {: .fixed data-area="mfa"} The Google Authenticator registration QR code includes `digits` and `period` when
+  `cas.authn.mfa.gauth.core.code-digits`{: .cas-setting} or `cas.authn.mfa.gauth.core.time-step-size`{: .cas-setting} differ
+  from the defaults, so authenticator apps generate codes CAS accepts.
+- {: .changed data-area="project"} Browser tests now cover OpenID Connect front-channel logout, refused hybrid and unauthorized
+  response types, encrypted user info and introspection responses, JWT refresh tokens, optional ID token encryption, token
+  revocation with its cascade from refresh tokens to access tokens, WebAuthn signature counters, user verification and
+  attestation, and Google Authenticator replay protection with custom code length, time step and window.
+
+- {: .changed data-area="project"} Browser tests now sign in with [SPNEGO](../authentication/SPNEGO-Authentication.html) against a
+  real Kerberos KDC: the browser presents a Kerberos ticket and is signed in without a password, with and without
+  `cas.authn.spnego.principal-with-domain-name`{: .cas-setting}, and falls back to the login form when it has no ticket.
+- {: .changed data-area="docs"} The [SPNEGO](../authentication/SPNEGO-Authentication.html) settings explain that
+  `cas.authn.spnego.properties[0].jcifs-service-password`{: .cas-setting} is only used when
+  `cas.authn.spnego.system.use-subject-creds-only`{: .cas-setting} is `true` (otherwise the service keys come from a keytab),
+  and that setting both the Kerberos KDC and realm makes the JDK ignore the Kerberos configuration file.
 
 {% include release-footer.html %}

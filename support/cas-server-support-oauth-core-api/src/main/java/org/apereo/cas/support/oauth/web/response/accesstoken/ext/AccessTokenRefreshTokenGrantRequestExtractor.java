@@ -7,6 +7,7 @@ import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
+import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20JwtAccessTokenEncoder;
 import org.apereo.cas.ticket.OAuth20Token;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -42,6 +43,18 @@ public class AccessTokenRefreshTokenGrantRequestExtractor extends AccessTokenAut
     @Override
     protected String getOAuthParameterName() {
         return OAuth20Constants.REFRESH_TOKEN;
+    }
+
+    /**
+     * The refresh token as the client sent it, decoded to its ticket id when it was issued as a JWT.
+     *
+     * @param context the context
+     * @return the refresh token id
+     */
+    @Override
+    protected String getOAuthParameter(final WebContext context) {
+        val accessTokenJwtBuilder = getConfigurationContext().getObject().getAccessTokenJwtBuilder();
+        return OAuth20JwtAccessTokenEncoder.toDecodableCipher(accessTokenJwtBuilder).decode(super.getOAuthParameter(context));
     }
 
     @Override

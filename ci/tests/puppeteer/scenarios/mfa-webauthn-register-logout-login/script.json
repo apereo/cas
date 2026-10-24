@@ -17,6 +17,7 @@
     "--cas.authn.mfa.web-authn.core.relying-party-name=CAS WebAuthn Demo",
     "--cas.authn.mfa.web-authn.core.allow-primary-authentication=false",
     "--cas.authn.mfa.web-authn.crypto.enabled=false",
+    "--cas.authn.mfa.web-authn.core.validate-signature-counter=true",
 
     "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
     "--management.endpoints.web.exposure.include=webAuthnDevices",

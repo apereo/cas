@@ -37,6 +37,10 @@ public class OneTimeTokenAccountCreateRegistrationAction extends AbstractMultifa
      */
     public static final String FLOW_SCOPE_ATTR_QR_IMAGE_BASE64 = "QRcode";
 
+    private static final int DEFAULT_CODE_DIGITS = 6;
+
+    private static final long DEFAULT_TIME_STEP_SIZE = 30;
+
     private final OneTimeTokenCredentialRepository repository;
 
     private final TenantExtractor tenantExtractor;
@@ -75,10 +79,27 @@ public class OneTimeTokenAccountCreateRegistrationAction extends AbstractMultifa
         return buildRegistrationUri(principal, keyAccount, casProperties);
     }
 
-    private static String buildRegistrationUri(final Principal principal, final OneTimeTokenAccount keyAccount,
-                                               final CasConfigurationProperties casProperties) {
+    /**
+     * Build the key URI that the registration QR code carries. The number of digits and the period are added when
+     * they differ from what authenticator apps assume without them (six digits every thirty seconds); otherwise the
+     * app would produce codes that CAS does not accept.
+     *
+     * @param principal     the principal
+     * @param keyAccount    the account being registered
+     * @param casProperties the CAS settings that apply
+     * @return the key URI
+     */
+    public static String buildRegistrationUri(final Principal principal, final OneTimeTokenAccount keyAccount,
+                                              final CasConfigurationProperties casProperties) {
         val gauth = casProperties.getAuthn().getMfa().getGauth().getCore();
-        return "otpauth://totp/" + gauth.getLabel() + ':' + principal.getId() + "?secret="
-            + keyAccount.getSecretKey() + "&issuer=" + gauth.getIssuer();
+        val uri = new StringBuilder("otpauth://totp/").append(gauth.getLabel()).append(':').append(principal.getId())
+            .append("?secret=").append(keyAccount.getSecretKey()).append("&issuer=").append(gauth.getIssuer());
+        if (gauth.getCodeDigits() != DEFAULT_CODE_DIGITS) {
+            uri.append("&digits=").append(gauth.getCodeDigits());
+        }
+        if (gauth.getTimeStepSize() != DEFAULT_TIME_STEP_SIZE) {
+            uri.append("&period=").append(gauth.getTimeStepSize());
+        }
+        return uri.toString();
     }
 }

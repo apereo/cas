@@ -561,6 +561,30 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
   client only: a `Cas20ProxyHandler` built in the test (delivers the PGT IOU) needs its own client on
   `CasSSLContext.disabled()`, or the IOU callback fails with PKIX path errors. A public URL is fine only where
   nothing contacts it (a redirect target, a service id, a failure path).
+- WebAuthn scenarios drive the CDP virtual authenticator (`cas.createWebAuthnVirtualAuthenticator(page, protocol, resident, options)`
+  spreads `options` into the authenticator, e.g. `isUserVerified`). `cas.setWebAuthnSignCount(device, n)` replaces each
+  credential with the same key and a different sign count, which is how `mfa-webauthn-register-logout-login` proves a
+  cloned authenticator (count going back) is refused; `WebAuthn.setUserVerified` toggles user verification mid-scenario.
+- The OIDC front-channel logout page (`casPropagateLogoutView`) calls each `logoutUrl` with JSONP, so the front-channel
+  request shows up as a script request in the browser. Capture it with `page.on("request")` filtered on the URL and read
+  `iss`/`sid` from its query; httpbin answers it with JSON, which the page ignores.
+- `cas.generateOtp(config, stepOffset)` builds the code for a neighbouring time step without waiting; use it to test
+  `window-size` (the next step is accepted with the default window, refused with `window-size=1`) and replay
+  (`USED_OTPS` records the codes already sent). `parseOtpAuthenticationUrl` reads `digits` and `period` from the URI.
+- A token sent by a client may be a JWT (`jwtAccessToken`, `jwtRefreshToken`). Every lookup of a client-supplied token in
+  the ticket registry must first go through `OAuth20JwtAccessTokenEncoder.toDecodableCipher(...).decode(token)`, which
+  returns non-JWT values unchanged; revocation and the refresh grant skipped this. `OAuth20RefreshTokenAuthenticator`
+  (public clients presenting a JWT refresh token) still does, because it has no `JwtBuilder`.
+- `.gitignore` drops every `ci/tests/puppeteer/**/*.jwks`: client key sets a scenario ships must use another extension
+  (`client-public.json`), or the scenario passes locally and fails in CI with a missing file.
+- SPNEGO scenarios get a real KDC from `ci/tests/kerberos/run-kerberos-server.sh` (port 10088, not 88: macOS runs its own
+  KDC on 88). Chrome sends Negotiate tokens only with `--auth-server-allowlist=localhost`; it reads `KRB5_CONFIG` and
+  `KRB5CCNAME` from the environment given to `cas.newBrowser` (a missing cache makes it show the 401 body, which is the
+  login form in mixed mode). CAS must get the port from `kerberos-conf`: blank `cas.authn.spnego.system.kerberos-kdc` and
+  `kerberos-realm`, because Java ignores krb5.conf once both system properties are set and they cannot carry a port.
+  jcifs-ext logs the service principal in with `jcifs-service-password` only when `javax.security.auth.useSubjectCredsOnly`
+  is true (`cas.authn.spnego.system.use-subject-creds-only=true`). With the CAS default (false) it skips its JAAS login
+  and the JDK looks for a keytab instead, which fails with "Cannot find key of appropriate type to decrypt AP-REQ".
 
 ## Storage backend scenarios (service registry, SAML2 metadata, MFA devices, consent)
 
@@ -847,6 +871,19 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
   `fragments/accountflow :: shell(flow, step, steps, content)`, which owns the step trail (`screen.account.flow.<flow>.*`)
   and keeps `h2`/`p` out of the brand panel so `#content h2` and `#content p` still hit the card. The strength meter
   markup lives in `fragments/accountflow :: strengthMeter`; keep its ids, `passwordMeter.js` depends on them.
+- A module adds to the account profile through `AccountProfileContributionWebflowConfigurer` (core-webflow-api):
+  `withRenderAction(id)` for data the profile shows, `withOperation(eventId, actionId)` for a form the profile posts (its
+  action state returns to the profile view on success and on error), `customizeAccountFlow` for extra views. Register it with
+  its own `CasWebflowExecutionPlanConfigurer` in a configuration guarded by the `AccountManagement` feature. Every profile
+  operation that takes an id from the request (session, token, device, scratch codes, rename) must check that the record
+  belongs to the signed-in principal before touching it; return `error()` and leave the record alone otherwise. Views reused
+  from the login flow post to `${activeFlowId == 'account'} ? @{/account} : @{/login}` and offer a cancel link to
+  `@{/account}` only in the account flow. Account flow views render at `/cas/account` with no `execution` parameter, so a
+  link to `/account#divXxx` only changes the fragment and never leaves the view; `account.js` reopens the last panel. `data-account-action="confirm-submit"` on a `type="button"` inside a form asks
+  with SweetAlert (`data-confirm-*`) and submits the form. Scratch codes and other secrets shown once go to the flash scope.
+- Claude's session cannot get folder access to `~/.gradle` (the auto-mode classifier refuses it), so the VM javac check
+  below is not available there; compiled classes under `*/build/classes` from Misagh's IDE show which main modules
+  compiled, and `build/account-profile-run.sh` runs compile, checkstyle, the touched tests and the profile scenarios.
 - Puppeteer selectors for these pages are list-based now: `#mfaDevicesList [data-field=source|id|name|type|model|number]`,
   `#mfaDevicesEmpty`, `#registrationOptions`, `#securityQuestionsList`, `#pwdmain h2`, `#reset #fm1 h2`. Do not
   reintroduce DataTables there; filtering and paging come from `data-account-list`.
