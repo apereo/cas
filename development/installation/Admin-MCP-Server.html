@@ -1,0 +1,1926 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="light dark">
+    
+    
+    
+
+
+
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <meta name="description" content="Expose CAS as a Model Context Protocol (MCP) server so AI assistants and agents can look up applications, tickets and people.">
+    <meta name="robots" content="index,follow">
+    <meta name="theme-color" content="#06304a">
+    <link rel="canonical" href="https://apereo.github.io/cas/development/installation/Admin-MCP-Server.html">
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="en_US">
+    <meta property="og:site_name" content="Apereo CAS Documentation">
+    <meta property="og:title" content="CAS - MCP Server">
+    <meta property="og:description" content="Expose CAS as a Model Context Protocol (MCP) server so AI assistants and agents can look up applications, tickets and people.">
+    <meta property="og:url" content="https://apereo.github.io/cas/development/installation/Admin-MCP-Server.html">
+    <meta property="og:image" content="https://apereo.github.io/cas/images/cas_logo.png">
+    <meta property="og:image:alt" content="Apereo CAS">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="CAS - MCP Server">
+    <meta name="twitter:description" content="Expose CAS as a Model Context Protocol (MCP) server so AI assistants and agents can look up applications, tickets and people.">
+    <meta name="twitter:image" content="https://apereo.github.io/cas/images/cas_logo.png">
+
+    
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "TechArticle",
+      "headline": "MCP Server",
+      "description": "Expose CAS as a Model Context Protocol (MCP) server so AI assistants and agents can look up applications, tickets and people.",
+      "url": "https://apereo.github.io/cas/development/installation/Admin-MCP-Server.html",
+      "inLanguage": "en",
+      "isPartOf": {"@type": "WebSite", "name": "Apereo CAS Documentation",
+                   "url": "https://apereo.github.io/cas/"},
+      "author": {"@type": "Organization", "name": "Apereo Foundation", "url": "https://www.apereo.org/"},
+      "publisher": {"@type": "Organization", "name": "Apereo Foundation", "url": "https://www.apereo.org/"}
+    }
+    </script>
+    
+
+    <script>
+        if (window.location.hostname === "apereo.github.io") {
+            window.dataLayer = window.dataLayer || [];
+            window.gtag = function () {
+                window.dataLayer.push(arguments);
+            };
+            window.gtag("js", new Date());
+            window.gtag("config", "G-W3M8JXP7GP");
+            const analytics = document.createElement("script");
+            analytics.async = true;
+            analytics.src = "https://www.googletagmanager.com/gtag/js?id=G-W3M8JXP7GP";
+            document.head.appendChild(analytics);
+        }
+    </script>
+
+    <script>
+        function readThemePreference() {
+            try {
+                return localStorage.getItem('cas-docs-theme') || 'system';
+            } catch (error) {
+                return 'system';
+            }
+        }
+
+        function systemTheme() {
+            return window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+        }
+
+        function resolveTheme(preference) {
+            return preference === 'dark' || preference === 'light' ? preference : systemTheme();
+        }
+
+        function changeTheme(theme) {
+            if (theme !== 'dark' && theme !== 'light') {
+                return;
+            }
+
+            if (document.documentElement.getAttribute('data-bs-theme') !== theme) {
+                document.documentElement.setAttribute('data-bs-theme', theme);
+            }
+        }
+
+        (() => {
+            let preference = readThemePreference();
+            if (preference !== 'dark' && preference !== 'light') {
+                preference = 'system';
+
+            }
+
+            changeTheme(resolveTheme(preference));
+
+            if (window.matchMedia) {
+                window.matchMedia('(prefers-color-scheme: light)').addEventListener('change', () => {
+                    if (readThemePreference() !== 'system') {
+                        return;
+                    }
+                    const theme = systemTheme();
+                    changeTheme(theme);
+                });
+            }
+        })();
+    </script>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.2/css/all.min.css" integrity="sha384-PPIZEGYM1v8zp5Py7UjFb79S58UeqCL9pYVnVPURKEqvioPROaVAJKKLzvH2rDnI" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@docsearch/css@3.9.0/dist/style.css" integrity="sha384-cHiDHRyv+KTDBfpMqc3t2SeQYjfK05cReQA49eigiKoBzOMi9WIFsBsNfetC5n2a" crossorigin="anonymous"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.5/css/lightbox.min.css" integrity="sha384-9623XJODy0qDAl6X6Y9xTBSzYUxM0ixdjO8zqJQeGzDP2Uwo1PqAOq6gXkk2ul99" crossorigin="anonymous" />
+    
+    
+    <link rel="stylesheet" type="text/css" media="screen" href='/cas/stylesheets/site.css'>
+    <link rel="stylesheet" type="text/css" media="print" href='/cas/stylesheets/site-print.css'>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400..800;1,9..40,400..500&family=Bricolage+Grotesque:opsz,wght@12..96,400..800&display=swap" rel="stylesheet">
+    <link href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css" rel="stylesheet" integrity="sha384-yT2pwyD9a3Oee/HtjWTccnRmchDWH2EDHjzH7gwf8yAK0RilKFL164FCHX9fzlxh" crossorigin="anonymous">
+
+    <title>CAS - MCP Server · Apereo CAS Documentation</title>
+
+</head>
+
+<body class="" data-docs-base="/cas" data-docs-version="development" data-docs-build="20261024021550">
+    <a class="skip-link" href="#cas-docs-container">Skip to content</a>
+    <header class="site-header">
+        <div class="masthead">
+            <a class="cas-brand" href="../../index.html" aria-label="Apereo CAS home">
+                <img class="brand-logo" src="/cas/images/cas_logo.png" width="119" height="60" alt="CAS">
+                <span class="brand-caption">APEREO CAS<span>Documentation</span></span>
+            </a>
+            <div class="brand-mission">
+                <p>Enterprise Authentication <span class="brand-mission-accent">for All Earthlings and Beyond</span></p>
+                <span>Identity, Single Sign-On and Access Management</span>
+            </div>
+            <a id="forkme_banner" aria-label="View CAS on GitHub" href="https://github.com/apereo/cas"><i class="fab fa-github" aria-hidden="true"></i><span>View on GitHub</span><span aria-hidden="true">↗</span></a>
+        </div>
+        <div class="navigation-bar">
+            
+            <button onclick="navigateSidebar()" id="sidebarNavButton" class="icon-button" type="button" aria-controls="sidebar" aria-expanded="true" aria-label="Toggle documentation navigation" title="Toggle documentation navigation">
+                <i class="fa fa-bars" aria-hidden="true"></i>
+            </button>
+            
+            <nav class="primary-navigation" aria-label="Main navigation">
+                <a href="../../index.html">Home</a>
+                <a href="https://github.com/apereo/cas/releases">Releases</a>
+                <a href="../../Support.html">Support</a>
+                <a href="../../Mailing-Lists.html">Mailing Lists</a>
+                <div class="dropdown">
+                    <button class="dropdown-toggle" type="button" id="cas-versions" data-bs-toggle="dropdown" aria-expanded="false">Versions</button>
+                    <div class="dropdown-menu" aria-labelledby="cas-versions">
+                        
+                        
+                        
+                        
+                        <a class="dropdown-item cas-version-link" href="/cas/development/installation/Admin-MCP-Server.html" data-version-home="/cas/development/">Development</a>
+                        
+                        
+                        
+                        
+                        <a class="dropdown-item cas-version-link" href="/cas/8.0.x/installation/Admin-MCP-Server.html" data-version-home="/cas/8.0.x/">v8.0.x</a>
+                        
+                        
+                        
+                        
+                        <a class="dropdown-item cas-version-link" href="/cas/7.3.x/installation/Admin-MCP-Server.html" data-version-home="/cas/7.3.x/">v7.3.x</a>
+                        
+                    </div>
+                </div>
+                <a href="https://apereo.github.io" target="_blank" rel="noopener">Blog <span aria-hidden="true">↗</span><span class="visually-hidden"> (opens in a new tab)</span></a>
+            </nav>
+            <div class="navigation-tools">
+                <div id="searchField"></div>
+                <button id="settingsSearchButton" class="icon-button" type="button" aria-label="Search configuration settings (press Shift twice)" title="Search configuration settings (Shift Shift)"><i class="fa fa-sliders" aria-hidden="true"></i></button>
+                <button id="themeToggle" class="icon-button" type="button" onclick="toggleDarkMode()" aria-label="Toggle color theme" title="Toggle color theme"><i class="fa fa-circle-half-stroke" aria-hidden="true"></i></button>
+            </div>
+        </div>
+        <div class="reading-progress" aria-hidden="true"><span id="readingProgress"></span></div>
+    </header>
+
+    <div class="docs-shell">
+        
+        <aside id="sidebar" class="docs-sidebar" aria-label="Documentation navigation">
+    <div class="sidebar-heading">
+<span class="eyebrow">APEREO CAS DOCUMENTATION</span><span class="sidebar-symbol" aria-hidden="true">✳</span>
+</div>
+    <nav id="sidebar-navigation" aria-label="Documentation topics"></nav>
+    <noscript><p>Browse the <a href="/cas/development/sidebar.html">documentation index</a>.</p></noscript>
+</aside>
+
+        
+        <main class="cas-docs-content">
+            
+            <div class="page-toolbar">
+                <nav id="docsNavBar" aria-label="Breadcrumb"></nav>
+                <div id="toolbarIcons" role="group" aria-label="Page tools"></div>
+            </div>
+            
+            
+            <aside id="dev-doc-info" aria-labelledby="dev-doc-title">
+                <span class="development-marker" aria-hidden="true"></span>
+                <div>
+                    <p id="dev-doc-title">WORKERS AHEAD!</p>
+                    <p class="dev-doc-summary">Development documentation for features that are
+                        <a href="https://github.com/apereo/cas/milestones">not released yet</a>.</p>
+                    <p class="dev-doc-details">You are viewing the <strong>development</strong> documentation for the Apereo CAS server. <strong>The
+                        functionality presented here <a href="https://github.com/apereo/cas/milestones">is not officially released yet</a></strong>.
+                        This is a work in progress and will be continually updated as development moves forward.
+                        <strong>You are most encouraged to test the changes presented.</strong>
+                    </p>
+                </div>
+            </aside>
+            
+            <article id="cas-docs-container" tabindex="-1">
+                
+<h1 id="mcp-server">MCP Server</h1>
+
+<p>CAS can act as a <a href="https://modelcontextprotocol.io/">Model Context Protocol (MCP)</a> server, allowing AI assistants,
+agents and other MCP clients to examine the state of a CAS deployment through a set of read-only tools. Typical use cases
+include troubleshooting an application registration, inspecting a single sign-on session or verifying the attributes
+CAS resolves for a given person, all from within the MCP client of your choice.</p>
+
+<p>Support is enabled by adding the following module into the overlay:</p>
+
+<div style="display: block">
+
+    <div class="cas-module-controls nav-pills">
+        <ul class="nav cas-modules" role="tablist" aria-label="Dependency format">
+            <li class="nav-item cas-module" role="presentation"><a class="nav-link" id="mavenorgapereocascasserversupportmcp-tab" data-bs-toggle="tab" href="#mavenorgapereocascasserversupportmcp" role="tab" aria-controls="mavenorgapereocascasserversupportmcp" aria-selected="false">Apache Maven</a></li>
+            <li class="nav-item cas-module" role="presentation"><a class="nav-link" id="gradleorgapereocascasserversupportmcp-tab" data-bs-toggle="tab" href="#gradleorgapereocascasserversupportmcp" role="tab" aria-controls="gradleorgapereocascasserversupportmcp" aria-selected="false">Gradle</a></li>
+<li class="nav-item cas-module" role="presentation"><a class="nav-link" id="bomorgapereocascasserversupportmcp-tab" data-bs-toggle="tab" href="#bomorgapereocascasserversupportmcp" role="tab" aria-controls="bomorgapereocascasserversupportmcp" aria-selected="false">BOM - Spring</a></li>
+            <li class="nav-item cas-module" role="presentation"><a class="nav-link active" id="bomGradleorgapereocascasserversupportmcp-tab" data-bs-toggle="tab" href="#bomGradleorgapereocascasserversupportmcp" role="tab" aria-controls="bomGradleorgapereocascasserversupportmcp" aria-selected="true">BOM - Gradle</a></li>
+</ul>
+        <div class="dropdown cas-module">
+            <button class="nav-link dropdown-toggle" data-bs-toggle="dropdown" type="button" aria-expanded="false">Resources<span class="caret"></span>
+            </button>
+            <div class="dropdown-menu">
+                <a class="dropdown-item" href="https://getcas.apereo.org?dependencies=webapp-tomcat,support-mcp" target="_blank" rel="noopener">Show in CAS Initializr <span aria-hidden="true">↗</span><span class="visually-hidden"> (opens in a new tab)</span></a>
+                <a class="dropdown-item" href="javascript:generateOverlay('cas-server-support-mcp',%20'cas-overlay');">Generate CAS Server WAR Overlay</a>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="cas-module-tabs tab-content clearfix">
+        <div class="tab-pane fade" id="mavenorgapereocascasserversupportmcp" role="tabpanel" aria-labelledby="mavenorgapereocascasserversupportmcp-tab">
+<span>
+      <div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+</pre></td>
+<td class="rouge-code"><pre><span class="nt">&lt;dependency&gt;</span>
+    <span class="nt">&lt;groupId&gt;</span>org.apereo.cas<span class="nt">&lt;/groupId&gt;</span>
+    <span class="nt">&lt;artifactId&gt;</span>cas-server-support-mcp<span class="nt">&lt;/artifactId&gt;</span>
+    <span class="nt">&lt;version&gt;</span>${cas.version}<span class="nt">&lt;/version&gt;</span>
+<span class="nt">&lt;/dependency&gt;</span>
+</pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+    </span>
+
+        </div>
+
+
+        <div class="tab-pane fade" id="gradleorgapereocascasserversupportmcp" role="tabpanel" aria-labelledby="gradleorgapereocascasserversupportmcp-tab">
+
+            <span>
+    
+<div class="language-groovy highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td>
+<td class="rouge-code"><pre><span class="n">implementation</span> <span class="s2">"org.apereo.cas:cas-server-support-mcp:${project.'cas.version'}"</span>
+</pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+  </span>
+
+        </div>
+
+        <div class="tab-pane fade" id="bomorgapereocascasserversupportmcp" role="tabpanel" aria-labelledby="bomorgapereocascasserversupportmcp-tab">
+<span>
+    <div class="language-groovy highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+</pre></td>
+<td class="rouge-code"><pre><span class="n">dependencyManagement</span> <span class="o">{</span>
+    <span class="n">imports</span> <span class="o">{</span>
+        <span class="n">mavenBom</span> <span class="s2">"org.apereo.cas:cas-server-support-bom:${project.'cas.version'}"</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+
+<span class="n">dependencies</span> <span class="o">{</span>
+    <span class="n">implementation</span> <span class="s2">"org.apereo.cas:cas-server-support-mcp"</span>
+<span class="o">}</span>
+</pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+  </span>
+
+        </div>
+
+        <div class="tab-pane fade show active" id="bomGradleorgapereocascasserversupportmcp" role="tabpanel" aria-labelledby="bomGradleorgapereocascasserversupportmcp-tab">
+<span>
+    <div class="language-groovy highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+</pre></td>
+<td class="rouge-code"><pre><span class="n">dependencies</span> <span class="o">{</span>
+    <span class="cm">/*
+        The following platform references are included automatically and are listed for reference only.
+
+        implementation enforcedPlatform("org.apereo.cas:cas-server-support-bom:${project.'cas.version'}")
+        implementation platform(org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES)
+        
+    */</span>
+    <span class="n">implementation</span> <span class="s2">"org.apereo.cas:cas-server-support-mcp"</span>
+<span class="o">}</span>
+</pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+  </span>
+
+        </div>
+
+    </div>
+
+</div>
+
+<h2 id="transport">Transport</h2>
+
+<p>The MCP server uses the <a href="https://modelcontextprotocol.io/specification/2025-11-25/basic/transports#streamable-http">Streamable HTTP</a>
+transport and is available by default at <code class="language-plaintext highlighter-rouge">/cas/mcp</code>. The endpoint accepts JSON-RPC messages over HTTP <code class="language-plaintext highlighter-rouge">POST</code> and answers
+with either JSON or server-sent events, as the specification requires. The server name, version, instructions,
+transport protocol and endpoint path along with the capabilities advertised to clients can be adjusted via CAS settings.</p>
+
+<!-- fragment:keep -->
+
+<p>The following settings and properties are available from the CAS configuration catalog:</p>
+
+
+<div class="cas-properties">
+    <div class="cas-properties-list">
+<div class="cas-property" data-kind="thirdparty" data-name="spring.ai.mcp.server.annotation-scanner.enabled" data-default="true">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.ai.mcp.server.annotation-scanner.enabled</code><span class="cas-property-summary"></span>
+</div>
+        <div class="cas-property-default"><code>true</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Boolean</code></dd>
+<dt>Default</dt>
+<dd><code>true</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.ai.mcp.server.common.autoconfigure.annotations.McpServerAnnotationScannerProperties">McpServerAnnotationScannerProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.ai.mcp.server.base-url" data-default="" data-deprecated>
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.ai.mcp.server.base-url</code><span class="cas-property-summary"></span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags">
+<span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span><span class="cas-property-tag cas-property-tag-deprecated"><i class="fa fa-skull" aria-hidden="true"></i>Deprecated</span>
+</div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.ai.mcp.server.common.autoconfigure.properties.McpServerSseProperties">McpServerSseProperties</code></dd>
+<dt>Deprecation</dt>
+<dd>
+<code>WARNING</code>, no replacement</dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.ai.mcp.server.capabilities.completion" data-default="true">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.ai.mcp.server.capabilities.completion</code><span class="cas-property-summary"></span>
+</div>
+        <div class="cas-property-default"><code>true</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Boolean</code></dd>
+<dt>Default</dt>
+<dd><code>true</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.ai.mcp.server.common.autoconfigure.properties.McpServerProperties$Capabilities">McpServerProperties$Capabilities</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.ai.mcp.server.capabilities.prompt" data-default="true">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.ai.mcp.server.capabilities.prompt</code><span class="cas-property-summary"></span>
+</div>
+        <div class="cas-property-default"><code>true</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Boolean</code></dd>
+<dt>Default</dt>
+<dd><code>true</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.ai.mcp.server.common.autoconfigure.properties.McpServerProperties$Capabilities">McpServerProperties$Capabilities</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.ai.mcp.server.capabilities.resource" data-default="true">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.ai.mcp.server.capabilities.resource</code><span class="cas-property-summary"></span>
+</div>
+        <div class="cas-property-default"><code>true</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Boolean</code></dd>
+<dt>Default</dt>
+<dd><code>true</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.ai.mcp.server.common.autoconfigure.properties.McpServerProperties$Capabilities">McpServerProperties$Capabilities</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.ai.mcp.server.capabilities.tool" data-default="true">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.ai.mcp.server.capabilities.tool</code><span class="cas-property-summary"></span>
+</div>
+        <div class="cas-property-default"><code>true</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Boolean</code></dd>
+<dt>Default</dt>
+<dd><code>true</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.ai.mcp.server.common.autoconfigure.properties.McpServerProperties$Capabilities">McpServerProperties$Capabilities</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.ai.mcp.server.enabled" data-default="true">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.ai.mcp.server.enabled</code><span class="cas-property-summary">Enable/disable the MCP server.</span>
+</div>
+        <div class="cas-property-default"><code>true</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description">
+<p>Enable/disable the MCP server.</p>
+<p>When set to false, the MCP server and all its components will not be initialized.</p>
+</div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Boolean</code></dd>
+<dt>Default</dt>
+<dd><code>true</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.ai.mcp.server.common.autoconfigure.properties.McpServerProperties">McpServerProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.ai.mcp.server.expose-mcp-client-tools" data-default="false">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.ai.mcp.server.expose-mcp-client-tools</code><span class="cas-property-summary">Whether to re-expose downstream MCP tools (provided by MCP clients) as tools in this MCP server.</span>
+</div>
+        <div class="cas-property-default"><code>false</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Whether to re-expose downstream MCP tools (provided by MCP clients) as tools in this MCP server. Defaults to false.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Boolean</code></dd>
+<dt>Default</dt>
+<dd><code>false</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.ai.mcp.server.common.autoconfigure.properties.McpServerProperties">McpServerProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.ai.mcp.server.instructions" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.ai.mcp.server.instructions</code><span class="cas-property-summary">The instructions of the MCP server instance.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description">
+<p>The instructions of the MCP server instance.</p>
+<p>These instructions are used to provide guidance to the client on how to interact with this server.</p>
+</div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.ai.mcp.server.common.autoconfigure.properties.McpServerProperties">McpServerProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.ai.mcp.server.keep-alive-interval" data-default="" data-deprecated>
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.ai.mcp.server.keep-alive-interval</code><span class="cas-property-summary">The duration to keep the connection alive.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags">
+<span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span><span class="cas-property-tag cas-property-tag-deprecated"><i class="fa fa-skull" aria-hidden="true"></i>Deprecated</span>
+</div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>The duration to keep the connection alive. Disabled by default.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Duration</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.ai.mcp.server.common.autoconfigure.properties.McpServerSseProperties">McpServerSseProperties</code></dd>
+<dt>Deprecation</dt>
+<dd>
+<code>WARNING</code>, no replacement</dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.ai.mcp.server.name" data-default="mcp-server">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.ai.mcp.server.name</code><span class="cas-property-summary">The name of the MCP server instance.</span>
+</div>
+        <div class="cas-property-default"><code>mcp-server</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description">
+<p>The name of the MCP server instance.</p>
+<p>This name is used to identify the server in logs and monitoring.</p>
+</div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><code>mcp-server</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.ai.mcp.server.common.autoconfigure.properties.McpServerProperties">McpServerProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.ai.mcp.server.prompt-change-notification" data-default="true">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.ai.mcp.server.prompt-change-notification</code><span class="cas-property-summary">Enable/disable notifications for prompt changes.</span>
+</div>
+        <div class="cas-property-default"><code>true</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description">
+<p>Enable/disable notifications for prompt changes. Only relevant for MCP servers with prompt capabilities.</p>
+<p>When enabled, the server will notify clients when prompt templates are modified.</p>
+</div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Boolean</code></dd>
+<dt>Default</dt>
+<dd><code>true</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.ai.mcp.server.common.autoconfigure.properties.McpServerChangeNotificationProperties">McpServerChangeNotificationProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.ai.mcp.server.protocol" data-default="streamable">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.ai.mcp.server.protocol</code><span class="cas-property-summary"></span>
+</div>
+        <div class="cas-property-default"><code>streamable</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>McpServerProperties.ServerProtocol</code></dd>
+<dt>Default</dt>
+<dd><code>streamable</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.ai.mcp.server.common.autoconfigure.properties.McpServerProperties">McpServerProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.ai.mcp.server.request-timeout" data-default="20s">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.ai.mcp.server.request-timeout</code><span class="cas-property-summary">Sets the duration to wait for server responses before timing out requests.</span>
+</div>
+        <div class="cas-property-default"><code>20s</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Sets the duration to wait for server responses before timing out requests. This timeout applies to all requests made through the client, including tool calls, resource access, and prompt operations.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Duration</code></dd>
+<dt>Default</dt>
+<dd><code>20s</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.ai.mcp.server.common.autoconfigure.properties.McpServerProperties">McpServerProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.ai.mcp.server.resource-change-notification" data-default="true">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.ai.mcp.server.resource-change-notification</code><span class="cas-property-summary">Enable/disable notifications for resource changes.</span>
+</div>
+        <div class="cas-property-default"><code>true</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description">
+<p>Enable/disable notifications for resource changes. Only relevant for MCP servers with resource capabilities.</p>
+<p>When enabled, the server will notify clients when resources are added, updated, or removed.</p>
+</div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Boolean</code></dd>
+<dt>Default</dt>
+<dd><code>true</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.ai.mcp.server.common.autoconfigure.properties.McpServerChangeNotificationProperties">McpServerChangeNotificationProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.ai.mcp.server.sse-endpoint" data-default="/sse" data-deprecated>
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.ai.mcp.server.sse-endpoint</code><span class="cas-property-summary">An SSE endpoint, for clients to establish a connection and receive messages from the server</span>
+</div>
+        <div class="cas-property-default"><code>/sse</code></div>
+        <div class="cas-property-tags">
+<span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span><span class="cas-property-tag cas-property-tag-deprecated"><i class="fa fa-skull" aria-hidden="true"></i>Deprecated</span>
+</div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>An SSE endpoint, for clients to establish a connection and receive messages from the server</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><code>/sse</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.ai.mcp.server.common.autoconfigure.properties.McpServerSseProperties">McpServerSseProperties</code></dd>
+<dt>Deprecation</dt>
+<dd>
+<code>WARNING</code>, no replacement</dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.ai.mcp.server.sse-message-endpoint" data-default="/mcp/message" data-deprecated>
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.ai.mcp.server.sse-message-endpoint</code><span class="cas-property-summary">A regular HTTP POST endpoint for clients to send messages to the server.</span>
+</div>
+        <div class="cas-property-default"><code>/mcp/message</code></div>
+        <div class="cas-property-tags">
+<span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span><span class="cas-property-tag cas-property-tag-deprecated"><i class="fa fa-skull" aria-hidden="true"></i>Deprecated</span>
+</div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>A regular HTTP POST endpoint for clients to send messages to the server.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><code>/mcp/message</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.ai.mcp.server.common.autoconfigure.properties.McpServerSseProperties">McpServerSseProperties</code></dd>
+<dt>Deprecation</dt>
+<dd>
+<code>WARNING</code>, no replacement</dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.ai.mcp.server.stdio" data-default="false">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.ai.mcp.server.stdio</code><span class="cas-property-summary">Enable/disable the standard input/output (stdio) transport.</span>
+</div>
+        <div class="cas-property-default"><code>false</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description">
+<p>Enable/disable the standard input/output (stdio) transport.</p>
+<p>When enabled, the server will listen for incoming messages on the standard input and write responses to the standard output.</p>
+</div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Boolean</code></dd>
+<dt>Default</dt>
+<dd><code>false</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.ai.mcp.server.common.autoconfigure.properties.McpServerProperties">McpServerProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.ai.mcp.server.streamable-http.disallow-delete" data-default="false">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.ai.mcp.server.streamable-http.disallow-delete</code><span class="cas-property-summary"></span>
+</div>
+        <div class="cas-property-default"><code>false</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Boolean</code></dd>
+<dt>Default</dt>
+<dd><code>false</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.ai.mcp.server.common.autoconfigure.properties.McpServerStreamableHttpProperties">McpServerStreamableHttpProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.ai.mcp.server.streamable-http.keep-alive-interval" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.ai.mcp.server.streamable-http.keep-alive-interval</code><span class="cas-property-summary">The duration to keep the connection alive.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>The duration to keep the connection alive.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Duration</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.ai.mcp.server.common.autoconfigure.properties.McpServerStreamableHttpProperties">McpServerStreamableHttpProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.ai.mcp.server.streamable-http.mcp-endpoint" data-default="/mcp">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.ai.mcp.server.streamable-http.mcp-endpoint</code><span class="cas-property-summary"></span>
+</div>
+        <div class="cas-property-default"><code>/mcp</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><code>/mcp</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.ai.mcp.server.common.autoconfigure.properties.McpServerStreamableHttpProperties">McpServerStreamableHttpProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.ai.mcp.server.tool-change-notification" data-default="true">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.ai.mcp.server.tool-change-notification</code><span class="cas-property-summary">Enable/disable notifications for tool changes.</span>
+</div>
+        <div class="cas-property-default"><code>true</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description">
+<p>Enable/disable notifications for tool changes. Only relevant for MCP servers with tool capabilities.</p>
+<p>When enabled, the server will notify clients when tools are registered or unregistered.</p>
+</div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Boolean</code></dd>
+<dt>Default</dt>
+<dd><code>true</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.ai.mcp.server.common.autoconfigure.properties.McpServerChangeNotificationProperties">McpServerChangeNotificationProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.ai.mcp.server.tool-response-mime-type" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.ai.mcp.server.tool-response-mime-type</code><span class="cas-property-summary">(Optional) response MIME type per tool name.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>(Optional) response MIME type per tool name.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Map&lt;String,String&gt;</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.ai.mcp.server.common.autoconfigure.properties.McpServerProperties">McpServerProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.ai.mcp.server.type" data-default="sync">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.ai.mcp.server.type</code><span class="cas-property-summary">The type of server to use for MCP server communication.</span>
+</div>
+        <div class="cas-property-default"><code>sync</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description">
+<p>The type of server to use for MCP server communication.</p>
+<div>Supported types are: <ul> <li>SYNC - Standard synchronous server (default)</li>
+<li>ASYNC - Asynchronous server</li>
+</ul>
+</div>
+</div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>McpServerProperties.ApiType</code></dd>
+<dt>Default</dt>
+<dd><code>sync</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.ai.mcp.server.common.autoconfigure.properties.McpServerProperties">McpServerProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.ai.mcp.server.version" data-default="1.0.0">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.ai.mcp.server.version</code><span class="cas-property-summary">The version of the MCP server instance.</span>
+</div>
+        <div class="cas-property-default"><code>1.0.0</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>The version of the MCP server instance.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><code>1.0.0</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.ai.mcp.server.common.autoconfigure.properties.McpServerProperties">McpServerProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+</div>
+<p class="cas-properties-legend">
+        <strong>Required</strong> settings may be needed to activate or affect the feature; review them even when they have a default.
+        <strong>Optional</strong> settings only need to be set to change a default or to turn on the behavior they control.
+        <strong>Third party</strong> settings belong to libraries such as Spring Boot that CAS builds on; their own documentation may have more detail.
+    </p>
+<div class="cas-properties-topics"><details class="cas-properties-topic">
+            <summary><i class="fa fa-newspaper" aria-hidden="true"></i>Notes on configuration</summary>
+            <div class="cas-properties-topic-body">
+<!-- fragment:keep -->
+
+<p></p>
+
+<p><strong>Configuration Metadata</strong></p>
+
+<p>The collection of configuration properties listed in this section are automatically generated from the CAS source and components that contain the actual field
+definitions, types, descriptions, modules, etc. This metadata may not always be 100% accurate, or could be lacking details and sufficient explanations.</p>
+
+<p><strong>Be Selective</strong></p>
+
+<p>This section is meant as a guide only. Do NOT copy/paste the entire collection of settings into your CAS configuration; rather pick only the properties that you
+need. Do NOT enable settings unless you are certain of their purpose and do NOT copy settings into your configuration only to keep them as reference. All these
+ideas lead to upgrade headaches, maintenance nightmares and premature aging.</p>
+
+<p><strong>YAGNI</strong></p>
+
+<p>Note that for nearly ALL use cases, declaring and configuring properties listed here is sufficient. You should NOT have to explicitly massage a CAS XML/Java/etc
+configuration file to design an authentication handler, create attribute release policies, etc. CAS at runtime will auto-configure all required changes for you.
+If you are unsure about the meaning of a given CAS setting, do NOT turn it on without hesitation. Review the codebase or better yet, ask questions to clarify
+the intended behavior.</p>
+
+<p><strong>Naming Convention</strong></p>
+
+<p>Property names can be specified in very relaxed terms. For instance <code class="language-plaintext highlighter-rouge">cas.someProperty</code>, <code class="language-plaintext highlighter-rouge">cas.some-property</code>, <code class="language-plaintext highlighter-rouge">cas.some_property</code> are all valid names. While all
+forms are accepted by CAS, there are certain components (in CAS and other frameworks used) whose activation at runtime is conditional on a property value, where
+this property is required to have been specified in CAS configuration using kebab case. This is both true for properties that are owned by CAS as well as those
+that might be presented to the system via an external library or framework such as Spring Boot, etc.</p>
+
+<div class="alert alert-info">
+<img class="emoji" title=":information_source:" alt=":information_source:" src="https://github.githubassets.com/images/icons/emoji/unicode/2139.png" height="20" width="20"> <strong>Note</strong> <p>
+When possible, properties should be stored in lower-case kebab format, such as <code>cas.property-name=value</code>.
+The only possible exception to this rule is when naming actuator endpoints; The name of the
+actuator endpoints (i.e. <code>ssoSessions</code>) <strong>MUST</strong> remain in camelCase mode. 
+</p>
+</div>
+
+<p>Settings and properties that are controlled by the CAS platform directly always begin with the prefix <code class="language-plaintext highlighter-rouge">cas</code>. All other settings are controlled and provided
+to CAS via other underlying frameworks and may have their own schemas and syntax. BE CAREFUL with
+the distinction. Unrecognized properties are rejected by CAS and/or frameworks upon which CAS depends. This means if you somehow misspell a property definition
+or fail to adhere to the dot-notation syntax and such, your setting is entirely refused by CAS and likely the feature it controls will never be activated in the
+way you intend.</p>
+
+<p><strong>Validation</strong></p>
+
+<p>Configuration properties are automatically validated on CAS startup to report issues with configuration binding, especially if defined CAS settings cannot be
+recognized or validated by the configuration schema. Additional validation processes are also handled
+via <a href="/cas/development/configuration/Configuration-Metadata-Repository.html">Configuration Metadata</a> and property migrations applied automatically on
+startup by Spring Boot and family.</p>
+
+<p><strong>Indexed Settings</strong></p>
+
+<p>CAS settings able to accept multiple values are typically documented with an index, such as <code class="language-plaintext highlighter-rouge">cas.some.setting[0]=value</code>. The index <code class="language-plaintext highlighter-rouge">[0]</code> is meant to be
+incremented by the adopter to allow for distinct multiple configuration blocks.</p>
+
+            </div>
+        </details></div>
+</div>
+
+<h2 id="security">Security</h2>
+
+<p>Every request to the MCP endpoint must be authenticated with HTTP Basic authentication. The credentials are
+verified by the same user stores that protect CAS actuator endpoints, such as the Spring Security user,
+JSON, JDBC, LDAP or JAAS user details sources.</p>
+
+<!-- fragment:keep -->
+
+<p>The following settings and properties are available from the CAS configuration catalog:</p>
+
+
+<div class="cas-properties">
+    <div class="cas-properties-list">
+<div class="cas-property" data-kind="thirdparty" data-name="spring.security.user.name" data-default="user">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.security.user.name</code><span class="cas-property-summary">Default user name.</span>
+</div>
+        <div class="cas-property-default"><code>user</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Default user name.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><code>user</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.security.autoconfigure.SecurityProperties$User">SecurityProperties$User</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.security.user.password" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.security.user.password</code><span class="cas-property-summary">Password for the default user name.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Password for the default user name.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.security.autoconfigure.SecurityProperties$User">SecurityProperties$User</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.security.user.roles" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.security.user.roles</code><span class="cas-property-summary">Granted roles for the default user name.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Granted roles for the default user name.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>List&lt;String&gt;</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.security.autoconfigure.SecurityProperties$User">SecurityProperties$User</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+</div>
+<p class="cas-properties-legend">
+        <strong>Required</strong> settings may be needed to activate or affect the feature; review them even when they have a default.
+        <strong>Optional</strong> settings only need to be set to change a default or to turn on the behavior they control.
+        <strong>Third party</strong> settings belong to libraries such as Spring Boot that CAS builds on; their own documentation may have more detail.
+    </p>
+<div class="cas-properties-topics"><details class="cas-properties-topic">
+            <summary><i class="fa fa-newspaper" aria-hidden="true"></i>Notes on configuration</summary>
+            <div class="cas-properties-topic-body">
+<!-- fragment:keep -->
+
+<p></p>
+
+<p><strong>Configuration Metadata</strong></p>
+
+<p>The collection of configuration properties listed in this section are automatically generated from the CAS source and components that contain the actual field
+definitions, types, descriptions, modules, etc. This metadata may not always be 100% accurate, or could be lacking details and sufficient explanations.</p>
+
+<p><strong>Be Selective</strong></p>
+
+<p>This section is meant as a guide only. Do NOT copy/paste the entire collection of settings into your CAS configuration; rather pick only the properties that you
+need. Do NOT enable settings unless you are certain of their purpose and do NOT copy settings into your configuration only to keep them as reference. All these
+ideas lead to upgrade headaches, maintenance nightmares and premature aging.</p>
+
+<p><strong>YAGNI</strong></p>
+
+<p>Note that for nearly ALL use cases, declaring and configuring properties listed here is sufficient. You should NOT have to explicitly massage a CAS XML/Java/etc
+configuration file to design an authentication handler, create attribute release policies, etc. CAS at runtime will auto-configure all required changes for you.
+If you are unsure about the meaning of a given CAS setting, do NOT turn it on without hesitation. Review the codebase or better yet, ask questions to clarify
+the intended behavior.</p>
+
+<p><strong>Naming Convention</strong></p>
+
+<p>Property names can be specified in very relaxed terms. For instance <code class="language-plaintext highlighter-rouge">cas.someProperty</code>, <code class="language-plaintext highlighter-rouge">cas.some-property</code>, <code class="language-plaintext highlighter-rouge">cas.some_property</code> are all valid names. While all
+forms are accepted by CAS, there are certain components (in CAS and other frameworks used) whose activation at runtime is conditional on a property value, where
+this property is required to have been specified in CAS configuration using kebab case. This is both true for properties that are owned by CAS as well as those
+that might be presented to the system via an external library or framework such as Spring Boot, etc.</p>
+
+<div class="alert alert-info">
+<img class="emoji" title=":information_source:" alt=":information_source:" src="https://github.githubassets.com/images/icons/emoji/unicode/2139.png" height="20" width="20"> <strong>Note</strong> <p>
+When possible, properties should be stored in lower-case kebab format, such as <code>cas.property-name=value</code>.
+The only possible exception to this rule is when naming actuator endpoints; The name of the
+actuator endpoints (i.e. <code>ssoSessions</code>) <strong>MUST</strong> remain in camelCase mode. 
+</p>
+</div>
+
+<p>Settings and properties that are controlled by the CAS platform directly always begin with the prefix <code class="language-plaintext highlighter-rouge">cas</code>. All other settings are controlled and provided
+to CAS via other underlying frameworks and may have their own schemas and syntax. BE CAREFUL with
+the distinction. Unrecognized properties are rejected by CAS and/or frameworks upon which CAS depends. This means if you somehow misspell a property definition
+or fail to adhere to the dot-notation syntax and such, your setting is entirely refused by CAS and likely the feature it controls will never be activated in the
+way you intend.</p>
+
+<p><strong>Validation</strong></p>
+
+<p>Configuration properties are automatically validated on CAS startup to report issues with configuration binding, especially if defined CAS settings cannot be
+recognized or validated by the configuration schema. Additional validation processes are also handled
+via <a href="/cas/development/configuration/Configuration-Metadata-Repository.html">Configuration Metadata</a> and property migrations applied automatically on
+startup by Spring Boot and family.</p>
+
+<p><strong>Indexed Settings</strong></p>
+
+<p>CAS settings able to accept multiple values are typically documented with an index, such as <code class="language-plaintext highlighter-rouge">cas.some.setting[0]=value</code>. The index <code class="language-plaintext highlighter-rouge">[0]</code> is meant to be
+incremented by the adopter to allow for distinct multiple configuration blocks.</p>
+
+            </div>
+        </details></div>
+</div>
+
+<p>Authenticated users may initialize a session and list the available tools. Calling a tool additionally requires
+the <code class="language-plaintext highlighter-rouge">ROLE_MCP_ADMIN</code> role/authority. A tool call made by a user without this role is answered with an error result
+and the tool is not executed.</p>
+
+<p>Every tool call and resource read is recorded in the <a href="../audits/Audits.html">audit log</a> under the MCP user who made it,
+with the action <code class="language-plaintext highlighter-rouge">MCP_TOOL_CALL_SUCCESS</code>, <code class="language-plaintext highlighter-rouge">MCP_TOOL_CALL_DENIED</code> or <code class="language-plaintext highlighter-rouge">MCP_TOOL_CALL_FAILED</code> and, as the resource, the tool name
+or resource URI along with its arguments. Calls refused for lack of the <code class="language-plaintext highlighter-rouge">MCP_ADMIN</code> role are recorded too.</p>
+
+<div class="alert alert-warning">
+<img class="emoji" title=":warning:" alt=":warning:" src="https://github.githubassets.com/images/icons/emoji/unicode/26a0.png" height="20" width="20"> <strong>Usage Warning!</strong><p>
+The tools return sensitive data, such as the attributes CAS resolves and releases for a person, single sign-on
+session identifiers and full application definitions. Only grant the <code>MCP_ADMIN</code> role to trusted operators, keep the MCP
+endpoint on a protected network and always use TLS.
+</p>
+</div>
+
+<h2 id="tools">Tools</h2>
+
+<p>The following tools are available. All tools are read-only and are advertised to clients with the
+<code class="language-plaintext highlighter-rouge">readOnlyHint</code> annotation. When the requested object cannot be found, the result says why in a <code class="language-plaintext highlighter-rouge">reason</code> field, except for
+<code class="language-plaintext highlighter-rouge">findService</code> and <code class="language-plaintext highlighter-rouge">matchService</code>, which return nothing.</p>
+
+<table class="cas-mcp-tools">
+  <thead>
+    <tr>
+      <th>Tool</th>
+      <th>Parameters</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">findService</code></td>
+      <td>
+<code class="language-plaintext highlighter-rouge">serviceId</code> (long)</td>
+      <td>Look up a <a href="../services/Service-Management.html">registered service</a> by its numeric id. The definition is returned as JSON, in the same format used by the JSON service registry, with client secrets, passwords, keys and inline key sets replaced by <code class="language-plaintext highlighter-rouge">&lt;redacted&gt;</code>.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">matchService</code></td>
+      <td>
+<code class="language-plaintext highlighter-rouge">service</code> (string)</td>
+      <td>Find the registered service that matches an application URL, the same way CAS does at login, and return its definition as JSON with secrets replaced by <code class="language-plaintext highlighter-rouge">&lt;redacted&gt;</code>.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">evaluateAccess</code></td>
+      <td>
+<code class="language-plaintext highlighter-rouge">username</code>, <code class="language-plaintext highlighter-rouge">service</code> (string)</td>
+      <td>Evaluate the <a href="../services/Configuring-Service-Access-Strategy.html">access strategy</a> of the matching registered service against the person’s resolved attributes, and explain why access is denied.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">previewAttributeRelease</code></td>
+      <td>
+<code class="language-plaintext highlighter-rouge">username</code>, <code class="language-plaintext highlighter-rouge">service</code> (string)</td>
+      <td>Preview the username and <a href="../integration/Attribute-Release-Policies.html">attributes</a> CAS would release to the application for the person, along with the access decision.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">listMultifactorProviders</code></td>
+      <td>none</td>
+      <td>List the configured <a href="../mfa/Configuring-Multifactor-Authentication.html">multifactor authentication providers</a> with their ids, names, order and failure modes.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">evaluateMultifactorTriggers</code></td>
+      <td>
+<code class="language-plaintext highlighter-rouge">username</code>, <code class="language-plaintext highlighter-rouge">service</code> (string), <code class="language-plaintext highlighter-rouge">clientIpAddress</code>, <code class="language-plaintext highlighter-rouge">userAgent</code>, <code class="language-plaintext highlighter-rouge">geoLocation</code> (optional)</td>
+      <td>Run the <a href="../mfa/Configuring-Multifactor-Authentication-Triggers.html">multifactor authentication triggers</a> in order for the person and application, and report which provider is required and which trigger selected it.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">searchServices</code></td>
+      <td>
+<code class="language-plaintext highlighter-rouge">query</code> (string)</td>
+      <td>Search registered services whose name, service id pattern, description or numeric id contains the text, and return a summary of each.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">findSessions</code></td>
+      <td>
+<code class="language-plaintext highlighter-rouge">username</code> (string)</td>
+      <td>Summarize the active single sign-on sessions of a person: a session reference, when each was created and last used, the authentication handlers and the applications accessed.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">findTicket</code></td>
+      <td>
+<code class="language-plaintext highlighter-rouge">ticketId</code> (string), <code class="language-plaintext highlighter-rouge">username</code> (optional)</td>
+      <td>Look up a ticket by its id in the <a href="../ticketing/Configuring-Ticketing-Components.html">ticket registry</a>, or a single sign-on session by its session reference and the person’s username, and summarize it: type, creation and last use, number of uses, expiration policy, the principal with the names of its principal and authentication attributes, the application of a service ticket, the session reference, and the applications of a single sign-on session. Attribute values, session ids and the serialized ticket are never returned. Expired tickets are not found.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">findPerson</code></td>
+      <td>
+<code class="language-plaintext highlighter-rouge">username</code> (string)</td>
+      <td>Resolve a person by username through the <a href="../integration/Attribute-Resolution.html">attribute repositories</a> and return the principal with its attributes.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">findSessionsWithAttribute</code></td>
+      <td>
+<code class="language-plaintext highlighter-rouge">attributeName</code>, <code class="language-plaintext highlighter-rouge">attributeValue</code> (string)</td>
+      <td>Summarize the active single sign-on sessions, with their session reference and principal, whose principal or authentication attributes contain the value.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">previewLogout</code></td>
+      <td>
+<code class="language-plaintext highlighter-rouge">ticketId</code> (string), <code class="language-plaintext highlighter-rouge">username</code> (optional)</td>
+      <td>Preview which applications would receive a <a href="Logout-Single-Signout.html">single logout</a> notification if the single sign-on session ended now, with the logout URL and channel of each. Takes a ticket-granting ticket id, or a session reference with the person’s username. Nothing is logged out.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">getRegistryStatistics</code></td>
+      <td>none</td>
+      <td>Report how many single sign-on sessions, service tickets and tickets the ticket registry holds, and how many registered services are loaded.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">findTenant</code></td>
+      <td>
+<code class="language-plaintext highlighter-rouge">tenantId</code> (string)</td>
+      <td>Look up a <a href="../multitenancy/Multitenancy-Overview.html">tenant</a> and its policies, along with the names of the settings it overrides; setting values are never returned.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">findAuditRecords</code></td>
+      <td>
+<code class="language-plaintext highlighter-rouge">username</code> (string), <code class="language-plaintext highlighter-rouge">days</code> and <code class="language-plaintext highlighter-rouge">action</code> (optional)</td>
+      <td>Return the most recent <a href="../audits/Audits.html">audit records</a> of a person, optionally limited to a number of days and to actions that contain the given text.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">findAuthenticationEvents</code></td>
+      <td>
+<code class="language-plaintext highlighter-rouge">username</code> (string), <code class="language-plaintext highlighter-rouge">days</code> (optional)</td>
+      <td>Return the most recent recorded <a href="../authentication/Configuring-Authentication-Events.html">authentication events</a> of a person, such as single sign-on sessions created and destroyed and authentication failures, with the client IP address, user agent and location of each. Device fingerprints are never returned.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">describeDeployment</code></td>
+      <td>none</td>
+      <td>Describe the deployment: CAS version, server name and prefix, active profiles, the feature modules that are turned on, the CAS modules on the classpath, ticket and service registry types, authentication handlers and policies, attribute repositories, and which optional MCP tool groups are active along with the setting that turns each one on.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">explainLogin</code></td>
+      <td>
+<code class="language-plaintext highlighter-rouge">username</code>, <code class="language-plaintext highlighter-rouge">service</code> (string), <code class="language-plaintext highlighter-rouge">clientIpAddress</code>, <code class="language-plaintext highlighter-rouge">userAgent</code>, <code class="language-plaintext highlighter-rouge">geoLocation</code> (optional)</td>
+      <td>Walk through a login in one call, in the order CAS applies each step: the registered service and its access strategy, the risk of the attempt, the multifactor authentication provider, the interrupt and the released username and attributes. Returns the outcome and, for each step, its status and the result of the tool that evaluates it. Passwords are not checked.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">validateServiceDefinition</code></td>
+      <td>
+<code class="language-plaintext highlighter-rouge">definition</code> (string), <code class="language-plaintext highlighter-rouge">urls</code> (optional list)</td>
+      <td>Check a proposed registered service definition, given as JSON, without saving it: whether CAS can read it, whether its service id pattern is valid, whether its id or name collides with an existing service, and for each URL whether it matches, which existing service matches today and which of the two CAS would pick by evaluation priority and order. The definition is not returned.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">findThrottledLogins</code></td>
+      <td>
+<code class="language-plaintext highlighter-rouge">username</code>, <code class="language-plaintext highlighter-rouge">clientIpAddress</code> (optional)</td>
+      <td>Return the failed login attempts that <a href="../authentication/Configuring-Authentication-Throttling.html">authentication throttling</a> tracks, with the username, client IP address, last failure, end of the lock and whether each is throttled now, along with the failure threshold, range and lock window.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">findAttributeSources</code></td>
+      <td>
+<code class="language-plaintext highlighter-rouge">username</code> (string)</td>
+      <td>Ask each <a href="../integration/Attribute-Resolution.html">attribute repository</a> separately which attributes it returns for a person, and report the attribute names and any error per repository. Attribute values are not returned; <code class="language-plaintext highlighter-rouge">findPerson</code> has them.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">findAttributeDefinitions</code></td>
+      <td>
+<code class="language-plaintext highlighter-rouge">query</code> (optional)</td>
+      <td>List the <a href="../integration/Attribute-Definitions.html">attribute definitions</a> whose key, name or source attribute contains the text, with their type, scoping, encryption, canonicalization and hashing settings. Scripts are not returned, only whether a definition is scripted.</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>The <code class="language-plaintext highlighter-rouge">service</code> parameter is the application URL, such as the <code class="language-plaintext highlighter-rouge">service</code> parameter an application sends to CAS at login.
+Access evaluations are recorded in the <a href="../audits/Audits.html">audit log</a> like any other access strategy decision, and
+session summaries are limited to the most recent fifty sessions; more about a session can be fetched with <code class="language-plaintext highlighter-rouge">findTicket</code>.</p>
+
+<p>A ticket-granting ticket id grants access to the single sign-on session it identifies, so the tools never return one.
+Sessions are identified by a <em>session reference</em> instead, such as <code class="language-plaintext highlighter-rouge">session:3f2a…</code>, derived from the ticket id with a
+one-way digest. <code class="language-plaintext highlighter-rouge">findTicket</code> and <code class="language-plaintext highlighter-rouge">previewLogout</code> accept a session reference together with the username of the person,
+and look for it among that person’s sessions only. Ticket ids passed to the tools are masked in the audit log the same way
+CAS masks them in its own audit records.</p>
+
+<p>Multifactor authentication triggers are evaluated against the person’s resolved attributes and a request that carries
+no parameters, headers, cookies or query string, so triggers that depend on the HTTP request, such as a request parameter or header,
+are not activated during the evaluation. The optional client IP address, user agent and location describe the login attempt
+for adaptive triggers: they become the client address, the <code class="language-plaintext highlighter-rouge">User-Agent</code> header and the <code class="language-plaintext highlighter-rouge">geolocation</code> parameter that the
+triggers see. Without them the client is unknown; the address of the MCP request, which belongs to the operator, is never used. Counting tickets may require a scan of the whole ticket registry,
+depending on the registry in use.</p>
+
+<p>Audit records can only be returned when CAS is configured with an audit storage option that supports querying,
+such as a database or Redis; the default audit log that is written to the CAS logs cannot be searched.
+Search results are limited to the first fifty matches, and audit lookups to the most recent hundred records.</p>
+
+<p>Authentication events are only returned when CAS records them in an
+<a href="../authentication/Configuring-Authentication-Events.html">events repository</a>, such as memory, a database or Redis;
+lookups are limited to the most recent hundred events.</p>
+
+<p><code class="language-plaintext highlighter-rouge">explainLogin</code> runs <code class="language-plaintext highlighter-rouge">evaluateAccess</code>, <code class="language-plaintext highlighter-rouge">evaluateAuthenticationRisk</code>, <code class="language-plaintext highlighter-rouge">evaluateMultifactorTriggers</code>, <code class="language-plaintext highlighter-rouge">previewInterrupt</code> and
+<code class="language-plaintext highlighter-rouge">previewAttributeRelease</code> in turn and stops at the first step that denies the login, with the outcome <code class="language-plaintext highlighter-rouge">SERVICE_NOT_REGISTERED</code>,
+<code class="language-plaintext highlighter-rouge">ACCESS_DENIED</code>, <code class="language-plaintext highlighter-rouge">BLOCKED_AS_RISKY</code>, <code class="language-plaintext highlighter-rouge">BLOCKED_BY_INTERRUPT</code> or <code class="language-plaintext highlighter-rouge">LOGIN_SUCCEEDS</code>. Each step has the status <code class="language-plaintext highlighter-rouge">PASSED</code>, <code class="language-plaintext highlighter-rouge">TRIGGERED</code>
+(a requirement such as multifactor authentication is added), <code class="language-plaintext highlighter-rouge">BLOCKED</code>, <code class="language-plaintext highlighter-rouge">SKIPPED</code> or <code class="language-plaintext highlighter-rouge">FAILED</code>. Risk is evaluated only when a
+client IP address and user agent are given and risk-based authentication is installed, and a step whose module is not installed
+is skipped. The call is recorded once in the audit log as <code class="language-plaintext highlighter-rouge">explainLogin</code>; the tools it runs are not recorded separately.</p>
+
+<p><code class="language-plaintext highlighter-rouge">findThrottledLogins</code> reads the throttling records that CAS keeps in memory or in Hazelcast. Throttling backed by a database,
+MongoDB or Redis keeps its records in the audit trail instead, which <code class="language-plaintext highlighter-rouge">findAuditRecords</code> returns with the action
+<code class="language-plaintext highlighter-rouge">THROTTLED_LOGIN_ATTEMPT</code>; the <code class="language-plaintext highlighter-rouge">auditBased</code> field of the result says when that is the case. At most a hundred records are returned,
+most recent first.</p>
+
+<h3 id="structured-output">Structured Output</h3>
+
+<p>Every tool except <code class="language-plaintext highlighter-rouge">findService</code> and <code class="language-plaintext highlighter-rouge">matchService</code>, whose definitions are free-form, advertises an <code class="language-plaintext highlighter-rouge">outputSchema</code> in <code class="language-plaintext highlighter-rouge">tools/list</code>
+and returns its result as <code class="language-plaintext highlighter-rouge">structuredContent</code>, along with the same JSON as text for clients that do not read structured content.
+Fields without a value are left out of the result rather than set to <code class="language-plaintext highlighter-rouge">null</code>.</p>
+
+<h3 id="optional-tools">Optional Tools</h3>
+
+<p>Additional tools become available when the feature they examine is included in the CAS build. They are listed by the MCP
+server only when the corresponding module is present, and each group can be turned off via feature toggles.</p>
+
+<table class="cas-mcp-tools">
+  <thead>
+    <tr>
+      <th>Tool</th>
+      <th>Requires</th>
+      <th>Parameters</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">findConsentDecisions</code></td>
+      <td><a href="../integration/Attribute-Release-Consent.html">Attribute consent</a></td>
+      <td>
+<code class="language-plaintext highlighter-rouge">username</code> (string)</td>
+      <td>Return the consent decisions of a person: the application, when consent was given, the reminder settings and the names of the attributes consented to. Attribute values are never returned.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">resolveSamlMetadata</code></td>
+      <td><a href="../authentication/Configuring-SAML2-Authentication.html">SAML2 identity provider</a></td>
+      <td>
+<code class="language-plaintext highlighter-rouge">entityId</code> (string)</td>
+      <td>Resolve the metadata of a service provider the way CAS does, and report the matching registration and metadata source, the validity period, assertion consumer and single logout endpoints, name id formats and certificates with their expiration dates, or the error when resolution fails.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">findOidcClient</code></td>
+      <td><a href="../authentication/OIDC-Authentication.html">OpenID Connect</a></td>
+      <td>
+<code class="language-plaintext highlighter-rouge">clientId</code> (string)</td>
+      <td>Summarize an OAuth or OpenID Connect client registration: redirect URI pattern, grant and response types, scopes, client authentication, token settings, issuer and ID token settings. Client secrets are never returned.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">listJwksKeys</code></td>
+      <td><a href="../authentication/OIDC-Authentication.html">OpenID Connect</a></td>
+      <td>none</td>
+      <td>List the keys of the CAS OpenID Connect keystore with their key id, type, algorithm, use and rotation state. Key material is never returned.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">findTrustedDevices</code></td>
+      <td><a href="../mfa/Multifactor-TrustedDevice-Authentication.html">Trusted devices</a></td>
+      <td>
+<code class="language-plaintext highlighter-rouge">username</code> (string)</td>
+      <td>Return the devices a person has registered as trusted for multifactor authentication: the device name, the multifactor authentication provider, when it was registered, when it expires and whether it has expired. Device fingerprints and record keys are never returned.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">findSurrogateAccounts</code></td>
+      <td><a href="../authentication/Surrogate-Authentication.html">Surrogate authentication</a></td>
+      <td>
+<code class="language-plaintext highlighter-rouge">username</code> (string), <code class="language-plaintext highlighter-rouge">service</code> (optional)</td>
+      <td>Return the accounts a person may impersonate, optionally for an application, and whether the person may impersonate any account.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">previewInterrupt</code></td>
+      <td><a href="../webflow/Webflow-Customization-Interrupt.html">Authentication interrupts</a></td>
+      <td>
+<code class="language-plaintext highlighter-rouge">username</code>, <code class="language-plaintext highlighter-rouge">service</code> (string)</td>
+      <td>Ask each interrupt source in order which notification CAS would show the person after authenticating to the application, and report the first interrupt with its message, links and whether it blocks the login. The interrupt policy of the matching registered service is reported, but its attribute and script conditions are not evaluated.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">evaluateAuthenticationRisk</code></td>
+      <td><a href="../authentication/Configuring-RiskBased-Authentication.html">Risk-based authentication</a></td>
+      <td>
+<code class="language-plaintext highlighter-rouge">username</code>, <code class="language-plaintext highlighter-rouge">service</code>, <code class="language-plaintext highlighter-rouge">clientIpAddress</code>, <code class="language-plaintext highlighter-rouge">userAgent</code> (string), <code class="language-plaintext highlighter-rouge">geoLocation</code> (optional)</td>
+      <td>Score a login attempt from the given client against the person’s recorded sign-ins, reporting each risk calculator’s score, the overall score, the threshold and whether CAS would treat the attempt as risky.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">findOneTimeTokenAccounts</code></td>
+      <td><a href="../mfa/GoogleAuthenticator-Authentication.html">Google Authenticator</a></td>
+      <td>
+<code class="language-plaintext highlighter-rouge">username</code> (string)</td>
+      <td>Return the one-time password devices a person has registered: the device name, when it was registered and last used, where the registration came from and how many scratch codes are left. Secret keys, validation codes and scratch codes are never returned.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">findWebAuthnDevices</code></td>
+      <td><a href="../mfa/FIDO2-WebAuthn-Authentication.html">FIDO2 WebAuthn</a></td>
+      <td>
+<code class="language-plaintext highlighter-rouge">username</code> (string)</td>
+      <td>Return the security keys and passkeys a person has registered: the nickname, registration time, transports, whether it is a discoverable credential, the AAGUID of the authenticator model and the signature count. Credential ids, user handles and public keys are never returned.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">findPasswordlessAccount</code></td>
+      <td><a href="../authentication/Passwordless-Authentication.html">Passwordless authentication</a></td>
+      <td>
+<code class="language-plaintext highlighter-rouge">username</code> (string)</td>
+      <td>Return the passwordless account of a person: masked email address and phone number, whether a password is still requested, the selection menu, multifactor and delegated authentication eligibility, allowed identity providers and the account source. Account attributes are not returned.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">listIdentityProviders</code></td>
+      <td><a href="../integration/Delegate-Authentication.html">Delegated authentication</a></td>
+      <td>none</td>
+      <td>List the external identity providers CAS can delegate to with their name, type, display name, callback URL, auto-redirect setting and principal attribute. Client secrets and other provider settings are never returned.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">findAuthorizableResources</code></td>
+      <td><a href="../authorization/Heimdall-Authorization-Overview.html">Heimdall</a></td>
+      <td>
+<code class="language-plaintext highlighter-rouge">namespace</code> (optional)</td>
+      <td>Return the resources of a Heimdall namespace: URI pattern and method, AuthZEN resource type, id pattern and actions, whether every policy must grant, the policy types and the property names. Policy definitions and property values are never returned; without a namespace, the known namespaces are listed.</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Interrupt sources run as they do at login: a source that fails is recorded and skipped, and sources such as a REST
+endpoint or a Groovy script are called for real, so <code class="language-plaintext highlighter-rouge">previewInterrupt</code> is advertised with the <code class="language-plaintext highlighter-rouge">openWorldHint</code> annotation.
+Risk is scored for the client details passed to <code class="language-plaintext highlighter-rouge">evaluateAuthenticationRisk</code>, never those of the MCP request, which describe
+the operator; a person with no recorded sign-ins is always regarded as risky, and each evaluation is recorded in the
+<a href="../audits/Audits.html">audit log</a>.</p>
+
+<h2 id="resources">Resources</h2>
+
+<p>The MCP server offers the CAS settings catalog as an <a href="https://modelcontextprotocol.io/specification/2025-11-25/server/resources">MCP resource</a>
+template, <code class="language-plaintext highlighter-rouge">cas://settings/{name}</code>, which clients read with <code class="language-plaintext highlighter-rouge">resources/read</code>, for example <code class="language-plaintext highlighter-rouge">cas://settings/cas.server.name</code>.
+The JSON result describes the setting: its description, type, default value, the CAS module that provides it, whether it is
+required, deprecated, or accepts durations, regular expressions or expressions, and whether it is defined in this deployment.
+The value of a setting is never returned, since settings carry keys, passwords and other secrets. Reading a resource requires
+the <code class="language-plaintext highlighter-rouge">ROLE_MCP_ADMIN</code> role/authority like any tool.</p>
+
+<p>To find the name of a setting, the <code class="language-plaintext highlighter-rouge">searchSettings</code> tool takes a <code class="language-plaintext highlighter-rouge">query</code> of at least three characters, matched against
+setting names and descriptions (every word must match), and an optional CAS <code class="language-plaintext highlighter-rouge">module</code> such as <code class="language-plaintext highlighter-rouge">cas-server-support-ldap</code>. It returns up to
+fifty settings with their name, a short description, module, type, deprecation and the <code class="language-plaintext highlighter-rouge">cas://settings/{name}</code> URI to read.</p>
+
+<p>Registered services are offered as the resource template <code class="language-plaintext highlighter-rouge">cas://services/{id}</code>, such as <code class="language-plaintext highlighter-rouge">cas://services/1001</code>, which returns
+the definition as JSON with the same secret redaction as <code class="language-plaintext highlighter-rouge">findService</code>.</p>
+
+<p>Resources are advertised only when the resource capability of the MCP server is turned on, which CAS does by default with
+<code class="language-plaintext cas-setting highlighter-rouge">spring.ai.mcp.server.capabilities.resource=true</code>.</p>
+
+<p>Clients that support <a href="https://modelcontextprotocol.io/specification/2025-11-25/server/utilities/completion">argument completion</a>
+can complete the setting name of <code class="language-plaintext highlighter-rouge">cas://settings/{name}</code> from at least two typed characters, and the service id of
+<code class="language-plaintext highlighter-rouge">cas://services/{id}</code> from the first digits of the id or part of the service name. MCP completion applies to resource
+templates and prompts only, not to tool parameters. Completion is turned on by default with
+<code class="language-plaintext cas-setting highlighter-rouge">spring.ai.mcp.server.capabilities.completion=true</code>, and requires the <code class="language-plaintext highlighter-rouge">ROLE_MCP_ADMIN</code> role/authority.</p>
+
+<!-- fragment:keep -->
+
+<p><strong>Feature Activation</strong></p>
+
+<p>To activate this feature, the following feature toggle(s) must be turned on:</p>
+
+<div class="language-properties highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td>
+<td class="rouge-code"><pre><span class="py">CasFeatureModule.AI.mcp-settings.enabled</span><span class="p">=</span><span class="s">true</span>
+</pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+<p>To learn more about configuration feature toggles,
+please <a href="/cas/development/configuration/Configuration-Feature-Toggles.html">see this page</a>.</p>
+
+<h2 id="client-configuration">Client Configuration</h2>
+
+<p>Most MCP clients can connect to a remote Streamable HTTP server using a configuration similar to the following:</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+</pre></td>
+<td class="rouge-code"><pre><span class="p">{</span><span class="w">
+  </span><span class="nl">"mcpServers"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"cas"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+      </span><span class="nl">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"http"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://sso.example.org/cas/mcp"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"headers"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="nl">"Authorization"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Basic &lt;base64-encoded username:password&gt;"</span><span class="w">
+      </span><span class="p">}</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+<h3 id="browser-clients">Browser Clients</h3>
+
+<p>MCP clients that run in a web browser, such as web-based MCP inspectors and playgrounds, call the MCP endpoint from another
+origin, so the browser first sends a CORS preflight request. CAS does not answer cross-origin requests unless
+<a href="../planning/Security-Guide.html#cors">CORS</a> is turned on; without it, such clients report a CORS or network error even though
+the server is reachable. Clients that do not run in a browser, such as desktop applications and command-line tools,
+are not affected.</p>
+
+<p>When CORS is turned on for a browser client, allow the origin of that client, the <code class="language-plaintext highlighter-rouge">POST</code>, <code class="language-plaintext highlighter-rouge">GET</code>, <code class="language-plaintext highlighter-rouge">DELETE</code> and <code class="language-plaintext highlighter-rouge">OPTIONS</code>
+methods, and the <code class="language-plaintext highlighter-rouge">Authorization</code>, <code class="language-plaintext highlighter-rouge">Content-Type</code>, <code class="language-plaintext highlighter-rouge">Accept</code>, <code class="language-plaintext highlighter-rouge">Mcp-Session-Id</code>, <code class="language-plaintext highlighter-rouge">MCP-Protocol-Version</code> and <code class="language-plaintext highlighter-rouge">Last-Event-ID</code>
+request headers. The <code class="language-plaintext highlighter-rouge">Mcp-Session-Id</code> response header must also be exposed; otherwise the browser hides the session id
+returned by <code class="language-plaintext highlighter-rouge">initialize</code> and every later call fails.</p>
+
+<!-- fragment:keep -->
+
+<p>The following settings and properties are available from the CAS configuration catalog:</p>
+
+
+<div class="cas-properties">
+    <div class="cas-properties-list">
+<div class="cas-property" data-kind="required" data-name="cas.http-web-request.cors.enabled" data-default="false">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.http-web-request.cors.enabled</code><span class="cas-property-summary">Whether CORS should be enabled for http requests.</span>
+</div>
+        <div class="cas-property-default"><code>false</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-required"><i class="fa fa-asterisk" aria-hidden="true"></i>Required</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Whether CORS should be enabled for http requests.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Boolean</code></dd>
+<dt>Default</dt>
+<dd><code>false</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.core.web.security.HttpCorsRequestProperties">HttpCorsRequestProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.http-web-request.cors.allow-credentials" data-default="true">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.http-web-request.cors.allow-credentials</code><span class="cas-property-summary">The Access-Control-Allow-Credentials header Indicates whether or not the response to the request can be exposed when the credentials flag is true.</span>
+</div>
+        <div class="cas-property-default"><code>true</code></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>The Access-Control-Allow-Credentials header Indicates whether or not the response to the request can be exposed when the credentials flag is true. When used as part of a response to a preflight request, this indicates whether or not the actual request can be made using credentials. Note that simple GET requests are not preflighted, and so if a request is made for a resource with credentials, if this header is not returned with the resource, the response is ignored by the browser and not returned to web content.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Boolean</code></dd>
+<dt>Default</dt>
+<dd><code>true</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.core.web.security.HttpCorsRequestProperties">HttpCorsRequestProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.http-web-request.cors.allow-headers" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.http-web-request.cors.allow-headers</code><span class="cas-property-summary">The Access-Control-Allow-Headers header is used in response to a preflight request to indicate which HTTP headers can be used when making the actual request.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>The Access-Control-Allow-Headers header is used in response to a preflight request to indicate which HTTP headers can be used when making the actual request. Default is everything.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>List&lt;String&gt;</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.core.web.security.HttpCorsRequestProperties">HttpCorsRequestProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.http-web-request.cors.allow-methods" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.http-web-request.cors.allow-methods</code><span class="cas-property-summary">The Access-Control-Allow-Methods header specifies the method or methods allowed when accessing the resource.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>The Access-Control-Allow-Methods header specifies the method or methods allowed when accessing the resource. This is used in response to a pre-flight request. The conditions under which a request is pre-flighted are discussed above. Default is everything.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>List&lt;String&gt;</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.core.web.security.HttpCorsRequestProperties">HttpCorsRequestProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.http-web-request.cors.allow-origin-patterns" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.http-web-request.cors.allow-origin-patterns</code><span class="cas-property-summary">Comma-separated list of origin patterns to allow.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Comma-separated list of origin patterns to allow. Unlike allowed origins which only supports <code>*</code>, origin patterns are more flexible (for example <code>https://*.example.com</code>) and can be used when credentials are allowed. When no allowed origin patterns or allowed origins are set, CORS support is disabled.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>List&lt;String&gt;</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.core.web.security.HttpCorsRequestProperties">HttpCorsRequestProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.http-web-request.cors.allow-origins" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.http-web-request.cors.allow-origins</code><span class="cas-property-summary">The Origin header indicates the origin of the cross-site access request or preflight request.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>The Origin header indicates the origin of the cross-site access request or preflight request. The origin is a URI indicating the server from which the request initiated. When credentials are allowed, '*' cannot be used and origin patterns should be configured instead. It does not include any path information, but only the server name.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>List&lt;String&gt;</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.core.web.security.HttpCorsRequestProperties">HttpCorsRequestProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.http-web-request.cors.exposed-headers" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.http-web-request.cors.exposed-headers</code><span class="cas-property-summary">The Access-Control-Expose-Headers header lets a server accept headers that browsers are allowed to access.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>The Access-Control-Expose-Headers header lets a server accept headers that browsers are allowed to access.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>List&lt;String&gt;</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.core.web.security.HttpCorsRequestProperties">HttpCorsRequestProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="optional" data-name="cas.http-web-request.cors.max-age" data-default="3600">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.http-web-request.cors.max-age</code><span class="cas-property-summary">The Access-Control-Max-Age header indicates how long the results of a preflight request can be cached.</span>
+</div>
+        <div class="cas-property-default"><code>3600</code></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>The Access-Control-Max-Age header indicates how long the results of a preflight request can be cached.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>Long</code></dd>
+<dt>Default</dt>
+<dd><code>3600</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.core.web.security.HttpCorsRequestProperties">HttpCorsRequestProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+</div>
+<p class="cas-properties-legend">
+        <strong>Required</strong> settings may be needed to activate or affect the feature; review them even when they have a default.
+        <strong>Optional</strong> settings only need to be set to change a default or to turn on the behavior they control.
+        <strong>Third party</strong> settings belong to libraries such as Spring Boot that CAS builds on; their own documentation may have more detail.
+    </p>
+<div class="cas-properties-topics"><details class="cas-properties-topic">
+            <summary><i class="fa fa-newspaper" aria-hidden="true"></i>Notes on configuration</summary>
+            <div class="cas-properties-topic-body">
+<!-- fragment:keep -->
+
+<p></p>
+
+<p><strong>Configuration Metadata</strong></p>
+
+<p>The collection of configuration properties listed in this section are automatically generated from the CAS source and components that contain the actual field
+definitions, types, descriptions, modules, etc. This metadata may not always be 100% accurate, or could be lacking details and sufficient explanations.</p>
+
+<p><strong>Be Selective</strong></p>
+
+<p>This section is meant as a guide only. Do NOT copy/paste the entire collection of settings into your CAS configuration; rather pick only the properties that you
+need. Do NOT enable settings unless you are certain of their purpose and do NOT copy settings into your configuration only to keep them as reference. All these
+ideas lead to upgrade headaches, maintenance nightmares and premature aging.</p>
+
+<p><strong>YAGNI</strong></p>
+
+<p>Note that for nearly ALL use cases, declaring and configuring properties listed here is sufficient. You should NOT have to explicitly massage a CAS XML/Java/etc
+configuration file to design an authentication handler, create attribute release policies, etc. CAS at runtime will auto-configure all required changes for you.
+If you are unsure about the meaning of a given CAS setting, do NOT turn it on without hesitation. Review the codebase or better yet, ask questions to clarify
+the intended behavior.</p>
+
+<p><strong>Naming Convention</strong></p>
+
+<p>Property names can be specified in very relaxed terms. For instance <code class="language-plaintext highlighter-rouge">cas.someProperty</code>, <code class="language-plaintext highlighter-rouge">cas.some-property</code>, <code class="language-plaintext highlighter-rouge">cas.some_property</code> are all valid names. While all
+forms are accepted by CAS, there are certain components (in CAS and other frameworks used) whose activation at runtime is conditional on a property value, where
+this property is required to have been specified in CAS configuration using kebab case. This is both true for properties that are owned by CAS as well as those
+that might be presented to the system via an external library or framework such as Spring Boot, etc.</p>
+
+<div class="alert alert-info">
+<img class="emoji" title=":information_source:" alt=":information_source:" src="https://github.githubassets.com/images/icons/emoji/unicode/2139.png" height="20" width="20"> <strong>Note</strong> <p>
+When possible, properties should be stored in lower-case kebab format, such as <code>cas.property-name=value</code>.
+The only possible exception to this rule is when naming actuator endpoints; The name of the
+actuator endpoints (i.e. <code>ssoSessions</code>) <strong>MUST</strong> remain in camelCase mode. 
+</p>
+</div>
+
+<p>Settings and properties that are controlled by the CAS platform directly always begin with the prefix <code class="language-plaintext highlighter-rouge">cas</code>. All other settings are controlled and provided
+to CAS via other underlying frameworks and may have their own schemas and syntax. BE CAREFUL with
+the distinction. Unrecognized properties are rejected by CAS and/or frameworks upon which CAS depends. This means if you somehow misspell a property definition
+or fail to adhere to the dot-notation syntax and such, your setting is entirely refused by CAS and likely the feature it controls will never be activated in the
+way you intend.</p>
+
+<p><strong>Validation</strong></p>
+
+<p>Configuration properties are automatically validated on CAS startup to report issues with configuration binding, especially if defined CAS settings cannot be
+recognized or validated by the configuration schema. Additional validation processes are also handled
+via <a href="/cas/development/configuration/Configuration-Metadata-Repository.html">Configuration Metadata</a> and property migrations applied automatically on
+startup by Spring Boot and family.</p>
+
+<p><strong>Indexed Settings</strong></p>
+
+<p>CAS settings able to accept multiple values are typically documented with an index, such as <code class="language-plaintext highlighter-rouge">cas.some.setting[0]=value</code>. The index <code class="language-plaintext highlighter-rouge">[0]</code> is meant to be
+incremented by the adopter to allow for distinct multiple configuration blocks.</p>
+
+            </div>
+        </details></div>
+</div>
+
+<div class="alert alert-warning">
+<img class="emoji" title=":warning:" alt=":warning:" src="https://github.githubassets.com/images/icons/emoji/unicode/26a0.png" height="20" width="20"> <strong>Usage Warning!</strong><p>
+CORS settings apply to every CAS endpoint, not only to the MCP endpoint. Allow only the exact origins of the clients you trust,
+never all origins, and do not allow credentials: browser clients send their credentials in the <code>Authorization</code>
+header, and allowing credentials would let other origins use a CAS session cookie of the browser.
+</p>
+</div>
+
+<h2 id="feature-toggle">Feature Toggle</h2>
+
+<p>The MCP server tools are enabled by default when the module is present, and can be turned off via feature toggles.
+When turned off, CAS registers no tools and no longer opens the MCP endpoint to authenticated users.</p>
+
+<!-- fragment:keep -->
+
+<p><strong>Feature Activation</strong></p>
+
+<p>To activate this feature, the following feature toggle(s) must be turned on:</p>
+
+<div class="language-properties highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td>
+<td class="rouge-code"><pre><span class="py">CasFeatureModule.AI.mcp.enabled</span><span class="p">=</span><span class="s">true</span>
+</pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+<p>To learn more about configuration feature toggles,
+please <a href="/cas/development/configuration/Configuration-Feature-Toggles.html">see this page</a>.</p>
+
+
+            </article>
+            <div class="article-end" aria-hidden="true">
+<span></span><span>CAS</span><span></span>
+</div>
+        </main>
+        
+        <aside class="docs-toc" aria-label="On this page">
+    <nav id="pageContents" aria-label="Table of contents">
+        <p class="eyebrow">ON THIS PAGE</p>
+        <ul class="section-nav"></ul>
+    </nav>
+    <a class="toc-top" href="#cas-docs-container">Back to top <span aria-hidden="true">↑</span></a>
+</aside>
+
+        
+    </div>
+
+    <footer class="site-footer">
+        <a class="footer-brand" href="../../index.html">APEREO <strong>CAS</strong></a>
+        <p>CAS is supported by the <a href="https://www.apereo.org/">Apereo Foundation</a>.</p>
+        <a href="#cas-docs-container">Back to top <span aria-hidden="true">↑</span></a>
+    </footer>
+    <div id="docs-status" class="visually-hidden" role="status" aria-live="polite"></div>
+    <button id="backToTop" class="back-to-top" type="button" aria-label="Back to top" title="Back to top">
+        <svg viewbox="0 0 40 40" aria-hidden="true"><circle class="back-to-top-track" cx="20" cy="20" r="18.5" pathlength="100"></circle><circle class="back-to-top-ring" cx="20" cy="20" r="18.5" pathlength="100"></circle></svg>
+        <svg class="back-to-top-arrow" viewbox="0 0 16 16" aria-hidden="true"><path d="M8 12.5v-9M3.75 7.5 8 3.25l4.25 4.25"></path></svg>
+    </button>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha384-1H217gwSVyLSIfaLxHbE7dRb3v4mYCKbpQvzx0cegeju1MVsGrX5xXxAvs/HgeFs" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.11/clipboard.min.js" integrity="sha384-J08i8An/QeARD9ExYpvphB8BsyOj3Gh2TSh1aLINKO3L0cMSH2dN3E22zFoXEi0Q" crossorigin="anonymous"></script>
+
+    <script src="/cas/javascripts/URI.js"></script>
+    <script src="/cas/javascripts/site.js"></script>
+    
+
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@docsearch/js@3.9.0/dist/umd/index.js" integrity="sha384-QhsjJ84XKaqUeM7eZpvYApdPamFboJLQg4BD2CCCSiUOL4cWzLp5caae6oW/oAXh" crossorigin="anonymous"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js" integrity="sha384-ficRBwtap/VLzILv81vIvgp30PoJYnlCm96tPpNYHXAf+h9SIThOZxxIzRUzbpAh" crossorigin="anonymous"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.5/js/lightbox.min.js" integrity="sha384-bcXRY0im+IjB6RvmBpbgdkqjLV0pCTbaJRJ9IRPeQaWCYlzRn9pPaPmCvONr9h9z" crossorigin="anonymous"></script>
+
+    <script>
+        let pageSection = "Installation";
+        let siteUrl = "https://apereo.github.io";
+        let basePath = "/cas";
+
+        
+    </script>
+</body>
+
+</html>
