@@ -137,6 +137,7 @@ async function verifyEncryptedResponses(page) {
             throw `Introspection operation failed: ${error}`;
         }, {
             "Authorization": `Basic ${btoa("encrypted:secret")}`,
+            "Content-Type": "application/json",
             "Accept": "application/token-introspection+jwt"
         });
     assert.equal(introspection.split(".").length, 5, "Introspection response must be a JWE");

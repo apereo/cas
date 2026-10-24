@@ -145,10 +145,10 @@ class DefaultSingleSignOnParticipationStrategyTests {
             mock(TicketRegistrySupport.class), authenticationSystemSupport, plan);
 
         val ssoRequest = getSingleSignOnParticipationRequest(context);
-        assertEquals(TriStateBoolean.FALSE, strategy.isCreateCookieOnRenewedAuthentication(ssoRequest));
+        assertEquals(TriStateBoolean.UNDEFINED, strategy.isCreateCookieOnRenewedAuthentication(ssoRequest));
         val chain = new ChainingSingleSignOnParticipationStrategy();
         chain.addStrategy(strategy);
-        assertEquals(TriStateBoolean.FALSE, chain.isCreateCookieOnRenewedAuthentication(ssoRequest));
+        assertEquals(TriStateBoolean.TRUE, chain.isCreateCookieOnRenewedAuthentication(ssoRequest));
     }
 
     @Test

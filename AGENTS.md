@@ -588,6 +588,8 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
   must stay in it; only keys marked `use=enc` may be dropped.
 - Mockito: never call another mock inside `thenReturn(...)` (`thenReturn(accessToken.getAuthentication())` with a mocked
   token is an UnfinishedStubbingException); read the values into locals first.
+- CAS shell validation: the `quit` command deliberately returns EXECUTION_ERROR and Spring Shell then prints a
+  CommandExecutionException trace; `.github/workflows/validation.yml` only counts exception lines before the quit message.
 - SPNEGO scenarios get a real KDC from `ci/tests/kerberos/run-kerberos-server.sh` (port 10088, not 88: macOS runs its own
   KDC on 88). Chrome sends Negotiate tokens only with `--auth-server-allowlist=localhost`; it reads `KRB5_CONFIG` and
   `KRB5CCNAME` from the environment given to `cas.newBrowser` (a missing cache makes it show the 401 body, which is the

@@ -252,7 +252,8 @@ one-time codes can be added when `cas.authn.mfa.simple.mail.accepted-email-patte
   and that setting both the Kerberos KDC and realm makes the JDK ignore the Kerberos configuration file.
 - {: .fixed data-area="services"} A service whose single sign-on participation policy does not set
   `createCookieOnRenewedAuthentication` (for example the last-used-time and authentication-date policies) no longer
-  fails the login flow; the global `cas.sso.create-sso-cookie-on-renew-authn`{: .cas-setting} setting applies instead.
+  fails the login flow; such a policy behaves like one that leaves the setting undefined, and the single sign-on
+  session is kept when the service does not take part in it.
 - {: .fixed data-area="oidc"} JWT access tokens are no longer signed with keys from the application's own `jwks` that
   are marked for encryption (`"use": "enc"`); when the application publishes only encryption keys, CAS signs with its own
   keys. `jwtAccessTokenSigningAlg` is honored as documented: CAS picks a signing key whose type fits the algorithm,
