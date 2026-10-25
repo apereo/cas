@@ -161,9 +161,9 @@ so they can differ per theme, per application and per tenant, and most of them p
 | External identity providers | `cas.login-providers.layout` (`stacked`, `grid`, `inline`), `.select-threshold`, `.sort`             |
 | Password management links   | `cas.pm-links.forgot-password.url`                                                                   |
 | Error pages                 | `cas.error.show-message`, `cas.error.show-details`                                                   |
-| WebAuthn                    | `cas.webauthn.authentication.show-device-details`, `cas.webauthn.registration.recommended`          |
+| WebAuthn                    | `cas.webauthn.authentication.show-device-details`, `cas.webauthn.registration.recommended`           |
 | Google Authenticator        | `cas.gauth.registration.show-secret-key`, `.scratch-codes` (`chips`, `list`), `.show-print`          |
-| QR codes                    | `cas.qr-code.size`, `cas.qr-code.foreground`, `cas.qr-code.background`, `cas.qr-code.margin`        |
+| QR codes                    | `cas.qr-code.size`, `cas.qr-code.foreground`, `cas.qr-code.background`, `cas.qr-code.margin`         |
 | Multifactor authentication  | `cas.mfa.selection.layout` (`list`, `grid`, `cards`), `cas.mfa.device-name.prefill`                  |
 | Attribute consent           | `cas.consent.show-attribute-values`, `cas.consent.layout` (`table`, `list`)                          |
 
@@ -260,5 +260,33 @@ one-time codes can be added when `cas.authn.mfa.simple.mail.accepted-email-patte
   and the key's own algorithm only applies when none is configured or the configured one does not fit the key.
 - {: .fixed data-area="attributes"} The [return linked attribute release policy](../integration/Attribute-Release-Policy-ReturnLinked.html)
   releases the values of the first linked attribute that has a value, as documented; it used to release the last one.
+- {: .changed data-area="services"} Attribute-based activation criteria for [access strategies](../services/Service-Access-Strategy-ABAC-Activation.html)
+  and [attribute release policies](../integration/Attribute-Release-Policy-Activation.html) match required values against
+  the entire attribute value, like required and rejected attributes; `admin` no longer activates a policy for `sysadmin`.
+  Use `.*admin.*` to match part of a value.
+- {: .fixed data-area="services"} [Service replication](../services/Configuring-Service-Replication.html) no longer broadcasts
+  every service definition from every node on each reload: a loaded definition is sent only when it differs from the
+  replicated copy, and the replicated copies are kept across reloads instead of being cleared, so nodes started later still
+  receive every definition. A replicated definition that differs from the local one replaces it instead of being listed twice.
+- {: .fixed data-area="services"} When several service registries are chained, a service URL that is not cached is matched
+  against the best candidate from every registry by evaluation order, instead of the first registry's match.
+- {: .fixed data-area="services"} The [REST service registry](../services/REST-Service-Management.html) no longer publishes a
+  loaded event for every service when services are counted or looked up, and counting services while the registry is
+  unreachable logs the failure and reports zero instead of failing (for example at startup).
+- {: .changed data-area="services"} The [REST access strategy](../services/Service-Access-Strategy-REST.html) calls its endpoint
+  once per access decision, without retries, and waits at most 5 seconds for the response; an endpoint that does not answer
+  in time denies access. It used to retry up to three times on errors and timeouts, holding the login for the duration.
+- {: .fixed data-area="services"} Groovy single sign-on participation policies and Groovy activation criteria for access
+  strategies and attribute release resolve their script once, and again only when the script changes or expires from the
+  script cache, instead of resolving its location and expressions on every evaluation.
+- {: .fixed data-area="services"} [Service replication](../services/Configuring-Service-Replication.html) through Apache Kafka
+  keeps one entry per service definition; an updated definition used to be stored next to its earlier versions.
+- {: .fixed data-area="services"} A service definition deleted on one node stays deleted across the cluster with
+  [service replication](../services/Configuring-Service-Replication.html): the deletion marker is kept instead of being
+  removed by the first node that applies it, so nodes that still have the definition remove it rather than sending it
+  back. Deletions now also replicate through Apache Kafka, whose nodes used to drop the marker on arrival.
+- {: .fixed data-area="services"} With the services cache turned off (`cas.service-registry.cache.cache-size`{: .cas-setting}
+  set to `0`), listing services no longer re-indexes every service it reads, which also made the next service lookup
+  read the whole service registry again.
 
 {% include release-footer.html %}

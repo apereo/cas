@@ -1053,7 +1053,9 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
   changes there are changes to authentication, attribute release, MFA, AUP, OIDC, SAML and themes at once.
 - `ScriptResourceCacheManager` is a singleton whose `close()` clears the entire cache — it must never be
   used in a try-with-resources block.
-- Script execution is serialized per script instance on a blocking lock. Review every script-backed
+- `CompiledGroovyScript.of` decides how a script runs: a stateless script (only final fields holding immutable
+  values) gets a fresh instance per call and runs in parallel; a stateful one keeps a shared instance serialized
+  on a blocking lock, on purpose, so its fields stay consistent. Do not report that lock as a bottleneck. Review every script-backed
   decision for what a `null` result means and prefer fail-closed defaults at security boundaries — MFA
   triggers and AUP read `null` as "skip". Never guard script execution with a timed `tryLock`; a timeout
   that returns `null` is indistinguishable from a script that declined.
@@ -1074,6 +1076,44 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
   (`service-access-strategy-groovy`, `surrogate-login-groovy`, `mfa-provider-selection-trigger-groovy`,
   `interrupt-afterauthn-groovy`, `webflow-groovy-action`, …). None of them exercise concurrency, script
   errors, or cache expiry, so a change in this area needs new coverage rather than a rerun.
+
+## Service registries and replication
+
+- `ServiceRegistry.getServicesStream()` and `size()` are lookups, not loads: they must not publish
+  `CasRegisteredServiceLoadedEvent`, which service replication and the OAuth client secret expiration listener
+  consume. Only `load()` publishes it. `DefaultChainingServiceRegistry.getServicesStream()` delegates to each
+  registry's stream; the interface default falls back to `load()`, so a registry with a cheaper read overrides it. `RestfulServiceRegistry.size()` logs and returns zero for an unreachable
+  registry (the initializer counts at startup), while `load()` throws so the services manager keeps the cached services.
+- Replication (`cas-server-support-service-registry-stream*`) applies only to file-based registries.
+  `DefaultRegisteredServiceReplicationStrategy.updateLoadedRegisteredServicesFromCache` never clears the
+  replication cache (late joiners read it); it keeps the newest entry per service id, removes older ones (renames
+  leave them behind) and replaces the loaded service with the cached one instead of adding it. The publisher
+  skips a loaded service that equals its cache entry, so steady state sends nothing; saves and deletes are always
+  sent. Kafka keeps a node-local map fed by the topic, Hazelcast a shared `IMap` keyed by id, name and service id.
+  Deletion markers (`event=CasRegisteredServiceDeletedEvent`) are never removed when applied: each node deletes its
+  local copy (only if it has one, so no repeated delete events) and drops it from the loaded list, otherwise the
+  load would publish it again over the marker. A save of the same id replaces the marker. The Kafka listener stores
+  every foreign entry, markers included. Lookups (`getRegisteredServiceFromCacheByPredicate`) ignore markers: they run inside
+  `save` and the create watcher, where acting on a marker would delete the definition being re-added.
+- With `cache-size=0`, listing (`getAllServices`, `getAllServicesOfType`) must not cache, index or bump the cache
+  version: a bump discards the sorted snapshot and the next lookup streams the registry. The id lookup and the
+  unknown-URL fallback still index and bump on purpose, since that is what makes a newly found service visible to
+  later lookups while the cache is off.
+- `DefaultChainingServiceRegistry.findServiceBy(String)` asks every registry and picks the best match by
+  evaluation order (registry order breaks ties); the exact-id and exact-name lookups still stop at the first hit.
+- `HttpExecutionRequest.responseTimeout` sets a per-request response and connection-request timeout (applied in
+  `HttpUtils.prepareHttpRequest` as a request `RequestConfig`, which replaces the client's, so it repeats the redirect
+  setting); connect timeouts stay global. `RemoteEndpointServiceAccessStrategy` calls once (`maximumRetryAttempts(0)`)
+  with its fixed `TIMEOUT`; `maximumRetryAttempts` counts retries after the first attempt, so the default 3 means 4 calls.
+- Groovy SSO participation policies and Groovy activation criteria call `resolveScriptIfNeeded()` per evaluation:
+  the script is resolved again only when missing, closed (expired from the script cache) or when `groovyScript`
+  changed (`resolvedGroovyScript`). Tests prove reuse by swapping in a mock `ExecutableCompiledScript`.
+- Kafka and Hazelcast replication caches key services by id, name and service id (`buildKey`); the `Mappable`
+  default is `toString()`, which changes with every edit.
+- The Kafka stream test classes share one Spring context and so one cache manager; never `clear()` it in a test.
+  Assert on the test's own (unique) service only.
+- Attribute-based activation criteria (access strategy and attribute release) use `asMatchPredicate`, like
+  required and rejected attributes in `RegisteredServiceAccessStrategyEvaluator`; patterns match whole values.
 
 ## Actuator endpoints review discipline
 

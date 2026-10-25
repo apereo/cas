@@ -18,6 +18,8 @@ This strategy allows one to configure a service access strategy with the followi
 The objective of this policy is to ensure a remote endpoint can make service access decisions by
 receiving the CAS authenticated principal as url parameter of a `GET` request. The response code that
 the endpoint returns is then compared against the policy setting and if a match is found, access is granted.
+The endpoint is called once per access decision, without retries, and must answer within 5 seconds;
+an endpoint that cannot be reached, or does not answer in time, denies access.
 
 Here is an example of the remote endpoint access strategy authorizing service access based on response code:
 

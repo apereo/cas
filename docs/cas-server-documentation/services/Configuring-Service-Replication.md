@@ -49,6 +49,14 @@ The following settings control the common and cor behavior of service registry r
 
 {% include_cached casproperties.html properties="cas.service-registry.stream.core" %}
                                                                                  
+Each node broadcasts a service definition when it is saved or deleted, or when it is loaded and differs from the
+replicated copy; definitions that are loaded again unchanged are not broadcast. The replicated copy of each definition
+is kept across reloads, so that nodes started later pick up every definition.
+A deleted definition is kept as a deletion marker, so that every node removes its own copy, including nodes that start
+later, instead of broadcasting it again. The marker is replaced when a definition with the same identifier is saved,
+for example from the management UI or through a file picked up by the file watcher; a file dropped back in while
+the watcher is off is removed again on the next reload, unless it carries a new identifier.
+
 Replication strategies may be configured using one the methods listed below. 
 
 ### Hazelcast
