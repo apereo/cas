@@ -7,6 +7,7 @@ import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseModeTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
+import org.apereo.cas.support.oauth.services.RegisteredServiceOAuthResourceMatcher;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.util.CollectionUtils;
@@ -227,15 +228,11 @@ public class DefaultOAuth20RequestParameterResolver implements OAuth20RequestPar
     public boolean isAuthorizedResourceForService(final WebContext context,
                                                   final OAuthRegisteredService registeredService) {
         return resolveRequestedResources(context).stream().allMatch(resource -> {
-            try {
-                val uri = new URI(resource);
-                if (uri.isAbsolute() && uri.getFragment() == null && registeredService.getAllowedResources().contains(resource)) {
-                    return true;
-                }
-            } catch (final URISyntaxException e) {
-                LOGGER.debug(e.getMessage(), e);
+            if (RegisteredServiceOAuthResourceMatcher.isValidResource(resource)
+                && RegisteredServiceOAuthResourceMatcher.isResourceAllowed(registeredService.getAllowedResources(), resource)) {
+                return true;
             }
-            LOGGER.warn("Resource [{}] is invalid or not allowed for service [{}]", resource, registeredService.getName());
+            LOGGER.debug("Resource [{}] is invalid or not allowed for service [{}]", resource, registeredService.getName());
             return false;
         });
     }
@@ -375,14 +372,28 @@ public class DefaultOAuth20RequestParameterResolver implements OAuth20RequestPar
         return List.of("*");
     }
 
-    private static <T> T getJwtRequestClaim(final JWTClaimsSet jwt, final String name, final Class<T> clazz) throws Exception {
+    private static <T> @Nullable T getJwtRequestClaim(final JWTClaimsSet jwt, final String name, final Class<T> clazz) throws Exception {
         if (clazz.isArray()) {
-            return clazz.cast(jwt.getStringArrayClaim(name));
+            val values = getJwtRequestClaimValues(jwt, name);
+            return values == null ? null : clazz.cast(values.toArray(String[]::new));
         }
         if (Collection.class.isAssignableFrom(clazz)) {
-            return clazz.cast(jwt.getStringListClaim(name));
+            return clazz.cast(getJwtRequestClaimValues(jwt, name));
         }
         return clazz.cast(jwt.getStringClaim(name));
+    }
+
+    /**
+     * Read a multi-valued request object claim. A single string is accepted as one value,
+     * i.e. {@code "resource": "https://api.example.org/"}, since such claims may carry either form.
+     *
+     * @param jwt  the request object claims
+     * @param name the claim name
+     * @return the values, or null if the claim is absent
+     * @throws ParseException if the claim is neither a string nor a list of strings
+     */
+    private static @Nullable List<String> getJwtRequestClaimValues(final JWTClaimsSet jwt, final String name) throws ParseException {
+        return jwt.getClaim(name) instanceof final String value ? List.of(value) : jwt.getStringListClaim(name);
     }
 
     private record UnpackedJwtRequest(String jwtRequest, JWTClaimsSet claims) {

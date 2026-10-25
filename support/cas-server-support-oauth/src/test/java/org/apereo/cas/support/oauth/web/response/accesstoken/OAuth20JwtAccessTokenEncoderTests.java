@@ -107,6 +107,19 @@ class OAuth20JwtAccessTokenEncoderTests {
             val claims = JwtBuilder.parse(encodedAccessToken);
 
             assertEquals(Set.of(accessToken.getClientId(), resource), new HashSet<>(claims.getStringListClaim("aud")));
+
+            val exchangeAudience = "https://backend.example.org/";
+            val tokenResult = OAuth20AccessTokenResponseResult
+                .builder()
+                .registeredService(registeredService)
+                .service(accessToken.getService())
+                .grantType(OAuth20GrantTypes.TOKEN_EXCHANGE)
+                .requestedTokenType(OAuth20TokenExchangeTypes.JWT)
+                .tokenExchangeAudience(exchangeAudience)
+                .build();
+            val exchangedToken = OAuth20JwtAccessTokenEncoder.toEncodableCipher(configurationContext, tokenResult, accessToken)
+                .encode(accessToken.getId());
+            assertEquals(List.of(exchangeAudience), JwtBuilder.parse(exchangedToken).getAudience());
         }
 
         private OAuthRegisteredService getRegisteredServiceForJwtAccessTokenWithoutKeys(final OAuth20AccessToken accessToken) {

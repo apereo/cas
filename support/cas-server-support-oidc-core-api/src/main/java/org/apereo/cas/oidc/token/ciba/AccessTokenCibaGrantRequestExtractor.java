@@ -102,6 +102,7 @@ public class AccessTokenCibaGrantRequestExtractor extends BaseAccessTokenGrantRe
             .responseType(getResponseType())
             .grantType(getGrantType())
             .scopes(cibaRequest.getScopes())
+            .resources(cibaRequest.getResources())
             .userProfile(profile)
             .clientId(registeredService.getClientId())
             .cibaRequestId(authRequestId)

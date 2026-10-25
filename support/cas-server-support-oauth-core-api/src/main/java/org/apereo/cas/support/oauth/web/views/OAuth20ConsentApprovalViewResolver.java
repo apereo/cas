@@ -63,7 +63,7 @@ public class OAuth20ConsentApprovalViewResolver implements ConsentApprovalViewRe
             val approvalKey = context.getRequestParameter(OAuth20Constants.SCOPES_APPROVAL_KEY)
                 .orElseThrow(() -> new IllegalArgumentException("Unknown approval key"));
             val supportedScopes = resolveSupportedScopes(context, service);
-            val approvalEntry = buildApprovalEntry(context, service, supportedScopes);
+            val approvalEntry = buildApprovalEntry(context, service, supportedScopes, resolveRequestedResources(context));
             return Strings.CS.equals(approvalEntry.approvalKey(), approvalKey);
         }
         return false;
@@ -84,9 +84,11 @@ public class OAuth20ConsentApprovalViewResolver implements ConsentApprovalViewRe
             u -> model.put("deniedApprovalUrl", u));
 
         val supportedScopes = resolveSupportedScopes(context, service);
-        val approvalEntry = buildApprovalEntry(context, service, supportedScopes);
+        val resources = resolveRequestedResources(context);
+        val approvalEntry = buildApprovalEntry(context, service, supportedScopes, resources);
 
         model.put("scopes", supportedScopes);
+        model.put("resources", resources);
         model.put("approvalKey", approvalEntry.approvalKey());
         model.put("recordKey", approvalEntry.recordKey());
 
@@ -104,18 +106,41 @@ public class OAuth20ConsentApprovalViewResolver implements ConsentApprovalViewRe
         return supportedScopes;
     }
 
+    /**
+     * Resources requested with the authorization request (RFC 8707). They are shown on the consent view and are part of
+     * the approval, so a decision remembered for some resources does not approve a request for others.
+     *
+     * @param context the context
+     * @return the requested resources
+     */
+    protected Set<String> resolveRequestedResources(final WebContext context) {
+        return new TreeSet<>(oauthRequestParameterResolver.resolveRequestedResources(context));
+    }
+
+    /**
+     * The approval key covers the client, the user, the scopes and the requested resources; without resources, the key
+     * is the one issued before resources were part of it, so decisions remembered earlier still apply.
+     *
+     * @param context         the context
+     * @param service         the service
+     * @param supportedScopes the scopes
+     * @param resources       the requested resources
+     * @return the approval entry
+     */
     private ApprovalEntry buildApprovalEntry(final WebContext context,
                                              final OAuthRegisteredService service,
-                                             final Set<String> supportedScopes) {
+                                             final Set<String> supportedScopes,
+                                             final Set<String> resources) {
         val profile = OAuth20Utils.getAuthenticatedUserProfile(context, sessionStore);
         val crypto = casProperties.getTgc().getCrypto();
         val secretKey = StringUtils.defaultIfBlank(crypto.getSigning().getKey(), APPROVAL_KEY_SALT)
             + StringUtils.defaultIfBlank(crypto.getEncryption().getKey(), APPROVAL_KEY_SALT);
 
-        val approvalKey = String.format("%s/%s/%s",
+        val scopesKey = String.format("%s/%s/%s",
             service.getClientId(),
             profile.getId(),
             String.join(",", supportedScopes));
+        val approvalKey = resources.isEmpty() ? scopesKey : scopesKey + '/' + String.join(",", resources);
         val encodedApprovalKey = DigestUtils.sha512Hmac(secretKey, approvalKey);
         val recordKey = String.format("%s/%s", service.getClientId(), profile.getId());
         return new ApprovalEntry(DigestUtils.sha512(recordKey), encodedApprovalKey);

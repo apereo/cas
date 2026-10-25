@@ -90,6 +90,7 @@ public class AccessTokenPreAuthorizedCodeGrantRequestExtractor<T extends OAuth20
         val tokenRequestContext = AccessTokenRequestContext
             .builder()
             .scopes(scopes)
+            .resources(requestParameterResolver.resolveRequestedResources(webContext))
             .grantType(getGrantType())
             .registeredService(registeredService)
             .service(service)

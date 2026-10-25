@@ -103,6 +103,19 @@ async function createRegisteredServiceOidcFields() {
 
     createInputField({
         cssClasses: "advanced-option",
+        labelTitle: "Allowed Resources",
+        name: "registeredServiceAllowedResources",
+        paramName: "allowedResources",
+        required: false,
+        containerId: "editServiceWizardOAuthOidcContainer",
+        title: "Define the resource URIs this OAuth/OpenID Connect relying party may request with the <code>resource</code> parameter (RFC 8707), as regular expressions separated by comma. A requested resource must match one in full; requested resources are added to the access token audience."
+    })
+        .data("renderer", function (value) {
+            return ["java.util.HashSet", value.split(",").map(v => v.trim()).filter(v => v !== "")];
+        });
+
+    createInputField({
+        cssClasses: "advanced-option",
         labelTitle: "JWKS",
         name: "registeredServiceJwksUrl",
         paramName: "jwks",

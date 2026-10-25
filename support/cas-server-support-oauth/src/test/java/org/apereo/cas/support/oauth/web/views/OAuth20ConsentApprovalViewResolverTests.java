@@ -72,4 +72,23 @@ class OAuth20ConsentApprovalViewResolverTests extends AbstractOAuth20Tests {
         modelAndView = consentApprovalViewResolver.resolve(webContext, registeredService);
         assertFalse(modelAndView.hasView());
     }
+
+    @Test
+    void verifyApprovalCoversResources() throws Throwable {
+        val withoutResources = consentApprovalViewResolver.resolve(webContext, registeredService).getModel().get("approvalKey").toString();
+
+        request.addParameter(OAuth20Constants.RESOURCE, "https://api.example.org/");
+        val modelAndView = consentApprovalViewResolver.resolve(webContext, registeredService);
+        assertTrue(modelAndView.hasView());
+        assertEquals(Set.of("https://api.example.org/"), modelAndView.getModel().get("resources"));
+        val approvalKey = modelAndView.getModel().get("approvalKey").toString();
+        assertNotEquals(withoutResources, approvalKey);
+
+        request.addParameter(OAuth20Constants.BYPASS_APPROVAL_PROMPT, Boolean.TRUE.toString());
+        request.addParameter(OAuth20Constants.SCOPES_APPROVAL_KEY, withoutResources);
+        assertTrue(consentApprovalViewResolver.resolve(webContext, registeredService).hasView());
+
+        request.setParameter(OAuth20Constants.SCOPES_APPROVAL_KEY, approvalKey);
+        assertFalse(consentApprovalViewResolver.resolve(webContext, registeredService).hasView());
+    }
 }

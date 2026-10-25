@@ -197,7 +197,7 @@ public interface OAuth20RequestParameterResolver {
     Set<String> resolveRequestedResources(WebContext context);
 
     /**
-     * Is every requested resource an absolute URI without fragment that the service allows?
+     * Checks whether every requested resource is an absolute URI without a fragment that the service allows.
      *
      * @param context           the context
      * @param registeredService the registered service

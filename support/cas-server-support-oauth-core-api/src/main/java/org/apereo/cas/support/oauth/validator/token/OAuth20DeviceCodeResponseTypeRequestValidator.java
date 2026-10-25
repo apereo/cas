@@ -68,8 +68,25 @@ public class OAuth20DeviceCodeResponseTypeRequestValidator implements OAuth20Tok
         }).get();
         if (authorized) {
             validateProofOfPossession(context, clientId);
+            validateRequestedResources(context, clientId, validResponseType);
         }
         return authorized;
+    }
+
+    /**
+     * The device authorization request may name the resources the tokens are for (RFC 8707), which must be ones the
+     * service allows. The device code then carries them over to the token request that redeems it.
+     *
+     * @param context                    the context
+     * @param clientId                   the client id
+     * @param deviceAuthorizationRequest whether this is the device authorization request rather than the token request
+     */
+    protected void validateRequestedResources(final WebContext context, final String clientId,
+                                              final boolean deviceAuthorizationRequest) {
+        if (deviceAuthorizationRequest) {
+            val registeredService = Objects.requireNonNull(OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, clientId));
+            OAuth20Utils.verifyRequestedResources(requestParameterResolver, context, registeredService);
+        }
     }
 
     /**

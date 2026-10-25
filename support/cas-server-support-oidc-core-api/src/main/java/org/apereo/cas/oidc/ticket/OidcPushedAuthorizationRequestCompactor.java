@@ -34,10 +34,10 @@ import tools.jackson.databind.ObjectMapper;
  * This is {@link OidcPushedAuthorizationRequestCompactor}.
  * Keeps what the authorization endpoint needs to resume a pushed authorization request: the service and client,
  * the redirect URI, response type and mode, grant type, scopes, PKCE challenge, authorization details, issuer state,
- * DPoP confirmation, requested claims, the request parameters (client credentials excluded), and the principal id,
- * date and attributes of the authentication built for the request. The registered service is looked up again by
- * client id, and the ticket is created again by the pushed authorization request factory. The pac4j profile of the
- * client that pushed the request is not kept.
+ * DPoP confirmation, requested claims, the request parameters (client credentials excluded), the principal id,
+ * date and attributes of the authentication built for the request, and the requested resource indicators.
+ * The registered service is looked up again by client id, and the ticket is created again by the pushed
+ * authorization request factory. The pac4j profile of the client that pushed the request is not kept.
  *
  * @author Misagh Moayyed
  * @since 8.1.0
@@ -81,6 +81,8 @@ public class OidcPushedAuthorizationRequestCompactor implements TicketCompactor<
     private static final int AUTHENTICATION_DATE_INDEX = 17;
 
     private static final int AUTHENTICATION_ATTRIBUTES_INDEX = 18;
+
+    private static final int RESOURCES_INDEX = 19;
 
     private final ObjectProvider<TicketFactory> ticketFactory;
 
@@ -133,11 +135,12 @@ public class OidcPushedAuthorizationRequestCompactor implements TicketCompactor<
             }
         });
         fields.add(CompactTicketCodec.encodeValues(attributes));
+        fields.add(CompactTicketCodec.encodeValues(holder.getResources()));
     }
 
     @Override
     public Ticket expand(final String compactTicket) throws Throwable {
-        val structure = parse(compactTicket, AUTHENTICATION_ATTRIBUTES_INDEX + 1);
+        val structure = parse(compactTicket, RESOURCES_INDEX + 1);
         val clientId = structure.get(CLIENT_ID_INDEX);
         val registeredService = Objects.requireNonNull(OAuth20Utils.getRegisteredOAuthServiceByClientId(servicesManager, clientId),
             () -> "Unable to locate registered service for client id " + clientId);
@@ -151,6 +154,7 @@ public class OidcPushedAuthorizationRequestCompactor implements TicketCompactor<
             .responseMode(OAuth20ResponseModeTypes.valueOf(structure.get(RESPONSE_MODE_INDEX)))
             .grantType(OAuth20GrantTypes.valueOf(structure.get(GRANT_TYPE_INDEX)))
             .scopes(new LinkedHashSet<>(CompactTicketCodec.decodeValues(structure.get(SCOPES_INDEX))))
+            .resources(new LinkedHashSet<>(CompactTicketCodec.decodeValues(structure.get(RESOURCES_INDEX))))
             .codeChallenge(structure.get(CODE_CHALLENGE_INDEX))
             .codeChallengeMethod(structure.get(CODE_CHALLENGE_METHOD_INDEX))
             .authorizationDetails(StringUtils.trimToNull(structure.get(AUTHORIZATION_DETAILS_INDEX)))

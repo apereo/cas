@@ -72,6 +72,7 @@ class OidcDefaultPushedAuthorizationRequestFactoryTests extends AbstractOidcTest
             .responseType(OAuth20ResponseTypes.CODE)
             .responseMode(OAuth20ResponseModeTypes.QUERY)
             .scopes(new LinkedHashSet<>(List.of("openid", "profile")))
+            .resources(new LinkedHashSet<>(List.of("https://api.example.org/")))
             .codeChallenge("E9Melhoa2OwvFrEMTJguCHaoeK1t8URWbuGJSstw-cM")
             .codeChallengeMethod("S256")
             .claims(Map.of("userinfo", Map.of("email", Map.of("essential", true))))
@@ -94,6 +95,7 @@ class OidcDefaultPushedAuthorizationRequestFactoryTests extends AbstractOidcTest
         assertEquals(holder.getRedirectUri(), request.getRedirectUri());
         assertEquals(OAuth20ResponseModeTypes.QUERY, request.getResponseMode());
         assertEquals(holder.getScopes(), request.getScopes());
+        assertEquals(holder.getResources(), request.getResources());
         assertEquals(holder.getCodeChallenge(), request.getCodeChallenge());
         assertEquals("S256", request.getCodeChallengeMethod());
         assertEquals(Map.of("essential", true), request.getClaims().get("userinfo").get("email"));

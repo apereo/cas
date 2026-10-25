@@ -77,6 +77,13 @@ class OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidatorTests ext
         request.setParameter(OAuth20Constants.RESOURCE, "https://api.example.org/#fragment");
         assertFalse(validator.supports(context));
         assertEquals(OAuth20Constants.INVALID_TARGET, context.getRequestAttribute(OAuth20Constants.ERROR).orElseThrow().toString());
+
+        service.setAllowedResources(Set.of("https://api\\.example\\.org/(orders|reports)/?"));
+        servicesManager.save(service);
+        request.setParameter(OAuth20Constants.RESOURCE, "https://api.example.org/orders");
+        assertTrue(validator.supports(context));
+        request.setParameter(OAuth20Constants.RESOURCE, "https://api.example.org/orders/../admin");
+        assertFalse(validator.supports(context));
     }
 
     @Test

@@ -26,8 +26,10 @@ const TABS = [
 ];
 
 const PROTOCOL_FIELDS = {
-    OidcRegisteredService: ["#registeredServiceClientId", "input.registered-service-client-secret-value"],
-    OAuthRegisteredService: ["#registeredServiceClientId", "input.registered-service-client-secret-value"],
+    OidcRegisteredService: ["#registeredServiceClientId", "input.registered-service-client-secret-value",
+        {selector: "#registeredServiceAllowedResources", advanced: true}],
+    OAuthRegisteredService: ["#registeredServiceClientId", "input.registered-service-client-secret-value",
+        {selector: "#registeredServiceAllowedResources", advanced: true}],
     SamlRegisteredService: ["#registeredServiceMetadataLocation"],
     WSFederationRegisteredService: ["#registeredServiceWsFederationRealm"],
     CasRegisteredService: [

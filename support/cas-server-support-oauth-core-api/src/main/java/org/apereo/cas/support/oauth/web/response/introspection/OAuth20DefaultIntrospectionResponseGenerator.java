@@ -3,6 +3,8 @@ package org.apereo.cas.support.oauth.web.response.introspection;
 import module java.base;
 import org.apereo.cas.authentication.AuthenticationManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
+import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
+import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.ticket.OAuth20Token;
 import org.apereo.cas.util.CollectionUtils;
 import lombok.val;
@@ -15,21 +17,31 @@ import lombok.val;
  */
 public class OAuth20DefaultIntrospectionResponseGenerator implements OAuth20IntrospectionResponseGenerator {
     @Override
-    public OAuth20IntrospectionAccessTokenResponse generate(final String accessTokenId, final OAuth20Token accessToken) {
+    public OAuth20IntrospectionAccessTokenResponse generate(final String accessTokenId, final OAuth20Token accessToken,
+                                                            final OAuthRegisteredService registeredService) {
         var introspect = new OAuth20IntrospectionAccessTokenResponse();
         introspect.setScope("CAS");
         introspect.setActive(accessToken != null && !accessToken.isExpired());
         if (introspect.isActive()) {
-            return collectIntrospectionDetails(introspect, accessToken).setToken(accessTokenId);
+            return collectIntrospectionDetails(introspect, accessToken, registeredService).setToken(accessTokenId);
         }
         return introspect;
     }
 
+    /**
+     * Collect introspection details. The audience is the one a JWT access token carries, as determined by
+     * {@link OAuth20Utils#determineAudience(OAuthRegisteredService, OAuth20Token)}: a single value or a list.
+     *
+     * @param introspect        the introspection response
+     * @param accessToken       the access token
+     * @param registeredService the registered service of the client the token was issued to
+     * @return the introspection response
+     */
     protected OAuth20IntrospectionAccessTokenResponse collectIntrospectionDetails(final OAuth20IntrospectionAccessTokenResponse introspect,
-                                                                                  final OAuth20Token accessToken) {
+                                                                                  final OAuth20Token accessToken,
+                                                                                  final OAuthRegisteredService registeredService) {
         introspect.setClientId(accessToken.getClientId());
-        val audience = new LinkedHashSet<>(CollectionUtils.wrapList(accessToken.getClientId()));
-        audience.addAll(accessToken.getResources());
+        val audience = OAuth20Utils.determineAudience(registeredService, accessToken);
         introspect.setAud(audience.size() == 1 ? audience.iterator().next() : new ArrayList<>(audience));
 
         val authentication = accessToken.getAuthentication();

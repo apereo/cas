@@ -33,6 +33,34 @@ public interface OAuth20Token extends TicketGrantingTicketAwareTicket {
     }
 
     /**
+     * Assign the authorized resource indicators of this token.
+     * Tokens that do not keep resource indicators ignore the assignment.
+     *
+     * @param resources the resources
+     */
+    default void setResources(final Collection<String> resources) {
+    }
+
+    /**
+     * Get the audience fixed when this token was issued, as by a token exchange.
+     * When empty, the audience follows the service definition and the resources of the token.
+     *
+     * @return the audience
+     */
+    default Set<String> getAudience() {
+        return Set.of();
+    }
+
+    /**
+     * Fix the audience of this token.
+     * Tokens that do not keep an audience ignore the assignment.
+     *
+     * @param audience the audience
+     */
+    default void setAudience(final Collection<String> audience) {
+    }
+
+    /**
      * Collection of requested claims, if any.
      *
      * @return map of requested claims.

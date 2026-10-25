@@ -95,6 +95,9 @@ public class OidcConsentApprovalViewResolver extends OAuth20ConsentApprovalViewR
                 val holder = uriFactory.toAccessTokenRequest(authzRequest);
                 userInfoClaims.addAll(holder.getClaims().keySet());
                 requestedScopes.addAll(holder.getScopes());
+                val resources = new TreeSet<>(holder.getResources());
+                resources.addAll(resolveRequestedResources(context));
+                model.put("resources", resources);
             }));
             supportedScopes.retainAll(requestedScopes);
             supportedScopes.add(OidcConstants.StandardScopes.OPENID.getScope());

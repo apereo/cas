@@ -64,7 +64,7 @@ async function callTool(sessionId, name, args) {
     const sessionId = await initialize();
     const tools = (await send(sessionId, "tools/list", {})).tools.map((tool) => tool.name);
     await cas.log(`Available tools: ${tools}`);
-    for (const tool of ["resolveSamlMetadata", "findOidcClient", "listJwksKeys"]) {
+    for (const tool of ["resolveSamlMetadata", "findOidcClient", "checkOidcClientResource", "listJwksKeys"]) {
         assert(tools.includes(tool), `Tool ${tool} must be listed when SAML2 and OpenID Connect are included`);
     }
     assert(!tools.includes("findConsentDecisions"));
@@ -109,6 +109,17 @@ async function callTool(sessionId, name, args) {
     assert(JSON.parse(definitionText).clientSecrets === "<redacted>");
     const missingClient = await callTool(sessionId, "findOidcClient", {clientId: "unknown"});
     assert(missingClient.reason !== undefined);
+    assert.deepStrictEqual(client.allowedResources, ["https://localhost:9859/anything/(api|reports)"]);
+
+    const allowedResource = await callTool(sessionId, "checkOidcClientResource",
+        {clientId: "mcp-client", resource: "https://localhost:9859/anything/api"});
+    assert(allowedResource.allowed === true);
+    assert(allowedResource.matchedPattern === "https://localhost:9859/anything/(api|reports)");
+    assert.deepStrictEqual(allowedResource.audience, ["mcp-client", "https://localhost:9859/anything/api"]);
+    const refusedResource = await callTool(sessionId, "checkOidcClientResource",
+        {clientId: "mcp-client", resource: "https://localhost:9859/anything/admin"});
+    assert(refusedResource.allowed === false);
+    assert(refusedResource.reason !== undefined);
 
     const keys = await callTool(sessionId, "listJwksKeys", {});
     assert(keys.issuer === "https://localhost:8443/cas/oidc");

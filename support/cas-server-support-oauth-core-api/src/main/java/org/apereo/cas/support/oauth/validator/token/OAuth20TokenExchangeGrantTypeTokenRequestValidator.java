@@ -6,6 +6,7 @@ import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20TokenExchangeTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
+import org.apereo.cas.support.oauth.services.RegisteredServiceOAuthResourceMatcher;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
@@ -86,6 +87,10 @@ public class OAuth20TokenExchangeGrantTypeTokenRequestValidator<T extends OAuth2
             List.of(OAuth20Constants.RESOURCE, OAuth20Constants.AUDIENCE), webContext);
         val resources = resourceAndAudience.getOrDefault(OAuth20Constants.RESOURCE, Set.of());
         val audience = resourceAndAudience.getOrDefault(OAuth20Constants.AUDIENCE, Set.of());
+        if (!registeredService.getAllowedResources().isEmpty()
+            && !RegisteredServiceOAuthResourceMatcher.areResourcesAllowed(registeredService.getAllowedResources(), resources)) {
+            throw new OAuth20InvalidTargetException("Requested resource is not authorized for client %s".formatted(registeredService.getClientId()));
+        }
         val tokenExchangePolicy = registeredService.getTokenExchangePolicy();
         return tokenExchangePolicy == null || tokenExchangePolicy.isTokenExchangeAllowed(registeredService, resources, audience, requestedTokenType);
     }

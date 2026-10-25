@@ -9,6 +9,7 @@ import org.apereo.cas.oidc.vc.offer.OidcVerifiableCredentialTransactionService;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.authenticator.Authenticators;
+import org.apereo.cas.support.oauth.validator.token.OAuth20InvalidTargetException;
 import org.apereo.cas.support.oauth.validator.token.OAuth20TokenRequestValidator;
 import org.apereo.cas.ticket.TransientSessionTicket;
 import lombok.val;
@@ -65,6 +66,24 @@ class OidcVerifiableCredentialsPreAuthorizationCodeGrantRequestValidatorTests ex
         val context = createContext(preAuthorizationCode,
             ticket.getPropertyAsString(OidcVerifiableCredentialTransactionService.PROPERTY_TRANSACTION_CODE));
         assertTrue(oidcVerifiableCredentialsPreAuthorizationCodeGrantRequestValidator.validate(context));
+    }
+
+    @Test
+    void verifyRequestedResources() throws Throwable {
+        val registeredService = getOidcRegisteredService(UUID.randomUUID().toString());
+        registeredService.setAllowedResources(Set.of("https://api.example.org/"));
+        servicesManager.save(registeredService);
+        val transaction = (TransientSessionTicket) transactionService.issue(
+            registeredService.getClientId(), "casuser", List.of("UniversityDegreeCredential"));
+        val preAuthorizationCode = Objects.requireNonNull(transaction).getProperty("preAuthorizedCode", String.class);
+        val context = createContext(preAuthorizationCode,
+            transaction.getPropertyAsString(OidcVerifiableCredentialTransactionService.PROPERTY_TRANSACTION_CODE));
+        val request = (MockHttpServletRequest) context.getNativeRequest();
+        request.addParameter(OAuth20Constants.RESOURCE, "https://api.example.org/");
+        assertTrue(oidcVerifiableCredentialsPreAuthorizationCodeGrantRequestValidator.validate(context));
+        request.setParameter(OAuth20Constants.RESOURCE, "https://other.example.org/");
+        assertThrows(OAuth20InvalidTargetException.class,
+            () -> oidcVerifiableCredentialsPreAuthorizationCodeGrantRequestValidator.validate(context));
     }
 
     @Test

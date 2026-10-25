@@ -9,6 +9,7 @@ import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.validator.CertificateBoundAccessTokenRequiredException;
 import org.apereo.cas.support.oauth.validator.token.OAuth20AuthorizationPendingException;
 import org.apereo.cas.support.oauth.validator.token.OAuth20ExpiredTokenException;
+import org.apereo.cas.support.oauth.validator.token.OAuth20InvalidTargetException;
 import org.apereo.cas.support.oauth.validator.token.device.InvalidOAuth20DeviceTokenException;
 import org.apereo.cas.support.oauth.validator.token.device.ThrottledOAuth20DeviceUserCodeApprovalException;
 import org.apereo.cas.support.oauth.validator.token.device.UnapprovedOAuth20DeviceUserCodeException;
@@ -73,7 +74,11 @@ public class OAuth20AccessTokenEndpointController<T extends OAuth20Configuration
 
         OAuth20UnauthorizedScopeRequestException.class.getName(),
         new AccessTokenExceptionResponses(OAuth20Constants.INVALID_SCOPE,
-            "Invalid or unauthorized scope")
+            "Invalid or unauthorized scope"),
+
+        OAuth20InvalidTargetException.class.getName(),
+        new AccessTokenExceptionResponses(OAuth20Constants.INVALID_TARGET,
+            "Requested resource is invalid or not authorized for this client")
     );
 
     private final AuditableExecution accessTokenGrantAuditableRequestExtractor;
@@ -111,6 +116,9 @@ public class OAuth20AccessTokenEndpointController<T extends OAuth20Configuration
                 LOGGER.warn("Access token validation failed for request [{}]", context.getFullRequestURL());
                 return OAuth20Utils.writeError(response, OAuth20Constants.INVALID_GRANT);
             }
+        } catch (final OAuth20InvalidTargetException e) {
+            LOGGER.warn(e.getMessage());
+            return OAuth20Utils.writeError(response, OAuth20Constants.INVALID_TARGET, e.getMessage());
         } catch (final InvalidDPoPNonceException e) {
             LOGGER.info("DPoP proof of the access token request carries no valid nonce; a fresh nonce is provided");
             return OAuth20Utils.writeError(response, OAuth20Constants.USE_DPOP_NONCE, e.getMessage());

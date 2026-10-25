@@ -189,6 +189,11 @@ public class OidcCibaController extends BaseOidcController {
             return badCibaRequest("Scope must contain %s".formatted(OidcConstants.StandardScopes.OPENID.getScope()));
         }
         val registeredService = findRegisteredService(cibaRequestContext);
+        if (!getConfigurationContext().getRequestParameterResolver().isAuthorizedResourceForService(webContext, registeredService)) {
+            val body = OAuth20Utils.getErrorResponseBody(OAuth20Constants.INVALID_TARGET,
+                "Requested resource is invalid or not authorized for this client");
+            return ResponseEntity.badRequest().body(body);
+        }
         if (!registeredService.isBackchannelUserCodeParameterSupported() && !configurationContext.getDiscoverySettings().isBackchannelUserCodeParameterSupported()
             && StringUtils.isNotBlank(cibaRequestContext.getUserCode())) {
             return badCibaRequest("User code is not supported");
@@ -299,6 +304,7 @@ public class OidcCibaController extends BaseOidcController {
             .loginHintToken(requestParameterResolver.resolveRequestParameter(webContext, OidcConstants.LOGIN_HINT_TOKEN).orElse(null))
             .requestedExpiry(requestParameterResolver.resolveRequestParameter(webContext, OidcConstants.REQUESTED_EXPIRY, Long.class).orElse(0L))
             .scope(requestParameterResolver.resolveRequestScopes(webContext))
+            .resources(requestParameterResolver.resolveRequestedResources(webContext))
             .clientId(clientId)
             .userCode(requestParameterResolver.resolveRequestParameter(webContext, OidcConstants.USER_CODE).orElse(null))
             .tenant(tenant)

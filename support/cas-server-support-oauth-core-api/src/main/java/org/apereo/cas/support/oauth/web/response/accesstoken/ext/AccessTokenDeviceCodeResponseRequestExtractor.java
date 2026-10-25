@@ -64,6 +64,7 @@ public class AccessTokenDeviceCodeResponseRequestExtractor extends BaseAccessTok
             .grantType(getGrantType())
             .generateRefreshToken(registeredService != null && registeredService.isGenerateRefreshToken())
             .deviceCode(deviceCode)
+            .resources(configurationContext.getRequestParameterResolver().resolveRequestedResources(context))
             .build();
     }
 

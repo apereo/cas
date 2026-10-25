@@ -114,6 +114,19 @@ class OidcCibaControllerTests extends AbstractOidcTests {
                 .queryParam(OidcConstants.LOGIN_HINT, UUID.randomUUID().toString())
             )
             .andExpect(status().isBadRequest());
+
+        mockMvc.perform(post("/cas/" + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.CIBA_URL)
+                .secure(true)
+                .with(withHttpRequestProcessor())
+                .header(HttpHeaders.AUTHORIZATION, "Basic " + EncodingUtils.encodeBase64("%s:%s".formatted(registeredService.getClientId(),
+                    registeredService.getClientSecrets().getFirst().getValue()).getBytes(StandardCharsets.UTF_8)))
+                .queryParam(OAuth20Constants.SCOPE, OidcConstants.StandardScopes.OPENID.getScope())
+                .queryParam(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.CIBA.name())
+                .queryParam(OAuth20Constants.RESOURCE, "https://api.example.org/")
+                .queryParam(OidcConstants.LOGIN_HINT, UUID.randomUUID().toString())
+            )
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.error").value(OAuth20Constants.INVALID_TARGET));
     }
 
     @Test

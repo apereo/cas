@@ -51,7 +51,7 @@ class CasMcpServerTests {
         "findAuditRecords", "findConsentDecisions", "findPerson", "findService", "findSessions",
         "findSessionsWithAttribute", "findTenant", "findTicket", "getRegistryStatistics", "listMultifactorProviders",
         "matchService", "previewAttributeRelease", "previewLogout", "searchServices",
-        "resolveSamlMetadata", "findOidcClient", "listJwksKeys", "findAuthenticationEvents", "findTrustedDevices",
+        "resolveSamlMetadata", "findOidcClient", "checkOidcClientResource", "listJwksKeys", "findAuthenticationEvents", "findTrustedDevices",
         "findSurrogateAccounts", "previewInterrupt", "evaluateAuthenticationRisk", "findOneTimeTokenAccounts", "findWebAuthnDevices",
         "findPasswordlessAccount", "listIdentityProviders", "findAuthorizableResources", "searchSettings", "describeDeployment",
         "findThrottledLogins", "findAttributeSources", "findAttributeDefinitions", "validateServiceDefinition", "explainLogin");

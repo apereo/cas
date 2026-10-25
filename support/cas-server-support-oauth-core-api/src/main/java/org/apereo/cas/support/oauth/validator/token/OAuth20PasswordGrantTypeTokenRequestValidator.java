@@ -62,6 +62,7 @@ public class OAuth20PasswordGrantTypeTokenRequestValidator extends BaseOAuth20To
                 grantType, registeredService.getServiceId());
             return false;
         }
-        return configurationContext.getRequestParameterResolver().isAuthorizedResourceForService(context, registeredService);
+        OAuth20Utils.verifyRequestedResources(configurationContext.getRequestParameterResolver(), context, registeredService);
+        return true;
     }
 }

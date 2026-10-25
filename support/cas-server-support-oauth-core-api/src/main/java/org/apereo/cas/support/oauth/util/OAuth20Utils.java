@@ -13,6 +13,9 @@ import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseModeTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
+import org.apereo.cas.support.oauth.services.RegisteredServiceOAuthResourceMatcher;
+import org.apereo.cas.support.oauth.validator.token.OAuth20InvalidTargetException;
+import org.apereo.cas.support.oauth.web.OAuth20RequestParameterResolver;
 import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20TokenGeneratedResult;
 import org.apereo.cas.ticket.OAuth20Token;
 import org.apereo.cas.ticket.Ticket;
@@ -711,5 +714,73 @@ public class OAuth20Utils {
             ? new ArrayList<>()
             : UNTYPED_MAPPER.readValue(value, new TypeReference<ArrayList<LinkedHashMap<String, Object>>>() {
             });
+    }
+
+    /**
+     * Verify that every requested resource indicator is one the service allows (RFC 8707, section 2).
+     *
+     * @param requestParameterResolver the request parameter resolver
+     * @param context                  the context
+     * @param registeredService        the registered service
+     * @throws OAuth20InvalidTargetException when a requested resource is invalid or not allowed
+     */
+    public static void verifyRequestedResources(final OAuth20RequestParameterResolver requestParameterResolver,
+                                                final WebContext context,
+                                                final OAuthRegisteredService registeredService) {
+        if (!requestParameterResolver.isAuthorizedResourceForService(context, registeredService)) {
+            throw new OAuth20InvalidTargetException("Requested resource is invalid or not authorized for client %s"
+                .formatted(registeredService.getClientId()));
+        }
+    }
+
+    /**
+     * Resources requested at the token endpoint for a grant that already carries resources, such as a code or a
+     * refresh token (RFC 8707, section 2.2). Without a request, the token keeps the resources of the grant. Otherwise,
+     * the requested resources must be among those of the grant, or match the resources the service allows when the
+     * grant carries none, and the token is issued for the requested resources only.
+     *
+     * @param requestedResources the requested resources
+     * @param grant              the code or token presented as the grant
+     * @param registeredService  the registered service
+     * @return the resources of the token to issue
+     * @throws OAuth20InvalidTargetException when a requested resource is not part of the grant
+     */
+    public static Set<String> narrowRequestedResources(final Set<String> requestedResources,
+                                                       final OAuth20Token grant,
+                                                       final OAuthRegisteredService registeredService) {
+        if (requestedResources.isEmpty()) {
+            return new LinkedHashSet<>(grant.getResources());
+        }
+        val permitted = grant.getResources().isEmpty()
+            ? RegisteredServiceOAuthResourceMatcher.areResourcesAllowed(registeredService.getAllowedResources(), requestedResources)
+            : grant.getResources().containsAll(requestedResources);
+        if (!permitted) {
+            LOGGER.debug("Requested resources [{}] exceed the resources granted to [{}]", requestedResources, grant.getId());
+            throw new OAuth20InvalidTargetException("Requested resource is not part of the grant %s".formatted(grant.getId()));
+        }
+        return new LinkedHashSet<>(requestedResources);
+    }
+
+    /**
+     * Determine the audience of a token, shared by JWT access tokens and token introspection. A token whose audience
+     * was fixed when it was issued, as by a token exchange, has that audience only. Otherwise, the audience is the
+     * service audience, or the client id when the service defines none, along with the resources granted to the token.
+     *
+     * @param registeredService the registered service
+     * @param token             the token
+     * @return the audience
+     */
+    public static Set<String> determineAudience(final OAuthRegisteredService registeredService, final OAuth20Token token) {
+        if (!token.getAudience().isEmpty()) {
+            return new LinkedHashSet<>(token.getAudience());
+        }
+        val audience = new LinkedHashSet<String>();
+        if (registeredService.getAudience().isEmpty()) {
+            audience.add(token.getClientId());
+        } else {
+            audience.addAll(registeredService.getAudience());
+        }
+        audience.addAll(token.getResources());
+        return audience;
     }
 }

@@ -7,6 +7,7 @@ import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
+import org.apereo.cas.support.oauth.validator.token.OAuth20InvalidTargetException;
 import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.OAuth20UnauthorizedScopeRequestException;
 import lombok.val;
@@ -111,6 +112,36 @@ class AccessTokenAuthorizationCodeGrantRequestExtractorTests extends AbstractOAu
 
         val result = extractor.extract(context);
         assertNotNull(result);
+    }
+
+    @Test
+    void verifyRequestedResources() throws Throwable {
+        val service = getRegisteredService(REDIRECT_URI, UUID.randomUUID().toString(), CLIENT_SECRET);
+        service.setAllowedResources(Set.of("https://api.example.org/", "https://other.example.org/", "https://third.example.org/"));
+        servicesManager.save(service);
+
+        val code = addCode(RegisteredServiceTestUtils.getPrincipal(), service);
+        code.setResources(List.of("https://api.example.org/", "https://other.example.org/"));
+        ticketRegistry.addTicket(code.getTicketGrantingTicket());
+        ticketRegistry.updateTicket(code);
+
+        val request = new MockHttpServletRequest();
+        request.addParameter(OAuth20Constants.REDIRECT_URI, REDIRECT_URI);
+        request.addParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.AUTHORIZATION_CODE.getType());
+        request.addParameter(OAuth20Constants.CLIENT_ID, service.getClientId());
+        request.addParameter(OAuth20Constants.CODE, code.getId());
+        val context = new JEEContext(request, new MockHttpServletResponse());
+        val commonProfile = new CommonProfile();
+        commonProfile.setId("testuser");
+        new ProfileManager(context, oauthDistributedSessionStore).save(true, commonProfile, false);
+
+        assertEquals(Set.of("https://api.example.org/", "https://other.example.org/"), extractor.extract(context).getResources());
+
+        request.addParameter(OAuth20Constants.RESOURCE, "https://api.example.org/");
+        assertEquals(Set.of("https://api.example.org/"), extractor.extract(context).getResources());
+
+        request.setParameter(OAuth20Constants.RESOURCE, "https://third.example.org/");
+        assertThrows(OAuth20InvalidTargetException.class, () -> extractor.extract(context));
     }
 
     @Test

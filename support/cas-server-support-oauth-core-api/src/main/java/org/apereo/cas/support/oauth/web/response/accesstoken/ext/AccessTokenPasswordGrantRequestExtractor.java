@@ -8,7 +8,6 @@ import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
-import org.apereo.cas.support.oauth.web.OAuth20RequestParameterResolver;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -33,8 +32,8 @@ public class AccessTokenPasswordGrantRequestExtractor extends BaseAccessTokenGra
         val configurationContext = getConfigurationContext().getObject();
         val callContext = new CallContext(context, configurationContext.getSessionStore());
         val profile = OAuth20Utils.getAuthenticatedUserProfile(context, configurationContext.getSessionStore());
-      OAuth20RequestParameterResolver requestParameterResolver = configurationContext.getRequestParameterResolver();
-      val clientId = StringUtils.defaultIfBlank(requestParameterResolver
+        val requestParameterResolver = configurationContext.getRequestParameterResolver();
+        val clientId = StringUtils.defaultIfBlank(requestParameterResolver
             .resolveClientIdAndClientSecret(callContext).getKey(), (String) profile.getAttribute(OAuth20Constants.CLIENT_ID));
 
         LOGGER.debug("Locating OAuth registered service by client id [{}]", clientId);

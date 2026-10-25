@@ -55,6 +55,13 @@ class OAuth20DeviceCodeResponseTypeRequestValidatorTests extends AbstractOAuth20
         val service = addRegisteredService();
         request.setParameter(OAuth20Constants.CLIENT_ID, service.getClientId());
         assertTrue(validator.validate(context));
+
+        service.setAllowedResources(Set.of("https://api.example.org/"));
+        servicesManager.save(service);
+        request.setParameter(OAuth20Constants.RESOURCE, "https://api.example.org/");
+        assertTrue(validator.validate(context));
+        request.setParameter(OAuth20Constants.RESOURCE, "https://other.example.org/");
+        assertThrows(OAuth20InvalidTargetException.class, () -> validator.validate(context));
     }
 
     

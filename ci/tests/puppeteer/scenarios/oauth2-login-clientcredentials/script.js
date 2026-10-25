@@ -32,8 +32,23 @@ async function executeRequest(clientId = "client", scope = "example", resource) 
     });
 }
 
+async function executeRequestForUnknownResource() {
+    const params = `grant_type=client_credentials&scope=example&resource=${encodeURIComponent("https://unknown.example.com/")}`;
+    await cas.doPost(`https://localhost:8443/cas/oauth2.0/token?${params}`, params, {
+        "Content-Type": "application/json",
+        "Authorization": `Basic ${btoa("client:secret")}`
+    }, (res) => {
+        throw `Operation should have failed: ${res.data}`;
+    }, (error) => {
+        assert(error.response.status === 400);
+        assert(error.response.data.error === "invalid_target");
+    });
+}
+
 (async () => {
     await executeRequest("client", "example", "https://api.example.com/app/");
     await cas.separator();
     await executeRequest("client2", "");
+    await cas.separator();
+    await executeRequestForUnknownResource();
 })();

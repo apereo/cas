@@ -4,11 +4,14 @@ import module java.base;
 import org.apereo.cas.oidc.OidcConfigurationContext;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.vc.offer.OidcVerifiableCredentialTransactionService;
+import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
+import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.validator.token.BaseOAuth20TokenRequestValidator;
 import org.apereo.cas.ticket.TransientSessionTicket;
 import lombok.Getter;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.core.profile.UserProfile;
@@ -48,7 +51,15 @@ public class OidcVerifiableCredentialsPreAuthorizationCodeGrantRequestValidator 
             return false;
         }
         val transactionCode = requestParameterResolver.resolveRequestParameter(context, OidcConstants.TX_CODE).orElse(null);
-        return transactionService.isTransactionCodeValid(ticket, transactionCode);
+        if (!transactionService.isTransactionCodeValid(ticket, transactionCode)) {
+            return false;
+        }
+        val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(getConfigurationContext().getObject().getServicesManager(),
+            StringUtils.defaultString(ticket.getPropertyAsString(OAuth20Constants.CLIENT_ID)));
+        if (registeredService != null) {
+            OAuth20Utils.verifyRequestedResources(requestParameterResolver, context, registeredService);
+        }
+        return true;
     }
 
     @Override

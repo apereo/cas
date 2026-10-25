@@ -5,6 +5,7 @@ import org.apereo.cas.AbstractOAuth20Tests;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.web.response.introspection.BaseOAuth20IntrospectionAccessTokenResponse;
+import org.apereo.cas.support.oauth.web.response.introspection.OAuth20DefaultIntrospectionResponseGenerator;
 import org.apereo.cas.support.oauth.web.response.introspection.OAuth20IntrospectionAccessTokenFailureResponse;
 import org.apereo.cas.support.oauth.web.response.introspection.OAuth20IntrospectionAccessTokenResponse;
 import org.apereo.cas.util.EncodingUtils;
@@ -52,10 +53,17 @@ class OAuth20IntrospectionEndpointControllerTests extends AbstractOAuth20Tests {
         val accessToken = getAccessToken();
         val resource = "https://api.example.org/";
         when(accessToken.getResources()).thenReturn(Set.of(resource));
-        val response = new org.apereo.cas.support.oauth.web.response.introspection.OAuth20DefaultIntrospectionResponseGenerator()
-            .generate(accessToken.getId(), accessToken);
+        val registeredService = getRegisteredService(SERVICE_URL, accessToken.getClientId(), CLIENT_SECRET);
+        val generator = new OAuth20DefaultIntrospectionResponseGenerator();
+        assertEquals(List.of(accessToken.getClientId(), resource),
+            generator.generate(accessToken.getId(), accessToken, registeredService).getAud());
 
-        assertEquals(List.of(accessToken.getClientId(), resource), response.getAud());
+        registeredService.setAudience(Set.of("https://audience.example.org/"));
+        assertEquals(List.of("https://audience.example.org/", resource),
+            generator.generate(accessToken.getId(), accessToken, registeredService).getAud());
+
+        when(accessToken.getAudience()).thenReturn(Set.of("https://backend.example.org/"));
+        assertEquals("https://backend.example.org/", generator.generate(accessToken.getId(), accessToken, registeredService).getAud());
     }
 
     @Test

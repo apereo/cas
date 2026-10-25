@@ -56,6 +56,7 @@ public class OAuth20DefaultOAuthCodeFactory implements OAuth20CodeFactory {
                               final Authentication authentication,
                               final Ticket ticketGrantingTicket,
                               final Collection<String> scopes,
+                              final Collection<String> resources,
                               final String codeChallenge,
                               final String codeChallengeMethod,
                               final String clientId,
@@ -78,6 +79,7 @@ public class OAuth20DefaultOAuthCodeFactory implements OAuth20CodeFactory {
             expirationPolicyToUse, ticketGrantingTicket, scopes,
             codeChallenge, codeChallengeMethod, clientId,
             requestClaims, responseType, grantType);
+        oauthCode.setResources(resources);
         FunctionUtils.doIfNotNull(service, _ -> oauthCode.setTenantId(service.getTenant()));
         descendantTicketsTrackingPolicy.trackTicket(ticketGrantingTicket, oauthCode);
         return oauthCode;

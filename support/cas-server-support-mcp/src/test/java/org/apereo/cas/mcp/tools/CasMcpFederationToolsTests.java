@@ -107,10 +107,14 @@ class CasMcpFederationToolsTests extends BaseCasMcpTests {
         service.setClientSecret("very-secret-client-secret");
         service.setSupportedGrantTypes(new HashSet<>(Set.of("authorization_code")));
         service.setScopes(new HashSet<>(Set.of("openid", "profile")));
+        service.setAudience(new HashSet<>(Set.of("https://audience.example.org")));
+        service.setAllowedResources(new HashSet<>(Set.of("https://api\\.example\\.org/(orders|reports)")));
         servicesManager.save(service);
 
         val result = casOidcTools.findOidcClient(clientId);
         assertEquals(service.getId(), result.id());
+        assertEquals(List.of("https://audience.example.org"), result.audience());
+        assertEquals(List.of("https://api\\.example\\.org/(orders|reports)"), result.allowedResources());
         assertEquals(Boolean.TRUE, result.clientSecretConfigured());
         assertEquals(List.of("openid", "profile"), result.scopes());
         assertEquals(McpFederationTestConfiguration.OIDC_ISSUER, result.issuer());
@@ -121,6 +125,31 @@ class CasMcpFederationToolsTests extends BaseCasMcpTests {
         assertTrue(definition.contains("\"clientSecrets\":\"<redacted>\""), definition);
         assertTrue(definition.contains(clientId), definition);
         assertNotNull(casOidcTools.findOidcClient("unknown-" + UUID.randomUUID()).reason());
+    }
+
+    @Test
+    @WithMockUser(roles = "MCP_ADMIN")
+    void verifyCheckOidcClientResource() {
+        val clientId = "client-" + UUID.randomUUID();
+        val service = new OidcRegisteredService();
+        service.setId(ThreadLocalRandom.current().nextLong(1, Integer.MAX_VALUE));
+        service.setName("OIDC-" + service.getId());
+        service.setServiceId("^https://oidc-" + UUID.randomUUID() + ".example.org/.*");
+        service.setClientId(clientId);
+        service.setAllowedResources(new HashSet<>(Set.of("https://api\\.example\\.org/(orders|reports)")));
+        servicesManager.save(service);
+
+        val allowed = casOidcTools.checkOidcClientResource(clientId, "https://api.example.org/orders");
+        assertTrue(allowed.allowed());
+        assertEquals("https://api\\.example\\.org/(orders|reports)", allowed.matchedPattern());
+        assertEquals(List.of(clientId, "https://api.example.org/orders"), allowed.audience());
+
+        val partial = casOidcTools.checkOidcClientResource(clientId, "https://api.example.org/orders/../admin");
+        assertFalse(partial.allowed());
+        assertNotNull(partial.reason());
+        assertFalse(casOidcTools.checkOidcClientResource(clientId, "https://api.example.org/orders#fragment").allowed());
+        assertFalse(casOidcTools.checkOidcClientResource(clientId, "/orders").allowed());
+        assertNotNull(casOidcTools.checkOidcClientResource("unknown-" + UUID.randomUUID(), "https://api.example.org/orders").reason());
     }
 
     @Test
@@ -141,5 +170,6 @@ class CasMcpFederationToolsTests extends BaseCasMcpTests {
         assertThrows(AccessDeniedException.class, () -> casSamlIdPMetadataTools.resolveSamlMetadata("https://sp.example.org"));
         assertThrows(AccessDeniedException.class, () -> casOidcTools.findOidcClient("client"));
         assertThrows(AccessDeniedException.class, () -> casOidcTools.listJwksKeys());
+        assertThrows(AccessDeniedException.class, () -> casOidcTools.checkOidcClientResource("client", "https://api.example.org/"));
     }
 }

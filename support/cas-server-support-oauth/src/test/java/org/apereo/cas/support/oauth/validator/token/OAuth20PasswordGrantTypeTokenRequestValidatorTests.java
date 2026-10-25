@@ -114,10 +114,10 @@ class OAuth20PasswordGrantTypeTokenRequestValidatorTests extends AbstractOAuth20
         assertTrue(validator.validate(context));
 
         request.setParameter(OAuth20Constants.RESOURCE, "https://other.example.org/");
-        assertFalse(validator.validate(context));
+        assertThrows(OAuth20InvalidTargetException.class, () -> validator.validate(context));
 
         request.setParameter(OAuth20Constants.RESOURCE, allowedResource + "#fragment");
-        assertFalse(validator.validate(context));
+        assertThrows(OAuth20InvalidTargetException.class, () -> validator.validate(context));
     }
 
     protected OAuth20GrantTypes getGrantType() {

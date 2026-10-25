@@ -24,6 +24,7 @@ class OidcDefaultCibaRequestFactoryTests extends AbstractOidcTests {
             .clientId(UUID.randomUUID().toString())
             .clientNotificationToken(UUID.randomUUID().toString())
             .bindingMessage(UUID.randomUUID().toString())
+            .resources(Set.of("https://api.example.org/"))
             .build();
         val factory = (OidcCibaRequestFactory) defaultTicketFactory.get(OidcCibaRequest.class);
         val ticket = factory.create(cibaRequestContext);
@@ -31,6 +32,7 @@ class OidcDefaultCibaRequestFactoryTests extends AbstractOidcTests {
         assertTrue(ticket.getId().startsWith(OidcCibaRequest.PREFIX));
         assertSame(OidcCibaRequest.class, factory.getTicketType());
         assertEquals(ticket.getClientId(), cibaRequestContext.getClientId());
+        assertEquals(Set.of("https://api.example.org/"), ticket.getResources());
         val authentication = ticket.getAuthentication();
         assertEquals(authentication.getAttributes().get(OidcConstants.CLIENT_NOTIFICATION_TOKEN).getFirst(), cibaRequestContext.getClientNotificationToken());
         assertEquals(authentication.getAttributes().get(OidcConstants.BINDING_MESSAGE).getFirst(), cibaRequestContext.getBindingMessage());

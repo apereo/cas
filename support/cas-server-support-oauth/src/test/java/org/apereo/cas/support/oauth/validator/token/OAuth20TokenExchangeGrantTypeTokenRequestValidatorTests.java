@@ -129,6 +129,27 @@ class OAuth20TokenExchangeGrantTypeTokenRequestValidatorTests extends AbstractOA
         assertFalse(validator.validate(context));
     }
 
+    @Test
+    void verifyServiceAllowedResources() throws Throwable {
+        val requestingService = addRegisteredService(Set.of(OAuth20GrantTypes.TOKEN_EXCHANGE),
+            UUID.randomUUID().toString(), UUID.randomUUID().toString());
+        requestingService.setAllowedResources(Set.of("https://api\\.example\\.org/.+"));
+        servicesManager.save(requestingService);
+        val subjectToken = getAccessToken(requestingService.getServiceId(), requestingService.getClientId());
+        ticketRegistry.addTicket(subjectToken);
+
+        authenticateClient(requestingService.getClientId());
+        request.addParameter(OAuth20Constants.CLIENT_ID, requestingService.getClientId());
+        request.addParameter(OAuth20Constants.SUBJECT_TOKEN, subjectToken.getId());
+        request.addParameter(OAuth20Constants.SUBJECT_TOKEN_TYPE, OAuth20TokenExchangeTypes.ACCESS_TOKEN.getType());
+        request.addParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.TOKEN_EXCHANGE.getType());
+        request.addParameter(OAuth20Constants.RESOURCE, "https://api.example.org/backend");
+        assertTrue(validator.validate(context));
+
+        request.setParameter(OAuth20Constants.RESOURCE, "https://other.example.org/backend");
+        assertThrows(OAuth20InvalidTargetException.class, () -> validator.validate(context));
+    }
+
     static Stream<Arguments> contextProvider() throws Exception {
         val claims = JWTClaimsSet.parse(Map.of(
             "sub", UUID.randomUUID().toString(),

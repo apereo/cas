@@ -111,6 +111,7 @@ class OAuth20UtilsTests extends AbstractOAuth20Tests {
             .claim("scope", new String[]{"openid", "profile"})
             .claim("response", "code")
             .claim("client_id", List.of("client1", "client2"))
+            .claim(OAuth20Constants.RESOURCE, "https://api.example.org/")
             .build();
         val jwt = new PlainJWT(claims);
         val jwtString = jwt.serialize();
@@ -120,6 +121,9 @@ class OAuth20UtilsTests extends AbstractOAuth20Tests {
         assertFalse(oauthRequestParameterResolver.resolveRequestParameter(context, "response", String.class).isEmpty());
         assertFalse(oauthRequestParameterResolver.resolveRequestParameter(context, "client_id", List.class).isEmpty());
         assertFalse(oauthRequestParameterResolver.resolveRequestParameter(context, "scope", String[].class).isEmpty());
+        assertEquals(Set.of("https://api.example.org/"), oauthRequestParameterResolver.resolveRequestedResources(context));
+        assertEquals(List.of("https://api.example.org/"),
+            oauthRequestParameterResolver.resolveRequestParameter(context, OAuth20Constants.RESOURCE, List.class).orElseThrow());
     }
 
     @Test

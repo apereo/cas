@@ -83,6 +83,7 @@ public class OidcAccessTokenJwtBearerGrantRequestExtractor extends BaseAccessTok
         val builder = AccessTokenRequestContext
             .builder()
             .scopes(requestedScopes)
+            .resources(configurationContext.getRequestParameterResolver().resolveRequestedResources(webContext))
             .service(service)
             .authentication(authentication)
             .registeredService(registeredService)

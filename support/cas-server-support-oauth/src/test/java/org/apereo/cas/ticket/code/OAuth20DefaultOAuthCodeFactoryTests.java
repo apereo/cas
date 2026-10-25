@@ -51,10 +51,11 @@ class OAuth20DefaultOAuthCodeFactoryTests extends AbstractOAuth20Tests {
         val token = defaultOAuthCodeFactory.create(RegisteredServiceTestUtils.getService("https://code.oauth.org"),
             RegisteredServiceTestUtils.getAuthentication(),
             tgt,
-            Set.of("Scope1", "Scope2"), "code-challenge", "plain",
+            Set.of("Scope1", "Scope2"), Set.of("https://api.example.org/"), "code-challenge", "plain",
             "clientid-code", Map.of(),
             OAuth20ResponseTypes.CODE, OAuth20GrantTypes.AUTHORIZATION_CODE);
         assertNotNull(token);
+        assertEquals(Set.of("https://api.example.org/"), token.getResources());
         assertEquals(0, tgt.getDescendantTickets().size());
     }
 

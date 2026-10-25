@@ -8,7 +8,7 @@ import org.jspecify.annotations.Nullable;
 
 /**
  * Encodes the fields of a compact ticket as a versioned sequence of length-prefixed values,
- * i.e. {@code 1;10:1727000000...}, so field values never need escaping.
+ * i.e. {@code 2;10:1727000000...}, so field values never need escaping.
  *
  * @author Misagh Moayyed
  * @since 8.1.0
@@ -18,7 +18,7 @@ public class CompactTicketCodec {
     /**
      * Current version of the compact ticket format.
      */
-    public static final int VERSION = 1;
+    public static final int VERSION = 2;
 
     private static final char VERSION_SEPARATOR = ';';
 

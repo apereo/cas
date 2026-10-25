@@ -138,7 +138,7 @@ public class OAuth20IntrospectionEndpointController<T extends OAuth20Configurati
                 .filter(generator -> generator.supports(accessToken))
                 .findFirst()
                 .orElseThrow()
-                .generate(tokenId, accessToken);
+                .generate(tokenId, accessToken, registeredService);
             return buildIntrospectionEntityResponse(context, introspect, registeredService);
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);

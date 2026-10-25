@@ -33,6 +33,9 @@ public class OidcDefaultCibaRequest extends AbstractTicket implements OidcCibaRe
     private final String encodedId;
 
     private boolean ready;
+
+    @JsonSetter(nulls = Nulls.AS_EMPTY)
+    private Set<String> resources = new LinkedHashSet<>();
     
     public OidcDefaultCibaRequest(final String id,
                                   final Authentication authentication,
@@ -53,5 +56,10 @@ public class OidcDefaultCibaRequest extends AbstractTicket implements OidcCibaRe
     public OidcCibaRequest markTicketReady() {
         this.ready = true;
         return this;
+    }
+
+    @Override
+    public void setResources(final Collection<String> resources) {
+        this.resources = resources == null ? new LinkedHashSet<>() : new LinkedHashSet<>(resources);
     }
 }

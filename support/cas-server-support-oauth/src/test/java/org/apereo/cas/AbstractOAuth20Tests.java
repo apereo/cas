@@ -853,6 +853,8 @@ public abstract class AbstractOAuth20Tests {
             .subjectToken(oauthRequestParameterResolver.resolveRequestParameter(webContext, OAuth20Constants.SUBJECT_TOKEN)
                 .map(token -> ticketRegistry.getTicket(token))
                 .orElse(null))
+            .tokenExchangeAudience(oauthRequestParameterResolver.resolveRequestParameter(webContext, OAuth20Constants.AUDIENCE)
+                .orElse(null))
             .build();
     }
 

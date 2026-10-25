@@ -40,11 +40,13 @@ class AccessTokenDeviceCodeResponseRequestExtractorTests extends AbstractOAuth20
         request.addParameter(OAuth20Constants.CLIENT_ID, service.getClientId());
         request.addParameter(OAuth20Constants.DEVICE_CODE, UUID.randomUUID().toString());
         request.addParameter(OAuth20Constants.SCOPE, "read");
+        request.addParameter(OAuth20Constants.RESOURCE, "https://api.example.org/");
         val context = new JEEContext(request, response);
         assertTrue(accessTokenDeviceCodeResponseRequestExtractor.supports(context));
         val result = accessTokenDeviceCodeResponseRequestExtractor.extract(context);
         assertNotNull(result);
         assertEquals(1, result.getScopes().size());
+        assertEquals(Set.of("https://api.example.org/"), result.getResources());
     }
 }
 

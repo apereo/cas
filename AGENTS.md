@@ -138,6 +138,9 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
 > This repository is for CAS contributors. If the task is deployment/configuration, prefer the WAR overlay approach instead of editing this repo.
 - `CasMcpEvaluationContextFactory` hands the username to the principal resolvers as the current principal. Without attribute repositories the chain holds only `EchoingPrincipalResolver`, which echoes the current principal, so resolving without one yields `NullPrincipal` (`nobody`).
 - OAuth/OIDC services serialize their secret as `clientSecrets` (a list of objects with `value`); `getClientSecret()` is `@JsonIgnore`. Redaction of service definitions must cover the plural property, which `SECRET_PROPERTY` in `CasServiceManagementTools` does with `secrets?`.
+- `CasOidcTools.checkOidcClientResource` reuses `RegisteredServiceOAuthResourceMatcher` (`isValidResource`,
+  `findAllowedResource`) so the tool and the protocol endpoints decide resource indicators the same way; new tools are
+  added to `CasMcpServerTests.CAS_TOOLS` and to the optional-tool lists of the `mcp-server-*` scenarios.
 
 ## Big picture
 
@@ -741,6 +744,38 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
 - Grant-neutral exceptions in `org.apereo.cas.support.oauth.validator.token` map to the RFC 8628 / CIBA Core 1.0 polling errors: `OAuth20AuthorizationPendingException` → `authorization_pending`, `OAuth20ExpiredTokenException` → `expired_token`. Use these for any new polling grant rather than the device-code ones (`UnapprovedOAuth20DeviceUserCodeException`, `ThrottledOAuth20DeviceUserCodeApprovalException`, `InvalidOAuth20DeviceTokenException` → `invalid_grant`). The CIBA validator therefore lets expired and unapproved requests through; the extractor reports them.
 - `TicketRegistry.getTicket(id)` and `getTicket(id, type)` delete an expired ticket and return nothing, so expired and unknown look the same. To report `expired_token`, look the ticket up with `getTicket(id, _ -> true)`, check `isExpired()`, and delete it yourself. That works only while the registry still holds the ticket: the registry cleaner, or a store with native TTL such as Redis, removes it, and from then on it is reported as unknown. Scenarios that assert `expired_token` set `cas.ticket.registry.cleaner.schedule.enabled=false`.
 - `OidcConsentApprovalViewResolver` and `prompt=consent`: the consent view's Allow link is the original authorize URL plus `bypass_approval_prompt` and the approval key, so it still carries `prompt=consent`. Under that prompt, only `isConsentApprovalSubmitted` (a valid approval key) may let the request through; the service-level or global bypass may not. Returning a plain `false` there loops the consent screen forever.
+
+## OAuth resource indicators (RFC 8707)
+
+- Resource indicators live on the token (`OAuth20Token#getResources`/`setResources`; `BaseOAuth20Token`, the device code
+  and the CIBA request keep them). The audience of a token has one rule, `OAuth20Utils.determineAudience`, used by the JWT
+  access token and by introspection (whose generators receive the client's registered service): the token's fixed
+  audience (`OAuth20Token#getAudience`, set by a token exchange to its audience or resource) or else the service
+  `audience` (client id when undefined) plus the resources. The exchanged token never inherits the subject token's
+  resources; `oidc-token-exchange` asserts this with a subject token issued for a resource.
+- Both `allowedResources` (service and token exchange policy) are regular expressions matched by
+  `RegisteredServiceOAuthResourceMatcher`: every requested resource must match one in full, case-sensitively. A token
+  exchange checks the policy (which also requires a resource when it defines patterns) and, when defined, the service's
+  own `allowedResources`. Rejected resources are logged at DEBUG only.
+- `oauth2-login-devicecode` and `oidc-login-ciba` (poll) cover resources, `invalid_target` and the introspected audience
+  for the device and CIBA flows.
+- A rejected resource is `invalid_target` everywhere (RFC 8707): validators and extractors throw
+  `OAuth20InvalidTargetException` (use `OAuth20Utils.verifyRequestedResources`), which the token endpoint maps in both its
+  validation and extraction phases; the authorization endpoint and CIBA write the error themselves.
+- Resources are given to the code, access token, refresh token and device code factories when the ticket is created
+  (the `create` overloads that take `resources`; the older signatures delegate with none). Do not set them afterwards.
+- Consent: the approval key covers the requested resources (appended only when there are some, so earlier remembered
+  decisions stay valid), and the OAuth and OIDC consent views list them (`screen.oauth.confirm.resources*`, every bundle).
+  `oauth2-login-authzcode` covers consent, token endpoint narrowing, refresh and `invalid_target` end to end.
+- At the token endpoint, a code or refresh token grant may narrow the access token to some of its resources
+  (`OAuth20Utils.narrowRequestedResources`; the service's `allowedResources` when the grant carries none); the refresh
+  token keeps all the resources of its grant (`determineRefreshTokenResources`).
+- Every compactor of an OAuth ticket that carries resources (code, access token, refresh token, device code, pushed
+  authorization request) must write and restore them, and the access token compactor its fixed audience; a new token field is a compact layout change (see the stateless registry section).
+- Request objects may carry list-valued claims such as `resource` as a single string; the parameter resolver reads
+  `String[]` and collection claims through `getJwtRequestClaimValues`, so do not call `getStringArrayClaim` directly.
+- The login round-trip does not lose request parameters: after `callbackAuthorize`, pac4j restores the saved original
+  `/authorize` URL with every value; the callback URL's own parameters only feed the login flow.
 
 ## OpenID Connect discovery metadata
 

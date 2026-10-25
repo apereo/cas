@@ -291,6 +291,7 @@ class OAuth20AccessTokenEndpointControllerTests {
                     .queryParam(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.CLIENT_CREDENTIALS.name())
                     .queryParam(OAuth20Constants.RESOURCE, "https://other.example.org/"))
                 .andExpect(status().is4xxClientError())
+                .andExpect(jsonPath("$.error").value(OAuth20Constants.INVALID_TARGET))
                 .andExpect(jsonPath("$.access_token").doesNotExist());
         }
 

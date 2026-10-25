@@ -38,6 +38,8 @@ public class OidcAccessTokenJwtBearerGrantRequestValidator implements OAuth20Tok
         val registeredService = resolveRegisteredService(assertion);
         if (registeredService.isPresent()) {
             getConfigurationContext().getObject().getProofOfPossessionValidator().validateTokenRequest(context, registeredService.get());
+            OAuth20Utils.verifyRequestedResources(getConfigurationContext().getObject().getRequestParameterResolver(),
+                context, registeredService.get());
         }
         return true;
     }

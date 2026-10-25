@@ -328,5 +328,35 @@ one-time codes can be added when `cas.authn.mfa.simple.mail.accepted-email-patte
 - {: .fixed data-area="services"} With the services cache turned off (`cas.service-registry.cache.cache-size`{: .cas-setting}
   set to `0`), listing services no longer re-indexes every service it reads, which also made the next service lookup
   read the whole service registry again.
+- {: .new data-area="oidc"} [OAuth relying parties](../authentication/OAuth-Authentication-Clients.html#resource-indicators)
+  may request access tokens for specific resources with the RFC 8707 `resource` parameter, limited to the resources listed
+  in the service definition's `allowedResources`, with authorization and pushed authorization requests, device
+  authorization and CIBA requests, and the password, client credentials, JWT bearer and pre-authorized code grants.
+  Other resources are refused with `invalid_target`. Requested resources are added to the access token audience. Redeeming a
+  code or refresh token may narrow the access token to some of the granted resources, while the refresh token keeps them all.
+  A [token exchange](../authentication/OAuth-ProtocolFlow-TokenExchange.html) issues tokens for its own audience or resource
+  only, without the resources of the exchanged token. In request objects, `resource` may be a single value or a list.
+  The consent screen lists the requested resources, and a remembered consent decision covers only the resources it was
+  given for. Resources can be defined in the Palantir service wizard.
+- {: .changed data-area="oidc"} The `allowedResources` of a service definition and of its
+  [token exchange policy](../authentication/OAuth-ProtocolFlow-TokenExchange.html) are regular expressions with the same
+  rule: every requested resource must match one of them in full, case-sensitively. The token exchange policy used to accept
+  a request when any one of its resources was found by any pattern. A token exchange is also checked against the service's
+  own `allowedResources` when the service defines them.
+- {: .new data-area="oidc"} The [MCP server](../installation/Admin-MCP-Server.html) reports the audience and allowed
+  resources of OAuth and OpenID Connect clients, and the new `checkOidcClientResource` tool tells whether a client may
+  request a resource, which allowed expression it matches or why it would be refused, and the audience of the token.
+- {: .fixed data-area="tickets"} With the [stateless ticket registry](../ticketing/Stateless-Ticket-Registry.html),
+  device codes keep their requested scopes, so tokens issued for an approved device code carry them; the scopes used
+  to be dropped.
+- {: .changed data-area="oidc"} The `aud` of a token introspection response is the audience of the JWT access token: the
+  service `audience` (or the client ID) and the token's resources, or the audience requested by a token exchange. It used
+  to be the service URL the token was issued for. Custom `OAuth20IntrospectionResponseGenerator` implementations now
+  receive the registered service of the client.
+- {: .action data-area="tickets"} The compact form of tickets kept by the
+  [stateless ticket registry](../ticketing/Stateless-Ticket-Registry.html) now carries the resources of OAuth codes,
+  access tokens, refresh tokens, device codes and pushed authorization requests, and the audience of exchanged access
+  tokens; its format version changes: tickets and tokens issued before the upgrade can no longer be read, so users sign in
+  again and clients obtain new tokens.
 
 {% include release-footer.html %}

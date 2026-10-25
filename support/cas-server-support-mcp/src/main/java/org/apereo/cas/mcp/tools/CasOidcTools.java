@@ -7,6 +7,7 @@ import org.apereo.cas.oidc.jwks.rotation.OidcJsonWebKeystoreRotationService;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
+import org.apereo.cas.support.oauth.services.RegisteredServiceOAuthResourceMatcher;
 import org.apereo.cas.util.function.FunctionUtils;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Builder;
@@ -42,7 +43,8 @@ public class CasOidcTools {
      * @return the client registration summary
      */
     @McpTool(description = "Find an OAuth or OpenID Connect client registration by its client id and summarize it: "
-        + "redirect URI pattern, grant and response types, scopes, client authentication method, token settings and, "
+        + "redirect URI pattern, grant and response types, scopes, audience, allowed resource indicators (RFC 8707), "
+        + "client authentication method, token settings and, "
         + "for OpenID Connect clients, the issuer and ID token signing and encryption settings. Client secrets are never "
         + "returned, only whether one is configured.",
         title = "Find OpenID Connect Client",
@@ -53,13 +55,7 @@ public class CasOidcTools {
     public OidcClient findOidcClient(
         @McpToolParam(description = "The client id of the OAuth or OpenID Connect client")
         final String clientId) {
-        val client = servicesManager.getAllServicesOfType(OAuthRegisteredService.class)
-            .stream()
-            .filter(OAuthRegisteredService.class::isInstance)
-            .map(OAuthRegisteredService.class::cast)
-            .filter(service -> clientId.equals(service.getClientId()))
-            .findFirst()
-            .orElse(null);
+        val client = findClient(clientId);
         if (client == null) {
             return OidcClient.builder()
                 .clientId(clientId)
@@ -76,6 +72,8 @@ public class CasOidcTools {
             .supportedGrantTypes(sorted(client.getSupportedGrantTypes()))
             .supportedResponseTypes(sorted(client.getSupportedResponseTypes()))
             .scopes(sorted(client.getScopes()))
+            .audience(sorted(client.getAudience()))
+            .allowedResources(sorted(client.getAllowedResources()))
             .tokenEndpointAuthenticationMethod(client.getTokenEndpointAuthenticationMethod())
             .clientSecretConfigured(client.getClientSecrets() != null && !client.getClientSecrets().isEmpty())
             .bypassApprovalPrompt(client.isBypassApprovalPrompt())
@@ -98,6 +96,49 @@ public class CasOidcTools {
                 .jwks(describeClientJwks(oidcClient.getJwks()));
         }
         return summary.build();
+    }
+
+    /**
+     * Check whether an OAuth or OpenID Connect client may request a resource indicator.
+     *
+     * @param clientId the client id
+     * @param resource the resource indicator
+     * @return the outcome
+     */
+    @McpTool(description = "Check whether an OAuth or OpenID Connect client may request a resource with the RFC 8707 "
+        + "resource parameter, as CAS decides it: the resource must be an absolute URI without a fragment that fully matches "
+        + "one of the regular expressions in the client's allowed resources. Reports the expression that matched, or why "
+        + "the request would be refused with invalid_target, and the audience an access token issued for the resource carries.",
+        title = "Check OAuth Client Resource",
+        generateOutputSchema = true,
+        annotations = @McpTool.McpAnnotations(readOnlyHint = true, destructiveHint = false,
+            idempotentHint = true, openWorldHint = false))
+    @PreAuthorize("hasRole('MCP_ADMIN')")
+    public ResourceCheck checkOidcClientResource(
+        @McpToolParam(description = "The client id of the OAuth or OpenID Connect client")
+        final String clientId,
+        @McpToolParam(description = "The resource indicator to check, i.e. https://api.example.org/orders")
+        final String resource) {
+        val client = findClient(clientId);
+        if (client == null) {
+            return ResourceCheck.builder().clientId(clientId).resource(resource).allowed(false)
+                .reason("No OAuth or OpenID Connect client is registered with client id " + clientId)
+                .build();
+        }
+        val check = ResourceCheck.builder()
+            .clientId(clientId)
+            .resource(resource)
+            .allowedResources(sorted(client.getAllowedResources()));
+        if (!RegisteredServiceOAuthResourceMatcher.isValidResource(resource)) {
+            return check.allowed(false).reason("The resource is not an absolute URI without a fragment").build();
+        }
+        val matched = RegisteredServiceOAuthResourceMatcher.findAllowedResource(client.getAllowedResources(), resource);
+        if (matched.isEmpty()) {
+            return check.allowed(false).reason("The resource matches none of the allowed resources of the client").build();
+        }
+        val audience = new LinkedHashSet<String>(client.getAudience().isEmpty() ? List.of(client.getClientId()) : client.getAudience());
+        audience.add(resource);
+        return check.allowed(true).matchedPattern(matched.orElseThrow()).audience(List.copyOf(audience)).build();
     }
 
     /**
@@ -132,6 +173,16 @@ public class CasOidcTools {
             OidcJsonWebKeystoreRotationService.JsonWebKeyLifecycleStates.getJsonWebKeyState(key).name());
     }
 
+    private @Nullable OAuthRegisteredService findClient(final String clientId) {
+        return servicesManager.getAllServicesOfType(OAuthRegisteredService.class)
+            .stream()
+            .filter(OAuthRegisteredService.class::isInstance)
+            .map(OAuthRegisteredService.class::cast)
+            .filter(service -> clientId.equals(service.getClientId()))
+            .findFirst()
+            .orElse(null);
+    }
+
     private static String describeClientJwks(final String jwks) {
         if (StringUtils.isBlank(jwks)) {
             return "NONE";
@@ -148,6 +199,7 @@ public class CasOidcTools {
     public record OidcClient(String clientId, @Nullable Long id, @Nullable String name, @Nullable String type,
                              @Nullable String redirectUriPattern, @Nullable Boolean enabled, @Nullable List<String> supportedGrantTypes,
                              @Nullable List<String> supportedResponseTypes, @Nullable List<String> scopes,
+                             @Nullable List<String> audience, @Nullable List<String> allowedResources,
                              @Nullable String tokenEndpointAuthenticationMethod, @Nullable Boolean clientSecretConfigured,
                              @Nullable Boolean bypassApprovalPrompt, @Nullable Boolean generateRefreshToken,
                              @Nullable Boolean jwtAccessToken, @Nullable Boolean dpopBoundAccessTokens,
@@ -155,6 +207,13 @@ public class CasOidcTools {
                              @Nullable String applicationType, @Nullable String subjectType, @Nullable String sectorIdentifierUri,
                              @Nullable Boolean signIdToken, @Nullable String idTokenSigningAlg, @Nullable Boolean encryptIdToken,
                              @Nullable String idTokenEncryptionAlg, @Nullable String jwks, @Nullable String reason) {
+    }
+
+    @Builder
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    public record ResourceCheck(String clientId, String resource, boolean allowed, @Nullable String matchedPattern,
+                                @Nullable List<String> allowedResources, @Nullable List<String> audience,
+                                @Nullable String reason) {
     }
 
     @JsonInclude(JsonInclude.Include.NON_NULL)

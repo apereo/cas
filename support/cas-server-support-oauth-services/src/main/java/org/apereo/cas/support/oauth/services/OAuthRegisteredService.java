@@ -2,6 +2,7 @@ package org.apereo.cas.support.oauth.services;
 
 import module java.base;
 import org.apereo.cas.configuration.model.support.oauth.OAuthCoreProperties;
+import org.apereo.cas.configuration.support.RegularExpressionCapable;
 import org.apereo.cas.services.BaseRegisteredService;
 import org.apereo.cas.services.BaseWebBasedRegisteredService;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -55,6 +56,7 @@ public class OAuthRegisteredService extends BaseWebBasedRegisteredService {
 
     private Set<String> audience = new HashSet<>();
 
+    @RegularExpressionCapable
     private Set<String> allowedResources = new HashSet<>();
 
     private RegisteredServiceOAuthCodeExpirationPolicy codeExpirationPolicy;
