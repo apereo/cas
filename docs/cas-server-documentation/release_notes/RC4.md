@@ -21,6 +21,9 @@ interface_images:
   - src: img_29.png
     alt: Attribute consent listing released attributes as cards
     title: Attribute consent with the list layout
+  - src: img_30.png
+    alt: The logout page with its card placed in each of the nine main content positions
+    title: The nine values of the main content position, from top left to bottom right
 account_profile_images:
   - src: img_30.png
     alt: Account profile overview with a banner saying the password expires in five days
@@ -84,6 +87,7 @@ release:
       - Identity providers move before or after the login form, in a stack, a grid or a row, with their own sort and dropdown threshold.
       - Multifactor selection, Google Authenticator, WebAuthn and consent screens choose their layout, what they show and what they recommend.
       - QR codes take their size, colors and margin from the theme, and device names can start empty, random or with the username.
+      - The main content of every page can sit anywhere on a 3x3 grid, from the top left to the bottom right of the screen.
   highlights:
     - section: Theme Builder
       summary: Edit theme properties and custom.css from the CAS header, preview live and download both files for an overlay.
@@ -161,6 +165,7 @@ so they can differ per theme, per application and per tenant, and most of them p
 
 | Screen                      | Theme properties                                                                                     |
 |-----------------------------|------------------------------------------------------------------------------------------------------|
+| Every page                  | `cas.main-content.position` (`topleft` … `bottomright`, default `topcenter`)                         |
 | Login form                  | `cas.login-form.password-reveal.enabled`, `cas.login-form.caps-lock-warning.enabled`                 |
 | Login card                  | `cas.login-side-panel.position` (`start`, `end`), `cas.login-providers.position` (`after`, `before`) |
 | External identity providers | `cas.login-providers.layout` (`stacked`, `grid`, `inline`), `.select-threshold`, `.sort`             |
@@ -171,6 +176,10 @@ so they can differ per theme, per application and per tenant, and most of them p
 | QR codes                    | `cas.qr-code.size`, `cas.qr-code.foreground`, `cas.qr-code.background`, `cas.qr-code.margin`         |
 | Multifactor authentication  | `cas.mfa.selection.layout` (`list`, `grid`, `cards`), `cas.mfa.device-name.prefill`                  |
 | Attribute consent           | `cas.consent.show-attribute-values`, `cas.consent.layout` (`table`, `list`)                          |
+
+The main content position places the content of every page in a 3x3 grid on the screen: top, middle or bottom, and
+left, center or right, as in `middleleft` or `bottomright`. Pages taller than the screen still start at the top and scroll,
+and Palantir keeps its own layout.
 
 Defaults keep the screens as they were, with two exceptions: external identity providers keep their configured order in
 the dropdown that replaces the buttons once there are more than ten, and the error page offers its details button only

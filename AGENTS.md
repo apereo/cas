@@ -1050,6 +1050,10 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
   `#ctb-output-properties`, `#ctb-output-css`, `#ctb-reset`, `#cas-theme-builder-close`; the panel slides out, so wait
   before asserting it is gone. `login-success` and `template-accessibility` cover it.
 
+- `cas.main-content.position` (3x3 grid, default `topcenter`) works through auto margins on `#main-content` (vertical)
+  and on `#content` plus the page's root element (horizontal), not `align-items`/`justify-content` on the scrolling
+  wrapper: auto margins collapse when a page is taller than the screen, so it still scrolls from the top. Pages render
+  `main > div#content > <page root>`; most roots are the card with Bootstrap `m-auto`, so overrides need `!important`.
 - Enumerated theme properties need their values in `CHOICES` (theme-builder.js) so the builder offers a dropdown; layout
   variants are a container class (`cas-providers-<layout>`, `cas-mfa-layout-<layout>`, `cas-consent-list`,
   `cas-scratch-codes-list`) styled in cas.css, never different markup, so scenario selectors keep working and the

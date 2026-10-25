@@ -87,6 +87,38 @@ aside, section, main {
     background-size: cover;
 }
 
+/*
+ * Main content position (theme property cas.main-content.position): auto margins on the main element place it in a 3x3
+ * grid inside the scrolling content area; unlike align-items, auto margins collapse to zero when the page is taller than
+ * the screen, so nothing is cut off. #content and the page's root element (usually the card, sometimes a centering flex
+ * row) follow the horizontal side, since cards center themselves inside the main element. Palantir keeps its layout.
+ */
+html:not(.palantir-page) .cas-content-middle > #main-content {
+    margin-block: auto;
+}
+
+html:not(.palantir-page) .cas-content-bottom > #main-content {
+    margin-block: auto 0;
+}
+
+html:not(.palantir-page) .cas-content-left > #main-content {
+    margin-inline: 1.5rem auto !important;
+}
+
+html:not(.palantir-page) .cas-content-right > #main-content {
+    margin-inline: auto 1.5rem !important;
+}
+
+html:not(.palantir-page) .cas-content-left > #main-content :is(#content, #content > *) {
+    justify-content: flex-start !important;
+    margin-inline: 0 auto !important;
+}
+
+html:not(.palantir-page) .cas-content-right > #main-content :is(#content, #content > *) {
+    justify-content: flex-end !important;
+    margin-inline: auto 0 !important;
+}
+
 .main-content {
     display: flex;
 }

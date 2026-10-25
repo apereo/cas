@@ -19,6 +19,7 @@
 
     const GROUPS = [
         {key: "branding", title: "Branding", pattern: /^cas\.(theme\.|logo\.|favicon\.|hero-banner\.)/},
+        {key: "layout", title: "Layout", pattern: /^cas\.main-content\./},
         {key: "header", title: "Header", pattern: /^cas\.(drawer-menu|notifications-menu|theme-builder|locale-selection)\./},
         {key: "login", title: "Login", pattern: /^cas\.(login-form|pm-links|public-workstation|warn-on-redirect|login-side-panel|login-providers|service-ui|successful-login)\./},
         {key: "mfa", title: "Multifactor", pattern: /^cas\.(mfa|webauthn|gauth|qr-code)\./},
@@ -42,6 +43,8 @@
     const VALUE_TOGGLES = new Set(["cas.hero-banner.file", "cas.pm-links.forgot-password.url"]);
 
     const CHOICES = {
+        "cas.main-content.position": ["topleft", "topcenter", "topright", "middleleft", "middlecenter", "middleright",
+            "bottomleft", "bottomcenter", "bottomright"],
         "cas.login-side-panel.position": ["start", "end"],
         "cas.login-providers.position": ["after", "before"],
         "cas.login-providers.layout": ["stacked", "grid", "inline"],
@@ -259,6 +262,15 @@
             setShown("cas.pm-links.forgot-password.url", url.length > 0);
             document.querySelectorAll("#forgotPasswordExternal a").forEach((link) => link.setAttribute("href", url));
         },
+        "cas.main-content.position": (value) => {
+            const position = value.trim().toLowerCase().replace(/-/g, "") || "topcenter";
+            document.querySelectorAll(".mdc-drawer-app-content").forEach((content) => {
+                content.classList.toggle("cas-content-middle", position.startsWith("middle"));
+                content.classList.toggle("cas-content-bottom", position.startsWith("bottom"));
+                content.classList.toggle("cas-content-left", position.endsWith("left"));
+                content.classList.toggle("cas-content-right", position.endsWith("right"));
+            });
+        },
         "cas.login-side-panel.position": (value) => {
             document.querySelectorAll(".cas-login-card").forEach((card) =>
                 card.classList.toggle("cas-side-panel-end", value.trim().toLowerCase() === "end"));
@@ -316,6 +328,7 @@
     }
 
     const PREVIEW_TARGETS = {
+        "cas.main-content.position": ".mdc-drawer-app-content",
         "cas.login-side-panel.position": "#loginSidePanel",
         "cas.login-providers.position": "#loginProviders",
         "cas.login-providers.layout": "#identityProvidersPanel",
