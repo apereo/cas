@@ -385,7 +385,8 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
      * Finds sessions that hold, for every given attribute, at least one of its values. The ticket type and
      * the values are bound as parameters, so the statement only changes with the attribute names. Those are
      * part of a JSON path, where the databases accept no parameter (Postgres excepted), and are written as
-     * quoted literals. The matches are collected inside a transaction, which keeps the connection, and with it
+     * quoted literals. On Postgres the condition is a {@code jsonb} containment, which the GIN index on the
+     * attributes column answers instead of a scan of every session. The matches are collected inside a transaction, which keeps the connection, and with it
      * the result set, open while the rows are read; callers then work on the collected sessions and need no
      * transaction of their own.
      *
@@ -456,7 +457,8 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
         if (ticketEntityFactory.isPostgres()) {
             val nameParameter = "k" + index;
             parameters.put(nameParameter, digestIdentifier(name));
-            return String.format("jsonb_exists(cast(t.attributes->:%s as jsonb), :%s)", nameParameter, valueParameter);
+            return String.format("t.attributes @> jsonb_build_object(CAST(:%s AS text), jsonb_build_array(CAST(:%s AS text)))",
+                nameParameter, valueParameter);
         }
         if (ticketEntityFactory.isMariaDb()) {
             val attributeKey = isCipherExecutorEnabled() ? name : name.replace("-", "\\\\-");

@@ -1912,6 +1912,14 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
   persistence unit and adds `useCursorFetch`/`cachePrepStmts`/`prepStmtCacheSize`/`prepStmtCacheSqlLimit` unless set in
   `properties` or the URL; streaming queries set the fetch size as a hint (`streaming(...)`). New streaming queries in
   `JpaTicketRegistry` must use `streaming(...)`, lookups must not.
+- Postgres ticket attributes are `jsonb` (`PostgresJpaTicketEntity`); the attribute lookup is
+  `t.attributes @> jsonb_build_object(CAST(:k AS text), jsonb_build_array(CAST(:v AS text)))`, served by the GIN index
+  `idx_ticket_attributes` (`jsonb_path_ops`). JPA `@Index` cannot declare GIN and CAS deliberately does not run DDL of
+  its own (Misagh removed a startup initializer): the docs make the admin create the index once after the table exists;
+  `PostgresJpaTicketRegistryTests` runs the documented statement inside `jpaTicketRegistryTransactionTemplate`: the ticket
+  data source has autocommit off and Postgres DDL is transactional, so a bare `JdbcTemplate.execute` is rolled back
+  when the pooled connection is returned and the index never appears. Schema migrations like this may move to Liquibase
+  later. On an old `json` column `@>` fails; the docs recommend a clean ticket table for every new deployment or upgrade.
 - `getSessionsWithAttributes` binds the ticket type and values; attribute names stay in the JSON paths as quoted literals
   (bound on Postgres via `->`, which is matched with `jsonb_exists` rather than the `?` operator Hibernate would read as a
   parameter). `build/jpa-ticket-registry-run.sh` runs the module against MySQL, MariaDB and Postgres in turn.

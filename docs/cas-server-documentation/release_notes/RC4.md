@@ -208,6 +208,14 @@ one-time codes can be added when `cas.authn.mfa.simple.mail.accepted-email-patte
 - {: .fixed data-area="services"} The [JPA service registry](../services/JPA-Service-Management.html) keeps the identifier
   of a service that carries one, such as an imported definition; a database sequence used to replace it. New services
   get a random identifier, as with other service registries.
+- {: .action data-area="tickets"} New deployments of CAS, and upgrades to a new CAS version, should always start with a
+  clean [JPA ticket registry](../ticketing/JPA-Ticket-Registry.html) table: drop the existing table and let CAS create it.
+  Schema updates do not change the type or length of an existing column, and this version changes several of them.
+- {: .changed data-area="tickets"} With PostgreSQL, the [JPA ticket registry](../ticketing/JPA-Ticket-Registry.html)
+  stores ticket attributes as `jsonb`, and session lookups by attribute, as in delegated OpenID Connect and SAML2 logout,
+  can be answered by a GIN index instead of reading every session. The index is not created by CAS: the administrator
+  must create it once after the ticket table is created, with the statement on that page. A table created by an earlier
+  version keeps a `json` column, on which those lookups fail; start with a clean table or convert the column.
 - {: .changed data-area="tickets"} The [JPA ticket registry](../ticketing/JPA-Ticket-Registry.html) stores when each
   ticket expires, including its idle timeout, and indexes it, and the [ticket registry cleaner](../ticketing/Ticket-Registry-Cleaner.html)
   asks only for tickets whose time has passed, with a full scan at startup and hourly; it used to read and decode

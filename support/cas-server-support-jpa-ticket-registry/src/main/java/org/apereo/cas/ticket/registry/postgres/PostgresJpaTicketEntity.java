@@ -42,6 +42,6 @@ public class PostgresJpaTicketEntity extends BaseTicketEntity {
     private static final long serialVersionUID = 6546716187959834795L;
 
     @Type(JsonType.class)
-    @Column(columnDefinition = "json")
+    @Column(columnDefinition = "jsonb")
     private Map<String, List<Object>> attributes;
 }
