@@ -68,6 +68,11 @@ release:
       text: no longer offer the details button unless `cas.error.show-details=true` is set in theme properties.
       section: Theme Properties
       area: ui
+    - type: removed
+      title: Azure CosmosDb
+      text: service and ticket registries are removed; move service definitions and tickets to another registry before upgrading.
+      section: Tickets & Sessions
+      area: tickets
   spotlight:
     section: Theme Properties
     kicker: User interface
@@ -358,5 +363,9 @@ one-time codes can be added when `cas.authn.mfa.simple.mail.accepted-email-patte
   access tokens, refresh tokens, device codes and pushed authorization requests, and the audience of exchanged access
   tokens; its format version changes: tickets and tokens issued before the upgrade can no longer be read, so users sign in
   again and clients obtain new tokens.
+- {: .removed data-area="tickets"} The deprecated Azure CosmosDb ticket registry is removed, along with its settings.
+  Deployments that still use it should switch to another [ticket registry](../ticketing/Configuring-Ticketing-Components.html).
+- {: .removed data-area="services"} The deprecated Azure CosmosDb service registry is removed, along with its settings.
+  Definitions stored there should be exported and imported into another [service registry](../services/Service-Management.html).
 
 {% include release-footer.html %}

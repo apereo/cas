@@ -1534,32 +1534,6 @@ ext.libraries = [
                     exclude(group: "org.yaml", module: "snakeyaml")
                 }
         ],
-        cosmosdb                   : [
-                dependencies.create(libs.azure.cosmos.get()) {
-                    exclude(group: "org.slf4j", module: "slf4j-api")
-                    exclude(group: "org.json", module: "json")
-                    exclude(group: "tools.jackson.core", module: "jackson-databind")
-                    exclude(group: "tools.jackson.core", module: "jackson-core")
-                    exclude(group: "tools.jackson.core", module: "jackson-annotations")
-                    exclude(group: "tools.jackson.datatype", module: "jackson-datatype-jsr310")
-                },
-                dependencies.create(libs.azure.spring.data.cosmos.get()) {
-                    exclude(group: "org.slf4j", module: "slf4j-api")
-                    exclude(group: "org.json", module: "json")
-                    exclude(group: "com.azure", module: "azure-cosmos")
-                    exclude(group: "org.springframework", module: "spring-core")
-                    exclude(group: "org.springframework", module: "spring-web")
-                    exclude(group: "org.springframework", module: "spring-beans")
-                    exclude(group: "org.springframework", module: "spring-context")
-                    exclude(group: "org.springframework", module: "spring-tx")
-                    exclude(group: "org.springframework", module: "spring-expression")
-                    exclude(group: "org.springframework.data", module: "spring-data-commons")
-                    exclude(group: "org.apache.commons", module: "commons-lang3")
-                    exclude(group: "javax.annotation", module: "javax.annotation-api")
-                    exclude(group: "tools.jackson.module", module: "jackson-module-parameter-names")
-                    exclude(group: "tools.jackson.datatype", module: "jackson-datatype-jsr310")
-                }
-        ],
         jdom                       : dependencies.create(libs.jdom2.get()) {
             exclude(group: "xml-apis", module: "xml-apis")
         },

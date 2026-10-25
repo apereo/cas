@@ -506,7 +506,6 @@ layout: null
         *   [JPA](/cas/{{ version }}/ticketing/JPA-Ticket-Registry.html)
         *   [Apache Ignite](/cas/{{ version }}/ticketing/Ignite-Ticket-Registry.html)
         *   [Apache Geode](/cas/{{ version }}/ticketing/Geode-Ticket-Registry.html)
-        *   [~~CosmosDb~~ (deprecated)](/cas/{{ version }}/ticketing/CosmosDb-Ticket-Registry.html)
         *   [Redis](#redisticketregistry)
             *   [Overview](/cas/{{ version }}/ticketing/Redis-Ticket-Registry.html)
             *   [Indexing & Search](/cas/{{ version }}/ticketing/Redis-Ticket-Registry-RediSearch.html)
@@ -568,7 +567,6 @@ layout: null
         *   [DynamoDb](/cas/{{ version }}/services/DynamoDb-Service-Management.html)
         *   [Amazon S3](/cas/{{ version }}/services/AmazonS3-Service-Management.html)
         *   [Apache Cassandra](/cas/{{ version }}/services/Cassandra-Service-Management.html)
-        *   [~~CosmosDb~~ (deprecated)](/cas/{{ version }}/services/CosmosDb-Service-Management.html)
         *   [REST](/cas/{{ version }}/services/REST-Service-Management.html)
         *   [Custom](/cas/{{ version }}/services/Custom-Service-Management.html)
 
