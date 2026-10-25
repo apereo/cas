@@ -20,6 +20,12 @@ To learn how to configure database drivers, [please see this guide](../installat
 
 {% include_cached casproperties.html properties="cas.service-registry.jpa" %}
 
+## Service Identifiers
+
+A service saved without an identifier is given a random positive one, as with other service registries. A service that
+carries an identifier, such as one imported from another registry, is stored with it. Rows created by earlier versions
+keep the identifiers the database sequence gave them.
+
 ## Loading Services
 
 Each time CAS reloads its services, the registry reads the identifier and the JSON body of every stored definition.

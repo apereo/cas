@@ -182,6 +182,7 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
     /**
      * Rewrites the row with a single statement, where {@code merge} would first read it back. When no row
      * matches, the ticket is added instead, which is what {@code merge} did for a ticket that was not stored.
+     * The ticket is encoded once, for both the row and the result.
      *
      * @param ticket the ticket
      * @return the encoded ticket
@@ -190,7 +191,8 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
     public @Nullable Ticket updateTicket(final Ticket ticket) {
         return transactionTemplate.execute(_ -> FunctionUtils.doUnchecked(() -> {
             LOGGER.trace("Updating ticket [{}]", ticket);
-            val ticketEntity = getTicketEntityFrom(ticket);
+            val encodedTicket = encodeTicket(ticket);
+            val ticketEntity = getTicketEntityFrom(encodedTicket, ticket);
             val sql = String.format("UPDATE %s t SET t.body = :body, t.type = :type, t.parentId = :parentId, "
                 + "t.principalId = :principalId, t.service = :service, t.attributes = :attributes, "
                 + "t.creationTime = :creationTime, t.expirationTime = :expirationTime, t.lastUsedTime = :lastUsedTime "
@@ -211,7 +213,7 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
                 persistDetached(ticketEntity);
             }
             LOGGER.debug("Updated ticket [{}]", ticketEntity.getId());
-            return encodeTicket(ticket);
+            return encodedTicket;
         }));
     }
 
@@ -361,7 +363,9 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
      * Finds sessions that hold, for every given attribute, at least one of its values. The ticket type and
      * the values are bound as parameters, so the statement only changes with the attribute names. Those are
      * part of a JSON path, where the databases accept no parameter (Postgres excepted), and are written as
-     * quoted literals.
+     * quoted literals. The matches are collected inside a transaction, which keeps the connection, and with it
+     * the result set, open while the rows are read; callers then work on the collected sessions and need no
+     * transaction of their own.
      *
      * @param queryAttributes the attributes to match
      * @return the matching sessions
@@ -395,14 +399,20 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
 
         val sql = String.format("%s WHERE t.type = :type AND %s", selectClause, criteria);
         LOGGER.debug("Executing SQL query [{}]", sql);
-        val query = readOnly(entityManager.createNativeQuery(sql, ticketEntityFactory.getType()));
-        parameters.forEach(query::setParameter);
-        return jpaBeanFactory.streamQuery(query)
-            .map(BaseTicketEntity.class::cast)
-            .map(this::toDetachedTicket)
-            .map(this::decodeTicket)
-            .filter(Objects::nonNull)
-            .filter(ticket -> !ticket.isExpired());
+        val sessions = transactionTemplate.execute(_ -> {
+            val query = readOnly(entityManager.createNativeQuery(sql, ticketEntityFactory.getType()));
+            parameters.forEach(query::setParameter);
+            try (val rows = jpaBeanFactory.streamQuery(query)) {
+                return rows
+                    .map(BaseTicketEntity.class::cast)
+                    .map(this::toDetachedTicket)
+                    .map(this::decodeTicket)
+                    .filter(Objects::nonNull)
+                    .filter(ticket -> !ticket.isExpired())
+                    .toList();
+            }
+        });
+        return Objects.requireNonNullElse(sessions, List.<Ticket>of()).stream();
     }
 
     /**
@@ -485,10 +495,21 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
     }
 
     protected BaseTicketEntity getTicketEntityFrom(final Ticket ticket) {
+        return FunctionUtils.doUnchecked(() -> getTicketEntityFrom(encodeTicket(ticket), ticket));
+    }
+
+    /**
+     * Builds the entity for a ticket that is already encoded, so a caller that also needs the encoded ticket
+     * encodes it only once.
+     *
+     * @param encodedTicket the encoded ticket
+     * @param ticket        the ticket
+     * @return the ticket entity
+     */
+    protected BaseTicketEntity getTicketEntityFrom(final Ticket encodedTicket, final Ticket ticket) {
         return FunctionUtils.doUnchecked(() -> {
-            val encodeTicket = encodeTicket(ticket);
             val ticketEntity = ticketEntityFactory
-                .fromTicket(encodeTicket, ticket)
+                .fromTicket(encodedTicket, ticket)
                 .setPrincipalId(digestIdentifier(getPrincipalIdFrom(ticket)))
                 .setAttributes(collectAndDigestTicketAttributes(ticket));
             if (ticket instanceof final TicketGrantingTicketAwareTicket grantingTicketAware && grantingTicketAware.getTicketGrantingTicket() != null) {

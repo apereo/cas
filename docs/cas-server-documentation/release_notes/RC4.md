@@ -205,6 +205,12 @@ one-time codes can be added when `cas.authn.mfa.simple.mail.accepted-email-patte
   when its stored body is unchanged. Deleting a service is a single statement, new services are no longer looked up before
   they are stored, bulk saves flush every `batch-size`{: .cas-setting} definitions, and the service id and name columns
   are indexed.
+- {: .fixed data-area="services"} The [JPA service registry](../services/JPA-Service-Management.html) keeps the identifier
+  of a service that carries one, such as an imported definition; a database sequence used to replace it. New services
+  get a random identifier, as with other service registries.
+- {: .fixed data-area="tickets"} Looking up sessions by attribute in the [JPA ticket registry](../ticketing/JPA-Ticket-Registry.html)
+  no longer fails on MySQL when the caller runs outside a transaction, as delegated OpenID Connect and SAML2 logout do.
+  Updating a ticket encrypts it once instead of twice when ticket encryption is turned on.
 - {: .changed data-area="project"} MariaDB integration tests and functional test scenarios use port `3307`, so they can run
   alongside the MySQL tests on `3306`.
 - {: .changed data-area="tickets"} The [JPA ticket registry](../ticketing/JPA-Ticket-Registry.html) updates a ticket with a

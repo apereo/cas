@@ -224,20 +224,24 @@ public class JpaServiceRegistry extends AbstractServiceRegistry implements JpaPe
     }
 
     /**
-     * Saves the service. A new service has no stored row to look for, so it is persisted right away;
-     * an existing one is read first and merged into.
+     * Saves the service under its own identifier. A new service is given one the way other registries do,
+     * a random positive value, and is stored right away since no row can hold it yet; a service that already
+     * has an identifier is stored with it, merging into the row when there is one. The identifier of an
+     * imported service is therefore kept.
      *
      * @param registeredService the registered service
      * @return the saved service
      */
     private RegisteredService saveInternal(final RegisteredService registeredService) {
         invokeServiceRegistryListenerPreSave(registeredService);
+        val newService = registeredService.getId() == RegisteredServiceDefinition.INITIAL_IDENTIFIER_VALUE;
+        registeredService.assignIdIfNecessary();
 
         val entity = fromRegisteredService(registeredService);
-        val foundEntity = entity.getId() > 0 ? entityManager.find(JpaRegisteredServiceEntity.class, entity.getId()) : null;
+        val foundEntity = newService ? null : entityManager.find(JpaRegisteredServiceEntity.class, entity.getId());
         if (foundEntity == null) {
             try {
-                entityManager.persist(entity.setId(0));
+                entityManager.persist(entity);
                 return toRegisteredService(entity);
             } catch (final EntityExistsException e) {
                 LoggingUtils.error(LOGGER, e);

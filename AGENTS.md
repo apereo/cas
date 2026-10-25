@@ -1899,9 +1899,11 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
 - `getSessionsWithAttributes` binds the ticket type and values; attribute names stay in the JSON paths as quoted literals
   (bound on Postgres via `->`, which is matched with `jsonb_exists` rather than the `?` operator Hibernate would read as a
   parameter). `build/jpa-ticket-registry-run.sh` runs the module against MySQL, MariaDB and Postgres in turn.
-- JPA registry streams (`stream`, `getSessionsFor`, `getTicketsFor`, `getSessionsWithAttributes`) must be consumed inside a
-  ticket transaction: outside one, MySQL fails on the first row with "Operation not allowed after ResultSet closed",
-  because the connection goes back to the pool. Tests that read them wrap the read in `jpaTicketRegistryTransactionTemplate`.
+- JPA registry streams (`stream`, `getSessionsFor`, `getTicketsFor`) must be consumed inside a ticket transaction:
+  outside one, MySQL fails on the first row with "Operation not allowed after ResultSet closed", because the connection
+  goes back to the pool. Tests that read them wrap the read in `jpaTicketRegistryTransactionTemplate`.
+  `getSessionsWithAttributes` is the exception: its results are small and its callers (delegated OIDC/SAML2 logout, MCP
+  tools) run without one, so it collects the matches inside its own transaction and returns the list's stream.
 - Tests in classes extending `BaseTicketRegistryTests` must be `@RepeatedTest`, never `@Test`: its `@BeforeEach` takes
   a `RepetitionInfo`.
 - `JpaServiceRegistry` reads through `SELECT r.id, r.body` projections, never entities: a read-only hint on the entity
@@ -1910,9 +1912,10 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
   that need a fresh instance must change and save the definition; `delete`/`deleteAll` evict from that map.
   `JpaServiceRegistryTests` asserts identity reuse, zero managed entities after reads, and a bulk-save persistence
   context capped at `batch-size`.
-- `JpaServiceRegistry.saveInternal` persists a service whose id is not stored with `setId(0)`, so the sequence assigns a
-  new id and the imported id is lost (the `service-registry-jpa` scenario's ids 1..10 only match because the sequence
-  starts at 1). `cas.verifyServiceRegistry` cannot be used for JPA until that changes.
+- `JpaRegisteredServiceEntity` has no generated id: `saveInternal` calls `assignIdIfNecessary()` (random, below 2^53, as
+  the JSON, in-memory, DynamoDB and REST registries do) and stores explicit ids as given, so imported ids are kept.
+  Do not bring back `@GeneratedValue`: Hibernate then refuses or replaces assigned ids. `service-registry-jpa` runs
+  `cas.verifyServiceRegistry` against MySQL through `docker exec mysql-server mysql ...` (2-second reload schedule).
 - MariaDB runs on host port 3307 (`ci/tests/mariadb/run-mariadb-server.sh` maps `3307:3306`), MySQL on 3306, so `testJDBC`
   can run both. Every MariaDB test class uses `jdbc:mariadb://localhost:3307` with `@EnabledIfListeningOnPort(port = 3307)`,
   as do the `mfa-gauth-login-encrypted`, `mfa-webauthn-register-logout-login` and `mfa-yubikey-storage` scenarios (their

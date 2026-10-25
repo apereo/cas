@@ -104,6 +104,21 @@ class JpaServiceRegistryTests extends AbstractServiceRegistryTests {
     }
 
     @Test
+    void verifyImportedIdentifierIsKept() {
+        val id = ThreadLocalRandom.current().nextLong(1, RegisteredService.MAXIMUM_GENERATED_IDENTIFIER);
+        val imported = newServiceRegistry.save(buildRegisteredServiceInstance(RandomUtils.nextInt(), CasRegisteredService.class).setId(id));
+        assertEquals(id, imported.getId());
+        assertEquals(id, Objects.requireNonNull(newServiceRegistry.findServiceById(id)).getId());
+        assertEquals(id, findLoadedService(id).getId());
+
+        val created = newServiceRegistry.save(buildRegisteredServiceInstance(RandomUtils.nextInt(), CasRegisteredService.class)
+            .setId(RegisteredServiceDefinition.INITIAL_IDENTIFIER_VALUE));
+        assertTrue(created.getId() > 0 && created.getId() < RegisteredService.MAXIMUM_GENERATED_IDENTIFIER);
+        assertNotEquals(id, created.getId());
+        assertNotNull(newServiceRegistry.findServiceById(created.getId()));
+    }
+
+    @Test
     void verifyDeleteNeedsOnlyIdentifier() {
         val saved = newServiceRegistry.save(buildRegisteredServiceInstance(RandomUtils.nextInt(), CasRegisteredService.class)
             .setId(RegisteredServiceDefinition.INITIAL_IDENTIFIER_VALUE));

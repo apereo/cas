@@ -9,6 +9,7 @@ import org.apereo.cas.config.CasOAuth20AutoConfiguration;
 import org.apereo.cas.config.CasWsSecuritySecurityTokenAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.CloseableDataSource;
+import org.apereo.cas.jpa.JpaBeanFactory;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
@@ -21,6 +22,7 @@ import org.apereo.cas.ticket.code.OAuth20CodeFactory;
 import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 import org.apereo.cas.util.TicketGrantingTicketIdGenerator;
+import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
 import lombok.Getter;
 import lombok.val;
@@ -80,6 +82,13 @@ public abstract class BaseJpaTicketRegistryTests extends BaseTicketRegistryTests
     @Autowired
     @Qualifier("jpaTicketRegistryTransactionTemplate")
     protected TransactionOperations jpaTicketRegistryTransactionTemplate;
+
+    @Autowired
+    @Qualifier(JpaBeanFactory.DEFAULT_BEAN_NAME)
+    protected JpaBeanFactory jpaBeanFactory;
+
+    @Autowired
+    protected CasConfigurationProperties casProperties;
 
     @Override
     protected boolean isCipherExecutorOwnedByContext() {
@@ -193,6 +202,30 @@ public abstract class BaseJpaTicketRegistryTests extends BaseTicketRegistryTests
         }
     }
 
+    @RepeatedTest(1)
+    void verifyUpdateEncodesTicketOnce() throws Throwable {
+        val encodings = new AtomicInteger();
+        val registry = new JpaTicketRegistry(CipherExecutor.noOp(), ticketSerializationManager, ticketCatalog,
+            applicationContext, jpaBeanFactory, jpaTicketRegistryTransactionTemplate, casProperties) {
+            @Override
+            protected Ticket encodeTicket(final Ticket ticket) throws Exception {
+                encodings.incrementAndGet();
+                return super.encodeTicket(ticket);
+            }
+        };
+        val principal = UUID.randomUUID().toString();
+        val ticketGrantingTicket = new TicketGrantingTicketImpl(TestTicketIdentifiers.generate().ticketGrantingTicketId(),
+            CoreAuthenticationTestUtils.getAuthentication(principal), NeverExpiresExpirationPolicy.INSTANCE);
+        registry.addTicket(ticketGrantingTicket);
+        try {
+            encodings.set(0);
+            assertNotNull(registry.updateTicket(ticketGrantingTicket));
+            assertEquals(1, encodings.get());
+        } finally {
+            registry.deleteTicketsFor(principal);
+        }
+    }
+
     @RepeatedTest(2)
     void verifyUpdateStoresTicketNotYetAdded() throws Throwable {
         val principal = UUID.randomUUID().toString();
@@ -215,14 +248,12 @@ public abstract class BaseJpaTicketRegistryTests extends BaseTicketRegistryTests
             authentication, NeverExpiresExpirationPolicy.INSTANCE);
         newTicketRegistry.addTicket(ticketGrantingTicket);
         try {
-            jpaTicketRegistryTransactionTemplate.executeWithoutResult(_ -> {
-                try (val sessions = newTicketRegistry.getSessionsWithAttributes(Map.of("cn", List.of("' OR '1'='1", name)))) {
-                    assertEquals(List.of(ticketGrantingTicket.getId()), sessions.map(Ticket::getId).toList());
-                }
-                try (val sessions = newTicketRegistry.getSessionsWithAttributes(Map.of("cn", List.of("' OR '1'='1")))) {
-                    assertEquals(0, sessions.count());
-                }
-            });
+            try (val sessions = newTicketRegistry.getSessionsWithAttributes(Map.of("cn", List.of("' OR '1'='1", name)))) {
+                assertEquals(List.of(ticketGrantingTicket.getId()), sessions.map(Ticket::getId).toList());
+            }
+            try (val sessions = newTicketRegistry.getSessionsWithAttributes(Map.of("cn", List.of("' OR '1'='1")))) {
+                assertEquals(0, sessions.count());
+            }
         } finally {
             newTicketRegistry.deleteTicketsFor(principal);
         }
