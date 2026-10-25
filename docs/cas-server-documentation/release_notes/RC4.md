@@ -200,6 +200,11 @@ one-time codes can be added when `cas.authn.mfa.simple.mail.accepted-email-patte
 
 ## Other Stuff
 - {: .changed data-area="project"} A large number of dependencies and libraries have been updated to their latest versions.
+- {: .changed data-area="services"} The [JPA service registry](../services/JPA-Service-Management.html) reads only the
+  identifier and body of each definition, keeps no entities for reads, and no longer deserializes a definition on reload
+  when its stored body is unchanged. Deleting a service is a single statement, new services are no longer looked up before
+  they are stored, bulk saves flush every `batch-size`{: .cas-setting} definitions, and the service id and name columns
+  are indexed.
 - {: .changed data-area="project"} MariaDB integration tests and functional test scenarios use port `3307`, so they can run
   alongside the MySQL tests on `3306`.
 - {: .changed data-area="tickets"} The [JPA ticket registry](../ticketing/JPA-Ticket-Registry.html) updates a ticket with a

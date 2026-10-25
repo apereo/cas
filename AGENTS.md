@@ -1904,6 +1904,15 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
   because the connection goes back to the pool. Tests that read them wrap the read in `jpaTicketRegistryTransactionTemplate`.
 - Tests in classes extending `BaseTicketRegistryTests` must be `@RepeatedTest`, never `@Test`: its `@BeforeEach` takes
   a `RepetitionInfo`.
+- `JpaServiceRegistry` reads through `SELECT r.id, r.body` projections, never entities: a read-only hint on the entity
+  that `saveInternal` later finds and merges into would make Hibernate skip the update without an error. `load` and
+  `getServicesStream` reuse the service built last time when the stored body is unchanged (`loadedServices`), so tests
+  that need a fresh instance must change and save the definition; `delete`/`deleteAll` evict from that map.
+  `JpaServiceRegistryTests` asserts identity reuse, zero managed entities after reads, and a bulk-save persistence
+  context capped at `batch-size`.
+- `JpaServiceRegistry.saveInternal` persists a service whose id is not stored with `setId(0)`, so the sequence assigns a
+  new id and the imported id is lost (the `service-registry-jpa` scenario's ids 1..10 only match because the sequence
+  starts at 1). `cas.verifyServiceRegistry` cannot be used for JPA until that changes.
 - MariaDB runs on host port 3307 (`ci/tests/mariadb/run-mariadb-server.sh` maps `3307:3306`), MySQL on 3306, so `testJDBC`
   can run both. Every MariaDB test class uses `jdbc:mariadb://localhost:3307` with `@EnabledIfListeningOnPort(port = 3307)`,
   as do the `mfa-gauth-login-encrypted`, `mfa-webauthn-register-logout-login` and `mfa-yubikey-storage` scenarios (their

@@ -8,6 +8,7 @@ import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.serialization.StringSerializer;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -41,6 +42,15 @@ public class JpaServiceRegistry extends AbstractServiceRegistry implements JpaPe
 
     private final StringSerializer<RegisteredService> serializer;
 
+    @ToString.Exclude
+    private final Map<Long, LoadedService> loadedServices = new ConcurrentHashMap<>();
+
+    /**
+     * Number of services saved in bulk between two flushes of the persistence context.
+     */
+    @Setter
+    private int batchSize = 100;
+
     public JpaServiceRegistry(final ConfigurableApplicationContext applicationContext,
                               final Collection<ServiceRegistryListener> serviceRegistryListeners,
                               final TransactionOperations transactionTemplate) {
@@ -50,17 +60,19 @@ public class JpaServiceRegistry extends AbstractServiceRegistry implements JpaPe
         this.entityManager = recreateEntityManagerIfNecessary(PERSISTENCE_UNIT_NAME);
     }
 
+    /**
+     * Removes the service with one statement, without reading it back or serializing it first.
+     *
+     * @param registeredService the registered service
+     * @return true
+     */
     @Override
     public boolean delete(final RegisteredService registeredService) {
         transactionTemplate.executeWithoutResult(_ -> {
-            val entity = fromRegisteredService(registeredService);
-            if (entityManager.contains(entity)) {
-                entityManager.remove(entity);
-            } else {
-                val mergedEntity = entityManager.merge(entity);
-                entityManager.remove(mergedEntity);
-            }
+            val query = String.format("DELETE FROM %s r WHERE r.id = :id", JpaRegisteredServiceEntity.ENTITY_NAME);
+            entityManager.createQuery(query).setParameter("id", registeredService.getId()).executeUpdate();
         });
+        loadedServices.remove(registeredService.getId());
         return true;
     }
 
@@ -70,52 +82,52 @@ public class JpaServiceRegistry extends AbstractServiceRegistry implements JpaPe
             val query = String.format("DELETE FROM %s s", JpaRegisteredServiceEntity.ENTITY_NAME);
             entityManager.createQuery(query).executeUpdate();
         });
+        loadedServices.clear();
     }
 
     @Override
     public Collection<RegisteredService> load() {
-        return transactionTemplate.execute(status -> {
-            val query = String.format("SELECT r FROM %s r", JpaRegisteredServiceEntity.ENTITY_NAME);
-            val list = entityManager.createQuery(query, JpaRegisteredServiceEntity.class).getResultList();
-            val clientInfo = ClientInfoHolder.getClientInfo();
-            return list
-                .stream()
-                .map(this::toRegisteredService)
-                .sorted()
-                .map(this::invokeServiceRegistryListenerPostLoad)
-                .filter(Objects::nonNull)
-                .peek(service -> publishEvent(new CasRegisteredServiceLoadedEvent(this, service, clientInfo)))
-                .collect(Collectors.toList());
-        });
+        val clientInfo = ClientInfoHolder.getClientInfo();
+        return loadServices()
+            .stream()
+            .sorted()
+            .peek(service -> publishEvent(new CasRegisteredServiceLoadedEvent(this, service, clientInfo)))
+            .collect(Collectors.toList());
     }
 
     @Override
     public Stream<? extends RegisteredService> getServicesStream() {
-        final List<RegisteredService> services = transactionTemplate.execute(_ -> {
-            val query = String.format("SELECT r FROM %s r", JpaRegisteredServiceEntity.ENTITY_NAME);
-            return entityManager.createQuery(query, JpaRegisteredServiceEntity.class)
-                .getResultList()
-                .stream()
-                .map(this::toRegisteredService)
-                .map(this::invokeServiceRegistryListenerPostLoad)
-                .filter(Objects::nonNull)
-                .toList();
-        });
-        return Objects.requireNonNullElse(services, List.<RegisteredService>of()).stream();
+        return loadServices().stream();
     }
 
+    /**
+     * Bulk saves run in a single transaction. The persistence context is flushed and cleared every
+     * {@code batchSize} services, so it never holds more than one batch and the inserts can be batched.
+     *
+     * @param supplier       the supplier of services to save
+     * @param andThenConsume what to do with each saved service
+     * @param countExclusive the number of services to save
+     * @return the number of services saved
+     */
     @Override
     public Long save(final Supplier<RegisteredService> supplier,
                      final Consumer<RegisteredService> andThenConsume,
                      final long countExclusive) {
-        return transactionTemplate.execute(_ ->
-            LongStream.range(0, countExclusive)
-                .mapToObj(count -> supplier.get())
-                .filter(Objects::nonNull)
-                .map(this::saveInternal)
-                .peek(andThenConsume)
-                .filter(Objects::nonNull)
-                .count());
+        return transactionTemplate.execute(_ -> {
+            var saved = 0L;
+            for (var count = 0L; count < countExclusive; count++) {
+                val registeredService = supplier.get();
+                if (registeredService != null) {
+                    andThenConsume.accept(saveInternal(registeredService));
+                    saved++;
+                    if (batchSize > 0 && saved % batchSize == 0) {
+                        entityManager.flush();
+                        entityManager.clear();
+                    }
+                }
+            }
+            return saved;
+        });
     }
 
     @Override
@@ -125,45 +137,27 @@ public class JpaServiceRegistry extends AbstractServiceRegistry implements JpaPe
 
     @Override
     public RegisteredService findServiceById(final long id) {
-        return transactionTemplate.execute(_ ->
-            Optional.ofNullable(entityManager.find(JpaRegisteredServiceEntity.class, id))
+        return transactionTemplate.execute(_ -> {
+            val query = String.format("SELECT r.id, r.body FROM %s r WHERE r.id = :id", JpaRegisteredServiceEntity.ENTITY_NAME);
+            return entityManager.createQuery(query, Object[].class)
+                .setParameter("id", id)
+                .getResultList()
+                .stream()
+                .findFirst()
                 .map(this::toRegisteredService)
                 .map(this::invokeServiceRegistryListenerPostLoad)
-                .orElse(null));
+                .orElse(null);
+        });
     }
 
     @Override
     public RegisteredService findServiceByExactServiceId(final String id) {
-        return transactionTemplate.execute(_ -> {
-            val query = String.format("SELECT r FROM %s r WHERE r.serviceId=:serviceId", JpaRegisteredServiceEntity.ENTITY_NAME);
-            val results = entityManager.createQuery(query, JpaRegisteredServiceEntity.class)
-                .setParameter("serviceId", id)
-                .getResultList();
-            return results
-                .stream()
-                .map(this::toRegisteredService)
-                .sorted()
-                .peek(this::invokeServiceRegistryListenerPostLoad)
-                .findFirst()
-                .orElse(null);
-        });
+        return findServiceByColumn("serviceId", id);
     }
 
     @Override
     public RegisteredService findServiceByExactServiceName(final String name) {
-        return transactionTemplate.execute(_ -> {
-            val query = String.format("SELECT r FROM %s r WHERE r.name=:name", JpaRegisteredServiceEntity.ENTITY_NAME);
-            val results = entityManager.createQuery(query, JpaRegisteredServiceEntity.class)
-                .setParameter("name", name)
-                .getResultList();
-            return results
-                .stream()
-                .map(this::toRegisteredService)
-                .sorted()
-                .peek(this::invokeServiceRegistryListenerPostLoad)
-                .findFirst()
-                .orElse(null);
-        });
+        return findServiceByColumn("name", name);
     }
 
     @Override
@@ -174,11 +168,73 @@ public class JpaServiceRegistry extends AbstractServiceRegistry implements JpaPe
         });
     }
 
+    /**
+     * Reads every stored service as its identifier and body, so no entity is loaded, kept or checked for changes.
+     * A service whose body is the one read last time is not deserialized again: the service built from it then,
+     * after the post-load listeners, is returned as it was. Services no longer stored are forgotten.
+     *
+     * @return the services
+     */
+    private List<RegisteredService> loadServices() {
+        val services = transactionTemplate.execute(_ -> {
+            val query = String.format("SELECT r.id, r.body FROM %s r", JpaRegisteredServiceEntity.ENTITY_NAME);
+            return entityManager.createQuery(query, Object[].class)
+                .getResultList()
+                .stream()
+                .map(this::toLoadedService)
+                .filter(Objects::nonNull)
+                .toList();
+        });
+        val results = Objects.requireNonNullElse(services, List.<RegisteredService>of());
+        val identifiers = results.stream().map(RegisteredService::getId).collect(Collectors.toSet());
+        loadedServices.keySet().retainAll(identifiers);
+        return results;
+    }
+
+    private RegisteredService toLoadedService(final Object[] row) {
+        val id = (Long) row[0];
+        val body = (String) row[1];
+        val previous = loadedServices.get(id);
+        if (previous != null && previous.body().equals(body)) {
+            return previous.service();
+        }
+        val service = invokeServiceRegistryListenerPostLoad(toRegisteredService(id, body));
+        if (service != null) {
+            loadedServices.put(id, new LoadedService(body, service));
+        } else {
+            loadedServices.remove(id);
+        }
+        return service;
+    }
+
+    private RegisteredService findServiceByColumn(final String column, final String value) {
+        return transactionTemplate.execute(_ -> {
+            val query = String.format("SELECT r.id, r.body FROM %s r WHERE r.%s = :value",
+                JpaRegisteredServiceEntity.ENTITY_NAME, column);
+            return entityManager.createQuery(query, Object[].class)
+                .setParameter("value", value)
+                .getResultList()
+                .stream()
+                .map(this::toRegisteredService)
+                .sorted()
+                .peek(this::invokeServiceRegistryListenerPostLoad)
+                .findFirst()
+                .orElse(null);
+        });
+    }
+
+    /**
+     * Saves the service. A new service has no stored row to look for, so it is persisted right away;
+     * an existing one is read first and merged into.
+     *
+     * @param registeredService the registered service
+     * @return the saved service
+     */
     private RegisteredService saveInternal(final RegisteredService registeredService) {
         invokeServiceRegistryListenerPreSave(registeredService);
 
         val entity = fromRegisteredService(registeredService);
-        val foundEntity = entityManager.find(JpaRegisteredServiceEntity.class, entity.getId());
+        val foundEntity = entity.getId() > 0 ? entityManager.find(JpaRegisteredServiceEntity.class, entity.getId()) : null;
         if (foundEntity == null) {
             try {
                 entityManager.persist(entity.setId(0));
@@ -205,14 +261,25 @@ public class JpaServiceRegistry extends AbstractServiceRegistry implements JpaPe
     }
 
     protected RegisteredService toRegisteredService(final JpaRegisteredServiceEntity entity) {
-        val service = serializer.from(entity.getBody());
-        service.setId(entity.getId());
-        LOGGER.trace("Converted JPA entity [{}] to [{}]", this, service);
+        return toRegisteredService(entity.getId(), entity.getBody());
+    }
+
+    private RegisteredService toRegisteredService(final Object[] row) {
+        return toRegisteredService((Long) row[0], (String) row[1]);
+    }
+
+    private RegisteredService toRegisteredService(final long id, final String body) {
+        val service = serializer.from(body);
+        service.setId(id);
+        LOGGER.trace("Converted JPA entity [{}] to [{}]", id, service);
         return service;
     }
 
     @Override
     public void destroy() {
         FunctionUtils.doAndHandle(_ -> entityManager.close());
+    }
+
+    private record LoadedService(String body, RegisteredService service) {
     }
 }

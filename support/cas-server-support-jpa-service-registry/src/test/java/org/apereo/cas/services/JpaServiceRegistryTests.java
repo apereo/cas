@@ -8,12 +8,17 @@ import org.apereo.cas.util.RandomUtils;
 import lombok.Getter;
 import lombok.val;
 import org.apache.commons.lang3.time.StopWatch;
+import org.hibernate.Session;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.orm.jpa.EntityManagerFactoryUtils;
+import org.springframework.transaction.support.TransactionOperations;
+import jakarta.persistence.EntityManagerFactory;
+import javax.sql.DataSource;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -38,8 +43,95 @@ class JpaServiceRegistryTests extends AbstractServiceRegistryTests {
     @Qualifier("jpaServiceRegistry")
     protected ServiceRegistry newServiceRegistry;
 
+    @Autowired
+    @Qualifier("serviceEntityManagerFactory")
+    protected EntityManagerFactory serviceEntityManagerFactory;
+
+    @Autowired
+    @Qualifier("jdbcServiceRegistryTransactionTemplate")
+    protected TransactionOperations jdbcServiceRegistryTransactionTemplate;
+
+    @Autowired
+    @Qualifier("dataSourceService")
+    protected DataSource dataSourceService;
+
+    private long countManagedEntities() {
+        val entityManager = EntityManagerFactoryUtils.getTransactionalEntityManager(serviceEntityManagerFactory);
+        return Objects.requireNonNull(entityManager).unwrap(Session.class).getStatistics().getEntityCount();
+    }
+
+    private RegisteredService findLoadedService(final long id) {
+        return newServiceRegistry.load().stream().filter(service -> service.getId() == id).findFirst().orElseThrow();
+    }
+
+    @Test
+    void verifyUnchangedServicesAreReused() {
+        val saved = newServiceRegistry.save(buildRegisteredServiceInstance(RandomUtils.nextInt(), CasRegisteredService.class)
+            .setId(RegisteredServiceDefinition.INITIAL_IDENTIFIER_VALUE));
+        val loaded = findLoadedService(saved.getId());
+        assertSame(loaded, findLoadedService(saved.getId()));
+        assertSame(loaded, newServiceRegistry.getServicesStream()
+            .filter(service -> service.getId() == saved.getId()).findFirst().orElseThrow());
+
+        saved.setEvaluationOrder(loaded.getEvaluationOrder() + 1);
+        newServiceRegistry.save(saved);
+        val updated = findLoadedService(saved.getId());
+        assertNotSame(loaded, updated);
+        assertEquals(saved.getEvaluationOrder(), updated.getEvaluationOrder());
+
+        assertTrue(newServiceRegistry.delete(updated));
+        assertTrue(newServiceRegistry.load().stream().noneMatch(service -> service.getId() == saved.getId()));
+    }
+
+    @Test
+    void verifyReadsKeepNoEntities() {
+        val saved = newServiceRegistry.save(buildRegisteredServiceInstance(RandomUtils.nextInt(), CasRegisteredService.class)
+            .setId(RegisteredServiceDefinition.INITIAL_IDENTIFIER_VALUE));
+        val managedEntities = jdbcServiceRegistryTransactionTemplate.execute(_ -> {
+            assertFalse(newServiceRegistry.load().isEmpty());
+            assertEquals(1, newServiceRegistry.getServicesStream().filter(service -> service.getId() == saved.getId()).count());
+            assertNotNull(newServiceRegistry.findServiceByExactServiceName(saved.getName()));
+            assertNotNull(newServiceRegistry.findServiceByExactServiceId(saved.getServiceId()));
+            val found = Objects.requireNonNull(newServiceRegistry.findServiceById(saved.getId()));
+            val count = countManagedEntities();
+            found.setEvaluationOrder(saved.getEvaluationOrder() + 10);
+            newServiceRegistry.save(found);
+            return count;
+        });
+        assertEquals(0L, managedEntities);
+        assertEquals(saved.getEvaluationOrder() + 10,
+            Objects.requireNonNull(newServiceRegistry.findServiceById(saved.getId())).getEvaluationOrder());
+    }
+
+    @Test
+    void verifyDeleteNeedsOnlyIdentifier() {
+        val saved = newServiceRegistry.save(buildRegisteredServiceInstance(RandomUtils.nextInt(), CasRegisteredService.class)
+            .setId(RegisteredServiceDefinition.INITIAL_IDENTIFIER_VALUE));
+        val reference = new CasRegisteredService();
+        reference.setId(saved.getId());
+        assertTrue(newServiceRegistry.delete(reference));
+        assertNull(newServiceRegistry.findServiceById(saved.getId()));
+    }
+
+    @Test
+    void verifyLookupColumnsAreIndexed() throws Exception {
+        try (val connection = dataSourceService.getConnection()) {
+            val metadata = connection.getMetaData();
+            val indexes = new HashSet<String>();
+            for (val table : List.of("registered_services", "REGISTERED_SERVICES")) {
+                try (val results = metadata.getIndexInfo(connection.getCatalog(), null, table, false, true)) {
+                    while (results.next()) {
+                        Optional.ofNullable(results.getString("INDEX_NAME")).map(name -> name.toLowerCase(Locale.ROOT)).ifPresent(indexes::add);
+                    }
+                }
+            }
+            assertTrue(indexes.containsAll(List.of("idx_regsvc_service_id", "idx_regsvc_name")), indexes::toString);
+        }
+    }
+
     @Test
     void verifyLargeDataset() {
+        val maximumManagedEntities = new AtomicLong();
         newServiceRegistry.save(
             () -> {
                 val svc = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString(), true)
@@ -47,9 +139,9 @@ class JpaServiceRegistryTests extends AbstractServiceRegistryTests {
                 svc.setId(RegisteredServiceDefinition.INITIAL_IDENTIFIER_VALUE);
                 return svc;
             },
-            result -> {
-            },
+            result -> maximumManagedEntities.accumulateAndGet(countManagedEntities(), Math::max),
             COUNT);
+        assertTrue(maximumManagedEntities.get() <= 100, () -> "Persistence context grew to " + maximumManagedEntities.get());
         var stopwatch = new StopWatch();
         stopwatch.start();
         assertEquals(newServiceRegistry.size(), newServiceRegistry.load().size());

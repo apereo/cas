@@ -14,6 +14,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 
@@ -23,7 +24,10 @@ import jakarta.persistence.Table;
  * @author Misagh Moayyed
  * @since 6.4.0
  */
-@Table(name = "RegisteredServices")
+@Table(name = "RegisteredServices", indexes = {
+    @Index(name = "idx_regsvc_service_id", columnList = "serviceId"),
+    @Index(name = "idx_regsvc_name", columnList = "name")
+})
 @Entity(name = JpaRegisteredServiceEntity.ENTITY_NAME)
 @Getter
 @Setter
