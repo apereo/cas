@@ -19,6 +19,11 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
  * @since 7.0.0
  */
 public class GoogleMultifactorAuthenticationAccountProfileWebflowConfigurer extends MultifactorAuthenticationAccountProfileWebflowConfigurer {
+    /**
+     * Transition from the account profile that replaces the scratch codes of a device.
+     */
+    public static final String TRANSITION_ID_REGENERATE_SCRATCH_CODES = "regenerateGauthScratchCodes";
+
     public GoogleMultifactorAuthenticationAccountProfileWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
                                                                           final FlowDefinitionRegistry accountProfileFlowRegistry,
                                                                           final ConfigurableApplicationContext applicationContext,
@@ -50,5 +55,11 @@ public class GoogleMultifactorAuthenticationAccountProfileWebflowConfigurer exte
 
         val accountProfileView = (ViewState) accountFlow.getState(CasWebflowConstants.STATE_ID_MY_ACCOUNT_PROFILE_VIEW);
         createTransitionForState(accountProfileView, "registerGauth", regViewState.getId());
+
+        val scratchCodesState = createActionState(accountFlow, "googleAccountProfileRegenerateScratchCodes",
+            CasWebflowConstants.ACTION_ID_ACCOUNT_PROFILE_GOOGLE_MFA_SCRATCH_CODES);
+        createTransitionForState(scratchCodesState, CasWebflowConstants.TRANSITION_ID_SUCCESS, CasWebflowConstants.STATE_ID_MY_ACCOUNT_PROFILE_VIEW);
+        createTransitionForState(scratchCodesState, CasWebflowConstants.TRANSITION_ID_ERROR, CasWebflowConstants.STATE_ID_MY_ACCOUNT_PROFILE_VIEW);
+        createTransitionForState(accountProfileView, TRANSITION_ID_REGENERATE_SCRATCH_CODES, scratchCodesState.getId());
     }
 }

@@ -12,8 +12,12 @@
 
     "--cas.ticket.st.number-of-uses=10",
     "--cas.ticket.st.time-to-kill-in-seconds=60",
+    "--cas.ticket.pt.number-of-uses=10",
+    "--cas.ticket.pt.time-to-kill-in-seconds=60",
 
-    "--cas.authn.accept.name=STATIC"
+    "--cas.authn.accept.name=STATIC",
+
+    "--cas.http-client.host-name-verifier=none"
   ],
   "initScript": "${PWD}/ci/tests/httpbin/run-httpbin-server.sh"
 }

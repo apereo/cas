@@ -1,0 +1,9 @@
+{
+  "@class": "org.apereo.cas.services.CasRegisteredService",
+  "serviceId": "^https://localhost:9859/anything/fullregex/[a-z]+$",
+  "name": "FullRegex",
+  "id": 3,
+  "matchingStrategy": {
+    "@class": "org.apereo.cas.services.FullRegexRegisteredServiceMatchingStrategy"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "@class": "org.apereo.cas.services.CasRegisteredService",
+  "serviceId": "^https://localhost:9859/anything/lastused.*",
+  "id": 4,
+  "name": "LastUsedTime",
+  "singleSignOnParticipationPolicy": {
+    "@class": "org.apereo.cas.services.LastUsedTimeRegisteredServiceSingleSignOnParticipationPolicy",
+    "timeUnit": "SECONDS",
+    "timeValue": 4
+  }
+}

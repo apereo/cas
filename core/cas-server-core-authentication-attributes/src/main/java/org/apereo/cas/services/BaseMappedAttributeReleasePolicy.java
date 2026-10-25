@@ -50,6 +50,17 @@ public abstract class BaseMappedAttributeReleasePolicy extends AbstractRegistere
     }
 
     /**
+     * Collect the attributes produced by mapping one allowed attribute into the attributes to release.
+     *
+     * @param attributesToRelease the attributes to release
+     * @param mappingResults      the mapped attributes
+     */
+    protected void collectMappedAttributes(final Map<String, List<Object>> attributesToRelease,
+                                           final Map<String, List<Object>> mappingResults) {
+        attributesToRelease.putAll(mappingResults);
+    }
+
+    /**
      * Authorize release of allowed attributes map.
      * Map each entry in the allowed list into an array first
      * by the original key, value and the original entry itself.
@@ -79,7 +90,7 @@ public abstract class BaseMappedAttributeReleasePolicy extends AbstractRegistere
                     attributeName, mappedAttributeName, attributeValue);
                 val mappingRequest = buildAttributeMappingRequest(resolvedAttributes, attributeName, mappedAttributeName, attributeValue);
                 val mappingResults = PrincipalAttributesMapper.defaultMapper().map(mappingRequest);
-                attributesToRelease.putAll(mappingResults);
+                collectMappedAttributes(attributesToRelease, mappingResults);
             });
         });
         return attributesToRelease;

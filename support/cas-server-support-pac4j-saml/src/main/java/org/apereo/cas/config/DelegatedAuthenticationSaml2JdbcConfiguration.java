@@ -47,7 +47,7 @@ class DelegatedAuthenticationSaml2JdbcConfiguration {
                         val datasource = JpaBeans.newDataSource(saml);
                         val metadataGenerator = new SAML2JdbcMetadataGenerator(new JdbcTemplate(datasource), configuration.getServiceProviderEntityId());
                         metadataGenerator.setTableName(saml.getTableName());
-                        configuration.setServiceProviderMetadataResource(ResourceUtils.NULL_RESOURCE);
+                        configuration.getServiceProviderMetadata().setResource(ResourceUtils.NULL_RESOURCE);
                         configuration.setMetadataGenerator(metadataGenerator);
                     });
             }

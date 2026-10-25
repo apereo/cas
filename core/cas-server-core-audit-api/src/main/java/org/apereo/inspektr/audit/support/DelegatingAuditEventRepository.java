@@ -29,8 +29,7 @@ public class DelegatingAuditEventRepository implements AuditEventRepository {
     @Override
     public void add(final AuditEvent event) {
         val eventData = event.getData();
-        if (eventData != null && (!eventData.containsKey(CasEventRepository.PARAM_SOURCE)
-            || !"CAS".equalsIgnoreCase(eventData.get(CasEventRepository.PARAM_SOURCE).toString()))) {
+        if (eventData != null && !"CAS".equalsIgnoreCase(Objects.toString(eventData.get(CasEventRepository.PARAM_SOURCE), null))) {
 
             casEventRepository.ifAvailable(Unchecked.consumer(repo -> {
                 val clientInfo = ClientInfoHolder.getClientInfo();

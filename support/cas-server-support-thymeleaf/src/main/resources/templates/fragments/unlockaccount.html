@@ -64,7 +64,7 @@
                                name="captchaValue"
                                size="50"
                                type="text"
-                               autocomplete="false"
+                               autocomplete="off"
                                autocapitalize="none"
                                spellcheck="false" required/>
                         <span class="mdc-notched-outline">
@@ -84,7 +84,7 @@
         </section>
 
         <script th:inline="javascript">
-            $("body").on("contextmenu", e => false);
+            $(".captcha-area").on("contextmenu", e => false);
             $('.captcha').text(/*[[${captchaValue}]]*/);
         </script>
     </div>

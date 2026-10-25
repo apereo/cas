@@ -7,7 +7,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -44,7 +44,7 @@ public class HeimdallAuthZenConfigurationController {
     @GetMapping(value = ENDPOINT, produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "AuthZEN policy decision point metadata")
     public AuthZenConfiguration configuration() {
-        val policyDecisionPoint = StringUtils.removeEnd(casProperties.getServer().getPrefix(), "/")
+        val policyDecisionPoint = Strings.CS.removeEnd(casProperties.getServer().getPrefix(), "/")
             + HeimdallAuthorizationController.BASE_URL;
         return new AuthZenConfiguration(policyDecisionPoint,
             policyDecisionPoint + HeimdallAuthorizationController.AUTHZEN_PATH,

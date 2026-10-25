@@ -42,6 +42,7 @@ import org.springframework.mock.web.MockFilterConfig;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
+import jakarta.servlet.RequestDispatcher;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -138,6 +139,22 @@ class RegisteredServiceResponseHeadersEnforcementFilterTests {
     }
 
     @Test
+    void verifyServiceWithUserInfoIsForbiddenAndChainContinues() {
+        val filter = getFilterForProperty(UUID.randomUUID().toString(), RegisteredServiceProperties.HTTP_HEADER_ENABLE_CACHE_CONTROL);
+        filter.init(new MockFilterConfig(new MockServletContext()));
+        for (val service : List.of("http://localhost%23@127.0.0.1:8081/capture", "http://localhost@127.0.0.1:8081/capture")) {
+            val response = new MockHttpServletResponse();
+            val request = new MockHttpServletRequest();
+            request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, service);
+            val chain = new MockFilterChain();
+            assertDoesNotThrow(() -> filter.doFilter(request, response, chain));
+            assertEquals(HttpStatus.SC_FORBIDDEN, response.getStatus());
+            assertNotNull(chain.getRequest());
+            assertNotNull(request.getAttribute(RequestDispatcher.ERROR_EXCEPTION));
+        }
+    }
+
+    @Test
     void verifyNumericLookingServiceIsNotAnIdentifier() {
         val filter = getFilterForProperty(UUID.randomUUID().toString(), RegisteredServiceProperties.HTTP_HEADER_ENABLE_CACHE_CONTROL);
         filter.init(new MockFilterConfig(new MockServletContext()));
@@ -148,23 +165,6 @@ class RegisteredServiceResponseHeadersEnforcementFilterTests {
             assertDoesNotThrow(() -> filter.doFilter(request, response, new MockFilterChain()));
             assertEquals(HttpStatus.SC_FORBIDDEN, response.getStatus());
         }
-    }
-
-    @Test
-    void verifyServiceByNumericIdentifier() {
-        val id = UUID.randomUUID().toString();
-        val filter = getFilterForProperty(id, RegisteredServiceProperties.HTTP_HEADER_ENABLE_CACHE_CONTROL);
-        val registeredService = servicesManager.findServiceBy(RegisteredServiceTestUtils.getService(id));
-        assertNotNull(registeredService);
-        val response = new MockHttpServletResponse();
-        val request = new MockHttpServletRequest();
-        request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, String.valueOf(registeredService.getId()));
-        val filterConfig = new MockFilterConfig(new MockServletContext());
-        filterConfig.addInitParameter(ResponseHeadersEnforcementFilter.INIT_PARAM_CACHE_CONTROL_STATIC_RESOURCES, "css|js|png|txt|jpg|ico|jpeg|bmp|gif");
-        filter.init(filterConfig);
-        filter.doFilter(request, response, new MockFilterChain());
-        assertEquals(HttpStatus.SC_OK, response.getStatus());
-        assertNotNull(response.getHeader("Cache-Control"));
     }
 
     @Test

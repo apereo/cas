@@ -585,6 +585,13 @@ class OidcIdTokenGeneratorServiceTests {
             assertNotNull(idToken);
         }
 
+        /**
+         * The access token hash covers the JWT access token the response carries; encoding the access token again
+         * would produce a different token once it is signed with a randomized algorithm (the EC key of the keystore).
+         *
+         * @param repetitionInfo the repetition info
+         * @throws Throwable the throwable
+         */
         @RepeatedTest(2)
         void verifyAccessTokenAsJwt(final RepetitionInfo repetitionInfo) throws Throwable {
             val request = new MockHttpServletRequest();
@@ -607,12 +614,16 @@ class OidcIdTokenGeneratorServiceTests {
             ));
 
             servicesManager.save(registeredService);
+            val issuer = oidcIssuerService.determineIssuer(Optional.of(registeredService));
+            val encodedAccessToken = OAuth20JwtAccessTokenEncoder.toEncodableCipher(oidcConfigurationContext,
+                registeredService, accessToken, issuer).encode(accessToken.getId());
             val idTokenContext = IdTokenGenerationContext.builder()
                 .accessToken(accessToken)
                 .userProfile(profile)
                 .responseType(OAuth20ResponseTypes.CODE)
                 .grantType(OAuth20GrantTypes.NONE)
                 .registeredService(registeredService)
+                .encodedAccessToken(encodedAccessToken)
                 .build();
             val idToken = oidcIdTokenGenerator.generate(idTokenContext);
             assertNotNull(idToken);
@@ -620,13 +631,9 @@ class OidcIdTokenGeneratorServiceTests {
             assertNotNull(claims);
             assertTrue(claims.hasClaim(OidcConstants.CLAIM_AT_HASH));
             assertTrue(claims.hasClaim(OidcConstants.CLAIM_AUTH_TIME));
-            val issuer = oidcIssuerService.determineIssuer(Optional.of(registeredService));
             assertEquals(issuer, claims.getIssuer());
 
             val hash = claims.getClaimValue(OidcConstants.CLAIM_AT_HASH, String.class);
-            val cipher = OAuth20JwtAccessTokenEncoder.toEncodableCipher(oidcConfigurationContext,
-                registeredService, accessToken, issuer);
-            val encodedAccessToken = cipher.encode(accessToken.getId());
             val newHash = OAuth20TokenHashGenerator.builder()
                 .token(encodedAccessToken)
                 .registeredService(registeredService)

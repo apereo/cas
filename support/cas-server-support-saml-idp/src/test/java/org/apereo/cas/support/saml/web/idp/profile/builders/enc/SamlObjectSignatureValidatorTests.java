@@ -26,6 +26,8 @@ import org.opensaml.saml.saml2.metadata.IDPSSODescriptor;
 import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
 import org.opensaml.xmlsec.context.SecurityParametersContext;
 import org.opensaml.xmlsec.signature.support.SignatureException;
+import org.pac4j.core.config.properties.KeystoreProperties;
+import org.pac4j.core.config.properties.ResourceProperties;
 import org.pac4j.core.context.CallContext;
 import org.pac4j.jee.context.JEEContext;
 import org.pac4j.jee.context.session.JEESessionStore;
@@ -63,9 +65,12 @@ class SamlObjectSignatureValidatorTests extends BaseSamlIdPConfigurationTests {
     private void setupTestContextFor(final String spMetadataPath, final String spEntityId) throws Exception {
         val idpMetadata = new File("src/test/resources/metadata/idp-metadata.xml").getCanonicalPath();
         val keystorePath = new File(FileUtils.getTempDirectory(), "keystore-%s".formatted(UUID.randomUUID())).getCanonicalPath();
-        saml2ClientConfiguration = new SAML2Configuration(keystorePath, "changeit", "changeit", idpMetadata);
+        saml2ClientConfiguration = new SAML2Configuration(new KeystoreProperties(keystorePath)
+            .setKeystorePassword("changeit")
+            .setPrivateKeyPassword("changeit"),
+            new ResourceProperties(idpMetadata));
         saml2ClientConfiguration.setServiceProviderEntityId(spEntityId);
-        saml2ClientConfiguration.setServiceProviderMetadataPath(spMetadataPath);
+        saml2ClientConfiguration.getServiceProviderMetadata().setPath(spMetadataPath);
         saml2ClientConfiguration.init();
 
         val saml2Client = new SAML2Client(saml2ClientConfiguration);
@@ -95,7 +100,7 @@ class SamlObjectSignatureValidatorTests extends BaseSamlIdPConfigurationTests {
 
         val sp = self.ensureSubcontext(SAMLMetadataContext.class);
         assertNotNull(sp);
-        val spRes = new InMemoryResourceMetadataResolver(saml2ClientConfiguration.getServiceProviderMetadataResource(), openSamlConfigBean);
+        val spRes = new InMemoryResourceMetadataResolver(saml2ClientConfiguration.getServiceProviderMetadata().getResource(), openSamlConfigBean);
         spRes.setId(getClass().getSimpleName());
         spRes.initialize();
         val spResolver = SamlIdPUtils.getRoleDescriptorResolver(spRes, true);

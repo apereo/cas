@@ -30,16 +30,16 @@
             <div id="view-genericsuccess-authn-data"
                  th:if="${#cas.isTrue(#cas.theme('cas.successful-login.display-attributes'))}">
                 <p th:unless="${#maps.isEmpty(authentication.principal.attributes)}">
-                    The following attributes and services are resolved and available for <strong th:utext="${authentication.principal.id}"/>:
+                    <span th:utext="#{screen.success.attributes(${#strings.escapeXml(authentication.principal.id)})}">The following attributes and services are resolved and available for <strong>username</strong>:</span>
 
                     <div id="attribute-tabs" class="mdc-tab-bar cas-segmented" role="tablist">
                         <div class="mdc-tab-scroller">
                             <div class="mdc-tab-scroller__scroll-area">
-                                <nav class="nav nav-tabs mdc-tab-scroller__scroll-content">
+                                <div class="nav nav-tabs mdc-tab-scroller__scroll-content">
                                     <button id="principal-tab" type="button" class="mdc-tab nav-link" role="tab"
                                             aria-selected="true" aria-controls="attribute-tab-0" data-toggle="tab" data-target="attribute-tab-0">
                                             <span class="mdc-tab__content">
-                                                <span class="mdc-tab__text-label">Principal</span>
+                                                <span class="mdc-tab__text-label" th:utext="#{screen.success.tab.principal}">Principal</span>
                                             </span>
                                         <span class="mdc-tab-indicator">
                                                 <span class="mdc-tab-indicator__content mdc-tab-indicator__content--underline"></span>
@@ -49,7 +49,7 @@
                                     <button id="auth-tab" type="button" class="mdc-tab nav-link" role="tab"
                                             aria-selected="false" aria-controls="attribute-tab-1" data-toggle="tab" data-target="attribute-tab-1">
                                             <span class="mdc-tab__content">
-                                                <span class="mdc-tab__text-label">Authentication</span>
+                                                <span class="mdc-tab__text-label" th:utext="#{screen.success.tab.authentication}">Authentication</span>
                                             </span>
                                         <span class="mdc-tab-indicator">
                                                 <span class="mdc-tab-indicator__content mdc-tab-indicator__content--underline"></span>
@@ -60,14 +60,14 @@
                                             class="mdc-tab nav-link" role="tab" aria-selected="false"
                                             aria-controls="attribute-tab-2" data-toggle="tab" data-target="attribute-tab-2">
                                             <span class="mdc-tab__content">
-                                                <span class="mdc-tab__text-label">Services</span>
+                                                <span class="mdc-tab__text-label" th:utext="#{screen.success.tab.services}">Services</span>
                                             </span>
                                         <span class="mdc-tab-indicator">
                                                 <span class="mdc-tab-indicator__content mdc-tab-indicator__content--underline"></span>
                                             </span>
                                         <span class="mdc-tab__ripple"></span>
                                     </button>
-                                </nav>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -77,8 +77,8 @@
                             <table id="attributesTable" class="table table-striped auto-init" style="white-space: unset">
                                 <thead>
                                 <tr class="mdc-data-table__header-row">
-                                    <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Attribute</th>
-                                    <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Value(s)</th>
+                                    <th class="mdc-data-table__header-cell" role="columnheader" scope="col" th:utext="#{screen.success.column.attribute}">Attribute</th>
+                                    <th class="mdc-data-table__header-cell" role="columnheader" scope="col" th:utext="#{screen.success.column.values}">Value(s)</th>
 
                                 </tr>
                                 </thead>
@@ -100,8 +100,8 @@
                             <table id="attributesTable" class="mdc-data-table__table table table-striped auto-init" style="white-space: unset">
                                 <thead>
                                 <tr class="mdc-data-table__header-row">
-                                    <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Attribute</th>
-                                    <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Value(s)</th>
+                                    <th class="mdc-data-table__header-cell" role="columnheader" scope="col" th:utext="#{screen.success.column.attribute}">Attribute</th>
+                                    <th class="mdc-data-table__header-cell" role="columnheader" scope="col" th:utext="#{screen.success.column.values}">Value(s)</th>
                                 </tr>
                                 </thead>
                                 <tbody class="mdc-data-table__content">
@@ -124,8 +124,8 @@
                                 <thead>
                                 <tr class="mdc-data-table__header-row">
                                     <th class="mdc-data-table__header-cell" role="columnheader" scope="col"></th>
-                                    <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Service</th>
-                                    <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Description</th>
+                                    <th class="mdc-data-table__header-cell" role="columnheader" scope="col" th:utext="#{screen.success.column.service}">Service</th>
+                                    <th class="mdc-data-table__header-cell" role="columnheader" scope="col" th:utext="#{screen.success.column.description}">Description</th>
 
                                 </tr>
                                 </thead>

@@ -1,0 +1,77 @@
+{
+  "dependencies": "yubikey,yubikey-jpa,yubikey-mongo,yubikey-redis,yubikey-dynamodb",
+  "conditions": {
+    "docker": "true"
+  },
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
+    "--cas.authn.mfa.yubikey.crypto.enabled=false",
+    "--cas.authn.mfa.yubikey.client-id=18421",
+    "--cas.authn.mfa.yubikey.secret-key=aBIehjui12aK8x82oe5qzGeb0As=",
+    "--cas.authn.mfa.yubikey.multiple-device-registration-enabled=true",
+    "--cas.authn.mfa.yubikey.validator=SKIP",
+
+    "--cas.service-registry.core.init-from-json=true",
+
+    "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
+    "--management.endpoints.web.exposure.include=yubikeyAccountRepository",
+    "--management.endpoints.access.default=UNRESTRICTED"
+  ],
+  "variations": [
+    {
+      "name": "jpa",
+      "properties": [
+        "--CasFeatureModule.YubiKey.mongo.enabled=false",
+        "--CasFeatureModule.YubiKey.redis.enabled=false",
+        "--CasFeatureModule.YubiKey.dynamodb.enabled=false",
+        "--cas.authn.mfa.yubikey.jpa.ddl-auto=create",
+        "--cas.authn.mfa.yubikey.jpa.user=root",
+        "--cas.authn.mfa.yubikey.jpa.password=mypass",
+        "--cas.authn.mfa.yubikey.jpa.driver-class=org.mariadb.jdbc.Driver",
+        "--cas.authn.mfa.yubikey.jpa.url=jdbc:mariadb://localhost:3307/mysql?allowPublicKeyRetrieval=true&characterEncoding=UTF-8&useSSL=FALSE",
+        "--cas.authn.mfa.yubikey.jpa.dialect=org.hibernate.dialect.MariaDBDialect"
+      ]
+    },
+    {
+      "name": "mongo",
+      "properties": [
+        "--CasFeatureModule.YubiKey.jpa.enabled=false",
+        "--CasFeatureModule.YubiKey.redis.enabled=false",
+        "--CasFeatureModule.YubiKey.dynamodb.enabled=false",
+        "--cas.authn.mfa.yubikey.mongo.host=localhost",
+        "--cas.authn.mfa.yubikey.mongo.port=27017",
+        "--cas.authn.mfa.yubikey.mongo.user-id=root",
+        "--cas.authn.mfa.yubikey.mongo.password=secret",
+        "--cas.authn.mfa.yubikey.mongo.authentication-database-name=admin",
+        "--cas.authn.mfa.yubikey.mongo.database-name=yubikey",
+        "--cas.authn.mfa.yubikey.mongo.drop-collection=true"
+      ]
+    },
+    {
+      "name": "redis",
+      "properties": [
+        "--CasFeatureModule.YubiKey.jpa.enabled=false",
+        "--CasFeatureModule.YubiKey.mongo.enabled=false",
+        "--CasFeatureModule.YubiKey.dynamodb.enabled=false",
+        "--cas.authn.mfa.yubikey.redis.host=localhost",
+        "--cas.authn.mfa.yubikey.redis.port=6379"
+      ]
+    },
+    {
+      "name": "dynamodb",
+      "properties": [
+        "--CasFeatureModule.YubiKey.jpa.enabled=false",
+        "--CasFeatureModule.YubiKey.mongo.enabled=false",
+        "--CasFeatureModule.YubiKey.redis.enabled=false",
+        "--cas.authn.mfa.yubikey.dynamo-db.endpoint=http://localhost:8000",
+        "--cas.authn.mfa.yubikey.dynamo-db.region=us-east-1",
+        "--cas.authn.mfa.yubikey.dynamo-db.credential-access-key=AKIAIPPIGGUNIO74C63Z",
+        "--cas.authn.mfa.yubikey.dynamo-db.credential-secret-key=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",
+        "--cas.authn.mfa.yubikey.dynamo-db.drop-tables-on-startup=true"
+      ]
+    }
+  ],
+  "initScript": "${PWD}/ci/tests/mariadb/run-mariadb-server.sh,${PWD}/ci/tests/mongodb/run-mongodb-server.sh,${PWD}/ci/tests/redis/run-redis-server.sh,${PWD}/ci/tests/dynamodb/run-dynamodb-server.sh"
+}

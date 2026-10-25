@@ -52,4 +52,37 @@ class AccountProfileRemoveSingleSignOnSessionActionTests extends AbstractWebflow
         assertNull(getTicketRegistry().getTicket(tgtId));
         assertEquals(CasWebflowConstants.TRANSITION_ID_VALIDATE, result.getId());
     }
+    @Test
+    void verifyOtherSessionOfSamePrincipal() throws Throwable {
+        val context = MockRequestContext.create(applicationContext);
+        val principal = CoreAuthenticationTestUtils.getPrincipal(RandomUtils.randomAlphabetic(8));
+        val current = new TicketGrantingTicketImpl(RandomUtils.randomAlphabetic(8),
+            CoreAuthenticationTestUtils.getAuthentication(principal), NeverExpiresExpirationPolicy.INSTANCE);
+        val other = new TicketGrantingTicketImpl(RandomUtils.randomAlphabetic(8),
+            CoreAuthenticationTestUtils.getAuthentication(principal), NeverExpiresExpirationPolicy.INSTANCE);
+        getTicketRegistry().addTicket(current);
+        getTicketRegistry().addTicket(other);
+        WebUtils.putTicketGrantingTicketInScopes(context, current);
+        context.setParameter("id", other.getId());
+        val result = removeSessionAction.execute(context);
+        assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, result.getId());
+        assertNull(getTicketRegistry().getTicket(other.getId()));
+        assertNotNull(getTicketRegistry().getTicket(current.getId()));
+    }
+
+    @Test
+    void verifySessionOfAnotherPrincipalIsKept() throws Throwable {
+        val context = MockRequestContext.create(applicationContext);
+        val current = new TicketGrantingTicketImpl(RandomUtils.randomAlphabetic(8),
+            CoreAuthenticationTestUtils.getAuthentication(RandomUtils.randomAlphabetic(8)), NeverExpiresExpirationPolicy.INSTANCE);
+        val victim = new TicketGrantingTicketImpl(RandomUtils.randomAlphabetic(8),
+            CoreAuthenticationTestUtils.getAuthentication(RandomUtils.randomAlphabetic(8)), NeverExpiresExpirationPolicy.INSTANCE);
+        getTicketRegistry().addTicket(current);
+        getTicketRegistry().addTicket(victim);
+        WebUtils.putTicketGrantingTicketInScopes(context, current);
+        context.setParameter("id", victim.getId());
+        val result = removeSessionAction.execute(context);
+        assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, result.getId());
+        assertNotNull(getTicketRegistry().getTicket(victim.getId()));
+    }
 }

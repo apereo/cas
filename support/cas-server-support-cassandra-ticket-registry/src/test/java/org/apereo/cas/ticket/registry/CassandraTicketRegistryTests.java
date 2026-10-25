@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.util.AopTestUtils;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -44,6 +45,9 @@ class CassandraTicketRegistryTests extends BaseTicketRegistryTests {
     @Autowired
     @Qualifier(TicketRegistry.BEAN_NAME)
     private TicketRegistry newTicketRegistry;
+
+    @Autowired
+    private CasConfigurationProperties casConfigurationProperties;
 
     @Override
     protected boolean isCipherExecutorOwnedByContext() {
@@ -73,4 +77,22 @@ class CassandraTicketRegistryTests extends BaseTicketRegistryTests {
         assertNull(newTicketRegistry.getTicket(TestTicketIdentifiers.generate().ticketGrantingTicketId()));
     }
 
+    @RepeatedTest(1)
+    void verifyAnotherNodeStartingKeepsTicketsQueryable() throws Throwable {
+        val principal = UUID.randomUUID().toString();
+        val ticket = new TicketGrantingTicketImpl(TestTicketIdentifiers.generate().ticketGrantingTicketId(),
+            CoreAuthenticationTestUtils.getAuthentication(principal), NeverExpiresExpirationPolicy.INSTANCE);
+        newTicketRegistry.addTicket(ticket);
+        val registry = (CassandraTicketRegistry) AopTestUtils.getUltimateTargetObject(newTicketRegistry);
+        val cassandra = casConfigurationProperties.getTicket().getRegistry().getCassandra();
+        cassandra.setDropTablesOnStartup(false);
+        try {
+            registry.afterPropertiesSet();
+            registry.afterPropertiesSet();
+        } finally {
+            cassandra.setDropTablesOnStartup(true);
+        }
+        assertEquals(ticket.getId(), newTicketRegistry.getTicket(ticket.getId()).getId());
+        assertEquals(1, newTicketRegistry.countSessionsFor(principal));
+    }
 }

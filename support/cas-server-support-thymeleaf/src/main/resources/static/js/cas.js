@@ -43,9 +43,14 @@ function randomWord() {
 
 function generateRandom(length = 12) {
     const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    const limit = Math.floor(0x100000000 / chars.length) * chars.length;
+    const buffer = new Uint32Array(1);
     let result = "";
-    for (let i = 0; i < length; i++) {
-        result += chars.charAt(Math.floor(Math.random() * chars.length));
+    while (result.length < length) {
+        crypto.getRandomValues(buffer);
+        if (buffer[0] < limit) {
+            result += chars.charAt(buffer[0] % chars.length);
+        }
     }
     return result;
 }
@@ -656,7 +661,7 @@ function resourceLoadedSuccessfully() {
             requestGeoPosition();
         }
 
-        if ($(":focus").length === 0) {
+        if ($(":focus").length === 0 && document.documentElement.dataset.casAutofocus !== "false") {
             $("input:visible:enabled:first").focus();
         }
 

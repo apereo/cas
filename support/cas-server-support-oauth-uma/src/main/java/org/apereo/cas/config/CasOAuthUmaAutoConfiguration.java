@@ -323,8 +323,8 @@ public class CasOAuthUmaAutoConfiguration {
         @ConditionalOnMissingBean(name = "umaPermissionTicketIdGenerator")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public UniqueTicketIdGenerator umaPermissionTicketIdGenerator() {
-            return new HostNameBasedUniqueTicketIdGenerator();
+        public UniqueTicketIdGenerator umaPermissionTicketIdGenerator(final CasConfigurationProperties casProperties) {
+            return new HostNameBasedUniqueTicketIdGenerator(casProperties.getHost().getName());
         }
 
         @Bean

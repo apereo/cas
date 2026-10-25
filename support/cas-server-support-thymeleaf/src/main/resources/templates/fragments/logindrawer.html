@@ -13,7 +13,7 @@
 <body>
 <main class="container mt-3 mb-3">
     <div th:fragment="logindrawer" id="logindrawer">
-        <th:block th:if="${#cas.isTrue(#cas.theme('cas.drawer-menu.enabled'))}">
+        <th:block th:if="${#cas.themeBuilderEnabled or #cas.isTrue(#cas.theme('cas.drawer-menu.enabled'))}">
         <aside id="app-drawer"
                class="mdc-drawer mdc-drawer--modal offcanvas offcanvas-start cas-drawer cas-ui"
                tabindex="-1"

@@ -12,6 +12,7 @@ const cas = require("../../cas.js");
     await cas.assertTextContent(page, "#login h3", "Use your registered YubiKey device(s) to authenticate.");
 
     await cas.assertVisibility(page, "button[name=register]");
+    await cas.assertAccessibility(page, "YubiKey login");
     await cas.type(page, "#token", "12345678901234567890123456789012345");
     await cas.submitForm(page, "#yubiKeyForm");
 

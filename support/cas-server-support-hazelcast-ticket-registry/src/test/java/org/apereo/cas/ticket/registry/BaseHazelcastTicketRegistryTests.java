@@ -44,6 +44,17 @@ public abstract class BaseHazelcastTicketRegistryTests extends BaseTicketRegistr
         assertEquals(0, getNewTicketRegistry().countSessionsFor(principal));
     }
 
+    @RepeatedTest(2)
+    void verifyPrincipalIsMatchedRegardlessOfCase() throws Throwable {
+        val principal = "CasUser-" + UUID.randomUUID();
+        addSessionFor(principal);
+        assertEquals(1, getNewTicketRegistry().countSessionsFor(principal.toLowerCase(Locale.ENGLISH)));
+        assertEquals(1, getNewTicketRegistry().getSessionsFor(principal.toUpperCase(Locale.ENGLISH)).count());
+        assertEquals(1, getNewTicketRegistry().deleteTicketsFor(principal.toLowerCase(Locale.ENGLISH)));
+        assertEquals(0, getNewTicketRegistry().countSessionsFor(principal));
+        assertEquals(0, getNewTicketRegistry().deleteTicketsFor(principal));
+    }
+
     private void addSessionFor(final String principal) throws Throwable {
         val ticketGrantingTicketId = new TicketGrantingTicketIdGenerator(10, StringUtils.EMPTY)
             .getNewTicketId(TicketGrantingTicket.PREFIX);

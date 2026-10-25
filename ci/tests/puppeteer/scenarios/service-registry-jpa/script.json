@@ -9,6 +9,8 @@
     
     "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
     "--cas.service-registry.core.init-from-json=false",
+    "--cas.service-registry.schedule.start-delay=PT2S",
+    "--cas.service-registry.schedule.repeat-interval=PT2S",
 
     "--cas.authn.accept.name=STATIC",
 

@@ -46,6 +46,8 @@ The policy can be conditionally activated based on available principal attribute
 
 In the above example, the access strategy is only activated if the current principal has a `lastName` attribute with values `Jon` or `John`, 
 **AND** has a `firstName` attribute with values `Holdoor` or `Hodor`. The `operator` field can also be modified to use `OR`. 
+Required values are regular expression patterns that must match the entire attribute value, so `admin` matches
+only `admin` and not `sysadmin`; use `.*admin.*` to match part of a value.
 
 Note that if the access strategy fails to activate and must remain inactive, then access is denied via `allowIfInactive`.
 

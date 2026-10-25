@@ -2,7 +2,7 @@ const assert = require("assert");
 const axios = require("axios");
 const http = require("http");
 const https = require("https");
-const {spawn} = require("child_process");
+const {spawn, execFileSync} = require("child_process");
 const waitOn = require("wait-on");
 const JwtOps = require("jsonwebtoken");
 const colors = require("colors");
@@ -128,16 +128,38 @@ exports.newBrowser = async (options) => {
     throw "Failed to launch browser after multiple attempts";
 };
 
+/**
+ * Waits for an operation for a bounded time, so a browser that stops answering cannot keep the scenario alive.
+ *
+ * @param operation the promise to wait for
+ * @param description what the operation does, for the log
+ * @param timeout how long to wait, in milliseconds
+ * @returns true if the operation finished in time
+ */
+async function finishesWithin(operation, description, timeout = 15000) {
+    let timer = undefined;
+    const expired = new Promise((resolve) => {
+        timer = setTimeout(() => resolve(false), timeout);
+    });
+    const finished = await Promise.race([operation.then(() => true), expired]);
+    clearTimeout(timer);
+    if (!finished) {
+        await exports.logr(`${description} did not finish within ${timeout / 1000} second(s)`);
+    }
+    return finished;
+}
+
 exports.closeBrowser = async (browser, preClose = () => {}, postClose = () => {}) => {
     try {
         preClose(browser);
-        const pages = await browser.pages();
-        await Promise.all(
-            pages
-                .filter(page => !page.isClosed())
-                .map(page => page.close())
-        );
-        await browser.close();
+        const pagesClosed = await finishesWithin(browser.pages()
+            .then((pages) => Promise.all(pages
+                .filter((page) => !page.isClosed())
+                .map((page) => page.close()))), "Closing browser pages");
+        const browserClosed = pagesClosed && await finishesWithin(browser.close(), "Closing the browser");
+        if (!browserClosed) {
+            browser.process()?.kill("SIGKILL");
+        }
     } finally {
         postClose(browser);
     }
@@ -613,6 +635,142 @@ exports.assertTicketParameter = async (page, found = true) => {
     return null;
 };
 
+/**
+ * Verifies that two CAS nodes share ticket state, whether the registry is a shared store or replicates by messaging:
+ * a service ticket issued by the first node validates on the second and only once, the single sign-on session of the
+ * first node is honored by the second, and logging out on the second node ends the session on the first node, even
+ * when the browser presents the old ticket-granting cookie again.
+ *
+ * @param nodes the ports of the two CAS nodes
+ * @param service the service to log into
+ * @param replicationDelay milliseconds to allow for replication between steps
+ */
+exports.verifyTicketRegistryAcrossNodes = async (nodes = [8443, 8444], service = "https://localhost:9859/anything/cluster", replicationDelay = 2000) => {
+    const [first, second] = nodes;
+    const browser = await this.newBrowser(this.browserOptions());
+    try {
+        const page = await this.newPage(browser);
+        await this.log(`Logging in on node ${first}`);
+        await this.gotoLogin(page, service, first);
+        await this.loginWith(page);
+        await this.sleep(replicationDelay);
+        const ticket = await this.assertTicketParameter(page);
+
+        await this.log(`Validating service ticket ${ticket} on node ${second}`);
+        let payload = await this.validateTicket(service, ticket, "JSON", second);
+        assert(payload.serviceResponse.authenticationSuccess?.user === "casuser", "Service ticket must validate on the other node");
+        await this.sleep(replicationDelay);
+        payload = await this.validateTicket(service, ticket, "JSON", first);
+        assert(payload.serviceResponse.authenticationFailure?.code === "INVALID_TICKET", "Service ticket must not validate twice");
+
+        await this.log(`Single sign-on session from node ${first} must be honored by node ${second}`);
+        await this.gotoLogin(page, undefined, first);
+        const ticketGrantingCookie = await this.assertCookie(page);
+        await this.gotoLogin(page, service, second);
+        await this.sleep(replicationDelay);
+        const secondTicket = await this.assertTicketParameter(page);
+        payload = await this.validateTicket(service, secondTicket, "JSON", first);
+        assert(payload.serviceResponse.authenticationSuccess?.user === "casuser", "Service ticket from the other node must validate");
+
+        await this.log(`Logging out on node ${second} must end the session on node ${first}`);
+        await this.goto(page, `https://localhost:${second}/cas/logout`);
+        await this.sleep(replicationDelay);
+        await page.setCookie(ticketGrantingCookie);
+        await this.gotoLogin(page, service, first);
+        await this.sleep(1000);
+        await this.assertTicketParameter(page, false);
+        await this.assertVisibility(page, "#username");
+    } finally {
+        await this.closeBrowser(browser);
+    }
+};
+
+/**
+ * Verifies a service registry backend from both sides of CAS. A definition written straight into the backend is picked
+ * up by the scheduled reload; a definition imported through the registeredServices actuator endpoint lands in the backend
+ * and still authorizes after a reload; renaming it leaves a single definition behind; deleting it removes it from the
+ * backend and rejects the service, again even after a reload. The scenario must run the reload every few seconds
+ * (cas.service-registry.schedule), start httpbin, and turn off cas.service-registry.core.init-from-json so that no
+ * embedded JSON registry answers in place of the backend.
+ *
+ * @param backend the backend, as {insert: async (definition) => void, contains: async (id) => boolean}
+ * @param reloadDelay milliseconds that cover at least one scheduled reload
+ */
+exports.verifyServiceRegistry = async (backend, reloadDelay = 6000) => {
+    const actuator = "https://localhost:8443/cas/actuator/registeredServices";
+    const headers = {"Accept": "application/json", "Content-Type": "application/json"};
+    const definition = (id, path, name) => ({
+        "@class": "org.apereo.cas.services.CasRegisteredService",
+        "serviceId": `^https://localhost:9859/anything/${path}.*`,
+        "name": name,
+        "id": id,
+        "evaluationOrder": id
+    });
+    const definitionsWithId = async (id) => {
+        const services = JSON.parse(await this.doRequest(actuator, "GET", headers))[1];
+        return services.filter((service) => service.id === id);
+    };
+
+    const browser = await this.newBrowser(this.browserOptions());
+    try {
+        const page = await this.newPage(browser);
+        const verifyAccess = async (path, authorized) => {
+            const service = `https://localhost:9859/anything/${path}`;
+            for (let attempt = 1; attempt <= 20; attempt++) {
+                await this.gotoLogin(page, service);
+                await this.sleep(500);
+                const ticket = new URL(page.url()).searchParams.get("ticket");
+                if ((ticket !== null) === authorized) {
+                    if (authorized) {
+                        const payload = await this.validateTicket(service, ticket);
+                        assert(payload.serviceResponse.authenticationSuccess?.user === "casuser");
+                    } else {
+                        await this.assertInnerText(page, "#content h2", "Application Not Authorized to Use CAS");
+                    }
+                    await this.log(`Service ${service} is ${authorized ? "authorized" : "rejected"} after ${attempt} attempt(s)`);
+                    return;
+                }
+                await this.sleep(1000);
+            }
+            throw new Error(`Service ${service} was expected to be ${authorized ? "authorized" : "rejected"}`);
+        };
+
+        await this.gotoLogin(page);
+        await this.loginWith(page);
+        await this.assertCookie(page);
+
+        await this.logg("A definition written straight into the backend is loaded by CAS");
+        await backend.insert(definition(1001, "external", "External Service"));
+        await verifyAccess("external", true);
+
+        await this.logg("A definition imported through CAS lands in the backend and survives a reload");
+        await this.doRequest(`${actuator}/import`, "POST", headers, 201,
+            JSON.stringify(definition(1002, "imported", "Imported Service")));
+        assert(await backend.contains(1002), "Imported definition must be found in the backend");
+        await this.sleep(reloadDelay);
+        await verifyAccess("imported", true);
+
+        await this.logg("Renaming a definition leaves a single definition behind");
+        await this.doRequest(`${actuator}/import`, "POST", headers, 201,
+            JSON.stringify(definition(1002, "renamed", "Renamed Service")));
+        await this.sleep(reloadDelay);
+        await verifyAccess("renamed", true);
+        await verifyAccess("imported", false);
+        const renamed = await definitionsWithId(1002);
+        assert(renamed.length === 1 && renamed[0].name === "Renamed Service", "Renamed definition must replace the original");
+
+        await this.logg("Deleting a definition through CAS removes it from the backend");
+        await this.doRequest(`${actuator}/1002`, "DELETE", headers, 200);
+        assert(!(await backend.contains(1002)), "Deleted definition must be gone from the backend");
+        await this.sleep(reloadDelay);
+        await verifyAccess("renamed", false);
+        assert((await definitionsWithId(1002)).length === 0);
+        await verifyAccess("external", true);
+    } finally {
+        await this.closeBrowser(browser);
+    }
+};
+
 exports.validateTicket = async (service, ticket, format = "JSON", port = 8443) => {
     const body = await this.doRequest(`https://localhost:${port}/cas/p3/serviceValidate?service=${service}&ticket=${ticket}&format=${format}`);
     await this.log(body);
@@ -713,7 +871,7 @@ exports.doDelete = async (url, statusCode = 0, successHandler = undefined,
             if (statusCode > 0) {
                 assert.equal(res.status, statusCode);
             } else {
-                assert(statusCode === 200 || statusCode === 204, `Unexpected status code: ${res.status}`);
+                assert(res.status === 200 || res.status === 204, `Unexpected status code: ${res.status}`);
             }
             this.log(`DELETE response status: ${res.status}`);
             return successHandler === undefined ? undefined : successHandler(res);
@@ -1302,18 +1460,39 @@ exports.parseOtpAuthenticationUrl = async (url) => {
     return {
         user: userLabel,
         secret: secret,
-        issuer: issuer || issuerLabel
+        issuer: issuer || issuerLabel,
+        digits: Number(params.get("digits") ?? 6),
+        period: Number(params.get("period") ?? 30)
     };
 };
 
-exports.generateOtp = async (otpConfig) => {
+/**
+ * Generates a TOTP code for an account parsed from its registration URL, waiting for the next time step when the
+ * current code was already handed out. A step offset produces the code of an earlier or later time step instead,
+ * without waiting, for checks of the window CAS accepts; it is remembered as handed out too.
+ *
+ * @param otpConfig the parsed registration URL
+ * @param stepOffset the number of time steps away from now
+ * @returns the code
+ */
+exports.generateOtp = async (otpConfig, stepOffset = 0) => {
+    const step = otpConfig.period ?? 30;
+    const totp = () => speakeasy.totp({
+        secret: otpConfig.secret,
+        encoding: "base32",
+        step: step,
+        digits: otpConfig.digits ?? 6,
+        time: Math.floor(Date.now() / 1000) + (stepOffset * step)
+    });
+    if (stepOffset !== 0) {
+        const code = totp();
+        await this.logb(`Generated OTP ${code} for ${stepOffset} time step(s) away`);
+        USED_OTPS.push(code);
+        return code;
+    }
     let otp = undefined;
     while (otp === undefined || USED_OTPS.includes(otp)) {
-        otp = speakeasy.totp({
-            secret: otpConfig.secret,
-            encoding: "base32",
-            step: 30
-        });
+        otp = totp();
         if (USED_OTPS.includes(otp)) {
             await this.logb(`Generated OTP matches the previous value: ${otp}. Trying again...`);
             await this.sleep(3000);
@@ -1325,13 +1504,33 @@ exports.generateOtp = async (otpConfig) => {
     return otp;
 };
 
+/**
+ * Sets the signature counter of the credentials held by a virtual authenticator, the way a cloned authenticator
+ * would report a counter that does not move forward.
+ *
+ * @param device the virtual authenticator
+ * @param signCount the new counter
+ * @param rpId the relying party of the credentials; the authenticator does not report it for non-resident credentials
+ * @returns the counters the credentials had before
+ */
+exports.setWebAuthnSignCount = async (device, signCount, rpId = "localhost") => {
+    const authenticatorId = device.authenticator.authenticatorId;
+    const {credentials} = await device.client.send("WebAuthn.getCredentials", {authenticatorId});
+    for (const credential of credentials) {
+        await this.log(`Credential ${credential.credentialId} has signature counter ${credential.signCount}; setting it to ${signCount}`);
+        await device.client.send("WebAuthn.removeCredential", {authenticatorId, credentialId: credential.credentialId});
+        await device.client.send("WebAuthn.addCredential", {authenticatorId, credential: {rpId, ...credential, signCount}});
+    }
+    return credentials.map((credential) => credential.signCount);
+};
+
 exports.removeWebAuthnVirtualAuthenticator = async (device) => {
     await device.client.send("WebAuthn.removeVirtualAuthenticator", {
         authenticatorId: device.authenticator.authenticatorId
     });
 };
 
-exports.createWebAuthnVirtualAuthenticator = async (page, protocol = "u2f", hasResidentKey = false) => {
+exports.createWebAuthnVirtualAuthenticator = async (page, protocol = "u2f", hasResidentKey = false, options = {}) => {
     const client = await page.target().createCDPSession();
     await client.send("WebAuthn.enable");
     const authenticator = await client.send("WebAuthn.addVirtualAuthenticator", {
@@ -1340,7 +1539,8 @@ exports.createWebAuthnVirtualAuthenticator = async (page, protocol = "u2f", hasR
             transport: "usb",
             hasResidentKey: hasResidentKey,
             hasUserVerification: true,
-            isUserVerified: true
+            isUserVerified: true,
+            ...options
         }
     });
     await this.logg(`WebAuthn authenticator: ${authenticator}`);
@@ -1348,6 +1548,151 @@ exports.createWebAuthnVirtualAuthenticator = async (page, protocol = "u2f", hasR
         authenticator: authenticator,
         client: client
     };
+};
+
+/**
+ * Runs a command inside a running docker container and returns what it prints, trimmed. Scenarios use it to look at
+ * a backend directly, bypassing CAS, e.g. to count the records a repository wrote.
+ *
+ * @param container the container name
+ * @param args the command and its arguments
+ * @param input optional text to feed the command on its standard input
+ * @returns the standard output of the command
+ */
+exports.dockerExec = async (container, args, input = undefined) => {
+    await this.log(`Running in ${container}: ${args.join(" ")}`);
+    const output = execFileSync("docker", ["exec", "-i", container, ...args], {input: input}).toString().trim();
+    await this.log(output);
+    return output;
+};
+
+/**
+ * WCAG 2.1 A and AA rules, the level CAS pages are held to.
+ */
+const ACCESSIBILITY_WCAG_TAGS = ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"];
+
+/**
+ * Violation impacts that fail an accessibility check; lesser impacts and best-practice findings are only logged.
+ */
+const ACCESSIBILITY_BLOCKING_IMPACTS = ["serious", "critical"];
+
+/**
+ * Runs axe-core over the page as it stands, once the animations that end (such as the fade-in of the page content) are
+ * done, so that colors are measured at full opacity. Every violation is logged with the elements it found; serious and
+ * critical violations of WCAG 2.1 A/AA are returned as "name: rule" entries, so that a scenario can check several pages
+ * and fail once at the end.
+ *
+ * @param page the page to check
+ * @param name a short name of the page, used in the log and in the returned entries
+ * @param options optional settings: exclude, a list of CSS selectors axe should skip
+ * @returns the blocking violations, as "name: rule" entries
+ */
+exports.auditAccessibility = async (page, name, options = {}) => {
+    const {AxePuppeteer} = require("@axe-core/puppeteer");
+    await page.evaluate(() => Promise.all(document.getAnimations()
+        .filter((animation) => animation.effect?.getComputedTiming().endTime !== Infinity)
+        .map((animation) => animation.finished.catch(() => undefined))));
+    await this.screenshot(page);
+    const axe = new AxePuppeteer(page).withTags([...ACCESSIBILITY_WCAG_TAGS, "best-practice"]);
+    (options.exclude ?? []).forEach((selector) => axe.exclude(selector));
+    const results = await axe.analyze();
+    await this.log(`Accessibility of ${name}: ${results.violations.length} violation(s), ${results.passes.length} rule(s) passed`);
+    const blocking = [];
+    for (const violation of results.violations) {
+        const targets = violation.nodes.map((node) => node.target.join(" ")).join(", ");
+        const message = `${name} [${violation.impact}] ${violation.id}: ${violation.help} -> ${targets}`;
+        if (ACCESSIBILITY_BLOCKING_IMPACTS.includes(violation.impact)
+            && violation.tags.some((tag) => ACCESSIBILITY_WCAG_TAGS.includes(tag))) {
+            await this.logr(message);
+            blocking.push(`${name}: ${violation.id}`);
+        } else {
+            await this.logy(message);
+        }
+    }
+    return blocking;
+};
+
+/**
+ * Runs axe-core over the page and fails right away on serious or critical violations of WCAG 2.1 A/AA. Feature
+ * scenarios call this on the pages they already open; template-accessibility collects the results of
+ * auditAccessibility over many pages instead.
+ *
+ * @param page the page to check
+ * @param name a short name of the page
+ * @param options optional settings, as for auditAccessibility
+ */
+exports.assertAccessibility = async (page, name, options = {}) => {
+    const blocking = await this.auditAccessibility(page, name, options);
+    assert(blocking.length === 0, `Serious or critical accessibility violations found: ${blocking.join(", ")}`);
+};
+
+/**
+ * Sends one request to the DynamoDB Local container on port 8000, signed the way the AWS SDK signs it. DynamoDB Local
+ * keeps a separate database per access key and region, so the request must carry the same credentials the scenario
+ * hands to CAS. The connection is closed after each request, so that no pooled socket keeps the scenario from exiting. Attribute values use the DynamoDB wire format, e.g. {"userid": {"S": "casuser"}}.
+ *
+ * @param operation the DynamoDB operation, e.g. Scan or PutItem
+ * @param payload the request body
+ * @param accessKey the access key CAS was configured with
+ * @param secretKey the secret key CAS was configured with
+ * @param region the region CAS was configured with
+ * @returns the parsed response
+ */
+exports.dynamoDbRequest = async (operation, payload, accessKey = "AKIAIPPIGGUNIO74C63Z",
+    secretKey = "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", region = "us-east-1") => {
+    const nodeCrypto = require("crypto");
+    const hmac = (key, data) => nodeCrypto.createHmac("sha256", key).update(data, "utf8").digest();
+    const hash = (data) => nodeCrypto.createHash("sha256").update(data, "utf8").digest("hex");
+    const body = JSON.stringify(payload);
+    const amzDate = new Date().toISOString().replace(/[:-]|\.\d{3}/g, "");
+    const date = amzDate.slice(0, 8);
+    const target = `DynamoDB_20120810.${operation}`;
+    const canonicalHeaders = `content-type:application/x-amz-json-1.0\nhost:localhost:8000\nx-amz-date:${amzDate}\nx-amz-target:${target}\n`;
+    const signedHeaders = "content-type;host;x-amz-date;x-amz-target";
+    const canonicalRequest = `POST\n/\n\n${canonicalHeaders}\n${signedHeaders}\n${hash(body)}`;
+    const scope = `${date}/${region}/dynamodb/aws4_request`;
+    const stringToSign = `AWS4-HMAC-SHA256\n${amzDate}\n${scope}\n${hash(canonicalRequest)}`;
+    const signingKey = hmac(hmac(hmac(hmac(`AWS4${secretKey}`, date), region), "dynamodb"), "aws4_request");
+    const signature = nodeCrypto.createHmac("sha256", signingKey).update(stringToSign, "utf8").digest("hex");
+    const response = await axios.post("http://localhost:8000/", body, {
+        httpAgent: new http.Agent({keepAlive: false}),
+        timeout: 10000,
+        headers: {
+            "Content-Type": "application/x-amz-json-1.0",
+            "X-Amz-Date": amzDate,
+            "X-Amz-Target": target,
+            "Authorization": `AWS4-HMAC-SHA256 Credential=${accessKey}/${scope}, SignedHeaders=${signedHeaders}, Signature=${signature}`
+        },
+        transformResponse: [(data) => data]
+    });
+    return JSON.parse(response.data);
+};
+
+/**
+ * Reads every item of a table from the DynamoDB Local container, following the pages of the scan.
+ *
+ * @param table the table name
+ * @returns the items of the table in the DynamoDB wire format, or an empty list when the table does not exist
+ */
+exports.dynamoDbScan = async (table) => {
+    const items = [];
+    let startKey = undefined;
+    do {
+        const payload = startKey === undefined ? {TableName: table} : {TableName: table, ExclusiveStartKey: startKey};
+        try {
+            const page = await this.dynamoDbRequest("Scan", payload);
+            items.push(...page.Items);
+            startKey = page.LastEvaluatedKey;
+        } catch (e) {
+            if (String(e.response?.data).includes("ResourceNotFoundException")) {
+                await this.log(`DynamoDb table ${table} does not exist`);
+                return [];
+            }
+            throw e;
+        }
+    } while (startKey !== undefined);
+    await this.log(`DynamoDb table ${table} holds ${items.length} item(s)`);
+    return items;
 };
 
 exports.dockerContainer = async (name) => {

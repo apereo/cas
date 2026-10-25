@@ -44,6 +44,8 @@ The release policy can be conditionally activated based on available principal a
 In the above example, the attribute release policy is only activated if the current 
 principal has a `lastName` attribute with values `Jon` or `John`, AND has a `firstName` attribute 
 with values `Holdoor` or `Hodor`. The operator field can also be modified to use `OR`.
+Required values are regular expression patterns that must match the entire attribute value, so `admin` matches
+only `admin` and not `sysadmin`; use `.*admin.*` to match part of a value.
     
 The `reverseMatch` field can be used to invert the logic of the condition. When set to `true`,   
 principal must not carry any of the required attributes for the policy to activate.

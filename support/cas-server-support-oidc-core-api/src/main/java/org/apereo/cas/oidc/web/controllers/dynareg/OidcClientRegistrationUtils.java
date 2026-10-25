@@ -60,6 +60,7 @@ public class OidcClientRegistrationUtils {
         clientResponse.setSubjectType(registeredService.getSubjectType());
         clientResponse.setTokenEndpointAuthMethod(registeredService.getTokenEndpointAuthenticationMethod());
         clientResponse.setDpopBoundAccessTokens(registeredService.isDpopBoundAccessTokens() ? Boolean.TRUE : null);
+        clientResponse.setTlsClientCertificateBoundAccessTokens(registeredService.isTlsClientCertificateBoundAccessTokens() ? Boolean.TRUE : null);
         clientResponse.setClientName(registeredService.getName());
         clientResponse.setRedirectUris(CollectionUtils.wrap(registeredService.getServiceId()));
         clientResponse.setUserInfoSignedResponseAlg(registeredService.getUserInfoSigningAlg());

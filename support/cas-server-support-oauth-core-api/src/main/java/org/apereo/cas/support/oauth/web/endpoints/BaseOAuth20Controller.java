@@ -19,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jooq.lambda.Unchecked;
 import org.jspecify.annotations.Nullable;
@@ -132,7 +133,7 @@ public abstract class BaseOAuth20Controller<T extends OAuth20ConfigurationContex
             return Optional.empty();
         }
         return Stream.of(OAuth20Constants.TOKEN_TYPE_BEARER, OAuth20Constants.TOKEN_TYPE_DPOP)
-            .filter(scheme -> StringUtils.startsWithIgnoreCase(authHeader, scheme + ' '))
+            .filter(scheme -> Strings.CI.startsWith(authHeader, scheme + ' '))
             .findFirst()
             .map(scheme -> StringUtils.trimToNull(authHeader.substring(scheme.length() + 1)));
     }
@@ -148,7 +149,7 @@ public abstract class BaseOAuth20Controller<T extends OAuth20ConfigurationContex
      */
     protected String resolveAuthorizationScheme(final HttpServletRequest request) {
         val authHeader = request.getHeader(HttpConstants.AUTHORIZATION_HEADER);
-        return StringUtils.startsWithIgnoreCase(authHeader, OAuth20Constants.TOKEN_TYPE_DPOP + ' ')
+        return Strings.CI.startsWith(authHeader, OAuth20Constants.TOKEN_TYPE_DPOP + ' ')
             ? OAuth20Constants.TOKEN_TYPE_DPOP
             : OAuth20Constants.TOKEN_TYPE_BEARER;
     }
@@ -198,6 +199,9 @@ public abstract class BaseOAuth20Controller<T extends OAuth20ConfigurationContex
      * <p>
      * A missing or invalid proof is answered with {@code invalid_dpop_proof}, and a bound token presented as a bearer token
      * with {@code invalid_token}; each with a {@code 401} and a challenge (RFC 9449, sections 7.1 and 7.2).
+     * <p>
+     * A token bound to the client certificate of a mutual TLS client is accepted only over a connection that presents the
+     * same certificate, or answered with a {@code 401} and {@code invalid_token} (RFC 8705, section 3).
      *
      * @param webContext           the web context
      * @param presentedAccessToken the access token exactly as the client presented it
@@ -207,6 +211,12 @@ public abstract class BaseOAuth20Controller<T extends OAuth20ConfigurationContex
     protected @Nullable ResponseEntity verifyProofOfPossession(final JEEContext webContext,
                                                                final String presentedAccessToken,
                                                                final OAuth20AccessToken accessToken) {
+        val boundCertificate = OAuth20Utils.getBoundCertificateThumbprint(accessToken);
+        if (boundCertificate.isPresent() && !OAuth20Utils.isBoundCertificatePresented(webContext, boundCertificate.get())) {
+            LOGGER.warn("Access token is bound to a client certificate that the request to [{}] does not present", webContext.getRequestURL());
+            return unauthorized(webContext.getNativeRequest(), OAuth20Constants.INVALID_TOKEN,
+                "Access token is bound to a client certificate that the request does not present");
+        }
         val validator = configurationContext.getProofOfPossessionValidator();
         try {
             validator.validateProtectedResourceRequest(webContext, presentedAccessToken, accessToken);

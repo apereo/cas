@@ -10,6 +10,7 @@ const cas = require("../../cas.js");
     await cas.assertCookie(page, false);
     await cas.screenshot(page);
     await cas.assertInnerText(page, "#content h2", "Weak Password Detected");
+    await cas.assertAccessibility(page, "Weak password detected");
     await cas.click(page, "#submit");
     await cas.waitForNavigation(page);
 

@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.util.spring.DirectObjectProvider;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import lombok.val;
@@ -64,6 +65,19 @@ class CasLocaleChangeInterceptorTests {
         when(servicesManager.findServiceBy(any(Service.class))).thenReturn(registeredService);
         getInterceptor(false).preHandle(request, response, new Object());
         assertEquals(Locale.GERMAN, resolver.resolveLocale(request));
+    }
+
+    @Test
+    void verifyRefusedServiceIsIgnored() {
+        val request = new MockHttpServletRequest();
+        request.addParameter("locale", "it");
+        val response = new MockHttpServletResponse();
+        val resolver = new SessionLocaleResolver();
+        request.setAttribute(DispatcherServlet.LOCALE_RESOLVER_ATTRIBUTE, resolver);
+        when(argumentExtractor.extractService(any(HttpServletRequest.class)))
+            .thenThrow(UnauthorizedServiceException.denied("HTTP service URLs must not contain user information"));
+        assertTrue(getInterceptor(false).preHandle(request, response, new Object()));
+        assertEquals(Locale.ITALIAN, resolver.resolveLocale(request));
     }
 
     @Test

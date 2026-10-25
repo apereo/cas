@@ -5,10 +5,10 @@ const cas = require("../../cas.js");
 const state = "40W6nJCYWnnPplmAo13Icy";
 const nonce = "yYxIingpZy";
 
-async function login(page, redirectUrl, params) {
+async function login(page, redirectUrl, params, prompt = "none") {
     let authzUrl = "https://localhost:8443/cas/oidc/authorize?";
     authzUrl += "response_type=code&client_id=client&scope=openid";
-    authzUrl += `&prompt=none&redirect_uri=${redirectUrl}&nonce=${nonce}&state=${state}`;
+    authzUrl += `&prompt=${prompt}&redirect_uri=${redirectUrl}&nonce=${nonce}&state=${state}`;
 
     if (params !== undefined) {
         authzUrl += `&${params}`;
@@ -50,5 +50,19 @@ async function login(page, redirectUrl, params) {
     assert(payload.form.code !== undefined);
     assert(payload.form.state === state);
     assert(payload.form.nonce === nonce);
+
+    await cas.log("prompt=consent must ask for consent even though the service bypasses the approval prompt");
+    await login(page, redirectUrl, "response_mode=form_post", "consent");
+    await cas.sleep(2000);
+    await cas.logPage(page);
+    await cas.assertVisibility(page, "#allow");
+    await cas.click(page, "#allow");
+    await cas.sleep(3000);
+    await cas.logPage(page);
+    await page.waitForSelector("body pre", { visible: true });
+    content = await cas.textContent(page, "body pre");
+    payload = JSON.parse(content);
+    assert(payload.form.code !== undefined);
+    assert(payload.form.state === state);
     await cas.closeBrowser(browser);
 })();

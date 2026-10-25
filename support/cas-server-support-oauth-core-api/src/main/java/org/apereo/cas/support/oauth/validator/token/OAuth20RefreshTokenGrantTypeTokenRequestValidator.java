@@ -6,6 +6,7 @@ import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
+import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20JwtAccessTokenEncoder;
 import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshToken;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -42,7 +43,7 @@ public class OAuth20RefreshTokenGrantTypeTokenRequestValidator extends BaseOAuth
             return false;
         }
 
-        val token = refreshTokenResult.get();
+        val token = OAuth20JwtAccessTokenEncoder.toDecodableCipher(configurationContext.getAccessTokenJwtBuilder()).decode(refreshTokenResult.get());
         val refreshToken = OAuth20Utils.getRequestedOAuthToken(context, configurationContext.getTicketRegistry(), token, OAuth20RefreshToken.class);
         if (refreshToken == null || refreshToken.isExpired()) {
             LOGGER.warn("Provided refresh token [{}] cannot be found in the registry or has expired", token);

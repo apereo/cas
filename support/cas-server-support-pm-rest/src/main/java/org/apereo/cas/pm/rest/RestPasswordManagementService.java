@@ -61,7 +61,7 @@ public class RestPasswordManagementService extends BasePasswordManagementService
             return null;
         }
         val url = UriComponentsBuilder.fromUriString(rest.getEndpointUrlUser())
-            .queryParam("email", query.getUsername()).build().toUriString();
+            .queryParam("email", query.getEmail()).build().toUriString();
         val result = restClient.get().uri(URI.create(url)).retrieve().toEntity(String.class);
 
         if (result.getStatusCode().value() == HttpStatus.OK.value() && result.hasBody()) {

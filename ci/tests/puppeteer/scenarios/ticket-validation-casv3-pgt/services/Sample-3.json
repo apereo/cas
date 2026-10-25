@@ -1,0 +1,11 @@
+{
+  "@class": "org.apereo.cas.services.CasRegisteredService",
+  "serviceId": "^https://localhost:9859/anything/ptonce.*",
+  "name": "ProxiedOnce",
+  "id": 3,
+  "proxyTicketExpirationPolicy": {
+    "@class": "org.apereo.cas.services.DefaultRegisteredServiceProxyTicketExpirationPolicy",
+    "numberOfUses": 1,
+    "timeToLive": "PT60S"
+  }
+}

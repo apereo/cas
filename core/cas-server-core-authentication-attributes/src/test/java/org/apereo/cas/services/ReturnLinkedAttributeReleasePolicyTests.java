@@ -50,6 +50,29 @@ class ReturnLinkedAttributeReleasePolicyTests {
     }
 
     @Test
+    void verifyFirstLinkedAttributeWithValueIsReleased() throws Throwable {
+        val allowed = CollectionUtils.<String, Object>wrap("primaryGroup", List.of("missing", "groupMembership2", "groupMembership1"));
+        val policy = new ReturnLinkedAttributeReleasePolicy().setAllowedAttributes(allowed);
+        val registeredService = CoreAttributesTestUtils.getRegisteredService();
+        when(registeredService.getAttributeReleasePolicy()).thenReturn(policy);
+
+        val attributes = new HashMap<String, List<Object>>();
+        attributes.put("groupMembership1", List.of("STUD"));
+        attributes.put("groupMembership2", List.of("ADMN"));
+
+        val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
+            .registeredService(registeredService)
+            .applicationContext(applicationContext)
+            .service(CoreAuthenticationTestUtils.getService())
+            .principal(CoreAttributesTestUtils.getPrincipal(CoreAttributesTestUtils.CONST_USERNAME, attributes))
+            .build();
+
+        val result = policy.getAttributes(releasePolicyContext);
+        assertEquals(List.of("ADMN"), result.get("primaryGroup"));
+        assertFalse(result.containsKey("groupMembership1"));
+    }
+
+    @Test
     void verifyMappedToMultipleAttributes() throws Throwable {
         val allowed1 = CollectionUtils.<String, Object>wrap("uid", List.of("cn", "givenName", "unknown", "firstName"));
         val p1 = new ReturnLinkedAttributeReleasePolicy().setAllowedAttributes(allowed1);

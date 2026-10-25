@@ -44,7 +44,7 @@ public class DelegatedClientsSaml2EndpointContributor implements DelegatedClient
             "nameIdPolicyFormat", configuration.getNameIdPolicyFormat(),
             "serviceProviderEntityId", configuration.getServiceProviderEntityId(),
             "identityProviderEntityId", identityProviderEntityId,
-            "identityProviderMetadata", configuration.getIdentityProviderMetadataResource().toString());
+            "identityProviderMetadata", configuration.getIdentityProviderMetadata().getResource().toString());
         payload.put("wantsAssertionsSigned", BooleanUtils.toStringTrueFalse(configuration.isWantsAssertionsSigned()));
         payload.put("wantsResponsesSigned", BooleanUtils.toStringTrueFalse(configuration.isWantsResponsesSigned()));
         payload.put("type", "saml2");

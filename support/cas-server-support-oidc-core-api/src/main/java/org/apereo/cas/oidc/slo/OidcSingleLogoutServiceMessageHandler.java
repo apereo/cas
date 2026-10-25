@@ -83,7 +83,7 @@ public class OidcSingleLogoutServiceMessageHandler extends BaseSingleLogoutServi
                     var newUrl = CommonHelper.addParameter(url.getUrl(), ReservedClaimNames.ISSUER,
                         issuerService.determineIssuer(Optional.empty()));
                     newUrl = CommonHelper.addParameter(newUrl, OidcConstants.CLAIM_SESSION_ID,
-                        DigestUtils.sha(context.getTicketGrantingTicket().getId()));
+                        DigestUtils.sha(DigestUtils.sha512(context.getTicketGrantingTicket().getId())));
                     newSloUrl = new SingleLogoutUrl(newUrl, RegisteredServiceLogoutType.FRONT_CHANNEL);
                 }
                 return createLogoutRequest(ticketId, selectedService, registeredService, newSloUrl, context);

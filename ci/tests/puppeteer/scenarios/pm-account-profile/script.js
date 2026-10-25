@@ -51,6 +51,46 @@ async function removeMultifactorTrustedRecord(record) {
     await cas.doRequest(`https://localhost:8443/cas/actuator/multifactorTrustedDevices/${record.recordKey}`);
 }
 
+async function verifyYubiKeyRegistration(page) {
+    await cas.goto(page, "https://localhost:8443/cas/account#divMfaRegisteredAccounts");
+    await cas.sleep(1000);
+    await cas.click(page, "button#register");
+    await cas.sleep(1000);
+    await cas.assertVisibility(page, "#yubikeyRegistrationLink");
+    await cas.click(page, "#yubikeyRegistrationLink");
+    await cas.waitForNavigation(page);
+    await cas.sleep(1000);
+    await cas.screenshot(page);
+    await cas.assertVisibility(page, "#yubiKeyForm #token");
+    await cas.assertVisibility(page, "#yubiKeyForm #accountName");
+    await cas.click(page, "#yubiKeyForm #cancel");
+    await cas.waitForNavigation(page);
+    await cas.sleep(1000);
+    await cas.assertVisibility(page, "#mfaDevicesList");
+}
+
+async function verifyWebAuthnDeviceRename(page) {
+    await importWebAuthnDevice();
+    await cas.goto(page, "https://localhost:8443/cas/account");
+    await cas.sleep(1000);
+    await cas.click(page, "#linkMfaRegisteredAccounts");
+    await cas.sleep(1000);
+    const sources = await page.$$eval("#mfaDevicesList [data-field=source]", (items) => items.map((item) => item.innerText.trim()));
+    await cas.logg(sources);
+    assert(sources.includes("Web Authn"), "The imported WebAuthn device must be listed");
+    await cas.click(page, "button[name=renameMfaDevice]");
+    await cas.sleep(500);
+    await cas.type(page, "form.cas-account-inline-form input[name=name]", "Puppeteer Key");
+    await cas.click(page, "form.cas-account-inline-form button[type=submit]");
+    await cas.waitForNavigation(page);
+    await cas.sleep(1000);
+    await cas.assertInnerTextContains(page, "#infoMessages", "The device was renamed.");
+    const names = await page.$$eval("#mfaDevicesList [data-field=name]", (items) => items.map((item) => item.innerText.trim()));
+    await cas.logg(names);
+    assert(names.includes("Puppeteer Key"));
+    await removeWebAuthnDevices();
+}
+
 async function verifyAccountManagementFlow(browser) {
     await removeWebAuthnDevices();
     const record = await importMultifactorTrustedRecord();
@@ -68,6 +108,8 @@ async function verifyAccountManagementFlow(browser) {
 
     await cas.goto(page, "https://localhost:8443/cas/account");
     await cas.sleep(1000);
+    await cas.assertVisibility(page, "#linkOverview");
+    await cas.assertAccessibility(page, "Account profile");
 
     await cas.click(page, "#linkOverview");
     await cas.sleep(1000);
@@ -102,6 +144,9 @@ async function verifyAccountManagementFlow(browser) {
     await cas.assertVisibility(page, "button#cancel");
     await cas.click(page, "button#cancel");
     await cas.sleep(2000);
+
+    await verifyYubiKeyRegistration(page);
+    await verifyWebAuthnDeviceRename(page);
 
     await cas.click(page, "#linkMfaTrustedDevices");
     await cas.sleep(1000);
