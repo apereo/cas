@@ -23,7 +23,29 @@ Support is enabled by adding the following module into the overlay:
 
 {% include_cached casproperties.html properties="cas.ticket.registry.jpa" %}
 
+## Expiration
+
+Each ticket row stores the time the ticket expires unless it is used again: the earlier of its maximum and its idle
+expiration time, or the time it was saved for a ticket that was already expired, such as one marked expired. The row is
+rewritten each time the ticket is updated, so the idle expiration follows its last use. The column is indexed, and
+the [ticket registry cleaner](Ticket-Registry-Cleaner.html) reads only the rows whose time has passed, apart from a
+full scan at startup and hourly. Rows written by earlier versions hold the maximum expiration time; they are caught
+by those full scans until their tickets are next updated. Schema updates add the index to an existing table; with
+schema generation turned off, create it by hand:
+
+```sql
+CREATE INDEX idx_ticket_expiration ON cas_tickets (expiration_time);
+```
+
 ## MySQL
+
+To scan large tables without reading every row into memory, CAS sets `useCursorFetch=true` for MySQL, together with
+`cachePrepStmts=true`, `prepStmtCacheSize=250` and `prepStmtCacheSqlLimit=2048`, unless the
+`cas.ticket.registry.jpa.properties`{: .cas-setting} settings or the JDBC URL already set them. Connector/J uses a
+server-side cursor only for statements with a fetch size, so CAS applies the configured
+`cas.ticket.registry.jpa.fetch-size`{: .cas-setting} only to queries that stream tickets, such as the cleaner's scan;
+single-ticket lookups read their row directly. With `useCursorFetch`, Connector/J prepares every statement on the
+server, and the prepared statement cache keeps that to one round trip per lookup.
 
 MySQL limits an index key to 3072 bytes, which with the `utf8mb4` character set is 768 characters. On MySQL the
 ticket table therefore declares `type` as `VARCHAR(255)`, `principal_id` as `VARCHAR(512)` and `parent_id` as

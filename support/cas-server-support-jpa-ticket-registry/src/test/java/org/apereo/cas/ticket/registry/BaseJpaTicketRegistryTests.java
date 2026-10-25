@@ -8,6 +8,7 @@ import org.apereo.cas.config.CasJpaTicketRegistryAutoConfiguration;
 import org.apereo.cas.config.CasOAuth20AutoConfiguration;
 import org.apereo.cas.config.CasWsSecuritySecurityTokenAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.support.jpa.ticketregistry.JpaTicketRegistryProperties;
 import org.apereo.cas.configuration.support.CloseableDataSource;
 import org.apereo.cas.jpa.JpaBeanFactory;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
@@ -19,7 +20,11 @@ import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketFactory;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.code.OAuth20CodeFactory;
+import org.apereo.cas.ticket.expiration.BaseDelegatingExpirationPolicy;
+import org.apereo.cas.ticket.expiration.HardTimeoutExpirationPolicy;
 import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
+import org.apereo.cas.ticket.expiration.RememberMeDelegatingExpirationPolicy;
+import org.apereo.cas.ticket.expiration.TicketGrantingTicketExpirationPolicy;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 import org.apereo.cas.util.TicketGrantingTicketIdGenerator;
 import org.apereo.cas.util.crypto.CipherExecutor;
@@ -200,6 +205,66 @@ public abstract class BaseJpaTicketRegistryTests extends BaseTicketRegistryTests
         } finally {
             newTicketRegistry.deleteTicketsFor(principal);
         }
+    }
+
+    @RepeatedTest(1)
+    void verifyStoredExpirationTime() {
+        val idlePolicy = new TicketGrantingTicketExpirationPolicy(3600, 60);
+        val idle = new TicketGrantingTicketImpl(TestTicketIdentifiers.generate().ticketGrantingTicketId(),
+            CoreAuthenticationTestUtils.getAuthentication(), idlePolicy);
+        assertEquals(idle.getLastTimeUsed().plusSeconds(60).toInstant(), JpaTicketEntityFactory.toExpirationTime(idle).toInstant());
+
+        val delegating = new RememberMeDelegatingExpirationPolicy();
+        delegating.addPolicy(BaseDelegatingExpirationPolicy.POLICY_NAME_DEFAULT, idlePolicy);
+        val delegated = new TicketGrantingTicketImpl(TestTicketIdentifiers.generate().ticketGrantingTicketId(),
+            CoreAuthenticationTestUtils.getAuthentication(), delegating);
+        assertEquals(delegated.getLastTimeUsed().plusSeconds(60).toInstant(),
+            JpaTicketEntityFactory.toExpirationTime(delegated).toInstant());
+
+        val hard = new TicketGrantingTicketImpl(TestTicketIdentifiers.generate().ticketGrantingTicketId(),
+            CoreAuthenticationTestUtils.getAuthentication(), new HardTimeoutExpirationPolicy(30));
+        assertEquals(hard.getCreationTime().plusSeconds(30).toInstant(), JpaTicketEntityFactory.toExpirationTime(hard).toInstant());
+
+        idle.markTicketExpired();
+        assertFalse(JpaTicketEntityFactory.toExpirationTime(idle).isAfter(ZonedDateTime.now(Clock.systemUTC())));
+    }
+
+    @RepeatedTest(1)
+    void verifyStreamExpiryCandidates() throws Throwable {
+        val principal = UUID.randomUUID().toString();
+        val expiring = new TicketGrantingTicketImpl(TestTicketIdentifiers.generate().ticketGrantingTicketId(),
+            CoreAuthenticationTestUtils.getAuthentication(principal), new HardTimeoutExpirationPolicy(60));
+        val lasting = new TicketGrantingTicketImpl(TestTicketIdentifiers.generate().ticketGrantingTicketId(),
+            CoreAuthenticationTestUtils.getAuthentication(principal), NeverExpiresExpirationPolicy.INSTANCE);
+        newTicketRegistry.addTicket(expiring);
+        newTicketRegistry.addTicket(lasting);
+        try {
+            val criteria = TicketRegistryStreamCriteria.builder()
+                .expiringBefore(ZonedDateTime.now(Clock.systemUTC()).plusMinutes(5)).build();
+            val candidates = jpaTicketRegistryTransactionTemplate.execute(_ -> {
+                try (val tickets = newTicketRegistry.stream(criteria)) {
+                    return tickets.map(Ticket::getId).collect(Collectors.toSet());
+                }
+            });
+            assertTrue(Objects.requireNonNull(candidates).contains(expiring.getId()));
+            assertFalse(candidates.contains(lasting.getId()));
+        } finally {
+            newTicketRegistry.deleteTicketsFor(principal);
+        }
+    }
+
+    @RepeatedTest(1)
+    void verifyMySqlDriverDefaults() {
+        val properties = new JpaTicketRegistryProperties();
+        properties.setUrl("jdbc:mysql://localhost:3306/cas?prepStmtCacheSize=50");
+        val effective = new JpaTicketEntityFactory("org.hibernate.dialect.MySQLDialect").withDialectDefaults(properties);
+        assertEquals("true", effective.getProperties().get("useCursorFetch"));
+        assertEquals("true", effective.getProperties().get("cachePrepStmts"));
+        assertFalse(effective.getProperties().containsKey("prepStmtCacheSize"));
+        assertEquals(0, effective.getFetchSize());
+        assertTrue(properties.getProperties().isEmpty());
+        assertNotEquals(0, properties.getFetchSize());
+        assertSame(properties, new JpaTicketEntityFactory("org.hibernate.dialect.PostgreSQLDialect").withDialectDefaults(properties));
     }
 
     @RepeatedTest(1)

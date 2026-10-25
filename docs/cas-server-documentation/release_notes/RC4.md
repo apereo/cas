@@ -208,6 +208,12 @@ one-time codes can be added when `cas.authn.mfa.simple.mail.accepted-email-patte
 - {: .fixed data-area="services"} The [JPA service registry](../services/JPA-Service-Management.html) keeps the identifier
   of a service that carries one, such as an imported definition; a database sequence used to replace it. New services
   get a random identifier, as with other service registries.
+- {: .changed data-area="tickets"} The [JPA ticket registry](../ticketing/JPA-Ticket-Registry.html) stores when each
+  ticket expires, including its idle timeout, and indexes it, and the [ticket registry cleaner](../ticketing/Ticket-Registry-Cleaner.html)
+  asks only for tickets whose time has passed, with a full scan at startup and hourly; it used to read and decode
+  every ticket on every run. With MySQL, the registry streams scans through a server-side cursor (`useCursorFetch`)
+  and leaves single-ticket lookups as they were; the defaults can be overridden with
+  `cas.ticket.registry.jpa.properties`{: .cas-setting}.
 - {: .fixed data-area="tickets"} Looking up sessions by attribute in the [JPA ticket registry](../ticketing/JPA-Ticket-Registry.html)
   no longer fails on MySQL when the caller runs outside a transaction, as delegated OpenID Connect and SAML2 logout do.
   Updating a ticket encrypts it once instead of twice when ticket encryption is turned on.
@@ -308,6 +314,9 @@ one-time codes can be added when `cas.authn.mfa.simple.mail.accepted-email-patte
   [service replication](../services/Configuring-Service-Replication.html): the deletion marker is kept instead of being
   removed by the first node that applies it, so nodes that still have the definition remove it rather than sending it
   back. Deletions now also replicate through Apache Kafka, whose nodes used to drop the marker on arrival.
+- {: .fixed data-area="services"} With [service replication](../services/Configuring-Service-Replication.html) through Apache
+  Kafka, a node reads the replication topic from the beginning when it starts, so it receives the service definitions that
+  other nodes loaded before it joined; it used to rely on every node sending all definitions again on every reload.
 - {: .fixed data-area="services"} With the services cache turned off (`cas.service-registry.cache.cache-size`{: .cas-setting}
   set to `0`), listing services no longer re-indexes every service it reads, which also made the next service lookup
   read the whole service registry again.

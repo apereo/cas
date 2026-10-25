@@ -85,6 +85,9 @@ Support is enabled by including the following dependency in the overlay:
 
 {% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-service-registry-stream-kafka" %}
 
+Each node reads the replication topic from the beginning when it starts. The topic is compacted and keeps the latest
+message for each service definition, so a node that starts later rebuilds every definition from it.
+
 {% include_cached casproperties.html properties="cas.service-registry.stream.kafka" %}
 
 ## Replication Modes

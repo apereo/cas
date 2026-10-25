@@ -91,6 +91,20 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
         return query;
     }
 
+    /**
+     * Marks a query that reads rows one batch at a time: read-only, with the configured fetch size. On MySQL the
+     * persistence unit has no global fetch size, so this is what makes such a query, and only such a query, use
+     * a server-side cursor instead of reading the whole result into memory.
+     *
+     * @param <T>   the query type
+     * @param query the query
+     * @return the query
+     */
+    private <T extends Query> T streaming(final T query) {
+        query.setHint(HibernateHints.HINT_FETCH_SIZE, casProperties.getTicket().getRegistry().getJpa().getFetchSize());
+        return readOnly(query);
+    }
+
     private static String quoteLiteral(final String value) {
         return value.replace("'", "''");
     }
@@ -168,7 +182,7 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
     public Collection<? extends Ticket> getTickets() {
         return transactionTemplate.execute(_ -> {
             val sql = String.format("SELECT t FROM %s t", ticketEntityFactory.getEntityName());
-            val query = readOnly(entityManager.createQuery(sql, ticketEntityFactory.getType()));
+            val query = streaming(entityManager.createQuery(sql, ticketEntityFactory.getType()));
             query.setLockMode(getConfiguredLockModeType());
 
             return query
@@ -220,15 +234,23 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
     /**
      * This method purposefully doesn't lock any rows, because the stream traversing can take an indeterminate
      * amount of time, and logging in to an application with an existing TGT will update the TGT row in the database.
-     * The page is applied by the query, so rows before it are never read.
+     * The page is applied by the query, so rows before it are never read. When the criteria ask only for tickets
+     * expiring before an instant, the indexed expiration time selects them, earliest first.
      *
      * @return streamable results
      */
     @Override
     public Stream<? extends Ticket> stream(final TicketRegistryStreamCriteria criteria) {
-        val sql = String.format("SELECT t FROM %s t", ticketEntityFactory.getEntityName());
-        val query = readOnly(entityManager.createQuery(sql, ticketEntityFactory.getType()));
+        val expiringBefore = criteria.getExpiringBefore();
+        val sql = expiringBefore == null
+            ? String.format("SELECT t FROM %s t", ticketEntityFactory.getEntityName())
+            : String.format("SELECT t FROM %s t WHERE t.expirationTime <= :expiringBefore ORDER BY t.expirationTime",
+                ticketEntityFactory.getEntityName());
+        val query = streaming(entityManager.createQuery(sql, ticketEntityFactory.getType()));
         query.setLockMode(LockModeType.NONE);
+        if (expiringBefore != null) {
+            query.setParameter("expiringBefore", expiringBefore);
+        }
         if (criteria.getFrom() > 0) {
             query.setFirstResult((int) Math.min(criteria.getFrom(), Integer.MAX_VALUE));
         }
@@ -300,7 +322,7 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
     @Override
     public Stream<? extends Ticket> getTicketsFor(final Service service) {
         val sql = String.format("SELECT t FROM %s t WHERE t.service=:service", ticketEntityFactory.getEntityName());
-        val query = readOnly(entityManager.createQuery(sql, ticketEntityFactory.getType())).setParameter("service", service.getId());
+        val query = streaming(entityManager.createQuery(sql, ticketEntityFactory.getType())).setParameter("service", service.getId());
         query.setLockMode(LockModeType.NONE);
         return jpaBeanFactory
             .streamQuery(query)
@@ -314,7 +336,7 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
     @Override
     public Stream<? extends Ticket> getSessionsFor(final String principalId) {
         val sql = String.format("SELECT t FROM %s t WHERE t.type=:type AND t.principalId=:principalId", ticketEntityFactory.getEntityName());
-        val query = readOnly(entityManager.createQuery(sql, ticketEntityFactory.getType()))
+        val query = streaming(entityManager.createQuery(sql, ticketEntityFactory.getType()))
             .setParameter("principalId", digestIdentifier(principalId))
             .setParameter("type", getTicketTypeName(TicketGrantingTicket.class));
         query.setLockMode(LockModeType.NONE);
@@ -337,7 +359,7 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
             sql = sql.concat(" AND t.principalId = :principalId");
         }
         val definition = ticketCatalog.find(criteria.getType());
-        val query = readOnly(entityManager.createQuery(sql, ticketEntityFactory.getType()));
+        val query = streaming(entityManager.createQuery(sql, ticketEntityFactory.getType()));
         query.setParameter("type", getTicketTypeName(definition.getApiClass()));
         if (StringUtils.isNotBlank(criteria.getId())) {
             query.setParameter("id", digestIdentifier(criteria.getId()));
@@ -400,7 +422,7 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
         val sql = String.format("%s WHERE t.type = :type AND %s", selectClause, criteria);
         LOGGER.debug("Executing SQL query [{}]", sql);
         val sessions = transactionTemplate.execute(_ -> {
-            val query = readOnly(entityManager.createNativeQuery(sql, ticketEntityFactory.getType()));
+            val query = streaming(entityManager.createNativeQuery(sql, ticketEntityFactory.getType()));
             parameters.forEach(query::setParameter);
             try (val rows = jpaBeanFactory.streamQuery(query)) {
                 return rows

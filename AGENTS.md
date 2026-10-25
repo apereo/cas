@@ -1114,6 +1114,11 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
   changed (`resolvedGroovyScript`). Tests prove reuse by swapping in a mock `ExecutableCompiledScript`.
 - Kafka and Hazelcast replication caches key services by id, name and service id (`buildKey`); the `Mappable`
   default is `toString()`, which changes with every edit.
+- Kafka replication consumers use a group per node named after the publisher id, a new UUID on every start, so the
+  listener factory sets `auto.offset.reset=earliest` (`KafkaObjectFactory.setAutoOffsetReset`) and a node replays the
+  compacted topic (records keyed by `buildKey`) on start. Without it, a node that starts after another node's startup
+  broadcast never receives those services, since unchanged services are no longer sent again
+  (`service-registry-replication-kafka` caught this).
 - The Kafka stream test classes share one Spring context and so one cache manager; never `clear()` it in a test.
   Assert on the test's own (unique) service only.
 - Attribute-based activation criteria (access strategy and attribute release) use `asMatchPredicate`, like
@@ -1896,6 +1901,17 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
   ticket column that is indexed on MySQL must stay within that (`MySQLJpaTicketEntity` overrides the lengths;
   `MySQLJpaTicketRegistryTests` checks the indexes exist). MariaDB (10.11, generic entity) shortens a single-column index to
   a 768-character prefix on its own but refuses the `type,principalId` index.
+- JPA `expirationTime` is the earliest expiry (`JpaTicketEntityFactory.toExpirationTime`): now when `isExpired()` at write
+  time (marked expired, out of uses), else the earlier of `toMaximumExpirationTime` and `IdleExpirationPolicy` idle time,
+  looking through `BaseDelegatingExpirationPolicy.getExpirationPolicyFor` (public for this). Do not make the delegating
+  policy implement `IdleExpirationPolicy`: Redis calls `getIdleExpirationTime(...).toInstant()` assuming non-null.
+  `TicketRegistryStreamCriteria.expiringBefore` asks for candidates; only JPA honors it. `DefaultTicketRegistryCleaner`
+  full-scans on run 0 and every 60th run (`FULL_SCAN_INTERVAL`), so tests that need a candidate run call `clean()` once
+  on a fresh cleaner first; mocks must stub `stream(any(TicketRegistryStreamCriteria.class))`, not `stream()`.
+- MySQL ticket registry: `JpaTicketEntityFactory.withDialectDefaults` copies the settings, sets fetch size 0 for the
+  persistence unit and adds `useCursorFetch`/`cachePrepStmts`/`prepStmtCacheSize`/`prepStmtCacheSqlLimit` unless set in
+  `properties` or the URL; streaming queries set the fetch size as a hint (`streaming(...)`). New streaming queries in
+  `JpaTicketRegistry` must use `streaming(...)`, lookups must not.
 - `getSessionsWithAttributes` binds the ticket type and values; attribute names stay in the JSON paths as quoted literals
   (bound on Postgres via `->`, which is matched with `jsonb_exists` rather than the `?` operator Hibernate would read as a
   parameter). `build/jpa-ticket-registry-run.sh` runs the module against MySQL, MariaDB and Postgres in turn.

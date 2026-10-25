@@ -16,6 +16,7 @@ import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
+import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -24,6 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.support.StaticApplicationContext;
+import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import static org.awaitility.Awaitility.*;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -56,6 +58,16 @@ class CasServicesStreamingKafkaConfigurationTests {
     @Autowired
     @Qualifier("casRegisteredServiceStreamPublisherIdentifier")
     private PublisherIdentifier casRegisteredServiceStreamPublisherIdentifier;
+
+    @Autowired
+    @Qualifier("registeredServiceKafkaListenerContainerFactory")
+    private ConcurrentKafkaListenerContainerFactory<?, ?> registeredServiceKafkaListenerContainerFactory;
+
+    @Test
+    void verifyListenerReadsTopicFromBeginning() {
+        assertEquals("earliest", registeredServiceKafkaListenerContainerFactory.getConsumerFactory()
+            .getConfigurationProperties().get(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG));
+    }
 
     @Test
     void verifyOperation() {

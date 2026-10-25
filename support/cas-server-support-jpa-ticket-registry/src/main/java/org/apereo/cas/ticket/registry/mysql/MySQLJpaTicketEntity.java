@@ -34,6 +34,7 @@ import jakarta.persistence.Table;
 @Table(name = "CasTickets", indexes = {
     @Index(name = "idx_ticket_principal", columnList = "principalId"),
     @Index(name = "idx_ticket_parent", columnList = "parentId"),
+    @Index(name = "idx_ticket_expiration", columnList = "expirationTime"),
     @Index(name = "idx_type_principal", columnList = "type,principalId")
 })
 @Setter
