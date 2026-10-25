@@ -10,6 +10,7 @@ import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20Jwt
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.util.crypto.DecodableCipher;
 import org.apereo.cas.util.crypto.EncodableCipher;
+import com.nimbusds.jwt.SignedJWT;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Tag;
@@ -40,6 +41,13 @@ class OidcJwtAccessTokenEncoderTests extends AbstractOidcTests {
         return OAuth20JwtAccessTokenEncoder.toDecodableCipher(oidcAccessTokenJwtBuilder, registeredService);
     }
 
+    /**
+     * The service keystore holds an RSA key reserved for encryption ({@code 1234567890}) and an EC key, so the
+     * token is signed with the EC key. ECDSA signatures are randomized: each encoding is a different token,
+     * and both must decode to the same access token.
+     *
+     * @throws Throwable the throwable
+     */
     @Test
     void verifyEncodingWithoutEncryptionForService() throws Throwable {
         val accessToken = getAccessToken();
@@ -53,7 +61,10 @@ class OidcJwtAccessTokenEncoderTests extends AbstractOidcTests {
 
         val token1 = getAccessTokenEncodingCipher(accessToken, registeredService).encode(accessToken.getId());
         val token2 = getAccessTokenEncodingCipher(accessToken, registeredService).encode(accessToken.getId());
-        assertEquals(token1, token2);
+        val decodingCipher = getAccessTokenDecodingCipher(registeredService);
+        assertEquals(accessToken.getId(), decodingCipher.decode(token1));
+        assertEquals(accessToken.getId(), decodingCipher.decode(token2));
+        assertNotEquals("1234567890", SignedJWT.parse(token1).getHeader().getKeyID());
     }
 
     @Test

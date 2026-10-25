@@ -200,6 +200,16 @@ one-time codes can be added when `cas.authn.mfa.simple.mail.accepted-email-patte
 
 ## Other Stuff
 - {: .changed data-area="project"} A large number of dependencies and libraries have been updated to their latest versions.
+- {: .changed data-area="project"} MariaDB integration tests and functional test scenarios use port `3307`, so they can run
+  alongside the MySQL tests on `3306`.
+- {: .changed data-area="tickets"} The [JPA ticket registry](../ticketing/JPA-Ticket-Registry.html) updates a ticket with a
+  single statement instead of reading the row back first, no longer deletes service tickets twice when a session ends,
+  pages ticket listings in the query instead of reading and skipping the rows before the page, and reads tickets without
+  keeping copies of them for change tracking. Session queries by attribute bind the attribute values as parameters.
+- {: .action data-area="tickets"} With MySQL, the [JPA ticket registry](../ticketing/JPA-Ticket-Registry.html) declares shorter
+  `type`, `principal_id` and `parent_id` columns so that its indexes fit MySQL's key length limit; until now MySQL refused
+  every one of them. Existing tables need the statements listed on that page. The index on the ticket type alone is gone
+  on all databases.
 - {: .fixed data-area="ui"} The account profile only ends single sign-on sessions, revokes OpenID Connect tokens and removes
   trusted devices that belong to the signed-in user; it used to act on any session, token or device whose identifier was submitted.
 - {: .fixed data-area="ui"} [Themes](../ux/User-Interface-Customization-Themes.html) other than the default one, including themes chosen per
@@ -258,6 +268,8 @@ one-time codes can be added when `cas.authn.mfa.simple.mail.accepted-email-patte
   are marked for encryption (`"use": "enc"`); when the application publishes only encryption keys, CAS signs with its own
   keys. `jwtAccessTokenSigningAlg` is honored as documented: CAS picks a signing key whose type fits the algorithm,
   and the key's own algorithm only applies when none is configured or the configured one does not fit the key.
+  Signatures made with an EC (`ES*`) or RSA-PSS (`PS*`) key are randomized, so such a token is a different string each
+  time it is encoded; the ID token's `at_hash` is computed over the access token the response carries.
 - {: .fixed data-area="attributes"} The [return linked attribute release policy](../integration/Attribute-Release-Policy-ReturnLinked.html)
   releases the values of the first linked attribute that has a value, as documented; it used to release the last one.
 - {: .changed data-area="services"} Attribute-based activation criteria for [access strategies](../services/Service-Access-Strategy-ABAC-Activation.html)

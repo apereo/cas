@@ -28,7 +28,6 @@ import jakarta.persistence.Table;
 @AttributeOverrides(@AttributeOverride(name = "body", column = @Column(columnDefinition = "text")))
 @Entity(name = "PostgresJpaTicketEntity")
 @Table(name = "CasTickets", indexes = {
-    @Index(name = "idx_ticket_type", columnList = "type"),
     @Index(name = "idx_ticket_principal", columnList = "principalId"),
     @Index(name = "idx_ticket_parent", columnList = "parentId"),
     @Index(name = "idx_ticket_service", columnList = "service"),

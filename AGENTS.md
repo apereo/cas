@@ -746,6 +746,10 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
 
 - Discovery metadata is a contract, not a description: RFC 8414 makes some entries mandatory *because* of what others advertise. `token_endpoint_auth_signing_alg_values_supported` MUST be present when `private_key_jwt` or `client_secret_jwt` is in `token_endpoint_auth_methods_supported` (and MUST NOT contain `none`). When adding an entry to one list, check whether the specification makes a second entry mandatory as a result.
 - Nothing in CAS's own test suite reads this metadata as a client would, so missing entries stay invisible until a real relying party parses it. Treat a third-party client's complaint about metadata as a CAS defect until the specification says otherwise.
+- Do not assert that encoding a JWT twice gives the same string. The OIDC test `keystore.jwks` holds an RSA key marked
+  `"use": "enc"` and an EC key; only the EC key signs, and ECDSA (like RSA-PSS and any JWE) is randomized. Compare decoded
+  values or headers, and hash the token actually issued (`IdTokenGenerationContext.encodedAccessToken`) when checking
+  `at_hash`.
 
 ## Sender-constrained tokens (DPoP)
 
@@ -1883,6 +1887,28 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
   databases. Scenarios on MySQL/PostgreSQL with `cas.ticket.registry.core.enable-locking=true` must set
   `spring.integration.jdbc.initialize-schema=always`, or every lock fails ("Failed to lock for: TGT-...") and no service
   ticket is issued; a scenario that never asks for a service ticket will not notice.
+- `JpaTicketRegistry` never leaves a managed entity behind: `updateTicket` is a bulk JPQL `UPDATE` (falling back to
+  `persist` when no row matched), which bypasses the persistence context, so every read detaches what it loaded when a
+  transaction is bound (`toDetachedTicket`) and adding flushes and detaches (`persistDetached`). A new read path must do
+  the same, or a later read in the same transaction gets the copy from before the update. Reads also carry
+  `HibernateHints.HINT_READ_ONLY`. `BaseJpaTicketRegistryTests` asserts zero managed entities after such sequences.
+- MySQL caps index keys at 3072 bytes (768 `utf8mb4` characters) and `ddl-auto=update` only logs a refused index, so a
+  ticket column that is indexed on MySQL must stay within that (`MySQLJpaTicketEntity` overrides the lengths;
+  `MySQLJpaTicketRegistryTests` checks the indexes exist). MariaDB (10.11, generic entity) shortens a single-column index to
+  a 768-character prefix on its own but refuses the `type,principalId` index.
+- `getSessionsWithAttributes` binds the ticket type and values; attribute names stay in the JSON paths as quoted literals
+  (bound on Postgres via `->`, which is matched with `jsonb_exists` rather than the `?` operator Hibernate would read as a
+  parameter). `build/jpa-ticket-registry-run.sh` runs the module against MySQL, MariaDB and Postgres in turn.
+- JPA registry streams (`stream`, `getSessionsFor`, `getTicketsFor`, `getSessionsWithAttributes`) must be consumed inside a
+  ticket transaction: outside one, MySQL fails on the first row with "Operation not allowed after ResultSet closed",
+  because the connection goes back to the pool. Tests that read them wrap the read in `jpaTicketRegistryTransactionTemplate`.
+- Tests in classes extending `BaseTicketRegistryTests` must be `@RepeatedTest`, never `@Test`: its `@BeforeEach` takes
+  a `RepetitionInfo`.
+- MariaDB runs on host port 3307 (`ci/tests/mariadb/run-mariadb-server.sh` maps `3307:3306`), MySQL on 3306, so `testJDBC`
+  can run both. Every MariaDB test class uses `jdbc:mariadb://localhost:3307` with `@EnabledIfListeningOnPort(port = 3307)`,
+  as do the `mfa-gauth-login-encrypted`, `mfa-webauthn-register-logout-login` and `mfa-yubikey-storage` scenarios (their
+  `dockerExec` calls run inside the container and are unaffected). A MariaDB test pointed at 3306 reaches MySQL and fails
+  with `caching_sha2_password ... sslMode=trust`.
 - Two-node scenarios for any ticket registry call `cas.verifyTicketRegistryAcrossNodes()` (in `cas.js`): ST from node 1
   validates once on node 2, SSO is honored across nodes, and logout on node 2 ends the session on node 1 even when the old
   TGC is replayed. `pulsar-ticket-registry`, `kafka-ticket-registry`, `jpa-ticket-registry-loadbalanced` and
