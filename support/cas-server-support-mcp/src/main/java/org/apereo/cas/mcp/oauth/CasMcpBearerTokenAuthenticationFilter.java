@@ -1,7 +1,10 @@
 package org.apereo.cas.mcp.oauth;
 
 import module java.base;
+import org.apereo.cas.authentication.credential.BasicIdentifiableCredential;
+import org.apereo.cas.authentication.principal.NullPrincipal;
 import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.model.support.mcp.McpOAuthProperties;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.ServicesManager;
@@ -14,6 +17,7 @@ import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.util.RegexUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -43,7 +47,7 @@ import jakarta.servlet.http.HttpServletResponse;
  * or bound to a DPoP key or client certificate, must have been issued for the MCP endpoint as a resource or audience,
  * and the application it was issued to must still be allowed. Such a token is refused with {@code 401 invalid_token}.
  * A valid token without the {@code mcp:read} scope is refused with {@code 403 insufficient_scope}. The caller is
- * granted the {@code MCP_ADMIN} role only when the principal of the token has every attribute in
+ * granted the {@code MCP_ADMIN} role only when the person behind the token has every attribute in
  * {@link McpOAuthProperties#getRequiredAttributes()}, with a value that matches; otherwise the caller may connect and
  * list tools, and tool calls are refused. The security context is kept in a request attribute only, so that asynchronous
  * dispatches of the same request see it, and never in the HTTP session: every request must present the token again.
@@ -72,6 +76,8 @@ public class CasMcpBearerTokenAuthenticationFilter extends OncePerRequestFilter 
     private final ServicesManager servicesManager;
 
     private final ObjectProvider<JwtBuilder> accessTokenJwtBuilder;
+
+    private final PrincipalResolver principalResolver;
 
     private final SecurityContextRepository securityContextRepository = new RequestAttributeSecurityContextRepository();
 
@@ -146,15 +152,22 @@ public class CasMcpBearerTokenAuthenticationFilter extends OncePerRequestFilter 
     }
 
     /**
-     * Whether the principal has every required attribute with a value that fully matches its expression.
-     * Without required attributes, nobody is an administrator.
+     * Whether the person behind the token has every required attribute with a value that fully matches its expression.
+     * Without required attributes, nobody is an administrator. The attributes are those CAS resolves for the person now,
+     * through the principal resolvers, rather than those released to the client in the token, so the role does not
+     * depend on the client's attribute release policy and follows changes to the person's attributes; when nothing can
+     * be resolved, the attributes of the token's principal are used.
      *
-     * @param principal the principal of the access token
+     * @param tokenPrincipal the principal of the access token
      * @return true if the principal is granted the MCP_ADMIN role
      */
-    protected boolean isAdministrator(final Principal principal) {
+    protected boolean isAdministrator(final Principal tokenPrincipal) {
         val required = properties.getRequiredAttributes();
-        return !required.isEmpty() && required.entrySet().stream().allMatch(entry -> {
+        if (required.isEmpty()) {
+            return false;
+        }
+        val principal = resolvePrincipal(tokenPrincipal);
+        return required.entrySet().stream().allMatch(entry -> {
             val pattern = RegexUtils.createPattern(entry.getValue());
             return principal.getAttributes().getOrDefault(entry.getKey(), List.of())
                 .stream()
@@ -186,6 +199,13 @@ public class CasMcpBearerTokenAuthenticationFilter extends OncePerRequestFilter 
             }
         }
         return null;
+    }
+
+    private Principal resolvePrincipal(final Principal tokenPrincipal) {
+        val credential = new BasicIdentifiableCredential(tokenPrincipal.getId());
+        val resolved = FunctionUtils.doAndHandle(() -> principalResolver.resolve(credential,
+            Optional.of(tokenPrincipal), Optional.empty(), Optional.empty()));
+        return resolved == null || resolved instanceof NullPrincipal ? tokenPrincipal : resolved;
     }
 
     private @Nullable OAuth20AccessToken findAccessToken(final String id) {

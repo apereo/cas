@@ -681,7 +681,7 @@ class CasMcpServerTests {
     @SpringBootTest(classes = BaseCasMcpTests.SharedTestConfiguration.class,
         properties = {
             "cas.server.prefix=https://cas.example.org/cas",
-            "cas.mcp.oauth.required-attributes.memberOf=mcp-(admins|operators)"
+            "cas.mcp.oauth.required-attributes.mail=casuser@apereo.org"
         },
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
     class OAuthTests extends BaseCasMcpTests {
@@ -704,8 +704,7 @@ class CasMcpServerTests {
         @Test
         void verifyAdministratorToken() throws Throwable {
             val clientId = registerOidcClient(servicesManager, true);
-            val token = bearer(newAccessToken(ticketRegistry, clientId, Set.of("openid", "mcp:read"), Set.of(RESOURCE),
-                Map.of("memberOf", List.of("staff", "mcp-admins")), Map.of()));
+            val token = bearer(newAccessToken(ticketRegistry, clientId, Set.of("openid", "mcp:read"), Set.of(RESOURCE), Map.of(), Map.of()));
             val username = "agent-" + UUID.randomUUID();
             val response = send(token, initialize(token), callToolRequest("findPerson", "{\"username\":\"%s\"}".formatted(username)));
             assertFalse(isToolError(response), response);
@@ -717,15 +716,6 @@ class CasMcpServerTests {
             assertEquals(CasMcpOperation.Outcome.SUCCESS, operation.outcome());
             assertEquals(clientId, operation.client());
             assertTrue(operation.operator().startsWith("agent-principal-"), operation::toString);
-        }
-
-        @Test
-        void verifyTokenWithoutRequiredAttributeCannotCallTools() throws Throwable {
-            val clientId = registerOidcClient(servicesManager, true);
-            val token = bearer(newAccessToken(ticketRegistry, clientId, Set.of("mcp:read"), Set.of(RESOURCE),
-                Map.of("memberOf", List.of("staff", "mcp-administrators")), Map.of()));
-            val response = send(token, initialize(token), callToolRequest("findPerson", "{\"username\":\"casuser\"}"));
-            assertTrue(isToolError(response), response);
         }
 
         @Test

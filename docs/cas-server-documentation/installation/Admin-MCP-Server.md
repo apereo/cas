@@ -90,7 +90,8 @@ Otherwise the request is refused with `401` and `error="invalid_token"`. A token
 
 Like a Basic user, the person behind a token may connect and list tools, but only calls tools with the `MCP_ADMIN` role. With
 an access token, the role is granted only to people whose principal attributes match all the attributes and regular expressions
-defined in CAS settings. No attributes are defined by default, so tokens grant nobody the role until you define them. The audit
+defined in CAS settings. These are the attributes CAS resolves for the person when the token is used, through its attribute
+repositories, so the role does not depend on the attributes released to the client and follows changes to the person's attributes. No attributes are defined by default, so tokens grant nobody the role until you define them. The audit
 record of a call made with a token also names the OAuth client.
 
 {% include_cached casproperties.html properties="cas.mcp.oauth" %}

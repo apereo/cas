@@ -407,7 +407,9 @@ public class CasMcpAutoConfiguration {
             @Qualifier(ServicesManager.BEAN_NAME)
             final ObjectProvider<ServicesManager> servicesManager,
             @Qualifier(JwtBuilder.ACCESS_TOKEN_JWT_BUILDER_BEAN_NAME)
-            final ObjectProvider<JwtBuilder> accessTokenJwtBuilder) {
+            final ObjectProvider<JwtBuilder> accessTokenJwtBuilder,
+            @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
+            final ObjectProvider<PrincipalResolver> principalResolver) {
             val endpoint = mcpServerStreamableHttpProperties.getMcpEndpoint();
             val protectedResource = CasMcpProtectedResource.of(casProperties, endpoint);
             return new CasWebSecurityConfigurer<>() {
@@ -421,7 +423,8 @@ public class CasMcpAutoConfiguration {
                 public CasWebSecurityConfigurer<HttpSecurity> configure(final HttpSecurity http) throws Exception {
                     val matcher = PathPatternRequestMatcher.withDefaults().matcher(endpoint);
                     val filter = new CasMcpBearerTokenAuthenticationFilter(matcher, protectedResource,
-                        casProperties.getMcp().getOauth(), ticketRegistry.getObject(), servicesManager.getObject(), accessTokenJwtBuilder);
+                        casProperties.getMcp().getOauth(), ticketRegistry.getObject(), servicesManager.getObject(), accessTokenJwtBuilder,
+                        principalResolver.getObject());
                     http.addFilterBefore(filter, BasicAuthenticationFilter.class)
                         .exceptionHandling(customizer -> customizer.defaultAuthenticationEntryPointFor(
                             new CasMcpAuthenticationEntryPoint(matcher, protectedResource), matcher));

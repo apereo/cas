@@ -66,7 +66,9 @@ description: "Review and extend the CAS MCP server (support/cas-server-support-m
   `CasMcpBearerTokenAuthenticationFilter` is built inside a `CasWebSecurityConfigurer`, never exposed as a bean (Spring Boot
   registers `Filter` beans for every request). It sits before `BasicAuthenticationFilter`, acts only on the MCP path with a
   `Bearer` header, sets a `CasMcpBearerTokenAuthentication` (principal id, client id, scopes) without saving it, and grants
-  `ROLE_MCP_ADMIN` only from `cas.mcp.oauth.required-attributes` (empty matches nobody). The unauthenticated challenge comes from
+  `ROLE_MCP_ADMIN` only from `cas.mcp.oauth.required-attributes` (empty matches nobody), checked against attributes resolved
+  through `defaultPrincipalResolver` (token principal as current principal): a token's principal carries only the attributes
+  released to the client, so `memberOf` and the like are usually missing there. The unauthenticated challenge comes from
   `defaultAuthenticationEntryPointFor(..., mcp matcher)`, registered before `httpBasic` initializes so it wins. Being first
   also makes it Spring Security's fallback for requests no entry point claims (browser requests to actuators), so outside
   the MCP path it answers with the Basic challenge alone. A configurer that sets an explicit `authenticationEntryPoint`

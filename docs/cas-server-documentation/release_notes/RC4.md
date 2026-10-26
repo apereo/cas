@@ -369,7 +369,8 @@ one-time codes can be added when `cas.authn.mfa.simple.mail.accepted-email-patte
   tokens issued by CAS, alongside Basic authentication. It publishes RFC 9728 protected resource metadata that names CAS as the
   authorization server, challenges unauthenticated clients with both `Bearer` and `Basic`, and accepts a token only when it was
   issued for the MCP endpoint with the `mcp:read` scope to an application that is still allowed. The `MCP_ADMIN` role comes from
-  the principal attributes listed in `cas.mcp.oauth.required-attributes`{: .cas-setting}, which match nobody by default, and the
+  the principal attributes listed in `cas.mcp.oauth.required-attributes`{: .cas-setting}, resolved for the person when the token
+  is used rather than taken from the attributes released to the client; they match nobody by default, and the
   audit record of a call names the OAuth client. The `AI.mcp-oauth` feature toggle turns it off.
 - {: .fixed data-area="tickets"} With the [stateless ticket registry](../ticketing/Stateless-Ticket-Registry.html),
   device codes keep their requested scopes, so tokens issued for an approved device code carry them; the scopes used
