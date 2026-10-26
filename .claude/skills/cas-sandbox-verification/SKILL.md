@@ -1,0 +1,45 @@
+---
+name: cas-sandbox-verification
+description: "Compile and test CAS changes from a restricted sandbox or remote VM where Gradle, JDK 25 or Maven Central are unavailable: the VM javac/Error Prone compile check, the VM test runner and its stale build dirs, emulators (moto, fakeredis, UnboundID), background-process limits, and fetching specifications. Use whenever Gradle cannot run in the current environment."
+---
+
+# Verifying CAS changes from a sandbox
+
+## OIDC verifiable credentials (OID4VCI / OID4VP)
+
+- The VM test runner's copied build dirs predate any unpushed round: compile the Java files of the previous round's commit together with the current ones, or settings and methods added there are missing. `AbstractTicketRegistry.getTicket(id, type)` throws when the ticket is absent; use `getTicket(id)` to probe.
+- The openid.net spec pages are long: WebFetch summaries truncate and can invent text. Fetch the markdown source (`raw.githubusercontent.com/openid/OpenID4VCI/main/1.0/...`, `.../OpenID4VC-HAIP/main/1.0/...`) with curl and grep it instead.
+- The VM compile check can also run Error Prone, which `-Werror` turns every warning of into a build failure: add `-XDcompilePolicy=byfile -XDshould-stop.ifError=FLOW "-Xplugin:ErrorProne <the -Xep flags of project-conventions.gradle> -XepOpt:NullAway:OnlyNullMarked=true -XepOpt:NullAway:JSpecifyMode=true"`, the `-J--add-exports`/`--add-opens` of `jdk.compiler`'s `api, main, model, parser, processing, tree, util, code, comp, file` packages, and every cached jar on `-processorpath`. NullAway refuses to start without one of its package options. For the VM test runner, leave out every `spring-cloud-*` jar except `spring-cloud-commons` and `spring-cloud-context` (the Vault, Consul and Kubernetes bootstrap configurations otherwise start and fail).
+- IETF drafts are blocked on ietf.org here: fetch the markdown source from the draft's GitHub repository at the published tag (`raw.githubusercontent.com/oauth-wg/<repo>/draft-ietf-oauth-<name>-NN/draft-ietf-oauth-<name>.md`), and confirm the number is the latest published one.
+- The compile script's `main` mode wipes `out/`, test classes included: run `test` mode again after every `main` run, or the runner falls back to stale prebuilt test classes and silently runs fewer tests.
+- A process a `device_bash` call starts in the background dies when the call returns, `setsid` and `nohup` included, so a test batch left running there leaves an empty log. Run each batch in the foreground under `timeout 170` with `timeout_ms` at 180000, splitting the classes when they take longer.
+- Refreshing the VM build after upstream moves on: copy each module's `build/classes/java/{main,test}` and `build/resources/{main,test}` from the maintainer's Gradle build into `cls/` and `res/` (`refresh-cls.sh`), take the latest jar of each artifact from the connected Gradle cache (`files-2.1`) and rewrite the class paths in place (`refresh-jars.py`, then `addnew.py` for artifacts the class paths never had, leaving out Gradle plugins and CAS's own published jars), and set the compile base (`base.txt`) to a commit older than that build. Split artifacts replace a jar outright (ClassGraph 6 is `classgraph` plus `-base`, `-classpath` and `-vfs`): drop the old version rather than keeping both.
+
+## Sender-constrained tokens (DPoP)
+
+- Upstream commits since the compile script's base can touch modules whose prebuilt classes are stale: restrict its file list with `include.txt` (module paths) rather than compiling every changed file.
+
+## Environment limits
+
+- A remote container may lack JDK 25: `apt-get install openjdk-25-jdk-headless` provides it, and `CI=true` drops the JetBrains vendor requirement of the toolchain. When Maven Central answers `429`, route resolution through `maven-central.storage-download.googleapis.com` with a Gradle init script kept outside the repository; that mirror lags new releases by a day or so, so leave Central in place, restricted to the groups the mirror does not have yet.
+- Gradle may be unavailable in a sandboxed or remote review environment because the wrapper cannot download its distribution. When that happens, say the verification was not run instead of implying a test result, and fall back to static review such as `git diff --check` and targeted reading.
+
+## View and presentation layer
+
+- Claude's session cannot get folder access to `~/.gradle` (the auto-mode classifier refuses it), so the VM javac check
+  below is not available there; compiled classes under `*/build/classes` from Misagh's IDE show which main modules
+  compiled, and `build/account-profile-run.sh` runs compile, checkstyle, the touched tests and the profile scenarios.
+
+## Google Authenticator credential repositories (all backends)
+
+- Compile-check changed sources when Gradle cannot run: in the device VM, download a JDK 25 from `api.github.com/repos/adoptium/temurin25-binaries/releases/assets/<id>` (`Accept: application/octet-stream`; `github.com` itself is blocked), get read access to `~/.gradle/caches/modules-2/files-2.1`, copy the highest version of every jar to local disk (the mount runs out of file handles with ~1,700 jars open), and run `javac -proc:full -processorpath <lombok 1.18.x jar>` with an `@argfile` classpath of the repo's `*/build/classes/java/{main,test}` plus those jars. To run tests in the same VM: copy `*/build/{classes/java,resources}/{main,test}` to local disk (class lookups across ~1,400 directories on the mount are too slow), build the classpath from the module's project closure (parse `project(":...")` references in `build.gradle`, following `configuration: "tests"` into test classes) instead of every module, pick jar versions from `gradle/libs.versions.toml` rather than the highest in the cache (the highest Hibernate/Hypersistence pairing does not load), leave out `spring-cloud-*` integration jars and `log4j-to-slf4j`/`logback`, put the freshly compiled changed classes first, and drive JUnit with a small `LauncherFactory` main. Services such as LDAP, MongoDB or DynamoDB are not available there, so those suites still need a local run.
+- In the VM test runner, tenant property binding (`containsBindingFor(...)`) did not take effect, so tenant-specific crypto paths pass there and can still fail under Gradle; check those with a local Gradle run.
+- The VM test runner's copied build dirs go stale once Misagh commits: recompile every Java file touched by the commits of the current work (`git diff --name-only <first commit>^ HEAD`) plus the uncommitted ones, not just `git status`.
+- Use `git --no-optional-locks` for every read-only git command in the device VM; a plain `git status` leaves `.git/index.lock` behind there.
+- DynamoDB-backed tests can run in the device VM against moto: `pip3 install --user "moto[server]"` works there (Maven Central and MongoDB downloads do not), then start `~/.local/bin/moto_server -p 8000` and run the suite in the same `device_bash` call. It is not DynamoDB Local, so CI can still differ.
+- More services for the VM test runner: `pip3 install --user fakeredis` provides `fakeredis.TcpFakeServer`, a Redis emulator on 6379. An UnboundID `InMemoryDirectoryServer` on 10389, with base `dc=example,dc=org`, bind `cn=Directory Manager`/`password` and the schema turned off, runs the GAuth LDAP suite. Start either one in the background in the same `device_bash` call as the tests, and stop it by a PID file, not `pkill -f <name>`: that pattern also matches the calling shell and kills it.
+- To compile a Java file outside the repository with Lombok, copy the repo's `lombok.config` next to it; without it, `@Slf4j` creates `log` rather than `LOGGER`.
+
+## Hazelcast ticket registry
+
+- In the VM test runner, leave `cas-server-*` jars of the Gradle cache off the classpath: released CAS jars such as `cas-server-webapp-resources` bring their own `application.properties` (`spring.mvc.pathmatch.matching-strategy=ant-path-matcher`) and the context fails to start. Processes started in the background are killed when the `device_bash` call returns, even with `setsid nohup`; run each suite in the foreground under the call's time limit, one nested class at a time if needed. To run in parallel like CI, pass all of CI's settings, `junit.jupiter.execution.parallel.config.executor-service=WORKER_THREAD_POOL` included: without it, work stealing runs `@Transactional` base tests on a thread that already holds a test transaction (`Cannot start new transaction without ending existing transaction`), before and after any change. The Hazelcast suites run there (embedded members); modules without prebuilt test classes need their tests compiled first.
