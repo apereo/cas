@@ -104,10 +104,24 @@ description: "Review and change ticket registries: stateless (compact tickets), 
   type-specific code). Fix call sites as scenarios need them, not all at once. Delegation: the webflow manager keeps the
   built transient ticket in the flow (it carries the request properties) and hands the stored ticket to
   `DelegatedClientSessionManager.trackIdentifier(WebContext, Ticket, Client)` and the CAS client session key. Still
-  open: account registration and others not in the scenarios. Password reset (`DefaultPasswordResetUrlBuilder` puts the
-  stored TST id in the link; scenario `forgot-password-stateless`) and dynamic client registration
+  open: UMA permission tickets and WS-Federation (no compactors; not listed as supported). Password reset
+  (`DefaultPasswordResetUrlBuilder` puts the stored TST id in the link; scenario `forgot-password-stateless`), account
+  registration (`SubmitAccountRegistrationAction` puts the stored TST id in the activation link; scenario
+  `account-mgmt-registration-stateless`) and dynamic client registration
   (`OidcDynamicClientRegistrationEndpointController.generateRegistrationAccessToken` returns the stored token, resolved
-  through `resolveAccessToken`; scenario `oidc-client-registration-stateless`) are done. Reset links are not single-use.
+  through `resolveAccessToken`; scenario `oidc-client-registration-stateless`) are done. Reset and activation links are
+  not single-use.
+- CIBA on the stateless registry is push only (maintainer decision; poll and ping documented as unsupported: readiness
+  is server-side state and `consumeCibaRequest` needs `deleteTicket` to return 1). `OidcCibaRequestCompactor`
+  (oidc-core-api) keeps client id, scopes, resources, principal id, notification token, user code, binding message and
+  tenant, rebuilds through the CIBA factory, and keeps the principal id with attributes from the principal resolver (as the TGT compactor does; a `NullPrincipal` from the resolver must not replace the id). A stateless request's
+  `getEncodedId()` is its own (already encrypted) id, so `auth_req_id` is the stored id with no second encoding;
+  `OidcCibaController.recordCibaRequest` reads the stored request back, and `fetchOidcCibaRequest` looks up `CIBA-` ids
+  as is (the encoded-id equality check still rejects raw stateful ids). The ID token `auth_req_id` claim comes from
+  `IdTokenGenerationContext.cibaRequestId` (set from the response result), since the stateless access token does not
+  keep that attribute. Scenario `oidc-login-ciba-stateless`.
+- SAML IdP SSO path (`buildResponseBasedSingleSignOnSession`): the service ticket id is only the assertion's
+  `SessionIndex` and is never read back (SAML2 SLO is unsupported here), so the raw id is fine.
 - Duo `TICKET_REGISTRY` session storage is unsupported with the stateless registry (maintainer decision: document only,
   no code). The TST holds the whole flow (authentication, result builder, all webflow scopes) as objects, Duo's SDK
   rejects a `state` over 1024 characters, and the Duo webflow is wired at startup by storage type, so a runtime fallback

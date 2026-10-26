@@ -372,6 +372,12 @@ one-time codes can be added when `cas.authn.mfa.simple.mail.accepted-email-patte
   the principal attributes listed in `cas.mcp.oauth.required-attributes`{: .cas-setting}, resolved for the person when the token
   is used rather than taken from the attributes released to the client; they match nobody by default, and the
   audit record of a call names the OAuth client. The `AI.mcp-oauth` feature toggle turns it off.
+- {: .new data-area="oidc"} OpenID Connect clients may identify themselves with
+  [client ID metadata documents](../authentication/OIDC-Authentication-Client-ID-Metadata-Documents.html), as MCP clients do:
+  the client id is an HTTPS URL whose JSON document CAS fetches, checks and registers, refreshes when its cache lifetime ends
+  and removes once unused. Documents are only fetched from public addresses, without redirects and up to 5 KB, and these
+  clients always see a consent screen that names the host of the client id. Turned off by default; enable it with
+  `cas.authn.oidc.registration.client-id-metadata-document.enabled=true`{: .cas-setting}.
 - {: .fixed data-area="tickets"} With the [stateless ticket registry](../ticketing/Stateless-Ticket-Registry.html),
   device codes keep their requested scopes, so tokens issued for an approved device code carry them; the scopes used
   to be dropped.

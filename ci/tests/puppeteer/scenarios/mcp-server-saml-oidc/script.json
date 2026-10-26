@@ -13,6 +13,7 @@
 
     "--cas.authn.attribute-repository.stub.attributes.memberOf=mcp-admins",
     "--cas.mcp.oauth.required-attributes.memberOf=mcp-admins",
+    "--cas.authn.oidc.registration.client-id-metadata-document.enabled=true",
 
     "--cas.service-registry.core.init-from-json=false",
     "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services",

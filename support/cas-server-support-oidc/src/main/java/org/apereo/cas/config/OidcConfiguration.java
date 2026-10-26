@@ -12,6 +12,7 @@ import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
+import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.logout.slo.SingleLogoutServiceLogoutUrlBuilder;
 import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.notifications.CommunicationsManager;
@@ -43,6 +44,9 @@ import org.apereo.cas.oidc.discovery.webfinger.OidcWebFingerUserInfoRepository;
 import org.apereo.cas.oidc.discovery.webfinger.userinfo.OidcEchoingWebFingerUserInfoRepository;
 import org.apereo.cas.oidc.discovery.webfinger.userinfo.OidcGroovyWebFingerUserInfoRepository;
 import org.apereo.cas.oidc.discovery.webfinger.userinfo.OidcRestfulWebFingerUserInfoRepository;
+import org.apereo.cas.oidc.dynareg.DefaultOidcClientIdMetadataDocumentFetcher;
+import org.apereo.cas.oidc.dynareg.DefaultOidcClientIdMetadataDocumentResolver;
+import org.apereo.cas.oidc.dynareg.OidcClientIdMetadataDocumentResolver;
 import org.apereo.cas.oidc.dynareg.OidcClientRegistrationRequest;
 import org.apereo.cas.oidc.dynareg.OidcClientRegistrationRequestSerializer;
 import org.apereo.cas.oidc.issuer.OidcDefaultIssuerService;
@@ -61,6 +65,8 @@ import org.apereo.cas.oidc.scopes.DefaultOidcAttributeReleasePolicyFactory;
 import org.apereo.cas.oidc.scopes.OidcAttributeReleasePolicyFactory;
 import org.apereo.cas.oidc.services.OidcServiceRegistryListener;
 import org.apereo.cas.oidc.services.OidcServicesManagerRegisteredServiceLocator;
+import org.apereo.cas.oidc.ticket.OidcCibaRequest;
+import org.apereo.cas.oidc.ticket.OidcCibaRequestCompactor;
 import org.apereo.cas.oidc.ticket.OidcCibaRequestExpirationPolicyBuilder;
 import org.apereo.cas.oidc.ticket.OidcCibaRequestFactory;
 import org.apereo.cas.oidc.ticket.OidcDefaultCibaRequestFactory;
@@ -1061,6 +1067,25 @@ class OidcConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = OidcClientIdMetadataDocumentResolver.BEAN_NAME)
+        public OidcClientIdMetadataDocumentResolver oidcClientIdMetadataDocumentResolver(
+            final CasConfigurationProperties casProperties,
+            @Qualifier(ServicesManager.BEAN_NAME)
+            final ServicesManager servicesManager,
+            @Qualifier("oidcClientRegistrationRequestTranslator")
+            final OidcClientRegistrationRequestTranslator oidcClientRegistrationRequestTranslator,
+            @Qualifier("clientRegistrationRequestSerializer")
+            final StringSerializer<OidcClientRegistrationRequest> clientRegistrationRequestSerializer,
+            @Qualifier(HttpClient.BEAN_NAME_HTTPCLIENT)
+            final HttpClient httpClient) {
+            val properties = casProperties.getAuthn().getOidc().getRegistration().getClientIdMetadataDocument();
+            return new DefaultOidcClientIdMetadataDocumentResolver(properties, servicesManager,
+                oidcClientRegistrationRequestTranslator, clientRegistrationRequestSerializer,
+                new DefaultOidcClientIdMetadataDocumentFetcher(httpClient, Beans.newDuration(properties.getTimeout())));
+        }
+
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "oidcClientRegistrationRequestTranslator")
         public OidcClientRegistrationRequestTranslator oidcClientRegistrationRequestTranslator(
             @Qualifier(OidcConfigurationContext.BEAN_NAME)
@@ -1351,6 +1376,19 @@ class OidcConfiguration {
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager) {
             return new OidcPushedAuthorizationRequestCompactor(ticketFactory, serviceFactory, principalFactory, servicesManager);
+        }
+
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "oidcCibaRequestTicketCompactor")
+        public TicketCompactor<OidcCibaRequest> oidcCibaRequestTicketCompactor(
+            @Qualifier(TicketFactory.BEAN_NAME)
+            final ObjectProvider<TicketFactory> ticketFactory,
+            @Qualifier(PrincipalFactory.BEAN_NAME)
+            final PrincipalFactory principalFactory,
+            @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
+            final ObjectProvider<PrincipalResolver> principalResolver) {
+            return new OidcCibaRequestCompactor(ticketFactory, principalFactory, principalResolver);
         }
     }
 }

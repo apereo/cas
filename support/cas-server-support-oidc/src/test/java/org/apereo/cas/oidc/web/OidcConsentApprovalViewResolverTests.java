@@ -5,6 +5,8 @@ import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.ticket.OidcPushedAuthorizationRequest;
 import org.apereo.cas.oidc.ticket.OidcPushedAuthorizationRequestFactory;
+import org.apereo.cas.services.DefaultRegisteredServiceProperty;
+import org.apereo.cas.services.RegisteredServiceProperty.RegisteredServiceProperties;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
@@ -81,6 +83,37 @@ class OidcConsentApprovalViewResolverTests extends AbstractOidcTests {
         assertTrue(consentApprovalViewResolver.resolve(context, service).hasView());
 
         request.setParameter(OAuth20Constants.SCOPES_APPROVAL_KEY, mv.getModel().get("approvalKey").toString());
+        assertFalse(consentApprovalViewResolver.resolve(context, service).hasView());
+    }
+
+    @Test
+    void verifyClientIdMetadataDocumentClientsAlwaysConsent() throws Throwable {
+        val request = new MockHttpServletRequest();
+        request.addHeader(HttpHeaders.USER_AGENT, "MSIE");
+        request.addParameter(OAuth20Constants.REDIRECT_URI, "http://127.0.0.1:3000/callback");
+        val response = new MockHttpServletResponse();
+        val context = new JEEContext(request, response);
+
+        val profile = new CommonProfile();
+        profile.setId("casTest");
+        val profileManager = new ProfileManager(context, oauthDistributedSessionStore);
+        profileManager.save(true, profile, false);
+
+        val service = getOidcRegisteredService("https://app.example.org/" + UUID.randomUUID() + "/client.json", randomServiceUrl());
+        service.setBypassApprovalPrompt(true);
+        service.getProperties().put(RegisteredServiceProperties.OIDC_CLIENT_ID_METADATA_DOCUMENT.getPropertyName(),
+            new DefaultRegisteredServiceProperty(Boolean.TRUE.toString()));
+        servicesManager.save(service);
+        val mv = consentApprovalViewResolver.resolve(context, service);
+        assertTrue(mv.hasView());
+        val model = mv.getModel();
+        assertEquals(Boolean.TRUE, model.get("clientIdMetadataDocument"));
+        assertEquals("app.example.org", model.get("clientIdHost"));
+        assertEquals("127.0.0.1", model.get("redirectHost"));
+        assertEquals(Boolean.TRUE, model.get("loopbackRedirect"));
+
+        request.addParameter(OAuth20Constants.BYPASS_APPROVAL_PROMPT, Boolean.TRUE.toString());
+        request.addParameter(OAuth20Constants.SCOPES_APPROVAL_KEY, model.get("approvalKey").toString());
         assertFalse(consentApprovalViewResolver.resolve(context, service).hasView());
     }
 

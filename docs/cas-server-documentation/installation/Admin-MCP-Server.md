@@ -99,6 +99,11 @@ record of a call made with a token also names the OAuth client.
 The OpenID Connect provider only issues scopes it supports, so add `mcp:read` to the scopes of the OpenID Connect discovery
 document and to the scopes of the applications that may call the MCP server.
 
+MCP clients usually have no prior relationship with CAS. Besides applications registered by an administrator, they
+can identify themselves with [client ID metadata documents](../authentication/OIDC-Authentication-Client-ID-Metadata-Documents.html),
+which the MCP authorization specification recommends, or register through
+[dynamic client registration](../authentication/OIDC-Authentication-Dynamic-Registration.html).
+
 {% include_cached featuretoggles.html features="AI.mcp-oauth" %}
 
 ## Tools

@@ -76,3 +76,25 @@ description: "Review and change CAS OAuth2/OIDC protocol behavior: token endpoin
 - `tls_client_certificate_bound_access_tokens` (RFC 8705 section 3.4) is `tlsClientCertificateBoundAccessTokens` on the service, enforced next to `dpopBoundAccessTokens` in `DefaultOAuth20ProofOfPossessionValidator` (`validate` for profile-authenticated grants, `validateTokenRequest` for device code polling and the JWT bearer grant): the request's authenticated profile must be this client's and carry `x509_digest`, or `CertificateBoundAccessTokenRequiredException` becomes `400 invalid_request` before any grant is redeemed. A new service flag also belongs in dynamic registration (request, translator, response utils), the Palantir switch list in `servicestab.html` and the MCP `CasOidcTools.OidcClient` summary.
 - The validator owns the header checks of RFC 9449 section 4.3. `getProofOfPossessionHeader` refuses a second `DPoP` header (pac4j's `getRequestHeader` silently returns the first), and `getSignedProofOfPosessionJwt` turns a parse failure into `InvalidDPoPProofException`, so a value that is not a JWS is `invalid_dpop_proof` rather than `invalid_request`. Read the header through the former, never with `getRequestHeader(DPOP)`; PAR has no check of its own any more.
 - Protected resources map proof failures in one place, `BaseOAuth20Controller.verifyProofOfPossession` (profile/userinfo and VC): `use_dpop_nonce`, `invalid_token` for a downgrade, `invalid_dpop_proof` for anything else, each a `401` with a challenge. A `DPoP` challenge carries `algs` (RFC 9449 section 7.1) from `OAuth20ProofOfPossessionValidator.getAcceptedSigningAlgorithms()`, which is the discovery `dpop_signing_alg_values_supported` in order: `unauthorized` adds it whenever the scheme is `DPoP`, and `useDPoPNonceResponse` and Heimdall's `unauthenticated` take it as an argument.
+
+## Client ID metadata documents
+
+- `OidcClientIdMetadataDocumentResolver` (`DefaultOidcClientIdMetadataDocumentResolver`) runs at the top of
+  `OidcHandlerInterceptorAdapter.preHandle` for every OIDC endpoint with a `client_id` parameter: an `https://` client id is
+  fetched, checked and saved as an `OidcRegisteredService` (property `oidcClientIdMetadataDocument`, refresh instant in
+  `oidcClientIdMetadataDocumentRefresh`, expiration = last fetch + retention with delete-when-expired, evaluation order
+  `Integer.MAX_VALUE`) so every other client lookup works unchanged. Off by default
+  (`cas.authn.oidc.registration.client-id-metadata-document.enabled`).
+- It reuses the DCR translator and then undoes what does not fit: no client secret, exact `\Q...\E` redirect URIs instead
+  of the translator's `|`-joined regex, empty post-logout URIs (the translator maps them to `logoutUrl`, which CAS calls
+  for back-channel logout). Metadata CAS would fetch server-side (`jwks_uri`, `sector_identifier_uri`, back-channel
+  endpoints) is refused, because only the document fetch is SSRF-checked.
+- `DefaultOidcClientIdMetadataDocumentFetcher` resolves the host, requires every address to be public
+  (`isPublicAddress`) and pins them with `HttpExecutionRequest.resolvedAddresses`, with redirects off, one attempt,
+  `maximumResponseSize` 5 KB and the CAS `httpClient` for TLS. Tests inject a permissive address policy and host resolver
+  and serve the document over plain HTTP from `MockWebServer(false, ...)`: with pinned addresses the request gets a
+  dedicated client, and the self-signed `MockWebServer(true, ...)` certificate fails the handshake there. Never add a
+  setting that relaxes the address check. Expiration dates on services are written as a `ZonedDateTime` truncated to
+  seconds; a `LocalDateTime` with fractions makes `DateTimeUtils.zonedDateTimeOf` warn on every expiration check.
+- Consent for these clients is never bypassed (`OidcConsentApprovalViewResolver`); `confirm.html` shows `clientIdHost`,
+  `redirectHost` and a loopback warning (`screen.oidc.confirm.cimd.*`, every bundle).

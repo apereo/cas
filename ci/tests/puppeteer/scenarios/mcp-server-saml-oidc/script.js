@@ -110,6 +110,20 @@ async function verifyAccessTokens() {
     });
 }
 
+async function verifyClientIdMetadataDocuments(sessionId) {
+    await cas.separator();
+    const configuration = JSON.parse(await cas.doRequest("https://localhost:8443/cas/oidc/.well-known/openid-configuration",
+        "GET", {"Accept": "application/json"}, 200));
+    assert(configuration.client_id_metadata_document_supported === true);
+    const clientId = "https://localhost:8443/cas/actuator/info";
+    const authorize = `https://localhost:8443/cas/oidc/authorize?response_type=code&client_id=${encodeURIComponent(clientId)}`
+        + `&redirect_uri=${encodeURIComponent("http://127.0.0.1:3000/callback")}&scope=openid`
+        + "&code_challenge=E9Melhoa2OwvFrEMTJguCHaoeK1t8URWbuGJSstw-cM&code_challenge_method=S256";
+    await cas.doRequest(authorize, "GET", {}, 0);
+    const client = await callTool(sessionId, "findOidcClient", {clientId: clientId});
+    assert(client.reason !== undefined, "A client id on a loopback address must not be registered");
+}
+
 (async () => {
     const sessionId = await initialize();
     const tools = (await send(sessionId, "tools/list", {})).tools.map((tool) => tool.name);
@@ -185,4 +199,5 @@ async function verifyAccessTokens() {
         "Only key metadata may be returned");
 
     await verifyAccessTokens();
+    await verifyClientIdMetadataDocuments(sessionId);
 })();

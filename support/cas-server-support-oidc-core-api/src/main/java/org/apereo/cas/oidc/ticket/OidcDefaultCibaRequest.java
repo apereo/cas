@@ -51,6 +51,17 @@ public class OidcDefaultCibaRequest extends AbstractTicket implements OidcCibaRe
         this.encodedId = encodedId;
     }
 
+    /**
+     * The id given to the client. A stateless request is given its own id, which is already encrypted;
+     * other requests are given their id encoded.
+     *
+     * @return the encoded id
+     */
+    @Override
+    public String getEncodedId() {
+        return isStateless() ? getId() : encodedId;
+    }
+
     @Override
     @CanIgnoreReturnValue
     public OidcCibaRequest markTicketReady() {

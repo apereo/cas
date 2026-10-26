@@ -1,27 +1,39 @@
 package org.apereo.cas.oidc.web.controllers.ciba;
 
 import module java.base;
+import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.oidc.OidcConstants;
+import org.apereo.cas.oidc.ticket.OidcCibaRequest;
+import org.apereo.cas.oidc.ticket.OidcCibaRequestCompactor;
 import org.apereo.cas.services.OidcBackchannelTokenDeliveryModes;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
+import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.idtoken.IdTokenGenerationContext;
+import org.apereo.cas.ticket.registry.StatelessTicketRegistry;
+import org.apereo.cas.ticket.serialization.TicketSerializationManager;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.MockWebServer;
+import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
+import org.apereo.cas.util.spring.DirectObjectProvider;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.pac4j.core.profile.CommonProfile;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.test.context.TestPropertySource;
+import org.springframework.web.servlet.ModelAndView;
 import tools.jackson.databind.ObjectMapper;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -52,6 +64,14 @@ class OidcCibaControllerTests extends AbstractOidcTests {
 
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(false).build().toObjectMapper();
+
+    @Autowired
+    @Qualifier(TicketCatalog.BEAN_NAME)
+    private TicketCatalog ticketCatalog;
+
+    @Autowired
+    @Qualifier(TicketSerializationManager.BEAN_NAME)
+    private TicketSerializationManager ticketSerializationManager;
 
     @Test
     void verifyRequestWithoutScopes() throws Throwable {
@@ -270,6 +290,38 @@ class OidcCibaControllerTests extends AbstractOidcTests {
                 )
                 .andExpect(status().isOk());
         }
+    }
+
+    @Test
+    void verifyStatelessRequestIsGivenTheStoredId() throws Throwable {
+        val registeredService = getOidcRegisteredService(UUID.randomUUID().toString());
+        registeredService.setBackchannelTokenDeliveryMode(OidcBackchannelTokenDeliveryModes.PUSH.getMode());
+        registeredService.setSupportedGrantTypes(Set.of(OAuth20GrantTypes.CIBA.getType()));
+        registeredService.setBackchannelClientNotificationEndpoint("https://ciba.example.org");
+        servicesManager.save(registeredService);
+
+        val compactor = new OidcCibaRequestCompactor(new DirectObjectProvider<>(defaultTicketFactory),
+            PrincipalFactoryUtils.newPrincipalFactory(), new DirectObjectProvider<>(oidcConfigurationContext.getPrincipalResolver()));
+        val registry = new StatelessTicketRegistry((CipherExecutor) CipherExecutor.noOp(), ticketSerializationManager,
+            ticketCatalog, applicationContext, List.of(compactor));
+        val context = spy(oidcConfigurationContext);
+        when(context.getTicketRegistry()).thenReturn(registry);
+        val controller = new OidcCibaController(context, List.of());
+
+        val cibaRequest = controller.recordCibaRequest(CibaRequestContext.builder()
+            .scope(Set.of(OidcConstants.StandardScopes.OPENID.getScope()))
+            .clientId(registeredService.getClientId())
+            .clientNotificationToken(UUID.randomUUID().toString())
+            .principal(RegisteredServiceTestUtils.getPrincipal("casuser"))
+            .build());
+        assertTrue(cibaRequest.isStateless());
+        assertEquals(cibaRequest.getId(), cibaRequest.getEncodedId());
+        assertTrue(cibaRequest.getEncodedId().startsWith(OidcCibaRequest.PREFIX));
+
+        val result = controller.initializeBackchannelVerificationRequest(registeredService.getClientId(), cibaRequest.getEncodedId());
+        val modelAndView = assertInstanceOf(ModelAndView.class, result);
+        assertEquals(OidcConstants.CIBA_VERIFICATION_VIEW, modelAndView.getViewName());
+        assertEquals(cibaRequest.getId(), ((OidcCibaRequest) modelAndView.getModel().get("cibaRequest")).getId());
     }
 
     @Test

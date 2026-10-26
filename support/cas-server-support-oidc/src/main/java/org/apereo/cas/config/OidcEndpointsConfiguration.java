@@ -12,6 +12,7 @@ import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.authn.OidcClientAttestationChallengeService;
 import org.apereo.cas.oidc.discovery.OidcServerDiscoverySettings;
 import org.apereo.cas.oidc.discovery.webfinger.OidcWebFingerDiscoveryService;
+import org.apereo.cas.oidc.dynareg.OidcClientIdMetadataDocumentResolver;
 import org.apereo.cas.oidc.issuer.OidcIssuerService;
 import org.apereo.cas.oidc.jwks.generator.OidcJsonWebKeystoreGeneratorService;
 import org.apereo.cas.oidc.jwks.register.ClientJwksRegistrationStore;
@@ -170,6 +171,8 @@ class OidcEndpointsConfiguration {
             final ObjectProvider<ServicesManager> servicesManager,
             @Qualifier(OAuth20ConfigurationContext.BEAN_NAME)
             final ObjectProvider<OAuth20ConfigurationContext> oauthConfigurationContext,
+            @Qualifier(OidcClientIdMetadataDocumentResolver.BEAN_NAME)
+            final ObjectProvider<OidcClientIdMetadataDocumentResolver> oidcClientIdMetadataDocumentResolver,
             final CasConfigurationProperties casProperties) {
 
             return new OidcHandlerInterceptorAdapter(
@@ -183,7 +186,8 @@ class OidcEndpointsConfiguration {
                 oauthDistributedSessionStore,
                 oauthRequestValidators,
                 oauthRequestParameterResolver,
-                oauthConfigurationContext);
+                oauthConfigurationContext,
+                oidcClientIdMetadataDocumentResolver);
         }
     }
 

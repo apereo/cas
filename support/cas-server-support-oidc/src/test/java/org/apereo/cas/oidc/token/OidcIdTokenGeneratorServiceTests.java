@@ -10,6 +10,7 @@ import org.apereo.cas.oidc.claims.OidcScopeFreeAttributeReleasePolicy;
 import org.apereo.cas.oidc.services.DefaultRegisteredServiceOidcIdTokenExpirationPolicy;
 import org.apereo.cas.services.ChainingAttributeReleasePolicy;
 import org.apereo.cas.services.DefaultRegisteredServiceProperty;
+import org.apereo.cas.services.OidcBackchannelTokenDeliveryModes;
 import org.apereo.cas.services.RegisteredServiceProperty;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy;
@@ -698,6 +699,34 @@ class OidcIdTokenGeneratorServiceTests {
             val idToken = oidcIdTokenGenerator.generate(idTokenContext);
             val claims = oidcTokenSigningAndEncryptionService.decode(idToken.token(), Optional.of(registeredService));
             assertFalse(claims.hasClaim(OidcConstants.CLAIM_AT_HASH));
+        }
+
+        @Test
+        void verifyCibaPushRequestIdFromResponse() throws Throwable {
+            val profile = new CommonProfile();
+            profile.setClientName("OIDC");
+            profile.setId(UUID.randomUUID().toString());
+
+            val clientId = UUID.randomUUID().toString();
+            val accessToken = getAccessToken(clientId);
+            assertFalse(accessToken.getAuthentication().containsAttribute(OidcConstants.AUTH_REQ_ID));
+            val registeredService = getOidcRegisteredService(clientId);
+            registeredService.setBackchannelTokenDeliveryMode(OidcBackchannelTokenDeliveryModes.PUSH.getMode());
+            registeredService.setIdTokenSigningAlg(AlgorithmIdentifiers.RSA_USING_SHA256);
+            servicesManager.save(registeredService);
+
+            val cibaRequestId = "CIBA-" + UUID.randomUUID();
+            val idTokenContext = IdTokenGenerationContext.builder()
+                .accessToken(accessToken)
+                .userProfile(profile)
+                .responseType(OAuth20ResponseTypes.NONE)
+                .grantType(OAuth20GrantTypes.CIBA)
+                .registeredService(registeredService)
+                .cibaRequestId(cibaRequestId)
+                .build();
+            val idToken = oidcIdTokenGenerator.generate(idTokenContext);
+            val claims = oidcTokenSigningAndEncryptionService.decode(idToken.token(), Optional.of(registeredService));
+            assertEquals(cibaRequestId, claims.getClaimValue(OidcConstants.CLAIM_AUTH_REQ_ID, String.class));
         }
     }
 }

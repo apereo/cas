@@ -3,7 +3,9 @@ package org.apereo.cas.oidc.web;
 import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.oidc.OidcConstants;
+import org.apereo.cas.oidc.dynareg.OidcClientIdMetadataDocumentResolver;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.validator.authorization.OAuth20AuthorizationRequestValidator;
 import org.apereo.cas.support.oauth.web.OAuth20HandlerInterceptorAdapter;
 import org.apereo.cas.support.oauth.web.OAuth20RequestParameterResolver;
@@ -36,6 +38,8 @@ public class OidcHandlerInterceptorAdapter extends OAuth20HandlerInterceptorAdap
 
     private final CasConfigurationProperties casProperties;
 
+    private final ObjectProvider<OidcClientIdMetadataDocumentResolver> clientIdMetadataDocumentResolver;
+
     public OidcHandlerInterceptorAdapter(
         final ObjectProvider<HandlerInterceptor> requiresAuthenticationAccessTokenInterceptor,
         final ObjectProvider<HandlerInterceptor> requiresAuthenticationAuthorizeInterceptor,
@@ -47,7 +51,8 @@ public class OidcHandlerInterceptorAdapter extends OAuth20HandlerInterceptorAdap
         final ObjectProvider<SessionStore> sessionStore,
         final ObjectProvider<List<OAuth20AuthorizationRequestValidator>> oauthAuthorizationRequestValidators,
         final ObjectProvider<OAuth20RequestParameterResolver> oauthRequestParameterResolver,
-        final ObjectProvider<OAuth20ConfigurationContext> configurationContext) {
+        final ObjectProvider<OAuth20ConfigurationContext> configurationContext,
+        final ObjectProvider<OidcClientIdMetadataDocumentResolver> clientIdMetadataDocumentResolver) {
         super(requiresAuthenticationAccessTokenInterceptor, requiresAuthenticationAuthorizeInterceptor,
             accessTokenGrantRequestExtractors, servicesManager, sessionStore, oauthAuthorizationRequestValidators,
             oauthRequestParameterResolver, configurationContext);
@@ -55,6 +60,7 @@ public class OidcHandlerInterceptorAdapter extends OAuth20HandlerInterceptorAdap
         this.requiresAuthenticationDynamicRegistrationInterceptor = requiresAuthenticationDynamicRegistrationInterceptor;
         this.casProperties = casProperties;
         this.requiresAuthenticationClientConfigurationInterceptor = requiresAuthenticationClientConfigurationInterceptor;
+        this.clientIdMetadataDocumentResolver = clientIdMetadataDocumentResolver;
     }
 
     @Override
@@ -64,6 +70,7 @@ public class OidcHandlerInterceptorAdapter extends OAuth20HandlerInterceptorAdap
 
         LOGGER.trace("Attempting to pre-handle OIDC request at [{}] with parameters [{}]",
             request.getRequestURI(), request.getParameterMap().keySet());
+        clientIdMetadataDocumentResolver.ifAvailable(resolver -> resolver.resolve(request.getParameter(OAuth20Constants.CLIENT_ID)));
 
         if (casProperties.getAuthn().getOidc().getDiscovery().isRequirePushedAuthorizationRequests()
             && !HttpMethod.valueOf(request.getMethod()).equals(HttpMethod.POST)

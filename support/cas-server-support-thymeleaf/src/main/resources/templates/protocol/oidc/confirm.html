@@ -18,6 +18,22 @@
             <strong th:utext="#{screen.oidc.confirm.dynamic(${dynamicTime})}"/>
         </div>
 
+        <div id="clientIdMetadataDocument" th:if="${clientIdMetadataDocument}"
+             class="my-2 banner banner-warning alert alert-warning d-flex align-items-start">
+            <i class="mdi mdi-alert fas fa-exclamation-triangle me-2" aria-hidden="true"></i>
+            <div>
+                <div>
+                    <span th:text="#{screen.oidc.confirm.cimd.client}"/>
+                    <strong><code id="clientIdHost" th:text="${clientIdHost}"/></strong>
+                </div>
+                <div th:if="${redirectHost}">
+                    <span th:text="#{screen.oidc.confirm.cimd.redirect}"/>
+                    <strong><code id="redirectHost" th:text="${redirectHost}"/></strong>
+                </div>
+                <div id="loopbackRedirect" class="mt-2" th:if="${loopbackRedirect}" th:text="#{screen.oidc.confirm.cimd.loopback}"/>
+            </div>
+        </div>
+
         <section id="scopes" class="cas-consent-section" th:unless="${#sets.isEmpty(scopes)}">
             <h3 th:text="#{screen.oidc.confirm.scopes}"/>
             <p class="cas-consent-hint" th:text="#{screen.oidc.confirm.asksinfo}"/>

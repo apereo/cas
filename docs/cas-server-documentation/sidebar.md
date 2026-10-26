@@ -607,6 +607,7 @@ layout: null
             *   [Clients](#oidcclients)
                 *   [Overview](/cas/{{ version }}/authentication/OIDC-Authentication-Clients.html) 
                 *   [Dynamic Registration](/cas/{{ version }}/authentication/OIDC-Authentication-Dynamic-Registration.html) 
+                *   [Client ID Metadata Documents](/cas/{{ version }}/authentication/OIDC-Authentication-Client-ID-Metadata-Documents.html)
                 *   [JWKS Management](/cas/{{ version }}/authentication/OIDC-Authentication-JWKS-Clients.html) 
                 *   [Scope Approval](/cas/{{ version }}/authentication/OIDC-Authentication-Clients-ScopeApproval.html)
             *   [Discovery](/cas/{{ version }}/authentication/OIDC-Authentication-Discovery.html)

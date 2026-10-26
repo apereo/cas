@@ -48,4 +48,7 @@ public class IdTokenGenerationContext {
     @Nullable
     @ToString.Exclude
     private final String encodedAccessToken;
+
+    @Nullable
+    private final String cibaRequestId;
 }

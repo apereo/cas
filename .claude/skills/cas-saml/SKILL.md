@@ -158,6 +158,18 @@ description: "Review and change SAML2 SP and IdP metadata handling: resolvers, M
   descriptor themselves, and the login action called one after the other, so every render resolved
   twice. The action resolves once and passes the descriptor down; do not reintroduce a helper that
   resolves internally.
+- `FunctionUtils.doAndRetry` sleeps between attempts on the calling thread: Spring 7's `RetryPolicy.withMaxRetries(n)`
+  is `FixedBackOff(1000ms, n)`, so the default `maximum-retry-attempts=3` means four attempts and three seconds of sleep.
+  Caffeine caches no failed load, so whatever is retried is reloaded per attempt per request. Before wrapping anything on
+  the request path in it, check the failure is transient; "this metadata does not contain the entity" is not, and the
+  caching resolver's outer retry does exactly that (finding D1 of `claude/saml2-metadata-review.md` in the project).
+- The SP cache key carries the entity id only for MDQ, while the store-backed resolvers (`jdbc://`, `mongodb://`,
+  `redis://`, `dynamodb://`, `awss3://`, `git://`, `rest://`) scope their lookup to the requested entity; a change on
+  either side has to be checked against the other. The MDQ backup file is the opposite: named after `serviceId`, which for
+  MDQ is a wildcard, not after the entity.
+- Neither SP nor IdP metadata caches are invalidated by anything but the cached-metadata actuator endpoint: service edits
+  do not touch the SP cache, and both IdP caches (`SamlIdPMetadataResolver`, `samlIdPMetadataCache`) expire after
+  *access*, so a node under traffic never sees rotated IdP keys.
 - Puppeteer coverage: `saml2-idp-metadata-caching`, `saml2-idp-login-idp-initiated-mdq`,
   `saml2-idp-login-sp-metadata-{directory,groovy,jdbc,json,mongodb}`,
   `saml2-idp-login-sp-override-metadata`, `saml2-idp-login-metadata-aws-s3`, `saml-mdui`,

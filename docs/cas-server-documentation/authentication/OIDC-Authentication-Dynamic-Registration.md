@@ -8,7 +8,8 @@ category: Protocols
 # Dynamic Client Registration - OpenID Connect Authentication
        
 Please study [the specification](https://openid.net/specs/openid-connect-registration-1_0.html) 
-to learn more about dynamic client registration.
+to learn more about dynamic client registration. Clients may also identify themselves with
+[client ID metadata documents](OIDC-Authentication-Client-ID-Metadata-Documents.html), without registering first.
 
 The registration endpoint accepts `POST` requests where the body of the request is to contain the
 application registration record. By default, CAS operates in a `PROTECTED` mode where the registration 

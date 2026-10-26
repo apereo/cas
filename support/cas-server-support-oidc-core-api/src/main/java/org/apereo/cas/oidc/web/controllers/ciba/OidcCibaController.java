@@ -23,6 +23,7 @@ import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
+import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
@@ -333,8 +334,12 @@ public class OidcCibaController extends BaseOidcController {
                 "Principal", cibaRequestContext.getPrincipal().getId()));
         val cibaFactory = (OidcCibaRequestFactory) configurationContext.getTicketFactory().get(OidcCibaRequest.class);
         val cibaRequest = cibaFactory.create(cibaRequestContext);
-        configurationContext.getTicketRegistry().addTicket(cibaRequest);
-        return cibaRequest;
+        val storedRequest = Objects.requireNonNull(configurationContext.getTicketRegistry().addTicket(cibaRequest),
+            "Unable to store CIBA request");
+        return storedRequest.isStateless()
+            ? Objects.requireNonNull(configurationContext.getTicketRegistry().getTicket(storedRequest.getId(), OidcCibaRequest.class),
+                "Unable to resolve CIBA request")
+            : cibaRequest;
     }
 
     protected ResponseEntity badCibaRequest(final String error) {
@@ -360,9 +365,18 @@ public class OidcCibaController extends BaseOidcController {
         return null;
     }
 
+    /**
+     * Fetch the request by the id given to the client. A stateless request is given its own id,
+     * which is looked up as is; other ids are decoded first, and must match the encoded id of the request.
+     *
+     * @param requestId the request id
+     * @return the request
+     */
     private OidcCibaRequest fetchOidcCibaRequest(final String requestId) {
         val cibaFactory = (OidcCibaRequestFactory) configurationContext.getTicketFactory().get(OidcCibaRequest.class);
-        val decodedId = cibaFactory.decodeId(requestId);
+        val decodedId = Strings.CS.startsWith(requestId, OidcCibaRequest.PREFIX + UniqueTicketIdGenerator.SEPARATOR)
+            ? requestId
+            : cibaFactory.decodeId(requestId);
         val cibaRequest = configurationContext.getTicketRegistry().getTicket(decodedId, OidcCibaRequest.class);
         Assert.notNull(cibaRequest, "CIBA request cannot be found");
         Assert.isTrue(cibaRequest.getEncodedId().equals(requestId), "CIBA request identifier is invalid");
