@@ -62,8 +62,8 @@ A client may name the resources it needs an access token for with the [RFC 8707]
 parameter, once or more, on the authorization request, a pushed authorization request or request object, the device
 authorization request, the CIBA backchannel authentication request, and the token request of the `password`, `client_credentials`,
 `urn:ietf:params:oauth:grant-type:jwt-bearer` and `urn:ietf:params:oauth:grant-type:pre-authorized_code` grants. Each value must be
-an absolute URI without a fragment that matches one of the regular expressions in the service's `allowedResources`
-in full, case-sensitively; otherwise, the request is refused with `invalid_target`. Since every entry is a regular
+an absolute URI without a fragment that matches one of the regular expressions in the service's `allowedResources`,
+or in the resources CAS allows for every client, in full, case-sensitively; otherwise, the request is refused with `invalid_target`. Since every entry is a regular
 expression, escape characters such as `?` or `+` to match them literally, i.e. `"https://api\\.example\\.org/(orders|reports)"` in a JSON service definition.
 The `allowedResources` of a [token exchange policy](OAuth-ProtocolFlow-TokenExchange.html) follow the same rule.
 
@@ -74,9 +74,20 @@ The `allowedResources` of a [token exchange policy](OAuth-ProtocolFlow-TokenExch
 - When redeeming an authorization code or a refresh token, the token request may name some of the resources granted
   to the code or refresh token, and the access token is issued for those only. Naming any other resource is refused with
   `invalid_target`. A refresh token keeps all the resources of its grant. When the grant carries no resources, the
-  token request may name any resource that matches the service's `allowedResources`.
+  token request may name any resource that matches the service's `allowedResources` or the resources CAS allows for every client.
 - A [token exchange](OAuth-ProtocolFlow-TokenExchange.html) issues tokens for its requested `audience` or `resource`
   only, without the resources of the exchanged token.
+
+### Resources For Every Client
+
+Resources defined in CAS settings may be requested by every client, in addition to the
+`allowedResources` of its service. This suits resources hosted by CAS itself, such as the [CAS MCP server](../installation/Admin-MCP-Server.html),
+which clients that [register themselves dynamically](OIDC-Authentication-Dynamic-Registration.html) cannot list in their own registration.
+Entries are regular expressions and follow the same matching rule. By default, CAS allows its MCP server endpoint,
+i.e. `\Qhttps://sso.example.org/cas/mcp\E`, built from the CAS server prefix and the MCP endpoint path; defining these resources
+replaces that default, so list the MCP server endpoint again if clients should still request it.
+
+{% include_cached casproperties.html properties="cas.authn.oauth.core.allowed-resources" %}
 
 ## Attribute Release
 

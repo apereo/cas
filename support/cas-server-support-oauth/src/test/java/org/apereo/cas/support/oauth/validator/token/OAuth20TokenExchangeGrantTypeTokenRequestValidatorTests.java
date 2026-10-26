@@ -148,6 +148,9 @@ class OAuth20TokenExchangeGrantTypeTokenRequestValidatorTests extends AbstractOA
 
         request.setParameter(OAuth20Constants.RESOURCE, "https://other.example.org/backend");
         assertThrows(OAuth20InvalidTargetException.class, () -> validator.validate(context));
+
+        request.setParameter(OAuth20Constants.RESOURCE, "https://cas.example.org/cas/mcp");
+        assertTrue(validator.validate(context));
     }
 
     static Stream<Arguments> contextProvider() throws Exception {

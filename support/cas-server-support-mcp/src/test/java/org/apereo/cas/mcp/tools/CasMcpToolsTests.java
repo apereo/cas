@@ -859,6 +859,8 @@ class CasMcpToolsTests extends BaseCasMcpTests {
         assertEquals("operation=findPerson, arguments={username=casuser}", resourceResolver.resolveFrom(joinPoint, new IllegalStateException())[0]);
         val sanitizing = new CasMcpOperationAuditResourceResolver(message -> message.replace("casuser", "*******"));
         assertEquals("operation=findPerson, arguments={username=*******}", sanitizing.resolveFrom(joinPoint, operation)[0]);
+        val withClient = new CasMcpOperation("agent", "findPerson", Map.of(), CasMcpOperation.Outcome.SUCCESS, "mcp-agent");
+        assertEquals("operation=findPerson, arguments={}, client=mcp-agent", resourceResolver.resolveFrom(joinPoint, withClient)[0]);
     }
 
     private CasMcpOperation findAuditedOperation(final String argument, final String value) {

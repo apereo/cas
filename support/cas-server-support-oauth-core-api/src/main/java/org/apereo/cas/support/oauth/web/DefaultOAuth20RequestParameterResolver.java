@@ -227,14 +227,22 @@ public class DefaultOAuth20RequestParameterResolver implements OAuth20RequestPar
     @Override
     public boolean isAuthorizedResourceForService(final WebContext context,
                                                   final OAuthRegisteredService registeredService) {
+        val allowedResources = resolveAllowedResources(registeredService);
         return resolveRequestedResources(context).stream().allMatch(resource -> {
             if (RegisteredServiceOAuthResourceMatcher.isValidResource(resource)
-                && RegisteredServiceOAuthResourceMatcher.isResourceAllowed(registeredService.getAllowedResources(), resource)) {
+                && RegisteredServiceOAuthResourceMatcher.isResourceAllowed(allowedResources, resource)) {
                 return true;
             }
             LOGGER.debug("Resource [{}] is invalid or not allowed for service [{}]", resource, registeredService.getName());
             return false;
         });
+    }
+
+    @Override
+    public Set<String> resolveAllowedResources(final OAuthRegisteredService registeredService) {
+        val allowedResources = new LinkedHashSet<String>(registeredService.getAllowedResources());
+        allowedResources.addAll(jwtBuilder.getCasProperties().getAuthn().getOauth().getCore().getAllowedResources());
+        return allowedResources;
     }
 
     @Override

@@ -360,6 +360,17 @@ one-time codes can be added when `cas.authn.mfa.simple.mail.accepted-email-patte
 - {: .new data-area="oidc"} The [MCP server](../installation/Admin-MCP-Server.html) reports the audience and allowed
   resources of OAuth and OpenID Connect clients, and the new `checkOidcClientResource` tool tells whether a client may
   request a resource, which allowed expression it matches or why it would be refused, and the audience of the token.
+- {: .new data-area="oidc"} [Resources every client may request](../authentication/OAuth-Authentication-Clients.html#resources-for-every-client)
+  can be listed with `cas.authn.oauth.core.allowed-resources`{: .cas-setting}, in addition to the `allowedResources` of each
+  service. CAS allows its own [MCP server](../installation/Admin-MCP-Server.html) endpoint by default, so that clients
+  registered dynamically, which cannot list resources themselves, may request access tokens for it. `checkOidcClientResource`
+  reports whether the client or this setting allowed a resource.
+- {: .new data-area="oidc"} The [MCP server](../installation/Admin-MCP-Server.html#oauth-access-tokens) accepts OAuth access
+  tokens issued by CAS, alongside Basic authentication. It publishes RFC 9728 protected resource metadata that names CAS as the
+  authorization server, challenges unauthenticated clients with both `Bearer` and `Basic`, and accepts a token only when it was
+  issued for the MCP endpoint with the `mcp:read` scope to an application that is still allowed. The `MCP_ADMIN` role comes from
+  the principal attributes listed in `cas.mcp.oauth.required-attributes`{: .cas-setting}, which match nobody by default, and the
+  audit record of a call names the OAuth client. The `AI.mcp-oauth` feature toggle turns it off.
 - {: .fixed data-area="tickets"} With the [stateless ticket registry](../ticketing/Stateless-Ticket-Registry.html),
   device codes keep their requested scopes, so tokens issued for an approved device code carry them; the scopes used
   to be dropped.

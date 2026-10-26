@@ -26,6 +26,10 @@ import org.apereo.cas.mcp.audit.CasMcpAuditInterceptor;
 import org.apereo.cas.mcp.audit.CasMcpAuditor;
 import org.apereo.cas.mcp.audit.CasMcpOperationAuditActionResolver;
 import org.apereo.cas.mcp.audit.CasMcpOperationAuditResourceResolver;
+import org.apereo.cas.mcp.oauth.CasMcpAuthenticationEntryPoint;
+import org.apereo.cas.mcp.oauth.CasMcpBearerTokenAuthenticationFilter;
+import org.apereo.cas.mcp.oauth.CasMcpProtectedResource;
+import org.apereo.cas.mcp.oauth.CasMcpProtectedResourceMetadataController;
 import org.apereo.cas.mcp.resources.CasServiceResources;
 import org.apereo.cas.mcp.resources.CasSettingResources;
 import org.apereo.cas.mcp.tools.CasAttributeTools;
@@ -68,7 +72,9 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.events.CasEventRepository;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.apereo.cas.throttle.AuthenticationThrottlingExecutionPlan;
+import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
 import org.apereo.cas.util.feature.CasRuntimeModuleLoader;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
@@ -80,6 +86,7 @@ import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import io.modelcontextprotocol.server.McpAsyncServer;
 import io.modelcontextprotocol.server.McpSyncServer;
 import lombok.val;
+import org.apache.commons.lang3.Strings;
 import org.springframework.ai.mcp.annotation.McpResource;
 import org.springframework.ai.mcp.annotation.McpTool;
 import org.springframework.ai.mcp.server.common.autoconfigure.McpServerAutoConfiguration;
@@ -106,6 +113,7 @@ import org.springframework.core.Ordered;
 import org.springframework.core.env.Environment;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.security.web.servlet.util.matcher.PathPatternRequestMatcher;
 
 /**
@@ -360,13 +368,66 @@ public class CasMcpAutoConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "casOidcTools")
         public CasOidcTools casOidcTools(
+            final CasConfigurationProperties casProperties,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
             @Qualifier(OidcIssuerService.BEAN_NAME)
             final ObjectProvider<OidcIssuerService> oidcIssuerService,
             @Qualifier("oidcJsonWebKeystoreGeneratorService")
             final ObjectProvider<OidcJsonWebKeystoreGeneratorService> oidcJsonWebKeystoreGeneratorService) {
-            return new CasOidcTools(servicesManager, oidcIssuerService, oidcJsonWebKeystoreGeneratorService);
+            return new CasOidcTools(servicesManager, oidcIssuerService, oidcJsonWebKeystoreGeneratorService, casProperties);
+        }
+    }
+
+    @ConditionalOnClass({OidcIssuerService.class, OAuth20AccessToken.class})
+    @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.AI, module = "mcp-oauth")
+    @Configuration(value = "CasMcpOAuthConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties({CasConfigurationProperties.class, McpServerStreamableHttpProperties.class})
+    static class CasMcpOAuthConfiguration {
+        @Bean
+        @ConditionalOnMissingBean(name = "casMcpProtectedResourceMetadataController")
+        public CasMcpProtectedResourceMetadataController casMcpProtectedResourceMetadataController(
+            final CasConfigurationProperties casProperties,
+            final Environment environment,
+            final McpServerStreamableHttpProperties mcpServerStreamableHttpProperties,
+            @Qualifier(OidcIssuerService.BEAN_NAME)
+            final ObjectProvider<OidcIssuerService> oidcIssuerService) {
+            val protectedResource = CasMcpProtectedResource.of(casProperties, mcpServerStreamableHttpProperties.getMcpEndpoint());
+            return new CasMcpProtectedResourceMetadataController(protectedResource, oidcIssuerService,
+                environment.getProperty("spring.ai.mcp.server.name", "Apereo CAS MCP Server"));
+        }
+
+        @Bean
+        @ConditionalOnMissingBean(name = "casMcpOAuthEndpointConfigurer")
+        public CasWebSecurityConfigurer<HttpSecurity> casMcpOAuthEndpointConfigurer(
+            final CasConfigurationProperties casProperties,
+            final McpServerStreamableHttpProperties mcpServerStreamableHttpProperties,
+            @Qualifier(TicketRegistry.BEAN_NAME)
+            final ObjectProvider<TicketRegistry> ticketRegistry,
+            @Qualifier(ServicesManager.BEAN_NAME)
+            final ObjectProvider<ServicesManager> servicesManager,
+            @Qualifier(JwtBuilder.ACCESS_TOKEN_JWT_BUILDER_BEAN_NAME)
+            final ObjectProvider<JwtBuilder> accessTokenJwtBuilder) {
+            val endpoint = mcpServerStreamableHttpProperties.getMcpEndpoint();
+            val protectedResource = CasMcpProtectedResource.of(casProperties, endpoint);
+            return new CasWebSecurityConfigurer<>() {
+                @Override
+                public List<String> getIgnoredEndpoints() {
+                    return List.of(CasMcpProtectedResource.WELL_KNOWN_PATH + Strings.CS.prependIfMissing(endpoint, "/"));
+                }
+
+                @Override
+                @CanIgnoreReturnValue
+                public CasWebSecurityConfigurer<HttpSecurity> configure(final HttpSecurity http) throws Exception {
+                    val matcher = PathPatternRequestMatcher.withDefaults().matcher(endpoint);
+                    val filter = new CasMcpBearerTokenAuthenticationFilter(matcher, protectedResource,
+                        casProperties.getMcp().getOauth(), ticketRegistry.getObject(), servicesManager.getObject(), accessTokenJwtBuilder);
+                    http.addFilterBefore(filter, BasicAuthenticationFilter.class)
+                        .exceptionHandling(customizer -> customizer.defaultAuthenticationEntryPointFor(
+                            new CasMcpAuthenticationEntryPoint(matcher, protectedResource), matcher));
+                    return this;
+                }
+            };
         }
     }
 

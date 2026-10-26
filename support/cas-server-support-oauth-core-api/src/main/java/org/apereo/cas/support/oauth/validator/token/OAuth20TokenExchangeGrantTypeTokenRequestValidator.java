@@ -88,7 +88,7 @@ public class OAuth20TokenExchangeGrantTypeTokenRequestValidator<T extends OAuth2
         val resources = resourceAndAudience.getOrDefault(OAuth20Constants.RESOURCE, Set.of());
         val audience = resourceAndAudience.getOrDefault(OAuth20Constants.AUDIENCE, Set.of());
         if (!registeredService.getAllowedResources().isEmpty()
-            && !RegisteredServiceOAuthResourceMatcher.areResourcesAllowed(registeredService.getAllowedResources(), resources)) {
+            && !RegisteredServiceOAuthResourceMatcher.areResourcesAllowed(requestParameterResolver.resolveAllowedResources(registeredService), resources)) {
             throw new OAuth20InvalidTargetException("Requested resource is not authorized for client %s".formatted(registeredService.getClientId()));
         }
         val tokenExchangePolicy = registeredService.getTokenExchangePolicy();

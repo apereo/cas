@@ -142,6 +142,11 @@ class AccessTokenAuthorizationCodeGrantRequestExtractorTests extends AbstractOAu
 
         request.setParameter(OAuth20Constants.RESOURCE, "https://third.example.org/");
         assertThrows(OAuth20InvalidTargetException.class, () -> extractor.extract(context));
+
+        code.setResources(List.of());
+        ticketRegistry.updateTicket(code);
+        request.setParameter(OAuth20Constants.RESOURCE, "https://cas.example.org/cas/mcp");
+        assertEquals(Set.of("https://cas.example.org/cas/mcp"), extractor.extract(context).getResources());
     }
 
     @Test

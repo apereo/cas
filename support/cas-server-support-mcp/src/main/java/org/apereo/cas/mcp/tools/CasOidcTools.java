@@ -1,6 +1,7 @@
 package org.apereo.cas.mcp.tools;
 
 import module java.base;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.oidc.issuer.OidcIssuerService;
 import org.apereo.cas.oidc.jwks.generator.OidcJsonWebKeystoreGeneratorService;
 import org.apereo.cas.oidc.jwks.rotation.OidcJsonWebKeystoreRotationService;
@@ -35,6 +36,8 @@ public class CasOidcTools {
     private final ObjectProvider<OidcIssuerService> oidcIssuerService;
 
     private final ObjectProvider<OidcJsonWebKeystoreGeneratorService> oidcJsonWebKeystoreGeneratorService;
+
+    private final CasConfigurationProperties casProperties;
 
     /**
      * Find an OAuth or OpenID Connect client registration by its client id.
@@ -107,7 +110,8 @@ public class CasOidcTools {
      */
     @McpTool(description = "Check whether an OAuth or OpenID Connect client may request a resource with the RFC 8707 "
         + "resource parameter, as CAS decides it: the resource must be an absolute URI without a fragment that fully matches "
-        + "one of the regular expressions in the client's allowed resources. Reports the expression that matched, or why "
+        + "one of the regular expressions in the client's allowed resources or in those CAS allows for every client "
+        + "(cas.authn.oauth.core.allowed-resources). Reports the expression that matched and where it is defined, or why "
         + "the request would be refused with invalid_target, and the audience an access token issued for the resource carries.",
         title = "Check OAuth Client Resource",
         generateOutputSchema = true,
@@ -132,10 +136,16 @@ public class CasOidcTools {
         if (!RegisteredServiceOAuthResourceMatcher.isValidResource(resource)) {
             return check.allowed(false).reason("The resource is not an absolute URI without a fragment").build();
         }
-        val matched = RegisteredServiceOAuthResourceMatcher.findAllowedResource(client.getAllowedResources(), resource);
-        if (matched.isEmpty()) {
-            return check.allowed(false).reason("The resource matches none of the allowed resources of the client").build();
+        val casAllowedResources = casProperties.getAuthn().getOauth().getCore().getAllowedResources();
+        if (!casAllowedResources.isEmpty()) {
+            check.casAllowedResources(List.copyOf(casAllowedResources));
         }
+        val matchedByClient = RegisteredServiceOAuthResourceMatcher.findAllowedResource(client.getAllowedResources(), resource);
+        val matched = matchedByClient.or(() -> RegisteredServiceOAuthResourceMatcher.findAllowedResource(casAllowedResources, resource));
+        if (matched.isEmpty()) {
+            return check.allowed(false).reason("The resource matches none of the allowed resources of the client or of CAS").build();
+        }
+        check.matchedBy(matchedByClient.isPresent() ? "client" : "cas.authn.oauth.core.allowed-resources");
         val audience = new LinkedHashSet<String>(client.getAudience().isEmpty() ? List.of(client.getClientId()) : client.getAudience());
         audience.add(resource);
         return check.allowed(true).matchedPattern(matched.orElseThrow()).audience(List.copyOf(audience)).build();
@@ -212,7 +222,8 @@ public class CasOidcTools {
     @Builder
     @JsonInclude(JsonInclude.Include.NON_NULL)
     public record ResourceCheck(String clientId, String resource, boolean allowed, @Nullable String matchedPattern,
-                                @Nullable List<String> allowedResources, @Nullable List<String> audience,
+                                @Nullable String matchedBy, @Nullable List<String> allowedResources,
+                                @Nullable List<String> casAllowedResources, @Nullable List<String> audience,
                                 @Nullable String reason) {
     }
 

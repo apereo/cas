@@ -49,6 +49,57 @@ session identifiers and full application definitions. Only grant the <code>MCP_A
 endpoint on a protected network and always use TLS.
 </p></div>
 
+### OAuth Access Tokens
+
+When [OpenID Connect](../authentication/OIDC-Authentication.html) is also included, the MCP endpoint is an OAuth protected
+resource, as the [MCP authorization specification](https://modelcontextprotocol.io/specification/latest/basic/authorization)
+expects, and MCP clients may sign people in with CAS and call the MCP server with the access tokens CAS issues to them.
+HTTP Basic authentication keeps working alongside.
+
+A request without credentials is answered with `401` and two challenges: `Basic`, and `Bearer` with the `mcp:read` scope and
+the location of the protected resource metadata ([RFC 9728](https://datatracker.ietf.org/doc/html/rfc9728)), which MCP clients
+follow to discover CAS as their authorization server. The metadata is published under the CAS context path, at
+`/cas/.well-known/oauth-protected-resource/mcp`:
+
+```json
+{
+  "resource": "https://sso.example.org/cas/mcp",
+  "authorization_servers": [
+    "https://sso.example.org/cas/oidc"
+  ],
+  "scopes_supported": [
+    "mcp:read"
+  ],
+  "bearer_methods_supported": [
+    "header"
+  ],
+  "resource_name": "Apereo CAS MCP Server"
+}
+```
+
+An access token is accepted in the `Authorization: Bearer` header only, never as a request parameter, and only when:
+
+- it is found in the ticket registry, either by its identifier or, for JWT access tokens, by the identifier it carries, and has not expired;
+- it was issued for the MCP endpoint, which clients request with the `resource` parameter ([RFC 8707](https://www.rfc-editor.org/rfc/rfc8707.html)).
+  CAS allows every client to [request the MCP endpoint](../authentication/OAuth-Authentication-Clients.html#resources-for-every-client) by default;
+- the application it was issued to is still registered and allowed;
+- it is not bound to a [DPoP](../authentication/OIDC-Authentication-DPoP.html) key or a client certificate. Sender-constrained tokens are not accepted yet.
+
+Otherwise the request is refused with `401` and `error="invalid_token"`. A token without the `mcp:read` scope is refused with
+`403` and `error="insufficient_scope"`. The `mcp:write` scope is reserved for tools that change CAS; no tool requires it yet.
+
+Like a Basic user, the person behind a token may connect and list tools, but only calls tools with the `MCP_ADMIN` role. With
+an access token, the role is granted only to people whose principal attributes match all the attributes and regular expressions
+defined in CAS settings. No attributes are defined by default, so tokens grant nobody the role until you define them. The audit
+record of a call made with a token also names the OAuth client.
+
+{% include_cached casproperties.html properties="cas.mcp.oauth" %}
+
+The OpenID Connect provider only issues scopes it supports, so add `mcp:read` to the scopes of the OpenID Connect discovery
+document and to the scopes of the applications that may call the MCP server.
+
+{% include_cached featuretoggles.html features="AI.mcp-oauth" %}
+
 ## Tools
 
 The following tools are available. All tools are read-only and are advertised to clients with the
@@ -134,7 +185,7 @@ server only when the corresponding module is present, and each group can be turn
 | `findConsentDecisions`       | [Attribute consent](../integration/Attribute-Release-Consent.html)                       | `username` (string)                                                                      | Return the consent decisions of a person: the application, when consent was given, the reminder settings and the names of the attributes consented to. Attribute values are never returned.                                                                                                                                                      |
 | `resolveSamlMetadata`        | [SAML2 identity provider](../authentication/Configuring-SAML2-Authentication.html)       | `entityId` (string)                                                                      | Resolve the metadata of a service provider the way CAS does, and report the matching registration and metadata source, the validity period, assertion consumer and single logout endpoints, name id formats and certificates with their expiration dates, or the error when resolution fails.                                                    |
 | `findOidcClient`             | [OpenID Connect](../authentication/OIDC-Authentication.html)                             | `clientId` (string)                                                                      | Summarize an OAuth or OpenID Connect client registration: redirect URI pattern, grant and response types, scopes, audience, allowed resource indicators, client authentication, token settings, issuer and ID token settings. Client secrets are never returned.                                                                                 |
-| `checkOidcClientResource`    | [OpenID Connect](../authentication/OIDC-Authentication.html)                             | `clientId`, `resource` (string)                                                          | Check whether a client may request a resource with the RFC 8707 `resource` parameter: whether it is an absolute URI without a fragment, the allowed resource expression it fully matches, or why it would be refused with `invalid_target`, and the access token audience it would get.                                                          |
+| `checkOidcClientResource`    | [OpenID Connect](../authentication/OIDC-Authentication.html)                             | `clientId`, `resource` (string)                                                          | Check whether a client may request a resource with the RFC 8707 `resource` parameter: whether it is an absolute URI without a fragment, the allowed resource expression it fully matches, or why it would be refused with `invalid_target`, whether the client or `cas.authn.oauth.core.allowed-resources` allowed it, and the token audience.   |
 | `listJwksKeys`               | [OpenID Connect](../authentication/OIDC-Authentication.html)                             | none                                                                                     | List the keys of the CAS OpenID Connect keystore with their key id, type, algorithm, use and rotation state. Key material is never returned.                                                                                                                                                                                                     |
 | `findTrustedDevices`         | [Trusted devices](../mfa/Multifactor-TrustedDevice-Authentication.html)                  | `username` (string)                                                                      | Return the devices a person has registered as trusted for multifactor authentication: the device name, the multifactor authentication provider, when it was registered, when it expires and whether it has expired. Device fingerprints and record keys are never returned.                                                                      |
 | `findSurrogateAccounts`      | [Surrogate authentication](../authentication/Surrogate-Authentication.html)              | `username` (string), `service` (optional)                                                | Return the accounts a person may impersonate, optionally for an application, and whether the person may impersonate any account.                                                                                                                                                                                                                 |
@@ -198,6 +249,20 @@ Most MCP clients can connect to a remote Streamable HTTP server using a configur
 }
 ```
 
+MCP clients that support OAuth need only the URL. Without credentials, they follow the `Bearer` challenge, sign the person in with CAS
+and request a token for the MCP endpoint (see [OAuth Access Tokens](#oauth-access-tokens)):
+
+```json
+{
+  "mcpServers": {
+    "cas": {
+      "type": "http",
+      "url": "https://sso.example.org/cas/mcp"
+    }
+  }
+}
+```
+
 ### Browser Clients
 
 MCP clients that run in a web browser, such as web-based MCP inspectors and playgrounds, call the MCP endpoint from another
@@ -209,7 +274,8 @@ are not affected.
 When CORS is turned on for a browser client, allow the origin of that client, the `POST`, `GET`, `DELETE` and `OPTIONS`
 methods, and the `Authorization`, `Content-Type`, `Accept`, `Mcp-Session-Id`, `MCP-Protocol-Version` and `Last-Event-ID`
 request headers. The `Mcp-Session-Id` response header must also be exposed; otherwise the browser hides the session id
-returned by `initialize` and every later call fails.
+returned by `initialize` and every later call fails. Browser clients that use access tokens also need the `WWW-Authenticate`
+response header exposed, to read the challenges.
 
 {% include_cached casproperties.html properties="cas.http-web-request.cors" %}
 

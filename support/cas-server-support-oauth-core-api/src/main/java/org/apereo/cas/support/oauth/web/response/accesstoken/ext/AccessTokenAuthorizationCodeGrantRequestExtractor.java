@@ -54,7 +54,8 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAcces
 
         val scopes = extractRequestedScopesByToken(requestedScopes, token, context);
         val resources = OAuth20Utils.narrowRequestedResources(
-            configurationContext.getRequestParameterResolver().resolveRequestedResources(context), token, registeredService);
+            configurationContext.getRequestParameterResolver().resolveRequestedResources(context), token,
+            configurationContext.getRequestParameterResolver().resolveAllowedResources(registeredService));
         val service = configurationContext.getWebApplicationServiceServiceFactory().createService(redirectUri);
         val generateRefreshToken = isAllowedToGenerateRefreshToken() && registeredService.isGenerateRefreshToken();
 

@@ -57,6 +57,12 @@ async function verifyRefreshWithResource(refreshToken, resource, expectedAudienc
     assert(await cas.assertParameter(page, "error") === "invalid_target");
     await cas.separator();
 
+    await cas.log("Every client may request the CAS MCP server endpoint, allowed by default for all clients");
+    await cas.goto(page, `https://localhost:8443/cas/oauth2.0/authorize?${parameters}&resource=${encodeURIComponent("https://localhost:8443/cas/mcp")}`);
+    await cas.sleep(1000);
+    assert(new URL(await page.url()).searchParams.get("error") === null);
+    await cas.separator();
+
     const resources = `&resource=${encodeURIComponent(apiResource)}&resource=${encodeURIComponent(reportsResource)}`;
     const url = `https://localhost:8443/cas/oauth2.0/authorize?${parameters}${resources}`;
 

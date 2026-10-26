@@ -84,6 +84,15 @@ class OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidatorTests ext
         assertTrue(validator.supports(context));
         request.setParameter(OAuth20Constants.RESOURCE, "https://api.example.org/orders/../admin");
         assertFalse(validator.supports(context));
+
+        request.setParameter(OAuth20Constants.RESOURCE, "https://cas.example.org/cas/mcp");
+        assertTrue(validator.supports(context));
+        service.setAllowedResources(Set.of());
+        servicesManager.save(service);
+        assertTrue(validator.supports(context));
+        request.setParameter(OAuth20Constants.RESOURCE, "https://cas.example.org/cas/mcp/other");
+        assertFalse(validator.supports(context));
+        assertEquals(OAuth20Constants.INVALID_TARGET, context.getRequestAttribute(OAuth20Constants.ERROR).orElseThrow().toString());
     }
 
     @Test

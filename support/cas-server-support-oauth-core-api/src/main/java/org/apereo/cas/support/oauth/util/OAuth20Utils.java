@@ -736,23 +736,23 @@ public class OAuth20Utils {
     /**
      * Resources requested at the token endpoint for a grant that already carries resources, such as a code or a
      * refresh token (RFC 8707, section 2.2). Without a request, the token keeps the resources of the grant. Otherwise,
-     * the requested resources must be among those of the grant, or match the resources the service allows when the
+     * the requested resources must be among those of the grant, or match the resources the service may request when the
      * grant carries none, and the token is issued for the requested resources only.
      *
      * @param requestedResources the requested resources
      * @param grant              the code or token presented as the grant
-     * @param registeredService  the registered service
+     * @param allowedResources   the resources the service may request, as regular expressions
      * @return the resources of the token to issue
      * @throws OAuth20InvalidTargetException when a requested resource is not part of the grant
      */
     public static Set<String> narrowRequestedResources(final Set<String> requestedResources,
                                                        final OAuth20Token grant,
-                                                       final OAuthRegisteredService registeredService) {
+                                                       final Collection<String> allowedResources) {
         if (requestedResources.isEmpty()) {
             return new LinkedHashSet<>(grant.getResources());
         }
         val permitted = grant.getResources().isEmpty()
-            ? RegisteredServiceOAuthResourceMatcher.areResourcesAllowed(registeredService.getAllowedResources(), requestedResources)
+            ? RegisteredServiceOAuthResourceMatcher.areResourcesAllowed(allowedResources, requestedResources)
             : grant.getResources().containsAll(requestedResources);
         if (!permitted) {
             LOGGER.debug("Requested resources [{}] exceed the resources granted to [{}]", requestedResources, grant.getId());

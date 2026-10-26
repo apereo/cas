@@ -143,6 +143,13 @@ class CasMcpFederationToolsTests extends BaseCasMcpTests {
         assertTrue(allowed.allowed());
         assertEquals("https://api\\.example\\.org/(orders|reports)", allowed.matchedPattern());
         assertEquals(List.of(clientId, "https://api.example.org/orders"), allowed.audience());
+        assertEquals("client", allowed.matchedBy());
+        assertEquals(List.of("https://cas\\.example\\.org/cas/mcp"), allowed.casAllowedResources());
+
+        val casWide = casOidcTools.checkOidcClientResource(clientId, "https://cas.example.org/cas/mcp");
+        assertTrue(casWide.allowed());
+        assertEquals("cas.authn.oauth.core.allowed-resources", casWide.matchedBy());
+        assertEquals("https://cas\\.example\\.org/cas/mcp", casWide.matchedPattern());
 
         val partial = casOidcTools.checkOidcClientResource(clientId, "https://api.example.org/orders/../admin");
         assertFalse(partial.allowed());

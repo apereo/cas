@@ -9,6 +9,10 @@
 
     "--cas.authn.oidc.core.issuer=https://localhost:8443/cas/oidc",
     "--cas.authn.oidc.jwks.file-system.jwks-file=file:${#systemProperties['java.io.tmpdir']}/mcp-oidc.jwks",
+    "--cas.authn.oidc.discovery.scopes=openid,profile,email,mcp:read",
+
+    "--cas.authn.attribute-repository.stub.attributes.memberOf=mcp-admins",
+    "--cas.mcp.oauth.required-attributes.memberOf=mcp-admins",
 
     "--cas.service-registry.core.init-from-json=false",
     "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services",

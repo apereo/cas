@@ -131,6 +131,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
     "cas.authn.adaptive.policy.require-multifactor.mfa-dummy=198[.]51[.]100[.][0-9]+",
     "cas.authn.throttle.failure.threshold=3",
     "cas.authn.throttle.failure.range-seconds=10",
+    "cas.authn.oauth.core.allowed-resources=https://cas\\\\.example\\\\.org/cas/mcp",
     "cas.authn.throttle.failure.throttle-window-seconds=PT5M"
 })
 public abstract class BaseCasMcpTests {

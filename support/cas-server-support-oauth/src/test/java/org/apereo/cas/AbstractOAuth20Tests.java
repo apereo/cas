@@ -148,6 +148,8 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.authn.attribute-repository.stub.attributes.uid=cas",
         "cas.authn.attribute-repository.stub.attributes.givenName=apereo-cas",
 
+        "cas.authn.oauth.core.allowed-resources=https://cas\\\\.example\\\\.org/cas/mcp",
+
         "cas.authn.oauth.session-replication.replicate-sessions=true",
         "cas.authn.oauth.session-replication.cookie.auto-configure-cookie-path=true",
         "cas.authn.oauth.session-replication.cookie.crypto.enabled=true",

@@ -206,6 +206,15 @@ public interface OAuth20RequestParameterResolver {
     boolean isAuthorizedResourceForService(WebContext context, OAuthRegisteredService registeredService);
 
     /**
+     * Resolve the resources, as regular expressions, a service may request: the allowed resources of the service,
+     * along with those CAS allows for every client.
+     *
+     * @param registeredService the registered service
+     * @return the allowed resources
+     */
+    Set<String> resolveAllowedResources(OAuthRegisteredService registeredService);
+
+    /**
      * Is authorized response type for service.
      *
      * @param context           the context

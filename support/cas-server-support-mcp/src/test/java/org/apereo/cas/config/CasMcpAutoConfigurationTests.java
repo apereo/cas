@@ -38,6 +38,7 @@ import org.apereo.cas.pac4j.client.DelegatedIdentityProviders;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
+import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
 import org.apereo.cas.webauthn.storage.WebAuthnCredentialRepository;
 import lombok.val;
@@ -135,6 +136,24 @@ class CasMcpAutoConfigurationTests {
             val result = context.getBean(CasOidcTools.class).listJwksKeys();
             assertEquals("The OpenID Connect keystore is not available", result.reason());
         });
+    }
+
+    @Test
+    void verifyOAuthActivation() {
+        val runner = new ApplicationContextRunner()
+            .withUserConfiguration(CasMcpAutoConfiguration.CasMcpOAuthConfiguration.class)
+            .withBean(OidcIssuerService.BEAN_NAME, OidcIssuerService.class, () -> OidcIssuerService.echoing("https://sso.example.org/cas/oidc"));
+        runner.run(context -> {
+            assertNull(context.getStartupFailure());
+            assertTrue(context.containsBean("casMcpOAuthEndpointConfigurer"));
+            assertTrue(context.containsBean("casMcpProtectedResourceMetadataController"));
+        });
+        runner.withClassLoader(new FilteredClassLoader(OAuth20AccessToken.class))
+            .run(context -> assertFalse(context.containsBean("casMcpOAuthEndpointConfigurer")));
+        runner.withClassLoader(new FilteredClassLoader(OidcIssuerService.class))
+            .run(context -> assertFalse(context.containsBean("casMcpProtectedResourceMetadataController")));
+        runner.withPropertyValues("CasFeatureModule.AI.mcp-oauth.enabled=false")
+            .run(context -> assertFalse(context.containsBean("casMcpOAuthEndpointConfigurer")));
     }
 
     @Test
