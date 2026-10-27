@@ -378,6 +378,16 @@ one-time codes can be added when `cas.authn.mfa.simple.mail.accepted-email-patte
   and removes once unused. Documents are only fetched from public addresses, without redirects and up to 5 KB, and these
   clients always see a consent screen that names the host of the client id. Turned off by default; enable it with
   `cas.authn.oidc.registration.client-id-metadata-document.enabled=true`{: .cas-setting}.
+- {: .new data-area="operations"} The [MCP server](../installation/Admin-MCP-Server.html#tools-that-change-cas) can offer
+  tools that change CAS: end the single sign-on sessions of a person with single logout, release throttled logins, turn an
+  application on or off, change a log level, revoke OAuth tokens and consent decisions, and remove trusted devices,
+  one-time password devices and WebAuthn devices. They are turned off by default, are turned on with the `AI.mcp-write`
+  feature toggle, and require the new `MCP_OPERATOR` role. With an OAuth access token, that role also requires the
+  `mcp:write` scope and the principal attributes listed in `cas.mcp.oauth.operator-required-attributes`{: .cas-setting},
+  which match nobody by default.
+- {: .fixed data-area="ui"} Turning on CAS login for [Palantir](../installation/Admin-Dashboard.html) no longer sends other
+  protected endpoints, such as actuator endpoints and the [MCP server](../installation/Admin-MCP-Server.html), to the CAS
+  login page; they challenge for their own credentials again, as API clients expect, and only Palantir redirects to CAS.
 - {: .fixed data-area="tickets"} With the [stateless ticket registry](../ticketing/Stateless-Ticket-Registry.html),
   device codes keep their requested scopes, so tokens issued for an approved device code carry them; the scopes used
   to be dropped.

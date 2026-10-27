@@ -8,7 +8,18 @@ description: "Review and extend the CAS MCP server (support/cas-server-support-m
 ## MCP server module (`support/cas-server-support-mcp`)
 
 - Tools are plain beans whose methods carry `@McpTool` plus `@PreAuthorize("hasRole('MCP_ADMIN')")`;
-  `CasMcpToolsTests.verifyToolsAreSecuredByProxies` asserts every such bean is an AOP proxy. All tools are read-only.
+  `CasMcpToolsTests.verifyToolsAreSecuredByProxies` asserts every such bean is an AOP proxy. Read tools need `MCP_ADMIN`.
+- Tools that change CAS (`AI.mcp-write`, off by default) live in separate `*AdministrationTools` beans so the toggle can drop
+  them: core ones in `CasAdministrationTools` (sessions with SLO through `SingleLogoutRequestExecutor`, throttle release via
+  `ThrottledSubmissionsStore.removeIf`, `setServiceEnabled` on `DefaultRegisteredServiceAccessStrategy` including chained
+  ones, `setLogLevel` through Spring Boot's `LoggingSystem`), optional ones as extra `@Bean` methods in the group's nested
+  configuration, or a nested configuration of their own (`CasMcpOAuthAdministrationConfiguration`). Each bean method carries
+  `@ConditionalOnFeatureEnabled(module = "mcp-write", enabledByDefault = false)`, each tool `hasRole('MCP_OPERATOR')`,
+  `readOnlyHint = false` and `destructiveHint = true` unless harmless. They accept session references and record ids from
+  the read tools, never raw TGT or token ids. Tests: `CasMcpToolsTests` turns `mcp-write` on (bean level, `MCP_OPERATOR`
+  mock user, Mockito `verify` on the mocked MFA repositories), `CasMcpServerTests.WriteToolsTests` (MockMvc, `mcpoperator`,
+  tokens), and `ProtocolTests` asserts they are not listed by default. Checkstyle rejects `public LoggerXxx` and a parameter
+  named `logger` (non-static logger rule).
 - A tool over an optional feature follows the consent pattern: `compileOnly` (and `testImplementation`) on that module, a
   nested `@Configuration` with `@ConditionalOnClass` and feature module `mcp-<group>`, an `ObjectProvider` for the backing
   bean and a `reason` in the result when it is absent; test activation in `CasMcpAutoConfigurationTests`.
@@ -66,13 +77,15 @@ description: "Review and extend the CAS MCP server (support/cas-server-support-m
   `CasMcpBearerTokenAuthenticationFilter` is built inside a `CasWebSecurityConfigurer`, never exposed as a bean (Spring Boot
   registers `Filter` beans for every request). It sits before `BasicAuthenticationFilter`, acts only on the MCP path with a
   `Bearer` header, sets a `CasMcpBearerTokenAuthentication` (principal id, client id, scopes) without saving it, and grants
-  `ROLE_MCP_ADMIN` only from `cas.mcp.oauth.required-attributes` (empty matches nobody), checked against attributes resolved
+  `ROLE_MCP_ADMIN` only from `cas.mcp.oauth.required-attributes` (empty matches nobody), and `ROLE_MCP_OPERATOR` only with the
+  `mcp:write` scope plus `cas.mcp.oauth.operator-required-attributes` (`grantRoles`), checked against attributes resolved
   through `defaultPrincipalResolver` (token principal as current principal): a token's principal carries only the attributes
   released to the client, so `memberOf` and the like are usually missing there. The unauthenticated challenge comes from
   `defaultAuthenticationEntryPointFor(..., mcp matcher)`, registered before `httpBasic` initializes so it wins. Being first
   also makes it Spring Security's fallback for requests no entry point claims (browser requests to actuators), so outside
-  the MCP path it answers with the Basic challenge alone. A configurer that sets an explicit `authenticationEntryPoint`
-  (Palantir CAS login) replaces it. The security context is saved in a request attribute only (async SSE dispatches need
+  the MCP path it answers with the Basic challenge alone. A configurer must never set an explicit `authenticationEntryPoint`,
+  which replaces every other one; Palantir's CAS login registers its entry point with `defaultAuthenticationEntryPointFor`
+  for `/palantir/**` only (`DashboardControllerTests.CasAuthenticationTests`). The security context is saved in a request attribute only (async SSE dispatches need
   it), never in the HTTP session.
 - Spring Security's Basic challenge is `Basic realm="Realm", charset="UTF-8"` (MockMvc reports it as more than one value), so
   `CasMcpAuthenticationEntryPoint` delegates to `BasicAuthenticationEntryPoint` rather than writing it, and tests compare with

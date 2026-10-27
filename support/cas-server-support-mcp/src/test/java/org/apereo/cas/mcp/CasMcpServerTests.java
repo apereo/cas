@@ -33,6 +33,7 @@ import org.apereo.cas.ticket.accesstoken.OAuth20DefaultAccessToken;
 import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
+import org.apereo.cas.util.RandomUtils;
 import com.jayway.jsonpath.JsonPath;
 import lombok.val;
 import org.apereo.inspektr.audit.AuditActionContext;
@@ -76,6 +77,10 @@ class CasMcpServerTests {
         "findThrottledLogins", "findAttributeSources", "findAttributeDefinitions", "validateServiceDefinition", "explainLogin");
 
     private static final List<String> FREE_FORM_TOOLS = List.of("findService", "matchService");
+
+    private static final List<String> WRITE_TOOLS = List.of("revokeSessions", "releaseThrottledLogins", "setServiceEnabled",
+        "setLogLevel", "revokeOAuthTokens", "revokeConsentDecisions", "removeTrustedDevices", "removeOneTimeTokenAccounts",
+        "removeWebAuthnDevices");
 
     @Nested
     @SpringBootTest(classes = BaseCasMcpTests.SharedTestConfiguration.class,
@@ -164,6 +169,7 @@ class CasMcpServerTests {
             val response = send(MCP_ADMIN, initialize(MCP_ADMIN), jsonRpcRequest("tools/list", "{}"));
             val tools = JsonPath.<List<String>>read(response, "$.result.tools[*].name");
             assertTrue(tools.containsAll(CAS_TOOLS), response);
+            assertTrue(tools.stream().noneMatch(WRITE_TOOLS::contains), response);
             for (val tool : CAS_TOOLS) {
                 val prefix = "$.result.tools[?(@.name == '%s')]".formatted(tool);
                 assertEquals(List.of(true), JsonPath.read(response, prefix + ".annotations.readOnlyHint"), response);
@@ -853,6 +859,97 @@ class CasMcpServerTests {
             assertFalse(webApplicationContext.containsBean("casAttributeTools"));
             assertFalse(webApplicationContext.containsBean("casLoginExplanationTools"));
             assertFalse(webApplicationContext.containsBean("casServiceResources"));
+            assertFalse(webApplicationContext.containsBean("casAdministrationTools"));
+            assertFalse(webApplicationContext.containsBean("casOAuthAdministrationTools"));
+            assertFalse(webApplicationContext.containsBean("casConsentAdministrationTools"));
+            assertFalse(webApplicationContext.containsBean("casTrustedDeviceAdministrationTools"));
+            assertFalse(webApplicationContext.containsBean("casOneTimeTokenAdministrationTools"));
+            assertFalse(webApplicationContext.containsBean("casWebAuthnAdministrationTools"));
+        }
+    }
+
+    @Nested
+    @SpringBootTest(classes = BaseCasMcpTests.SharedTestConfiguration.class,
+        properties = {
+            "CasFeatureModule.AI.mcp-write.enabled=true",
+            "cas.mcp.oauth.operator-required-attributes.mail=casuser@apereo.org"
+        },
+        webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+    class WriteToolsTests extends BaseCasMcpTests {
+        private static final String RESOURCE = "https://cas.example.org:8443/cas/mcp";
+
+        @Autowired
+        @Qualifier(ServicesManager.BEAN_NAME)
+        private ServicesManager servicesManager;
+
+        @Autowired
+        @Qualifier(TicketRegistry.BEAN_NAME)
+        private TicketRegistry ticketRegistry;
+
+        @Test
+        void verifyWriteToolsAreListed() throws Throwable {
+            val response = send(MCP_OPERATOR, initialize(MCP_OPERATOR), jsonRpcRequest("tools/list", "{}"));
+            val tools = JsonPath.<List<String>>read(response, "$.result.tools[*].name");
+            assertTrue(tools.containsAll(WRITE_TOOLS), response);
+            for (val tool : WRITE_TOOLS) {
+                val prefix = "$.result.tools[?(@.name == '%s')]".formatted(tool);
+                assertEquals(List.of(false), JsonPath.read(response, prefix + ".annotations.readOnlyHint"), response);
+                assertEquals(List.of(!"setLogLevel".equals(tool)), JsonPath.read(response, prefix + ".annotations.destructiveHint"), response);
+                assertFalse(JsonPath.<List<Object>>read(response, prefix + ".outputSchema").isEmpty(), tool);
+            }
+        }
+
+        @Test
+        void verifyWriteToolsRequireOperatorRole() throws Throwable {
+            val sessionId = initialize(MCP_ADMIN);
+            val calls = List.of(
+                callToolRequest("revokeSessions", "{\"username\":\"casuser\"}"),
+                callToolRequest("releaseThrottledLogins", "{\"username\":\"casuser\"}"),
+                callToolRequest("setServiceEnabled", "{\"serviceId\":1,\"enabled\":false}"),
+                callToolRequest("setLogLevel", "{\"loggerName\":\"org.apereo.cas\",\"level\":\"DEBUG\"}"),
+                callToolRequest("revokeOAuthTokens", "{\"username\":\"casuser\"}"),
+                callToolRequest("revokeConsentDecisions", "{\"username\":\"casuser\"}"),
+                callToolRequest("removeTrustedDevices", "{\"username\":\"casuser\"}"),
+                callToolRequest("removeOneTimeTokenAccounts", "{\"username\":\"casuser\"}"),
+                callToolRequest("removeWebAuthnDevices", "{\"username\":\"casuser\"}"));
+            for (val call : calls) {
+                assertTrue(isToolError(send(MCP_ADMIN, sessionId, call)), call);
+            }
+        }
+
+        @Test
+        void verifyOperatorRevokesOAuthTokens() throws Throwable {
+            val clientId = registerOidcClient(servicesManager, true);
+            val revoked = newAccessToken(ticketRegistry, clientId, Set.of("mcp:read"), Set.of(RESOURCE), Map.of(), Map.of());
+            val response = send(MCP_OPERATOR, initialize(MCP_OPERATOR),
+                callToolRequest("revokeOAuthTokens", "{\"clientId\":\"%s\"}".formatted(clientId)));
+            assertFalse(isToolError(response), response);
+            assertEquals(1, JsonPath.<Number>read(response, "$.result.structuredContent.accessTokens").intValue(), response);
+            assertFalse(response.contains(revoked), response);
+            assertNull(ticketRegistry.getTicket(revoked));
+        }
+
+        @Test
+        void verifyAccessTokenNeedsWriteScopeForOperatorRole() throws Throwable {
+            val clientId = registerOidcClient(servicesManager, true);
+            val logger = "{\"loggerName\":\"org.apereo.cas.mcp.%s\",\"level\":\"INFO\"}".formatted(RandomUtils.randomAlphabetic(12));
+            val operator = bearer(newAccessToken(ticketRegistry, clientId, Set.of("mcp:read", "mcp:write"), Set.of(RESOURCE), Map.of(), Map.of()));
+            val allowed = send(operator, initialize(operator), callToolRequest("setLogLevel", logger));
+            assertFalse(isToolError(allowed), allowed);
+            assertEquals("INFO", JsonPath.read(allowed, "$.result.structuredContent.level"), allowed);
+            assertTrue(isToolError(send(operator, initialize(operator), callToolRequest("findPerson", "{\"username\":\"casuser\"}"))));
+
+            val reader = bearer(newAccessToken(ticketRegistry, clientId, Set.of("mcp:read"), Set.of(RESOURCE), Map.of(), Map.of()));
+            assertTrue(isToolError(send(reader, initialize(reader), callToolRequest("setLogLevel", logger))));
+        }
+
+        @Test
+        void verifyProtectedResourceMetadataListsWriteScope() throws Throwable {
+            mockMvc.perform(get("/.well-known/oauth-protected-resource/mcp").accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.scopes_supported.length()").value(2))
+                .andExpect(jsonPath("$.scopes_supported[0]").value("mcp:read"))
+                .andExpect(jsonPath("$.scopes_supported[1]").value("mcp:write"));
         }
     }
 

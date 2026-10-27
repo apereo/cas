@@ -24,7 +24,8 @@ public record CasMcpProtectedResource(String resource, String metadataUrl) {
     public static final String SCOPE_READ = "mcp:read";
 
     /**
-     * The scope reserved for tools that change CAS; no tool requires it yet, so it is not advertised.
+     * The scope an access token needs, in addition to {@link #SCOPE_READ}, for its person to be granted the role of the
+     * tools that change CAS. It is advertised only when those tools are turned on.
      */
     public static final String SCOPE_WRITE = "mcp:write";
 

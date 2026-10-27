@@ -29,4 +29,13 @@ public class McpOAuthProperties implements Serializable {
      */
     @RegularExpressionCapable
     private Map<String, String> requiredAttributes = new LinkedHashMap<>();
+
+    /**
+     * Principal attributes that the person behind an access token must have to be granted the {@code MCP_OPERATOR} role,
+     * which the tools that change CAS require, keyed by attribute name, with a regular expression as the value. Every
+     * attribute must be present with at least one value that fully matches its expression, and the token must also carry
+     * the {@code mcp:write} scope. When no attributes are defined, nobody is granted the role with an access token.
+     */
+    @RegularExpressionCapable
+    private Map<String, String> operatorRequiredAttributes = new LinkedHashMap<>();
 }

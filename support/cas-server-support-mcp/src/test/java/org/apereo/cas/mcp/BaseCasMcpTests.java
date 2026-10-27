@@ -143,6 +143,8 @@ public abstract class BaseCasMcpTests {
 
     protected static final RequestPostProcessor CAS_USER = httpBasic("casuser", "Mellon");
 
+    protected static final RequestPostProcessor MCP_OPERATOR = httpBasic("mcpoperator", "Mellon");
+
     private static final AtomicLong REQUEST_ID = new AtomicLong();
 
     @Autowired

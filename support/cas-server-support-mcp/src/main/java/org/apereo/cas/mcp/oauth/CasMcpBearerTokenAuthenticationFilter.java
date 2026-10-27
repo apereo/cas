@@ -47,10 +47,10 @@ import jakarta.servlet.http.HttpServletResponse;
  * or bound to a DPoP key or client certificate, must have been issued for the MCP endpoint as a resource or audience,
  * and the application it was issued to must still be allowed. Such a token is refused with {@code 401 invalid_token}.
  * A valid token without the {@code mcp:read} scope is refused with {@code 403 insufficient_scope}. The caller is
- * granted the {@code MCP_ADMIN} role only when the person behind the token has every attribute in
- * {@link McpOAuthProperties#getRequiredAttributes()}, with a value that matches; otherwise the caller may connect and
- * list tools, and tool calls are refused. The security context is kept in a request attribute only, so that asynchronous
- * dispatches of the same request see it, and never in the HTTP session: every request must present the token again.
+ * granted the {@code MCP_ADMIN} and {@code MCP_OPERATOR} roles as {@link #grantRoles(OAuth20AccessToken)} describes;
+ * without them the caller may connect and list tools, and tool calls are refused. The security context is kept in a
+ * request attribute only, so that asynchronous dispatches of the same request see it, and never in the HTTP session:
+ * every request must present the token again.
  *
  * @author Misagh Moayyed
  * @since 8.1.0
@@ -62,6 +62,11 @@ public class CasMcpBearerTokenAuthenticationFilter extends OncePerRequestFilter 
      * The role that lets a caller use the tools.
      */
     public static final String ROLE_MCP_ADMIN = "ROLE_MCP_ADMIN";
+
+    /**
+     * The role that lets a caller use the tools that change CAS.
+     */
+    public static final String ROLE_MCP_OPERATOR = "ROLE_MCP_OPERATOR";
 
     private static final String BEARER_PREFIX = "Bearer ";
 
@@ -107,9 +112,7 @@ public class CasMcpBearerTokenAuthenticationFilter extends OncePerRequestFilter 
             return;
         }
         val principal = accessToken.getAuthentication().getPrincipal();
-        val authorities = isAdministrator(principal)
-            ? List.of(new SimpleGrantedAuthority(ROLE_MCP_ADMIN))
-            : List.<SimpleGrantedAuthority>of();
+        val authorities = grantRoles(accessToken);
         val authentication = new CasMcpBearerTokenAuthentication(principal.getId(), accessToken.getClientId(),
             accessToken.getScopes(), authorities);
         val strategy = SecurityContextHolder.getContextHolderStrategy();
@@ -152,22 +155,38 @@ public class CasMcpBearerTokenAuthenticationFilter extends OncePerRequestFilter 
     }
 
     /**
-     * Whether the person behind the token has every required attribute with a value that fully matches its expression.
-     * Without required attributes, nobody is an administrator. The attributes are those CAS resolves for the person now,
-     * through the principal resolvers, rather than those released to the client in the token, so the role does not
-     * depend on the client's attribute release policy and follows changes to the person's attributes; when nothing can
-     * be resolved, the attributes of the token's principal are used.
+     * The roles of the person behind the token. {@code MCP_ADMIN} is granted when the person has every attribute in
+     * {@link McpOAuthProperties#getRequiredAttributes()}, and {@code MCP_OPERATOR}, which the tools that change CAS
+     * require, when the token carries the {@code mcp:write} scope and the person has every attribute in
+     * {@link McpOAuthProperties#getOperatorRequiredAttributes()}. Without attributes defined, the role is granted to
+     * nobody. The attributes are those CAS resolves for the person now, through the principal resolvers, rather than
+     * those released to the client in the token, so the roles do not depend on the client's attribute release policy and
+     * follow changes to the person's attributes; when nothing can be resolved, the attributes of the token's principal are used.
      *
-     * @param tokenPrincipal the principal of the access token
-     * @return true if the principal is granted the MCP_ADMIN role
+     * @param accessToken the access token
+     * @return the granted roles
      */
-    protected boolean isAdministrator(final Principal tokenPrincipal) {
-        val required = properties.getRequiredAttributes();
-        if (required.isEmpty()) {
-            return false;
+    protected List<SimpleGrantedAuthority> grantRoles(final OAuth20AccessToken accessToken) {
+        val administrator = properties.getRequiredAttributes();
+        val operator = accessToken.getScopes().contains(CasMcpProtectedResource.SCOPE_WRITE)
+            ? properties.getOperatorRequiredAttributes()
+            : Map.<String, String>of();
+        if (administrator.isEmpty() && operator.isEmpty()) {
+            return List.of();
         }
-        val principal = resolvePrincipal(tokenPrincipal);
-        return required.entrySet().stream().allMatch(entry -> {
+        val principal = resolvePrincipal(accessToken.getAuthentication().getPrincipal());
+        val roles = new ArrayList<SimpleGrantedAuthority>();
+        if (hasAttributes(principal, administrator)) {
+            roles.add(new SimpleGrantedAuthority(ROLE_MCP_ADMIN));
+        }
+        if (hasAttributes(principal, operator)) {
+            roles.add(new SimpleGrantedAuthority(ROLE_MCP_OPERATOR));
+        }
+        return roles;
+    }
+
+    private static boolean hasAttributes(final Principal principal, final Map<String, String> required) {
+        return !required.isEmpty() && required.entrySet().stream().allMatch(entry -> {
             val pattern = RegexUtils.createPattern(entry.getValue());
             return principal.getAttributes().getOrDefault(entry.getKey(), List.of())
                 .stream()

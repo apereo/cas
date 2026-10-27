@@ -14,22 +14,29 @@ import org.apereo.cas.consent.ConsentRepository;
 import org.apereo.cas.consent.InMemoryConsentRepository;
 import org.apereo.cas.heimdall.authorizer.repository.AuthorizableResourceRepository;
 import org.apereo.cas.interrupt.InterruptInquiryExecutionPlan;
+import org.apereo.cas.logout.slo.SingleLogoutRequestExecutor;
 import org.apereo.cas.mcp.CasMcpEvaluationContextFactory;
 import org.apereo.cas.mcp.audit.CasMcpAuditor;
 import org.apereo.cas.mcp.audit.CasMcpOperationAuditActionResolver;
 import org.apereo.cas.mcp.audit.CasMcpOperationAuditResourceResolver;
 import org.apereo.cas.mcp.resources.CasSettingResources;
+import org.apereo.cas.mcp.tools.CasAdministrationTools;
 import org.apereo.cas.mcp.tools.CasAuthenticationRiskTools;
+import org.apereo.cas.mcp.tools.CasConsentAdministrationTools;
 import org.apereo.cas.mcp.tools.CasConsentTools;
 import org.apereo.cas.mcp.tools.CasDelegatedAuthenticationTools;
 import org.apereo.cas.mcp.tools.CasHeimdallTools;
 import org.apereo.cas.mcp.tools.CasInterruptTools;
+import org.apereo.cas.mcp.tools.CasOAuthAdministrationTools;
 import org.apereo.cas.mcp.tools.CasOidcTools;
+import org.apereo.cas.mcp.tools.CasOneTimeTokenAdministrationTools;
 import org.apereo.cas.mcp.tools.CasOneTimeTokenTools;
 import org.apereo.cas.mcp.tools.CasPasswordlessTools;
 import org.apereo.cas.mcp.tools.CasSamlIdPMetadataTools;
 import org.apereo.cas.mcp.tools.CasSurrogateTools;
+import org.apereo.cas.mcp.tools.CasTrustedDeviceAdministrationTools;
 import org.apereo.cas.mcp.tools.CasTrustedDeviceTools;
+import org.apereo.cas.mcp.tools.CasWebAuthnAdministrationTools;
 import org.apereo.cas.mcp.tools.CasWebAuthnTools;
 import org.apereo.cas.metadata.CasConfigurationMetadataRepository;
 import org.apereo.cas.oidc.issuer.OidcIssuerService;
@@ -39,11 +46,15 @@ import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
+import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
+import org.apereo.cas.web.support.ThrottledSubmissionsStore;
 import org.apereo.cas.webauthn.storage.WebAuthnCredentialRepository;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.support.StaticListableBeanFactory;
+import org.springframework.boot.logging.LoggingSystem;
 import org.springframework.boot.test.context.FilteredClassLoader;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 import static org.junit.jupiter.api.Assertions.*;
@@ -331,5 +342,52 @@ class CasMcpAutoConfigurationTests {
                 assertFalse(context.containsBean("casMcpAuditor"));
                 assertFalse(context.containsBean("casMcpAuditAdvisor"));
             });
+    }
+
+    @Test
+    void verifyWriteToolsActivation() {
+        val writeTools = List.of("casConsentAdministrationTools", "casTrustedDeviceAdministrationTools",
+            "casOneTimeTokenAdministrationTools", "casWebAuthnAdministrationTools", "casOAuthAdministrationTools");
+        val runner = new ApplicationContextRunner()
+            .withUserConfiguration(CasMcpAutoConfiguration.CasMcpConsentConfiguration.class,
+                CasMcpAutoConfiguration.CasMcpTrustedDevicesConfiguration.class,
+                CasMcpAutoConfiguration.CasMcpOneTimeTokenConfiguration.class,
+                CasMcpAutoConfiguration.CasMcpWebAuthnConfiguration.class,
+                CasMcpAutoConfiguration.CasMcpOAuthAdministrationConfiguration.class)
+            .withBean(TicketRegistry.BEAN_NAME, TicketRegistry.class, () -> mock(TicketRegistry.class));
+        runner.run(context -> {
+            assertNull(context.getStartupFailure());
+            assertTrue(context.containsBean("casTrustedDeviceTools"));
+            writeTools.forEach(bean -> assertFalse(context.containsBean(bean), bean));
+        });
+        val enabled = runner.withPropertyValues("CasFeatureModule.AI.mcp-write.enabled=true");
+        enabled.run(context -> {
+            assertNull(context.getStartupFailure());
+            writeTools.forEach(bean -> assertTrue(context.containsBean(bean), bean));
+            assertEquals("Attribute consent is not configured",
+                context.getBean(CasConsentAdministrationTools.class).revokeConsentDecisions("casuser", null).reason());
+            assertEquals("Multifactor authentication trusted devices are not configured",
+                context.getBean(CasTrustedDeviceAdministrationTools.class).removeTrustedDevices("casuser", null).reason());
+            assertEquals("One-time password multifactor authentication is not configured",
+                context.getBean(CasOneTimeTokenAdministrationTools.class).removeOneTimeTokenAccounts("casuser", null).reason());
+            assertEquals("WebAuthn multifactor authentication is not configured",
+                context.getBean(CasWebAuthnAdministrationTools.class).removeWebAuthnDevices("casuser").reason());
+            assertEquals("A username or a client id is required",
+                context.getBean(CasOAuthAdministrationTools.class).revokeOAuthTokens(null, null).reason());
+        });
+        enabled.withClassLoader(new FilteredClassLoader(OAuth20AccessToken.class))
+            .run(context -> assertFalse(context.containsBean("casOAuthAdministrationTools")));
+    }
+
+    @Test
+    void verifyAdministrationToolsWithoutDependencies() {
+        val beanFactory = new StaticListableBeanFactory();
+        val tools = new CasAdministrationTools(mock(TicketRegistry.class), mock(ServicesManager.class), mock(CasMcpEvaluationContextFactory.class),
+            beanFactory.getBeanProvider(SingleLogoutRequestExecutor.class), beanFactory.getBeanProvider(ThrottledSubmissionsStore.class),
+            beanFactory.getBeanProvider(LoggingSystem.class));
+        assertEquals("Single logout is not available", tools.revokeSessions("casuser", null).reason());
+        assertEquals("No throttle store is available", tools.releaseThrottledLogins("casuser", null).reason());
+        assertEquals("The logging system is not available", tools.setLogLevel("org.apereo.cas", "DEBUG").reason());
+        assertEquals("No registered service has this id", tools.setServiceEnabled(1, false).reason());
     }
 }

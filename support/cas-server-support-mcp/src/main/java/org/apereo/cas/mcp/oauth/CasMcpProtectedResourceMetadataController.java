@@ -14,9 +14,9 @@ import org.springframework.web.bind.annotation.RestController;
 /**
  * This is {@link CasMcpProtectedResourceMetadataController}, which publishes the OAuth protected resource metadata
  * (RFC 9728) of the MCP server: the resource identifier, CAS as the authorization server through its OpenID Connect
- * issuer, the supported scopes and how tokens are presented. The document is served under the CAS context path, at the
- * well-known path followed by the MCP endpoint path, and clients find it through the {@code resource_metadata} parameter
- * of the challenges.
+ * issuer, the supported scopes and how tokens are presented; {@code mcp:write} is listed only when the tools that change
+ * CAS are turned on. The document is served under the CAS context path, at the well-known path followed by the MCP
+ * endpoint path, and clients find it through the {@code resource_metadata} parameter of the challenges.
  *
  * @author Misagh Moayyed
  * @since 8.1.0
@@ -30,6 +30,8 @@ public class CasMcpProtectedResourceMetadataController {
 
     private final String resourceName;
 
+    private final boolean writable;
+
     /**
      * Protected resource metadata.
      *
@@ -41,7 +43,9 @@ public class CasMcpProtectedResourceMetadataController {
         val metadata = new LinkedHashMap<String, Object>();
         metadata.put("resource", protectedResource.resource());
         metadata.put("authorization_servers", List.of(oidcIssuerService.getObject().determineIssuer(Optional.empty())));
-        metadata.put("scopes_supported", List.of(CasMcpProtectedResource.SCOPE_READ));
+        metadata.put("scopes_supported", writable
+            ? List.of(CasMcpProtectedResource.SCOPE_READ, CasMcpProtectedResource.SCOPE_WRITE)
+            : List.of(CasMcpProtectedResource.SCOPE_READ));
         metadata.put("bearer_methods_supported", List.of("header"));
         metadata.put("resource_name", resourceName);
         return ResponseEntity.ok()
