@@ -10,7 +10,7 @@ x-redis-server: &redis-server
 services:
   redis-1:
     <<: *redis-server
-    image: redis:8.10.2
+    image: redis:8.10.3
     container_name: redis-1
     hostname: redis-1
     command:
@@ -44,7 +44,7 @@ services:
 
   redis-2:
     <<: *redis-server
-    image: redis:8.10.2
+    image: redis:8.10.3
     container_name: redis-2
     hostname: redis-2
     command:
@@ -78,7 +78,7 @@ services:
 
   redis-3:
     <<: *redis-server
-    image: redis:8.10.2
+    image: redis:8.10.3
     container_name: redis-3
     hostname: redis-3
     command:
@@ -112,7 +112,7 @@ services:
 
   redis-4:
     <<: *redis-server
-    image: redis:8.10.2
+    image: redis:8.10.3
     container_name: redis-4
     hostname: redis-4
     command:
@@ -146,7 +146,7 @@ services:
 
   redis-5:
     <<: *redis-server
-    image: redis:8.10.2
+    image: redis:8.10.3
     container_name: redis-5
     hostname: redis-5
     command:
@@ -180,7 +180,7 @@ services:
 
   redis-6:
     <<: *redis-server
-    image: redis:8.10.2
+    image: redis:8.10.3
     container_name: redis-6
     hostname: redis-6
     command:
