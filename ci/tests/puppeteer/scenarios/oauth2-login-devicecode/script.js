@@ -111,6 +111,15 @@ async function verifyDeviceCode(data) {
     await cas.sleep(1000);
     await cas.assertVisibility(page, "div.banner-danger");
 
+    await cas.log("A user code posted without the approval token of the form must be refused, and stay unapproved");
+    await page.$eval("input[name='approvaltoken']", (input) => input.remove());
+    await cas.type(page, "#usercode", data.user_code);
+    await cas.pressEnter(page);
+    await cas.waitForNavigation(page);
+    await cas.sleep(1000);
+    await cas.assertVisibility(page, "div.banner-danger");
+    await cas.assertVisibility(page, "input[name='approvaltoken']");
+
     await cas.type(page, "#usercode", data.user_code);
     await cas.pressEnter(page);
     await cas.waitForNavigation(page);

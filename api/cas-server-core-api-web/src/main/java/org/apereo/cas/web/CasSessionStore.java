@@ -1,6 +1,7 @@
 package org.apereo.cas.web;
 
 import module java.base;
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import org.jspecify.annotations.Nullable;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -15,6 +16,15 @@ import jakarta.servlet.http.HttpServletResponse;
  * @since 8.1.0
  */
 public interface CasSessionStore {
+
+    /**
+     * Get the identifier of the current session.
+     *
+     * @param request the request
+     * @param create  whether a session should be created when there is none, for stores that create sessions on demand
+     * @return the session id, if any
+     */
+    Optional<String> getSessionId(HttpServletRequest request, boolean create);
 
     /**
      * Get the value stored under the given key.
@@ -36,6 +46,25 @@ public interface CasSessionStore {
     void set(HttpServletRequest request, HttpServletResponse response, String key, @Nullable Object value);
 
     /**
+     * Destroy the current session and everything stored in it.
+     *
+     * @param request  the request
+     * @param response the response, used by stores that track state with a cookie
+     * @return true if the session could be destroyed
+     */
+    @CanIgnoreReturnValue
+    boolean destroySession(HttpServletRequest request, HttpServletResponse response);
+
+    /**
+     * Give the current session a new identifier while keeping its content, to defeat session fixation.
+     *
+     * @param request the request
+     * @return true if the session was renewed, false if the store does not renew sessions
+     */
+    @CanIgnoreReturnValue
+    boolean renewSession(HttpServletRequest request);
+
+    /**
      * Get an object that represents the current session and that can travel outside the store,
      * such as the browser storage payload of the browser-backed store.
      *
@@ -45,10 +74,14 @@ public interface CasSessionStore {
     Optional<Object> getTrackableSession(HttpServletRequest request);
 
     /**
-     * Restore the session of the current request from an object produced by {@link #getTrackableSession(HttpServletRequest)}.
+     * Restore a session from an object produced by {@link #getTrackableSession(HttpServletRequest)}.
+     * Stores that keep state outside the container restore it into the current request and return themselves;
+     * the container-backed store returns a store that operates on the tracked session itself.
      *
      * @param request          the request
      * @param trackableSession the trackable session
+     * @return the store that operates on the restored session
      */
-    void buildFromTrackableSession(HttpServletRequest request, Object trackableSession);
+    @CanIgnoreReturnValue
+    Optional<CasSessionStore> buildFromTrackableSession(HttpServletRequest request, Object trackableSession);
 }

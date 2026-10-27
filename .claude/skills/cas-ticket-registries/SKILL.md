@@ -135,7 +135,8 @@ description: "Review and change ticket registries: stateless (compact tickets), 
   no code). The TST holds the whole flow (authentication, result builder, all webflow scopes) as objects, Duo's SDK
   rejects a `state` over 1024 characters, and the Duo webflow is wired at startup by storage type, so a runtime fallback
   onto browser storage does not work (no `restore` transition, no storage write). Users must set `BROWSER_STORAGE`.
-- Session stores on the ticket registry (pac4j `TicketRegistrySessionStore`, Spring Session
+- Session stores on the ticket registry (`TicketRegistryCasSessionStore`, also behind pac4j through
+  `CasSessionStorePac4jAdapter`; Spring Session
   `TicketRegistrySessionRepository`) keep only text properties, since the transient ticket compactor stringifies values:
   other values go in as base64 Java serialization text, times as ISO-8601. The default in-memory registry hands the
   same ticket instance to concurrent requests, so never add or remove keys of a stored ticket's properties map while

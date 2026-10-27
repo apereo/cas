@@ -15,6 +15,7 @@
         <span th:utext="#{${'cas.oauth.device.error.' + error}}"/>
     </div>
     <form method="post" id="fm1">
+        <input type="hidden" name="approvaltoken" th:if="${approvalToken}" th:value="${approvalToken}"/>
         <section class="cas-field form-group my-3 mdc-input-group">
             <div class="mdc-input-group-field mdc-input-group-field-append">
                 <div class="d-flex">

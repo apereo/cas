@@ -98,3 +98,15 @@ description: "Review and change CAS OAuth2/OIDC protocol behavior: token endpoin
   seconds; a `LocalDateTime` with fractions makes `DateTimeUtils.zonedDateTimeOf` warn on every expiration check.
 - Consent for these clients is never bypassed (`OidcConsentApprovalViewResolver`); `confirm.html` shows `clientIdHost`,
   `redirectHost` and a loopback warning (`screen.oidc.confirm.cimd.*`, every bundle).
+
+## Device user code approval
+
+- The approval form at `/oauth2.0/device` carries `approvaltoken`, an HMAC of the ticket-granting ticket id keyed by the
+  TGC signing and encryption keys (the TGT id itself when they are blank, so it holds on every node), and
+  `OAuth20DeviceUserCodeApprovalEndpointController` checks it before it looks the user code up. Spring Security CSRF is
+  disabled globally and the pac4j CSRF matcher only issues a cookie, so nothing else protects that POST: keep the check,
+  and keep the hidden input in `deviceCodeApproval.html`. Error keys live under `cas.oauth.device.error.*`.
+- Do not move this check to `http.csrf(...)` in a `CasWebSecurityConfigurer` as things stand: every configurer shares one
+  `CsrfConfigurer`, so `requireCsrfProtectionMatcher`, the token repository and the request handler of the last one
+  replace the others (CIBA in `oidcProtocolEndpointConfigurer` and WebAuthn already overwrite each other when both are
+  present). A Spring Security CSRF move needs one configurer that combines the matchers first.

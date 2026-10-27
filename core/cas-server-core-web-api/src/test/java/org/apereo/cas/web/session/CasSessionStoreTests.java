@@ -16,6 +16,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.mock.web.MockHttpSession;
 import jakarta.servlet.http.HttpSession;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -46,7 +47,30 @@ class CasSessionStoreTests {
 
             store.set(request, response, "key", null);
             assertTrue(store.get(request, "key").isEmpty());
-            assertDoesNotThrow(() -> store.buildFromTrackableSession(request, "ignored"));
+            assertTrue(store.buildFromTrackableSession(request, "ignored").isEmpty());
+        }
+
+        @Test
+        void verifySessionLifecycle() {
+            val store = new DefaultCasSessionStore("Prefix");
+            val request = new MockHttpServletRequest();
+            val response = new MockHttpServletResponse();
+            assertTrue(store.getSessionId(request, false).isEmpty());
+            store.set(request, response, "key", "value");
+            val sessionId = store.getSessionId(request, false).orElseThrow();
+
+            assertTrue(store.renewSession(request));
+            assertNotEquals(sessionId, store.getSessionId(request, false).orElseThrow());
+            assertEquals("value", store.get(request, "key").orElseThrow());
+
+            val tracked = (MockHttpSession) store.getTrackableSession(request).orElseThrow();
+            val otherRequest = new MockHttpServletRequest();
+            val rebuilt = store.buildFromTrackableSession(otherRequest, tracked).orElseThrow();
+            assertEquals("value", rebuilt.get(otherRequest, "key").orElseThrow());
+            assertEquals(tracked.getId(), rebuilt.getSessionId(otherRequest, false).orElseThrow());
+            assertTrue(rebuilt.destroySession(otherRequest, new MockHttpServletResponse()));
+            assertTrue(tracked.isInvalid());
+            assertNull(otherRequest.getSession(false));
         }
 
         @Test
@@ -67,16 +91,17 @@ class CasSessionStoreTests {
             val request = new MockHttpServletRequest();
             val response = new MockHttpServletResponse();
             store.set(request, response, "key1", "value1");
-            store.set(request, response, "key2", new ArrayList<>(List.of("HelloWorld")));
-            store.set(request, response, "key3", 1234567);
+            store.withSessionAttributes(request, Map.of("key2", new ArrayList<>(List.of("HelloWorld")), "key3", 1234567));
 
             val storage = (BrowserStorage) store.getTrackableSession(request).orElseThrow();
             assertEquals("ContextKey", storage.getContext());
             assertEquals(BrowserStorage.BrowserStorageTypes.LOCAL, storage.getStorageType());
 
             val restoredRequest = new MockHttpServletRequest();
-            store.buildFromTrackableSession(restoredRequest, toBrowserPayload(storage));
+            assertSame(store, store.buildFromTrackableSession(restoredRequest, toBrowserPayload(storage)).orElseThrow());
             assertEquals("value1", store.get(restoredRequest, "key1").orElseThrow());
+            assertEquals("value1", store.getSessionAttributes(restoredRequest).get("key1"));
+            assertTrue(store.getSessionAttributes(new MockHttpServletRequest()).isEmpty());
             assertEquals(List.of("HelloWorld"), store.get(restoredRequest, "key2").orElseThrow());
             assertEquals(1234567, store.get(restoredRequest, "key3").orElseThrow());
         }
@@ -184,6 +209,18 @@ class CasSessionStoreTests {
             store.set(request, response, "key", "value");
             assertEquals("TST-updated", store.getTrackableSession(request).orElseThrow());
             verify(cookieGenerator).addCookie(request, response, "TST-updated");
+        }
+
+        @Test
+        void verifySessionDestroyed() throws Throwable {
+            val store = new TicketRegistryCasSessionStore(ticketRegistry, ticketFactory, cookieGenerator);
+            assertTrue(store.getSessionId(request, true).isEmpty());
+            assertFalse(store.renewSession(request));
+            store.set(request, response, "key", "value");
+            val ticketId = store.getSessionId(request, false).orElseThrow();
+            assertTrue(store.destroySession(request, response));
+            verify(ticketRegistry).deleteTicket(ticketId);
+            verify(cookieGenerator).removeCookie(response);
         }
 
         @Test

@@ -100,10 +100,40 @@ class OAuth20DeviceUserCodeApprovalEndpointControllerTests extends AbstractOAuth
 
         request.setCookies(result.getResponse().getCookies());
 
+        result = performOAuthRequest(request);
+        assertEquals("invalidrequest", getModelAndView(result).getModel().get("error"));
+        userCode = ticketRegistry.getTicket(userCode.getId(), OAuth20DeviceUserCode.class);
+        assertFalse(userCode.isUserCodeApproved());
+
+        request.setParameter(OAuth20DeviceUserCodeApprovalEndpointController.PARAMETER_APPROVAL_TOKEN, UUID.randomUUID().toString());
+        result = performOAuthRequest(request);
+        assertEquals("invalidrequest", getModelAndView(result).getModel().get("error"));
+        userCode = ticketRegistry.getTicket(userCode.getId(), OAuth20DeviceUserCode.class);
+        assertFalse(userCode.isUserCodeApproved());
+
+        request.setMethod(HttpMethod.GET.name());
+        result = performOAuthRequest(request);
+        val approvalToken = (String) getModelAndView(result).getModel()
+            .get(OAuth20DeviceUserCodeApprovalEndpointController.MODEL_ATTRIBUTE_APPROVAL_TOKEN);
+        assertNotNull(approvalToken);
+
+        request.setMethod(HttpMethod.POST.name());
+        request.setParameter(OAuth20DeviceUserCodeApprovalEndpointController.PARAMETER_APPROVAL_TOKEN, approvalToken);
+        request.removeParameter(OAuth20DeviceUserCodeApprovalEndpointController.PARAMETER_USER_CODE);
+        result = performOAuthRequest(request);
+        var model = getModelAndView(result).getModel();
+        assertEquals("codenotfound", model.get("error"));
+        assertEquals(approvalToken, model.get(OAuth20DeviceUserCodeApprovalEndpointController.MODEL_ATTRIBUTE_APPROVAL_TOKEN));
+
+        request.setParameter(OAuth20DeviceUserCodeApprovalEndpointController.PARAMETER_USER_CODE, userCode.getId());
         performOAuthRequest(request);
         userCode = ticketRegistry.getTicket(userCode.getId(), OAuth20DeviceUserCode.class);
         assertTrue(userCode.isUserCodeApproved());
         assertNotNull(userCode.getAuthentication());
+
+        result = performOAuthRequest(request);
+        model = getModelAndView(result).getModel();
+        assertEquals("codeapproved", model.get("error"));
     }
 
     private MockHttpServletRequest prepareDeviceApprovalRequest(final HttpMethod method, final String userCode) throws Exception {

@@ -412,5 +412,18 @@ one-time codes can be added when `cas.authn.mfa.simple.mail.accepted-email-patte
   `JEEContext` or `SessionStore` must pass the request instead. Forced and passive authentication, requested authentication
   context classes and scoped identity providers of a SAML2 request still reach SAML2 identity providers used for
   [delegated authentication](../integration/Delegate-Authentication-SAML2.html), now through the SAML2 delegated authentication module.
+- {: .action data-area="general"} Duo Security, [OAuth/OpenID Connect](../authentication/OAuth-Authentication.html) and
+  [delegated authentication](../integration/Delegate-Authentication.html) keep their session state with the same CAS
+  session store the SAML2 identity provider uses, in the http session, in browser storage or in the ticket registry as
+  configured, with the same attribute names and cookies as before. Duo Security no longer depends on pac4j for it. The
+  pac4j `TicketRegistrySessionStore` and `BrowserWebStorageSessionStore` classes are removed: customizations that defined
+  `oauthDistributedSessionStore` or `delegatedClientDistributedSessionStore` with them should wrap
+  `TicketRegistryCasSessionStore`, `BrowserStorageCasSessionStore` or `DefaultCasSessionStore` in a
+  `CasSessionStorePac4jAdapter`, and the `duoUniversalPromptSessionStore` bean is now a `BrowserStorageCasSessionStore`.
+- {: .action data-area="oidc"} The page where users approve a [device user code](../authentication/OAuth-ProtocolFlow-DeviceAuthorization.html)
+  now carries an approval token tied to the single sign-on session, and an approval without it is refused, so another site
+  can no longer make a signed-in browser approve a code. Customized `protocol/oauth/deviceCodeApproval.html` templates must
+  add the hidden `approvaltoken` input of the default template to their form. The error messages of the page are now
+  defined, under `cas.oauth.device.error.*`.
 
 {% include release-footer.html %}

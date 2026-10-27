@@ -23,7 +23,7 @@ import org.apereo.cas.configuration.model.support.oauth.OAuthProperties;
 import org.apereo.cas.logout.LogoutExecutionPlanConfigurer;
 import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.notifications.CommunicationsManager;
-import org.apereo.cas.pac4j.TicketRegistrySessionStore;
+import org.apereo.cas.pac4j.CasSessionStorePac4jAdapter;
 import org.apereo.cas.services.RegisteredServiceCipherExecutor;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20ClientIdAwareProfileManager;
@@ -168,6 +168,8 @@ import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
 import org.apereo.cas.web.UrlValidator;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
+import org.apereo.cas.web.session.DefaultCasSessionStore;
+import org.apereo.cas.web.session.TicketRegistryCasSessionStore;
 import org.apereo.cas.web.support.ArgumentExtractor;
 import org.apereo.cas.web.support.CookieUtils;
 import org.apereo.cas.web.support.mgmr.DefaultCasCookieValueManager;
@@ -197,7 +199,6 @@ import org.pac4j.http.client.direct.HeaderClient;
 import org.pac4j.http.credentials.extractor.X509CredentialsExtractor;
 import org.pac4j.jee.context.JEEContext;
 import org.pac4j.jee.context.JEEContextFactory;
-import org.pac4j.jee.context.session.JEESessionStore;
 import org.pac4j.jee.http.adapter.JEEHttpActionAdapter;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -865,12 +866,10 @@ class CasOAuth20Configuration {
                 final CasConfigurationProperties casProperties) {
                 val replicate = casProperties.getAuthn().getOauth().getSessionReplication().isReplicateSessions();
                 if (replicate) {
-                    return new TicketRegistrySessionStore(ticketRegistry,
-                        ticketFactory, oauthDistributedSessionCookieGenerator);
+                    return new CasSessionStorePac4jAdapter(new TicketRegistryCasSessionStore(ticketRegistry,
+                        ticketFactory, oauthDistributedSessionCookieGenerator));
                 }
-                val sessionStore = new JEESessionStore();
-                sessionStore.setPrefix("OauthOidcServerSupport");
-                return sessionStore;
+                return new CasSessionStorePac4jAdapter(new DefaultCasSessionStore("OauthOidcServerSupport"));
             }
         }
 

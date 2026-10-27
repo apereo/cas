@@ -45,6 +45,11 @@ public class TicketRegistryCasSessionStore implements CasSessionStore {
     private final CasCookieBuilder cookieGenerator;
 
     @Override
+    public Optional<String> getSessionId(final HttpServletRequest request, final boolean create) {
+        return Optional.ofNullable(fetchSessionIdFromRequest(request));
+    }
+
+    @Override
     public Optional<Object> get(final HttpServletRequest request, final String key) {
         LOGGER.trace("Getting key: [{}]", key);
         val ticket = getTransientSessionTicketForSession(request);
@@ -92,6 +97,23 @@ public class TicketRegistryCasSessionStore implements CasSessionStore {
     }
 
     @Override
+    public boolean destroySession(final HttpServletRequest request, final HttpServletResponse response) {
+        val sessionId = fetchSessionIdFromRequest(request);
+        if (sessionId != null) {
+            val ticketId = TransientSessionTicketFactory.normalizeTicketId(sessionId);
+            FunctionUtils.doUnchecked(_ -> ticketRegistry.deleteTicket(ticketId));
+            cookieGenerator.removeCookie(response);
+            LOGGER.trace("Removed session cookie and ticket [{}]", ticketId);
+        }
+        return true;
+    }
+
+    @Override
+    public boolean renewSession(final HttpServletRequest request) {
+        return false;
+    }
+
+    @Override
     public Optional<Object> getTrackableSession(final HttpServletRequest request) {
         val sessionId = fetchSessionIdFromRequest(request);
         LOGGER.trace("Track session id: [{}]", sessionId);
@@ -99,9 +121,10 @@ public class TicketRegistryCasSessionStore implements CasSessionStore {
     }
 
     @Override
-    public void buildFromTrackableSession(final HttpServletRequest request, final Object trackableSession) {
+    public Optional<CasSessionStore> buildFromTrackableSession(final HttpServletRequest request, final Object trackableSession) {
         request.setAttribute(SESSION_ID_IN_REQUEST_ATTRIBUTE, trackableSession);
         LOGGER.trace("Force session id: [{}]", trackableSession);
+        return Optional.of(this);
     }
 
     protected @Nullable String fetchSessionIdFromRequest(final HttpServletRequest request) {
