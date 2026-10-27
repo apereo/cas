@@ -6,6 +6,7 @@ const fs = require("fs");
 const path = require("path");
 
 let notifications = 0;
+let notificationError = undefined;
 
 async function verifyPushDelivery(userCode) {
     const clientId = "clientpush";
@@ -60,6 +61,7 @@ async function verifyPushDelivery(userCode) {
         await cas.sleep(3000);
         await cas.assertInvisibility(page, "#error");
         await cas.assertVisibility(page, "#confirmation");
+        assert(notificationError === undefined, `Push notification was rejected: ${notificationError}`);
         assert(notifications === received + 1, `Expected a push notification, received ${notifications - received}`);
     } finally {
         await cas.closeBrowser(browser);
@@ -69,20 +71,25 @@ async function verifyPushDelivery(userCode) {
 (async () => {
     const app = express();
     app.use(express.json());
-    app.post("/notification", (req, res) => {
-        cas.logg("Received CIBA notification from CAS");
+    app.post("/notification", async (req, res) => {
+        await cas.logg("Received CIBA notification from CAS");
         const requestBody = req.body;
-        cas.log(requestBody);
-        assert(requestBody.access_token !== undefined);
-        assert(requestBody.refresh_token !== undefined);
-        assert(requestBody.id_token !== undefined);
-        assert(requestBody.token_type === "Bearer");
-        assert(requestBody.scope === "openid profile");
-        const decoded = cas.decodeJwt(requestBody.id_token);
-        assert(decoded.sub === "casuser@apereo.org");
-        assert(decoded["urn:openid:params:jwt:claim:auth_req_id"] === requestBody.auth_req_id);
-        notifications += 1;
-        res.status(200).send("Accepted");
+        await cas.log(requestBody);
+        try {
+            assert(requestBody.access_token !== undefined);
+            assert(requestBody.refresh_token !== undefined);
+            assert(requestBody.id_token !== undefined);
+            assert(requestBody.token_type === "Bearer");
+            assert(requestBody.scope === "openid profile");
+            const decoded = await cas.decodeJwt(requestBody.id_token);
+            assert(decoded.sub === "casuser@apereo.org", decoded.sub);
+            assert(decoded["urn:openid:params:jwt:claim:auth_req_id"] === requestBody.auth_req_id);
+            notifications += 1;
+            res.status(200).send("Accepted");
+        } catch (e) {
+            notificationError = e;
+            res.status(500).send(e.message);
+        }
     });
     const credentials = {
         key: fs.readFileSync(path.join(__dirname, "private.key"), "utf8"),

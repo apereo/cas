@@ -196,7 +196,7 @@ async function verifyExpiredRequest(clientId = "clientpoll", clientSecret = "sec
 (async () => {
     const app = express();
     app.use(express.json());
-    app.post("/notification", (req, res) => {
+    app.post("/notification", async (req, res) => {
         cas.logg("Received CIBA notification from CAS");
         const requestBody = req.body;
         cas.log(requestBody);
@@ -207,7 +207,7 @@ async function verifyExpiredRequest(clientId = "clientpoll", clientSecret = "sec
         assert(requestBody.expires_in !== undefined);
         assert(requestBody.scope === "openid profile");
         
-        const decoded = cas.decodeJwt(requestBody.id_token);
+        const decoded = await cas.decodeJwt(requestBody.id_token);
         assert(decoded.sub === "casuser@apereo.org");
         assert(decoded["urn:openid:params:jwt:claim:auth_req_id"] !== undefined);
         assert(decoded["urn:openid:params:jwt:claim:rt_hash"] !== undefined);
