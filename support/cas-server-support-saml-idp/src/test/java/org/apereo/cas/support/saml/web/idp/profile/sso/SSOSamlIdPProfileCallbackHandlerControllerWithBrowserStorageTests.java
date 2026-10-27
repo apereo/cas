@@ -26,7 +26,6 @@ import org.opensaml.saml.common.SAMLObjectBuilder;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.Issuer;
-import org.pac4j.jee.context.JEEContext;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -90,7 +89,7 @@ class SSOSamlIdPProfileCallbackHandlerControllerWithBrowserStorageTests extends 
         storeAuthnRequest(request, response, authn);
 
         val st = getServiceTicket();
-        val storage = samlIdPDistributedSessionStore.getTrackableSession(new JEEContext(request, response))
+        val storage = samlIdPDistributedSessionStore.getTrackableSession(request)
             .map(BrowserStorage.class::cast)
             .orElseThrow();
         val result = performCallbackPost(request, response, st.getId(),
@@ -138,7 +137,7 @@ class SSOSamlIdPProfileCallbackHandlerControllerWithBrowserStorageTests extends 
         context.setMessage(authnRequest);
         request.addParameter(SamlIdPConstants.AUTHN_REQUEST_ID, authnRequest.getID());
         SamlIdPSessionManager.of(openSamlConfigBean, samlIdPDistributedSessionStore)
-            .store(new JEEContext(request, response), Pair.of(authnRequest, context));
+            .store(request, response, Pair.of(authnRequest, context));
     }
     
     private AuthnRequest getAuthnRequest() {

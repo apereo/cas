@@ -27,7 +27,6 @@ import org.springframework.context.annotation.Import;
     SamlIdPMetadataConfiguration.class,
     SamlIdPTicketCatalogConfiguration.class,
     SamlIdPTicketSerializationConfiguration.class,
-    SamlIdPDelegatedAuthenticationConfiguration.class,
     SamlIdPMonitoringConfiguration.class
 })
 public class CasSamlIdPAutoConfiguration {

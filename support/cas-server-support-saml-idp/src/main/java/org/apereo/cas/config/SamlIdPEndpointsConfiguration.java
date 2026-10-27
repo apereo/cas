@@ -20,8 +20,6 @@ import org.apereo.cas.logout.slo.SingleLogoutMessageCreator;
 import org.apereo.cas.logout.slo.SingleLogoutServiceLogoutUrlBuilder;
 import org.apereo.cas.logout.slo.SingleLogoutServiceMessageHandler;
 import org.apereo.cas.multitenancy.TenantExtractor;
-import org.apereo.cas.pac4j.BrowserWebStorageSessionStore;
-import org.apereo.cas.pac4j.TicketRegistrySessionStore;
 import org.apereo.cas.services.CasRegisteredService;
 import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
 import org.apereo.cas.services.ServicesManager;
@@ -71,9 +69,13 @@ import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
 import org.apereo.cas.validation.TicketValidator;
+import org.apereo.cas.web.CasSessionStore;
 import org.apereo.cas.web.CasWebSecurityConfigurer;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.SingleSignOnParticipationStrategy;
+import org.apereo.cas.web.session.BrowserStorageCasSessionStore;
+import org.apereo.cas.web.session.DefaultCasSessionStore;
+import org.apereo.cas.web.session.TicketRegistryCasSessionStore;
 import org.apereo.cas.web.support.CookieUtils;
 import org.apereo.cas.web.support.mgmr.DefaultCasCookieValueManager;
 import org.apereo.cas.web.support.mgmr.DefaultCookieSameSitePolicy;
@@ -87,8 +89,6 @@ import org.opensaml.saml.saml2.binding.decoding.impl.HTTPPostDecoder;
 import org.opensaml.saml.saml2.binding.decoding.impl.HTTPPostSimpleSignDecoder;
 import org.opensaml.saml.saml2.core.Response;
 import org.opensaml.soap.soap11.Envelope;
-import org.pac4j.core.context.session.SessionStore;
-import org.pac4j.jee.context.session.JEESessionStore;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -527,7 +527,7 @@ class SamlIdPEndpointsConfiguration {
         @ConditionalOnMissingBean(name = "samlIdPDistributedSessionStore")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public SessionStore samlIdPDistributedSessionStore(
+        public CasSessionStore samlIdPDistributedSessionStore(
             final CasConfigurationProperties casProperties,
             @Qualifier("samlIdPDistributedSessionCookieGenerator")
             final CasCookieBuilder samlIdPDistributedSessionCookieGenerator,
@@ -539,13 +539,9 @@ class SamlIdPEndpointsConfiguration {
             final TicketFactory ticketFactory) {
             val type = casProperties.getAuthn().getSamlIdp().getCore().getSessionStorageType();
             return switch (type) {
-                case TICKET_REGISTRY -> new TicketRegistrySessionStore(ticketRegistry, ticketFactory, samlIdPDistributedSessionCookieGenerator);
-                case BROWSER_STORAGE -> new BrowserWebStorageSessionStore(webflowCipherExecutor, "SamlIdPSessionStore");
-                default -> {
-                    val jeeSessionStore = new JEESessionStore();
-                    jeeSessionStore.setPrefix("SamlServerSupport");
-                    yield jeeSessionStore;
-                }
+                case TICKET_REGISTRY -> new TicketRegistryCasSessionStore(ticketRegistry, ticketFactory, samlIdPDistributedSessionCookieGenerator);
+                case BROWSER_STORAGE -> new BrowserStorageCasSessionStore(webflowCipherExecutor, "SamlIdPSessionStore");
+                default -> new DefaultCasSessionStore("SamlServerSupport");
             };
         }
 
@@ -609,7 +605,7 @@ class SamlIdPEndpointsConfiguration {
             @Qualifier(CasCookieBuilder.BEAN_NAME_TICKET_GRANTING_COOKIE_BUILDER)
             final CasCookieBuilder ticketGrantingTicketCookieGenerator,
             @Qualifier("samlIdPDistributedSessionStore")
-            final SessionStore samlIdPDistributedSessionStore,
+            final CasSessionStore samlIdPDistributedSessionStore,
             @Qualifier("samlProfileSamlResponseBuilder")
             final SamlProfileObjectBuilder<Response> samlProfileSamlResponseBuilder,
             @Qualifier("samlProfileSamlAttributeQueryFaultResponseBuilder")

@@ -30,7 +30,7 @@ When you learn something new, record it in the skill that owns the area, or here
 | [`cas-passwordless-webauthn`](.claude/skills/cas-passwordless-webauthn/SKILL.md) | `support/cas-server-support-passwordless*`, `support/cas-server-support-webauthn*` |
 | [`cas-protocol`](.claude/skills/cas-protocol/SKILL.md) | Service/proxy validation, SAML 1.1 |
 | [`cas-puppeteer-scenarios`](.claude/skills/cas-puppeteer-scenarios/SKILL.md) | `ci/tests/puppeteer/**`, `ci/tests/**/run-*.sh`, scenario cross-checks |
-| [`cas-saml`](.claude/skills/cas-saml/SKILL.md) | `support/cas-server-support-saml*` metadata |
+| [`cas-saml`](.claude/skills/cas-saml/SKILL.md) | `support/cas-server-support-saml*` metadata, SAML2 IdP session store |
 | [`cas-sandbox-verification`](.claude/skills/cas-sandbox-verification/SKILL.md) | Gradle, JDK 25 or Maven Central unavailable; the device VM test runner |
 | [`cas-service-registries`](.claude/skills/cas-service-registries/SKILL.md) | `ServicesManager`, `support/cas-server-support-*-service-registry*` |
 | [`cas-startup-performance`](.claude/skills/cas-startup-performance/SKILL.md) | Startup time, eager beans, classpath scanning |

@@ -43,3 +43,16 @@ description: "Compile and test CAS changes from a restricted sandbox or remote V
 ## Hazelcast ticket registry
 
 - In the VM test runner, leave `cas-server-*` jars of the Gradle cache off the classpath: released CAS jars such as `cas-server-webapp-resources` bring their own `application.properties` (`spring.mvc.pathmatch.matching-strategy=ant-path-matcher`) and the context fails to start. Processes started in the background are killed when the `device_bash` call returns, even with `setsid nohup`; run each suite in the foreground under the call's time limit, one nested class at a time if needed. To run in parallel like CI, pass all of CI's settings, `junit.jupiter.execution.parallel.config.executor-service=WORKER_THREAD_POOL` included: without it, work stealing runs `@Transactional` base tests on a thread that already holds a test transaction (`Cannot start new transaction without ending existing transaction`), before and after any change. The Hazelcast suites run there (embedded members); modules without prebuilt test classes need their tests compiled first.
+
+## SAML2 identity provider (VM compile and test runner)
+
+- The VM's own hostname does not resolve, so Spring Boot contexts fail with `UnknownHostException`; write a hosts file
+  mapping it to 127.0.0.1 and pass `-Djdk.net.hosts.file=<file>` to the test JVM.
+- Picking the highest jar of every artifact breaks SAML contexts in three ways: commons-codec newer than
+  `gradle/libs.versions.toml` decodes metadata certificates strictly and fails, `bcprov-ext`, Pulsar's shaded Bouncy
+  Castle and `jclouds-bouncycastle` clash with `bcprov`/`bcpkix`, and Saxon takes over `TransformerFactory`. Use the
+  catalog version of commons-codec and leave the others out. A group filter on `org.apereo.cas` also drops
+  `org.apereo.cas.client` (`cas-client-core`), which delegation tests need.
+- For the Error Prone check, put every cached jar on `-processorpath` (Error Prone needs more than its own jars) and
+  restrict annotation processing to Lombok with `-processor lombok.launch.AnnotationProcessorHider$AnnotationProcessor,lombok.launch.AnnotationProcessorHider$ClaimingProcessor`;
+  long class paths go into `@argfiles` for both `javac` and `java`.

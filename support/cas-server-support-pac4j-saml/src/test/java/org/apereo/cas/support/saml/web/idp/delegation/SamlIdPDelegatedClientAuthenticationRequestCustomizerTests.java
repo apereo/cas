@@ -3,23 +3,28 @@ package org.apereo.cas.support.saml.web.idp.delegation;
 import module java.base;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.config.CasSamlIdPAutoConfiguration;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.pac4j.client.DelegatedClientAuthenticationRequestCustomizer;
 import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
 import org.apereo.cas.services.DefaultRegisteredServiceDelegatedAuthenticationPolicy;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
+import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlIdPConstants;
-import org.apereo.cas.support.saml.SamlIdPTestUtils;
 import org.apereo.cas.support.saml.idp.SamlIdPSessionManager;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.util.RandomUtils;
+import org.apereo.cas.web.CasSessionStore;
+import org.apereo.cas.web.saml2.BaseSaml2DelegatedAuthenticationTests;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.common.SAMLObjectBuilder;
 import org.opensaml.saml.saml2.core.AuthnContextClassRef;
@@ -27,18 +32,22 @@ import org.opensaml.saml.saml2.core.AuthnContextComparisonTypeEnumeration;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.IDPEntry;
 import org.opensaml.saml.saml2.core.IDPList;
+import org.opensaml.saml.saml2.core.Issuer;
 import org.opensaml.saml.saml2.core.RequestedAuthnContext;
 import org.opensaml.saml.saml2.core.Scoping;
+import org.pac4j.core.client.IndirectClient;
 import org.pac4j.core.config.properties.KeystoreProperties;
 import org.pac4j.core.config.properties.ResourceProperties;
-import org.pac4j.http.client.indirect.FormClient;
+import org.pac4j.core.redirect.RedirectionActionBuilder;
 import org.pac4j.jee.context.JEEContext;
 import org.pac4j.saml.client.SAML2Client;
 import org.pac4j.saml.config.SAML2Configuration;
+import org.pac4j.saml.context.SAML2ConfigurationContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -48,54 +57,88 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.4.0
  */
-@Tag("SAML2")
-class SamlIdPDelegatedClientAuthenticationRequestCustomizerTests extends BaseSamlIdPConfigurationTests {
+@SpringBootTest(classes = {
+    CasSamlIdPAutoConfiguration.class,
+    BaseSaml2DelegatedAuthenticationTests.SharedTestConfiguration.class
+}, properties = "cas.authn.saml-idp.metadata.file-system.location=${#systemProperties['java.io.tmpdir']}/saml4223")
+@Tag("SAML2Web")
+@ExtendWith(CasTestExtension.class)
+class SamlIdPDelegatedClientAuthenticationRequestCustomizerTests {
+    private static final String SERVICE_PROVIDER_ENTITY_ID = "https://cassp.example.org";
+
     @Autowired
     @Qualifier("saml2DelegatedClientAuthenticationRequestCustomizer")
     private DelegatedClientAuthenticationRequestCustomizer customizer;
 
+    @Autowired
+    @Qualifier(SamlIdPDelegatedClientAuthenticationRequestCustomizer.BEAN_NAME_SESSION_STORE)
+    private CasSessionStore samlIdPDistributedSessionStore;
+
+    @Autowired
+    @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
+    private OpenSamlConfigBean openSamlConfigBean;
+
+    @Autowired
+    @Qualifier(ServicesManager.BEAN_NAME)
+    private ServicesManager servicesManager;
+
+    @Autowired
+    private CasConfigurationProperties casProperties;
+
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
+
+    @Test
+    void verifyCustomization() throws Throwable {
+        val authnRequest = buildAuthnRequest();
+        authnRequest.setForceAuthn(true);
+        authnRequest.setIsPassive(true);
+        authnRequest.setRequestedAuthnContext(buildRequestedAuthnContext("https://refeds.org/profile/mfa"));
+
+        val requestContext = MockRequestContext.create(applicationContext);
+        val webContext = new JEEContext(requestContext.getHttpServletRequest(), requestContext.getHttpServletResponse());
+        storeRequest(authnRequest, webContext);
+
+        val saml2Client = mock(SAML2Client.class);
+        assertTrue(customizer.supports(saml2Client, webContext, requestContext));
+        customizer.customize(saml2Client, webContext, requestContext);
+        assertTrue(webContext.getRequestAttribute(RedirectionActionBuilder.ATTRIBUTE_FORCE_AUTHN).isPresent());
+        assertTrue(webContext.getRequestAttribute(RedirectionActionBuilder.ATTRIBUTE_PASSIVE).isPresent());
+        assertTrue(webContext.getRequestAttribute(SAML2ConfigurationContext.REQUEST_ATTR_AUTHN_CONTEXT_CLASS_REFS).isPresent());
+        assertTrue(webContext.getRequestAttribute(SAML2ConfigurationContext.REQUEST_ATTR_COMPARISON_TYPE).isPresent());
+    }
+
     @Test
     void verifyScopedIdentityProviderPerServiceImplicitly() throws Throwable {
         val saml2Client = buildMockSaml2Client();
-
-        val request = new MockHttpServletRequest();
-        val response = new MockHttpServletResponse();
-        val webContext = new JEEContext(request, response);
+        val requestContext = MockRequestContext.create(applicationContext);
+        val webContext = new JEEContext(requestContext.getHttpServletRequest(), requestContext.getHttpServletResponse());
 
         val webApplicationService = RegisteredServiceTestUtils.getService(UUID.randomUUID().toString());
-
         val registeredService = RegisteredServiceTestUtils.getRegisteredService(webApplicationService.getId());
         val delegatedAuthenticationPolicy = new DefaultRegisteredServiceDelegatedAuthenticationPolicy();
         delegatedAuthenticationPolicy.setPermitUndefined(true);
-        val accessStrategy = new DefaultRegisteredServiceAccessStrategy().setDelegatedAuthenticationPolicy(delegatedAuthenticationPolicy);
-        registeredService.setAccessStrategy(accessStrategy);
+        registeredService.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy().setDelegatedAuthenticationPolicy(delegatedAuthenticationPolicy));
         servicesManager.save(registeredService);
 
         setAuthnRequestFor(webContext, saml2Client.getIdentityProviderResolvedEntityId());
-
-        val requestContext = MockRequestContext.create(applicationContext);
         assertTrue(customizer.isAuthorized(webContext, saml2Client, webApplicationService, requestContext));
     }
 
     @Test
     void verifyScopedIdentityProviderPerService() throws Throwable {
         val saml2Client = buildMockSaml2Client();
-
-        val request = new MockHttpServletRequest();
-        val response = new MockHttpServletResponse();
-        val webContext = new JEEContext(request, response);
+        val requestContext = MockRequestContext.create(applicationContext);
+        val webContext = new JEEContext(requestContext.getHttpServletRequest(), requestContext.getHttpServletResponse());
 
         val webApplicationService = RegisteredServiceTestUtils.getService(UUID.randomUUID().toString());
-
         val registeredService = RegisteredServiceTestUtils.getRegisteredService(webApplicationService.getId());
         val delegatedAuthenticationPolicy = new DefaultRegisteredServiceDelegatedAuthenticationPolicy();
         delegatedAuthenticationPolicy.setAllowedProviders(List.of(saml2Client.getName()));
-        val accessStrategy = new DefaultRegisteredServiceAccessStrategy().setDelegatedAuthenticationPolicy(delegatedAuthenticationPolicy);
-        registeredService.setAccessStrategy(accessStrategy);
+        registeredService.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy().setDelegatedAuthenticationPolicy(delegatedAuthenticationPolicy));
         servicesManager.save(registeredService);
 
         setAuthnRequestFor(webContext, saml2Client.getIdentityProviderResolvedEntityId());
-        val requestContext = MockRequestContext.create(applicationContext);
         assertTrue(customizer.isAuthorized(webContext, saml2Client, webApplicationService, requestContext));
     }
 
@@ -113,15 +156,11 @@ class SamlIdPDelegatedClientAuthenticationRequestCustomizerTests extends BaseSam
     @Test
     void verifyAuthorization() throws Throwable {
         val saml2Client = buildMockSaml2Client();
-
-        val request = new MockHttpServletRequest();
-        val response = new MockHttpServletResponse();
-        val webContext = new JEEContext(request, response);
         val requestContext = MockRequestContext.create(applicationContext);
+        val webContext = new JEEContext(requestContext.getHttpServletRequest(), requestContext.getHttpServletResponse());
         val webApplicationService = CoreAuthenticationTestUtils.getWebApplicationService(UUID.randomUUID().toString());
 
         assertDoesNotThrow(() -> customizer.customize(saml2Client, webContext, requestContext));
-        
         assertTrue(customizer.isAuthorized(webContext, saml2Client, webApplicationService, requestContext));
 
         setAuthnRequestFor(webContext);
@@ -135,9 +174,9 @@ class SamlIdPDelegatedClientAuthenticationRequestCustomizerTests extends BaseSam
             .isAuthorized(webContext, saml2Client, webApplicationService, requestContext));
 
         setAuthnRequestFor(webContext, saml2Client.getIdentityProviderResolvedEntityId());
-        assertTrue(customizer.isAuthorized(webContext, saml2Client, webApplicationService, requestContext));    
+        assertTrue(customizer.isAuthorized(webContext, saml2Client, webApplicationService, requestContext));
         assertDoesNotThrow(() -> customizer.customize(saml2Client, webContext, requestContext));
-        assertTrue(customizer.isAuthorized(webContext, new FormClient(), webApplicationService, requestContext));
+        assertTrue(customizer.isAuthorized(webContext, mock(IndirectClient.class), webApplicationService, requestContext));
     }
 
     /**
@@ -151,34 +190,26 @@ class SamlIdPDelegatedClientAuthenticationRequestCustomizerTests extends BaseSam
     private DelegatedClientAuthenticationRequestCustomizer customizerResolving(final RegisteredService registeredService) {
         val isolatedServicesManager = mock(ServicesManager.class);
         when(isolatedServicesManager.findServiceBy(any(Service.class))).thenReturn(registeredService);
-        return new SamlIdPDelegatedClientAuthenticationRequestCustomizer(
-            samlIdPDistributedSessionStore, openSamlConfigBean, isolatedServicesManager, casProperties);
+        return new SamlIdPDelegatedClientAuthenticationRequestCustomizer(openSamlConfigBean, isolatedServicesManager, casProperties);
     }
 
     private void storeRequest(final AuthnRequest authnRequest, final JEEContext webContext) throws Exception {
         val messageContext = new MessageContext();
         messageContext.setMessage(authnRequest);
         val context = Pair.of(authnRequest, messageContext);
-        ((MockHttpServletRequest) webContext.getNativeRequest()).addParameter(SamlIdPConstants.AUTHN_REQUEST_ID, authnRequest.getID());
-        SamlIdPSessionManager.of(openSamlConfigBean, samlIdPDistributedSessionStore).store(webContext, context);
+        val request = (MockHttpServletRequest) webContext.getNativeRequest();
+        request.setParameter(SamlIdPConstants.AUTHN_REQUEST_ID, authnRequest.getID());
+        SamlIdPSessionManager.of(openSamlConfigBean, samlIdPDistributedSessionStore)
+            .store(request, webContext.getNativeResponse(), context);
     }
 
-    private void setAuthnRequestFor(final JEEContext webContext,
-                                    final String... allowedIdps)
-            throws Exception {
-        val service = getSamlRegisteredServiceFor("https://cassp.example.org");
-        service.setId(RandomUtils.nextInt());
+    private void setAuthnRequestFor(final JEEContext webContext, final String... allowedIdps) throws Exception {
+        val authnRequest = buildAuthnRequest();
 
-        val authnRequest = SamlIdPTestUtils.getAuthnRequest(openSamlConfigBean, service);
-
-        var builder = (SAMLObjectBuilder) openSamlConfigBean.getBuilderFactory()
-            .getBuilder(Scoping.DEFAULT_ELEMENT_NAME);
+        var builder = (SAMLObjectBuilder) openSamlConfigBean.getBuilderFactory().getBuilder(Scoping.DEFAULT_ELEMENT_NAME);
         val scoping = (Scoping) Objects.requireNonNull(builder).buildObject(Scoping.DEFAULT_ELEMENT_NAME);
-
-        builder = (SAMLObjectBuilder) openSamlConfigBean.getBuilderFactory()
-            .getBuilder(IDPList.DEFAULT_ELEMENT_NAME);
+        builder = (SAMLObjectBuilder) openSamlConfigBean.getBuilderFactory().getBuilder(IDPList.DEFAULT_ELEMENT_NAME);
         val idpList = (IDPList) Objects.requireNonNull(builder).buildObject(IDPList.DEFAULT_ELEMENT_NAME);
-
         Arrays.stream(allowedIdps).forEach(idp -> {
             val idpEntry = (IDPEntry) openSamlConfigBean.getBuilderFactory()
                 .getBuilder(IDPEntry.DEFAULT_ELEMENT_NAME).buildObject(IDPEntry.DEFAULT_ELEMENT_NAME);
@@ -187,24 +218,32 @@ class SamlIdPDelegatedClientAuthenticationRequestCustomizerTests extends BaseSam
         });
         scoping.setIDPList(idpList);
         authnRequest.setScoping(scoping);
-
-        builder = (SAMLObjectBuilder) openSamlConfigBean.getBuilderFactory()
-            .getBuilder(RequestedAuthnContext.DEFAULT_ELEMENT_NAME);
-        val authnContext = (RequestedAuthnContext) builder.buildObject(RequestedAuthnContext.DEFAULT_ELEMENT_NAME);
-        authnContext.setComparison(AuthnContextComparisonTypeEnumeration.EXACT);
-
-        builder = (SAMLObjectBuilder) openSamlConfigBean.getBuilderFactory()
-            .getBuilder(AuthnContextClassRef.DEFAULT_ELEMENT_NAME);
-        val classRef = (AuthnContextClassRef) builder.buildObject(AuthnContextClassRef.DEFAULT_ELEMENT_NAME);
-        classRef.setURI(UUID.randomUUID().toString());
-        authnContext.getAuthnContextClassRefs().add(classRef);
-
-        authnRequest.setRequestedAuthnContext(authnContext);
-
+        authnRequest.setRequestedAuthnContext(buildRequestedAuthnContext(UUID.randomUUID().toString()));
         authnRequest.setIsPassive(Boolean.TRUE);
         authnRequest.setForceAuthn(Boolean.TRUE);
-
         storeRequest(authnRequest, webContext);
+    }
+
+    private AuthnRequest buildAuthnRequest() {
+        var builder = (SAMLObjectBuilder) openSamlConfigBean.getBuilderFactory().getBuilder(AuthnRequest.DEFAULT_ELEMENT_NAME);
+        val authnRequest = (AuthnRequest) Objects.requireNonNull(builder).buildObject();
+        authnRequest.setID("_" + RandomUtils.randomAlphanumeric(16));
+        builder = (SAMLObjectBuilder) openSamlConfigBean.getBuilderFactory().getBuilder(Issuer.DEFAULT_ELEMENT_NAME);
+        val issuer = (Issuer) Objects.requireNonNull(builder).buildObject();
+        issuer.setValue(SERVICE_PROVIDER_ENTITY_ID);
+        authnRequest.setIssuer(issuer);
+        return authnRequest;
+    }
+
+    private RequestedAuthnContext buildRequestedAuthnContext(final String authnContextClass) {
+        var builder = (SAMLObjectBuilder) openSamlConfigBean.getBuilderFactory().getBuilder(AuthnContextClassRef.DEFAULT_ELEMENT_NAME);
+        val classRef = (AuthnContextClassRef) Objects.requireNonNull(builder).buildObject(AuthnContextClassRef.DEFAULT_ELEMENT_NAME);
+        classRef.setURI(authnContextClass);
+        builder = (SAMLObjectBuilder) openSamlConfigBean.getBuilderFactory().getBuilder(RequestedAuthnContext.DEFAULT_ELEMENT_NAME);
+        val requestedAuthnContext = (RequestedAuthnContext) Objects.requireNonNull(builder).buildObject(RequestedAuthnContext.DEFAULT_ELEMENT_NAME);
+        requestedAuthnContext.setComparison(AuthnContextComparisonTypeEnumeration.EXACT);
+        requestedAuthnContext.getAuthnContextClassRefs().add(classRef);
+        return requestedAuthnContext;
     }
 
     private static SAML2Client buildMockSaml2Client() throws Exception {
@@ -215,7 +254,7 @@ class SamlIdPDelegatedClientAuthenticationRequestCustomizerTests extends BaseSam
     }
 
     private static SAML2Configuration getSAML2Configuration() throws Exception {
-        val idpMetadata = new File("src/test/resources/metadata/idp-metadata.xml").getCanonicalPath();
+        val idpMetadata = new File("src/test/resources/idp-metadata.xml").getCanonicalPath();
         val keystorePath = new File(FileUtils.getTempDirectory(), "keystore-" + RandomUtils.nextInt()).getCanonicalPath();
         FileUtils.deleteQuietly(new File(keystorePath));
         val spMetadataPath = new File(FileUtils.getTempDirectory(), "sp-metadata-%s.xml".formatted(RandomUtils.nextInt())).getCanonicalPath();
@@ -225,7 +264,6 @@ class SamlIdPDelegatedClientAuthenticationRequestCustomizerTests extends BaseSam
             .setPrivateKeyPassword("changeit"),
             new ResourceProperties(idpMetadata));
         saml2Config.getKeystore().setForceKeystoreGeneration(true);
-
         saml2Config.setForceServiceProviderMetadataGeneration(true);
         saml2Config.setServiceProviderEntityId("cas:example:sp");
         saml2Config.getServiceProviderMetadata().setPath(spMetadataPath);

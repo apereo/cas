@@ -404,5 +404,13 @@ one-time codes can be added when `cas.authn.mfa.simple.mail.accepted-email-patte
   Deployments that still use it should switch to another [ticket registry](../ticketing/Configuring-Ticketing-Components.html).
 - {: .removed data-area="services"} The deprecated Azure CosmosDb service registry is removed, along with its settings.
   Definitions stored there should be exported and imported into another [service registry](../services/Service-Management.html).
+- {: .action data-area="saml"} The [SAML2 identity provider](../authentication/Configuring-SAML2-Authentication.html) no
+  longer depends on pac4j. Pending SAML2 authentication requests are kept by a CAS session store that is still chosen with
+  `cas.authn.saml-idp.core.session-storage-type`{: .cas-setting} and keeps them in the same places: the http session, browser
+  storage or the ticket registry. The `samlIdPDistributedSessionStore` bean is now a `CasSessionStore`, and
+  `SamlIdPSessionManager` takes the servlet request and response; Groovy scripts and customizations that passed a pac4j
+  `JEEContext` or `SessionStore` must pass the request instead. Forced and passive authentication, requested authentication
+  context classes and scoped identity providers of a SAML2 request still reach SAML2 identity providers used for
+  [delegated authentication](../integration/Delegate-Authentication-SAML2.html), now through the SAML2 delegated authentication module.
 
 {% include release-footer.html %}

@@ -1,6 +1,6 @@
 ---
 name: cas-saml
-description: "Review and change SAML2 SP and IdP metadata handling: resolvers, MDQ, caching and backup files, signature trust, IdP metadata backends and generation, the shared HTTP client and the SAML2 metadata scenarios. Use when touching support/cas-server-support-saml* metadata code."
+description: "Review and change SAML2 SP and IdP metadata handling: resolvers, MDQ, caching and backup files, signature trust, IdP metadata backends and generation, the shared HTTP client, the SAML2 metadata scenarios, and the pac4j-free session store of the SAML2 IdP. Use when touching support/cas-server-support-saml* code."
 ---
 
 # SAML2 metadata
@@ -177,3 +177,21 @@ description: "Review and change SAML2 SP and IdP metadata handling: resolvers, M
   reachable metadata source, so nothing here covers concurrency, a metadata host that is down,
   signature-validation failure, or MDQ content negotiation. Changes in those areas need new
   scenarios rather than a rerun.
+
+## SAML2 identity provider session state
+
+- `saml-idp`, `saml-idp-core` and `saml-idp-web` (main and test) carry no pac4j dependency; keep it that way. Endpoints
+  are `permitAll` in the Spring Security chain and the controllers do the login handshake themselves (redirect to
+  `/login`, `InternalTicketValidator` on the callback), so pac4j was only ever the store for pending requests.
+- Pending AuthnRequests live in `samlIdPDistributedSessionStore`, a `CasSessionStore` (`api/cas-server-core-api-web`)
+  whose implementations sit in `core/cas-server-core-web-api` (`org.apereo.cas.web.session`): `DefaultCasSessionStore`
+  (http session, prefix `SamlServerSupport`), `BrowserStorageCasSessionStore` (payload format unchanged from the pac4j
+  store, context `SamlIdPSessionStore`) and the deprecated `TicketRegistryCasSessionStore`. The store is shared on
+  purpose: OAuth/OIDC is meant to move onto it when pac4j leaves that module too.
+- The one place that needs both the IdP and pac4j, `SamlIdPDelegatedClientAuthenticationRequestCustomizer`, lives in
+  `cas-server-support-pac4j-saml` and looks the session store up by bean name when it runs, because delegated
+  authentication contexts (including the pac4j-saml tests) can run without the IdP auto-configuration.
+- Test AuthnRequests come from `BaseSamlIdPConfigurationTests.getAuthnRequestFor(...)`; signed ones in
+  `SamlObjectSignatureValidatorTests` are signed with OpenSAML and the `metadata/idp-signing.*` key pair, whose
+  certificate is written into a temporary SP metadata file. Do not reintroduce a pac4j `SAML2Client` as a test SP.
+- OpenSAML 5 has no `BasicSignatureSigningParameters`; build `org.opensaml.xmlsec.SignatureSigningParameters` directly.

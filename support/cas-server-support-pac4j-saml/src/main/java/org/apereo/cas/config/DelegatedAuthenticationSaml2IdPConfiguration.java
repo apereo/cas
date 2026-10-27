@@ -8,9 +8,12 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.model.support.pac4j.Pac4jDelegatedAuthenticationProperties;
 import org.apereo.cas.multitenancy.TenantExtractor;
+import org.apereo.cas.pac4j.client.DelegatedClientAuthenticationRequestCustomizer;
 import org.apereo.cas.pac4j.client.DelegatedIdentityProviders;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.idp.slo.SamlIdPProfileSingleLogoutRequestProcessor;
+import org.apereo.cas.support.saml.web.idp.delegation.SamlIdPDelegatedClientAuthenticationRequestCustomizer;
 import org.apereo.cas.support.saml.web.idp.profile.builders.response.SamlIdPResponseCustomizer;
 import org.apereo.cas.util.cipher.CipherExecutorUtils;
 import org.apereo.cas.util.cipher.DefaultCipherExecutorResolver;
@@ -51,6 +54,19 @@ import org.springframework.webflow.execution.Action;
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.DelegatedAuthentication, module = "saml-idp")
 @Configuration(value = "DelegatedAuthenticationSaml2IdPConfiguration", proxyBeanMethods = false)
 class DelegatedAuthenticationSaml2IdPConfiguration {
+    @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    @ConditionalOnMissingBean(name = "saml2DelegatedClientAuthenticationRequestCustomizer")
+    @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.SAMLIdentityProvider)
+    public DelegatedClientAuthenticationRequestCustomizer saml2DelegatedClientAuthenticationRequestCustomizer(
+        @Qualifier(ServicesManager.BEAN_NAME)
+        final ServicesManager servicesManager,
+        final CasConfigurationProperties casProperties,
+        @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
+        final OpenSamlConfigBean openSamlConfigBean) {
+        return new SamlIdPDelegatedClientAuthenticationRequestCustomizer(openSamlConfigBean, servicesManager, casProperties);
+    }
+
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "delegatedSaml2IdPResponseCustomizer")
