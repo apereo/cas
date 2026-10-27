@@ -10,7 +10,7 @@ x-redis-server: &redis-server
 services:
   redis-master:
     <<: *redis-server
-    image: redis:8.10.2
+    image: redis:8.10.3
     container_name: redis_server_master
     command: ["redis-server", "/usr/local/etc/redis/redis.conf", "--maxmemory", "${REDIS_MAXMEMORY:-0}"]
     ports:
@@ -22,7 +22,7 @@ services:
 
   redis-ssl:
     <<: *redis-server
-    image: redis:8.10.2
+    image: redis:8.10.3
     container_name: redis_server_ssl
     command: >
       redis-server /usr/local/etc/redis/redis.conf
@@ -41,7 +41,7 @@ services:
 
   redis-master2:
     <<: *redis-server
-    image: redis:8.10.2
+    image: redis:8.10.3
     container_name: redis_server_master2
     command: ["redis-server", "/usr/local/etc/redis/redis.conf", "--maxmemory", "${REDIS_MAXMEMORY:-0}"]
     # These envs were also Bitnami-specific; kept or removed won't affect tests.
