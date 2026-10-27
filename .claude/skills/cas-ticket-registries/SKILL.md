@@ -36,9 +36,11 @@ description: "Review and change ticket registries: stateless (compact tickets), 
   never finds it and fails open. Callers must use the ticket `addTicket` returns: the stored id is re-encoded.
 - `TransientSessionTicketCompactor` stringifies properties, so only flat string properties survive, and a one-element list
   comes back as a plain string (read list properties with `CollectionUtils.toCollection`); object-valued TSTs
-  (VP transactions and results) do not. It keeps the full service id: flows resume with that service
-  (delegation back to the SAML2 IdP callback with `srid`/`entityId`), so `getShortenedId` is only for tickets that are
-  validated against a presented service (ST, PT, PGT, OAuth).
+  (VP transactions and results) do not. It keeps the whole service as typed JSON (class, original URL, source, format,
+  tenant, attributes): flows resume with that service (delegation back to the SAML2 IdP callback with
+  `srid`/`entityId`; a SAML1 `SamlService` must come back as one, or the application gets `ticket=` instead of
+  `SAMLart`). A bare id (tickets compacted before) is rebuilt with the service factory. `getShortenedId` is only for
+  tickets that are validated against a presented service (ST, PT, PGT, OAuth).
 - Maintainer decision: the stateless registry stays 100% stateless, in the spirit of the Shibboleth IdP client-side
   storage. Never propose a server-side replay, nonce or single-use store as the fix for anything here; fixes must be
   expressible in the ticket or client storage itself (encoding, binding, lifetimes, key versioning).
@@ -83,6 +85,13 @@ description: "Review and change ticket registries: stateless (compact tickets), 
 - Scenarios `stateless-ticket-registry`, `stateless-ticket-registry-saml2-idp`, `oauth2-login-stateless`,
   `oidc-login-stateless`, `mfa-duo-universal-login-stateless`, `ticket-validation-casv3-pgt-stateless` cover happy
   paths only; none covers VC/VP, DPoP, private_key_jwt, replay or delimiter input.
+- Scenario `rest-protocol-tickets-stateless`: REST TGT and ST, ticket status, p3 validation with a stub attribute,
+  reuse of the ST, tampered tickets rejected (404 / validation failure), DELETE does not revoke the TGT.
+- Scenario `delegated-login-stateless`: delegation to an external CAS (`CasClient`) and SimpleSAMLphp (`SAML2Client`),
+  SSO afterwards, `clientName` plus a stub repository attribute released (identity provider attributes are not kept),
+  SAML1 validation, cookie sizes under 4096. The SAML2 `RelayState` is the stateless TST id, so it is far longer than
+  the 80 bytes the SAML binding allows; the scenario logs its length. Identity providers that enforce the limit will
+  reject delegation with this registry.
 - Scenario `stateless-ticket-registry-load` combines interrupt notifications, the SAML2 identity provider, OIDC, proxy
   tickets and delegation to the simplesamlphp SAML2 IdP, checks unhappy paths (tampered or forged tickets and cookies,
   expired and reused service tickets, cookie replay after logout, attribute-based access at single sign-on) and runs a load
