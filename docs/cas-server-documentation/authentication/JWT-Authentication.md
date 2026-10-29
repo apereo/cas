@@ -26,7 +26,8 @@ the proper JCE bundle installed in your Java environment that is used by CAS, sp
 signing/encryption algorithms and methods. Be sure to pick the right version of the JCE for your Java version. Java 
 versions can be detected via the <code>java -version</code> command.</p></div>
 
-Here is an example of how to generate a JWT via [Pac4j](https://github.com/pac4j/pac4j):
+The token must be signed with the signing secret of the service, and may be encrypted with its encryption secret.
+Here is an example of how to generate a JWT with [Nimbus JOSE + JWT](https://connect2id.com/products/nimbus-jose-jwt):
 
 ```java
 var signingSecret = RandomUtils.randomAlphanumeric(256);
@@ -35,16 +36,21 @@ var encryptionSecret = RandomUtils.randomAlphanumeric(48);
 IO.println("signingSecret " + signingSecret);
 IO.println("encryptionSecret " + encryptionSecret);
 
-var g = new JwtGenerator<>();
-g.setSignatureConfiguration(new SecretSignatureConfiguration(signingSecret, JWSAlgorithm.HS256));
-g.setEncryptionConfiguration(new SecretEncryptionConfiguration(encryptionSecret,
-        JWEAlgorithm.DIR, EncryptionMethod.A192CBC_HS384));
+var claims = new JWTClaimsSet.Builder().subject("casuser").issueTime(new Date()).build();
+var jwt = new SignedJWT(new JWSHeader(JWSAlgorithm.HS256), claims);
+jwt.sign(new MACSigner(signingSecret.getBytes(StandardCharsets.UTF_8)));
 
-var profile = new CommonProfile();
-profile.setId("casuser");
-var token = g.generate(profile);
+var header = new JWEHeader.Builder(JWEAlgorithm.DIR, EncryptionMethod.A192CBC_HS384).contentType("JWT").build();
+var jwe = new JWEObject(header, new Payload(jwt));
+jwe.encrypt(new DirectEncrypter(encryptionSecret.getBytes(StandardCharsets.UTF_8)));
+var token = jwe.serialize();
 IO.println("token: " + token);
 ```
+
+The subject of the token becomes the authenticated principal, and its other claims become principal attributes.
+Tokens built with the pac4j `JwtGenerator`, whose subject carries the pac4j profile type
+(`org.pac4j.core.profile.CommonProfile#casuser`), are accepted as well. A token that is not signed, has expired or
+has no subject is refused.
 
 Once the token is generated, you may pass it to the `/login` endpoint of CAS as such:
 
@@ -100,9 +106,8 @@ Configure the appropriate service in your service registry to hold the secrets:
 }
 ```
 
-Note that the only required property is `jwtSigningSecret`.
-
-Signing and encryption keys may also be defined on a per-service basis, or globally via CAS settings.
+Note that the only required property is `jwtSigningSecret`: a service that does not define it neither accepts nor
+issues tokens. Signing and encryption keys are defined per service, in its properties.
 
 {% include_cached registeredserviceproperties.html groups="JWT_AUTHENTICATION" %}
 

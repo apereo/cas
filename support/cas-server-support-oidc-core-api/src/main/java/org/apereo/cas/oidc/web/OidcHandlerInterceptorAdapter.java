@@ -16,8 +16,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.hc.core5.http.HttpStatus;
-import org.pac4j.core.context.session.SessionStore;
-import org.pac4j.jee.context.JEEContext;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.http.HttpMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -48,13 +46,12 @@ public class OidcHandlerInterceptorAdapter extends OAuth20HandlerInterceptorAdap
         final CasConfigurationProperties casProperties,
         final ObjectProvider<List<AccessTokenGrantRequestExtractor>> accessTokenGrantRequestExtractors,
         final ObjectProvider<ServicesManager> servicesManager,
-        final ObjectProvider<SessionStore> sessionStore,
         final ObjectProvider<List<OAuth20AuthorizationRequestValidator>> oauthAuthorizationRequestValidators,
         final ObjectProvider<OAuth20RequestParameterResolver> oauthRequestParameterResolver,
         final ObjectProvider<OAuth20ConfigurationContext> configurationContext,
         final ObjectProvider<OidcClientIdMetadataDocumentResolver> clientIdMetadataDocumentResolver) {
         super(requiresAuthenticationAccessTokenInterceptor, requiresAuthenticationAuthorizeInterceptor,
-            accessTokenGrantRequestExtractors, servicesManager, sessionStore, oauthAuthorizationRequestValidators,
+            accessTokenGrantRequestExtractors, servicesManager, oauthAuthorizationRequestValidators,
             oauthRequestParameterResolver, configurationContext);
 
         this.requiresAuthenticationDynamicRegistrationInterceptor = requiresAuthenticationDynamicRegistrationInterceptor;
@@ -87,7 +84,7 @@ public class OidcHandlerInterceptorAdapter extends OAuth20HandlerInterceptorAdap
             return false;
         }
 
-        if (isPushedAuthorizationRequest(request.getRequestURI()) && !isValidAuthorizeRequest(new JEEContext(request, response))) {
+        if (isPushedAuthorizationRequest(request.getRequestURI()) && !isValidAuthorizeRequest(request, response)) {
             LOGGER.warn("Invalid OIDC pushed authorization request at [{}]", request.getRequestURI());
             response.setStatus(HttpStatus.SC_FORBIDDEN);
             writeErrorResponseBody(response);

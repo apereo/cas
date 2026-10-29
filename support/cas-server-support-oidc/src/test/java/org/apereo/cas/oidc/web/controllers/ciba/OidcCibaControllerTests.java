@@ -11,6 +11,7 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
+import org.apereo.cas.support.oauth.profile.DefaultOAuth20UserProfile;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.idtoken.IdTokenGenerationContext;
 import org.apereo.cas.ticket.registry.StatelessTicketRegistry;
@@ -24,7 +25,6 @@ import org.apereo.cas.util.spring.DirectObjectProvider;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.pac4j.core.profile.CommonProfile;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpHeaders;
@@ -197,8 +197,7 @@ class OidcCibaControllerTests extends AbstractOidcTests {
         registeredService.setGenerateRefreshToken(true);
         servicesManager.save(registeredService);
 
-        val profile = new CommonProfile();
-        profile.setId("casuser");
+        val profile = new DefaultOAuth20UserProfile("casuser");
         profile.addAttributes((Map) RegisteredServiceTestUtils.getTestAttributes());
 
         val idTokenContext = IdTokenGenerationContext.builder()
@@ -270,6 +269,22 @@ class OidcCibaControllerTests extends AbstractOidcTests {
             webServer.start();
 
             val csrfToken = (CsrfToken) result.getRequest().getAttribute("_csrf");
+            mockMvc.perform(post(verifyUrl)
+                    .secure(true)
+                    .with(withHttpRequestProcessor())
+                    .queryParam("userCode", userCode)
+                    .cookie(result.getResponse().getCookies())
+                )
+                .andExpect(status().isForbidden());
+            mockMvc.perform(post("/cas/" + OidcConstants.BASE_OIDC_URL + "/custom/" + OidcConstants.CIBA_URL + '/'
+                        + registeredService.getClientId() + '/' + authRequestId)
+                    .secure(true)
+                    .with(withHttpRequestProcessor())
+                    .queryParam("userCode", userCode)
+                    .cookie(result.getResponse().getCookies())
+                )
+                .andExpect(status().isForbidden());
+
             mockMvc.perform(post(verifyUrl)
                     .secure(true)
                     .with(withHttpRequestProcessor())

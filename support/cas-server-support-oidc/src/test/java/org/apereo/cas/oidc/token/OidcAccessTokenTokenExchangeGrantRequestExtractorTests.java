@@ -8,14 +8,12 @@ import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.OAuth20TokenExchangeTypes;
+import org.apereo.cas.support.oauth.profile.DefaultOAuth20UserProfile;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenGrantRequestExtractor;
 import org.apereo.cas.ticket.idtoken.IdTokenGenerationContext;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.pac4j.core.profile.CommonProfile;
-import org.pac4j.core.profile.ProfileManager;
-import org.pac4j.jee.context.JEEContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -43,14 +41,11 @@ class OidcAccessTokenTokenExchangeGrantRequestExtractorTests extends AbstractOid
 
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
-        val context = new JEEContext(request, response);
 
-        val userProfile = new CommonProfile();
-        userProfile.setId(registeredService.getClientId());
+        val userProfile = new DefaultOAuth20UserProfile(registeredService.getClientId());
         userProfile.addAttribute(OAuth20Constants.CLIENT_ID, registeredService.getClientId());
         userProfile.addAttributes((Map) RegisteredServiceTestUtils.getTestAttributes());
-        val profileManager = new ProfileManager(context, oauthDistributedSessionStore);
-        profileManager.save(true, userProfile, false);
+        storeProfileIntoSession(request, userProfile);
 
         val accessToken = getAccessToken(registeredService.getClientId());
         when(accessToken.getScopes()).thenReturn(
@@ -62,7 +57,7 @@ class OidcAccessTokenTokenExchangeGrantRequestExtractorTests extends AbstractOid
 
         val idTokenContext = IdTokenGenerationContext.builder()
             .accessToken(accessToken)
-            .userProfile(profileManager.getProfile().orElseThrow())
+            .userProfile(userProfile)
             .responseType(OAuth20ResponseTypes.CODE)
             .grantType(OAuth20GrantTypes.AUTHORIZATION_CODE)
             .registeredService(registeredService)
@@ -78,7 +73,7 @@ class OidcAccessTokenTokenExchangeGrantRequestExtractorTests extends AbstractOid
         request.addParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.TOKEN_EXCHANGE.getType());
         request.addParameter(OAuth20Constants.AUDIENCE, registeredService.getClientId());
         
-        val tokenContext = extractor.extract(context);
+        val tokenContext = extractor.extract(request, response);
         assertNotNull(tokenContext);
     }
 
@@ -90,14 +85,11 @@ class OidcAccessTokenTokenExchangeGrantRequestExtractorTests extends AbstractOid
 
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
-        val context = new JEEContext(request, response);
 
-        val userProfile = new CommonProfile();
-        userProfile.setId(registeredService.getClientId());
+        val userProfile = new DefaultOAuth20UserProfile(registeredService.getClientId());
         userProfile.addAttribute(OAuth20Constants.CLIENT_ID, registeredService.getClientId());
         userProfile.addAttributes((Map) RegisteredServiceTestUtils.getTestAttributes());
-        val profileManager = new ProfileManager(context, oauthDistributedSessionStore);
-        profileManager.save(true, userProfile, false);
+        storeProfileIntoSession(request, userProfile);
 
         val accessToken = getAccessToken(registeredService.getClientId());
         when(accessToken.getScopes()).thenReturn(
@@ -109,7 +101,7 @@ class OidcAccessTokenTokenExchangeGrantRequestExtractorTests extends AbstractOid
 
         val idTokenContext = IdTokenGenerationContext.builder()
             .accessToken(accessToken)
-            .userProfile(profileManager.getProfile().orElseThrow())
+            .userProfile(userProfile)
             .responseType(OAuth20ResponseTypes.CODE)
             .grantType(OAuth20GrantTypes.AUTHORIZATION_CODE)
             .registeredService(registeredService)
@@ -125,7 +117,7 @@ class OidcAccessTokenTokenExchangeGrantRequestExtractorTests extends AbstractOid
         request.addParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.TOKEN_EXCHANGE.getType());
         request.addParameter(OAuth20Constants.AUDIENCE, registeredService.getClientId());
 
-        val tokenContext = extractor.extract(context);
+        val tokenContext = extractor.extract(request, response);
         assertNotNull(tokenContext);
     }
 }

@@ -25,6 +25,7 @@ When you learn something new, record it in the skill that owns the area, or here
 | [`cas-interrupt-notifications`](.claude/skills/cas-interrupt-notifications/SKILL.md) | `support/cas-server-support-interrupt*` |
 | [`cas-ldap`](.claude/skills/cas-ldap/SKILL.md) | LDAP modules |
 | [`cas-mcp-server`](.claude/skills/cas-mcp-server/SKILL.md) | `support/cas-server-support-mcp` |
+| [`cas-oauth-oidc-authentication`](.claude/skills/cas-oauth-oidc-authentication/SKILL.md) | OAuth/OIDC/UMA client authentication, access-token-protected endpoints, `OAuth20UserProfile`, login callback |
 | [`cas-oauth-oidc`](.claude/skills/cas-oauth-oidc/SKILL.md) | `support/cas-server-support-oauth*`, `support/cas-server-support-oidc*` |
 | [`cas-oid4vc`](.claude/skills/cas-oid4vc/SKILL.md) | `support/cas-server-support-oidc-vc*`, wallets, SD-JWT/mdoc |
 | [`cas-passwordless-webauthn`](.claude/skills/cas-passwordless-webauthn/SKILL.md) | `support/cas-server-support-passwordless*`, `support/cas-server-support-webauthn*` |
@@ -33,11 +34,13 @@ When you learn something new, record it in the skill that owns the area, or here
 | [`cas-saml`](.claude/skills/cas-saml/SKILL.md) | `support/cas-server-support-saml*` metadata, SAML2 IdP session store |
 | [`cas-sandbox-verification`](.claude/skills/cas-sandbox-verification/SKILL.md) | Gradle, JDK 25 or Maven Central unavailable; the device VM test runner |
 | [`cas-service-registries`](.claude/skills/cas-service-registries/SKILL.md) | `ServicesManager`, `support/cas-server-support-*-service-registry*` |
+| [`cas-session-stores`](.claude/skills/cas-session-stores/SKILL.md) | `CasSessionStore`, browser storage, the `BROWSER_STORAGE` cookie fallback |
 | [`cas-startup-performance`](.claude/skills/cas-startup-performance/SKILL.md) | Startup time, eager beans, classpath scanning |
 | [`cas-storage-backends`](.claude/skills/cas-storage-backends/SKILL.md) | MongoDB, Redis, JPA/Hibernate, DynamoDB modules |
 | [`cas-testing`](.claude/skills/cas-testing/SKILL.md) | Running tests, writing tests, flaky tests |
 | [`cas-ticket-registries`](.claude/skills/cas-ticket-registries/SKILL.md) | `support/cas-server-support-*-ticket-registry`, ticket compactors |
 | [`cas-ui`](.claude/skills/cas-ui/SKILL.md) | Templates, `static/**`, themes, theme builder, Palantir |
+| [`cas-web-security`](.claude/skills/cas-web-security/SKILL.md) | `CasWebSecurityConfigurer`, CSRF, authentication entry points |
 
 ## Big picture
 
@@ -71,6 +74,10 @@ When you learn something new, record it in the skill that owns the area, or here
 - Keep overloaded methods (same name, any parameters or visibility) next to each other, with no other method between
   them; Checkstyle's `OverloadMethodsDeclarationOrder` fails the build otherwise. Check this when adding a method whose
   name already exists in the class or interface, including private helpers.
+- Group `&&` inside `||` with parentheses (`(a && b) || (c && d)`); Error Prone's `OperatorPrecedence` warns otherwise and
+  `-Werror` fails `compileJava`. Run Error Prone over every module you changed, new code included, before handing off.
+- Never `catch (RuntimeException e)` or `catch (Error e)`; Checkstyle's `IllegalCatch` fails the build. Catch the specific
+  exception, or `Exception` when any failure of the call must be handled the same way.
 - Do not add unnecessary javadoc. Add javadoc only where a public contract or a non-obvious reason genuinely needs it; record rationale for a change in PLANS.md instead.
 - Explanation belongs in the javadoc of the method it explains, with its parameters. Do not write inline block comments inside method bodies.
 - Turning attribute text into numbers: `NumberUtils.createNumber` decodes a leading zero as octal. Only convert when the
@@ -91,6 +98,7 @@ When you learn something new, record it in the skill that owns the area, or here
 - Build credentials from matching certificate/private-key material belonging to the message recipient. Never combine a peer's public key with CAS's private key.
 - `SubjectConfirmationData.Address` identifies the presenter, not the ACS server. Use trusted proxy-aware client information or omit it; never perform a synchronous DNS lookup of the ACS host while building assertions.
 - Scope caches that contain service-specific metadata, keys, validation filters, or trust policy to the registered-service boundary. Address entries by their complete key; do not scan unrelated cached values for a matching entity.
+- When replacing a library that verifies tokens, check what it does when nothing is configured: pac4j's `JwtAuthenticator` with no signature configuration skipped verification and accepted unsigned tokens, which let any `sub` log in through JWT authentication. Token validation in CAS refuses everything when the service defines no signing secret (`TokenAuthenticationSecurity`); keep it that way.
 
 ## Test, concurrency, and hand-off expectations
 
@@ -117,23 +125,3 @@ When you learn something new, record it in the skill that owns the area, or here
 - For service-aware logic, look for `ServicesManager.findServiceBy(...)`; for ticket-aware logic, look for `ticketRegistry.getTicket(...)`. Those seams are used repeatedly across `core/` and `support/` and are usually the right integration points.
 - Treat authentication, tickets, webflow, logout, MFA, and crypto as security-sensitive areas. Match existing CAS utilities and flows instead of introducing parallel mechanisms.
 - Keep diffs surgical: this codebase already has strong patterns, so the fastest path is usually “copy the nearest module family pattern and adapt it” rather than inventing a new abstraction.
-
-## Browser storage cookie fallback
-
-- `BROWSER_STORAGE` state (Duo Universal Prompt, SAML IdP, stateless ticket registry, account profile) goes through the
-  shared `storage/casBrowserStorageWriteView` and `ReadView`, which call `writeToBrowserStorage` / `readFromBrowserStorage`
-  in `cas.js`. When local or session storage throws or is unavailable, the payload is written to chunked cookies
-  (`CasBrowserStorage_<context>_<i>` plus a `_n` count cookie, Secure on https, `SameSite=Lax`, host-only, path = CAS
-  context path from `casBrowserStorageCookiePath` in `fragments/scripts.html`). The read view merges them (cookies win,
-  since a successful storage write clears the cookie copy) and posts the usual `browserStorage` parameter, so no server
-  read path changed. The login fails only when cookies are refused too.
-- The context segment of the cookie name is encoded identically in `cas.js` (`encodeBrowserStorageCookieToken`) and in
-  `WebUtils.removeBrowserStorageCookies`: keep `A-Z a-z 0-9 - . ~`, percent-encode every other UTF-8 byte, so `_` is an
-  unambiguous separator. Change both together.
-- Do not clear the cookies on read generically: the stateless ticket registry reads its TGT payload on every login.
-  Single-use consumers clear their own context server-side (Duo does, in `DuoSecurityUniversalPromptValidateLoginAction`);
-  logout and the 422 page clear all of them.
-- The Duo payload is the serialized, encrypted flow state, likely tens of KB and 10+ cookies (not yet measured in a run). CAS accepts 500KB headers, but
-  fronting proxies often cap a header at 8-16KB; that is deployment configuration, documented on the Duo page.
-- Scenario `mfa-duo-universal-login-storage-fails` covers both halves: storage broken with cookies falling back to a full
-  Duo login, and storage plus script cookies broken showing the error panel.

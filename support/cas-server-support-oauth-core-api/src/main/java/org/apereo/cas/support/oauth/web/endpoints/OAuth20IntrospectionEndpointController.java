@@ -18,13 +18,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.jspecify.annotations.NonNull;
-import org.pac4j.core.context.CallContext;
-import org.pac4j.core.context.WebContext;
-import org.pac4j.core.credentials.Credentials;
-import org.pac4j.core.credentials.UsernamePasswordCredentials;
-import org.pac4j.core.credentials.extractor.BasicAuthExtractor;
-import org.pac4j.jee.context.JEEContext;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -94,18 +89,17 @@ public class OAuth20IntrospectionEndpointController<T extends OAuth20Configurati
     @Operation(summary = "Handle OAuth introspection request")
     public ResponseEntity handlePostRequest(final HttpServletRequest request, final HttpServletResponse response) throws Throwable {
         try {
-            val context = new JEEContext(request, response);
-            val credentialsResult = extractCredentials(context);
+            val credentialsResult = extractCredentials(request, response);
             if (credentialsResult.isEmpty()) {
                 LOGGER.warn("Unable to locate and extract credentials from the request");
                 return buildUnauthorizedResponseEntity(OAuth20Constants.INVALID_CLIENT, true);
             }
 
-            val credentials = (UsernamePasswordCredentials) credentialsResult.get();
+            val credentials = credentialsResult.get();
             val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(
-                getConfigurationContext().getServicesManager(), credentials.getUsername());
+                getConfigurationContext().getServicesManager(), credentials.getLeft());
             if (registeredService == null) {
-                LOGGER.warn("Unable to locate service definition by client id [{}]", credentials.getUsername());
+                LOGGER.warn("Unable to locate service definition by client id [{}]", credentials.getLeft());
                 return buildUnauthorizedResponseEntity(OAuth20Constants.INVALID_CLIENT, true);
             }
 
@@ -139,7 +133,7 @@ public class OAuth20IntrospectionEndpointController<T extends OAuth20Configurati
                 .findFirst()
                 .orElseThrow()
                 .generate(tokenId, accessToken, registeredService);
-            return buildIntrospectionEntityResponse(context, introspect, registeredService);
+            return buildIntrospectionEntityResponse(request, introspect, registeredService);
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
         }
@@ -157,16 +151,20 @@ public class OAuth20IntrospectionEndpointController<T extends OAuth20Configurati
         return null;
     }
 
-    protected Optional<Credentials> extractCredentials(final JEEContext context) {
-        val authExtractor = new BasicAuthExtractor();
-        val callContext = new CallContext(context, getConfigurationContext().getSessionStore(),
-            getConfigurationContext().getOauthConfig().getProfileManagerFactory());
-        return authExtractor.extract(callContext);
+    /**
+     * The client id and secret of the HTTP Basic {@code Authorization} header (RFC 7662, section 2.1).
+     *
+     * @param request  the request
+     * @param response the response
+     * @return the client id and secret, if the request carries the header
+     */
+    protected Optional<Pair<String, String>> extractCredentials(final HttpServletRequest request, final HttpServletResponse response) {
+        return OAuth20Utils.readClientBasicAuthorization(request);
     }
 
 
     private Optional<ResponseEntity<? extends @NonNull BaseOAuth20IntrospectionAccessTokenResponse>> validateIntrospectionRequest(
-        final OAuthRegisteredService registeredService, final UsernamePasswordCredentials credentials,
+        final OAuthRegisteredService registeredService, final Pair<String, String> credentials,
         final HttpServletRequest request)
             throws Throwable {
         val tokenExists = HttpRequestUtils.doesParameterExist(request, OAuth20Constants.TOKEN)
@@ -177,7 +175,7 @@ public class OAuth20IntrospectionEndpointController<T extends OAuth20Configurati
             return Optional.of(buildBadRequestResponseEntity(OAuth20Constants.MISSING_ACCESS_TOKEN));
         }
 
-        if (getConfigurationContext().getClientSecretValidator().validate(registeredService, credentials.getPassword())) {
+        if (getConfigurationContext().getClientSecretValidator().validate(registeredService, credentials.getRight())) {
             val service = getConfigurationContext().getWebApplicationServiceServiceFactory().createService(registeredService.getClientId());
             val audit = AuditableContext.builder()
                 .service(service)
@@ -194,13 +192,13 @@ public class OAuth20IntrospectionEndpointController<T extends OAuth20Configurati
     }
 
     protected ResponseEntity buildIntrospectionEntityResponse(
-        final WebContext context, final OAuth20IntrospectionAccessTokenResponse introspect) {
+        final HttpServletRequest request, final OAuth20IntrospectionAccessTokenResponse introspect) {
         return new ResponseEntity<>(introspect, HttpStatus.OK);
     }
 
     protected ResponseEntity buildIntrospectionEntityResponse(
-        final WebContext context, final OAuth20IntrospectionAccessTokenResponse introspect,
+        final HttpServletRequest request, final OAuth20IntrospectionAccessTokenResponse introspect,
         final OAuthRegisteredService registeredService) {
-        return buildIntrospectionEntityResponse(context, introspect);
+        return buildIntrospectionEntityResponse(request, introspect);
     }
 }

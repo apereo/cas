@@ -14,6 +14,8 @@ import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
+import org.apereo.cas.support.oauth.profile.DefaultOAuth20UserProfile;
+import org.apereo.cas.support.oauth.profile.OAuth20UserProfile;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestContext;
@@ -33,9 +35,9 @@ import org.jooq.lambda.Unchecked;
 import org.jose4j.jwk.JsonWebKeySet;
 import org.jose4j.jwk.PublicJsonWebKey;
 import org.jose4j.jwt.JwtClaims;
-import org.pac4j.core.context.WebContext;
-import org.pac4j.core.profile.CommonProfile;
 import org.springframework.beans.factory.ObjectProvider;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * This is {@link OidcAccessTokenJwtBearerGrantRequestExtractor}.
@@ -58,13 +60,13 @@ public class OidcAccessTokenJwtBearerGrantRequestExtractor extends BaseAccessTok
     }
 
     @Override
-    protected AccessTokenRequestContext extractRequest(final WebContext webContext) throws Throwable {
+    protected AccessTokenRequestContext extractRequest(final HttpServletRequest request, final HttpServletResponse response) throws Throwable {
         val configurationContext = getConfigurationContext().getObject();
         val grantType = configurationContext.getRequestParameterResolver()
-            .resolveRequestParameter(webContext, OAuth20Constants.GRANT_TYPE);
+            .resolveRequestParameter(request, OAuth20Constants.GRANT_TYPE);
         LOGGER.debug("OAuth grant type is [{}]", grantType);
         val assertion = getConfigurationContext().getObject().getRequestParameterResolver()
-            .resolveRequestParameter(webContext, OAuth20Constants.ASSERTION).orElseThrow();
+            .resolveRequestParameter(request, OAuth20Constants.ASSERTION).orElseThrow();
         val clientIdInAssertion = OAuth20Utils.extractClientIdFromToken(assertion);
         LOGGER.debug("Client id retrieved from ID token is [{}]", clientIdInAssertion);
         val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(
@@ -73,30 +75,29 @@ public class OidcAccessTokenJwtBearerGrantRequestExtractor extends BaseAccessTok
         val service = verifyServiceAccess(registeredService);
         val claims = extractAssertionClaims(registeredService, assertion);
         val generateRefreshToken = isAllowedToGenerateRefreshToken() && registeredService.isGenerateRefreshToken();
-        val requestedScopes = configurationContext.getRequestParameterResolver().resolveRequestScopes(webContext);
+        val requestedScopes = configurationContext.getRequestParameterResolver().resolveRequestScopes(request);
         LOGGER.debug("Requested scopes are [{}]", requestedScopes);
 
         val profile = createAuthenticationProfile(claims, requestedScopes, registeredService);
         val authentication = configurationContext.getAuthenticationBuilder()
-            .build(profile, registeredService, webContext, service);
+            .build(profile, registeredService, request, service);
 
         val builder = AccessTokenRequestContext
             .builder()
             .scopes(requestedScopes)
-            .resources(configurationContext.getRequestParameterResolver().resolveRequestedResources(webContext))
+            .resources(configurationContext.getRequestParameterResolver().resolveRequestedResources(request))
             .service(service)
             .authentication(authentication)
             .registeredService(registeredService)
             .grantType(getGrantType())
             .generateRefreshToken(generateRefreshToken);
-        return extractInternal(webContext, builder.build());
+        return extractInternal(request, builder.build());
     }
 
-    protected CommonProfile createAuthenticationProfile(final JwtClaims claims, final Set<String> requestedScopes,
-                                                        final OAuthRegisteredService registeredService)
+    protected OAuth20UserProfile createAuthenticationProfile(final JwtClaims claims, final Set<String> requestedScopes,
+                                                             final OAuthRegisteredService registeredService)
             throws Throwable {
-        val profile = new CommonProfile();
-        profile.setId(claims.getSubject());
+        val profile = new DefaultOAuth20UserProfile(claims.getSubject(), OAuth20UserProfile.COMMON_PROFILE_HANDLER_NAME);
         profile.addRoles(requestedScopes);
         profile.addAttribute(OAuth20Constants.CLIENT_ID, registeredService.getClientId());
 
@@ -155,7 +156,7 @@ public class OidcAccessTokenJwtBearerGrantRequestExtractor extends BaseAccessTok
     }
 
     protected AccessTokenRequestContext extractInternal(
-        final WebContext context,
+        final HttpServletRequest request,
         final AccessTokenRequestContext tokenRequestContext) {
         return tokenRequestContext;
     }
@@ -165,11 +166,11 @@ public class OidcAccessTokenJwtBearerGrantRequestExtractor extends BaseAccessTok
     }
 
     @Override
-    public boolean supports(final WebContext context) {
+    public boolean supports(final HttpServletRequest request) {
         val grantType = getConfigurationContext().getObject().getRequestParameterResolver()
-            .resolveRequestParameter(context, OAuth20Constants.GRANT_TYPE).orElse(StringUtils.EMPTY);
+            .resolveRequestParameter(request, OAuth20Constants.GRANT_TYPE).orElse(StringUtils.EMPTY);
         val assertion = getConfigurationContext().getObject().getRequestParameterResolver()
-            .resolveRequestParameter(context, OAuth20Constants.ASSERTION).orElse(StringUtils.EMPTY);
+            .resolveRequestParameter(request, OAuth20Constants.ASSERTION).orElse(StringUtils.EMPTY);
         return StringUtils.isNotBlank(assertion) && OAuth20Utils.isGrantType(grantType, getGrantType());
     }
 

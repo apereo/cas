@@ -19,6 +19,7 @@ import org.apereo.cas.ticket.AuthenticationAwareTicket;
 import org.apereo.cas.ticket.OAuth20Token;
 import org.apereo.cas.ticket.OAuth20UnauthorizedScopeRequestException;
 import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.util.http.HttpRequestUtils;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import com.nimbusds.oauth2.sdk.dpop.verifiers.InvalidDPoPNonceException;
 import com.nimbusds.oauth2.sdk.dpop.verifiers.InvalidDPoPProofException;
@@ -29,8 +30,6 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.jooq.lambda.Unchecked;
-import org.pac4j.core.context.WebContext;
-import org.pac4j.jee.context.JEEContext;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -110,10 +109,9 @@ public class OAuth20AccessTokenEndpointController<T extends OAuth20Configuration
         produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Handle OAuth access token request")
     public ModelAndView handleRequest(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        val context = new JEEContext(request, response);
         try {
-            if (!verifyAccessTokenRequest(context)) {
-                LOGGER.warn("Access token validation failed for request [{}]", context.getFullRequestURL());
+            if (!verifyAccessTokenRequest(request, response)) {
+                LOGGER.warn("Access token validation failed for request [{}]", HttpRequestUtils.getFullRequestUrl(request));
                 return OAuth20Utils.writeError(response, OAuth20Constants.INVALID_GRANT);
             }
         } catch (final OAuth20InvalidTargetException e) {
@@ -205,12 +203,12 @@ public class OAuth20AccessTokenEndpointController<T extends OAuth20Configuration
             () -> new UnsupportedOperationException("Access token request is not supported"));
     }
 
-    protected boolean verifyAccessTokenRequest(final WebContext context) throws Throwable {
+    protected boolean verifyAccessTokenRequest(final HttpServletRequest request, final HttpServletResponse response) throws Throwable {
         val validators = getConfigurationContext().getAccessTokenGrantRequestValidators().getObject();
         return validators
             .stream()
             .filter(BeanSupplier::isNotProxy)
-            .filter(Unchecked.predicate(ext -> ext.supports(context)))
+            .filter(Unchecked.predicate(ext -> ext.supports(request, response)))
             .findFirst()
             .orElseThrow(() -> {
                 val message = """
@@ -220,6 +218,6 @@ public class OAuth20AccessTokenEndpointController<T extends OAuth20Configuration
                     """.stripIndent().strip().trim();
                 return new UnsupportedOperationException(StringUtils.normalizeSpace(message));
             })
-            .validate(context);
+            .validate(request, response);
     }
 }

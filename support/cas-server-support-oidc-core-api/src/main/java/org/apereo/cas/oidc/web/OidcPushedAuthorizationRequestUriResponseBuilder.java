@@ -23,9 +23,9 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.audit.annotation.Audit;
 import org.jooq.lambda.Unchecked;
-import org.pac4j.core.context.WebContext;
-import org.pac4j.jee.context.JEEContext;
 import org.springframework.web.servlet.ModelAndView;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * This is {@link OidcPushedAuthorizationRequestUriResponseBuilder}.
@@ -61,24 +61,25 @@ public class OidcPushedAuthorizationRequestUriResponseBuilder extends BaseOAuth2
 
     @Override
     public Optional<OAuth20AuthorizationRequest.OAuth20AuthorizationRequestBuilder> toAuthorizationRequest(
-        final WebContext context,
+        final HttpServletRequest request,
+        final HttpServletResponse response,
         final Authentication authentication,
         final Service service,
         final OAuthRegisteredService registeredService) {
 
-        val requestUri = context.getRequestParameter(OidcConstants.REQUEST_URI);
-        if (context.getRequestURL().endsWith(OidcConstants.AUTHORIZE_URL) && requestUri.isEmpty()) {
+        val requestUri = Optional.ofNullable(request.getParameter(OidcConstants.REQUEST_URI));
+        if (request.getRequestURL().toString().endsWith(OidcConstants.AUTHORIZE_URL) && requestUri.isEmpty()) {
             return Optional.empty();
         }
 
-        val authzRequestBuilder = super.toAuthorizationRequest(context, authentication, service, registeredService).orElseThrow();
+        val authzRequestBuilder = super.toAuthorizationRequest(request, response, authentication, service, registeredService).orElseThrow();
         return requestUri
             .map(Unchecked.function(uri -> {
                 val factory = (OidcPushedAuthorizationRequestFactory) configurationContext.getTicketFactory().get(OidcPushedAuthorizationRequest.class);
                 val pushAuthzTicket = configurationContext.getTicketRegistry().getTicket(uri, OidcPushedAuthorizationRequest.class);
                 FunctionUtils.doIf(pushAuthzTicket.isExpired(), Unchecked.consumer(r -> configurationContext.getTicketRegistry().deleteTicket(pushAuthzTicket)),
                     Unchecked.consumer(r -> configurationContext.getTicketRegistry().updateTicket(pushAuthzTicket))).accept(pushAuthzTicket);
-                val tgt = configurationContext.fetchTicketGrantingTicketFrom((JEEContext) context);
+                val tgt = configurationContext.fetchTicketGrantingTicketFrom(request, response);
 
                 val pushAuthzAuthentication = DefaultAuthenticationBuilder.newInstance(tgt.getAuthentication())
                     .mergeAttributes(pushAuthzTicket.getAuthentication().getAttributes())
@@ -95,7 +96,7 @@ public class OidcPushedAuthorizationRequestUriResponseBuilder extends BaseOAuth2
                     .grantType(tokenRequest.getGrantType().getType());
                 return Optional.of(value);
             }))
-            .orElseGet(() -> Optional.of(authzRequestBuilder.singleSignOnSessionRequired(!context.getRequestURL().endsWith(OidcConstants.PUSHED_AUTHORIZE_URL))));
+            .orElseGet(() -> Optional.of(authzRequestBuilder.singleSignOnSessionRequired(!request.getRequestURL().toString().endsWith(OidcConstants.PUSHED_AUTHORIZE_URL))));
     }
 
     @Override

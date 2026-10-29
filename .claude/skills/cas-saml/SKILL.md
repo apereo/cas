@@ -183,14 +183,8 @@ description: "Review and change SAML2 SP and IdP metadata handling: resolvers, M
 - `saml-idp`, `saml-idp-core` and `saml-idp-web` (main and test) carry no pac4j dependency; keep it that way. Endpoints
   are `permitAll` in the Spring Security chain and the controllers do the login handshake themselves (redirect to
   `/login`, `InternalTicketValidator` on the callback), so pac4j was only ever the store for pending requests.
-- Pending AuthnRequests live in `samlIdPDistributedSessionStore`, a `CasSessionStore` (`api/cas-server-core-api-web`)
-  whose implementations sit in `core/cas-server-core-web-api` (`org.apereo.cas.web.session`): `DefaultCasSessionStore`
-  (http session, prefix `SamlServerSupport`), `BrowserStorageCasSessionStore` (payload format unchanged from the pac4j
-  store, context `SamlIdPSessionStore`) and the deprecated `TicketRegistryCasSessionStore`. The store is shared:
-  Duo uses `BrowserStorageCasSessionStore` directly, and OAuth/OIDC/UMA and delegated authentication keep their pac4j
-  `SessionStore` beans as `CasSessionStorePac4jAdapter` over these implementations (same prefixes). pac4j needs the
-  full contract (session id, destroy, renew, and a store bound to a tracked `HttpSession` for back-channel logout), so
-  keep those semantics when changing an implementation.
+- Pending AuthnRequests live in `samlIdPDistributedSessionStore`; the store implementations, their contract and the
+  pac4j adapter are in the `cas-session-stores` skill.
 - The one place that needs both the IdP and pac4j, `SamlIdPDelegatedClientAuthenticationRequestCustomizer`, lives in
   `cas-server-support-pac4j-saml` and looks the session store up by bean name when it runs, because delegated
   authentication contexts (including the pac4j-saml tests) can run without the IdP auto-configuration.

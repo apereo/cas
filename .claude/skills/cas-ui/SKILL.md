@@ -115,12 +115,7 @@ description: "Change CAS views and presentation: Thymeleaf render path, theme re
   jQuery 4 dropped `isWindow`/`isFunction`, which the jQuery UI 1.12 position plugin shipped with contextMenu still calls and
   which replaces jQuery UI's own position: `installJQueryCompatibility()` must run before any dialog, menu or tooltip opens.
   Tom Select wrappers carry `z-index: 10000`; open select menus are raised above them.
-- Palantir's CAS login (`CasPalantirCasAuthenticationConfiguration`, `Palantir.cas-authentication`) shares the single
-  Spring Security chain with actuators and the MCP server: register its entry point with
-  `defaultAuthenticationEntryPointFor(entryPoint, /palantir/**)`, never `authenticationEntryPoint(...)`, which replaces every
-  other entry point and sends API clients to the CAS login page. Spring Security uses a lone registered entry point for every
-  request, so a test context needs a second one (an `AUTHENTICATED` actuator endpoint adds Basic) before an API request can
-  be shown to escape the CAS redirect; `DashboardControllerTests.CasAuthenticationTests` checks both.
+- Palantir's CAS login entry point: see the `cas-web-security` skill.
 - Header panels (`fragments/header.html`, `fragments/logindrawer.html`) carry `.cas-ui` and serve both themes: MDC
   (`MDCDialog`, modal `MDCDrawer` with its `.mdc-drawer-scrim` as the next sibling) and Bootstrap (`modal`, `offcanvas`), so
   keep both class sets. The notification count is the number of `.cas-notification-message` items not `[hidden]`; an item

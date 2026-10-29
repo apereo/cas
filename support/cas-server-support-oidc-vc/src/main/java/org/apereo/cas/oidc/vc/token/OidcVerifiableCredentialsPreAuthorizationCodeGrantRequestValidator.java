@@ -6,17 +6,17 @@ import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.vc.offer.OidcVerifiableCredentialTransactionService;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
+import org.apereo.cas.support.oauth.profile.OAuth20UserProfile;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.validator.token.BaseOAuth20TokenRequestValidator;
 import org.apereo.cas.ticket.TransientSessionTicket;
 import lombok.Getter;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.pac4j.core.context.WebContext;
-import org.pac4j.core.profile.ProfileManager;
-import org.pac4j.core.profile.UserProfile;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.core.Ordered;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * This is {@link OidcVerifiableCredentialsPreAuthorizationCodeGrantRequestValidator}.
@@ -38,11 +38,11 @@ public class OidcVerifiableCredentialsPreAuthorizationCodeGrantRequestValidator 
     }
 
     @Override
-    protected boolean validateInternal(final WebContext context, final String grantType, final ProfileManager manager,
-                                       final UserProfile userProfile)
+    protected boolean validateInternal(final HttpServletRequest request, final HttpServletResponse response, final String grantType,
+                                       final OAuth20UserProfile userProfile)
             throws Throwable {
         val requestParameterResolver = getConfigurationContext().getObject().getRequestParameterResolver();
-        val preAuthCode = requestParameterResolver.resolveRequestParameter(context, OidcConstants.PRE_AUTHORIZED_CODE);
+        val preAuthCode = requestParameterResolver.resolveRequestParameter(request, OidcConstants.PRE_AUTHORIZED_CODE);
         if (preAuthCode.isEmpty()) {
             return false;
         }
@@ -50,14 +50,14 @@ public class OidcVerifiableCredentialsPreAuthorizationCodeGrantRequestValidator 
         if (ticket == null || ticket.isExpired()) {
             return false;
         }
-        val transactionCode = requestParameterResolver.resolveRequestParameter(context, OidcConstants.TX_CODE).orElse(null);
+        val transactionCode = requestParameterResolver.resolveRequestParameter(request, OidcConstants.TX_CODE).orElse(null);
         if (!transactionService.isTransactionCodeValid(ticket, transactionCode)) {
             return false;
         }
         val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(getConfigurationContext().getObject().getServicesManager(),
             StringUtils.defaultString(ticket.getPropertyAsString(OAuth20Constants.CLIENT_ID)));
         if (registeredService != null) {
-            OAuth20Utils.verifyRequestedResources(requestParameterResolver, context, registeredService);
+            OAuth20Utils.verifyRequestedResources(requestParameterResolver, request, registeredService);
         }
         return true;
     }

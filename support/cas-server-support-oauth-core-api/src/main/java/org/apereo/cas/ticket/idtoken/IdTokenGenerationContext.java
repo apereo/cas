@@ -3,6 +3,7 @@ package org.apereo.cas.ticket.idtoken;
 import module java.base;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
+import org.apereo.cas.support.oauth.profile.OAuth20UserProfile;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshToken;
@@ -15,7 +16,6 @@ import lombok.With;
 import lombok.extern.jackson.Jacksonized;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
-import org.pac4j.core.profile.UserProfile;
 
 /**
  * This is {@link IdTokenGenerationContext}.
@@ -35,7 +35,7 @@ public class IdTokenGenerationContext {
     @Nullable
     private final OAuth20RefreshToken refreshToken;
     @Nullable
-    private final UserProfile userProfile;
+    private final OAuth20UserProfile userProfile;
     @NonNull
     @Builder.Default
     private final OAuth20ResponseTypes responseType = OAuth20ResponseTypes.NONE;

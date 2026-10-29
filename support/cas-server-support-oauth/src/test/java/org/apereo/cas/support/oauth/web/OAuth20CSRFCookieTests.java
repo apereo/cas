@@ -3,9 +3,14 @@ package org.apereo.cas.support.oauth.web;
 import module java.base;
 import org.apereo.cas.AbstractOAuth20Tests;
 import org.apereo.cas.configuration.model.support.oauth.OAuthCsrfCookieProperties;
+import org.apereo.cas.support.oauth.OAuth20Constants;
+import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.TestPropertySource;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -35,5 +40,18 @@ class OAuth20CSRFCookieTests extends AbstractOAuth20Tests {
         assertEquals("mellon.edu", csrfCookie.getDomain());
         assertTrue(csrfCookie.isHttpOnly());
         assertTrue(csrfCookie.isSecure());
+    }
+
+    @Test
+    void verifyNoCookieIssuedForLogin() throws Throwable {
+        val registeredService = addRegisteredService();
+        val request = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.AUTHORIZE_URL);
+        request.setParameter(OAuth20Constants.CLIENT_ID, registeredService.getClientId());
+        request.setParameter(OAuth20Constants.REDIRECT_URI, REDIRECT_URI);
+        request.setParameter(OAuth20Constants.RESPONSE_TYPE, OAuth20ResponseTypes.CODE.getType());
+        val response = performOAuthRequest(request).getResponse();
+        assertEquals(HttpStatus.FOUND.value(), response.getStatus());
+        assertTrue(Arrays.stream(response.getCookies()).noneMatch(cookie -> "mellon.edu".equals(cookie.getDomain())));
+        assertNull(response.getCookie("pac4jCsrfToken"));
     }
 }

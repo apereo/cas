@@ -6,7 +6,7 @@ import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
-import org.apereo.cas.support.oauth.authenticator.Authenticators;
+import org.apereo.cas.support.oauth.profile.DefaultOAuth20UserProfile;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20JwtAccessTokenEncoder;
 import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
 import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshToken;
@@ -16,8 +16,6 @@ import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.pac4j.core.profile.CommonProfile;
-import org.pac4j.jee.context.JEEContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpHeaders;
@@ -83,9 +81,7 @@ class OAuth20RefreshTokenGrantTypeTokenRequestValidatorTests extends AbstractOAu
     void verifyRefreshTokenFromAnotherClientId() throws Throwable {
         val request = new MockHttpServletRequest();
 
-        val profile = new CommonProfile();
-        profile.setClientName(Authenticators.CAS_OAUTH_CLIENT_BASIC_AUTHN);
-        profile.setId(SUPPORTING_CLIENT_ID);
+        val profile = new DefaultOAuth20UserProfile(SUPPORTING_CLIENT_ID);
         storeProfileIntoSession(request, profile);
 
         val response = new MockHttpServletResponse();
@@ -93,16 +89,14 @@ class OAuth20RefreshTokenGrantTypeTokenRequestValidatorTests extends AbstractOAu
         request.setParameter(OAuth20Constants.CLIENT_ID, PROMISCUOUS_CLIENT_ID);
         request.setParameter(OAuth20Constants.CLIENT_SECRET, RequestValidatorTestUtils.SHARED_SECRET);
         request.setParameter(OAuth20Constants.REFRESH_TOKEN, SUPPORTING_TICKET);
-        assertFalse(validator.validate(new JEEContext(request, response)));
+        assertFalse(validator.validate(request, response));
     }
 
     @Test
     void verifyOperationClientSecretPost() throws Throwable {
         val request = new MockHttpServletRequest();
 
-        val profile = new CommonProfile();
-        profile.setClientName(Authenticators.CAS_OAUTH_CLIENT_BASIC_AUTHN);
-        profile.setId(SUPPORTING_CLIENT_ID);
+        val profile = new DefaultOAuth20UserProfile(SUPPORTING_CLIENT_ID);
 
         storeProfileIntoSession(request, profile);
 
@@ -112,7 +106,7 @@ class OAuth20RefreshTokenGrantTypeTokenRequestValidatorTests extends AbstractOAu
         request.setParameter(OAuth20Constants.CLIENT_SECRET, RequestValidatorTestUtils.SHARED_SECRET);
         request.setParameter(OAuth20Constants.REFRESH_TOKEN, SUPPORTING_TICKET);
 
-        assertTrue(validator.validate(new JEEContext(request, response)));
+        assertTrue(validator.validate(request, response));
 
         profile.setId(NON_SUPPORTING_CLIENT_ID);
         storeProfileIntoSession(request, profile);
@@ -120,7 +114,7 @@ class OAuth20RefreshTokenGrantTypeTokenRequestValidatorTests extends AbstractOAu
         request.setParameter(OAuth20Constants.CLIENT_ID, NON_SUPPORTING_CLIENT_ID);
         request.setParameter(OAuth20Constants.CLIENT_SECRET, RequestValidatorTestUtils.SHARED_SECRET);
         request.setParameter(OAuth20Constants.REFRESH_TOKEN, NON_SUPPORTING_TICKET);
-        assertFalse(validator.validate(new JEEContext(request, response)));
+        assertFalse(validator.validate(request, response));
 
         profile.setId(PROMISCUOUS_CLIENT_ID);
         storeProfileIntoSession(request, profile);
@@ -128,16 +122,14 @@ class OAuth20RefreshTokenGrantTypeTokenRequestValidatorTests extends AbstractOAu
         request.setParameter(OAuth20Constants.CLIENT_ID, PROMISCUOUS_CLIENT_ID);
         request.setParameter(OAuth20Constants.CLIENT_SECRET, RequestValidatorTestUtils.SHARED_SECRET);
         request.setParameter(OAuth20Constants.REFRESH_TOKEN, PROMISCUOUS_TICKET);
-        assertTrue(validator.validate(new JEEContext(request, response)));
+        assertTrue(validator.validate(request, response));
     }
 
     @Test
     void verifyOperationClientSecretBasic() throws Throwable {
         val request = new MockHttpServletRequest();
 
-        val profile = new CommonProfile();
-        profile.setClientName(Authenticators.CAS_OAUTH_CLIENT_BASIC_AUTHN);
-        profile.setId(SUPPORTING_CLIENT_ID);
+        val profile = new DefaultOAuth20UserProfile(SUPPORTING_CLIENT_ID);
         storeProfileIntoSession(request, profile);
 
         val response = new MockHttpServletResponse();
@@ -146,7 +138,7 @@ class OAuth20RefreshTokenGrantTypeTokenRequestValidatorTests extends AbstractOAu
         request.setParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.REFRESH_TOKEN.getType());
         request.setParameter(OAuth20Constants.REFRESH_TOKEN, SUPPORTING_TICKET);
 
-        assertTrue(validator.validate(new JEEContext(request, response)));
+        assertTrue(validator.validate(request, response));
 
         profile.setId(NON_SUPPORTING_CLIENT_ID);
         storeProfileIntoSession(request, profile);
@@ -154,7 +146,7 @@ class OAuth20RefreshTokenGrantTypeTokenRequestValidatorTests extends AbstractOAu
         request.addHeader(HttpHeaders.AUTHORIZATION, "Basic " + EncodingUtils.encodeBase64(NON_SUPPORTING_CLIENT_ID
             + ':' + RequestValidatorTestUtils.SHARED_SECRET));
         request.setParameter(OAuth20Constants.REFRESH_TOKEN, NON_SUPPORTING_TICKET);
-        assertFalse(validator.validate(new JEEContext(request, response)));
+        assertFalse(validator.validate(request, response));
 
         profile.setId(PROMISCUOUS_CLIENT_ID);
         storeProfileIntoSession(request, profile);
@@ -162,7 +154,7 @@ class OAuth20RefreshTokenGrantTypeTokenRequestValidatorTests extends AbstractOAu
         request.addHeader(HttpHeaders.AUTHORIZATION,
             "Basic " + EncodingUtils.encodeBase64(PROMISCUOUS_CLIENT_ID + ':' + RequestValidatorTestUtils.SHARED_SECRET));
         request.setParameter(OAuth20Constants.REFRESH_TOKEN, PROMISCUOUS_TICKET);
-        assertTrue(validator.validate(new JEEContext(request, response)));
+        assertTrue(validator.validate(request, response));
     }
 
     @Test
@@ -183,16 +175,14 @@ class OAuth20RefreshTokenGrantTypeTokenRequestValidatorTests extends AbstractOAu
         assertNotEquals(refreshToken.getId(), encodedRefreshToken);
 
         val request = new MockHttpServletRequest();
-        val profile = new CommonProfile();
-        profile.setClientName(Authenticators.CAS_OAUTH_CLIENT_BASIC_AUTHN);
-        profile.setId(clientId);
+        val profile = new DefaultOAuth20UserProfile(clientId);
         storeProfileIntoSession(request, profile);
 
         request.setParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.REFRESH_TOKEN.getType());
         request.setParameter(OAuth20Constants.CLIENT_ID, clientId);
         request.setParameter(OAuth20Constants.CLIENT_SECRET, RequestValidatorTestUtils.SHARED_SECRET);
         request.setParameter(OAuth20Constants.REFRESH_TOKEN, encodedRefreshToken);
-        assertTrue(validator.validate(new JEEContext(request, new MockHttpServletResponse())));
+        assertTrue(validator.validate(request, new MockHttpServletResponse()));
     }
 
     private void registerTicket(final String name, final String clientId) throws Throwable {

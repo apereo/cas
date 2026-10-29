@@ -46,6 +46,7 @@ import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.OAuth20TokenExchangeTypes;
+import org.apereo.cas.support.oauth.profile.OAuth20UserProfile;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredServiceClientSecret;
 import org.apereo.cas.support.oauth.validator.OAuth20ClientSecretValidator;
@@ -86,6 +87,7 @@ import org.apereo.cas.util.serialization.ComponentSerializationPlan;
 import org.apereo.cas.util.serialization.ComponentSerializationPlanConfigurer;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
+import org.apereo.cas.web.CasSessionStore;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -93,13 +95,6 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.apache.hc.core5.http.HttpStatus;
 import org.jose4j.jwe.ContentEncryptionAlgorithmIdentifiers;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.pac4j.core.client.Client;
-import org.pac4j.core.config.Config;
-import org.pac4j.core.context.HttpConstants;
-import org.pac4j.core.context.session.SessionStore;
-import org.pac4j.core.profile.CommonProfile;
-import org.pac4j.core.util.Pac4jConstants;
-import org.pac4j.jee.context.JEEContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.SpringBootConfiguration;
@@ -112,6 +107,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
@@ -128,7 +124,6 @@ import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 import tools.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -228,14 +223,6 @@ public abstract class AbstractOAuth20Tests {
     protected ServicesManager servicesManager;
 
     @Autowired
-    @Qualifier("oauthSecConfig")
-    protected Config oauthSecConfig;
-
-    @Autowired
-    @Qualifier("oauthCasClient")
-    protected Client oauthCasClient;
-
-    @Autowired
     @Qualifier(OAuth20ConfigurationContext.BEAN_NAME)
     protected OAuth20ConfigurationContext configurationContext;
 
@@ -261,7 +248,7 @@ public abstract class AbstractOAuth20Tests {
 
     @Autowired
     @Qualifier("oauthDistributedSessionStore")
-    protected SessionStore oauthDistributedSessionStore;
+    protected CasSessionStore oauthDistributedSessionStore;
 
     @Autowired
     @Qualifier("oauthAuthorizationCodeResponseBuilder")
@@ -602,8 +589,8 @@ public abstract class AbstractOAuth20Tests {
         mockRequest.setParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.AUTHORIZATION_CODE.name().toLowerCase(Locale.ENGLISH));
         val auth = service.getClientId() + ':' + service.getClientSecrets().getFirst().getValue();
         val value = EncodingUtils.encodeBase64(auth.getBytes(StandardCharsets.UTF_8));
-        val header = HttpConstants.BASIC_HEADER_PREFIX + value;
-        mockRequest.addHeader(HttpConstants.AUTHORIZATION_HEADER, header);
+        val header = "Basic " + value;
+        mockRequest.addHeader(HttpHeaders.AUTHORIZATION, header);
         LOGGER.debug("Created header [{}] for client id [{}]", header, service.getClientId());
         mockRequest.setParameter(OAuth20Constants.CLIENT_ID, service.getClientId());
         mockRequest.setParameter(OAuth20Constants.CLIENT_SECRET, CLIENT_SECRET);
@@ -797,9 +784,7 @@ public abstract class AbstractOAuth20Tests {
 
         val service = RegisteredServiceTestUtils.getService(SERVICE_URL);
 
-        val mockResponse = new MockHttpServletResponse();
-        val webContext = new JEEContext(mockRequest, mockResponse);
-        val tokenRequestContext = buildAccessTokenRequestContext(registeredService, authentication, grantType, service, webContext);
+        val tokenRequestContext = buildAccessTokenRequestContext(registeredService, authentication, grantType, service, mockRequest);
         val generatedToken = oauthTokenGenerator.generate(tokenRequestContext);
         return generateAccessTokenResponse(registeredService, service, generatedToken, tokenRequestContext);
     }
@@ -825,10 +810,10 @@ public abstract class AbstractOAuth20Tests {
                                                                        final Authentication authentication,
                                                                        final OAuth20GrantTypes grantType,
                                                                        final AbstractWebApplicationService service,
-                                                                       final JEEContext webContext)
+                                                                       final HttpServletRequest request)
             throws Exception {
         return buildAccessTokenRequestContext(registeredService, authentication, grantType, service,
-            new MockTicketGrantingTicket(authentication.getPrincipal().getId()), webContext);
+            new MockTicketGrantingTicket(authentication.getPrincipal().getId()), request);
     }
 
     protected AccessTokenRequestContext buildAccessTokenRequestContext(final OAuthRegisteredService registeredService,
@@ -836,7 +821,7 @@ public abstract class AbstractOAuth20Tests {
                                                                        final OAuth20GrantTypes grantType,
                                                                        final AbstractWebApplicationService service,
                                                                        final TicketGrantingTicket ticketGrantingTicket,
-                                                                       final JEEContext webContext)
+                                                                       final HttpServletRequest request)
             throws Exception {
         return AccessTokenRequestContext
             .builder()
@@ -848,14 +833,14 @@ public abstract class AbstractOAuth20Tests {
             .responseType(OAuth20ResponseTypes.CODE)
             .ticketGrantingTicket(ticketGrantingTicket)
             .generateRefreshToken(true)
-            .claims(oauthRequestParameterResolver.resolveRequestClaims(webContext))
-            .requestedTokenType(oauthRequestParameterResolver.resolveRequestParameter(webContext, OAuth20Constants.REQUESTED_TOKEN_TYPE)
+            .claims(oauthRequestParameterResolver.resolveRequestClaims(request))
+            .requestedTokenType(oauthRequestParameterResolver.resolveRequestParameter(request, OAuth20Constants.REQUESTED_TOKEN_TYPE)
                 .map(OAuth20TokenExchangeTypes::from)
                 .orElse(null))
-            .subjectToken(oauthRequestParameterResolver.resolveRequestParameter(webContext, OAuth20Constants.SUBJECT_TOKEN)
+            .subjectToken(oauthRequestParameterResolver.resolveRequestParameter(request, OAuth20Constants.SUBJECT_TOKEN)
                 .map(token -> ticketRegistry.getTicket(token))
                 .orElse(null))
-            .tokenExchangeAudience(oauthRequestParameterResolver.resolveRequestParameter(webContext, OAuth20Constants.AUDIENCE)
+            .tokenExchangeAudience(oauthRequestParameterResolver.resolveRequestParameter(request, OAuth20Constants.AUDIENCE)
                 .orElse(null))
             .build();
     }
@@ -865,12 +850,8 @@ public abstract class AbstractOAuth20Tests {
         return Beans.newDuration(seconds).toSeconds();
     }
 
-    protected HttpSession storeProfileIntoSession(final HttpServletRequest request, final CommonProfile profile) {
-        val session = request.getSession(true);
-        assertNotNull(session);
-        session.setAttribute("OauthOidcServerSupport%s".formatted(Pac4jConstants.USER_PROFILES),
-            CollectionUtils.wrapLinkedHashMap(profile.getClientName(), profile));
-        return session;
+    protected void storeProfileIntoSession(final HttpServletRequest request, final OAuth20UserProfile profile) {
+        oauthDistributedSessionStore.set(request, new MockHttpServletResponse(), OAuth20Constants.SESSION_ATTRIBUTE_AUTHENTICATED_PROFILE, profile);
     }
 
     @TestConfiguration(value = "OAuth20TestConfiguration", proxyBeanMethods = false)

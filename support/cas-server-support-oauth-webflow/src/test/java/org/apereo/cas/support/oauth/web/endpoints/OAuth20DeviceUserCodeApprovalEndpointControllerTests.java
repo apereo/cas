@@ -5,21 +5,16 @@ import org.apereo.cas.AbstractOAuth20Tests;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.oauth.OAuth20Constants;
-import org.apereo.cas.support.oauth.authenticator.Authenticators;
+import org.apereo.cas.support.oauth.profile.DefaultOAuth20UserProfile;
 import org.apereo.cas.support.oauth.web.flow.BaseOAuth20WebflowTests;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.device.OAuth20DeviceUserCode;
-import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.pac4j.core.profile.CommonProfile;
-import org.pac4j.core.profile.ProfileManager;
-import org.pac4j.core.util.Pac4jConstants;
-import org.pac4j.jee.context.JEEContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Import;
@@ -83,9 +78,6 @@ class OAuth20DeviceUserCodeApprovalEndpointControllerTests extends AbstractOAuth
         assertNotNull(result.getResponse().getRedirectedUrl());
         assertTrue(result.getResponse().getRedirectedUrl().contains(OAuth20DeviceUserCodeApprovalEndpointController.PARAMETER_USER_CODE));
 
-        val context = new JEEContext(request, new MockHttpServletResponse());
-        val profileManager = new ProfileManager(context, configurationContext.getSessionStore());
-
         ClientInfoHolder.setClientInfo(ClientInfo.from(request));
 
         val principal = RegisteredServiceTestUtils.getPrincipal();
@@ -93,10 +85,9 @@ class OAuth20DeviceUserCodeApprovalEndpointControllerTests extends AbstractOAuth
         ticketRegistry.addTicket(ticketGrantingTicket);
         configurationContext.getTicketGrantingTicketCookieGenerator().addCookie(
             request, result.getResponse(), ticketGrantingTicket.getId());
-        val profile = new CommonProfile();
-        profile.setId(UUID.randomUUID().toString());
+        val profile = new DefaultOAuth20UserProfile(UUID.randomUUID().toString());
         profile.addAttribute(TicketGrantingTicket.class.getName(), ticketGrantingTicket);
-        profileManager.save(true, profile, false);
+        storeProfileIntoSession(request, profile);
 
         request.setCookies(result.getResponse().getCookies());
 
@@ -145,12 +136,9 @@ class OAuth20DeviceUserCodeApprovalEndpointControllerTests extends AbstractOAuth
             request.setParameter(OAuth20DeviceUserCodeApprovalEndpointController.PARAMETER_USER_CODE, userCode);
         }
 
-        val commonProfile = new CommonProfile();
-        commonProfile.setId("testuser");
-        commonProfile.setClientName(Authenticators.CAS_OAUTH_CLIENT);
+        val commonProfile = new DefaultOAuth20UserProfile("testuser");
         val response = new MockHttpServletResponse();
-        oauthDistributedSessionStore.set(new JEEContext(request, response), Pac4jConstants.USER_PROFILES,
-            CollectionUtils.wrapLinkedHashMap(commonProfile.getClientName(), commonProfile));
+        oauthDistributedSessionStore.set(request, response, OAuth20Constants.SESSION_ATTRIBUTE_AUTHENTICATED_PROFILE, commonProfile);
 
         val tgt = new MockTicketGrantingTicket(UUID.randomUUID().toString());
         ticketRegistry.addTicket(tgt);

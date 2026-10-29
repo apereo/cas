@@ -9,12 +9,12 @@ import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseModeTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
+import org.apereo.cas.support.oauth.profile.DefaultOAuth20UserProfile;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestContext;
 import org.apereo.cas.util.spring.DirectObjectProvider;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.pac4j.core.profile.CommonProfile;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -28,8 +28,7 @@ class OidcDefaultPushedAuthorizationRequestFactoryTests extends AbstractOidcTest
     @Test
     void verifyOperation() throws Throwable {
         val registeredService = getOidcRegisteredService();
-        val profile = new CommonProfile();
-        profile.setId("casTest");
+        val profile = new DefaultOAuth20UserProfile("casTest");
         val holder = AccessTokenRequestContext.builder()
             .clientId(registeredService.getClientId())
             .service(RegisteredServiceTestUtils.getService())

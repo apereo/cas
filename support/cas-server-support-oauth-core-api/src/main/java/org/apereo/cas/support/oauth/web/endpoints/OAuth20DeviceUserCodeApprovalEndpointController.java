@@ -13,7 +13,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.Nullable;
-import org.pac4j.jee.context.JEEContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -129,7 +128,7 @@ public class OAuth20DeviceUserCodeApprovalEndpointController extends BaseOAuth20
 
     private @Nullable TicketGrantingTicket fetchTicketGrantingTicket(final HttpServletRequest request, final HttpServletResponse response) {
         try {
-            return getConfigurationContext().fetchTicketGrantingTicketFrom(new JEEContext(request, response));
+            return getConfigurationContext().fetchTicketGrantingTicketFrom(request, response);
         } catch (final Exception e) {
             LoggingUtils.warn(LOGGER, e);
             return null;

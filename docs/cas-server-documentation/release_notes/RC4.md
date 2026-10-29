@@ -404,26 +404,44 @@ one-time codes can be added when `cas.authn.mfa.simple.mail.accepted-email-patte
   Deployments that still use it should switch to another [ticket registry](../ticketing/Configuring-Ticketing-Components.html).
 - {: .removed data-area="services"} The deprecated Azure CosmosDb service registry is removed, along with its settings.
   Definitions stored there should be exported and imported into another [service registry](../services/Service-Management.html).
-- {: .action data-area="saml"} The [SAML2 identity provider](../authentication/Configuring-SAML2-Authentication.html) no
-  longer depends on pac4j. Pending SAML2 authentication requests are kept by a CAS session store that is still chosen with
-  `cas.authn.saml-idp.core.session-storage-type`{: .cas-setting} and keeps them in the same places: the http session, browser
-  storage or the ticket registry. The `samlIdPDistributedSessionStore` bean is now a `CasSessionStore`, and
-  `SamlIdPSessionManager` takes the servlet request and response; Groovy scripts and customizations that passed a pac4j
-  `JEEContext` or `SessionStore` must pass the request instead. Forced and passive authentication, requested authentication
-  context classes and scoped identity providers of a SAML2 request still reach SAML2 identity providers used for
-  [delegated authentication](../integration/Delegate-Authentication-SAML2.html), now through the SAML2 delegated authentication module.
-- {: .action data-area="general"} Duo Security, [OAuth/OpenID Connect](../authentication/OAuth-Authentication.html) and
-  [delegated authentication](../integration/Delegate-Authentication.html) keep their session state with the same CAS
-  session store the SAML2 identity provider uses, in the http session, in browser storage or in the ticket registry as
-  configured, with the same attribute names and cookies as before. Duo Security no longer depends on pac4j for it. The
-  pac4j `TicketRegistrySessionStore` and `BrowserWebStorageSessionStore` classes are removed: customizations that defined
-  `oauthDistributedSessionStore` or `delegatedClientDistributedSessionStore` with them should wrap
-  `TicketRegistryCasSessionStore`, `BrowserStorageCasSessionStore` or `DefaultCasSessionStore` in a
-  `CasSessionStorePac4jAdapter`, and the `duoUniversalPromptSessionStore` bean is now a `BrowserStorageCasSessionStore`.
+- {: .action data-area="general"} The [SAML2 identity provider](../authentication/Configuring-SAML2-Authentication.html),
+  [OAuth/OpenID Connect](../authentication/OAuth-Authentication.html), [UMA](../protocol/OAuth-UMA-Protocol.html),
+  [Heimdall](../authorization/Heimdall-Authorization-Overview.html), [JWT authentication](../authentication/JWT-Authentication.html)
+  and [Duo Security](../mfa/DuoSecurity-Authentication.html) no longer depend on pac4j, which remains only in
+  [delegated authentication](../integration/Delegate-Authentication.html). They are built on Spring Security and CAS
+  components and keep their session state in a CAS session store, in the http session, in browser storage or in the
+  ticket registry as configured. Customizations, Groovy scripts and session store beans that use pac4j types must be
+  updated, and authentication handler names recorded in audit logs no longer carry pac4j class names. OAuth/OpenID Connect
+  sign-ins and pushed authorization requests that are under way during the upgrade must start again. SAML2 requests passed
+  on to [SAML2 identity providers](../integration/Delegate-Authentication-SAML2.html) keep their forced and passive
+  authentication, authentication contexts and scoping.
+- {: .action data-area="oidc"} OAuth/OpenID Connect clients are held to what they registered. They authenticate with their
+  registered method, and only as the client the request names, at the token endpoint and also for
+  [pushed authorization](../authentication/OIDC-Authentication-PAR.html),
+  [backchannel authentication](../authentication/OIDC-Authentication-CIBA.html), revocation and
+  [verifiable credentials](../authentication/OIDC-Authentication-Verifiable-Credentials.html); an access token no longer
+  authenticates a client. Clients that use [mutual TLS](../authentication/OIDC-Authentication-AccessToken-AuthMethods.html#mutual-tls-client-authentication)
+  must register the subject DN or a subject alternative name of their certificate, unless their client id is the
+  certificate's [SPIFFE](../authentication/OIDC-Authentication-AccessToken-AuthMethods.html#spiffe) ID. User profiles keep
+  every value of a multi-valued attribute, and the [CSRF cookie settings](../authentication/OAuth-Authentication-CSRF.html)
+  of OAuth are deprecated.
 - {: .action data-area="oidc"} The page where users approve a [device user code](../authentication/OAuth-ProtocolFlow-DeviceAuthorization.html)
   now carries an approval token tied to the single sign-on session, and an approval without it is refused, so another site
   can no longer make a signed-in browser approve a code. Customized `protocol/oauth/deviceCodeApproval.html` templates must
   add the hidden `approvaltoken` input of the default template to their form. The error messages of the page are now
   defined, under `cas.oauth.device.error.*`.
+- {: .fixed data-area="oidc"} OAuth/OpenID Connect follow the specifications more closely.
+  [Sender-constrained](../authentication/OIDC-Authentication-DPoP.html) access tokens always require their proof,
+  `prompt=login` and `max_age=0` request parameters always lead to a fresh login and `prompt=none` to `login_required`,
+  authorization requests
+  keep all their parameters through login and [consent](../authentication/OIDC-Authentication-Clients-ScopeApproval.html),
+  and refused requests receive the error and challenge the specifications call for instead of a server error. OpenID Connect
+  JWT access tokens no longer fail to sign now and then under load.
+- {: .fixed data-area="authentication"} A service without a signing secret no longer accepts any token for
+  [JWT authentication](../authentication/JWT-Authentication.html); tokens issued by earlier versions keep working.
+- {: .fixed data-area="general"} CSRF protection is configured once for all modules, so OpenID Connect and
+  [WebAuthn](../mfa/FIDO2-WebAuthn-Authentication.html) no longer override each other's settings, and the
+  [backchannel authentication](../authentication/OIDC-Authentication-CIBA.html) verification page is now protected.
+  A custom CSRF token repository is defined once, as the `casCsrfTokenRepository` bean.
 
 {% include release-footer.html %}

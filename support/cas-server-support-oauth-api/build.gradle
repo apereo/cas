@@ -4,6 +4,7 @@ description = "Defines shared OAuth provider contracts used by CAS OAuth feature
 dependencies {
     api project(":api:cas-server-core-api-throttle")
     api project(":api:cas-server-core-api-webflow")
+    api libraries.springsecurityweb
 
     implementation project(":support:cas-server-support-oauth-services")
     implementation project(":support:cas-server-support-token-core-api")
@@ -14,7 +15,5 @@ dependencies {
     compileOnly project(":core:cas-server-core-tickets")
 
     implementation libraries.nimbus
-    implementation libraries.pac4jcore
     implementation libraries.jose4j
-    implementation libraries.pac4jcas
 }

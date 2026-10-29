@@ -5,16 +5,13 @@ import org.apereo.cas.AbstractOAuth20Tests;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
-import org.apereo.cas.support.oauth.authenticator.Authenticators;
+import org.apereo.cas.support.oauth.profile.DefaultOAuth20UserProfile;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.util.CollectionUtils;
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.pac4j.core.profile.CommonProfile;
-import org.pac4j.core.util.Pac4jConstants;
-import org.pac4j.jee.context.JEEContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -69,39 +66,32 @@ class OAuth20PasswordGrantTypeTokenRequestValidatorTests extends AbstractOAuth20
         val response = new MockHttpServletResponse();
 
         request.setParameter(OAuth20Constants.GRANT_TYPE, "unsupported");
-        val context = new JEEContext(request, response);
-        assertFalse(validator.validate(context));
+        assertFalse(validator.validate(request, response));
 
-        val profile = new CommonProfile();
-        profile.setClientName(Authenticators.CAS_OAUTH_CLIENT_BASIC_AUTHN);
-        profile.setId(supportingService.getClientId());
+        val profile = new DefaultOAuth20UserProfile(supportingService.getClientId());
         
-        val session = storeProfileIntoSession(request, profile);
+        storeProfileIntoSession(request, profile);
 
         request.setParameter(OAuth20Constants.GRANT_TYPE, getGrantType().getType());
         request.setParameter(OAuth20Constants.CLIENT_ID, supportingService.getClientId());
-        assertTrue(validator.validate(context));
+        assertTrue(validator.validate(request, response));
 
         request.setParameter(OAuth20Constants.CLIENT_ID, nonSupportingService.getClientId());
         profile.setId(nonSupportingService.getClientId());
-        session.setAttribute(Pac4jConstants.USER_PROFILES,
-            CollectionUtils.wrapLinkedHashMap(profile.getClientName(), profile));
-        assertFalse(validator.validate(context));
+        storeProfileIntoSession(request, profile);
+        assertFalse(validator.validate(request, response));
 
         request.setParameter(OAuth20Constants.CLIENT_ID, promiscuousService.getClientId());
         profile.setId(promiscuousService.getClientId());
-        session.setAttribute(Pac4jConstants.USER_PROFILES,
-            CollectionUtils.wrapLinkedHashMap(profile.getClientName(), profile));
-        assertTrue(validator.validate(context));
+        storeProfileIntoSession(request, profile);
+        assertTrue(validator.validate(request, response));
     }
 
     @Test
     void verifyRequestedResources() throws Throwable {
         val request = new MockHttpServletRequest();
-        val context = new JEEContext(request, new MockHttpServletResponse());
-        val profile = new CommonProfile();
-        profile.setClientName(Authenticators.CAS_OAUTH_CLIENT_BASIC_AUTHN);
-        profile.setId(supportingService.getClientId());
+        val response = new MockHttpServletResponse();
+        val profile = new DefaultOAuth20UserProfile(supportingService.getClientId());
         storeProfileIntoSession(request, profile);
 
         val allowedResource = "https://api.example.org/";
@@ -111,13 +101,13 @@ class OAuth20PasswordGrantTypeTokenRequestValidatorTests extends AbstractOAuth20
         request.setParameter(OAuth20Constants.CLIENT_ID, supportingService.getClientId());
 
         request.setParameter(OAuth20Constants.RESOURCE, allowedResource);
-        assertTrue(validator.validate(context));
+        assertTrue(validator.validate(request, response));
 
         request.setParameter(OAuth20Constants.RESOURCE, "https://other.example.org/");
-        assertThrows(OAuth20InvalidTargetException.class, () -> validator.validate(context));
+        assertThrows(OAuth20InvalidTargetException.class, () -> validator.validate(request, response));
 
         request.setParameter(OAuth20Constants.RESOURCE, allowedResource + "#fragment");
-        assertThrows(OAuth20InvalidTargetException.class, () -> validator.validate(context));
+        assertThrows(OAuth20InvalidTargetException.class, () -> validator.validate(request, response));
     }
 
     protected OAuth20GrantTypes getGrantType() {

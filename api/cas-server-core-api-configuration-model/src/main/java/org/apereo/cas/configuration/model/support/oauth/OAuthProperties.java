@@ -40,8 +40,11 @@ public class OAuthProperties implements Serializable {
 
     /**
      * Control the CSRF cookie settings in OAUTH authentication flows.
+     * @deprecated Since 8.1.0. CAS no longer issues this cookie, which nothing checked; consent and device user code
+     * approval are protected by their approval keys.
      */
     @NestedConfigurationProperty
+    @Deprecated(since = "8.1.0", forRemoval = true)
     private OAuthCsrfCookieProperties csrfCookie = new OAuthCsrfCookieProperties();
 
     /**

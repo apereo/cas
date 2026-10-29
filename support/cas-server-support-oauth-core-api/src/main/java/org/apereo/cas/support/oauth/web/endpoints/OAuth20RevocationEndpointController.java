@@ -8,6 +8,7 @@ import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.ticket.OAuth20Token;
 import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshToken;
 import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.util.http.HttpRequestUtils;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -15,10 +16,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
-import org.pac4j.core.context.CallContext;
-import org.pac4j.core.context.WebContext;
-import org.pac4j.core.profile.ProfileManager;
-import org.pac4j.jee.context.JEEContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -54,22 +51,19 @@ public class OAuth20RevocationEndpointController<T extends OAuth20ConfigurationC
     public ModelAndView handleRequest(final HttpServletRequest request,
                                       final HttpServletResponse response)
             throws Throwable {
-        val context = new JEEContext(request, response);
 
-        if (!verifyRevocationRequest(context)) {
+        if (!verifyRevocationRequest(request, response)) {
             LOGGER.error("Revocation request verification failed. Request is missing required parameters");
             return OAuth20Utils.writeError(response, OAuth20Constants.INVALID_REQUEST);
         }
 
-        val manager = new ProfileManager(context, getConfigurationContext().getSessionStore());
-        val callContext = new CallContext(context, getConfigurationContext().getSessionStore());
         val clientId = getConfigurationContext().getRequestParameterResolver()
-            .resolveClientIdAndClientSecret(callContext).getLeft();
+            .resolveClientIdAndClientSecret(request).getLeft();
         val registeredService = getRegisteredServiceByClientId(clientId);
         RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(registeredService);
         
         if (OAuth20Utils.doesServiceNeedAuthentication(Objects.requireNonNull(registeredService))) {
-            if (manager.getProfile().isEmpty()) {
+            if (OAuth20Utils.findAuthenticatedUserProfile(request, response, getConfigurationContext().getSessionStore()).isEmpty()) {
                 LOGGER.warn("Service [{}] requests authentication", clientId);
                 return OAuth20Utils.writeError(response, OAuth20Constants.ACCESS_DENIED);
             }
@@ -85,7 +79,7 @@ public class OAuth20RevocationEndpointController<T extends OAuth20ConfigurationC
                 return OAuth20Utils.writeError(response, OAuth20Constants.INVALID_REQUEST);
             }
         }
-        val token = context.getRequestParameter(OAuth20Constants.TOKEN)
+        val token = Optional.ofNullable(request.getParameter(OAuth20Constants.TOKEN))
             .map(String::valueOf).orElse(StringUtils.EMPTY);
 
         return generateRevocationResponse(token, clientId, response);
@@ -126,17 +120,17 @@ public class OAuth20RevocationEndpointController<T extends OAuth20ConfigurationC
         return modelAndView;
     }
 
-    private boolean verifyRevocationRequest(final WebContext context) throws Throwable {
+    private boolean verifyRevocationRequest(final HttpServletRequest request, final HttpServletResponse response) throws Throwable {
         val validator = getConfigurationContext().getAccessTokenGrantRequestValidators().getObject()
             .stream()
             .filter(BeanSupplier::isNotProxy)
-            .filter(Unchecked.predicate(requestValidator -> requestValidator.supports(context)))
+            .filter(Unchecked.predicate(requestValidator -> requestValidator.supports(request, response)))
             .findFirst()
             .orElse(null);
         if (validator == null) {
-            LOGGER.warn("Ignoring malformed request [{}] as no OAuth20 validator could declare support for its syntax", context.getFullRequestURL());
+            LOGGER.warn("Ignoring malformed request [{}] as no OAuth20 validator could declare support for its syntax", HttpRequestUtils.getFullRequestUrl(request));
             return false;
         }
-        return validator.validate(context);
+        return validator.validate(request, response);
     }
 }

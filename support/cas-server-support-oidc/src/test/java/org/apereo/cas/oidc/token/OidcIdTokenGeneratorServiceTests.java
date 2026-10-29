@@ -17,6 +17,7 @@ import org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
+import org.apereo.cas.support.oauth.profile.DefaultOAuth20UserProfile;
 import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20TokenHashGenerator;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20JwtAccessTokenEncoder;
 import org.apereo.cas.ticket.TicketGrantingTicket;
@@ -30,8 +31,6 @@ import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.RepetitionInfo;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.pac4j.core.profile.CommonProfile;
-import org.pac4j.core.util.Pac4jConstants;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.TestPropertySource;
 import static org.apereo.cas.oidc.OidcConstants.StandardScopes.EMAIL;
@@ -83,12 +82,9 @@ class OidcIdTokenGeneratorServiceTests {
         @Test
         void verifyClaimReleaseAllowedByScopeFreePolicyInChain() throws Throwable {
             val request = new MockHttpServletRequest();
-            val profile = new CommonProfile();
-            profile.setClientName("OIDC");
-            profile.setId(UUID.randomUUID().toString());
+            val profile = new DefaultOAuth20UserProfile(UUID.randomUUID().toString());
 
-            request.setAttribute(Pac4jConstants.USER_PROFILES,
-                CollectionUtils.wrapLinkedHashMap(profile.getClientName(), profile));
+            request.setAttribute(OAuth20Constants.REQUEST_ATTRIBUTE_AUTHENTICATED_PROFILE, profile);
 
             val principal = RegisteredServiceTestUtils.getPrincipal(profile.getId(), CollectionUtils.wrap(
                 OIDC_CLAIM_EMAIL, List.of("casuser@example.org"), "sys_id", List.of("1234567890")));
@@ -130,12 +126,9 @@ class OidcIdTokenGeneratorServiceTests {
         @Test
         void verifyClaimReleaseAllowedByScopeFreePolicy() throws Throwable {
             val request = new MockHttpServletRequest();
-            val profile = new CommonProfile();
-            profile.setClientName("OIDC");
-            profile.setId(UUID.randomUUID().toString());
+            val profile = new DefaultOAuth20UserProfile(UUID.randomUUID().toString());
 
-            request.setAttribute(Pac4jConstants.USER_PROFILES,
-                CollectionUtils.wrapLinkedHashMap(profile.getClientName(), profile));
+            request.setAttribute(OAuth20Constants.REQUEST_ATTRIBUTE_AUTHENTICATED_PROFILE, profile);
 
             val principal = RegisteredServiceTestUtils.getPrincipal(profile.getId(), CollectionUtils.wrap(
                 OIDC_CLAIM_EMAIL, List.of("casuser@example.org"), "sys_id", List.of("1234567890")));
@@ -177,12 +170,9 @@ class OidcIdTokenGeneratorServiceTests {
         @Test
         void verifyOperation() throws Throwable {
             val request = new MockHttpServletRequest();
-            val profile = new CommonProfile();
-            profile.setClientName("OIDC");
-            profile.setId(UUID.randomUUID().toString());
+            val profile = new DefaultOAuth20UserProfile(UUID.randomUUID().toString());
 
-            request.setAttribute(Pac4jConstants.USER_PROFILES,
-                CollectionUtils.wrapLinkedHashMap(profile.getClientName(), profile));
+            request.setAttribute(OAuth20Constants.REQUEST_ATTRIBUTE_AUTHENTICATED_PROFILE, profile);
 
             val principal = RegisteredServiceTestUtils.getPrincipal(profile.getId(), CollectionUtils.wrap(
                 OIDC_CLAIM_EMAIL, List.of("casuser@example.org"), "org.apereo.cas.entity", List.of("example", "apereo")));
@@ -231,12 +221,9 @@ class OidcIdTokenGeneratorServiceTests {
         @Test
         void verifyTokenGenerationWithClaimsForCodeResponseType() throws Throwable {
             val request = new MockHttpServletRequest();
-            val profile = new CommonProfile();
-            profile.setClientName("OIDC");
-            profile.setId(UUID.randomUUID().toString());
+            val profile = new DefaultOAuth20UserProfile(UUID.randomUUID().toString());
 
-            request.setAttribute(Pac4jConstants.USER_PROFILES,
-                CollectionUtils.wrapLinkedHashMap(profile.getClientName(), profile));
+            request.setAttribute(OAuth20Constants.REQUEST_ATTRIBUTE_AUTHENTICATED_PROFILE, profile);
 
             val phoneValues = List.of("123456789", "4805553241");
             val principal = RegisteredServiceTestUtils.getPrincipal(profile.getId(), CollectionUtils.wrap(
@@ -296,9 +283,7 @@ class OidcIdTokenGeneratorServiceTests {
 
             val registeredService = getOidcRegisteredService(UUID.randomUUID().toString(), randomServiceUrl());
             servicesManager.save(registeredService);
-            val profile = new CommonProfile();
-            profile.setClientName("OIDC");
-            profile.setId(authentication.getPrincipal().getId());
+            val profile = new DefaultOAuth20UserProfile(authentication.getPrincipal().getId());
             
             val idTokenContext = IdTokenGenerationContext.builder()
                 .accessToken(accessToken)
@@ -319,9 +304,7 @@ class OidcIdTokenGeneratorServiceTests {
 
             val registeredService = getOidcRegisteredService(UUID.randomUUID().toString(), randomServiceUrl());
             servicesManager.save(registeredService);
-            val profile = new CommonProfile();
-            profile.setClientName("OIDC");
-            profile.setId(authentication.getPrincipal().getId());
+            val profile = new DefaultOAuth20UserProfile(authentication.getPrincipal().getId());
 
             val idTokenContext = IdTokenGenerationContext.builder()
                 .accessToken(accessToken)
@@ -337,12 +320,9 @@ class OidcIdTokenGeneratorServiceTests {
         @Test
         void verifyTokenGeneration() throws Throwable {
             val request = new MockHttpServletRequest();
-            val profile = new CommonProfile();
-            profile.setClientName("OIDC");
-            profile.setId(UUID.randomUUID().toString());
+            val profile = new DefaultOAuth20UserProfile(UUID.randomUUID().toString());
 
-            request.setAttribute(Pac4jConstants.USER_PROFILES,
-                CollectionUtils.wrapLinkedHashMap(profile.getClientName(), profile));
+            request.setAttribute(OAuth20Constants.REQUEST_ATTRIBUTE_AUTHENTICATED_PROFILE, profile);
 
             val phoneValues = List.of("\\\\123456789", "4805553241");
             val principal = RegisteredServiceTestUtils.getPrincipal(profile.getId(), CollectionUtils.wrap(
@@ -399,12 +379,9 @@ class OidcIdTokenGeneratorServiceTests {
         @Test
         void verifyTokenGenerationWithoutClaimsForCodeResponseType() throws Throwable {
             val request = new MockHttpServletRequest();
-            val profile = new CommonProfile();
-            profile.setClientName("OIDC");
-            profile.setId(UUID.randomUUID().toString());
+            val profile = new DefaultOAuth20UserProfile(UUID.randomUUID().toString());
 
-            request.setAttribute(Pac4jConstants.USER_PROFILES,
-                CollectionUtils.wrapLinkedHashMap(profile.getClientName(), profile));
+            request.setAttribute(OAuth20Constants.REQUEST_ATTRIBUTE_AUTHENTICATED_PROFILE, profile);
 
             val phoneValues = List.of("123456789", "4805553241");
             val principal = RegisteredServiceTestUtils.getPrincipal(profile.getId(), CollectionUtils.wrap(
@@ -452,12 +429,9 @@ class OidcIdTokenGeneratorServiceTests {
         @Test
         void verifyTokenGenerationWithOutClaimsForAuthzCodeGrantType() throws Throwable {
             val request = new MockHttpServletRequest();
-            val profile = new CommonProfile();
-            profile.setClientName("OIDC");
-            profile.setId(UUID.randomUUID().toString());
+            val profile = new DefaultOAuth20UserProfile(UUID.randomUUID().toString());
 
-            request.setAttribute(Pac4jConstants.USER_PROFILES,
-                CollectionUtils.wrapLinkedHashMap(profile.getClientName(), profile));
+            request.setAttribute(OAuth20Constants.REQUEST_ATTRIBUTE_AUTHENTICATED_PROFILE, profile);
 
             val phoneValues = List.of("123456789", "4805553241");
             val principal = RegisteredServiceTestUtils.getPrincipal(profile.getId(), CollectionUtils.wrap(
@@ -503,12 +477,9 @@ class OidcIdTokenGeneratorServiceTests {
         @Test
         void verifyTokenGenerationWithOutClaimsForRefreshTokenGrantType() throws Throwable {
             val request = new MockHttpServletRequest();
-            val profile = new CommonProfile();
-            profile.setClientName("OIDC");
-            profile.setId(UUID.randomUUID().toString());
+            val profile = new DefaultOAuth20UserProfile(UUID.randomUUID().toString());
 
-            request.setAttribute(Pac4jConstants.USER_PROFILES,
-                CollectionUtils.wrapLinkedHashMap(profile.getClientName(), profile));
+            request.setAttribute(OAuth20Constants.REQUEST_ATTRIBUTE_AUTHENTICATED_PROFILE, profile);
 
             val phoneValues = List.of("123456789", "4805553241");
             val principal = RegisteredServiceTestUtils.getPrincipal(profile.getId(), CollectionUtils.wrap(
@@ -554,11 +525,8 @@ class OidcIdTokenGeneratorServiceTests {
         @Test
         void verifyTokenGenerationWithoutCallbackService() throws Throwable {
             val request = new MockHttpServletRequest();
-            val profile = new CommonProfile();
-            profile.setClientName("OIDC");
-            profile.setId(UUID.randomUUID().toString());
-            request.setAttribute(Pac4jConstants.USER_PROFILES,
-                CollectionUtils.wrapLinkedHashMap(profile.getClientName(), profile));
+            val profile = new DefaultOAuth20UserProfile(UUID.randomUUID().toString());
+            request.setAttribute(OAuth20Constants.REQUEST_ATTRIBUTE_AUTHENTICATED_PROFILE, profile);
 
             val mfa = casProperties.getAuthn().getMfa();
             val authentication = CoreAuthenticationTestUtils.getAuthentication(profile.getId(),
@@ -596,11 +564,8 @@ class OidcIdTokenGeneratorServiceTests {
         @RepeatedTest(2)
         void verifyAccessTokenAsJwt(final RepetitionInfo repetitionInfo) throws Throwable {
             val request = new MockHttpServletRequest();
-            val profile = new CommonProfile();
-            profile.setClientName("OIDC");
-            profile.setId(UUID.randomUUID().toString());
-            request.setAttribute(Pac4jConstants.USER_PROFILES,
-                CollectionUtils.wrapLinkedHashMap(profile.getClientName(), profile));
+            val profile = new DefaultOAuth20UserProfile(UUID.randomUUID().toString());
+            request.setAttribute(OAuth20Constants.REQUEST_ATTRIBUTE_AUTHENTICATED_PROFILE, profile);
 
             val accessToken = getAccessToken();
             val registeredService = getOidcRegisteredService(accessToken.getClientId());
@@ -646,9 +611,7 @@ class OidcIdTokenGeneratorServiceTests {
 
         @Test
         void verifyAccessTokenHashUsesAccessTokenFromResponse() throws Throwable {
-            val profile = new CommonProfile();
-            profile.setClientName("OIDC");
-            profile.setId(UUID.randomUUID().toString());
+            val profile = new DefaultOAuth20UserProfile(UUID.randomUUID().toString());
 
             val clientId = UUID.randomUUID().toString();
             val accessToken = getAccessToken(clientId);
@@ -679,9 +642,7 @@ class OidcIdTokenGeneratorServiceTests {
 
         @Test
         void verifyNoAccessTokenHashWhenNoAccessTokenIsIssued() throws Throwable {
-            val profile = new CommonProfile();
-            profile.setClientName("OIDC");
-            profile.setId(UUID.randomUUID().toString());
+            val profile = new DefaultOAuth20UserProfile(UUID.randomUUID().toString());
 
             val clientId = UUID.randomUUID().toString();
             val accessToken = getAccessToken(clientId);
@@ -703,9 +664,7 @@ class OidcIdTokenGeneratorServiceTests {
 
         @Test
         void verifyCibaPushRequestIdFromResponse() throws Throwable {
-            val profile = new CommonProfile();
-            profile.setClientName("OIDC");
-            profile.setId(UUID.randomUUID().toString());
+            val profile = new DefaultOAuth20UserProfile(UUID.randomUUID().toString());
 
             val clientId = UUID.randomUUID().toString();
             val accessToken = getAccessToken(clientId);

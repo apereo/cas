@@ -12,9 +12,9 @@ import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.pac4j.core.context.CallContext;
-import org.pac4j.core.context.WebContext;
 import org.springframework.beans.factory.ObjectProvider;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * This is {@link AccessTokenPasswordGrantRequestExtractor}.
@@ -28,13 +28,12 @@ public class AccessTokenPasswordGrantRequestExtractor extends BaseAccessTokenGra
         super(oAuthConfigurationContext);
     }
     @Override
-    public AccessTokenRequestContext extractRequest(final WebContext context) throws Throwable {
+    public AccessTokenRequestContext extractRequest(final HttpServletRequest request, final HttpServletResponse response) throws Throwable {
         val configurationContext = getConfigurationContext().getObject();
-        val callContext = new CallContext(context, configurationContext.getSessionStore());
-        val profile = OAuth20Utils.getAuthenticatedUserProfile(context, configurationContext.getSessionStore());
+        val profile = OAuth20Utils.getAuthenticatedUserProfile(request, response, configurationContext.getSessionStore());
         val requestParameterResolver = configurationContext.getRequestParameterResolver();
         val clientId = StringUtils.defaultIfBlank(requestParameterResolver
-            .resolveClientIdAndClientSecret(callContext).getKey(), (String) profile.getAttribute(OAuth20Constants.CLIENT_ID));
+            .resolveClientIdAndClientSecret(request).getKey(), (String) profile.getAttribute(OAuth20Constants.CLIENT_ID));
 
         LOGGER.debug("Locating OAuth registered service by client id [{}]", clientId);
         val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(configurationContext.getServicesManager(), clientId);
@@ -44,10 +43,10 @@ public class AccessTokenPasswordGrantRequestExtractor extends BaseAccessTokenGra
         LOGGER.debug("Creating matching service request based on [{}]", registeredService);
         val requireServiceHeader = configurationContext.getCasProperties().getAuthn()
             .getOauth().getGrants().getResourceOwner().isRequireServiceHeader();
-        val service = configurationContext.getAuthenticationBuilder().buildService(registeredService, context, requireServiceHeader);
+        val service = configurationContext.getAuthenticationBuilder().buildService(registeredService, request, requireServiceHeader);
 
         LOGGER.debug("Authenticating the OAuth request indicated by [{}]", service);
-        val authentication = configurationContext.getAuthenticationBuilder().build(profile, registeredService, context, service);
+        val authentication = configurationContext.getAuthenticationBuilder().build(profile, registeredService, request, service);
 
         val audit = AuditableContext.builder()
             .service(service)
@@ -60,7 +59,7 @@ public class AccessTokenPasswordGrantRequestExtractor extends BaseAccessTokenGra
         val result = new DefaultAuthenticationResult(authentication, requireServiceHeader ? service : null);
         val ticketGrantingTicket = configurationContext.getCentralAuthenticationService().createTicketGrantingTicket(result);
 
-        val scopes = requestParameterResolver.resolveRequestScopes(context);
+        val scopes = requestParameterResolver.resolveRequestScopes(request);
         scopes.retainAll(Objects.requireNonNull(registeredService).getScopes());
 
         return AccessTokenRequestContext.builder()
@@ -69,16 +68,16 @@ public class AccessTokenPasswordGrantRequestExtractor extends BaseAccessTokenGra
             .authentication(authentication)
             .registeredService(registeredService)
             .grantType(getGrantType())
-            .resources(requestParameterResolver.resolveRequestedResources(context))
+            .resources(requestParameterResolver.resolveRequestedResources(request))
             .ticketGrantingTicket(ticketGrantingTicket)
             .generateRefreshToken(registeredService.isGenerateRefreshToken())
             .build();
     }
 
     @Override
-    public boolean supports(final WebContext context) {
+    public boolean supports(final HttpServletRequest request) {
         val grantType = getConfigurationContext().getObject().getRequestParameterResolver()
-            .resolveRequestParameter(context, OAuth20Constants.GRANT_TYPE).orElse(StringUtils.EMPTY);
+            .resolveRequestParameter(request, OAuth20Constants.GRANT_TYPE).orElse(StringUtils.EMPTY);
         return OAuth20Utils.isGrantType(grantType, getGrantType());
     }
 

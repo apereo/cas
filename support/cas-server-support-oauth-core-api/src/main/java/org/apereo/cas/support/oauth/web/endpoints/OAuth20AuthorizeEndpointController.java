@@ -11,6 +11,7 @@ import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.events.OAuth20AuthorizationRequestEvent;
 import org.apereo.cas.support.oauth.events.OAuth20AuthorizationResponseEvent;
+import org.apereo.cas.support.oauth.profile.OAuth20UserProfile;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.response.OAuth20AuthorizationRequest;
@@ -18,6 +19,7 @@ import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequ
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20AuthorizationResponseBuilder;
 import org.apereo.cas.util.JsonUtils;
 import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.util.http.HttpRequestUtils;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -27,9 +29,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.jooq.lambda.Unchecked;
 import org.jspecify.annotations.Nullable;
-import org.pac4j.core.profile.ProfileManager;
-import org.pac4j.core.profile.UserProfile;
-import org.pac4j.jee.context.JEEContext;
 import org.springframework.core.OrderComparator;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -55,10 +54,10 @@ public class OAuth20AuthorizeEndpointController<T extends OAuth20ConfigurationCo
 
     private static Optional<OAuth20AuthorizationRequest.OAuth20AuthorizationRequestBuilder> toAuthorizationRequest(
         final OAuthRegisteredService registeredService,
-        final JEEContext context, final Service service,
+        final HttpServletRequest request, final HttpServletResponse response, final Service service,
         final Authentication authentication,
         final OAuth20AuthorizationResponseBuilder builder) {
-        return builder.toAuthorizationRequest(context, authentication, service, registeredService);
+        return builder.toAuthorizationRequest(request, response, authentication, service, registeredService);
     }
 
     /**
@@ -76,36 +75,32 @@ public class OAuth20AuthorizeEndpointController<T extends OAuth20ConfigurationCo
             throws Throwable {
         val requestParameterResolver = getConfigurationContext().getRequestParameterResolver();
 
-        val webContext = new JEEContext(request, response);
-        val prompts = requestParameterResolver.resolveSupportedPromptValues(webContext);
-        val requestedPrompt = requestParameterResolver.resolveRequestedPromptValues(webContext);
+        val prompts = requestParameterResolver.resolveSupportedPromptValues(request);
+        val requestedPrompt = requestParameterResolver.resolveRequestedPromptValues(request);
         if (!requestedPrompt.isEmpty() && !requestedPrompt.equals(prompts)) {
             return OAuth20Utils.writeError(response, OAuth20Constants.INVALID_REQUEST, "Unsupported prompt parameter value");
         }
         ensureSessionReplicationIsAutoconfiguredIfNeedBe(request);
 
-        val context = new JEEContext(request, response);
-        val manager = new ProfileManager(context, getConfigurationContext().getSessionStore());
-
-        if (context.getRequestAttribute(OAuth20Constants.ERROR).isPresent()) {
-            val mv = getConfigurationContext().getOauthInvalidAuthorizationResponseBuilder().build(context);
+        if (request.getAttribute(OAuth20Constants.ERROR) != null) {
+            val mv = getConfigurationContext().getOauthInvalidAuthorizationResponseBuilder().build(request);
             if (!mv.isEmpty() && mv.hasView()) {
                 return mv;
             }
         }
 
         val clientId = requestParameterResolver
-            .resolveRequestParameter(context, OAuth20Constants.CLIENT_ID)
+            .resolveRequestParameter(request, OAuth20Constants.CLIENT_ID)
             .map(String::valueOf)
             .orElse(StringUtils.EMPTY);
         val registeredService = getRegisteredServiceByClientId(clientId);
         val clientService = getConfigurationContext().getWebApplicationServiceServiceFactory().createService(clientId);
         RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(clientService, registeredService);
         if (LoggingUtils.isProtocolMessageLoggerEnabled()) {
-            val redirectUri = requestParameterResolver.resolveRequestParameter(context, OAuth20Constants.REDIRECT_URI).orElse(StringUtils.EMPTY);
-            val responseType = requestParameterResolver.resolveRequestParameter(context, OAuth20Constants.RESPONSE_TYPE).orElse(StringUtils.EMPTY);
-            val scopes = requestParameterResolver.resolveRequestParameter(context, OAuth20Constants.SCOPE).orElse(StringUtils.EMPTY);
-            val state = requestParameterResolver.resolveRequestParameter(context, OAuth20Constants.STATE).orElse(StringUtils.EMPTY);
+            val redirectUri = requestParameterResolver.resolveRequestParameter(request, OAuth20Constants.REDIRECT_URI).orElse(StringUtils.EMPTY);
+            val responseType = requestParameterResolver.resolveRequestParameter(request, OAuth20Constants.RESPONSE_TYPE).orElse(StringUtils.EMPTY);
+            val scopes = requestParameterResolver.resolveRequestParameter(request, OAuth20Constants.SCOPE).orElse(StringUtils.EMPTY);
+            val state = requestParameterResolver.resolveRequestParameter(request, OAuth20Constants.STATE).orElse(StringUtils.EMPTY);
             val protocolContext = Map.of("Registered Service", registeredService.getName(), "Client ID", clientId, "State", state,
                 "Redirect URI", redirectUri, "Response Type", responseType, "Scopes", scopes);
             LoggingUtils.protocolMessage("OAuth/OpenID Connect Authorization Request", protocolContext);
@@ -113,15 +108,15 @@ public class OAuth20AuthorizeEndpointController<T extends OAuth20ConfigurationCo
                 new OAuth20AuthorizationRequestEvent(this, ClientInfoHolder.getClientInfo(), protocolContext));
         }
 
-        if (isRequestAuthenticated(manager, context, registeredService)) {
-            val mv = getConfigurationContext().getConsentApprovalViewResolver().resolve(context, registeredService);
+        if (isRequestAuthenticated(request, response, registeredService)) {
+            val mv = getConfigurationContext().getConsentApprovalViewResolver().resolve(request, response, registeredService);
             if (mv != null && !mv.isEmpty() && mv.hasView()) {
                 LOGGER.debug("Redirecting to consent-approval view with model [{}]", mv.getModel());
                 return mv;
             }
         }
 
-        return redirectToCallbackRedirectUrl(manager, registeredService, context);
+        return redirectToCallbackRedirectUrl(registeredService, request, response);
     }
 
     /**
@@ -138,17 +133,17 @@ public class OAuth20AuthorizeEndpointController<T extends OAuth20ConfigurationCo
         return handleRequest(request, response);
     }
 
-    protected @Nullable ModelAndView redirectToCallbackRedirectUrl(final ProfileManager manager,
-                                                                   final OAuthRegisteredService registeredService,
-                                                                   final JEEContext context)
+    protected @Nullable ModelAndView redirectToCallbackRedirectUrl(final OAuthRegisteredService registeredService,
+                                                                   final HttpServletRequest request,
+                                                                   final HttpServletResponse response)
             throws Throwable {
-        val profile = verifyAndReturnAuthenticatedProfile(manager, context);
+        val profile = verifyAndReturnAuthenticatedProfile(request, response);
         val service = getConfigurationContext().getAuthenticationBuilder()
-            .buildService(registeredService, context, false);
+            .buildService(registeredService, request, false);
         LOGGER.trace("Created service [{}] based on registered service [{}]", service, registeredService);
 
-        val authentication = bindProofOfPossessionKey(context, getConfigurationContext().getAuthenticationBuilder()
-            .build(profile, registeredService, context, service));
+        val authentication = bindProofOfPossessionKey(request, getConfigurationContext().getAuthenticationBuilder()
+            .build(profile, registeredService, request, service));
         LOGGER.trace("Created OAuth authentication [{}] for service [{}]", authentication, service);
 
         try {
@@ -160,7 +155,7 @@ public class OAuth20AuthorizeEndpointController<T extends OAuth20ConfigurationCo
             val accessResult = getConfigurationContext().getRegisteredServiceAccessStrategyEnforcer().execute(audit);
             accessResult.throwExceptionIfNeeded();
 
-            val modelAndView = buildAuthorizationForRequest(registeredService, context, service, authentication);
+            val modelAndView = buildAuthorizationForRequest(registeredService, request, response, service, authentication);
             return Optional.ofNullable(modelAndView)
                 .filter(ModelAndView::hasView)
                 .orElseGet(() -> {
@@ -178,14 +173,14 @@ public class OAuth20AuthorizeEndpointController<T extends OAuth20ConfigurationCo
      * verified DPoP proof that came with a pushed authorization request, is kept as an authentication attribute and travels
      * with the authorization code, whose token request must then carry a DPoP proof made with that key.
      *
-     * @param context        the context
+     * @param request        the request
      * @param authentication the authentication of the authorization request
      * @return the authentication, with the thumbprint when one was given
      */
-    protected Authentication bindProofOfPossessionKey(final JEEContext context, final Authentication authentication) {
+    protected Authentication bindProofOfPossessionKey(final HttpServletRequest request, final Authentication authentication) {
         val requestParameterResolver = getConfigurationContext().getRequestParameterResolver();
-        final Optional<String> thumbprint = context.getRequestAttribute(OAuth20Constants.DPOP_JKT).map(Object::toString)
-            .or(() -> requestParameterResolver.resolveRequestParameter(context, OAuth20Constants.DPOP_JKT).map(String::valueOf));
+        final Optional<String> thumbprint = Optional.ofNullable(request.getAttribute(OAuth20Constants.DPOP_JKT)).map(Object::toString)
+            .or(() -> requestParameterResolver.resolveRequestParameter(request, OAuth20Constants.DPOP_JKT).map(String::valueOf));
         return thumbprint
             .filter(StringUtils::isNotBlank)
             .map(value -> DefaultAuthenticationBuilder.newInstance(authentication)
@@ -194,9 +189,9 @@ public class OAuth20AuthorizeEndpointController<T extends OAuth20ConfigurationCo
             .orElse(authentication);
     }
 
-    private UserProfile verifyAndReturnAuthenticatedProfile(final ProfileManager manager, final JEEContext context) {
+    private OAuth20UserProfile verifyAndReturnAuthenticatedProfile(final HttpServletRequest request, final HttpServletResponse response) {
         val casProperties = getConfigurationContext().getCasProperties();
-        return manager.getProfile()
+        return OAuth20Utils.findAuthenticatedUserProfile(request, response, getConfigurationContext().getSessionStore())
             .orElseThrow(() -> new IllegalArgumentException(
                 """
                 CAS is unable to locate authentication profile for this request: %s. The authentication request is expected
@@ -206,14 +201,14 @@ public class OAuth20AuthorizeEndpointController<T extends OAuth20ConfigurationCo
                 """
                 .strip()
                 .formatted(
-                    context.getFullRequestURL(),
+                    HttpRequestUtils.getFullRequestUrl(request),
                     casProperties.getAuthn().getOidc().getCore().getIssuer(),
                     casProperties.getServer().getPrefix())));
     }
 
     protected ModelAndView buildAuthorizationForRequest(
         final OAuthRegisteredService registeredService,
-        final JEEContext context, final Service service,
+        final HttpServletRequest request, final HttpServletResponse response, final Service service,
         final Authentication authentication) {
 
         val registeredBuilders = getConfigurationContext().getOauthAuthorizationResponseBuilders().getObject();
@@ -222,7 +217,7 @@ public class OAuth20AuthorizeEndpointController<T extends OAuth20ConfigurationCo
             .stream()
             .filter(BeanSupplier::isNotProxy)
             .sorted(OrderComparator.INSTANCE)
-            .map(builder -> toAuthorizationRequest(registeredService, context, service, authentication, builder))
+            .map(builder -> toAuthorizationRequest(registeredService, request, response, service, authentication, builder))
             .filter(Objects::nonNull)
             .filter(Optional::isPresent)
             .findFirst()
@@ -232,7 +227,7 @@ public class OAuth20AuthorizeEndpointController<T extends OAuth20ConfigurationCo
 
         val payload = Optional.ofNullable(authzRequest.getAccessTokenRequest())
             .orElseGet(Unchecked.supplier(() -> prepareAccessTokenRequestContext(authzRequest,
-                registeredService, context, service, authentication)));
+                registeredService, request, response, service, authentication)));
 
         val result = registeredBuilders
             .stream()
@@ -268,45 +263,46 @@ public class OAuth20AuthorizeEndpointController<T extends OAuth20ConfigurationCo
     protected AccessTokenRequestContext prepareAccessTokenRequestContext(
         final OAuth20AuthorizationRequest authzRequest,
         final OAuthRegisteredService registeredService,
-        final JEEContext context,
+        final HttpServletRequest request,
+        final HttpServletResponse response,
         final Service service,
         final Authentication authentication)
             throws Exception {
 
         var payloadBuilder = AccessTokenRequestContext.builder();
         if (authzRequest.isSingleSignOnSessionRequired()) {
-            val tgt = getConfigurationContext().fetchTicketGrantingTicketFrom(context);
+            val tgt = getConfigurationContext().fetchTicketGrantingTicketFrom(request, response);
             payloadBuilder = payloadBuilder.ticketGrantingTicket(tgt);
         }
         val requestParameterResolver = getConfigurationContext().getRequestParameterResolver();
         val redirectUri = requestParameterResolver
-            .resolveRequestParameter(context, OAuth20Constants.REDIRECT_URI)
+            .resolveRequestParameter(request, OAuth20Constants.REDIRECT_URI)
             .map(String::valueOf)
             .orElse(StringUtils.EMPTY);
-        val grantType = context.getRequestParameter(OAuth20Constants.GRANT_TYPE)
+        val grantType = Optional.ofNullable(request.getParameter(OAuth20Constants.GRANT_TYPE))
             .map(String::valueOf)
             .orElseGet(OAuth20GrantTypes.AUTHORIZATION_CODE::getType)
             .toUpperCase(Locale.ENGLISH);
-        val scopes = requestParameterResolver.resolveRequestScopes(context);
-        val resources = requestParameterResolver.resolveRequestedResources(context);
-        val codeChallenge = requestParameterResolver.resolveRequestParameter(context, OAuth20Constants.CODE_CHALLENGE)
+        val scopes = requestParameterResolver.resolveRequestScopes(request);
+        val resources = requestParameterResolver.resolveRequestedResources(request);
+        val codeChallenge = requestParameterResolver.resolveRequestParameter(request, OAuth20Constants.CODE_CHALLENGE)
             .map(String::valueOf).orElse(StringUtils.EMPTY);
 
         val challengeMethodsSupported = getConfigurationContext().getCasProperties().getAuthn().getOidc().getDiscovery().getCodeChallengeMethodsSupported();
-        val codeChallengeMethod = requestParameterResolver.resolveRequestParameter(context, OAuth20Constants.CODE_CHALLENGE_METHOD)
+        val codeChallengeMethod = requestParameterResolver.resolveRequestParameter(request, OAuth20Constants.CODE_CHALLENGE_METHOD)
             .map(String::valueOf)
             .filter(challengeMethodsSupported::contains)
             .orElse(StringUtils.EMPTY)
             .toUpperCase(Locale.ENGLISH);
 
-        val userProfile = OAuth20Utils.getAuthenticatedUserProfile(context, getConfigurationContext().getSessionStore());
-        val claims = requestParameterResolver.resolveRequestClaims(context);
+        val userProfile = OAuth20Utils.getAuthenticatedUserProfile(request, response, getConfigurationContext().getSessionStore());
+        val claims = requestParameterResolver.resolveRequestClaims(request);
         val holder = payloadBuilder
             .service(service)
             .authentication(authentication)
             .registeredService(registeredService)
-            .grantType(requestParameterResolver.resolveGrantType(context))
-            .responseType(requestParameterResolver.resolveResponseType(context))
+            .grantType(requestParameterResolver.resolveGrantType(request))
+            .responseType(requestParameterResolver.resolveResponseType(request))
             .codeChallenge(codeChallenge)
             .codeChallengeMethod(codeChallengeMethod)
             .scopes(scopes)
@@ -315,13 +311,13 @@ public class OAuth20AuthorizeEndpointController<T extends OAuth20ConfigurationCo
             .redirectUri(redirectUri)
             .userProfile(userProfile)
             .claims(claims)
-            .responseMode(requestParameterResolver.resolveResponseModeType(context))
+            .responseMode(requestParameterResolver.resolveResponseModeType(request))
             .authorizationDetails(authzRequest.getAuthorizationDetails())
             .issuerState(authzRequest.getIssuerState())
             .build();
-        context.getRequestParameters()
+        request.getParameterMap()
             .keySet()
-            .forEach(key -> context.getRequestParameter(key).ifPresent(value -> holder.getParameters().put(key, value)));
+            .forEach(key -> Optional.ofNullable(request.getParameter(key)).ifPresent(value -> holder.getParameters().put(key, value)));
         LOGGER.debug("Building authorization response for grant type [{}] with scopes [{}] for client id [{}]",
             grantType, scopes, authzRequest.getClientId());
         return holder;

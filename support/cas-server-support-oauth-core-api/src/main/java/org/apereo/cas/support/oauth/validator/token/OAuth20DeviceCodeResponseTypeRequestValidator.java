@@ -18,8 +18,9 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.pac4j.core.context.WebContext;
 import org.springframework.core.Ordered;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * This is {@link OAuth20DeviceCodeResponseTypeRequestValidator}.
@@ -43,10 +44,10 @@ public class OAuth20DeviceCodeResponseTypeRequestValidator implements OAuth20Tok
     private int order = Ordered.LOWEST_PRECEDENCE;
 
     @Override
-    public boolean validate(final WebContext context) throws Throwable {
-        val responseType = requestParameterResolver.resolveRequestParameter(context, OAuth20Constants.RESPONSE_TYPE)
+    public boolean validate(final HttpServletRequest request, final HttpServletResponse response) throws Throwable {
+        val responseType = requestParameterResolver.resolveRequestParameter(request, OAuth20Constants.RESPONSE_TYPE)
             .map(String::valueOf).orElse(StringUtils.EMPTY);
-        val grantType = requestParameterResolver.resolveRequestParameter(context, OAuth20Constants.GRANT_TYPE)
+        val grantType = requestParameterResolver.resolveRequestParameter(request, OAuth20Constants.GRANT_TYPE)
             .map(String::valueOf).orElse(StringUtils.EMPTY);
         val validResponseType = OAuth20Utils.isResponseType(responseType, OAuth20ResponseTypes.DEVICE_CODE);
         val validGrantType = OAuth20Utils.isGrantType(grantType, OAuth20GrantTypes.DEVICE_CODE);
@@ -56,19 +57,19 @@ public class OAuth20DeviceCodeResponseTypeRequestValidator implements OAuth20Tok
             return false;
         }
 
-        val clientId = requestParameterResolver.resolveRequestParameter(context, OAuth20Constants.CLIENT_ID).orElse(StringUtils.EMPTY);
+        val clientId = requestParameterResolver.resolveRequestParameter(request, OAuth20Constants.CLIENT_ID).orElse(StringUtils.EMPTY);
         val authorized = FunctionUtils.doAndHandle(() -> {
             val registeredService = Objects.requireNonNull(OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, clientId));
             RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(registeredService);
-            return (validResponseType && requestParameterResolver.isAuthorizedResponseTypeForService(context, registeredService))
-                   || (validGrantType && requestParameterResolver.isAuthorizedGrantTypeForService(context, registeredService));
+            return (validResponseType && requestParameterResolver.isAuthorizedResponseTypeForService(request, registeredService))
+                   || (validGrantType && requestParameterResolver.isAuthorizedGrantTypeForService(request, registeredService));
         }, t -> {
             LOGGER.warn("Registered service access is not allowed for service definition for client id [{}]", clientId);
             return false;
         }).get();
         if (authorized) {
-            validateProofOfPossession(context, clientId);
-            validateRequestedResources(context, clientId, validResponseType);
+            validateProofOfPossession(request, response, clientId);
+            validateRequestedResources(request, clientId, validResponseType);
         }
         return authorized;
     }
@@ -77,15 +78,15 @@ public class OAuth20DeviceCodeResponseTypeRequestValidator implements OAuth20Tok
      * The device authorization request may name the resources the tokens are for (RFC 8707), which must be ones the
      * service allows. The device code then carries them over to the token request that redeems it.
      *
-     * @param context                    the context
+     * @param request                    the request
      * @param clientId                   the client id
      * @param deviceAuthorizationRequest whether this is the device authorization request rather than the token request
      */
-    protected void validateRequestedResources(final WebContext context, final String clientId,
+    protected void validateRequestedResources(final HttpServletRequest request, final String clientId,
                                               final boolean deviceAuthorizationRequest) {
         if (deviceAuthorizationRequest) {
             val registeredService = Objects.requireNonNull(OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, clientId));
-            OAuth20Utils.verifyRequestedResources(requestParameterResolver, context, registeredService);
+            OAuth20Utils.verifyRequestedResources(requestParameterResolver, request, registeredService);
         }
     }
 
@@ -94,25 +95,28 @@ public class OAuth20DeviceCodeResponseTypeRequestValidator implements OAuth20Tok
      * the token to be bound to the proof's key (RFC 9449, section 5). The device authorization request that hands out
      * the device code is not, and is left alone.
      *
-     * @param context  the context
+     * @param request  the request
+     * @param response the response
      * @param clientId the client id
      * @throws Throwable when the proof does not verify, or is missing for a client that must present one
      */
-    protected void validateProofOfPossession(final WebContext context, final String clientId) throws Throwable {
-        val deviceCode = requestParameterResolver.resolveRequestParameter(context, OAuth20Constants.DEVICE_CODE);
+    protected void validateProofOfPossession(final HttpServletRequest request, final HttpServletResponse response,
+                                             final String clientId)
+            throws Throwable {
+        val deviceCode = requestParameterResolver.resolveRequestParameter(request, OAuth20Constants.DEVICE_CODE);
         if (deviceCode.filter(StringUtils::isNotBlank).isPresent()) {
             val registeredService = Objects.requireNonNull(OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, clientId));
-            proofOfPossessionValidator.validateTokenRequest(context, registeredService);
+            proofOfPossessionValidator.validateTokenRequest(request, response, registeredService);
         }
     }
 
     @Override
-    public boolean supports(final WebContext context) {
-        val responseType = requestParameterResolver.resolveRequestParameter(context, OAuth20Constants.RESPONSE_TYPE)
+    public boolean supports(final HttpServletRequest request, final HttpServletResponse response) {
+        val responseType = requestParameterResolver.resolveRequestParameter(request, OAuth20Constants.RESPONSE_TYPE)
             .map(String::valueOf).orElse(StringUtils.EMPTY);
-        val grantType = requestParameterResolver.resolveRequestParameter(context, OAuth20Constants.GRANT_TYPE)
+        val grantType = requestParameterResolver.resolveRequestParameter(request, OAuth20Constants.GRANT_TYPE)
             .map(String::valueOf).orElse(StringUtils.EMPTY);
-        val clientId = requestParameterResolver.resolveRequestParameter(context, OAuth20Constants.CLIENT_ID)
+        val clientId = requestParameterResolver.resolveRequestParameter(request, OAuth20Constants.CLIENT_ID)
             .map(String::valueOf).orElse(StringUtils.EMPTY);
         val validRequest = OAuth20Utils.isResponseType(responseType, OAuth20ResponseTypes.DEVICE_CODE)
                            || OAuth20Utils.isGrantType(grantType, OAuth20GrantTypes.DEVICE_CODE);

@@ -97,6 +97,11 @@ async function verifyDeliveryMode(clientId = "client", deliveryMode = "push",
     const browser = await cas.newBrowser(cas.browserOptions());
     const page = await cas.newPage(browser);
     const verificationUrl = await cas.extractFromEmail(browser);
+    await cas.doPost(verificationUrl, "", {
+        "Content-Type": "application/x-www-form-urlencoded"
+    }, (res) => {
+        throw `A CIBA verification without a CSRF token must be refused: ${res.status}`;
+    }, (error) => assert(error.response.status === 403));
     await cas.goto(page, verificationUrl);
 
     await cas.assertVisibility(page, "#scopes");

@@ -15,6 +15,39 @@ public interface OAuth20Constants {
     String REQUEST_ATTRIBUTE_ACCESS_TOKEN_REQUEST = "oauth.request.access-token";
 
     /**
+     * Internal attribute to indicate that the incoming request authenticates its client, as requests to the token,
+     * revocation, pushed authorization, backchannel authentication and verifiable credential endpoints do.
+     */
+    String REQUEST_ATTRIBUTE_CLIENT_AUTHENTICATION_REQUEST = "oauth.request.client-authentication";
+
+    /**
+     * Internal attribute to indicate that the callback of the login handshake validated a service ticket that comes from a
+     * new login, in which the user presented credentials.
+     */
+    String REQUEST_ATTRIBUTE_NEW_LOGIN = "oauth.request.new-login";
+
+    /**
+     * Internal attribute that holds the profile that client authentication, an access token or the login handshake
+     * established for the request.
+     */
+    String REQUEST_ATTRIBUTE_AUTHENTICATED_PROFILE = "oauth.request.authenticated-profile";
+
+    /**
+     * Profile attribute that records the client of the request that authenticated the profile.
+     */
+    String PROFILE_ATTRIBUTE_CLIENT_ID = "oauthClientId";
+
+    /**
+     * Session attribute that holds the profile of the user that the login handshake authenticated.
+     */
+    String SESSION_ATTRIBUTE_AUTHENTICATED_PROFILE = "oauthAuthenticatedProfile";
+
+    /**
+     * Session attribute that holds the URL of the request that the login handshake resumes after login.
+     */
+    String SESSION_ATTRIBUTE_REQUESTED_URL = "oauthRequestedUrl";
+
+    /**
      * The prompt parameter.
      */
     String PROMPT = "prompt";
@@ -262,6 +295,12 @@ public interface OAuth20Constants {
      * {@code WWW-Authenticate} challenge.
      */
     String INVALID_TOKEN = "invalid_token";
+
+    /**
+     * The insufficient scope, per RFC 6750, section 3.1: the request requires higher privileges than the access token
+     * provides. It is answered with a 403 and a {@code WWW-Authenticate} challenge that names the scope.
+     */
+    String INSUFFICIENT_SCOPE = "insufficient_scope";
 
     /**
      * The invalid scope.

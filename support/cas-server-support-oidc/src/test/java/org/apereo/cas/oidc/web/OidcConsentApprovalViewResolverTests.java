@@ -11,14 +11,12 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
+import org.apereo.cas.support.oauth.profile.DefaultOAuth20UserProfile;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestContext;
 import org.apereo.cas.util.CollectionUtils;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.pac4j.core.profile.CommonProfile;
-import org.pac4j.core.profile.ProfileManager;
-import org.pac4j.jee.context.JEEContext;
 import org.springframework.http.HttpHeaders;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -38,21 +36,18 @@ class OidcConsentApprovalViewResolverTests extends AbstractOidcTests {
         val request = new MockHttpServletRequest();
         request.addHeader(HttpHeaders.USER_AGENT, "MSIE");
         val response = new MockHttpServletResponse();
-        val context = new JEEContext(request, response);
 
-        val profile = new CommonProfile();
-        profile.setId("casTest");
-        val profileManager = new ProfileManager(context, oauthDistributedSessionStore);
-        profileManager.save(true, profile, false);
+        val profile = new DefaultOAuth20UserProfile("casTest");
+        storeProfileIntoSession(request, profile);
 
         val service = getOidcRegisteredService(UUID.randomUUID().toString(), randomServiceUrl());
         servicesManager.save(service);
-        var modelAndView = consentApprovalViewResolver.resolve(context, service);
+        var modelAndView = consentApprovalViewResolver.resolve(request, response, service);
         assertTrue(modelAndView.hasView());
         val model = modelAndView.getModel();
         request.addParameter(OAuth20Constants.BYPASS_APPROVAL_PROMPT, Boolean.TRUE.toString());
         request.addParameter(OAuth20Constants.SCOPES_APPROVAL_KEY, model.get("approvalKey").toString());
-        modelAndView = consentApprovalViewResolver.resolve(context, service);
+        modelAndView = consentApprovalViewResolver.resolve(request, response, service);
         assertFalse(modelAndView.hasView());
 
     }
@@ -65,25 +60,22 @@ class OidcConsentApprovalViewResolverTests extends AbstractOidcTests {
         request.setQueryString(OAuth20Constants.PROMPT + '=' + OidcConstants.PROMPT_CONSENT);
 
         val response = new MockHttpServletResponse();
-        val context = new JEEContext(request, response);
 
-        val profile = new CommonProfile();
-        profile.setId("casTest");
-        val profileManager = new ProfileManager(context, oauthDistributedSessionStore);
-        profileManager.save(true, profile, false);
+        val profile = new DefaultOAuth20UserProfile("casTest");
+        storeProfileIntoSession(request, profile);
 
         val service = getOidcRegisteredService(UUID.randomUUID().toString(), randomServiceUrl());
         service.setBypassApprovalPrompt(true);
         servicesManager.save(service);
-        val mv = consentApprovalViewResolver.resolve(context, service);
+        val mv = consentApprovalViewResolver.resolve(request, response, service);
         assertTrue(mv.hasView());
 
         request.addParameter(OAuth20Constants.BYPASS_APPROVAL_PROMPT, Boolean.TRUE.toString());
         request.addParameter(OAuth20Constants.SCOPES_APPROVAL_KEY, "unknown-approval-key");
-        assertTrue(consentApprovalViewResolver.resolve(context, service).hasView());
+        assertTrue(consentApprovalViewResolver.resolve(request, response, service).hasView());
 
         request.setParameter(OAuth20Constants.SCOPES_APPROVAL_KEY, mv.getModel().get("approvalKey").toString());
-        assertFalse(consentApprovalViewResolver.resolve(context, service).hasView());
+        assertFalse(consentApprovalViewResolver.resolve(request, response, service).hasView());
     }
 
     @Test
@@ -92,19 +84,16 @@ class OidcConsentApprovalViewResolverTests extends AbstractOidcTests {
         request.addHeader(HttpHeaders.USER_AGENT, "MSIE");
         request.addParameter(OAuth20Constants.REDIRECT_URI, "http://127.0.0.1:3000/callback");
         val response = new MockHttpServletResponse();
-        val context = new JEEContext(request, response);
 
-        val profile = new CommonProfile();
-        profile.setId("casTest");
-        val profileManager = new ProfileManager(context, oauthDistributedSessionStore);
-        profileManager.save(true, profile, false);
+        val profile = new DefaultOAuth20UserProfile("casTest");
+        storeProfileIntoSession(request, profile);
 
         val service = getOidcRegisteredService("https://app.example.org/" + UUID.randomUUID() + "/client.json", randomServiceUrl());
         service.setBypassApprovalPrompt(true);
         service.getProperties().put(RegisteredServiceProperties.OIDC_CLIENT_ID_METADATA_DOCUMENT.getPropertyName(),
             new DefaultRegisteredServiceProperty(Boolean.TRUE.toString()));
         servicesManager.save(service);
-        val mv = consentApprovalViewResolver.resolve(context, service);
+        val mv = consentApprovalViewResolver.resolve(request, response, service);
         assertTrue(mv.hasView());
         val model = mv.getModel();
         assertEquals(Boolean.TRUE, model.get("clientIdMetadataDocument"));
@@ -114,7 +103,7 @@ class OidcConsentApprovalViewResolverTests extends AbstractOidcTests {
 
         request.addParameter(OAuth20Constants.BYPASS_APPROVAL_PROMPT, Boolean.TRUE.toString());
         request.addParameter(OAuth20Constants.SCOPES_APPROVAL_KEY, model.get("approvalKey").toString());
-        assertFalse(consentApprovalViewResolver.resolve(context, service).hasView());
+        assertFalse(consentApprovalViewResolver.resolve(request, response, service).hasView());
     }
 
     @Test
@@ -123,11 +112,10 @@ class OidcConsentApprovalViewResolverTests extends AbstractOidcTests {
         request.addHeader(HttpHeaders.USER_AGENT, "MSIE");
         request.setRequestURI("https://cas.org/something/" + OidcConstants.PUSHED_AUTHORIZE_URL);
         val response = new MockHttpServletResponse();
-        val context = new JEEContext(request, response);
 
         val service = getOidcRegisteredService(UUID.randomUUID().toString(), randomServiceUrl());
         servicesManager.save(service);
-        val mv = consentApprovalViewResolver.resolve(context, service);
+        val mv = consentApprovalViewResolver.resolve(request, response, service);
         assertFalse(mv.hasView());
     }
 
@@ -136,8 +124,7 @@ class OidcConsentApprovalViewResolverTests extends AbstractOidcTests {
         val registeredService = getOidcRegisteredService(UUID.randomUUID().toString(), randomServiceUrl());
         servicesManager.save(registeredService);
 
-        val profile = new CommonProfile();
-        profile.setId("casTest");
+        val profile = new DefaultOAuth20UserProfile("casTest");
         val holder = AccessTokenRequestContext.builder()
             .clientId(registeredService.getClientId())
             .service(RegisteredServiceTestUtils.getService())
@@ -159,14 +146,11 @@ class OidcConsentApprovalViewResolverTests extends AbstractOidcTests {
 
 
         val response = new MockHttpServletResponse();
-        val context = new JEEContext(request, response);
-
-        val profileManager = new ProfileManager(context, oauthDistributedSessionStore);
-        profileManager.save(true, profile, false);
+        storeProfileIntoSession(request, profile);
 
         val service = getOidcRegisteredService(UUID.randomUUID().toString(), randomServiceUrl());
         servicesManager.save(service);
-        val mv = consentApprovalViewResolver.resolve(context, service);
+        val mv = consentApprovalViewResolver.resolve(request, response, service);
         assertTrue(mv.hasView());
         assertEquals(3, ((Collection) mv.getModel().get("scopes")).size());
     }
@@ -178,17 +162,14 @@ class OidcConsentApprovalViewResolverTests extends AbstractOidcTests {
         request.setRequestURI("https://cas.org/something");
 
         val response = new MockHttpServletResponse();
-        val context = new JEEContext(request, response);
 
-        val profile = new CommonProfile();
-        profile.setId("casTest");
-        val profileManager = new ProfileManager(context, oauthDistributedSessionStore);
-        profileManager.save(true, profile, false);
+        val profile = new DefaultOAuth20UserProfile("casTest");
+        storeProfileIntoSession(request, profile);
 
         val service = getOidcRegisteredService(UUID.randomUUID().toString(), randomServiceUrl());
         service.markAsDynamicallyRegistered();
         servicesManager.save(service);
-        val mv = consentApprovalViewResolver.resolve(context, service);
+        val mv = consentApprovalViewResolver.resolve(request, response, service);
         assertTrue(mv.hasView());
         assertTrue(mv.getModel().containsKey("dynamic"));
         assertTrue(mv.getModel().containsKey("dynamicTime"));

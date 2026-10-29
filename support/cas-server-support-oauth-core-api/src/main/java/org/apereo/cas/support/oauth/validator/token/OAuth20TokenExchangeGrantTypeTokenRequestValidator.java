@@ -5,6 +5,7 @@ import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20TokenExchangeTypes;
+import org.apereo.cas.support.oauth.profile.OAuth20UserProfile;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.services.RegisteredServiceOAuthResourceMatcher;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
@@ -17,10 +18,9 @@ import com.nimbusds.jwt.proc.JWTClaimsSetVerifier;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jspecify.annotations.Nullable;
-import org.pac4j.core.context.WebContext;
-import org.pac4j.core.profile.ProfileManager;
-import org.pac4j.core.profile.UserProfile;
 import org.springframework.beans.factory.ObjectProvider;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * This is {@link OAuth20TokenExchangeGrantTypeTokenRequestValidator}.
@@ -39,16 +39,16 @@ public class OAuth20TokenExchangeGrantTypeTokenRequestValidator<T extends OAuth2
     }
 
     @Override
-    protected boolean validateInternal(final WebContext webContext, final String grantType,
-                                       final ProfileManager manager, final UserProfile uProfile)
+    protected boolean validateInternal(final HttpServletRequest request, final HttpServletResponse response, final String grantType,
+                                       final OAuth20UserProfile uProfile)
             throws Throwable {
         val configurationContext = getConfigurationContext().getObject();
         val requestParameterResolver = configurationContext.getRequestParameterResolver();
-        val subjectTokenType = requestParameterResolver.resolveRequestParameter(webContext, OAuth20Constants.SUBJECT_TOKEN_TYPE)
+        val subjectTokenType = requestParameterResolver.resolveRequestParameter(request, OAuth20Constants.SUBJECT_TOKEN_TYPE)
             .orElseThrow(() -> new IllegalArgumentException("Subject token type cannot be undefined"));
-        val subjectToken = requestParameterResolver.resolveRequestParameter(webContext, OAuth20Constants.SUBJECT_TOKEN)
+        val subjectToken = requestParameterResolver.resolveRequestParameter(request, OAuth20Constants.SUBJECT_TOKEN)
             .orElseThrow(() -> new IllegalArgumentException("Subject token cannot be undefined"));
-        val requestedTokenType = requestParameterResolver.resolveRequestParameter(webContext, OAuth20Constants.REQUESTED_TOKEN_TYPE)
+        val requestedTokenType = requestParameterResolver.resolveRequestParameter(request, OAuth20Constants.REQUESTED_TOKEN_TYPE)
             .orElseGet(OAuth20TokenExchangeTypes.ACCESS_TOKEN::getType);
 
         val subjectRegisteredService = Objects.requireNonNull(extractRegisteredService(subjectTokenType, subjectToken));
@@ -59,7 +59,7 @@ public class OAuth20TokenExchangeGrantTypeTokenRequestValidator<T extends OAuth2
 
         val authenticatedClientId = Objects.requireNonNullElse(
             OAuth20Utils.getClientIdFromAuthenticatedProfile(uProfile), uProfile.getId());
-        val requestingClientId = requestParameterResolver.resolveRequestParameter(webContext, OAuth20Constants.CLIENT_ID)
+        val requestingClientId = requestParameterResolver.resolveRequestParameter(request, OAuth20Constants.CLIENT_ID)
             .orElse(authenticatedClientId);
         if (!Objects.equals(authenticatedClientId, requestingClientId)) {
             LOGGER.warn("Authenticated client [{}] cannot request a token exchange for client [{}]",
@@ -78,13 +78,13 @@ public class OAuth20TokenExchangeGrantTypeTokenRequestValidator<T extends OAuth2
             return false;
         }
 
-        val actorToken = requestParameterResolver.resolveRequestParameter(webContext, OAuth20Constants.ACTOR_TOKEN);
-        val actorTokenType = requestParameterResolver.resolveRequestParameter(webContext, OAuth20Constants.ACTOR_TOKEN_TYPE).map(OAuth20TokenExchangeTypes::from);
+        val actorToken = requestParameterResolver.resolveRequestParameter(request, OAuth20Constants.ACTOR_TOKEN);
+        val actorTokenType = requestParameterResolver.resolveRequestParameter(request, OAuth20Constants.ACTOR_TOKEN_TYPE).map(OAuth20TokenExchangeTypes::from);
         FunctionUtils.throwIf(actorToken.isPresent() && actorTokenType.isEmpty(),
             () -> new IllegalArgumentException("Actor token type cannot be undefined when actor token is provided"));
 
         val resourceAndAudience = requestParameterResolver.resolveRequestParameters(
-            List.of(OAuth20Constants.RESOURCE, OAuth20Constants.AUDIENCE), webContext);
+            List.of(OAuth20Constants.RESOURCE, OAuth20Constants.AUDIENCE), request);
         val resources = resourceAndAudience.getOrDefault(OAuth20Constants.RESOURCE, Set.of());
         val audience = resourceAndAudience.getOrDefault(OAuth20Constants.AUDIENCE, Set.of());
         if (!registeredService.getAllowedResources().isEmpty()

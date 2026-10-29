@@ -19,6 +19,7 @@ import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.DigestUtils;
 import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.web.CasSessionStore;
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.util.Base64URL;
 import com.nimbusds.jwt.SignedJWT;
@@ -40,11 +41,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
 import org.jooq.lambda.Unchecked;
 import org.jspecify.annotations.Nullable;
-import org.pac4j.core.context.HttpConstants;
-import org.pac4j.core.context.WebContext;
-import org.pac4j.core.context.session.SessionStore;
-import org.pac4j.core.profile.ProfileManager;
-import org.pac4j.jee.context.JEEContext;
+import org.springframework.http.HttpHeaders;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * This is {@link DefaultOAuth20ProofOfPossessionValidator}.
@@ -56,7 +55,7 @@ import org.pac4j.jee.context.JEEContext;
 @Slf4j
 public class DefaultOAuth20ProofOfPossessionValidator implements OAuth20ProofOfPossessionValidator {
 
-    private final SessionStore sessionStore;
+    private final CasSessionStore sessionStore;
     private final ServicesManager servicesManager;
     private final TicketRegistry ticketRegistry;
     private final TicketFactory ticketFactory;
@@ -65,10 +64,12 @@ public class DefaultOAuth20ProofOfPossessionValidator implements OAuth20ProofOfP
     private final OAuth20DPoPNonceService dpopNonceService;
 
     @Override
-    public void validate(final WebContext webContext, final OAuth20AccessToken accessToken) throws Throwable {
-        val result = getProofOfPossessionHeader(webContext);
+    public void validate(final HttpServletRequest request, final HttpServletResponse response,
+                         final @Nullable OAuth20AccessToken accessToken)
+            throws Throwable {
+        val result = getProofOfPossessionHeader(request);
         if (result.isPresent()) {
-            val clientId = resolveClientId(webContext, accessToken).orElseThrow();
+            val clientId = resolveClientId(request, response, accessToken).orElseThrow();
             val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, clientId);
             val audit = AuditableContext
                 .builder()
@@ -76,27 +77,29 @@ public class DefaultOAuth20ProofOfPossessionValidator implements OAuth20ProofOfP
                 .build();
             val accessResult = registeredServiceAccessStrategyEnforcer.execute(audit);
             accessResult.throwExceptionIfNeeded();
-            enforceCertificateBinding(webContext, registeredService);
-            val confirmation = verifyProofOfPossession(webContext, result.get(), clientId);
-            adjustUserProfile(webContext, result.get(), clientId, confirmation);
+            enforceCertificateBinding(request, response, registeredService);
+            val confirmation = verifyProofOfPossession(request, response, result.get(), clientId);
+            adjustUserProfile(request, response, result.get(), clientId, confirmation);
         } else {
-            val clientId = resolveClientId(webContext, accessToken);
+            val clientId = resolveClientId(request, response, accessToken);
             if (clientId.isPresent()) {
                 val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, clientId.get());
-                enforceCertificateBinding(webContext, registeredService);
+                enforceCertificateBinding(request, response, registeredService);
                 enforceProofOfPossession(registeredService);
             }
         }
     }
 
     @Override
-    public void validateTokenRequest(final WebContext webContext, final OAuthRegisteredService registeredService) throws Throwable {
-        enforceCertificateBinding(webContext, registeredService);
-        val dPopProof = getProofOfPossessionHeader(webContext).filter(StringUtils::isNotBlank);
+    public void validateTokenRequest(final HttpServletRequest request, final HttpServletResponse response,
+                                     final OAuthRegisteredService registeredService)
+            throws Throwable {
+        enforceCertificateBinding(request, response, registeredService);
+        val dPopProof = getProofOfPossessionHeader(request).filter(StringUtils::isNotBlank);
         if (dPopProof.isPresent()) {
-            val confirmation = verifyProofOfPossession(webContext, dPopProof.get(), registeredService.getClientId());
-            webContext.setRequestAttribute(OAuth20Constants.DPOP, dPopProof.get());
-            webContext.setRequestAttribute(OAuth20Constants.DPOP_CONFIRMATION, confirmation.getValue().toString());
+            val confirmation = verifyProofOfPossession(request, response, dPopProof.get(), registeredService.getClientId());
+            request.setAttribute(OAuth20Constants.DPOP, dPopProof.get());
+            request.setAttribute(OAuth20Constants.DPOP_CONFIRMATION, confirmation.getValue().toString());
         } else {
             enforceProofOfPossession(registeredService);
         }
@@ -106,18 +109,16 @@ public class DefaultOAuth20ProofOfPossessionValidator implements OAuth20ProofOfP
      * The {@code DPoP} header of the request. A request may carry only one (RFC 9449, section 4.3), and pac4j would
      * otherwise return the first of several without a word.
      *
-     * @param webContext the web context
+     * @param request the request
      * @return the header value, if any
      * @throws InvalidDPoPProofException when the request carries more than one {@code DPoP} header
      */
-    protected Optional<String> getProofOfPossessionHeader(final WebContext webContext) throws InvalidDPoPProofException {
-        if (webContext instanceof final JEEContext jeeContext) {
-            val headers = jeeContext.getNativeRequest().getHeaders(OAuth20Constants.DPOP);
-            if (headers != null && Collections.list(headers).size() > 1) {
-                throw new InvalidDPoPProofException("Only one DPoP proof may be sent");
-            }
+    protected Optional<String> getProofOfPossessionHeader(final HttpServletRequest request) throws InvalidDPoPProofException {
+        val headers = request.getHeaders(OAuth20Constants.DPOP);
+        if (headers != null && Collections.list(headers).size() > 1) {
+            throw new InvalidDPoPProofException("Only one DPoP proof may be sent");
         }
-        return webContext.getRequestHeader(OAuth20Constants.DPOP);
+        return Optional.ofNullable(request.getHeader(OAuth20Constants.DPOP));
     }
 
     /**
@@ -125,14 +126,16 @@ public class DefaultOAuth20ProofOfPossessionValidator implements OAuth20ProofOfP
      * mutual TLS, so that the token it receives is bound to its certificate; it never receives an unbound token
      * (RFC 8705, section 3.4).
      *
-     * @param webContext        the web context
+     * @param request           the request
+     * @param response          the response
      * @param registeredService the client that makes the token request, if known
      * @throws CertificateBoundAccessTokenRequiredException when the request is not authenticated with mutual TLS
      */
-    protected void enforceCertificateBinding(final WebContext webContext, final @Nullable OAuthRegisteredService registeredService)
-        throws CertificateBoundAccessTokenRequiredException {
+    protected void enforceCertificateBinding(final HttpServletRequest request, final HttpServletResponse response,
+                                             final @Nullable OAuthRegisteredService registeredService)
+            throws CertificateBoundAccessTokenRequiredException {
         if (registeredService != null && registeredService.isTlsClientCertificateBoundAccessTokens()) {
-            val authenticatedWithCertificate = new ProfileManager(webContext, this.sessionStore).getProfile()
+            val authenticatedWithCertificate = OAuth20Utils.findAuthenticatedUserProfile(request, response, this.sessionStore)
                 .filter(profile -> registeredService.getClientId().equals(OAuth20Utils.getClientIdFromAuthenticatedProfile(profile)))
                 .map(profile -> profile.getAttribute(OAuth20Constants.X509_CERTIFICATE_DIGEST))
                 .isPresent();
@@ -165,36 +168,38 @@ public class DefaultOAuth20ProofOfPossessionValidator implements OAuth20ProofOfP
      * while the real client is the one recorded on the authenticated profile when the credential
      * offer was created. The raw request parameter is therefore consulted last, not first.
      *
-     * @param webContext  the web context
+     * @param request     the request
+     * @param response    the response
      * @param accessToken the access token, when one is already established
      * @return the client id
      */
-    protected Optional<String> resolveClientId(final WebContext webContext,
+    protected Optional<String> resolveClientId(final HttpServletRequest request, final HttpServletResponse response,
                                                final @Nullable OAuth20AccessToken accessToken) {
-        val manager = new ProfileManager(webContext, this.sessionStore);
-        return manager.getProfile()
+        return OAuth20Utils.findAuthenticatedUserProfile(request, response, this.sessionStore)
             .map(OAuth20Utils::getClientIdFromAuthenticatedProfile)
             .filter(StringUtils::isNotBlank)
             .or(() -> Optional.ofNullable(accessToken).map(OAuth20Token::getClientId))
-            .or(() -> webContext.getRequestParameter(OAuth20Constants.CLIENT_ID));
+            .or(() -> Optional.ofNullable(request.getParameter(OAuth20Constants.CLIENT_ID)));
     }
 
-    protected JWKThumbprintConfirmation verifyProofOfPossession(final WebContext webContext,
+    protected JWKThumbprintConfirmation verifyProofOfPossession(final HttpServletRequest request,
+                                                                final HttpServletResponse response,
                                                                 final String dPopProof,
                                                                 final String clientId)
             throws Throwable {
-        val endpointURI = new URI(webContext.getRequestURL());
+        val endpointURI = new URI(request.getRequestURL().toString());
         val verifier = new DPoPTokenRequestVerifier(getAcceptedSigningAlgorithms(), endpointURI,
             getMaximumAgeInSeconds(), getMaximumAgeInSeconds(), getSingleUseChecker(dPopProof, clientId));
         val signedProof = getSignedProofOfPosessionJwt(dPopProof);
         val dPopIssuer = new DPoPIssuer(new ClientID(clientId));
         val confirmation = verifier.verify(dPopIssuer, signedProof, dpopNonceService.getAcceptedNonces(signedProof));
-        verifyNonce(webContext, signedProof);
+        verifyNonce(response, signedProof);
         return confirmation;
     }
 
     @Override
-    public void validateProtectedResourceRequest(final WebContext webContext,
+    public void validateProtectedResourceRequest(final HttpServletRequest request,
+                                                 final HttpServletResponse response,
                                                  final String presentedAccessToken,
                                                  final OAuth20AccessToken accessToken)
             throws Throwable {
@@ -203,34 +208,34 @@ public class DefaultOAuth20ProofOfPossessionValidator implements OAuth20ProofOfP
             LOGGER.trace("Access token is not sender-constrained; no DPoP proof is expected");
             return;
         }
-        verifyAuthorizationScheme(webContext, presentedAccessToken);
-        val dPopProof = getProofOfPossessionHeader(webContext)
+        verifyAuthorizationScheme(request, presentedAccessToken);
+        val dPopProof = getProofOfPossessionHeader(request)
             .filter(StringUtils::isNotBlank)
             .orElseThrow(() -> new InvalidDPoPProofException(
                 "Access token is DPoP-bound but the request carries no DPoP proof"));
         val clientId = accessToken.getClientId();
-        LOGGER.debug("Verifying DPoP proof for client [{}] at [{}]", clientId, webContext.getRequestURL());
+        LOGGER.debug("Verifying DPoP proof for client [{}] at [{}]", clientId, request.getRequestURL());
         val verifier = new DPoPProtectedResourceRequestVerifier(getAcceptedSigningAlgorithms(),
             getMaximumAgeInSeconds(), getMaximumAgeInSeconds(), getSingleUseChecker(dPopProof, clientId));
         val signedProof = getSignedProofOfPosessionJwt(dPopProof);
-        verifier.verify(webContext.getRequestMethod(), new URI(webContext.getRequestURL()),
+        verifier.verify(request.getMethod(), new URI(request.getRequestURL().toString()),
             new DPoPIssuer(new ClientID(clientId)), signedProof,
             new DPoPAccessToken(presentedAccessToken), confirmation.get(), dpopNonceService.getAcceptedNonces(signedProof), null);
-        verifyNonce(webContext, signedProof);
+        verifyNonce(response, signedProof);
     }
 
     /**
      * A DPoP-bound access token is accepted only in the {@code Authorization} header under the {@code DPoP} scheme. Taking it
      * as a bearer token, whether in the header, the form body or the query, would let it be downgraded (RFC 9449, section 7.2).
      *
-     * @param webContext           the web context
+     * @param request              the request
      * @param presentedAccessToken the access token exactly as the client presented it
      * @throws DPoPBoundAccessTokenDowngradeException when the token is not presented under the {@code DPoP} scheme
      */
-    protected void verifyAuthorizationScheme(final WebContext webContext, final String presentedAccessToken)
+    protected void verifyAuthorizationScheme(final HttpServletRequest request, final String presentedAccessToken)
         throws DPoPBoundAccessTokenDowngradeException {
         val scheme = OAuth20Constants.TOKEN_TYPE_DPOP + ' ';
-        val authorization = webContext.getRequestHeader(HttpConstants.AUTHORIZATION_HEADER).orElse(StringUtils.EMPTY);
+        val authorization = Objects.requireNonNullElse(request.getHeader(HttpHeaders.AUTHORIZATION), StringUtils.EMPTY);
         if (!Strings.CI.startsWith(authorization, scheme)
             || !presentedAccessToken.equals(authorization.substring(scheme.length()).trim())) {
             throw new DPoPBoundAccessTokenDowngradeException(
@@ -239,14 +244,14 @@ public class DefaultOAuth20ProofOfPossessionValidator implements OAuth20ProofOfP
     }
 
     @Override
-    public Optional<String> validateKeyBinding(final WebContext webContext) throws Throwable {
-        val dPopProof = getProofOfPossessionHeader(webContext).filter(StringUtils::isNotBlank);
+    public Optional<String> validateKeyBinding(final HttpServletRequest request, final HttpServletResponse response) throws Throwable {
+        val dPopProof = getProofOfPossessionHeader(request).filter(StringUtils::isNotBlank);
         if (dPopProof.isEmpty()) {
             return Optional.empty();
         }
-        val clientId = resolveClientId(webContext, null)
+        val clientId = resolveClientId(request, response, null)
             .orElseThrow(() -> new InvalidDPoPProofException("Unable to determine the client that presented the DPoP proof"));
-        return Optional.of(verifyProofOfPossession(webContext, dPopProof.get(), clientId).getValue().toString());
+        return Optional.of(verifyProofOfPossession(request, response, dPopProof.get(), clientId).getValue().toString());
     }
 
     /**
@@ -254,13 +259,13 @@ public class DefaultOAuth20ProofOfPossessionValidator implements OAuth20ProofOfP
      * expired (RFC 9449, sections 4.3 and 11.3). Otherwise a fresh nonce is put in the {@code DPoP-Nonce} header of the
      * response, and the endpoint answers with {@code use_dpop_nonce}.
      *
-     * @param webContext  the web context
+     * @param response    the response
      * @param signedProof the verified proof
      * @throws Throwable the throwable, {@link InvalidDPoPNonceException} when the nonce is missing or not valid
      */
-    protected void verifyNonce(final WebContext webContext, final SignedJWT signedProof) throws Throwable {
+    protected void verifyNonce(final HttpServletResponse response, final SignedJWT signedProof) throws Throwable {
         if (!dpopNonceService.isAccepted(signedProof)) {
-            dpopNonceService.provide(webContext);
+            dpopNonceService.provide(response);
             throw new InvalidDPoPNonceException("DPoP proof carries no valid server-provided nonce", null);
         }
     }
@@ -317,13 +322,13 @@ public class DefaultOAuth20ProofOfPossessionValidator implements OAuth20ProofOfP
         };
     }
 
-    protected void adjustUserProfile(final WebContext webContext,
+    protected void adjustUserProfile(final HttpServletRequest request,
+                                     final HttpServletResponse response,
                                      final String dPopProof,
                                      final String clientId,
                                      final JWKThumbprintConfirmation confirmation)
             throws Throwable {
-        val manager = new ProfileManager(webContext, this.sessionStore);
-        manager.getProfile().ifPresent(Unchecked.consumer(profile -> {
+        OAuth20Utils.findAuthenticatedUserProfile(request, response, this.sessionStore).ifPresent(Unchecked.consumer(profile -> {
             val signedProof = getSignedProofOfPosessionJwt(dPopProof);
             /*
              * A profile that already names this client was authenticated as somebody -- the

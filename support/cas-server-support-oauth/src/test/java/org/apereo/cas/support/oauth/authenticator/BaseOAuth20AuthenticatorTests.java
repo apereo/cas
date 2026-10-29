@@ -49,7 +49,6 @@ import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.pac4j.core.credentials.authenticator.Authenticator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.SpringBootConfiguration;
@@ -103,7 +102,7 @@ public abstract class BaseOAuth20AuthenticatorTests {
 
     @Autowired
     @Qualifier("oauthClientAuthenticator")
-    protected Authenticator oauthClientAuthenticator;
+    protected OAuth20ClientCredentialsAuthenticator oauthClientAuthenticator;
 
     @Autowired
     @Qualifier(OAuth20ConfigurationContext.BEAN_NAME)
@@ -188,6 +187,7 @@ public abstract class BaseOAuth20AuthenticatorTests {
         serviceTlsAuth.setClientId("TlsWithClientId");
         serviceTlsAuth.setAttributeReleasePolicy(new ReturnAllAttributeReleasePolicy());
         serviceTlsAuth.setTokenEndpointAuthenticationMethod(OAuth20ClientAuthenticationMethods.TLS_CLIENT_AUTH.getType());
+        serviceTlsAuth.setTlsClientAuthSubjectDn("CN=(.+?)(?:,|$)");
 
         serviceTlsAuthSpiffe = new OAuthRegisteredService();
         serviceTlsAuthSpiffe.setName("OAuthTls");

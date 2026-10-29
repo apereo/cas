@@ -167,6 +167,15 @@ The following parameters are supported:
 | `tlsClientAuthSanIp`     | The expected iPAddress SAN entry in the certificate in either for IPv4 or IPv6.                                   |
 | `tlsClientAuthSanEmail`  | The expected rfc822Name SAN entry in the certificate.                                                             |
 
+A client that registers none of these is refused, unless its client identifier is the [SPIFFE](#spiffe) ID of its certificate.
+The subject DN is first compared with the subject of the certificate as a distinguished name, as RFC 8705 defines it.
+When they differ, a value with a capturing group, such as `CN=(.+?)(?:,|$)`, is read as a regular expression that must match
+the RFC 2253 form of the subject exactly once; the captured value then identifies the client's certificate. A subject
+alternative name must equal an entry of that type in the certificate: DNS names and email addresses are compared ignoring
+case, IP addresses as addresses (`::1` equals `0:0:0:0:0:0:0:1`), and URIs exactly. A client that registers no subject DN
+is not matched on its subject at all, so its certificate may have an empty subject or no common name, as SPIFFE
+certificates often do.
+
 Access tokens issued to a client that authenticates with mutual TLS are bound to its certificate, whatever the grant, as described
 in [RFC 8705](https://www.rfc-editor.org/rfc/rfc8705#section-3). JWT access tokens and introspection responses carry
 the certificate thumbprint in the `cnf` claim as `x5t#S256`, the base64url-encoded SHA-256 hash of the DER-encoded certificate.

@@ -25,8 +25,8 @@ import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
 import org.springframework.boot.actuate.endpoint.annotation.Selector;
 import org.springframework.boot.actuate.endpoint.annotation.WriteOperation;
+import org.springframework.boot.actuate.endpoint.web.WebEndpointResponse;
 import org.springframework.http.MediaType;
-import org.springframework.util.Assert;
 
 /**
  * This is {@link TokenAuthenticationEndpoint}.
@@ -61,11 +61,12 @@ public class TokenAuthenticationEndpoint extends BaseCasActuatorEndpoint {
     }
 
     /**
-     * Produce token for user and service.
+     * Produce token for user and service. A service that defines no signing secret, or one of an unsupported algorithm,
+     * is answered with {@code 400}.
      *
      * @param username the username
      * @param service  the service
-     * @return the map
+     * @return the registered service and the token
      * @throws Throwable the throwable
      */
     @WriteOperation(produces = MediaType.APPLICATION_JSON_VALUE)
@@ -73,8 +74,8 @@ public class TokenAuthenticationEndpoint extends BaseCasActuatorEndpoint {
         @Parameter(name = "username", required = true, in = ParameterIn.PATH, description = "The username to authenticate"),
         @Parameter(name = "service", required = true, in = ParameterIn.QUERY, description = "May be the service id or its numeric identifier")
     })
-    public Map<?, ?> produceToken(@Selector final String username,
-                                  final String service)
+    public WebEndpointResponse<Map<String, ?>> produceToken(@Selector final String username,
+                                                            final String service)
             throws Throwable {
         val selectedService = serviceFactory.getObject().createService(service);
         val registeredServiceId = Longs.tryParse(service);
@@ -93,16 +94,19 @@ public class TokenAuthenticationEndpoint extends BaseCasActuatorEndpoint {
             .build();
         val accessResult = registeredServiceAccessStrategyEnforcer.getObject().execute(audit);
         accessResult.throwExceptionIfNeeded();
-        val token = TokenAuthenticationSecurity.forRegisteredService(Objects.requireNonNull(registeredService)).generateTokenFor(authentication);
-        return Map.of("registeredService", registeredService, "token", token);
+        return TokenAuthenticationSecurity.forRegisteredService(Objects.requireNonNull(registeredService))
+            .generateTokenFor(authentication)
+            .map(token -> new WebEndpointResponse<Map<String, ?>>(Map.of("registeredService", registeredService, "token", token)))
+            .orElseGet(() -> new WebEndpointResponse<>(Map.of("error", "No signing secret is defined for the service to sign a token"),
+                WebEndpointResponse.STATUS_BAD_REQUEST));
     }
 
     /**
-     * Validate token and return results.
+     * Validate token and return results. A token that does not validate for the service is answered with {@code 400}.
      *
      * @param token   the token
      * @param service the service
-     * @return the map
+     * @return the registered service and the principal
      * @throws Throwable the throwable
      */
     @ReadOperation(produces = MediaType.APPLICATION_JSON_VALUE)
@@ -110,8 +114,8 @@ public class TokenAuthenticationEndpoint extends BaseCasActuatorEndpoint {
         @Parameter(name = "token", required = true, in = ParameterIn.PATH, description = "The token to validate"),
         @Parameter(name = "service", required = true, in = ParameterIn.QUERY, description = "May be the service id or its numeric identifier")
     })
-    public Map<?, ?> validateToken(@Selector final String token,
-                                  final String service)
+    public WebEndpointResponse<Map<String, ?>> validateToken(@Selector final String token,
+                                                             final String service)
             throws Throwable {
         val selectedService = serviceFactory.getObject().createService(service);
         val registeredServiceId = Longs.tryParse(service);
@@ -119,10 +123,15 @@ public class TokenAuthenticationEndpoint extends BaseCasActuatorEndpoint {
             ? servicesManager.getObject().findServiceBy(registeredServiceId)
             : servicesManager.getObject().findServiceBy(selectedService);
         RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(registeredService);
-        val profile = TokenAuthenticationSecurity.forRegisteredService(Objects.requireNonNull(registeredService)).validateToken(token);
-        Assert.notNull(profile, "Authentication attempt failed to produce an authenticated profile");
-        val attributes = CollectionUtils.toMultiValuedMap(profile.getAttributes());
-        val principal = Objects.requireNonNull(principalFactory.getObject().createPrincipal(profile.getId(), attributes));
+        val validatedToken = TokenAuthenticationSecurity.forRegisteredService(Objects.requireNonNull(registeredService))
+            .validateToken(token);
+        if (validatedToken.isEmpty()) {
+            return new WebEndpointResponse<>(Map.of("error", "Authentication attempt failed to validate the token"),
+                WebEndpointResponse.STATUS_BAD_REQUEST);
+        }
+        val authenticatedToken = validatedToken.get();
+        val attributes = CollectionUtils.toMultiValuedMap(authenticatedToken.claims());
+        val principal = Objects.requireNonNull(principalFactory.getObject().createPrincipal(authenticatedToken.subject(), attributes));
         val audit = AuditableContext.builder()
             .service(selectedService)
             .principal(principal)
@@ -130,6 +139,6 @@ public class TokenAuthenticationEndpoint extends BaseCasActuatorEndpoint {
             .build();
         val accessResult = registeredServiceAccessStrategyEnforcer.getObject().execute(audit);
         accessResult.throwExceptionIfNeeded();
-        return Map.of("registeredService", registeredService, "principal", principal);
+        return new WebEndpointResponse<>(Map.of("registeredService", registeredService, "principal", principal));
     }
 }

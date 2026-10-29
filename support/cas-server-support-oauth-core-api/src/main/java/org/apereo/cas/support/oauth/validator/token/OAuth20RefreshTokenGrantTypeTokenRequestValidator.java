@@ -4,6 +4,7 @@ import module java.base;
 import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
+import org.apereo.cas.support.oauth.profile.OAuth20UserProfile;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20JwtAccessTokenEncoder;
@@ -11,11 +12,9 @@ import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshToken;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.Strings;
-import org.pac4j.core.context.CallContext;
-import org.pac4j.core.context.WebContext;
-import org.pac4j.core.profile.ProfileManager;
-import org.pac4j.core.profile.UserProfile;
 import org.springframework.beans.factory.ObjectProvider;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * This is {@link OAuth20RefreshTokenGrantTypeTokenRequestValidator}.
@@ -30,21 +29,20 @@ public class OAuth20RefreshTokenGrantTypeTokenRequestValidator extends BaseOAuth
     }
 
     @Override
-    protected boolean validateInternal(final WebContext context, final String grantType,
-                                       final ProfileManager manager, final UserProfile uProfile)
+    protected boolean validateInternal(final HttpServletRequest request, final HttpServletResponse response, final String grantType,
+                                       final OAuth20UserProfile uProfile)
             throws Throwable {
         val configurationContext = getConfigurationContext().getObject();
-        val callContext = new CallContext(context, configurationContext.getSessionStore());
         val clientId = configurationContext.getRequestParameterResolver()
-            .resolveClientIdAndClientSecret(callContext).getLeft();
+            .resolveClientIdAndClientSecret(request).getLeft();
         val refreshTokenResult = configurationContext.getRequestParameterResolver()
-            .resolveRequestParameter(context, OAuth20Constants.REFRESH_TOKEN);
+            .resolveRequestParameter(request, OAuth20Constants.REFRESH_TOKEN);
         if (refreshTokenResult.isEmpty() || clientId.isEmpty()) {
             return false;
         }
 
         val token = OAuth20JwtAccessTokenEncoder.toDecodableCipher(configurationContext.getAccessTokenJwtBuilder()).decode(refreshTokenResult.get());
-        val refreshToken = OAuth20Utils.getRequestedOAuthToken(context, configurationContext.getTicketRegistry(), token, OAuth20RefreshToken.class);
+        val refreshToken = OAuth20Utils.getRequestedOAuthToken(request, configurationContext.getTicketRegistry(), token, OAuth20RefreshToken.class);
         if (refreshToken == null || refreshToken.isExpired()) {
             LOGGER.warn("Provided refresh token [{}] cannot be found in the registry or has expired", token);
             return false;
@@ -71,7 +69,7 @@ public class OAuth20RefreshTokenGrantTypeTokenRequestValidator extends BaseOAuth
             LOGGER.warn("Provided refresh token [{}] does not belong to client [{}]", refreshToken.getId(), clientId);
             return false;
         }
-        verifyBoundProofOfPossessionKey(refreshToken, OAuth20Constants.DPOP_CONFIRMATION, manager);
+        verifyBoundProofOfPossessionKey(refreshToken, OAuth20Constants.DPOP_CONFIRMATION, uProfile);
         return true;
     }
 

@@ -1,6 +1,6 @@
 ---
 name: cas-testing
-description: "Run and write tests in the CAS Gradle monorepo: testcas.sh categories, JUnit tags, single-module test tasks, fast compile checks, and how tests stay correct under JUnit parallel execution (shared registries, ports, pac4j clients, negative assertions). Use when running tests, choosing a test category, writing or fixing a *Tests.java class, or chasing a flaky test."
+description: "Run and write tests in the CAS Gradle monorepo: testcas.sh categories, JUnit tags, single-module test tasks, fast compile checks, how tests stay correct under JUnit parallel execution (shared registries, ports, pac4j clients, negative assertions), test authentications and principal attributes, and ticket-granting cookies in MockMvc tests. Use when running tests, choosing a test category, writing or fixing a *Tests.java class, or chasing a flaky test."
 ---
 
 # Running and writing CAS tests
@@ -82,6 +82,26 @@ description: "Run and write tests in the CAS Gradle monorepo: testcas.sh categor
   is the giveaway that it is timing rather than logic. Moving the band fixed that class of failure
   wholesale; hardcoded 8080/8081 elsewhere in the tree is mostly harmless string-building and
   serialization anyway, and only tests that actually open a connection were ever exposed.
+
+## Test authentications and principal attributes
+
+- `CoreAuthenticationTestUtils.getAuthentication(name, attributes)` puts the attributes on the authentication; its principal
+  keeps the default test attributes (`cn=TEST`, `givenName=test`, ...). Anything that merges the two with the principal last
+  (JWT claims of token authentication, released attributes) sees the principal's values, and a service from
+  `RegisteredServiceTestUtils.getRegisteredService` requires `uid=uid`, `givenName=CASUser` and the `memberOf` values on the
+  principal. Pass them with `getAuthentication(getPrincipal(name, attributes))`.
+- A test whose outcome depends on its own registered service's properties (secrets, policies) must register a URL nobody
+  else uses (`"https://token.example.org/" + UUID.randomUUID()`), not `RegisteredServiceTestUtils.CONST_TEST_URL`: other
+  services in the shared context match that URL too, and which one `findServiceBy` returns depends on test order.
+
+## Ticket-granting cookies in MockMvc tests
+
+- A TGC is pinned to the client address and user agent read from `ClientInfoHolder` and the request when it is built.
+  MockMvc's filters clear `ClientInfoHolder` after every request, so a cookie built afterwards in the test thread carries no
+  address, fails validation silently (`retrieveCookieValue` returns `null`) and the request behaves as if no one signed in.
+  Call `ClientInfoHolder.setClientInfo(ClientInfo.from(request))` right before `addCookie`, and send the same `User-Agent`
+  with the MockMvc request. A test that expects SSO but sees the login page has usually hit this; do not "fix" it by
+  asserting the login redirect.
 
 ## Puppeteer scenario init scripts
 

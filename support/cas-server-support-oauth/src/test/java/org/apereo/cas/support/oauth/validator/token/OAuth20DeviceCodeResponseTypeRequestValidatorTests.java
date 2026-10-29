@@ -7,7 +7,6 @@ import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.pac4j.jee.context.JEEContext;
 import org.springframework.core.Ordered;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -29,10 +28,9 @@ class OAuth20DeviceCodeResponseTypeRequestValidatorTests extends AbstractOAuth20
         val response = new MockHttpServletResponse();
         val validator = new OAuth20DeviceCodeResponseTypeRequestValidator(servicesManager, serviceFactory,
             oauthRequestParameterResolver, configurationContext.getProofOfPossessionValidator());
-        val context = new JEEContext(request, response);
         request.addParameter(OAuth20Constants.RESPONSE_TYPE, OAuth20ResponseTypes.DEVICE_CODE.getType());
         request.addParameter(OAuth20Constants.CLIENT_ID, service.getClientId());
-        assertTrue(validator.supports(context));
+        assertTrue(validator.supports(request, response));
         assertNotNull(validator.getServicesManager());
         assertEquals(Ordered.LOWEST_PRECEDENCE, validator.getOrder());
         assertNotNull(validator.getWebApplicationServiceServiceFactory());
@@ -44,24 +42,23 @@ class OAuth20DeviceCodeResponseTypeRequestValidatorTests extends AbstractOAuth20
         val response = new MockHttpServletResponse();
         val validator = new OAuth20DeviceCodeResponseTypeRequestValidator(servicesManager, serviceFactory,
             oauthRequestParameterResolver, configurationContext.getProofOfPossessionValidator());
-        val context = new JEEContext(request, response);
         request.setParameter(OAuth20Constants.RESPONSE_TYPE, "unknown");
         request.addParameter(OAuth20Constants.CLIENT_ID, "unknown");
-        assertFalse(validator.validate(context));
+        assertFalse(validator.validate(request, response));
 
         request.setParameter(OAuth20Constants.RESPONSE_TYPE, OAuth20ResponseTypes.DEVICE_CODE.getType());
-        assertFalse(validator.validate(context));
+        assertFalse(validator.validate(request, response));
 
         val service = addRegisteredService();
         request.setParameter(OAuth20Constants.CLIENT_ID, service.getClientId());
-        assertTrue(validator.validate(context));
+        assertTrue(validator.validate(request, response));
 
         service.setAllowedResources(Set.of("https://api.example.org/"));
         servicesManager.save(service);
         request.setParameter(OAuth20Constants.RESOURCE, "https://api.example.org/");
-        assertTrue(validator.validate(context));
+        assertTrue(validator.validate(request, response));
         request.setParameter(OAuth20Constants.RESOURCE, "https://other.example.org/");
-        assertThrows(OAuth20InvalidTargetException.class, () -> validator.validate(context));
+        assertThrows(OAuth20InvalidTargetException.class, () -> validator.validate(request, response));
     }
 
     

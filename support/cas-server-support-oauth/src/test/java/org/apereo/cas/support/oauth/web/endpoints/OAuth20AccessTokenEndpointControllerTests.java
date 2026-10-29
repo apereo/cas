@@ -11,7 +11,7 @@ import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.OAuth20TokenExchangeTypes;
-import org.apereo.cas.support.oauth.authenticator.Authenticators;
+import org.apereo.cas.support.oauth.profile.DefaultOAuth20UserProfile;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
@@ -39,9 +39,6 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.pac4j.core.profile.CommonProfile;
-import org.pac4j.core.util.Pac4jConstants;
-import org.pac4j.jee.context.JEEContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.io.ClassPathResource;
@@ -96,6 +93,22 @@ class OAuth20AccessTokenEndpointControllerTests {
                     .queryParam(OAuth20Constants.CLIENT_ID, service.getClientId())
                     .queryParam(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.CLIENT_CREDENTIALS.name())
                     .requestAttr("jakarta.servlet.request.X509Certificate", new X509Certificate[]{certificate}))
+                .andExpect(status().isUnauthorized());
+
+            service.setTlsClientAuthSubjectDn("CN=other.org,OU=CAS,O=Apereo,L=Gilbert,ST=AZ,C=US");
+            servicesManager.save(service);
+            mvc.perform(post("/cas" + CONTEXT + OAuth20Constants.ACCESS_TOKEN_URL)
+                    .queryParam(OAuth20Constants.CLIENT_ID, service.getClientId())
+                    .queryParam(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.CLIENT_CREDENTIALS.name())
+                    .requestAttr("jakarta.servlet.request.X509Certificate", new X509Certificate[]{certificate}))
+                .andExpect(status().isUnauthorized());
+
+            service.setTlsClientAuthSubjectDn("CN=apereo.org,OU=CAS,O=Apereo,L=Gilbert,ST=AZ,C=US");
+            servicesManager.save(service);
+            mvc.perform(post("/cas" + CONTEXT + OAuth20Constants.ACCESS_TOKEN_URL)
+                    .queryParam(OAuth20Constants.CLIENT_ID, service.getClientId())
+                    .queryParam(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.CLIENT_CREDENTIALS.name())
+                    .requestAttr("jakarta.servlet.request.X509Certificate", new X509Certificate[]{certificate}))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.access_token").exists())
                 .andReturn();
@@ -105,6 +118,7 @@ class OAuth20AccessTokenEndpointControllerTests {
         void verifyAuthorizationCodeWithTlsIsCertificateBound() throws Throwable {
             val service = getRegisteredService(OAuth20GrantTypes.AUTHORIZATION_CODE);
             service.setTokenEndpointAuthenticationMethod(OAuth20ClientAuthenticationMethods.TLS_CLIENT_AUTH.getType());
+            service.setTlsClientAuthSubjectDn("CN=(.+?)(?:,|$)");
             servicesManager.save(service);
             val certificate = CertUtils.readCertificate(new ClassPathResource("RSA1024x509Cert.pem").getInputStream());
             val certificates = new X509Certificate[]{certificate};
@@ -141,6 +155,7 @@ class OAuth20AccessTokenEndpointControllerTests {
         void verifyClientWithCertificateBoundAccessTokensRequiresTls() throws Throwable {
             val service = getRegisteredService(OAuth20GrantTypes.AUTHORIZATION_CODE);
             service.setTlsClientCertificateBoundAccessTokens(true);
+            service.setTlsClientAuthSubjectDn("CN=apereo.org,OU=CAS,O=Apereo,L=Gilbert,ST=AZ,C=US");
             servicesManager.save(service);
             val code = addCode(createPrincipal(), service);
             mvc.perform(post("/cas" + CONTEXT + OAuth20Constants.ACCESS_TOKEN_URL)
@@ -199,6 +214,7 @@ class OAuth20AccessTokenEndpointControllerTests {
             val service = getRegisteredService(OAuth20GrantTypes.CLIENT_CREDENTIALS);
             service.setJwtAccessToken(true);
             service.setTokenEndpointAuthenticationMethod(OAuth20ClientAuthenticationMethods.TLS_CLIENT_AUTH.getType());
+            service.setTlsClientAuthSubjectDn("CN=apereo.org,OU=CAS,O=Apereo,L=Gilbert,ST=AZ,C=US");
             servicesManager.save(service);
             val certificate = CertUtils.readCertificate(new ClassPathResource("RSA1024x509Cert.pem").getInputStream());
             val accessToken = mvc.perform(post("/cas" + CONTEXT + OAuth20Constants.ACCESS_TOKEN_URL)
@@ -782,12 +798,9 @@ class OAuth20AccessTokenEndpointControllerTests {
             mockRequest.addHeader(HttpHeaders.USER_AGENT, "MSIE");
             mockRequest.setParameter(OAuth20Constants.CLIENT_ID, service.getClientId());
             mockRequest.setParameter(OAuth20Constants.RESPONSE_TYPE, OAuth20ResponseTypes.DEVICE_CODE.getType());
-            val commonProfile = new CommonProfile();
-            commonProfile.setId("testuser");
-            commonProfile.setClientName(Authenticators.CAS_OAUTH_CLIENT);
+            val commonProfile = new DefaultOAuth20UserProfile("testuser");
             val mockResponse = new MockHttpServletResponse();
-            oauthDistributedSessionStore.set(new JEEContext(mockRequest, mockResponse), Pac4jConstants.USER_PROFILES,
-                CollectionUtils.wrapLinkedHashMap(commonProfile.getClientName(), commonProfile));
+            oauthDistributedSessionStore.set(mockRequest, mockResponse, OAuth20Constants.SESSION_ATTRIBUTE_AUTHENTICATED_PROFILE, commonProfile);
             val tgt = new MockTicketGrantingTicket(UUID.randomUUID().toString());
             ticketRegistry.addTicket(tgt);
             val cookie = ticketGrantingTicketCookieGenerator.addCookie(mockRequest, mockResponse, tgt.getId());

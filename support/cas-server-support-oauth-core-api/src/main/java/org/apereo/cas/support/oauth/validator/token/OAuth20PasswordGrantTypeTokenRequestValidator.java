@@ -5,16 +5,15 @@ import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
+import org.apereo.cas.support.oauth.profile.OAuth20UserProfile;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.pac4j.core.context.CallContext;
-import org.pac4j.core.context.WebContext;
-import org.pac4j.core.profile.ProfileManager;
-import org.pac4j.core.profile.UserProfile;
 import org.springframework.beans.factory.ObjectProvider;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * This is {@link OAuth20PasswordGrantTypeTokenRequestValidator}.
@@ -34,13 +33,12 @@ public class OAuth20PasswordGrantTypeTokenRequestValidator extends BaseOAuth20To
     }
 
     @Override
-    protected boolean validateInternal(final WebContext context, final String grantType,
-                                       final ProfileManager manager, final UserProfile uProfile)
+    protected boolean validateInternal(final HttpServletRequest request, final HttpServletResponse response, final String grantType,
+                                       final OAuth20UserProfile uProfile)
             throws Throwable {
 
         val configurationContext = getConfigurationContext().getObject();
-        val callContext = new CallContext(context, configurationContext.getSessionStore());
-        val clientIdAndSecret = configurationContext.getRequestParameterResolver().resolveClientIdAndClientSecret(callContext);
+        val clientIdAndSecret = configurationContext.getRequestParameterResolver().resolveClientIdAndClientSecret(request);
         val clientId = StringUtils.defaultIfBlank(clientIdAndSecret.getKey(), (String) uProfile.getAttribute(OAuth20Constants.CLIENT_ID));
         if (StringUtils.isBlank(clientId)) {
             LOGGER.warn("No client id is provided in the request");
@@ -62,7 +60,7 @@ public class OAuth20PasswordGrantTypeTokenRequestValidator extends BaseOAuth20To
                 grantType, registeredService.getServiceId());
             return false;
         }
-        OAuth20Utils.verifyRequestedResources(configurationContext.getRequestParameterResolver(), context, registeredService);
+        OAuth20Utils.verifyRequestedResources(configurationContext.getRequestParameterResolver(), request, registeredService);
         return true;
     }
 }

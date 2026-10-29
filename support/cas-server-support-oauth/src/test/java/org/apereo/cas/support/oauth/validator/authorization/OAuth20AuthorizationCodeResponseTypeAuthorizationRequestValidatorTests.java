@@ -12,7 +12,6 @@ import org.apereo.cas.util.CollectionUtils;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.pac4j.jee.context.JEEContext;
 import org.springframework.core.Ordered;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -42,7 +41,6 @@ class OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidatorTests ext
 
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
-        val context = new JEEContext(request, response);
 
         val claims = """
             {"scope":"openid","response_type":"code","redirect_uri":"https://staging.certification.openid.net/test/a/CAS/callback",\
@@ -51,8 +49,8 @@ class OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidatorTests ext
             + Base64.getUrlEncoder().withoutPadding().encodeToString(claims.getBytes(StandardCharsets.UTF_8)) + '.';
 
         request.setParameter(OAuth20Constants.REQUEST, authnRequest);
-        assertTrue(validator.supports(context));
-        assertTrue(validator.validate(context));
+        assertTrue(validator.supports(request, response));
+        assertTrue(validator.validate(request, response));
     }
 
     @Test
@@ -66,33 +64,33 @@ class OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidatorTests ext
         request.addParameter(OAuth20Constants.REDIRECT_URI, "https://oauth.example.org");
         request.addParameter(OAuth20Constants.RESPONSE_TYPE, OAuth20ResponseTypes.CODE.getType());
         request.addParameter(OAuth20Constants.RESOURCE, allowedResource);
-        val context = new JEEContext(request, new MockHttpServletResponse());
+        val response = new MockHttpServletResponse();
 
-        assertTrue(validator.supports(context));
+        assertTrue(validator.supports(request, response));
 
         request.setParameter(OAuth20Constants.RESOURCE, "https://other.example.org/");
-        assertFalse(validator.supports(context));
-        assertEquals(OAuth20Constants.INVALID_TARGET, context.getRequestAttribute(OAuth20Constants.ERROR).orElseThrow().toString());
+        assertFalse(validator.supports(request, response));
+        assertEquals(OAuth20Constants.INVALID_TARGET, request.getAttribute(OAuth20Constants.ERROR).toString());
 
         request.setParameter(OAuth20Constants.RESOURCE, "https://api.example.org/#fragment");
-        assertFalse(validator.supports(context));
-        assertEquals(OAuth20Constants.INVALID_TARGET, context.getRequestAttribute(OAuth20Constants.ERROR).orElseThrow().toString());
+        assertFalse(validator.supports(request, response));
+        assertEquals(OAuth20Constants.INVALID_TARGET, request.getAttribute(OAuth20Constants.ERROR).toString());
 
         service.setAllowedResources(Set.of("https://api\\.example\\.org/(orders|reports)/?"));
         servicesManager.save(service);
         request.setParameter(OAuth20Constants.RESOURCE, "https://api.example.org/orders");
-        assertTrue(validator.supports(context));
+        assertTrue(validator.supports(request, response));
         request.setParameter(OAuth20Constants.RESOURCE, "https://api.example.org/orders/../admin");
-        assertFalse(validator.supports(context));
+        assertFalse(validator.supports(request, response));
 
         request.setParameter(OAuth20Constants.RESOURCE, "https://cas.example.org/cas/mcp");
-        assertTrue(validator.supports(context));
+        assertTrue(validator.supports(request, response));
         service.setAllowedResources(Set.of());
         servicesManager.save(service);
-        assertTrue(validator.supports(context));
+        assertTrue(validator.supports(request, response));
         request.setParameter(OAuth20Constants.RESOURCE, "https://cas.example.org/cas/mcp/other");
-        assertFalse(validator.supports(context));
-        assertEquals(OAuth20Constants.INVALID_TARGET, context.getRequestAttribute(OAuth20Constants.ERROR).orElseThrow().toString());
+        assertFalse(validator.supports(request, response));
+        assertEquals(OAuth20Constants.INVALID_TARGET, request.getAttribute(OAuth20Constants.ERROR).toString());
     }
 
     @Test
@@ -102,99 +100,98 @@ class OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidatorTests ext
 
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
-        val context = new JEEContext(request, response);
 
-        assertFalse(validator.supports(context));
-        assertTrue(context.getRequestAttribute(OAuth20Constants.ERROR).isPresent());
-        assertEquals(OAuth20Constants.INVALID_REQUEST, context.getRequestAttribute(OAuth20Constants.ERROR).get().toString());
+        assertFalse(validator.supports(request, response));
+        assertNotNull(request.getAttribute(OAuth20Constants.ERROR));
+        assertEquals(OAuth20Constants.INVALID_REQUEST, request.getAttribute(OAuth20Constants.ERROR).toString());
 
         request.removeAttribute(OAuth20Constants.ERROR);
         request.setParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.AUTHORIZATION_CODE.getType());
-        assertFalse(validator.supports(context));
-        assertTrue(context.getRequestAttribute(OAuth20Constants.ERROR_DESCRIPTION).isPresent());
+        assertFalse(validator.supports(request, response));
+        assertNotNull(request.getAttribute(OAuth20Constants.ERROR_DESCRIPTION));
         assertEquals("Missing required parameter: [" + OAuth20Constants.CLIENT_ID + ']',
-                     context.getRequestAttribute(OAuth20Constants.ERROR_DESCRIPTION).get());
+                     request.getAttribute(OAuth20Constants.ERROR_DESCRIPTION));
 
         request.removeAttribute(OAuth20Constants.ERROR);
         request.setParameter(OAuth20Constants.CLIENT_ID, "invalid-client-id");
-        assertFalse(validator.supports(context));
-        assertEquals(OAuth20Constants.INVALID_REQUEST, context.getRequestAttribute(OAuth20Constants.ERROR).get().toString());
-        assertTrue(context.getRequestAttribute(OAuth20Constants.ERROR_DESCRIPTION).isPresent());
+        assertFalse(validator.supports(request, response));
+        assertEquals(OAuth20Constants.INVALID_REQUEST, request.getAttribute(OAuth20Constants.ERROR).toString());
+        assertNotNull(request.getAttribute(OAuth20Constants.ERROR_DESCRIPTION));
         assertEquals("Service [invalid-client-id] is not found or is not authorized for access",
-                     context.getRequestAttribute(OAuth20Constants.ERROR_DESCRIPTION).get());
+                     request.getAttribute(OAuth20Constants.ERROR_DESCRIPTION));
 
         request.removeAttribute(OAuth20Constants.ERROR);
         request.setParameter(OAuth20Constants.CLIENT_ID, service.getClientId());
-        assertFalse(validator.supports(context));
-        assertTrue(context.getRequestAttribute(OAuth20Constants.ERROR).isPresent());
-        assertEquals(OAuth20Constants.INVALID_REQUEST, context.getRequestAttribute(OAuth20Constants.ERROR).get().toString());
-        assertTrue(context.getRequestAttribute(OAuth20Constants.ERROR_DESCRIPTION).isPresent());
+        assertFalse(validator.supports(request, response));
+        assertNotNull(request.getAttribute(OAuth20Constants.ERROR));
+        assertEquals(OAuth20Constants.INVALID_REQUEST, request.getAttribute(OAuth20Constants.ERROR).toString());
+        assertNotNull(request.getAttribute(OAuth20Constants.ERROR_DESCRIPTION));
         assertEquals("Missing required parameter: [" + OAuth20Constants.REDIRECT_URI + ']',
-                     context.getRequestAttribute(OAuth20Constants.ERROR_DESCRIPTION).get());
+                     request.getAttribute(OAuth20Constants.ERROR_DESCRIPTION));
 
         request.removeAttribute(OAuth20Constants.ERROR);
         request.setParameter(OAuth20Constants.REDIRECT_URI, "invalid.uri");
-        assertFalse(validator.supports(context));
-        assertEquals(OAuth20Constants.INVALID_REQUEST, context.getRequestAttribute(OAuth20Constants.ERROR).get().toString());
-        assertTrue(context.getRequestAttribute(OAuth20Constants.ERROR_DESCRIPTION).isPresent());
+        assertFalse(validator.supports(request, response));
+        assertEquals(OAuth20Constants.INVALID_REQUEST, request.getAttribute(OAuth20Constants.ERROR).toString());
+        assertNotNull(request.getAttribute(OAuth20Constants.ERROR_DESCRIPTION));
         assertEquals("Redirect URI [invalid.uri] found in the request is not authorized for this service",
-                     context.getRequestAttribute(OAuth20Constants.ERROR_DESCRIPTION).get());
+                     request.getAttribute(OAuth20Constants.ERROR_DESCRIPTION));
 
         request.removeAttribute(OAuth20Constants.ERROR);
         request.setParameter(OAuth20Constants.REDIRECT_URI, "https://oauth.example.org");
-        assertFalse(validator.supports(context));
-        assertTrue(context.getRequestAttribute(OAuth20Constants.ERROR).isPresent());
-        assertEquals(OAuth20Constants.UNSUPPORTED_RESPONSE_TYPE, context.getRequestAttribute(OAuth20Constants.ERROR).get().toString());
-        assertTrue(context.getRequestAttribute(OAuth20Constants.ERROR_DESCRIPTION).isPresent());
+        assertFalse(validator.supports(request, response));
+        assertNotNull(request.getAttribute(OAuth20Constants.ERROR));
+        assertEquals(OAuth20Constants.UNSUPPORTED_RESPONSE_TYPE, request.getAttribute(OAuth20Constants.ERROR).toString());
+        assertNotNull(request.getAttribute(OAuth20Constants.ERROR_DESCRIPTION));
         assertEquals("Missing required parameter: [" + OAuth20Constants.RESPONSE_TYPE + ']',
-                     context.getRequestAttribute(OAuth20Constants.ERROR_DESCRIPTION).get());
+                     request.getAttribute(OAuth20Constants.ERROR_DESCRIPTION));
 
         request.removeAttribute(OAuth20Constants.ERROR);
         request.setParameter(OAuth20Constants.RESPONSE_TYPE, "unknown");
-        assertFalse(validator.supports(context));
-        assertTrue(context.getRequestAttribute(OAuth20Constants.ERROR).isPresent());
-        assertEquals(OAuth20Constants.UNSUPPORTED_RESPONSE_TYPE, context.getRequestAttribute(OAuth20Constants.ERROR).get().toString());
-        assertTrue(context.getRequestAttribute(OAuth20Constants.ERROR_DESCRIPTION).isPresent());
+        assertFalse(validator.supports(request, response));
+        assertNotNull(request.getAttribute(OAuth20Constants.ERROR));
+        assertEquals(OAuth20Constants.UNSUPPORTED_RESPONSE_TYPE, request.getAttribute(OAuth20Constants.ERROR).toString());
+        assertNotNull(request.getAttribute(OAuth20Constants.ERROR_DESCRIPTION));
         assertEquals("Unsupported response_type: [unknown]",
-                     context.getRequestAttribute(OAuth20Constants.ERROR_DESCRIPTION).get());
+                     request.getAttribute(OAuth20Constants.ERROR_DESCRIPTION));
 
         request.removeAttribute(OAuth20Constants.ERROR);
         request.setParameter(OAuth20Constants.RESPONSE_TYPE, OAuth20ResponseTypes.CODE.getType());
         request.setParameter(OAuth20Constants.CODE_VERIFIER, "abcd");
         service.setSupportedResponseTypes(new LinkedHashSet<>());
-        assertTrue(validator.supports(context));
-        assertTrue(validator.validate(context));
+        assertTrue(validator.supports(request, response));
+        assertTrue(validator.validate(request, response));
 
         request.removeAttribute(OAuth20Constants.ERROR);
-        assertTrue(validator.supports(context));
-        assertTrue(validator.validate(context));
-        assertFalse(context.getRequestAttribute(OAuth20Constants.ERROR).isPresent());
+        assertTrue(validator.supports(request, response));
+        assertTrue(validator.validate(request, response));
+        assertNull(request.getAttribute(OAuth20Constants.ERROR));
 
         request.removeAttribute(OAuth20Constants.ERROR);
         service.setSupportedResponseTypes(CollectionUtils.wrapHashSet(OAuth20ResponseTypes.CODE.getType()));
-        assertTrue(validator.supports(context));
-        assertTrue(validator.validate(context));
-        assertFalse(context.getRequestAttribute(OAuth20Constants.ERROR).isPresent());
+        assertTrue(validator.supports(request, response));
+        assertTrue(validator.validate(request, response));
+        assertNull(request.getAttribute(OAuth20Constants.ERROR));
 
         request.removeAttribute(OAuth20Constants.ERROR);
         service.setSupportedResponseTypes(CollectionUtils.wrapHashSet(OAuth20ResponseTypes.TOKEN.getType()));
-        assertTrue(validator.supports(context));
-        assertFalse(validator.validate(context));
-        assertTrue(context.getRequestAttribute(OAuth20Constants.ERROR).isPresent());
+        assertTrue(validator.supports(request, response));
+        assertFalse(validator.validate(request, response));
+        assertNotNull(request.getAttribute(OAuth20Constants.ERROR));
 
         request.removeAttribute(OAuth20Constants.ERROR);
         request.setParameter(OAuth20Constants.REDIRECT_URI, "unknown-uri");
-        assertFalse(validator.supports(context));
-        assertTrue(context.getRequestAttribute(OAuth20Constants.ERROR).isPresent());
-        assertEquals(OAuth20Constants.INVALID_REQUEST, context.getRequestAttribute(OAuth20Constants.ERROR).get().toString());
+        assertFalse(validator.supports(request, response));
+        assertNotNull(request.getAttribute(OAuth20Constants.ERROR));
+        assertEquals(OAuth20Constants.INVALID_REQUEST, request.getAttribute(OAuth20Constants.ERROR).toString());
 
         request.removeAttribute(OAuth20Constants.ERROR);
         request.setParameter(OAuth20Constants.REDIRECT_URI, service.getServiceId());
 
         service.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy().setEnabled(false));
-        assertFalse(validator.supports(context));
-        assertTrue(context.getRequestAttribute(OAuth20Constants.ERROR).isPresent());
-        assertEquals(OAuth20Constants.INVALID_REQUEST, context.getRequestAttribute(OAuth20Constants.ERROR).get().toString());
+        assertFalse(validator.supports(request, response));
+        assertNotNull(request.getAttribute(OAuth20Constants.ERROR));
+        assertEquals(OAuth20Constants.INVALID_REQUEST, request.getAttribute(OAuth20Constants.ERROR).toString());
 
         assertEquals(Ordered.LOWEST_PRECEDENCE, validator.getOrder());
         assertNotNull(validator.getRegisteredServiceAccessStrategyEnforcer());

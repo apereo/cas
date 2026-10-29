@@ -20,9 +20,10 @@ description: "Review and change CAS actuator endpoints: the security filter chai
 - `prepareProtocolEndpoint` emits `/<ep>**` as well as `/<ep>/**`. The first form is a
   within-segment wildcard, so an ignored endpoint also permits sibling paths sharing its
   prefix. Check that before adding an entry.
-- That chain disables CSRF, security headers and logout globally, and it is the same chain
-  that serves the actuator. Any browser-reachable session credential (`cas.monitor.endpoints.form-login-enabled`)
-  therefore leaves mutating actuator operations unprotected against cross-site requests.
+- That chain disables security headers and logout globally, and CSRF everywhere except the paths that configurers
+  declare through `getCsrfProtectedEndpoints()` (CIBA verification, WebAuthn). It is the same chain that serves the
+  actuator. Any browser-reachable session credential (`cas.monitor.endpoints.form-login-enabled`) therefore leaves
+  mutating actuator operations unprotected against cross-site requests.
 - `ActuatorEndpointProperties.access` defaults to `DENY` and the `endpoint` map always
   carries a synthetic `defaults` key. The adapter iterates the map and calls
   `EndpointRequest.to("defaults")`, which resolves to no path and silently registers nothing;

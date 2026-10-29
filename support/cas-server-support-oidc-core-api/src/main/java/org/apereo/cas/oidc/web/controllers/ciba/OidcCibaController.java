@@ -42,8 +42,6 @@ import org.apache.commons.lang3.Strings;
 import org.apache.hc.core5.net.URIBuilder;
 import org.apereo.inspektr.audit.annotation.Audit;
 import org.jspecify.annotations.Nullable;
-import org.pac4j.core.context.WebContext;
-import org.pac4j.jee.context.JEEContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -177,8 +175,7 @@ public class OidcCibaController extends BaseOidcController {
         resourceResolverName = AuditResourceResolvers.OIDC_CIBA_RESPONSE_RESOURCE_RESOLVER)
     @Operation(summary = "Handle back-channel authn request")
     public ResponseEntity handleBackchannelAuthnRequest(final HttpServletRequest request, final HttpServletResponse response) throws Throwable {
-        val webContext = new JEEContext(request, response);
-        val cibaRequestContext = buildCibaRequestContext(webContext);
+        val cibaRequestContext = buildCibaRequestContext(request, response);
 
         var hintCount = StringUtils.isNotBlank(cibaRequestContext.getLoginHint()) ? 1 : 0;
         hintCount += StringUtils.isNotBlank(cibaRequestContext.getLoginHintToken()) ? 1 : 0;
@@ -190,7 +187,7 @@ public class OidcCibaController extends BaseOidcController {
             return badCibaRequest("Scope must contain %s".formatted(OidcConstants.StandardScopes.OPENID.getScope()));
         }
         val registeredService = findRegisteredService(cibaRequestContext);
-        if (!getConfigurationContext().getRequestParameterResolver().isAuthorizedResourceForService(webContext, registeredService)) {
+        if (!getConfigurationContext().getRequestParameterResolver().isAuthorizedResourceForService(request, registeredService)) {
             val body = OAuth20Utils.getErrorResponseBody(OAuth20Constants.INVALID_TARGET,
                 "Requested resource is invalid or not authorized for this client");
             return ResponseEntity.badRequest().body(body);
@@ -288,26 +285,26 @@ public class OidcCibaController extends BaseOidcController {
         return (OidcRegisteredService) registeredService;
     }
 
-    protected CibaRequestContext buildCibaRequestContext(final WebContext webContext) {
+    protected CibaRequestContext buildCibaRequestContext(final HttpServletRequest request, final HttpServletResponse response) {
         val requestParameterResolver = getConfigurationContext().getRequestParameterResolver();
-        val userProfile = OAuth20Utils.getAuthenticatedUserProfile(webContext, getConfigurationContext().getSessionStore());
-        val clientId = userProfile.getAttribute(OAuth20Constants.CLIENT_ID).toString();
+        val userProfile = OAuth20Utils.getAuthenticatedUserProfile(request, response, getConfigurationContext().getSessionStore());
+        val clientId = Objects.requireNonNull(userProfile.getAttribute(OAuth20Constants.CLIENT_ID)).toString();
 
-        val tenant = getConfigurationContext().getTenantExtractor().extract(webContext.getRequestURL())
+        val tenant = getConfigurationContext().getTenantExtractor().extract(request.getRequestURL().toString())
             .map(TenantDefinition::getId).orElse(StringUtils.EMPTY);
 
         return CibaRequestContext.builder()
-            .acrValues(requestParameterResolver.resolveRequestParameters(webContext, OAuth20Constants.ACR_VALUES))
-            .bindingMessage(requestParameterResolver.resolveRequestParameter(webContext, OidcConstants.BINDING_MESSAGE).orElse(null))
-            .clientNotificationToken(requestParameterResolver.resolveRequestParameter(webContext, OidcConstants.CLIENT_NOTIFICATION_TOKEN).orElse(null))
-            .idTokenHint(requestParameterResolver.resolveRequestParameter(webContext, OidcConstants.ID_TOKEN_HINT).orElse(null))
-            .loginHint(requestParameterResolver.resolveRequestParameter(webContext, OidcConstants.LOGIN_HINT).orElse(null))
-            .loginHintToken(requestParameterResolver.resolveRequestParameter(webContext, OidcConstants.LOGIN_HINT_TOKEN).orElse(null))
-            .requestedExpiry(requestParameterResolver.resolveRequestParameter(webContext, OidcConstants.REQUESTED_EXPIRY, Long.class).orElse(0L))
-            .scope(requestParameterResolver.resolveRequestScopes(webContext))
-            .resources(requestParameterResolver.resolveRequestedResources(webContext))
+            .acrValues(requestParameterResolver.resolveRequestParameters(request, OAuth20Constants.ACR_VALUES))
+            .bindingMessage(requestParameterResolver.resolveRequestParameter(request, OidcConstants.BINDING_MESSAGE).orElse(null))
+            .clientNotificationToken(requestParameterResolver.resolveRequestParameter(request, OidcConstants.CLIENT_NOTIFICATION_TOKEN).orElse(null))
+            .idTokenHint(requestParameterResolver.resolveRequestParameter(request, OidcConstants.ID_TOKEN_HINT).orElse(null))
+            .loginHint(requestParameterResolver.resolveRequestParameter(request, OidcConstants.LOGIN_HINT).orElse(null))
+            .loginHintToken(requestParameterResolver.resolveRequestParameter(request, OidcConstants.LOGIN_HINT_TOKEN).orElse(null))
+            .requestedExpiry(requestParameterResolver.resolveRequestParameter(request, OidcConstants.REQUESTED_EXPIRY, Long.class).orElse(0L))
+            .scope(requestParameterResolver.resolveRequestScopes(request))
+            .resources(requestParameterResolver.resolveRequestedResources(request))
             .clientId(clientId)
-            .userCode(requestParameterResolver.resolveRequestParameter(webContext, OidcConstants.USER_CODE).orElse(null))
+            .userCode(requestParameterResolver.resolveRequestParameter(request, OidcConstants.USER_CODE).orElse(null))
             .tenant(tenant)
             .build();
     }

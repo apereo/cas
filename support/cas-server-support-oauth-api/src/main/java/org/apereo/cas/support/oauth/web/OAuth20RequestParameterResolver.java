@@ -6,11 +6,11 @@ import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseModeTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
+import org.apereo.cas.util.http.HttpRequestUtils;
 import org.apache.commons.lang3.tuple.Pair;
-import org.pac4j.core.context.CallContext;
-import org.pac4j.core.context.WebContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * This is {@link OAuth20RequestParameterResolver}.
@@ -66,36 +66,36 @@ public interface OAuth20RequestParameterResolver {
     /**
      * Is authorized grant type for service.
      *
-     * @param context           the context
+     * @param request           the request
      * @param registeredService the registered service
      * @return true/false
      */
-    boolean isAuthorizedGrantTypeForService(WebContext context,
+    boolean isAuthorizedGrantTypeForService(HttpServletRequest request,
                                             OAuthRegisteredService registeredService);
 
     /**
      * Resolve response type.
      *
-     * @param context the context
+     * @param request the request
      * @return the response types
      */
-    OAuth20ResponseTypes resolveResponseType(WebContext context);
+    OAuth20ResponseTypes resolveResponseType(HttpServletRequest request);
 
     /**
      * Resolve grant type.
      *
-     * @param context the context
+     * @param request the request
      * @return the grant types
      */
-    OAuth20GrantTypes resolveGrantType(WebContext context);
+    OAuth20GrantTypes resolveGrantType(HttpServletRequest request);
 
     /**
      * Resolve response mode.
      *
-     * @param context the context
+     * @param request the request
      * @return response mode types
      */
-    OAuth20ResponseModeTypes resolveResponseModeType(WebContext context);
+    OAuth20ResponseModeTypes resolveResponseModeType(HttpServletRequest request);
 
     /**
      * Resolve jwt request parameter.
@@ -116,13 +116,13 @@ public interface OAuth20RequestParameterResolver {
      * Resolve jwt request.
      *
      * @param <T>        the type parameter
-     * @param context    the context
+     * @param request    the request
      * @param jwtRequest the jwt request
      * @param name       the name
      * @param clazz      the clazz
      * @return the type
      */
-    <T> T resolveJwtRequestParameter(WebContext context, String jwtRequest,
+    <T> T resolveJwtRequestParameter(HttpServletRequest request, String jwtRequest,
                                      String name, Class<T> clazz);
 
     /**
@@ -145,65 +145,65 @@ public interface OAuth20RequestParameterResolver {
      * Resolve request parameters map.
      *
      * @param attributes the attributes
-     * @param context    the context
+     * @param request    the request
      * @return the map
      */
     Map<String, Set<String>> resolveRequestParameters(Collection<String> attributes,
-                                                      WebContext context);
+                                                      HttpServletRequest request);
 
     /**
      * Resolve request parameter.
      *
-     * @param context the context
+     * @param request the request
      * @param name    the name
      * @return the optional
      */
-    Set<String> resolveRequestParameters(WebContext context, String name);
+    Set<String> resolveRequestParameters(HttpServletRequest request, String name);
 
     /**
      * Resolve request parameter.
      *
-     * @param context the context
+     * @param request the request
      * @param name    the name
      * @return the optional
      */
-    Optional<String> resolveRequestParameter(WebContext context, String name);
+    Optional<String> resolveRequestParameter(HttpServletRequest request, String name);
 
     /**
      * Resolve request parameter.
      *
      * @param <T>     the type parameter
-     * @param context the context
+     * @param request the request
      * @param name    the name
      * @param clazz   the clazz
      * @return the optional
      */
-    <T> Optional<T> resolveRequestParameter(WebContext context, String name, Class<T> clazz);
+    <T> Optional<T> resolveRequestParameter(HttpServletRequest request, String name, Class<T> clazz);
 
     /**
      * Resolve requested scopes.
      *
-     * @param context the context
+     * @param request the request
      * @return the collection
      */
-    Collection<String> resolveRequestedScopes(WebContext context);
+    Collection<String> resolveRequestedScopes(HttpServletRequest request);
 
     /**
      * Resolve requested resource indicators.
      *
-     * @param context the context
+     * @param request the request
      * @return the resources
      */
-    Set<String> resolveRequestedResources(WebContext context);
+    Set<String> resolveRequestedResources(HttpServletRequest request);
 
     /**
      * Checks whether every requested resource is an absolute URI without a fragment that the service allows.
      *
-     * @param context           the context
+     * @param request           the request
      * @param registeredService the registered service
      * @return true/false
      */
-    boolean isAuthorizedResourceForService(WebContext context, OAuthRegisteredService registeredService);
+    boolean isAuthorizedResourceForService(HttpServletRequest request, OAuthRegisteredService registeredService);
 
     /**
      * Resolve the resources, as regular expressions, a service may request: the allowed resources of the service,
@@ -217,53 +217,53 @@ public interface OAuth20RequestParameterResolver {
     /**
      * Is authorized response type for service.
      *
-     * @param context           the context
+     * @param request           the request
      * @param registeredService the registered service
      * @return true/false
      */
-    boolean isAuthorizedResponseTypeForService(WebContext context, OAuthRegisteredService registeredService);
+    boolean isAuthorizedResponseTypeForService(HttpServletRequest request, OAuthRegisteredService registeredService);
 
     /**
      * Resolve client id and client secret pair.
      *
-     * @param callContext the call context
+     * @param request the request
      * @return the pair
      */
-    Pair<String, String> resolveClientIdAndClientSecret(CallContext callContext);
+    Pair<String, String> resolveClientIdAndClientSecret(HttpServletRequest request);
 
     /**
      * Resolve request scopes set.
      *
-     * @param context the context
+     * @param request the request
      * @return the set
      */
-    Set<String> resolveRequestScopes(WebContext context);
+    Set<String> resolveRequestScopes(HttpServletRequest request);
 
     /**
      * Resolve request claims map.
      *
-     * @param context the context
+     * @param request the request
      * @return the map
      * @throws Exception the exception
      */
-    Map<String, Map<String, Object>> resolveRequestClaims(WebContext context) throws Exception;
+    Map<String, Map<String, Object>> resolveRequestClaims(HttpServletRequest request) throws Exception;
 
     /**
      * Resolve user info request claims set.
      *
-     * @param context the context
+     * @param request the request
      * @return the set
      * @throws Exception the exception
      */
-    Set<String> resolveUserInfoRequestClaims(WebContext context) throws Exception;
+    Set<String> resolveUserInfoRequestClaims(HttpServletRequest request) throws Exception;
 
     /**
      * Resolve prompt parameter set.
      *
-     * @param context the context
+     * @param request the request
      * @return the set
      */
-    Set<String> resolveRequestedPromptValues(WebContext context);
+    Set<String> resolveRequestedPromptValues(HttpServletRequest request);
 
     /**
      * Resolve prompt values.
@@ -276,19 +276,19 @@ public interface OAuth20RequestParameterResolver {
     /**
      * Resolve prompt values.
      *
-     * @param context the context
+     * @param request the request
      * @return the set
      */
-    default Set<String> resolveSupportedPromptValues(final WebContext context) {
-        return resolveSupportedPromptValues(context.getFullRequestURL());
+    default Set<String> resolveSupportedPromptValues(final HttpServletRequest request) {
+        return resolveSupportedPromptValues(HttpRequestUtils.getFullRequestUrl(request));
     }
 
     /**
      * Is the provided parameter name on the query string.
      *
-     * @param context the web context
+     * @param request the request
      * @param name    the parameter name
      * @return whether the parameter name is on the query string
      */
-    boolean isParameterOnQueryString(WebContext context, String name);
+    boolean isParameterOnQueryString(HttpServletRequest request, String name);
 }

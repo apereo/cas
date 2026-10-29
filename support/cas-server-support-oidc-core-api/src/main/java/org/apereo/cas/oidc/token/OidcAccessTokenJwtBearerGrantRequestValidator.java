@@ -13,9 +13,10 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.pac4j.core.context.WebContext;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.core.Ordered;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * This is {@link OidcAccessTokenJwtBearerGrantRequestValidator}.
@@ -32,14 +33,14 @@ public class OidcAccessTokenJwtBearerGrantRequestValidator implements OAuth20Tok
     private final ObjectProvider<OidcConfigurationContext> configurationContext;
 
     @Override
-    public boolean validate(final WebContext context) throws Throwable {
+    public boolean validate(final HttpServletRequest request, final HttpServletResponse response) throws Throwable {
         val assertion = getConfigurationContext().getObject().getRequestParameterResolver()
-            .resolveRequestParameter(context, OAuth20Constants.ASSERTION).orElse(StringUtils.EMPTY);
+            .resolveRequestParameter(request, OAuth20Constants.ASSERTION).orElse(StringUtils.EMPTY);
         val registeredService = resolveRegisteredService(assertion);
         if (registeredService.isPresent()) {
-            getConfigurationContext().getObject().getProofOfPossessionValidator().validateTokenRequest(context, registeredService.get());
+            getConfigurationContext().getObject().getProofOfPossessionValidator().validateTokenRequest(request, response, registeredService.get());
             OAuth20Utils.verifyRequestedResources(getConfigurationContext().getObject().getRequestParameterResolver(),
-                context, registeredService.get());
+                request, registeredService.get());
         }
         return true;
     }
@@ -66,11 +67,11 @@ public class OidcAccessTokenJwtBearerGrantRequestValidator implements OAuth20Tok
     }
 
     @Override
-    public boolean supports(final WebContext webContext) throws Throwable {
+    public boolean supports(final HttpServletRequest request, final HttpServletResponse response) throws Throwable {
         val grantType = getConfigurationContext().getObject().getRequestParameterResolver()
-            .resolveRequestParameter(webContext, OAuth20Constants.GRANT_TYPE).orElse(StringUtils.EMPTY);
+            .resolveRequestParameter(request, OAuth20Constants.GRANT_TYPE).orElse(StringUtils.EMPTY);
         val assertion = getConfigurationContext().getObject().getRequestParameterResolver()
-            .resolveRequestParameter(webContext, OAuth20Constants.ASSERTION).orElse(StringUtils.EMPTY);
+            .resolveRequestParameter(request, OAuth20Constants.ASSERTION).orElse(StringUtils.EMPTY);
         return StringUtils.isNotBlank(assertion) && OAuth20Utils.isGrantType(grantType, OAuth20GrantTypes.JWT_BEARER);
     }
 }

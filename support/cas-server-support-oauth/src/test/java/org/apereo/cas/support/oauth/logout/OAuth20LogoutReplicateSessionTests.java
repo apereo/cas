@@ -5,12 +5,11 @@ import org.apereo.cas.AbstractOAuth20Tests;
 import org.apereo.cas.logout.LogoutExecutionPlan;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.ticket.TicketGrantingTicket;
+import org.apereo.cas.web.CasSessionStore;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.pac4j.core.context.session.SessionStore;
-import org.pac4j.jee.context.JEEContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -63,16 +62,16 @@ class OAuth20LogoutReplicateSessionTests {
         val tgt = mock(TicketGrantingTicket.class);
         val processor = processors.iterator().next();
         processor.handle(tgt);
-        verify(OAuthDistributedSessionTestConfiguration.SESSION_STORE).destroySession(any(JEEContext.class));
+        verify(OAuthDistributedSessionTestConfiguration.SESSION_STORE).destroySession(request, response);
     }
 
     @TestConfiguration(value = "OAuthDistributedSessionTestConfiguration", proxyBeanMethods = false)
     static class OAuthDistributedSessionTestConfiguration {
 
-        private static final SessionStore SESSION_STORE = mock(SessionStore.class);
+        private static final CasSessionStore SESSION_STORE = mock(CasSessionStore.class);
 
         @Bean
-        public SessionStore oauthDistributedSessionStore() {
+        public CasSessionStore oauthDistributedSessionStore() {
             return SESSION_STORE;
         }
     }

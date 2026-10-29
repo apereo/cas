@@ -38,18 +38,20 @@ import org.apereo.cas.oidc.web.controllers.token.OidcAccessTokenEndpointControll
 import org.apereo.cas.oidc.web.controllers.token.OidcRevocationEndpointController;
 import org.apereo.cas.oidc.web.flow.OidcMultifactorAuthenticationTrigger;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.support.oauth.authenticator.Authenticators;
+import org.apereo.cas.support.oauth.authenticator.OAuth20AccessTokenAuthenticator;
 import org.apereo.cas.support.oauth.validator.OAuth20DPoPNonceService;
+import org.apereo.cas.support.oauth.validator.OAuth20ProofOfPossessionValidator;
 import org.apereo.cas.support.oauth.validator.authorization.OAuth20AuthorizationRequestValidator;
+import org.apereo.cas.support.oauth.web.OAuth20AccessTokenAuthenticationInterceptor;
 import org.apereo.cas.support.oauth.web.OAuth20RequestParameterResolver;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenGrantRequestExtractor;
-import org.apereo.cas.util.RandomUtils;
+import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.util.spring.RefreshableHandlerInterceptor;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.validation.CasProtocolViewFactory;
 import org.apereo.cas.web.CasWebSecurityConfigurer;
-import org.apereo.cas.web.SecurityLogicInterceptor;
 import org.apereo.cas.web.UrlValidator;
 import org.apereo.cas.web.support.ArgumentExtractor;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
@@ -57,8 +59,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.Strings;
 import org.jspecify.annotations.NonNull;
-import org.pac4j.core.config.Config;
-import org.pac4j.core.context.session.SessionStore;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -73,11 +73,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.core.Ordered;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
-import org.springframework.security.web.csrf.CsrfTokenRepository;
-import org.springframework.security.web.csrf.XorCsrfTokenRequestAttributeHandler;
 import org.springframework.security.web.servlet.util.matcher.PathPatternRequestMatcher;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.View;
@@ -136,18 +132,31 @@ class OidcEndpointsConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public HandlerInterceptor requiresAuthenticationDynamicRegistrationInterceptor(
-            @Qualifier("oauthSecConfig")
-            final Config oauthSecConfig) {
-            return new SecurityLogicInterceptor(oauthSecConfig,
-                Authenticators.CAS_OAUTH_CLIENT_DYNAMIC_REGISTRATION_AUTHN);
+            @Qualifier("oidcDynamicRegistrationAuthenticator")
+            final OAuth20AccessTokenAuthenticator oidcDynamicRegistrationAuthenticator,
+            @Qualifier(TicketRegistry.BEAN_NAME)
+            final TicketRegistry ticketRegistry,
+            @Qualifier(JwtBuilder.ACCESS_TOKEN_JWT_BUILDER_BEAN_NAME)
+            final JwtBuilder accessTokenJwtBuilder,
+            @Qualifier("oauthProofOfPossessionValidator")
+            final OAuth20ProofOfPossessionValidator oauthProofOfPossessionValidator) {
+            return new OAuth20AccessTokenAuthenticationInterceptor(oidcDynamicRegistrationAuthenticator,
+                ticketRegistry, accessTokenJwtBuilder, oauthProofOfPossessionValidator);
         }
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public HandlerInterceptor requiresAuthenticationClientConfigurationInterceptor(
-            @Qualifier("oauthSecConfig")
-            final Config oauthSecConfig) {
-            return new SecurityLogicInterceptor(oauthSecConfig, OidcConstants.CAS_OAUTH_CLIENT_CONFIG_ACCESS_TOKEN_AUTHN);
+            @Qualifier("oidcClientConfigurationAuthenticator")
+            final OAuth20AccessTokenAuthenticator oidcClientConfigurationAuthenticator,
+            @Qualifier(TicketRegistry.BEAN_NAME)
+            final TicketRegistry ticketRegistry,
+            @Qualifier(JwtBuilder.ACCESS_TOKEN_JWT_BUILDER_BEAN_NAME)
+            final JwtBuilder accessTokenJwtBuilder,
+            @Qualifier("oauthProofOfPossessionValidator")
+            final OAuth20ProofOfPossessionValidator oauthProofOfPossessionValidator) {
+            return new OAuth20AccessTokenAuthenticationInterceptor(oidcClientConfigurationAuthenticator,
+                ticketRegistry, accessTokenJwtBuilder, oauthProofOfPossessionValidator);
         }
 
         @Bean
@@ -155,8 +164,6 @@ class OidcEndpointsConfiguration {
         public HandlerInterceptor oauthInterceptor(
             final ObjectProvider<List<AccessTokenGrantRequestExtractor>> accessTokenGrantRequestExtractors,
             final ObjectProvider<List<OAuth20AuthorizationRequestValidator>> oauthRequestValidators,
-            @Qualifier("oauthDistributedSessionStore")
-            final ObjectProvider<SessionStore> oauthDistributedSessionStore,
             @Qualifier("requiresAuthenticationAuthorizeInterceptor")
             final ObjectProvider<HandlerInterceptor> requiresAuthenticationAuthorizeInterceptor,
             @Qualifier("requiresAuthenticationAccessTokenInterceptor")
@@ -183,7 +190,6 @@ class OidcEndpointsConfiguration {
                 casProperties,
                 accessTokenGrantRequestExtractors,
                 servicesManager,
-                oauthDistributedSessionStore,
                 oauthRequestValidators,
                 oauthRequestParameterResolver,
                 oauthConfigurationContext,
@@ -225,22 +231,11 @@ class OidcEndpointsConfiguration {
         }
 
         @Bean
-        @ConditionalOnMissingBean(name = "oidcCsrfTokenRepository")
-        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public CsrfTokenRepository oidcCsrfTokenRepository(final CasConfigurationProperties casProperties) {
-            val repository = new CookieCsrfTokenRepository();
-            repository.setHeaderName("X-CSRF-TOKEN");
-            return repository;
-        }
-
-        @Bean
         @ConditionalOnMissingBean(name = "oidcProtocolEndpointConfigurer")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @CanIgnoreReturnValue
         @SuppressWarnings("UnnecessaryMethodReference")
         public CasWebSecurityConfigurer<HttpSecurity> oidcProtocolEndpointConfigurer(
-            @Qualifier("oidcCsrfTokenRepository")
-            final CsrfTokenRepository oidcCsrfTokenRepository,
             @Qualifier(OidcIssuerService.BEAN_NAME)
             final OidcIssuerService oidcIssuerService,
             final CasConfigurationProperties casProperties) {
@@ -252,20 +247,15 @@ class OidcEndpointsConfiguration {
                 }
 
                 @Override
+                public List<String> getCsrfProtectedEndpoints() {
+                    return List.of("/**/" + OidcConstants.CIBA_URL + "/{clientId}/{cibaRequestId}");
+                }
+
+                @Override
                 public CasWebSecurityConfigurer<HttpSecurity> configure(final HttpSecurity http) {
                     http.authorizeHttpRequests(customizer -> {
                         val authEndpoints = PathPatternRequestMatcher.withDefaults().matcher('/' + OidcConstants.CIBA_URL + "/**");
                         customizer.requestMatchers(authEndpoints).anonymous();
-                    });
-                    http.csrf(customizer -> {
-                        val path = '/' + OidcConstants.CIBA_URL + "/{clientId}/{cibaRequestId}";
-                        val pattern = PathPatternRequestMatcher.withDefaults().matcher(HttpMethod.POST, path);
-                        val requestHandler = new XorCsrfTokenRequestAttributeHandler();
-                        requestHandler.setCsrfRequestAttributeName(null);
-                        requestHandler.setSecureRandom(RandomUtils.getNativeInstance());
-                        customizer.requireCsrfProtectionMatcher(pattern)
-                            .csrfTokenRequestHandler(requestHandler)
-                            .csrfTokenRepository(oidcCsrfTokenRepository);
                     });
                     return this;
                 }

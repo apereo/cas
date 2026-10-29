@@ -12,7 +12,7 @@ import org.apereo.cas.util.EncodingUtils;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.pac4j.core.context.HttpConstants;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -95,7 +95,7 @@ class OAuth20IntrospectionEndpointControllerTests extends AbstractOAuth20Tests {
         val id = UUID.randomUUID().toString();
         val auth = id + ':' + CLIENT_SECRET;
         val value = EncodingUtils.encodeBase64(auth.getBytes(StandardCharsets.UTF_8));
-        request.addHeader(HttpConstants.AUTHORIZATION_HEADER, HttpConstants.BASIC_HEADER_PREFIX + value);
+        request.addHeader(HttpHeaders.AUTHORIZATION, "Basic " + value);
 
         val registeredService = getRegisteredService(id, id);
         val mv = generateAccessTokenResponseAndGetModelAndView(registeredService);
@@ -119,7 +119,7 @@ class OAuth20IntrospectionEndpointControllerTests extends AbstractOAuth20Tests {
         val request = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.INTROSPECTION_URL);
         val auth = service.getClientId() + ':' + CLIENT_SECRET;
         val value = EncodingUtils.encodeBase64(auth.getBytes(StandardCharsets.UTF_8));
-        request.addHeader(HttpConstants.AUTHORIZATION_HEADER, HttpConstants.BASIC_HEADER_PREFIX + value);
+        request.addHeader(HttpHeaders.AUTHORIZATION, "Basic " + value);
         val result = performOAuthRequest(request);
         assertEquals(HttpStatus.BAD_REQUEST.value(), result.getResponse().getStatus());
     }
@@ -130,7 +130,7 @@ class OAuth20IntrospectionEndpointControllerTests extends AbstractOAuth20Tests {
         val request = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.INTROSPECTION_URL);
 
         val value = EncodingUtils.encodeBase64(auth.getBytes(StandardCharsets.UTF_8));
-        request.addHeader(HttpConstants.AUTHORIZATION_HEADER, HttpConstants.BASIC_HEADER_PREFIX + value);
+        request.addHeader(HttpHeaders.AUTHORIZATION, "Basic " + value);
 
         val mv = generateAccessTokenResponseAndGetModelAndView(registeredService);
         val at = mv.getModel().get(OAuth20Constants.ACCESS_TOKEN).toString();

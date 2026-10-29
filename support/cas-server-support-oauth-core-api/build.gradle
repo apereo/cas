@@ -2,11 +2,9 @@ apply plugin: "org.apereo.cas.project-conventions"
 
 description = "Defines shared OAuth provider contracts used by CAS OAuth features."
 dependencies {
-    implementation libraries.pac4jcore
     implementation libraries.nimbus
     implementation libraries.jose4j
     implementation libraries.cqengine
-    implementation libraries.pac4jcas
     
     api project(":api:cas-server-core-api-throttle")
     api project(":api:cas-server-core-api")
@@ -24,7 +22,6 @@ dependencies {
     implementation project(":core:cas-server-core-cookie-api")
     implementation project(":core:cas-server-core-notifications-api")
 
-    implementation project(":support:cas-server-support-pac4j-api")
     implementation project(":support:cas-server-support-token-core-api")
     implementation project(":support:cas-server-support-oauth-api")
     implementation project(":support:cas-server-support-oauth-services")

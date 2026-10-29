@@ -9,7 +9,8 @@ import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.web.OAuth20RequestParameterResolver;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.pac4j.core.context.WebContext;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * This is {@link OAuth20ProofKeyCodeExchangeResponseTypeAuthorizationRequestValidator}.
@@ -30,9 +31,9 @@ public class OAuth20ProofKeyCodeExchangeResponseTypeAuthorizationRequestValidato
     }
 
     @Override
-    public boolean supports(final WebContext context) throws Throwable {
-        val challenge = requestParameterResolver.resolveRequestParameter(context, OAuth20Constants.CODE_VERIFIER)
+    public boolean supports(final HttpServletRequest request, final HttpServletResponse response) throws Throwable {
+        val challenge = requestParameterResolver.resolveRequestParameter(request, OAuth20Constants.CODE_VERIFIER)
             .map(String::valueOf).orElse(StringUtils.EMPTY);
-        return StringUtils.isNotBlank(challenge) && super.supports(context);
+        return StringUtils.isNotBlank(challenge) && super.supports(request, response);
     }
 }

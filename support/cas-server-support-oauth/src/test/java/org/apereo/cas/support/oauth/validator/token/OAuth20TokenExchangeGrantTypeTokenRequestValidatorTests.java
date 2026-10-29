@@ -6,7 +6,7 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20TokenExchangeTypes;
-import org.apereo.cas.support.oauth.authenticator.Authenticators;
+import org.apereo.cas.support.oauth.profile.DefaultOAuth20UserProfile;
 import org.apereo.cas.support.oauth.services.DefaultRegisteredServiceOAuthTokenExchangePolicy;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.ticket.Ticket;
@@ -19,9 +19,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.pac4j.core.profile.CommonProfile;
-import org.pac4j.core.profile.ProfileManager;
-import org.pac4j.jee.context.JEEContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.Ordered;
@@ -42,24 +39,23 @@ class OAuth20TokenExchangeGrantTypeTokenRequestValidatorTests extends AbstractOA
     @Qualifier("oauthTokenExchangeGrantTypeTokenRequestValidator")
     private OAuth20TokenRequestValidator validator;
 
-    private JEEContext context;
+
     private MockHttpServletRequest request;
+
+    private MockHttpServletResponse response;
 
     @BeforeEach
     void setup() {
         request = new MockHttpServletRequest();
         request.addHeader(HttpHeaders.USER_AGENT, "Firefox");
-        val response = new MockHttpServletResponse();
-        context = new JEEContext(request, response);
+        response = new MockHttpServletResponse();
         authenticateClient("casuser");
     }
 
     private void authenticateClient(final String clientId) {
-        val profile = new CommonProfile();
-        profile.setClientName(Authenticators.CAS_OAUTH_CLIENT_BASIC_AUTHN);
-        profile.setId(clientId);
+        val profile = new DefaultOAuth20UserProfile(clientId);
         profile.addAttribute(OAuth20Constants.CLIENT_ID, clientId);
-        new ProfileManager(context, oauthDistributedSessionStore).save(true, profile, false);
+        storeProfileIntoSession(request, profile);
     }
 
     @Test
@@ -69,7 +65,7 @@ class OAuth20TokenExchangeGrantTypeTokenRequestValidatorTests extends AbstractOA
         request.addParameter(OAuth20Constants.SUBJECT_TOKEN_TYPE, OAuth20TokenExchangeTypes.ACCESS_TOKEN.getType());
         request.addParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.TOKEN_EXCHANGE.getType());
         request.addParameter(OAuth20Constants.CLIENT_ID, service.getClientId());
-        assertTrue(validator.supports(context));
+        assertTrue(validator.supports(request, response));
         assertEquals(Ordered.LOWEST_PRECEDENCE, validator.getOrder());
     }
 
@@ -78,9 +74,9 @@ class OAuth20TokenExchangeGrantTypeTokenRequestValidatorTests extends AbstractOA
         val service = addRegisteredService(Set.of(OAuth20GrantTypes.TOKEN_EXCHANGE), UUID.randomUUID().toString(), UUID.randomUUID().toString());
         request.addParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.TOKEN_EXCHANGE.getType());
         request.addParameter(OAuth20Constants.CLIENT_ID, service.getClientId());
-        assertThrows(IllegalArgumentException.class, () -> validator.validate(context));
+        assertThrows(IllegalArgumentException.class, () -> validator.validate(request, response));
         request.addParameter(OAuth20Constants.SUBJECT_TOKEN_TYPE, OAuth20TokenExchangeTypes.ACCESS_TOKEN.getType());
-        assertThrows(IllegalArgumentException.class, () -> validator.validate(context));
+        assertThrows(IllegalArgumentException.class, () -> validator.validate(request, response));
     }
 
     @MethodSource("contextProvider")
@@ -100,7 +96,7 @@ class OAuth20TokenExchangeGrantTypeTokenRequestValidatorTests extends AbstractOA
 
         servicesManager.save(registeredService);
         authenticateClient(registeredService.getClientId());
-        assertEquals(expectation, validator.validate(context));
+        assertEquals(expectation, validator.validate(request, response));
     }
 
     @Test
@@ -123,10 +119,10 @@ class OAuth20TokenExchangeGrantTypeTokenRequestValidatorTests extends AbstractOA
         request.addParameter(OAuth20Constants.SUBJECT_TOKEN, subjectToken.getId());
         request.addParameter(OAuth20Constants.SUBJECT_TOKEN_TYPE, OAuth20TokenExchangeTypes.ACCESS_TOKEN.getType());
         request.addParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.TOKEN_EXCHANGE.getType());
-        assertTrue(validator.validate(context));
+        assertTrue(validator.validate(request, response));
 
         request.setParameter(OAuth20Constants.CLIENT_ID, subjectService.getClientId());
-        assertFalse(validator.validate(context));
+        assertFalse(validator.validate(request, response));
     }
 
     @Test
@@ -144,13 +140,13 @@ class OAuth20TokenExchangeGrantTypeTokenRequestValidatorTests extends AbstractOA
         request.addParameter(OAuth20Constants.SUBJECT_TOKEN_TYPE, OAuth20TokenExchangeTypes.ACCESS_TOKEN.getType());
         request.addParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.TOKEN_EXCHANGE.getType());
         request.addParameter(OAuth20Constants.RESOURCE, "https://api.example.org/backend");
-        assertTrue(validator.validate(context));
+        assertTrue(validator.validate(request, response));
 
         request.setParameter(OAuth20Constants.RESOURCE, "https://other.example.org/backend");
-        assertThrows(OAuth20InvalidTargetException.class, () -> validator.validate(context));
+        assertThrows(OAuth20InvalidTargetException.class, () -> validator.validate(request, response));
 
         request.setParameter(OAuth20Constants.RESOURCE, "https://cas.example.org/cas/mcp");
-        assertTrue(validator.validate(context));
+        assertTrue(validator.validate(request, response));
     }
 
     static Stream<Arguments> contextProvider() throws Exception {

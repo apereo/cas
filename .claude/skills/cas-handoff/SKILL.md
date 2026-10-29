@@ -7,7 +7,9 @@ description: "Finish and hand off a change in the CAS repository: Checkstyle on 
 
 Run these steps, in order, before reporting the work as done. The rules behind them follow.
 
-1. Compile what changed (see the `cas-testing` skill; in a sandbox without Gradle, the `cas-sandbox-verification` skill).
+1. Compile what changed, main and test sources, with Error Prone, each changed module on its own class path so a
+   missing test dependency shows (see Conventions in AGENTS.md, the `cas-testing` skill and, in a sandbox without
+   Gradle, the `cas-sandbox-verification` skill).
 2. Run Checkstyle on every changed Java file (rule below), and fix overloads, imports and file length it reports.
 3. Run `git --no-optional-locks diff --check`.
 4. Cross-check the puppeteer scenarios that cover the change and update them (`cas-puppeteer-scenarios` skill).

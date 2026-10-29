@@ -4,6 +4,7 @@ const assert = require("assert");
 const SIGNING_SECRET = "Jq3wB7zH5nVxR2kP9cTfL4mYsD8gE6aU1oWiN0bQhZrXtKvCjMeSpFyGdAlOuI2w";
 const WRONG_SECRET = "Zx9vB3nM6qW1eR4tY7uI0oP2aS5dF8gH1jK4lZ7xC0vB3nM6qW9eR2tY5uI8oP1a";
 const SIGNED_SERVICE = "https://localhost:9859/anything/signed";
+const SERVICE_WITHOUT_SECRET = "https://localhost:9859/anything/nosecret";
 const UNREGISTERED_SERVICE = "https://localhost:9859/anything/unregistered";
 
 const base64Url = (value) => Buffer.from(JSON.stringify(value)).toString("base64url");
@@ -46,7 +47,7 @@ async function assertRejected(page, description, token, service = SIGNED_SERVICE
     await attemptLogin(page, service, token);
     await cas.assertTicketParameter(page, false);
     await cas.assertCookie(page, false);
-    if (service === SIGNED_SERVICE) {
+    if (service !== UNREGISTERED_SERVICE) {
         await cas.assertVisibility(page, "#username");
     } else {
         await cas.assertInnerText(page, "#content h2", "Application Not Authorized to Use CAS");
@@ -70,6 +71,10 @@ async function assertRejected(page, description, token, service = SIGNED_SERVICE
     await assertRejected(page, "an unsigned token for a service that requires a signature",
         unsignedToken({sub: "casuser", iat: now, exp: now + 300}));
     await assertRejected(page, "a valid token for a service that is not registered", valid, UNREGISTERED_SERVICE);
+    await assertRejected(page, "an unsigned token for a service that defines no signing secret",
+        unsignedToken({sub: "casuser", iat: now, exp: now + 300}), SERVICE_WITHOUT_SECRET);
+    await assertRejected(page, "a token for a service that defines no signing secret",
+        await cas.createJwt({sub: "casuser"}, WRONG_SECRET, "HS256", {expiresIn: "5m"}), SERVICE_WITHOUT_SECRET);
 
     await cas.log("The service still accepts a valid token after the rejected attempts");
     await assertAccepted(page, valid);

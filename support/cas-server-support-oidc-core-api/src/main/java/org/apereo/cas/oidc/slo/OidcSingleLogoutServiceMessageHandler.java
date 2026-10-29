@@ -26,7 +26,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.hc.core5.http.HttpResponse;
 import org.jose4j.jwt.ReservedClaimNames;
-import org.pac4j.core.util.CommonHelper;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -80,9 +79,9 @@ public class OidcSingleLogoutServiceMessageHandler extends BaseSingleLogoutServi
                 var newSloUrl = url;
                 val logoutType = url.getLogoutType();
                 if (logoutType == RegisteredServiceLogoutType.FRONT_CHANNEL) {
-                    var newUrl = CommonHelper.addParameter(url.getUrl(), ReservedClaimNames.ISSUER,
+                    var newUrl = addParameter(url.getUrl(), ReservedClaimNames.ISSUER,
                         issuerService.determineIssuer(Optional.empty()));
-                    newUrl = CommonHelper.addParameter(newUrl, OidcConstants.CLAIM_SESSION_ID,
+                    newUrl = addParameter(newUrl, OidcConstants.CLAIM_SESSION_ID,
                         DigestUtils.sha(DigestUtils.sha512(context.getTicketGrantingTicket().getId())));
                     newSloUrl = new SingleLogoutUrl(newUrl, RegisteredServiceLogoutType.FRONT_CHANNEL);
                 }
@@ -90,6 +89,18 @@ public class OidcSingleLogoutServiceMessageHandler extends BaseSingleLogoutServi
             })
             .filter(Objects::nonNull)
             .collect(Collectors.toList());
+    }
+
+    /**
+     * Add a query parameter, URL-encoded, to the end of the URL, as pac4j's {@code CommonHelper.addParameter} did.
+     *
+     * @param url   the url
+     * @param name  the parameter name
+     * @param value the parameter value
+     * @return the url with the parameter
+     */
+    protected static String addParameter(final String url, final String name, final String value) {
+        return url + (url.contains("?") ? '&' : '?') + name + '=' + URLEncoder.encode(value, StandardCharsets.UTF_8);
     }
 
     @Override

@@ -20,9 +20,9 @@ import org.apereo.cas.support.oauth.web.response.accesstoken.ext.BaseAccessToken
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.pac4j.core.context.WebContext;
-import org.pac4j.core.profile.ProfileManager;
 import org.springframework.beans.factory.ObjectProvider;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * This is {@link AccessTokenCibaGrantRequestExtractor}.
@@ -41,25 +41,26 @@ public class AccessTokenCibaGrantRequestExtractor extends BaseAccessTokenGrantRe
      * {@code expired_token}, and a request the end-user has not approved yet as {@code authorization_pending}
      * (CIBA Core 1.0, section 11).
      *
-     * @param context the context
+     * @param request  the request
+     * @param response the response
      * @return the access token request context
      * @throws Throwable the throwable
      */
     @Override
-    protected AccessTokenRequestContext extractRequest(final WebContext context) throws Throwable {
+    protected AccessTokenRequestContext extractRequest(final HttpServletRequest request, final HttpServletResponse response) throws Throwable {
         val configurationContext = getConfigurationContext().getObject();
-        val manager = new ProfileManager(context, configurationContext.getSessionStore());
-        val profile = manager.getProfile().orElseThrow(() -> UnauthorizedServiceException.denied("OAuth user profile cannot be determined"));
-        val clientId = profile.getAttribute(OAuth20Constants.CLIENT_ID).toString();
+        val profile = OAuth20Utils.findAuthenticatedUserProfile(request, response, configurationContext.getSessionStore())
+            .orElseThrow(() -> UnauthorizedServiceException.denied("OAuth user profile cannot be determined"));
+        val clientId = Objects.requireNonNull(profile.getAttribute(OAuth20Constants.CLIENT_ID)).toString();
         LOGGER.debug("Locating OAuth registered service by client id [{}]", clientId);
 
         val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(configurationContext.getServicesManager(), clientId, OidcRegisteredService.class);
         LOGGER.debug("Located registered service [{}]", registeredService);
 
         val authRequestId = configurationContext.getRequestParameterResolver()
-            .resolveRequestParameter(context, OidcConstants.AUTH_REQ_ID).orElseThrow();
+            .resolveRequestParameter(request, OidcConstants.AUTH_REQ_ID).orElseThrow();
         val service = configurationContext.getAuthenticationBuilder()
-            .buildService(registeredService, context, true);
+            .buildService(registeredService, request, true);
 
         val cibaFactory = (OidcCibaRequestFactory) configurationContext.getTicketFactory().get(OidcCibaRequest.class);
         val decodedId = cibaFactory.decodeId(authRequestId);
@@ -112,12 +113,12 @@ public class AccessTokenCibaGrantRequestExtractor extends BaseAccessTokenGrantRe
     }
 
     @Override
-    public boolean supports(final WebContext context) {
+    public boolean supports(final HttpServletRequest request) {
         val configurationContext = getConfigurationContext().getObject();
         val grantType = configurationContext.getRequestParameterResolver()
-            .resolveRequestParameter(context, OAuth20Constants.GRANT_TYPE).orElse(StringUtils.EMPTY);
+            .resolveRequestParameter(request, OAuth20Constants.GRANT_TYPE).orElse(StringUtils.EMPTY);
         val authRequestId = configurationContext.getRequestParameterResolver()
-            .resolveRequestParameter(context, OidcConstants.AUTH_REQ_ID);
+            .resolveRequestParameter(request, OidcConstants.AUTH_REQ_ID);
         return OAuth20Utils.isGrantType(grantType, getGrantType()) && authRequestId.isPresent();
     }
 

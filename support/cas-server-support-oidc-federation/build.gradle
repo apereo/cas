@@ -24,7 +24,6 @@ dependencies {
 
     implementation libraries.nimbus
     implementation libraries.jose4j
-    implementation libraries.pac4jcore
 
     testImplementation project(":core:cas-server-core-multitenancy")
     testImplementation project(":core:cas-server-core-configuration")

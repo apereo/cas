@@ -37,7 +37,7 @@ import tools.jackson.databind.ObjectMapper;
  * DPoP confirmation, requested claims, the request parameters (client credentials excluded), the principal id,
  * date and attributes of the authentication built for the request, and the requested resource indicators.
  * The registered service is looked up again by client id, and the ticket is created again by the pushed
- * authorization request factory. The pac4j profile of the client that pushed the request is not kept.
+ * authorization request factory. The profile of the client that pushed the request is not kept.
  *
  * @author Misagh Moayyed
  * @since 8.1.0

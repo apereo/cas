@@ -10,7 +10,6 @@ import org.apereo.cas.support.oauth.validator.OAuth20DPoPNonceService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
-import org.pac4j.jee.context.JEEContext;
 import org.springframework.http.CacheControl;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -65,7 +64,7 @@ public class OidcClientAttestationChallengeEndpointController extends BaseOidcCo
             return ResponseEntity.notFound().build();
         }
         if (dpopNonceService.isEnabled()) {
-            dpopNonceService.provide(new JEEContext(request, response));
+            dpopNonceService.provide(response);
         }
         return ResponseEntity.ok()
             .cacheControl(CacheControl.noStore())

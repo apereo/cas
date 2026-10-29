@@ -13,6 +13,7 @@ import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.util.http.HttpRequestUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import com.nimbusds.jwt.JWTClaimsSet;
 import lombok.RequiredArgsConstructor;
@@ -24,12 +25,9 @@ import org.apache.hc.core5.net.URIBuilder;
 import org.hjson.JsonValue;
 import org.jooq.lambda.Unchecked;
 import org.jspecify.annotations.Nullable;
-import org.pac4j.core.context.CallContext;
-import org.pac4j.core.context.WebContext;
-import org.pac4j.core.context.WebContextHelper;
-import org.pac4j.core.credentials.UsernamePasswordCredentials;
-import org.pac4j.core.credentials.extractor.BasicAuthExtractor;
+import org.springframework.security.authentication.BadCredentialsException;
 import tools.jackson.databind.ObjectMapper;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * This is {@link DefaultOAuth20RequestParameterResolver}.
@@ -46,9 +44,9 @@ public class DefaultOAuth20RequestParameterResolver implements OAuth20RequestPar
     protected final JwtBuilder jwtBuilder;
 
     @Override
-    public OAuth20ResponseTypes resolveResponseType(final WebContext context) {
-        val responseTypesSupport = getResponseTypesSupported(context);
-        val responseType = resolveRequestParameter(context, OAuth20Constants.RESPONSE_TYPE)
+    public OAuth20ResponseTypes resolveResponseType(final HttpServletRequest request) {
+        val responseTypesSupport = getResponseTypesSupported(request);
+        val responseType = resolveRequestParameter(request, OAuth20Constants.RESPONSE_TYPE)
             .map(String::valueOf)
             .filter(typeName -> responseTypesSupport.stream().anyMatch(supported -> "*".equalsIgnoreCase(supported) || supported.equalsIgnoreCase(typeName)))
             .orElse(StringUtils.EMPTY);
@@ -61,9 +59,9 @@ public class DefaultOAuth20RequestParameterResolver implements OAuth20RequestPar
     }
     
     @Override
-    public OAuth20GrantTypes resolveGrantType(final WebContext context) {
-        val grantTypesSupport = getGrantTypesSupported(context);
-        val grantType = resolveRequestParameter(context, OAuth20Constants.GRANT_TYPE)
+    public OAuth20GrantTypes resolveGrantType(final HttpServletRequest request) {
+        val grantTypesSupport = getGrantTypesSupported(request);
+        val grantType = resolveRequestParameter(request, OAuth20Constants.GRANT_TYPE)
             .map(String::valueOf)
             .filter(typeName -> grantTypesSupport.stream().anyMatch(supported -> "*".equalsIgnoreCase(supported) || supported.equalsIgnoreCase(typeName)))
             .orElse(StringUtils.EMPTY);
@@ -76,9 +74,9 @@ public class DefaultOAuth20RequestParameterResolver implements OAuth20RequestPar
     }
 
     @Override
-    public OAuth20ResponseModeTypes resolveResponseModeType(final WebContext context) {
-        val supportedResponseModes = getResponseModesSupported(context);
-        val responseType = resolveRequestParameter(context, OAuth20Constants.RESPONSE_MODE)
+    public OAuth20ResponseModeTypes resolveResponseModeType(final HttpServletRequest request) {
+        val supportedResponseModes = getResponseModesSupported(request);
+        val responseType = resolveRequestParameter(request, OAuth20Constants.RESPONSE_MODE)
             .map(String::valueOf)
             .filter(typeName -> supportedResponseModes.stream().anyMatch(supported -> "*".equalsIgnoreCase(supported) || supported.equalsIgnoreCase(typeName)))
             .orElse(StringUtils.EMPTY);
@@ -103,9 +101,9 @@ public class DefaultOAuth20RequestParameterResolver implements OAuth20RequestPar
      * comes from the same claims.
      */
     @Override
-    public <T> @Nullable T resolveJwtRequestParameter(final WebContext context, final String jwtRequest,
+    public <T> @Nullable T resolveJwtRequestParameter(final HttpServletRequest request, final String jwtRequest,
                                             final String name, final Class<T> clazz) {
-        val jwt = unpackJwtRequest(context, jwtRequest);
+        val jwt = unpackJwtRequest(request, jwtRequest);
         return jwt == null ? null : FunctionUtils.doUnchecked(() -> getJwtRequestClaim(jwt, name, clazz));
     }
 
@@ -126,27 +124,27 @@ public class DefaultOAuth20RequestParameterResolver implements OAuth20RequestPar
         return parameters;
     }
 
-    private @Nullable JWTClaimsSet unpackJwtRequest(final WebContext context, final String jwtRequest) {
-        val unpackedRequest = context.getRequestAttribute(UnpackedJwtRequest.class.getName()).orElse(null);
-        if (unpackedRequest instanceof UnpackedJwtRequest(String request, JWTClaimsSet claims) && request.equals(jwtRequest)) {
+    private @Nullable JWTClaimsSet unpackJwtRequest(final HttpServletRequest request, final String jwtRequest) {
+        val unpackedRequest = request.getAttribute(UnpackedJwtRequest.class.getName());
+        if (unpackedRequest instanceof UnpackedJwtRequest(String requestObject, JWTClaimsSet claims) && requestObject.equals(jwtRequest)) {
             return claims;
         }
-        val id = context.getRequestParameter(OAuth20Constants.CLIENT_ID).orElse(StringUtils.EMPTY);
+        val id = Objects.requireNonNullElse(request.getParameter(OAuth20Constants.CLIENT_ID), StringUtils.EMPTY);
         val service = OAuth20Utils.getRegisteredOAuthServiceByClientId(jwtBuilder.getServicesManager(), id);
         val jwt = jwtBuilder.unpack(Optional.ofNullable(service), jwtRequest);
         if (jwt != null) {
-            context.setRequestAttribute(UnpackedJwtRequest.class.getName(), new UnpackedJwtRequest(jwtRequest, jwt));
+            request.setAttribute(UnpackedJwtRequest.class.getName(), new UnpackedJwtRequest(jwtRequest, jwt));
         }
         return jwt;
     }
 
     @Override
     public Map<String, Set<String>> resolveRequestParameters(final Collection<String> attributes,
-                                                             final WebContext context) {
+                                                             final HttpServletRequest request) {
         return attributes
             .stream()
             .map(name -> {
-                val values = resolveRequestParameter(context, name)
+                val values = resolveRequestParameter(request, name)
                     .map(EncodingUtils::urlDecode)
                     .map(value -> Arrays.stream(value.split(" ")).collect(Collectors.toSet()))
                     .orElseGet(Set::of);
@@ -156,26 +154,26 @@ public class DefaultOAuth20RequestParameterResolver implements OAuth20RequestPar
     }
 
     @Override
-    public Set<String> resolveRequestParameters(final WebContext context, final String name) {
-        return resolveRequestParameters(List.of(name), context).getOrDefault(name, Set.of());
+    public Set<String> resolveRequestParameters(final HttpServletRequest request, final String name) {
+        return resolveRequestParameters(List.of(name), request).getOrDefault(name, Set.of());
     }
 
     @Override
-    public Optional<String> resolveRequestParameter(final WebContext context,
+    public Optional<String> resolveRequestParameter(final HttpServletRequest request,
                                                     final String name) {
-        return resolveRequestParameter(context, name, String.class);
+        return resolveRequestParameter(request, name, String.class);
     }
 
     @Override
-    public <T> Optional<T> resolveRequestParameter(final WebContext context,
+    public <T> Optional<T> resolveRequestParameter(final HttpServletRequest request,
                                                    final String name,
                                                    final Class<T> clazz) {
-        val supported = isRequestParameterSupported(context);
-        return context.getRequestParameter(OAuth20Constants.REQUEST)
+        val supported = isRequestParameterSupported(request);
+        return Optional.ofNullable(request.getParameter(OAuth20Constants.REQUEST))
             .filter(parameterValue -> supported)
-            .map(Unchecked.function(jwtRequest -> resolveJwtRequestParameter(context, jwtRequest, name, clazz)))
+            .map(Unchecked.function(jwtRequest -> resolveJwtRequestParameter(request, jwtRequest, name, clazz)))
             .or(() -> {
-                val values = context.getRequestParameters().get(name);
+                val values = request.getParameterMap().get(name);
                 if (values != null && values.length > 0) {
                     if (clazz.isArray()) {
                         return Optional.of(clazz.cast(values));
@@ -203,12 +201,12 @@ public class DefaultOAuth20RequestParameterResolver implements OAuth20RequestPar
     
 
     @Override
-    public Collection<String> resolveRequestedScopes(final WebContext context) {
-        val map = resolveRequestParameters(CollectionUtils.wrap(OAuth20Constants.SCOPE), context);
+    public Collection<String> resolveRequestedScopes(final HttpServletRequest request) {
+        val map = resolveRequestParameters(CollectionUtils.wrap(OAuth20Constants.SCOPE), request);
         if (map == null || map.isEmpty()) {
             return new HashSet<>();
         }
-        val supported = getSupportedScopes(context);
+        val supported = getSupportedScopes(request);
         val results = new LinkedHashSet<>(map.get(OAuth20Constants.SCOPE));
         if (!supported.contains("*")) {
             results.retainAll(supported);
@@ -217,18 +215,18 @@ public class DefaultOAuth20RequestParameterResolver implements OAuth20RequestPar
     }
 
     @Override
-    public Set<String> resolveRequestedResources(final WebContext context) {
-        return resolveRequestParameter(context, OAuth20Constants.RESOURCE, String[].class)
+    public Set<String> resolveRequestedResources(final HttpServletRequest request) {
+        return resolveRequestParameter(request, OAuth20Constants.RESOURCE, String[].class)
             .map(Arrays::stream)
             .orElseGet(Stream::empty)
             .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
     @Override
-    public boolean isAuthorizedResourceForService(final WebContext context,
+    public boolean isAuthorizedResourceForService(final HttpServletRequest request,
                                                   final OAuthRegisteredService registeredService) {
         val allowedResources = resolveAllowedResources(registeredService);
-        return resolveRequestedResources(context).stream().allMatch(resource -> {
+        return resolveRequestedResources(request).stream().allMatch(resource -> {
             if (RegisteredServiceOAuthResourceMatcher.isValidResource(resource)
                 && RegisteredServiceOAuthResourceMatcher.isResourceAllowed(allowedResources, resource)) {
                 return true;
@@ -246,18 +244,18 @@ public class DefaultOAuth20RequestParameterResolver implements OAuth20RequestPar
     }
 
     @Override
-    public boolean isAuthorizedGrantTypeForService(final WebContext context,
+    public boolean isAuthorizedGrantTypeForService(final HttpServletRequest request,
                                                    final OAuthRegisteredService registeredService) {
-        val grantType = resolveRequestParameter(context, OAuth20Constants.GRANT_TYPE)
+        val grantType = resolveRequestParameter(request, OAuth20Constants.GRANT_TYPE)
             .map(String::valueOf).orElse(StringUtils.EMPTY);
         return OAuth20RequestParameterResolver.isAuthorizedGrantTypeForService(grantType, registeredService);
     }
 
     @Override
-    public boolean isAuthorizedResponseTypeForService(final WebContext context,
+    public boolean isAuthorizedResponseTypeForService(final HttpServletRequest request,
                                                       final OAuthRegisteredService registeredService) {
         if (registeredService.getSupportedResponseTypes() != null && !registeredService.getSupportedResponseTypes().isEmpty()) {
-            val responseType = resolveRequestParameter(context, OAuth20Constants.RESPONSE_TYPE)
+            val responseType = resolveRequestParameter(request, OAuth20Constants.RESPONSE_TYPE)
                 .map(String::valueOf).orElse(StringUtils.EMPTY);
             if (registeredService.getSupportedResponseTypes().stream().anyMatch(s -> s.equalsIgnoreCase(responseType))) {
                 return true;
@@ -273,27 +271,36 @@ public class DefaultOAuth20RequestParameterResolver implements OAuth20RequestPar
     }
 
     @Override
-    public Pair<String, String> resolveClientIdAndClientSecret(final CallContext callContext) {
-        val extractor = new BasicAuthExtractor();
-        val upcResult = extractor.extract(callContext);
-        if (upcResult.isPresent()) {
-            val upc = (UsernamePasswordCredentials) upcResult.get();
-            return Pair.of(upc.getUsername(), upc.getPassword());
+    public Pair<String, String> resolveClientIdAndClientSecret(final HttpServletRequest request) {
+        val basicCredentials = resolveBasicAuthorizationCredentials(request);
+        if (basicCredentials.isPresent()) {
+            return basicCredentials.get();
         }
-        val clientId = resolveRequestParameter(callContext.webContext(), OAuth20Constants.CLIENT_ID)
+        val clientId = resolveRequestParameter(request, OAuth20Constants.CLIENT_ID)
             .map(String::valueOf).orElse(StringUtils.EMPTY);
-        val clientSecret = resolveRequestParameter(callContext.webContext(), OAuth20Constants.CLIENT_SECRET)
+        val clientSecret = resolveRequestParameter(request, OAuth20Constants.CLIENT_SECRET)
             .map(String::valueOf).orElse(StringUtils.EMPTY);
         return Pair.of(clientId, clientSecret);
     }
 
+    /**
+     * Read the client id and secret of the HTTP Basic {@code Authorization} header, form-url-decoded (RFC 6749, section 2.3.1).
+     * A header that is not a Basic one, or that cannot be decoded, fails with a {@link BadCredentialsException}.
+     *
+     * @param request the request
+     * @return the client id and secret, if the request carries the header
+     */
+    protected Optional<Pair<String, String>> resolveBasicAuthorizationCredentials(final HttpServletRequest request) {
+        return OAuth20Utils.readClientBasicAuthorization(request);
+    }
+
     @Override
-    public Set<String> resolveRequestScopes(final WebContext context) {
-        val parameterValues = resolveRequestParameter(context, OAuth20Constants.SCOPE);
+    public Set<String> resolveRequestScopes(final HttpServletRequest request) {
+        val parameterValues = resolveRequestParameter(request, OAuth20Constants.SCOPE);
         if (parameterValues.isEmpty()) {
             return new HashSet<>();
         }
-        val supported = getSupportedScopes(context);
+        val supported = getSupportedScopes(request);
         val results = CollectionUtils.wrapSet(parameterValues.get().split(" "));
         if (!supported.contains("*")) {
             results.retainAll(supported);
@@ -302,11 +309,11 @@ public class DefaultOAuth20RequestParameterResolver implements OAuth20RequestPar
     }
 
     @Override
-    public Map<String, Map<String, Object>> resolveRequestClaims(final WebContext context) {
-        val supported = isClaimsParameterSupported(context);
+    public Map<String, Map<String, Object>> resolveRequestClaims(final HttpServletRequest request) {
+        val supported = isClaimsParameterSupported(request);
 
         val claims = FunctionUtils.doIf(supported,
-            () -> resolveRequestParameter(context, OAuth20Constants.CLAIMS).map(String::valueOf).orElse(StringUtils.EMPTY),
+            () -> resolveRequestParameter(request, OAuth20Constants.CLAIMS).map(String::valueOf).orElse(StringUtils.EMPTY),
             () -> StringUtils.EMPTY).get();
 
         if (StringUtils.isBlank(claims)) {
@@ -317,62 +324,88 @@ public class DefaultOAuth20RequestParameterResolver implements OAuth20RequestPar
     
 
     @Override
-    public Set<String> resolveUserInfoRequestClaims(final WebContext context) {
-        val requestedClaims = resolveRequestClaims(context);
+    public Set<String> resolveUserInfoRequestClaims(final HttpServletRequest request) {
+        val requestedClaims = resolveRequestClaims(request);
         val userInfo = requestedClaims.getOrDefault(OAuth20Constants.CLAIMS_USERINFO, new HashMap<>());
         return new TreeSet<>(userInfo.keySet());
     }
 
+    /**
+     * The prompt values of the request: those of its query, and those of its form body, since an authorization request may
+     * be a {@code POST} (OpenID Connect Core, section 3.1.2.1). A {@code POST} that goes to the login is saved as a
+     * {@code GET} with its parameters, so the callback sees, and removes after a fresh login, the same values. A
+     * {@code prompt} inside a request object is not read: the URL of the saved request cannot be rewritten to drop it after a
+     * fresh login, so honoring it would send the browser back to the login without end.
+     *
+     * @param request the request
+     * @return the prompt values
+     */
     @Override
-    public Set<String> resolveRequestedPromptValues(final WebContext context) {
-        val url = context.getFullRequestURL();
-        return FunctionUtils.doUnchecked(() -> new URIBuilder(url).getQueryParams()
+    public Set<String> resolveRequestedPromptValues(final HttpServletRequest request) {
+        val values = new LinkedHashSet<>(readPromptValues(HttpRequestUtils.getFullRequestUrl(request)));
+        Optional.ofNullable(request.getParameterValues(OAuth20Constants.PROMPT))
             .stream()
-            .filter(p -> OAuth20Constants.PROMPT.equals(p.getName()))
-            .map(param -> param.getValue().split(" "))
             .flatMap(Arrays::stream)
-            .collect(Collectors.toSet()));
+            .map(value -> StringUtils.split(value, ' '))
+            .flatMap(Arrays::stream)
+            .forEach(values::add);
+        return values;
     }
 
     @Override
     public Set<String> resolveSupportedPromptValues(final String url) {
-        val supported = getPromptValuesSupported();
-        return FunctionUtils.doUnchecked(() -> new URIBuilder(url).getQueryParams()
-            .stream()
-            .filter(p -> OAuth20Constants.PROMPT.equals(p.getName()))
-            .map(param -> param.getValue().split(" "))
-            .flatMap(Arrays::stream)
-            .filter(value -> supported.stream().anyMatch(supportedValue -> "*".equalsIgnoreCase(supportedValue) || supportedValue.equalsIgnoreCase(value)))
-            .collect(Collectors.toSet()));
+        return filterSupportedPromptValues(readPromptValues(url));
     }
-    
 
     @Override
-    public boolean isParameterOnQueryString(final WebContext context, final String name) {
-        return WebContextHelper.isQueryStringParameter(context, name);
+    public Set<String> resolveSupportedPromptValues(final HttpServletRequest request) {
+        return filterSupportedPromptValues(resolveRequestedPromptValues(request));
     }
 
-    protected List<String> getSupportedScopes(final WebContext context) {
+    private Set<String> filterSupportedPromptValues(final Collection<String> values) {
+        val supported = getPromptValuesSupported();
+        return values
+            .stream()
+            .filter(value -> supported.stream().anyMatch(supportedValue -> "*".equalsIgnoreCase(supportedValue) || supportedValue.equalsIgnoreCase(value)))
+            .collect(Collectors.toSet());
+    }
+
+    private static Set<String> readPromptValues(final String url) {
+        return FunctionUtils.doUnchecked(() -> new URIBuilder(url).setPlusAsBlank(true).getQueryParams()
+            .stream()
+            .filter(param -> OAuth20Constants.PROMPT.equals(param.getName()))
+            .map(param -> StringUtils.split(Objects.toString(param.getValue(), StringUtils.EMPTY), ' '))
+            .flatMap(Arrays::stream)
+            .collect(Collectors.toCollection(LinkedHashSet::new)));
+    }
+
+    @Override
+    public boolean isParameterOnQueryString(final HttpServletRequest request, final String name) {
+        val queryString = request.getQueryString();
+        return queryString != null && request.getParameter(name) != null && queryString.contains(name + '=');
+    }
+
+    protected List<String> getSupportedScopes(final HttpServletRequest request) {
         return List.of("*");
     }
     
-    protected List<String> getResponseTypesSupported(final WebContext context) {
+    protected List<String> getResponseTypesSupported(final HttpServletRequest request) {
         return List.of("*");
     }
 
-    protected List<String> getGrantTypesSupported(final WebContext context) {
+    protected List<String> getGrantTypesSupported(final HttpServletRequest request) {
         return List.of("*");
     }
 
-    protected List<String> getResponseModesSupported(final WebContext context) {
+    protected List<String> getResponseModesSupported(final HttpServletRequest request) {
         return List.of("*");
     }
 
-    protected boolean isRequestParameterSupported(final WebContext context) {
+    protected boolean isRequestParameterSupported(final HttpServletRequest request) {
         return true;
     }
 
-    protected boolean isClaimsParameterSupported(final WebContext context) {
+    protected boolean isClaimsParameterSupported(final HttpServletRequest request) {
         return true;
     }
 

@@ -10,7 +10,6 @@ import org.apereo.cas.util.CollectionUtils;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.pac4j.jee.context.JEEContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -40,14 +39,13 @@ class OAuth20IdTokenResponseTypeAuthorizationRequestValidatorTests extends Abstr
 
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
-        val context = new JEEContext(request, response);
 
         request.setParameter(OAuth20Constants.RESPONSE_TYPE, OAuth20ResponseTypes.CODE.getType());
         request.setParameter(OAuth20Constants.CLIENT_ID, "client");
         request.setParameter(OAuth20Constants.REDIRECT_URI, service.getServiceId());
-        assertFalse(oauthIdTokenResponseTypeRequestValidator.supports(context));
+        assertFalse(oauthIdTokenResponseTypeRequestValidator.supports(request, response));
 
         request.setParameter(OAuth20Constants.RESPONSE_TYPE, OAuth20ResponseTypes.ID_TOKEN.getType());
-        assertTrue(oauthIdTokenResponseTypeRequestValidator.supports(context));
+        assertTrue(oauthIdTokenResponseTypeRequestValidator.supports(request, response));
     }
 }

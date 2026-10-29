@@ -12,8 +12,11 @@ import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseModeTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
+import org.apereo.cas.support.oauth.profile.OAuth20UserProfile;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.services.RegisteredServiceOAuthResourceMatcher;
+import org.apereo.cas.support.oauth.validator.DPoPBoundAccessTokenDowngradeException;
+import org.apereo.cas.support.oauth.validator.OAuth20ProofOfPossessionValidator;
 import org.apereo.cas.support.oauth.validator.token.OAuth20InvalidTargetException;
 import org.apereo.cas.support.oauth.web.OAuth20RequestParameterResolver;
 import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20TokenGeneratedResult;
@@ -29,31 +32,35 @@ import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.DigestUtils;
 import org.apereo.cas.util.EncodingUtils;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.util.http.HttpRequestUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
+import org.apereo.cas.web.CasSessionStore;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import com.nimbusds.jose.JWSAlgorithm;
+import com.nimbusds.jwt.JWTClaimsSet;
+import com.nimbusds.jwt.JWTParser;
 import com.nimbusds.oauth2.sdk.client.RedirectURIValidator;
+import com.nimbusds.oauth2.sdk.dpop.verifiers.InvalidDPoPNonceException;
 import com.nimbusds.oauth2.sdk.token.DPoPTokenError;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
+import org.apache.commons.lang3.tuple.Pair;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
-import org.pac4j.core.context.CallContext;
-import org.pac4j.core.context.WebContext;
-import org.pac4j.core.context.session.SessionStore;
-import org.pac4j.core.profile.ProfileManager;
-import org.pac4j.core.profile.UserProfile;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.json.JacksonJsonView;
 import tools.jackson.core.type.TypeReference;
 import tools.jackson.databind.json.JsonMapper;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.security.cert.X509Certificate;
 
@@ -73,6 +80,14 @@ public class OAuth20Utils {
     public static final String REDEEMED_CODE_TOKENS = "oauthTokensIssuedFromCode";
 
     private static final String X509_CERTIFICATE_REQUEST_ATTRIBUTE = "jakarta.servlet.request.X509Certificate";
+
+    private static final String BASIC_AUTHORIZATION_PREFIX = "Basic ";
+
+    private static final List<String> STATIC_RESOURCES = List.of(".css", ".js", ".png", ".jpg", ".ico", ".jpeg", ".bmp", ".gif");
+
+    private static final long STRICT_TRANSPORT_SECURITY_MAX_AGE = 15_768_000L;
+
+    private static final String REQUEST_ATTRIBUTE_CLIENT_ID_BY_REDIRECT_URI = OAuth20Utils.class.getName() + ".clientId";
 
     private static final JsonMapper MAPPER = JacksonObjectMapperFactory.builder()
         .singleArrayElementUnwrapped(true).build().toJsonMapper();
@@ -306,12 +321,12 @@ public class OAuth20Utils {
     /**
      * Gets service request header if any.
      *
-     * @param context the context
+     * @param request the request
      * @return the service request header if any
      */
-    public static String getServiceRequestHeaderIfAny(final WebContext context) {
-        return context.getRequestHeader(CasProtocolConstants.PARAMETER_SERVICE)
-            .or(() -> context.getRequestHeader("X-".concat(CasProtocolConstants.PARAMETER_SERVICE)))
+    public static String getServiceRequestHeaderIfAny(final HttpServletRequest request) {
+        return Optional.ofNullable(request.getHeader(CasProtocolConstants.PARAMETER_SERVICE))
+            .or(() -> Optional.ofNullable(request.getHeader("X-".concat(CasProtocolConstants.PARAMETER_SERVICE))))
             .orElse(StringUtils.EMPTY);
     }
 
@@ -361,7 +376,7 @@ public class OAuth20Utils {
      * @param profile the profile
      * @return the client id from authenticated profile
      */
-    public static @Nullable String getClientIdFromAuthenticatedProfile(final UserProfile profile) {
+    public static @Nullable String getClientIdFromAuthenticatedProfile(final OAuth20UserProfile profile) {
         val attrs = new HashMap<>(profile.getAttributes());
         if (attrs.containsKey(OAuth20Constants.CLIENT_ID)) {
             val attribute = attrs.get(OAuth20Constants.CLIENT_ID);
@@ -385,13 +400,13 @@ public class OAuth20Utils {
      * and reused by every authenticator, validator and extractor that handles the same request.
      *
      * @param <T>            the token type
-     * @param context        the web context
+     * @param request        the request
      * @param ticketRegistry the ticket registry
      * @param tokenId        the token id
      * @param clazz          the expected token type
      * @return the token, or null if it cannot be found or is of another type
      */
-    public static <T extends OAuth20Token> @Nullable T getRequestedOAuthToken(final WebContext context,
+    public static <T extends OAuth20Token> @Nullable T getRequestedOAuthToken(final HttpServletRequest request,
                                                                               final TicketRegistry ticketRegistry,
                                                                               final String tokenId,
                                                                               final Class<T> clazz) {
@@ -399,11 +414,11 @@ public class OAuth20Utils {
             return null;
         }
         val attributeName = OAuth20Token.class.getName() + '.' + tokenId;
-        val token = context.getRequestAttribute(attributeName)
+        val token = Optional.ofNullable(request.getAttribute(attributeName))
             .or(() -> Optional.ofNullable(FunctionUtils.doAndHandle(() -> ticketRegistry.getTicket(tokenId, OAuth20Token.class))))
             .orElse(null);
         if (token != null) {
-            context.setRequestAttribute(attributeName, token);
+            request.setAttribute(attributeName, token);
         }
         return clazz.isInstance(token) ? clazz.cast(token) : null;
     }
@@ -462,14 +477,158 @@ public class OAuth20Utils {
     /**
      * Gets authenticated user profile.
      *
-     * @param context      the context
+     * @param request      the request
+     * @param response     the response
      * @param sessionStore the session store
      * @return the authenticated user profile
      */
-    public UserProfile getAuthenticatedUserProfile(final WebContext context, final SessionStore sessionStore) {
-        val manager = new ProfileManager(context, sessionStore);
-        val profile = manager.getProfile();
-        return profile.orElseThrow(() -> new IllegalArgumentException("Unable to determine the user profile from the context"));
+    public OAuth20UserProfile getAuthenticatedUserProfile(final HttpServletRequest request, final HttpServletResponse response,
+                                                          final CasSessionStore sessionStore) {
+        return findAuthenticatedUserProfile(request, response, sessionStore)
+            .orElseThrow(() -> new IllegalArgumentException("Unable to determine the user profile from the request"));
+    }
+
+    /**
+     * Finds the authenticated user profile, the one that client authentication, an access token or the login handshake
+     * keeps for the request or, failing that, the one the login handshake keeps in the session.
+     *
+     * @param request      the request
+     * @param response     the response
+     * @param sessionStore the session store
+     * @return the authenticated user profile, if any
+     */
+    public Optional<OAuth20UserProfile> findAuthenticatedUserProfile(final HttpServletRequest request, final HttpServletResponse response,
+                                                                     final CasSessionStore sessionStore) {
+        if (request.getAttribute(OAuth20Constants.REQUEST_ATTRIBUTE_AUTHENTICATED_PROFILE) instanceof final OAuth20UserProfile profile) {
+            return Optional.of(profile);
+        }
+        return sessionStore.get(request, OAuth20Constants.SESSION_ATTRIBUTE_AUTHENTICATED_PROFILE)
+            .filter(OAuth20UserProfile.class::isInstance)
+            .map(OAuth20UserProfile.class::cast);
+    }
+
+    /**
+     * Read the client id and secret of the HTTP Basic {@code Authorization} header, the way client authentication reads
+     * them: the header must start with {@code Basic }, in any case (RFC 9110, section 11.1), and decode to {@code id:secret}.
+     *
+     * @param request the request
+     * @return the client id and secret, if the request carries the header
+     * @throws BadCredentialsException when the header is not a Basic one or cannot be decoded
+     */
+    public Optional<Pair<String, String>> readBasicAuthorization(final HttpServletRequest request) throws BadCredentialsException {
+        val header = request.getHeader(HttpHeaders.AUTHORIZATION);
+        if (header == null) {
+            return Optional.empty();
+        }
+        if (!Strings.CI.startsWith(header, BASIC_AUTHORIZATION_PREFIX)) {
+            throw new BadCredentialsException("Wrong prefix for header: " + HttpHeaders.AUTHORIZATION);
+        }
+        try {
+            val token = new String(Base64.getDecoder().decode(header.substring(BASIC_AUTHORIZATION_PREFIX.length())), StandardCharsets.UTF_8);
+            val delimiter = token.indexOf(':');
+            if (delimiter < 0) {
+                throw new BadCredentialsException("Bad format of the basic auth header");
+            }
+            return Optional.of(Pair.of(token.substring(0, delimiter), token.substring(delimiter + 1)));
+        } catch (final IllegalArgumentException e) {
+            throw new BadCredentialsException("Bad format of the basic auth header", e);
+        }
+    }
+
+    /**
+     * Read the client id and secret of the HTTP Basic {@code Authorization} header of a client authentication request.
+     * Both are form-url-decoded, as clients encode them before HTTP Basic encoding (RFC 6749, section 2.3.1).
+     *
+     * @param request the request
+     * @return the client id and secret, if the request carries the header
+     * @throws BadCredentialsException when the header is not a Basic one or cannot be decoded
+     */
+    public Optional<Pair<String, String>> readClientBasicAuthorization(final HttpServletRequest request) throws BadCredentialsException {
+        return readBasicAuthorization(request).map(credentials -> {
+            try {
+                return Pair.of(URLDecoder.decode(credentials.getLeft(), StandardCharsets.UTF_8),
+                    URLDecoder.decode(credentials.getRight(), StandardCharsets.UTF_8));
+            } catch (final IllegalArgumentException e) {
+                throw new BadCredentialsException("Client credentials of the basic auth header are not form-url-encoded", e);
+            }
+        });
+    }
+
+    /**
+     * The client a request is made for: its {@code client_id} parameter, or else the client named by its HTTP Basic
+     * credentials or by its client assertion, or else the client whose redirect URI the request carries.
+     * A client that authenticates with HTTP Basic, as a confidential client usually does at the token endpoint,
+     * sends no {@code client_id} parameter; its credentials name it, as does the assertion of a client that authenticates
+     * with {@code private_key_jwt} or {@code client_secret_jwt} (RFC 7523, section 3; OpenID Connect Core, section 9: its
+     * {@code iss} and {@code sub} are both the client id). The redirect URI lookup is kept for the request.
+     *
+     * @param request                  the request
+     * @param servicesManager          the services manager
+     * @param requestParameterResolver the request parameter resolver
+     * @return the client id, or an empty string
+     */
+    public String resolveClientIdFromRequest(final HttpServletRequest request, final ServicesManager servicesManager,
+                                             final OAuth20RequestParameterResolver requestParameterResolver) {
+        val clientId = requestParameterResolver.resolveRequestParameter(request, OAuth20Constants.CLIENT_ID)
+            .map(String::valueOf).orElse(StringUtils.EMPTY);
+        if (StringUtils.isNotBlank(clientId)) {
+            return clientId;
+        }
+        val redirectUri = requestParameterResolver.resolveRequestParameter(request, OAuth20Constants.REDIRECT_URI)
+            .map(String::valueOf).orElse(StringUtils.EMPTY);
+        validateRedirectUri(redirectUri, true);
+        return resolveClientIdFromBasicAuthentication(request, requestParameterResolver)
+            .or(() -> resolveClientIdFromAssertion(request, requestParameterResolver))
+            .orElseGet(() -> resolveClientIdByRedirectUri(request, servicesManager, redirectUri));
+    }
+
+    private static Optional<String> resolveClientIdFromBasicAuthentication(final HttpServletRequest request,
+                                                                           final OAuth20RequestParameterResolver requestParameterResolver) {
+        val authorization = Objects.requireNonNullElse(request.getHeader(HttpHeaders.AUTHORIZATION), StringUtils.EMPTY);
+        if (!Strings.CI.startsWith(authorization, BASIC_AUTHORIZATION_PREFIX)) {
+            return Optional.empty();
+        }
+        try {
+            return Optional.ofNullable(requestParameterResolver.resolveClientIdAndClientSecret(request).getLeft())
+                .filter(StringUtils::isNotBlank);
+        } catch (final BadCredentialsException e) {
+            LOGGER.debug("Unable to read client credentials from the authorization header: [{}]", e.getMessage());
+            return Optional.empty();
+        }
+    }
+
+    private static Optional<String> resolveClientIdFromAssertion(final HttpServletRequest request,
+                                                                 final OAuth20RequestParameterResolver requestParameterResolver) {
+        val assertionType = requestParameterResolver.resolveRequestParameter(request, OAuth20Constants.CLIENT_ASSERTION_TYPE)
+            .map(String::valueOf).orElse(StringUtils.EMPTY);
+        val assertion = requestParameterResolver.resolveRequestParameter(request, OAuth20Constants.CLIENT_ASSERTION)
+            .map(String::valueOf).orElse(StringUtils.EMPTY);
+        if (!OAuth20Constants.CLIENT_ASSERTION_TYPE_JWT_BEARER.equals(assertionType) || StringUtils.isBlank(assertion)) {
+            return Optional.empty();
+        }
+        try {
+            val claims = JWTParser.parse(assertion).getJWTClaimsSet();
+            return Optional.ofNullable(claims)
+                .map(JWTClaimsSet::getSubject)
+                .filter(StringUtils::isNotBlank)
+                .filter(subject -> subject.equals(claims.getIssuer()));
+        } catch (final Exception e) {
+            LOGGER.debug("Unable to read the client assertion to determine the client: [{}]", e.getMessage());
+            return Optional.empty();
+        }
+    }
+
+    private static String resolveClientIdByRedirectUri(final HttpServletRequest request, final ServicesManager servicesManager,
+                                                       final String redirectUri) {
+        val attributeName = REQUEST_ATTRIBUTE_CLIENT_ID_BY_REDIRECT_URI + ':' + redirectUri;
+        val resolvedClientId = request.getAttribute(attributeName);
+        if (resolvedClientId != null) {
+            return resolvedClientId.toString();
+        }
+        val svc = getRegisteredOAuthServiceByRedirectUri(servicesManager, redirectUri);
+        val clientId = svc != null ? svc.getClientId() : StringUtils.EMPTY;
+        request.setAttribute(attributeName, clientId);
+        return clientId;
     }
 
     /**
@@ -519,42 +678,40 @@ public class OAuth20Utils {
     /**
      * Is access token request?.
      *
-     * @param webContext the web context
+     * @param request the request
      * @return true or false
      */
-    public static boolean isAccessTokenRequest(final WebContext webContext) {
-        return (Boolean) webContext.getRequestAttribute(OAuth20Constants.REQUEST_ATTRIBUTE_ACCESS_TOKEN_REQUEST).orElse(false);
+    public static boolean isAccessTokenRequest(final HttpServletRequest request) {
+        return Boolean.TRUE.equals(request.getAttribute(OAuth20Constants.REQUEST_ATTRIBUTE_ACCESS_TOKEN_REQUEST));
+    }
+
+    /**
+     * Whether the request authenticates its client: an access token request, or a request to the revocation, pushed
+     * authorization, backchannel authentication or verifiable credential endpoints. Such requests use the client
+     * authentication method the client registered for the token endpoint (RFC 9126, section 2; CIBA, section 7.1).
+     *
+     * @param request the request
+     * @return true or false
+     */
+    public static boolean isClientAuthenticationRequest(final HttpServletRequest request) {
+        return isAccessTokenRequest(request)
+            || Boolean.TRUE.equals(request.getAttribute(OAuth20Constants.REQUEST_ATTRIBUTE_CLIENT_AUTHENTICATION_REQUEST));
     }
 
     /**
      * Is token authentication method supported for service.
      *
-     * @param callContext          the call context
+     * @param request              the request
      * @param registeredService    the registered service
      * @param authenticationMethod the authentication method
      * @return true/false
      */
-    public static boolean isTokenAuthenticationMethodSupportedFor(final CallContext callContext,
+    public static boolean isTokenAuthenticationMethodSupportedFor(final HttpServletRequest request,
                                                                   final OAuthRegisteredService registeredService,
                                                                   final OAuth20ClientAuthenticationMethods... authenticationMethod) {
-        return !OAuth20Utils.isAccessTokenRequest(callContext.webContext())
+        return !OAuth20Utils.isClientAuthenticationRequest(request)
             || StringUtils.isBlank(registeredService.getTokenEndpointAuthenticationMethod())
             || Arrays.stream(authenticationMethod).anyMatch(method -> Strings.CI.equals(registeredService.getTokenEndpointAuthenticationMethod(), method.getType()));
-    }
-
-    /**
-     * Find stateless ticket validation result.
-     *
-     * @param manager the manager
-     * @return the ticket validation result
-     */
-    public static Boolean isStatelessAuthentication(final ProfileManager manager) {
-        return manager
-            .getProfile()
-            .stream()
-            .map(OAuth20Utils::isStatelessAuthentication)
-            .findFirst()
-            .orElse(Boolean.FALSE);
     }
 
     /**
@@ -563,7 +720,7 @@ public class OAuth20Utils {
      * @param profile the profile
      * @return the ticket validation result
      */
-    public static Boolean isStatelessAuthentication(final UserProfile profile) {
+    public static Boolean isStatelessAuthentication(final OAuth20UserProfile profile) {
         val validationResult = (Boolean) profile.getAttribute(OAuth20Constants.CAS_OAUTH_STATELESS_PROPERTY);
         val principal = profile.getAttribute(Principal.class.getName());
         return validationResult != null && validationResult && principal != null;
@@ -638,17 +795,186 @@ public class OAuth20Utils {
      * Whether the request presents, over mutual TLS, the client certificate with the given thumbprint. The certificate is
      * the one the TLS layer exposes on the request, the same one client authentication at the token endpoint uses.
      *
-     * @param webContext            the web context
+     * @param request               the request
      * @param certificateThumbprint the thumbprint of the bound certificate
      * @return true when the presented certificate matches
      */
-    public static boolean isBoundCertificatePresented(final WebContext webContext, final String certificateThumbprint) {
-        return webContext.getRequestAttribute(X509_CERTIFICATE_REQUEST_ATTRIBUTE, X509Certificate[].class)
+    public static boolean isBoundCertificatePresented(final HttpServletRequest request, final String certificateThumbprint) {
+        return Optional.ofNullable((X509Certificate[]) request.getAttribute(X509_CERTIFICATE_REQUEST_ATTRIBUTE))
             .filter(certificates -> certificates.length > 0)
             .map(certificates -> computeCertificateThumbprint(certificates[0]))
             .filter(thumbprint -> MessageDigest.isEqual(thumbprint.getBytes(StandardCharsets.UTF_8),
                 certificateThumbprint.getBytes(StandardCharsets.UTF_8)))
             .isPresent();
+    }
+
+    /**
+     * Add the security headers that pac4j's security logic used to add to every request it protected: no caching unless
+     * the URL is a static resource, HSTS over a secure connection, and the content-type, framing and XSS protections.
+     *
+     * @param request  the request
+     * @param response the response
+     */
+    public static void addSecurityHeaders(final HttpServletRequest request, final HttpServletResponse response) {
+        val requestUrl = HttpRequestUtils.getFullRequestUrl(request).toLowerCase(Locale.ENGLISH);
+        if (STATIC_RESOURCES.stream().noneMatch(requestUrl::endsWith)) {
+            response.setHeader(HttpHeaders.CACHE_CONTROL, "no-cache, no-store, max-age=0, must-revalidate");
+            response.setHeader(HttpHeaders.PRAGMA, "no-cache");
+            response.setHeader(HttpHeaders.EXPIRES, "0");
+        }
+        if (request.isSecure() || "https".equalsIgnoreCase(request.getScheme())) {
+            response.setHeader("Strict-Transport-Security", "max-age=" + STRICT_TRANSPORT_SECURITY_MAX_AGE + " ; includeSubDomains");
+        }
+        response.setHeader("X-Content-Type-Options", "nosniff");
+        response.setHeader("X-Frame-Options", "DENY");
+        response.setHeader("X-XSS-Protection", "1; mode=block");
+    }
+
+    /**
+     * The access token carried by the {@code Authorization} header of a request to a protected resource. Plain tokens use
+     * the {@code Bearer} scheme of RFC 6750 and sender-constrained tokens the {@code DPoP} scheme of RFC 9449, section 7.1;
+     * CAS answers a token request with {@code token_type: DPoP} whenever a proof accompanied it, so protected resources accept
+     * both. Authentication schemes are case-insensitive (RFC 9110, section 11.1).
+     *
+     * @param request the request
+     * @return the access token carried by the authorization header, if any
+     */
+    public static Optional<String> extractAccessTokenFromAuthorizationHeader(final HttpServletRequest request) {
+        val authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
+        if (StringUtils.isBlank(authHeader)) {
+            return Optional.empty();
+        }
+        return Stream.of(OAuth20Constants.TOKEN_TYPE_BEARER, OAuth20Constants.TOKEN_TYPE_DPOP)
+            .filter(scheme -> Strings.CI.startsWith(authHeader, scheme + ' '))
+            .findFirst()
+            .map(scheme -> StringUtils.trimToNull(authHeader.substring(scheme.length() + 1)));
+    }
+
+    /**
+     * The authentication scheme the client used to present its access token, which is the scheme a
+     * {@code WWW-Authenticate} challenge has to answer in. Defaults to {@code Bearer} when the request carries no
+     * recognizable scheme, since that is what a client with no token should be told to use.
+     *
+     * @param request the request
+     * @return the authentication scheme
+     */
+    public static String resolveAuthorizationScheme(final HttpServletRequest request) {
+        val authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
+        return Strings.CI.startsWith(authHeader, OAuth20Constants.TOKEN_TYPE_DPOP + ' ')
+            ? OAuth20Constants.TOKEN_TYPE_DPOP
+            : OAuth20Constants.TOKEN_TYPE_BEARER;
+    }
+
+    /**
+     * The answer of a protected resource that refuses the request, with a {@code WWW-Authenticate} challenge. RFC 9110,
+     * section 15.5.2 makes the challenge mandatory on a {@code 401}, and RFC 6750, section 3 says to name the error only
+     * when the request actually presented credentials: a client that sent none is told which scheme to use and nothing
+     * more. The challenge answers in whichever scheme the client used, so a DPoP-bound token is not told to retry as a
+     * bearer token, and a DPoP-bound token sent as a bearer token is told so in the {@code Bearer} scheme (RFC 9449,
+     * section 7.2). A {@code DPoP} challenge lists the algorithms accepted for DPoP proofs in its {@code algs} parameter
+     * (RFC 9449, section 7.1), and an {@code insufficient_scope} challenge the scope the request needs (RFC 6750, section 3).
+     *
+     * @param request         the request
+     * @param status          the status, {@code 401} or, for {@code insufficient_scope}, {@code 403}
+     * @param error           the error code, or null when the request carried no token at all
+     * @param description     the error description
+     * @param scope           the scope the request needs, or null
+     * @param dpopAlgorithms  the JWS algorithms accepted for DPoP proofs
+     * @return the response entity
+     */
+    public static ResponseEntity protectedResourceErrorResponse(final HttpServletRequest request,
+                                                                final HttpStatus status,
+                                                                final @Nullable String error,
+                                                                final @Nullable String description,
+                                                                final @Nullable String scope,
+                                                                final Collection<JWSAlgorithm> dpopAlgorithms) {
+        val scheme = resolveAuthorizationScheme(request);
+        val parameters = new ArrayList<String>();
+        if (StringUtils.isNotBlank(error)) {
+            parameters.add("error=\"%s\"".formatted(error));
+            if (StringUtils.isNotBlank(description)) {
+                parameters.add("error_description=\"%s\"".formatted(toChallengeValue(description)));
+            }
+            if (StringUtils.isNotBlank(scope)) {
+                parameters.add("scope=\"%s\"".formatted(toChallengeValue(scope)));
+            }
+        }
+        if (OAuth20Constants.TOKEN_TYPE_DPOP.equals(scheme)) {
+            toDPoPAlgorithmsChallengeParameter(dpopAlgorithms).ifPresent(parameters::add);
+        }
+        val challenge = parameters.isEmpty() ? scheme : scheme + ' ' + String.join(", ", parameters);
+        val response = ResponseEntity.status(status).header(HttpHeaders.WWW_AUTHENTICATE, challenge);
+        return StringUtils.isBlank(error)
+            ? response.build()
+            : response.body(getErrorResponseBody(error, description));
+    }
+
+    /**
+     * Verify the proof of possession of a request to a protected resource, when the access token is sender-constrained.
+     * A DPoP proof is bound to the presented token through its {@code ath} claim and to the confirmation recorded at
+     * issuance (RFC 9449, section 7.1); a token with no confirmation is an ordinary bearer token and passes straight through.
+     * A missing or invalid proof is answered with {@code invalid_dpop_proof}, a proof without the server-provided nonce with
+     * {@code use_dpop_nonce}, and a bound token presented as a bearer token with {@code invalid_token}; each with a
+     * {@code 401} and a challenge (RFC 9449, sections 7.1, 7.2 and 9). A token that is not DPoP-bound has no key for a proof
+     * to match, so presenting it under the {@code DPoP} scheme is answered with {@code invalid_token} (RFC 9449, section 7.1).
+     * A token bound to the client certificate of a mutual
+     * TLS client is accepted only over a connection that presents the same certificate, or answered with a {@code 401} and
+     * {@code invalid_token} (RFC 8705, section 3).
+     *
+     * @param request              the request
+     * @param response             the response
+     * @param presentedAccessToken the access token exactly as the client presented it
+     * @param accessToken          the access token ticket
+     * @param validator            the proof of possession validator
+     * @return an error response when the proof is missing or does not verify, otherwise null
+     */
+    public static @Nullable ResponseEntity verifyProofOfPossession(final HttpServletRequest request,
+                                                                   final HttpServletResponse response,
+                                                                   final String presentedAccessToken,
+                                                                   final OAuth20AccessToken accessToken,
+                                                                   final OAuth20ProofOfPossessionValidator validator) {
+        val algorithms = validator.getAcceptedSigningAlgorithms();
+        if (OAuth20Constants.TOKEN_TYPE_DPOP.equals(resolveAuthorizationScheme(request))
+            && !accessToken.getAuthentication().containsAttribute(OAuth20Constants.DPOP_CONFIRMATION)) {
+            LOGGER.warn("Access token presented to [{}] under the DPoP scheme is not DPoP-bound", request.getRequestURL());
+            return protectedResourceErrorResponse(request, HttpStatus.UNAUTHORIZED, OAuth20Constants.INVALID_TOKEN,
+                "Access token is not DPoP-bound and cannot be presented with the DPoP scheme", null, algorithms);
+        }
+        val boundCertificate = getBoundCertificateThumbprint(accessToken);
+        if (boundCertificate.isPresent() && !isBoundCertificatePresented(request, boundCertificate.get())) {
+            LOGGER.warn("Access token is bound to a client certificate that the request to [{}] does not present", request.getRequestURL());
+            return protectedResourceErrorResponse(request, HttpStatus.UNAUTHORIZED, OAuth20Constants.INVALID_TOKEN,
+                "Access token is bound to a client certificate that the request does not present", null, algorithms);
+        }
+        try {
+            validator.validateProtectedResourceRequest(request, response, presentedAccessToken, accessToken);
+            return null;
+        } catch (final InvalidDPoPNonceException e) {
+            LOGGER.info("DPoP proof of the request to [{}] carries no valid nonce; a fresh nonce is provided", request.getRequestURL());
+            return useDPoPNonceResponse(algorithms);
+        } catch (final DPoPBoundAccessTokenDowngradeException e) {
+            LOGGER.warn(e.getMessage());
+            return protectedResourceErrorResponse(request, HttpStatus.UNAUTHORIZED, OAuth20Constants.INVALID_TOKEN, e.getMessage(), null, algorithms);
+        } catch (final Throwable e) {
+            LoggingUtils.warn(LOGGER, e);
+            return protectedResourceErrorResponse(request, HttpStatus.UNAUTHORIZED, OAuth20Constants.INVALID_DPOP_PROOF,
+                StringUtils.defaultIfBlank(e.getMessage(), "DPoP proof validation failed"), null, algorithms);
+        }
+    }
+
+    /**
+     * Challenge parameters are quoted strings, so anything that would end the quoted string early --
+     * a quote, a backslash or a control character -- is removed rather than escaped.
+     *
+     * @param value the value
+     * @return the sanitized value
+     */
+    public static String toChallengeValue(final String value) {
+        return value
+            .chars()
+            .filter(character -> character >= ' ' && character != '"' && character != '\\' && !Character.isISOControl(character))
+            .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
+            .toString();
     }
 
     /**
@@ -720,14 +1046,14 @@ public class OAuth20Utils {
      * Verify that every requested resource indicator is one the service allows (RFC 8707, section 2).
      *
      * @param requestParameterResolver the request parameter resolver
-     * @param context                  the context
+     * @param request                  the request
      * @param registeredService        the registered service
      * @throws OAuth20InvalidTargetException when a requested resource is invalid or not allowed
      */
     public static void verifyRequestedResources(final OAuth20RequestParameterResolver requestParameterResolver,
-                                                final WebContext context,
+                                                final HttpServletRequest request,
                                                 final OAuthRegisteredService registeredService) {
-        if (!requestParameterResolver.isAuthorizedResourceForService(context, registeredService)) {
+        if (!requestParameterResolver.isAuthorizedResourceForService(request, registeredService)) {
             throw new OAuth20InvalidTargetException("Requested resource is invalid or not authorized for client %s"
                 .formatted(registeredService.getClientId()));
         }

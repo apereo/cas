@@ -5,9 +5,12 @@ import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.config.CasTokenAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasTokenAuthenticationWebflowAutoConfiguration;
 import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
+import org.apereo.cas.services.DefaultRegisteredServiceProperty;
+import org.apereo.cas.services.RegisteredServiceProperty.RegisteredServiceProperties;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.token.authentication.TokenCredential;
 import org.apereo.cas.util.JsonUtils;
+import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.web.report.AbstractCasEndpointTests;
 import lombok.val;
@@ -46,13 +49,17 @@ class TokenAuthenticationEndpointTests extends AbstractCasEndpointTests {
 
     @Test
     void verifyOperation() throws Throwable {
-        val registeredService = RegisteredServiceTestUtils.getRegisteredService(RegisteredServiceTestUtils.CONST_TEST_URL);
+        val serviceId = "https://token.example.org/" + UUID.randomUUID();
+        val registeredService = RegisteredServiceTestUtils.getRegisteredService(serviceId);
         registeredService.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy());
+        val signingSecret = new DefaultRegisteredServiceProperty();
+        signingSecret.addValue(RandomUtils.randomAlphanumeric(256));
+        registeredService.getProperties().put(RegisteredServiceProperties.TOKEN_SECRET_SIGNING.getPropertyName(), signingSecret);
         servicesManager.save(registeredService);
         val response = mockMvc.perform(post("/actuator/tokenAuth/{username}", "casuser")
                 .with(csrf())
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(JsonUtils.render(Map.of("service", RegisteredServiceTestUtils.CONST_TEST_URL)))
+                .content(JsonUtils.render(Map.of("service", serviceId)))
                 .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.registeredService").exists())
@@ -61,7 +68,7 @@ class TokenAuthenticationEndpointTests extends AbstractCasEndpointTests {
             .getResponse()
             .getContentAsString();
         val token = MAPPER.readTree(response).get("token").asString();
-        val service = RegisteredServiceTestUtils.getService(RegisteredServiceTestUtils.CONST_TEST_URL);
+        val service = RegisteredServiceTestUtils.getService(serviceId);
         val authnResults = tokenAuthenticationHandler.authenticate(new TokenCredential(token, service), service);
         assertEquals("casuser", authnResults.getPrincipal().getId());
         mockMvc.perform(get("/actuator/tokenAuth/{token}", token)
@@ -69,5 +76,25 @@ class TokenAuthenticationEndpointTests extends AbstractCasEndpointTests {
                 .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.principal.id").value("casuser"));
+    }
+
+    @Test
+    void verifyServiceWithoutSigningSecret() throws Throwable {
+        val serviceId = "https://token.example.org/" + UUID.randomUUID();
+        val registeredService = RegisteredServiceTestUtils.getRegisteredService(serviceId);
+        registeredService.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy());
+        servicesManager.save(registeredService);
+        mockMvc.perform(post("/actuator/tokenAuth/{username}", "casuser")
+                .with(csrf())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(JsonUtils.render(Map.of("service", serviceId)))
+                .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.error").exists());
+        mockMvc.perform(get("/actuator/tokenAuth/{token}", "invalid-token")
+                .param("service", serviceId)
+                .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.error").exists());
     }
 }

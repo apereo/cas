@@ -18,8 +18,9 @@ import org.apereo.cas.util.function.FunctionUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.pac4j.core.context.WebContext;
 import org.springframework.beans.factory.ObjectProvider;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * This is {@link AccessTokenPreAuthorizedCodeGrantRequestExtractor}.
@@ -39,9 +40,9 @@ public class AccessTokenPreAuthorizedCodeGrantRequestExtractor<T extends OAuth20
     }
 
     @Override
-    public boolean supports(final WebContext context) {
+    public boolean supports(final HttpServletRequest request) {
         val grantType = getConfigurationContext().getObject().getRequestParameterResolver()
-            .resolveRequestParameter(context, OAuth20Constants.GRANT_TYPE).orElse(StringUtils.EMPTY);
+            .resolveRequestParameter(request, OAuth20Constants.GRANT_TYPE).orElse(StringUtils.EMPTY);
         return OAuth20Utils.isGrantType(grantType, getGrantType());
     }
 
@@ -56,12 +57,12 @@ public class AccessTokenPreAuthorizedCodeGrantRequestExtractor<T extends OAuth20
     }
 
     @Override
-    protected AccessTokenRequestContext extractRequest(final WebContext webContext) throws Throwable {
+    protected AccessTokenRequestContext extractRequest(final HttpServletRequest request, final HttpServletResponse response) throws Throwable {
         val configurationContext = getConfigurationContext().getObject();
         val requestParameterResolver = configurationContext.getRequestParameterResolver();
 
-        val scopes = requestParameterResolver.resolveRequestScopes(webContext);
-        val givenCode = requestParameterResolver.resolveRequestParameter(webContext, OidcConstants.PRE_AUTHORIZED_CODE).orElseThrow();
+        val scopes = requestParameterResolver.resolveRequestScopes(request);
+        val givenCode = requestParameterResolver.resolveRequestParameter(request, OidcConstants.PRE_AUTHORIZED_CODE).orElseThrow();
 
         val preAuthorizationCode = (TransientSessionTicket) transactionService.consumePreAuthorizationCode(givenCode);
         FunctionUtils.throwIf(preAuthorizationCode == null, () -> new InvalidTicketException(givenCode));
@@ -72,7 +73,7 @@ public class AccessTokenPreAuthorizedCodeGrantRequestExtractor<T extends OAuth20
         val service = configurationContext.getWebApplicationServiceServiceFactory().createService(clientId);
         service.getAttributes().put(OAuth20Constants.CLIENT_ID, List.of(clientId));
 
-        val userProfile = extractUserProfile(webContext).orElseThrow();
+        val userProfile = extractUserProfile(request, response).orElseThrow();
 
         val audit = AuditableContext.builder()
             .service(service)
@@ -85,12 +86,12 @@ public class AccessTokenPreAuthorizedCodeGrantRequestExtractor<T extends OAuth20
             new BasicIdentifiableCredential(Objects.requireNonNull(preAuthorizationCode.getPropertyAsString("principalId"))));
         principal.getAttributes().forEach(userProfile::addAttribute);
         val authentication = configurationContext.getAuthenticationBuilder()
-            .build(userProfile, Objects.requireNonNull(registeredService), webContext, service);
+            .build(userProfile, Objects.requireNonNull(registeredService), request, service);
 
         val tokenRequestContext = AccessTokenRequestContext
             .builder()
             .scopes(scopes)
-            .resources(requestParameterResolver.resolveRequestedResources(webContext))
+            .resources(requestParameterResolver.resolveRequestedResources(request))
             .grantType(getGrantType())
             .registeredService(registeredService)
             .service(service)

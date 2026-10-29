@@ -16,6 +16,12 @@ to manage access to their resources.
 may carry special scopes such as <code>uma_protection</code> or <code>uma_authorization</code> must not only be
 requested in the initial authorization request, but should also be explicitly authorized in the registered service definition.</p></div>
 
+The protection and authorization API endpoints below expect the access token in the `Authorization` header, and answer
+a request without a token, with an unknown or expired token or without the `uma_protection` or `uma_authorization` scope
+the way [RFC 6750](https://www.rfc-editor.org/rfc/rfc6750#section-3.1) describes, with `401` or `403` and a
+`WWW-Authenticate` challenge. A [DPoP-bound](../authentication/OIDC-Authentication-DPoP.html) access token is accepted
+only with the `DPoP` scheme and its proof.
+
 ## Configuration
 
 Support is enabled by including the following dependency in the WAR overlay:
