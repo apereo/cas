@@ -118,7 +118,7 @@ class OAuth20AccessTokenEndpointControllerTests {
         void verifyAuthorizationCodeWithTlsIsCertificateBound() throws Throwable {
             val service = getRegisteredService(OAuth20GrantTypes.AUTHORIZATION_CODE);
             service.setTokenEndpointAuthenticationMethod(OAuth20ClientAuthenticationMethods.TLS_CLIENT_AUTH.getType());
-            service.setTlsClientAuthSubjectDn("CN=(.+?)(?:,|$)");
+            service.setTlsClientAuthSubjectDn("CN=([^,]+),OU=CAS,O=Apereo,L=Gilbert,ST=AZ,C=US");
             servicesManager.save(service);
             val certificate = CertUtils.readCertificate(new ClassPathResource("RSA1024x509Cert.pem").getInputStream());
             val certificates = new X509Certificate[]{certificate};

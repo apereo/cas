@@ -47,10 +47,8 @@ var token = jwe.serialize();
 IO.println("token: " + token);
 ```
 
-The subject of the token becomes the authenticated principal, and its other claims become principal attributes.
-Tokens built with the pac4j `JwtGenerator`, whose subject carries the pac4j profile type
-(`org.pac4j.core.profile.CommonProfile#casuser`), are accepted as well. A token that is not signed, has expired or
-has no subject is refused.
+The subject of the token becomes the authenticated principal as it is, and its other claims become principal attributes.
+A token that is not signed, has expired or has no subject is refused.
 
 Once the token is generated, you may pass it to the `/login` endpoint of CAS as such:
 

@@ -163,7 +163,7 @@ class OAuth20HandlerInterceptorAdapterTests extends AbstractOAuth20Tests {
         assertEquals("0", response.getHeader(HttpHeaders.EXPIRES));
         assertEquals("nosniff", response.getHeader("X-Content-Type-Options"));
         assertEquals("DENY", response.getHeader("X-Frame-Options"));
-        assertEquals("1; mode=block", response.getHeader("X-XSS-Protection"));
+        assertNull(response.getHeader("X-XSS-Protection"));
         assertNull(response.getHeader("Strict-Transport-Security"));
         assertNull(request.getAttribute(OAuth20Constants.REQUEST_ATTRIBUTE_AUTHENTICATED_PROFILE));
     }

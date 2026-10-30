@@ -29,7 +29,7 @@ Protocol behavior (token errors, resource indicators, discovery, DPoP, client ID
   An `AuthenticationException` (usually `BadCredentialsException`) or an empty result moves to the next method; an
   `OAuth20ClientAuthenticationResponseException` answers the request itself (client attestation challenge, DPoP nonce).
   The CAS methods are ordered from `CasOAuth20Configuration.CLIENT_AUTHENTICATION_ORDER` in pac4j's old client order.
-- Responses: the security headers on every request, and on failure `401` through `sendError` with
+- Responses: the security headers on every request (no `X-XSS-Protection`, which browsers ignore), and on failure `401` through `sendError` with
   `WWW-Authenticate: Basic realm="authentication required"`, whatever the method tried (RFC 9110 requires a challenge on
   every `401`). `OAuth20HandlerInterceptorAdapterTests` pins these.
 - The authenticated profile goes into the request attribute `OAuth20Constants.REQUEST_ATTRIBUTE_AUTHENTICATED_PROFILE`, with
@@ -49,9 +49,10 @@ Protocol behavior (token errors, resource indicators, discovery, DPoP, client ID
   wherever client authentication runs, not only at the token endpoint: the interceptor marks the request with
   `REQUEST_ATTRIBUTE_CLIENT_AUTHENTICATION_REQUEST` (`OAuth20Utils.isClientAuthenticationRequest`).
 - `tls_client_auth` (RFC 8705): a client must register `tlsClientAuthSubjectDn` or a `tlsClientAuthSan*` value, unless its
-  client id is the certificate's SPIFFE ID. The subject value is first compared as a DN (`X500Principal.equals`), so DNs
-  with parentheses work; otherwise a value with a capturing group is a pac4j-style regex (one match in the RFC 2253 DN, the
-  profile id is the group). Without a registered subject the subject is not matched. After a DN match, or without a
+  client id is exactly (case-sensitive) the certificate's SPIFFE ID. The subject value is first compared as a DN
+  (`X500Principal.equals`), so DNs with parentheses work; otherwise a value with a capturing group is a regex that must
+  match the whole RFC 2253 DN (`matches()`, never `find()`), and the profile id is the group. Without a registered subject
+  the subject is not matched. After a DN match, or without a
   registered subject, the profile id is the single CN, as pac4j's default pattern made it (the `sub` of client_credentials
   tokens, which the `oidc-clientcredentials-x509` scenario checks), else the SPIFFE ID, the subject DN or the first SAN
   (SPIRE SVIDs have no CN). SAN values are exact (RFC 8705 section 2.1.2): DNS and email ignoring case,
@@ -125,8 +126,7 @@ Protocol behavior (token errors, resource indicators, discovery, DPoP, client ID
   (case-sensitive, as client lookup is; a request without a client takes any) and a live TGT cookie comes with the request,
   or the authentication was stateless. Otherwise it saves the request under `SESSION_ATTRIBUTE_REQUESTED_URL` (a `POST` as
   the `GET` URL with its parameters) and redirects to the login with `oauthCasClientRedirectActionBuilder`; an AJAX request
-  (`X-Requested-With: XMLHttpRequest`, or pac4j's `is_ajax_request=true` header or parameter) gets `401` with
-  `Bearer realm="CAS"` and is not saved.
+  (`X-Requested-With: XMLHttpRequest` only) gets `401` with `Bearer realm="CAS"` and is not saved.
 - The service is `OAuth20CasCallbackUrlResolver.compute(request)`: `callbackAuthorize` plus the request parameters plus
   `client_name=CasOAuthClient`, byte for byte what pac4j sent, so tickets, service registry patterns and puppeteer
   assertions keep matching. The callback validates the ticket for `computeServiceForTicket(request)` (the raw query minus

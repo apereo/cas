@@ -809,8 +809,9 @@ public class OAuth20Utils {
     }
 
     /**
-     * Add the security headers that pac4j's security logic used to add to every request it protected: no caching unless
-     * the URL is a static resource, HSTS over a secure connection, and the content-type, framing and XSS protections.
+     * Add the security headers of every protected request: no caching unless the URL is a static resource, HSTS over a
+     * secure connection, and the content-type and framing protections. {@code X-XSS-Protection} is not sent, since browsers
+     * no longer implement the filter it controls.
      *
      * @param request  the request
      * @param response the response
@@ -827,7 +828,6 @@ public class OAuth20Utils {
         }
         response.setHeader("X-Content-Type-Options", "nosniff");
         response.setHeader("X-Frame-Options", "DENY");
-        response.setHeader("X-XSS-Protection", "1; mode=block");
     }
 
     /**

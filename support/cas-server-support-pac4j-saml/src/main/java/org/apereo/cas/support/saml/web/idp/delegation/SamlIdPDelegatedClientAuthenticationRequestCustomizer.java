@@ -153,13 +153,20 @@ public class SamlIdPDelegatedClientAuthenticationRequestCustomizer implements De
         webContext.setRequestAttribute(RedirectionActionBuilder.ATTRIBUTE_FORCE_AUTHN, true);
     }
 
+    /**
+     * The entity id of the identity provider of the client, from its configuration or else from its metadata. Metadata is
+     * resolved as loaded, and refreshed on the schedule of its resolver, never for each request.
+     *
+     * @param saml2Client the client
+     * @return the entity id
+     */
     protected String getIdentityProviderEntityId(final SAML2Client saml2Client) {
         saml2Client.init();
         val configuration = saml2Client.getConfiguration();
         var identityProviderEntityId = configuration.getIdentityProviderEntityId();
         if (org.apache.commons.lang3.StringUtils.isBlank(identityProviderEntityId)) {
             val identityProviderMetadataResolver = configuration.getIdentityProviderMetadataResolver();
-            identityProviderMetadataResolver.resolve(true);
+            identityProviderMetadataResolver.resolve();
             identityProviderEntityId = identityProviderMetadataResolver.getEntityId();
         }
         LOGGER.debug("Resolved SAML2 identity provider entity id as [{}]", identityProviderEntityId);

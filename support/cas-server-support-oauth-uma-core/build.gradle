@@ -24,7 +24,6 @@ dependencies {
     implementation project(":core:cas-server-core-cookie-api")
     implementation project(":support:cas-server-support-jpa-util")
 
-    implementation libraries.nimbus
     implementation libraries.jose4j
     implementation libraries.hibernate
 

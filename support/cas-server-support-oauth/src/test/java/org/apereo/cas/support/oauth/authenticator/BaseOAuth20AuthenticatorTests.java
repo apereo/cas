@@ -187,7 +187,7 @@ public abstract class BaseOAuth20AuthenticatorTests {
         serviceTlsAuth.setClientId("TlsWithClientId");
         serviceTlsAuth.setAttributeReleasePolicy(new ReturnAllAttributeReleasePolicy());
         serviceTlsAuth.setTokenEndpointAuthenticationMethod(OAuth20ClientAuthenticationMethods.TLS_CLIENT_AUTH.getType());
-        serviceTlsAuth.setTlsClientAuthSubjectDn("CN=(.+?)(?:,|$)");
+        serviceTlsAuth.setTlsClientAuthSubjectDn("[^,]+,CN=([^,]+),OU=test,O=test,L=test,ST=test,C=US");
 
         serviceTlsAuthSpiffe = new OAuthRegisteredService();
         serviceTlsAuthSpiffe.setName("OAuthTls");

@@ -10,9 +10,6 @@ ext {
     ]
 }
 dependencies {
-    implementation libraries.nimbus
-    implementation libraries.jose4j
-    
     api project(":api:cas-server-core-api-webflow")
 
     implementation project(":core:cas-server-core-webflow")

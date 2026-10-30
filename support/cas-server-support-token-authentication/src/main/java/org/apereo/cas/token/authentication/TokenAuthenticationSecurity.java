@@ -46,14 +46,12 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.jose4j.keys.RsaKeyUtil;
 import org.jspecify.annotations.Nullable;
 
 /**
  * This is {@link TokenAuthenticationSecurity}, which signs, encrypts and validates the JWTs of token authentication with
  * the secrets and algorithms that a registered service defines in its properties. Tokens are signed JWS, optionally
- * nested in a JWE with the {@code JWT} content type, the shapes pac4j's {@code JwtGenerator} produced, so tokens that
- * applications already build keep working. A service that defines no signing secret neither issues nor accepts tokens.
+ * nested in a JWE with the {@code JWT} content type. A service that defines no signing secret neither issues nor accepts tokens.
  *
  * @author Misagh Moayyed
  * @since 7.0.0
@@ -61,11 +59,7 @@ import org.jspecify.annotations.Nullable;
 @Slf4j
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 public class TokenAuthenticationSecurity {
-    private static final String LEGACY_PROFILE_CLASS_PREFIX = "org.pac4j.";
-
-    private static final String LEGACY_TYPED_ID_SEPARATOR = "#";
-
-    private static final String LEGACY_INTERNAL_CLAIM_PREFIX = "$int_";
+    private static final String RSA_KEY_ALGORITHM = "RSA";
 
     private final @Nullable TokenSigning signing;
 
@@ -100,9 +94,8 @@ public class TokenAuthenticationSecurity {
     /**
      * Validate the token. The token must be signed with the service's signing secret, and may be encrypted with its
      * encryption secret; an unsigned token, an expired one or one without a subject is refused, and so is every token
-     * when the service defines no signing secret. A subject that pac4j typed with its profile class
-     * ({@code org.pac4j...CommonProfile#casuser}) is read without the type, and pac4j's internal {@code $int_} claims are dropped.
-     * Claims whose value is a map are also added one by one, one level deep, as pac4j did.
+     * when the service defines no signing secret. The subject is the principal as the token names it, and every other
+     * claim is an attribute; claims whose value is a map are also added one by one, one level deep.
      *
      * @param token the token
      * @return the subject and claims of the token, if it is valid
@@ -155,7 +148,7 @@ public class TokenAuthenticationSecurity {
     }
 
     private static Optional<AuthenticatedToken> buildAuthenticatedToken(final JWTClaimsSet claims) {
-        val subject = sanitizeSubject(Objects.toString(claims.getSubject(), StringUtils.EMPTY));
+        val subject = Objects.toString(claims.getSubject(), StringUtils.EMPTY);
         if (StringUtils.isBlank(subject)) {
             LOGGER.warn("The token has no subject");
             return Optional.empty();
@@ -167,7 +160,7 @@ public class TokenAuthenticationSecurity {
         }
         val attributes = new LinkedHashMap<String, Object>();
         claims.getClaims().forEach((name, value) -> {
-            if (!JWTClaimNames.SUBJECT.equals(name) && !name.startsWith(LEGACY_INTERNAL_CLAIM_PREFIX)) {
+            if (!JWTClaimNames.SUBJECT.equals(name)) {
                 if (value instanceof final Map<?, ?> nested) {
                     nested.forEach((nestedName, nestedValue) -> addClaim(attributes, String.valueOf(nestedName), nestedValue));
                 }
@@ -184,13 +177,6 @@ public class TokenAuthenticationSecurity {
                 ? Stream.concat(existingValues.stream(), givenValues.stream()).distinct().toList()
                 : given);
         }
-    }
-
-    private static String sanitizeSubject(final String subject) {
-        val type = StringUtils.substringBefore(subject, LEGACY_TYPED_ID_SEPARATOR);
-        return subject.contains(LEGACY_TYPED_ID_SEPARATOR) && type.startsWith(LEGACY_PROFILE_CLASS_PREFIX)
-            ? subject.substring(type.length() + 1)
-            : subject;
     }
 
     private static @Nullable String getRegisteredServiceJwtProperty(final RegisteredService registeredService,
@@ -247,7 +233,7 @@ public class TokenAuthenticationSecurity {
     private static RSAPublicKey getRsaPublicKey(final String encryptionSecret) {
         return FunctionUtils.doUnchecked(() -> {
             val resource = ResourceUtils.getResourceFrom(encryptionSecret);
-            val factory = new PublicKeyFactoryBean(resource, RsaKeyUtil.RSA);
+            val factory = new PublicKeyFactoryBean(resource, RSA_KEY_ALGORITHM);
             factory.setSingleton(false);
             return (RSAPublicKey) factory.getObject();
         });
@@ -257,7 +243,7 @@ public class TokenAuthenticationSecurity {
         return FunctionUtils.doUnchecked(() -> {
             val resource = ResourceUtils.getResourceFrom(signingSecret);
             val factory = new PrivateKeyFactoryBean();
-            factory.setAlgorithm(RsaKeyUtil.RSA);
+            factory.setAlgorithm(RSA_KEY_ALGORITHM);
             factory.setLocation(resource);
             factory.setSingleton(false);
             return (RSAPrivateKey) factory.getObject();
@@ -336,7 +322,7 @@ public class TokenAuthenticationSecurity {
     /**
      * The subject and claims of a valid token.
      *
-     * @param subject the subject, without the profile type pac4j may have added
+     * @param subject the subject
      * @param claims  the claims, without the subject
      */
     public record AuthenticatedToken(String subject, Map<String, Object> claims) {

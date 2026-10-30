@@ -27,7 +27,6 @@ dependencies {
 
 
     implementation libraries.nimbus
-    implementation libraries.jose4j
     
     testImplementation project(":support:cas-server-support-person-directory")
     testImplementation project(":support:cas-server-support-oidc")

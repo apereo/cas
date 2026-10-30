@@ -68,10 +68,11 @@ description: "Review and change CAS actuator endpoints: the security filter chai
   handler mappings in the child management context but no `SecurityFilterChain`. Verify what
   actually secures that port before assuming the main chain applies.
 - Several endpoints are authentication primitives, not diagnostics: `casValidate`,
-  `samlValidate`, `samlPostProfileResponse` and `tokenAuth` mint CAS assertions, signed SAML
-  responses and JWTs for an arbitrary username, and the `password` parameter is optional (absent
-  entirely for `tokenAuth`) -- with no password they fall through to `PrincipalResolver` and
-  succeed. Anything that widens actuator access widens impersonation.
+  `samlValidate` and `samlPostProfileResponse` mint CAS assertions and signed SAML responses
+  for an arbitrary username, and the `password` parameter is optional -- with no password they
+  fall through to `PrincipalResolver` and succeed. Anything that widens actuator access widens
+  impersonation. `tokenAuth` only validates a JWT and answers the principal with the service's
+  id, name and service id; it no longer issues tokens, and must never return service properties.
 - These endpoints return configuration values and service definitions unmasked, unlike Boot's own
   `/env` and `/configprops`. `casConfig` `/retrieve` returns raw property values and
   `registeredServices` serializes `OAuthRegisteredService.clientSecrets` (the `value` field carries

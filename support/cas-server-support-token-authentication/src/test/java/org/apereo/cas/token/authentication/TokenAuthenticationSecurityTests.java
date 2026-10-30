@@ -71,36 +71,33 @@ class TokenAuthenticationSecurityTests {
     }
 
     @Test
-    void verifyTokenBuiltByPac4j() throws Exception {
+    void verifyClaimsAreReadAsGiven() throws Exception {
         val claims = new JWTClaimsSet.Builder()
             .subject("org.pac4j.core.profile.CommonProfile#casuser")
             .issueTime(new Date())
             .claim("uid", "casuser")
             .claim("address", Map.of("city", "Paris", "geo", Map.of("lat", "48.85")))
-            .claim("$int_roles", List.of())
-            .claim("$int_perms", List.of())
+            .claim("$int_roles", List.of("admin"))
             .build();
         val token = encrypt(sign(claims, SIGNING_SECRET));
         val security = TokenAuthenticationSecurity.forRegisteredService(newRegisteredService(signingAndEncryptionSecrets()));
         val authenticatedToken = security.validateToken(token).orElseThrow();
-        assertEquals("casuser", authenticatedToken.subject());
+        assertEquals("org.pac4j.core.profile.CommonProfile#casuser", authenticatedToken.subject());
         assertEquals("casuser", authenticatedToken.claims().get("uid"));
         assertEquals("Paris", authenticatedToken.claims().get("city"));
         assertEquals(Map.of("lat", "48.85"), authenticatedToken.claims().get("geo"));
         assertFalse(authenticatedToken.claims().containsKey("lat"));
         assertEquals(Map.of("city", "Paris", "geo", Map.of("lat", "48.85")), authenticatedToken.claims().get("address"));
-        assertFalse(authenticatedToken.claims().containsKey("$int_roles"));
-        assertFalse(authenticatedToken.claims().containsKey("$int_perms"));
+        assertEquals(List.of("admin"), authenticatedToken.claims().get("$int_roles"));
         assertNotNull(authenticatedToken.claims().get("iat"));
     }
 
     @Test
     void verifyTokenOfPuppeteerScenario() {
-        val token = "eyJjdHkiOiJKV1QiLCJlbmMiOiJBMTkyQ0JDLUhTMzg0IiwiYWxnIjoiZGlyIn0..zTe4qLwuyvVi6gHmSL4VcQ."
-            + "NAmUxtxfEc-xJ0BO1DIUtxRN05-XTiB4bFVqN4YFvBPtVUrppTR5oXVKszWYQD_jWuhHnUBCVcvOBri9n-q6rKXQBkMnW9TLXQ4d9waJUOKpxORvgX3T56qoVfYTbUkVxe-5"
-            + "VchX000JWy8GdhpyWawldG0au03GhU7jhVnQeMlb7WWaNFOGXQwx6wvF0B30UL-6wgZO1nWD7InaQXJiFZazE0HK0DX61DUbP6PFYJKOBkbSWg9vSSzCeTxVFx9uJXMSAg9_"
-            + "vacpAYmq02ixV8e73CU9_hHhiCqEOYGunzwO4mEm6mn3fhPz6Q5azzPhZTc-lROKc66bmo_Y7jtMRmwgwBTq4diY9bIhw0x_qMsLLEdk1qk-dH9_FhBcunW2PkM8rCyGyDQ2"
-            + "slL-Axs_zg.HgP2g-UNsljcDhO74OMFWKxkYiSo4mbK";
+        val token = "eyJhbGciOiJkaXIiLCJlbmMiOiJBMTkyQ0JDLUhTMzg0IiwiY3R5IjoiSldUIn0..6q-WnspGZkzHAd_4LDbRnA."
+            + "Crc5YCWpZ26j9iJ61RR0t7L_A1NtEbTe-IaqqBrEZBlLFxGIcchMGC6sPXOasewh3GwkukrHGyg5pfXU8OvPHWPvC8riG5T1rEYkfgxVoG2rUOIFrLYHGpLCRdsXRP3E"
+            + "YnE4nnIePlDTmKLVC80ovtUoonow2YVwMK6mv1mqWE-RN-XSv_gav4aroaNvY4AA19Q_ppBYc_VVUJmz1t0pr1BTIRao8Hm56LQU8_kSBDfEuB96wTPpuTafZ3zMshgk"
+            + "LM--Ga-FGLL2Tyx_toMdaQ.QtUB4sH8R0BQ0YsB8QmC-ccAtgwGhLZu";
         val security = TokenAuthenticationSecurity.forRegisteredService(newRegisteredService(Map.of(
             RegisteredServiceProperties.TOKEN_SECRET_SIGNING, "V2x4dPVYmPT3v1YBf976B0dpFMYrfSwMiFUioYu69W6WyjdmqAkV6LgtpAhuhE3x7k3hKGsecnQFtgseOpvk7x5"
                 + "sCE6jUt1d9fUfuiUCp6r2dvbiGmZedsQebd3daktu7x1MUGOxeTRgbv3XHK4eRlbfgsakg5cryHqUjaWR99yyBU3mHfnm30aC77z5pKpxnfQbhGy5pX9zITcgu27wWiTCcT"
@@ -108,14 +105,8 @@ class TokenAuthenticationSecurityTests {
             RegisteredServiceProperties.TOKEN_SECRET_ENCRYPTION, "oY233692DZea4fUfJxUhGJOp96rpCi0Tna7xl9vFxr4bZ60D")));
         val authenticatedToken = security.validateToken(token).orElseThrow();
         assertEquals("casuser", authenticatedToken.subject());
-        assertTrue(authenticatedToken.claims().keySet().stream().noneMatch(name -> name.startsWith("$int_")));
-    }
-
-    @Test
-    void verifyTypedSubjectOutsidePac4jIsKept() throws Exception {
-        val security = TokenAuthenticationSecurity.forRegisteredService(newRegisteredService(signingAndEncryptionSecrets()));
-        val token = sign(new JWTClaimsSet.Builder().subject("urn:example#casuser").build(), SIGNING_SECRET).serialize();
-        assertEquals("urn:example#casuser", security.validateToken(token).orElseThrow().subject());
+        assertEquals("CASUser", authenticatedToken.claims().get("givenName"));
+        assertEquals(List.of("system", "cas", "admin"), authenticatedToken.claims().get("memberOf"));
     }
 
     @Test
@@ -151,8 +142,8 @@ class TokenAuthenticationSecurityTests {
         val expired = new JWTClaimsSet.Builder().subject("casuser").expirationTime(Date.from(Instant.now().minusSeconds(60))).build();
         assertTrue(security.validateToken(encrypt(sign(expired, SIGNING_SECRET))).isEmpty());
         assertTrue(security.validateToken(encrypt(sign(new JWTClaimsSet.Builder().claim("uid", "casuser").build(), SIGNING_SECRET))).isEmpty());
-        val typedBlankSubject = new JWTClaimsSet.Builder().subject("org.pac4j.core.profile.CommonProfile#  ").build();
-        assertTrue(security.validateToken(encrypt(sign(typedBlankSubject, SIGNING_SECRET))).isEmpty());
+        val blankSubject = new JWTClaimsSet.Builder().subject("  ").build();
+        assertTrue(security.validateToken(encrypt(sign(blankSubject, SIGNING_SECRET))).isEmpty());
         assertTrue(security.validateToken("not-a-token").isEmpty());
     }
 

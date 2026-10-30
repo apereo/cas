@@ -23,6 +23,12 @@ description: "Compile and test CAS changes from a restricted sandbox or remote V
 
 - A remote container may lack JDK 25: `apt-get install openjdk-25-jdk-headless` provides it, and `CI=true` drops the JetBrains vendor requirement of the toolchain. When Maven Central answers `429`, route resolution through `maven-central.storage-download.googleapis.com` with a Gradle init script kept outside the repository; that mirror lags new releases by a day or so, so leave Central in place, restricted to the groups the mirror does not have yet.
 - Gradle may be unavailable in a sandboxed or remote review environment because the wrapper cannot download its distribution. When that happens, say the verification was not run instead of implying a test result, and fall back to static review such as `git diff --check` and targeted reading.
+- `device_stage_files` refuses any file more than 7 folders below the connected folder, which is every Java source of the
+  repository: tar the files into the repository's `build/` (`tar czf build/<task>/changed.tgz -T paths.txt style`) and stage
+  the tarball. Checkstyle then runs in the cloud container, which can download the `checkstyle-<version>-all.jar` of
+  `gradle/libs.versions.toml` from github.com releases; Maven Central, Lombok and the Gradle cache stay out of reach from
+  both machines, so without the cache a `javac` check is not possible: hand over a `build/<name>-run.sh` instead.
+- Deleting a file in the device VM is refused there; leave the file in place and ask Misagh to `git rm` it.
 
 ## View and presentation layer
 

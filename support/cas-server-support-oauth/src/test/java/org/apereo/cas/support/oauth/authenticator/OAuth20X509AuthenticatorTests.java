@@ -46,6 +46,7 @@ public class OAuth20X509AuthenticatorTests extends BaseOAuth20AuthenticatorTests
         val profile = authenticator.authenticate(OAuth20TestUtils.newClientAuthenticationToken(request,
             OAuth20ClientAuthenticationToken.CredentialSource.CERTIFICATE, null, certificate));
         assertTrue(profile.isPresent());
+        assertEquals("test", profile.orElseThrow().getId());
         assertEquals(X509CertUtils.computeSHA256Thumbprint(certificate).toString(),
             profile.orElseThrow().getAttribute(OAuth20Constants.X509_CERTIFICATE_DIGEST));
     }
@@ -59,6 +60,15 @@ public class OAuth20X509AuthenticatorTests extends BaseOAuth20AuthenticatorTests
         val profile = authenticator.authenticate(OAuth20TestUtils.newClientAuthenticationToken(request,
             OAuth20ClientAuthenticationToken.CredentialSource.CERTIFICATE, null, certificate));
         assertTrue(profile.isPresent());
+
+        val spiffeRequest = new MockHttpServletRequest();
+        spiffeRequest.addParameter(OAuth20Constants.CLIENT_ID, "spiffe://example.org/client");
+        val spiffeCertificate = new CasX509Certificate(true).setSubjectAltNames(List.of("spiffe://example.org/client"));
+        assertTrue(authenticator.authenticate(OAuth20TestUtils.newClientAuthenticationToken(spiffeRequest,
+            OAuth20ClientAuthenticationToken.CredentialSource.CERTIFICATE, null, spiffeCertificate)).isPresent());
+        val otherCaseCertificate = new CasX509Certificate(true).setSubjectAltNames(List.of("SPIFFE://example.org/CLIENT"));
+        assertThrows(BadCredentialsException.class, () -> authenticator.authenticate(OAuth20TestUtils.newClientAuthenticationToken(spiffeRequest,
+            OAuth20ClientAuthenticationToken.CredentialSource.CERTIFICATE, null, otherCaseCertificate)));
     }
 
     @Test
@@ -137,6 +147,12 @@ public class OAuth20X509AuthenticatorTests extends BaseOAuth20AuthenticatorTests
         assertEquals("CN=apereo.org,OU=CAS,O=Apereo,L=Gilbert,ST=AZ,C=US", profile.getAttribute("x509-subjectDN"));
         assertThrows(BadCredentialsException.class,
             () -> x509Authenticator.buildCertificateProfile(certificate, "CN=apereo.org,OU=CAS,O=Apereo,L=Gilbert,ST=AZ,C=CA"));
+
+        assertEquals("apereo.org", x509Authenticator.buildCertificateProfile(certificate,
+            "CN=([^,]+),OU=CAS,O=Apereo,L=Gilbert,ST=AZ,C=US").getId());
+        assertThrows(BadCredentialsException.class, () -> x509Authenticator.buildCertificateProfile(certificate, "CN=([^,]+),OU=CAS"));
+        assertThrows(BadCredentialsException.class, () -> x509Authenticator.buildCertificateProfile(certificate, "CN=(\\w+)"));
+        assertThrows(BadCredentialsException.class, () -> x509Authenticator.buildCertificateProfile(certificate, "O=(Apereo)"));
     }
 
     @Test

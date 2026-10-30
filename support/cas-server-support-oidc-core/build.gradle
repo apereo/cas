@@ -2,9 +2,6 @@ apply plugin: "org.apereo.cas.project-conventions"
 
 description = "Provides the core OpenID Connect provider behavior used by CAS OIDC features."
 dependencies {
-    implementation libraries.jose4j
-    implementation libraries.nimbus
-    
     api project(":api:cas-server-core-api-throttle")
 
     implementation project(":core:cas-server-core-services-api")

@@ -13,7 +13,4 @@ dependencies {
     implementation project(":core:cas-server-core-util-api")
 
     compileOnly project(":core:cas-server-core-tickets")
-
-    implementation libraries.nimbus
-    implementation libraries.jose4j
 }

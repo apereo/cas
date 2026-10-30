@@ -13,6 +13,7 @@ import org.apereo.cas.ticket.OAuth20Token;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.code.OAuth20Code;
 import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshToken;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -21,7 +22,6 @@ import lombok.SuperBuilder;
 import lombok.ToString;
 import lombok.With;
 import lombok.extern.jackson.Jacksonized;
-import net.minidev.json.annotate.JsonIgnore;
 
 /**
  * This is {@link AccessTokenRequestContext}.

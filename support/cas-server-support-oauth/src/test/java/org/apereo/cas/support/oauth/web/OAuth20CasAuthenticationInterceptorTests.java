@@ -151,16 +151,11 @@ class OAuth20CasAuthenticationInterceptorTests extends AbstractOAuth20Tests {
 
         request.removeHeader("X-Requested-With");
         request.addHeader("is_ajax_request", "true");
+        request.addParameter("is_ajax_request", "true");
         response = new MockHttpServletResponse();
         assertFalse(interceptor.preHandle(request, response, new Object()));
-        assertEquals(HttpStatus.UNAUTHORIZED.value(), response.getStatus());
-
-        request.removeHeader("is_ajax_request");
-        request.addParameter("is_ajax_request", "TRUE");
-        response = new MockHttpServletResponse();
-        assertFalse(interceptor.preHandle(request, response, new Object()));
-        assertEquals(HttpStatus.UNAUTHORIZED.value(), response.getStatus());
-        assertTrue(oauthDistributedSessionStore.get(request, OAuth20Constants.SESSION_ATTRIBUTE_REQUESTED_URL).isEmpty());
+        assertEquals(HttpStatus.FOUND.value(), response.getStatus());
+        assertNotNull(response.getHeader(HttpHeaders.LOCATION));
     }
 
     @Test

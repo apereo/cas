@@ -44,8 +44,6 @@ public class OAuth20CasAuthenticationInterceptor implements HandlerInterceptor {
 
     private static final String AJAX_HEADER_NAME = "X-Requested-With";
 
-    private static final String AJAX_REQUEST_INDICATOR = "is_ajax_request";
-
     private static final String AJAX_AUTHENTICATION_CHALLENGE = "Bearer realm=\"CAS\"";
 
     protected final CasSessionStore sessionStore;
@@ -89,15 +87,13 @@ public class OAuth20CasAuthenticationInterceptor implements HandlerInterceptor {
 
     /**
      * Whether the request is made by a script that cannot follow a redirect to the login page: it carries the
-     * {@code X-Requested-With: XMLHttpRequest} header, or sets {@code is_ajax_request} to {@code true} as a header or a parameter.
+     * {@code X-Requested-With: XMLHttpRequest} header.
      *
      * @param request the request
      * @return true or false
      */
     protected boolean isAjaxRequest(final HttpServletRequest request) {
-        return AJAX_HEADER_VALUE.equalsIgnoreCase(request.getHeader(AJAX_HEADER_NAME))
-            || Boolean.TRUE.toString().equalsIgnoreCase(request.getHeader(AJAX_REQUEST_INDICATOR))
-            || Boolean.TRUE.toString().equalsIgnoreCase(request.getParameter(AJAX_REQUEST_INDICATOR));
+        return AJAX_HEADER_VALUE.equalsIgnoreCase(request.getHeader(AJAX_HEADER_NAME));
     }
 
     /**

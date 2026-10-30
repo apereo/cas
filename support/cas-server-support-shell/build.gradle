@@ -42,10 +42,8 @@ dependencies {
     
     implementation libraries.springbootconfigmetadata
     implementation libraries.springshell
-    implementation libraries.nimbus
     implementation libraries.snakeyaml
     implementation libraries.jasypt
-    implementation libraries.jose4j
     implementation libraries.bouncycastle
     implementation libraries.opensaml
     implementation libraries.dropwizard
@@ -53,6 +51,7 @@ dependencies {
     implementation libraries.hibernatevalidator
 
     testImplementation libraries.springshelltests
+    testImplementation libraries.jose4j
     
     runtimeOnly project(":support:cas-server-support-jdbc-drivers")
 

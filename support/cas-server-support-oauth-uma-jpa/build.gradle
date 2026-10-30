@@ -34,9 +34,6 @@ dependencies {
     implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-tickets-api")
     implementation project(":core:cas-server-core-cookie-api")
-    
-    implementation libraries.nimbus
-    implementation libraries.jose4j
 
     runtimeOnly project(":support:cas-server-support-jdbc-drivers")
 

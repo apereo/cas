@@ -206,7 +206,7 @@ class CasSessionStorePac4jAdapterTests {
     class BrowserStorageStoreTests {
         @Test
         void verifyOperation() {
-            val store = new CasSessionStorePac4jAdapter(new BrowserStorageCasSessionStore(webflowCipherExecutor, "ContextKey"));
+            val store = new CasSessionStorePac4jAdapter(new BrowserStorageCasSessionStore(webflowCipherExecutor, "ContextKey", Duration.ofMinutes(5)));
             val request = new MockHttpServletRequest();
             val ctx = new JEEContext(request, new MockHttpServletResponse());
             store.set(ctx, "key1", "value1");

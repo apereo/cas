@@ -414,7 +414,9 @@ one-time codes can be added when `cas.authn.mfa.simple.mail.accepted-email-patte
   [OAuth/OpenID Connect](../authentication/OAuth-Authentication.html), [UMA](../protocol/OAuth-UMA-Protocol.html),
   [Heimdall](../authorization/Heimdall-Authorization-Overview.html), [JWT authentication](../authentication/JWT-Authentication.html)
   and [Duo Security](../mfa/DuoSecurity-Authentication.html) no longer depend on pac4j, which remains only in
-  [delegated authentication](../integration/Delegate-Authentication.html) and is no longer packaged without it. They are built on Spring Security and CAS
+  [delegated authentication](../integration/Delegate-Authentication.html) and the features that hand off to it, such as
+  [passwordless authentication](../authentication/Passwordless-Authentication.html) and
+  [ADFS integration](../integration/ADFS-Integration.html). They are built on Spring Security and CAS
   components and keep their session state in a CAS session store, in the http session, in browser storage or in the
   ticket registry as configured. Customizations, Groovy scripts and session store beans that use pac4j types must be
   updated, and authentication handler names recorded in audit logs no longer carry pac4j class names. OAuth/OpenID Connect
@@ -427,8 +429,9 @@ one-time codes can be added when `cas.authn.mfa.simple.mail.accepted-email-patte
   [backchannel authentication](../authentication/OIDC-Authentication-CIBA.html), revocation and
   [verifiable credentials](../authentication/OIDC-Authentication-Verifiable-Credentials.html); an access token no longer
   authenticates a client. Clients that use [mutual TLS](../authentication/OIDC-Authentication-AccessToken-AuthMethods.html#mutual-tls-client-authentication)
-  must register the subject DN or a subject alternative name of their certificate, unless their client id is the
-  certificate's [SPIFFE](../authentication/OIDC-Authentication-AccessToken-AuthMethods.html#spiffe) ID. User profiles keep
+  must register the subject DN or a subject alternative name of their certificate, unless their client id is exactly the
+  certificate's [SPIFFE](../authentication/OIDC-Authentication-AccessToken-AuthMethods.html#spiffe) ID; a subject DN written
+  as a regular expression must now match the whole subject, as `CN=([^,]+),O=Example,C=US` does. User profiles keep
   every value of a multi-valued attribute, and the `cas.authn.oauth.csrf-cookie` settings are removed since CAS no
   longer issues that cookie.
 - {: .action data-area="oidc"} The page where users approve a [device user code](../authentication/OAuth-ProtocolFlow-DeviceAuthorization.html)
@@ -443,8 +446,26 @@ one-time codes can be added when `cas.authn.mfa.simple.mail.accepted-email-patte
   keep all their parameters through login and [consent](../authentication/OIDC-Authentication-Clients-ScopeApproval.html),
   and refused requests receive the error and challenge the specifications call for instead of a server error. OpenID Connect
   JWT access tokens no longer fail to sign now and then under load.
-- {: .fixed data-area="authentication"} A service without a signing secret no longer accepts any token for
-  [JWT authentication](../authentication/JWT-Authentication.html); tokens issued by earlier versions keep working.
+- {: .changed data-area="oidc"} OAuth/OpenID Connect endpoints no longer send the `X-XSS-Protection` header, which browsers
+  ignore. Only the `X-Requested-With: XMLHttpRequest` header now marks a script request that is answered with `401` instead
+  of a redirect to the login; the `is_ajax_request` header and parameter are no longer recognized.
+- {: .action data-area="authentication"} [JWT authentication](../authentication/JWT-Authentication.html) takes the subject
+  of a token as the principal as it is, and every other claim as an attribute. Tokens built with pac4j, whose subject
+  carries a profile type such as `org.pac4j.core.profile.CommonProfile#casuser`, now sign in as that whole subject and
+  must be issued again with a plain one. A service without a signing secret no longer accepts any token. The `tokenAuth`
+  actuator endpoint no longer issues tokens: it validates one and answers the principal and the identifier, name and
+  service id of the service, never its properties or secrets.
+- {: .changed data-area="general"} When the [SAML2 identity provider](../authentication/Configuring-SAML2-Authentication.html)
+  or [Duo Security](../mfa/DuoSecurity-Authentication.html#session-storage) keep their session state in browser storage,
+  the browser receives only the state of that flow rather than every attribute of the http session, and the state
+  expires with the lifetime of transient session tickets (`cas.ticket.tst.time-to-kill-in-seconds`{: .cas-setting}).
+  A state that has expired or belongs to another flow restores nothing; sign-ins under way during the upgrade must
+  start again.
+- {: .action data-area="authentication"} For [unsolicited SSO](../authentication/Configuring-SAML2-Authentication-Unsolicited.html),
+  the SAML2 identity provider no longer signs the authentication request it builds itself, nor checks it for a signature,
+  and the `signUnsolicitedAuthnRequest` setting of SAML2 service definitions is removed. Unsolicited SSO also works when
+  the session state is kept in browser storage. [Delegated authentication](../integration/Delegate-Authentication-SAML2.html)
+  no longer reloads the metadata of a SAML2 identity provider for each request.
 - {: .fixed data-area="general"} CSRF protection is configured once for all modules, so OpenID Connect and
   [WebAuthn](../mfa/FIDO2-WebAuthn-Authentication.html) no longer override each other's settings, and the
   [backchannel authentication](../authentication/OIDC-Authentication-CIBA.html) verification page is now protected.

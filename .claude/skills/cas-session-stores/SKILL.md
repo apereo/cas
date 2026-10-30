@@ -1,6 +1,6 @@
 ---
 name: cas-session-stores
-description: "CAS session stores and browser-side state: CasSessionStore implementations (HTTP session, browser storage, ticket registry), the pac4j adapter used by OAuth/OIDC/UMA and delegated authentication, and the BROWSER_STORAGE cookie fallback in cas.js. Use when touching session stores, pending-request storage (SAML2 IdP, OAuth/OIDC, Duo, delegation) or browser storage reads and writes."
+description: "CAS session stores and browser-side state: CasSessionStore implementations (HTTP session, browser storage, ticket registry), the pac4j adapter used by delegated authentication, and the BROWSER_STORAGE cookie fallback in cas.js. Use when touching session stores, pending-request storage (SAML2 IdP, OAuth/OIDC, Duo, delegation) or browser storage reads and writes."
 ---
 
 # Session stores and browser storage
@@ -11,12 +11,17 @@ Session stores kept on the ticket registry, and their limits with the stateless 
 
 - Pending AuthnRequests live in `samlIdPDistributedSessionStore`, a `CasSessionStore` (`api/cas-server-core-api-web`)
   whose implementations sit in `core/cas-server-core-web-api` (`org.apereo.cas.web.session`): `DefaultCasSessionStore`
-  (http session, prefix `SamlServerSupport`), `BrowserStorageCasSessionStore` (payload format unchanged from the pac4j
-  store, context `SamlIdPSessionStore`) and the deprecated `TicketRegistryCasSessionStore`. The store is shared:
-  Duo uses `BrowserStorageCasSessionStore` directly, and OAuth/OIDC/UMA and delegated authentication keep their pac4j
-  `SessionStore` beans as `CasSessionStorePac4jAdapter` over these implementations (same prefixes). pac4j needs the
+  (http session, prefix `SamlServerSupport`), `BrowserStorageCasSessionStore` (context `SamlIdPSessionStore`) and the
+  deprecated `TicketRegistryCasSessionStore`. The store is shared: Duo uses `BrowserStorageCasSessionStore` directly,
+  OAuth/OIDC/UMA use `CasSessionStore` directly (`oauthDistributedSessionStore`), and delegated authentication keeps its
+  pac4j `SessionStore` beans as `CasSessionStorePac4jAdapter` over these implementations (same prefixes). pac4j needs the
   full contract (session id, destroy, renew, and a store bound to a tracked `HttpSession` for back-channel logout), so
   keep those semantics when changing an implementation.
+- `BrowserStorageCasSessionStore` keeps its values under the prefix `<context>.` and hands the browser a private record
+  (context, expiry, those values only), Java-serialized under the webflow cipher; other http session attributes (security
+  context, CSRF token, other modules' state) never leave the server. Restore returns empty for another context's payload,
+  an expired one (the bean passes the transient session ticket lifetime) or one that cannot be decoded, and restores
+  nothing. Values must be `Serializable`; the store throws on others rather than dropping them.
 
 ## Browser storage cookie fallback
 

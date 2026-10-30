@@ -14,6 +14,7 @@ import org.apereo.cas.authentication.principal.attribute.PersonAttributeDao;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
+import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.logout.LogoutExecutionPlanConfigurer;
 import org.apereo.cas.logout.LogoutRedirectionStrategy;
 import org.apereo.cas.logout.slo.SingleLogoutMessageCreator;
@@ -40,7 +41,6 @@ import org.apereo.cas.support.saml.web.idp.profile.artifact.SamlIdPSaml1Artifact
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectEncrypter;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectSigner;
-import org.apereo.cas.support.saml.web.idp.profile.builders.enc.validate.SamlIdPObjectSignatureValidator;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.validate.SamlObjectSignatureValidator;
 import org.apereo.cas.support.saml.web.idp.profile.ecp.ECPSamlIdPProfileHandlerController;
 import org.apereo.cas.support.saml.web.idp.profile.query.SamlIdPSaml2AttributeQueryProfileHandlerController;
@@ -84,7 +84,6 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
 import org.apache.velocity.app.VelocityEngine;
-import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.saml2.binding.decoding.impl.HTTPPostDecoder;
 import org.opensaml.saml.saml2.binding.decoding.impl.HTTPPostSimpleSignDecoder;
 import org.opensaml.saml.saml2.core.Response;
@@ -121,19 +120,6 @@ class SamlIdPEndpointsConfiguration {
     @Configuration(value = "SamlIdPEndpointCryptoConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     static class SamlIdPEndpointCryptoConfiguration {
-
-        @ConditionalOnMissingBean(name = "samlIdPObjectSignatureValidator")
-        @Bean
-        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public SamlIdPObjectSignatureValidator samlIdPObjectSignatureValidator(
-            final CasConfigurationProperties casProperties,
-            @Qualifier("casSamlIdPMetadataResolver")
-            final MetadataResolver casSamlIdPMetadataResolver) {
-            val algs = casProperties.getAuthn().getSamlIdp().getAlgs();
-            return new SamlIdPObjectSignatureValidator(algs.getOverrideSignatureReferenceDigestMethods(),
-                algs.getOverrideSignatureAlgorithms(), algs.getOverrideBlockedSignatureSigningAlgorithms(),
-                algs.getOverrideAllowedSignatureSigningAlgorithms(), casSamlIdPMetadataResolver, casProperties);
-        }
 
         @ConditionalOnMissingBean(name = "samlObjectSignatureValidator")
         @Bean
@@ -195,10 +181,7 @@ class SamlIdPEndpointsConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public SamlIdPInitiatedProfileHandlerController idpInitiatedSamlProfileHandlerController(
             @Qualifier("samlProfileHandlerConfigurationContext")
-            final SamlProfileHandlerConfigurationContext samlProfileHandlerConfigurationContext,
-            @Qualifier("samlIdPObjectSignatureValidator")
-            final SamlObjectSignatureValidator samlObjectSignatureValidator) {
-            samlProfileHandlerConfigurationContext.setSamlObjectSignatureValidator(samlObjectSignatureValidator);
+            final SamlProfileHandlerConfigurationContext samlProfileHandlerConfigurationContext) {
             return new SamlIdPInitiatedProfileHandlerController(samlProfileHandlerConfigurationContext);
         }
 
@@ -540,7 +523,8 @@ class SamlIdPEndpointsConfiguration {
             val type = casProperties.getAuthn().getSamlIdp().getCore().getSessionStorageType();
             return switch (type) {
                 case TICKET_REGISTRY -> new TicketRegistryCasSessionStore(ticketRegistry, ticketFactory, samlIdPDistributedSessionCookieGenerator);
-                case BROWSER_STORAGE -> new BrowserStorageCasSessionStore(webflowCipherExecutor, "SamlIdPSessionStore");
+                case BROWSER_STORAGE -> new BrowserStorageCasSessionStore(webflowCipherExecutor, "SamlIdPSessionStore",
+                    Beans.newDuration(casProperties.getTicket().getTst().getTimeToKillInSeconds()));
                 default -> new DefaultCasSessionStore("SamlServerSupport");
             };
         }

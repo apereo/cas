@@ -93,8 +93,8 @@ public class OAuth20X509Authenticator implements OAuth20ClientCredentialsAuthent
     /**
      * Build the profile of the certificate. The subject pattern is first compared with the certificate's subject as a
      * distinguished name, as RFC 8705 registers {@code tls_client_auth_subject_dn}. Otherwise a subject pattern with a
-     * capturing group is a regular expression, as pac4j's {@code X509Authenticator} read it: the identifier is the single
-     * match of the first group in the RFC 2253 subject DN, and a blank match refuses the certificate. Without a subject
+     * capturing group is a regular expression that must match the whole RFC 2253 subject DN: the identifier is its first
+     * group, and a subject that does not match, or a blank group, refuses the certificate. Without a subject
      * pattern, when the client registered only subject alternative names or is known by its SPIFFE ID, the subject is not
      * matched. When the subject matches as a distinguished name or is not matched, the identifier is the certificate's
      * common name when it has exactly one, as the default pattern of pac4j made it, or else its SPIFFE ID, its subject DN,
@@ -145,8 +145,10 @@ public class OAuth20X509Authenticator implements OAuth20ClientCredentialsAuthent
         }
         val pattern = compileSubjectPattern(subjectPattern);
         if (pattern != null && pattern.matcher(StringUtils.EMPTY).groupCount() > 0) {
-            return findSingleMatch(pattern, subjectDN).orElseThrow(() ->
-                new BadCredentialsException("No single match for pattern " + subjectPattern + " in subject DN " + subjectDN));
+            val matcher = pattern.matcher(subjectDN);
+            if (matcher.matches() && StringUtils.isNotBlank(matcher.group(1))) {
+                return matcher.group(1);
+            }
         }
         throw new BadCredentialsException("Certificate subject " + subjectDN + " does not match " + subjectPattern);
     }
@@ -190,7 +192,7 @@ public class OAuth20X509Authenticator implements OAuth20ClientCredentialsAuthent
 
     private static boolean hasSpiffeIdOf(final X509Certificate certificate, final String clientId) {
         return Strings.CI.startsWith(clientId, SUBJECT_ALT_NAME_SPIFFE_PREFIX)
-            && findSubjectAlternativeNames(certificate).anyMatch(name -> Strings.CI.equals(name, clientId));
+            && findSubjectAlternativeNames(certificate).anyMatch(clientId::equals);
     }
 
     protected @Nullable OAuthRegisteredService locateRegisteredService(final HttpServletRequest request, final X509Certificate certificate) {

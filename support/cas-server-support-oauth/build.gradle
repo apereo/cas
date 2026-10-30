@@ -2,9 +2,6 @@ apply plugin: "org.apereo.cas.project-conventions"
 
 description = "Enables CAS to act as an OAuth authorization server for registered applications."
 dependencies {
-    implementation libraries.nimbus
-    implementation libraries.jose4j
-    
     api project(":api:cas-server-core-api-throttle")
     api project(":api:cas-server-core-api")
 
@@ -33,6 +30,9 @@ dependencies {
     implementation project(":support:cas-server-support-oauth-core-api")
     implementation project(":support:cas-server-support-oauth-services")
     
+    testImplementation libraries.nimbus
+    testImplementation libraries.jose4j
+
     testImplementation project(":core:cas-server-core-util")
     testImplementation project(":core:cas-server-core-scripting")
     testImplementation project(":core:cas-server-core")

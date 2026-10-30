@@ -87,11 +87,13 @@ class CasSessionStoreTests {
         @Test
         void verifySessionTravelsThroughBrowserStorage() {
             val cipher = new WebflowConversationStateCipherExecutor("AES", 512, 16);
-            val store = new BrowserStorageCasSessionStore(cipher, "ContextKey");
+            val store = new BrowserStorageCasSessionStore(cipher, "ContextKey", Duration.ofMinutes(5));
             val request = new MockHttpServletRequest();
             val response = new MockHttpServletResponse();
             store.set(request, response, "key1", "value1");
             store.withSessionAttributes(request, Map.of("key2", new ArrayList<>(List.of("HelloWorld")), "key3", 1234567));
+            Objects.requireNonNull(request.getSession(false)).setAttribute("SPRING_SECURITY_CONTEXT", "unrelated");
+            assertEquals("value1", Objects.requireNonNull(request.getSession(false)).getAttribute("ContextKey.key1"));
 
             val storage = (BrowserStorage) store.getTrackableSession(request).orElseThrow();
             assertEquals("ContextKey", storage.getContext());
@@ -104,12 +106,45 @@ class CasSessionStoreTests {
             assertTrue(store.getSessionAttributes(new MockHttpServletRequest()).isEmpty());
             assertEquals(List.of("HelloWorld"), store.get(restoredRequest, "key2").orElseThrow());
             assertEquals(1234567, store.get(restoredRequest, "key3").orElseThrow());
+            assertEquals(Set.of("key1", "key2", "key3"), store.getSessionAttributes(restoredRequest).keySet());
+            assertNull(Objects.requireNonNull(restoredRequest.getSession(false)).getAttribute("SPRING_SECURITY_CONTEXT"));
+        }
+
+        @Test
+        void verifyPayloadOfAnotherContextOrExpiredIsRefused() {
+            val cipher = new WebflowConversationStateCipherExecutor("AES", 512, 16);
+            val store = new BrowserStorageCasSessionStore(cipher, "ContextKey", Duration.ofMinutes(5));
+            val request = new MockHttpServletRequest();
+            store.set(request, new MockHttpServletResponse(), "key1", "value1");
+            val payload = toBrowserPayload((BrowserStorage) store.getTrackableSession(request).orElseThrow());
+
+            val otherStore = new BrowserStorageCasSessionStore(cipher, "OtherContextKey", Duration.ofMinutes(5));
+            val otherPayload = toBrowserPayload((BrowserStorage) otherStore.getTrackableSession(request).orElseThrow());
+            val restoredRequest = new MockHttpServletRequest();
+            assertTrue(store.buildFromTrackableSession(restoredRequest, otherPayload.replace("OtherContextKey", "ContextKey")).isEmpty());
+            assertTrue(store.get(restoredRequest, "key1").isEmpty());
+            assertTrue(store.getSessionAttributes(restoredRequest).isEmpty());
+
+            val expiredStore = new BrowserStorageCasSessionStore(cipher, "ContextKey", Duration.ofSeconds(-1));
+            val expiredPayload = toBrowserPayload((BrowserStorage) expiredStore.getTrackableSession(request).orElseThrow());
+            assertTrue(store.buildFromTrackableSession(restoredRequest, expiredPayload).isEmpty());
+            assertTrue(store.get(restoredRequest, "key1").isEmpty());
+
+            val otherCipher = new WebflowConversationStateCipherExecutor("AES", 512, 16);
+            val foreignPayload = toBrowserPayload((BrowserStorage) new BrowserStorageCasSessionStore(otherCipher, "ContextKey", Duration.ofMinutes(5))
+                .getTrackableSession(request).orElseThrow());
+            assertTrue(store.buildFromTrackableSession(restoredRequest, foreignPayload).isEmpty());
+            assertTrue(store.buildFromTrackableSession(restoredRequest, "{\"ContextKey\":\"not-a-payload\"}").isEmpty());
+            assertTrue(store.get(restoredRequest, "key1").isEmpty());
+
+            assertSame(store, store.buildFromTrackableSession(restoredRequest, payload).orElseThrow());
+            assertEquals("value1", store.get(restoredRequest, "key1").orElseThrow());
         }
 
         @Test
         void verifyEmptySession() {
             val cipher = new WebflowConversationStateCipherExecutor("AES", 512, 16);
-            val store = new BrowserStorageCasSessionStore(cipher, "ContextKey");
+            val store = new BrowserStorageCasSessionStore(cipher, "ContextKey", Duration.ofMinutes(5));
             val storage = (BrowserStorage) store.getTrackableSession(new MockHttpServletRequest()).orElseThrow();
             val restoredRequest = new MockHttpServletRequest();
             store.buildFromTrackableSession(restoredRequest, toBrowserPayload(storage));

@@ -179,6 +179,22 @@ class SamlIdPDelegatedClientAuthenticationRequestCustomizerTests {
         assertTrue(customizer.isAuthorized(webContext, mock(IndirectClient.class), webApplicationService, requestContext));
     }
 
+    @Test
+    void verifyMetadataIsNotRefreshedPerRequest() throws Throwable {
+        val saml2Client = buildMockSaml2Client();
+        val metadataResolver = spy(saml2Client.getConfiguration().getIdentityProviderMetadataResolver());
+        saml2Client.getConfiguration().setIdentityProviderMetadataResolver(metadataResolver);
+        val requestContext = MockRequestContext.create(applicationContext);
+        val webContext = new JEEContext(requestContext.getHttpServletRequest(), requestContext.getHttpServletResponse());
+        val webApplicationService = CoreAuthenticationTestUtils.getWebApplicationService(UUID.randomUUID().toString());
+
+        setAuthnRequestFor(webContext, saml2Client.getIdentityProviderResolvedEntityId());
+        assertTrue(customizer.isAuthorized(webContext, saml2Client, webApplicationService, requestContext));
+        assertTrue(customizer.isAuthorized(webContext, saml2Client, webApplicationService, requestContext));
+        verify(metadataResolver, atLeastOnce()).getEntityId();
+        verify(metadataResolver, never()).resolve(true);
+    }
+
     /**
      * Builds a customizer whose service lookups resolve to the given service definition, or to nothing
      * when it is null, so that the delegated authentication policy fallback can be asserted without
