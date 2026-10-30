@@ -402,6 +402,12 @@ one-time codes can be added when `cas.authn.mfa.simple.mail.accepted-email-patte
   again and clients obtain new tokens.
 - {: .removed data-area="tickets"} The deprecated Azure CosmosDb ticket registry is removed, along with its settings.
   Deployments that still use it should switch to another [ticket registry](../ticketing/Configuring-Ticketing-Components.html).
+- {: .changed data-area="tickets"} A [logout](../installation/Logout-Single-Signout.html) request now looks up its
+  `service` parameter once for all the steps of the logout flow, where every step, and every single logout protocol in
+  use, used to look it up again.
+  [Redirecting logout to the service](../installation/Logout-Single-Signout.html#redirecting-logout-to-service) looks it
+  up once more, and only when `cas.logout.follow-service-redirects`{: .cas-setting} is turned on. Logout requests that
+  name unknown services, such as those sent by crawlers, cost far less.
 - {: .removed data-area="services"} The deprecated Azure CosmosDb service registry is removed, along with its settings.
   Definitions stored there should be exported and imported into another [service registry](../services/Service-Management.html).
 - {: .action data-area="general"} The [SAML2 identity provider](../authentication/Configuring-SAML2-Authentication.html),

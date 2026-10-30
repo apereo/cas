@@ -118,7 +118,8 @@ async function verifyDeviceCode(data) {
     await cas.waitForNavigation(page);
     await cas.sleep(1000);
     await cas.assertVisibility(page, "div.banner-danger");
-    await cas.assertVisibility(page, "input[name='approvaltoken']");
+    const approvalToken = await page.$eval("input[name='approvaltoken']", (input) => input.value);
+    assert(approvalToken !== undefined && approvalToken.length > 0);
 
     await cas.type(page, "#usercode", data.user_code);
     await cas.pressEnter(page);

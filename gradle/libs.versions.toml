@@ -608,7 +608,6 @@ pac4j-cas = { module = "org.pac4j:pac4j-cas", version.ref = "pac4j" }
 pac4j-core = { module = "org.pac4j:pac4j-core", version.ref = "pac4j" }
 pac4j-http = { module = "org.pac4j:pac4j-http", version.ref = "pac4j" }
 pac4j-jakartaee = { module = "org.pac4j:pac4j-jakartaee", version.ref = "pac4j" }
-pac4j-jwt = { module = "org.pac4j:pac4j-jwt", version.ref = "pac4j" }
 pac4j-oauth = { module = "org.pac4j:pac4j-oauth", version.ref = "pac4j" }
 pac4j-oidc = { module = "org.pac4j:pac4j-oidc", version.ref = "pac4j" }
 pac4j-saml = { module = "org.pac4j:pac4j-saml", version.ref = "pac4j" }

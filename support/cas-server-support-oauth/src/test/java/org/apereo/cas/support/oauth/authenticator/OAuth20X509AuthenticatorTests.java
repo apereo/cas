@@ -133,7 +133,8 @@ public class OAuth20X509AuthenticatorTests extends BaseOAuth20AuthenticatorTests
         val x509Authenticator = new OAuth20X509Authenticator(servicesManager, oauthRequestParameterResolver);
         val certificate = CertUtils.readCertificate(new ClassPathResource("RSA1024x509Cert.pem").getInputStream());
         val profile = x509Authenticator.buildCertificateProfile(certificate, "cn=apereo.org, ou=CAS, o=Apereo, l=Gilbert, st=AZ, c=US");
-        assertEquals("CN=apereo.org,OU=CAS,O=Apereo,L=Gilbert,ST=AZ,C=US", profile.getId());
+        assertEquals("apereo.org", profile.getId());
+        assertEquals("CN=apereo.org,OU=CAS,O=Apereo,L=Gilbert,ST=AZ,C=US", profile.getAttribute("x509-subjectDN"));
         assertThrows(BadCredentialsException.class,
             () -> x509Authenticator.buildCertificateProfile(certificate, "CN=apereo.org,OU=CAS,O=Apereo,L=Gilbert,ST=AZ,C=CA"));
     }
@@ -147,7 +148,7 @@ public class OAuth20X509AuthenticatorTests extends BaseOAuth20AuthenticatorTests
         when(certificate.getIssuerX500Principal()).thenReturn(subject);
         when(certificate.getEncoded()).thenReturn(new byte[]{1});
         val profile = x509Authenticator.buildCertificateProfile(certificate, "CN=client, O=Acme (Europe) Ltd");
-        assertEquals("CN=client,O=Acme (Europe) Ltd", profile.getId());
+        assertEquals("client", profile.getId());
     }
 
     @Test

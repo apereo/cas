@@ -2355,22 +2355,6 @@ ext.libraries = [
                     exclude(group: "com.google.code.findbugs", module: "findbugs-annotations")
                 }
         ],
-        pac4jjwt                   : [
-                dependencies.create(libs.pac4j.jwt.get()) {
-                    exclude(group: "org.slf4j", module: "slf4j-api")
-                    exclude(group: "org.slf4j", module: "jcl-over-slf4j")
-                    exclude(group: "org.bouncycastle", module: "bcprov-jdk15on")
-                    exclude(group: "commons-io", module: "commons-io")
-                    exclude(group: "commons-collections", module: "commons-collections")
-                    exclude(group: "net.minidev", module: "json-smart")
-                    exclude(group: "com.nimbusds", module: "nimbus-jose-jwt")
-                    exclude(group: "org.cryptacular", module: "cryptacular")
-                    exclude(group: "tools.jackson.core", module: "jackson-databind")
-                    exclude(group: "tools.jackson.core", module: "jackson-annotations")
-                    exclude(group: "org.projectlombok", module: "lombok")
-                    exclude(group: "com.google.code.findbugs", module: "findbugs-annotations")
-                }
-        ],
         pac4jcas                   : [
                 dependencies.create(libs.pac4j.cas.get()) {
                     exclude(group: "org.slf4j", module: "slf4j-api")

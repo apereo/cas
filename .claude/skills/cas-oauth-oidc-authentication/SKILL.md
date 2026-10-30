@@ -49,10 +49,12 @@ Protocol behavior (token errors, resource indicators, discovery, DPoP, client ID
   wherever client authentication runs, not only at the token endpoint: the interceptor marks the request with
   `REQUEST_ATTRIBUTE_CLIENT_AUTHENTICATION_REQUEST` (`OAuth20Utils.isClientAuthenticationRequest`).
 - `tls_client_auth` (RFC 8705): a client must register `tlsClientAuthSubjectDn` or a `tlsClientAuthSan*` value, unless its
-  client id is the certificate's SPIFFE ID. The subject value is first compared as a DN (`X500Principal.equals`, profile id
-  = subject DN), so DNs with parentheses work; otherwise a value with a capturing group is a pac4j-style regex (one match in
-  the RFC 2253 DN, the profile id is the group). Without a registered subject the subject is not matched: the profile id
-  is the single CN, else the SPIFFE ID, the subject DN or the first SAN (SPIRE SVIDs have no CN). SAN values are exact (RFC 8705 section 2.1.2): DNS and email ignoring case,
+  client id is the certificate's SPIFFE ID. The subject value is first compared as a DN (`X500Principal.equals`), so DNs
+  with parentheses work; otherwise a value with a capturing group is a pac4j-style regex (one match in the RFC 2253 DN, the
+  profile id is the group). Without a registered subject the subject is not matched. After a DN match, or without a
+  registered subject, the profile id is the single CN, as pac4j's default pattern made it (the `sub` of client_credentials
+  tokens, which the `oidc-clientcredentials-x509` scenario checks), else the SPIFFE ID, the subject DN or the first SAN
+  (SPIRE SVIDs have no CN). SAN values are exact (RFC 8705 section 2.1.2): DNS and email ignoring case,
   IP as `InetAddress`, URI as is; never regexes. Unit tests that use the test certificates must register a subject
   (`BaseOAuth20AuthenticatorTests.serviceTlsAuth`).
 - A method whose client is not the request's (`OAuth20ClientAuthenticationProvider.isRequestedClientIgnored`, set for the

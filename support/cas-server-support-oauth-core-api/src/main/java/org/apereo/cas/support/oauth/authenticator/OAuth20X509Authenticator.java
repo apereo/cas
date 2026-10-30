@@ -92,14 +92,15 @@ public class OAuth20X509Authenticator implements OAuth20ClientCredentialsAuthent
 
     /**
      * Build the profile of the certificate. The subject pattern is first compared with the certificate's subject as a
-     * distinguished name, as RFC 8705 registers {@code tls_client_auth_subject_dn}; when they are equal, the identifier is
-     * the subject DN. Otherwise a subject pattern with a capturing group is a regular expression, as pac4j's
-     * {@code X509Authenticator} read it: the identifier is the single match of the first group in the RFC 2253 subject DN,
-     * and a blank match refuses the certificate. Without a subject pattern, when the client registered only subject
-     * alternative names or is known by its SPIFFE ID, the subject is not matched: the identifier is the certificate's
-     * common name when it has exactly one, or else its SPIFFE ID, its subject DN, or its first subject alternative name,
-     * since RFC 5280 allows an empty subject and SPIFFE certificates often carry no common name. The attributes carry the
-     * encoded certificate, its subject and issuer, validity, signature algorithm and subject alternative names.
+     * distinguished name, as RFC 8705 registers {@code tls_client_auth_subject_dn}. Otherwise a subject pattern with a
+     * capturing group is a regular expression, as pac4j's {@code X509Authenticator} read it: the identifier is the single
+     * match of the first group in the RFC 2253 subject DN, and a blank match refuses the certificate. Without a subject
+     * pattern, when the client registered only subject alternative names or is known by its SPIFFE ID, the subject is not
+     * matched. When the subject matches as a distinguished name or is not matched, the identifier is the certificate's
+     * common name when it has exactly one, as the default pattern of pac4j made it, or else its SPIFFE ID, its subject DN,
+     * or its first subject alternative name, since RFC 5280 allows an empty subject and SPIFFE certificates often carry no
+     * common name. The attributes carry the encoded certificate, its subject and issuer, validity, signature algorithm and
+     * subject alternative names.
      *
      * @param certificate    the certificate
      * @param subjectPattern the subject pattern the client registered, if any
@@ -133,7 +134,7 @@ public class OAuth20X509Authenticator implements OAuth20ClientCredentialsAuthent
     }
 
     private static String resolveProfileId(final X509Certificate certificate, final String subjectDN, final @Nullable String subjectPattern) {
-        if (subjectPattern == null) {
+        if (subjectPattern == null || isSubjectDistinguishedName(certificate, subjectPattern)) {
             return findSingleMatch(COMMON_NAME_PATTERN, subjectDN)
                 .or(() -> findSubjectAlternativeNames(certificate)
                     .filter(name -> Strings.CI.startsWith(name, SUBJECT_ALT_NAME_SPIFFE_PREFIX))
@@ -141,9 +142,6 @@ public class OAuth20X509Authenticator implements OAuth20ClientCredentialsAuthent
                 .or(() -> Optional.of(subjectDN).filter(StringUtils::isNotBlank))
                 .or(() -> findSubjectAlternativeNames(certificate).findFirst())
                 .orElseThrow(() -> new BadCredentialsException("Certificate carries neither a subject nor a subject alternative name"));
-        }
-        if (isSubjectDistinguishedName(certificate, subjectPattern)) {
-            return subjectDN;
         }
         val pattern = compileSubjectPattern(subjectPattern);
         if (pattern != null && pattern.matcher(StringUtils.EMPTY).groupCount() > 0) {

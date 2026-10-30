@@ -26,6 +26,12 @@ description: "Review and change service registries and the services manager: loo
   must go through `cacheRegisteredService`/`cacheRegisteredServices` (or bump the version itself); a direct
   `getServicesCache().put` leaves URL lookups on a stale snapshot. Read paths must not re-cache or re-index services
   the cache already holds, and the returned list is shared and unmodifiable.
+- The logout flow looks its `service` parameter up once per request: `AbstractLogoutAction` remembers the outcome,
+  found or not, in the webflow request scope for the other logout actions of that request, and
+  `DefaultLogoutRedirectionStrategy` looks the service up only when `cas.logout.follow-service-redirects` is on, then asks
+  the chained single logout URL builders `supports(...)` instead of `isServiceAuthorized(...)`, which looks the service up
+  again in every builder. Build new logout checks on the result already resolved; crawlers sending
+  `/logout?service=<unknown>` pay for every lookup.
 
 ## Service registries and replication
 
