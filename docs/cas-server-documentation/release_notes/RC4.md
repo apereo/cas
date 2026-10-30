@@ -414,7 +414,7 @@ one-time codes can be added when `cas.authn.mfa.simple.mail.accepted-email-patte
   [OAuth/OpenID Connect](../authentication/OAuth-Authentication.html), [UMA](../protocol/OAuth-UMA-Protocol.html),
   [Heimdall](../authorization/Heimdall-Authorization-Overview.html), [JWT authentication](../authentication/JWT-Authentication.html)
   and [Duo Security](../mfa/DuoSecurity-Authentication.html) no longer depend on pac4j, which remains only in
-  [delegated authentication](../integration/Delegate-Authentication.html). They are built on Spring Security and CAS
+  [delegated authentication](../integration/Delegate-Authentication.html) and is no longer packaged without it. They are built on Spring Security and CAS
   components and keep their session state in a CAS session store, in the http session, in browser storage or in the
   ticket registry as configured. Customizations, Groovy scripts and session store beans that use pac4j types must be
   updated, and authentication handler names recorded in audit logs no longer carry pac4j class names. OAuth/OpenID Connect
@@ -429,8 +429,8 @@ one-time codes can be added when `cas.authn.mfa.simple.mail.accepted-email-patte
   authenticates a client. Clients that use [mutual TLS](../authentication/OIDC-Authentication-AccessToken-AuthMethods.html#mutual-tls-client-authentication)
   must register the subject DN or a subject alternative name of their certificate, unless their client id is the
   certificate's [SPIFFE](../authentication/OIDC-Authentication-AccessToken-AuthMethods.html#spiffe) ID. User profiles keep
-  every value of a multi-valued attribute, and the [CSRF cookie settings](../authentication/OAuth-Authentication-CSRF.html)
-  of OAuth are deprecated.
+  every value of a multi-valued attribute, and the `cas.authn.oauth.csrf-cookie` settings are removed since CAS no
+  longer issues that cookie.
 - {: .action data-area="oidc"} The page where users approve a [device user code](../authentication/OAuth-ProtocolFlow-DeviceAuthorization.html)
   now carries an approval token tied to the single sign-on session, and an approval without it is refused, so another site
   can no longer make a signed-in browser approve a code. Customized `protocol/oauth/deviceCodeApproval.html` templates must
