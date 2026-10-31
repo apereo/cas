@@ -647,7 +647,7 @@ The documentation now explains how to let browser-based MCP clients reach the se
   single sign-on revocation attribute, numeric durations, cookie lifetimes and the actuator endpoints that accept a service
   identifier handle such values the same way. Cookie lifetimes too large for a cookie are capped instead of overflowing.
 - {: .fixed} When the service registry is consulted for an application that matches no cached definition, the
-  [JPA](../services/JPA-Service-Management.html) and the deprecated [CosmosDb](../services/CosmosDb-Service-Management.html)
+  [JPA](../services/JPA-Service-Management.html) and the deprecated CosmosDb
   service registries now evaluate every definition the way other registries do. Both used to search for definitions whose
   pattern contained the requested URL, which never found definitions written as regular expressions; CosmosDb also placed
   the requested URL in its query text unescaped and no longer sends it to the database at all.

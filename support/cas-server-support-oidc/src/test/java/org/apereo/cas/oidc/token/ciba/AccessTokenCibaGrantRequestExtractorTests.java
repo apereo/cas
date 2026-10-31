@@ -8,7 +8,7 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
-import org.apereo.cas.support.oauth.authenticator.Authenticators;
+import org.apereo.cas.support.oauth.profile.DefaultOAuth20UserProfile;
 import org.apereo.cas.support.oauth.validator.token.OAuth20AuthorizationPendingException;
 import org.apereo.cas.support.oauth.validator.token.OAuth20ExpiredTokenException;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenGrantRequestExtractor;
@@ -18,9 +18,6 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.pac4j.core.profile.CommonProfile;
-import org.pac4j.core.profile.ProfileManager;
-import org.pac4j.jee.context.JEEContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -70,29 +67,26 @@ class AccessTokenCibaGrantRequestExtractorTests extends AbstractOidcTests {
         request.addParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.CIBA.getType());
         request.addParameter(OidcConstants.AUTH_REQ_ID, cibaRequest.getEncodedId());
 
-        val context = new JEEContext(request, new MockHttpServletResponse());
-        val profile = new CommonProfile();
-        profile.setClientName(Authenticators.CAS_OAUTH_CLIENT_BASIC_AUTHN);
-        profile.setId(registeredService.getClientId());
+        val response = new MockHttpServletResponse();
+        val profile = new DefaultOAuth20UserProfile(registeredService.getClientId());
         profile.addAttribute(OAuth20Constants.CLIENT_ID, registeredService.getClientId());
-        val profileManager = new ProfileManager(context, oauthDistributedSessionStore);
-        profileManager.save(true, profile, false);
+        storeProfileIntoSession(request, profile);
 
-        assertTrue(oidcCibaAccessTokenGrantRequestExtractor.supports(context));
+        assertTrue(oidcCibaAccessTokenGrantRequestExtractor.supports(request));
         val canGrantTokens = mode.equalsIgnoreCase(OidcBackchannelTokenDeliveryModes.POLL.name())
             || mode.equalsIgnoreCase(OidcBackchannelTokenDeliveryModes.PING.name());
         if (canGrantTokens) {
-            assertThrows(OAuth20AuthorizationPendingException.class, () -> oidcCibaAccessTokenGrantRequestExtractor.extract(context));
+            assertThrows(OAuth20AuthorizationPendingException.class, () -> oidcCibaAccessTokenGrantRequestExtractor.extract(request, response));
             ticketRegistry.updateTicket(cibaRequest.markTicketReady());
-            val result = oidcCibaAccessTokenGrantRequestExtractor.extract(context);
+            val result = oidcCibaAccessTokenGrantRequestExtractor.extract(request, response);
             assertNotNull(result);
             assertEquals(cibaRequest.getEncodedId(), result.getCibaRequestId());
 
             cibaRequest.markTicketExpired();
-            assertThrows(OAuth20ExpiredTokenException.class, () -> oidcCibaAccessTokenGrantRequestExtractor.extract(context));
-            assertThrows(InvalidCibaRequestException.class, () -> oidcCibaAccessTokenGrantRequestExtractor.extract(context));
+            assertThrows(OAuth20ExpiredTokenException.class, () -> oidcCibaAccessTokenGrantRequestExtractor.extract(request, response));
+            assertThrows(InvalidCibaRequestException.class, () -> oidcCibaAccessTokenGrantRequestExtractor.extract(request, response));
         } else {
-            assertThrows(InvalidCibaRequestException.class, () -> oidcCibaAccessTokenGrantRequestExtractor.extract(context));
+            assertThrows(InvalidCibaRequestException.class, () -> oidcCibaAccessTokenGrantRequestExtractor.extract(request, response));
         }
     }
 }

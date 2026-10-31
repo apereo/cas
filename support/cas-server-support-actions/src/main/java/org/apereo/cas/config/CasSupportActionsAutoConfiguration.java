@@ -20,6 +20,7 @@ import org.apereo.cas.logout.slo.SingleLogoutRequestExecutor;
 import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.services.RegisteredServicePrincipalAccessStrategyEnforcer;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.support.events.CasEventRepository;
 import org.apereo.cas.ticket.ServiceTicketGeneratorAuthority;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
@@ -703,11 +704,13 @@ public class CasSupportActionsAutoConfiguration {
             final ConfigurableApplicationContext applicationContext,
             @Qualifier(SingleLogoutRequestExecutor.BEAN_NAME)
             final SingleLogoutRequestExecutor defaultSingleLogoutRequestExecutor,
+            @Qualifier(TicketRegistry.BEAN_NAME)
+            final TicketRegistry ticketRegistry,
             final CasConfigurationProperties casProperties) {
             return WebflowActionBeanSupplier.builder()
                 .withApplicationContext(applicationContext)
                 .withProperties(casProperties)
-                .withAction(() -> new AccountProfileRemoveSingleSignOnSessionAction(defaultSingleLogoutRequestExecutor))
+                .withAction(() -> new AccountProfileRemoveSingleSignOnSessionAction(defaultSingleLogoutRequestExecutor, ticketRegistry))
                 .withId(CasWebflowConstants.ACTION_ID_ACCOUNT_PROFILE_REMOVE_SINGLE_SIGNON_SESSION)
                 .build()
                 .get();
@@ -728,6 +731,8 @@ public class CasSupportActionsAutoConfiguration {
             final TicketRegistry ticketRegistry,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
+            @Qualifier(CasEventRepository.BEAN_NAME)
+            final ObjectProvider<CasEventRepository> casEventRepository,
             final CasConfigurationProperties casProperties) {
 
             return WebflowActionBeanSupplier.builder()
@@ -735,7 +740,8 @@ public class CasSupportActionsAutoConfiguration {
                 .withProperties(casProperties)
                 .withAction(() -> new PrepareAccountProfileViewAction(ticketRegistry,
                     servicesManager, casProperties, auditTrailExecutionPlan,
-                    geoLocationService.getIfAvailable(), principalAccessStrategyEnforcer))
+                    geoLocationService.getIfAvailable(), principalAccessStrategyEnforcer,
+                    casEventRepository.getIfAvailable()))
                 .withId(CasWebflowConstants.ACTION_ID_PREPARE_ACCOUNT_PROFILE)
                 .build()
                 .get();

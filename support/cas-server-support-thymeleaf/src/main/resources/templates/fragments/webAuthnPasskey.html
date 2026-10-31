@@ -32,6 +32,7 @@
             const csrfToken = $("#passkeyCsrfToken").val() || getCookie('XSRF-TOKEN');
             console.log(`Using CSRF token for passkeys: ${csrfToken}`);
         </script>
+        <script th:replace="~{fragments/webAuthnMessages :: messages}"></script>
         <script th:src="@{/js/webauthn/webauthn.js}"></script>
     </div>
 </main>

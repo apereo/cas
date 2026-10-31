@@ -2,6 +2,8 @@ package org.apereo.cas.support.oauth.web.response.accesstoken.ext;
 
 import module java.base;
 import org.apereo.cas.support.oauth.OAuth20Constants;
+import org.apereo.cas.support.oauth.profile.OAuth20UserProfile;
+import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 import org.apereo.cas.ticket.OAuth20Token;
 import org.apereo.cas.ticket.OAuth20UnauthorizedScopeRequestException;
@@ -10,10 +12,9 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.pac4j.core.context.WebContext;
-import org.pac4j.core.profile.ProfileManager;
-import org.pac4j.core.profile.UserProfile;
 import org.springframework.beans.factory.ObjectProvider;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * This is {@link BaseAccessTokenGrantRequestExtractor}.
@@ -35,34 +36,32 @@ public abstract class BaseAccessTokenGrantRequestExtractor<T extends OAuth20Conf
      * that authenticated with mutual TLS leaves the thumbprint of its certificate on the profile, and the token is bound
      * to that certificate (RFC 8705, section 3).
      *
-     * @param webContext the web context
+     * @param request  the request
+     * @param response the response
      * @return the access token request context
      * @throws Throwable the throwable
      */
     @Override
-    public AccessTokenRequestContext extract(final WebContext webContext) throws Throwable {
-        val tokenRequestContext = extractRequest(webContext);
-        extractUserProfile(webContext).ifPresent(profile -> {
-            if (profile.containsAttribute(OAuth20Constants.DPOP_CONFIRMATION)) {
-                tokenRequestContext.setDpopConfirmation(profile.getAttribute(OAuth20Constants.DPOP_CONFIRMATION).toString());
-            }
-            if (profile.containsAttribute(OAuth20Constants.DPOP)) {
-                tokenRequestContext.setDpop(profile.getAttribute(OAuth20Constants.DPOP).toString());
-            }
-            if (profile.containsAttribute(OAuth20Constants.X509_CERTIFICATE_DIGEST)) {
-                tokenRequestContext.setX509CertificateDigest(profile.getAttribute(OAuth20Constants.X509_CERTIFICATE_DIGEST).toString());
-            }
+    public AccessTokenRequestContext extract(final HttpServletRequest request, final HttpServletResponse response) throws Throwable {
+        val tokenRequestContext = extractRequest(request, response);
+        extractUserProfile(request, response).ifPresent(profile -> {
+            Optional.ofNullable(profile.getAttribute(OAuth20Constants.DPOP_CONFIRMATION))
+                .ifPresent(confirmation -> tokenRequestContext.setDpopConfirmation(confirmation.toString()));
+            Optional.ofNullable(profile.getAttribute(OAuth20Constants.DPOP))
+                .ifPresent(proof -> tokenRequestContext.setDpop(proof.toString()));
+            Optional.ofNullable(profile.getAttribute(OAuth20Constants.X509_CERTIFICATE_DIGEST))
+                .ifPresent(digest -> tokenRequestContext.setX509CertificateDigest(digest.toString()));
             tokenRequestContext.setUserProfile(profile);
         });
-        webContext.getRequestAttribute(OAuth20Constants.DPOP_CONFIRMATION)
+        Optional.ofNullable(request.getAttribute(OAuth20Constants.DPOP_CONFIRMATION))
             .ifPresent(confirmation -> tokenRequestContext.setDpopConfirmation(confirmation.toString()));
-        webContext.getRequestAttribute(OAuth20Constants.DPOP)
+        Optional.ofNullable(request.getAttribute(OAuth20Constants.DPOP))
             .ifPresent(proof -> tokenRequestContext.setDpop(proof.toString()));
         return tokenRequestContext;
     }
 
-    protected Optional<UserProfile> extractUserProfile(final WebContext webContext) {
-        return new ProfileManager(webContext, configurationContext.getObject().getSessionStore()).getProfile();
+    protected Optional<OAuth20UserProfile> extractUserProfile(final HttpServletRequest request, final HttpServletResponse response) {
+        return OAuth20Utils.findAuthenticatedUserProfile(request, response, configurationContext.getObject().getSessionStore());
     }
 
     /**
@@ -73,12 +72,12 @@ public abstract class BaseAccessTokenGrantRequestExtractor<T extends OAuth20Conf
      *
      * @param requestedScopes the requested scopes
      * @param token           the token
-     * @param context         the context
+     * @param request         the request
      * @return scopes
      */
     protected Set<String> extractRequestedScopesByToken(final Set<String> requestedScopes,
                                                         final OAuth20Token token,
-                                                        final WebContext context) {
+                                                        final HttpServletRequest request) {
         if (requestedScopes.isEmpty()) {
             return new TreeSet<>(token.getScopes());
         }
@@ -90,5 +89,5 @@ public abstract class BaseAccessTokenGrantRequestExtractor<T extends OAuth20Conf
         return new TreeSet<>(requestedScopes);
     }
 
-    protected abstract AccessTokenRequestContext extractRequest(WebContext webContext) throws Throwable;
+    protected abstract AccessTokenRequestContext extractRequest(HttpServletRequest request, HttpServletResponse response) throws Throwable;
 }

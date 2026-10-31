@@ -37,7 +37,7 @@ class CompactTicketCodecTests {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {StringUtils.EMPTY, "1", "2;1:a", "1;5:ab", "1;x:a", "1;:a", "1;1a", "1;-1:a", "1;9999999999:a", "1;+1:a"})
+    @ValueSource(strings = {StringUtils.EMPTY, "2", "1;1:a", "3;1:a", "2;5:ab", "2;x:a", "2;:a", "2;1a", "2;-1:a", "2;9999999999:a", "2;+1:a"})
     void verifyMalformedValuesAreRejected(final String value) {
         assertThrows(IllegalArgumentException.class, () -> CompactTicketCodec.decode(value));
     }

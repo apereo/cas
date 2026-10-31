@@ -11,7 +11,6 @@ import org.apereo.cas.authentication.PrincipalElectionStrategy;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.mfa.duo.DuoSecurityMultifactorAuthenticationProperties;
-import org.apereo.cas.pac4j.BrowserWebStorageSessionStore;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.ticket.TransientSessionTicket;
@@ -20,6 +19,7 @@ import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.web.BrowserStorage;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.util.MultifactorAuthenticationWebflowUtils;
+import org.apereo.cas.web.session.BrowserStorageCasSessionStore;
 import org.apereo.cas.web.support.WebUtils;
 import com.duosecurity.Client;
 import com.duosecurity.model.AccessDevice;
@@ -35,7 +35,6 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.pac4j.jee.context.JEEContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -78,7 +77,7 @@ class DuoSecurityUniversalPromptValidateLoginActionTests {
     private abstract static class BaseTests extends BaseCasWebflowMultifactorAuthenticationTests {
         @Autowired
         @Qualifier("duoUniversalPromptSessionStore")
-        protected BrowserWebStorageSessionStore duoUniversalPromptSessionStore;
+        protected BrowserStorageCasSessionStore duoUniversalPromptSessionStore;
 
         @Autowired
         @Qualifier(CasWebflowConstants.ACTION_ID_DUO_UNIVERSAL_PROMPT_VALIDATE_LOGIN)
@@ -135,7 +134,6 @@ class DuoSecurityUniversalPromptValidateLoginActionTests {
         @Test
         void verifyPass() throws Throwable {
             val context = MockRequestContext.create(applicationContext);
-            val webContext = new JEEContext(context.getHttpServletRequest(), context.getHttpServletResponse());
 
             val authentication = RegisteredServiceTestUtils.getAuthentication();
             WebUtils.putAuthentication(authentication, context);
@@ -158,10 +156,10 @@ class DuoSecurityUniversalPromptValidateLoginActionTests {
 
             val storage = (BrowserStorage) prepResult.getAttributes().get("result");
             val payload = MAPPER.writeValueAsString(Map.of(storage.getContext(), storage.getPayload()));
-            val attributes = duoUniversalPromptSessionStore.buildFromTrackableSession(webContext, payload)
-                .map(BrowserWebStorageSessionStore.class::cast)
+            val attributes = duoUniversalPromptSessionStore.buildFromTrackableSession(context.getHttpServletRequest(), payload)
+                .map(BrowserStorageCasSessionStore.class::cast)
                 .orElseThrow()
-                .getSessionAttributes(webContext);
+                .getSessionAttributes(context.getHttpServletRequest());
 
             val chunkCookie = BrowserStorage.COOKIE_NAME_PREFIX + storage.getContext() + "_0";
             val countCookie = BrowserStorage.COOKIE_NAME_PREFIX + storage.getContext() + "_n";

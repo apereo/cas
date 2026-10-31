@@ -26,7 +26,6 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.hc.core5.net.URIBuilder;
 import org.jooq.lambda.Unchecked;
-import org.pac4j.jee.context.JEEContext;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.Ordered;
@@ -102,8 +101,7 @@ public class OidcMultifactorAuthenticationTrigger implements MultifactorAuthenti
 
     protected String getAuthenticationClassReference(final HttpServletRequest request,
                                                      final HttpServletResponse response) {
-        val context = new JEEContext(request, response);
-        val acr = oauthRequestParameterResolver.resolveRequestParameter(context, OAuth20Constants.ACR_VALUES)
+        val acr = oauthRequestParameterResolver.resolveRequestParameter(request, OAuth20Constants.ACR_VALUES)
             .orElse(StringUtils.EMPTY);
         if (StringUtils.isBlank(acr)) {
             val serviceParam = request.getParameter(CasProtocolConstants.PARAMETER_SERVICE);

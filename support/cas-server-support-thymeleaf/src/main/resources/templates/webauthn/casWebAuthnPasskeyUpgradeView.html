@@ -13,6 +13,7 @@
         const contextPath = (/*[[@{/}]]*/ '/').slice(0, -1);
         /*]]>*/
     </script>
+    <script th:replace="~{fragments/webAuthnMessages :: messages}"></script>
     <script th:src="@{/js/webauthn/webauthn.js}"></script>
 </head>
 

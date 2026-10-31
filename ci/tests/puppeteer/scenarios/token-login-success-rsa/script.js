@@ -1,6 +1,22 @@
 
 const cas = require("../../cas.js");
-const assert = require("assert");
+const fs = require("fs");
+const path = require("path");
+const jose = require("jose");
+
+async function buildToken() {
+    const privateKey = await jose.importPKCS8(fs.readFileSync(path.join(__dirname, "private.key"), "utf8"), "RS256");
+    const publicKey = await jose.importSPKI(fs.readFileSync(path.join(__dirname, "public.key"), "utf8"), "RSA-OAEP-256");
+    const jwt = await new jose.SignJWT({})
+        .setProtectedHeader({alg: "RS256"})
+        .setSubject("casuser")
+        .setIssuedAt()
+        .setExpirationTime("5m")
+        .sign(privateKey);
+    return new jose.CompactEncrypt(new TextEncoder().encode(jwt))
+        .setProtectedHeader({alg: "RSA-OAEP-256", enc: "A128CBC-HS256", cty: "JWT"})
+        .encrypt(publicKey);
+}
 
 async function loginWithToken(page, service, token) {
     await cas.log(`Logging in with SSO token to service ${service}`);
@@ -20,23 +36,15 @@ async function loginWithToken(page, service, token) {
     const page = await cas.newPage(browser);
     await cas.gotoLogout(page);
 
-    await cas.log("Generating SSO token");
-    const response = await cas.doRequest(`https://localhost:8443/cas/actuator/tokenAuth/casuser?service=${service}`,
-        "POST", {
-            "Content-Type": "application/json",
-            "Accept": "application/json"
-        });
-    let body = JSON.parse(response);
-    console.dir(body, {depth: null, colors: true});
-    assert(body.registeredService.id === 1);
-    await loginWithToken(page, service, body.token);
+    await cas.log("Logging in with a token signed and encrypted with the keys of the service");
+    await loginWithToken(page, service, await buildToken());
 
     await cas.log("Checking for SSO token in service validation response");
     await cas.gotoLogout(page);
     await cas.gotoLogin(page, service);
     await cas.loginWith(page);
     const ticket = await cas.assertTicketParameter(page);
-    body = await cas.validateTicket(service, ticket, "XML");
+    const body = await cas.validateTicket(service, ticket, "XML");
     const token = body.match(/<cas:token>(.+)<\/cas:token>/)[1];
     await cas.log(`SSO Token ${token}`);
     await loginWithToken(page, service, token);

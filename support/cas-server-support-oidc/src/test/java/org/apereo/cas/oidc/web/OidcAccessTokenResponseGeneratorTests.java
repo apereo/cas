@@ -8,7 +8,7 @@ import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.OAuth20TokenExchangeTypes;
-import org.apereo.cas.support.oauth.authenticator.Authenticators;
+import org.apereo.cas.support.oauth.profile.DefaultOAuth20UserProfile;
 import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20TokenGeneratedResult;
 import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20TokenHashGenerator;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20AccessTokenResponseResult;
@@ -16,12 +16,6 @@ import lombok.val;
 import org.jose4j.jws.AlgorithmIdentifiers;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.pac4j.core.profile.CommonProfile;
-import org.pac4j.core.profile.ProfileManager;
-import org.pac4j.jee.context.JEEContext;
-import org.pac4j.jee.context.session.JEESessionStore;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -47,16 +41,8 @@ class OidcAccessTokenResponseGeneratorTests extends AbstractOidcTests {
             .grantType(OAuth20GrantTypes.AUTHORIZATION_CODE)
             .build();
 
-        val request = new MockHttpServletRequest();
-        val response = new MockHttpServletResponse();
-        val context = new JEEContext(request, response);
-        val manager = new ProfileManager(context, new JEESessionStore());
 
-        val profile = new CommonProfile();
-        profile.setClientName(Authenticators.CAS_OAUTH_CLIENT_BASIC_AUTHN);
-        profile.setId("casuser");
-
-        manager.save(true, profile, false);
+        val profile = new DefaultOAuth20UserProfile("casuser");
 
         val result = OAuth20AccessTokenResponseResult.builder()
             .service(RegisteredServiceTestUtils.getService())
@@ -96,16 +82,8 @@ class OidcAccessTokenResponseGeneratorTests extends AbstractOidcTests {
             .grantType(OAuth20GrantTypes.AUTHORIZATION_CODE)
             .build();
 
-        val request = new MockHttpServletRequest();
-        val response = new MockHttpServletResponse();
-        val context = new JEEContext(request, response);
-        val manager = new ProfileManager(context, new JEESessionStore());
 
-        val profile = new CommonProfile();
-        profile.setClientName(Authenticators.CAS_OAUTH_CLIENT_BASIC_AUTHN);
-        profile.setId("casuser");
-
-        manager.save(true, profile, false);
+        val profile = new DefaultOAuth20UserProfile("casuser");
 
         val result = OAuth20AccessTokenResponseResult.builder()
             .service(RegisteredServiceTestUtils.getService())
@@ -144,16 +122,8 @@ class OidcAccessTokenResponseGeneratorTests extends AbstractOidcTests {
             .grantType(OAuth20GrantTypes.AUTHORIZATION_CODE)
             .build();
 
-        val request = new MockHttpServletRequest();
-        val response = new MockHttpServletResponse();
-        val context = new JEEContext(request, response);
-        val manager = new ProfileManager(context, new JEESessionStore());
 
-        val profile = new CommonProfile();
-        profile.setClientName(Authenticators.CAS_OAUTH_CLIENT_BASIC_AUTHN);
-        profile.setId("casuser");
-
-        manager.save(true, profile, false);
+        val profile = new DefaultOAuth20UserProfile("casuser");
 
         val result = OAuth20AccessTokenResponseResult.builder()
             .service(RegisteredServiceTestUtils.getService())
@@ -185,16 +155,8 @@ class OidcAccessTokenResponseGeneratorTests extends AbstractOidcTests {
             .userCode(deviceUserCodeFactory.createDeviceUserCode(devCode.getService()).getId())
             .build();
 
-        val request = new MockHttpServletRequest();
-        val response = new MockHttpServletResponse();
-        val context = new JEEContext(request, response);
-        val manager = new ProfileManager(context, new JEESessionStore());
 
-        val profile = new CommonProfile();
-        profile.setClientName(Authenticators.CAS_OAUTH_CLIENT_BASIC_AUTHN);
-        profile.setId("casuser");
-
-        manager.save(true, profile, false);
+        val profile = new DefaultOAuth20UserProfile("casuser");
 
         val result = OAuth20AccessTokenResponseResult.builder()
             .service(RegisteredServiceTestUtils.getService())
@@ -231,9 +193,7 @@ class OidcAccessTokenResponseGeneratorTests extends AbstractOidcTests {
             .responseType(OAuth20ResponseTypes.CODE)
             .grantType(OAuth20GrantTypes.AUTHORIZATION_CODE)
             .build();
-        val profile = new CommonProfile();
-        profile.setClientName(Authenticators.CAS_OAUTH_CLIENT_BASIC_AUTHN);
-        profile.setId("casuser");
+        val profile = new DefaultOAuth20UserProfile("casuser");
         val result = OAuth20AccessTokenResponseResult.builder()
             .service(RegisteredServiceTestUtils.getService())
             .registeredService(registeredService)

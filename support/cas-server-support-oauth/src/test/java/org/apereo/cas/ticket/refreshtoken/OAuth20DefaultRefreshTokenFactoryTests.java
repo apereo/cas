@@ -55,6 +55,7 @@ class OAuth20DefaultRefreshTokenFactoryTests extends AbstractOAuth20Tests {
             val ticketGrantingTicket = new MockTicketGrantingTicket("casuser");
             val token = createRefreshToken(ticketGrantingTicket, registeredService);
             assertNotNull(token);
+            assertEquals(Set.of("https://api.example.org/"), token.getResources());
             assertNotNull(defaultAccessTokenFactory.get(OAuth20RefreshToken.class));
             assertInstanceOf(OAuth20RefreshTokenExpirationPolicy.class, token.getExpirationPolicy());
         }
@@ -64,7 +65,7 @@ class OAuth20DefaultRefreshTokenFactoryTests extends AbstractOAuth20Tests {
                 RegisteredServiceTestUtils.getService(registeredService.getServiceId()),
                 RegisteredServiceTestUtils.getAuthentication(),
                 ticketGrantingTicket,
-                Set.of("Scope1", "Scope2"), registeredService.getClientId(),
+                Set.of("Scope1", "Scope2"), Set.of("https://api.example.org/"), registeredService.getClientId(),
                 "AT-1234567890", Map.of(),
                 OAuth20ResponseTypes.CODE, OAuth20GrantTypes.AUTHORIZATION_CODE);
         }

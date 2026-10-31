@@ -3,13 +3,9 @@ package org.apereo.cas.support.saml.web.idp.profile.artifact;
 import module java.base;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
-import org.apereo.cas.ticket.TicketGrantingTicket;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.pac4j.core.profile.BasicUserProfile;
-import org.pac4j.core.profile.ProfileManager;
-import org.pac4j.jee.context.JEEContext;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.TestPropertySource;
@@ -40,22 +36,10 @@ class CasSamlArtifactMapTests extends BaseSamlIdPConfigurationTests {
     }
 
     @Test
-    void verifyOperationByStore() throws Throwable {
-        val tgt = new MockTicketGrantingTicket("casuser");
-        ticketRegistry.addTicket(tgt);
-        val response = new MockHttpServletResponse();
+    void verifyOperationWithoutTicketGrantingTicket() throws Throwable {
         val request = new MockHttpServletRequest();
-
-        val profile = new BasicUserProfile();
-        profile.addAttribute(TicketGrantingTicket.class.getName(), tgt.getId());
-
-        val context = new JEEContext(request, response);
-        val profileManager = new ProfileManager(context, samlIdPDistributedSessionStore);
-        profileManager.save(true, profile, false);
-        
-        RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request, response));
+        RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request, new MockHttpServletResponse()));
         val authnRequest = getAuthnRequestFor("example");
-        samlArtifactMap.put("artifact", "relying-party", "issuer", authnRequest);
-        assertTrue(samlArtifactMap.contains("artifact"));
+        assertThrows(NullPointerException.class, () -> samlArtifactMap.put("artifact-no-tgt", "relying-party", "issuer", authnRequest));
     }
 }

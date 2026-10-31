@@ -5,8 +5,8 @@ import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.pac4j.core.context.WebContext;
 import org.springframework.beans.factory.ObjectProvider;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * This is {@link AccessTokenProofKeyCodeExchangeAuthorizationCodeGrantRequestExtractor}.
@@ -21,10 +21,10 @@ public class AccessTokenProofKeyCodeExchangeAuthorizationCodeGrantRequestExtract
     }
 
     @Override
-    public boolean supports(final WebContext context) {
+    public boolean supports(final HttpServletRequest request) {
         val challenge = getConfigurationContext().getObject().getRequestParameterResolver()
-            .resolveRequestParameter(context, OAuth20Constants.CODE_VERIFIER).orElse(StringUtils.EMPTY);
-        return StringUtils.isNotBlank(challenge) && super.supports(context);
+            .resolveRequestParameter(request, OAuth20Constants.CODE_VERIFIER).orElse(StringUtils.EMPTY);
+        return StringUtils.isNotBlank(challenge) && super.supports(request);
     }
 
     @Override
@@ -34,10 +34,10 @@ public class AccessTokenProofKeyCodeExchangeAuthorizationCodeGrantRequestExtract
 
     @Override
     protected AccessTokenRequestContext extractInternal(
-        final WebContext context,
+        final HttpServletRequest request,
         final AccessTokenRequestContext accessTokenRequestContext) {
         val challenge = getConfigurationContext().getObject().getRequestParameterResolver()
-            .resolveRequestParameter(context, OAuth20Constants.CODE_VERIFIER).orElse(StringUtils.EMPTY);
+            .resolveRequestParameter(request, OAuth20Constants.CODE_VERIFIER).orElse(StringUtils.EMPTY);
         return accessTokenRequestContext.withCodeVerifier(challenge);
     }
 }

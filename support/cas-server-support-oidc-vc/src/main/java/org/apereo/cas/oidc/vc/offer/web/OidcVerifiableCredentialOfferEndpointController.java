@@ -20,7 +20,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.pac4j.jee.context.JEEContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -104,11 +103,10 @@ public class OidcVerifiableCredentialOfferEndpointController extends BaseOAuth20
         final HttpServletRequest httpRequest,
         final HttpServletResponse httpResponse)
             throws Throwable {
-        val context = new JEEContext(httpRequest, httpResponse);
-        val profile = OAuth20Utils.getAuthenticatedUserProfile(context, getConfigurationContext().getSessionStore());
+        val profile = OAuth20Utils.getAuthenticatedUserProfile(httpRequest, httpResponse, getConfigurationContext().getSessionStore());
         LOGGER.debug("Checking credential configuration IDs for [{}]", profile.getId());
 
-        val clientId = profile.getAttribute(OAuth20Constants.CLIENT_ID).toString();
+        val clientId = Objects.requireNonNull(profile.getAttribute(OAuth20Constants.CLIENT_ID)).toString();
         val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(
             getConfigurationContext().getServicesManager(), clientId, OidcRegisteredService.class);
 

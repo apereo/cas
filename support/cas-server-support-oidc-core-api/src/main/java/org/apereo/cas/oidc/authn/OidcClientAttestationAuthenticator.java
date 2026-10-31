@@ -11,6 +11,11 @@ import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20ClientAuthenticationMethods;
 import org.apereo.cas.support.oauth.OAuth20Constants;
+import org.apereo.cas.support.oauth.authenticator.OAuth20ClientAuthenticationResponseException;
+import org.apereo.cas.support.oauth.authenticator.OAuth20ClientAuthenticationToken;
+import org.apereo.cas.support.oauth.authenticator.OAuth20ClientCredentialsAuthenticator;
+import org.apereo.cas.support.oauth.profile.DefaultOAuth20UserProfile;
+import org.apereo.cas.support.oauth.profile.OAuth20UserProfile;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.validator.OAuth20DPoPNonceService;
 import org.apereo.cas.ticket.ExpirationPolicy;
@@ -42,18 +47,13 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.Nullable;
-import org.pac4j.core.context.CallContext;
-import org.pac4j.core.context.WebContext;
-import org.pac4j.core.credentials.Credentials;
-import org.pac4j.core.credentials.authenticator.Authenticator;
-import org.pac4j.core.credentials.extractor.CredentialsExtractor;
-import org.pac4j.core.exception.CredentialsException;
-import org.pac4j.core.exception.http.BadRequestAction;
-import org.pac4j.core.exception.http.HttpAction;
-import org.pac4j.core.profile.CommonProfile;
-import org.pac4j.jee.context.JEEContext;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.web.authentication.AuthenticationConverter;
+import jakarta.servlet.http.HttpServletRequest;
 import java.security.cert.X509Certificate;
 
 /**
@@ -72,7 +72,7 @@ import java.security.cert.X509Certificate;
  * @since 8.1.0
  */
 @Slf4j
-public class OidcClientAttestationAuthenticator implements Authenticator {
+public class OidcClientAttestationAuthenticator implements OAuth20ClientCredentialsAuthenticator {
     /**
      * Header that carries the client attestation.
      */
@@ -140,46 +140,43 @@ public class OidcClientAttestationAuthenticator implements Authenticator {
      * except a missing or invalid challenge, which is answered with {@code use_attestation_challenge}, and a DPoP proof without
      * a valid nonce in the DPoP combined mode, which is answered with {@code use_dpop_nonce}.
      *
-     * @param callContext the call context
-     * @param credentials the credentials
-     * @return the credentials with the client profile, or empty
+     * @param token the token with the client attestation credentials
+     * @return the client profile, or empty
      */
     @Override
-    public Optional<Credentials> validate(final CallContext callContext, final Credentials credentials) {
-        if (!(credentials instanceof final ClientAttestationCredentials attestationCredentials) || trustAnchors.isEmpty()) {
+    public Optional<OAuth20UserProfile> authenticate(final OAuth20ClientAuthenticationToken token) {
+        if (!(token.getCredentials() instanceof final ClientAttestationCredentials attestationCredentials) || trustAnchors.isEmpty()) {
             return Optional.empty();
         }
         try {
             val clientAttestation = verifyClientAttestation(attestationCredentials.getClientAttestation());
             val clientId = clientAttestation.clientId();
-            val requestedClientId = callContext.webContext().getRequestParameter(OAuth20Constants.CLIENT_ID);
-            if (requestedClientId.isPresent() && !clientId.equals(requestedClientId.get())) {
-                throw new CredentialsException("Client attestation sub does not match the client_id of the request");
+            val requestedClientId = token.getRequest().getParameter(OAuth20Constants.CLIENT_ID);
+            if (requestedClientId != null && !clientId.equals(requestedClientId)) {
+                throw new BadCredentialsException("Client attestation sub does not match the client_id of the request");
             }
             val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(servicesManager, clientId, OidcRegisteredService.class);
             val accessResult = registeredServiceAccessStrategyEnforcer.execute(AuditableContext.builder().registeredService(registeredService).build());
             if (registeredService == null || accessResult.isExecutionFailure()) {
-                throw new CredentialsException("No registered service allows access to client " + clientId);
+                throw new BadCredentialsException("No registered service allows access to client " + clientId);
             }
             val method = attestationCredentials.isDpopCombinedMode()
                 ? OAuth20ClientAuthenticationMethods.ATTEST_JWT_CLIENT_AUTH_DPOP
                 : OAuth20ClientAuthenticationMethods.ATTEST_JWT_CLIENT_AUTH;
-            if (!OAuth20Utils.isTokenAuthenticationMethodSupportedFor(callContext, registeredService, method)) {
-                throw new CredentialsException("Client authentication method " + method.getType() + " is not supported for service " + registeredService.getName());
+            if (!OAuth20Utils.isTokenAuthenticationMethodSupportedFor(token.getRequest(), registeredService, method)) {
+                throw new BadCredentialsException("Client authentication method " + method.getType() + " is not supported for service " + registeredService.getName());
             }
             if (attestationCredentials.isDpopCombinedMode()) {
-                verifyDPoPProof(callContext.webContext(), Objects.requireNonNull(attestationCredentials.getDpopProof()), clientAttestation.key(), clientId);
+                verifyDPoPProof(token, Objects.requireNonNull(attestationCredentials.getDpopProof()), clientAttestation.key(), clientId);
             } else {
-                verifyProofOfPossession(callContext.webContext(), Objects.requireNonNull(attestationCredentials.getProofOfPossession()),
+                verifyProofOfPossession(Objects.requireNonNull(attestationCredentials.getProofOfPossession()),
                     clientAttestation.key(), clientId);
             }
 
-            val profile = new CommonProfile();
-            profile.setId(clientId);
+            val profile = new DefaultOAuth20UserProfile(clientId, OAuth20UserProfile.COMMON_PROFILE_HANDLER_NAME);
             profile.addAttribute(OAuth20Constants.CLIENT_ID, clientId);
-            credentials.setUserProfile(profile);
-            return Optional.of(credentials);
-        } catch (final HttpAction e) {
+            return Optional.of(profile);
+        } catch (final OAuth20ClientAuthenticationResponseException e) {
             throw e;
         } catch (final Throwable e) {
             LOGGER.warn("Unable to authenticate client by its client attestation: [{}]", e.getMessage());
@@ -202,7 +199,7 @@ public class OidcClientAttestationAuthenticator implements Authenticator {
         verifyHeader(signedJwt, CLIENT_ATTESTATION_TYPE);
         val encodedChain = signedJwt.getHeader().getX509CertChain();
         if (encodedChain == null || encodedChain.isEmpty()) {
-            throw new CredentialsException("Client attestation carries no x5c certificate chain");
+            throw new BadCredentialsException("Client attestation carries no x5c certificate chain");
         }
         val chain = new ArrayList<X509Certificate>();
         for (val encoded : encodedChain) {
@@ -214,13 +211,13 @@ public class OidcClientAttestationAuthenticator implements Authenticator {
         val claims = signedJwt.getJWTClaimsSet();
         val now = Instant.now(Clock.systemUTC());
         if (StringUtils.isBlank(claims.getSubject())) {
-            throw new CredentialsException("Client attestation carries no sub");
+            throw new BadCredentialsException("Client attestation carries no sub");
         }
         if (claims.getExpirationTime() == null || claims.getExpirationTime().toInstant().plusSeconds(CLOCK_SKEW_SECONDS).isBefore(now)) {
-            throw new CredentialsException("Client attestation exp is missing or has passed");
+            throw new BadCredentialsException("Client attestation exp is missing or has passed");
         }
         if (claims.getIssueTime() != null && claims.getIssueTime().toInstant().isAfter(now.plusSeconds(CLOCK_SKEW_SECONDS))) {
-            throw new CredentialsException("Client attestation iat is in the future");
+            throw new BadCredentialsException("Client attestation iat is in the future");
         }
         val key = readConfirmationKey(claims);
         if (claims.getClaim("status") != null) {
@@ -235,13 +232,12 @@ public class OidcClientAttestationAuthenticator implements Authenticator {
      * {@code aud} naming the issuer, an {@code iat} within the last few minutes, a {@code challenge} handed out by CAS when
      * challenges are turned on, and a {@code jti} not used before.
      *
-     * @param webContext        the web context
      * @param proofOfPossession the proof of possession JWT
      * @param key               the attested key
      * @param clientId          the client identifier
      * @throws Throwable the throwable
      */
-    protected void verifyProofOfPossession(final WebContext webContext, final String proofOfPossession,
+    protected void verifyProofOfPossession(final String proofOfPossession,
                                            final JWK key, final String clientId)
             throws Throwable {
         val signedJwt = SignedJWT.parse(proofOfPossession);
@@ -249,19 +245,19 @@ public class OidcClientAttestationAuthenticator implements Authenticator {
         verifySignature(signedJwt, key);
         val claims = signedJwt.getJWTClaimsSet();
         if (claims.getAudience() == null || !claims.getAudience().contains(oidcServerDiscoverySettings.getIssuer())) {
-            throw new CredentialsException("Client attestation proof of possession aud does not name the issuer");
+            throw new BadCredentialsException("Client attestation proof of possession aud does not name the issuer");
         }
         val now = Instant.now(Clock.systemUTC());
         val issuedAt = claims.getIssueTime();
         if (issuedAt == null || issuedAt.toInstant().isAfter(now.plusSeconds(CLOCK_SKEW_SECONDS))
             || issuedAt.toInstant().isBefore(now.minusSeconds(PROOF_OF_POSSESSION_LIFETIME_SECONDS))) {
-            throw new CredentialsException("Client attestation proof of possession iat is missing or out of range");
+            throw new BadCredentialsException("Client attestation proof of possession iat is missing or out of range");
         }
         if (challengeService.isEnabled() && !challengeService.isValid(claims.getStringClaim("challenge"))) {
-            throw useAttestationChallenge(webContext);
+            throw useAttestationChallenge();
         }
         if (StringUtils.isBlank(claims.getJWTID()) || !registerProofOfPossessionIdentifier(PROOF_OF_POSSESSION_PREFIX, clientId, claims.getJWTID())) {
-            throw new CredentialsException("Client attestation proof of possession jti is missing or has been used before");
+            throw new BadCredentialsException("Client attestation proof of possession jti is missing or has been used before");
         }
     }
 
@@ -273,31 +269,33 @@ public class OidcClientAttestationAuthenticator implements Authenticator {
      * themselves; the token endpoint still does, to bind the access token. Server-provided challenges do not apply; once DPoP
      * nonces are turned on, the proof must carry a valid one instead (RFC 9449, section 8).
      *
-     * @param webContext the web context
-     * @param dpopProof  the DPoP proof
+     * @param token     the token of the request
+     * @param dpopProof the DPoP proof
      * @param key        the attested key
      * @param clientId   the client identifier
      * @throws Throwable the throwable
      */
-    protected void verifyDPoPProof(final WebContext webContext, final String dpopProof, final JWK key, final String clientId) throws Throwable {
+    protected void verifyDPoPProof(final OAuth20ClientAuthenticationToken token, final String dpopProof,
+                                   final JWK key, final String clientId)
+            throws Throwable {
         val signedProof = SignedJWT.parse(dpopProof);
         val oidc = casProperties.getAuthn().getOidc();
         val algorithms = oidc.getDiscovery().getDpopSigningAlgValuesSupported().stream()
             .map(JWSAlgorithm::parse)
             .collect(Collectors.toSet());
         val maximumAge = Beans.newDuration(oidc.getCore().getSkew()).toSeconds();
-        val verifier = new DPoPTokenRequestVerifier(algorithms, new URI(webContext.getRequestURL()), maximumAge, maximumAge, null);
+        val verifier = new DPoPTokenRequestVerifier(algorithms, new URI(token.getRequest().getRequestURL().toString()), maximumAge, maximumAge, null);
         val confirmation = verifier.verify(new DPoPIssuer(new ClientID(clientId)), signedProof, dpopNonceService.getAcceptedNonces(signedProof));
         if (!confirmation.getValue().equals(key.computeThumbprint())) {
-            throw new CredentialsException("DPoP proof key does not match the client attestation key");
+            throw new BadCredentialsException("DPoP proof key does not match the client attestation key");
         }
         if (!dpopNonceService.isAccepted(signedProof)) {
-            dpopNonceService.provide(webContext);
-            throw badRequest(webContext, OAuth20Constants.USE_DPOP_NONCE, "A server-provided nonce is required in the DPoP proof");
+            dpopNonceService.provide(Objects.requireNonNull(token.getResponse()));
+            throw badRequest(Map.of(), OAuth20Constants.USE_DPOP_NONCE, "A server-provided nonce is required in the DPoP proof");
         }
         val jwtId = signedProof.getJWTClaimsSet().getJWTID();
         if (StringUtils.isBlank(jwtId) || !registerProofOfPossessionIdentifier(DPOP_PROOF_PREFIX, clientId, jwtId)) {
-            throw new CredentialsException("DPoP proof jti is missing or has been used before");
+            throw new BadCredentialsException("DPoP proof jti is missing or has been used before");
         }
     }
 
@@ -305,40 +303,39 @@ public class OidcClientAttestationAuthenticator implements Authenticator {
      * The {@code use_attestation_challenge} error, with a fresh challenge in the {@code OAuth-Client-Attestation-Challenge}
      * header, which the client is to put in a new proof of possession.
      *
-     * @param webContext the web context
      * @return the error, to be thrown
      * @throws Throwable the throwable
      */
-    protected HttpAction useAttestationChallenge(final WebContext webContext) throws Throwable {
+    protected OAuth20ClientAuthenticationResponseException useAttestationChallenge() throws Throwable {
         LOGGER.info("Client attestation proof of possession carries no valid challenge; a fresh challenge is provided");
-        webContext.setResponseHeader(OidcConstants.HEADER_CLIENT_ATTESTATION_CHALLENGE, challengeService.create());
-        return badRequest(webContext, OidcConstants.USE_ATTESTATION_CHALLENGE,
-            "A fresh challenge is required in the client attestation proof of possession");
+        return badRequest(Map.of(OidcConstants.HEADER_CLIENT_ATTESTATION_CHALLENGE, challengeService.create()),
+            OidcConstants.USE_ATTESTATION_CHALLENGE, "A fresh challenge is required in the client attestation proof of possession");
     }
 
     /**
-     * A {@code 400} error that is not to be cached, kept as the response by pac4j when thrown from the authenticator.
+     * A {@code 400} error that is not to be cached, which answers the request instead of client authentication.
      *
-     * @param webContext  the web context
+     * @param headers     the headers of the response
      * @param error       the error code
      * @param description the error description
      * @return the error, to be thrown
      */
-    protected static HttpAction badRequest(final WebContext webContext, final String error, final String description) {
-        webContext.setResponseHeader(HttpHeaders.CACHE_CONTROL, "no-store");
-        webContext.setResponseContentType(MediaType.APPLICATION_JSON_VALUE);
-        val action = new BadRequestAction();
-        action.setContent(JSONObjectUtils.toJSONString(new LinkedHashMap<>(OAuth20Utils.getErrorResponseBody(error, description))));
-        return action;
+    protected static OAuth20ClientAuthenticationResponseException badRequest(final Map<String, String> headers,
+                                                                             final String error, final String description) {
+        val responseHeaders = new LinkedHashMap<>(headers);
+        responseHeaders.put(HttpHeaders.CACHE_CONTROL, "no-store");
+        responseHeaders.put(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
+        val body = JSONObjectUtils.toJSONString(new LinkedHashMap<>(OAuth20Utils.getErrorResponseBody(error, description)));
+        return new OAuth20ClientAuthenticationResponseException(HttpStatus.BAD_REQUEST.value(), responseHeaders, body);
     }
 
     protected void verifyHeader(final SignedJWT signedJwt, final JOSEObjectType type) {
         if (!type.equals(signedJwt.getHeader().getType())) {
-            throw new CredentialsException("JWT type must be " + type);
+            throw new BadCredentialsException("JWT type must be " + type);
         }
         val algorithm = signedJwt.getHeader().getAlgorithm();
         if (!casProperties.getAuthn().getOidc().getClientAttestation().getSigningAlgValuesSupported().contains(algorithm.getName())) {
-            throw new CredentialsException("JWT signing algorithm " + algorithm + " is not accepted");
+            throw new BadCredentialsException("JWT signing algorithm " + algorithm + " is not accepted");
         }
     }
 
@@ -350,18 +347,18 @@ public class OidcClientAttestationAuthenticator implements Authenticator {
             default -> false;
         };
         if (!verified) {
-            throw new CredentialsException("JWT signature validation failed");
+            throw new BadCredentialsException("JWT signature validation failed");
         }
     }
 
     protected static JWK readConfirmationKey(final JWTClaimsSet claims) throws Exception {
         val confirmation = claims.getJSONObjectClaim("cnf");
         if (confirmation == null || !(confirmation.get("jwk") instanceof final Map<?, ?> members)) {
-            throw new CredentialsException("Client attestation carries no cnf jwk");
+            throw new BadCredentialsException("Client attestation carries no cnf jwk");
         }
         val key = JWK.parse((Map<String, Object>) members);
         if (key.isPrivate()) {
-            throw new CredentialsException("Client attestation cnf jwk must not contain private key material");
+            throw new BadCredentialsException("Client attestation cnf jwk must not contain private key material");
         }
         return key;
     }
@@ -397,11 +394,8 @@ public class OidcClientAttestationAuthenticator implements Authenticator {
      */
     @Getter
     @RequiredArgsConstructor
-    @EqualsAndHashCode(callSuper = true)
-    public static class ClientAttestationCredentials extends Credentials {
-        @Serial
-        private static final long serialVersionUID = -2271463547431093327L;
-
+    @EqualsAndHashCode
+    public static class ClientAttestationCredentials {
         private final String clientAttestation;
 
         private final @Nullable String proofOfPossession;
@@ -419,31 +413,34 @@ public class OidcClientAttestationAuthenticator implements Authenticator {
     }
 
     /**
-     * Extracts the client attestation and its proof of possession, each of which must arrive in exactly one header. A
+     * Reads the client attestation and its proof of possession, each of which must arrive in exactly one header. A
      * request with a client attestation and a single DPoP proof but no proof of possession header uses the DPoP combined
      * mode; with a proof of possession header, a DPoP proof is left to the DPoP validation of the endpoint.
      */
-    public static class ClientAttestationCredentialsExtractor implements CredentialsExtractor {
+    public static class ClientAttestationAuthenticationConverter implements AuthenticationConverter {
         @Override
-        public Optional<Credentials> extract(final CallContext callContext) {
-            if (callContext.webContext() instanceof final JEEContext context) {
-                val attestations = readHeaders(context, HEADER_CLIENT_ATTESTATION);
-                val proofs = readHeaders(context, HEADER_CLIENT_ATTESTATION_POP);
-                val dpopProofs = readHeaders(context, OAuth20Constants.DPOP);
-                if (attestations.size() == 1 && StringUtils.isNotBlank(attestations.getFirst())) {
-                    if (proofs.size() == 1 && StringUtils.isNotBlank(proofs.getFirst())) {
-                        return Optional.of(new ClientAttestationCredentials(attestations.getFirst().trim(), proofs.getFirst().trim(), null));
-                    }
-                    if (proofs.isEmpty() && dpopProofs.size() == 1 && StringUtils.isNotBlank(dpopProofs.getFirst())) {
-                        return Optional.of(new ClientAttestationCredentials(attestations.getFirst().trim(), null, dpopProofs.getFirst().trim()));
-                    }
+        public @Nullable Authentication convert(final HttpServletRequest request) {
+            val attestations = readHeaders(request, HEADER_CLIENT_ATTESTATION);
+            val proofs = readHeaders(request, HEADER_CLIENT_ATTESTATION_POP);
+            val dpopProofs = readHeaders(request, OAuth20Constants.DPOP);
+            if (attestations.size() == 1 && StringUtils.isNotBlank(attestations.getFirst())) {
+                if (proofs.size() == 1 && StringUtils.isNotBlank(proofs.getFirst())) {
+                    return newToken(request, new ClientAttestationCredentials(attestations.getFirst().trim(), proofs.getFirst().trim(), null));
+                }
+                if (proofs.isEmpty() && dpopProofs.size() == 1 && StringUtils.isNotBlank(dpopProofs.getFirst())) {
+                    return newToken(request, new ClientAttestationCredentials(attestations.getFirst().trim(), null, dpopProofs.getFirst().trim()));
                 }
             }
-            return Optional.empty();
+            return null;
         }
 
-        private static List<String> readHeaders(final JEEContext context, final String headerName) {
-            val headers = context.getNativeRequest().getHeaders(headerName);
+        private static OAuth20ClientAuthenticationToken newToken(final HttpServletRequest request, final ClientAttestationCredentials credentials) {
+            return new OAuth20ClientAuthenticationToken(request, OAuth20ClientAuthenticationToken.CredentialSource.HEADER,
+                credentials.getClientAttestation(), credentials);
+        }
+
+        private static List<String> readHeaders(final HttpServletRequest request, final String headerName) {
+            val headers = request.getHeaders(headerName);
             return headers == null ? List.of() : Collections.list(headers);
         }
     }

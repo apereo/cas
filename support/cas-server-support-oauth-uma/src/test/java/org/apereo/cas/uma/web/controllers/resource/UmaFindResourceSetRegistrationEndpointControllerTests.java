@@ -6,8 +6,7 @@ import org.apereo.cas.uma.web.controllers.BaseUmaEndpointControllerTests;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.pac4j.core.profile.ProfileManager;
-import org.pac4j.jee.context.JEEContext;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import static org.junit.jupiter.api.Assertions.*;
@@ -41,13 +40,9 @@ class UmaFindResourceSetRegistrationEndpointControllerTests extends BaseUmaEndpo
         performUmaRequest(HttpMethod.POST, OAuth20Constants.UMA_RESOURCE_SET_REGISTRATION_URL,
             body, results.getLeft(), results.getMiddle());
 
-        val context = new JEEContext(results.getLeft(), results.getMiddle());
-        val manager = new ProfileManager(context, oauthDistributedSessionStore);
-        manager.removeProfiles();
-
-        val result = performUmaRequest(HttpMethod.GET, OAuth20Constants.UMA_RESOURCE_SET_REGISTRATION_URL,
-            results.getLeft(), results.getMiddle());
-        assertEquals(HttpStatus.OK.value(), result.getResponse().getStatus());
+        val result = performUmaRequest(HttpMethod.GET, OAuth20Constants.UMA_RESOURCE_SET_REGISTRATION_URL);
+        assertEquals(HttpStatus.UNAUTHORIZED.value(), result.getResponse().getStatus());
+        assertEquals(OAuth20Constants.TOKEN_TYPE_BEARER, result.getResponse().getHeader(HttpHeaders.WWW_AUTHENTICATE));
     }
 
     @Test
@@ -63,10 +58,6 @@ class UmaFindResourceSetRegistrationEndpointControllerTests extends BaseUmaEndpo
             OAuth20Constants.UMA_RESOURCE_SET_REGISTRATION_URL + "/-1",
             results.getLeft(), results.getMiddle());
         assertEquals(HttpStatus.BAD_REQUEST.value(), result.getResponse().getStatus());
-
-        val context = new JEEContext(results.getLeft(), results.getMiddle());
-        val manager = new ProfileManager(context, oauthDistributedSessionStore);
-        manager.removeProfiles();
 
         result = performUmaRequest(HttpMethod.GET,
             OAuth20Constants.UMA_RESOURCE_SET_REGISTRATION_URL + '/' + resourceId,

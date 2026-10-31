@@ -1,0 +1,42 @@
+{
+  "@class": "org.apereo.cas.services.OidcRegisteredService",
+  "clientId": "encrypted",
+  "clientSecret": "secret",
+  "serviceId": "^https://localhost:9859/anything/encrypted.*",
+  "name": "Encrypted",
+  "id": 2,
+  "evaluationOrder": 1,
+  "scopes": [
+    "java.util.HashSet",
+    [
+      "openid",
+      "profile",
+      "email"
+    ]
+  ],
+  "supportedResponseTypes": [
+    "java.util.HashSet",
+    [
+      "code"
+    ]
+  ],
+  "supportedGrantTypes": [
+    "java.util.HashSet",
+    [
+      "authorization_code",
+      "refresh_token"
+    ]
+  ],
+  "bypassApprovalPrompt": true,
+  "generateRefreshToken": true,
+  "jwtRefreshToken": true,
+  "jwtAccessToken": true,
+  "jwtAccessTokenSigningAlg": "PS256",
+  "jwks": "file://${#environmentVariables['PWD']}/ci/tests/puppeteer/scenarios/${#environmentVariables['SCENARIO']}/client-public.json",
+  "userInfoSigningAlg": "RS256",
+  "userInfoEncryptedResponseAlg": "RSA-OAEP-256",
+  "userInfoEncryptedResponseEncoding": "A256GCM",
+  "introspectionSignedResponseAlg": "RS256",
+  "introspectionEncryptedResponseAlg": "RSA-OAEP-256",
+  "introspectionEncryptedResponseEncoding": "A256GCM"
+}

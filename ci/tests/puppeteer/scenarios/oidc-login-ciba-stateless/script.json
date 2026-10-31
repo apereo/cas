@@ -1,0 +1,40 @@
+{
+  "dependencies": "oidc,stateless-ticket-registry,reports",
+  "conditions": {
+    "docker": "true"
+  },
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
+    "--cas.http-client.host-name-verifier=none",
+    
+    "--spring.mail.host=localhost",
+    "--spring.mail.port=25000",
+
+    "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
+    "--management.endpoints.web.exposure.include=*",
+    "--management.endpoints.access.default=UNRESTRICTED",
+    
+    "--cas.authn.oidc.ciba.max-time-to-live-in-seconds=PT10M",
+    "--cas.authn.oidc.ciba.verification.delay=PT1S",
+    "--cas.authn.oidc.ciba.verification.mail.html=false",
+    "--cas.authn.oidc.ciba.verification.mail.from=cas@apereo.org",
+    "--cas.authn.oidc.ciba.verification.mail.subject=CIBA Token",
+    "--cas.authn.oidc.ciba.verification.mail.text=${verificationUrl}",
+    
+    "--cas.authn.oidc.core.issuer=https://localhost:8443/cas/oidc",
+    "--cas.authn.oidc.discovery.scopes=openid,profile,email,address,phone",
+    "--cas.authn.oidc.jwks.file-system.jwks-file=file:${#systemProperties['java.io.tmpdir']}/cibaoidcstateless.jwks",
+
+    "--cas.authn.attribute-repository.stub.attributes.email=casuser@apereo.org",
+    "--cas.authn.attribute-repository.stub.attributes.name=CAS",
+    "--cas.authn.attribute-repository.stub.attributes.gender=female",
+    "--cas.authn.attribute-repository.stub.attributes.preferred_username=casuser",
+
+    "--cas.service-registry.core.init-from-json=true",
+    "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services"
+  ],
+  "initScript": "${PWD}/ci/tests/httpbin/run-httpbin-server.sh,${PWD}/ci/tests/mail/run-mail-server.sh"
+}
+

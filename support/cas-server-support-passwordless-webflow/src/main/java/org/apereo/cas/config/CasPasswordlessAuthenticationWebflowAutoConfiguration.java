@@ -39,6 +39,7 @@ import org.apereo.cas.web.flow.DelegatedClientWebflowCustomizer;
 import org.apereo.cas.web.flow.DetermineMultifactorPasswordlessAuthenticationAction;
 import org.apereo.cas.web.flow.DisplayBeforePasswordlessAuthenticationAction;
 import org.apereo.cas.web.flow.InitializeCaptchaAction;
+import org.apereo.cas.web.flow.PasswordlessAccountProfileContactMethodsAction;
 import org.apereo.cas.web.flow.PasswordlessAuthenticationCaptchaWebflowConfigurer;
 import org.apereo.cas.web.flow.PasswordlessAuthenticationWebflowConfigurer;
 import org.apereo.cas.web.flow.PasswordlessCasWebflowLoginContextProvider;
@@ -50,6 +51,7 @@ import org.apereo.cas.web.flow.VerifyPasswordlessAccountAuthenticationAction;
 import org.apereo.cas.web.flow.actions.ConsumerExecutionAction;
 import org.apereo.cas.web.flow.actions.StaticEventExecutionAction;
 import org.apereo.cas.web.flow.actions.WebflowActionBeanSupplier;
+import org.apereo.cas.web.flow.configurer.acct.AccountProfileContributionWebflowConfigurer;
 import org.apereo.cas.web.flow.delegation.PasswordlessDelegatedClientAuthenticationRequestCustomizer;
 import org.apereo.cas.web.flow.delegation.PasswordlessDelegatedClientAuthenticationWebflowStateContributor;
 import org.apereo.cas.web.flow.delegation.PasswordlessDelegatedClientIdentityProviderAuthorizer;
@@ -351,6 +353,52 @@ public class CasPasswordlessAuthenticationWebflowAutoConfiguration {
             return plan -> plan.registerSerializableClass(PasswordlessUserAccount.class);
         }
 
+    }
+
+    @Configuration(value = "PasswordlessAccountProfileConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.AccountManagement, enabledByDefault = false)
+    static class PasswordlessAccountProfileConfiguration {
+        @ConditionalOnMissingBean(name = "passwordlessAccountProfileWebflowConfigurer")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public CasWebflowConfigurer passwordlessAccountProfileWebflowConfigurer(
+            final CasConfigurationProperties casProperties,
+            final ConfigurableApplicationContext applicationContext,
+            @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_DEFINITION_REGISTRY)
+            final FlowDefinitionRegistry flowDefinitionRegistry,
+            @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
+            final FlowBuilderServices flowBuilderServices) {
+            return new AccountProfileContributionWebflowConfigurer(flowBuilderServices,
+                flowDefinitionRegistry, applicationContext, casProperties)
+                .withRenderAction(CasWebflowConstants.ACTION_ID_ACCOUNT_PROFILE_PASSWORDLESS_CONTACT_METHODS);
+        }
+
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "passwordlessAccountProfileWebflowExecutionPlanConfigurer")
+        public CasWebflowExecutionPlanConfigurer passwordlessAccountProfileWebflowExecutionPlanConfigurer(
+            @Qualifier("passwordlessAccountProfileWebflowConfigurer")
+            final CasWebflowConfigurer passwordlessAccountProfileWebflowConfigurer) {
+            return plan -> plan.registerWebflowConfigurer(passwordlessAccountProfileWebflowConfigurer);
+        }
+
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_ACCOUNT_PROFILE_PASSWORDLESS_CONTACT_METHODS)
+        public Action passwordlessAccountProfileContactMethodsAction(
+            final CasConfigurationProperties casProperties,
+            final ConfigurableApplicationContext applicationContext,
+            @Qualifier(PasswordlessUserAccountStore.BEAN_NAME)
+            final PasswordlessUserAccountStore passwordlessUserAccountStore) {
+            return WebflowActionBeanSupplier.builder()
+                .withApplicationContext(applicationContext)
+                .withProperties(casProperties)
+                .withAction(() -> new PasswordlessAccountProfileContactMethodsAction(passwordlessUserAccountStore))
+                .withId(CasWebflowConstants.ACTION_ID_ACCOUNT_PROFILE_PASSWORDLESS_CONTACT_METHODS)
+                .build()
+                .get();
+        }
     }
 
     @Configuration(value = "PasswordlessDelegatedAuthenticationConfiguration", proxyBeanMethods = false)

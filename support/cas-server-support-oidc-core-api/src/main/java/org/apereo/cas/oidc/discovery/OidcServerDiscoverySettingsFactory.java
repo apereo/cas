@@ -112,6 +112,7 @@ public class OidcServerDiscoverySettingsFactory implements FactoryBean<OidcServe
             new LinkedHashSet<>(discoveryConfig.getRequestObjectEncryptionEncodingValuesSupported()));
 
         discovery.setAuthorizationResponseIssuerParameterSupported(discoveryConfig.isAuthorizationResponseIssuerParameterSupported());
+        discovery.setClientIdMetadataDocumentSupported(oidc.getRegistration().getClientIdMetadataDocument().isEnabled());
         discovery.setTlsClientCertificateBoundAccessTokens(discoveryConfig.isTlsClientCertificateBoundAccessTokens());
 
         discovery.setAcrValuesSupported(new LinkedHashSet<>(discoveryConfig.getAcrValuesSupported()));

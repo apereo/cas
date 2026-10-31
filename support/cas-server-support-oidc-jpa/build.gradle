@@ -42,7 +42,6 @@ dependencies {
     implementation project(":core:cas-server-core-logout-api")
 
     implementation libraries.jose4j
-    implementation libraries.nimbus
 
     testImplementation project(":core:cas-server-core-util")
     testImplementation project(":core:cas-server-core-scripting")

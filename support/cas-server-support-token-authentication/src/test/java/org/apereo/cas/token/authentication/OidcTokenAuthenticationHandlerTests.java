@@ -12,6 +12,7 @@ import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
+import org.apereo.cas.support.oauth.profile.DefaultOAuth20UserProfile;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredServiceClientSecret;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20JwtAccessTokenEncoder;
@@ -21,7 +22,6 @@ import org.apereo.cas.util.CollectionUtils;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.pac4j.core.profile.CommonProfile;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
@@ -134,9 +134,7 @@ class OidcTokenAuthenticationHandlerTests extends BaseTokenAuthenticationTests {
         ));
         servicesManager.save(registeredService);
 
-        val profile = new CommonProfile();
-        profile.setClientName("OIDC");
-        profile.setId(accessToken.getAuthentication().getPrincipal().getId());
+        val profile = new DefaultOAuth20UserProfile(accessToken.getAuthentication().getPrincipal().getId());
         
         val idTokenContext = IdTokenGenerationContext.builder()
             .accessToken(accessToken)

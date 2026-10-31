@@ -9,13 +9,13 @@ import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceMe
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectSigner;
 import org.apereo.cas.test.CasTestExtension;
+import org.apereo.cas.web.CasSessionStore;
 import lombok.val;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.Issuer;
-import org.pac4j.core.context.session.SessionStore;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
@@ -50,7 +50,7 @@ public abstract class BaseSamlIdPWebflowTests extends BaseWebflowConfigurerTests
 
     @Autowired
     @Qualifier("samlIdPDistributedSessionStore")
-    protected SessionStore samlIdPDistributedSessionStore;
+    protected CasSessionStore samlIdPDistributedSessionStore;
 
     protected AuthnRequest signAuthnRequest(final HttpServletRequest request, final HttpServletResponse response,
                                             final AuthnRequest authnRequest, final SamlRegisteredService samlRegisteredService,

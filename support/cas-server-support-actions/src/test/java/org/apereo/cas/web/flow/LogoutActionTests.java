@@ -2,13 +2,19 @@ package org.apereo.cas.web.flow;
 
 import module java.base;
 import org.apereo.cas.CasProtocolConstants;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.logout.DefaultSingleLogoutRequestContext;
+import org.apereo.cas.logout.LogoutExecutionPlan;
 import org.apereo.cas.logout.LogoutRequestStatus;
 import org.apereo.cas.logout.slo.SingleLogoutExecutionRequest;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.CasRegisteredService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.MockRequestContext;
+import org.apereo.cas.web.flow.logout.FinishLogoutAction;
+import org.apereo.cas.web.flow.logout.LogoutAction;
+import org.apereo.cas.web.flow.logout.LogoutViewSetupAction;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.val;
 import org.junit.jupiter.api.Nested;
@@ -20,6 +26,7 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.webflow.execution.Action;
 import jakarta.servlet.http.Cookie;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * @author Scott Battaglia
@@ -73,6 +80,28 @@ class LogoutActionTests {
         @Autowired
         @Qualifier(CasWebflowConstants.ACTION_ID_LOGOUT)
         private Action logoutAction;
+
+        @Autowired
+        @Qualifier(LogoutExecutionPlan.BEAN_NAME)
+        private LogoutExecutionPlan logoutExecutionPlan;
+
+        @Test
+        void verifyServiceLookedUpOncePerRequest() throws Throwable {
+            val servicesManager = mock(ServicesManager.class);
+            val actions = List.<Action>of(
+                new LogoutAction(getTicketRegistry(), getTicketGrantingTicketCookieGenerator(),
+                    getArgumentExtractor(), servicesManager, logoutExecutionPlan, casProperties),
+                new FinishLogoutAction(getTicketRegistry(), getTicketGrantingTicketCookieGenerator(),
+                    getArgumentExtractor(), servicesManager, logoutExecutionPlan, casProperties),
+                new LogoutViewSetupAction(getTicketRegistry(), getTicketGrantingTicketCookieGenerator(),
+                    getArgumentExtractor(), servicesManager, logoutExecutionPlan, casProperties));
+            val requestContext = MockRequestContext.create(applicationContext);
+            requestContext.setParameter(CasProtocolConstants.PARAMETER_SERVICE, "https://%s.example.org".formatted(UUID.randomUUID()));
+            for (val action : actions) {
+                action.execute(requestContext);
+            }
+            verify(servicesManager).findServiceBy(any(Service.class));
+        }
 
         @Test
         void verifyLogoutNoCookie() throws Throwable {

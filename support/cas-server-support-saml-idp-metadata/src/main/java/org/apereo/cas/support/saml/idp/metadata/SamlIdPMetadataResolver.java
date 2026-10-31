@@ -9,6 +9,7 @@ import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataGenerat
 import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPMetadataLocator;
 import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPSamlRegisteredServiceCriterion;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
+import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument;
 import org.apereo.cas.util.concurrent.CasReentrantLock;
 import org.apereo.cas.util.function.FunctionUtils;
 import com.github.benmanes.caffeine.cache.Cache;
@@ -41,7 +42,7 @@ public class SamlIdPMetadataResolver extends BaseElementMetadataResolver {
 
     private final CasConfigurationProperties casProperties;
 
-    private final Cache<String, List<EntityDescriptor>> metadataCache;
+    private final Cache<String, CachedMetadata> metadataCache;
 
     public SamlIdPMetadataResolver(final SamlIdPMetadataLocator locator,
                                    final SamlIdPMetadataGenerator generator,
@@ -57,7 +58,7 @@ public class SamlIdPMetadataResolver extends BaseElementMetadataResolver {
         val idp = casProperties.getAuthn().getSamlIdp();
         this.metadataCache = Caffeine.newBuilder()
             .maximumSize(1_000)
-            .expireAfterAccess(Beans.newDuration(idp.getMetadata().getCore().getCacheExpiration()))
+            .expireAfterWrite(Beans.newDuration(idp.getMetadata().getCore().getCacheExpiration()))
             .build();
     }
 
@@ -90,9 +91,9 @@ public class SamlIdPMetadataResolver extends BaseElementMetadataResolver {
         for (val filter : filteringCriteria) {
             val cacheKey = getMetadataCacheKey(filter, criteria);
             LOGGER.debug("Cache key for SAML IdP metadata is [{}]", cacheKey);
-            val cachedEntities = metadataCache.getIfPresent(cacheKey);
-            if (cachedEntities != null) {
-                return cachedEntities;
+            val cachedMetadata = metadataCache.getIfPresent(cacheKey);
+            if (cachedMetadata != null && cachedMetadata.isCurrent(locator.fetch(filter))) {
+                return cachedMetadata.entities();
             }
             val entities = resolveAndCacheMetadata(criteria, filter, cacheKey);
             if (entities != null) {
@@ -114,6 +115,11 @@ public class SamlIdPMetadataResolver extends BaseElementMetadataResolver {
      * {@link org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPMetadataCredentialResolver},
      * the wrong signing and encryption credentials. The cache is consulted a second time
      * inside the lock so that threads queued behind the winner do not repeat the work.
+     * <p>
+     * A cached entry is only reused while the locator still hands out the metadata document it was
+     * parsed from. Signing and encryption keys are read through the same locator, so a document
+     * replaced in the backing store (a key rotation) is picked up here as soon as the locator's own
+     * cache picks it up, rather than lingering for as long as the identity provider sees traffic.
      *
      * @param criteria          the criteria set
      * @param registeredService the registered service acting as an override, if any
@@ -124,14 +130,14 @@ public class SamlIdPMetadataResolver extends BaseElementMetadataResolver {
                                                                      final Optional<SamlRegisteredService> registeredService,
                                                                      final String cacheKey) {
         return lock.execute(() -> {
-            val cachedEntities = metadataCache.getIfPresent(cacheKey);
-            if (cachedEntities != null) {
-                return cachedEntities;
+            val cachedMetadata = metadataCache.getIfPresent(cacheKey);
+            if (cachedMetadata != null && cachedMetadata.isCurrent(locator.fetch(registeredService))) {
+                return cachedMetadata.entities();
             }
-            val entities = FunctionUtils.doUnchecked(() -> resolveMetadata(criteria, registeredService));
-            if (entities != null && !entities.isEmpty()) {
-                metadataCache.put(cacheKey, entities);
-                return entities;
+            val resolvedMetadata = FunctionUtils.doUnchecked(() -> resolveMetadata(criteria, registeredService));
+            if (resolvedMetadata != null && !resolvedMetadata.entities().isEmpty()) {
+                metadataCache.put(cacheKey, resolvedMetadata);
+                return resolvedMetadata.entities();
             }
             return null;
         });
@@ -156,15 +162,16 @@ public class SamlIdPMetadataResolver extends BaseElementMetadataResolver {
      *
      * @param criteria          the criteria set
      * @param registeredService the registered service acting as an override, if any
-     * @return the resolved entity descriptors, or null when no metadata is available
+     * @return the resolved entity descriptors and the document they came from, or null when no metadata is available
      * @throws Throwable the throwable
      */
-    private @Nullable List<EntityDescriptor> resolveMetadata(final CriteriaSet criteria,
-                                                             final Optional<SamlRegisteredService> registeredService)
+    private @Nullable CachedMetadata resolveMetadata(final CriteriaSet criteria,
+                                                     final Optional<SamlRegisteredService> registeredService)
             throws Throwable {
         if (!locator.exists(registeredService) && locator.shouldGenerateMetadataFor(registeredService)) {
             generator.generate(registeredService);
         }
+        val document = locator.fetch(registeredService);
         val resource = locator.resolveMetadata(registeredService);
         LOGGER.trace("Resolved metadata resource is [{}]", resource);
         if (resource.contentLength() > 0) {
@@ -175,8 +182,20 @@ public class SamlIdPMetadataResolver extends BaseElementMetadataResolver {
             LOGGER.trace("Resolving metadata for criteria [{}]", criteria);
             val entityDescriptors = new ArrayList<EntityDescriptor>();
             super.resolve(criteria).forEach(entityDescriptors::add);
-            return List.copyOf(entityDescriptors);
+            return new CachedMetadata(document, List.copyOf(entityDescriptors));
         }
         return null;
+    }
+
+    /**
+     * Entity descriptors resolved from a metadata document, together with that document as the locator handed it out.
+     *
+     * @param document the metadata document, if the locator produced one
+     * @param entities the resolved entity descriptors
+     */
+    private record CachedMetadata(@Nullable SamlIdPMetadataDocument document, List<EntityDescriptor> entities) {
+        boolean isCurrent(@Nullable final SamlIdPMetadataDocument currentDocument) {
+            return Objects.equals(document, currentDocument);
+        }
     }
 }

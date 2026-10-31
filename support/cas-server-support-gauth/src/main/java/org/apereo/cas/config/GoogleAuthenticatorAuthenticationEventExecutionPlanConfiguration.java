@@ -38,6 +38,7 @@ import org.apereo.cas.gauth.web.flow.GoogleAuthenticatorValidateSelectedRegistra
 import org.apereo.cas.gauth.web.flow.GoogleAuthenticatorValidateTokenAction;
 import org.apereo.cas.gauth.web.flow.account.GoogleMultifactorAuthenticationAccountProfilePrepareAction;
 import org.apereo.cas.gauth.web.flow.account.GoogleMultifactorAuthenticationAccountProfileRegistrationAction;
+import org.apereo.cas.gauth.web.flow.account.GoogleMultifactorAuthenticationAccountProfileScratchCodesAction;
 import org.apereo.cas.gauth.web.flow.account.GoogleMultifactorAuthenticationAccountProfileWebflowConfigurer;
 import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenAccountCipherExecutor;
@@ -617,6 +618,26 @@ class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
                 .withProperties(casProperties)
                 .withAction(() -> new GoogleMultifactorAuthenticationAccountProfileRegistrationAction(googleAuthenticatorMultifactorAuthenticationProvider))
                 .withId(CasWebflowConstants.ACTION_ID_ACCOUNT_PROFILE_GOOGLE_MFA_REGISTRATION)
+                .build()
+                .get();
+        }
+
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_ACCOUNT_PROFILE_GOOGLE_MFA_SCRATCH_CODES)
+        public Action googleAccountProfileScratchCodesAction(
+            final ConfigurableApplicationContext applicationContext,
+            final CasConfigurationProperties casProperties,
+            @Qualifier(CasGoogleAuthenticator.BEAN_NAME)
+            final CasGoogleAuthenticator googleAuthenticatorInstance,
+            @Qualifier(BaseGoogleAuthenticatorTokenCredentialRepository.BEAN_NAME)
+            final OneTimeTokenCredentialRepository googleAuthenticatorAccountRegistry) {
+            return WebflowActionBeanSupplier.builder()
+                .withApplicationContext(applicationContext)
+                .withProperties(casProperties)
+                .withAction(() -> new GoogleMultifactorAuthenticationAccountProfileScratchCodesAction(
+                    googleAuthenticatorAccountRegistry, googleAuthenticatorInstance))
+                .withId(CasWebflowConstants.ACTION_ID_ACCOUNT_PROFILE_GOOGLE_MFA_SCRATCH_CODES)
                 .build()
                 .get();
         }

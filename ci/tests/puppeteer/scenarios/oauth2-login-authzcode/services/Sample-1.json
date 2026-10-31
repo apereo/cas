@@ -12,7 +12,9 @@
     "authorizedToReleaseAuthenticationAttributes": false,
     "allowedAttributes" : [ "java.util.ArrayList", [ "email", "organization" ] ]
   },
-  "supportedGrantTypes": [ "java.util.HashSet", [ "authorization_code" ] ],
+  "generateRefreshToken": true,
+  "allowedResources": [ "java.util.HashSet", [ "https://localhost:9859/anything/api", "https://localhost:9859/anything/reports" ] ],
+  "supportedGrantTypes": [ "java.util.HashSet", [ "authorization_code", "refresh_token" ] ],
   "supportedResponseTypes": [ "java.util.HashSet", [ "code" ] ],
   "scopes": [ "java.util.HashSet", [ "read", "write", "profile", "email", "phone" ] ]
 }
