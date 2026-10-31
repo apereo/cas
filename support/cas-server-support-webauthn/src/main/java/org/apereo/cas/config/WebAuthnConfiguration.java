@@ -21,7 +21,6 @@ import org.apereo.cas.logout.SessionTerminationHandler;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
-import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.cipher.CipherExecutorUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
@@ -92,7 +91,6 @@ import org.springframework.security.web.access.expression.WebExpressionAuthoriza
 import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.web.csrf.CsrfTokenRepository;
-import org.springframework.security.web.csrf.XorCsrfTokenRequestAttributeHandler;
 import org.springframework.security.web.servlet.util.matcher.PathPatternRequestMatcher;
 
 /**
@@ -614,34 +612,29 @@ class WebAuthnConfiguration {
             @Bean
             @ConditionalOnMissingBean(name = "webAuthnCsrfTokenRepository")
             @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-            public CsrfTokenRepository webAuthnCsrfTokenRepository() {
-                val repository = CookieCsrfTokenRepository.withHttpOnlyFalse();
-                repository.setHeaderName("X-CSRF-TOKEN");
-                return repository;
+            public CsrfTokenRepository webAuthnCsrfTokenRepository(
+                @Qualifier("casCsrfTokenRepository")
+                final ObjectProvider<CsrfTokenRepository> casCsrfTokenRepository) {
+                return casCsrfTokenRepository.getIfAvailable(() -> {
+                    val repository = CookieCsrfTokenRepository.withHttpOnlyFalse();
+                    repository.setHeaderName("X-CSRF-TOKEN");
+                    return repository;
+                });
             }
 
             @Bean
             @ConditionalOnMissingBean(name = "webAuthnProtocolEndpointConfigurer")
             @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-            public CasWebSecurityConfigurer<HttpSecurity> webAuthnProtocolEndpointConfigurer(
-                @Qualifier("webAuthnCsrfTokenRepository")
-                final ObjectProvider<CsrfTokenRepository> webAuthnCsrfTokenRepository) {
+            public CasWebSecurityConfigurer<HttpSecurity> webAuthnProtocolEndpointConfigurer() {
                 return new CasWebSecurityConfigurer<>() {
                     @Override
-                    @CanIgnoreReturnValue
-                    @SuppressWarnings("UnnecessaryMethodReference")
-                    public CasWebSecurityConfigurer<HttpSecurity> configure(final HttpSecurity http) {
-                        http.csrf(customizer -> webAuthnCsrfTokenRepository.ifAvailable(repository -> {
-                            val pattern = PathPatternRequestMatcher.withDefaults().matcher(BaseWebAuthnController.BASE_ENDPOINT_WEBAUTHN + "/**");
-                            val delegate = new XorCsrfTokenRequestAttributeHandler();
-                            delegate.setSecureRandom(RandomUtils.getNativeInstance());
-                            customizer
-                                .ignoringRequestMatchers(matcher -> HttpMethod.GET.matches(matcher.getMethod()))
-                                .requireCsrfProtectionMatcher(pattern)
-                                .csrfTokenRequestHandler(delegate::handle)
-                                .csrfTokenRepository(repository);
+                    public List<String> getCsrfProtectedEndpoints() {
+                        return List.of(BaseWebAuthnController.BASE_ENDPOINT_WEBAUTHN + "/**");
+                    }
 
-                        }));
+                    @Override
+                    @CanIgnoreReturnValue
+                    public CasWebSecurityConfigurer<HttpSecurity> configure(final HttpSecurity http) {
                         http.authorizeHttpRequests(customizer -> {
                             val regEndpoints = PathPatternRequestMatcher.withDefaults()
                                 .matcher(BaseWebAuthnController.BASE_ENDPOINT_WEBAUTHN + WebAuthnController.WEBAUTHN_ENDPOINT_REGISTER + "/**");

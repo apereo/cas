@@ -5,7 +5,8 @@ import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import com.nimbusds.jose.JWSAlgorithm;
 import org.jspecify.annotations.Nullable;
-import org.pac4j.core.context.WebContext;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * This is {@link OAuth20ProofOfPossessionValidator}.
@@ -18,20 +19,22 @@ public interface OAuth20ProofOfPossessionValidator {
     /**
      * Validate.
      *
-     * @param webContext  the web context
+     * @param request     the request
+     * @param response    the response
      * @param accessToken the access token
      * @throws Throwable the throwable
      */
-    void validate(WebContext webContext, @Nullable OAuth20AccessToken accessToken) throws Throwable;
+    void validate(HttpServletRequest request, HttpServletResponse response, @Nullable OAuth20AccessToken accessToken) throws Throwable;
 
     /**
      * Validate.
      *
-     * @param webContext the web context
+     * @param request  the request
+     * @param response the response
      * @throws Throwable the throwable
      */
-    default void validate(final WebContext webContext) throws Throwable {
-        validate(webContext, null);
+    default void validate(final HttpServletRequest request, final HttpServletResponse response) throws Throwable {
+        validate(request, response, null);
     }
 
     /**
@@ -42,11 +45,14 @@ public interface OAuth20ProofOfPossessionValidator {
      * client registered with {@code tls_client_certificate_bound_access_tokens} that is not authenticated with mutual TLS
      * (RFC 8705, section 3.4).
      *
-     * @param webContext        the web context
+     * @param request           the request
+     * @param response          the response
      * @param registeredService the client that makes the token request
      * @throws Throwable when the proof does not verify, or is missing for a client that must present one
      */
-    void validateTokenRequest(WebContext webContext, OAuthRegisteredService registeredService) throws Throwable;
+    void validateTokenRequest(HttpServletRequest request, HttpServletResponse response,
+                              OAuthRegisteredService registeredService)
+            throws Throwable;
 
     /**
      * Verify the DPoP proof that accompanies a request to a protected resource.
@@ -63,15 +69,16 @@ public interface OAuth20ProofOfPossessionValidator {
      * the {@code Authorization} header under the {@code DPoP} scheme, never as a bearer token
      * (RFC 9449, section 7.2).
      *
-     * @param webContext           the web context
+     * @param request              the request
+     * @param response             the response
      * @param presentedAccessToken the access token exactly as the client presented it
      * @param accessToken          the access token ticket the presented value resolved to
      * @throws Throwable when the request carries no proof for a sender-constrained token, or the
      *                   proof does not verify; {@link DPoPBoundAccessTokenDowngradeException} when
      *                   the token is not presented under the {@code DPoP} scheme
      */
-    void validateProtectedResourceRequest(WebContext webContext, String presentedAccessToken,
-                                          OAuth20AccessToken accessToken)
+    void validateProtectedResourceRequest(HttpServletRequest request, HttpServletResponse response,
+                                          String presentedAccessToken, OAuth20AccessToken accessToken)
             throws Throwable;
 
     /**
@@ -79,11 +86,12 @@ public interface OAuth20ProofOfPossessionValidator {
      * pushed authorization request (RFC 9449, section 10.1). The proof is checked as at the token endpoint, nonce included,
      * and the authenticated profile is left untouched.
      *
-     * @param webContext the web context
+     * @param request  the request
+     * @param response the response
      * @return the SHA-256 JWK thumbprint of the proof's key, or empty when the request carries no DPoP proof
      * @throws Throwable when the proof does not verify
      */
-    Optional<String> validateKeyBinding(WebContext webContext) throws Throwable;
+    Optional<String> validateKeyBinding(HttpServletRequest request, HttpServletResponse response) throws Throwable;
 
     /**
      * The JWS algorithms accepted for DPoP proofs, which a protected resource lists in the {@code algs} parameter of its

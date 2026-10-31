@@ -67,7 +67,7 @@ class DefaultRegisteredServiceReplicationStrategyTests {
     }
 
     @Test
-    void verifyGetInCacheAndRemove() {
+    void verifyLookupIgnoresDeletionMarker() {
         val id = new PublisherIdentifier();
         val appCtx = new StaticApplicationContext();
         appCtx.refresh();
@@ -85,9 +85,11 @@ class DefaultRegisteredServiceReplicationStrategyTests {
             .build();
         when(mgr.find(any())).thenReturn(Optional.of(object));
 
+        serviceRegistry.save(service);
         val svc = strategy.getRegisteredServiceFromCacheIfAny(service, 1000, serviceRegistry);
-        assertNotNull(svc);
-        assertEquals(0, serviceRegistry.size());
+        assertSame(service, svc);
+        assertEquals(1, serviceRegistry.size());
+        verify(mgr, never()).remove(any(), any(), anyBoolean());
     }
 
     @Test
@@ -210,5 +212,81 @@ class DefaultRegisteredServiceReplicationStrategyTests {
         val results = strategy.updateLoadedRegisteredServicesFromCache(CollectionUtils.wrapList(service), serviceRegistry);
         assertFalse(results.isEmpty());
         assertEquals(2, results.size());
+    }
+
+    @Test
+    void verifyUpdateReplacesChangedServiceAndKeepsCache() {
+        val id = new PublisherIdentifier();
+        val appCtx = new StaticApplicationContext();
+        appCtx.refresh();
+        val serviceRegistry = new InMemoryServiceRegistry(appCtx);
+        val stream = casProperties.getServiceRegistry().getStream();
+        val mgr = mock(DistributedCacheManager.class);
+        val object = DistributedCacheObject.<RegisteredService>builder()
+            .value(newService("Changed"))
+            .publisherIdentifier(id)
+            .build();
+        when(mgr.getAll()).thenReturn(CollectionUtils.wrapList(object));
+        val strategy = new DefaultRegisteredServiceReplicationStrategy(mgr, stream, id);
+
+        val results = strategy.updateLoadedRegisteredServicesFromCache(CollectionUtils.wrapList(newService("Original")), serviceRegistry);
+        assertEquals(1, results.size());
+        assertEquals("Changed", results.getFirst().getName());
+        assertEquals("Changed", serviceRegistry.findServiceById(1000).getName());
+        verify(mgr, never()).clear();
+    }
+
+    @Test
+    void verifyUpdateRemovesOlderEntriesForSameService() {
+        val id = new PublisherIdentifier();
+        val appCtx = new StaticApplicationContext();
+        appCtx.refresh();
+        val serviceRegistry = new InMemoryServiceRegistry(appCtx);
+        val stream = casProperties.getServiceRegistry().getStream();
+        val mgr = mock(DistributedCacheManager.class);
+        val older = DistributedCacheObject.<RegisteredService>builder()
+            .value(newService("Older"))
+            .timestamp(1000)
+            .publisherIdentifier(id)
+            .build();
+        val newer = DistributedCacheObject.<RegisteredService>builder()
+            .value(newService("Newer"))
+            .timestamp(2000)
+            .publisherIdentifier(id)
+            .build();
+        when(mgr.getAll()).thenReturn(CollectionUtils.wrapList(older, newer));
+        val strategy = new DefaultRegisteredServiceReplicationStrategy(mgr, stream, id);
+
+        val results = strategy.updateLoadedRegisteredServicesFromCache(new ArrayList<>(), serviceRegistry);
+        assertEquals(1, results.size());
+        assertEquals("Newer", results.getFirst().getName());
+        verify(mgr).remove(older.getValue(), older, false);
+        verify(mgr, never()).remove(newer.getValue(), newer, false);
+    }
+
+    @Test
+    void verifyDeletionMarkerRemovesLocalServiceAndStays() {
+        val id = new PublisherIdentifier();
+        val appCtx = new StaticApplicationContext();
+        appCtx.refresh();
+        val serviceRegistry = new InMemoryServiceRegistry(appCtx);
+        val stream = casProperties.getServiceRegistry().getStream();
+        val mgr = mock(DistributedCacheManager.class);
+        val service = newService("Deleted");
+        serviceRegistry.save(service);
+        val marker = DistributedCacheObject.<RegisteredService>builder()
+            .value(newService("Deleted"))
+            .publisherIdentifier(id)
+            .properties(Map.of("event", CasRegisteredServiceDeletedEvent.class.getSimpleName()))
+            .build();
+        when(mgr.getAll()).thenReturn(CollectionUtils.wrapList(marker));
+        val strategy = new DefaultRegisteredServiceReplicationStrategy(mgr, stream, id);
+
+        val results = strategy.updateLoadedRegisteredServicesFromCache(CollectionUtils.wrapList(service), serviceRegistry);
+        assertTrue(results.isEmpty());
+        assertEquals(0, serviceRegistry.size());
+        assertTrue(strategy.updateLoadedRegisteredServicesFromCache(new ArrayList<>(), serviceRegistry).isEmpty());
+        verify(mgr, never()).remove(any(), any(), anyBoolean());
+        verify(mgr, never()).clear();
     }
 }

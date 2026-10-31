@@ -43,7 +43,7 @@ public class OAuth20IntrospectionAccessTokenResponse extends BaseOAuth20Introspe
 
     private String tokenType;
 
-    private String aud;
+    private Object aud;
 
     private String iss;
 

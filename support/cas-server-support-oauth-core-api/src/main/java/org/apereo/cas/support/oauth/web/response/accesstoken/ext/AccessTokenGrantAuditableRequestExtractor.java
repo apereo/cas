@@ -10,7 +10,6 @@ import org.apereo.cas.audit.BaseAuditableExecution;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apereo.inspektr.audit.annotation.Audit;
-import org.pac4j.jee.context.JEEContext;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -32,13 +31,12 @@ public class AccessTokenGrantAuditableRequestExtractor extends BaseAuditableExec
         val request = (HttpServletRequest) auditableContext.getRequest().orElseThrow();
         val response = (HttpServletResponse) auditableContext.getResponse().orElseThrow();
 
-        val context = new JEEContext(request, response);
         val tokenRequestContext = accessTokenGrantRequestExtractors
             .stream()
-            .filter(ext -> ext.supports(context))
+            .filter(ext -> ext.supports(request))
             .findFirst()
             .orElseThrow(() -> new UnsupportedOperationException("Access token request is not supported"))
-            .extract(context);
+            .extract(request, response);
 
         return AuditableExecutionResult
             .builder()

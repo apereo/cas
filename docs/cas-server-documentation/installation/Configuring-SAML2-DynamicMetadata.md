@@ -24,6 +24,10 @@ metadata overrides that may have been specified.
 
 {% include_cached casproperties.html properties="cas.authn.saml-idp.metadata.core" %}
 
+Identity provider metadata, keys and certificates are cached in memory once loaded and are fetched again from their
+storage once the cache entry expires, regardless of how often they are used, so a key rotation in a shared metadata
+store reaches every CAS node within that period.
+
 You may use [this service](https://www.samltool.com/idp_metadata.php) to experiment with the metadata generation process
 and produce an example metadata for review and study.
 

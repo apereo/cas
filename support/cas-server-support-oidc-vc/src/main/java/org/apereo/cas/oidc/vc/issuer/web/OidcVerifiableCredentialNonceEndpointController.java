@@ -12,7 +12,6 @@ import org.apereo.cas.util.LoggingUtils;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.pac4j.jee.context.JEEContext;
 import org.springframework.http.CacheControl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -64,15 +63,14 @@ public class OidcVerifiableCredentialNonceEndpointController extends BaseOAuth20
         final HttpServletResponse httpResponse)
             throws Throwable {
 
-        val webContext = new JEEContext(httpRequest, httpResponse);
-        if (!getConfigurationContext().getIssuerService().validateIssuer(webContext, List.of(OidcConstants.VC_NONCE_URL))) {
+        if (!getConfigurationContext().getIssuerService().validateIssuer(httpRequest, List.of(OidcConstants.VC_NONCE_URL))) {
             LOGGER.warn("CAS cannot accept the request given the issuer is invalid.");
             val body = OAuth20Utils.getErrorResponseBody(OAuth20Constants.INVALID_REQUEST, "Invalid issuer");
             return ResponseEntity.badRequest().body(body);
         }
         val nonce = credentialNonceService.create();
         if (dpopNonceService.isEnabled()) {
-            dpopNonceService.provide(webContext);
+            dpopNonceService.provide(httpResponse);
         }
         return ResponseEntity
             .ok()

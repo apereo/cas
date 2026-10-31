@@ -298,6 +298,7 @@ public class CasEvent implements Serializable {
         request.setTimestamp(get(FIELD_GEO_TIMESTAMP));
         request.setLongitude(get(FIELD_GEO_LONGITUDE));
         request.setLatitude(get(FIELD_GEO_LATITUDE));
+        request.setAddress(get(FIELD_GEO_ADDRESS));
         return request;
     }
 

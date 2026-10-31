@@ -19,10 +19,9 @@ import org.apereo.cas.ticket.registry.TicketRegistry;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.Strings;
-import org.pac4j.core.context.CallContext;
-import org.pac4j.core.credentials.UsernamePasswordCredentials;
-import org.pac4j.core.exception.CredentialsException;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.security.authentication.BadCredentialsException;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * This is {@link OAuth20RefreshTokenAuthenticator}.
@@ -53,14 +52,13 @@ public class OAuth20RefreshTokenAuthenticator extends OAuth20ClientIdClientSecre
     }
 
     @Override
-    protected boolean canAuthenticate(final CallContext callContext) {
-        val context = callContext.webContext();
-        val grantType = context.getRequestParameter(OAuth20Constants.GRANT_TYPE);
-        val clientId = context.getRequestParameter(OAuth20Constants.CLIENT_ID);
+    protected boolean canAuthenticate(final HttpServletRequest request) {
+        val grantType = Optional.ofNullable(request.getParameter(OAuth20Constants.GRANT_TYPE));
+        val clientId = Optional.ofNullable(request.getParameter(OAuth20Constants.CLIENT_ID));
 
         if (clientId.isPresent() && grantType.isPresent()
             && OAuth20Utils.isGrantType(grantType.get(), OAuth20GrantTypes.REFRESH_TOKEN)
-            && context.getRequestParameter(OAuth20Constants.REFRESH_TOKEN).isPresent()) {
+            && request.getParameter(OAuth20Constants.REFRESH_TOKEN) != null) {
             val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(getServicesManager(), clientId.get());
 
             LOGGER.trace("Checking if the client [{}] is eligible for refresh token authentication", clientId.get());
@@ -70,18 +68,17 @@ public class OAuth20RefreshTokenAuthenticator extends OAuth20ClientIdClientSecre
     }
 
     @Override
-    protected void validateCredentials(final UsernamePasswordCredentials credentials,
+    protected void validateCredentials(final OAuth20ClientAuthenticationToken credentials,
                                        final OAuthRegisteredService registeredService,
-                                       final CallContext callContext,
                                        final OAuth20ClientAuthenticationMethods authnMethod) {
-        val token = credentials.getPassword();
+        val token = Objects.requireNonNull((String) credentials.getCredentials());
         LOGGER.trace("Received refresh token [{}] for authentication", token);
 
-        val refreshToken = OAuth20Utils.getRequestedOAuthToken(callContext.webContext(), getTicketRegistry(), token, OAuth20RefreshToken.class);
+        val refreshToken = OAuth20Utils.getRequestedOAuthToken(credentials.getRequest(), getTicketRegistry(), token, OAuth20RefreshToken.class);
         val clientId = credentials.getUsername();
         if (refreshToken == null || refreshToken.isExpired() || !Strings.CI.equals(refreshToken.getClientId(), clientId)) {
             LOGGER.error("Refresh token [{}] is either not found in the ticket registry, has expired or does not belong to the client [{}]", token, clientId);
-            throw new CredentialsException("Invalid token: " + token);
+            throw new BadCredentialsException("Invalid token: " + token);
         }
     }
 }

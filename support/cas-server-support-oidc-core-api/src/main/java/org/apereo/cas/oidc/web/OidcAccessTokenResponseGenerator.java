@@ -99,6 +99,7 @@ public class OidcAccessTokenResponseGenerator extends OAuth20DefaultAccessTokenR
                 .registeredService((OAuthRegisteredService) result.getRegisteredService())
                 .refreshToken(resolveToken(refreshToken, OAuth20RefreshToken.class))
                 .encodedAccessToken(encodedAccessToken)
+                .cibaRequestId(result.getCibaRequestId())
                 .build();
             LOGGER.debug("Generating ID token for access token [{}]", accessToken.getId());
             return configurationContext.getObject().getIdTokenGeneratorService().generate(idTokenContext);

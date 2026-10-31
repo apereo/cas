@@ -10,7 +10,6 @@ import org.apereo.cas.util.cache.DistributedCacheObject;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import lombok.val;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -41,11 +40,6 @@ class RegisteredServiceKafkaDistributedCacheListenerTests {
     @Qualifier("registeredServiceKafkaDistributedCacheListener")
     private RegisteredServiceKafkaDistributedCacheListener listener;
 
-    @BeforeEach
-    void tearDown() {
-        listener.getCacheManager().clear();
-    }
-
     @Test
     void verifyRemoval() {
         val service = RegisteredServiceTestUtils.getRegisteredService();
@@ -55,6 +49,9 @@ class RegisteredServiceKafkaDistributedCacheListenerTests {
             service, new PublisherIdentifier());
 
         assertDoesNotThrow(() -> listener.registeredServiceDistributedCacheKafkaListener(item));
+        val cached = listener.getCacheManager().get(service);
+        assertNotNull(cached);
+        assertEquals(CasRegisteredServiceDeletedEvent.class.getSimpleName(), cached.getProperties().get("event"));
     }
 
     @Test
@@ -66,6 +63,7 @@ class RegisteredServiceKafkaDistributedCacheListenerTests {
             service, new PublisherIdentifier());
 
         assertDoesNotThrow(() -> listener.registeredServiceDistributedCacheKafkaListener(item));
+        assertSame(item, listener.getCacheManager().get(service));
     }
 
 }

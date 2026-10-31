@@ -85,7 +85,7 @@
                                                            size="50"
                                                            autocomplete="off"/>
                                                 </label>
-                                                <script>document.getElementById("accountName").value = randomWord();</script>
+                                                <script th:replace="~{fragments/deviceName :: prefill(field='accountName')}"></script>
                                             </div>
                                         </div>
                                         <div th:if="${confirmationType == 'delete'}">

@@ -18,6 +18,7 @@
         const contextPath = (/*[[@{/}]]*/ '/').slice(0,-1);
         /*]]>*/
     </script>
+    <script th:replace="~{fragments/webAuthnMessages :: messages}"></script>
     <script th:src="@{/js/webauthn/webauthn.js}"></script>
 </head>
 
@@ -97,25 +98,32 @@
                 </div>
             </section>
 
-            <div id="registrationChoices" class="cas-choice-grid">
-                <div class="cas-choice cas-choice-recommended">
+            <div id="registrationChoices" class="cas-choice-grid"
+                 th:with="recommended=${#strings.toLowerCase(#strings.defaultString(#cas.theme('cas.webauthn.registration.recommended'), 'passkey'))}"
+                 th:classappend="${recommended == 'security-key'} ? 'cas-choice-key-first'">
+                <div class="cas-choice" th:classappend="${recommended == 'passkey'} ? 'cas-choice-recommended'">
                     <span class="cas-choice-icon" aria-hidden="true"><i class="mdi mdi-account-key-outline"></i></span>
-                    <span class="cas-choice-tag" th:text="#{cas.mfa.webauthn.register.choice.passkey.tag}">Recommended</span>
+                    <span class="cas-choice-tag" th:if="${recommended == 'passkey'}"
+                          th:text="#{cas.mfa.webauthn.register.choice.passkey.tag}">Recommended</span>
                     <h3 th:text="#{cas.mfa.webauthn.register.choice.passkey}">Passkey</h3>
                     <section id="residentKeysPanel" class="cas-field mdc-input-group">
                         <p th:utext="#{cas.mfa.webauthn.register.discoverablecredentials}"></p>
                     </section>
-                    <button class="mdc-button mdc-button--raised me-2 drop-button"
+                    <button class="mdc-button me-2 drop-button"
+                            th:classappend="${recommended == 'security-key'} ? 'mdc-button--outline btn btn-outline-secondary' : 'mdc-button--raised'"
                             name="registerDiscoverableCredentialButton"
                             id="registerDiscoverableCredentialButton" type="button">
                         <span class="mdc-button__label" th:text="#{screen.welcome.button.register-residentkey}">Register Device with Discoverable Credentials</span>
                     </button>
                 </div>
-                <div class="cas-choice">
+                <div class="cas-choice" th:classappend="${recommended == 'security-key'} ? 'cas-choice-recommended'">
                     <span class="cas-choice-icon" aria-hidden="true"><i class="mdi mdi-usb-flash-drive-outline"></i></span>
+                    <span class="cas-choice-tag" th:if="${recommended == 'security-key'}"
+                          th:text="#{cas.mfa.webauthn.register.choice.passkey.tag}">Recommended</span>
                     <h3 th:text="#{cas.mfa.webauthn.register.choice.key}">Security key</h3>
                     <p th:utext="#{cas.mfa.webauthn.register.choice.key.desc}">Register this device as a second factor for your account.</p>
-                    <button class="mdc-button mdc-button--outline btn btn-outline-secondary me-2 drop-button"
+                    <button class="mdc-button me-2 drop-button"
+                            th:classappend="${recommended == 'security-key'} ? 'mdc-button--raised' : 'mdc-button--outline btn btn-outline-secondary'"
                             name="registerButton" id="registerButton" type="button">
                         <span class="mdc-button__label" th:text="#{screen.welcome.button.register}">Register Device</span>
                     </button>
@@ -131,10 +139,10 @@
             <input type="hidden" id="execution" name="execution" th:value="${flowExecutionKey}"/>
         </form>
 
+        <script th:replace="~{fragments/deviceName :: prefill(field='credentialNickname')}"></script>
         <script type="text/javascript" th:inline="javascript">
             const csrfToken = $('#registerCsrfToken').val();
 
-            document.getElementById("credentialNickname").value = randomWord();
             let btn = document.getElementById('registerButton');
             btn.addEventListener('click', event => {
                 const username = /*[[${principal?.id}]]*/

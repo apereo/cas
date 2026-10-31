@@ -1,0 +1,54 @@
+{
+  "@class": "org.apereo.cas.services.CasRegisteredService",
+  "serviceId": "^https://localhost:9859/anything/custom.*",
+  "name": "Custom",
+  "id": 3,
+  "properties": {
+    "@class": "java.util.HashMap",
+    "httpHeaderEnableXFrameOptions": {
+      "@class": "org.apereo.cas.services.DefaultRegisteredServiceProperty",
+      "values": [
+        "java.util.HashSet",
+        [
+          "true"
+        ]
+      ]
+    },
+    "httpHeaderXFrameOptions": {
+      "@class": "org.apereo.cas.services.DefaultRegisteredServiceProperty",
+      "values": [
+        "java.util.HashSet",
+        [
+          "SAMEORIGIN"
+        ]
+      ]
+    },
+    "httpHeaderEnableStrictTransportSecurity": {
+      "@class": "org.apereo.cas.services.DefaultRegisteredServiceProperty",
+      "values": [
+        "java.util.HashSet",
+        [
+          "true"
+        ]
+      ]
+    },
+    "httpHeaderStrictTransportSecurity": {
+      "@class": "org.apereo.cas.services.DefaultRegisteredServiceProperty",
+      "values": [
+        "java.util.HashSet",
+        [
+          "max-age=60"
+        ]
+      ]
+    },
+    "httpHeaderEnableXSSProtection": {
+      "@class": "org.apereo.cas.services.DefaultRegisteredServiceProperty",
+      "values": [
+        "java.util.HashSet",
+        [
+          "true"
+        ]
+      ]
+    }
+  }
+}

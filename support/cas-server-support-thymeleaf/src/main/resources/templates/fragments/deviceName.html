@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Device Name Fragment</title>
+</head>
+<body>
+<!--/* Suggests a name for a device being registered, as the cas.mfa.device-name.prefill theme property asks. */-->
+<script th:fragment="prefill(field)" type="text/javascript" th:inline="javascript">
+    (() => {
+        const field = document.getElementById(/*[[${field}]]*/ "deviceName");
+        if (field === null) {
+            return;
+        }
+        const mode = /*[[${#strings.toLowerCase(#strings.defaultString(#cas.theme('cas.mfa.device-name.prefill'), 'random'))}]]*/ "random";
+        const username = /*[[${authentication?.principal?.id ?: principal?.id}]]*/ null;
+        if (mode === "empty") {
+            field.value = "";
+        } else if (mode === "username" && username) {
+            field.value = username;
+        } else {
+            field.value = randomWord();
+        }
+    })();
+</script>
+</body>
+</html>

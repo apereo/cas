@@ -2,7 +2,9 @@ package org.apereo.cas.web.flow.logout;
 
 import module java.base;
 import org.apereo.cas.logout.SessionTerminationHandler;
+import org.apereo.cas.pac4j.CasSessionStorePac4jAdapter;
 import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.web.session.DefaultCasSessionStore;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -10,7 +12,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.core.util.Pac4jConstants;
 import org.pac4j.jee.context.JEEContext;
-import org.pac4j.jee.context.session.JEESessionStore;
 import org.springframework.webflow.execution.RequestContext;
 
 /**
@@ -28,7 +29,7 @@ public class DelegatedProfileTerminationHandler implements SessionTerminationHan
         val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
 
         val context = new JEEContext(request, response);
-        val manager = new ProfileManager(context, new JEESessionStore());
+        val manager = new ProfileManager(context, new CasSessionStorePac4jAdapter(new DefaultCasSessionStore()));
         manager.removeProfiles();
         val session = request.getSession(false);
         val url = FunctionUtils.doIfNotNull(session, () -> (String) session.getAttribute(Pac4jConstants.REQUESTED_URL));

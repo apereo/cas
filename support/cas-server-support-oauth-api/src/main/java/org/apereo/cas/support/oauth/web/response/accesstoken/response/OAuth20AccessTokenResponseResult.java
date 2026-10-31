@@ -9,13 +9,13 @@ import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.OAuth20TokenExchangeTypes;
+import org.apereo.cas.support.oauth.profile.OAuth20UserProfile;
 import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20TokenGeneratedResult;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.SuperBuilder;
 import lombok.extern.jackson.Jacksonized;
 import lombok.val;
-import org.pac4j.core.profile.UserProfile;
 
 /**
  * This is {@link OAuth20AccessTokenResponseResult}.
@@ -49,7 +49,7 @@ public class OAuth20AccessTokenResponseResult implements Serializable, Auditable
 
     private final long deviceRefreshInterval;
 
-    private final UserProfile userProfile;
+    private final OAuth20UserProfile userProfile;
 
     private final OAuth20TokenExchangeTypes requestedTokenType;
 

@@ -8,7 +8,7 @@ import org.apereo.cas.support.oauth.authenticator.OAuth20X509Authenticator;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.web.OAuth20RequestParameterResolver;
 import lombok.val;
-import org.pac4j.core.context.CallContext;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * This is {@link OidcX509Authenticator}.
@@ -27,11 +27,11 @@ public class OidcX509Authenticator extends OAuth20X509Authenticator {
     }
 
     @Override
-    protected boolean isAuthenticationMethodSupported(final CallContext ctx, final OAuthRegisteredService registeredService) {
+    protected boolean isAuthenticationMethodSupported(final HttpServletRequest request, final OAuthRegisteredService registeredService) {
         val authMethodSupported = oidcServerDiscoverySettings.getTokenEndpointAuthMethodsSupported()
             .stream()
             .map(OAuth20ClientAuthenticationMethods::parse)
             .anyMatch(method -> method == OAuth20ClientAuthenticationMethods.TLS_CLIENT_AUTH);
-        return super.isAuthenticationMethodSupported(ctx, registeredService) && authMethodSupported;
+        return super.isAuthenticationMethodSupported(request, registeredService) && authMethodSupported;
     }
 }

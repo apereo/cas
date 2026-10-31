@@ -9,7 +9,9 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
-import org.apereo.cas.support.oauth.authenticator.OAuth20AuthenticationClientProvider;
+import org.apereo.cas.support.oauth.authenticator.OAuth20ClientAuthenticationProvider;
+import org.apereo.cas.support.oauth.authenticator.OAuth20ClientAuthenticationToken;
+import org.apereo.cas.support.oauth.profile.OAuth20UserProfile;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.cipher.BasicIdentifiableKey;
 import com.jayway.jsonpath.JsonPath;
@@ -32,17 +34,10 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-import org.pac4j.core.client.BaseClient;
-import org.pac4j.core.context.CallContext;
-import org.pac4j.core.credentials.UsernamePasswordCredentials;
-import org.pac4j.core.credentials.authenticator.Authenticator;
-import org.pac4j.jee.context.JEEContext;
-import org.pac4j.jee.context.session.JEESessionStore;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.TestPropertySource;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -60,7 +55,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class OidcJwksRegistrationEndpointControllerTests extends AbstractOidcTests {
     @Autowired
     @Qualifier("oidcJwtClientProvider")
-    private OAuth20AuthenticationClientProvider oidcJwtClientProvider;
+    private OAuth20ClientAuthenticationProvider oidcJwtClientProvider;
 
     @Test
     void verifyWithoutAccessToken() throws Exception {
@@ -133,12 +128,8 @@ class OidcJwksRegistrationEndpointControllerTests extends AbstractOidcTests {
         val jkt = JsonPath.read(output, "$.jkt").toString();
 
         val request = new MockHttpServletRequest();
-        val response = new MockHttpServletResponse();
-        val context = new JEEContext(request, response);
-
         val audience = casProperties.getServer().getPrefix().concat('/'
             + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.ACCESS_TOKEN_URL);
-        val authenticator = getAuthenticator();
         val claims = getClaims(
             registeredService.getClientId(),
             registeredService.getClientId(),
@@ -156,7 +147,8 @@ class OidcJwksRegistrationEndpointControllerTests extends AbstractOidcTests {
         val jwt = EncodingUtils.signJws(new BasicIdentifiableKey(jkt, proof.privateKey()),
             claims.toJson().getBytes(StandardCharsets.UTF_8), Map.of(), signingAlg);
 
-        val credentials = new UsernamePasswordCredentials(
+        val credentials = newClientAuthenticationToken(request,
+            OAuth20ClientAuthenticationToken.CredentialSource.FORM,
             OAuth20Constants.CLIENT_ASSERTION_TYPE_JWT_BEARER,
             new String(jwt, StandardCharsets.UTF_8));
 
@@ -171,8 +163,10 @@ class OidcJwksRegistrationEndpointControllerTests extends AbstractOidcTests {
         ticketRegistry.addTicket(code);
         request.addParameter(OAuth20Constants.CODE, code.getId());
 
-        authenticator.validate(new CallContext(context, new JEESessionStore()), credentials);
-        assertNotNull(credentials.getUserProfile());
+        val result = oidcJwtClientProvider.getAuthenticationProvider().authenticate(credentials);
+        assertNotNull(result);
+        assertTrue(result.isAuthenticated());
+        assertInstanceOf(OAuth20UserProfile.class, result.getPrincipal());
     }
 
     private static Proof buildProof(final String algorithm) throws Throwable {
@@ -221,11 +215,6 @@ class OidcJwksRegistrationEndpointControllerTests extends AbstractOidcTests {
         jws.setJwkHeader(PublicJsonWebKey.Factory.newPublicJwk(presentedKey));
         jws.setKey(signingKey);
         return jws.getCompactSerialization();
-    }
-
-    private Authenticator getAuthenticator() {
-        val client = (BaseClient) oidcJwtClientProvider.createClient();
-        return client.getAuthenticator();
     }
 
     private record Proof(String proof, PublicKey publicKey, PrivateKey privateKey) {

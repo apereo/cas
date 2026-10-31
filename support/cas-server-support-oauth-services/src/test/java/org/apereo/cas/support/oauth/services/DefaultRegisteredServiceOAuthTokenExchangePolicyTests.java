@@ -38,6 +38,20 @@ class DefaultRegisteredServiceOAuthTokenExchangePolicyTests {
     }
 
     @Test
+    void verifyAllowedResources() {
+        val policy = new DefaultRegisteredServiceOAuthTokenExchangePolicy()
+            .setAllowedResources(Set.of("https://api\\.example\\.org/.+"));
+        val service = new OAuthRegisteredService();
+        assertTrue(policy.isTokenExchangeAllowed(service, Set.of("https://api.example.org/backend"), Set.of(), "access-token"));
+        assertFalse(policy.isTokenExchangeAllowed(service, Set.of("https://api.example.org/backend", "https://other.example.org/"),
+            Set.of(), "access-token"));
+        assertFalse(policy.isTokenExchangeAllowed(service, Set.of("https://other.example.org/?https://api.example.org/backend"),
+            Set.of(), "access-token"));
+        assertFalse(policy.isTokenExchangeAllowed(service, Set.of("https://API.example.org/backend"), Set.of(), "access-token"));
+        assertFalse(policy.isTokenExchangeAllowed(service, Set.of(), Set.of(), "access-token"));
+    }
+
+    @Test
     void verifyActorToken() {
         val policy = new DefaultRegisteredServiceOAuthTokenExchangePolicy()
             .setAllowedActorTokenTypes(Set.of(".*"))

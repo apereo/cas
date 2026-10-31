@@ -20,15 +20,24 @@
         th:attr="data-filter-label=#{screen.account.list.filter},data-more-label=#{screen.account.list.more},data-count-label=#{screen.account.list.count}">
         <li class="cas-account-item" th:each="entry, iter : ${oidcAccessTokens}">
             <div class="cas-account-item-row">
-                <span class="cas-account-item-icon" aria-hidden="true"><i class="mdi mdi-key-outline"></i></span>
+                <span class="cas-account-item-icon" aria-hidden="true">
+                    <i class="mdi" th:classappend="${entry.refreshToken} ? 'mdi-refresh' : 'mdi-key-outline'"></i>
+                </span>
                 <div class="cas-account-item-body">
                     <div class="cas-account-item-title">
                         <span class="acct-mono" th:id="${'accessTokenTitle' + iter.index}" th:text="${entry.id}" th:title="${entry.id}">AT-1-...</span>
                         <span class="cas-account-tag" th:text="${#strings.setJoin(entry.scopes, ', ')}">openid, profile</span>
+                        <span class="cas-account-tag is-info" th:if="${entry.refreshToken}"
+                              th:text="#{screen.account.accesstokens.refresh}">Refresh token</span>
                     </div>
                     <div class="cas-account-item-meta">
-                        <span th:text="${entry.service.id}" th:title="${entry.service}">https://app.example.org</span>
-                        · <span th:text="#{screen.account.accesstokens.client(${entry.clientId})}">Client client</span>
+                        <th:block th:if="${entry.service != null}">
+                            <span th:text="${entry.service.id}" th:title="${entry.service}">https://app.example.org</span> ·
+                        </th:block>
+                        <span th:text="#{screen.account.accesstokens.client(${entry.clientId})}">Client client</span>
+                        <th:block th:if="${entry.refreshToken}">
+                            · <span th:text="#{screen.account.accesstokens.issued(${entry.accessTokenCount})}">2 access tokens issued</span>
+                        </th:block>
                     </div>
                 </div>
                 <div class="cas-account-item-actions">

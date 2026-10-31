@@ -13,7 +13,9 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20ClientAuthenticationMethods;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
+import org.apereo.cas.support.oauth.profile.DefaultOAuth20UserProfile;
 import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
+import org.apereo.cas.support.oauth.profile.OAuth20UserProfile;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.validator.OAuth20ClientSecretValidator;
@@ -22,21 +24,15 @@ import org.apereo.cas.ticket.OAuth20Token;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.code.OAuth20Code;
 import org.apereo.cas.ticket.registry.TicketRegistry;
-import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.pac4j.core.context.CallContext;
-import org.pac4j.core.credentials.CredentialSource;
-import org.pac4j.core.credentials.Credentials;
-import org.pac4j.core.credentials.UsernamePasswordCredentials;
-import org.pac4j.core.credentials.authenticator.Authenticator;
-import org.pac4j.core.exception.CredentialsException;
-import org.pac4j.core.profile.CommonProfile;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.security.authentication.BadCredentialsException;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * Authenticator for client credentials authentication.
@@ -47,7 +43,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 @Slf4j
 @RequiredArgsConstructor
 @Getter
-public class OAuth20ClientIdClientSecretAuthenticator implements Authenticator {
+public class OAuth20ClientIdClientSecretAuthenticator implements OAuth20ClientCredentialsAuthenticator {
     private final ServicesManager servicesManager;
 
     private final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory;
@@ -69,77 +65,72 @@ public class OAuth20ClientIdClientSecretAuthenticator implements Authenticator {
     private final ConfigurableApplicationContext applicationContext;
 
     @Override
-    public Optional<Credentials> validate(final CallContext callContext, final Credentials credentials) {
+    public Optional<OAuth20UserProfile> authenticate(final OAuth20ClientAuthenticationToken token) {
         return FunctionUtils.doUnchecked(() -> {
-            LOGGER.debug("Authenticating credential [{}]", credentials);
-            val upc = (UsernamePasswordCredentials) credentials;
-            val id = upc.getUsername();
+            LOGGER.debug("Authenticating client [{}]", token.getUsername());
+            val id = Objects.requireNonNull(token.getUsername());
+            val request = token.getRequest();
             val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(servicesManager, id);
             val audit = AuditableContext.builder()
                 .registeredService(registeredService)
                 .build();
             val accessResult = registeredServiceAccessStrategyEnforcer.execute(audit);
-            val proceed = !accessResult.isExecutionFailure() && canAuthenticate(callContext);
+            val proceed = !accessResult.isExecutionFailure() && canAuthenticate(request);
             if (!proceed) {
                 val name = getClass().getSimpleName();
                 LOGGER.debug("Skipping authenticator [{}]; service access is rejected for [{}] or the authentication request is not supported", name, registeredService);
-                return Optional.empty();
+                return Optional.<OAuth20UserProfile>empty();
             }
 
-            val requiredAuthnMethod = CredentialSource.FORM.name().equalsIgnoreCase(upc.getSource())
+            val requiredAuthnMethod = token.getSource() == OAuth20ClientAuthenticationToken.CredentialSource.FORM
                 ? OAuth20ClientAuthenticationMethods.CLIENT_SECRET_POST
                 : OAuth20ClientAuthenticationMethods.CLIENT_SECRET_BASIC;
-            if (!isAuthenticationMethodSupported(callContext, Objects.requireNonNull(registeredService), requiredAuthnMethod)) {
+            if (!isAuthenticationMethodSupported(request, Objects.requireNonNull(registeredService), requiredAuthnMethod)) {
                 LOGGER.warn("Client authentication method [{}] is not supported for service [{}]", requiredAuthnMethod, registeredService.getName());
-                return Optional.empty();
+                return Optional.<OAuth20UserProfile>empty();
             }
 
-            validateCredentials(upc, registeredService, callContext, requiredAuthnMethod);
+            validateCredentials(token, registeredService, requiredAuthnMethod);
 
-            val resolvedPrincipal = resolvePrincipal(upc);
+            val resolvedPrincipal = resolvePrincipal(token);
             val service = webApplicationServiceServiceFactory.createService(registeredService.getClientId());
-            val profile = new CommonProfile();
-            if (resolvedPrincipal instanceof NullPrincipal) {
-                LOGGER.debug("No principal was resolved. Falling back to the username [{}] from the credentials.", id);
-                profile.setId(id);
-            } else {
-                val usernameContext = RegisteredServiceUsernameProviderContext.builder()
+            val profileId = resolvedPrincipal instanceof NullPrincipal
+                ? id
+                : registeredService.getUsernameAttributeProvider().resolveUsername(RegisteredServiceUsernameProviderContext.builder()
                     .registeredService(registeredService)
                     .service(service)
                     .principal(resolvedPrincipal)
                     .applicationContext(applicationContext)
-                    .build();
-                val username = registeredService.getUsernameAttributeProvider().resolveUsername(usernameContext);
-                profile.setId(username);
-            }
+                    .build());
+            val profile = new DefaultOAuth20UserProfile(profileId, OAuth20UserProfile.COMMON_PROFILE_HANDLER_NAME);
             profile.addAttribute(OAuth20Constants.CLIENT_ID, id);
             LOGGER.debug("Created profile id [{}]", profile.getId());
 
-            val principal = buildAuthenticatedPrincipal(resolvedPrincipal, registeredService, service, callContext);
-            profile.addAttributes((Map) principal.getAttributes());
+            val principal = buildAuthenticatedPrincipal(resolvedPrincipal, registeredService, service, request);
+            profile.addAttributes(principal.getAttributes());
 
             LOGGER.debug("Authenticated user profile [{}]", profile);
-            credentials.setUserProfile(profile);
-            return Optional.of(credentials);
+            return Optional.<OAuth20UserProfile>of(profile);
         });
     }
 
-    protected Principal resolvePrincipal(final UsernamePasswordCredentials upc) throws Throwable {
-        val credential = new OAuth20ClientIdClientSecretCredential(upc.getUsername(), upc.getPassword());
+    protected Principal resolvePrincipal(final OAuth20ClientAuthenticationToken token) throws Throwable {
+        val credential = new OAuth20ClientIdClientSecretCredential(Objects.requireNonNull(token.getUsername()),
+            Objects.requireNonNull((String) token.getCredentials()));
         return Objects.requireNonNull(principalResolver.resolve(credential));
     }
 
-    protected boolean isAuthenticationMethodSupported(final CallContext callContext, final OAuthRegisteredService registeredService,
+    protected boolean isAuthenticationMethodSupported(final HttpServletRequest request, final OAuthRegisteredService registeredService,
                                                       final OAuth20ClientAuthenticationMethods requiredAuthnMethod) {
-        return OAuth20Utils.isTokenAuthenticationMethodSupportedFor(callContext, registeredService, requiredAuthnMethod);
+        return OAuth20Utils.isTokenAuthenticationMethodSupportedFor(request, registeredService, requiredAuthnMethod);
     }
 
     protected Principal buildAuthenticatedPrincipal(final Principal resolvedPrincipal, final OAuthRegisteredService registeredService,
-                                                    final WebApplicationService service, final CallContext callContext)
+                                                    final WebApplicationService service, final HttpServletRequest request)
             throws Throwable {
-        val scopes = new LinkedHashSet<>(resolveRequestedScopes(callContext));
-        val oauthCode = requestParameterResolver.resolveRequestParameter(callContext.webContext(), OAuth20Constants.CODE)
-            .map(code -> OAuth20Utils.getRequestedOAuthToken(callContext.webContext(), ticketRegistry, code, OAuth20Token.class))
+        val scopes = new LinkedHashSet<>(resolveRequestedScopes(request));
+        val oauthCode = requestParameterResolver.resolveRequestParameter(request, OAuth20Constants.CODE)
+            .map(code -> OAuth20Utils.getRequestedOAuthToken(request, ticketRegistry, code, OAuth20Token.class))
             .orElse(null);
 
         if (oauthCode != null && !oauthCode.isExpired()) {
@@ -152,33 +143,28 @@ public class OAuth20ClientIdClientSecretAuthenticator implements Authenticator {
         return finalPrincipal;
     }
 
-    protected Collection<String> resolveRequestedScopes(final CallContext callContext) {
-        return requestParameterResolver.resolveRequestedScopes(callContext.webContext());
+    protected Collection<String> resolveRequestedScopes(final HttpServletRequest request) {
+        return requestParameterResolver.resolveRequestedScopes(request);
     }
 
-    protected void validateCredentials(final UsernamePasswordCredentials credentials,
+    protected void validateCredentials(final OAuth20ClientAuthenticationToken token,
                                        final OAuthRegisteredService registeredService,
-                                       final CallContext callContext,
                                        final OAuth20ClientAuthenticationMethods authnMethod) {
-        var pwdToCheck = credentials.getPassword();
-        if (authnMethod == OAuth20ClientAuthenticationMethods.CLIENT_SECRET_BASIC) {
-            pwdToCheck = EncodingUtils.urlDecode(credentials.getPassword());
-        }
+        val pwdToCheck = Objects.requireNonNull((String) token.getCredentials());
         if (!clientSecretValidator.validate(registeredService, pwdToCheck)) {
-            throw new CredentialsException("Invalid client credentials provided for registered service: " + registeredService.getName());
+            throw new BadCredentialsException("Invalid client credentials provided for registered service: " + registeredService.getName());
         }
     }
 
-    protected boolean canAuthenticate(final CallContext callContext) {
-        val context = callContext.webContext();
-        val grantType = requestParameterResolver.resolveGrantType(context);
+    protected boolean canAuthenticate(final HttpServletRequest request) {
+        val grantType = requestParameterResolver.resolveGrantType(request);
 
         if (grantType == OAuth20GrantTypes.PASSWORD) {
             LOGGER.debug("Skipping client credential authentication to use password authentication");
             return false;
         }
 
-        val clientIdAndSecret = requestParameterResolver.resolveClientIdAndClientSecret(callContext);
+        val clientIdAndSecret = requestParameterResolver.resolveClientIdAndClientSecret(request);
         if (grantType == OAuth20GrantTypes.REFRESH_TOKEN
             && StringUtils.isNotBlank(clientIdAndSecret.getKey())
             && StringUtils.isBlank(clientIdAndSecret.getValue())) {
@@ -186,10 +172,10 @@ public class OAuth20ClientIdClientSecretAuthenticator implements Authenticator {
             return false;
         }
 
-        val code = context.getRequestParameter(OAuth20Constants.CODE);
+        val code = Optional.ofNullable(request.getParameter(OAuth20Constants.CODE));
         if (code.isPresent()) {
             LOGGER.debug("Checking if the OAuth code issued contains code challenge");
-            val token = OAuth20Utils.getRequestedOAuthToken(context, ticketRegistry, code.get(), OAuth20Code.class);
+            val token = OAuth20Utils.getRequestedOAuthToken(request, ticketRegistry, code.get(), OAuth20Code.class);
             if (token != null && !token.isExpired() && StringUtils.isNotEmpty(token.getCodeChallenge())) {
                 LOGGER.debug("The OAuth code [{}] issued contains code challenge which requires PKCE Authentication", code.get());
                 return false;

@@ -27,6 +27,10 @@ Contents of this file may contain the following settings
   theme-specific `cas.css` and `cas.js` inside the appropriate directories for `css` and `js`.
 - Specify `[theme_name]` for the service definition under the `theme` property.
 
+A theme only needs the properties it changes. Every other property comes from `cas-theme-custom.properties`, the file
+that holds your deployment-wide changes, and then from `cas-theme-default.properties`. Theme files found under the
+template prefixes apply to every browser language.
+
 ```json
 {
   "@class" : "org.apereo.cas.services.CasRegisteredService",

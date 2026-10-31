@@ -26,7 +26,6 @@ import org.opensaml.saml.common.SAMLObjectBuilder;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.Issuer;
-import org.pac4j.jee.context.JEEContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -140,7 +139,7 @@ class SSOSamlIdPPostProfileHandlerControllerTests extends BaseSamlIdPConfigurati
         request.setCookies(response.getCookies());
         val authnRequest = getAuthnRequest();
         val xml = SamlUtils.transformSamlObject(openSamlConfigBean, authnRequest).toString();
-        samlIdPDistributedSessionStore.set(new JEEContext(request, response),
+        samlIdPDistributedSessionStore.set(request, response,
             SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE, "relay-state");
         val result = performPostProfileRequest(request, response, EncodingUtils.encodeBase64(xml));
         assertNull(result.getModelAndView());
@@ -159,7 +158,7 @@ class SSOSamlIdPPostProfileHandlerControllerTests extends BaseSamlIdPConfigurati
         val authnRequest = getAuthnRequest();
         authnRequest.setForceAuthn(true);
         val xml = SamlUtils.transformSamlObject(openSamlConfigBean, authnRequest).toString();
-        samlIdPDistributedSessionStore.set(new JEEContext(request, response),
+        samlIdPDistributedSessionStore.set(request, response,
             SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE, "relay-state");
         val result = performPostProfileRequest(request, response, EncodingUtils.encodeBase64(xml));
         assertEquals(HttpStatus.FOUND.value(), result.getResponse().getStatus());
@@ -174,7 +173,7 @@ class SSOSamlIdPPostProfileHandlerControllerTests extends BaseSamlIdPConfigurati
         request.setCookies(response.getCookies());
         val authnRequest = getAuthnRequest();
         val xml = SamlUtils.transformSamlObject(openSamlConfigBean, authnRequest).toString();
-        samlIdPDistributedSessionStore.set(new JEEContext(request, response),
+        samlIdPDistributedSessionStore.set(request, response,
             SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE, "relay-state");
         val result = assertDoesNotThrow(() -> performPostProfileRequest(request, response, EncodingUtils.encodeBase64(xml)));
         assertEquals(HttpStatus.FOUND.value(), result.getResponse().getStatus());
@@ -195,7 +194,7 @@ class SSOSamlIdPPostProfileHandlerControllerTests extends BaseSamlIdPConfigurati
         request.setCookies(response.getCookies());
         val authnRequest = getAuthnRequest(strategyService.getServiceId());
         val xml = SamlUtils.transformSamlObject(openSamlConfigBean, authnRequest).toString();
-        samlIdPDistributedSessionStore.set(new JEEContext(request, response),
+        samlIdPDistributedSessionStore.set(request, response,
             SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE, "relay-state");
         val mv = performPostProfileRequest(request, response, EncodingUtils.encodeBase64(xml)).getModelAndView();
         assertNotNull(mv);

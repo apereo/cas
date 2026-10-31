@@ -14,6 +14,8 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.jose4j.jwk.JsonWebKey;
 import org.jose4j.jwk.JsonWebKeySet;
 
@@ -56,9 +58,15 @@ public class OidcRegisteredServiceJwtAccessTokenCipherExecutor extends OAuth20Re
         if (registeredService instanceof OidcRegisteredService oidcRegisteredService) {
             val jsonWebKeySet = OidcJsonWebKeyStoreUtils.fetchJsonWebKeySetForSigning(registeredService, this, true);
             if (jsonWebKeySet.isPresent()) {
-                val signingKey = jsonWebKeySet.get().findJsonWebKey(oidcRegisteredService.getJwksKeyId(), null, null,
-                    oidcRegisteredService.getJwtAccessTokenSigningAlg());
-                return Optional.ofNullable(signingKey)
+                val keyId = oidcRegisteredService.getJwksKeyId();
+                val algorithm = oidcRegisteredService.getJwtAccessTokenSigningAlg();
+                val signingKey = Optional.ofNullable(jsonWebKeySet.get().findJsonWebKey(keyId, null, null, algorithm))
+                    .or(() -> jsonWebKeySet.get().getJsonWebKeys()
+                        .stream()
+                        .filter(key -> StringUtils.isBlank(keyId) || Strings.CI.equals(keyId, key.getKeyId()))
+                        .filter(key -> OidcJsonWebKeyStoreUtils.isSigningAlgorithmCompatible(key, algorithm))
+                        .findFirst());
+                return signingKey
                     .map(key -> key.toJson(JsonWebKey.OutputControlLevel.INCLUDE_PRIVATE))
                     .or(() -> Optional.of(jsonWebKeySet.get().toJson(JsonWebKey.OutputControlLevel.INCLUDE_PRIVATE)));
             }

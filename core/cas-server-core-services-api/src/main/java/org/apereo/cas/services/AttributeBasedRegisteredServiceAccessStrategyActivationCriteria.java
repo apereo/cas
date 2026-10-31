@@ -48,6 +48,15 @@ public class AttributeBasedRegisteredServiceAccessStrategyActivationCriteria imp
             : stream.anyMatch(entry -> verifyRequiredAttribute(entry, request));
     }
 
+    /**
+     * Verify that the principal carries a value for the required attribute that matches
+     * one of its required values. A required value is a pattern that must match the entire
+     * attribute value, so {@code admin} does not match {@code sysadmin}.
+     *
+     * @param entry   the required attribute and its values
+     * @param request the access strategy request
+     * @return true if a value matches
+     */
     protected boolean verifyRequiredAttribute(
         final Map.Entry<String, Object> entry,
         final RegisteredServiceAccessStrategyRequest request) {
@@ -58,6 +67,6 @@ public class AttributeBasedRegisteredServiceAccessStrategyActivationCriteria imp
             requiredValues, currentValues, pattern, entry.getKey());
         return pattern.equals(RegexUtils.MATCH_NOTHING_PATTERN)
             ? currentValues.stream().anyMatch(requiredValues::contains)
-            : currentValues.stream().map(Object::toString).anyMatch(pattern.asPredicate());
+            : currentValues.stream().map(Object::toString).anyMatch(pattern.asMatchPredicate());
     }
 }

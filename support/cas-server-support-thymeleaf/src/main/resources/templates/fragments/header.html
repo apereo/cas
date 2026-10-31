@@ -11,7 +11,7 @@
 </head>
 
 <body>
-<div th:fragment="header">
+<div th:fragment="header" th:with="themeBuilder=${#cas.themeBuilderEnabled}">
 
     <style th:inline="css">
         :root {
@@ -24,7 +24,9 @@
         <nav class="mdc-top-app-bar__row navbar navbar-dark bg-dark">
             <div class="container-fluid container-fluid d-flex align-items-center justify-content-between">
                 <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-start">
-                    <button th:if="${#cas.isTrue(#cas.theme('cas.drawer-menu.enabled'))}"
+                    <button th:if="${themeBuilder or #cas.isTrue(#cas.theme('cas.drawer-menu.enabled'))}"
+                            th:classappend="${!#cas.isTrue(#cas.theme('cas.drawer-menu.enabled'))} ? 'cas-theme-builder-off'"
+                            data-cas-theme-builder-toggle="cas.drawer-menu.enabled"
                             class="mdc-icon-button mdc-top-app-bar__navigation-icon  btn btn-outline-light"
                             id="drawerButton"
                             type="button"
@@ -38,7 +40,9 @@
                 <section class="mdc-top-app-bar__section">
                     <div class="cas-brand mx-auto">
                         <h1 class="visually-hidden" th:text="${#strings.defaultString(#cas.theme('cas.theme.name'), 'CAS')}">CAS</h1>
-                        <a th:href="@{/}" th:if="${#cas.isTrue(#cas.theme('cas.logo.enabled'))}">
+                        <a th:href="@{/}" th:if="${themeBuilder or #cas.isTrue(#cas.theme('cas.logo.enabled'))}"
+                           th:classappend="${!#cas.isTrue(#cas.theme('cas.logo.enabled'))} ? 'cas-theme-builder-off'"
+                           data-cas-theme-builder-toggle="cas.logo.enabled">
                             <img id="cas-logo"
                                  class="cas-logo"
                                  th:alt="${#strings.defaultString(#cas.theme('cas.theme.name'), 'CAS')}"
@@ -48,7 +52,9 @@
                     </div>
                 </section>
                 <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-end">
-                    <select th:if="${#cas.isTrue(#cas.theme('cas.locale-selection.enabled'))}"
+                    <select th:if="${themeBuilder or #cas.isTrue(#cas.theme('cas.locale-selection.enabled'))}"
+                            th:classappend="${!#cas.isTrue(#cas.theme('cas.locale-selection.enabled'))} ? 'cas-theme-builder-off'"
+                            data-cas-theme-builder-toggle="cas.locale-selection.enabled"
                             onchange="changeLanguage(this.value)"
                             id="languageSelector"
                             aria-label="Language"
@@ -60,8 +66,23 @@
                         </option>
                     </select>
 
+                    <button id="cas-theme-builder-menu"
+                            th:if="${themeBuilder}"
+                            class="mdc-icon-button mdc-top-app-bar__action-item cas-theme-builder-toggle btn btn-outline-light"
+                            type="button"
+                            aria-controls="cas-theme-builder"
+                            aria-expanded="false"
+                            th:title="#{screen.themebuilder.button}"
+                            title="Theme builder">
+                        <span class="mdi mdi-palette-outline fa fa-palette" aria-hidden="true"></span>
+                        <span class="visually-hidden" th:text="#{screen.themebuilder.button}">Theme builder</span>
+                        <span class="cas-theme-builder-dot" hidden></span>
+                    </button>
+
                     <button id="cas-notifications-menu"
-                            th:if="${#cas.isTrue(#cas.theme('cas.notifications-menu.enabled'))}"
+                            th:if="${themeBuilder or #cas.isTrue(#cas.theme('cas.notifications-menu.enabled'))}"
+                            th:classappend="${!#cas.isTrue(#cas.theme('cas.notifications-menu.enabled'))} ? 'cas-theme-builder-off'"
+                            data-cas-theme-builder-toggle="cas.notifications-menu.enabled"
                             class="mdc-icon-button mdc-top-app-bar__action-item cas-notification-toggle btn btn-outline-light"
                             type="button"
                             data-bs-toggle="modal"
@@ -88,8 +109,12 @@
 
     <div th:replace="~{fragments/logindrawer :: logindrawer}"/>
 
+    <th:block th:if="${themeBuilder}">
+        <div th:replace="~{fragments/themebuilder :: themebuilder}"/>
+    </th:block>
+
     <div
-            th:if="${#cas.isTrue(#cas.theme('cas.notifications-menu.enabled'))}"
+            th:if="${themeBuilder or #cas.isTrue(#cas.theme('cas.notifications-menu.enabled'))}"
             class="mdc-dialog cas-notification-dialog modal fade"
             id="cas-notification-dialog" role="alertdialog" tabindex="-1"
             aria-modal="true" aria-labelledby="cas-notification-dialog-title"

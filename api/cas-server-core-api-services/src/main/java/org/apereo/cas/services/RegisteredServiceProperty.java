@@ -244,6 +244,20 @@ public interface RegisteredServiceProperty extends Serializable {
             "Indicate the registration date/time when the client was registered with CAS using OpenID Connect client dynamic registration flow."),
 
         /**
+         * Indicate whether the client was registered with CAS from its OAuth client ID metadata document.
+         */
+        OIDC_CLIENT_ID_METADATA_DOCUMENT("oidcClientIdMetadataDocument", "false",
+            RegisteredServicePropertyGroups.OIDC, RegisteredServicePropertyTypes.BOOLEAN,
+            "Indicate whether the client was registered with CAS from its OAuth client ID metadata document."),
+
+        /**
+         * Indicate when CAS fetches the client ID metadata document of the client again, as an ISO-8601 instant.
+         */
+        OIDC_CLIENT_ID_METADATA_DOCUMENT_REFRESH("oidcClientIdMetadataDocumentRefresh", StringUtils.EMPTY,
+            RegisteredServicePropertyGroups.OIDC, RegisteredServicePropertyTypes.STRING,
+            "Indicate when CAS fetches the client ID metadata document of the client again, as an ISO-8601 instant."),
+
+        /**
          * Indicate the cipher strategy for JWTs for OIDC responses, to determine order of signing/encryption operations.
          */
         OIDC_RESPONSE_MODE_JWT_CIPHER_STRATEGY_TYPE("oidcResponseModeAsJwtCipherStrategyType", StringUtils.EMPTY,

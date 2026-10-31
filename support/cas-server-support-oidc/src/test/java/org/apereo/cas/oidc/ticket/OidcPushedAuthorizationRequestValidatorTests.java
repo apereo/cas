@@ -7,13 +7,12 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
+import org.apereo.cas.support.oauth.profile.DefaultOAuth20UserProfile;
 import org.apereo.cas.support.oauth.validator.authorization.OAuth20AuthorizationRequestValidator;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestContext;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.pac4j.core.profile.CommonProfile;
-import org.pac4j.jee.context.JEEContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -35,8 +34,7 @@ class OidcPushedAuthorizationRequestValidatorTests extends AbstractOidcTests {
     @Test
     void verifyOperation() throws Throwable {
         val registeredService = getOidcRegisteredService();
-        val profile = new CommonProfile();
-        profile.setId("casTest");
+        val profile = new DefaultOAuth20UserProfile("casTest");
         val holder = AccessTokenRequestContext.builder()
             .clientId(registeredService.getClientId())
             .service(RegisteredServiceTestUtils.getService())
@@ -55,9 +53,9 @@ class OidcPushedAuthorizationRequestValidatorTests extends AbstractOidcTests {
         request.addParameter(OAuth20Constants.CLIENT_ID, holder.getClientId());
         request.addParameter(OidcConstants.REQUEST_URI, ticket.getId());
 
-        val context = new JEEContext(request, new MockHttpServletResponse());
-        assertTrue(oidcPushedAuthorizationRequestValidator.supports(context));
-        assertTrue(oidcPushedAuthorizationRequestValidator.validate(context));
+        val response = new MockHttpServletResponse();
+        assertTrue(oidcPushedAuthorizationRequestValidator.supports(request, response));
+        assertTrue(oidcPushedAuthorizationRequestValidator.validate(request, response));
         assertEquals(0, oidcPushedAuthorizationRequestValidator.getOrder());
     }
 }

@@ -143,37 +143,21 @@ public class RestfulServiceRegistry extends AbstractServiceRegistry {
 
     @Override
     public Collection<RegisteredService> load() {
-        HttpResponse response = null;
         val clientInfo = ClientInfoHolder.getClientInfo();
-        try {
-            val exec = HttpExecutionRequest.builder()
-                .basicAuthPassword(properties.getBasicAuthPassword())
-                .basicAuthUsername(properties.getBasicAuthUsername())
-                .method(HttpMethod.GET)
-                .url(SpringExpressionLanguageValueResolver.getInstance().resolve(properties.getUrl()))
-                .headers(getRequestHeaders(properties))
-                .maximumRetryAttempts(properties.getMaximumRetryAttempts())
-                .build();
-            response = HttpUtils.execute(exec);
-            if (response != null && response.getCode() == HttpStatus.OK.value()) {
-                try (val content = ((HttpEntityContainer) response).getEntity().getContent()) {
-                    val result = IOUtils.toString(content, StandardCharsets.UTF_8);
-                    val services = this.serializer.fromList(result)
-                        .stream()
-                        .map(this::invokeServiceRegistryListenerPostLoad)
-                        .filter(Objects::nonNull)
-                        .collect(Collectors.toList());
-                    services.forEach(service -> publishEvent(new CasRegisteredServiceLoadedEvent(this, service, clientInfo)));
-                    return services;
-                }
-            }
-            throw new IllegalStateException("Unable to load services from %s; received status %s"
-                .formatted(sanitizeUrl(exec.getUrl()), response != null ? response.getCode() : "none"));
-        } catch (final IOException e) {
-            throw new UncheckedIOException(e);
-        } finally {
-            HttpUtils.close(response);
-        }
+        val services = fetchServices();
+        services.forEach(service -> publishEvent(new CasRegisteredServiceLoadedEvent(this, service, clientInfo)));
+        return services;
+    }
+
+    /**
+     * Read the services without publishing loaded events: streaming services for a lookup is not a load,
+     * and publishing would broadcast every service again to listeners such as service replication.
+     *
+     * @return the services
+     */
+    @Override
+    public Stream<? extends RegisteredService> getServicesStream() {
+        return fetchServices().stream();
     }
 
     @Override
@@ -205,8 +189,51 @@ public class RestfulServiceRegistry extends AbstractServiceRegistry {
         return null;
     }
 
+    /**
+     * Count the services without publishing loaded events. A registry that cannot be reached
+     * counts as empty and the failure is logged, so that reporting the count never fails;
+     * loading services still fails, so that services already loaded are kept.
+     *
+     * @return the number of services, or zero if the registry cannot be reached
+     */
     @Override
     public long size() {
-        return load().size();
+        try {
+            return fetchServices().size();
+        } catch (final Exception e) {
+            LOGGER.error("Unable to count services: [{}]", e.getMessage());
+            return 0;
+        }
+    }
+
+    private List<RegisteredService> fetchServices() {
+        HttpResponse response = null;
+        try {
+            val exec = HttpExecutionRequest.builder()
+                .basicAuthPassword(properties.getBasicAuthPassword())
+                .basicAuthUsername(properties.getBasicAuthUsername())
+                .method(HttpMethod.GET)
+                .url(SpringExpressionLanguageValueResolver.getInstance().resolve(properties.getUrl()))
+                .headers(getRequestHeaders(properties))
+                .maximumRetryAttempts(properties.getMaximumRetryAttempts())
+                .build();
+            response = HttpUtils.execute(exec);
+            if (response != null && response.getCode() == HttpStatus.OK.value()) {
+                try (val content = ((HttpEntityContainer) response).getEntity().getContent()) {
+                    val result = IOUtils.toString(content, StandardCharsets.UTF_8);
+                    return this.serializer.fromList(result)
+                        .stream()
+                        .map(this::invokeServiceRegistryListenerPostLoad)
+                        .filter(Objects::nonNull)
+                        .collect(Collectors.toList());
+                }
+            }
+            throw new IllegalStateException("Unable to load services from %s; received status %s"
+                .formatted(sanitizeUrl(exec.getUrl()), response != null ? response.getCode() : "none"));
+        } catch (final IOException e) {
+            throw new UncheckedIOException(e);
+        } finally {
+            HttpUtils.close(response);
+        }
     }
 }
