@@ -58,7 +58,13 @@ public abstract class BaseTicketEntity implements Serializable {
     @Column(nullable = true, length = 512)
     private ZonedDateTime lastUsedTime;
 
-    
+    /**
+     * Gets attributes.
+     *
+     * @return the attributes
+     */
+    public abstract Map<String, List<Object>> getAttributes();
+
     /**
      * Sets attributes.
      *

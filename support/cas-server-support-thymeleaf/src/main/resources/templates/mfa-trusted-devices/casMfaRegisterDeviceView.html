@@ -35,7 +35,7 @@
                                size="25"
                                autocomplete="off" required />
                     </label>
-                    <script>document.getElementById("deviceName").value = randomWord();</script>
+                    <script th:replace="~{fragments/deviceName :: prefill(field='deviceName')}"></script>
                 </div>
 
                 <div><p th:text="#{cas.mfa.registerdevice.label.duration}">How long should we remember this device?</p></div>

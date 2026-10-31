@@ -174,21 +174,22 @@ public class PatternMatchingAttributeReleasePolicy extends AbstractRegisteredSer
         val transformedValues = attributeValues
             .stream()
             .map(value -> {
-                var transformedValue = rule.getTransform();
                 val matcher = valuePattern.matcher(value.toString());
-                if (matcher.find()) {
-                    while (transformPattern.find()) {
-                        val group = Integer.parseInt(transformPattern.group(1));
-                        val target = String.format("${%s}", group);
-                        transformedValue = transformedValue.replace(target, matcher.group(group));
-                    }
+                if (!matcher.find()) {
+                    return StringUtils.EMPTY;
+                }
+                var transformedValue = rule.getTransform();
+                while (transformPattern.find()) {
+                    val group = Integer.parseInt(transformPattern.group(1));
+                    val target = String.format("${%s}", group);
+                    transformedValue = transformedValue.replace(target, matcher.group(group));
                 }
                 transformPattern.reset();
                 return transformedValue;
             })
             .filter(StringUtils::isNotBlank)
             .collect(Collectors.<Object>toList());
-        return Map.of(entry.getKey(), transformedValues);
+        return transformedValues.isEmpty() ? Map.of() : Map.of(entry.getKey(), transformedValues);
     }
 
     @ToString

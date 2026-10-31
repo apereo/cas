@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Account Profile</title>
+    <link href="../../static/css/account.css" rel="stylesheet" th:remove="tag"/>
+</head>
+<body>
+<section th:fragment="signinactivity" th:if="${signInActivity}" id="divSignInActivity" class="profile-content" hidden
+         aria-labelledby="divSignInActivityTitle"
+         th:data-account-trail="|#{screen.account.trail.root} › #{screen.account.group.activity} › #{screen.account.signins.title}|">
+    <header>
+        <div>
+            <h2 id="divSignInActivityTitle" th:text="#{screen.account.signins.title}">Recent sign-ins</h2>
+            <p th:text="#{screen.account.signins.subtitle}">Sign-in attempts on your account over the last 30 days.</p>
+        </div>
+    </header>
+    <ul id="signInActivityList" class="cas-account-list" data-account-list
+        th:attr="data-filter-label=#{screen.account.list.filter},data-more-label=#{screen.account.list.more},data-count-label=#{screen.account.list.count}">
+        <li class="cas-account-item" th:each="entry, iter : ${signInActivity}">
+            <div class="cas-account-item-row">
+                <span class="cas-account-item-icon" aria-hidden="true" th:switch="${entry.outcome}">
+                    <i th:case="'failure'" class="mdi mdi-close-circle-outline"></i>
+                    <i th:case="'risk'" class="mdi mdi-alert-outline"></i>
+                    <i th:case="*" class="mdi mdi-login-variant"></i>
+                </span>
+                <div class="cas-account-item-body">
+                    <div class="cas-account-item-title">
+                        <span th:id="${'signInTitle' + iter.index}" th:text="${#temporals.format(entry.when, 'MMMM dd, yyyy HH:mm') + ' UTC'}">October 2, 2026 21:14</span>
+                        <span class="cas-account-tag" data-field="outcome"
+                              th:classappend="${entry.outcome == 'success'} ? 'is-success' : (${entry.outcome == 'failure'} ? 'is-failure' : 'is-warning')"
+                              th:text="#{${'screen.account.signins.' + entry.outcome}}">Signed in</span>
+                    </div>
+                    <div class="cas-account-item-meta">
+                        <span data-field="location" th:text="${entry.location} ?: #{screen.account.signins.location.unknown}">Lisbon, Portugal</span>
+                        <th:block th:if="${entry.clientIpAddress}">· <span data-field="ip" th:text="${entry.clientIpAddress}">192.0.2.14</span></th:block>
+                        <th:block th:if="${entry.userAgent}">· <span data-field="agent" th:data-account-useragent="${entry.userAgent}"
+                              th:text="${#strings.abbreviate(entry.userAgent, 60)}" th:title="${entry.userAgent}">Chrome · macOS</span></th:block>
+                    </div>
+                </div>
+            </div>
+        </li>
+    </ul>
+</section>
+</body>
+</html>

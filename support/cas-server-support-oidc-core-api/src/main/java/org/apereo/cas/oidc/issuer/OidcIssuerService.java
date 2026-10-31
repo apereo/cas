@@ -2,7 +2,7 @@ package org.apereo.cas.oidc.issuer;
 
 import module java.base;
 import org.apereo.cas.services.OidcRegisteredService;
-import org.pac4j.core.context.WebContext;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * This is {@link OidcIssuerService}.
@@ -42,12 +42,12 @@ public interface OidcIssuerService {
      * and compare that with the system-defined issuer, while considering
      * the endpoint that is requesting access.
      *
-     * @param webContext the web context
+     * @param request    the request
      * @param endpoints  the endpoint
      * @return true/false
      */
-    default boolean validateIssuer(final WebContext webContext, final List<String> endpoints) {
-        return validateIssuer(webContext, endpoints, null);
+    default boolean validateIssuer(final HttpServletRequest request, final List<String> endpoints) {
+        return validateIssuer(request, endpoints, null);
     }
 
     /**
@@ -56,12 +56,12 @@ public interface OidcIssuerService {
      * and compare that with the system-defined issuer, while considering
      * the endpoint that is requesting access.
      *
-     * @param webContext        the web context
+     * @param request           the request
      * @param endpoints         the endpoints
      * @param registeredService the registered service
      * @return the boolean
      */
-    default boolean validateIssuer(final WebContext webContext, final List<String> endpoints,
+    default boolean validateIssuer(final HttpServletRequest request, final List<String> endpoints,
                                    final OidcRegisteredService registeredService) {
         return true;
     }

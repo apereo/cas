@@ -13,7 +13,6 @@ import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.pac4j.jee.context.JEEContext;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -55,8 +54,7 @@ public class OidcVerifiableCredentialTypeMetadataController extends BaseOAuth20C
         parameters = @Parameter(name = "configurationId", in = ParameterIn.PATH, description = "Configuration ID"))
     public ResponseEntity handle(final HttpServletRequest request, final HttpServletResponse response,
                                  @PathVariable final String configurationId) {
-        val webContext = new JEEContext(request, response);
-        if (!getConfigurationContext().getIssuerService().validateIssuer(webContext, List.of(OidcConstants.VC_CREDENTIAL_TYPE_URL))) {
+        if (!getConfigurationContext().getIssuerService().validateIssuer(request, List.of(OidcConstants.VC_CREDENTIAL_TYPE_URL))) {
             LOGGER.warn("CAS cannot accept the request given the issuer is invalid.");
             val body = OAuth20Utils.getErrorResponseBody(OAuth20Constants.INVALID_REQUEST, "Invalid issuer");
             return ResponseEntity.badRequest().body(body);

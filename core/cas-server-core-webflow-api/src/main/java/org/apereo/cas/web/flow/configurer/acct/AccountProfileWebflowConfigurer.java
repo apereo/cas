@@ -72,6 +72,7 @@ public class AccountProfileWebflowConfigurer extends AbstractCasWebflowConfigure
             CasWebflowConstants.ACTION_ID_ACCOUNT_PROFILE_REMOVE_SINGLE_SIGNON_SESSION);
         createTransitionForState(removeSession, CasWebflowConstants.TRANSITION_ID_SUCCESS, CasWebflowConstants.STATE_ID_MY_ACCOUNT_PROFILE_VIEW);
         createTransitionForState(removeSession, CasWebflowConstants.TRANSITION_ID_VALIDATE, accountFlow.getStartState().getId());
+        createTransitionForState(removeSession, CasWebflowConstants.TRANSITION_ID_ERROR, CasWebflowConstants.STATE_ID_MY_ACCOUNT_PROFILE_VIEW);
 
         val successView = getState(loginFlow, CasWebflowConstants.STATE_ID_VIEW_GENERIC_LOGIN_SUCCESS, EndState.class);
         val expression = createExpression(String.format("'%s'", accountFlow.getId()));

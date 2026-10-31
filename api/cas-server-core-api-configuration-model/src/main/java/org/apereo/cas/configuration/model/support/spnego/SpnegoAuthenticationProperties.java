@@ -43,7 +43,8 @@ public class SpnegoAuthenticationProperties implements Serializable {
     private String jcifsPassword;
 
     /**
-     * The Jcifs service password.
+     * The Jcifs service password, used to log the service principal in
+     * when {@code cas.authn.spnego.system.use-subject-creds-only} is {@code true}.
      */
     private String jcifsServicePassword;
 

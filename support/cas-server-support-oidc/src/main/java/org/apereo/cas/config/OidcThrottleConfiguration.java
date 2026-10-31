@@ -11,7 +11,6 @@ import org.apereo.cas.util.spring.RefreshableHandlerInterceptor;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import lombok.val;
 import org.jspecify.annotations.NonNull;
-import org.pac4j.jee.context.JEEContext;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -91,8 +90,7 @@ class OidcThrottleConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public ThrottledRequestFilter oidcThrottledRequestFilter() {
             return (request, response) -> {
-                val webContext = new JEEContext(request, response);
-                val url = UriUtils.decode(webContext.getRequestURL(), StandardCharsets.UTF_8);
+                val url = UriUtils.decode(request.getRequestURL().toString(), StandardCharsets.UTF_8);
                 return THROTTLED_ENDPOINTS.stream().anyMatch(url::endsWith);
             };
         }

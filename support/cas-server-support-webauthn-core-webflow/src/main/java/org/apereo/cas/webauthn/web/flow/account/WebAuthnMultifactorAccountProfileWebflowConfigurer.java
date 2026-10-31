@@ -18,6 +18,11 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
  * @since 7.0.0
  */
 public class WebAuthnMultifactorAccountProfileWebflowConfigurer extends MultifactorAuthenticationAccountProfileWebflowConfigurer {
+    /**
+     * Transition from the account profile that renames a passkey or security key.
+     */
+    public static final String TRANSITION_ID_RENAME_DEVICE = "renameWebAuthnDevice";
+
     public WebAuthnMultifactorAccountProfileWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
                                                               final FlowDefinitionRegistry accountProfileFlowRegistry,
                                                               final ConfigurableApplicationContext applicationContext,
@@ -48,5 +53,11 @@ public class WebAuthnMultifactorAccountProfileWebflowConfigurer extends Multifac
 
         val accountProfileView = (ViewState) accountFlow.getState(CasWebflowConstants.STATE_ID_MY_ACCOUNT_PROFILE_VIEW);
         createTransitionForState(accountProfileView, "registerWebAuthn", regViewState.getId());
+
+        val renameState = createActionState(accountFlow, "webAuthnAccountProfileRenameDevice",
+            CasWebflowConstants.ACTION_ID_ACCOUNT_PROFILE_WEBAUTHN_RENAME_DEVICE);
+        createTransitionForState(renameState, CasWebflowConstants.TRANSITION_ID_SUCCESS, CasWebflowConstants.STATE_ID_MY_ACCOUNT_PROFILE_VIEW);
+        createTransitionForState(renameState, CasWebflowConstants.TRANSITION_ID_ERROR, CasWebflowConstants.STATE_ID_MY_ACCOUNT_PROFILE_VIEW);
+        createTransitionForState(accountProfileView, TRANSITION_ID_RENAME_DEVICE, renameState.getId());
     }
 }

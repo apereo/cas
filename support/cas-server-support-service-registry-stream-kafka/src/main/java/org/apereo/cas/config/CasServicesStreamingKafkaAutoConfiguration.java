@@ -55,6 +55,17 @@ import org.springframework.kafka.support.serializer.JacksonJsonSerializer;
 public class CasServicesStreamingKafkaAutoConfiguration {
     private static final BeanCondition CONDITION = BeanCondition.on("cas.service-registry.stream.core.enabled").isTrue().evenIfMissing();
 
+    /**
+     * Each node consumes in a group of its own, named after its publisher identifier, which is new on every start.
+     * The group reads the topic from the beginning, so that a node rebuilds every service definition from the compacted
+     * topic when it starts; nodes do not send definitions again on every reload, so reading only new messages would
+     * leave a node that starts later without the definitions loaded before it joined.
+     *
+     * @param casRegisteredServiceStreamPublisherIdentifier the publisher identifier of this node
+     * @param applicationContext                            the application context
+     * @param casProperties                                 the CAS properties
+     * @return the listener container factory
+     */
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "registeredServiceKafkaListenerContainerFactory")
@@ -66,6 +77,7 @@ public class CasServicesStreamingKafkaAutoConfiguration {
         val kafka = casProperties.getServiceRegistry().getStream().getKafka();
         val factory = new KafkaObjectFactory<String, DistributedCacheObject>(kafka.getBootstrapAddress());
         factory.setConsumerGroupId(casRegisteredServiceStreamPublisherIdentifier.getId());
+        factory.setAutoOffsetReset("earliest");
         val mapper = new RegisteredServiceJsonSerializer(applicationContext).getJsonMapper();
         return factory.getKafkaListenerContainerFactory(new StringDeserializer(),
             new JacksonJsonDeserializer<>(DistributedCacheObject.class, mapper));

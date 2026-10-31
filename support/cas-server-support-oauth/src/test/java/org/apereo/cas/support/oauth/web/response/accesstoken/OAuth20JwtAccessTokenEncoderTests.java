@@ -96,6 +96,32 @@ class OAuth20JwtAccessTokenEncoderTests {
             assertNotNull(claims.getStringClaim(OAuth20Constants.RESPONSE_TYPE));
         }
 
+        @Test
+        void verifyRequestedResourcesAreAddedToAudience() throws Throwable {
+            val accessToken = getAccessToken();
+            val resource = "https://api.example.org/";
+            when(accessToken.getResources()).thenReturn(Set.of(resource));
+            val registeredService = getRegisteredServiceForJwtAccessTokenWithKeys(accessToken, true, false);
+            val encodedAccessToken = OAuth20JwtAccessTokenEncoder.toEncodableCipher(configurationContext, registeredService, accessToken)
+                .encode(accessToken.getId());
+            val claims = JwtBuilder.parse(encodedAccessToken);
+
+            assertEquals(Set.of(accessToken.getClientId(), resource), new HashSet<>(claims.getStringListClaim("aud")));
+
+            val exchangeAudience = "https://backend.example.org/";
+            val tokenResult = OAuth20AccessTokenResponseResult
+                .builder()
+                .registeredService(registeredService)
+                .service(accessToken.getService())
+                .grantType(OAuth20GrantTypes.TOKEN_EXCHANGE)
+                .requestedTokenType(OAuth20TokenExchangeTypes.JWT)
+                .tokenExchangeAudience(exchangeAudience)
+                .build();
+            val exchangedToken = OAuth20JwtAccessTokenEncoder.toEncodableCipher(configurationContext, tokenResult, accessToken)
+                .encode(accessToken.getId());
+            assertEquals(List.of(exchangeAudience), JwtBuilder.parse(exchangedToken).getAudience());
+        }
+
         private OAuthRegisteredService getRegisteredServiceForJwtAccessTokenWithoutKeys(final OAuth20AccessToken accessToken) {
             val registeredService = getRegisteredService(accessToken.getService().getId(), "secret", new LinkedHashSet<>());
             registeredService.setJwtAccessToken(true);

@@ -8,7 +8,8 @@ import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
-import org.apereo.cas.support.oauth.util.OAuth20Utils;
+import org.apereo.cas.support.oauth.validator.OAuth20ProofOfPossessionValidator;
+import org.apereo.cas.support.oauth.web.OAuth20AccessTokenAuthenticationInterceptor;
 import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20TokenGenerator;
 import org.apereo.cas.support.oauth.web.response.introspection.OAuth20IntrospectionResponseGenerator;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
@@ -60,14 +61,8 @@ import org.apereo.cas.util.serialization.ComponentSerializationPlanConfigurer;
 import org.apereo.cas.util.spring.RefreshableHandlerInterceptor;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
-import org.apereo.cas.web.SecurityLogicInterceptor;
-import lombok.val;
+import org.apereo.cas.web.CasSessionStore;
 import org.jspecify.annotations.NonNull;
-import org.pac4j.core.config.Config;
-import org.pac4j.core.context.session.SessionStore;
-import org.pac4j.core.credentials.authenticator.Authenticator;
-import org.pac4j.http.client.direct.HeaderClient;
-import org.pac4j.jee.context.JEEContextFactory;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -79,8 +74,8 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
-import org.springframework.http.HttpHeaders;
 import org.springframework.scheduling.TaskScheduler;
+import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -155,7 +150,7 @@ public class CasOAuthUmaAutoConfiguration {
             @Qualifier(CentralAuthenticationService.BEAN_NAME)
             final CentralAuthenticationService centralAuthenticationService,
             @Qualifier("oauthDistributedSessionStore")
-            final SessionStore oauthDistributedSessionStore,
+            final CasSessionStore oauthDistributedSessionStore,
             @Qualifier("oauthTokenGenerator")
             final OAuth20TokenGenerator oauthTokenGenerator,
             @Qualifier(JwtBuilder.ACCESS_TOKEN_JWT_BUILDER_BEAN_NAME)
@@ -210,50 +205,31 @@ public class CasOAuthUmaAutoConfiguration {
     @Configuration(value = "CasOAuthUmaInterceptorConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     static class CasOAuthUmaInterceptorConfiguration {
-        private static SecurityLogicInterceptor getSecurityInterceptor(
-            final Authenticator authenticator,
-            final String clientName,
-            final SessionStore oauthDistributedSessionStore,
-            final CasConfigurationProperties casProperties) {
-            val headerClient = new HeaderClient(HttpHeaders.AUTHORIZATION,
-                OAuth20Constants.TOKEN_TYPE_BEARER.concat(" "), authenticator);
-            headerClient.setName(clientName);
-            headerClient.init();
-            val clients = Stream.of(headerClient.getName()).collect(Collectors.joining(","));
-            val config = new Config(OAuth20Utils.casOAuthCallbackUrl(casProperties.getServer().getPrefix()), headerClient);
-            config.setSessionStoreFactory(objects -> oauthDistributedSessionStore);
-            config.setWebContextFactory(JEEContextFactory.INSTANCE);
-            return new SecurityLogicInterceptor(config, clients);
-        }
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public SecurityLogicInterceptor umaRequestingPartyTokenSecurityInterceptor(
-            final CasConfigurationProperties casProperties,
-            @Qualifier("oauthDistributedSessionStore")
-            final SessionStore oauthDistributedSessionStore,
+        public HandlerInterceptor umaRequestingPartyTokenSecurityInterceptor(
             @Qualifier(TicketRegistry.BEAN_NAME)
             final TicketRegistry ticketRegistry,
             @Qualifier(JwtBuilder.ACCESS_TOKEN_JWT_BUILDER_BEAN_NAME)
-            final JwtBuilder accessTokenJwtBuilder) {
-            val authenticator = new UmaRequestingPartyTokenAuthenticator(ticketRegistry, accessTokenJwtBuilder);
-            return getSecurityInterceptor(authenticator, "CAS_UMA_CLIENT_RPT_AUTH", oauthDistributedSessionStore, casProperties);
+            final JwtBuilder accessTokenJwtBuilder,
+            @Qualifier("oauthProofOfPossessionValidator")
+            final OAuth20ProofOfPossessionValidator oauthProofOfPossessionValidator) {
+            return new OAuth20AccessTokenAuthenticationInterceptor(new UmaRequestingPartyTokenAuthenticator(),
+                ticketRegistry, accessTokenJwtBuilder, oauthProofOfPossessionValidator);
         }
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public SecurityLogicInterceptor umaAuthorizationApiTokenSecurityInterceptor(
-            final CasConfigurationProperties casProperties,
-            @Qualifier("oauthDistributedSessionStore")
-            final SessionStore oauthDistributedSessionStore,
+        public HandlerInterceptor umaAuthorizationApiTokenSecurityInterceptor(
             @Qualifier(TicketRegistry.BEAN_NAME)
             final TicketRegistry ticketRegistry,
             @Qualifier(JwtBuilder.ACCESS_TOKEN_JWT_BUILDER_BEAN_NAME)
-            final JwtBuilder accessTokenJwtBuilder) {
-            val authenticator = new UmaAuthorizationApiTokenAuthenticator(ticketRegistry, accessTokenJwtBuilder);
-            return getSecurityInterceptor(authenticator, "CAS_UMA_CLIENT_AAT_AUTH",
-                oauthDistributedSessionStore, casProperties);
+            final JwtBuilder accessTokenJwtBuilder,
+            @Qualifier("oauthProofOfPossessionValidator")
+            final OAuth20ProofOfPossessionValidator oauthProofOfPossessionValidator) {
+            return new OAuth20AccessTokenAuthenticationInterceptor(new UmaAuthorizationApiTokenAuthenticator(),
+                ticketRegistry, accessTokenJwtBuilder, oauthProofOfPossessionValidator);
         }
-
     }
 
     @Configuration(value = "CasOAuthUmaDiscoveryConfiguration", proxyBeanMethods = false)
@@ -277,9 +253,9 @@ public class CasOAuthUmaAutoConfiguration {
         @ConditionalOnMissingBean(name = "umaWebMvcConfigurer")
         public WebMvcConfigurer umaWebMvcConfigurer(
             @Qualifier("umaAuthorizationApiTokenSecurityInterceptor")
-            final ObjectProvider<SecurityLogicInterceptor> umaAuthorizationApiTokenSecurityInterceptor,
+            final ObjectProvider<HandlerInterceptor> umaAuthorizationApiTokenSecurityInterceptor,
             @Qualifier("umaRequestingPartyTokenSecurityInterceptor")
-            final ObjectProvider<SecurityLogicInterceptor> umaRequestingPartyTokenSecurityInterceptor) {
+            final ObjectProvider<HandlerInterceptor> umaRequestingPartyTokenSecurityInterceptor) {
             return new WebMvcConfigurer() {
                 @Override
                 public void addInterceptors(

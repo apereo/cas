@@ -14,6 +14,7 @@ import lombok.val;
 import org.jspecify.annotations.Nullable;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 /**
@@ -29,6 +30,7 @@ public abstract class AbstractLogoutAction extends BaseCasWebflowAction {
 
     private static final String CACHE_CONTROL = "Cache-Control";
 
+    private static final String REQUEST_SCOPE_ATTRIBUTE_SERVICE_RESOLVED = AbstractLogoutAction.class.getName() + ".serviceResolved";
 
     /**
      * The cas service.
@@ -65,15 +67,29 @@ public abstract class AbstractLogoutAction extends BaseCasWebflowAction {
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
         val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(context);
         preventCaching(response);
-
-        Optional.ofNullable(argumentExtractor.extractService(request))
-            .filter(service -> {
-                val registeredService = servicesManager.findServiceBy(service);
-                return registeredService != null && registeredService.getAccessStrategy().isServiceAccessAllowed(registeredService, service);
-            })
-            .ifPresent(service -> WebUtils.putServiceIntoFlowScope(context, service));
-
+        resolveServiceOncePerRequest(context, request);
         return doInternalExecute(context);
+    }
+
+    /**
+     * Put the requested service into the flow scope when it is registered and allowed. Every logout action runs this,
+     * and several of them run in the same request, so the outcome, found or not, is remembered in the request scope
+     * and the service is looked up only once per request.
+     *
+     * @param context the request context
+     * @param request the http request
+     */
+    protected void resolveServiceOncePerRequest(final RequestContext context, final HttpServletRequest request) {
+        val requestScope = context.getRequestScope();
+        if (!requestScope.contains(REQUEST_SCOPE_ATTRIBUTE_SERVICE_RESOLVED)) {
+            requestScope.put(REQUEST_SCOPE_ATTRIBUTE_SERVICE_RESOLVED, Boolean.TRUE);
+            Optional.ofNullable(argumentExtractor.extractService(request))
+                .filter(service -> {
+                    val registeredService = servicesManager.findServiceBy(service);
+                    return registeredService != null && registeredService.getAccessStrategy().isServiceAccessAllowed(registeredService, service);
+                })
+                .ifPresent(service -> WebUtils.putServiceIntoFlowScope(context, service));
+        }
     }
 
     protected abstract Event doInternalExecute(RequestContext context);

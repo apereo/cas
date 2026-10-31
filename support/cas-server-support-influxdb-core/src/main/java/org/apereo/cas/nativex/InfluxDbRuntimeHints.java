@@ -8,6 +8,7 @@ import org.apache.arrow.memory.netty.NettyAllocationManager;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import org.springframework.aot.hint.RuntimeHints;
+import org.springframework.aot.hint.TypeReference;
 
 /**
  * This is {@link InfluxDbRuntimeHints}.
@@ -18,6 +19,7 @@ import org.springframework.aot.hint.RuntimeHints;
 public class InfluxDbRuntimeHints implements CasRuntimeHintsRegistrar {
     @Override
     public void registerHints(final @NonNull RuntimeHints hints, final @Nullable ClassLoader classLoader) {
+        hints.reflection().registerType(TypeReference.of("java.nio.Bits"), hint -> hint.withField("UNALIGNED"));
         registerReflectionHints(hints,
             AllocationManager.Factory.class,
             DefaultAllocationManagerFactory.class,

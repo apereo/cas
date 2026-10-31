@@ -119,6 +119,7 @@ public class CibaPushTokenDeliveryHandler implements CibaTokenDeliveryHandler {
         val tokenRequestContext = AccessTokenRequestContext
             .builder()
             .scopes(cibaRequest.getScopes())
+            .resources(cibaRequest.getResources())
             .grantType(OAuth20GrantTypes.CIBA)
             .registeredService(registeredService)
             .authentication(cibaRequest.getAuthentication())

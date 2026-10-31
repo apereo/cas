@@ -7,6 +7,7 @@ import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
 import org.apereo.cas.authentication.DefaultAuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.config.CasStatelessTicketRegistryAutoConfiguration;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
@@ -27,6 +28,7 @@ import org.apereo.cas.ticket.expiration.TicketGrantingTicketExpirationPolicy;
 import org.apereo.cas.ticket.registry.compact.CompactTicketAuthentication;
 import org.apereo.cas.ticket.tracking.TicketTrackingPolicy;
 import org.apereo.cas.util.RandomUtils;
+import org.apereo.cas.validation.ValidationResponseType;
 import org.apereo.cas.web.flow.BaseWebflowConfigurerTests;
 import lombok.Getter;
 import lombok.val;
@@ -128,6 +130,27 @@ class StatelessTicketRegistryTests extends BaseTicketRegistryTests {
         val foundTicket = (TransientSessionTicket) newTicketRegistry.getTicket(addedTicket.getId());
         assertNotNull(foundTicket);
         assertEquals(service.getId(), Objects.requireNonNull(foundTicket.getService()).getId());
+    }
+
+    @RepeatedTest(2)
+    void verifyTransientTicketKeepsTheWholeService() throws Throwable {
+        val transientFactory = (TransientSessionTicketFactory) ticketFactory.get(TransientSessionTicket.class);
+        val service = RegisteredServiceTestUtils.getService("https://app.example.org/saml1?id=" + UUID.randomUUID());
+        service.setSource("TARGET");
+        service.setFormat(ValidationResponseType.JSON);
+        service.setTenant("shire");
+        service.getAttributes().put("TARGET", new ArrayList<>(List.of(service.getId())));
+        val addedTicket = newTicketRegistry.addTicket(transientFactory.create(service));
+        val foundTicket = (TransientSessionTicket) newTicketRegistry.getTicket(addedTicket.getId());
+        assertNotNull(foundTicket);
+        val foundService = assertInstanceOf(WebApplicationService.class, foundTicket.getService());
+        assertSame(service.getClass(), foundService.getClass());
+        assertEquals(service.getId(), foundService.getId());
+        assertEquals(service.getOriginalUrl(), foundService.getOriginalUrl());
+        assertEquals("TARGET", foundService.getSource());
+        assertEquals(ValidationResponseType.JSON, foundService.getFormat());
+        assertEquals("shire", foundService.getTenant());
+        assertEquals(List.of(service.getId()), foundService.getAttributes().get("TARGET"));
     }
 
     @RepeatedTest(2)

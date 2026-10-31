@@ -1,9 +1,21 @@
 package org.apereo.cas.acct.webflow;
 
 import module java.base;
+import org.apereo.cas.acct.AccountRegistrationRequest;
+import org.apereo.cas.acct.AccountRegistrationService;
+import org.apereo.cas.acct.AccountRegistrationUtils;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.config.CasAccountManagementWebflowAutoConfiguration;
 import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
+import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.multitenancy.TenantExtractor;
+import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
+import org.apereo.cas.ticket.Ticket;
+import org.apereo.cas.ticket.TicketFactory;
+import org.apereo.cas.ticket.TransientSessionTicket;
+import org.apereo.cas.ticket.TransientSessionTicketFactory;
+import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import org.apereo.cas.web.flow.BaseWebflowConfigurerTests;
@@ -12,12 +24,14 @@ import org.apereo.cas.web.support.WebUtils;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentMatchers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.webflow.execution.Action;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * This is {@link SubmitAccountRegistrationActionTests}.
@@ -57,6 +71,31 @@ class SubmitAccountRegistrationActionTests extends BaseWebflowConfigurerTests {
         WebUtils.putRegisteredService(context, RegisteredServiceTestUtils.getRegisteredService());
         val results = submitAccountRegistrationAction.execute(context);
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, results.getId());
+    }
+
+    @Test
+    void verifyActivationUrlCarriesStoredTicketId() throws Throwable {
+        val accountRegistrationService = mock(AccountRegistrationService.class);
+        when(accountRegistrationService.createToken(any())).thenReturn("activation-token");
+
+        val createdTicket = mock(TransientSessionTicket.class);
+        when(createdTicket.getId()).thenReturn("TST-created");
+        val transientFactory = mock(TransientSessionTicketFactory.class);
+        when(transientFactory.create(ArgumentMatchers.<Service>isNull(), anyMap())).thenReturn(createdTicket);
+        val ticketFactory = mock(TicketFactory.class);
+        when(ticketFactory.get(TransientSessionTicket.class)).thenReturn(transientFactory);
+
+        val storedTicket = mock(Ticket.class);
+        when(storedTicket.getId()).thenReturn("TST-stored");
+        val ticketRegistry = mock(TicketRegistry.class);
+        when(ticketRegistry.addTicket(createdTicket)).thenReturn(storedTicket);
+
+        val casProperties = new CasConfigurationProperties();
+        casProperties.getServer().setPrefix("https://sso.example.org/cas");
+        val action = new SubmitAccountRegistrationAction(accountRegistrationService, casProperties,
+            mock(CommunicationsManager.class), ticketFactory, ticketRegistry, mock(TenantExtractor.class));
+        val url = action.createAccountRegistrationActivationUrl(new AccountRegistrationRequest());
+        assertTrue(url.endsWith(AccountRegistrationUtils.REQUEST_PARAMETER_ACCOUNT_REGISTRATION_ACTIVATION_TOKEN + "=TST-stored"), url);
     }
 
     @Test

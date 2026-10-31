@@ -1,0 +1,11 @@
+{
+  "@class": "org.apereo.cas.services.CasRegisteredService",
+  "serviceId": "^https://localhost:9859/anything/authdate.*",
+  "id": 5,
+  "name": "AuthenticationDate",
+  "singleSignOnParticipationPolicy": {
+    "@class": "org.apereo.cas.services.AuthenticationDateRegisteredServiceSingleSignOnParticipationPolicy",
+    "timeUnit": "SECONDS",
+    "timeValue": 20
+  }
+}

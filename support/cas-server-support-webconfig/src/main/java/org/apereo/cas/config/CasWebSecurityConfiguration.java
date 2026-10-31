@@ -66,6 +66,8 @@ import org.springframework.security.web.context.HttpSessionSecurityContextReposi
 import org.springframework.security.web.context.RequestAttributeSecurityContextRepository;
 import org.springframework.security.web.context.SecurityContextHolderFilter;
 import org.springframework.security.web.context.SecurityContextRepository;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+import org.springframework.security.web.csrf.CsrfTokenRepository;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.webflow.context.servlet.FlowUrlHandler;
@@ -168,6 +170,20 @@ class CasWebSecurityConfiguration {
             return bean;
         }
 
+        /**
+         * The CSRF token repository of the endpoints that CAS protects against CSRF: the {@code XSRF-TOKEN} cookie, which
+         * scripts may read, and the {@code X-CSRF-TOKEN} header.
+         *
+         * @return the CSRF token repository
+         */
+        @Bean
+        @ConditionalOnMissingBean(name = "casCsrfTokenRepository")
+        public CsrfTokenRepository casCsrfTokenRepository() {
+            val repository = CookieCsrfTokenRepository.withHttpOnlyFalse();
+            repository.setHeaderName("X-CSRF-TOKEN");
+            return repository;
+        }
+
         @Bean
         @ConditionalOnMissingBean(name = "casWebSecurityCustomizer")
         public WebSecurityCustomizer casWebSecurityCustomizer(
@@ -178,11 +194,13 @@ class CasWebSecurityConfiguration {
             final WebEndpointProperties webEndpointProperties,
             final ManagementServerProperties managementServerProperties,
             final CasConfigurationProperties casProperties,
-            final WebProperties webProperties) {
+            final WebProperties webProperties,
+            @Qualifier("casCsrfTokenRepository")
+            final ObjectProvider<CsrfTokenRepository> casCsrfTokenRepository) {
             val adapter = new CasWebSecurityConfigurerAdapter(casProperties,
                 webEndpointProperties, managementServerProperties,
                 pathMappedEndpoints, configurersList,
-                securityContextRepository, webProperties);
+                securityContextRepository, webProperties, casCsrfTokenRepository);
             return adapter::configureWebSecurity;
         }
 
@@ -199,11 +217,13 @@ class CasWebSecurityConfiguration {
             final ManagementServerProperties managementServerProperties,
             final SecurityProperties securityProperties,
             final CasConfigurationProperties casProperties,
-            final WebProperties webProperties)
+            final WebProperties webProperties,
+            @Qualifier("casCsrfTokenRepository")
+            final ObjectProvider<CsrfTokenRepository> casCsrfTokenRepository)
                 throws Exception {
             val adapter = new CasWebSecurityConfigurerAdapter(casProperties,
                 webEndpointProperties, managementServerProperties,
-                pathMappedEndpoints, configurersList, securityContextRepository, webProperties);
+                pathMappedEndpoints, configurersList, securityContextRepository, webProperties, casCsrfTokenRepository);
             return adapter.configureHttpSecurity(http, applicationContext).build();
         }
     }

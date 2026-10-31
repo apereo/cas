@@ -73,28 +73,31 @@ public abstract class BaseOidcJwtCipherExecutor extends BaseStringCipherExecutor
         setEncryptionAlgorithm(KeyManagementAlgorithmIdentifiers.RSA_OAEP_256);
     }
 
+    /**
+     * Decode with the first keys of the keystore: the private key of the encryption key decrypts and the public key of the
+     * signing key verifies. They are passed to this call only and the keys of the executor are left alone, since the
+     * executor is shared: switching its signing key to the public key here would let a concurrent encoding sign with it.
+     *
+     * @param value      the value
+     * @param parameters the parameters
+     * @return the decoded value
+     */
     @Override
     public String decode(final Serializable value, final Object[] parameters) {
-        prepareKeysForDecryptionAndVerification();
-        return super.decode(value, parameters);
-    }
-
-    private void prepareKeysForDecryptionAndVerification() {
-        getJsonWebKeyFor(OidcJsonWebKeyUsage.ENCRYPTION)
+        val encryptionKey = getJsonWebKeyFor(OidcJsonWebKeyUsage.ENCRYPTION)
             .map(jwks -> jwks.getJsonWebKeys().getFirst())
             .map(PublicJsonWebKey.class::cast)
             .findAny()
-            .ifPresent(key -> {
-                setEncryptionKey(new BasicIdentifiableKey(key.getKeyId(), key.getPrivateKey()));
-                configureEncryptionSettingsFor(key);
-            });
-        getJsonWebKeyFor(OidcJsonWebKeyUsage.SIGNING)
+            .<Key>map(key -> new BasicIdentifiableKey(key.getKeyId(), key.getPrivateKey()))
+            .orElseGet(this::getEncryptionKey);
+        val signingKey = getJsonWebKeyFor(OidcJsonWebKeyUsage.SIGNING)
             .map(jwks -> jwks.getJsonWebKeys().getFirst())
             .map(PublicJsonWebKey.class::cast)
             .findAny()
-            .ifPresent(key -> setSigningKey(new BasicIdentifiableKey(key.getKeyId(), key.getKey())));
+            .<Key>map(key -> new BasicIdentifiableKey(key.getKeyId(), key.getKey()))
+            .orElseGet(this::getSigningKey);
+        return decode(value, parameters, encryptionKey, signingKey);
     }
-
 
     private Stream<JsonWebKeySet> getJsonWebKeyFor(final OidcJsonWebKeyUsage usage) {
         val issuer = oidcIssuerService.determineIssuer(Optional.empty());

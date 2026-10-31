@@ -129,15 +129,18 @@ class OAuth20JwtAccessTokenEncodableCipher implements EncodableCipher<String, St
         return DateTimeUtils.dateOf(authenticationDate.plusSeconds(token.getExpirationPolicy().getTimeToLive()));
     }
 
+    /**
+     * Determine the audience of the JWT access token. The audience requested by a token exchange is used on its own,
+     * so the exchanged token is never valid at the resources of the subject token. Otherwise, the audience is the one
+     * token introspection reports as well; see {@link OAuth20Utils#determineAudience(OAuthRegisteredService, OAuth20Token)}.
+     *
+     * @return the audience
+     */
     protected Set<String> determineServiceAudience() {
         if (StringUtils.isNotBlank(tokenAudience)) {
             return Set.of(tokenAudience);
         }
-        val oauthRegisteredService = (OAuthRegisteredService) registeredService;
-        if (oauthRegisteredService.getAudience().isEmpty()) {
-            return Set.of(token.getClientId());
-        }
-        return oauthRegisteredService.getAudience();
+        return OAuth20Utils.determineAudience((OAuthRegisteredService) registeredService, token);
     }
 
     protected boolean shouldEncodeAsJwt() {

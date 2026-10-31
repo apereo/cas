@@ -34,7 +34,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.Nullable;
-import org.pac4j.jee.context.JEEContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -580,8 +579,7 @@ public class OidcVerifiableCredentialEndpointController extends BaseOAuth20Contr
         final HttpServletRequest httpRequest,
         final HttpServletResponse httpResponse,
         final String endpoint) {
-        val webContext = new JEEContext(httpRequest, httpResponse);
-        if (!getConfigurationContext().getIssuerService().validateIssuer(webContext, List.of(endpoint))) {
+        if (!getConfigurationContext().getIssuerService().validateIssuer(httpRequest, List.of(endpoint))) {
             LOGGER.warn("CAS cannot accept the request given the issuer is invalid.");
             return Couplet.right(badRequest(OidcConstants.VC_ERROR_INVALID_CREDENTIAL_REQUEST, "Invalid issuer"));
         }
@@ -598,7 +596,7 @@ public class OidcVerifiableCredentialEndpointController extends BaseOAuth20Contr
             return Couplet.right(unauthorized(httpRequest, OAuth20Constants.INVALID_TOKEN,
                 "The access token is invalid, revoked or expired"));
         }
-        val proofError = verifyProofOfPossession(webContext, presentedAccessToken.getKey(), decodedToken);
+        val proofError = verifyProofOfPossession(httpRequest, httpResponse, presentedAccessToken.getKey(), decodedToken);
         if (proofError != null) {
             return Couplet.right(proofError);
         }

@@ -18,7 +18,6 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.jose4j.jwt.JwtClaims;
 import org.jose4j.jwt.NumericDate;
-import org.pac4j.jee.context.JEEContext;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -70,8 +69,7 @@ public class OidcVerifiableCredentialIssuerMetadataController extends BaseOAuth2
     public ResponseEntity handle(final HttpServletRequest request,
                                  final HttpServletResponse response)
             throws Throwable {
-        val webContext = new JEEContext(request, response);
-        if (!getConfigurationContext().getIssuerService().validateIssuer(webContext, List.of(OidcConstants.WELL_KNOWN_OPENID_CREDENTIAL_ISSUER_URL))) {
+        if (!getConfigurationContext().getIssuerService().validateIssuer(request, List.of(OidcConstants.WELL_KNOWN_OPENID_CREDENTIAL_ISSUER_URL))) {
             LOGGER.warn("CAS cannot accept the request given the issuer is invalid.");
             val body = OAuth20Utils.getErrorResponseBody(OAuth20Constants.INVALID_REQUEST, "Invalid issuer");
             return ResponseEntity.badRequest().contentType(MediaType.APPLICATION_JSON).body(body);
@@ -145,8 +143,7 @@ public class OidcVerifiableCredentialIssuerMetadataController extends BaseOAuth2
         description = "Publishes where verifiers find the keys that sign issued verifiable credentials")
     public ResponseEntity handleJwtVcIssuerMetadata(final HttpServletRequest request,
                                                     final HttpServletResponse response) {
-        val webContext = new JEEContext(request, response);
-        if (!getConfigurationContext().getIssuerService().validateIssuer(webContext, List.of(OidcConstants.WELL_KNOWN_JWT_VC_ISSUER_URL))) {
+        if (!getConfigurationContext().getIssuerService().validateIssuer(request, List.of(OidcConstants.WELL_KNOWN_JWT_VC_ISSUER_URL))) {
             LOGGER.warn("CAS cannot accept the request given the issuer is invalid.");
             val body = OAuth20Utils.getErrorResponseBody(OAuth20Constants.INVALID_REQUEST, "Invalid issuer");
             return ResponseEntity.badRequest().body(body);

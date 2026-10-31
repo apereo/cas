@@ -23,5 +23,10 @@ A typical request to the CAS would look like this:
 ```bash
 GET https://sso.example.org/cas/idp/profile/SAML2/Unsolicited/SSO \
     ?providerId=https://sp.example.org/saml2 \
-    &shire=my-relay-state-here
+    &target=my-relay-state-here
 ```
+
+CAS builds the authentication request itself, for a service provider whose metadata it knows and for an assertion
+consumer service that the metadata lists. That request is not signed, and it is not checked for a signature even when the
+metadata of the service provider asks for signed authentication requests. Other request parameters are passed on to the
+login flow.

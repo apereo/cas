@@ -17,6 +17,7 @@ class GenerateJwtCommandTests extends BaseCasShellCommandTests {
     @Test
     void verifyOperation() {
         assertDoesNotThrow(() -> runShellCommand(() -> "generate-jwt --subject=casuser"));
+        assertThrows(IllegalArgumentException.class, () -> new GenerateJwtCommand().generate(256, 48, "HS256", "dir", "A192CBC-HS384", " "));
     }
 
     @Test

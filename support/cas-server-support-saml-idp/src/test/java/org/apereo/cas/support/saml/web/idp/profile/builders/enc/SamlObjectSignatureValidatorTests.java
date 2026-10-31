@@ -2,42 +2,29 @@ package org.apereo.cas.support.saml.web.idp.profile.builders.enc;
 
 import module java.base;
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
-import org.apereo.cas.support.saml.InMemoryResourceMetadataResolver;
 import org.apereo.cas.support.saml.SamlException;
-import org.apereo.cas.support.saml.SamlIdPUtils;
 import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceMetadataAdaptor;
+import org.apereo.cas.support.saml.util.credential.BasicX509CredentialFactoryBean;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.validate.SamlObjectSignatureValidator;
 import lombok.val;
-import net.shibboleth.shared.resolver.CriteriaSet;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.opensaml.core.criterion.EntityIdCriterion;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.common.binding.security.impl.SAMLOutboundProtocolMessageSigningHandler;
-import org.opensaml.saml.common.messaging.context.SAMLMetadataContext;
 import org.opensaml.saml.common.messaging.context.SAMLPeerEntityContext;
-import org.opensaml.saml.common.messaging.context.SAMLSelfEntityContext;
-import org.opensaml.saml.criterion.EntityRoleCriterion;
 import org.opensaml.saml.saml2.core.AuthnRequest;
-import org.opensaml.saml.saml2.metadata.IDPSSODescriptor;
-import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
+import org.opensaml.security.x509.BasicX509Credential;
+import org.opensaml.xmlsec.SignatureSigningParameters;
 import org.opensaml.xmlsec.context.SecurityParametersContext;
+import org.opensaml.xmlsec.keyinfo.impl.X509KeyInfoGeneratorFactory;
+import org.opensaml.xmlsec.signature.support.SignatureConstants;
 import org.opensaml.xmlsec.signature.support.SignatureException;
-import org.pac4j.core.config.properties.KeystoreProperties;
-import org.pac4j.core.config.properties.ResourceProperties;
-import org.pac4j.core.context.CallContext;
-import org.pac4j.jee.context.JEEContext;
-import org.pac4j.jee.context.session.JEESessionStore;
-import org.pac4j.saml.client.SAML2Client;
-import org.pac4j.saml.config.SAML2Configuration;
-import org.pac4j.saml.context.SAML2MessageContext;
-import org.pac4j.saml.crypto.DefaultSignatureSigningParametersProvider;
-import org.pac4j.saml.sso.impl.SAML2AuthnRequestBuilder;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.TestPropertySource;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -54,63 +41,57 @@ import static org.junit.jupiter.api.Assertions.*;
         + "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256,http://www.w3.org/2001/04/xmlenc#sha256"
 })
 class SamlObjectSignatureValidatorTests extends BaseSamlIdPConfigurationTests {
-    private SAML2Configuration saml2ClientConfiguration;
+    private static final String SERVICE_PROVIDER_ENTITY_ID = "cas:example:sp";
 
-    private SAML2MessageContext saml2MessageContext;
+    private static final String SERVICE_PROVIDER_ACS_URL = "http://callback.example.org";
+
+    private BasicX509Credential signingCredential;
 
     private MessageContext samlContext;
 
     private SamlRegisteredServiceMetadataAdaptor adaptor;
 
+    /**
+     * Prepare a service provider whose metadata is found at the given location. A location that is not on the
+     * classpath is written as metadata of a service provider that signs with the test signing key pair, so
+     * authentication requests signed with that key pair can be verified against it.
+     *
+     * @param spMetadataPath the metadata location of the service provider
+     * @param spEntityId     the entity id of the service provider
+     * @throws Exception the exception
+     */
     private void setupTestContextFor(final String spMetadataPath, final String spEntityId) throws Exception {
-        val idpMetadata = new File("src/test/resources/metadata/idp-metadata.xml").getCanonicalPath();
-        val keystorePath = new File(FileUtils.getTempDirectory(), "keystore-%s".formatted(UUID.randomUUID())).getCanonicalPath();
-        saml2ClientConfiguration = new SAML2Configuration(new KeystoreProperties(keystorePath)
-            .setKeystorePassword("changeit")
-            .setPrivateKeyPassword("changeit"),
-            new ResourceProperties(idpMetadata));
-        saml2ClientConfiguration.setServiceProviderEntityId(spEntityId);
-        saml2ClientConfiguration.getServiceProviderMetadata().setPath(spMetadataPath);
-        saml2ClientConfiguration.init();
+        val certificate = new File("src/test/resources/metadata/idp-signing.crt");
+        val factory = new BasicX509CredentialFactoryBean();
+        factory.setCertificateResources(List.of(new FileSystemResource(certificate)));
+        factory.setPrivateKeyResource(new FileSystemResource(new File("src/test/resources/metadata/idp-signing.key")));
+        signingCredential = factory.getObject();
 
-        val saml2Client = new SAML2Client(saml2ClientConfiguration);
-        saml2Client.setCallbackUrl("http://callback.example.org");
-        saml2Client.init();
-
+        if (!spMetadataPath.startsWith("classpath:")) {
+            val encodedCertificate = FileUtils.readFileToString(certificate, StandardCharsets.UTF_8)
+                .replace("-----BEGIN CERTIFICATE-----", StringUtils.EMPTY)
+                .replace("-----END CERTIFICATE-----", StringUtils.EMPTY)
+                .strip();
+            val metadata = """
+            <?xml version="1.0" encoding="UTF-8"?>
+            <md:EntityDescriptor xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata" entityID="%s">
+                <md:SPSSODescriptor AuthnRequestsSigned="true" protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol">
+                    <md:KeyDescriptor use="signing">
+                        <ds:KeyInfo xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
+                            <ds:X509Data><ds:X509Certificate>%s</ds:X509Certificate></ds:X509Data>
+                        </ds:KeyInfo>
+                    </md:KeyDescriptor>
+                    <md:AssertionConsumerService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="%s" index="0"/>
+                </md:SPSSODescriptor>
+            </md:EntityDescriptor>
+            """.formatted(spEntityId, encodedCertificate, SERVICE_PROVIDER_ACS_URL);
+            FileUtils.writeStringToFile(new File(spMetadataPath), metadata, StandardCharsets.UTF_8);
+        }
         samlContext = new MessageContext();
-
-        val ctx = new JEEContext(new MockHttpServletRequest(), new MockHttpServletResponse());
-        saml2MessageContext = new SAML2MessageContext(new CallContext(ctx, new JEESessionStore()));
-        saml2MessageContext.setSaml2Configuration(saml2ClientConfiguration);
-        val peer = saml2MessageContext.getMessageContext().ensureSubcontext(SAMLPeerEntityContext.class);
-        assertNotNull(peer);
-
-        peer.setEntityId("https://cas.example.org/idp");
-        val md = peer.ensureSubcontext(SAMLMetadataContext.class);
-        assertNotNull(md);
-        val idpResolver = SamlIdPUtils.getRoleDescriptorResolver(casSamlIdPMetadataResolver, true);
-
-        md.setRoleDescriptor(idpResolver.resolveSingle(new CriteriaSet(
-            new EntityIdCriterion(Objects.requireNonNull(peer.getEntityId())),
-            new EntityRoleCriterion(IDPSSODescriptor.DEFAULT_ELEMENT_NAME))));
-
-        val self = saml2MessageContext.getMessageContext().ensureSubcontext(SAMLSelfEntityContext.class);
-        assertNotNull(self);
-        self.setEntityId(saml2ClientConfiguration.getServiceProviderEntityId());
-
-        val sp = self.ensureSubcontext(SAMLMetadataContext.class);
-        assertNotNull(sp);
-        val spRes = new InMemoryResourceMetadataResolver(saml2ClientConfiguration.getServiceProviderMetadata().getResource(), openSamlConfigBean);
-        spRes.setId(getClass().getSimpleName());
-        spRes.initialize();
-        val spResolver = SamlIdPUtils.getRoleDescriptorResolver(spRes, true);
-        sp.setRoleDescriptor(spResolver.resolveSingle(new CriteriaSet(
-            new EntityIdCriterion(Objects.requireNonNull(self.getEntityId())),
-            new EntityRoleCriterion(SPSSODescriptor.DEFAULT_ELEMENT_NAME))));
 
         val service = new SamlRegisteredService();
         service.setName("Sample");
-        service.setServiceId(saml2ClientConfiguration.getServiceProviderEntityId());
+        service.setServiceId(spEntityId);
         service.setId(100);
         service.setDescription("SAML Service");
         service.setMetadataLocation(spMetadataPath);
@@ -123,10 +104,9 @@ class SamlObjectSignatureValidatorTests extends BaseSamlIdPConfigurationTests {
     @Test
     void verifySamlAuthnRequestNotSigned() throws Throwable {
         val spMetadataPath = new File(FileUtils.getTempDirectory(), "sp-metadata-%s.xml".formatted(UUID.randomUUID())).getCanonicalPath();
-        setupTestContextFor(spMetadataPath, "cas:example:sp");
+        setupTestContextFor(spMetadataPath, SERVICE_PROVIDER_ENTITY_ID);
         val request = new MockHttpServletRequest();
-        val builder = new SAML2AuthnRequestBuilder();
-        val authnRequest = builder.build(saml2MessageContext);
+        val authnRequest = buildAuthnRequest(SERVICE_PROVIDER_ENTITY_ID);
         assertThrows(SamlException.class,
             () -> samlObjectSignatureValidator.verifySamlProfileRequest(authnRequest, adaptor, request, samlContext));
     }
@@ -134,7 +114,7 @@ class SamlObjectSignatureValidatorTests extends BaseSamlIdPConfigurationTests {
     @Test
     void verifySamlAuthnRequestSigned() throws Throwable {
         val spMetadataPath = new File(FileUtils.getTempDirectory(), "sp-metadata-%s.xml".formatted(UUID.randomUUID())).getCanonicalPath();
-        setupTestContextFor(spMetadataPath, "cas:example:sp");
+        setupTestContextFor(spMetadataPath, SERVICE_PROVIDER_ENTITY_ID);
 
         val request = new MockHttpServletRequest();
         val authnRequest = buildSignedAuthnRequest();
@@ -146,7 +126,7 @@ class SamlObjectSignatureValidatorTests extends BaseSamlIdPConfigurationTests {
     @Test
     void verifySamlAuthnRequestSignatureRejectsTamperedRequest() throws Throwable {
         val spMetadataPath = new File(FileUtils.getTempDirectory(), "sp-metadata-%s.xml".formatted(UUID.randomUUID())).getCanonicalPath();
-        setupTestContextFor(spMetadataPath, "cas:example:sp");
+        setupTestContextFor(spMetadataPath, SERVICE_PROVIDER_ENTITY_ID);
 
         val authnRequest = buildSignedAuthnRequest();
         authnRequest.setAssertionConsumerServiceURL("https://unregistered.example.org/acs");
@@ -164,7 +144,7 @@ class SamlObjectSignatureValidatorTests extends BaseSamlIdPConfigurationTests {
     @Test
     void verifySamlAuthnRequestRejectsBlockedEmbeddedSignatureAlgorithm() throws Throwable {
         val spMetadataPath = new File(FileUtils.getTempDirectory(), "sp-metadata-%s.xml".formatted(UUID.randomUUID())).getCanonicalPath();
-        setupTestContextFor(spMetadataPath, "cas:example:sp");
+        setupTestContextFor(spMetadataPath, SERVICE_PROVIDER_ENTITY_ID);
 
         val authnRequest = buildSignedAuthnRequest();
         val signature = Objects.requireNonNull(authnRequest.getSignature());
@@ -183,8 +163,7 @@ class SamlObjectSignatureValidatorTests extends BaseSamlIdPConfigurationTests {
         setupTestContextFor("classpath:metadata/sp-metadata-multicerts.xml", "https://bard.zoom.us");
 
         val request = new MockHttpServletRequest();
-        val builder = new SAML2AuthnRequestBuilder();
-        val authnRequest = builder.build(saml2MessageContext);
+        val authnRequest = buildAuthnRequest("https://bard.zoom.us");
 
         assertThrows(SamlException.class,
             () -> samlObjectSignatureValidator.verifySamlProfileRequest(authnRequest, adaptor, request, samlContext));
@@ -193,32 +172,42 @@ class SamlObjectSignatureValidatorTests extends BaseSamlIdPConfigurationTests {
     @Test
     void verifySamlAuthnRequestWithoutSig() throws Throwable {
         val spMetadataPath = new File(FileUtils.getTempDirectory(), "sp-metadata-%s.xml".formatted(UUID.randomUUID())).getCanonicalPath();
-        setupTestContextFor(spMetadataPath, "cas:example:sp");
+        setupTestContextFor(spMetadataPath, SERVICE_PROVIDER_ENTITY_ID);
 
         val request = new MockHttpServletRequest();
-        val builder = new SAML2AuthnRequestBuilder();
-        val authnRequest = builder.build(saml2MessageContext);
+        val authnRequest = buildAuthnRequest(SERVICE_PROVIDER_ENTITY_ID);
         val messageContext = new MessageContext();
         messageContext.setMessage(authnRequest);
-        val secContext = messageContext.ensureSubcontext(SecurityParametersContext.class);
-
-        val provider = new DefaultSignatureSigningParametersProvider(saml2ClientConfiguration);
-        Objects.requireNonNull(secContext).setSignatureSigningParameters(provider.build(adaptor.getSsoDescriptor()));
+        messageContext.ensureSubcontext(SecurityParametersContext.class).setSignatureSigningParameters(buildSignatureSigningParameters());
 
         assertThrows(SamlException.class,
             () -> samlObjectSignatureValidator.verifySamlProfileRequest(authnRequest, adaptor, request, samlContext));
 
     }
 
+    private AuthnRequest buildAuthnRequest(final String spEntityId) {
+        val authnRequest = getAuthnRequestFor(spEntityId);
+        authnRequest.setAssertionConsumerServiceURL(SERVICE_PROVIDER_ACS_URL);
+        return authnRequest;
+    }
+
+    private SignatureSigningParameters buildSignatureSigningParameters() {
+        val parameters = new SignatureSigningParameters();
+        parameters.setSigningCredential(signingCredential);
+        parameters.setSignatureAlgorithm(SignatureConstants.ALGO_ID_SIGNATURE_RSA_SHA256);
+        parameters.setSignatureReferenceDigestMethod(SignatureConstants.ALGO_ID_DIGEST_SHA256);
+        parameters.setSignatureCanonicalizationAlgorithm(SignatureConstants.ALGO_ID_C14N_EXCL_OMIT_COMMENTS);
+        val keyInfoGeneratorFactory = new X509KeyInfoGeneratorFactory();
+        keyInfoGeneratorFactory.setEmitEntityCertificate(true);
+        parameters.setKeyInfoGenerator(keyInfoGeneratorFactory.newInstance());
+        return parameters;
+    }
+
     private AuthnRequest buildSignedAuthnRequest() throws Exception {
-        val builder = new SAML2AuthnRequestBuilder();
-        val authnRequest = builder.build(saml2MessageContext);
+        val authnRequest = buildAuthnRequest(SERVICE_PROVIDER_ENTITY_ID);
         val messageContext = new MessageContext();
         messageContext.setMessage(authnRequest);
-        val secContext = messageContext.ensureSubcontext(SecurityParametersContext.class);
-
-        val provider = new DefaultSignatureSigningParametersProvider(saml2ClientConfiguration);
-        Objects.requireNonNull(secContext).setSignatureSigningParameters(provider.build(adaptor.getSsoDescriptor()));
+        messageContext.ensureSubcontext(SecurityParametersContext.class).setSignatureSigningParameters(buildSignatureSigningParameters());
 
         val handler = new SAMLOutboundProtocolMessageSigningHandler();
         handler.initialize();

@@ -12,7 +12,6 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.pac4j.jee.context.JEEContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -42,10 +41,9 @@ class AccessTokenRefreshTokenGrantRequestExtractorTests extends AbstractOAuth20T
         val response = new MockHttpServletResponse();
         assertEquals(OAuth20ResponseTypes.NONE, extractor.getResponseType());
 
-        val context = new JEEContext(request, response);
-        assertTrue(extractor.supports(context));
+        assertTrue(extractor.supports(request));
 
-        assertThrows(UnauthorizedServiceException.class, () -> extractor.extract(context));
+        assertThrows(UnauthorizedServiceException.class, () -> extractor.extract(request, response));
     }
 
     @Test
@@ -66,21 +64,21 @@ class AccessTokenRefreshTokenGrantRequestExtractorTests extends AbstractOAuth20T
         request.addParameter(OAuth20Constants.REFRESH_TOKEN, "RT-1");
 
         request.addParameter(OAuth20Constants.SCOPE, "email");
-        val webContext = new JEEContext(request, new MockHttpServletResponse());
+        val response = new MockHttpServletResponse();
         
-        var result = extractor.extract(webContext);
+        var result = extractor.extract(request, response);
         assertEquals(Set.of("email"), result.getScopes());
 
         request.setParameter(OAuth20Constants.SCOPE, StringUtils.EMPTY);
-        result = extractor.extract(webContext);
+        result = extractor.extract(request, response);
         assertEquals(Set.of("openid", "email"), result.getScopes());
 
         request.setParameter(OAuth20Constants.SCOPE, "openid email");
-        result = extractor.extract(webContext);
+        result = extractor.extract(request, response);
         assertEquals(Set.of("openid", "email"), result.getScopes());
 
         request.setParameter(OAuth20Constants.SCOPE, "email profile");
         assertThrows(OAuth20UnauthorizedScopeRequestException.class,
-            () -> extractor.extract(webContext));
+            () -> extractor.extract(request, response));
     }
 }

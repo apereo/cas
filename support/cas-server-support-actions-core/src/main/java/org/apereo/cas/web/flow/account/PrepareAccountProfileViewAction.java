@@ -2,11 +2,14 @@ package org.apereo.cas.web.flow.account;
 
 import module java.base;
 import org.apereo.cas.audit.AuditTrailExecutionPlan;
+import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationService;
 import org.apereo.cas.authentication.principal.WebApplicationService;
+import org.apereo.cas.authentication.support.password.PasswordExpiringWarningMessageDescriptor;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredServicePrincipalAccessStrategyEnforcer;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.support.events.CasEventRepository;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.CollectionUtils;
@@ -38,6 +41,10 @@ public class PrepareAccountProfileViewAction extends BaseCasWebflowAction {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(false).build().toObjectMapper();
 
+    private static final int SIGN_IN_ACTIVITY_DAYS = 30;
+
+    private static final int SIGN_IN_ACTIVITY_LIMIT = 20;
+
     private final TicketRegistry ticketRegistry;
 
     private final ServicesManager servicesManager;
@@ -49,6 +56,8 @@ public class PrepareAccountProfileViewAction extends BaseCasWebflowAction {
     private final GeoLocationService geoLocationService;
 
     private final RegisteredServicePrincipalAccessStrategyEnforcer principalAccessStrategyEnforcer;
+
+    private final @Nullable CasEventRepository casEventRepository;
 
     @Override
     protected @Nullable Event doExecuteInternal(final RequestContext requestContext) {
@@ -65,6 +74,8 @@ public class PrepareAccountProfileViewAction extends BaseCasWebflowAction {
             }
             buildAuditLogRecords(requestContext, ticket);
             buildActiveSingleSignOnSessions(requestContext, ticket);
+            buildSignInActivity(requestContext, ticket);
+            buildPasswordExpiration(requestContext, ticket);
         });
         return success();
     }
@@ -120,4 +131,50 @@ public class PrepareAccountProfileViewAction extends BaseCasWebflowAction {
         FunctionUtils.doIf(!auditLog.isEmpty(), u -> requestContext.getFlowScope().put("auditLog", auditLog)).accept(auditLog);
     }
 
+    /**
+     * Put recent sign-in attempts of the principal, as recorded by the CAS event repository, into the flow scope.
+     *
+     * @param requestContext the request context
+     * @param ticket         the ticket granting ticket
+     */
+    protected void buildSignInActivity(final RequestContext requestContext, final TicketGrantingTicket ticket) {
+        val repository = casEventRepository;
+        if (repository != null && BeanSupplier.isNotProxy(repository)) {
+            val since = ZonedDateTime.now(ZoneOffset.UTC).minusDays(SIGN_IN_ACTIVITY_DAYS);
+            val activity = FunctionUtils.doAndHandle(
+                () -> {
+                    try (val events = repository.getEventsForPrincipal(ticket.getAuthentication().getPrincipal().getId(), since)) {
+                        return events
+                            .filter(event -> AccountSignInActivity.OUTCOMES.containsKey(event.getType()))
+                            .map(AccountSignInActivity::from)
+                            .sorted(Comparator.comparing(AccountSignInActivity::getWhen).reversed())
+                            .limit(SIGN_IN_ACTIVITY_LIMIT)
+                            .toList();
+                    }
+                },
+                throwable -> List.<AccountSignInActivity>of()).get();
+            FunctionUtils.doIf(!activity.isEmpty(), u -> requestContext.getFlowScope().put("signInActivity", activity)).accept(activity);
+        }
+    }
+
+    /**
+     * Put the number of days until the password expires, and the date it expires,
+     * into the flow scope when the authentication carries a password expiration warning.
+     *
+     * @param requestContext the request context
+     * @param ticket         the ticket granting ticket
+     */
+    protected void buildPasswordExpiration(final RequestContext requestContext, final TicketGrantingTicket ticket) {
+        val authentication = ticket.getAuthentication();
+        Stream.concat(authentication.getWarnings().stream(),
+                authentication.getSuccesses().values().stream().map(AuthenticationHandlerExecutionResult::getWarnings).flatMap(List::stream))
+            .filter(PasswordExpiringWarningMessageDescriptor.class::isInstance)
+            .map(PasswordExpiringWarningMessageDescriptor.class::cast)
+            .findFirst()
+            .ifPresent(warning -> {
+                requestContext.getFlowScope().put("passwordExpirationDays", warning.getDaysToExpiration());
+                requestContext.getFlowScope().put("passwordExpirationDate",
+                    authentication.getAuthenticationDate().plusDays(warning.getDaysToExpiration()));
+            });
+    }
 }

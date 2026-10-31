@@ -1,6 +1,7 @@
 package org.apereo.cas.mcp.audit;
 
 import module java.base;
+import org.apereo.cas.mcp.oauth.CasMcpBearerTokenAuthentication;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.aopalliance.intercept.MethodInterceptor;
@@ -58,7 +59,7 @@ public class CasMcpAuditInterceptor implements MethodInterceptor {
         val instance = auditor.getIfAvailable();
         if (instance != null) {
             instance.record(new CasMcpOperation(currentOperator(), operationName(invocation.getMethod()),
-                arguments(invocation), outcome));
+                arguments(invocation), outcome, currentClient()));
         }
     }
 
@@ -67,6 +68,12 @@ public class CasMcpAuditInterceptor implements MethodInterceptor {
         return authentication != null && StringUtils.isNotBlank(authentication.getName())
             ? authentication.getName()
             : PrincipalResolver.UNKNOWN_USER;
+    }
+
+    private static @Nullable String currentClient() {
+        return SecurityContextHolder.getContext().getAuthentication() instanceof final CasMcpBearerTokenAuthentication token
+            ? token.getClientId()
+            : null;
     }
 
     private static String operationName(final Method method) {
