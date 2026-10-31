@@ -43,7 +43,7 @@
                                     }
                                 }), 0);
                         } else if (data.result.reason === "force_close") {
-                            document.getElementById("vaError").textContent = "Error: enable third-party cookies for this browser!";
+                            document.getElementById("vaError").textContent = /*[[#{cas.inwebo.error.cookies}]]*/ "Error: enable third-party cookies for this browser!";
                         }
                     }
                 });

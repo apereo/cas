@@ -12,6 +12,7 @@ import lombok.SuperBuilder;
 import lombok.With;
 import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.springframework.http.HttpMethod;
 import tools.jackson.databind.ObjectMapper;
 
@@ -56,6 +57,13 @@ public class HttpExecutionRequest {
      */
     @Builder.Default
     private final long maximumResponseSize = 0;
+
+    /**
+     * Maximum time to wait for a pooled connection and for the response of this request.
+     * When unset, the timeouts shared by all requests apply.
+     */
+    @Nullable
+    private final Duration responseTimeout;
 
     @Builder.Default
     private final Map<String, String> parameters = new LinkedHashMap<>();

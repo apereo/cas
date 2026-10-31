@@ -11,5 +11,6 @@
   "supportedGrantTypes": [ "java.util.HashSet", [ "urn:openid:params:grant-type:ciba" ] ],
   "backchannelTokenDeliveryMode": "poll",
   "backchannelUserCodeParameterSupported": true,
-  "generateRefreshToken": true
+  "generateRefreshToken": true,
+  "allowedResources": [ "java.util.HashSet", [ "https://localhost:9859/anything/(api|reports)" ] ]
 }

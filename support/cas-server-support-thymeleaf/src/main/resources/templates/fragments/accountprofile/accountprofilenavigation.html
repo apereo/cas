@@ -44,8 +44,15 @@
                 <span th:text="#{screen.account.nav.tokens}">Tokens</span>
             </a>
         </li>
+        <li th:if="${surrogateAccounts != null || #cas.isTrue(surrogateWildcard) || surrogateImpersonatedBy != null}">
+            <a id="linkSurrogateAccounts" class="cas-account-rail-link" href="#divSurrogateAccounts" data-account-panel="#divSurrogateAccounts">
+                <i class="mdi mdi-account-switch-outline" aria-hidden="true"></i>
+                <span th:text="#{screen.account.nav.surrogate}">Impersonation</span>
+            </a>
+        </li>
         <li class="cas-account-rail-divider" aria-hidden="true"
-            th:if="${multifactorRegisteredAccounts != null || multifactorTrustedDevices != null || #cas.isTrue(securityQuestionsEnabled)}"></li>
+            th:if="${multifactorRegisteredAccounts != null || multifactorTrustedDevices != null || #cas.isTrue(securityQuestionsEnabled)
+                    || qrAuthenticationDevices != null || simpleMfaContactMethods != null || passwordlessContactMethods != null}"></li>
         <li th:if="${multifactorRegisteredAccounts}">
             <a id="linkMfaRegisteredAccounts" class="cas-account-rail-link" href="#divMfaRegisteredAccounts" data-account-panel="#divMfaRegisteredAccounts">
                 <i class="mdi mdi-cellphone-key" aria-hidden="true"></i>
@@ -58,17 +65,42 @@
                 <span th:text="#{screen.account.nav.trusteddevices}">Trusted</span>
             </a>
         </li>
+        <li th:if="${qrAuthenticationDevices}">
+            <a id="linkQRDevices" class="cas-account-rail-link" href="#divQRDevices" data-account-panel="#divQRDevices">
+                <i class="mdi mdi-qrcode-scan" aria-hidden="true"></i>
+                <span th:text="#{screen.account.nav.qrdevices}">QR devices</span>
+            </a>
+        </li>
+        <li th:if="${simpleMfaContactMethods != null || passwordlessContactMethods != null}">
+            <a id="linkContactMethods" class="cas-account-rail-link" href="#divContactMethods" data-account-panel="#divContactMethods">
+                <i class="mdi mdi-card-account-mail-outline" aria-hidden="true"></i>
+                <span th:text="#{screen.account.nav.contact}">Contact</span>
+            </a>
+        </li>
         <li th:if="${securityQuestionsEnabled}">
             <a id="linkSecurityQuestions" class="cas-account-rail-link" href="#divSecurityQuestions" data-account-panel="#divSecurityQuestions">
                 <i class="mdi mdi-help-circle-outline" aria-hidden="true"></i>
                 <span th:text="#{screen.account.nav.questions}">Questions</span>
             </a>
         </li>
-        <li class="cas-account-rail-divider" aria-hidden="true" th:if="${consentDecisions != null || auditLog != null}"></li>
+        <li class="cas-account-rail-divider" aria-hidden="true"
+            th:if="${consentDecisions != null || auditLog != null || acceptableUsagePolicyStatus != null || signInActivity != null}"></li>
         <li th:if="${consentDecisions}">
             <a id="linkConsentDecisions" class="cas-account-rail-link" href="#divConsentDecisions" data-account-panel="#divConsentDecisions">
                 <i class="mdi mdi-checkbox-marked-outline" aria-hidden="true"></i>
                 <span th:text="#{screen.account.nav.consent}">Consent</span>
+            </a>
+        </li>
+        <li th:if="${acceptableUsagePolicyStatus}">
+            <a id="linkAcceptableUsagePolicy" class="cas-account-rail-link" href="#divAcceptableUsagePolicy" data-account-panel="#divAcceptableUsagePolicy">
+                <i class="mdi mdi-file-document-check-outline" aria-hidden="true"></i>
+                <span th:text="#{screen.account.nav.aup}">Usage policy</span>
+            </a>
+        </li>
+        <li th:if="${signInActivity}">
+            <a id="linkSignInActivity" class="cas-account-rail-link" href="#divSignInActivity" data-account-panel="#divSignInActivity">
+                <i class="mdi mdi-login-variant" aria-hidden="true"></i>
+                <span th:text="#{screen.account.nav.signins}">Sign-ins</span>
             </a>
         </li>
         <li th:if="${auditLog}">

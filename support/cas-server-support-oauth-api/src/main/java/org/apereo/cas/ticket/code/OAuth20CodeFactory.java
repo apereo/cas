@@ -23,6 +23,7 @@ public interface OAuth20CodeFactory extends TicketFactory {
      * @param authentication       the authentication
      * @param ticketGrantingTicket the ticket granting ticket
      * @param scopes               the scopes
+     * @param resources            the resource indicators the code is granted for
      * @param codeChallenge        the code challenge
      * @param codeChallengeMethod  the code challenge method
      * @param clientId             the client id
@@ -36,6 +37,7 @@ public interface OAuth20CodeFactory extends TicketFactory {
                        Authentication authentication,
                        Ticket ticketGrantingTicket,
                        Collection<String> scopes,
+                       Collection<String> resources,
                        String codeChallenge,
                        String codeChallengeMethod,
                        String clientId,
@@ -43,6 +45,37 @@ public interface OAuth20CodeFactory extends TicketFactory {
                        OAuth20ResponseTypes responseType,
                        OAuth20GrantTypes grantType)
             throws Throwable;
+
+    /**
+     * Create an OAuth code that is granted for no particular resource.
+     *
+     * @param service              the service
+     * @param authentication       the authentication
+     * @param ticketGrantingTicket the ticket granting ticket
+     * @param scopes               the scopes
+     * @param codeChallenge        the code challenge
+     * @param codeChallengeMethod  the code challenge method
+     * @param clientId             the client id
+     * @param requestClaims        the claims
+     * @param responseType         the response type
+     * @param grantType            the grant type
+     * @return the OAuth code
+     * @throws Throwable the throwable
+     */
+    default OAuth20Code create(final Service service,
+                               final Authentication authentication,
+                               final Ticket ticketGrantingTicket,
+                               final Collection<String> scopes,
+                               final String codeChallenge,
+                               final String codeChallengeMethod,
+                               final String clientId,
+                               final Map<String, Map<String, Object>> requestClaims,
+                               final OAuth20ResponseTypes responseType,
+                               final OAuth20GrantTypes grantType)
+            throws Throwable {
+        return create(service, authentication, ticketGrantingTicket, scopes, Set.of(),
+            codeChallenge, codeChallengeMethod, clientId, requestClaims, responseType, grantType);
+    }
 
     /**
      * Create OAuth code without code challenge or method.

@@ -4,6 +4,7 @@ import module java.base;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.cxf.binding.AbstractBindingFactory;
 import org.apache.cxf.binding.soap.wsdl.extensions.SoapAddress;
 import org.apache.cxf.binding.soap.wsdl.extensions.SoapBinding;
 import org.apache.cxf.binding.soap.wsdl.extensions.SoapBody;
@@ -28,6 +29,7 @@ import jakarta.xml.bind.annotation.W3CDomHandler;
 public class CoreWsSecurityTokenServiceRuntimeHints implements CasRuntimeHintsRegistrar {
     @Override
     public void registerHints(final @NonNull RuntimeHints hints, final @Nullable ClassLoader classLoader) {
+        registerReflectionHints(hints, AbstractBindingFactory.class);
         hints.resources().registerResourceBundle("messages.wss4j_errors");
         hints.resources().registerResourceBundle("org.apache.xml.security.resource.xmlsecurity");
         hints.resources().registerPattern("wss/wss-config.xml");

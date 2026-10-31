@@ -75,6 +75,27 @@ async function hasStoredRegistration() {
     }
 }
 
+/**
+ * The signature counter stored by the repository moves forward with every login. An authenticator that reports a
+ * counter behind the stored one may be a clone, so the login is refused.
+ *
+ * @param page the page, logged in with the device
+ * @param virtualAuthenticator the virtual authenticator holding the device
+ */
+async function verifyClonedAuthenticatorRefused(page, virtualAuthenticator) {
+    await cas.gotoLogout(page);
+    const counters = await cas.setWebAuthnSignCount(virtualAuthenticator, 0);
+    assert(counters.every((counter) => counter > 0), `The counter must have moved forward with each login: ${counters}`);
+
+    await cas.gotoLoginWithAuthnMethod(page, undefined, "mfa-webauthn");
+    await cas.loginWith(page);
+    await cas.sleep(1000);
+    await cas.click(page, "#authnButton");
+    await cas.sleep(5000);
+    await cas.assertCookie(page, false);
+    await cas.assertVisibility(page, "#authnButton");
+}
+
 (async () => {
     await cas.log(`Running with the ${process.env.SCENARIO_VARIATION} repository`);
     const restBackend = await startRestBackend();
@@ -150,6 +171,8 @@ async function hasStoredRegistration() {
     await cas.assertInnerTextContains(page, "#attribute-tab-1 table#attributesTable tbody", "[WebAuthnAuthenticationHandler]");
     await cas.assertInnerTextContains(page, "#attribute-tab-1 table#attributesTable tbody", "[mfa-webauthn]");
     await cas.assertInnerTextContains(page, "#attribute-tab-1 table#attributesTable tbody", "[WebAuthnCredential]");
+
+    await verifyClonedAuthenticatorRefused(page, virtualAuthenticator);
 
     await cas.doRequest(DEVICES, "DELETE", {"Accept": "application/json"}, 200);
     assert(!(await cas.doRequest(DEVICES, "GET", {"Accept": "application/json"}, 200)).includes("credentialId"));

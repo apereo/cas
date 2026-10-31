@@ -92,9 +92,6 @@ public class SamlRegisteredService extends BaseWebBasedRegisteredService {
     @JacksonInject(value = "signAssertions", optional = OptBoolean.TRUE, useInput = OptBoolean.FALSE)
     private TriStateBoolean signAssertions = TriStateBoolean.FALSE;
 
-    @JacksonInject(value = "signUnsolicitedAuthnRequest", optional = OptBoolean.TRUE)
-    private boolean signUnsolicitedAuthnRequest;
-
     @JacksonInject(value = "skipGeneratingAssertionNameId", optional = OptBoolean.TRUE)
     private boolean skipGeneratingAssertionNameId;
 

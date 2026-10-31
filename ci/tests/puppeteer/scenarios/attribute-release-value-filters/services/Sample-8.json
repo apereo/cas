@@ -1,0 +1,17 @@
+{
+  "@class": "org.apereo.cas.services.CasRegisteredService",
+  "serviceId": "^https://localhost:9859/anything/pattern$",
+  "name": "PatternMatching",
+  "id": 8,
+  "attributeReleasePolicy": {
+    "@class": "org.apereo.cas.services.PatternMatchingAttributeReleasePolicy",
+    "allowedAttributes": {
+      "@class": "java.util.TreeMap",
+      "courses": {
+        "@class": "org.apereo.cas.services.PatternMatchingAttributeReleasePolicy$Rule",
+        "pattern": "^([A-Z]+)(\\d+)$",
+        "transform": "${1}-${2}"
+      }
+    }
+  }
+}

@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+
+    <title>Theme Builder Fragment</title>
+    <link href="../../static/css/theme-builder.css" rel="stylesheet" th:remove="tag"/>
+</head>
+
+<body>
+<div th:fragment="themebuilder" th:remove="tag">
+    <div id="cas-theme-builder"
+           class="cas-theme-builder"
+           role="dialog"
+           aria-modal="false"
+           aria-labelledby="cas-theme-builder-title"
+           aria-describedby="cas-theme-builder-summary"
+           tabindex="-1"
+           hidden
+           th:attr="data-context-path=@{/},
+                    data-msg-live=#{screen.themebuilder.live},
+                    data-msg-deploy=#{screen.themebuilder.deploy},
+                    data-msg-deploy-title=#{screen.themebuilder.deploy.title},
+                    data-msg-changed=#{screen.themebuilder.changed},
+                    data-msg-reset=#{screen.themebuilder.reset.one},
+                    data-msg-copied=#{screen.themebuilder.copied},
+                    data-msg-copy=#{screen.themebuilder.copy},
+                    data-msg-empty=#{screen.themebuilder.export.empty}">
+
+        <div class="ctb-head">
+            <span class="ctb-head-icon mdi mdi-palette-outline fa fa-palette" aria-hidden="true"></span>
+            <div class="ctb-heading">
+                <h2 id="cas-theme-builder-title" th:utext="#{screen.themebuilder.title}">Theme Builder</h2>
+                <p id="cas-theme-builder-summary" th:utext="#{screen.themebuilder.summary}">
+                    Adjust the theme and watch this page change.
+                </p>
+            </div>
+            <button type="button" id="cas-theme-builder-close" class="ctb-icon-button"
+                    th:attr="aria-label=#{screen.pm.button.close}" aria-label="Close">
+                <span class="mdi mdi-close fa fa-times" aria-hidden="true"></span>
+            </button>
+        </div>
+
+        <div class="ctb-tabs" role="tablist" th:attr="aria-label=#{screen.themebuilder.title}">
+            <button type="button" role="tab" id="ctb-tab-properties" aria-controls="ctb-panel-properties"
+                    aria-selected="true" th:utext="#{screen.themebuilder.tab.properties}">Properties</button>
+            <button type="button" role="tab" id="ctb-tab-styles" aria-controls="ctb-panel-styles"
+                    aria-selected="false" tabindex="-1" th:utext="#{screen.themebuilder.tab.styles}">Styles</button>
+            <button type="button" role="tab" id="ctb-tab-export" aria-controls="ctb-panel-export"
+                    aria-selected="false" tabindex="-1">
+                <span th:utext="#{screen.themebuilder.tab.export}">Export</span>
+                <span id="ctb-change-count" class="ctb-count" hidden></span>
+            </button>
+        </div>
+
+        <div class="ctb-body">
+            <section role="tabpanel" id="ctb-panel-properties" aria-labelledby="ctb-tab-properties">
+                <input type="search" id="ctb-filter" class="ctb-input"
+                       th:attr="placeholder=#{screen.themebuilder.filter},aria-label=#{screen.themebuilder.filter}"
+                       placeholder="Filter properties" aria-label="Filter properties"/>
+                <div id="ctb-properties"></div>
+            </section>
+
+            <section role="tabpanel" id="ctb-panel-styles" aria-labelledby="ctb-tab-styles" hidden>
+                <div id="ctb-styles"></div>
+                <div class="ctb-group">
+                    <label class="ctb-label" for="ctb-extra-css" th:utext="#{screen.themebuilder.css.extra}">Additional CSS</label>
+                    <p class="ctb-help" id="ctb-extra-css-help" th:utext="#{screen.themebuilder.css.extra.help}">
+                        Appended to custom.css after the generated variables.
+                    </p>
+                    <textarea id="ctb-extra-css" class="ctb-input ctb-code" rows="8" spellcheck="false"
+                              aria-describedby="ctb-extra-css-help"></textarea>
+                </div>
+            </section>
+
+            <section role="tabpanel" id="ctb-panel-export" aria-labelledby="ctb-tab-export" hidden>
+                <div class="ctb-file">
+                    <div class="ctb-file-head">
+                        <h3 id="ctb-properties-file-name">cas-theme-custom.properties</h3>
+                        <button type="button" class="ctb-button" data-ctb-copy="properties"
+                                th:utext="#{screen.themebuilder.copy}">Copy</button>
+                        <button type="button" class="ctb-button is-primary" id="ctb-download-properties"
+                                data-ctb-download="properties">
+                            <span class="mdi mdi-download fa fa-download" aria-hidden="true"></span>
+                            <span th:utext="#{screen.themebuilder.download}">Download</span>
+                        </button>
+                    </div>
+                    <p class="ctb-help" th:utext="#{screen.themebuilder.export.properties}">
+                        Put this file in your overlay next to the other theme files.
+                    </p>
+                    <pre id="ctb-output-properties" class="ctb-output" tabindex="0"></pre>
+                </div>
+                <div class="ctb-file">
+                    <div class="ctb-file-head">
+                        <h3>custom.css</h3>
+                        <button type="button" class="ctb-button" data-ctb-copy="css"
+                                th:utext="#{screen.themebuilder.copy}">Copy</button>
+                        <button type="button" class="ctb-button is-primary" id="ctb-download-css"
+                                data-ctb-download="css">
+                            <span class="mdi mdi-download fa fa-download" aria-hidden="true"></span>
+                            <span th:utext="#{screen.themebuilder.download}">Download</span>
+                        </button>
+                    </div>
+                    <p class="ctb-help" th:utext="#{screen.themebuilder.export.css}">
+                        Put this file in your overlay under src/main/resources/static/css.
+                    </p>
+                    <p class="ctb-help is-warning" id="ctb-css-missing" hidden
+                       th:utext="#{screen.themebuilder.export.css.missing}">
+                        This theme does not load custom.css yet.
+                    </p>
+                    <pre id="ctb-output-css" class="ctb-output" tabindex="0"></pre>
+                </div>
+            </section>
+        </div>
+
+        <div class="ctb-foot">
+            <p th:utext="#{screen.themebuilder.notice}">Nothing is saved on the server.</p>
+            <button type="button" class="ctb-button" id="ctb-reset" th:utext="#{screen.themebuilder.reset}">Reset all</button>
+        </div>
+        <div class="ctb-status visually-hidden" role="status" aria-live="polite" id="ctb-status"></div>
+    </div>
+
+    <script th:inline="javascript">
+        window.casThemeBuilderModel = /*[[${#cas.themeBuilder}]]*/ {};
+    </script>
+    <script type="text/javascript" th:src="@{/js/theme-builder.js}"></script>
+</div>
+</body>
+
+</html>

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Account Profile</title>
+    <link href="../../static/css/account.css" rel="stylesheet" th:remove="tag"/>
+</head>
+<body>
+<section th:fragment="qrdevices" th:if="${qrAuthenticationDevices}" id="divQRDevices" class="profile-content" hidden
+         aria-labelledby="divQRDevicesTitle"
+         th:data-account-trail="|#{screen.account.trail.root} › #{screen.account.group.security} › #{screen.account.qrdevices.title}|">
+    <header>
+        <div>
+            <h2 id="divQRDevicesTitle" th:text="#{screen.account.qrdevices.title}">QR code login devices</h2>
+            <p th:text="#{screen.account.qrdevices.subtitle}">Mobile devices that can sign you in by scanning a QR code.</p>
+        </div>
+    </header>
+    <ul id="qrDevicesList" class="cas-account-list" data-account-list
+        th:attr="data-filter-label=#{screen.account.list.filter},data-more-label=#{screen.account.list.more},data-count-label=#{screen.account.list.count}">
+        <li class="cas-account-item" th:each="entry, iter : ${qrAuthenticationDevices}">
+            <div class="cas-account-item-row">
+                <span class="cas-account-item-icon" aria-hidden="true"><i class="mdi mdi-qrcode-scan"></i></span>
+                <div class="cas-account-item-body">
+                    <div class="cas-account-item-title">
+                        <span class="acct-mono" th:id="${'qrDeviceTitle' + iter.index}" th:text="${entry}" th:title="${entry}">device-identifier</span>
+                    </div>
+                </div>
+                <div class="cas-account-item-actions">
+                    <form method="post" th:action="@{/account#divQRDevices}">
+                        <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
+                        <input type="hidden" name="deviceId" th:value="${entry}"/>
+                        <input type="hidden" name="_eventId" value="removeQRDevice"/>
+                        <button type="button" name="removeQRDevice" class="acct-btn acct-btn-text acct-btn-danger"
+                                data-account-action="confirm-submit"
+                                th:attr="aria-describedby=${'qrDeviceTitle' + iter.index},data-confirm-title=#{screen.account.qrdevices.remove.confirm.title},data-confirm-text=#{screen.account.qrdevices.remove.confirm},data-confirm-button=#{screen.account.qrdevices.remove},data-cancel-button=#{screen.account.cancel}"
+                                th:text="#{screen.account.qrdevices.remove}">Remove</button>
+                    </form>
+                </div>
+            </div>
+        </li>
+    </ul>
+</section>
+</body>
+</html>

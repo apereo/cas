@@ -9,9 +9,9 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
-import org.apereo.cas.support.oauth.authenticator.Authenticators;
 import org.apereo.cas.support.oauth.authenticator.OAuth20DefaultCasAuthenticationBuilder;
 import org.apereo.cas.support.oauth.profile.DefaultOAuth20ProfileScopeToAttributesFilter;
+import org.apereo.cas.support.oauth.profile.DefaultOAuth20UserProfile;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.ticket.ExpirationPolicy;
@@ -34,8 +34,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.pac4j.core.profile.CommonProfile;
-import org.pac4j.jee.context.JEEContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpMethod;
@@ -71,9 +69,7 @@ class OAuth20AuthorizationCodeGrantTypeTokenRequestValidatorTests {
         void verifyPreviousAccessTokensRemoved() throws Throwable {
             val request = new MockHttpServletRequest();
             val response = new MockHttpServletResponse();
-            val profile = new CommonProfile();
-            profile.setClientName(Authenticators.CAS_OAUTH_CLIENT_BASIC_AUTHN);
-            profile.setId(SUPPORTING_CLIENT_ID);
+            val profile = new DefaultOAuth20UserProfile(SUPPORTING_CLIENT_ID);
             storeProfileIntoSession(request, profile);
 
             val principal = PrincipalFactoryUtils.newPrincipalFactory().createPrincipal("casuser");
@@ -95,7 +91,7 @@ class OAuth20AuthorizationCodeGrantTypeTokenRequestValidatorTests {
             request.setParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.AUTHORIZATION_CODE.getType());
             request.setParameter(OAuth20Constants.REDIRECT_URI, registeredService.getServiceId());
             storeProfileIntoSession(request, profile);
-            assertFalse(validator.validate(new JEEContext(request, response)));
+            assertFalse(validator.validate(request, response));
             assertNull(ticketRegistry.getTicket(at1.getId()));
             assertNull(ticketRegistry.getTicket(at2.getId()));
             assertNull(ticketRegistry.getTicket(recordId));
@@ -148,9 +144,7 @@ class OAuth20AuthorizationCodeGrantTypeTokenRequestValidatorTests {
             val request = new MockHttpServletRequest();
             request.setMethod(HttpMethod.GET.name());
             val response = new MockHttpServletResponse();
-            val profile = new CommonProfile();
-            profile.setClientName(Authenticators.CAS_OAUTH_CLIENT_BASIC_AUTHN);
-            profile.setId(SUPPORTING_CLIENT_ID);
+            val profile = new DefaultOAuth20UserProfile(SUPPORTING_CLIENT_ID);
             storeProfileIntoSession(request, profile);
 
             val secret = UUID.randomUUID().toString();
@@ -159,7 +153,7 @@ class OAuth20AuthorizationCodeGrantTypeTokenRequestValidatorTests {
             request.setParameter(OAuth20Constants.REDIRECT_URI, RegisteredServiceTestUtils.CONST_TEST_URL);
             request.setParameter(OAuth20Constants.CODE, secret);
             request.setQueryString(OAuth20Constants.CLIENT_SECRET + '=' + secret);
-            assertFalse(validator.validate(new JEEContext(request, response)));
+            assertFalse(validator.validate(request, response));
         }
 
         @Test
@@ -167,15 +161,13 @@ class OAuth20AuthorizationCodeGrantTypeTokenRequestValidatorTests {
             val request = new MockHttpServletRequest();
             request.setMethod(HttpMethod.POST.name());
             val response = new MockHttpServletResponse();
-            val profile = new CommonProfile();
-            profile.setClientName(Authenticators.CAS_OAUTH_CLIENT_BASIC_AUTHN);
-            profile.setId(SUPPORTING_CLIENT_ID);
+            val profile = new DefaultOAuth20UserProfile(SUPPORTING_CLIENT_ID);
             storeProfileIntoSession(request, profile);
             request.setParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.AUTHORIZATION_CODE.getType());
             request.setParameter(OAuth20Constants.REDIRECT_URI, RegisteredServiceTestUtils.CONST_TEST_URL);
 
             request.setParameter(OAuth20Constants.CODE, "UnknownToken");
-            assertFalse(validator.validate(new JEEContext(request, response)));
+            assertFalse(validator.validate(request, response));
         }
 
         @Test
@@ -183,15 +175,13 @@ class OAuth20AuthorizationCodeGrantTypeTokenRequestValidatorTests {
             val request = new MockHttpServletRequest();
             request.setMethod(HttpMethod.POST.name());
             val response = new MockHttpServletResponse();
-            val profile = new CommonProfile();
-            profile.setClientName(Authenticators.CAS_OAUTH_CLIENT_BASIC_AUTHN);
-            profile.setId(SUPPORTING_CLIENT_ID);
+            val profile = new DefaultOAuth20UserProfile(SUPPORTING_CLIENT_ID);
             storeProfileIntoSession(request, profile);
             request.setParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.AUTHORIZATION_CODE.getType());
             request.setParameter(OAuth20Constants.REDIRECT_URI, RegisteredServiceTestUtils.CONST_TEST_URL);
 
             request.setParameter(OAuth20Constants.CODE, nonSupportingServiceTicket.getId());
-            assertFalse(validator.validate(new JEEContext(request, response)));
+            assertFalse(validator.validate(request, response));
         }
 
         @Test
@@ -199,13 +189,11 @@ class OAuth20AuthorizationCodeGrantTypeTokenRequestValidatorTests {
             val request = new MockHttpServletRequest();
             request.setMethod(HttpMethod.POST.name());
             val response = new MockHttpServletResponse();
-            val profile = new CommonProfile();
-            profile.setClientName(Authenticators.CAS_OAUTH_CLIENT_BASIC_AUTHN);
-            profile.setId(SUPPORTING_CLIENT_ID);
+            val profile = new DefaultOAuth20UserProfile(SUPPORTING_CLIENT_ID);
             storeProfileIntoSession(request, profile);
             request.setParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.AUTHORIZATION_CODE.getType());
             request.setParameter(OAuth20Constants.REDIRECT_URI, RegisteredServiceTestUtils.CONST_TEST_URL);
-            assertFalse(validator.validate(new JEEContext(request, response)));
+            assertFalse(validator.validate(request, response));
         }
 
         @Test
@@ -213,9 +201,7 @@ class OAuth20AuthorizationCodeGrantTypeTokenRequestValidatorTests {
             val request = new MockHttpServletRequest();
             request.setMethod(HttpMethod.POST.name());
             val response = new MockHttpServletResponse();
-            val profile = new CommonProfile();
-            profile.setClientName(Authenticators.CAS_OAUTH_CLIENT_BASIC_AUTHN);
-            profile.setId(SUPPORTING_CLIENT_ID);
+            val profile = new DefaultOAuth20UserProfile(SUPPORTING_CLIENT_ID);
             storeProfileIntoSession(request, profile);
 
             val principal = PrincipalFactoryUtils.newPrincipalFactory().createPrincipal("casuser");
@@ -230,7 +216,7 @@ class OAuth20AuthorizationCodeGrantTypeTokenRequestValidatorTests {
             request.setParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.AUTHORIZATION_CODE.getType());
             request.setParameter(OAuth20Constants.REDIRECT_URI, RegisteredServiceTestUtils.CONST_TEST_URL3);
             storeProfileIntoSession(request, profile);
-            assertFalse(validator.validate(new JEEContext(request, response)));
+            assertFalse(validator.validate(request, response));
             assertNull(ticketRegistry.getTicket(at.getToken()));
         }
 
@@ -239,35 +225,33 @@ class OAuth20AuthorizationCodeGrantTypeTokenRequestValidatorTests {
             val request = new MockHttpServletRequest();
             request.setMethod(HttpMethod.POST.name());
             val response = new MockHttpServletResponse();
-            val profile = new CommonProfile();
-            profile.setClientName(Authenticators.CAS_OAUTH_CLIENT_BASIC_AUTHN);
-            profile.setId(SUPPORTING_CLIENT_ID);
+            val profile = new DefaultOAuth20UserProfile(SUPPORTING_CLIENT_ID);
             storeProfileIntoSession(request, profile);
 
             request.setParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.AUTHORIZATION_CODE.getType());
             request.setParameter(OAuth20Constants.REDIRECT_URI, RegisteredServiceTestUtils.CONST_TEST_URL);
 
             request.setParameter(OAuth20Constants.CODE, supportingServiceTicket.getId());
-            assertTrue(validator.validate(new JEEContext(request, response)));
+            assertTrue(validator.validate(request, response));
 
             request.setParameter(OAuth20Constants.GRANT_TYPE, "unsupported");
-            assertFalse(validator.validate(new JEEContext(request, response)));
+            assertFalse(validator.validate(request, response));
 
             request.setParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.PASSWORD.getType());
-            assertFalse(validator.validate(new JEEContext(request, response)));
+            assertFalse(validator.validate(request, response));
             request.setParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.AUTHORIZATION_CODE.getType());
 
             request.setParameter(OAuth20Constants.CODE, nonSupportingServiceTicket.getId());
             request.setParameter(OAuth20Constants.REDIRECT_URI, RegisteredServiceTestUtils.CONST_TEST_URL2);
             profile.setId(NON_SUPPORTING_CLIENT_ID);
             storeProfileIntoSession(request, profile);
-            assertFalse(validator.validate(new JEEContext(request, response)));
+            assertFalse(validator.validate(request, response));
 
             request.setParameter(OAuth20Constants.CODE, promiscuousServiceTicket.getId());
             profile.setId(PROMISCUOUS_CLIENT_ID);
             request.setParameter(OAuth20Constants.REDIRECT_URI, RegisteredServiceTestUtils.CONST_TEST_URL3);
             storeProfileIntoSession(request, profile);
-            assertTrue(validator.validate(new JEEContext(request, response)));
+            assertTrue(validator.validate(request, response));
         }
 
         @Test
@@ -279,20 +263,18 @@ class OAuth20AuthorizationCodeGrantTypeTokenRequestValidatorTests {
             val request = new MockHttpServletRequest();
             request.setMethod(HttpMethod.POST.name());
             val response = new MockHttpServletResponse();
-            val profile = new CommonProfile();
-            profile.setClientName(Authenticators.CAS_OAUTH_CLIENT_X509_CERTIFICATE_AUTHN);
-            profile.setId(SUPPORTING_CLIENT_ID);
+            val profile = new DefaultOAuth20UserProfile(SUPPORTING_CLIENT_ID);
             storeProfileIntoSession(request, profile);
             request.setParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.AUTHORIZATION_CODE.getType());
             request.setParameter(OAuth20Constants.REDIRECT_URI, RegisteredServiceTestUtils.CONST_TEST_URL);
             request.setParameter(OAuth20Constants.CODE, code.getId());
-            assertFalse(validator.validate(new JEEContext(request, response)));
+            assertFalse(validator.validate(request, response));
 
             request.setParameter(OAuth20Constants.CODE_VERIFIER, RandomUtils.randomAlphanumeric(43));
-            assertFalse(validator.validate(new JEEContext(request, response)));
+            assertFalse(validator.validate(request, response));
 
             request.setParameter(OAuth20Constants.CODE_VERIFIER, codeVerifier);
-            assertTrue(validator.validate(new JEEContext(request, response)));
+            assertTrue(validator.validate(request, response));
         }
 
         @Test
@@ -303,15 +285,13 @@ class OAuth20AuthorizationCodeGrantTypeTokenRequestValidatorTests {
             val request = new MockHttpServletRequest();
             request.setMethod(HttpMethod.POST.name());
             val response = new MockHttpServletResponse();
-            val profile = new CommonProfile();
-            profile.setClientName(Authenticators.CAS_OAUTH_CLIENT_BASIC_AUTHN);
-            profile.setId(SUPPORTING_CLIENT_ID);
+            val profile = new DefaultOAuth20UserProfile(SUPPORTING_CLIENT_ID);
             storeProfileIntoSession(request, profile);
             request.setParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.AUTHORIZATION_CODE.getType());
             request.setParameter(OAuth20Constants.REDIRECT_URI, RegisteredServiceTestUtils.CONST_TEST_URL);
             request.setParameter(OAuth20Constants.CODE, code.getId());
             request.setParameter(OAuth20Constants.CODE_VERIFIER, codeVerifier.toLowerCase(Locale.ENGLISH));
-            assertFalse(validator.validate(new JEEContext(request, response)));
+            assertFalse(validator.validate(request, response));
         }
 
         @Test
@@ -319,15 +299,13 @@ class OAuth20AuthorizationCodeGrantTypeTokenRequestValidatorTests {
             val request = new MockHttpServletRequest();
             request.setMethod(HttpMethod.POST.name());
             val response = new MockHttpServletResponse();
-            val profile = new CommonProfile();
-            profile.setClientName(Authenticators.CAS_OAUTH_CLIENT_X509_CERTIFICATE_AUTHN);
-            profile.setId(SUPPORTING_CLIENT_ID);
+            val profile = new DefaultOAuth20UserProfile(SUPPORTING_CLIENT_ID);
             storeProfileIntoSession(request, profile);
             request.setParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.AUTHORIZATION_CODE.getType());
             request.setParameter(OAuth20Constants.REDIRECT_URI, RegisteredServiceTestUtils.CONST_TEST_URL);
             request.setParameter(OAuth20Constants.CODE, supportingServiceTicket.getId());
             request.setParameter(OAuth20Constants.CODE_VERIFIER, RandomUtils.randomAlphanumeric(43));
-            assertFalse(validator.validate(new JEEContext(request, response)));
+            assertFalse(validator.validate(request, response));
         }
 
         private OAuth20Code registerTicket(final OAuthRegisteredService service) throws Throwable {

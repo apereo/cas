@@ -11,7 +11,6 @@ import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.multitenancy.TenantExtractor;
-import org.apereo.cas.pac4j.BrowserWebStorageSessionStore;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.TransientSessionTicket;
@@ -22,6 +21,7 @@ import org.apereo.cas.web.BrowserStorage;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.actions.AbstractMultifactorAuthenticationAction;
 import org.apereo.cas.web.flow.util.MultifactorAuthenticationWebflowUtils;
+import org.apereo.cas.web.session.BrowserStorageCasSessionStore;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,7 +29,6 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jspecify.annotations.Nullable;
-import org.pac4j.jee.context.JEEContext;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.scope.ConversationScope;
@@ -46,7 +45,7 @@ import org.springframework.webflow.scope.RequestScope;
 @Slf4j
 @RequiredArgsConstructor
 public class DuoSecurityUniversalPromptPrepareLoginAction extends AbstractMultifactorAuthenticationAction<DuoSecurityMultifactorAuthenticationProvider> {
-    protected final BrowserWebStorageSessionStore duoUniversalPromptSessionStore;
+    protected final BrowserStorageCasSessionStore duoUniversalPromptSessionStore;
     protected final TicketRegistry ticketRegistry;
     protected final TicketFactory ticketFactory;
     protected final TenantExtractor tenantExtractor;
@@ -96,12 +95,10 @@ public class DuoSecurityUniversalPromptPrepareLoginAction extends AbstractMultif
         val provider = resolveMultifactorAuthenticationProvider(requestContext);
         if (!provider.getDuoAuthenticationService().getProperties().getSessionStorageType().isTicketRegistry()) {
             val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
-            val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
-            val context = new JEEContext(request, response);
             LOGGER.debug("Storing Duo Security session attributes [{}] into session", properties);
             val sessionStorage = duoUniversalPromptSessionStore
-                .withSessionAttributes(context, properties)
-                .getTrackableSession(context)
+                .withSessionAttributes(request, properties)
+                .getTrackableSession(request)
                 .map(BrowserStorage.class::cast)
                 .orElseThrow(() -> new IllegalStateException("Unable to determine trackable session for storage"));
             sessionStorage.setDestinationUrl(urlWithStatePair.getLeft());

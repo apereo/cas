@@ -75,7 +75,7 @@ public class MetadataQueryProtocolMetadataResolver extends UrlResourceMetadataRe
         writeMetadataToBackupFile(result, backupFile);
         setFileAttribute(response, backupFile);
         EntityUtils.consume(entity);
-        return new InMemoryResourceMetadataResolver(backupFile, configBean);
+        return new InMemoryResourceMetadataResolver(result, configBean);
     }
 
     /**

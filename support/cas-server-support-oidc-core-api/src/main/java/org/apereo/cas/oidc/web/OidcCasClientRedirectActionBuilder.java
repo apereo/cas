@@ -5,41 +5,44 @@ import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.util.OidcRequestSupport;
 import org.apereo.cas.support.oauth.web.OAuth20RequestParameterResolver;
 import org.apereo.cas.support.oauth.web.response.OAuth20DefaultCasClientRedirectActionBuilder;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.pac4j.cas.client.CasClient;
-import org.pac4j.core.context.WebContext;
-import org.pac4j.core.exception.http.RedirectionAction;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
- * This is {@link OidcCasClientRedirectActionBuilder}.
+ * This is {@link OidcCasClientRedirectActionBuilder}, which asks CAS to act as a gateway for {@code prompt=none}, and to
+ * renew the credentials for {@code prompt=login}, {@code max_age=0}, or when the single sign-on session is older than {@code max_age}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
 @Slf4j
-@RequiredArgsConstructor
 public class OidcCasClientRedirectActionBuilder extends OAuth20DefaultCasClientRedirectActionBuilder {
     private final OidcRequestSupport oidcRequestSupport;
 
     private final OAuth20RequestParameterResolver parameterResolver;
 
-    @Override
-    public Optional<RedirectionAction> build(final CasClient casClient, final WebContext context) {
-        var renew = casClient.getConfiguration().isRenew();
-        var gateway = casClient.getConfiguration().isGateway();
+    public OidcCasClientRedirectActionBuilder(final String casServerLoginUrl,
+                                              final OidcRequestSupport oidcRequestSupport,
+                                              final OAuth20RequestParameterResolver parameterResolver) {
+        super(casServerLoginUrl);
+        this.oidcRequestSupport = oidcRequestSupport;
+        this.parameterResolver = parameterResolver;
+    }
 
-        val prompts = parameterResolver.resolveSupportedPromptValues(context);
+    @Override
+    public String build(final HttpServletRequest request, final String serviceUrl) {
+        var renew = false;
+        var gateway = false;
+        val prompts = parameterResolver.resolveSupportedPromptValues(request);
         if (prompts.contains(OidcConstants.PROMPT_NONE)) {
-            renew = false;
             gateway = true;
-        } else if (prompts.contains(OidcConstants.PROMPT_LOGIN) || oidcRequestSupport.isCasAuthenticationOldForMaxAgeAuthorizationRequest(context)) {
+        } else if (prompts.contains(OidcConstants.PROMPT_LOGIN) || OidcRequestSupport.isZeroMaxAgeAuthorizationRequest(request)
+            || oidcRequestSupport.isCasAuthenticationOldForMaxAgeAuthorizationRequest(request)) {
             renew = true;
         }
-
-        val action = build(casClient, context, renew, gateway);
-        LOGGER.debug("Final redirect action is [{}]", action);
-        return action;
+        val url = build(serviceUrl, renew, gateway);
+        LOGGER.debug("Final redirect url is [{}]", url);
+        return url;
     }
 }

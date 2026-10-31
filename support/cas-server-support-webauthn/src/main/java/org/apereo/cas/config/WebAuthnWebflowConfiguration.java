@@ -36,6 +36,7 @@ import org.apereo.cas.webauthn.web.flow.WebAuthnStartRegistrationAction;
 import org.apereo.cas.webauthn.web.flow.WebAuthnValidateSessionCredentialTokenAction;
 import org.apereo.cas.webauthn.web.flow.account.WebAuthnMultifactorAccountProfilePrepareAction;
 import org.apereo.cas.webauthn.web.flow.account.WebAuthnMultifactorAccountProfileRegistrationAction;
+import org.apereo.cas.webauthn.web.flow.account.WebAuthnMultifactorAccountProfileRenameDeviceAction;
 import org.apereo.cas.webauthn.web.flow.account.WebAuthnMultifactorAccountProfileWebflowConfigurer;
 import com.yubico.core.RegistrationStorage;
 import com.yubico.core.SessionManager;
@@ -439,6 +440,23 @@ class WebAuthnWebflowConfiguration {
                 .withProperties(casProperties)
                 .withAction(() -> new WebAuthnMultifactorAccountProfileRegistrationAction(webAuthnMultifactorAuthenticationProvider))
                 .withId(CasWebflowConstants.ACTION_ID_ACCOUNT_PROFILE_WEBAUTHN_REGISTRATION)
+                .build()
+                .get();
+        }
+
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_ACCOUNT_PROFILE_WEBAUTHN_RENAME_DEVICE)
+        public Action webAuthnAccountProfileRenameDeviceAction(
+            final ConfigurableApplicationContext applicationContext,
+            final CasConfigurationProperties casProperties,
+            @Qualifier(WebAuthnCredentialRepository.BEAN_NAME)
+            final RegistrationStorage webAuthnCredentialRepository) {
+            return WebflowActionBeanSupplier.builder()
+                .withApplicationContext(applicationContext)
+                .withProperties(casProperties)
+                .withAction(() -> new WebAuthnMultifactorAccountProfileRenameDeviceAction(webAuthnCredentialRepository))
+                .withId(CasWebflowConstants.ACTION_ID_ACCOUNT_PROFILE_WEBAUTHN_RENAME_DEVICE)
                 .build()
                 .get();
         }

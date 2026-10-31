@@ -14,7 +14,6 @@ import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.pac4j.jee.context.JEEContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpHeaders;
@@ -61,18 +60,18 @@ class OAuth20RevocationRequestValidatorTests extends AbstractOAuth20Tests {
         request.setParameter(OAuth20Constants.CLIENT_SECRET, RequestValidatorTestUtils.SHARED_SECRET);
         request.setParameter(OAuth20Constants.TOKEN, SUPPORTING_SERVICE_TICKET);
 
-        assertTrue(validator.validate(new JEEContext(request, response)));
+        assertTrue(validator.validate(request, response));
 
         request.removeAllParameters();
         request.setParameter(OAuth20Constants.CLIENT_ID, supportingService.getClientId());
         request.setParameter(OAuth20Constants.CLIENT_SECRET, RequestValidatorTestUtils.SHARED_SECRET);
-        assertFalse(validator.supports(new JEEContext(request, response)));
+        assertFalse(validator.supports(request, response));
 
         request.removeAllParameters();
         request.setParameter(OAuth20Constants.CLIENT_ID, "unknown");
         request.setParameter(OAuth20Constants.CLIENT_SECRET, RequestValidatorTestUtils.SHARED_SECRET);
         request.setParameter(OAuth20Constants.TOKEN, SUPPORTING_SERVICE_TICKET);
-        assertFalse(validator.validate(new JEEContext(request, response)));
+        assertFalse(validator.validate(request, response));
     }
 
     @Test
@@ -82,18 +81,18 @@ class OAuth20RevocationRequestValidatorTests extends AbstractOAuth20Tests {
 
         HttpUtils.createBasicAuthHeaders(supportingService.getClientId(), RequestValidatorTestUtils.SHARED_SECRET).forEach(request::addHeader);
         request.setParameter(OAuth20Constants.TOKEN, SUPPORTING_SERVICE_TICKET);
-        assertTrue(validator.validate(new JEEContext(request, response)));
+        assertTrue(validator.validate(request, response));
 
         request.removeHeader(HttpHeaders.AUTHORIZATION);
         request.removeAllParameters();
         HttpUtils.createBasicAuthHeaders(supportingService.getClientId(), RequestValidatorTestUtils.SHARED_SECRET).forEach(request::addHeader);
-        assertFalse(validator.supports(new JEEContext(request, response)));
+        assertFalse(validator.supports(request, response));
 
         request.removeHeader(HttpHeaders.AUTHORIZATION);
         request.removeAllParameters();
         HttpUtils.createBasicAuthHeaders("unknown", RequestValidatorTestUtils.SHARED_SECRET).forEach(request::addHeader);
         request.setParameter(OAuth20Constants.TOKEN, SUPPORTING_SERVICE_TICKET);
-        assertFalse(validator.validate(new JEEContext(request, response)));
+        assertFalse(validator.validate(request, response));
     }
 
     private void registerTicket(final String name) throws Throwable {

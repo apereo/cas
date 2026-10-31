@@ -60,7 +60,7 @@ public class WebAuthnStartAuthenticationAction extends AbstractMultifactorAuthen
             urlBuilder.appendPath(WebAuthnQRCodeController.ENDPOINT_QR_VERIFY);
             requestContext.getFlowScope().put("QRCodeUri", urlBuilder.toString());
             urlBuilder.appendPath(storedTicket.getId());
-            val qrCodeBase64 = QRUtils.generateQRCode(urlBuilder.toString(), QRUtils.SIZE, QRUtils.SIZE);
+            val qrCodeBase64 = QRUtils.generateQRCode(requestContext, urlBuilder.toString());
             requestContext.getFlowScope().put("QRCode", qrCodeBase64);
             requestContext.getFlowScope().put("QRCodeTicket", storedTicket);
             WebUtils.putPrincipal(requestContext, principal);
