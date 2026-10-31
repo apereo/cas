@@ -286,8 +286,8 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
         val authentication = builder.build();
         val executionResult = evaluateAuthenticationPolicies(authentication, transaction, authenticationHandlers);
         if (!executionResult.isSuccess()) {
-            publishEvent(new CasAuthenticationPolicyFailureEvent(this, builder.getFailures(), transaction, authentication, clientInfo));
             executionResult.getFailures().forEach(e -> handleAuthenticationException(e, e.getClass().getSimpleName(), builder));
+            publishEvent(new CasAuthenticationPolicyFailureEvent(this, builder.getFailures(), transaction, authentication, clientInfo));
             throw createAuthenticationException(builder);
         }
     }
