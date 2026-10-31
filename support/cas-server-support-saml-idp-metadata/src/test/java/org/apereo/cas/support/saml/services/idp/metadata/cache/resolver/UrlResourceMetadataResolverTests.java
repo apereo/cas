@@ -186,10 +186,38 @@ class UrlResourceMetadataResolverTests {
                 assertFalse(resolver.resolve(service).isEmpty());
                 assertNull(conditionalHeader.get(), "Validators must not be used for a backup file holding another document");
 
+                assertTrue(backupFile.setLastModified(Instant.now(Clock.systemUTC()).minus(Duration.ofDays(30)).toEpochMilli()));
+                assertEquals(Boolean.TRUE, resolver.describe(service, new CriteriaSet()).get("metadataBackupStale"));
                 assertFalse(resolver.resolve(service).isEmpty());
                 assertEquals(etag, conditionalHeader.get());
                 assertEquals(3, webServer.getRequestCount());
+                assertEquals(Boolean.FALSE, resolver.describe(service, new CriteriaSet()).get("metadataBackupStale"),
+                    "A source answering that the metadata has not changed confirms the backup file");
             }
+        }
+
+        @Test
+        void verifyStaleBackupIsReportedAndServed() throws Throwable {
+            val resolver = getMetadataResolver();
+            val service = new SamlRegisteredService();
+            service.setName(RandomUtils.randomAlphabetic(12));
+            service.setId(RandomUtils.nextInt());
+            try (val webServer = new MockWebServer(new ClassPathResource("sample-metadata.xml"))) {
+                webServer.start();
+                service.setMetadataLocation("http://localhost:%s".formatted(webServer.getPort()));
+                assertFalse(resolver.resolve(service).isEmpty());
+            }
+            val backupFile = resolver.getMetadataBackupFile(service, new CriteriaSet());
+            var details = resolver.describe(service, new CriteriaSet());
+            assertEquals(backupFile.getCanonicalPath(), details.get("metadataBackupFile"));
+            assertEquals(Boolean.TRUE, details.get("metadataBackupExists"));
+            assertEquals(Boolean.FALSE, details.get("metadataBackupStale"));
+
+            assertTrue(backupFile.setLastModified(Instant.now(Clock.systemUTC()).minus(Duration.ofDays(8)).toEpochMilli()));
+            details = resolver.describe(service, new CriteriaSet());
+            assertEquals(Boolean.TRUE, details.get("metadataBackupStale"));
+            assertTrue(Duration.parse(details.get("metadataBackupAge").toString()).toDays() >= 8);
+            assertFalse(resolver.resolve(service).isEmpty(), "A stale metadata backup file must still be served");
         }
 
         @Test

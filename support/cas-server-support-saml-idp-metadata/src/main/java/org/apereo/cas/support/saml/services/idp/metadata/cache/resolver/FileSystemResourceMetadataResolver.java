@@ -83,6 +83,25 @@ public class FileSystemResourceMetadataResolver extends BaseSamlRegisteredServic
         }, throwable -> false).get();
     }
 
+    /**
+     * {@inheritDoc}
+     * <p>
+     * Every file or directory named by the metadata location is reported, so that cached metadata is reloaded once a
+     * file changes, or a file is added to or removed from a directory.
+     */
+    @Override
+    public Collection<File> getMetadataSourceFiles(final SamlRegisteredService service) {
+        return FunctionUtils.doAndHandle(() -> {
+            val metadataLocations = org.springframework.util.StringUtils.commaDelimitedListToSet(
+                SpringExpressionLanguageValueResolver.getInstance().resolve(service.getMetadataLocation()));
+            return metadataLocations
+                .stream()
+                .filter(FileSystemResourceMetadataResolver::isMetadataFileSystemResource)
+                .map(location -> FunctionUtils.doUnchecked(() -> ResourceUtils.getResourceFrom(location).getFile()))
+                .toList();
+        }, throwable -> List.<File>of()).get();
+    }
+
     @Override
     public void destroy() {
         LOCAL_DYNAMIC_METADATA_RESOLVER_TIMER.cancel();

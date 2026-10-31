@@ -502,5 +502,28 @@ one-time codes can be added when `cas.authn.mfa.simple.mail.accepted-email-patte
   1000 documents are read completely. Metadata kept in [Git](../installation/Configuring-SAML2-DynamicMetadata-Git.html)
   pulls the repository at most once per `cas.authn.saml-idp.metadata.git.schedule.repeat-interval`{: .cas-setting} instead
   of on every load. The metadata health indicator checks each metadata source once per run rather than once per service.
+- {: .changed data-area="saml"} [SAML2 service provider metadata](../installation/SAML2-ServiceProvider-Metadata.html#metadata-caching--resolution)
+  read from files, directories or the JSON metadata file is loaded again once a file changes, checked at most once per
+  `cas.authn.saml-idp.metadata.file-system.change-detection-interval`{: .cas-setting}. The cached metadata endpoint lists
+  statistics and entries of the metadata cache, including the failures it remembers, and reports whether each entity is
+  still valid; the cache statistics are also published as metrics. A metadata backup file that its source has not confirmed
+  for longer than `cas.authn.saml-idp.metadata.http.metadata-backup-max-age`{: .cas-setting} is logged as an error when
+  used and flagged by the metadata health indicator. Metadata criteria patterns are compiled once per load, metadata
+  signature certificates are downloaded once per load, and downloaded metadata is no longer copied as text.
+- {: .changed data-area="saml"} [Cached SAML2 service provider metadata](../installation/SAML2-ServiceProvider-Metadata.html#metadata-caching--resolution)
+  is loaded again once its `validUntil` passes, and a `cacheDuration` declared by the metadata is kept between
+  `cas.authn.saml-idp.metadata.core.minimum-cache-duration`{: .cas-setting} and
+  `cas.authn.saml-idp.metadata.core.maximum-cache-duration`{: .cas-setting}. A request for an entity that an aggregate
+  does not hold no longer walks every entity of the aggregate. Metadata resolvers returned by
+  [Groovy scripts](../installation/Configuring-SAML2-DynamicMetadata-Groovy.html) that run background tasks are destroyed
+  once no longer used. Metadata kept in [Redis](../installation/Configuring-SAML2-DynamicMetadata-Redis.html) is indexed by
+  entity, so a service provider is found without scanning every key. A [metadata query](../installation/Configuring-SAML2-DynamicMetadata-MDQ.html)
+  location given as an expression, or as one of several comma-separated locations, is cached per entity like any other.
+- {: .fixed data-area="saml"} [SAML2 identity provider metadata](../installation/Configuring-SAML2-DynamicMetadata.html)
+  is cached once for all services that have no metadata of their own, instead of once per service, so deployments with
+  many SAML2 services no longer read identity provider metadata from its storage on every response.
+- {: .changed data-area="saml"} [SAML2 identity provider metadata](../installation/Configuring-SAML2-DynamicMetadata.html)
+  is served as `application/samlmetadata+xml` when asked for, carries an `ETag`, and answers `304 Not Modified` to a
+  client that already holds it.
 
 {% include release-footer.html %}

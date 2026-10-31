@@ -46,9 +46,13 @@ metadata resolution to override the default global value.
 
 The expiration policy of the service metadata is controlled using the following order:
 
-1. `CacheDuration` setting found inside the SAML2 service provider metadata, if any.
+1. `CacheDuration` setting found inside the SAML2 service provider metadata, if any, kept within a minimum and maximum
+   that are controlled via CAS settings, so that metadata asking to be cached for no time at all is not loaded again on every request.
 2. Metadata expiration policy and duration defined for the SAML2 registered service defined with CAS.
 3. Global metadata expiration policy controlled via CAS settings.
+
+Whichever applies, cached metadata is loaded again once the `validUntil` of the service provider, or of the aggregate that
+holds it, has passed, rather than turning requests away as no longer valid until the cache entry expires.
 
 Cached metadata is tied to the metadata settings of the service definition, such as signature validation, filtering criteria
 or the expiration policy. Once a service definition changes any of those, the next request resolves its metadata again
@@ -58,6 +62,18 @@ or served by a metadata query server is cached per entity.
 When metadata cannot be loaded for a service provider, CAS remembers the failure for a short period that is controlled
 via CAS settings, and requests for that service provider are rejected right away instead of contacting the metadata
 source every time. A failed HTTP request that fetches metadata may still be retried, again as controlled via CAS settings.
+
+Metadata that is read from files on disk, whether XML files, a directory of metadata files or the JSON file described below,
+is loaded again once a file changes, even before its cache entry expires. CAS compares the modification times of those files,
+and the files present in a metadata directory, at most once per interval that is controlled via CAS settings, so a busy
+server does not inspect the disk on every request.
+
+The cached metadata endpoint reports the metadata of a service along with whether each entity is still valid and, when the
+entity declares one, its `validUntil` instant. The endpoint can also list statistics of the cache,
+such as its size, hit rate and load times, along with every cached entry: the service and entity it was loaded for, when it
+was loaded and when it expires, the resolvers and local files it came from, the state of its metadata backup file, and the
+failure remembered for it, if any. The same cache statistics are published as `cache.*` metrics tagged
+with `cache=samlRegisteredServiceMetadata` when [metrics](../monitoring/Configuring-Metrics.html) are turned on.
 
 {% include_cached actuators.html endpoints="samlIdPRegisteredServiceMetadataCache" %}
 
@@ -104,6 +120,12 @@ and `Last-Modified` headers of the previous answer, which CAS keeps next to the 
 answers `304 Not Modified` is not asked to send the document again. When no location works and there is no backup
 file, the failure names every location and why it failed, such as the HTTP status it answered with.
 
+Every answer from a metadata location confirms the backup file, whether the location sends the document again or answers
+that it has not changed. When CAS has to fall back onto a backup file, it logs how long ago the metadata source last
+confirmed it, and once that is longer than allowed by CAS settings, the fallback is logged as an error and the service
+is flagged as stale by the metadata health indicator and the cached metadata endpoint. The backup file is still used,
+so that service providers keep working while the metadata source is restored.
+
 <div class="alert alert-info">:information_source: <strong>Usage</strong>
 <p>
 SAML2 metadata should generally be signed for integrity and authenticity, especially if it’s provided and shared with 
@@ -131,7 +153,8 @@ Metadata files for SAML2 service providers can be found on the file system direc
 }
 ```
 
-Multiple locations may be comma-separated.
+Multiple locations may be comma-separated. Changes to a metadata file are picked up without waiting for its cached
+metadata to expire.
 
 {% endtab %}
 
@@ -181,7 +204,8 @@ and may be as follows:
 ```
 
 Each entry in the file is identified by the service provider entity id, allowing CAS to dynamically locate and build the required metadata on the fly
-to resume the authentication flow. This may prove easier for those service providers that only present a URL and a signing certificate for the
+to resume the authentication flow. The file is read again once it changes, or once it is created after CAS has started, and
+metadata built from it is loaded again as well. This may prove easier for those service providers that only present a URL and a signing certificate for the
 integration relieving you from creating and managing XML metadata files separately.
 
 The service providers are registered with the CAS service registry as such:

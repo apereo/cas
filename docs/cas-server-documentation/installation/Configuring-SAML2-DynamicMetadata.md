@@ -16,6 +16,9 @@ The following CAS endpoints handle the generation of SAML2 metadata:
 
 This endpoint will display the CAS IdP SAML2 metadata upon receiving a GET request. If metadata is already available and generated,
 it will be displayed. If metadata is absent, one will be generated automatically.
+The metadata is served as `application/samlmetadata+xml` to clients that ask for that media type in their `Accept` header,
+and as `text/xml` otherwise. Responses carry an `ETag`, so a client that already holds the current metadata and sends it back
+in `If-None-Match` receives `304 Not Modified` without the document, and clients are asked to revalidate before reusing it.
 CAS configuration below dictates where metadata files/keys will be generated and stored.
 
 Note that the endpoint can accept a `service` parameter either by entity id or numeric identifier. This parameter

@@ -4,6 +4,7 @@ import module java.base;
 import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.util.DigestUtils;
+import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -78,6 +79,8 @@ public class SamlRegisteredServiceCacheKey implements Serializable {
      * Gets the part of the key that identifies the metadata. Metadata queries and metadata stores
      * (a bare source such as {@code jdbc://} or {@code mongodb://}) load the document of the requested entity only,
      * so they are keyed by that entity; any other location is loaded whole and keyed by the location.
+     * The location is classified the way the resolvers see it: after its expressions are evaluated, and as a metadata
+     * query when any of its comma-separated locations is one.
      *
      * @param service     the service
      * @param criteriaSet the criteria set
@@ -85,8 +88,11 @@ public class SamlRegisteredServiceCacheKey implements Serializable {
      */
     private static String getMetadataKeyForRegisteredService(final SamlRegisteredService service,
                                                               final CriteriaSet criteriaSet) {
-        val metadataLocation = service.getMetadataLocation();
-        if (SamlUtils.isDynamicMetadataQueryConfigured(metadataLocation) || isMetadataSourceId(metadataLocation)) {
+        val metadataLocation = SpringExpressionLanguageValueResolver.getInstance().resolve(StringUtils.defaultString(service.getMetadataLocation()));
+        val metadataQuery = org.springframework.util.StringUtils.commaDelimitedListToSet(metadataLocation)
+            .stream()
+            .anyMatch(SamlUtils::isDynamicMetadataQueryConfigured);
+        if (metadataQuery || isMetadataSourceId(metadataLocation)) {
             val entityId = criteriaSet.contains(EntityIdCriterion.class)
                 ? Objects.requireNonNull(criteriaSet.get(EntityIdCriterion.class)).getEntityId()
                 : service.getServiceId();

@@ -13,6 +13,43 @@ description: "Review and change SAML2 SP and IdP metadata handling: resolvers, M
   invalidation. Directory sources use OpenSAML's `LocalDynamicMetadataResolver`, not CAS PathWatcher.
   JSON metadata, Groovy sources, discovery feeds and watched service definitions are different paths;
   establish the actual metadata source before attributing stale XML to the global watcher switch.
+- Local SP metadata files are change-detected by the caching resolver, not by a watcher: a resolver reports its files
+  through `SamlRegisteredServiceMetadataResolver.getMetadataSourceFiles` (file system: every file or directory of the
+  location; JSON: `saml-sp-metadata.json`), the loader snapshots their mtimes (a directory adds its direct children)
+  into `CachedMetadataResolverResult`, and `locateAndCacheMetadataResolver` compares at most once per
+  `file-system.change-detection-interval`, one caller per entry (CAS on a timestamp), then invalidates and reloads.
+  A new file-backed resolver must report its files or edits wait for expiry. The JSON resolver has no
+  `FileWatcherService` any more; it re-reads the file when its mtime changes, including a file created after startup.
+- Operator visibility for the SP cache lives on the caching resolver interface (`getStatistics`, `getCachedEntries`,
+  defaults empty) and per resolver (`describe(service, criteria)`, merged into health details and cache entries). The URL
+  resolver reports the backup file, its age since the source last confirmed it (a `304` touches the mtime, a `200`
+  rewrites it) and `metadataBackupStale` past `http.metadata-backup-max-age`; a stale backup is still served, logged at
+  ERROR. `GET .../samlIdPRegisteredServiceMetadataCache/statistics` returns both lists, and the
+  `samlRegisteredServiceMetadataCacheMeterBinder` bean publishes Caffeine `cache.*` meters tagged
+  `cache=samlRegisteredServiceMetadata`. The per-service GET no longer drops entities failing `isValid()`; it adds `valid`.
+- Whether cached SP metadata holds a single SP (the only case reloaded when it lacks the requested entity) is decided
+  once by the loader (`CachedMetadataResolverResult.singleServiceProvider`): the predicate-only lookup walks every entity,
+  so it must not run per request. Directory (`LocalDynamicMetadataResolver`) and most Groovy resolvers report 0 entities.
+- Removed cache entries (refresh, D8 reload, expiry, eviction, invalidation) go through a Caffeine removal listener that
+  destroys reloading/dynamic OpenSAML child resolvers after `metadataResolverRetirementDelay` (PT1M), skipping any
+  instance a live entry still holds (a Groovy script may return a shared resolver). DOM/in-memory resolvers are left
+  alone: destroying them buys nothing and breaks requests still holding them.
+- `SamlRegisteredServiceMetadataExpirationPolicy` clamps a metadata `cacheDuration` to `core.minimum-cache-duration`/
+  `maximum-cache-duration` (PT1M/P1D) and caps any lifetime at the earliest *future* `validUntil` of the entity (cache-key
+  entity, else `serviceId`) and its ancestors; a past `validUntil` does not cap, or an expired aggregate would reload
+  forever. Mockito returns `Duration.ZERO` for an unstubbed `getCacheDuration()`; stub `null` in policy tests.
+- The SP cache key classifies the *SpEL-resolved* location, MDQ when any comma-separated part is, matching
+  `MetadataQueryProtocolMetadataResolver.supports`; classifying the raw string collapsed SpEL or mirrored MDQ locations
+  into one key for every entity.
+- `AbstractSamlIdPMetadataLocator.fetch(service)` compares what `fetchInternal` returns with the cached global document
+  (metadata, certificates, keys); a match means the store fell back, so the service is remembered in a key-only cache
+  (10,000 entries, the document cache's expiry) and gets the global instance. Only services with their own documents take
+  one of the 100 document-cache slots. `appliesTo` cannot tell them apart: the file-system locator stamps the service
+  owner on the global artifacts. Never compute another key inside the Caffeine mapping function; fetch the global first.
+- Redis SP metadata keeps `SamlMetadataDocumentIndex:<sha512(entityId)>` hashes (field = document key) next to the
+  `SamlMetadataDocument:*` keys; entity lookups read the hash and `MGET`, never SCAN. Pre-index documents are indexed once,
+  guarded by `SamlMetadataDocumentIndex:complete`; every delete path must also drop the index field. The prefix must not
+  match `SamlMetadataDocument:*`, which `load()` and the scenario scan.
 - There are two independent metadata subsystems and they share almost nothing. *SP metadata*
   runs `SamlRegisteredService` -> `SamlRegisteredServiceDefaultCachingMetadataResolver` ->
   `SamlRegisteredServiceMetadataResolverCacheLoader` -> the resolvers under
@@ -117,6 +154,8 @@ description: "Review and change SAML2 SP and IdP metadata handling: resolvers, M
   deployment the endpoint mints nothing and simply returns the global metadata. What is genuinely
   unguarded is the first generation, before any document exists — no lock across threads or nodes,
   and two RSA keypairs at a default `key-size` of 4096.
+  The controller answers `text/xml` unless `Accept` names `application/samlmetadata+xml`, sets a SHA-256 `ETag` with
+  `Cache-Control: no-cache`, and answers `If-None-Match` (lists, `W/`, `*`) with `304`.
 - The parser pool in `CasCoreSamlAutoConfiguration` is properly hardened (doctype disallowed,
   external entities off, secure processing on), so XXE is not the gap. Response size is:
   metadata bodies are read with `IOUtils.toString` with no bound.

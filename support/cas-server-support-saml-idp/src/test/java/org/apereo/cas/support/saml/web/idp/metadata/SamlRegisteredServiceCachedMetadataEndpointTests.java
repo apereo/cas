@@ -5,11 +5,15 @@ import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
 import org.apereo.cas.support.saml.SamlIdPTestUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
+import io.micrometer.core.instrument.binder.MeterBinder;
+import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.ResourceLock;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.TestPropertySource;
 import tools.jackson.databind.ObjectMapper;
@@ -33,6 +37,10 @@ class SamlRegisteredServiceCachedMetadataEndpointTests extends BaseSamlIdPConfig
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .build().toObjectMapper();
     
+    @Autowired
+    @Qualifier("samlRegisteredServiceMetadataCacheMeterBinder")
+    private MeterBinder samlRegisteredServiceMetadataCacheMeterBinder;
+
     private SamlRegisteredService samlRegisteredService;
 
     @BeforeEach
@@ -93,6 +101,34 @@ class SamlRegisteredServiceCachedMetadataEndpointTests extends BaseSamlIdPConfig
             .accept(MediaType.APPLICATION_JSON)
         ).andExpect(status().isOk()).andReturn().getResponse().getContentAsString(), Map.class);
         assertTrue(body.containsKey(samlRegisteredService.getServiceId()));
+        val details = (Map) body.get(samlRegisteredService.getServiceId());
+        assertTrue(details.containsKey("valid"));
+    }
+
+    @Test
+    void verifyCacheStatistics() throws Throwable {
+        mockMvc.perform(get("/actuator/samlIdPRegisteredServiceMetadataCache")
+            .queryParam("serviceId", samlRegisteredService.getServiceId())
+            .queryParam("force", "true")
+            .contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+            .accept(MediaType.APPLICATION_JSON)
+        ).andExpect(status().isOk());
+
+        val body = MAPPER.readValue(mockMvc.perform(get("/actuator/samlIdPRegisteredServiceMetadataCache/statistics")
+            .accept(MediaType.APPLICATION_JSON)
+        ).andExpect(status().isOk()).andReturn().getResponse().getContentAsString(), Map.class);
+        val statistics = (Map) body.get("statistics");
+        assertTrue(((Number) statistics.get("size")).longValue() >= 1);
+        assertTrue(statistics.containsKey("hitRate"));
+        val entries = (List<Map>) body.get("entries");
+        assertTrue(entries.stream().anyMatch(entry -> samlRegisteredService.getName().equals(entry.get("registeredServiceName"))
+            && entry.containsKey("cachedInstant") && entry.containsKey("metadataResolvers")));
+
+        val registry = new SimpleMeterRegistry();
+        samlRegisteredServiceMetadataCacheMeterBinder.bindTo(registry);
+        val size = registry.find("cache.size").tag("cache", "samlRegisteredServiceMetadata").gauge();
+        assertNotNull(size);
+        assertTrue(size.value() >= 1);
     }
 
     @Test

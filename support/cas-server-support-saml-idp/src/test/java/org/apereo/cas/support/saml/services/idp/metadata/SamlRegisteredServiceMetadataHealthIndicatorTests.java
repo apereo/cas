@@ -83,6 +83,25 @@ class SamlRegisteredServiceMetadataHealthIndicatorTests extends BaseSamlIdPConfi
         verify(metadataResolver, times(2)).isAvailable(any());
     }
 
+    @Test
+    void verifyStaleMetadataIsReported() {
+        val metadataResolver = mock(SamlRegisteredServiceMetadataResolver.class);
+        when(metadataResolver.supports(any())).thenReturn(Boolean.TRUE);
+        when(metadataResolver.isAvailable(any())).thenReturn(Boolean.TRUE);
+        when(metadataResolver.describe(any(), any())).thenReturn(Map.of("metadataBackupStale", Boolean.TRUE, "metadataBackupAge", "P9D"));
+        val plan = new DefaultSamlRegisteredServiceMetadataResolutionPlan();
+        plan.registerMetadataResolver(metadataResolver);
+
+        val service = SamlIdPTestUtils.getSamlRegisteredService(UUID.randomUUID().toString());
+        val isolatedServicesManager = mock(ServicesManager.class);
+        when(isolatedServicesManager.findServiceBy(any(Predicate.class))).thenReturn(List.of(service));
+        val health = new SamlRegisteredServiceMetadataHealthIndicator(plan, isolatedServicesManager).health();
+        assertEquals(Status.UP, health.getStatus());
+        val details = (Map<String, Object>) health.getDetails().get(service.getName());
+        assertEquals(Boolean.TRUE, details.get("metadataStale"));
+        assertEquals("P9D", details.get("metadataBackupAge"));
+    }
+
     private SamlRegisteredServiceMetadataHealthIndicator healthIndicatorFor(final RegisteredService... services) {
         val isolatedServicesManager = mock(ServicesManager.class);
         when(isolatedServicesManager.findServiceBy(any(Predicate.class))).thenReturn(List.of(services));

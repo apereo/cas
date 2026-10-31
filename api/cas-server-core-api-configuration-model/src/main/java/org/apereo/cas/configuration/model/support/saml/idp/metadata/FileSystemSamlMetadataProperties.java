@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration.model.support.saml.idp.metadata;
 
 import module java.base;
+import org.apereo.cas.configuration.support.DurationCapable;
 import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
@@ -37,4 +38,14 @@ public class FileSystemSamlMetadataProperties implements Serializable {
      * signing certificate and signing key.
      */
     private boolean signMetadata;
+
+    /**
+     * How often CAS may check whether service provider metadata kept in local files has changed.
+     * Metadata loaded from a file, a directory of metadata files or the JSON metadata file is
+     * reloaded as soon as a check finds one of its files changed, added or removed, instead of
+     * waiting for the cached entry to expire. Checks happen when the metadata is used, and
+     * no more often than this interval.
+     */
+    @DurationCapable
+    private String changeDetectionInterval = "PT5S";
 }

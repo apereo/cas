@@ -8,6 +8,7 @@ import org.apereo.cas.support.saml.services.idp.metadata.plan.SamlRegisteredServ
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import net.shibboleth.shared.resolver.CriteriaSet;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -33,6 +34,8 @@ public class SamlRegisteredServiceMetadataHealthIndicator extends AbstractHealth
      * location once per health check and the answer is shared by every service with that location: a metadata store
      * such as {@code jdbc://}, a metadata query server or a federation aggregate is one backend, however many service
      * definitions point at it, and probing it once per service turned every health check into as many calls.
+     * Each service also carries what its resolvers report about their sources, such as a metadata backup file that
+     * its source has not confirmed for longer than allowed, which flags the service as {@code metadataStale}.
      *
      * @param builder the health builder
      */
@@ -62,6 +65,15 @@ public class SamlRegisteredServiceMetadataHealthIndicator extends AbstractHealth
                     .anyMatch(r -> probes.computeIfAbsent(Pair.of(r, StringUtils.defaultString(service.getMetadataLocation())),
                         _ -> r.isAvailable(service)));
                 map.put("availability", BooleanUtils.toStringYesNo(availability));
+                availableResolvers
+                    .stream()
+                    .filter(Objects::nonNull)
+                    .filter(r -> r.supports(service))
+                    .map(r -> r.describe(service, new CriteriaSet()))
+                    .forEach(map::putAll);
+                if (Boolean.TRUE.equals(map.get("metadataBackupStale"))) {
+                    map.put("metadataStale", Boolean.TRUE);
+                }
                 builder.withDetail(service.getName(), map);
                 if (!availability) {
                     LOGGER.debug("No metadata resolver is available for service [{}]", service.getName());

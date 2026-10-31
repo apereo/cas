@@ -113,6 +113,11 @@ description: "Run and write tests in the CAS Gradle monorepo: testcas.sh categor
   as do the `mfa-gauth-login-encrypted`, `mfa-webauthn-register-logout-login` and `mfa-yubikey-storage` scenarios (their
   `dockerExec` calls run inside the container and are unaffected). A MariaDB test pointed at 3306 reaches MySQL and fails
   with `caching_sha2_password ... sslMode=trust`.
+- Redis tests can run in the VM against `fakeredis` (`pip install --user fakeredis`; `TcpFakeServer(("127.0.0.1", 6379))`),
+  started in the same `device_bash` call as `(timeout 170 python3 fr.py &)`: a detached server keeps the call open until
+  the tool times out, and a server started in an earlier call is gone. Pass `-Djdk.net.hosts.file` mapping the VM's
+  host name to 127.0.0.1, or every local host name lookup waits 40 s, and run from class directories copied off the
+  mount, or Spring context startup crawls on class loading.
 - `MockWebServer.requestLineConsumer` exposes the request line, for asserting the HTTP method a client sends.
 - Log4j hands a thread that asks for the logging context while another thread is still starting it (`tryLock` in
   `LoggerContext.start`) the context as it was, still on the default configuration, instead of making it wait. Tests
