@@ -4,7 +4,7 @@ import module java.base;
 import org.apereo.cas.oidc.discovery.OidcServerDiscoverySettingsFactory;
 import org.apereo.cas.support.oauth.web.DefaultOAuth20RequestParameterResolver;
 import org.apereo.cas.token.JwtBuilder;
-import org.pac4j.core.context.WebContext;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * This is {@link OidcRequestParameterResolver}.
@@ -18,32 +18,32 @@ public class OidcRequestParameterResolver extends DefaultOAuth20RequestParameter
     }
 
     @Override
-    protected List<String> getSupportedScopes(final WebContext context) {
+    protected List<String> getSupportedScopes(final HttpServletRequest request) {
         return OidcServerDiscoverySettingsFactory.resolveScopesSupported(jwtBuilder.getCasProperties());
     }
 
     @Override
-    protected List<String> getResponseTypesSupported(final WebContext context) {
+    protected List<String> getResponseTypesSupported(final HttpServletRequest request) {
         return jwtBuilder.getCasProperties().getAuthn().getOidc().getDiscovery().getResponseTypesSupported();
     }
 
     @Override
-    protected List<String> getGrantTypesSupported(final WebContext context) {
+    protected List<String> getGrantTypesSupported(final HttpServletRequest request) {
         return jwtBuilder.getCasProperties().getAuthn().getOidc().getDiscovery().getGrantTypesSupported();
     }
 
     @Override
-    protected List<String> getResponseModesSupported(final WebContext context) {
+    protected List<String> getResponseModesSupported(final HttpServletRequest request) {
         return jwtBuilder.getCasProperties().getAuthn().getOidc().getDiscovery().getResponseModesSupported();
     }
 
     @Override
-    protected boolean isRequestParameterSupported(final WebContext context) {
+    protected boolean isRequestParameterSupported(final HttpServletRequest request) {
         return jwtBuilder.getCasProperties().getAuthn().getOidc().getDiscovery().isRequestParameterSupported();
     }
 
     @Override
-    protected boolean isClaimsParameterSupported(final WebContext context) {
+    protected boolean isClaimsParameterSupported(final HttpServletRequest request) {
         return jwtBuilder.getCasProperties().getAuthn().getOidc().getDiscovery().isClaimsParameterSupported();
     }
 

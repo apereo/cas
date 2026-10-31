@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import tools.jackson.databind.ObjectMapper;
 import static org.junit.jupiter.api.Assertions.*;
@@ -88,6 +89,25 @@ class RemoteEndpointServiceAccessStrategyTests {
             assertFalse(strategy.authorizeRequest(RegisteredServiceAccessStrategyRequest.builder()
                 .applicationContext(applicationContext)
                 .principalId("casuser").build()));
+        }
+    }
+
+    @Test
+    void verifyEndpointIsCalledOnceWithFixedTimeout() {
+        val strategy = new RemoteEndpointServiceAccessStrategy();
+        strategy.setAcceptableResponseCodes("200");
+        try (val webServer = new MockWebServer(HttpStatus.INTERNAL_SERVER_ERROR)) {
+            webServer.start();
+            strategy.setEndpointUrl("http://localhost:%s".formatted(webServer.getPort()));
+            val request = RegisteredServiceAccessStrategyRequest.builder()
+                .applicationContext(applicationContext)
+                .principalId("casuser").build();
+            assertFalse(strategy.authorizeRequest(request));
+            assertEquals(1, webServer.getRequestCount());
+
+            val execution = strategy.buildExecutionRequest(request);
+            assertEquals(RemoteEndpointServiceAccessStrategy.TIMEOUT, execution.getResponseTimeout());
+            assertEquals(0, execution.getMaximumRetryAttempts());
         }
     }
 }

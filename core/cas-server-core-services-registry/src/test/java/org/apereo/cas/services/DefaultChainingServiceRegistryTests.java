@@ -62,4 +62,33 @@ class DefaultChainingServiceRegistryTests {
         assertNull(registry2.findServiceById(service.getId()));
     }
 
+    @Test
+    void verifyFindServiceByHonorsEvaluationOrderAcrossRegistries() {
+        val appCtx = new StaticApplicationContext();
+        appCtx.refresh();
+        val chain = new DefaultChainingServiceRegistry(appCtx);
+        val registry1 = new InMemoryServiceRegistry(appCtx);
+        registry1.setOrder(1);
+        val registry2 = new InMemoryServiceRegistry(appCtx);
+        registry2.setOrder(2);
+        chain.addServiceRegistries(List.<ServiceRegistry>of(registry1, registry2));
+
+        val broad = new CasRegisteredService();
+        broad.setId(1000);
+        broad.setName("Broad");
+        broad.setServiceId("^https://app.example.org.*");
+        broad.setEvaluationOrder(100);
+        registry1.save(broad);
+
+        val specific = new CasRegisteredService();
+        specific.setId(2000);
+        specific.setName("Specific");
+        specific.setServiceId("^https://app.example.org/admin.*");
+        specific.setEvaluationOrder(1);
+        registry2.save(specific);
+
+        assertEquals("Specific", chain.findServiceBy("https://app.example.org/admin/page").getName());
+        assertEquals("Broad", chain.findServiceBy("https://app.example.org/home").getName());
+        assertEquals(2, chain.getServicesStream().count());
+    }
 }

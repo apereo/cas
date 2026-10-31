@@ -5,8 +5,10 @@ import module java.xml;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.support.saml.SamlIdPConstants;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
+import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceMetadataAdaptor;
 import org.apereo.cas.support.saml.util.Saml20HexRandomIdGenerator;
+import org.apereo.cas.web.BrowserStorage;
 import com.google.common.primitives.Longs;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -34,7 +36,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 /**
- * This is {@link SamlIdPInitiatedProfileHandlerController}.
+ * This is {@link SamlIdPInitiatedProfileHandlerController}, which handles unsolicited SSO. The authentication request is
+ * built here for a service provider whose metadata is known and for an assertion consumer service that the metadata lists;
+ * it is neither signed nor checked for a signature.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
@@ -81,10 +85,6 @@ public class SamlIdPInitiatedProfileHandlerController extends AbstractSamlIdPPro
             request.setAttribute(SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE, target);
         }
         val ctx = new MessageContext();
-        if (facade.isAuthnRequestsSigned() || registeredService.isSignUnsolicitedAuthnRequest()) {
-            getConfigurationContext().getSamlObjectSigner().encode(authnRequest, registeredService,
-                facade, response, request, SAMLConstants.SAML2_POST_BINDING_URI, authnRequest, ctx);
-        }
         ctx.setMessage(authnRequest);
         val bindingContext = ctx.ensureSubcontext(SAMLBindingContext.class);
         Objects.requireNonNull(bindingContext).setHasBindingSignature(false);
@@ -93,18 +93,44 @@ public class SamlIdPInitiatedProfileHandlerController extends AbstractSamlIdPPro
         val pair = Pair.<RequestAbstractType, MessageContext>of(authnRequest, ctx);
         val modelAndView = initiateAuthenticationRequest(pair, response, request);
         if (modelAndView != null) {
-            val view = (RedirectView) modelAndView.getView();
-            val urlBuilder = new URIBuilder(Objects.requireNonNull(view).getUrl());
-            val paramNames = request.getParameterNames();
-            while (paramNames.hasMoreElements()) {
-                val parameterName = paramNames.nextElement();
-                if (canAcceptParameter(parameterName)) {
-                    urlBuilder.addParameter(parameterName, request.getParameter(parameterName));
-                }
+            if (modelAndView.getView() instanceof final RedirectView view) {
+                view.setUrl(appendRequestParameters(request, Objects.requireNonNull(view.getUrl())));
+            } else if (modelAndView.getModel().get(BrowserStorage.PARAMETER_BROWSER_STORAGE) instanceof final BrowserStorage storage) {
+                storage.setDestinationUrl(appendRequestParameters(request, storage.getDestinationUrl()));
             }
-            view.setUrl(urlBuilder.build().toString());
         }
         return modelAndView;
+    }
+
+    /**
+     * The authentication request of unsolicited SSO is built by this identity provider, not sent by the service provider,
+     * so there is no signature to verify, whatever the metadata of the service provider says about signed requests.
+     *
+     * @param ctx               the message context
+     * @param request           the request
+     * @param authnRequest      the authentication request
+     * @param adaptor           the metadata of the service provider
+     * @param registeredService the registered service
+     */
+    @Override
+    protected void verifyAuthenticationContextSignature(final MessageContext ctx,
+                                                        final HttpServletRequest request,
+                                                        final RequestAbstractType authnRequest,
+                                                        final SamlRegisteredServiceMetadataAdaptor adaptor,
+                                                        final SamlRegisteredService registeredService) {
+        LOGGER.debug("Unsolicited authentication request for [{}] is built by the identity provider and carries no signature", adaptor.getEntityId());
+    }
+
+    private static String appendRequestParameters(final HttpServletRequest request, final String url) throws URISyntaxException {
+        val urlBuilder = new URIBuilder(url);
+        val parameterNames = request.getParameterNames();
+        while (parameterNames.hasMoreElements()) {
+            val parameterName = parameterNames.nextElement();
+            if (canAcceptParameter(parameterName)) {
+                urlBuilder.addParameter(parameterName, request.getParameter(parameterName));
+            }
+        }
+        return urlBuilder.build().toString();
     }
 
     private static boolean canAcceptParameter(final String parameterName) {

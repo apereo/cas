@@ -37,7 +37,9 @@ public class OAuth20RefreshTokenCompactor implements TicketCompactor<OAuth20Refr
 
     private static final int AUTHORIZATION_DETAILS_INDEX = 7;
 
-    private static final int AUTHENTICATION_INDEX = 8;
+    private static final int RESOURCES_INDEX = 8;
+
+    private static final int AUTHENTICATION_INDEX = 9;
 
     private final ObjectProvider<TicketFactory> ticketFactory;
 
@@ -59,6 +61,7 @@ public class OAuth20RefreshTokenCompactor implements TicketCompactor<OAuth20Refr
         fields.add(Objects.requireNonNullElse(refreshToken.getResponseType(), OAuth20ResponseTypes.CODE).name());
         fields.add(Objects.requireNonNullElse(refreshToken.getGrantType(), OAuth20GrantTypes.AUTHORIZATION_CODE).name());
         fields.add(OAuth20Utils.toCompactAuthorizationDetails(refreshToken.getAuthorizationDetails()));
+        fields.add(CompactTicketCodec.encodeValues(refreshToken.getResources()));
         CompactTicketAuthentication.compact(fields, refreshToken.getAuthentication(), retainedAuthenticationAttributes);
     }
 
@@ -76,7 +79,8 @@ public class OAuth20RefreshTokenCompactor implements TicketCompactor<OAuth20Refr
         val grantType = OAuth20GrantTypes.valueOf(structure.get(GRANT_TYPE_INDEX));
         val factory = (OAuth20RefreshTokenFactory) ticketFactory.getObject().get(getTicketType());
         val refreshToken = factory.create(service, authentication, null,
-            CompactTicketCodec.decodeValues(structure.get(SCOPES_INDEX)), structure.get(CLIENT_ID_INDEX),
+            CompactTicketCodec.decodeValues(structure.get(SCOPES_INDEX)),
+            CompactTicketCodec.decodeValues(structure.get(RESOURCES_INDEX)), structure.get(CLIENT_ID_INDEX),
             null, new HashMap<>(), responseType, grantType);
         refreshToken.setAuthorizationDetails(OAuth20Utils.fromCompactAuthorizationDetails(structure.get(AUTHORIZATION_DETAILS_INDEX)));
         refreshToken.setCreationTime(DateTimeUtils.zonedDateTimeOf(structure.creationTime()));

@@ -21,21 +21,21 @@
                     <div class="text-center">
                         <h3 class="mt-md-0 mt-4">
                             <i class="mdi mdi-qrcode-scan fas fa-qrcode" aria-hidden="true"></i>
-                            <span>Login with QR Code</span>
+                            <span th:utext="#{cas.authn.qr.title}">Login with QR Code</span>
                         </h3>
                         <section>
                             <div id="qrerror" class="banner banner-danger alert alert-danger banner-dismissible" style="display:none;">
                                 <p th:utext="#{cas.authn.qr.fail}">Error</p>
                             </div>
                         </section>
-                        <p>Scan the QR code with your mobile device to begin the login flow. If your credentials
+                        <p th:utext="#{cas.authn.qr.instructions}">Scan the QR code with your mobile device to begin the login flow. If your credentials
                             are accepted, you will automatically proceed to the next step.</p>
                     </div>
                 </div>
                 <div class="card-text">
                     <div class="d-flex justify-content-center flex-column">
                         <img id="qrcode" th:src="@{'data:image/jpeg;base64,' + ${qrCode}}" alt="QR code"/>
-                        <p>Your mobile device must communicate with CAS using the following channel id.</p>
+                        <p th:utext="#{cas.authn.qr.channel}">Your mobile device must communicate with CAS using the following channel id.</p>
 
                         <section class="cas-field form-group my-3 mdc-input-group d-flex">
                             <div class="mdc-input-group-field mdc-input-group-field-append">
@@ -43,7 +43,7 @@
                                     <span class="mdc-notched-outline">
                                         <span class="mdc-notched-outline__leading"></span>
                                         <span class="mdc-notched-outline__notch">
-                                            <span class="mdc-floating-label">ID</span>
+                                            <span class="mdc-floating-label" th:utext="#{cas.authn.qr.channel.label}">ID</span>
                                     </span>
                                     <span class="mdc-notched-outline__trailing"></span>
                                     </span>
@@ -55,7 +55,7 @@
                                     class="mdc-button mdc-button--raised btn btn-primary mdc-input-group-append mdc-icon-button align-self-end drop-button"
                                     type="button">
                                 <i class="mdi mdi-content-copy fas fa-copy" aria-hidden="true"></i>
-                                <span class="visually-hidden">Copy</span>
+                                <span class="visually-hidden" th:utext="#{cas.authn.qr.copy}">Copy</span>
                             </button>
                         </section>
                     </div>

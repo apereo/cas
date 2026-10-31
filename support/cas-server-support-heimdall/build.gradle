@@ -16,7 +16,6 @@ dependencies {
     api project(":api:cas-server-core-api-ticket")
 
     implementation libraries.jose4j
-    implementation libraries.pac4jcore
     implementation libraries.nimbus
     implementation libraries.springsecurityweb
     implementation libraries.springsecurityconfig

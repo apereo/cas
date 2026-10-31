@@ -16,6 +16,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
 import org.jooq.lambda.fi.util.function.CheckedFunction;
+import org.jose4j.jwa.AlgorithmFactoryFactory;
 import org.jose4j.jwk.EcJwkGenerator;
 import org.jose4j.jwk.JsonWebKey;
 import org.jose4j.jwk.JsonWebKeySet;
@@ -25,6 +26,7 @@ import org.jose4j.jwk.RsaJwkGenerator;
 import org.jose4j.jws.AlgorithmIdentifiers;
 import org.jose4j.keys.AesKey;
 import org.jose4j.keys.EllipticCurves;
+import org.jose4j.lang.InvalidAlgorithmException;
 import org.jspecify.annotations.Nullable;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
@@ -244,13 +246,14 @@ public class OidcJsonWebKeyStoreUtils {
         LOGGER.trace("Using issuer [{}] to determine JWKS from default keystore cache", issuer);
         val serviceJsonWebKeys = Objects.requireNonNull(cipherExecutor.getRegisteredServiceJsonWebKeystoreCache().get(
             new OidcJsonWebKeyCacheKey(oidcRegisteredService, OidcJsonWebKeyUsage.SIGNING)));
-        if (serviceJsonWebKeys.isPresent()) {
-            val jsonWebKey = serviceJsonWebKeys.get();
-            LOGGER.debug("Found JSON web key to sign the token: [{}]", jsonWebKey);
-            val keys = jsonWebKey.getJsonWebKeys().stream()
-                .filter(key -> key.getKey() != null).collect(Collectors.toList());
-            return Optional.of(new JsonWebKeySet(keys));
+        val signingKeys = serviceJsonWebKeys
+            .map(jwks -> jwks.getJsonWebKeys().stream().filter(OidcJsonWebKeyStoreUtils::isUsableForSigning).toList())
+            .orElseGet(List::of);
+        if (!signingKeys.isEmpty()) {
+            LOGGER.debug("Found JSON web keys to sign the token: [{}]", signingKeys);
+            return Optional.of(new JsonWebKeySet(signingKeys));
         }
+        serviceJsonWebKeys.ifPresent(jwks -> LOGGER.debug("Service keys [{}] are reserved for encryption and are not used for signing", jwks));
         if (fallbackToDefault) {
             val cacheKey = new OidcJsonWebKeyCacheKey(issuer, OidcJsonWebKeyUsage.SIGNING);
             val defaultJsonWebKeys = cipherExecutor.getDefaultJsonWebKeystoreCache().get(cacheKey);
@@ -260,6 +263,37 @@ public class OidcJsonWebKeyStoreUtils {
         }
         LOGGER.warn("No [{}] key could be found for issuer [{}]", OidcJsonWebKeyUsage.SIGNING, issuer);
         return Optional.empty();
+    }
+
+    /**
+     * Whether the JWS algorithm can be used with the key, i.e. the algorithm is known and expects the key's type.
+     *
+     * @param key       the key
+     * @param algorithm the algorithm
+     * @return true/false
+     */
+    public static boolean isSigningAlgorithmCompatible(final JsonWebKey key, final @Nullable String algorithm) {
+        if (StringUtils.isBlank(algorithm)) {
+            return false;
+        }
+        try {
+            val jwsAlgorithm = AlgorithmFactoryFactory.getInstance().getJwsAlgorithmFactory().getAlgorithm(algorithm);
+            return Strings.CI.equals(jwsAlgorithm.getKeyType(), key.getKeyType());
+        } catch (final InvalidAlgorithmException e) {
+            LOGGER.debug("Unknown signing algorithm [{}]: [{}]", algorithm, e.getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Whether the key may be used for signing operations: it carries key material and is not reserved for encryption.
+     * Public keys stay usable, since the same keys verify objects the application signs, such as request objects.
+     *
+     * @param key the key
+     * @return true/false
+     */
+    private static boolean isUsableForSigning(final JsonWebKey key) {
+        return key.getKey() != null && !OidcJsonWebKeyUsage.ENCRYPTION.is(key);
     }
 
     /**

@@ -24,6 +24,7 @@ public interface OAuth20RefreshTokenFactory extends TicketFactory {
      * @param authentication       the authentication
      * @param ticketGrantingTicket the ticket granting ticket
      * @param scopes               the scopes
+     * @param resources            the resource indicators of the grant
      * @param clientId             the client id
      * @param accessToken          the access token created with this refresh token
      * @param requestClaims        the request claims
@@ -35,12 +36,41 @@ public interface OAuth20RefreshTokenFactory extends TicketFactory {
     OAuth20RefreshToken create(Service service, Authentication authentication,
                                Ticket ticketGrantingTicket,
                                Collection<String> scopes,
+                               Collection<String> resources,
                                String clientId,
                                String accessToken,
                                Map<String, Map<String, Object>> requestClaims,
                                OAuth20ResponseTypes responseType,
                                OAuth20GrantTypes grantType)
             throws Throwable;
+
+    /**
+     * Create a refresh token that is granted for no particular resource.
+     *
+     * @param service              the service
+     * @param authentication       the authentication
+     * @param ticketGrantingTicket the ticket granting ticket
+     * @param scopes               the scopes
+     * @param clientId             the client id
+     * @param accessToken          the access token created with this refresh token
+     * @param requestClaims        the request claims
+     * @param responseType         the response type
+     * @param grantType            the grant type
+     * @return the refresh token
+     * @throws Throwable the throwable
+     */
+    default OAuth20RefreshToken create(final Service service, final Authentication authentication,
+                                       final Ticket ticketGrantingTicket,
+                                       final Collection<String> scopes,
+                                       final String clientId,
+                                       final String accessToken,
+                                       final Map<String, Map<String, Object>> requestClaims,
+                                       final OAuth20ResponseTypes responseType,
+                                       final OAuth20GrantTypes grantType)
+            throws Throwable {
+        return create(service, authentication, ticketGrantingTicket, scopes, Set.of(),
+            clientId, accessToken, requestClaims, responseType, grantType);
+    }
 
     /**
      * Create refresh token without authentication.

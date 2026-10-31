@@ -19,9 +19,10 @@ import org.apereo.cas.util.function.FunctionUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.Strings;
-import org.pac4j.core.context.WebContext;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.util.Assert;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * This is {@link OidcAccessTokenTokenExchangeGrantRequestExtractor}.
@@ -36,17 +37,17 @@ public class OidcAccessTokenTokenExchangeGrantRequestExtractor extends AccessTok
     }
 
     @Override
-    protected TokenExchangeRequest extractSubjectTokenExchangeRequest(final WebContext webContext) throws Throwable {
+    protected TokenExchangeRequest extractSubjectTokenExchangeRequest(final HttpServletRequest request, final HttpServletResponse response) throws Throwable {
         val configurationContext = getConfigurationContext().getObject();
         val requestParameterResolver = configurationContext.getRequestParameterResolver();
-        val subjectTokenType = requestParameterResolver.resolveRequestParameter(webContext, OAuth20Constants.SUBJECT_TOKEN_TYPE)
+        val subjectTokenType = requestParameterResolver.resolveRequestParameter(request, OAuth20Constants.SUBJECT_TOKEN_TYPE)
             .map(OAuth20TokenExchangeTypes::from)
             .orElseThrow();
-        val subjectToken = requestParameterResolver.resolveRequestParameter(webContext, OAuth20Constants.SUBJECT_TOKEN)
+        val subjectToken = requestParameterResolver.resolveRequestParameter(request, OAuth20Constants.SUBJECT_TOKEN)
             .orElseThrow(() -> new IllegalArgumentException("Subject token cannot be undefined"));
 
         if (subjectTokenType == OAuth20TokenExchangeTypes.ID_TOKEN) {
-            val userProfile = extractUserProfile(webContext).orElseThrow();
+            val userProfile = extractUserProfile(request, response).orElseThrow();
             val requestingClientId = userProfile.getId();
 
             val clientIdInIdToken = OAuth20Utils.extractClientIdFromToken(subjectToken);
@@ -57,9 +58,9 @@ public class OidcAccessTokenTokenExchangeGrantRequestExtractor extends AccessTok
 
             userProfile.setId(claimSet.getSubject());
             claimSet.getClaimsMap().forEach(userProfile::addAttribute);
-            val authentication = configurationContext.getAuthenticationBuilder().build(userProfile, registeredService, webContext, service);
+            val authentication = configurationContext.getAuthenticationBuilder().build(userProfile, registeredService, request, service);
             val accessTokenFactory = (OAuth20AccessTokenFactory) configurationContext.getTicketFactory().get(OAuth20AccessToken.class);
-            val scopes = configurationContext.getRequestParameterResolver().resolveRequestedScopes(webContext);
+            val scopes = configurationContext.getRequestParameterResolver().resolveRequestedScopes(request);
             val accessToken = accessTokenFactory.create(service, authentication, scopes, requestingClientId,
                 OAuth20ResponseTypes.NONE, OAuth20GrantTypes.TOKEN_EXCHANGE);
             val requestedRegisteredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(
@@ -67,26 +68,26 @@ public class OidcAccessTokenTokenExchangeGrantRequestExtractor extends AccessTok
             return new TokenExchangeRequest(accessToken, service, requestedRegisteredService, authentication);
 
         }
-        return super.extractSubjectTokenExchangeRequest(webContext);
+        return super.extractSubjectTokenExchangeRequest(request, response);
     }
 
     @Override
-    protected Authentication getActorTokenAuthentication(final WebContext webContext, final TokenExchangeRequest extractedRequest) throws Throwable {
+    protected Authentication getActorTokenAuthentication(final HttpServletRequest request, final HttpServletResponse response, final TokenExchangeRequest extractedRequest) throws Throwable {
         val configurationContext = getConfigurationContext().getObject();
         val actorToken = configurationContext.getRequestParameterResolver()
-            .resolveRequestParameter(webContext, OAuth20Constants.ACTOR_TOKEN);
+            .resolveRequestParameter(request, OAuth20Constants.ACTOR_TOKEN);
         val actorTokenType = configurationContext.getRequestParameterResolver()
-            .resolveRequestParameter(webContext, OAuth20Constants.ACTOR_TOKEN_TYPE)
+            .resolveRequestParameter(request, OAuth20Constants.ACTOR_TOKEN_TYPE)
             .map(OAuth20TokenExchangeTypes::from);
 
         if (actorTokenType.isPresent() && actorTokenType.get() == OAuth20TokenExchangeTypes.DEVICE_SECRET) {
             val subjectTokenType = configurationContext.getRequestParameterResolver()
-                .resolveRequestParameter(webContext, OAuth20Constants.SUBJECT_TOKEN_TYPE)
+                .resolveRequestParameter(request, OAuth20Constants.SUBJECT_TOKEN_TYPE)
                 .map(OAuth20TokenExchangeTypes::from);
             FunctionUtils.throwIf(subjectTokenType.isEmpty() || subjectTokenType.get() != OAuth20TokenExchangeTypes.ID_TOKEN,
                 () -> new IllegalArgumentException("Subject token type is missing or not an ID token when actor token is %s".formatted(actorTokenType.get())));
             val subjectToken = configurationContext.getRequestParameterResolver()
-                .resolveRequestParameter(webContext, OAuth20Constants.SUBJECT_TOKEN)
+                .resolveRequestParameter(request, OAuth20Constants.SUBJECT_TOKEN)
                 .orElseThrow(() -> new IllegalArgumentException("Subject token type cannot be undefined when actor token is provided"));
             val clientIdInIdToken = OAuth20Utils.extractClientIdFromToken(subjectToken);
             val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(configurationContext.getServicesManager(), clientIdInIdToken);
@@ -105,17 +106,17 @@ public class OidcAccessTokenTokenExchangeGrantRequestExtractor extends AccessTok
             Assert.notNull(ticketGrantingTicket, "Ticket granting ticket cannot be null");
             return ticketGrantingTicket.getAuthentication();
         }
-        return super.getActorTokenAuthentication(webContext, extractedRequest);
+        return super.getActorTokenAuthentication(request, response, extractedRequest);
     }
 
     @Override
-    protected Authentication buildActorTokenAuthentication(final WebContext webContext,
+    protected Authentication buildActorTokenAuthentication(final HttpServletRequest request, final HttpServletResponse response,
                                                            final OAuth20TokenExchangeTypes actorTokenType,
                                                            final String actorToken)
             throws Throwable {
         val configurationContext = getConfigurationContext().getObject();
         if (actorTokenType == OAuth20TokenExchangeTypes.ID_TOKEN) {
-            val userProfile = extractUserProfile(webContext).orElseThrow();
+            val userProfile = extractUserProfile(request, response).orElseThrow();
             val clientIdInIdToken = OAuth20Utils.extractClientIdFromToken(actorToken);
             val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(configurationContext.getServicesManager(), clientIdInIdToken);
             RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(registeredService);
@@ -124,8 +125,8 @@ public class OidcAccessTokenTokenExchangeGrantRequestExtractor extends AccessTok
             service.getAttributes().put(OAuth20Constants.CLIENT_ID, List.of(clientIdInIdToken));
             userProfile.setId(claimSet.getSubject());
             claimSet.getClaimsMap().forEach(userProfile::addAttribute);
-            return configurationContext.getAuthenticationBuilder().build(userProfile, Objects.requireNonNull(registeredService), webContext, service);
+            return configurationContext.getAuthenticationBuilder().build(userProfile, Objects.requireNonNull(registeredService), request, service);
         }
-        return super.buildActorTokenAuthentication(webContext, actorTokenType, actorToken);
+        return super.buildActorTokenAuthentication(request, response, actorTokenType, actorToken);
     }
 }

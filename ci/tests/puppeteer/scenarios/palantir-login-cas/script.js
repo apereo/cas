@@ -2,6 +2,8 @@ const assert = require("assert");
 const cas = require("../../cas.js");
 
 (async () => {
+    await cas.doRequest("https://localhost:8443/cas/actuator/info", "GET", {"Accept": "application/json"}, 401, undefined,
+        async (res) => assert(String(res.headers["www-authenticate"]).startsWith("Basic"), "Only Palantir redirects to the CAS login"));
     const browser = await cas.newBrowser(cas.browserOptions());
     const page = await cas.newPage(browser);
     await cas.goto(page, "https://localhost:8443/cas/palantir/dashboard");

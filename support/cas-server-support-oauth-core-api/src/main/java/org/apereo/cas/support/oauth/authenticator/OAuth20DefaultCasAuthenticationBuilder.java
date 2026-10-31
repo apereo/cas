@@ -13,6 +13,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
+import org.apereo.cas.support.oauth.profile.OAuth20UserProfile;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.OAuth20RequestParameterResolver;
@@ -22,9 +23,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.pac4j.core.context.WebContext;
-import org.pac4j.core.profile.BasicUserProfile;
-import org.pac4j.core.profile.UserProfile;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * This is {@link OAuth20DefaultCasAuthenticationBuilder}.
@@ -48,10 +47,10 @@ public class OAuth20DefaultCasAuthenticationBuilder implements OAuth20CasAuthent
 
     @Override
     public Service buildService(final OAuthRegisteredService registeredService,
-                                final WebContext context, final boolean useServiceHeader) {
+                                final HttpServletRequest request, final boolean useServiceHeader) {
         var serviceIdentifier = StringUtils.EMPTY;
         if (useServiceHeader) {
-            serviceIdentifier = OAuth20Utils.getServiceRequestHeaderIfAny(context);
+            serviceIdentifier = OAuth20Utils.getServiceRequestHeaderIfAny(request);
             LOGGER.debug("Located service based on request header is [{}]", serviceIdentifier);
         }
         if (StringUtils.isBlank(serviceIdentifier)) {
@@ -64,9 +63,9 @@ public class OAuth20DefaultCasAuthenticationBuilder implements OAuth20CasAuthent
     }
 
     @Override
-    public Authentication build(final UserProfile profile,
+    public Authentication build(final OAuth20UserProfile profile,
                                 final OAuthRegisteredService registeredService,
-                                final WebContext context,
+                                final HttpServletRequest request,
                                 final Service service)
             throws Throwable {
 
@@ -75,29 +74,26 @@ public class OAuth20DefaultCasAuthenticationBuilder implements OAuth20CasAuthent
         val newPrincipal = principalFactory.createPrincipal(profile.getId(), profileAttributes);
         LOGGER.debug("Created final principal [{}] after filtering attributes based on [{}]", newPrincipal, registeredService);
 
-        val authenticator = profile.getClass().getCanonicalName();
+        val authenticator = profile.getAuthenticationHandlerName();
         val credential = new BasicIdentifiableCredential(profile.getId());
         val handlerResult = new DefaultAuthenticationHandlerExecutionResult(authenticator,
             credential, newPrincipal, new ArrayList<>());
 
-        val scopes = requestParameterResolver.resolveRequestedScopes(context);
+        val scopes = requestParameterResolver.resolveRequestedScopes(request);
         scopes.retainAll(registeredService.getScopes());
 
-        val state = context.getRequestParameter(OAuth20Constants.STATE)
+        val state = Optional.ofNullable(request.getParameter(OAuth20Constants.STATE))
             .map(String::valueOf)
-            .or(() -> requestParameterResolver.resolveRequestParameter(context, OAuth20Constants.STATE))
+            .or(() -> requestParameterResolver.resolveRequestParameter(request, OAuth20Constants.STATE))
             .orElse(StringUtils.EMPTY);
-        val nonce = context.getRequestParameter(OAuth20Constants.NONCE)
+        val nonce = Optional.ofNullable(request.getParameter(OAuth20Constants.NONCE))
             .map(String::valueOf)
-            .or(() -> requestParameterResolver.resolveRequestParameter(context, OAuth20Constants.NONCE))
+            .or(() -> requestParameterResolver.resolveRequestParameter(request, OAuth20Constants.NONCE))
             .orElse(StringUtils.EMPTY);
         LOGGER.debug("OAuth [{}] is [{}], and [{}] is [{}]", OAuth20Constants.STATE, state, OAuth20Constants.NONCE, nonce);
 
         val builder = DefaultAuthenticationBuilder.newInstance();
-        if (profile instanceof final BasicUserProfile basicUserProfile) {
-            val authenticationAttributes = basicUserProfile.getAuthenticationAttributes();
-            builder.addAttributes(authenticationAttributes);
-        }
+        builder.addAttributes(profile.getAuthenticationAttributes());
         if (!profile.getRoles().isEmpty()) {
             builder.addAttribute("roles", new LinkedHashSet<>(profile.getRoles()));
         }
@@ -111,9 +107,9 @@ public class OAuth20DefaultCasAuthenticationBuilder implements OAuth20CasAuthent
             .addCredential(credential)
             .setPrincipal(newPrincipal)
             .setAuthenticationDate(ZonedDateTime.now(ZoneOffset.UTC))
-            .addSuccess(profile.getClass().getCanonicalName(), handlerResult);
+            .addSuccess(authenticator, handlerResult);
 
-        context.getRequestParameter(OAuth20Constants.ACR_VALUES)
+        Optional.ofNullable(request.getParameter(OAuth20Constants.ACR_VALUES))
             .ifPresent(value -> builder.addAttribute(OAuth20Constants.ACR_VALUES, value));
 
         return builder.build();

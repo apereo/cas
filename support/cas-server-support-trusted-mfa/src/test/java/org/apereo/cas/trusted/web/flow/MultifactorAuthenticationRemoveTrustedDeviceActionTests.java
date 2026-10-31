@@ -5,6 +5,7 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.trusted.AbstractMultifactorAuthenticationTrustStorageTests;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
+import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
 import org.apereo.cas.trusted.util.MultifactorAuthenticationTrustUtils;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.web.flow.CasWebflowConstants;
@@ -41,6 +42,10 @@ class MultifactorAuthenticationRemoveTrustedDeviceActionTests {
     private Action mfaRemoveAction;
     
     @Autowired
+    @Qualifier(MultifactorAuthenticationTrustStorage.BEAN_NAME)
+    private MultifactorAuthenticationTrustStorage mfaTrustEngine;
+
+    @Autowired
     private ConfigurableApplicationContext applicationContext;
 
     @Test
@@ -53,6 +58,20 @@ class MultifactorAuthenticationRemoveTrustedDeviceActionTests {
         val record = result.getAttributes().get("result", MultifactorAuthenticationTrustRecord.class);
         context.setParameter("key", record.getRecordKey());
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, mfaRemoveAction.execute(context).getId());
+    }
+
+    @Test
+    void verifyDeviceOfAnotherPrincipalIsKept() throws Throwable {
+        val context = getMockRequestContext();
+        val bean = new MultifactorAuthenticationTrustBean().setDeviceName("ApereoCAS");
+        MultifactorAuthenticationTrustUtils.putMultifactorAuthenticationTrustRecord(context, bean);
+        val result = mfaSetTrustAction.execute(context);
+        val record = result.getAttributes().get("result", MultifactorAuthenticationTrustRecord.class);
+
+        val otherContext = getMockRequestContext();
+        otherContext.setParameter("key", record.getRecordKey());
+        assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, mfaRemoveAction.execute(otherContext).getId());
+        assertFalse(mfaTrustEngine.get(record.getPrincipal()).isEmpty());
     }
 
     private MockRequestContext getMockRequestContext() throws Throwable {

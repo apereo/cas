@@ -1,6 +1,7 @@
 package org.apereo.cas.support.saml.services.idp.metadata.cache;
 
 import module java.base;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.saml.SamlException;
 import org.apereo.cas.support.saml.services.BaseSamlIdPServicesTests;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
@@ -16,10 +17,8 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.retry.RetryException;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.TestPropertySource;
-import static org.apereo.cas.util.junit.Assertions.assertThrowsWithRootCause;
 import static org.awaitility.Awaitility.*;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -49,7 +48,7 @@ class SamlRegisteredServiceDefaultCachingMetadataResolverTests extends BaseSamlI
             assertTrue(resolver.resolveIfPresent(aggregateRegisteredService, criteriaSet1).isPresent());
 
             val criteriaSet2 = getCriteriaFor("unknown-entity");
-            assertThrowsWithRootCause(RetryException.class, SamlException.class, () -> resolver.resolve(aggregateRegisteredService, criteriaSet2));
+            assertThrows(SamlException.class, () -> resolver.resolve(aggregateRegisteredService, criteriaSet2));
             assertTrue(resolver.resolveIfPresent(aggregateRegisteredService, criteriaSet1).isPresent());
         }
     }
@@ -69,7 +68,7 @@ class SamlRegisteredServiceDefaultCachingMetadataResolverTests extends BaseSamlI
         assertTrue(resolver.resolveIfPresent(aggregateRegisteredService, criteriaSet1).isPresent());
 
         val criteriaSet2 = getCriteriaFor("unknown-service-provider");
-        assertThrowsWithRootCause(RetryException.class, SamlException.class, () -> resolver.resolve(aggregateRegisteredService, criteriaSet2));
+        assertThrows(SamlException.class, () -> resolver.resolve(aggregateRegisteredService, criteriaSet2));
 
         assertTrue(resolver.resolveIfPresent(aggregateRegisteredService, criteriaSet1).isPresent());
 
@@ -95,9 +94,11 @@ class SamlRegisteredServiceDefaultCachingMetadataResolverTests extends BaseSamlI
         assertTrue(resolver.resolveIfPresent(service, criteriaSet).isPresent());
 
         val criteriaSet2 = getCriteriaFor("unknown-service-provider");
-        assertThrowsWithRootCause(RetryException.class, SamlException.class, () -> resolver.resolve(service, criteriaSet2));
+        assertThrows(SamlException.class, () -> resolver.resolve(service, criteriaSet2));
+        assertThrows(SamlException.class, () -> resolver.resolve(service, criteriaSet2));
 
-        assertFalse(resolver.resolveIfPresent(service, criteriaSet).isPresent());
+        assertTrue(resolver.resolveIfPresent(service, criteriaSet).isPresent());
+        assertEquals(1, resolver.getCacheStatistics().loadSuccessCount());
         resolver.invalidate();
     }
 
@@ -112,7 +113,17 @@ class SamlRegisteredServiceDefaultCachingMetadataResolverTests extends BaseSamlI
         service.setMetadataLocation("classpath:metadata-invalid.xml");
 
         val resolver = getResolver("PT5S");
-        assertThrowsWithRootCause(RetryException.class, SamlException.class, () -> resolver.resolve(service, criteriaSet));
+        assertThrows(SamlException.class, () -> resolver.resolve(service, criteriaSet));
+
+        val missingService = getSamlRegisteredService(2000, "urn:.+", "classpath:missing-metadata.xml");
+        val failures = resolver.getCacheStatistics().loadFailureCount();
+        assertThrows(SamlException.class, () -> resolver.resolve(missingService, criteriaSet));
+        assertThrows(SamlException.class, () -> resolver.resolve(missingService, criteriaSet));
+        assertEquals(failures + 1, resolver.getCacheStatistics().loadFailureCount());
+
+        resolver.invalidate(missingService, criteriaSet);
+        assertThrows(SamlException.class, () -> resolver.resolve(missingService, criteriaSet));
+        assertEquals(failures + 2, resolver.getCacheStatistics().loadFailureCount());
         resolver.invalidate();
     }
 
@@ -125,14 +136,15 @@ class SamlRegisteredServiceDefaultCachingMetadataResolverTests extends BaseSamlI
         service.setServiceId(".+");
         service.setMetadataLocation("classpath:sample-sp.xml");
 
-        val resolver = getResolver("PT5S");
+        val resolver = getResolver("PT5S", "PT0S");
         val criteriaSet1 = getCriteriaFor("https://carmenwiki.osu.edu/shibboleth");
         assertNotNull(resolver.resolve(service, criteriaSet1));
 
         val criteriaSet2 = getCriteriaFor("unknown-service-provider");
-        assertThrowsWithRootCause(RetryException.class, SamlException.class, () -> resolver.resolve(service, criteriaSet2));
+        assertThrows(SamlException.class, () -> resolver.resolve(service, criteriaSet2));
+        assertEquals(2, resolver.getCacheStatistics().loadSuccessCount());
 
-        assertFalse(resolver.resolveIfPresent(service, criteriaSet1).isPresent());
+        assertTrue(resolver.resolveIfPresent(service, criteriaSet1).isPresent());
         resolver.invalidate();
     }
 
@@ -208,7 +220,7 @@ class SamlRegisteredServiceDefaultCachingMetadataResolverTests extends BaseSamlI
         val criteriaSet1 = getCriteriaFor("https://shib-sp-test-preprod.dartmouth.edu/shibboleth");
         val service = getSamlRegisteredService(1, ".*", "https://mdq.incommon.org/entities/{0}");
         val resolver = getResolver("PT5M");
-        assertThrowsWithRootCause(RetryException.class, SamlException.class, () -> resolver.resolve(service, criteriaSet1));
+        assertThrows(SamlException.class, () -> resolver.resolve(service, criteriaSet1));
     }
 
     @Test
@@ -260,6 +272,10 @@ class SamlRegisteredServiceDefaultCachingMetadataResolverTests extends BaseSamlI
     }
 
     private SamlRegisteredServiceDefaultCachingMetadataResolver getResolver(final String duration) {
+        return getResolver(duration, "PT1M");
+    }
+
+    private SamlRegisteredServiceDefaultCachingMetadataResolver getResolver(final String duration, final String failureDuration) {
         val resolutionPlan = new DefaultSamlRegisteredServiceMetadataResolutionPlan();
         val props = casProperties.getAuthn().getSamlIdp();
         resolutionPlan.registerMetadataResolver(
@@ -271,7 +287,10 @@ class SamlRegisteredServiceDefaultCachingMetadataResolverTests extends BaseSamlI
         resolutionPlan.registerMetadataResolver(
             new FileSystemResourceMetadataResolver(props, openSamlConfigBean));
         val cacheLoader = new SamlRegisteredServiceMetadataResolverCacheLoader(openSamlConfigBean, httpClient, resolutionPlan);
-        casProperties.getAuthn().getSamlIdp().getMetadata().getCore().setCacheExpiration(duration);
-        return new SamlRegisteredServiceDefaultCachingMetadataResolver(casProperties, cacheLoader, openSamlConfigBean);
+        val resolverProperties = new CasConfigurationProperties();
+        resolverProperties.getAuthn().getSamlIdp().getMetadata().getCore()
+            .setCacheExpiration(duration)
+            .setFailureCacheExpiration(failureDuration);
+        return new SamlRegisteredServiceDefaultCachingMetadataResolver(resolverProperties, cacheLoader, openSamlConfigBean);
     }
 }

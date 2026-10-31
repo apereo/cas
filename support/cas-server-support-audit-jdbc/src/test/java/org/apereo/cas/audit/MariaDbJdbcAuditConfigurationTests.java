@@ -17,10 +17,10 @@ import org.springframework.test.context.TestPropertySource;
     "cas.audit.jdbc.user=root",
     "cas.audit.jdbc.password=mypass",
     "cas.audit.jdbc.driver-class=org.mariadb.jdbc.Driver",
-    "cas.audit.jdbc.url=jdbc:mariadb://localhost:3306/mysql?allowPublicKeyRetrieval=true&characterEncoding=UTF-8&useSSL=FALSE",
+    "cas.audit.jdbc.url=jdbc:mariadb://localhost:3307/mysql?allowPublicKeyRetrieval=true&characterEncoding=UTF-8&useSSL=FALSE",
     "cas.audit.jdbc.dialect=org.hibernate.dialect.MariaDBDialect"
 })
-@EnabledIfListeningOnPort(port = 3306)
+@EnabledIfListeningOnPort(port = 3307)
 @Tag("MariaDb")
 class MariaDbJdbcAuditConfigurationTests extends CasJdbcAuditConfigurationTests {
 }

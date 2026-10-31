@@ -59,6 +59,7 @@ public class OAuth20DefaultAccessTokenFactory implements OAuth20AccessTokenFacto
                                      final Authentication authentication,
                                      final Ticket ticketGrantingTicket,
                                      final Collection<String> scopes,
+                                     final Collection<String> resources,
                                      final Ticket token,
                                      final String clientId,
                                      final Map<String, Map<String, Object>> requestClaims,
@@ -84,6 +85,7 @@ public class OAuth20DefaultAccessTokenFactory implements OAuth20AccessTokenFacto
         val accessToken = new OAuth20DefaultAccessToken(accessTokenId, service, authentication,
             expirationPolicyToUse, ticketGrantingTicket, exchangedToken, scopes,
             clientId, requestClaims, responseType, grantType, authorizationDetails);
+        accessToken.setResources(resources);
         
         FunctionUtils.doIfNotNull(service, _ -> accessToken.setTenantId(service.getTenant()));
         descendantTicketsTrackingPolicy.trackTicket(ticketGrantingTicket, accessToken);

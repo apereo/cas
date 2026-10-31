@@ -22,7 +22,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.pac4j.jee.context.JEEContext;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -151,7 +150,7 @@ public class HeimdallAuthorizationController {
         try {
             val authorizationHeader = Objects.requireNonNull(request.getHeader(HttpHeaders.AUTHORIZATION));
             Assert.hasText(authorizationHeader, "Authorization header cannot be blank");
-            principalParser.authenticateCaller(authorizationHeader, new JEEContext(request, response));
+            principalParser.authenticateCaller(authorizationHeader, request, response);
         } catch (final Throwable e) {
             LOGGER.debug("AuthZEN caller authentication failed", e);
             return unauthenticated(e);
@@ -301,7 +300,7 @@ public class HeimdallAuthorizationController {
             throws Throwable {
         val authorizationHeader = Objects.requireNonNull(request.getHeader(HttpHeaders.AUTHORIZATION));
         Assert.hasText(authorizationHeader, "Authorization header cannot be blank");
-        val principal = principalParser.parse(authorizationHeader, authorizationRequest, new JEEContext(request, response));
+        val principal = principalParser.parse(authorizationHeader, authorizationRequest, request, response);
         val requestToAuthorize = authorizationRequest.withPrincipal(principal);
         if (!requestToAuthorize.isAuthZen()) {
             val context = (Map<String, Object>) requestToAuthorize.getContext();

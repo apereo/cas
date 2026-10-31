@@ -2,6 +2,7 @@ package org.apereo.cas.oidc.token;
 
 import module java.base;
 import org.apereo.cas.oidc.AbstractOidcTests;
+import org.apereo.cas.util.crypto.IdentifiableKey;
 import com.nimbusds.jwt.SignedJWT;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -26,5 +27,14 @@ class OidcJwtAccessTokenCipherExecutorTests extends AbstractOidcTests {
         val decoded = oidcAccessTokenJwtCipherExecutor.decode(encoded);
         assertNotNull(decoded);
         assertEquals(at.getId(), decoded);
+    }
+
+    @Test
+    void verifyDecodingKeepsPrivateSigningKey() throws Throwable {
+        val encoded = oidcAccessTokenJwtCipherExecutor.encode(getAccessToken().getId());
+        val cipher = assertInstanceOf(BaseOidcJwtCipherExecutor.class, oidcAccessTokenJwtCipherExecutor);
+        assertNotNull(oidcAccessTokenJwtCipherExecutor.decode(encoded));
+        val signingKey = assertInstanceOf(IdentifiableKey.class, cipher.getSigningKey());
+        assertInstanceOf(PrivateKey.class, signingKey.getKey());
     }
 }

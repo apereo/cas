@@ -13,7 +13,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.Nullable;
-import org.pac4j.jee.context.JEEContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -46,11 +45,10 @@ public class OidcPushedAuthorizeEndpointController extends OidcAuthorizeEndpoint
     @PostMapping("/**/" + OidcConstants.PUSHED_AUTHORIZE_URL)
     @Operation(summary = "Handle OIDC Pushed Authorization Request")
     public ModelAndView handleRequestPost(final HttpServletRequest request, final HttpServletResponse response) throws Throwable {
-        val webContext = new JEEContext(request, response);
-        if (!getConfigurationContext().getIssuerService().validateIssuer(webContext, List.of(OidcConstants.PUSHED_AUTHORIZE_URL))) {
+        if (!getConfigurationContext().getIssuerService().validateIssuer(request, List.of(OidcConstants.PUSHED_AUTHORIZE_URL))) {
             return OAuth20Utils.writeError(response, OAuth20Constants.INVALID_REQUEST, "Invalid issuer");
         }
-        val keyBindingError = verifyProofOfPossessionKey(request, response, webContext);
+        val keyBindingError = verifyProofOfPossessionKey(request, response);
         return keyBindingError != null ? keyBindingError : super.handleRequest(request, response);
     }
 
@@ -59,24 +57,22 @@ public class OidcPushedAuthorizeEndpointController extends OidcAuthorizeEndpoint
      * and its key thumbprint stands for {@code dpop_jkt}, binding the authorization code to that key; a {@code dpop_jkt} in the
      * request must then name the same key (RFC 9449, section 10.1).
      *
-     * @param request    the request
-     * @param response   the response
-     * @param webContext the web context
+     * @param request  the request
+     * @param response the response
      * @return the error, or null when the request carries no DPoP proof or a valid one
      */
-    protected @Nullable ModelAndView verifyProofOfPossessionKey(final HttpServletRequest request, final HttpServletResponse response,
-                                                                final JEEContext webContext) {
+    protected @Nullable ModelAndView verifyProofOfPossessionKey(final HttpServletRequest request, final HttpServletResponse response) {
         try {
-            val thumbprint = getConfigurationContext().getProofOfPossessionValidator().validateKeyBinding(webContext);
+            val thumbprint = getConfigurationContext().getProofOfPossessionValidator().validateKeyBinding(request, response);
             if (thumbprint.isPresent()) {
                 val requestedThumbprint = getConfigurationContext().getRequestParameterResolver()
-                    .resolveRequestParameter(webContext, OAuth20Constants.DPOP_JKT)
+                    .resolveRequestParameter(request, OAuth20Constants.DPOP_JKT)
                     .filter(StringUtils::isNotBlank);
                 if (requestedThumbprint.isPresent() && !requestedThumbprint.get().equals(thumbprint.get())) {
                     return OAuth20Utils.writeError(response, OAuth20Constants.INVALID_DPOP_PROOF,
                         "dpop_jkt does not match the key of the DPoP proof");
                 }
-                webContext.setRequestAttribute(OAuth20Constants.DPOP_JKT, thumbprint.get());
+                request.setAttribute(OAuth20Constants.DPOP_JKT, thumbprint.get());
             }
             return null;
         } catch (final InvalidDPoPNonceException e) {

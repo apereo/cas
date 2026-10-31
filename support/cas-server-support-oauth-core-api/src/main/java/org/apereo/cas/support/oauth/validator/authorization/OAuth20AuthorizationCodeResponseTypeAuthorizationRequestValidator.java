@@ -14,8 +14,9 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.pac4j.core.context.WebContext;
 import org.springframework.core.Ordered;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * This is {@link OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidator}.
@@ -39,17 +40,17 @@ public class OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidator e
     }
 
     @Override
-    public boolean validate(final WebContext context) {
-        val clientIdResult = requestParameterResolver.resolveRequestParameter(context, OAuth20Constants.CLIENT_ID);
+    public boolean validate(final HttpServletRequest request, final HttpServletResponse response) {
+        val clientIdResult = requestParameterResolver.resolveRequestParameter(request, OAuth20Constants.CLIENT_ID);
         return clientIdResult
             .map(this::getRegisteredServiceByClientId)
             .filter(Objects::nonNull)
             .map(registeredService -> {
-                if (!requestParameterResolver.isAuthorizedResponseTypeForService(context, registeredService)) {
-                    val responseTypeResult = requestParameterResolver.resolveRequestParameter(context, OAuth20Constants.RESPONSE_TYPE);
+                if (!requestParameterResolver.isAuthorizedResponseTypeForService(request, registeredService)) {
+                    val responseTypeResult = requestParameterResolver.resolveRequestParameter(request, OAuth20Constants.RESPONSE_TYPE);
                     val msg = String.format("Client is not allowed to use the [%s] response type", responseTypeResult.orElse("unknown"));
                     LOGGER.warn(msg);
-                    setErrorDetails(context, OAuth20Constants.UNAUTHORIZED_CLIENT, msg, true);
+                    setErrorDetails(request, OAuth20Constants.UNAUTHORIZED_CLIENT, msg, true);
                     return false;
                 }
                 return true;
@@ -58,9 +59,9 @@ public class OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidator e
     }
 
     @Override
-    public boolean supports(final WebContext context) throws Throwable {
-        if (preValidate(context)) {
-            val responseType = requestParameterResolver.resolveRequestParameter(context, OAuth20Constants.RESPONSE_TYPE)
+    public boolean supports(final HttpServletRequest request, final HttpServletResponse response) throws Throwable {
+        if (preValidate(request)) {
+            val responseType = requestParameterResolver.resolveRequestParameter(request, OAuth20Constants.RESPONSE_TYPE)
                 .map(String::valueOf)
                 .orElse(StringUtils.EMPTY);
             LOGGER.debug("Requested response type is [{}]", responseType);

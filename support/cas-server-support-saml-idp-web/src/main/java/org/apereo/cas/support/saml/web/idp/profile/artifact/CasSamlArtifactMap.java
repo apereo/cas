@@ -2,7 +2,6 @@ package org.apereo.cas.support.saml.web.idp.profile.artifact;
 
 import module java.base;
 import org.apereo.cas.ticket.TicketFactory;
-import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.artifact.SamlArtifactTicket;
 import org.apereo.cas.ticket.artifact.SamlArtifactTicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
@@ -15,9 +14,6 @@ import lombok.val;
 import org.jspecify.annotations.NonNull;
 import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.common.binding.artifact.impl.BasicSAMLArtifactMap;
-import org.pac4j.core.context.session.SessionStore;
-import org.pac4j.core.profile.ProfileManager;
-import org.pac4j.jee.context.JEEContext;
 
 /**
  * This is {@link CasSamlArtifactMap}.
@@ -34,8 +30,6 @@ public class CasSamlArtifactMap extends BasicSAMLArtifactMap {
 
     private final CasCookieBuilder ticketGrantingTicketCookieGenerator;
 
-    private final SessionStore samlIdPDistributedSessionStore;
-
     @Override
     public void put(
         @NonNull final String artifact,
@@ -46,17 +40,8 @@ public class CasSamlArtifactMap extends BasicSAMLArtifactMap {
         super.put(artifact, relyingPartyId, issuerId, samlMessage);
 
         val request = HttpRequestUtils.getHttpServletRequestFromRequestAttributes();
-        val response = HttpRequestUtils.getHttpServletResponseFromRequestAttributes();
-        var ticketGrantingTicket = CookieUtils.getTicketGrantingTicketFromRequest(
+        val ticketGrantingTicket = CookieUtils.getTicketGrantingTicketFromRequest(
             ticketGrantingTicketCookieGenerator, ticketRegistry, request);
-        if (ticketGrantingTicket == null) {
-            val ctx = new JEEContext(request, response);
-            val manager = new ProfileManager(ctx, samlIdPDistributedSessionStore);
-            ticketGrantingTicket = manager.getProfile()
-                .map(profile -> profile.getAttribute(TicketGrantingTicket.class.getName()))
-                .map(ticketId -> ticketRegistry.getTicket(ticketId.toString(), TicketGrantingTicket.class))
-                .orElse(null);
-        }
 
         val samlArtifactTicketFactory = (SamlArtifactTicketFactory) ticketFactory.get(SamlArtifactTicket.class);
         val ticket = samlArtifactTicketFactory.create(artifact,

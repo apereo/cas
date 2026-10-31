@@ -59,6 +59,20 @@ public class DefaultChainingServiceRegistry extends AbstractServiceRegistry impl
             .collect(Collectors.toList());
     }
 
+    /**
+     * Stream the services of every registry through the registry's own stream, which unlike
+     * {@link #load()} does not publish loaded events.
+     *
+     * @return the services
+     */
+    @Override
+    public Stream<? extends RegisteredService> getServicesStream() {
+        return serviceRegistries
+            .stream()
+            .sorted(Comparator.comparingInt(ServiceRegistry::getOrder))
+            .<RegisteredService>flatMap(ServiceRegistry::getServicesStream);
+    }
+
     @Override
     public RegisteredService findServiceById(final long id) {
         return serviceRegistries
@@ -70,13 +84,22 @@ public class DefaultChainingServiceRegistry extends AbstractServiceRegistry impl
             .orElse(null);
     }
 
+    /**
+     * Find the service that matches the given id across all registries. Each registry offers its own best match,
+     * and the one that comes first in evaluation order wins, so that a registry earlier in the chain does not shadow
+     * a service elsewhere that should be evaluated before it. Registries in chain order break ties.
+     *
+     * @param id the id to match with
+     * @return the registered service, or null
+     */
     @Override
-    public RegisteredService findServiceBy(final String id) {
+    public @Nullable RegisteredService findServiceBy(final String id) {
         return serviceRegistries
             .stream()
             .sorted(Comparator.comparingInt(ServiceRegistry::getOrder))
             .map(registry -> registry.findServiceBy(id))
             .filter(Objects::nonNull)
+            .sorted()
             .findFirst()
             .orElse(null);
     }

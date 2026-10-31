@@ -44,24 +44,15 @@ dependencies {
     implementation project(":support:cas-server-support-saml-idp-metadata")
     implementation project(":support:cas-server-support-saml-idp-web")
     implementation project(":support:cas-server-support-saml-idp-ticket")
-    implementation project(":support:cas-server-support-pac4j-api")
-    implementation project(":support:cas-server-support-pac4j-core")
     implementation project(":support:cas-server-support-actions")
     implementation project(":support:cas-server-support-actions-core")
 
     compileOnly project(":support:cas-server-support-jpa-util")
     compileOnly project(":support:cas-server-support-consent-api")
-    compileOnly project(":support:cas-server-support-pac4j-webflow")
-    
-    implementation libraries.pac4jcore
+
     implementation libraries.shibutiljavasupport
     implementation libraries.jose4j
-    compileOnly libraries.pac4jsaml
 
-    testImplementation libraries.pac4joidcoauth
-    testImplementation libraries.pac4jsaml
-
-    
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
@@ -79,13 +70,12 @@ dependencies {
     testImplementation project(":support:cas-server-support-person-directory")
     testImplementation project(":support:cas-server-support-consent-api")
     testImplementation project(":support:cas-server-support-saml")
-    testImplementation project(":support:cas-server-support-pac4j-webflow")
     testImplementation project(":support:cas-server-support-consent-core")
     testImplementation project(":support:cas-server-support-throttle")
     testImplementation project(":support:cas-server-support-webconfig")
     testImplementation project(":support:cas-server-support-themes")
     testImplementation project(":support:cas-server-support-thymeleaf")
-    
+
     testImplementation project(":core:cas-server-core-monitor")
     testImplementation project(":core:cas-server-core-util")
     testImplementation project(":core:cas-server-core")

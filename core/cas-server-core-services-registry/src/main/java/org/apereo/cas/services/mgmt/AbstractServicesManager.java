@@ -545,8 +545,15 @@ public abstract class AbstractServicesManager implements IndexableServicesManage
         servicesCacheVersion.incrementAndGet();
     }
 
+    /**
+     * Cache a service read while listing services, unless it is already cached. With caching turned off
+     * nothing is cached, indexed or versioned: listing reads the registry directly, and touching the index
+     * and version for every listed service would discard the sorted services for no reason.
+     *
+     * @param service the service
+     */
     private void cacheRegisteredServiceIfAbsent(final RegisteredService service) {
-        if (configurationContext.getServicesCache().asMap().putIfAbsent(service.getId(), service) == null) {
+        if (isServicesCacheEnabled() && configurationContext.getServicesCache().asMap().putIfAbsent(service.getId(), service) == null) {
             configurationContext.getRegisteredServiceIndexService().indexService(service);
             servicesCacheVersion.incrementAndGet();
         }

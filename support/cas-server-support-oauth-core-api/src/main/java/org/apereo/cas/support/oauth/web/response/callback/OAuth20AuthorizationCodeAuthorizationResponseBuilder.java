@@ -54,7 +54,7 @@ public class OAuth20AuthorizationCodeAuthorizationResponseBuilder extends BaseOA
         val authentication = tokenRequestContext.getAuthentication();
         val factory = (OAuth20CodeFactory) configurationContext.getTicketFactory().get(OAuth20Code.class);
         val code = factory.create(tokenRequestContext.getService(), authentication,
-            tokenRequestContext.getTicketGrantingTicket(), tokenRequestContext.getScopes(),
+            tokenRequestContext.getTicketGrantingTicket(), tokenRequestContext.getScopes(), tokenRequestContext.getResources(),
             tokenRequestContext.getCodeChallenge(), tokenRequestContext.getCodeChallengeMethod(),
             tokenRequestContext.getClientId(), tokenRequestContext.getClaims(),
             tokenRequestContext.getResponseType(), tokenRequestContext.getGrantType());

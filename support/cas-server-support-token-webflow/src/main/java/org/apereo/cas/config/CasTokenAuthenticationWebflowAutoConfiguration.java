@@ -5,7 +5,6 @@ import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
-import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -114,8 +113,6 @@ public class CasTokenAuthenticationWebflowAutoConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public TokenAuthenticationEndpoint tokenAuthenticationEndpoint(
         final ObjectProvider<CasConfigurationProperties> casProperties,
-        @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
-        final ObjectProvider<PrincipalResolver> defaultPrincipalResolver,
         @Qualifier(ServicesManager.BEAN_NAME)
         final ObjectProvider<ServicesManager> servicesManager,
         @Qualifier(AuditableExecution.AUDITABLE_EXECUTION_REGISTERED_SERVICE_ACCESS)
@@ -124,7 +121,7 @@ public class CasTokenAuthenticationWebflowAutoConfiguration {
         final ObjectProvider<ServiceFactory<WebApplicationService>> webApplicationServiceFactory,
         @Qualifier(PrincipalFactory.BEAN_NAME)
         final ObjectProvider<PrincipalFactory> principalFactory) {
-        return new TokenAuthenticationEndpoint(casProperties, defaultPrincipalResolver,
+        return new TokenAuthenticationEndpoint(casProperties,
             servicesManager, registeredServiceAccessStrategyEnforcer,
             webApplicationServiceFactory, principalFactory);
     }

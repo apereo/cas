@@ -1,35 +1,70 @@
+
 const assert = require("assert");
 const cas = require("../../cas.js");
 
-(async () => {
+const AUTHZ_HEADER = `Basic ${Buffer.from("client:secret").toString("base64")}`;
 
+(async () => {
+    const tokens = await issueTokens();
+    await introspect(tokens.access_token);
+    await introspect(tokens.refresh_token);
+
+    await revoke(tokens.access_token, "access_token");
+    await assertInactive(tokens.access_token);
+    await introspect(tokens.refresh_token);
+
+    const cascading = await issueTokens();
+    await introspect(cascading.access_token);
+    await revoke(cascading.refresh_token, "refresh_token");
+    await assertInactive(cascading.refresh_token);
+    await assertInactive(cascading.access_token);
+
+    await revoke("AT-unknown-token", "access_token");
+})();
+
+async function issueTokens() {
     const params = "grant_type=client_credentials&scope=openid";
     const url = `https://localhost:8443/cas/oidc/token?${params}`;
     await cas.log(`Calling ${url}`);
-
-    await cas.doPost(url, "", {
+    return cas.doPost(url, "", {
         "Content-Type": "application/json",
-        "Authorization": `Basic ${btoa("client:secret")}`
+        "Authorization": AUTHZ_HEADER
     }, (res) => {
         cas.log(res.data);
         assert(res.data.access_token !== undefined);
         assert(res.data.refresh_token !== undefined);
-
-        introspect(res.data.access_token);
-        introspect(res.data.refresh_token);
-
+        return res.data;
     }, (error) => {
         throw `Operation failed: ${error}`;
     });
+}
 
-})();
+async function revoke(token, hint) {
+    await cas.log(`Revoking token ${token} with hint ${hint}`);
+    const body = new URLSearchParams({token: token, "token_type_hint": hint}).toString();
+    await cas.doRequest("https://localhost:8443/cas/oidc/revoke", "POST", {
+        "Authorization": AUTHZ_HEADER,
+        "Content-Type": "application/x-www-form-urlencoded",
+        "Content-Length": Buffer.byteLength(body)
+    }, 200, body);
+}
+
+async function assertInactive(token) {
+    await cas.log(`Introspecting revoked token ${token}`);
+    await cas.doGet(`https://localhost:8443/cas/oidc/introspect?token=${token}`,
+        (res) => {
+            cas.log(res.data);
+            assert(res.data.active === false);
+            assert(!res.data.sub);
+        }, (error) => {
+            throw `Introspection operation failed: ${error}`;
+        }, {
+            "Authorization": AUTHZ_HEADER,
+            "Content-Type": "application/json"
+        });
+}
 
 async function introspect(token) {
-    const value = "client:secret";
-    const buff = Buffer.alloc(value.length, value);
-    const authzHeader = `Basic ${buff.toString("base64")}`;
-    await cas.log(`Authorization header: ${authzHeader}`);
-
     await cas.log(`Introspecting token ${token}`);
     await cas.doGet(`https://localhost:8443/cas/oidc/introspect?token=${token}`,
         (res) => {
@@ -42,7 +77,7 @@ async function introspect(token) {
         }, (error) => {
             throw `Introspection operation failed: ${error}`;
         }, {
-            "Authorization": authzHeader,
+            "Authorization": AUTHZ_HEADER,
             "Content-Type": "application/json"
         });
 
@@ -51,7 +86,7 @@ async function introspect(token) {
         (res) => res.data, (error) => {
             throw `Introspection operation failed: ${error}`;
         }, {
-            "Authorization": authzHeader,
+            "Authorization": AUTHZ_HEADER,
             "Content-Type": "application/json",
             "Accept": "application/token-introspection+jwt"
         });
