@@ -40,4 +40,22 @@ class RegisteredServiceKafkaDistributedCacheManagerTests {
             verify(kafkaTemplate, times(4)).send(eq("registered-services"), anyString(), same(item));
         }
     }
+
+    @Test
+    void verifyUpdatedServiceReplacesEntry() {
+        val kafkaTemplate = mock(KafkaOperations.class);
+        doReturn(CompletableFuture.completedFuture(null))
+            .when(kafkaTemplate).send(anyString(), anyString(), any());
+        try (val manager = new RegisteredServiceKafkaDistributedCacheManager(kafkaTemplate, "registered-services")) {
+            val service = RegisteredServiceTestUtils.getRegisteredService();
+            manager.set(service, new DistributedCacheObject<RegisteredService>(Map.of(),
+                System.currentTimeMillis(), service, new PublisherIdentifier()), true);
+            service.setDescription("Changed description");
+            manager.set(service, new DistributedCacheObject<RegisteredService>(Map.of(),
+                System.currentTimeMillis(), service, new PublisherIdentifier()), true);
+            assertEquals(1, manager.getAll().size());
+            val key = service.getId() + ";" + service.getName() + ';' + service.getServiceId();
+            verify(kafkaTemplate, times(2)).send(eq("registered-services"), eq(key), any());
+        }
+    }
 }

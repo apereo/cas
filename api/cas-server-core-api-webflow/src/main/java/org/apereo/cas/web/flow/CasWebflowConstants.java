@@ -627,6 +627,11 @@ public interface CasWebflowConstants {
     String STATE_ID_MY_ACCOUNT_PROFILE_GOOGLE_REGISTRATION_FINALIZED = "googleAccountProfileRegistrationFinalized";
 
     /**
+     * The state 'yubiKeyAccountProfileRegistrationFinalized'.
+     */
+    String STATE_ID_MY_ACCOUNT_PROFILE_YUBIKEY_REGISTRATION_FINALIZED = "yubiKeyAccountProfileRegistrationFinalized";
+
+    /**
      * The state 'duoUniversalPromptPrepareValidate'.
      */
     String STATE_ID_DUO_UNIVERSAL_PROMPT_VALIDATE_LOGIN = "duoUniversalPromptPrepareValidate";
@@ -1158,6 +1163,11 @@ public interface CasWebflowConstants {
     String STATE_ID_WEBAUTHN_VIEW_REGISTRATION = "viewRegistrationWebAuthn";
 
     /**
+     * State id 'viewRegistrationYubiKey'.
+     */
+    String STATE_ID_YUBIKEY_VIEW_REGISTRATION = "viewRegistrationYubiKey";
+
+    /**
      * State id 'checkRiskVerificationToken'.
      */
     String STATE_ID_RISK_AUTHENTICATION_TOKEN_CHECK = "checkRiskVerificationToken";
@@ -1463,6 +1473,61 @@ public interface CasWebflowConstants {
      * Action id 'googleAccountProfileRegistrationAction'.
      */
     String ACTION_ID_ACCOUNT_PROFILE_GOOGLE_MFA_PREPARE = "googleAccountProfilePrepareAction";
+
+    /**
+     * Action id 'yubiKeyAccountProfilePrepareAction'.
+     */
+    String ACTION_ID_ACCOUNT_PROFILE_YUBIKEY_MFA_PREPARE = "yubiKeyAccountProfilePrepareAction";
+
+    /**
+     * Action id 'yubiKeyAccountProfileRegistrationAction'.
+     */
+    String ACTION_ID_ACCOUNT_PROFILE_YUBIKEY_MFA_REGISTRATION = "yubiKeyAccountProfileRegistrationAction";
+
+    /**
+     * Action id 'acceptableUsagePolicyAccountProfileAction'.
+     */
+    String ACTION_ID_ACCOUNT_PROFILE_AUP = "acceptableUsagePolicyAccountProfileAction";
+
+    /**
+     * Action id 'surrogateAccountProfileAction'.
+     */
+    String ACTION_ID_ACCOUNT_PROFILE_SURROGATE_ACCOUNTS = "surrogateAccountProfileAction";
+
+    /**
+     * Action id 'qrAuthenticationAccountProfileDevicesAction'.
+     */
+    String ACTION_ID_ACCOUNT_PROFILE_QR_DEVICES = "qrAuthenticationAccountProfileDevicesAction";
+
+    /**
+     * Action id 'qrAuthenticationAccountProfileRemoveDeviceAction'.
+     */
+    String ACTION_ID_ACCOUNT_PROFILE_REMOVE_QR_DEVICE = "qrAuthenticationAccountProfileRemoveDeviceAction";
+
+    /**
+     * Action id 'simpleMfaAccountProfileContactMethodsAction'.
+     */
+    String ACTION_ID_ACCOUNT_PROFILE_SIMPLE_MFA_CONTACT_METHODS = "simpleMfaAccountProfileContactMethodsAction";
+
+    /**
+     * Action id 'simpleMfaAccountProfileRegistrationAction'.
+     */
+    String ACTION_ID_ACCOUNT_PROFILE_SIMPLE_MFA_REGISTRATION = "simpleMfaAccountProfileRegistrationAction";
+
+    /**
+     * Action id 'passwordlessAccountProfileContactMethodsAction'.
+     */
+    String ACTION_ID_ACCOUNT_PROFILE_PASSWORDLESS_CONTACT_METHODS = "passwordlessAccountProfileContactMethodsAction";
+
+    /**
+     * Action id 'googleAccountProfileScratchCodesAction'.
+     */
+    String ACTION_ID_ACCOUNT_PROFILE_GOOGLE_MFA_SCRATCH_CODES = "googleAccountProfileScratchCodesAction";
+
+    /**
+     * Action id 'webAuthnAccountProfileRenameDeviceAction'.
+     */
+    String ACTION_ID_ACCOUNT_PROFILE_WEBAUTHN_RENAME_DEVICE = "webAuthnAccountProfileRenameDeviceAction";
 
     /**
      * Action id 'delegatedAuthenticationClientCredentialSelectionFinalizeAction'.

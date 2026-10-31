@@ -2,7 +2,6 @@ package org.apereo.cas.configuration.model.core.ticket.registry;
 
 import module java.base;
 import org.apereo.cas.configuration.model.support.cassandra.ticketregistry.CassandraTicketRegistryProperties;
-import org.apereo.cas.configuration.model.support.cosmosdb.CosmosDbTicketRegistryProperties;
 import org.apereo.cas.configuration.model.support.dynamodb.DynamoDbTicketRegistryProperties;
 import org.apereo.cas.configuration.model.support.gcp.GoogleCloudFirestoreTicketRegistryProperties;
 import org.apereo.cas.configuration.model.support.geode.GeodeProperties;
@@ -35,12 +34,6 @@ public class TicketRegistryProperties implements Serializable {
 
     @Serial
     private static final long serialVersionUID = -4735458476452635679L;
-
-    /**
-     * CosmosDb registry settings.
-     */
-    @NestedConfigurationProperty
-    private CosmosDbTicketRegistryProperties cosmosDb = new CosmosDbTicketRegistryProperties();
 
     /**
      * DynamoDb registry settings.

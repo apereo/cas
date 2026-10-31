@@ -6,7 +6,8 @@ import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.heimdall.AuthorizationRequest;
 import org.apereo.cas.heimdall.authzen.AuthZenSubject;
 import org.jspecify.annotations.Nullable;
-import org.pac4j.core.context.WebContext;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * This is {@link AuthorizationPrincipalParser}.
@@ -29,15 +30,17 @@ public interface AuthorizationPrincipalParser {
     /**
      * Parse the caller while validating proofs against the actual HTTP request.
      *
-     * @param authorizationHeader the authorization header
+     * @param authorizationHeader  the authorization header
      * @param authorizationRequest the authorization request
-     * @param webContext the HTTP context
+     * @param request              the HTTP request
+     * @param response             the HTTP response
      * @return the principal
      * @throws Throwable when authentication fails
      */
     default @Nullable Principal parse(final String authorizationHeader,
                                       final AuthorizationRequest authorizationRequest,
-                                      final WebContext webContext)
+                                      final HttpServletRequest request,
+                                      final HttpServletResponse response)
             throws Throwable {
         return parse(authorizationHeader, authorizationRequest);
     }
@@ -47,10 +50,13 @@ public interface AuthorizationPrincipalParser {
      * evaluations is authenticated once.
      *
      * @param authorizationHeader the authorization header
-     * @param webContext          the HTTP context
+     * @param request             the HTTP request
+     * @param response            the HTTP response
      * @throws Throwable when authentication fails
      */
-    default void authenticateCaller(final String authorizationHeader, final WebContext webContext) throws Throwable {
+    default void authenticateCaller(final String authorizationHeader, final HttpServletRequest request,
+                                    final HttpServletResponse response)
+            throws Throwable {
         throw new UnsupportedOperationException("Authenticating AuthZEN callers is not supported by " + getClass().getSimpleName());
     }
 

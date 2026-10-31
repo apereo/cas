@@ -8,7 +8,6 @@ import org.apereo.cas.util.CollectionUtils;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.pac4j.jee.context.JEEContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -40,11 +39,12 @@ class AccessTokenDeviceCodeResponseRequestExtractorTests extends AbstractOAuth20
         request.addParameter(OAuth20Constants.CLIENT_ID, service.getClientId());
         request.addParameter(OAuth20Constants.DEVICE_CODE, UUID.randomUUID().toString());
         request.addParameter(OAuth20Constants.SCOPE, "read");
-        val context = new JEEContext(request, response);
-        assertTrue(accessTokenDeviceCodeResponseRequestExtractor.supports(context));
-        val result = accessTokenDeviceCodeResponseRequestExtractor.extract(context);
+        request.addParameter(OAuth20Constants.RESOURCE, "https://api.example.org/");
+        assertTrue(accessTokenDeviceCodeResponseRequestExtractor.supports(request));
+        val result = accessTokenDeviceCodeResponseRequestExtractor.extract(request, response);
         assertNotNull(result);
         assertEquals(1, result.getScopes().size());
+        assertEquals(Set.of("https://api.example.org/"), result.getResources());
     }
 }
 

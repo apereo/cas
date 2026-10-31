@@ -59,7 +59,6 @@ page has the details, including connection, replication and encryption settings.
 | [Apache Cassandra](Cassandra-Ticket-Registry.html)                                                                                                                              | Database   | Yes                                   | Yes                                          | In-process only                     |
 | [Google Cloud Firestore](GCP-Firestore-Ticket-Registry.html)                                                                                                                    | Database   | Yes                                   | Yes                                          | In-process only                     |
 | [Memcached](Memcached-Ticket-Registry.html) (deprecated)                                                                                                                        | Cache      | Yes                                   | No                                           | In-process only                     |
-| [Azure CosmosDb](CosmosDb-Ticket-Registry.html) (deprecated)                                                                                                                    | Database   | Yes                                   | Yes                                          | In-process only                     |
 
 "In-process only" means CAS uses the [default lock implementation](Ticket-Registry-Locking.html), which only
 coordinates requests within one node.
@@ -104,7 +103,6 @@ Cassandra, for ticket storage and persistence:
 * [MongoDb](MongoDb-Ticket-Registry.html)
 * [DynamoDb](DynamoDb-Ticket-Registry.html)
 * [Apache Cassandra](Cassandra-Ticket-Registry.html)
-* [Azure CosmosDb](CosmosDb-Ticket-Registry.html)
 * [Google Cloud Firestore](GCP-Firestore-Ticket-Registry.html)
 
 ### Secure Cache Replication

@@ -8,7 +8,7 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
-import org.apereo.cas.support.oauth.authenticator.Authenticators;
+import org.apereo.cas.support.oauth.profile.DefaultOAuth20UserProfile;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestContext;
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20AuthorizationResponseBuilder;
 import com.nimbusds.jwt.JWTParser;
@@ -16,7 +16,6 @@ import lombok.val;
 import org.apache.hc.core5.net.URIBuilder;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.pac4j.core.profile.CommonProfile;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.servlet.view.AbstractUrlBasedView;
@@ -41,9 +40,7 @@ class OidcTokenAuthorizationResponseBuilderTests extends AbstractOidcTests {
         registeredService.setJwtAccessToken(true);
         val code = addCode(principal, registeredService);
 
-        val profile = new CommonProfile();
-        profile.setClientName(Authenticators.CAS_OAUTH_CLIENT_BASIC_AUTHN);
-        profile.setId("casuser");
+        val profile = new DefaultOAuth20UserProfile("casuser");
 
         val holder = AccessTokenRequestContext.builder()
             .token(code)

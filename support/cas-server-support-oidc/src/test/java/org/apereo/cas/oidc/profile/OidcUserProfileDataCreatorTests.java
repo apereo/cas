@@ -13,9 +13,7 @@ import lombok.val;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.pac4j.jee.context.JEEContext;
 import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.TestPropertySource;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -81,11 +79,9 @@ class OidcUserProfileDataCreatorTests {
         @Test
         void verifyTokenWithClaims() throws Throwable {
             val request = new MockHttpServletRequest();
-            val response = new MockHttpServletResponse();
-            val context = new JEEContext(request, response);
             val claims = "\"userinfo\": {\"given_name\": {\"essential\": true}}";
             request.addParameter(OAuth20Constants.CLAIMS, claims);
-            val result = oauthRequestParameterResolver.resolveRequestClaims(context);
+            val result = oauthRequestParameterResolver.resolveRequestClaims(request);
 
             val accessToken = getAccessToken();
             when(accessToken.getClaims()).thenReturn(result);

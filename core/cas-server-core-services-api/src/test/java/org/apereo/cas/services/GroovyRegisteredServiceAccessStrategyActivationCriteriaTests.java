@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.RandomUtils;
+import org.apereo.cas.util.scripting.ExecutableCompiledScript;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -16,6 +17,7 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
 import tools.jackson.databind.ObjectMapper;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * This is {@link GroovyRegisteredServiceAccessStrategyActivationCriteriaTests}.
@@ -62,5 +64,28 @@ class GroovyRegisteredServiceAccessStrategyActivationCriteriaTests {
         MAPPER.writeValue(jsonFile, strategy);
         val policyRead = MAPPER.readValue(jsonFile, RegisteredServiceAccessStrategyActivationCriteria.class);
         assertEquals(strategy, policyRead);
+    }
+
+    @Test
+    void verifyScriptIsResolvedOnlyWhenNeeded() throws Throwable {
+        val request = RegisteredServiceAccessStrategyRequest.builder().principalId("casuser")
+            .registeredService(CoreAuthenticationTestUtils.getRegisteredService())
+            .applicationContext(applicationContext)
+            .attributes(CollectionUtils.wrap("key1", Set.of("value1"))).build();
+        val criteria = new GroovyRegisteredServiceAccessStrategyActivationCriteria();
+        criteria.setGroovyScript("classpath:GroovyAccessActivation.groovy");
+        assertTrue(criteria.shouldActivate(request));
+
+        val script = mock(ExecutableCompiledScript.class);
+        when(script.execute(any(Object[].class), eq(Boolean.class))).thenReturn(Boolean.FALSE);
+        criteria.setExecutableScript(script);
+        assertFalse(criteria.shouldActivate(request));
+
+        when(script.isClosed()).thenReturn(Boolean.TRUE);
+        assertTrue(criteria.shouldActivate(request));
+        assertNotSame(script, criteria.getExecutableScript());
+
+        criteria.setGroovyScript("groovy { return false }");
+        assertFalse(criteria.shouldActivate(request));
     }
 }

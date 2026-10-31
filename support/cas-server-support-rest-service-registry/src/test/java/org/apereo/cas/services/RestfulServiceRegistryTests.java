@@ -7,6 +7,7 @@ import org.apereo.cas.config.CasThemesAutoConfiguration;
 import org.apereo.cas.config.CasWebAppAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.services.RestfulServiceRegistryProperties;
+import org.apereo.cas.support.events.service.CasRegisteredServiceLoadedEvent;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.MockWebServer;
 import org.apereo.cas.util.RandomUtils;
@@ -26,6 +27,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.util.TestPropertyValues;
 import org.springframework.context.ApplicationContextInitializer;
+import org.springframework.context.ApplicationEvent;
+import org.springframework.context.ApplicationListener;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
@@ -144,6 +147,46 @@ class RestfulServiceRegistryTests extends AbstractServiceRegistryTests {
             properties.setMaximumRetryAttempts(0);
             val registry = new RestfulServiceRegistry(applicationContext, List.of(), properties);
             assertThrows(IllegalStateException.class, registry::load);
+        }
+    }
+
+    @Test
+    void verifyCountWhenRegistryIsUnreachable() {
+        try (val webServer = new MockWebServer(HttpStatus.INTERNAL_SERVER_ERROR)) {
+            webServer.start();
+            val properties = new RestfulServiceRegistryProperties();
+            properties.setUrl("http://localhost:%s".formatted(webServer.getPort()));
+            properties.setMaximumRetryAttempts(0);
+            val registry = new RestfulServiceRegistry(applicationContext, List.of(), properties);
+            assertEquals(0, registry.size());
+        }
+    }
+
+    @Test
+    void verifyCountAndStreamDoNotPublishLoadedEvents() {
+        val registeredService = new CasRegisteredService();
+        registeredService.setId(RandomUtils.nextLong());
+        registeredService.setName(UUID.randomUUID().toString());
+        registeredService.setServiceId("https://" + registeredService.getName() + ".example.org");
+        newServiceRegistry.save(registeredService);
+
+        val properties = applicationContext.getBean(CasConfigurationProperties.class).getServiceRegistry().getRest();
+        val registry = new RestfulServiceRegistry(applicationContext, List.of(), properties);
+        val loadedEvents = new AtomicInteger();
+        ApplicationListener<ApplicationEvent> listener = event -> {
+            if (event instanceof CasRegisteredServiceLoadedEvent && event.getSource().equals(registry)) {
+                loadedEvents.incrementAndGet();
+            }
+        };
+        applicationContext.addApplicationListener(listener);
+        try {
+            assertTrue(registry.size() > 0);
+            assertTrue(registry.getServicesStream().anyMatch(service -> service.getId() == registeredService.getId()));
+            assertEquals(0, loadedEvents.get());
+            assertFalse(registry.load().isEmpty());
+            assertTrue(loadedEvents.get() > 0);
+        } finally {
+            applicationContext.removeApplicationListener(listener);
         }
     }
 

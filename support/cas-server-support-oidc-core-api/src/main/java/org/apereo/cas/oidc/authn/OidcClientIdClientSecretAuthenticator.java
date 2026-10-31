@@ -16,8 +16,8 @@ import org.apereo.cas.support.oauth.web.OAuth20RequestParameterResolver;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import lombok.val;
-import org.pac4j.core.context.CallContext;
 import org.springframework.context.ConfigurableApplicationContext;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * This is {@link OidcClientIdClientSecretAuthenticator}.
@@ -47,12 +47,12 @@ public class OidcClientIdClientSecretAuthenticator extends OAuth20ClientIdClient
     }
 
     @Override
-    protected boolean isAuthenticationMethodSupported(final CallContext callContext, final OAuthRegisteredService registeredService,
+    protected boolean isAuthenticationMethodSupported(final HttpServletRequest request, final OAuthRegisteredService registeredService,
                                                       final OAuth20ClientAuthenticationMethods requiredAuthnMethod) {
         val authMethodSupported = oidcServerDiscoverySettings.getTokenEndpointAuthMethodsSupported()
             .stream()
             .map(OAuth20ClientAuthenticationMethods::parse)
             .anyMatch(method -> method == requiredAuthnMethod);
-        return super.isAuthenticationMethodSupported(callContext, registeredService, requiredAuthnMethod) && authMethodSupported;
+        return super.isAuthenticationMethodSupported(request, registeredService, requiredAuthnMethod) && authMethodSupported;
     }
 }

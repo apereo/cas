@@ -31,7 +31,10 @@ import static org.mockito.Mockito.*;
  */
 @Tag("WebflowActions")
 @SpringBootTest(classes = BaseSurrogateAuthenticationTests.SharedTestConfiguration.class,
-    properties = "cas.authn.surrogate.simple.surrogates.casuser=cassurrogate")
+    properties = {
+        "cas.authn.surrogate.simple.surrogates.casuser=cassurrogate,banderson",
+        "CasFeatureModule.AccountManagement.enabled=true"
+    })
 @ExtendWith(CasTestExtension.class)
 class LoadSurrogatesListActionTests extends BaseSurrogateAuthenticationTests {
     @Autowired
@@ -39,7 +42,27 @@ class LoadSurrogatesListActionTests extends BaseSurrogateAuthenticationTests {
     protected Action loadSurrogatesListAction;
 
     @Autowired
+    @Qualifier(CasWebflowConstants.ACTION_ID_ACCOUNT_PROFILE_SURROGATE_ACCOUNTS)
+    protected Action surrogateAccountProfileAction;
+
+    @Autowired
     protected ConfigurableApplicationContext applicationContext;
+
+    @Test
+    void verifyAccountProfile() throws Throwable {
+        val context = MockRequestContext.create(applicationContext);
+        WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication("casuser"), context);
+        assertNull(surrogateAccountProfileAction.execute(context));
+        assertEquals(List.of("banderson", "cassurrogate"), context.getFlowScope().get(SurrogateAccountProfileAction.FLOW_SCOPE_ATTR_ACCOUNTS));
+        assertFalse(context.getFlowScope().contains(SurrogateAccountProfileAction.FLOW_SCOPE_ATTR_IMPERSONATED_BY));
+
+        val impersonation = CoreAuthenticationTestUtils.getAuthentication("cassurrogate",
+            Map.<String, List<Object>>of(SurrogateAuthenticationService.AUTHENTICATION_ATTR_SURROGATE_PRINCIPAL, List.of("casuser")));
+        WebUtils.putAuthentication(impersonation, context);
+        assertNull(surrogateAccountProfileAction.execute(context));
+        assertEquals("casuser", context.getFlowScope().get(SurrogateAccountProfileAction.FLOW_SCOPE_ATTR_IMPERSONATED_BY));
+        assertEquals(List.of("banderson", "cassurrogate"), context.getFlowScope().get(SurrogateAccountProfileAction.FLOW_SCOPE_ATTR_ACCOUNTS));
+    }
 
     @Test
     void verifyGetListView() throws Throwable {

@@ -39,10 +39,10 @@ import static org.mockito.Mockito.*;
     "database.password=mypass",
     "database.driver-class=org.mariadb.jdbc.Driver",
     "database.name=mysql",
-    "database.url=jdbc:mariadb://localhost:3306/",
+    "database.url=jdbc:mariadb://localhost:3307/",
     "database.dialect=org.hibernate.dialect.MariaDBDialect"
 })
-@EnabledIfListeningOnPort(port = 3306)
+@EnabledIfListeningOnPort(port = 3307)
 @Tag("MariaDb")
 @Import(QueryDatabaseAuthenticationHandlerMariaDbTests.DatabaseTestConfiguration.class)
 class QueryDatabaseAuthenticationHandlerMariaDbTests extends BaseDatabaseAuthenticationHandlerTests {

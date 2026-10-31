@@ -1,0 +1,37 @@
+{
+  "dependencies": "spnego-webflow",
+  "conditions": {
+    "docker": "true"
+  },
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
+    "--cas.service-registry.core.init-from-json=true",
+
+    "--cas.authn.spnego.name=SPNEGO",
+    "--cas.authn.spnego.system.kerberos-conf=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/krb5.conf",
+    "--cas.authn.spnego.system.login-conf=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/login.conf",
+    "--cas.authn.spnego.system.kerberos-kdc=",
+    "--cas.authn.spnego.system.kerberos-realm=",
+    "--cas.authn.spnego.system.use-subject-creds-only=true",
+    "--cas.authn.spnego.properties[0].jcifs-service-principal=HTTP/localhost@EXAMPLE.ORG",
+    "--cas.authn.spnego.properties[0].jcifs-service-password=Kerb3r0s",
+    "--cas.authn.spnego.mixed-mode-authentication=true",
+    "--cas.authn.spnego.ips-to-check-pattern=.*",
+    "--cas.authn.spnego.host-name-pattern-string=.*"
+  ],
+  "variations": [
+    {
+      "name": "default",
+      "properties": []
+    },
+    {
+      "name": "principal-with-domain-name",
+      "properties": [
+        "--cas.authn.spnego.principal-with-domain-name=true"
+      ]
+    }
+  ],
+  "initScript": "${PWD}/ci/tests/kerberos/run-kerberos-server.sh,${PWD}/ci/tests/httpbin/run-httpbin-server.sh"
+}

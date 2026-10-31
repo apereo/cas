@@ -173,6 +173,23 @@ class HttpUtilsTests {
     }
 
     @Test
+    void verifyResponseTimeout() throws Exception {
+        try (val server = new ServerSocket(0)) {
+            val exec = HttpExecutionRequest.builder()
+                .method(HttpMethod.GET)
+                .url("http://localhost:%s".formatted(server.getLocalPort()))
+                .maximumRetryAttempts(0)
+                .responseTimeout(Duration.ofMillis(500))
+                .build();
+            val started = System.nanoTime();
+            val response = HttpUtils.execute(exec);
+            val elapsed = Duration.ofNanos(System.nanoTime() - started);
+            assertEquals(HttpStatus.SERVICE_UNAVAILABLE.value(), response.getCode());
+            assertTrue(elapsed.compareTo(Duration.ofSeconds(4)) < 0, () -> "Request took " + elapsed);
+        }
+    }
+
+    @Test
     void verifyExecWithExistingClient() {
         try (val webServer = new MockWebServer(HttpStatus.OK)) {
             webServer.start();

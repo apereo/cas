@@ -62,6 +62,7 @@ public class OidcDefaultCibaRequestFactory implements OidcCibaRequestFactory {
         val request = new OidcDefaultCibaRequest(id, authentication, expirationPolicy,
             holder.getScope(), holder.getClientId(), encodeCibaRequestId(id));
         request.setTenantId(holder.getTenant());
+        request.setResources(holder.getResources());
         return request;
     }
 

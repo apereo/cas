@@ -5,14 +5,12 @@ import org.apereo.cas.AbstractOAuth20Tests;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
+import org.apereo.cas.support.oauth.profile.DefaultOAuth20UserProfile;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 import org.apereo.cas.util.spring.DirectObjectProvider;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.pac4j.core.profile.CommonProfile;
-import org.pac4j.core.profile.ProfileManager;
-import org.pac4j.jee.context.JEEContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -50,12 +48,9 @@ class AccessTokenProofKeyCodeExchangeAuthorizationCodeGrantRequestExtractorTests
         val extractor = new AccessTokenProofKeyCodeExchangeAuthorizationCodeGrantRequestExtractor(
             new DirectObjectProvider<>(oauth20ConfigurationContext));
         assertTrue(extractor.requestMustBeAuthenticated());
-
-        val context = new JEEContext(request, response);
-        val commonProfile = new CommonProfile();
-        commonProfile.setId("testuser");
-        new ProfileManager(context, oauthDistributedSessionStore).save(true, commonProfile, false);
-        val result = extractor.extract(context);
+        val commonProfile = new DefaultOAuth20UserProfile("testuser");
+        storeProfileIntoSession(request, commonProfile);
+        val result = extractor.extract(request, response);
         assertNotNull(result);
     }
 }

@@ -11,6 +11,7 @@ import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
+import org.apereo.cas.support.oauth.profile.DefaultOAuth20UserProfile;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenGrantRequestExtractor;
 import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.util.EncodingUtils;
@@ -23,10 +24,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.pac4j.core.context.WebContext;
-import org.pac4j.core.profile.CommonProfile;
-import org.pac4j.core.profile.ProfileManager;
-import org.pac4j.jee.context.JEEContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -48,8 +45,10 @@ class OidcAccessTokenJwtBearerGrantRequestExtractorTests {
         @Qualifier("accessTokenJwtBearerGrantRequestExtractor")
         private AccessTokenGrantRequestExtractor extractor;
 
-        private WebContext webContext;
         private MockHttpServletRequest request;
+
+        private MockHttpServletResponse response;
+
         private OidcRegisteredService registeredService;
 
         @BeforeEach
@@ -58,8 +57,7 @@ class OidcAccessTokenJwtBearerGrantRequestExtractorTests {
             registeredService.setSupportedGrantTypes(Set.of(OAuth20GrantTypes.JWT_BEARER.getType()));
             servicesManager.save(registeredService);
             request = new MockHttpServletRequest();
-            val response = new MockHttpServletResponse();
-            webContext = new JEEContext(request, response);
+            response = new MockHttpServletResponse();
         }
 
         @Test
@@ -69,9 +67,9 @@ class OidcAccessTokenJwtBearerGrantRequestExtractorTests {
             val assertion = JwtBuilder.buildPlain(JWTClaimsSet.parse(Map.of()), Optional.of(registeredService));
             request.setParameter(OAuth20Constants.ASSERTION, assertion);
 
-            assertTrue(extractor.supports(webContext));
+            assertTrue(extractor.supports(request));
             assertEquals(OAuth20ResponseTypes.NONE, extractor.getResponseType());
-            assertThrows(UnauthorizedServiceException.class, () -> extractor.extract(webContext));
+            assertThrows(UnauthorizedServiceException.class, () -> extractor.extract(request, response));
         }
 
         @Test
@@ -81,7 +79,7 @@ class OidcAccessTokenJwtBearerGrantRequestExtractorTests {
             val claims = JWTClaimsSet.parse(Map.of(OAuth20Constants.CLIENT_ID, registeredService.getClientId()));
             val assertion = JwtBuilder.buildPlain(claims, Optional.of(registeredService));
             request.setParameter(OAuth20Constants.ASSERTION, assertion);
-            assertThrows(IllegalArgumentException.class, () -> extractor.extract(webContext));
+            assertThrows(IllegalArgumentException.class, () -> extractor.extract(request, response));
         }
 
         @Test
@@ -104,12 +102,11 @@ class OidcAccessTokenJwtBearerGrantRequestExtractorTests {
             val signAssertion = EncodingUtils.signJwsRSASha512(jsonWebKey.getPrivateKey(),
                 claims.toString().getBytes(StandardCharsets.UTF_8), Map.of());
             request.setParameter(OAuth20Constants.ASSERTION, new String(signAssertion, StandardCharsets.UTF_8));
-            val staleProfile = new CommonProfile();
-            staleProfile.setId("casuser");
+            val staleProfile = new DefaultOAuth20UserProfile("casuser");
             staleProfile.addAttribute(OAuth20Constants.DPOP_CONFIRMATION, "stale-thumbprint");
-            new ProfileManager(webContext, oidcConfigurationContext.getSessionStore()).save(true, staleProfile, false);
+            storeProfileIntoSession(request, staleProfile);
             request.setAttribute(OAuth20Constants.DPOP_CONFIRMATION, "thumbprint");
-            val tokenRequestContext = extractor.extract(webContext);
+            val tokenRequestContext = extractor.extract(request, response);
             assertNotNull(tokenRequestContext);
             assertNotNull(tokenRequestContext.getAuthentication());
             assertEquals(staleProfile.getId(), tokenRequestContext.getUserProfile().getId());
@@ -128,8 +125,10 @@ class OidcAccessTokenJwtBearerGrantRequestExtractorTests {
         @Qualifier("clientJwksRegistrationStore")
         private ClientJwksRegistrationStore clientJwksRegistrationStore;
 
-        private WebContext webContext;
         private MockHttpServletRequest request;
+
+        private MockHttpServletResponse response;
+
         private OidcRegisteredService registeredService;
 
         @BeforeEach
@@ -138,8 +137,7 @@ class OidcAccessTokenJwtBearerGrantRequestExtractorTests {
             registeredService.setSupportedGrantTypes(Set.of(OAuth20GrantTypes.JWT_BEARER.getType()));
             servicesManager.save(registeredService);
             request = new MockHttpServletRequest();
-            val response = new MockHttpServletResponse();
-            webContext = new JEEContext(request, response);
+            response = new MockHttpServletResponse();
         }
 
         @Test
@@ -165,7 +163,7 @@ class OidcAccessTokenJwtBearerGrantRequestExtractorTests {
             val signAssertion = EncodingUtils.signJwsRSASha512(new BasicIdentifiableKey(jkt, keyPair.getPrivate()),
                 claims.toString().getBytes(StandardCharsets.UTF_8), Map.of());
             request.setParameter(OAuth20Constants.ASSERTION, new String(signAssertion, StandardCharsets.UTF_8));
-            val tokenRequestContext = extractor.extract(webContext);
+            val tokenRequestContext = extractor.extract(request, response);
             assertNotNull(tokenRequestContext);
             assertNotNull(tokenRequestContext.getAuthentication());
         }

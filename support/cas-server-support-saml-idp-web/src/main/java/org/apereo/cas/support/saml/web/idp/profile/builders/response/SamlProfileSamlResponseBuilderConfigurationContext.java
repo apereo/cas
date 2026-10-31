@@ -21,7 +21,6 @@ import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.common.binding.artifact.SAMLArtifactMap;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.saml2.core.Assertion;
-import org.pac4j.core.context.session.SessionStore;
 import org.springframework.context.ConfigurableApplicationContext;
 
 /**
@@ -58,8 +57,6 @@ public class SamlProfileSamlResponseBuilderConfigurationContext {
     private final SAMLArtifactMap samlArtifactMap;
 
     private final SamlProfileObjectBuilder<? extends SAMLObject> samlSoapResponseBuilder;
-
-    private final SessionStore sessionStore;
 
     private final CentralAuthenticationService centralAuthenticationService;
 

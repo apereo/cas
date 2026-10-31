@@ -15,7 +15,8 @@ import lombok.val;
 import org.springframework.core.Ordered;
 
 /**
- * This is {@link TokenAuthenticationPostProcessor}.
+ * This is {@link TokenAuthenticationPostProcessor}, which adds a token for the service to the authentication attributes
+ * when the service defines a signing secret.
  *
  * @author Misagh Moayyed
  * @since 7.0.0
@@ -37,8 +38,9 @@ public class TokenAuthenticationPostProcessor implements AuthenticationPostProce
                 .build();
             val accessResult = registeredServiceAccessStrategyEnforcer.execute(audit);
             accessResult.throwExceptionIfNeeded();
-            val token = TokenAuthenticationSecurity.forRegisteredService(Objects.requireNonNull(registeredService)).generateTokenFor(authentication);
-            builder.addAttribute(TokenConstants.PARAMETER_NAME_TOKEN, token);
+            TokenAuthenticationSecurity.forRegisteredService(Objects.requireNonNull(registeredService))
+                .generateTokenFor(authentication)
+                .ifPresent(token -> builder.addAttribute(TokenConstants.PARAMETER_NAME_TOKEN, token));
         });
     }
 

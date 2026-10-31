@@ -2,10 +2,14 @@ const assert = require("assert");
 const cas = require("../../cas.js");
 
 const DEVICE_CODE_TTL_SECONDS = 45;
+const API_RESOURCE = "https://localhost:9859/anything/api";
 
-async function requestDeviceCode() {
+async function requestDeviceCode(resource) {
     const scopes = `${encodeURIComponent("read write create")}`;
-    const url = `https://localhost:8443/cas/oauth2.0/accessToken?response_type=device_code&client_id=client&scope=${scopes}`;
+    let url = `https://localhost:8443/cas/oauth2.0/accessToken?response_type=device_code&client_id=client&scope=${scopes}`;
+    if (resource !== undefined) {
+        url += `&resource=${encodeURIComponent(resource)}`;
+    }
     return cas.doPost(url, "", {
         "Content-Type": "application/json"
     }, (res) => {
@@ -47,10 +51,26 @@ async function verifyExpiredDeviceCode(data, issuedAt) {
     }
 }
 
+async function verifyDeviceCodeForUnknownResource() {
+    const url = "https://localhost:8443/cas/oauth2.0/accessToken?response_type=device_code&client_id=client"
+        + `&resource=${encodeURIComponent("https://unknown.example.org/")}`;
+    await cas.doPost(url, "", {
+        "Content-Type": "application/json"
+    }, (res) => {
+        throw `A device code must not be issued for an unknown resource: ${JSON.stringify(res.data)}`;
+    }, (error) => {
+        assert(error.response.status === 400);
+        assert(error.response.data.error === "invalid_target");
+    });
+}
+
 (async () => {
+    await cas.log("A device authorization request for a resource the client may not request is refused");
+    await verifyDeviceCodeForUnknownResource();
+    await cas.separator();
     const expiring = await requestDeviceCode();
     const issuedAt = Date.now();
-    await verifyDeviceCode(await requestDeviceCode());
+    await verifyDeviceCode(await requestDeviceCode(API_RESOURCE));
     await cas.separator();
     await cas.log("An expired device code must be refused with expired_token, and then be gone");
     await verifyExpiredDeviceCode(expiring, issuedAt);
@@ -90,6 +110,16 @@ async function verifyDeviceCode(data) {
     await cas.waitForNavigation(page);
     await cas.sleep(1000);
     await cas.assertVisibility(page, "div.banner-danger");
+
+    await cas.log("A user code posted without the approval token of the form must be refused, and stay unapproved");
+    await page.$eval("input[name='approvaltoken']", (input) => input.remove());
+    await cas.type(page, "#usercode", data.user_code);
+    await cas.pressEnter(page);
+    await cas.waitForNavigation(page);
+    await cas.sleep(1000);
+    await cas.assertVisibility(page, "div.banner-danger");
+    const approvalToken = await page.$eval("input[name='approvaltoken']", (input) => input.value);
+    assert(approvalToken !== undefined && approvalToken.length > 0);
 
     await cas.type(page, "#usercode", data.user_code);
     await cas.pressEnter(page);
@@ -141,6 +171,7 @@ async function verifyDeviceCode(data) {
             assert(res.data.active === true);
             assert(res.data.sub === "casuser");
             assert(res.data.uniqueSecurityName === "casuser");
+            assert.deepStrictEqual(res.data.aud, ["client", API_RESOURCE]);
         },
         (error) => {
             throw `Introspection operation failed: ${error}`;

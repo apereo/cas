@@ -9,8 +9,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.pac4j.jee.context.JEEContext;
 import org.springframework.web.servlet.ModelAndView;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * This is {@link OAuth20InvalidAuthorizationResponseBuilder}.
@@ -31,31 +31,29 @@ public class OAuth20InvalidAuthorizationResponseBuilder {
     /**
      * Build string.
      *
-     * @param context the context
+     * @param request the request
      * @return the view response
      */
-    public ModelAndView build(final JEEContext context) throws Exception {
-        val errorWithCallBack = (Boolean) context.getRequestAttribute(OAuth20Constants.ERROR_WITH_CALLBACK)
-            .orElse(false);
-
+    public ModelAndView build(final HttpServletRequest request) throws Exception {
+        val errorWithCallBack = Boolean.TRUE.equals(request.getAttribute(OAuth20Constants.ERROR_WITH_CALLBACK));
         if (!errorWithCallBack) {
             return OAuth20Utils.produceUnauthorizedErrorView();
         }
 
-        val error = context.getRequestAttribute(OAuth20Constants.ERROR)
+        val error = Optional.ofNullable(request.getAttribute(OAuth20Constants.ERROR))
             .orElseThrow()
             .toString();
-        val errorDescription = context.getRequestAttribute(OAuth20Constants.ERROR_DESCRIPTION)
+        val errorDescription = Optional.ofNullable(request.getAttribute(OAuth20Constants.ERROR_DESCRIPTION))
             .orElse(StringUtils.EMPTY)
             .toString();
-        val clientId = context.getRequestParameter(OAuth20Constants.CLIENT_ID)
+        val clientId = Optional.ofNullable(request.getParameter(OAuth20Constants.CLIENT_ID))
             .map(String::valueOf)
             .orElse(StringUtils.EMPTY);
-        val redirectUri = context.getRequestParameter(OAuth20Constants.REDIRECT_URI)
+        val redirectUri = Optional.ofNullable(request.getParameter(OAuth20Constants.REDIRECT_URI))
             .map(String::valueOf)
             .orElse(StringUtils.EMPTY);
 
-        val state = context.getRequestParameter(OAuth20Constants.STATE)
+        val state = Optional.ofNullable(request.getParameter(OAuth20Constants.STATE))
             .map(String::valueOf)
             .orElse(StringUtils.EMPTY);
 
@@ -69,20 +67,20 @@ public class OAuth20InvalidAuthorizationResponseBuilder {
         }
 
         LOGGER.debug("Redirecting to URL [{}] with params [{}] for clientId [{}]", redirectUri, params.keySet(), clientId);
-        return buildResponseModelAndView(context, servicesManager, clientId, redirectUri, params);
+        return buildResponseModelAndView(request, servicesManager, clientId, redirectUri, params);
     }
 
     /**
      * Build response model and view.
      *
-     * @param context         the context
+     * @param request         the request
      * @param servicesManager the services manager
      * @param clientId        the client id
      * @param redirectUrl     the redirect url
      * @param parameters      the parameters
      * @return the model and view
      */
-    public ModelAndView buildResponseModelAndView(final JEEContext context,
+    public ModelAndView buildResponseModelAndView(final HttpServletRequest request,
                                                   final ServicesManager servicesManager,
                                                   final String clientId,
                                                   final String redirectUrl,
@@ -91,7 +89,7 @@ public class OAuth20InvalidAuthorizationResponseBuilder {
         OAuth20Utils.validateRedirectUri(redirectUrl, true);
 
         val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(servicesManager, clientId);
-        val responseType = requestParameterResolver.resolveResponseModeType(context);
+        val responseType = requestParameterResolver.resolveResponseModeType(request);
 
         val builder = responseModeFactory.getBuilder(Objects.requireNonNull(registeredService), responseType);
         return builder.build(registeredService, redirectUrl, parameters);
@@ -100,10 +98,10 @@ public class OAuth20InvalidAuthorizationResponseBuilder {
     /**
      * Determines whether this builder supports the request.
      *
-     * @param context the context
+     * @param request the request
      * @return true/false
      */
-    public boolean supports(final JEEContext context) {
-        return context.getRequestAttribute(OAuth20Constants.ERROR).isPresent();
+    public boolean supports(final HttpServletRequest request) {
+        return request.getAttribute(OAuth20Constants.ERROR) != null;
     }
 }

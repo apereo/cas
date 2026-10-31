@@ -69,7 +69,7 @@ class DefaultTicketRegistryCleanerTests {
     void verifyCleanFail() {
         val applicationContext = mock(ConfigurableApplicationContext.class);
         val ticketRegistry = mock(TicketRegistry.class);
-        when(ticketRegistry.stream()).thenThrow(IllegalArgumentException.class);
+        when(ticketRegistry.stream(any(TicketRegistryStreamCriteria.class))).thenThrow(IllegalArgumentException.class);
         val cleaner = new DefaultTicketRegistryCleaner(LockRepository.noOp(), applicationContext, ticketRegistry, TransactionOperations.withoutTransaction());
         assertEquals(0, cleaner.clean());
     }
@@ -80,7 +80,7 @@ class DefaultTicketRegistryCleanerTests {
         val ticketRegistry = mock(TicketRegistry.class);
         val closed = new AtomicBoolean(false);
         val stream = Stream.<Ticket>empty().onClose(() -> closed.set(true));
-        doReturn(stream).when(ticketRegistry).stream();
+        doReturn(stream).when(ticketRegistry).stream(any(TicketRegistryStreamCriteria.class));
         val cleaner = new DefaultTicketRegistryCleaner(LockRepository.noOp(), applicationContext, ticketRegistry, TransactionOperations.withoutTransaction());
         cleaner.clean();
         assertTrue(closed.get());
@@ -166,6 +166,42 @@ class DefaultTicketRegistryCleanerTests {
         val cleaner = newBatchingCleaner(ticketRegistry);
         assertEquals(0, cleaner.clean());
         assertEquals(1, scans.get());
+    }
+
+    @Test
+    void verifyFullScanAtStartupAndEverySixtiethRun() {
+        val ticketRegistry = mock(TicketRegistry.class);
+        val scans = new ArrayList<TicketRegistryStreamCriteria>();
+        doAnswer(invocation -> {
+            scans.add(invocation.getArgument(0));
+            return Stream.empty();
+        }).when(ticketRegistry).stream(any(TicketRegistryStreamCriteria.class));
+        val cleaner = new DefaultTicketRegistryCleaner(LockRepository.noOp(), mock(ConfigurableApplicationContext.class),
+            ticketRegistry, TransactionOperations.withoutTransaction());
+        for (var run = 0; run < 61; run++) {
+            cleaner.clean();
+        }
+        assertEquals(61, scans.size());
+        assertNull(scans.getFirst().getExpiringBefore());
+        assertTrue(scans.subList(1, 60).stream().allMatch(criteria -> criteria.getExpiringBefore() != null));
+        assertNull(scans.getLast().getExpiringBefore());
+    }
+
+    @Test
+    void verifyCandidateScanStillChecksExpiration() throws Throwable {
+        val ticketRegistry = newTicketRegistry();
+        val expired = new MockTicketGrantingTicket(UUID.randomUUID().toString());
+        expired.setExpirationPolicy(new HardTimeoutExpirationPolicy(1));
+        ticketRegistry.addTicket(expired);
+        val active = new MockTicketGrantingTicket(UUID.randomUUID().toString());
+        ticketRegistry.addTicket(active);
+        val cleaner = new DefaultTicketRegistryCleaner(LockRepository.noOp(), mock(ConfigurableApplicationContext.class),
+            ticketRegistry, TransactionOperations.withoutTransaction());
+        assertEquals(0, cleaner.clean());
+        expired.markTicketExpired();
+        assertEquals(1, cleaner.clean());
+        assertNull(ticketRegistry.getTicket(expired.getId()));
+        assertNotNull(ticketRegistry.getTicket(active.getId()));
     }
 
     private static DefaultTicketRegistry newScanCountingTicketRegistry(final AtomicInteger scans, final boolean failRemovals) {

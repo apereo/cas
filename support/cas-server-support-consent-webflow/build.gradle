@@ -11,9 +11,7 @@ ext {
 }
 dependencies {
     api project(":api:cas-server-core-api-webflow")
-    
-    implementation libraries.nimbus
-    
+
     implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-webflow")
     implementation project(":core:cas-server-core-multitenancy")
@@ -27,7 +25,6 @@ dependencies {
     implementation project(":core:cas-server-core-services-authentication")
     implementation project(":core:cas-server-core-services-registry")
 
-    implementation project(":support:cas-server-support-pac4j-core")
     implementation project(":support:cas-server-support-consent-core")
     implementation project(":support:cas-server-support-consent-api")
 

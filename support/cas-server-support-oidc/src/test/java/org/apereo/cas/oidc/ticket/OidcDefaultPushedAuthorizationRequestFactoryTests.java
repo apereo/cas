@@ -9,12 +9,12 @@ import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseModeTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
+import org.apereo.cas.support.oauth.profile.DefaultOAuth20UserProfile;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestContext;
 import org.apereo.cas.util.spring.DirectObjectProvider;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.pac4j.core.profile.CommonProfile;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -28,8 +28,7 @@ class OidcDefaultPushedAuthorizationRequestFactoryTests extends AbstractOidcTest
     @Test
     void verifyOperation() throws Throwable {
         val registeredService = getOidcRegisteredService();
-        val profile = new CommonProfile();
-        profile.setId("casTest");
+        val profile = new DefaultOAuth20UserProfile("casTest");
         val holder = AccessTokenRequestContext.builder()
             .clientId(registeredService.getClientId())
             .service(RegisteredServiceTestUtils.getService())
@@ -72,6 +71,7 @@ class OidcDefaultPushedAuthorizationRequestFactoryTests extends AbstractOidcTest
             .responseType(OAuth20ResponseTypes.CODE)
             .responseMode(OAuth20ResponseModeTypes.QUERY)
             .scopes(new LinkedHashSet<>(List.of("openid", "profile")))
+            .resources(new LinkedHashSet<>(List.of("https://api.example.org/")))
             .codeChallenge("E9Melhoa2OwvFrEMTJguCHaoeK1t8URWbuGJSstw-cM")
             .codeChallengeMethod("S256")
             .claims(Map.of("userinfo", Map.of("email", Map.of("essential", true))))
@@ -94,6 +94,7 @@ class OidcDefaultPushedAuthorizationRequestFactoryTests extends AbstractOidcTest
         assertEquals(holder.getRedirectUri(), request.getRedirectUri());
         assertEquals(OAuth20ResponseModeTypes.QUERY, request.getResponseMode());
         assertEquals(holder.getScopes(), request.getScopes());
+        assertEquals(holder.getResources(), request.getResources());
         assertEquals(holder.getCodeChallenge(), request.getCodeChallenge());
         assertEquals("S256", request.getCodeChallengeMethod());
         assertEquals(Map.of("essential", true), request.getClaims().get("userinfo").get("email"));

@@ -72,7 +72,10 @@ public class CasJpaTicketRegistryAutoConfiguration {
             final CasConfigurationProperties casProperties) {
             return BeanSupplier.of(CloseableDataSource.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
-                .supply(() -> JpaBeans.newDataSource(casProperties.getTicket().getRegistry().getJpa()))
+                .supply(() -> {
+                    val jpa = casProperties.getTicket().getRegistry().getJpa();
+                    return JpaBeans.newDataSource(new JpaTicketEntityFactory(jpa.getDialect()).withDialectDefaults(jpa));
+                })
                 .otherwiseProxy()
                 .get();
         }
@@ -122,7 +125,8 @@ public class CasJpaTicketRegistryAutoConfiguration {
                             ? Set.of(new JpaTicketEntityFactory(properties.getDialect()).getType().getName())
                             : Set.of())
                         .build();
-                    return jpaBeanFactory.newEntityManagerFactoryBean(ctx, properties);
+                    return jpaBeanFactory.newEntityManagerFactoryBean(ctx,
+                        new JpaTicketEntityFactory(properties.getDialect()).withDialectDefaults(properties));
                 }))
                 .otherwiseProxy()
                 .get();

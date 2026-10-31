@@ -13,6 +13,7 @@ import org.apereo.cas.util.scripting.ExecutableCompiledScriptFactory;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -52,9 +53,16 @@ public class GroovyRegisteredServiceSingleSignOnParticipationPolicy implements R
     @org.springframework.data.annotation.Transient
     private transient ExecutableCompiledScript executableScript;
 
+    @JsonIgnore
+    @Transient
+    @org.springframework.data.annotation.Transient
+    @Getter(AccessLevel.NONE)
+    @Setter(AccessLevel.NONE)
+    private transient String resolvedGroovyScript;
+
     @Override
     public boolean shouldParticipateInSso(final RegisteredService registeredService, final AuthenticationAwareTicket ticketState) {
-        initializeWatchableScriptIfNeeded();
+        resolveScriptIfNeeded();
         return FunctionUtils.doIfNotNull(executableScript, () -> getGroovyScriptResult(registeredService, ticketState), () -> false).get();
     }
 
@@ -65,6 +73,17 @@ public class GroovyRegisteredServiceSingleSignOnParticipationPolicy implements R
             executableScript.setBinding(args);
             return executableScript.execute(args.values().toArray(), Boolean.class);
         }, e -> Boolean.FALSE).get();
+    }
+
+    /**
+     * Resolve the script when it has not been resolved yet, when the cached script was closed because it
+     * expired from the script cache, or when the script setting changed since it was resolved. Otherwise
+     * the script already held is used, rather than resolving expressions and resources on every evaluation.
+     */
+    private void resolveScriptIfNeeded() {
+        if (executableScript == null || executableScript.isClosed() || !Objects.equals(groovyScript, resolvedGroovyScript)) {
+            initializeWatchableScriptIfNeeded();
+        }
     }
 
     @PostLoad
@@ -81,5 +100,6 @@ public class GroovyRegisteredServiceSingleSignOnParticipationPolicy implements R
             val script = scriptFactoryInstance.getInlineScript(groovyScript).orElseThrow();
             this.executableScript = CachedScriptResources.fromInlineScript(script);
         }
+        this.resolvedGroovyScript = groovyScript;
     }
 }

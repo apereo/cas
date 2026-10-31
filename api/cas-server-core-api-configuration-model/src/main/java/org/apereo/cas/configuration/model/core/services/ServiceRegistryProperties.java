@@ -5,7 +5,6 @@ import org.apereo.cas.configuration.model.core.cache.ExpiringSimpleCacheProperti
 import org.apereo.cas.configuration.model.core.templates.ServiceRegistryTemplatesProperties;
 import org.apereo.cas.configuration.model.support.aws.AmazonS3ServiceRegistryProperties;
 import org.apereo.cas.configuration.model.support.cassandra.serviceregistry.CassandraServiceRegistryProperties;
-import org.apereo.cas.configuration.model.support.cosmosdb.CosmosDbServiceRegistryProperties;
 import org.apereo.cas.configuration.model.support.dynamodb.DynamoDbServiceRegistryProperties;
 import org.apereo.cas.configuration.model.support.email.EmailProperties;
 import org.apereo.cas.configuration.model.support.gcp.GoogleCloudFirestoreServiceRegistryProperties;
@@ -39,12 +38,6 @@ public class ServiceRegistryProperties implements Serializable {
 
     @Serial
     private static final long serialVersionUID = -368826011744304210L;
-
-    /**
-     * Properties pertaining to Cosmos DB service registry.
-     */
-    @NestedConfigurationProperty
-    private CosmosDbServiceRegistryProperties cosmosDb = new CosmosDbServiceRegistryProperties();
 
     /**
      * Properties pertaining to Apache Cassandra service registry.

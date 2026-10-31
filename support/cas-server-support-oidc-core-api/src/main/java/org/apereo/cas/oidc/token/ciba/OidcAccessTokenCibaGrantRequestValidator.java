@@ -9,6 +9,7 @@ import org.apereo.cas.services.OidcBackchannelTokenDeliveryModes;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
+import org.apereo.cas.support.oauth.profile.OAuth20UserProfile;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.validator.token.BaseOAuth20TokenRequestValidator;
 import org.apereo.cas.util.function.FunctionUtils;
@@ -16,11 +17,10 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
-import org.pac4j.core.context.WebContext;
-import org.pac4j.core.profile.ProfileManager;
-import org.pac4j.core.profile.UserProfile;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.core.Ordered;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * This is {@link OidcAccessTokenCibaGrantRequestValidator}.
@@ -43,17 +43,17 @@ public class OidcAccessTokenCibaGrantRequestValidator extends BaseOAuth20TokenRe
      * {@code invalid_grant} (CIBA Core 1.0, section 11). Expiry and approval are not checked here: the lookup keeps expired
      * requests so that the grant request extractor can report {@code expired_token} or {@code authorization_pending}.
      *
-     * @param context     the context
+     * @param request     the request
+     * @param response    the response
      * @param grantType   the grant type
-     * @param manager     the profile manager
      * @param userProfile the authenticated client profile
      * @return true if the request may proceed
      */
     @Override
-    protected boolean validateInternal(final WebContext context, final String grantType,
-                                       final ProfileManager manager, final UserProfile userProfile) {
+    protected boolean validateInternal(final HttpServletRequest request, final HttpServletResponse response,
+                                       final String grantType, final OAuth20UserProfile userProfile) {
         val configurationContext = getConfigurationContext().getObject();
-        val authRequestId = configurationContext.getRequestParameterResolver().resolveRequestParameter(context, OidcConstants.AUTH_REQ_ID).orElseThrow();
+        val authRequestId = configurationContext.getRequestParameterResolver().resolveRequestParameter(request, OidcConstants.AUTH_REQ_ID).orElseThrow();
         val cibaFactory = (OidcCibaRequestFactory) configurationContext.getTicketFactory().get(OidcCibaRequest.class);
         val ticket = FunctionUtils.doAndHandle(
             () -> configurationContext.getTicketRegistry().getTicket(cibaFactory.decodeId(authRequestId), _ -> true),
@@ -77,9 +77,9 @@ public class OidcAccessTokenCibaGrantRequestValidator extends BaseOAuth20TokenRe
     }
 
     @Override
-    public boolean supports(final WebContext context) {
-        val authRequestId = getConfigurationContext().getObject().getRequestParameterResolver().resolveRequestParameter(context, OidcConstants.AUTH_REQ_ID);
-        return super.supports(context) && authRequestId.isPresent();
+    public boolean supports(final HttpServletRequest request, final HttpServletResponse response) {
+        val authRequestId = getConfigurationContext().getObject().getRequestParameterResolver().resolveRequestParameter(request, OidcConstants.AUTH_REQ_ID);
+        return super.supports(request, response) && authRequestId.isPresent();
     }
 
     @Override

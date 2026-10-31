@@ -24,6 +24,7 @@ import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
 import org.apereo.cas.validation.TicketValidator;
+import org.apereo.cas.web.CasSessionStore;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.SingleSignOnParticipationStrategy;
 import lombok.Getter;
@@ -32,7 +33,6 @@ import lombok.SuperBuilder;
 import lombok.ToString;
 import org.jspecify.annotations.NonNull;
 import org.opensaml.core.xml.XMLObject;
-import org.pac4j.core.context.session.SessionStore;
 import org.springframework.context.ApplicationContext;
 
 /**
@@ -109,7 +109,7 @@ public class SamlProfileHandlerConfigurationContext {
     private final SingleLogoutServiceLogoutUrlBuilder singleLogoutServiceLogoutUrlBuilder;
 
     @NonNull
-    private final SessionStore sessionStore;
+    private final CasSessionStore sessionStore;
 
     @NonNull
     private final TicketRegistrySupport ticketRegistrySupport;

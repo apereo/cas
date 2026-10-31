@@ -22,7 +22,6 @@ import org.opensaml.saml.saml2.core.RequesterID;
 import org.opensaml.saml.saml2.core.Response;
 import org.opensaml.xmlsec.encryption.support.EncryptionConstants;
 import org.opensaml.xmlsec.signature.support.SignatureConstants;
-import org.pac4j.jee.context.JEEContext;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.TestPropertySource;
@@ -90,8 +89,7 @@ class SamlProfileSaml2ResponseBuilderTests extends BaseSamlIdPConfigurationTests
 
         val tgt = new MockTicketGrantingTicket("casuser");
         ticketRegistry.addTicket(tgt);
-        val webContext = new JEEContext(request, response);
-        samlIdPDistributedSessionStore.set(webContext, WebUtils.PARAMETER_TICKET_GRANTING_TICKET_ID, tgt.getId());
+        samlIdPDistributedSessionStore.set(request, response, WebUtils.PARAMETER_TICKET_GRANTING_TICKET_ID, tgt.getId());
 
         val service = getSamlRegisteredServiceForTestShib(true, true);
         service.setIssuerEntityId("https://issuer.example.org");
