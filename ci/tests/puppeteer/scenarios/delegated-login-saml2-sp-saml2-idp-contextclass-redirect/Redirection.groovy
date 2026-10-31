@@ -4,8 +4,6 @@ import org.apereo.cas.support.saml.idp.*
 import org.apereo.cas.web.support.*
 import org.apereo.cas.pac4j.*
 import org.apache.commons.lang3.tuple.*
-import org.pac4j.core.context.*
-import org.pac4j.jee.context.*
 import org.opensaml.saml.saml2.core.*
 import org.opensaml.core.xml.schema.*
 import java.util.stream.*
@@ -35,8 +33,6 @@ def run(Object[] args) {
      saml2 authn request sent by the SP
      */
     def request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext)
-    def response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext)
-    def webContext = new JEEContext(request, response)
     def sessionStore = appContext.getBean("samlIdPDistributedSessionStore")
     def openSamlConfigBean = appContext.getBean(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
 
@@ -46,7 +42,7 @@ def run(Object[] args) {
      */
     logger.info("Locate the SAML2 authentication request sent by the SP...")
     def result = SamlIdPSessionManager.of(openSamlConfigBean, sessionStore)
-            .fetch(webContext, AuthnRequest.class)
+            .fetch(request, AuthnRequest.class)
             .map(Pair::getLeft)
             .map(AuthnRequest.class::cast)
 

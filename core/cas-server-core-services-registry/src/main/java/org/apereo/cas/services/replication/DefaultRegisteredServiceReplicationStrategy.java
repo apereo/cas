@@ -57,6 +57,16 @@ public class DefaultRegisteredServiceReplicationStrategy implements RegisteredSe
         return getRegisteredServiceFromCacheByPredicate(service, value -> value.getValue().getId() == id, serviceRegistry);
     }
 
+    /**
+     * Reconcile the local service with the replication cache. A deletion marker leaves the local service
+     * alone: lookups also run while a service is being saved or picked up by the file watcher, and acting
+     * on the marker there would delete the definition being added. Deletions are applied when services load.
+     *
+     * @param service         the service found locally, if any
+     * @param predicate       the predicate that selects the cache entry
+     * @param serviceRegistry the service registry of this node
+     * @return the service to use, or null if there is none
+     */
     @Override
     public @Nullable RegisteredService getRegisteredServiceFromCacheByPredicate(
         final RegisteredService service,
@@ -68,10 +78,7 @@ public class DefaultRegisteredServiceReplicationStrategy implements RegisteredSe
             val value = item.getValue();
             LOGGER.debug("Located cache entry [{}] in service registry cache [{}]", item, this.distributedCacheManager.getName());
             if (isRegisteredServiceMarkedAsDeletedInCache(item)) {
-                LOGGER.debug("Service found in the cache [{}] is marked as a deleted service. CAS will update the service registry "
-                             + "of this CAS node to remove the local service, if found", value);
-                serviceRegistry.delete(value);
-                this.distributedCacheManager.remove(value, item, true);
+                LOGGER.debug("Service found in the cache [{}] is marked as a deleted service; the local service is removed on the next load", value);
                 return service;
             }
 
@@ -105,24 +112,49 @@ public class DefaultRegisteredServiceReplicationStrategy implements RegisteredSe
         return service;
     }
 
+    /**
+     * Apply the cached services to the services loaded on this node. A cached service replaces the loaded
+     * service with the same id rather than being listed next to it. Older cache entries for the same id,
+     * left behind when a service is renamed, are removed. The cache is otherwise kept after the load,
+     * so that nodes started later receive every service and loaded services that the cache already holds
+     * are not sent again. A deleted service stays in the cache as a deletion marker, so that every node,
+     * including one started later, removes its local copy instead of sending it back; the marker is
+     * replaced only when a service with that id is saved again.
+     *
+     * @param services        the services loaded on this node
+     * @param serviceRegistry the service registry of this node
+     * @return the services
+     */
     @Override
     public List<RegisteredService> updateLoadedRegisteredServicesFromCache(final List<RegisteredService> services,
                                                                            final ServiceRegistry serviceRegistry) {
-        val cachedServices = distributedCacheManager.getAll()
+        val allCachedServices = distributedCacheManager.getAll()
             .stream()
             .sorted(Comparator.<DistributedCacheObject>comparingLong(DistributedCacheObject::getTimestamp).reversed())
+            .toList();
+        val cachedServices = allCachedServices
+            .stream()
             .filter(CollectionUtils.distinctByKey(service -> service.getValue().getId()))
             .toList();
+        allCachedServices
+            .stream()
+            .filter(entry -> !cachedServices.contains(entry))
+            .forEach(entry -> distributedCacheManager.remove(entry.getValue(), entry, false));
         for (val entry : cachedServices) {
             val cachedService = entry.getValue();
             LOGGER.debug("Found cached service definition [{}] in the replication cache [{}]",
                 cachedService, distributedCacheManager.getName());
 
             if (isRegisteredServiceMarkedAsDeletedInCache(entry)) {
-                LOGGER.debug("Service found in the cache [{}] is marked as a deleted service. CAS will update the service registry "
-                             + "of this CAS node to remove the local service, if found.", cachedService);
-                serviceRegistry.delete(cachedService);
-                distributedCacheManager.remove(cachedService, entry, true);
+                services.stream()
+                    .filter(svc -> svc.getId() == cachedService.getId())
+                    .findFirst()
+                    .ifPresent(localService -> {
+                        LOGGER.debug("Service found in the cache [{}] is marked as a deleted service. CAS will update the service registry "
+                                     + "of this CAS node to remove the local service", cachedService);
+                        serviceRegistry.delete(localService);
+                        services.remove(localService);
+                    });
                 continue;
             }
 
@@ -137,7 +169,6 @@ public class DefaultRegisteredServiceReplicationStrategy implements RegisteredSe
                 updateServiceRegistryWithNoMatchingService(services, cachedService, serviceRegistry);
             }
         }
-        distributedCacheManager.clear();
         return services;
     }
 
@@ -165,7 +196,8 @@ public class DefaultRegisteredServiceReplicationStrategy implements RegisteredSe
         } else {
             LOGGER.debug("Service definition found in the cache [{}] is more recent than its counterpart on this CAS node. "
                          + "CAS will update the service registry of this CAS node with the cache entry for future look-ups", cachedService);
-            updateServiceRegistryWithRegisteredService(services, cachedService, serviceRegistry);
+            saveRegisteredServiceIfNecessary(serviceRegistry, cachedService);
+            services.set(services.indexOf(matchingService), cachedService);
         }
     }
 

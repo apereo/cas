@@ -8,6 +8,7 @@ import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.util.MockWebServer;
 import org.apereo.cas.util.RandomUtils;
 import lombok.val;
+import net.shibboleth.shared.resolver.CriteriaSet;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
@@ -83,8 +84,8 @@ class UrlResourceMetadataResolverTests {
                 assertFalse(resolver.resolve(serviceOne).isEmpty());
                 assertFalse(resolver.resolve(serviceTwo).isEmpty());
 
-                val backupFile = resolver.getMetadataBackupFile(serviceOne);
-                assertEquals(backupFile, resolver.getMetadataBackupFile(serviceTwo));
+                val backupFile = resolver.getMetadataBackupFile(serviceOne, new CriteriaSet());
+                assertEquals(backupFile, resolver.getMetadataBackupFile(serviceTwo, new CriteriaSet()));
                 assertTrue(backupFile.exists());
                 assertTrue(FileUtils.listFiles(backupFile.getParentFile(), new String[]{"tmp"}, false).isEmpty(),
                     "Metadata backup directory must not retain temporary files");
@@ -103,7 +104,7 @@ class UrlResourceMetadataResolverTests {
                 service.setMetadataLocation("http://localhost:%s".formatted(webServer.getPort()));
                 assertFalse(resolver.resolve(service).isEmpty());
             }
-            val backupFile = resolver.getMetadataBackupFile(service);
+            val backupFile = resolver.getMetadataBackupFile(service, new CriteriaSet());
             assertTrue(backupFile.exists(), "Metadata backup file must survive a forced refresh");
             assertFalse(resolver.resolve(service).isEmpty(),
                 "Metadata backup file must carry the service while the metadata source is unreachable");
@@ -172,7 +173,7 @@ class UrlResourceMetadataResolverTests {
                 assertFalse(results.isEmpty());
             }
 
-            val backupFile = resolver.getMetadataBackupFile(service);
+            val backupFile = resolver.getMetadataBackupFile(service, new CriteriaSet());
             FileUtils.writeByteArrayToFile(backupFile, UUID.randomUUID().toString().getBytes(StandardCharsets.UTF_8));
             try (val webServer = new MockWebServer(new ClassPathResource("sample-metadata.xml"))) {
                 webServer.start();

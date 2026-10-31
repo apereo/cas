@@ -10,7 +10,7 @@ import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseModeTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
-import org.apereo.cas.support.oauth.authenticator.Authenticators;
+import org.apereo.cas.support.oauth.profile.DefaultOAuth20UserProfile;
 import org.apereo.cas.support.oauth.web.response.OAuth20AuthorizationRequest;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestContext;
 import lombok.val;
@@ -20,7 +20,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.pac4j.core.profile.CommonProfile;
 import org.springframework.web.servlet.view.AbstractUrlBasedView;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -53,9 +52,7 @@ class OidcImplicitIdTokenAuthorizationResponseBuilderTests extends AbstractOidcT
         val authentication = RegisteredServiceTestUtils.getAuthentication(principal, attributes);
         val code = addCode(principal, registeredService);
 
-        val profile = new CommonProfile();
-        profile.setClientName(Authenticators.CAS_OAUTH_CLIENT_BASIC_AUTHN);
-        profile.setId("casuser");
+        val profile = new DefaultOAuth20UserProfile("casuser");
 
         val tokenRequestContext = AccessTokenRequestContext.builder()
             .clientId(registeredService.getClientId())

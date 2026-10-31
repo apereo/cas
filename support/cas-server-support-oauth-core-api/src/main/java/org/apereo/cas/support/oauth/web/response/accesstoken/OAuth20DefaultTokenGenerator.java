@@ -23,6 +23,7 @@ import org.apereo.cas.support.oauth.validator.token.device.UnapprovedOAuth20Devi
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestContext;
 import org.apereo.cas.ticket.AuthenticationAwareTicket;
 import org.apereo.cas.ticket.InvalidTicketException;
+import org.apereo.cas.ticket.OAuth20Token;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.TransientSessionTicket;
@@ -122,6 +123,7 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
                     .ticketGrantingTicket(tokenRequestContext.getTicketGrantingTicket())
                     .grantType(tokenRequestContext.getGrantType())
                     .scopes(deviceCodeTicket.getScopes())
+                    .resources(deviceCodeTicket.getResources())
                     .responseType(tokenRequestContext.getResponseType())
                     .generateRefreshToken(tokenRequestContext.getRegisteredService() != null && tokenRequestContext.isGenerateRefreshToken())
                     .dpop(tokenRequestContext.getDpop())
@@ -285,6 +287,7 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
             authentication,
             ticketGrantingTicket,
             tokenRequestContext.getScopes(),
+            tokenRequestContext.getResources(),
             tokenRequestContext.getToken(),
             clientId,
             tokenRequestContext.getClaims(),
@@ -321,7 +324,7 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
         val accessTokenFactory = (OAuth20AccessTokenFactory) ticketFactory.get(OAuth20AccessToken.class);
         val ticketGrantingTicket = tokenRequestContext.getTicketGrantingTicket() == null || tokenRequestContext.getTicketGrantingTicket().isExpired()
             ? null : tokenRequestContext.getTicketGrantingTicket();
-        return accessTokenFactory.create(
+        val exchangedToken = accessTokenFactory.create(
             service,
             exchangedAuthentication.build(),
             ticketGrantingTicket,
@@ -331,6 +334,11 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
             accessToken.getClaims(),
             accessToken.getResponseType(),
             accessToken.getGrantType());
+        Optional.ofNullable(tokenRequestContext.getTokenExchangeAudience())
+            .filter(StringUtils::isNotBlank)
+            .or(() -> Optional.ofNullable(tokenRequestContext.getTokenExchangeResource()).map(Service::getId))
+            .ifPresent(audience -> exchangedToken.setAudience(List.of(audience)));
+        return exchangedToken;
     }
 
     protected Ticket addAccessToken(final AccessTokenRequestContext tokenRequestContext,
@@ -443,11 +451,13 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
             bindRefreshTokenToProofOfPossessionKey(tokenRequestContext),
             ticketGrantingTicket,
             scopes,
+            determineRefreshTokenResources(tokenRequestContext),
             tokenRequestContext.getRegisteredService().getClientId(),
             accessTokenId,
             tokenRequestContext.getClaims(),
             tokenRequestContext.getResponseType(),
             tokenRequestContext.getGrantType());
+
         refreshToken.setAuthorizationDetails(OAuth20Utils.getAuthorizationDetails(tokenRequestContext.getToken()));
 
         if (refreshToken.getExpirationPolicy().getTimeToLive() > 0) {
@@ -457,6 +467,20 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
         LOGGER.debug("Refresh token expiration policy for [{}] does not allow refresh tokens to be added to the registry",
             refreshToken.getId());
         return null;
+    }
+
+    /**
+     * A refresh token keeps the resources of the grant it was issued from, the code or the refresh token it replaces,
+     * even when the access token issued with it was narrowed to fewer resources (RFC 8707, section 2.2). Otherwise, it
+     * has the resources of the request.
+     *
+     * @param tokenRequestContext the token request context
+     * @return the resources of the refresh token
+     */
+    protected Collection<String> determineRefreshTokenResources(final AccessTokenRequestContext tokenRequestContext) {
+        return Optional.ofNullable(tokenRequestContext.getToken())
+            .<Collection<String>>map(OAuth20Token::getResources)
+            .orElseGet(tokenRequestContext::getResources);
     }
 
     /**
@@ -534,7 +558,7 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
         val deviceUserCodeFactory = (OAuth20DeviceUserCodeFactory) ticketFactory.get(OAuth20DeviceUserCode.class);
 
         val deviceToken = deviceTokenFactory.createDeviceCode(tokenRequestContext.getService(),
-            tokenRequestContext.getScopes(), tokenRequestContext.getRegisteredService().getClientId());
+            tokenRequestContext.getScopes(), tokenRequestContext.getResources(), tokenRequestContext.getRegisteredService().getClientId());
         LOGGER.debug("Created device code token [{}]", deviceToken.getId());
 
         val deviceUserCode = deviceUserCodeFactory.createDeviceUserCode(deviceToken.getService());

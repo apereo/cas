@@ -7,8 +7,8 @@ import com.nimbusds.openid.connect.sdk.Nonce;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.Nullable;
-import org.pac4j.core.context.WebContext;
 import org.springframework.http.HttpHeaders;
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * Hands out and checks server-provided nonces for DPoP proofs (RFC 9449, sections 8 and 9). Once turned on, every DPoP proof
@@ -79,14 +79,14 @@ public interface OAuth20DPoPNonceService {
     /**
      * Hand out a fresh nonce in the {@code DPoP-Nonce} header of the response, which is then not to be cached.
      *
-     * @param webContext the web context
+     * @param response the response
      * @return the nonce
      * @throws Throwable the throwable
      */
-    default String provide(final WebContext webContext) throws Throwable {
+    default String provide(final HttpServletResponse response) throws Throwable {
         val nonce = create();
-        webContext.setResponseHeader(OAuth20Constants.DPOP_NONCE, nonce);
-        webContext.setResponseHeader(HttpHeaders.CACHE_CONTROL, "no-store");
+        response.setHeader(OAuth20Constants.DPOP_NONCE, nonce);
+        response.setHeader(HttpHeaders.CACHE_CONTROL, "no-store");
         return nonce;
     }
 }

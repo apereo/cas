@@ -20,7 +20,6 @@ import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.hc.core5.net.URIBuilder;
-import org.pac4j.jee.context.JEEContext;
 
 /**
  * This is {@link OAuth20AuthenticationServiceSelectionStrategy}.
@@ -69,9 +68,9 @@ public class OAuth20AuthenticationServiceSelectionStrategy extends BaseAuthentic
                 val grantValue = grantType.get();
                 if (OAuth20Utils.isGrantType(grantValue, OAuth20GrantTypes.CLIENT_CREDENTIALS)) {
                     LOGGER.debug("Located grant type [{}]; checking for service headers", grantValue);
-                    val request = HttpRequestUtils.getHttpServletRequestFromRequestAttributes();
-                    val response = HttpRequestUtils.getHttpServletResponseFromRequestAttributes();
-                    id = OAuth20Utils.getServiceRequestHeaderIfAny(new JEEContext(request, response));
+                    id = Optional.ofNullable(HttpRequestUtils.getHttpServletRequestFromRequestAttributes())
+                        .map(OAuth20Utils::getServiceRequestHeaderIfAny)
+                        .orElse(StringUtils.EMPTY);
                 }
                 if (StringUtils.isBlank(id)) {
                     id = clientId.get();

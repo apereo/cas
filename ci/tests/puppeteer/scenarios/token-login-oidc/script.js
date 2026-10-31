@@ -4,7 +4,7 @@ const assert = require("assert");
 
 (async () => {
     const service = "https://localhost:9859/anything/sample1";
-    const token = "eyJjdHkiOiJKV1QiLCJlbmMiOiJBMTkyQ0JDLUhTMzg0IiwiYWxnIjoiZGlyIn0..zTe4qLwuyvVi6gHmSL4VcQ.NAmUxtxfEc-xJ0BO1DIUtxRN05-XTiB4bFVqN4YFvBPtVUrppTR5oXVKszWYQD_jWuhHnUBCVcvOBri9n-q6rKXQBkMnW9TLXQ4d9waJUOKpxORvgX3T56qoVfYTbUkVxe-5VchX000JWy8GdhpyWawldG0au03GhU7jhVnQeMlb7WWaNFOGXQwx6wvF0B30UL-6wgZO1nWD7InaQXJiFZazE0HK0DX61DUbP6PFYJKOBkbSWg9vSSzCeTxVFx9uJXMSAg9_vacpAYmq02ixV8e73CU9_hHhiCqEOYGunzwO4mEm6mn3fhPz6Q5azzPhZTc-lROKc66bmo_Y7jtMRmwgwBTq4diY9bIhw0x_qMsLLEdk1qk-dH9_FhBcunW2PkM8rCyGyDQ2slL-Axs_zg.HgP2g-UNsljcDhO74OMFWKxkYiSo4mbK";
+    const token = "eyJhbGciOiJkaXIiLCJlbmMiOiJBMTkyQ0JDLUhTMzg0IiwiY3R5IjoiSldUIn0..6q-WnspGZkzHAd_4LDbRnA.Crc5YCWpZ26j9iJ61RR0t7L_A1NtEbTe-IaqqBrEZBlLFxGIcchMGC6sPXOasewh3GwkukrHGyg5pfXU8OvPHWPvC8riG5T1rEYkfgxVoG2rUOIFrLYHGpLCRdsXRP3EYnE4nnIePlDTmKLVC80ovtUoonow2YVwMK6mv1mqWE-RN-XSv_gav4aroaNvY4AA19Q_ppBYc_VVUJmz1t0pr1BTIRao8Hm56LQU8_kSBDfEuB96wTPpuTafZ3zMshgkLM--Ga-FGLL2Tyx_toMdaQ.QtUB4sH8R0BQ0YsB8QmC-ccAtgwGhLZu";
 
     const browser = await cas.newBrowser(cas.browserOptions());
     const page = await cas.newPage(browser);
@@ -56,8 +56,9 @@ const assert = require("assert");
         });
     const body = JSON.parse(response);
     console.dir(body, {depth: null, colors: true});
-    assert(body.registeredService !== undefined);
-    assert(body.principal !== undefined);
+    assert(body.registeredService.id === 1);
+    assert(body.registeredService.properties === undefined);
+    assert(body.principal.id === "casuser");
 
     await cas.closeBrowser(browser);
 })();

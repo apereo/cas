@@ -1,0 +1,13 @@
+{
+  "dependencies": "rest,stateless-ticket-registry",
+
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
+    "--cas.authn.attribute-repository.stub.attributes.department=engineering",
+
+    "--cas.service-registry.core.init-from-json=true",
+    "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services"
+  ]
+}

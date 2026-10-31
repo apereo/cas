@@ -4,6 +4,7 @@ import module java.base;
 import org.apereo.cas.util.text.MessageSanitizer;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.audit.spi.AuditResourceResolver;
 import org.aspectj.lang.JoinPoint;
 import org.jspecify.annotations.Nullable;
@@ -39,6 +40,7 @@ public class CasMcpOperationAuditResourceResolver implements AuditResourceResolv
         if (operation == null) {
             return new String[]{"unknown"};
         }
-        return new String[]{messageSanitizer.sanitize("operation=" + operation.operation() + ", arguments=" + operation.arguments())};
+        val client = operation.client() != null ? ", client=" + operation.client() : StringUtils.EMPTY;
+        return new String[]{messageSanitizer.sanitize("operation=" + operation.operation() + ", arguments=" + operation.arguments() + client)};
     }
 }

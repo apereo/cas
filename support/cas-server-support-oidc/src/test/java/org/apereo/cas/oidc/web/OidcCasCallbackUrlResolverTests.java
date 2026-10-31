@@ -5,16 +5,14 @@ import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
+import org.apereo.cas.support.oauth.web.OAuth20CasCallbackUrlResolver;
 import lombok.val;
 import org.apache.hc.core5.net.URIBuilder;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.pac4j.core.http.url.UrlResolver;
-import org.pac4j.jee.context.JEEContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -27,12 +25,11 @@ import static org.junit.jupiter.api.Assertions.*;
 class OidcCasCallbackUrlResolverTests extends AbstractOidcTests {
     @Autowired
     @Qualifier("casCallbackUrlResolver")
-    private UrlResolver casCallbackUrlResolver;
+    private OAuth20CasCallbackUrlResolver casCallbackUrlResolver;
 
     @Test
     void verifyOperation() throws Throwable {
         val request = new MockHttpServletRequest();
-        val response = new MockHttpServletResponse();
         request.addParameter(OAuth20Constants.CLIENT_ID, UUID.randomUUID().toString());
         request.addParameter(OAuth20Constants.STATE, UUID.randomUUID().toString());
         request.addParameter(OidcConstants.UI_LOCALES, "de");
@@ -40,8 +37,7 @@ class OidcCasCallbackUrlResolverTests extends AbstractOidcTests {
         request.addParameter(OidcConstants.REQUEST_URI, UUID.randomUUID().toString());
 
         val output = casCallbackUrlResolver.compute(
-            OAuth20Utils.casOAuthCallbackUrl(casProperties.getServer().getPrefix()),
-            new JEEContext(request, response));
+            OAuth20Utils.casOAuthCallbackUrl(casProperties.getServer().getPrefix()), request);
         assertNotNull(output);
 
         val uri = new URIBuilder(output);

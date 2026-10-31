@@ -1,10 +1,12 @@
 package org.apereo.cas.support.saml.web.idp.profile;
 
 import module java.base;
+import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
 import org.apereo.cas.support.saml.SamlIdPConstants;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
+import org.apereo.cas.support.saml.idp.SamlIdPSessionManager;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.util.junit.Assertions;
 import org.apereo.cas.web.flow.CasWebflowConstants;
@@ -13,8 +15,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.opensaml.messaging.decoder.MessageDecodingException;
+import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.springframework.http.HttpStatus;
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.web.util.UriComponentsBuilder;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 
@@ -31,12 +36,11 @@ class SamlIdPInitiatedProfileHandlerControllerTests extends BaseSamlIdPConfigura
     @BeforeEach
     void beforeEach() {
         this.samlRegisteredService = getSamlRegisteredServiceForTestShib();
-        this.samlRegisteredService.setSignUnsolicitedAuthnRequest(true);
         servicesManager.save(samlRegisteredService);
     }
 
     @Test
-    void verifySignedAuthnRequest() throws Throwable {
+    void verifyUnsignedRequestForServiceProviderThatSignsRequests() throws Throwable {
         val service = getSamlRegisteredServiceForTestShib();
         service.setServiceId("signed:authn:service");
         servicesManager.save(service);
@@ -45,6 +49,18 @@ class SamlIdPInitiatedProfileHandlerControllerTests extends BaseSamlIdPConfigura
             SamlIdPConstants.PROVIDER_ID, service.getServiceId(),
             SamlIdPConstants.TARGET, "relay-state");
         assertEquals(HttpStatus.FOUND.value(), result.getResponse().getStatus());
+
+        val loginUrl = UriComponentsBuilder.fromUriString(Objects.requireNonNull(result.getResponse().getRedirectedUrl())).build();
+        val serviceUrl = URLDecoder.decode(Objects.requireNonNull(loginUrl.getQueryParams().getFirst(CasProtocolConstants.PARAMETER_SERVICE)),
+            StandardCharsets.UTF_8);
+        val authnRequestId = UriComponentsBuilder.fromUriString(serviceUrl).build().getQueryParams().getFirst(SamlIdPConstants.AUTHN_REQUEST_ID);
+        val request = new MockHttpServletRequest();
+        request.setSession(result.getRequest().getSession());
+        request.addParameter(SamlIdPConstants.AUTHN_REQUEST_ID, Objects.requireNonNull(authnRequestId));
+        val storedRequest = (AuthnRequest) SamlIdPSessionManager.of(openSamlConfigBean, samlIdPDistributedSessionStore)
+            .fetch(request, AuthnRequest.class).orElseThrow().getLeft();
+        assertFalse(storedRequest.isSigned());
+        assertNull(storedRequest.getSignature());
     }
 
     @Test

@@ -20,6 +20,7 @@
     <span th:remove="tag" th:each="file : ${#strings.setSplit(#cas.theme('cas.standard.css.file'), ',')}">
         <link rel="stylesheet" type="text/css" href="../static/css/cas.css" th:href="@{${file}}" />
     </span>
+    <link rel="stylesheet" type="text/css" th:if="${#cas.themeBuilderEnabled}" th:href="@{/css/theme-builder.css}" />
     <link rel="shortcut icon" th:href="@{${#strings.defaultString(#cas.theme('cas.favicon.file'), '/favicon.ico')}}" />
 
     <span th:remove="tag" th:each="name : ${#strings.setSplit(#cas.theme('cas.standard.fragments.head'), ',')}">
@@ -37,7 +38,10 @@
 
     <div class="mdc-drawer-scrim"></div>
 
-    <div class="fade-in mdc-drawer-app-content mdc-top-app-bar--fixed-adjust d-flex justify-content-center bgimage">
+    <div class="fade-in mdc-drawer-app-content mdc-top-app-bar--fixed-adjust d-flex justify-content-center bgimage"
+         th:with="contentPosition=${#strings.toLowerCase(#strings.replace(#strings.defaultString(#cas.theme('cas.main-content.position'), 'topcenter'), '-', ''))}"
+         th:classappend="${(#strings.startsWith(contentPosition, 'middle') ? 'cas-content-middle ' : (#strings.startsWith(contentPosition, 'bottom') ? 'cas-content-bottom ' : ''))
+                          + (#strings.endsWith(contentPosition, 'left') ? 'cas-content-left' : (#strings.endsWith(contentPosition, 'right') ? 'cas-content-right' : ''))}">
         <main id="main-content" th:attr="class=*{mainContentClass ?: 'container-lg' + ' py-4'},role=main"
               th:classappend="'cas-ui'">
             <div layout:fragment="content" id="content">

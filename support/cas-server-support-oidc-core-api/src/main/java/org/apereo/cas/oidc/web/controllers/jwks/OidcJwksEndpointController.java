@@ -24,7 +24,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
 import org.jose4j.jwk.JsonWebKey;
 import org.jose4j.jwk.JsonWebKeySet;
-import org.pac4j.jee.context.JEEContext;
 import org.springframework.context.event.EventListener;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -91,8 +90,7 @@ public class OidcJwksEndpointController extends BaseOidcController {
                                                 final HttpServletResponse response,
                                                 @RequestParam(value = "kid", required = false) final String kid,
                                                 @RequestParam(value = "state", required = false) final String state) {
-        val webContext = new JEEContext(request, response);
-        if (!getConfigurationContext().getIssuerService().validateIssuer(webContext, List.of(OidcConstants.JWKS_URL))) {
+        if (!getConfigurationContext().getIssuerService().validateIssuer(request, List.of(OidcConstants.JWKS_URL))) {
             val body = OAuth20Utils.getErrorResponseBody(OAuth20Constants.INVALID_REQUEST, "Invalid issuer");
             return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
         }

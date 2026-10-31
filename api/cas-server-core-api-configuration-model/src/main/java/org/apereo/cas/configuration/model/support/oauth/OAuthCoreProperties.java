@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration.model.support.oauth;
 
 import module java.base;
+import org.apereo.cas.configuration.support.RegularExpressionCapable;
 import org.apereo.cas.configuration.support.RequiresModule;
 import lombok.Getter;
 import lombok.Setter;
@@ -31,6 +32,16 @@ public class OAuthCoreProperties implements Serializable {
      * once an access token is "validated".
      */
     private UserProfileViewTypes userProfileViewType = UserProfileViewTypes.NESTED;
+
+    /**
+     * Resources, as regular expressions, that every OAuth client may request with the RFC 8707 {@code resource}
+     * parameter, in addition to those allowed by its registered service. A requested resource must fully match one of
+     * the expressions, case-sensitively, the same way it must match the allowed resources of a service. This suits
+     * resources hosted by CAS itself, such as its MCP server, which clients that register themselves dynamically
+     * cannot list in their own registration. CAS allows its MCP server endpoint by default.
+     */
+    @RegularExpressionCapable
+    private List<String> allowedResources = new ArrayList<>();
 
     /**
      * Profile view types.

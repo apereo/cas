@@ -72,4 +72,19 @@ class AttributeBasedRegisteredServiceAccessStrategyActivationCriteriaTests {
             .setRequiredAttributes(Map.of("common-name", List.of("n@m3"), "cn", List.of("***")));
         assertTrue(criteria.shouldActivate(request));
     }
+
+    @Test
+    void verifyRequiredValueMatchesEntireValue() {
+        val request = RegisteredServiceAccessStrategyRequest.builder()
+            .principalId("casuser")
+            .attributes(CollectionUtils.wrap("role", List.of("sysadmin-disabled")))
+            .applicationContext(applicationContext)
+            .build();
+        val criteria = new AttributeBasedRegisteredServiceAccessStrategyActivationCriteria()
+            .setOperator(LogicalOperatorTypes.AND)
+            .setRequiredAttributes(Map.of("role", List.of("admin")));
+        assertFalse(criteria.shouldActivate(request));
+        criteria.setRequiredAttributes(Map.of("role", List.of(".*admin.*")));
+        assertTrue(criteria.shouldActivate(request));
+    }
 }

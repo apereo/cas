@@ -27,7 +27,6 @@ dependencies {
     implementation project(":support:cas-server-support-oauth-api")
     implementation project(":support:cas-server-support-oauth")
     implementation project(":support:cas-server-support-oauth-services")
-    implementation project(":support:cas-server-support-pac4j-api")
     
     implementation project(":core:cas-server-core-authentication-throttle")
     implementation project(":core:cas-server-core-audit-api")
@@ -51,8 +50,6 @@ dependencies {
     compileOnly project(":support:cas-server-support-discovery-profile-core")
     compileOnly project(":support:cas-server-support-stateless-ticket-registry-api")
     
-    implementation libraries.pac4jcore
-    implementation libraries.pac4jcas
     implementation libraries.springsecurityconfig
     implementation libraries.springsecurityweb
 
