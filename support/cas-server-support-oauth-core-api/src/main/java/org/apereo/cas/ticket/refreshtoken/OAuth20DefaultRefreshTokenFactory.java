@@ -60,6 +60,7 @@ public class OAuth20DefaultRefreshTokenFactory implements OAuth20RefreshTokenFac
                                       final Authentication authentication,
                                       final Ticket ticketGrantingTicket,
                                       final Collection<String> scopes,
+                                      final Collection<String> resources,
                                       final String clientId,
                                       final String accessToken,
                                       final Map<String, Map<String, Object>> requestClaims,
@@ -82,6 +83,7 @@ public class OAuth20DefaultRefreshTokenFactory implements OAuth20RefreshTokenFac
         val refreshToken = new OAuth20DefaultRefreshToken(codeId, service, authentication,
             expirationPolicyToUse, ticketGrantingTicket,
             scopes, clientId, accessToken, requestClaims, responseType, grantType);
+        refreshToken.setResources(resources);
         FunctionUtils.doIfNotNull(service, _ -> refreshToken.setTenantId(service.getTenant()));
         descendantTicketsTrackingPolicy.trackTicket(ticketGrantingTicket, refreshToken);
         return refreshToken;

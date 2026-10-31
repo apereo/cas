@@ -5,6 +5,7 @@ import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
 import org.apereo.cas.support.saml.idp.metadata.SamlIdPMetadataResolver;
 import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataGenerator;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
+import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument;
 import com.google.common.collect.Iterables;
 import lombok.val;
 import net.shibboleth.shared.resolver.CriteriaSet;
@@ -130,6 +131,40 @@ class SamlIdPMetadataResolverTests extends BaseSamlIdPConfigurationTests {
             }
         }
         assertTrue(failures.isEmpty(), () -> "Concurrent resolution crossed service boundaries: " + String.join("; ", failures));
+    }
+
+    @Test
+    void verifyMetadataFollowsLocatorDocument() throws Throwable {
+        val globalEntityId = casProperties.getAuthn().getSamlIdp().getCore().getEntityId();
+        val globalMetadata = samlIdPMetadataLocator.resolveMetadata(Optional.empty())
+            .getContentAsString(StandardCharsets.UTF_8);
+        val firstDocument = SamlIdPMetadataDocument.builder()
+            .metadata(globalMetadata.replace(globalEntityId, "https://idp.example.org/first")).build();
+        val secondDocument = SamlIdPMetadataDocument.builder()
+            .metadata(globalMetadata.replace(globalEntityId, "https://idp.example.org/second")).build();
+        val currentDocument = new AtomicReference<>(firstDocument);
+
+        val locator = mock(SamlIdPMetadataLocator.class);
+        when(locator.exists(any())).thenReturn(true);
+        when(locator.shouldGenerateMetadataFor(any())).thenReturn(false);
+        when(locator.fetch(any())).thenAnswer(_ -> currentDocument.get());
+        when(locator.resolveMetadata(any())).thenAnswer(_ ->
+            new ByteArrayResource(currentDocument.get().getMetadata().getBytes(StandardCharsets.UTF_8)));
+
+        val resolver = new SamlIdPMetadataResolver(locator, mock(SamlIdPMetadataGenerator.class), openSamlConfigBean, casProperties);
+        resolver.setId(UUID.randomUUID().toString());
+        resolver.setRequireValidMetadata(false);
+        resolver.setFailFastInitialization(false);
+        resolver.initialize();
+
+        val criteria = new CriteriaSet(new EvaluableEntityRoleEntityDescriptorCriterion(IDPSSODescriptor.DEFAULT_ELEMENT_NAME));
+        assertEquals("https://idp.example.org/first", Iterables.getFirst(resolver.resolve(criteria), null).getEntityID());
+        assertEquals("https://idp.example.org/first", Iterables.getFirst(resolver.resolve(criteria), null).getEntityID());
+        verify(locator, times(1)).resolveMetadata(any());
+
+        currentDocument.set(secondDocument);
+        assertEquals("https://idp.example.org/second", Iterables.getFirst(resolver.resolve(criteria), null).getEntityID());
+        verify(locator, times(2)).resolveMetadata(any());
     }
 
     @RepeatedTest(2)

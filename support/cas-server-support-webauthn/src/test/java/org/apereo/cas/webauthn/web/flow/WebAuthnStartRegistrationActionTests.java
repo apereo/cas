@@ -9,6 +9,7 @@ import org.apereo.cas.web.CasWebSecurityConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.util.MultifactorAuthenticationWebflowUtils;
 import org.apereo.cas.web.support.WebUtils;
+import org.apereo.cas.webauthn.web.BaseWebAuthnController;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -66,7 +67,8 @@ class WebAuthnStartRegistrationActionTests {
             new AuthenticationManagerBuilder(mock(ObjectPostProcessor.class)),
             Map.of(ApplicationContext.class, applicationContext));
         assertNotNull(webAuthnProtocolEndpointConfigurer.configure(http));
-        assertNotNull(http.getConfigurer(CsrfConfigurer.class));
+        assertNull(http.getConfigurer(CsrfConfigurer.class));
+        assertEquals(List.of(BaseWebAuthnController.BASE_ENDPOINT_WEBAUTHN + "/**"), webAuthnProtocolEndpointConfigurer.getCsrfProtectedEndpoints());
     }
 
 }

@@ -13,7 +13,8 @@ import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.function.FunctionUtils;
 import lombok.val;
-import org.pac4j.core.context.WebContext;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * This is {@link OidcPushedAuthorizationRequestValidator}.
@@ -39,22 +40,22 @@ public class OidcPushedAuthorizationRequestValidator extends BaseOAuth20Authoriz
     }
 
     @Override
-    public boolean validate(final WebContext context) {
+    public boolean validate(final HttpServletRequest request, final HttpServletResponse response) {
         return FunctionUtils.doAndHandle(() -> {
-            val requestUri = context.getRequestParameter(OidcConstants.REQUEST_URI).orElseThrow();
+            val requestUri = Optional.ofNullable(request.getParameter(OidcConstants.REQUEST_URI)).orElseThrow();
             val uriToken = ticketRegistry.getTicket(requestUri, OidcPushedAuthorizationRequest.class);
             val uriFactory = (OidcPushedAuthorizationRequestFactory) ticketFactory.get(OidcPushedAuthorizationRequest.class);
             val holder = uriFactory.toAccessTokenRequest(uriToken);
-            context.setRequestAttribute(OidcPushedAuthorizationRequest.class.getName(), holder);
-            val givenClientId = getClientIdFromRequest(context);
-            return givenClientId.equals(holder.getClientId()) && verifyRegisteredServiceByClientId(context, holder.getClientId()) != null;
+            request.setAttribute(OidcPushedAuthorizationRequest.class.getName(), holder);
+            val givenClientId = getClientIdFromRequest(request);
+            return givenClientId.equals(holder.getClientId()) && verifyRegisteredServiceByClientId(request, holder.getClientId()) != null;
         }, throwable -> false).get();
     }
 
     @Override
-    public boolean supports(final WebContext context) {
-        return context.getRequestParameter(OAuth20Constants.CLIENT_ID).isPresent()
-               && context.getRequestParameter(OidcConstants.REQUEST_URI).isPresent();
+    public boolean supports(final HttpServletRequest request, final HttpServletResponse response) {
+        return request.getParameter(OAuth20Constants.CLIENT_ID) != null
+               && request.getParameter(OidcConstants.REQUEST_URI) != null;
     }
 
     @Override

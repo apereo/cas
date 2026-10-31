@@ -131,6 +131,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
     "cas.authn.adaptive.policy.require-multifactor.mfa-dummy=198[.]51[.]100[.][0-9]+",
     "cas.authn.throttle.failure.threshold=3",
     "cas.authn.throttle.failure.range-seconds=10",
+    "cas.authn.oauth.core.allowed-resources=https://cas\\\\.example\\\\.org/cas/mcp",
     "cas.authn.throttle.failure.throttle-window-seconds=PT5M"
 })
 public abstract class BaseCasMcpTests {
@@ -141,6 +142,8 @@ public abstract class BaseCasMcpTests {
     protected static final RequestPostProcessor MCP_ADMIN = httpBasic("mcpadmin", "Mellon");
 
     protected static final RequestPostProcessor CAS_USER = httpBasic("casuser", "Mellon");
+
+    protected static final RequestPostProcessor MCP_OPERATOR = httpBasic("mcpoperator", "Mellon");
 
     private static final AtomicLong REQUEST_ID = new AtomicLong();
 

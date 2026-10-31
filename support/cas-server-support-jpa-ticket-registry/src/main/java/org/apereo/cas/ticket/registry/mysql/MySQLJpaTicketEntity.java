@@ -24,13 +24,17 @@ import jakarta.persistence.Table;
  */
 @SuperBuilder
 @NoArgsConstructor
-@AttributeOverrides(@AttributeOverride(name = "body", column = @Column(columnDefinition = "text")))
+@AttributeOverrides({
+    @AttributeOverride(name = "body", column = @Column(columnDefinition = "text")),
+    @AttributeOverride(name = "type", column = @Column(nullable = false, length = 255)),
+    @AttributeOverride(name = "principalId", column = @Column(length = 512)),
+    @AttributeOverride(name = "parentId", column = @Column(length = 768))
+})
 @Entity(name = "MySQLJpaTicketEntity")
 @Table(name = "CasTickets", indexes = {
-    @Index(name = "idx_ticket_type", columnList = "type"),
     @Index(name = "idx_ticket_principal", columnList = "principalId"),
     @Index(name = "idx_ticket_parent", columnList = "parentId"),
-    @Index(name = "idx_ticket_service", columnList = "service"),
+    @Index(name = "idx_ticket_expiration", columnList = "expirationTime"),
     @Index(name = "idx_type_principal", columnList = "type,principalId")
 })
 @Setter

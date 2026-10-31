@@ -20,7 +20,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.pac4j.jee.context.JEEContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -61,8 +60,7 @@ public class OidcClientConfigurationEndpointController extends BaseOidcControlle
         @RequestParam(name = OAuth20Constants.CLIENT_ID) final String clientId,
         final HttpServletRequest request, final HttpServletResponse response) {
 
-        val webContext = new JEEContext(request, response);
-        if (!getConfigurationContext().getIssuerService().validateIssuer(webContext, List.of(OidcConstants.CLIENT_CONFIGURATION_URL))) {
+        if (!getConfigurationContext().getIssuerService().validateIssuer(request, List.of(OidcConstants.CLIENT_CONFIGURATION_URL))) {
             val body = OAuth20Utils.getErrorResponseBody(OAuth20Constants.INVALID_REQUEST, "Invalid issuer");
             return ResponseEntity.badRequest().body(body);
         }
@@ -109,8 +107,7 @@ public class OidcClientConfigurationEndpointController extends BaseOidcControlle
         final HttpServletRequest request, final HttpServletResponse response)
             throws Exception {
 
-        val webContext = new JEEContext(request, response);
-        if (!getConfigurationContext().getIssuerService().validateIssuer(webContext, List.of(OidcConstants.CLIENT_CONFIGURATION_URL))) {
+        if (!getConfigurationContext().getIssuerService().validateIssuer(request, List.of(OidcConstants.CLIENT_CONFIGURATION_URL))) {
             val body = OAuth20Utils.getErrorResponseBody(OAuth20Constants.INVALID_REQUEST, "Invalid issuer");
             return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
         }

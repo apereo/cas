@@ -51,9 +51,11 @@ class SamlIdPJpaRegisteredServiceMetadataConfiguration {
         public SamlRegisteredServiceMetadataResolver jpaSamlRegisteredServiceMetadataResolver(
             final CasConfigurationProperties casProperties,
             @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
-            final OpenSamlConfigBean openSamlConfigBean) {
+            final OpenSamlConfigBean openSamlConfigBean,
+            @Qualifier("dataSourceSamlMetadata")
+            final DataSource dataSourceSamlMetadata) {
             val idp = casProperties.getAuthn().getSamlIdp();
-            return new JpaSamlRegisteredServiceMetadataResolver(idp, openSamlConfigBean);
+            return new JpaSamlRegisteredServiceMetadataResolver(idp, openSamlConfigBean, dataSourceSamlMetadata);
         }
 
     }

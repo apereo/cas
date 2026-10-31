@@ -65,6 +65,18 @@ public class RegisteredServiceKafkaDistributedCacheManager extends
         return super.remove(key, item, publish);
     }
 
+    /**
+     * Key a service by its id, name and service id, as the Hazelcast cache does, so that an updated
+     * definition replaces its earlier entry instead of being stored next to it.
+     *
+     * @param service the service
+     * @return the key
+     */
+    @Override
+    protected String buildKey(final RegisteredService service) {
+        return service.getId() + ";" + service.getName() + ';' + service.getServiceId();
+    }
+
     @SuppressWarnings("FutureReturnValueIgnored")
     private void sendObject(final RegisteredService key, final DistributedCacheObject<RegisteredService> item) {
         val itemKey = buildKey(key);

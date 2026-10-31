@@ -3,6 +3,7 @@ package org.apereo.cas.gauth.web.flow;
 import module java.base;
 import org.apereo.cas.authentication.OneTimeTokenAccount;
 import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.gauth.BaseGoogleAuthenticatorTests;
 import org.apereo.cas.gauth.credential.BaseGoogleAuthenticatorTokenCredentialRepository;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
@@ -16,6 +17,7 @@ import org.apereo.cas.web.support.WebUtils;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -71,6 +73,28 @@ class GoogleAuthenticatorAccountCreateRegistrationActionTests {
         assertEquals(CasWebflowConstants.TRANSITION_ID_REGISTER, googleAccountCreateRegistrationAction.execute(context).getId());
         assertTrue(context.getFlowScope().contains(OneTimeTokenAccountCreateRegistrationAction.FLOW_SCOPE_ATTR_ACCOUNT));
         assertTrue(context.getFlowScope().contains(OneTimeTokenAccountCreateRegistrationAction.FLOW_SCOPE_ATTR_QR_IMAGE_BASE64));
+    }
+
+    @Test
+    void verifyRegistrationUriCarriesDigitsAndPeriod() {
+        val account = OneTimeTokenAccount.builder()
+            .username("casuser")
+            .secretKey("SECRETKEY")
+            .scratchCodes(List.of())
+            .name(UUID.randomUUID().toString())
+            .build();
+        val principal = RegisteredServiceTestUtils.getPrincipal("casuser");
+        val properties = new CasConfigurationProperties();
+        val defaultUri = OneTimeTokenAccountCreateRegistrationAction.buildRegistrationUri(principal, account, properties);
+        assertFalse(defaultUri.contains("digits="));
+        assertFalse(defaultUri.contains("period="));
+
+        properties.getAuthn().getMfa().getGauth().getCore().setCodeDigits(8).setTimeStepSize(60);
+        val customUri = OneTimeTokenAccountCreateRegistrationAction.buildRegistrationUri(principal, account, properties);
+        assertTrue(customUri.startsWith("otpauth://totp/"));
+        assertTrue(customUri.contains("secret=SECRETKEY"));
+        assertTrue(customUri.contains("&digits=8"));
+        assertTrue(customUri.contains("&period=60"));
     }
 
     static Stream<Arguments> oneTimeTokenAccountProvider() {

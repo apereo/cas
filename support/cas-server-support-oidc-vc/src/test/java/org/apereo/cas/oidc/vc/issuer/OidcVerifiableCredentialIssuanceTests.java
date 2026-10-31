@@ -566,6 +566,27 @@ class OidcVerifiableCredentialIssuanceTests extends AbstractOidcTests {
     }
 
     @Test
+    void verifyPreAuthorizedCodeExchangeWithWalletClientId() throws Exception {
+        val registeredService = getOidcRegisteredService(UUID.randomUUID().toString());
+        servicesManager.save(registeredService);
+
+        val transaction = createOfferTransaction(mockMvc,
+            registeredService.getClientId(), registeredService.getClientSecrets().getFirst().getValue(),
+            "casuser", List.of("UniversityDegreeCredential"));
+        val preAuthorizedCode = fetchPreAuthorizedCode(mockMvc, transaction.transactionId());
+
+        mockMvc.perform(post(TOKEN_URL)
+                .secure(true)
+                .with(withHttpRequestProcessor())
+                .param(OAuth20Constants.CLIENT_ID, "wallet-" + UUID.randomUUID())
+                .queryParam(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.PRE_AUTHORIZED_CODE.getType())
+                .queryParam(OidcConstants.PRE_AUTHORIZED_CODE, preAuthorizedCode)
+                .queryParam(OidcConstants.TX_CODE, transaction.txCode()))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$." + OAuth20Constants.ACCESS_TOKEN).exists());
+    }
+
+    @Test
     void verifyCredentialEndpointRejectsConfigurationNotAuthorizedByToken() throws Exception {
         val registeredService = getOidcRegisteredService(UUID.randomUUID().toString());
         servicesManager.save(registeredService);

@@ -17,7 +17,9 @@
                 Multifactor Authentication Provider Selection</h2>
             <hr>
             <div class="card-text">
-                <div th:id="${provider}" th:each="provider: ${mfaSelectableProviders}" class="border-bottom py-4">
+                <div class="cas-mfa-providers"
+                     th:classappend="${'cas-mfa-layout-' + #strings.defaultString(#strings.toLowerCase(#cas.theme('cas.mfa.selection.layout')), 'list')}">
+                <div th:id="${provider}" th:each="provider: ${mfaSelectableProviders}" class="border-bottom py-4 cas-mfa-provider">
                     <form th:name="${'fm-' + provider}" th:id="${'fm-' + provider}" method="post" th:action="@{/login}">
                         <h3 class="d-flex align-items-center">
                             <i class="mdi fas fa-laptop me-2" aria-hidden="true"
@@ -33,6 +35,7 @@
                         <input type="hidden" name="mfaProvider" th:value="${provider}" />
                         <input type="hidden" name="_eventId" value="submit" />
                     </form>
+                </div>
                 </div>
 
                 <div id="mfaOptional" class="py-4" th:if="${#cas.isTrue(mfaProviderSelectionOptional)}">

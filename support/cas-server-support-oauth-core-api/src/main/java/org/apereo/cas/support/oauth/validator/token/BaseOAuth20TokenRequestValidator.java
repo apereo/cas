@@ -4,6 +4,7 @@ import module java.base;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
+import org.apereo.cas.support.oauth.profile.OAuth20UserProfile;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.OAuth20RequestParameterResolver;
@@ -21,12 +22,11 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.Nullable;
-import org.pac4j.core.context.WebContext;
-import org.pac4j.core.profile.ProfileManager;
-import org.pac4j.core.profile.UserProfile;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.core.Ordered;
 import org.springframework.http.HttpMethod;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * This is {@link BaseOAuth20TokenRequestValidator}.
@@ -56,28 +56,27 @@ public abstract class BaseOAuth20TokenRequestValidator<T extends OAuth20Configur
     }
 
     @Override
-    public boolean validate(final WebContext webContext) throws Throwable {
+    public boolean validate(final HttpServletRequest request, final HttpServletResponse response) throws Throwable {
         var configurationContextObject = configurationContext.getObject();
         val grantType = configurationContextObject.getRequestParameterResolver()
-            .resolveRequestParameter(webContext, OAuth20Constants.GRANT_TYPE).orElse(StringUtils.EMPTY);
+            .resolveRequestParameter(request, OAuth20Constants.GRANT_TYPE).orElse(StringUtils.EMPTY);
         if (!isGrantTypeSupported(grantType, OAuth20GrantTypes.values())) {
             LOGGER.warn("Grant type is not supported: [{}]", grantType);
             return false;
         }
 
-        val manager = new ProfileManager(webContext, getConfigurationContext().getObject().getSessionStore());
-        val profile = extractUserProfile(webContext, manager);
+        val profile = extractUserProfile(request, response);
         if (profile.isEmpty()) {
             LOGGER.warn("Could not locate authenticated profile for this request. Request is not authenticated");
             return false;
         }
-        if (!validateClientSecretInRequestIfAny(webContext)) {
+        if (!validateClientSecretInRequestIfAny(request)) {
             LOGGER.warn("Cannot accept [{}] as a query parameter in the request", OAuth20Constants.CLIENT_SECRET);
             return false;
         }
         val userProfile = profile.get();
-        configurationContextObject.getProofOfPossessionValidator().validate(webContext);
-        return validateInternal(webContext, grantType, manager, userProfile);
+        configurationContextObject.getProofOfPossessionValidator().validate(request, response);
+        return validateInternal(request, response, grantType, userProfile);
     }
     
     /**
@@ -88,29 +87,29 @@ public abstract class BaseOAuth20TokenRequestValidator<T extends OAuth20Configur
      *
      * @param token         the code or token presented as the grant
      * @param attributeName the authentication attribute of the token that names the bound key
-     * @param manager       the profile manager
+     * @param userProfile   the authenticated profile of the request
      * @throws InvalidDPoPProofException when the request carries no DPoP proof, or one made with another key
      */
     protected void verifyBoundProofOfPossessionKey(final OAuth20Token token, final String attributeName,
-                                                   final ProfileManager manager)
+                                                   final OAuth20UserProfile userProfile)
             throws InvalidDPoPProofException {
         val boundKey = Optional.ofNullable(token.getAuthentication())
             .flatMap(authentication -> CollectionUtils.firstElement(authentication.getAttributes().get(attributeName)));
         if (boundKey.isPresent()) {
-            val presentedKey = manager.getProfile().map(profile -> profile.getAttribute(OAuth20Constants.DPOP_CONFIRMATION));
+            val presentedKey = Optional.ofNullable(userProfile.getAttribute(OAuth20Constants.DPOP_CONFIRMATION));
             if (presentedKey.isEmpty() || !boundKey.get().toString().equals(presentedKey.get().toString())) {
                 throw new InvalidDPoPProofException("The grant is bound to a DPoP key that the request does not prove possession of");
             }
         }
     }
 
-    protected Optional<UserProfile> extractUserProfile(final WebContext context, final ProfileManager manager) {
-        return manager.getProfile();
+    protected Optional<OAuth20UserProfile> extractUserProfile(final HttpServletRequest request, final HttpServletResponse response) {
+        return OAuth20Utils.findAuthenticatedUserProfile(request, response, getConfigurationContext().getObject().getSessionStore());
     }
 
     @Override
-    public boolean supports(final WebContext context) {
-        val grantType = configurationContext.getObject().getRequestParameterResolver().resolveRequestParameter(context, OAuth20Constants.GRANT_TYPE);
+    public boolean supports(final HttpServletRequest request, final HttpServletResponse response) {
+        val grantType = configurationContext.getObject().getRequestParameterResolver().resolveRequestParameter(request, OAuth20Constants.GRANT_TYPE);
         return OAuth20Utils.isGrantType(grantType.map(String::valueOf).orElse(StringUtils.EMPTY), getGrantType());
     }
 
@@ -123,10 +122,10 @@ public abstract class BaseOAuth20TokenRequestValidator<T extends OAuth20Configur
         return OAuth20RequestParameterResolver.isAuthorizedGrantTypeForService(type, registeredService, rejectUndefined);
     }
 
-    protected boolean validateInternal(final WebContext context,
+    protected boolean validateInternal(final HttpServletRequest request,
+                                       final HttpServletResponse response,
                                        final String grantType,
-                                       final ProfileManager manager,
-                                       final UserProfile userProfile)
+                                       final OAuth20UserProfile userProfile)
             throws Throwable {
         return false;
     }
@@ -139,10 +138,10 @@ public abstract class BaseOAuth20TokenRequestValidator<T extends OAuth20Configur
             : ((AuthenticationAwareTicket) oauthCode.getTicketGrantingTicket()).getAuthentication();
     }
 
-    protected boolean validateClientSecretInRequestIfAny(final WebContext webContext) {
+    protected boolean validateClientSecretInRequestIfAny(final HttpServletRequest request) {
         val requestParameterResolver = getConfigurationContext().getObject().getRequestParameterResolver();
-        val httpMethod = HttpMethod.valueOf(webContext.getRequestMethod().toUpperCase(Locale.ROOT));
-        return httpMethod.equals(HttpMethod.POST) || !requestParameterResolver.isParameterOnQueryString(webContext, OAuth20Constants.CLIENT_SECRET);
+        val httpMethod = HttpMethod.valueOf(request.getMethod().toUpperCase(Locale.ROOT));
+        return httpMethod.equals(HttpMethod.POST) || !requestParameterResolver.isParameterOnQueryString(request, OAuth20Constants.CLIENT_SECRET);
     }
 
 

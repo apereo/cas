@@ -9,7 +9,9 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
-import org.apereo.cas.support.oauth.authenticator.OAuth20AuthenticationClientProvider;
+import org.apereo.cas.support.oauth.authenticator.DefaultOAuth20ClientAuthenticationProvider;
+import org.apereo.cas.support.oauth.authenticator.OAuth20ClientAuthenticationProvider;
+import org.apereo.cas.support.oauth.authenticator.OAuth20ClientAuthenticationToken;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredServiceClientSecret;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.EncodingUtils;
@@ -24,16 +26,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.junit.jupiter.params.provider.ValueSource;
-import org.pac4j.core.client.BaseClient;
-import org.pac4j.core.context.CallContext;
-import org.pac4j.core.credentials.UsernamePasswordCredentials;
-import org.pac4j.core.credentials.authenticator.Authenticator;
-import org.pac4j.jee.context.JEEContext;
-import org.pac4j.jee.context.session.JEESessionStore;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.TestPropertySource;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -48,16 +43,13 @@ import static org.junit.jupiter.api.Assertions.*;
 class OidcJwtAuthenticatorHMacTests extends AbstractOidcTests {
     @Autowired
     @Qualifier("oidcJwtClientProvider")
-    private OAuth20AuthenticationClientProvider oidcJwtClientProvider;
+    private OAuth20ClientAuthenticationProvider oidcJwtClientProvider;
 
     @Test
     void verifyBadAlgAction() throws Throwable {
         val auth = getAuthenticator();
 
         val request = new MockHttpServletRequest();
-        val response = new MockHttpServletResponse();
-        val context = new JEEContext(request, response);
-
         val registeredService = getOidcRegisteredService();
         servicesManager.save(registeredService);
 
@@ -72,13 +64,11 @@ class OidcJwtAuthenticatorHMacTests extends AbstractOidcTests {
         val jwt = EncodingUtils.signJwsRSASha512(privateKey, claims.toJson().getBytes(StandardCharsets.UTF_8), Map.of());
         val credentials = getCredentials(request, OAuth20Constants.CLIENT_ASSERTION_TYPE_JWT_BEARER,
             new String(jwt, StandardCharsets.UTF_8), registeredService.getClientId());
-        auth.validate(new CallContext(context, new JEESessionStore()), credentials);
-        assertNull(credentials.getUserProfile());
+        assertTrue(auth.authenticate(credentials).isEmpty());
     }
 
-    private Authenticator getAuthenticator() {
-        val client = (BaseClient) oidcJwtClientProvider.createClient();
-        return client.getAuthenticator();
+    private OidcJwtAuthenticator getAuthenticator() {
+        return (OidcJwtAuthenticator) ((DefaultOAuth20ClientAuthenticationProvider) oidcJwtClientProvider).getAuthenticator();
     }
 
     @Test
@@ -86,9 +76,6 @@ class OidcJwtAuthenticatorHMacTests extends AbstractOidcTests {
         val auth = getAuthenticator();
 
         val request = new MockHttpServletRequest();
-        val response = new MockHttpServletResponse();
-        val context = new JEEContext(request, response);
-
         val registeredService = getOidcRegisteredService(UUID.randomUUID().toString());
         val audience = casProperties.getServer().getPrefix().concat('/'
                 + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.ACCESS_TOKEN_URL);
@@ -104,15 +91,13 @@ class OidcJwtAuthenticatorHMacTests extends AbstractOidcTests {
 
         val credentials = getCredentials(request, OAuth20Constants.CLIENT_ASSERTION_TYPE_JWT_BEARER,
             new String(jwt, StandardCharsets.UTF_8), registeredService.getClientId());
-        auth.validate(new CallContext(context, new JEESessionStore()), credentials);
-        assertNotNull(credentials.getUserProfile());
+        val profile = auth.authenticate(credentials).orElseThrow();
+        assertEquals(registeredService.getClientId(), profile.getAttribute(OAuth20Constants.CLIENT_ID));
 
         val replayRequest = new MockHttpServletRequest();
         val replayCredentials = getCredentials(replayRequest, OAuth20Constants.CLIENT_ASSERTION_TYPE_JWT_BEARER,
             new String(jwt, StandardCharsets.UTF_8), registeredService.getClientId());
-        val replayContext = new JEEContext(replayRequest, new MockHttpServletResponse());
-        auth.validate(new CallContext(replayContext, new JEESessionStore()), replayCredentials);
-        assertNull(replayCredentials.getUserProfile());
+        assertTrue(auth.authenticate(replayCredentials).isEmpty());
     }
 
     @ParameterizedTest
@@ -121,7 +106,6 @@ class OidcJwtAuthenticatorHMacTests extends AbstractOidcTests {
     void verifyClientSecretJwtIsVerifiedWithClientSecret(final String authenticationMethod) throws Throwable {
         val auth = getAuthenticator();
         val request = new MockHttpServletRequest();
-        val context = new JEEContext(request, new MockHttpServletResponse());
         val registeredService = getOidcRegisteredService(UUID.randomUUID().toString());
         registeredService.setTokenEndpointAuthenticationMethod(authenticationMethod);
         val clientSecret = EncodingUtils.generateJsonWebKey(512);
@@ -136,13 +120,12 @@ class OidcJwtAuthenticatorHMacTests extends AbstractOidcTests {
             claims.toJson().getBytes(StandardCharsets.UTF_8), Map.of());
         val credentials = getCredentials(request, OAuth20Constants.CLIENT_ASSERTION_TYPE_JWT_BEARER,
             new String(jwt, StandardCharsets.UTF_8), registeredService.getClientId());
-        auth.validate(new CallContext(context, new JEESessionStore()), credentials);
-        assertNotNull(credentials.getUserProfile());
+        assertTrue(auth.authenticate(credentials).isPresent());
     }
 
     @Test
     void verifySharedKeyShorterThanAlgorithmRequiresIsSkipped() throws Throwable {
-        val auth = (OidcJwtAuthenticator) getAuthenticator();
+        val auth = getAuthenticator();
         val registeredService = getOidcRegisteredService(UUID.randomUUID().toString());
         val claims = getClaims(registeredService.getClientId(), registeredService.getClientId(),
             registeredService.getClientId(), casProperties.getServer().getPrefix());
@@ -161,7 +144,6 @@ class OidcJwtAuthenticatorHMacTests extends AbstractOidcTests {
     void verifySubjectMustMatchClientId() throws Throwable {
         val auth = getAuthenticator();
         val request = new MockHttpServletRequest();
-        val context = new JEEContext(request, new MockHttpServletResponse());
         val registeredService = getOidcRegisteredService(UUID.randomUUID().toString());
         val audience = casProperties.getServer().getPrefix().concat('/'
             + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.ACCESS_TOKEN_URL);
@@ -175,8 +157,7 @@ class OidcJwtAuthenticatorHMacTests extends AbstractOidcTests {
             claims.toJson().getBytes(StandardCharsets.UTF_8), Map.of());
         val credentials = getCredentials(request, OAuth20Constants.CLIENT_ASSERTION_TYPE_JWT_BEARER,
             new String(jwt, StandardCharsets.UTF_8), registeredService.getClientId());
-        auth.validate(new CallContext(context, new JEESessionStore()), credentials);
-        assertNull(credentials.getUserProfile());
+        assertTrue(auth.authenticate(credentials).isEmpty());
     }
 
     @Test
@@ -184,8 +165,6 @@ class OidcJwtAuthenticatorHMacTests extends AbstractOidcTests {
         val auth = getAuthenticator();
 
         val request = new MockHttpServletRequest();
-        val response = new MockHttpServletResponse();
-        val context = new JEEContext(request, response);
 
         val audience = casProperties.getServer().getPrefix().concat('/'
             + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.ACCESS_TOKEN_URL);
@@ -202,8 +181,7 @@ class OidcJwtAuthenticatorHMacTests extends AbstractOidcTests {
 
         val credentials = getCredentials(request, OAuth20Constants.CLIENT_ASSERTION_TYPE_JWT_BEARER,
             new String(jwt, StandardCharsets.UTF_8), registeredService.getClientId());
-        auth.validate(new CallContext(context, new JEESessionStore()), credentials);
-        assertNull(credentials.getUserProfile());
+        assertTrue(auth.authenticate(credentials).isEmpty());
     }
 
     @Test
@@ -211,13 +189,9 @@ class OidcJwtAuthenticatorHMacTests extends AbstractOidcTests {
         val auth = getAuthenticator();
 
         val request = new MockHttpServletRequest();
-        val response = new MockHttpServletResponse();
-        val context = new JEEContext(request, response);
-
         val registeredService = getOidcRegisteredService();
         val credentials = getCredentials(request, "unknown", "----", registeredService.getClientId());
-        auth.validate(new CallContext(context, new JEESessionStore()), credentials);
-        assertNull(credentials.getUserProfile());
+        assertTrue(auth.authenticate(credentials).isEmpty());
     }
 
     @Test
@@ -225,22 +199,17 @@ class OidcJwtAuthenticatorHMacTests extends AbstractOidcTests {
         val auth = getAuthenticator();
 
         val request = new MockHttpServletRequest();
-        val response = new MockHttpServletResponse();
-        val context = new JEEContext(request, response);
-
         val registeredService = getOidcRegisteredService();
         val credentials = getCredentials(request, OAuth20Constants.CLIENT_ASSERTION_TYPE_JWT_BEARER,
             "----", registeredService.getClientId());
-        auth.validate(new CallContext(context, new JEESessionStore()), credentials);
-        assertNull(credentials.getUserProfile());
+        assertTrue(auth.authenticate(credentials).isEmpty());
     }
 
-    private UsernamePasswordCredentials getCredentials(final MockHttpServletRequest request,
-                                                       final String uid, final String password,
-                                                       final String clientId)
+    private OAuth20ClientAuthenticationToken getCredentials(final MockHttpServletRequest request,
+                                                            final String uid, final String password,
+                                                            final String clientId)
             throws Throwable {
-        val credentials = new UsernamePasswordCredentials(uid, password);
-        val code = defaultOAuthCodeFactory.create(RegisteredServiceTestUtils.getService(),
+                val code = defaultOAuthCodeFactory.create(RegisteredServiceTestUtils.getService(),
             RegisteredServiceTestUtils.getAuthentication(),
             new MockTicketGrantingTicket("casuser"),
             new ArrayList<>(),
@@ -249,6 +218,6 @@ class OidcJwtAuthenticatorHMacTests extends AbstractOidcTests {
             OAuth20ResponseTypes.CODE, OAuth20GrantTypes.AUTHORIZATION_CODE);
         ticketRegistry.addTicket(code);
         request.addParameter(OAuth20Constants.CODE, code.getId());
-        return credentials;
+        return newClientAuthenticationToken(request, OAuth20ClientAuthenticationToken.CredentialSource.FORM, uid, password);
     }
 }

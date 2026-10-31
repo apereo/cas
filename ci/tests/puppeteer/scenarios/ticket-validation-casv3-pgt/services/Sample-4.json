@@ -1,0 +1,11 @@
+{
+  "@class": "org.apereo.cas.services.CasRegisteredService",
+  "serviceId": "^https://localhost:9859/anything/ptshort.*",
+  "name": "ProxiedShort",
+  "id": 4,
+  "proxyTicketExpirationPolicy": {
+    "@class": "org.apereo.cas.services.DefaultRegisteredServiceProxyTicketExpirationPolicy",
+    "numberOfUses": 10,
+    "timeToLive": "PT2S"
+  }
+}

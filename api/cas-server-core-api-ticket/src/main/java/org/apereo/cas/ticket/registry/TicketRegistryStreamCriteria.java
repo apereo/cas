@@ -11,6 +11,7 @@ import lombok.SuperBuilder;
 import lombok.ToString;
 import lombok.With;
 import lombok.experimental.Accessors;
+import org.jspecify.annotations.Nullable;
 
 /**
  * This is {@link TicketRegistryStreamCriteria}.
@@ -34,6 +35,13 @@ public class TicketRegistryStreamCriteria implements Serializable {
 
     @Builder.Default
     private long count = Long.MAX_VALUE;
+
+    /**
+     * When set, asks only for tickets whose stored expiration time is at or before this instant: candidates
+     * for removal, not a full listing. Registries that keep no such time ignore it and return every ticket,
+     * so callers must still check each ticket's expiration themselves.
+     */
+    private @Nullable ZonedDateTime expiringBefore;
 
     /**
      * Is count infinite?.

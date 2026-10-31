@@ -24,11 +24,18 @@ import static org.mockito.Mockito.*;
  * @since 6.2.0
  */
 @Tag("WebflowAccountActions")
-@TestPropertySource(properties = "cas.acceptable-usage-policy.core.aup-policy-terms-attribute-name=cn")
+@TestPropertySource(properties = {
+    "cas.acceptable-usage-policy.core.aup-policy-terms-attribute-name=cn",
+    "CasFeatureModule.AccountManagement.enabled=true"
+})
 class AcceptableUsagePolicyRenderActionTests extends BaseAcceptableUsagePolicyActionTests {
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_AUP_RENDER)
     private Action acceptableUsagePolicyRenderAction;
+
+    @Autowired
+    @Qualifier(CasWebflowConstants.ACTION_ID_ACCOUNT_PROFILE_AUP)
+    private Action acceptableUsagePolicyAccountProfileAction;
 
     @Test
     void verifyAction() throws Throwable {
@@ -44,5 +51,22 @@ class AcceptableUsagePolicyRenderActionTests extends BaseAcceptableUsagePolicyAc
         assertNotNull(terms);
         assertTrue(terms.getCode().startsWith(AcceptableUsagePolicyTerms.CODE));
     }
-}
+    @Test
+    void verifyAccountProfile() throws Throwable {
+        val appContext = mock(ApplicationContext.class);
+        when(appContext.getMessage(anyString(), any(), anyString(), any(Locale.class))).thenReturn("hello.world");
+        val context = MockRequestContext.create(appContext);
+        WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(CoreAuthenticationTestUtils.getPrincipal("casuser",
+            Map.<String, List<Object>>of("aupAccepted", List.of("true"), "cn", List.of("casuser")))), context);
+        assertNull(acceptableUsagePolicyAccountProfileAction.execute(context));
+        assertEquals("accepted", context.getFlowScope().get(AcceptableUsagePolicyAccountProfileAction.FLOW_SCOPE_ATTR_STATUS));
+        val terms = context.getFlowScope().get(AcceptableUsagePolicyAccountProfileAction.FLOW_SCOPE_ATTR_TERMS, AcceptableUsagePolicyTerms.class);
+        assertNotNull(terms);
+        assertEquals(AcceptableUsagePolicyTerms.CODE + ".casuser", terms.getCode());
 
+        WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(
+            CoreAuthenticationTestUtils.getPrincipal("casuser", Map.of())), context);
+        assertNull(acceptableUsagePolicyAccountProfileAction.execute(context));
+        assertEquals("denied", context.getFlowScope().get(AcceptableUsagePolicyAccountProfileAction.FLOW_SCOPE_ATTR_STATUS));
+    }
+}

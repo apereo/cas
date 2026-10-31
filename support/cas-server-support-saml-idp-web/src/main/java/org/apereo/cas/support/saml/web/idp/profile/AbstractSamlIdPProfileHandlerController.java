@@ -63,7 +63,6 @@ import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.Issuer;
 import org.opensaml.saml.saml2.core.RequestAbstractType;
 import org.opensaml.saml.saml2.core.StatusResponseType;
-import org.pac4j.jee.context.JEEContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.ModelAndView;
@@ -224,9 +223,8 @@ public abstract class AbstractSamlIdPProfileHandlerController extends AbstractCo
 
         val type = properties.getAuthn().getSamlIdp().getCore().getSessionStorageType();
         if (type.isBrowserStorage()) {
-            val context = new JEEContext(request, response);
             val sessionStorage = configurationContext.getSessionStore()
-                .getTrackableSession(context).map(BrowserStorage.class::cast)
+                .getTrackableSession(request).map(BrowserStorage.class::cast)
                 .orElseThrow(() -> new IllegalStateException("Unable to determine trackable session for storage"));
             sessionStorage.setDestinationUrl(urlToRedirectTo);
             return new ModelAndView(CasWebflowConstants.VIEW_ID_BROWSER_STORAGE_WRITE,
@@ -607,11 +605,10 @@ public abstract class AbstractSamlIdPProfileHandlerController extends AbstractCo
     protected final Pair<? extends RequestAbstractType, MessageContext> retrieveAuthenticationRequest(
         final HttpServletResponse response, final HttpServletRequest request) {
         LOGGER.info("Received SAML2 callback profile request [{}]", request.getRequestURI());
-        val webContext = new JEEContext(request, response);
         return SamlIdPSessionManager.of(configurationContext.getOpenSamlConfigBean(), configurationContext.getSessionStore())
-            .fetchAndRemove(webContext, AuthnRequest.class)
+            .fetchAndRemove(request, response, AuthnRequest.class)
             .orElseThrow(() -> {
-                val samlAuthnRequestId = webContext.getRequestParameter(SamlIdPConstants.AUTHN_REQUEST_ID).orElse("N/A");
+                val samlAuthnRequestId = StringUtils.defaultIfBlank(request.getParameter(SamlIdPConstants.AUTHN_REQUEST_ID), "N/A");
                 val message = """
                     SAML2 authentication request cannot be determined from the CAS session store for request id %s.
                     This typically means that the original SAML2 authentication request that was submitted to CAS via a SAML2 service provider
@@ -625,9 +622,8 @@ public abstract class AbstractSamlIdPProfileHandlerController extends AbstractCo
 
     protected void storeAuthenticationRequest(final HttpServletRequest request, final HttpServletResponse response,
                                               final Pair<? extends SignableSAMLObject, MessageContext> context) {
-        val webContext = new JEEContext(request, response);
         FunctionUtils.doUnchecked(_ -> SamlIdPSessionManager.of(configurationContext.getOpenSamlConfigBean(),
-            configurationContext.getSessionStore()).store(webContext, context));
+            configurationContext.getSessionStore()).store(request, response, context));
     }
 
     protected String determineProfileBinding(final Pair<? extends RequestAbstractType, MessageContext> authenticationContext,

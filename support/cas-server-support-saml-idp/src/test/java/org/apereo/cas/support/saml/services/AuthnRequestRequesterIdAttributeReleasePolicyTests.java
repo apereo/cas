@@ -13,7 +13,6 @@ import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.tuple.Pair;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.opensaml.messaging.context.MessageContext;
@@ -21,9 +20,6 @@ import org.opensaml.saml.common.SAMLObjectBuilder;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.RequesterID;
 import org.opensaml.saml.saml2.core.Scoping;
-import org.pac4j.jee.context.JEEContext;
-import org.pac4j.saml.context.SAML2MessageContext;
-import org.pac4j.saml.sso.impl.SAML2AuthnRequestBuilder;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.TestPropertySource;
 import tools.jackson.databind.ObjectMapper;
@@ -50,12 +46,6 @@ class AuthnRequestRequesterIdAttributeReleasePolicyTests extends BaseSamlIdPConf
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
 
-    private SAML2MessageContext saml2MessageContext;
-
-    @BeforeEach
-    void initialize() throws Throwable {
-        this.saml2MessageContext = buildSamlMessageContext();
-    }
 
     
     @Test
@@ -77,8 +67,7 @@ class AuthnRequestRequesterIdAttributeReleasePolicyTests extends BaseSamlIdPConf
         val registeredService = SamlIdPTestUtils.getSamlRegisteredService();
         registeredService.setAttributeReleasePolicy(filter);
 
-        val builder = new SAML2AuthnRequestBuilder();
-        val authnRequest = builder.build(saml2MessageContext);
+        val authnRequest = getAuthnRequestFor("cas:example:sp");
 
         val scoping = ((SAMLObjectBuilder<Scoping>) openSamlConfigBean.getBuilderFactory()
             .getBuilder(Scoping.DEFAULT_ELEMENT_NAME)).buildObject();
@@ -107,10 +96,9 @@ class AuthnRequestRequesterIdAttributeReleasePolicyTests extends BaseSamlIdPConf
         request.setParameter(SamlIdPConstants.AUTHN_REQUEST_ID, authnRequest.getID());
 
         val response = HttpRequestUtils.getHttpServletResponseFromRequestAttributes();
-        val context = new JEEContext(request, response);
         val messageContext = new MessageContext();
         messageContext.setMessage(authnRequest);
         SamlIdPSessionManager.of(openSamlConfigBean, samlIdPDistributedSessionStore)
-            .store(context, Pair.of(authnRequest, messageContext));
+            .store(request, response, Pair.of(authnRequest, messageContext));
     }
 }

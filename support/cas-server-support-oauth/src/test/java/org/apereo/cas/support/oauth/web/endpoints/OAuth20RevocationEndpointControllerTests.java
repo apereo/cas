@@ -3,6 +3,7 @@ package org.apereo.cas.support.oauth.web.endpoints;
 import module java.base;
 import org.apereo.cas.AbstractOAuth20Tests;
 import org.apereo.cas.support.oauth.OAuth20Constants;
+import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20JwtAccessTokenEncoder;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Tag;
@@ -127,6 +128,25 @@ class OAuth20RevocationEndpointControllerTests extends AbstractOAuth20Tests {
                 .param(OAuth20Constants.TOKEN, accessToken3.getId()))
             .andExpect(status().isOk());
         assertNotNull(ticketRegistry.getTicket(accessToken3.getId()));
+    }
+
+    @Test
+    void verifyGivenJwtAccessToken() throws Throwable {
+        val principal = createPrincipal();
+        val service = getRegisteredService(REDIRECT_URI, CLIENT_SECRET, Set.of());
+        service.setJwtAccessToken(true);
+        servicesManager.save(service);
+
+        val accessToken = addAccessToken(principal, service);
+        val jwt = OAuth20JwtAccessTokenEncoder.toEncodableCipher(configurationContext, service, accessToken).encode(accessToken.getId());
+        assertNotEquals(accessToken.getId(), jwt);
+
+        mockMvc.perform(post(REVOCATION_ENDPOINT)
+                .param(OAuth20Constants.CLIENT_ID, service.getClientId())
+                .param(OAuth20Constants.CLIENT_SECRET, CLIENT_SECRET)
+                .param(OAuth20Constants.TOKEN, jwt))
+            .andExpect(status().isOk());
+        assertNull(ticketRegistry.getTicket(accessToken.getId()));
     }
 
     @Test
