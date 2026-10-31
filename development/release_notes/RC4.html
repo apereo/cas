@@ -1,0 +1,1016 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="light dark">
+    
+    
+    
+
+
+
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <meta name="description" content="These changes alter existing behavior. Each one links to its full description below.">
+    <meta name="robots" content="index,follow">
+    <meta name="theme-color" content="#06304a">
+    <link rel="canonical" href="https://apereo.github.io/cas/development/release_notes/RC4.html">
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="en_US">
+    <meta property="og:site_name" content="Apereo CAS Documentation">
+    <meta property="og:title" content="CAS - 8.1.0-RC4 Release Notes">
+    <meta property="og:description" content="These changes alter existing behavior. Each one links to its full description below.">
+    <meta property="og:url" content="https://apereo.github.io/cas/development/release_notes/RC4.html">
+    <meta property="og:image" content="https://apereo.github.io/cas/images/cas_logo.png">
+    <meta property="og:image:alt" content="Apereo CAS">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="CAS - 8.1.0-RC4 Release Notes">
+    <meta name="twitter:description" content="These changes alter existing behavior. Each one links to its full description below.">
+    <meta name="twitter:image" content="https://apereo.github.io/cas/images/cas_logo.png">
+
+    
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "TechArticle",
+      "headline": "8.1.0-RC4 Release Notes",
+      "description": "These changes alter existing behavior. Each one links to its full description below.",
+      "url": "https://apereo.github.io/cas/development/release_notes/RC4.html",
+      "inLanguage": "en",
+      "isPartOf": {"@type": "WebSite", "name": "Apereo CAS Documentation",
+                   "url": "https://apereo.github.io/cas/"},
+      "author": {"@type": "Organization", "name": "Apereo Foundation", "url": "https://www.apereo.org/"},
+      "publisher": {"@type": "Organization", "name": "Apereo Foundation", "url": "https://www.apereo.org/"}
+    }
+    </script>
+    
+
+    <script>
+        if (window.location.hostname === "apereo.github.io") {
+            window.dataLayer = window.dataLayer || [];
+            window.gtag = function () {
+                window.dataLayer.push(arguments);
+            };
+            window.gtag("js", new Date());
+            window.gtag("config", "G-W3M8JXP7GP");
+            const analytics = document.createElement("script");
+            analytics.async = true;
+            analytics.src = "https://www.googletagmanager.com/gtag/js?id=G-W3M8JXP7GP";
+            document.head.appendChild(analytics);
+        }
+    </script>
+
+    <script>
+        function readThemePreference() {
+            try {
+                return localStorage.getItem('cas-docs-theme') || 'system';
+            } catch (error) {
+                return 'system';
+            }
+        }
+
+        function systemTheme() {
+            return window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+        }
+
+        function resolveTheme(preference) {
+            return preference === 'dark' || preference === 'light' ? preference : systemTheme();
+        }
+
+        function changeTheme(theme) {
+            if (theme !== 'dark' && theme !== 'light') {
+                return;
+            }
+
+            if (document.documentElement.getAttribute('data-bs-theme') !== theme) {
+                document.documentElement.setAttribute('data-bs-theme', theme);
+            }
+        }
+
+        (() => {
+            let preference = readThemePreference();
+            if (preference !== 'dark' && preference !== 'light') {
+                preference = 'system';
+
+            }
+
+            changeTheme(resolveTheme(preference));
+
+            if (window.matchMedia) {
+                window.matchMedia('(prefers-color-scheme: light)').addEventListener('change', () => {
+                    if (readThemePreference() !== 'system') {
+                        return;
+                    }
+                    const theme = systemTheme();
+                    changeTheme(theme);
+                });
+            }
+        })();
+    </script>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.2/css/all.min.css" integrity="sha384-PPIZEGYM1v8zp5Py7UjFb79S58UeqCL9pYVnVPURKEqvioPROaVAJKKLzvH2rDnI" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@docsearch/css@3.9.0/dist/style.css" integrity="sha384-cHiDHRyv+KTDBfpMqc3t2SeQYjfK05cReQA49eigiKoBzOMi9WIFsBsNfetC5n2a" crossorigin="anonymous"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.5/css/lightbox.min.css" integrity="sha384-9623XJODy0qDAl6X6Y9xTBSzYUxM0ixdjO8zqJQeGzDP2Uwo1PqAOq6gXkk2ul99" crossorigin="anonymous" />
+    
+    
+    <link rel="stylesheet" type="text/css" media="screen" href='/cas/stylesheets/site.css'>
+    <link rel="stylesheet" type="text/css" media="print" href='/cas/stylesheets/site-print.css'>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400..800;1,9..40,400..500&family=Bricolage+Grotesque:opsz,wght@12..96,400..800&display=swap" rel="stylesheet">
+    <link href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css" rel="stylesheet" integrity="sha384-yT2pwyD9a3Oee/HtjWTccnRmchDWH2EDHjzH7gwf8yAK0RilKFL164FCHX9fzlxh" crossorigin="anonymous">
+
+    <title>CAS - 8.1.0-RC4 Release Notes · Apereo CAS Documentation</title>
+
+</head>
+
+<body class=" docs-release-notes" data-docs-base="/cas" data-docs-version="development" data-docs-build="20261031175939">
+    <a class="skip-link" href="#cas-docs-container">Skip to content</a>
+    <header class="site-header">
+        <div class="masthead">
+            <a class="cas-brand" href="../../index.html" aria-label="Apereo CAS home">
+                <img class="brand-logo" src="/cas/images/cas_logo.png" width="119" height="60" alt="CAS">
+                <span class="brand-caption">APEREO CAS<span>Documentation</span></span>
+            </a>
+            <div class="brand-mission">
+                <p>Enterprise Authentication <span class="brand-mission-accent">for All Earthlings and Beyond</span></p>
+                <span>Identity, Single Sign-On and Access Management</span>
+            </div>
+            <a id="forkme_banner" aria-label="View CAS on GitHub" href="https://github.com/apereo/cas"><i class="fab fa-github" aria-hidden="true"></i><span>View on GitHub</span><span aria-hidden="true">↗</span></a>
+        </div>
+        <div class="navigation-bar">
+            
+            <button onclick="navigateSidebar()" id="sidebarNavButton" class="icon-button" type="button" aria-controls="sidebar" aria-expanded="true" aria-label="Toggle documentation navigation" title="Toggle documentation navigation">
+                <i class="fa fa-bars" aria-hidden="true"></i>
+            </button>
+            
+            <nav class="primary-navigation" aria-label="Main navigation">
+                <a href="../../index.html">Home</a>
+                <a href="https://github.com/apereo/cas/releases">Releases</a>
+                <a href="../../Support.html">Support</a>
+                <a href="../../Mailing-Lists.html">Mailing Lists</a>
+                <div class="dropdown">
+                    <button class="dropdown-toggle" type="button" id="cas-versions" data-bs-toggle="dropdown" aria-expanded="false">Versions</button>
+                    <div class="dropdown-menu" aria-labelledby="cas-versions">
+                        
+                        
+                        
+                        
+                        <a class="dropdown-item cas-version-link" href="/cas/development/release_notes/RC4.html" data-version-home="/cas/development/">Development</a>
+                        
+                        
+                        
+                        
+                        <a class="dropdown-item cas-version-link" href="/cas/8.0.x/release_notes/RC4.html" data-version-home="/cas/8.0.x/">v8.0.x</a>
+                        
+                        
+                        
+                        
+                        <a class="dropdown-item cas-version-link" href="/cas/7.3.x/release_notes/RC4.html" data-version-home="/cas/7.3.x/">v7.3.x</a>
+                        
+                    </div>
+                </div>
+                <a href="https://apereo.github.io" target="_blank" rel="noopener">Blog <span aria-hidden="true">↗</span><span class="visually-hidden"> (opens in a new tab)</span></a>
+            </nav>
+            <div class="navigation-tools">
+                <div id="searchField"></div>
+                <button id="settingsSearchButton" class="icon-button" type="button" aria-label="Search configuration settings (press Shift twice)" title="Search configuration settings (Shift Shift)"><i class="fa fa-sliders" aria-hidden="true"></i></button>
+                <button id="themeToggle" class="icon-button" type="button" onclick="toggleDarkMode()" aria-label="Toggle color theme" title="Toggle color theme"><i class="fa fa-circle-half-stroke" aria-hidden="true"></i></button>
+            </div>
+        </div>
+        <div class="reading-progress" aria-hidden="true"><span id="readingProgress"></span></div>
+    </header>
+
+    <div class="docs-shell">
+        
+        <aside id="sidebar" class="docs-sidebar" aria-label="Documentation navigation">
+    <div class="sidebar-heading"><span class="eyebrow">APEREO CAS DOCUMENTATION</span><span class="sidebar-symbol" aria-hidden="true">✳</span></div>
+    <nav id="sidebar-navigation" aria-label="Documentation topics"></nav>
+    <noscript><p>Browse the <a href="/cas/development/sidebar.html">documentation index</a>.</p></noscript>
+</aside>
+
+        
+        <main class="cas-docs-content">
+            
+            <div class="page-toolbar">
+                <nav id="docsNavBar" aria-label="Breadcrumb"></nav>
+                <div id="toolbarIcons" role="group" aria-label="Page tools"></div>
+            </div>
+            
+            
+            <aside id="dev-doc-info" aria-labelledby="dev-doc-title">
+                <span class="development-marker" aria-hidden="true"></span>
+                <div>
+                    <p id="dev-doc-title">WORKERS AHEAD!</p>
+                    <p class="dev-doc-summary">Development documentation for features that are
+                        <a href="https://github.com/apereo/cas/milestones">not released yet</a>.</p>
+                    <p class="dev-doc-details">You are viewing the <strong>development</strong> documentation for the Apereo CAS server. <strong>The
+                        functionality presented here <a href="https://github.com/apereo/cas/milestones">is not officially released yet</a></strong>.
+                        This is a work in progress and will be continually updated as development moves forward.
+                        <strong>You are most encouraged to test the changes presented.</strong>
+                    </p>
+                </div>
+            </aside>
+            
+            <article id="cas-docs-container" tabindex="-1">
+                
+<div class="cas-release" data-release="8.1.0-RC4">
+<header class="cas-release-hero">
+    <div class="cas-release-hero-text">
+        <p class="cas-release-eyebrow">Release notes · 8.1.0 development</p>
+        <h1 id="release-8-1-0-rc4">8.1.0-RC4</h1>
+        <p class="cas-release-lede">The fourth release candidate is in progress. This page fills in as changes land on the development branch.</p>
+        <ul class="cas-release-facts" aria-label="At a glance">
+            <li><a href="../planning/Installation-Requirements.html"><span>Requires</span> <b>JDK 25</b></a></li>
+            <li><span>Built on</span> <b>Spring Boot 4.2</b></li>
+            <li><a href="../../developer/Test-Process.html"><b>618</b> <span>browser test scenarios</span></a></li>
+            <li><b>94%</b> <span>test coverage</span></li>
+        </ul>
+    </div>
+    <nav class="cas-release-switcher" aria-label="Release candidates">
+        <a href="RC1.html">RC1</a>
+        <a href="RC2.html">RC2</a>
+        <a href="RC3.html">RC3</a>
+        <a href="RC4.html" aria-current="page">RC4</a>
+        <a href="RC.html" class="cas-release-switcher-all" title="Every change from all release candidates">All</a>
+    </nav>
+</header>
+
+<ul class="cas-release-stats" aria-label="In this release">
+    <li><b>8</b><span>New &amp; noteworthy topics</span></li>
+    <li class="cas-release-stat-attention"><b>4</b><span>Changes to review before upgrading</span></li>
+    <li><b>64</b><span>Other changes</span></li>
+    <li><b>31</b><span>Fixes</span></li>
+</ul>
+<section class="cas-release-upgrade" aria-labelledby="before-you-upgrade">
+    <h2 id="before-you-upgrade"><i class="fa fa-triangle-exclamation" aria-hidden="true"></i>Before You Upgrade</h2>
+    <p>These changes alter existing behavior. Each one links to its full description below.</p>
+    <ul>
+        <li>
+            <span class="cas-release-type" data-type="action">Action</span>
+            <div><a href="#theme-builder"><b>Theme builder</b></a> is turned on by default; turn it off for production with <code class="language-plaintext highlighter-rouge">cas.theme-builder.enabled=false</code> in theme properties.<span class="cas-release-note-area">Interface &amp; Accounts</span>
+            </div>
+        </li>
+        <li>
+            <span class="cas-release-type" data-type="changed">Changed</span>
+            <div><a href="#theme-properties"><b>External identity providers</b></a> keep their configured order in the dropdown as well; set <code class="language-plaintext highlighter-rouge">cas.login-providers.sort=true</code> in theme properties to sort them by name.<span class="cas-release-note-area">Interface &amp; Accounts</span>
+            </div>
+        </li>
+        <li>
+            <span class="cas-release-type" data-type="changed">Changed</span>
+            <div><a href="#theme-properties"><b>Error pages</b></a> no longer offer the details button unless <code class="language-plaintext highlighter-rouge">cas.error.show-details=true</code> is set in theme properties.<span class="cas-release-note-area">Interface &amp; Accounts</span>
+            </div>
+        </li>
+        <li>
+            <span class="cas-release-type" data-type="removed">Removed</span>
+            <div><a href="#tickets--sessions"><b>Azure CosmosDb</b></a> service and ticket registries are removed; move service definitions and tickets to another registry before upgrading.<span class="cas-release-note-area">Tickets &amp; Sessions</span>
+            </div>
+        </li>
+    </ul>
+</section><section class="cas-release-spotlight" aria-labelledby="release-spotlight">
+    <div class="cas-release-spotlight-shots">
+        <a href="img_24.png" data-lightbox="release-spotlight" data-title="The theme builder previews theme properties live, here turning off the password reveal button"
+           class="cas-release-spotlight-main"
+           aria-label="The theme builder previews theme properties live, here turning off the password reveal button"><img src="img_24.png" alt="Theme builder next to the login page, turning off the password reveal button" loading="lazy"></a>
+        <a href="img_25.png" data-lightbox="release-spotlight" data-title="External identity providers in a grid, placed before the login form"
+           class="cas-release-spotlight-thumb"
+           aria-label="External identity providers in a grid, placed before the login form"><img src="img_25.png" alt="Login page with external identity providers in a two-column grid before the login form" loading="lazy"></a>
+        <a href="img_26.png" data-lightbox="release-spotlight" data-title="Multifactor authentication provider selection as cards"
+           class="cas-release-spotlight-thumb"
+           aria-label="Multifactor authentication provider selection as cards"><img src="img_26.png" alt="Multifactor authentication provider selection shown as cards" loading="lazy"><span>+4 more</span></a>
+        <a href="img_27.png" data-lightbox="release-spotlight" data-title="Google Authenticator registration with themed QR code colors and scratch codes as a list"
+           class="cas-release-spotlight-rest"
+           aria-label="Google Authenticator registration with themed QR code colors and scratch codes as a list"></a>
+        <a href="img_28.png" data-lightbox="release-spotlight" data-title="WebAuthn registration recommending a security key instead of a passkey"
+           class="cas-release-spotlight-rest"
+           aria-label="WebAuthn registration recommending a security key instead of a passkey"></a>
+        <a href="img_29.png" data-lightbox="release-spotlight" data-title="Attribute consent with the list layout"
+           class="cas-release-spotlight-rest"
+           aria-label="Attribute consent with the list layout"></a>
+        <a href="img_30.png" data-lightbox="release-spotlight" data-title="The nine values of the main content position, from top left to bottom right"
+           class="cas-release-spotlight-rest"
+           aria-label="The nine values of the main content position, from top left to bottom right"></a>
+    </div>
+    <div class="cas-release-spotlight-text">
+        <p class="cas-release-kicker">Spotlight · User interface</p>
+        <h2 id="release-spotlight">Shape the CAS Screens From Theme Properties</h2><p>Login, error, multifactor and consent screens gain theme properties, each previewed live in the new theme builder.</p>
+        <ul>
+            <li>Identity providers move before or after the login form, in a stack, a grid or a row, with their own sort and dropdown threshold.</li>
+            <li>Multifactor selection, Google Authenticator, WebAuthn and consent screens choose their layout, what they show and what they recommend.</li>
+            <li>QR codes take their size, colors and margin from the theme, and device names can start empty, random or with the username.</li>
+            <li>The main content of every page can sit anywhere on a 3x3 grid, from the top left to the bottom right of the screen.</li>
+        </ul><a class="cas-release-more" href="#theme-properties">Read the full section <span aria-hidden="true">→</span></a>
+    </div>
+</section>
+<section class="cas-release-highlights" aria-labelledby="release-highlights">
+    <h2 id="release-highlights">Highlights</h2>
+    <ul>
+        <li data-area="ui">
+            <p class="cas-release-card-top"><span class="cas-release-card-area">Interface &amp; Accounts</span><span class="cas-release-type" data-type="new">New</span></p>
+            <h3><a href="#theme-builder">Theme Builder</a></h3><p>Edit theme properties and custom.css from the CAS header, preview live and download both files for an overlay.</p>
+            <p class="cas-release-card-foot"><a href="#theme-builder" aria-hidden="true" tabindex="-1">Read more →</a></p>
+        </li>
+        <li data-area="ui">
+            <p class="cas-release-card-top"><span class="cas-release-card-area">Interface &amp; Accounts</span><span class="cas-release-type" data-type="new">New</span></p>
+            <h3><a href="#theme-properties">Theme Properties</a></h3><p>Over twenty new theme properties for the login form, identity providers, errors, multifactor, QR codes and consent.</p>
+            <p class="cas-release-card-foot"><a href="#theme-properties" aria-hidden="true" tabindex="-1">Read more →</a></p>
+        </li>
+        <li data-area="ui">
+            <p class="cas-release-card-top"><span class="cas-release-card-area">Interface &amp; Accounts</span><span class="cas-release-type" data-type="new">New</span></p>
+            <h3><a href="#account-profile">Account Profile</a></h3><p>Sign-in activity, contact methods, refresh tokens, usage policy, impersonation, QR devices and password expiry in the profile.</p>
+            <p class="cas-release-card-foot"><a href="#account-profile" aria-hidden="true" tabindex="-1">Read more →</a></p>
+        </li>
+    </ul>
+</section>
+<section class="cas-release-filter" aria-label="Filter changes" hidden>
+    <label class="cas-release-search">
+        <i class="fa fa-magnifying-glass" aria-hidden="true"></i>
+        <span class="visually-hidden">Filter changes</span>
+        <input type="search" autocomplete="off" spellcheck="false" placeholder="Filter changes, e.g. mongodb, passkey, cas.tgc">
+    </label>
+    <div class="cas-release-chips" role="group" aria-label="Change type">
+        <button type="button" data-type="" aria-pressed="true">All <span>72</span></button>
+        <button type="button" data-type="new" aria-pressed="false"><i aria-hidden="true"></i>New <span>9</span></button>
+        <button type="button" data-type="changed" aria-pressed="false"><i aria-hidden="true"></i>Changed <span>18</span></button>
+        <button type="button" data-type="fixed" aria-pressed="false"><i aria-hidden="true"></i>Fixed <span>31</span></button>
+        <button type="button" data-type="action" aria-pressed="false"><i aria-hidden="true"></i>Action Required <span>8</span></button>
+        <button type="button" data-type="removed" aria-pressed="false"><i aria-hidden="true"></i>Removed <span>2</span></button>
+    </div>
+    <div class="cas-release-chips cas-release-areas" role="group" aria-label="Area">
+        <button type="button" data-area="" aria-pressed="true">All areas</button>
+        <button type="button" data-area="authentication" aria-pressed="false">Authentication <span>2</span></button>
+        <button type="button" data-area="mfa" aria-pressed="false">Multifactor &amp; Passkeys <span>1</span></button>
+        <button type="button" data-area="oidc" aria-pressed="false">OAuth &amp; OpenID Connect <span>14</span></button>
+        <button type="button" data-area="saml" aria-pressed="false">SAML2 <span>2</span></button>
+        <button type="button" data-area="attributes" aria-pressed="false">Attributes &amp; Consent <span>2</span></button>
+        <button type="button" data-area="tickets" aria-pressed="false">Tickets &amp; Sessions <span>10</span></button>
+        <button type="button" data-area="services" aria-pressed="false">Service Registry <span>14</span></button>
+        <button type="button" data-area="ui" aria-pressed="false">Interface &amp; Accounts <span>12</span></button>
+        <button type="button" data-area="operations" aria-pressed="false">Platform &amp; Operations <span>3</span></button>
+        <button type="button" data-area="docs" aria-pressed="false">Documentation <span>1</span></button>
+        <button type="button" data-area="project" aria-pressed="false">Build &amp; Project <span>8</span></button>
+        <button type="button" data-area="general" aria-pressed="false">General <span>3</span></button>
+    </div>
+    <p class="cas-release-status" role="status" aria-live="polite"></p>
+</section>
+</div>
+
+<h2 id="new--noteworthy">New &amp; Noteworthy</h2>
+
+<p>The following items are new improvements and enhancements presented in this release.</p>
+
+<h3 class="cas-change cas-change-topic" data-area="operations" data-area-label="Platform &amp; Operations" id="openrewrite-recipes">OpenRewrite Recipes</h3>
+
+<p>CAS continues to produce and publish <a href="https://docs.openrewrite.org/">OpenRewrite</a> recipes that allow the project to upgrade installations
+in place from one version to the next. <a href="../installation/OpenRewrite-Upgrade-Recipes.html">See this guide</a> to learn more.</p>
+
+<h3 class="cas-change cas-change-topic" data-area="operations" data-area-label="Platform &amp; Operations" id="graal-vm-native-images">Graal VM Native Images</h3>
+
+<p>A CAS server installation and deployment process can be tuned to build and run
+as a <a href="../installation/GraalVM-NativeImage-Installation.html">Graal VM native image</a>. We continue to polish native runtime hints.
+The collection of end-to-end <a href="../../developer/Test-Process.html">browser tests based on Puppeteer</a> have selectively switched
+to build and verify Graal VM native images and we plan to extend the coverage to all such scenarios in the coming releases.</p>
+
+<h3 class="cas-change cas-change-topic" data-area="project" data-area-label="Build &amp; Project" id="testing-strategy">Testing Strategy</h3>
+
+<p>The collection of end-to-end <a href="../../developer/Test-Process.html">browser tests based on Puppeteer</a> continue to grow to cover more use cases
+and scenarios. At the moment, total number of jobs stands at approximately <code class="language-plaintext highlighter-rouge">618</code> distinct scenarios. The overall
+test coverage of the CAS codebase is approximately <code class="language-plaintext highlighter-rouge">94%</code>.</p>
+
+<h3 class="cas-change cas-change-topic" data-area="project" data-area-label="Build &amp; Project" id="jspecify--nullaway">JSpecify &amp; NullAway</h3>
+
+<p>CAS codebase is now annotated with <a href="https://jspecify.dev/">JSpecify</a> annotations to indicate nullness contracts on method parameters,
+return types and fields. We will gradually extend the coverage of such annotations across the entire codebase in future releases
+and will integrate the Gradle build tool with tools such as <a href="https://github.com/uber/NullAway">NullAway</a> to prevent nullness contract violations
+during compile time.</p>
+
+<h3 class="cas-change cas-change-topic" data-type="changed" data-area="project" data-area-label="Build &amp; Project" data-type-label="Changed" id="spring-boot-42">Spring Boot 4.2</h3>
+
+<p>CAS is now built on top of Spring Boot <code class="language-plaintext highlighter-rouge">4.2.x</code>. This is an in-progress ongoing minor platform upgrade that
+affects almost all aspects of the codebase including many of the third-party core libraries used by CAS
+as well as some CAS functionality.</p>
+
+<p>Please refer to the <a href="https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-4.2-Release-Notes">Spring Boot Wiki</a>
+for more information on the changes and updates in this release.</p>
+
+<h3 class="cas-change cas-change-topic" data-type="new" data-area="ui" data-area-label="Interface &amp; Accounts" data-type-label="New" id="theme-builder">Theme Builder</h3>
+
+<p>The CAS header has a new palette button, next to the notifications button, that opens a
+<a href="../ux/User-Interface-Customization-CSSJS.html#theme-builder">theme builder</a>. It lists every theme property with its
+description and current value, and edits the colors, shapes, font, header, footer and background that <code class="language-plaintext highlighter-rouge">custom.css</code> usually
+controls. Changes are previewed live on the page without a reload, including elements that a theme property would turn off,
+and the result downloads as a <code class="language-plaintext highlighter-rouge">cas-theme-custom.properties</code> file and a <code class="language-plaintext highlighter-rouge">custom.css</code> file ready for an overlay. When the builder
+opens on a server that already serves such a <code class="language-plaintext highlighter-rouge">custom.css</code>, it reads its own block back so the file can keep evolving.
+Nothing is saved on the server; the builder is turned on by default and is controlled by the <code class="language-plaintext highlighter-rouge">cas.theme-builder.enabled</code>
+theme property.</p>
+
+<h3 class="cas-change cas-change-topic" data-type="new" data-area="ui" data-area-label="Interface &amp; Accounts" data-type-label="New" id="theme-properties">Theme Properties</h3>
+
+<p>Several screens can now be adjusted through <a href="../ux/User-Interface-Customization-Themes-Static.html">theme properties</a>,
+so they can differ per theme, per application and per tenant, and most of them preview live in the theme builder:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Screen</th>
+      <th>Theme properties</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Every page</td>
+      <td><code class="language-plaintext highlighter-rouge">cas.main-content.position</code> (<code class="language-plaintext highlighter-rouge">topleft</code> … <code class="language-plaintext highlighter-rouge">bottomright</code>, default <code class="language-plaintext highlighter-rouge">topcenter</code>)</td>
+    </tr>
+    <tr>
+      <td>Login form</td>
+      <td><code class="language-plaintext highlighter-rouge">cas.login-form.password-reveal.enabled</code>, <code class="language-plaintext highlighter-rouge">cas.login-form.caps-lock-warning.enabled</code></td>
+    </tr>
+    <tr>
+      <td>Login card</td>
+      <td><code class="language-plaintext highlighter-rouge">cas.login-side-panel.position</code> (<code class="language-plaintext highlighter-rouge">start</code>, <code class="language-plaintext highlighter-rouge">end</code>), <code class="language-plaintext highlighter-rouge">cas.login-providers.position</code> (<code class="language-plaintext highlighter-rouge">after</code>, <code class="language-plaintext highlighter-rouge">before</code>)</td>
+    </tr>
+    <tr>
+      <td>External identity providers</td>
+      <td><code class="language-plaintext highlighter-rouge">cas.login-providers.layout</code> (<code class="language-plaintext highlighter-rouge">stacked</code>, <code class="language-plaintext highlighter-rouge">grid</code>, <code class="language-plaintext highlighter-rouge">inline</code>), <code class="language-plaintext highlighter-rouge">.select-threshold</code>, <code class="language-plaintext highlighter-rouge">.sort</code></td>
+    </tr>
+    <tr>
+      <td>Password management links</td>
+      <td><code class="language-plaintext highlighter-rouge">cas.pm-links.forgot-password.url</code></td>
+    </tr>
+    <tr>
+      <td>Error pages</td>
+      <td><code class="language-plaintext highlighter-rouge">cas.error.show-message</code>, <code class="language-plaintext highlighter-rouge">cas.error.show-details</code></td>
+    </tr>
+    <tr>
+      <td>WebAuthn</td>
+      <td><code class="language-plaintext highlighter-rouge">cas.webauthn.authentication.show-device-details</code>, <code class="language-plaintext highlighter-rouge">cas.webauthn.registration.recommended</code></td>
+    </tr>
+    <tr>
+      <td>Google Authenticator</td>
+      <td><code class="language-plaintext highlighter-rouge">cas.gauth.registration.show-secret-key</code>, <code class="language-plaintext highlighter-rouge">.scratch-codes</code> (<code class="language-plaintext highlighter-rouge">chips</code>, <code class="language-plaintext highlighter-rouge">list</code>), <code class="language-plaintext highlighter-rouge">.show-print</code></td>
+    </tr>
+    <tr>
+      <td>QR codes</td>
+      <td><code class="language-plaintext highlighter-rouge">cas.qr-code.size</code>, <code class="language-plaintext highlighter-rouge">cas.qr-code.foreground</code>, <code class="language-plaintext highlighter-rouge">cas.qr-code.background</code>, <code class="language-plaintext highlighter-rouge">cas.qr-code.margin</code></td>
+    </tr>
+    <tr>
+      <td>Multifactor authentication</td>
+      <td><code class="language-plaintext highlighter-rouge">cas.mfa.selection.layout</code> (<code class="language-plaintext highlighter-rouge">list</code>, <code class="language-plaintext highlighter-rouge">grid</code>, <code class="language-plaintext highlighter-rouge">cards</code>), <code class="language-plaintext highlighter-rouge">cas.mfa.device-name.prefill</code></td>
+    </tr>
+    <tr>
+      <td>Attribute consent</td>
+      <td><code class="language-plaintext highlighter-rouge">cas.consent.show-attribute-values</code>, <code class="language-plaintext highlighter-rouge">cas.consent.layout</code> (<code class="language-plaintext highlighter-rouge">table</code>, <code class="language-plaintext highlighter-rouge">list</code>)</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>The main content position places the content of every page in a 3x3 grid on the screen: top, middle or bottom, and
+left, center or right, as in <code class="language-plaintext highlighter-rouge">middleleft</code> or <code class="language-plaintext highlighter-rouge">bottomright</code>. Pages taller than the screen still start at the top and scroll,
+and Palantir keeps its own layout.</p>
+
+<p>Defaults keep the screens as they were, with two exceptions: external identity providers keep their configured order in
+the dropdown that replaces the buttons once there are more than ten, and the error page offers its details button only
+when <code class="language-plaintext highlighter-rouge">cas.error.show-details</code> is turned on, in which case it now shows the stack trace the server includes rather than an
+empty box. QR codes for Google Authenticator, WebAuthn and QR code login use the QR code properties of the theme that
+applies to the request; their size stays between <code class="language-plaintext highlighter-rouge">100</code> and <code class="language-plaintext highlighter-rouge">1000</code> pixels, and a foreground that is not darker than the
+background falls back to black on white so the code remains scannable. Device and account names suggested when
+registering trusted devices, Google Authenticator, YubiKey or WebAuthn devices can start empty, random or with the
+username.</p>
+
+<h3 class="cas-change cas-change-topic" data-type="new" data-area="ui" data-area-label="Interface &amp; Accounts" data-type-label="New" id="account-profile">Account Profile</h3>
+
+<p>The <a href="../registration/Account-Management-Overview.html">account profile</a> shows more of what CAS knows about the user:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Section</th>
+      <th>What it shows</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Overview</td>
+      <td>Days left before the password expires, from the password policy warning, with a shortcut to change it.</td>
+    </tr>
+    <tr>
+      <td>Sign-ins</td>
+      <td>Successful, failed and risky sign-in attempts of the last 30 days from the authentication events.</td>
+    </tr>
+    <tr>
+      <td>Contact</td>
+      <td>Email addresses and phone numbers for one-time codes and for passwordless sign-in.</td>
+    </tr>
+    <tr>
+      <td>Tokens</td>
+      <td>Refresh tokens (offline access) next to access tokens; revoking one revokes its access tokens.</td>
+    </tr>
+    <tr>
+      <td>Usage policy</td>
+      <td>Whether the acceptable usage policy is accepted, and the policy terms.</td>
+    </tr>
+    <tr>
+      <td>Impersonation</td>
+      <td>Accounts the user may impersonate, and on whose behalf an impersonation session runs.</td>
+    </tr>
+    <tr>
+      <td>QR devices</td>
+      <td>Devices authorized for QR code login, which the user can remove.</td>
+    </tr>
+    <tr>
+      <td>MFA devices</td>
+      <td>YubiKey registration, new Google Authenticator scratch codes, renaming WebAuthn passkeys.</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>YubiKey registration is offered when the user has no device yet or when
+<code class="language-plaintext cas-setting highlighter-rouge">cas.authn.mfa.yubikey.multiple-device-registration-enabled</code> is turned on, and an email address for
+one-time codes can be added when <code class="language-plaintext cas-setting highlighter-rouge">cas.authn.mfa.simple.mail.accepted-email-pattern</code> is set.</p>
+
+<div class="image-gallery">
+    
+    
+    
+    
+    
+
+    <a href="img_30.png" data-lightbox="account-profile" aria-label="The overview warns before the password expires, with a shortcut to change it" data-title="The overview warns before the password expires, with a shortcut to change it">
+        <img src="img_30.png" alt="Account profile overview with a banner saying the password expires in five days" title="The overview warns before the password expires, with a shortcut to change it" />
+    </a>
+    
+    
+    
+    
+
+    <a href="img_31.png" data-lightbox="account-profile" aria-label="YubiKey registration from the profile, and new Google Authenticator scratch codes shown once" data-title="YubiKey registration from the profile, and new Google Authenticator scratch codes shown once">
+        <img src="img_31.png" alt="Multifactor devices with Google Authenticator, WebAuthn and YubiKey registration options and new scratch codes" title="YubiKey registration from the profile, and new Google Authenticator scratch codes shown once" />
+    </a>
+    
+    
+    
+    
+
+    <a href="img_32.png" data-lightbox="account-profile" aria-label="Recent sign-ins from the authentication events" data-title="Recent sign-ins from the authentication events">
+        <img src="img_32.png" alt="Recent sign-ins listing a failed attempt, a successful sign-in and a risky attempt with location and browser" title="Recent sign-ins from the authentication events" />
+    </a>
+    
+    
+    
+    
+
+    <a href="img_33.png" data-lightbox="account-profile" aria-label="Contact methods for one-time codes and passwordless sign-in" data-title="Contact methods for one-time codes and passwordless sign-in">
+        <img src="img_33.png" alt="Contact methods listing the email address and phone number for one-time codes and passwordless sign-in" title="Contact methods for one-time codes and passwordless sign-in" />
+    </a>
+    
+    
+    
+    
+
+    <a href="img_34.png" data-lightbox="account-profile" aria-label="Refresh tokens next to access tokens" data-title="Refresh tokens next to access tokens">
+        <img src="img_34.png" alt="Tokens listing an access token and a refresh token with the number of access tokens issued from it" title="Refresh tokens next to access tokens" />
+    </a>
+    
+    
+</div>
+
+<h2 class="cas-change-others" id="other-stuff">Other Stuff</h2>
+
+<h3 class="cas-change-group" data-area="authentication" id="authentication">Authentication</h3>
+
+<ul>
+  <li class="cas-change cas-change-item" data-type="action" data-area="authentication" data-type-label="Action"><a href="../authentication/JWT-Authentication.html">JWT authentication</a> takes the subject
+of a token as the principal as it is, and every other claim as an attribute. Tokens built with pac4j, whose subject
+carries a profile type such as <code class="language-plaintext highlighter-rouge">org.pac4j.core.profile.CommonProfile#casuser</code>, now sign in as that whole subject and
+must be issued again with a plain one. A service without a signing secret no longer accepts any token. The <code class="language-plaintext highlighter-rouge">tokenAuth</code>
+actuator endpoint no longer issues tokens: it validates one and answers the principal and the identifier, name and
+service id of the service, never its properties or secrets.</li>
+  <li class="cas-change cas-change-item" data-type="action" data-area="authentication" data-type-label="Action">For <a href="../authentication/Configuring-SAML2-Authentication-Unsolicited.html">unsolicited SSO</a>,
+the SAML2 identity provider no longer signs the authentication request it builds itself, nor checks it for a signature,
+and the <code class="language-plaintext highlighter-rouge">signUnsolicitedAuthnRequest</code> setting of SAML2 service definitions is removed. Unsolicited SSO also works when
+the session state is kept in browser storage. <a href="../integration/Delegate-Authentication-SAML2.html">Delegated authentication</a>
+no longer reloads the metadata of a SAML2 identity provider for each request.</li>
+</ul>
+
+<h3 class="cas-change-group" data-area="mfa" id="multifactor--passkeys">Multifactor &amp; Passkeys</h3>
+
+<ul>
+  <li class="cas-change cas-change-item" data-type="fixed" data-area="mfa" data-type-label="Fixed">The Google Authenticator registration QR code includes <code class="language-plaintext highlighter-rouge">digits</code> and <code class="language-plaintext highlighter-rouge">period</code> when
+<code class="language-plaintext cas-setting highlighter-rouge">cas.authn.mfa.gauth.core.code-digits</code> or <code class="language-plaintext cas-setting highlighter-rouge">cas.authn.mfa.gauth.core.time-step-size</code> differ
+from the defaults, so authenticator apps generate codes CAS accepts.</li>
+</ul>
+
+<h3 class="cas-change-group" data-area="oidc" id="oauth--openid-connect">OAuth &amp; OpenID Connect</h3>
+
+<ul>
+  <li class="cas-change cas-change-item" data-type="fixed" data-area="oidc" data-type-label="Fixed"><a href="../authentication/OIDC-Authentication-Logout.html">Front-channel logout</a> requests now carry the same
+<code class="language-plaintext highlighter-rouge">sid</code> as the ID token and the back-channel logout token; the session identifier used to be computed differently, so
+applications could not match it to the session they had recorded.</li>
+  <li class="cas-change cas-change-item" data-type="fixed" data-area="oidc" data-type-label="Fixed">Access tokens issued as JWTs can be revoked through the revocation endpoint, and refresh tokens issued as
+JWTs can be redeemed with the <code class="language-plaintext highlighter-rouge">refresh_token</code> grant; both used to be looked up in the ticket registry without being decoded
+first, so revocation silently did nothing and the refresh request was refused.</li>
+  <li class="cas-change cas-change-item" data-type="fixed" data-area="oidc" data-type-label="Fixed">JWT access tokens are no longer signed with keys from the application’s own <code class="language-plaintext highlighter-rouge">jwks</code> that
+are marked for encryption (<code class="language-plaintext highlighter-rouge">"use": "enc"</code>); when the application publishes only encryption keys, CAS signs with its own
+keys. <code class="language-plaintext highlighter-rouge">jwtAccessTokenSigningAlg</code> is honored as documented: CAS picks a signing key whose type fits the algorithm,
+and the key’s own algorithm only applies when none is configured or the configured one does not fit the key.
+Signatures made with an EC (<code class="language-plaintext highlighter-rouge">ES*</code>) or RSA-PSS (<code class="language-plaintext highlighter-rouge">PS*</code>) key are randomized, so such a token is a different string each
+time it is encoded; the ID token’s <code class="language-plaintext highlighter-rouge">at_hash</code> is computed over the access token the response carries.</li>
+  <li class="cas-change cas-change-item" data-type="new" data-area="oidc" data-type-label="New"><a href="../authentication/OAuth-Authentication-Clients.html#resource-indicators">OAuth relying parties</a>
+may request access tokens for specific resources with the RFC 8707 <code class="language-plaintext highlighter-rouge">resource</code> parameter, limited to the resources listed
+in the service definition’s <code class="language-plaintext highlighter-rouge">allowedResources</code>, with authorization and pushed authorization requests, device
+authorization and CIBA requests, and the password, client credentials, JWT bearer and pre-authorized code grants.
+Other resources are refused with <code class="language-plaintext highlighter-rouge">invalid_target</code>. Requested resources are added to the access token audience. Redeeming a
+code or refresh token may narrow the access token to some of the granted resources, while the refresh token keeps them all.
+A <a href="../authentication/OAuth-ProtocolFlow-TokenExchange.html">token exchange</a> issues tokens for its own audience or resource
+only, without the resources of the exchanged token. In request objects, <code class="language-plaintext highlighter-rouge">resource</code> may be a single value or a list.
+The consent screen lists the requested resources, and a remembered consent decision covers only the resources it was
+given for. Resources can be defined in the Palantir service wizard.</li>
+  <li class="cas-change cas-change-item" data-type="changed" data-area="oidc" data-type-label="Changed">The <code class="language-plaintext highlighter-rouge">allowedResources</code> of a service definition and of its
+<a href="../authentication/OAuth-ProtocolFlow-TokenExchange.html">token exchange policy</a> are regular expressions with the same
+rule: every requested resource must match one of them in full, case-sensitively. The token exchange policy used to accept
+a request when any one of its resources was found by any pattern. A token exchange is also checked against the service’s
+own <code class="language-plaintext highlighter-rouge">allowedResources</code> when the service defines them.</li>
+  <li class="cas-change cas-change-item" data-type="new" data-area="oidc" data-type-label="New">The <a href="../installation/Admin-MCP-Server.html">MCP server</a> reports the audience and allowed
+resources of OAuth and OpenID Connect clients, and the new <code class="language-plaintext highlighter-rouge">checkOidcClientResource</code> tool tells whether a client may
+request a resource, which allowed expression it matches or why it would be refused, and the audience of the token.</li>
+  <li class="cas-change cas-change-item" data-type="new" data-area="oidc" data-type-label="New"><a href="../authentication/OAuth-Authentication-Clients.html#resources-for-every-client">Resources every client may request</a>
+can be listed with <code class="language-plaintext cas-setting highlighter-rouge">cas.authn.oauth.core.allowed-resources</code>, in addition to the <code class="language-plaintext highlighter-rouge">allowedResources</code> of each
+service. CAS allows its own <a href="../installation/Admin-MCP-Server.html">MCP server</a> endpoint by default, so that clients
+registered dynamically, which cannot list resources themselves, may request access tokens for it. <code class="language-plaintext highlighter-rouge">checkOidcClientResource</code>
+reports whether the client or this setting allowed a resource.</li>
+  <li class="cas-change cas-change-item" data-type="new" data-area="oidc" data-type-label="New">The <a href="../installation/Admin-MCP-Server.html#oauth-access-tokens">MCP server</a> accepts OAuth access
+tokens issued by CAS, alongside Basic authentication. It publishes RFC 9728 protected resource metadata that names CAS as the
+authorization server, challenges unauthenticated clients with both <code class="language-plaintext highlighter-rouge">Bearer</code> and <code class="language-plaintext highlighter-rouge">Basic</code>, and accepts a token only when it was
+issued for the MCP endpoint with the <code class="language-plaintext highlighter-rouge">mcp:read</code> scope to an application that is still allowed. The <code class="language-plaintext highlighter-rouge">MCP_ADMIN</code> role comes from
+the principal attributes listed in <code class="language-plaintext cas-setting highlighter-rouge">cas.mcp.oauth.required-attributes</code>, resolved for the person when the token
+is used rather than taken from the attributes released to the client; they match nobody by default, and the
+audit record of a call names the OAuth client. The <code class="language-plaintext highlighter-rouge">AI.mcp-oauth</code> feature toggle turns it off.</li>
+  <li class="cas-change cas-change-item" data-type="new" data-area="oidc" data-type-label="New">OpenID Connect clients may identify themselves with
+<a href="../authentication/OIDC-Authentication-Client-ID-Metadata-Documents.html">client ID metadata documents</a>, as MCP clients do:
+the client id is an HTTPS URL whose JSON document CAS fetches, checks and registers, refreshes when its cache lifetime ends
+and removes once unused. Documents are only fetched from public addresses, without redirects and up to 5 KB, and these
+clients always see a consent screen that names the host of the client id. Turned off by default; enable it with
+<code class="language-plaintext cas-setting highlighter-rouge">cas.authn.oidc.registration.client-id-metadata-document.enabled=true</code>.</li>
+  <li class="cas-change cas-change-item" data-type="changed" data-area="oidc" data-type-label="Changed">The <code class="language-plaintext highlighter-rouge">aud</code> of a token introspection response is the audience of the JWT access token: the
+service <code class="language-plaintext highlighter-rouge">audience</code> (or the client ID) and the token’s resources, or the audience requested by a token exchange. It used
+to be the service URL the token was issued for. Custom <code class="language-plaintext highlighter-rouge">OAuth20IntrospectionResponseGenerator</code> implementations now
+receive the registered service of the client.</li>
+  <li class="cas-change cas-change-item" data-type="action" data-area="oidc" data-type-label="Action">OAuth/OpenID Connect clients are held to what they registered. They authenticate with their
+registered method, and only as the client the request names, at the token endpoint and also for
+<a href="../authentication/OIDC-Authentication-PAR.html">pushed authorization</a>,
+<a href="../authentication/OIDC-Authentication-CIBA.html">backchannel authentication</a>, revocation and
+<a href="../authentication/OIDC-Authentication-Verifiable-Credentials.html">verifiable credentials</a>; an access token no longer
+authenticates a client. Clients that use <a href="../authentication/OIDC-Authentication-AccessToken-AuthMethods.html#mutual-tls-client-authentication">mutual TLS</a>
+must register the subject DN or a subject alternative name of their certificate, unless their client id is exactly the
+certificate’s <a href="../authentication/OIDC-Authentication-AccessToken-AuthMethods.html#spiffe">SPIFFE</a> ID; a subject DN written
+as a regular expression must now match the whole subject, as <code class="language-plaintext highlighter-rouge">CN=([^,]+),O=Example,C=US</code> does. User profiles keep
+every value of a multi-valued attribute, and the <code class="language-plaintext highlighter-rouge">cas.authn.oauth.csrf-cookie</code> settings are removed since CAS no
+longer issues that cookie.</li>
+  <li class="cas-change cas-change-item" data-type="action" data-area="oidc" data-type-label="Action">The page where users approve a <a href="../authentication/OAuth-ProtocolFlow-DeviceAuthorization.html">device user code</a>
+now carries an approval token tied to the single sign-on session, and an approval without it is refused, so another site
+can no longer make a signed-in browser approve a code. Customized <code class="language-plaintext highlighter-rouge">protocol/oauth/deviceCodeApproval.html</code> templates must
+add the hidden <code class="language-plaintext highlighter-rouge">approvaltoken</code> input of the default template to their form. The error messages of the page are now
+defined, under <code class="language-plaintext highlighter-rouge">cas.oauth.device.error.*</code>.</li>
+  <li class="cas-change cas-change-item" data-type="fixed" data-area="oidc" data-type-label="Fixed">OAuth/OpenID Connect follow the specifications more closely.
+<a href="../authentication/OIDC-Authentication-DPoP.html">Sender-constrained</a> access tokens always require their proof,
+<code class="language-plaintext highlighter-rouge">prompt=login</code> and <code class="language-plaintext highlighter-rouge">max_age=0</code> request parameters always lead to a fresh login and <code class="language-plaintext highlighter-rouge">prompt=none</code> to <code class="language-plaintext highlighter-rouge">login_required</code>,
+authorization requests
+keep all their parameters through login and <a href="../authentication/OIDC-Authentication-Clients-ScopeApproval.html">consent</a>,
+and refused requests receive the error and challenge the specifications call for instead of a server error. OpenID Connect
+JWT access tokens no longer fail to sign now and then under load.</li>
+  <li class="cas-change cas-change-item" data-type="changed" data-area="oidc" data-type-label="Changed">OAuth/OpenID Connect endpoints no longer send the <code class="language-plaintext highlighter-rouge">X-XSS-Protection</code> header, which browsers
+ignore. Only the <code class="language-plaintext highlighter-rouge">X-Requested-With: XMLHttpRequest</code> header now marks a script request that is answered with <code class="language-plaintext highlighter-rouge">401</code> instead
+of a redirect to the login; the <code class="language-plaintext highlighter-rouge">is_ajax_request</code> header and parameter are no longer recognized.</li>
+</ul>
+
+<h3 class="cas-change-group" data-area="saml" id="saml2">SAML2</h3>
+
+<ul>
+  <li class="cas-change cas-change-item" data-type="fixed" data-area="saml" data-type-label="Fixed"><a href="../installation/SAML2-ServiceProvider-Metadata.html#metadata-caching--resolution">SAML2 service provider metadata</a>
+that cannot be resolved is no longer retried with one-second pauses during the request, and a failure to load it is
+remembered for <code class="language-plaintext cas-setting highlighter-rouge">cas.authn.saml-idp.metadata.core.failure-cache-expiration</code> instead of contacting the
+metadata source on every request. Metadata query servers keep one backup per entity, so an entity no longer falls back
+onto the metadata of another, and metadata stores such as JPA or MongoDB are cached per entity, so providers that share
+a service definition no longer evict each other’s metadata. Changes to the metadata settings of a service definition take
+effect on the next request on every node, and checking whether the JPA metadata store is available no longer opens a
+new connection pool each time.</li>
+  <li class="cas-change cas-change-item" data-type="fixed" data-area="saml" data-type-label="Fixed"><a href="../installation/Configuring-SAML2-DynamicMetadata.html">SAML2 identity provider metadata</a>,
+keys and certificates are fetched again from their storage once <code class="language-plaintext cas-setting highlighter-rouge">cas.authn.saml-idp.metadata.core.cache-expiration</code>
+has passed, even while in constant use, so a key rotation in a shared metadata store reaches every node.</li>
+</ul>
+
+<h3 class="cas-change-group" data-area="attributes" id="attributes--consent">Attributes &amp; Consent</h3>
+
+<ul>
+  <li class="cas-change cas-change-item" data-type="fixed" data-area="attributes" data-type-label="Fixed">The <a href="../integration/Attribute-Release-Policy-PatternMatching.html">pattern matching attribute release policy</a>
+no longer releases the transformation template itself for values that do not match the pattern; such values are dropped, and
+the attribute is not released when none of its values match, as the inline Groovy transformation already did.</li>
+  <li class="cas-change cas-change-item" data-type="fixed" data-area="attributes" data-type-label="Fixed">The <a href="../integration/Attribute-Release-Policy-ReturnLinked.html">return linked attribute release policy</a>
+releases the values of the first linked attribute that has a value, as documented; it used to release the last one.</li>
+</ul>
+
+<h3 class="cas-change-group" data-area="tickets" id="tickets--sessions">Tickets &amp; Sessions</h3>
+
+<ul>
+  <li class="cas-change cas-change-item" data-type="action" data-area="tickets" data-type-label="Action">New deployments of CAS, and upgrades to a new CAS version, should always start with a
+clean <a href="../ticketing/JPA-Ticket-Registry.html">JPA ticket registry</a> table: drop the existing table and let CAS create it.
+Schema updates do not change the type or length of an existing column, and this version changes several of them.</li>
+  <li class="cas-change cas-change-item" data-type="changed" data-area="tickets" data-type-label="Changed">With PostgreSQL, the <a href="../ticketing/JPA-Ticket-Registry.html">JPA ticket registry</a>
+stores ticket attributes as <code class="language-plaintext highlighter-rouge">jsonb</code>, and session lookups by attribute, as in delegated OpenID Connect and SAML2 logout,
+can be answered by a GIN index instead of reading every session. The index is not created by CAS: the administrator
+must create it once after the ticket table is created, with the statement on that page. A table created by an earlier
+version keeps a <code class="language-plaintext highlighter-rouge">json</code> column, on which those lookups fail; start with a clean table or convert the column.</li>
+  <li class="cas-change cas-change-item" data-type="changed" data-area="tickets" data-type-label="Changed">The <a href="../ticketing/JPA-Ticket-Registry.html">JPA ticket registry</a> stores when each
+ticket expires, including its idle timeout, and indexes it, and the <a href="../ticketing/Ticket-Registry-Cleaner.html">ticket registry cleaner</a>
+asks only for tickets whose time has passed, with a full scan at startup and hourly; it used to read and decode
+every ticket on every run. With MySQL, the registry streams scans through a server-side cursor (<code class="language-plaintext highlighter-rouge">useCursorFetch</code>)
+and leaves single-ticket lookups as they were; the defaults can be overridden with
+<code class="language-plaintext cas-setting highlighter-rouge">cas.ticket.registry.jpa.properties</code>.</li>
+  <li class="cas-change cas-change-item" data-type="fixed" data-area="tickets" data-type-label="Fixed">Looking up sessions by attribute in the <a href="../ticketing/JPA-Ticket-Registry.html">JPA ticket registry</a>
+no longer fails on MySQL when the caller runs outside a transaction, as delegated OpenID Connect and SAML2 logout do.
+Updating a ticket encrypts it once instead of twice when ticket encryption is turned on.</li>
+  <li class="cas-change cas-change-item" data-type="changed" data-area="tickets" data-type-label="Changed">The <a href="../ticketing/JPA-Ticket-Registry.html">JPA ticket registry</a> updates a ticket with a
+single statement instead of reading the row back first, no longer deletes service tickets twice when a session ends,
+pages ticket listings in the query instead of reading and skipping the rows before the page, and reads tickets without
+keeping copies of them for change tracking. Session queries by attribute bind the attribute values as parameters.</li>
+  <li class="cas-change cas-change-item" data-type="action" data-area="tickets" data-type-label="Action">With MySQL, the <a href="../ticketing/JPA-Ticket-Registry.html">JPA ticket registry</a> declares shorter
+<code class="language-plaintext highlighter-rouge">type</code>, <code class="language-plaintext highlighter-rouge">principal_id</code> and <code class="language-plaintext highlighter-rouge">parent_id</code> columns so that its indexes fit MySQL’s key length limit; until now MySQL refused
+every one of them. Existing tables need the statements listed on that page. The index on the ticket type alone is gone
+on all databases.</li>
+  <li class="cas-change cas-change-item" data-type="fixed" data-area="tickets" data-type-label="Fixed">With the <a href="../ticketing/Stateless-Ticket-Registry.html">stateless ticket registry</a>,
+device codes keep their requested scopes, so tokens issued for an approved device code carry them; the scopes used
+to be dropped.</li>
+  <li class="cas-change cas-change-item" data-type="action" data-area="tickets" data-type-label="Action">The compact form of tickets kept by the
+<a href="../ticketing/Stateless-Ticket-Registry.html">stateless ticket registry</a> now carries the resources of OAuth codes,
+access tokens, refresh tokens, device codes and pushed authorization requests, and the audience of exchanged access
+tokens; its format version changes: tickets and tokens issued before the upgrade can no longer be read, so users sign in
+again and clients obtain new tokens.</li>
+  <li class="cas-change cas-change-item" data-type="removed" data-area="tickets" data-type-label="Removed">The deprecated Azure CosmosDb ticket registry is removed, along with its settings.
+Deployments that still use it should switch to another <a href="../ticketing/Configuring-Ticketing-Components.html">ticket registry</a>.</li>
+  <li class="cas-change cas-change-item" data-type="changed" data-area="tickets" data-type-label="Changed">A <a href="../installation/Logout-Single-Signout.html">logout</a> request now looks up its
+<code class="language-plaintext highlighter-rouge">service</code> parameter once for all the steps of the logout flow, where every step, and every single logout protocol in
+use, used to look it up again.
+<a href="../installation/Logout-Single-Signout.html#redirecting-logout-to-service">Redirecting logout to the service</a> looks it
+up once more, and only when <code class="language-plaintext cas-setting highlighter-rouge">cas.logout.follow-service-redirects</code> is turned on. Logout requests that
+name unknown services, such as those sent by crawlers, cost far less.</li>
+</ul>
+
+<h3 class="cas-change-group" data-area="services" id="service-registry">Service Registry</h3>
+
+<ul>
+  <li class="cas-change cas-change-item" data-type="changed" data-area="services" data-type-label="Changed">The <a href="../services/JPA-Service-Management.html">JPA service registry</a> reads only the
+identifier and body of each definition, keeps no entities for reads, and no longer deserializes a definition on reload
+when its stored body is unchanged. Deleting a service is a single statement, new services are no longer looked up before
+they are stored, bulk saves flush every <code class="language-plaintext cas-setting highlighter-rouge">batch-size</code> definitions, and the service id and name columns
+are indexed.</li>
+  <li class="cas-change cas-change-item" data-type="fixed" data-area="services" data-type-label="Fixed">The <a href="../services/JPA-Service-Management.html">JPA service registry</a> keeps the identifier
+of a service that carries one, such as an imported definition; a database sequence used to replace it. New services
+get a random identifier, as with other service registries.</li>
+  <li class="cas-change cas-change-item" data-type="fixed" data-area="services" data-type-label="Fixed">A service whose single sign-on participation policy does not set
+<code class="language-plaintext highlighter-rouge">createCookieOnRenewedAuthentication</code> (for example the last-used-time and authentication-date policies) no longer
+fails the login flow; such a policy behaves like one that leaves the setting undefined, and the single sign-on
+session is kept when the service does not take part in it.</li>
+  <li class="cas-change cas-change-item" data-type="changed" data-area="services" data-type-label="Changed">Attribute-based activation criteria for <a href="../services/Service-Access-Strategy-ABAC-Activation.html">access strategies</a>
+and <a href="../integration/Attribute-Release-Policy-Activation.html">attribute release policies</a> match required values against
+the entire attribute value, like required and rejected attributes; <code class="language-plaintext highlighter-rouge">admin</code> no longer activates a policy for <code class="language-plaintext highlighter-rouge">sysadmin</code>.
+Use <code class="language-plaintext highlighter-rouge">.*admin.*</code> to match part of a value.</li>
+  <li class="cas-change cas-change-item" data-type="fixed" data-area="services" data-type-label="Fixed"><a href="../services/Configuring-Service-Replication.html">Service replication</a> no longer broadcasts
+every service definition from every node on each reload: a loaded definition is sent only when it differs from the
+replicated copy, and the replicated copies are kept across reloads instead of being cleared, so nodes started later still
+receive every definition. A replicated definition that differs from the local one replaces it instead of being listed twice.</li>
+  <li class="cas-change cas-change-item" data-type="fixed" data-area="services" data-type-label="Fixed">When several service registries are chained, a service URL that is not cached is matched
+against the best candidate from every registry by evaluation order, instead of the first registry’s match.</li>
+  <li class="cas-change cas-change-item" data-type="fixed" data-area="services" data-type-label="Fixed">The <a href="../services/REST-Service-Management.html">REST service registry</a> no longer publishes a
+loaded event for every service when services are counted or looked up, and counting services while the registry is
+unreachable logs the failure and reports zero instead of failing (for example at startup).</li>
+  <li class="cas-change cas-change-item" data-type="changed" data-area="services" data-type-label="Changed">The <a href="../services/Service-Access-Strategy-REST.html">REST access strategy</a> calls its endpoint
+once per access decision, without retries, and waits at most 5 seconds for the response; an endpoint that does not answer
+in time denies access. It used to retry up to three times on errors and timeouts, holding the login for the duration.</li>
+  <li class="cas-change cas-change-item" data-type="fixed" data-area="services" data-type-label="Fixed">Groovy single sign-on participation policies and Groovy activation criteria for access
+strategies and attribute release resolve their script once, and again only when the script changes or expires from the
+script cache, instead of resolving its location and expressions on every evaluation.</li>
+  <li class="cas-change cas-change-item" data-type="fixed" data-area="services" data-type-label="Fixed"><a href="../services/Configuring-Service-Replication.html">Service replication</a> through Apache Kafka
+keeps one entry per service definition; an updated definition used to be stored next to its earlier versions.</li>
+  <li class="cas-change cas-change-item" data-type="fixed" data-area="services" data-type-label="Fixed">A service definition deleted on one node stays deleted across the cluster with
+<a href="../services/Configuring-Service-Replication.html">service replication</a>: the deletion marker is kept instead of being
+removed by the first node that applies it, so nodes that still have the definition remove it rather than sending it
+back. Deletions now also replicate through Apache Kafka, whose nodes used to drop the marker on arrival.</li>
+  <li class="cas-change cas-change-item" data-type="fixed" data-area="services" data-type-label="Fixed">With <a href="../services/Configuring-Service-Replication.html">service replication</a> through Apache
+Kafka, a node reads the replication topic from the beginning when it starts, so it receives the service definitions that
+other nodes loaded before it joined; it used to rely on every node sending all definitions again on every reload.</li>
+  <li class="cas-change cas-change-item" data-type="fixed" data-area="services" data-type-label="Fixed">With the services cache turned off (<code class="language-plaintext cas-setting highlighter-rouge">cas.service-registry.cache.cache-size</code>
+set to <code class="language-plaintext highlighter-rouge">0</code>), listing services no longer re-indexes every service it reads, which also made the next service lookup
+read the whole service registry again.</li>
+  <li class="cas-change cas-change-item" data-type="removed" data-area="services" data-type-label="Removed">The deprecated Azure CosmosDb service registry is removed, along with its settings.
+Definitions stored there should be exported and imported into another <a href="../services/Service-Management.html">service registry</a>.</li>
+</ul>
+
+<h3 class="cas-change-group" data-area="ui" id="interface--accounts">Interface &amp; Accounts</h3>
+
+<ul>
+  <li class="cas-change cas-change-item" data-type="fixed" data-area="ui" data-type-label="Fixed">The account profile only ends single sign-on sessions, revokes OpenID Connect tokens and removes
+trusted devices that belong to the signed-in user; it used to act on any session, token or device whose identifier was submitted.</li>
+  <li class="cas-change cas-change-item" data-type="fixed" data-area="ui" data-type-label="Fixed"><a href="../ux/User-Interface-Customization-Themes.html">Themes</a> other than the default one, including themes chosen per
+application or per tenant, now inherit <code class="language-plaintext highlighter-rouge">cas-theme-custom.properties</code> before falling back to <code class="language-plaintext highlighter-rouge">cas-theme-default.properties</code>.
+Theme files found under the template prefixes now apply regardless of the browser language; they used to be ignored for
+languages other than English, and the aggregate theme source only honored them for an exact <code class="language-plaintext highlighter-rouge">en</code> request.</li>
+  <li class="cas-change cas-change-item" data-type="fixed" data-area="ui" data-type-label="Fixed">The account profile and account management pages follow the shared card, text and border colors of the
+theme, and the light Palantir theme follows the theme’s primary and secondary colors.</li>
+  <li class="cas-change cas-change-item" data-type="fixed" data-area="ui" data-type-label="Fixed">When password management is turned off, the login page no longer links to <code class="language-plaintext highlighter-rouge">https://pwd.example.org</code>; the
+address of an external password recovery page is set with the <code class="language-plaintext highlighter-rouge">cas.pm-links.forgot-password.url</code> theme property, and
+nothing is shown when it is blank.</li>
+  <li class="cas-change cas-change-item" data-type="fixed" data-area="ui" data-type-label="Fixed">Date fields in the <a href="../installation/Admin-Dashboard.html">Palantir</a> service wizard open a calendar to
+pick from: the expiration date, client secret expiration dates, and the start and end of a time-based access strategy, which
+take the start and the end of the picked day. Values of the access strategy types (remote, HTTP request, time-based and
+others) and of the proxy and token exchange policies now reach the generated definition; they used to be left out.</li>
+  <li class="cas-change cas-change-item" data-type="fixed" data-area="ui" data-type-label="Fixed">Generated passwords on the password update form and client secrets generated in Palantir use the
+browser’s cryptographic random number generator. WebAuthn no longer shows the session token after authentication, and the
+account unlock page only blocks the context menu on the captcha.</li>
+  <li class="cas-change cas-change-item" data-type="fixed" data-area="ui" data-type-label="Fixed">Browser storage pages show their error panel when progress display is turned off, instead of leaving a
+blank page.</li>
+  <li class="cas-change cas-change-item" data-type="fixed" data-area="ui" data-type-label="Fixed">Labels and messages that were written in English inside templates and scripts (generic success page,
+logout confirmation, error pages, QR code login, WebAuthn progress, attribute consent, interrupts, delegated profile
+selection, impersonation, device code approval, account profile and sign-up dialogs) now come from message bundles.</li>
+  <li class="cas-change cas-change-item" data-type="fixed" data-area="ui" data-type-label="Fixed">Turning on CAS login for <a href="../installation/Admin-Dashboard.html">Palantir</a> no longer sends other
+protected endpoints, such as actuator endpoints and the <a href="../installation/Admin-MCP-Server.html">MCP server</a>, to the CAS
+login page; they challenge for their own credentials again, as API clients expect, and only Palantir redirects to CAS.</li>
+</ul>
+
+<h3 class="cas-change-group" data-area="operations" id="platform--operations">Platform &amp; Operations</h3>
+
+<ul>
+  <li class="cas-change cas-change-item" data-type="new" data-area="operations" data-type-label="New">The <a href="../installation/Admin-MCP-Server.html#tools-that-change-cas">MCP server</a> can offer
+tools that change CAS: end the single sign-on sessions of a person with single logout, release throttled logins, turn an
+application on or off, change a log level, revoke OAuth tokens and consent decisions, and remove trusted devices,
+one-time password devices and WebAuthn devices. They are turned off by default, are turned on with the <code class="language-plaintext highlighter-rouge">AI.mcp-write</code>
+feature toggle, and require the new <code class="language-plaintext highlighter-rouge">MCP_OPERATOR</code> role. With an OAuth access token, that role also requires the
+<code class="language-plaintext highlighter-rouge">mcp:write</code> scope and the principal attributes listed in <code class="language-plaintext cas-setting highlighter-rouge">cas.mcp.oauth.operator-required-attributes</code>,
+which match nobody by default.</li>
+</ul>
+
+<h3 class="cas-change-group" data-area="docs" id="documentation">Documentation</h3>
+
+<ul>
+  <li class="cas-change cas-change-item" data-type="changed" data-area="docs" data-type-label="Changed">The <a href="../authentication/SPNEGO-Authentication.html">SPNEGO</a> settings explain that
+<code class="language-plaintext cas-setting highlighter-rouge">cas.authn.spnego.properties[0].jcifs-service-password</code> is only used when
+<code class="language-plaintext cas-setting highlighter-rouge">cas.authn.spnego.system.use-subject-creds-only</code> is <code class="language-plaintext highlighter-rouge">true</code> (otherwise the service keys come from a keytab),
+and that setting both the Kerberos KDC and realm makes the JDK ignore the Kerberos configuration file.</li>
+</ul>
+
+<h3 class="cas-change-group" data-area="project" id="build--project">Build &amp; Project</h3>
+
+<ul>
+  <li class="cas-change cas-change-item" data-type="changed" data-area="project" data-type-label="Changed">A large number of dependencies and libraries have been updated to their latest versions.</li>
+  <li class="cas-change cas-change-item" data-type="changed" data-area="project" data-type-label="Changed">MariaDB integration tests and functional test scenarios use port <code class="language-plaintext highlighter-rouge">3307</code>, so they can run
+alongside the MySQL tests on <code class="language-plaintext highlighter-rouge">3306</code>.</li>
+  <li class="cas-change cas-change-item" data-type="changed" data-area="project" data-type-label="Changed">Browser tests now cover service matching strategies (literal, starts with, full and partial
+regular expressions), throttled ticket-granting ticket timeouts, per-service service ticket, proxy ticket and proxy-granting
+ticket expiration policies, single sign-on participation policies (never, last used time, authentication date), per-service
+security headers, encrypted, pattern matching, linked, environment and Groovy script attribute release policies, the
+anonymous username provider, multifactor bypass by remote address, request header and credential type, and the REST
+multifactor trigger (<code class="language-plaintext cas-setting highlighter-rouge">cas.authn.mfa.triggers.rest.url</code>).</li>
+  <li class="cas-change cas-change-item" data-type="changed" data-area="project" data-type-label="Changed">Browser tests now cover OpenID Connect front-channel logout, refused hybrid and unauthorized
+response types, encrypted user info and introspection responses, JWT refresh tokens, optional ID token encryption, token
+revocation with its cascade from refresh tokens to access tokens, WebAuthn signature counters, user verification and
+attestation, and Google Authenticator replay protection with custom code length, time step and window.</li>
+  <li class="cas-change cas-change-item" data-type="changed" data-area="project" data-type-label="Changed">Browser tests now sign in with <a href="../authentication/SPNEGO-Authentication.html">SPNEGO</a> against a
+real Kerberos KDC: the browser presents a Kerberos ticket and is signed in without a password, with and without
+<code class="language-plaintext cas-setting highlighter-rouge">cas.authn.spnego.principal-with-domain-name</code>, and falls back to the login form when it has no ticket.</li>
+</ul>
+
+<h3 class="cas-change-group" data-area="general" id="general">General</h3>
+
+<ul>
+  <li class="cas-change cas-change-item" data-type="action" data-area="general" data-type-label="Action">The <a href="../authentication/Configuring-SAML2-Authentication.html">SAML2 identity provider</a>,
+<a href="../authentication/OAuth-Authentication.html">OAuth/OpenID Connect</a>, <a href="../protocol/OAuth-UMA-Protocol.html">UMA</a>,
+<a href="../authorization/Heimdall-Authorization-Overview.html">Heimdall</a>, <a href="../authentication/JWT-Authentication.html">JWT authentication</a>
+and <a href="../mfa/DuoSecurity-Authentication.html">Duo Security</a> no longer depend on pac4j, which remains only in
+<a href="../integration/Delegate-Authentication.html">delegated authentication</a> and the features that hand off to it, such as
+<a href="../authentication/Passwordless-Authentication.html">passwordless authentication</a> and
+<a href="../integration/ADFS-Integration.html">ADFS integration</a>. They are built on Spring Security and CAS
+components and keep their session state in a CAS session store, in the http session, in browser storage or in the
+ticket registry as configured. Customizations, Groovy scripts and session store beans that use pac4j types must be
+updated, and authentication handler names recorded in audit logs no longer carry pac4j class names. OAuth/OpenID Connect
+sign-ins and pushed authorization requests that are under way during the upgrade must start again. SAML2 requests passed
+on to <a href="../integration/Delegate-Authentication-SAML2.html">SAML2 identity providers</a> keep their forced and passive
+authentication, authentication contexts and scoping.</li>
+  <li class="cas-change cas-change-item" data-type="changed" data-area="general" data-type-label="Changed">When the <a href="../authentication/Configuring-SAML2-Authentication.html">SAML2 identity provider</a>
+or <a href="../mfa/DuoSecurity-Authentication.html#session-storage">Duo Security</a> keep their session state in browser storage,
+the browser receives only the state of that flow rather than every attribute of the http session, and the state
+expires with the lifetime of transient session tickets (<code class="language-plaintext cas-setting highlighter-rouge">cas.ticket.tst.time-to-kill-in-seconds</code>).
+A state that has expired or belongs to another flow restores nothing; sign-ins under way during the upgrade must
+start again.</li>
+  <li class="cas-change cas-change-item" data-type="fixed" data-area="general" data-type-label="Fixed">CSRF protection is configured once for all modules, so OpenID Connect and
+<a href="../mfa/FIDO2-WebAuthn-Authentication.html">WebAuthn</a> no longer override each other’s settings, and the
+<a href="../authentication/OIDC-Authentication-CIBA.html">backchannel authentication</a> verification page is now protected.
+A custom CSRF token repository is defined once, as the <code class="language-plaintext highlighter-rouge">casCsrfTokenRepository</code> bean.</li>
+</ul>
+
+<aside class="cas-release-footer" aria-label="About release candidates">
+    <div>
+        <h2 id="test-release-candidates">Test Release Candidates Early</h2>
+        <p>CAS releases are strictly time-based, and a <code>GA</code> release is
+            <a href="https://apereo.github.io/2017/03/08/the-myth-of-ga-rel/">a tag and nothing more</a>.
+            Trying each release candidate and the snapshots that follow it is the best way to gain confidence in an upgrade.</p>
+    </div>
+    <div>
+        <h3>Support the Project</h3>
+        <p>Development is almost entirely voluntary. If CAS serves you well,
+            <a href="https://www.apereo.org/content/apereo-membership">join the Apereo Foundation</a> to fund dedicated time for
+            long-term support, maintenance and timely security fixes.</p>
+    </div>
+    <div>
+        <h3>Get Involved</h3>
+        <ul>
+            <li><a href="/cas/Mailing-Lists.html">Share feedback</a> on the features you try</li>
+            <li><a href="/cas/developer/Contributor-Guidelines.html">Contribute patches</a> and documentation improvements</li>
+        </ul>
+    </div>
+    <div>
+        <h3>Resources</h3>
+        <ul>
+            <li><a href="https://github.com/apereo/cas/milestones">Release schedule</a></li>
+            <li><a href="/cas/developer/Release-Policy.html">Release policy</a></li>
+            <li><a href="/cas/developer/Maintenance-Policy.html">Maintenance policy</a></li>
+        </ul>
+    </div>
+</aside>
+
+
+            </article>
+            <div class="article-end" aria-hidden="true"><span></span><span>CAS</span><span></span></div>
+        </main>
+        
+        <aside class="docs-toc" aria-label="On this page">
+    <nav id="pageContents" aria-label="Table of contents">
+        <p class="eyebrow">ON THIS PAGE</p>
+        <ul class="section-nav"></ul>
+    </nav>
+    <a class="toc-top" href="#cas-docs-container">Back to top <span aria-hidden="true">↑</span></a>
+</aside>
+
+        
+    </div>
+
+    <footer class="site-footer">
+        <a class="footer-brand" href="../../index.html">APEREO <strong>CAS</strong></a>
+        <p>CAS is supported by the <a href="https://www.apereo.org/">Apereo Foundation</a>.</p>
+        <a href="#cas-docs-container">Back to top <span aria-hidden="true">↑</span></a>
+    </footer>
+    <div id="docs-status" class="visually-hidden" role="status" aria-live="polite"></div>
+    <button id="backToTop" class="back-to-top" type="button" aria-label="Back to top" title="Back to top">
+        <svg viewBox="0 0 40 40" aria-hidden="true"><circle class="back-to-top-track" cx="20" cy="20" r="18.5" pathLength="100"></circle><circle class="back-to-top-ring" cx="20" cy="20" r="18.5" pathLength="100"></circle></svg>
+        <svg class="back-to-top-arrow" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 12.5v-9M3.75 7.5 8 3.25l4.25 4.25"></path></svg>
+    </button>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha384-1H217gwSVyLSIfaLxHbE7dRb3v4mYCKbpQvzx0cegeju1MVsGrX5xXxAvs/HgeFs" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.11/clipboard.min.js" integrity="sha384-J08i8An/QeARD9ExYpvphB8BsyOj3Gh2TSh1aLINKO3L0cMSH2dN3E22zFoXEi0Q" crossorigin="anonymous"></script>
+
+    <script src='/cas/javascripts/URI.js'></script>
+    <script src='/cas/javascripts/site.js'></script>
+    
+
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@docsearch/js@3.9.0/dist/umd/index.js" integrity="sha384-QhsjJ84XKaqUeM7eZpvYApdPamFboJLQg4BD2CCCSiUOL4cWzLp5caae6oW/oAXh" crossorigin="anonymous"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js" integrity="sha384-ficRBwtap/VLzILv81vIvgp30PoJYnlCm96tPpNYHXAf+h9SIThOZxxIzRUzbpAh" crossorigin="anonymous"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.5/js/lightbox.min.js" integrity="sha384-bcXRY0im+IjB6RvmBpbgdkqjLV0pCTbaJRJ9IRPeQaWCYlzRn9pPaPmCvONr9h9z" crossorigin="anonymous"></script>
+
+    <script>
+        let pageSection = "Planning";
+        let siteUrl = "https://apereo.github.io";
+        let basePath = "/cas";
+
+        
+    </script>
+</body>
+
+</html>

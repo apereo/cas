@@ -1,0 +1,27 @@
+{%- assign property = include.property -%}
+<div class="cas-property" data-kind="{{ property.kind }}" data-name="{{ property.displayName | escape }}" data-default="{{ property.defaultText | escape }}"{% if property.duration %} data-duration{% endif %}{% if property.regexPattern %} data-regex{% endif %}{% if property.expressionLanguage %} data-spel{% endif %}{% if property.deprecationLevel.size > 0 %} data-deprecated{% endif %}>
+    <div class="cas-property-head">
+        <div class="cas-property-key"><code class="cas-property-name">{{ property.displayName }}</code><span class="cas-property-summary">{{ property.summaryText }}</span></div>
+        <div class="cas-property-default">{% if property.defaultText != "" %}<code>{{ property.defaultText | escape }}</code>{% else %}<span>no default</span>{% endif %}</div>
+        <div class="cas-property-tags">
+            {%- if property.kind == "required" -%}<span class="cas-property-tag cas-property-tag-required"><i class="fa fa-asterisk" aria-hidden="true"></i>Required</span>{%- endif -%}
+            {%- if property.kind == "thirdparty" -%}<span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span>{%- endif -%}
+            {%- if property.duration -%}<span class="cas-property-tag"><i class="fa fa-clock" aria-hidden="true"></i>Duration</span>{%- endif -%}
+            {%- if property.regexPattern -%}<span class="cas-property-tag"><i class="fa fa-asterisk" aria-hidden="true"></i>Regex</span>{%- endif -%}
+            {%- if property.expressionLanguage -%}<span class="cas-property-tag"><i class="fa fa-code" aria-hidden="true"></i>SpEL</span>{%- endif -%}
+            {%- if property.deprecationLevel.size > 0 -%}<span class="cas-property-tag cas-property-tag-deprecated"><i class="fa fa-skull" aria-hidden="true"></i>Deprecated</span>{%- endif -%}
+        </div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description">{{ property.descriptionHtml }}</div>
+            <dl class="cas-property-meta">
+                {%- if property.displayType != "" -%}<dt>Type</dt><dd><code>{{ property.displayType | escape }}</code></dd>{%- endif -%}
+                <dt>Default</dt><dd>{% if property.defaultText != "" %}<code>{{ property.defaultText | escape }}</code>{% else %}<em>none</em>{% endif %}</dd>
+                {%- if property.owner.size > 0 -%}<dt>Defined by</dt><dd><code title="{{ property.owner }}">{{ property.owner | split: "." | last }}</code></dd>{%- endif -%}
+                {%- if property.expressionLanguage -%}<dt>Supports</dt><dd><a href="/cas/{{ version }}/configuration/Configuration-Spring-Expressions.html">Spring Expression Language</a></dd>{%- endif -%}
+                {%- if property.deprecationLevel.size > 0 -%}<dt>Deprecation</dt><dd><code>{{ property.deprecationLevel }}</code>{% if property.deprecationReplacement.size > 0 %}, replaced by <code>{{ property.deprecationReplacement }}</code>{% else %}, no replacement{% endif %}</dd>{%- endif -%}
+            </dl>
+        </div>
+    </div>
+</div>
