@@ -1,0 +1,38 @@
+{
+  "dependencies": "events-memory,aup-webflow,surrogate-webflow,qr-authentication,simple-mfa",
+  "conditions": {
+    "docker": "true"
+  },
+  "properties": [
+    "--CasFeatureModule.AccountManagement.enabled=true",
+
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
+    "--spring.mail.host=localhost",
+    "--spring.mail.port=25000",
+
+    "--cas.service-registry.core.init-from-json=true",
+
+    "--management.endpoints.access.default=UNRESTRICTED",
+    "--management.endpoints.web.exposure.include=*",
+    "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
+
+    "--cas.authn.attribute-repository.stub.attributes.mail=casuser@example.org",
+    "--cas.authn.attribute-repository.stub.attributes.phone=+1-555-0100",
+    "--cas.authn.attribute-repository.stub.attributes.aupAccepted=true",
+
+    "--cas.acceptable-usage-policy.core.enabled=true",
+
+    "--cas.authn.surrogate.simple.surrogates.casuser=user3,banderson",
+
+    "--cas.authn.qr.json.location=file:${java.io.tmpdir}/account-profile-qr-devices.json",
+
+    "--cas.authn.mfa.simple.mail.from=cas@example.org",
+    "--cas.authn.mfa.simple.mail.subject=CAS Token",
+    "--cas.authn.mfa.simple.mail.text=${token}",
+    "--cas.authn.mfa.simple.mail.html=false",
+    "--cas.authn.mfa.simple.mail.accepted-email-pattern=.+@example.org"
+  ],
+  "initScript": "${PWD}/ci/tests/mail/run-mail-server.sh"
+}

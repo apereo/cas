@@ -46,6 +46,8 @@ class OAuth20AccessTokenCompactorTests extends AbstractOAuth20Tests {
             "credential_configuration_id", "UniversityDegreeCredential",
             "credential_identifiers", List.of("UniversityDegreeCredential"))));
         token.setAuthorizationDetails(authorizationDetails);
+        token.setResources(List.of("https://api.example.org/", "https://other.example.org/"));
+        token.setAudience(List.of("https://backend.example.org/"));
         assertSame(OAuth20AccessToken.class, oauth20AccessTokenTicketCompactor.getTicketType());
         val compacted = oauth20AccessTokenTicketCompactor.compact(token);
         assertNotNull(compacted);
@@ -58,6 +60,9 @@ class OAuth20AccessTokenCompactorTests extends AbstractOAuth20Tests {
         assertEquals(result.getGrantType(), token.getGrantType());
         assertEquals(List.of("UniversityDegreeCredential"), result.getCredentialConfigurationIds());
         assertEquals(authorizationDetails, result.getAuthorizationDetails());
+        assertEquals(token.getResources(), result.getResources());
+        assertEquals(2, result.getResources().size());
+        assertEquals(Set.of("https://backend.example.org/"), result.getAudience());
         assertEquals(result.getAuthentication().getPrincipal(), token.getAuthentication().getPrincipal());
         assertEquals(List.of("SAML2Client"), result.getAuthentication().getAttributes().get(CompactTicketAuthentication.CLIENT_NAME_ATTRIBUTE));
         assertEquals(List.of("NzbLsXh8uDCcd-6MNwXF4W_7noWXFZAfHkxZsRGC9Xs"),

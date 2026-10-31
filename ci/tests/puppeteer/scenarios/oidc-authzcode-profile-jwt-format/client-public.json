@@ -1,0 +1,12 @@
+{
+  "keys": [
+    {
+      "kty": "RSA",
+      "n": "ihFz1Sb5dljarKNkUtv45K1GOX2gX7xpIe-s6RHIqDKQ7ERelLb3vvbDS2ylzSHvuG39ecvb6E12Usml6HeFXKwxp0daY1VqVXmOrsc8_rV_pLXTMQqDrbIw-egViRq6FaT6nCNDRO59Tu9i4wbEbRE7adymsa6EmoVA_CxiNP9HiKKvCKjK0gtsTOMgf88jm05KWr6oaPDQEMb8bFA6Ogk1mnASJMNhjyJ4k0UOyOg4AlVo6mL0YkRIBdalLdgcXLdFQ1AVoERy6zVt_7xu_7SEb0gYKgUV7sApfXmJ-3qZPMZyyJDWgMG1kBLf1gNT_Wc87YV6IsmlkHZd6mZbVw",
+      "e": "AQAB",
+      "kid": "client-encryption",
+      "use": "enc",
+      "alg": "RSA-OAEP-256"
+    }
+  ]
+}

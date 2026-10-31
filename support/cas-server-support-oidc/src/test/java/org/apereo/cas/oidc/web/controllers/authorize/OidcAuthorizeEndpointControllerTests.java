@@ -4,21 +4,20 @@ import module java.base;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.oidc.OidcConstants;
-import org.apereo.cas.support.oauth.OAuth20ClientIdAwareProfileManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
-import org.apereo.cas.support.oauth.authenticator.Authenticators;
+import org.apereo.cas.support.oauth.profile.DefaultOAuth20UserProfile;
+import org.apereo.cas.support.oauth.profile.OAuth20UserProfile;
 import org.apereo.cas.ticket.TicketGrantingTicket;
-import org.apereo.cas.util.CollectionUtils;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.inspektr.common.web.ClientInfo;
+import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.pac4j.cas.profile.CasProfile;
-import org.pac4j.core.util.Pac4jConstants;
-import org.pac4j.jee.context.JEEContext;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -76,7 +75,8 @@ class OidcAuthorizeEndpointControllerTests {
                     .param(OAuth20Constants.PROMPT, "unknown")
                     .with(withHttpRequestProcessor()))
                 .andReturn();
-            assertEquals(HttpStatus.UNAUTHORIZED.value(), result.getResponse().getStatus());
+            assertEquals(HttpStatus.BAD_REQUEST.value(), result.getResponse().getStatus());
+            assertTrue(result.getResponse().getContentAsString().contains(OAuth20Constants.INVALID_REQUEST));
         }
 
         @Test
@@ -87,7 +87,7 @@ class OidcAuthorizeEndpointControllerTests {
             mockRequest.setParameter(OAuth20Constants.CLIENT_ID, id);
             mockRequest.setParameter(OAuth20Constants.REDIRECT_URI, "https://oauth.example.org/");
             mockRequest.setParameter(OAuth20Constants.RESPONSE_TYPE, OAuth20ResponseTypes.TOKEN.name().toLowerCase(Locale.ENGLISH));
-            mockRequest.setContextPath(StringUtils.EMPTY);
+            mockRequest.setContextPath("/cas");
             val mockResponse = new MockHttpServletResponse();
 
             val oauthContext = oidcConfigurationContext;
@@ -98,21 +98,21 @@ class OidcAuthorizeEndpointControllerTests {
             service.setBypassApprovalPrompt(true);
             servicesManager.save(service);
 
-            val profile = new CasProfile();
-            profile.setId("casuser");
-            profile.setClientName(Authenticators.CAS_OAUTH_CLIENT);
+            val profile = new DefaultOAuth20UserProfile("casuser", OAuth20UserProfile.BASIC_PROFILE_HANDLER_NAME);
 
-            val sessionStore = oauthContext.getSessionStore();
-            val context = new JEEContext(mockRequest, mockResponse);
             val ticket = new MockTicketGrantingTicket("casuser");
             ticketRegistry.addTicket(ticket);
             profile.addAttribute(TicketGrantingTicket.class.getName(), ticket.getId());
             seedAuthorizeRequest(mockRequest, mockResponse, profile, ticket.getId());
-            sessionStore.set(context, Pac4jConstants.USER_PROFILES, CollectionUtils.wrapLinkedHashMap(profile.getClientName(), profile));
 
             val result = performAuthorizeFlow(mockRequest, mockResponse);
-            assertEquals(HttpStatus.FORBIDDEN.value(), result.getResponse().getStatus());
-            assertNull(getRedirectUrl(result));
+            val url = getRedirectUrl(result);
+            assertNotNull(url);
+            assertTrue(url.startsWith("https://oauth.example.org/"));
+            val fragment = URI.create(url).getFragment();
+            assertTrue(fragment.contains(OAuth20Constants.ACCESS_TOKEN));
+            assertTrue(fragment.contains(OAuth20Constants.EXPIRES_IN));
+            assertTrue(fragment.contains(OAuth20Constants.TOKEN_TYPE));
         }
 
         private MvcResult performRequest(final MockHttpServletRequest request,
@@ -134,6 +134,7 @@ class OidcAuthorizeEndpointControllerTests {
                     builder.param(parameterName, parameterValues);
                 }
             }
+            Optional.ofNullable(request.getHeader(HttpHeaders.USER_AGENT)).ifPresent(agent -> builder.header(HttpHeaders.USER_AGENT, agent));
             if (request.getSession(false) instanceof final MockHttpSession session) {
                 builder.session(session);
             }
@@ -166,18 +167,12 @@ class OidcAuthorizeEndpointControllerTests {
 
         private void seedAuthorizeRequest(final MockHttpServletRequest request,
                                           final MockHttpServletResponse response,
-                                          final CasProfile profile,
+                                          final OAuth20UserProfile profile,
                                           final String ticketGrantingTicketId) {
-            val context = new JEEContext(request, response);
-            val profiles = CollectionUtils.wrapLinkedHashMap(profile.getClientName(), profile);
-            val profileManager = new OAuth20ClientIdAwareProfileManager(
-                context,
-                oauthDistributedSessionStore,
-                servicesManager,
-                oidcConfigurationContext.getRequestParameterResolver());
-            profileManager.save(true, profile, false);
-            oauthDistributedSessionStore.set(context, Pac4jConstants.USER_PROFILES, profiles);
-            oidcConfigurationContext.getSessionStore().set(context, Pac4jConstants.USER_PROFILES, profiles);
+            Optional.ofNullable(request.getParameter(OAuth20Constants.CLIENT_ID))
+                .ifPresent(clientId -> profile.addAttribute(OAuth20Constants.PROFILE_ATTRIBUTE_CLIENT_ID, clientId));
+            oauthDistributedSessionStore.set(request, response, OAuth20Constants.SESSION_ATTRIBUTE_AUTHENTICATED_PROFILE, profile);
+            ClientInfoHolder.setClientInfo(ClientInfo.from(request));
             val cookie = ticketGrantingTicketCookieGenerator.addCookie(request, response, ticketGrantingTicketId);
             assertNotNull(cookie);
             if (response.getCookies().length > 0) {

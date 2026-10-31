@@ -49,6 +49,7 @@ class OAuth20CodeCompactorTests extends AbstractOAuth20Tests {
         val authorizationDetails = List.of(new LinkedHashMap<String, Object>(Map.of("type", "openid_credential",
             "credential_configuration_id", "UniversityDegreeCredential")));
         token.setAuthorizationDetails(authorizationDetails);
+        token.setResources(List.of("https://api.example.org/", "https://other.example.org/"));
         assertSame(OAuth20Code.class, oauth20CodeTicketCompactor.getTicketType());
         val compacted = oauth20CodeTicketCompactor.compact(token);
         assertNotNull(compacted);
@@ -62,6 +63,8 @@ class OAuth20CodeCompactorTests extends AbstractOAuth20Tests {
         assertEquals(result.getGrantType(), token.getGrantType());
         assertEquals(result.getAuthentication().getPrincipal(), token.getAuthentication().getPrincipal());
         assertEquals(authorizationDetails, result.getAuthorizationDetails());
+        assertEquals(token.getResources(), result.getResources());
+        assertEquals(2, result.getResources().size());
         assertEquals(token.getAuthentication().getAttributes().get(OAuth20Constants.DPOP_JKT),
             result.getAuthentication().getAttributes().get(OAuth20Constants.DPOP_JKT));
 

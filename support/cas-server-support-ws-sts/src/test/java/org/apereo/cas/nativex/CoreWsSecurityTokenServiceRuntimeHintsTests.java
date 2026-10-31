@@ -2,6 +2,7 @@ package org.apereo.cas.nativex;
 
 import module java.base;
 import lombok.val;
+import org.apache.cxf.binding.AbstractBindingFactory;
 import org.apache.cxf.binding.soap.SoapBindingFactory;
 import org.apache.cxf.binding.soap.wsdl.extensions.SoapAddress;
 import org.apache.cxf.binding.soap.wsdl.extensions.SoapBinding;
@@ -27,6 +28,7 @@ class CoreWsSecurityTokenServiceRuntimeHintsTests {
     void verifyHints() throws Exception {
         val hints = new RuntimeHints();
         new CoreWsSecurityTokenServiceRuntimeHints().registerHints(hints, getClass().getClassLoader());
+        assertTrue(RuntimeHintsPredicates.reflection().onFieldAccess(AbstractBindingFactory.class.getDeclaredField("bus")).test(hints));
         val domProvider = Class.forName("com.sun.org.apache.xerces.internal.dom.DOMXSImplementationSourceImpl");
         assertTrue(RuntimeHintsPredicates.reflection().onConstructorInvocation(domProvider.getConstructor()).test(hints));
         assertTrue(RuntimeHintsPredicates.resource().forBundle("org.apache.cxf.bus.managers.Messages").test(hints));

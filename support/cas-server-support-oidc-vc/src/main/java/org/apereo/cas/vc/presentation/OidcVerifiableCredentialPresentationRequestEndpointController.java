@@ -46,7 +46,6 @@ import org.jose4j.jwt.JwtClaims;
 import org.jose4j.jwt.NumericDate;
 import org.jose4j.keys.EllipticCurves;
 import org.jspecify.annotations.Nullable;
-import org.pac4j.jee.context.JEEContext;
 import org.springframework.http.CacheControl;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -680,7 +679,7 @@ public class OidcVerifiableCredentialPresentationRequestEndpointController exten
      */
     public static String resolveAuthenticatedClientId(final OidcConfigurationContext configurationContext,
                                                       final HttpServletRequest httpRequest, final HttpServletResponse httpResponse) {
-        val profile = OAuth20Utils.getAuthenticatedUserProfile(new JEEContext(httpRequest, httpResponse),
+        val profile = OAuth20Utils.getAuthenticatedUserProfile(httpRequest, httpResponse,
             configurationContext.getSessionStore());
         val clientId = profile.getAttribute(OAuth20Constants.CLIENT_ID);
         return clientId != null ? clientId.toString() : profile.getId();

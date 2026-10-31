@@ -34,15 +34,50 @@ public class ReturnLinkedAttributeReleasePolicy extends BaseMappedAttributeRelea
         return authorizeMappedAttributes(context, attrs);
     }
 
+    /**
+     * Each allowed attribute is sourced from the first linked attribute that produces a value;
+     * linked attributes listed after it are ignored.
+     *
+     * @param attributesToRelease the attributes to release
+     * @param mappingResults      the mapped attributes
+     */
+    @Override
+    protected void collectMappedAttributes(final Map<String, List<Object>> attributesToRelease,
+                                           final Map<String, List<Object>> mappingResults) {
+        mappingResults.forEach((name, values) -> {
+            if (values != null && !values.isEmpty()) {
+                attributesToRelease.putIfAbsent(name, values);
+            }
+        });
+    }
+
     @Override
     protected List<Object> getAttributeValue(final Map<String, List<Object>> resolvedAttributes, final String attributeName, final String mappedAttributeName) {
         return Objects.requireNonNullElseGet(resolvedAttributes.get(mappedAttributeName), List::of);
     }
 
+    /**
+     * Build the mapping request for one linked attribute. A linked attribute without a value produces nothing:
+     * the released attribute's own value, if the principal happens to have one, is not used in its place.
+     *
+     * @param resolvedAttributes  the resolved attributes
+     * @param attributeName       the released attribute
+     * @param mappedAttributeName the linked attribute
+     * @param attributeValue      the value of the linked attribute
+     * @return the mapping request
+     */
     @Override
     protected AttributeMappingRequest buildAttributeMappingRequest(final Map<String, List<Object>> resolvedAttributes, final String attributeName,
                                                                    final String mappedAttributeName, final List<Object> attributeValue) {
-        val request = super.buildAttributeMappingRequest(resolvedAttributes, attributeName, mappedAttributeName, attributeValue);
+        val sourceAttributes = attributeValue.isEmpty() ? withoutAttribute(resolvedAttributes, attributeName) : resolvedAttributes;
+        val request = super.buildAttributeMappingRequest(sourceAttributes, attributeName, mappedAttributeName, attributeValue);
         return request.withMappedAttributeName(attributeName);
+    }
+
+    private static Map<String, List<Object>> withoutAttribute(final Map<String, List<Object>> attributes, final String attributeName) {
+        val result = new TreeMap<String, List<Object>>(String.CASE_INSENSITIVE_ORDER);
+        result.putAll(attributes);
+        result.remove(attributeName);
+        return result;
     }
 }

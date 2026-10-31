@@ -45,6 +45,34 @@ the end of `cas.css` gives page elements one look without moving them around on 
 Colors come from the `--cas-theme-*` variables declared at the top of `cas.css`, so overriding those in `custom.css` 
 recolors every page, the Palantir admin dashboard included.
 
+## Theme Builder
+
+The CAS header carries a palette button, next to the notifications button, that opens the theme builder: a panel on the
+side of the page where you adjust the theme and watch the page you are on change as you go, without reloading it.
+
+- **Properties** lists every theme property of `cas-theme-default.properties` with its description and the value the current
+  theme resolves. Properties that change the page, such as the logo, the drawer menu, the language selector, the footer,
+  the login form legend or the password management links, are previewed live; the others are marked as taking effect
+  after deployment.
+- **Styles** edits what `custom.css` usually controls: the `--cas-theme-*` colors, the colors, corner radius and field
+  height of cards and fields, the font family, the header and footer colors, the logo height and the background image,
+  plus any additional CSS you want to append.
+- **Export** shows and downloads the resulting files: `cas-theme-custom.properties` (or `<theme>.properties` for a named
+  theme) with only the properties that differ from `cas-theme-default.properties`, and `custom.css` with the generated
+  rules between `cas-theme-builder:start` and `cas-theme-builder:end` markers, followed by your additional CSS.
+
+Put the properties file in your overlay next to the other theme files (for example `src/main/resources`) and `custom.css` under
+`src/main/resources/static/css`. When the builder opens again on a server that serves such a `custom.css`, it reads the marked
+block back, so you can keep refining the same file.
+
+<div class="alert alert-warning">:warning: <strong>Usage Warning</strong><p>Nothing the theme builder does is saved on the server:
+changes apply only to your own browser tab until you deploy the files, and the draft is discarded when you reset it or log out.
+The theme builder is turned on by default to help with customization; turn it off for production deployments with
+<code>cas.theme-builder.enabled=false</code> in your theme properties.</p></div>
+
+While the theme builder is on, elements that a theme property turns off are still rendered, hidden, so that the preview can
+show them again; with the builder turned off, pages render exactly as before.
+
 # JavaScript
 
 If you need to add some JavaScript, feel free to append to `src/main/resources/static/js/cas.js`.

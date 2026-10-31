@@ -15,6 +15,7 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.http.HttpRequestUtils;
+import org.apereo.cas.web.CasSessionStore;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
@@ -25,8 +26,6 @@ import org.apache.hc.core5.net.URIBuilder;
 import org.jspecify.annotations.Nullable;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.RequestAbstractType;
-import org.pac4j.core.context.session.SessionStore;
-import org.pac4j.jee.context.JEEContext;
 
 /**
  * This is {@link SamlIdPSAttributeReleasePolicyUtils}.
@@ -59,7 +58,7 @@ class SamlIdPSAttributeReleasePolicyUtils {
         val samlRequest = selectedService.getAttributeAs(SamlProtocolConstants.PARAMETER_SAML_REQUEST, List.class);
         if (samlRequest != null && !samlRequest.isEmpty()) {
             val applicationContext = context.getApplicationContext();
-            val sessionStore = applicationContext.getBean("samlIdPDistributedSessionStore", SessionStore.class);
+            val sessionStore = applicationContext.getBean("samlIdPDistributedSessionStore", CasSessionStore.class);
 
             val resolver = applicationContext.getBean(SamlRegisteredServiceCachingMetadataResolver.BEAN_NAME,
                 SamlRegisteredServiceCachingMetadataResolver.class);
@@ -97,15 +96,13 @@ class SamlIdPSAttributeReleasePolicyUtils {
 
     public static Optional<AuthnRequest> getSamlAuthnRequest(final RegisteredServiceAttributeReleasePolicyContext context) {
         val openSamlConfigBean = context.getApplicationContext().getBean(OpenSamlConfigBean.DEFAULT_BEAN_NAME, OpenSamlConfigBean.class);
-        val sessionStore = context.getApplicationContext().getBean("samlIdPDistributedSessionStore", SessionStore.class);
-        val request = HttpRequestUtils.getHttpServletRequestFromRequestAttributes();
-        val response = HttpRequestUtils.getHttpServletResponseFromRequestAttributes();
-        val webContext = new JEEContext(request, response);
+        val sessionStore = context.getApplicationContext().getBean("samlIdPDistributedSessionStore", CasSessionStore.class);
+        val request = Objects.requireNonNull(HttpRequestUtils.getHttpServletRequestFromRequestAttributes());
         val result = SamlIdPSessionManager.of(openSamlConfigBean, sessionStore)
-            .fetch(webContext, AuthnRequest.class);
+            .fetch(request, AuthnRequest.class);
         val authnRequest = (AuthnRequest) result
             .orElseThrow(() -> {
-                val samlAuthnRequestId = webContext.getRequestParameter(SamlIdPConstants.AUTHN_REQUEST_ID).orElse("N/A");
+                val samlAuthnRequestId = StringUtils.defaultIfBlank(request.getParameter(SamlIdPConstants.AUTHN_REQUEST_ID), "N/A");
                 return new MissingSamlAuthnRequestException("SAML2 request could not be determined from session store %s for SAML2 request id %s"
                     .formatted(sessionStore.getClass().getName(), samlAuthnRequestId));
             })

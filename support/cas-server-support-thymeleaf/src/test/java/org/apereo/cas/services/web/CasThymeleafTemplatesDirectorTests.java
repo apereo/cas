@@ -55,11 +55,33 @@ class CasThymeleafTemplatesDirectorTests {
     private ConfigurableApplicationContext applicationContext;
 
     @Test
+    @SuppressWarnings("unchecked")
     void verifyOperation() throws Throwable {
         MockRequestContext.create(applicationContext);
 
         val themeMessage = director.theme("cas.theme.description");
         assertEquals("Central Authentication Service", themeMessage);
+        assertTrue(director.isThemeBuilderEnabled());
+        assertEquals(10, director.themeInteger("cas.login-providers.select-threshold", 5));
+        assertEquals(250, director.themeInteger("cas.qr-code.size", 100));
+        assertEquals(7, director.themeInteger("cas.theme.description", 7));
+        assertEquals(3, director.themeInteger("cas.unknown.property", 3));
+
+        val themeBuilder = director.getThemeBuilder();
+        assertEquals("cas-theme-default", themeBuilder.get("theme"));
+        val properties = (List<Map<String, String>>) themeBuilder.get("properties");
+        val byName = properties.stream().collect(Collectors.toMap(entry -> entry.get("name"), Function.identity()));
+        assertEquals(properties.size(), byName.size());
+        assertEquals("true", byName.get(CasThymeleafTemplatesDirector.THEME_PROPERTY_THEME_BUILDER_ENABLED).get("value"));
+        assertEquals("true", byName.get(CasThymeleafTemplatesDirector.THEME_PROPERTY_THEME_BUILDER_ENABLED).get("defaultValue"));
+        assertTrue(byName.get(CasThymeleafTemplatesDirector.THEME_PROPERTY_THEME_BUILDER_ENABLED).get("description").contains("theme builder"));
+        val themeName = byName.get("cas.theme.name");
+        assertEquals(StringUtils.EMPTY, themeName.get("defaultValue"));
+        assertEquals("CAS", themeName.get("example"));
+        assertEquals("Default theme name", themeName.get("description"));
+        assertEquals("Central Authentication Service", byName.get("cas.theme.description").get("value"));
+        assertEquals("en,de,fr,it,es,ar,fa,ja,nl,pl,ru,sk,tr,pt_BR,zh_CN,zh_TW",
+            byName.get("cas.locale-selection.languages").get("defaultValue"));
         
         assertNotNull(director.getExceptionClassSimpleName(new AuthenticationException()));
         assertEquals(LOGIN_URL + '?', director.getUrlExternalForm(new URI(LOGIN_URL).toURL()));

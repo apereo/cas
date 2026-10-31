@@ -54,6 +54,15 @@ public class AttributeBasedRegisteredServiceAttributeReleaseActivationCriteria i
             : stream.anyMatch(entry -> verifyRequiredAttribute(entry, attributes));
     }
 
+    /**
+     * Verify that the attributes carry a value for the required attribute that matches
+     * one of its required values. A required value is a pattern that must match the entire
+     * attribute value, so {@code admin} does not match {@code sysadmin}.
+     *
+     * @param entry      the required attribute and its values
+     * @param attributes the principal and releasing attributes
+     * @return true if a value matches
+     */
     protected boolean verifyRequiredAttribute(final Map.Entry<String, Object> entry,
                                               final Map<String, List<Object>> attributes) {
         val currentValues = ObjectUtils.getIfNull(attributes.get(entry.getKey()), List.of());
@@ -61,6 +70,6 @@ public class AttributeBasedRegisteredServiceAttributeReleaseActivationCriteria i
         val pattern = RegexUtils.concatenate(requiredValues, true);
         LOGGER.debug("Checking activation criteria [{}] against [{}] with pattern [{}] for attribute [{}]",
             requiredValues, currentValues, pattern, entry.getKey());
-        return currentValues.stream().map(Object::toString).anyMatch(pattern.asPredicate());
+        return currentValues.stream().map(Object::toString).anyMatch(pattern.asMatchPredicate());
     }
 }

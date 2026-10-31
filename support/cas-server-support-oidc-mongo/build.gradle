@@ -43,7 +43,6 @@ dependencies {
 
     implementation libraries.mongo
     implementation libraries.jose4j
-    implementation libraries.nimbus
 
     testImplementation project(":core:cas-server-core-util")
     testImplementation project(":core:cas-server-core-scripting")

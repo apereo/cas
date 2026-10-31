@@ -8,5 +8,6 @@
   "scopes": [ "java.util.HashSet", [ "openid", "profile" ] ],
   "supportedGrantTypes": [ "java.util.HashSet", [ "authorization_code" ] ],
   "supportedResponseTypes": [ "java.util.HashSet", [ "code" ] ],
-  "idTokenSigningAlg": "RS256"
+  "idTokenSigningAlg": "RS256",
+  "allowedResources": [ "java.util.HashSet", [ "https://localhost:9859/anything/(api|reports)" ] ]
 }

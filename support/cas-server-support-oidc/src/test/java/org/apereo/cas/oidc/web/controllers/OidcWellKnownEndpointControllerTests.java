@@ -43,7 +43,8 @@ class OidcWellKnownEndpointControllerTests extends AbstractOidcTests {
         mockMvc.perform(get("/cas/oidc/" + OidcConstants.WELL_KNOWN_OPENID_CONFIGURATION_URL)
                 .with(withHttpRequestProcessor()))
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.issuer").exists());
+            .andExpect(jsonPath("$.issuer").exists())
+            .andExpect(jsonPath("$.client_id_metadata_document_supported").value(false));
     }
 
     /**

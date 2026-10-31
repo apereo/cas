@@ -9,6 +9,8 @@
 <body class="login mdc-typography">
 <div layout:fragment="content" class="d-flex justify-content-center">
    <div class="d-flex justify-content-center flex-md-row flex-column mdc-card mdc-card-content card flex-grow-1 cas-login-card"
+         th:classappend="${(#strings.equalsIgnoreCase(#cas.theme('cas.login-side-panel.position'), 'end') ? 'cas-side-panel-end ' : '')
+                          + (#strings.equalsIgnoreCase(#cas.theme('cas.login-providers.position'), 'before') ? 'cas-providers-before' : '')}"
          th:with="loginFormEnabled=${#cas.isTrue(#cas.theme('cas.login-form.enabled'))},
                   loginFormViewable=${#cas.isLoginFormViewable(#vars)}">
 

@@ -108,7 +108,14 @@ public abstract class BaseDelegatingExpirationPolicy extends AbstractCasExpirati
         return this.policies.get(POLICY_NAME_DEFAULT).getTimeToLive();
     }
 
-    protected Optional<ExpirationPolicy> getExpirationPolicyFor(final AuthenticationAwareTicket ticketState) {
+    /**
+     * Finds the policy this ticket is delegated to, for callers that need more than the answers
+     * this policy forwards, such as the idle expiration time of a delegate that has one.
+     *
+     * @param ticketState the ticket state
+     * @return the policy the ticket is delegated to, if any
+     */
+    public Optional<ExpirationPolicy> getExpirationPolicyFor(final AuthenticationAwareTicket ticketState) {
         val name = getExpirationPolicyNameFor(ticketState);
         LOGGER.trace("Received expiration policy name [{}] to activate", name);
         if (StringUtils.isNotBlank(name) && policies.containsKey(name)) {

@@ -36,8 +36,9 @@ JSON, JDBC, LDAP or JAAS user details sources.
 {% include_cached casproperties.html thirdPartyStartsWith="spring.security.user" %}
 
 Authenticated users may initialize a session and list the available tools. Calling a tool additionally requires
-the `ROLE_MCP_ADMIN` role/authority. A tool call made by a user without this role is answered with an error result
-and the tool is not executed.
+the `ROLE_MCP_ADMIN` role/authority, and calling one of the [tools that change CAS](#tools-that-change-cas) requires
+the `ROLE_MCP_OPERATOR` role/authority. A tool call made by a user without the required role is answered with an error
+result and the tool is not executed.
 
 Every tool call and resource read is recorded in the [audit log](../audits/Audits.html) under the MCP user who made it,
 with the action `MCP_TOOL_CALL_SUCCESS`, `MCP_TOOL_CALL_DENIED` or `MCP_TOOL_CALL_FAILED` and, as the resource, the tool name
@@ -48,6 +49,70 @@ The tools return sensitive data, such as the attributes CAS resolves and release
 session identifiers and full application definitions. Only grant the <code>MCP_ADMIN</code> role to trusted operators, keep the MCP
 endpoint on a protected network and always use TLS.
 </p></div>
+
+### OAuth Access Tokens
+
+When [OpenID Connect](../authentication/OIDC-Authentication.html) is also included, the MCP endpoint is an OAuth protected
+resource, as the [MCP authorization specification](https://modelcontextprotocol.io/specification/latest/basic/authorization)
+expects, and MCP clients may sign people in with CAS and call the MCP server with the access tokens CAS issues to them.
+HTTP Basic authentication keeps working alongside.
+
+A request without credentials is answered with `401` and two challenges: `Basic`, and `Bearer` with the `mcp:read` scope and
+the location of the protected resource metadata ([RFC 9728](https://datatracker.ietf.org/doc/html/rfc9728)), which MCP clients
+follow to discover CAS as their authorization server. The metadata is published under the CAS context path, at
+`/cas/.well-known/oauth-protected-resource/mcp`:
+
+```json
+{
+  "resource": "https://sso.example.org/cas/mcp",
+  "authorization_servers": [
+    "https://sso.example.org/cas/oidc"
+  ],
+  "scopes_supported": [
+    "mcp:read"
+  ],
+  "bearer_methods_supported": [
+    "header"
+  ],
+  "resource_name": "Apereo CAS MCP Server"
+}
+```
+
+An access token is accepted in the `Authorization: Bearer` header only, never as a request parameter, and only when:
+
+- it is found in the ticket registry, either by its identifier or, for JWT access tokens, by the identifier it carries, and has not expired;
+- it was issued for the MCP endpoint, which clients request with the `resource` parameter ([RFC 8707](https://www.rfc-editor.org/rfc/rfc8707.html)).
+  CAS allows every client to [request the MCP endpoint](../authentication/OAuth-Authentication-Clients.html#resources-for-every-client) by default;
+- the application it was issued to is still registered and allowed;
+- it is not bound to a [DPoP](../authentication/OIDC-Authentication-DPoP.html) key or a client certificate. Sender-constrained tokens are not accepted yet.
+
+Otherwise the request is refused with `401` and `error="invalid_token"`. A token without the `mcp:read` scope is refused with
+`403` and `error="insufficient_scope"`. When the [tools that change CAS](#tools-that-change-cas) are turned on, the protected
+resource metadata also lists the `mcp:write` scope.
+
+Like a Basic user, the person behind a token may connect and list tools, but only calls tools with the `MCP_ADMIN` role. With
+an access token, the role is granted only to people whose principal attributes match all the attributes and regular expressions
+defined in CAS settings. These are the attributes CAS resolves for the person when the token is used, through its attribute
+repositories, so the role does not depend on the attributes released to the client and follows changes to the person's attributes. No attributes are defined by default, so tokens grant nobody the role until you define them. The audit
+record of a call made with a token also names the OAuth client.
+
+The `MCP_OPERATOR` role, which the tools that change CAS require, is granted to the person behind a token only when the token
+also carries the `mcp:write` scope and the person's attributes match a separate set of attributes and regular expressions,
+which is empty by default. A token that carries `mcp:write` grants nothing more without those attributes, and a person with
+those attributes cannot change CAS with a token issued for `mcp:read` only. Add `mcp:write` to the scopes of the discovery
+document and to the applications that may change CAS, in the same way as `mcp:read`.
+
+{% include_cached casproperties.html properties="cas.mcp.oauth" %}
+
+The OpenID Connect provider only issues scopes it supports, so add `mcp:read` to the scopes of the OpenID Connect discovery
+document and to the scopes of the applications that may call the MCP server.
+
+MCP clients usually have no prior relationship with CAS. Besides applications registered by an administrator, they
+can identify themselves with [client ID metadata documents](../authentication/OIDC-Authentication-Client-ID-Metadata-Documents.html),
+which the MCP authorization specification recommends, or register through
+[dynamic client registration](../authentication/OIDC-Authentication-Dynamic-Registration.html).
+
+{% include_cached featuretoggles.html features="AI.mcp-oauth" %}
 
 ## Tools
 
@@ -133,7 +198,8 @@ server only when the corresponding module is present, and each group can be turn
 |------------------------------|------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `findConsentDecisions`       | [Attribute consent](../integration/Attribute-Release-Consent.html)                       | `username` (string)                                                                      | Return the consent decisions of a person: the application, when consent was given, the reminder settings and the names of the attributes consented to. Attribute values are never returned.                                                                                                                                                      |
 | `resolveSamlMetadata`        | [SAML2 identity provider](../authentication/Configuring-SAML2-Authentication.html)       | `entityId` (string)                                                                      | Resolve the metadata of a service provider the way CAS does, and report the matching registration and metadata source, the validity period, assertion consumer and single logout endpoints, name id formats and certificates with their expiration dates, or the error when resolution fails.                                                    |
-| `findOidcClient`             | [OpenID Connect](../authentication/OIDC-Authentication.html)                             | `clientId` (string)                                                                      | Summarize an OAuth or OpenID Connect client registration: redirect URI pattern, grant and response types, scopes, client authentication, token settings, issuer and ID token settings. Client secrets are never returned.                                                                                                                        |
+| `findOidcClient`             | [OpenID Connect](../authentication/OIDC-Authentication.html)                             | `clientId` (string)                                                                      | Summarize an OAuth or OpenID Connect client registration: redirect URI pattern, grant and response types, scopes, audience, allowed resource indicators, client authentication, token settings, issuer and ID token settings. Client secrets are never returned.                                                                                 |
+| `checkOidcClientResource`    | [OpenID Connect](../authentication/OIDC-Authentication.html)                             | `clientId`, `resource` (string)                                                          | Check whether a client may request a resource with the RFC 8707 `resource` parameter: whether it is an absolute URI without a fragment, the allowed resource expression it fully matches, or why it would be refused with `invalid_target`, whether the client or `cas.authn.oauth.core.allowed-resources` allowed it, and the token audience.   |
 | `listJwksKeys`               | [OpenID Connect](../authentication/OIDC-Authentication.html)                             | none                                                                                     | List the keys of the CAS OpenID Connect keystore with their key id, type, algorithm, use and rotation state. Key material is never returned.                                                                                                                                                                                                     |
 | `findTrustedDevices`         | [Trusted devices](../mfa/Multifactor-TrustedDevice-Authentication.html)                  | `username` (string)                                                                      | Return the devices a person has registered as trusted for multifactor authentication: the device name, the multifactor authentication provider, when it was registered, when it expires and whether it has expired. Device fingerprints and record keys are never returned.                                                                      |
 | `findSurrogateAccounts`      | [Surrogate authentication](../authentication/Surrogate-Authentication.html)              | `username` (string), `service` (optional)                                                | Return the accounts a person may impersonate, optionally for an application, and whether the person may impersonate any account.                                                                                                                                                                                                                 |
@@ -151,6 +217,40 @@ endpoint or a Groovy script are called for real, so `previewInterrupt` is advert
 Risk is scored for the client details passed to `evaluateAuthenticationRisk`, never those of the MCP request, which describe
 the operator; a person with no recorded sign-ins is always regarded as risky, and each evaluation is recorded in the
 [audit log](../audits/Audits.html).
+
+## Tools That Change CAS
+
+The MCP server can also offer tools that change CAS, for troubleshooting and day-to-day administration. They are turned
+off by default and are only registered when turned on via feature toggles; each tool that depends on an optional feature
+is also listed only when that feature is included in the CAS build. Calling them requires the `ROLE_MCP_OPERATOR`
+role/authority; the `ROLE_MCP_ADMIN` role alone is not enough, and a person usually needs both, to look before changing.
+
+| Tool                         | Requires                                                                | Parameters                                             | Description                                                                                                                                                                                               |
+|------------------------------|-------------------------------------------------------------------------|--------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `revokeSessions`             | none                                                                    | `username` (string), `sessionReference` (optional)     | End the single sign-on sessions of a person, or the one session with a session reference returned by `findSessions`, and send single logout to their applications as when the person logs out.            |
+| `releaseThrottledLogins`     | none                                                                    | `username`, `clientIpAddress` (optional, at least one) | Release the failed login attempts that in-memory or Hazelcast throttling tracks, so the person may try again right away. Throttling backed by the audit trail is not changed.                             |
+| `setServiceEnabled`          | none                                                                    | `serviceId` (number), `enabled` (boolean)              | Turn an application on or off through the enabled flag of its access strategy, including the strategies of a chain, and save it in the service registry. Returns whether it was allowed before and after. |
+| `setLogLevel`                | none                                                                    | `loggerName` (string), `level` (optional)              | Change the level of a logger of this CAS server until it restarts, or reset it to its configured level when no level is given. Returns the effective level before and after.                              |
+| `revokeOAuthTokens`          | [OAuth](../authentication/OAuth-Authentication.html)                    | `username`, `clientId` (optional, at least one)        | Remove the access tokens and refresh tokens issued to a person, to a client, or to a person for one client from the ticket registry.                                                                      |
+| `revokeConsentDecisions`     | [Attribute consent](../integration/Attribute-Release-Consent.html)      | `username` (string), `decisionId` (optional)           | Revoke the consent decisions of a person, or one decision returned by `findConsentDecisions`, so consent is asked again.                                                                                  |
+| `removeTrustedDevices`       | [Trusted devices](../mfa/Multifactor-TrustedDevice-Authentication.html) | `username` (string), `deviceId` (optional)             | Remove the trusted devices of a person, or one device returned by `findTrustedDevices`, so multifactor authentication is asked again on those devices.                                                    |
+| `removeOneTimeTokenAccounts` | [Google Authenticator](../mfa/GoogleAuthenticator-Authentication.html)  | `username` (string), `accountId` (optional)            | Remove the one-time password devices of a person, or one device returned by `findOneTimeTokenAccounts`, so the person registers a new device at the next login.                                           |
+| `removeWebAuthnDevices`      | [FIDO2 WebAuthn](../mfa/FIDO2-WebAuthn-Authentication.html)             | `username` (string)                                    | Remove all the security keys and passkeys of a person, so the person registers a new one at the next login.                                                                                               |
+{: .cas-mcp-tools}
+
+These tools are advertised without the `readOnlyHint` annotation, and all but `setLogLevel` with the `destructiveHint`
+annotation, so MCP clients that honor them ask before calling. Every call is recorded in the [audit log](../audits/Audits.html)
+like any other tool call. Single sign-on session identifiers and token identifiers are never accepted or returned. A log level
+change applies to the node that handles the call only, and the service registry change is subject to how the registry
+replicates changes in a cluster.
+
+<div class="alert alert-warning">:warning: <strong>Usage Warning!</strong><p>
+These tools change CAS for real, with no undo. Only grant the <code>MCP_OPERATOR</code> role to a few trusted operators. The
+<code>DEBUG</code> and <code>TRACE</code> log levels may write sensitive data, such as attributes, tickets and tokens, to the
+logs; reset the logger when done.
+</p></div>
+
+{% include_cached featuretoggles.html features="AI.mcp-write" %}
 
 ## Resources
 
@@ -197,6 +297,20 @@ Most MCP clients can connect to a remote Streamable HTTP server using a configur
 }
 ```
 
+MCP clients that support OAuth need only the URL. Without credentials, they follow the `Bearer` challenge, sign the person in with CAS
+and request a token for the MCP endpoint (see [OAuth Access Tokens](#oauth-access-tokens)):
+
+```json
+{
+  "mcpServers": {
+    "cas": {
+      "type": "http",
+      "url": "https://sso.example.org/cas/mcp"
+    }
+  }
+}
+```
+
 ### Browser Clients
 
 MCP clients that run in a web browser, such as web-based MCP inspectors and playgrounds, call the MCP endpoint from another
@@ -208,7 +322,8 @@ are not affected.
 When CORS is turned on for a browser client, allow the origin of that client, the `POST`, `GET`, `DELETE` and `OPTIONS`
 methods, and the `Authorization`, `Content-Type`, `Accept`, `Mcp-Session-Id`, `MCP-Protocol-Version` and `Last-Event-ID`
 request headers. The `Mcp-Session-Id` response header must also be exposed; otherwise the browser hides the session id
-returned by `initialize` and every later call fails.
+returned by `initialize` and every later call fails. Browser clients that use access tokens also need the `WWW-Authenticate`
+response header exposed, to read the challenges.
 
 {% include_cached casproperties.html properties="cas.http-web-request.cors" %}
 

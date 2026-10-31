@@ -30,44 +30,66 @@ public class DefaultCasThemeSource extends ResourceBundleThemeSource {
     @Override
     protected MessageSource createMessageSource(
         @NonNull final String basename) {
+        if (Strings.CI.equals(basename, ThemeProperties.DEFAULT_THEME_NAME)) {
+            return createDefaultThemeMessageSource();
+        }
+        return findThemeFile(basename)
+            .map(Unchecked.function(path -> loadMessageSourceFromPath(path, createDefaultThemeMessageSource())))
+            .map(MessageSource.class::cast)
+            .orElseGet(() -> createExtendedMessageSource(basename));
+    }
+
+    protected MessageSource createExtendedMessageSource(final String basename) {
+        val source = (HierarchicalMessageSource) super.createMessageSource(basename);
+        source.setParentMessageSource(createDefaultThemeMessageSource());
+        return source;
+    }
+
+    /**
+     * Create the message source of the default theme: {@code cas-theme-custom} on top of
+     * {@code cas-theme-default}, itself overridden by a default theme file found under the template prefixes.
+     * Every other theme falls back to this source, so deployment customizations apply to all themes.
+     *
+     * @return the message source
+     */
+    protected MessageSource createDefaultThemeMessageSource() {
+        val classpathDefaults = super.createMessageSource(ThemeProperties.DEFAULT_THEME_NAME);
+        val defaults = findThemeFile(ThemeProperties.DEFAULT_THEME_NAME)
+            .map(Unchecked.function(path -> loadMessageSourceFromPath(path, classpathDefaults)))
+            .map(MessageSource.class::cast)
+            .orElse(classpathDefaults);
+        val custom = (HierarchicalMessageSource) super.createMessageSource(
+            Strings.CI.replace(ThemeProperties.DEFAULT_THEME_NAME, "-default", "-custom"));
+        custom.setParentMessageSource(defaults);
+        return custom;
+    }
+
+    /**
+     * Load theme properties from the given path. Values do not depend on the request locale:
+     * they are registered as common messages, which apply to every locale.
+     *
+     * @param path   the path
+     * @param parent the parent message source
+     * @return the message source
+     * @throws Exception the exception
+     */
+    protected StaticMessageSource loadMessageSourceFromPath(final String path, final MessageSource parent) throws Exception {
+        val source = new StaticMessageSource();
+        try (val is = ResourceUtils.getRawResourceFrom(path).getInputStream()) {
+            val properties = new Properties();
+            properties.load(is);
+            LOGGER.trace("Loaded theme properties [{}] from [{}]", properties.keySet(), path);
+            source.setCommonMessages(properties);
+        }
+        source.setParentMessageSource(parent);
+        return source;
+    }
+
+    private Optional<String> findThemeFile(final String basename) {
         return casProperties.getView().getTemplatePrefixes()
             .stream()
             .map(prefix -> Strings.CI.appendIfMissing(prefix, "/").concat(basename).concat(".properties"))
             .filter(ResourceUtils::doesResourceExist)
-            .findFirst()
-            .map(Unchecked.function(this::loadMessageSourceFromPath))
-            .map(MessageSource.class::cast)
-            .orElseGet(Unchecked.supplier(() -> createExtendedMessageSource(basename)));
-    }
-
-    protected MessageSource createExtendedMessageSource(final String basename) {
-        if (Strings.CI.equals(basename, ThemeProperties.DEFAULT_THEME_NAME)) {
-            val customTheme = Strings.CI.replace(basename, "-default", "-custom");
-            val source = (HierarchicalMessageSource) super.createMessageSource(customTheme);
-            source.setParentMessageSource(super.createMessageSource(basename));
-            return source;
-        }
-        val source = (HierarchicalMessageSource) super.createMessageSource(basename);
-        val defaultSource = super.createMessageSource(ThemeProperties.DEFAULT_THEME_NAME);
-        source.setParentMessageSource(defaultSource);
-        return source;
-    }
-
-    protected StaticMessageSource loadMessageSourceFromPath(final String path) throws Exception {
-        val source = new StaticMessageSource();
-        if (ResourceUtils.doesResourceExist(path)) {
-            try (val is = ResourceUtils.getRawResourceFrom(path).getInputStream()) {
-                val properties = new Properties();
-                properties.load(is);
-                properties.forEach((key, value) ->
-                    List.of(Locale.US, Locale.CANADA, Locale.ENGLISH).forEach(locale -> {
-                        LOGGER.trace("Adding theme property [{}] with value [{}] from [{}] for locale [{}]", key, value, path, locale);
-                        source.addMessage(key.toString(), locale, value.toString());
-                    }));
-            }
-            val defaultSource = super.createMessageSource(ThemeProperties.DEFAULT_THEME_NAME);
-            source.setParentMessageSource(defaultSource);
-        }
-        return source;
+            .findFirst();
     }
 }

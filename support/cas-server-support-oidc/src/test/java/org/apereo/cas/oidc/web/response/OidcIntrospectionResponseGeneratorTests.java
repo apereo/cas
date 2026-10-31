@@ -34,7 +34,7 @@ class OidcIntrospectionResponseGeneratorTests extends AbstractOidcTests {
 
         assertTrue(oidcIntrospectionResponseGenerator.supports(accessToken));
         assertEquals(Ordered.HIGHEST_PRECEDENCE, oidcIntrospectionResponseGenerator.getOrder());
-        val response = oidcIntrospectionResponseGenerator.generate(accessToken.getId(), accessToken);
+        val response = oidcIntrospectionResponseGenerator.generate(accessToken.getId(), accessToken, oidcRegisteredService);
         assertNotNull(response.getIss());
         assertTrue(response.isActive());
         assertNotNull(response.getScope());
@@ -47,7 +47,7 @@ class OidcIntrospectionResponseGeneratorTests extends AbstractOidcTests {
         val oidcRegisteredService = getOidcRegisteredService(accessToken.getClientId());
         servicesManager.save(oidcRegisteredService);
         ticketRegistry.addTicket(accessToken);
-        val response = oidcIntrospectionResponseGenerator.generate(accessToken.getId(), accessToken);
+        val response = oidcIntrospectionResponseGenerator.generate(accessToken.getId(), accessToken, oidcRegisteredService);
         assertNotNull(response.getIss());
         assertNotNull(response.getScope());
         assertTrue(response.isActive());

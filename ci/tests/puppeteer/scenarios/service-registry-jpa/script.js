@@ -54,6 +54,18 @@ async function importServices() {
     }
 }
 
+async function verifyBackend() {
+    const sql = async (statement) => cas.dockerExec("mysql-server",
+        ["mysql", "-uroot", "-ppassword", "-D", "cas", "-N", "-e", statement]);
+    await cas.verifyServiceRegistry({
+        insert: async (definition) => sql("INSERT INTO registered_services "
+            + "(id, body, evaluation_order, evaluation_priority, name, service_id) VALUES "
+            + `(${definition.id}, '${JSON.stringify(definition)}', ${definition.evaluationOrder}, 0, `
+            + `'${definition.name}', '${definition.serviceId}')`),
+        contains: async (id) => await sql(`SELECT COUNT(*) FROM registered_services WHERE id = ${id}`) === "1"
+    });
+}
+
 async function verifyHistoryRestore() {
     const headers = {"Accept": "application/json", "Content-Type": "application/json"};
     const historyUrl = `${ACTUATOR_URL}/entityHistory/registeredServices/1`;
@@ -96,6 +108,7 @@ async function verifyHistoryRestore() {
     try {
         const mysql = await cas.dockerContainer("mysql-server");
 
+        await verifyBackend();
         await importServices();
         await verifyHistoryRestore();
         await fetchServices();

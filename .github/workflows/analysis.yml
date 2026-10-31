@@ -23,6 +23,7 @@ on:
   push:
     branches:
       - master
+      - next
       - '!**.**.**'
       - '!heroku-*'
   pull_request:

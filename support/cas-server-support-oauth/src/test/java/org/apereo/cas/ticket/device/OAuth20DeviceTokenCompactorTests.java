@@ -31,8 +31,9 @@ class OAuth20DeviceTokenCompactorTests extends AbstractOAuth20Tests {
     void verifyOperation(final Service service, final String clientId) throws Throwable {
         val registeredService = getRegisteredService(service.getId(), clientId, "secret-at");
         servicesManager.save(registeredService);
-        val deviceCode = defaultDeviceTokenFactory.createDeviceCode(service, List.of(), clientId);
+        val deviceCode = defaultDeviceTokenFactory.createDeviceCode(service, List.of("read", "write"), clientId);
         deviceCode.setUserCode(UUID.randomUUID().toString());
+        deviceCode.setResources(List.of("https://api.example.org/"));
         assertSame(OAuth20DeviceToken.class, oauth20DeviceTokenTicketCompactor.getTicketType());
         val compacted = oauth20DeviceTokenTicketCompactor.compact(deviceCode);
         assertNotNull(compacted);
@@ -40,6 +41,8 @@ class OAuth20DeviceTokenCompactorTests extends AbstractOAuth20Tests {
         assertNotNull(result);
         assertEquals(result.getUserCode(), deviceCode.getUserCode());
         assertEquals(clientId, result.getClientId());
+        assertEquals(Set.of("https://api.example.org/"), result.getResources());
+        assertEquals(Set.of("read", "write"), result.getScopes());
     }
 
     static Stream<Arguments> codeProvider() {

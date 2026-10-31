@@ -48,7 +48,8 @@ public class CasDeploymentTools {
         Map.entry("mcp-delegated", "casDelegatedAuthenticationTools"),
         Map.entry("mcp-heimdall", "casHeimdallTools"),
         Map.entry("mcp-settings", "casSettingTools"),
-        Map.entry("mcp-audit", "casMcpAuditor")));
+        Map.entry("mcp-audit", "casMcpAuditor"),
+        Map.entry("mcp-write", "casAdministrationTools")));
 
     private static final String FEATURE_PREFIX = CasFeatureModule.class.getSimpleName() + '.';
 

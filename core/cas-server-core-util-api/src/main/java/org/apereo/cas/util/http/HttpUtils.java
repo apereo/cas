@@ -16,6 +16,7 @@ import org.apache.hc.client5.http.classic.methods.HttpGet;
 import org.apache.hc.client5.http.classic.methods.HttpPatch;
 import org.apache.hc.client5.http.classic.methods.HttpPost;
 import org.apache.hc.client5.http.classic.methods.HttpUriRequest;
+import org.apache.hc.client5.http.classic.methods.HttpUriRequestBase;
 import org.apache.hc.client5.http.config.ConnectionConfig;
 import org.apache.hc.client5.http.config.RequestConfig;
 import org.apache.hc.client5.http.impl.InMemoryDnsResolver;
@@ -307,7 +308,9 @@ public class HttpUtils {
     /**
      * Prepare http request. Tries to set the authorization header
      * in cases where the URL endpoint does not actually produce the header
-     * on its own.
+     * on its own. A response timeout given for the request replaces the shared
+     * response and connection request timeouts for this request only; the request
+     * configuration replaces the client's, so it carries the redirect setting too.
      *
      * @param request   the request
      * @param execution the execution request
@@ -320,6 +323,15 @@ public class HttpUtils {
         }
         if (execution.isBearerAuthentication()) {
             request.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + execution.getBearerToken());
+        }
+        val responseTimeout = execution.getResponseTimeout();
+        if (responseTimeout != null && request instanceof final HttpUriRequestBase configurable) {
+            val timeout = Timeout.ofMilliseconds(responseTimeout.toMillis());
+            configurable.setConfig(RequestConfig.custom()
+                .setRedirectsEnabled(execution.isRedirectsEnabled())
+                .setConnectionRequestTimeout(timeout)
+                .setResponseTimeout(timeout)
+                .build());
         }
     }
 

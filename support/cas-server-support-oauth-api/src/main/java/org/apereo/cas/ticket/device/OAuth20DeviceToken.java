@@ -54,4 +54,18 @@ public interface OAuth20DeviceToken extends Ticket {
      * @return requested scopes.
      */
     Set<String> getScopes();
+
+    /**
+     * Get the resource indicators requested with the device authorization request.
+     *
+     * @return the resources
+     */
+    Set<String> getResources();
+
+    /**
+     * Assign the resource indicators requested with the device authorization request.
+     *
+     * @param resources the resources
+     */
+    void setResources(Collection<String> resources);
 }

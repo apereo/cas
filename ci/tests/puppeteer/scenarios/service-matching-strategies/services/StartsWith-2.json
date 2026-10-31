@@ -1,0 +1,10 @@
+{
+  "@class": "org.apereo.cas.services.CasRegisteredService",
+  "serviceId": "https://localhost:9859/anything/startswith/",
+  "name": "StartsWith",
+  "id": 2,
+  "matchingStrategy": {
+    "@class": "org.apereo.cas.services.StartsWithRegisteredServiceMatchingStrategy",
+    "expectedUrl": "https://localhost:9859/anything/startswith/"
+  }
+}

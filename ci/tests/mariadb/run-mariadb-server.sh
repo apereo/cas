@@ -9,7 +9,7 @@ docker stop mariadb || true
 # others insert therefore deadlock on this engine and on no other. READ COMMITTED drops gap locking, which
 # is the isolation most CAS deployments run anyway, and is set on the server rather than worked around in
 # the tests.
-docker run --quiet  --rm -p 3306:3306 --rm --name mariadb \
+docker run --quiet  --rm -p 3307:3306 --rm --name mariadb \
   -e MYSQL_ROOT_PASSWORD=mypass -d ${DOCKER_IMAGE} \
   --transaction-isolation=READ-COMMITTED
 

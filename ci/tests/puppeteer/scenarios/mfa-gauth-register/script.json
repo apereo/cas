@@ -11,5 +11,19 @@
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas"
   ],
+  "variations": [
+    {
+      "name": "default",
+      "properties": []
+    },
+    {
+      "name": "custom-codes",
+      "properties": [
+        "--cas.authn.mfa.gauth.core.code-digits=8",
+        "--cas.authn.mfa.gauth.core.time-step-size=60",
+        "--cas.authn.mfa.gauth.core.window-size=1"
+      ]
+    }
+  ],
   "initScript": "${PWD}/ci/tests/httpbin/run-httpbin-server.sh"
 }

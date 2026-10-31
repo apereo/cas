@@ -9,7 +9,7 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
-import org.apereo.cas.support.oauth.authenticator.Authenticators;
+import org.apereo.cas.support.oauth.profile.DefaultOAuth20UserProfile;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestContext;
 import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
@@ -19,7 +19,6 @@ import lombok.val;
 import org.jooq.lambda.Unchecked;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.pac4j.core.profile.CommonProfile;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -55,9 +54,7 @@ class OidcDefaultTokenGeneratorTests extends AbstractOidcTests {
         val accessToken = (OAuth20AccessToken) result.getAccessToken().orElseThrow();
         assertEquals(cibaRequest.getEncodedId(), accessToken.getAuthentication().getSingleValuedAttribute(OidcConstants.AUTH_REQ_ID).toString());
 
-        val profile = new CommonProfile();
-        profile.setClientName(Authenticators.CAS_OAUTH_CLIENT_BASIC_AUTHN);
-        profile.setId(registeredService.getClientId());
+        val profile = new DefaultOAuth20UserProfile(registeredService.getClientId());
         profile.addAttribute(OAuth20Constants.CLIENT_ID, registeredService.getClientId());
 
         val idTokenContext = IdTokenGenerationContext.builder()
