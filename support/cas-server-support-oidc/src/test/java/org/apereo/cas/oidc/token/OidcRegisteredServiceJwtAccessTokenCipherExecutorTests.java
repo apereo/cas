@@ -9,7 +9,9 @@ import org.apereo.cas.token.cipher.RegisteredServiceJwtTicketCipherExecutor;
 import org.apereo.cas.util.EncodingUtils;
 import com.nimbusds.jwt.SignedJWT;
 import lombok.val;
+import org.jose4j.jwe.KeyManagementAlgorithmIdentifiers;
 import org.jose4j.jwk.JsonWebKey;
+import org.jose4j.jwk.JsonWebKeySet;
 import org.jose4j.jws.AlgorithmIdentifiers;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -73,6 +75,25 @@ class OidcRegisteredServiceJwtAccessTokenCipherExecutorTests extends AbstractOid
         assertTrue(cipher.getSigningOpHeaders().isEmpty());
         assertEquals("EC", SignedJWT.parse(encoded).getHeader().getKeyID());
         assertEquals(at.getId(), executor.decode(encoded, Optional.of(service)));
+    }
+
+    @Test
+    void verifyServiceEncryptionKeysAreNotUsedForSigning() throws Throwable {
+        val service = getOidcRegisteredService(UUID.randomUUID().toString());
+        val clientKey = EncodingUtils.newJsonWebKey(2048);
+        clientKey.setKeyId("client-encryption");
+        clientKey.setUse("enc");
+        clientKey.setAlgorithm(KeyManagementAlgorithmIdentifiers.RSA_OAEP_256);
+        service.setJwks(new JsonWebKeySet(clientKey).toJson(JsonWebKey.OutputControlLevel.PUBLIC_ONLY));
+        service.setJwksKeyId(null);
+        service.setJwtAccessTokenSigningAlg(AlgorithmIdentifiers.RSA_PSS_USING_SHA256);
+
+        val at = getAccessToken(service.getClientId());
+        val encoded = oidcRegisteredServiceJwtAccessTokenCipherExecutor.encode(at.getId(), Optional.of(service));
+        val header = SignedJWT.parse(encoded).getHeader();
+        assertEquals(AlgorithmIdentifiers.RSA_PSS_USING_SHA256, header.getAlgorithm().getName());
+        assertNotEquals("client-encryption", header.getKeyID());
+        assertEquals(at.getId(), oidcRegisteredServiceJwtAccessTokenCipherExecutor.decode(encoded, Optional.of(service)));
     }
 
     @Test

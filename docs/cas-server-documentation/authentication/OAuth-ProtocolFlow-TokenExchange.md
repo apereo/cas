@@ -51,6 +51,12 @@ Furthermore, as it's shown the above example, one may define a dedicated token e
 the allowed resources, audience and token types for the token exchange operation. All fields defined for the
 token exchange policy can accept regular expression patterns.
 
+The `allowedResources` of the policy follow the same rule as the `allowedResources` of the
+[service definition](OAuth-Authentication-Clients.html#resource-indicators): every requested `resource` must match one
+of the patterns in full, case-sensitively, and a token exchange that names no `resource` is refused when the policy
+defines any. When the service definition itself defines `allowedResources`, the requested resources must match those as
+well, or the request is refused with `invalid_target`.
+
 {% endtab %}
 
 {% tab tokenexchangesvc Delegation %}

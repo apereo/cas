@@ -7,16 +7,13 @@ import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.OAuth20TokenExchangeTypes;
-import org.apereo.cas.support.oauth.authenticator.Authenticators;
+import org.apereo.cas.support.oauth.profile.DefaultOAuth20UserProfile;
 import org.apereo.cas.support.oauth.validator.token.OAuth20TokenRequestValidator;
 import org.apereo.cas.ticket.idtoken.IdTokenGenerationContext;
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.pac4j.core.profile.CommonProfile;
-import org.pac4j.core.profile.ProfileManager;
-import org.pac4j.jee.context.JEEContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpHeaders;
@@ -37,23 +34,19 @@ class OidcTokenExchangeGrantTypeTokenRequestValidatorTests extends AbstractOidcT
     @Qualifier("oauthTokenExchangeGrantTypeTokenRequestValidator")
     private OAuth20TokenRequestValidator validator;
 
-    private JEEContext context;
+
     private MockHttpServletRequest request;
-    private ProfileManager profileManager;
+
+    private MockHttpServletResponse response;
 
     @BeforeEach
     void setup() {
         request = new MockHttpServletRequest();
         request.addHeader(HttpHeaders.USER_AGENT, "Firefox");
-        val response = new MockHttpServletResponse();
-        context = new JEEContext(request, response);
-        val profile = new CommonProfile();
-        profile.setClientName(Authenticators.CAS_OAUTH_CLIENT_BASIC_AUTHN);
-        profile.setId("casuser");
-        profileManager = new ProfileManager(context, oauthDistributedSessionStore);
-        profileManager.save(true, profile, false);
+        response = new MockHttpServletResponse();
+        val profile = new DefaultOAuth20UserProfile("casuser");
+        storeProfileIntoSession(request, profile);
     }
-
 
     @Test
     void verifySubjectTokenAsIdToken() throws Throwable {
@@ -61,11 +54,9 @@ class OidcTokenExchangeGrantTypeTokenRequestValidatorTests extends AbstractOidcT
         registeredService.setSupportedGrantTypes(Set.of(OAuth20GrantTypes.TOKEN_EXCHANGE.getType()));
         servicesManager.save(registeredService);
 
-        val profile = new CommonProfile();
-        profile.setClientName(Authenticators.CAS_OAUTH_CLIENT_BASIC_AUTHN);
-        profile.setId(registeredService.getClientId());
+        val profile = new DefaultOAuth20UserProfile(registeredService.getClientId());
         profile.addAttribute(OAuth20Constants.CLIENT_ID, registeredService.getClientId());
-        profileManager.save(true, profile, false);
+        storeProfileIntoSession(request, profile);
 
         request.addParameter(OAuth20Constants.AUDIENCE, UUID.randomUUID().toString());
         request.addParameter(OAuth20Constants.CLIENT_ID, registeredService.getClientId());
@@ -80,13 +71,13 @@ class OidcTokenExchangeGrantTypeTokenRequestValidatorTests extends AbstractOidcT
 
         val idTokenContext = IdTokenGenerationContext.builder()
             .accessToken(accessToken)
-            .userProfile(profileManager.getProfile().orElseThrow())
+            .userProfile(profile)
             .responseType(OAuth20ResponseTypes.CODE)
             .grantType(OAuth20GrantTypes.AUTHORIZATION_CODE)
             .registeredService(registeredService)
             .build();
         val idToken = oidcIdTokenGenerator.generate(idTokenContext);
         request.setParameter(OAuth20Constants.SUBJECT_TOKEN, idToken.token());
-        assertTrue(validator.validate(context));
+        assertTrue(validator.validate(request, response));
     }
 }

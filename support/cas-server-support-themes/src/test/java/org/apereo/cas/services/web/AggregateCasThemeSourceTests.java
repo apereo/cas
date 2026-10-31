@@ -46,5 +46,11 @@ class AggregateCasThemeSourceTests {
         val message2 = theme.getMessageSource().getMessage("screen.welcome.instructions",
             ArrayUtils.EMPTY_OBJECT_ARRAY, Locale.ENGLISH);
         assertEquals("Test123", message2);
+
+        val messageSource = theme.getMessageSource();
+        assertEquals("MyTheme2", messageSource.getMessage("cas.theme.name", ArrayUtils.EMPTY_OBJECT_ARRAY, Locale.GERMAN));
+        assertEquals("MyTheme2", messageSource.getMessage("cas.theme.name", ArrayUtils.EMPTY_OBJECT_ARRAY, Locale.US));
+        assertEquals("Deployment", messageSource.getMessage("theme.deployment.property", ArrayUtils.EMPTY_OBJECT_ARRAY, Locale.GERMAN));
+        assertEquals("Apereo", messageSource.getMessage("theme.default.property", ArrayUtils.EMPTY_OBJECT_ARRAY, Locale.GERMAN));
     }
 }

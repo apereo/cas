@@ -26,7 +26,6 @@ import org.opensaml.saml.common.SAMLObjectBuilder;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.Issuer;
-import org.pac4j.jee.context.JEEContext;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -90,13 +89,31 @@ class SSOSamlIdPProfileCallbackHandlerControllerWithBrowserStorageTests extends 
         storeAuthnRequest(request, response, authn);
 
         val st = getServiceTicket();
-        val storage = samlIdPDistributedSessionStore.getTrackableSession(new JEEContext(request, response))
+        val storage = samlIdPDistributedSessionStore.getTrackableSession(request)
             .map(BrowserStorage.class::cast)
             .orElseThrow();
-        val result = performCallbackPost(request, response, st.getId(),
+        val otherNodeRequest = new MockHttpServletRequest();
+        otherNodeRequest.addParameter(SamlIdPConstants.AUTHN_REQUEST_ID, authn.getID());
+        val result = performCallbackPost(otherNodeRequest, new MockHttpServletResponse(), st.getId(),
             MAPPER.writeValueAsString(Map.of(storage.getContext(), storage.getPayload())));
         assertNull(result.getModelAndView());
         assertEquals(HttpStatus.SC_OK, result.getResponse().getStatus());
+    }
+
+    @Test
+    void verifyUnsolicitedSsoWritesToStorage() throws Throwable {
+        val result = mockMvc.perform(get(SamlIdPConstants.ENDPOINT_SAML2_IDP_INIT_PROFILE_SSO)
+                .param(SamlIdPConstants.PROVIDER_ID, samlRegisteredService.getServiceId())
+                .param(SamlIdPConstants.TARGET, "relay-state")
+                .param("CName1", "SomeParameter"))
+            .andReturn();
+        val mv = result.getModelAndView();
+        assertNotNull(mv);
+        assertEquals(CasWebflowConstants.VIEW_ID_BROWSER_STORAGE_WRITE, mv.getViewName());
+        val storage = (BrowserStorage) mv.getModel().get(BrowserStorage.PARAMETER_BROWSER_STORAGE);
+        assertNotNull(storage);
+        assertTrue(storage.getDestinationUrl().contains("CName1=SomeParameter"));
+        assertFalse(storage.getDestinationUrl().contains(SamlIdPConstants.PROVIDER_ID + '='));
     }
 
     private MvcResult performCallbackGet(final MockHttpServletRequest request, final MockHttpServletResponse response,
@@ -138,7 +155,7 @@ class SSOSamlIdPProfileCallbackHandlerControllerWithBrowserStorageTests extends 
         context.setMessage(authnRequest);
         request.addParameter(SamlIdPConstants.AUTHN_REQUEST_ID, authnRequest.getID());
         SamlIdPSessionManager.of(openSamlConfigBean, samlIdPDistributedSessionStore)
-            .store(new JEEContext(request, response), Pair.of(authnRequest, context));
+            .store(request, response, Pair.of(authnRequest, context));
     }
     
     private AuthnRequest getAuthnRequest() {

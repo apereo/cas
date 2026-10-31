@@ -32,6 +32,13 @@ public class DefaultTicketRegistryCleaner implements TicketRegistryCleaner {
 
     private static final int MAXIMUM_EXPIRED_TICKETS_PER_SCAN = 1_000;
 
+    /*
+     * Every this many runs, starting with the first, the cleaner reads every ticket instead of only the expiry
+     * candidates, which catches tickets that expire for reasons other than time and rows written before the
+     * registry kept an expiration time. With the default one-minute schedule, that is at startup and hourly.
+     */
+    private static final int FULL_SCAN_INTERVAL = 60;
+
     private final LockRepository lockRepository;
 
     private final ConfigurableApplicationContext applicationContext;
@@ -39,6 +46,8 @@ public class DefaultTicketRegistryCleaner implements TicketRegistryCleaner {
     private final TicketRegistry ticketRegistry;
 
     private final TransactionOperations transactionOperations;
+
+    private final AtomicLong runs = new AtomicLong();
 
     @Override
     public int clean() {
@@ -82,14 +91,15 @@ public class DefaultTicketRegistryCleaner implements TicketRegistryCleaner {
      * removed are left for the next run instead of being collected over and over.
      */
     protected int cleanInternal() {
+        val criteria = getScanCriteria();
         val threadFactory = Thread.ofVirtual().name("ticket-registry-cleaner-", 0).factory();
         try (val executor = Executors.newFixedThreadPool(MAXIMUM_CONCURRENT_REMOVALS, threadFactory)) {
             var ticketsDeleted = 0;
-            var expiredTickets = findExpiredTickets();
+            var expiredTickets = findExpiredTickets(criteria);
             var removed = removeExpiredTickets(executor, expiredTickets);
             ticketsDeleted += removed;
             while (removed > 0 && expiredTickets.size() >= getMaximumExpiredTicketsPerScan()) {
-                expiredTickets = findExpiredTickets();
+                expiredTickets = findExpiredTickets(criteria);
                 removed = removeExpiredTickets(executor, expiredTickets);
                 ticketsDeleted += removed;
             }
@@ -102,6 +112,20 @@ public class DefaultTicketRegistryCleaner implements TicketRegistryCleaner {
 
     protected int getMaximumExpiredTicketsPerScan() {
         return MAXIMUM_EXPIRED_TICKETS_PER_SCAN;
+    }
+
+    /**
+     * What this run reads. The first run and every sixtieth run after it read every ticket;
+     * the others ask only for tickets whose stored expiration time has passed, which registries that keep such
+     * a time can answer without reading the rest. Every ticket read is still checked for expiration.
+     *
+     * @return the criteria for this run
+     */
+    protected TicketRegistryStreamCriteria getScanCriteria() {
+        val criteria = TicketRegistryStreamCriteria.builder().build();
+        return runs.getAndIncrement() % FULL_SCAN_INTERVAL == 0
+            ? criteria
+            : criteria.withExpiringBefore(ZonedDateTime.now(Clock.systemUTC()));
     }
 
     private int removeExpiredTickets(final ExecutorService executor, final List<Ticket> expiredTickets) {
@@ -120,13 +144,13 @@ public class DefaultTicketRegistryCleaner implements TicketRegistryCleaner {
      * and every row read so far attached to it. Expired tickets are collected and that transaction ends before
      * any of them is removed.
      */
-    private List<Ticket> findExpiredTickets() {
-        val expiredTickets = transactionOperations.execute(_ -> streamExpiredTickets());
+    private List<Ticket> findExpiredTickets(final TicketRegistryStreamCriteria criteria) {
+        val expiredTickets = transactionOperations.execute(_ -> streamExpiredTickets(criteria));
         return expiredTickets != null ? expiredTickets : List.of();
     }
 
-    private List<Ticket> streamExpiredTickets() {
-        try (val ticketStream = ticketRegistry.stream()) {
+    private List<Ticket> streamExpiredTickets(final TicketRegistryStreamCriteria criteria) {
+        try (val ticketStream = ticketRegistry.stream(criteria)) {
             return ticketStream
                 .filter(Objects::nonNull)
                 .filter(Ticket::isExpired)

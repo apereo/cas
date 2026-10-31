@@ -8,11 +8,9 @@ import org.apereo.cas.web.flow.CasWebflowConstants;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.pac4j.jee.context.JEEContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.web.servlet.view.RedirectView;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -31,19 +29,17 @@ class OAuth20InvalidAuthorizationResponseBuilderTests extends AbstractOAuth20Tes
     @Test
     void verifyRequestWithoutCallback() throws Throwable {
         val request = new MockHttpServletRequest();
-        val response = new MockHttpServletResponse();
 
-        val context = new JEEContext(request, response);
-        assertFalse(oauthInvalidAuthorizationBuilder.supports(context));
+        assertFalse(oauthInvalidAuthorizationBuilder.supports(request));
 
-        context.setRequestAttribute(OAuth20Constants.ERROR, OAuth20Constants.INVALID_REQUEST);
-        assertTrue(oauthInvalidAuthorizationBuilder.supports(context));
+        request.setAttribute(OAuth20Constants.ERROR, OAuth20Constants.INVALID_REQUEST);
+        assertTrue(oauthInvalidAuthorizationBuilder.supports(request));
         assertEquals(CasWebflowConstants.VIEW_ID_SERVICE_ERROR,
-            oauthInvalidAuthorizationBuilder.build(context).getViewName());
+            oauthInvalidAuthorizationBuilder.build(request).getViewName());
 
-        context.setRequestAttribute(OAuth20Constants.ERROR_WITH_CALLBACK, false);
+        request.setAttribute(OAuth20Constants.ERROR_WITH_CALLBACK, false);
         assertEquals(CasWebflowConstants.VIEW_ID_SERVICE_ERROR,
-            oauthInvalidAuthorizationBuilder.build(context).getViewName());
+            oauthInvalidAuthorizationBuilder.build(request).getViewName());
     }
 
     @Test
@@ -53,16 +49,14 @@ class OAuth20InvalidAuthorizationResponseBuilderTests extends AbstractOAuth20Tes
         request.addParameter(OAuth20Constants.CLIENT_ID, service.getClientId());
         request.addParameter(OAuth20Constants.REDIRECT_URI, "https://github.com/apereo/cas");
 
-        val response = new MockHttpServletResponse();
-        val context = new JEEContext(request, response);
-        assertFalse(oauthInvalidAuthorizationBuilder.supports(context));
+        assertFalse(oauthInvalidAuthorizationBuilder.supports(request));
 
-        context.setRequestAttribute(OAuth20Constants.ERROR, OAuth20Constants.INVALID_REQUEST);
-        context.setRequestAttribute(OAuth20Constants.ERROR_DESCRIPTION, "Invalid Request Description");
-        context.setRequestAttribute(OAuth20Constants.ERROR_WITH_CALLBACK, true);
-        assertTrue(oauthInvalidAuthorizationBuilder.supports(context));
+        request.setAttribute(OAuth20Constants.ERROR, OAuth20Constants.INVALID_REQUEST);
+        request.setAttribute(OAuth20Constants.ERROR_DESCRIPTION, "Invalid Request Description");
+        request.setAttribute(OAuth20Constants.ERROR_WITH_CALLBACK, true);
+        assertTrue(oauthInvalidAuthorizationBuilder.supports(request));
 
-        val mv = oauthInvalidAuthorizationBuilder.build(context);
+        val mv = oauthInvalidAuthorizationBuilder.build(request);
         assertInstanceOf(RedirectView.class, mv.getView());
         val mvView = (RedirectView) mv.getView();
         assertEquals("https://github.com/apereo/cas", mvView.getUrl());
@@ -86,15 +80,13 @@ class OAuth20InvalidAuthorizationResponseBuilderTests extends AbstractOAuth20Tes
         request.addParameter(OAuth20Constants.RESPONSE_MODE, OAuth20ResponseModeTypes.FORM_POST.getType());
         request.addParameter("ParameterWhichShouldNotComingBack", "notAtAll");
 
-        val response = new MockHttpServletResponse();
-        val context = new JEEContext(request, response);
-        assertFalse(oauthInvalidAuthorizationBuilder.supports(context));
+        assertFalse(oauthInvalidAuthorizationBuilder.supports(request));
 
-        context.setRequestAttribute(OAuth20Constants.ERROR, OAuth20Constants.INVALID_REQUEST);
-        context.setRequestAttribute(OAuth20Constants.ERROR_WITH_CALLBACK, true);
-        assertTrue(oauthInvalidAuthorizationBuilder.supports(context));
+        request.setAttribute(OAuth20Constants.ERROR, OAuth20Constants.INVALID_REQUEST);
+        request.setAttribute(OAuth20Constants.ERROR_WITH_CALLBACK, true);
+        assertTrue(oauthInvalidAuthorizationBuilder.supports(request));
 
-        val mv = oauthInvalidAuthorizationBuilder.build(context);
+        val mv = oauthInvalidAuthorizationBuilder.build(request);
         assertEquals(CasWebflowConstants.VIEW_ID_POST_RESPONSE, mv.getViewName());
         assertTrue(mv.getModel().containsKey("originalUrl"));
         assertTrue(mv.getModel().containsKey("parameters"));

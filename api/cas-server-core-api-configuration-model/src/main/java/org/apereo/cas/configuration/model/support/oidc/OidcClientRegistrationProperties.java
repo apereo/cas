@@ -6,6 +6,7 @@ import org.apereo.cas.configuration.support.RequiresModule;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * This is {@link OidcClientRegistrationProperties}.
@@ -56,6 +57,12 @@ public class OidcClientRegistrationProperties implements Serializable {
      * in {@link DynamicClientRegistrationModes#PROTECTED} mode.
      */
     private String initialAccessTokenPassword;
+
+    /**
+     * Client ID metadata documents, where the client id is the URL of the client's metadata.
+     */
+    @NestedConfigurationProperty
+    private OidcClientIdMetadataDocumentProperties clientIdMetadataDocument = new OidcClientIdMetadataDocumentProperties();
 
     /**
      * Dynamic client registration mode.

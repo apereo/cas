@@ -13,7 +13,9 @@
 <body>
 <main class="container mt-3 mb-3">
     <div th:fragment="serviceUI"
-         th:if="${registeredService != null and #cas.isTrue(#cas.theme('cas.service-ui.show'))}"
+         th:if="${registeredService != null and (#cas.themeBuilderEnabled or #cas.isTrue(#cas.theme('cas.service-ui.show')))}"
+         th:classappend="${!#cas.isTrue(#cas.theme('cas.service-ui.show'))} ? 'cas-theme-builder-off'"
+         data-cas-theme-builder-toggle="cas.service-ui.show"
          th:with="showServiceUIDetails=${#cas.isTrue(#cas.theme('cas.service-ui.show-details'))}"
          id="serviceui" class="banner banner-info mb-4 text-justify">
 

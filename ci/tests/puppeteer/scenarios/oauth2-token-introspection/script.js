@@ -2,8 +2,9 @@ const assert = require("assert");
 const cas = require("../../cas.js");
 
 (async () => {
+    const resource = "https://localhost:9859/anything/backend";
     let params = "grant_type=client_credentials&";
-    params += "scope=openid";
+    params += `scope=openid&resource=${encodeURIComponent(resource)}`;
 
     const url = `https://localhost:8443/cas/oauth2.0/token?${params}`;
     await cas.log(`Calling ${url}`);
@@ -11,13 +12,13 @@ const cas = require("../../cas.js");
     await cas.doPost(url, "", {
         "Content-Type": "application/json",
         "Authorization": `Basic ${btoa("client:secret")}`
-    }, (res) => {
+    }, async (res) => {
         cas.log(res.data);
         assert(res.data.access_token !== undefined);
         assert(res.data.refresh_token !== undefined);
 
-        introspect(res.data.access_token, successHandler);
-        introspect(res.data.refresh_token, successHandler);
+        await introspect(res.data.access_token, (response, token) => successHandler(response, token, resource));
+        await introspect(res.data.refresh_token, (response, token) => successHandler(response, token, resource));
 
     }, (error) => {
         throw `Operation failed: ${error}`;
@@ -34,11 +35,11 @@ const cas = require("../../cas.js");
 
 })();
 
-function successHandler(res, token) {
+function successHandler(res, token, resource) {
     assert(res.data.active === true);
     assert(res.data.iat !== undefined);
     assert(res.data.exp !== undefined);
-    assert(res.data.aud === "client");
+    assert.deepStrictEqual(res.data.aud, ["client", resource]);
     assert(res.data.uniqueSecurityName === "client");
     assert(res.data.scope === "CAS");
     assert(res.data.sub === "client");

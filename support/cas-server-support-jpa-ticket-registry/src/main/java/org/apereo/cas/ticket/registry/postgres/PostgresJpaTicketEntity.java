@@ -28,9 +28,9 @@ import jakarta.persistence.Table;
 @AttributeOverrides(@AttributeOverride(name = "body", column = @Column(columnDefinition = "text")))
 @Entity(name = "PostgresJpaTicketEntity")
 @Table(name = "CasTickets", indexes = {
-    @Index(name = "idx_ticket_type", columnList = "type"),
     @Index(name = "idx_ticket_principal", columnList = "principalId"),
     @Index(name = "idx_ticket_parent", columnList = "parentId"),
+    @Index(name = "idx_ticket_expiration", columnList = "expirationTime"),
     @Index(name = "idx_ticket_service", columnList = "service"),
     @Index(name = "idx_type_principal", columnList = "type,principalId")
 })
@@ -42,6 +42,6 @@ public class PostgresJpaTicketEntity extends BaseTicketEntity {
     private static final long serialVersionUID = 6546716187959834795L;
 
     @Type(JsonType.class)
-    @Column(columnDefinition = "json")
+    @Column(columnDefinition = "jsonb")
     private Map<String, List<Object>> attributes;
 }

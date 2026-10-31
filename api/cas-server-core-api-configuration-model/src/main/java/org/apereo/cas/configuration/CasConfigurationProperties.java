@@ -45,6 +45,7 @@ import org.apereo.cas.configuration.model.support.heimdall.HeimdallAuthorization
 import org.apereo.cas.configuration.model.support.interrupt.InterruptProperties;
 import org.apereo.cas.configuration.model.support.javers.JaversProperties;
 import org.apereo.cas.configuration.model.support.jpa.DatabaseProperties;
+import org.apereo.cas.configuration.model.support.mcp.McpServerProperties;
 import org.apereo.cas.configuration.model.support.multitenancy.MultitenancyProperties;
 import org.apereo.cas.configuration.model.support.saml.SamlCoreProperties;
 import org.apereo.cas.configuration.model.support.saml.mdui.SamlMetadataUIProperties;
@@ -411,6 +412,12 @@ public class CasConfigurationProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private PalantirProperties palantir = new PalantirProperties();
+
+    /**
+     * MCP server properties.
+     */
+    @NestedConfigurationProperty
+    private McpServerProperties mcp = new McpServerProperties();
 
     /**
      * Bind from map.

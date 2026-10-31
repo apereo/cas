@@ -21,7 +21,6 @@ import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.RequestAbstractType;
 import org.opensaml.saml.saml2.core.Response;
-import org.pac4j.jee.context.JEEContext;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
@@ -62,9 +61,8 @@ public class SSOSamlIdPProfileCallbackHandlerController extends AbstractSamlIdPP
         val type = properties.getAuthn().getSamlIdp().getCore().getSessionStorageType();
         if (type.isBrowserStorage()
             && !request.getParameterMap().containsKey(BrowserStorage.PARAMETER_BROWSER_STORAGE)) {
-            val context = new JEEContext(request, response);
             val sessionStorage = configurationContext.getSessionStore()
-                .getTrackableSession(context).map(BrowserStorage.class::cast)
+                .getTrackableSession(request).map(BrowserStorage.class::cast)
                 .orElseThrow(() -> new IllegalStateException("Unable to determine trackable session for storage"));
             return new ModelAndView(CasWebflowConstants.VIEW_ID_BROWSER_STORAGE_READ,
                 BrowserStorage.PARAMETER_BROWSER_STORAGE, sessionStorage);
@@ -83,8 +81,7 @@ public class SSOSamlIdPProfileCallbackHandlerController extends AbstractSamlIdPP
         if (type.isBrowserStorage()) {
             val storage = WebUtils.getBrowserStoragePayload(request);
             if (storage.isPresent()) {
-                val context = new JEEContext(request, response);
-                configurationContext.getSessionStore().buildFromTrackableSession(context, storage.get());
+                configurationContext.getSessionStore().buildFromTrackableSession(request, storage.get());
                 return handleProfileRequest(response, request);
             }
         }

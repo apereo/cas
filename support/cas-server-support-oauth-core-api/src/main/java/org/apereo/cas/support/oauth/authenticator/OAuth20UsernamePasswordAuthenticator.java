@@ -11,7 +11,9 @@ import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.RegisteredServiceUsernameProviderContext;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
+import org.apereo.cas.support.oauth.profile.DefaultOAuth20UserProfile;
 import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
+import org.apereo.cas.support.oauth.profile.OAuth20UserProfile;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.validator.OAuth20ClientSecretValidator;
@@ -24,13 +26,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.pac4j.core.context.CallContext;
-import org.pac4j.core.credentials.Credentials;
-import org.pac4j.core.credentials.UsernamePasswordCredentials;
-import org.pac4j.core.credentials.authenticator.Authenticator;
-import org.pac4j.core.exception.CredentialsException;
-import org.pac4j.core.profile.CommonProfile;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.security.authentication.BadCredentialsException;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * Authenticator for user credentials authentication.
@@ -41,7 +39,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 @Slf4j
 @RequiredArgsConstructor
 @Getter
-public class OAuth20UsernamePasswordAuthenticator implements Authenticator {
+public class OAuth20UsernamePasswordAuthenticator implements OAuth20ClientCredentialsAuthenticator {
     private final AuthenticationSystemSupport authenticationSystemSupport;
 
     private final ServicesManager servicesManager;
@@ -61,13 +59,14 @@ public class OAuth20UsernamePasswordAuthenticator implements Authenticator {
     private final ConfigurableApplicationContext applicationContext;
 
     @Override
-    public Optional<Credentials> validate(final CallContext callContext, final Credentials credentials) throws CredentialsException {
+    public Optional<OAuth20UserProfile> authenticate(final OAuth20ClientAuthenticationToken token) throws BadCredentialsException {
         try {
-            val upc = (UsernamePasswordCredentials) credentials;
-            val casCredential = new UsernamePasswordCredential(upc.getUsername(), upc.getPassword());
-            val clientIdAndSecret = requestParameterResolver.resolveClientIdAndClientSecret(callContext);
+            val request = token.getRequest();
+            val casCredential = new UsernamePasswordCredential(Objects.requireNonNull(token.getUsername()),
+                Objects.requireNonNull((String) token.getCredentials()));
+            val clientIdAndSecret = requestParameterResolver.resolveClientIdAndClientSecret(request);
             if (StringUtils.isBlank(clientIdAndSecret.getKey())) {
-                throw new CredentialsException("No client credentials could be identified in this request");
+                throw new BadCredentialsException("No client credentials could be identified in this request");
             }
 
             val clientId = clientIdAndSecret.getKey();
@@ -76,10 +75,10 @@ public class OAuth20UsernamePasswordAuthenticator implements Authenticator {
 
             val clientSecret = clientIdAndSecret.getRight();
             if (!clientSecretValidator.validate(registeredService, clientSecret)) {
-                throw new CredentialsException("Client Credentials provided is not valid for registered service: "
+                throw new BadCredentialsException("Client Credentials provided is not valid for registered service: "
                     + Objects.requireNonNull(registeredService).getName());
             }
-            val redirectUri = requestParameterResolver.resolveRequestParameter(callContext.webContext(), OAuth20Constants.REDIRECT_URI)
+            val redirectUri = requestParameterResolver.resolveRequestParameter(request, OAuth20Constants.REDIRECT_URI)
                 .map(String::valueOf).orElse(StringUtils.EMPTY);
             OAuth20Utils.validateRedirectUri(redirectUri, true);
             val service = StringUtils.isNotBlank(redirectUri)
@@ -90,31 +89,28 @@ public class OAuth20UsernamePasswordAuthenticator implements Authenticator {
 
             val authenticationResult = authenticationSystemSupport.finalizeAuthenticationTransaction(service, casCredential);
             if (authenticationResult == null) {
-                throw new CredentialsException("Could not authenticate the provided credentials");
+                throw new BadCredentialsException("Could not authenticate the provided credentials");
             }
 
-            val principal = buildAuthenticatedPrincipal(authenticationResult, registeredService, service, callContext);
-            val profile = new CommonProfile();
-
-            profile.setId(principal.getId());
+            val principal = buildAuthenticatedPrincipal(authenticationResult, registeredService, service, request);
+            val profile = new DefaultOAuth20UserProfile(principal.getId(), OAuth20UserProfile.COMMON_PROFILE_HANDLER_NAME);
             profile.addAttribute(OAuth20Constants.CLIENT_ID, clientId);
-            profile.addAttributes((Map) principal.getAttributes());
+            profile.addAttributes(principal.getAttributes());
 
             val authentication = authenticationResult.getAuthentication();
             val authnAttributes = authenticationAttributeReleasePolicy.getAuthenticationAttributesForRelease(authentication, registeredService);
             profile.addAuthenticationAttributes(new HashMap<>(authnAttributes));
 
             LOGGER.debug("Authenticated user profile [{}]", profile);
-            credentials.setUserProfile(profile);
-            return Optional.of(credentials);
+            return Optional.of(profile);
         } catch (final Throwable e) {
-            throw new CredentialsException("Cannot login user using CAS internal authentication", e);
+            throw new BadCredentialsException("Cannot login user using CAS internal authentication", e);
         }
     }
 
     protected Principal buildAuthenticatedPrincipal(final AuthenticationResult authenticationResult,
                                                     final OAuthRegisteredService registeredService,
-                                                    final Service service, final CallContext callContext)
+                                                    final Service service, final HttpServletRequest request)
             throws Throwable {
         val authentication = authenticationResult.getAuthentication();
         val principal = authentication.getPrincipal();
@@ -129,13 +125,13 @@ public class OAuth20UsernamePasswordAuthenticator implements Authenticator {
         val id = registeredService.getUsernameAttributeProvider().resolveUsername(usernameContext);
         LOGGER.debug("Created profile id [{}]", id);
 
-        val scopes = new LinkedHashSet<>(resolveRequestedScopes(callContext));
+        val scopes = new LinkedHashSet<>(resolveRequestedScopes(request));
         val finalPrincipal = profileScopeToAttributesFilter.filter(service, principal, registeredService, scopes, null);
         LOGGER.debug("Built final principal [{}]", finalPrincipal);
         return finalPrincipal;
     }
 
-    protected Collection<String> resolveRequestedScopes(final CallContext callContext) {
-        return requestParameterResolver.resolveRequestedScopes(callContext.webContext());
+    protected Collection<String> resolveRequestedScopes(final HttpServletRequest request) {
+        return requestParameterResolver.resolveRequestedScopes(request);
     }
 }

@@ -38,6 +38,7 @@
             const authFailDesc = [[#{ screen.authentication.webauthn.authn.fail.desc }]];
         </script>
 
+        <script th:replace="~{fragments/webAuthnMessages :: messages}"></script>
         <script th:src="@{/js/webauthn/webauthn.js}"></script>
 
         <div style="display: none" id="diagnostics">
@@ -173,7 +174,7 @@
                     </script>
                 </div>
 
-                <script type="text/javascript">
+                <script type="text/javascript" th:inline="javascript">
                     $("form#webauthnQRCodeForm").submit(() => {
                         resetDisplays();
                         $("#QRCodeSection").hide();
@@ -186,8 +187,8 @@
 
                         Swal.fire({
                             icon: "info",
-                            title: "Please Wait...",
-                            text: "Your authentication attempt is in progress. Do not close this window!",
+                            title: /*[[#{screen.authentication.webauthn.qr.wait.title}]]*/ "Please Wait...",
+                            text: /*[[#{screen.authentication.webauthn.qr.wait.text}]]*/ "Your authentication attempt is in progress. Do not close this window!",
                             allowOutsideClick: false,
                             showConfirmButton: false,
                             didOpen: () => Swal.showLoading()
@@ -208,7 +209,10 @@
                 </script>
         </div>
         <div>
-            <div class="w-100 mdc-data-table table-responsive mx-auto my-4" id="divDeviceInfo" style="display: none">
+            <div class="w-100 mdc-data-table table-responsive mx-auto my-4" id="divDeviceInfo" style="display: none"
+                 th:if="${#cas.themeBuilderEnabled or #cas.isTrue(#cas.theme('cas.webauthn.authentication.show-device-details'))}"
+                 th:classappend="${!#cas.isTrue(#cas.theme('cas.webauthn.authentication.show-device-details'))} ? 'cas-theme-builder-off'"
+                 data-cas-theme-builder-toggle="cas.webauthn.authentication.show-device-details">
                 <table id="deviceTable" class="table table-striped auto-init" style="white-space: unset">
                     <thead>
                     <tr class="mdc-data-table__header-row">

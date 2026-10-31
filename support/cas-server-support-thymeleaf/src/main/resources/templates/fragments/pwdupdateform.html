@@ -30,10 +30,16 @@
             /*]]>*/
 
             function generatePassword() {
-                let possible = /*[[${passwordPolicyCharacterSet}]]*/;
+                const possible = /*[[${passwordPolicyCharacterSet}]]*/;
+                const length = /*[[${passwordPolicyPasswordLength}]]*/;
+                const limit = Math.floor(0x100000000 / possible.length) * possible.length;
+                const buffer = new Uint32Array(1);
                 let text = '';
-                for(let i = 0; i < /*[[${passwordPolicyPasswordLength}]]*/; i++) {
-                    text += possible.charAt(Math.floor(Math.random() * possible.length));
+                while (possible.length > 0 && text.length < length) {
+                    crypto.getRandomValues(buffer);
+                    if (buffer[0] < limit) {
+                        text += possible.charAt(buffer[0] % possible.length);
+                    }
                 }
                 $("#password").val(text);
                 $("#confirmedPassword").val(text);

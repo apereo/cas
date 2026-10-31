@@ -1,0 +1,20 @@
+{
+  "@class": "org.apereo.cas.services.CasRegisteredService",
+  "serviceId": "^https://localhost:9859/anything/linked$",
+  "name": "Linked",
+  "id": 9,
+  "attributeReleasePolicy": {
+    "@class": "org.apereo.cas.services.ReturnLinkedAttributeReleasePolicy",
+    "allowedAttributes": {
+      "@class": "java.util.TreeMap",
+      "primaryGroup": [
+        "java.util.ArrayList",
+        [
+          "missing",
+          "groupMembership2",
+          "groupMembership1"
+        ]
+      ]
+    }
+  }
+}

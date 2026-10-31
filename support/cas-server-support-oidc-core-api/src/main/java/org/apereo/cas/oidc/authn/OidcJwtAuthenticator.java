@@ -18,6 +18,10 @@ import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20ClientAuthenticationMethods;
 import org.apereo.cas.support.oauth.OAuth20Constants;
+import org.apereo.cas.support.oauth.authenticator.OAuth20ClientAuthenticationToken;
+import org.apereo.cas.support.oauth.authenticator.OAuth20ClientCredentialsAuthenticator;
+import org.apereo.cas.support.oauth.profile.DefaultOAuth20UserProfile;
+import org.apereo.cas.support.oauth.profile.OAuth20UserProfile;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.InvalidTicketException;
@@ -51,14 +55,9 @@ import org.jose4j.jwt.consumer.JwtConsumer;
 import org.jose4j.jwt.consumer.JwtConsumerBuilder;
 import org.jose4j.keys.HmacKey;
 import org.jspecify.annotations.Nullable;
-import org.pac4j.core.context.CallContext;
-import org.pac4j.core.context.WebContext;
-import org.pac4j.core.credentials.Credentials;
-import org.pac4j.core.credentials.UsernamePasswordCredentials;
-import org.pac4j.core.credentials.authenticator.Authenticator;
-import org.pac4j.core.profile.CommonProfile;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.context.ApplicationContext;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * This is {@link OidcJwtAuthenticator}.
@@ -68,7 +67,7 @@ import org.springframework.context.ApplicationContext;
  */
 @Slf4j
 @RequiredArgsConstructor
-public class OidcJwtAuthenticator implements Authenticator {
+public class OidcJwtAuthenticator implements OAuth20ClientCredentialsAuthenticator {
     protected final OidcIssuerService issuerService;
 
     protected final ServicesManager servicesManager;
@@ -91,19 +90,19 @@ public class OidcJwtAuthenticator implements Authenticator {
 
     protected final CipherExecutor<Serializable, String> registeredServiceCipherExecutor;
 
-    protected @Nullable JWT verifyCredentials(final UsernamePasswordCredentials credentials,
-                                              final WebContext webContext) {
+    protected @Nullable JWT verifyCredentials(final OAuth20ClientAuthenticationToken credentials) {
         if (!Strings.CI.equals(OAuth20Constants.CLIENT_ASSERTION_TYPE_JWT_BEARER, credentials.getUsername())) {
             LOGGER.debug("client assertion type is not set to [{}]", OAuth20Constants.CLIENT_ASSERTION_TYPE_JWT_BEARER);
             return null;
         }
-        if (StringUtils.isBlank(credentials.getPassword())) {
+        val assertion = (String) credentials.getCredentials();
+        if (StringUtils.isBlank(assertion)) {
             LOGGER.debug("No assertion is available in the provided credentials");
             return null;
         }
 
         try {
-            val jwt = JWTParser.parse(credentials.getPassword());
+            val jwt = JWTParser.parse(assertion);
             val alg = jwt.getHeader().getAlgorithm();
             if (!validateJwtAlgorithm(alg)) {
                 LOGGER.debug("No assertion is available in the provided credentials");
@@ -118,29 +117,29 @@ public class OidcJwtAuthenticator implements Authenticator {
 
 
     @Override
-    public Optional<Credentials> validate(final CallContext callContext, final Credentials creds) {
+    public Optional<OAuth20UserProfile> authenticate(final OAuth20ClientAuthenticationToken credentials) {
         return FunctionUtils.doAndHandle(() -> {
-            val registeredService = getOidcRegisteredService(callContext);
+            val request = credentials.getRequest();
+            val registeredService = getOidcRegisteredService(request);
             RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(registeredService);
             Objects.requireNonNull(registeredService, "regisetered service is null");
 
-            if (OAuth20Utils.isAccessTokenRequest(callContext.webContext())) {
+            if (OAuth20Utils.isClientAuthenticationRequest(request)) {
                 val authMethodDisabled = oidcServerDiscoverySettings.getTokenEndpointAuthMethodsSupported()
                     .stream()
                     .map(OAuth20ClientAuthenticationMethods::parse)
                     .noneMatch(method -> method == OAuth20ClientAuthenticationMethods.CLIENT_SECRET_JWT || method == OAuth20ClientAuthenticationMethods.PRIVATE_KEY_JWT);
-                if (authMethodDisabled || !OAuth20Utils.isTokenAuthenticationMethodSupportedFor(callContext, registeredService,
+                if (authMethodDisabled || !OAuth20Utils.isTokenAuthenticationMethodSupportedFor(request, registeredService,
                     OAuth20ClientAuthenticationMethods.CLIENT_SECRET_JWT, OAuth20ClientAuthenticationMethods.PRIVATE_KEY_JWT)) {
                     LOGGER.warn("Private key JWT authentication method is not enabled for CAS, or is not supported for service [{}]", registeredService.getName());
-                    return Optional.<Credentials>empty();
+                    return Optional.<OAuth20UserProfile>empty();
                 }
             }
 
-            val credentials = (UsernamePasswordCredentials) creds;
-            val jwt = verifyCredentials(credentials, callContext.webContext());
+            val jwt = verifyCredentials(credentials);
             if (jwt == null) {
                 LOGGER.warn("Unable to verify credentials");
-                return Optional.<Credentials>empty();
+                return Optional.<OAuth20UserProfile>empty();
             }
 
             val keys = new JsonWebKeySet();
@@ -186,9 +185,10 @@ public class OidcJwtAuthenticator implements Authenticator {
                 .stream()
                 .filter(jsonWebKey -> isVerificationKeyUsable(jwt, jsonWebKey, registeredService))
                 .toList();
-            for (var i = 0; credentials.getUserProfile() == null && i < verificationKeys.size(); i++) {
-                val jsonWebKey = verificationKeys.get(i);
-                val consumer = new JwtConsumerBuilder()
+            val assertion = Objects.requireNonNull((String) credentials.getCredentials());
+            val profile = verificationKeys
+                .stream()
+                .map(jsonWebKey -> new JwtConsumerBuilder()
                     .setVerificationKey(jsonWebKey.getKey())
                     .setRequireJwtId()
                     .setRequireExpirationTime()
@@ -196,30 +196,30 @@ public class OidcJwtAuthenticator implements Authenticator {
                     .setExpectedIssuer(true, registeredService.getClientId())
                     .setExpectedSubject(registeredService.getClientId())
                     .setExpectedAudience(true, audience)
-                    .build();
-                determineUserProfile(credentials, consumer);
-            }
-            if (credentials.getUserProfile() != null && !registerJwtIdentifier(jwt, registeredService.getClientId())) {
+                    .build())
+                .map(consumer -> determineUserProfile(assertion, consumer))
+                .filter(Objects::nonNull)
+                .findFirst();
+            if (profile.isPresent() && !registerJwtIdentifier(jwt, registeredService.getClientId())) {
                 LOGGER.warn("Client assertion JWT identifier has already been used");
-                credentials.setUserProfile(null);
+                return Optional.<OAuth20UserProfile>empty();
             }
-            return Optional.<Credentials>of(credentials);
+            profile.ifPresent(found -> found.addAttribute(OAuth20Constants.CLIENT_ID, registeredService.getClientId()));
+            return profile;
         }, e -> {
             LoggingUtils.error(LOGGER, e);
-            return Optional.<Credentials>empty();
+            return Optional.<OAuth20UserProfile>empty();
         }).get();
     }
 
-    protected @Nullable OidcRegisteredService getOidcRegisteredService(final CallContext callContext) throws Throwable {
-        val webContext = callContext.webContext();
-        val code = webContext.getRequestParameter(OAuth20Constants.CODE)
-            .map(String::valueOf).orElse(StringUtils.EMPTY);
-        val givenCode = OAuth20Utils.getRequestedOAuthToken(webContext, ticketRegistry, code, OAuth20Code.class);
+    protected @Nullable OidcRegisteredService getOidcRegisteredService(final HttpServletRequest request) throws Throwable {
+        val code = Objects.requireNonNullElse(request.getParameter(OAuth20Constants.CODE), StringUtils.EMPTY);
+        val givenCode = OAuth20Utils.getRequestedOAuthToken(request, ticketRegistry, code, OAuth20Code.class);
         if (givenCode == null) {
             OAuth20Utils.revokeTokensIssuedFromCode(ticketRegistry, code);
         }
         val oauthCode = givenCode == null || givenCode.isExpired() ? null : givenCode;
-        val clientId = oauthCode == null ? webContext.getRequestParameter(OAuth20Constants.CLIENT_ID).orElse(null) : oauthCode.getClientId();
+        val clientId = oauthCode == null ? request.getParameter(OAuth20Constants.CLIENT_ID) : oauthCode.getClientId();
         val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(servicesManager, clientId, OidcRegisteredService.class);
         val audit = AuditableContext.builder()
             .registeredService(registeredService)
@@ -228,15 +228,13 @@ public class OidcJwtAuthenticator implements Authenticator {
         return accessResult.isExecutionFailure() ? null : registeredService;
     }
 
-    protected void determineUserProfile(final UsernamePasswordCredentials credentials,
-                                        final JwtConsumer consumer) {
-        FunctionUtils.doAndHandle(_ -> {
-            val jwt = consumer.processToClaims(credentials.getPassword());
-            val userProfile = new CommonProfile(true);
-            userProfile.setId(jwt.getSubject());
+    protected @Nullable OAuth20UserProfile determineUserProfile(final String assertion, final JwtConsumer consumer) {
+        return FunctionUtils.doAndHandle(() -> {
+            val jwt = consumer.processToClaims(assertion);
+            val userProfile = new DefaultOAuth20UserProfile(jwt.getSubject(), OAuth20UserProfile.COMMON_PROFILE_HANDLER_NAME);
             userProfile.addAttributes(jwt.getClaimsMap());
-            credentials.setUserProfile(userProfile);
-        });
+            return userProfile;
+        }, _ -> null).get();
     }
 
     protected boolean registerJwtIdentifier(final JWT jwt, final String clientId) throws Exception {

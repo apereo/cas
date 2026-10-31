@@ -8,6 +8,7 @@ import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.services.RegisteredServiceLogoutType;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
+import org.apereo.cas.util.DigestUtils;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -32,6 +33,23 @@ class OidcSingleLogoutServiceMessageHandlerTests extends AbstractOidcTests {
     @Test
     void verifyCreateLogoutRequestsFrontChannel() {
         verifyCreateLogoutRequests(RegisteredServiceLogoutType.FRONT_CHANNEL, LOGOUT_URL_OK);
+    }
+
+    @Test
+    void verifyFrontChannelSessionIdMatchesIdToken() {
+        val registeredService = getOidcRegisteredService(UUID.randomUUID().toString(), LOGOUT_URL_OK + ".*");
+        registeredService.setLogoutType(RegisteredServiceLogoutType.FRONT_CHANNEL);
+        registeredService.setLogoutUrl(LOGOUT_URL_OK);
+        val service = RegisteredServiceTestUtils.getService(LOGOUT_URL_OK + "?client_id=" + registeredService.getClientId());
+        service.getAttributes().remove(CasProtocolConstants.PARAMETER_SERVICE);
+        servicesManager.save(registeredService);
+
+        val ticketGrantingTicket = new MockTicketGrantingTicket("casuser");
+        val executionRequest = SingleLogoutExecutionRequest.builder().ticketGrantingTicket(ticketGrantingTicket).build();
+        val requests = oidcSingleLogoutServiceMessageHandler.handle(service, UUID.randomUUID().toString(), executionRequest);
+        val logoutUrl = requests.iterator().next().getLogoutUrl().toExternalForm();
+        val sessionId = DigestUtils.sha(DigestUtils.sha512(ticketGrantingTicket.getId()));
+        assertTrue(logoutUrl.contains("sid=" + sessionId), () -> "Front-channel logout URL " + logoutUrl + " must carry the sid of the ID token");
     }
 
     @Test

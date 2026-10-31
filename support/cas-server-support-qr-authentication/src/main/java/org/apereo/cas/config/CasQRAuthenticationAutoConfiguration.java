@@ -17,6 +17,8 @@ import org.apereo.cas.qr.validation.DefaultQRAuthenticationTokenValidatorService
 import org.apereo.cas.qr.validation.QRAuthenticationTokenValidatorService;
 import org.apereo.cas.qr.web.QRAuthenticationChannelController;
 import org.apereo.cas.qr.web.QRAuthenticationDeviceRepositoryEndpoint;
+import org.apereo.cas.qr.web.flow.QRAuthenticationAccountProfileDevicesAction;
+import org.apereo.cas.qr.web.flow.QRAuthenticationAccountProfileRemoveDeviceAction;
 import org.apereo.cas.qr.web.flow.QRAuthenticationGenerateCodeAction;
 import org.apereo.cas.qr.web.flow.QRAuthenticationValidateTokenAction;
 import org.apereo.cas.qr.web.flow.QRAuthenticationWebflowConfigurer;
@@ -29,6 +31,7 @@ import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.actions.WebflowActionBeanSupplier;
+import org.apereo.cas.web.flow.configurer.acct.AccountProfileContributionWebflowConfigurer;
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
 import org.jspecify.annotations.NonNull;
@@ -109,6 +112,70 @@ public class CasQRAuthenticationAutoConfiguration {
             return plan -> plan.registerWebflowConfigurer(qrAuthenticationWebflowConfigurer);
         }
 
+    }
+
+    @Configuration(value = "QRAuthenticationAccountProfileConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.AccountManagement, enabledByDefault = false)
+    static class QRAuthenticationAccountProfileConfiguration {
+        private static final String TRANSITION_ID_REMOVE_DEVICE = "removeQRDevice";
+
+        @ConditionalOnMissingBean(name = "qrAuthenticationAccountProfileWebflowConfigurer")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public CasWebflowConfigurer qrAuthenticationAccountProfileWebflowConfigurer(
+            final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext,
+            @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_DEFINITION_REGISTRY)
+            final FlowDefinitionRegistry flowDefinitionRegistry,
+            @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
+            final FlowBuilderServices flowBuilderServices) {
+            return new AccountProfileContributionWebflowConfigurer(flowBuilderServices, flowDefinitionRegistry, applicationContext, casProperties)
+                .withRenderAction(CasWebflowConstants.ACTION_ID_ACCOUNT_PROFILE_QR_DEVICES)
+                .withOperation(TRANSITION_ID_REMOVE_DEVICE, CasWebflowConstants.ACTION_ID_ACCOUNT_PROFILE_REMOVE_QR_DEVICE);
+        }
+
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "qrAuthenticationAccountProfileWebflowExecutionPlanConfigurer")
+        public CasWebflowExecutionPlanConfigurer qrAuthenticationAccountProfileWebflowExecutionPlanConfigurer(
+            @Qualifier("qrAuthenticationAccountProfileWebflowConfigurer")
+            final CasWebflowConfigurer qrAuthenticationAccountProfileWebflowConfigurer) {
+            return plan -> plan.registerWebflowConfigurer(qrAuthenticationAccountProfileWebflowConfigurer);
+        }
+
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_ACCOUNT_PROFILE_QR_DEVICES)
+        public Action qrAuthenticationAccountProfileDevicesAction(
+            final CasConfigurationProperties casProperties,
+            final ConfigurableApplicationContext applicationContext,
+            @Qualifier("qrAuthenticationDeviceRepository")
+            final QRAuthenticationDeviceRepository qrAuthenticationDeviceRepository) {
+            return WebflowActionBeanSupplier.builder()
+                .withApplicationContext(applicationContext)
+                .withProperties(casProperties)
+                .withAction(() -> new QRAuthenticationAccountProfileDevicesAction(qrAuthenticationDeviceRepository))
+                .withId(CasWebflowConstants.ACTION_ID_ACCOUNT_PROFILE_QR_DEVICES)
+                .build()
+                .get();
+        }
+
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_ACCOUNT_PROFILE_REMOVE_QR_DEVICE)
+        public Action qrAuthenticationAccountProfileRemoveDeviceAction(
+            final CasConfigurationProperties casProperties,
+            final ConfigurableApplicationContext applicationContext,
+            @Qualifier("qrAuthenticationDeviceRepository")
+            final QRAuthenticationDeviceRepository qrAuthenticationDeviceRepository) {
+            return WebflowActionBeanSupplier.builder()
+                .withApplicationContext(applicationContext)
+                .withProperties(casProperties)
+                .withAction(() -> new QRAuthenticationAccountProfileRemoveDeviceAction(qrAuthenticationDeviceRepository))
+                .withId(CasWebflowConstants.ACTION_ID_ACCOUNT_PROFILE_REMOVE_QR_DEVICE)
+                .build()
+                .get();
+        }
     }
 
     @Configuration(value = "QRAuthenticationWebflowConfiguration", proxyBeanMethods = false)

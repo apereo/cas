@@ -16,11 +16,8 @@ import org.apereo.cas.util.spring.beans.BeanSupplier;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.jooq.lambda.Unchecked;
-import org.pac4j.core.context.CallContext;
-import org.pac4j.core.context.WebContext;
-import org.pac4j.core.context.session.SessionStore;
-import org.pac4j.jee.context.JEEContext;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.servlet.AsyncHandlerInterceptor;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.util.UriUtils;
@@ -50,8 +47,6 @@ public class OAuth20HandlerInterceptorAdapter implements AsyncHandlerInterceptor
 
     private final ObjectProvider<ServicesManager> servicesManager;
 
-    private final ObjectProvider<SessionStore> sessionStore;
-
     private final ObjectProvider<List<OAuth20AuthorizationRequestValidator>> oauthAuthorizationRequestValidators;
 
     private final ObjectProvider<OAuth20RequestParameterResolver> requestParameterResolver;
@@ -79,20 +74,24 @@ public class OAuth20HandlerInterceptorAdapter implements AsyncHandlerInterceptor
     /**
      * Determines whether the requesting client is an OAuth public client.
      * An OAuth "public" client is one that does not define a secret like a mobile application.
+     * An {@code Authorization} header that is not valid HTTP Basic (a bearer token, say) names no client,
+     * so the request must authenticate and is refused by client authentication rather than failing here.
      *
      * @param request  the request
      * @param response the response
      * @return true/false
      */
     protected boolean clientNeedAuthentication(final HttpServletRequest request, final HttpServletResponse response) {
-        val callContext = new CallContext(new JEEContext(request, response), sessionStore.getObject());
-        val clientId = requestParameterResolver.getObject().resolveClientIdAndClientSecret(callContext).getLeft();
-        if (clientId.isEmpty()) {
+        try {
+            val clientId = requestParameterResolver.getObject().resolveClientIdAndClientSecret(request).getLeft();
+            if (clientId.isEmpty()) {
+                return true;
+            }
+            val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(servicesManager.getObject(), clientId);
+            return registeredService == null || OAuth20Utils.doesServiceNeedAuthentication(registeredService);
+        } catch (final BadCredentialsException e) {
             return true;
         }
-
-        val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(servicesManager.getObject(), clientId);
-        return registeredService == null || OAuth20Utils.doesServiceNeedAuthentication(registeredService);
     }
 
     protected boolean isRevokeTokenRequest(final HttpServletRequest request, final HttpServletResponse response) {
@@ -121,7 +120,6 @@ public class OAuth20HandlerInterceptorAdapter implements AsyncHandlerInterceptor
 
     protected boolean requestRequiresAuthentication(final HttpServletRequest request,
                                                     final HttpServletResponse response) {
-        val context = new JEEContext(request, response);
         val revokeTokenRequest = isRevokeTokenRequest(request, response);
 
         if (revokeTokenRequest) {
@@ -129,7 +127,7 @@ public class OAuth20HandlerInterceptorAdapter implements AsyncHandlerInterceptor
         }
 
         val accessTokenRequest = isAccessTokenRequest(request, response);
-        val extractor = extractAccessTokenGrantRequest(context);
+        val extractor = extractAccessTokenGrantRequest(request);
         if (accessTokenRequest) {
             request.setAttribute(OAuth20Constants.REQUEST_ATTRIBUTE_ACCESS_TOKEN_REQUEST, Boolean.TRUE);
             if (extractor.isPresent()) {
@@ -149,9 +147,8 @@ public class OAuth20HandlerInterceptorAdapter implements AsyncHandlerInterceptor
 
     protected boolean isAuthorizationRequest(final HttpServletRequest request,
                                              final HttpServletResponse response) {
-        val context = new JEEContext(request, response);
         val requestPath = request.getRequestURI();
-        return doesUriMatchPattern(requestPath, getAuthorizeUrls()) && isValidAuthorizeRequest(context);
+        return doesUriMatchPattern(requestPath, getAuthorizeUrls()) && isValidAuthorizeRequest(request, response);
     }
 
     protected List<String> getAuthorizeUrls() {
@@ -173,22 +170,22 @@ public class OAuth20HandlerInterceptorAdapter implements AsyncHandlerInterceptor
         });
     }
 
-    protected boolean isValidAuthorizeRequest(final JEEContext context) {
+    protected boolean isValidAuthorizeRequest(final HttpServletRequest request, final HttpServletResponse response) {
         val validator = oauthAuthorizationRequestValidators.getObject()
             .stream()
             .filter(BeanSupplier::isNotProxy)
-            .filter(Unchecked.predicate(b -> b.supports(context)))
+            .filter(Unchecked.predicate(b -> b.supports(request, response)))
             .findFirst()
             .orElse(null);
-        return FunctionUtils.doUnchecked(() -> validator != null && validator.validate(context));
+        return FunctionUtils.doUnchecked(() -> validator != null && validator.validate(request, response));
     }
 
     private Optional<AccessTokenGrantRequestExtractor> extractAccessTokenGrantRequest(
-        final WebContext context) {
+        final HttpServletRequest request) {
         return accessTokenGrantRequestExtractors.getObject()
             .stream()
             .filter(BeanSupplier::isNotProxy)
-            .filter(ext -> ext.supports(context))
+            .filter(ext -> ext.supports(request))
             .findFirst();
     }
     

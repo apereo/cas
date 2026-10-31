@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Account Profile</title>
+    <link href="../../static/css/account.css" rel="stylesheet" th:remove="tag"/>
+</head>
+<body>
+<section th:fragment="surrogate" th:if="${surrogateAccounts != null || #cas.isTrue(surrogateWildcard) || surrogateImpersonatedBy != null}"
+         id="divSurrogateAccounts" class="profile-content" hidden aria-labelledby="divSurrogateAccountsTitle"
+         th:data-account-trail="|#{screen.account.trail.root} › #{screen.account.group.access} › #{screen.account.surrogate.title}|">
+    <header>
+        <div>
+            <h2 id="divSurrogateAccountsTitle" th:text="#{screen.account.surrogate.title}">Impersonation</h2>
+            <p th:text="#{screen.account.surrogate.subtitle}">Accounts you may sign in as on someone's behalf.</p>
+        </div>
+    </header>
+    <div id="surrogateCurrent" class="cas-account-alert" role="status" th:if="${surrogateImpersonatedBy}">
+        <i class="mdi mdi-account-switch-outline" aria-hidden="true"></i>
+        <p th:text="#{screen.account.surrogate.current(${authentication.principal.id}, ${surrogateImpersonatedBy})}">
+            You are using the account casuser. You signed in as admin.</p>
+    </div>
+    <p id="surrogateWildcard" class="cas-account-empty" th:if="${#cas.isTrue(surrogateWildcard)}"
+       th:text="#{screen.account.surrogate.wildcard}">You may impersonate any account.</p>
+    <ul id="surrogateAccountsList" class="cas-account-list" data-account-list th:if="${surrogateAccounts}"
+        th:attr="data-filter-label=#{screen.account.list.filter},data-more-label=#{screen.account.list.more},data-count-label=#{screen.account.list.count}">
+        <li class="cas-account-item" th:each="entry : ${surrogateAccounts}">
+            <div class="cas-account-item-row">
+                <span class="cas-account-item-icon" aria-hidden="true"><i class="mdi mdi-account-arrow-right-outline"></i></span>
+                <div class="cas-account-item-body">
+                    <div class="cas-account-item-title"><span data-field="account" th:text="${entry}">banderson</span></div>
+                </div>
+            </div>
+        </li>
+    </ul>
+    <p class="cas-account-empty" th:if="${surrogateAccounts == null && !#cas.isTrue(surrogateWildcard)}"
+       th:text="#{screen.account.surrogate.empty}">You may not impersonate any account.</p>
+</section>
+</body>
+</html>

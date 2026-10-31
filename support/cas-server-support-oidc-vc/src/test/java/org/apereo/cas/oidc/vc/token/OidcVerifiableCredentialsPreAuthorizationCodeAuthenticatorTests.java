@@ -7,15 +7,13 @@ import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.vc.offer.OidcVerifiableCredentialTransactionService;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
+import org.apereo.cas.support.oauth.authenticator.OAuth20ClientAuthenticationToken;
+import org.apereo.cas.support.oauth.authenticator.OAuth20ClientCredentialsAuthenticator;
 import org.apereo.cas.ticket.TransientSessionTicket;
 import lombok.val;
+import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.pac4j.core.context.CallContext;
-import org.pac4j.core.credentials.UsernamePasswordCredentials;
-import org.pac4j.core.credentials.authenticator.Authenticator;
-import org.pac4j.jee.context.JEEContext;
-import org.pac4j.jee.context.session.JEESessionStore;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
@@ -36,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class OidcVerifiableCredentialsPreAuthorizationCodeAuthenticatorTests extends AbstractOidcTests {
     @Autowired
     @Qualifier("oidcVerifiableCredentialsPreAuthorizationCodeAuthenticator")
-    private Authenticator oidcVerifiableCredentialsPreAuthorizationCodeAuthenticator;
+    private OAuth20ClientCredentialsAuthenticator oidcVerifiableCredentialsPreAuthorizationCodeAuthenticator;
 
     @Autowired
     @Qualifier(OidcVerifiableCredentialTransactionService.BEAN_NAME)
@@ -49,15 +47,12 @@ public class OidcVerifiableCredentialsPreAuthorizationCodeAuthenticatorTests ext
         val transactionCode = ticket.getPropertyAsString(
             OidcVerifiableCredentialTransactionService.PROPERTY_TRANSACTION_CODE);
         assertNotNull(transactionCode);
-        val credentials = createCredentials(ticket.getId(), OAuth20GrantTypes.PRE_AUTHORIZED_CODE);
+        val credentials = createCredentials(ticket.getId(), OAuth20GrantTypes.PRE_AUTHORIZED_CODE, transactionCode);
 
-        val result = oidcVerifiableCredentialsPreAuthorizationCodeAuthenticator.validate(
-            createCallContext(transactionCode), credentials);
+        val result = oidcVerifiableCredentialsPreAuthorizationCodeAuthenticator.authenticate(credentials);
         assertTrue(result.isPresent());
-        assertSame(credentials, result.orElseThrow());
 
-        val profile = credentials.getUserProfile();
-        assertNotNull(profile);
+        val profile = result.orElseThrow();
         assertEquals("casuser", profile.getId());
         assertEquals(getOidcRegisteredService().getClientId(), profile.getAttribute(OAuth20Constants.CLIENT_ID));
         assertEquals(credentialConfigurationIds, profile.getAttribute("credentialConfigurationIds"));
@@ -67,11 +62,10 @@ public class OidcVerifiableCredentialsPreAuthorizationCodeAuthenticatorTests ext
     @Test
     void verifyMissingTransactionCodeIsRejected() {
         val ticket = issuePreAuthorizationCode(List.of("UniversityDegreeCredential"));
-        val credentials = createCredentials(ticket.getId(), OAuth20GrantTypes.PRE_AUTHORIZED_CODE);
+        val credentials = createCredentials(ticket.getId(), OAuth20GrantTypes.PRE_AUTHORIZED_CODE, null);
 
-        val result = oidcVerifiableCredentialsPreAuthorizationCodeAuthenticator.validate(createCallContext(null), credentials);
+        val result = oidcVerifiableCredentialsPreAuthorizationCodeAuthenticator.authenticate(credentials);
         assertTrue(result.isEmpty());
-        assertNull(credentials.getUserProfile());
     }
 
     @Test
@@ -79,31 +73,26 @@ public class OidcVerifiableCredentialsPreAuthorizationCodeAuthenticatorTests ext
         val ticket = issuePreAuthorizationCode(List.of("UniversityDegreeCredential"));
         val transactionId = ticket.getPropertyAsString("transactionId");
         assertNotNull(transactionId);
-        val credentials = createCredentials(ticket.getId(), OAuth20GrantTypes.PRE_AUTHORIZED_CODE);
+        val credentials = createCredentials(ticket.getId(), OAuth20GrantTypes.PRE_AUTHORIZED_CODE, transactionId);
 
-        val result = oidcVerifiableCredentialsPreAuthorizationCodeAuthenticator.validate(
-            createCallContext(transactionId), credentials);
+        val result = oidcVerifiableCredentialsPreAuthorizationCodeAuthenticator.authenticate(credentials);
         assertTrue(result.isEmpty());
-        assertNull(credentials.getUserProfile());
     }
 
     @Test
     void verifyMismatchedTransactionCode() {
         val ticket = issuePreAuthorizationCode(List.of("UniversityDegreeCredential"));
-        val credentials = createCredentials(ticket.getId(), OAuth20GrantTypes.PRE_AUTHORIZED_CODE);
+        val credentials = createCredentials(ticket.getId(), OAuth20GrantTypes.PRE_AUTHORIZED_CODE, UUID.randomUUID().toString());
 
-        val result = oidcVerifiableCredentialsPreAuthorizationCodeAuthenticator.validate(
-            createCallContext(UUID.randomUUID().toString()), credentials);
+        val result = oidcVerifiableCredentialsPreAuthorizationCodeAuthenticator.authenticate(credentials);
         assertTrue(result.isEmpty());
-        assertNull(credentials.getUserProfile());
     }
 
     @Test
     void verifyUnsupportedGrantType() {
-        val credentials = createCredentials(UUID.randomUUID().toString(), OAuth20GrantTypes.AUTHORIZATION_CODE);
-        val result = oidcVerifiableCredentialsPreAuthorizationCodeAuthenticator.validate(createCallContext(null), credentials);
+        val credentials = createCredentials(UUID.randomUUID().toString(), OAuth20GrantTypes.AUTHORIZATION_CODE, null);
+        val result = oidcVerifiableCredentialsPreAuthorizationCodeAuthenticator.authenticate(credentials);
         assertTrue(result.isEmpty());
-        assertNull(credentials.getUserProfile());
     }
 
     private TransientSessionTicket issuePreAuthorizationCode(final List<String> credentialConfigurationIds) {
@@ -119,17 +108,16 @@ public class OidcVerifiableCredentialsPreAuthorizationCodeAuthenticatorTests ext
         return ticket;
     }
 
-    private static UsernamePasswordCredentials createCredentials(final String preAuthorizationCode,
-                                                                 final OAuth20GrantTypes grantType) {
-        return new UsernamePasswordCredentials(preAuthorizationCode, grantType.getType());
-    }
-
-    private static CallContext createCallContext(final String transactionCode) {
+    private static OAuth20ClientAuthenticationToken createCredentials(final String preAuthorizationCode,
+                                                                      final OAuth20GrantTypes grantType,
+                                                                      final @Nullable String transactionCode) {
         val request = new MockHttpServletRequest();
         if (transactionCode != null) {
             request.addParameter(OidcConstants.TX_CODE, transactionCode);
         }
-        val context = new JEEContext(request, new MockHttpServletResponse());
-        return new CallContext(context, new JEESessionStore());
+        val token = new OAuth20ClientAuthenticationToken(request, OAuth20ClientAuthenticationToken.CredentialSource.FORM,
+            preAuthorizationCode, grantType.getType());
+        token.setResponse(new MockHttpServletResponse());
+        return token;
     }
 }

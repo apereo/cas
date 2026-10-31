@@ -4,7 +4,9 @@ import module java.base;
 import org.apereo.cas.api.PasswordlessAuthenticationRequest;
 import org.apereo.cas.api.PasswordlessRequestParser;
 import org.apereo.cas.api.PasswordlessUserAccount;
+import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.MockRequestContext;
+import org.apereo.cas.web.support.WebUtils;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -24,11 +26,32 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Import(BaseWebflowConfigurerTests.SharedTestConfiguration.class)
 @Tag("WebflowAuthenticationActions")
-@TestPropertySource(properties = "cas.authn.passwordless.accounts.groovy.location=classpath:PasswordlessAccount.groovy")
+@TestPropertySource(properties = {
+    "cas.authn.passwordless.accounts.groovy.location=classpath:PasswordlessAccount.groovy",
+    "CasFeatureModule.AccountManagement.enabled=true"
+})
 class VerifyPasswordlessAccountAuthenticationActionTests extends BasePasswordlessAuthenticationActionTests {
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_VERIFY_PASSWORDLESS_ACCOUNT_AUTHN)
     private Action verifyPasswordlessAccountAuthenticationAction;
+
+    @Autowired
+    @Qualifier(CasWebflowConstants.ACTION_ID_ACCOUNT_PROFILE_PASSWORDLESS_CONTACT_METHODS)
+    private Action passwordlessAccountProfileContactMethodsAction;
+
+    @Test
+    void verifyAccountProfileContactMethods() throws Throwable {
+        val context = MockRequestContext.create(applicationContext);
+        WebUtils.putAuthentication(RegisteredServiceTestUtils.getAuthentication("needs-password"), context);
+        assertNull(passwordlessAccountProfileContactMethodsAction.execute(context));
+        assertEquals(List.of(Map.of("type", "email", "value", "casuser@example.org"), Map.of("type", "phone", "value", "123-456-7890")),
+            context.getFlowScope().get(PasswordlessAccountProfileContactMethodsAction.FLOW_SCOPE_ATTR_CONTACT_METHODS));
+
+        val unknown = MockRequestContext.create(applicationContext);
+        WebUtils.putAuthentication(RegisteredServiceTestUtils.getAuthentication("unknown"), unknown);
+        assertNull(passwordlessAccountProfileContactMethodsAction.execute(unknown));
+        assertFalse(unknown.getFlowScope().contains(PasswordlessAccountProfileContactMethodsAction.FLOW_SCOPE_ATTR_CONTACT_METHODS));
+    }
 
     @Test
     void verifyAction() throws Throwable {

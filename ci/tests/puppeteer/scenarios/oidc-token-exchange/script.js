@@ -74,7 +74,8 @@ async function exchangeToken(token, fromType, toType) {
 }
 
 async function verifyTokenExchangeTypes() {
-    const params = `grant_type=client_credentials&scope=${encodeURIComponent("openid profile address phone")}`;
+    let params = `grant_type=client_credentials&scope=${encodeURIComponent("openid profile address phone")}`;
+    params += `&resource=${encodeURIComponent("https://localhost:9859/anything/api")}`;
     const url = `https://localhost:8443/cas/oauth2.0/token?${params}`;
     await cas.log(`Calling ${url}`);
 

@@ -387,7 +387,7 @@ class SamlIdPMetadataConfiguration {
             final CasConfigurationProperties casProperties) {
             val idp = casProperties.getAuthn().getSamlIdp();
             return Caffeine.newBuilder().initialCapacity(10)
-                .maximumSize(100).expireAfterAccess(Beans.newDuration(idp.getMetadata().getCore().getCacheExpiration())).build();
+                .maximumSize(100).expireAfterWrite(Beans.newDuration(idp.getMetadata().getCore().getCacheExpiration())).build();
         }
 
         @ConditionalOnMissingBean(name = "chainingMetadataResolverCacheLoader")

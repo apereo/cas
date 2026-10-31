@@ -1,13 +1,11 @@
 package org.apereo.cas.services;
 
 import module java.base;
-import org.apereo.cas.support.events.service.CasRegisteredServiceDeletedEvent;
 import org.apereo.cas.util.PublisherIdentifier;
 import org.apereo.cas.util.cache.DistributedCacheManager;
 import org.apereo.cas.util.cache.DistributedCacheObject;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.val;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.messaging.handler.annotation.Payload;
 
@@ -27,7 +25,9 @@ public class RegisteredServiceKafkaDistributedCacheListener {
         PublisherIdentifier> cacheManager;
 
     /**
-     * Registered service distributed cache kafka listener.
+     * Registered service distributed cache kafka listener. Entries published by other nodes are stored
+     * as they are, deletion markers included, so that loading services on this node removes a service
+     * deleted elsewhere instead of sending it back.
      *
      * @param item the item
      */
@@ -37,20 +37,8 @@ public class RegisteredServiceKafkaDistributedCacheListener {
     public void registeredServiceDistributedCacheKafkaListener(
         @Payload
         final DistributedCacheObject<RegisteredService> item) {
-        if (!item.getPublisherIdentifier().getId().equals(publisherIdentifier.getId()) && !deleteObjectFromCache(item)) {
+        if (!item.getPublisherIdentifier().getId().equals(publisherIdentifier.getId())) {
             cacheManager.update(item.getValue(), item, false);
         }
     }
-
-    private boolean deleteObjectFromCache(final DistributedCacheObject<RegisteredService> item) {
-        if (item.containsProperty("event")) {
-            val event = item.getProperty("event", String.class);
-            if (event.equalsIgnoreCase(CasRegisteredServiceDeletedEvent.class.getSimpleName())) {
-                cacheManager.remove(item.getValue(), item, false);
-                return true;
-            }
-        }
-        return false;
-    }
-
 }

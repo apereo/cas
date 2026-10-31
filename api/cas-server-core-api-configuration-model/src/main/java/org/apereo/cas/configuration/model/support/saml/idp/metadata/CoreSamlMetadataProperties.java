@@ -44,6 +44,17 @@ public class CoreSamlMetadataProperties implements Serializable {
     private String cacheExpiration = "PT24H";
 
     /**
+     * How long a failure to load metadata for a service provider is remembered before
+     * the metadata source is consulted again. Requests for that service provider fail
+     * immediately during this period instead of contacting the metadata source every time.
+     * This also bounds how often a cached metadata document that holds a single service provider
+     * is reloaded because it does not contain the requested entity.
+     * A zero duration disables remembering failures.
+     */
+    @DurationCapable
+    private String failureCacheExpiration = "PT1M";
+
+    /**
      * Whether valid metadata is required.
      */
     private boolean requireValidMetadata = true;
@@ -93,9 +104,9 @@ public class CoreSamlMetadataProperties implements Serializable {
     private int keySize = 4096;
 
     /**
-     * When attempting to resolve metadata from sources, particularly URLs,
+     * When fetching metadata over HTTP, such as from URLs or a metadata query server,
      * this setting controls the number of <strong>retry attempts</strong> that CAS should execute
-     * when metadata resolution fails. Setting this value to a zero or negative value
+     * when the request fails. Setting this value to a zero or negative value
      * will disable the retry policy.
      */
     private int maximumRetryAttempts = 3;

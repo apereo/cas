@@ -17,7 +17,8 @@
         <h2 th:utext="#{cas.mfa.simple.registration.title}">Register Account</h2>
         <p th:utext="#{cas.mfa.simple.registration.description}">Your account is not registered.</p>
         
-        <form th:if="${allowRegisterEmail}" method="post" id="fmRegister" class="fm-v clearfix" th:action="@{/login}">
+        <form th:if="${allowRegisterEmail}" method="post" id="fmRegister" class="fm-v clearfix"
+              th:action="${activeFlowId == 'account'} ? @{/account} : @{/login}">
             <div id="errorPanel" class="banner banner-danger my-2" th:if="${flowRequestContext.messageContext.hasErrorMessages()}">
                 <h3>Error</h3>
                 <p th:each="message : ${flowRequestContext.messageContext.allMessages}"
@@ -45,9 +46,15 @@
                     </div>
                 </div>
             </section>
-            <button class="mdc-button mdc-button--raised btn btn-primary drop-button">
-                <span class="mdc-button__label" th:text="#{screen.welcome.button.register}">Register</span>
-            </button>
+            <div class="d-flex gap-2">
+                <button class="mdc-button mdc-button--raised btn btn-primary drop-button" id="registerButton">
+                    <span class="mdc-button__label" th:text="#{screen.welcome.button.register}">Register</span>
+                </button>
+                    <a class="mdc-button mdc-button--outline btn btn-outline-secondary button-cancel" id="cancel"
+                       th:if="${activeFlowId == 'account'}" th:href="@{/account}">
+                        <span class="mdc-button__label" th:text="#{screen.pm.button.cancel}">Cancel</span>
+                    </a>
+            </div>
             <input type="hidden" name="_eventId" value="register"/>
             <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
         </form>

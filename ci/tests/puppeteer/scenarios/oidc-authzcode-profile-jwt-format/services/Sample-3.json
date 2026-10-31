@@ -1,0 +1,27 @@
+{
+  "@class": "org.apereo.cas.services.OidcRegisteredService",
+  "clientId": "optional",
+  "clientSecret": "secret",
+  "serviceId": "^https://localhost:9859/anything/optional.*",
+  "name": "OptionalEncryption",
+  "id": 3,
+  "evaluationOrder": 2,
+  "scopes": [
+    "java.util.HashSet",
+    [
+      "openid",
+      "profile"
+    ]
+  ],
+  "supportedResponseTypes": [
+    "java.util.HashSet",
+    [
+      "code"
+    ]
+  ],
+  "bypassApprovalPrompt": true,
+  "encryptIdToken": true,
+  "idTokenEncryptionAlg": "RSA-OAEP-256",
+  "idTokenEncryptionEncoding": "A256GCM",
+  "idTokenEncryptionOptional": true
+}

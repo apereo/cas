@@ -15,11 +15,13 @@ import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.SurrogateWebflowConfigurer;
 import org.apereo.cas.web.flow.action.LoadSurrogatesListAction;
+import org.apereo.cas.web.flow.action.SurrogateAccountProfileAction;
 import org.apereo.cas.web.flow.action.SurrogateAuthorizationAction;
 import org.apereo.cas.web.flow.action.SurrogateInitialAuthenticationAction;
 import org.apereo.cas.web.flow.action.SurrogateSelectionAction;
 import org.apereo.cas.web.flow.actions.WebflowActionBeanSupplier;
 import org.apereo.cas.web.flow.authentication.CasWebflowExceptionCatalog;
+import org.apereo.cas.web.flow.configurer.acct.AccountProfileContributionWebflowConfigurer;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -142,6 +144,52 @@ class SurrogateAuthenticationWebflowConfiguration {
                 .withProperties(casProperties)
                 .withAction(() -> new LoadSurrogatesListAction(surrogateAuthenticationService, surrogatePrincipalBuilder))
                 .withId(CasWebflowConstants.ACTION_ID_LOAD_SURROGATES_LIST_ACTION)
+                .build()
+                .get();
+        }
+    }
+
+    @Configuration(value = "SurrogateAuthenticationAccountProfileConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.AccountManagement, enabledByDefault = false)
+    static class SurrogateAuthenticationAccountProfileConfiguration {
+        @ConditionalOnMissingBean(name = "surrogateAccountProfileWebflowConfigurer")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public CasWebflowConfigurer surrogateAccountProfileWebflowConfigurer(
+            final CasConfigurationProperties casProperties,
+            final ConfigurableApplicationContext applicationContext,
+            @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_DEFINITION_REGISTRY)
+            final FlowDefinitionRegistry flowDefinitionRegistry,
+            @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
+            final FlowBuilderServices flowBuilderServices) {
+            return new AccountProfileContributionWebflowConfigurer(flowBuilderServices,
+                flowDefinitionRegistry, applicationContext, casProperties)
+                .withRenderAction(CasWebflowConstants.ACTION_ID_ACCOUNT_PROFILE_SURROGATE_ACCOUNTS);
+        }
+
+        @Bean
+        @ConditionalOnMissingBean(name = "surrogateAccountProfileWebflowExecutionPlanConfigurer")
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public CasWebflowExecutionPlanConfigurer surrogateAccountProfileWebflowExecutionPlanConfigurer(
+            @Qualifier("surrogateAccountProfileWebflowConfigurer")
+            final CasWebflowConfigurer surrogateAccountProfileWebflowConfigurer) {
+            return plan -> plan.registerWebflowConfigurer(surrogateAccountProfileWebflowConfigurer);
+        }
+
+        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_ACCOUNT_PROFILE_SURROGATE_ACCOUNTS)
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public Action surrogateAccountProfileAction(
+            final CasConfigurationProperties casProperties,
+            final ConfigurableApplicationContext applicationContext,
+            @Qualifier(SurrogateAuthenticationService.BEAN_NAME)
+            final SurrogateAuthenticationService surrogateAuthenticationService) {
+            return WebflowActionBeanSupplier.builder()
+                .withApplicationContext(applicationContext)
+                .withProperties(casProperties)
+                .withAction(() -> new SurrogateAccountProfileAction(surrogateAuthenticationService))
+                .withId(CasWebflowConstants.ACTION_ID_ACCOUNT_PROFILE_SURROGATE_ACCOUNTS)
                 .build()
                 .get();
         }

@@ -50,6 +50,15 @@ The expiration policy of the service metadata is controlled using the following 
 2. Metadata expiration policy and duration defined for the SAML2 registered service defined with CAS.
 3. Global metadata expiration policy controlled via CAS settings.
 
+Cached metadata is tied to the metadata settings of the service definition, such as signature validation, filtering criteria
+or the expiration policy. Once a service definition changes any of those, the next request resolves its metadata again
+on every CAS node, and the entry built from the previous definition simply expires. Metadata kept in a metadata store
+or served by a metadata query server is cached per entity.
+
+When metadata cannot be loaded for a service provider, CAS remembers the failure for a short period that is controlled
+via CAS settings, and requests for that service provider are rejected right away instead of contacting the metadata
+source every time. A failed HTTP request that fetches metadata may still be retried, again as controlled via CAS settings.
+
 {% include_cached actuators.html endpoints="samlIdPRegisteredServiceMetadataCache" %}
 
 <div class="alert alert-info">:information_source: <strong>Metadata Cache</strong><p>

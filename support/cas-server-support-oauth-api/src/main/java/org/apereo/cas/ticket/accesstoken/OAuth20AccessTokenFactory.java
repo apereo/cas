@@ -24,6 +24,7 @@ public interface OAuth20AccessTokenFactory extends TicketFactory {
      * @param authentication       the authentication
      * @param ticketGrantingTicket the ticket granting ticket
      * @param scopes               the scopes
+     * @param resources            the resource indicators the token is issued for
      * @param token                the token
      * @param clientId             the client id
      * @param requestClaims        the request claims
@@ -36,12 +37,42 @@ public interface OAuth20AccessTokenFactory extends TicketFactory {
                               Authentication authentication,
                               @Nullable Ticket ticketGrantingTicket,
                               Collection<String> scopes,
+                              Collection<String> resources,
                               @Nullable Ticket token,
                               String clientId,
                               Map<String, Map<String, Object>> requestClaims,
                               OAuth20ResponseTypes responseType,
                               OAuth20GrantTypes grantType)
             throws Throwable;
+
+    /**
+     * Create an access token that is issued for no particular resource.
+     *
+     * @param service              the service
+     * @param authentication       the authentication
+     * @param ticketGrantingTicket the ticket granting ticket
+     * @param scopes               the scopes
+     * @param token                the token
+     * @param clientId             the client id
+     * @param requestClaims        the request claims
+     * @param responseType         the response type
+     * @param grantType            the grant type
+     * @return the access token
+     * @throws Throwable the throwable
+     */
+    default OAuth20AccessToken create(final Service service,
+                                      final Authentication authentication,
+                                      @Nullable final Ticket ticketGrantingTicket,
+                                      final Collection<String> scopes,
+                                      @Nullable final Ticket token,
+                                      final String clientId,
+                                      final Map<String, Map<String, Object>> requestClaims,
+                                      final OAuth20ResponseTypes responseType,
+                                      final OAuth20GrantTypes grantType)
+            throws Throwable {
+        return create(service, authentication, ticketGrantingTicket, scopes, Set.of(), token,
+            clientId, requestClaims, responseType, grantType);
+    }
 
     /**
      * Create access token.

@@ -2,8 +2,9 @@ package org.apereo.cas.support.oauth.web.views;
 
 import module java.base;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
-import org.pac4j.core.context.WebContext;
 import org.springframework.web.servlet.ModelAndView;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * This is {@link ConsentApprovalViewResolver}.
@@ -17,10 +18,11 @@ public interface ConsentApprovalViewResolver {
     /**
      * Resolve model and view.
      *
-     * @param context the context
-     * @param service the service
+     * @param request  the request
+     * @param response the response
+     * @param service  the service
      * @return the model and view. Could be an empty view which would indicate consent is not required.
      * @throws Exception the exception
      */
-    ModelAndView resolve(WebContext context, OAuthRegisteredService service) throws Exception;
+    ModelAndView resolve(HttpServletRequest request, HttpServletResponse response, OAuthRegisteredService service) throws Exception;
 }
