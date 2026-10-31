@@ -59,5 +59,31 @@ const assert = require("assert");
         {
             "Content-Length": body.length,
             "Content-Type": "application/json"
-        }, 401, body);
+        }, 401, body, async (res) => {
+            const challenge = String(res.headers["www-authenticate"]);
+            await cas.log(`Challenge without an access token: ${challenge}`);
+            assert.equal(challenge, "Bearer");
+        });
+
+    await cas.doRequest("https://localhost:8443/cas/oidc/register", "POST",
+        {
+            "Authorization": "Bearer AT-1-unknown",
+            "Content-Length": body.length,
+            "Content-Type": "application/json"
+        }, 401, body, async (res) => {
+            const challenge = String(res.headers["www-authenticate"]);
+            await cas.log(`Challenge for an unknown access token: ${challenge}`);
+            assert(challenge.startsWith("Bearer error=\"invalid_token\""), challenge);
+        });
+
+    await cas.doRequest("https://localhost:8443/cas/oidc/register", "POST",
+        {
+            "Authorization": `Bearer ${entity.registration_access_token}`,
+            "Content-Length": body.length,
+            "Content-Type": "application/json"
+        }, 403, body, async (res) => {
+            const challenge = String(res.headers["www-authenticate"]);
+            await cas.log(`Challenge for a registration access token: ${challenge}`);
+            assert(challenge.startsWith("Bearer error=\"insufficient_scope\""), challenge);
+        });
 })();

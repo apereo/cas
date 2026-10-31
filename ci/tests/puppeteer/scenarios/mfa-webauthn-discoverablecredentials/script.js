@@ -1,3 +1,4 @@
+const assert = require("assert");
 const cas = require("../../cas.js");
 
 (async () => {
@@ -24,9 +25,27 @@ const cas = require("../../cas.js");
     await cas.pressBackspace(page);
     await page.type("#credentialNickname", "mydevice");
 
+    const registrationRequests = [];
+    page.on("response", async (response) => {
+        if (response.request().method() === "POST" && response.url().includes("/webauthn/register")) {
+            registrationRequests.push(await response.text().catch(() => ""));
+        }
+    });
     await cas.click(page, "#registerDiscoverableCredentialButton");
 
     await cas.sleep(5000);
+    assert(registrationRequests.some((body) => body.includes("\"attestation\":\"direct\"")),
+        "Registration must ask the authenticator for direct attestation");
+
+    if (process.env.SCENARIO_VARIATION === "untrusted-attestation-refused") {
+        await cas.logg("The attestation of the virtual authenticator cannot be trusted, so the registration is refused");
+        const status = await cas.innerText(page, "#status");
+        assert(/error|failed/i.test(status), `Registration must fail, but the status is ${status}`);
+        await cas.assertCookie(page, false);
+        await cas.removeWebAuthnVirtualAuthenticator(virtualAuthenticator);
+        await cas.closeBrowser(browser);
+        return;
+    }
 
     await cas.click(page, "#authnButton");
 
@@ -64,6 +83,18 @@ const cas = require("../../cas.js");
     await cas.assertInnerTextContains(page, "#attribute-tab-1 table#attributesTable tbody", "[WebAuthnAuthenticationHandler]");
     await cas.assertInnerTextContains(page, "#attribute-tab-1 table#attributesTable tbody", "[mfa-webauthn]");
     await cas.assertInnerTextContains(page, "#attribute-tab-1 table#attributesTable tbody", "[WebAuthnCredential]");
+
+    await cas.logg("User verification is required, so an authenticator that cannot verify the user is refused");
+    await cas.gotoLogout(page);
+    await virtualAuthenticator.client.send("WebAuthn.setUserVerified", {
+        authenticatorId: virtualAuthenticator.authenticator.authenticatorId,
+        isUserVerified: false
+    });
+    await cas.gotoLoginWithAuthnMethod(page, undefined, "mfa-webauthn");
+    await cas.sleep(1000);
+    await cas.click(page, "#authnButton");
+    await cas.sleep(5000);
+    await cas.assertCookie(page, false);
 
     await cas.sleep(2000);
 

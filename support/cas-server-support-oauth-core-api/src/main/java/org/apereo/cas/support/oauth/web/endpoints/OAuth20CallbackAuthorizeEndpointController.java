@@ -1,28 +1,27 @@
 package org.apereo.cas.support.oauth.web.endpoints;
 
 import module java.base;
+import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.support.oauth.OAuth20Constants;
-import org.apereo.cas.support.oauth.authenticator.Authenticators;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.pac4j.core.context.CallContext;
-import org.pac4j.core.engine.DefaultCallbackLogic;
-import org.pac4j.core.exception.http.HttpAction;
-import org.pac4j.core.exception.http.WithLocationAction;
-import org.pac4j.core.profile.ProfileManager;
-import org.pac4j.jee.context.JEEContext;
-import org.pac4j.jee.context.JEEFrameworkParameters;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.servlet.ModelAndView;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 /**
- * OAuth callback authorize controller based on the pac4j callback controller.
+ * The callback of the login handshake of the authorization endpoint. CAS sends the browser here with a service ticket
+ * for the callback URL; the ticket is validated for the URL it was issued for, the session is renewed when the session
+ * store can renew it (a session replicated through the ticket registry keeps its identifier), the profile of the user is
+ * kept in it for the client of the request, and the request saved before the login is resumed. Without a
+ * saved request the browser goes to the redirect URI of the client, when it is one the client registered, or to
+ * {@value #DEFAULT_URL}. A ticket that does not validate is answered with the service error view and {@code 401}.
  *
  * @author Jerome Leleu
  * @since 3.5.0
@@ -30,6 +29,10 @@ import jakarta.servlet.http.HttpServletResponse;
 @Slf4j
 @Tag(name = "OAuth")
 public class OAuth20CallbackAuthorizeEndpointController extends BaseOAuth20Controller<OAuth20ConfigurationContext> {
+    /**
+     * Where the browser goes without a saved request or a registered redirect URI.
+     */
+    public static final String DEFAULT_URL = "/";
 
     public OAuth20CallbackAuthorizeEndpointController(final OAuth20ConfigurationContext oAuthConfigurationContext) {
         super(oAuthConfigurationContext);
@@ -46,40 +49,72 @@ public class OAuth20CallbackAuthorizeEndpointController extends BaseOAuth20Contr
     @Operation(summary = "Handle OAuth callback authorize request", hidden = true)
     public ModelAndView handleRequest(final HttpServletRequest request, final HttpServletResponse response) {
         ensureSessionReplicationIsAutoconfiguredIfNeedBe(request);
-
-        val callback = new OAuth20CallbackLogic();
-        val context = new JEEContext(request, response);
-        String defaultUrl = null;
-        val clientId = context.getRequestParameter(OAuth20Constants.CLIENT_ID);
-        val redirectUri = context.getRequestParameter(OAuth20Constants.REDIRECT_URI);
-        if (clientId.isPresent() && redirectUri.isPresent()) {
-            val servicesManager = getConfigurationContext().getServicesManager();
-            val serviceClient = OAuth20Utils.getRegisteredOAuthServiceByClientId(servicesManager, clientId.get());
-            if (serviceClient != null && serviceClient.matches(redirectUri.get())) {
-                defaultUrl = redirectUri.get();
-            }
+        val ticket = request.getParameter(CasProtocolConstants.PARAMETER_TICKET);
+        if (StringUtils.isNotBlank(ticket) && !authenticate(request, response, ticket)) {
+            return OAuth20Utils.produceUnauthorizedErrorView(HttpStatus.UNAUTHORIZED);
         }
-        callback.perform(getConfigurationContext().getOauthConfig(),
-            defaultUrl, Boolean.FALSE, Authenticators.CAS_OAUTH_CLIENT,
-            new JEEFrameworkParameters(request, response));
-        val url = callback.getRedirectUrl();
-        val manager = new ProfileManager(context, getConfigurationContext().getSessionStore());
+        val url = restoreRequestedUrl(request, response);
+        val profile = OAuth20Utils.findAuthenticatedUserProfile(request, response, getConfigurationContext().getSessionStore()).orElse(null);
         LOGGER.trace("OAuth callback URL is [{}]", url);
-        return getConfigurationContext().getCallbackAuthorizeViewResolver().resolve(context, manager, url);
+        return getConfigurationContext().getCallbackAuthorizeViewResolver().resolve(request, response, profile, url);
     }
 
-    @Getter
-    private static final class OAuth20CallbackLogic extends DefaultCallbackLogic {
-        private String redirectUrl;
-
-        @Override
-        protected HttpAction redirectToOriginallyRequestedUrl(final CallContext callContext,
-                                                              final String defaultUrl) {
-            val result = getSavedRequestHandler().restore(callContext, defaultUrl);
-            if (result instanceof final WithLocationAction locationAction) {
-                redirectUrl = locationAction.getLocation();
+    /**
+     * Validate the ticket for the callback URL it was issued for, renew the session when the session store can, and keep the
+     * profile of the user in it, recording the client of the request as its {@code oauthClientId} attribute. Whether the
+     * ticket comes from a new login is kept for the request under {@link OAuth20Constants#REQUEST_ATTRIBUTE_NEW_LOGIN}.
+     *
+     * @param request  the request
+     * @param response the response
+     * @param ticket   the service ticket
+     * @return whether the ticket validated
+     */
+    protected boolean authenticate(final HttpServletRequest request, final HttpServletResponse response, final String ticket) {
+        val context = getConfigurationContext();
+        val service = context.getCasCallbackUrlResolver().computeServiceForTicket(request);
+        try {
+            val validatedTicket = context.getCasTicketValidator().validate(ticket, service);
+            val profile = validatedTicket.profile();
+            val clientId = OAuth20Utils.resolveClientIdFromRequest(request, context.getServicesManager(), context.getRequestParameterResolver());
+            if (StringUtils.isNotBlank(clientId)) {
+                profile.addAttribute(OAuth20Constants.PROFILE_ATTRIBUTE_CLIENT_ID, clientId);
             }
-            return result;
+            context.getSessionStore().renewSession(request);
+            context.getSessionStore().set(request, response, OAuth20Constants.SESSION_ATTRIBUTE_AUTHENTICATED_PROFILE, profile);
+            request.setAttribute(OAuth20Constants.REQUEST_ATTRIBUTE_AUTHENTICATED_PROFILE, profile);
+            request.setAttribute(OAuth20Constants.REQUEST_ATTRIBUTE_NEW_LOGIN, validatedTicket.fromNewLogin());
+            LOGGER.debug("Service ticket [{}] for [{}] authenticated [{}]", ticket, service, profile.getId());
+            return true;
+        } catch (final Throwable e) {
+            LOGGER.warn("Unable to validate service ticket [{}] for [{}]: [{}]", ticket, service, e.getMessage());
+            LOGGER.debug(e.getMessage(), e);
+            return false;
         }
+    }
+
+    /**
+     * The request saved before the login, which is removed from the session, or else the redirect URI of the client when
+     * it is one the client registered, or else {@value #DEFAULT_URL}.
+     *
+     * @param request  the request
+     * @param response the response
+     * @return the url to go to
+     */
+    protected String restoreRequestedUrl(final HttpServletRequest request, final HttpServletResponse response) {
+        val sessionStore = getConfigurationContext().getSessionStore();
+        val requestedUrl = sessionStore.get(request, OAuth20Constants.SESSION_ATTRIBUTE_REQUESTED_URL).map(String::valueOf);
+        if (requestedUrl.isPresent()) {
+            sessionStore.set(request, response, OAuth20Constants.SESSION_ATTRIBUTE_REQUESTED_URL, null);
+            return requestedUrl.get();
+        }
+        val clientId = request.getParameter(OAuth20Constants.CLIENT_ID);
+        val redirectUri = request.getParameter(OAuth20Constants.REDIRECT_URI);
+        if (StringUtils.isNoneBlank(clientId, redirectUri)) {
+            val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(getConfigurationContext().getServicesManager(), clientId);
+            if (registeredService != null && registeredService.matches(redirectUri)) {
+                return redirectUri;
+            }
+        }
+        return DEFAULT_URL;
     }
 }

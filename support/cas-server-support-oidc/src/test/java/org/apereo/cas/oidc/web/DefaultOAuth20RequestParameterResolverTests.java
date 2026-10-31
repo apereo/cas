@@ -15,9 +15,7 @@ import org.jose4j.jwk.PublicJsonWebKey;
 import org.jose4j.jwt.JwtClaims;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.pac4j.jee.context.JEEContext;
 import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -53,21 +51,18 @@ class DefaultOAuth20RequestParameterResolverTests extends AbstractOidcTests {
         when(jwtBuilder.unpack(any(Optional.class), anyString())).thenReturn(claims);
         val resolver = new DefaultOAuth20RequestParameterResolver(jwtBuilder);
 
-        val context = new JEEContext(request, new MockHttpServletResponse());
-        assertTrue(resolver.resolveRequestParameter(context, OAuth20Constants.SCOPE, List.class).orElseThrow().contains("openid"));
-        assertEquals("code", resolver.resolveRequestParameter(context, "response").orElseThrow());
+        assertTrue(resolver.resolveRequestParameter(request, OAuth20Constants.SCOPE, List.class).orElseThrow().contains("openid"));
+        assertEquals("code", resolver.resolveRequestParameter(request, "response").orElseThrow());
         verify(jwtBuilder, times(1)).unpack(any(Optional.class), anyString());
 
-        resolver.resolveRequestParameter(new JEEContext(getJwtRequest(), new MockHttpServletResponse()), "response");
+        resolver.resolveRequestParameter(getJwtRequest(), "response");
         verify(jwtBuilder, times(2)).unpack(any(Optional.class), anyString());
     }
 
     @Test
     void verifyPlainJwtWithoutClientId() {
         val request = getJwtRequest();
-        val response = new MockHttpServletResponse();
-        val context = new JEEContext(request, response);
-        val scope = oauthRequestParameterResolver.resolveRequestParameter(context, OAuth20Constants.SCOPE, List.class);
+        val scope = oauthRequestParameterResolver.resolveRequestParameter(request, OAuth20Constants.SCOPE, List.class);
         assertFalse(scope.isEmpty());
         assertTrue(scope.get().contains("openid"));
         assertTrue(scope.get().contains("profile"));
@@ -81,9 +76,7 @@ class DefaultOAuth20RequestParameterResolverTests extends AbstractOidcTests {
         servicesManager.save(registeredService);
         request.addParameter(OAuth20Constants.CLIENT_ID, registeredService.getClientId());
 
-        val response = new MockHttpServletResponse();
-        val context = new JEEContext(request, response);
-        val scope = oauthRequestParameterResolver.resolveRequestParameter(context, OAuth20Constants.CLIENT_ID, List.class);
+        val scope = oauthRequestParameterResolver.resolveRequestParameter(request, OAuth20Constants.CLIENT_ID, List.class);
         assertFalse(scope.isEmpty());
         assertTrue(scope.get().contains("client1"));
         assertTrue(scope.get().contains("client2"));
@@ -95,9 +88,7 @@ class DefaultOAuth20RequestParameterResolverTests extends AbstractOidcTests {
         request.setQueryString("client_id=myid&client_secret=mysecret");
         request.setParameter("client_id", "myid");
         request.setParameter("client_secret", "mysecret");
-        val response = new MockHttpServletResponse();
-        val context = new JEEContext(request, response);
-        assertTrue(oauthRequestParameterResolver.isParameterOnQueryString(context, OAuth20Constants.CLIENT_SECRET));
+        assertTrue(oauthRequestParameterResolver.isParameterOnQueryString(request, OAuth20Constants.CLIENT_SECRET));
     }
 
     @Test
@@ -105,11 +96,9 @@ class DefaultOAuth20RequestParameterResolverTests extends AbstractOidcTests {
         val request = new MockHttpServletRequest();
         request.setParameter("expiration", "10");
         request.setParameter("rate", "12.4365");
-        val response = new MockHttpServletResponse();
-        val context = new JEEContext(request, response);
-        assertTrue(oauthRequestParameterResolver.resolveRequestParameter(context, "expiration", Integer.class).isPresent());
-        assertTrue(oauthRequestParameterResolver.resolveRequestParameter(context, "expiration", Long.class).isPresent());
-        assertTrue(oauthRequestParameterResolver.resolveRequestParameter(context, "rate", Double.class).isPresent());
+        assertTrue(oauthRequestParameterResolver.resolveRequestParameter(request, "expiration", Integer.class).isPresent());
+        assertTrue(oauthRequestParameterResolver.resolveRequestParameter(request, "expiration", Long.class).isPresent());
+        assertTrue(oauthRequestParameterResolver.resolveRequestParameter(request, "rate", Double.class).isPresent());
     }
 
     @Test
@@ -117,10 +106,8 @@ class DefaultOAuth20RequestParameterResolverTests extends AbstractOidcTests {
         val request = new MockHttpServletRequest();
         request.setParameter("scope", "openid profile email");
         request.setParameter("keyword", "hello world");
-        val response = new MockHttpServletResponse();
-        val context = new JEEContext(request, response);
-        assertEquals(3, oauthRequestParameterResolver.resolveRequestScopes(context).size());
-        assertEquals(2, oauthRequestParameterResolver.resolveRequestParameters(context, "keyword").size());
+        assertEquals(3, oauthRequestParameterResolver.resolveRequestScopes(request).size());
+        assertEquals(2, oauthRequestParameterResolver.resolveRequestParameters(request, "keyword").size());
     }
 
     @Test
@@ -129,9 +116,7 @@ class DefaultOAuth20RequestParameterResolverTests extends AbstractOidcTests {
         request.setQueryString("client_id=myid");
         request.setParameter("client_id", "myid");
         request.setParameter("client_secret", "mysecret");
-        val response = new MockHttpServletResponse();
-        val context = new JEEContext(request, response);
-        assertFalse(oauthRequestParameterResolver.isParameterOnQueryString(context, OAuth20Constants.CLIENT_SECRET));
+        assertFalse(oauthRequestParameterResolver.isParameterOnQueryString(request, OAuth20Constants.CLIENT_SECRET));
     }
 
     @Test
@@ -158,11 +143,9 @@ class DefaultOAuth20RequestParameterResolverTests extends AbstractOidcTests {
         val request = new MockHttpServletRequest();
         request.addParameter(OAuth20Constants.REQUEST, signedJwt);
         request.addParameter(OAuth20Constants.CLIENT_ID, service.getClientId());
-        val response = new MockHttpServletResponse();
-        val context = new JEEContext(request, response);
-        val scopes = oauthRequestParameterResolver.resolveRequestParameter(context, OAuth20Constants.SCOPE, List.class).orElseThrow();
+        val scopes = oauthRequestParameterResolver.resolveRequestParameter(request, OAuth20Constants.SCOPE, List.class).orElseThrow();
         assertEquals(2, Objects.requireNonNull(scopes).size());
-        val aud = oauthRequestParameterResolver.resolveRequestParameter(context, "aud", List.class).orElseThrow();
+        val aud = oauthRequestParameterResolver.resolveRequestParameter(request, "aud", List.class).orElseThrow();
         assertEquals(1, Objects.requireNonNull(aud).size());
     }
 }

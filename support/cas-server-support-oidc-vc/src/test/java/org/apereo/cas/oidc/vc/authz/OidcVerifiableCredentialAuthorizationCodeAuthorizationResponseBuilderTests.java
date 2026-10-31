@@ -10,7 +10,8 @@ import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
-import org.apereo.cas.support.oauth.authenticator.Authenticators;
+import org.apereo.cas.support.oauth.profile.DefaultOAuth20UserProfile;
+import org.apereo.cas.support.oauth.profile.OAuth20UserProfile;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.code.OAuth20Code;
 import org.apereo.cas.util.JsonUtils;
@@ -19,8 +20,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.pac4j.cas.profile.CasProfile;
-import org.pac4j.jee.context.JEEContext;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.http.HttpHeaders;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -147,9 +146,8 @@ class OidcVerifiableCredentialAuthorizationCodeAuthorizationResponseBuilderTests
     private String authorize(final OidcRegisteredService registeredService,
                              @Nullable final String codeChallenge)
             throws Exception {
-        val profile = new CasProfile();
-        profile.setId("casuser");
-        profile.setClientName(Authenticators.CAS_OAUTH_CLIENT);
+        val profile = new DefaultOAuth20UserProfile("casuser", OAuth20UserProfile.BASIC_PROFILE_HANDLER_NAME);
+        profile.addAttribute(OAuth20Constants.PROFILE_ATTRIBUTE_CLIENT_ID, registeredService.getClientId());
         val ticketGrantingTicket = new MockTicketGrantingTicket(profile.getId());
         ticketRegistry.addTicket(ticketGrantingTicket);
         profile.addAttribute(TicketGrantingTicket.class.getName(), ticketGrantingTicket.getId());
@@ -167,10 +165,7 @@ class OidcVerifiableCredentialAuthorizationCodeAuthorizationResponseBuilderTests
                 val response = new MockHttpServletResponse();
                 ticketGrantingTicketCookieGenerator.addCookie(httpRequest, response, ticketGrantingTicket.getId());
                 httpRequest.setCookies(response.getCookies());
-                val context = new JEEContext(httpRequest, response);
-
-                val manager = oauthSecProfileManagerFactory.apply(context, oauthDistributedSessionStore);
-                manager.save(true, profile, false);
+                oauthDistributedSessionStore.set(httpRequest, response, OAuth20Constants.SESSION_ATTRIBUTE_AUTHENTICATED_PROFILE, profile);
                 return httpRequest;
             });
         if (StringUtils.isNotBlank(codeChallenge)) {

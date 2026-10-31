@@ -12,6 +12,7 @@
     "--cas.http-web-request.header.content-security-policy=",
     
     "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
+    "--cas.monitor.endpoints.endpoint.info.access=AUTHENTICATED",
     "--management.endpoints.web.exposure.include=*",
     "--management.endpoints.access.default=UNRESTRICTED",
 

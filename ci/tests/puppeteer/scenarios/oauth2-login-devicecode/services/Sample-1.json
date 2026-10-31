@@ -7,6 +7,7 @@
   "bypassApprovalPrompt": true,
   "name" : "Sample",
   "generateRefreshToken": true,
+  "allowedResources": [ "java.util.HashSet", [ "https://localhost:9859/anything/(api|reports)" ] ],
   "supportedResponseTypes": [ "java.util.HashSet", [ "device_code" ] ],
   "supportedGrantTypes": [ "java.util.HashSet", [ "urn:ietf:params:oauth:grant-type:device_code" ] ],
   "id" : 1

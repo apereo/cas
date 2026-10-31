@@ -1,6 +1,7 @@
 package org.apereo.cas.uma.web.controllers.resource;
 
 import module java.base;
+import org.apereo.cas.support.oauth.profile.OAuth20UserProfile;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.uma.ticket.resource.ResourceSet;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
@@ -8,7 +9,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.val;
-import org.pac4j.core.profile.UserProfile;
 import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.annotation.JsonSerialize;
 import tools.jackson.databind.ser.std.ToStringSerializer;
@@ -49,7 +49,7 @@ public class UmaResourceRegistrationRequest implements Serializable {
      * @return the resource set
      */
     @JsonIgnore
-    public ResourceSet asResourceSet(final UserProfile profileResult) {
+    public ResourceSet asResourceSet(final OAuth20UserProfile profileResult) {
         val resourceSet = new ResourceSet();
         resourceSet.setIconUri(getIconUri());
         resourceSet.setId(getId());

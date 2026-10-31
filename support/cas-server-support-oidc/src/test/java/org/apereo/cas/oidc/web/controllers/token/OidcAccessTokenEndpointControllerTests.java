@@ -10,6 +10,7 @@ import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.OAuth20TokenExchangeTypes;
+import org.apereo.cas.support.oauth.profile.DefaultOAuth20UserProfile;
 import org.apereo.cas.support.oauth.services.DefaultRegisteredServiceOAuthTokenExchangePolicy;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
@@ -32,7 +33,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.pac4j.core.profile.CommonProfile;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
@@ -129,6 +129,7 @@ class OidcAccessTokenEndpointControllerTests {
             registeredService.setJwtAccessToken(true);
             registeredService.setSupportedGrantTypes(Set.of(OAuth20GrantTypes.CLIENT_CREDENTIALS.getType()));
             registeredService.setTokenEndpointAuthenticationMethod(OAuth20ClientAuthenticationMethods.TLS_CLIENT_AUTH.getType());
+            registeredService.setTlsClientAuthSubjectDn("CN=apereo.org,OU=CAS,O=Apereo,L=Gilbert,ST=AZ,C=US");
             servicesManager.save(registeredService);
             val certificate = CertUtils.readCertificate(new ClassPathResource("RSA1024x509Cert.pem").getInputStream());
             mvc.perform(post("/cas/" + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.TOKEN_URL)
@@ -154,8 +155,7 @@ class OidcAccessTokenEndpointControllerTests {
             val accessToken = getAccessToken(registeredService.getClientId());
             ticketRegistry.addTicket(accessToken);
             
-            val userProfile = new CommonProfile();
-            userProfile.setId("casuser");
+            val userProfile = new DefaultOAuth20UserProfile("casuser");
             userProfile.addAttributes((Map) RegisteredServiceTestUtils.getTestAttributes());
             
             val idTokenContext = IdTokenGenerationContext.builder()

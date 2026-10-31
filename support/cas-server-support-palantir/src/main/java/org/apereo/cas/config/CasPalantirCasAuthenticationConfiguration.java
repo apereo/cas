@@ -69,13 +69,11 @@ class CasPalantirCasAuthenticationConfiguration {
         return new CasWebSecurityConfigurer<>() {
             @Override
             public CasWebSecurityConfigurer<HttpSecurity> configure(final HttpSecurity http) {
-                http.authorizeHttpRequests(customizer -> customizer
-                    .requestMatchers(PathPatternRequestMatcher.withDefaults()
-                        .matcher(PalantirConstants.URL_PATH_PALANTIR + "/**"))
-                    .authenticated()
-                );
+                val palantir = PathPatternRequestMatcher.withDefaults().matcher(PalantirConstants.URL_PATH_PALANTIR + "/**");
+                http.authorizeHttpRequests(customizer -> customizer.requestMatchers(palantir).authenticated());
                 http.authenticationProvider(casAuthenticationProvider);
-                http.exceptionHandling(ex -> ex.authenticationEntryPoint(casAuthenticationEntryPoint)).addFilter(casAuthenticationFilter);
+                http.exceptionHandling(ex -> ex.defaultAuthenticationEntryPointFor(casAuthenticationEntryPoint, palantir))
+                    .addFilter(casAuthenticationFilter);
                 http.logout(customizer -> {
                     customizer.logoutUrl(PalantirConstants.URL_PATH_PALANTIR + "/dashboard/logout");
                     customizer.logoutSuccessHandler((request, response, authentication) -> {

@@ -11,7 +11,8 @@
          th:with="questionCount=${questions != null ? #maps.size(questions) : 0},
                   securityPanel=${multifactorRegisteredAccounts != null ? '#divMfaRegisteredAccounts'
                         : (multifactorTrustedDevices != null ? '#divMultifactorTrustedDevices'
-                        : (#cas.isTrue(securityQuestionsEnabled) ? '#divSecurityQuestions' : null))},
+                        : (#cas.isTrue(securityQuestionsEnabled) ? '#divSecurityQuestions'
+                        : (simpleMfaContactMethods != null || passwordlessContactMethods != null ? '#divContactMethods' : null)))},
                   passwordEnabled=${passwordManagementEnabled != null && passwordManagementEnabled}">
     <header>
         <div>
@@ -21,9 +22,18 @@
         </div>
     </header>
 
+    <div id="passwordExpirationNotice" class="cas-account-alert" role="status" th:if="${passwordExpirationDays != null}">
+        <i class="mdi mdi-timer-sand" aria-hidden="true"></i>
+        <p th:text="#{screen.account.password.expiring(${passwordExpirationDays}, ${#temporals.format(passwordExpirationDate, 'MMMM dd, yyyy')})}">
+            Your password expires in 5 days, on October 7, 2026.</p>
+        <button type="button" class="acct-btn" data-account-action="password" th:if="${passwordEnabled}"
+                th:attr="data-confirm-title=#{screen.account.pwreset.title},data-confirm-text=#{screen.account.pwreset},data-confirm-button=#{screen.account.continue},data-cancel-button=#{screen.account.cancel}"
+                th:text="#{screen.account.password.change}">Change password</button>
+    </div>
+
     <div class="cas-account-summary">
         <section class="cas-account-card" aria-labelledby="overviewSecurityTitle"
-                 th:if="${securityPanel != null || passwordEnabled}">
+                 th:if="${securityPanel != null || passwordEnabled || passwordExpirationDate != null}">
             <h3 id="overviewSecurityTitle">
                 <span class="cas-account-card-icon" aria-hidden="true"><i class="mdi mdi-shield-outline"></i></span>
                 <span th:text="#{screen.account.group.security}">Sign-in &amp; security</span>
@@ -40,6 +50,10 @@
                 <th:block th:if="${#cas.isTrue(securityQuestionsEnabled)}">
                     <dt th:text="#{screen.account.count.questions}">Security questions</dt>
                     <dd th:text="${questionCount}">2</dd>
+                </th:block>
+                <th:block th:if="${passwordExpirationDate != null}">
+                    <dt th:text="#{screen.account.count.password}">Password expires</dt>
+                    <dd th:text="${#temporals.format(passwordExpirationDate, 'MMM dd, yyyy')}">Oct 07, 2026</dd>
                 </th:block>
             </dl>
             <a class="cas-account-card-link" th:if="${securityPanel != null}" th:href="${securityPanel}"
@@ -78,6 +92,10 @@
                 <th:block th:if="${consentDecisions != null}">
                     <dt th:text="#{screen.account.count.consent}">Consent decisions</dt>
                     <dd th:text="${#lists.size(consentDecisions)}">1</dd>
+                </th:block>
+                <th:block th:if="${acceptableUsagePolicyStatus != null}">
+                    <dt th:text="#{screen.account.count.aup}">Usage policy</dt>
+                    <dd th:text="#{${'screen.account.aup.status.' + acceptableUsagePolicyStatus}}">Accepted</dd>
                 </th:block>
             </dl>
             <a class="cas-account-card-link" href="#divAttributes" data-account-panel="#divAttributes"

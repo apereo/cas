@@ -94,7 +94,8 @@ async function failLogin(username, expectedStatus) {
     const tools = await send(MCP_ADMIN, sessionId, "tools/list", {});
     const names = tools.tools.map((tool) => tool.name);
     await cas.log(`Available tools: ${names}`);
-    for (const optional of ["findConsentDecisions", "resolveSamlMetadata", "findOidcClient", "listJwksKeys", "findTrustedDevices",
+    for (const optional of ["findConsentDecisions", "resolveSamlMetadata", "findOidcClient", "checkOidcClientResource",
+        "listJwksKeys", "findTrustedDevices",
         "previewInterrupt", "evaluateAuthenticationRisk", "findOneTimeTokenAccounts", "findWebAuthnDevices",
         "findPasswordlessAccount", "listIdentityProviders", "findAuthorizableResources"]) {
         assert(!names.includes(optional), `Tool ${optional} must not be listed without its module`);

@@ -21,7 +21,6 @@ import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
-import org.pac4j.jee.context.JEEContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.Assert;
@@ -122,7 +121,7 @@ public class OidcLogoutEndpointController extends BaseOidcController {
             val accessResult = getConfigurationContext().getRegisteredServiceAccessStrategyEnforcer().execute(audit);
             accessResult.throwExceptionIfNeeded();
 
-            if (!enforceIssuer(request, response, registeredService)) {
+            if (!enforceIssuer(request, registeredService)) {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
                     configurationContext.getMessageSource().getMessage("screen.oidc.issuer.invalid", ArrayUtils.EMPTY_OBJECT_ARRAY, request.getLocale()));
             }
@@ -156,7 +155,7 @@ public class OidcLogoutEndpointController extends BaseOidcController {
             ? OAuth20Utils.getRegisteredOAuthServiceByClientId(getConfigurationContext().getServicesManager(), givenClientId, OidcRegisteredService.class)
             : null;
 
-        if (!enforceIssuer(request, response, registeredService)) {
+        if (!enforceIssuer(request, registeredService)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
                 configurationContext.getMessageSource().getMessage("screen.oidc.issuer.invalid", ArrayUtils.EMPTY_OBJECT_ARRAY, request.getLocale()));
         }
@@ -164,10 +163,8 @@ public class OidcLogoutEndpointController extends BaseOidcController {
             Optional.empty(), Optional.ofNullable(givenClientId), request, response);
     }
 
-    private boolean enforceIssuer(final HttpServletRequest request, final HttpServletResponse response,
-                                  final OidcRegisteredService registeredService) {
-        val webContext = new JEEContext(request, response);
-        if (!getConfigurationContext().getIssuerService().validateIssuer(webContext, List.of(OidcConstants.LOGOUT_URL, "logout"), registeredService)) {
+    private boolean enforceIssuer(final HttpServletRequest request, final OidcRegisteredService registeredService) {
+        if (!getConfigurationContext().getIssuerService().validateIssuer(request, List.of(OidcConstants.LOGOUT_URL, "logout"), registeredService)) {
             val issuer = getConfigurationContext().getIssuerService().determineIssuer(Optional.ofNullable(registeredService));
             LOGGER.warn("Logout request is not issued by a trusted issuer: [{}]", issuer);
             return false;

@@ -21,8 +21,8 @@
                     <table id="profilesTable" class="table table-striped w-100 auto-init">
                         <thead>
                         <tr class="mdc-data-table__header-row">
-                            <th class="mdc-data-table__header-cell">ID</th>
-                            <th class="mdc-data-table__header-cell">Attributes</th>
+                            <th class="mdc-data-table__header-cell" th:utext="#{screen.pac4j.profiles.column.id}">ID</th>
+                            <th class="mdc-data-table__header-cell" th:utext="#{screen.pac4j.profiles.column.attributes}">Attributes</th>
                             <th class="mdc-data-table__header-cell"></th>
                         </tr>
                         </thead>
@@ -40,7 +40,7 @@
                                         <input type="hidden" name="_eventId" value="select"/>
                                         <input type="hidden" name="key" th:value="${principal.key}"/>
                                         <button class="mdc-button mdc-button--raised btn btn-primary me-2 drop-button">
-                                            <span class="mdc-button__label">Select</span>
+                                            <span class="mdc-button__label" th:utext="#{screen.pac4j.profiles.select}">Select</span>
                                         </button>
                                    </form>
                                 </td>
@@ -54,7 +54,7 @@
                         <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
                         <input type="hidden" name="_eventId" value="cancel"/>
                         <button id="cancelButton" class="mdc-button mdc-button--raised btn btn-primary me-2 button-cancel">
-                            <span class="mdc-button__label">Cancel</span>
+                            <span class="mdc-button__label" th:utext="#{screen.pac4j.profiles.cancel}">Cancel</span>
                         </button>
                     </section>
                 </form>

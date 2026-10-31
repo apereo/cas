@@ -5,12 +5,16 @@ import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
+import org.apereo.cas.support.oauth.authenticator.OAuth20ClientAuthenticationToken;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
 import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshToken;
 import lombok.experimental.UtilityClass;
 import lombok.val;
+import org.jspecify.annotations.Nullable;
+import org.springframework.mock.web.MockHttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
 import static org.mockito.Mockito.*;
 
 /**
@@ -21,6 +25,36 @@ import static org.mockito.Mockito.*;
  */
 @UtilityClass
 public class OAuth20TestUtils {
+    /**
+     * A client authentication token with credentials in the request headers, as HTTP Basic carries them.
+     *
+     * @param request     the request
+     * @param username    the username or client id
+     * @param credentials the credentials
+     * @return the token
+     */
+    public static OAuth20ClientAuthenticationToken newClientAuthenticationToken(final HttpServletRequest request,
+                                                                                final @Nullable String username, final @Nullable Object credentials) {
+        return newClientAuthenticationToken(request, OAuth20ClientAuthenticationToken.CredentialSource.HEADER, username, credentials);
+    }
+
+    /**
+     * A client authentication token.
+     *
+     * @param request     the request
+     * @param source      where the credentials are found
+     * @param username    the username or client id
+     * @param credentials the credentials
+     * @return the token
+     */
+    public static OAuth20ClientAuthenticationToken newClientAuthenticationToken(final HttpServletRequest request,
+                                                                                final OAuth20ClientAuthenticationToken.CredentialSource source,
+                                                                                final @Nullable String username, final @Nullable Object credentials) {
+        val token = new OAuth20ClientAuthenticationToken(request, source, username, credentials);
+        token.setResponse(new MockHttpServletResponse());
+        return token;
+    }
+
     /**
      * Gets access token.
      *

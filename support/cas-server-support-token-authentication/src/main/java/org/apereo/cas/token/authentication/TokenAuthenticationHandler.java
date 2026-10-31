@@ -15,7 +15,6 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.springframework.util.Assert;
 
 /**
  * This is {@link TokenAuthenticationHandler} that authenticates instances of {@link TokenCredential}.
@@ -43,10 +42,11 @@ public class TokenAuthenticationHandler extends AbstractPreAndPostProcessingAuth
         try {
             val tokenCredential = (BasicIdentifiableCredential) credential;
             val registeredService = servicesManager.findServiceBy(service);
-            val profile = TokenAuthenticationSecurity.forRegisteredService(Objects.requireNonNull(registeredService)).validateToken(tokenCredential.getId());
-            Assert.notNull(profile, "Authentication attempt failed to produce an authenticated profile");
-            val attributes = CollectionUtils.toMultiValuedMap(profile.getAttributes());
-            val principal = Objects.requireNonNull(principalFactory.createPrincipal(profile.getId(), attributes));
+            val token = TokenAuthenticationSecurity.forRegisteredService(Objects.requireNonNull(registeredService))
+                .validateToken(tokenCredential.getId())
+                .orElseThrow(() -> new IllegalArgumentException("Authentication attempt failed to validate the token"));
+            val attributes = CollectionUtils.toMultiValuedMap(token.claims());
+            val principal = Objects.requireNonNull(principalFactory.createPrincipal(token.subject(), attributes));
             tokenCredential.setId(principal.getId());
             return createHandlerResult(tokenCredential, principal, new ArrayList<>());
         } catch (final Throwable e) {

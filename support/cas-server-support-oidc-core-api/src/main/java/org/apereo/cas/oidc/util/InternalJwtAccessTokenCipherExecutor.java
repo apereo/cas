@@ -2,6 +2,7 @@ package org.apereo.cas.oidc.util;
 
 import module java.base;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeyCacheKey;
+import org.apereo.cas.oidc.jwks.OidcJsonWebKeyStoreUtils;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeyUsage;
 import org.apereo.cas.oidc.token.OidcRegisteredServiceJwtCipherExecutor;
 import org.apereo.cas.services.OidcRegisteredService;
@@ -129,8 +130,9 @@ public class InternalJwtAccessTokenCipherExecutor extends JwtTicketCipherExecuto
     protected byte[] sign(final byte[] value, final Key signingKey) {
         return Optional.ofNullable(this.signingWebKey)
             .map(key -> {
-                val alg = StringUtils.defaultIfBlank(key.getAlgorithm(),
-                    getSigningAlgorithmFor(key.getKey()));
+                val alg = OidcJsonWebKeyStoreUtils.isSigningAlgorithmCompatible(key, getSigningAlgorithm())
+                    ? getSigningAlgorithm()
+                    : StringUtils.defaultIfBlank(key.getAlgorithm(), getSigningAlgorithmFor(key.getKey()));
                 val headers = new LinkedHashMap<String, Object>();
                 FunctionUtils.doIfNotBlank(key.getKeyId(), id -> headers.put(JsonWebKey.KEY_ID_PARAMETER, id));
                 headers.put(JsonWebKey.ALGORITHM_PARAMETER, alg);

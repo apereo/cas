@@ -15,7 +15,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.val;
 import net.minidev.json.JSONObject;
 import org.jspecify.annotations.Nullable;
-import org.pac4j.jee.context.JEEContext;
 import org.springframework.http.CacheControl;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -40,8 +39,7 @@ abstract class AbstractOidcFederationEndpointController extends AbstractControll
 
     protected @Nullable ResponseEntity retrieveInvalidIssuerError(
         final HttpServletRequest request, final HttpServletResponse response, final String path) {
-        val webContext = new JEEContext(request, response);
-        if (!oidcIssuerService.validateIssuer(webContext, List.of(path))) {
+        if (!oidcIssuerService.validateIssuer(request, List.of(path))) {
             val body = OAuth20Utils.getErrorResponseBody(OAuth20Constants.INVALID_REQUEST, "Invalid issuer");
             return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
         }

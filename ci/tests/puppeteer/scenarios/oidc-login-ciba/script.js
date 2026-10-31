@@ -5,7 +5,40 @@ const https = require("https");
 const fs = require("fs");
 const path = require("path");
 
-async function verifyDeliveryMode(clientId = "client", deliveryMode = "push", userCode = "393515b9-4bb0-43ef-9973-91f3c3236ffe", clientSecret = "secret") {
+const API_RESOURCE = "https://localhost:9859/anything/api";
+
+async function verifyAudience(accessToken, authzHeader, expectedAudience) {
+    await cas.doGet(`https://localhost:8443/cas/oidc/introspect?token=${accessToken}`,
+        (res) => {
+            cas.log(res.data);
+            assert(res.data.active === true);
+            assert.deepStrictEqual(res.data.aud, expectedAudience);
+        }, (error) => {
+            throw `Introspection failed: ${error}`;
+        }, {
+            "Authorization": authzHeader,
+            "Content-Type": "application/json"
+        });
+}
+
+async function verifyUnknownResourceIsRefused(clientId = "clientpoll", clientSecret = "secret") {
+    let url = `https://localhost:8443/cas/oidc/oidcCiba?scope=${encodeURIComponent("openid profile")}`;
+    url += `&login_hint=${encodeURIComponent("casuser@apereo.org")}`;
+    url += `&resource=${encodeURIComponent("https://unknown.example.org/")}`;
+    const authzHeader = `Basic ${Buffer.from(`${clientId}:${clientSecret}`).toString("base64")}`;
+    await cas.doPost(url, "", {
+        "Authorization": authzHeader,
+        "Content-Type": "application/x-www-form-urlencoded"
+    }, (res) => {
+        throw `A CIBA request for an unknown resource must be refused: ${JSON.stringify(res.data)}`;
+    }, (error) => {
+        assert(error.response.status === 400);
+        assert(error.response.data.error === "invalid_target");
+    });
+}
+
+async function verifyDeliveryMode(clientId = "client", deliveryMode = "push",
+    userCode = "393515b9-4bb0-43ef-9973-91f3c3236ffe", clientSecret = "secret", resource = undefined) {
     await cas.log(`Attempting to verify CIBA delivery mode ${deliveryMode} with user code ${userCode} for client ID ${clientId}`);
 
     const expiration = 60;
@@ -22,6 +55,9 @@ async function verifyDeliveryMode(clientId = "client", deliveryMode = "push", us
         url += `&user_code=${userCode}`;
     }
     url += `&requested_expiry=${expiration}`;
+    if (resource !== undefined) {
+        url += `&resource=${encodeURIComponent(resource)}`;
+    }
 
     const value = `${clientId}:${clientSecret}`;
     const buff = Buffer.alloc(value.length, value);
@@ -61,6 +97,11 @@ async function verifyDeliveryMode(clientId = "client", deliveryMode = "push", us
     const browser = await cas.newBrowser(cas.browserOptions());
     const page = await cas.newPage(browser);
     const verificationUrl = await cas.extractFromEmail(browser);
+    await cas.doPost(verificationUrl, "", {
+        "Content-Type": "application/x-www-form-urlencoded"
+    }, (res) => {
+        throw `A CIBA verification without a CSRF token must be refused: ${res.status}`;
+    }, (error) => assert(error.response.status === 403));
     await cas.goto(page, verificationUrl);
 
     await cas.assertVisibility(page, "#scopes");
@@ -82,7 +123,7 @@ async function verifyDeliveryMode(clientId = "client", deliveryMode = "push", us
 
     if (deliveryMode === "ping" || deliveryMode === "poll") {
         const accessTokenUrl = `https://localhost:8443/cas/oidc/token?scope=${scopes}&grant_type=urn:openid:params:grant-type:ciba&auth_req_id=${authRequestId}`;
-        await cas.doPost(accessTokenUrl, "",
+        const accessToken = await cas.doPost(accessTokenUrl, "",
             {
                 "Authorization": authzHeader,
                 "Content-Type": "application/x-www-form-urlencoded"
@@ -96,9 +137,13 @@ async function verifyDeliveryMode(clientId = "client", deliveryMode = "push", us
                 assert(res.data.token_type === "Bearer");
                 assert(res.data.expires_in !== undefined);
                 assert(res.data.scope === "openid profile");
+                return res.data.access_token;
             }, (error) => {
                 throw `CIBA operation MUST failed to obtain tokens: ${error}`;
             });
+        if (resource !== undefined) {
+            await verifyAudience(accessToken, authzHeader, [clientId, resource]);
+        }
 
         await cas.log("A redeemed CIBA request must not be redeemed again");
         await cas.doPost(accessTokenUrl, "",
@@ -156,7 +201,7 @@ async function verifyExpiredRequest(clientId = "clientpoll", clientSecret = "sec
 (async () => {
     const app = express();
     app.use(express.json());
-    app.post("/notification", (req, res) => {
+    app.post("/notification", async (req, res) => {
         cas.logg("Received CIBA notification from CAS");
         const requestBody = req.body;
         cas.log(requestBody);
@@ -167,7 +212,7 @@ async function verifyExpiredRequest(clientId = "clientpoll", clientSecret = "sec
         assert(requestBody.expires_in !== undefined);
         assert(requestBody.scope === "openid profile");
         
-        const decoded = cas.decodeJwt(requestBody.id_token);
+        const decoded = await cas.decodeJwt(requestBody.id_token);
         assert(decoded.sub === "casuser@apereo.org");
         assert(decoded["urn:openid:params:jwt:claim:auth_req_id"] !== undefined);
         assert(decoded["urn:openid:params:jwt:claim:rt_hash"] !== undefined);
@@ -195,13 +240,17 @@ async function verifyExpiredRequest(clientId = "clientpoll", clientSecret = "sec
         await cas.separator();
 
         await cas.log("Starting CIBA request with POLL delivery mode...");
-        await verifyDeliveryMode("clientpoll", "poll");
+        await verifyDeliveryMode("clientpoll", "poll", "393515b9-4bb0-43ef-9973-91f3c3236ffe", "secret", API_RESOURCE);
         await cas.separator();
         await verifyDeliveryMode("clientpoll", "poll", "");
         await cas.separator();
 
         await cas.log("An expired CIBA request must be refused with expired_token");
         await verifyExpiredRequest();
+        await cas.separator();
+
+        await cas.log("A CIBA request for a resource the client may not request is refused");
+        await verifyUnknownResourceIsRefused();
 
         server.close(() => cas.log("Exiting server..."));
     });

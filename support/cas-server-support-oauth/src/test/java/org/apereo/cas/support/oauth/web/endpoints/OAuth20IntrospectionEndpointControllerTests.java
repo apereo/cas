@@ -5,17 +5,19 @@ import org.apereo.cas.AbstractOAuth20Tests;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.web.response.introspection.BaseOAuth20IntrospectionAccessTokenResponse;
+import org.apereo.cas.support.oauth.web.response.introspection.OAuth20DefaultIntrospectionResponseGenerator;
 import org.apereo.cas.support.oauth.web.response.introspection.OAuth20IntrospectionAccessTokenFailureResponse;
 import org.apereo.cas.support.oauth.web.response.introspection.OAuth20IntrospectionAccessTokenResponse;
 import org.apereo.cas.util.EncodingUtils;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.pac4j.core.context.HttpConstants;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletRequest;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * This is {@link OAuth20IntrospectionEndpointControllerTests}.
@@ -43,7 +45,25 @@ class OAuth20IntrospectionEndpointControllerTests extends AbstractOAuth20Tests {
 
         assertNotNull(body);
         assertEquals(service.getClientId(), body.getClientId());
-        assertEquals(SERVICE_URL, body.getAud());
+        assertEquals(service.getClientId(), body.getAud());
+    }
+
+    @Test
+    void verifyResourceAudience() throws Throwable {
+        val accessToken = getAccessToken();
+        val resource = "https://api.example.org/";
+        when(accessToken.getResources()).thenReturn(Set.of(resource));
+        val registeredService = getRegisteredService(SERVICE_URL, accessToken.getClientId(), CLIENT_SECRET);
+        val generator = new OAuth20DefaultIntrospectionResponseGenerator();
+        assertEquals(List.of(accessToken.getClientId(), resource),
+            generator.generate(accessToken.getId(), accessToken, registeredService).getAud());
+
+        registeredService.setAudience(Set.of("https://audience.example.org/"));
+        assertEquals(List.of("https://audience.example.org/", resource),
+            generator.generate(accessToken.getId(), accessToken, registeredService).getAud());
+
+        when(accessToken.getAudience()).thenReturn(Set.of("https://backend.example.org/"));
+        assertEquals("https://backend.example.org/", generator.generate(accessToken.getId(), accessToken, registeredService).getAud());
     }
 
     @Test
@@ -75,7 +95,7 @@ class OAuth20IntrospectionEndpointControllerTests extends AbstractOAuth20Tests {
         val id = UUID.randomUUID().toString();
         val auth = id + ':' + CLIENT_SECRET;
         val value = EncodingUtils.encodeBase64(auth.getBytes(StandardCharsets.UTF_8));
-        request.addHeader(HttpConstants.AUTHORIZATION_HEADER, HttpConstants.BASIC_HEADER_PREFIX + value);
+        request.addHeader(HttpHeaders.AUTHORIZATION, "Basic " + value);
 
         val registeredService = getRegisteredService(id, id);
         val mv = generateAccessTokenResponseAndGetModelAndView(registeredService);
@@ -99,7 +119,7 @@ class OAuth20IntrospectionEndpointControllerTests extends AbstractOAuth20Tests {
         val request = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.INTROSPECTION_URL);
         val auth = service.getClientId() + ':' + CLIENT_SECRET;
         val value = EncodingUtils.encodeBase64(auth.getBytes(StandardCharsets.UTF_8));
-        request.addHeader(HttpConstants.AUTHORIZATION_HEADER, HttpConstants.BASIC_HEADER_PREFIX + value);
+        request.addHeader(HttpHeaders.AUTHORIZATION, "Basic " + value);
         val result = performOAuthRequest(request);
         assertEquals(HttpStatus.BAD_REQUEST.value(), result.getResponse().getStatus());
     }
@@ -110,7 +130,7 @@ class OAuth20IntrospectionEndpointControllerTests extends AbstractOAuth20Tests {
         val request = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.INTROSPECTION_URL);
 
         val value = EncodingUtils.encodeBase64(auth.getBytes(StandardCharsets.UTF_8));
-        request.addHeader(HttpConstants.AUTHORIZATION_HEADER, HttpConstants.BASIC_HEADER_PREFIX + value);
+        request.addHeader(HttpHeaders.AUTHORIZATION, "Basic " + value);
 
         val mv = generateAccessTokenResponseAndGetModelAndView(registeredService);
         val at = mv.getModel().get(OAuth20Constants.ACCESS_TOKEN).toString();

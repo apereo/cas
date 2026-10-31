@@ -10,9 +10,7 @@ import org.apereo.cas.token.JwtBuilder;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.pac4j.jee.context.JEEContext;
 import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -36,7 +34,7 @@ class DefaultOidcRequestParameterResolverTests extends AbstractOidcTests {
         val request = new MockHttpServletRequest();
         request.addParameter(OAuth20Constants.SCOPE, "openid UniversityDegree UnknownScope");
         val scopes = new OidcRequestParameterResolver(jwtBuilder)
-            .resolveRequestScopes(new JEEContext(request, new MockHttpServletResponse()));
+            .resolveRequestScopes(request);
         assertEquals(Set.of(OidcConstants.StandardScopes.OPENID.getScope(), "UniversityDegree"), scopes);
     }
 
@@ -55,7 +53,8 @@ class DefaultOidcRequestParameterResolverTests extends AbstractOidcTests {
             .attributes(Map.of(OAuth20Constants.SCOPE, List.of(OidcConstants.StandardScopes.OPENID.getScope()),
                 OAuth20Constants.REDIRECT_URI, List.of("https://apereo.github.io"),
                 OAuth20Constants.RESPONSE_TYPE, List.of("code"),
-                OAuth20Constants.CLIENT_ID, List.of(registeredService.getClientId())))
+                OAuth20Constants.CLIENT_ID, List.of(registeredService.getClientId()),
+                OAuth20Constants.PROMPT, List.of(OidcConstants.PROMPT_LOGIN)))
             .build();
 
         val jwtString = oidcAccessTokenJwtBuilder.build(payload);
@@ -63,10 +62,10 @@ class DefaultOidcRequestParameterResolverTests extends AbstractOidcTests {
         request.addParameter(OAuth20Constants.REQUEST, jwtString);
         request.addParameter(OAuth20Constants.CLIENT_ID, registeredService.getClientId());
 
-        val response = new MockHttpServletResponse();
-        val context = new JEEContext(request, response);
-        val scope = oauthRequestParameterResolver.resolveRequestParameter(context, OAuth20Constants.SCOPE, String.class);
+        val scope = oauthRequestParameterResolver.resolveRequestParameter(request, OAuth20Constants.SCOPE, String.class);
         assertFalse(scope.isEmpty());
         assertTrue(scope.get().contains(OidcConstants.StandardScopes.OPENID.getScope()));
+        assertEquals(OidcConstants.PROMPT_LOGIN, oauthRequestParameterResolver.resolveRequestParameter(request, OAuth20Constants.PROMPT).orElseThrow());
+        assertTrue(oauthRequestParameterResolver.resolveRequestedPromptValues(request).isEmpty());
     }
 }

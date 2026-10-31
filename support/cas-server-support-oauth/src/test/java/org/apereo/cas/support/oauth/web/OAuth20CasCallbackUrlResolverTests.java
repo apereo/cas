@@ -4,17 +4,15 @@ import module java.base;
 import org.apereo.cas.AbstractOAuth20Tests;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20ResponseModeTypes;
+import org.apereo.cas.support.oauth.authenticator.Authenticators;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import lombok.val;
 import org.apache.hc.core5.net.URIBuilder;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.pac4j.core.http.url.UrlResolver;
-import org.pac4j.jee.context.JEEContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -27,14 +25,13 @@ import static org.junit.jupiter.api.Assertions.*;
 class OAuth20CasCallbackUrlResolverTests extends AbstractOAuth20Tests {
     @Autowired
     @Qualifier("casCallbackUrlResolver")
-    private UrlResolver casCallbackUrlResolver;
+    private OAuth20CasCallbackUrlResolver casCallbackUrlResolver;
 
     @Test
     void verifyOperation() throws Throwable {
         val registeredService = addRegisteredService();
 
         val request = new MockHttpServletRequest();
-        val response = new MockHttpServletResponse();
         request.addParameter(OAuth20Constants.CLIENT_ID, registeredService.getClientId());
         request.addParameter(OAuth20Constants.RESPONSE_MODE, OAuth20ResponseModeTypes.FORM_POST.getType());
         request.addParameter(OAuth20Constants.STATE, UUID.randomUUID().toString());
@@ -42,8 +39,7 @@ class OAuth20CasCallbackUrlResolverTests extends AbstractOAuth20Tests {
         request.addParameter("c1", UUID.randomUUID().toString());
         request.addParameter("c2", UUID.randomUUID().toString());
         val output = casCallbackUrlResolver.compute(
-            OAuth20Utils.casOAuthCallbackUrl(casProperties.getServer().getPrefix()),
-            new JEEContext(request, response));
+            OAuth20Utils.casOAuthCallbackUrl(casProperties.getServer().getPrefix()), request);
         assertNotNull(output);
 
         val uri = new URIBuilder(output);
@@ -56,4 +52,24 @@ class OAuth20CasCallbackUrlResolverTests extends AbstractOAuth20Tests {
         assertTrue(queryParams.stream().anyMatch(p -> "c2".equalsIgnoreCase(p.getName())));
     }
 
+    @Test
+    void verifyCallbackUrlForRequest() throws Throwable {
+        val request = new MockHttpServletRequest();
+        request.addParameter(OAuth20Constants.CLIENT_ID, "client");
+        val output = casCallbackUrlResolver.compute(request);
+        assertEquals(OAuth20Utils.casOAuthCallbackUrl(casProperties.getServer().getPrefix())
+            + "?client_id=client&client_name=" + Authenticators.CAS_OAUTH_CLIENT, output);
+    }
+
+    @Test
+    void verifyServiceForTicket() {
+        val callbackUrl = OAuth20Utils.casOAuthCallbackUrl(casProperties.getServer().getPrefix());
+        val request = new MockHttpServletRequest();
+        assertEquals(callbackUrl, casCallbackUrlResolver.computeServiceForTicket(request));
+        request.setQueryString("client_id=client&redirect_uri=https%3A%2F%2Fexample.org&client_name=CasOAuthClient&ticket=ST-1");
+        assertEquals(callbackUrl + "?client_id=client&redirect_uri=https%3A%2F%2Fexample.org&client_name=CasOAuthClient",
+            casCallbackUrlResolver.computeServiceForTicket(request));
+        request.setQueryString("ticket=ST-1");
+        assertEquals(callbackUrl, casCallbackUrlResolver.computeServiceForTicket(request));
+    }
 }

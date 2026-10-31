@@ -37,6 +37,7 @@ class OAuth20DefaultAccessTokenFactoryTests extends AbstractOAuth20Tests {
             servicesManager.save(registeredService);
             val token = createAccessToken(new MockTicketGrantingTicket("casuser"), registeredService);
             assertNotNull(token);
+            assertEquals(Set.of("https://api.example.org/"), token.getResources());
             assertNotNull(defaultAccessTokenFactory.get(OAuth20AccessToken.class));
         }
 
@@ -78,7 +79,7 @@ class OAuth20DefaultAccessTokenFactoryTests extends AbstractOAuth20Tests {
                 RegisteredServiceTestUtils.getService(registeredService.getServiceId()),
                 RegisteredServiceTestUtils.getAuthentication(),
                 ticketGrantingTicket,
-                Set.of("Scope1", "Scope2"), null, registeredService.getClientId(), Map.of(),
+                Set.of("Scope1", "Scope2"), Set.of("https://api.example.org/"), null, registeredService.getClientId(), Map.of(),
                 OAuth20ResponseTypes.CODE, OAuth20GrantTypes.AUTHORIZATION_CODE);
         }
     }

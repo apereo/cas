@@ -1,0 +1,11 @@
+{
+  "@class": "org.apereo.cas.services.CasRegisteredService",
+  "serviceId": "^https://localhost:9859/anything/st.*",
+  "id": 2,
+  "name": "ServiceTicketPolicy",
+  "serviceTicketExpirationPolicy": {
+    "@class": "org.apereo.cas.services.DefaultRegisteredServiceServiceTicketExpirationPolicy",
+    "numberOfUses": 2,
+    "timeToLive": "PT3S"
+  }
+}

@@ -3,20 +3,29 @@ package org.apereo.cas.shell.commands.jwt;
 import module java.base;
 import org.apereo.cas.shell.commands.CasShellCommand;
 import org.apereo.cas.util.RandomUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 import com.nimbusds.jose.Algorithm;
 import com.nimbusds.jose.EncryptionMethod;
 import com.nimbusds.jose.JWEAlgorithm;
+import com.nimbusds.jose.JWEHeader;
+import com.nimbusds.jose.JWEObject;
 import com.nimbusds.jose.JWSAlgorithm;
+import com.nimbusds.jose.JWSHeader;
+import com.nimbusds.jose.Payload;
+import com.nimbusds.jose.crypto.AESEncrypter;
+import com.nimbusds.jose.crypto.DirectEncrypter;
+import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jose.crypto.impl.AESCryptoProvider;
 import com.nimbusds.jose.crypto.impl.DirectCryptoProvider;
+import com.nimbusds.jwt.EncryptedJWT;
+import com.nimbusds.jwt.JWT;
+import com.nimbusds.jwt.JWTClaimsSet;
+import com.nimbusds.jwt.PlainJWT;
+import com.nimbusds.jwt.SignedJWT;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
-import org.pac4j.core.profile.CommonProfile;
-import org.pac4j.jwt.config.encryption.SecretEncryptionConfiguration;
-import org.pac4j.jwt.config.signature.SecretSignatureConfiguration;
-import org.pac4j.jwt.profile.JwtGenerator;
 import org.springframework.shell.core.command.annotation.Command;
 import org.springframework.shell.core.command.annotation.Option;
 
@@ -49,7 +58,8 @@ public class GenerateJwtCommand implements CasShellCommand {
      * @param signingAlgorithm     the signing algorithm
      * @param encryptionAlgorithm  the encryption algorithm
      * @param encryptionMethod     the encryption algorithm
-     * @param subject              the subject
+     * @param subject              the subject, which is required
+     * @throws IllegalArgumentException when no subject is given
      */
     @Command(group = "JWT", name = "generate-jwt", description = "Generate a JWT with given size and algorithm for signing and encryption.")
     public void generate(
@@ -90,19 +100,14 @@ public class GenerateJwtCommand implements CasShellCommand {
 
         @Option(
             longName = "subject",
-            description = "Subject to use for the JWT"
+            description = "Subject to use for the JWT",
+            required = true
         )
         final String subject
     ) {
-
-        val g = new JwtGenerator();
-
-        configureJwtSigning(signingSecretSize, signingAlgorithm, g);
-        configureJwtEncryption(encryptionSecretSize, encryptionAlgorithm, encryptionMethod, g);
-
-        val profile = new CommonProfile();
-        profile.setId(subject);
-
+        if (StringUtils.isBlank(subject)) {
+            throw new IllegalArgumentException("A subject is required to generate a JWT");
+        }
         val repeat = "=".repeat(SEP_LENGTH);
         LOGGER.debug(repeat);
         LOGGER.info("""
@@ -112,15 +117,27 @@ public class GenerateJwtCommand implements CasShellCommand {
             encryptionSecretSize, encryptionMethod, encryptionAlgorithm);
         LOGGER.debug(repeat);
 
-        val token = g.generate(profile);
+        val claims = new JWTClaimsSet.Builder().subject(subject).issueTime(new Date()).build();
+        val jwt = signJwt(signingSecretSize, signingAlgorithm, claims);
+        val token = encryptJwt(encryptionSecretSize, encryptionAlgorithm, encryptionMethod, jwt).orElseGet(jwt::serialize);
         LOGGER.info("==== JWT ====\n[{}]", token);
     }
 
-    private static void configureJwtEncryption(final int encryptionSecretSize, final String encryptionAlgorithm,
-                                               final String encryptionMethod, final JwtGenerator g) {
+    /**
+     * Encrypt the token with a random secret of the given size: a signed token travels as the payload of a JWE whose
+     * content type is {@code JWT}, an unsigned one as an encrypted JWT.
+     *
+     * @param encryptionSecretSize the encryption secret size
+     * @param encryptionAlgorithm  the encryption algorithm
+     * @param encryptionMethod     the encryption method
+     * @param jwt                  the token
+     * @return the encrypted token, or empty when the token stays unencrypted
+     */
+    private static Optional<String> encryptJwt(final int encryptionSecretSize, final String encryptionAlgorithm,
+                                               final String encryptionMethod, final JWT jwt) {
         if (encryptionSecretSize <= 0 || StringUtils.isBlank(encryptionMethod) || StringUtils.isBlank(encryptionAlgorithm)) {
             LOGGER.info("No encryption algorithm or size specified, so the generated JWT will not be encrypted");
-            return;
+            return Optional.empty();
         }
 
         val encryptionSecret = RandomUtils.randomAlphanumeric(encryptionSecretSize);
@@ -151,21 +168,40 @@ public class GenerateJwtCommand implements CasShellCommand {
             && !DirectCryptoProvider.SUPPORTED_ENCRYPTION_METHODS.contains(encryptionMethodAlg)) {
             LOGGER.warn("Encrypted method [{}] is not supported for algorithm [{}]. Accepted methods are [{}]",
                 encryptionMethod, encryptionAlgorithm, DirectCryptoProvider.SUPPORTED_ENCRYPTION_METHODS);
-            return;
+            return Optional.empty();
         }
         if (AESCryptoProvider.SUPPORTED_ALGORITHMS.contains(algorithm)
             && !AESCryptoProvider.SUPPORTED_ENCRYPTION_METHODS.contains(encryptionMethodAlg)) {
             LOGGER.warn("Encrypted method [{}] is not supported for algorithm [{}]. Accepted methods are [{}]",
                 encryptionMethod, encryptionAlgorithm, AESCryptoProvider.SUPPORTED_ENCRYPTION_METHODS);
-            return;
+            return Optional.empty();
         }
-        g.setEncryptionConfiguration(new SecretEncryptionConfiguration(encryptionSecret, algorithm, encryptionMethodAlg));
+        return Optional.of(FunctionUtils.doUnchecked(() -> {
+            val secret = encryptionSecret.getBytes(StandardCharsets.UTF_8);
+            val encrypter = DirectCryptoProvider.SUPPORTED_ALGORITHMS.contains(algorithm) ? new DirectEncrypter(secret) : new AESEncrypter(secret);
+            if (jwt instanceof final SignedJWT signedJwt) {
+                val jwe = new JWEObject(new JWEHeader.Builder(algorithm, encryptionMethodAlg).contentType("JWT").build(), new Payload(signedJwt));
+                jwe.encrypt(encrypter);
+                return jwe.serialize();
+            }
+            val encryptedJwt = new EncryptedJWT(new JWEHeader(algorithm, encryptionMethodAlg), jwt.getJWTClaimsSet());
+            encryptedJwt.encrypt(encrypter);
+            return encryptedJwt.serialize();
+        }));
     }
 
-    private static void configureJwtSigning(final int signingSecretSize, final String signingAlgorithm, final JwtGenerator g) {
+    /**
+     * Sign the claims with a random secret of the given size.
+     *
+     * @param signingSecretSize the signing secret size
+     * @param signingAlgorithm  the signing algorithm
+     * @param claims            the claims
+     * @return the signed token, or an unsigned one when no signing algorithm or size is given
+     */
+    private static JWT signJwt(final int signingSecretSize, final String signingAlgorithm, final JWTClaimsSet claims) {
         if (signingSecretSize <= 0 || StringUtils.isBlank(signingAlgorithm)) {
-            LOGGER.info("No signing algorithm or size specified, so the generated JWT will not be encrypted");
-            return;
+            LOGGER.info("No signing algorithm or size specified, so the generated JWT will not be signed");
+            return new PlainJWT(claims);
         }
 
         val signingSecret = RandomUtils.randomAlphanumeric(signingSecretSize);
@@ -180,6 +216,10 @@ public class GenerateJwtCommand implements CasShellCommand {
             .collect(Collectors.joining(","));
         LOGGER.debug("Signing algorithm: [{}]. Available algorithms are [{}]", signingAlgorithm, acceptedSigningAlgs);
 
-        g.setSignatureConfiguration(new SecretSignatureConfiguration(signingSecret, JWSAlgorithm.parse(signingAlgorithm)));
+        return FunctionUtils.doUnchecked(() -> {
+            val signedJwt = new SignedJWT(new JWSHeader(JWSAlgorithm.parse(signingAlgorithm)), claims);
+            signedJwt.sign(new MACSigner(signingSecret.getBytes(StandardCharsets.UTF_8)));
+            return signedJwt;
+        });
     }
 }

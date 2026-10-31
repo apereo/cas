@@ -37,6 +37,18 @@ public interface CasWebSecurityConfigurer<T> extends Ordered, DisposableBean {
     }
 
     /**
+     * The endpoints whose state-changing requests must carry a CSRF token, as path patterns. CSRF protection is configured
+     * once for all configurers: a request that is not a {@code GET}, {@code HEAD}, {@code TRACE} or {@code OPTIONS} request
+     * and whose path matches one of these patterns must carry the token. Configurers declare their endpoints here rather than
+     * configuring CSRF themselves, since each such configuration would replace the others.
+     *
+     * @return the path patterns
+     */
+    default List<String> getCsrfProtectedEndpoints() {
+        return List.of();
+    }
+
+    /**
      * Configure.
      *
      * @param object the object
