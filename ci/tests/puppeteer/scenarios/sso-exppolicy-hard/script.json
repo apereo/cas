@@ -1,10 +1,27 @@
 {
   "dependencies": "core",
-
+  "conditions": {
+    "docker": "true"
+  },
   "properties": [
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",
-    "--cas.service-registry.core.init-from-json=true",
-    "--cas.ticket.tgt.hard-timeout.time-to-kill-in-seconds=2"
-  ]
+    "--cas.service-registry.core.init-from-json=true"
+  ],
+  "variations": [
+    {
+      "name": "hard",
+      "properties": [
+        "--cas.ticket.tgt.hard-timeout.time-to-kill-in-seconds=2"
+      ]
+    },
+    {
+      "name": "throttled",
+      "properties": [
+        "--cas.ticket.tgt.throttled-timeout.time-to-kill-in-seconds=10",
+        "--cas.ticket.tgt.throttled-timeout.time-in-between-uses-in-seconds=2"
+      ]
+    }
+  ],
+  "initScript": "${PWD}/ci/tests/httpbin/run-httpbin-server.sh"
 }

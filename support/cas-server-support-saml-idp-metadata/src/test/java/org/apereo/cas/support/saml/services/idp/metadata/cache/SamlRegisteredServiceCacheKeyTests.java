@@ -37,8 +37,8 @@ class SamlRegisteredServiceCacheKeyTests {
         assertNotNull(results.getId());
         assertNotNull(results.getRegisteredService());
         assertNotNull(results.getCriteriaSet());
-        assertEquals(service.getId() + SamlRegisteredServiceCacheKey.KEY_SEPARATOR + service.getMetadataLocation(),
-            results.getCacheKey());
+        assertTrue(results.getCacheKey().startsWith(service.getId() + SamlRegisteredServiceCacheKey.KEY_SEPARATOR
+            + service.getMetadataLocation() + SamlRegisteredServiceCacheKey.KEY_SEPARATOR));
     }
 
     @Test
@@ -57,8 +57,9 @@ class SamlRegisteredServiceCacheKeyTests {
         val result1 = new SamlRegisteredServiceCacheKey(service, criteriaSet);
         assertNotNull(result1.getId());
         assertNotNull(result1.toString());
-        assertEquals(service.getId() + SamlRegisteredServiceCacheKey.KEY_SEPARATOR + entityIdCriterion.getEntityId(),
-            result1.getCacheKey());
+        assertTrue(result1.getCacheKey().startsWith(service.getId() + SamlRegisteredServiceCacheKey.KEY_SEPARATOR
+            + service.getMetadataLocation() + SamlRegisteredServiceCacheKey.KEY_SEPARATOR + entityIdCriterion.getEntityId()
+            + SamlRegisteredServiceCacheKey.KEY_SEPARATOR));
 
         val result2 = new SamlRegisteredServiceCacheKey(service, criteriaSet);
         assertEquals(result1, result2);
@@ -77,8 +78,9 @@ class SamlRegisteredServiceCacheKeyTests {
 
         val results = new SamlRegisteredServiceCacheKey(service, criteriaSet);
         assertNotNull(results.getId());
-        assertEquals(service.getId() + SamlRegisteredServiceCacheKey.KEY_SEPARATOR + service.getServiceId(),
-            results.getCacheKey());
+        assertTrue(results.getCacheKey().startsWith(service.getId() + SamlRegisteredServiceCacheKey.KEY_SEPARATOR
+            + service.getMetadataLocation() + SamlRegisteredServiceCacheKey.KEY_SEPARATOR + service.getServiceId()
+            + SamlRegisteredServiceCacheKey.KEY_SEPARATOR));
     }
 
     @Test
@@ -95,5 +97,42 @@ class SamlRegisteredServiceCacheKeyTests {
         val firstKey = new SamlRegisteredServiceCacheKey(firstService, criteriaSet);
         val secondKey = new SamlRegisteredServiceCacheKey(secondService, criteriaSet);
         assertNotEquals(firstKey, secondKey);
+    }
+
+    @Test
+    void verifyCacheKeyForMetadataStoreIsScopedToEntity() {
+        val service = new SamlRegisteredService();
+        service.setId(1000);
+        service.setServiceId("^https://sp.*");
+        service.setMetadataLocation("jdbc://");
+
+        val firstKey = new SamlRegisteredServiceCacheKey(service, new CriteriaSet(new EntityIdCriterion("https://sp1.example.org")));
+        val secondKey = new SamlRegisteredServiceCacheKey(service, new CriteriaSet(new EntityIdCriterion("https://sp2.example.org")));
+        assertNotEquals(firstKey, secondKey);
+        assertEquals(firstKey, new SamlRegisteredServiceCacheKey(service, new CriteriaSet(new EntityIdCriterion("https://sp1.example.org"))));
+
+        service.setMetadataLocation("classpath:sample-sp.xml");
+        assertEquals(new SamlRegisteredServiceCacheKey(service, new CriteriaSet(new EntityIdCriterion("https://sp1.example.org"))),
+            new SamlRegisteredServiceCacheKey(service, new CriteriaSet(new EntityIdCriterion("https://sp2.example.org"))));
+    }
+
+    @Test
+    void verifyCacheKeyChangesWithMetadataSettings() {
+        val criteriaSet = new CriteriaSet(new EntityIdCriterion("https://carmenwiki.osu.edu/shibboleth"));
+        val service = new SamlRegisteredService();
+        service.setId(1000);
+        service.setServiceId(".+");
+        service.setMetadataLocation("classpath:sample-sp.xml");
+        val originalKey = new SamlRegisteredServiceCacheKey(service, criteriaSet);
+
+        service.setDescription("Unrelated to metadata");
+        assertEquals(originalKey, new SamlRegisteredServiceCacheKey(service, criteriaSet));
+
+        service.setMetadataSignatureLocation("classpath:inc-md-pub.pem");
+        val signedKey = new SamlRegisteredServiceCacheKey(service, criteriaSet);
+        assertNotEquals(originalKey, signedKey);
+
+        service.setMetadataCriteriaEntityAttributes(Map.of("http://macedir.org/entity-category", List.of("category")));
+        assertNotEquals(signedKey, new SamlRegisteredServiceCacheKey(service, criteriaSet));
     }
 }

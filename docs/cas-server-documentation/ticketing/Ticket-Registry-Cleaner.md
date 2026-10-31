@@ -19,6 +19,12 @@ unable to auto-evict expired tokens and entries on its own via a background task
 where the configured ticket expiration policy in CAS cannot be a direct one-to-one match for the ticket registry
 if the policy is too parameterized or has many other dynamic conditions that would not be directly translatable for the ticket registry API.
 
+Each run reads expired tickets in batches. Registries that store when each ticket expires, such as the
+[JPA ticket registry](JPA-Ticket-Registry.html), are asked only for tickets whose expiration time has passed. The first
+run after startup and every sixtieth run after it (hourly with the default one-minute schedule) read every ticket instead,
+to catch tickets that expire for reasons other than time. Other registries return every ticket on each run, as before;
+every ticket read is still checked against its expiration policy before it is removed.
+
 Note that CAS itself will remove expired tickets on-demand when a ticket object is fetched and being processed.
 The ticket registry cleaner use case primarily addresses stale tickets that would otherwise never be requested and processed
 to go through the on-demand cleaning process as necessary.

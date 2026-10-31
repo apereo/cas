@@ -17,6 +17,7 @@ import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import org.apereo.cas.util.scripting.ExecutableCompiledScriptFactory;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
+import org.apereo.cas.web.flow.AcceptableUsagePolicyAccountProfileAction;
 import org.apereo.cas.web.flow.AcceptableUsagePolicySubmitAction;
 import org.apereo.cas.web.flow.AcceptableUsagePolicyVerifyAction;
 import org.apereo.cas.web.flow.AcceptableUsagePolicyVerifyServiceAction;
@@ -26,6 +27,7 @@ import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.actions.ConsumerExecutionAction;
 import org.apereo.cas.web.flow.actions.WebflowActionBeanSupplier;
+import org.apereo.cas.web.flow.configurer.acct.AccountProfileContributionWebflowConfigurer;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.val;
 import org.apereo.inspektr.audit.spi.AuditResourceResolver;
@@ -114,6 +116,55 @@ public class CasAcceptableUsagePolicyWebflowAutoConfiguration {
             @Qualifier("acceptableUsagePolicyWebflowConfigurer")
             final CasWebflowConfigurer acceptableUsagePolicyWebflowConfigurer) {
             return plan -> plan.registerWebflowConfigurer(acceptableUsagePolicyWebflowConfigurer);
+        }
+    }
+
+    @Configuration(value = "CasAcceptableUsagePolicyAccountProfileConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.AccountManagement, enabledByDefault = false)
+    static class CasAcceptableUsagePolicyAccountProfileConfiguration {
+        @ConditionalOnMissingBean(name = "acceptableUsagePolicyAccountProfileWebflowConfigurer")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public CasWebflowConfigurer acceptableUsagePolicyAccountProfileWebflowConfigurer(
+            final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext,
+            @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_DEFINITION_REGISTRY)
+            final FlowDefinitionRegistry flowDefinitionRegistry,
+            @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
+            final FlowBuilderServices flowBuilderServices) {
+            return BeanSupplier.of(CasWebflowConfigurer.class)
+                .when(AcceptableUsagePolicyRepository.CONDITION_AUP_ENABLED.given(applicationContext.getEnvironment()))
+                .supply(() -> new AccountProfileContributionWebflowConfigurer(flowBuilderServices,
+                    flowDefinitionRegistry, applicationContext, casProperties)
+                    .withRenderAction(CasWebflowConstants.ACTION_ID_ACCOUNT_PROFILE_AUP))
+                .otherwiseProxy()
+                .get();
+        }
+
+        @ConditionalOnMissingBean(name = "acceptableUsagePolicyAccountProfileWebflowExecutionPlanConfigurer")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public CasWebflowExecutionPlanConfigurer acceptableUsagePolicyAccountProfileWebflowExecutionPlanConfigurer(
+            @Qualifier("acceptableUsagePolicyAccountProfileWebflowConfigurer")
+            final CasWebflowConfigurer acceptableUsagePolicyAccountProfileWebflowConfigurer) {
+            return plan -> plan.registerWebflowConfigurer(acceptableUsagePolicyAccountProfileWebflowConfigurer);
+        }
+
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_ACCOUNT_PROFILE_AUP)
+        public Action acceptableUsagePolicyAccountProfileAction(
+            final CasConfigurationProperties casProperties,
+            final ConfigurableApplicationContext applicationContext,
+            @Qualifier(AcceptableUsagePolicyRepository.BEAN_NAME)
+            final AcceptableUsagePolicyRepository acceptableUsagePolicyRepository) {
+            return WebflowActionBeanSupplier.builder()
+                .withApplicationContext(applicationContext)
+                .withProperties(casProperties)
+                .withAction(() -> new AcceptableUsagePolicyAccountProfileAction(acceptableUsagePolicyRepository))
+                .withId(CasWebflowConstants.ACTION_ID_ACCOUNT_PROFILE_AUP)
+                .build()
+                .get();
         }
     }
 

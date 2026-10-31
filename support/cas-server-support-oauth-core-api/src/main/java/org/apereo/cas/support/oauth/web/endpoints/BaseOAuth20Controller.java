@@ -4,33 +4,25 @@ import module java.base;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
-import org.apereo.cas.support.oauth.validator.DPoPBoundAccessTokenDowngradeException;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20JwtAccessTokenEncoder;
 import org.apereo.cas.ticket.OAuth20Token;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshToken;
-import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.web.AbstractController;
-import com.nimbusds.oauth2.sdk.dpop.verifiers.InvalidDPoPNonceException;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.Strings;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jooq.lambda.Unchecked;
 import org.jspecify.annotations.Nullable;
-import org.pac4j.core.context.HttpConstants;
-import org.pac4j.core.context.WebContext;
-import org.pac4j.core.profile.ProfileManager;
-import org.pac4j.jee.context.JEEContext;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 
 /**
@@ -64,9 +56,9 @@ public abstract class BaseOAuth20Controller<T extends OAuth20ConfigurationContex
         getConfigurationContext().configureSessionReplicationCookiePath(request);
     }
 
-    protected boolean isRequestAuthenticated(final ProfileManager manager, final WebContext context,
+    protected boolean isRequestAuthenticated(final HttpServletRequest request, final HttpServletResponse response,
                                              @Nullable final OAuthRegisteredService registeredService) {
-        return manager.getProfile().isPresent();
+        return OAuth20Utils.findAuthenticatedUserProfile(request, response, getConfigurationContext().getSessionStore()).isPresent();
     }
 
     protected @Nullable OAuthRegisteredService getRegisteredServiceByClientId(final String clientId) {
@@ -116,136 +108,70 @@ public abstract class BaseOAuth20Controller<T extends OAuth20ConfigurationContex
     }
 
     /**
-     * Access tokens reach a protected resource under an authentication scheme, and the scheme that
-     * applies depends on how the token was bound. Plain tokens use {@code Bearer} per RFC 6750,
-     * while sender-constrained tokens use {@code DPoP}: RFC 9449, section 7.1 states that "a
-     * DPoP-bound access token is sent using the Authorization request header field ... with an
-     * authentication scheme of DPoP". CAS answers the token request with {@code token_type: DPoP}
-     * whenever a proof accompanied it, so every protected resource here has to accept that scheme
-     * back; recognizing {@code Bearer} alone would reject the very tokens CAS just minted.
+     * The access token carried by the authorization header, under the {@code Bearer} or {@code DPoP} scheme.
      *
      * @param request the request
      * @return the access token carried by the authorization header, if any
+     * @see OAuth20Utils#extractAccessTokenFromAuthorizationHeader(HttpServletRequest)
      */
     protected Optional<String> extractAccessTokenFromAuthorizationHeader(final HttpServletRequest request) {
-        val authHeader = request.getHeader(HttpConstants.AUTHORIZATION_HEADER);
-        if (StringUtils.isBlank(authHeader)) {
-            return Optional.empty();
-        }
-        return Stream.of(OAuth20Constants.TOKEN_TYPE_BEARER, OAuth20Constants.TOKEN_TYPE_DPOP)
-            .filter(scheme -> Strings.CI.startsWith(authHeader, scheme + ' '))
-            .findFirst()
-            .map(scheme -> StringUtils.trimToNull(authHeader.substring(scheme.length() + 1)));
+        return OAuth20Utils.extractAccessTokenFromAuthorizationHeader(request);
     }
 
     /**
-     * The authentication scheme the client used to present its access token, which is the scheme a
-     * {@code WWW-Authenticate} challenge has to answer in. Defaults to {@code Bearer} when the
-     * request carries no recognizable scheme, since that is what a client with no token should be
-     * told to use.
+     * The authentication scheme the client used to present its access token.
      *
      * @param request the request
      * @return the authentication scheme
+     * @see OAuth20Utils#resolveAuthorizationScheme(HttpServletRequest)
      */
     protected String resolveAuthorizationScheme(final HttpServletRequest request) {
-        val authHeader = request.getHeader(HttpConstants.AUTHORIZATION_HEADER);
-        return Strings.CI.startsWith(authHeader, OAuth20Constants.TOKEN_TYPE_DPOP + ' ')
-            ? OAuth20Constants.TOKEN_TYPE_DPOP
-            : OAuth20Constants.TOKEN_TYPE_BEARER;
+        return OAuth20Utils.resolveAuthorizationScheme(request);
     }
 
     /**
-     * A protected resource answers a token it cannot accept with a 401 carrying a {@code WWW-Authenticate}
-     * challenge, not a 400. RFC 9110, section 15.5.2 makes the challenge mandatory on a 401, and RFC 6750,
-     * section 3 says to name the error only when the request actually presented credentials -- a client that
-     * sent none is told which scheme to use and nothing more. The challenge answers in whichever scheme the
-     * client used, so a DPoP-bound token is not told to retry as a bearer token, and a DPoP-bound token sent
-     * as a bearer token is told so in the {@code Bearer} scheme (RFC 9449, section 7.2). A {@code DPoP} challenge lists the
-     * algorithms accepted for DPoP proofs in its {@code algs} parameter (RFC 9449, section 7.1).
+     * A {@code 401} with a {@code WWW-Authenticate} challenge in the scheme the client used.
      *
      * @param request     the request
      * @param error       the error code, or null when the request carried no token at all
      * @param description the error description
      * @return the response entity
+     * @see OAuth20Utils#protectedResourceErrorResponse
      */
     protected ResponseEntity unauthorized(final HttpServletRequest request,
                                           final @Nullable String error,
                                           final @Nullable String description) {
-        val scheme = resolveAuthorizationScheme(request);
-        val parameters = new ArrayList<String>();
-        if (StringUtils.isNotBlank(error)) {
-            parameters.add("error=\"%s\"".formatted(error));
-            if (StringUtils.isNotBlank(description)) {
-                parameters.add("error_description=\"%s\"".formatted(toChallengeValue(description)));
-            }
-        }
-        if (OAuth20Constants.TOKEN_TYPE_DPOP.equals(scheme)) {
-            OAuth20Utils.toDPoPAlgorithmsChallengeParameter(configurationContext.getProofOfPossessionValidator().getAcceptedSigningAlgorithms())
-                .ifPresent(parameters::add);
-        }
-        val challenge = parameters.isEmpty() ? scheme : scheme + ' ' + String.join(", ", parameters);
-        val response = ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-            .header(HttpHeaders.WWW_AUTHENTICATE, challenge);
-        return StringUtils.isBlank(error)
-            ? response.build()
-            : response.body(OAuth20Utils.getErrorResponseBody(error, description));
+        return OAuth20Utils.protectedResourceErrorResponse(request, HttpStatus.UNAUTHORIZED, error, description, null,
+            configurationContext.getProofOfPossessionValidator().getAcceptedSigningAlgorithms());
     }
 
     /**
-     * Verify the DPoP proof of a request to a protected resource, when the access token is sender-constrained. The proof is
-     * bound to the presented token through its {@code ath} claim and to the confirmation recorded at issuance (RFC 9449,
-     * section 7.1); verifying it as a token request would check neither. A token with no confirmation is an ordinary bearer
-     * token and passes straight through.
-     * <p>
-     * A missing or invalid proof is answered with {@code invalid_dpop_proof}, and a bound token presented as a bearer token
-     * with {@code invalid_token}; each with a {@code 401} and a challenge (RFC 9449, sections 7.1 and 7.2).
-     * <p>
-     * A token bound to the client certificate of a mutual TLS client is accepted only over a connection that presents the
-     * same certificate, or answered with a {@code 401} and {@code invalid_token} (RFC 8705, section 3).
+     * Verify the DPoP proof or the certificate binding of a request to a protected resource, when the access token is
+     * sender-constrained.
      *
-     * @param webContext           the web context
+     * @param request              the request
+     * @param response             the response
      * @param presentedAccessToken the access token exactly as the client presented it
      * @param accessToken          the access token ticket
      * @return an error response when the proof is missing or does not verify, otherwise null
+     * @see OAuth20Utils#verifyProofOfPossession
      */
-    protected @Nullable ResponseEntity verifyProofOfPossession(final JEEContext webContext,
+    protected @Nullable ResponseEntity verifyProofOfPossession(final HttpServletRequest request,
+                                                               final HttpServletResponse response,
                                                                final String presentedAccessToken,
                                                                final OAuth20AccessToken accessToken) {
-        val boundCertificate = OAuth20Utils.getBoundCertificateThumbprint(accessToken);
-        if (boundCertificate.isPresent() && !OAuth20Utils.isBoundCertificatePresented(webContext, boundCertificate.get())) {
-            LOGGER.warn("Access token is bound to a client certificate that the request to [{}] does not present", webContext.getRequestURL());
-            return unauthorized(webContext.getNativeRequest(), OAuth20Constants.INVALID_TOKEN,
-                "Access token is bound to a client certificate that the request does not present");
-        }
-        val validator = configurationContext.getProofOfPossessionValidator();
-        try {
-            validator.validateProtectedResourceRequest(webContext, presentedAccessToken, accessToken);
-            return null;
-        } catch (final InvalidDPoPNonceException e) {
-            LOGGER.info("DPoP proof of the request to [{}] carries no valid nonce; a fresh nonce is provided", webContext.getRequestURL());
-            return OAuth20Utils.useDPoPNonceResponse(validator.getAcceptedSigningAlgorithms());
-        } catch (final DPoPBoundAccessTokenDowngradeException e) {
-            LOGGER.warn(e.getMessage());
-            return unauthorized(webContext.getNativeRequest(), OAuth20Constants.INVALID_TOKEN, e.getMessage());
-        } catch (final Throwable e) {
-            LoggingUtils.warn(LOGGER, e);
-            return unauthorized(webContext.getNativeRequest(), OAuth20Constants.INVALID_DPOP_PROOF,
-                StringUtils.defaultIfBlank(e.getMessage(), "DPoP proof validation failed"));
-        }
+        return OAuth20Utils.verifyProofOfPossession(request, response, presentedAccessToken, accessToken,
+            configurationContext.getProofOfPossessionValidator());
     }
 
     /**
-     * Challenge parameters are quoted strings, so anything that would end the quoted string early --
-     * a quote, a backslash or a control character -- is removed rather than escaped.
+     * Remove what would end a quoted challenge parameter early.
      *
      * @param value the value
      * @return the sanitized value
+     * @see OAuth20Utils#toChallengeValue(String)
      */
     protected static String toChallengeValue(final String value) {
-        return value
-            .chars()
-            .filter(character -> character >= ' ' && character != '"' && character != '\\' && !Character.isISOControl(character))
-            .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
-            .toString();
+        return OAuth20Utils.toChallengeValue(value);
     }
 }

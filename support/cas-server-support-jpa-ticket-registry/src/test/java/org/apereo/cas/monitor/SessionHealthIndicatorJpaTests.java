@@ -42,11 +42,11 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.ticket.registry.jpa.user=root",
     "cas.ticket.registry.jpa.password=mypass",
     "cas.ticket.registry.jpa.driver-class=org.mariadb.jdbc.Driver",
-    "cas.ticket.registry.jpa.url=jdbc:mariadb://localhost:3306/mysql?allowPublicKeyRetrieval=true&characterEncoding=UTF-8&useSSL=FALSE",
+    "cas.ticket.registry.jpa.url=jdbc:mariadb://localhost:3307/mysql?allowPublicKeyRetrieval=true&characterEncoding=UTF-8&useSSL=FALSE",
     "cas.ticket.registry.jpa.dialect=org.hibernate.dialect.MariaDBDialect"
 })
 @EnableConfigurationProperties({IntegrationProperties.class, CasConfigurationProperties.class})
-@EnabledIfListeningOnPort(port = 3306)
+@EnabledIfListeningOnPort(port = 3307)
 @Tag("MariaDb")
 @ExtendWith(CasTestExtension.class)
 class SessionHealthIndicatorJpaTests {

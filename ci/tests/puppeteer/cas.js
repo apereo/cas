@@ -1460,18 +1460,39 @@ exports.parseOtpAuthenticationUrl = async (url) => {
     return {
         user: userLabel,
         secret: secret,
-        issuer: issuer || issuerLabel
+        issuer: issuer || issuerLabel,
+        digits: Number(params.get("digits") ?? 6),
+        period: Number(params.get("period") ?? 30)
     };
 };
 
-exports.generateOtp = async (otpConfig) => {
+/**
+ * Generates a TOTP code for an account parsed from its registration URL, waiting for the next time step when the
+ * current code was already handed out. A step offset produces the code of an earlier or later time step instead,
+ * without waiting, for checks of the window CAS accepts; it is remembered as handed out too.
+ *
+ * @param otpConfig the parsed registration URL
+ * @param stepOffset the number of time steps away from now
+ * @returns the code
+ */
+exports.generateOtp = async (otpConfig, stepOffset = 0) => {
+    const step = otpConfig.period ?? 30;
+    const totp = () => speakeasy.totp({
+        secret: otpConfig.secret,
+        encoding: "base32",
+        step: step,
+        digits: otpConfig.digits ?? 6,
+        time: Math.floor(Date.now() / 1000) + (stepOffset * step)
+    });
+    if (stepOffset !== 0) {
+        const code = totp();
+        await this.logb(`Generated OTP ${code} for ${stepOffset} time step(s) away`);
+        USED_OTPS.push(code);
+        return code;
+    }
     let otp = undefined;
     while (otp === undefined || USED_OTPS.includes(otp)) {
-        otp = speakeasy.totp({
-            secret: otpConfig.secret,
-            encoding: "base32",
-            step: 30
-        });
+        otp = totp();
         if (USED_OTPS.includes(otp)) {
             await this.logb(`Generated OTP matches the previous value: ${otp}. Trying again...`);
             await this.sleep(3000);
@@ -1483,13 +1504,33 @@ exports.generateOtp = async (otpConfig) => {
     return otp;
 };
 
+/**
+ * Sets the signature counter of the credentials held by a virtual authenticator, the way a cloned authenticator
+ * would report a counter that does not move forward.
+ *
+ * @param device the virtual authenticator
+ * @param signCount the new counter
+ * @param rpId the relying party of the credentials; the authenticator does not report it for non-resident credentials
+ * @returns the counters the credentials had before
+ */
+exports.setWebAuthnSignCount = async (device, signCount, rpId = "localhost") => {
+    const authenticatorId = device.authenticator.authenticatorId;
+    const {credentials} = await device.client.send("WebAuthn.getCredentials", {authenticatorId});
+    for (const credential of credentials) {
+        await this.log(`Credential ${credential.credentialId} has signature counter ${credential.signCount}; setting it to ${signCount}`);
+        await device.client.send("WebAuthn.removeCredential", {authenticatorId, credentialId: credential.credentialId});
+        await device.client.send("WebAuthn.addCredential", {authenticatorId, credential: {rpId, ...credential, signCount}});
+    }
+    return credentials.map((credential) => credential.signCount);
+};
+
 exports.removeWebAuthnVirtualAuthenticator = async (device) => {
     await device.client.send("WebAuthn.removeVirtualAuthenticator", {
         authenticatorId: device.authenticator.authenticatorId
     });
 };
 
-exports.createWebAuthnVirtualAuthenticator = async (page, protocol = "u2f", hasResidentKey = false) => {
+exports.createWebAuthnVirtualAuthenticator = async (page, protocol = "u2f", hasResidentKey = false, options = {}) => {
     const client = await page.target().createCDPSession();
     await client.send("WebAuthn.enable");
     const authenticator = await client.send("WebAuthn.addVirtualAuthenticator", {
@@ -1498,7 +1539,8 @@ exports.createWebAuthnVirtualAuthenticator = async (page, protocol = "u2f", hasR
             transport: "usb",
             hasResidentKey: hasResidentKey,
             hasUserVerification: true,
-            isUserVerified: true
+            isUserVerified: true,
+            ...options
         }
     });
     await this.logg(`WebAuthn authenticator: ${authenticator}`);

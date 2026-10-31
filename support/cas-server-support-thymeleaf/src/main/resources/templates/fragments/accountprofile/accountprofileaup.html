@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Account Profile</title>
+    <link href="../../static/css/account.css" rel="stylesheet" th:remove="tag"/>
+</head>
+<body>
+<section th:fragment="aup" th:if="${acceptableUsagePolicyStatus}" id="divAcceptableUsagePolicy" class="profile-content" hidden
+         aria-labelledby="divAcceptableUsagePolicyTitle"
+         th:data-account-trail="|#{screen.account.trail.root} › #{screen.account.group.privacy} › #{screen.account.aup.title}|">
+    <header>
+        <div>
+            <h2 id="divAcceptableUsagePolicyTitle" th:text="#{screen.account.aup.title}">Acceptable usage policy</h2>
+            <p th:text="#{screen.account.aup.subtitle}">The terms you agree to when you use this service.</p>
+        </div>
+    </header>
+    <p id="aupStatus" class="cas-account-status">
+        <span class="cas-account-tag" th:classappend="${acceptableUsagePolicyStatus == 'accepted'} ? 'is-success' : (${acceptableUsagePolicyStatus == 'denied'} ? 'is-warning' : '')"
+              th:text="#{${'screen.account.aup.status.' + acceptableUsagePolicyStatus}}">Accepted</span>
+        <span th:text="#{${'screen.account.aup.' + acceptableUsagePolicyStatus}}">You have accepted the policy.</span>
+    </p>
+    <div id="aupPolicyText" class="cas-account-policy">
+        <th:block th:if="${acceptableUsagePolicyTerms}">
+            <div th:if="${acceptableUsagePolicyTerms.code}" th:utext="#{${acceptableUsagePolicyTerms.code}}">Policy terms</div>
+            <div th:if="${acceptableUsagePolicyTerms.defaultText}" th:utext="${acceptableUsagePolicyTerms.defaultText}">Policy text</div>
+        </th:block>
+        <div th:unless="${acceptableUsagePolicyTerms}" th:utext="#{screen.aup.policyterms}">Policy terms</div>
+    </div>
+</section>
+</body>
+</html>

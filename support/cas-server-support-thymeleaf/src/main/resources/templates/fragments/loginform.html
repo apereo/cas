@@ -18,12 +18,14 @@
                 loginFormViewable=${#cas.isLoginFormViewable(#vars)}">
 
         <div th:if="${delegatedAuthenticationProviderPrimary == null}">
-            <div th:if="${!#strings.isEmpty(#cas.theme('cas.hero-banner.file'))}">
+            <div th:if="${#cas.themeBuilderEnabled or !#strings.isEmpty(#cas.theme('cas.hero-banner.file'))}"
+                 th:classappend="${#strings.isEmpty(#cas.theme('cas.hero-banner.file'))} ? 'cas-theme-builder-off'"
+                 data-cas-theme-builder-toggle="cas.hero-banner.file">
                 <p>
                     <img id="heroimg"
                          th:title="${#strings.defaultString(#cas.theme('cas.theme.name'), 'CAS')}"
                          th:alt="${#strings.defaultString(#cas.theme('cas.theme.name'), 'CAS')}"
-                         th:src="@{${#cas.theme('cas.hero-banner.file')}}"/>
+                         th:src="${#strings.isEmpty(#cas.theme('cas.hero-banner.file'))} ? null : @{${#cas.theme('cas.hero-banner.file')}}"/>
                 </p>
             </div>
             <div class="service-ui" th:replace="~{fragments/serviceui :: serviceUI}">
@@ -122,6 +124,9 @@
                                        aria-describedby="passwordValidationMessage"
                                        autocomplete="current-password"/>
                                 <button
+                                        th:if="${#cas.themeBuilderEnabled or #cas.isTrue(#cas.theme('cas.login-form.password-reveal.enabled'))}"
+                                        th:classappend="${!#cas.isTrue(#cas.theme('cas.login-form.password-reveal.enabled'))} ? 'cas-theme-builder-off'"
+                                        data-cas-theme-builder-toggle="cas.login-form.password-reveal.enabled"
                                         class="reveal-password mdc-button mdc-button--unelevated mdc-input-group-append mdc-icon-button btn btn-primary"
                                         type="button" th:title="#{screen.pm.password.toggle}" aria-pressed="false">
                                     <i class="mdi mdi-eye reveal-password-icon fas fa-eye" aria-hidden="true"></i>
@@ -137,7 +142,10 @@
 
                         </div>
 
-                        <div class="mdc-text-field-helper-line invalid-feedback caps-warn">
+                        <div class="mdc-text-field-helper-line invalid-feedback caps-warn"
+                             th:if="${#cas.themeBuilderEnabled or #cas.isTrue(#cas.theme('cas.login-form.caps-lock-warning.enabled'))}"
+                             th:classappend="${!#cas.isTrue(#cas.theme('cas.login-form.caps-lock-warning.enabled'))} ? 'cas-theme-builder-off'"
+                             data-cas-theme-builder-toggle="cas.login-form.caps-lock-warning.enabled">
                             <div class="mdc-text-field-helper-text mdc-text-field-helper-text--persistent mdc-text-field-helper-text--validation-msg text-danger">
                                 <span th:utext="#{screen.capslock.on}"/>
                             </div>
@@ -267,14 +275,18 @@
 
                     <p id="fieldsLegend"
                        class="text-muted mb-3"
-                       th:if="${#cas.isTrue(#cas.theme('cas.login-form.legend.enabled'))}"
+                       th:if="${#cas.themeBuilderEnabled or #cas.isTrue(#cas.theme('cas.login-form.legend.enabled'))}"
+                       th:classappend="${!#cas.isTrue(#cas.theme('cas.login-form.legend.enabled'))} ? 'cas-theme-builder-off'"
+                       data-cas-theme-builder-toggle="cas.login-form.legend.enabled"
                        th:utext="#{screen.welcome.fields.legend}">
                         * Indicates required fields
                     </p>
 
                     <div id="termsOfUse"
                          class="text-muted mb-3"
-                         th:if="${#cas.isTrue(#cas.theme('cas.login-form.terms-of-use.enabled'))}"
+                         th:if="${#cas.themeBuilderEnabled or #cas.isTrue(#cas.theme('cas.login-form.terms-of-use.enabled'))}"
+                         th:classappend="${!#cas.isTrue(#cas.theme('cas.login-form.terms-of-use.enabled'))} ? 'cas-theme-builder-off'"
+                         data-cas-theme-builder-toggle="cas.login-form.terms-of-use.enabled"
                          th:utext="#{screen.welcome.termsofuse}">
                         You agree to the terms of use by logging in.
                     </div>
@@ -331,8 +343,10 @@
 
 
             <div th:if="${loginFormViewable and loginFormEnabled}">
-                <span th:remove="tag"
-                      th:if="${#cas.isTrue(#cas.theme('cas.pm-links.enabled'))}">
+                <span th:remove="${#cas.themeBuilderEnabled} ? 'none' : 'tag'"
+                      th:if="${#cas.themeBuilderEnabled or #cas.isTrue(#cas.theme('cas.pm-links.enabled'))}"
+                      th:classappend="${!#cas.isTrue(#cas.theme('cas.pm-links.enabled'))} ? 'cas-theme-builder-off'"
+                      data-cas-theme-builder-toggle="cas.pm-links.enabled">
                     <div th:replace="~{fragments/pmlinks :: pmlinks}"/>
                 </span>
             </div>

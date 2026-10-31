@@ -3,6 +3,7 @@ package org.apereo.cas.web.security;
 import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.test.CasTestExtension;
+import org.apereo.cas.web.CasWebSecurityConfigurer;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
@@ -15,8 +16,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.annotation.Bean;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -135,6 +139,27 @@ class CasWebSecurityConfigurerAdapterWebTests {
     }
 
     @Test
+    void verifyCsrfProtectionOfAllConfigurers() throws Throwable {
+        mvc.perform(post("/cas/first")).andExpect(status().isForbidden());
+        mvc.perform(post("/cas/second")).andExpect(status().isForbidden());
+
+        val result = mvc.perform(get("/cas/first"))
+            .andExpect(status().isOk())
+            .andExpect(cookie().exists("XSRF-TOKEN"))
+            .andReturn();
+        val cookie = Objects.requireNonNull(result.getResponse().getCookie("XSRF-TOKEN"));
+        val maskedToken = ((CsrfToken) Objects.requireNonNull(result.getRequest().getAttribute(CsrfToken.class.getName()))).getToken();
+        assertNotEquals(cookie.getValue(), maskedToken);
+
+        mvc.perform(post("/cas/first").cookie(cookie).header("X-CSRF-TOKEN", cookie.getValue()))
+            .andExpect(status().isOk());
+        mvc.perform(post("/cas/second").cookie(cookie).header("X-CSRF-TOKEN", maskedToken))
+            .andExpect(status().isOk());
+        mvc.perform(post("/cas/second").cookie(cookie).header("X-CSRF-TOKEN", "unknown"))
+            .andExpect(status().isForbidden());
+    }
+
+    @Test
     void verifyStaticResources() throws Throwable {
         mvc.perform(get("/cas/hello/data.txt")).andExpect(status().isOk());
     }
@@ -167,6 +192,40 @@ class CasWebSecurityConfigurerAdapterWebTests {
         @RestController("CustomController")
         @RequestMapping("/custom")
         static class CustomController extends BaseController {
+        }
+
+        @RestController("FirstCsrfProtectedController")
+        @RequestMapping("/first")
+        static class FirstCsrfProtectedController extends BaseController {
+        }
+
+        @RestController("SecondCsrfProtectedController")
+        @RequestMapping("/second")
+        static class SecondCsrfProtectedController extends BaseController {
+        }
+
+        @Bean
+        public CasWebSecurityConfigurer<HttpSecurity> firstCsrfProtectedConfigurer() {
+            return csrfProtectedConfigurer("/first");
+        }
+
+        @Bean
+        public CasWebSecurityConfigurer<HttpSecurity> secondCsrfProtectedConfigurer() {
+            return csrfProtectedConfigurer("/second");
+        }
+
+        private static CasWebSecurityConfigurer<HttpSecurity> csrfProtectedConfigurer(final String endpoint) {
+            return new CasWebSecurityConfigurer<>() {
+                @Override
+                public List<String> getIgnoredEndpoints() {
+                    return List.of(endpoint);
+                }
+
+                @Override
+                public List<String> getCsrfProtectedEndpoints() {
+                    return List.of(endpoint + "/**");
+                }
+            };
         }
     }
 }

@@ -4,6 +4,7 @@ import module java.base;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
+import org.apereo.cas.support.oauth.profile.OAuth20UserProfile;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestContext;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20JwtAccessTokenEncoder;
@@ -22,8 +23,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.hjson.JsonValue;
-import org.pac4j.core.profile.UserProfile;
-import org.pac4j.jee.context.JEEContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -100,7 +99,7 @@ public class UmaAuthorizationRequestEndpointController extends BaseUmaEndpointCo
     protected ResponseEntity handleMismatchedClaims(
         final HttpServletRequest request,
         final HttpServletResponse response,
-        final UserProfile profileResult,
+        final OAuth20UserProfile profileResult,
         final UmaResourceSetClaimPermissionResult analysisResult,
         final UmaPermissionTicket permissionTicket) {
 
@@ -135,7 +134,7 @@ public class UmaAuthorizationRequestEndpointController extends BaseUmaEndpointCo
 
     protected ResponseEntity generateRequestingPartyToken(
         final HttpServletRequest request, final HttpServletResponse response,
-        final UserProfile profileResult, final UmaAuthorizationRequest umaRequest,
+        final OAuth20UserProfile profileResult, final UmaAuthorizationRequest umaRequest,
         final UmaPermissionTicket permissionTicket)
             throws Throwable {
         val currentAat = (OAuth20AccessToken) profileResult.getAttribute(OAuth20AccessToken.class.getName());
@@ -166,7 +165,7 @@ public class UmaAuthorizationRequestEndpointController extends BaseUmaEndpointCo
         val cipher = OAuth20JwtAccessTokenEncoder.toEncodableCipher(getUmaConfigurationContext(),
             registeredService, accessToken, accessToken.getService(), false);
         val encodedAccessToken = cipher.encode(accessToken.getId());
-        val userProfile = OAuth20Utils.getAuthenticatedUserProfile(new JEEContext(request, response),
+        val userProfile = OAuth20Utils.getAuthenticatedUserProfile(request, response,
             getUmaConfigurationContext().getSessionStore());
         userProfile.addAttribute(UmaPermissionTicket.class.getName(), permissionTicket);
         userProfile.addAttribute(ResourceSet.class.getName(), permissionTicket.getResourceSet());

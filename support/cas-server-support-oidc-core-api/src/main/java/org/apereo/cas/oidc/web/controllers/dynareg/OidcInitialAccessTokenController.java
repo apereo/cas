@@ -9,7 +9,10 @@ import org.apereo.cas.oidc.web.controllers.BaseOidcController;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
+import org.apereo.cas.support.oauth.profile.DefaultOAuth20UserProfile;
+import org.apereo.cas.support.oauth.profile.OAuth20UserProfile;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
+import org.apereo.cas.support.oauth.web.OAuth20ClientAuthenticationInterceptor;
 import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20TokenGeneratedResult;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestContext;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20AccessTokenResponseResult;
@@ -21,18 +24,11 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.pac4j.core.client.BaseClient;
-import org.pac4j.core.context.CallContext;
-import org.pac4j.core.credentials.extractor.BasicAuthExtractor;
-import org.pac4j.core.credentials.password.SpringSecurityPasswordEncoder;
-import org.pac4j.core.profile.CommonProfile;
-import org.pac4j.core.profile.service.InMemoryProfileService;
-import org.pac4j.core.util.Pac4jConstants;
-import org.pac4j.http.client.direct.HeaderClient;
-import org.pac4j.jee.context.JEEContext;
+import org.jspecify.annotations.Nullable;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.security.crypto.password.NoOpPasswordEncoder;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.json.JacksonJsonView;
@@ -48,33 +44,25 @@ import jakarta.servlet.http.HttpServletResponse;
 @Slf4j
 @Tag(name = "OpenID Connect")
 public class OidcInitialAccessTokenController extends BaseOidcController {
-    private final BaseClient accessTokenClient = new HeaderClient();
+    private final @Nullable String initialAccessTokenUser;
+
+    private final @Nullable String initialAccessTokenPassword;
 
     public OidcInitialAccessTokenController(final OidcConfigurationContext configurationContext) {
         super(configurationContext);
-        val casProperties = getConfigurationContext().getCasProperties();
-        val oidcProperties = casProperties.getAuthn().getOidc();
-
-        if (oidcProperties.getRegistration().getDynamicClientRegistrationMode().isProtected()) {
-            val authProfile = new CommonProfile();
-            val registration = getConfigurationContext().getCasProperties().getAuthn().getOidc().getRegistration();
-            authProfile.setId(StringUtils.defaultIfBlank(registration.getInitialAccessTokenUser(),
-                RandomUtils.randomAlphabetic(8)));
-            authProfile.addAttribute(Pac4jConstants.USERNAME, authProfile.getId());
-            accessTokenClient.setCredentialsExtractor(new BasicAuthExtractor());
-            val authenticator = new InMemoryProfileService<>(objects -> authProfile);
-            authenticator.setPasswordEncoder(new SpringSecurityPasswordEncoder(NoOpPasswordEncoder.getInstance()));
-            authenticator.init();
-            authenticator.create(authProfile, StringUtils.defaultIfBlank(registration.getInitialAccessTokenPassword(),
-                RandomUtils.randomAlphabetic(8)));
-            accessTokenClient.setAuthenticator(authenticator);
-            accessTokenClient.setName(UUID.randomUUID().toString());
-            accessTokenClient.init();
+        val registration = configurationContext.getCasProperties().getAuthn().getOidc().getRegistration();
+        if (registration.getDynamicClientRegistrationMode().isProtected()) {
+            this.initialAccessTokenUser = StringUtils.defaultIfBlank(registration.getInitialAccessTokenUser(), RandomUtils.randomAlphabetic(8));
+            this.initialAccessTokenPassword = StringUtils.defaultIfBlank(registration.getInitialAccessTokenPassword(), RandomUtils.randomAlphabetic(8));
+        } else {
+            this.initialAccessTokenUser = null;
+            this.initialAccessTokenPassword = null;
         }
     }
 
     /**
-     * Handle request..
+     * Handle request. A request without the credentials of the user configured for initial access tokens is answered with
+     * {@code 401} and a {@code Basic} challenge.
      *
      * @param request  the request
      * @param response the response
@@ -87,8 +75,7 @@ public class OidcInitialAccessTokenController extends BaseOidcController {
     @Operation(summary = "Handle OIDC initial access token request")
     public ModelAndView handleRequestInternal(
         final HttpServletRequest request, final HttpServletResponse response) {   
-        val webContext = new JEEContext(request, response);
-        if (!getConfigurationContext().getIssuerService().validateIssuer(webContext, List.of(OidcConstants.REGISTRATION_INITIAL_TOKEN_URL))) {
+        if (!getConfigurationContext().getIssuerService().validateIssuer(request, List.of(OidcConstants.REGISTRATION_INITIAL_TOKEN_URL))) {
             val body = OAuth20Utils.getErrorResponseBody(OAuth20Constants.INVALID_REQUEST, "Invalid issuer");
             val modelAndView = new ModelAndView(new JacksonJsonView(), body);
             modelAndView.setStatus(HttpStatus.BAD_REQUEST);
@@ -101,14 +88,9 @@ public class OidcInitialAccessTokenController extends BaseOidcController {
             LOGGER.warn("Dynamic client registration mode is not configured as protected.");
             return getBadRequestResponseEntity(HttpStatus.NOT_ACCEPTABLE);
         }
-        val callContext = new CallContext(webContext, getConfigurationContext().getSessionStore(),
-            getConfigurationContext().getOauthConfig().getProfileManagerFactory());
-        return accessTokenClient.getCredentials(callContext)
-            .map(credentials -> accessTokenClient.validateCredentials(callContext, credentials))
-            .filter(Optional::isPresent)
-            .map(Optional::get)
-            .map(credentials -> {
-                val principal = FunctionUtils.doUnchecked(() -> PrincipalFactoryUtils.newPrincipalFactory().createPrincipal(credentials.getUserProfile().getId()));
+        return authenticate(request)
+            .map(userProfile -> {
+                val principal = FunctionUtils.doUnchecked(() -> PrincipalFactoryUtils.newPrincipalFactory().createPrincipal(userProfile.getId()));
                 val service = getConfigurationContext().getWebApplicationServiceServiceFactory()
                     .createService(casProperties.getServer().getPrefix());
 
@@ -140,14 +122,53 @@ public class OidcInitialAccessTokenController extends BaseOidcController {
                             .casProperties(getConfigurationContext().getCasProperties())
                             .generatedToken(accessTokenResult)
                             .grantType(accessToken.getGrantType())
-                            .userProfile(credentials.getUserProfile())
+                            .userProfile(userProfile)
                             .build();
 
                         return getConfigurationContext().getAccessTokenResponseGenerator().generate(tokenResult);
                     })
                     .orElseGet(() -> getBadRequestResponseEntity(HttpStatus.BAD_REQUEST));
             })
-            .orElseGet(() -> getBadRequestResponseEntity(HttpStatus.UNAUTHORIZED));
+            .orElseGet(() -> {
+                response.setHeader(HttpHeaders.WWW_AUTHENTICATE, OAuth20ClientAuthenticationInterceptor.BASIC_AUTHENTICATION_CHALLENGE);
+                return getBadRequestResponseEntity(HttpStatus.UNAUTHORIZED);
+            });
+    }
+
+    /**
+     * Authenticate the request with the HTTP Basic credentials of the user configured for initial access tokens. Both the
+     * user and the password are compared in constant time. A request without credentials, with a malformed header or with
+     * other credentials is not authenticated.
+     *
+     * @param request the request
+     * @return the profile of the user, if authenticated
+     */
+    protected Optional<OAuth20UserProfile> authenticate(final HttpServletRequest request) {
+        val user = initialAccessTokenUser;
+        val password = initialAccessTokenPassword;
+        if (user == null || password == null) {
+            return Optional.empty();
+        }
+        try {
+            return OAuth20Utils.readBasicAuthorization(request)
+                .filter(credentials -> {
+                    val userMatches = isEqual(credentials.getKey(), user);
+                    val passwordMatches = isEqual(credentials.getValue(), password);
+                    return userMatches && passwordMatches;
+                })
+                .map(credentials -> {
+                    val profile = new DefaultOAuth20UserProfile(user, OAuth20UserProfile.COMMON_PROFILE_HANDLER_NAME);
+                    profile.addAttribute("username", user);
+                    return profile;
+                });
+        } catch (final BadCredentialsException e) {
+            LOGGER.debug("Unable to read the credentials of the initial access token request: [{}]", e.getMessage());
+            return Optional.empty();
+        }
+    }
+
+    private static boolean isEqual(final String given, final String expected) {
+        return MessageDigest.isEqual(given.getBytes(StandardCharsets.UTF_8), expected.getBytes(StandardCharsets.UTF_8));
     }
 
     protected ModelAndView getBadRequestResponseEntity(final HttpStatus status) {

@@ -91,4 +91,29 @@ class RegisteredServiceHazelcastDistributedCacheManagerTests {
             casRegisteredServiceStreamPublisherIdentifier);
         assertFalse(mgr.getAll().isEmpty());
     }
+
+    @Test
+    void verifyPublisherSkipsUnchangedLoadedService() {
+        val registeredService = RegisteredServiceTestUtils.getRegisteredService();
+        val publisherIdentifier = new PublisherIdentifier("123456");
+        val publisher = new DefaultCasRegisteredServiceStreamPublisher(mgr);
+        val clientInfo = ClientInfoHolder.getClientInfo();
+        val savedEvent = CasRegisteredServiceSavedEvent.class.getSimpleName();
+        val loadedEvent = CasRegisteredServiceLoadedEvent.class.getSimpleName();
+
+        publisher.publish(registeredService, new CasRegisteredServiceSavedEvent(this, registeredService, clientInfo), publisherIdentifier);
+        assertEquals(savedEvent, mgr.get(registeredService).getProperties().get("event"));
+
+        publisher.publish(registeredService, new CasRegisteredServiceLoadedEvent(this, registeredService, clientInfo), publisherIdentifier);
+        assertEquals(savedEvent, mgr.get(registeredService).getProperties().get("event"));
+
+        registeredService.setDescription("Changed description");
+        publisher.publish(registeredService, new CasRegisteredServiceLoadedEvent(this, registeredService, clientInfo), publisherIdentifier);
+        assertEquals(loadedEvent, mgr.get(registeredService).getProperties().get("event"));
+        assertEquals("Changed description", mgr.get(registeredService).getValue().getDescription());
+
+        publisher.publish(registeredService, new CasRegisteredServiceDeletedEvent(this, registeredService, clientInfo), publisherIdentifier);
+        publisher.publish(registeredService, new CasRegisteredServiceLoadedEvent(this, registeredService, clientInfo), publisherIdentifier);
+        assertEquals(loadedEvent, mgr.get(registeredService).getProperties().get("event"));
+    }
 }

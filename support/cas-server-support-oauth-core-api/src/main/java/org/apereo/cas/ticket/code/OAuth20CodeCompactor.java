@@ -41,7 +41,9 @@ public class OAuth20CodeCompactor implements TicketCompactor<OAuth20Code> {
 
     private static final int AUTHORIZATION_DETAILS_INDEX = 9;
 
-    private static final int AUTHENTICATION_INDEX = 10;
+    private static final int RESOURCES_INDEX = 10;
+
+    private static final int AUTHENTICATION_INDEX = 11;
 
     private final ObjectProvider<TicketFactory> ticketFactory;
 
@@ -65,6 +67,7 @@ public class OAuth20CodeCompactor implements TicketCompactor<OAuth20Code> {
         fields.add(Objects.requireNonNullElse(code.getResponseType(), OAuth20ResponseTypes.CODE).name());
         fields.add(Objects.requireNonNullElse(code.getGrantType(), OAuth20GrantTypes.AUTHORIZATION_CODE).name());
         fields.add(OAuth20Utils.toCompactAuthorizationDetails(code.getAuthorizationDetails()));
+        fields.add(CompactTicketCodec.encodeValues(code.getResources()));
         CompactTicketAuthentication.compact(fields, code.getAuthentication(), retainedAuthenticationAttributes);
     }
 
@@ -83,6 +86,7 @@ public class OAuth20CodeCompactor implements TicketCompactor<OAuth20Code> {
         val factory = (OAuth20CodeFactory) ticketFactory.getObject().get(getTicketType());
         val code = factory.create(service, authentication, null,
             CompactTicketCodec.decodeValues(structure.get(SCOPES_INDEX)),
+            CompactTicketCodec.decodeValues(structure.get(RESOURCES_INDEX)),
             StringUtils.trimToNull(structure.get(CODE_CHALLENGE_INDEX)),
             StringUtils.trimToNull(structure.get(CODE_CHALLENGE_METHOD_INDEX)),
             structure.get(CLIENT_ID_INDEX), new HashMap<>(), responseType, grantType);

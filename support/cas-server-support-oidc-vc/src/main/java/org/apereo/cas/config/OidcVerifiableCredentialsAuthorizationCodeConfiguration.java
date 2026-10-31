@@ -9,13 +9,13 @@ import org.apereo.cas.oidc.vc.authz.OidcVerifiableCredentialAuthorizationCodeAut
 import org.apereo.cas.oidc.vc.offer.OidcVerifiableCredentialTransactionService;
 import org.apereo.cas.oidc.vc.token.OidcVerifiableCredentialsPreAuthorizationCodeAuthenticator;
 import org.apereo.cas.support.oauth.OAuth20Constants;
-import org.apereo.cas.support.oauth.authenticator.OAuth20AuthenticationClientProvider;
+import org.apereo.cas.support.oauth.authenticator.DefaultOAuth20ClientAuthenticationProvider;
+import org.apereo.cas.support.oauth.authenticator.OAuth20ClientAuthenticationProvider;
+import org.apereo.cas.support.oauth.authenticator.OAuth20ClientCredentialsAuthenticator;
+import org.apereo.cas.support.oauth.authenticator.OAuth20FormAuthenticationConverter;
 import org.apereo.cas.support.oauth.web.OAuth20RequestParameterResolver;
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20AuthorizationModelAndViewBuilder;
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20AuthorizationResponseBuilder;
-import lombok.val;
-import org.pac4j.core.credentials.authenticator.Authenticator;
-import org.pac4j.http.client.direct.DirectFormClient;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -49,23 +49,21 @@ class OidcVerifiableCredentialsAuthorizationCodeConfiguration {
 
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    public OAuth20AuthenticationClientProvider oidcVerifiableCredentialsPreAuthorizationCodeAuthenticationClientProvider(
+    public OAuth20ClientAuthenticationProvider oidcVerifiableCredentialsPreAuthorizationCodeAuthenticationClientProvider(
         @Qualifier("oidcVerifiableCredentialsPreAuthorizationCodeAuthenticator")
-        final Authenticator oidcVerifiableCredentialsPreAuthorizationCodeAuthenticator) {
-        return () -> {
-            val accessTokenClient = new DirectFormClient(oidcVerifiableCredentialsPreAuthorizationCodeAuthenticator);
-            accessTokenClient.setName("oidcVerifiableCredentialsPreAuthorizationCodeAuthenticationClientProvider");
-            accessTokenClient.setUsernameParameter(OidcConstants.PRE_AUTHORIZED_CODE);
-            accessTokenClient.setPasswordParameter(OAuth20Constants.GRANT_TYPE);
-            accessTokenClient.init();
-            return accessTokenClient;
-        };
+        final OAuth20ClientCredentialsAuthenticator oidcVerifiableCredentialsPreAuthorizationCodeAuthenticator) {
+        return DefaultOAuth20ClientAuthenticationProvider.builder()
+            .name("oidcVerifiableCredentialsPreAuthorizationCodeAuthenticationClientProvider")
+            .authenticationConverter(new OAuth20FormAuthenticationConverter(OidcConstants.PRE_AUTHORIZED_CODE, OAuth20Constants.GRANT_TYPE))
+            .authenticator(oidcVerifiableCredentialsPreAuthorizationCodeAuthenticator)
+            .requestedClientIgnored(true)
+            .build();
     }
 
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "oidcVerifiableCredentialsPreAuthorizationCodeAuthenticator")
-    public Authenticator oidcVerifiableCredentialsPreAuthorizationCodeAuthenticator(
+    public OAuth20ClientCredentialsAuthenticator oidcVerifiableCredentialsPreAuthorizationCodeAuthenticator(
         @Qualifier(OAuth20RequestParameterResolver.BEAN_NAME)
         final OAuth20RequestParameterResolver oauthRequestParameterResolver,
         @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)

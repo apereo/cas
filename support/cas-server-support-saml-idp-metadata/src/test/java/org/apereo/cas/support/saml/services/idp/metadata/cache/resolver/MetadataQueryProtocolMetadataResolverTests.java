@@ -8,10 +8,12 @@ import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.util.MockWebServer;
 import org.apereo.cas.util.RandomUtils;
 import lombok.val;
+import net.shibboleth.shared.resolver.CriteriaSet;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.opensaml.core.criterion.EntityIdCriterion;
 import org.springframework.core.io.ClassPathResource;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -93,6 +95,28 @@ class MetadataQueryProtocolMetadataResolverTests extends BaseSamlIdPServicesTest
         }
         assertFalse(resolver.resolve(service).isEmpty(),
             "MDQ resolution must fall back onto the metadata backup file when the MDQ server is unreachable");
+    }
+
+    @Test
+    void verifyBackupFileIsScopedToRequestedEntity() throws Throwable {
+        val props = new SamlIdPProperties();
+        props.getMetadata().getFileSystem().setLocation(fileSystemMetadataPath);
+        val resolver = new MetadataQueryProtocolMetadataResolver(httpClient, props, openSamlConfigBean);
+        val service = new SamlRegisteredService();
+        service.setId(RandomUtils.nextLong());
+        service.setName(RandomUtils.randomAlphabetic(12));
+        service.setServiceId(".+");
+
+        val firstEntity = new CriteriaSet(new EntityIdCriterion("https://mockypost.io"));
+        val secondEntity = new CriteriaSet(new EntityIdCriterion("https://unknown.example.org"));
+        try (val webServer = new MockWebServer(new ClassPathResource("sample-metadata.xml"))) {
+            webServer.start();
+            service.setMetadataLocation("http://localhost:%s/entities/{0}".formatted(webServer.getPort()));
+            assertFalse(resolver.resolve(service, firstEntity).isEmpty());
+        }
+        assertFalse(resolver.resolve(service, firstEntity).isEmpty());
+        assertThrows(SamlException.class, () -> resolver.resolve(service, secondEntity),
+            "An entity never fetched must not fall back onto the backup of another entity of the same service");
     }
 
     @Test

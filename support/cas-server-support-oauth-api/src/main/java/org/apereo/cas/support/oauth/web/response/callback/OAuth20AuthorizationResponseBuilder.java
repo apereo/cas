@@ -7,10 +7,11 @@ import org.apereo.cas.support.oauth.OAuth20ResponseModeTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.web.response.OAuth20AuthorizationRequest;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestContext;
-import org.pac4j.core.context.WebContext;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.web.servlet.ModelAndView;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * This is {@link OAuth20AuthorizationResponseBuilder} that attempts to build the callback url
@@ -64,13 +65,14 @@ public interface OAuth20AuthorizationResponseBuilder extends Ordered {
     /**
      * To authorization request.
      *
-     * @param context           the context
+     * @param request           the request
+     * @param response          the response
      * @param authentication    the authentication
      * @param service           the service
      * @param registeredService the registered service
      * @return the oauth authorization request
      */
     Optional<OAuth20AuthorizationRequest.OAuth20AuthorizationRequestBuilder> toAuthorizationRequest(
-        WebContext context, Authentication authentication,
+        HttpServletRequest request, HttpServletResponse response, Authentication authentication,
         Service service, OAuthRegisteredService registeredService);
 }

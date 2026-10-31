@@ -2,62 +2,42 @@ package org.apereo.cas.uma.web.authn;
 
 import module java.base;
 import org.apereo.cas.support.oauth.OAuth20Constants;
-import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20JwtAccessTokenEncoder;
+import org.apereo.cas.support.oauth.authenticator.DefaultOAuth20AccessTokenAuthenticator;
+import org.apereo.cas.support.oauth.profile.DefaultOAuth20UserProfile;
+import org.apereo.cas.support.oauth.profile.OAuth20UserProfile;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
-import org.apereo.cas.ticket.registry.TicketRegistry;
-import org.apereo.cas.token.JwtBuilder;
-import lombok.AccessLevel;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.pac4j.core.context.CallContext;
-import org.pac4j.core.credentials.Credentials;
-import org.pac4j.core.credentials.TokenCredentials;
-import org.pac4j.core.credentials.authenticator.Authenticator;
-import org.pac4j.core.exception.CredentialsException;
-import org.pac4j.core.profile.CommonProfile;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
- * This is {@link BaseUmaTokenAuthenticator}.
+ * This is {@link BaseUmaTokenAuthenticator}, which accepts an access token with the scope of an UMA API and builds a
+ * profile whose roles are the scopes of the token and which carries the token itself.
  *
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 @Slf4j
-public abstract class BaseUmaTokenAuthenticator implements Authenticator {
-    private final TicketRegistry ticketRegistry;
-
-    private final JwtBuilder accessTokenJwtBuilder;
+public abstract class BaseUmaTokenAuthenticator extends DefaultOAuth20AccessTokenAuthenticator {
 
     @Override
-    public Optional<Credentials> validate(final CallContext callContext, final Credentials creds) {
-        val credentials = (TokenCredentials) creds;
-        val token = extractAccessTokenFrom(credentials.getToken().trim());
-        val at = ticketRegistry.getTicket(token, OAuth20AccessToken.class);
-        if (!at.getScopes().contains(getRequiredScope())) {
-            val err = String.format("Missing scope [%s]. Unable to authenticate access token %s", getRequiredScope(), token);
-            throw new CredentialsException(err);
-        }
-        val profile = new CommonProfile();
-        val authentication = at.getAuthentication();
-        val principal = authentication.getPrincipal();
-        profile.setId(principal.getId());
-        val attributes = new LinkedHashMap<String, Object>(authentication.getAttributes());
-        attributes.putAll(principal.getAttributes());
-
-        profile.addAttributes(attributes);
-        profile.addRoles(at.getScopes());
-        profile.addAttribute(OAuth20AccessToken.class.getName(), at);
-        profile.addAttribute(OAuth20Constants.CLIENT_ID, at.getClientId());
-
-        LOGGER.debug("Authenticated access token [{}]", profile);
-        credentials.setUserProfile(profile);
-        return Optional.of(credentials);
+    public Set<String> getRequiredScopes() {
+        return Set.of(getRequiredScope());
     }
 
-    protected String extractAccessTokenFrom(final String token) {
-        return OAuth20JwtAccessTokenEncoder.toDecodableCipher(accessTokenJwtBuilder).decode(token);
+    @Override
+    protected OAuth20UserProfile buildUserProfile(final HttpServletRequest request, final OAuth20AccessToken accessToken) {
+        val authentication = accessToken.getAuthentication();
+        val principal = authentication.getPrincipal();
+        val profile = new DefaultOAuth20UserProfile(principal.getId(), OAuth20UserProfile.COMMON_PROFILE_HANDLER_NAME);
+        val attributes = new LinkedHashMap<String, Object>(authentication.getAttributes());
+        attributes.putAll(principal.getAttributes());
+        profile.addAttributes(attributes);
+        profile.addRoles(accessToken.getScopes());
+        profile.addAttribute(OAuth20AccessToken.class.getName(), accessToken);
+        profile.addAttribute(OAuth20Constants.CLIENT_ID, accessToken.getClientId());
+        LOGGER.debug("Authenticated access token [{}]", profile);
+        return profile;
     }
 
     protected abstract String getRequiredScope();

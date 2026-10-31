@@ -78,7 +78,6 @@ import org.opensaml.saml.saml2.core.Conditions;
 import org.opensaml.saml.saml2.core.Response;
 import org.opensaml.saml.saml2.core.Subject;
 import org.opensaml.soap.soap11.Envelope;
-import org.pac4j.core.context.session.SessionStore;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -134,8 +133,6 @@ class SamlIdPConfiguration {
             final CasCookieBuilder ticketGrantingTicketCookieGenerator,
             @Qualifier(TicketRegistry.BEAN_NAME)
             final TicketRegistry ticketRegistry,
-            @Qualifier("samlIdPDistributedSessionStore")
-            final SessionStore samlIdPDistributedSessionStore,
             @Qualifier("samlArtifactMap")
             final SAMLArtifactMap samlArtifactMap,
             @Qualifier(TicketFactory.BEAN_NAME)
@@ -152,7 +149,6 @@ class SamlIdPConfiguration {
                 .samlObjectEncrypter(samlObjectEncrypter)
                 .ticketGrantingTicketCookieGenerator(ticketGrantingTicketCookieGenerator)
                 .ticketRegistry(ticketRegistry)
-                .sessionStore(samlIdPDistributedSessionStore)
                 .samlArtifactMap(samlArtifactMap)
                 .centralAuthenticationService(centralAuthenticationService)
                 .casProperties(casProperties)
@@ -436,11 +432,8 @@ class SamlIdPConfiguration {
             @Qualifier(CasCookieBuilder.BEAN_NAME_TICKET_GRANTING_COOKIE_BUILDER)
             final CasCookieBuilder ticketGrantingTicketCookieGenerator,
             @Qualifier(TicketRegistry.BEAN_NAME)
-            final TicketRegistry ticketRegistry,
-            @Qualifier("samlIdPDistributedSessionStore")
-            final SessionStore samlIdPDistributedSessionStore) {
-            val map = new CasSamlArtifactMap(ticketRegistry, ticketFactory,
-                ticketGrantingTicketCookieGenerator, samlIdPDistributedSessionStore);
+            final TicketRegistry ticketRegistry) {
+            val map = new CasSamlArtifactMap(ticketRegistry, ticketFactory, ticketGrantingTicketCookieGenerator);
             val expirationPolicy = samlArtifactTicketExpirationPolicy.buildTicketExpirationPolicy();
             map.setArtifactLifetime(Duration.ofSeconds(expirationPolicy.getTimeToLive()));
             return map;

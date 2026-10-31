@@ -18,6 +18,7 @@ import org.springframework.aop.framework.Advised;
 import org.springframework.aot.hint.RuntimeHints;
 import org.springframework.aot.hint.predicate.RuntimeHintsPredicates;
 import org.springframework.beans.factory.DisposableBean;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.core.DecoratingProxy;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -36,6 +37,8 @@ class CasCoreTicketsRuntimeHintsTests {
         val scheduler = Class.forName("org.apereo.cas.config.CasCoreTicketsSchedulingConfiguration$TicketRegistryCleanerScheduler");
         assertTrue(RuntimeHintsPredicates.reflection().onMethodInvocation(scheduler.getDeclaredMethod("run")).test(hints));
         assertTrue(RuntimeHintsPredicates.proxies().forInterfaces(DisposableBean.class, TicketRegistry.class,
+            SpringProxy.class, Advised.class, DecoratingProxy.class).test(hints));
+        assertTrue(RuntimeHintsPredicates.proxies().forInterfaces(DisposableBean.class, InitializingBean.class, TicketRegistry.class,
             SpringProxy.class, Advised.class, DecoratingProxy.class).test(hints));
         assertTrue(RuntimeHintsPredicates.proxies().forInterfaces(TicketFactoryExecutionPlanConfigurer.class).test(hints));
         assertTrue(RuntimeHintsPredicates.reflection().onType(TicketGrantingCookieCipherExecutor.class).test(hints));

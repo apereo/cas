@@ -34,8 +34,6 @@ dependencies {
     implementation project(":core:cas-server-core-audit-api")
 
     implementation libraries.cqengine
-    implementation libraries.pac4jcore
-    implementation libraries.pac4jcas
     implementation libraries.jose4j
     implementation libraries.nimbus
 
