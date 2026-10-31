@@ -2,7 +2,7 @@
 aceEditor = "1.44.0"
 acmeClient = "5.1.0"
 amazonDax = "2.0.11"
-amazonSdk = "2.57.7"
+amazonSdk = "2.57.8"
 azureInsights = "3.7.10"
 azureKustoLog4j = "1.0.0"
 animateCss = "4.1.1"
@@ -280,7 +280,7 @@ zxcvbn = "4.4.2"
 # This section handles Gradle build classpath dependency versions
 #################################################################
 gradleGit = "1.0.0"
-gradleLombok = "9.8.2"
+gradleLombok = "9.8.3"
 gradleNullAway = "3.3.0"
 gradleErrorProne = "5.1.1"
 gradleGraalVmNative = "1.1.18"
