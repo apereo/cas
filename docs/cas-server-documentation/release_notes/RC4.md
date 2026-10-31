@@ -260,6 +260,10 @@ one-time codes can be added when `cas.authn.mfa.simple.mail.accepted-email-patte
 - {: .fixed data-area="ui"} When password management is turned off, the login page no longer links to `https://pwd.example.org`; the
   address of an external password recovery page is set with the `cas.pm-links.forgot-password.url` theme property, and
   nothing is shown when it is blank.
+- {: .fixed data-area="ui"} Date fields in the [Palantir](../installation/Admin-Dashboard.html) service wizard open a calendar to
+  pick from: the expiration date, client secret expiration dates, and the start and end of a time-based access strategy, which
+  take the start and the end of the picked day. Values of the access strategy types (remote, HTTP request, time-based and
+  others) and of the proxy and token exchange policies now reach the generated definition; they used to be left out.
 - {: .fixed data-area="ui"} Generated passwords on the password update form and client secrets generated in Palantir use the
   browser's cryptographic random number generator. WebAuthn no longer shows the session token after authentication, and the
   account unlock page only blocks the context menu on the captcha.
@@ -470,5 +474,16 @@ one-time codes can be added when `cas.authn.mfa.simple.mail.accepted-email-patte
   [WebAuthn](../mfa/FIDO2-WebAuthn-Authentication.html) no longer override each other's settings, and the
   [backchannel authentication](../authentication/OIDC-Authentication-CIBA.html) verification page is now protected.
   A custom CSRF token repository is defined once, as the `casCsrfTokenRepository` bean.
+- {: .fixed data-area="saml"} [SAML2 service provider metadata](../installation/SAML2-ServiceProvider-Metadata.html#metadata-caching--resolution)
+  that cannot be resolved is no longer retried with one-second pauses during the request, and a failure to load it is
+  remembered for `cas.authn.saml-idp.metadata.core.failure-cache-expiration`{: .cas-setting} instead of contacting the
+  metadata source on every request. Metadata query servers keep one backup per entity, so an entity no longer falls back
+  onto the metadata of another, and metadata stores such as JPA or MongoDB are cached per entity, so providers that share
+  a service definition no longer evict each other's metadata. Changes to the metadata settings of a service definition take
+  effect on the next request on every node, and checking whether the JPA metadata store is available no longer opens a
+  new connection pool each time.
+- {: .fixed data-area="saml"} [SAML2 identity provider metadata](../installation/Configuring-SAML2-DynamicMetadata.html),
+  keys and certificates are fetched again from their storage once `cas.authn.saml-idp.metadata.core.cache-expiration`{: .cas-setting}
+  has passed, even while in constant use, so a key rotation in a shared metadata store reaches every node.
 
 {% include release-footer.html %}

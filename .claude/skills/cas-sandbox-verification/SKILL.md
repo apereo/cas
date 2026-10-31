@@ -83,6 +83,11 @@ description: "Compile and test CAS changes from a restricted sandbox or remote V
   Castle and `jclouds-bouncycastle` clash with `bcprov`/`bcpkix`, and Saxon takes over `TransformerFactory`. Use the
   catalog version of commons-codec and leave the others out. A group filter on `org.apereo.cas` also drops
   `org.apereo.cas.client` (`cas-client-core`), which delegation tests need.
+- A fresh device VM has only Java 11 and about 1 GB free under the session home: put the JDK there, but copy the cached
+  jars (about 1 GB of highest versions) to `/tmp`, which has room. Read access to `~/.gradle/caches/modules-2/files-2.1`
+  has been granted when requested with `device_request_folder_access`. Copy each module's project-closure class and
+  resource directories to `/tmp` too: run from the mount, a SAML JPA context did not start within the call's time limit,
+  and from local copies it starts in seconds.
 - For the Error Prone check, put every cached jar on `-processorpath` (Error Prone needs more than its own jars) and
   restrict annotation processing to Lombok with `-processor lombok.launch.AnnotationProcessorHider$AnnotationProcessor,lombok.launch.AnnotationProcessorHider$ClaimingProcessor`;
   long class paths go into `@argfiles` for both `javac` and `java`.

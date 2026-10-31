@@ -160,16 +160,26 @@ description: "Review and change SAML2 SP and IdP metadata handling: resolvers, M
   resolves internally.
 - `FunctionUtils.doAndRetry` sleeps between attempts on the calling thread: Spring 7's `RetryPolicy.withMaxRetries(n)`
   is `FixedBackOff(1000ms, n)`, so the default `maximum-retry-attempts=3` means four attempts and three seconds of sleep.
-  Caffeine caches no failed load, so whatever is retried is reloaded per attempt per request. Before wrapping anything on
-  the request path in it, check the failure is transient; "this metadata does not contain the entity" is not, and the
-  caching resolver's outer retry does exactly that (finding D1 of `claude/saml2-metadata-review.md` in the project).
-- The SP cache key carries the entity id only for MDQ, while the store-backed resolvers (`jdbc://`, `mongodb://`,
-  `redis://`, `dynamodb://`, `awss3://`, `git://`, `rest://`) scope their lookup to the requested entity; a change on
-  either side has to be checked against the other. The MDQ backup file is the opposite: named after `serviceId`, which for
-  MDQ is a wildcard, not after the entity.
-- Neither SP nor IdP metadata caches are invalidated by anything but the cached-metadata actuator endpoint: service edits
-  do not touch the SP cache, and both IdP caches (`SamlIdPMetadataResolver`, `samlIdPMetadataCache`) expire after
-  *access*, so a node under traffic never sees rotated IdP keys.
+  The SP caching resolver no longer retries at all: "this metadata does not contain the entity" is not transient, and the
+  entity id driving the lookup arrives on unauthenticated requests. A failed load is remembered per cache key for
+  `failure-cache-expiration` (Caffeine caches no failed load on its own), and metadata holding a single SP that lacks the
+  entity is reloaded at most once per that window. `maximum-retry-attempts` now only governs HTTP fetches inside the URL
+  and MDQ resolvers. Do not put a retry back around resolution; tests assert `SamlException`, not `RetryException`.
+- The SP cache key is `id|metadataKey|fingerprint`. `metadataKey` is the location, or `location|entityId` for MDQ and
+  for bare store sources (`jdbc://`, `mongodb://`, `redis://`, `dynamodb://`, `awss3://`, `git://`, `rest://`, `json://`),
+  because those resolvers load only the requested entity. The fingerprint holds every service field that changes how
+  metadata is filtered or cached (signature location, `requireSignedRoot`, criteria, max validity, certificate validation,
+  expiration duration, proxy); a new such field on `SamlRegisteredService` belongs in it, or edits to it go unnoticed
+  until the entry expires. Nothing listens for service events, deliberately: the fingerprint covers every node.
+- The MDQ backup file (and its `user:ETag`) is named after the requested entity id, falling back to `serviceId` only
+  when the criteria name none; an MDQ `serviceId` is a wildcard shared by every entity. Downloaded documents are parsed
+  from memory, never by reading the backup file back.
+- The service's `metadataExpirationDuration` defaults to `PT60M`, so for SP metadata the global `cache-expiration`
+  (`PT24H`) only applies to services that blank it out. For IdP metadata `cache-expiration` is the real lifetime: both IdP
+  caches expire after *write*, and `SamlIdPMetadataResolver` reuses a cached entry only while `locator.fetch(...)` returns
+  the same document instance it was parsed from, so the published certificates follow the locator's cache. The
+  file-system locator reads keys from disk on every call, bypassing that cache, so key and certificate can still disagree
+  there for up to `cache-expiration` after a rotation on disk.
 - Puppeteer coverage: `saml2-idp-metadata-caching`, `saml2-idp-login-idp-initiated-mdq`,
   `saml2-idp-login-sp-metadata-{directory,groovy,jdbc,json,mongodb}`,
   `saml2-idp-login-sp-override-metadata`, `saml2-idp-login-metadata-aws-s3`, `saml-mdui`,

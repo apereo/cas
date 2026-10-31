@@ -1,11 +1,11 @@
 package org.apereo.cas.support.saml.metadata.resolver;
 
 import module java.base;
+import module java.sql;
 import org.apereo.cas.audit.AuditActionResolvers;
 import org.apereo.cas.audit.AuditResourceResolvers;
 import org.apereo.cas.audit.AuditableActions;
 import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
-import org.apereo.cas.configuration.support.JpaBeans;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlMetadataDocument;
@@ -42,8 +42,12 @@ public class JpaSamlRegisteredServiceMetadataResolver extends BaseSamlRegistered
     @PersistenceContext(unitName = "jpaSamlMetadataContext")
     private EntityManager entityManager;
 
-    public JpaSamlRegisteredServiceMetadataResolver(final SamlIdPProperties samlIdPProperties, final OpenSamlConfigBean configBean) {
+    private final DataSource dataSource;
+
+    public JpaSamlRegisteredServiceMetadataResolver(final SamlIdPProperties samlIdPProperties, final OpenSamlConfigBean configBean,
+                                                    final DataSource dataSource) {
         super(samlIdPProperties, configBean);
+        this.dataSource = dataSource;
     }
 
     @Audit(action = AuditableActions.SAML2_METADATA_RESOLUTION,
@@ -123,8 +127,11 @@ public class JpaSamlRegisteredServiceMetadataResolver extends BaseSamlRegistered
     @Override
     public boolean isAvailable(final SamlRegisteredService service) {
         if (supports(service)) {
-            val ds = JpaBeans.newDataSource(samlIdPProperties.getMetadata().getJpa());
-            return JpaBeans.isValidDataSourceConnection(ds, DATA_SOURCE_VALIDITY_TIMEOUT_SECONDS);
+            try (val connection = dataSource.getConnection()) {
+                return connection.isValid(DATA_SOURCE_VALIDITY_TIMEOUT_SECONDS);
+            } catch (final Exception e) {
+                LoggingUtils.error(LOGGER, e);
+            }
         }
         return false;
     }

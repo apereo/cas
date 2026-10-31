@@ -2654,3 +2654,66 @@ html.palantir-page[data-theme] #dashboard .palantir-feature-card__name > code {
 html.palantir-page[data-theme="dark"] .palantir-feature-card mark {
     color: var(--palantir-warn);
 }
+
+/* Date picker: opened from fields inside dialogs, so it sits above them and the Tom Select fields */
+#ui-datepicker-div.ui-datepicker {
+    z-index: 10002 !important;
+    width: 18em;
+    padding: 8px;
+    border: 1px solid var(--palantir-border);
+    border-radius: 14px;
+    background: var(--palantir-surface-raised, var(--palantir-surface));
+    box-shadow: var(--palantir-shadow);
+    color: var(--palantir-text);
+    font-size: 14px;
+}
+
+#ui-datepicker-div .ui-datepicker-header {
+    border: 0;
+    border-radius: 10px;
+    background: var(--palantir-tint);
+    color: var(--palantir-text);
+}
+
+#ui-datepicker-div .ui-datepicker-title select {
+    border: 1px solid var(--palantir-border-strong);
+    border-radius: 8px;
+    background: var(--palantir-surface);
+    color: var(--palantir-text);
+    font-size: 13px;
+}
+
+#ui-datepicker-div th {
+    color: var(--palantir-text-muted);
+    font-weight: 500;
+}
+
+#ui-datepicker-div td :is(a, span).ui-state-default {
+    border: 1px solid transparent;
+    border-radius: 8px;
+    background: transparent;
+    color: var(--palantir-text);
+    text-align: center;
+}
+
+#ui-datepicker-div td a.ui-state-default:hover {
+    background: var(--palantir-hover);
+}
+
+#ui-datepicker-div td a.ui-state-highlight {
+    border-color: var(--palantir-brand);
+    color: var(--palantir-brand);
+}
+
+#ui-datepicker-div td a.ui-state-active {
+    border-color: var(--palantir-brand-fill);
+    background: var(--palantir-brand-fill);
+    color: var(--palantir-on-brand);
+}
+
+#ui-datepicker-div .ui-datepicker-prev,
+#ui-datepicker-div .ui-datepicker-next {
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+}

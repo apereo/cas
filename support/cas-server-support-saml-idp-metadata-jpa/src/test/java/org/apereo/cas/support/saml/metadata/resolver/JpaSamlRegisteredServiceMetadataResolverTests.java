@@ -1,6 +1,8 @@
 package org.apereo.cas.support.saml.metadata.resolver;
 
 import module java.base;
+import module java.sql;
+import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
 import org.apereo.cas.support.saml.BaseJpaSamlMetadataTests;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlMetadataDocument;
@@ -15,6 +17,7 @@ import org.opensaml.core.criterion.EntityIdCriterion;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.transaction.annotation.Transactional;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * This is {@link JpaSamlRegisteredServiceMetadataResolverTests}.
@@ -54,6 +57,27 @@ class JpaSamlRegisteredServiceMetadataResolverTests extends BaseJpaSamlMetadataT
 
         service.setMetadataLocation("whatever");
         assertFalse(resolver.supports(service));
+    }
+
+    @Test
+    void verifyAvailabilityUsesConfiguredDataSource() throws Throwable {
+        val service = new SamlRegisteredService();
+        service.setName("SAML Service");
+        service.setServiceId("https://carmenwiki.osu.edu/shibboleth");
+        service.setMetadataLocation("jdbc://");
+
+        val connection = mock(Connection.class);
+        when(connection.isValid(anyInt())).thenReturn(true);
+        val dataSource = mock(DataSource.class);
+        when(dataSource.getConnection()).thenReturn(connection);
+        val metadataResolver = new JpaSamlRegisteredServiceMetadataResolver(new SamlIdPProperties(), openSamlConfigBean, dataSource);
+        assertTrue(metadataResolver.isAvailable(service));
+        assertTrue(metadataResolver.isAvailable(service));
+        verify(dataSource, times(2)).getConnection();
+        verify(connection, times(2)).close();
+
+        when(dataSource.getConnection()).thenThrow(new SQLException("Database is down"));
+        assertFalse(metadataResolver.isAvailable(service));
     }
 
     @Test

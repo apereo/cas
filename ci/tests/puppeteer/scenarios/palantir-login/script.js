@@ -409,6 +409,46 @@ async function verifyWizardDropdowns(page, name) {
 }
 
 /**
+ * Assert the wizard's date fields offer the date picker and that a picked date reaches the definition.
+ *
+ * The service expiration date takes the day as is; the time-based access strategy gets the start of
+ * the picked day for its start and the last second for its end.
+ *
+ * @param page the puppeteer page
+ * @param name the registered service type under test, for the log
+ */
+async function verifyWizardDatePickers(page, name) {
+    const pick = async (selector) => {
+        await page.click(selector);
+        await page.waitForSelector("#ui-datepicker-div td[data-handler='selectDay']", {visible: true});
+        await page.click("#ui-datepicker-div td[data-handler='selectDay'] a");
+        return page.$eval(selector, (input) => input.value);
+    };
+    await page.evaluate(() => {
+        if ($("#hideAdvancedOptions").val() === "true") {
+            $("#hideAdvancedOptionsButton").trigger("click");
+        }
+        RegisteredServiceSections.activate("editServiceWizardMenuItemExpirationPolicy");
+    });
+    const expiration = await pick("#registeredServiceExpirationPolicyExpirationDate");
+    assert(/^\d{4}-\d{2}-\d{2}$/.test(expiration), `${name}: expiration date ${expiration}`);
+
+    await page.evaluate(() => RegisteredServiceSections.activate("editServiceWizardMenuItemAccessStrategy"));
+    await chooseDropdownOption(page, "registeredServiceAccessStrategy", "TIME BASED");
+    const starting = await pick("#registeredServiceAccessStrategyTimeBasedStartingDateTime");
+    const ending = await pick("#registeredServiceAccessStrategyTimeBasedEndingDateTime");
+    assert(starting.endsWith("T00:00:00") && ending.endsWith("T23:59:59"), `${name}: ${starting} to ${ending}`);
+
+    await page.waitForFunction((values) => {
+        const definition = ace.edit("wizardServiceEditor").getValue();
+        return values.every((value) => definition.includes(value));
+    }, {timeout: 10000}, [expiration, starting, ending]);
+    await chooseDropdownOption(page, "registeredServiceAccessStrategy", "DEFAULT");
+    await page.evaluate(() => $("#registeredServiceExpirationPolicyExpirationDate").val("").trigger("input"));
+    await cas.logg(`${name}: date fields pick ${expiration}, ${starting} and ${ending} into the definition`);
+}
+
+/**
  * Exercise the service wizard for each service type it models.
  *
  * The wizard's fields are built when the dialog is first opened rather than while the page parses,
@@ -462,6 +502,7 @@ async function verifyServiceWizard(page) {
         }
 
         await verifyWizardDropdowns(page, name);
+        await verifyWizardDatePickers(page, name);
 
         const steps = await walkWizardSteps(page);
         await cas.logg(`${name} steps: ${steps.join(" > ")}`);

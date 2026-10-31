@@ -86,6 +86,13 @@ description: "Change CAS views and presentation: Thymeleaf render path, theme re
 - The service wizard's fields are built on first open (`palantirWizardField` builders), after the Applications panel ran
   `initializePalantirWidgets`; `buildRegisteredServiceWizardFields` initializes the form's widgets afterwards, so dropdowns
   get the change callback that runs their `data-change-handler` functions. A bare `.selectmenu()` has no such callback.
+- Palantir date fields use the jQuery UI date picker: give the input the `jquery-datepicker` class and, for a format other
+  than the picker's default, a `dateFormat` data value (`createInputField({data: {dateFormat: "yy-mm-dd"}})`; quoted text is
+  literal, e.g. `yy-mm-dd'T'00:00:00` for a date-time field). `initializeDatePickers` attaches it and fires `input` on pick.
+  The picker's `#ui-datepicker-div` is raised above dialogs in `palantir-meridian.css`. Don't add another date library.
+- `generateServiceDefinition` leaves out fields whose container is switched off, judged by `isWizardContainerSwitchedOff`
+  (inline `display: none`, or the `hide` class with no inline display), since type handlers reveal fields with either
+  `showElements` or jQuery `show()`. Don't judge it by `:visible`: the wizard hides every section but the current one.
 - Palantir's navigation (`fragments/palantir/navigationsidebar.html`) is a top bar: Applications, grouped menus (Identity,
   Sessions, Platform) and the theme, settings and sign-out buttons. Only destinations may be `<li>` (scripts treat every
   `nav.sidebar-navigation ul li` as one and count them with `:visible`; polling also stops when a destination is not
