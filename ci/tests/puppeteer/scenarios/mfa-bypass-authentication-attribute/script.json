@@ -13,13 +13,36 @@
     "--cas.authn.accept.name=MyAuthHandler",
     "--cas.authn.mfa.triggers.global.global-provider-id=mfa-yubikey",
 
-    "--cas.authn.mfa.yubikey.bypass.authentication-attribute-name=bypass",
-    "--cas.authn.mfa.yubikey.bypass.authentication-attribute-value=.*bypass-enabled.*",
-
-    "--cas.authn.mfa.yubikey.bypass.authentication-handler-name=MyAuthHandler",
-    
     "--cas.authn.mfa.yubikey.client-id=18420",
     "--cas.authn.mfa.yubikey.secret-key=iBIehjui22aK8x82oe6qzGeb0As="
+  ],
+  "variations": [
+    {
+      "name": "authentication-handler",
+      "properties": [
+        "--cas.authn.mfa.yubikey.bypass.authentication-attribute-name=bypass",
+        "--cas.authn.mfa.yubikey.bypass.authentication-attribute-value=.*bypass-enabled.*",
+        "--cas.authn.mfa.yubikey.bypass.authentication-handler-name=MyAuthHandler"
+      ]
+    },
+    {
+      "name": "remote-address",
+      "properties": [
+        "--cas.authn.mfa.yubikey.bypass.http-request-remote-address=0:0:0:0:0:0:0:1|127.0.0.1"
+      ]
+    },
+    {
+      "name": "request-header",
+      "properties": [
+        "--cas.authn.mfa.yubikey.bypass.http-request-headers=(?i)x-bypass-mfa"
+      ]
+    },
+    {
+      "name": "credential-type",
+      "properties": [
+        "--cas.authn.mfa.yubikey.bypass.credential-class-type=.*UsernamePasswordCredential"
+      ]
+    }
   ],
   "initScript": "${PWD}/ci/tests/httpbin/run-httpbin-server.sh"
 }

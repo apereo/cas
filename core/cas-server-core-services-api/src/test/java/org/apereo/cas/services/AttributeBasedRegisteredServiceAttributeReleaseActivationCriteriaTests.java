@@ -101,6 +101,22 @@ class AttributeBasedRegisteredServiceAttributeReleaseActivationCriteriaTests {
         assertTrue(attributes.containsKey("common-name"));
     }
 
+    @Test
+    void verifyRequiredValueMatchesEntireValue() throws Throwable {
+        val policy = new ReturnMappedAttributeReleasePolicy();
+        val mappedAttr = ArrayListMultimap.<String, Object>create();
+        mappedAttr.put("cn", "common-name");
+        policy.setAllowedAttributes(CollectionUtils.wrap(mappedAttr));
+
+        val criteria = new AttributeBasedRegisteredServiceAttributeReleaseActivationCriteria();
+        criteria.setRequiredAttributes(Map.of("memberOf", List.of("adm")));
+        policy.setActivationCriteria(criteria);
+        assertTrue(getAttributesFromPolicy(policy).isEmpty());
+
+        criteria.setRequiredAttributes(Map.of("memberOf", List.of("adm.*")));
+        assertTrue(getAttributesFromPolicy(policy).containsKey("common-name"));
+    }
+
     private Map<String, List<Object>> getAttributesFromPolicy(final ReturnMappedAttributeReleasePolicy policy) throws Throwable {
         val context = RegisteredServiceAttributeReleasePolicyContext.builder()
             .registeredService(CoreAuthenticationTestUtils.getRegisteredService())

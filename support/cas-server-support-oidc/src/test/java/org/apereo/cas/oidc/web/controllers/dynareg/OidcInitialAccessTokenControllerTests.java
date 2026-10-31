@@ -8,6 +8,8 @@ import lombok.val;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.test.context.TestPropertySource;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -74,11 +76,30 @@ class OidcInitialAccessTokenControllerTests {
                 .andExpect(status().isUnauthorized());
         }
 
+        @ParameterizedTest
+        @ValueSource(strings = {"Basic Y2FzdXNlcg==", "Basic %%%", "Bearer AT-1"})
+        void verifyAuthMalformed(final String authorization) throws Throwable {
+            mockMvc.perform(get("/cas/" + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.REGISTRATION_INITIAL_TOKEN_URL)
+                    .with(withHttpRequestProcessor())
+                    .header(HttpHeaders.AUTHORIZATION, authorization))
+                .andExpect(status().isUnauthorized());
+        }
+
+        @Test
+        void verifyAuthOtherUser() throws Throwable {
+            val credentials = EncodingUtils.encodeBase64("someone:Mellon");
+            mockMvc.perform(get("/cas/" + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.REGISTRATION_INITIAL_TOKEN_URL)
+                    .with(withHttpRequestProcessor())
+                    .header(HttpHeaders.AUTHORIZATION, "Basic " + credentials))
+                .andExpect(status().isUnauthorized());
+        }
+
         @Test
         void verifyAuthMissing() throws Throwable {
             mockMvc.perform(get("/cas/" + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.REGISTRATION_INITIAL_TOKEN_URL)
                     .with(withHttpRequestProcessor()))
-                .andExpect(status().isUnauthorized());
+                .andExpect(status().isUnauthorized())
+                .andExpect(header().string(HttpHeaders.WWW_AUTHENTICATE, "Basic realm=\"authentication required\""));
         }
     }
 }

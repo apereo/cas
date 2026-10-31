@@ -10,7 +10,6 @@ import org.apereo.cas.util.spring.DirectObjectProvider;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.pac4j.jee.context.JEEContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -48,8 +47,7 @@ class AccessTokenPasswordGrantRequestExtractorTests extends AbstractOAuth20Tests
         assertTrue(extractor.requestMustBeAuthenticated());
         assertNull(extractor.getResponseType());
 
-        val context = new JEEContext(request, response);
-        assertThrows(IllegalArgumentException.class, () -> extractor.extract(context));
+        assertThrows(IllegalArgumentException.class, () -> extractor.extract(request, response));
     }
 
 }

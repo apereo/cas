@@ -3,14 +3,15 @@ const assert = require("assert");
 
 const MCP_ENDPOINT = "https://localhost:8443/cas/mcp";
 const MCP_ADMIN = `Basic ${btoa("mcpadmin:Mellon")}`;
+const MCP_OPERATOR = `Basic ${btoa("mcpoperator:Mellon")}`;
 
 let requestId = 0;
 
-function mcpHeaders(sessionId) {
+function mcpHeaders(sessionId, authorization = MCP_ADMIN) {
     const headers = {
         "Content-Type": "application/json",
         "Accept": "application/json, text/event-stream",
-        "Authorization": MCP_ADMIN
+        "Authorization": authorization
     };
     if (sessionId !== undefined) {
         headers["Mcp-Session-Id"] = sessionId;
@@ -23,9 +24,9 @@ function jsonRpc(method, params) {
     return JSON.stringify({jsonrpc: "2.0", id: requestId, method: method, params: params});
 }
 
-async function initialize() {
+async function initialize(authorization = MCP_ADMIN) {
     let sessionId = undefined;
-    await cas.doRequest(MCP_ENDPOINT, "POST", mcpHeaders(), 200,
+    await cas.doRequest(MCP_ENDPOINT, "POST", mcpHeaders(undefined, authorization), 200,
         jsonRpc("initialize", {
             protocolVersion: "2025-11-25",
             capabilities: {},
@@ -35,13 +36,13 @@ async function initialize() {
             sessionId = res.headers["mcp-session-id"];
         });
     assert(sessionId !== undefined, "MCP session id must be returned");
-    await cas.doRequest(MCP_ENDPOINT, "POST", mcpHeaders(sessionId), 202,
+    await cas.doRequest(MCP_ENDPOINT, "POST", mcpHeaders(sessionId, authorization), 202,
         JSON.stringify({jsonrpc: "2.0", method: "notifications/initialized"}));
     return sessionId;
 }
 
-async function send(sessionId, method, params) {
-    const body = await cas.doRequest(MCP_ENDPOINT, "POST", mcpHeaders(sessionId), 200, jsonRpc(method, params));
+async function send(sessionId, method, params, authorization = MCP_ADMIN) {
+    const body = await cas.doRequest(MCP_ENDPOINT, "POST", mcpHeaders(sessionId, authorization), 200, jsonRpc(method, params));
     const events = body.split(/\r?\n/)
         .filter((line) => line.startsWith("data:"))
         .map((line) => line.substring("data:".length).trim());
@@ -51,9 +52,9 @@ async function send(sessionId, method, params) {
     return response.result;
 }
 
-async function callTool(sessionId, name, args) {
+async function callTool(sessionId, name, args, authorization = MCP_ADMIN) {
     await cas.log(`Calling MCP tool ${name} with ${JSON.stringify(args)}`);
-    const result = await send(sessionId, "tools/call", {name: name, arguments: args});
+    const result = await send(sessionId, "tools/call", {name: name, arguments: args}, authorization);
     assert(result.isError !== true, `Tool ${name} failed: ${JSON.stringify(result)}`);
     const text = result.content[0].text;
     await cas.log(`Tool ${name} returned: ${text}`);
@@ -102,4 +103,28 @@ async function callTool(sessionId, name, args) {
     const rendered = JSON.stringify(otp);
     assert(!rendered.includes("S3cr3t198$") && !rendered.includes(scratch) && !rendered.includes("999666"),
         "Secret keys, validation codes and scratch codes must not be returned");
+
+    await cas.separator();
+    const denied = await send(sessionId, "tools/call", {name: "removeTrustedDevices", arguments: {username: "casuser"}});
+    assert(denied.isError === true, "Tools that change CAS must require the MCP_OPERATOR role");
+
+    const operator = await initialize(MCP_OPERATOR);
+    const operatorTools = (await send(operator, "tools/list", {}, MCP_OPERATOR)).tools.map((tool) => tool.name);
+    assert(operatorTools.includes("removeTrustedDevices") && operatorTools.includes("revokeSessions"),
+        "Tools that change CAS must be listed when the mcp-write feature is turned on");
+
+    const sessions = await callTool(operator, "findSessions", {username: "casuser"}, MCP_OPERATOR);
+    assert(sessions.count >= 1);
+    const revoked = await callTool(operator, "revokeSessions", {username: "casuser"}, MCP_OPERATOR);
+    assert(revoked.count === sessions.count);
+    assert((await callTool(operator, "findSessions", {username: "casuser"}, MCP_OPERATOR)).count === 0);
+
+    const removed = await callTool(operator, "removeTrustedDevices", {username: "casuser", deviceId: device.id}, MCP_OPERATOR);
+    assert(removed.removed === 1);
+    assert((await callTool(operator, "findTrustedDevices", {username: "casuser"}, MCP_OPERATOR)).count === 0);
+
+    const debug = await callTool(operator, "setLogLevel", {loggerName: "org.apereo.cas.trusted", level: "DEBUG"}, MCP_OPERATOR);
+    assert(debug.level === "DEBUG");
+    const reset = await callTool(operator, "setLogLevel", {loggerName: "org.apereo.cas.trusted"}, MCP_OPERATOR);
+    assert(reset.previousLevel === "DEBUG" && reset.level !== undefined);
 })();

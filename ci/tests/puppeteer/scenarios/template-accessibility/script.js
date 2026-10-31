@@ -44,6 +44,14 @@ async function logout(page) {
     await cas.assertVisibility(page, "#username");
     await audit("Login");
 
+    await cas.click(page, "#cas-theme-builder-menu");
+    await cas.waitForElement(page, "#cas-theme-builder.is-open");
+    for (const tab of ["properties", "styles", "export"]) {
+        await cas.click(page, `#ctb-tab-${tab}`);
+        await audit(`Theme builder ${tab}`);
+    }
+    await cas.click(page, "#cas-theme-builder-close");
+
     await cas.loginWith(page, "casuser", "BadPassword");
     await cas.assertVisibility(page, "#loginErrorsPanel");
     await audit("Login error");

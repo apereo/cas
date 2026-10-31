@@ -1,6 +1,7 @@
 package org.apereo.cas.uma.ticket.resource;
 
 import module java.base;
+import org.apereo.cas.support.oauth.profile.OAuth20UserProfile;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.hypersistence.utils.hibernate.type.json.JsonType;
@@ -11,7 +12,6 @@ import lombok.Setter;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.Type;
-import org.pac4j.core.profile.UserProfile;
 import org.springframework.data.annotation.Id;
 import org.springframework.http.HttpStatus;
 import tools.jackson.databind.annotation.JsonSerialize;
@@ -72,7 +72,7 @@ public class ResourceSet implements Serializable {
      * @param profile the profile
      */
     @JsonIgnore
-    public void validate(final UserProfile profile) {
+    public void validate(final OAuth20UserProfile profile) {
         if (StringUtils.isBlank(getClientId())) {
             throw new InvalidResourceSetException(HttpStatus.BAD_REQUEST.value(), "Authentication request does not contain a client id");
         }

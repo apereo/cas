@@ -113,6 +113,29 @@ class DefaultServicesManagerSortedServicesTests {
     }
 
     @Test
+    void verifyReadsDoNotReindexServicesWithCacheDisabled() {
+        val casProperties = new CasConfigurationProperties();
+        casProperties.getServiceRegistry().getCache().setCacheSize(0);
+        casProperties.getServiceRegistry().getSchedule().setEnabled(false);
+        val serviceRegistry = newServiceRegistry();
+        val indexService = spy(newIndexService(casProperties));
+        val servicesManager = newServicesManager(serviceRegistry, newServicesCache(casProperties), indexService, casProperties);
+        val registeredService = serviceRegistry.save(newRegisteredService());
+        servicesManager.load();
+        val service = RegisteredServiceTestUtils.getService(registeredService.getServiceId());
+        assertNotNull(servicesManager.findServiceBy(service));
+        clearInvocations(indexService);
+
+        assertEquals(1, servicesManager.getAllServices().size());
+        assertEquals(1, servicesManager.getAllServicesOfType(CasRegisteredService.class).size());
+        verify(indexService, never()).indexService(any());
+
+        clearInvocations(serviceRegistry);
+        assertNotNull(servicesManager.findServiceBy(service));
+        verify(serviceRegistry, never()).getServicesStream();
+    }
+
+    @Test
     void verifyIndexReplacesServiceById() {
         val indexService = newIndexService(new CasConfigurationProperties());
         indexService.initialize();

@@ -3,6 +3,8 @@ package org.apereo.cas.nativex;
 import module java.base;
 import org.apereo.cas.configuration.model.core.web.view.CustomLoginFieldViewProperties;
 import lombok.val;
+import org.bouncycastle.jcajce.provider.symmetric.AES;
+import org.bouncycastle.jcajce.provider.symmetric.ARGON2;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.aot.hint.RuntimeHints;
@@ -22,6 +24,8 @@ class CasCoreConfigurationRuntimeHintsTests {
     void verifyHints() throws Exception {
         val hints = new RuntimeHints();
         new CasCoreConfigurationRuntimeHints().registerHints(hints, getClass().getClassLoader());
+        assertTrue(RuntimeHintsPredicates.reflection().onConstructorInvocation(ARGON2.Mappings.class.getConstructor()).test(hints));
+        assertTrue(RuntimeHintsPredicates.reflection().onConstructorInvocation(AES.Mappings.class.getConstructor()).test(hints));
         assertTrue(RuntimeHintsPredicates.reflection().onType(CustomLoginFieldViewProperties.class).test(hints));
         val context = Class.forName("org.springframework.boot.context.properties.bind.Binder$Context");
         assertTrue(RuntimeHintsPredicates.reflection().onFieldAccess(context.getDeclaredField("dataObjectBindings")).test(hints));

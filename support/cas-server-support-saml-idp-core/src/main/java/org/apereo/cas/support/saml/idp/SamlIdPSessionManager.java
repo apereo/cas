@@ -8,6 +8,7 @@ import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.authentication.SamlIdPAuthenticationContext;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.EncodingUtils;
+import org.apereo.cas.web.CasSessionStore;
 import org.apereo.cas.web.support.ArgumentExtractor;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.Getter;
@@ -26,9 +27,8 @@ import org.opensaml.saml.common.SignableSAMLObject;
 import org.opensaml.saml.common.binding.SAMLBindingSupport;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.RequestAbstractType;
-import org.pac4j.core.context.WebContext;
-import org.pac4j.core.context.session.SessionStore;
-import org.pac4j.jee.context.JEEContext;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * This is {@link SamlIdPSessionManager}.
@@ -40,7 +40,7 @@ import org.pac4j.jee.context.JEEContext;
 @RequiredArgsConstructor
 public class SamlIdPSessionManager {
     private final OpenSamlConfigBean openSamlConfigBean;
-    private final SessionStore sessionStore;
+    private final CasSessionStore sessionStore;
 
     /**
      * Build the saml idp session manager.
@@ -50,20 +50,22 @@ public class SamlIdPSessionManager {
      * @return the saml id p session manager
      */
     public static SamlIdPSessionManager of(final OpenSamlConfigBean openSamlConfigBean,
-                                           final SessionStore sessionStore) {
+                                           final CasSessionStore sessionStore) {
         return new SamlIdPSessionManager(openSamlConfigBean, sessionStore);
     }
 
     /**
      * Store saml request.
      *
-     * @param webContext the web context
-     * @param context    the context
+     * @param request  the request
+     * @param response the response
+     * @param context  the context
      * @return the saml id p session manager
      * @throws Exception the exception
      */
     @CanIgnoreReturnValue
-    public SamlIdPSessionManager store(final WebContext webContext,
+    public SamlIdPSessionManager store(final HttpServletRequest request,
+                                       final HttpServletResponse response,
                                        final Pair<? extends SignableSAMLObject, MessageContext> context)
             throws Exception {
         val authnRequest = (AuthnRequest) context.getLeft();
@@ -76,13 +78,13 @@ public class SamlIdPSessionManager {
                 .setSamlRequest(samlRequest)
                 .setRelayState(SAMLBindingSupport.getRelayState(messageContext))
                 .setContext(authnContext);
-            val currentContext = sessionStore.get(webContext, SamlIdPSessionEntry.class.getName());
+            val currentContext = sessionStore.get(request, SamlIdPSessionEntry.class.getName());
             val entries = currentContext
                 .map(ctx -> (Map<String, SamlIdPSessionEntry>) ctx)
                 .map(SamlIdPSessionManager::asConcurrentMap)
                 .orElseGet(ConcurrentHashMap::new);
             entries.put(entry.getId(), entry);
-            sessionStore.set(webContext, SamlIdPSessionEntry.class.getName(), entries);
+            sessionStore.set(request, response, SamlIdPSessionEntry.class.getName(), entries);
         }
         return this;
     }
@@ -90,35 +92,37 @@ public class SamlIdPSessionManager {
     /**
      * Retrieve and remove an authentication request from the session.
      *
-     * @param context the context
-     * @param clazz   the clazz
+     * @param request  the request
+     * @param response the response
+     * @param clazz    the clazz
      * @return the request
      */
     public Optional<Pair<? extends RequestAbstractType, MessageContext>> fetchAndRemove(
-        final WebContext context, final Class<? extends RequestAbstractType> clazz) {
-        return fetch(context, clazz, true);
+        final HttpServletRequest request, final HttpServletResponse response,
+        final Class<? extends RequestAbstractType> clazz) {
+        return fetch(request, response, clazz, true);
     }
 
     /**
      * Retrieve authn request authn request.
      *
-     * @param context the context
+     * @param request the request
      * @param clazz   the clazz
      * @return the request
      */
     public Optional<Pair<? extends RequestAbstractType, MessageContext>> fetch(
-        final WebContext context, final Class<? extends RequestAbstractType> clazz) {
-        return fetch(context, clazz, false);
+        final HttpServletRequest request, final Class<? extends RequestAbstractType> clazz) {
+        return fetch(request, null, clazz, false);
     }
 
     private Optional<Pair<? extends RequestAbstractType, MessageContext>> fetch(
-        final WebContext context, final Class<? extends RequestAbstractType> clazz,
-        final boolean remove) {
-        LOGGER.trace("Attempting to fetch SAML2 authentication session from [{}]", context.getFullRequestURL());
-        val currentContext = sessionStore.get(context, SamlIdPSessionEntry.class.getName());
+        final HttpServletRequest request, final @Nullable HttpServletResponse response,
+        final Class<? extends RequestAbstractType> clazz, final boolean remove) {
+        LOGGER.trace("Attempting to fetch SAML2 authentication session from [{}]", request.getRequestURL());
+        val currentContext = sessionStore.get(request, SamlIdPSessionEntry.class.getName());
         return currentContext.map(ctx -> (Map<String, SamlIdPSessionEntry>) ctx)
             .map(SamlIdPSessionManager::asConcurrentMap)
-            .flatMap(entries -> getSamlIdPSessionEntry(context, entries)
+            .flatMap(entries -> getSamlIdPSessionEntry(request, entries)
                 .filter(entry -> StringUtils.isNotBlank(entry.getSamlRequest()))
                 .flatMap(entry -> {
                     val authnRequest = fetch(clazz, entry.getSamlRequest());
@@ -127,7 +131,7 @@ public class SamlIdPSessionManager {
                     val result = Pair.of((AuthnRequest) messageContext.getMessage(), messageContext);
                     if (!remove || entries.remove(entry.getId(), entry)) {
                         if (remove) {
-                            sessionStore.set(context, SamlIdPSessionEntry.class.getName(), entries);
+                            sessionStore.set(request, Objects.requireNonNull(response), SamlIdPSessionEntry.class.getName(), entries);
                         }
                         return Optional.of(result);
                     }
@@ -155,16 +159,16 @@ public class SamlIdPSessionManager {
     }
 
     private Optional<SamlIdPSessionEntry> getSamlIdPSessionEntry(
-        final WebContext context, final Map<String, SamlIdPSessionEntry> entries) {
-        return context.getRequestParameter(SamlIdPConstants.AUTHN_REQUEST_ID)
+        final HttpServletRequest request, final Map<String, SamlIdPSessionEntry> entries) {
+        return Optional.ofNullable(request.getParameter(SamlIdPConstants.AUTHN_REQUEST_ID))
             .map(entries::get)
-            .or(Unchecked.supplier(() -> getSamlIdPSessionEntryFromRequest(context, entries)));
+            .or(Unchecked.supplier(() -> getSamlIdPSessionEntryFromRequest(request, entries)));
     }
 
-    private Optional<SamlIdPSessionEntry> getSamlIdPSessionEntryFromRequest(final WebContext context, final Map<String, SamlIdPSessionEntry> ctx) {
+    private Optional<SamlIdPSessionEntry> getSamlIdPSessionEntryFromRequest(final HttpServletRequest request, final Map<String, SamlIdPSessionEntry> ctx) {
         val applicationContext = openSamlConfigBean.getApplicationContext();
         val argumentExtractor = applicationContext.getBean(ArgumentExtractor.BEAN_NAME, ArgumentExtractor.class);
-        val service = argumentExtractor.extractService(((JEEContext) context).getNativeRequest());
+        val service = argumentExtractor.extractService(request);
         return Optional.ofNullable(service)
             .map(Unchecked.function(_ -> {
                 val serviceSelectionPlan = applicationContext.getBean(AuthenticationServiceSelectionPlan.BEAN_NAME, AuthenticationServiceSelectionPlan.class);

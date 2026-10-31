@@ -48,6 +48,11 @@ class DefaultCasThemeSourceTests {
             val message = theme.getMessageSource().getMessage("cas.theme.name",
                 ArrayUtils.EMPTY_OBJECT_ARRAY, Locale.getDefault());
             assertEquals("MyTheme", message);
+            val messageSource = theme.getMessageSource();
+            assertEquals("MyTheme", messageSource.getMessage("cas.theme.name", ArrayUtils.EMPTY_OBJECT_ARRAY, Locale.GERMAN));
+            assertEquals("MyTheme", messageSource.getMessage("cas.theme.name", ArrayUtils.EMPTY_OBJECT_ARRAY, Locale.JAPAN));
+            assertEquals("Deployment", messageSource.getMessage("theme.deployment.property", ArrayUtils.EMPTY_OBJECT_ARRAY, Locale.GERMAN));
+            assertEquals("Apereo", messageSource.getMessage("theme.default.property", ArrayUtils.EMPTY_OBJECT_ARRAY, Locale.GERMAN));
         }
     }
 
@@ -63,6 +68,9 @@ class DefaultCasThemeSourceTests {
             message = theme.getMessageSource().getMessage("theme.default.property",
                 ArrayUtils.EMPTY_OBJECT_ARRAY, Locale.getDefault());
             assertEquals("Apereo", message);
+            message = theme.getMessageSource().getMessage("theme.deployment.property",
+                ArrayUtils.EMPTY_OBJECT_ARRAY, Locale.getDefault());
+            assertEquals("Deployment", message);
         }
     }
 
@@ -75,6 +83,8 @@ class DefaultCasThemeSourceTests {
             val message = theme.getMessageSource().getMessage("theme.default.property",
                 ArrayUtils.EMPTY_OBJECT_ARRAY, Locale.getDefault());
             assertEquals("Apereo", message);
+            assertEquals("Deployment", theme.getMessageSource().getMessage("theme.deployment.property",
+                ArrayUtils.EMPTY_OBJECT_ARRAY, Locale.GERMAN));
             assertThrows(NoSuchMessageException.class, () -> theme.getMessageSource().getMessage("theme.custom.property",
                 ArrayUtils.EMPTY_OBJECT_ARRAY, Locale.getDefault()));
         }

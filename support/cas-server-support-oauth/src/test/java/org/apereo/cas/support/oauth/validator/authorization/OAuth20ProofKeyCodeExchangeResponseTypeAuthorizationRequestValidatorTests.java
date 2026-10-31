@@ -7,7 +7,6 @@ import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.pac4j.jee.context.JEEContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -33,16 +32,15 @@ class OAuth20ProofKeyCodeExchangeResponseTypeAuthorizationRequestValidatorTests 
 
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
-        val context = new JEEContext(request, response);
-        assertFalse(validator.supports(context));
+        assertFalse(validator.supports(request, response));
 
         request.setParameter(OAuth20Constants.CLIENT_ID, service.getClientId());
         request.setParameter(OAuth20Constants.REDIRECT_URI, service.getServiceId());
         request.setParameter(OAuth20Constants.RESPONSE_TYPE, OAuth20ResponseTypes.TOKEN.getType());
         request.setParameter(OAuth20Constants.CODE_VERIFIER, "abcd");
-        assertFalse(validator.supports(context));
+        assertFalse(validator.supports(request, response));
 
         request.setParameter(OAuth20Constants.RESPONSE_TYPE, OAuth20ResponseTypes.CODE.getType());
-        assertTrue(validator.supports(context));
+        assertTrue(validator.supports(request, response));
     }
 }

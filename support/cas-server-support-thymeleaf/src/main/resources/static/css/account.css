@@ -10,21 +10,21 @@
     --acct-button: var(--cas-theme-button-bg, #26418f);
     --acct-button-hover: var(--cas-theme-button-bg-hover, #1678d8);
     --acct-focus: var(--cas-theme-button-bg-hover, #1678d8);
-    --acct-surface: #fff;
-    --acct-background: #f3f5f8;
-    --acct-text: #1b2733;
-    --acct-muted: #52606d;
-    --acct-border: #dfe6ee;
+    --acct-surface: var(--cas-ui-surface, #fff);
+    --acct-background: var(--cas-ui-subtle, #f3f5f8);
+    --acct-text: var(--cas-ui-text, #1b2733);
+    --acct-muted: var(--cas-ui-muted, #52606d);
+    --acct-border: var(--cas-ui-divider, #dfe6ee);
     --acct-tint: color-mix(in srgb, var(--acct-primary) 8%, #fff);
     --acct-on-brand: #fff;
     --acct-on-brand-muted: color-mix(in srgb, #fff 78%, var(--acct-primary));
     --acct-danger: var(--mdc-theme-error, #a20323);
-    --acct-danger-bg: #fbe9eb;
+    --acct-danger-bg: color-mix(in srgb, var(--acct-danger) 9%, #fff);
     --acct-success: #015e58;
     --acct-success-bg: #dff0ee;
     --acct-warning: var(--cas-theme-warning, #664d03);
     --acct-warning-bg: var(--cas-theme-warning-bg, #fff3cd);
-    --acct-card-shadow: 0 1px 2px rgba(16, 40, 70, .08), 0 0 0 1px #e1e7ee;
+    --acct-card-shadow: 0 1px 2px rgba(16, 40, 70, .08), 0 0 0 1px var(--acct-border);
     --acct-radius: 16px;
     color: var(--acct-text);
     font-size: 15px;
@@ -657,6 +657,16 @@
     color: #8a0b1f;
 }
 
+.cas-account-tag.is-info {
+    background: var(--acct-tint);
+    color: var(--acct-primary);
+}
+
+.cas-account-tag.is-warning {
+    background: var(--acct-warning-bg);
+    color: var(--acct-warning);
+}
+
 .cas-account-item-details {
     padding: 16px 20px 20px 80px;
     border-top: 1px solid #edf1f5;
@@ -701,6 +711,118 @@
     color: var(--acct-muted);
     font-size: 14px;
     text-align: center;
+}
+
+.cas-account-inline-form {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px 12px;
+}
+
+.cas-account-inline-form label {
+    color: var(--acct-muted);
+    font-size: 14px;
+}
+
+.cas-account-inline-form .acct-input {
+    flex: 1 1 220px;
+    max-width: 360px;
+}
+
+.cas-account-callout {
+    margin-bottom: 20px;
+    padding: 20px 24px;
+    border-left: 4px solid var(--acct-warning);
+    border-radius: var(--acct-radius);
+    background: var(--acct-warning-bg);
+    color: var(--acct-text);
+}
+
+.cas-account-callout h3 {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0 0 6px;
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.cas-account-callout p {
+    margin: 0 0 12px;
+    font-size: 14px;
+}
+
+.cas-account-codes {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 8px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.cas-account-codes li {
+    padding: 8px 12px;
+    border-radius: 8px;
+    background: var(--acct-surface);
+    box-shadow: 0 0 0 1px var(--acct-border);
+    font-size: 15px;
+    letter-spacing: .08em;
+    text-align: center;
+}
+
+.cas-account-alert {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 24px;
+    padding: 16px 20px;
+    border-radius: var(--acct-radius);
+    background: var(--acct-warning-bg);
+    color: var(--acct-warning);
+    font-size: 14px;
+}
+
+.cas-account-alert .mdi {
+    font-size: 22px;
+    line-height: 1;
+}
+
+.cas-account-alert p {
+    margin: 0;
+}
+
+.cas-account-alert .acct-btn {
+    margin-left: auto;
+}
+
+.cas-account-policy {
+    max-height: 360px;
+    overflow: auto;
+    padding: 20px 24px;
+    border-radius: var(--acct-radius);
+    background: var(--acct-surface);
+    box-shadow: var(--acct-card-shadow);
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.cas-account-status {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+    font-size: 15px;
+}
+
+.cas-account-subheading {
+    margin: 24px 0 12px;
+    color: var(--acct-muted);
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: .04em;
+    text-transform: uppercase;
 }
 
 .cas-account-list-tools {

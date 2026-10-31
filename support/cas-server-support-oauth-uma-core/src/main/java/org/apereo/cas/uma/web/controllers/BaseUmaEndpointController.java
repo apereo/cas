@@ -3,6 +3,7 @@ package org.apereo.cas.uma.web.controllers;
 import module java.base;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.support.oauth.OAuth20Constants;
+import org.apereo.cas.support.oauth.profile.OAuth20UserProfile;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
@@ -16,8 +17,6 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
-import org.pac4j.core.profile.UserProfile;
-import org.pac4j.jee.context.JEEContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.util.MultiValueMap;
 import tools.jackson.databind.ObjectMapper;
@@ -41,11 +40,10 @@ public abstract class BaseUmaEndpointController extends AbstractController {
 
     private final UmaConfigurationContext umaConfigurationContext;
 
-    protected UserProfile getAuthenticatedProfile(final HttpServletRequest request,
+    protected OAuth20UserProfile getAuthenticatedProfile(final HttpServletRequest request,
                                                   final HttpServletResponse response,
                                                   final String requiredPermission) {
-        val context = new JEEContext(request, response);
-        val profile = OAuth20Utils.getAuthenticatedUserProfile(context, getUmaConfigurationContext().getSessionStore());
+        val profile = OAuth20Utils.getAuthenticatedUserProfile(request, response, getUmaConfigurationContext().getSessionStore());
         if (!profile.getRoles().contains(requiredPermission)) {
             throw new AuthenticationException("Authenticated profile does not carry the UMA protection scope");
         }
@@ -66,7 +64,7 @@ public abstract class BaseUmaEndpointController extends AbstractController {
         return (OAuth20AccessToken) (token.isStateless() ? umaConfigurationContext.getTicketRegistry().getTicket(token.getId()) : token);
     }
 
-    protected Optional<ResourceSet> getResourceSet(final long id, final UserProfile profile) {
+    protected Optional<ResourceSet> getResourceSet(final long id, final OAuth20UserProfile profile) {
         val clientId = Objects.requireNonNull(OAuth20Utils.getClientIdFromAuthenticatedProfile(profile));
         return umaConfigurationContext.getUmaResourceSetRepository().getById(id, clientId, profile.getId());
     }

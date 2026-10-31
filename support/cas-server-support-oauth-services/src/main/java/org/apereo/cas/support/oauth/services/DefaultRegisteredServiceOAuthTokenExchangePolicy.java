@@ -55,7 +55,8 @@ public class DefaultRegisteredServiceOAuthTokenExchangePolicy implements Registe
     @Override
     public boolean isTokenExchangeAllowed(final RegisteredService registeredService, final Set<String> resources,
                                           final Set<String> audience, final String requestedType) {
-        val resourceAllowed = allowedResources == null || allowedResources.stream().anyMatch(resource -> RegexUtils.findFirst(resource, resources).isPresent());
+        val resourceAllowed = allowedResources == null
+            || (!resources.isEmpty() && RegisteredServiceOAuthResourceMatcher.areResourcesAllowed(allowedResources, resources));
         val audienceAllowed = allowedAudience == null || allowedAudience.stream().anyMatch(aud -> RegexUtils.findFirst(aud, audience).isPresent());
         val tokenTypeAllowed = allowedTokenTypes == null || allowedTokenTypes.stream().anyMatch(type -> RegexUtils.find(type, requestedType));
         val allowedExchange = resourceAllowed && audienceAllowed && tokenTypeAllowed;

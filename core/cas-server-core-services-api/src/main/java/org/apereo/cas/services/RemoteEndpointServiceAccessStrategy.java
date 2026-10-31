@@ -38,6 +38,13 @@ import tools.jackson.databind.ObjectMapper;
 @Accessors(chain = true)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public class RemoteEndpointServiceAccessStrategy extends BaseRegisteredServiceAccessStrategy {
+    /**
+     * How long an access decision waits for a pooled connection and for the endpoint's response.
+     * The endpoint is called once per decision without retries, so this bounds how long a login
+     * waits on a slow endpoint; when it passes, access is denied.
+     */
+    public static final Duration TIMEOUT = Duration.ofSeconds(5);
+
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(false).build().toObjectMapper();
 
@@ -56,14 +63,7 @@ public class RemoteEndpointServiceAccessStrategy extends BaseRegisteredServiceAc
     @Override
     public boolean authorizeRequest(final RegisteredServiceAccessStrategyRequest request) {
         return Unchecked.supplier(() -> {
-            val exec = HttpExecutionRequest.builder()
-                .method(HttpMethod.valueOf(this.method))
-                .url(SpringExpressionLanguageValueResolver.getInstance().resolve(endpointUrl))
-                .headers(headers)
-                .parameters(CollectionUtils.wrap("username", request.getPrincipalId()))
-                .entity(MAPPER.writeValueAsString(buildRequestPayload(request)))
-                .build();
-            val response = HttpUtils.execute(exec);
+            val response = HttpUtils.execute(buildExecutionRequest(request));
             try {
                 val currentCodes = StringUtils.commaDelimitedListToSet(this.acceptableResponseCodes);
                 return response != null && currentCodes.contains(String.valueOf(response.getCode()));
@@ -71,6 +71,24 @@ public class RemoteEndpointServiceAccessStrategy extends BaseRegisteredServiceAc
                 HttpUtils.close(response);
             }
         }).get();
+    }
+
+    /**
+     * Build the call to the remote endpoint, made once with the fixed {@link #TIMEOUT}.
+     *
+     * @param request the request
+     * @return the execution request
+     */
+    HttpExecutionRequest buildExecutionRequest(final RegisteredServiceAccessStrategyRequest request) {
+        return HttpExecutionRequest.builder()
+            .method(HttpMethod.valueOf(this.method))
+            .url(SpringExpressionLanguageValueResolver.getInstance().resolve(endpointUrl))
+            .headers(headers)
+            .parameters(CollectionUtils.wrap("username", request.getPrincipalId()))
+            .entity(MAPPER.writeValueAsString(buildRequestPayload(request)))
+            .maximumRetryAttempts(0)
+            .responseTimeout(TIMEOUT)
+            .build();
     }
 
     /**

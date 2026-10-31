@@ -118,6 +118,18 @@
  * WebAuthn Utilities
  *****************************************************/
 
+const webAuthnMessages = Object.assign({
+    registrationInit: "Initiating registration ceremony with server...",
+    registrationRequest: "Asking authenticators to create credential...",
+    registrationSuccess: "Registration successful.",
+    authenticationInit: "Initiating authentication ceremony...",
+    authenticationRequest: "Asking authenticators to perform assertion...",
+    authenticationSuccess: "Authentication successful.",
+    serverRequest: "Sending response to server...",
+    finalizingTitle: "Finalizing attempt for {0}",
+    finalizingText: "Please wait while your authentication attempt is processed..."
+}, typeof window.casWebAuthnMessages === "object" ? window.casWebAuthnMessages : {});
+
 let ceremonyState = {};
 let session = {};
 
@@ -395,7 +407,7 @@ function finishCeremony(response) {
     const statusStrings = ceremonyState.statusStrings;
     const urls = ceremonyState.urls;
 
-    setStatus(statusStrings.serverRequest || "Sending response to server...");
+    setStatus(statusStrings.serverRequest || webAuthnMessages.serverRequest);
     if (callbacks.serverRequest) {
         callbacks.serverRequest({urls, request, response});
     }
@@ -431,9 +443,9 @@ function register(username, displayName, credentialNickname, csrfToken,
         getWebAuthnUrls,
         getRequest: urls => getRequest(urls, username, displayName, credentialNickname, requireResidentKey, csrfToken),
         statusStrings: {
-            init: "Initiating registration ceremony with server...",
-            authenticatorRequest: "Asking authenticators to create credential...",
-            success: 'Registration successful.',
+            init: webAuthnMessages.registrationInit,
+            authenticatorRequest: webAuthnMessages.registrationRequest,
+            success: webAuthnMessages.registrationSuccess,
         },
         executeRequest: (req) => {
             request = req;
@@ -518,9 +530,9 @@ function authenticate(username = null, getRequest = getAuthenticateRequest) {
         getWebAuthnUrls,
         getRequest: (urls) => getRequest(urls, username),
         statusStrings: {
-            init: "Initiating authentication ceremony...",
-            authenticatorRequest: "Asking authenticators to perform assertion...",
-            success: "Authentication successful.",
+            init: webAuthnMessages.authenticationInit,
+            authenticatorRequest: webAuthnMessages.authenticationRequest,
+            success: webAuthnMessages.authenticationSuccess,
         },
         executeRequest: executeAuthenticateRequest,
     }).then((data) => {
@@ -533,7 +545,6 @@ function authenticate(username = null, getRequest = getAuthenticateRequest) {
                 addDeviceAttributeAsRow("Username", reg.username);
                 addDeviceAttributeAsRow("Credential Nickname", reg.credentialNickname);
                 addDeviceAttributeAsRow("Registration Date", reg.registrationTime);
-                addDeviceAttributeAsRow("Session Token", data.sessionToken);
                 if (reg.attestationMetadata) {
                     const deviceProperties = reg.attestationMetadata.deviceProperties;
                     if (deviceProperties) {
@@ -548,8 +559,8 @@ function authenticate(username = null, getRequest = getAuthenticateRequest) {
 
             Swal.fire({
                 icon: "info",
-                title: `Finalizing attempt for ${username}`,
-                text: "Please wait while your authentication attempt is processed...",
+                title: webAuthnMessages.finalizingTitle.replace("{0}", () => username ?? ""),
+                text: webAuthnMessages.finalizingText,
                 allowOutsideClick: false,
                 showConfirmButton: false,
                 didOpen: () => Swal.showLoading()

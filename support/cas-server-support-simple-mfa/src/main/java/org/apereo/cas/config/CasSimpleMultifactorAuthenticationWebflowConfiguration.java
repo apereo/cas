@@ -1,15 +1,20 @@
 package org.apereo.cas.config;
 
 import module java.base;
+import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.surrogate.SurrogateAuthenticationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.mfa.simple.CasSimpleMultifactorTokenCommunicationStrategy;
+import org.apereo.cas.mfa.simple.web.flow.CasSimpleMultifactorAccountProfileContactMethodsAction;
+import org.apereo.cas.mfa.simple.web.flow.CasSimpleMultifactorAccountProfileWebflowConfigurer;
 import org.apereo.cas.mfa.simple.web.flow.CasSimpleMultifactorWebflowConfigurer;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
+import org.apereo.cas.web.flow.actions.ConsumerExecutionAction;
+import org.apereo.cas.web.flow.actions.WebflowActionBeanSupplier;
 import org.apereo.cas.web.flow.configurer.AbstractCasWebflowConfigurer;
 import org.apereo.cas.web.flow.util.MultifactorAuthenticationWebflowUtils;
 import lombok.val;
@@ -28,6 +33,7 @@ import org.springframework.webflow.config.FlowDefinitionRegistryBuilder;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.FlowBuilder;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
+import org.springframework.webflow.execution.Action;
 
 /**
  * This is {@link CasSimpleMultifactorAuthenticationWebflowConfiguration}.
@@ -84,6 +90,69 @@ class CasSimpleMultifactorAuthenticationWebflowConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasSimpleMultifactorTokenCommunicationStrategy mfaSimpleMultifactorTokenCommunicationStrategy() {
             return CasSimpleMultifactorTokenCommunicationStrategy.all();
+        }
+    }
+
+    @Configuration(value = "CasSimpleMultifactorAuthenticationAccountProfileConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.AccountManagement, enabledByDefault = false)
+    static class CasSimpleMultifactorAuthenticationAccountProfileConfiguration {
+        @ConditionalOnMissingBean(name = "mfaSimpleAccountProfileWebflowConfigurer")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public CasWebflowConfigurer mfaSimpleAccountProfileWebflowConfigurer(
+            final CasConfigurationProperties casProperties,
+            final ConfigurableApplicationContext applicationContext,
+            @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_DEFINITION_REGISTRY)
+            final FlowDefinitionRegistry flowDefinitionRegistry,
+            @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
+            final FlowBuilderServices flowBuilderServices) {
+            return new CasSimpleMultifactorAccountProfileWebflowConfigurer(flowBuilderServices,
+                flowDefinitionRegistry, applicationContext, casProperties);
+        }
+
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "mfaSimpleAccountProfileWebflowExecutionPlanConfigurer")
+        public CasWebflowExecutionPlanConfigurer mfaSimpleAccountProfileWebflowExecutionPlanConfigurer(
+            @Qualifier("mfaSimpleAccountProfileWebflowConfigurer")
+            final CasWebflowConfigurer mfaSimpleAccountProfileWebflowConfigurer) {
+            return plan -> plan.registerWebflowConfigurer(mfaSimpleAccountProfileWebflowConfigurer);
+        }
+
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_ACCOUNT_PROFILE_SIMPLE_MFA_CONTACT_METHODS)
+        public Action simpleMfaAccountProfileContactMethodsAction(
+            final CasConfigurationProperties casProperties,
+            final ConfigurableApplicationContext applicationContext) {
+            return WebflowActionBeanSupplier.builder()
+                .withApplicationContext(applicationContext)
+                .withProperties(casProperties)
+                .withAction(() -> new CasSimpleMultifactorAccountProfileContactMethodsAction(casProperties.getAuthn().getMfa().getSimple()))
+                .withId(CasWebflowConstants.ACTION_ID_ACCOUNT_PROFILE_SIMPLE_MFA_CONTACT_METHODS)
+                .build()
+                .get();
+        }
+
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_ACCOUNT_PROFILE_SIMPLE_MFA_REGISTRATION)
+        public Action simpleMfaAccountProfileRegistrationAction(
+            final CasConfigurationProperties casProperties,
+            final ConfigurableApplicationContext applicationContext,
+            @Qualifier("casSimpleMultifactorAuthenticationProvider")
+            final MultifactorAuthenticationProvider casSimpleMultifactorAuthenticationProvider) {
+            return WebflowActionBeanSupplier.builder()
+                .withApplicationContext(applicationContext)
+                .withProperties(casProperties)
+                .withAction(() -> new ConsumerExecutionAction(requestContext -> {
+                    MultifactorAuthenticationWebflowUtils.putMultifactorAuthenticationProvider(requestContext, casSimpleMultifactorAuthenticationProvider);
+                    requestContext.getFlowScope().put("allowRegisterEmail", Boolean.TRUE);
+                }))
+                .withId(CasWebflowConstants.ACTION_ID_ACCOUNT_PROFILE_SIMPLE_MFA_REGISTRATION)
+                .build()
+                .get();
         }
     }
 

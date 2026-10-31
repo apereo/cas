@@ -3,6 +3,7 @@ package org.apereo.cas.nativex;
 import module java.base;
 import org.apereo.cas.configuration.model.core.web.view.CustomLoginFieldViewProperties;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
+import org.bouncycastle.jcajce.provider.util.AlgorithmProvider;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import org.springframework.aot.hint.RuntimeHints;
@@ -18,6 +19,7 @@ public class CasCoreConfigurationRuntimeHints implements CasRuntimeHintsRegistra
     @Override
     public void registerHints(final @NonNull RuntimeHints hints, final @Nullable ClassLoader classLoader) {
         registerSerializationHints(hints, CustomLoginFieldViewProperties.class);
+        registerReflectionHintsForConstructors(hints, findSubclassesInPackage(AlgorithmProvider.class, "org.bouncycastle"));
         registerReflectionHints(hints, findSubclassesInPackage(BindContext.class, "org.springframework.boot.context.properties.bind"));
     }
 }

@@ -6,6 +6,7 @@
   "bypassApprovalPrompt": true,
   "name" : "Sample",
   "id" : 1,
+  "allowedResources": [ "java.util.HashSet", [ "https://localhost:9859/anything/backend" ] ],
   "generateRefreshToken": true,
   "supportedGrantTypes": [ "java.util.HashSet", [ "client_credentials" ] ]
 }

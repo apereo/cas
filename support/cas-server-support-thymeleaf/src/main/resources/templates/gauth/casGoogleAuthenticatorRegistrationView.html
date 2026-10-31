@@ -31,13 +31,17 @@
                      th:alt="#{screen.authentication.gauth.qrimage}"/>
             </div>
             <div class="col-md-7">
-                <div class="my-2" id="seckeypanel">
+                <div class="my-2" id="seckeypanel"
+                     th:if="${#cas.themeBuilderEnabled or #cas.isTrue(#cas.theme('cas.gauth.registration.show-secret-key'))}"
+                     th:classappend="${!#cas.isTrue(#cas.theme('cas.gauth.registration.show-secret-key'))} ? 'cas-theme-builder-off'"
+                     data-cas-theme-builder-toggle="cas.gauth.registration.show-secret-key">
                     <p th:utext="#{screen.authentication.gauth.key(${key.getSecretKey()})}">Secret key to register is...</p>
                 </div>
                 <hr>
                 <p th:text="#{screen.authentication.gauth.scratchcodes}">Scratch codes:</p>
                 <div class="d-flex align-items-start mb-4">
-                    <div class="mdc-chip-set" role="grid" id="scratchcodes">
+                    <div class="mdc-chip-set" role="grid" id="scratchcodes"
+                         th:classappend="${#strings.equalsIgnoreCase(#cas.theme('cas.gauth.registration.scratch-codes'), 'list')} ? 'cas-scratch-codes-list'">
                         <div th:each="code : ${key.getScratchCodes()}" class="mdc-chip" role="row">
                             <div class="mdc-chip__ripple"></div>
                             <span role="gridcell">
@@ -55,6 +59,9 @@
                     <span class="mdc-button__label" th:text="#{screen.welcome.button.confirm}">Confirm</span>
                 </button>
                 <button class="mdc-button mdc-button--raised btn btn-primary me-2 drop-button" id="print" name="print" type="button"
+                        th:if="${#cas.themeBuilderEnabled or #cas.isTrue(#cas.theme('cas.gauth.registration.show-print'))}"
+                        th:classappend="${!#cas.isTrue(#cas.theme('cas.gauth.registration.show-print'))} ? 'cas-theme-builder-off'"
+                        data-cas-theme-builder-toggle="cas.gauth.registration.show-print"
                         onclick="window.print();">
                     <span class="mdc-button__label" th:text="#{screen.welcome.button.print}">Print</span>
                 </button>

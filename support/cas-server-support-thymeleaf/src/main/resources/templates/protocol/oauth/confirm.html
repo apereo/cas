@@ -18,6 +18,14 @@
                 </ul>
             </section>
 
+            <section id="resources" class="cas-consent-section" th:unless="${resources == null or #sets.isEmpty(resources)}">
+                <h3 th:text="#{screen.oauth.confirm.resources}"/>
+                <p class="cas-consent-hint" th:text="#{screen.oauth.confirm.resources.hint}"/>
+                <ul class="cas-perm-list cas-perm-list-compact">
+                    <th:block th:each="resource : ${resources}"><li th:replace="~{fragments/consent :: permission(${resource}, null, 'resource')}"/></th:block>
+                </ul>
+            </section>
+
             <p class="cas-consent-question" th:text="#{screen.oauth.confirm.message(${service.name})}"/>
             <div class="cas-consent-actions">
                 <a class="mdc-button mdc-button--raised btn btn-primary drop-button" id="allow" th:href="@{${callbackUrl}}">

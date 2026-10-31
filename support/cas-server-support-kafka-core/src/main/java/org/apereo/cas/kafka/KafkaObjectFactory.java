@@ -34,6 +34,12 @@ public class KafkaObjectFactory<K, V> {
     private String consumerGroupId;
 
     /**
+     * Where a consumer group without committed offsets starts reading, such as {@code earliest} or {@code latest}.
+     * When unset, the Kafka client default applies.
+     */
+    private String autoOffsetReset;
+
+    /**
      * Gets kafka admin.
      *
      * @return the kafka admin
@@ -78,6 +84,7 @@ public class KafkaObjectFactory<K, V> {
         val props = new HashMap<String, Object>();
         props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress);
         FunctionUtils.doIfNotNull(this.consumerGroupId, id -> props.put(ConsumerConfig.GROUP_ID_CONFIG, id));
+        FunctionUtils.doIfNotNull(this.autoOffsetReset, reset -> props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, reset));
         return props;
     }
 

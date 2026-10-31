@@ -2,9 +2,14 @@ package org.apereo.cas.ticket.registry;
 
 import module java.base;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
+import lombok.val;
+import org.hibernate.cfg.JdbcSettings;
+import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.parallel.ResourceLock;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.TestPropertySource;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Unit test for {@link JpaTicketRegistry} class.
@@ -26,4 +31,21 @@ import org.springframework.test.context.TestPropertySource;
 @Tag("MySQL")
 @Tag("TicketRegistryTestWithoutEncryption")
 class MySQLJpaTicketRegistryTests extends BaseJpaTicketRegistryTests {
+
+    @RepeatedTest(1)
+    void verifyOnlyScansUseCursorFetch() {
+        val properties = ticketEntityManagerFactory.getProperties();
+        assertEquals("true", String.valueOf(properties.get("useCursorFetch")));
+        assertEquals("0", String.valueOf(properties.get(JdbcSettings.STATEMENT_FETCH_SIZE)));
+        assertFalse(casProperties.getTicket().getRegistry().getJpa().getProperties().containsKey("useCursorFetch"));
+    }
+
+    @RepeatedTest(1)
+    void verifyTicketTableIndexesAreCreated() {
+        val indexes = new JdbcTemplate(dataSourceTicket).queryForList(
+            "SELECT DISTINCT LOWER(INDEX_NAME) FROM information_schema.STATISTICS "
+                + "WHERE TABLE_SCHEMA = DATABASE() AND LOWER(TABLE_NAME) = 'cas_tickets'", String.class);
+        assertTrue(indexes.containsAll(List.of("idx_ticket_principal", "idx_ticket_parent", "idx_type_principal", "idx_ticket_expiration")),
+            indexes::toString);
+    }
 }

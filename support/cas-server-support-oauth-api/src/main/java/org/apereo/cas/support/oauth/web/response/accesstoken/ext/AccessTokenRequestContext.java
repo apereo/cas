@@ -7,11 +7,13 @@ import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseModeTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.OAuth20TokenExchangeTypes;
+import org.apereo.cas.support.oauth.profile.OAuth20UserProfile;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.ticket.OAuth20Token;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.code.OAuth20Code;
 import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshToken;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -20,8 +22,6 @@ import lombok.SuperBuilder;
 import lombok.ToString;
 import lombok.With;
 import lombok.extern.jackson.Jacksonized;
-import net.minidev.json.annotate.JsonIgnore;
-import org.pac4j.core.profile.UserProfile;
 
 /**
  * This is {@link AccessTokenRequestContext}.
@@ -63,6 +63,9 @@ public class AccessTokenRequestContext implements Serializable {
     private final Set<String> scopes = new LinkedHashSet<>();
 
     @Builder.Default
+    private final Set<String> resources = new LinkedHashSet<>();
+
+    @Builder.Default
     private final Map<String, Map<String, Object>> claims = new HashMap<>();
 
     @Builder.Default
@@ -98,7 +101,7 @@ public class AccessTokenRequestContext implements Serializable {
     private final String redirectUri;
 
     @Setter
-    private UserProfile userProfile;
+    private OAuth20UserProfile userProfile;
 
     @Setter
     private String dpopConfirmation;

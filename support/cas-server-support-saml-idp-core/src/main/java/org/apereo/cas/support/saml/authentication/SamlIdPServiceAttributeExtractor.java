@@ -11,6 +11,7 @@ import org.apereo.cas.support.saml.idp.SamlIdPSessionManager;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.web.CasSessionStore;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,7 +20,6 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.jspecify.annotations.Nullable;
 import org.opensaml.saml.saml2.core.RequestAbstractType;
 import org.opensaml.saml.saml2.core.StatusResponseType;
-import org.pac4j.core.context.session.SessionStore;
 import org.springframework.core.Ordered;
 
 /**
@@ -39,7 +39,7 @@ public class SamlIdPServiceAttributeExtractor {
             public @Nullable String getEntityIdFrom(final SamlRegisteredServiceCachingMetadataResolver resolver, final String attributeValue) {
                 val openSamlConfigBean = resolver.getOpenSamlConfigBean();
                 val sessionStore = openSamlConfigBean.getApplicationContext()
-                    .getBean("samlIdPDistributedSessionStore", SessionStore.class);
+                    .getBean("samlIdPDistributedSessionStore", CasSessionStore.class);
                 val authnRequest = SamlIdPSessionManager.of(resolver.getOpenSamlConfigBean(), sessionStore)
                     .fetch(RequestAbstractType.class, attributeValue);
                 openSamlConfigBean.logObject(authnRequest);

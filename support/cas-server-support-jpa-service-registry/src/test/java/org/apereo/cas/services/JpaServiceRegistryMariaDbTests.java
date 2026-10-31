@@ -15,10 +15,10 @@ import org.springframework.test.context.TestPropertySource;
     "cas.service-registry.jpa.user=root",
     "cas.service-registry.jpa.password=mypass",
     "cas.service-registry.jpa.driver-class=org.mariadb.jdbc.Driver",
-    "cas.service-registry.jpa.url=jdbc:mariadb://localhost:3306/mysql?allowPublicKeyRetrieval=true&characterEncoding=UTF-8&useSSL=FALSE",
+    "cas.service-registry.jpa.url=jdbc:mariadb://localhost:3307/mysql?allowPublicKeyRetrieval=true&characterEncoding=UTF-8&useSSL=FALSE",
     "cas.service-registry.jpa.dialect=org.hibernate.dialect.MariaDBDialect"
 })
-@EnabledIfListeningOnPort(port = 3306)
+@EnabledIfListeningOnPort(port = 3307)
 @Tag("MariaDb")
 class JpaServiceRegistryMariaDbTests extends JpaServiceRegistryTests {
 }

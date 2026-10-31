@@ -17,7 +17,8 @@
             <script type="text/javascript">
                 let providers = [];
             </script>
-            <div th:if="${delegatedAuthenticationProviderConfigurations}">
+            <div th:if="${delegatedAuthenticationProviderConfigurations}"
+                 th:with="providerThreshold=${#cas.themeInteger('cas.login-providers.select-threshold', 10)}">
 
                 <h3 class="text-center mt-md-0 mt-4">
                     <i class="fas fa-user-shield"></i>
@@ -50,10 +51,11 @@
                 
                 <div id="identityProvidersPanel"
                      class="d-flex justify-content-center flex-wrap"
+                     th:classappend="${'cas-providers-' + #strings.defaultString(#strings.toLowerCase(#cas.theme('cas.login-providers.layout')), 'stacked')}"
                      th:style="'visibility:' + ${delegatedAuthenticationProviderPrimary != null ? 'hidden' : 'visible'}">
 
-                   <ul class="list-unstyled d-flex flex-column m-0 flex-fill"
-                       th:if="${#lists.size(delegatedAuthenticationProviderConfigurations) <= 10}">
+                   <ul class="list-unstyled m-0 flex-fill cas-providers-list"
+                       th:if="${#lists.size(delegatedAuthenticationProviderConfigurations) <= providerThreshold}">
                         <li class="p-1 login-provider-item"
                             th:each="entry: ${delegatedAuthenticationProviderConfigurations}"
                             th:switch="${entry.type}">
@@ -103,7 +105,7 @@
                     
                    <div class="w-100 mt-2">
                        <select id="identityProviderOptions"
-                               th:if="${#lists.size(delegatedAuthenticationProviderConfigurations) > 10}"
+                               th:if="${#lists.size(delegatedAuthenticationProviderConfigurations) > providerThreshold}"
                                aria-label="Identity provider"
                                class="d-flex flex-column m-0 flex-fill custom-select mw-100">
                            <option th:each="entry : ${delegatedAuthenticationProviderConfigurations}"
@@ -141,7 +143,7 @@
                                 }),
                                 $("<span>", {
                                     class: "mdc-button__label",
-                                    text: "SAML2 Identity Provider Discovery"
+                                    text: /*[[#{screen.pac4j.saml2.discovery}]]*/ "SAML2 Identity Provider Discovery"
                                 })
                             );
                             $("#identityProviderDiscoveryPanel").append(link);
@@ -160,7 +162,7 @@
                     <h3 class="card-title" th:utext="#{screen.welcome.label.loginwith}"
                         th:if="${delegatedAuthenticationProviderPrimary == null}">Login with:</h3>
                     <div class="card-title" th:if="${delegatedAuthenticationProviderPrimary != null}">
-                        <div class="alert alert-info">:information_source:
+                        <div class="alert alert-info"><span class="mdi mdi-information-outline" aria-hidden="true"></span>
                             <span th:utext="#{screen.welcome.label.navto(${delegatedAuthenticationProviderPrimary.name})}" />
                         </div>
                     </div>
@@ -188,9 +190,15 @@
                 /*<![CDATA[*/
                 
                 const identityProviderOptions = $('#identityProviderOptions');
-                const options = identityProviderOptions.find('option').get();
-                const sorted = options.sort((a, b) => $(a).text().localeCompare($(b).text()));
-                identityProviderOptions.empty().append(sorted).prop("selectedIndex", 0);
+                if (/*[[${#cas.isTrue(#cas.theme('cas.login-providers.sort'))}]]*/ false) {
+                    const options = identityProviderOptions.find('option').get();
+                    const sorted = options.sort((a, b) => $(a).text().localeCompare($(b).text()));
+                    identityProviderOptions.empty().append(sorted);
+                    const items = $('#identityProvidersPanel .cas-providers-list > .login-provider-item').get();
+                    items.sort((a, b) => $(a).find('.mdc-button__label').text().trim().localeCompare($(b).find('.mdc-button__label').text().trim()));
+                    $('#identityProvidersPanel .cas-providers-list').append(items);
+                }
+                identityProviderOptions.prop("selectedIndex", 0);
 
                 $(identityProviderOptions).on('change', function () {
                     const selectedValue = $(this).val();
