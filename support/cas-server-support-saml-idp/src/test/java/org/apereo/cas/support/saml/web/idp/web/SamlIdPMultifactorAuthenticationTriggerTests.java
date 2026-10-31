@@ -25,7 +25,6 @@ import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.saml2.core.AuthnContextClassRef;
 import org.opensaml.saml.saml2.core.AuthnContextComparisonTypeEnumeration;
 import org.opensaml.saml.saml2.core.RequestedAuthnContext;
-import org.pac4j.jee.context.JEEContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.TestConfiguration;
@@ -83,7 +82,7 @@ class SamlIdPMultifactorAuthenticationTriggerTests {
             val context = Pair.of(authnRequest, messageContext);
 
             SamlIdPSessionManager.of(openSamlConfigBean, samlIdPDistributedSessionStore)
-                .store(new JEEContext(request, response), context);
+                .store(request, response, context);
             assertTrue(samlIdPMultifactorAuthenticationTrigger.supports(request, registeredService,
                 RegisteredServiceTestUtils.getAuthentication(), service));
             val result = samlIdPMultifactorAuthenticationTrigger.isActivated(RegisteredServiceTestUtils.getAuthentication(),
@@ -117,7 +116,7 @@ class SamlIdPMultifactorAuthenticationTriggerTests {
             messageContext.ensureSubcontext(SAMLPeerEntityContext.class).setAuthenticated(true);
 
             SamlIdPSessionManager.of(openSamlConfigBean, samlIdPDistributedSessionStore)
-                .store(new JEEContext(request, response), Pair.of(authnRequest, messageContext));
+                .store(request, response, Pair.of(authnRequest, messageContext));
             assertTrue(samlIdPMultifactorAuthenticationTrigger.supports(request, registeredService,
                 RegisteredServiceTestUtils.getAuthentication(), service));
             val result = samlIdPMultifactorAuthenticationTrigger.isActivated(RegisteredServiceTestUtils.getAuthentication(),
@@ -144,7 +143,7 @@ class SamlIdPMultifactorAuthenticationTriggerTests {
             val context = Pair.of(authnRequest, messageContext);
 
             SamlIdPSessionManager.of(openSamlConfigBean, samlIdPDistributedSessionStore)
-                .store(new JEEContext(request, response), context);
+                .store(request, response, context);
             assertTrue(samlIdPMultifactorAuthenticationTrigger.supports(request, registeredService,
                 RegisteredServiceTestUtils.getAuthentication(), service));
             val result = samlIdPMultifactorAuthenticationTrigger.isActivated(RegisteredServiceTestUtils.getAuthentication(),

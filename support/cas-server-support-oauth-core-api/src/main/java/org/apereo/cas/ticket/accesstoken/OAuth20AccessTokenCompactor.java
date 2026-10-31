@@ -39,7 +39,11 @@ public class OAuth20AccessTokenCompactor implements TicketCompactor<OAuth20Acces
 
     private static final int AUTHORIZATION_DETAILS_INDEX = 8;
 
-    private static final int AUTHENTICATION_INDEX = 9;
+    private static final int RESOURCES_INDEX = 9;
+
+    private static final int AUDIENCE_INDEX = 10;
+
+    private static final int AUTHENTICATION_INDEX = 11;
 
     private final ObjectProvider<TicketFactory> ticketFactory;
 
@@ -62,6 +66,8 @@ public class OAuth20AccessTokenCompactor implements TicketCompactor<OAuth20Acces
         fields.add(Objects.requireNonNullElse(accessToken.getGrantType(), OAuth20GrantTypes.AUTHORIZATION_CODE).name());
         fields.add(CompactTicketCodec.encodeValues(Objects.requireNonNullElseGet(accessToken.getCredentialConfigurationIds(), List::of)));
         fields.add(OAuth20Utils.toCompactAuthorizationDetails(accessToken.getAuthorizationDetails()));
+        fields.add(CompactTicketCodec.encodeValues(accessToken.getResources()));
+        fields.add(CompactTicketCodec.encodeValues(accessToken.getAudience()));
         CompactTicketAuthentication.compact(fields, accessToken.getAuthentication(), retainedAuthenticationAttributes);
     }
 
@@ -79,13 +85,15 @@ public class OAuth20AccessTokenCompactor implements TicketCompactor<OAuth20Acces
         val grantType = OAuth20GrantTypes.valueOf(structure.get(GRANT_TYPE_INDEX));
         val factory = (OAuth20AccessTokenFactory) ticketFactory.getObject().get(getTicketType());
         val accessToken = factory.create(service, authentication, null,
-            CompactTicketCodec.decodeValues(structure.get(SCOPES_INDEX)), null, structure.get(CLIENT_ID_INDEX),
+            CompactTicketCodec.decodeValues(structure.get(SCOPES_INDEX)),
+            CompactTicketCodec.decodeValues(structure.get(RESOURCES_INDEX)), null, structure.get(CLIENT_ID_INDEX),
             new HashMap<>(), responseType, grantType);
         val credentialConfigurationIds = CompactTicketCodec.decodeValues(structure.get(CREDENTIAL_CONFIGURATION_IDS_INDEX));
         if (!credentialConfigurationIds.isEmpty()) {
             accessToken.setCredentialConfigurationIds(credentialConfigurationIds);
         }
         accessToken.setAuthorizationDetails(OAuth20Utils.fromCompactAuthorizationDetails(structure.get(AUTHORIZATION_DETAILS_INDEX)));
+        accessToken.setAudience(CompactTicketCodec.decodeValues(structure.get(AUDIENCE_INDEX)));
         accessToken.setCreationTime(DateTimeUtils.zonedDateTimeOf(structure.creationTime()));
         accessToken.setExpirationPolicy(new FixedInstantExpirationPolicy(structure.expirationTime()));
         return accessToken;

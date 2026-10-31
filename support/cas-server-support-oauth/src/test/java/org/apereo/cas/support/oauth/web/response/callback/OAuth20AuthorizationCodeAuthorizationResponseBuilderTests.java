@@ -44,6 +44,7 @@ class OAuth20AuthorizationCodeAuthorizationResponseBuilderTests extends Abstract
             .responseType(OAuth20ResponseTypes.CODE)
             .ticketGrantingTicket(new MockTicketGrantingTicket(authentication))
             .service(RegisteredServiceTestUtils.getService("example"))
+            .resources(Set.of("https://api.example.org/"))
             .redirectUri("https://github.com/apereo/cas")
             .build();
 
@@ -54,7 +55,9 @@ class OAuth20AuthorizationCodeAuthorizationResponseBuilderTests extends Abstract
         assertTrue(mv.getModel().containsKey(OAuth20Constants.NONCE));
 
         val code = mv.getModel().get(OAuth20Constants.CODE).toString();
-        assertNotNull(ticketRegistry.getTicket(code, OAuth20Code.class));
+        val issuedCode = ticketRegistry.getTicket(code, OAuth20Code.class);
+        assertNotNull(issuedCode);
+        assertEquals(Set.of("https://api.example.org/"), issuedCode.getResources());
 
         val authzRequest = OAuth20AuthorizationRequest.builder()
             .responseType(OAuth20ResponseTypes.CODE.getType())

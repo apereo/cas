@@ -1,0 +1,11 @@
+{
+  "@class" : "org.apereo.cas.services.OidcRegisteredService",
+  "clientId": "client",
+  "clientSecret": "secret",
+  "serviceId" : "^https://localhost:9859/anything/oidc.*",
+  "name": "OIDC",
+  "id": 1,
+  "logoutUrl" : "https://localhost:9859/anything/frontchannel",
+  "logoutType" : "FRONT_CHANNEL",
+  "scopes" : [ "java.util.HashSet", [ "openid", "profile" ] ]
+}

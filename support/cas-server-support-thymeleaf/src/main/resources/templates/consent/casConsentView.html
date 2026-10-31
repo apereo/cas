@@ -72,13 +72,17 @@
                     <p id="appTitle" th:utext="#{screen.consent.attributes.header(${service.id})}">
                         The following attributes will be released to application</p>
 
-                    <div class="w-100 mdc-data-table table-responsive mx-auto my-4" id="divAttributes">
+                    <div class="w-100 mdc-data-table table-responsive mx-auto my-4" id="divAttributes"
+                         th:classappend="${#strings.equalsIgnoreCase(#cas.theme('cas.consent.layout'), 'list')} ? 'cas-consent-list'">
                         <table id="attributesTable" class="table table-striped auto-init">
                             <thead>
                             <tr class="mdc-data-table__header-row">
                                 <th class="mdc-data-table__header-cell" role="columnheader" scope="col"
                                     th:utext="#{screen.consent.attributes.attribute}">Attribute</th>
                                 <th class="mdc-data-table__header-cell" role="columnheader" scope="col"
+                                    th:if="${#cas.themeBuilderEnabled or #cas.isTrue(#cas.theme('cas.consent.show-attribute-values'))}"
+                                    th:classappend="${!#cas.isTrue(#cas.theme('cas.consent.show-attribute-values'))} ? 'cas-theme-builder-off'"
+                                    data-cas-theme-builder-toggle="cas.consent.show-attribute-values"
                                     th:utext="#{screen.consent.attributes.values}">Value(s)</th>
                             </tr>
                             </thead>
@@ -90,7 +94,10 @@
                                             <span th:text="${!#strings.isEmpty(translated) && translated != key ? translated : label}"></span>
                                         </code>
                                     </td>
-                                    <td class="mdc-data-table__cell">
+                                    <td class="mdc-data-table__cell"
+                                        th:if="${#cas.themeBuilderEnabled or #cas.isTrue(#cas.theme('cas.consent.show-attribute-values'))}"
+                                        th:classappend="${!#cas.isTrue(#cas.theme('cas.consent.show-attribute-values'))} ? 'cas-theme-builder-off'"
+                                        data-cas-theme-builder-toggle="cas.consent.show-attribute-values">
                                         <code th:id="${attribute.name + '-value'}"><span th:utext="${attribute.values}"/></code>
                                     </td>
                                 </tr>
@@ -199,7 +206,7 @@
                                 <span class="mdc-notched-outline">
                                     <span class="mdc-notched-outline__leading"></span>
                                     <span class="mdc-notched-outline__notch">
-                                        <span class="mdc-floating-label">Reminder</span>
+                                        <span class="mdc-floating-label" th:utext="#{screen.consent.reminder}">Reminder</span>
                                     </span>
                                     <span class="mdc-notched-outline__trailing"></span>
                                 </span>
@@ -212,7 +219,7 @@
 
                         </div>
                         <select name="reminderTimeUnit" id="reminderTimeUnit" class="custom-select"
-                                aria-label="Reminder time unit">
+                                aria-label="Reminder time unit" th:attr="aria-label=#{screen.consent.reminder.unit}">
                             <option value="seconds" th:selected="${#strings.toLowerCase(reminderTimeUnit)  == 'seconds'}"
                                     th:text="#{screen.consent.options.timeunit.seconds}">Seconds
                             </option>

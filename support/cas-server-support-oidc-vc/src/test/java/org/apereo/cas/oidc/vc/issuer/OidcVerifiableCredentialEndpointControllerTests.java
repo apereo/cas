@@ -487,7 +487,7 @@ class OidcVerifiableCredentialEndpointControllerTests {
         }
 
         @Test
-        void verifyCredentialIssuanceWithDPoPToken() throws Throwable {
+        void verifyCredentialIssuanceWithUnboundTokenUnderDPoPScheme() throws Throwable {
             val clientId = UUID.randomUUID().toString();
             val registeredService = getOidcRegisteredService(clientId);
             servicesManager.save(registeredService);
@@ -497,17 +497,14 @@ class OidcVerifiableCredentialEndpointControllerTests {
             request.setCredentialConfigurationId("myorg");
             request.setProofs(buildProofs(buildValidRsaProofJwt()));
 
-            val response = mockMvc.perform(post(CREDENTIAL_ENDPOINT_URL)
+            mockMvc.perform(post(CREDENTIAL_ENDPOINT_URL)
                     .with(withHttpRequestProcessor())
                     .contentType(MediaType.APPLICATION_JSON)
                     .header(HttpHeaders.AUTHORIZATION, OAuth20Constants.TOKEN_TYPE_DPOP + ' ' + accessToken.getId())
                     .content(MAPPER.writeValueAsString(request)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.credentials[0].credential").exists())
-                .andReturn()
-                .getResponse()
-                .getContentAsString();
-            assertNotNull(response);
+                .andExpect(status().isUnauthorized())
+                .andExpect(header().string(HttpHeaders.WWW_AUTHENTICATE,
+                    org.hamcrest.Matchers.startsWith(OAuth20Constants.TOKEN_TYPE_DPOP + " error=\"invalid_token\"")));
         }
 
         @Test

@@ -28,7 +28,6 @@ import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.Issuer;
 import org.opensaml.saml.saml2.core.Response;
 import org.opensaml.saml.saml2.core.StatusCode;
-import org.pac4j.jee.context.JEEContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -245,7 +244,7 @@ class SSOSamlIdPProfileCallbackHandlerControllerTests {
                 throws Throwable {
             request.addParameter(SamlIdPConstants.AUTHN_REQUEST_ID, authnRequest.getID());
             SamlIdPSessionManager.of(openSamlConfigBean, samlIdPDistributedSessionStore)
-                .store(new JEEContext(request, response), Pair.of(authnRequest, context));
+                .store(request, response, Pair.of(authnRequest, context));
         }
     }
 }

@@ -228,6 +228,7 @@ public class CasJpaServiceRegistryAutoConfiguration {
                         Optional.ofNullable(serviceRegistryListeners.getIfAvailable()).orElseGet(ArrayList::new),
                         jdbcServiceRegistryTransactionTemplate);
                     registry.setOrder(casProperties.getServiceRegistry().getJpa().getOrder());
+                    registry.setBatchSize(casProperties.getServiceRegistry().getJpa().getBatchSize());
                     return registry;
                 })
                 .otherwiseProxy()

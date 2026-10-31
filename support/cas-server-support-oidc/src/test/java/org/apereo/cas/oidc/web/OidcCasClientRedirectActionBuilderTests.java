@@ -1,20 +1,17 @@
 package org.apereo.cas.oidc.web;
 
 import module java.base;
+import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.oidc.AbstractOidcTests;
+import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.support.oauth.OAuth20Constants;
+import org.apereo.cas.util.EncodingUtils;
 import lombok.val;
+import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.pac4j.cas.client.CasClient;
-import org.pac4j.cas.config.CasConfiguration;
-import org.pac4j.core.http.callback.CallbackUrlResolver;
-import org.pac4j.core.http.url.UrlResolver;
-import org.pac4j.jee.context.JEEContext;
 import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 /**
  * This is {@link OidcCasClientRedirectActionBuilderTests}.
@@ -24,31 +21,37 @@ import static org.mockito.Mockito.*;
  */
 @Tag("OIDCWeb")
 class OidcCasClientRedirectActionBuilderTests extends AbstractOidcTests {
+    private static final String CALLBACK_URL = "https://example.org/cas/oidc/callbackAuthorize?client_id=client&client_name=CasOAuthClient";
 
     @Test
     void verifyPromptNone() {
-        verifyBuild("=none");
+        val url = build(OidcConstants.PROMPT_NONE);
+        assertTrue(url.endsWith('&' + CasProtocolConstants.PARAMETER_GATEWAY + "=true"));
+        assertFalse(url.contains(CasProtocolConstants.PARAMETER_RENEW + '='));
     }
 
     @Test
     void verifyPromptLogin() {
-        verifyBuild("=login");
+        val url = build(OidcConstants.PROMPT_LOGIN);
+        assertTrue(url.endsWith('&' + CasProtocolConstants.PARAMETER_RENEW + "=true"));
+        assertFalse(url.contains(CasProtocolConstants.PARAMETER_GATEWAY + '='));
     }
 
-    private void verifyBuild(final String prompt) {
-        val request = new MockHttpServletRequest();
-        request.setRequestURI("https://cas.org/something");
-        request.setQueryString(OAuth20Constants.PROMPT + prompt);
-        val response = new MockHttpServletResponse();
-        val context = new JEEContext(request, response);
+    @Test
+    void verifyNoPrompt() {
+        val url = build(null);
+        assertEquals(casProperties.getServer().getLoginUrl() + "?service=" + EncodingUtils.urlEncode(CALLBACK_URL), url);
+    }
 
-        val casClient = new CasClient(new CasConfiguration("https://caslogin.com"));
-        casClient.setCallbackUrl("https://caslogin.com");
-        val callback = mock(CallbackUrlResolver.class);
-        when(callback.compute(any(), any(), anyString(), any())).thenReturn("https://caslogin.com");
-        casClient.setCallbackUrlResolver(callback);
-        casClient.setUrlResolver(mock(UrlResolver.class));
-        val result = oauthCasClientRedirectActionBuilder.build(casClient, context);
-        assertTrue(result.isPresent());
+    private String build(final @Nullable String prompt) {
+        val request = new MockHttpServletRequest();
+        request.setRequestURI("/cas/oidc/authorize");
+        if (prompt != null) {
+            request.setQueryString(OAuth20Constants.PROMPT + '=' + prompt);
+            request.addParameter(OAuth20Constants.PROMPT, prompt);
+        }
+        val url = oauthCasClientRedirectActionBuilder.build(request, CALLBACK_URL);
+        assertTrue(url.startsWith(casProperties.getServer().getLoginUrl() + "?service=" + EncodingUtils.urlEncode(CALLBACK_URL)));
+        return url;
     }
 }

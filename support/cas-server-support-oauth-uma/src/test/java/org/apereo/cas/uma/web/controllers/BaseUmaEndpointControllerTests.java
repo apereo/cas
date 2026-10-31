@@ -4,6 +4,8 @@ import module java.base;
 import org.apereo.cas.AbstractOAuth20Tests;
 import org.apereo.cas.config.CasOAuthUmaAutoConfiguration;
 import org.apereo.cas.support.oauth.OAuth20Constants;
+import org.apereo.cas.support.oauth.profile.OAuth20UserProfile;
+import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.uma.claim.UmaResourceSetClaimPermissionExaminer;
 import org.apereo.cas.uma.discovery.UmaServerDiscoverySettings;
 import org.apereo.cas.uma.ticket.resource.ResourceSetPolicy;
@@ -12,15 +14,11 @@ import org.apereo.cas.uma.ticket.resource.repository.ResourceSetRepository;
 import org.apereo.cas.uma.web.controllers.permission.UmaPermissionRegistrationRequest;
 import org.apereo.cas.uma.web.controllers.resource.UmaResourceRegistrationRequest;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.web.SecurityLogicInterceptor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.tuple.Triple;
 import org.apache.hc.core5.http.HttpHeaders;
 import org.jspecify.annotations.Nullable;
-import org.pac4j.core.profile.ProfileManager;
-import org.pac4j.core.profile.UserProfile;
-import org.pac4j.jee.context.JEEContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
@@ -32,6 +30,7 @@ import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.web.servlet.HandlerInterceptor;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import static org.junit.jupiter.api.Assertions.*;
@@ -49,7 +48,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public abstract class BaseUmaEndpointControllerTests extends AbstractOAuth20Tests {
     @Autowired
     @Qualifier("umaRequestingPartyTokenSecurityInterceptor")
-    protected SecurityLogicInterceptor umaRequestingPartyTokenSecurityInterceptor;
+    protected HandlerInterceptor umaRequestingPartyTokenSecurityInterceptor;
 
     @Autowired
     @Qualifier("umaServerDiscoverySettingsFactory")
@@ -57,7 +56,7 @@ public abstract class BaseUmaEndpointControllerTests extends AbstractOAuth20Test
 
     @Autowired
     @Qualifier("umaAuthorizationApiTokenSecurityInterceptor")
-    protected SecurityLogicInterceptor umaAuthorizationApiTokenSecurityInterceptor;
+    protected HandlerInterceptor umaAuthorizationApiTokenSecurityInterceptor;
 
     @Autowired
     @Qualifier("umaResourceSetClaimPermissionExaminer")
@@ -95,11 +94,11 @@ public abstract class BaseUmaEndpointControllerTests extends AbstractOAuth20Test
         return resRequest;
     }
 
-    protected static ResourceSetPolicy createUmaPolicyRegistrationRequest(final UserProfile profile) {
+    protected static ResourceSetPolicy createUmaPolicyRegistrationRequest(final OAuth20UserProfile profile) {
         return createUmaPolicyRegistrationRequest(profile, CollectionUtils.wrapHashSet("read", "write"));
     }
 
-    protected static ResourceSetPolicy createUmaPolicyRegistrationRequest(final UserProfile profile, final Collection<String> scopes) {
+    protected static ResourceSetPolicy createUmaPolicyRegistrationRequest(final OAuth20UserProfile profile, final Collection<String> scopes) {
         val policy = new ResourceSetPolicy();
         val perm = new ResourceSetPolicyPermission();
         perm.setScopes(new HashSet<>(scopes));
@@ -124,14 +123,9 @@ public abstract class BaseUmaEndpointControllerTests extends AbstractOAuth20Test
      * @param response the response
      * @return the current profile
      */
-    protected UserProfile getCurrentProfile(final HttpServletRequest request, final HttpServletResponse response) {
-        val ctx = new JEEContext(request, response);
-        val manager = new ProfileManager(ctx, oauthDistributedSessionStore);
-        val userProfileResult = manager.getProfile();
-        if (userProfileResult.isEmpty()) {
-            throw new IllegalStateException("Unable to determine the user profile from the context");
-        }
-        return userProfileResult.get();
+    protected OAuth20UserProfile getCurrentProfile(final HttpServletRequest request, final HttpServletResponse response) {
+        return OAuth20Utils.findAuthenticatedUserProfile(request, response, oauthDistributedSessionStore)
+            .orElseThrow(() -> new IllegalStateException("Unable to determine the user profile from the context"));
     }
 
     protected MvcResult performUmaRequest(final HttpMethod method, final String path) throws Throwable {
@@ -218,7 +212,7 @@ public abstract class BaseUmaEndpointControllerTests extends AbstractOAuth20Test
     }
     
     private Triple<HttpServletRequest, HttpServletResponse, String> authenticateUmaRequestWithScope(
-        final String scope, final SecurityLogicInterceptor interceptor)
+        final String scope, final HandlerInterceptor interceptor)
             throws Throwable {
         val service = addRegisteredService();
         val pair = assertClientOK(service, false, scope);

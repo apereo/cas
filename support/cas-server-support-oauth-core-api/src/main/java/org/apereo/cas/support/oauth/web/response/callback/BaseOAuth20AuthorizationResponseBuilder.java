@@ -15,8 +15,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.Nullable;
-import org.pac4j.core.context.WebContext;
 import org.springframework.web.servlet.ModelAndView;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * This is {@link BaseOAuth20AuthorizationResponseBuilder}.
@@ -49,23 +50,23 @@ public abstract class BaseOAuth20AuthorizationResponseBuilder<T extends OAuth20C
 
     @Override
     public Optional<OAuth20AuthorizationRequest.OAuth20AuthorizationRequestBuilder> toAuthorizationRequest(
-        final WebContext context, final Authentication authentication,
+        final HttpServletRequest request, final HttpServletResponse response, final Authentication authentication,
         final Service service, final OAuthRegisteredService registeredService) {
         return Optional.of(OAuth20AuthorizationRequest
             .builder()
-            .url(context.getRequestURL())
+            .url(request.getRequestURL().toString())
             .registeredService(registeredService)
-            .codeChallenge(resolveRequestParameter(context, OAuth20Constants.CODE_CHALLENGE))
-            .issuerState(resolveRequestParameter(context, OAuth20Constants.ISSUER_STATE))
-            .authorizationDetails(resolveRequestParameter(context, OAuth20Constants.AUTHORIZATION_DETAILS))
-            .clientId(resolveRequestParameter(context, OAuth20Constants.CLIENT_ID))
-            .responseType(resolveRequestParameter(context, OAuth20Constants.RESPONSE_TYPE))
-            .grantType(resolveRequestParameter(context, OAuth20Constants.GRANT_TYPE)));
+            .codeChallenge(resolveRequestParameter(request, OAuth20Constants.CODE_CHALLENGE))
+            .issuerState(resolveRequestParameter(request, OAuth20Constants.ISSUER_STATE))
+            .authorizationDetails(resolveRequestParameter(request, OAuth20Constants.AUTHORIZATION_DETAILS))
+            .clientId(resolveRequestParameter(request, OAuth20Constants.CLIENT_ID))
+            .responseType(resolveRequestParameter(request, OAuth20Constants.RESPONSE_TYPE))
+            .grantType(resolveRequestParameter(request, OAuth20Constants.GRANT_TYPE)));
     }
 
-    private String resolveRequestParameter(final WebContext context, final String parameterName) {
+    private String resolveRequestParameter(final HttpServletRequest request, final String parameterName) {
         val requestParameterResolver = configurationContext.getRequestParameterResolver();
-        return requestParameterResolver.resolveRequestParameter(context, parameterName)
+        return requestParameterResolver.resolveRequestParameter(request, parameterName)
             .map(String::valueOf)
             .orElse(StringUtils.EMPTY);
     }

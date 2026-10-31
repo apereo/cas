@@ -41,12 +41,16 @@ public class SpnegoSystemProperties implements Serializable {
     private String kerberosConf;
 
     /**
-     * The Kerberos kdc.
+     * The Kerberos kdc, set as the {@code java.security.krb5.kdc} system property.
+     * When both this and the Kerberos realm are set, the JDK ignores the Kerberos configuration file,
+     * and a KDC listening on a port other than 88 cannot be reached since the property carries no port.
+     * Leave both blank to take the realm and KDC from the Kerberos configuration file.
      */
     private String kerberosKdc = "172.10.1.10";
 
     /**
-     * The Kerberos realm.
+     * The Kerberos realm, set as the {@code java.security.krb5.realm} system property.
+     * See the Kerberos kdc setting for how both interact with the Kerberos configuration file.
      */
     private String kerberosRealm = "EXAMPLE.COM";
 
@@ -56,7 +60,12 @@ public class SpnegoSystemProperties implements Serializable {
     private String kerberosDebug;
 
     /**
-     * The Use subject creds only.
+     * Sets the {@code javax.security.auth.useSubjectCredsOnly} system property.
+     * When {@code true}, CAS logs the service principal in through the {@code jcifs.spnego.accept} entry of the
+     * JAAS login configuration, with the JCIFS service principal and service password, and uses the credentials of
+     * that login to accept SPNEGO tokens. When {@code false}, the JCIFS service password and the
+     * {@code jcifs.spnego.accept} entry are not used; the JDK finds the service keys on its own,
+     * typically from the {@code default_keytab_name} keytab of the Kerberos configuration file.
      */
     private boolean useSubjectCredsOnly;
 }

@@ -4,11 +4,17 @@ import module java.base;
 import org.apereo.cas.audit.spi.MockAuditTrailManager;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.consent.ConsentDecisionBuilder;
 import org.apereo.cas.consent.ConsentRepository;
+import org.apereo.cas.mcp.audit.CasMcpOperation;
+import org.apereo.cas.mcp.oauth.CasMcpAuthenticationEntryPoint;
+import org.apereo.cas.mcp.oauth.CasMcpProtectedResource;
 import org.apereo.cas.multitenancy.TenantDefinition;
 import org.apereo.cas.multitenancy.TenantsManager;
+import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
 import org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy;
+import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.RegisteredServiceLogoutType;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ReturnAllAttributeReleasePolicy;
@@ -16,12 +22,18 @@ import org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.events.CasEventRepository;
 import org.apereo.cas.support.events.dao.CasEvent;
+import org.apereo.cas.support.oauth.OAuth20Constants;
+import org.apereo.cas.support.oauth.OAuth20GrantTypes;
+import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
+import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
+import org.apereo.cas.ticket.accesstoken.OAuth20DefaultAccessToken;
 import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
+import org.apereo.cas.util.RandomUtils;
 import com.jayway.jsonpath.JsonPath;
 import lombok.val;
 import org.apereo.inspektr.audit.AuditActionContext;
@@ -33,8 +45,16 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.security.authentication.InsufficientAuthenticationException;
+import org.springframework.security.web.authentication.www.BasicAuthenticationEntryPoint;
+import org.springframework.security.web.servlet.util.matcher.PathPatternRequestMatcher;
+import org.springframework.test.web.servlet.request.RequestPostProcessor;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -51,12 +71,16 @@ class CasMcpServerTests {
         "findAuditRecords", "findConsentDecisions", "findPerson", "findService", "findSessions",
         "findSessionsWithAttribute", "findTenant", "findTicket", "getRegistryStatistics", "listMultifactorProviders",
         "matchService", "previewAttributeRelease", "previewLogout", "searchServices",
-        "resolveSamlMetadata", "findOidcClient", "listJwksKeys", "findAuthenticationEvents", "findTrustedDevices",
+        "resolveSamlMetadata", "findOidcClient", "checkOidcClientResource", "listJwksKeys", "findAuthenticationEvents", "findTrustedDevices",
         "findSurrogateAccounts", "previewInterrupt", "evaluateAuthenticationRisk", "findOneTimeTokenAccounts", "findWebAuthnDevices",
         "findPasswordlessAccount", "listIdentityProviders", "findAuthorizableResources", "searchSettings", "describeDeployment",
         "findThrottledLogins", "findAttributeSources", "findAttributeDefinitions", "validateServiceDefinition", "explainLogin");
 
     private static final List<String> FREE_FORM_TOOLS = List.of("findService", "matchService");
+
+    private static final List<String> WRITE_TOOLS = List.of("revokeSessions", "releaseThrottledLogins", "setServiceEnabled",
+        "setLogLevel", "revokeOAuthTokens", "revokeConsentDecisions", "removeTrustedDevices", "removeOneTimeTokenAccounts",
+        "removeWebAuthnDevices");
 
     @Nested
     @SpringBootTest(classes = BaseCasMcpTests.SharedTestConfiguration.class,
@@ -92,11 +116,52 @@ class CasMcpServerTests {
 
         @Test
         void verifyEndpointRequiresAuthentication() throws Throwable {
-            mockMvc.perform(post(MCP_ENDPOINT)
+            val challenges = mockMvc.perform(post(MCP_ENDPOINT)
                     .contentType(MediaType.APPLICATION_JSON)
                     .accept(MediaType.APPLICATION_JSON, MediaType.TEXT_EVENT_STREAM)
                     .content(jsonRpcRequest("initialize", "{}")))
-                .andExpect(status().isUnauthorized());
+                .andExpect(status().isUnauthorized())
+                .andReturn()
+                .getResponse()
+                .getHeaders(HttpHeaders.WWW_AUTHENTICATE);
+            val expected = new ArrayList<String>();
+            expected.add("Bearer scope=\"mcp:read\", resource_metadata=\"https://cas.example.org:8443/cas/.well-known/oauth-protected-resource/mcp\"");
+            expected.addAll(basicChallenge());
+            assertEquals(expected, challenges);
+        }
+
+        @Test
+        void verifyOtherRequestsGetBasicChallengeOnly() throws Throwable {
+            val endpoint = PathPatternRequestMatcher.withDefaults().matcher(MCP_ENDPOINT);
+            val entryPoint = new CasMcpAuthenticationEntryPoint(endpoint, CasMcpProtectedResource.of(new CasConfigurationProperties(), MCP_ENDPOINT));
+            val response = new MockHttpServletResponse();
+            entryPoint.commence(new MockHttpServletRequest("GET", "/actuator/health"), response, new InsufficientAuthenticationException("none"));
+            assertEquals(401, response.getStatus());
+            assertEquals(basicChallenge(), response.getHeaders(HttpHeaders.WWW_AUTHENTICATE));
+        }
+
+        @Test
+        void verifyProtectedResourceMetadata() throws Throwable {
+            mockMvc.perform(get("/.well-known/oauth-protected-resource/mcp").accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.resource").value("https://cas.example.org:8443/cas/mcp"))
+                .andExpect(jsonPath("$.authorization_servers[0]").value(McpFederationTestConfiguration.OIDC_ISSUER))
+                .andExpect(jsonPath("$.scopes_supported.length()").value(1))
+                .andExpect(jsonPath("$.scopes_supported[0]").value("mcp:read"))
+                .andExpect(jsonPath("$.bearer_methods_supported.length()").value(1))
+                .andExpect(jsonPath("$.bearer_methods_supported[0]").value("header"))
+                .andExpect(jsonPath("$.resource_name").value("Apereo CAS MCP Server"));
+        }
+
+        @Test
+        void verifyAccessTokenGrantsNoRoleWithoutRequiredAttributes() throws Throwable {
+            val clientId = registerOidcClient(servicesManager, true);
+            val token = bearer(newAccessToken(ticketRegistry, clientId, Set.of("mcp:read"),
+                Set.of("https://cas.example.org:8443/cas/mcp"), Map.of("memberOf", List.of("mcp-admins")), Map.of()));
+            val sessionId = initialize(token);
+            assertFalse(JsonPath.<List<String>>read(send(token, sessionId, jsonRpcRequest("tools/list", "{}")),
+                "$.result.tools[*].name").isEmpty());
+            assertTrue(isToolError(send(token, sessionId, callToolRequest("findPerson", "{\"username\":\"casuser\"}"))));
         }
 
         @Test
@@ -104,6 +169,7 @@ class CasMcpServerTests {
             val response = send(MCP_ADMIN, initialize(MCP_ADMIN), jsonRpcRequest("tools/list", "{}"));
             val tools = JsonPath.<List<String>>read(response, "$.result.tools[*].name");
             assertTrue(tools.containsAll(CAS_TOOLS), response);
+            assertTrue(tools.stream().noneMatch(WRITE_TOOLS::contains), response);
             for (val tool : CAS_TOOLS) {
                 val prefix = "$.result.tools[?(@.name == '%s')]".formatted(tool);
                 assertEquals(List.of(true), JsonPath.read(response, prefix + ".annotations.readOnlyHint"), response);
@@ -619,6 +685,141 @@ class CasMcpServerTests {
     
     @Nested
     @SpringBootTest(classes = BaseCasMcpTests.SharedTestConfiguration.class,
+        properties = {
+            "cas.server.prefix=https://cas.example.org/cas",
+            "cas.mcp.oauth.required-attributes.mail=casuser@apereo.org"
+        },
+        webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+    class OAuthTests extends BaseCasMcpTests {
+        private static final String RESOURCE = "https://cas.example.org/cas/mcp";
+
+        private static final String RESOURCE_METADATA = "https://cas.example.org/cas/.well-known/oauth-protected-resource/mcp";
+
+        @Autowired
+        @Qualifier(ServicesManager.BEAN_NAME)
+        private ServicesManager servicesManager;
+
+        @Autowired
+        @Qualifier(TicketRegistry.BEAN_NAME)
+        private TicketRegistry ticketRegistry;
+
+        @Autowired
+        @Qualifier("casMcpAuditor")
+        private RecordingCasMcpAuditor casMcpAuditor;
+
+        @Test
+        void verifyAdministratorToken() throws Throwable {
+            val clientId = registerOidcClient(servicesManager, true);
+            val token = bearer(newAccessToken(ticketRegistry, clientId, Set.of("openid", "mcp:read"), Set.of(RESOURCE), Map.of(), Map.of()));
+            val username = "agent-" + UUID.randomUUID();
+            val response = send(token, initialize(token), callToolRequest("findPerson", "{\"username\":\"%s\"}".formatted(username)));
+            assertFalse(isToolError(response), response);
+            val operation = casMcpAuditor.getOperations()
+                .stream()
+                .filter(entry -> username.equals(entry.arguments().get("username")))
+                .findFirst()
+                .orElseThrow();
+            assertEquals(CasMcpOperation.Outcome.SUCCESS, operation.outcome());
+            assertEquals(clientId, operation.client());
+            assertTrue(operation.operator().startsWith("agent-principal-"), operation::toString);
+        }
+
+        @Test
+        void verifyResourceSchemeAndHostIgnoreCase() throws Throwable {
+            val clientId = registerOidcClient(servicesManager, true);
+            val token = bearer(newAccessToken(ticketRegistry, clientId, Set.of("mcp:read"), Set.of("HTTPS://CAS.Example.org/cas/mcp"),
+                Map.of("memberOf", List.of("mcp-operators")), Map.of()));
+            assertNotNull(initialize(token));
+        }
+
+        @Test
+        void verifyInsufficientScope() throws Throwable {
+            val clientId = registerOidcClient(servicesManager, true);
+            val token = newAccessToken(ticketRegistry, clientId, Set.of("openid"), Set.of(RESOURCE),
+                Map.of("memberOf", List.of("mcp-admins")), Map.of());
+            mockMvc.perform(post(MCP_ENDPOINT)
+                    .with(bearer(token))
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .accept(MediaType.APPLICATION_JSON, MediaType.TEXT_EVENT_STREAM)
+                    .content(jsonRpcRequest("initialize", "{}")))
+                .andExpect(status().isForbidden())
+                .andExpect(header().string(HttpHeaders.WWW_AUTHENTICATE,
+                    "Bearer error=\"insufficient_scope\", error_description=\"The access token does not grant the mcp:read scope\", "
+                        + "scope=\"mcp:read\", resource_metadata=\"%s\"".formatted(RESOURCE_METADATA)));
+        }
+
+        @Test
+        void verifyRefusedTokens() throws Throwable {
+            val allowedClient = registerOidcClient(servicesManager, true);
+            val disabledClient = registerOidcClient(servicesManager, false);
+            val attributes = Map.<String, List<Object>>of("memberOf", List.of("mcp-admins"));
+            val tokens = List.of(
+                "AT-" + UUID.randomUUID(),
+                "eyJhbGciOiJub25lIn0.eyJqdGkiOiJBVC0xIn0.",
+                newAccessToken(ticketRegistry, allowedClient, Set.of("mcp:read"), Set.of(), attributes, Map.of()),
+                newAccessToken(ticketRegistry, allowedClient, Set.of("mcp:read"), Set.of("https://cas.example.org/cas/mcp/other"), attributes, Map.of()),
+                newAccessToken(ticketRegistry, disabledClient, Set.of("mcp:read"), Set.of(RESOURCE), attributes, Map.of()),
+                newAccessToken(ticketRegistry, "unknown-" + UUID.randomUUID(), Set.of("mcp:read"), Set.of(RESOURCE), attributes, Map.of()),
+                newAccessToken(ticketRegistry, allowedClient, Set.of("mcp:read"), Set.of(RESOURCE), attributes,
+                    Map.of(OAuth20Constants.DPOP_CONFIRMATION, List.of("thumbprint"))));
+            for (val token : tokens) {
+                val challenge = mockMvc.perform(post(MCP_ENDPOINT)
+                        .with(bearer(token))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON, MediaType.TEXT_EVENT_STREAM)
+                        .content(jsonRpcRequest("initialize", "{}")))
+                    .andExpect(status().isUnauthorized())
+                    .andReturn()
+                    .getResponse()
+                    .getHeader(HttpHeaders.WWW_AUTHENTICATE);
+                assertNotNull(challenge, token);
+                assertTrue(challenge.startsWith("Bearer error=\"invalid_token\""), challenge);
+                assertTrue(challenge.endsWith("resource_metadata=\"%s\"".formatted(RESOURCE_METADATA)), challenge);
+            }
+        }
+
+        @Test
+        void verifyBasicAuthenticationStillWorks() throws Throwable {
+            assertNotNull(initialize(MCP_ADMIN));
+        }
+    }
+
+    @Nested
+    @SpringBootTest(classes = BaseCasMcpTests.SharedTestConfiguration.class,
+        properties = "CasFeatureModule.AI.mcp-oauth.enabled=false",
+        webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+    class OAuthDisabledTests extends BaseCasMcpTests {
+        @Autowired
+        @Qualifier(ServicesManager.BEAN_NAME)
+        private ServicesManager servicesManager;
+
+        @Autowired
+        @Qualifier(TicketRegistry.BEAN_NAME)
+        private TicketRegistry ticketRegistry;
+
+        @Test
+        void verifyAccessTokensAreNotAccepted() throws Throwable {
+            assertFalse(webApplicationContext.containsBean("casMcpOAuthEndpointConfigurer"));
+            assertFalse(webApplicationContext.containsBean("casMcpProtectedResourceMetadataController"));
+            val clientId = registerOidcClient(servicesManager, true);
+            val token = newAccessToken(ticketRegistry, clientId, Set.of("mcp:read"), Set.of("https://cas.example.org:8443/cas/mcp"),
+                Map.of("memberOf", List.of("mcp-admins")), Map.of());
+            val challenges = mockMvc.perform(post(MCP_ENDPOINT)
+                    .with(bearer(token))
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .accept(MediaType.APPLICATION_JSON, MediaType.TEXT_EVENT_STREAM)
+                    .content(jsonRpcRequest("initialize", "{}")))
+                .andExpect(status().isUnauthorized())
+                .andReturn()
+                .getResponse()
+                .getHeaders(HttpHeaders.WWW_AUTHENTICATE);
+            assertEquals(basicChallenge(), challenges);
+            mockMvc.perform(get("/.well-known/oauth-protected-resource/mcp")).andExpect(status().is4xxClientError());
+        }
+    }
+
+    @Nested
+    @SpringBootTest(classes = BaseCasMcpTests.SharedTestConfiguration.class,
         properties = "CasFeatureModule.AI.mcp.enabled=false",
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
     class FeatureDisabledTests extends BaseCasMcpTests {
@@ -651,11 +852,148 @@ class CasMcpServerTests {
             assertFalse(webApplicationContext.containsBean("casAuthenticationRiskTools"));
             assertFalse(webApplicationContext.containsBean("casMcpEvaluationContextFactory"));
             assertFalse(webApplicationContext.containsBean("casMcpEndpointConfigurer"));
+            assertFalse(webApplicationContext.containsBean("casMcpOAuthEndpointConfigurer"));
+            assertFalse(webApplicationContext.containsBean("casMcpProtectedResourceMetadataController"));
             assertFalse(webApplicationContext.containsBean("casDeploymentTools"));
             assertFalse(webApplicationContext.containsBean("casThrottleTools"));
             assertFalse(webApplicationContext.containsBean("casAttributeTools"));
             assertFalse(webApplicationContext.containsBean("casLoginExplanationTools"));
             assertFalse(webApplicationContext.containsBean("casServiceResources"));
+            assertFalse(webApplicationContext.containsBean("casAdministrationTools"));
+            assertFalse(webApplicationContext.containsBean("casOAuthAdministrationTools"));
+            assertFalse(webApplicationContext.containsBean("casConsentAdministrationTools"));
+            assertFalse(webApplicationContext.containsBean("casTrustedDeviceAdministrationTools"));
+            assertFalse(webApplicationContext.containsBean("casOneTimeTokenAdministrationTools"));
+            assertFalse(webApplicationContext.containsBean("casWebAuthnAdministrationTools"));
         }
+    }
+
+    @Nested
+    @SpringBootTest(classes = BaseCasMcpTests.SharedTestConfiguration.class,
+        properties = {
+            "CasFeatureModule.AI.mcp-write.enabled=true",
+            "cas.mcp.oauth.operator-required-attributes.mail=casuser@apereo.org"
+        },
+        webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+    class WriteToolsTests extends BaseCasMcpTests {
+        private static final String RESOURCE = "https://cas.example.org:8443/cas/mcp";
+
+        @Autowired
+        @Qualifier(ServicesManager.BEAN_NAME)
+        private ServicesManager servicesManager;
+
+        @Autowired
+        @Qualifier(TicketRegistry.BEAN_NAME)
+        private TicketRegistry ticketRegistry;
+
+        @Test
+        void verifyWriteToolsAreListed() throws Throwable {
+            val response = send(MCP_OPERATOR, initialize(MCP_OPERATOR), jsonRpcRequest("tools/list", "{}"));
+            val tools = JsonPath.<List<String>>read(response, "$.result.tools[*].name");
+            assertTrue(tools.containsAll(WRITE_TOOLS), response);
+            for (val tool : WRITE_TOOLS) {
+                val prefix = "$.result.tools[?(@.name == '%s')]".formatted(tool);
+                assertEquals(List.of(false), JsonPath.read(response, prefix + ".annotations.readOnlyHint"), response);
+                assertEquals(List.of(!"setLogLevel".equals(tool)), JsonPath.read(response, prefix + ".annotations.destructiveHint"), response);
+                assertFalse(JsonPath.<List<Object>>read(response, prefix + ".outputSchema").isEmpty(), tool);
+            }
+        }
+
+        @Test
+        void verifyWriteToolsRequireOperatorRole() throws Throwable {
+            val sessionId = initialize(MCP_ADMIN);
+            val calls = List.of(
+                callToolRequest("revokeSessions", "{\"username\":\"casuser\"}"),
+                callToolRequest("releaseThrottledLogins", "{\"username\":\"casuser\"}"),
+                callToolRequest("setServiceEnabled", "{\"serviceId\":1,\"enabled\":false}"),
+                callToolRequest("setLogLevel", "{\"loggerName\":\"org.apereo.cas\",\"level\":\"DEBUG\"}"),
+                callToolRequest("revokeOAuthTokens", "{\"username\":\"casuser\"}"),
+                callToolRequest("revokeConsentDecisions", "{\"username\":\"casuser\"}"),
+                callToolRequest("removeTrustedDevices", "{\"username\":\"casuser\"}"),
+                callToolRequest("removeOneTimeTokenAccounts", "{\"username\":\"casuser\"}"),
+                callToolRequest("removeWebAuthnDevices", "{\"username\":\"casuser\"}"));
+            for (val call : calls) {
+                assertTrue(isToolError(send(MCP_ADMIN, sessionId, call)), call);
+            }
+        }
+
+        @Test
+        void verifyOperatorRevokesOAuthTokens() throws Throwable {
+            val clientId = registerOidcClient(servicesManager, true);
+            val revoked = newAccessToken(ticketRegistry, clientId, Set.of("mcp:read"), Set.of(RESOURCE), Map.of(), Map.of());
+            val response = send(MCP_OPERATOR, initialize(MCP_OPERATOR),
+                callToolRequest("revokeOAuthTokens", "{\"clientId\":\"%s\"}".formatted(clientId)));
+            assertFalse(isToolError(response), response);
+            assertEquals(1, JsonPath.<Number>read(response, "$.result.structuredContent.accessTokens").intValue(), response);
+            assertFalse(response.contains(revoked), response);
+            assertNull(ticketRegistry.getTicket(revoked));
+        }
+
+        @Test
+        void verifyAccessTokenNeedsWriteScopeForOperatorRole() throws Throwable {
+            val clientId = registerOidcClient(servicesManager, true);
+            val logger = "{\"loggerName\":\"org.apereo.cas.mcp.%s\",\"level\":\"INFO\"}".formatted(RandomUtils.randomAlphabetic(12));
+            val operator = bearer(newAccessToken(ticketRegistry, clientId, Set.of("mcp:read", "mcp:write"), Set.of(RESOURCE), Map.of(), Map.of()));
+            val allowed = send(operator, initialize(operator), callToolRequest("setLogLevel", logger));
+            assertFalse(isToolError(allowed), allowed);
+            assertEquals("INFO", JsonPath.read(allowed, "$.result.structuredContent.level"), allowed);
+            assertTrue(isToolError(send(operator, initialize(operator), callToolRequest("findPerson", "{\"username\":\"casuser\"}"))));
+
+            val reader = bearer(newAccessToken(ticketRegistry, clientId, Set.of("mcp:read"), Set.of(RESOURCE), Map.of(), Map.of()));
+            assertTrue(isToolError(send(reader, initialize(reader), callToolRequest("setLogLevel", logger))));
+        }
+
+        @Test
+        void verifyProtectedResourceMetadataListsWriteScope() throws Throwable {
+            mockMvc.perform(get("/.well-known/oauth-protected-resource/mcp").accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.scopes_supported.length()").value(2))
+                .andExpect(jsonPath("$.scopes_supported[0]").value("mcp:read"))
+                .andExpect(jsonPath("$.scopes_supported[1]").value("mcp:write"));
+        }
+    }
+
+    private static List<String> basicChallenge() throws Exception {
+        val entryPoint = new BasicAuthenticationEntryPoint();
+        entryPoint.setRealmName(CasMcpAuthenticationEntryPoint.BASIC_REALM);
+        val response = new MockHttpServletResponse();
+        entryPoint.commence(new MockHttpServletRequest(), response, new InsufficientAuthenticationException("none"));
+        return response.getHeaders(HttpHeaders.WWW_AUTHENTICATE);
+    }
+
+    private static RequestPostProcessor bearer(final String token) {
+        return request -> {
+            request.addHeader(HttpHeaders.AUTHORIZATION, "Bearer " + token);
+            return request;
+        };
+    }
+
+    private static String registerOidcClient(final ServicesManager servicesManager, final boolean enabled) {
+        val clientId = "agent-" + UUID.randomUUID();
+        val service = new OidcRegisteredService();
+        service.setId(ThreadLocalRandom.current().nextLong(1, Integer.MAX_VALUE));
+        service.setName("Agent-" + service.getId());
+        service.setServiceId("^https://agent.example.org/.*");
+        service.setClientId(clientId);
+        service.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy(enabled, true));
+        servicesManager.save(service);
+        return clientId;
+    }
+
+    private static String newAccessToken(final TicketRegistry ticketRegistry, final String clientId, final Set<String> scopes,
+                                         final Set<String> resources, final Map<String, List<Object>> principalAttributes,
+                                         final Map<String, List<Object>> authenticationAttributes)
+            throws Exception {
+        val principal = RegisteredServiceTestUtils.getPrincipal("agent-principal-" + UUID.randomUUID(), principalAttributes);
+        val authentication = RegisteredServiceTestUtils.getAuthentication(principal, authenticationAttributes);
+        val ticketGrantingTicket = new TicketGrantingTicketImpl(new DefaultUniqueTicketIdGenerator().getNewTicketId(TicketGrantingTicket.PREFIX),
+            authentication, NeverExpiresExpirationPolicy.INSTANCE);
+        val id = new DefaultUniqueTicketIdGenerator().getNewTicketId(OAuth20AccessToken.PREFIX);
+        val accessToken = new OAuth20DefaultAccessToken(id, RegisteredServiceTestUtils.getService("https://agent.example.org/callback"),
+            authentication, NeverExpiresExpirationPolicy.INSTANCE, ticketGrantingTicket, id, scopes, clientId, Map.of(),
+            OAuth20ResponseTypes.CODE, OAuth20GrantTypes.AUTHORIZATION_CODE, List.of());
+        accessToken.setResources(resources);
+        ticketRegistry.addTicket(accessToken);
+        return id;
     }
 }

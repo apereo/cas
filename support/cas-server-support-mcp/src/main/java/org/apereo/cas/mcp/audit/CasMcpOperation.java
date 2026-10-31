@@ -2,6 +2,7 @@ package org.apereo.cas.mcp.audit;
 
 import module java.base;
 import org.apereo.cas.audit.AuditableEntity;
+import org.jspecify.annotations.Nullable;
 
 /**
  * This is {@link CasMcpOperation}, one call an MCP client made to a CAS MCP tool or resource, as recorded in the
@@ -12,10 +13,15 @@ import org.apereo.cas.audit.AuditableEntity;
  * @param operation the tool name, or the URI template of the resource
  * @param arguments the arguments of the call, by name
  * @param outcome   how the call ended
+ * @param client    the OAuth client the caller used, when the call was made with an access token
  * @since 8.1.0
  */
-public record CasMcpOperation(String operator, String operation, Map<String, String> arguments, Outcome outcome)
-    implements AuditableEntity {
+public record CasMcpOperation(String operator, String operation, Map<String, String> arguments, Outcome outcome,
+                              @Nullable String client) implements AuditableEntity {
+
+    public CasMcpOperation(final String operator, final String operation, final Map<String, String> arguments, final Outcome outcome) {
+        this(operator, operation, arguments, outcome, null);
+    }
 
     @Override
     public String getAuditablePrincipal() {

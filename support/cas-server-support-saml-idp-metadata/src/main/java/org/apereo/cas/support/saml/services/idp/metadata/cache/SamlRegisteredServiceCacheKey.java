@@ -11,6 +11,7 @@ import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import net.shibboleth.shared.resolver.CriteriaSet;
+import org.apache.commons.lang3.StringUtils;
 import org.opensaml.core.criterion.EntityIdCriterion;
 
 /**
@@ -28,6 +29,8 @@ public class SamlRegisteredServiceCacheKey implements Serializable {
      * Cache key field separator.
      */
     static final String KEY_SEPARATOR = "|";
+
+    private static final Pattern PATTERN_METADATA_SOURCE_ID = Pattern.compile("^[a-z][a-z0-9+.-]*://$", Pattern.CASE_INSENSITIVE);
 
     @Serial
     private static final long serialVersionUID = -7238573226470492601L;
@@ -56,22 +59,58 @@ public class SamlRegisteredServiceCacheKey implements Serializable {
         return hashedKey;
     }
 
+    /**
+     * Builds the cache key from the service id, the metadata being looked up and the service settings that decide how
+     * that metadata is filtered and cached. A service whose settings change therefore gets a fresh resolver on every
+     * node, while the entry built with the old settings is left to expire.
+     *
+     * @param service     the service
+     * @param criteriaSet the criteria set
+     * @return the cache key
+     */
     private static String getCacheKeyForRegisteredService(final SamlRegisteredService service,
                                                           final CriteriaSet criteriaSet) {
         val metadataKey = getMetadataKeyForRegisteredService(service, criteriaSet);
-        return service.getId() + KEY_SEPARATOR + metadataKey;
+        return service.getId() + KEY_SEPARATOR + metadataKey + KEY_SEPARATOR + getMetadataSettingsFingerprint(service);
     }
 
+    /**
+     * Gets the part of the key that identifies the metadata. Metadata queries and metadata stores
+     * (a bare source such as {@code jdbc://} or {@code mongodb://}) load the document of the requested entity only,
+     * so they are keyed by that entity; any other location is loaded whole and keyed by the location.
+     *
+     * @param service     the service
+     * @param criteriaSet the criteria set
+     * @return the metadata key
+     */
     private static String getMetadataKeyForRegisteredService(final SamlRegisteredService service,
                                                               final CriteriaSet criteriaSet) {
-        if (SamlUtils.isDynamicMetadataQueryConfigured(service.getMetadataLocation())) {
+        val metadataLocation = service.getMetadataLocation();
+        if (SamlUtils.isDynamicMetadataQueryConfigured(metadataLocation) || isMetadataSourceId(metadataLocation)) {
             val entityId = criteriaSet.contains(EntityIdCriterion.class)
                 ? Objects.requireNonNull(criteriaSet.get(EntityIdCriterion.class)).getEntityId()
                 : service.getServiceId();
-            LOGGER.trace("Located entity id [{}] for service metadata location [{}]",
-                entityId, service.getMetadataLocation());
-            return entityId;
+            LOGGER.trace("Located entity id [{}] for service metadata location [{}]", entityId, metadataLocation);
+            return metadataLocation + KEY_SEPARATOR + entityId;
         }
-        return service.getMetadataLocation();
+        return metadataLocation;
+    }
+
+    private static boolean isMetadataSourceId(final String metadataLocation) {
+        return StringUtils.isNotBlank(metadataLocation) && PATTERN_METADATA_SOURCE_ID.matcher(metadataLocation.trim()).matches();
+    }
+
+    private static String getMetadataSettingsFingerprint(final SamlRegisteredService service) {
+        val entityAttributes = Optional.ofNullable(service.getMetadataCriteriaEntityAttributes())
+            .map(attributes -> new TreeMap<>(attributes).toString())
+            .orElse(StringUtils.EMPTY);
+        return Stream.of(service.getMetadataSignatureLocation(), service.isRequireSignedRoot(),
+                service.getMetadataMaxValidity(), service.isValidateMetadataCertificates(),
+                service.getMetadataCriteriaDirection(), service.getMetadataCriteriaPattern(), entityAttributes,
+                service.getMetadataCriteriaRoles(), service.isMetadataCriteriaRemoveEmptyEntitiesDescriptors(),
+                service.isMetadataCriteriaRemoveRolelessEntityDescriptors(), service.getMetadataExpirationDuration(),
+                service.getMetadataProxyLocation())
+            .map(String::valueOf)
+            .collect(Collectors.joining(KEY_SEPARATOR));
     }
 }

@@ -12,7 +12,6 @@ import com.nimbusds.oauth2.sdk.dpop.verifiers.InvalidDPoPProofException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.val;
-import org.pac4j.jee.context.JEEContext;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -43,9 +42,8 @@ public class OidcAccessTokenEndpointController extends OAuth20AccessTokenEndpoin
     @Operation(summary = "Handle OIDC access token request")
     @Override
     public ModelAndView handleRequest(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        val webContext = new JEEContext(request, response);
         val issuerService = getConfigurationContext().getIssuerService();
-        if (!issuerService.validateIssuer(webContext, List.of(OAuth20Constants.ACCESS_TOKEN_URL, OAuth20Constants.TOKEN_URL,
+        if (!issuerService.validateIssuer(request, List.of(OAuth20Constants.ACCESS_TOKEN_URL, OAuth20Constants.TOKEN_URL,
             OidcConstants.ACCESS_TOKEN_URL, OidcConstants.TOKEN_URL))) {
             return OAuth20Utils.writeError(response, OAuth20Constants.INVALID_REQUEST, "Invalid issuer");
         }

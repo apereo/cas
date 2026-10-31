@@ -31,6 +31,9 @@ public class OAuth20DefaultDeviceToken extends AbstractTicket implements OAuth20
 
     @JsonSetter(nulls = Nulls.AS_EMPTY)
     private Set<String> scopes = new HashSet<>();
+
+    @JsonSetter(nulls = Nulls.AS_EMPTY)
+    private Set<String> resources = new LinkedHashSet<>();
     
     public OAuth20DefaultDeviceToken(final String id, final Service service,
                                      final ExpirationPolicy expirationPolicy,
@@ -46,5 +49,10 @@ public class OAuth20DefaultDeviceToken extends AbstractTicket implements OAuth20
     @Override
     public String getPrefix() {
         return OAuth20DeviceToken.PREFIX;
+    }
+
+    @Override
+    public void setResources(final Collection<String> resources) {
+        this.resources = resources == null ? new LinkedHashSet<>() : new LinkedHashSet<>(resources);
     }
 }

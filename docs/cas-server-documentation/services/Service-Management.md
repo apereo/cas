@@ -79,7 +79,6 @@ The following options may be used to store services in CAS.
 | [Google Cloud Storage](GCP-Storage-Service-Management.html)     | Object storage | Yes                                                        |                                                                                   |
 | [REST](REST-Service-Management.html)                            | Your API       | Yes, through your API                                      | You implement the storage behind a REST API.                                      |
 | [Custom](Custom-Service-Management.html)                        | Your code      | Depends on your implementation                             | You implement the registry with CAS APIs.                                         |
-| [Azure CosmosDb](CosmosDb-Service-Management.html)              | Database       | Yes                                                        | Deprecated.                                                                       |
 
 Service definitions are cached by each node and reloaded on a schedule; see
 [caching and reloading](Service-Management-Caching-Reloading.html). The

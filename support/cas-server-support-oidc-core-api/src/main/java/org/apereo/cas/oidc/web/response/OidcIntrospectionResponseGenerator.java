@@ -5,6 +5,7 @@ import org.apereo.cas.oidc.OidcConfigurationContext;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.support.oauth.OAuth20Constants;
+import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.web.response.introspection.OAuth20DefaultIntrospectionResponseGenerator;
 import org.apereo.cas.support.oauth.web.response.introspection.OAuth20IntrospectionAccessTokenResponse;
 import org.apereo.cas.ticket.OAuth20Token;
@@ -30,13 +31,14 @@ public class OidcIntrospectionResponseGenerator extends OAuth20DefaultIntrospect
 
     @Override
     protected OAuth20IntrospectionAccessTokenResponse collectIntrospectionDetails(final OAuth20IntrospectionAccessTokenResponse response,
-                                                                                  final OAuth20Token accessToken) {
-        super.collectIntrospectionDetails(response, accessToken);
+                                                                                  final OAuth20Token accessToken,
+                                                                                  final OAuthRegisteredService registeredService) {
+        super.collectIntrospectionDetails(response, accessToken, registeredService);
 
         if (accessToken instanceof final ServiceAwareTicket sat) {
             val service = sat.getService();
-            val registeredService = oidcConfigurationContext.getObject().getServicesManager().findServiceBy(service, OidcRegisteredService.class);
-            response.setIss(oidcConfigurationContext.getObject().getIssuerService().determineIssuer(Optional.ofNullable(registeredService)));
+            val oidcRegisteredService = oidcConfigurationContext.getObject().getServicesManager().findServiceBy(service, OidcRegisteredService.class);
+            response.setIss(oidcConfigurationContext.getObject().getIssuerService().determineIssuer(Optional.ofNullable(oidcRegisteredService)));
         }
         FunctionUtils.doIf(response.isActive(), _ -> response.setScope(String.join(" ", accessToken.getScopes()))).accept(response);
         CollectionUtils.firstElement(accessToken.getAuthentication().getAttributes().get(OAuth20Constants.DPOP_CONFIRMATION))

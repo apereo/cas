@@ -15,6 +15,7 @@
         <span th:utext="#{${'cas.oauth.device.error.' + error}}"/>
     </div>
     <form method="post" id="fm1">
+        <input type="hidden" name="approvaltoken" th:if="${approvalToken}" th:value="${approvalToken}"/>
         <section class="cas-field form-group my-3 mdc-input-group">
             <div class="mdc-input-group-field mdc-input-group-field-append">
                 <div class="d-flex">
@@ -23,12 +24,13 @@
                             <span class="mdc-notched-outline">
                                 <span class="mdc-notched-outline__leading"></span>
                                 <span class="mdc-notched-outline__notch">
-                                    <span class="mdc-floating-label">Code</span>
+                                    <span class="mdc-floating-label" th:utext="#{cas.oauth.device.code.label}">Code</span>
                                 </span>
                                 <span class="mdc-notched-outline__trailing"></span>
                             </span>
                         <input class="mdc-text-field__input form-control pwd"
                                placeholder="code..."
+                               th:placeholder="#{cas.oauth.device.code.placeholder}"
                                type="password"
                                name="usercode"
                                id="usercode"

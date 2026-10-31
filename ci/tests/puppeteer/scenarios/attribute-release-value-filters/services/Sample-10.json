@@ -1,0 +1,13 @@
+{
+  "@class": "org.apereo.cas.services.CasRegisteredService",
+  "serviceId": "^https://localhost:9859/anything/environment$",
+  "name": "Environment",
+  "id": 10,
+  "attributeReleasePolicy": {
+    "@class": "org.apereo.cas.services.ReturnEnvironmentAttributeReleasePolicy",
+    "environmentVariables": {
+      "@class": "java.util.LinkedHashMap",
+      "SCENARIO": "scenarioName"
+    }
+  }
+}
