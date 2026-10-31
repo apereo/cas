@@ -11,10 +11,8 @@ import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.SequenceGenerator;
+import jakarta.persistence.Index;
 import jakarta.persistence.Table;
 
 /**
@@ -23,7 +21,10 @@ import jakarta.persistence.Table;
  * @author Misagh Moayyed
  * @since 6.4.0
  */
-@Table(name = "RegisteredServices")
+@Table(name = "RegisteredServices", indexes = {
+    @Index(name = "idx_regsvc_service_id", columnList = "serviceId"),
+    @Index(name = "idx_regsvc_name", columnList = "name")
+})
 @Entity(name = JpaRegisteredServiceEntity.ENTITY_NAME)
 @Getter
 @Setter
@@ -43,8 +44,6 @@ public class JpaRegisteredServiceEntity implements Serializable {
     private static final long serialVersionUID = 6534421912995436609L;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "service_sequence")
-    @SequenceGenerator(name = "service_sequence", allocationSize = 100)
     private long id;
 
     @Column(nullable = false)

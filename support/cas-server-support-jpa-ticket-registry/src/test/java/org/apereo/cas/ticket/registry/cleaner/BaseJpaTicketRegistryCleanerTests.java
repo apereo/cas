@@ -28,6 +28,7 @@ import org.apereo.cas.ticket.device.OAuth20DeviceUserCodeFactory;
 import org.apereo.cas.ticket.expiration.HardTimeoutExpirationPolicy;
 import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
 import org.apereo.cas.ticket.registry.BaseJpaTicketRegistryTests;
+import org.apereo.cas.ticket.registry.DefaultTicketRegistryCleaner;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistryCleaner;
 import org.apereo.cas.ticket.tracking.TicketTrackingPolicy;
@@ -36,6 +37,7 @@ import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.util.lock.LockRepository;
 import lombok.val;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
@@ -46,6 +48,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.integration.autoconfigure.IntegrationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.transaction.support.TransactionOperations;
 import static org.awaitility.Awaitility.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -88,6 +92,38 @@ public abstract class BaseJpaTicketRegistryCleanerTests {
     @Autowired
     @Qualifier(TicketRegistryCleaner.BEAN_NAME)
     private TicketRegistryCleaner ticketRegistryCleaner;
+
+    @Autowired
+    @Qualifier("jpaTicketRegistryTransactionTemplate")
+    private TransactionOperations jpaTicketRegistryTransactionTemplate;
+
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
+
+    @Test
+    void verifyCandidateRunRemovesTicketsExpiredOnUpdate() throws Throwable {
+        val cleaner = new DefaultTicketRegistryCleaner(LockRepository.noOp(), applicationContext,
+            ticketRegistry, jpaTicketRegistryTransactionTemplate);
+        cleaner.clean();
+
+        val principal = UUID.randomUUID().toString();
+        val expired = new TicketGrantingTicketImpl(new DefaultUniqueTicketIdGenerator().getNewTicketId(TicketGrantingTicket.PREFIX),
+            CoreAuthenticationTestUtils.getAuthentication(principal), NeverExpiresExpirationPolicy.INSTANCE);
+        val active = new TicketGrantingTicketImpl(new DefaultUniqueTicketIdGenerator().getNewTicketId(TicketGrantingTicket.PREFIX),
+            CoreAuthenticationTestUtils.getAuthentication(principal), NeverExpiresExpirationPolicy.INSTANCE);
+        ticketRegistry.addTicket(expired);
+        ticketRegistry.addTicket(active);
+        try {
+            expired.markTicketExpired();
+            ticketRegistry.updateTicket(expired);
+
+            assertTrue(cleaner.clean() >= 1);
+            assertFalse(registryHolds(expired.getId()));
+            assertTrue(registryHolds(active.getId()));
+        } finally {
+            ticketRegistry.deleteTicketsFor(principal);
+        }
+    }
 
     @Test
     void verifyOperation() throws Throwable {

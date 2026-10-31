@@ -6,10 +6,24 @@
   "properties": [
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",
-    "--cas.service-registry.core.init-from-json=true",
-    "--cas.authn.mfa.groovy-script.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/GroovyMfa.groovy",
-    "--cas.authn.mfa.core.provider-selection.provider-selection-enabled=true"
+    "--cas.service-registry.core.init-from-json=true"
+  ],
+  "variations": [
+    {
+      "name": "groovy",
+      "properties": [
+        "--cas.authn.mfa.groovy-script.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/GroovyMfa.groovy",
+        "--cas.authn.mfa.core.provider-selection.provider-selection-enabled=true"
+      ]
+    },
+    {
+      "name": "rest",
+      "properties": [
+        "--cas.authn.accept.users=casuser::Mellon,casnomfa::Mellon",
+        "--cas.authn.mfa.triggers.rest.url=http://localhost:5619/mfa",
+        "--cas.authn.mfa.triggers.rest.method=POST"
+      ]
+    }
   ],
   "initScript": "${PWD}/ci/tests/httpbin/run-httpbin-server.sh"
 }
-

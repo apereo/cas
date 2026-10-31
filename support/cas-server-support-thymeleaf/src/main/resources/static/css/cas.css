@@ -22,12 +22,7 @@
     --mdc-theme-primary: var(--cas-theme-primary, #153e50);
     --mdc-typography-font-family: "Ubuntu", "Open Sans", Roboto, Arial, sans-serif;
 
-    --navbar-width: 256px;
-    --navbar-width-min: 80px;
-    --navbar-dark-primary: #18283b;
-    --navbar-dark-secondary: #2c3e50;
     --navbar-light-primary: #f5f6fa;
-    --navbar-light-secondary: #8392a5;
 }
 
 body {
@@ -78,7 +73,7 @@ aside, section, main {
 /* Material */
 
 .mdc-tab-bar {
-    background-color: var(--navbar-light-primary, "whitesmoke");
+    background-color: var(--navbar-light-primary, whitesmoke);
 }
 
 .mdc-drawer {
@@ -90,6 +85,38 @@ aside, section, main {
     overflow: auto;
     position: relative;
     background-size: cover;
+}
+
+/*
+ * Main content position (theme property cas.main-content.position): auto margins on the main element place it in a 3x3
+ * grid inside the scrolling content area; unlike align-items, auto margins collapse to zero when the page is taller than
+ * the screen, so nothing is cut off. #content and the page's root element (usually the card, sometimes a centering flex
+ * row) follow the horizontal side, since cards center themselves inside the main element. Palantir keeps its layout.
+ */
+html:not(.palantir-page) .cas-content-middle > #main-content {
+    margin-block: auto;
+}
+
+html:not(.palantir-page) .cas-content-bottom > #main-content {
+    margin-block: auto 0;
+}
+
+html:not(.palantir-page) .cas-content-left > #main-content {
+    margin-inline: 1.5rem auto !important;
+}
+
+html:not(.palantir-page) .cas-content-right > #main-content {
+    margin-inline: auto 1.5rem !important;
+}
+
+html:not(.palantir-page) .cas-content-left > #main-content :is(#content, #content > *) {
+    justify-content: flex-start !important;
+    margin-inline: 0 auto !important;
+}
+
+html:not(.palantir-page) .cas-content-right > #main-content :is(#content, #content > *) {
+    justify-content: flex-end !important;
+    margin-inline: auto 0 !important;
 }
 
 .main-content {
@@ -458,15 +485,15 @@ form button i.mdi {
 
     font-size: 1rem;
     line-height: 1.5;
-    color: #1f2937; /* slate-800 */
+    color: #1b2733;
 
     background-color: #f8fafc;
-    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%234f46e5'%3e%3cpath d='M7 10l5 5 5-5z'/%3e%3c/svg%3e");
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2352606d'%3e%3cpath d='M7 10l5 5 5-5z'/%3e%3c/svg%3e");
     background-repeat: no-repeat;
     background-position: right 1rem center;
     background-size: 16px;
 
-    border: 1px solid #c7d2fe;
+    border: 1px solid color-mix(in srgb, var(--cas-theme-primary, #114377) 25%, #fff);
     border-radius: 10px;
 
     transition:
@@ -477,16 +504,16 @@ form button i.mdi {
 
 /* Hover */
 .custom-select:hover {
-    background-color: lightskyblue;
-    border-color: #818cf8;
+    background-color: color-mix(in srgb, var(--cas-theme-primary, #114377) 8%, #fff);
+    border-color: color-mix(in srgb, var(--cas-theme-primary, #114377) 55%, #fff);
 }
 
 /* Focus */
 .custom-select:focus {
     outline: none;
     background-color: #ffffff;
-    border-color: #4f46e5;
-    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.25);
+    border-color: var(--cas-theme-button-bg-hover, #1678d8);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--cas-theme-button-bg-hover, #1678d8) 25%, transparent);
 }
 
 /* Disabled */
@@ -499,15 +526,15 @@ form button i.mdi {
 }
 
 .custom-select option {
-    color: #1f2937;
+    color: #1b2733;
     background-color: #ffffff;
 }
 
 /* Some browsers only */
 .custom-select option:hover,
 .custom-select option:checked {
-    background-color: #eef2ff;
-    color: #1e1b4b;
+    background-color: color-mix(in srgb, var(--cas-theme-primary, #114377) 10%, #fff);
+    color: #1b2733;
 }
 
 /* utilities */
@@ -1075,6 +1102,31 @@ select.palantir {
 
 .login-providers {
     max-width: 50%;
+}
+
+.cas-providers-list {
+    display: flex;
+    flex-direction: column;
+}
+
+.cas-providers-grid .cas-providers-list {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.cas-providers-inline .cas-providers-list {
+    flex-flow: row wrap;
+    justify-content: center;
+}
+
+.cas-providers-inline .cas-providers-list .login-provider-item .mdc-button.w-100 {
+    width: auto !important;
+}
+
+@media (max-width: 575.98px) {
+    .cas-providers-grid .cas-providers-list {
+        grid-template-columns: minmax(0, 1fr);
+    }
 }
 
 
@@ -2196,6 +2248,10 @@ pre code.hljs {
     text-align: start;
 }
 
+.cas-ui .cas-choice-grid.cas-choice-key-first > .cas-choice:last-child {
+    order: -1;
+}
+
 .cas-ui .cas-choice {
     display: flex;
     flex-direction: column;
@@ -2991,8 +3047,26 @@ pre code.hljs {
     box-shadow: 0 1px 2px rgba(16, 40, 70, .06), 0 12px 32px rgba(16, 40, 70, .12);
 }
 
-.cas-ui .cas-login-card .login-section + .login-section {
+/*
+ * Every section draws its own start border and shifts it out of the card (overflow hidden), so the dividers stay right
+ * whatever order the theme properties give the side panel and the identity providers.
+ */
+.cas-ui .cas-login-card > .login-section {
+    border-right: 0;
     border-inline-start: 1px solid var(--cas-ui-divider);
+    margin-inline-start: -1px;
+}
+
+.cas-ui .cas-login-card > #loginSidePanel {
+    order: -2;
+}
+
+.cas-ui .cas-login-card.cas-side-panel-end > #loginSidePanel {
+    order: 10;
+}
+
+.cas-ui .cas-login-card.cas-providers-before > #loginProviders {
+    order: -1;
 }
 
 .cas-ui .cas-login-card .login-form h2.text-center {
@@ -3013,9 +3087,12 @@ pre code.hljs {
 }
 
 @media (max-width: 767.98px) {
-    .cas-ui .cas-login-card .login-section + .login-section {
+    .cas-ui .cas-login-card > .login-section {
         border-inline-start: 0;
+        border-bottom: 0;
         border-top: 1px solid var(--cas-ui-divider);
+        margin-inline-start: 0;
+        margin-top: -1px;
     }
 }
 
@@ -3586,4 +3663,175 @@ pre code.hljs {
         transition: none;
         transform: none !important;
     }
+}
+
+/*
+ * Theme-controlled variants: Google Authenticator scratch codes as a list, the multifactor provider selection as a grid
+ * or as cards, and attribute consent as a list. The markup stays the same (ids and classes the scenarios rely on), only
+ * the container class changes.
+ */
+.cas-ui #scratchcodes.cas-scratch-codes-list {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    counter-reset: scratch-code;
+}
+
+.cas-ui #scratchcodes.cas-scratch-codes-list .mdc-chip {
+    height: auto;
+    margin: 0;
+    padding: 6px 2px;
+    border-bottom: 1px solid var(--cas-ui-divider);
+    border-radius: 0;
+    background: none;
+    counter-increment: scratch-code;
+}
+
+.cas-ui #scratchcodes.cas-scratch-codes-list .mdc-chip__ripple {
+    display: none;
+}
+
+.cas-ui #scratchcodes.cas-scratch-codes-list .mdc-chip > span::before {
+    display: inline-block;
+    width: 2em;
+    color: var(--cas-ui-muted);
+    content: counter(scratch-code) ".";
+}
+
+.cas-ui #scratchcodes.cas-scratch-codes-list .mdc-chip__text {
+    color: var(--cas-ui-text);
+    font-family: var(--font-mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace);
+    font-size: 15px;
+    letter-spacing: .08em;
+}
+
+.cas-ui .cas-mfa-providers.cas-mfa-layout-grid,
+.cas-ui .cas-mfa-providers.cas-mfa-layout-cards {
+    display: grid;
+    gap: 12px;
+    padding-top: 8px;
+}
+
+.cas-ui .cas-mfa-providers.cas-mfa-layout-grid {
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 240px), 1fr));
+}
+
+.cas-ui .cas-mfa-providers.cas-mfa-layout-cards {
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 220px), 1fr));
+}
+
+.cas-ui .cas-mfa-providers:is(.cas-mfa-layout-grid, .cas-mfa-layout-cards) > .cas-mfa-provider {
+    padding: 16px !important;
+    border: 1px solid var(--cas-ui-divider) !important;
+    border-radius: 16px;
+    background: var(--cas-ui-surface);
+    transition: border-color .15s ease, box-shadow .15s ease;
+}
+
+.cas-ui .cas-mfa-providers:is(.cas-mfa-layout-grid, .cas-mfa-layout-cards) > .cas-mfa-provider:hover,
+.cas-ui .cas-mfa-providers:is(.cas-mfa-layout-grid, .cas-mfa-layout-cards) > .cas-mfa-provider:focus-within {
+    border-color: color-mix(in srgb, var(--cas-ui-focus) 45%, #fff) !important;
+    box-shadow: 0 6px 18px rgba(16, 40, 70, .08);
+}
+
+.cas-ui .cas-mfa-providers:is(.cas-mfa-layout-grid, .cas-mfa-layout-cards) form {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    height: 100%;
+}
+
+.cas-ui .cas-mfa-providers:is(.cas-mfa-layout-grid, .cas-mfa-layout-cards) h3 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.cas-ui .cas-mfa-providers.cas-mfa-layout-grid p {
+    display: none;
+}
+
+.cas-ui .cas-mfa-providers.cas-mfa-layout-grid form {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.cas-ui .cas-mfa-providers.cas-mfa-layout-cards h3 {
+    flex-direction: column;
+    align-items: flex-start !important;
+    gap: 10px;
+}
+
+.cas-ui .cas-mfa-providers.cas-mfa-layout-cards h3 > .mdi {
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    margin: 0 !important;
+    border-radius: 12px;
+    background: color-mix(in srgb, var(--cas-ui-focus) 10%, #fff);
+    color: var(--cas-ui-primary);
+}
+
+.cas-ui .cas-mfa-providers.cas-mfa-layout-cards p {
+    flex: 1;
+    margin: 0;
+    color: var(--cas-ui-muted);
+    font-size: 13px;
+}
+
+.cas-ui .cas-mfa-providers:is(.cas-mfa-layout-grid, .cas-mfa-layout-cards) .mdc-button {
+    flex: none;
+    max-width: none;
+}
+
+.cas-ui .cas-mfa-providers.cas-mfa-layout-cards .mdc-button {
+    width: 100%;
+}
+
+.cas-ui #divAttributes.cas-consent-list table,
+.cas-ui #divAttributes.cas-consent-list tbody,
+.cas-ui #divAttributes.cas-consent-list tr,
+.cas-ui #divAttributes.cas-consent-list td {
+    display: block;
+    width: 100%;
+}
+
+.cas-ui #divAttributes.cas-consent-list thead {
+    display: none;
+}
+
+.cas-ui #divAttributes.cas-consent-list tbody {
+    display: grid;
+    gap: 8px;
+}
+
+.cas-ui #divAttributes.cas-consent-list tr {
+    height: auto;
+    padding: 12px 14px;
+    border: 1px solid var(--cas-ui-divider);
+    border-radius: 12px;
+    background: var(--cas-ui-surface);
+}
+
+.cas-ui #divAttributes.cas-consent-list td {
+    height: auto;
+    padding: 0;
+    border: 0;
+    background: none;
+}
+
+.cas-ui #divAttributes.cas-consent-list td:first-child code {
+    color: var(--cas-ui-text);
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.cas-ui #divAttributes.cas-consent-list td + td {
+    margin-top: 2px;
+    color: var(--cas-ui-muted);
+    font-size: 13px;
+    overflow-wrap: anywhere;
 }

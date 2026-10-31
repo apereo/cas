@@ -10,8 +10,8 @@ import org.apereo.cas.adaptors.duo.web.flow.action.DuoSecurityUniversalPromptPre
 import org.apereo.cas.adaptors.duo.web.flow.action.DuoSecurityUniversalPromptValidateLoginAction;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
+import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.multitenancy.TenantExtractor;
-import org.apereo.cas.pac4j.BrowserWebStorageSessionStore;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.crypto.CipherExecutor;
@@ -23,6 +23,7 @@ import org.apereo.cas.web.flow.actions.MultifactorAuthenticationDeviceProviderAc
 import org.apereo.cas.web.flow.actions.WebflowActionBeanSupplier;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.CasWebflowEventResolutionConfigurationContext;
+import org.apereo.cas.web.session.BrowserStorageCasSessionStore;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -52,9 +53,12 @@ class DuoSecurityConfiguration {
         @ConditionalOnMissingBean(name = "duoUniversalPromptSessionStore")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public BrowserWebStorageSessionStore duoUniversalPromptSessionStore(@Qualifier(CipherExecutor.BEAN_NAME_WEBFLOW_CIPHER_EXECUTOR)
-                                                                            final CipherExecutor webflowCipherExecutor) {
-            return new BrowserWebStorageSessionStore(webflowCipherExecutor, "DuoSecuritySessionContext");
+        public BrowserStorageCasSessionStore duoUniversalPromptSessionStore(
+            final CasConfigurationProperties casProperties,
+            @Qualifier(CipherExecutor.BEAN_NAME_WEBFLOW_CIPHER_EXECUTOR)
+            final CipherExecutor webflowCipherExecutor) {
+            return new BrowserStorageCasSessionStore(webflowCipherExecutor, "DuoSecuritySessionContext",
+                Beans.newDuration(casProperties.getTicket().getTst().getTimeToKillInSeconds()));
         }
 
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_DUO_NON_WEB_AUTHENTICATION)
@@ -102,7 +106,7 @@ class DuoSecurityConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Action duoUniversalPromptPrepareLoginAction(
             @Qualifier("duoUniversalPromptSessionStore")
-            final BrowserWebStorageSessionStore duoUniversalPromptSessionStore,
+            final BrowserStorageCasSessionStore duoUniversalPromptSessionStore,
             @Qualifier(TicketFactory.BEAN_NAME)
             final TicketFactory ticketFactory,
             @Qualifier(TenantExtractor.BEAN_NAME)
@@ -134,7 +138,7 @@ class DuoSecurityConfiguration {
             @Qualifier("duoAuthenticationWebflowEventResolver")
             final CasWebflowEventResolver duoAuthenticationWebflowEventResolver,
             @Qualifier("duoUniversalPromptSessionStore")
-            final BrowserWebStorageSessionStore duoUniversalPromptSessionStore,
+            final BrowserStorageCasSessionStore duoUniversalPromptSessionStore,
             @Qualifier(TenantExtractor.BEAN_NAME)
             final TenantExtractor tenantExtractor,
             @Qualifier(TicketRegistry.BEAN_NAME)

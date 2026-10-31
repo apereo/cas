@@ -79,6 +79,31 @@ class PatternMatchingAttributeReleasePolicyTests {
     }
 
     @Test
+    void verifyValuesThatDoNotMatchAreNotReleased() throws Throwable {
+        val policy = new PatternMatchingAttributeReleasePolicy();
+        policy.getAllowedAttributes().put("courses",
+            new PatternMatchingAttributeReleasePolicy.Rule()
+                .setPattern("^([A-Z]+)(\\d+)$")
+                .setTransform("${1}-${2}"));
+        policy.getAllowedAttributes().put("memberOf",
+            new PatternMatchingAttributeReleasePolicy.Rule()
+                .setPattern("^CN=(\\w+)")
+                .setTransform("${1}"));
+
+        val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
+            .registeredService(CoreAuthenticationTestUtils.getRegisteredService())
+            .service(CoreAuthenticationTestUtils.getService())
+            .applicationContext(applicationContext)
+            .principal(CoreAuthenticationTestUtils.getPrincipal(
+                Map.of("courses", List.of("MATH101", "art", "CHEM202"),
+                    "memberOf", List.of("OU=example", "DC=org"))))
+            .build();
+        val attributes = policy.getAttributes(releasePolicyContext);
+        assertEquals(List.of("MATH-101", "CHEM-202"), attributes.get("courses"));
+        assertFalse(attributes.containsKey("memberOf"));
+    }
+
+    @Test
     void verifyTransformEntireMatch() throws Throwable {
         val policy = new PatternMatchingAttributeReleasePolicy();
         policy.getAllowedAttributes().put("memberOf",

@@ -3,12 +3,14 @@ package org.apereo.cas.services;
 import module java.base;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.util.RandomUtils;
+import org.apereo.cas.util.scripting.ExecutableCompiledScript;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tools.jackson.databind.ObjectMapper;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * This is {@link GroovyRegisteredServiceAttributeReleaseActivationCriteriaTests}.
@@ -49,5 +51,27 @@ class GroovyRegisteredServiceAttributeReleaseActivationCriteriaTests {
         MAPPER.writeValue(jsonFile, strategy);
         val policyRead = MAPPER.readValue(jsonFile, GroovyRegisteredServiceAttributeReleaseActivationCriteria.class);
         assertEquals(strategy, policyRead);
+    }
+
+    @Test
+    void verifyScriptIsResolvedOnlyWhenNeeded() throws Throwable {
+        val context = RegisteredServiceAttributeReleasePolicyContext.builder()
+            .principal(CoreAuthenticationTestUtils.getPrincipal("Gandalf"))
+            .build();
+        val criteria = new GroovyRegisteredServiceAttributeReleaseActivationCriteria();
+        criteria.setGroovyScript("classpath:GroovyAttributeReleaseCriteria.groovy");
+        assertTrue(criteria.shouldActivate(context));
+
+        val script = mock(ExecutableCompiledScript.class);
+        when(script.execute(any(Object[].class), eq(Boolean.class))).thenReturn(Boolean.FALSE);
+        criteria.setExecutableScript(script);
+        assertFalse(criteria.shouldActivate(context));
+
+        when(script.isClosed()).thenReturn(Boolean.TRUE);
+        assertTrue(criteria.shouldActivate(context));
+        assertNotSame(script, criteria.getExecutableScript());
+
+        criteria.setGroovyScript("groovy { return false }");
+        assertFalse(criteria.shouldActivate(context));
     }
 }

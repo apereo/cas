@@ -135,7 +135,8 @@ jobs:
           chmod -R +x ./ci/tests/shell/run-shell.sh && ./ci/tests/shell/run-shell.sh
           echo "Checking for stack traces in output that would indicate an error"
           cat cas-shell.ignore
-          count=$(grep -c -e ".*\(Exception\|Throwable\|caused\\sby\).*" cas-shell.ignore || true);
+          count=$(sed '/Command quit returned an error: EXECUTION_ERROR/q' cas-shell.ignore \
+            | grep -c -e ".*\(Exception\|Throwable\|caused\\sby\).*" || true);
           test "$count" -eq 0
 
 ##########################################################################

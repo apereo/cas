@@ -3,6 +3,7 @@ package org.apereo.cas.web.flow;
 import module java.base;
 import org.apereo.cas.AbstractCentralAuthenticationServiceTests;
 import org.apereo.cas.BaseCasCoreTests;
+import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.config.CasTokenAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasTokenAuthenticationWebflowAutoConfiguration;
 import org.apereo.cas.services.DefaultRegisteredServiceProperty;
@@ -12,23 +13,16 @@ import org.apereo.cas.services.ReturnAllAttributeReleasePolicy;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.token.TokenConstants;
-import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.token.authentication.TokenAuthenticationSecurity;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.util.gen.DefaultRandomStringGenerator;
 import org.apereo.cas.util.gen.RandomStringGenerator;
 import org.apereo.cas.web.support.WebUtils;
-import com.nimbusds.jose.EncryptionMethod;
-import com.nimbusds.jose.JWEAlgorithm;
-import com.nimbusds.jose.JWSAlgorithm;
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.pac4j.core.profile.CommonProfile;
-import org.pac4j.jwt.config.encryption.SecretEncryptionConfiguration;
-import org.pac4j.jwt.config.signature.SecretSignatureConfiguration;
-import org.pac4j.jwt.profile.JwtGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -79,22 +73,17 @@ class TokenAuthenticationActionTests extends AbstractCentralAuthenticationServic
 
     @Test
     void verifyAction() throws Throwable {
-        val generator = new JwtGenerator();
-
-        generator.setSignatureConfiguration(new SecretSignatureConfiguration(SIGNING_SECRET, JWSAlgorithm.HS256));
-        generator.setEncryptionConfiguration(new SecretEncryptionConfiguration(ENCRYPTION_SECRET, JWEAlgorithm.DIR, EncryptionMethod.A192CBC_HS384));
-
-        val profile = new CommonProfile();
-        profile.setId("casuser");
-        profile.addAttribute("uid", "uid");
-        profile.addAttribute("givenName", "CASUser");
-        profile.addAttribute("memberOf", CollectionUtils.wrapSet("system", "cas", "admin"));
-        val token = generator.generate(profile);
+        val service = RegisteredServiceTestUtils.getService("https://example.token.org");
+        val authentication = CoreAuthenticationTestUtils.getAuthentication(CoreAuthenticationTestUtils.getPrincipal("casuser", Map.of(
+            "uid", List.of("uid"), "givenName", List.of("CASUser"), "memberOf", List.of("system", "cas", "admin"))));
+        val token = TokenAuthenticationSecurity.forRegisteredService(servicesManager.findServiceBy(service))
+            .generateTokenFor(authentication)
+            .orElseThrow();
 
         val context = MockRequestContext.create(applicationContext);
         context.addHeader(TokenConstants.PARAMETER_NAME_TOKEN, token);
 
-        WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService("https://example.token.org"));
+        WebUtils.putServiceIntoFlowScope(context, service);
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, action.execute(context).getId());
     }
 }

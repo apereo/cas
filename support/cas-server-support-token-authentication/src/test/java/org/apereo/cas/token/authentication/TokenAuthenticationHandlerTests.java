@@ -13,10 +13,11 @@ import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.token.TokenConstants;
 import org.apereo.cas.util.gen.DefaultRandomStringGenerator;
 import org.apereo.cas.util.gen.RandomStringGenerator;
+import com.nimbusds.jwt.JWTClaimsSet;
+import com.nimbusds.jwt.PlainJWT;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.pac4j.core.profile.CommonProfile;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
@@ -57,14 +58,13 @@ class TokenAuthenticationHandlerTests extends BaseTokenAuthenticationTests {
     void verifyAuthentication() throws Throwable {
         val service = RegisteredServiceTestUtils.getService();
         val registeredService = servicesManager.findServiceBy(service);
-        val generator = TokenAuthenticationSecurity.forRegisteredService(registeredService).toGenerator();
-        val profile = new CommonProfile();
-        profile.setId("casuser");
-        profile.addAttributes((Map) RegisteredServiceTestUtils.getTestAttributes());
-        val token = generator.generate(profile);
+        val token = TokenAuthenticationSecurity.forRegisteredService(registeredService)
+            .generateTokenFor(CoreAuthenticationTestUtils.getAuthentication("casuser", Map.of("department", List.<Object>of("CAS"))))
+            .orElseThrow();
         val credential = new TokenCredential(token, service);
         val result = tokenAuthenticationHandler.authenticate(credential, credential.getService());
-        assertEquals(result.getPrincipal().getId(), profile.getId());
+        assertEquals("casuser", result.getPrincipal().getId());
+        assertEquals(List.of("CAS"), result.getPrincipal().getAttributes().get("department"));
     }
 
     @Test
@@ -72,7 +72,7 @@ class TokenAuthenticationHandlerTests extends BaseTokenAuthenticationTests {
         val service = RegisteredServiceTestUtils.getService("nosigningservice");
         val registeredService = servicesManager.findServiceBy(service);
         assertThrows(UnauthorizedServiceException.class,
-            () -> TokenAuthenticationSecurity.forRegisteredService(registeredService).toGenerator());
+            () -> TokenAuthenticationSecurity.forRegisteredService(registeredService));
         val credential = new TokenCredential(UUID.randomUUID().toString(), service);
         assertThrows(AuthenticationException.class, () -> tokenAuthenticationHandler.authenticate(credential, credential.getService()));
     }
@@ -81,27 +81,27 @@ class TokenAuthenticationHandlerTests extends BaseTokenAuthenticationTests {
     void verifyNoSigning() throws Throwable {
         val service = RegisteredServiceTestUtils.getService(RegisteredServiceTestUtils.CONST_TEST_URL2);
         val registeredService = servicesManager.findServiceBy(service);
-        val generator = TokenAuthenticationSecurity.forRegisteredService(registeredService).toGenerator();
-        val profile = new CommonProfile();
-        profile.setId("casuser");
-        profile.addAttributes((Map) RegisteredServiceTestUtils.getTestAttributes());
-        val token = generator.generate(profile);
+        val security = TokenAuthenticationSecurity.forRegisteredService(registeredService);
+        assertTrue(security.generateTokenFor(CoreAuthenticationTestUtils.getAuthentication("casuser")).isEmpty());
+        val authenticationBuilder = CoreAuthenticationTestUtils.getAuthenticationBuilder();
+        tokenAuthenticationPostProcessor.process(authenticationBuilder,
+            CoreAuthenticationTestUtils.getAuthenticationTransactionFactory().newTransaction(service));
+        assertFalse(authenticationBuilder.build().containsAttribute(TokenConstants.PARAMETER_NAME_TOKEN));
+        val token = new PlainJWT(new JWTClaimsSet.Builder().subject("casuser").build()).serialize();
         val credential = new TokenCredential(token, service);
-        val result = tokenAuthenticationHandler.authenticate(credential, credential.getService());
-        assertEquals(result.getPrincipal().getId(), profile.getId());
+        assertThrows(AuthenticationException.class, () -> tokenAuthenticationHandler.authenticate(credential, credential.getService()));
     }
 
     @Test
     void verifyNoEnc() throws Throwable {
         val service = RegisteredServiceTestUtils.getService(RegisteredServiceTestUtils.CONST_TEST_URL3);
         val registeredService = servicesManager.findServiceBy(service);
-        val generator = TokenAuthenticationSecurity.forRegisteredService(registeredService).toGenerator();
-        val profile = new CommonProfile();
-        profile.setId("casuser");
-        profile.addAttributes((Map) RegisteredServiceTestUtils.getTestAttributes());
-        val token = generator.generate(profile);
+        val token = TokenAuthenticationSecurity.forRegisteredService(registeredService)
+            .generateTokenFor(CoreAuthenticationTestUtils.getAuthentication("casuser"))
+            .orElseThrow();
+        assertEquals(3, token.split("\\.").length);
         val credential = new TokenCredential(token, service);
-        assertNotNull(tokenAuthenticationHandler.authenticate(credential, credential.getService()));
+        assertEquals("casuser", tokenAuthenticationHandler.authenticate(credential, credential.getService()).getPrincipal().getId());
     }
 
     @TestConfiguration(value = "TokenAuthenticationTestConfiguration", proxyBeanMethods = false)

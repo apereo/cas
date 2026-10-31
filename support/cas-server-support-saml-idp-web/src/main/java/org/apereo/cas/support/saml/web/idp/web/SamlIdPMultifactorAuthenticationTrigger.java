@@ -16,7 +16,6 @@ import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceMe
 import org.apereo.cas.support.saml.web.idp.profile.SamlProfileHandlerConfigurationContext;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.function.FunctionUtils;
-import org.apereo.cas.util.http.HttpRequestUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -26,7 +25,6 @@ import org.opensaml.saml.common.messaging.context.SAMLPeerEntityContext;
 import org.opensaml.saml.saml2.core.Attribute;
 import org.opensaml.saml.saml2.core.AttributeValue;
 import org.opensaml.saml.saml2.core.AuthnRequest;
-import org.pac4j.jee.context.JEEContext;
 import org.springframework.beans.factory.ObjectProvider;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -47,7 +45,7 @@ public class SamlIdPMultifactorAuthenticationTrigger implements MultifactorAuthe
                                                                    final HttpServletRequest request,
                                                                    final HttpServletResponse response,
                                                                    final Service service) {
-        val activation = isMulifactorAuthenticationActivatedForAuthnRequest(registeredService, request, response);
+        val activation = isMulifactorAuthenticationActivatedForAuthnRequest(registeredService, request);
         return activation.or(() -> isMulifactorAuthenticationActivatedForMetadata(registeredService, request, response));
     }
 
@@ -55,8 +53,7 @@ public class SamlIdPMultifactorAuthenticationTrigger implements MultifactorAuthe
         final RegisteredService registeredService, final HttpServletRequest request, final HttpServletResponse response) {
         val mappings = getAuthenticationContextMappings();
         val context = contextProvider.getObject();
-        val webContext = new JEEContext(request, response);
-        val result = SamlIdPSessionManager.of(context.getOpenSamlConfigBean(), context.getSessionStore()).fetch(webContext, AuthnRequest.class);
+        val result = SamlIdPSessionManager.of(context.getOpenSamlConfigBean(), context.getSessionStore()).fetch(request, AuthnRequest.class);
         return result
             .filter(_ -> !mappings.isEmpty())
             .filter(pair -> registeredService instanceof SamlRegisteredService && pair.getLeft() instanceof AuthnRequest)
@@ -95,11 +92,9 @@ public class SamlIdPMultifactorAuthenticationTrigger implements MultifactorAuthe
     }
 
     private Optional<MultifactorAuthenticationProvider> isMulifactorAuthenticationActivatedForAuthnRequest(
-        final RegisteredService registeredService, final HttpServletRequest request,
-        final HttpServletResponse response) {
+        final RegisteredService registeredService, final HttpServletRequest request) {
         val context = contextProvider.getObject();
-        val webContext = new JEEContext(request, response);
-        val result = SamlIdPSessionManager.of(context.getOpenSamlConfigBean(), context.getSessionStore()).fetch(webContext, AuthnRequest.class);
+        val result = SamlIdPSessionManager.of(context.getOpenSamlConfigBean(), context.getSessionStore()).fetch(request, AuthnRequest.class);
         val mappings = getAuthenticationContextMappings();
         return result
             .filter(pair -> registeredService instanceof SamlRegisteredService && pair.getLeft() instanceof AuthnRequest)
@@ -150,12 +145,9 @@ public class SamlIdPMultifactorAuthenticationTrigger implements MultifactorAuthe
                             final Service service) {
         if (!getAuthenticationContextMappings().isEmpty()
             && registeredService instanceof final SamlRegisteredService samlRegisteredService) {
-            val response = HttpRequestUtils.getHttpServletResponseFromRequestAttributes();
-
             val context = contextProvider.getObject();
-            val webContext = new JEEContext(request, response);
             val result = SamlIdPSessionManager.of(context.getOpenSamlConfigBean(),
-                context.getSessionStore()).fetch(webContext, AuthnRequest.class);
+                context.getSessionStore()).fetch(request, AuthnRequest.class);
             if (result.isPresent()) {
                 val authnRequest = (AuthnRequest) result.get().getLeft();
                 var supported = authnRequest.getRequestedAuthnContext() != null

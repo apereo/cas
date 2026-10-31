@@ -4,26 +4,24 @@ import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.support.oauth.authenticator.Authenticators;
+import org.apereo.cas.support.oauth.authenticator.OAuth20ClientAuthenticationProvider;
 import org.apereo.cas.support.oauth.validator.authorization.OAuth20AuthorizationRequestValidator;
+import org.apereo.cas.support.oauth.web.OAuth20CasAuthenticationInterceptor;
+import org.apereo.cas.support.oauth.web.OAuth20CasCallbackUrlResolver;
+import org.apereo.cas.support.oauth.web.OAuth20ClientAuthenticationInterceptor;
 import org.apereo.cas.support.oauth.web.OAuth20HandlerInterceptorAdapter;
 import org.apereo.cas.support.oauth.web.OAuth20RequestParameterResolver;
-import org.apereo.cas.support.oauth.web.OAuth20TicketGrantingTicketAwareSecurityLogic;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
+import org.apereo.cas.support.oauth.web.response.OAuth20CasClientRedirectActionBuilder;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenGrantRequestExtractor;
 import org.apereo.cas.throttle.AuthenticationThrottlingExecutionPlan;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.spring.RefreshableHandlerInterceptor;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
-import org.apereo.cas.web.SecurityLogicInterceptor;
+import org.apereo.cas.web.CasSessionStore;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import lombok.val;
 import org.jspecify.annotations.NonNull;
-import org.pac4j.core.client.Client;
-import org.pac4j.core.client.DirectClient;
-import org.pac4j.core.config.Config;
-import org.pac4j.core.context.session.SessionStore;
-import org.pac4j.core.engine.DefaultSecurityLogic;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
@@ -86,7 +84,6 @@ class CasOAuth20ThrottleConfiguration {
             @Qualifier("requiresAuthenticationAccessTokenInterceptor") final ObjectProvider<HandlerInterceptor> requiresAuthenticationAccessTokenInterceptor,
             final ObjectProvider<List<OAuth20AuthorizationRequestValidator>> oauthAuthorizationRequestValidators,
             final ObjectProvider<List<AccessTokenGrantRequestExtractor>> accessTokenGrantRequestExtractors,
-            @Qualifier("oauthDistributedSessionStore") final ObjectProvider<SessionStore> oauthDistributedSessionStore,
             @Qualifier(ServicesManager.BEAN_NAME) final ObjectProvider<ServicesManager> servicesManager,
             @Qualifier(OAuth20ConfigurationContext.BEAN_NAME) final ObjectProvider<OAuth20ConfigurationContext> oauthConfigurationContext) {
             return new OAuth20HandlerInterceptorAdapter(
@@ -94,7 +91,6 @@ class CasOAuth20ThrottleConfiguration {
                 requiresAuthenticationAuthorizeInterceptor,
                 accessTokenGrantRequestExtractors,
                 servicesManager,
-                oauthDistributedSessionStore,
                 oauthAuthorizationRequestValidators,
                 oauthRequestParameterResolver,
                 oauthConfigurationContext);
@@ -126,28 +122,45 @@ class CasOAuth20ThrottleConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public HandlerInterceptor requiresAuthenticationAuthorizeInterceptor(
-            @Qualifier("oauthSecConfig") final Config oauthSecConfig,
+            @Qualifier("oauthDistributedSessionStore")
+            final CasSessionStore oauthDistributedSessionStore,
             @Qualifier(CasCookieBuilder.BEAN_NAME_TICKET_GRANTING_COOKIE_BUILDER)
             final CasCookieBuilder ticketGrantingTicketCookieGenerator,
-            @Qualifier(TicketRegistry.BEAN_NAME) final TicketRegistry ticketRegistry) {
-            val logic = new OAuth20TicketGrantingTicketAwareSecurityLogic(ticketGrantingTicketCookieGenerator, ticketRegistry);
-            return new SecurityLogicInterceptor(oauthSecConfig.withSecurityLogic(logic), Authenticators.CAS_OAUTH_CLIENT);
+            @Qualifier(TicketRegistry.BEAN_NAME)
+            final TicketRegistry ticketRegistry,
+            @Qualifier(ServicesManager.BEAN_NAME)
+            final ServicesManager servicesManager,
+            @Qualifier(OAuth20RequestParameterResolver.BEAN_NAME)
+            final OAuth20RequestParameterResolver oauthRequestParameterResolver,
+            @Qualifier("casCallbackUrlResolver")
+            final OAuth20CasCallbackUrlResolver casCallbackUrlResolver,
+            @Qualifier("oauthCasClientRedirectActionBuilder")
+            final OAuth20CasClientRedirectActionBuilder oauthCasClientRedirectActionBuilder) {
+            return new OAuth20CasAuthenticationInterceptor(oauthDistributedSessionStore, ticketGrantingTicketCookieGenerator,
+                ticketRegistry, servicesManager, oauthRequestParameterResolver, casCallbackUrlResolver, oauthCasClientRedirectActionBuilder);
         }
 
+        /**
+         * Client authentication for the token, revocation, pushed authorization, backchannel authentication and
+         * verifiable credential transaction requests, by every {@link OAuth20ClientAuthenticationProvider}.
+         * A bearer access token is not client authentication: the pushed authorization request endpoint (RFC 9126,
+         * section 2) and the backchannel authentication endpoint (OpenID Connect CIBA, section 7.1) authenticate the
+         * client the way the token endpoint does.
+         *
+         * @param clientAuthenticationProviders the client authentication methods
+         * @param servicesManager               the services manager
+         * @param oauthRequestParameterResolver the request parameter resolver
+         * @return the interceptor
+         */
         @ConditionalOnMissingBean(name = "requiresAuthenticationAccessTokenInterceptor")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public HandlerInterceptor requiresAuthenticationAccessTokenInterceptor(
-            @Qualifier("oauthSecConfig") final Config oauthSecConfig) {
-            val clients = oauthSecConfig.getClients()
-                .findAllClients()
-                .stream()
-                .filter(DirectClient.class::isInstance)
-                .map(Client::getName)
-                .collect(Collectors.joining(","));
-            val logic = new DefaultSecurityLogic();
-            logic.setLoadProfilesFromSession(false);
-            return new SecurityLogicInterceptor(oauthSecConfig.withSecurityLogic(logic), clients);
+            final ObjectProvider<List<OAuth20ClientAuthenticationProvider>> clientAuthenticationProviders,
+            @Qualifier(ServicesManager.BEAN_NAME) final ObjectProvider<ServicesManager> servicesManager,
+            @Qualifier(OAuth20RequestParameterResolver.BEAN_NAME)
+            final ObjectProvider<OAuth20RequestParameterResolver> oauthRequestParameterResolver) {
+            return new OAuth20ClientAuthenticationInterceptor(clientAuthenticationProviders, servicesManager, oauthRequestParameterResolver);
         }
     }
 }

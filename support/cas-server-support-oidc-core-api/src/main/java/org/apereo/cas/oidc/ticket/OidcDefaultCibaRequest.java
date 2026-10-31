@@ -33,6 +33,9 @@ public class OidcDefaultCibaRequest extends AbstractTicket implements OidcCibaRe
     private final String encodedId;
 
     private boolean ready;
+
+    @JsonSetter(nulls = Nulls.AS_EMPTY)
+    private Set<String> resources = new LinkedHashSet<>();
     
     public OidcDefaultCibaRequest(final String id,
                                   final Authentication authentication,
@@ -48,10 +51,26 @@ public class OidcDefaultCibaRequest extends AbstractTicket implements OidcCibaRe
         this.encodedId = encodedId;
     }
 
+    /**
+     * The id given to the client. A stateless request is given its own id, which is already encrypted;
+     * other requests are given their id encoded.
+     *
+     * @return the encoded id
+     */
+    @Override
+    public String getEncodedId() {
+        return isStateless() ? getId() : encodedId;
+    }
+
     @Override
     @CanIgnoreReturnValue
     public OidcCibaRequest markTicketReady() {
         this.ready = true;
         return this;
+    }
+
+    @Override
+    public void setResources(final Collection<String> resources) {
+        this.resources = resources == null ? new LinkedHashSet<>() : new LinkedHashSet<>(resources);
     }
 }

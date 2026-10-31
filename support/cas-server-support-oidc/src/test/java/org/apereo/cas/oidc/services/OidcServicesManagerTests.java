@@ -70,7 +70,10 @@ class OidcServicesManagerTests {
             servicesManager.save(stream);
             val loadedServices = new ArrayList<>(servicesManager.load());
 
-            val candidate = (OidcRegisteredService) loadedServices.getLast();
+            val candidate = (OidcRegisteredService) loadedServices.stream()
+                .filter(service -> service.getServiceId().startsWith("https://oidc.example.org/"))
+                .reduce((first, second) -> second)
+                .orElseThrow();
             val stopwatch = new StopWatch();
             stopwatch.start();
 

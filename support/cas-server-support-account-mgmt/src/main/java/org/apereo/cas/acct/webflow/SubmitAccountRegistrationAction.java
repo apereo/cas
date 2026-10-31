@@ -149,9 +149,9 @@ public class SubmitAccountRegistrationAction extends BaseCasWebflowAction {
         val transientFactory = (TransientSessionTicketFactory) ticketFactory.get(TransientSessionTicket.class);
         val properties = CollectionUtils.<String, Serializable>wrap(AccountRegistrationUtils.PROPERTY_ACCOUNT_REGISTRATION_ACTIVATION_TOKEN, token);
         val ticket = transientFactory.create((Service) null, properties);
-        ticketRegistry.addTicket(ticket);
+        val storedTicket = Objects.requireNonNull(ticketRegistry.addTicket(ticket), "Unable to store account registration ticket");
         return new URIBuilder(casProperties.getServer().getLoginUrl())
-            .addParameter(AccountRegistrationUtils.REQUEST_PARAMETER_ACCOUNT_REGISTRATION_ACTIVATION_TOKEN, ticket.getId())
+            .addParameter(AccountRegistrationUtils.REQUEST_PARAMETER_ACCOUNT_REGISTRATION_ACTIVATION_TOKEN, storedTicket.getId())
             .build()
             .toURL()
             .toExternalForm();

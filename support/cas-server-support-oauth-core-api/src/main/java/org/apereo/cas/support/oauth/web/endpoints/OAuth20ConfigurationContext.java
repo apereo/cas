@@ -16,10 +16,13 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.authenticator.OAuth20CasAuthenticationBuilder;
 import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
 import org.apereo.cas.support.oauth.profile.OAuth20UserProfileDataCreator;
+import org.apereo.cas.support.oauth.util.OAuth20Utils;
+import org.apereo.cas.support.oauth.validator.CASOAuth20TicketValidator;
 import org.apereo.cas.support.oauth.validator.OAuth20ClientSecretValidator;
 import org.apereo.cas.support.oauth.validator.OAuth20ProofOfPossessionValidator;
 import org.apereo.cas.support.oauth.validator.authorization.OAuth20AuthorizationRequestValidator;
 import org.apereo.cas.support.oauth.validator.token.OAuth20TokenRequestValidator;
+import org.apereo.cas.support.oauth.web.OAuth20CasCallbackUrlResolver;
 import org.apereo.cas.support.oauth.web.OAuth20RequestParameterResolver;
 import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20TokenGenerator;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20AccessTokenResponseGenerator;
@@ -41,6 +44,7 @@ import org.apereo.cas.util.gen.RandomStringGenerator;
 import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.serialization.StringSerializer;
 import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
+import org.apereo.cas.web.CasSessionStore;
 import org.apereo.cas.web.UrlValidator;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.support.ArgumentExtractor;
@@ -51,15 +55,12 @@ import lombok.SuperBuilder;
 import lombok.ToString;
 import lombok.val;
 import org.jspecify.annotations.Nullable;
-import org.pac4j.core.config.Config;
-import org.pac4j.core.context.session.SessionStore;
-import org.pac4j.core.profile.ProfileManager;
-import org.pac4j.jee.context.JEEContext;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.MessageSource;
 import org.springframework.scheduling.TaskScheduler;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * This is {@link OAuth20ConfigurationContext}.
@@ -117,7 +118,9 @@ public class OAuth20ConfigurationContext {
 
     private final AuditableExecution registeredServiceAccessStrategyEnforcer;
 
-    private final Config oauthConfig;
+    private final CASOAuth20TicketValidator casTicketValidator;
+
+    private final OAuth20CasCallbackUrlResolver casCallbackUrlResolver;
 
     private final OAuth20CallbackAuthorizeViewResolver callbackAuthorizeViewResolver;
 
@@ -135,7 +138,7 @@ public class OAuth20ConfigurationContext {
 
     private final SingleLogoutServiceLogoutUrlBuilder singleLogoutServiceLogoutUrlBuilder;
 
-    private final SessionStore sessionStore;
+    private final CasSessionStore sessionStore;
 
     private final CipherExecutor<Serializable, String> registeredServiceCipherExecutor;
 
@@ -176,18 +179,19 @@ public class OAuth20ConfigurationContext {
     /**
      * Gets ticket granting ticket.
      *
-     * @param context the context
+     * @param request  the request
+     * @param response the response
      * @return the ticket granting ticket
      */
-    public @Nullable TicketGrantingTicket fetchTicketGrantingTicketFrom(final JEEContext context) {
+    public @Nullable TicketGrantingTicket fetchTicketGrantingTicketFrom(final HttpServletRequest request,
+                                                                       final HttpServletResponse response) {
         val ticketGrantingTicket = CookieUtils.getTicketGrantingTicketFromRequest(
             getTicketGrantingTicketCookieGenerator(),
-            getTicketRegistry(), context.getNativeRequest());
-        if (!ticketGrantingTicketCookieGenerator.containsCookie(context.getNativeRequest())) {
+            getTicketRegistry(), request);
+        if (!ticketGrantingTicketCookieGenerator.containsCookie(request)) {
             return Optional.ofNullable(ticketGrantingTicket)
                 .orElseGet(() -> {
-                    val manager = new ProfileManager(context, getSessionStore());
-                    return manager.getProfile()
+                    return OAuth20Utils.findAuthenticatedUserProfile(request, response, getSessionStore())
                         .map(profile -> profile.getAttribute(TicketGrantingTicket.class.getName()))
                         .map(ticketId -> ticketRegistry.getTicket(ticketId.toString(), TicketGrantingTicket.class))
                         .orElse(null);

@@ -20,6 +20,7 @@ import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import org.springframework.aot.hint.RuntimeHints;
 import org.springframework.beans.factory.DisposableBean;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.integration.support.locks.LockRegistry;
 
 /**
@@ -39,6 +40,7 @@ public class CasCoreTicketsRuntimeHints implements CasRuntimeHintsRegistrar {
         registerSpringProxyHints(hints, QueueableTicketRegistry.class, TicketRegistry.class);
         registerSpringProxyHints(hints, AutoCloseable.class, DisposableBean.class, TicketRegistry.class);
         registerSpringProxyHints(hints, DisposableBean.class, TicketRegistry.class);
+        registerSpringProxyHints(hints, DisposableBean.class, InitializingBean.class, TicketRegistry.class);
         registerReflectionHintsForMethodsAndFields(hints,
             List.of("org.apereo.cas.config.CasCoreTicketsSchedulingConfiguration$TicketRegistryCleanerScheduler"));
 

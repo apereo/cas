@@ -459,8 +459,7 @@ while (( "$#" )); do
             spnego)
                 task+="testSpnego "
                 ;;
-            azure|cosmosdb)
-                isDockerOnLinux && ./ci/tests/cosmosdb/run-cosmosdb-server.sh || exit 1
+            azure)
                 task+="testAzure "
                 ;;
             mssql|mssqlserver)

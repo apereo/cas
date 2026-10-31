@@ -33,10 +33,8 @@ import org.jose4j.jwt.JwtClaims;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.pac4j.jee.context.JEEContext;
 import org.springframework.http.HttpMethod;
 import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.TestPropertySource;
 import static org.awaitility.Awaitility.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -83,11 +81,9 @@ class OAuth20DefaultTokenGeneratorTests {
             mockRequest.setParameter(OAuth20Constants.ACTOR_TOKEN, actorToken.getId());
 
             val service = RegisteredServiceTestUtils.getService(SERVICE_URL);
-            val mockResponse = new MockHttpServletResponse();
-            val webContext = new JEEContext(mockRequest, mockResponse);
             val authentication = RegisteredServiceTestUtils.getAuthentication("casuser");
             val tokenRequestContext = buildAccessTokenRequestContext(registeredService, authentication,
-                OAuth20GrantTypes.TOKEN_EXCHANGE, service, webContext).withActorToken(actorToken.getAuthentication());
+                OAuth20GrantTypes.TOKEN_EXCHANGE, service, mockRequest).withActorToken(actorToken.getAuthentication());
             val result = oauthTokenGenerator.generate(tokenRequestContext);
             assertNotNull(result);
             val mv = generateAccessTokenResponse(registeredService, service, result, tokenRequestContext);
@@ -105,10 +101,12 @@ class OAuth20DefaultTokenGeneratorTests {
             servicesManager.save(registeredService);
 
             val accessToken = getAccessToken(registeredService.getServiceId(), registeredService.getClientId());
+            when(accessToken.getResources()).thenReturn(Set.of("https://api.example.org/"));
             ticketRegistry.addTicket(accessToken);
 
             val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.ACCESS_TOKEN_URL);
             mockRequest.setParameter(OAuth20Constants.REQUESTED_TOKEN_TYPE, OAuth20TokenExchangeTypes.ACCESS_TOKEN.getType());
+            mockRequest.setParameter(OAuth20Constants.AUDIENCE, "https://backend.example.org/");
             mockRequest.setParameter(OAuth20Constants.SUBJECT_TOKEN, accessToken.getId());
 
             val mv = generateAccessTokenResponseAndGetModelAndView(registeredService,
@@ -125,6 +123,8 @@ class OAuth20DefaultTokenGeneratorTests {
             assertTrue(mv.getModel().containsKey(OAuth20Constants.EXPIRES_IN));
             assertTrue(mv.getModel().containsKey(OAuth20Constants.TOKEN_TYPE));
             assertTrue(mv.getModel().containsKey(OAuth20Constants.ISSUED_TOKEN_TYPE));
+            assertTrue(at.getResources().isEmpty());
+            assertEquals(Set.of("https://backend.example.org/"), at.getAudience());
         }
 
         @Test
@@ -280,14 +280,12 @@ class OAuth20DefaultTokenGeneratorTests {
             servicesManager.save(registeredService);
             val authentication = RegisteredServiceTestUtils.getAuthentication(UUID.randomUUID().toString());
             val service = RegisteredServiceTestUtils.getService(SERVICE_URL);
-            val mockResponse = new MockHttpServletResponse();
             val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.ACCESS_TOKEN_URL);
-            val webContext = new JEEContext(mockRequest, mockResponse);
             val ticketGrantingTicket = new TicketGrantingTicketImpl(UUID.randomUUID().toString(), authentication,
                 new TimeoutExpirationPolicy(5));
             val lastUsedTime = ticketGrantingTicket.getLastTimeUsed();
             val tokenRequestContext = buildAccessTokenRequestContext(registeredService, authentication,
-                OAuth20GrantTypes.AUTHORIZATION_CODE, service, ticketGrantingTicket, webContext);
+                OAuth20GrantTypes.AUTHORIZATION_CODE, service, ticketGrantingTicket, mockRequest);
 
             val result = oauthTokenGenerator.generate(tokenRequestContext);
             val accessToken = result.getAccessToken().map(OAuth20AccessToken.class::cast).orElseThrow();
@@ -356,6 +354,7 @@ class OAuth20DefaultTokenGeneratorTests {
             userCode.setAuthentication(RegisteredServiceTestUtils.getAuthentication());
             ticketRegistry.addTicket(userCode);
             deviceCode.setUserCode(userCode.getId());
+            deviceCode.setResources(List.of("https://api.example.org/"));
             ticketRegistry.addTicket(deviceCode);
 
             val tokenRequestContext = AccessTokenRequestContext.builder()
@@ -367,6 +366,7 @@ class OAuth20DefaultTokenGeneratorTests {
                 .build();
 
             val issued = new AtomicInteger();
+            val issuedResult = new AtomicReference<OAuth20TokenGeneratedResult>();
             val rejected = new AtomicInteger();
             val requests = 8;
             val start = new CountDownLatch(1);
@@ -374,7 +374,7 @@ class OAuth20DefaultTokenGeneratorTests {
                 val results = IntStream.range(0, requests).mapToObj(i -> executor.submit(Unchecked.callable(() -> {
                     start.await();
                     try {
-                        oauthTokenGenerator.generate(tokenRequestContext);
+                        issuedResult.set(oauthTokenGenerator.generate(tokenRequestContext));
                         issued.incrementAndGet();
                     } catch (final InvalidOAuth20DeviceTokenException e) {
                         rejected.incrementAndGet();
@@ -389,6 +389,8 @@ class OAuth20DefaultTokenGeneratorTests {
             assertEquals(1, issued.get());
             assertEquals(requests - 1, rejected.get());
             assertNull(ticketRegistry.getTicket(deviceCode.getId()));
+            assertEquals(Set.of("https://api.example.org/"),
+                ((OAuth20Token) issuedResult.get().getAccessToken().orElseThrow()).getResources());
         }
 
         @Test
@@ -442,14 +444,13 @@ class OAuth20DefaultTokenGeneratorTests {
             servicesManager.save(registeredService);
             val authentication = RegisteredServiceTestUtils.getAuthentication(UUID.randomUUID().toString());
             val service = RegisteredServiceTestUtils.getService(SERVICE_URL);
-            val webContext = new JEEContext(new MockHttpServletRequest(HttpMethod.POST.name(), CONTEXT + OAuth20Constants.ACCESS_TOKEN_URL),
-                new MockHttpServletResponse());
+            val mockRequest = new MockHttpServletRequest(HttpMethod.POST.name(), CONTEXT + OAuth20Constants.ACCESS_TOKEN_URL);
             val ticketGrantingTicket = new TicketGrantingTicketImpl(UUID.randomUUID().toString(), authentication,
                 new TimeoutExpirationPolicy(5));
             ticketGrantingTicket.markTicketStateless();
             val lastUsedTime = ticketGrantingTicket.getLastTimeUsed();
             val tokenRequestContext = buildAccessTokenRequestContext(registeredService, authentication,
-                OAuth20GrantTypes.CLIENT_CREDENTIALS, service, ticketGrantingTicket, webContext);
+                OAuth20GrantTypes.CLIENT_CREDENTIALS, service, ticketGrantingTicket, mockRequest);
 
             val result = oauthTokenGenerator.generate(tokenRequestContext);
             assertTrue(result.getAccessToken().isPresent());
@@ -463,12 +464,10 @@ class OAuth20DefaultTokenGeneratorTests {
             servicesManager.save(registeredService);
             val authentication = RegisteredServiceTestUtils.getAuthentication(UUID.randomUUID().toString());
             val service = RegisteredServiceTestUtils.getService(SERVICE_URL);
-            val mockResponse = new MockHttpServletResponse();
             val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.ACCESS_TOKEN_URL);
-            val webContext = new JEEContext(mockRequest, mockResponse);
             val ticketGrantingTicket = new TicketGrantingTicketImpl(UUID.randomUUID().toString(), authentication, AlwaysExpiresExpirationPolicy.INSTANCE);
             val tokenRequestContext = buildAccessTokenRequestContext(registeredService, authentication,
-                OAuth20GrantTypes.AUTHORIZATION_CODE, service, ticketGrantingTicket, webContext).withGenerateRefreshToken(true);
+                OAuth20GrantTypes.AUTHORIZATION_CODE, service, ticketGrantingTicket, mockRequest).withGenerateRefreshToken(true);
             val result = oauthTokenGenerator.generate(tokenRequestContext);
             val accessToken = result.getAccessToken().map(OAuth20AccessToken.class::cast).orElseThrow();
             val refreshToken = result.getRefreshToken().map(OAuth20RefreshToken.class::cast).orElseThrow();
@@ -520,6 +519,7 @@ class OAuth20DefaultTokenGeneratorTests {
             val authentication = RegisteredServiceTestUtils.getAuthentication("casuser");
             val refreshToken = OAuth20TestUtils.getRefreshToken(registeredService.getServiceId(), registeredService.getClientId());
             when(refreshToken.getScopes()).thenReturn(Set.of("email", "openid"));
+            when(refreshToken.getResources()).thenReturn(Set.of("https://api.example.org/", "https://other.example.org/"));
             val authorizationDetails = List.of(new LinkedHashMap<String, Object>(Map.of("type", "openid_credential",
                 "credential_configuration_id", "UniversityDegreeCredential")));
             doReturn(authorizationDetails).when(refreshToken).getAuthorizationDetails();
@@ -529,6 +529,7 @@ class OAuth20DefaultTokenGeneratorTests {
                 .authentication(authentication)
                 .service(service)
                 .scopes(Set.of("email"))
+                .resources(Set.of("https://api.example.org/"))
                 .token(refreshToken)
                 .grantType(OAuth20GrantTypes.REFRESH_TOKEN)
                 .generateRefreshToken(true)
@@ -544,6 +545,8 @@ class OAuth20DefaultTokenGeneratorTests {
             val ticket2 = response.getAccessToken().get();
             assertInstanceOf(OAuth20AccessToken.class, ticket2);
             assertEquals(Set.of("email"), ((OAuth20Token) ticket2).getScopes());
+            assertEquals(Set.of("https://api.example.org/", "https://other.example.org/"), ((OAuth20Token) ticket).getResources());
+            assertEquals(Set.of("https://api.example.org/"), ((OAuth20Token) ticket2).getResources());
             assertEquals(authorizationDetails, ((OAuth20RefreshToken) ticket).getAuthorizationDetails());
             assertEquals(authorizationDetails, ((OAuth20AccessToken) ticket2).getAuthorizationDetails());
         }
@@ -555,7 +558,6 @@ class OAuth20DefaultTokenGeneratorTests {
             val service = RegisteredServiceTestUtils.getService(SERVICE_URL);
 
             val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.ACCESS_TOKEN_URL);
-            val mockResponse = new MockHttpServletResponse();
 
             val holder = AccessTokenRequestContext.builder()
                 .clientId(registeredService.getClientId())
@@ -565,7 +567,7 @@ class OAuth20DefaultTokenGeneratorTests {
                 .grantType(OAuth20GrantTypes.AUTHORIZATION_CODE)
                 .responseType(OAuth20ResponseTypes.CODE)
                 .ticketGrantingTicket(new MockTicketGrantingTicket("casuser"))
-                .claims(oauthRequestParameterResolver.resolveRequestClaims(new JEEContext(mockRequest, mockResponse)))
+                .claims(oauthRequestParameterResolver.resolveRequestClaims(mockRequest))
                 .build();
 
             val generatedToken = ((OAuth20DefaultTokenGenerator) oauthTokenGenerator).generateAccessTokenOAuthGrantTypes(holder);

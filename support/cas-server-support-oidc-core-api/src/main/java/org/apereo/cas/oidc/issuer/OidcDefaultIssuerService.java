@@ -11,7 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
-import org.pac4j.core.context.WebContext;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * This is {@link OidcDefaultIssuerService}.
@@ -37,9 +37,9 @@ public class OidcDefaultIssuerService implements OidcIssuerService {
     }
 
     @Override
-    public boolean validateIssuer(final WebContext webContext, final List<String> endpoints,
+    public boolean validateIssuer(final HttpServletRequest request, final List<String> endpoints,
                                   final OidcRegisteredService registeredService) {
-        val requestUrl = webContext.getRequestURL();
+        val requestUrl = request.getRequestURL().toString();
         val definedIssuer = determineIssuer(Optional.ofNullable(registeredService));
         val definedIssuerWithSlash = Strings.CI.appendIfMissing(definedIssuer, "/");
         
@@ -52,7 +52,7 @@ public class OidcDefaultIssuerService implements OidcIssuerService {
         });
         if (!foundMatch) {
             LOGGER.debug("Cannot accept issuer [{}] at [{}] for any of the endpoints [{}]",
-                webContext.getRequestURL(), endpoints, definedIssuer);
+                request.getRequestURL().toString(), endpoints, definedIssuer);
         }
         return foundMatch;
     }

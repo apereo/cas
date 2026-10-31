@@ -49,7 +49,7 @@ while :; do
         kill -9 ${pid} &> /dev/null
         exit 1
     fi
-    if grep -q ${exitRequest} "cas-shell.ignore"; then
+    if grep -q "${exitRequest}" "cas-shell.ignore"; then
         printgreen "Found ${GREEN}${exitRequest}${ENDCOLOR}"
         rm -Rf ./cas-db-schema.sql
         break

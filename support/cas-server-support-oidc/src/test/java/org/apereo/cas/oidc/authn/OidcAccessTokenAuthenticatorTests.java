@@ -4,19 +4,17 @@ import module java.base;
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.support.oauth.OAuth20Constants;
+import org.apereo.cas.support.oauth.authenticator.OAuth20AccessTokenAuthenticator;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.pac4j.core.context.CallContext;
-import org.pac4j.core.credentials.TokenCredentials;
-import org.pac4j.core.credentials.authenticator.Authenticator;
-import org.pac4j.core.profile.ProfileManager;
-import org.pac4j.jee.context.JEEContext;
-import org.pac4j.jee.context.session.JEESessionStore;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.web.servlet.HandlerInterceptor;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -28,28 +26,20 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("OIDCAuthentication")
 class OidcAccessTokenAuthenticatorTests extends AbstractOidcTests {
     @Autowired
-    @Qualifier("oauthAccessTokenAuthenticator")
-    private Authenticator oauthAccessTokenAuthenticator;
+    @Qualifier("oidcDynamicRegistrationAuthenticator")
+    private OAuth20AccessTokenAuthenticator oidcDynamicRegistrationAuthenticator;
 
     @Autowired
-    @Qualifier("oidcDynamicRegistrationAuthenticator")
-    private Authenticator oidcDynamicRegistrationAuthenticator;
+    @Qualifier("requiresAuthenticationDynamicRegistrationInterceptor")
+    private HandlerInterceptor requiresAuthenticationDynamicRegistrationInterceptor;
 
     @Test
     void verifyOperation() throws Throwable {
-        val request = new MockHttpServletRequest();
-        val ctx = new JEEContext(request, new MockHttpServletResponse());
-        new ProfileManager(ctx, new JEESessionStore()).removeProfiles();
-
         val token = oidcTokenSigningAndEncryptionService.encode(getOidcRegisteredService(), getClaims());
         val at = getAccessToken(token, "clientid");
         ticketRegistry.addTicket(at);
-        val credentials = new TokenCredentials(at.getId());
 
-        oauthAccessTokenAuthenticator.validate(new CallContext(ctx, new JEESessionStore()), credentials);
-
-        val userProfile = credentials.getUserProfile();
-        assertNotNull(userProfile);
+        val userProfile = getAuthenticator().authenticate(new MockHttpServletRequest(), at).orElseThrow();
         assertEquals("casuser", userProfile.getId());
         assertTrue(userProfile.containsAttribute("client_id"));
         assertTrue(userProfile.containsAttribute(OAuth20Constants.CLAIM_SUB));
@@ -61,26 +51,37 @@ class OidcAccessTokenAuthenticatorTests extends AbstractOidcTests {
 
     @Test
     void verifyFailsOperation() throws Throwable {
-        val request = new MockHttpServletRequest();
-        val ctx = new JEEContext(request, new MockHttpServletResponse());
-        new ProfileManager(ctx, new JEESessionStore()).removeProfiles();
-
         val at = getAccessToken("helloworld", "clientid");
         ticketRegistry.addTicket(at);
-        val credentials = new TokenCredentials(at.getId());
-        oauthAccessTokenAuthenticator.validate(new CallContext(ctx, new JEESessionStore()), credentials);
-        assertNull(credentials.getUserProfile());
+        assertTrue(getAuthenticator().authenticate(new MockHttpServletRequest(), at).isEmpty());
     }
 
     @Test
     void verifyFailsMissingScopes() throws Throwable {
-        val request = new MockHttpServletRequest();
-        val ctx = new JEEContext(request, new MockHttpServletResponse());
+        assertEquals(Set.of(OidcConstants.CLIENT_REGISTRATION_SCOPE), oidcDynamicRegistrationAuthenticator.getRequiredScopes());
         val token = oidcTokenSigningAndEncryptionService.encode(getOidcRegisteredService(), getClaims());
         val at = getAccessToken(token, "clientid");
         ticketRegistry.addTicket(at);
-        val credentials = new TokenCredentials(at.getId());
-        oidcDynamicRegistrationAuthenticator.validate(new CallContext(ctx, new JEESessionStore()), credentials);
-        assertNull(credentials.getUserProfile());
+        val request = new MockHttpServletRequest();
+        request.addHeader(HttpHeaders.AUTHORIZATION, OAuth20Constants.TOKEN_TYPE_BEARER + ' ' + at.getId());
+        val response = new MockHttpServletResponse();
+        assertFalse(requiresAuthenticationDynamicRegistrationInterceptor.preHandle(request, response, new Object()));
+        assertEquals(HttpStatus.FORBIDDEN.value(), response.getStatus());
+        assertTrue(response.getHeader(HttpHeaders.WWW_AUTHENTICATE).contains("scope=\"" + OidcConstants.CLIENT_REGISTRATION_SCOPE + '"'));
+    }
+
+    @Test
+    void verifyPassesWithRegistrationScope() throws Throwable {
+        val registrationToken = getAccessToken(UUID.randomUUID().toString(),
+            Set.of(OidcConstants.StandardScopes.OPENID.getScope(), OidcConstants.CLIENT_REGISTRATION_SCOPE));
+        ticketRegistry.addTicket(registrationToken);
+        val request = new MockHttpServletRequest();
+        request.addHeader(HttpHeaders.AUTHORIZATION, OAuth20Constants.TOKEN_TYPE_BEARER + ' ' + registrationToken.getId());
+        assertTrue(requiresAuthenticationDynamicRegistrationInterceptor.preHandle(request, new MockHttpServletResponse(), new Object()));
+        assertNotNull(request.getAttribute(OAuth20Constants.REQUEST_ATTRIBUTE_AUTHENTICATED_PROFILE));
+    }
+
+    private OidcAccessTokenAuthenticator getAuthenticator() {
+        return new OidcAccessTokenAuthenticator(oidcTokenSigningAndEncryptionService, servicesManager);
     }
 }

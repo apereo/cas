@@ -8,6 +8,7 @@
   "id" : 1,
   "scopes" : [ "java.util.HashSet", [ "openid", "email", "profile", "device_sso" ] ],
   "generateRefreshToken": true,
+  "allowedResources": [ "java.util.HashSet", [ "https://localhost:9859/anything/(api|backend)" ] ],
   "supportedGrantTypes": [ "java.util.HashSet", [ "authorization_code", "client_credentials", "urn:ietf:params:oauth:grant-type:token-exchange" ] ],
   "tokenExchangePolicy": {
     "@class": "org.apereo.cas.support.oauth.services.DefaultRegisteredServiceOAuthTokenExchangePolicy",

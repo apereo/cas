@@ -1,8 +1,9 @@
 package org.apereo.cas.support.oauth.validator;
 
 import module java.base;
-import org.pac4j.core.context.WebContext;
 import org.springframework.core.Ordered;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * This is {@link OAuth20RequestValidator}.
@@ -15,18 +16,20 @@ public interface OAuth20RequestValidator extends Ordered {
     /**
      * Validate request.
      *
-     * @param context the context
+     * @param request  the request
+     * @param response the response
      * @return true /false
-     * @throws Exception the exception
+     * @throws Throwable the throwable
      */
-    boolean validate(WebContext context) throws Throwable;
+    boolean validate(HttpServletRequest request, HttpServletResponse response) throws Throwable;
 
     /**
      * Determines whether this validator supports the request.
      *
-     * @param context the context
+     * @param request  the request
+     * @param response the response
      * @return true /false
-     * @throws Exception the exception
+     * @throws Throwable the throwable
      */
-    boolean supports(WebContext context) throws Throwable;
+    boolean supports(HttpServletRequest request, HttpServletResponse response) throws Throwable;
 }
