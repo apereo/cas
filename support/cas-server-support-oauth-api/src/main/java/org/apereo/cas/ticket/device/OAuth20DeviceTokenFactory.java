@@ -3,6 +3,7 @@ package org.apereo.cas.ticket.device;
 import module java.base;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.ticket.TicketFactory;
+import lombok.val;
 
 /**
  * Factory to create OAuth device tokens.
@@ -35,5 +36,23 @@ public interface OAuth20DeviceTokenFactory extends TicketFactory {
                                                 final String clientId)
             throws Throwable {
         return createDeviceCode(service, scopes);
+    }
+
+    /**
+     * Create a device token for a client, carrying the resource indicators of the device authorization request.
+     *
+     * @param service   the service
+     * @param scopes    the scopes
+     * @param resources the resource indicators
+     * @param clientId  the client identifier
+     * @return the device token
+     * @throws Throwable the throwable
+     */
+    default OAuth20DeviceToken createDeviceCode(final Service service, final Collection<String> scopes,
+                                                final Collection<String> resources, final String clientId)
+            throws Throwable {
+        val token = createDeviceCode(service, scopes, clientId);
+        token.setResources(resources);
+        return token;
     }
 }

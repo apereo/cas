@@ -1,6 +1,7 @@
 package org.apereo.cas.ticket.registry.compact;
 
 import module java.base;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketFactory;
@@ -9,16 +10,21 @@ import org.apereo.cas.ticket.TransientSessionTicketFactory;
 import org.apereo.cas.ticket.expiration.FixedInstantExpirationPolicy;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.DateTimeUtils;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.ObjectProvider;
+import tools.jackson.databind.ObjectMapper;
 
 /**
  * This is {@link TransientSessionTicketCompactor}.
  * Properties are kept as strings; a single value is restored as a string, several values as a list.
- * The service is kept in full rather than shortened, since flows resume with it, such as delegated authentication
- * returning to the SAML2 identity provider callback with its query parameters.
+ * The service is kept in full, as JSON with its type, rather than shortened or rebuilt from its id, since flows resume
+ * with it: delegated authentication returns to the SAML2 identity provider callback with its query parameters, and
+ * to a SAML1 application with a SAML service that answers with an artifact. Its source, format, tenant and attributes
+ * are kept too. A service kept as a bare id, by tickets compacted before, is rebuilt from that id.
  *
  * @author Misagh Moayyed
  * @since 7.0.0
@@ -26,6 +32,9 @@ import org.springframework.beans.factory.ObjectProvider;
 @RequiredArgsConstructor
 public class TransientSessionTicketCompactor implements TicketCompactor<TransientSessionTicket> {
     private static final int PROPERTIES_INDEX = 3;
+
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .defaultTypingEnabled(true).minimal(true).build().toObjectMapper();
 
     private final ObjectProvider<TicketFactory> ticketFactory;
 
@@ -35,7 +44,7 @@ public class TransientSessionTicketCompactor implements TicketCompactor<Transien
     public void compactFields(final List<String> fields, final Ticket ticket) throws Exception {
         val transientTicket = (TransientSessionTicket) ticket;
         val service = transientTicket.getService();
-        fields.add(service != null ? StringUtils.defaultString(service.getId()) : StringUtils.EMPTY);
+        fields.add(service != null ? MAPPER.writerFor(Service.class).writeValueAsString(service) : StringUtils.EMPTY);
         val properties = new ArrayList<String>();
         transientTicket.getProperties().forEach((key, value) -> {
             properties.add(key);
@@ -53,8 +62,7 @@ public class TransientSessionTicketCompactor implements TicketCompactor<Transien
     @SuppressWarnings("NullAway")
     public Ticket expand(final String compactTicket) throws Throwable {
         val structure = parse(compactTicket, PROPERTIES_INDEX + 1);
-        val url = structure.get(CompactTicketIndexes.SERVICE);
-        val service = StringUtils.isNotBlank(url) ? serviceFactory.createService(url) : null;
+        val service = expandService(structure.get(CompactTicketIndexes.SERVICE));
         val properties = new HashMap<String, Serializable>();
         val entries = CompactTicketCodec.decodeValues(structure.get(PROPERTIES_INDEX));
         if (entries.size() % 2 != 0) {
@@ -71,5 +79,12 @@ public class TransientSessionTicketCompactor implements TicketCompactor<Transien
         transientTicket.setCreationTime(DateTimeUtils.zonedDateTimeOf(structure.creationTime()));
         transientTicket.setExpirationPolicy(new FixedInstantExpirationPolicy(structure.expirationTime()));
         return transientTicket;
+    }
+
+    private @Nullable Service expandService(final String service) {
+        if (StringUtils.isBlank(service)) {
+            return null;
+        }
+        return service.startsWith("{") ? MAPPER.readValue(service, Service.class) : serviceFactory.createService(service);
     }
 }

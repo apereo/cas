@@ -8,18 +8,27 @@ import org.apereo.cas.config.CasJpaTicketRegistryAutoConfiguration;
 import org.apereo.cas.config.CasOAuth20AutoConfiguration;
 import org.apereo.cas.config.CasWsSecuritySecurityTokenAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.support.jpa.ticketregistry.JpaTicketRegistryProperties;
 import org.apereo.cas.configuration.support.CloseableDataSource;
+import org.apereo.cas.jpa.JpaBeanFactory;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.ticket.DefaultSecurityTokenTicketFactory;
+import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketFactory;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.code.OAuth20CodeFactory;
+import org.apereo.cas.ticket.expiration.BaseDelegatingExpirationPolicy;
+import org.apereo.cas.ticket.expiration.HardTimeoutExpirationPolicy;
 import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
+import org.apereo.cas.ticket.expiration.RememberMeDelegatingExpirationPolicy;
+import org.apereo.cas.ticket.expiration.TicketGrantingTicketExpirationPolicy;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 import org.apereo.cas.util.TicketGrantingTicketIdGenerator;
+import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.util.function.FunctionUtils;
 import lombok.Getter;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -34,6 +43,7 @@ import org.springframework.boot.integration.autoconfigure.IntegrationProperties;
 import org.springframework.context.annotation.Import;
 import org.springframework.orm.jpa.EntityManagerFactoryUtils;
 import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.util.AopTestUtils;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionOperations;
 import jakarta.persistence.EntityManagerFactory;
@@ -77,6 +87,13 @@ public abstract class BaseJpaTicketRegistryTests extends BaseTicketRegistryTests
     @Autowired
     @Qualifier("jpaTicketRegistryTransactionTemplate")
     protected TransactionOperations jpaTicketRegistryTransactionTemplate;
+
+    @Autowired
+    @Qualifier(JpaBeanFactory.DEFAULT_BEAN_NAME)
+    protected JpaBeanFactory jpaBeanFactory;
+
+    @Autowired
+    protected CasConfigurationProperties casProperties;
 
     @Override
     protected boolean isCipherExecutorOwnedByContext() {
@@ -129,8 +146,182 @@ public abstract class BaseJpaTicketRegistryTests extends BaseTicketRegistryTests
         try (val tickets = newTicketRegistry.stream()) {
             assertTrue(tickets.count() > 0);
         }
+        return countManagedEntities();
+    }
+
+    private long countManagedEntities() {
         val entityManager = EntityManagerFactoryUtils.getTransactionalEntityManager(ticketEntityManagerFactory);
         return Objects.requireNonNull(entityManager).unwrap(Session.class).getStatistics().getEntityCount();
+    }
+
+    @RepeatedTest(1)
+    void verifyStreamPageIsAppliedByQuery() throws Throwable {
+        val principal = UUID.randomUUID().toString();
+        for (var i = 0; i < 3; i++) {
+            addSessionFor(principal);
+        }
+        try {
+            val page = TicketRegistryStreamCriteria.builder().from(1).count(2).build();
+            val managedEntities = jpaTicketRegistryTransactionTemplate.execute(_ -> {
+                try (val tickets = newTicketRegistry.stream(page)) {
+                    assertEquals(2, tickets.count());
+                }
+                try (val tickets = newTicketRegistry.stream(page.withFrom(Integer.MAX_VALUE))) {
+                    assertEquals(0, tickets.count());
+                }
+                try (val tickets = newTicketRegistry.stream(page.withFrom(0).withCount(0))) {
+                    assertTrue(tickets.count() >= 3);
+                }
+                try (val tickets = newTicketRegistry.stream(page.withCount(1))) {
+                    assertEquals(1, tickets.count());
+                }
+                return countManagedEntities();
+            });
+            assertEquals(0L, managedEntities);
+        } finally {
+            newTicketRegistry.deleteTicketsFor(principal);
+        }
+    }
+
+    @RepeatedTest(2)
+    void verifyUpdateIsReadBackInSameTransaction() throws Throwable {
+        val principal = UUID.randomUUID().toString();
+        val ticketGrantingTicket = new TicketGrantingTicketImpl(TestTicketIdentifiers.generate().ticketGrantingTicketId(),
+            CoreAuthenticationTestUtils.getAuthentication(principal), NeverExpiresExpirationPolicy.INSTANCE);
+        try {
+            val managedEntities = jpaTicketRegistryTransactionTemplate.execute(_ -> FunctionUtils.doUnchecked(() -> {
+                newTicketRegistry.addTicket(ticketGrantingTicket);
+                val stored = newTicketRegistry.getTicket(ticketGrantingTicket.getId(), TicketGrantingTicket.class);
+                stored.grantServiceTicket(TestTicketIdentifiers.generate().serviceTicketId(),
+                    RegisteredServiceTestUtils.getService(), NeverExpiresExpirationPolicy.INSTANCE,
+                    false, serviceTicketSessionTrackingPolicy);
+                newTicketRegistry.updateTicket(stored);
+                val updated = newTicketRegistry.getTicket(ticketGrantingTicket.getId(), TicketGrantingTicket.class);
+                assertEquals(1, updated.getCountOfUses());
+                assertEquals(1, newTicketRegistry.countSessionsFor(principal));
+                return countManagedEntities();
+            }));
+            assertEquals(0L, managedEntities);
+        } finally {
+            newTicketRegistry.deleteTicketsFor(principal);
+        }
+    }
+
+    @RepeatedTest(1)
+    void verifyStoredExpirationTime() {
+        val idlePolicy = new TicketGrantingTicketExpirationPolicy(3600, 60);
+        val idle = new TicketGrantingTicketImpl(TestTicketIdentifiers.generate().ticketGrantingTicketId(),
+            CoreAuthenticationTestUtils.getAuthentication(), idlePolicy);
+        assertEquals(idle.getLastTimeUsed().plusSeconds(60).toInstant(), JpaTicketEntityFactory.toExpirationTime(idle).toInstant());
+
+        val delegating = new RememberMeDelegatingExpirationPolicy();
+        delegating.addPolicy(BaseDelegatingExpirationPolicy.POLICY_NAME_DEFAULT, idlePolicy);
+        val delegated = new TicketGrantingTicketImpl(TestTicketIdentifiers.generate().ticketGrantingTicketId(),
+            CoreAuthenticationTestUtils.getAuthentication(), delegating);
+        assertEquals(delegated.getLastTimeUsed().plusSeconds(60).toInstant(),
+            JpaTicketEntityFactory.toExpirationTime(delegated).toInstant());
+
+        val hard = new TicketGrantingTicketImpl(TestTicketIdentifiers.generate().ticketGrantingTicketId(),
+            CoreAuthenticationTestUtils.getAuthentication(), new HardTimeoutExpirationPolicy(30));
+        assertEquals(hard.getCreationTime().plusSeconds(30).toInstant(), JpaTicketEntityFactory.toExpirationTime(hard).toInstant());
+
+        idle.markTicketExpired();
+        assertFalse(JpaTicketEntityFactory.toExpirationTime(idle).isAfter(ZonedDateTime.now(Clock.systemUTC())));
+    }
+
+    @RepeatedTest(1)
+    void verifyStreamExpiryCandidates() throws Throwable {
+        val principal = UUID.randomUUID().toString();
+        val expiring = new TicketGrantingTicketImpl(TestTicketIdentifiers.generate().ticketGrantingTicketId(),
+            CoreAuthenticationTestUtils.getAuthentication(principal), new HardTimeoutExpirationPolicy(60));
+        val lasting = new TicketGrantingTicketImpl(TestTicketIdentifiers.generate().ticketGrantingTicketId(),
+            CoreAuthenticationTestUtils.getAuthentication(principal), NeverExpiresExpirationPolicy.INSTANCE);
+        newTicketRegistry.addTicket(expiring);
+        newTicketRegistry.addTicket(lasting);
+        try {
+            val criteria = TicketRegistryStreamCriteria.builder()
+                .expiringBefore(ZonedDateTime.now(Clock.systemUTC()).plusMinutes(5)).build();
+            val candidates = jpaTicketRegistryTransactionTemplate.execute(_ -> {
+                try (val tickets = newTicketRegistry.stream(criteria)) {
+                    return tickets.map(Ticket::getId).collect(Collectors.toSet());
+                }
+            });
+            assertTrue(Objects.requireNonNull(candidates).contains(expiring.getId()));
+            assertFalse(candidates.contains(lasting.getId()));
+        } finally {
+            newTicketRegistry.deleteTicketsFor(principal);
+        }
+    }
+
+    @RepeatedTest(1)
+    void verifyMySqlDriverDefaults() {
+        val properties = new JpaTicketRegistryProperties();
+        properties.setUrl("jdbc:mysql://localhost:3306/cas?prepStmtCacheSize=50");
+        val effective = new JpaTicketEntityFactory("org.hibernate.dialect.MySQLDialect").withDialectDefaults(properties);
+        assertEquals("true", effective.getProperties().get("useCursorFetch"));
+        assertEquals("true", effective.getProperties().get("cachePrepStmts"));
+        assertFalse(effective.getProperties().containsKey("prepStmtCacheSize"));
+        assertEquals(0, effective.getFetchSize());
+        assertTrue(properties.getProperties().isEmpty());
+        assertNotEquals(0, properties.getFetchSize());
+        assertSame(properties, new JpaTicketEntityFactory("org.hibernate.dialect.PostgreSQLDialect").withDialectDefaults(properties));
+    }
+
+    @RepeatedTest(1)
+    void verifyUpdateEncodesTicketOnce() throws Throwable {
+        val encodings = new AtomicInteger();
+        val registry = new JpaTicketRegistry(CipherExecutor.noOp(), ticketSerializationManager, ticketCatalog,
+            applicationContext, jpaBeanFactory, jpaTicketRegistryTransactionTemplate, casProperties) {
+            @Override
+            protected Ticket encodeTicket(final Ticket ticket) throws Exception {
+                encodings.incrementAndGet();
+                return super.encodeTicket(ticket);
+            }
+        };
+        val principal = UUID.randomUUID().toString();
+        val ticketGrantingTicket = new TicketGrantingTicketImpl(TestTicketIdentifiers.generate().ticketGrantingTicketId(),
+            CoreAuthenticationTestUtils.getAuthentication(principal), NeverExpiresExpirationPolicy.INSTANCE);
+        registry.addTicket(ticketGrantingTicket);
+        try {
+            encodings.set(0);
+            assertNotNull(registry.updateTicket(ticketGrantingTicket));
+            assertEquals(1, encodings.get());
+        } finally {
+            registry.deleteTicketsFor(principal);
+        }
+    }
+
+    @RepeatedTest(2)
+    void verifyUpdateStoresTicketNotYetAdded() throws Throwable {
+        val principal = UUID.randomUUID().toString();
+        val ticketGrantingTicket = new TicketGrantingTicketImpl(TestTicketIdentifiers.generate().ticketGrantingTicketId(),
+            CoreAuthenticationTestUtils.getAuthentication(principal), NeverExpiresExpirationPolicy.INSTANCE);
+        try {
+            assertNotNull(newTicketRegistry.updateTicket(ticketGrantingTicket));
+            assertNotNull(newTicketRegistry.getTicket(ticketGrantingTicket.getId(), TicketGrantingTicket.class));
+        } finally {
+            newTicketRegistry.deleteTicketsFor(principal);
+        }
+    }
+
+    @RepeatedTest(2)
+    void verifySessionsWithQuotedAttributeValue() throws Throwable {
+        val principal = UUID.randomUUID().toString();
+        val name = "o'" + UUID.randomUUID();
+        val authentication = CoreAuthenticationTestUtils.getAuthentication(principal, Map.of("cn", List.of(name)));
+        val ticketGrantingTicket = new TicketGrantingTicketImpl(TestTicketIdentifiers.generate().ticketGrantingTicketId(),
+            authentication, NeverExpiresExpirationPolicy.INSTANCE);
+        newTicketRegistry.addTicket(ticketGrantingTicket);
+        try {
+            try (val sessions = newTicketRegistry.getSessionsWithAttributes(Map.of("cn", List.of("' OR '1'='1", name)))) {
+                assertEquals(List.of(ticketGrantingTicket.getId()), sessions.map(Ticket::getId).toList());
+            }
+            try (val sessions = newTicketRegistry.getSessionsWithAttributes(Map.of("cn", List.of("' OR '1'='1")))) {
+                assertEquals(0, sessions.count());
+            }
+        } finally {
+            newTicketRegistry.deleteTicketsFor(principal);
+        }
     }
 
     @RepeatedTest(2)
@@ -218,6 +409,9 @@ public abstract class BaseJpaTicketRegistryTests extends BaseTicketRegistryTests
         newTicketRegistry.addTicket(untrackedTicket);
         newTicketRegistry.updateTicket(untrackedTicket);
 
+        val registry = AopTestUtils.<JpaTicketRegistry>getUltimateTargetObject(newTicketRegistry);
+        assertEquals(0, registry.deleteServiceTickets(tgt));
+        assertNotNull(newTicketRegistry.getTicket(trackedTicket.getId()));
         assertEquals(3, newTicketRegistry.deleteTicket(tgt.getId()));
         assertNull(newTicketRegistry.getTicket(tgt.getId()));
         assertNull(newTicketRegistry.getTicket(trackedTicket.getId()));

@@ -7,6 +7,14 @@
     ]
   },
   {
+    "username": "mcpoperator",
+    "password": "{noop}Mellon",
+    "authorities": [
+      "ROLE_MCP_ADMIN",
+      "ROLE_MCP_OPERATOR"
+    ]
+  },
+  {
     "username": "mcpuser",
     "password": "{noop}Mellon",
     "authorities": [

@@ -30,7 +30,7 @@ import org.apereo.cas.configuration.support.JpaBeans;
 import org.apereo.cas.discovery.CasServerProfileCustomizer;
 import org.apereo.cas.logout.LogoutExecutionPlanConfigurer;
 import org.apereo.cas.multitenancy.TenantExtractor;
-import org.apereo.cas.pac4j.TicketRegistrySessionStore;
+import org.apereo.cas.pac4j.CasSessionStorePac4jAdapter;
 import org.apereo.cas.pac4j.client.DelegatedClientNameExtractor;
 import org.apereo.cas.pac4j.client.DelegatedIdentityProviderFactory;
 import org.apereo.cas.pac4j.client.DelegatedIdentityProviders;
@@ -55,6 +55,8 @@ import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.web.DelegatedClientAuthenticationDistributedSessionCookieCipherExecutor;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
+import org.apereo.cas.web.session.DefaultCasSessionStore;
+import org.apereo.cas.web.session.TicketRegistryCasSessionStore;
 import org.apereo.cas.web.support.CookieUtils;
 import org.apereo.cas.web.support.mgmr.DefaultCasCookieValueManager;
 import org.apereo.cas.web.support.mgmr.DefaultCookieSameSitePolicy;
@@ -69,7 +71,6 @@ import org.pac4j.core.client.BaseClient;
 import org.pac4j.core.client.Client;
 import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.jee.context.JEEContext;
-import org.pac4j.jee.context.session.JEESessionStore;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -114,12 +115,10 @@ class DelegatedAuthenticationEventExecutionPlanConfiguration {
             final TicketRegistry ticketRegistry) {
             val replicationProps = casProperties.getAuthn().getPac4j().getCore().getSessionReplication();
             if (replicationProps.isReplicateSessions()) {
-                return new TicketRegistrySessionStore(ticketRegistry,
-                    ticketFactory, delegatedClientDistributedSessionCookieGenerator);
+                return new CasSessionStorePac4jAdapter(new TicketRegistryCasSessionStore(ticketRegistry,
+                    ticketFactory, delegatedClientDistributedSessionCookieGenerator));
             }
-            val sessionStore = new JEESessionStore();
-            sessionStore.setPrefix("AuthnDelegation");
-            return sessionStore;
+            return new CasSessionStorePac4jAdapter(new DefaultCasSessionStore("AuthnDelegation"));
         }
     }
 

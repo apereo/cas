@@ -1655,23 +1655,25 @@ function createRegisteredServiceAccessStrategy() {
     });
 
     createInputField({
-        cssClasses: "hide TimeBasedRegisteredServiceAccessStrategy",
+        cssClasses: "hide TimeBasedRegisteredServiceAccessStrategy jquery-datepicker",
+        data: {dateFormat: "yy-mm-dd'T'00:00:00"},
         labelTitle: "Starting Date/Time",
         name: "registeredServiceAccessStrategyTimeBasedStartingDateTime",
         paramName: "accessStrategy.startingDateTime",
         required: false,
         containerId: "editServiceWizardMenuItemAccessStrategy",
-        title: "Specifies the starting date and time from which access is allowed. Supports expression language."
+        title: "Specifies the starting date and time from which access is allowed; picking a date starts at midnight. Supports expression language."
     });
 
     createInputField({
-        cssClasses: "hide TimeBasedRegisteredServiceAccessStrategy",
+        cssClasses: "hide TimeBasedRegisteredServiceAccessStrategy jquery-datepicker",
+        data: {dateFormat: "yy-mm-dd'T'23:59:59"},
         labelTitle: "Ending Date/Time",
         name: "registeredServiceAccessStrategyTimeBasedEndingDateTime",
         paramName: "accessStrategy.endingDateTime",
         required: false,
         containerId: "editServiceWizardMenuItemAccessStrategy",
-        title: "Specifies the ending date and time after which access is denied. Supports expression language."
+        title: "Specifies the ending date and time after which access is denied; picking a date ends at the last second of that day. Supports expression language."
     });
 
     createInputField({
@@ -2273,6 +2275,7 @@ function createRegisteredServiceUsernameAttributeProvider() {
 function createRegisteredServiceExpirationPolicy() {
     createInputField({
         cssClasses: "jquery-datepicker",
+        data: {dateFormat: "yy-mm-dd"},
         paramType: "org.apereo.cas.services.DefaultRegisteredServiceExpirationPolicy",
         labelTitle: "Expiration Date",
         name: "registeredServiceExpirationPolicyExpirationDate",
@@ -2473,6 +2476,23 @@ function toggleJsonEditorVisibility() {
     RegisteredServiceSections.refresh();
 }
 
+/**
+ * Whether a wizard field container is switched off for the type chosen in its section.
+ *
+ * Type handlers reveal their fields either through showElements, which drops the hide class, or
+ * through jQuery's show(), which only sets an inline display and leaves the class in place. A
+ * container is off when its inline display is none, or when it carries hide with no inline display
+ * overriding it. What is on screen is not asked, since the wizard hides every section but the current
+ * one, and a value entered in another section still belongs in the definition.
+ *
+ * @param element the field, select or map container
+ * @returns {boolean} true when the container's values must stay out of the definition
+ */
+function isWizardContainerSwitchedOff(element) {
+    const display = element.style.display;
+    return display === "none" || (element.classList.contains("hide") && display === "");
+}
+
 function generateServiceDefinition() {
     if (isPopulatingWizard) {
         return;
@@ -2550,7 +2570,7 @@ function generateServiceDefinition() {
                     // For regular inputs/selects (not in MapContainer), check if they're in a hidden container
                     // This handles fields like ReturnAllowedAttributeReleasePolicy's allowedAttributes
                     const $fieldContainer = $input.closest("[id$='FieldContainer'], [id$='SelectContainer']");
-                    if ($fieldContainer.length > 0 && $fieldContainer.hasClass("hide")) {
+                    if ($fieldContainer.length > 0 && isWizardContainerSwitchedOff($fieldContainer[0])) {
                         // Don't skip if this is an advanced-option that has a value
                         if (!$fieldContainer.hasClass("advanced-option")) {
                             return; // Skip inputs in hidden field containers (except advanced-option)
@@ -3492,7 +3512,7 @@ function populateWizardFromServiceDefinition(serviceDefinition) {
             // Inactive sidebar sections may hide an otherwise enabled container
             $inputs.each(function () {
                 const $potentialContainer = $(this).closest("[id$='MapContainer']");
-                if ($potentialContainer.css("display") !== "none" && !$potentialContainer.hasClass("hide")) {
+                if (!isWizardContainerSwitchedOff($potentialContainer[0])) {
                     $container = $potentialContainer;
                     return false; // break
                 }
@@ -3677,7 +3697,7 @@ function populateWizardFromServiceDefinition(serviceDefinition) {
             const $container = $(this);
 
             // Skip disabled policy containers, including when their sidebar section is inactive
-            if ($container.hasClass("hide") || $container.css("display") === "none") {
+            if (isWizardContainerSwitchedOff($container[0])) {
                 return;
             }
 

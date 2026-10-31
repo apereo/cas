@@ -4,6 +4,7 @@ import module java.base;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.ticket.AuthenticationAwareTicket;
 import org.apereo.cas.util.RandomUtils;
+import org.apereo.cas.util.scripting.ExecutableCompiledScript;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -49,5 +50,27 @@ class GroovyRegisteredServiceSingleSignOnParticipationPolicyTests {
         MAPPER.writeValue(jsonFile, strategy);
         val policyRead = MAPPER.readValue(jsonFile, GroovyRegisteredServiceSingleSignOnParticipationPolicy.class);
         assertEquals(strategy, policyRead);
+    }
+
+    @Test
+    void verifyScriptIsResolvedOnlyWhenNeeded() throws Throwable {
+        val ticket = mock(AuthenticationAwareTicket.class);
+        when(ticket.getAuthentication()).thenReturn(CoreAuthenticationTestUtils.getAuthentication("Gandalf"));
+        val registeredService = CoreAuthenticationTestUtils.getRegisteredService();
+        val policy = new GroovyRegisteredServiceSingleSignOnParticipationPolicy();
+        policy.setGroovyScript("classpath:GroovySSOParticipationPolicy.groovy");
+        assertTrue(policy.shouldParticipateInSso(registeredService, ticket));
+
+        val script = mock(ExecutableCompiledScript.class);
+        when(script.execute(any(Object[].class), eq(Boolean.class))).thenReturn(Boolean.FALSE);
+        policy.setExecutableScript(script);
+        assertFalse(policy.shouldParticipateInSso(registeredService, ticket));
+
+        when(script.isClosed()).thenReturn(Boolean.TRUE);
+        assertTrue(policy.shouldParticipateInSso(registeredService, ticket));
+        assertNotSame(script, policy.getExecutableScript());
+
+        policy.setGroovyScript("groovy { return false }");
+        assertFalse(policy.shouldParticipateInSso(registeredService, ticket));
     }
 }

@@ -8,6 +8,7 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
+import org.apereo.cas.support.oauth.profile.DefaultOAuth20UserProfile;
 import org.apereo.cas.support.oauth.web.response.OAuth20AuthorizationRequest;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestContext;
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20AuthorizationResponseBuilder;
@@ -15,8 +16,6 @@ import org.apereo.cas.ticket.InvalidTicketException;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.pac4j.core.profile.CommonProfile;
-import org.pac4j.jee.context.JEEContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -46,8 +45,7 @@ class OidcPushedAuthorizationRequestUriResponseBuilderTests extends AbstractOidc
         assertEquals(0, oidcPushedAuthorizationRequestResponseBuilder.getOrder());
 
         val registeredService = getOidcRegisteredService();
-        val profile = new CommonProfile();
-        profile.setId("casuser");
+        val profile = new DefaultOAuth20UserProfile("casuser");
 
         val holder = AccessTokenRequestContext.builder()
             .clientId(registeredService.getClientId())
@@ -77,9 +75,8 @@ class OidcPushedAuthorizationRequestUriResponseBuilderTests extends AbstractOidc
         val request = new MockHttpServletRequest();
         request.setRequestURI('/' + OidcConstants.PUSHED_AUTHORIZE_URL);
         val response = new MockHttpServletResponse();
-        var context = new JEEContext(request, response);
 
-        authzRequest = oidcPushedAuthorizationRequestResponseBuilder.toAuthorizationRequest(context,
+        authzRequest = oidcPushedAuthorizationRequestResponseBuilder.toAuthorizationRequest(request, response,
             holder.getAuthentication(), holder.getService(), holder.getRegisteredService()).orElseThrow().build();
         assertNotNull(authzRequest);
         assertFalse(authzRequest.isSingleSignOnSessionRequired());
@@ -94,8 +91,7 @@ class OidcPushedAuthorizationRequestUriResponseBuilderTests extends AbstractOidc
         val cookie = ticketGrantingTicketCookieGenerator.addCookie(request, response, tgt.getId());
         request.setCookies(cookie);
 
-        context = new JEEContext(request, response);
-        authzRequest = oidcPushedAuthorizationRequestResponseBuilder.toAuthorizationRequest(context,
+        authzRequest = oidcPushedAuthorizationRequestResponseBuilder.toAuthorizationRequest(request, response,
             holder.getAuthentication(), holder.getService(), holder.getRegisteredService()).get().build();
         val accessTokenRequest = authzRequest.getAccessTokenRequest();
         assertTrue(authzRequest.isSingleSignOnSessionRequired());

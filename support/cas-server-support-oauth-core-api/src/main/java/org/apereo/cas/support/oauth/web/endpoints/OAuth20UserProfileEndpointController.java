@@ -14,7 +14,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.pac4j.jee.context.JEEContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -101,7 +100,7 @@ public class OAuth20UserProfileEndpointController<T extends OAuth20Configuration
 
         try {
             validateAccessToken(accessTokenResult.getKey(), accessTokenTicket, request, response);
-            val proofError = verifyProofOfPossession(new JEEContext(request, response), accessTokenResult.getKey(), accessTokenTicket);
+            val proofError = verifyProofOfPossession(request, response, accessTokenResult.getKey(), accessTokenTicket);
             if (proofError != null) {
                 return proofError;
             }

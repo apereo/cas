@@ -702,17 +702,29 @@ function initializeDropDowns(root) {
     });
 }
 
+/**
+ * Attach the jQuery UI date picker to every input marked jquery-datepicker.
+ *
+ * An input chooses the text a picked date becomes through its dateFormat data value, in the date
+ * picker's notation; quoted text is copied as is, so a date and time field can carry a fixed time of
+ * day, such as yy-mm-dd'T'00:00:00. Without one, the picker's own format applies. A picked date is
+ * announced as input, so the field's own handler validates it and regenerates the definition.
+ *
+ * @param root the subtree to search; the document, minus the tab panels, when omitted
+ */
 function initializeDatePickers(root) {
     palantirWidgetTargets("input.jquery-datepicker", root).each(function () {
         if ($(this).data("datepicker")) {
             return;
         }
+        const format = $(this).data("dateFormat");
         $(this).datepicker({
+            ...format ? {dateFormat: format} : {},
+            changeMonth: true,
+            changeYear: true,
             showAnim: "slideDown",
-            onSelect: function (date, ins) {
-                $(ins).val(date);
-                generateServiceDefinition();
-                $(`#${$(ins).prop("id")}`).prev().find(".mdc-notched-outline__notch").hide();
+            onSelect: function () {
+                $(this).trigger("input");
             }
         });
     });

@@ -25,7 +25,7 @@
 <li th:fragment="permission(name, text, kind)" class="cas-perm" th:id="${name}"
     th:with="scopeIcons=${ {'openid':'mdi-account-key-outline','profile':'mdi-card-account-details-outline','email':'mdi-email-outline','address':'mdi-map-marker-outline','phone':'mdi-phone-outline','offline_access':'mdi-refresh','read':'mdi-eye-outline','write':'mdi-pencil-outline'} },
              claimIcons=${ {'name':'mdi-account-outline','given_name':'mdi-account-outline','family_name':'mdi-account-outline','middle_name':'mdi-account-outline','nickname':'mdi-account-outline','preferred_username':'mdi-at','email':'mdi-email-outline','email_verified':'mdi-email-check-outline','phone_number':'mdi-phone-outline','address':'mdi-map-marker-outline','picture':'mdi-image-outline','profile':'mdi-link-variant','website':'mdi-link-variant','birthdate':'mdi-cake-variant-outline','locale':'mdi-earth','zoneinfo':'mdi-earth','updated_at':'mdi-update'} },
-             icon=${kind == 'claim' ? (claimIcons.get(name) ?: 'mdi-tag-outline') : (scopeIcons.get(name) ?: 'mdi-shield-check-outline')}">
+             icon=${kind == 'resource' ? 'mdi-web' : (kind == 'claim' ? (claimIcons.get(name) ?: 'mdi-tag-outline') : (scopeIcons.get(name) ?: 'mdi-shield-check-outline'))}">
     <span class="cas-perm-icon mdi" th:classappend="${icon}" aria-hidden="true"></span>
     <span class="cas-perm-body">
         <span class="cas-perm-name"><code th:text="${name}">scope</code></span>

@@ -51,7 +51,9 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
+import org.apereo.cas.support.oauth.authenticator.OAuth20ClientAuthenticationToken;
 import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
+import org.apereo.cas.support.oauth.profile.OAuth20UserProfile;
 import org.apereo.cas.support.oauth.profile.OAuth20UserProfileDataCreator;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredServiceClientSecret;
@@ -84,6 +86,7 @@ import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.spring.CasEventListener;
 import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
+import org.apereo.cas.web.CasSessionStore;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import com.github.benmanes.caffeine.cache.LoadingCache;
@@ -103,10 +106,9 @@ import org.jose4j.jwe.KeyManagementAlgorithmIdentifiers;
 import org.jose4j.jwk.JsonWebKeySet;
 import org.jose4j.jwt.JwtClaims;
 import org.jose4j.jwt.NumericDate;
+import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.pac4j.core.context.session.SessionStore;
-import org.pac4j.core.profile.factory.ProfileManagerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.SpringBootConfiguration;
@@ -119,11 +121,14 @@ import org.springframework.context.annotation.Import;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.RequestPostProcessor;
 import org.springframework.web.context.ConfigurableWebApplicationContext;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.webflow.execution.Action;
+import jakarta.servlet.http.HttpServletRequest;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
@@ -158,10 +163,6 @@ public abstract class AbstractOidcTests {
     @Qualifier("mockMvc")
     protected MockMvc mockMvc;
 
-    @Autowired
-    @Qualifier("oauthSecProfileManagerFactory")
-    protected ProfileManagerFactory oauthSecProfileManagerFactory;
-    
     @Autowired
     @Qualifier("oauthTokenGenerator")
     protected OAuth20TokenGenerator oauthTokenGenerator;
@@ -199,7 +200,7 @@ public abstract class AbstractOidcTests {
 
     @Autowired
     @Qualifier("oauthDistributedSessionStore")
-    protected SessionStore oauthDistributedSessionStore;
+    protected CasSessionStore oauthDistributedSessionStore;
 
     @Autowired
     @Qualifier("oauthInterceptor")
@@ -536,6 +537,10 @@ public abstract class AbstractOidcTests {
         return accessToken;
     }
 
+    protected void storeProfileIntoSession(final HttpServletRequest request, final OAuth20UserProfile profile) {
+        oauthDistributedSessionStore.set(request, new MockHttpServletResponse(), OAuth20Constants.SESSION_ATTRIBUTE_AUTHENTICATED_PROFILE, profile);
+    }
+
     protected String randomServiceUrl() {
         return "https://app.example.org/%s".formatted(RandomUtils.randomAlphabetic(8));
     }
@@ -596,6 +601,38 @@ public abstract class AbstractOidcTests {
             request.setServerPort(443);
             return request;
         };
+    }
+
+    /**
+     * A client authentication token for credentials read from a request header.
+     *
+     * @param request     the request
+     * @param username    the username or client id
+     * @param credentials the credentials
+     * @return the token
+     */
+    protected static OAuth20ClientAuthenticationToken newClientAuthenticationToken(final HttpServletRequest request,
+                                                                                   final @Nullable String username,
+                                                                                   final @Nullable Object credentials) {
+        return newClientAuthenticationToken(request, OAuth20ClientAuthenticationToken.CredentialSource.HEADER, username, credentials);
+    }
+
+    /**
+     * A client authentication token.
+     *
+     * @param request     the request
+     * @param source      where the credentials are found
+     * @param username    the username or client id
+     * @param credentials the credentials
+     * @return the token
+     */
+    protected static OAuth20ClientAuthenticationToken newClientAuthenticationToken(final HttpServletRequest request,
+                                                                                   final OAuth20ClientAuthenticationToken.CredentialSource source,
+                                                                                   final @Nullable String username,
+                                                                                   final @Nullable Object credentials) {
+        val token = new OAuth20ClientAuthenticationToken(request, source, username, credentials);
+        token.setResponse(new MockHttpServletResponse());
+        return token;
     }
 
     /**

@@ -281,6 +281,9 @@
                     window.location.href = action.dataset.logoutUrl;
                 });
                 break;
+            case "confirm-submit":
+                confirmAction(action, () => action.closest("form").submit());
+                break;
             case "register": {
                 const options = document.getElementById(action.getAttribute("aria-controls"));
                 if (options) {

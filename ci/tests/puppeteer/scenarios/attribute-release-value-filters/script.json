@@ -20,6 +20,7 @@
     "--cas.authn.attribute-repository.stub.attributes.groupMembership5=CHEMISTRY",
     "--cas.authn.attribute-repository.stub.attributes.groupMembership6=SOFTENG",
 
+    "--cas.authn.attribute-repository.stub.attributes.courses=MATH101,art,CHEM202",
     "--cas.authn.attribute-repository.stub.attributes.accountId=9Wy1B3m3f66bPPmU5"
   ],
   "initScript": "${PWD}/ci/tests/httpbin/run-httpbin-server.sh"

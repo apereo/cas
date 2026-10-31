@@ -36,10 +36,15 @@
                 onclick="document.getElementById('forgotUsernameForm').submit();" />
             <br><br>
         </form>
-        <div th:unless="${passwordManagementEnabled}" class="mt-2">
-            <span class="mdi mdi-account-question" aria-hidden="true"></span>
-            <span th:utext="#{screen.pm.button.forgotpwd('https://pwd.example.org')}">Forgot your password?</span>
-        </div>
+        <th:block th:unless="${passwordManagementEnabled}">
+            <div id="forgotPasswordExternal" class="mt-2"
+                 th:if="${#cas.themeBuilderEnabled or !#strings.isEmpty(#cas.theme('cas.pm-links.forgot-password.url'))}"
+                 th:classappend="${#strings.isEmpty(#cas.theme('cas.pm-links.forgot-password.url'))} ? 'cas-theme-builder-off'"
+                 data-cas-theme-builder-toggle="cas.pm-links.forgot-password.url">
+                <span class="mdi mdi-account-question" aria-hidden="true"></span>
+                <span th:utext="#{screen.pm.button.forgotpwd(${#strings.escapeXml(#cas.theme('cas.pm-links.forgot-password.url'))})}">Forgot your password?</span>
+            </div>
+        </th:block>
     </div>
 </body>
 

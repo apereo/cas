@@ -15,6 +15,8 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.security.web.csrf.CsrfToken;
+import org.springframework.security.web.csrf.DefaultCsrfToken;
+import org.springframework.security.web.csrf.DeferredCsrfToken;
 import org.springframework.webflow.execution.Action;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -53,5 +55,20 @@ class WebAuthnPopulateCsrfTokenActionTests {
         assertEquals(csrf1.getToken(), csrf2.getToken());
         assertEquals(csrf1.getParameterName(), csrf2.getParameterName());
         assertEquals(csrf1.getHeaderName(), csrf2.getHeaderName());
+
+        val filterToken = new DefaultCsrfToken("X-CSRF-TOKEN", "_csrf", UUID.randomUUID().toString());
+        request.setAttribute(DeferredCsrfToken.class.getName(), new DeferredCsrfToken() {
+            @Override
+            public CsrfToken get() {
+                return filterToken;
+            }
+
+            @Override
+            public boolean isGenerated() {
+                return true;
+            }
+        });
+        webAuthnPopulateCsrfTokenAction.execute(context);
+        assertSame(filterToken, context.getFlowScope().get("_csrf", CsrfToken.class));
     }
 }

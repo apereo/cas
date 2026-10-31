@@ -57,9 +57,10 @@ import org.jose4j.jwk.JsonWebKeySet;
 import org.jose4j.jwk.PublicJsonWebKey;
 import org.jose4j.jwt.JwtClaims;
 import org.jspecify.annotations.Nullable;
-import org.pac4j.core.context.WebContext;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.http.HttpHeaders;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * This is {@link DefaultAuthorizationPrincipalParser}.
@@ -88,14 +89,15 @@ public class DefaultAuthorizationPrincipalParser implements AuthorizationPrincip
 
     @Override
     public Principal parse(final String authorizationHeader, final AuthorizationRequest authorizationRequest) throws Throwable {
-        return parse(authorizationHeader, authorizationRequest, null);
+        return parse(authorizationHeader, authorizationRequest, null, null);
     }
 
     @Override
     public @Nullable Principal parse(final String authorizationHeader, final AuthorizationRequest authorizationRequest,
-                                     final @Nullable WebContext webContext)
+                                     final @Nullable HttpServletRequest request,
+                                     final @Nullable HttpServletResponse response)
             throws Throwable {
-        val claims = parseAuthorizationHeader(authorizationHeader, authorizationRequest.isAuthZen(), webContext);
+        val claims = parseAuthorizationHeader(authorizationHeader, authorizationRequest.isAuthZen(), request, response);
         val subject = authorizationRequest.getSubject();
         if (subject != null) {
             return resolveSubject(subject);
@@ -106,8 +108,10 @@ public class DefaultAuthorizationPrincipalParser implements AuthorizationPrincip
     }
 
     @Override
-    public void authenticateCaller(final String authorizationHeader, final @Nullable WebContext webContext) throws Throwable {
-        parseAuthorizationHeader(authorizationHeader, true, webContext);
+    public void authenticateCaller(final String authorizationHeader, final @Nullable HttpServletRequest request,
+                                   final @Nullable HttpServletResponse response)
+            throws Throwable {
+        parseAuthorizationHeader(authorizationHeader, true, request, response);
     }
 
     @Override
@@ -119,7 +123,8 @@ public class DefaultAuthorizationPrincipalParser implements AuthorizationPrincip
     }
 
     protected JWTClaimsSet parseAuthorizationHeader(final String authorizationHeader, final boolean authZen,
-                                                    final @Nullable WebContext webContext)
+                                                    final @Nullable HttpServletRequest request,
+                                                    final @Nullable HttpServletResponse response)
             throws Throwable {
         if (Strings.CI.startsWith(authorizationHeader, "Basic ")) {
             val credentials = EncodingUtils.decodeBase64ToString(Strings.CI.removeStart(authorizationHeader, "Basic ").trim());
@@ -142,12 +147,12 @@ public class DefaultAuthorizationPrincipalParser implements AuthorizationPrincip
                 val bound = ticket.getAuthentication().containsAttribute(OAuth20Constants.DPOP_CONFIRMATION);
                 FunctionUtils.throwIf(dpop != bound, () -> new AuthenticationException("Invalid access token authorization scheme"));
                 if (bound) {
-                    FunctionUtils.throwIf(webContext == null, () -> new AuthenticationException("DPoP requires an HTTP request"));
-                    proofOfPossessionValidator.getObject().validateProtectedResourceRequest(webContext, token, ticket);
+                    FunctionUtils.throwIf(request == null || response == null, () -> new AuthenticationException("DPoP requires an HTTP request"));
+                    proofOfPossessionValidator.getObject().validateProtectedResourceRequest(request, response, token, ticket);
                 }
                 val certificateBinding = OAuth20Utils.getBoundCertificateThumbprint(ticket);
                 FunctionUtils.throwIf(certificateBinding.isPresent()
-                        && (webContext == null || !OAuth20Utils.isBoundCertificatePresented(webContext, certificateBinding.get())),
+                        && (request == null || !OAuth20Utils.isBoundCertificatePresented(request, certificateBinding.get())),
                     () -> new AuthenticationException("Access token is bound to a client certificate that was not presented"));
                 val claims = buildClaimsFromAuthentication(ticket.getAuthentication());
                 claims.putAll(ticket.getClaims());

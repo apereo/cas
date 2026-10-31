@@ -2,14 +2,11 @@ package org.apereo.cas.support.oauth.web.response;
 
 import module java.base;
 import org.apereo.cas.AbstractOAuth20Tests;
+import org.apereo.cas.util.EncodingUtils;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.pac4j.cas.client.CasClient;
-import org.pac4j.cas.config.CasConfiguration;
-import org.pac4j.jee.context.JEEContext;
 import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -20,16 +17,25 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("OAuthWeb")
 class OAuth20DefaultCasClientRedirectActionBuilderTests extends AbstractOAuth20Tests {
+    private static final String CALLBACK_URL = "https://example.org/cas/oauth2.0/callbackAuthorize?client_id=client&client_name=CasOAuthClient";
 
     @Test
     void verifyOperation() {
-        val client = new CasClient(new CasConfiguration("https://example.org/cas/login"));
-        client.setCallbackUrl("https://example.org/cas/callback");
-        client.init();
-        val context = new JEEContext(new MockHttpServletRequest(), new MockHttpServletResponse());
-        val input = oauthCasClientRedirectActionBuilder.build(client, context);
-        assertFalse(input.isEmpty());
-
+        val builder = new OAuth20DefaultCasClientRedirectActionBuilder("https://example.org/cas/login");
+        val url = builder.build(new MockHttpServletRequest(), CALLBACK_URL);
+        assertEquals("https://example.org/cas/login?service=" + EncodingUtils.urlEncode(CALLBACK_URL), url);
     }
 
+    @Test
+    void verifyLoginUrlWithQuery() {
+        val builder = new OAuth20DefaultCasClientRedirectActionBuilder("https://example.org/cas/login?locale=de");
+        val url = builder.build(new MockHttpServletRequest(), CALLBACK_URL);
+        assertEquals("https://example.org/cas/login?locale=de&service=" + EncodingUtils.urlEncode(CALLBACK_URL), url);
+    }
+
+    @Test
+    void verifyConfiguredLoginUrl() {
+        val url = oauthCasClientRedirectActionBuilder.build(new MockHttpServletRequest(), CALLBACK_URL);
+        assertEquals(casProperties.getServer().getLoginUrl() + "?service=" + EncodingUtils.urlEncode(CALLBACK_URL), url);
+    }
 }

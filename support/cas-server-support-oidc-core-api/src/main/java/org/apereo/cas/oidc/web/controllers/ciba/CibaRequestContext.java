@@ -3,6 +3,7 @@ package org.apereo.cas.oidc.web.controllers.ciba;
 import module java.base;
 import org.apereo.cas.authentication.principal.Principal;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.SuperBuilder;
 import lombok.With;
@@ -33,4 +34,7 @@ public class CibaRequestContext implements Serializable {
     private final String clientId;
     private final Principal principal;
     private final String tenant;
+
+    @Builder.Default
+    private final Set<String> resources = new LinkedHashSet<>();
 }

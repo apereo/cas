@@ -36,7 +36,11 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.web.authentication.www.BasicAuthenticationConverter;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.security.web.context.SecurityContextRepository;
+import org.springframework.security.web.csrf.CsrfFilter;
+import org.springframework.security.web.csrf.CsrfTokenRepository;
 import org.springframework.security.web.servlet.util.matcher.PathPatternRequestMatcher;
+import org.springframework.security.web.util.matcher.AndRequestMatcher;
+import org.springframework.security.web.util.matcher.OrRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.util.ResourceUtils;
 import jakarta.servlet.http.HttpServletRequest;
@@ -83,6 +87,8 @@ public class CasWebSecurityConfigurerAdapter {
     private final ObjectProvider<SecurityContextRepository> securityContextRepository;
 
     private final WebProperties webProperties;
+
+    private final ObjectProvider<CsrfTokenRepository> csrfTokenRepository;
 
     private static List<String> prepareProtocolEndpoint(final String endpoint) {
         val baseEndpoint = Strings.CI.prependIfMissing(endpoint, "/");
@@ -138,6 +144,7 @@ public class CasWebSecurityConfigurerAdapter {
             .stream()
             .filter(BeanSupplier::isNotProxy)
             .forEach(Unchecked.consumer(cfg -> cfg.configure(http)));
+        configureCsrfProtection(http);
 
         val endpoints = casProperties.getMonitor().getEndpoints().getEndpoint();
         endpoints.forEach(Unchecked.biConsumer((key, endpointProps) -> {
@@ -158,6 +165,35 @@ public class CasWebSecurityConfigurerAdapter {
             .filter(BeanSupplier::isNotProxy)
             .forEach(Unchecked.consumer(cfg -> cfg.finish(http)));
         return http;
+    }
+
+    /**
+     * Configure CSRF protection once, for the endpoints that all configurers declare through
+     * {@link CasWebSecurityConfigurer#getCsrfProtectedEndpoints()}: a request that is not a {@code GET}, {@code HEAD},
+     * {@code TRACE} or {@code OPTIONS} request to one of them must carry the token of the CSRF token repository, masked or raw
+     * (see {@link CasCsrfTokenRequestHandler}). CSRF protection stays disabled when no configurer declares an endpoint.
+     *
+     * @param http the http security
+     * @throws Exception the exception
+     */
+    protected void configureCsrfProtection(final HttpSecurity http) throws Exception {
+        val endpoints = webSecurityConfigurers
+            .getObject()
+            .stream()
+            .filter(BeanSupplier::isNotProxy)
+            .map(CasWebSecurityConfigurer::getCsrfProtectedEndpoints)
+            .flatMap(List<String>::stream)
+            .distinct()
+            .<RequestMatcher>map(endpoint -> PathPatternRequestMatcher.withDefaults().matcher(endpoint))
+            .toList();
+        if (!endpoints.isEmpty()) {
+            LOGGER.debug("Configuring CSRF protection for [{}]", endpoints);
+            val protectedEndpoints = new OrRequestMatcher(endpoints);
+            http.csrf(csrf -> csrf
+                .requireCsrfProtectionMatcher(new AndRequestMatcher(CsrfFilter.DEFAULT_CSRF_MATCHER, protectedEndpoints))
+                .csrfTokenRepository(csrfTokenRepository.getObject())
+                .csrfTokenRequestHandler(new CasCsrfTokenRequestHandler(protectedEndpoints)));
+        }
     }
 
     protected List<String> getAllowedPatternsToIgnore() {

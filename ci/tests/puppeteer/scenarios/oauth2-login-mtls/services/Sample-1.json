@@ -10,7 +10,7 @@
   },
   "tokenEndpointAuthenticationMethod": "tls_client_auth",
   "tlsClientCertificateBoundAccessTokens": true,
-  "tlsClientAuthSubjectDn": "^CN=(\\w+)",
+  "tlsClientAuthSubjectDn": "CN=([\\w-]+),O=Example,ST=CA,C=US",
   "supportedGrantTypes": [ "java.util.HashSet", [ "authorization_code" ] ],
   "supportedResponseTypes": [ "java.util.HashSet", [ "code" ] ]
 }
