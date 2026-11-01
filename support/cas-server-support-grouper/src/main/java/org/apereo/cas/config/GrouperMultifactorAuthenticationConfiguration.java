@@ -11,12 +11,11 @@ import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.web.flow.GrouperMultifactorAuthenticationTrigger;
-import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
+import org.apereo.cas.web.flow.authentication.MultifactorAuthenticationWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.CasWebflowEventResolutionConfigurationContext;
 import org.apereo.cas.web.flow.resolver.impl.mfa.DefaultMultifactorAuthenticationProviderWebflowEventResolver;
 import lombok.extern.slf4j.Slf4j;
-import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -25,7 +24,6 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.ScopedProxyMode;
 
 /**
@@ -73,12 +71,10 @@ class GrouperMultifactorAuthenticationConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "grouperMultifactorAuthenticationWebflowEventResolver")
+    @MultifactorAuthenticationWebflowEventResolver
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Lazy(false)
     public CasWebflowEventResolver grouperMultifactorAuthenticationWebflowEventResolver(
         final ConfigurableApplicationContext applicationContext,
-        @Qualifier(CasDelegatingWebflowEventResolver.BEAN_NAME_INITIAL_AUTHENTICATION_EVENT_RESOLVER)
-        final ObjectProvider<CasDelegatingWebflowEventResolver> initialAuthenticationAttemptWebflowEventResolver,
         @Qualifier("grouperMultifactorAuthenticationTrigger")
         final ObjectProvider<MultifactorAuthenticationTrigger> grouperMultifactorAuthenticationTrigger,
         @Qualifier(CasWebflowEventResolutionConfigurationContext.BEAN_NAME)
@@ -86,11 +82,9 @@ class GrouperMultifactorAuthenticationConfiguration {
         return BeanSupplier.of(CasWebflowEventResolver.class)
             .when(CONDITION.given(applicationContext.getEnvironment()))
             .supply(() -> {
-                val r = new DefaultMultifactorAuthenticationProviderWebflowEventResolver(
-                    casWebflowConfigurationContext.getObject(), grouperMultifactorAuthenticationTrigger.getObject());
                 LOGGER.debug("Activating MFA event resolver based on Grouper groups...");
-                initialAuthenticationAttemptWebflowEventResolver.getObject().addDelegate(r);
-                return r;
+                return new DefaultMultifactorAuthenticationProviderWebflowEventResolver(
+                    casWebflowConfigurationContext.getObject(), grouperMultifactorAuthenticationTrigger.getObject());
             })
             .otherwiseProxy()
             .get();

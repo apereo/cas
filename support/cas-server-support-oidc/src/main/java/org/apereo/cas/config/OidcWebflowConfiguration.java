@@ -21,12 +21,11 @@ import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.CasWebflowLoginContextProvider;
 import org.apereo.cas.web.flow.actions.WebflowActionBeanSupplier;
 import org.apereo.cas.web.flow.authentication.CasWebflowExceptionHandler;
-import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
+import org.apereo.cas.web.flow.authentication.MultifactorAuthenticationWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.CasWebflowEventResolutionConfigurationContext;
 import org.apereo.cas.web.flow.resolver.impl.mfa.DefaultMultifactorAuthenticationProviderWebflowEventResolver;
 import org.apereo.cas.web.support.ArgumentExtractor;
-import lombok.val;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -34,7 +33,6 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
@@ -89,18 +87,14 @@ class OidcWebflowConfiguration {
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
-    @Lazy(false)
+    @MultifactorAuthenticationWebflowEventResolver
     public CasWebflowEventResolver oidcAuthenticationContextWebflowEventResolver(
-        @Qualifier(CasDelegatingWebflowEventResolver.BEAN_NAME_INITIAL_AUTHENTICATION_EVENT_RESOLVER)
-        final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver,
         @Qualifier(CasWebflowEventResolutionConfigurationContext.BEAN_NAME)
         final CasWebflowEventResolutionConfigurationContext casWebflowConfigurationContext,
         @Qualifier("oidcMultifactorAuthenticationTrigger")
         final MultifactorAuthenticationTrigger oidcMultifactorAuthenticationTrigger) {
-        val resolver = new DefaultMultifactorAuthenticationProviderWebflowEventResolver(
+        return new DefaultMultifactorAuthenticationProviderWebflowEventResolver(
             casWebflowConfigurationContext, oidcMultifactorAuthenticationTrigger);
-        initialAuthenticationAttemptWebflowEventResolver.addDelegate(resolver);
-        return resolver;
     }
 
     @ConditionalOnMissingBean(name = "oidcWebflowConfigurer")

@@ -558,6 +558,10 @@ one-time codes can be added when `cas.authn.mfa.simple.mail.accepted-email-patte
 - {: .new data-area="mfa"} [Principal attribute triggers per application](../mfa/Configuring-Multifactor-Authentication-Triggers-PrincipalAttribute-PerApplication.html#provider-selection-mappings)
   can map each multifactor provider to a pattern for the attribute values, so the service definition alone decides which
   provider a user is sent to; [Palantir](../installation/Admin-Dashboard.html) can edit these mappings.
+- {: .changed data-area="mfa"} [Custom multifactor authentication triggers](../mfa/Configuring-Multifactor-Authentication-Triggers-Custom.html#register-triggers)
+  register their event resolvers by tagging the resolver bean with an annotation; CAS collects tagged resolvers on its own, and
+  resolvers no longer add themselves to the initial authentication event resolver. Custom resolvers, and beans that override a
+  built-in trigger resolver, must carry the annotation.
 - {: .changed data-area="docs"} The [SPNEGO](../authentication/SPNEGO-Authentication.html) settings explain that
   `cas.authn.spnego.properties[0].jcifs-service-password`{: .cas-setting} is only used when
   `cas.authn.spnego.system.use-subject-creds-only`{: .cas-setting} is `true` (otherwise the service keys come from a keytab),

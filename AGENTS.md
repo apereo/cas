@@ -61,6 +61,10 @@ When you learn something new, record it in the skill that owns the area, or here
   `@Configuration(value = "...", proxyBeanMethods = false)` class nested in the module's main auto-configuration. A
   configuration class kept outside it must follow the structure the sibling modules of that family already use; do not
   introduce a new standalone `@Configuration` plus `@Import` where the family has none.
+- Multifactor trigger event resolvers are `@Bean` methods tagged `@MultifactorAuthenticationWebflowEventResolver`; the
+  initial authentication event resolver collects them with `getBeansWithAnnotation` (as MFA bypass evaluators are), skips
+  `BeanSupplier` proxies and sorts them with `AnnotationAwareOrderComparator`. Never inject the initial resolver into a
+  resolver bean to `addDelegate` it (that creates a cycle), and do not tag the per-provider final-transaction resolvers.
 - Configuration model classes usually live under `api/.../configuration/model/**`, use Lombok accessors, and carry `@RequiresModule(name = "...")`; example: `LdapAuthorizationProperties`.
 - Tests are organized by JUnit tags, not by the plain Gradle `test` task. The shared `buildSrc` test conventions disable `test` and register tasks like `testAuthentication` and `testTickets` for the tags discovered by `TestCategoryTagsValueSource` in `*Tests.java`. Both root category selectors and module-qualified category tasks execute tests; the plain `test` task never does.
 - Related test scenarios are often grouped with `@Nested`; example: `support/cas-server-support-token-core/.../JwtBuilderTests.java`.
