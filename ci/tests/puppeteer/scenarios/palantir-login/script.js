@@ -1,6 +1,3 @@
-/* global $, CAS_FEATURES, CasActuatorEndpoints, PalantirDashboardConfiguration,
-   RegisteredServiceSections, openRegisteredServiceWizardDialog, isPopulatingWizard,
-   activateDashboardTab, ace */
 const assert = require("assert");
 const cas = require("../../cas.js");
 
@@ -599,6 +596,8 @@ async function verifySettingsDialog(page) {
 (async () => {
     const browser = await cas.newBrowser(cas.browserOptions());
     const page = await cas.newPage(browser);
+    await cas.gotoLogout(page);
+    
     const failures = trackFailures(page);
 
     await cas.goto(page, DASHBOARD_URL);

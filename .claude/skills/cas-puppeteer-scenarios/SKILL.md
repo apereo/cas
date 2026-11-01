@@ -39,6 +39,11 @@ description: "Write, fix and review the end-to-end puppeteer scenarios under ci/
 - `cas.newPage(browser)` returns the browser's first tab when one exists; it opens a new one only with `cas.newPage(browser, true)`. A helper that takes a page, intercepts its requests and closes it must force a new page, or it closes the scenario's main page and later calls fail with "Attempted to use detached Frame" (`saml2-idp-login-acs-signed`).
 - Before writing a negative assertion, read the server code for the exact error. Each token-endpoint failure surfaces differently: device code reuse → `access_denied` (`InvalidOAuth20DeviceTokenException`), a mismatched ST service → `INVALID_SERVICE` and the ticket is consumed. Where the specification names the error (CIBA Core §11: `authorization_pending`, `invalid_grant`), the scenario asserts the specification even when the current code differs, and the hand-off says so.
 - `from` in actuator and ticket registry queries (`ssoSessions?from=`, `TicketRegistryStreamCriteria`) is a 0-based offset in every registry. A scenario that deletes all SSO sessions passes `from=0` (or omits it); `from=1` leaves the first session alive, which only shows once that session outlives the scenario's other timeouts, such as a remember-me TGT in a browser profile that later browsers share.
+- In CI, `cas.prepareChromium` unzips the Chromium profile only when it is missing, so the in-process attempts of a
+  script share one profile and a retry starts with the cookies the failed attempt left: the login form is gone and
+  `cas.loginWith` times out on `#username`. Sign in only when the form is there
+  (`if (await cas.isVisible(page, "#username"))`, as `palantir-login` does), or the first failure hides itself behind
+  three identical login timeouts.
 - In CI, `run.sh` bounds each script attempt with `PUPPETEER_SCRIPT_TIMEOUT` (420 seconds; 0 locally, meaning no limit). A script whose steps all finish but whose node process never exits then fails that attempt and is retried, instead of running into the 20 minute job timeout.
 - AOT training runs extract the built artifact with `-Djarmode=tools extract` and launch what it produces. Since Spring Boot
   4.2 (gh-51372) extracting a war writes `cas/cas.jar` (root web content moved to `META-INF/resources/`), no longer
