@@ -132,3 +132,6 @@ description: "Run and write tests in the CAS Gradle monorepo: testcas.sh categor
   `headersConsumer`) and make it the last request a test sends to that server.
 - `MockRequestContext.create(...)` throws `Exception`; a test method that calls it must declare `throws Throwable`.
 - The Gradle build runs Error Prone with warnings as errors on main and test sources (e.g. `CanonicalDuration`: `Duration.ofMinutes(-1)`, not `ofSeconds(-60)`); compile-check tests with Error Prone too, not only main. NullAway reports the same pre-existing errors on `HazelcastTicketRegistry` before and after a change, so compare against the old sources rather than expecting zero.
+- `Set.of(...)`/`Map.of(...)` iterate in an order that changes from one JVM run to the next. When the code under test
+  keeps that order (MFA providers of a service are collected into a `LinkedHashSet`, and the ranked selector picks the last
+  of equally ranked ones), give the test a `LinkedHashSet`/`LinkedHashMap`, or it passes and fails at random.

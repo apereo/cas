@@ -87,6 +87,8 @@ description: "Change CAS views and presentation: Thymeleaf render path, theme re
 - The service wizard's fields are built on first open (`palantirWizardField` builders), after the Applications panel ran
   `initializePalantirWidgets`; `buildRegisteredServiceWizardFields` initializes the form's widgets afterwards, so dropdowns
   get the change callback that runs their `data-change-handler` functions. A bare `.selectmenu()` has no such callback.
+- The wizard's key/value fields (`createMappedInputField`) emit `java.util.TreeMap`, which sorts the keys; a map whose
+  order matters (MFA provider selection mappings, first match wins) passes `mapType: "java.util.LinkedHashMap"`.
 - Palantir date fields use the jQuery UI date picker: give the input the `jquery-datepicker` class and, for a format other
   than the picker's default, a `dateFormat` data value (`createInputField({data: {dateFormat: "yy-mm-dd"}})`; quoted text is
   literal, e.g. `yy-mm-dd'T'00:00:00` for a date-time field). `initializeDatePickers` attaches it and fires `input` on pick.

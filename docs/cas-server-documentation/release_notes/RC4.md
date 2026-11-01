@@ -555,9 +555,14 @@ one-time codes can be added when `cas.authn.mfa.simple.mail.accepted-email-patte
 - {: .fixed data-area="mfa"} The Google Authenticator registration QR code includes `digits` and `period` when
   `cas.authn.mfa.gauth.core.code-digits`{: .cas-setting} or `cas.authn.mfa.gauth.core.time-step-size`{: .cas-setting} differ
   from the defaults, so authenticator apps generate codes CAS accepts.
+- {: .new data-area="mfa"} [Principal attribute triggers per application](../mfa/Configuring-Multifactor-Authentication-Triggers-PrincipalAttribute-PerApplication.html#provider-selection-mappings)
+  can map each multifactor provider to a pattern for the attribute values, so the service definition alone decides which
+  provider a user is sent to; [Palantir](../installation/Admin-Dashboard.html) can edit these mappings.
 - {: .changed data-area="docs"} The [SPNEGO](../authentication/SPNEGO-Authentication.html) settings explain that
   `cas.authn.spnego.properties[0].jcifs-service-password`{: .cas-setting} is only used when
   `cas.authn.spnego.system.use-subject-creds-only`{: .cas-setting} is `true` (otherwise the service keys come from a keytab),
   and that setting both the Kerberos KDC and realm makes the JDK ignore the Kerberos configuration file.
+- {: .fixed data-area="docs"} Setting lists show default values in full instead of cutting them off; where a list is narrow, the
+  value moves to a second row under the setting name. Each setting in the configuration catalog also has a *Copy link* button.
 
 {% include release-footer.html %}

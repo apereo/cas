@@ -18,6 +18,7 @@ import org.apereo.cas.authentication.mfa.trigger.GroovyScriptMultifactorAuthenti
 import org.apereo.cas.authentication.mfa.trigger.HttpRequestMultifactorAuthenticationTrigger;
 import org.apereo.cas.authentication.mfa.trigger.PredicatedPrincipalAttributeMultifactorAuthenticationTrigger;
 import org.apereo.cas.authentication.mfa.trigger.PrincipalAttributeMultifactorAuthenticationTrigger;
+import org.apereo.cas.authentication.mfa.trigger.RegisteredServiceMappedPrincipalAttributeToMultifactorAuthenticationTrigger;
 import org.apereo.cas.authentication.mfa.trigger.RegisteredServiceMultifactorAuthenticationTrigger;
 import org.apereo.cas.authentication.mfa.trigger.RegisteredServicePrincipalAttributeMultifactorAuthenticationTrigger;
 import org.apereo.cas.authentication.mfa.trigger.RestEndpointMultifactorAuthenticationTrigger;
@@ -256,6 +257,18 @@ public class CasCoreMultifactorAuthenticationWebflowAutoConfiguration {
                 casWebflowConfigurationContext, registeredServicePrincipalAttributeMultifactorAuthenticationTrigger);
         }
 
+        @ConditionalOnMissingBean(name = "registeredServiceMappedPrincipalAttributeMultifactorWebflowEventResolver")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public CasWebflowEventResolver registeredServiceMappedPrincipalAttributeMultifactorWebflowEventResolver(
+            @Qualifier("registeredServiceMappedPrincipalAttributeToMultifactorAuthenticationTrigger")
+            final MultifactorAuthenticationTrigger trigger,
+            @Qualifier(CasWebflowEventResolutionConfigurationContext.BEAN_NAME)
+            final CasWebflowEventResolutionConfigurationContext casWebflowConfigurationContext) {
+            return new DefaultMultifactorAuthenticationProviderWebflowEventResolver(
+                casWebflowConfigurationContext, trigger);
+        }
+
         @ConditionalOnMissingBean(name = "authenticationAttributeAuthenticationPolicyWebflowEventResolver")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -321,6 +334,20 @@ public class CasCoreMultifactorAuthenticationWebflowAutoConfiguration {
             final CasConfigurationProperties casProperties) {
             return new RegisteredServiceMultifactorAuthenticationTrigger(casProperties,
                 multifactorAuthenticationProviderSelector, applicationContext, tenantExtractor);
+        }
+
+        @Bean
+        @ConditionalOnMissingBean(name = "registeredServiceMappedPrincipalAttributeToMultifactorAuthenticationTrigger")
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public MultifactorAuthenticationTrigger registeredServiceMappedPrincipalAttributeToMultifactorAuthenticationTrigger(
+            @Qualifier(TenantExtractor.BEAN_NAME)
+            final TenantExtractor tenantExtractor,
+            @Qualifier(MultifactorAuthenticationProviderResolver.BEAN_NAME)
+            final MultifactorAuthenticationProviderResolver multifactorAuthenticationProviderResolver,
+            final ConfigurableApplicationContext applicationContext,
+            final CasConfigurationProperties casProperties) {
+            return new RegisteredServiceMappedPrincipalAttributeToMultifactorAuthenticationTrigger(
+                casProperties, multifactorAuthenticationProviderResolver, applicationContext, tenantExtractor);
         }
 
         @ConditionalOnMissingBean(name = "adaptiveMultifactorAuthenticationTrigger")
@@ -522,7 +549,9 @@ public class CasCoreMultifactorAuthenticationWebflowAutoConfiguration {
             @Qualifier("authenticationAttributeAuthenticationPolicyWebflowEventResolver")
             final CasWebflowEventResolver authenticationAttributeAuthenticationPolicyWebflowEventResolver,
             @Qualifier("registeredServiceAuthenticationPolicyWebflowEventResolver")
-            final CasWebflowEventResolver registeredServiceAuthenticationPolicyWebflowEventResolver) {
+            final CasWebflowEventResolver registeredServiceAuthenticationPolicyWebflowEventResolver,
+            @Qualifier("registeredServiceMappedPrincipalAttributeMultifactorWebflowEventResolver")
+            final CasWebflowEventResolver registeredServiceMappedPrincipalAttributeMultifactorWebflowEventResolver) {
 
             val resolver = new DefaultCasDelegatingWebflowEventResolver(casWebflowConfigurationContext,
                 selectiveAuthenticationProviderWebflowEventResolver);
@@ -538,6 +567,7 @@ public class CasCoreMultifactorAuthenticationWebflowAutoConfiguration {
             resolver.addDelegate(principalAttributeAuthenticationPolicyWebflowEventResolver);
             resolver.addDelegate(authenticationAttributeAuthenticationPolicyWebflowEventResolver);
             resolver.addDelegate(registeredServiceAuthenticationPolicyWebflowEventResolver);
+            resolver.addDelegate(registeredServiceMappedPrincipalAttributeMultifactorWebflowEventResolver);
             return resolver;
         }
 
