@@ -44,6 +44,12 @@ description: "Write, fix and review the end-to-end puppeteer scenarios under ci/
   `cas.loginWith` times out on `#username`. Sign in only when the form is there
   (`if (await cas.isVisible(page, "#username"))`, as `palantir-login` does), or the first failure hides itself behind
   three identical login timeouts.
+- X.509 scenarios present the client certificate from their own folder (`trustStoreCertificateFile` /
+  `trustStorePrivateKeyFile` in `script.json`): their `init.sh` re-signs that `cert.pem` and imports it into the
+  scenario's `truststore.jks`. `x509-login-passwordless` presented `x509-login`'s certificate, trusted only because it
+  shares the subject and key, and every handshake failed once the runners moved to Ubuntu 26.04. A failed handshake in
+  the `request`-based interception shows up as `ERR_CONNECTION_REFUSED`, and `cas.logr` logs only its first argument,
+  so put the error in the message.
 - In CI, `run.sh` bounds each script attempt with `PUPPETEER_SCRIPT_TIMEOUT` (420 seconds; 0 locally, meaning no limit). A script whose steps all finish but whose node process never exits then fails that attempt and is retried, instead of running into the 20 minute job timeout.
 - AOT training runs extract the built artifact with `-Djarmode=tools extract` and launch what it produces. Since Spring Boot
   4.2 (gh-51372) extracting a war writes `cas/cas.jar` (root web content moved to `META-INF/resources/`), no longer

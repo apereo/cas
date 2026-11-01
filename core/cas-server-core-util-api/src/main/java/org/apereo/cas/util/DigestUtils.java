@@ -7,6 +7,7 @@ import org.apache.commons.codec.digest.HmacAlgorithms;
 import org.apache.commons.codec.digest.HmacUtils;
 import org.apache.commons.codec.digest.MessageDigestAlgorithms;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.Nullable;
 
 /**
  * This is {@link DigestUtils}
@@ -150,7 +151,7 @@ public class DigestUtils {
      * @param data data to be hashed
      * @return hex encoded hash
      */
-    public static String digest(final String alg, final byte[] data) {
+    public static @Nullable String digest(final String alg, final byte[] data) {
         return EncodingUtils.hexEncode(rawDigest(alg, data));
     }
 
@@ -215,8 +216,8 @@ public class DigestUtils {
      * @param iterations  the iterations
      * @return the string
      */
-    public static String rawDigest(final String alg, final byte[] staticSalt, final byte[] dynamicSalt,
-                                   final String value, final long iterations) {
+    public static @Nullable String rawDigest(final String alg, final byte[] staticSalt, final byte[] dynamicSalt,
+                                             final String value, final long iterations) {
         try {
             val salt = new byte[staticSalt.length + dynamicSalt.length];
             System.arraycopy(staticSalt, 0, salt, 0, staticSalt.length);

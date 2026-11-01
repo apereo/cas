@@ -472,6 +472,12 @@ one-time codes can be added when `cas.authn.mfa.simple.mail.accepted-email-patte
   [WebAuthn](../mfa/FIDO2-WebAuthn-Authentication.html) no longer override each other's settings, and the
   [backchannel authentication](../authentication/OIDC-Authentication-CIBA.html) verification page is now protected.
   A custom CSRF token repository is defined once, as the `casCsrfTokenRepository` bean.
+- {: .fixed data-area="mfa"} [Google Authenticator](../mfa/GoogleAuthenticator-Authentication.html) scratch codes are
+  compared by their exact value, and a stored scratch code that cannot be decrypted is ignored instead of being used as
+  it was stored. With scratch codes encrypted (`cas.authn.mfa.gauth.core.scratch-codes.encryption.key`{: .cas-setting}),
+  the [REST registration store](../mfa/GoogleAuthenticator-Authentication-Registration-Rest.html) no longer loses
+  precision when reading them back. Scratch codes that can no longer be decrypted, such as codes stored under another
+  key, stop working; users can generate new ones from the account profile.
 
 ### SAML2
 {: .changed data-area="saml"}

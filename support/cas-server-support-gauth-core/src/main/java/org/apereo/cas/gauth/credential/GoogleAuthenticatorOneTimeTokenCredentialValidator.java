@@ -44,8 +44,36 @@ public class GoogleAuthenticatorOneTimeTokenCredentialValidator implements
     private static void removeScratchCode(final OneTimeTokenAccount account, final int code) {
         account.setScratchCodes(account.getScratchCodes()
             .stream()
-            .filter(scratchCode -> scratchCode.intValue() != code)
+            .filter(scratchCode -> !isScratchCode(scratchCode, code))
             .collect(Collectors.toList()));
+    }
+
+    /**
+     * Whether the account holds the given token as one of its scratch codes. Codes are compared by their exact value.
+     *
+     * @param account the account
+     * @param token   the token
+     * @return true if the token is one of the account's scratch codes
+     */
+    private static boolean hasScratchCode(final OneTimeTokenAccount account, final int token) {
+        return account.getScratchCodes().stream().anyMatch(scratchCode -> isScratchCode(scratchCode, token));
+    }
+
+    private static boolean isScratchCode(final Number scratchCode, final int token) {
+        if (scratchCode instanceof Integer || scratchCode instanceof Long) {
+            return scratchCode.longValue() == token;
+        }
+        if (scratchCode instanceof final BigInteger bi) {
+            return bi.compareTo(BigInteger.valueOf(token)) == 0;
+        }
+        try {
+            val value = scratchCode instanceof final BigDecimal decimal
+                ? decimal
+                : new BigDecimal(scratchCode.toString());
+            return value.compareTo(BigDecimal.valueOf(token)) == 0;
+        } catch (final NumberFormatException e) {
+            return false;
+        }
     }
 
     private static boolean isCredentialAssignedToAccount(final GoogleAuthenticatorTokenCredential credential,
@@ -116,7 +144,7 @@ public class GoogleAuthenticatorOneTimeTokenCredentialValidator implements
     public boolean isTokenAuthorizedFor(final int token, final OneTimeTokenAccount account) {
         LOGGER.debug("Authorizing token [{}] against account [{}]", token, account);
         val authorized = googleAuthenticatorInstance.authorize(account.getSecretKey(), token);
-        if (!authorized && account.getScratchCodes().stream().map(Number::intValue).toList().contains(token)) {
+        if (!authorized && hasScratchCode(account, token)) {
             LOGGER.debug("Token [{}] is a valid scratch code for account [{}]", token, account);
             removeScratchCode(account, token);
             if (account.getId() > 0) {
@@ -139,7 +167,7 @@ public class GoogleAuthenticatorOneTimeTokenCredentialValidator implements
             .filter(ac -> isCredentialAssignedToAccount(tokenCredential, ac))
             .peek(ac -> LOGGER.debug("Comparing existing scratch codes [{}] for account [{}] against [{}]",
                 ac.getScratchCodes(), ac.getId(), otp))
-            .filter(ac -> ac.getScratchCodes().stream().anyMatch(code -> code.intValue() == otp))
+            .filter(ac -> hasScratchCode(ac, otp))
             .map(GoogleAuthenticatorAccount.class::cast)
             .peek(acct -> {
                 LOGGER.info("Using scratch code [{}] to authenticate user [{}]. Scratch code will be removed", otp, uid);

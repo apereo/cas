@@ -102,3 +102,5 @@ description: "Review and change CAS actuator endpoints: the security filter chai
   200; none asserts 401/403 for an unauthenticated one, and 158 scenarios run with
   `management.endpoints.web.exposure.include=*`. A change to endpoint security therefore needs a
   new negative scenario rather than a rerun.
+- `gcpLogs` preserves missing log timestamps as null. Its `LogEvent.timestamp` must remain `@Nullable` to match
+  `DateTimeUtils.zonedDateTimeOf(Instant)`; do not substitute the current time for a missing event timestamp.

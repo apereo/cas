@@ -108,6 +108,32 @@ class InMemoryGoogleAuthenticatorTokenCredentialRepositoryTests {
         }
 
         @Test
+        void verifyUndecryptableScratchCodesAreIgnored() {
+            val encryptor = new JasyptNumberCipherExecutor(UUID.randomUUID().toString(), "scratchCodesCipher");
+            val scratchCodesCipher = new CipherExecutor<Number, Number>() {
+                @Override
+                public Number encode(final Number value, final Object[] parameters) {
+                    return encryptor.encode(value, parameters);
+                }
+
+                @Override
+                public Number decode(final Number value, final Object[] parameters) {
+                    throw new IllegalArgumentException("Scratch code cannot be decrypted");
+                }
+            };
+            val repo = new InMemoryGoogleAuthenticatorTokenCredentialRepository(CipherExecutor.noOpOfStringToString(),
+                scratchCodesCipher, new DefaultCasGoogleAuthenticator(casProperties, tenantExtractor));
+            val username = UUID.randomUUID().toString();
+            val account = repo.create(username);
+            val id = repo.save(account).getId();
+
+            val stored = repo.get(username, id);
+            assertEquals(account.getSecretKey(), stored.getSecretKey());
+            assertTrue(stored.getScratchCodes().isEmpty());
+            assertTrue(repo.get(username).iterator().next().getScratchCodes().isEmpty());
+        }
+
+        @Test
         void verifyCountsDevicesAndReplacesOnSave() {
             val repo = getRegistry();
             val first = repo.create("casuser");

@@ -46,7 +46,7 @@ public abstract class AbstractCasEventRepository implements CasEventRepository, 
     @Nullable
     private ApplicationEventPublisher applicationEventPublisher;
 
-    private static ZonedDateTime convertEventCreationTime(final CasEvent event) {
+    private static @Nullable ZonedDateTime convertEventCreationTime(final CasEvent event) {
         return DateTimeUtils.zonedDateTimeOf(event.getCreationTime());
     }
 
@@ -70,7 +70,7 @@ public abstract class AbstractCasEventRepository implements CasEventRepository, 
         return load()
             .filter(e -> {
                 val dt = convertEventCreationTime(e);
-                return dt.isEqual(dateTime) || dt.isAfter(dateTime);
+                return dt != null && (dt.isEqual(dateTime) || dt.isAfter(dateTime));
             });
     }
 
@@ -86,7 +86,7 @@ public abstract class AbstractCasEventRepository implements CasEventRepository, 
         return getEventsOfTypeForPrincipal(type, principal)
             .filter(e -> {
                 val dt = convertEventCreationTime(e);
-                return dt.isEqual(dateTime) || dt.isAfter(dateTime);
+                return dt != null && (dt.isEqual(dateTime) || dt.isAfter(dateTime));
             });
     }
 
@@ -100,7 +100,7 @@ public abstract class AbstractCasEventRepository implements CasEventRepository, 
         return getEventsOfType(type)
             .filter(e -> {
                 val dt = convertEventCreationTime(e);
-                return dt.isEqual(dateTime) || dt.isAfter(dateTime);
+                return dt != null && (dt.isEqual(dateTime) || dt.isAfter(dateTime));
             });
     }
 
@@ -114,7 +114,7 @@ public abstract class AbstractCasEventRepository implements CasEventRepository, 
         return getEventsForPrincipal(id)
             .filter(e -> {
                 val dt = convertEventCreationTime(e);
-                return dt.isEqual(dateTime) || dt.isAfter(dateTime);
+                return dt != null && (dt.isEqual(dateTime) || dt.isAfter(dateTime));
             });
     }
     

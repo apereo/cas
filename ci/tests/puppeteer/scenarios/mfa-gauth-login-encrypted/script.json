@@ -18,6 +18,7 @@
     "--cas.authn.mfa.gauth.crypto.enabled=true",
     "--cas.authn.mfa.gauth.crypto.signing.key=7zNPHGAiD-xPLt1EPJgbx9itrLg1zqnA6gI3YSWjwly6rVTSTwnM3h4DB4kt0rOCPZJGI1SmhVAxYw0G-lwJEw",
     "--cas.authn.mfa.gauth.crypto.encryption.key=RdiUkQaVzPiAQThap5mcBxSJRgV027Ckxl2hWY_3_OSFqsRFliM-b8H4tLOF9j_irsb7_uJy1l49fjdlocc2wg",
+    "--cas.authn.mfa.gauth.core.scratch-codes.encryption.key=3RpTrUdLdHh1wZ5y8nG4qK2vX7cB9mF6",
     "--logging.level.org.springframework.webflow=warn"
   ],
   "variations": [

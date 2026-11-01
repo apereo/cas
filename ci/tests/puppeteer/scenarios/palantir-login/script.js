@@ -1,3 +1,6 @@
+/* global $, CAS_FEATURES, CasActuatorEndpoints, PalantirDashboardConfiguration,
+   RegisteredServiceSections, openRegisteredServiceWizardDialog, isPopulatingWizard,
+   activateDashboardTab, ace */
 const assert = require("assert");
 const cas = require("../../cas.js");
 
