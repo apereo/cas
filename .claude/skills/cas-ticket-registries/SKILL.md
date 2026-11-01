@@ -179,6 +179,9 @@ description: "Review and change ticket registries: stateless (compact tickets), 
   (default typing on, as the Kafka registry's mapper), received by `PulsarTicketRegistryMessageListener`. Pulsar's
   `SchemaType.JSON` derives a schema from the declared class, which cannot describe `BaseMessageQueueCommand` subclasses
   carrying a `Ticket` known only at runtime. Any new broker-backed registry should ship its own JSON the same way.
+- The Pulsar listener is constructed inside `ticketRegistryPulsarListenerConfigurer`, not registered as a Spring bean.
+  Its `receive(String)` method therefore needs explicit invocation metadata in `PulsarTicketRegistryRuntimeHints`:
+  native startup otherwise returns null from `ReflectionUtils.findMethod` and fails before registering the endpoint.
 
 ## JPA ticket registry
 

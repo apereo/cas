@@ -41,6 +41,11 @@ description: "Review and change Groovy scripting support (core/cas-server-core-s
 - Treat compiling a Groovy script as running it: AST transformations execute inside the compiler. Script
   text that comes from anywhere other than deployment configuration must be parsed
   (`ScriptingUtils.validateGroovyScript`), never compiled.
+- Groovy 6 `ConfigSlurper.parse(URL)` with GraalVM 25.4.4.1.1 runtime class loading can abort in the interpreter's
+  virtual dispatch of `Class.getConstructor`, even with reflection metadata for that method. An isolated native
+  reproducer confirmed it; constructing the script from Java and calling `parse(Script, URL)` merely exposed another
+  fatal dispatch error (`Deque.getLast` resolving to `LinkedList.contains`). Do not treat that overload change or
+  additional constructor hints as a complete fix for the native configuration-profile scenarios.
 - Puppeteer coverage lives in the 18 `ci/tests/puppeteer/scenarios/*groovy*` scenarios
   (`service-access-strategy-groovy`, `surrogate-login-groovy`, `mfa-provider-selection-trigger-groovy`,
   `interrupt-afterauthn-groovy`, `webflow-groovy-action`, …). None of them exercise concurrency, script
