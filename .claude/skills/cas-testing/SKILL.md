@@ -123,7 +123,9 @@ description: "Run and write tests in the CAS Gradle monorepo: testcas.sh categor
   `LoggerContext.start`) the context as it was, still on the default configuration, instead of making it wait. Tests
   that read appenders from their module's `log4j2-test.xml` and run concurrently must wait for the configuration
   first, as `SQSAppenderTests` does in a `@BeforeAll` (`await().until(() -> context.getConfiguration().getAppender(...)
-  != null)`); an appender that does network work in `start()` widens the window. A VM run must put the module's own
+  != null)`); an appender that does network work in `start()` widens the window. A test that reads appenders off a
+  logger waits for `context::isStarted` instead (`CasAppenderTests`): the configuration is assigned before the loggers
+  are updated, and the context is marked started only after both. A VM run must put the module's own
   `build/resources/test` first on the class path, or another module's `log4j2-test.xml` wins.
 - `MockWebServer` stops serving for good after a `SocketException` in its worker (`running = false`), while its port
   keeps accepting connections: later requests then hang until the client times out and retries (four 5 s attempts
