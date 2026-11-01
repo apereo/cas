@@ -3,6 +3,7 @@ package org.apereo.cas.nativex;
 import module java.base;
 import org.apereo.cas.ticket.registry.PulsarTicketRegistryMessageListener;
 import lombok.val;
+import org.apache.pulsar.client.impl.ConsumerImpl;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.aot.hint.RuntimeHints;
@@ -25,5 +26,8 @@ class PulsarTicketRegistryRuntimeHintsTests {
         val method = ReflectionUtils.findMethod(PulsarTicketRegistryMessageListener.class, "receive", String.class);
         assertNotNull(method);
         assertTrue(RuntimeHintsPredicates.reflection().onMethodInvocation(method).test(hints));
+        val configuration = ReflectionUtils.findField(ConsumerImpl.class, "conf");
+        assertNotNull(configuration);
+        assertTrue(RuntimeHintsPredicates.reflection().onFieldAccess(configuration).test(hints));
     }
 }

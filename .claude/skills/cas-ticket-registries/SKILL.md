@@ -182,6 +182,9 @@ description: "Review and change ticket registries: stateless (compact tickets), 
 - The Pulsar listener is constructed inside `ticketRegistryPulsarListenerConfigurer`, not registered as a Spring bean.
   Its `receive(String)` method therefore needs explicit invocation metadata in `PulsarTicketRegistryRuntimeHints`:
   native startup otherwise returns null from `ReflectionUtils.findMethod` and fails before registering the endpoint.
+- Spring Pulsar 2.0.8 also reads the inherited `ConsumerBase.conf` field through `ConsumerImpl` to determine the
+  subscription type when starting its listener container. Register field access on the declaring class; preserving
+  the CAS listener method alone gets past endpoint registration but still fails native consumer startup.
 
 ## JPA ticket registry
 
