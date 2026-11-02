@@ -63,6 +63,9 @@ class FileSystemResourceMetadataResolverTests extends BaseSamlIdPServicesTests {
         val service = new SamlRegisteredService();
         service.setMetadataLocation(METADATA_FILE.getCanonicalPath());
         assertTrue(metadataResolver.supports(service));
+        assertEquals(List.of(METADATA_FILE.getCanonicalFile()), metadataResolver.getMetadataSourceFiles(service));
+        service.setMetadataLocation("classpath:sample-sp.xml," + METADATA_FILE.getCanonicalPath());
+        assertEquals(List.of(METADATA_FILE.getCanonicalFile()), metadataResolver.getMetadataSourceFiles(service));
         assertFalse(metadataResolver.isAvailable(null));
         assertTrue(metadataResolver.resolve(null).isEmpty());
     }
@@ -119,5 +122,6 @@ class FileSystemResourceMetadataResolverTests extends BaseSamlIdPServicesTests {
         criteriaSet.add(new EntityIdCriterion("sp1:example"));
         criteriaSet.add(new EntityRoleCriterion(SPSSODescriptor.DEFAULT_ELEMENT_NAME));
         assertEquals(1, Iterables.size(directoryResolver.resolve(criteriaSet)));
+        assertEquals(List.of(new File(file)), metadataResolver.getMetadataSourceFiles(service));
     }
 }

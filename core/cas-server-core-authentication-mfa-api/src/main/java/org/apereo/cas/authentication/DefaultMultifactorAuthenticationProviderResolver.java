@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jspecify.annotations.Nullable;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -28,14 +29,14 @@ public class DefaultMultifactorAuthenticationProviderResolver implements Multifa
     }
 
     @Override
-    public Set<Event> resolveEventViaAttribute(final Principal principal,
-                                               final Map<String, List<Object>> attributesToExamine,
-                                               final Collection<String> attributeNames,
-                                               final RegisteredService registeredService,
-                                               final Service service,
-                                               final Optional<RequestContext> context,
-                                               final Collection<MultifactorAuthenticationProvider> providers,
-                                               final BiPredicate<String, MultifactorAuthenticationProvider> predicate) {
+    public @Nullable Set<Event> resolveEventViaAttribute(final Principal principal,
+                                                         final Map<String, List<Object>> attributesToExamine,
+                                                         final Collection<String> attributeNames,
+                                                         final RegisteredService registeredService,
+                                                         final Service service,
+                                                         final Optional<RequestContext> context,
+                                                         final Collection<MultifactorAuthenticationProvider> providers,
+                                                         final BiPredicate<String, MultifactorAuthenticationProvider> predicate) {
 
         LOGGER.debug("Attributes to examine are [{}]", attributesToExamine);
         if (providers == null || providers.isEmpty()) {

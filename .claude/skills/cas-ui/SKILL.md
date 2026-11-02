@@ -3,6 +3,7 @@ name: cas-ui
 description: "Change CAS views and presentation: Thymeleaf render path, theme resolution and theme sources, templates and escaping, the theme builder, account profile pages, .cas-hero cards, Palantir admin UI, previewing views without a running CAS. Use when touching templates, static CSS/JS, themes or Palantir."
 ---
 
+
 # CAS views, themes and Palantir
 
 ## View and presentation layer
@@ -86,6 +87,8 @@ description: "Change CAS views and presentation: Thymeleaf render path, theme re
 - The service wizard's fields are built on first open (`palantirWizardField` builders), after the Applications panel ran
   `initializePalantirWidgets`; `buildRegisteredServiceWizardFields` initializes the form's widgets afterwards, so dropdowns
   get the change callback that runs their `data-change-handler` functions. A bare `.selectmenu()` has no such callback.
+- The wizard's key/value fields (`createMappedInputField`) emit `java.util.TreeMap`, which sorts the keys; a map whose
+  order matters (MFA provider selection mappings, first match wins) passes `mapType: "java.util.LinkedHashMap"`.
 - Palantir date fields use the jQuery UI date picker: give the input the `jquery-datepicker` class and, for a format other
   than the picker's default, a `dateFormat` data value (`createInputField({data: {dateFormat: "yy-mm-dd"}})`; quoted text is
   literal, e.g. `yy-mm-dd'T'00:00:00` for a date-time field). `initializeDatePickers` attaches it and fires `input` on pick.
@@ -129,7 +132,7 @@ description: "Change CAS views and presentation: Thymeleaf render path, theme re
   shown client-side starts `hidden`. The twbs theme does not load `cas.css` and styles them in its own `cas.css`. Puppeteer
   uses `#drawerButton`; `#drawerCloseButton` and `#cas-notifications-menu` are wired in `material.js`.
 
-## CAS protocol (v1/v2/v3 + SAML 1.1) review discipline
+## Theme builder, theme properties and view previews
 
 - Theme builder (`fragments/themebuilder.html`, `static/js/theme-builder.js`, `static/css/theme-builder.css`): on when the
   theme property `cas.theme-builder.enabled` is true (default). Its property list is `#cas.themeBuilder`
@@ -170,9 +173,6 @@ description: "Change CAS views and presentation: Thymeleaf render path, theme re
 - Random values in the UI (passwords, client secrets) come from `crypto.getRandomValues` with rejection sampling, never
   `Math.random()`. Page-level CSS tokens (`--acct-*`, light `--palantir-*`) derive from `--cas-ui-*` / `--cas-theme-*` so the
   theme builder and `custom.css` reach them.
-
-## FIDO2 WebAuthn / passkeys review discipline
-
 - Screenshots of themed views without a running CAS: stage the template, `cas.css`, logo and background via `build/`,
   install `normalize.css`, `bootstrap` (grid), `material-components-web`, `@mdi/font` from npm at the versions in
   `libs.versions.toml`, rebuild the layout shell (header, `.bgimage` main, footer) and capture with Playwright.

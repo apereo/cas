@@ -3,9 +3,10 @@ name: cas-build-ci
 description: "Gradle build settings (configuration cache, Isolated Projects, build cache, test-category discovery) and the GitHub Actions workflows (tests.yml coverage job, setup-gradle caching, daemon reuse, CodeQL). Use when changing build logic under buildSrc or gradle/, the root Gradle settings, or anything under .github/workflows or ci/."
 ---
 
+
 # CAS build and CI workflows
 
-## Workflows that matter here
+## Gradle build settings
 
 - Gradle 9.8.0 enables build caching, the configuration cache, parallel execution and Isolated Projects here.
   Isolated Projects configures every project on a cache miss and ignores configuration on demand. Compare representative
@@ -17,7 +18,7 @@ description: "Gradle build settings (configuration cache, Isolated Projects, bui
   Use `--no-isolated-projects` for the affected IDE invocation until that integration supports Isolated Projects; keep
   configuration caching enabled and do not disable Isolated Projects globally to hide an IDE-only violation.
 
-## Practical boundaries
+## GitHub Actions workflows
 
 - Unit-test matrix jobs (`tests.yml`) record JaCoCo data only (`testcas.sh --with-coverage` only turns on the agent) and upload the `.exec` files; the single `coverage` job builds `jacocoRootReport` and does every Sonar/Codecov/Coveralls/Codacy upload. Do not move `jacocoRootReport` or `sonar` back into the matrix: the root report compiles all ~430 projects and Sonar re-analyses the whole code base, which is what made each category job 17 minutes instead of 7.
 - Every `gradle/actions/setup-gradle` step sets `gradle-home-cache-excludes: caches/build-cache-1` and

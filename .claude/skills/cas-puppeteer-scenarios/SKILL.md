@@ -3,15 +3,17 @@ name: cas-puppeteer-scenarios
 description: "Write, fix and review the end-to-end puppeteer scenarios under ci/tests/puppeteer: run.sh behavior, init/bootstrap scripts, script.json properties and variations, storage-backend scenarios (JPA, Redis, Mongo, DynamoDB, LDAP, REST, localstack), cas.js helpers, actuator coverage and the CI retry rules. Use when touching ci/tests/puppeteer or ci/tests/**/run-*.sh, or cross-checking a change against its scenarios."
 ---
 
+
 # CAS puppeteer scenarios
 
-## Puppeteer scenario init scripts
+## run.sh, init scripts and writing scenarios
 
 - `ci/tests/puppeteer/run.sh` runs a scenario's `initScript` entries with `eval "source ${script}"`, so they execute in the runner's own shell. An `exit` on the success path therefore terminates the whole scenario run, which looks like the scenario dying silently right after the init script's last line of output. Let a successful init script fall off the end, and reserve `exit 1` for the failure path, which is what that exit is there for. `ci/tests/ldap/run-ad-server.sh` still carries an `exit 0` early return for the already-running case and has the same hazard.
 - Init scripts are sourced, so `set -e`, `set -u` or `pipefail` in one would stay on for the rest of `run.sh`; 17 scenarios source such a script, and a leaked `set -e` made a failing test exit `run.sh` at its first attempt with code 1 (whole-script retry) instead of 5 after its in-process attempts. `run.sh` turns those options off after each init script, so do not rely on them persisting.
 - Prefer polling the service's own port over a container health check, and dump `docker compose logs` on the failure path: an unhealthy container tells you nothing, while the service's logs say why it would not start.
 - In CI, `run.sh` launches the Gradle build (`bootWar`, or `bootJar` for starter scenarios; native keeps `build` + `nativeCompile`) in the background and runs npm install, ESLint, bootstrap and init scripts while it builds, waiting on the build process only before launching the CAS instance that needs it. Init and bootstrap scripts must therefore never depend on the built artifact, and a fixed `sleep` in them now runs while the build competes for CPU, so poll instead. `PUPPETEER_BUILD_OVERLAP=false` restores the sequential order. `PUPPETEER_BUILD_CTR` is the build timeout in minutes, measured from launch.
 - `run.sh` lints the scenario before running it and stops on any ESLint error. Page globals used inside `page.evaluate` or `page.waitForFunction` callbacks (`$`, `ace`, Palantir classes) must be named in the script's `/* global ... */` header, or `no-undef` fails the job; run `npx eslint scenarios/<name>/script.js` from `ci/tests/puppeteer` before handing a scenario off.
+- Drive jQuery UI select menus in dialogs through the widget (`selectmenu("open")`, then the `menuWidget()`'s `menu("focus", null, item)` and `menu("select", $.Event("click", {target}))`), not with a coordinate click on the item, which misses when the dialog scrolls; then wait for the result with `page.waitForFunction` rather than asserting at once.
 - A container answering HTTP is not a container ready for setup calls. Apache Syncope's Tomcat answers `/syncope/` several seconds before its content loader populates the empty Master domain, and admin REST calls made in that window fail with `AuthorizationDeniedException` (seen once the build overlapped the init scripts and slowed startup). `ci/tests/syncope/run-syncope-server.sh` therefore waits for `Started SyncopeCoreApplication` in the container log; readiness waits in other init scripts should likewise key off the application's own started signal, bounded, with `exit 1` on timeout.
 - Scenario matrix jobs in `functional-tests.yml` restore the Gradle User Home with `cache-read-only: true` and do not set `cache: 'gradle'` on `setup-java`; saving from every one of the ~560 jobs cost ~12 s each and churned the Actions cache, and the two actions caching the same directory conflict.
 - The matrix jobs cache the Node.js install under `${{ runner.tool_cache }}/node/<NODE_VERSION_REQUIRED>` with a key that is that exact version, restored before `setup-node` and saved only from the default branch on a miss. A version change in `NODE_CURRENT` or a scenario's `requirements.nodejs` is a new key, so `setup-node` downloads the instructed version; keep those values exact versions (a range would never match the cached directory) and do not add `check-latest`.
@@ -37,6 +39,17 @@ description: "Write, fix and review the end-to-end puppeteer scenarios under ci/
 - `cas.newPage(browser)` returns the browser's first tab when one exists; it opens a new one only with `cas.newPage(browser, true)`. A helper that takes a page, intercepts its requests and closes it must force a new page, or it closes the scenario's main page and later calls fail with "Attempted to use detached Frame" (`saml2-idp-login-acs-signed`).
 - Before writing a negative assertion, read the server code for the exact error. Each token-endpoint failure surfaces differently: device code reuse → `access_denied` (`InvalidOAuth20DeviceTokenException`), a mismatched ST service → `INVALID_SERVICE` and the ticket is consumed. Where the specification names the error (CIBA Core §11: `authorization_pending`, `invalid_grant`), the scenario asserts the specification even when the current code differs, and the hand-off says so.
 - `from` in actuator and ticket registry queries (`ssoSessions?from=`, `TicketRegistryStreamCriteria`) is a 0-based offset in every registry. A scenario that deletes all SSO sessions passes `from=0` (or omits it); `from=1` leaves the first session alive, which only shows once that session outlives the scenario's other timeouts, such as a remember-me TGT in a browser profile that later browsers share.
+- In CI, `cas.prepareChromium` unzips the Chromium profile only when it is missing, so the in-process attempts of a
+  script share one profile and a retry starts with the cookies the failed attempt left: the login form is gone and
+  `cas.loginWith` times out on `#username`. Sign in only when the form is there
+  (`if (await cas.isVisible(page, "#username"))`, as `palantir-login` does), or the first failure hides itself behind
+  three identical login timeouts.
+- X.509 scenarios present the client certificate from their own folder (`trustStoreCertificateFile` /
+  `trustStorePrivateKeyFile` in `script.json`): their `init.sh` re-signs that `cert.pem` and imports it into the
+  scenario's `truststore.jks`. `x509-login-passwordless` presented `x509-login`'s certificate, trusted only because it
+  shares the subject and key, and every handshake failed once the runners moved to Ubuntu 26.04. A failed handshake in
+  the `request`-based interception shows up as `ERR_CONNECTION_REFUSED`, and `cas.logr` logs only its first argument,
+  so put the error in the message.
 - In CI, `run.sh` bounds each script attempt with `PUPPETEER_SCRIPT_TIMEOUT` (420 seconds; 0 locally, meaning no limit). A script whose steps all finish but whose node process never exits then fails that attempt and is retried, instead of running into the 20 minute job timeout.
 - AOT training runs extract the built artifact with `-Djarmode=tools extract` and launch what it produces. Since Spring Boot
   4.2 (gh-51372) extracting a war writes `cas/cas.jar` (root web content moved to `META-INF/resources/`), no longer
@@ -210,6 +223,7 @@ description: "Write, fix and review the end-to-end puppeteer scenarios under ci/
 - A SAML2 metadata module with `SAMLIdentityProviderMetadata` on replaces the file-system IdP metadata beans even when
   its own IdP metadata is off; scenarios that keep IdP metadata on disk switch it off with
   `CasFeatureModule.SAMLIdentityProviderMetadata.<module>.enabled=false`.
+- One puppeteer scenario can cover several storage backends: put every backend module in `dependencies`, list the init scripts comma-separated in `initScript`, and give each backend a `variations` entry that turns the others off with `--CasFeatureModule.<Feature>.<module>.enabled=false` (each backend auto-configuration carries `@ConditionalOnFeatureEnabled`). `SCENARIO_VARIATION` holds the variation name. `mfa-gauth-login-encrypted-stores` does this for GAuth on JPA and Redis, with encryption on.
 
 ## Actuator endpoint coverage in scenarios
 
@@ -224,7 +238,3 @@ description: "Write, fix and review the end-to-end puppeteer scenarios under ci/
   from starting without Google credentials (exit code 4 in `actuator-endpoint-roles`).
 - `qrauthn-login` logs in over a STOMP callback; `connectAndLogin` returns a promise that settles when that
   callback's assertions finish, and the browser is closed only after it, or the assertions hit a detached frame.
-
-## Google Authenticator credential repositories (all backends)
-
-- One puppeteer scenario can cover several storage backends: put every backend module in `dependencies`, list the init scripts comma-separated in `initScript`, and give each backend a `variations` entry that turns the others off with `--CasFeatureModule.<Feature>.<module>.enabled=false` (each backend auto-configuration carries `@ConditionalOnFeatureEnabled`). `SCENARIO_VARIATION` holds the variation name. `mfa-gauth-login-encrypted-stores` does this for GAuth on JPA and Redis, with encryption on.

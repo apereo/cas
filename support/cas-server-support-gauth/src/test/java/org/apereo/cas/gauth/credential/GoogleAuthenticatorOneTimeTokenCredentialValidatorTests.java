@@ -70,6 +70,24 @@ class GoogleAuthenticatorOneTimeTokenCredentialValidatorTests {
     }
 
     @Test
+    void verifyScratchCodesComparedByExactValue() throws Throwable {
+        val acct = getOneTimeTokenAccount(new ArrayList<>(List.<Number>of(
+            new BigInteger("12345678901234567890123456789012345678" + "0".repeat(87)),
+            BigInteger.ONE.shiftLeft(64).add(BigInteger.valueOf(48)),
+            1.2345678901234567E124,
+            74125896)));
+        acct.setUsername(UUID.randomUUID().toString());
+        googleAuthenticatorAccountRegistry.save(acct);
+        val authentication = CoreAuthenticationTestUtils.getAuthentication(acct.getUsername());
+
+        for (val token : List.of("0", "000000", "48", String.valueOf(Integer.MAX_VALUE))) {
+            assertNull(validator.validate(authentication, new GoogleAuthenticatorTokenCredential(token, acct.getId())), token);
+        }
+        assertNotNull(validator.validate(authentication, new GoogleAuthenticatorTokenCredential("74125896", acct.getId())));
+        assertEquals(3, googleAuthenticatorAccountRegistry.get(acct.getId()).getScratchCodes().size());
+    }
+
+    @Test
     void verifyStore() {
         val token = new GoogleAuthenticatorToken(632435, "casuser");
         assertDoesNotThrow(() -> validator.store(token));

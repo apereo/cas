@@ -18,6 +18,6 @@
     "--cas.authn.x509.subject-alt-name.alternate-principal-attribute=subjectDn"
   ],
   "initScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/init.sh",
-  "trustStoreCertificateFile": "./ci/tests/puppeteer/scenarios/x509-login/cert.pem",
-  "trustStorePrivateKeyFile": "./ci/tests/puppeteer/scenarios/x509-login/key.pem"
+  "trustStoreCertificateFile": "./ci/tests/puppeteer/scenarios/x509-login-passwordless/cert.pem",
+  "trustStorePrivateKeyFile": "./ci/tests/puppeteer/scenarios/x509-login-passwordless/key.pem"
 }

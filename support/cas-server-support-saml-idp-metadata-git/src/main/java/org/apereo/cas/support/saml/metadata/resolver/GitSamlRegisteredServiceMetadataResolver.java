@@ -5,6 +5,7 @@ import org.apereo.cas.audit.AuditActionResolvers;
 import org.apereo.cas.audit.AuditResourceResolvers;
 import org.apereo.cas.audit.AuditableActions;
 import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
+import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.git.GitRepository;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
@@ -12,6 +13,7 @@ import org.apereo.cas.support.saml.services.idp.metadata.SamlMetadataDocument;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.resolver.BaseSamlRegisteredServiceMetadataResolver;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.resolver.SamlRegisteredServiceMetadataManager;
 import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.util.concurrent.CasReentrantLock;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import net.shibboleth.shared.resolver.CriteriaSet;
@@ -37,6 +39,12 @@ public class GitSamlRegisteredServiceMetadataResolver extends BaseSamlRegistered
 
     private final GitRepository gitRepository;
 
+    private final CasReentrantLock pullLock = new CasReentrantLock();
+
+    private final Map<String, IndexedFile> entityIdIndex = new ConcurrentHashMap<>();
+
+    private volatile Instant lastPullInstant = Instant.EPOCH;
+
     public GitSamlRegisteredServiceMetadataResolver(final SamlIdPProperties samlIdPProperties,
                                                     final OpenSamlConfigBean configBean,
                                                     final GitRepository gitRepository) {
@@ -51,9 +59,15 @@ public class GitSamlRegisteredServiceMetadataResolver extends BaseSamlRegistered
     @Override
     public Collection<? extends MetadataResolver> resolve(final SamlRegisteredService service,
                                                           final CriteriaSet criteriaSet) {
-        return load()
+        pullIfNecessary();
+        val metadataFiles = listMetadataFiles();
+        entityIdIndex.keySet().retainAll(metadataFiles.stream().map(File::getAbsolutePath).collect(Collectors.toSet()));
+        val entityId = getEntityIdFromCriteriaSet(criteriaSet);
+        return metadataFiles
             .stream()
-            .filter(document -> matchesEntityIdCriteria(document, criteriaSet))
+            .filter(file -> entityId.map(id -> id.equals(getEntityIdOf(file))).orElse(Boolean.TRUE))
+            .map(GitSamlRegisteredServiceMetadataResolver::parseFileIntoSamlMetadataDocument)
+            .filter(Objects::nonNull)
             .map(doc -> buildMetadataResolverFrom(service, doc))
             .filter(Objects::nonNull)
             .collect(Collectors.toList());
@@ -78,14 +92,8 @@ public class GitSamlRegisteredServiceMetadataResolver extends BaseSamlRegistered
     @Override
     public List<SamlMetadataDocument> load() {
         try {
-            if (gitRepository.pull()) {
-                LOGGER.debug("Successfully pulled metadata changes from the remote repository");
-            } else {
-                LOGGER.warn("Unable to pull changes from the remote repository. Metadata files may be stale.");
-            }
-            val repoDirectory = getMetadataDirectory();
-            val metadataFiles = FileUtils.listFiles(repoDirectory, new String[]{"xml"}, false);
-            return metadataFiles
+            pullIfNecessary();
+            return listMetadataFiles()
                 .stream()
                 .map(GitSamlRegisteredServiceMetadataResolver::parseFileIntoSamlMetadataDocument)
                 .filter(Objects::nonNull)
@@ -167,6 +175,59 @@ public class GitSamlRegisteredServiceMetadataResolver extends BaseSamlRegistered
     @Override
     public boolean isAvailable(final SamlRegisteredService service) {
         return supports(service);
+    }
+
+    /**
+     * Pulls changes from the remote repository at most once per the schedule's repeat interval, and shares that pull
+     * with every load that asks for it in the meantime. A pull is a network round trip, and loads happen on cache
+     * misses, which entity-scoped lookups make frequent. The first load always pulls, so metadata committed to the
+     * remote before it is picked up without waiting for the scheduled pull.
+     */
+    protected void pullIfNecessary() {
+        val schedule = samlIdPProperties.getMetadata().getGit().getSchedule();
+        val interval = Beans.newDuration(StringUtils.defaultIfBlank(schedule.getRepeatInterval(), "PT2M"));
+        if (isPullDue(interval)) {
+            pullLock.execute(() -> {
+                if (isPullDue(interval)) {
+                    try {
+                        if (gitRepository.pull()) {
+                            LOGGER.debug("Successfully pulled metadata changes from the remote repository");
+                        } else {
+                            LOGGER.warn("Unable to pull changes from the remote repository. Metadata files may be stale.");
+                        }
+                    } catch (final Exception e) {
+                        LoggingUtils.error(LOGGER, e);
+                    } finally {
+                        lastPullInstant = Instant.now(Clock.systemUTC());
+                    }
+                }
+            });
+        }
+    }
+
+    /**
+     * Gets the entity id of the metadata document kept in a file, parsing the document only when the file is new or
+     * has changed since it was last seen.
+     *
+     * @param metadataFile the metadata file
+     * @return the entity id, or null when it cannot be determined
+     */
+    protected @Nullable String getEntityIdOf(final File metadataFile) {
+        val key = metadataFile.getAbsolutePath();
+        val size = metadataFile.length();
+        val lastModified = metadataFile.lastModified();
+        val indexed = entityIdIndex.get(key);
+        if (indexed != null && indexed.size() == size && indexed.lastModified() == lastModified) {
+            return indexed.entityId();
+        }
+        val document = parseFileIntoSamlMetadataDocument(metadataFile);
+        val entityId = document != null ? prepareMetadataDocument(document, false).getEntityId() : null;
+        entityIdIndex.put(key, new IndexedFile(size, lastModified, entityId));
+        return entityId;
+    }
+
+    protected Collection<File> listMetadataFiles() {
+        return FileUtils.listFiles(getMetadataDirectory(), new String[]{"xml"}, false);
     }
 
     protected File getMetadataDirectory() {
@@ -256,5 +317,12 @@ public class GitSamlRegisteredServiceMetadataResolver extends BaseSamlRegistered
             LoggingUtils.error(LOGGER, e);
         }
         return null;
+    }
+
+    private boolean isPullDue(final Duration interval) {
+        return !Instant.now(Clock.systemUTC()).isBefore(lastPullInstant.plus(interval));
+    }
+
+    private record IndexedFile(long size, long lastModified, @Nullable String entityId) {
     }
 }

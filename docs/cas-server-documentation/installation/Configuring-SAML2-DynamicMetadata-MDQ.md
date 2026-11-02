@@ -28,4 +28,7 @@ MDQ may be configured using the below snippet as an example:
 ...where `{0}` serves as an entityID placeholder for which metadata is to be queried. The placeholder
 is dynamically processed and replaced by CAS at runtime. Multiple locations may be comma-separated.
 
+CAS keeps a backup of the metadata of each entity it has queried, and queries the server again with a conditional
+request based on the `ETag` of the previous answer. When the server cannot answer, the backup of that entity is used.
+
 {% include_cached casproperties.html properties="cas.authn.saml-idp.metadata.mdq" %}

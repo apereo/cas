@@ -2,7 +2,9 @@ package org.apereo.cas.support.saml.metadata.resolver;
 
 import module java.base;
 import org.apereo.cas.config.CasAmazonS3SamlMetadataAutoConfiguration;
+import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
 import org.apereo.cas.support.saml.BaseSamlIdPMetadataTests;
+import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlMetadataDocument;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.resolver.SamlRegisteredServiceMetadataResolver;
@@ -22,7 +24,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.ClassPathResource;
+import software.amazon.awssdk.core.ResponseInputStream;
+import software.amazon.awssdk.http.AbortableInputStream;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.GetObjectRequest;
+import software.amazon.awssdk.services.s3.model.GetObjectResponse;
+import software.amazon.awssdk.services.s3.model.HeadBucketRequest;
+import software.amazon.awssdk.services.s3.model.HeadBucketResponse;
+import software.amazon.awssdk.services.s3.model.HeadObjectRequest;
+import software.amazon.awssdk.services.s3.model.HeadObjectResponse;
+import software.amazon.awssdk.services.s3.model.ListObjectsV2Request;
+import software.amazon.awssdk.services.s3.model.ListObjectsV2Response;
+import software.amazon.awssdk.services.s3.model.S3Object;
+import software.amazon.awssdk.services.s3.paginators.ListObjectsV2Iterable;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * This is {@link AmazonS3SamlRegisteredServiceMetadataResolverTests}.
@@ -51,6 +67,10 @@ class AmazonS3SamlRegisteredServiceMetadataResolverTests {
     @Autowired
     @Qualifier("amazonS3SamlRegisteredServiceMetadataResolver")
     private SamlRegisteredServiceMetadataResolver resolver;
+
+    @Autowired
+    @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
+    private OpenSamlConfigBean openSamlConfigBean;
 
     @BeforeEach
     void setup() {
@@ -104,6 +124,50 @@ class AmazonS3SamlRegisteredServiceMetadataResolverTests {
         service.setMetadataLocation("awss3://");
         val resolvers = resolver.resolve(service, new CriteriaSet(new EntityIdCriterion(entityId)));
         assertEquals(1, resolvers.size());
+    }
+
+    @Test
+    void verifyListingIsPagedAndOnlyMatchesAreDownloaded() throws Throwable {
+        val entityId = "https://carmenwiki.osu.edu/shibboleth";
+        val metadata = IOUtils.toString(new ClassPathResource("sp-metadata.xml").getInputStream(), StandardCharsets.UTF_8);
+        val s3Client = mock(S3Client.class);
+        when(s3Client.headBucket(any(HeadBucketRequest.class))).thenReturn(HeadBucketResponse.builder().build());
+        when(s3Client.listObjectsV2Paginator(any(ListObjectsV2Request.class)))
+            .thenAnswer(invocation -> new ListObjectsV2Iterable(s3Client, invocation.getArgument(0)));
+        when(s3Client.listObjectsV2(any(ListObjectsV2Request.class))).thenAnswer(invocation -> {
+            val request = (ListObjectsV2Request) invocation.getArgument(0);
+            return request.continuationToken() == null
+                ? ListObjectsV2Response.builder().isTruncated(true).nextContinuationToken("page-2")
+                    .contents(S3Object.builder().key("other").eTag("etag-other").build()).build()
+                : ListObjectsV2Response.builder().isTruncated(false)
+                    .contents(S3Object.builder().key("carmenwiki").eTag("etag-carmenwiki").build()).build();
+        });
+        when(s3Client.headObject(any(HeadObjectRequest.class))).thenAnswer(invocation -> {
+            val request = (HeadObjectRequest) invocation.getArgument(0);
+            return HeadObjectResponse.builder()
+                .metadata(Map.of("entityid", "carmenwiki".equals(request.key()) ? entityId : "https://other.example.org"))
+                .build();
+        });
+        when(s3Client.getObject(any(GetObjectRequest.class))).thenAnswer(_ -> new ResponseInputStream<>(
+            GetObjectResponse.builder().metadata(Map.of("entityid", entityId)).build(),
+            AbortableInputStream.create(new ByteArrayInputStream(metadata.getBytes(StandardCharsets.UTF_8)))));
+
+        val properties = new SamlIdPProperties();
+        properties.getMetadata().getAmazonS3().setBucketName("paged-bucket");
+        val metadataResolver = new AmazonS3SamlRegisteredServiceMetadataResolver(properties, openSamlConfigBean, s3Client);
+        val service = new SamlRegisteredService();
+        service.setName("SAML Service");
+        service.setServiceId("^https://.+$");
+        service.setMetadataLocation("awss3://");
+        val criteria = new CriteriaSet(new EntityIdCriterion(entityId));
+        assertEquals(1, metadataResolver.resolve(service, criteria).size());
+        assertEquals(1, metadataResolver.resolve(service, criteria).size());
+
+        verify(s3Client, times(4)).listObjectsV2(any(ListObjectsV2Request.class));
+        verify(s3Client, times(2)).headObject(any(HeadObjectRequest.class));
+        verify(s3Client, times(2)).getObject(argThat((GetObjectRequest request) -> "carmenwiki".equals(request.key())));
+        verify(s3Client, never()).getObject(argThat((GetObjectRequest request) -> "other".equals(request.key())));
+        verify(s3Client, never()).listBuckets();
     }
 
     @Test
