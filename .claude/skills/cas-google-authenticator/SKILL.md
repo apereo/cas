@@ -25,6 +25,8 @@ description: "Review and change Google Authenticator (GAuth) MFA credential repo
 - Active Directory keeps a single value of `description` on user objects. The LDAP GAuth repository therefore writes all of an entry's accounts as one JSON array value; writing one value per account loses all but one device on AD.
 - A webflow action that validates a GAuth token and then updates the device must read the device again after validation: the validator updates its own copy (used scratch code, last-used time), and updating an older copy undoes that.
 
+- Scratch codes are matched by exact value (`GoogleAuthenticatorOneTimeTokenCredentialValidator.isScratchCode`), never through `intValue()`: encrypted codes are Jasypt `BigInteger`s of about 125 digits whose last 4 bytes are the encrypted length (48), so a truncated comparison lets a damaged ciphertext match `0` or `48`. `BaseOneTimeTokenCredentialRepository.decode` drops codes that do not decrypt. The REST repository reads responses with Jackson directly; `JsonValue.readHjson` holds numbers as doubles and rounded every encrypted code.
+
 ## Google Authenticator Redis repository
 
 - Accounts live twice: the record at `CAS_TOKEN_ACCOUNT:<id>` and a copy as a member of the set `CAS_TOKEN_PRINCIPAL:<username>`. `get(username)`, `count(username)` and OTP validation read the set, not the record, so a delete that removes only the record leaves a device that is still listed and still validates.

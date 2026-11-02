@@ -24,4 +24,15 @@ const cas = require("../../cas.js");
     await cas.assertVisibility(page, "#imageQRCode");
     await cas.assertVisibility(page, "#confirm");
     await cas.closeBrowser(browser);
+
+    await cas.logb("Provider selection mappings pick the provider whose pattern matches the attribute value");
+    const mappedBrowser = await cas.newBrowser(cas.browserOptions());
+    const mappedPage = await cas.newPage(mappedBrowser);
+    await cas.gotoLogin(mappedPage, "https://localhost:9859/anything/mapped");
+    await cas.loginWith(mappedPage);
+    await cas.sleep(2000);
+    await cas.assertInvisibility(mappedPage, "#mfa-webauthn");
+    await cas.assertVisibility(mappedPage, "#imageQRCode");
+    await cas.assertVisibility(mappedPage, "#confirm");
+    await cas.closeBrowser(mappedBrowser);
 })();

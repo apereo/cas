@@ -3,9 +3,10 @@ name: cas-docs-site
 description: "Edit the CAS documentation site (docs/cas-server-documentation, Jekyll plugins, site.js/site.css, ci/docs/publish.sh, the docs data generator) and release notes: page titles and descriptions, setting links, settings rules, release-notes front matter and tags, Quick Start wizard, sidebar, mobile layout. Use when editing any documentation page or release_notes/RC*.md."
 ---
 
+
 # CAS documentation site
 
-## Practical boundaries
+## Documentation site and release notes
 
 - Documentation pages on gh-pages are pre-rendered per version, but they load the stylesheet and script from the shared site root, and every publish overwrites those root files. The current design ships as `stylesheets/site.css`, `stylesheets/site-print.css` and `javascripts/site.js`; the root `stylesheet.css`, `print.css` and `main.js` belong to the released versions' old markup. A redesign that changes page markup must use new asset names, never replace the ones older versions link.
 - The documentation data generator (`docs/cas-server-documentation-processor`) runs as `java @build/casdocsgen.args ...`, an argument file written by its `docsGeneratorArguments` task from `sourceSets.main.runtimeClasspath`; `publish.sh` no longer builds the ~1 GB `casdocsgen.jar` boot jar. Its Gradle run adds `-DskipErrorProneCompiler=true` (override with `DOCS_GENERATOR_GRADLE_OPTIONS`, an empty value restores Error Prone). It still needs every CAS module compiled: actuators, feature toggles and shell commands are found by ClassGraph scans of the runtime classpath, and third-party settings come from the dependencies' metadata. Those lookups go through `CasDocumentationClassIndex`, one ClassGraph scan of `org` shared by the exporters; add new class lookups there rather than calling `ReflectionUtils`, which scans the whole classpath on every call.
@@ -77,7 +78,4 @@ description: "Edit the CAS documentation site (docs/cas-server-documentation, Je
   monospace stack. Do not add font families or hotlink images from third-party hosts; keep images under `images/`.
 - Large topics are split into one page per concern with a sidebar submenu (see `authorization/Heimdall-Authorization-*.md`
   and `multitenancy/Multitenancy-*.md`); when moving a section, update cross-page anchors and links in release notes.
-
-## FIDO2 WebAuthn / passkeys review discipline
-
 - JSON examples pasted into the documentation are pretty-printed (one member per line, two-space indent), never minified.

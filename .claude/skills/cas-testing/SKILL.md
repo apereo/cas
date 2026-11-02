@@ -3,9 +3,10 @@ name: cas-testing
 description: "Run and write tests in the CAS Gradle monorepo: testcas.sh categories, JUnit tags, single-module test tasks, fast compile checks, how tests stay correct under JUnit parallel execution (shared registries, ports, pac4j clients, negative assertions), test authentications and principal attributes, and ticket-granting cookies in MockMvc tests. Use when running tests, choosing a test category, writing or fixing a *Tests.java class, or chasing a flaky test."
 ---
 
+
 # Running and writing CAS tests
 
-## Workflows that matter here
+## Running tests
 
 - List supported test buckets:
   ```bash
@@ -103,24 +104,36 @@ description: "Run and write tests in the CAS Gradle monorepo: testcas.sh categor
   with the MockMvc request. A test that expects SSO but sees the login page has usually hit this; do not "fix" it by
   asserting the login redirect.
 
-## Puppeteer scenario init scripts
+## Mocks, test servers and compilation
 
 - Mockito: never call another mock inside `thenReturn(...)` (`thenReturn(accessToken.getAuthentication())` with a mocked
   token is an UnfinishedStubbingException); read the values into locals first.
-
-## Queue-backed ticket registries (Kafka, AMQP, Pulsar, GCP Pub/Sub)
-
 - MariaDB runs on host port 3307 (`ci/tests/mariadb/run-mariadb-server.sh` maps `3307:3306`), MySQL on 3306, so `testJDBC`
   can run both. Every MariaDB test class uses `jdbc:mariadb://localhost:3307` with `@EnabledIfListeningOnPort(port = 3307)`,
   as do the `mfa-gauth-login-encrypted`, `mfa-webauthn-register-logout-login` and `mfa-yubikey-storage` scenarios (their
   `dockerExec` calls run inside the container and are unaffected). A MariaDB test pointed at 3306 reaches MySQL and fails
   with `caching_sha2_password ... sslMode=trust`.
-
-## Google Authenticator credential repositories (all backends)
-
+- Redis tests can run in the VM against `fakeredis` (`pip install --user fakeredis`; `TcpFakeServer(("127.0.0.1", 6379))`),
+  started in the same `device_bash` call as `(timeout 170 python3 fr.py &)`: a detached server keeps the call open until
+  the tool times out, and a server started in an earlier call is gone. Pass `-Djdk.net.hosts.file` mapping the VM's
+  host name to 127.0.0.1, or every local host name lookup waits 40 s, and run from class directories copied off the
+  mount, or Spring context startup crawls on class loading.
 - `MockWebServer.requestLineConsumer` exposes the request line, for asserting the HTTP method a client sends.
+- Log4j hands a thread that asks for the logging context while another thread is still starting it (`tryLock` in
+  `LoggerContext.start`) the context as it was, still on the default configuration, instead of making it wait. Tests
+  that read appenders from their module's `log4j2-test.xml` and run concurrently must wait for the configuration
+  first, as `SQSAppenderTests` does in a `@BeforeAll` (`await().until(() -> context.getConfiguration().getAppender(...)
+  != null)`); an appender that does network work in `start()` widens the window. A test that reads appenders off a
+  logger waits for `context::isStarted` instead (`CasAppenderTests`): the configuration is assigned before the loggers
+  are updated, and the context is marked started only after both. A VM run must put the module's own
+  `build/resources/test` first on the class path, or another module's `log4j2-test.xml` wins.
+- `MockWebServer` stops serving for good after a `SocketException` in its worker (`running = false`), while its port
+  keeps accepting connections: later requests then hang until the client times out and retries (four 5 s attempts
+  through `HttpUtils`). A response the client is entitled to abandon, such as a `304` the server still sends a body with,
+  can raise that exception on macOS but not on Linux. Answer `304` with an empty body (`responseBody("")` from the
+  `headersConsumer`) and make it the last request a test sends to that server.
 - `MockRequestContext.create(...)` throws `Exception`; a test method that calls it must declare `throws Throwable`.
-
-## Hazelcast ticket registry
-
 - The Gradle build runs Error Prone with warnings as errors on main and test sources (e.g. `CanonicalDuration`: `Duration.ofMinutes(-1)`, not `ofSeconds(-60)`); compile-check tests with Error Prone too, not only main. NullAway reports the same pre-existing errors on `HazelcastTicketRegistry` before and after a change, so compare against the old sources rather than expecting zero.
+- `Set.of(...)`/`Map.of(...)` iterate in an order that changes from one JVM run to the next. When the code under test
+  keeps that order (MFA providers of a service are collected into a `LinkedHashSet`, and the ranked selector picks the last
+  of equally ranked ones), give the test a `LinkedHashSet`/`LinkedHashMap`, or it passes and fails at random.

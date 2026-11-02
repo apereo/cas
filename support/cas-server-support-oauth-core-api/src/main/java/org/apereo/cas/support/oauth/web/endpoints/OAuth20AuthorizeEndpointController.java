@@ -3,8 +3,10 @@ package org.apereo.cas.support.oauth.web.endpoints;
 import module java.base;
 import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.authentication.Authentication;
+import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
 import org.apereo.cas.authentication.PreventedException;
+import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.support.oauth.OAuth20Constants;
@@ -17,6 +19,8 @@ import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.response.OAuth20AuthorizationRequest;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestContext;
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20AuthorizationResponseBuilder;
+import org.apereo.cas.ticket.TicketGrantingTicket;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.JsonUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.http.HttpRequestUtils;
@@ -133,6 +137,35 @@ public class OAuth20AuthorizeEndpointController<T extends OAuth20ConfigurationCo
         return handleRequest(request, response);
     }
 
+    /**
+     * Build the principal whose attributes the access strategy of the service evaluates. As when CAS grants service
+     * tickets, the attributes of the principal are merged with those of the CAS authentication: the authentication of
+     * the single sign-on session the profile was validated from, or the authentication attributes of the profile when
+     * that session is not found (stateless authentication). Strategies that look at authentication attributes such as
+     * {@code clientIpAddress} see them here as they do for CAS services. The attributes that the OAuth authentication
+     * records from request parameters, such as {@code state} or {@code nonce}, are left out, since the caller controls them.
+     *
+     * @param profile        the authenticated profile
+     * @param authentication the OAuth authentication built from the profile
+     * @return the principal
+     * @throws Throwable the throwable
+     */
+    protected Principal buildAccessStrategyPrincipal(final OAuth20UserProfile profile,
+                                                     final Authentication authentication)
+            throws Throwable {
+        val authenticationAttributes = Optional.ofNullable(profile.getAttribute(TicketGrantingTicket.class.getName()))
+            .map(ticketId -> getConfigurationContext().getTicketRegistry().getTicket(ticketId.toString()))
+            .filter(TicketGrantingTicket.class::isInstance)
+            .map(TicketGrantingTicket.class::cast)
+            .map(TicketGrantingTicket::getRoot)
+            .map(TicketGrantingTicket::getAuthentication)
+            .map(Authentication::getAttributes)
+            .orElseGet(() -> CollectionUtils.toMultiValuedMap(profile.getAuthenticationAttributes()));
+        val principal = authentication.getPrincipal();
+        val attributes = CoreAuthenticationUtils.mergeAttributes(principal.getAttributes(), authenticationAttributes);
+        return getConfigurationContext().getPrincipalFactory().createPrincipal(principal.getId(), attributes);
+    }
+
     protected @Nullable ModelAndView redirectToCallbackRedirectUrl(final OAuthRegisteredService registeredService,
                                                                    final HttpServletRequest request,
                                                                    final HttpServletResponse response)
@@ -150,7 +183,7 @@ public class OAuth20AuthorizeEndpointController<T extends OAuth20ConfigurationCo
             val audit = AuditableContext.builder()
                 .service(service)
                 .registeredService(registeredService)
-                .principal(authentication.getPrincipal())
+                .principal(buildAccessStrategyPrincipal(profile, authentication))
                 .build();
             val accessResult = getConfigurationContext().getRegisteredServiceAccessStrategyEnforcer().execute(audit);
             accessResult.throwExceptionIfNeeded();

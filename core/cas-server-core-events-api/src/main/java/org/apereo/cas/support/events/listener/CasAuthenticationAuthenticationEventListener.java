@@ -54,7 +54,7 @@ public class CasAuthenticationAuthenticationEventListener implements CasAuthenti
         dto.setType(event.getClass().getCanonicalName());
         dto.putTimestamp(event.getTimestamp());
         val dt = DateTimeUtils.zonedDateTimeOf(Instant.ofEpochMilli(event.getTimestamp()));
-        dto.setCreationTime(dt.toInstant());
+        dto.setCreationTime(Objects.requireNonNull(dt).toInstant());
         val clientInfo = event.getClientInfo();
         FunctionUtils.doIfNotNull(clientInfo, _ -> {
             dto.putClientIpAddress(clientInfo.getClientIpAddress());

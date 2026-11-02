@@ -34,6 +34,11 @@ The metadata location in the registration record above needs to be specified as 
 SAML metadata for registered service provider must be fetched from Redis data sources defined in CAS configuration. 
 </p></div>
 
+Next to the metadata documents, CAS keeps an index of the documents of each entity, so that the metadata of a service
+provider is found without scanning every key in Redis. Documents stored by earlier CAS versions are indexed once, the first
+time a service provider is looked up. Documents should therefore be managed through CAS, such as with the actuator endpoint
+below, rather than written to Redis directly.
+
 {% include_cached casproperties.html properties="cas.authn.saml-idp.metadata.redis" %}
 
 ## Actuator Endpoints

@@ -1,0 +1,17 @@
+{
+  "@class": "org.apereo.cas.services.CasRegisteredService",
+  "serviceId": "^https://localhost:9859/anything/mapped.*",
+  "name": "Mapped",
+  "id": 2,
+  "description": "Selects the provider from the attribute value",
+  "evaluationOrder": 1,
+  "multifactorPolicy": {
+    "@class": "org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy",
+    "principalAttributeNameTrigger": "memberof",
+    "multifactorProviderSelectionMappings": {
+      "@class": "java.util.LinkedHashMap",
+      "mfa-webauthn": "(?i)^faculty$",
+      "mfa-gauth": "(?i)^staff$"
+    }
+  }
+}

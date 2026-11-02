@@ -35,6 +35,10 @@ and picks the one whose entity id matches the service provider. A document may b
 such as `sp-metadata/SAMLService.xml`, optionally accompanied by its signing certificate in `sp-metadata/SAMLService.pem`.
 Documents that CAS stores itself, for example via the actuator endpoint below, are named `<id>-<name>.xml`.
 
+Loading metadata pulls changes from the repository at most once per the repeat interval of the pull schedule, which
+is controlled via CAS settings, in addition to the scheduled pull itself. Each document is read again only once its
+file changes.
+
 <div class="alert alert-info">:information_source: <strong>Metadata Location</strong><p>
 The metadata location in the registration record above needs to be specified as <code>git://</code> to signal to CAS that 
 SAML metadata for registered service provider must be fetched from Git repositories defined in CAS configuration. 

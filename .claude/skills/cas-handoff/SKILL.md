@@ -3,6 +3,7 @@ name: cas-handoff
 description: "Finish and hand off a change in the CAS repository: Checkstyle on changed Java files, no stale .git/index.lock, release-notes and puppeteer cross-checks, and the ready-to-use commit message. Use at the end of every task that changed files in cas-server, before reporting the work as done."
 ---
 
+
 # Handing off CAS work
 
 Run these steps, in order, before reporting the work as done. The rules behind them follow.
@@ -19,13 +20,13 @@ Run these steps, in order, before reporting the work as done. The rules behind t
 7. Check `ls .git/*.lock` and clear what is left.
 8. End with the commit message (rule below). Say clearly what was not run.
 
-## Test, concurrency, and hand-off expectations
+## Commit message
 
 - When the work is done, end the hand-off with a ready-to-use commit message covering only the uncommitted changes
   (`git --no-optional-locks status`): a conventional subject (`fix:`, `feat:`, ... as in `git log`) and a short body.
   The maintainer commits; do not commit yourself.
 
-## Environment limits
+## Git locks and Checkstyle
 
 - Leave no `.git/index.lock` behind. `git status` and `git diff` take that lock to refresh the index, and in a remote environment that cannot delete files the lock survives the command and blocks every subsequent git operation the maintainer runs. Read git state with `git --no-optional-locks status` / `git --no-optional-locks diff`, which never takes it, and before finishing check `ls .git/*.lock` and clear anything left. If deletion is refused, request it rather than leaving the repository wedged.
 - Maintainer: run Checkstyle on every changed Java file before handing work off, even without Gradle. Use the version in

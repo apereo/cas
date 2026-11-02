@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration.model.support.saml.idp.metadata;
 
 import module java.base;
+import org.apereo.cas.configuration.support.DurationCapable;
 import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
 import org.apereo.cas.configuration.support.RequiresModule;
 import lombok.Getter;
@@ -37,4 +38,14 @@ public class HttpSamlMetadataProperties implements Serializable {
      */
     @ExpressionLanguageCapable
     private String metadataBackupLocation;
+
+    /**
+     * How long a metadata backup file may go without being confirmed by its source
+     * before it is reported as stale. A download refreshes the backup, and so does an answer
+     * from the source that the metadata has not changed. CAS keeps falling back onto a stale backup
+     * when the source cannot be reached, but logs an error each time and flags the service
+     * in the health indicator and the metadata cache endpoint.
+     */
+    @DurationCapable
+    private String metadataBackupMaxAge = "P7D";
 }

@@ -13,6 +13,10 @@ async function redisKeys(pattern) {
     return output.length === 0 ? [] : output.split("\n");
 }
 
+async function entityIndexes() {
+    return (await redisKeys("SamlMetadataDocumentIndex:*")).filter((key) => !key.endsWith(":complete"));
+}
+
 async function metadataDocuments() {
     return JSON.parse(await cas.doRequest(MANAGER_URL, "GET", {"Accept": "application/json"}));
 }
@@ -25,6 +29,7 @@ async function metadataDocuments() {
     assert(documents.length === 1);
     assert(documents[0].name === "SimpleSAMLphp");
     assert(documents[0].entityId === ENTITY_ID);
+    assert((await entityIndexes()).length === 1);
 
     await cas.logg("The Redis metadata manager is listed, and documents can be fetched and replaced by id");
     const managers = JSON.parse(await cas.doRequest(MANAGERS_URL, "GET", {"Accept": "application/json"}));
@@ -62,6 +67,7 @@ async function metadataDocuments() {
         {"Content-Type": "application/x-www-form-urlencoded"}, 204);
     assert((await redisKeys("SamlMetadataDocument:*")).length === 0);
     assert((await metadataDocuments()).length === 0);
+    assert((await entityIndexes()).length === 0);
     assert((await redisKeys("SamlIdPMetadataDocument:*")).length > 0);
     await cas.removeDirectoryOrFile(path.join(__dirname, "/saml-md"));
 })();

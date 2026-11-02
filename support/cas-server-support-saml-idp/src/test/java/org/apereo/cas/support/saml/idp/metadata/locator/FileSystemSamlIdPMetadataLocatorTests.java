@@ -4,8 +4,10 @@ import module java.base;
 import org.apereo.cas.configuration.support.CasConfigurationJasyptCipherExecutor;
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
+import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.val;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
@@ -95,6 +97,33 @@ class FileSystemSamlIdPMetadataLocatorTests {
             service.setId(1000);
             service.setName("service");
             assertArtifacts(linkedMetadata, service, "service");
+        }
+
+        @Test
+        void verifyServicesWithoutOwnDocumentShareGlobalDocument() throws Throwable {
+            val metadata = directory.resolve("metadata");
+            writeArtifacts(metadata, "global");
+            writeArtifacts(metadata.resolve("own-2000"), "service");
+            val cache = Caffeine.newBuilder().maximumSize(100).expireAfterWrite(Duration.ofHours(1))
+                .<String, SamlIdPMetadataDocument>build();
+            val locator = new FileSystemSamlIdPMetadataLocator(CipherExecutor.noOpOfStringToString(),
+                metadata.toFile(), cache, mock(ConfigurableApplicationContext.class));
+
+            val globalDocument = locator.fetch(Optional.empty());
+            for (var i = 0; i < 150; i++) {
+                val service = new SamlRegisteredService();
+                service.setId(i);
+                service.setName("shared");
+                assertSame(globalDocument, locator.fetch(Optional.of(service)));
+            }
+            val ownService = new SamlRegisteredService();
+            ownService.setId(2000);
+            ownService.setName("own");
+            val ownDocument = locator.fetch(Optional.of(ownService));
+            assertEquals("service:idp-metadata.xml", ownDocument.getMetadata());
+            assertSame(ownDocument, locator.fetch(Optional.of(ownService)));
+            cache.cleanUp();
+            assertEquals(2, cache.estimatedSize());
         }
 
         private static void writeArtifacts(final Path location, final String prefix) throws IOException {

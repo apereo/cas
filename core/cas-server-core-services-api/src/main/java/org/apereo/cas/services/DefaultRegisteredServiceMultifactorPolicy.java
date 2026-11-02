@@ -51,4 +51,6 @@ public class DefaultRegisteredServiceMultifactorPolicy implements RegisteredServ
     private String script;
 
     private boolean bypassIfMissingPrincipalAttribute;
+
+    private Map<String, Serializable> multifactorProviderSelectionMappings = new LinkedHashMap<>();
 }

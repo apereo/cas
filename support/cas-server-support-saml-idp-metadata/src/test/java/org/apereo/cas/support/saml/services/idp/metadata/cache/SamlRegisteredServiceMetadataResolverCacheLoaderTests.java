@@ -98,7 +98,7 @@ class SamlRegisteredServiceMetadataResolverCacheLoaderTests extends BaseSamlIdPS
     }
 
     @Test
-    void verifyEmptyResolvers() {
+    void verifyEmptyResolvers() throws Throwable {
         val plan = new DefaultSamlRegisteredServiceMetadataResolutionPlan();
         val loader = new SamlRegisteredServiceMetadataResolverCacheLoader(openSamlConfigBean, httpClient, plan);
         val service = new SamlRegisteredService();
@@ -107,7 +107,15 @@ class SamlRegisteredServiceMetadataResolverCacheLoaderTests extends BaseSamlIdPS
         service.setServiceId("https://example.org/saml");
         service.setMetadataLocation("${#systemProperties['EMPTY_SP_REF']}");
         val key = new SamlRegisteredServiceCacheKey(service, new CriteriaSet());
-        assertThrows(SamlException.class, () -> loader.load(key));
+        val unsupported = assertThrows(SamlException.class, () -> loader.load(key));
+        assertTrue(unsupported.getMessage().contains("no metadata resolver supports this metadata location"));
+
+        val metadataResolver = mock(SamlRegisteredServiceMetadataResolver.class);
+        when(metadataResolver.supports(any())).thenReturn(Boolean.TRUE);
+        when(metadataResolver.getName()).thenReturn("EmptyMetadataResolver");
+        when(metadataResolver.resolve(any(SamlRegisteredService.class), any(CriteriaSet.class))).thenAnswer(_ -> List.of());
+        val empty = assertThrows(SamlException.class, () -> buildCacheLoader(metadataResolver).load(key));
+        assertTrue(empty.getMessage().contains("[EmptyMetadataResolver] produced no metadata"));
     }
 
     private SamlRegisteredServiceMetadataResolverCacheLoader buildCacheLoader() throws Throwable {

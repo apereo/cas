@@ -5,6 +5,7 @@ import org.apereo.cas.AbstractOAuth20Tests;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.authentication.metadata.ClientInfoAuthenticationMetaDataPopulator;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
@@ -269,7 +270,7 @@ class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Tests {
     void verifyServiceAccessDenied() throws Throwable {
         val service = getOAuthRegisteredService(REDIRECT_URI, SERVICE_NAME);
         service.setBypassApprovalPrompt(true);
-        service.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy(Map.of("required", Set.of("value1"))));
+        service.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy(Map.of(OAuth20Constants.STATE, Set.of("value1"))));
         configurationContext.getServicesManager().save(service);
 
         val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.AUTHORIZE_URL);
@@ -277,6 +278,7 @@ class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Tests {
         mockRequest.setParameter(OAuth20Constants.CLIENT_ID, service.getClientId());
         mockRequest.setParameter(OAuth20Constants.REDIRECT_URI, REDIRECT_URI);
         mockRequest.setParameter(OAuth20Constants.RESPONSE_TYPE, OAuth20ResponseTypes.CODE.name().toLowerCase(Locale.ENGLISH));
+        mockRequest.setParameter(OAuth20Constants.STATE, "value1");
         mockRequest.setServerName(CAS_SERVER);
         mockRequest.setServerPort(CAS_PORT);
         mockRequest.setScheme(CAS_SCHEME);
@@ -293,6 +295,31 @@ class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Tests {
 
         val result = performAuthorizeRequest(mockRequest);
         assertEquals(CasWebflowConstants.VIEW_ID_SERVICE_ERROR, getModelAndView(result).getViewName());
+    }
+
+    @Test
+    void verifyServiceAccessSeesAuthenticationAttributes() throws Throwable {
+        val clientIpAddress = "192.0.2.10";
+        val service = getOAuthRegisteredService(REDIRECT_URI, SERVICE_NAME);
+        service.setBypassApprovalPrompt(true);
+        service.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy(
+            Map.of(ClientInfoAuthenticationMetaDataPopulator.ATTRIBUTE_CLIENT_IP_ADDRESS, Set.of(clientIpAddress))));
+        servicesManager.save(service);
+        configureAuthorizeSessionReplication();
+
+        val ticket = new MockTicketGrantingTicket("casuser", Map.of(),
+            Map.of(ClientInfoAuthenticationMetaDataPopulator.ATTRIBUTE_CLIENT_IP_ADDRESS, List.of(clientIpAddress)));
+        ticketRegistry.addTicket(ticket);
+        val ssoProfile = buildCasProfile();
+        ssoProfile.addAttribute(TicketGrantingTicket.class.getName(), ticket.getId());
+        assertCodeIssuedForProfile(performAuthorizeRequest(newAuthorizeRequest(service, ssoProfile, ticket.getId())), null);
+
+        val otherTicket = new MockTicketGrantingTicket("casuser");
+        ticketRegistry.addTicket(otherTicket);
+        val profile = new DefaultOAuth20UserProfile(ID, OAuth20UserProfile.BASIC_PROFILE_HANDLER_NAME);
+        profile.addAttribute(FIRST_NAME_ATTRIBUTE, FIRST_NAME);
+        profile.addAuthenticationAttribute(ClientInfoAuthenticationMetaDataPopulator.ATTRIBUTE_CLIENT_IP_ADDRESS, clientIpAddress);
+        assertCodeIssuedForProfile(performAuthorizeRequest(newAuthorizeRequest(service, profile, otherTicket.getId())), null);
     }
 
     @Test
@@ -825,6 +852,23 @@ class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Tests {
         if (response.getCookies() != null && response.getCookies().length > 0) {
             request.setCookies(response.getCookies());
         }
+    }
+
+    private MockHttpServletRequest newAuthorizeRequest(final OAuthRegisteredService service,
+                                                       final OAuth20UserProfile profile,
+                                                       final String ticketGrantingTicketId) {
+        val request = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.AUTHORIZE_URL);
+        request.addHeader(HttpHeaders.USER_AGENT, "MSIE");
+        request.setParameter(OAuth20Constants.CLIENT_ID, service.getClientId());
+        request.setParameter(OAuth20Constants.REDIRECT_URI, REDIRECT_URI);
+        request.setParameter(OAuth20Constants.RESPONSE_TYPE, OAuth20ResponseTypes.CODE.name().toLowerCase(Locale.ENGLISH));
+        request.setServerName(CAS_SERVER);
+        request.setServerPort(CAS_PORT);
+        request.setScheme(CAS_SCHEME);
+        request.setContextPath(StringUtils.EMPTY);
+        request.setSession(new MockHttpSession());
+        seedAuthorizeRequest(request, new MockHttpServletResponse(), profile, ticketGrantingTicketId);
+        return request;
     }
 
     private void configureAuthorizeSessionReplication() {

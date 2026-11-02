@@ -60,6 +60,29 @@ public interface SamlRegisteredServiceMetadataResolver extends NamedObject {
     }
 
     /**
+     * Gets the local files the metadata of the service is read from, if any, so that a change to them can be noticed.
+     * A directory stands for the metadata files inside it.
+     *
+     * @param service the service
+     * @return the files
+     */
+    default Collection<File> getMetadataSourceFiles(final SamlRegisteredService service) {
+        return List.of();
+    }
+
+    /**
+     * Describes where the metadata of the service comes from and the state of that source, such as a backup file
+     * and how long ago its source last confirmed it, for operators.
+     *
+     * @param service     the service
+     * @param criteriaSet the criteria set
+     * @return the description
+     */
+    default Map<String, Object> describe(final SamlRegisteredService service, final CriteriaSet criteriaSet) {
+        return Map.of();
+    }
+
+    /**
      * Gets metadata manager.
      *
      * @return the metadata manager

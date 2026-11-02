@@ -16,6 +16,8 @@ import org.apereo.cas.web.support.WebUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 import jakarta.servlet.http.HttpServletRequest;
@@ -27,6 +29,7 @@ import jakarta.servlet.http.HttpServletRequest;
  * @since 5.1.0
  */
 @Slf4j
+@Order(Ordered.HIGHEST_PRECEDENCE)
 public class RiskAwareAuthenticationWebflowEventResolver extends AbstractCasWebflowEventResolver {
 
     private final AuthenticationRiskEvaluator authenticationRiskEvaluator;

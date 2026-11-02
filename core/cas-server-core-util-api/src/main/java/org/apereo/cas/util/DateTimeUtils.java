@@ -21,7 +21,7 @@ public class DateTimeUtils {
      * @param value the value
      * @return the date/time instance
      */
-    public static LocalDateTime localDateTimeOf(final String value) {
+    public static @Nullable LocalDateTime localDateTimeOf(final String value) {
         var result = (LocalDateTime) null;
 
         try {
@@ -166,7 +166,7 @@ public class DateTimeUtils {
      * @param time the time
      * @return the zoned date time
      */
-    public static ZonedDateTime zonedDateTimeOf(final Instant time) {
+    public static @Nullable ZonedDateTime zonedDateTimeOf(final Instant time) {
         return Optional.ofNullable(time).map(instant -> instant.atZone(ZoneOffset.UTC)).orElse(null);
     }
 
@@ -197,7 +197,7 @@ public class DateTimeUtils {
      * @param time Time object to be converted.
      * @return ZonedDateTime representing time
      */
-    public static ZonedDateTime zonedDateTimeOf(final Date time) {
+    public static @Nullable ZonedDateTime zonedDateTimeOf(final Date time) {
         return Optional.ofNullable(time).map(date -> zonedDateTimeOf(Instant.ofEpochMilli(date.getTime()))).orElse(null);
     }
 
@@ -273,7 +273,7 @@ public class DateTimeUtils {
      * @param tu the tu
      * @return the time unit
      */
-    public static TimeUnit toTimeUnit(final ChronoUnit tu) {
+    public static @Nullable TimeUnit toTimeUnit(final ChronoUnit tu) {
         if (tu == null) {
             return null;
         }
@@ -295,7 +295,7 @@ public class DateTimeUtils {
      * @param tu the tu
      * @return the chrono unit
      */
-    public static ChronoUnit toChronoUnit(final TimeUnit tu) {
+    public static @Nullable ChronoUnit toChronoUnit(final TimeUnit tu) {
         if (tu == null) {
             return null;
         }

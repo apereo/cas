@@ -4,6 +4,7 @@ import module java.base;
 import org.apereo.cas.config.BaseSamlConfigurationTests;
 import org.apereo.cas.support.saml.util.NonInflatingSaml20ObjectBuilder;
 import org.apereo.cas.test.CasTestExtension;
+import org.apereo.cas.util.MockWebServer;
 import lombok.val;
 import net.shibboleth.shared.xml.ParserPool;
 import org.apache.commons.lang3.ArrayUtils;
@@ -22,6 +23,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
+import org.springframework.http.MediaType;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -73,6 +75,16 @@ class SamlUtilsTests {
     void verifyCert() {
         val x509 = SamlUtils.readCertificate(new ClassPathResource("idp-signing.crt"));
         assertNotNull(x509);
+    }
+
+    @Test
+    void verifyRemoteSignatureResourceIsReadOnce() throws Throwable {
+        try (val webServer = new MockWebServer(new ClassPathResource("idp-signing.crt"), MediaType.TEXT_PLAIN_VALUE)) {
+            webServer.start();
+            val filter = SamlUtils.buildSignatureValidationFilter("http://localhost:%s/signing.crt".formatted(webServer.getPort()));
+            assertNotNull(filter);
+            assertEquals(1, webServer.getRequestCount());
+        }
     }
 
     @Test

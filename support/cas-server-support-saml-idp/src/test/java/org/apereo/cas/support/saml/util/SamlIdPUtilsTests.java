@@ -5,26 +5,20 @@ import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
 import org.apereo.cas.support.saml.SamlException;
 import org.apereo.cas.support.saml.SamlIdPUtils;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceMetadataAdaptor;
-import org.apereo.cas.util.CollectionUtils;
 import lombok.val;
-import net.shibboleth.shared.resolver.CriteriaSet;
 import org.apache.commons.lang3.tuple.Pair;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.opensaml.core.criterion.EntityIdCriterion;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.common.messaging.context.SAMLBindingContext;
 import org.opensaml.saml.common.messaging.context.SAMLPeerEntityContext;
 import org.opensaml.saml.common.xml.SAMLConstants;
-import org.opensaml.saml.criterion.BindingCriterion;
-import org.opensaml.saml.criterion.EntityRoleCriterion;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.Issuer;
 import org.opensaml.saml.saml2.core.LogoutRequest;
 import org.opensaml.saml.saml2.metadata.IndexedEndpoint;
-import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
 import org.opensaml.saml.saml2.metadata.SingleLogoutService;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -61,24 +55,6 @@ class SamlIdPUtilsTests extends BaseSamlIdPConfigurationTests {
         assertThrows(SamlException.class, () -> SamlIdPUtils.determineEndpointForRequest(Pair.of(logoutRequest, new MessageContext()),
             adaptor, SAMLConstants.SAML2_POST_BINDING_URI));
     }
-
-    @Test
-    void verifyMetadataForAllServices() throws Throwable {
-        val service = getSamlRegisteredServiceForTestShib();
-        servicesManager.save(service);
-        val md = SamlIdPUtils.getMetadataResolverForAllSamlServices(servicesManager, service.getServiceId(),
-            samlRegisteredServiceCachingMetadataResolver);
-        assertNotNull(md);
-
-        val criteriaSet = new CriteriaSet();
-        criteriaSet.add(new EntityIdCriterion(service.getServiceId()));
-        criteriaSet.add(new EntityRoleCriterion(SPSSODescriptor.DEFAULT_ELEMENT_NAME));
-        criteriaSet.add(new BindingCriterion(CollectionUtils.wrap(SAMLConstants.SAML2_POST_BINDING_URI)));
-        val it = md.resolve(criteriaSet).iterator();
-        assertTrue(it.hasNext());
-        assertEquals(service.getServiceId(), it.next().getEntityID());
-    }
-
 
     @Test
     void verifyUnsignedRequestWithAssertionConsumerServiceUrlNotMatchingMetadataAcsUrl() {

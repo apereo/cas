@@ -59,6 +59,8 @@ import org.apereo.cas.util.spring.boot.ConditionalOnMissingGraalVMNativeImage;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.CacheLoader;
 import com.github.benmanes.caffeine.cache.Caffeine;
+import io.micrometer.core.instrument.binder.MeterBinder;
+import io.micrometer.core.instrument.binder.cache.CaffeineCacheMetrics;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.velocity.app.VelocityEngine;
@@ -420,6 +422,18 @@ class SamlIdPMetadataConfiguration {
             final OpenSamlConfigBean openSamlConfigBean) {
             return new SamlRegisteredServiceDefaultCachingMetadataResolver(
                 casProperties, chainingMetadataResolverCacheLoader, openSamlConfigBean);
+        }
+
+        @ConditionalOnMissingBean(name = "samlRegisteredServiceMetadataCacheMeterBinder")
+        @Bean
+        public MeterBinder samlRegisteredServiceMetadataCacheMeterBinder(
+            @Qualifier(SamlRegisteredServiceCachingMetadataResolver.BEAN_NAME)
+            final ObjectProvider<SamlRegisteredServiceCachingMetadataResolver> defaultSamlRegisteredServiceCachingMetadataResolver) {
+            return registry -> defaultSamlRegisteredServiceCachingMetadataResolver.ifAvailable(resolver -> {
+                if (resolver instanceof final SamlRegisteredServiceDefaultCachingMetadataResolver cachingResolver) {
+                    CaffeineCacheMetrics.monitor(registry, cachingResolver.getCache(), "samlRegisteredServiceMetadata");
+                }
+            });
         }
     }
 
