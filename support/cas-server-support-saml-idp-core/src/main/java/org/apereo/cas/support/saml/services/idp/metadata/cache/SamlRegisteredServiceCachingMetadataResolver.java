@@ -67,4 +67,22 @@ public interface SamlRegisteredServiceCachingMetadataResolver {
      * @return the OpenSAML config bean
      */
     OpenSamlConfigBean getOpenSamlConfigBean();
+
+    /**
+     * Gets statistics that describe how the cache performs, such as its size, hit and miss counts and load times.
+     *
+     * @return the statistics
+     */
+    default Map<String, Object> getStatistics() {
+        return Map.of();
+    }
+
+    /**
+     * Describes the entries held by the cache, and the failures it remembers.
+     *
+     * @return the cached entries
+     */
+    default List<Map<String, Object>> getCachedEntries() {
+        return List.of();
+    }
 }

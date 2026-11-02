@@ -72,6 +72,8 @@ public class HttpRequestUtils {
      * Builds a response handler that buffers the response body, refusing to read beyond the given
      * number of bytes. The executing client owns entity cleanup. Failed downloads are closed
      * immediately so graceful stream cleanup cannot drain an oversized or endless response.
+     * The buffer is sized from a declared {@code Content-Length}, so a large body, such as a SAML
+     * federation aggregate, is not copied again each time a default-sized buffer grows.
      *
      * @param maximumResponseSize the ceiling in bytes; a value of zero or less means the default
      * @return the response handler
@@ -86,7 +88,10 @@ public class HttpRequestUtils {
 
             val entity = response.getEntity();
             if (entity != null) {
-                try (val output = new ByteArrayOutputStream()) {
+                val contentLength = entity.getContentLength();
+                val bufferLimit = Math.min(maximumSize, Integer.MAX_VALUE - 8L);
+                val initialSize = contentLength > 0 && contentLength <= bufferLimit ? (int) contentLength : COPY_BUFFER_SIZE;
+                try (val output = new ByteArrayOutputStream(initialSize)) {
                     try {
                         if (entity.getContentLength() > maximumSize) {
                             throw new IOException("Response body of %s bytes exceeds the maximum permitted size of %s bytes"

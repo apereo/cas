@@ -12,6 +12,7 @@ import org.apereo.cas.support.saml.services.idp.metadata.SamlMetadataDocument;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.resolver.BaseSamlRegisteredServiceMetadataResolver;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.resolver.SamlRegisteredServiceMetadataManager;
 import org.apereo.cas.util.DigestUtils;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import net.shibboleth.shared.resolver.CriteriaSet;
 import org.apache.commons.lang3.StringUtils;
@@ -20,10 +21,16 @@ import org.opensaml.saml.metadata.resolver.MetadataResolver;
 
 /**
  * This is {@link RedisSamlRegisteredServiceMetadataResolver}.
+ * <p>
+ * Each metadata document is kept under a key derived from its entity id, name and identifier. Next to the documents,
+ * every entity id has an index, a hash whose fields are the keys of its documents, so that the documents of the
+ * requested entity are found without scanning the keyspace. Documents stored before the index existed are indexed
+ * once, the first time an entity is looked up, after which a marker records that the index is complete.
  *
  * @author Misagh Moayyed
  * @since 6.4.0
  */
+@Slf4j
 public class RedisSamlRegisteredServiceMetadataResolver extends BaseSamlRegisteredServiceMetadataResolver
     implements SamlRegisteredServiceMetadataManager {
     /**
@@ -31,7 +38,19 @@ public class RedisSamlRegisteredServiceMetadataResolver extends BaseSamlRegister
      */
     public static final String CAS_PREFIX = SamlMetadataDocument.class.getSimpleName() + ':';
 
+    /**
+     * Redis key prefix of the per-entity index of metadata documents.
+     */
+    public static final String CAS_INDEX_PREFIX = SamlMetadataDocument.class.getSimpleName() + "Index:";
+
+    /**
+     * Redis key recording that every metadata document has been indexed.
+     */
+    public static final String CAS_INDEX_MARKER = CAS_INDEX_PREFIX + "complete";
+
     private final CasRedisTemplate<String, SamlMetadataDocument> redisTemplate;
+
+    private final AtomicBoolean indexed = new AtomicBoolean();
 
     public RedisSamlRegisteredServiceMetadataResolver(
         final SamlIdPProperties samlIdPProperties,
@@ -45,8 +64,12 @@ public class RedisSamlRegisteredServiceMetadataResolver extends BaseSamlRegister
         return CAS_PREFIX + '*';
     }
 
-    private static String getPatternRedisKey(final String entityId) {
-        return CAS_PREFIX + DigestUtils.sha512(entityId) + ":*";
+    private static String getIndexKey(final String entityId) {
+        return CAS_INDEX_PREFIX + DigestUtils.sha512(entityId);
+    }
+
+    private static String getIndexKeyForRedisKey(final String redisKey) {
+        return CAS_INDEX_PREFIX + StringUtils.substringBefore(StringUtils.removeStart(redisKey, CAS_PREFIX), ":");
     }
 
     private static String getRedisKey(final SamlMetadataDocument document) {
@@ -59,10 +82,15 @@ public class RedisSamlRegisteredServiceMetadataResolver extends BaseSamlRegister
         resourceResolverName = AuditResourceResolvers.SAML2_METADATA_RESOLUTION_RESOURCE_RESOLVER)
     @Override
     public Collection<? extends MetadataResolver> resolve(final SamlRegisteredService service, final CriteriaSet criteriaSet) {
-        val pattern = getEntityIdFromCriteriaSet(criteriaSet)
-            .map(RedisSamlRegisteredServiceMetadataResolver::getPatternRedisKey)
-            .orElseGet(RedisSamlRegisteredServiceMetadataResolver::getPatternRedisKey);
-        try (val results = redisTemplate.scan(pattern)) {
+        val entityId = getEntityIdFromCriteriaSet(criteriaSet);
+        if (entityId.isPresent()) {
+            return findDocumentsForEntity(entityId.get())
+                .stream()
+                .map(doc -> buildMetadataResolverFrom(service, doc))
+                .filter(Objects::nonNull)
+                .collect(Collectors.toSet());
+        }
+        try (val results = redisTemplate.scan(getPatternRedisKey())) {
             return results
                 .map(redisKey -> redisTemplate.boundValueOps(redisKey).get())
                 .filter(Objects::nonNull)
@@ -70,6 +98,60 @@ public class RedisSamlRegisteredServiceMetadataResolver extends BaseSamlRegister
                 .filter(Objects::nonNull)
                 .collect(Collectors.toSet());
         }
+    }
+
+    /**
+     * Finds the documents of an entity through its index. Index entries whose document no longer exists are dropped.
+     *
+     * @param entityId the entity id
+     * @return the documents
+     */
+    protected List<SamlMetadataDocument> findDocumentsForEntity(final String entityId) {
+        indexExistingDocuments();
+        val indexKey = getIndexKey(entityId);
+        val redisKeys = List.copyOf(redisTemplate.<String, String>opsForHash().keys(indexKey));
+        if (redisKeys.isEmpty()) {
+            return List.of();
+        }
+        val documents = Objects.requireNonNull(redisTemplate.opsForValue().multiGet(redisKeys));
+        val found = new ArrayList<SamlMetadataDocument>();
+        for (var i = 0; i < redisKeys.size(); i++) {
+            val document = documents.get(i);
+            if (document == null) {
+                redisTemplate.opsForHash().delete(indexKey, redisKeys.get(i));
+            } else {
+                found.add(document);
+            }
+        }
+        return found;
+    }
+
+    /**
+     * Indexes the documents stored before documents were indexed. This happens once: a marker records that every
+     * document is indexed, and documents stored since are indexed as they are stored. Indexing is idempotent, so
+     * nodes that do it at the same time do no harm.
+     */
+    protected void indexExistingDocuments() {
+        if (indexed.get()) {
+            return;
+        }
+        if (!Boolean.TRUE.equals(redisTemplate.hasKey(CAS_INDEX_MARKER))) {
+            LOGGER.info("Indexing SAML2 service provider metadata documents in Redis by entity id");
+            try (val results = redisTemplate.scan(getPatternRedisKey())) {
+                results.forEach(this::addToIndex);
+            }
+            redisTemplate.<String, String>opsForHash().put(CAS_INDEX_MARKER, "indexedAt", Instant.now(Clock.systemUTC()).toString());
+        }
+        indexed.set(true);
+    }
+
+    private void addToIndex(final String redisKey) {
+        redisTemplate.<String, String>opsForHash().put(getIndexKeyForRedisKey(redisKey), redisKey, redisKey);
+    }
+
+    private void delete(final String redisKey) {
+        redisTemplate.delete(redisKey);
+        redisTemplate.opsForHash().delete(getIndexKeyForRedisKey(redisKey), redisKey);
     }
 
     @Override
@@ -86,7 +168,9 @@ public class RedisSamlRegisteredServiceMetadataResolver extends BaseSamlRegister
     @Override
     public SamlMetadataDocument store(final SamlMetadataDocument document) {
         val metadataDocument = prepareMetadataDocument(document);
-        redisTemplate.boundValueOps(getRedisKey(metadataDocument)).set(metadataDocument);
+        val redisKey = getRedisKey(metadataDocument);
+        redisTemplate.boundValueOps(redisKey).set(metadataDocument);
+        addToIndex(redisKey);
         return metadataDocument;
     }
 
@@ -105,7 +189,7 @@ public class RedisSamlRegisteredServiceMetadataResolver extends BaseSamlRegister
         try (val results = redisTemplate.scan(getPatternRedisKey())) {
             results
                 .filter(redisKey -> redisKey.endsWith(":" + id))
-                .forEach(redisTemplate::delete);
+                .forEach(this::delete);
         }
     }
 
@@ -117,14 +201,14 @@ public class RedisSamlRegisteredServiceMetadataResolver extends BaseSamlRegister
                     val document = redisTemplate.boundValueOps(redisKey).get();
                     return document != null && name.equalsIgnoreCase(document.getName());
                 })
-                .forEach(redisTemplate::delete);
+                .forEach(this::delete);
         }
     }
 
     @Override
     public void removeAll() {
         try (val results = redisTemplate.scan(getPatternRedisKey())) {
-            results.forEach(redisTemplate::delete);
+            results.forEach(this::delete);
         }
     }
 

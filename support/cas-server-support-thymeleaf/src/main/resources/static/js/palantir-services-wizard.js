@@ -1108,6 +1108,19 @@ function createRegisteredServiceMultifactorPolicy() {
         title: "Specifies the principal attribute value to match for triggering multifactor authentication."
     });
 
+    createMappedInputField({
+        cssClasses: "advanced-option",
+        header: "Provider Selection Mappings",
+        containerId: "editServiceWizardMenuItemMfaPolicy",
+        keyField: "registeredServiceMfaProviderSelectionMappingProvider",
+        keyLabel: "Provider ID",
+        valueField: "registeredServiceMfaProviderSelectionMappingPattern",
+        valueLabel: "Attribute Value Pattern",
+        containerField: "multifactorPolicy.multifactorProviderSelectionMappings",
+        containerType: "org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy",
+        mapType: "java.util.LinkedHashMap"
+    });
+
 
     createInputField({
         paramType: "org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy",
@@ -2696,7 +2709,8 @@ function generateMappedFieldValue(sectionId, config) {
         valueFieldRenderer,
         multipleValuesType = "java.util.ArrayList",
         unwrapSingleElement = false,
-        groovyEditorTitle = ""
+        groovyEditorTitle = "",
+        mapType = "java.util.TreeMap"
     } = config;
 
     const definition = {};
@@ -2739,7 +2753,7 @@ function generateMappedFieldValue(sectionId, config) {
             }
         }
     });
-    return {"@class": "java.util.TreeMap", ...definition};
+    return {"@class": mapType, ...definition};
 }
 
 function createMappedInputField(config) {

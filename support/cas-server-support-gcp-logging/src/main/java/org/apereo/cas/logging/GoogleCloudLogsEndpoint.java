@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.Nullable;
 import org.springframework.boot.actuate.endpoint.Access;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -82,6 +83,6 @@ public class GoogleCloudLogsEndpoint extends BaseCasRestActuatorEndpoint {
         return logEvents;
     }
 
-    public record LogEvent(String message, ZonedDateTime timestamp, String level, Map<String, String> labels) {
+    public record LogEvent(String message, @Nullable ZonedDateTime timestamp, String level, Map<String, String> labels) {
     }
 }

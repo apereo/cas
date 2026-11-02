@@ -1,9 +1,12 @@
 package org.apereo.cas.support.saml.metadata.resolver;
 
 import module java.base;
+import org.apereo.cas.redis.core.CasRedisTemplate;
 import org.apereo.cas.support.saml.BaseRedisSamlMetadataTests;
+import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlMetadataDocument;
+import org.apereo.cas.util.DigestUtils;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import lombok.val;
@@ -12,6 +15,8 @@ import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.opensaml.core.criterion.EntityIdCriterion;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.test.context.TestPropertySource;
@@ -32,6 +37,14 @@ import static org.junit.jupiter.api.Assertions.*;
 @EnabledIfListeningOnPort(port = 6379)
 class RedisSamlRegisteredServiceMetadataResolverTests extends BaseRedisSamlMetadataTests {
     private static final String DEFAULT_ENTITY_ID = "https://carmenwiki.osu.edu/shibboleth";
+
+    @Autowired
+    @Qualifier("redisSamlRegisteredServiceMetadataResolverTemplate")
+    private CasRedisTemplate<String, SamlMetadataDocument> redisTemplate;
+
+    @Autowired
+    @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
+    private OpenSamlConfigBean openSamlConfigBean;
 
     private static String randomEntityId() {
         return "https://%s.example.org/shibboleth".formatted(RandomUtils.randomAlphabetic(8));
@@ -97,6 +110,24 @@ class RedisSamlRegisteredServiceMetadataResolverTests extends BaseRedisSamlMetad
     }
 
     @Test
+    void verifyDocumentsStoredBeforeIndexingAreIndexed() throws Throwable {
+        val entityId = randomEntityId();
+        resolver.getMetadataManager().orElseThrow().store(documentFor(entityId));
+        redisTemplate.delete(RedisSamlRegisteredServiceMetadataResolver.CAS_INDEX_PREFIX + DigestUtils.sha512(entityId));
+        redisTemplate.delete(RedisSamlRegisteredServiceMetadataResolver.CAS_INDEX_MARKER);
+
+        val service = new SamlRegisteredService();
+        service.setName("SAML Service");
+        service.setServiceId("^https://.+$");
+        service.setMetadataLocation("redis://");
+        val criteriaSet = new CriteriaSet(new EntityIdCriterion(entityId));
+        val unindexedResolver = new RedisSamlRegisteredServiceMetadataResolver(casProperties.getAuthn().getSamlIdp(), openSamlConfigBean, redisTemplate);
+        assertEquals(1, unindexedResolver.resolve(service, criteriaSet).size());
+        assertTrue(redisTemplate.hasKey(RedisSamlRegisteredServiceMetadataResolver.CAS_INDEX_MARKER));
+        assertEquals(1, resolver.resolve(service, criteriaSet).size());
+    }
+
+    @Test
     void verifyResolverDoesNotSupport() {
         assertFalse(resolver.supports(null));
     }
@@ -138,9 +169,18 @@ class RedisSamlRegisteredServiceMetadataResolverTests extends BaseRedisSamlMetad
     @Test
     void verifyRemoveById() throws Throwable {
         val metadataManager = resolver.getMetadataManager().orElseThrow();
-        val storedDocument = metadataManager.store(documentFor(randomEntityId()));
+        val entityId = randomEntityId();
+        val storedDocument = metadataManager.store(documentFor(entityId));
+        val service = new SamlRegisteredService();
+        service.setName("SAML Service");
+        service.setServiceId("^https://.+$");
+        service.setMetadataLocation("redis://");
+        val criteriaSet = new CriteriaSet(new EntityIdCriterion(entityId));
+        assertEquals(1, resolver.resolve(service, criteriaSet).size());
 
         metadataManager.removeById(storedDocument.getId());
+        assertTrue(resolver.resolve(service, criteriaSet).isEmpty());
+        assertFalse(redisTemplate.hasKey(RedisSamlRegisteredServiceMetadataResolver.CAS_INDEX_PREFIX + DigestUtils.sha512(entityId)));
         assertTrue(metadataManager.findById(storedDocument.getId()).isEmpty());
         assertTrue(metadataManager.load().stream().noneMatch(doc -> storedDocument.getName().equals(doc.getName())));
     }

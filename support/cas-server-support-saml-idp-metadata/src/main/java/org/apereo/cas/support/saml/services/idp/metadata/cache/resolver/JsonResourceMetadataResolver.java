@@ -11,7 +11,6 @@ import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.function.FunctionUtils;
-import org.apereo.cas.util.io.FileWatcherService;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import lombok.Getter;
@@ -23,31 +22,34 @@ import org.apache.commons.io.IOUtils;
 import org.apereo.inspektr.audit.annotation.Audit;
 import org.hjson.JsonValue;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
-import org.springframework.beans.factory.DisposableBean;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.FileSystemResource;
-import org.springframework.core.io.Resource;
 import tools.jackson.core.type.TypeReference;
 import tools.jackson.databind.ObjectMapper;
 
 /**
  * This is {@link JsonResourceMetadataResolver}.
+ * <p>
+ * Service providers are read from {@code saml-sp-metadata.json} in the metadata directory. The file is read again
+ * whenever its modification time changes, including when it appears after startup, and it is reported as a
+ * metadata source file so that cached metadata built from it is reloaded once it changes.
  *
  * @author Misagh Moayyed
  * @since 6.1.0
  */
 @Slf4j
-public class JsonResourceMetadataResolver extends BaseSamlRegisteredServiceMetadataResolver implements DisposableBean {
+public class JsonResourceMetadataResolver extends BaseSamlRegisteredServiceMetadataResolver {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(false).build().toObjectMapper();
 
     private final String metadataTemplate;
 
-    private final Resource jsonResource;
+    private final File jsonFile;
 
-    private Map<String, SamlServiceProviderMetadata> metadataMap = new HashMap<>();
+    private final Lock lock = new ReentrantLock();
 
-    private FileWatcherService watcherService;
+    private volatile Map<String, SamlServiceProviderMetadata> metadataMap = Map.of();
+
+    private volatile long metadataLastModified = -1;
 
     public JsonResourceMetadataResolver(final SamlIdPProperties samlIdPProperties,
                                         final OpenSamlConfigBean configBean) {
@@ -60,14 +62,9 @@ public class JsonResourceMetadataResolver extends BaseSamlRegisteredServiceMetad
         val location = SpringExpressionLanguageValueResolver.getInstance().resolve(md.getFileSystem().getLocation());
         val metadataDir = FunctionUtils.doUnchecked(() -> ResourceUtils.getRawResourceFrom(location).getFile());
 
-        this.jsonResource = new FileSystemResource(new File(metadataDir, "saml-sp-metadata.json"));
-        LOGGER.debug("Service provider metadata as JSON may be found at [{}]", jsonResource);
-        if (jsonResource.exists()) {
-            metadataMap = readDecisionsFromJsonResource();
-            watcherService = FunctionUtils.doUnchecked(() -> new FileWatcherService(jsonResource.getFile(),
-                file -> this.metadataMap = readDecisionsFromJsonResource()));
-            watcherService.start(getClass().getSimpleName());
-        }
+        this.jsonFile = new File(metadataDir, "saml-sp-metadata.json");
+        LOGGER.debug("Service provider metadata as JSON may be found at [{}]", jsonFile);
+        getMetadataMap();
     }
 
     @Audit(action = AuditableActions.SAML2_METADATA_RESOLUTION,
@@ -75,15 +72,16 @@ public class JsonResourceMetadataResolver extends BaseSamlRegisteredServiceMetad
         resourceResolverName = AuditResourceResolvers.SAML2_METADATA_RESOLUTION_RESOURCE_RESOLVER)
     @Override
     public Collection<? extends MetadataResolver> resolve(final SamlRegisteredService service, final CriteriaSet criteriaSet) {
-        if (metadataMap.containsKey(service.getServiceId())) {
+        val metadata = getMetadataMap();
+        if (metadata.containsKey(service.getServiceId())) {
             return FunctionUtils.doUnchecked(() -> {
-                val sp = metadataMap.get(service.getServiceId());
-                val metadata = metadataTemplate
+                val sp = metadata.get(service.getServiceId());
+                val document = metadataTemplate
                     .replace("${entityId}", sp.getEntityId())
                     .replace("${certificate}", sp.getCertificate())
                     .replace("${binding}", sp.getBinding())
                     .replace("${assertionConsumerServiceUrl}", sp.getAssertionConsumerServiceUrl());
-                val metadataResource = new ByteArrayInputStream(metadata.getBytes(StandardCharsets.UTF_8));
+                val metadataResource = new ByteArrayInputStream(document.getBytes(StandardCharsets.UTF_8));
                 val resolver = new InMemoryResourceMetadataResolver(metadataResource, configBean);
                 configureAndInitializeSingleMetadataResolver(resolver, service);
                 return CollectionUtils.wrap(resolver);
@@ -100,14 +98,35 @@ public class JsonResourceMetadataResolver extends BaseSamlRegisteredServiceMetad
 
     @Override
     public boolean isAvailable(final SamlRegisteredService service) {
-        return ResourceUtils.doesResourceExist(this.jsonResource);
+        return jsonFile.isFile();
     }
 
     @Override
-    public void destroy() {
-        if (this.watcherService != null) {
-            this.watcherService.close();
+    public Collection<File> getMetadataSourceFiles(final SamlRegisteredService service) {
+        return supports(service) ? List.of(jsonFile) : List.of();
+    }
+
+    /**
+     * Gets the service providers, reading the file again if its modification time has changed since it was last read.
+     * A file that is removed yields no service providers.
+     *
+     * @return the service providers keyed by service id
+     */
+    protected Map<String, SamlServiceProviderMetadata> getMetadataMap() {
+        val lastModified = jsonFile.isFile() ? jsonFile.lastModified() : -1L;
+        if (lastModified != metadataLastModified) {
+            lock.lock();
+            try {
+                if (lastModified != metadataLastModified) {
+                    LOGGER.debug("Reading service provider metadata from [{}]", jsonFile);
+                    metadataMap = lastModified < 0 ? Map.of() : readDecisionsFromJsonResource();
+                    metadataLastModified = lastModified;
+                }
+            } finally {
+                lock.unlock();
+            }
         }
+        return metadataMap;
     }
 
     private static String getSourceId() {
@@ -134,7 +153,7 @@ public class JsonResourceMetadataResolver extends BaseSamlRegisteredServiceMetad
 
     private Map<String, SamlServiceProviderMetadata> readDecisionsFromJsonResource() {
         return FunctionUtils.doUnchecked(() -> {
-            try (val reader = new InputStreamReader(jsonResource.getInputStream(), StandardCharsets.UTF_8)) {
+            try (val reader = Files.newBufferedReader(jsonFile.toPath(), StandardCharsets.UTF_8)) {
                 val personList = new TypeReference<Map<String, SamlServiceProviderMetadata>>() {
                 };
                 return MAPPER.readValue(JsonValue.readHjson(reader).toString(), personList);

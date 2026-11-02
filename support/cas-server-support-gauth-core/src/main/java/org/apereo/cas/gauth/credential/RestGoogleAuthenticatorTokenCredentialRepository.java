@@ -74,7 +74,7 @@ public class RestGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
                         if (content != null) {
                             val values = new TypeReference<GoogleAuthenticatorAccount>() {
                             };
-                            val result = MAPPER.readValue(JsonValue.readHjson(content).toString(), values);
+                            val result = MAPPER.readValue(content, values);
                             return decode(Objects.requireNonNull(result));
                         }
                     }
@@ -115,7 +115,7 @@ public class RestGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
                         if (content != null) {
                             val values = new TypeReference<GoogleAuthenticatorAccount>() {
                             };
-                            val result = MAPPER.readValue(JsonValue.readHjson(content).toString(), values);
+                            val result = MAPPER.readValue(content, values);
                             return decode(Objects.requireNonNull(result));
                         }
                     }
@@ -154,7 +154,7 @@ public class RestGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
         }
         val values = new TypeReference<List<GoogleAuthenticatorAccount>>() {
         };
-        return decode(Objects.requireNonNull(MAPPER.readValue(JsonValue.readHjson(content).toString(), values)));
+        return decode(Objects.requireNonNull(MAPPER.readValue(content, values)));
     }
 
     @Override
@@ -179,7 +179,7 @@ public class RestGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
                     try (val contents = ((HttpEntityContainer) response).getEntity().getContent()) {
                         val content = IOUtils.toString(contents, StandardCharsets.UTF_8);
                         if (content != null) {
-                            val results = MAPPER.readValue(JsonValue.readHjson(content).toString(),
+                            val results = MAPPER.readValue(content,
                                     new TypeReference<List<GoogleAuthenticatorAccount>>() {
                                     });
                             return results.stream().map(this::decode).collect(Collectors.toList());

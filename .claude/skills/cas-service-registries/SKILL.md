@@ -3,9 +3,10 @@ name: cas-service-registries
 description: "Review and change service registries and the services manager: lookups vs loads, caching, replication (Kafka/Hazelcast streams), chaining, JPA service registry, URL matching snapshots. Use when touching ServicesManager, ServiceRegistry implementations or support/cas-server-support-*-service-registry*."
 ---
 
+
 # Service registries and services manager
 
-## Parallel test execution and shared registries
+## Services manager lookups and cache
 
 - `ServicesManager.findServiceBy(Service)` matches against the services cache only while the background
   reload is enabled and the cache size is above zero; it consults the registry on a miss only when the
@@ -76,7 +77,7 @@ description: "Review and change service registries and the services manager: loo
 - Attribute-based activation criteria (access strategy and attribute release) use `asMatchPredicate`, like
   required and rejected attributes in `RegisteredServiceAccessStrategyEvaluator`; patterns match whole values.
 
-## Queue-backed ticket registries (Kafka, AMQP, Pulsar, GCP Pub/Sub)
+## JPA service registry
 
 - `JpaServiceRegistry` reads through `SELECT r.id, r.body` projections, never entities: a read-only hint on the entity
   that `saveInternal` later finds and merges into would make Hibernate skip the update without an error. `load` and

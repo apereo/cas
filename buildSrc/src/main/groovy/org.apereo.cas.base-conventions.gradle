@@ -22,17 +22,6 @@ project.pluginManager.apply('org.apereo.cas.tasks-conventions')
 
 CasBuildSettings.configureProjectExtensions(project)
 
-if (!CasBuildSettings.isArchAdjusted()) {
-    def arch = System.getProperty('os.arch')
-    if (arch == 'aarch64') {
-        System.setProperty('os.arch', 'x86_64')
-        arch = System.getProperty('os.arch')
-        def name = System.getProperty('os.name')
-        logger.info("The OS platform architecture for this Gradle build is reset to ${arch} for ${name}")
-    }
-    CasBuildSettings.markArchAdjusted()
-}
-
 project.ext['forceBootifulArtifact'] = null
 
 if (generateGitProperties) {

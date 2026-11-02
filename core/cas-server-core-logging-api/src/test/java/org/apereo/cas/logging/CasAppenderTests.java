@@ -8,6 +8,7 @@ import org.apache.logging.log4j.core.config.AppenderRef;
 import org.apache.logging.log4j.core.config.Configuration;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import static org.awaitility.Awaitility.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -20,9 +21,16 @@ import static org.mockito.Mockito.*;
 @Tag("Simple")
 class CasAppenderTests {
 
+    /**
+     * Another test class in the same JVM may be starting the logger context at the same time;
+     * {@link LoggerContext#start()} does not wait for a start already in progress, so the context
+     * can still be on its default configuration, without the appenders of {@code log4j2-test.xml}.
+     * Wait for the context to finish starting before looking up the appender.
+     */
     @Test
     void verifyOperation() {
         val context = LoggerContext.getContext(false);
+        await().atMost(Duration.ofSeconds(10)).until(context::isStarted);
         val logger = context.getLogger(CasAppender.class.getName());
         val appender = (CasAppender) logger.getAppenders().get("CasAppender");
         assertNotNull(appender);

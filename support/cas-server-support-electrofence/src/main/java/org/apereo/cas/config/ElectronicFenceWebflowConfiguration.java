@@ -31,8 +31,8 @@ import org.apereo.cas.web.flow.RiskAwareAuthenticationWebflowConfigurer;
 import org.apereo.cas.web.flow.RiskAwareAuthenticationWebflowEventResolver;
 import org.apereo.cas.web.flow.actions.WebflowActionBeanSupplier;
 import org.apereo.cas.web.flow.authentication.CasWebflowExceptionConfigurer;
+import org.apereo.cas.web.flow.authentication.MultifactorAuthenticationWebflowEventResolver;
 import org.apereo.cas.web.flow.executor.WebflowExecutorFactory;
-import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.CasWebflowEventResolutionConfigurationContext;
 import lombok.val;
@@ -45,7 +45,6 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.web.servlet.HandlerAdapter;
@@ -80,21 +79,17 @@ class ElectronicFenceWebflowConfiguration {
 
         @ConditionalOnMissingBean(name = "riskAwareAuthenticationWebflowEventResolver")
         @Bean
+        @MultifactorAuthenticationWebflowEventResolver
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Lazy(false)
         public CasWebflowEventResolver riskAwareAuthenticationWebflowEventResolver(
             @Qualifier(CasWebflowEventResolutionConfigurationContext.BEAN_NAME)
             final CasWebflowEventResolutionConfigurationContext casWebflowConfigurationContext,
             @Qualifier("authenticationRiskMitigator")
             final AuthenticationRiskMitigator authenticationRiskMitigator,
             @Qualifier("authenticationRiskEvaluator")
-            final AuthenticationRiskEvaluator authenticationRiskEvaluator,
-            @Qualifier(CasDelegatingWebflowEventResolver.BEAN_NAME_INITIAL_AUTHENTICATION_EVENT_RESOLVER)
-            final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver) {
-            val resolver = new RiskAwareAuthenticationWebflowEventResolver(casWebflowConfigurationContext,
+            final AuthenticationRiskEvaluator authenticationRiskEvaluator) {
+            return new RiskAwareAuthenticationWebflowEventResolver(casWebflowConfigurationContext,
                 authenticationRiskEvaluator, authenticationRiskMitigator);
-            initialAuthenticationAttemptWebflowEventResolver.addDelegate(resolver, 0);
-            return resolver;
         }
 
         @ConditionalOnMissingBean(name = "riskAwareAuthenticationWebflowConfigurer")

@@ -75,7 +75,7 @@ public class EncodingUtils {
      * @param data the data
      * @return the string
      */
-    public static String hexDecode(final char[] data) {
+    public static @Nullable String hexDecode(final char[] data) {
         try {
             val result = Hex.decodeHex(data);
             return new String(result, StandardCharsets.UTF_8);
@@ -91,7 +91,7 @@ public class EncodingUtils {
      * @param data the data
      * @return the string
      */
-    public static String hexEncode(final String data) {
+    public static @Nullable String hexEncode(final String data) {
         try {
             val result = Hex.encodeHex(data.getBytes(StandardCharsets.UTF_8));
             return new String(result);
@@ -107,7 +107,7 @@ public class EncodingUtils {
      * @param data the data
      * @return the string
      */
-    public static String hexEncode(final byte[] data) {
+    public static @Nullable String hexEncode(final byte[] data) {
         try {
             val result = Hex.encodeHex(data);
             return new String(result);

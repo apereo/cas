@@ -20,6 +20,12 @@ const assert = require("assert");
     assert(decoded["memberships"].includes("director"));
     assert(decoded["memberships"].includes("admin"));
 
+    const url3 = "https://localhost:9859/anything/clientip";
+    await cas.logg(`Trying with URL ${url3}, which requires the client IP address authentication attribute`);
+    payload = await getPayload(page, url3, "client3", "secret3");
+    decoded = await cas.decodeJwt(payload.id_token);
+    assert(decoded["sub"] === "casuser");
+
     await cas.closeBrowser(browser);
 })();
 

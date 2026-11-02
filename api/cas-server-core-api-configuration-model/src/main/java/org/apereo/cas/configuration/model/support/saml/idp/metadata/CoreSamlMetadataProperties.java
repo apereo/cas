@@ -55,6 +55,21 @@ public class CoreSamlMetadataProperties implements Serializable {
     private String failureCacheExpiration = "PT1M";
 
     /**
+     * The shortest time service provider metadata is cached when the metadata itself
+     * asks for a shorter time with its {@code cacheDuration}, so that metadata asking to be cached for
+     * no time at all is not loaded again on every request.
+     */
+    @DurationCapable
+    private String minimumCacheDuration = "PT1M";
+
+    /**
+     * The longest time service provider metadata is cached when the metadata itself
+     * asks for a longer time with its {@code cacheDuration}.
+     */
+    @DurationCapable
+    private String maximumCacheDuration = "P1D";
+
+    /**
      * Whether valid metadata is required.
      */
     private boolean requireValidMetadata = true;

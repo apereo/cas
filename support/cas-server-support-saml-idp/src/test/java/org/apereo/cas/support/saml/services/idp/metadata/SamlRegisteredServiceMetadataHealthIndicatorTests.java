@@ -5,6 +5,8 @@ import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
 import org.apereo.cas.support.saml.SamlIdPTestUtils;
+import org.apereo.cas.support.saml.services.idp.metadata.cache.resolver.SamlRegisteredServiceMetadataResolver;
+import org.apereo.cas.support.saml.services.idp.metadata.plan.DefaultSamlRegisteredServiceMetadataResolutionPlan;
 import org.apereo.cas.support.saml.services.idp.metadata.plan.SamlRegisteredServiceMetadataResolutionPlan;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -56,6 +58,48 @@ class SamlRegisteredServiceMetadataHealthIndicatorTests extends BaseSamlIdPConfi
         val health = healthIndicatorFor(unresolvableService,
             SamlIdPTestUtils.getSamlRegisteredService(UUID.randomUUID().toString())).health();
         assertEquals(Status.UP, health.getStatus());
+    }
+
+    @Test
+    void verifyEachLocationIsProbedOncePerCheck() {
+        val metadataResolver = mock(SamlRegisteredServiceMetadataResolver.class);
+        when(metadataResolver.supports(any())).thenReturn(Boolean.TRUE);
+        when(metadataResolver.isAvailable(any())).thenReturn(Boolean.TRUE);
+        val plan = new DefaultSamlRegisteredServiceMetadataResolutionPlan();
+        plan.registerMetadataResolver(metadataResolver);
+
+        val services = new ArrayList<RegisteredService>();
+        for (var i = 0; i < 5; i++) {
+            val service = SamlIdPTestUtils.getSamlRegisteredService(UUID.randomUUID().toString());
+            service.setId(i);
+            service.setName("Service-" + i);
+            service.setMetadataLocation(i < 4 ? "jdbc://" : "mongodb://");
+            services.add(service);
+        }
+        val isolatedServicesManager = mock(ServicesManager.class);
+        when(isolatedServicesManager.findServiceBy(any(Predicate.class))).thenReturn(services);
+        val health = new SamlRegisteredServiceMetadataHealthIndicator(plan, isolatedServicesManager).health();
+        assertEquals(Status.UP, health.getStatus());
+        verify(metadataResolver, times(2)).isAvailable(any());
+    }
+
+    @Test
+    void verifyStaleMetadataIsReported() {
+        val metadataResolver = mock(SamlRegisteredServiceMetadataResolver.class);
+        when(metadataResolver.supports(any())).thenReturn(Boolean.TRUE);
+        when(metadataResolver.isAvailable(any())).thenReturn(Boolean.TRUE);
+        when(metadataResolver.describe(any(), any())).thenReturn(Map.of("metadataBackupStale", Boolean.TRUE, "metadataBackupAge", "P9D"));
+        val plan = new DefaultSamlRegisteredServiceMetadataResolutionPlan();
+        plan.registerMetadataResolver(metadataResolver);
+
+        val service = SamlIdPTestUtils.getSamlRegisteredService(UUID.randomUUID().toString());
+        val isolatedServicesManager = mock(ServicesManager.class);
+        when(isolatedServicesManager.findServiceBy(any(Predicate.class))).thenReturn(List.of(service));
+        val health = new SamlRegisteredServiceMetadataHealthIndicator(plan, isolatedServicesManager).health();
+        assertEquals(Status.UP, health.getStatus());
+        val details = (Map<String, Object>) health.getDetails().get(service.getName());
+        assertEquals(Boolean.TRUE, details.get("metadataStale"));
+        assertEquals("P9D", details.get("metadataBackupAge"));
     }
 
     private SamlRegisteredServiceMetadataHealthIndicator healthIndicatorFor(final RegisteredService... services) {

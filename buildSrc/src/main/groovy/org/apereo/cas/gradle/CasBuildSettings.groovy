@@ -163,14 +163,6 @@ final class CasBuildSettings {
                 || isTaskRequested(project, 'aggregateJavadocsIntoJar'))
     }
 
-    static boolean isArchAdjusted() {
-        System.getProperty(ARCH_ADJUSTED_KEY) == 'true'
-    }
-
-    static void markArchAdjusted() {
-        System.setProperty(ARCH_ADJUSTED_KEY, 'true')
-    }
-
     static List<String> includedProjectPaths(final Project project) {
         INCLUDED_PROJECT_PATHS.computeIfAbsent(project.rootDir.absolutePath) {
             def settingsFile = new File(project.rootDir, 'settings.gradle')

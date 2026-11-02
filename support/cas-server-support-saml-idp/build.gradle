@@ -51,6 +51,7 @@ dependencies {
     compileOnly project(":support:cas-server-support-consent-api")
 
     implementation libraries.shibutiljavasupport
+    implementation libraries.metrics
     implementation libraries.jose4j
 
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")

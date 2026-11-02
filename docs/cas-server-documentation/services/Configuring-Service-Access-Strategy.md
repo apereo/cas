@@ -14,7 +14,9 @@ rules. It describes whether the service is allowed to use the CAS server, allowe
 single sign-on authentication, etc. Additionally, it may be configured to require a certain set of 
 principal attributes that must exist before access can be granted to the service. This behavior allows 
 one to configure various attributes in terms of access roles for the application and define rules that 
-would be enacted and validated when an authentication request from the application arrives.
+would be enacted and validated when an authentication request from the application arrives. When the request belongs to a
+single sign-on session, the attributes the access strategy evaluates also include those of the authentication, such as
+`clientIpAddress`, the address of the client recorded when the user signed in.
 
 | Strategy                 | Resource                                                                |
 |--------------------------|-------------------------------------------------------------------------|

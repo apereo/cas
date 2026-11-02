@@ -1,0 +1,36 @@
+{
+  "@class": "org.apereo.cas.services.OidcRegisteredService",
+  "clientId": "client3",
+  "clientSecret": "secret3",
+  "serviceId": "^https://localhost:9859/anything/clientip",
+  "name": "Sample",
+  "id": 3,
+  "supportedGrantTypes": [
+    "java.util.HashSet",
+    [
+      "authorization_code"
+    ]
+  ],
+  "supportedResponseTypes": [
+    "java.util.HashSet",
+    [
+      "code"
+    ]
+  ],
+  "bypassApprovalPrompt": true,
+  "accessStrategy": {
+    "@class": "org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy",
+    "requiredAttributes": {
+      "@class": "java.util.HashMap",
+      "clientIpAddress": [
+        "java.util.HashSet",
+        [
+          ".+"
+        ]
+      ]
+    }
+  },
+  "attributeReleasePolicy": {
+    "@class": "org.apereo.cas.oidc.claims.OidcEmailScopeAttributeReleasePolicy"
+  }
+}

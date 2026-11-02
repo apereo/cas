@@ -6,8 +6,10 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.ThreadContext;
 import org.apache.logging.log4j.core.LoggerContext;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import static org.awaitility.Awaitility.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -19,6 +21,19 @@ import static org.junit.jupiter.api.Assertions.*;
 @EnabledIfListeningOnPort(port = 4566)
 @Tag("AmazonWebServices")
 class SQSAppenderTests {
+    /**
+     * Waits for the logging configuration of this module to be in place. Starting it starts the SQS appender, which
+     * creates its queue over the network, and a thread that asks for the logging context meanwhile is handed the
+     * context as it was before, without the appender, rather than made to wait. The tests of this class run
+     * concurrently, so each would otherwise race the other for the first start.
+     */
+    @BeforeAll
+    static void waitForLoggingConfiguration() {
+        val context = LoggerContext.getContext(false);
+        await().atMost(Duration.ofSeconds(30))
+            .until(() -> context.getConfiguration().getAppender("SQSAppender") != null);
+    }
+
     @Test
     void verifyOperation() throws Throwable {
         val context = LoggerContext.getContext(false);
