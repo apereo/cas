@@ -2,8 +2,11 @@ package org.apereo.cas.support.oauth.validator.token;
 
 import module java.base;
 import org.apereo.cas.AbstractOAuth20Tests;
+import org.apereo.cas.authentication.PrincipalException;
+import org.apereo.cas.authentication.metadata.ClientInfoAuthenticationMetaDataPopulator;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
+import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
@@ -16,6 +19,7 @@ import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
+import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TransientSessionTicketImpl;
 import org.apereo.cas.ticket.code.OAuth20Code;
 import org.apereo.cas.ticket.code.OAuth20CodeExpirationPolicy;
@@ -308,12 +312,46 @@ class OAuth20AuthorizationCodeGrantTypeTokenRequestValidatorTests {
             assertFalse(validator.validate(request, response));
         }
 
+        @Test
+        void verifyAccessStrategySeesAuthenticationAttributes() throws Throwable {
+            val clientIpAddress = "192.0.2.10";
+            val clientId = UUID.randomUUID().toString();
+            val serviceUrl = "https://code.example.org/" + clientId;
+            val service = RequestValidatorTestUtils.getService(serviceUrl, clientId, clientId,
+                RequestValidatorTestUtils.SHARED_SECRET, CollectionUtils.wrapSet(OAuth20GrantTypes.AUTHORIZATION_CODE));
+            service.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy(
+                Map.of(ClientInfoAuthenticationMetaDataPopulator.ATTRIBUTE_CLIENT_IP_ADDRESS, Set.of(clientIpAddress))));
+            servicesManager.save(service);
+
+            val request = new MockHttpServletRequest();
+            request.setMethod(HttpMethod.POST.name());
+            val response = new MockHttpServletResponse();
+            storeProfileIntoSession(request, new DefaultOAuth20UserProfile(clientId));
+            request.setParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.AUTHORIZATION_CODE.getType());
+            request.setParameter(OAuth20Constants.REDIRECT_URI, serviceUrl);
+
+            val ticketGrantingTicket = new MockTicketGrantingTicket("casuser", Map.of(),
+                Map.of(ClientInfoAuthenticationMetaDataPopulator.ATTRIBUTE_CLIENT_IP_ADDRESS, List.of(clientIpAddress)));
+            request.setParameter(OAuth20Constants.CODE, registerTicket(service, null, null, ticketGrantingTicket).getId());
+            assertTrue(validator.validate(request, response));
+
+            request.setParameter(OAuth20Constants.CODE, registerTicket(service).getId());
+            assertThrows(PrincipalException.class, () -> validator.validate(request, response));
+        }
+
         private OAuth20Code registerTicket(final OAuthRegisteredService service) throws Throwable {
             return registerTicket(service, null, null);
         }
 
         private OAuth20Code registerTicket(final OAuthRegisteredService service, @Nullable final String codeChallenge,
                                            @Nullable final String codeChallengeMethod)
+                throws Throwable {
+            return registerTicket(service, codeChallenge, codeChallengeMethod, new MockTicketGrantingTicket("casuser"));
+        }
+
+        private OAuth20Code registerTicket(final OAuthRegisteredService service, @Nullable final String codeChallenge,
+                                           @Nullable final String codeChallengeMethod,
+                                           final TicketGrantingTicket ticketGrantingTicket)
                 throws Throwable {
             val builder = new OAuth20DefaultCasAuthenticationBuilder(
                 PrincipalFactoryUtils.newPrincipalFactory(),
@@ -335,7 +373,7 @@ class OAuth20AuthorizationCodeGrantTypeTokenRequestValidatorTests {
             val oauthCode = new OAuth20DefaultOAuthCodeFactory(new DefaultUniqueTicketIdGenerator(), expirationPolicy,
                 mock(ServicesManager.class), CipherExecutor.noOpOfStringToString(), TicketTrackingPolicy.noOp())
                 .create(oauthCasAuthenticationBuilderService, RegisteredServiceTestUtils.getAuthentication(),
-                    new MockTicketGrantingTicket("casuser"), new HashSet<>(),
+                    ticketGrantingTicket, new HashSet<>(),
                     codeChallenge, codeChallengeMethod, "clientid12345",
                     new HashMap<>(), OAuth20ResponseTypes.CODE, OAuth20GrantTypes.AUTHORIZATION_CODE);
             this.ticketRegistry.addTicket(oauthCode);

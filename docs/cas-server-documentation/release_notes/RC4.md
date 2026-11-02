@@ -406,6 +406,10 @@ one-time codes can be added when `cas.authn.mfa.simple.mail.accepted-email-patte
   keep all their parameters through login and [consent](../authentication/OIDC-Authentication-Clients-ScopeApproval.html),
   and refused requests receive the error and challenge the specifications call for instead of a server error. OpenID Connect
   JWT access tokens no longer fail to sign now and then under load.
+- {: .fixed data-area="oidc"} [Access strategies](../services/Configuring-Service-Access-Strategy.html) of OAuth/OpenID Connect
+  applications see the attributes of the authentication, such as `clientIpAddress`, at the authorization endpoint and when a
+  code issued from a single sign-on session is exchanged for tokens, as they do for CAS applications. They used to see only the attributes of the principal there,
+  so a strategy that relied on an authentication attribute refused access.
 - {: .changed data-area="oidc"} OAuth/OpenID Connect endpoints no longer send the `X-XSS-Protection` header, which browsers
   ignore. Only the `X-Requested-With: XMLHttpRequest` header now marks a script request that is answered with `401` instead
   of a redirect to the login; the `is_ajax_request` header and parameter are no longer recognized.
