@@ -153,6 +153,13 @@ Protocol behavior (token errors, resource indicators, discovery, DPoP, client ID
   `.param()` sets no query string, so a URL-only reading misses them. They must come from where the callback can read and
   remove them: a `prompt` inside a request object or a pushed authorization request is not read, because the callback
   cannot drop it from the saved URL after a fresh login and the browser would go back to the login without end.
+- Access strategies at the authorization endpoint (`buildAccessStrategyPrincipal`) and at the authorization-code exchange
+  see the principal's attributes merged with the attributes of the SSO session's root authentication (TGT id from the
+  profile attribute `TicketGrantingTicket.class.getName()`; the profile's authentication attributes when stateless), as
+  `DefaultCentralAuthenticationService` does for service tickets, so `clientIpAddress` and friends reach them. Never pass
+  the OAuth authentication's own attributes there: it records `state`, `nonce`, `scope`, `client_id` and `acr_values` from
+  the request. `RegisteredServiceAccessStrategyAuditableEnforcer` uses a context's `principal` before its `authentication`,
+  so set the merged attributes on the principal.
 - `CASOAuth20TicketValidator` builds the profile from the validation: a principal id that delegated authentication typed
   with a pac4j profile class (`org.pac4j...GitHubProfile#12345`) loses the type, as pac4j did, so subjects stay stable;
   attribute values pass through unchanged (pac4j's converters, which kept the first `email` and so on, are gone).

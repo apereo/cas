@@ -28,7 +28,7 @@ import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.SingleSignOnParticipationStrategy;
 import org.apereo.cas.web.flow.SingleSignOnParticipationStrategyConfigurer;
 import org.apereo.cas.web.flow.actions.WebflowActionBeanSupplier;
-import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
+import org.apereo.cas.web.flow.authentication.MultifactorAuthenticationWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.CasWebflowEventResolutionConfigurationContext;
 import org.apereo.cas.web.flow.resolver.impl.mfa.DefaultMultifactorAuthenticationProviderWebflowEventResolver;
@@ -42,7 +42,6 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
@@ -166,18 +165,14 @@ class SamlIdPWebflowConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         @ConditionalOnMissingBean(name = "samlIdPAuthenticationContextWebflowEventResolver")
-        @Lazy(false)
+        @MultifactorAuthenticationWebflowEventResolver
         public CasWebflowEventResolver samlIdPAuthenticationContextWebflowEventResolver(
             @Qualifier("samlIdPMultifactorAuthenticationTrigger")
             final MultifactorAuthenticationTrigger samlIdPMultifactorAuthenticationTrigger,
-            @Qualifier(CasDelegatingWebflowEventResolver.BEAN_NAME_INITIAL_AUTHENTICATION_EVENT_RESOLVER)
-            final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver,
             @Qualifier(CasWebflowEventResolutionConfigurationContext.BEAN_NAME)
             final CasWebflowEventResolutionConfigurationContext casWebflowConfigurationContext) {
-            val r = new DefaultMultifactorAuthenticationProviderWebflowEventResolver(casWebflowConfigurationContext,
+            return new DefaultMultifactorAuthenticationProviderWebflowEventResolver(casWebflowConfigurationContext,
                 samlIdPMultifactorAuthenticationTrigger);
-            Objects.requireNonNull(initialAuthenticationAttemptWebflowEventResolver).addDelegate(r);
-            return r;
         }
     }
 

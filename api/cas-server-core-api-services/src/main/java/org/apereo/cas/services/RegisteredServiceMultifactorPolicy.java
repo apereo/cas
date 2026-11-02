@@ -104,4 +104,15 @@ public interface RegisteredServiceMultifactorPolicy extends Serializable {
      */
     @ExpressionLanguageCapable
     String getScript();
+
+    /**
+     * Gets multifactor provider selection mappings.
+     * In the event that multiple providers are defined for a service, this mapping allows
+     * for selection of a provider based on the values of attributes.
+     * Keys indicate the provider id, and the values in the map indicate the rule/predicate/attribute
+     * that should be used to match and select the provider. The value may be a regex pattern.
+     *
+     * @return the multifactor provider selection mappings
+     */
+    Map<String, Serializable> getMultifactorProviderSelectionMappings();
 }

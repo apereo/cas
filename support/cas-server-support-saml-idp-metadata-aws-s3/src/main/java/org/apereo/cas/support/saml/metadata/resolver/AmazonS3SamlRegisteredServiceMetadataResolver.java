@@ -25,9 +25,12 @@ import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.CreateBucketRequest;
 import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
-import software.amazon.awssdk.services.s3.model.ListBucketsRequest;
+import software.amazon.awssdk.services.s3.model.HeadBucketRequest;
+import software.amazon.awssdk.services.s3.model.HeadObjectRequest;
 import software.amazon.awssdk.services.s3.model.ListObjectsV2Request;
+import software.amazon.awssdk.services.s3.model.NoSuchBucketException;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
+import software.amazon.awssdk.services.s3.model.S3Object;
 
 /**
  * This is {@link AmazonS3SamlRegisteredServiceMetadataResolver}.
@@ -44,6 +47,8 @@ public class AmazonS3SamlRegisteredServiceMetadataResolver extends BaseSamlRegis
 
     private final String bucketName;
 
+    private final Map<String, IndexedObject> entityIdIndex = new ConcurrentHashMap<>();
+
     public AmazonS3SamlRegisteredServiceMetadataResolver(final SamlIdPProperties samlIdPProperties,
                                                          final OpenSamlConfigBean configBean,
                                                          final S3Client s3Client) {
@@ -52,8 +57,7 @@ public class AmazonS3SamlRegisteredServiceMetadataResolver extends BaseSamlRegis
             .resolve(samlIdPProperties.getMetadata().getAmazonS3().getBucketName());
         this.s3Client = s3Client;
 
-        if (s3Client.listBuckets(ListBucketsRequest.builder().build())
-            .buckets().stream().noneMatch(bucket -> bucket.name().equalsIgnoreCase(bucketName))) {
+        if (!doesBucketExist()) {
             LOGGER.trace("Bucket [{}] does not exist. Creating...", bucketName);
             val bucket = s3Client.createBucket(CreateBucketRequest.builder().bucket(bucketName.toLowerCase(Locale.ENGLISH)).build());
             LOGGER.debug("Created bucket [{}]", bucket.location());
@@ -66,25 +70,54 @@ public class AmazonS3SamlRegisteredServiceMetadataResolver extends BaseSamlRegis
     @Override
     public Collection<? extends MetadataResolver> resolve(final SamlRegisteredService service,
                                                           final CriteriaSet criteriaSet) {
-
         LOGGER.debug("Locating S3 object(s) from bucket [{}]...", bucketName);
-        if (s3Client.listBuckets(ListBucketsRequest.builder().build())
-            .buckets().stream().noneMatch(bucket -> bucket.name().equalsIgnoreCase(bucketName))) {
+        try {
+            val objects = listObjects().toList();
+            LOGGER.debug("Located [{}] S3 object(s) from bucket [{}]", objects.size(), bucketName);
+            entityIdIndex.keySet().retainAll(objects.stream().map(S3Object::key).collect(Collectors.toSet()));
+            val entityId = getEntityIdFromCriteriaSet(criteriaSet);
+            return objects
+                .stream()
+                .filter(object -> entityId.map(id -> id.equals(getEntityIdOf(object))).orElse(Boolean.TRUE))
+                .map(object -> getDocumentFromBucket(object.key()))
+                .filter(Objects::nonNull)
+                .filter(document -> matchesEntityIdCriteria(document, criteriaSet))
+                .map(document -> buildMetadataResolverFrom(service, document))
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+        } catch (final NoSuchBucketException e) {
             LOGGER.debug("S3 bucket [{}] does not exist", bucketName);
             return new ArrayList<>();
         }
+    }
 
-        val result = s3Client.listObjectsV2(ListObjectsV2Request.builder().bucket(bucketName).build());
-        val objects = result.contents();
-        LOGGER.debug("Located [{}] S3 object(s) from bucket [{}]", objects.size(), bucketName);
-
-        return objects.stream()
-            .map(obj -> getDocumentFromBucket(obj.key()))
-            .filter(Objects::nonNull)
-            .filter(document -> matchesEntityIdCriteria(document, criteriaSet))
-            .map(document -> buildMetadataResolverFrom(service, document))
-            .filter(Objects::nonNull)
-            .collect(Collectors.toList());
+    /**
+     * Gets the entity id of the metadata document stored in an object without downloading the document.
+     * The entity id is kept in memory by object key and ETag, so a listing only costs a request for objects
+     * that are new or have changed since they were last seen: one {@code HEAD} request for the entity id
+     * stored with the object, and a download only for documents stored without it.
+     *
+     * @param object the S3 object
+     * @return the entity id, or null when it cannot be determined
+     */
+    protected @Nullable String getEntityIdOf(final S3Object object) {
+        val indexed = entityIdIndex.get(object.key());
+        if (indexed != null && Objects.equals(indexed.eTag(), object.eTag())) {
+            return indexed.entityId();
+        }
+        try {
+            val head = s3Client.headObject(HeadObjectRequest.builder().bucket(bucketName).key(object.key()).build());
+            var entityId = head.metadata().get(ENTITY_ID_METADATA_KEY);
+            if (StringUtils.isBlank(entityId)) {
+                val document = getDocumentFromBucket(object.key());
+                entityId = document != null ? prepareMetadataDocument(document, false).getEntityId() : null;
+            }
+            entityIdIndex.put(object.key(), new IndexedObject(object.eTag(), entityId));
+            return entityId;
+        } catch (final Exception e) {
+            LoggingUtils.error(LOGGER, e);
+        }
+        return null;
     }
 
     @Override
@@ -124,14 +157,17 @@ public class AmazonS3SamlRegisteredServiceMetadataResolver extends BaseSamlRegis
 
     @Override
     public boolean isAvailable(final SamlRegisteredService service) {
-        return supports(service) && s3Client.listBuckets().hasBuckets();
+        try {
+            return supports(service) && doesBucketExist();
+        } catch (final Exception e) {
+            LoggingUtils.error(LOGGER, e);
+        }
+        return false;
     }
 
     @Override
     public List<SamlMetadataDocument> load() {
-        val result = s3Client.listObjectsV2(ListObjectsV2Request.builder().bucket(bucketName).build());
-        return result.contents()
-            .stream()
+        return listObjects()
             .map(obj -> getDocumentFromBucket(obj.key()))
             .filter(Objects::nonNull)
             .collect(Collectors.toList());
@@ -139,9 +175,7 @@ public class AmazonS3SamlRegisteredServiceMetadataResolver extends BaseSamlRegis
 
     @Override
     public void removeById(final long id) {
-        val result = s3Client.listObjectsV2(ListObjectsV2Request.builder().bucket(bucketName).build());
-        result.contents()
-            .stream()
+        listObjects()
             .filter(obj -> {
                 val document = getDocumentFromBucket(obj.key());
                 return document != null && document.getId() == id;
@@ -152,8 +186,7 @@ public class AmazonS3SamlRegisteredServiceMetadataResolver extends BaseSamlRegis
 
     @Override
     public void removeAll() {
-        val result = s3Client.listObjectsV2(ListObjectsV2Request.builder().bucket(bucketName).build());
-        result.contents().forEach(obj -> s3Client.deleteObject(DeleteObjectRequest.builder()
+        listObjects().forEach(obj -> s3Client.deleteObject(DeleteObjectRequest.builder()
             .bucket(bucketName).key(obj.key()).build()));
     }
 
@@ -170,9 +203,7 @@ public class AmazonS3SamlRegisteredServiceMetadataResolver extends BaseSamlRegis
 
     @Override
     public Optional<SamlMetadataDocument> findById(final long id) {
-        val result = s3Client.listObjectsV2(ListObjectsV2Request.builder().bucket(bucketName).build());
-        return result.contents()
-            .stream()
+        return listObjects()
             .map(obj -> getDocumentFromBucket(obj.key()))
             .filter(Objects::nonNull)
             .filter(doc -> doc.getId() == id)
@@ -198,5 +229,28 @@ public class AmazonS3SamlRegisteredServiceMetadataResolver extends BaseSamlRegis
             LoggingUtils.error(LOGGER, e);
         }
         return null;
+    }
+
+    /**
+     * Lists every object of the bucket, following the listing across pages; a single listing request
+     * returns at most 1000 objects.
+     *
+     * @return the objects
+     */
+    protected Stream<S3Object> listObjects() {
+        return s3Client.listObjectsV2Paginator(ListObjectsV2Request.builder().bucket(bucketName).build()).contents().stream();
+    }
+
+    private boolean doesBucketExist() {
+        try {
+            s3Client.headBucket(HeadBucketRequest.builder().bucket(bucketName).build());
+            return true;
+        } catch (final NoSuchBucketException e) {
+            LOGGER.trace("S3 bucket [{}] does not exist: [{}]", bucketName, e.getMessage());
+            return false;
+        }
+    }
+
+    private record IndexedObject(String eTag, @Nullable String entityId) {
     }
 }

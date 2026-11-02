@@ -1,12 +1,10 @@
 package org.apereo.cas.support.saml;
 
 import module java.base;
-import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPSamlRegisteredServiceCriterion;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.MetadataEntityAttributeQuery;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceMetadataAdaptor;
-import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.apereo.cas.util.function.FunctionUtils;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +21,6 @@ import org.opensaml.saml.common.messaging.context.SAMLPeerEntityContext;
 import org.opensaml.saml.common.profile.logic.EntityAttributesPredicate;
 import org.opensaml.saml.ext.saml2mdattr.EntityAttributes;
 import org.opensaml.saml.metadata.criteria.entity.impl.EvaluableEntityRoleEntityDescriptorCriterion;
-import org.opensaml.saml.metadata.resolver.ChainingMetadataResolver;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.metadata.resolver.RoleDescriptorResolver;
 import org.opensaml.saml.metadata.resolver.impl.PredicateRoleDescriptorResolver;
@@ -175,40 +172,6 @@ public class SamlIdPUtils {
         acs.setIndex(acsIndex);
         acs.setIsDefault(Boolean.TRUE);
         return acs;
-    }
-
-    /**
-     * Gets chaining metadata resolver for all saml services.
-     *
-     * @param servicesManager the services manager
-     * @param entityID        the entity id
-     * @param resolver        the resolver
-     * @return the chaining metadata resolver for all saml services
-     */
-    public static MetadataResolver getMetadataResolverForAllSamlServices(final ServicesManager servicesManager,
-                                                                         final String entityID,
-                                                                         final SamlRegisteredServiceCachingMetadataResolver resolver) {
-
-        val registeredServices = servicesManager.findServiceBy(SamlRegisteredService.class::isInstance);
-        val chainingMetadataResolver = new ChainingMetadataResolver();
-
-        val resolvers = registeredServices.stream()
-            .filter(SamlRegisteredService.class::isInstance)
-            .map(SamlRegisteredService.class::cast)
-            .map(service -> SamlRegisteredServiceMetadataAdaptor.get(resolver, service, entityID))
-            .filter(Optional::isPresent)
-            .map(Optional::get)
-            .map(SamlRegisteredServiceMetadataAdaptor::getMetadataResolver)
-            .collect(Collectors.toList());
-
-        LOGGER.debug("Located [{}] metadata resolvers to match against [{}]", resolvers, entityID);
-
-        FunctionUtils.doUnchecked(_ -> {
-            chainingMetadataResolver.setResolvers(resolvers);
-            chainingMetadataResolver.setId(entityID);
-            chainingMetadataResolver.initialize();
-        });
-        return chainingMetadataResolver;
     }
 
     /**

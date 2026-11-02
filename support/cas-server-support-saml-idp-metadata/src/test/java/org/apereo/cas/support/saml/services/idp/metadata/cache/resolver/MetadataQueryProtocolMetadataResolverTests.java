@@ -110,10 +110,14 @@ class MetadataQueryProtocolMetadataResolverTests extends BaseSamlIdPServicesTest
         val firstEntity = new CriteriaSet(new EntityIdCriterion("https://mockypost.io"));
         val secondEntity = new CriteriaSet(new EntityIdCriterion("https://unknown.example.org"));
         try (val webServer = new MockWebServer(new ClassPathResource("sample-metadata.xml"))) {
+            webServer.headers(Map.of("ETag", "\"first-entity\""));
             webServer.start();
             service.setMetadataLocation("http://localhost:%s/entities/{0}".formatted(webServer.getPort()));
             assertFalse(resolver.resolve(service, firstEntity).isEmpty());
         }
+        val firstBackupFile = resolver.getMetadataBackupFile(service, firstEntity);
+        assertTrue(resolver.getMetadataValidatorsFile(firstBackupFile).exists());
+        assertFalse(resolver.getMetadataValidatorsFile(resolver.getMetadataBackupFile(service, secondEntity)).exists());
         assertFalse(resolver.resolve(service, firstEntity).isEmpty());
         assertThrows(SamlException.class, () -> resolver.resolve(service, secondEntity),
             "An entity never fetched must not fall back onto the backup of another entity of the same service");
@@ -132,6 +136,7 @@ class MetadataQueryProtocolMetadataResolverTests extends BaseSamlIdPServicesTest
         assertThrows(SamlException.class, () -> resolver.resolve(service));
 
         service.setMetadataLocation("https://github.com/entities/{0}");
-        assertTrue(resolver.resolve(service).isEmpty());
+        val error = assertThrows(SamlException.class, () -> resolver.resolve(service));
+        assertTrue(error.getMessage().contains("https://github.com/entities/"));
     }
 }

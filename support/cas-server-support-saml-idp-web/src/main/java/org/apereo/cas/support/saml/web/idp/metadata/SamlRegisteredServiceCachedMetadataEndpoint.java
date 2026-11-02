@@ -32,7 +32,6 @@ import org.opensaml.core.criterion.EntityIdCriterion;
 import org.opensaml.core.criterion.SatisfyAnyCriterion;
 import org.opensaml.saml.criterion.EntityRoleCriterion;
 import org.opensaml.saml.metadata.criteria.entity.impl.EvaluableEntityRoleEntityDescriptorCriterion;
-import org.opensaml.saml.saml2.common.TimeBoundSAMLObject;
 import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.actuate.endpoint.Access;
@@ -170,9 +169,10 @@ public class SamlRegisteredServiceCachedMetadataEndpoint extends BaseCasRestActu
                     .map(Unchecked.function(result -> {
                         val iteration = result.getMetadataResolver().resolve(criteriaSet).spliterator();
                         return StreamSupport.stream(iteration, false)
-                            .filter(TimeBoundSAMLObject::isValid)
                             .map(entity -> {
-                                val details = CollectionUtils.wrap("cachedInstant", result.getCachedInstant());
+                                val details = CollectionUtils.<String, Object>wrap("cachedInstant", result.getCachedInstant());
+                                details.put("valid", entity.isValid());
+                                Optional.ofNullable(entity.getValidUntil()).ifPresent(validUntil -> details.put("validUntil", validUntil));
                                 if (includeMetadata) {
                                     details.put("metadata", SamlUtils.transformSamlObject(openSamlConfigBean.getObject(), entity).toString());
                                 }
@@ -193,6 +193,28 @@ public class SamlRegisteredServiceCachedMetadataEndpoint extends BaseCasRestActu
         } finally {
             stopWatch.stop();
         }
+    }
+
+    /**
+     * Gets statistics of the metadata cache, and describes its entries.
+     *
+     * @return the statistics and the cached entries
+     */
+    @GetMapping(path = "/statistics", produces = {
+        MediaType.APPLICATION_JSON_VALUE,
+        MEDIA_TYPE_SPRING_BOOT_V2_JSON,
+        MEDIA_TYPE_SPRING_BOOT_V3_JSON,
+        MEDIA_TYPE_CAS_YAML
+    })
+    @Operation(summary = "Get statistics of the SAML2 metadata cache, such as its size, hit and miss counts and load times, "
+        + "along with every cached entry: the service and entity it was loaded for, when it was loaded and when it expires, "
+        + "where its metadata came from, and the failure remembered for it, if any.")
+    public ResponseEntity<Map<String, Object>> getCacheStatistics() {
+        val resolver = cachingMetadataResolver.getObject();
+        val body = new LinkedHashMap<String, Object>();
+        body.put("statistics", resolver.getStatistics());
+        body.put("entries", resolver.getCachedEntries());
+        return ResponseEntity.ok(body);
     }
 
     protected SamlRegisteredService findRegisteredService(final String serviceId) throws Throwable {

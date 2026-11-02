@@ -24,6 +24,7 @@ Note that:
 You will need to have compile-time access to the following modules in the Overlay:
 
 {% include_cached casmodule.html group="org.apereo.cas" module="cas-server-core-webflow" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-core-webflow-mfa-api" %}
 
 These are modules that ship with CAS by default and thou shall mark them with a `compile` or `provided` scope in your build configuration.
 
@@ -52,7 +53,10 @@ public class ExampleMultifactorAuthenticationTrigger implements MultifactorAuthe
 
 ## Register Triggers
 
-The event resolver trigger then needs to be registered. [See this guide](../configuration/Configuration-Management-Extensions.html) for better details.
+The event resolver trigger then needs to be registered as a bean tagged with the `@MultifactorAuthenticationWebflowEventResolver`
+annotation. CAS collects every bean carrying this annotation from the application context and adds it to the initial authentication
+event resolver, so the resolver does not need to locate or register itself with any other component.
+Resolvers are invoked in the order indicated by their `Ordered` implementation or `@Order` annotation, if any.
 
 The below example demonstrates a reasonable outline of a custom event resolver:
 
@@ -66,24 +70,23 @@ public class SomethingConfiguration {
     public MultifactorAuthenticationTrigger exampleMultifactorAuthenticationTrigger() {
         return new ExampleMultifactorAuthenticationTrigger();
     }
-    
+
     @Bean
+    @MultifactorAuthenticationWebflowEventResolver
     public CasWebflowEventResolver exampleMultifactorAuthenticationWebflowEventResolver(
-        @Qualifier(CasDelegatingWebflowEventResolver.BEAN_NAME_INITIAL_AUTHENTICATION_EVENT_RESOLVER)
-        final CasDelegatingWebflowEventResolver initialEventResolver) {
-        var resolver = new DefaultMultifactorAuthenticationProviderEventResolver(
-            authenticationSystemSupport.getObject(),
-            centralAuthenticationService.getObject(),
-            servicesManager.getObject(),
-            ticketRegistrySupport.getObject(),
-            warnCookieGenerator.getObject(),
-            authenticationRequestServiceSelectionStrategies.getObject(),
-            multifactorAuthenticationProviderSelector.getObject(),
-            exampleMultifactorAuthenticationTrigger());
-        initialEventResolver.addDelegate(resolver);
-        return resolver;
+        @Qualifier(CasWebflowEventResolutionConfigurationContext.BEAN_NAME)
+        final CasWebflowEventResolutionConfigurationContext casWebflowConfigurationContext,
+        @Qualifier("exampleMultifactorAuthenticationTrigger")
+        final MultifactorAuthenticationTrigger exampleMultifactorAuthenticationTrigger) {
+        return new DefaultMultifactorAuthenticationProviderWebflowEventResolver(
+            casWebflowConfigurationContext, exampleMultifactorAuthenticationTrigger);
     }
 }
 ```
+
+<div class="alert alert-info">:information_source: <strong>Remember</strong>
+<p>The same annotation must be placed on any bean that replaces one of the built-in trigger event resolvers under the same
+bean name; a resolver bean without the annotation is not consulted by the initial authentication event resolver.</p>
+</div>
 
 Do not forget to register the configuration class with CAS. [See this guide](../configuration/Configuration-Management-Extensions.html) for better details.

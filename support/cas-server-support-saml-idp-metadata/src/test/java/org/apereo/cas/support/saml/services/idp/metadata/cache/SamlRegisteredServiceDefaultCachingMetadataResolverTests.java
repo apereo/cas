@@ -16,7 +16,10 @@ import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.opensaml.saml.common.xml.SAMLConstants;
+import org.opensaml.saml.metadata.resolver.ChainingMetadataResolver;
+import org.opensaml.saml.metadata.resolver.impl.LocalDynamicMetadataResolver;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.TestPropertySource;
 import static org.awaitility.Awaitility.*;
@@ -38,7 +41,7 @@ class SamlRegisteredServiceDefaultCachingMetadataResolverTests extends BaseSamlI
         aggregateRegisteredService.setId(1000);
         aggregateRegisteredService.setServiceId("https://.+");
 
-        val resolver = getResolver("PT1M");
+        val resolver = getResolver("PT1M", "PT0S");
         try (val webServer = new MockWebServer(new ClassPathResource("aggregate-md.xml"), MediaType.APPLICATION_XML_VALUE)) {
             webServer.start();
 
@@ -46,10 +49,12 @@ class SamlRegisteredServiceDefaultCachingMetadataResolverTests extends BaseSamlI
             val criteriaSet1 = getCriteriaFor("https://issues.shibboleth.net/shibboleth");
             assertNotNull(resolver.resolve(aggregateRegisteredService, criteriaSet1));
             assertTrue(resolver.resolveIfPresent(aggregateRegisteredService, criteriaSet1).isPresent());
+            assertFalse(resolver.getIfPresent(aggregateRegisteredService, criteriaSet1).orElseThrow().isSingleServiceProvider());
 
             val criteriaSet2 = getCriteriaFor("unknown-entity");
             assertThrows(SamlException.class, () -> resolver.resolve(aggregateRegisteredService, criteriaSet2));
             assertTrue(resolver.resolveIfPresent(aggregateRegisteredService, criteriaSet1).isPresent());
+            assertEquals(1, resolver.getCacheStatistics().loadSuccessCount(), "An aggregate is not reloaded for an entity it does not hold");
         }
     }
 
@@ -124,6 +129,59 @@ class SamlRegisteredServiceDefaultCachingMetadataResolverTests extends BaseSamlI
         resolver.invalidate(missingService, criteriaSet);
         assertThrows(SamlException.class, () -> resolver.resolve(missingService, criteriaSet));
         assertEquals(failures + 2, resolver.getCacheStatistics().loadFailureCount());
+
+        val entries = resolver.getCachedEntries();
+        assertTrue(entries.stream().anyMatch(entry -> missingService.getName().equals(entry.get("registeredServiceName"))
+            && entry.get("rememberedFailure").toString().contains("classpath:missing-metadata.xml")
+            && !entry.containsKey("cachedInstant")));
+        assertTrue((Long) resolver.getStatistics().get("rememberedFailures") >= 1);
+        resolver.invalidate();
+    }
+
+    @Test
+    void verifyChangedMetadataFileIsReloaded() throws Throwable {
+        val metadataFile = Files.createTempFile("sp-metadata", ".xml").toFile();
+        FileUtils.copyInputStreamToFile(new ClassPathResource("sample-sp.xml").getInputStream(), metadataFile);
+        val entityId = "https://carmenwiki.osu.edu/shibboleth";
+        val service = getSamlRegisteredService(3000, ".+", metadataFile.getCanonicalPath());
+        val resolver = getResolver("PT1H", "PT1M", "PT0S");
+
+        val initial = resolver.resolve(service, getCriteriaFor(entityId));
+        assertEquals(initial.getCachedInstant(), resolver.resolve(service, getCriteriaFor(entityId)).getCachedInstant());
+        assertEquals(1, resolver.getCacheStatistics().loadSuccessCount());
+
+        val entries = resolver.getCachedEntries();
+        assertEquals(1, entries.size());
+        val entry = entries.getFirst();
+        assertEquals(List.of(metadataFile.getCanonicalPath()), entry.get("metadataSourceFiles"));
+        assertEquals(entityId, entry.get("entityId"));
+        assertNotNull(entry.get("expiresIn"));
+        assertEquals(1L, resolver.getStatistics().get("size"));
+        assertEquals(1L, resolver.getStatistics().get("loadSuccessCount"));
+
+        val changedEntityId = "https://changed.example.org/shibboleth";
+        val metadata = FileUtils.readFileToString(metadataFile, StandardCharsets.UTF_8).replace(entityId, changedEntityId);
+        FileUtils.writeStringToFile(metadataFile, metadata, StandardCharsets.UTF_8);
+        assertTrue(metadataFile.setLastModified(metadataFile.lastModified() + 5000));
+
+        val result = resolver.resolve(service, getCriteriaFor(changedEntityId));
+        assertEquals(changedEntityId, result.getEntityDescriptor().orElseThrow().getEntityID());
+        assertEquals(2, resolver.getCacheStatistics().loadSuccessCount());
+        resolver.invalidate();
+    }
+
+    @Test
+    void verifyMetadataFileChangesAreCheckedOncePerInterval() throws Throwable {
+        val metadataFile = Files.createTempFile("sp-metadata", ".xml").toFile();
+        FileUtils.copyInputStreamToFile(new ClassPathResource("sample-sp.xml").getInputStream(), metadataFile);
+        val entityId = "https://carmenwiki.osu.edu/shibboleth";
+        val service = getSamlRegisteredService(3001, ".+", metadataFile.getCanonicalPath());
+        val resolver = getResolver("PT1H", "PT1M", "PT1H");
+
+        val initial = resolver.resolve(service, getCriteriaFor(entityId));
+        assertTrue(metadataFile.setLastModified(metadataFile.lastModified() + 5000));
+        assertEquals(initial.getCachedInstant(), resolver.resolve(service, getCriteriaFor(entityId)).getCachedInstant());
+        assertEquals(1, resolver.getCacheStatistics().loadSuccessCount());
         resolver.invalidate();
     }
 
@@ -139,6 +197,7 @@ class SamlRegisteredServiceDefaultCachingMetadataResolverTests extends BaseSamlI
         val resolver = getResolver("PT5S", "PT0S");
         val criteriaSet1 = getCriteriaFor("https://carmenwiki.osu.edu/shibboleth");
         assertNotNull(resolver.resolve(service, criteriaSet1));
+        assertTrue(resolver.getIfPresent(service, criteriaSet1).orElseThrow().isSingleServiceProvider());
 
         val criteriaSet2 = getCriteriaFor("unknown-service-provider");
         assertThrows(SamlException.class, () -> resolver.resolve(service, criteriaSet2));
@@ -271,11 +330,34 @@ class SamlRegisteredServiceDefaultCachingMetadataResolverTests extends BaseSamlI
         resolver.invalidate();
     }
 
+    @Test
+    void verifyRemovedDynamicMetadataResolverIsDestroyed() throws Throwable {
+        val directory = new FileSystemResource("src/test/resources/md-dir").getFile().getCanonicalPath();
+        val service = getSamlRegisteredService(4000, ".+", directory);
+        val criteriaSet = getCriteriaFor("sp1:example");
+        val resolver = getResolver("PT1H");
+        resolver.setMetadataResolverRetirementDelay(Duration.ZERO);
+
+        val result = resolver.resolve(service, criteriaSet);
+        val chain = (ChainingMetadataResolver) result.getMetadataResolver();
+        val dynamicResolver = (LocalDynamicMetadataResolver) chain.getResolvers().getFirst();
+        assertFalse(dynamicResolver.isDestroyed());
+
+        resolver.invalidate(service, criteriaSet);
+        await().atMost(Duration.ofSeconds(10)).until(dynamicResolver::isDestroyed);
+        assertNotSame(chain, resolver.resolve(service, criteriaSet).getMetadataResolver());
+    }
+
     private SamlRegisteredServiceDefaultCachingMetadataResolver getResolver(final String duration) {
         return getResolver(duration, "PT1M");
     }
 
     private SamlRegisteredServiceDefaultCachingMetadataResolver getResolver(final String duration, final String failureDuration) {
+        return getResolver(duration, failureDuration, "PT5S");
+    }
+
+    private SamlRegisteredServiceDefaultCachingMetadataResolver getResolver(final String duration, final String failureDuration,
+                                                                            final String changeDetectionInterval) {
         val resolutionPlan = new DefaultSamlRegisteredServiceMetadataResolutionPlan();
         val props = casProperties.getAuthn().getSamlIdp();
         resolutionPlan.registerMetadataResolver(
@@ -291,6 +373,7 @@ class SamlRegisteredServiceDefaultCachingMetadataResolverTests extends BaseSamlI
         resolverProperties.getAuthn().getSamlIdp().getMetadata().getCore()
             .setCacheExpiration(duration)
             .setFailureCacheExpiration(failureDuration);
+        resolverProperties.getAuthn().getSamlIdp().getMetadata().getFileSystem().setChangeDetectionInterval(changeDetectionInterval);
         return new SamlRegisteredServiceDefaultCachingMetadataResolver(resolverProperties, cacheLoader, openSamlConfigBean);
     }
 }

@@ -50,4 +50,8 @@ The parameters passed are as follows:
 | `criteriaSet`       | The object responsible for capturing the criteria for metadata solution, if any.                                   |
 | `logger`            | The object responsible for issuing log messages such as `logger.info(...)`.                                        |
 
+The script is asked for a metadata resolver whenever the metadata of the service is loaded again. A metadata resolver that
+runs background tasks, such as one that reloads its metadata on a schedule, is destroyed shortly after CAS stops using it,
+unless the script has returned the very same resolver again in the meantime.
+
 To prepare CAS to support and integrate with Apache Groovy, please [review this guide](../integration/Apache-Groovy-Scripting.html).

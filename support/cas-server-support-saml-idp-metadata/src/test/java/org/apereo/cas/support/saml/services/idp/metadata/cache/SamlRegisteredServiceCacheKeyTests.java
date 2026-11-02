@@ -66,6 +66,23 @@ class SamlRegisteredServiceCacheKeyTests {
     }
 
     @Test
+    void verifyCacheKeyForMetadataQueryFromExpression() {
+        System.setProperty("cas.saml.mdq.location", "https://mdq.something.net/entities/{0}");
+        val service = new SamlRegisteredService();
+        service.setId(1000);
+        service.setServiceId("^https://sp.*");
+        service.setMetadataLocation("${#systemProperties['cas.saml.mdq.location']}");
+
+        val firstKey = new SamlRegisteredServiceCacheKey(service, new CriteriaSet(new EntityIdCriterion("https://sp1.example.org")));
+        val secondKey = new SamlRegisteredServiceCacheKey(service, new CriteriaSet(new EntityIdCriterion("https://sp2.example.org")));
+        assertNotEquals(firstKey, secondKey);
+
+        service.setMetadataLocation("https://mdq.something.net/entities/{0},https://mdq.backup.net/entities/{0}/");
+        assertNotEquals(new SamlRegisteredServiceCacheKey(service, new CriteriaSet(new EntityIdCriterion("https://sp1.example.org"))),
+            new SamlRegisteredServiceCacheKey(service, new CriteriaSet(new EntityIdCriterion("https://sp2.example.org"))));
+    }
+
+    @Test
     void verifyCacheKeyNoEntityIdCriteria() {
         val criteriaSet = new CriteriaSet();
         criteriaSet.add(new EntityRoleCriterion(SPSSODescriptor.DEFAULT_ELEMENT_NAME));

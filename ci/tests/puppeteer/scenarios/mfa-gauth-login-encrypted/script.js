@@ -37,7 +37,7 @@ async function readStoredAccount() {
     switch (process.env.SCENARIO_VARIATION) {
     case "jpa":
         return cas.dockerExec("mariadb", ["mariadb", "-uroot", "-pmypass", "-N", "-D", "mysql", "-e",
-            "SELECT secretKey FROM GoogleAuthenticatorRegistrationRecord WHERE username='casuser'"]);
+            "SELECT secret_key FROM google_authenticator_registration_record WHERE username='casuser'"]);
     case "redis":
         return cas.dockerExec("redis_server_master", ["redis-cli", "--scan", "--pattern", "CAS_TOKEN_ACCOUNT*"]);
     case "mongo":

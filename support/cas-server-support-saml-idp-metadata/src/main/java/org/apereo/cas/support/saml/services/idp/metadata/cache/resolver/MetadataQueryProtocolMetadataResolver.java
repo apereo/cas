@@ -2,14 +2,11 @@ package org.apereo.cas.support.saml.services.idp.metadata.cache.resolver;
 
 import module java.base;
 import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
-import org.apereo.cas.services.UnauthorizedServiceException;
-import org.apereo.cas.support.saml.InMemoryResourceMetadataResolver;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlException;
 import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.util.EncodingUtils;
-import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.http.HttpExecutionRequest;
 import org.apereo.cas.util.http.HttpUtils;
@@ -17,17 +14,12 @@ import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import net.shibboleth.shared.resolver.CriteriaSet;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.hc.core5.http.HttpEntityContainer;
 import org.apache.hc.core5.http.HttpResponse;
-import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.jspecify.annotations.Nullable;
 import org.opensaml.core.criterion.EntityIdCriterion;
-import org.opensaml.saml.metadata.resolver.impl.AbstractMetadataResolver;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
 
 /**
  * This is {@link MetadataQueryProtocolMetadataResolver}.
@@ -52,39 +44,13 @@ public class MetadataQueryProtocolMetadataResolver extends UrlResourceMetadataRe
         return locations.stream().anyMatch(SamlUtils::isDynamicMetadataQueryConfigured);
     }
 
-    @Override
-    protected boolean shouldHttpResponseStatusBeProcessed(final HttpStatus status) {
-        return true;
-    }
-
-    @Override
-    protected AbstractMetadataResolver getMetadataResolverFromResponse(final @Nullable HttpResponse response,
-                                                                       final File backupFile)
-            throws Exception {
-        val status = response != null ? HttpStatus.resolve(response.getCode()) : null;
-        if (status == null || !status.is2xxSuccessful()) {
-            if (Files.exists(backupFile.toPath())) {
-                LOGGER.warn("MDQ server did not return metadata with status [{}]. CAS will fall back onto "
-                    + "the metadata backup file at [{}], which may be out of date.", status, backupFile);
-                return new InMemoryResourceMetadataResolver(backupFile, this.configBean);
-            }
-            throw new SamlException("Unable to get entity from MDQ server and a backup file does not exist.");
-        }
-        val entity = ((HttpEntityContainer) response).getEntity();
-        val result = IOUtils.toString(entity.getContent(), StandardCharsets.UTF_8);
-        writeMetadataToBackupFile(result, backupFile);
-        setFileAttribute(response, backupFile);
-        EntityUtils.consume(entity);
-        return new InMemoryResourceMetadataResolver(result, configBean);
-    }
-
     /**
      * {@inheritDoc}
      * <p>
-     * A null or server-error response is only fatal when there is nothing to fall back onto.
-     * When the metadata backup file exists, this returns null so that the resolution can
-     * continue and serve the last known good copy, rather than taking the service offline
-     * for as long as the MDQ server is unreachable.
+     * The request negotiates the metadata media type the Metadata Query Protocol requires, and is
+     * conditional on the backup file of the requested entity when validators were recorded for it.
+     * An answer other than {@code 200} or {@code 304} is not an error here: the resolution moves on
+     * to the next location and eventually to the backup file.
      */
     @Override
     protected @Nullable HttpResponse fetchMetadata(final SamlRegisteredService service,
@@ -92,13 +58,7 @@ public class MetadataQueryProtocolMetadataResolver extends UrlResourceMetadataRe
         val metadata = samlIdPProperties.getMetadata().getMdq();
         val headers = new LinkedHashMap<String, String>();
         headers.put(HttpHeaders.ACCEPT, metadata.getSupportedContentType());
-        val path = backupFile.toPath();
-        FunctionUtils.doAndHandle(p -> {
-            if (Files.exists(path)) {
-                val etag = new String((byte[]) Files.getAttribute(path, "user:ETag"), StandardCharsets.UTF_8).trim();
-                headers.put("If-None-Match", etag);
-            }
-        });
+        headers.putAll(getConditionalRequestHeaders(backupFile));
         LOGGER.trace("Fetching metadata via MDQ for [{}]", metadataLocation);
         val exec = HttpExecutionRequest.builder()
             .basicAuthPassword(metadata.getBasicAuthnPassword())
@@ -110,19 +70,7 @@ public class MetadataQueryProtocolMetadataResolver extends UrlResourceMetadataRe
             .httpClient(httpClient)
             .maximumRetryAttempts(samlIdPProperties.getMetadata().getCore().getMaximumRetryAttempts())
             .build();
-        val response = HttpUtils.execute(exec);
-        val status = response != null ? HttpStatus.resolve(response.getCode()) : null;
-        if (status == null || status.is5xxServerError()) {
-            HttpUtils.close(response);
-            if (backupFile.exists() && backupFile.canRead()) {
-                LOGGER.warn("Unable to fetch metadata from [{}]. CAS will fall back onto the metadata "
-                    + "backup file at [{}].", metadataLocation, backupFile);
-                return null;
-            }
-            LOGGER.error("Unable to fetch metadata from [{}]", metadataLocation);
-            throw UnauthorizedServiceException.denied("Rejected: %s".formatted(metadataLocation));
-        }
-        return response;
+        return HttpUtils.execute(exec);
     }
 
     @Override
@@ -140,13 +88,5 @@ public class MetadataQueryProtocolMetadataResolver extends UrlResourceMetadataRe
             .stream()
             .map(location -> location.replace("{0}", EncodingUtils.urlEncode(entityId)))
             .collect(Collectors.toCollection(LinkedHashSet::new));
-    }
-
-    private static void setFileAttribute(final HttpResponse response, final File backupFile) {
-        FunctionUtils.doAndHandle(t -> {
-            val path = backupFile.toPath();
-            val etag = response.getFirstHeader("ETag").getValue();
-            Files.setAttribute(path, "user:ETag", ByteBuffer.wrap(etag.getBytes(StandardCharsets.UTF_8)));
-        });
     }
 }
