@@ -11,6 +11,7 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 
@@ -21,6 +22,7 @@ import org.apache.commons.lang3.StringUtils;
  * @since 5.0.0
  */
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
+@Slf4j
 public abstract class BaseOneTimeTokenCredentialRepository implements OneTimeTokenCredentialRepository {
     private final CipherExecutor<String, String> tokenCredentialCipher;
 
@@ -57,7 +59,9 @@ public abstract class BaseOneTimeTokenCredentialRepository implements OneTimeTok
     }
 
     /**
-     * Decode.
+     * Decode a copy of the account: the secret and the scratch codes are decrypted. A scratch code that cannot be
+     * decrypted is left out rather than kept as it was stored, since a stored value that is not a scratch code must
+     * never be offered to the validator as one.
      *
      * @param account the account
      * @return the one time token account
@@ -67,12 +71,21 @@ public abstract class BaseOneTimeTokenCredentialRepository implements OneTimeTok
         val scratchCodesCipherExecutor = toScratchCodesCipherExecutor(account);
         val decodedScratchCodes = account.getScratchCodes()
             .stream()
-            .map(code -> FunctionUtils.doAndHandle(() -> scratchCodesCipherExecutor.decode(code), t -> code).get())
+            .map(code -> decodeScratchCode(scratchCodesCipherExecutor, code))
+            .flatMap(Optional::stream)
             .collect(Collectors.toList());
+        if (decodedScratchCodes.size() < account.getScratchCodes().size()) {
+            LOGGER.warn("[{}] scratch code(s) of device [{}] registered to [{}] cannot be decrypted and are ignored",
+                account.getScratchCodes().size() - decodedScratchCodes.size(), account.getId(), account.getUsername());
+        }
         val newAccount = account.clone();
         newAccount.setSecretKey(decodedSecret);
         newAccount.setScratchCodes(decodedScratchCodes);
         return newAccount;
+    }
+
+    private static Optional<Number> decodeScratchCode(final CipherExecutor<Number, Number> cipher, final Number code) {
+        return FunctionUtils.doAndHandle(() -> Optional.ofNullable(cipher.decode(code)), _ -> Optional.<Number>empty()).get();
     }
 
     /**

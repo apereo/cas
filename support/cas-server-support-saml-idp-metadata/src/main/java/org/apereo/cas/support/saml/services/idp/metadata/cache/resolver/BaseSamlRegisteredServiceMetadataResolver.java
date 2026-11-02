@@ -144,9 +144,10 @@ public abstract class BaseSamlRegisteredServiceMetadataResolver implements SamlR
             LOGGER.debug("Metadata predicate filter configuring with direction [{}] and pattern [{}]",
                 service.getMetadataCriteriaDirection(), service.getMetadataCriteriaPattern());
 
+            val pattern = RegexUtils.createPattern(service.getMetadataCriteriaPattern(), 0);
             val filter = new PredicateFilter(dir, entityDescriptor ->
                 StringUtils.isNotBlank(entityDescriptor.getEntityID())
-                    && entityDescriptor.getEntityID().matches(service.getMetadataCriteriaPattern()));
+                    && pattern.matcher(entityDescriptor.getEntityID()).matches());
             filter.initialize();
 
             metadataFilterList.add(filter);

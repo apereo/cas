@@ -34,6 +34,19 @@ public class OAuth20AuthorizationCodeGrantTypeTokenRequestValidator extends Base
         return OAuth20GrantTypes.AUTHORIZATION_CODE;
     }
 
+    /**
+     * The access strategy of the service sees the attributes of the principal and, as when CAS grants service tickets,
+     * those of the authentication of the single sign-on session the code was issued from. A stateless code carries only
+     * the OAuth authentication, whose attributes include request parameters such as {@code state} or {@code nonce};
+     * those are left out, since the caller controls them.
+     *
+     * @param request   the request
+     * @param response  the response
+     * @param grantType the grant type
+     * @param uProfile  the authenticated profile
+     * @return whether the request is valid
+     * @throws Throwable the throwable
+     */
     @Override
     protected boolean validateInternal(final HttpServletRequest request, final HttpServletResponse response, final String grantType,
                                        final OAuth20UserProfile uProfile)
@@ -68,8 +81,11 @@ public class OAuth20AuthorizationCodeGrantTypeTokenRequestValidator extends Base
 
             val authentication = resolveAuthenticationFrom(oauthCode);
             val originalPrincipal = authentication.getPrincipal();
-            val accessStrategyAttributes = CoreAuthenticationUtils.mergeAttributes(originalPrincipal.getAttributes(),
+            val principalAttributes = CoreAuthenticationUtils.mergeAttributes(originalPrincipal.getAttributes(),
                 oauthCode.getAuthentication().getPrincipal().getAttributes());
+            val accessStrategyAttributes = oauthCode.isStateless()
+                ? principalAttributes
+                : CoreAuthenticationUtils.mergeAttributes(principalAttributes, authentication.getAttributes());
             val accessStrategyPrincipal = configurationContext.getPrincipalFactory()
                 .createPrincipal(oauthCode.getAuthentication().getPrincipal().getId(), accessStrategyAttributes);
             val audit = AuditableContext.builder()

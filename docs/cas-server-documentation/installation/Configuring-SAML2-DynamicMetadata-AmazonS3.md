@@ -35,6 +35,10 @@ The following parameters are expected for the Amazon S3 object metadata:
 | Parameter   | Description                               |
 |-------------|-------------------------------------------|
 | `signature` | The metadata signing certificate, if any. |
+| `entityid`  | The entity id of the metadata document.   |
+
+CAS stores the entity id with every document it saves, and uses it to download only the documents that match the
+requested service provider. A document stored without it is read once to learn its entity id.
 
 <div class="alert alert-info">:information_source: <strong>Metadata Location</strong><p>
 The metadata location in the registration record above needs to be specified as <code>awss3://</code> to signal to CAS that 

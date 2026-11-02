@@ -40,6 +40,7 @@ import org.opensaml.xmlsec.keyinfo.impl.provider.InlineX509DataProvider;
 import org.opensaml.xmlsec.keyinfo.impl.provider.RSAKeyValueProvider;
 import org.opensaml.xmlsec.signature.support.SignatureValidationParametersCriterion;
 import org.opensaml.xmlsec.signature.support.impl.ExplicitKeySignatureTrustEngine;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import java.security.cert.X509Certificate;
@@ -247,14 +248,24 @@ public class SamlUtils {
 
     /**
      * Build signature validation filter if needed.
+     * <p>
+     * A resource that is not a local file, such as a certificate published at a URL, is read once and
+     * kept in memory: building the filter reads the resource more than once (to check that it exists,
+     * then to decode it as a certificate and possibly as a public key), and each of those reads would
+     * otherwise be another request to the remote server on every metadata load.
      *
      * @param signatureResourceLocation the signature resource location
      * @return the metadata filter
      * @throws Exception the exception
      */
     public static @Nullable SignatureValidationFilter buildSignatureValidationFilter(final String signatureResourceLocation) throws Exception {
-        val resource = ResourceUtils.getResourceFrom(signatureResourceLocation);
-        return buildSignatureValidationFilter(resource);
+        val resource = ResourceUtils.getRawResourceFrom(signatureResourceLocation);
+        if (resource.isFile()) {
+            return buildSignatureValidationFilter(ResourceUtils.getResourceFrom(signatureResourceLocation));
+        }
+        try (val input = resource.getInputStream()) {
+            return buildSignatureValidationFilter(new ByteArrayResource(input.readAllBytes(), resource.getDescription()));
+        }
     }
 
     /**

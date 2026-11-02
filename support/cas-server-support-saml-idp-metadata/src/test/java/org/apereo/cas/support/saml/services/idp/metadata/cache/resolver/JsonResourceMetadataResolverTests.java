@@ -45,7 +45,34 @@ class JsonResourceMetadataResolverTests extends BaseSamlIdPServicesTests {
         val metadataResolver = results.iterator().next();
         val resolved = metadataResolver.resolveSingle(new CriteriaSet(new EntityIdCriterion("https://example.org/saml")));
         assertNotNull(resolved);
-        resolver.destroy();
+        assertEquals(List.of(new File(dir.getFile().getCanonicalPath(), "saml-sp-metadata.json")), resolver.getMetadataSourceFiles(service));
+    }
+
+    @Test
+    void verifyResolverReadsFileWhenItChanges() throws Throwable {
+        val dir = Files.createTempDirectory("saml-sp-metadata").toFile();
+        val props = new SamlIdPProperties();
+        props.getMetadata().getFileSystem().setLocation(dir.getCanonicalPath());
+        val resolver = new JsonResourceMetadataResolver(props, openSamlConfigBean);
+        val service = new SamlRegisteredService();
+        service.setName("Example");
+        service.setId(1000);
+        service.setServiceId("https://example.org/saml");
+        service.setMetadataLocation("json://");
+        assertFalse(resolver.isAvailable(service));
+        assertTrue(resolver.resolve(service).isEmpty());
+
+        val jsonFile = new File(dir, "saml-sp-metadata.json");
+        FileUtils.copyFile(new ClassPathResource("saml-sp-metadata.json").getFile(), jsonFile);
+        assertTrue(resolver.isAvailable(service));
+        assertFalse(resolver.resolve(service).isEmpty());
+
+        val json = FileUtils.readFileToString(jsonFile, StandardCharsets.UTF_8).replace("https://example.org/saml", "https://example.org/other");
+        FileUtils.writeStringToFile(jsonFile, json, StandardCharsets.UTF_8);
+        assertTrue(jsonFile.setLastModified(jsonFile.lastModified() + 5000));
+        assertTrue(resolver.resolve(service).isEmpty());
+        service.setServiceId("https://example.org/other");
+        assertFalse(resolver.resolve(service).isEmpty());
     }
 
     /**

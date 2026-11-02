@@ -134,6 +134,25 @@ class RestGoogleAuthenticatorTokenCredentialRepositoryTests {
     }
 
     @Test
+    void verifyGetKeepsScratchCodesExact() {
+        try (val webServer = new MockWebServer()) {
+            val props = new GoogleAuthenticatorMultifactorProperties();
+            props.getRest().setUrl("http://localhost:" + webServer.getPort());
+            val repo = buildRepositoryInstance(props);
+            val scratchCode = new BigInteger("123456789012345678901234567890");
+            val account = repo.create(UUID.randomUUID().toString()).assignIdIfNecessary();
+            account.setScratchCodes(new ArrayList<>(List.of(scratchCode)));
+            webServer.responseBody(MAPPER.writeValueAsString(account));
+            webServer.start();
+            assertEquals(List.of(scratchCode.toString()), repo.get(account.getUsername(), account.getId())
+                .getScratchCodes().stream().map(String::valueOf).toList());
+            webServer.responseBody(MAPPER.writeValueAsString(CollectionUtils.wrapList(account)));
+            assertEquals(List.of(scratchCode.toString()), repo.get(account.getUsername()).iterator().next()
+                .getScratchCodes().stream().map(String::valueOf).toList());
+        }
+    }
+
+    @Test
     void verifyGetById() {
         try (val webServer = new MockWebServer()) {
             val props = new GoogleAuthenticatorMultifactorProperties();

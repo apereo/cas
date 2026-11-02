@@ -11,27 +11,61 @@ import net.shibboleth.shared.resolver.CriteriaSet;
 import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.NonNull;
 import org.opensaml.core.criterion.EntityIdCriterion;
+import org.opensaml.core.xml.XMLObject;
 import org.opensaml.saml.criterion.EntityRoleCriterion;
+import org.opensaml.saml.saml2.common.TimeBoundSAMLObject;
 import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
 
 /**
  * This is {@link SamlRegisteredServiceMetadataExpirationPolicy}.
+ * <p>
+ * The lifetime of cached metadata is the {@code cacheDuration} the metadata asks for, kept between the given minimum
+ * and maximum; otherwise the expiration duration or policy of the service; otherwise the default. Whichever applies,
+ * cached metadata never outlives the {@code validUntil} of the entity it was loaded for, or of the documents that
+ * enclose it, as long as that instant lies in the future: the metadata is loaded again once it is no longer valid,
+ * rather than turning every request away until the entry expires.
  *
  * @author Misagh Moayyed
+ * @param defaultExpiration    the default lifetime
+ * @param minimumCacheDuration the shortest lifetime a metadata {@code cacheDuration} may ask for
+ * @param maximumCacheDuration the longest lifetime a metadata {@code cacheDuration} may ask for
  * @since 5.2.0
  */
 @Slf4j
-public record SamlRegisteredServiceMetadataExpirationPolicy(Duration defaultExpiration) implements Expiry<SamlRegisteredServiceCacheKey, @NonNull CachedMetadataResolverResult> {
+public record SamlRegisteredServiceMetadataExpirationPolicy(Duration defaultExpiration, Duration minimumCacheDuration,
+                                                            Duration maximumCacheDuration)
+    implements Expiry<SamlRegisteredServiceCacheKey, @NonNull CachedMetadataResolverResult> {
+
+    public SamlRegisteredServiceMetadataExpirationPolicy(final Duration defaultExpiration) {
+        this(defaultExpiration, Duration.ZERO, Duration.ofNanos(Long.MAX_VALUE));
+    }
+
     @Override
     public long expireAfterCreate(
         final @NonNull SamlRegisteredServiceCacheKey cacheKey,
         final @NonNull CachedMetadataResolverResult cacheResult,
         final long currentTime) {
+        val lifetime = getLifetime(cacheKey, cacheResult);
+        if (lifetime <= 0) {
+            return lifetime;
+        }
+        return getValidUntil(cacheKey, cacheResult)
+            .map(validUntil -> Duration.between(Instant.now(Clock.systemUTC()), validUntil))
+            .filter(remaining -> remaining.isPositive() && remaining.compareTo(Duration.ofNanos(lifetime)) < 0)
+            .map(remaining -> {
+                LOGGER.debug("Metadata for [{}] is valid for [{}], less than its cache lifetime", cacheKey.getRegisteredService().getName(), remaining);
+                return remaining.toNanos();
+            })
+            .orElse(lifetime);
+    }
+
+    private long getLifetime(final SamlRegisteredServiceCacheKey cacheKey, final CachedMetadataResolverResult cacheResult) {
         val service = cacheKey.getRegisteredService();
         val duration = getCacheDurationForServiceProvider(service, cacheResult);
         if (duration >= 0) {
-            LOGGER.trace("Metadata cache duration for [{}] is [{}]", service.getName(), duration);
-            return duration;
+            val lifetime = Math.min(Math.max(duration, minimumCacheDuration.toNanos()), maximumCacheDuration.toNanos());
+            LOGGER.trace("Metadata cache duration for [{}] is [{}], kept at [{}]", service.getName(), duration, lifetime);
+            return lifetime;
         }
         LOGGER.trace("Metadata for [{}] does not define caching policies", service.getName());
         if (StringUtils.isNotBlank(service.getMetadataExpirationDuration())) {
@@ -68,6 +102,42 @@ public record SamlRegisteredServiceMetadataExpirationPolicy(Duration defaultExpi
         final long currentTime, final long currentDuration) {
         LOGGER.trace("Cache expiration duration after reads is set to [{}] nanoseconds", currentDuration);
         return currentDuration;
+    }
+
+    /**
+     * Gets the earliest {@code validUntil} of the entity the metadata was loaded for, which is the entity of the cache
+     * key or else the entity id of the service, and of the documents that enclose that entity.
+     *
+     * @param cacheKey    the cache key
+     * @param cacheResult the cached metadata
+     * @return the earliest validity limit, if any
+     */
+    Optional<Instant> getValidUntil(final SamlRegisteredServiceCacheKey cacheKey, final CachedMetadataResolverResult cacheResult) {
+        try {
+            val entityId = Optional.ofNullable(cacheKey.getCriteriaSet())
+                .map(criteria -> criteria.get(EntityIdCriterion.class))
+                .map(EntityIdCriterion::getEntityId)
+                .filter(StringUtils::isNotBlank)
+                .orElseGet(() -> cacheKey.getRegisteredService().getServiceId());
+            if (StringUtils.isBlank(entityId)) {
+                return Optional.empty();
+            }
+            var validUntil = (Instant) null;
+            var current = (XMLObject) cacheResult.getMetadataResolver().resolveSingle(new CriteriaSet(new EntityIdCriterion(entityId)));
+            while (current != null) {
+                if (current instanceof final TimeBoundSAMLObject timeBound) {
+                    val instant = timeBound.getValidUntil();
+                    if (instant != null && (validUntil == null || instant.isBefore(validUntil))) {
+                        validUntil = instant;
+                    }
+                }
+                current = current.getParent();
+            }
+            return Optional.ofNullable(validUntil);
+        } catch (final Exception e) {
+            LOGGER.debug(e.getMessage(), e);
+            return Optional.empty();
+        }
     }
 
     long getCacheDurationForServiceProvider(final SamlRegisteredService service,

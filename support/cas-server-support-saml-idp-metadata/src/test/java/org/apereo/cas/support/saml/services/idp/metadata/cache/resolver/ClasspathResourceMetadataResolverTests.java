@@ -5,9 +5,12 @@ import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
 import org.apereo.cas.support.saml.services.BaseSamlIdPServicesTests;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import lombok.val;
+import net.shibboleth.shared.resolver.CriteriaSet;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.opensaml.core.criterion.EntityIdCriterion;
 import org.springframework.core.io.FileSystemResource;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -39,6 +42,25 @@ class ClasspathResourceMetadataResolverTests extends BaseSamlIdPServicesTests {
         service.setMetadataLocation("classpath:sample-sp.xml");
         val results = resolver.resolve(service);
         assertFalse(results.isEmpty());
+    }
+
+    @Test
+    void verifyMetadataCriteriaPattern() throws Throwable {
+        val resolver = getClasspathResourceMetadataResolver();
+        val service = new SamlRegisteredService();
+        service.setName("Aggregate");
+        service.setId(1000);
+        service.setMetadataLocation("classpath:aggregate-md.xml");
+        service.setMetadataCriteriaDirection("INCLUDE");
+        service.setMetadataCriteriaPattern("https://gitlab\\..+");
+        service.setMetadataCriteriaRoles(StringUtils.EMPTY);
+        val metadataResolver = resolver.resolve(service).iterator().next();
+        assertNotNull(metadataResolver.resolveSingle(new CriteriaSet(new EntityIdCriterion("https://gitlab.com"))));
+        assertNull(metadataResolver.resolveSingle(new CriteriaSet(new EntityIdCriterion("https://issues.shibboleth.net/shibboleth"))));
+
+        service.setMetadataCriteriaPattern("https://GITLAB\\..+");
+        val caseSensitiveResolver = resolver.resolve(service).iterator().next();
+        assertNull(caseSensitiveResolver.resolveSingle(new CriteriaSet(new EntityIdCriterion("https://gitlab.com"))));
     }
 
     @Test

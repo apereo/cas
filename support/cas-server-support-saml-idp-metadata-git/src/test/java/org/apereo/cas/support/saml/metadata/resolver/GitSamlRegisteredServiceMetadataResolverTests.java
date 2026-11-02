@@ -1,7 +1,10 @@
 package org.apereo.cas.support.saml.metadata.resolver;
 
 import module java.base;
+import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
+import org.apereo.cas.git.GitRepository;
 import org.apereo.cas.support.saml.BaseGitSamlMetadataTests;
+import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlMetadataDocument;
 import org.apereo.cas.util.LoggingUtils;
@@ -25,6 +28,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.test.context.TestPropertySource;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * This is {@link GitSamlRegisteredServiceMetadataResolverTests}.
@@ -51,6 +55,10 @@ class GitSamlRegisteredServiceMetadataResolverTests extends BaseGitSamlMetadataT
     @Autowired
     @Qualifier("gitSamlRegisteredServiceRepositoryScheduler")
     private Runnable gitSamlRegisteredServiceRepositoryScheduler;
+
+    @Autowired
+    @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
+    private OpenSamlConfigBean openSamlConfigBean;
 
     @BeforeAll
     public static void setup() {
@@ -134,6 +142,35 @@ class GitSamlRegisteredServiceMetadataResolverTests extends BaseGitSamlMetadataT
         service.setRequireSignedRoot(false);
         val resolvers = resolver.resolve(service, new CriteriaSet(new EntityIdCriterion(entityId)));
         assertEquals(1, resolvers.size());
+    }
+
+    @Test
+    void verifyPullsAreThrottled() throws Throwable {
+        val repositoryDirectory = Files.createTempDirectory("git-saml-metadata").toFile();
+        val metadataDirectory = new File(repositoryDirectory, "sp-metadata");
+        FileUtils.forceMkdir(metadataDirectory);
+        val metadata = IOUtils.toString(new ClassPathResource("sp-metadata.xml").getInputStream(), StandardCharsets.UTF_8);
+        FileUtils.writeStringToFile(new File(metadataDirectory, "1-SP.xml"), metadata, StandardCharsets.UTF_8);
+        FileUtils.writeStringToFile(new File(metadataDirectory, "2-Other.xml"),
+            metadata.replace("https://carmenwiki.osu.edu/shibboleth", "https://other.example.org"), StandardCharsets.UTF_8);
+
+        val gitRepository = mock(GitRepository.class);
+        when(gitRepository.getRepositoryDirectory()).thenReturn(repositoryDirectory);
+        when(gitRepository.pull()).thenReturn(Boolean.TRUE);
+        val properties = new SamlIdPProperties();
+        properties.getMetadata().getGit().getSchedule().setRepeatInterval("PT1H");
+        val metadataResolver = new GitSamlRegisteredServiceMetadataResolver(properties, openSamlConfigBean, gitRepository);
+
+        val service = new SamlRegisteredService();
+        service.setName("SAML Service");
+        service.setServiceId("^https://.+$");
+        service.setMetadataLocation("git://");
+        service.setRequireSignedRoot(false);
+        val criteria = new CriteriaSet(new EntityIdCriterion("https://carmenwiki.osu.edu/shibboleth"));
+        for (var i = 0; i < 3; i++) {
+            assertEquals(1, metadataResolver.resolve(service, criteria).size());
+        }
+        verify(gitRepository, times(1)).pull();
     }
 
     @Test

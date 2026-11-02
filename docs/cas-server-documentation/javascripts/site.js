@@ -1530,6 +1530,11 @@ function initializeCasProperties() {
             applyCasPropertyFilter(block);
             return;
         }
+        const linkCopy = target.closest(".cas-property-link-copy");
+        if (linkCopy) {
+            copyCasPropertyText(new URL(linkCopy.dataset.href, window.location.href).href, linkCopy);
+            return;
+        }
         const copy = target.closest(".cas-property-copy");
         if (copy) {
             copyCasPropertyText(copy.closest(".cas-property-snippet").querySelector("code").textContent, copy);
@@ -1845,12 +1850,12 @@ function casSettingRowHtml(doc, text, linkBase = "") {
         `<dt>Default</dt><dd>${doc.defaultValue ? `<code>${casSettingsEscape(doc.defaultValue)}</code>` : "<em>none</em>"}</dd>`,
         doc.module ? `<dt>Module</dt><dd><code>${casSettingsEscape(doc.module)}</code></dd>` : "",
         doc.deprecated ? `<dt>Deprecation</dt><dd><code>${casSettingsEscape(doc.deprecated)}</code>${doc.replacement ? `, replaced by <code>${casSettingsEscape(doc.replacement)}</code>` : ", no replacement"}</dd>` : "",
-        `<dt>Link</dt><dd><a href="${permalink}">${linkBase ? "Open in the settings catalog" : "Link to this setting"}</a></dd>`
+        `<dt>Link</dt><dd class="cas-property-link"><a href="${permalink}">${linkBase ? "Open in the settings catalog" : "Link to this setting"}</a><button type="button" class="cas-property-link-copy" data-href="${casSettingsEscape(permalink)}" aria-label="Copy the link to ${casSettingsEscape(name)}"><i class="fa fa-link" aria-hidden="true"></i><span>Copy link</span></button></dd>`
     ].join("");
     return `<div class="cas-property" data-kind="${doc.kind}" data-name="${casSettingsEscape(name)}" data-default="${casSettingsEscape(doc.defaultValue)}"${doc.duration ? " data-duration" : ""}${doc.deprecated ? " data-deprecated" : ""}>
     <div class="cas-property-head" role="button" tabindex="0" aria-expanded="false">
       <div class="cas-property-key"><code class="cas-property-name" title="${casSettingsEscape(name)}">${highlightCasSetting(name, text)}</code><span class="cas-property-summary">${casSettingsEscape(doc.summary)}</span></div>
-      <div class="cas-property-default">${doc.defaultValue ? `<code>${casSettingsEscape(doc.defaultValue)}</code>` : "<span>no default</span>"}</div>
+      <div class="cas-property-default"${doc.defaultValue ? ` title="${casSettingsEscape(doc.defaultValue)}"` : ""}>${doc.defaultValue ? `<code>${casSettingsEscape(doc.defaultValue)}</code>` : "<span>no default</span>"}</div>
       <div class="cas-property-tags">${tags.join("")}</div>
       <i class="cas-property-chevron" aria-hidden="true"></i>
     </div>

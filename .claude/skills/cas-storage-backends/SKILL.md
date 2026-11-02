@@ -3,6 +3,7 @@ name: cas-storage-backends
 description: "Backend-specific rules for MongoDB (connection factory, client lifecycle, ticket and service registry documents, indexes, change streams), Redis/Lettuce (pipelines, SCAN, streams), JPA/Hibernate 7 and DynamoDB. Use when touching any MongoDB, Redis, JPA or DynamoDB backed module."
 ---
 
+
 # Storage backends (MongoDB, Redis, JPA, DynamoDB)
 
 ## MongoDB backends (service registry and ticket registry)
@@ -143,7 +144,7 @@ description: "Backend-specific rules for MongoDB (connection factory, client lif
   methods concurrently, so any new test there must assert on identifiers it created itself (a UUID
   principal or attribute value) rather than on registry-wide counts.
 
-## Google Authenticator credential repositories (all backends)
+## Redis, JPA/Hibernate, DynamoDB and MongoDB indexes
 
 - JPA with `@GeneratedValue` ids (Hibernate 7): `merge()` of an entity whose id is set but not in the table throws `OptimisticLockException`; reset the id to `0` to insert. The JPA GAuth repository does this when `update()` inserts a missing device.
 - `DynamoDbTableUtils.createTable(..., globalSecondaryIndexes)` creates GSIs with a new table and adds missing ones to an existing table with `UpdateTable`; pass every GSI key attribute in the attribute definitions.

@@ -209,12 +209,11 @@ public class MultifactorAuthenticationUtils {
         return Optional.ofNullable(service.getMultifactorAuthenticationPolicy())
             .map(policy -> policy.getMultifactorAuthenticationProviders()
                 .stream()
-                .map(provider ->
-                    MultifactorAuthenticationUtils.getMultifactorAuthenticationProviderFromApplicationContext(provider, applicationContext))
+                .map(provider -> getMultifactorAuthenticationProviderFromApplicationContext(provider, applicationContext))
                 .filter(Optional::isPresent)
                 .map(Optional::get)
-                .collect(Collectors.toSet()))
-            .orElseGet(HashSet::new);
+                .collect(Collectors.toCollection(LinkedHashSet::new)))
+            .orElseGet(LinkedHashSet::new);
     }
 
     /**
@@ -248,17 +247,17 @@ public class MultifactorAuthenticationUtils {
                                                                final Service service,
                                                                final Optional<RequestContext> context,
                                                                final MultifactorAuthenticationProvider provider) {
-        LOGGER.debug("Attempting check for availability of multifactor authentication provider [{}] for [{}]", provider, registeredService);
+        LOGGER.trace("Attempting check for availability of multifactor authentication provider [{}] for [{}]", provider, registeredService);
         if (provider != null) {
             LOGGER.debug("Provider [{}] is successfully verified", provider);
             val id = provider.getId();
-            val eventAttrMap = MultifactorAuthenticationUtils.buildEventAttributeMap(principal,
+            val eventAttrMap = buildEventAttributeMap(principal,
                 Optional.ofNullable(service), Optional.ofNullable(registeredService), provider);
-            val event = MultifactorAuthenticationUtils.validateEventIdForMatchingTransitionInContext(id, context, eventAttrMap);
+            val event = validateEventIdForMatchingTransitionInContext(id, context, eventAttrMap);
             return CollectionUtils.wrapSet(event);
         }
-        LOGGER.debug("Provider could not be verified");
-        return new HashSet<>();
+        LOGGER.trace("Undefined provider could not be verified");
+        return new LinkedHashSet<>();
     }
 
     /**
