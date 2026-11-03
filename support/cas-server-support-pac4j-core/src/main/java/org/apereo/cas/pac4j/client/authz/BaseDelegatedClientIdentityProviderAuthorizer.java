@@ -77,7 +77,7 @@ public abstract class BaseDelegatedClientIdentityProviderAuthorizer implements D
             LOGGER.debug("Delegated authentication policy for [{}] allows for using provider [{}]", registeredService, clientName);
             return true;
         }
-        LOGGER.warn("Delegated authentication policy for [{}] refuses access to provider [{}]", registeredService.getServiceId(), clientName);
+        LOGGER.debug("Delegated authentication policy for [{}] refuses access to provider [{}]", registeredService.getServiceId(), clientName);
         return false;
     }
 
