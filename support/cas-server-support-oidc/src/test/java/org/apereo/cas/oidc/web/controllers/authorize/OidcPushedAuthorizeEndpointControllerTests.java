@@ -10,9 +10,14 @@ import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.util.CollectionUtils;
 import com.jayway.jsonpath.JsonPath;
 import com.nimbusds.jose.JWSAlgorithm;
+import com.nimbusds.jose.JWSHeader;
+import com.nimbusds.jose.crypto.RSASSASigner;
 import com.nimbusds.jose.jwk.Curve;
 import com.nimbusds.jose.jwk.ECKey;
 import com.nimbusds.jose.jwk.gen.ECKeyGenerator;
+import com.nimbusds.jose.jwk.gen.RSAKeyGenerator;
+import com.nimbusds.jwt.JWTClaimsSet;
+import com.nimbusds.jwt.SignedJWT;
 import com.nimbusds.oauth2.sdk.dpop.DefaultDPoPProofFactory;
 import com.nimbusds.openid.connect.sdk.Nonce;
 import lombok.val;
@@ -60,7 +65,9 @@ class OidcPushedAuthorizeEndpointControllerTests extends AbstractOidcTests {
     void verifyPostWithoutRequiredParams() throws Exception {
         mockMvc.perform(post("/cas/oidc/" + OidcConstants.PUSHED_AUTHORIZE_URL)
                 .with(withHttpRequestProcessor()))
-            .andExpect(status().isForbidden());
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.error").value(OAuth20Constants.INVALID_REQUEST))
+            .andExpect(jsonPath("$.error_description").exists());
     }
 
     @Test
@@ -94,7 +101,37 @@ class OidcPushedAuthorizeEndpointControllerTests extends AbstractOidcTests {
                 .param(OAuth20Constants.REDIRECT_URI, "https://invalid.example.org/")
                 .param(OAuth20Constants.RESPONSE_TYPE, OAuth20ResponseTypes.CODE.name().toLowerCase(Locale.ENGLISH))
                 .with(withHttpRequestProcessor()))
-            .andExpect(status().isForbidden());
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.error").value(OAuth20Constants.INVALID_REQUEST));
+    }
+
+    @Test
+    void verifyPostWithUnverifiableRequestObject() throws Exception {
+        val id = UUID.randomUUID().toString();
+        val service = getOidcRegisteredService(id);
+        service.setBypassApprovalPrompt(true);
+        servicesManager.save(service);
+
+        val claims = new JWTClaimsSet.Builder()
+            .issuer(id)
+            .audience("https://sso.example.org/cas/oidc")
+            .claim(OAuth20Constants.CLIENT_ID, id)
+            .claim(OAuth20Constants.REDIRECT_URI, "https://oauth.example.org/")
+            .claim(OAuth20Constants.RESPONSE_TYPE, OAuth20ResponseTypes.CODE.getType())
+            .build();
+        val requestObject = new SignedJWT(new JWSHeader(JWSAlgorithm.RS256), claims);
+        requestObject.sign(new RSASSASigner(new RSAKeyGenerator(2048).generate()));
+
+        mockMvc.perform(post("/cas/oidc/" + OidcConstants.PUSHED_AUTHORIZE_URL)
+                .param(OAuth20Constants.CLIENT_ID, id)
+                .param(OAuth20Constants.CLIENT_SECRET, service.getClientSecrets().getFirst().getValue())
+                .param(OAuth20Constants.REDIRECT_URI, "https://oauth.example.org/")
+                .param(OAuth20Constants.RESPONSE_TYPE, OAuth20ResponseTypes.CODE.getType())
+                .param(OAuth20Constants.REQUEST, requestObject.serialize())
+                .with(withHttpRequestProcessor()))
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.error").value(OAuth20Constants.INVALID_REQUEST_OBJECT))
+            .andExpect(jsonPath("$.request_uri").doesNotExist());
     }
 
     @Test

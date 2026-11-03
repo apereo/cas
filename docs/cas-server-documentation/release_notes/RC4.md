@@ -459,6 +459,9 @@ one-time codes can be added when `cas.authn.mfa.simple.mail.accepted-email-patte
   authorization request now receives the credentials named by the `authorization_details` it pushed; CAS issued the
   authorization code without them. Authorization details that cannot be granted are refused with
   `invalid_authorization_details` when they are pushed, instead of after the redirect to the authorization endpoint.
+- {: .changed data-area="oidc"} [Pushed authorization requests](../authentication/OIDC-Authentication-PAR.html) that
+  fail validation are answered with `400` and the actual error, such as `invalid_request_object` or
+  `unsupported_response_type`, as RFC 9126 requires, instead of `403` with a generic `invalid_request`.
 - {: .changed data-area="oidc"} The `aud` of a token introspection response is the audience of the JWT access token: the
   service `audience` (or the client ID) and the token's resources, or the audience requested by a token exchange. It used
   to be the service URL the token was issued for. Custom `OAuth20IntrospectionResponseGenerator` implementations now
