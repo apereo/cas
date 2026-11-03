@@ -242,10 +242,12 @@ public class OidcDiscoveryProperties implements Serializable {
         "HS512").toList();
 
     /**
-     * Supported algorithms for request object encryption.
+     * Supported algorithms for request object encryption. Request objects are encrypted to the encryption keys
+     * of the OpenID Connect keystore, so only key management algorithms that work with those keys apply:
+     * RSA algorithms for RSA keys, ECDH-ES algorithms for elliptic curve keys. Symmetric key wrapping with keys
+     * derived from client secrets is not supported.
      */
-    private List<String> requestObjectEncryptionAlgValuesSupported = Stream.of("RSA1_5", "RSA-OAEP", "RSA-OAEP-256",
-        "A128KW", "A192KW", "A256KW", "A128GCMKW", "A192GCMKW", "A256GCMKW",
+    private List<String> requestObjectEncryptionAlgValuesSupported = Stream.of("RSA-OAEP", "RSA-OAEP-256",
         "ECDH-ES", "ECDH-ES+A128KW", "ECDH-ES+A192KW", "ECDH-ES+A256KW").toList();
 
     /**

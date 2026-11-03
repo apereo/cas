@@ -26,7 +26,7 @@ When you learn something new, record it in the skill that owns the area, or here
 | [`cas-ldap`](.claude/skills/cas-ldap/SKILL.md) | LDAP modules |
 | [`cas-mcp-server`](.claude/skills/cas-mcp-server/SKILL.md) | `support/cas-server-support-mcp` |
 | [`cas-oauth-oidc-authentication`](.claude/skills/cas-oauth-oidc-authentication/SKILL.md) | OAuth/OIDC/UMA client authentication, access-token-protected endpoints, `OAuth20UserProfile`, login callback |
-| [`cas-oauth-oidc`](.claude/skills/cas-oauth-oidc/SKILL.md) | `support/cas-server-support-oauth*`, `support/cas-server-support-oidc*` |
+| [`cas-oauth-oidc`](.claude/skills/cas-oauth-oidc/SKILL.md) | `support/cas-server-support-oauth*`, `support/cas-server-support-oidc*`, OpenID Federation |
 | [`cas-oid4vc`](.claude/skills/cas-oid4vc/SKILL.md) | `support/cas-server-support-oidc-vc*`, wallets, SD-JWT/mdoc |
 | [`cas-passwordless-webauthn`](.claude/skills/cas-passwordless-webauthn/SKILL.md) | `support/cas-server-support-passwordless*`, `support/cas-server-support-webauthn*` |
 | [`cas-protocol`](.claude/skills/cas-protocol/SKILL.md) | Service/proxy validation, SAML 1.1 |

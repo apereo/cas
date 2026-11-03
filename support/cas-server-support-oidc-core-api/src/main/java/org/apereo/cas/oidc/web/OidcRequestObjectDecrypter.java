@@ -1,0 +1,147 @@
+package org.apereo.cas.oidc.web;
+
+import module java.base;
+import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.oidc.jwks.OidcJsonWebKeyStoreUtils;
+import org.apereo.cas.oidc.jwks.OidcJsonWebKeyUsage;
+import org.apereo.cas.oidc.jwks.generator.OidcJsonWebKeystoreGeneratorService;
+import org.apereo.cas.util.function.FunctionUtils;
+import com.nimbusds.jwt.JWTClaimsSet;
+import com.nimbusds.jwt.PlainJWT;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
+import org.jose4j.jwa.AlgorithmConstraints;
+import org.jose4j.jwe.JsonWebEncryption;
+import org.jose4j.jwk.JsonWebKeySet;
+import org.jose4j.jwk.PublicJsonWebKey;
+import org.jose4j.jwx.HeaderParameterNames;
+import org.jspecify.annotations.Nullable;
+
+/**
+ * Decrypts request objects that clients encrypt to CAS (OpenID Connect Core 1.0, section 6.3.1; RFC 9101, section 4).
+ * A request object is encrypted to one of the encryption keys of the OpenID Connect keystore, which CAS publishes in its
+ * JWKS, and names it with {@code kid}; without a {@code kid}, each encryption key is tried in turn. Every encryption key
+ * the JWKS publishes is accepted, whatever its rotation state, since clients may still hold a key set from before a
+ * rotation. Only the key management
+ * and content encryption algorithms that discovery advertises are accepted, and compressed request objects are refused.
+ * <p>
+ * The result is the nested JWT, normally signed by the client, which is then verified with the client's keys like any
+ * signed request object. A request object encrypted without being signed comes back as an unsigned JWT, and is accepted
+ * or refused exactly as an unsigned request object would be. Symmetric key wrapping, with keys derived from client
+ * secrets, is not supported.
+ *
+ * @author Misagh Moayyed
+ * @since 8.1.0
+ */
+@RequiredArgsConstructor
+@Slf4j
+public class OidcRequestObjectDecrypter {
+    /**
+     * Default bean name.
+     */
+    public static final String BEAN_NAME = "oidcRequestObjectDecrypter";
+
+    private static final int ENCRYPTED_JWT_PARTS_SEPARATORS = 4;
+
+    private final OidcJsonWebKeystoreGeneratorService keystoreGeneratorService;
+
+    private final CasConfigurationProperties casProperties;
+
+    /**
+     * Whether the request object is encrypted: a JWE in compact serialization has five parts.
+     *
+     * @param requestObject the request object
+     * @return true/false
+     */
+    public static boolean isEncrypted(final String requestObject) {
+        return StringUtils.countMatches(requestObject, '.') == ENCRYPTED_JWT_PARTS_SEPARATORS;
+    }
+
+    /**
+     * Decrypt the request object.
+     *
+     * @param requestObject the encrypted request object
+     * @return the nested JWT, in compact serialization
+     * @throws IllegalArgumentException when the request object cannot be decrypted with any acceptable key
+     */
+    public String decrypt(final String requestObject) {
+        val keyId = readKeyId(requestObject);
+        val keys = getDecryptionKeys()
+            .stream()
+            .filter(key -> StringUtils.isBlank(keyId) || Strings.CS.equals(keyId, key.getKeyId()))
+            .toList();
+        for (val key : keys) {
+            try {
+                return toNestedJwt(decryptWith(requestObject, key));
+            } catch (final Exception e) {
+                LOGGER.debug("Request object cannot be decrypted with key [{}]: [{}]", key.getKeyId(), e.getMessage());
+            }
+        }
+        throw new IllegalArgumentException("Request object cannot be decrypted with any encryption key of CAS");
+    }
+
+    /**
+     * Encryption keys of the OpenID Connect keystore that have a private key, in any rotation state.
+     *
+     * @return the keys
+     */
+    protected List<PublicJsonWebKey> getDecryptionKeys() {
+        return FunctionUtils.doAndHandle(() -> {
+            val keystore = OidcJsonWebKeystoreGeneratorService.toJsonWebKeyStore(keystoreGeneratorService.generate());
+            return OidcJsonWebKeyStoreUtils.getJsonWebKeyFromJsonWebKeySet(keystore, Optional.empty(), Optional.of(OidcJsonWebKeyUsage.ENCRYPTION))
+                .map(JsonWebKeySet::getJsonWebKeys)
+                .orElseGet(List::of)
+                .stream()
+                .filter(PublicJsonWebKey.class::isInstance)
+                .map(PublicJsonWebKey.class::cast)
+                .filter(key -> key.getPrivateKey() != null)
+                .toList();
+        }, e -> {
+            LOGGER.warn("Unable to read the encryption keys of the OpenID Connect keystore: [{}]", e.getMessage());
+            return List.<PublicJsonWebKey>of();
+        }).get();
+    }
+
+    private String decryptWith(final String requestObject, final PublicJsonWebKey key) throws Exception {
+        val discovery = casProperties.getAuthn().getOidc().getDiscovery();
+        val jwe = new JsonWebEncryption();
+        jwe.setCompactSerialization(requestObject);
+        if (jwe.getHeader(HeaderParameterNames.ZIP) != null) {
+            throw new IllegalArgumentException("Compressed request objects are not supported");
+        }
+        jwe.setAlgorithmConstraints(new AlgorithmConstraints(AlgorithmConstraints.ConstraintType.PERMIT,
+            discovery.getRequestObjectEncryptionAlgValuesSupported().toArray(String[]::new)));
+        jwe.setContentEncryptionAlgorithmConstraints(new AlgorithmConstraints(AlgorithmConstraints.ConstraintType.PERMIT,
+            discovery.getRequestObjectEncryptionEncodingValuesSupported().toArray(String[]::new)));
+        jwe.setKey(key.getPrivateKey());
+        return jwe.getPayload();
+    }
+
+    private static @Nullable String readKeyId(final String requestObject) {
+        try {
+            val jwe = new JsonWebEncryption();
+            jwe.setCompactSerialization(requestObject);
+            return jwe.getKeyIdHeaderValue();
+        } catch (final Exception e) {
+            throw new IllegalArgumentException("Request object is not a valid encrypted JWT", e);
+        }
+    }
+
+    /**
+     * The payload of an encrypted request object is the nested JWT, or, for a request object that was encrypted without
+     * being signed, the claims themselves, which are handed on as an unsigned JWT.
+     *
+     * @param payload the decrypted payload
+     * @return the nested JWT
+     * @throws Exception the exception
+     */
+    private static String toNestedJwt(final String payload) throws Exception {
+        val trimmed = StringUtils.trim(payload);
+        return Strings.CS.startsWith(trimmed, "{")
+            ? new PlainJWT(JWTClaimsSet.parse(trimmed)).serialize()
+            : trimmed;
+    }
+}

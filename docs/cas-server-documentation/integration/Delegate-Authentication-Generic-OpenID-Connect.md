@@ -30,7 +30,8 @@ Federation support translates into two aspects:
 {% include_cached casproperties.html properties="cas.authn.pac4j.oidc[].generic.federation" %}
 
 For exposing the entity statement, a JWKS must be defined as a resource (file or URL) with an optional key identifier. The 
-entity statement is exposed on the `/rp/{clientName}/.well-known/openid-federation` URL of the CAS server.
+entity statement is exposed on the `/rp/{clientName}/.well-known/openid-federation` URL of the CAS server; a client
+that is unknown or not set up for a federation has no entity statement and is answered with `404`.
 
 For resolving the trust chain and authenticating on a target provider, the OP issuer 
 must be defined as the `targetOp` property along with one or more 

@@ -15,6 +15,7 @@ import lombok.val;
 import net.minidev.json.JSONObject;
 import net.minidev.json.JSONValue;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,6 +31,9 @@ import jakarta.servlet.http.HttpServletResponse;
  */
 @Slf4j
 public class OidcFetchFederationEndpointController extends AbstractOidcFederationEndpointController {
+    private static final String NOT_FOUND = "not_found";
+
+    private static final String SERVER_ERROR = "server_error";
 
     private final OidcFederationSubordinateRepository subordinateRepository;
 
@@ -41,12 +45,17 @@ public class OidcFetchFederationEndpointController extends AbstractOidcFederatio
     }
 
     /**
-     * Gets the entity statement for the requested entity.
+     * Gets the subordinate statement about the requested entity (OpenID Federation 1.0, section 8.1).
+     * Errors are JSON (section 8.9): an entity that is not a subordinate is {@code not_found} with 404,
+     * a missing {@code sub} or this entity itself is {@code invalid_request} with 400, a role that issues no
+     * subordinate statements answers 404, and a subordinate defined without metadata or keys is
+     * {@code server_error} with 500.
      *
-     * @param sub the entityId
+     * @param sub      the entityId
      * @param request  the request
      * @param response the response
      * @return the specific entity statement
+     * @throws Exception the exception
      */
     @GetMapping('/' + OidcConstants.BASE_OIDC_URL + OidcConstants.FETCH_FEDERATION_URL)
     @Operation(summary = "Handle OIDC fetch federation request",
@@ -62,7 +71,7 @@ public class OidcFetchFederationEndpointController extends AbstractOidcFederatio
 
         val role = oidcProperties.getFederation().getRole();
         if (!role.isTrustAnchorOrIntermediate()) {
-            throw new IllegalArgumentException("Federation role [" + role + "] is not supported for Trust Anchor/Intermediate");
+            return errorResponse(HttpStatus.NOT_FOUND, NOT_FOUND, "Federation role [" + role + "] does not issue subordinate statements");
         }
 
         val error = retrieveInvalidIssuerError(request, response, OidcConstants.FETCH_FEDERATION_URL);
@@ -70,27 +79,27 @@ public class OidcFetchFederationEndpointController extends AbstractOidcFederatio
             return error;
         }
 
-        if (StringUtils.isBlank(sub)) {
-            val body = OAuth20Utils.getErrorResponseBody(OAuth20Constants.INVALID_REQUEST, "Invalid entity");
-            return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+        val issuer = oidcProperties.getCore().getIssuer();
+        if (StringUtils.isBlank(sub) || Strings.CS.equals(sub, issuer)) {
+            return errorResponse(HttpStatus.BAD_REQUEST, OAuth20Constants.INVALID_REQUEST, "Invalid entity");
         }
 
         val foundSubordinate = subordinateRepository.getSubordinates().get(sub);
         if (foundSubordinate == null) {
-            val body = OAuth20Utils.getErrorResponseBody(OAuth20Constants.INVALID_REQUEST, "Invalid entity");
-            return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+            return errorResponse(HttpStatus.NOT_FOUND, NOT_FOUND, "Unknown subordinate entity");
         }
         val serviceMetadata = foundSubordinate.getMetadata();
-        if (serviceMetadata == null) {
-            throw new IllegalArgumentException("No metadata defined for entity");
-        }
         val federationKeys = foundSubordinate.getFederationKeys();
-        if (federationKeys == null || federationKeys.isEmpty()) {
-            throw new IllegalArgumentException("No federation keys defined for entity");
+        if (serviceMetadata == null || federationKeys == null || federationKeys.isEmpty()) {
+            LOGGER.error("Subordinate [{}] must define its metadata and federation keys", sub);
+            return errorResponse(HttpStatus.INTERNAL_SERVER_ERROR, SERVER_ERROR, "Subordinate entity is not defined correctly");
         }
 
-        val issuer = oidcProperties.getCore().getIssuer();
         val metadata = (JSONObject) JSONValue.parse(serviceMetadata.toString());
         return buildEntityStatement(issuer, sub, metadata, federationKeys, null);
+    }
+
+    private static ResponseEntity errorResponse(final HttpStatus status, final String error, final String description) {
+        return new ResponseEntity<>(OAuth20Utils.getErrorResponseBody(error, description), status);
     }
 }

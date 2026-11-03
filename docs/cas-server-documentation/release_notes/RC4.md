@@ -71,6 +71,11 @@ release:
       text: no longer offer the details button unless `cas.error.show-details=true` is set in theme properties.
       section: Theme Properties
       area: ui
+    - type: action
+      title: OpenID Federation relying parties
+      text: registered automatically must send a signed request object or a pushed authorization request with every authorization request.
+      section: OAuth & OpenID Connect
+      area: oidc
     - type: removed
       title: Azure CosmosDb
       text: service and ticket registries are removed; move service definitions and tickets to another registry before upgrading.
@@ -379,6 +384,62 @@ one-time codes can be added when `cas.authn.mfa.simple.mail.accepted-email-patte
   and removes once unused. Documents are only fetched from public addresses, without redirects and up to 5 KB, and these
   clients always see a consent screen that names the host of the client id. Turned off by default; enable it with
   `cas.authn.oidc.registration.client-id-metadata-document.enabled=true`{: .cas-setting}.
+- {: .action data-area="oidc"} [OpenID Federation](../authentication/OIDC-Authentication-Federation.html#automatic-registration)
+  relying parties registered automatically must prove they control their keys: every authorization request carries a
+  signed request object addressed to the CAS issuer, used once, or refers to a pushed authorization request for which the
+  relying party authenticated itself, and requests that fail are refused without a redirect. Entity identifiers must be
+  `https` URLs, relying parties authenticate with `private_key_jwt` or `tls_client_auth`, and client assertions may be
+  addressed to the issuer. Relying parties are now registered before client authentication, so a pushed authorization
+  request can be the first contact. The end-to-end federation scenario runs against the go-oidfed OFFA relying party.
+- {: .changed data-area="oidc"} An [OpenID Federation](../authentication/OIDC-Authentication-Federation.html#trust-anchors)
+  OpenID provider trusts the trust anchors defined with `cas.authn.oidc.federation.trust-anchors`{: .cas-setting}, with
+  their keys obtained out of band, instead of treating its authority hints as trust anchors and taking their keys from
+  whoever answers; without trust anchors, the authority hints are still used, with a warning. Subordinate statements
+  carry only the subordinate's keys, entity configurations no longer carry `constraints`, statements are valid to the
+  second so lifetimes under a day work, and the fetch endpoint answers unknown subordinates with `404 not_found` and
+  other failures with JSON errors instead of a server error page.
+- {: .changed data-area="oidc"} [OpenID Federation](../authentication/OIDC-Authentication-Federation.html#automatic-registration)
+  automatic registration resolves trust chains within bounds: at most `cas.authn.oidc.federation.max-authority-hints`{: .cas-setting}
+  authority hints per entity and `cas.authn.oidc.federation.max-path-length`{: .cas-setting} intermediates, and an entity
+  whose trust chains could not be resolved is not resolved again for
+  `cas.authn.oidc.federation.unresolved-entity-retention`{: .cas-setting}, during which a registration that failed to
+  refresh is kept. The subordinate listing filters by `entity_type` and `intermediate`.
+- {: .new data-area="oidc"} The [OpenID Federation](../authentication/OIDC-Authentication-Federation.html#entity-configuration)
+  entity configuration of a CAS OpenID provider that issues verifiable credentials also describes it as
+  `openid_credential_issuer` and `oauth_authorization_server`, so federation-based wallets can trust the credential
+  issuer through its trust chain. Trust marks issued to CAS, defined with `cas.authn.oidc.federation.trust-marks`{: .cas-setting},
+  are published as `trust_marks`. Discovery advertises `client_registration_types_supported` only when CAS is a federation
+  OpenID provider, and the delegated relying party entity statement endpoint answers `404` for an unknown client instead
+  of an empty page.
+- {: .new data-area="oidc"} CAS as a [verifiable presentation verifier](../authentication/OIDC-Authentication-Verifiable-Credentials.html#openid-federation-verifier)
+  can identify itself to wallets with the OpenID4VP `openid_federation` client identifier prefix, chosen with
+  `cas.authn.oidc.vc.presentation.client-identifier-prefix=OPENID_FEDERATION`{: .cas-setting}: request objects are signed
+  and named by `kid`, carry no client metadata, and wallets read the `openid_credential_verifier` metadata (keys, response
+  URI, formats) from the CAS entity configuration through its trust chain. Encrypted responses then use the encryption
+  keys of the OpenID Connect keystore (`ECDH-ES` or `RSA-OAEP-256`) instead of a key per request. Request objects under
+  any prefix are now signed with the algorithm of the signing key's curve (`ES384`, `ES512`), no longer always `ES256`.
+- {: .changed data-area="oidc"} [Encrypted request objects](../authentication/OIDC-Authentication-JWKS.html#encrypted-request-objects)
+  now work: CAS decrypts them with the encryption keys it publishes in its JWKS (any rotation state, chosen by `kid`) and
+  verifies the nested request object with the client's keys; before, it tried the client's own keys and every encrypted
+  request object failed, OpenID Federation relying parties included. Discovery no longer advertises algorithms CAS cannot
+  decrypt with: `cas.authn.oidc.discovery.request-object-encryption-alg-values-supported`{: .cas-setting} now defaults to
+  `RSA-OAEP`, `RSA-OAEP-256` and the `ECDH-ES` family, without `RSA1_5` and symmetric key wrapping.
+- {: .new data-area="oidc"} [OpenID Federation keys roll over](../authentication/OIDC-Authentication-Federation.html#key-rollover):
+  the federation keystore holds current, future and previous keys, all published in the entity configuration, rotated
+  and retired on a schedule (`cas.authn.oidc.federation.rotation.schedule.enabled`{: .cas-setting},
+  `cas.authn.oidc.federation.revocation.schedule.enabled`{: .cas-setting}) or through the new `oidcFederationJwks`
+  actuator endpoint. Retired keys are published by the new federation historical keys endpoint. New keystores start
+  with a future key; existing single-key keystores keep working. Published keys now carry the algorithm they sign with,
+  matching the key's curve.
+- {: .fixed data-area="oidc"} Elliptic curve keys that CAS generates for its
+  [OpenID Connect keystore](../authentication/OIDC-Authentication-JWKS.html#key-types) carry the signing algorithm of their
+  curve. P-256 keys used to be tagged `ES512`, which the JWKS published and which made signing with them fail, and a key
+  size of `521` produced P-256 keys instead of P-521. Existing keystores are corrected as they are loaded, without new
+  keys, encryption keys no longer carry a signing algorithm, and a configured signing algorithm only selects an elliptic
+  curve key of the matching curve.
+- {: .fixed data-area="oidc"} [Pushed authorization requests](../authentication/OIDC-Authentication-PAR.html) are
+  accepted again when [verifiable credentials](../authentication/OIDC-Authentication-Verifiable-Credentials.html) are
+  turned on; CAS answered them with `401` as if they needed a single sign-on session.
 - {: .changed data-area="oidc"} The `aud` of a token introspection response is the audience of the JWT access token: the
   service `audience` (or the client ID) and the token's resources, or the audience requested by a token exchange. It used
   to be the service URL the token was issued for. Custom `OAuth20IntrospectionResponseGenerator` implementations now
@@ -472,6 +533,8 @@ one-time codes can be added when `cas.authn.mfa.simple.mail.accepted-email-patte
   expires with the lifetime of transient session tickets (`cas.ticket.tst.time-to-kill-in-seconds`{: .cas-setting}).
   A state that has expired or belongs to another flow restores nothing; sign-ins under way during the upgrade must
   start again.
+- {: .fixed data-area="general"} Signing and encryption of values such as tokens and cookies now report a failure to
+  sign, verify or encrypt a value instead of continuing without that step.
 - {: .fixed data-area="general"} CSRF protection is configured once for all modules, so OpenID Connect and
   [WebAuthn](../mfa/FIDO2-WebAuthn-Authentication.html) no longer override each other's settings, and the
   [backchannel authentication](../authentication/OIDC-Authentication-CIBA.html) verification page is now protected.

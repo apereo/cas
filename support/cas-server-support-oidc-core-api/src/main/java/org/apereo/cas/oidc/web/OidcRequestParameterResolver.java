@@ -13,8 +13,24 @@ import jakarta.servlet.http.HttpServletRequest;
  * @since 8.0.0
  */
 public class OidcRequestParameterResolver extends DefaultOAuth20RequestParameterResolver {
-    public OidcRequestParameterResolver(final JwtBuilder jwtBuilder) {
+    private final OidcRequestObjectDecrypter requestObjectDecrypter;
+
+    public OidcRequestParameterResolver(final JwtBuilder jwtBuilder, final OidcRequestObjectDecrypter requestObjectDecrypter) {
         super(jwtBuilder);
+        this.requestObjectDecrypter = requestObjectDecrypter;
+    }
+
+    /**
+     * A request object encrypted to CAS is decrypted first; the nested JWT is then verified like any request object.
+     *
+     * @param requestObject the request object
+     * @return the request object, decrypted
+     */
+    @Override
+    protected String decryptRequestObject(final String requestObject) {
+        return OidcRequestObjectDecrypter.isEncrypted(requestObject)
+            ? requestObjectDecrypter.decrypt(requestObject)
+            : requestObject;
     }
 
     @Override

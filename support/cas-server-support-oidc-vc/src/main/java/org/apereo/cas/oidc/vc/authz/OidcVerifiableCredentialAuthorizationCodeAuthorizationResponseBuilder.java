@@ -33,7 +33,11 @@ import org.springframework.web.servlet.ModelAndView;
 public class OidcVerifiableCredentialAuthorizationCodeAuthorizationResponseBuilder
     extends OAuth20AuthorizationCodeAuthorizationResponseBuilder {
 
-    private int order = Ordered.HIGHEST_PRECEDENCE;
+    /**
+     * Ahead of the generic authorization code builder, and after the pushed authorization request builder: the first
+     * builder in order builds the authorization request, and pushed authorization requests must be built by the latter.
+     */
+    private int order = Ordered.LOWEST_PRECEDENCE - 1;
 
     public OidcVerifiableCredentialAuthorizationCodeAuthorizationResponseBuilder(
         final OAuth20ConfigurationContext context,

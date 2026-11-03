@@ -390,6 +390,14 @@ public interface OidcConstants {
      */
     String LIST_FEDERATION_URL = "/list";
     /**
+     * Federation historical keys URL.
+     */
+    String HISTORICAL_KEYS_FEDERATION_URL = "/federation_historical_keys";
+    /**
+     * Federation historical keys content type.
+     */
+    MediaType HISTORICAL_KEYS_CONTENT_TYPE = new MediaType("application", "jwk-set+jwt");
+    /**
      * Scope assigned to access token internally
      * to access client config urls and look up relying parties.
      */

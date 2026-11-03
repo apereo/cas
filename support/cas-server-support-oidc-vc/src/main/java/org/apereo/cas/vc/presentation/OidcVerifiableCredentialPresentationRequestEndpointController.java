@@ -2,11 +2,12 @@ package org.apereo.cas.vc.presentation;
 
 import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.support.oidc.OidcVerifiableCredentialConfigurationProperties;
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.model.support.oidc.OidcVerifiableCredentialsPresentationProperties;
 import org.apereo.cas.configuration.model.support.oidc.OidcVerifiableCredentialsPresentationProperties.ClientIdentifierPrefixes;
 import org.apereo.cas.oidc.OidcConfigurationContext;
 import org.apereo.cas.oidc.OidcConstants;
+import org.apereo.cas.oidc.jwks.OidcJsonWebKeyStoreUtils;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.endpoints.BaseOAuth20Controller;
@@ -17,7 +18,6 @@ import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.crypto.CertUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
-import com.authlete.cose.constants.COSEAlgorithms;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.Operation;
@@ -35,12 +35,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
 import org.jose4j.jwe.KeyManagementAlgorithmIdentifiers;
 import org.jose4j.jwk.EcJwkGenerator;
-import org.jose4j.jwk.EllipticCurveJsonWebKey;
 import org.jose4j.jwk.JsonWebKey;
 import org.jose4j.jwk.JsonWebKeySet;
 import org.jose4j.jwk.PublicJsonWebKey;
 import org.jose4j.jwk.Use;
-import org.jose4j.jws.AlgorithmIdentifiers;
 import org.jose4j.jws.JsonWebSignature;
 import org.jose4j.jwt.JwtClaims;
 import org.jose4j.jwt.NumericDate;
@@ -99,12 +97,18 @@ public class OidcVerifiableCredentialPresentationRequestEndpointController exten
 
     private static final String CLAIM_ID_PREFIX = "claim-";
 
+    private static final String OPENID_FEDERATION_FEATURE_MODULE = "federation";
+
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(false).minimal(true).build().toObjectMapper();
 
+    private final OidcVerifiableCredentialVerifierMetadataService verifierMetadataService;
+
     public OidcVerifiableCredentialPresentationRequestEndpointController(
-        final OidcConfigurationContext configurationContext) {
+        final OidcConfigurationContext configurationContext,
+        final OidcVerifiableCredentialVerifierMetadataService verifierMetadataService) {
         super(configurationContext);
+        this.verifierMetadataService = verifierMetadataService;
     }
 
     /**
@@ -113,7 +117,8 @@ public class OidcVerifiableCredentialPresentationRequestEndpointController exten
      * this value as the key binding audience, so the presentation response endpoint resolves
      * the expected audience through this same method. Under {@code x509_hash} it is the
      * base64url-encoded SHA-256 hash of the DER-encoded leaf certificate of the OpenID Connect
-     * signing key (OpenID4VP 1.0 section 5.9.3).
+     * signing key, and under {@code openid_federation} the OpenID Federation entity identifier of CAS,
+     * its issuer (OpenID4VP 1.0 section 5.9.3).
      *
      * @param configurationContext the configuration context
      * @return the client identifier
@@ -127,6 +132,7 @@ public class OidcVerifiableCredentialPresentationRequestEndpointController exten
             case X509_HASH -> OAuth20Utils.computeCertificateThumbprint(resolveCertificateChain(FunctionUtils.doUnchecked(
                 () -> configurationContext.getIdTokenSigningAndEncryptionService().getJsonWebKeySigningKey(Optional.empty()))).getFirst());
             case REDIRECT_URI -> responseUri;
+            case OPENID_FEDERATION -> casProperties.getAuthn().getOidc().getCore().getIssuer();
         };
         return prefix.getValue() + ':' + identifier;
     }
@@ -341,6 +347,7 @@ public class OidcVerifiableCredentialPresentationRequestEndpointController exten
             throws Throwable {
 
         val clientId = resolveAuthenticatedClientId(httpRequest, httpResponse);
+        verifyFederationVerifier();
         val responseMode = resolveResponseMode(request);
         val origin = responseMode.isDigitalCredentialsApi() ? verifyOrigin(request, clientId) : null;
         val redirectUri = request.getRedirectUri();
@@ -366,7 +373,14 @@ public class OidcVerifiableCredentialPresentationRequestEndpointController exten
         if (origin != null) {
             transientSessionTicket.putProperty(OidcVerifiableCredentialPresentationResponseEndpointController.PROPERTY_ORIGIN, origin);
         }
-        if (responseMode.isEncrypted()) {
+        if (responseMode.isEncrypted() && verifierMetadataService.isFederationVerifier()) {
+            if (verifierMetadataService.getResponseEncryptionKeys().isEmpty()) {
+                throw new IllegalStateException("Encrypted responses under the openid_federation client identifier prefix "
+                    + "need an encryption key with a key id in the OpenID Connect keystore");
+            }
+            transientSessionTicket.putProperty(
+                OidcVerifiableCredentialPresentationResponseEndpointController.PROPERTY_RESPONSE_ENCRYPTED_TO_KEYSTORE, Boolean.TRUE);
+        } else if (responseMode.isEncrypted()) {
             transientSessionTicket.putProperty(OidcVerifiableCredentialPresentationResponseEndpointController.PROPERTY_RESPONSE_ENCRYPTION_KEY,
                 generateResponseEncryptionKey(transientSessionTicket.getId()));
         }
@@ -491,6 +505,18 @@ public class OidcVerifiableCredentialPresentationRequestEndpointController exten
         return key.toJson(JsonWebKey.OutputControlLevel.INCLUDE_PRIVATE);
     }
 
+    /**
+     * Under the {@code openid_federation} client identifier prefix, wallets find the keys and metadata of CAS in its
+     * OpenID Federation entity configuration, which only the OpenID Federation module publishes. Without it, requests
+     * are refused here rather than sent to wallets that cannot trust them.
+     */
+    protected void verifyFederationVerifier() {
+        if (verifierMetadataService.isFederationVerifier()
+            && !CasFeatureModule.FeatureCatalog.OpenIDConnect.isRegistered(OPENID_FEDERATION_FEATURE_MODULE)) {
+            throw new IllegalStateException("The openid_federation client identifier prefix requires the OpenID Federation module");
+        }
+    }
+
     protected boolean isRequestObjectSigned() {
         return configurationContext.getCasProperties().getAuthn().getOidc().getVc()
             .getPresentation().getClientIdentifierPrefix() != ClientIdentifierPrefixes.REDIRECT_URI;
@@ -502,6 +528,8 @@ public class OidcVerifiableCredentialPresentationRequestEndpointController exten
      * object, so that both delivery modes describe an identical request. A Digital Credentials API request
      * (OpenID4VP 1.0 Appendix A) carries no {@code response_uri} or {@code state}, since the answer returns to the
      * relying party page, and no {@code client_id} unless it is signed, in which case it lists {@code expected_origins}.
+     * Under the {@code openid_federation} client identifier prefix the request carries no {@code client_metadata}, which
+     * wallets must ignore: they read the verifier metadata from the entity configuration of CAS instead.
      *
      * @param transientSessionTicket the presentation transaction
      * @return the authorization request parameters
@@ -511,24 +539,10 @@ public class OidcVerifiableCredentialPresentationRequestEndpointController exten
         val casProperties = configurationContext.getCasProperties();
         val responseEncryptionKey = transientSessionTicket.getPropertyAsString(
             OidcVerifiableCredentialPresentationResponseEndpointController.PROPERTY_RESPONSE_ENCRYPTION_KEY);
-        val vpFormats = new LinkedHashMap<String, OidcVerifiableCredentialPresentationClientMetadata.VpFormat>();
-        vpFormats.put(OidcVerifiableCredentialConfigurationProperties.CredentialConfigurationFormats.DC_SD_JWT.getValue(),
-            OidcVerifiableCredentialPresentationClientMetadata.VpFormat.builder()
-                .sdJwtAlgValues(resolveCredentialSigningAlgorithms())
-                .kbJwtAlgValues(OidcVerifiableCredentialPresentationResponseEndpointController.KEY_BINDING_ALGORITHMS_SUPPORTED)
-                .build());
-        val issuerAuthAlgorithms = resolveMdocSigningAlgorithms();
-        if (!issuerAuthAlgorithms.isEmpty()) {
-            vpFormats.put(OidcVerifiableCredentialConfigurationProperties.CredentialConfigurationFormats.MSO_MDOC.getValue(),
-                OidcVerifiableCredentialPresentationClientMetadata.VpFormat.builder()
-                    .issuerAuthAlgValues(issuerAuthAlgorithms)
-                    .deviceAuthAlgValues(OidcVerifiableCredentialMdocPresentationVerifier.DEVICE_SIGNING_ALGORITHMS)
-                    .build());
-        }
         final OidcVerifiableCredentialPresentationClientMetadata.OidcVerifiableCredentialPresentationClientMetadataBuilder<?, ?> clientMetadataBuilder =
             OidcVerifiableCredentialPresentationClientMetadata.builder()
                 .clientName("Apereo CAS")
-                .vpFormatsSupported(vpFormats);
+                .vpFormatsSupported(verifierMetadataService.buildVpFormatsSupported());
         if (StringUtils.isNotBlank(responseEncryptionKey)) {
             val publicKey = PublicJsonWebKey.Factory.newPublicJwk(responseEncryptionKey)
                 .toParams(JsonWebKey.OutputControlLevel.PUBLIC_ONLY);
@@ -549,7 +563,8 @@ public class OidcVerifiableCredentialPresentationRequestEndpointController exten
         val parameters = new LinkedHashMap<String, Object>();
         val responseMode = Objects.requireNonNullElseGet(
             transientSessionTicket.getPropertyAsString(OidcVerifiableCredentialPresentationResponseEndpointController.PROPERTY_RESPONSE_MODE),
-            () -> StringUtils.isNotBlank(responseEncryptionKey)
+            () -> StringUtils.isNotBlank(responseEncryptionKey) || transientSessionTicket.getProperty(
+                OidcVerifiableCredentialPresentationResponseEndpointController.PROPERTY_RESPONSE_ENCRYPTED_TO_KEYSTORE, Boolean.class) != null
                 ? OidcVerifiableCredentialsPresentationProperties.ResponseModes.DIRECT_POST_JWT.getValue()
                 : OidcVerifiableCredentialsPresentationProperties.ResponseModes.DIRECT_POST.getValue());
         val origin = transientSessionTicket.getPropertyAsString(OidcVerifiableCredentialPresentationResponseEndpointController.PROPERTY_ORIGIN);
@@ -568,46 +583,10 @@ public class OidcVerifiableCredentialPresentationRequestEndpointController exten
             parameters.put(OAuth20Constants.STATE, Objects.requireNonNull(transientSessionTicket.getPropertyAsString("state")));
         }
         parameters.put("dcql_query", MAPPER.convertValue(Map.of("credentials", dcqlCredentials), Map.class));
-        parameters.put("client_metadata", MAPPER.convertValue(clientMetadata, Map.class));
+        if (!verifierMetadataService.isFederationVerifier()) {
+            parameters.put("client_metadata", MAPPER.convertValue(clientMetadata, Map.class));
+        }
         return parameters;
-    }
-
-    /**
-     * Credential signing algorithms the verifier accepts, advertised as {@code sd-jwt_alg_values}: those of the
-     * {@code dc+sd-jwt} credential configurations, since a presented credential is checked against the
-     * configuration its {@code vct} names.
-     *
-     * @return the credential signing algorithms
-     */
-    protected List<String> resolveCredentialSigningAlgorithms() {
-        return configurationContext.getCasProperties().getAuthn().getOidc().getVc().getIssuer().getCredentialConfigurations()
-            .values()
-            .stream()
-            .filter(configuration -> configuration.getFormat()
-                == OidcVerifiableCredentialConfigurationProperties.CredentialConfigurationFormats.DC_SD_JWT)
-            .flatMap(configuration -> configuration.getCredentialSigningAlgValuesSupported().stream())
-            .distinct()
-            .toList();
-    }
-
-    /**
-     * Issuer signature algorithms the verifier accepts for an mdoc, advertised as {@code issuerauth_alg_values}: the COSE
-     * identifiers of those the {@code mso_mdoc} credential configurations advertise, since a presented mdoc is checked
-     * against the configuration its document type names. Empty when no configuration issues an mdoc.
-     *
-     * @return the COSE algorithm identifiers
-     */
-    protected List<Integer> resolveMdocSigningAlgorithms() {
-        return configurationContext.getCasProperties().getAuthn().getOidc().getVc().getIssuer().getCredentialConfigurations()
-            .values()
-            .stream()
-            .filter(configuration -> configuration.getFormat()
-                == OidcVerifiableCredentialConfigurationProperties.CredentialConfigurationFormats.MSO_MDOC)
-            .flatMap(configuration -> configuration.getCredentialSigningAlgValuesSupported().stream())
-            .filter(OidcVerifiableCredentialMdocPresentationVerifier.ISSUER_SIGNING_ALGORITHMS::contains)
-            .map(COSEAlgorithms::getValueByName)
-            .distinct()
-            .toList();
     }
 
     /**
@@ -687,7 +666,10 @@ public class OidcVerifiableCredentialPresentationRequestEndpointController exten
 
     /**
      * Sign the authorization request into a request object.
-     * The {@code typ} header and the audience are what let a wallet accept the object at all.
+     * The {@code typ} header and the audience are what let a wallet accept the object at all. Under an {@code x509}
+     * client identifier prefix the object carries the certificate chain of the signing key in {@code x5c}; under
+     * {@code openid_federation} it carries the {@code kid} of the signing key instead, which the wallet looks up in the
+     * {@code jwks} of the verifier metadata in the entity configuration of CAS.
      *
      * @param parameters             the authorization request parameters
      * @param transientSessionTicket the presentation transaction
@@ -703,7 +685,11 @@ public class OidcVerifiableCredentialPresentationRequestEndpointController exten
         Objects.requireNonNull(signingKey.getPrivateKey(), "The OpenID Connect signing key has no private key");
 
         val clientId = parameters.get(OAuth20Constants.CLIENT_ID).toString();
-        val certificateChain = verifyCertificateChain(signingKey, clientId);
+        val federation = verifierMetadataService.isFederationVerifier();
+        if (federation && StringUtils.isBlank(signingKey.getKeyId())) {
+            throw new IllegalStateException("The OpenID Connect signing key has no key id, which the openid_federation "
+                + "client identifier prefix requires");
+        }
 
         val claims = new JwtClaims();
         parameters.forEach(claims::setClaim);
@@ -718,11 +704,11 @@ public class OidcVerifiableCredentialPresentationRequestEndpointController exten
         jws.setPayload(claims.toJson());
         jws.setKey(signingKey.getPrivateKey());
         FunctionUtils.doIfNotNull(signingKey.getKeyId(), jws::setKeyIdHeaderValue);
-        jws.setAlgorithmHeaderValue(signingKey instanceof EllipticCurveJsonWebKey
-            ? AlgorithmIdentifiers.ECDSA_USING_P256_CURVE_AND_SHA256
-            : AlgorithmIdentifiers.RSA_USING_SHA256);
+        jws.setAlgorithmHeaderValue(OidcJsonWebKeyStoreUtils.getSigningAlgorithm(signingKey));
         jws.setHeader("typ", REQUEST_OBJECT_JWT_TYPE);
-        jws.setCertificateChainHeaderValue(certificateChain.toArray(X509Certificate[]::new));
+        if (!federation) {
+            jws.setCertificateChainHeaderValue(verifyCertificateChain(signingKey, clientId).toArray(X509Certificate[]::new));
+        }
         return jws.getCompactSerialization();
     }
 
@@ -970,10 +956,18 @@ public class OidcVerifiableCredentialPresentationRequestEndpointController exten
         private URI termsOfServiceUri;
 
         /**
-         * Public keys the wallet may encrypt its response to.
+         * Public keys the wallet may encrypt its response to, and in the OpenID Federation verifier metadata also the
+         * keys that verify request objects.
          */
         @JsonProperty("jwks")
         private Map<String, Object> jwks;
+
+        /**
+         * Response URIs a wallet may answer to; published only in the OpenID Federation verifier metadata, where
+         * wallets refuse a request whose response URI is not listed.
+         */
+        @JsonProperty("response_uris")
+        private List<String> responseUris;
 
         /**
          * Content encryption algorithms the verifier accepts for an encrypted response.

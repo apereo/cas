@@ -4,7 +4,9 @@ import module java.base;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.model.support.oidc.OidcVerifiableCredentialConfigurationProperties;
+import org.apereo.cas.configuration.model.support.oidc.federation.OidcFederationRole;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.issuer.OidcIssuerService;
 import org.apereo.cas.support.oauth.OAuth20ClientAuthenticationMethods;
@@ -23,6 +25,8 @@ import org.springframework.context.ConfigurableApplicationContext;
  */
 @RequiredArgsConstructor
 public class OidcServerDiscoverySettingsFactory implements FactoryBean<OidcServerDiscoverySettings> {
+    private static final String CLIENT_REGISTRATION_TYPE_AUTOMATIC = "automatic";
+
     protected final CasConfigurationProperties casProperties;
 
     protected final OidcIssuerService issuerService;
@@ -32,6 +36,17 @@ public class OidcServerDiscoverySettingsFactory implements FactoryBean<OidcServe
     @Override
     public OidcServerDiscoverySettings getObject() {
         return populateDiscovery(createDiscovery());
+    }
+
+    /**
+     * Whether CAS is an OpenID provider of an OpenID Federation, the only case in which relying parties register
+     * automatically (OpenID Federation 1.0, section 12.1) and {@code client_registration_types_supported} is published.
+     *
+     * @return true when the federation module is present and CAS plays the OpenID provider role
+     */
+    protected boolean isFederationOpenIdProvider() {
+        return CasFeatureModule.FeatureCatalog.OpenIDConnect.isRegistered("federation")
+            && casProperties.getAuthn().getOidc().getFederation().getRole() == OidcFederationRole.OPENID_PROVIDER;
     }
 
     protected OidcServerDiscoverySettings createDiscovery() {
@@ -113,6 +128,9 @@ public class OidcServerDiscoverySettingsFactory implements FactoryBean<OidcServe
 
         discovery.setAuthorizationResponseIssuerParameterSupported(discoveryConfig.isAuthorizationResponseIssuerParameterSupported());
         discovery.setClientIdMetadataDocumentSupported(oidc.getRegistration().getClientIdMetadataDocument().isEnabled());
+        if (isFederationOpenIdProvider()) {
+            discovery.setClientRegistrationTypesSupported(new LinkedHashSet<>(Set.of(CLIENT_REGISTRATION_TYPE_AUTOMATIC)));
+        }
         discovery.setTlsClientCertificateBoundAccessTokens(discoveryConfig.isTlsClientCertificateBoundAccessTokens());
 
         discovery.setAcrValuesSupported(new LinkedHashSet<>(discoveryConfig.getAcrValuesSupported()));

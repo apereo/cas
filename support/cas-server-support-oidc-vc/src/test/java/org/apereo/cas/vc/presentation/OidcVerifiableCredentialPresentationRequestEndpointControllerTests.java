@@ -2,8 +2,10 @@ package org.apereo.cas.vc.presentation;
 
 import module java.base;
 import org.apereo.cas.config.CasOidcVerifiableCredentialsAutoConfiguration;
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.oidc.OidcConstants;
+import org.apereo.cas.oidc.discovery.OidcFederationEntityMetadataContributor;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.ticket.TransientSessionTicket;
 import org.apereo.cas.ticket.TransientSessionTicketFactory;
@@ -22,9 +24,12 @@ import com.nimbusds.jwt.SignedJWT;
 import lombok.val;
 import org.jose4j.jwk.JsonWebKey;
 import org.jose4j.jwk.PublicJsonWebKey;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.MediaType;
@@ -529,4 +534,89 @@ class OidcVerifiableCredentialPresentationRequestEndpointControllerTests {
             assertNull(claims.getClaim(OAuth20Constants.STATE));
         }
     }
+
+    /**
+     * OpenID4VP 1.0 section 5.9.3: under {@code openid_federation} the client identifier is the entity identifier of
+     * CAS, the request object is signed with a key the wallet finds by {@code kid} in the {@code openid_credential_verifier}
+     * metadata of the entity configuration, carries no {@code client_metadata}, and responses are encrypted to a keystore
+     * encryption key published there.
+     */
+    @Nested
+    @TestPropertySource(properties = {
+        "cas.authn.oidc.vc.presentation.client-identifier-prefix=OPENID_FEDERATION",
+        "cas.authn.oidc.vc.presentation.response-mode=DIRECT_POST_JWT",
+        "cas.authn.oidc.jwks.file-system.jwks-file=classpath:vc-verifier-federation.jwks"
+    })
+    class FederationRequestTests extends BaseTests {
+        @Autowired
+        @Qualifier(OidcVerifiableCredentialVerifierMetadataService.BEAN_NAME)
+        private OidcVerifiableCredentialVerifierMetadataService verifierMetadataService;
+
+        @Autowired
+        @Qualifier("oidcVerifiableCredentialFederationMetadataContributor")
+        private OidcFederationEntityMetadataContributor federationMetadataContributor;
+
+        @BeforeEach
+        void registerFederationModule() {
+            CasFeatureModule.FeatureCatalog.OpenIDConnect.register("federation");
+        }
+
+        @Test
+        void verifyRequestObjectIdentifiesTheFederationEntity() throws Throwable {
+            val issuer = casProperties.getAuthn().getOidc().getCore().getIssuer();
+            val response = createPresentationRequest();
+            assertNotNull(response.getRequestUri());
+            val parameters = parseQueryParameters(URI.create(response.getAuthorizationRequest()));
+            assertEquals("openid_federation:" + issuer, parameters.get(OAuth20Constants.CLIENT_ID));
+
+            val requestObject = SignedJWT.parse(mockMvc.perform(get(PRESENTATION_REQUEST_ENDPOINT_URL + '/' + response.getRequestId())
+                    .with(withHttpRequestProcessor()))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString());
+            assertEquals("vc-verifier", requestObject.getHeader().getKeyID());
+            assertNull(requestObject.getHeader().getX509CertChain());
+            val signingKey = assertInstanceOf(ECKey.class, JWKSet.load(
+                new ClassPathResource("vc-verifier-federation.jwks").getInputStream()).getKeyByKeyId("vc-verifier"));
+            assertTrue(requestObject.verify(new ECDSAVerifier(signingKey.toECPublicKey())));
+            val claims = requestObject.getJWTClaimsSet();
+            assertEquals("openid_federation:" + issuer, claims.getIssuer());
+            assertEquals("openid_federation:" + issuer, claims.getStringClaim(OAuth20Constants.CLIENT_ID));
+            assertEquals("direct_post.jwt", claims.getStringClaim(OAuth20Constants.RESPONSE_MODE));
+            assertEquals(getResponseUri(), claims.getStringClaim("response_uri"));
+            assertNull(claims.getClaim("client_metadata"));
+
+            val ticket = ticketRegistry.getTicket(response.getRequestId(), TransientSessionTicket.class);
+            assertEquals(Boolean.TRUE, ticket.getProperty(
+                OidcVerifiableCredentialPresentationResponseEndpointController.PROPERTY_RESPONSE_ENCRYPTED_TO_KEYSTORE, Boolean.class));
+            assertNull(ticket.getPropertyAsString(OidcVerifiableCredentialPresentationResponseEndpointController.PROPERTY_RESPONSE_ENCRYPTION_KEY));
+        }
+
+        @Test
+        void verifyVerifierMetadataIsPublishedInTheEntityConfiguration() {
+            val issuer = casProperties.getAuthn().getOidc().getCore().getIssuer();
+            val contributed = federationMetadataContributor.contribute(issuer);
+            val metadata = contributed.get(OidcVerifiableCredentialVerifierMetadataService.ENTITY_TYPE_CREDENTIAL_VERIFIER);
+            assertNotNull(metadata);
+            assertEquals(MAPPER.convertValue(verifierMetadataService.buildFederationMetadata(), Map.class), metadata);
+            assertEquals(List.of(getResponseUri()), metadata.get("response_uris"));
+            assertEquals("Apereo CAS", metadata.get("client_name"));
+            assertFalse(metadata.containsKey("request_uris"));
+            assertTrue(assertInstanceOf(Map.class, metadata.get("vp_formats_supported")).containsKey("dc+sd-jwt"));
+            assertEquals(List.of("A128GCM", "A256GCM"), metadata.get("encrypted_response_enc_values_supported"));
+
+            val keys = (List<Map<String, Object>>) assertInstanceOf(Map.class, metadata.get("jwks")).get("keys");
+            assertEquals(2, keys.size());
+            val signingKey = keys.stream().filter(key -> "vc-verifier".equals(key.get("kid"))).findFirst().orElseThrow();
+            assertEquals("sig", signingKey.get("use"));
+            assertEquals("ES256", signingKey.get("alg"));
+            val encryptionKey = keys.stream().filter(key -> "vc-verifier-encryption".equals(key.get("kid"))).findFirst().orElseThrow();
+            assertEquals("enc", encryptionKey.get("use"));
+            assertEquals("ECDH-ES", encryptionKey.get("alg"));
+            assertTrue(keys.stream().noneMatch(key -> key.containsKey("d")));
+            assertTrue(federationMetadataContributor.contribute("https://other.example.org").isEmpty());
+        }
+    }
 }
+

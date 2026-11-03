@@ -754,6 +754,78 @@ request object is signed and served by reference the same way, and the client id
 the base64url-encoded SHA-256 hash of the DER-encoded leaf certificate, so the leaf needs no particular name. The
 signing key must still carry an `x5c` certificate chain.
 
+### OpenID Federation Verifier
+
+CAS can also identify itself to wallets with the `openid_federation` client identifier prefix of
+[OpenID4VP](https://openid.net/specs/openid-4-verifiable-presentations-1_0.html#section-5.9.3), as federation-based
+wallet ecosystems expect: the client identifier is `openid_federation:` followed by the issuer of CAS, which must be its
+[OpenID Federation](OIDC-Authentication-Federation.html) entity identifier, so CAS must take part in a federation as an
+OpenID Provider. The wallet resolves the trust chain of CAS up to a trust anchor it trusts and reads the verifier metadata,
+`openid_credential_verifier`, from the entity configuration of CAS
+([OpenID Federation for Wallet Architectures](https://openid.net/specs/openid-federation-wallet-1_0.html)):
+
+```json
+{
+  "openid_credential_verifier": {
+    "client_name": "Apereo CAS",
+    "vp_formats_supported": {
+      "dc+sd-jwt": {
+        "sd-jwt_alg_values": [
+          "ES256"
+        ],
+        "kb-jwt_alg_values": [
+          "ES256",
+          "RS256",
+          "Ed25519"
+        ]
+      }
+    },
+    "response_uris": [
+      "https://sso.example.org/cas/oidc/oidcVcPresentationResponse"
+    ],
+    "jwks": {
+      "keys": [
+        {
+          "kty": "EC",
+          "crv": "P-256",
+          "kid": "...",
+          "use": "sig",
+          "alg": "ES256",
+          "x": "...",
+          "y": "..."
+        },
+        {
+          "kty": "EC",
+          "crv": "P-256",
+          "kid": "...",
+          "use": "enc",
+          "alg": "ECDH-ES",
+          "x": "...",
+          "y": "..."
+        }
+      ]
+    },
+    "encrypted_response_enc_values_supported": [
+      "A128GCM",
+      "A256GCM"
+    ]
+  }
+}
+```
+
+- The request object is always signed and served by reference. It is signed with the OpenID Connect signing key, which
+  must have a key id, and names it with `kid` instead of carrying a certificate chain; the wallet verifies it with the
+  signing keys of the verifier metadata.
+- The request carries no client metadata, which wallets must ignore under this prefix; they take the accepted formats
+  and keys from the verifier metadata instead.
+- Encrypted responses are encrypted to an encryption key of the OpenID Connect keystore, published in the verifier
+  metadata with the algorithm to use with it: `ECDH-ES` for an elliptic curve key, as HAIP requires, or `RSA-OAEP-256`
+  for an RSA key. Encrypted responses need such a key with a key id, or presentation requests are refused.
+- The response URI is the only trusted response URI. No request URIs are listed, since each request object is served
+  at a URI of its own and wallets refuse any request URI that the verifier metadata does not list.
+
+The prefix can be chosen using CAS properties.
+
 ### ISO mdoc Presentations
 
 An mdoc is requested by its document type, with claim paths made of the name space and the element:

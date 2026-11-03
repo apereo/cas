@@ -1,25 +1,38 @@
 package org.apereo.cas.oidc.federation.chain;
 
 import module java.base;
+import org.apereo.cas.configuration.model.support.oidc.federation.OidcFederationProperties;
+import org.apereo.cas.configuration.model.support.oidc.federation.OidcFederationRole;
+import org.apereo.cas.configuration.model.support.oidc.federation.OidcFederationTrustAnchorProperties;
 import org.apereo.cas.services.DefaultRegisteredServiceContact;
 import org.apereo.cas.services.DefaultRegisteredServiceExpirationPolicy;
 import org.apereo.cas.services.DefaultRegisteredServiceProperty;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.RegisteredServiceContact;
+import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
+import com.nimbusds.jose.jwk.JWK;
+import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.oauth2.sdk.GrantType;
 import com.nimbusds.oauth2.sdk.ResponseType;
+import com.nimbusds.oauth2.sdk.auth.ClientAuthenticationMethod;
 import com.nimbusds.openid.connect.sdk.federation.entities.CommonFederationClaimsSet;
 import com.nimbusds.openid.connect.sdk.federation.entities.EntityID;
 import com.nimbusds.openid.connect.sdk.federation.entities.EntityType;
+import com.nimbusds.openid.connect.sdk.federation.trust.DefaultEntityStatementRetriever;
 import com.nimbusds.openid.connect.sdk.federation.trust.TrustChainResolver;
+import com.nimbusds.openid.connect.sdk.federation.trust.constraints.TrustChainConstraints;
 import com.nimbusds.openid.connect.sdk.rp.OIDCClientMetadata;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import net.minidev.json.JSONObject;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
 import org.jooq.lambda.Unchecked;
+import org.jspecify.annotations.Nullable;
 
 /**
  * This is {@link OidcFederationDefaultTrustChainResolver}.
@@ -36,11 +49,71 @@ public class OidcFederationDefaultTrustChainResolver implements OidcFederationTr
      */
     public static final String TEMPORARY_OPENIDFEDERATION_SERVICE = "TEMPORARY_OPENIDFEDERATION_SERVICE";
 
+    /**
+     * Client authentication methods an automatically registered client may use: asymmetric cryptography is required,
+     * since no secret is ever issued to it (OpenID Federation 1.0, section 12.1).
+     */
+    private static final Set<ClientAuthenticationMethod> ASYMMETRIC_CLIENT_AUTHENTICATION_METHODS =
+        Set.of(ClientAuthenticationMethod.PRIVATE_KEY_JWT, ClientAuthenticationMethod.TLS_CLIENT_AUTH);
+
     private final List<TrustChainResolver> trustChainResolvers;
+
+    /**
+     * Build one trust chain resolver per trust anchor. Trust anchors are configured with the keys obtained out of
+     * band (OpenID Federation 1.0, section 11.3), or, when their keys are not configured, the keys are taken from their
+     * entity configuration. Without any configured trust anchor, the authority hints are used as trust anchors, as
+     * before trust anchors could be configured; authority hints are only the immediate superiors of this entity,
+     * so chains through an intermediate then end at the intermediate. Every resolver follows at most the configured
+     * number of authority hints per entity and the configured path length (section 18.1).
+     *
+     * @param properties the federation properties
+     * @return the trust chain resolvers
+     */
+    public static List<TrustChainResolver> buildTrustChainResolvers(final OidcFederationProperties properties) {
+        if (properties.getTrustAnchors().isEmpty()) {
+            if (properties.getRole() == OidcFederationRole.OPENID_PROVIDER && !properties.getAuthorityHints().isEmpty()) {
+                LOGGER.warn("No trust anchors are defined; authority hints [{}] are used as trust anchors with the keys of their own "
+                    + "entity configuration. Define trust anchors and their keys with cas.authn.oidc.federation.trust-anchors",
+                    properties.getAuthorityHints());
+            }
+            return properties.getAuthorityHints()
+                .stream()
+                .map(authorityHint -> buildTrustChainResolver(new EntityID(authorityHint), null, properties))
+                .collect(Collectors.toCollection(ArrayList::new));
+        }
+        return properties.getTrustAnchors()
+            .stream()
+            .map(Unchecked.function(trustAnchor -> buildTrustChainResolver(new EntityID(trustAnchor.getEntityId()),
+                readTrustAnchorKeys(trustAnchor), properties)))
+            .collect(Collectors.toCollection(ArrayList::new));
+    }
+
+    private static TrustChainResolver buildTrustChainResolver(final EntityID trustAnchor, @Nullable final JWKSet keys,
+                                                              final OidcFederationProperties properties) {
+        val retriever = new OidcFederationBoundedEntityStatementRetriever(new DefaultEntityStatementRetriever(),
+            properties.getMaxAuthorityHints());
+        return new TrustChainResolver(Collections.singletonMap(trustAnchor, keys),
+            new TrustChainConstraints(properties.getMaxPathLength()), retriever);
+    }
+
+    private static @Nullable JWKSet readTrustAnchorKeys(final OidcFederationTrustAnchorProperties trustAnchor) throws Exception {
+        if (StringUtils.isBlank(trustAnchor.getJwks())) {
+            LOGGER.warn("Keys of trust anchor [{}] are not defined; they are taken from its own entity configuration", trustAnchor.getEntityId());
+            return null;
+        }
+        val jwks = StringUtils.trim(SpringExpressionLanguageValueResolver.getInstance().resolve(trustAnchor.getJwks()));
+        val json = Strings.CS.startsWith(jwks, "{")
+            ? jwks
+            : IOUtils.toString(ResourceUtils.getRawResourceFrom(jwks).getInputStream(), StandardCharsets.UTF_8);
+        val keys = JWKSet.parse(json).toPublicJWKSet();
+        LOGGER.debug("Trust anchor [{}] is trusted with keys [{}]", trustAnchor.getEntityId(),
+            keys.getKeys().stream().map(JWK::getKeyID).toList());
+        return keys;
+    }
 
     @Override
     public Optional<OidcRegisteredService> resolveTrustChains(final String id) throws Exception {
-        if (Strings.CI.startsWith(id, "http")) {
+        if (Strings.CI.startsWith(id, "https://")) {
             val entityId = new EntityID(id);
             for (val trustChainResolver : trustChainResolvers) {
                 val trustMetadataResult = fetchRelyingPartyMetadata(trustChainResolver, entityId);
@@ -54,8 +127,24 @@ public class OidcFederationDefaultTrustChainResolver implements OidcFederationTr
         return Optional.empty();
     }
 
-    protected OidcRegisteredService extractRegisteredService(final EntityID entityId, final OIDCClientMetadata rpMetadata,
-                                                             final Date expirationTime) {
+    /**
+     * Build the temporary service of a relying party from its resolved metadata. The relying party must authenticate
+     * with {@code private_key_jwt}, which is assumed when its metadata names no method, or {@code tls_client_auth};
+     * any other method is refused.
+     *
+     * @param entityId       the entity id
+     * @param rpMetadata     the resolved relying party metadata
+     * @param expirationTime the expiration time of the trust chain
+     * @return the registered service, or null when the relying party cannot be registered automatically
+     */
+    protected @Nullable OidcRegisteredService extractRegisteredService(final EntityID entityId, final OIDCClientMetadata rpMetadata,
+                                                                       final Date expirationTime) {
+        val authenticationMethod = Objects.requireNonNullElse(rpMetadata.getTokenEndpointAuthMethod(), ClientAuthenticationMethod.PRIVATE_KEY_JWT);
+        if (!ASYMMETRIC_CLIENT_AUTHENTICATION_METHODS.contains(authenticationMethod)) {
+            LOGGER.warn("Relying party [{}] cannot be registered automatically with client authentication method [{}]; "
+                + "use one of [{}]", entityId, authenticationMethod, ASYMMETRIC_CLIENT_AUTHENTICATION_METHODS);
+            return null;
+        }
         val registeredService = new OidcRegisteredService();
         registeredService.assignIdIfNecessary();
 
@@ -130,8 +219,7 @@ public class OidcFederationDefaultTrustChainResolver implements OidcFederationTr
             val jwks = rpMetadata.getJWKSet();
             registeredService.setJwks(jwks.toString());
         }
-        FunctionUtils.doIfNotNull(rpMetadata.getTokenEndpointAuthMethod(),
-            method -> registeredService.setTokenEndpointAuthenticationMethod(method.getValue()));
+        registeredService.setTokenEndpointAuthenticationMethod(authenticationMethod.getValue());
 
         registeredService.setExpirationPolicy(new DefaultRegisteredServiceExpirationPolicy(true, expirationTime.toInstant().atZone(ZoneOffset.UTC)));
 

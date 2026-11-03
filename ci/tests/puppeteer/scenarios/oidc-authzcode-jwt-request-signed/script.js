@@ -1,6 +1,7 @@
 
 const cas = require("../../cas.js");
 const assert = require("assert");
+const jose = require("jose");
 
 (async () => {
     const browser = await cas.newBrowser(cas.browserOptions());
@@ -57,5 +58,34 @@ const assert = require("assert");
         throw `Operation failed to obtain access token: ${error}`;
     });
     
+    await verifyEncryptedRequestObject(page, request);
     await cas.closeBrowser(browser);
 })();
+
+/**
+ * The same signed request object, encrypted to the encryption key CAS publishes in its JWKS (OpenID Connect Core 1.0,
+ * section 6.3.1): CAS decrypts it and verifies the nested JWT with the client's keys.
+ */
+async function verifyEncryptedRequestObject(page, signedRequest) {
+    const jwks = JSON.parse(await cas.doRequest("https://localhost:8443/cas/oidc/jwks", "GET", {}, 200));
+    const encryptionKey = jwks.keys.find((key) => key.use === "enc" && key.kty === "RSA");
+    assert(encryptionKey !== undefined, "CAS publishes no RSA encryption key");
+    const encryptedRequest = await new jose.CompactEncrypt(new TextEncoder().encode(signedRequest))
+        .setProtectedHeader({alg: "RSA-OAEP-256", enc: "A256GCM", cty: "JWT", kid: encryptionKey.kid})
+        .encrypt(await jose.importJWK(encryptionKey, "RSA-OAEP-256"));
+    assert.equal(encryptedRequest.split(".").length, 5);
+
+    const url = `https://localhost:8443/cas/oidc/authorize?request=${encryptedRequest}&client_id=client&redirect_uri=https://unknown.net`;
+    await cas.log(`Browsing to ${url}`);
+    await cas.goto(page, url);
+    if (await cas.isVisible(page, "#username")) {
+        await cas.loginWith(page);
+    }
+    if (await cas.isVisible(page, "#allow")) {
+        await cas.click(page, "#allow");
+        await cas.waitForNavigation(page);
+    }
+    const code = await cas.assertParameter(page, "code");
+    await cas.log(`OAuth code ${code} for the encrypted request object`);
+    assert(page.url().startsWith("https://localhost:9859/anything/cas"), page.url());
+}

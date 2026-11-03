@@ -61,6 +61,8 @@ import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * This is {@link OidcJwtAuthenticator}.
+ * The client assertion is addressed to the token endpoint or to the issuer, which the pushed authorization requests
+ * of an automatically registered OpenID Federation client use (OpenID Federation 1.0, section 12.1.1.2).
  *
  * @author Misagh Moayyed
  * @since 6.1.0
@@ -179,7 +181,8 @@ public class OidcJwtAuthenticator implements OAuth20ClientCredentialsAuthenticat
             val audience = new String[]{
                 baseUrl + OidcConstants.ACCESS_TOKEN_URL,
                 baseUrl + OAuth20Constants.ACCESS_TOKEN_URL,
-                baseUrl + OAuth20Constants.TOKEN_URL
+                baseUrl + OAuth20Constants.TOKEN_URL,
+                issuerService.determineIssuer(Optional.of(registeredService))
             };
             val verificationKeys = keys.getJsonWebKeys()
                 .stream()

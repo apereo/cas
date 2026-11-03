@@ -116,6 +116,33 @@ class OidcVerifiableCredentialAuthorizationCodeAuthorizationResponseBuilderTests
             .andExpect(jsonPath("$." + OAuth20Constants.AUTHORIZATION_DETAILS).exists());
     }
 
+    @Test
+    void verifyPushedAuthorizationRequestIsAccepted() throws Exception {
+        val registeredService = registerService(null, true);
+        pushAuthorizationRequest(registeredService, false)
+            .andExpect(status().isCreated())
+            .andExpect(jsonPath("$.request_uri").exists());
+        pushAuthorizationRequest(registeredService, true)
+            .andExpect(status().isCreated())
+            .andExpect(jsonPath("$.request_uri").exists());
+    }
+
+    private ResultActions pushAuthorizationRequest(final OidcRegisteredService registeredService,
+                                                   final boolean withAuthorizationDetails)
+            throws Exception {
+        val builder = post("/cas/oidc/" + OidcConstants.PUSHED_AUTHORIZE_URL)
+            .param(OAuth20Constants.CLIENT_ID, registeredService.getClientId())
+            .param(OAuth20Constants.CLIENT_SECRET, registeredService.getClientSecrets().getFirst().getValue())
+            .param(OAuth20Constants.REDIRECT_URI, "https://oauth.example.org")
+            .param(OAuth20Constants.RESPONSE_TYPE, OAuth20ResponseTypes.CODE.name().toLowerCase(Locale.ENGLISH))
+            .with(withHttpRequestProcessor());
+        if (withAuthorizationDetails) {
+            builder.param(OAuth20Constants.AUTHORIZATION_DETAILS,
+                JsonUtils.render(List.of(OidcVerifiableCredentialAuthorizationDetails.builder().credentialConfigurationId("myorg").build())));
+        }
+        return mockMvc.perform(builder);
+    }
+
     private OidcRegisteredService registerService(@Nullable final Set<String> allowedCredentialTypes,
                                                   final boolean confidential) {
         val registeredService = getOidcRegisteredService(UUID.randomUUID().toString());

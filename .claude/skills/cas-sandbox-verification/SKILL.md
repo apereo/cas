@@ -10,6 +10,9 @@ description: "Compile and test CAS changes from a restricted sandbox or remote V
 
 - The openid.net spec pages are long: WebFetch summaries truncate and can invent text. Fetch the markdown source (`raw.githubusercontent.com/openid/OpenID4VCI/main/1.0/...`, `.../OpenID4VC-HAIP/main/1.0/...`) with curl and grep it instead.
 - IETF drafts are blocked on ietf.org here: fetch the markdown source from the draft's GitHub repository at the published tag (`raw.githubusercontent.com/oauth-wg/<repo>/draft-ietf-oauth-<name>-NN/draft-ietf-oauth-<name>.md`), and confirm the number is the latest published one.
+- `git clone --depth 1 https://github.com/<org>/<repo>` works from the cloud container even when `gh api` (repository not
+  attached) and codeload tarballs answer 403; use it to read third-party sources such as go-oidfed `lib` and `offa`.
+- openid.net is blocked for curl here. OpenID Federation is published as xml2rfc source at `raw.githubusercontent.com/openid/federation/main/openid-federation-1_0.xml`; flatten it to text with BeautifulSoup (walk `<middle>` sections) and grep. Other federation profiles are not in that repository path; use WebFetch with narrow questions for them.
 
 ## Environment setup
 
@@ -35,6 +38,13 @@ description: "Compile and test CAS changes from a restricted sandbox or remote V
 
 ## Compile checks without Gradle
 
+- When a scenario was built locally, `webapp/cas-server-webapp-<server>/build/libs/*.war` holds every runtime jar of that
+  scenario's stack (CAS modules as built, Lombok excepted): stage the war (about 140 MB), take `WEB-INF/lib/*` as class
+  path, install `openjdk-25-jdk-headless` with apt in the cloud container, strip Lombok from the changed main sources with
+  a small script (`val` to `final var`, `@Slf4j` logger field, `@RequiredArgsConstructor` over private/protected final
+  fields, `@Getter`/`@Setter` accessors) and run `javac --release 25 -proc:none`. Changed sources shadow the war's jars.
+  A small `main` against the same class path can exercise the changed classes. Test sources cannot be compiled this way
+  (no JUnit, Mockito or Spring test jars).
 - Compile-check changed sources when Gradle cannot run: in the device VM, download a JDK 25 from `api.github.com/repos/adoptium/temurin25-binaries/releases/assets/<id>` (`Accept: application/octet-stream`; `github.com` itself is blocked), get read access to `~/.gradle/caches/modules-2/files-2.1`, copy the highest version of every jar to local disk (the mount runs out of file handles with ~1,700 jars open), and run `javac -proc:full -processorpath <lombok 1.18.x jar>` with an `@argfile` classpath of the repo's `*/build/classes/java/{main,test}` plus those jars. To run tests in the same VM: copy `*/build/{classes/java,resources}/{main,test}` to local disk (class lookups across ~1,400 directories on the mount are too slow), build the classpath from the module's project closure (parse `project(":...")` references in `build.gradle`, following `configuration: "tests"` into test classes) instead of every module, pick jar versions from `gradle/libs.versions.toml` rather than the highest in the cache (the highest Hibernate/Hypersistence pairing does not load), leave out `spring-cloud-*` integration jars and `log4j-to-slf4j`/`logback`, put the freshly compiled changed classes first, and drive JUnit with a small `LauncherFactory` main. Services such as LDAP, MongoDB or DynamoDB are not available there, so those suites still need a local run.
 - The VM compile check can also run Error Prone, which `-Werror` turns every warning of into a build failure: add `-XDcompilePolicy=byfile -XDshould-stop.ifError=FLOW "-Xplugin:ErrorProne <the -Xep flags of project-conventions.gradle> -XepOpt:NullAway:OnlyNullMarked=true -XepOpt:NullAway:JSpecifyMode=true"`, the `-J--add-exports`/`--add-opens` of `jdk.compiler`'s `api, main, model, parser, processing, tree, util, code, comp, file` packages, and every cached jar on `-processorpath`. NullAway refuses to start without one of its package options. For the VM test runner, leave out every `spring-cloud-*` jar except `spring-cloud-commons` and `spring-cloud-context` (the Vault, Consul and Kubernetes bootstrap configurations otherwise start and fail).
 - The compile script's `main` mode wipes `out/`, test classes included: run `test` mode again after every `main` run, or the runner falls back to stale prebuilt test classes and silently runs fewer tests.

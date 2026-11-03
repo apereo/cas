@@ -8,7 +8,6 @@ import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.crypto.PropertyBoundCipherExecutor;
-import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.jwt.JsonWebTokenEncryptor;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -262,11 +261,8 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
             encodedObj = EncodingUtils.decryptJwtValue(encryptionKey, encodedObj);
         }
         val currentValue = encodedObj.getBytes(StandardCharsets.UTF_8);
-        val encoded = FunctionUtils.doIf(this.signingEnabled, () -> {
-            LOGGER.trace("Attempting to verify signature based on signing key defined by [{}]", getSigningKeySetting());
-            return verifySignature(currentValue, signingKey);
-        }, () -> currentValue).get();
-        return new String(Objects.requireNonNull(encoded), StandardCharsets.UTF_8);
+        val encoded = this.signingEnabled ? verifySignatureOrNull(currentValue, signingKey) : currentValue;
+        return new String(Objects.requireNonNull(encoded, "Signature of the value cannot be verified"), StandardCharsets.UTF_8);
     }
 
     private @Nullable String verifyAndDecrypt(final Serializable value, final Key encryptionKey, final Key signingKey) {
@@ -275,10 +271,7 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
             """.stripIndent().trim());
         
         val currentValue = value.toString().getBytes(StandardCharsets.UTF_8);
-        val encoded = FunctionUtils.doIf(this.signingEnabled, () -> {
-            LOGGER.trace("Attempting to verify signature based on signing key defined by [{}]", getSigningKeySetting());
-            return verifySignature(currentValue, signingKey);
-        }, () -> currentValue).get();
+        val encoded = this.signingEnabled ? verifySignatureOrNull(currentValue, signingKey) : currentValue;
 
         if (encoded != null && encoded.length > 0) {
             val encodedObj = new String(encoded, StandardCharsets.UTF_8);
@@ -292,14 +285,32 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
         return null;
     }
 
-    private @Nullable String encryptAndSign(final Serializable value, @Nullable final Key encryptionKey, @Nullable final Key signingKey) {
-        val encoded = FunctionUtils.doIf(isEncryptionPossible(encryptionKey),
-            () -> {
-                LOGGER.trace("Attempting to encrypt value with encryption key defined by [{}]", getEncryptionKeySetting());
-                return encryptValueAsJwt(encryptionKey, value);
-            },
-            value::toString).get();
+    /**
+     * Verify the signature of the value. A value whose signature cannot be checked, for example because its
+     * header names an algorithm the signing key does not support, is refused like a value with a bad signature,
+     * and never passed on unverified.
+     *
+     * @param value      the value
+     * @param signingKey the signing key
+     * @return the verified payload, or null
+     */
+    private byte @Nullable [] verifySignatureOrNull(final byte[] value, final Key signingKey) {
+        LOGGER.trace("Attempting to verify signature based on signing key defined by [{}]", getSigningKeySetting());
+        try {
+            return verifySignature(value, signingKey);
+        } catch (final Exception e) {
+            LOGGER.warn("Signature of the value cannot be verified: [{}]", e.getMessage());
+            LOGGER.debug(e.getMessage(), e);
+            return null;
+        }
+    }
 
+    private @Nullable String encryptAndSign(final Serializable value, @Nullable final Key encryptionKey, @Nullable final Key signingKey) {
+        var encoded = value.toString();
+        if (isEncryptionPossible(encryptionKey)) {
+            LOGGER.trace("Attempting to encrypt value with encryption key defined by [{}]", getEncryptionKeySetting());
+            encoded = encryptValueAsJwt(encryptionKey, value);
+        }
         if (this.signingEnabled) {
             LOGGER.trace("Attempting to sign value with signing key defined by [{}]", getSigningKeySetting());
             val signed = sign(encoded.getBytes(StandardCharsets.UTF_8), signingKey);
@@ -309,21 +320,17 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
     }
 
     private String signAndEncrypt(final Serializable value, final Key encryptionKey, @Nullable final Key signingKey) {
-        val encoded = FunctionUtils.doIf(this.signingEnabled,
-            () -> {
-                LOGGER.trace("Attempting to sign value based on signing key defined by [{}]", getSigningKeySetting());
-                val signed = sign(value.toString().getBytes(StandardCharsets.UTF_8), signingKey);
-                return new String(signed, StandardCharsets.UTF_8);
-            },
-            value::toString
-        ).get();
-
-        return FunctionUtils.doIf(isEncryptionPossible(encryptionKey),
-            () -> {
-                LOGGER.trace("Attempting to encrypt value based on encryption key defined by [{}]", getEncryptionKeySetting());
-                return encryptValueAsJwt(encryptionKey, encoded);
-            },
-            () -> encoded).get();
+        var encoded = value.toString();
+        if (this.signingEnabled) {
+            LOGGER.trace("Attempting to sign value based on signing key defined by [{}]", getSigningKeySetting());
+            val signed = sign(encoded.getBytes(StandardCharsets.UTF_8), signingKey);
+            encoded = new String(signed, StandardCharsets.UTF_8);
+        }
+        if (isEncryptionPossible(encryptionKey)) {
+            LOGGER.trace("Attempting to encrypt value based on encryption key defined by [{}]", getEncryptionKeySetting());
+            return encryptValueAsJwt(encryptionKey, encoded);
+        }
+        return encoded;
     }
 
     /**

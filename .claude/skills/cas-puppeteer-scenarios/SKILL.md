@@ -172,6 +172,10 @@ description: "Write, fix and review the end-to-end puppeteer scenarios under ci/
 - Service ids in scenario JSON are regular expressions: `^https://localhost:9859/anything/1` also matches `/anything/10`,
   so give new services distinct path names. A scenario that sets `cas.service-registry.json.location` has no catch-all
   service, which is what lets it assert that a URL is refused.
+- The JSON service registry writes every service CAS saves, such as automatically or dynamically registered clients,
+  into its location. Point it at a fresh copy under `overlay/${SCENARIO}` made by `init.sh` (as `oidc-federation-end2end`
+  does), never at the scenario's own `services/` folder, or a later run reuses stale registrations (an OpenID Federation
+  RP registered with keys that no longer exist fails as "Request object signature or claims are invalid").
 - The login page is a webflow response, which sets its own cache headers; check per-service security headers on
   `/cas/p3/serviceValidate?service=...` instead (`service-security-headers`).
 - A ticket-granting ticket's last used time changes only when a ticket is issued from it, not when the login page is shown;
@@ -238,3 +242,26 @@ description: "Write, fix and review the end-to-end puppeteer scenarios under ci/
   from starting without Google credentials (exit code 4 in `actuator-endpoint-roles`).
 - `qrauthn-login` logs in over a STOMP callback; `connectAndLogin` returns a promise that settles when that
   callback's assertions finish, and the browser is closed only after it, or the assertions hit a detached frame.
+- `oidc-federation-end2end` runs a CAS trust anchor (8443) and a CAS OP (8444) with two relying parties: go-oidfed OFFA
+  (`oidfed/offa`, pinned, `https://localhost` on port 443 with host networking) and the scenario's Node RP (`rp.js`,
+  `https://localhost:9861`, started inside the script). `init.sh` works in the git-ignored
+  `overlay/oidc-federation-end2end/`: it exports the CAS keystore's key pair as PEM for both RPs (OpenSSL 3 needs the
+  current PKCS12 format, LibreSSL on macOS the legacy one), builds the JVM truststore, pins the trust anchor's public key in
+  OFFA's config, and writes the trust anchor's subordinate directory there, adding `offa.json` from OFFA's live entity
+  configuration because OFFA generates its keys on first start. OFFA's root page (`/`) shows the claims of its session,
+  which is what the script asserts after logging in through `/login?op=<OP entity id>&next=...`. That page calls OFFA's
+  own `/auth` from loopback, which fiber v3 refuses (`403 Untrusted Proxy`) unless `server.trusted_proxies` lists
+  `127.0.0.1` and `::1`: without `TrustProxy`, `IsProxyTrusted()` is false. OFFA discovers OPs by walking the trust
+  anchor's `/list` without parameters and fetching each subordinate's entity configuration (go-oidfed
+  `SimpleEntityCollector`), every `op_discovery.local.entity_collection_interval` (10 s here); its first run happens
+  before the trust anchor starts, so the script reloads `/login` until the OP's `data-value="<entity id>"` shows. The
+  Node RP covers what OFFA does not send (trust chain header, PAR, client assertions addressed to the issuer) and the
+  refused requests; the script also checks the trust anchor's `/list` filters directly. The OP also runs `oidc-vc` and
+  publishes `metadata/op-trust-mark.jwt` (signed RS256 with the trust anchor's federation key, no `exp`; re-sign it with
+  that key if the trust anchor's keys or the OP's entity id change), so the script checks `openid_credential_issuer`,
+  `oauth_authorization_server` and a trust mark that verifies with the trust anchor's key in the OP entity configuration.
+  Its OP is also an OID4VP verifier with the `openid_federation` prefix and `direct_post.jwt`: `wallet.js` (no walt.id,
+  which lacks the prefix) gets a `dc+sd-jwt` credential through a pre-authorized offer (`vc-client` from `services/`),
+  resolves CAS through the trust anchor with `rp.resolveEntity`, verifies the request object with the
+  `openid_credential_verifier` signing keys, encrypts its response with `RSA-OAEP-256` to the OP keystore encryption key
+  published there, and the script collects the verified claims.

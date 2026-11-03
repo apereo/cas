@@ -63,6 +63,7 @@ import org.jose4j.jwe.KeyManagementAlgorithmIdentifiers;
 import org.jose4j.jwk.EcJwkGenerator;
 import org.jose4j.jwk.JsonWebKey;
 import org.jose4j.jwk.PublicJsonWebKey;
+import org.jose4j.jwk.RsaJsonWebKey;
 import org.jose4j.jwt.JwtClaims;
 import org.jose4j.keys.EllipticCurves;
 import org.jspecify.annotations.Nullable;
@@ -120,6 +121,10 @@ class OidcVerifiableCredentialPresentationResponseEndpointControllerTests extend
     @Autowired
     @Qualifier(OidcVerifiableCredentialStatusListService.BEAN_NAME)
     private OidcVerifiableCredentialStatusListService oidcVerifiableCredentialStatusListService;
+
+    @Autowired
+    @Qualifier(OidcVerifiableCredentialVerifierMetadataService.BEAN_NAME)
+    private OidcVerifiableCredentialVerifierMetadataService verifierMetadataService;
 
     private OidcRegisteredService credentialClient;
 
@@ -262,6 +267,54 @@ class OidcVerifiableCredentialPresentationResponseEndpointControllerTests extend
             ContentEncryptionAlgorithmIdentifiers.AES_128_GCM,
             Map.of("vp_token", vpToken, OAuth20Constants.STATE, other.ticket().getId())).replaceFirst("^[^.]+", "e30")));
         assertNotNull(ticketRegistry.getTicket(transaction.ticket().getId()));
+    }
+
+    /**
+     * Under the {@code openid_federation} client identifier prefix the wallet encrypts to a keystore encryption key it
+     * found in the verifier metadata, here the RSA key of the test keystore with {@code RSA-OAEP-256}; the request is
+     * found by the decrypted {@code state}, and only a request that asked for a keystore-encrypted response accepts it.
+     */
+    @Test
+    void verifyPresentationEncryptedToKeystoreKey() throws Throwable {
+        val transaction = requireKeystoreEncryptedResponse(createTransaction());
+        val keystoreKey = verifierMetadataService.getResponseEncryptionKeys().stream()
+            .filter(RsaJsonWebKey.class::isInstance).findFirst().orElseThrow();
+        assertEquals(KeyManagementAlgorithmIdentifiers.RSA_OAEP_256,
+            OidcVerifiableCredentialVerifierMetadataService.resolveKeyManagementAlgorithm(keystoreKey));
+        val vpToken = buildVpToken(bindCredential(issueCredential(), transaction.nonce()));
+        val presentation = MAPPER.readValue(vpToken, Map.class);
+
+        assertInvalid(submitPresentation(transaction.ticket().getId(), vpToken));
+        assertInvalid(submitEncryptedResponse(encryptResponse(keystoreKey, KeyManagementAlgorithmIdentifiers.RSA_OAEP_256,
+            ContentEncryptionAlgorithmIdentifiers.AES_128_GCM, Map.of("vp_token", presentation))));
+        val other = createTransaction();
+        requireEncryptedResponse(other);
+        assertInvalid(submitEncryptedResponse(encryptResponse(keystoreKey, KeyManagementAlgorithmIdentifiers.RSA_OAEP_256,
+            ContentEncryptionAlgorithmIdentifiers.AES_128_GCM, Map.of("vp_token", presentation, OAuth20Constants.STATE, other.ticket().getId()))));
+        assertNotNull(ticketRegistry.getTicket(transaction.ticket().getId()));
+
+        submitEncryptedResponse(encryptResponse(keystoreKey, KeyManagementAlgorithmIdentifiers.RSA_OAEP_256,
+            ContentEncryptionAlgorithmIdentifiers.AES_256_GCM, Map.of("vp_token", presentation, OAuth20Constants.STATE, transaction.ticket().getId())))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.status").value("verified"));
+        assertNull(ticketRegistry.getTicket(transaction.ticket().getId()));
+    }
+
+    @Test
+    void verifyDigitalCredentialsApiPresentationEncryptedToKeystoreKey() throws Throwable {
+        val transaction = requireKeystoreEncryptedResponse(createDigitalCredentialsTransaction("dc_api.jwt"));
+        val keystoreKey = verifierMetadataService.getResponseEncryptionKeys().stream()
+            .filter(RsaJsonWebKey.class::isInstance).findFirst().orElseThrow();
+        val vpToken = MAPPER.readValue(buildVpToken(bindCredential(issueCredential(), transaction.nonce(), DIGITAL_CREDENTIALS_AUDIENCE)), Map.class);
+
+        assertInvalid(submitDigitalCredentialsResponse(transaction.ticket().getId(), Map.of("response",
+            encryptResponse(requireEncryptedResponse(createTransaction()), ContentEncryptionAlgorithmIdentifiers.AES_256_GCM,
+                Map.of("vp_token", vpToken))), credentialClient));
+        submitDigitalCredentialsResponse(transaction.ticket().getId(), Map.of("response",
+                encryptResponse(keystoreKey, KeyManagementAlgorithmIdentifiers.RSA_OAEP_256, ContentEncryptionAlgorithmIdentifiers.AES_256_GCM,
+                    Map.of("vp_token", vpToken))), credentialClient)
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.status").value("verified"));
     }
 
     @Test
@@ -904,11 +957,24 @@ class OidcVerifiableCredentialPresentationResponseEndpointControllerTests extend
         return key;
     }
 
+    private PresentationTransaction requireKeystoreEncryptedResponse(final PresentationTransaction transaction) throws Exception {
+        transaction.ticket().putProperty(OidcVerifiableCredentialPresentationResponseEndpointController.PROPERTY_RESPONSE_ENCRYPTED_TO_KEYSTORE,
+            Boolean.TRUE);
+        ticketRegistry.updateTicket(transaction.ticket());
+        return transaction;
+    }
+
     private static String encryptResponse(final PublicJsonWebKey key, final String contentEncryption,
                                           final Map<String, Object> parameters)
             throws Exception {
+        return encryptResponse(key, KeyManagementAlgorithmIdentifiers.ECDH_ES, contentEncryption, parameters);
+    }
+
+    private static String encryptResponse(final PublicJsonWebKey key, final String algorithm, final String contentEncryption,
+                                          final Map<String, Object> parameters)
+            throws Exception {
         val jwe = new JsonWebEncryption();
-        jwe.setAlgorithmHeaderValue(KeyManagementAlgorithmIdentifiers.ECDH_ES);
+        jwe.setAlgorithmHeaderValue(algorithm);
         jwe.setEncryptionMethodHeaderParameter(contentEncryption);
         jwe.setKeyIdHeaderValue(key.getKeyId());
         jwe.setKey(key.getPublicKey());

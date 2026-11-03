@@ -3,6 +3,7 @@ package org.apereo.cas.oidc.federation.web;
 import module java.base;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.federation.AbstractOidcIntermediateFederationTests;
+import org.apereo.cas.oidc.federation.AbstractOidcOpenIdProviderFederationTests;
 import org.apereo.cas.oidc.federation.AbstractOidcTrustAnchorFederationTests;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import com.nimbusds.jwt.SignedJWT;
@@ -10,7 +11,11 @@ import lombok.val;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import jakarta.servlet.ServletException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpStatus;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpServletResponse;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -32,6 +37,8 @@ class OidcFetchFederationEndpointControllerTests {
     private static final String INTERMEDIATE = "http://intermediate";
 
     private static final String FETCH_ENDPOINT_URL = "/cas/" + OidcConstants.BASE_OIDC_URL + OidcConstants.FETCH_FEDERATION_URL;
+
+    private static final String ISSUER = "https://sso.example.org/cas/oidc";
 
     @Nested
     class TrustAnchorFetchFederationTests extends AbstractOidcTrustAnchorFederationTests {
@@ -65,6 +72,15 @@ class OidcFetchFederationEndpointControllerTests {
         void verifyInvalidEntity() throws Exception {
             mockMvc.perform(get(FETCH_ENDPOINT_URL + "?sub=http://fake")
                             .with(withHttpRequestProcessor()))
+                    .andExpect(status().isNotFound())
+                    .andExpect(jsonPath("$.error").value("not_found"))
+                    .andExpect(jsonPath("$.error_description").value("Unknown subordinate entity"));
+        }
+
+        @Test
+        void verifyOwnEntity() throws Exception {
+            mockMvc.perform(get(FETCH_ENDPOINT_URL + "?sub=" + ISSUER)
+                            .with(withHttpRequestProcessor()))
                     .andExpect(status().isBadRequest())
                     .andExpect(jsonPath("$.error").value(OAuth20Constants.INVALID_REQUEST))
                     .andExpect(jsonPath("$.error_description").value("Invalid entity"));
@@ -85,8 +101,11 @@ class OidcFetchFederationEndpointControllerTests {
             assertNull(claims.getClaim("constraints"));
             val jwks = (Map) claims.getClaim("jwks");
             assertNotNull(jwks);
-            val keys = (List) jwks.get("keys");
-            assertEquals(2, keys.size());
+            val keys = (List<Map>) jwks.get("keys");
+            assertEquals(1, keys.size());
+            assertEquals("TJns", keys.getFirst().get("kid"));
+            assertEquals(Duration.ofDays(90).toMillis(), claims.getExpirationTime().getTime() - claims.getIssueTime().getTime());
+            assertTrue(Duration.between(claims.getIssueTime().toInstant(), Instant.now()).abs().toMinutes() < 1);
             val metadata = (Map) claims.getClaim("metadata");
             assertNull(metadata.get("federation_entity"));
             assertNull(metadata.get("openid_provider"));
@@ -95,22 +114,20 @@ class OidcFetchFederationEndpointControllerTests {
 
         @Test
         void verifyRelyingPartyNoMetadata() throws Exception {
-            val thrown = assertThrows(ServletException.class, () -> {
-                mockMvc.perform(get(FETCH_ENDPOINT_URL + "?sub=" + RP_NO_METADATA)
-                        .with(withHttpRequestProcessor()));
-            });
-            assertTrue(thrown.getCause() instanceof IllegalArgumentException);
-            assertEquals("No metadata defined for entity", thrown.getCause().getMessage());
+            mockMvc.perform(get(FETCH_ENDPOINT_URL + "?sub=" + RP_NO_METADATA)
+                            .with(withHttpRequestProcessor()))
+                    .andExpect(status().isInternalServerError())
+                    .andExpect(jsonPath("$.error").value("server_error"))
+                    .andExpect(jsonPath("$.error_description").value("Subordinate entity is not defined correctly"));
         }
 
         @Test
         void verifyRelyingPartyNoKeys() throws Exception {
-            val thrown = assertThrows(ServletException.class, () -> {
-                mockMvc.perform(get(FETCH_ENDPOINT_URL + "?sub=" + RP_NO_KEYS)
-                        .with(withHttpRequestProcessor()));
-            });
-            assertTrue(thrown.getCause() instanceof IllegalArgumentException);
-            assertEquals("No federation keys defined for entity", thrown.getCause().getMessage());
+            mockMvc.perform(get(FETCH_ENDPOINT_URL + "?sub=" + RP_NO_KEYS)
+                            .with(withHttpRequestProcessor()))
+                    .andExpect(status().isInternalServerError())
+                    .andExpect(jsonPath("$.error").value("server_error"))
+                    .andExpect(jsonPath("$.error_description").value("Subordinate entity is not defined correctly"));
         }
 
         @Test
@@ -128,8 +145,8 @@ class OidcFetchFederationEndpointControllerTests {
             assertNull(claims.getClaim("constraints"));
             val jwks = (Map) claims.getClaim("jwks");
             assertNotNull(jwks);
-            val keys = (List) jwks.get("keys");
-            assertEquals(2, keys.size());
+            val keys = (List<Map>) jwks.get("keys");
+            assertEquals(1, keys.size());
             val metadata = (Map) claims.getClaim("metadata");
             assertNull(metadata.get("federation_entity"));
             assertNotNull(metadata.get("openid_provider"));
@@ -151,8 +168,8 @@ class OidcFetchFederationEndpointControllerTests {
             assertNotNull(claims.getClaim("constraints"));
             val jwks = (Map) claims.getClaim("jwks");
             assertNotNull(jwks);
-            val keys = (List) jwks.get("keys");
-            assertEquals(2, keys.size());
+            val keys = (List<Map>) jwks.get("keys");
+            assertEquals(1, keys.size());
             val metadata = (Map) claims.getClaim("metadata");
             assertNotNull(metadata.get("federation_entity"));
             assertNull(metadata.get("openid_provider"));
@@ -192,6 +209,15 @@ class OidcFetchFederationEndpointControllerTests {
         void verifyInvalidEntity() throws Exception {
             mockMvc.perform(get(FETCH_ENDPOINT_URL + "?sub=http://fake")
                             .with(withHttpRequestProcessor()))
+                    .andExpect(status().isNotFound())
+                    .andExpect(jsonPath("$.error").value("not_found"))
+                    .andExpect(jsonPath("$.error_description").value("Unknown subordinate entity"));
+        }
+
+        @Test
+        void verifyOwnEntity() throws Exception {
+            mockMvc.perform(get(FETCH_ENDPOINT_URL + "?sub=" + ISSUER)
+                            .with(withHttpRequestProcessor()))
                     .andExpect(status().isBadRequest())
                     .andExpect(jsonPath("$.error").value(OAuth20Constants.INVALID_REQUEST))
                     .andExpect(jsonPath("$.error_description").value("Invalid entity"));
@@ -212,8 +238,11 @@ class OidcFetchFederationEndpointControllerTests {
             assertNull(claims.getClaim("constraints"));
             val jwks = (Map) claims.getClaim("jwks");
             assertNotNull(jwks);
-            val keys = (List) jwks.get("keys");
-            assertEquals(2, keys.size());
+            val keys = (List<Map>) jwks.get("keys");
+            assertEquals(1, keys.size());
+            assertEquals("TJns", keys.getFirst().get("kid"));
+            assertEquals(Duration.ofDays(90).toMillis(), claims.getExpirationTime().getTime() - claims.getIssueTime().getTime());
+            assertTrue(Duration.between(claims.getIssueTime().toInstant(), Instant.now()).abs().toMinutes() < 1);
             val metadata = (Map) claims.getClaim("metadata");
             assertNull(metadata.get("federation_entity"));
             assertNull(metadata.get("openid_provider"));
@@ -222,22 +251,20 @@ class OidcFetchFederationEndpointControllerTests {
 
         @Test
         void verifyRelyingPartyNoMetadata() throws Exception {
-            val thrown = assertThrows(ServletException.class, () -> {
-                mockMvc.perform(get(FETCH_ENDPOINT_URL + "?sub=" + RP_NO_METADATA)
-                        .with(withHttpRequestProcessor()));
-            });
-            assertTrue(thrown.getCause() instanceof IllegalArgumentException);
-            assertEquals("No metadata defined for entity", thrown.getCause().getMessage());
+            mockMvc.perform(get(FETCH_ENDPOINT_URL + "?sub=" + RP_NO_METADATA)
+                            .with(withHttpRequestProcessor()))
+                    .andExpect(status().isInternalServerError())
+                    .andExpect(jsonPath("$.error").value("server_error"))
+                    .andExpect(jsonPath("$.error_description").value("Subordinate entity is not defined correctly"));
         }
 
         @Test
         void verifyRelyingPartyNoKeys() throws Exception {
-            val thrown = assertThrows(ServletException.class, () -> {
-                mockMvc.perform(get(FETCH_ENDPOINT_URL + "?sub=" + RP_NO_KEYS)
-                        .with(withHttpRequestProcessor()));
-            });
-            assertTrue(thrown.getCause() instanceof IllegalArgumentException);
-            assertEquals("No federation keys defined for entity", thrown.getCause().getMessage());
+            mockMvc.perform(get(FETCH_ENDPOINT_URL + "?sub=" + RP_NO_KEYS)
+                            .with(withHttpRequestProcessor()))
+                    .andExpect(status().isInternalServerError())
+                    .andExpect(jsonPath("$.error").value("server_error"))
+                    .andExpect(jsonPath("$.error_description").value("Subordinate entity is not defined correctly"));
         }
 
         @Test
@@ -255,8 +282,8 @@ class OidcFetchFederationEndpointControllerTests {
             assertNull(claims.getClaim("constraints"));
             val jwks = (Map) claims.getClaim("jwks");
             assertNotNull(jwks);
-            val keys = (List) jwks.get("keys");
-            assertEquals(2, keys.size());
+            val keys = (List<Map>) jwks.get("keys");
+            assertEquals(1, keys.size());
             val metadata = (Map) claims.getClaim("metadata");
             assertNull(metadata.get("federation_entity"));
             assertNotNull(metadata.get("openid_provider"));
@@ -278,12 +305,26 @@ class OidcFetchFederationEndpointControllerTests {
             assertNotNull(claims.getClaim("constraints"));
             val jwks = (Map) claims.getClaim("jwks");
             assertNotNull(jwks);
-            val keys = (List) jwks.get("keys");
-            assertEquals(2, keys.size());
+            val keys = (List<Map>) jwks.get("keys");
+            assertEquals(1, keys.size());
             val metadata = (Map) claims.getClaim("metadata");
             assertNotNull(metadata.get("federation_entity"));
             assertNull(metadata.get("openid_provider"));
             assertNull(metadata.get("openid_relying_party"));
+        }
+    }
+
+    @Nested
+    class OpenIdProviderFetchFederationTests extends AbstractOidcOpenIdProviderFederationTests {
+        @Autowired
+        @Qualifier("oidcFetchFederationController")
+        private OidcFetchFederationEndpointController fetchController;
+
+        @Test
+        void verifyRoleWithoutSubordinates() throws Exception {
+            val result = fetchController.fetchEntityStatement(RP, new MockHttpServletRequest(), new MockHttpServletResponse());
+            assertEquals(HttpStatus.NOT_FOUND, result.getStatusCode());
+            assertEquals("not_found", ((Map) result.getBody()).get("error"));
         }
     }
 }

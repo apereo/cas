@@ -54,6 +54,7 @@ import org.apereo.cas.oidc.issuer.OidcIssuerService;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeyCacheKey;
 import org.apereo.cas.oidc.jwks.OidcRegisteredServiceJsonWebKeystoreCacheLoader;
 import org.apereo.cas.oidc.jwks.OidcServiceJsonWebKeystoreCacheExpirationPolicy;
+import org.apereo.cas.oidc.jwks.generator.OidcJsonWebKeystoreGeneratorService;
 import org.apereo.cas.oidc.jwks.register.ClientJwksRegistrationStore;
 import org.apereo.cas.oidc.nativesso.OidcDeviceSecretGenerator;
 import org.apereo.cas.oidc.profile.OidcProfileScopeToAttributesFilter;
@@ -86,6 +87,7 @@ import org.apereo.cas.oidc.web.OidcCallbackAuthorizeViewResolver;
 import org.apereo.cas.oidc.web.OidcCasAuthenticationInterceptor;
 import org.apereo.cas.oidc.web.OidcCasClientRedirectActionBuilder;
 import org.apereo.cas.oidc.web.OidcConsentApprovalViewResolver;
+import org.apereo.cas.oidc.web.OidcRequestObjectDecrypter;
 import org.apereo.cas.oidc.web.OidcRequestParameterResolver;
 import org.apereo.cas.oidc.web.controllers.dynareg.OidcClientRegistrationRequestTranslator;
 import org.apereo.cas.oidc.web.controllers.dynareg.OidcDefaultClientRegistrationRequestTranslator;
@@ -231,8 +233,20 @@ class OidcConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public OAuth20RequestParameterResolver oauthRequestParameterResolver(
             @Qualifier(JwtBuilder.ACCESS_TOKEN_JWT_BUILDER_BEAN_NAME)
-            final JwtBuilder accessTokenJwtBuilder) {
-            return new OidcRequestParameterResolver(accessTokenJwtBuilder);
+            final JwtBuilder accessTokenJwtBuilder,
+            @Qualifier(OidcRequestObjectDecrypter.BEAN_NAME)
+            final OidcRequestObjectDecrypter oidcRequestObjectDecrypter) {
+            return new OidcRequestParameterResolver(accessTokenJwtBuilder, oidcRequestObjectDecrypter);
+        }
+
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = OidcRequestObjectDecrypter.BEAN_NAME)
+        public OidcRequestObjectDecrypter oidcRequestObjectDecrypter(
+            @Qualifier("oidcJsonWebKeystoreGeneratorService")
+            final OidcJsonWebKeystoreGeneratorService oidcJsonWebKeystoreGeneratorService,
+            final CasConfigurationProperties casProperties) {
+            return new OidcRequestObjectDecrypter(oidcJsonWebKeystoreGeneratorService, casProperties);
         }
 
         @Bean

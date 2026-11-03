@@ -1,6 +1,6 @@
 ---
 name: cas-oauth-oidc
-description: "Review and change CAS OAuth2/OIDC protocol behavior: token endpoint error mapping, RFC 8707 resource indicators, discovery metadata, DPoP (RFC 9449) and certificate-bound tokens (RFC 8705), client ID metadata documents, device user code approval. Use when touching support/cas-server-support-oauth* or support/cas-server-support-oidc* outside verifiable credentials; for client authentication, access-token-protected endpoints, the authenticated profile and the login handshake, use cas-oauth-oidc-authentication."
+description: "Review and change CAS OAuth2/OIDC protocol behavior: token endpoint error mapping, RFC 8707 resource indicators, discovery metadata, DPoP (RFC 9449) and certificate-bound tokens (RFC 8705), client ID metadata documents, device user code approval, OpenID Federation (support/cas-server-support-oidc-federation, delegated RP federation). Use when touching support/cas-server-support-oauth* or support/cas-server-support-oidc* outside verifiable credentials; for client authentication, access-token-protected endpoints, the authenticated profile and the login handshake, use cas-oauth-oidc-authentication."
 ---
 
 # OAuth and OpenID Connect
@@ -108,3 +108,109 @@ description: "Review and change CAS OAuth2/OIDC protocol behavior: token endpoin
   that POST: keep the check, and keep the hidden input in `deviceCodeApproval.html`. Error keys live under
   `cas.oauth.device.error.*`.
 - CSRF protection for `CasWebSecurityConfigurer`s (how to declare protected paths): see the `cas-web-security` skill.
+
+## OpenID Federation
+
+- Review against OpenID Federation 1.0 Final (17 February 2026); automatic and explicit client registration are in its
+  Section 12, not in a separate spec. The wallet profile is "OpenID Federation for Wallet Architectures" (draft, entity
+  types `openid_wallet_provider`, `openid_credential_issuer`, `openid_credential_verifier`). Findings of the November
+  2026 review are in the project doc `claude/oidc-federation-review.md`; read it before another round.
+- Module map: `OidcWellKnownFederationEndpointController` (Entity Configuration for every role),
+  `OidcFetchFederationEndpointController` and `OidcListFederationEndpointController` (trust anchor/intermediate, fed by the
+  JSON files in `cas.authn.oidc.federation.subordinate-directory`), `OidcFederationDefaultEntityStatementService` (builds
+  and signs every statement), `OidcFederationDefaultTrustChainResolver` (trust chain to a temporary `OidcRegisteredService`;
+  refuses any client authentication but `private_key_jwt`, the default, and `tls_client_auth`),
+  `OidcFederationAutomaticClientRegistration` (registers and refreshes those services; `https` entity ids only; a
+  refresh saves under the existing service id, or the registry keeps two services with one client id; first contacts
+  are serialized per client with striped `CasReentrantLock`s, never a lock per client id, which made-up ids would grow) and
+  `OidcFederationAutomaticRegistrationInterceptor`. CAS as a federated RP is pac4j's `DefaultEntityConfigurationGenerator`
+  behind `DelegatedOidcFederationEntityStatementController`.
+- Automatic registration runs in a `WebMvcConfigurer` interceptor at order 50 on the authorize and PAR endpoints, ahead of
+  the OIDC interceptor (order 100): the OIDC interceptor runs the authorization request validators and client
+  authentication, and the request parameter resolver verifies a request object with the keys of the client it looks up, so a
+  client that is not registered yet fails there before any federation code runs. The interceptor also enforces section
+  12.1.1 and answers `400 invalid_request` itself (never a redirect): authorize requests of temporary services need a
+  signed request object (jose4j `JwksVerificationKeyResolver` over the service JWKS, `aud` exactly the issuer, `jti`, `exp`,
+  no `sub`); PAR requests and `request_uri` authorize requests are left to client authentication. The `jti` goes into a
+  transient session ticket holding the request object digest: CAS replays the authorize URL after login and consent, so
+  the identical object must be accepted again within the ticket's lifetime while a different object with that `jti` is
+  refused. Request objects from relying parties live about a minute (go-oidfed: 60 s), so re-checking `exp` on the replay
+  would break real logins.
+- An authorization request passed by value goes through the CAS login inside the `callbackAuthorize` service URL, and
+  `AbstractServicesManager.findServiceBy` refuses to match service ids longer than
+  `cas.service-registry.core.maximum-service-id-length` (4096): the login then shows the unauthorized-service page and
+  stays on `/cas/login?service=...callbackAuthorize...`. A request object with a `trust_chain` header (about 9 KB) hits
+  that. Misagh chose not to exempt CAS's own callback services in code: `oidc-federation-end2end` turns the check off
+  with the property (`0`) on its OP, and the federation docs recommend PAR or raising the limit.
+- `OidcJwtAuthenticator` accepts the issuer as client assertion audience as well as the token endpoint URLs (federation
+  PAR requires the OP entity id).
+- The federation module runs without `cas-server-support-oidc`: trust anchors and intermediates (`oidc-federation-ta-role`,
+  `-int-role`, the trust anchor of `oidc-federation-end2end`) only depend on `oidc-federation`, and refresh-scoped beans are
+  created eagerly at startup whatever the role. Beans in `OidcFederationConfiguration` may only require beans of the
+  federation module and CAS core: take `oidcFederationIssuerService`, never `OidcIssuerService.BEAN_NAME`, and anything
+  from the OIDC module through an `ObjectProvider`. The module's unit tests always load the OIDC auto-configuration, so
+  they do not catch this; the role scenarios do.
+- Trust anchors (`cas.authn.oidc.federation.trust-anchors`, entity id plus out-of-band JWKS as a resource or inline JSON,
+  private members dropped) feed `OidcFederationDefaultTrustChainResolver.buildTrustChainResolvers`, one nimbus
+  `TrustChainResolver(entityId, jwks)` each, or `TrustChainResolver(entityId)` (keys from the anchor's own entity
+  configuration) when no keys are given. Authority hints are only the immediate superiors published in the entity
+  configuration; they serve as trust anchors only when none are configured (backward compatible, with a warning).
+- `createAndSign` builds entity configurations (no `federationKeys`: own keys, no `constraints`) and subordinate
+  statements (`federationKeys`: only the subject's keys, `constraints` when the subject has a fetch endpoint), valid from
+  now to the second. Every test that counts `jwks` keys of a fetched statement expects the subordinate's keys alone.
+- Automatic registration is bounded (section 18.1): `OidcFederationBoundedEntityStatementRetriever` refuses any fetched
+  entity configuration with more than `max-authority-hints` authority hints, resolvers carry
+  `TrustChainConstraints(max-path-length)`, and `OidcFederationAutomaticClientRegistration` keeps unresolvable entity ids
+  in a Caffeine cache for `unresolved-entity-retention` (no resolution meanwhile; a registration whose refresh failed is
+  returned as is). Every nimbus resolver CAS builds goes through `buildTrustChainResolvers`; `TrustChainResolver` beans
+  from the context (tests) are used as they are.
+- The list endpoint filters by `entity_type` (repeatable, any of) and `intermediate=true` (subordinate metadata has a
+  `federation_fetch_endpoint`), from the subordinate files; trust-mark filters are `unsupported_parameter`. go-oidfed's
+  OP discovery does not send `entity_type`: it lists everything and fetches each entity configuration.
+- The fetch endpoint answers in JSON (section 8.9): unknown `sub` `404 not_found`, missing `sub` or its own entity id
+  `400 invalid_request`, a role without subordinates `404 not_found`, a subordinate file without metadata or keys
+  `500 server_error`.
+- Other entity types join the OP entity configuration through `OidcFederationEntityMetadataContributor` beans
+  (oidc-core-api; the federation module must not depend on oidc-vc). The VC module contributes `openid_credential_issuer`
+  (only when `credential_issuer` equals the entity id, Wallet Architectures 6.2.1) and `oauth_authorization_server`
+  (its `authorization_servers` names CAS), plus `openid_credential_verifier` when the OID4VP client id prefix is
+  `OPENID_FEDERATION` (see `cas-oid4vc`). Contributions never replace `openid_provider` or `federation_entity`.
+- Trust marks (`cas.authn.oidc.federation.trust-marks`: JWT or resource, read on every request) go only into the entity
+  configuration as `trust_marks` `{trust_mark_type, trust_mark}`, the type taken from the JWT; marks about another `sub`,
+  untyped or expired are skipped with a warning; signatures are not checked. Do not use nimbus 11.38 `TrustMarkEntry` /
+  `TrustMarkClaimsSet`: they still use the pre-Final `id` claim, not `trust_mark_type`.
+- `client_registration_types_supported` is published only when `CasFeatureModule.FeatureCatalog.OpenIDConnect`
+  has `federation` registered (the auto-configuration condition) and the role is `OPENID_PROVIDER`.
+- Encrypted request objects (OIDC Core 6.3.1): `OidcRequestObjectDecrypter` (oidc-core-api, bean `oidcRequestObjectDecrypter`)
+  decrypts with every encryption key of the OIDC keystore with a private key, any rotation state (read through
+  `OidcJsonWebKeystoreGeneratorService`, like the JWKS endpoint; the keystore cache holds only current keys, but clients
+  encrypt to whatever the JWKS lists), by `kid` or each key in turn; algorithms limited to the discovery lists, `zip`
+  refused; an encrypted unsigned payload becomes a `PlainJWT`. It runs through the
+  `DefaultOAuth20RequestParameterResolver.decryptRequestObject` hook (OIDC resolver overrides it) before
+  `JwtBuilder.unpack`, which verifies with the client's keys; never let `unpack` see a JWE: its service cipher decrypts
+  with the private keys of the client's own JWKS. The federation interceptor decrypts through an `ObjectProvider` (no OIDC
+  bean on TA/intermediate instances) and keeps replay digests on the encrypted object. Discovery defaults advertise only
+  `RSA-OAEP`, `RSA-OAEP-256`, `ECDH-ES*` (no `RSA1_5`, no symmetric key wrap).
+- Federation keys (`OidcFederationDefaultJsonWebKeystoreService`): one JWKS file with the OIDC lifecycle `state`
+  (current/future/previous, missing = current) plus retired keys, public only, marked by an `exp` member (and `iat`
+  from generation). EC publishes non-retired keys with `alg` derived from key type/curve (never trust the stored
+  `alg`: files written before the OIDC keystore fix below hold P-256 keys tagged `ES512`); statements are signed with the
+  current key through `EntityStatement.sign(claims, jwk, alg)`. `rotate()` without a future key only adds one;
+  `revoke()` retires previous keys. Historical keys at `/oidc/federation_historical_keys` (all roles, ignored by
+  security, `application/jwk-set+jwt`, `typ` `jwk-set+jwt`). Schedules `cas.authn.oidc.federation.rotation|revocation`
+  and actuator `oidcFederationJwks` (GET, POST rotate/revoke). Startup never writes an existing keystore file.
+- OIDC keystore key algorithms: `OidcJsonWebKeyStoreUtils.getSigningAlgorithm(JsonWebKey)` is the one curve-to-`alg`
+  map (P-256/384/521, secp256k1, RSA → `RS256`, else null); reuse it (OID4VC issuer and verifier do) instead of writing
+  another. Generated EC signing keys carry it, EC encryption keys carry no `alg` (like RSA ones). Key size 384 → P-384,
+  512 or 521 → P-521, anything else → P-256.
+  `OidcJsonWebKeystoreGeneratorService.toJsonWebKeyStore` corrects stored EC keys whose `ES*` `alg` does not match
+  the curve (and drops it from `enc` keys), so every reader of the keystore (cache, JWKS endpoint, rotation, decrypter)
+  sees fixed keys; rotation persists them. `isSigningAlgorithmCompatible` checks the curve for EC keys. jose4j refuses
+  to sign with an `ES*` algorithm of another curve ("expects a key using P-521 but was P-256").
+- Scenarios: `oidc-federation-op-role`, `-int-role`, `-ta-role` (endpoint shape) and `oidc-federation-end2end` (CAS trust
+  anchor plus CAS OP, the go-oidfed OFFA relying party in docker and the scenario's Node RP with negative cases; see the
+  `cas-puppeteer-scenarios` skill); `delegated-oidc-rp-federation-endpoint` for the RP side (`404` for an unknown client).
+- go-oidfed (OFFA) sends the request object by value (`request_uri` only when it has a request URI generator, which OFFA
+  does not), signs it with the first of its `signing.oidc.algs` the OP lists, and addresses client assertions to the token
+  endpoint. It signs ID token and userinfo algorithms into its RP metadata from the same setting, so keep OFFA on `RS256`
+  against CAS's RSA keystore.

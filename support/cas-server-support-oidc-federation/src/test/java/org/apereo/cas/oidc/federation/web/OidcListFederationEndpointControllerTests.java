@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 
+import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -48,12 +49,19 @@ class OidcListFederationEndpointControllerTests {
         }
 
         @Test
-        void verifyUnsupportedEntityType() throws Exception {
-            mockMvc.perform(get(LIST_ENDPOINT_URL + "?entity_type=x")
+        void verifyEntityTypeFilter() throws Exception {
+            mockMvc.perform(get(LIST_ENDPOINT_URL + "?entity_type=openid_relying_party")
                             .with(withHttpRequestProcessor()))
-                    .andExpect(status().isBadRequest())
-                    .andExpect(jsonPath("$.error").value(OidcConstants.UNSUPPORTED_PARAMETER))
-                    .andExpect(jsonPath("$.error_description").value("The entity_type parameter is not supported"));
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$", containsInAnyOrder("http://rp", "http://rpnokeys")));
+            mockMvc.perform(get(LIST_ENDPOINT_URL + "?entity_type=openid_relying_party&entity_type=openid_provider")
+                            .with(withHttpRequestProcessor()))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$", containsInAnyOrder("http://rp", "http://rpnokeys", "http://op")));
+            mockMvc.perform(get(LIST_ENDPOINT_URL + "?entity_type=openid_credential_issuer")
+                            .with(withHttpRequestProcessor()))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$", hasSize(0)));
         }
 
         @Test
@@ -75,12 +83,15 @@ class OidcListFederationEndpointControllerTests {
         }
 
         @Test
-        void verifyUnsupportedIntermediate() throws Exception {
-            mockMvc.perform(get(LIST_ENDPOINT_URL + "?intermediate=x")
+        void verifyIntermediateFilter() throws Exception {
+            mockMvc.perform(get(LIST_ENDPOINT_URL + "?intermediate=true")
                             .with(withHttpRequestProcessor()))
-                    .andExpect(status().isBadRequest())
-                    .andExpect(jsonPath("$.error").value(OidcConstants.UNSUPPORTED_PARAMETER))
-                    .andExpect(jsonPath("$.error_description").value("The intermediate parameter is not supported"));
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$", containsInAnyOrder("http://intermediate")));
+            mockMvc.perform(get(LIST_ENDPOINT_URL + "?intermediate=false")
+                            .with(withHttpRequestProcessor()))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$", hasSize(5)));
         }
 
         @Test
@@ -114,12 +125,19 @@ class OidcListFederationEndpointControllerTests {
         }
 
         @Test
-        void verifyUnsupportedEntityType() throws Exception {
-            mockMvc.perform(get(LIST_ENDPOINT_URL + "?entity_type=y")
+        void verifyEntityTypeFilter() throws Exception {
+            mockMvc.perform(get(LIST_ENDPOINT_URL + "?entity_type=openid_relying_party")
                             .with(withHttpRequestProcessor()))
-                    .andExpect(status().isBadRequest())
-                    .andExpect(jsonPath("$.error").value(OidcConstants.UNSUPPORTED_PARAMETER))
-                    .andExpect(jsonPath("$.error_description").value("The entity_type parameter is not supported"));
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$", containsInAnyOrder("http://rp", "http://rpnokeys")));
+            mockMvc.perform(get(LIST_ENDPOINT_URL + "?entity_type=openid_relying_party&entity_type=openid_provider")
+                            .with(withHttpRequestProcessor()))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$", containsInAnyOrder("http://rp", "http://rpnokeys", "http://op")));
+            mockMvc.perform(get(LIST_ENDPOINT_URL + "?entity_type=openid_credential_issuer")
+                            .with(withHttpRequestProcessor()))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$", hasSize(0)));
         }
 
         @Test
@@ -141,12 +159,15 @@ class OidcListFederationEndpointControllerTests {
         }
 
         @Test
-        void verifyUnsupportedIntermediate() throws Exception {
-            mockMvc.perform(get(LIST_ENDPOINT_URL + "?intermediate=y")
+        void verifyIntermediateFilter() throws Exception {
+            mockMvc.perform(get(LIST_ENDPOINT_URL + "?intermediate=true")
                             .with(withHttpRequestProcessor()))
-                    .andExpect(status().isBadRequest())
-                    .andExpect(jsonPath("$.error").value(OidcConstants.UNSUPPORTED_PARAMETER))
-                    .andExpect(jsonPath("$.error_description").value("The intermediate parameter is not supported"));
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$", containsInAnyOrder("http://intermediate")));
+            mockMvc.perform(get(LIST_ENDPOINT_URL + "?intermediate=false")
+                            .with(withHttpRequestProcessor()))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$", hasSize(5)));
         }
 
         @Test

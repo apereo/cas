@@ -92,7 +92,7 @@ public class DefaultOAuth20RequestParameterResolver implements OAuth20RequestPar
     public <T> @Nullable T resolveJwtRequestParameter(final String jwtRequest, final RegisteredService registeredService,
                                                       final String name, final Class<T> clazz)
             throws Exception {
-        val jwt = jwtBuilder.unpack(Optional.ofNullable(registeredService), jwtRequest);
+        val jwt = jwtBuilder.unpack(Optional.ofNullable(registeredService), decryptRequestObject(jwtRequest));
         return jwt == null ? null : getJwtRequestClaim(jwt, name, clazz);
     }
 
@@ -111,7 +111,7 @@ public class DefaultOAuth20RequestParameterResolver implements OAuth20RequestPar
     public <T> Map<String, T> resolveJwtRequestParameters(final String jwtRequest, final RegisteredService registeredService,
                                                           final Collection<String> names, final Class<T> clazz)
             throws Exception {
-        val jwt = jwtBuilder.unpack(Optional.ofNullable(registeredService), jwtRequest);
+        val jwt = jwtBuilder.unpack(Optional.ofNullable(registeredService), decryptRequestObject(jwtRequest));
         val parameters = new LinkedHashMap<String, T>();
         if (jwt != null) {
             for (val name : names) {
@@ -124,6 +124,17 @@ public class DefaultOAuth20RequestParameterResolver implements OAuth20RequestPar
         return parameters;
     }
 
+    /**
+     * Decrypt a request object encrypted to the authorization server, before it is unpacked and verified. Plain OAuth
+     * does not define encrypted request objects, so the request object is returned as it is.
+     *
+     * @param requestObject the request object
+     * @return the request object, decrypted
+     */
+    protected String decryptRequestObject(final String requestObject) {
+        return requestObject;
+    }
+
     private @Nullable JWTClaimsSet unpackJwtRequest(final HttpServletRequest request, final String jwtRequest) {
         val unpackedRequest = request.getAttribute(UnpackedJwtRequest.class.getName());
         if (unpackedRequest instanceof UnpackedJwtRequest(String requestObject, JWTClaimsSet claims) && requestObject.equals(jwtRequest)) {
@@ -131,7 +142,7 @@ public class DefaultOAuth20RequestParameterResolver implements OAuth20RequestPar
         }
         val id = Objects.requireNonNullElse(request.getParameter(OAuth20Constants.CLIENT_ID), StringUtils.EMPTY);
         val service = OAuth20Utils.getRegisteredOAuthServiceByClientId(jwtBuilder.getServicesManager(), id);
-        val jwt = jwtBuilder.unpack(Optional.ofNullable(service), jwtRequest);
+        val jwt = jwtBuilder.unpack(Optional.ofNullable(service), decryptRequestObject(jwtRequest));
         if (jwt != null) {
             request.setAttribute(UnpackedJwtRequest.class.getName(), new UnpackedJwtRequest(jwtRequest, jwt));
         }
