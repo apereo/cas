@@ -111,6 +111,8 @@ class DefaultOidcRequestParameterResolverTests extends AbstractOidcTests {
         tampered.addParameter(OAuth20Constants.REQUEST, encrypt(signedJwt.substring(0, signedJwt.lastIndexOf('.') + 1) + "AAAA",
             resolveEncryptionKey()));
         tampered.addParameter(OAuth20Constants.CLIENT_ID, service.getClientId());
+        assertTrue(oauthRequestParameterResolver.isRequestObjectVerified(request));
+        assertFalse(oauthRequestParameterResolver.isRequestObjectVerified(tampered));
         assertTrue(oauthRequestParameterResolver.resolveRequestParameter(tampered, OAuth20Constants.SCOPE, List.class).isEmpty());
     }
 
@@ -130,6 +132,7 @@ class DefaultOidcRequestParameterResolverTests extends AbstractOidcTests {
         request.addParameter(OAuth20Constants.REQUEST, encrypt(requestObjectClaims("client").toString(), unknownKey));
         assertThrows(IllegalArgumentException.class,
             () -> oauthRequestParameterResolver.resolveRequestParameter(request, OAuth20Constants.SCOPE, List.class));
+        assertFalse(oauthRequestParameterResolver.isRequestObjectVerified(request));
 
         val compressed = new JsonWebEncryption();
         compressed.setPayload(requestObjectClaims("client").toString());
@@ -143,6 +146,7 @@ class DefaultOidcRequestParameterResolverTests extends AbstractOidcTests {
         compressedRequest.addParameter(OAuth20Constants.REQUEST, compressed.getCompactSerialization());
         assertThrows(IllegalArgumentException.class,
             () -> oauthRequestParameterResolver.resolveRequestParameter(compressedRequest, OAuth20Constants.SCOPE, List.class));
+        assertFalse(oauthRequestParameterResolver.isRequestObjectVerified(compressedRequest));
     }
 
     private PublicJsonWebKey resolveEncryptionKey() {

@@ -135,6 +135,21 @@ public class DefaultOAuth20RequestParameterResolver implements OAuth20RequestPar
         return requestObject;
     }
 
+    @Override
+    public boolean isRequestObjectVerified(final HttpServletRequest request) {
+        val jwtRequest = request.getParameter(OAuth20Constants.REQUEST);
+        if (StringUtils.isBlank(jwtRequest) || !isRequestParameterSupported(request)) {
+            return true;
+        }
+        try {
+            return unpackJwtRequest(request, jwtRequest) != null;
+        } catch (final Throwable e) {
+            LOGGER.warn("Request object cannot be decrypted or verified: [{}]", e.getMessage());
+            LOGGER.debug(e.getMessage(), e);
+            return false;
+        }
+    }
+
     private @Nullable JWTClaimsSet unpackJwtRequest(final HttpServletRequest request, final String jwtRequest) {
         val unpackedRequest = request.getAttribute(UnpackedJwtRequest.class.getName());
         if (unpackedRequest instanceof UnpackedJwtRequest(String requestObject, JWTClaimsSet claims) && requestObject.equals(jwtRequest)) {

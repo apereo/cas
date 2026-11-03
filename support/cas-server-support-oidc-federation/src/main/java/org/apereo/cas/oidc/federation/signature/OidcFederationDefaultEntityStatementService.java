@@ -2,6 +2,8 @@ package org.apereo.cas.oidc.federation.signature;
 
 import module java.base;
 import org.apereo.cas.configuration.model.support.oidc.OidcProperties;
+import org.apereo.cas.configuration.model.support.oidc.federation.OidcFederationRole;
+import org.apereo.cas.configuration.model.support.oidc.federation.OidcFederationTrustMarkIssuerProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.function.FunctionUtils;
@@ -41,6 +43,8 @@ public class OidcFederationDefaultEntityStatementService implements OidcFederati
 
     private static final String TRUST_MARK_CLAIM_NAME = "trust_mark";
 
+    private static final String TRUST_MARK_ISSUERS_CLAIM_NAME = "trust_mark_issuers";
+
     private static final int TRUST_MARK_REFERENCE_LENGTH = 64;
 
     private final OidcFederationJsonWebKeystoreService jsonWebKeystoreService;
@@ -51,7 +55,8 @@ public class OidcFederationDefaultEntityStatementService implements OidcFederati
      * entity and carries its own keys; with them, it is a subordinate statement about the subject and carries only the
      * subject's keys (OpenID Federation 1.0, section 3), which is what the next statement of a trust chain is verified with.
      * Only subordinate statements carry {@code constraints}, which an entity configuration must not (section 3.1.3).
-     * Only the entity configuration carries the {@code trust_marks} issued to this entity (section 3.1.1).
+     * Only the entity configuration carries the {@code trust_marks} issued to this entity (section 3.1.1), and
+     * only the entity configuration of a trust anchor carries the {@code trust_mark_issuers} it accepts (section 3.1).
      * The statement is valid from now, to the second, for the configured entity statement expiration.
      *
      * @param issuer         the issuer
@@ -96,6 +101,10 @@ public class OidcFederationDefaultEntityStatementService implements OidcFederati
             if (!trustMarks.isEmpty()) {
                 claims.setClaim(TRUST_MARKS_CLAIM_NAME, trustMarks);
             }
+            val trustMarkIssuers = resolveTrustMarkIssuers();
+            if (!trustMarkIssuers.isEmpty()) {
+                claims.setClaim(TRUST_MARK_ISSUERS_CLAIM_NAME, trustMarkIssuers);
+            }
         }
 
         val federationEntity = (JSONObject) metadata.get(EntityType.FEDERATION_ENTITY.getValue());
@@ -122,6 +131,24 @@ public class OidcFederationDefaultEntityStatementService implements OidcFederati
             .map(configured -> readTrustMark(configured, entityId))
             .flatMap(Optional::stream)
             .toList();
+    }
+
+    /**
+     * The trust mark types a trust anchor accepts and their issuers, published as {@code trust_mark_issuers}
+     * (OpenID Federation 1.0, section 3.1). Only a trust anchor publishes them; others would be ignored.
+     *
+     * @return the trust mark types and their accepted issuers
+     */
+    protected Map<String, List<String>> resolveTrustMarkIssuers() {
+        val federation = oidcProperties.getFederation();
+        if (federation.getRole() != OidcFederationRole.TRUST_ANCHOR) {
+            return Map.of();
+        }
+        return federation.getTrustMarkIssuers()
+            .stream()
+            .filter(entry -> StringUtils.isNotBlank(entry.getTrustMarkType()))
+            .collect(Collectors.toMap(OidcFederationTrustMarkIssuerProperties::getTrustMarkType,
+                entry -> List.copyOf(entry.getIssuers()), (first, second) -> first, LinkedHashMap::new));
     }
 
     private static Optional<Map<String, String>> readTrustMark(final String configured, final String entityId) {

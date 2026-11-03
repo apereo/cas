@@ -584,6 +584,11 @@ These scopes are accepted and advertised in `scopes_supported` without being lis
 The token response then carries no credential identifiers, so the credential request names the configuration with
 `credential_configuration_id`. A wallet may use both mechanisms in one authorization request.
 
+The wallet may also send the authorization request as a
+[pushed authorization request](OIDC-Authentication-PAR.html), with its `authorization_details`, `issuer_state` and
+PKCE parameters, and then send only its client ID and the returned `request_uri` to the authorization endpoint.
+CAS uses the pushed request alone and ignores any authorization details on the authorization endpoint request.
+
 A refresh token issued in this flow keeps the authorization details of its code, as RFC 9396 describes, so access
 tokens obtained with it may request the same credentials; scopes are honored as before.
 

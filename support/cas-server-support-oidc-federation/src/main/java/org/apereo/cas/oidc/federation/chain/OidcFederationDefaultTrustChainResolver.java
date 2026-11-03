@@ -4,6 +4,7 @@ import module java.base;
 import org.apereo.cas.configuration.model.support.oidc.federation.OidcFederationProperties;
 import org.apereo.cas.configuration.model.support.oidc.federation.OidcFederationRole;
 import org.apereo.cas.configuration.model.support.oidc.federation.OidcFederationTrustAnchorProperties;
+import org.apereo.cas.oidc.federation.trustmark.OidcFederationTrustMarkValidator;
 import org.apereo.cas.services.DefaultRegisteredServiceContact;
 import org.apereo.cas.services.DefaultRegisteredServiceExpirationPolicy;
 import org.apereo.cas.services.DefaultRegisteredServiceProperty;
@@ -57,6 +58,8 @@ public class OidcFederationDefaultTrustChainResolver implements OidcFederationTr
         Set.of(ClientAuthenticationMethod.PRIVATE_KEY_JWT, ClientAuthenticationMethod.TLS_CLIENT_AUTH);
 
     private final List<TrustChainResolver> trustChainResolvers;
+
+    private final OidcFederationTrustMarkValidator trustMarkValidator;
 
     /**
      * Build one trust chain resolver per trust anchor. Trust anchors are configured with the keys obtained out of
@@ -233,6 +236,9 @@ public class OidcFederationDefaultTrustChainResolver implements OidcFederationTr
         return FunctionUtils.doAndHandle(() -> {
             val resolvedChains = trustChainResolver.resolveTrustChains(entityId);
             val chain = resolvedChains.getShortest();
+            if (!trustMarkValidator.hasRequiredTrustMarks(trustChainResolver, chain)) {
+                return Optional.<TrustChainMetadata>empty();
+            }
             val metadataPolicy = chain.resolveCombinedMetadataPolicy(EntityType.OPENID_RELYING_PARTY);
 
             val claims = chain.getLeafConfiguration().getSignedStatement().getJWTClaimsSet();

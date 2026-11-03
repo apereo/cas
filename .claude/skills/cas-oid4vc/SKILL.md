@@ -121,6 +121,11 @@ description: "Review and change verifiable-credential issuance and presentation 
   PAR endpoint and loads `request_uri` tickets, so a builder ordered ahead of it breaks every pushed authorization
   request ("Missing ticket-granting-ticket", 401). The VC builder sat at `HIGHEST_PRECEDENCE`; it is now
   `LOWEST_PRECEDENCE - 1`, behind PAR and ahead of the generic builders.
+- The builder that answers an authorization request is chosen by `supports(OAuth20AuthorizationRequest)`, but the
+  payload it builds from is the `AccessTokenRequestContext` restored from the PAR ticket. Any field a `supports` reads
+  (for the VC builder, `authorizationDetails`) must be copied from that context in the PAR builder's
+  `toAuthorizationRequest`; read from the authorize URL it is blank for `client_id` + `request_uri`, the VC builder is
+  skipped, and the code is issued with no authorization details.
 - `OidcVerifiableCredentialEndpointControllerTests` is close to checkstyle's 2,500-line `FileLength` limit; keep additions compact or put them in another existing class.
 - `CharacterEncodingFilter` adds `;charset=UTF-8` to every response content type, `application/statuslist+jwt` included; assert media types with `contentTypeCompatibleWith`.
 - Nested `@Nested` test classes that extend `AbstractOidcTests` do not inherit the enclosing class's `@ImportAutoConfiguration` or `@TestPropertySource`: repeat what they need, including whatever the enclosing instance autowires (the outer instance is built from the nested context).

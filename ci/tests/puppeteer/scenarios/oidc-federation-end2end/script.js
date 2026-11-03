@@ -60,6 +60,19 @@ async function verifyOffaDiscovery(page) {
     assert(html.includes(`data-value="${OP_ENTITY_ID}"`), "OFFA did not discover the CAS OP");
 }
 
+/**
+ * The trust anchor names the issuers it accepts for each trust mark type of the federation; the OP accepts the relying
+ * party trust marks that OFFA and the Node RP carry because their issuer is listed here.
+ */
+async function verifyTrustMarkIssuers() {
+    await cas.log("Trust anchor: trust mark issuers in its entity configuration");
+    const trustAnchorClaims = jose.decodeJwt(await cas.doRequest(`${TRUST_ANCHOR}/.well-known/openid-federation`, "GET", {}, 200));
+    assert.deepEqual(trustAnchorClaims.trust_mark_issuers, {
+        [`${TRUST_ANCHOR}/trust-marks/relying-party`]: [TRUST_ANCHOR],
+        [`${TRUST_ANCHOR}/trust-marks/identity-provider`]: [TRUST_ANCHOR]
+    });
+}
+
 async function verifySubordinateListing() {
     await cas.log("Trust anchor: subordinate listing filtered by entity type");
     const listEndpoint = `${TRUST_ANCHOR}/list`;
@@ -226,6 +239,7 @@ async function verifyPushedRequestWithTrustChain(page, rp, op) {
     try {
         const page = await cas.newPage(browser);
         await verifySubordinateListing();
+        await verifyTrustMarkIssuers();
         await verifyOpEntityConfiguration();
         await verifyOffaDiscovery(page);
         await verifyOffaLogin(page);

@@ -59,6 +59,7 @@ const jose = require("jose");
     });
     
     await verifyEncryptedRequestObject(page, request);
+    await verifyTamperedRequestObject(page, request);
     await cas.closeBrowser(browser);
 })();
 
@@ -88,4 +89,20 @@ async function verifyEncryptedRequestObject(page, signedRequest) {
     const code = await cas.assertParameter(page, "code");
     await cas.log(`OAuth code ${code} for the encrypted request object`);
     assert(page.url().startsWith("https://localhost:9859/anything/cas"), page.url());
+}
+
+/**
+ * The same request object with a broken signature is refused with invalid_request_object at the registered redirect URI
+ * (OpenID Connect Core 1.0, section 6.3.2), instead of being ignored in favor of the query parameters.
+ */
+async function verifyTamperedRequestObject(page, signedRequest) {
+    const tampered = `${signedRequest.substring(0, signedRequest.lastIndexOf(".") + 1)}AAAA`;
+    const redirectUri = "https://localhost:9859/anything/cas";
+    const url = `https://localhost:8443/cas/oidc/authorize?request=${tampered}&client_id=client&redirect_uri=${redirectUri}`;
+    await cas.log(`Browsing to ${url}`);
+    await cas.goto(page, url);
+    await cas.sleep(1000);
+    assert(page.url().startsWith(redirectUri), page.url());
+    const error = new URL(page.url()).searchParams.get("error");
+    assert.equal(error, "invalid_request_object");
 }

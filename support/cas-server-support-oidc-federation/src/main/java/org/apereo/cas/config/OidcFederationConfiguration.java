@@ -19,6 +19,8 @@ import org.apereo.cas.oidc.federation.signature.OidcFederationDefaultJsonWebKeys
 import org.apereo.cas.oidc.federation.signature.OidcFederationEntityStatementService;
 import org.apereo.cas.oidc.federation.signature.OidcFederationJsonWebKeystoreService;
 import org.apereo.cas.oidc.federation.subordinate.OidcFederationSubordinateRepository;
+import org.apereo.cas.oidc.federation.trustmark.OidcFederationDefaultTrustMarkValidator;
+import org.apereo.cas.oidc.federation.trustmark.OidcFederationTrustMarkValidator;
 import org.apereo.cas.oidc.federation.validator.OpenIdFederationAuthorizationCodeResponseTypeAuthorizationRequestValidator;
 import org.apereo.cas.oidc.federation.web.OidcFederationJwksEndpoint;
 import org.apereo.cas.oidc.federation.web.OidcFetchFederationEndpointController;
@@ -223,6 +225,8 @@ class OidcFederationConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = OidcFederationTrustChainResolver.BEAN_NAME)
     public OidcFederationTrustChainResolver oidcFederationTrustChainResolver(
+        @Qualifier(OidcFederationTrustMarkValidator.BEAN_NAME)
+        final OidcFederationTrustMarkValidator oidcFederationTrustMarkValidator,
         final ConfigurableApplicationContext applicationContext,
         final CasConfigurationProperties casProperties) {
         val trustChainResolvers = OidcFederationDefaultTrustChainResolver.buildTrustChainResolvers(
@@ -230,7 +234,14 @@ class OidcFederationConfiguration {
         val resolvers = applicationContext.getBeansOfType(TrustChainResolver.class).values();
         trustChainResolvers.addAll(resolvers);
 
-        return new OidcFederationDefaultTrustChainResolver(trustChainResolvers);
+        return new OidcFederationDefaultTrustChainResolver(trustChainResolvers, oidcFederationTrustMarkValidator);
+    }
+
+    @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    @ConditionalOnMissingBean(name = OidcFederationTrustMarkValidator.BEAN_NAME)
+    public OidcFederationTrustMarkValidator oidcFederationTrustMarkValidator(final CasConfigurationProperties casProperties) {
+        return new OidcFederationDefaultTrustMarkValidator(casProperties.getAuthn().getOidc().getFederation());
     }
 
     @Bean

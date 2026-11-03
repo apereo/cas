@@ -75,6 +75,16 @@ public class HazelcastCoreClusterProperties implements Serializable {
     private String instanceName;
 
     /**
+     * Name of the Hazelcast cluster.
+     * All members intended to join the same cluster must use the same name.
+     * Members with different cluster names cannot join each other's clusters.
+     * Use distinct names to separate environments such as production and testing.
+     * The cluster name does not authenticate members; additional network or
+     * authentication controls are required to restrict access.
+     */
+    private String clusterName = "cas-hazelcast-cluster";
+
+    /**
      * Define how data items in Hazelcast maps are merged together from source to destination,
      * when the members of a cluster that split apart join again.
      * By default, the copy of an entry that was updated last wins, so updates made on either side are kept.

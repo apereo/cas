@@ -4,6 +4,8 @@
 # prepares what the CAS trust anchor needs before it starts: a truststore with the shared localhost certificate,
 # the TLS key pair for OFFA and the scenario's Node RP, and the subordinate statements (op.json and rp.json from this
 # scenario plus offa.json, built from OFFA's live entity configuration since OFFA generates its keys on first start).
+# OFFA and the Node RP carry a relying party trust mark issued by the trust anchor (trust-mark.js), which the OP requires;
+# OFFA's is added as extra entity configuration data, since go-oidfed refuses a configured trust mark JWT it cannot verify.
 # The OP's service registry is a fresh copy of this scenario's services, since relying parties registered automatically
 # are written there and would otherwise carry the keys of an earlier run into the next one.
 # run.sh sources this script once per CAS instance; the second call finds OFFA running and does nothing.
@@ -62,6 +64,8 @@ keys = json.load(open(sys.argv[1]))["keys"][:1]
 private = {"d", "p", "q", "dp", "dq", "qi"}
 print(json.dumps({"keys": [{k: v for k, v in key.items() if k not in private} for key in keys]}))
 ' "${SCENARIO_DIR}/metadata/ta-federation.jwks") || return 1
+  local offaTrustMark
+  offaTrustMark=$(node "${SCENARIO_DIR}/trust-mark.js" "${SCENARIO_DIR}/metadata/ta-federation.jwks" "${OFFA_ENTITY_ID}") || return 1
   cat > "${OFFA_DIR}/config.yaml" <<YAML
 server:
   trusted_proxies: ["127.0.0.1", "::1"]
@@ -97,6 +101,10 @@ federation:
       jwks: ${trustAnchorKeys}
   authority_hints:
     - ${TRUST_ANCHOR}
+  extra_entity_configuration_data:
+    trust_marks:
+      - trust_mark_type: ${TRUST_ANCHOR}/trust-marks/relying-party
+        trust_mark: ${offaTrustMark}
 op_discovery:
   local:
     enabled: true

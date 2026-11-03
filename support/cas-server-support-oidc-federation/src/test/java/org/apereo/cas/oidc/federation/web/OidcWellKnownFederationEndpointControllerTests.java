@@ -186,6 +186,7 @@ class OidcWellKnownFederationEndpointControllerTests {
             assertEquals("automatic", ((List<String>) openIdProvider.get("client_registration_types_supported")).getFirst());
             assertNull(metadata.get("openid_credential_issuer"));
             assertNull(claims.getClaim("trust_marks"));
+            assertNull(claims.getClaim("trust_mark_issuers"));
         }
     }
 
@@ -262,6 +263,9 @@ class OidcWellKnownFederationEndpointControllerTests {
             "cas.authn.oidc.federation.role=TRUST_ANCHOR",
             "cas.authn.oidc.federation.jwks-file=file:${#systemProperties['java.io.tmpdir']}/rollover-federation.jwks",
             "cas.authn.oidc.federation.subordinate-directory=./src/test/resources/subordinates",
+            "cas.authn.oidc.federation.trust-mark-issuers[0].trust-mark-type=https://sso.example.org/cas/oidc/trust-marks/member",
+            "cas.authn.oidc.federation.trust-mark-issuers[0].issuers[0]=https://sso.example.org/cas/oidc",
+            "cas.authn.oidc.federation.trust-mark-issuers[1].trust-mark-type=https://refeds.org/sirtfi",
             "management.endpoints.web.exposure.include=oidcFederationJwks",
             "management.endpoints.access.default=UNRESTRICTED"
         }, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -274,6 +278,13 @@ class OidcWellKnownFederationEndpointControllerTests {
         @BeforeAll
         static void removeKeystore() throws Exception {
             Files.deleteIfExists(Path.of(FileUtils.getTempDirectoryPath(), "rollover-federation.jwks"));
+        }
+
+        @Test
+        void verifyTrustMarkIssuersArePublished() throws Exception {
+            val trustMarkIssuers = (Map<String, Object>) fetchEntityConfiguration().getJWTClaimsSet().getClaim("trust_mark_issuers");
+            assertEquals(List.of("https://sso.example.org/cas/oidc"), trustMarkIssuers.get("https://sso.example.org/cas/oidc/trust-marks/member"));
+            assertEquals(List.of(), trustMarkIssuers.get("https://refeds.org/sirtfi"));
         }
 
         @Test

@@ -197,11 +197,11 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
                 val jwk = (PublicJsonWebKey) EncodingUtils.newJsonWebKey(signingKeyToUse);
                 LOGGER.trace("Parsed signing key as a JSON web key for [{}] with kid [{}]", getName(), jwk.getKeyId());
                 if (jwk.getPrivateKey() == null) {
-                    val msg = "Provided signing key as a JSON web key does not carry a private key";
-                    LOGGER.error(msg);
-                    throw new RuntimeException(msg);
+                    LOGGER.debug("Signing key [{}] for [{}] carries no private key and only verifies signatures", jwk.getKeyId(), getName());
+                    setSigningKey(jwk.getPublicKey());
+                } else {
+                    setSigningKey(jwk.getPrivateKey());
                 }
-                setSigningKey(jwk.getPrivateKey());
             } catch (final Exception e) {
                 LOGGER.trace("Unable to recognize signing key for [{}] as a JSON web key: [{}].", getSigningKeySetting(), e.getMessage());
                 LOGGER.debug("Using pre-defined signing key to use for [{}]", getSigningKeySetting());

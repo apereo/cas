@@ -91,6 +91,19 @@ public class OidcFederationProperties implements Serializable {
     private List<String> trustMarks = new ArrayList<>();
 
     /**
+     * Trust mark types that a relying party must hold to be registered automatically by this OpenID provider.
+     * For each type, the relying party's entity configuration must carry a valid trust mark of that type,
+     * issued by an issuer that the trust anchor of its trust chain accepts for that type.
+     */
+    private List<String> requiredTrustMarks = new ArrayList<>();
+
+    /**
+     * For a trust anchor, the trust mark types of the federation and the entities accepted as their issuers,
+     * published as {@code trust_mark_issuers} in its entity configuration.
+     */
+    private List<OidcFederationTrustMarkIssuerProperties> trustMarkIssuers = new ArrayList<>();
+
+    /**
      * Rotation of the federation keys: the future key becomes current and starts signing, the current key
      * becomes previous, and a new future key is published.
      */

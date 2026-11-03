@@ -15,6 +15,7 @@ import org.apereo.cas.support.oauth.profile.OAuth20UserProfile;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.code.OAuth20Code;
 import org.apereo.cas.util.JsonUtils;
+import com.jayway.jsonpath.JsonPath;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.Nullable;
@@ -25,6 +26,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.web.util.UriComponentsBuilder;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -127,6 +129,28 @@ class OidcVerifiableCredentialAuthorizationCodeAuthorizationResponseBuilderTests
             .andExpect(jsonPath("$.request_uri").exists());
     }
 
+    @Test
+    void verifyPushedAuthorizationDetailsAreGranted() throws Exception {
+        val registeredService = registerService(null, true);
+        val pushResponse = pushAuthorizationRequest(registeredService, true)
+            .andExpect(status().isCreated())
+            .andReturn()
+            .getResponse()
+            .getContentAsString();
+        val requestUri = JsonPath.read(pushResponse, "$." + OidcConstants.REQUEST_URI).toString();
+
+        val redirectedUrl = authorize(registeredService, builder -> builder.param(OidcConstants.REQUEST_URI, requestUri));
+        val code = UriComponentsBuilder.fromUri(URI.create(redirectedUrl)).build().getQueryParams().getFirst(OAuth20Constants.CODE);
+        assertNotNull(code);
+        val oauthCode = ticketRegistry.getTicket(code, OAuth20Code.class);
+        assertFalse(oauthCode.getAuthorizationDetails().isEmpty());
+
+        exchangeForToken(registeredService, code, null)
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$." + OAuth20Constants.AUTHORIZATION_DETAILS + "[0].credential_configuration_id").value("myorg"))
+            .andExpect(jsonPath("$." + OAuth20Constants.AUTHORIZATION_DETAILS + "[0].credential_identifiers").isArray());
+    }
+
     private ResultActions pushAuthorizationRequest(final OidcRegisteredService registeredService,
                                                    final boolean withAuthorizationDetails)
             throws Exception {
@@ -173,6 +197,22 @@ class OidcVerifiableCredentialAuthorizationCodeAuthorizationResponseBuilderTests
     private String authorize(final OidcRegisteredService registeredService,
                              @Nullable final String codeChallenge)
             throws Exception {
+        return authorize(registeredService, builder -> {
+            builder.param(OAuth20Constants.ISSUER_STATE, UUID.randomUUID().toString())
+                .param(OAuth20Constants.RESPONSE_TYPE, OAuth20ResponseTypes.CODE.name())
+                .param(OAuth20Constants.REDIRECT_URI, "https://oauth.example.org")
+                .param(OAuth20Constants.AUTHORIZATION_DETAILS,
+                    JsonUtils.render(List.of(OidcVerifiableCredentialAuthorizationDetails.builder().credentialConfigurationId("myorg").build())));
+            if (StringUtils.isNotBlank(codeChallenge)) {
+                builder.param(OAuth20Constants.CODE_CHALLENGE, codeChallenge)
+                    .param(OAuth20Constants.CODE_CHALLENGE_METHOD, "plain");
+            }
+        });
+    }
+
+    private String authorize(final OidcRegisteredService registeredService,
+                             final Consumer<MockHttpServletRequestBuilder> parameters)
+            throws Exception {
         val profile = new DefaultOAuth20UserProfile("casuser", OAuth20UserProfile.BASIC_PROFILE_HANDLER_NAME);
         profile.addAttribute(OAuth20Constants.PROFILE_ATTRIBUTE_CLIENT_ID, registeredService.getClientId());
         val ticketGrantingTicket = new MockTicketGrantingTicket(profile.getId());
@@ -181,11 +221,6 @@ class OidcVerifiableCredentialAuthorizationCodeAuthorizationResponseBuilderTests
 
         val builder = get("/cas/oidc/" + OidcConstants.AUTHORIZE_URL)
             .param(OAuth20Constants.CLIENT_ID, registeredService.getClientId())
-            .param(OAuth20Constants.ISSUER_STATE, UUID.randomUUID().toString())
-            .param(OAuth20Constants.RESPONSE_TYPE, OAuth20ResponseTypes.CODE.name())
-            .param(OAuth20Constants.REDIRECT_URI, "https://oauth.example.org")
-            .param(OAuth20Constants.AUTHORIZATION_DETAILS,
-                JsonUtils.render(List.of(OidcVerifiableCredentialAuthorizationDetails.builder().credentialConfigurationId("myorg").build())))
             .with(withHttpRequestProcessor())
             .with(httpRequest -> {
                 httpRequest.addHeader(HttpHeaders.USER_AGENT, "test");
@@ -195,10 +230,7 @@ class OidcVerifiableCredentialAuthorizationCodeAuthorizationResponseBuilderTests
                 oauthDistributedSessionStore.set(httpRequest, response, OAuth20Constants.SESSION_ATTRIBUTE_AUTHENTICATED_PROFILE, profile);
                 return httpRequest;
             });
-        if (StringUtils.isNotBlank(codeChallenge)) {
-            builder.param(OAuth20Constants.CODE_CHALLENGE, codeChallenge)
-                .param(OAuth20Constants.CODE_CHALLENGE_METHOD, "plain");
-        }
+        parameters.accept(builder);
         val redirectedUrl = mockMvc.perform(builder)
             .andExpect(status().is3xxRedirection())
             .andExpect(redirectedUrlPattern("https://oauth.example.org*"))

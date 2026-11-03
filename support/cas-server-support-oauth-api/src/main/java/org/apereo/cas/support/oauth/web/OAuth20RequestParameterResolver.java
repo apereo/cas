@@ -98,6 +98,16 @@ public interface OAuth20RequestParameterResolver {
     OAuth20ResponseModeTypes resolveResponseModeType(HttpServletRequest request);
 
     /**
+     * Whether the request object of the request, if it carries one and request objects are supported, can be
+     * decrypted and verified. A request object that cannot be is not used for any parameter, and the request
+     * must be refused rather than read from its query parameters alone.
+     *
+     * @param request the request
+     * @return true when there is no request object to verify, or when it verifies
+     */
+    boolean isRequestObjectVerified(HttpServletRequest request);
+
+    /**
      * Resolve jwt request parameter.
      *
      * @param <T>        the type parameter

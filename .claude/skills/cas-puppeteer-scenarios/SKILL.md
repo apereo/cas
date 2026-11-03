@@ -55,6 +55,11 @@ description: "Write, fix and review the end-to-end puppeteer scenarios under ci/
   4.2 (gh-51372) extracting a war writes `cas/cas.jar` (root web content moved to `META-INF/resources/`), no longer
   `cas/cas.war`; `run.sh` launches `cas/cas.jar` and falls back to `cas/cas.<projectType>`. When a Spring Boot bump fails
   every AOT scenario at once, diff `loader/spring-boot-jarmode-tools/.../ExtractCommand.java` between the two tags first.
+- `ci/tests/gcp/Dockerfile` builds the Firestore and Pub/Sub emulators on the pinned `google-cloud-cli` Alpine image and
+  installs the JDK the emulators need. Do not run `gcloud components update` there: it pulls the newest emulators onto
+  the pinned image, so the same commit can pass in the morning and fail in the afternoon. Firestore emulator v1.23.0
+  (Cloud SDK 592) requires Java 25, and the container died within the 5 second start check on Java 21. When Renovate
+  bumps the image, check the Cloud SDK release notes for emulator Java requirements.
 - `ci/tests/aws/run-aws-server.sh` serves the `AmazonWebServices` unit test category, not only scenarios: tests start as
   soon as it returns, and `@EnabledIfListeningOnPort(port = 4566)` passes while localstack's services are still starting.
   Components that create their AWS resources while starting (the log4j2 `SQSAppender` creates its queue in `start()`, and
@@ -248,7 +253,10 @@ description: "Write, fix and review the end-to-end puppeteer scenarios under ci/
   `overlay/oidc-federation-end2end/`: it exports the CAS keystore's key pair as PEM for both RPs (OpenSSL 3 needs the
   current PKCS12 format, LibreSSL on macOS the legacy one), builds the JVM truststore, pins the trust anchor's public key in
   OFFA's config, and writes the trust anchor's subordinate directory there, adding `offa.json` from OFFA's live entity
-  configuration because OFFA generates its keys on first start. OFFA's root page (`/`) shows the claims of its session,
+  configuration because OFFA generates its keys on first start. The OP requires a relying party trust mark: both RPs
+  carry one issued by the trust anchor with its scenario key (`trust-mark.js`, also a CLI); `init.sh` puts OFFA's in
+  `federation.extra_entity_configuration_data.trust_marks` (raw `trust_marks` claim). Not in `federation.trust_marks`:
+  go-oidfed v0.14.0 parses a configured `trust_mark_jwt` with verification on and no keys, and OFFA exits at startup. OFFA's root page (`/`) shows the claims of its session,
   which is what the script asserts after logging in through `/login?op=<OP entity id>&next=...`. That page calls OFFA's
   own `/auth` from loopback, which fiber v3 refuses (`403 Untrusted Proxy`) unless `server.trusted_proxies` lists
   `127.0.0.1` and `::1`: without `TrustProxy`, `IsProxyTrusted()` is false. OFFA discovers OPs by walking the trust

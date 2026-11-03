@@ -191,6 +191,11 @@ description: "Review and change CAS OAuth2/OIDC protocol behavior: token endpoin
   with the private keys of the client's own JWKS. The federation interceptor decrypts through an `ObjectProvider` (no OIDC
   bean on TA/intermediate instances) and keeps replay digests on the encrypted object. Discovery defaults advertise only
   `RSA-OAEP`, `RSA-OAEP-256`, `ECDH-ES*` (no `RSA1_5`, no symmetric key wrap).
+- Request objects that cannot be decrypted or verified: `OAuth20RequestParameterResolver.isRequestObjectVerified`, checked
+  in `BaseOAuth20AuthorizationRequestValidator.preValidate` after the redirect URI, refuses with `invalid_request_object`
+  (callback). The resolver itself still answers such a request from the query parameters (the claims are dropped), so
+  anything reading parameters before the validators must not trust them; tests that pass a `request` must sign it with
+  a key the client's JWKS publishes for signing.
 - Federation keys (`OidcFederationDefaultJsonWebKeystoreService`): one JWKS file with the OIDC lifecycle `state`
   (current/future/previous, missing = current) plus retired keys, public only, marked by an `exp` member (and `iat`
   from generation). EC publishes non-retired keys with `alg` derived from key type/curve (never trust the stored
@@ -207,6 +212,17 @@ description: "Review and change CAS OAuth2/OIDC protocol behavior: token endpoin
   the curve (and drops it from `enc` keys), so every reader of the keystore (cache, JWKS endpoint, rotation, decrypter)
   sees fixed keys; rotation persists them. `isSigningAlgorithmCompatible` checks the curve for EC keys. jose4j refuses
   to sign with an `ES*` algorithm of another curve ("expects a key using P-521 but was P-256").
+- Required trust marks (`OidcFederationDefaultTrustMarkValidator`, called from
+  `OidcFederationDefaultTrustChainResolver.fetchRelyingPartyMetadata`, so registration and refresh): leaf `trust_marks`
+  entries of each required type; TA config from `TrustChain.getTrustAnchorConfiguration()` or the resolver's retriever,
+  verified with the resolver's trust anchor keys; issuer accepted by `trust_mark_issuers`; issuer keys = TA config or the
+  leaf of the issuer's own chain to the same TA (`TrustChainResolver.resolveTrustChains`); verification with nimbus
+  `DefaultJWTProcessor` (typ verifier, `JWSAlgorithm.Family.SIGNATURE`, exact-match claims, 60s skew; `iat` in the
+  future checked by hand); `delegation` against `trust_mark_owners`; status endpoint POST `trust_mark=`, response typed
+  `trust-mark-status-response+jwt` must echo the mark with `status` `active`. Read federation claims as raw `Map`s, not
+  `getJSONObjectClaim` (fails on statements built in code). `trust_mark_issuers` is published only by the TA role.
+  `TrustChain` is final but constructible (leaf + superior statements), and `TrustChainResolver` can be subclassed,
+  for smoke tests without Mockito.
 - Scenarios: `oidc-federation-op-role`, `-int-role`, `-ta-role` (endpoint shape) and `oidc-federation-end2end` (CAS trust
   anchor plus CAS OP, the go-oidfed OFFA relying party in docker and the scenario's Node RP with negative cases; see the
   `cas-puppeteer-scenarios` skill); `delegated-oidc-rp-federation-endpoint` for the RP side (`404` for an unknown client).

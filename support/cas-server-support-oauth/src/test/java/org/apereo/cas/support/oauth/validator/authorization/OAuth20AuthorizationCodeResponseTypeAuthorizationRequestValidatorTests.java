@@ -54,6 +54,34 @@ class OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidatorTests ext
     }
 
     @Test
+    void verifyRequestObjectThatCannotBeVerifiedIsRefused() throws Throwable {
+        val clientId = UUID.randomUUID().toString();
+        addRegisteredService(Set.of(), clientId, UUID.randomUUID().toString(), "https://.+");
+        val validator = getValidator(servicesManager);
+
+        val request = new MockHttpServletRequest();
+        val response = new MockHttpServletResponse();
+        request.addParameter(OAuth20Constants.CLIENT_ID, clientId);
+        request.addParameter(OAuth20Constants.REDIRECT_URI, "https://oauth.example.org");
+        request.addParameter(OAuth20Constants.RESPONSE_TYPE, OAuth20ResponseTypes.CODE.getType());
+        val encoder = Base64.getUrlEncoder().withoutPadding();
+        val claims = """
+            {"response_type":"code","redirect_uri":"https://oauth.example.org","client_id":"%s"}""".formatted(clientId);
+        request.addParameter(OAuth20Constants.REQUEST, encoder.encodeToString("{\"alg\":\"RS256\"}".getBytes(StandardCharsets.UTF_8))
+            + '.' + encoder.encodeToString(claims.getBytes(StandardCharsets.UTF_8)) + ".AAAA");
+
+        assertFalse(oauthRequestParameterResolver.isRequestObjectVerified(request));
+        assertFalse(validator.supports(request, response));
+        assertEquals(OAuth20Constants.INVALID_REQUEST_OBJECT, request.getAttribute(OAuth20Constants.ERROR));
+        assertEquals(Boolean.TRUE, request.getAttribute(OAuth20Constants.ERROR_WITH_CALLBACK));
+
+        request.removeAttribute(OAuth20Constants.ERROR);
+        request.removeParameter(OAuth20Constants.REQUEST);
+        assertTrue(oauthRequestParameterResolver.isRequestObjectVerified(request));
+        assertTrue(validator.supports(request, response));
+    }
+
+    @Test
     void verifyRequestedResources() throws Throwable {
         val service = addRegisteredService("https://.+", UUID.randomUUID().toString());
         val allowedResource = "https://api.example.org/";

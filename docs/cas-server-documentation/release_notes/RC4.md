@@ -411,6 +411,13 @@ one-time codes can be added when `cas.authn.mfa.simple.mail.accepted-email-patte
   are published as `trust_marks`. Discovery advertises `client_registration_types_supported` only when CAS is a federation
   OpenID provider, and the delegated relying party entity statement endpoint answers `404` for an unknown client instead
   of an empty page.
+- {: .new data-area="oidc"} An [OpenID Federation](../authentication/OIDC-Authentication-Federation.html#required-trust-marks)
+  OpenID provider can require trust marks of the relying parties it registers automatically, listed with
+  `cas.authn.oidc.federation.required-trust-marks`{: .cas-setting}. Each trust mark is checked against the issuers the
+  trust anchor accepts in `trust_mark_issuers`, verified with its issuer's keys through the issuer's own trust chain,
+  its delegation checked when the trust anchor names an owner of the type, and its status asked of the issuer when it
+  publishes a status endpoint. A CAS trust anchor publishes the issuers it accepts, defined with
+  `cas.authn.oidc.federation.trust-mark-issuers`{: .cas-setting}.
 - {: .new data-area="oidc"} CAS as a [verifiable presentation verifier](../authentication/OIDC-Authentication-Verifiable-Credentials.html#openid-federation-verifier)
   can identify itself to wallets with the OpenID4VP `openid_federation` client identifier prefix, chosen with
   `cas.authn.oidc.vc.presentation.client-identifier-prefix=OPENID_FEDERATION`{: .cas-setting}: request objects are signed
@@ -437,9 +444,14 @@ one-time codes can be added when `cas.authn.mfa.simple.mail.accepted-email-patte
   size of `521` produced P-256 keys instead of P-521. Existing keystores are corrected as they are loaded, without new
   keys, encryption keys no longer carry a signing algorithm, and a configured signing algorithm only selects an elliptic
   curve key of the matching curve.
+- {: .action data-area="oidc"} An authorization request whose request object cannot be decrypted or its signature verified
+  is refused with `invalid_request_object`, as OpenID Connect requires. CAS used to ignore such a request object and carry
+  on with the query parameters alone.
 - {: .fixed data-area="oidc"} [Pushed authorization requests](../authentication/OIDC-Authentication-PAR.html) are
   accepted again when [verifiable credentials](../authentication/OIDC-Authentication-Verifiable-Credentials.html) are
-  turned on; CAS answered them with `401` as if they needed a single sign-on session.
+  turned on; CAS answered them with `401` as if they needed a single sign-on session. A wallet that pushes its
+  authorization request now receives the credentials named by the `authorization_details` it pushed; CAS issued the
+  authorization code without them.
 - {: .changed data-area="oidc"} The `aud` of a token introspection response is the audience of the JWT access token: the
   service `audience` (or the client ID) and the token's resources, or the audience requested by a token exchange. It used
   to be the service URL the token was issued for. Custom `OAuth20IntrospectionResponseGenerator` implementations now
@@ -534,7 +546,8 @@ one-time codes can be added when `cas.authn.mfa.simple.mail.accepted-email-patte
   A state that has expired or belongs to another flow restores nothing; sign-ins under way during the upgrade must
   start again.
 - {: .fixed data-area="general"} Signing and encryption of values such as tokens and cookies now report a failure to
-  sign, verify or encrypt a value instead of continuing without that step.
+  sign, verify or encrypt a value instead of continuing without that step. A JSON web key that carries only a public
+  key can now be used as a signing key to verify signatures produced elsewhere.
 - {: .fixed data-area="general"} CSRF protection is configured once for all modules, so OpenID Connect and
   [WebAuthn](../mfa/FIDO2-WebAuthn-Authentication.html) no longer override each other's settings, and the
   [backchannel authentication](../authentication/OIDC-Authentication-CIBA.html) verification page is now protected.

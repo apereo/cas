@@ -59,6 +59,11 @@ public class OidcPushedAuthorizationRequestUriResponseBuilder extends BaseOAuth2
             holder.getRedirectUri(), parameters);
     }
 
+    /**
+     * An authorization request that refers to a pushed request with {@code request_uri} is built from the pushed
+     * request alone (RFC 9126, section 4), including its {@code authorization_details} and {@code issuer_state},
+     * so the builder that answers it is chosen by what was pushed rather than by the parameters of the authorize URL.
+     */
     @Override
     public Optional<OAuth20AuthorizationRequest.OAuth20AuthorizationRequestBuilder> toAuthorizationRequest(
         final HttpServletRequest request,
@@ -93,6 +98,8 @@ public class OidcPushedAuthorizationRequestUriResponseBuilder extends BaseOAuth2
                 val value = authzRequestBuilder.accessTokenRequest(tokenRequest)
                     .responseType(tokenRequest.getResponseType().getType())
                     .clientId(tokenRequest.getClientId())
+                    .authorizationDetails(StringUtils.defaultString(tokenRequest.getAuthorizationDetails()))
+                    .issuerState(StringUtils.defaultString(tokenRequest.getIssuerState()))
                     .grantType(tokenRequest.getGrantType().getType());
                 return Optional.of(value);
             }))

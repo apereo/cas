@@ -6,6 +6,7 @@ const assert = require("assert");
 const express = require("express");
 const jose = require("jose");
 const cas = require("../../cas.js");
+const {RELYING_PARTY_TRUST_MARK, issueRelyingPartyTrustMark} = require("./trust-mark.js");
 
 const ENTITY_ID = "https://localhost:9861";
 const REDIRECT_URI = `${ENTITY_ID}/callback`;
@@ -31,13 +32,15 @@ class FederationRelyingParty {
         this.redirectUri = REDIRECT_URI;
         this.federationJwk = readJwk(path.join(scenarioDirectory, "metadata", "rp-federation.jwks"));
         this.oidcJwk = readJwk(path.join(scenarioDirectory, "metadata", "rp-oidc.jwks"));
-        this.trustAnchorJwks = {keys: [publicJwk(readJwk(path.join(scenarioDirectory, "metadata", "ta-federation.jwks")))]};
+        this.trustAnchorJwksFile = path.join(scenarioDirectory, "metadata", "ta-federation.jwks");
+        this.trustAnchorJwks = {keys: [publicJwk(readJwk(this.trustAnchorJwksFile))]};
         this.tlsDirectory = path.join(scenarioDirectory, "..", "..", "overlay", path.basename(scenarioDirectory));
     }
 
     async start() {
         this.federationKey = await jose.importJWK(this.federationJwk, "RS256");
         this.oidcKey = await jose.importJWK(this.oidcJwk, "RS256");
+        this.trustMark = await issueRelyingPartyTrustMark(this.trustAnchorJwksFile, ENTITY_ID);
         const app = express();
         app.get("/.well-known/openid-federation", async (req, res) => {
             res.type("application/entity-statement+jwt").send(await this.entityConfiguration());
@@ -65,6 +68,7 @@ class FederationRelyingParty {
             exp: now() + 3600,
             jwks: {keys: [publicJwk(this.federationJwk)]},
             authority_hints: [TRUST_ANCHOR],
+            trust_marks: [{trust_mark_type: RELYING_PARTY_TRUST_MARK, trust_mark: this.trustMark}],
             metadata: {
                 openid_relying_party: {
                     client_name: "CAS federation scenario RP",

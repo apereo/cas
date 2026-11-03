@@ -217,6 +217,10 @@ the trust mark, and a trust mark that is about another entity, names no type or 
 reported in the logs. Trust marks are not verified by CAS, which leaves that to the parties that resolve it, and can be
 defined using CAS properties.
 
+As a trust anchor, CAS publishes in its entity configuration the trust mark types of the federation and the entities it
+accepts as their issuers, as `trust_mark_issuers`. A trust mark type listed without issuers may be issued by anyone.
+Both can be defined using CAS properties.
+
 ## Key Rollover
 
 CAS signs its entity configuration and the statements it issues with its federation keys, which are kept in their own
@@ -282,6 +286,25 @@ registration step:
   accepts a limited number of intermediates between the relying party and a trust anchor, and an entity identifier
   whose trust chains could not be resolved is not resolved again for a while. Meanwhile, a registration that could not
   be refreshed is kept as it is. These limits can be tuned using CAS properties.
+
+### Required Trust Marks
+
+An OpenID Provider may only register relying parties that hold specific
+[trust marks](https://openid.net/specs/openid-federation-1_0.html#section-7), such as a certification or a
+membership the federation vouches for. The required trust mark types can be defined using CAS properties. For each of
+them, the entity configuration of the relying party must carry a trust mark of that type that:
+
+- is a signed JWT typed `trust-mark+jwt` that names its signing key, is about the relying party, and has been issued
+  and has not expired;
+- is issued by an entity that the trust anchor of the relying party's trust chain accepts for that type in its
+  `trust_mark_issuers`;
+- verifies with the federation keys of its issuer: the trust anchor's own keys, or the keys of the issuer's entity
+  configuration, whose trust chain must end at the same trust anchor;
+- carries a valid `delegation` from the owner of the type, when the trust anchor names one in `trust_mark_owners`;
+- is reported `active` by the issuer's trust mark status endpoint, when the issuer publishes one.
+
+A relying party that lacks a valid trust mark of a required type is not registered, and the reason is reported in the
+logs. Trust marks are checked again whenever the registration is refreshed.
 
 An authorization request passed by value travels through the CAS login as part of its service URL, and CAS does not
 match service URLs beyond a maximum length, which can be adjusted using CAS properties. A request object that carries
