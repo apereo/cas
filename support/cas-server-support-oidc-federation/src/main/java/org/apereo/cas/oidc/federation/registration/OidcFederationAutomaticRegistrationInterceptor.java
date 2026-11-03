@@ -8,6 +8,7 @@ import org.apereo.cas.oidc.jwks.OidcJsonWebKeyUsage;
 import org.apereo.cas.oidc.web.OidcRequestObjectDecrypter;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.support.oauth.OAuth20Constants;
+import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.TicketFactory;
@@ -16,16 +17,20 @@ import org.apereo.cas.ticket.TransientSessionTicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.DigestUtils;
 import com.nimbusds.jwt.JWTParser;
+import com.nimbusds.jwt.SignedJWT;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
+import org.jose4j.jwk.JsonWebKey;
 import org.jose4j.jwk.JsonWebKeySet;
+import org.jose4j.jws.JsonWebSignature;
 import org.jose4j.jwt.MalformedClaimException;
 import org.jose4j.jwt.consumer.InvalidJwtException;
 import org.jose4j.jwt.consumer.JwtConsumerBuilder;
 import org.jose4j.keys.resolvers.JwksVerificationKeyResolver;
+import org.jose4j.lang.JoseException;
 import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.context.ApplicationContext;
@@ -52,6 +57,12 @@ import jakarta.servlet.http.HttpServletResponse;
  * first and its nested JWT checked as above, while replay is tracked on the request object as sent. Requests that fail
  * are refused with {@code invalid_request} and are never redirected to the client, since its trust could not be
  * established.
+ * <p>
+ * A relying party that rolls its keys over signs with keys its registration does not hold until the registration is
+ * resolved again. A request object of an authorization request, or a {@code client_assertion} sent to any of the
+ * OpenID Connect endpoints, that verifies with none of the signing keys of an automatically registered client has the
+ * registration reevaluated first (section 12.3), before the request object is checked and before client
+ * authentication; the client is the {@code client_id}, or the subject of the client assertion when there is none.
  *
  * @author Misagh Moayyed
  * @since 8.1.0
@@ -81,12 +92,20 @@ public class OidcFederationAutomaticRegistrationInterceptor implements HandlerIn
     public boolean preHandle(final HttpServletRequest request, final HttpServletResponse response,
                              final Object handler)
             throws Exception {
-        val clientId = request.getParameter(OAuth20Constants.CLIENT_ID);
-        if (!isAuthorizationRequest(request) || !OidcFederationAutomaticClientRegistration.isFederatedEntityId(clientId)) {
+        val clientAssertion = resolveClientAssertion(request);
+        val clientId = StringUtils.defaultIfBlank(request.getParameter(OAuth20Constants.CLIENT_ID), resolveSubject(clientAssertion));
+        val authorizationRequest = isAuthorizationRequest(request);
+        if ((!authorizationRequest && clientAssertion == null) || !OidcFederationAutomaticClientRegistration.isFederatedEntityId(clientId)) {
             return true;
         }
-        val registeredService = clientRegistration.register(clientId);
-        if (registeredService instanceof final OidcRegisteredService oidcService
+        var registeredService = authorizationRequest ? clientRegistration.register(clientId) : null;
+        val signedObjects = Stream.of(clientAssertion, authorizationRequest ? resolveRequestObject(request) : null)
+            .filter(Objects::nonNull)
+            .toList();
+        if (!signedObjects.isEmpty()) {
+            registeredService = clientRegistration.reevaluate(clientId, service -> !isSignedWithKeysOf(service, signedObjects));
+        }
+        if (authorizationRequest && registeredService instanceof final OidcRegisteredService oidcService
             && OidcFederationAutomaticClientRegistration.isAutomaticallyRegistered(oidcService)
             && !isPushedAuthorizationRequest(request)
             && StringUtils.isBlank(request.getParameter(OidcConstants.REQUEST_URI))) {
@@ -143,6 +162,73 @@ public class OidcFederationAutomaticRegistrationInterceptor implements HandlerIn
         } catch (final Throwable e) {
             LOGGER.debug("Unable to verify the request object of [{}]: [{}]", registeredService.getClientId(), e.getMessage());
             return Optional.of("Request object is invalid");
+        }
+    }
+
+    /**
+     * Whether every signed object verifies with one of the signing keys of the registration, by signature alone.
+     *
+     * @param registeredService the registered service
+     * @param signedObjects     the signed JWTs the client sent
+     * @return true or false
+     */
+    protected boolean isSignedWithKeysOf(final OAuthRegisteredService registeredService, final List<String> signedObjects) {
+        if (!(registeredService instanceof final OidcRegisteredService oidcService)) {
+            return true;
+        }
+        val keys = OidcJsonWebKeyStoreUtils.getJsonWebKeySet(oidcService, applicationContext, Optional.of(OidcJsonWebKeyUsage.SIGNING))
+            .map(JsonWebKeySet::getJsonWebKeys)
+            .orElseGet(List::of);
+        return signedObjects.stream().allMatch(signedObject -> keys.stream().anyMatch(key -> isSignedWith(signedObject, key)));
+    }
+
+    private static boolean isSignedWith(final String signedObject, final JsonWebKey key) {
+        try {
+            val signature = new JsonWebSignature();
+            signature.setCompactSerialization(signedObject);
+            signature.setKey(key.getKey());
+            return signature.verifySignature();
+        } catch (final JoseException e) {
+            LOGGER.trace("Signed object does not verify with key [{}]: [{}]", key.getKeyId(), e.getMessage());
+            return false;
+        }
+    }
+
+    private static @Nullable String resolveClientAssertion(final HttpServletRequest request) {
+        val assertion = request.getParameter(OAuth20Constants.CLIENT_ASSERTION);
+        return Strings.CI.equals(OAuth20Constants.CLIENT_ASSERTION_TYPE_JWT_BEARER, request.getParameter(OAuth20Constants.CLIENT_ASSERTION_TYPE))
+            && isSignedJwt(assertion) ? assertion : null;
+    }
+
+    private @Nullable String resolveRequestObject(final HttpServletRequest request) {
+        val requestObject = request.getParameter(OAuth20Constants.REQUEST);
+        if (StringUtils.isBlank(requestObject)) {
+            return null;
+        }
+        try {
+            val nestedRequestObject = decryptRequestObject(requestObject);
+            return isSignedJwt(nestedRequestObject) ? nestedRequestObject : null;
+        } catch (final Exception e) {
+            LOGGER.trace("Request object cannot be decrypted: [{}]", e.getMessage());
+            return null;
+        }
+    }
+
+    private static @Nullable String resolveSubject(@Nullable final String clientAssertion) {
+        try {
+            return clientAssertion == null ? null : JWTParser.parse(clientAssertion).getJWTClaimsSet().getSubject();
+        } catch (final ParseException e) {
+            LOGGER.trace("Client assertion has no subject: [{}]", e.getMessage());
+            return null;
+        }
+    }
+
+    private static boolean isSignedJwt(@Nullable final String value) {
+        try {
+            return StringUtils.isNotBlank(value) && JWTParser.parse(value) instanceof SignedJWT;
+        } catch (final ParseException e) {
+            LOGGER.trace("Value is not a signed JWT: [{}]", e.getMessage());
+            return false;
         }
     }
 

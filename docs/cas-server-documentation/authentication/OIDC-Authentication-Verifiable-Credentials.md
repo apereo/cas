@@ -588,6 +588,8 @@ The wallet may also send the authorization request as a
 [pushed authorization request](OIDC-Authentication-PAR.html), with its `authorization_details`, `issuer_state` and
 PKCE parameters, and then send only its client ID and the returned `request_uri` to the authorization endpoint.
 CAS uses the pushed request alone and ignores any authorization details on the authorization endpoint request.
+Authorization details that name no credential the wallet may receive are refused when they are pushed, with
+`invalid_authorization_details`, rather than when the wallet is sent to the authorization endpoint.
 
 A refresh token issued in this flow keeps the authorization details of its code, as RFC 9396 describes, so access
 tokens obtained with it may request the same credentials; scopes are honored as before.

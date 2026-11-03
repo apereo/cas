@@ -232,6 +232,23 @@ async function verifyPushedRequestWithTrustChain(page, rp, op) {
     await completeAuthorization(page, rp, op, pushed, op.issuer);
 }
 
+/**
+ * The relying party rolls its signing key over twice: the OP, holding the earlier key in its registration, resolves the
+ * relying party again (OpenID Federation 1.0, section 12.3) the first time from a request object passed by value and the
+ * second time from a pushed request and its client assertion, once the OP lets the entity be resolved again; neither is
+ * refused, and the token requests authenticate with the new key.
+ */
+async function verifyKeyRollover(page, rp, op) {
+    await cas.log("Node RP: signing key rolled over, request object passed by value");
+    await rp.rolloverOidcKey();
+    await completeAuthorization(page, rp, op, await rp.authorizationRequest(op), op.token_endpoint);
+
+    await cas.sleep(6000);
+    await cas.log("Node RP: signing key rolled over again, pushed request with private_key_jwt");
+    await rp.rolloverOidcKey();
+    await completeAuthorization(page, rp, op, await rp.pushAuthorizationRequest(op), op.issuer);
+}
+
 (async () => {
     const rp = new FederationRelyingParty(__dirname);
     await rp.start();
@@ -251,6 +268,7 @@ async function verifyPushedRequestWithTrustChain(page, rp, op) {
         await verifyPushedRequestWithTrustChain(page, rp, op);
         await cas.log("Node RP: signed request object encrypted to the OP, passed by value");
         await completeAuthorization(page, rp, op, await rp.authorizationRequest(op, {}, {encrypted: true}), op.token_endpoint);
+        await verifyKeyRollover(page, rp, op);
 
         await verifyRefusedRequests(rp, op, request);
         await verifyFederatedPresentation(rp);

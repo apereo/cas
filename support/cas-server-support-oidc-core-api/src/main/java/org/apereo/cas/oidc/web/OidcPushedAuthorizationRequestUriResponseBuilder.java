@@ -18,12 +18,16 @@ import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequ
 import org.apereo.cas.support.oauth.web.response.callback.BaseOAuth20AuthorizationResponseBuilder;
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20AuthorizationModelAndViewBuilder;
 import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.util.spring.beans.BeanSupplier;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.audit.annotation.Audit;
 import org.jooq.lambda.Unchecked;
+import org.springframework.core.OrderComparator;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.view.json.JacksonJsonView;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -46,6 +50,13 @@ public class OidcPushedAuthorizationRequestUriResponseBuilder extends BaseOAuth2
         actionResolverName = AuditActionResolvers.OAUTH2_AUTHORIZATION_RESPONSE_ACTION_RESOLVER,
         resourceResolverName = AuditResourceResolvers.OAUTH2_AUTHORIZATION_RESPONSE_RESOURCE_RESOLVER)
     public ModelAndView build(final AccessTokenRequestContext holder) throws Throwable {
+        val error = verifyAuthorizationRequest(holder);
+        if (error.isPresent()) {
+            LOGGER.warn("Pushed authorization request of client [{}] is refused: [{}]", holder.getClientId(), error.get());
+            val mv = new ModelAndView(new JacksonJsonView(), error.get());
+            mv.setStatus(HttpStatus.BAD_REQUEST);
+            return mv;
+        }
         val factory = (OidcPushedAuthorizationRequestFactory) configurationContext.getTicketFactory().get(OidcPushedAuthorizationRequest.class);
         val uri = factory.create(holder);
         LOGGER.debug("Generated pushed authorization URI code: [{}]", uri);
@@ -104,6 +115,34 @@ public class OidcPushedAuthorizationRequestUriResponseBuilder extends BaseOAuth2
                 return Optional.of(value);
             }))
             .orElseGet(() -> Optional.of(authzRequestBuilder.singleSignOnSessionRequired(!request.getRequestURL().toString().endsWith(OidcConstants.PUSHED_AUTHORIZE_URL))));
+    }
+
+    /**
+     * Ask the builder that will answer the authorization request referring to this pushed request, the first in order
+     * that supports it, whether it would refuse it.
+     *
+     * @param holder the pushed authorization request
+     * @return the error response body, or empty
+     */
+    protected Optional<Map<String, Object>> verifyAuthorizationRequest(final AccessTokenRequestContext holder) {
+        val authorizationRequest = OAuth20AuthorizationRequest.builder()
+            .url(OidcConstants.AUTHORIZE_URL)
+            .registeredService(holder.getRegisteredService())
+            .clientId(holder.getClientId())
+            .responseType(holder.getResponseType().getType())
+            .grantType(holder.getGrantType().getType())
+            .authorizationDetails(StringUtils.defaultString(holder.getAuthorizationDetails()))
+            .issuerState(StringUtils.defaultString(holder.getIssuerState()))
+            .codeChallenge(StringUtils.defaultString(holder.getCodeChallenge()))
+            .accessTokenRequest(holder)
+            .build();
+        return configurationContext.getOauthAuthorizationResponseBuilders().getObject()
+            .stream()
+            .filter(BeanSupplier::isNotProxy)
+            .sorted(OrderComparator.INSTANCE)
+            .filter(builder -> builder.supports(authorizationRequest))
+            .findFirst()
+            .flatMap(builder -> builder.verifyPushedAuthorizationRequest(holder));
     }
 
     @Override

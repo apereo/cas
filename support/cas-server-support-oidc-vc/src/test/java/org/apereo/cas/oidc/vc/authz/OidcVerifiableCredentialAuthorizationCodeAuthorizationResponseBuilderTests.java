@@ -130,6 +130,15 @@ class OidcVerifiableCredentialAuthorizationCodeAuthorizationResponseBuilderTests
     }
 
     @Test
+    void verifyPushedUngrantableCredentialIsRefused() throws Exception {
+        val registeredService = registerService(Set.of("SomeOtherCredential"), true);
+        pushAuthorizationRequest(registeredService, true)
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$." + OAuth20Constants.ERROR).value(OAuth20Constants.INVALID_AUTHORIZATION_DETAILS))
+            .andExpect(jsonPath("$." + OidcConstants.REQUEST_URI).doesNotExist());
+    }
+
+    @Test
     void verifyPushedAuthorizationDetailsAreGranted() throws Exception {
         val registeredService = registerService(null, true);
         val pushResponse = pushAuthorizationRequest(registeredService, true)

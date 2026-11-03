@@ -126,6 +126,12 @@ description: "Review and change verifiable-credential issuance and presentation 
   (for the VC builder, `authorizationDetails`) must be copied from that context in the PAR builder's
   `toAuthorizationRequest`; read from the authorize URL it is blank for `client_id` + `request_uri`, the VC builder is
   skipped, and the code is issued with no authorization details.
+- PAR refusals that belong to a later builder: `OAuth20AuthorizationResponseBuilder.verifyPushedAuthorizationRequest`
+  (default empty) is asked of the first builder, in order, that supports the authorize-shaped request the PAR builder
+  derives from the pushed context (url `oidcAuthorize`, so the PAR builder itself does not match). Its error body is
+  answered `400` JSON before the PAR ticket is stored. The VC builder returns `invalid_authorization_details` there and
+  still checks again in `build` at the authorize step. Validator failures at PAR are a different path
+  (`OidcHandlerInterceptorAdapter`: `403` with a generic `invalid_request`).
 - `OidcVerifiableCredentialEndpointControllerTests` is close to checkstyle's 2,500-line `FileLength` limit; keep additions compact or put them in another existing class.
 - `CharacterEncodingFilter` adds `;charset=UTF-8` to every response content type, `application/statuslist+jwt` included; assert media types with `contentTypeCompatibleWith`.
 - Nested `@Nested` test classes that extend `AbstractOidcTests` do not inherit the enclosing class's `@ImportAutoConfiguration` or `@TestPropertySource`: repeat what they need, including whatever the enclosing instance autowires (the outer instance is built from the nested context).

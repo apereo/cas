@@ -32,6 +32,11 @@ import org.jspecify.annotations.Nullable;
  * <p>
  * An entity identifier whose trust chains could not be resolved is remembered for a while: requests that carry it do
  * not resolve again until then, whether it is unknown or a registration whose refresh failed, which is kept meanwhile.
+ * <p>
+ * A registration can also be reevaluated ahead of its expiration (section 12.3), when a relying party signs with keys
+ * its registration does not hold after rolling its keys over. Each entity is reevaluated at most once in the same
+ * period, so requests signed with keys a relying party never published cannot make CAS fetch its statements again and
+ * again; a reevaluation that fails keeps the current registration.
  *
  * @author Misagh Moayyed
  * @since 8.1.0
@@ -57,12 +62,18 @@ public class OidcFederationAutomaticClientRegistration {
 
     private final Cache<String, Boolean> unresolvedEntities;
 
+    private final Cache<String, Boolean> reevaluatedEntities;
+
     public OidcFederationAutomaticClientRegistration(final ServicesManager servicesManager,
                                                      final OidcFederationTrustChainResolver trustChainResolver,
                                                      final Duration unresolvedEntityRetention) {
         this.servicesManager = servicesManager;
         this.trustChainResolver = trustChainResolver;
         this.unresolvedEntities = Caffeine.newBuilder()
+            .expireAfterWrite(unresolvedEntityRetention)
+            .maximumSize(MAX_UNRESOLVED_ENTITIES)
+            .build();
+        this.reevaluatedEntities = Caffeine.newBuilder()
             .expireAfterWrite(unresolvedEntityRetention)
             .maximumSize(MAX_UNRESOLVED_ENTITIES)
             .build();
@@ -98,6 +109,32 @@ public class OidcFederationAutomaticClientRegistration {
     }
 
     /**
+     * Resolve the trust chains of an automatically registered relying party again before its registration expires,
+     * when the registration is found stale, as when the relying party signs with a key its registration does not hold.
+     * The condition is checked again under the lock, so that concurrent requests reevaluate once and the others find
+     * the refreshed registration.
+     *
+     * @param clientId the client id
+     * @param stale    whether the registration no longer holds what the request needs
+     * @return the registered service, refreshed when it was reevaluated, or null when the client is not registered
+     */
+    public @Nullable OAuthRegisteredService reevaluate(final String clientId, final Predicate<OAuthRegisteredService> stale) {
+        val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(servicesManager, clientId);
+        if (!isReevaluationDue(registeredService, stale)) {
+            return registeredService;
+        }
+        return serviceLocks.get(Math.floorMod(clientId.hashCode(), LOCK_STRIPES)).execute(() -> {
+            val currentService = OAuth20Utils.getRegisteredOAuthServiceByClientId(servicesManager, clientId);
+            if (!isReevaluationDue(currentService, stale)) {
+                return currentService;
+            }
+            reevaluatedEntities.put(clientId, Boolean.TRUE);
+            LOGGER.info("Registration of [{}] does not hold the keys it signs with; resolving its trust chains again", clientId);
+            return resolveAndSave(clientId, currentService).orElse(currentService);
+        });
+    }
+
+    /**
      * Whether the client id can be the Entity Identifier of a relying party: an absolute {@code https} URL with a host.
      *
      * @param clientId the client id
@@ -124,6 +161,14 @@ public class OidcFederationAutomaticClientRegistration {
     public static boolean isAutomaticallyRegistered(@Nullable final RegisteredService registeredService) {
         return registeredService != null
             && registeredService.getProperties().containsKey(OidcFederationDefaultTrustChainResolver.TEMPORARY_OPENIDFEDERATION_SERVICE);
+    }
+
+    private boolean isReevaluationDue(@Nullable final OAuthRegisteredService registeredService,
+                                      final Predicate<OAuthRegisteredService> stale) {
+        return registeredService != null
+            && isAutomaticallyRegistered(registeredService)
+            && reevaluatedEntities.getIfPresent(registeredService.getClientId()) == null
+            && stale.test(registeredService);
     }
 
     private boolean isUnresolved(final String clientId) {

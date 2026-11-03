@@ -320,6 +320,59 @@ class OpenIdFederationAuthorizationCodeResponseTypeAuthorizationRequestValidator
         assertTrue(preHandle(AUTHORIZE_URL, "http://rp-signed-" + UUID.randomUUID() + ".example.org", Map.of()).getLeft());
     }
 
+    /**
+     * A relying party that rolls its keys over (OpenID Federation 1.0, section 12.3) is resolved again once when its
+     * request object is signed with a key its registration does not hold, and not again for a while after that.
+     */
+    @Test
+    void verifyRolledOverRequestObjectKeyIsResolvedAgain() throws Throwable {
+        val clientId = "https://rp-rotated-" + UUID.randomUUID() + ".example.org";
+        TestOidcFederationTrustChainResolver.PUBLISHED_KEYS.put(clientId, RELYING_PARTY_KEY);
+        assertTrue(preHandle(AUTHORIZE_URL, clientId, Map.of(OAuth20Constants.REQUEST,
+            signRequestObject(requestObjectClaims(clientId, UUID.randomUUID().toString()).build(), RELYING_PARTY_KEY))).getLeft());
+        assertTrue(preHandle(AUTHORIZE_URL, clientId, Map.of(OAuth20Constants.REQUEST,
+            signRequestObject(requestObjectClaims(clientId, UUID.randomUUID().toString()).build(), RELYING_PARTY_KEY))).getLeft());
+        assertEquals(1, TestOidcFederationTrustChainResolver.RESOLUTIONS.get(clientId).get());
+
+        val rolledOverKey = generateKey("rp-key-next");
+        TestOidcFederationTrustChainResolver.PUBLISHED_KEYS.put(clientId, rolledOverKey);
+        assertTrue(preHandle(AUTHORIZE_URL, clientId, Map.of(OAuth20Constants.REQUEST,
+            signRequestObject(requestObjectClaims(clientId, UUID.randomUUID().toString()).build(), rolledOverKey))).getLeft());
+        assertEquals(2, TestOidcFederationTrustChainResolver.RESOLUTIONS.get(clientId).get());
+
+        val unpublishedKey = signRequestObject(requestObjectClaims(clientId, UUID.randomUUID().toString()).build(), generateKey("rp-key-unknown"));
+        assertFalse(preHandle(AUTHORIZE_URL, clientId, Map.of(OAuth20Constants.REQUEST, unpublishedKey)).getLeft());
+        assertEquals(2, TestOidcFederationTrustChainResolver.RESOLUTIONS.get(clientId).get());
+    }
+
+    @Test
+    void verifyRolledOverClientAssertionKeyIsResolvedAgain() throws Throwable {
+        val clientId = "https://rp-rotated-" + UUID.randomUUID() + ".example.org";
+        TestOidcFederationTrustChainResolver.PUBLISHED_KEYS.put(clientId, RELYING_PARTY_KEY);
+        assertTrue(preHandle(PUSHED_AUTHORIZE_URL, clientId, Map.of()).getLeft());
+
+        val rolledOverKey = generateKey("rp-key-next");
+        TestOidcFederationTrustChainResolver.PUBLISHED_KEYS.put(clientId, rolledOverKey);
+        val claims = new JWTClaimsSet.Builder()
+            .issuer(clientId)
+            .subject(clientId)
+            .audience(OP_ENTITY_ID)
+            .jwtID(UUID.randomUUID().toString())
+            .expirationTime(Date.from(Instant.now().plusSeconds(60)))
+            .build();
+        val assertion = new SignedJWT(new JWSHeader.Builder(JWSAlgorithm.RS256).keyID(rolledOverKey.getKeyID()).build(), claims);
+        assertion.sign(new RSASSASigner(rolledOverKey));
+        val request = new MockHttpServletRequest("POST", "/cas/" + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.ACCESS_TOKEN_URL);
+        request.addParameter(OAuth20Constants.CLIENT_ASSERTION_TYPE, OAuth20Constants.CLIENT_ASSERTION_TYPE_JWT_BEARER);
+        request.addParameter(OAuth20Constants.CLIENT_ASSERTION, assertion.serialize());
+        assertTrue(automaticRegistrationInterceptor.preHandle(request, new MockHttpServletResponse(), new Object()));
+
+        assertEquals(2, TestOidcFederationTrustChainResolver.RESOLUTIONS.get(clientId).get());
+        assertTrue(servicesManager.getAllServicesOfType(OidcRegisteredService.class)
+            .stream()
+            .anyMatch(service -> clientId.equals(service.getClientId()) && service.getJwks().contains(rolledOverKey.getKeyID())));
+    }
+
     private Pair<Boolean, MockHttpServletResponse> preHandle(final String uri, final String clientId,
                                                              final Map<String, String> parameters)
             throws Exception {
@@ -426,6 +479,8 @@ class OpenIdFederationAuthorizationCodeResponseTypeAuthorizationRequestValidator
     static class TestOidcFederationTrustChainResolver implements OidcFederationTrustChainResolver {
         static final Map<String, AtomicInteger> RESOLUTIONS = new ConcurrentHashMap<>();
 
+        static final Map<String, RSAKey> PUBLISHED_KEYS = new ConcurrentHashMap<>();
+
         @Override
         public Optional<OidcRegisteredService> resolveTrustChains(final String clientId) {
             RESOLUTIONS.computeIfAbsent(clientId, _ -> new AtomicInteger()).incrementAndGet();
@@ -435,13 +490,13 @@ class OpenIdFederationAuthorizationCodeResponseTypeAuthorizationRequestValidator
             if (clientId.contains("rp-refresh-")) {
                 return Optional.of(buildOidcRegisteredService(clientId, "new-service"));
             }
-            if (clientId.contains("rp-signed-")) {
+            if (clientId.contains("rp-signed-") || clientId.contains("rp-rotated-")) {
                 val service = buildOidcRegisteredService(clientId, "signed-service");
                 service.setClientSecret(null);
                 service.setServiceId(Pattern.quote(REDIRECT_URI));
                 service.setScopes(new HashSet<>(List.of(OidcConstants.StandardScopes.OPENID.getScope())));
                 service.setTokenEndpointAuthenticationMethod("private_key_jwt");
-                service.setJwks(new JWKSet(RELYING_PARTY_KEY.toPublicJWK()).toString());
+                service.setJwks(new JWKSet(PUBLISHED_KEYS.getOrDefault(clientId, RELYING_PARTY_KEY).toPublicJWK()).toString());
                 service.setExpirationPolicy(new DefaultRegisteredServiceExpirationPolicy(true,
                     ZonedDateTime.now(Clock.systemUTC()).plusDays(1)));
                 service.getProperties().put(OidcFederationDefaultTrustChainResolver.TEMPORARY_OPENIDFEDERATION_SERVICE,

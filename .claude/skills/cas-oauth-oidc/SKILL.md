@@ -144,6 +144,20 @@ description: "Review and change CAS OAuth2/OIDC protocol behavior: token endpoin
   with the property (`0`) on its OP, and the federation docs recommend PAR or raising the limit.
 - `OidcJwtAuthenticator` accepts the issuer as client assertion audience as well as the token endpoint URLs (federation
   PAR requires the OP entity id).
+- Key rollover of a federated RP: the interceptor is mapped to all of `/oidc/**` and filters itself. A signed request
+  object (decrypted first) on authorize/PAR, or a `client_assertion` on any endpoint, that verifies with none of the
+  service's signing keys (signature only, jose4j `JsonWebSignature` per key) has `OidcFederationAutomaticClientRegistration.reevaluate`
+  resolve the RP again before the request object check and client authentication. The client is `client_id`, else the
+  assertion's `sub`; token requests often carry no `client_id`. Reevaluation is limited per entity by a second Caffeine
+  cache on `unresolved-entity-retention`, set when it starts (not when it succeeds), so random keys cannot make CAS
+  refetch; any test or scenario that sends a request signed with an unknown key therefore blocks a key rollover right
+  after it (`oidc-federation-end2end` rolls over before its negative checks and runs its OP at `PT5S`). The resolver does
+  not cache entity statements, so a re-resolution sees the RP's current metadata.
+- The client keys are also read through `oidcServiceJsonWebKeystoreCache` (request objects via `JwtBuilder.unpack`,
+  token signing/encryption), keyed by `OidcJsonWebKeyCacheKey`. It used to hash only serviceId|clientId|usage, so a
+  re-resolved RP passed the interceptor and then failed with `invalid_request_object` against the cached old key; the
+  service key now also hashes `jwks` and `jwksKeyId`. Unit tests of the interceptor alone do not see this; the
+  end2end rollover does.
 - The federation module runs without `cas-server-support-oidc`: trust anchors and intermediates (`oidc-federation-ta-role`,
   `-int-role`, the trust anchor of `oidc-federation-end2end`) only depend on `oidc-federation`, and refresh-scoped beans are
   created eagerly at startup whatever the role. Beans in `OidcFederationConfiguration` may only require beans of the

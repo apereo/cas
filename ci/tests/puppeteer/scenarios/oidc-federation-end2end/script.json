@@ -39,6 +39,7 @@
       "--cas.authn.oidc.federation.trust-anchors[0].jwks=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/metadata/ta-federation.jwks",
       "--cas.authn.oidc.federation.trust-marks[0]=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/metadata/op-trust-mark.jwt",
       "--cas.authn.oidc.federation.required-trust-marks[0]=https://localhost:8443/cas/oidc/trust-marks/relying-party",
+      "--cas.authn.oidc.federation.unresolved-entity-retention=PT5S",
       "--cas.authn.oidc.vc.issuer.credential-configurations.member.format=DC_SD_JWT",
       "--cas.authn.oidc.vc.issuer.credential-configurations.member.scope=MemberCredential",
       "--cas.authn.oidc.vc.issuer.credential-configurations.member.claims.given_name.mandatory=true",

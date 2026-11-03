@@ -88,6 +88,18 @@ class FederationRelyingParty {
         }).setProtectedHeader({alg: "RS256", kid: this.federationJwk.kid, typ: ENTITY_STATEMENT_TYPE}).sign(this.federationKey);
     }
 
+    /**
+     * Roll the key the relying party signs request objects and client assertions with over: the entity configuration
+     * publishes only the new key from now on, while the OP holds the earlier one until it resolves the relying party
+     * again.
+     */
+    async rolloverOidcKey() {
+        const {privateKey} = await jose.generateKeyPair("RS256", {extractable: true});
+        this.oidcJwk = {...await jose.exportJWK(privateKey), kid: `node-rp-oidc-${crypto.randomUUID()}`, use: "sig", alg: "RS256"};
+        this.oidcKey = privateKey;
+        await cas.log(`Relying party signing key rolled over to ${this.oidcJwk.kid}`);
+    }
+
     async fetchStatement(url) {
         const statement = await cas.doRequest(url, "GET", {}, 200);
         assert.equal(jose.decodeProtectedHeader(statement).typ, ENTITY_STATEMENT_TYPE);

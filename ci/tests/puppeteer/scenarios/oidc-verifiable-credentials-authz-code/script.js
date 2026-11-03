@@ -146,6 +146,20 @@ async function createPublicKey() {
     })));
     await cas.log(pushedResult);
     assert(pushedResult.credentials.length === 1);
+
+    await cas.log("Pushing authorization details for a credential the issuer does not offer is refused right away");
+    const refused = JSON.parse(await cas.doRequest("https://localhost:8443/cas/oidc/oidcPushAuthorize", "POST", {
+        "Content-Type": "application/x-www-form-urlencoded"
+    }, 400, new URLSearchParams({
+        response_type: "code",
+        client_id: "wallet",
+        client_secret: "secret",
+        scope: "openid",
+        redirect_uri: "https://localhost:9859/anything/wallet",
+        authorization_details: JSON.stringify([{type: "openid_credential", credential_configuration_id: "unknown"}])
+    }).toString()));
+    assert.equal(refused.error, "invalid_authorization_details");
+    assert(refused.request_uri === undefined);
 })();
 
 /**

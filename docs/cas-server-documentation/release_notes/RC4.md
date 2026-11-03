@@ -418,6 +418,12 @@ one-time codes can be added when `cas.authn.mfa.simple.mail.accepted-email-patte
   its delegation checked when the trust anchor names an owner of the type, and its status asked of the issuer when it
   publishes a status endpoint. A CAS trust anchor publishes the issuers it accepts, defined with
   `cas.authn.oidc.federation.trust-mark-issuers`{: .cas-setting}.
+- {: .new data-area="oidc"} An [OpenID Federation](../authentication/OIDC-Authentication-Federation.html#automatic-registration)
+  relying party that rolls its keys over is no longer refused until its registration expires: a request object or
+  client assertion signed with a key its registration does not hold has CAS resolve the relying party again, at most
+  once per `cas.authn.oidc.federation.unresolved-entity-retention`{: .cas-setting}.
+- {: .fixed data-area="oidc"} OpenID Connect applications whose keys change no longer keep being checked against the keys
+  cached for their earlier definition until that cache expires.
 - {: .new data-area="oidc"} CAS as a [verifiable presentation verifier](../authentication/OIDC-Authentication-Verifiable-Credentials.html#openid-federation-verifier)
   can identify itself to wallets with the OpenID4VP `openid_federation` client identifier prefix, chosen with
   `cas.authn.oidc.vc.presentation.client-identifier-prefix=OPENID_FEDERATION`{: .cas-setting}: request objects are signed
@@ -451,7 +457,8 @@ one-time codes can be added when `cas.authn.mfa.simple.mail.accepted-email-patte
   accepted again when [verifiable credentials](../authentication/OIDC-Authentication-Verifiable-Credentials.html) are
   turned on; CAS answered them with `401` as if they needed a single sign-on session. A wallet that pushes its
   authorization request now receives the credentials named by the `authorization_details` it pushed; CAS issued the
-  authorization code without them.
+  authorization code without them. Authorization details that cannot be granted are refused with
+  `invalid_authorization_details` when they are pushed, instead of after the redirect to the authorization endpoint.
 - {: .changed data-area="oidc"} The `aud` of a token introspection response is the audience of the JWT access token: the
   service `audience` (or the client ID) and the token's resources, or the audience requested by a token exchange. It used
   to be the service URL the token was issued for. Custom `OAuth20IntrospectionResponseGenerator` implementations now

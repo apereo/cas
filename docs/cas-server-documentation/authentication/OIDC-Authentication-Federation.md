@@ -286,6 +286,12 @@ registration step:
   accepts a limited number of intermediates between the relying party and a trust anchor, and an entity identifier
   whose trust chains could not be resolved is not resolved again for a while. Meanwhile, a registration that could not
   be refreshed is kept as it is. These limits can be tuned using CAS properties.
+- A relying party that rolls its keys over is resolved again before its registration expires, as
+  [OpenID Federation](https://openid.net/specs/openid-federation-1_0.html#section-12.3) allows: when a request object
+  or a client assertion it sends, at any endpoint, verifies with none of the keys of its registration, CAS resolves its
+  trust chains first and then checks the request with the keys the relying party now publishes. Each relying party is
+  resolved this way at most once in the same period that applies to entity identifiers that could not be resolved, so
+  objects signed with keys a relying party never published cannot make CAS fetch its statements over and over.
 
 ### Required Trust Marks
 
