@@ -236,9 +236,9 @@ class OidcConfiguration {
             final JwtBuilder accessTokenJwtBuilder,
             @Qualifier(OidcRequestObjectDecrypter.BEAN_NAME)
             final OidcRequestObjectDecrypter oidcRequestObjectDecrypter,
-            @Qualifier("oauthRegisteredServiceCipherExecutor")
-            final CipherExecutor oauthRegisteredServiceCipherExecutor) {
-            return new OidcRequestParameterResolver(accessTokenJwtBuilder, oidcRequestObjectDecrypter, oauthRegisteredServiceCipherExecutor);
+            @Qualifier(OAuth20ClientSecretValidator.BEAN_NAME)
+            final OAuth20ClientSecretValidator oauth20ClientSecretValidator) {
+            return new OidcRequestParameterResolver(accessTokenJwtBuilder, oidcRequestObjectDecrypter, oauth20ClientSecretValidator);
         }
 
         @Bean
@@ -246,9 +246,9 @@ class OidcConfiguration {
         @ConditionalOnMissingBean(name = OidcRequestObjectDecrypter.BEAN_NAME)
         public OidcRequestObjectDecrypter oidcRequestObjectDecrypter(
             @Qualifier("oidcJsonWebKeystoreGeneratorService")
-            final OidcJsonWebKeystoreGeneratorService oidcJsonWebKeystoreGeneratorService,
+            final ObjectProvider<OidcJsonWebKeystoreGeneratorService> oidcJsonWebKeystoreGeneratorService,
             final CasConfigurationProperties casProperties) {
-            return new OidcRequestObjectDecrypter(oidcJsonWebKeystoreGeneratorService, casProperties);
+            return new OidcRequestObjectDecrypter(oidcJsonWebKeystoreGeneratorService::getObject, casProperties);
         }
 
         @Bean

@@ -10,8 +10,11 @@ import org.apereo.cas.ticket.TransientSessionTicketFactory;
 import org.apereo.cas.ticket.expiration.HardTimeoutExpirationPolicy;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.DigestUtils;
+import org.apereo.cas.util.concurrent.CasReentrantLock;
+import org.apereo.cas.util.function.FunctionUtils;
 import com.nimbusds.jose.JOSEObjectType;
 import com.nimbusds.jose.JWSAlgorithm;
+import com.nimbusds.jose.crypto.factories.DefaultJWSVerifierFactory;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
 import com.nimbusds.jose.proc.DefaultJOSEObjectTypeVerifier;
@@ -36,7 +39,8 @@ import org.jspecify.annotations.Nullable;
  * subordinate definition holds them, its {@code iss} and {@code sub} are the entity identifier of the subordinate, its
  * {@code aud} is only the entity identifier of this entity, and it carries {@code jti} and {@code exp}. A client
  * assertion is accepted once: its {@code jti} is kept in the ticket registry until the assertion can no longer be
- * accepted, that is its expiration plus the allowed clock skew.
+ * accepted, that is its expiration plus the allowed clock skew. Checking and recording the {@code jti} is a single step
+ * on each node; across nodes, it is as atomic as the ticket registry.
  *
  * @author Misagh Moayyed
  * @since 8.1.0
@@ -50,9 +54,14 @@ public class OidcFederationSubordinateClientAuthenticator {
     public static final String BEAN_NAME = "oidcFederationSubordinateClientAuthenticator";
 
     /**
-     * The algorithms client assertions may be signed with, published as {@code endpoint_auth_signing_alg_values_supported}.
+     * The algorithms client assertions may be signed with, published as {@code endpoint_auth_signing_alg_values_supported}:
+     * the asymmetric signature algorithms CAS can verify, which leave out the EdDSA family unless its library is present.
      */
-    public static final List<String> SIGNING_ALGORITHMS = JWSAlgorithm.Family.SIGNATURE.stream().map(JWSAlgorithm::getName).toList();
+    public static final List<String> SIGNING_ALGORITHMS = JWSAlgorithm.Family.SIGNATURE
+        .stream()
+        .filter(new DefaultJWSVerifierFactory().supportedJWSAlgorithms()::contains)
+        .map(JWSAlgorithm::getName)
+        .toList();
 
     private static final String TICKET_PREFIX = "OidcFederationClientAssertion:";
 
@@ -60,11 +69,19 @@ public class OidcFederationSubordinateClientAuthenticator {
 
     private static final int MAX_CLOCK_SKEW_SECONDS = 60;
 
+    private static final int LOCK_STRIPES = 64;
+
     private final OidcFederationSubordinateRepository subordinateRepository;
 
     private final TicketRegistry ticketRegistry;
 
     private final TicketFactory ticketFactory;
+
+    /**
+     * Locks striped by client assertion, so that checking whether a {@code jti} was used and recording it is a single step
+     * on this node, and the same client assertion sent twice at once is accepted only once.
+     */
+    private final List<CasReentrantLock> jwtIdentifierLocks = Stream.generate(CasReentrantLock::new).limit(LOCK_STRIPES).toList();
 
     /**
      * Authenticate the subordinate that sent the client assertion.
@@ -123,8 +140,13 @@ public class OidcFederationSubordinateClientAuthenticator {
         return Optional.of(JWKSet.parse(Map.of(KEYS, JSONValue.parse(subordinate.getFederationKeys().toString()))));
     }
 
-    private boolean registerJwtIdentifier(final String issuer, final JWTClaimsSet claims) throws Exception {
+    private boolean registerJwtIdentifier(final String issuer, final JWTClaimsSet claims) {
         val ticketId = TransientSessionTicketFactory.normalizeTicketId(TICKET_PREFIX + issuer + ':' + DigestUtils.sha256(claims.getJWTID()));
+        return jwtIdentifierLocks.get(Math.floorMod(ticketId.hashCode(), LOCK_STRIPES))
+            .execute(() -> FunctionUtils.doUnchecked(() -> registerJwtIdentifier(ticketId, issuer, claims)));
+    }
+
+    private boolean registerJwtIdentifier(final String ticketId, final String issuer, final JWTClaimsSet claims) throws Exception {
         try {
             val ticket = ticketRegistry.getTicket(ticketId, TransientSessionTicket.class);
             if (ticket != null && !ticket.isExpired()) {

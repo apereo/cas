@@ -78,7 +78,7 @@ public class OidcFederationTrustChainConstraints {
     private static boolean isSatisfiedBy(final Map<String, Object> constraints, final int intermediates,
                                          final List<EntityID> subordinates, @Nullable final EntityType leafEntityType) {
         val maxPathLength = constraints.get(MAX_PATH_LENGTH);
-        if (maxPathLength != null && (!(maxPathLength instanceof final Number number) || number.intValue() < 0 || intermediates > number.intValue())) {
+        if (maxPathLength != null && !allowsPathLength(maxPathLength, intermediates)) {
             return false;
         }
         val allowedEntityTypes = constraints.get(ALLOWED_ENTITY_TYPES);
@@ -101,6 +101,28 @@ public class OidcFederationTrustChainConstraints {
                 && excluded.stream().noneMatch(name -> matchesDomainName(host, name))
                 && (permitted.isEmpty() || permitted.stream().anyMatch(name -> matchesDomainName(host, name)));
         });
+    }
+
+    /**
+     * Whether {@code max_path_length}, which must be a non-negative integer, allows the given number of intermediates.
+     * A fraction, a negative number or anything else is refused rather than rounded, and a number too large for an
+     * {@code int} is compared as it is.
+     *
+     * @param maxPathLength the constraint value
+     * @param intermediates the number of intermediates
+     * @return true or false
+     */
+    private static boolean allowsPathLength(final Object maxPathLength, final int intermediates) {
+        if (!(maxPathLength instanceof final Number number)) {
+            return false;
+        }
+        try {
+            val limit = new BigDecimal(number.toString()).toBigIntegerExact();
+            return limit.signum() >= 0 && limit.compareTo(BigInteger.valueOf(intermediates)) >= 0;
+        } catch (final ArithmeticException | NumberFormatException e) {
+            LOGGER.debug("max_path_length [{}] is not an integer: [{}]", maxPathLength, e.getMessage());
+            return false;
+        }
     }
 
     private static List<String> readNames(@Nullable final Object names) {

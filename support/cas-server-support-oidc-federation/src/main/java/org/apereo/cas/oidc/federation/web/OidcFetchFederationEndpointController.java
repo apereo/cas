@@ -9,7 +9,6 @@ import org.apereo.cas.oidc.federation.subordinate.OidcFederationSubordinate;
 import org.apereo.cas.oidc.federation.subordinate.OidcFederationSubordinateRepository;
 import org.apereo.cas.oidc.issuer.OidcIssuerService;
 import org.apereo.cas.support.oauth.OAuth20Constants;
-import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import com.nimbusds.openid.connect.sdk.federation.entities.EntityStatement;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -24,6 +23,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import tools.jackson.databind.JsonNode;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -135,29 +135,43 @@ public class OidcFetchFederationEndpointController extends AbstractOidcFederatio
         if (federationKeys == null || federationKeys.isEmpty()) {
             throw new IllegalArgumentException("Subordinate must define its federation keys");
         }
-        val metadata = Optional.ofNullable(subordinate.getMetadata())
-            .map(value -> withoutEntityConfigurationEndpoints((JSONObject) JSONValue.parse(value.toString())))
+        val metadata = readObject(subordinate.getMetadata(), "Metadata")
+            .map(OidcFetchFederationEndpointController::withoutEntityConfigurationEndpoints)
             .orElse(null);
         val policyClaims = new LinkedHashMap<String, Object>();
-        if (subordinate.getMetadataPolicy() != null) {
-            val metadataPolicy = (JSONObject) JSONValue.parse(subordinate.getMetadataPolicy().toString());
+        val metadataPolicy = readObject(subordinate.getMetadataPolicy(), "Metadata policy");
+        if (metadataPolicy.isPresent()) {
             try {
-                OidcFederationMetadataPolicies.validate(metadataPolicy);
+                OidcFederationMetadataPolicies.validate(metadataPolicy.get());
             } catch (final Exception e) {
                 throw new IllegalArgumentException("Metadata policy is invalid: " + e.getMessage(), e);
             }
-            policyClaims.put(METADATA_POLICY, metadataPolicy);
+            policyClaims.put(METADATA_POLICY, metadataPolicy.get());
         }
-        if (!subordinate.getMetadataPolicyCrit().isEmpty()) {
-            policyClaims.put(OidcFederationMetadataPolicies.METADATA_POLICY_CRIT, subordinate.getMetadataPolicyCrit());
+        val metadataPolicyCrit = Objects.requireNonNullElseGet(subordinate.getMetadataPolicyCrit(), List::<String>of);
+        if (!metadataPolicyCrit.isEmpty()) {
+            policyClaims.put(OidcFederationMetadataPolicies.METADATA_POLICY_CRIT, metadataPolicyCrit);
         }
-        if (subordinate.getConstraints() != null) {
-            if (!subordinate.getConstraints().isObject()) {
-                throw new IllegalArgumentException("Constraints must be an object");
-            }
-            policyClaims.put(CONSTRAINTS, JSONValue.parse(subordinate.getConstraints().toString()));
-        }
+        readObject(subordinate.getConstraints(), "Constraints").ifPresent(constraints -> policyClaims.put(CONSTRAINTS, constraints));
         return federationEntityStatementService.createAndSign(issuer, subordinate.getEntityId(), metadata, federationKeys, null, policyClaims);
+    }
+
+    /**
+     * A member of a subordinate definition that must be a JSON object, when defined.
+     *
+     * @param value the member
+     * @param name  its name, for the error
+     * @return the object, or empty when not defined
+     * @throws IllegalArgumentException when the member is not an object
+     */
+    private static Optional<JSONObject> readObject(@Nullable final JsonNode value, final String name) {
+        if (value == null || value.isNull()) {
+            return Optional.empty();
+        }
+        if (!value.isObject()) {
+            throw new IllegalArgumentException(name + " must be an object");
+        }
+        return Optional.of((JSONObject) JSONValue.parse(value.toString()));
     }
 
     private static @Nullable JSONObject withoutEntityConfigurationEndpoints(final JSONObject metadata) {
@@ -172,9 +186,5 @@ public class OidcFetchFederationEndpointController extends AbstractOidcFederatio
             }
         }
         return metadata.isEmpty() ? null : metadata;
-    }
-
-    private static ResponseEntity errorResponse(final HttpStatus status, final String error, final String description) {
-        return new ResponseEntity<>(OAuth20Utils.getErrorResponseBody(error, description), status);
     }
 }

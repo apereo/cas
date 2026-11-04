@@ -2,6 +2,8 @@ package org.apereo.cas.oidc.federation.signature;
 
 import module java.base;
 import org.apereo.cas.configuration.model.support.oidc.OidcProperties;
+import org.apereo.cas.configuration.model.support.quartz.SchedulingProperties;
+import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeyStoreUtils;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeyUsage;
 import org.apereo.cas.oidc.jwks.rotation.OidcJsonWebKeystoreRotationService.JsonWebKeyLifecycleStates;
@@ -33,6 +35,7 @@ import org.jose4j.jwk.JsonWebKeySet;
 import org.jose4j.jwk.PublicJsonWebKey;
 import org.jspecify.annotations.Nullable;
 import org.springframework.core.io.Resource;
+import org.springframework.scheduling.support.CronExpression;
 
 /**
  * The Federation Entity Keys of CAS, kept in a JSON web keystore file that is generated when missing, with a current
@@ -41,7 +44,9 @@ import org.springframework.core.io.Resource;
  * configuration publishes the current, future and previous keys, so that a key is known to the federation before it
  * signs and after it stopped signing (OpenID Federation 1.0, section 11.2). Keys that are retired are kept in the same
  * file, public only, with {@code exp} set to the time they were retired, and are published by the historical keys
- * endpoint (section 8.7). New keys record {@code iat}.
+ * endpoint (section 8.7). New keys record {@code iat}, and keys record when they became previous. The keystore file is
+ * read again when it changes, so that nodes sharing it sign with the same keys; a scheduled rotation or revocation runs
+ * only when it is due by the age of the keys, so that it does not run again on a restart or on another node.
  *
  * @author Misagh Moayyed
  * @since 7.3.0
@@ -58,6 +63,8 @@ public class OidcFederationDefaultJsonWebKeystoreService implements OidcFederati
 
     private static final String REASON = "reason";
 
+    private static final String PREVIOUS_SINCE = "previous_since";
+
     private final CasReentrantLock lock = new CasReentrantLock();
 
     private final OidcProperties oidcProperties;
@@ -66,11 +73,32 @@ public class OidcFederationDefaultJsonWebKeystoreService implements OidcFederati
 
     private volatile List<JsonWebKey> keys;
 
+    private volatile long keysLastModified;
+
     public OidcFederationDefaultJsonWebKeystoreService(final OidcProperties oidcProperties) throws Exception {
         this.oidcProperties = oidcProperties;
         val jwksFile = SpringExpressionLanguageValueResolver.getInstance().resolve(oidcProperties.getFederation().getJwksFile());
         this.resource = ResourceUtils.getRawResourceFrom(jwksFile);
         this.keys = loadOrGenerate(jwksFile);
+        this.keysLastModified = getKeystoreLastModified();
+    }
+
+    /**
+     * How old keys must be for a scheduled rotation or revocation to change them: half the time between two runs of the
+     * schedule, so that a run soon after another one, on a restart or on another node sharing the keystore, leaves the
+     * keys as they are, while a schedule that restarts more often than it runs still rotates.
+     *
+     * @param schedule the schedule
+     * @return the age
+     */
+    public static Duration getScheduledKeyAge(final SchedulingProperties schedule) {
+        if (StringUtils.isNotBlank(schedule.getCronExpression())) {
+            val cron = CronExpression.parse(schedule.getCronExpression());
+            val next = cron.next(ZonedDateTime.now(ZoneOffset.UTC));
+            val following = next == null ? null : cron.next(next);
+            return next == null || following == null ? Duration.ZERO : Duration.between(next, following).dividedBy(2);
+        }
+        return Beans.newDuration(schedule.getRepeatInterval()).dividedBy(2);
     }
 
     private List<JsonWebKey> loadOrGenerate(final String jwksFile) throws Exception {
@@ -149,7 +177,7 @@ public class OidcFederationDefaultJsonWebKeystoreService implements OidcFederati
 
     @Override
     public List<JWK> getHistoricalKeys() {
-        return keys
+        return getKeys()
             .stream()
             .filter(OidcFederationDefaultJsonWebKeystoreService::isRetired)
             .map(OidcFederationDefaultJsonWebKeystoreService::toPublicJwk)
@@ -159,13 +187,17 @@ public class OidcFederationDefaultJsonWebKeystoreService implements OidcFederati
     @Override
     public JWKSet rotate() throws Exception {
         return lock.executeAndThrow(() -> {
+            reloadKeystoreIfModified();
+            val now = Instant.now(Clock.systemUTC()).getEpochSecond();
             val updated = new ArrayList<>(keys);
             val futureKeys = getActiveKeys(updated, JsonWebKeyLifecycleStates.FUTURE);
             if (futureKeys.isEmpty()) {
                 LOGGER.info("No future OpenID Connect Federation key is published yet; adding one, which the next rotation makes current");
             } else {
-                getActiveKeys(updated, JsonWebKeyLifecycleStates.CURRENT)
-                    .forEach(key -> JsonWebKeyLifecycleStates.setJsonWebKeyState(key, JsonWebKeyLifecycleStates.PREVIOUS));
+                getActiveKeys(updated, JsonWebKeyLifecycleStates.CURRENT).forEach(key -> {
+                    JsonWebKeyLifecycleStates.setJsonWebKeyState(key, JsonWebKeyLifecycleStates.PREVIOUS);
+                    key.setOtherParameter(PREVIOUS_SINCE, now);
+                });
                 futureKeys.forEach(key -> JsonWebKeyLifecycleStates.setJsonWebKeyState(key, JsonWebKeyLifecycleStates.CURRENT));
             }
             updated.add(generateKey(JsonWebKeyLifecycleStates.FUTURE));
@@ -176,22 +208,69 @@ public class OidcFederationDefaultJsonWebKeystoreService implements OidcFederati
     }
 
     @Override
-    public JWKSet revoke() throws Exception {
+    public JWKSet rotateWhenDue(final Duration published) throws Exception {
         return lock.executeAndThrow(() -> {
-            val retiredAt = Instant.now(Clock.systemUTC()).getEpochSecond();
+            reloadKeystoreIfModified();
+            val since = Instant.now(Clock.systemUTC()).minus(published).getEpochSecond();
+            val notDue = getActiveKeys(keys, JsonWebKeyLifecycleStates.FUTURE)
+                .stream()
+                .filter(key -> readEpochSecond(key, ISSUED_AT).orElse(Long.MIN_VALUE) > since)
+                .map(JsonWebKey::getKeyId)
+                .toList();
+            if (!notDue.isEmpty()) {
+                LOGGER.debug("OpenID Connect Federation keys are not rotated: future keys [{}] are published for less than [{}]", notDue, published);
+                return toJWKSet();
+            }
+            return rotate();
+        });
+    }
+
+    @Override
+    public JWKSet revoke() throws Exception {
+        return retirePreviousKeys(null);
+    }
+
+    @Override
+    public JWKSet revokeWhenDue(final Duration previous) throws Exception {
+        return retirePreviousKeys(previous);
+    }
+
+    /**
+     * Retire the previous keys, all of them or those previous for at least the given time. A previous key that does not
+     * record since when it is previous, rotated before keys recorded it, records now.
+     *
+     * @param previous how long keys must have been previous, or null to retire all of them
+     * @return the keys published after the revocation
+     * @throws Exception the exception
+     */
+    private JWKSet retirePreviousKeys(@Nullable final Duration previous) throws Exception {
+        return lock.executeAndThrow(() -> {
+            reloadKeystoreIfModified();
+            val now = Instant.now(Clock.systemUTC()).getEpochSecond();
             val updated = new ArrayList<JsonWebKey>();
+            var modified = false;
             for (val key : keys) {
-                if (!isRetired(key) && JsonWebKeyLifecycleStates.getJsonWebKeyState(key).isPrevious()) {
+                val previousSince = readEpochSecond(key, PREVIOUS_SINCE);
+                if (isRetired(key) || !JsonWebKeyLifecycleStates.getJsonWebKeyState(key).isPrevious()) {
+                    updated.add(key);
+                } else if (previous != null && previousSince.isEmpty()) {
+                    key.setOtherParameter(PREVIOUS_SINCE, now);
+                    updated.add(key);
+                    modified = true;
+                } else if (previous == null || previousSince.orElseThrow() + previous.toSeconds() <= now) {
                     val retired = JsonWebKey.Factory.newJwk(key.toParams(JsonWebKey.OutputControlLevel.PUBLIC_ONLY));
-                    retired.setOtherParameter(EXPIRATION, retiredAt);
+                    retired.setOtherParameter(EXPIRATION, now);
                     updated.add(retired);
+                    modified = true;
                     LOGGER.info("Retired OpenID Connect Federation key [{}]", key.getKeyId());
                 } else {
                     updated.add(key);
                 }
             }
-            store(updated);
-            keys = updated;
+            if (modified) {
+                store(updated);
+                keys = updated;
+            }
             return toJWKSet();
         });
     }
@@ -199,6 +278,7 @@ public class OidcFederationDefaultJsonWebKeystoreService implements OidcFederati
     @Override
     public Optional<JWKSet> revokeKey(final String keyId, @Nullable final String reason) throws Exception {
         return lock.executeAndThrow(() -> {
+            reloadKeystoreIfModified();
             if (keys.stream().noneMatch(key -> keyId.equals(key.getKeyId()))) {
                 return Optional.<JWKSet>empty();
             }
@@ -240,7 +320,7 @@ public class OidcFederationDefaultJsonWebKeystoreService implements OidcFederati
     }
 
     private List<JsonWebKey> getPublishedKeys() {
-        return keys
+        return getKeys()
             .stream()
             .filter(key -> !isRetired(key))
             .sorted(Comparator.comparingLong(key -> JsonWebKeyLifecycleStates.getJsonWebKeyState(key).getState()))
@@ -248,7 +328,7 @@ public class OidcFederationDefaultJsonWebKeystoreService implements OidcFederati
     }
 
     private JsonWebKey getCurrentKey() {
-        return getActiveKeys(keys, JsonWebKeyLifecycleStates.CURRENT)
+        return getActiveKeys(getKeys(), JsonWebKeyLifecycleStates.CURRENT)
             .stream()
             .findFirst()
             .orElseThrow(() -> new IllegalStateException("No current OpenID Connect Federation key is defined"));
@@ -259,6 +339,48 @@ public class OidcFederationDefaultJsonWebKeystoreService implements OidcFederati
             .stream()
             .filter(key -> !isRetired(key) && JsonWebKeyLifecycleStates.getJsonWebKeyState(key).getState() == state.getState())
             .toList();
+    }
+
+    /**
+     * The keys, read again from the keystore file when it changed since they were read, such as by another node.
+     *
+     * @return the keys
+     */
+    private List<JsonWebKey> getKeys() {
+        if (getKeystoreLastModified() != keysLastModified) {
+            lock.execute(this::reloadKeystoreIfModified);
+        }
+        return keys;
+    }
+
+    private void reloadKeystoreIfModified() {
+        val lastModified = getKeystoreLastModified();
+        if (resource != null && lastModified != keysLastModified) {
+            try (val input = resource.getInputStream()) {
+                val loaded = new JsonWebKeySet(IOUtils.toString(input, StandardCharsets.UTF_8)).getJsonWebKeys();
+                if (!loaded.isEmpty()) {
+                    keys = new ArrayList<>(loaded);
+                    keysLastModified = lastModified;
+                    LOGGER.info("Reloaded OpenID Connect Federation JSON web keys from [{}]", resource);
+                }
+            } catch (final Exception e) {
+                LOGGER.warn("OpenID Connect Federation JSON web keys cannot be reloaded from [{}]: [{}]", resource, e.getMessage());
+            }
+        }
+    }
+
+    private long getKeystoreLastModified() {
+        try {
+            return resource != null && resource.isFile() && resource.exists() ? resource.getFile().lastModified() : 0L;
+        } catch (final Exception e) {
+            LOGGER.trace(e.getMessage(), e);
+            return 0L;
+        }
+    }
+
+    private static Optional<Long> readEpochSecond(final JsonWebKey key, final String name) {
+        val value = key.getOtherParameterValue(name, Object.class);
+        return value instanceof final Number number ? Optional.of(number.longValue()) : Optional.empty();
     }
 
     private static boolean isRetired(final JsonWebKey key) {
@@ -284,6 +406,7 @@ public class OidcFederationDefaultJsonWebKeystoreService implements OidcFederati
         val json = new JsonWebKeySet(updated).toJson(JsonWebKey.OutputControlLevel.INCLUDE_PRIVATE);
         LOGGER.debug("Writing OpenID Connect Federation JSON web keys to [{}]", resource);
         FileUtils.write(resource.getFile(), json, StandardCharsets.UTF_8);
+        keysLastModified = getKeystoreLastModified();
     }
 
     private static JWK toJwk(final JsonWebKey key) throws Exception {

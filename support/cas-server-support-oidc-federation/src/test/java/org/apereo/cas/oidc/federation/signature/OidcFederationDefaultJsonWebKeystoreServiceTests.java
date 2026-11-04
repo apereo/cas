@@ -2,6 +2,7 @@ package org.apereo.cas.oidc.federation.signature;
 
 import module java.base;
 import org.apereo.cas.configuration.model.support.oidc.OidcProperties;
+import org.apereo.cas.configuration.model.support.quartz.SchedulingProperties;
 import org.apereo.cas.oidc.federation.AbstractOidcTrustAnchorFederationTests;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
@@ -167,6 +168,54 @@ class OidcFederationDefaultJsonWebKeystoreServiceTests {
             service.rotate();
             assertNotEquals("legacy", signingKeyId(service));
             assertTrue(keyIds(service.toJWKSet()).contains("legacy"));
+        }
+
+        /**
+         * A scheduled rotation makes a future key current only once it has been published long enough, and a scheduled
+         * revocation retires a previous key only once it has been previous long enough, so that running them again, on
+         * a restart or on another node, changes nothing.
+         */
+        @Test
+        void verifyScheduledRotationAndRevocationWhenDue() throws Exception {
+            val file = new File(directory, "scheduled.jwks");
+            val service = newService(file);
+            val initial = keyIds(service.toJWKSet());
+            assertEquals(initial, keyIds(service.rotateWhenDue(Duration.ofDays(1))));
+            assertEquals(initial.getFirst(), signingKeyId(service));
+
+            assertEquals(3, keyIds(service.rotateWhenDue(Duration.ZERO)).size());
+            assertEquals(initial.get(1), signingKeyId(service));
+            assertEquals(3, keyIds(service.rotateWhenDue(Duration.ofDays(1))).size());
+            assertEquals(initial.get(1), signingKeyId(service));
+
+            assertTrue(keyIds(service.revokeWhenDue(Duration.ofDays(1))).contains(initial.getFirst()));
+            assertTrue(service.getHistoricalKeys().isEmpty());
+            assertFalse(keyIds(service.revokeWhenDue(Duration.ZERO)).contains(initial.getFirst()));
+            assertEquals(List.of(initial.getFirst()), service.getHistoricalKeys().stream().map(JWK::getKeyID).toList());
+        }
+
+        /**
+         * Nodes that share the keystore file sign with the keys another node rotated, and do not rotate them again.
+         */
+        @Test
+        void verifyKeystoreChangedByAnotherNodeIsReloaded() throws Exception {
+            val file = new File(directory, "shared.jwks");
+            val first = newService(file);
+            val second = newService(file);
+            assertEquals(signingKeyId(first), signingKeyId(second));
+            first.rotate();
+            assertTrue(file.setLastModified(file.lastModified() + 1000));
+            assertEquals(signingKeyId(first), signingKeyId(second));
+            assertEquals(keyIds(first.toJWKSet()), keyIds(second.rotateWhenDue(Duration.ofDays(1))));
+        }
+
+        @Test
+        void verifyScheduledKeyAge() {
+            assertEquals(Duration.ofDays(45), OidcFederationDefaultJsonWebKeystoreService.getScheduledKeyAge(
+                new SchedulingProperties().setRepeatInterval("P90D")));
+            val monthly = OidcFederationDefaultJsonWebKeystoreService.getScheduledKeyAge(
+                new SchedulingProperties().setCronExpression("0 0 0 1 * *"));
+            assertTrue(monthly.compareTo(Duration.ofDays(14)) >= 0 && monthly.compareTo(Duration.ofHours(372)) <= 0, monthly::toString);
         }
 
         private static OidcFederationDefaultJsonWebKeystoreService newService(final File file) throws Exception {

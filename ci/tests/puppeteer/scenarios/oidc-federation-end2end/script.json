@@ -27,7 +27,8 @@
       "--cas.authn.oidc.federation.issued-trust-marks[0].expiration=P1D",
       "--cas.authn.oidc.federation.issued-trust-marks[1].trust-mark-type=https://localhost:8443/cas/oidc/trust-marks/identity-provider",
       "--cas.authn.oidc.federation.issued-trust-marks[1].subjects[0]=https://localhost:8444/cas/oidc",
-      "--cas.authn.oidc.federation.trust-mark-endpoint-authentication=OPTIONAL"
+      "--cas.authn.oidc.federation.trust-mark-endpoint-authentication=OPTIONAL",
+      "--cas.authn.oidc.federation.resolve-endpoint-authentication=OPTIONAL"
     ]
   },
   "instance2": {

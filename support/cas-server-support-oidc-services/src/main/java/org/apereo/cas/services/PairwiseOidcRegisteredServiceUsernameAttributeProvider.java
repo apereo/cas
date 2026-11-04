@@ -65,13 +65,34 @@ public class PairwiseOidcRegisteredServiceUsernameAttributeProvider extends Base
         return id;
     }
 
+    /**
+     * The host of the sector identifier URI of the client, or else of its first redirect URI. The redirect URIs of a
+     * client registered by CAS are read from its service id, which matches them; any other service id is read as the
+     * redirect URI. A client whose redirect URIs name several hosts should register a sector identifier URI; one whose
+     * registered redirect URIs name no host, such as a native application with a private-use scheme, is its own sector.
+     *
+     * @param client the client
+     * @return the sector identifier
+     */
     private static @Nullable String getSectorIdentifier(final OidcRegisteredService client) {
         if (StringUtils.isNotBlank(client.getSectorIdentifierUri())) {
             val uri = UriComponentsBuilder.fromUriString(client.getSectorIdentifierUri()).build();
             return uri.getHost();
         }
-        val uri = UriComponentsBuilder.fromUriString(client.getServiceId()).build();
-        return uri.getHost();
+        val redirectUris = OidcRedirectUriUtils.toRedirectUris(client.getServiceId());
+        val hosts = redirectUris.stream()
+            .map(redirectUri -> UriComponentsBuilder.fromUriString(redirectUri).build().getHost())
+            .filter(StringUtils::isNotBlank)
+            .distinct()
+            .toList();
+        if (hosts.size() > 1) {
+            LOGGER.warn("Redirect URIs of [{}] name several hosts [{}] and no sector identifier URI; [{}] is used as the sector identifier",
+                client.getClientId(), hosts, hosts.getFirst());
+        }
+        if (hosts.isEmpty()) {
+            return redirectUris.equals(List.of(client.getServiceId())) ? null : client.getClientId();
+        }
+        return hosts.getFirst();
     }
 
 }

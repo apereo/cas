@@ -4,9 +4,9 @@ import module java.base;
 import org.apereo.cas.oidc.discovery.OidcServerDiscoverySettingsFactory;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
+import org.apereo.cas.support.oauth.validator.OAuth20ClientSecretValidator;
 import org.apereo.cas.support.oauth.web.DefaultOAuth20RequestParameterResolver;
 import org.apereo.cas.token.JwtBuilder;
-import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.crypto.MACSigner;
@@ -29,18 +29,19 @@ import jakarta.servlet.http.HttpServletRequest;
 public class OidcRequestParameterResolver extends DefaultOAuth20RequestParameterResolver {
     private final OidcRequestObjectDecrypter requestObjectDecrypter;
 
-    private final CipherExecutor<Serializable, String> clientSecretCipherExecutor;
+    private final OAuth20ClientSecretValidator clientSecretValidator;
 
     public OidcRequestParameterResolver(final JwtBuilder jwtBuilder, final OidcRequestObjectDecrypter requestObjectDecrypter,
-                                        final CipherExecutor<Serializable, String> clientSecretCipherExecutor) {
+                                        final OAuth20ClientSecretValidator clientSecretValidator) {
         super(jwtBuilder);
         this.requestObjectDecrypter = requestObjectDecrypter;
-        this.clientSecretCipherExecutor = clientSecretCipherExecutor;
+        this.clientSecretValidator = clientSecretValidator;
     }
 
     /**
      * A request object signed with HMAC, {@code HS256}, {@code HS384} or {@code HS512}, is verified with the client
-     * secrets of the client (OpenID Connect Core 1.0, sections 6.1 and 10.1): its unexpired secrets, decoded, whose
+     * secrets of the client (OpenID Connect Core 1.0, sections 6.1 and 10.1): its secrets that the client secret validator
+     * does not consider expired, decoded with the cipher of the validator, whose
      * octets are at least as long as the hash output of the algorithm (RFC 7518, section 3.2). Request objects signed
      * otherwise are verified with the keys of the client, as the default resolver does.
      *
@@ -60,9 +61,9 @@ public class OidcRequestParameterResolver extends DefaultOAuth20RequestParameter
         val minimumLength = Unchecked.supplier(() -> MACSigner.getMinRequiredSecretLength(signedJwt.getHeader().getAlgorithm())).get() / Byte.SIZE;
         val verified = oauthService.getClientSecrets()
             .stream()
-            .filter(secret -> !secret.hasClientSecretExpired(oauthService))
+            .filter(secret -> !clientSecretValidator.isClientSecretExpired(secret, oauthService))
             .map(secret -> SpringExpressionLanguageValueResolver.getInstance().resolve(secret.getValue()))
-            .map(secret -> clientSecretCipherExecutor.decode(secret, new Object[]{oauthService}))
+            .map(secret -> clientSecretValidator.getCipherExecutor().decode(secret, new Object[]{oauthService}))
             .filter(StringUtils::isNotBlank)
             .map(secret -> secret.getBytes(StandardCharsets.UTF_8))
             .filter(secret -> secret.length >= minimumLength)

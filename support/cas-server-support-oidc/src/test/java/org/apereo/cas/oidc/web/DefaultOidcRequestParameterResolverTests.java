@@ -8,7 +8,10 @@ import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeyCacheKey;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeyUsage;
 import org.apereo.cas.oidc.jwks.generator.OidcJsonWebKeystoreGeneratorService;
+import org.apereo.cas.oidc.jwks.generator.OidcJsonWebKeystoreModifiedEvent;
+import org.apereo.cas.oidc.jwks.rotation.OidcJsonWebKeystoreRotatedEvent;
 import org.apereo.cas.support.oauth.OAuth20Constants;
+import org.apereo.cas.support.oauth.validator.OAuth20ClientSecretValidator;
 import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
@@ -21,6 +24,7 @@ import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.JWTParser;
 import com.nimbusds.jwt.SignedJWT;
 import lombok.val;
+import org.apereo.inspektr.common.web.ClientInfo;
 import org.jose4j.jwa.AlgorithmConstraints;
 import org.jose4j.jwe.ContentEncryptionAlgorithmIdentifiers;
 import org.jose4j.jwe.JsonWebEncryption;
@@ -58,7 +62,7 @@ class DefaultOidcRequestParameterResolverTests extends AbstractOidcTests {
 
         val request = new MockHttpServletRequest();
         request.addParameter(OAuth20Constants.SCOPE, "openid UniversityDegree UnknownScope");
-        val scopes = new OidcRequestParameterResolver(jwtBuilder, mock(OidcRequestObjectDecrypter.class), CipherExecutor.noOpOfSerializableToString())
+        val scopes = new OidcRequestParameterResolver(jwtBuilder, mock(OidcRequestObjectDecrypter.class), mock(OAuth20ClientSecretValidator.class))
             .resolveRequestScopes(request);
         assertEquals(Set.of(OidcConstants.StandardScopes.OPENID.getScope(), "UniversityDegree"), scopes);
     }
@@ -162,6 +166,29 @@ class DefaultOidcRequestParameterResolverTests extends AbstractOidcTests {
     }
 
     /**
+     * Client secrets of a request object signed with HMAC are checked for expiry and decoded by the client secret
+     * validator, as they are when the client authenticates with them.
+     */
+    @Test
+    void verifyRequestObjectSecretsFollowClientSecretValidator() throws Throwable {
+        val service = getOidcRegisteredService(UUID.randomUUID().toString());
+        service.setClientSecrets(new ArrayList<>());
+        service.setClientSecret(RandomUtils.randomAlphanumeric(64));
+        servicesManager.save(service);
+        val requestObject = signWithSecret(JWSAlgorithm.HS256, service.getClientSecret(), service.getClientId());
+
+        val validator = mock(OAuth20ClientSecretValidator.class);
+        when(validator.getCipherExecutor()).thenReturn(CipherExecutor.noOpOfSerializableToString());
+        when(validator.isClientSecretExpired(any(), any())).thenReturn(Boolean.FALSE);
+        val resolver = new OidcRequestParameterResolver(oidcAccessTokenJwtBuilder, mock(OidcRequestObjectDecrypter.class), validator);
+        assertTrue(resolver.isRequestObjectVerified(requestWith(service.getClientId(), requestObject)));
+
+        when(validator.isClientSecretExpired(any(), any())).thenReturn(Boolean.TRUE);
+        assertFalse(resolver.isRequestObjectVerified(requestWith(service.getClientId(), requestObject)));
+        verify(validator, atLeastOnce()).isClientSecretExpired(any(), any());
+    }
+
+    /**
      * The request object must name the client of the request (OpenID Connect Core 1.0, section 6.1; RFC 9101,
      * section 5): it is verified with the keys of the {@code client_id} parameter, so a request object for another
      * client, even one signed with the keys of the client of the parameter, is refused, and its parameters are not used.
@@ -198,7 +225,7 @@ class DefaultOidcRequestParameterResolverTests extends AbstractOidcTests {
         val discovery = properties.getAuthn().getOidc().getDiscovery();
         discovery.setRequestObjectEncryptionAlgValuesSupported(Stream.concat(discovery.getRequestObjectEncryptionAlgValuesSupported().stream(),
             Stream.of(KeyManagementAlgorithmIdentifiers.RSA1_5)).toList());
-        val decrypter = new OidcRequestObjectDecrypter(generator, properties);
+        val decrypter = new OidcRequestObjectDecrypter(() -> generator, properties);
 
         val payload = requestObjectClaims("client").toString();
         for (var attempt = 0; attempt < 2; attempt++) {
@@ -206,6 +233,10 @@ class DefaultOidcRequestParameterResolverTests extends AbstractOidcTests {
             assertEquals("client", decrypted.getStringClaim(OAuth20Constants.CLIENT_ID));
         }
         verify(generator, times(1)).generate();
+        decrypter.handleOidcJsonWebKeystoreRotatedEvent(new OidcJsonWebKeystoreRotatedEvent(this,
+            ClientInfo.from(new MockHttpServletRequest())));
+        assertEquals(1, decrypter.getDecryptionKeys().size());
+        verify(generator, times(2)).generate();
 
         val rsa15 = new JsonWebEncryption();
         rsa15.setPayload(payload);
@@ -216,6 +247,27 @@ class DefaultOidcRequestParameterResolverTests extends AbstractOidcTests {
         rsa15.setAlgorithmConstraints(AlgorithmConstraints.NO_CONSTRAINTS);
         val rsa15RequestObject = rsa15.getCompactSerialization();
         assertThrows(IllegalArgumentException.class, () -> decrypter.decrypt(rsa15RequestObject));
+    }
+
+    /**
+     * A keystore without encryption keys is not read again for every encrypted request object, but is once it changes.
+     */
+    @Test
+    void verifyMissingDecryptionKeysAreNotReadEachTime() throws Throwable {
+        val signingKey = RsaJwkGenerator.generateJwk(2048);
+        signingKey.setKeyId(UUID.randomUUID().toString());
+        signingKey.setUse("sig");
+        val keystore = new JsonWebKeySet(signingKey).toJson(JsonWebKey.OutputControlLevel.INCLUDE_PRIVATE);
+        val generator = mock(OidcJsonWebKeystoreGeneratorService.class);
+        when(generator.generate()).thenReturn(new ByteArrayResource(keystore.getBytes(StandardCharsets.UTF_8)));
+        val decrypter = new OidcRequestObjectDecrypter(() -> generator, new CasConfigurationProperties());
+        assertTrue(decrypter.getDecryptionKeys().isEmpty());
+        assertTrue(decrypter.getDecryptionKeys().isEmpty());
+        verify(generator, times(1)).generate();
+        decrypter.handleOidcJsonWebKeystoreModifiedEvent(new OidcJsonWebKeystoreModifiedEvent(this, new File("keystore.jwks"),
+            ClientInfo.from(new MockHttpServletRequest())));
+        assertTrue(decrypter.getDecryptionKeys().isEmpty());
+        verify(generator, times(2)).generate();
     }
 
     @Test

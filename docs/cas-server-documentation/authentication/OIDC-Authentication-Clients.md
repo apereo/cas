@@ -59,7 +59,7 @@ The following fields are specifically available for OpenID connect services:
 | `tokenEndpointAuthenticationMethod` | Optional. The requested [client authentication method](OIDC-Authentication-AccessToken-AuthMethods.html) to the token endpoint.                                                                                               |
 | `applicationType`                   | Optional. `web`, `native`, or blank. Defined the kind of the application. The default, if omitted, is `web`.                                                                                                                  |     
 | `subjectType`                       | Optional value chosen from `public` or `pairwise`. Type to use when generating principal identifiers. Default is `public`.                                                                                                    |     
-| `sectorIdentifierUri`               | Optional. Host value of this URL is used as the sector identifier for the pairwise identifier calculation. If left undefined, the host value of the `serviceId` will be used instead.                                         |     
+| `sectorIdentifierUri`               | Optional. Host value of this URL is used as the sector identifier for the pairwise identifier calculation. If left undefined, the host of the redirect URI is used instead.                                                   |     
 
 <div class="alert alert-info">:information_source: <strong>Keep What You Need!</strong><p>You are encouraged to 
 only keep and maintain properties and settings needed for a particular integration. It is UNNECESSARY to grab a copy of all service fields and try to 

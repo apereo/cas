@@ -5,10 +5,14 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeyStoreUtils;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeyUsage;
+import org.apereo.cas.oidc.jwks.generator.OidcJsonWebKeystoreGeneratedEvent;
 import org.apereo.cas.oidc.jwks.generator.OidcJsonWebKeystoreGeneratorService;
+import org.apereo.cas.oidc.jwks.generator.OidcJsonWebKeystoreModifiedEvent;
+import org.apereo.cas.oidc.jwks.rotation.OidcJsonWebKeystoreRotatedEvent;
 import org.apereo.cas.util.function.FunctionUtils;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
+import com.github.benmanes.caffeine.cache.Expiry;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.PlainJWT;
 import lombok.extern.slf4j.Slf4j;
@@ -22,6 +26,7 @@ import org.jose4j.jwk.JsonWebKeySet;
 import org.jose4j.jwk.PublicJsonWebKey;
 import org.jose4j.jwx.HeaderParameterNames;
 import org.jspecify.annotations.Nullable;
+import org.springframework.context.event.EventListener;
 
 /**
  * Decrypts request objects that clients encrypt to CAS (OpenID Connect Core 1.0, section 6.3.1; RFC 9101, section 4).
@@ -37,6 +42,9 @@ import org.jspecify.annotations.Nullable;
  * signed request object. A request object encrypted without being signed comes back as an unsigned JWT, and is accepted
  * or refused exactly as an unsigned request object would be. Symmetric key wrapping, with keys derived from client
  * secrets, is not supported.
+ * <p>
+ * The keystore generator service is looked up when the keys are first read, since it publishes the keystore events this
+ * decrypter listens to while it is created.
  *
  * @author Misagh Moayyed
  * @since 8.1.0
@@ -52,20 +60,58 @@ public class OidcRequestObjectDecrypter {
 
     private static final String DECRYPTION_KEYS = "decryptionKeys";
 
-    private final OidcJsonWebKeystoreGeneratorService keystoreGeneratorService;
+    private static final Duration MISSING_DECRYPTION_KEYS_EXPIRATION = Duration.ofMinutes(1);
+
+    private final Supplier<OidcJsonWebKeystoreGeneratorService> keystoreGeneratorService;
 
     private final CasConfigurationProperties casProperties;
 
     private final Cache<String, List<PublicJsonWebKey>> decryptionKeys;
 
-    public OidcRequestObjectDecrypter(final OidcJsonWebKeystoreGeneratorService keystoreGeneratorService,
+    public OidcRequestObjectDecrypter(final Supplier<OidcJsonWebKeystoreGeneratorService> keystoreGeneratorService,
                                       final CasConfigurationProperties casProperties) {
         this.keystoreGeneratorService = keystoreGeneratorService;
         this.casProperties = casProperties;
+        val expiration = Beans.newDuration(casProperties.getAuthn().getOidc().getJwks().getCore().getJwksCacheExpiration());
+        val missingExpiration = expiration.compareTo(MISSING_DECRYPTION_KEYS_EXPIRATION) < 0 ? expiration : MISSING_DECRYPTION_KEYS_EXPIRATION;
         this.decryptionKeys = Caffeine.newBuilder()
             .maximumSize(1)
-            .expireAfterWrite(Beans.newDuration(casProperties.getAuthn().getOidc().getJwks().getCore().getJwksCacheExpiration()))
+            .expireAfter(Expiry.<String, List<PublicJsonWebKey>>creating((key, keys) -> keys.isEmpty() ? missingExpiration : expiration))
             .build();
+    }
+
+    /**
+     * Forget the decryption keys once the keystore file changes or is generated.
+     *
+     * @param event the event
+     */
+    @EventListener
+    public void handleOidcJsonWebKeystoreModifiedEvent(final OidcJsonWebKeystoreModifiedEvent event) {
+        LOGGER.debug("Detected change in [{}]; request object decryption keys will be read again", event.getFile());
+        decryptionKeys.invalidateAll();
+    }
+
+    /**
+     * Forget the decryption keys once the keystore is generated.
+     *
+     * @param event the event
+     */
+    @EventListener
+    public void handleOidcJsonWebKeystoreGeneratedEvent(final OidcJsonWebKeystoreGeneratedEvent event) {
+        LOGGER.debug("Keystore [{}] is generated; request object decryption keys will be read again", event.getFile());
+        decryptionKeys.invalidateAll();
+    }
+
+    /**
+     * Forget the decryption keys once keys are rotated or revoked, so that a revoked encryption key stops decrypting at
+     * once rather than when the keys would be read again.
+     *
+     * @param event the event
+     */
+    @EventListener
+    public void handleOidcJsonWebKeystoreRotatedEvent(final OidcJsonWebKeystoreRotatedEvent event) {
+        LOGGER.debug("Keys in the keystore are rotated or revoked; request object decryption keys will be read again");
+        decryptionKeys.invalidateAll();
     }
 
     /**
@@ -102,8 +148,11 @@ public class OidcRequestObjectDecrypter {
     }
 
     /**
-     * Encryption keys of the OpenID Connect keystore that have a private key, in any rotation state, as read once per
-     * JWKS cache period. A keystore that cannot be read, or has no such key, is read again on the next call.
+     * Encryption keys of the OpenID Connect keystore that have a private key, in any rotation state, never signing keys,
+     * which the keystore lookup falls back to when it holds no encryption key, as read once per
+     * JWKS cache period, or until the keystore changes, is generated, or has keys rotated or revoked. A keystore that
+     * cannot be read, or has no such key, is read again after at most a minute, not on every call, so that encrypted
+     * request objects sent to a CAS without encryption keys do not make it read its keystore each time.
      *
      * @return the keys
      */
@@ -111,22 +160,23 @@ public class OidcRequestObjectDecrypter {
         return Objects.requireNonNullElseGet(decryptionKeys.get(DECRYPTION_KEYS, _ -> loadDecryptionKeys()), List::of);
     }
 
-    private @Nullable List<PublicJsonWebKey> loadDecryptionKeys() {
+    private List<PublicJsonWebKey> loadDecryptionKeys() {
         val keys = FunctionUtils.doAndHandle(() -> {
-            val keystore = OidcJsonWebKeystoreGeneratorService.toJsonWebKeyStore(keystoreGeneratorService.generate());
+            val keystore = OidcJsonWebKeystoreGeneratorService.toJsonWebKeyStore(keystoreGeneratorService.get().generate());
             return OidcJsonWebKeyStoreUtils.getJsonWebKeyFromJsonWebKeySet(keystore, Optional.empty(), Optional.of(OidcJsonWebKeyUsage.ENCRYPTION))
                 .map(JsonWebKeySet::getJsonWebKeys)
                 .orElseGet(List::of)
                 .stream()
                 .filter(PublicJsonWebKey.class::isInstance)
                 .map(PublicJsonWebKey.class::cast)
+                .filter(key -> !OidcJsonWebKeyUsage.SIGNING.is(key))
                 .filter(key -> key.getPrivateKey() != null)
                 .toList();
         }, e -> {
             LOGGER.warn("Unable to read the encryption keys of the OpenID Connect keystore: [{}]", e.getMessage());
             return List.<PublicJsonWebKey>of();
         }).get();
-        return keys.isEmpty() ? null : keys;
+        return Objects.requireNonNullElseGet(keys, List::of);
     }
 
     private String decryptWith(final String requestObject, final PublicJsonWebKey key) throws Exception {

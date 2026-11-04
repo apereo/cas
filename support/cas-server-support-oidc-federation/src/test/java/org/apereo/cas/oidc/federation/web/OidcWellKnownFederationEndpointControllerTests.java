@@ -8,6 +8,7 @@ import org.apereo.cas.oidc.federation.AbstractOidcOpenIdProviderFederationTests;
 import org.apereo.cas.oidc.federation.AbstractOidcTrustAnchorFederationTests;
 import org.apereo.cas.oidc.federation.signature.OidcFederationJsonWebKeystoreService;
 import org.apereo.cas.oidc.federation.subordinate.OidcFederationSubordinate;
+import org.apereo.cas.oidc.federation.subordinate.OidcFederationSubordinateClientAuthenticator;
 import org.apereo.cas.oidc.federation.subordinate.OidcFederationSubordinateRepository;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.util.function.FunctionUtils;
@@ -648,6 +649,10 @@ class OidcWellKnownFederationEndpointControllerTests {
         @Qualifier("oidcFederationSubordinateRepository")
         private OidcFederationSubordinateRepository oidcFederationSubordinateRepository;
 
+        @Autowired
+        @Qualifier(OidcFederationSubordinateClientAuthenticator.BEAN_NAME)
+        private OidcFederationSubordinateClientAuthenticator clientAuthenticator;
+
         @BeforeEach
         void registerSubordinate() {
             val federationKeys = JsonMapper.builder().build().readTree('[' + RELYING_PARTY_KEY.toPublicJWK().toJSONString() + ']');
@@ -667,6 +672,8 @@ class OidcWellKnownFederationEndpointControllerTests {
             assertTrue(algorithms.contains(JWSAlgorithm.RS256.getName()));
             assertTrue(algorithms.contains(JWSAlgorithm.ES256.getName()));
             assertFalse(algorithms.contains("none"));
+            val verifiable = new DefaultJWSVerifierFactory().supportedJWSAlgorithms();
+            assertTrue(algorithms.stream().map(JWSAlgorithm::parse).allMatch(verifiable::contains), algorithms::toString);
         }
 
         @Test
@@ -705,6 +712,31 @@ class OidcWellKnownFederationEndpointControllerTests {
                     .param("trust_mark_type", MEMBER_TRUST_MARK_TYPE).with(withHttpRequestProcessor()))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.error").value(OAuth20Constants.INVALID_REQUEST));
+        }
+
+        /**
+         * The same client assertion sent many times at once is accepted once.
+         */
+        @Test
+        void verifyClientAssertionIsAcceptedOnceAtOnce() throws Exception {
+            val assertion = clientAssertion(RELYING_PARTY_KEY, RELYING_PARTY, List.of(ENTITY_ID));
+            val start = new CountDownLatch(1);
+            try (val executor = Executors.newVirtualThreadPerTaskExecutor()) {
+                val attempts = IntStream.range(0, 16)
+                    .mapToObj(_ -> executor.submit(() -> {
+                        start.await();
+                        return clientAuthenticator.authenticate(OAuth20Constants.CLIENT_ASSERTION_TYPE_JWT_BEARER, assertion, ENTITY_ID);
+                    }))
+                    .toList();
+                start.countDown();
+                var accepted = 0;
+                for (val attempt : attempts) {
+                    if (attempt.get().isPresent()) {
+                        accepted++;
+                    }
+                }
+                assertEquals(1, accepted);
+            }
         }
 
         private MockHttpServletRequestBuilder authenticatedRequest(final String subject, final String clientAssertion) {

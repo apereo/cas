@@ -9,7 +9,6 @@ import org.apereo.cas.oidc.federation.subordinate.OidcFederationSubordinateClien
 import org.apereo.cas.oidc.federation.trustmark.OidcFederationTrustMarkIssuer;
 import org.apereo.cas.oidc.issuer.OidcIssuerService;
 import org.apereo.cas.support.oauth.OAuth20Constants;
-import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.extern.slf4j.Slf4j;
@@ -238,9 +237,5 @@ public class OidcTrustMarkFederationEndpointController extends AbstractOidcFeder
             return errorResponse(HttpStatus.NOT_FOUND, NOT_FOUND, "This entity issues no trust marks");
         }
         return retrieveInvalidIssuerError(request, response, path);
-    }
-
-    private static ResponseEntity errorResponse(final HttpStatus status, final String error, final String description) {
-        return new ResponseEntity<>(OAuth20Utils.getErrorResponseBody(error, description), status);
     }
 }

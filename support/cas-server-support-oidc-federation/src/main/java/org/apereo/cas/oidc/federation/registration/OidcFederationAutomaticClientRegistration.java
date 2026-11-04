@@ -2,6 +2,7 @@ package org.apereo.cas.oidc.federation.registration;
 
 import module java.base;
 import org.apereo.cas.oidc.federation.chain.OidcFederationDefaultTrustChainResolver;
+import org.apereo.cas.oidc.federation.chain.OidcFederationResolutionBusyException;
 import org.apereo.cas.oidc.federation.chain.OidcFederationTrustChainResolver;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.RegisteredService;
@@ -119,12 +120,17 @@ public class OidcFederationAutomaticClientRegistration {
             if ((currentService != null && !shouldRefresh(currentService)) || isUnresolved(clientId)) {
                 return currentService;
             }
-            val resolvedService = resolveAndSave(clientId, currentService, trustChain, signedWithKeys);
-            if (resolvedService.isEmpty()) {
-                LOGGER.debug("Trust chains of [{}] could not be resolved; they are not resolved again for a while", clientId);
-                unresolvedEntities.put(clientId, Boolean.TRUE);
+            try {
+                val resolvedService = resolveAndSave(clientId, currentService, trustChain, signedWithKeys);
+                if (resolvedService.isEmpty()) {
+                    LOGGER.debug("Trust chains of [{}] could not be resolved; they are not resolved again for a while", clientId);
+                    unresolvedEntities.put(clientId, Boolean.TRUE);
+                }
+                return resolvedService.orElse(currentService);
+            } catch (final OidcFederationResolutionBusyException e) {
+                LOGGER.warn("Trust chains of [{}] are not resolved now: [{}]", clientId, e.getMessage());
+                return currentService;
             }
-            return resolvedService.orElse(currentService);
         });
     }
 
@@ -166,7 +172,13 @@ public class OidcFederationAutomaticClientRegistration {
             }
             reevaluatedEntities.put(clientId, Boolean.TRUE);
             LOGGER.info("Registration of [{}] does not hold the keys it signs with; resolving its trust chains again", clientId);
-            return resolveAndSave(clientId, currentService, trustChain, stale.negate()).orElse(currentService);
+            try {
+                return resolveAndSave(clientId, currentService, trustChain, stale.negate()).orElse(currentService);
+            } catch (final OidcFederationResolutionBusyException e) {
+                LOGGER.warn("Trust chains of [{}] are not resolved again now: [{}]", clientId, e.getMessage());
+                reevaluatedEntities.invalidate(clientId);
+                return currentService;
+            }
         });
     }
 
@@ -220,6 +232,8 @@ public class OidcFederationAutomaticClientRegistration {
      * @param trustChain     the serialized statements of the trust chain the relying party sent, which may be empty
      * @param signedWithKeys whether the request that carries the trust chain is signed with the keys of a registration
      * @return the saved registration
+     * @throws OidcFederationResolutionBusyException when too many resolutions are running, which is not a failure to
+     *                                               resolve the relying party
      */
     private Optional<OAuthRegisteredService> resolveAndSave(final String clientId, @Nullable final OAuthRegisteredService currentService,
                                                             final List<String> trustChain,
@@ -234,6 +248,8 @@ public class OidcFederationAutomaticClientRegistration {
                 }
                 return (OAuthRegisteredService) servicesManager.save(service);
             });
+        } catch (final OidcFederationResolutionBusyException e) {
+            throw e;
         } catch (final Exception e) {
             LoggingUtils.warn(LOGGER, "Unable to resolve federated service [" + clientId + "]", e);
             return Optional.empty();
@@ -242,10 +258,11 @@ public class OidcFederationAutomaticClientRegistration {
 
     /**
      * The registration built from the trust chain the relying party sent, when the chain verifies, its entity
-     * configuration was issued after the one the current registration was built from, and the request that carries it
-     * is signed with the keys it resolves to. Statements of an entity are public, so a chain alone proves nothing about
-     * who sends it: an older chain, or the very chain of the current registration, replayed with a request the relying
-     * party did not sign, must not keep or bring back keys the relying party has replaced.
+     * configuration was not issued before the one the current registration was built from, and the request that carries
+     * it is signed with the keys it resolves to. Statements of an entity are public, so a chain alone proves nothing about
+     * who sends it: an older chain must not bring back keys the relying party has replaced, and any chain, the very chain
+     * of the current registration included, is only used with a request signed with its keys, which is what stops a
+     * replay. A chain as new as the registration, signed with its keys, is the relying party's own.
      *
      * @param clientId       the client id
      * @param currentService the current registration
@@ -283,7 +300,7 @@ public class OidcFederationAutomaticClientRegistration {
         }
         val resolved = readIssuedAt(resolvedService);
         val current = readIssuedAt(currentService);
-        return resolved.isEmpty() || current.isEmpty() || resolved.get() > current.get();
+        return resolved.isEmpty() || current.isEmpty() || resolved.get() >= current.get();
     }
 
     private static Optional<Long> readIssuedAt(final RegisteredService registeredService) {

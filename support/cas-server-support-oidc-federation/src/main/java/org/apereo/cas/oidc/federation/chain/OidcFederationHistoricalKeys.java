@@ -22,6 +22,7 @@ import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -45,7 +46,9 @@ public class OidcFederationHistoricalKeys {
     private static final int TIMEOUT_MILLIS = 5000;
 
     /**
-     * Fetch the historical keys of an entity.
+     * Fetch the historical keys of an entity. The endpoint must be an {@code https} URL, as federation endpoints are
+     * (section 5.1.1), and every key must carry its {@code exp} (section 8.7.2); a key set that does not is refused as
+     * a whole, since leaving a key out could hide its revocation.
      *
      * @param configuration    the entity configuration of the entity, which advertises the endpoint
      * @param verificationKeys the keys of the entity to verify the signed key set with
@@ -58,7 +61,12 @@ public class OidcFederationHistoricalKeys {
         if (endpoint == null) {
             return List.of();
         }
-        val request = new HTTPRequest(HTTPRequest.Method.GET, new URI(endpoint.toString()));
+        val endpointUri = new URI(endpoint.toString());
+        if (!Strings.CI.equals(endpointUri.getScheme(), "https")) {
+            throw new IllegalStateException("Historical keys endpoint " + endpoint + " is not an https URL");
+        }
+        OidcFederationResolutionLimiter.consumeRequest("historical keys at " + endpoint);
+        val request = new HTTPRequest(HTTPRequest.Method.GET, endpointUri);
         request.setConnectTimeout(TIMEOUT_MILLIS);
         request.setReadTimeout(TIMEOUT_MILLIS);
         val response = request.send();
@@ -73,17 +81,11 @@ public class OidcFederationHistoricalKeys {
             new JWTClaimsSet.Builder().issuer(configuration.getEntityID().getValue()).build(),
             Set.of(JWTClaimNames.ISSUER, JWTClaimNames.ISSUED_AT, KEYS)));
         val claims = processor.process(response.getBody(), null);
-        return JWKSet.parse(Map.<String, Object>of(KEYS, claims.getListClaim(KEYS))).getKeys();
-    }
-
-    /**
-     * Whether the historical key has been revoked by now.
-     *
-     * @param key the historical key
-     * @return true or false
-     */
-    public static boolean isRevoked(final JWK key) {
-        return key.getKeyRevocation() != null && !key.getKeyRevocation().getRevocationTime().after(new Date());
+        val keys = JWKSet.parse(Map.<String, Object>of(KEYS, claims.getListClaim(KEYS))).getKeys();
+        if (keys.stream().anyMatch(key -> key.getExpirationTime() == null)) {
+            throw new IllegalStateException("Historical keys published at " + endpoint + " must all carry exp");
+        }
+        return keys;
     }
 
     /**
@@ -101,15 +103,17 @@ public class OidcFederationHistoricalKeys {
     }
 
     /**
-     * Whether the trust anchor signed its statements in the chain with a key it has since revoked (OpenID Federation 1.0,
-     * section 8.7), as published by its federation historical keys endpoint. The keys a trust anchor is trusted with
+     * Whether the trust anchor signed its statements in the chain with a key it has since revoked, or with a key it had
+     * already retired when it issued them (OpenID Federation 1.0, section 8.7), as published by its federation historical
+     * keys endpoint. The keys a trust anchor is trusted with
      * out of band may still list a key it has revoked; its historical keys are verified with those keys, and the
      * entity configuration that advertises them is always fetched from the trust anchor, never taken from the chain:
      * a chain sent by a relying party could carry an entity configuration signed with the revoked key that advertises
      * no historical keys, or other ones. Statements are matched by their
      * {@code kid}, which is required (section 3), so a statement that names no key is treated as signed with a revoked
-     * key. When the trust anchor publishes no historical keys, or they cannot be obtained or verified, the chain is not
-     * refused on that account, which is reported in the logs.
+     * key. When the trust anchor advertises no historical keys endpoint, none of its keys is revoked. When its entity
+     * configuration or the historical keys it advertises cannot be obtained or verified, whether the key was revoked
+     * cannot be told, and the chain is treated as signed with a revoked key.
      *
      * @param trustChainResolver the trust chain resolver of the trust anchor of the chain
      * @param chain              the trust chain
@@ -125,28 +129,32 @@ public class OidcFederationHistoricalKeys {
             } else {
                 configuration.verifySignature(trustAnchorKeys);
             }
-            val revokedKeys = fetch(configuration, Objects.requireNonNullElseGet(trustAnchorKeys, () -> configuration.getClaimsSet().getJWKSet()))
+            val historicalKeys = fetch(configuration, Objects.requireNonNullElseGet(trustAnchorKeys, () -> configuration.getClaimsSet().getJWKSet()))
                 .stream()
-                .filter(OidcFederationHistoricalKeys::isRevoked)
-                .map(JWK::getKeyID)
-                .filter(Objects::nonNull)
-                .collect(Collectors.toSet());
+                .filter(key -> key.getKeyID() != null)
+                .collect(Collectors.toMap(JWK::getKeyID, Function.identity(), (first, second) -> first));
             val statements = new ArrayList<EntityStatement>();
             statements.add(chain.getSuperiorStatements().getLast());
             if (chain.getTrustAnchorConfiguration() != null) {
                 statements.add(chain.getTrustAnchorConfiguration());
             }
-            val revoked = statements.stream()
-                .map(statement -> statement.getSignedStatement().getHeader().getKeyID())
-                .anyMatch(keyId -> StringUtils.isBlank(keyId) || revokedKeys.contains(keyId));
+            val revoked = statements.stream().anyMatch(statement -> {
+                val keyId = statement.getSignedStatement().getHeader().getKeyID();
+                if (StringUtils.isBlank(keyId)) {
+                    return true;
+                }
+                val historicalKey = historicalKeys.get(keyId);
+                return historicalKey != null && !mayHaveSigned(historicalKey, statement.getClaimsSet().getIssueTime());
+            });
             if (revoked) {
-                LOGGER.warn("Trust chain of [{}] is signed with a key that trust anchor [{}] has revoked",
+                LOGGER.warn("Trust chain of [{}] is signed with a key that trust anchor [{}] has revoked, or had retired before",
                     chain.getLeafConfiguration().getEntityID(), trustAnchorId);
             }
             return revoked;
         } catch (final Exception e) {
-            LOGGER.warn("Unable to check the revoked keys of trust anchor [{}]: [{}]", trustAnchorId, e.getMessage());
-            return false;
+            LOGGER.warn("Unable to check the revoked keys of trust anchor [{}], so the trust chain of [{}] is not used: [{}]",
+                trustAnchorId, chain.getLeafConfiguration().getEntityID(), e.getMessage());
+            return true;
         }
     }
 }

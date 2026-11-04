@@ -4,10 +4,13 @@ import module java.base;
 import org.apereo.cas.configuration.model.support.oidc.federation.OidcFederationProperties;
 import org.apereo.cas.configuration.model.support.oidc.federation.OidcFederationRole;
 import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.oidc.federation.chain.OidcFederationBudgetedEntityStatementRetriever;
 import org.apereo.cas.oidc.federation.chain.OidcFederationDefaultTrustChainResolver;
 import org.apereo.cas.oidc.federation.chain.OidcFederationHistoricalKeys;
 import org.apereo.cas.oidc.federation.chain.OidcFederationLocalEntityStatementRetriever;
 import org.apereo.cas.oidc.federation.chain.OidcFederationMetadataPolicies;
+import org.apereo.cas.oidc.federation.chain.OidcFederationResolutionBusyException;
+import org.apereo.cas.oidc.federation.chain.OidcFederationResolutionLimiter;
 import org.apereo.cas.oidc.federation.chain.OidcFederationTrustChainConstraints;
 import org.apereo.cas.oidc.federation.signature.OidcFederationJsonWebKeystoreService;
 import org.apereo.cas.oidc.federation.trustmark.OidcFederationTrustMarkValidator;
@@ -48,11 +51,14 @@ import org.springframework.http.HttpStatus;
  * anchor; without one, the request fails with {@code invalid_trust_chain}. The metadata of each entity type of the
  * subject, or of each requested type, is resolved with the metadata policies of the chain; types the constraints of
  * the chain do not allow are left out, and a policy that cannot apply fails the request with {@code invalid_metadata}.
- * Only valid trust marks are included, and the response expires with the chain or the first of those trust marks.
+ * Only valid trust marks are included, and the response expires with the chain or the first of those trust marks. A
+ * response for an authenticated requester is addressed to it with {@code aud}, and to no one else.
  * <p>
  * Resolved chains, and subjects that cannot be resolved, are kept per subject and trusted trust anchors for at most the
  * retention of unresolved entities, or until the chain or a trust mark expires, so that repeated requests do not cause
- * the chains to be resolved again. The number of kept resolutions is bounded. Responses are signed per request.
+ * the chains to be resolved again. The number of kept resolutions is bounded. Responses are signed per request. Each
+ * resolution runs within the limits of the resolution limiter, which bounds the requests it sends and how many run at
+ * once; one that cannot start is answered with {@code temporarily_unavailable} and is not remembered.
  *
  * @author Misagh Moayyed
  * @since 8.1.0
@@ -72,6 +78,8 @@ public class OidcFederationDefaultEntityResolver implements OidcFederationEntity
     private static final String INVALID_TRUST_CHAIN = "invalid_trust_chain";
 
     private static final String INVALID_METADATA = "invalid_metadata";
+
+    private static final String TEMPORARILY_UNAVAILABLE = "temporarily_unavailable";
 
     private static final String METADATA = "metadata";
 
@@ -97,6 +105,8 @@ public class OidcFederationDefaultEntityResolver implements OidcFederationEntity
 
     private final CheckedFunction<EntityID, Optional<EntityStatement>> subordinateStatements;
 
+    private final OidcFederationResolutionLimiter resolutionLimiter;
+
     private final Map<EntityID, Map<EntityID, TrustChainResolver>> trustChainResolvers = new ConcurrentHashMap<>();
 
     private final Cache<String, Resolution> resolutions = Caffeine.newBuilder()
@@ -105,7 +115,9 @@ public class OidcFederationDefaultEntityResolver implements OidcFederationEntity
         .build();
 
     @Override
-    public SignedJWT resolve(final String subject, final List<String> trustAnchors, final List<String> entityTypes) throws Exception {
+    public SignedJWT resolve(final String subject, final List<String> trustAnchors, final List<String> entityTypes,
+                             @Nullable final String audience)
+            throws Exception {
         if (!properties.getRole().isTrustAnchorOrIntermediate()) {
             throw new OidcFederationResolveException(HttpStatus.NOT_FOUND, NOT_FOUND,
                 "Federation role [%s] does not resolve entities".formatted(properties.getRole()));
@@ -129,15 +141,16 @@ public class OidcFederationDefaultEntityResolver implements OidcFederationEntity
                 "None of the requested trust anchors is trusted by this entity");
         }
         val key = Stream.concat(Stream.of(subject), trusted.stream().map(EntityID::getValue)).collect(Collectors.joining(" "));
-        val resolution = resolutions.get(key, _ -> resolveEntity(entityId, new EntityID(subject), trusted, resolvers));
+        val resolution = findResolution(key, entityId, new EntityID(subject), trusted, resolvers);
         if (resolution.failure() != null) {
             throw resolution.failure();
         }
-        return sign(entityId, Objects.requireNonNull(resolution.entity()), entityTypes);
+        return sign(entityId, Objects.requireNonNull(resolution.entity()), entityTypes, audience);
     }
 
     private Map<EntityID, TrustChainResolver> buildTrustChainResolvers(final EntityID entityId) {
-        val localRetriever = new OidcFederationLocalEntityStatementRetriever(retriever, entityId, entityConfiguration, subordinateStatements);
+        val localRetriever = new OidcFederationLocalEntityStatementRetriever(new OidcFederationBudgetedEntityStatementRetriever(retriever),
+            entityId, entityConfiguration, subordinateStatements);
         if (properties.getRole() == OidcFederationRole.TRUST_ANCHOR) {
             return Map.of(entityId, OidcFederationDefaultTrustChainResolver.buildTrustChainResolver(entityId, null, properties, localRetriever));
         }
@@ -145,6 +158,31 @@ public class OidcFederationDefaultEntityResolver implements OidcFederationEntity
         OidcFederationDefaultTrustChainResolver.buildTrustChainResolvers(properties, localRetriever)
             .forEach(resolver -> resolver.getTrustAnchors().keySet().forEach(trustAnchor -> resolvers.putIfAbsent(trustAnchor, resolver)));
         return resolvers;
+    }
+
+    private Resolution findResolution(final String key, final EntityID entityId, final EntityID subject,
+                                      final List<EntityID> trustAnchors, final Map<EntityID, TrustChainResolver> resolvers)
+            throws OidcFederationResolveException {
+        try {
+            return resolutions.get(key, _ -> resolveEntityWithinLimits(entityId, subject, trustAnchors, resolvers));
+        } catch (final OidcFederationResolutionBusyException e) {
+            LOGGER.warn("[{}] is not resolved now: [{}]", subject, e.getMessage());
+            throw new OidcFederationResolveException(HttpStatus.SERVICE_UNAVAILABLE, TEMPORARILY_UNAVAILABLE,
+                "Too many federation resolutions are running; try again later");
+        }
+    }
+
+    private Resolution resolveEntityWithinLimits(final EntityID entityId, final EntityID subject, final List<EntityID> trustAnchors,
+                                                 final Map<EntityID, TrustChainResolver> resolvers) {
+        try {
+            return resolutionLimiter.execute(() -> resolveEntity(entityId, subject, trustAnchors, resolvers));
+        } catch (final OidcFederationResolutionBusyException e) {
+            throw e;
+        } catch (final Exception e) {
+            LOGGER.warn("[{}] cannot be resolved: [{}]", subject, e.getMessage());
+            return new Resolution(null, new OidcFederationResolveException(HttpStatus.BAD_REQUEST, INVALID_TRUST_CHAIN,
+                "No valid trust chain to the requested trust anchors"), Beans.newDuration(properties.getUnresolvedEntityRetention()));
+        }
     }
 
     private Resolution resolveEntity(final EntityID entityId, final EntityID subject, final List<EntityID> trustAnchors,
@@ -201,7 +239,9 @@ public class OidcFederationDefaultEntityResolver implements OidcFederationEntity
             .toList();
     }
 
-    private SignedJWT sign(final EntityID entityId, final ResolvedEntity entity, final List<String> entityTypes) throws Exception {
+    private SignedJWT sign(final EntityID entityId, final ResolvedEntity entity, final List<String> entityTypes,
+                           @Nullable final String audience)
+            throws Exception {
         val chain = entity.trustChain();
         val metadata = new JSONObject();
         for (val entityType : readEntityTypes(chain, entityTypes)) {
@@ -225,14 +265,18 @@ public class OidcFederationDefaultEntityResolver implements OidcFederationEntity
         if (!entity.trustMarks().isEmpty()) {
             claims.claim(TRUST_MARKS, entity.trustMarks());
         }
+        if (StringUtils.isNotBlank(audience)) {
+            claims.audience(audience);
+        }
         return keystoreService.sign(claims.build(), RESOLVE_RESPONSE_JWT_TYPE);
     }
 
     private static List<EntityType> readEntityTypes(final TrustChain chain, final List<String> requested) {
-        val types = new LinkedHashSet<String>();
-        types.addAll(readMetadataTypes(chain.getLeafConfiguration()));
-        types.addAll(readMetadataTypes(chain.getSuperiorStatements().getFirst()));
-        return types.stream().filter(type -> requested.isEmpty() || requested.contains(type)).map(EntityType::new).toList();
+        return readMetadataTypes(chain.getLeafConfiguration())
+            .stream()
+            .filter(type -> requested.isEmpty() || requested.contains(type))
+            .map(EntityType::new)
+            .toList();
     }
 
     private static Set<String> readMetadataTypes(final EntityStatement statement) {

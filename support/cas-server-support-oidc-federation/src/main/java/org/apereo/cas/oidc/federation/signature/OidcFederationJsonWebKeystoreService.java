@@ -69,6 +69,17 @@ public interface OidcFederationJsonWebKeystoreService {
     JWKSet rotate() throws Exception;
 
     /**
+     * Rotate the keys when the rotation is due: when every future key has been published for at least the given time,
+     * so that superiors have had the time to learn it before it signs, and a rotation that runs again soon after, such
+     * as on a restart or on another node sharing the keys, leaves the keys as they are.
+     *
+     * @param published how long future keys must have been published
+     * @return the keys published after the rotation, if any
+     * @throws Exception the exception
+     */
+    JWKSet rotateWhenDue(Duration published) throws Exception;
+
+    /**
      * Retire the previous keys: they are no longer published in the entity configuration and are kept as historical
      * keys, without their private keys.
      *
@@ -76,6 +87,16 @@ public interface OidcFederationJsonWebKeystoreService {
      * @throws Exception the exception
      */
     JWKSet revoke() throws Exception;
+
+    /**
+     * Retire the previous keys that have been previous for at least the given time, so that what they signed shortly
+     * before the rotation can still be verified with the published keys.
+     *
+     * @param previous how long keys must have been previous
+     * @return the keys published after the revocation, if any
+     * @throws Exception the exception
+     */
+    JWKSet revokeWhenDue(Duration previous) throws Exception;
 
     /**
      * Revoke a key, such as one whose private key is believed compromised (OpenID Federation 1.0, section 8.7): it is

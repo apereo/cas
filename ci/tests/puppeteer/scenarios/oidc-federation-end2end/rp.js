@@ -106,6 +106,19 @@ class FederationRelyingParty {
      * subordinate definition of this relying party at the trust anchor holds, and addressed only to the trust anchor.
      */
     async trustMarkRequest(subject = ENTITY_ID) {
+        return new URLSearchParams({
+            trust_mark_type: RELYING_PARTY_TRUST_MARK,
+            sub: subject,
+            ...await this.federationClientAuthentication()
+        }).toString();
+    }
+
+    /**
+     * private_key_jwt client authentication at a federation endpoint of the trust anchor (OpenID Federation 1.0,
+     * section 8.8), signed with the federation key that the subordinate definition of this relying party holds and
+     * addressed only to the trust anchor.
+     */
+    async federationClientAuthentication() {
         const clientAssertion = await new jose.SignJWT({
             iss: ENTITY_ID,
             sub: ENTITY_ID,
@@ -114,12 +127,10 @@ class FederationRelyingParty {
             iat: now(),
             exp: now() + 60
         }).setProtectedHeader({alg: "RS256", kid: this.federationJwk.kid, typ: "JWT"}).sign(this.federationKey);
-        return new URLSearchParams({
-            trust_mark_type: RELYING_PARTY_TRUST_MARK,
-            sub: subject,
+        return {
             client_assertion_type: "urn:ietf:params:oauth:client-assertion-type:jwt-bearer",
             client_assertion: clientAssertion
-        }).toString();
+        };
     }
 
     async fetchStatement(url) {

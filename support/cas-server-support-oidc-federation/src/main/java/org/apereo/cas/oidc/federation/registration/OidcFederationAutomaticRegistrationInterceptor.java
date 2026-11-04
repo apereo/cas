@@ -62,7 +62,8 @@ import jakarta.servlet.http.HttpServletResponse;
  * is what the authorization endpoint receives again after the login, even once the request object has expired. A pushed authorization
  * request proves the keys through client authentication instead, which the pushed authorization endpoint requires of an
  * automatically registered client since its registration only allows asymmetric methods, so the authorization request
- * that refers to it by {@code request_uri} carries no request object. A request object encrypted to CAS is decrypted
+ * that refers to it by {@code request_uri} carries no request object; a client assertion sent there must have the OP
+ * Entity Identifier as its only {@code aud} (section 12.1.1.2), or the request is refused with {@code invalid_client}. A request object encrypted to CAS is decrypted
  * first and its nested JWT checked as above, while replay is tracked on the request object as sent. Requests that fail
  * are refused with {@code invalid_request} and are never redirected to the client, since its trust could not be
  * established.
@@ -92,6 +93,8 @@ public class OidcFederationAutomaticRegistrationInterceptor implements HandlerIn
     private static final long MAX_REQUEST_OBJECT_LIFETIME_SECONDS = Duration.ofMinutes(10).toSeconds();
 
     private static final String TRUST_CHAIN = "trust_chain";
+
+    private static final String INVALID_CLIENT = "invalid_client";
 
     private final OidcFederationAutomaticClientRegistration clientRegistration;
 
@@ -126,21 +129,52 @@ public class OidcFederationAutomaticRegistrationInterceptor implements HandlerIn
         if (!signedObjects.isEmpty()) {
             registeredService = clientRegistration.reevaluate(clientId, service -> !isSignedWithKeysOf(service, signedObjects), trustChain);
         }
-        if (authorizationRequest && registeredService instanceof final OidcRegisteredService oidcService
-            && OidcFederationAutomaticClientRegistration.isAutomaticallyRegistered(oidcService)
-            && !isPushedAuthorizationRequest(request)
-            && StringUtils.isBlank(request.getParameter(OidcConstants.REQUEST_URI))) {
+        if (!authorizationRequest || !(registeredService instanceof final OidcRegisteredService oidcService)
+            || !OidcFederationAutomaticClientRegistration.isAutomaticallyRegistered(oidcService)) {
+            return true;
+        }
+        if (isPushedAuthorizationRequest(request)) {
+            if (clientAssertion != null && !isAddressedOnlyTo(clientAssertion, issuerService.determineIssuer(Optional.of(oidcService)))) {
+                LOGGER.warn("Refusing the pushed authorization request of [{}]: its client assertion is not addressed only to CAS", clientId);
+                return refuse(response, HttpStatus.UNAUTHORIZED, INVALID_CLIENT, "Client assertion aud must only be the OP Entity Identifier");
+            }
+            return true;
+        }
+        if (StringUtils.isBlank(request.getParameter(OidcConstants.REQUEST_URI))) {
             val error = verifyRequestObject(request, oidcService);
             if (error.isPresent()) {
                 LOGGER.warn("Refusing the authorization request of [{}]: [{}]", clientId, error.get());
-                response.setStatus(HttpStatus.BAD_REQUEST.value());
-                response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-                response.getWriter().write(OAuth20Utils.toJson(
-                    OAuth20Utils.getErrorResponseBody(OAuth20Constants.INVALID_REQUEST, error.get())));
-                return false;
+                return refuse(response, HttpStatus.BAD_REQUEST, OAuth20Constants.INVALID_REQUEST, error.get());
             }
         }
         return true;
+    }
+
+    private static boolean refuse(final HttpServletResponse response, final HttpStatus status, final String error,
+                                  final String description)
+            throws IOException {
+        response.setStatus(status.value());
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        response.getWriter().write(OAuth20Utils.toJson(OAuth20Utils.getErrorResponseBody(error, description)));
+        return false;
+    }
+
+    /**
+     * Whether the client assertion is addressed only to the given entity: at the pushed authorization endpoint, the
+     * client assertion of an automatically registered relying party must have the OP Entity Identifier as its only
+     * audience (OpenID Federation 1.0, section 12.1.1.2), not its token endpoint nor any other value besides.
+     *
+     * @param clientAssertion the client assertion
+     * @param entityId        the entity identifier of CAS
+     * @return true or false
+     */
+    private static boolean isAddressedOnlyTo(final String clientAssertion, final String entityId) {
+        try {
+            return List.of(entityId).equals(JWTParser.parse(clientAssertion).getJWTClaimsSet().getAudience());
+        } catch (final ParseException e) {
+            LOGGER.trace("Client assertion cannot be parsed: [{}]", e.getMessage());
+            return false;
+        }
     }
 
     /**

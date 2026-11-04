@@ -10,10 +10,14 @@ import org.apereo.cas.oidc.federation.subordinate.OidcFederationSubordinate;
 import org.apereo.cas.oidc.federation.subordinate.OidcFederationSubordinateRepository;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.util.function.FunctionUtils;
+import com.nimbusds.jose.JWSAlgorithm;
+import com.nimbusds.jose.JWSHeader;
+import com.nimbusds.jose.crypto.RSASSASigner;
 import com.nimbusds.jose.crypto.factories.DefaultJWSVerifierFactory;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.gen.RSAKeyGenerator;
+import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 import com.nimbusds.openid.connect.sdk.federation.entities.EntityID;
 import com.nimbusds.openid.connect.sdk.federation.entities.EntityStatement;
@@ -27,17 +31,20 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import tools.jackson.databind.json.JsonMapper;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
@@ -94,6 +101,19 @@ class OidcFetchFederationEndpointControllerTests {
                     .andExpect(status().isNotFound())
                     .andExpect(jsonPath("$.error").value("not_found"))
                     .andExpect(jsonPath("$.error_description").value("Unknown subordinate entity"));
+        }
+
+        /**
+         * Errors are JSON (OpenID Federation 1.0, section 8.9) even when the request only accepts entity statements.
+         */
+        @Test
+        void verifyErrorIsJsonWhateverIsAccepted() throws Exception {
+            mockMvc.perform(get(FETCH_ENDPOINT_URL + "?sub=http://fake")
+                            .accept(OidcConstants.ENTITY_STATEMENT_CONTENT_TYPE)
+                            .with(withHttpRequestProcessor()))
+                    .andExpect(status().isNotFound())
+                    .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                    .andExpect(jsonPath("$.error").value("not_found"));
         }
 
         @Test
@@ -417,6 +437,10 @@ class OidcFetchFederationEndpointControllerTests {
 
         @BeforeEach
         void registerSubordinates() {
+            registerResolvableSubordinates(subordinateRepository);
+        }
+
+        static void registerResolvableSubordinates(final OidcFederationSubordinateRepository subordinateRepository) {
             val mapper = JsonMapper.builder().build();
             val federationKeys = mapper.readTree('[' + LEAF_KEY.toPublicJWK().toJSONString() + ']');
             val metadataPolicy = mapper.readTree("""
@@ -435,6 +459,7 @@ class OidcFetchFederationEndpointControllerTests {
                 .andReturn();
             val metadata = (Map) SignedJWT.parse(result.getResponse().getContentAsString()).getJWTClaimsSet().getClaim("metadata");
             assertEquals(ISSUER + OidcConstants.RESOLVE_FEDERATION_URL, ((Map) metadata.get("federation_entity")).get("federation_resolve_endpoint"));
+            assertNull(((Map) metadata.get("federation_entity")).get("federation_resolve_endpoint_auth_methods"));
         }
 
         @Test
@@ -488,8 +513,15 @@ class OidcFetchFederationEndpointControllerTests {
 
         @Test
         void verifyErrors() throws Exception {
-            mockMvc.perform(get(RESOLVE_ENDPOINT_URL).param("sub", RELYING_PARTY).with(withHttpRequestProcessor()))
+            mockMvc.perform(post(RESOLVE_ENDPOINT_URL).contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                    .param("sub", RELYING_PARTY).param("trust_anchor", ISSUER).with(withHttpRequestProcessor()))
                 .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error").value(OAuth20Constants.INVALID_REQUEST))
+                .andExpect(jsonPath("$.error_description").value("Client authentication is not supported"));
+            mockMvc.perform(get(RESOLVE_ENDPOINT_URL).param("sub", RELYING_PARTY)
+                    .accept(OidcConstants.RESOLVE_RESPONSE_CONTENT_TYPE).with(withHttpRequestProcessor()))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.error").value(OAuth20Constants.INVALID_REQUEST));
             mockMvc.perform(get(RESOLVE_ENDPOINT_URL).param("sub", "http://rp.resolve.example.org").param("trust_anchor", ISSUER)
                     .with(withHttpRequestProcessor()))
@@ -506,6 +538,52 @@ class OidcFetchFederationEndpointControllerTests {
         }
 
         /**
+         * A subordinate definition whose metadata, metadata policy or constraints are not objects, or whose critical
+         * operators are null, is answered with a JSON server error instead of failing the request.
+         */
+        @Test
+        void verifyMalformedSubordinatesAnswerServerError() throws Exception {
+            val mapper = JsonMapper.builder().build();
+            val keys = mapper.readTree('[' + LEAF_KEY.toPublicJWK().toJSONString() + ']');
+            val malformed = Map.of(
+                "https://array-metadata.resolve.example.org", new OidcFederationSubordinate().setMetadata(mapper.readTree("[]")),
+                "https://string-policy.resolve.example.org", new OidcFederationSubordinate().setMetadataPolicy(mapper.readTree("\"policy\"")),
+                "https://array-constraints.resolve.example.org", new OidcFederationSubordinate().setConstraints(mapper.readTree("[1]")));
+            malformed.forEach((entityId, subordinate) -> {
+                subordinateRepository.getSubordinates().put(entityId, subordinate.setEntityId(entityId).setFederationKeys(keys));
+                FunctionUtils.doUnchecked(_ -> mockMvc.perform(get(FETCH_ENDPOINT_URL).param("sub", entityId).with(withHttpRequestProcessor()))
+                    .andExpect(status().isInternalServerError())
+                    .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                    .andExpect(jsonPath("$.error").value("server_error")));
+            });
+            val withoutCrit = "https://null-crit.resolve.example.org";
+            subordinateRepository.getSubordinates().put(withoutCrit, new OidcFederationSubordinate().setEntityId(withoutCrit)
+                .setFederationKeys(keys).setMetadataPolicyCrit(null).setMetadata(mapper.readTree("null")));
+            mockMvc.perform(get(FETCH_ENDPOINT_URL).param("sub", withoutCrit).with(withHttpRequestProcessor()))
+                .andExpect(status().isOk());
+        }
+
+        /**
+         * The listing filters by the entity types of a subordinate as its definition declares them, or else by its
+         * metadata: the subordinates of these tests only carry a metadata policy for relying parties, which does not
+         * make them relying parties.
+         */
+        @Test
+        void verifyListingFiltersByEntityTypes() throws Exception {
+            val response = mockMvc.perform(get("/cas/" + OidcConstants.BASE_OIDC_URL + OidcConstants.LIST_FEDERATION_URL)
+                    .param("entity_type", "openid_relying_party")
+                    .with(withHttpRequestProcessor()))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+            val listing = JsonMapper.builder().build().readValue(response, List.class);
+            assertFalse(listing.contains(RELYING_PARTY), response);
+            assertTrue(listing.contains(RP), response);
+            assertTrue(listing.contains(RP_NO_METADATA), response);
+        }
+
+        /**
          * A subject that cannot be resolved is remembered, so that asking again does not resolve its trust chains again.
          */
         @Test
@@ -519,7 +597,7 @@ class OidcFetchFederationEndpointControllerTests {
             verify(entityStatementRetriever, times(1)).fetchEntityConfiguration(new EntityID(UNREACHABLE));
         }
 
-        private static EntityStatement leafConfiguration(final String entityId, final String applicationType) throws Exception {
+        static EntityStatement leafConfiguration(final String entityId, final String applicationType) throws Exception {
             val now = Instant.now(Clock.systemUTC());
             val claims = new EntityStatementClaimsSet(new EntityID(entityId), new EntityID(entityId),
                 Date.from(now.minusSeconds(60)), Date.from(now.plusSeconds(86400)), new JWKSet(LEAF_KEY.toPublicJWK()));
@@ -546,6 +624,105 @@ class OidcFetchFederationEndpointControllerTests {
                 });
                 return retriever;
             }
+        }
+    }
+
+    /**
+     * Client authentication at the resolve endpoint (OpenID Federation 1.0, section 8.8), required: only a subordinate
+     * authenticated with {@code private_key_jwt}, once per client assertion, gets a resolve response, addressed to it.
+     */
+    @SpringBootTest(
+        classes = AbstractOidcTrustAnchorFederationTests.SharedTestConfiguration.class,
+        properties = {
+            "cas.server.name=https://sso.example.org/",
+            "cas.server.prefix=https://sso.example.org/cas",
+            "cas.authn.oidc.core.issuer=https://sso.example.org/cas/oidc",
+            "cas.authn.oidc.federation.role=TRUST_ANCHOR",
+            "cas.authn.oidc.federation.jwks-file=file:${#systemProperties['java.io.tmpdir']}/authenticated-resolve-federation.jwks",
+            "cas.authn.oidc.federation.subordinate-directory=./src/test/resources/subordinates",
+            "cas.authn.oidc.federation.resolve-endpoint-authentication=REQUIRED"
+        }, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+    @Nested
+    @Import(ResolveTrustAnchorFederationTests.ResolveTestConfiguration.class)
+    class AuthenticatedResolveTrustAnchorFederationTests extends AbstractOidcTrustAnchorFederationTests {
+        private static final String RESOLVE_ENDPOINT_URL = "/cas/" + OidcConstants.BASE_OIDC_URL + OidcConstants.RESOLVE_FEDERATION_URL;
+
+        private static final String REQUESTER = "https://requester.resolve.example.org";
+
+        private static final RSAKey REQUESTER_KEY = FunctionUtils.doUnchecked(() -> new RSAKeyGenerator(2048).keyID("requester-federation").generate());
+
+        @Autowired
+        @Qualifier("oidcFederationSubordinateRepository")
+        private OidcFederationSubordinateRepository subordinateRepository;
+
+        @BeforeEach
+        void registerSubordinates() {
+            ResolveTrustAnchorFederationTests.registerResolvableSubordinates(subordinateRepository);
+            val federationKeys = JsonMapper.builder().build().readTree('[' + REQUESTER_KEY.toPublicJWK().toJSONString() + ']');
+            subordinateRepository.getSubordinates().put(REQUESTER,
+                new OidcFederationSubordinate().setEntityId(REQUESTER).setFederationKeys(federationKeys));
+        }
+
+        @Test
+        void verifyOnlyAuthenticatedSubordinateResolves() throws Exception {
+            val configuration = mockMvc.perform(get("/cas/" + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.WELL_KNOWN_OPENID_FEDERATION_URL)
+                    .with(withHttpRequestProcessor()))
+                .andExpect(status().isOk())
+                .andReturn();
+            val metadata = (Map) SignedJWT.parse(configuration.getResponse().getContentAsString()).getJWTClaimsSet().getClaim("metadata");
+            val federationEntity = (Map) metadata.get("federation_entity");
+            assertEquals(List.of("private_key_jwt"), federationEntity.get("federation_resolve_endpoint_auth_methods"));
+            assertNotNull(federationEntity.get("endpoint_auth_signing_alg_values_supported"));
+
+            mockMvc.perform(get(RESOLVE_ENDPOINT_URL).param("sub", ResolveTrustAnchorFederationTests.RELYING_PARTY)
+                    .param("trust_anchor", ISSUER).with(withHttpRequestProcessor()))
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.error").value("invalid_client"));
+
+            val assertion = clientAssertion(REQUESTER_KEY, REQUESTER, List.of(ISSUER));
+            val result = mockMvc.perform(authenticatedRequest(assertion))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(OidcConstants.RESOLVE_RESPONSE_CONTENT_TYPE))
+                .andReturn();
+            val claims = SignedJWT.parse(result.getResponse().getContentAsString()).getJWTClaimsSet();
+            assertEquals(ResolveTrustAnchorFederationTests.RELYING_PARTY, claims.getSubject());
+            assertEquals(List.of(REQUESTER), claims.getAudience());
+
+            mockMvc.perform(authenticatedRequest(assertion))
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.error").value("invalid_client"));
+            mockMvc.perform(authenticatedRequest(clientAssertion(REQUESTER_KEY, REQUESTER, List.of(ISSUER, "https://other.example.org"))))
+                .andExpect(status().isUnauthorized());
+            mockMvc.perform(authenticatedRequest(clientAssertion(
+                    FunctionUtils.doUnchecked(() -> new RSAKeyGenerator(2048).keyID("requester-federation").generate()), REQUESTER, List.of(ISSUER))))
+                .andExpect(status().isUnauthorized());
+            mockMvc.perform(post(RESOLVE_ENDPOINT_URL).contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                    .param("sub", ResolveTrustAnchorFederationTests.RELYING_PARTY).param("trust_anchor", ISSUER)
+                    .with(withHttpRequestProcessor()))
+                .andExpect(status().isUnauthorized());
+        }
+
+        private MockHttpServletRequestBuilder authenticatedRequest(final String clientAssertion) {
+            return post(RESOLVE_ENDPOINT_URL).contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .param("sub", ResolveTrustAnchorFederationTests.RELYING_PARTY)
+                .param("trust_anchor", ISSUER)
+                .param(OAuth20Constants.CLIENT_ASSERTION_TYPE, OAuth20Constants.CLIENT_ASSERTION_TYPE_JWT_BEARER)
+                .param(OAuth20Constants.CLIENT_ASSERTION, clientAssertion)
+                .with(withHttpRequestProcessor());
+        }
+
+        private static String clientAssertion(final RSAKey key, final String issuer, final List<String> audience) throws Exception {
+            val claims = new JWTClaimsSet.Builder()
+                .issuer(issuer)
+                .subject(issuer)
+                .audience(audience)
+                .jwtID(UUID.randomUUID().toString())
+                .issueTime(new Date())
+                .expirationTime(Date.from(Instant.now().plusSeconds(60)))
+                .build();
+            val jwt = new SignedJWT(new JWSHeader.Builder(JWSAlgorithm.RS256).keyID(key.getKeyID()).build(), claims);
+            jwt.sign(new RSASSASigner(key));
+            return jwt.serialize();
         }
     }
 }

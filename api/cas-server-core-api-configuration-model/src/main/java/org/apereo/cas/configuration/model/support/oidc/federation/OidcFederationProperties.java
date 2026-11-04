@@ -75,6 +75,20 @@ public class OidcFederationProperties implements Serializable {
     private int maxPathLength = 3;
 
     /**
+     * The maximum number of requests a single resolution may send: entity configurations, subordinate statements,
+     * historical keys and trust mark status requests, counted together across the trust chains of the entity and those
+     * of the issuers of its trust marks. Statements already fetched in the same resolution are reused and not counted
+     * again. A resolution that needs more fails, which bounds what a single client id or resolve request can cost.
+     */
+    private int maxRequestsPerResolution = 50;
+
+    /**
+     * The maximum number of resolutions that run at the same time, for automatic registration and the resolve endpoint
+     * together. A resolution that cannot start within a few seconds fails without being remembered as unresolved.
+     */
+    private int maxConcurrentResolutions = 10;
+
+    /**
      * How long an entity identifier whose trust chains could not be resolved is remembered.
      * Within that time, authorization requests that carry it as client id do not cause trust chains
      * to be resolved again, and a registration whose refresh failed is kept as it is. A trust anchor or intermediate
@@ -125,6 +139,14 @@ public class OidcFederationProperties implements Serializable {
      * Accepted values are {@code NONE}, {@code OPTIONAL} and {@code REQUIRED}.
      */
     private OidcFederationEndpointAuthenticationModes trustMarkEndpointAuthentication = OidcFederationEndpointAuthenticationModes.NONE;
+
+    /**
+     * Client authentication at the resolve endpoint of this entity as a trust anchor or intermediate. Authenticated
+     * requests use {@code POST} and {@code private_key_jwt}, signed with the federation keys of a subordinate of this
+     * entity as its subordinate definition holds them, and their resolve responses are addressed to the requester.
+     * Accepted values are {@code NONE}, {@code OPTIONAL} and {@code REQUIRED}.
+     */
+    private OidcFederationEndpointAuthenticationModes resolveEndpointAuthentication = OidcFederationEndpointAuthenticationModes.NONE;
 
     /**
      * Rotation of the federation keys: the future key becomes current and starts signing, the current key

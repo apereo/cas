@@ -395,6 +395,37 @@ class OpenIdFederationAuthorizationCodeResponseTypeAuthorizationRequestValidator
     }
 
     /**
+     * At the pushed authorization endpoint, the client assertion of an automatically registered relying party must be
+     * addressed only to the OP Entity Identifier (OpenID Federation 1.0, section 12.1.1.2).
+     */
+    @Test
+    void verifyPushedClientAssertionIsAddressedOnlyToTheProvider() throws Throwable {
+        val clientId = newSignedClientId();
+        for (val audience : List.of(List.of(OP_ENTITY_ID, "https://other.example.org"), List.of(OP_ENTITY_ID + "/token"))) {
+            val refused = preHandle(PUSHED_AUTHORIZE_URL, clientId, clientAssertionParameters(clientId, audience));
+            assertFalse(refused.getLeft(), audience::toString);
+            assertEquals(HttpStatus.UNAUTHORIZED.value(), refused.getRight().getStatus());
+            assertTrue(refused.getRight().getContentAsString().contains("invalid_client"));
+        }
+        assertTrue(preHandle(PUSHED_AUTHORIZE_URL, clientId, clientAssertionParameters(clientId, List.of(OP_ENTITY_ID))).getLeft());
+    }
+
+    private static Map<String, String> clientAssertionParameters(final String clientId, final List<String> audience) throws Exception {
+        val claims = new JWTClaimsSet.Builder()
+            .issuer(clientId)
+            .subject(clientId)
+            .audience(audience)
+            .jwtID(UUID.randomUUID().toString())
+            .issueTime(new Date())
+            .expirationTime(Date.from(Instant.now().plusSeconds(60)))
+            .build();
+        val assertion = new SignedJWT(new JWSHeader.Builder(JWSAlgorithm.RS256).keyID(RELYING_PARTY_KEY.getKeyID()).build(), claims);
+        assertion.sign(new RSASSASigner(RELYING_PARTY_KEY));
+        return Map.of(OAuth20Constants.CLIENT_ASSERTION_TYPE, OAuth20Constants.CLIENT_ASSERTION_TYPE_JWT_BEARER,
+            OAuth20Constants.CLIENT_ASSERTION, assertion.serialize());
+    }
+
+    /**
      * A relying party that rolls its keys over (OpenID Federation 1.0, section 12.3) is resolved again once when its
      * request object is signed with a key its registration does not hold, and not again for a while after that.
      */
@@ -496,10 +527,10 @@ class OpenIdFederationAuthorizationCodeResponseTypeAuthorizationRequestValidator
 
     /**
      * A sent trust chain may register a relying party or replace its registration, but only with an entity
-     * configuration issued after the one the registration was built from, and only when the request that carries it
-     * is signed with the keys it resolves to: statements are public, so an older chain, or the very chain of the
-     * registration, replayed with a request the relying party did not sign must not keep keys it has replaced. The
-     * trust chains are resolved instead.
+     * configuration not issued before the one the registration was built from, and only when the request that carries
+     * it is signed with the keys it resolves to: statements are public, so an older chain, or any chain replayed with a
+     * request the relying party did not sign, must not keep keys it has replaced. The trust chains are resolved
+     * instead. A chain as new as the registration, signed with its keys, is used.
      */
     @Test
     void verifySentTrustChainCannotRollBackRegistration() throws Throwable {
@@ -509,12 +540,12 @@ class OpenIdFederationAuthorizationCodeResponseTypeAuthorizationRequestValidator
         assertEquals("fetched-service", rolledBack.getName());
         assertEquals("200", issuedAt(rolledBack));
 
-        val replayedClientId = "https://rp-sent-" + UUID.randomUUID() + ".example.org";
-        val registered = clientRegistration.register(replayedClientId, List.of("100"), _ -> true);
+        val sameAgeClientId = "https://rp-sent-" + UUID.randomUUID() + ".example.org";
+        val registered = clientRegistration.register(sameAgeClientId, List.of("100"), _ -> true);
         assertEquals("sent-service", registered.getName());
-        val replayed = clientRegistration.reevaluate(replayedClientId, service -> service.getId() == registered.getId(), List.of("100"));
-        assertEquals("fetched-service", replayed.getName());
-        assertEquals("200", issuedAt(replayed));
+        val sameAge = clientRegistration.reevaluate(sameAgeClientId, service -> service.getId() == registered.getId(), List.of("100"));
+        assertEquals("sent-service", sameAge.getName());
+        assertEquals("100", issuedAt(sameAge));
 
         val unsignedClientId = "https://rp-sent-" + UUID.randomUUID() + ".example.org";
         assertEquals("fetched-service", clientRegistration.register(unsignedClientId, List.of("100"), _ -> false).getName());

@@ -19,6 +19,7 @@ import org.jspecify.annotations.Nullable;
 import org.springframework.http.CacheControl;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import tools.jackson.databind.JsonNode;
 import jakarta.servlet.http.HttpServletRequest;
@@ -41,10 +42,24 @@ abstract class AbstractOidcFederationEndpointController extends AbstractControll
     protected @Nullable ResponseEntity retrieveInvalidIssuerError(
         final HttpServletRequest request, final HttpServletResponse response, final String path) {
         if (!oidcIssuerService.validateIssuer(request, List.of(path))) {
-            val body = OAuth20Utils.getErrorResponseBody(OAuth20Constants.INVALID_REQUEST, "Invalid issuer");
-            return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+            return errorResponse(HttpStatus.BAD_REQUEST, OAuth20Constants.INVALID_REQUEST, "Invalid issuer");
         }
         return null;
+    }
+
+    /**
+     * A JSON error response (OpenID Federation 1.0, section 8.9). Its content type is set, so that it is sent as JSON
+     * whatever the request accepts, such as the JWT media type of the endpoint, instead of failing with {@code 406}.
+     *
+     * @param status      the status
+     * @param error       the error code
+     * @param description the error description
+     * @return the response
+     */
+    protected static ResponseEntity errorResponse(final HttpStatus status, final String error, @Nullable final String description) {
+        return ResponseEntity.status(status)
+            .contentType(MediaType.APPLICATION_JSON)
+            .body(OAuth20Utils.getErrorResponseBody(error, description));
     }
 
     protected FederationEntityMetadata buildMetadata(final String issuer) throws URISyntaxException {

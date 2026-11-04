@@ -1,5 +1,8 @@
 {
   "entityId": "http://rpnometadata",
+  "entityTypes": [
+    "openid_relying_party"
+  ],
   "metadataPolicy": {
     "openid_relying_party": {
       "scope": {

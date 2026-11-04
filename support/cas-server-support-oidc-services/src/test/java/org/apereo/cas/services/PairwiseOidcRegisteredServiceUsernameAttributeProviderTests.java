@@ -96,4 +96,43 @@ class PairwiseOidcRegisteredServiceUsernameAttributeProviderTests {
         val uid1 = provider.resolveUsername(usernameContext);
         assertEquals(uid1, uid);
     }
+
+    @Test
+    void verifySectorIdentifierOfRegisteredRedirectUris() throws Throwable {
+        val applicationContext = new StaticApplicationContext();
+        applicationContext.refresh();
+
+        val provider = new PairwiseOidcRegisteredServiceUsernameAttributeProvider();
+        provider.setPersistentIdGenerator(new ShibbolethCompatiblePersistentIdGenerator("cpaOl1pwGZ439!!"));
+
+        val registeredService = new OidcRegisteredService();
+        registeredService.setName("verifySectorIdentifierOfRegisteredRedirectUris");
+        registeredService.setClientId("clientid");
+        registeredService.setSubjectType(OidcSubjectTypes.PAIRWISE.getType());
+        registeredService.setServiceId(OidcRedirectUriUtils.toServiceId(List.of("https://sso.example.org/cb?x=1", "https://sso.example.org/other")));
+        assertTrue(registeredService.matches("https://sso.example.org/cb?x=1"));
+        assertFalse(registeredService.matches("https://SSO.example.org/cb?x=1"));
+        assertFalse(registeredService.matches("https://sso.example.org/cbXx=1"));
+        assertEquals(List.of("https://sso.example.org/cb?x=1", "https://sso.example.org/other"),
+            OidcRedirectUriUtils.toRedirectUris(registeredService.getServiceId()));
+
+        val usernameContext = RegisteredServiceUsernameProviderContext.builder()
+            .registeredService(registeredService)
+            .service(RegisteredServiceTestUtils.getService())
+            .principal(RegisteredServiceTestUtils.getPrincipal("casuser"))
+            .applicationContext(applicationContext)
+            .build();
+        assertEquals("9IOlxFj2XgfhkNJieynbw+Pm+4E=", provider.resolveUsername(usernameContext));
+
+        registeredService.setServiceId("^(\\Qhttps://sso.example.org/cb\\E|\\Qhttps://other.example.org/cb\\E)$");
+        assertEquals(List.of("https://sso.example.org/cb", "https://other.example.org/cb"),
+            OidcRedirectUriUtils.toRedirectUris(registeredService.getServiceId()));
+        assertEquals("9IOlxFj2XgfhkNJieynbw+Pm+4E=", provider.resolveUsername(usernameContext));
+
+        registeredService.setServiceId(OidcRedirectUriUtils.toServiceId(List.of("com.example.app:/callback")));
+        val nativeUid = provider.resolveUsername(usernameContext);
+        assertNotEquals("9IOlxFj2XgfhkNJieynbw+Pm+4E=", nativeUid);
+        registeredService.setClientId("otherclientid");
+        assertNotEquals(nativeUid, provider.resolveUsername(usernameContext));
+    }
 }

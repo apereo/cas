@@ -237,7 +237,9 @@ description: "Review and change CAS OAuth2/OIDC protocol behavior: token endpoin
 - Encrypted request objects (OIDC Core 6.3.1): `OidcRequestObjectDecrypter` (oidc-core-api, bean `oidcRequestObjectDecrypter`)
   decrypts with every encryption key of the OIDC keystore with a private key, any rotation state (read through
   `OidcJsonWebKeystoreGeneratorService`, like the JWKS endpoint; the keystore cache holds only current keys, but clients
-  encrypt to whatever the JWKS lists), by `kid` or each key in turn; algorithms limited to the discovery lists, `zip`
+  encrypt to whatever the JWKS lists; the decrypter takes it as a `Supplier` because it is an `@EventListener` for
+  keystore events that the generator publishes while it is created, so a direct dependency is a circular reference
+  whenever the keystore is generated at startup), by `kid` or each key in turn; algorithms limited to the discovery lists, `zip`
   refused; an encrypted unsigned payload becomes a `PlainJWT`. It runs through the
   `DefaultOAuth20RequestParameterResolver.decryptRequestObject` hook (OIDC resolver overrides it) before
   `JwtBuilder.unpack`, which verifies with the client's keys; never let `unpack` see a JWE: its service cipher decrypts
@@ -256,7 +258,12 @@ description: "Review and change CAS OAuth2/OIDC protocol behavior: token endpoin
   current key through `EntityStatement.sign(claims, jwk, alg)`. `rotate()` without a future key only adds one;
   `revoke()` retires previous keys. Historical keys at `/oidc/federation_historical_keys` (all roles, ignored by
   security, `application/jwk-set+jwt`, `typ` `jwk-set+jwt`). Schedules `cas.authn.oidc.federation.rotation|revocation`
-  and actuator `oidcFederationJwks` (GET, POST rotate/revoke). Startup never writes an existing keystore file.
+  and actuator `oidcFederationJwks` (GET, POST rotate/revoke). Startup never writes an existing keystore file. Schedules
+  call `rotateWhenDue`/`revokeWhenDue` with `getScheduledKeyAge` (half the repeat interval, or of the gap between two
+  cron fires): rotate only when every future key's `iat` is that old, retire only keys whose `previous_since` (set by
+  `rotate()`; stamped on first sight for older files) is that old, so `start-delay` runs after restarts and other nodes
+  are no-ops. The actuator stays forced. The service re-reads the file when its `lastModified` changes (shared keystore
+  across nodes); custom key members (`iat`, `previous_since`) are dropped by nimbus `JWK.parse`, so never published.
 - OIDC keystore key algorithms: `OidcJsonWebKeyStoreUtils.getSigningAlgorithm(JsonWebKey)` is the one curve-to-`alg`
   map (P-256/384/521, secp256k1, RSA → `RS256`, else null); reuse it (OID4VC issuer and verifier do) instead of writing
   another. Generated EC signing keys carry it, EC encryption keys carry no `alg` (like RSA ones). Key size 384 → P-384,
@@ -284,11 +291,17 @@ description: "Review and change CAS OAuth2/OIDC protocol behavior: token endpoin
   `HardTimeoutExpirationPolicy` of `max(transient lifetime, until no longer acceptable)` (transient lifetime from
   `factory.getExpirationPolicyBuilder().buildTicketExpirationPolicy()`). Federation request objects: at most 10 minutes
   (`exp - now`, `exp - iat`); DPoP: `2 x skew` (nimbus accepts `iat` within ±skew). Never rely on the default TST lifetime.
-- Redirect URIs to service ids: always `OidcClientRegistrationUtils.toServiceId` (`^(Pattern.quote|...)$`, full-regex
-  match) and back with `toRedirectUris` for registration responses; never join raw URIs (`.` matched look-alike hosts,
-  `?` broke URIs with a query, `,` never matched). Used by dynamic registration, client ID metadata documents, federation.
-- Request objects: `DefaultOAuth20RequestParameterResolver.unpackRequestObject` is the verification hook;
-  `OidcRequestParameterResolver` verifies `HS*` with the client's unexpired, decoded secrets (min length per alg via
+- Redirect URIs to service ids: always `OidcClientRegistrationUtils.toServiceId` (delegates to
+  `OidcRedirectUriUtils` in oidc-services: `(?-i)^(Pattern.quote|...)$`, full-regex match; `(?-i)` because
+  `RegexUtils.createPattern` is case-insensitive by default) and back with `toRedirectUris` for registration responses
+  (older `^(\Q..\E)$` ids still parse); never join raw URIs (`.` matched look-alike hosts, `?` broke URIs with a query,
+  `,` never matched). Used by dynamic registration, client ID metadata documents, federation. Anything that reads a
+  host from a service id must go through `toRedirectUris` (`UriComponentsBuilder` finds no host after `(?-i)`); the
+  pairwise sector identifier does: first redirect URI host, else the client id for built ids, else null.
+- Request objects: `DefaultOAuth20RequestParameterResolver.unpackRequestObject` is the verification hook; the unpacked
+  request object is cached as a request attribute, so tests need a fresh request for each verification they assert;
+  `OidcRequestParameterResolver` verifies `HS*` with the client's secrets that `OAuth20ClientSecretValidator` (expiry,
+  cipher executor) keeps, decoded (min length per alg via
   `MACSigner.getMinRequiredSecretLength`), the rest through `JwtBuilder.unpack` with the client's keys. Clients without
   keys otherwise fall back to CAS's own token keys, which never verify a client's object.
 - `OidcRequestObjectDecrypter.getDecryptionKeys()` is the cached (JWKS cache period) source of CAS encryption keys in
@@ -298,7 +311,13 @@ description: "Review and change CAS OAuth2/OIDC protocol behavior: token endpoin
   to the entity id (OID4VP `openid_federation:` client id); the raw `cas.authn.oidc.core.issuer` may end with `/`.
 - Subordinate statements: `federation_fetch/list/trust_mark_status_endpoint` are stripped from `federation_entity`
   (entity configuration only, spec 8.1/8.2/8.4); `constraints` come from the subordinate file only.
-- Historical keys (`chain/OidcFederationHistoricalKeys`): fetch + verify `jwk-set+jwt`, `isRevoked`, `mayHaveSigned`
+- Historical keys (`chain/OidcFederationHistoricalKeys`): fetch (https only, every key must carry `exp`, else the whole
+  set is refused) + verify `jwk-set+jwt`, `mayHaveSigned` (also used by the TA check, so a key retired before the
+  statement's `iat` refuses it; tests serve historical keys from `MockWebServer(true, ...)` with nimbus
+  `HTTPRequest.setDefaultSSLSocketFactory`/`HostnameVerifier` trust-all in `@BeforeAll`, from `CasSSLContext.disabled()`,
+  which lives in `core-authentication-api`: a test-only dependency of the federation module, since `implementation`
+  dependencies of other modules are not on its test classpath). The trust mark validator keeps
+  them a minute per issuer/metadata/keys (failures as empty), so vary the endpoint path per test phase.
   (never revoked, statement `iat` <= key `exp`). Retired, unrevoked keys keep statements and trust marks valid (spec
   8.7): the issuer's status endpoint looks the `kid` up in `getHistoricalKeys()`, the validator falls back to the
   issuer's historical keys endpoint (`resolveVerificationKeys`). Revoked-key checks match by `kid`, so every chain
@@ -306,7 +325,12 @@ description: "Review and change CAS OAuth2/OIDC protocol behavior: token endpoin
   key when the header has no `kid`, which let a statement signed with a revoked but still trusted key pass.
   `isSignedWithRevokedTrustAnchorKey` (now static in `OidcFederationHistoricalKeys`) always fetches the TA entity
   configuration through the resolver's retriever: a sent chain's TA configuration may be forged with the revoked key and
-  advertise no (or someone else's) historical keys endpoint.
+  advertise no (or someone else's) historical keys endpoint. The trust mark validator's `resolveTrustAnchorConfiguration`
+  also always fetches (never the chain's TA configuration), so neither check depends on the other running first. It fails closed: TA configuration or advertised historical
+  keys unobtainable/unverifiable means revoked (no endpoint advertised means none revoked); resolver tests stub the TA
+  configuration (`trustAnchorPublishesNoHistoricalKeys`). `OidcRequestObjectDecrypter` drops its decryption keys on the
+  keystore generated/modified/rotated events (`@EventListener`) and caches a keystore without encryption keys for at
+  most a minute.
 - Resolve endpoint (spec 8.3, `resolve/OidcFederationDefaultEntityResolver`, `/oidc/resolve`, TA + intermediate, GET
   only): TA resolves to itself, intermediate to `trust-anchors` (else authority hints). Its own EC and subordinate
   statements come from `chain/OidcFederationLocalEntityStatementRetriever` (wraps the `oidcFederationEntityStatementRetriever`
@@ -314,7 +338,10 @@ description: "Review and change CAS OAuth2/OIDC protocol behavior: token endpoin
   no self-HTTP. nimbus `TrustChainResolver` chains carry no TA configuration and `TrustChain` needs at least one superior
   (a TA cannot resolve itself): fetch + verify the TA EC once and rebuild with the 3-arg constructor so `trust_chain` ends
   with it. Resolutions/failures cached per (sub, trusted TAs) for min(retention, exp); signed per request. Trust marks via
-  `OidcFederationTrustMarkValidator.resolveValidTrustMarks`.
+  `OidcFederationTrustMarkValidator.resolveValidTrustMarks`. Authenticated POST (8.8, `resolve-endpoint-authentication`,
+  subordinates only through `OidcFederationSubordinateClientAuthenticator`) adds `aud` = requester at signing; the
+  cache holds the resolution, never a signed response. `resolveMetadata` refuses entity types the leaf EC lacks
+  (superior `metadata`/`value`/`default` must not create one), so resolve types come from the leaf only.
 - Client of an authorization request: validators read `client_id` from the request object first, so the federation
   interceptor uses the query `client_id`, else the request object's (also on `/oauth2.0/authorize`, registered there at
   order 0: the OAuth interceptor at order 1 redirects to the login first, so order 50 only ran after the login),
@@ -327,10 +354,11 @@ description: "Review and change CAS OAuth2/OIDC protocol behavior: token endpoin
   exp + skew (the pattern of `OidcJwtAuthenticator.registerJwtIdentifier`; never the default transient lifetime).
   Trust mark endpoint: `trust-mark-endpoint-authentication` NONE/OPTIONAL/REQUIRED; POST form, requester must be the
   `sub`; metadata `federation_trust_mark_endpoint_auth_methods` + `endpoint_auth_signing_alg_values_supported`.
-  Errors: `invalid_client` 401. Tests can add a subordinate through `getSubordinates()` (mutable map).
+  Errors: `invalid_client` 401. Tests can add a subordinate through `getSubordinates()` (a `ConcurrentHashMap`;
+  definitions without `entityId` are skipped). The jti check-and-record runs under a striped lock per node.
 - Sent trust chains (`trust_chain` header): statements are public, so a verified chain proves nothing about the sender.
   `OidcFederationTrustChainResolver.resolveSentTrustChain` only verifies (no fallback); the registration uses it only
-  when strictly newer (`>` on the `OPENIDFEDERATION_ENTITY_CONFIGURATION_ISSUED_AT` property) than the registration and
+  when not older (`>=` on the `OPENIDFEDERATION_ENTITY_CONFIGURATION_ISSUED_AT` property) than the registration and
   when the signed objects verify with the keys it resolves to (`reevaluate` passes `stale.negate()`), else resolves.
   The reevaluation slot is consumed before verification by design; it must always end in a fresh or proven chain.
   Federation `jwks_uri` must be `https` (`extractRegisteredService`), else `file:`/`jar:` reach the keystore loader.
@@ -348,7 +376,18 @@ description: "Review and change CAS OAuth2/OIDC protocol behavior: token endpoin
   unknown ops, `PolicyViolationException` when critical, split a `scope` string operand), combines from the TA down and
   applies with `scope` as a list. Subordinate files carry optional `metadata`, `metadataPolicy`, `metadataPolicyCrit`
   (only `federationKeys` is required); the fetch endpoint validates the policy (500 when unreadable) and `/list`
-  matches entity types on metadata and policy keys.
+  matches `entity_type` on the definition's `entityTypes`, else its metadata keys (never policy keys).
+- Resolution limits (M4, `chain/OidcFederationResolutionLimiter`): `max-requests-per-resolution` (50) and
+  `max-concurrent-resolutions` (10). The budget is a `ScopedValue` bound for the resolution (nested calls share it and
+  the slot); `OidcFederationBudgetedEntityStatementRetriever` counts remote fetches and memoizes statements per
+  resolution (wrap the remote retriever, under the local one for the resolve endpoint), and historical keys and trust
+  mark status requests call `consumeRequest`. Entry points: `resolveTrustChains`, `resolveSentTrustChain`, the entity
+  resolver. `OidcFederationResolutionBusyException` (runtime) must not mark the entity unresolved (registration) and is
+  `503 temporarily_unavailable` at the resolve endpoint. Trust mark status endpoints must be https.
+- Federated PAR: the interceptor refuses (`401 invalid_client`) a client assertion of an automatically registered RP
+  whose `aud` is not exactly the OP entity id (12.1.1.2); the generic authenticator still accepts token endpoint URLs.
+- Federation endpoint JSON errors go through `AbstractOidcFederationEndpointController.errorResponse`, which presets
+  `application/json`: without it, a request accepting only the endpoint's JWT type gets `406` instead of the error.
 - Scenarios: `oidc-federation-op-role`, `-int-role`, `-ta-role` (endpoint shape) and `oidc-federation-end2end` (CAS trust
   anchor plus CAS OP, the go-oidfed OFFA relying party in docker and the scenario's Node RP with negative cases; see the
   `cas-puppeteer-scenarios` skill); `delegated-oidc-rp-federation-endpoint` for the RP side (`404` for an unknown client).

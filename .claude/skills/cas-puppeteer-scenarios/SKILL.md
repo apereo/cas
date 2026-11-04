@@ -272,4 +272,9 @@ description: "Write, fix and review the end-to-end puppeteer scenarios under ci/
   which lacks the prefix) gets a `dc+sd-jwt` credential through a pre-authorized offer (`vc-client` from `services/`),
   resolves CAS through the trust anchor with `rp.resolveEntity`, verifies the request object with the
   `openid_credential_verifier` signing keys, encrypts its response with `RSA-OAEP-256` to the OP keystore encryption key
-  published there, and the script collects the verified claims.
+  published there, and the script collects the verified claims. `trust-mark.js` issues relying party trust marks
+  for the trust anchor: required by the Node RP and, as a CLI from `init.sh`, for OFFA. The waits before the OP may
+  resolve an entity again (`RERESOLUTION_DELAY`) are read from the OP's `unresolved-entity-retention` in `script.json`;
+  keep that setting in seconds (`PTnS`). Scenario `*.jwks` files are git-ignored (`ci/tests/puppeteer/**/*.jwks`)
+  except under `oidc-federation-end2end/metadata/`: a scenario that needs committed keys must add its own exception to
+  `.gitignore`, or `git status` will not show the file and CI will run without it.

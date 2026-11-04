@@ -1,6 +1,7 @@
 package org.apereo.cas.oidc.federation.chain;
 
 import module java.base;
+import org.apereo.cas.authentication.CasSSLContext;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.oidc.federation.OidcFederationProperties;
 import org.apereo.cas.configuration.model.support.oidc.federation.OidcFederationRole;
@@ -31,12 +32,14 @@ import com.nimbusds.oauth2.sdk.GrantType;
 import com.nimbusds.oauth2.sdk.ResponseType;
 import com.nimbusds.oauth2.sdk.Scope;
 import com.nimbusds.oauth2.sdk.auth.ClientAuthenticationMethod;
+import com.nimbusds.oauth2.sdk.http.HTTPRequest;
 import com.nimbusds.openid.connect.sdk.SubjectType;
 import com.nimbusds.openid.connect.sdk.federation.entities.EntityID;
 import com.nimbusds.openid.connect.sdk.federation.entities.EntityStatement;
 import com.nimbusds.openid.connect.sdk.federation.entities.EntityStatementClaimsSet;
 import com.nimbusds.openid.connect.sdk.federation.entities.EntityType;
 import com.nimbusds.openid.connect.sdk.federation.policy.MetadataPolicy;
+import com.nimbusds.openid.connect.sdk.federation.policy.language.PolicyViolationException;
 import com.nimbusds.openid.connect.sdk.federation.trust.EntityStatementRetriever;
 import com.nimbusds.openid.connect.sdk.federation.trust.ResolveException;
 import com.nimbusds.openid.connect.sdk.federation.trust.TrustChain;
@@ -49,6 +52,7 @@ import lombok.val;
 import net.minidev.json.JSONObject;
 import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.Nullable;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -225,6 +229,7 @@ class OidcFederationDefaultTrustChainResolverTests {
             assertTrue(registeredService.matches("https://example.com?parameter=true"));
             assertTrue(registeredService.matches("https://example2.com?parameter=false"));
             assertFalse(registeredService.matches("https://exampleXcom?parameter=true"));
+            assertFalse(registeredService.matches("https://EXAMPLE.com?parameter=TRUE"));
             assertEquals(List.of("https://example.com?parameter=true", "https://example2.com?parameter=false"),
                 OidcClientRegistrationUtils.toRedirectUris(registeredService.getServiceId()));
         }
@@ -280,8 +285,98 @@ class OidcFederationDefaultTrustChainResolverTests {
                         metadata, null, authorityHints);
                 when(trustChain.getLeafConfiguration()).thenReturn(leafConfiguration);
                 when(resolver.resolveTrustChains(any(EntityID.class))).thenReturn(trustChainSet);
+
+                val trustAnchorConfiguration = oidcFederationEntityStatementService.createAndSign(issuer, issuer,
+                        new JSONObject(), null, null);
+                val retriever = mock(EntityStatementRetriever.class);
+                when(retriever.fetchEntityConfiguration(any())).thenReturn(trustAnchorConfiguration);
+                when(resolver.getEntityStatementRetriever()).thenReturn(retriever);
+                when(trustChain.getTrustAnchorEntityID()).thenReturn(new EntityID(issuer));
+                when(trustChain.getSuperiorStatements()).thenReturn(List.of(trustAnchorConfiguration));
                 return resolver;
             }
+        }
+    }
+
+    /**
+     * Resolutions are bounded (OpenID Federation 1.0, section 18.1): each sends at most a number of requests, reusing the
+     * statements it already fetched, and at most a number of them run at the same time.
+     */
+    @Nested
+    class ResolutionLimitTests {
+        private static final String RELYING_PARTY = "https://rp.example.org";
+
+        private static final String TRUST_ANCHOR = "https://ta.example.org";
+
+        private final RSAKey entityKey = generateKey("entity");
+
+        @Test
+        void verifyRequestsPerResolutionAreBounded() throws Exception {
+            val properties = new OidcFederationProperties().setMaxRequestsPerResolution(3).setMaxAuthorityHints(5);
+            val retriever = mock(EntityStatementRetriever.class);
+            val calls = new AtomicInteger();
+            when(retriever.fetchEntityConfiguration(any())).thenAnswer(invocation -> {
+                calls.incrementAndGet();
+                val target = invocation.getArgument(0, EntityID.class).getValue();
+                return entityConfiguration(target, IntStream.range(0, 5).mapToObj(index -> target + '/' + index).toList());
+            });
+            val resolver = new OidcFederationDefaultTrustChainResolver(List.of(OidcFederationDefaultTrustChainResolver.buildTrustChainResolver(
+                    new EntityID(TRUST_ANCHOR), null, properties, new OidcFederationBudgetedEntityStatementRetriever(retriever))),
+                new OidcFederationDefaultTrustMarkValidator(properties), new OidcFederationResolutionLimiter(properties));
+            assertTrue(resolver.resolveTrustChains(RELYING_PARTY).isEmpty());
+            assertTrue(calls.get() <= 3, () -> calls.get() + " requests");
+        }
+
+        @Test
+        void verifyStatementsAreFetchedOncePerResolution() throws Exception {
+            val retriever = mock(EntityStatementRetriever.class);
+            when(retriever.fetchEntityConfiguration(any())).thenReturn(entityConfiguration(RELYING_PARTY, List.of()));
+            val budgeted = new OidcFederationBudgetedEntityStatementRetriever(retriever);
+            new OidcFederationResolutionLimiter(1, 2, Duration.ofSeconds(1)).execute(() -> {
+                budgeted.fetchEntityConfiguration(new EntityID(RELYING_PARTY));
+                budgeted.fetchEntityConfiguration(new EntityID(RELYING_PARTY));
+                budgeted.fetchEntityConfiguration(new EntityID(TRUST_ANCHOR));
+                assertThrows(ResolveException.class, () -> budgeted.fetchEntityConfiguration(new EntityID("https://other.example.org")));
+                assertThrows(IllegalStateException.class, () -> OidcFederationResolutionLimiter.consumeRequest("trust mark status"));
+                return null;
+            });
+            verify(retriever, times(2)).fetchEntityConfiguration(any());
+            budgeted.fetchEntityConfiguration(new EntityID("https://other.example.org"));
+            OidcFederationResolutionLimiter.consumeRequest("trust mark status");
+            verify(retriever, times(3)).fetchEntityConfiguration(any());
+        }
+
+        @Test
+        void verifySimultaneousResolutionsAreBounded() throws Exception {
+            val limiter = new OidcFederationResolutionLimiter(1, 10, Duration.ofMillis(200));
+            val started = new CountDownLatch(1);
+            val release = new CountDownLatch(1);
+            try (val executor = Executors.newVirtualThreadPerTaskExecutor()) {
+                val running = executor.submit(() -> limiter.execute(() -> {
+                    started.countDown();
+                    release.await();
+                    return "first";
+                }));
+                started.await();
+                assertThrows(OidcFederationResolutionBusyException.class, () -> limiter.execute(() -> "second"));
+                release.countDown();
+                assertEquals("first", running.get());
+            }
+            assertEquals("nested", limiter.execute(() -> limiter.execute(() -> "nested")));
+        }
+
+        private EntityStatement entityConfiguration(final String entityId, final List<String> authorityHints) throws Exception {
+            val now = Instant.now(Clock.systemUTC());
+            val claims = new EntityStatementClaimsSet(new EntityID(entityId), new EntityID(entityId),
+                Date.from(now.minusSeconds(60)), Date.from(now.plusSeconds(3600)), new JWKSet(entityKey.toPublicJWK()));
+            if (!authorityHints.isEmpty()) {
+                claims.setAuthorityHints(authorityHints.stream().map(EntityID::new).toList());
+            }
+            return EntityStatement.sign(claims, entityKey);
+        }
+
+        private static RSAKey generateKey(final String keyId) {
+            return FunctionUtils.doUnchecked(() -> new RSAKeyGenerator(2048).keyID(keyId).generate());
         }
     }
 
@@ -306,9 +401,18 @@ class OidcFederationDefaultTrustChainResolverTests {
 
         private final EntityStatementRetriever retriever = mock(EntityStatementRetriever.class);
 
+        /**
+         * Historical keys are only fetched over {@code https}; the test servers present a certificate of their own.
+         */
+        @BeforeAll
+        static void trustTestServers() {
+            HTTPRequest.setDefaultSSLSocketFactory(CasSSLContext.disabled().getSslContext().getSocketFactory());
+            HTTPRequest.setDefaultHostnameVerifier((hostname, session) -> true);
+        }
+
         @Test
         void verifySentTrustChainIsUsedWithoutResolving() throws Exception {
-            when(retriever.fetchEntityConfiguration(any())).thenThrow(new ResolveException("Not reachable"));
+            trustAnchorPublishesNoHistoricalKeys();
             val chain = List.of(relyingPartyConfiguration(), statement(trustAnchorKey, TRUST_ANCHOR, RELYING_PARTY, relyingPartyKey, 0),
                 entityConfiguration(TRUST_ANCHOR, trustAnchorKey, Map.of("metadata", Map.of(EntityType.FEDERATION_ENTITY.getValue(), Map.of()))));
             val service = resolver(new JWKSet(trustAnchorKey.toPublicJWK()), new TrustChainConstraints(3))
@@ -335,7 +439,7 @@ class OidcFederationDefaultTrustChainResolverTests {
          */
         @Test
         void verifyKeysOfRelyingPartyAreNotEvaluated() throws Exception {
-            when(retriever.fetchEntityConfiguration(any())).thenThrow(new ResolveException("Not reachable"));
+            trustAnchorPublishesNoHistoricalKeys();
             val keyId = "${#systemProperties['java.version']}-${#env['PATH']}";
             val encryptionKey = new RSAKeyGenerator(2048).keyID(keyId).keyUse(KeyUse.ENCRYPTION).generate().toPublicJWK();
             val chain = List.of(relyingPartyConfiguration(Map.of("jwks", new JWKSet(encryptionKey).toJSONObject())),
@@ -354,7 +458,7 @@ class OidcFederationDefaultTrustChainResolverTests {
          */
         @Test
         void verifyStatementsMustNameTheirSigningKey() throws Exception {
-            when(retriever.fetchEntityConfiguration(any())).thenThrow(new ResolveException("Not reachable"));
+            trustAnchorPublishesNoHistoricalKeys();
             val resolver = resolver(new JWKSet(trustAnchorKey.toPublicJWK()), new TrustChainConstraints(3));
             val now = Instant.now(Clock.systemUTC());
             val claims = new EntityStatementClaimsSet(new EntityID(TRUST_ANCHOR), new EntityID(RELYING_PARTY),
@@ -397,10 +501,11 @@ class OidcFederationDefaultTrustChainResolverTests {
          */
         @Test
         void verifyConstraintsOfSubordinateStatements() throws Exception {
-            when(retriever.fetchEntityConfiguration(any())).thenThrow(new ResolveException("Not reachable"));
+            trustAnchorPublishesNoHistoricalKeys();
             val resolver = resolver(new JWKSet(trustAnchorKey.toPublicJWK()), new TrustChainConstraints(3));
             for (val accepted : List.<Map<String, Object>>of(
                 Map.of("max_path_length", 0),
+                Map.of("max_path_length", 2147483648L),
                 Map.of("naming_constraints", Map.of("permitted", List.of(".example.org"))),
                 Map.of("naming_constraints", Map.of("permitted", List.of("rp.example.org"), "excluded", List.of(".example.com"))),
                 Map.of("allowed_entity_types", List.of("openid_provider", "openid_relying_party")),
@@ -410,6 +515,8 @@ class OidcFederationDefaultTrustChainResolverTests {
             }
             for (val refused : List.<Map<String, Object>>of(
                 Map.of("max_path_length", -1),
+                Map.of("max_path_length", 0.5),
+                Map.of("max_path_length", "1"),
                 Map.of("naming_constraints", Map.of("permitted", List.of(".example.com"))),
                 Map.of("naming_constraints", Map.of("permitted", List.of("example.org"))),
                 Map.of("naming_constraints", Map.of("permitted", List.of(".example.org"), "excluded", List.of("rp.example.org"))),
@@ -439,8 +546,10 @@ class OidcFederationDefaultTrustChainResolverTests {
          * The keys a trust anchor is trusted with out of band may still list a key it has since revoked (section 8.7):
          * a chain whose trust anchor statement is signed with it is refused. The historical keys are those the trust
          * anchor advertises in the entity configuration fetched from it, not in one the chain carries, which the holder of
-         * the revoked key could produce. Keys that are only expired, and historical keys that cannot be obtained or
-         * verified, do not refuse the chain.
+         * the revoked key could produce to advertise no historical keys, or historical keys of its own. A key retired before the statement was issued refuses it as well. Keys that are
+         * only expired since do not refuse the chain, nor does a trust anchor that advertises no historical keys; a trust
+         * anchor configuration or historical keys that cannot be obtained or verified do, since whether the key was
+         * revoked cannot be told, and so do historical keys without {@code exp} or served over plain {@code http}.
          */
         @Test
         void verifyTrustAnchorKeyRevokedInHistoricalKeys() throws Exception {
@@ -452,10 +561,9 @@ class OidcFederationDefaultTrustChainResolverTests {
             val expiredKey = new JSONObject(trustAnchorKey.toPublicJWK().toJSONObject());
             expiredKey.put("exp", now.getEpochSecond());
 
-            try (val webServer = new MockWebServer(new ByteArrayResource(historicalKeys(trustAnchorKey, revokedKey).getBytes(StandardCharsets.UTF_8)),
-                "application/jwk-set+jwt")) {
+            try (val webServer = new MockWebServer(true, new ByteArrayResource(historicalKeys(trustAnchorKey, revokedKey).getBytes(StandardCharsets.UTF_8)))) {
                 webServer.start();
-                val endpoint = "http://localhost:%s/federation_historical_keys".formatted(webServer.getPort());
+                val endpoint = "https://localhost:%s/federation_historical_keys".formatted(webServer.getPort());
                 when(retriever.fetchEntityConfiguration(new EntityID(TRUST_ANCHOR))).thenReturn(EntityStatement.parse(
                     entityConfiguration(TRUST_ANCHOR, trustAnchorKey, Map.of("metadata", Map.of(EntityType.FEDERATION_ENTITY.getValue(),
                         Map.of("federation_historical_keys_endpoint", endpoint))))));
@@ -467,13 +575,50 @@ class OidcFederationDefaultTrustChainResolverTests {
                     entityConfiguration(TRUST_ANCHOR, trustAnchorKey, Map.of("metadata", Map.of(EntityType.FEDERATION_ENTITY.getValue(), Map.of()))));
                 assertTrue(resolver.resolveSentTrustChain(RELYING_PARTY, withConfigurationAdvertisingNoHistoricalKeys).isEmpty());
 
+                try (val forgedServer = new MockWebServer(true,
+                    new ByteArrayResource(historicalKeys(trustAnchorKey, expiredKey).getBytes(StandardCharsets.UTF_8)))) {
+                    forgedServer.start();
+                    val withConfigurationAdvertisingOtherHistoricalKeys = List.of(relyingPartyConfiguration(),
+                        statement(trustAnchorKey, TRUST_ANCHOR, RELYING_PARTY, relyingPartyKey, 0),
+                        entityConfiguration(TRUST_ANCHOR, trustAnchorKey, Map.of("metadata", Map.of(EntityType.FEDERATION_ENTITY.getValue(),
+                            Map.of("federation_historical_keys_endpoint", "https://localhost:%s/forged".formatted(forgedServer.getPort()))))));
+                    assertTrue(resolver.resolveSentTrustChain(RELYING_PARTY, withConfigurationAdvertisingOtherHistoricalKeys).isEmpty());
+                }
+
                 webServer.responseBody(historicalKeys(trustAnchorKey, expiredKey));
                 assertTrue(resolver.resolveSentTrustChain(RELYING_PARTY, chain).isPresent());
                 webServer.responseBody(historicalKeys(generateKey("ta"), revokedKey));
-                assertTrue(resolver.resolveSentTrustChain(RELYING_PARTY, chain).isPresent());
+                assertTrue(resolver.resolveSentTrustChain(RELYING_PARTY, chain).isEmpty());
+
+                val retiredBeforeIssued = new JSONObject(trustAnchorKey.toPublicJWK().toJSONObject());
+                retiredBeforeIssued.put("exp", now.minus(Duration.ofDays(2)).getEpochSecond());
+                webServer.responseBody(historicalKeys(trustAnchorKey, retiredBeforeIssued));
+                assertTrue(resolver.resolveSentTrustChain(RELYING_PARTY, chain).isEmpty());
+                webServer.responseBody(historicalKeys(trustAnchorKey, new JSONObject(trustAnchorKey.toPublicJWK().toJSONObject())));
+                assertTrue(resolver.resolveSentTrustChain(RELYING_PARTY, chain).isEmpty());
+
+                webServer.responseBody(historicalKeys(trustAnchorKey, expiredKey));
+                when(retriever.fetchEntityConfiguration(new EntityID(TRUST_ANCHOR))).thenReturn(EntityStatement.parse(
+                    entityConfiguration(TRUST_ANCHOR, trustAnchorKey, Map.of("metadata", Map.of(EntityType.FEDERATION_ENTITY.getValue(),
+                        Map.of("federation_historical_keys_endpoint", endpoint.replace("https:", "http:")))))));
+                assertTrue(resolver.resolveSentTrustChain(RELYING_PARTY, chain).isEmpty());
             }
             assertTrue(resolver(new JWKSet(trustAnchorKey.toPublicJWK()), new TrustChainConstraints(3))
+                .resolveSentTrustChain(RELYING_PARTY, chain).isEmpty());
+
+            when(retriever.fetchEntityConfiguration(new EntityID(TRUST_ANCHOR))).thenThrow(new ResolveException("Not reachable"));
+            assertTrue(resolver(new JWKSet(trustAnchorKey.toPublicJWK()), new TrustChainConstraints(3))
+                .resolveSentTrustChain(RELYING_PARTY, chain).isEmpty());
+            trustAnchorPublishesNoHistoricalKeys();
+            assertTrue(resolver(new JWKSet(trustAnchorKey.toPublicJWK()), new TrustChainConstraints(3))
                 .resolveSentTrustChain(RELYING_PARTY, chain).isPresent());
+        }
+
+        private void trustAnchorPublishesNoHistoricalKeys() throws Exception {
+            when(retriever.fetchEntityConfiguration(any())).thenThrow(new ResolveException("Not reachable"));
+            doReturn(EntityStatement.parse(entityConfiguration(TRUST_ANCHOR, trustAnchorKey,
+                Map.of("metadata", Map.of(EntityType.FEDERATION_ENTITY.getValue(), Map.of())))))
+                .when(retriever).fetchEntityConfiguration(new EntityID(TRUST_ANCHOR));
         }
 
         private String historicalKeys(final RSAKey signingKey, final Map<String, Object> key) throws Exception {
@@ -495,7 +640,7 @@ class OidcFederationDefaultTrustChainResolverTests {
          */
         @Test
         void verifyMetadataPolicies() throws Exception {
-            when(retriever.fetchEntityConfiguration(any())).thenThrow(new ResolveException("Not reachable"));
+            trustAnchorPublishesNoHistoricalKeys();
             val resolver = resolver(new JWKSet(trustAnchorKey.toPublicJWK()), new TrustChainConstraints(3));
             val relyingParty = relyingPartyConfiguration(Map.of("scope", "openid email profile", "contacts", List.of("rp@example.org")));
             val metadataPolicy = Map.<String, Object>of(EntityType.OPENID_RELYING_PARTY.getValue(), Map.of(
@@ -519,15 +664,74 @@ class OidcFederationDefaultTrustChainResolverTests {
                     Map.of("client_name", "Asserted by the trust anchor")))))).orElseThrow();
             assertEquals("Asserted by the trust anchor", asserted.getName());
 
-            val conflicting = List.of(relyingParty,
-                statementWithClaims(intermediateKey, INTERMEDIATE, RELYING_PARTY, relyingPartyKey, Map.of("metadata_policy",
-                    Map.of(EntityType.OPENID_RELYING_PARTY.getValue(), Map.of("token_endpoint_auth_method", Map.of("one_of", List.of("tls_client_auth")))))),
-                statementWithClaims(trustAnchorKey, TRUST_ANCHOR, INTERMEDIATE, intermediateKey, Map.of("metadata_policy",
-                    Map.of(EntityType.OPENID_RELYING_PARTY.getValue(), Map.of("token_endpoint_auth_method", Map.of("one_of", List.of("private_key_jwt")))))));
+            assertEquals("Named by both", resolver.resolveSentTrustChain(RELYING_PARTY,
+                namedByIntermediateAndTrustAnchor(relyingParty, "Named by both", "Named by both")).orElseThrow().getName());
+            val conflicting = namedByIntermediateAndTrustAnchor(relyingParty, "Named by the intermediate", "Named by the trust anchor");
             assertTrue(resolver.resolveSentTrustChain(RELYING_PARTY, conflicting).isEmpty());
+            assertThrows(PolicyViolationException.class, () -> OidcFederationMetadataPolicies.resolveMetadata(
+                TrustChain.parseSerialized(conflicting), EntityType.OPENID_RELYING_PARTY));
 
             assertThrows(Exception.class, () -> OidcFederationMetadataPolicies.validate(Map.of(EntityType.OPENID_RELYING_PARTY.getValue(),
                 Map.of("scope", Map.of("value", "openid", "one_of", List.of("email"))))));
+        }
+
+        /**
+         * A relying party without redirect URIs is not registered, and a post-logout redirect URI that contains a comma is
+         * left out, since the logout URLs of a service are a comma-separated list and it would split into other URIs.
+         */
+        @Test
+        void verifyRedirectAndPostLogoutUris() throws Exception {
+            trustAnchorPublishesNoHistoricalKeys();
+            val resolver = resolver(new JWKSet(trustAnchorKey.toPublicJWK()), new TrustChainConstraints(3));
+            val statement = statement(trustAnchorKey, TRUST_ANCHOR, RELYING_PARTY, relyingPartyKey, 0);
+            assertTrue(resolver.resolveSentTrustChain(RELYING_PARTY,
+                List.of(relyingPartyConfiguration(Map.of("redirect_uris", List.of())), statement)).isEmpty());
+
+            val service = resolver.resolveSentTrustChain(RELYING_PARTY, List.of(relyingPartyConfiguration(Map.of("post_logout_redirect_uris",
+                List.of(RELYING_PARTY + "/bye", RELYING_PARTY + "/bye?next=1,https://elsewhere.example.org"))), statement)).orElseThrow();
+            assertEquals(RELYING_PARTY + "/bye", service.getLogoutUrl());
+        }
+
+        /**
+         * The metadata superiors assert, and their policies, apply only to the entity types the subject publishes in its
+         * entity configuration (section 3): they cannot make an entity without {@code openid_relying_party} metadata a
+         * relying party.
+         */
+        @Test
+        void verifySuperiorsCannotAddEntityTypes() throws Exception {
+            trustAnchorPublishesNoHistoricalKeys();
+            val resolver = resolver(new JWKSet(trustAnchorKey.toPublicJWK()), new TrustChainConstraints(3));
+            val withoutRelyingPartyMetadata = entityConfiguration(RELYING_PARTY, relyingPartyKey, Map.of(
+                "authority_hints", List.of(TRUST_ANCHOR),
+                "metadata", Map.of(EntityType.FEDERATION_ENTITY.getValue(), Map.of("organization_name", "Not a relying party"))));
+            val relyingPartyMetadata = Map.<String, Object>of(
+                "client_name", "Asserted by the trust anchor",
+                "redirect_uris", List.of(RELYING_PARTY + "/callback"),
+                "jwks", new JWKSet(generateKey("rp-oidc").toPublicJWK()).toJSONObject());
+            val asserted = statementWithClaims(trustAnchorKey, TRUST_ANCHOR, RELYING_PARTY, relyingPartyKey,
+                Map.of("metadata", Map.of(EntityType.OPENID_RELYING_PARTY.getValue(), relyingPartyMetadata)));
+            assertTrue(resolver.resolveSentTrustChain(RELYING_PARTY, List.of(withoutRelyingPartyMetadata, asserted)).isEmpty());
+            val defaulted = statementWithClaims(trustAnchorKey, TRUST_ANCHOR, RELYING_PARTY, relyingPartyKey,
+                Map.of("metadata_policy", Map.of(EntityType.OPENID_RELYING_PARTY.getValue(),
+                    Map.of("client_name", Map.of("default", "Defaulted by the trust anchor")))));
+            assertTrue(resolver.resolveSentTrustChain(RELYING_PARTY, List.of(withoutRelyingPartyMetadata, defaulted)).isEmpty());
+
+            assertEquals("Asserted by the trust anchor", resolver.resolveSentTrustChain(RELYING_PARTY,
+                List.of(relyingPartyConfiguration(), asserted)).orElseThrow().getName());
+        }
+
+        /**
+         * A chain whose intermediate and trust anchor each set {@code client_name} with {@code value}: either policy alone
+         * applies to the metadata of the relying party, so only merging them can find that they conflict.
+         */
+        private List<String> namedByIntermediateAndTrustAnchor(final String relyingParty, final String byIntermediate,
+                                                              final String byTrustAnchor)
+                throws Exception {
+            return List.of(relyingParty,
+                statementWithClaims(intermediateKey, INTERMEDIATE, RELYING_PARTY, relyingPartyKey, Map.of("metadata_policy",
+                    Map.of(EntityType.OPENID_RELYING_PARTY.getValue(), Map.of("client_name", Map.of("value", byIntermediate))))),
+                statementWithClaims(trustAnchorKey, TRUST_ANCHOR, INTERMEDIATE, intermediateKey, Map.of("metadata_policy",
+                    Map.of(EntityType.OPENID_RELYING_PARTY.getValue(), Map.of("client_name", Map.of("value", byTrustAnchor))))));
         }
 
         private OidcFederationDefaultTrustChainResolver resolver(@Nullable final JWKSet trustAnchorKeys, final TrustChainConstraints constraints) {
@@ -617,6 +821,15 @@ class OidcFederationDefaultTrustChainResolverTests {
         private final OidcFederationDefaultTrustMarkValidator validator = new OidcFederationDefaultTrustMarkValidator(
             new OidcFederationProperties().setRequiredTrustMarks(List.of(TYPE)));
 
+        /**
+         * Historical keys are only fetched over {@code https}; the test servers present a certificate of their own.
+         */
+        @BeforeAll
+        static void trustTestServers() {
+            HTTPRequest.setDefaultSSLSocketFactory(CasSSLContext.disabled().getSslContext().getSocketFactory());
+            HTTPRequest.setDefaultHostnameVerifier((hostname, session) -> true);
+        }
+
         @Test
         void verifyTrustMarkIssuedByTrustAnchor() throws Exception {
             val trustAnchor = trustAnchorConfiguration(Map.of(TYPE, List.of(TRUST_ANCHOR)), Map.of());
@@ -692,7 +905,8 @@ class OidcFederationDefaultTrustChainResolverTests {
         /**
          * A trust mark signed with a key its issuer has retired since stays valid, verified with that key from the
          * issuer's historical keys (OpenID Federation 1.0, section 8.7), unless the key was revoked, was retired before
-         * the trust mark was issued, or the issuer publishes no historical keys.
+         * the trust mark was issued, carries no {@code exp}, the historical keys are not served over {@code https}, or the
+         * issuer publishes no historical keys. Historical keys are kept for a while per issuer and endpoint.
          */
         @Test
         void verifyTrustMarkSignedWithRetiredKey() throws Exception {
@@ -700,21 +914,24 @@ class OidcFederationDefaultTrustChainResolverTests {
             val trustMark = trustMark(retiredKey, TRUST_ANCHOR, RELYING_PARTY, TYPE, Map.of());
             val retiredAt = Date.from(Instant.now(Clock.systemUTC()).plusSeconds(60));
             val retired = new RSAKey.Builder(retiredKey.toPublicJWK()).expirationTime(retiredAt).build();
-            try (val webServer = new MockWebServer(new ByteArrayResource(historicalKeys(retired).getBytes(StandardCharsets.UTF_8)),
-                "application/jwk-set+jwt")) {
+            try (val webServer = new MockWebServer(true, new ByteArrayResource(historicalKeys(retired).getBytes(StandardCharsets.UTF_8)))) {
                 webServer.start();
-                val endpoint = "http://localhost:%s/historical".formatted(webServer.getPort());
-                val trustAnchor = trustAnchorConfiguration(Map.of(TYPE, List.of(TRUST_ANCHOR)), Map.of(),
-                    Map.of("federation_historical_keys_endpoint", endpoint));
+                val endpoint = "https://localhost:%s/historical".formatted(webServer.getPort());
+                val trustAnchor = trustAnchorWithHistoricalKeys(endpoint + "/retired");
                 assertTrue(hasRequiredTrustMarks(trustAnchor, trustMark, Map.of()));
-
                 webServer.responseBody(historicalKeys(new RSAKey.Builder(retiredKey.toPublicJWK())
                     .expirationTime(Date.from(Instant.now(Clock.systemUTC()).minusSeconds(3600))).build()));
-                assertFalse(hasRequiredTrustMarks(trustAnchor, trustMark, Map.of()));
+                assertTrue(hasRequiredTrustMarks(trustAnchor, trustMark, Map.of()), "Historical keys are kept for a while");
 
+                assertFalse(hasRequiredTrustMarks(trustAnchorWithHistoricalKeys(endpoint + "/retired-before"), trustMark, Map.of()));
                 webServer.responseBody(historicalKeys(new RSAKey.Builder(retired)
                     .keyRevocation(new KeyRevocation(new Date(), KeyRevocation.Reason.COMPROMISED)).build()));
-                assertFalse(hasRequiredTrustMarks(trustAnchor, trustMark, Map.of()));
+                assertFalse(hasRequiredTrustMarks(trustAnchorWithHistoricalKeys(endpoint + "/revoked"), trustMark, Map.of()));
+                webServer.responseBody(historicalKeys(retiredKey.toPublicJWK()));
+                assertFalse(hasRequiredTrustMarks(trustAnchorWithHistoricalKeys(endpoint + "/without-exp"), trustMark, Map.of()));
+                webServer.responseBody(historicalKeys(retired));
+                assertFalse(hasRequiredTrustMarks(trustAnchorWithHistoricalKeys(endpoint.replace("https:", "http:") + "/plain"),
+                    trustMark, Map.of()));
             }
             val withoutHistoricalKeys = trustAnchorConfiguration(Map.of(TYPE, List.of(TRUST_ANCHOR)), Map.of());
             assertFalse(hasRequiredTrustMarks(withoutHistoricalKeys, trustMark, Map.of()));
@@ -724,19 +941,41 @@ class OidcFederationDefaultTrustChainResolverTests {
         void verifyTrustMarkStatusEndpoint() throws Exception {
             val trustMark = trustMark(trustAnchorKey, TRUST_ANCHOR, RELYING_PARTY, TYPE, Map.of());
             val active = statusResponse(trustMark, "active");
-            try (val webServer = new MockWebServer(new ByteArrayResource(active.getBytes(StandardCharsets.UTF_8)),
-                "application/trust-mark-status-response+jwt")) {
+            try (val webServer = new MockWebServer(true, new ByteArrayResource(active.getBytes(StandardCharsets.UTF_8)))) {
                 webServer.start();
-                val endpoint = "http://localhost:%s/status".formatted(webServer.getPort());
+                val endpoint = "https://localhost:%s/status".formatted(webServer.getPort());
                 val trustAnchor = trustAnchorConfiguration(Map.of(TYPE, List.of(TRUST_ANCHOR)), Map.of(),
                     Map.of("federation_trust_mark_status_endpoint", endpoint));
                 assertTrue(hasRequiredTrustMarks(trustAnchor, trustMark, Map.of()));
+                assertFalse(hasRequiredTrustMarks(trustAnchorConfiguration(Map.of(TYPE, List.of(TRUST_ANCHOR)), Map.of(),
+                    Map.of("federation_trust_mark_status_endpoint", endpoint.replace("https:", "http:"))), trustMark, Map.of()));
                 webServer.responseBody(statusResponse(trustMark, "revoked"));
                 assertFalse(hasRequiredTrustMarks(trustAnchor, trustMark, Map.of()));
                 webServer.responseBody(statusResponse(trustMark(trustAnchorKey, TRUST_ANCHOR, RELYING_PARTY, TYPE,
                     Map.of("ref", "https://ta.example.org/other")), "active"));
                 assertFalse(hasRequiredTrustMarks(trustAnchor, trustMark, Map.of()));
             }
+        }
+
+        /**
+         * Trust marks are validated against the configuration fetched from the trust anchor, never the one a chain
+         * carries, which could list issuers of its own if signed with a revoked but still trusted key.
+         */
+        @Test
+        void verifyTrustAnchorConfigurationIsNotTakenFromTheChain() throws Exception {
+            val trustMark = trustMark(trustAnchorKey, TRUST_ANCHOR, RELYING_PARTY, TYPE, Map.of());
+            val genuine = trustAnchorConfiguration(Map.of(), Map.of());
+            val carried = trustAnchorConfiguration(Map.of(TYPE, List.of(TRUST_ANCHOR)), Map.of());
+            val chain = trustChain(relyingParty(List.of(Map.of("trust_mark_type", TYPE, "trust_mark", trustMark))), genuine);
+            when(chain.getTrustAnchorConfiguration()).thenReturn(carried);
+            assertFalse(validator.hasRequiredTrustMarks(resolver(genuine, Map.of()), chain));
+            assertTrue(validator.resolveValidTrustMarks(resolver(genuine, Map.of()), chain).isEmpty());
+            assertTrue(validator.hasRequiredTrustMarks(resolver(carried, Map.of()), chain));
+            assertEquals(1, validator.resolveValidTrustMarks(resolver(carried, Map.of()), chain).size());
+        }
+
+        private EntityStatement trustAnchorWithHistoricalKeys(final String endpoint) throws Exception {
+            return trustAnchorConfiguration(Map.of(TYPE, List.of(TRUST_ANCHOR)), Map.of(), Map.of("federation_historical_keys_endpoint", endpoint));
         }
 
         private boolean hasRequiredTrustMarks(final EntityStatement trustAnchor, final String trustMark,

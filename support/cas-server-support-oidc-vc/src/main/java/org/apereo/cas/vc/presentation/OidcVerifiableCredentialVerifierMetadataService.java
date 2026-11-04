@@ -138,7 +138,8 @@ public class OidcVerifiableCredentialVerifierMetadataService {
      * {@code openid_federation} client identifier prefix: the verifier description of {@code client_metadata}, the
      * response URI as the only trusted {@code response_uris}, and in {@code jwks} the keys request objects are signed
      * with and the keys responses are encrypted to. No {@code request_uris} are listed: CAS serves each request object
-     * at a URI of its own, and wallets refuse any request URI the list does not contain.
+     * at a URI of its own, which a list could not name in advance, and wallets only hold request URIs to the list when
+     * the metadata carries one.
      *
      * @return the metadata
      */

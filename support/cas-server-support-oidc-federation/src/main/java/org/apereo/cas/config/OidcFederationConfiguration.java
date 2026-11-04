@@ -6,11 +6,13 @@ import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.oidc.federation.OidcFederationRole;
+import org.apereo.cas.configuration.model.support.quartz.SchedulingProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.oidc.discovery.OidcFederationEntityMetadataContributor;
 import org.apereo.cas.oidc.discovery.OidcServerDiscoverySettings;
 import org.apereo.cas.oidc.federation.chain.OidcFederationDefaultTrustChainResolver;
+import org.apereo.cas.oidc.federation.chain.OidcFederationResolutionLimiter;
 import org.apereo.cas.oidc.federation.chain.OidcFederationTrustChainResolver;
 import org.apereo.cas.oidc.federation.registration.OidcFederationAutomaticClientRegistration;
 import org.apereo.cas.oidc.federation.registration.OidcFederationAutomaticRegistrationInterceptor;
@@ -170,9 +172,12 @@ class OidcFederationConfiguration {
         final OidcFederationEntityStatementService oidcFederationEntityStatementService,
         @Qualifier(OidcFederationEntityResolver.BEAN_NAME)
         final OidcFederationEntityResolver oidcFederationEntityResolver,
+        @Qualifier(OidcFederationSubordinateClientAuthenticator.BEAN_NAME)
+        final OidcFederationSubordinateClientAuthenticator oidcFederationSubordinateClientAuthenticator,
         final CasConfigurationProperties casProperties) {
         return new OidcResolveFederationEndpointController(oidcFederationIssuerService,
-            oidcFederationEntityStatementService, casProperties.getAuthn().getOidc(), oidcFederationEntityResolver);
+            oidcFederationEntityStatementService, casProperties.getAuthn().getOidc(), oidcFederationEntityResolver,
+            oidcFederationSubordinateClientAuthenticator);
     }
 
     @Bean
@@ -198,12 +203,15 @@ class OidcFederationConfiguration {
         final ObjectProvider<OidcWellKnownFederationEndpointController> oidcWellKnownFederationController,
         @Qualifier("oidcFetchFederationController")
         final ObjectProvider<OidcFetchFederationEndpointController> oidcFetchFederationController,
+        @Qualifier(OidcFederationResolutionLimiter.BEAN_NAME)
+        final OidcFederationResolutionLimiter oidcFederationResolutionLimiter,
         final CasConfigurationProperties casProperties) {
         return new OidcFederationDefaultEntityResolver(casProperties.getAuthn().getOidc().getFederation(),
             oidcFederationIssuerService, oidcFederationWebKeystoreService, oidcFederationTrustMarkValidator,
             oidcFederationEntityStatementRetriever,
             () -> oidcWellKnownFederationController.getObject().buildEntityConfiguration(),
-            subject -> oidcFetchFederationController.getObject().buildSubordinateStatement(subject.getValue()));
+            subject -> oidcFetchFederationController.getObject().buildSubordinateStatement(subject.getValue()),
+            oidcFederationResolutionLimiter);
     }
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -291,11 +299,13 @@ class OidcFederationConfiguration {
     @Lazy(false)
     public Runnable oidcFederationKeystoreRotationScheduler(
         final ConfigurableApplicationContext applicationContext,
+        final CasConfigurationProperties casProperties,
         @Qualifier(OidcFederationJsonWebKeystoreService.BEAN_NAME)
         final ObjectProvider<OidcFederationJsonWebKeystoreService> oidcFederationWebKeystoreService) {
         return BeanSupplier.of(Runnable.class)
             .when(BeanCondition.on("cas.authn.oidc.federation.rotation.schedule.enabled").isTrue().given(applicationContext.getEnvironment()))
-            .supply(() -> new OidcFederationKeystoreRotationScheduler(oidcFederationWebKeystoreService.getObject()))
+            .supply(() -> new OidcFederationKeystoreRotationScheduler(oidcFederationWebKeystoreService.getObject(),
+                casProperties.getAuthn().getOidc().getFederation().getRotation().getSchedule()))
             .otherwiseProxy()
             .get();
     }
@@ -306,11 +316,13 @@ class OidcFederationConfiguration {
     @Lazy(false)
     public Runnable oidcFederationKeystoreRevocationScheduler(
         final ConfigurableApplicationContext applicationContext,
+        final CasConfigurationProperties casProperties,
         @Qualifier(OidcFederationJsonWebKeystoreService.BEAN_NAME)
         final ObjectProvider<OidcFederationJsonWebKeystoreService> oidcFederationWebKeystoreService) {
         return BeanSupplier.of(Runnable.class)
             .when(BeanCondition.on("cas.authn.oidc.federation.revocation.schedule.enabled").isTrue().given(applicationContext.getEnvironment()))
-            .supply(() -> new OidcFederationKeystoreRevocationScheduler(oidcFederationWebKeystoreService.getObject()))
+            .supply(() -> new OidcFederationKeystoreRevocationScheduler(oidcFederationWebKeystoreService.getObject(),
+                casProperties.getAuthn().getOidc().getFederation().getRevocation().getSchedule()))
             .otherwiseProxy()
             .get();
     }
@@ -333,6 +345,8 @@ class OidcFederationConfiguration {
     public OidcFederationTrustChainResolver oidcFederationTrustChainResolver(
         @Qualifier(OidcFederationTrustMarkValidator.BEAN_NAME)
         final OidcFederationTrustMarkValidator oidcFederationTrustMarkValidator,
+        @Qualifier(OidcFederationResolutionLimiter.BEAN_NAME)
+        final OidcFederationResolutionLimiter oidcFederationResolutionLimiter,
         final ConfigurableApplicationContext applicationContext,
         final CasConfigurationProperties casProperties) {
         val trustChainResolvers = OidcFederationDefaultTrustChainResolver.buildTrustChainResolvers(
@@ -340,7 +354,15 @@ class OidcFederationConfiguration {
         val resolvers = applicationContext.getBeansOfType(TrustChainResolver.class).values();
         trustChainResolvers.addAll(resolvers);
 
-        return new OidcFederationDefaultTrustChainResolver(trustChainResolvers, oidcFederationTrustMarkValidator);
+        return new OidcFederationDefaultTrustChainResolver(trustChainResolvers, oidcFederationTrustMarkValidator,
+            oidcFederationResolutionLimiter);
+    }
+
+    @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    @ConditionalOnMissingBean(name = OidcFederationResolutionLimiter.BEAN_NAME)
+    public OidcFederationResolutionLimiter oidcFederationResolutionLimiter(final CasConfigurationProperties casProperties) {
+        return new OidcFederationResolutionLimiter(casProperties.getAuthn().getOidc().getFederation());
     }
 
     @Bean
@@ -482,6 +504,8 @@ class OidcFederationConfiguration {
     static class OidcFederationKeystoreRotationScheduler implements Runnable {
         private final OidcFederationJsonWebKeystoreService keystoreService;
 
+        private final SchedulingProperties schedule;
+
         @Scheduled(
             cron = "${cas.authn.oidc.federation.rotation.schedule.cron-expression:}",
             zone = "${cas.authn.oidc.federation.rotation.schedule.cron-time-zone:}",
@@ -491,7 +515,7 @@ class OidcFederationConfiguration {
         public void run() {
             FunctionUtils.doUnchecked(_ -> {
                 LOGGER.info("Starting to rotate keys in the OpenID Connect Federation keystore...");
-                keystoreService.rotate();
+                keystoreService.rotateWhenDue(OidcFederationDefaultJsonWebKeystoreService.getScheduledKeyAge(schedule));
             });
         }
     }
@@ -500,6 +524,8 @@ class OidcFederationConfiguration {
     @Slf4j
     static class OidcFederationKeystoreRevocationScheduler implements Runnable {
         private final OidcFederationJsonWebKeystoreService keystoreService;
+
+        private final SchedulingProperties schedule;
 
         @Scheduled(
             cron = "${cas.authn.oidc.federation.revocation.schedule.cron-expression:}",
@@ -510,7 +536,7 @@ class OidcFederationConfiguration {
         public void run() {
             FunctionUtils.doUnchecked(_ -> {
                 LOGGER.info("Starting to retire previous keys in the OpenID Connect Federation keystore...");
-                keystoreService.revoke();
+                keystoreService.revokeWhenDue(OidcFederationDefaultJsonWebKeystoreService.getScheduledKeyAge(schedule));
             });
         }
     }

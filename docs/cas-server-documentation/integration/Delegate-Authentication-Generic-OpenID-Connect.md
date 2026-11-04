@@ -27,21 +27,18 @@ Federation support translates into two aspects:
 1. Exposing the entity statement of the OIDC client (The CAS server itself)
 2. Resolving the trust chain to retrieve the target provider via the trust anchors.
 
-{% include_cached casproperties.html properties="cas.authn.pac4j.oidc[].generic.federation" %}
-
 For exposing the entity statement, a JWKS must be defined as a resource (file or URL) with an optional key identifier. The 
 entity statement is exposed on the `/rp/{clientName}/.well-known/openid-federation` URL of the CAS server; a client
 that is unknown or not set up for a federation has no entity statement and is answered with `404`.
 
-For resolving the trust chain and authenticating on a target provider, the OP issuer 
-must be defined as the `targetOp` property along with one or more 
-trust anchors.
+For resolving the trust chain and authenticating on a target provider, the issuer of the target OpenID provider must be
+defined along with one or more trust anchors. All of these can be defined using CAS properties:
 
 {% include_cached casproperties.html properties="cas.authn.pac4j.oidc[].generic.federation" %}
 
 ## Per Service Customizations
 
-Th configuration for the external OpenID Connect identity provider is typically done at build time
+The configuration for the external OpenID Connect identity provider is typically done at build time
 via CAS configuration settings and applies to all applications and relying parties. You may override
 certain aspects this configuration on a per application basis by assigning
 dedicated [properties to the service definition](../services/Configuring-Service-Custom-Properties.html).

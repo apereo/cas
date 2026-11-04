@@ -36,7 +36,9 @@ content encryption algorithms. `RSA1_5` is never accepted nor advertised, even w
 [RFC 8725](https://www.rfc-editor.org/rfc/rfc8725#section-3.2) recommends. Symmetric key wrapping with keys derived from
 client secrets is not supported, and compressed request objects are refused. The advertised algorithms can be adjusted
 using CAS properties. The encryption keys are read from the keystore once per JWKS cache period rather than for every
-request object, so a key added to the keystore is used for decryption once that period has passed.
+request object, and again as soon as the keystore file changes or keys are rotated or revoked, so a revoked encryption
+key stops decrypting at once. Signing keys are never used to decrypt, and a keystore without encryption keys is read
+again after at most a minute.
 
 ## Keystore Storage
        

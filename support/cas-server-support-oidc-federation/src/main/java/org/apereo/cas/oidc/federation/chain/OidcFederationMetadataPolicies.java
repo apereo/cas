@@ -46,16 +46,23 @@ public class OidcFederationMetadataPolicies {
     private static final String SCOPE = "scope";
 
     /**
-     * Resolve the metadata of the given entity type of the subject of the trust chain.
+     * Resolve the metadata of the given entity type of the subject of the trust chain. The subject must publish metadata
+     * of that type in its entity configuration: the metadata its superiors assert, and their policies, only apply to the
+     * entity types the subject has (section 3), so they never give it a type it does not claim.
      *
      * @param chain      the trust chain
      * @param entityType the entity type
      * @return the resolved metadata
-     * @throws Exception when a policy error makes the trust chain invalid
+     * @throws Exception when the subject has no metadata of the type, or a policy error makes the trust chain invalid
      */
     public static JSONObject resolveMetadata(final TrustChain chain, final EntityType entityType) throws Exception {
+        val leafMetadata = chain.getLeafConfiguration().getSignedStatement().getJWTClaimsSet().getClaim(METADATA);
+        if (!(leafMetadata instanceof final Map<?, ?> entityTypes && entityTypes.get(entityType.getValue()) instanceof Map<?, ?>)) {
+            throw new IllegalArgumentException("Entity " + chain.getLeafConfiguration().getEntityID()
+                + " publishes no metadata of type " + entityType);
+        }
         val metadata = new JSONObject();
-        metadata.putAll(readEntityTypeObject(chain.getLeafConfiguration().getSignedStatement().getJWTClaimsSet().getClaim(METADATA), entityType));
+        metadata.putAll(readEntityTypeObject(leafMetadata, entityType));
         val superiors = chain.getSuperiorStatements();
         if (!superiors.isEmpty()) {
             metadata.putAll(readEntityTypeObject(superiors.getFirst().getSignedStatement().getJWTClaimsSet().getClaim(METADATA), entityType));

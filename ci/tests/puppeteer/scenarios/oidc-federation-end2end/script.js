@@ -14,6 +14,15 @@ const TRUST_ANCHOR = "https://localhost:8443/cas/oidc";
 const VC_CLIENT = {id: "vc-client", secret: "vc-secret"};
 const VC_CLIENT_AUTHORIZATION = `Basic ${Buffer.from(`${VC_CLIENT.id}:${VC_CLIENT.secret}`).toString("base64")}`;
 
+/**
+ * How long the OP waits before it resolves an entity again, taken from the scenario configuration, plus a second.
+ */
+const RERESOLUTION_DELAY = (() => {
+    const retention = fs.readFileSync(path.join(__dirname, "script.json"), "utf8").match(/unresolved-entity-retention=PT(\d+)S/);
+    assert(retention !== null, "The scenario must define the unresolved entity retention in seconds");
+    return (Number(retention[1]) + 1) * 1000;
+})();
+
 async function approveConsent(page) {
     if (await cas.isVisible(page, "#allow")) {
         await cas.click(page, "#allow");
@@ -142,9 +151,10 @@ async function verifySubordinateListing() {
 /**
  * The trust anchor resolves the Node RP (OpenID Federation 1.0, section 8.3): the signed resolve response carries its
  * resolved metadata, its trust chain ending with the trust anchor's entity configuration, and the trust mark the trust
- * anchor issued to it. Trust anchors it does not trust are refused.
+ * anchor issued to it. Trust anchors it does not trust are refused. A request the Node RP authenticates as a
+ * subordinate of the trust anchor (section 8.8) gets a response addressed to it.
  */
-async function verifyResolveEndpoint() {
+async function verifyResolveEndpoint(rp) {
     await cas.log("Trust anchor: resolve endpoint");
     const configuration = jose.decodeJwt(await cas.doRequest(`${TRUST_ANCHOR}/.well-known/openid-federation`, "GET", {}, 200));
     const resolveEndpoint = configuration.metadata.federation_entity.federation_resolve_endpoint;
@@ -162,9 +172,26 @@ async function verifyResolveEndpoint() {
     assert.equal(jose.decodeJwt(payload.trust_chain[2]).sub, TRUST_ANCHOR);
     assert(payload.trust_marks.some((entry) => entry.trust_mark_type === RELYING_PARTY_TRUST_MARK));
 
+    assert.equal(payload.aud, undefined);
+    assert.deepEqual(configuration.metadata.federation_entity.federation_resolve_endpoint_auth_methods, ["none", "private_key_jwt"]);
+
     const untrusted = await cas.doRequest(`${resolveEndpoint}?${new URLSearchParams({sub: ENTITY_ID, trust_anchor: OP_ENTITY_ID})}`,
         "GET", {}, 404);
     assert.equal(JSON.parse(untrusted).error, "invalid_trust_anchor");
+
+    await cas.log("Trust anchor: resolve request authenticated by the Node RP, a subordinate");
+    const body = new URLSearchParams({sub: OP_ENTITY_ID, trust_anchor: TRUST_ANCHOR, ...await rp.federationClientAuthentication()}).toString();
+    const authenticated = await cas.doRequest(resolveEndpoint, "POST", {"Content-Type": "application/x-www-form-urlencoded"}, 200, body);
+    const {payload: addressed} = await jose.jwtVerify(authenticated, jose.createLocalJWKSet(configuration.jwks), {
+        typ: "resolve-response+jwt",
+        issuer: TRUST_ANCHOR,
+        subject: OP_ENTITY_ID,
+        audience: ENTITY_ID
+    });
+    assert.equal(addressed.metadata.openid_provider.issuer, OP_ENTITY_ID);
+    const unauthenticated = await cas.doRequest(resolveEndpoint, "POST", {"Content-Type": "application/x-www-form-urlencoded"}, 401,
+        new URLSearchParams({sub: OP_ENTITY_ID, trust_anchor: TRUST_ANCHOR}).toString());
+    assert.equal(JSON.parse(unauthenticated).error, "invalid_client");
 }
 
 /**
@@ -297,6 +324,14 @@ async function verifyRefusedRequests(rp, op, usedRequest) {
     await assertRefused((await rp.authorizationRequest(op, {jti: usedRequest.jti, state: crypto.randomUUID()})).url,
         "Request object jti has already been used");
 
+    await cas.log("A pushed request whose client assertion is not addressed only to the OP is refused");
+    const pushed = await rp.authorizationRequest(op);
+    pushed.params.set("client_assertion_type", "urn:ietf:params:oauth:client-assertion-type:jwt-bearer");
+    pushed.params.set("client_assertion", await rp.clientAssertion([op.issuer, op.token_endpoint]));
+    const refusedPush = await cas.doRequest(op.pushed_authorization_request_endpoint, "POST",
+        {"Content-Type": "application/x-www-form-urlencoded"}, 401, pushed.params.toString());
+    assert.equal(JSON.parse(refusedPush).error, "invalid_client");
+
     await cas.log("Clients outside the federation are not registered");
     await assertUnknownClient(op, "https://localhost:9862");
     await assertUnknownClient(op, ENTITY_ID.replace("https://", "http://"));
@@ -325,7 +360,7 @@ async function verifyKeyRollover(page, rp, op) {
     await rp.rolloverOidcKey();
     await completeAuthorization(page, rp, op, await rp.authorizationRequest(op), op.token_endpoint);
 
-    await cas.sleep(6000);
+    await cas.sleep(RERESOLUTION_DELAY);
     await cas.log("Node RP: signing key rolled over again, pushed request with private_key_jwt");
     await rp.rolloverOidcKey();
     await completeAuthorization(page, rp, op, await rp.pushAuthorizationRequest(op), op.issuer);
@@ -337,7 +372,7 @@ async function verifyKeyRollover(page, rp, op) {
  * request of the relying party, signed with its new key, is accepted right away.
  */
 async function verifyReplayedTrustChain(page, rp, op) {
-    await cas.sleep(6000);
+    await cas.sleep(RERESOLUTION_DELAY);
     await cas.log("Someone else replays a trust chain of the relying party captured before its key rollover");
     const capturedTrustChain = await rp.trustChain();
     await rp.rolloverOidcKey();
@@ -357,7 +392,7 @@ async function verifyReplayedTrustChain(page, rp, op) {
         await verifySubordinateListing();
         await verifyTrustMarkIssuers();
         await verifyTrustMarkIssuance(rp);
-        await verifyResolveEndpoint();
+        await verifyResolveEndpoint(rp);
         await verifyOpEntityConfiguration();
         await verifyOffaDiscovery(page);
         await verifyOffaLogin(page);

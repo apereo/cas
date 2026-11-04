@@ -830,8 +830,9 @@ take part in a federation as an OpenID Provider. The wallet resolves the trust c
   for an RSA key. Encrypted responses need such a key with a key id, or presentation requests are refused. Only current
   keys are published, but responses encrypted to a key that has since been rotated out of the keystore's current state
   are still decrypted, since wallets may hold the verifier metadata from before the rotation.
-- The response URI is the only trusted response URI. No request URIs are listed, since each request object is served
-  at a URI of its own and wallets refuse any request URI that the verifier metadata does not list.
+- The response URI is the only trusted response URI. No request URIs are listed: each request object is served at a
+  URI of its own, which a list could not name in advance, and wallets only refuse request URIs that are missing from
+  the verifier metadata when it lists some.
 
 The prefix can be chosen using CAS properties.
 

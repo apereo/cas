@@ -71,19 +71,27 @@ public class OidcFederationDefaultTrustChainResolver implements OidcFederationTr
 
     private final OidcFederationTrustMarkValidator trustMarkValidator;
 
+    private final OidcFederationResolutionLimiter resolutionLimiter;
+
+    public OidcFederationDefaultTrustChainResolver(final List<TrustChainResolver> trustChainResolvers,
+                                                   final OidcFederationTrustMarkValidator trustMarkValidator) {
+        this(trustChainResolvers, trustMarkValidator, new OidcFederationResolutionLimiter(new OidcFederationProperties()));
+    }
+
     /**
      * Build one trust chain resolver per trust anchor. Trust anchors are configured with the keys obtained out of
      * band (OpenID Federation 1.0, section 11.3), or, when their keys are not configured, the keys are taken from their
      * entity configuration. Without any configured trust anchor, the authority hints are used as trust anchors, as
      * before trust anchors could be configured; authority hints are only the immediate superiors of this entity,
      * so chains through an intermediate then end at the intermediate. Every resolver follows at most the configured
-     * number of authority hints per entity and the configured path length (section 18.1).
+     * number of authority hints per entity and the configured path length (section 18.1), and retrieves statements
+     * within the request budget of the running resolution.
      *
      * @param properties the federation properties
      * @return the trust chain resolvers
      */
     public static List<TrustChainResolver> buildTrustChainResolvers(final OidcFederationProperties properties) {
-        return buildTrustChainResolvers(properties, new DefaultEntityStatementRetriever());
+        return buildTrustChainResolvers(properties, new OidcFederationBudgetedEntityStatementRetriever(new DefaultEntityStatementRetriever()));
     }
 
     /**
@@ -147,9 +155,20 @@ public class OidcFederationDefaultTrustChainResolver implements OidcFederationTr
         return keys;
     }
 
+    /**
+     * Resolve the trust chains of the relying party to each trust anchor in turn, as a single resolution within the
+     * limits of the resolution limiter.
+     *
+     * @param id the client id
+     * @return the registered service, or empty when no trust chain can be used
+     * @throws Exception the exception
+     */
     @Override
     public Optional<OidcRegisteredService> resolveTrustChains(final String id) throws Exception {
-        if (Strings.CI.startsWith(id, "https://")) {
+        if (!Strings.CI.startsWith(id, "https://")) {
+            return Optional.empty();
+        }
+        return resolutionLimiter.execute(() -> {
             val entityId = new EntityID(id);
             for (val trustChainResolver : trustChainResolvers) {
                 val trustMetadataResult = fetchRelyingPartyMetadata(trustChainResolver, entityId);
@@ -157,8 +176,8 @@ public class OidcFederationDefaultTrustChainResolver implements OidcFederationTr
                     return Optional.ofNullable(toRegisteredService(entityId, trustMetadataResult.get()));
                 }
             }
-        }
-        return Optional.empty();
+            return Optional.<OidcRegisteredService>empty();
+        });
     }
 
     /**
@@ -167,6 +186,7 @@ public class OidcFederationDefaultTrustChainResolver implements OidcFederationTr
      * verify statement by statement down from those keys, not have expired, and respect the maximum path length; the
      * required trust marks and the metadata policies of the chain then apply as usual. A chain that cannot be used, or
      * a trust anchor trusted with the keys of its own entity configuration, which a sent chain could forge, is refused.
+     * Verifying the chain is a resolution within the limits of the resolution limiter.
      *
      * @param id         the client id
      * @param trustChain the serialized statements of the sent trust chain
@@ -179,8 +199,8 @@ public class OidcFederationDefaultTrustChainResolver implements OidcFederationTr
             return Optional.empty();
         }
         val entityId = new EntityID(id);
-        val sentMetadata = verifyTrustChain(entityId, trustChain)
-            .flatMap(verified -> toRelyingPartyMetadata(verified.getLeft(), verified.getRight()));
+        val sentMetadata = resolutionLimiter.execute(() -> verifyTrustChain(entityId, trustChain)
+            .flatMap(verified -> toRelyingPartyMetadata(verified.getLeft(), verified.getRight())));
         if (sentMetadata.isEmpty()) {
             LOGGER.debug("Trust chain sent by [{}] cannot be used", entityId);
             return Optional.empty();
@@ -243,8 +263,10 @@ public class OidcFederationDefaultTrustChainResolver implements OidcFederationTr
     /**
      * Build the temporary service of a relying party from its resolved metadata. The relying party must authenticate
      * with {@code private_key_jwt}, which is assumed when its metadata names no method, or {@code tls_client_auth};
-     * any other method is refused. Keys published at a {@code jwks_uri} must be served over {@code https}, so that
-     * a relying party cannot have CAS read keys from local files or other schemes.
+     * any other method is refused, and so is a relying party without redirect URIs. Post-logout redirect URIs are kept
+     * as a comma-separated list, so one that contains a comma is left out: it would otherwise be split into URIs that
+     * the metadata policies of the chain never saw. Keys published at a {@code jwks_uri} must be served over
+     * {@code https}, so that a relying party cannot have CAS read keys from local files or other schemes.
      *
      * @param entityId       the entity id
      * @param rpMetadata     the resolved relying party metadata
@@ -257,6 +279,10 @@ public class OidcFederationDefaultTrustChainResolver implements OidcFederationTr
         if (!ASYMMETRIC_CLIENT_AUTHENTICATION_METHODS.contains(authenticationMethod)) {
             LOGGER.warn("Relying party [{}] cannot be registered automatically with client authentication method [{}]; "
                 + "use one of [{}]", entityId, authenticationMethod, ASYMMETRIC_CLIENT_AUTHENTICATION_METHODS);
+            return null;
+        }
+        if (rpMetadata.getRedirectionURIStrings() == null || rpMetadata.getRedirectionURIStrings().isEmpty()) {
+            LOGGER.warn("Relying party [{}] cannot be registered automatically without redirect URIs", entityId);
             return null;
         }
         val jwksUri = rpMetadata.getJWKSetURI();
@@ -303,9 +329,7 @@ public class OidcFederationDefaultTrustChainResolver implements OidcFederationTr
             registeredService.setContacts(contacts);
         }
 
-        if (rpMetadata.getRedirectionURIStrings() != null) {
-            registeredService.setServiceId(OidcClientRegistrationUtils.toServiceId(new TreeSet<>(rpMetadata.getRedirectionURIStrings())));
-        }
+        registeredService.setServiceId(OidcClientRegistrationUtils.toServiceId(new TreeSet<>(rpMetadata.getRedirectionURIStrings())));
 
         FunctionUtils.doIfNotNull(rpMetadata.getLogoURI(), value -> registeredService.setLogo(value.toURL().toExternalForm()));
         FunctionUtils.doIfNotNull(rpMetadata.getPolicyURI(), value -> registeredService.setPrivacyUrl(value.toURL().toExternalForm()));
@@ -325,8 +349,17 @@ public class OidcFederationDefaultTrustChainResolver implements OidcFederationTr
             val logoutUrls = rpMetadata.getPostLogoutRedirectionURIs()
                 .stream()
                 .map(Unchecked.function(url -> url.toURL().toExternalForm()))
+                .filter(url -> {
+                    val separated = Strings.CS.contains(url, ",");
+                    if (separated) {
+                        LOGGER.warn("Post-logout redirect URI [{}] of [{}] contains a comma and is left out", url, entityId);
+                    }
+                    return !separated;
+                })
                 .collect(Collectors.joining(","));
-            registeredService.setLogoutUrl(logoutUrls);
+            if (StringUtils.isNotBlank(logoutUrls)) {
+                registeredService.setLogoutUrl(logoutUrls);
+            }
         }
 
         FunctionUtils.doIfNotNull(rpMetadata.getJWKSetURI(),

@@ -7,7 +7,6 @@ import org.apereo.cas.oidc.federation.signature.OidcFederationEntityStatementSer
 import org.apereo.cas.oidc.federation.subordinate.OidcFederationSubordinate;
 import org.apereo.cas.oidc.federation.subordinate.OidcFederationSubordinateRepository;
 import org.apereo.cas.oidc.issuer.OidcIssuerService;
-import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import com.nimbusds.openid.connect.sdk.federation.entities.EntityType;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.extern.slf4j.Slf4j;
@@ -47,8 +46,9 @@ public class OidcListFederationEndpointController extends AbstractOidcFederation
 
     /**
      * Lists the immediate subordinates (OpenID Federation 1.0, section 8.2). Subordinates can be filtered by
-     * {@code entity_type}, which may be repeated and keeps the subordinates whose metadata has any of the given entity
-     * types, and by {@code intermediate=true}, which keeps the subordinates whose {@code federation_entity} metadata
+     * {@code entity_type}, which may be repeated and keeps the subordinates that have any of the given entity types, as
+     * their definitions declare them or, when they declare none, as the types of their metadata; a metadata policy for a
+     * type does not count, and by {@code intermediate=true}, which keeps the subordinates whose {@code federation_entity} metadata
      * publishes a fetch endpoint, as intermediates must. Trust mark filters are refused with
      * {@code unsupported_parameter}.
      *
@@ -72,8 +72,7 @@ public class OidcListFederationEndpointController extends AbstractOidcFederation
         for (val parameter : UNSUPPORTED_PARAMETERS) {
             val value = request.getParameter(parameter);
             if (value != null) {
-                val body = OAuth20Utils.getErrorResponseBody(OidcConstants.UNSUPPORTED_PARAMETER, "The " + parameter + " parameter is not supported");
-                return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+                return errorResponse(HttpStatus.BAD_REQUEST, OidcConstants.UNSUPPORTED_PARAMETER, "The " + parameter + " parameter is not supported");
             }
         }
 
@@ -91,8 +90,10 @@ public class OidcListFederationEndpointController extends AbstractOidcFederation
     }
 
     private static boolean hasEntityType(final OidcFederationSubordinate subordinate, final String entityType) {
-        return (subordinate.getMetadata() != null && subordinate.getMetadata().has(entityType))
-            || (subordinate.getMetadataPolicy() != null && subordinate.getMetadataPolicy().has(entityType));
+        if (subordinate.getEntityTypes() != null && !subordinate.getEntityTypes().isEmpty()) {
+            return subordinate.getEntityTypes().contains(entityType);
+        }
+        return subordinate.getMetadata() != null && subordinate.getMetadata().has(entityType);
     }
 
     private static boolean isIntermediate(final OidcFederationSubordinate subordinate) {

@@ -47,5 +47,12 @@ public class OidcFederationSubordinate {
      */
     private JsonNode constraints;
 
+    /**
+     * The entity types of the subordinate, by which the subordinate listing endpoint filters (OpenID Federation 1.0,
+     * section 8.2). When not defined, the entity types are those of the {@code metadata} of the definition: a metadata
+     * policy for a type does not mean the subordinate has it.
+     */
+    private List<String> entityTypes = new ArrayList<>();
+
     private String description;
 }
