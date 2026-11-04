@@ -26,4 +26,16 @@ public interface OidcFederationTrustMarkValidator {
      * @return true/false
      */
     boolean hasRequiredTrustMarks(TrustChainResolver trustChainResolver, TrustChain trustChain);
+
+    /**
+     * The trust marks the leaf entity of the trust chain publishes that are valid, whatever their type: the trust
+     * anchor of the chain recognizes their issuer for their type, and they are active.
+     *
+     * @param trustChainResolver the trust chain resolver that resolved the chain
+     * @param trustChain         the trust chain of the entity
+     * @return the valid trust marks, each with its {@code trust_mark_type} and {@code trust_mark}
+     */
+    default List<Map<String, Object>> resolveValidTrustMarks(final TrustChainResolver trustChainResolver, final TrustChain trustChain) {
+        return List.of();
+    }
 }

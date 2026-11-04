@@ -118,6 +118,24 @@ public class OidcFederationDefaultTrustMarkValidator implements OidcFederationTr
         }
     }
 
+    @Override
+    public List<Map<String, Object>> resolveValidTrustMarks(final TrustChainResolver trustChainResolver, final TrustChain trustChain) {
+        val entityId = trustChain.getLeafConfiguration().getEntityID();
+        try {
+            val trustAnchor = resolveTrustAnchorConfiguration(trustChainResolver, trustChain);
+            return readTrustMarks(trustChain.getLeafConfiguration())
+                .stream()
+                .filter(entry -> entry.get(TRUST_MARK_TYPE) instanceof final String type
+                    && entry.get(TRUST_MARK) instanceof final String trustMark
+                    && isValidTrustMark(trustMark, type, entityId, trustChainResolver, trustAnchor))
+                .toList();
+        } catch (final Exception e) {
+            LOGGER.warn("Unable to validate the trust marks of [{}]: [{}]", entityId, e.getMessage());
+            LOGGER.debug(e.getMessage(), e);
+            return List.of();
+        }
+    }
+
     /**
      * The entity configuration of the trust anchor of the chain, verified with the keys the trust anchor is trusted with.
      *

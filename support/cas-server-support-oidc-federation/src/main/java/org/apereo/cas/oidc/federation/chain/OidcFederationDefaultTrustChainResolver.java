@@ -20,9 +20,9 @@ import com.nimbusds.oauth2.sdk.GrantType;
 import com.nimbusds.oauth2.sdk.ResponseType;
 import com.nimbusds.oauth2.sdk.auth.ClientAuthenticationMethod;
 import com.nimbusds.openid.connect.sdk.federation.entities.EntityID;
-import com.nimbusds.openid.connect.sdk.federation.entities.EntityStatement;
 import com.nimbusds.openid.connect.sdk.federation.entities.EntityType;
 import com.nimbusds.openid.connect.sdk.federation.trust.DefaultEntityStatementRetriever;
+import com.nimbusds.openid.connect.sdk.federation.trust.EntityStatementRetriever;
 import com.nimbusds.openid.connect.sdk.federation.trust.TrustChain;
 import com.nimbusds.openid.connect.sdk.federation.trust.TrustChainResolver;
 import com.nimbusds.openid.connect.sdk.federation.trust.TrustChainSet;
@@ -83,6 +83,19 @@ public class OidcFederationDefaultTrustChainResolver implements OidcFederationTr
      * @return the trust chain resolvers
      */
     public static List<TrustChainResolver> buildTrustChainResolvers(final OidcFederationProperties properties) {
+        return buildTrustChainResolvers(properties, new DefaultEntityStatementRetriever());
+    }
+
+    /**
+     * Build one trust chain resolver per trust anchor, as {@link #buildTrustChainResolvers(OidcFederationProperties)}
+     * does, retrieving entity statements with the given retriever.
+     *
+     * @param properties the federation properties
+     * @param retriever  the entity statement retriever
+     * @return the trust chain resolvers
+     */
+    public static List<TrustChainResolver> buildTrustChainResolvers(final OidcFederationProperties properties,
+                                                                    final EntityStatementRetriever retriever) {
         if (properties.getTrustAnchors().isEmpty()) {
             if (properties.getRole() == OidcFederationRole.OPENID_PROVIDER && !properties.getAuthorityHints().isEmpty()) {
                 LOGGER.warn("No trust anchors are defined; authority hints [{}] are used as trust anchors with the keys of their own "
@@ -91,22 +104,32 @@ public class OidcFederationDefaultTrustChainResolver implements OidcFederationTr
             }
             return properties.getAuthorityHints()
                 .stream()
-                .map(authorityHint -> buildTrustChainResolver(new EntityID(authorityHint), null, properties))
+                .map(authorityHint -> buildTrustChainResolver(new EntityID(authorityHint), null, properties, retriever))
                 .collect(Collectors.toCollection(ArrayList::new));
         }
         return properties.getTrustAnchors()
             .stream()
             .map(Unchecked.function(trustAnchor -> buildTrustChainResolver(new EntityID(trustAnchor.getEntityId()),
-                readTrustAnchorKeys(trustAnchor), properties)))
+                readTrustAnchorKeys(trustAnchor), properties, retriever)))
             .collect(Collectors.toCollection(ArrayList::new));
     }
 
-    private static TrustChainResolver buildTrustChainResolver(final EntityID trustAnchor, @Nullable final JWKSet keys,
-                                                              final OidcFederationProperties properties) {
-        val retriever = new OidcFederationBoundedEntityStatementRetriever(new DefaultEntityStatementRetriever(),
-            properties.getMaxAuthorityHints());
+    /**
+     * Build the trust chain resolver of a trust anchor, which follows at most the configured number of authority hints
+     * per entity and the configured path length.
+     *
+     * @param trustAnchor the entity identifier of the trust anchor
+     * @param keys        the keys the trust anchor is trusted with, or null to take them from its entity configuration
+     * @param properties  the federation properties
+     * @param retriever   the entity statement retriever
+     * @return the trust chain resolver
+     */
+    public static TrustChainResolver buildTrustChainResolver(final EntityID trustAnchor, @Nullable final JWKSet keys,
+                                                             final OidcFederationProperties properties,
+                                                             final EntityStatementRetriever retriever) {
         return new TrustChainResolver(Collections.singletonMap(trustAnchor, keys),
-            new TrustChainConstraints(properties.getMaxPathLength()), retriever);
+            new TrustChainConstraints(properties.getMaxPathLength()),
+            new OidcFederationBoundedEntityStatementRetriever(retriever, properties.getMaxAuthorityHints()));
     }
 
     private static @Nullable JWKSet readTrustAnchorKeys(final OidcFederationTrustAnchorProperties trustAnchor) throws Exception {
@@ -366,51 +389,15 @@ public class OidcFederationDefaultTrustChainResolver implements OidcFederationTr
     }
 
     /**
-     * Whether the trust anchor signed its statements in the chain with a key it has since revoked (OpenID Federation 1.0,
-     * section 8.7), as published by its federation historical keys endpoint. The keys a trust anchor is trusted with
-     * out of band may still list a key it has revoked; its historical keys are verified with those keys, and the
-     * entity configuration that advertises them comes from the chain or is fetched. Statements are matched by their
-     * {@code kid}, which is required (section 3), so a statement that names no key is treated as signed with a revoked
-     * key. When the trust anchor publishes no historical keys, or they cannot be obtained or verified, the chain is not
-     * refused on that account, which is reported in the logs.
+     * Whether the trust anchor signed its statements in the chain with a key it has since revoked.
      *
      * @param trustChainResolver the trust chain resolver of the trust anchor of the chain
      * @param chain              the trust chain
      * @return true or false
+     * @see OidcFederationHistoricalKeys#isSignedWithRevokedTrustAnchorKey(TrustChainResolver, TrustChain)
      */
     protected boolean isSignedWithRevokedTrustAnchorKey(final TrustChainResolver trustChainResolver, final TrustChain chain) {
-        val trustAnchorId = chain.getTrustAnchorEntityID();
-        try {
-            val trustAnchorKeys = trustChainResolver.getTrustAnchors().get(trustAnchorId);
-            val configuration = Objects.requireNonNullElseGet(chain.getTrustAnchorConfiguration(),
-                Unchecked.supplier(() -> trustChainResolver.getEntityStatementRetriever().fetchEntityConfiguration(trustAnchorId)));
-            if (trustAnchorKeys == null) {
-                configuration.verifySignatureOfSelfStatement();
-            } else {
-                configuration.verifySignature(trustAnchorKeys);
-            }
-            val revokedKeys = OidcFederationHistoricalKeys.fetch(configuration,
-                    Objects.requireNonNullElseGet(trustAnchorKeys, () -> configuration.getClaimsSet().getJWKSet()))
-                .stream()
-                .filter(OidcFederationHistoricalKeys::isRevoked)
-                .map(JWK::getKeyID)
-                .filter(Objects::nonNull)
-                .collect(Collectors.toSet());
-            val statements = new ArrayList<EntityStatement>();
-            statements.add(chain.getSuperiorStatements().getLast());
-            FunctionUtils.doIfNotNull(chain.getTrustAnchorConfiguration(), statements::add);
-            val revoked = statements.stream()
-                .map(statement -> statement.getSignedStatement().getHeader().getKeyID())
-                .anyMatch(keyId -> StringUtils.isBlank(keyId) || revokedKeys.contains(keyId));
-            if (revoked) {
-                LOGGER.warn("Trust chain of [{}] is signed with a key that trust anchor [{}] has revoked",
-                    chain.getLeafConfiguration().getEntityID(), trustAnchorId);
-            }
-            return revoked;
-        } catch (final Exception e) {
-            LOGGER.warn("Unable to check the revoked keys of trust anchor [{}]: [{}]", trustAnchorId, e.getMessage());
-            return false;
-        }
+        return OidcFederationHistoricalKeys.isSignedWithRevokedTrustAnchorKey(trustChainResolver, chain);
     }
 
     protected record TrustChainMetadata(OIDCClientMetadata metadata, Date expirationTime, Date issuedAt) {

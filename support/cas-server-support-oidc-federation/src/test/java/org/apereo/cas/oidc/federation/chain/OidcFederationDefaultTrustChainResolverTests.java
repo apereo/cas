@@ -317,7 +317,8 @@ class OidcFederationDefaultTrustChainResolverTests {
             assertTrue(service.getJwks().contains("rp-oidc"));
             assertTrue(StringUtils.isNumeric(service.getProperties()
                 .get(OidcFederationDefaultTrustChainResolver.OPENIDFEDERATION_ENTITY_CONFIGURATION_ISSUED_AT).getValue(String.class)));
-            verify(retriever, never()).fetchEntityConfiguration(any());
+            verify(retriever, never()).fetchEntityConfiguration(new EntityID(RELYING_PARTY));
+            verify(retriever).fetchEntityConfiguration(new EntityID(TRUST_ANCHOR));
 
             val throughIntermediate = List.of(relyingPartyConfiguration(),
                 statement(intermediateKey, INTERMEDIATE, RELYING_PARTY, relyingPartyKey, 0),
@@ -436,8 +437,10 @@ class OidcFederationDefaultTrustChainResolverTests {
 
         /**
          * The keys a trust anchor is trusted with out of band may still list a key it has since revoked (section 8.7):
-         * a chain whose trust anchor statement is signed with it is refused. Keys that are only expired, and historical
-         * keys that cannot be obtained or verified, do not refuse the chain.
+         * a chain whose trust anchor statement is signed with it is refused. The historical keys are those the trust
+         * anchor advertises in the entity configuration fetched from it, not in one the chain carries, which the holder of
+         * the revoked key could produce. Keys that are only expired, and historical keys that cannot be obtained or
+         * verified, do not refuse the chain.
          */
         @Test
         void verifyTrustAnchorKeyRevokedInHistoricalKeys() throws Exception {
@@ -458,6 +461,11 @@ class OidcFederationDefaultTrustChainResolverTests {
                         Map.of("federation_historical_keys_endpoint", endpoint))))));
                 val resolver = resolver(new JWKSet(trustAnchorKey.toPublicJWK()), new TrustChainConstraints(3));
                 assertTrue(resolver.resolveSentTrustChain(RELYING_PARTY, chain).isEmpty());
+
+                val withConfigurationAdvertisingNoHistoricalKeys = List.of(relyingPartyConfiguration(),
+                    statement(trustAnchorKey, TRUST_ANCHOR, RELYING_PARTY, relyingPartyKey, 0),
+                    entityConfiguration(TRUST_ANCHOR, trustAnchorKey, Map.of("metadata", Map.of(EntityType.FEDERATION_ENTITY.getValue(), Map.of()))));
+                assertTrue(resolver.resolveSentTrustChain(RELYING_PARTY, withConfigurationAdvertisingNoHistoricalKeys).isEmpty());
 
                 webServer.responseBody(historicalKeys(trustAnchorKey, expiredKey));
                 assertTrue(resolver.resolveSentTrustChain(RELYING_PARTY, chain).isPresent());

@@ -14,6 +14,8 @@ import org.apereo.cas.oidc.federation.chain.OidcFederationDefaultTrustChainResol
 import org.apereo.cas.oidc.federation.chain.OidcFederationTrustChainResolver;
 import org.apereo.cas.oidc.federation.registration.OidcFederationAutomaticClientRegistration;
 import org.apereo.cas.oidc.federation.registration.OidcFederationAutomaticRegistrationInterceptor;
+import org.apereo.cas.oidc.federation.resolve.OidcFederationDefaultEntityResolver;
+import org.apereo.cas.oidc.federation.resolve.OidcFederationEntityResolver;
 import org.apereo.cas.oidc.federation.signature.OidcFederationDefaultEntityStatementService;
 import org.apereo.cas.oidc.federation.signature.OidcFederationDefaultJsonWebKeystoreService;
 import org.apereo.cas.oidc.federation.signature.OidcFederationEntityStatementService;
@@ -29,12 +31,14 @@ import org.apereo.cas.oidc.federation.web.OidcFederationJwksEndpoint;
 import org.apereo.cas.oidc.federation.web.OidcFetchFederationEndpointController;
 import org.apereo.cas.oidc.federation.web.OidcHistoricalKeysFederationEndpointController;
 import org.apereo.cas.oidc.federation.web.OidcListFederationEndpointController;
+import org.apereo.cas.oidc.federation.web.OidcResolveFederationEndpointController;
 import org.apereo.cas.oidc.federation.web.OidcTrustMarkFederationEndpointController;
 import org.apereo.cas.oidc.federation.web.OidcWellKnownFederationEndpointController;
 import org.apereo.cas.oidc.issuer.OidcDefaultIssuerService;
 import org.apereo.cas.oidc.issuer.OidcIssuerService;
 import org.apereo.cas.oidc.web.OidcRequestObjectDecrypter;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.validator.authorization.OAuth20AuthorizationRequestValidator;
 import org.apereo.cas.support.oauth.web.OAuth20RequestParameterResolver;
@@ -45,6 +49,8 @@ import org.apereo.cas.util.spring.RefreshableHandlerInterceptor;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.web.CasWebSecurityConfigurer;
+import com.nimbusds.openid.connect.sdk.federation.trust.DefaultEntityStatementRetriever;
+import com.nimbusds.openid.connect.sdk.federation.trust.EntityStatementRetriever;
 import com.nimbusds.openid.connect.sdk.federation.trust.TrustChainResolver;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -85,6 +91,12 @@ class OidcFederationConfiguration {
      * Ahead of the OAuth/OIDC interceptors (order 100), after authentication throttling (order 0).
      */
     private static final int AUTOMATIC_REGISTRATION_INTERCEPTOR_ORDER = 50;
+
+    /**
+     * On the OAuth authorization endpoint, ahead of the OAuth interceptor (order 1), which sends the browser to the login
+     * first, alongside authentication throttling (order 0), which does not apply to that endpoint.
+     */
+    private static final int OAUTH_AUTHORIZATION_INTERCEPTOR_ORDER = 0;
 
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -146,6 +158,52 @@ class OidcFederationConfiguration {
             final CasConfigurationProperties casProperties) {
         return new OidcWellKnownFederationEndpointController(oidcServerDiscoverySettings, oidcFederationEntityMetadataContributors,
                 oidcFederationIssuerService, oidcFederationEntityStatementService, casProperties.getAuthn().getOidc());
+    }
+
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    @ConditionalOnMissingBean(name = "oidcResolveFederationController")
+    @Bean
+    public OidcResolveFederationEndpointController oidcResolveFederationController(
+        @Qualifier("oidcFederationIssuerService")
+        final OidcIssuerService oidcFederationIssuerService,
+        @Qualifier(OidcFederationEntityStatementService.BEAN_NAME)
+        final OidcFederationEntityStatementService oidcFederationEntityStatementService,
+        @Qualifier(OidcFederationEntityResolver.BEAN_NAME)
+        final OidcFederationEntityResolver oidcFederationEntityResolver,
+        final CasConfigurationProperties casProperties) {
+        return new OidcResolveFederationEndpointController(oidcFederationIssuerService,
+            oidcFederationEntityStatementService, casProperties.getAuthn().getOidc(), oidcFederationEntityResolver);
+    }
+
+    @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    @ConditionalOnMissingBean(name = "oidcFederationEntityStatementRetriever")
+    public EntityStatementRetriever oidcFederationEntityStatementRetriever() {
+        return new DefaultEntityStatementRetriever();
+    }
+
+    @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    @ConditionalOnMissingBean(name = OidcFederationEntityResolver.BEAN_NAME)
+    public OidcFederationEntityResolver oidcFederationEntityResolver(
+        @Qualifier("oidcFederationIssuerService")
+        final OidcIssuerService oidcFederationIssuerService,
+        @Qualifier(OidcFederationJsonWebKeystoreService.BEAN_NAME)
+        final OidcFederationJsonWebKeystoreService oidcFederationWebKeystoreService,
+        @Qualifier(OidcFederationTrustMarkValidator.BEAN_NAME)
+        final OidcFederationTrustMarkValidator oidcFederationTrustMarkValidator,
+        @Qualifier("oidcFederationEntityStatementRetriever")
+        final EntityStatementRetriever oidcFederationEntityStatementRetriever,
+        @Qualifier("oidcWellKnownFederationController")
+        final ObjectProvider<OidcWellKnownFederationEndpointController> oidcWellKnownFederationController,
+        @Qualifier("oidcFetchFederationController")
+        final ObjectProvider<OidcFetchFederationEndpointController> oidcFetchFederationController,
+        final CasConfigurationProperties casProperties) {
+        return new OidcFederationDefaultEntityResolver(casProperties.getAuthn().getOidc().getFederation(),
+            oidcFederationIssuerService, oidcFederationWebKeystoreService, oidcFederationTrustMarkValidator,
+            oidcFederationEntityStatementRetriever,
+            () -> oidcWellKnownFederationController.getObject().buildEntityConfiguration(),
+            subject -> oidcFetchFederationController.getObject().buildSubordinateStatement(subject.getValue()));
     }
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -342,6 +400,9 @@ class OidcFederationConfiguration {
                     registry.addInterceptor(new RefreshableHandlerInterceptor(oidcFederationAutomaticRegistrationInterceptor))
                         .order(AUTOMATIC_REGISTRATION_INTERCEPTOR_ORDER)
                         .addPathPatterns(baseEndpoint.concat("/**"));
+                    registry.addInterceptor(new RefreshableHandlerInterceptor(oidcFederationAutomaticRegistrationInterceptor))
+                        .order(OAUTH_AUTHORIZATION_INTERCEPTOR_ORDER)
+                        .addPathPatterns(OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.AUTHORIZE_URL);
                 }
             }
         };
@@ -398,6 +459,7 @@ class OidcFederationConfiguration {
         if (role.isTrustAnchorOrIntermediate()) {
             endpoints.add(baseEndpoint + FETCH_FEDERATION_URL);
             endpoints.add(baseEndpoint + LIST_FEDERATION_URL);
+            endpoints.add(baseEndpoint + RESOLVE_FEDERATION_URL);
         }
 
         return new CasWebSecurityConfigurer<>() {

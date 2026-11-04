@@ -103,6 +103,12 @@ When you learn something new, record it in the skill that owns the area, or here
 - `SubjectConfirmationData.Address` identifies the presenter, not the ACS server. Use trusted proxy-aware client information or omit it; never perform a synchronous DNS lookup of the ACS host while building assertions.
 - Scope caches that contain service-specific metadata, keys, validation filters, or trust policy to the registered-service boundary. Address entries by their complete key; do not scan unrelated cached values for a matching entity.
 - When replacing a library that verifies tokens, check what it does when nothing is configured: pac4j's `JwtAuthenticator` with no signature configuration skipped verification and accepted unsigned tokens, which let any `sub` log in through JWT authentication. Token validation in CAS refuses everything when the service defines no signing secret (`TokenAuthenticationSecurity`); keep it that way.
+- A string cipher executor (`BaseStringCipherExecutor`) refuses a value whose signature cannot be verified by returning
+  null from `decode` rather than throwing. Callers that turn the decoded value into an identity must reject a null or
+  blank result themselves; `SimplePrincipal` accepts a null id, so a handler that relied on the exception
+  (`RemoteCookieAuthenticationHandler`) authenticated any cookie. `JwtBuilder.unpack` likewise returns null for a JWT
+  whose signature cannot be verified. Refuse the null explicitly with the exception the caller already uses for a bad
+  input (`Optional.ofNullable(...).orElseThrow(...)`) instead of letting it fail later through a dereference.
 
 ## Test, concurrency, and hand-off expectations
 

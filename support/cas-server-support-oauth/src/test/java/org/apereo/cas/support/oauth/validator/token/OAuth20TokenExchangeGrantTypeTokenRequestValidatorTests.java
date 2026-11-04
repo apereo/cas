@@ -11,7 +11,12 @@ import org.apereo.cas.support.oauth.services.DefaultRegisteredServiceOAuthTokenE
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.token.JwtBuilder;
+import org.apereo.cas.util.RandomUtils;
+import com.nimbusds.jose.JWSAlgorithm;
+import com.nimbusds.jose.JWSHeader;
+import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jwt.JWTClaimsSet;
+import com.nimbusds.jwt.SignedJWT;
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
@@ -76,6 +81,22 @@ class OAuth20TokenExchangeGrantTypeTokenRequestValidatorTests extends AbstractOA
         request.addParameter(OAuth20Constants.CLIENT_ID, service.getClientId());
         assertThrows(IllegalArgumentException.class, () -> validator.validate(request, response));
         request.addParameter(OAuth20Constants.SUBJECT_TOKEN_TYPE, OAuth20TokenExchangeTypes.ACCESS_TOKEN.getType());
+        assertThrows(IllegalArgumentException.class, () -> validator.validate(request, response));
+    }
+
+    @Test
+    void verifyJwtSignedByAnotherKey() throws Throwable {
+        val service = addRegisteredService(Set.of(OAuth20GrantTypes.TOKEN_EXCHANGE), UUID.randomUUID().toString(), UUID.randomUUID().toString());
+        val claims = new JWTClaimsSet.Builder()
+            .subject(service.getClientId())
+            .issuer(RegisteredServiceTestUtils.CONST_TEST_URL)
+            .build();
+        val jwt = new SignedJWT(new JWSHeader(JWSAlgorithm.HS256), claims);
+        jwt.sign(new MACSigner(RandomUtils.randomAlphanumeric(256).getBytes(StandardCharsets.UTF_8)));
+        request.addParameter(OAuth20Constants.SUBJECT_TOKEN, jwt.serialize());
+        request.addParameter(OAuth20Constants.SUBJECT_TOKEN_TYPE, OAuth20TokenExchangeTypes.JWT.getType());
+        request.addParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.TOKEN_EXCHANGE.getType());
+        request.addParameter(OAuth20Constants.CLIENT_ID, service.getClientId());
         assertThrows(IllegalArgumentException.class, () -> validator.validate(request, response));
     }
 

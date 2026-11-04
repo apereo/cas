@@ -11,6 +11,7 @@ import org.apereo.cas.oidc.federation.signature.OidcFederationEntityStatementSer
 import org.apereo.cas.oidc.federation.subordinate.OidcFederationSubordinateClientAuthenticator;
 import org.apereo.cas.oidc.issuer.OidcIssuerService;
 import com.nimbusds.openid.connect.sdk.federation.entities.EntityID;
+import com.nimbusds.openid.connect.sdk.federation.entities.EntityStatement;
 import com.nimbusds.openid.connect.sdk.federation.entities.EntityType;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.extern.slf4j.Slf4j;
@@ -86,9 +87,19 @@ public class OidcWellKnownFederationEndpointController extends AbstractOidcFeder
             return error;
         }
 
+        return toResponse(buildEntityConfiguration());
+    }
+
+    /**
+     * Build and sign the entity configuration of CAS, as the well-known endpoint publishes it.
+     *
+     * @return the entity configuration
+     * @throws Exception the exception
+     */
+    public EntityStatement buildEntityConfiguration() throws Exception {
         val role = oidcProperties.getFederation().getRole();
         val settings = serverDiscoverySettings.getIfAvailable();
-        var issuer = oidcProperties.getCore().getIssuer();
+        var issuer = oidcIssuerService.determineIssuer(Optional.empty());
         val metadata = new JSONObject();
         val authorityHints = oidcProperties.getFederation().getAuthorityHints().stream().map(EntityID::new).toList();
         if (settings != null) {
@@ -136,7 +147,7 @@ public class OidcWellKnownFederationEndpointController extends AbstractOidcFeder
         }
         metadata.put(EntityType.FEDERATION_ENTITY.getValue(), federationMetadata);
 
-        return buildEntityStatement(issuer, issuer, metadata, null, authorityHints);
+        return federationEntityStatementService.createAndSign(issuer, issuer, metadata, null, authorityHints, Map.of());
     }
 
     private void addContributedMetadata(final String entityId, final JSONObject metadata) {

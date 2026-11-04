@@ -16,6 +16,10 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.validator.authorization.OAuth20AuthorizationRequestValidator;
+import org.apereo.cas.ticket.TransientSessionTicket;
+import org.apereo.cas.ticket.TransientSessionTicketFactory;
+import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.util.DigestUtils;
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import com.nimbusds.jose.EncryptionMethod;
 import com.nimbusds.jose.JOSEObjectType;
@@ -101,6 +105,10 @@ class OpenIdFederationAuthorizationCodeResponseTypeAuthorizationRequestValidator
     @Autowired
     @Qualifier(OidcIssuerService.BEAN_NAME)
     private OidcIssuerService oidcIssuerService;
+
+    @Autowired
+    @Qualifier(TicketRegistry.BEAN_NAME)
+    private TicketRegistry ticketRegistry;
 
     @Test
     void verifyMissingServiceGetsResolvedAndSaved() throws Throwable {
@@ -263,6 +271,26 @@ class OpenIdFederationAuthorizationCodeResponseTypeAuthorizationRequestValidator
             "Request object jti has already been used");
     }
 
+    /**
+     * A used request object is remembered for as long as it could be accepted, its expiration plus the allowed clock
+     * skew, and at least for the lifetime of transient session tickets, so that it cannot be replayed once its record
+     * would otherwise have expired.
+     */
+    @Test
+    void verifyUsedRequestObjectIsRememberedWhileItCanBeAccepted() throws Throwable {
+        val clientId = newSignedClientId();
+        val shortLived = UUID.randomUUID().toString();
+        assertTrue(preHandle(AUTHORIZE_URL, clientId, Map.of(OAuth20Constants.REQUEST,
+            signRequestObject(requestObjectClaims(clientId, shortLived).build(), RELYING_PARTY_KEY))).getLeft());
+        assertTrue(usedRequestObject(clientId, shortLived).getExpirationPolicy().getTimeToLive() >= 90);
+
+        val longLived = UUID.randomUUID().toString();
+        assertTrue(preHandle(AUTHORIZE_URL, clientId, Map.of(OAuth20Constants.REQUEST, signRequestObject(requestObjectClaims(clientId, longLived)
+            .expirationTime(Date.from(Instant.now().plusSeconds(540))).build(), RELYING_PARTY_KEY))).getLeft());
+        val timeToLive = usedRequestObject(clientId, longLived).getExpirationPolicy().getTimeToLive();
+        assertTrue(timeToLive > 540 && timeToLive <= 600, String.valueOf(timeToLive));
+    }
+
     @Test
     void verifyInvalidRequestObjectsAreRefused() throws Throwable {
         val clientId = newSignedClientId();
@@ -273,12 +301,20 @@ class OpenIdFederationAuthorizationCodeResponseTypeAuthorizationRequestValidator
         val wrongIssuer = requestObjectClaims(clientId, UUID.randomUUID().toString()).issuer("https://other.example.org").build();
         val wrongClient = requestObjectClaims(clientId, UUID.randomUUID().toString()).claim(OAuth20Constants.CLIENT_ID, "https://other.example.org").build();
         val withoutJti = requestObjectClaims(clientId, UUID.randomUUID().toString()).jwtID(null).build();
+        val longLived = requestObjectClaims(clientId, UUID.randomUUID().toString())
+            .expirationTime(Date.from(Instant.now().plusSeconds(3600))).build();
+        val longLivedSinceIssued = requestObjectClaims(clientId, UUID.randomUUID().toString())
+            .issueTime(Date.from(Instant.now().minusSeconds(3600))).build();
 
         for (val claims : List.of(wrongAudience, extraAudience, withSubject, expired, wrongIssuer, wrongClient)) {
             assertRefused(mockMvc.perform(authorize(clientId).param(OAuth20Constants.REQUEST, signRequestObject(claims, RELYING_PARTY_KEY))).andReturn(), null);
         }
         assertRefused(mockMvc.perform(authorize(clientId).param(OAuth20Constants.REQUEST, signRequestObject(withoutJti, RELYING_PARTY_KEY))).andReturn(),
             "Request object has no jti");
+        for (val claims : List.of(longLived, longLivedSinceIssued)) {
+            assertRefused(mockMvc.perform(authorize(clientId).param(OAuth20Constants.REQUEST, signRequestObject(claims, RELYING_PARTY_KEY))).andReturn(),
+                "Request object must not be valid for more than 10 minutes");
+        }
         val unknownKey = signRequestObject(requestObjectClaims(clientId, UUID.randomUUID().toString()).build(), generateKey(RELYING_PARTY_KEY.getKeyID()));
         assertRefused(mockMvc.perform(authorize(clientId).param(OAuth20Constants.REQUEST, unknownKey)).andReturn(),
             "Request object signature or claims are invalid");
@@ -293,6 +329,39 @@ class OpenIdFederationAuthorizationCodeResponseTypeAuthorizationRequestValidator
             requestObjectClaims(clientId, UUID.randomUUID().toString()).build()).serialize(), resolveEncryptionKey());
         assertRefused(mockMvc.perform(authorize(clientId).param(OAuth20Constants.REQUEST, encryptedWithoutSignature)).andReturn(),
             "Request object signature or claims are invalid");
+    }
+
+    /**
+     * The client whose keys must be proven (OpenID Federation 1.0, section 12.1.1) is the client the authorization
+     * request is for: the {@code client_id} of the request object when the request carries no {@code client_id}
+     * parameter, and on the OAuth authorization endpoint as well as on the OpenID Connect one.
+     */
+    @Test
+    void verifyClientOfRequestObjectMustProveItsKeys() throws Throwable {
+        val clientId = newSignedClientId();
+        val unsigned = new PlainJWT(requestObjectClaims(clientId, UUID.randomUUID().toString()).build()).serialize();
+        assertRefused(mockMvc.perform(get(AUTHORIZE_URL)
+            .param(OAuth20Constants.REQUEST, unsigned)
+            .param(OAuth20Constants.REDIRECT_URI, REDIRECT_URI)
+            .param(OAuth20Constants.RESPONSE_TYPE, OAuth20Constants.CODE)
+            .with(withHttpRequestProcessor())).andReturn(), "Request object signature or claims are invalid");
+
+        val signed = signRequestObject(requestObjectClaims(clientId, UUID.randomUUID().toString()).build(), RELYING_PARTY_KEY);
+        val request = new MockHttpServletRequest("GET", AUTHORIZE_URL);
+        request.addParameter(OAuth20Constants.REQUEST, signed);
+        assertTrue(automaticRegistrationInterceptor.preHandle(request, new MockHttpServletResponse(), new Object()));
+
+        val oauthAuthorizeUrl = "/cas" + OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.AUTHORIZE_URL;
+        assertRefused(mockMvc.perform(get(oauthAuthorizeUrl)
+            .param(OAuth20Constants.CLIENT_ID, clientId)
+            .param(OAuth20Constants.REDIRECT_URI, REDIRECT_URI)
+            .param(OAuth20Constants.RESPONSE_TYPE, OAuth20Constants.CODE)
+            .with(withHttpRequestProcessor())).andReturn(), "Automatic registration requires a signed request object or a pushed authorization request");
+        assertRefused(mockMvc.perform(get(oauthAuthorizeUrl)
+            .param(OAuth20Constants.REQUEST, unsigned)
+            .param(OAuth20Constants.REDIRECT_URI, REDIRECT_URI)
+            .param(OAuth20Constants.RESPONSE_TYPE, OAuth20Constants.CODE)
+            .with(withHttpRequestProcessor())).andReturn(), "Request object signature or claims are invalid");
     }
 
     /**
@@ -463,6 +532,11 @@ class OpenIdFederationAuthorizationCodeResponseTypeAuthorizationRequestValidator
     private static String issuedAt(final OAuthRegisteredService service) {
         return service.getProperties()
             .get(OidcFederationDefaultTrustChainResolver.OPENIDFEDERATION_ENTITY_CONFIGURATION_ISSUED_AT).getValue(String.class);
+    }
+
+    private TransientSessionTicket usedRequestObject(final String clientId, final String jwtId) {
+        val ticketId = TransientSessionTicketFactory.normalizeTicketId("OidcFederationRequestObject:" + clientId + ':' + DigestUtils.sha256(jwtId));
+        return Objects.requireNonNull(ticketRegistry.getTicket(ticketId, TransientSessionTicket.class));
     }
 
     private Pair<Boolean, MockHttpServletResponse> preHandle(final String uri, final String clientId,

@@ -10,10 +10,12 @@ import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
+import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.TransientSessionTicket;
 import org.apereo.cas.ticket.TransientSessionTicketFactory;
+import org.apereo.cas.ticket.expiration.HardTimeoutExpirationPolicy;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.DigestUtils;
 import com.nimbusds.jwt.JWTParser;
@@ -46,12 +48,18 @@ import jakarta.servlet.http.HttpServletResponse;
  * party of the federation is registered automatically (OpenID Federation 1.0, section 12.1) before client
  * authentication and the authorization request validators look the client up.
  * <p>
+ * The client is the {@code client_id} parameter, or, for an authorization request without one, the {@code client_id}
+ * of its request object, which is where the authorization request validators take it from; a request object whose
+ * {@code client_id} differs from the parameter is refused by the request parameter resolver. The interceptor runs on
+ * the OpenID Connect endpoints and on the OAuth authorization endpoint.
+ * <p>
  * An authorization request of an automatically registered client must prove that the client controls its keys
  * (section 12.1.1): it carries a request object signed with a key of the relying party's resolved metadata, whose
  * {@code iss} and {@code client_id} are the Entity Identifier, whose {@code aud} is only the OP's Entity Identifier,
- * with {@code jti} and {@code exp} and without {@code sub}. A request object is used once: its {@code jti} is kept
- * in the ticket registry for the lifetime of transient session tickets, and only the very same request object may come
- * back in that time, which is what the authorization endpoint receives again after the login. A pushed authorization
+ * with {@code jti} and {@code exp} and without {@code sub}, valid for 10 minutes at most. A request object is used
+ * once: its {@code jti} is kept in the ticket registry for as long as the request object could be accepted, and at least
+ * for the lifetime of transient session tickets, and only the very same request object may come back in that time, which
+ * is what the authorization endpoint receives again after the login, even once the request object has expired. A pushed authorization
  * request proves the keys through client authentication instead, which the pushed authorization endpoint requires of an
  * automatically registered client since its registration only allows asymmetric methods, so the authorization request
  * that refers to it by {@code request_uri} carries no request object. A request object encrypted to CAS is decrypted
@@ -77,6 +85,12 @@ public class OidcFederationAutomaticRegistrationInterceptor implements HandlerIn
 
     private static final int ALLOWED_CLOCK_SKEW_SECONDS = 30;
 
+    /**
+     * The longest a request object may be valid for, from now or from its {@code iat}: it must be kept as used for as
+     * long as it could be accepted, so its lifetime bounds what is remembered.
+     */
+    private static final long MAX_REQUEST_OBJECT_LIFETIME_SECONDS = Duration.ofMinutes(10).toSeconds();
+
     private static final String TRUST_CHAIN = "trust_chain";
 
     private final OidcFederationAutomaticClientRegistration clientRegistration;
@@ -96,8 +110,9 @@ public class OidcFederationAutomaticRegistrationInterceptor implements HandlerIn
                              final Object handler)
             throws Exception {
         val clientAssertion = resolveClientAssertion(request);
-        val clientId = StringUtils.defaultIfBlank(request.getParameter(OAuth20Constants.CLIENT_ID), resolveSubject(clientAssertion));
         val authorizationRequest = isAuthorizationRequest(request);
+        val clientId = StringUtils.firstNonBlank(request.getParameter(OAuth20Constants.CLIENT_ID),
+            authorizationRequest ? resolveRequestObjectClientId(request) : null, resolveSubject(clientAssertion));
         if ((!authorizationRequest && clientAssertion == null) || !OidcFederationAutomaticClientRegistration.isFederatedEntityId(clientId)) {
             return true;
         }
@@ -162,6 +177,8 @@ public class OidcFederationAutomaticRegistrationInterceptor implements HandlerIn
                 val properties = new HashMap<String, Serializable>();
                 properties.put(OAuth20Constants.CLIENT_ID, clientId);
                 properties.put(REQUEST_OBJECT_DIGEST, digest);
+                properties.put(ExpirationPolicy.class.getName(), new HardTimeoutExpirationPolicy(
+                    usedRequestObjectLifetime(factory, JWTParser.parse(nestedRequestObject).getJWTClaimsSet().getExpirationTime())));
                 ticketRegistry.addTicket(factory.create(ticketId, properties));
             }
             return error;
@@ -240,6 +257,27 @@ public class OidcFederationAutomaticRegistrationInterceptor implements HandlerIn
         }
     }
 
+    /**
+     * The {@code client_id} of the request object, signed or not, when the request carries no {@code client_id}
+     * parameter: the authorization request validators then take the client from the request object, so the client
+     * whose keys must be proven is that one.
+     *
+     * @param request the request
+     * @return the client id of the request object, or null
+     */
+    private @Nullable String resolveRequestObjectClientId(final HttpServletRequest request) {
+        val requestObject = request.getParameter(OAuth20Constants.REQUEST);
+        if (StringUtils.isBlank(requestObject)) {
+            return null;
+        }
+        try {
+            return JWTParser.parse(decryptRequestObject(requestObject)).getJWTClaimsSet().getStringClaim(OAuth20Constants.CLIENT_ID);
+        } catch (final Exception e) {
+            LOGGER.trace("Request object has no client id: [{}]", e.getMessage());
+            return null;
+        }
+    }
+
     private static @Nullable String resolveSubject(@Nullable final String clientAssertion) {
         try {
             return clientAssertion == null ? null : JWTParser.parse(clientAssertion).getJWTClaimsSet().getSubject();
@@ -269,6 +307,17 @@ public class OidcFederationAutomaticRegistrationInterceptor implements HandlerIn
         return decrypter.decrypt(requestObject);
     }
 
+    /**
+     * How long a used request object is remembered: until it can no longer be accepted, its expiration plus the allowed
+     * clock skew, and at least for the lifetime of transient session tickets, during which the very same request object
+     * comes back after the login.
+     */
+    private static long usedRequestObjectLifetime(final TransientSessionTicketFactory factory, final Date expiration) {
+        val transientLifetime = Objects.requireNonNullElse(factory.getExpirationPolicyBuilder().buildTicketExpirationPolicy().getTimeToLive(), 0L);
+        val acceptedFor = Duration.between(Instant.now(Clock.systemUTC()), expiration.toInstant()).toSeconds() + ALLOWED_CLOCK_SKEW_SECONDS;
+        return Math.max(1, Math.max(transientLifetime, acceptedFor));
+    }
+
     private Optional<String> verifyRequestObjectClaims(final String requestObject, final OidcRegisteredService registeredService) {
         val keys = OidcJsonWebKeyStoreUtils.getJsonWebKeySet(registeredService, applicationContext, Optional.of(OidcJsonWebKeyUsage.SIGNING))
             .map(JsonWebKeySet::getJsonWebKeys)
@@ -296,6 +345,12 @@ public class OidcFederationAutomaticRegistrationInterceptor implements HandlerIn
             }
             if (claims.hasClaim("sub")) {
                 return Optional.of("Request object must not carry sub");
+            }
+            val expiration = claims.getExpirationTime().getValue();
+            val now = Instant.now(Clock.systemUTC()).getEpochSecond();
+            if (expiration - now > MAX_REQUEST_OBJECT_LIFETIME_SECONDS + ALLOWED_CLOCK_SKEW_SECONDS
+                || (claims.getIssuedAt() != null && expiration - claims.getIssuedAt().getValue() > MAX_REQUEST_OBJECT_LIFETIME_SECONDS)) {
+                return Optional.of("Request object must not be valid for more than 10 minutes");
             }
             return Optional.empty();
         } catch (final InvalidJwtException | MalformedClaimException e) {

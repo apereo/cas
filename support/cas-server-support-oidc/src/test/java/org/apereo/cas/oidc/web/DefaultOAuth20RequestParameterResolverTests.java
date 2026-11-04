@@ -68,6 +68,10 @@ class DefaultOAuth20RequestParameterResolverTests extends AbstractOidcTests {
         assertTrue(scope.get().contains("profile"));
     }
 
+    /**
+     * A request object that names other clients than the {@code client_id} parameter is not used (OpenID Connect Core
+     * 1.0, section 6.1): the parameters come from the request itself.
+     */
     @Test
     void verifyPlainJwtWithClientId() {
         val request = getJwtRequest();
@@ -76,10 +80,10 @@ class DefaultOAuth20RequestParameterResolverTests extends AbstractOidcTests {
         servicesManager.save(registeredService);
         request.addParameter(OAuth20Constants.CLIENT_ID, registeredService.getClientId());
 
-        val scope = oauthRequestParameterResolver.resolveRequestParameter(request, OAuth20Constants.CLIENT_ID, List.class);
-        assertFalse(scope.isEmpty());
-        assertTrue(scope.get().contains("client1"));
-        assertTrue(scope.get().contains("client2"));
+        val clientIds = oauthRequestParameterResolver.resolveRequestParameter(request, OAuth20Constants.CLIENT_ID, List.class);
+        assertEquals(List.of(registeredService.getClientId()), clientIds.orElseThrow());
+        assertTrue(oauthRequestParameterResolver.resolveRequestParameter(request, OAuth20Constants.SCOPE, List.class).isEmpty());
+        assertFalse(oauthRequestParameterResolver.isRequestObjectVerified(request));
     }
 
     @Test

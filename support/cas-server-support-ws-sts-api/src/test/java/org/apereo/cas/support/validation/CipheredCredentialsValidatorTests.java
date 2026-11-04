@@ -45,4 +45,17 @@ class CipheredCredentialsValidatorTests {
         credential.setUsernametoken(token);
         assertThrows(WSSecurityException.class, () -> validator.validate(credential, mock(RequestData.class)));
     }
+
+    @Test
+    void verifyUndecodablePassword() {
+        val cipherExecutor = mock(CipherExecutor.class);
+        when(cipherExecutor.decode(any())).thenReturn(null);
+        val validator = new CipheredCredentialsValidator(cipherExecutor);
+        val credential = new Credential();
+        val token = mock(UsernameToken.class);
+        when(token.getName()).thenReturn(UUID.randomUUID().toString());
+        when(token.getPassword()).thenReturn(UUID.randomUUID().toString());
+        credential.setUsernametoken(token);
+        assertThrows(WSSecurityException.class, () -> validator.validate(credential, mock(RequestData.class)));
+    }
 }

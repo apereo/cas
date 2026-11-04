@@ -9,6 +9,7 @@ import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.web.AbstractController;
 import com.nimbusds.openid.connect.sdk.federation.entities.EntityID;
+import com.nimbusds.openid.connect.sdk.federation.entities.EntityStatement;
 import com.nimbusds.openid.connect.sdk.federation.entities.FederationEntityMetadata;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -54,6 +55,7 @@ abstract class AbstractOidcFederationEndpointController extends AbstractControll
         if (role.isTrustAnchorOrIntermediate()) {
             fedMeta.setFederationFetchEndpointURI(new URI(issuer + OidcConstants.FETCH_FEDERATION_URL));
             fedMeta.setFederationListEndpointURI(new URI(issuer + OidcConstants.LIST_FEDERATION_URL));
+            fedMeta.setFederationResolveEndpointURI(new URI(issuer + OidcConstants.RESOLVE_FEDERATION_URL));
         }
         return fedMeta;
     }
@@ -72,8 +74,11 @@ abstract class AbstractOidcFederationEndpointController extends AbstractControll
         @Nullable final List<EntityID> authorityHints,
         final Map<String, Object> additionalClaims)
             throws Exception {
-        val entityStatement = federationEntityStatementService.createAndSign(
-            issuer, subject, metadata, federationKeys, authorityHints, additionalClaims);
+        return toResponse(federationEntityStatementService.createAndSign(
+            issuer, subject, metadata, federationKeys, authorityHints, additionalClaims));
+    }
+
+    protected static ResponseEntity toResponse(final EntityStatement entityStatement) {
         return ResponseEntity.ok()
             .cacheControl(CacheControl.noStore().mustRevalidate())
             .header(HttpHeaders.ACCEPT, OidcConstants.ENTITY_STATEMENT_CONTENT_TYPE.toString())

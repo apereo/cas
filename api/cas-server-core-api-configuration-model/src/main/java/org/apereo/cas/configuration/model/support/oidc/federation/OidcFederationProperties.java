@@ -55,8 +55,9 @@ public class OidcFederationProperties implements Serializable {
 
     /**
      * The trust anchors whose trust chains an OpenID provider accepts when relying parties register
-     * automatically, with their keys obtained out of band. When none are defined, the authority hints
-     * are used as trust anchors and their keys are taken from their own entity configuration.
+     * automatically, and that an intermediate resolves entities to at its resolve endpoint, with their keys obtained
+     * out of band. When none are defined, the authority hints are used as trust anchors and their keys are taken from
+     * their own entity configuration.
      */
     private List<OidcFederationTrustAnchorProperties> trustAnchors = new ArrayList<>();
 
@@ -76,7 +77,8 @@ public class OidcFederationProperties implements Serializable {
     /**
      * How long an entity identifier whose trust chains could not be resolved is remembered.
      * Within that time, authorization requests that carry it as client id do not cause trust chains
-     * to be resolved again, and a registration whose refresh failed is kept as it is.
+     * to be resolved again, and a registration whose refresh failed is kept as it is. A trust anchor or intermediate
+     * also remembers the entities its resolve endpoint resolved, or could not resolve, for at most that time.
      */
     @DurationCapable
     private String unresolvedEntityRetention = "PT5M";

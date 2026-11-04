@@ -169,10 +169,33 @@ public class DefaultOAuth20RequestParameterResolver implements OAuth20RequestPar
         val id = Objects.requireNonNullElse(request.getParameter(OAuth20Constants.CLIENT_ID), StringUtils.EMPTY);
         val service = OAuth20Utils.getRegisteredOAuthServiceByClientId(jwtBuilder.getServicesManager(), id);
         val jwt = unpackRequestObject(service, decryptRequestObject(jwtRequest));
+        if (jwt != null && !isIssuedForClient(jwt, id)) {
+            LOGGER.warn("Request object is for client [{}], not for client [{}] of the request", jwt.getClaim(OAuth20Constants.CLIENT_ID), id);
+            return null;
+        }
         if (jwt != null) {
             request.setAttribute(UnpackedJwtRequest.class.getName(), new UnpackedJwtRequest(jwtRequest, jwt));
         }
         return jwt;
+    }
+
+    /**
+     * Whether the request object names the client of the request: its {@code client_id}, when it has one, must be the
+     * {@code client_id} parameter, when the request has one (OpenID Connect Core 1.0, section 6.1; RFC 9101, section 5).
+     * The request object is verified with the keys of the client of the parameter, so a request object for another
+     * client is never used.
+     *
+     * @param requestObject the claims of the request object
+     * @param clientId      the client id parameter of the request
+     * @return true or false
+     */
+    private static boolean isIssuedForClient(final JWTClaimsSet requestObject, final String clientId) {
+        val claimed = requestObject.getClaim(OAuth20Constants.CLIENT_ID);
+        if (claimed == null || StringUtils.isBlank(clientId)) {
+            return true;
+        }
+        val values = claimed instanceof final Collection<?> collection ? new ArrayList<Object>(collection) : List.of(claimed);
+        return !values.isEmpty() && values.stream().allMatch(value -> clientId.equals(String.valueOf(value)));
     }
 
     @Override

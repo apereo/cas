@@ -140,24 +140,46 @@ class DefaultOidcRequestParameterResolverTests extends AbstractOidcTests {
         service.setClientSecret(RandomUtils.randomAlphanumeric(64));
         servicesManager.save(service);
         for (val algorithm : List.of(JWSAlgorithm.HS256, JWSAlgorithm.HS384, JWSAlgorithm.HS512)) {
-            val request = requestWith(service.getClientId(), signWithSecret(algorithm, service.getClientSecret()));
+            val request = requestWith(service.getClientId(), signWithSecret(algorithm, service.getClientSecret(), service.getClientId()));
             assertTrue(oauthRequestParameterResolver.isRequestObjectVerified(request), algorithm.getName());
             assertEquals(List.of(OidcConstants.StandardScopes.OPENID.getScope(), OidcConstants.StandardScopes.PROFILE.getScope()),
                 oauthRequestParameterResolver.resolveRequestParameter(request, OAuth20Constants.SCOPE, List.class).orElseThrow());
         }
         assertFalse(oauthRequestParameterResolver.isRequestObjectVerified(
-            requestWith(service.getClientId(), signWithSecret(JWSAlgorithm.HS256, RandomUtils.randomAlphanumeric(64)))));
+            requestWith(service.getClientId(), signWithSecret(JWSAlgorithm.HS256, RandomUtils.randomAlphanumeric(64), service.getClientId()))));
+        val unknownClientId = UUID.randomUUID().toString();
         assertFalse(oauthRequestParameterResolver.isRequestObjectVerified(
-            requestWith(UUID.randomUUID().toString(), signWithSecret(JWSAlgorithm.HS256, service.getClientSecret()))));
+            requestWith(unknownClientId, signWithSecret(JWSAlgorithm.HS256, service.getClientSecret(), unknownClientId))));
 
         val shortSecretService = getOidcRegisteredService(UUID.randomUUID().toString());
         shortSecretService.setClientSecrets(new ArrayList<>());
         shortSecretService.setClientSecret(RandomUtils.randomAlphanumeric(40));
         servicesManager.save(shortSecretService);
-        assertTrue(oauthRequestParameterResolver.isRequestObjectVerified(
-            requestWith(shortSecretService.getClientId(), signWithSecret(JWSAlgorithm.HS256, shortSecretService.getClientSecret()))));
-        assertFalse(oauthRequestParameterResolver.isRequestObjectVerified(
-            requestWith(shortSecretService.getClientId(), signWithShortSecret(shortSecretService.getClientSecret()))));
+        assertTrue(oauthRequestParameterResolver.isRequestObjectVerified(requestWith(shortSecretService.getClientId(),
+            signWithSecret(JWSAlgorithm.HS256, shortSecretService.getClientSecret(), shortSecretService.getClientId()))));
+        assertFalse(oauthRequestParameterResolver.isRequestObjectVerified(requestWith(shortSecretService.getClientId(),
+            signWithShortSecret(shortSecretService.getClientSecret(), shortSecretService.getClientId()))));
+    }
+
+    /**
+     * The request object must name the client of the request (OpenID Connect Core 1.0, section 6.1; RFC 9101,
+     * section 5): it is verified with the keys of the {@code client_id} parameter, so a request object for another
+     * client, even one signed with the keys of the client of the parameter, is refused, and its parameters are not used.
+     */
+    @Test
+    void verifyRequestObjectForAnotherClientIsRefused() throws Throwable {
+        val service = getOidcRegisteredService(UUID.randomUUID().toString());
+        service.setClientSecrets(new ArrayList<>());
+        service.setClientSecret(RandomUtils.randomAlphanumeric(64));
+        servicesManager.save(service);
+        val otherClientId = UUID.randomUUID().toString();
+        val request = requestWith(service.getClientId(), signWithSecret(JWSAlgorithm.HS256, service.getClientSecret(), otherClientId));
+        assertFalse(oauthRequestParameterResolver.isRequestObjectVerified(request));
+        assertEquals(service.getClientId(), oauthRequestParameterResolver.resolveRequestParameter(request, OAuth20Constants.CLIENT_ID).orElseThrow());
+        assertTrue(oauthRequestParameterResolver.resolveRequestParameter(request, OAuth20Constants.SCOPE, List.class).isEmpty());
+
+        val sameClient = requestWith(service.getClientId(), signWithSecret(JWSAlgorithm.HS256, service.getClientSecret(), service.getClientId()));
+        assertTrue(oauthRequestParameterResolver.isRequestObjectVerified(sameClient));
     }
 
     /**
@@ -240,14 +262,14 @@ class DefaultOidcRequestParameterResolverTests extends AbstractOidcTests {
             .orElseThrow();
     }
 
-    private static String signWithSecret(final JWSAlgorithm algorithm, final String secret) throws Exception {
-        val jwt = new SignedJWT(new JWSHeader(algorithm), requestObjectClaims("client"));
+    private static String signWithSecret(final JWSAlgorithm algorithm, final String secret, final String clientId) throws Exception {
+        val jwt = new SignedJWT(new JWSHeader(algorithm), requestObjectClaims(clientId));
         jwt.sign(new MACSigner(secret.getBytes(StandardCharsets.UTF_8)));
         return jwt.serialize();
     }
 
-    private static String signWithShortSecret(final String secret) throws Exception {
-        val input = Base64URL.encode(new JWSHeader(JWSAlgorithm.HS512).toString()) + "." + Base64URL.encode(requestObjectClaims("client").toString());
+    private static String signWithShortSecret(final String secret, final String clientId) throws Exception {
+        val input = Base64URL.encode(new JWSHeader(JWSAlgorithm.HS512).toString()) + "." + Base64URL.encode(requestObjectClaims(clientId).toString());
         val mac = Mac.getInstance("HmacSHA512");
         mac.init(new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8), "HmacSHA512"));
         return input + '.' + Base64URL.encode(mac.doFinal(input.getBytes(StandardCharsets.UTF_8)));

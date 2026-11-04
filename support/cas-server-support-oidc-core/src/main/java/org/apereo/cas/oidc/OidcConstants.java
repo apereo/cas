@@ -417,6 +417,16 @@ public interface OidcConstants {
      * Trust mark status response content type.
      */
     MediaType TRUST_MARK_STATUS_RESPONSE_CONTENT_TYPE = new MediaType("application", "trust-mark-status-response+jwt");
+
+    /**
+     * Federation resolve endpoint URL.
+     */
+    String RESOLVE_FEDERATION_URL = "/resolve";
+
+    /**
+     * Resolve response content type.
+     */
+    MediaType RESOLVE_RESPONSE_CONTENT_TYPE = new MediaType("application", "resolve-response+jwt");
     /**
      * Scope assigned to access token internally
      * to access client config urls and look up relying parties.

@@ -517,6 +517,25 @@ one-time codes can be added when `cas.authn.mfa.simple.mail.accepted-email-patte
   mark critical, and no longer requires metadata in subordinate definitions. A CAS OpenID provider resolves the metadata
   of relying parties as the specification describes: the metadata their superior states about them comes first, operators
   beyond the standard ones are ignored unless marked critical, and `scope` is handled as a list.
+- {: .new data-area="oidc"} A CAS [OpenID Federation](../authentication/OIDC-Authentication-Federation.html#resolve-endpoint)
+  trust anchor or intermediate publishes a resolve endpoint, which returns the resolved metadata, trust chain and valid
+  trust marks of an entity for a trust anchor it trusts, as a signed resolve response. Resolutions and entities that
+  could not be resolved are remembered for at most `cas.authn.oidc.federation.unresolved-entity-retention`{: .cas-setting}.
+- {: .fixed data-area="oidc"} A CAS [OpenID Federation](../authentication/OIDC-Authentication-Federation.html#automatic-registration)
+  OpenID provider reads the historical keys of a trust anchor from the entity configuration it fetches from the trust
+  anchor, never from one carried by a trust chain a relying party sends.
+- {: .fixed data-area="oidc"} [OpenID Federation](../authentication/OIDC-Authentication-Federation.html#automatic-registration)
+  relying parties must prove their keys for the client the authorization request is actually for, taken from the
+  request object when the request carries no `client_id`, and on the OAuth authorization endpoint as well. For every
+  OAuth/OpenID Connect client, a request object whose `client_id` differs from the `client_id` parameter is now refused
+  with `invalid_request_object`.
+- {: .fixed data-area="oidc"} [OpenID Federation](../authentication/OIDC-Authentication-Federation.html#automatic-registration)
+  request objects are refused when valid for more than 10 minutes, and are remembered as used for as long as they could
+  be accepted rather than only for the lifetime of transient session tickets, so they cannot be replayed once that
+  lifetime has passed. DPoP proofs are likewise remembered for as long as their `iat` keeps them acceptable.
+- {: .fixed data-area="oidc"} A CAS [OpenID Federation](../authentication/OIDC-Authentication-Federation.html#entity-configuration)
+  trust anchor or intermediate whose issuer is defined with a trailing slash uses the issuer without it as its entity
+  identifier, in its entity configuration and subordinate statements, as its trust marks already did.
 - {: .changed data-area="oidc"} [OpenID Federation](../authentication/OIDC-Authentication-Federation.html#metadata-policies)
   subordinate statements no longer copy the fetch, list and trust mark status endpoints of the subordinate, which belong
   in its entity configuration only, and no longer carry a fixed `max_path_length` of `1` for intermediates: subordinate

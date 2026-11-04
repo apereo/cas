@@ -280,6 +280,10 @@ description: "Review and change CAS OAuth2/OIDC protocol behavior: token endpoin
   other tests use (give the test its own nested class and keystore file), and anything a `@BeforeEach` writes into
   shared beans (e.g. `getSubordinates().put(...)`) must be identical for every instance, so keys must be `static`.
   `OAuthRegisteredService.setClientSecret` appends; clear with `setClientSecrets(new ArrayList<>())` first.
+- Replay records in the ticket registry must outlive acceptance: set `ExpirationPolicy.class.getName()` to a
+  `HardTimeoutExpirationPolicy` of `max(transient lifetime, until no longer acceptable)` (transient lifetime from
+  `factory.getExpirationPolicyBuilder().buildTicketExpirationPolicy()`). Federation request objects: at most 10 minutes
+  (`exp - now`, `exp - iat`); DPoP: `2 x skew` (nimbus accepts `iat` within ±skew). Never rely on the default TST lifetime.
 - Redirect URIs to service ids: always `OidcClientRegistrationUtils.toServiceId` (`^(Pattern.quote|...)$`, full-regex
   match) and back with `toRedirectUris` for registration responses; never join raw URIs (`.` matched look-alike hosts,
   `?` broke URIs with a query, `,` never matched). Used by dynamic registration, client ID metadata documents, federation.
@@ -300,6 +304,23 @@ description: "Review and change CAS OAuth2/OIDC protocol behavior: token endpoin
   issuer's historical keys endpoint (`resolveVerificationKeys`). Revoked-key checks match by `kid`, so every chain
   statement must carry one (`OidcFederationTrustChainConstraints.isSatisfiedBy`): nimbus `verifySignatures` tries every
   key when the header has no `kid`, which let a statement signed with a revoked but still trusted key pass.
+  `isSignedWithRevokedTrustAnchorKey` (now static in `OidcFederationHistoricalKeys`) always fetches the TA entity
+  configuration through the resolver's retriever: a sent chain's TA configuration may be forged with the revoked key and
+  advertise no (or someone else's) historical keys endpoint.
+- Resolve endpoint (spec 8.3, `resolve/OidcFederationDefaultEntityResolver`, `/oidc/resolve`, TA + intermediate, GET
+  only): TA resolves to itself, intermediate to `trust-anchors` (else authority hints). Its own EC and subordinate
+  statements come from `chain/OidcFederationLocalEntityStatementRetriever` (wraps the `oidcFederationEntityStatementRetriever`
+  bean, swap it in tests) via the well-known/fetch controllers' `buildEntityConfiguration()`/`buildSubordinateStatement()`,
+  no self-HTTP. nimbus `TrustChainResolver` chains carry no TA configuration and `TrustChain` needs at least one superior
+  (a TA cannot resolve itself): fetch + verify the TA EC once and rebuild with the 3-arg constructor so `trust_chain` ends
+  with it. Resolutions/failures cached per (sub, trusted TAs) for min(retention, exp); signed per request. Trust marks via
+  `OidcFederationTrustMarkValidator.resolveValidTrustMarks`.
+- Client of an authorization request: validators read `client_id` from the request object first, so the federation
+  interceptor uses the query `client_id`, else the request object's (also on `/oauth2.0/authorize`, registered there at
+  order 0: the OAuth interceptor at order 1 redirects to the login first, so order 50 only ran after the login),
+  and `DefaultOAuth20RequestParameterResolver` refuses a request object whose `client_id` differs from the query one
+  (unpack returns null, so `isRequestObjectVerified` fails). Plain (`alg=none`) request objects are otherwise accepted by
+  `JwtBuilder.unpack`; only the federation interceptor demands a signature.
 - Client authentication at federation endpoints (spec 8.8): `OidcFederationSubordinateClientAuthenticator` verifies
   `private_key_jwt` against the subordinate file's `federationKeys` (nimbus `DefaultJWTProcessor`, exact iss/sub, only
   aud = CAS entity id, jti + exp) and records the jti in the ticket registry with a `HardTimeoutExpirationPolicy` until

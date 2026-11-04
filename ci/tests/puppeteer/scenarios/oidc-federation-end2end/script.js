@@ -140,6 +140,34 @@ async function verifySubordinateListing() {
 }
 
 /**
+ * The trust anchor resolves the Node RP (OpenID Federation 1.0, section 8.3): the signed resolve response carries its
+ * resolved metadata, its trust chain ending with the trust anchor's entity configuration, and the trust mark the trust
+ * anchor issued to it. Trust anchors it does not trust are refused.
+ */
+async function verifyResolveEndpoint() {
+    await cas.log("Trust anchor: resolve endpoint");
+    const configuration = jose.decodeJwt(await cas.doRequest(`${TRUST_ANCHOR}/.well-known/openid-federation`, "GET", {}, 200));
+    const resolveEndpoint = configuration.metadata.federation_entity.federation_resolve_endpoint;
+    assert.equal(resolveEndpoint, `${TRUST_ANCHOR}/resolve`);
+    const response = await cas.doRequest(`${resolveEndpoint}?${new URLSearchParams({sub: ENTITY_ID, trust_anchor: TRUST_ANCHOR})}`,
+        "GET", {}, 200);
+    const {payload} = await jose.jwtVerify(response, jose.createLocalJWKSet(configuration.jwks), {
+        typ: "resolve-response+jwt",
+        issuer: TRUST_ANCHOR,
+        subject: ENTITY_ID
+    });
+    assert.equal(payload.metadata.openid_relying_party.client_name, "CAS federation scenario RP");
+    assert.equal(payload.trust_chain.length, 3);
+    assert.equal(jose.decodeJwt(payload.trust_chain[0]).sub, ENTITY_ID);
+    assert.equal(jose.decodeJwt(payload.trust_chain[2]).sub, TRUST_ANCHOR);
+    assert(payload.trust_marks.some((entry) => entry.trust_mark_type === RELYING_PARTY_TRUST_MARK));
+
+    const untrusted = await cas.doRequest(`${resolveEndpoint}?${new URLSearchParams({sub: ENTITY_ID, trust_anchor: OP_ENTITY_ID})}`,
+        "GET", {}, 404);
+    assert.equal(JSON.parse(untrusted).error, "invalid_trust_anchor");
+}
+
+/**
  * The OP's entity configuration also describes it as the credential issuer it is with the verifiable credentials
  * module, and as the authorization server the credential issuer names, and carries the trust mark the trust anchor
  * issued to it, which verifies with the trust anchor's federation key.
@@ -329,6 +357,7 @@ async function verifyReplayedTrustChain(page, rp, op) {
         await verifySubordinateListing();
         await verifyTrustMarkIssuers();
         await verifyTrustMarkIssuance(rp);
+        await verifyResolveEndpoint();
         await verifyOpEntityConfiguration();
         await verifyOffaDiscovery(page);
         await verifyOffaLogin(page);

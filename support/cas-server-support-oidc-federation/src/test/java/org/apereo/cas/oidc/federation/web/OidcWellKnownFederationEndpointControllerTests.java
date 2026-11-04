@@ -509,6 +509,60 @@ class OidcWellKnownFederationEndpointControllerTests {
     }
 
     /**
+     * The entity identifier is the issuer without a trailing slash, as discovery has it: the entity configuration, its
+     * endpoints, the subordinate statements and the trust marks of a trust anchor all name the same entity.
+     */
+    @SpringBootTest(
+        classes = AbstractOidcTrustAnchorFederationTests.SharedTestConfiguration.class,
+        properties = {
+            "cas.server.name=https://sso.example.org/",
+            "cas.server.prefix=https://sso.example.org/cas",
+            "cas.authn.oidc.core.issuer=https://sso.example.org/cas/oidc/",
+            "cas.authn.oidc.federation.role=TRUST_ANCHOR",
+            "cas.authn.oidc.federation.jwks-file=file:${#systemProperties['java.io.tmpdir']}/trailing-slash-federation.jwks",
+            "cas.authn.oidc.federation.subordinate-directory=./src/test/resources/subordinates",
+            "cas.authn.oidc.federation.issued-trust-marks[0].trust-mark-type=" + MEMBER_TRUST_MARK_TYPE,
+            "cas.authn.oidc.federation.issued-trust-marks[0].subjects[0]=http://rp"
+        }, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+    @Nested
+    class TrailingSlashIssuerTrustAnchorFederationTests extends AbstractOidcTrustAnchorFederationTests {
+        private static final String ENTITY_ID = "https://sso.example.org/cas/oidc";
+
+        @Test
+        void verifyEntityIdentifierHasNoTrailingSlash() throws Exception {
+            val configuration = SignedJWT.parse(mockMvc.perform(get(FEDERATION_ENDPOINT_URL).with(withHttpRequestProcessor()))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString()).getJWTClaimsSet();
+            assertEquals(ENTITY_ID, configuration.getIssuer());
+            assertEquals(ENTITY_ID, configuration.getSubject());
+            val federationEntity = (Map<String, Object>) ((Map<String, Object>) configuration.getClaim("metadata")).get("federation_entity");
+            assertEquals(ENTITY_ID + OidcConstants.FETCH_FEDERATION_URL, federationEntity.get("federation_fetch_endpoint"));
+            assertEquals(ENTITY_ID + OidcConstants.TRUST_MARK_FEDERATION_URL, federationEntity.get("federation_trust_mark_endpoint"));
+
+            val statement = SignedJWT.parse(mockMvc.perform(get("/cas/" + OidcConstants.BASE_OIDC_URL + OidcConstants.FETCH_FEDERATION_URL)
+                    .param("sub", "http://rp").with(withHttpRequestProcessor()))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString()).getJWTClaimsSet();
+            assertEquals(ENTITY_ID, statement.getIssuer());
+            mockMvc.perform(get("/cas/" + OidcConstants.BASE_OIDC_URL + OidcConstants.FETCH_FEDERATION_URL)
+                    .param("sub", ENTITY_ID).with(withHttpRequestProcessor()))
+                .andExpect(status().isBadRequest());
+
+            val trustMark = SignedJWT.parse(mockMvc.perform(get("/cas/" + OidcConstants.BASE_OIDC_URL + OidcConstants.TRUST_MARK_FEDERATION_URL)
+                    .param("trust_mark_type", MEMBER_TRUST_MARK_TYPE).param("sub", "http://rp").with(withHttpRequestProcessor()))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString()).getJWTClaimsSet();
+            assertEquals(ENTITY_ID, trustMark.getIssuer());
+        }
+    }
+
+    /**
      * A trust mark stays {@code active} once its signing key is retired, since the historical keys keep it verifiable
      * (OpenID Federation 1.0, section 8.7), and becomes {@code invalid} once that key is revoked. Keys are rotated here,
      * in a keystore of its own, so that tests running alongside never see the signing key change under them.

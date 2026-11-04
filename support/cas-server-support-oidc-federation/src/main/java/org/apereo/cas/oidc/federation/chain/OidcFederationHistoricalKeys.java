@@ -16,8 +16,12 @@ import com.nimbusds.jwt.proc.DefaultJWTProcessor;
 import com.nimbusds.oauth2.sdk.http.HTTPRequest;
 import com.nimbusds.openid.connect.sdk.federation.entities.EntityStatement;
 import com.nimbusds.openid.connect.sdk.federation.entities.EntityType;
+import com.nimbusds.openid.connect.sdk.federation.trust.TrustChain;
+import com.nimbusds.openid.connect.sdk.federation.trust.TrustChainResolver;
 import lombok.experimental.UtilityClass;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -29,6 +33,7 @@ import org.jspecify.annotations.Nullable;
  * @author Misagh Moayyed
  * @since 8.1.0
  */
+@Slf4j
 @UtilityClass
 public class OidcFederationHistoricalKeys {
     private static final String HISTORICAL_KEYS_ENDPOINT = "federation_historical_keys_endpoint";
@@ -93,5 +98,55 @@ public class OidcFederationHistoricalKeys {
         return key.getKeyRevocation() == null
             && issuedAt != null
             && (key.getExpirationTime() == null || !issuedAt.after(key.getExpirationTime()));
+    }
+
+    /**
+     * Whether the trust anchor signed its statements in the chain with a key it has since revoked (OpenID Federation 1.0,
+     * section 8.7), as published by its federation historical keys endpoint. The keys a trust anchor is trusted with
+     * out of band may still list a key it has revoked; its historical keys are verified with those keys, and the
+     * entity configuration that advertises them is always fetched from the trust anchor, never taken from the chain:
+     * a chain sent by a relying party could carry an entity configuration signed with the revoked key that advertises
+     * no historical keys, or other ones. Statements are matched by their
+     * {@code kid}, which is required (section 3), so a statement that names no key is treated as signed with a revoked
+     * key. When the trust anchor publishes no historical keys, or they cannot be obtained or verified, the chain is not
+     * refused on that account, which is reported in the logs.
+     *
+     * @param trustChainResolver the trust chain resolver of the trust anchor of the chain
+     * @param chain              the trust chain
+     * @return true or false
+     */
+    public static boolean isSignedWithRevokedTrustAnchorKey(final TrustChainResolver trustChainResolver, final TrustChain chain) {
+        val trustAnchorId = chain.getTrustAnchorEntityID();
+        try {
+            val trustAnchorKeys = trustChainResolver.getTrustAnchors().get(trustAnchorId);
+            val configuration = trustChainResolver.getEntityStatementRetriever().fetchEntityConfiguration(trustAnchorId);
+            if (trustAnchorKeys == null) {
+                configuration.verifySignatureOfSelfStatement();
+            } else {
+                configuration.verifySignature(trustAnchorKeys);
+            }
+            val revokedKeys = fetch(configuration, Objects.requireNonNullElseGet(trustAnchorKeys, () -> configuration.getClaimsSet().getJWKSet()))
+                .stream()
+                .filter(OidcFederationHistoricalKeys::isRevoked)
+                .map(JWK::getKeyID)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toSet());
+            val statements = new ArrayList<EntityStatement>();
+            statements.add(chain.getSuperiorStatements().getLast());
+            if (chain.getTrustAnchorConfiguration() != null) {
+                statements.add(chain.getTrustAnchorConfiguration());
+            }
+            val revoked = statements.stream()
+                .map(statement -> statement.getSignedStatement().getHeader().getKeyID())
+                .anyMatch(keyId -> StringUtils.isBlank(keyId) || revokedKeys.contains(keyId));
+            if (revoked) {
+                LOGGER.warn("Trust chain of [{}] is signed with a key that trust anchor [{}] has revoked",
+                    chain.getLeafConfiguration().getEntityID(), trustAnchorId);
+            }
+            return revoked;
+        } catch (final Exception e) {
+            LOGGER.warn("Unable to check the revoked keys of trust anchor [{}]: [{}]", trustAnchorId, e.getMessage());
+            return false;
+        }
     }
 }

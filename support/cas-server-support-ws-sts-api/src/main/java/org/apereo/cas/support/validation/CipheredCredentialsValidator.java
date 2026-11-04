@@ -19,13 +19,22 @@ import org.apache.wss4j.dom.validate.Validator;
 public class CipheredCredentialsValidator implements Validator {
     private final CipherExecutor cipherExecutor;
 
+    /**
+     * Accept the credential when its password decodes to its user name. A password that the cipher cannot decode
+     * (one whose signature cannot be verified decodes to null) is refused like a password that does not match.
+     *
+     * @param credential  the credential
+     * @param requestData the request data
+     * @return the credential
+     * @throws WSSecurityException when the credential is refused
+     */
     @Override
     public Credential validate(final Credential credential, final RequestData requestData) throws WSSecurityException {
         if (credential != null && credential.getUsernametoken() != null) {
             val usernameToken = credential.getUsernametoken();
             val uid = usernameToken.getName();
-            val psw = usernameToken.getPassword();
-            if (cipherExecutor.decode(psw).equals(uid)) {
+            val decodedPassword = cipherExecutor.decode(usernameToken.getPassword());
+            if (decodedPassword != null && decodedPassword.equals(uid)) {
                 return credential;
             }
         }

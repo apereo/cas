@@ -5,10 +5,12 @@ import org.apereo.cas.configuration.model.support.oidc.OidcProperties;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.federation.chain.OidcFederationMetadataPolicies;
 import org.apereo.cas.oidc.federation.signature.OidcFederationEntityStatementService;
+import org.apereo.cas.oidc.federation.subordinate.OidcFederationSubordinate;
 import org.apereo.cas.oidc.federation.subordinate.OidcFederationSubordinateRepository;
 import org.apereo.cas.oidc.issuer.OidcIssuerService;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
+import com.nimbusds.openid.connect.sdk.federation.entities.EntityStatement;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.extern.slf4j.Slf4j;
@@ -94,7 +96,7 @@ public class OidcFetchFederationEndpointController extends AbstractOidcFederatio
             return error;
         }
 
-        val issuer = oidcProperties.getCore().getIssuer();
+        val issuer = oidcIssuerService.determineIssuer(Optional.empty());
         if (StringUtils.isBlank(sub) || Strings.CS.equals(sub, issuer)) {
             return errorResponse(HttpStatus.BAD_REQUEST, OAuth20Constants.INVALID_REQUEST, "Invalid entity");
         }
@@ -103,36 +105,59 @@ public class OidcFetchFederationEndpointController extends AbstractOidcFederatio
         if (foundSubordinate == null) {
             return errorResponse(HttpStatus.NOT_FOUND, NOT_FOUND, "Unknown subordinate entity");
         }
-        val federationKeys = foundSubordinate.getFederationKeys();
-        if (federationKeys == null || federationKeys.isEmpty()) {
-            LOGGER.error("Subordinate [{}] must define its federation keys", sub);
+        try {
+            return toResponse(createSubordinateStatement(issuer, foundSubordinate));
+        } catch (final IllegalArgumentException e) {
+            LOGGER.error("Subordinate [{}] is not defined correctly: [{}]", sub, e.getMessage());
             return errorResponse(HttpStatus.INTERNAL_SERVER_ERROR, SERVER_ERROR, "Subordinate entity is not defined correctly");
         }
-        val metadata = Optional.ofNullable(foundSubordinate.getMetadata())
+    }
+
+    /**
+     * Build and sign the subordinate statement CAS issues about the given entity, as the fetch endpoint publishes it.
+     *
+     * @param subject the entity identifier of the subordinate
+     * @return the subordinate statement, or empty when CAS issues none about the entity
+     * @throws Exception when the subordinate is not defined correctly
+     */
+    public Optional<EntityStatement> buildSubordinateStatement(final String subject) throws Exception {
+        if (!oidcProperties.getFederation().getRole().isTrustAnchorOrIntermediate()) {
+            return Optional.empty();
+        }
+        val subordinate = subordinateRepository.getSubordinates().get(subject);
+        return subordinate == null
+            ? Optional.empty()
+            : Optional.of(createSubordinateStatement(oidcIssuerService.determineIssuer(Optional.empty()), subordinate));
+    }
+
+    private EntityStatement createSubordinateStatement(final String issuer, final OidcFederationSubordinate subordinate) throws Exception {
+        val federationKeys = subordinate.getFederationKeys();
+        if (federationKeys == null || federationKeys.isEmpty()) {
+            throw new IllegalArgumentException("Subordinate must define its federation keys");
+        }
+        val metadata = Optional.ofNullable(subordinate.getMetadata())
             .map(value -> withoutEntityConfigurationEndpoints((JSONObject) JSONValue.parse(value.toString())))
             .orElse(null);
         val policyClaims = new LinkedHashMap<String, Object>();
-        if (foundSubordinate.getMetadataPolicy() != null) {
-            val metadataPolicy = (JSONObject) JSONValue.parse(foundSubordinate.getMetadataPolicy().toString());
+        if (subordinate.getMetadataPolicy() != null) {
+            val metadataPolicy = (JSONObject) JSONValue.parse(subordinate.getMetadataPolicy().toString());
             try {
                 OidcFederationMetadataPolicies.validate(metadataPolicy);
             } catch (final Exception e) {
-                LOGGER.error("Metadata policy of subordinate [{}] is invalid: [{}]", sub, e.getMessage());
-                return errorResponse(HttpStatus.INTERNAL_SERVER_ERROR, SERVER_ERROR, "Subordinate entity is not defined correctly");
+                throw new IllegalArgumentException("Metadata policy is invalid: " + e.getMessage(), e);
             }
             policyClaims.put(METADATA_POLICY, metadataPolicy);
         }
-        if (!foundSubordinate.getMetadataPolicyCrit().isEmpty()) {
-            policyClaims.put(OidcFederationMetadataPolicies.METADATA_POLICY_CRIT, foundSubordinate.getMetadataPolicyCrit());
+        if (!subordinate.getMetadataPolicyCrit().isEmpty()) {
+            policyClaims.put(OidcFederationMetadataPolicies.METADATA_POLICY_CRIT, subordinate.getMetadataPolicyCrit());
         }
-        if (foundSubordinate.getConstraints() != null) {
-            if (!foundSubordinate.getConstraints().isObject()) {
-                LOGGER.error("Constraints of subordinate [{}] must be an object", sub);
-                return errorResponse(HttpStatus.INTERNAL_SERVER_ERROR, SERVER_ERROR, "Subordinate entity is not defined correctly");
+        if (subordinate.getConstraints() != null) {
+            if (!subordinate.getConstraints().isObject()) {
+                throw new IllegalArgumentException("Constraints must be an object");
             }
-            policyClaims.put(CONSTRAINTS, JSONValue.parse(foundSubordinate.getConstraints().toString()));
+            policyClaims.put(CONSTRAINTS, JSONValue.parse(subordinate.getConstraints().toString()));
         }
-        return buildEntityStatement(issuer, sub, metadata, federationKeys, null, policyClaims);
+        return federationEntityStatementService.createAndSign(issuer, subordinate.getEntityId(), metadata, federationKeys, null, policyClaims);
     }
 
     private static @Nullable JSONObject withoutEntityConfigurationEndpoints(final JSONObject metadata) {

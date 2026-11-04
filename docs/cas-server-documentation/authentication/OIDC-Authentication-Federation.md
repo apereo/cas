@@ -257,7 +257,36 @@ The `/oidc/list` endpoint lists the subordinates, and can filter them by entity 
 request parameters, and to intermediates only, with `intermediate=true`, based on the metadata of their definitions.
 Filtering by trust marks is not supported and is answered with `unsupported_parameter`.
 
+### Resolve Endpoint
+
+As a trust anchor or an intermediate, CAS resolves entities of the federation for others at its `/oidc/resolve`
+endpoint, advertised as `federation_resolve_endpoint`, as described by
+[OpenID Federation](https://openid.net/specs/openid-federation-1_0.html#section-8.3). A `GET` request names the entity
+with `sub`, one or more trust anchors with `trust_anchor` and, optionally, the entity types whose metadata is wanted with
+one or more `entity_type`; all entity types are returned otherwise. Requests are not authenticated.
+
+- A trust anchor resolves entities to itself. An intermediate resolves them to its [trust anchors](#trust-anchors), or
+  to its authority hints when no trust anchor is defined. Requested trust anchors that CAS does not trust are ignored.
+- CAS resolves the trust chains of the entity with the same bounds on authority hints and path length as for automatic
+  registration, and builds its own statements itself rather than requesting them from its own endpoints. The shortest
+  trust chain that satisfies the constraints of its statements and is not signed with a key its trust anchor has
+  revoked is used, ending with the entity configuration of the trust anchor.
+- The metadata of each entity type is resolved with the metadata policies of the trust chain. Entity types the
+  constraints of the chain do not allow are left out.
+- Only the trust marks of the entity that are valid, issued by issuers the trust anchor accepts for their type and
+  active, are included. The response expires with the trust chain, or with the first of those trust marks to expire.
+- The response is a JWT of type `resolve-response+jwt`, signed with the current federation key.
+- Resolved trust chains, and entities that could not be resolved, are remembered per entity and trust anchors for the
+  period that applies to entity identifiers that could not be resolved, or until the chain or a trust mark expires, so
+  that repeated requests do not resolve them again. That period can be tuned using CAS properties.
+- Errors are answered as JSON: a missing or malformed parameter with `400` and `invalid_request`; trust anchors CAS
+  does not trust with `404` and `invalid_trust_anchor`; an entity without a usable trust chain to them with `400` and
+  `invalid_trust_chain`; metadata the policies of the chain cannot apply to with `400` and `invalid_metadata`. An
+  OpenID Provider answers `404` and `not_found`.
+
 ## Entity Configuration
+
+The entity identifier of CAS is its issuer, without a trailing slash, in every role.
 
 CAS publishes its entity configuration at `.well-known/openid-federation` under its issuer, signed with its federation
 keys, whatever its role. As an OpenID Provider, it describes itself as `openid_provider` with its discovery metadata,
@@ -384,14 +413,20 @@ registration step:
   party that publishes its keys at a `jwks_uri` that is not an `https` URL.
 - Every authorization request proves that the relying party controls its keys. It either carries a request object
   signed with a key of the relying party's metadata, whose `iss` and `client_id` are the entity identifier, whose `aud`
-  is only the issuer of CAS, with `jti` and `exp` and without `sub`, or it refers with `request_uri` to a
+  is only the issuer of CAS, with `jti` and `exp` and without `sub`, valid for 10 minutes at most, or it refers with
+  `request_uri` to a
   [pushed authorization request](OIDC-Authentication-PAR.html) for which the relying party authenticated itself.
   Client assertions may be addressed to the issuer of CAS as well as to its token endpoint.
-- A request object is used once: CAS remembers its `jti` for the lifetime of transient session tickets, during which only
-  the very same request object is accepted again, as happens when the browser returns from the login.
+- A request object is used once: CAS remembers its `jti` for as long as the request object could be accepted, and at
+  least for the lifetime of transient session tickets, during which only the very same request object is accepted again,
+  as happens when the browser returns from the login.
 - A request object may also be [encrypted to CAS](OIDC-Authentication-JWKS.html#encrypted-request-objects); it is
   decrypted first, and the signed request object inside is checked as above.
 - Requests that fail these checks are refused with `invalid_request` and are never redirected to the relying party.
+- The relying party that must prove its keys is the client of the authorization request: the `client_id` parameter or,
+  when the request carries none, the `client_id` of its request object, on the OpenID Connect and the OAuth
+  authorization endpoints alike. A request object whose `client_id` differs from the `client_id` parameter is refused
+  for every client, as [OpenID Connect](https://openid.net/specs/openid-connect-core-1_0.html#RequestObject) requires.
 - The constraints that trust anchors and intermediates set in their subordinate statements apply to every trust chain
   of a relying party, whether resolved or sent, as
   [OpenID Federation](https://openid.net/specs/openid-federation-1_0.html#section-6.2) requires: the maximum number of
@@ -408,7 +443,8 @@ registration step:
   used either.
 - The keys a trust anchor is trusted with out of band may still list a key the trust anchor has since revoked. When the
   trust anchor publishes its historical keys, CAS reads them, verified with those keys, and does not use a trust chain
-  in which the trust anchor signed with a key it marks revoked. When the historical keys cannot be obtained or verified,
+  in which the trust anchor signed with a key it marks revoked. The historical keys are always found through the entity
+  configuration CAS fetches from the trust anchor, never through one a trust chain sent by a relying party carries. When the historical keys cannot be obtained or verified,
   the trust chain is still used and the problem is reported in the logs. Every statement of a trust chain must name the
   key it is signed with, as the specification requires; a trust chain with a statement that does not is not used.
 - Resolving trust chains is bounded: CAS follows a limited number of authority hints from any entity configuration and
