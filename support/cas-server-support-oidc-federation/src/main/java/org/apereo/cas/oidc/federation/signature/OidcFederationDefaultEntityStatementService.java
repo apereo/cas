@@ -7,7 +7,6 @@ import org.apereo.cas.configuration.model.support.oidc.federation.OidcFederation
 import org.apereo.cas.configuration.model.support.oidc.federation.OidcFederationTrustMarkOwnerProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.util.ResourceUtils;
-import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jwt.SignedJWT;
@@ -15,7 +14,6 @@ import com.nimbusds.openid.connect.sdk.federation.entities.CommonFederationClaim
 import com.nimbusds.openid.connect.sdk.federation.entities.EntityID;
 import com.nimbusds.openid.connect.sdk.federation.entities.EntityStatement;
 import com.nimbusds.openid.connect.sdk.federation.entities.EntityStatementClaimsSet;
-import com.nimbusds.openid.connect.sdk.federation.entities.EntityType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -60,22 +58,26 @@ public class OidcFederationDefaultEntityStatementService implements OidcFederati
      * Only subordinate statements carry {@code constraints}, which an entity configuration must not (section 3.1.3).
      * Only the entity configuration carries the {@code trust_marks} issued to this entity (section 3.1.1), and
      * only the entity configuration of a trust anchor carries the {@code trust_mark_issuers} it accepts (section 3.1).
-     * The statement is valid from now, to the second, for the configured entity statement expiration.
+     * The statement is valid from now, to the second, for the configured entity statement expiration. A subordinate
+     * statement may leave out {@code metadata} and carry a {@code metadata_policy} among the additional claims instead
+     * (section 6.1).
      *
-     * @param issuer         the issuer
-     * @param subject        the subject
-     * @param metadata       the metadata
-     * @param federationKeys the federation keys of the subject of a subordinate statement
-     * @param authorityHints the authority hints
+     * @param issuer           the issuer
+     * @param subject          the subject
+     * @param metadata         the metadata
+     * @param federationKeys   the federation keys of the subject of a subordinate statement
+     * @param authorityHints   the authority hints
+     * @param additionalClaims the additional claims
      * @return the entity statement
      * @throws Exception the exception
      */
     @Override
     public EntityStatement createAndSign(final String issuer,
                                          final String subject,
-                                         final JSONObject metadata,
+                                         @Nullable final JSONObject metadata,
                                          @Nullable final JsonNode federationKeys,
-                                         @Nullable final List<EntityID> authorityHints)
+                                         @Nullable final List<EntityID> authorityHints,
+                                         final Map<String, Object> additionalClaims)
             throws Exception {
         val iss = new EntityID(issuer);
         val sub = new EntityID(subject);
@@ -97,7 +99,10 @@ public class OidcFederationDefaultEntityStatementService implements OidcFederati
             claims.setAuthorityHints(authorityHints);
         }
 
-        claims.setClaim(CommonFederationClaimsSet.METADATA_CLAIM_NAME, metadata);
+        if (metadata != null) {
+            claims.setClaim(CommonFederationClaimsSet.METADATA_CLAIM_NAME, metadata);
+        }
+        additionalClaims.forEach(claims::setClaim);
 
         if (federationKeys == null && issuer.equals(subject)) {
             val trustMarks = resolveTrustMarks(subject);
@@ -112,12 +117,6 @@ public class OidcFederationDefaultEntityStatementService implements OidcFederati
             if (!trustMarkOwners.isEmpty()) {
                 claims.setClaim(TRUST_MARK_OWNERS_CLAIM_NAME, trustMarkOwners);
             }
-        }
-
-        val federationEntity = (JSONObject) metadata.get(EntityType.FEDERATION_ENTITY.getValue());
-        if (federationKeys != null && federationEntity != null) {
-            val fetchEndpoint = federationEntity.get("federation_fetch_endpoint");
-            FunctionUtils.doIfNotNull(fetchEndpoint, _ -> claims.setClaim("constraints", Map.of("max_path_length", 1)));
         }
 
         return jsonWebKeystoreService.signEntityStatement(claims);

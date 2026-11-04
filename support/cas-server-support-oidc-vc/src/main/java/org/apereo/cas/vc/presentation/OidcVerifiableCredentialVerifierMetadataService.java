@@ -7,6 +7,7 @@ import org.apereo.cas.oidc.OidcConfigurationContext;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeyCacheKey;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeyStoreUtils;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeyUsage;
+import org.apereo.cas.oidc.web.OidcRequestObjectDecrypter;
 import org.apereo.cas.vc.presentation.OidcVerifiableCredentialPresentationRequestEndpointController.OidcVerifiableCredentialPresentationClientMetadata;
 import org.apereo.cas.vc.presentation.OidcVerifiableCredentialPresentationRequestEndpointController.OidcVerifiableCredentialPresentationClientMetadata.VpFormat;
 import com.authlete.cose.constants.COSEAlgorithms;
@@ -33,7 +34,8 @@ import org.jspecify.annotations.Nullable;
  * Under that prefix, responses are encrypted to the encryption keys of the OpenID Connect keystore, published with
  * the JWE algorithm each is used with: {@code ECDH-ES} for an elliptic curve key, as HAIP requires, and
  * {@code RSA-OAEP-256} for an RSA key. Keys without a key id are never published, since wallets name the key they
- * encrypt to by its {@code kid}.
+ * encrypt to by its {@code kid}. Only current keys are published, but a response encrypted to an encryption key of the
+ * keystore in any rotation state is decrypted, since wallets may still hold metadata from before a rotation.
  *
  * @author Misagh Moayyed
  * @since 8.1.0
@@ -55,6 +57,8 @@ public class OidcVerifiableCredentialVerifierMetadataService {
     protected final OidcConfigurationContext configurationContext;
 
     protected final LoadingCache<OidcJsonWebKeyCacheKey, JsonWebKeySet> keystoreCache;
+
+    protected final OidcRequestObjectDecrypter requestObjectDecrypter;
 
     /**
      * Whether wallets authenticate CAS through OpenID Federation, with the {@code openid_federation} client identifier
@@ -174,9 +178,17 @@ public class OidcVerifiableCredentialVerifierMetadataService {
      * @return the key, if it is one responses can be encrypted to
      */
     public Optional<PublicJsonWebKey> findResponseEncryptionKey(final @Nullable String keyId) {
-        return StringUtils.isBlank(keyId)
-            ? Optional.empty()
-            : getResponseEncryptionKeys().stream().filter(key -> keyId.equals(key.getKeyId())).findFirst();
+        if (StringUtils.isBlank(keyId)) {
+            return Optional.empty();
+        }
+        return getResponseEncryptionKeys()
+            .stream()
+            .filter(key -> keyId.equals(key.getKeyId()))
+            .findFirst()
+            .or(() -> requestObjectDecrypter.getDecryptionKeys()
+                .stream()
+                .filter(key -> keyId.equals(key.getKeyId()) && resolveKeyManagementAlgorithm(key) != null)
+                .findFirst());
     }
 
     /**

@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.oidc.OidcConfigurationContext;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeyCacheKey;
 import org.apereo.cas.oidc.vc.issuer.status.OidcVerifiableCredentialStatusListService;
+import org.apereo.cas.oidc.web.OidcRequestObjectDecrypter;
 import org.apereo.cas.vc.presentation.OidcVerifiableCredentialMdocPresentationVerifier;
 import org.apereo.cas.vc.presentation.OidcVerifiableCredentialPresentationRequestEndpointController;
 import org.apereo.cas.vc.presentation.OidcVerifiableCredentialPresentationResponseEndpointController;
@@ -65,8 +66,11 @@ class OidcVerifiableCredentialsPresentationConfiguration {
         @Qualifier(OidcConfigurationContext.BEAN_NAME)
         final OidcConfigurationContext oidcConfigurationContext,
         @Qualifier("oidcDefaultJsonWebKeystoreCache")
-        final LoadingCache<OidcJsonWebKeyCacheKey, JsonWebKeySet> oidcDefaultJsonWebKeystoreCache) {
-        return new OidcVerifiableCredentialVerifierMetadataService(oidcConfigurationContext, oidcDefaultJsonWebKeystoreCache);
+        final LoadingCache<OidcJsonWebKeyCacheKey, JsonWebKeySet> oidcDefaultJsonWebKeystoreCache,
+        @Qualifier(OidcRequestObjectDecrypter.BEAN_NAME)
+        final OidcRequestObjectDecrypter oidcRequestObjectDecrypter) {
+        return new OidcVerifiableCredentialVerifierMetadataService(oidcConfigurationContext, oidcDefaultJsonWebKeystoreCache,
+            oidcRequestObjectDecrypter);
     }
 
     @Bean

@@ -27,15 +27,15 @@ public interface OidcFederationTrustChainResolver {
 
     /**
      * Register a relying party from the trust chain it sent, such as the {@code trust_chain} header of its request
-     * object (OpenID Federation 1.0, section 12.1.1.1), once the chain is fully verified, or resolve its trust chains
-     * when the chain cannot be used.
+     * object (OpenID Federation 1.0, section 12.1.1.1), once the chain is fully verified. The trust chains of the
+     * relying party are not resolved when the chain cannot be used; that is left to the caller.
      *
      * @param clientId   the client id
      * @param trustChain the serialized statements of the trust chain the relying party sent, which may be empty
-     * @return the optional
+     * @return the registered service, or empty when the chain cannot be used
      * @throws Exception the exception
      */
-    default Optional<OidcRegisteredService> resolveTrustChains(final String clientId, final List<String> trustChain) throws Exception {
-        return resolveTrustChains(clientId);
+    default Optional<OidcRegisteredService> resolveSentTrustChain(final String clientId, final List<String> trustChain) throws Exception {
+        return Optional.empty();
     }
 }

@@ -235,8 +235,10 @@ class OidcConfiguration {
             @Qualifier(JwtBuilder.ACCESS_TOKEN_JWT_BUILDER_BEAN_NAME)
             final JwtBuilder accessTokenJwtBuilder,
             @Qualifier(OidcRequestObjectDecrypter.BEAN_NAME)
-            final OidcRequestObjectDecrypter oidcRequestObjectDecrypter) {
-            return new OidcRequestParameterResolver(accessTokenJwtBuilder, oidcRequestObjectDecrypter);
+            final OidcRequestObjectDecrypter oidcRequestObjectDecrypter,
+            @Qualifier("oauthRegisteredServiceCipherExecutor")
+            final CipherExecutor oauthRegisteredServiceCipherExecutor) {
+            return new OidcRequestParameterResolver(accessTokenJwtBuilder, oidcRequestObjectDecrypter, oauthRegisteredServiceCipherExecutor);
         }
 
         @Bean

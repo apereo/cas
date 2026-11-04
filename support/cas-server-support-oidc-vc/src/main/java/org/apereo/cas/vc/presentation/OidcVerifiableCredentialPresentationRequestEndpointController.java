@@ -132,7 +132,7 @@ public class OidcVerifiableCredentialPresentationRequestEndpointController exten
             case X509_HASH -> OAuth20Utils.computeCertificateThumbprint(resolveCertificateChain(FunctionUtils.doUnchecked(
                 () -> configurationContext.getIdTokenSigningAndEncryptionService().getJsonWebKeySigningKey(Optional.empty()))).getFirst());
             case REDIRECT_URI -> responseUri;
-            case OPENID_FEDERATION -> casProperties.getAuthn().getOidc().getCore().getIssuer();
+            case OPENID_FEDERATION -> configurationContext.getIssuerService().determineIssuer(Optional.empty());
         };
         return prefix.getValue() + ':' + identifier;
     }
@@ -161,7 +161,7 @@ public class OidcVerifiableCredentialPresentationRequestEndpointController exten
      * @return the response uri
      */
     public static String resolveResponseUri(final CasConfigurationProperties casProperties) {
-        return casProperties.getAuthn().getOidc().getCore().getIssuer()
+        return Strings.CI.removeEnd(casProperties.getAuthn().getOidc().getCore().getIssuer(), "/")
             + '/' + OidcConstants.VC_PRESENTATION_RESPONSE_URL;
     }
 
@@ -398,7 +398,7 @@ public class OidcVerifiableCredentialPresentationRequestEndpointController exten
             );
         }
         val requestUri = isRequestObjectSigned()
-            ? configurationContext.getCasProperties().getAuthn().getOidc().getCore().getIssuer()
+            ? configurationContext.getIssuerService().determineIssuer(Optional.empty())
               + '/' + OidcConstants.VC_PRESENTATION_REQUEST_URL + '/' + addedTicket.getId()
             : null;
         val authorizationRequest = requestUri != null

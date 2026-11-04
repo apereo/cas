@@ -53,11 +53,11 @@ class OidcListFederationEndpointControllerTests {
             mockMvc.perform(get(LIST_ENDPOINT_URL + "?entity_type=openid_relying_party")
                             .with(withHttpRequestProcessor()))
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$", containsInAnyOrder("http://rp", "http://rpnokeys")));
+                    .andExpect(jsonPath("$", containsInAnyOrder("http://rp", "http://rpnokeys", "http://rpnometadata")));
             mockMvc.perform(get(LIST_ENDPOINT_URL + "?entity_type=openid_relying_party&entity_type=openid_provider")
                             .with(withHttpRequestProcessor()))
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$", containsInAnyOrder("http://rp", "http://rpnokeys", "http://op")));
+                    .andExpect(jsonPath("$", containsInAnyOrder("http://rp", "http://rpnokeys", "http://rpnometadata", "http://op")));
             mockMvc.perform(get(LIST_ENDPOINT_URL + "?entity_type=openid_credential_issuer")
                             .with(withHttpRequestProcessor()))
                     .andExpect(status().isOk())
@@ -129,11 +129,11 @@ class OidcListFederationEndpointControllerTests {
             mockMvc.perform(get(LIST_ENDPOINT_URL + "?entity_type=openid_relying_party")
                             .with(withHttpRequestProcessor()))
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$", containsInAnyOrder("http://rp", "http://rpnokeys")));
+                    .andExpect(jsonPath("$", containsInAnyOrder("http://rp", "http://rpnokeys", "http://rpnometadata")));
             mockMvc.perform(get(LIST_ENDPOINT_URL + "?entity_type=openid_relying_party&entity_type=openid_provider")
                             .with(withHttpRequestProcessor()))
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$", containsInAnyOrder("http://rp", "http://rpnokeys", "http://op")));
+                    .andExpect(jsonPath("$", containsInAnyOrder("http://rp", "http://rpnokeys", "http://rpnometadata", "http://op")));
             mockMvc.perform(get(LIST_ENDPOINT_URL + "?entity_type=openid_credential_issuer")
                             .with(withHttpRequestProcessor()))
                     .andExpect(status().isOk())

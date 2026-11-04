@@ -91,7 +91,8 @@ public class OidcListFederationEndpointController extends AbstractOidcFederation
     }
 
     private static boolean hasEntityType(final OidcFederationSubordinate subordinate, final String entityType) {
-        return subordinate.getMetadata() != null && subordinate.getMetadata().has(entityType);
+        return (subordinate.getMetadata() != null && subordinate.getMetadata().has(entityType))
+            || (subordinate.getMetadataPolicy() != null && subordinate.getMetadataPolicy().has(entityType));
     }
 
     private static boolean isIntermediate(final OidcFederationSubordinate subordinate) {

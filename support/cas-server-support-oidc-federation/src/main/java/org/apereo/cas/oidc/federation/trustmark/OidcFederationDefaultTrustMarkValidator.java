@@ -2,6 +2,7 @@ package org.apereo.cas.oidc.federation.trustmark;
 
 import module java.base;
 import org.apereo.cas.configuration.model.support.oidc.federation.OidcFederationProperties;
+import org.apereo.cas.oidc.federation.chain.OidcFederationHistoricalKeys;
 import org.apereo.cas.oidc.federation.chain.OidcFederationTrustChainConstraints;
 import com.nimbusds.common.contenttype.ContentType;
 import com.nimbusds.jose.JOSEObjectType;
@@ -35,7 +36,8 @@ import org.jspecify.annotations.Nullable;
  * {@code trust-mark+jwt} that names its signing key, is about the entity, is of the required type, was issued and
  * has not expired; when the trust anchor of the entity's trust chain accepts its issuer for that type in
  * {@code trust_mark_issuers}; when it verifies with the issuer's federation keys, taken from the trust anchor itself
- * or from the issuer's own trust chain to the same trust anchor; when it carries a valid {@code delegation} for a type
+ * or from the issuer's own trust chain to the same trust anchor, or with a key the issuer has retired since, as its
+ * historical keys publish it, when the key was never revoked and the trust mark was issued before it was retired; when it carries a valid {@code delegation} for a type
  * that the trust anchor lists in {@code trust_mark_owners}; and, when the issuer publishes a trust mark status
  * endpoint, when that endpoint reports it {@code active} (OpenID Federation 1.0, sections 3.1, 7 and 8.5).
  *
@@ -165,7 +167,7 @@ public class OidcFederationDefaultTrustMarkValidator implements OidcFederationTr
                 .subject(entityId.getValue())
                 .claim(TRUST_MARK_TYPE, type)
                 .build();
-            val claims = verify(trustMark, TRUST_MARK_JWT_TYPE, issuerConfiguration.getClaimsSet().getJWKSet(), expectedClaims,
+            val claims = verify(trustMark, TRUST_MARK_JWT_TYPE, resolveVerificationKeys(trustMark, issuerConfiguration), expectedClaims,
                 Set.of(JWTClaimNames.ISSUER, JWTClaimNames.SUBJECT, JWTClaimNames.ISSUED_AT));
             verifyDelegation(trustAnchor, type, issuer, claims);
             verifyStatus(issuerConfiguration, serialized);
@@ -175,6 +177,33 @@ public class OidcFederationDefaultTrustMarkValidator implements OidcFederationTr
             LOGGER.debug(e.getMessage(), e);
             return false;
         }
+    }
+
+    /**
+     * The keys to verify a trust mark with: the federation keys of its issuer, or, when the trust mark names a key the
+     * issuer no longer publishes, that key from the issuer's historical keys (OpenID Federation 1.0, section 8.7),
+     * provided the key was never revoked and the trust mark was issued before the key was retired. Trust marks signed
+     * before a key rollover thus stay valid for the rest of their life.
+     *
+     * @param trustMark           the trust mark
+     * @param issuerConfiguration the entity configuration of the issuer
+     * @return the keys
+     * @throws Exception the exception
+     */
+    protected JWKSet resolveVerificationKeys(final SignedJWT trustMark, final EntityStatement issuerConfiguration) throws Exception {
+        val issuerKeys = issuerConfiguration.getClaimsSet().getJWKSet();
+        val keyId = trustMark.getHeader().getKeyID();
+        if (keyId == null || issuerKeys.getKeyByKeyId(keyId) != null) {
+            return issuerKeys;
+        }
+        val issuedAt = trustMark.getJWTClaimsSet().getIssueTime();
+        return OidcFederationHistoricalKeys.fetch(issuerConfiguration, issuerKeys)
+            .stream()
+            .filter(key -> keyId.equals(key.getKeyID()))
+            .filter(key -> OidcFederationHistoricalKeys.mayHaveSigned(key, issuedAt))
+            .findFirst()
+            .map(JWKSet::new)
+            .orElse(issuerKeys);
     }
 
     /**

@@ -169,9 +169,22 @@ public class OidcJsonWebKeyStoreUtils {
         return Optional.of(new JsonWebKeySet(jsonWebKey));
     }
 
+    /**
+     * Resolve the keystore of the application. Expressions are only evaluated in keystore locations,
+     * which the deployment defines; keys defined inline as JSON are taken as they are, since they may
+     * come from the application itself, through dynamic client registration or OpenID Federation.
+     *
+     * @param service the service
+     * @return the keystore location, or the keys defined inline
+     */
+    public static String resolveJsonWebKeySet(final OidcRegisteredService service) {
+        val jwks = StringUtils.trimToEmpty(service.getJwks());
+        return jwks.startsWith("{") ? jwks : SpringExpressionLanguageValueResolver.getInstance().resolve(jwks);
+    }
+
     private static @Nullable Resource getJsonWebKeySetResource(final OidcRegisteredService service,
                                                                final ResourceLoader resourceLoader) {
-        val serviceJwks = SpringExpressionLanguageValueResolver.getInstance().resolve(service.getJwks());
+        val serviceJwks = resolveJsonWebKeySet(service);
         if (StringUtils.isNotBlank(serviceJwks)) {
             if (ResourceUtils.doesResourceExist(serviceJwks)) {
                 return resourceLoader.getResource(serviceJwks);

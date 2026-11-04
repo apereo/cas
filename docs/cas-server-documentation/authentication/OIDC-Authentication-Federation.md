@@ -180,15 +180,78 @@ Here is an example of an OP subordinate definition:
 ```
 
 The `metadata` and `federationKeys` properties come both from the 
-data in the `.well-known/openid-federation` endpoint. Both sections are **mandatory** in the federation entity definitions.
-Metadata in a subordinate statement takes precedence over the metadata the entity publishes itself, so an empty object
-for an entity type, such as `"openid_relying_party": {}`, leaves the entity's own metadata in effect.
+data in the `.well-known/openid-federation` endpoint. The `federationKeys` section is **mandatory** in the federation
+entity definitions, while `metadata` is optional. Metadata in a subordinate statement takes precedence over the
+metadata the entity publishes itself, so an empty object for an entity type, such as `"openid_relying_party": {}`,
+leaves the entity's own metadata in effect.
+
+### Metadata Policies
+
+A subordinate definition may also carry a metadata policy, which CAS publishes in its subordinate statement as
+[OpenID Federation](https://openid.net/specs/openid-federation-1_0.html#section-6.1) describes, to restrict or adjust
+the metadata of the subordinate and of every entity below it. Policies use the standard operators `value`, `add`,
+`default`, `one_of`, `subset_of`, `superset_of` and `essential`; operators beyond those are ignored by entities that
+do not understand them, unless they are listed as critical:
+
+```json
+{
+  "entityId" : "https://rp.example.org",
+  "metadataPolicy": {
+    "openid_relying_party": {
+      "scope": {
+        "subset_of": [ "openid", "email", "profile" ]
+      },
+      "contacts": {
+        "add": [ "ops@example.org" ]
+      },
+      "token_endpoint_auth_method": {
+        "one_of": [ "private_key_jwt", "tls_client_auth" ],
+        "essential": true
+      }
+    }
+  },
+  "metadataPolicyCrit": [],
+  "federationKeys": [
+    {
+      "kty": "RSA",
+      "e": "AQAB",
+      "use": "sig",
+      "kid": "PRRz",
+      "n": "vPZc7Y..."
+    }
+  ]
+}
+```
+
+A metadata policy that CAS cannot read, such as one that combines operators in a way the specification forbids, is not
+published. Subordinates are listed for the entity types of their metadata as well as of their metadata policy.
+
+A subordinate definition may also carry `constraints`, published as they are in its subordinate statement, as
+[OpenID Federation](https://openid.net/specs/openid-federation-1_0.html#section-6.2) describes, to bound the trust chains
+that go through the subordinate:
+
+```json
+{
+  "entityId" : "https://intermediate.example.org",
+  "constraints": {
+    "max_path_length": 1,
+    "naming_constraints": {
+      "permitted": [ ".example.org" ]
+    },
+    "allowed_entity_types": [ "openid_relying_party" ]
+  },
+  "federationKeys": [ ]
+}
+```
+
+The fetch, list and trust mark status endpoints of a subordinate are left out of the `federation_entity` metadata of its
+subordinate statement, since they may only be published in the entity configuration of the subordinate.
 
 Signed entity statements are returned from the `/oidc/fetch` endpoint, 
 depending on the requested subordinate (`sub` request parameter). A subordinate statement carries the keys of the
 subordinate only. An unknown subordinate is answered with `404` and `not_found`, a missing `sub` or the entity
-identifier of CAS itself with `400` and `invalid_request`, and a subordinate defined without metadata or keys with
-`500` and `server_error`; entities that issue no subordinate statements answer `404`.
+identifier of CAS itself with `400` and `invalid_request`, and a subordinate defined without keys, with a metadata
+policy CAS cannot read, or with constraints that are not an object, with `500` and `server_error`; entities that issue no subordinate statements answer `404`.
 
 The `/oidc/list` endpoint lists the subordinates, and can filter them by entity type, with one or more `entity_type`
 request parameters, and to intermediates only, with `intermediate=true`, based on the metadata of their definitions.
@@ -207,8 +270,9 @@ federation-based ecosystems find and trust the credential issuer through its tru
 ([OpenID Federation for Wallet Architectures](https://openid.net/specs/openid-federation-wallet-1_0.html)). When CAS
 presents itself to wallets as a verifier with the `openid_federation` client identifier prefix, the entity
 configuration also describes it as `openid_credential_verifier`, with its keys and response URI, as described in
-[verifiable presentations](OIDC-Authentication-Verifiable-Credentials.html#openid-federation-verifier). This
-requires the issuer of CAS to be the entity identifier; otherwise these entity types are left out, with a warning.
+[verifiable presentations](OIDC-Authentication-Verifiable-Credentials.html#openid-federation-verifier). The credential
+issuer and authorization server entity types require the credential issuer of CAS to be the entity identifier;
+otherwise they are left out, with a warning.
 
 Trust marks that trust mark issuers have issued to CAS are published in the entity configuration as `trust_marks`. Each
 trust mark is a signed JWT, given as a file, a URL or the JWT itself; files and URLs are read again each time the entity
@@ -230,7 +294,7 @@ In any role, CAS can issue trust marks, as described by
 the entities it is issued to, how long its trust marks are valid, and optionally a logo, a reference to human-readable
 information and a delegation from the owner of the type, all of which can be defined using CAS properties. Nothing is
 stored: a trust mark is signed with the current federation key when it is requested. When CAS issues trust marks, its
-entity configuration advertises three endpoints, which do not require authentication:
+entity configuration advertises three endpoints, which do not require authentication by default:
 
 - The trust mark endpoint answers a request for a trust mark type and an entity with a trust mark of that type about
   that entity, typed `trust-mark+jwt`, or with `404` when the entity does not hold that type.
@@ -241,8 +305,21 @@ entity configuration advertises three endpoints, which do not require authentica
 - The trust marked entities listing endpoint lists the entities that hold a trust mark type, optionally only the one
   asked for.
 
+Requests to the trust mark endpoint can also be authenticated, as
+[OpenID Federation](https://openid.net/specs/openid-federation-1_0.html#section-8.8) allows, so that entities only
+obtain their own trust marks. Client authentication at that endpoint can be left off, which is the default, allowed, or
+required, using CAS properties, and the entity configuration advertises the choice along with the signing algorithms
+CAS accepts. An authenticated request is a `POST` that authenticates with `private_key_jwt`: the client assertion is
+signed with a federation key of the requester, as its [subordinate definition](#subordinates) holds it; its issuer and
+subject are the requester; its only audience is the entity identifier of CAS; and it is accepted once, until it
+expires. Only subordinates of CAS as a trust anchor or intermediate can therefore authenticate, and they may only ask
+for their own trust marks. A request that fails to authenticate, or asks for the trust mark of another entity, is
+answered with `401` and `invalid_client`, as is an unauthenticated request when client authentication is required.
+
 Removing an entity from a trust mark type revokes the trust marks of that type it holds. A trust mark signed with a
-federation key that has since been retired is `invalid`: its holder should fetch a new trust mark after a key rollover.
+federation key that has since been retired stays `active` for the rest of its life, since the historical keys keep it
+verifiable, as [OpenID Federation](https://openid.net/specs/openid-federation-1_0.html#section-8.7) intends; it becomes
+`invalid` once that key is revoked.
 
 ## Key Rollover
 
@@ -301,8 +378,10 @@ registration step:
   authorization or pushed authorization request, CAS resolves the trust chains of the relying party up to one of the
   [trust anchors](#trust-anchors), and registers the resolved `openid_relying_party` metadata as an application that
   expires with the trust chain and is resolved again shortly before.
+- Each redirect URI of the relying party is matched exactly, whatever characters it contains.
 - The relying party authenticates with `private_key_jwt`, assumed when its metadata names no method, or with
-  `tls_client_auth`. A relying party whose metadata names any other method is not registered.
+  `tls_client_auth`. A relying party whose metadata names any other method is not registered, and so is a relying
+  party that publishes its keys at a `jwks_uri` that is not an `https` URL.
 - Every authorization request proves that the relying party controls its keys. It either carries a request object
   signed with a key of the relying party's metadata, whose `iss` and `client_id` are the entity identifier, whose `aud`
   is only the issuer of CAS, with `jti` and `exp` and without `sub`, or it refers with `request_uri` to a
@@ -319,10 +398,19 @@ registration step:
   intermediates below the entity that sets them, the permitted and excluded domain names of the entities below it, and
   the entity types they may have, which must include `openid_relying_party`. A trust chain that breaks any of them is
   not used. The trust chains of trust mark issuers are held to the same constraints, except for entity types.
+- The metadata of a relying party is resolved from its trust chain as
+  [OpenID Federation](https://openid.net/specs/openid-federation-1_0.html#section-6.1) describes: the metadata the
+  immediate superior states about the relying party takes precedence over the metadata the relying party publishes,
+  and the metadata policies of the trust anchor and intermediates are then merged, from the trust anchor down, and
+  applied. `scope` is handled as a list of scope values. Operators beyond the standard ones are ignored, unless a
+  statement of the chain lists them as critical, in which case the trust chain is not used. A trust chain whose
+  policies conflict, or whose policies the metadata does not satisfy, such as a missing essential parameter, is not
+  used either.
 - The keys a trust anchor is trusted with out of band may still list a key the trust anchor has since revoked. When the
   trust anchor publishes its historical keys, CAS reads them, verified with those keys, and does not use a trust chain
   in which the trust anchor signed with a key it marks revoked. When the historical keys cannot be obtained or verified,
-  the trust chain is still used and the problem is reported in the logs.
+  the trust chain is still used and the problem is reported in the logs. Every statement of a trust chain must name the
+  key it is signed with, as the specification requires; a trust chain with a statement that does not is not used.
 - Resolving trust chains is bounded: CAS follows a limited number of authority hints from any entity configuration and
   accepts a limited number of intermediates between the relying party and a trust anchor, and an entity identifier
   whose trust chains could not be resolved is not resolved again for a while. Meanwhile, a registration that could not
@@ -332,9 +420,11 @@ registration step:
   resolve the relying party, to register it, to refresh its registration or after a key rollover, it uses that chain
   instead, once fully verified: the chain must start with the entity configuration of the relying party, end at a trust
   anchor whose keys are defined out of band, verify statement by statement from those keys, not have expired and not
-  exceed the maximum path length; the required trust marks and the metadata policies of the chain apply as usual. A
-  chain whose entity configuration is older than the one the current registration was built from is not used, so that
-  an older chain cannot bring back keys the relying party has replaced. CAS resolves the trust chains itself when the
+  exceed the maximum path length; the required trust marks and the metadata policies of the chain apply as usual.
+  Statements are public, so a chain alone does not show who sends it: it is used only when its entity configuration
+  was issued after the one the current registration was built from, and when the request object or client assertion
+  that carries it is signed with the keys it resolves to. A chain replayed by someone else, even a genuine one, cannot
+  keep or bring back keys the relying party has replaced. CAS resolves the trust chains itself when the
   sent chain cannot be used, and always when the trust anchor is trusted with the keys of its own entity configuration,
   which a sent chain could forge.
 - A relying party that rolls its keys over is resolved again before its registration expires, as
@@ -342,7 +432,9 @@ registration step:
   or a client assertion it sends, at any endpoint, verifies with none of the keys of its registration, CAS resolves its
   trust chains first and then checks the request with the keys the relying party now publishes. Each relying party is
   resolved this way at most once in the same period that applies to entity identifiers that could not be resolved, so
-  objects signed with keys a relying party never published cannot make CAS fetch its statements over and over.
+  objects signed with keys a relying party never published cannot make CAS fetch its statements over and over. Such
+  objects count against that period whoever sends them, and the relying party is then resolved from what it publishes,
+  so a relying party should publish a new key before it signs with it.
 
 ### Required Trust Marks
 
@@ -356,7 +448,9 @@ them, the entity configuration of the relying party must carry a trust mark of t
 - is issued by an entity that the trust anchor of the relying party's trust chain accepts for that type in its
   `trust_mark_issuers`;
 - verifies with the federation keys of its issuer: the trust anchor's own keys, or the keys of the issuer's entity
-  configuration, whose trust chain must end at the same trust anchor;
+  configuration, whose trust chain must end at the same trust anchor. A trust mark signed with a key the issuer has
+  since retired verifies with that key as the issuer's historical keys publish it, provided the key was never revoked
+  and the trust mark was issued before the key was retired;
 - carries a valid `delegation` from the owner of the type, when the trust anchor names one in `trust_mark_owners`;
 - is reported `active` by the issuer's trust mark status endpoint, when the issuer publishes one.
 

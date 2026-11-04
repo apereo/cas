@@ -765,9 +765,9 @@ signing key must still carry an `x5c` certificate chain.
 
 CAS can also identify itself to wallets with the `openid_federation` client identifier prefix of
 [OpenID4VP](https://openid.net/specs/openid-4-verifiable-presentations-1_0.html#section-5.9.3), as federation-based
-wallet ecosystems expect: the client identifier is `openid_federation:` followed by the issuer of CAS, which must be its
-[OpenID Federation](OIDC-Authentication-Federation.html) entity identifier, so CAS must take part in a federation as an
-OpenID Provider. The wallet resolves the trust chain of CAS up to a trust anchor it trusts and reads the verifier metadata,
+wallet ecosystems expect: the client identifier is `openid_federation:` followed by the issuer of CAS, without a
+trailing slash, which must be its [OpenID Federation](OIDC-Authentication-Federation.html) entity identifier, so CAS must
+take part in a federation as an OpenID Provider. The wallet resolves the trust chain of CAS up to a trust anchor it trusts and reads the verifier metadata,
 `openid_credential_verifier`, from the entity configuration of CAS
 ([OpenID Federation for Wallet Architectures](https://openid.net/specs/openid-federation-wallet-1_0.html)):
 
@@ -827,7 +827,9 @@ OpenID Provider. The wallet resolves the trust chain of CAS up to a trust anchor
   and keys from the verifier metadata instead.
 - Encrypted responses are encrypted to an encryption key of the OpenID Connect keystore, published in the verifier
   metadata with the algorithm to use with it: `ECDH-ES` for an elliptic curve key, as HAIP requires, or `RSA-OAEP-256`
-  for an RSA key. Encrypted responses need such a key with a key id, or presentation requests are refused.
+  for an RSA key. Encrypted responses need such a key with a key id, or presentation requests are refused. Only current
+  keys are published, but responses encrypted to a key that has since been rotated out of the keystore's current state
+  are still decrypted, since wallets may hold the verifier metadata from before the rotation.
 - The response URI is the only trusted response URI. No request URIs are listed, since each request object is served
   at a URI of its own and wallets refuse any request URI that the verifier metadata does not list.
 

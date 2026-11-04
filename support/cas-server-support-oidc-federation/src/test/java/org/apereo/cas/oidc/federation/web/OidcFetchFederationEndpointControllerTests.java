@@ -112,13 +112,22 @@ class OidcFetchFederationEndpointControllerTests {
             assertNotNull(metadata.get("openid_relying_party"));
         }
 
+        /**
+         * A subordinate statement may carry a metadata policy instead of metadata (OpenID Federation 1.0, section 6.1),
+         * with the non-standard operators that must be understood.
+         */
         @Test
         void verifyRelyingPartyNoMetadata() throws Exception {
-            mockMvc.perform(get(FETCH_ENDPOINT_URL + "?sub=" + RP_NO_METADATA)
+            val result = mockMvc.perform(get(FETCH_ENDPOINT_URL + "?sub=" + RP_NO_METADATA)
                             .with(withHttpRequestProcessor()))
-                    .andExpect(status().isInternalServerError())
-                    .andExpect(jsonPath("$.error").value("server_error"))
-                    .andExpect(jsonPath("$.error_description").value("Subordinate entity is not defined correctly"));
+                    .andExpect(status().isOk())
+                    .andReturn();
+            val claims = SignedJWT.parse(result.getResponse().getContentAsString()).getJWTClaimsSet();
+            assertNull(claims.getClaim("metadata"));
+            val policy = (Map) ((Map) claims.getClaim("metadata_policy")).get("openid_relying_party");
+            assertEquals(List.of("openid", "email"), ((Map) policy.get("scope")).get("subset_of"));
+            assertEquals("^[A-Za-z ]+$", ((Map) policy.get("client_name")).get("regexp"));
+            assertEquals(List.of("regexp"), claims.getStringListClaim("metadata_policy_crit"));
         }
 
         @Test
@@ -165,13 +174,16 @@ class OidcFetchFederationEndpointControllerTests {
             assertEquals("https://sso.example.org/cas/oidc", claims.getIssuer());
             assertEquals(INTERMEDIATE, claims.getSubject());
             assertNull(claims.getClaim("authority_hints"));
-            assertNotNull(claims.getClaim("constraints"));
+            assertEquals(2L, ((Map) claims.getClaim("constraints")).get("max_path_length"));
             val jwks = (Map) claims.getClaim("jwks");
             assertNotNull(jwks);
             val keys = (List<Map>) jwks.get("keys");
             assertEquals(1, keys.size());
             val metadata = (Map) claims.getClaim("metadata");
-            assertNotNull(metadata.get("federation_entity"));
+            val federationEntity = (Map) metadata.get("federation_entity");
+            assertEquals("Intermediate", federationEntity.get("organization_name"));
+            assertNull(federationEntity.get("federation_fetch_endpoint"));
+            assertNull(federationEntity.get("federation_list_endpoint"));
             assertNull(metadata.get("openid_provider"));
             assertNull(metadata.get("openid_relying_party"));
         }
@@ -249,13 +261,22 @@ class OidcFetchFederationEndpointControllerTests {
             assertNotNull(metadata.get("openid_relying_party"));
         }
 
+        /**
+         * A subordinate statement may carry a metadata policy instead of metadata (OpenID Federation 1.0, section 6.1),
+         * with the non-standard operators that must be understood.
+         */
         @Test
         void verifyRelyingPartyNoMetadata() throws Exception {
-            mockMvc.perform(get(FETCH_ENDPOINT_URL + "?sub=" + RP_NO_METADATA)
+            val result = mockMvc.perform(get(FETCH_ENDPOINT_URL + "?sub=" + RP_NO_METADATA)
                             .with(withHttpRequestProcessor()))
-                    .andExpect(status().isInternalServerError())
-                    .andExpect(jsonPath("$.error").value("server_error"))
-                    .andExpect(jsonPath("$.error_description").value("Subordinate entity is not defined correctly"));
+                    .andExpect(status().isOk())
+                    .andReturn();
+            val claims = SignedJWT.parse(result.getResponse().getContentAsString()).getJWTClaimsSet();
+            assertNull(claims.getClaim("metadata"));
+            val policy = (Map) ((Map) claims.getClaim("metadata_policy")).get("openid_relying_party");
+            assertEquals(List.of("openid", "email"), ((Map) policy.get("scope")).get("subset_of"));
+            assertEquals("^[A-Za-z ]+$", ((Map) policy.get("client_name")).get("regexp"));
+            assertEquals(List.of("regexp"), claims.getStringListClaim("metadata_policy_crit"));
         }
 
         @Test
@@ -302,13 +323,16 @@ class OidcFetchFederationEndpointControllerTests {
             assertEquals("https://sso.example.org/cas/oidc", claims.getIssuer());
             assertEquals(INTERMEDIATE, claims.getSubject());
             assertNull(claims.getClaim("authority_hints"));
-            assertNotNull(claims.getClaim("constraints"));
+            assertEquals(2L, ((Map) claims.getClaim("constraints")).get("max_path_length"));
             val jwks = (Map) claims.getClaim("jwks");
             assertNotNull(jwks);
             val keys = (List<Map>) jwks.get("keys");
             assertEquals(1, keys.size());
             val metadata = (Map) claims.getClaim("metadata");
-            assertNotNull(metadata.get("federation_entity"));
+            val federationEntity = (Map) metadata.get("federation_entity");
+            assertEquals("Intermediate", federationEntity.get("organization_name"));
+            assertNull(federationEntity.get("federation_fetch_endpoint"));
+            assertNull(federationEntity.get("federation_list_endpoint"));
             assertNull(metadata.get("openid_provider"));
             assertNull(metadata.get("openid_relying_party"));
         }

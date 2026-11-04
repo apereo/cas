@@ -164,7 +164,7 @@ class OidcDynamicClientRegistrationEndpointControllerTests {
                     {
                         "application_type": "web",
                         "default_acr_values": ["mfa-duo", "mfa-gauth"],
-                        "redirect_uris": ["https://client.example.org/callback5", "https://client.example.org/callback11"],
+                        "redirect_uris": ["https://client.example.org/callback5", "https://client.example.org/callback11?tenant=a"],
                         "client_name#ja-Japan-JP": "Japanese",
                         "logo_uri": "https://client.example.org/logo.png",
                         "policy_uri": "https://client.example.org/policy",
@@ -193,11 +193,17 @@ class OidcDynamicClientRegistrationEndpointControllerTests {
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.dpop_bound_access_tokens").value(true))
                 .andExpect(jsonPath("$.tls_client_certificate_bound_access_tokens").value(true))
+                .andExpect(jsonPath("$.redirect_uris[0]").value("https://client.example.org/callback5"))
+                .andExpect(jsonPath("$.redirect_uris[1]").value("https://client.example.org/callback11?tenant=a"))
                 .andReturn();
             val registeredClientId = JsonPath.read(result.getResponse().getContentAsString(), "$.client_id").toString();
             val registeredClient = OAuth20Utils.getRegisteredOAuthServiceByClientId(servicesManager, registeredClientId);
             assertTrue(registeredClient.isDpopBoundAccessTokens());
             assertTrue(registeredClient.isTlsClientCertificateBoundAccessTokens());
+            assertTrue(registeredClient.matches("https://client.example.org/callback5"));
+            assertTrue(registeredClient.matches("https://client.example.org/callback11?tenant=a"));
+            assertFalse(registeredClient.matches("https://clientxexample.org/callback5"));
+            assertFalse(registeredClient.matches("https://client.example.org/callback5/other"));
         }
 
         @Test

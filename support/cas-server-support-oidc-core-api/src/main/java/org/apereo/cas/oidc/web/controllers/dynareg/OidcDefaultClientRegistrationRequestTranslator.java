@@ -73,8 +73,7 @@ public class OidcDefaultClientRegistrationRequestTranslator implements OidcClien
             registeredService.setName(RandomUtils.randomAlphabetic(GENERATED_CLIENT_NAME_LENGTH));
         }
 
-        val serviceId = String.join("|", registrationRequest.getRedirectUris());
-        registeredService.setServiceId(serviceId);
+        registeredService.setServiceId(OidcClientRegistrationUtils.toServiceId(registrationRequest.getRedirectUris()));
 
         registeredService.setSectorIdentifierUri(registrationRequest.getSectorIdentifierUri());
         registeredService.setSubjectType(registrationRequest.getSubjectType());

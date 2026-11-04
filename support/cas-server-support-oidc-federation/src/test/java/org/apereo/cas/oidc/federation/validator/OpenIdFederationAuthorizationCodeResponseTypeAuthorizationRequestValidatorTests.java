@@ -379,6 +379,35 @@ class OpenIdFederationAuthorizationCodeResponseTypeAuthorizationRequestValidator
     }
 
     /**
+     * The genuine trust chain a relying party published before rolling its keys over, which anyone can fetch, does not
+     * keep its replaced keys when someone else replays it in a request the relying party did not sign: the registration
+     * is resolved instead, and the relying party's requests signed with its new key are accepted.
+     */
+    @Test
+    void verifyReplayedTrustChainDoesNotBlockKeyRollover() throws Throwable {
+        val clientId = "https://rp-rotated-" + UUID.randomUUID() + ".example.org";
+        TestOidcFederationTrustChainResolver.PUBLISHED_KEYS.put(clientId, RELYING_PARTY_KEY);
+        assertTrue(preHandle(AUTHORIZE_URL, clientId, Map.of(OAuth20Constants.REQUEST,
+            signRequestObject(requestObjectClaims(clientId, UUID.randomUUID().toString()).build(), RELYING_PARTY_KEY))).getLeft());
+
+        val rolledOverKey = generateKey("rp-key-next");
+        TestOidcFederationTrustChainResolver.PUBLISHED_KEYS.put(clientId, rolledOverKey);
+        val header = new JWSHeader.Builder(JWSAlgorithm.RS256)
+            .keyID("attacker")
+            .type(new JOSEObjectType("oauth-authz-req+jwt"))
+            .customParam("trust_chain", List.of(TestOidcFederationTrustChainResolver.REPLAYED_TRUST_CHAIN))
+            .build();
+        val replayed = new SignedJWT(header, requestObjectClaims(clientId, UUID.randomUUID().toString()).build());
+        replayed.sign(new RSASSASigner(generateKey("attacker")));
+        assertFalse(preHandle(AUTHORIZE_URL, clientId, Map.of(OAuth20Constants.REQUEST, replayed.serialize())).getLeft());
+        assertEquals(2, TestOidcFederationTrustChainResolver.RESOLUTIONS.get(clientId).get());
+
+        assertTrue(preHandle(AUTHORIZE_URL, clientId, Map.of(OAuth20Constants.REQUEST,
+            signRequestObject(requestObjectClaims(clientId, UUID.randomUUID().toString()).build(), rolledOverKey))).getLeft());
+        assertEquals(2, TestOidcFederationTrustChainResolver.RESOLUTIONS.get(clientId).get());
+    }
+
+    /**
      * The trust chain a relying party sends in the {@code trust_chain} header of its request object is handed to the
      * registration (OpenID Federation 1.0, section 12.1.1.1).
      */
@@ -397,24 +426,43 @@ class OpenIdFederationAuthorizationCodeResponseTypeAuthorizationRequestValidator
     }
 
     /**
-     * A sent trust chain may register a relying party or replace its registration, but not with an entity configuration
-     * older than the one the registration was built from: the trust chains are resolved instead.
+     * A sent trust chain may register a relying party or replace its registration, but only with an entity
+     * configuration issued after the one the registration was built from, and only when the request that carries it
+     * is signed with the keys it resolves to: statements are public, so an older chain, or the very chain of the
+     * registration, replayed with a request the relying party did not sign must not keep keys it has replaced. The
+     * trust chains are resolved instead.
      */
     @Test
     void verifySentTrustChainCannotRollBackRegistration() throws Throwable {
         val clientId = "https://rp-sent-" + UUID.randomUUID() + ".example.org";
-        assertEquals("sent-service", clientRegistration.register(clientId, List.of("100")).getName());
+        assertEquals("sent-service", clientRegistration.register(clientId, List.of("100"), _ -> true).getName());
         val rolledBack = clientRegistration.reevaluate(clientId, _ -> true, List.of("50"));
         assertEquals("fetched-service", rolledBack.getName());
-        assertEquals("200", rolledBack.getProperties()
-            .get(OidcFederationDefaultTrustChainResolver.OPENIDFEDERATION_ENTITY_CONFIGURATION_ISSUED_AT).getValue(String.class));
+        assertEquals("200", issuedAt(rolledBack));
+
+        val replayedClientId = "https://rp-sent-" + UUID.randomUUID() + ".example.org";
+        val registered = clientRegistration.register(replayedClientId, List.of("100"), _ -> true);
+        assertEquals("sent-service", registered.getName());
+        val replayed = clientRegistration.reevaluate(replayedClientId, service -> service.getId() == registered.getId(), List.of("100"));
+        assertEquals("fetched-service", replayed.getName());
+        assertEquals("200", issuedAt(replayed));
+
+        val unsignedClientId = "https://rp-sent-" + UUID.randomUUID() + ".example.org";
+        assertEquals("fetched-service", clientRegistration.register(unsignedClientId, List.of("100"), _ -> false).getName());
+        val unsigned = clientRegistration.reevaluate(unsignedClientId, _ -> true, List.of("300"));
+        assertEquals("fetched-service", unsigned.getName());
+        assertEquals("200", issuedAt(unsigned));
 
         val otherClientId = "https://rp-sent-" + UUID.randomUUID() + ".example.org";
-        assertEquals("sent-service", clientRegistration.register(otherClientId, List.of("100")).getName());
-        val newer = clientRegistration.reevaluate(otherClientId, _ -> true, List.of("150"));
+        assertEquals("sent-service", clientRegistration.register(otherClientId, List.of("100"), _ -> true).getName());
+        val newer = clientRegistration.reevaluate(otherClientId, service -> !"150".equals(issuedAt(service)), List.of("150"));
         assertEquals("sent-service", newer.getName());
-        assertEquals("150", newer.getProperties()
-            .get(OidcFederationDefaultTrustChainResolver.OPENIDFEDERATION_ENTITY_CONFIGURATION_ISSUED_AT).getValue(String.class));
+        assertEquals("150", issuedAt(newer));
+    }
+
+    private static String issuedAt(final OAuthRegisteredService service) {
+        return service.getProperties()
+            .get(OidcFederationDefaultTrustChainResolver.OPENIDFEDERATION_ENTITY_CONFIGURATION_ISSUED_AT).getValue(String.class);
     }
 
     private Pair<Boolean, MockHttpServletResponse> preHandle(final String uri, final String clientId,
@@ -537,15 +585,23 @@ class OpenIdFederationAuthorizationCodeResponseTypeAuthorizationRequestValidator
 
         static final Map<String, List<String>> SENT_TRUST_CHAINS = new ConcurrentHashMap<>();
 
+        static final String REPLAYED_TRUST_CHAIN = "replayed-statement";
+
         @Override
-        public Optional<OidcRegisteredService> resolveTrustChains(final String clientId, final List<String> trustChain) {
+        public Optional<OidcRegisteredService> resolveSentTrustChain(final String clientId, final List<String> trustChain) {
             if (!trustChain.isEmpty()) {
                 SENT_TRUST_CHAINS.put(clientId, trustChain);
                 if (clientId.contains("rp-sent-")) {
                     return Optional.of(buildAutomaticallyRegisteredService(clientId, "sent-service", trustChain.getFirst()));
                 }
+                if (clientId.contains("rp-rotated-") && trustChain.contains(REPLAYED_TRUST_CHAIN)) {
+                    val service = buildSignedService(clientId, RELYING_PARTY_KEY);
+                    service.getProperties().put(OidcFederationDefaultTrustChainResolver.OPENIDFEDERATION_ENTITY_CONFIGURATION_ISSUED_AT,
+                        new DefaultRegisteredServiceProperty(String.valueOf(Long.MAX_VALUE)));
+                    return Optional.of(service);
+                }
             }
-            return resolveTrustChains(clientId);
+            return Optional.empty();
         }
 
         @Override
@@ -561,19 +617,23 @@ class OpenIdFederationAuthorizationCodeResponseTypeAuthorizationRequestValidator
                 return Optional.of(buildAutomaticallyRegisteredService(clientId, "fetched-service", "200"));
             }
             if (clientId.contains("rp-signed-") || clientId.contains("rp-rotated-")) {
-                val service = buildOidcRegisteredService(clientId, "signed-service");
-                service.setClientSecret(null);
-                service.setServiceId(Pattern.quote(REDIRECT_URI));
-                service.setScopes(new HashSet<>(List.of(OidcConstants.StandardScopes.OPENID.getScope())));
-                service.setTokenEndpointAuthenticationMethod("private_key_jwt");
-                service.setJwks(new JWKSet(PUBLISHED_KEYS.getOrDefault(clientId, RELYING_PARTY_KEY).toPublicJWK()).toString());
-                service.setExpirationPolicy(new DefaultRegisteredServiceExpirationPolicy(true,
-                    ZonedDateTime.now(Clock.systemUTC()).plusDays(1)));
-                service.getProperties().put(OidcFederationDefaultTrustChainResolver.TEMPORARY_OPENIDFEDERATION_SERVICE,
-                    new DefaultRegisteredServiceProperty(Boolean.TRUE.toString()));
-                return Optional.of(service);
+                return Optional.of(buildSignedService(clientId, PUBLISHED_KEYS.getOrDefault(clientId, RELYING_PARTY_KEY)));
             }
             return Optional.empty();
+        }
+
+        private static OidcRegisteredService buildSignedService(final String clientId, final RSAKey key) {
+            val service = buildOidcRegisteredService(clientId, "signed-service");
+            service.setClientSecret(null);
+            service.setServiceId(Pattern.quote(REDIRECT_URI));
+            service.setScopes(new HashSet<>(List.of(OidcConstants.StandardScopes.OPENID.getScope())));
+            service.setTokenEndpointAuthenticationMethod("private_key_jwt");
+            service.setJwks(new JWKSet(key.toPublicJWK()).toString());
+            service.setExpirationPolicy(new DefaultRegisteredServiceExpirationPolicy(true,
+                ZonedDateTime.now(Clock.systemUTC()).plusDays(1)));
+            service.getProperties().put(OidcFederationDefaultTrustChainResolver.TEMPORARY_OPENIDFEDERATION_SERVICE,
+                new DefaultRegisteredServiceProperty(Boolean.TRUE.toString()));
+            return service;
         }
     }
 }

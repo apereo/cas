@@ -615,7 +615,42 @@ class OidcVerifiableCredentialPresentationRequestEndpointControllerTests {
             assertEquals("enc", encryptionKey.get("use"));
             assertEquals("ECDH-ES", encryptionKey.get("alg"));
             assertTrue(keys.stream().noneMatch(key -> key.containsKey("d")));
-            assertTrue(federationMetadataContributor.contribute("https://other.example.org").isEmpty());
+            assertEquals(Set.of(OidcVerifiableCredentialVerifierMetadataService.ENTITY_TYPE_CREDENTIAL_VERIFIER),
+                federationMetadataContributor.contribute("https://other.example.org").keySet());
+        }
+    }
+
+    /**
+     * The client identifier is the entity identifier of CAS as its entity configuration names it, even when the issuer
+     * is defined with a trailing slash, and the verifier metadata wallets need under that prefix is published.
+     */
+    @Nested
+    @TestPropertySource(properties = {
+        "cas.authn.oidc.core.issuer=https://sso.example.org/cas/oidc/",
+        "cas.authn.oidc.vc.presentation.client-identifier-prefix=OPENID_FEDERATION",
+        "cas.authn.oidc.vc.presentation.response-mode=DIRECT_POST_JWT",
+        "cas.authn.oidc.jwks.file-system.jwks-file=classpath:vc-verifier-federation.jwks"
+    })
+    class FederationTrailingSlashIssuerTests extends BaseTests {
+        @Autowired
+        @Qualifier("oidcVerifiableCredentialFederationMetadataContributor")
+        private OidcFederationEntityMetadataContributor federationMetadataContributor;
+
+        @BeforeEach
+        void registerFederationModule() {
+            CasFeatureModule.FeatureCatalog.OpenIDConnect.register("federation");
+        }
+
+        @Test
+        void verifyClientIdentifierIsTheEntityIdentifier() throws Throwable {
+            val entityId = oidcIssuerService.determineIssuer(Optional.empty());
+            assertEquals("https://sso.example.org/cas/oidc", entityId);
+            val parameters = parseQueryParameters(URI.create(createPresentationRequest().getAuthorizationRequest()));
+            assertEquals("openid_federation:" + entityId, parameters.get(OAuth20Constants.CLIENT_ID));
+            assertTrue(federationMetadataContributor.contribute(entityId)
+                .containsKey(OidcVerifiableCredentialVerifierMetadataService.ENTITY_TYPE_CREDENTIAL_VERIFIER));
+            assertEquals(entityId + '/' + OidcConstants.VC_PRESENTATION_RESPONSE_URL,
+                OidcVerifiableCredentialPresentationRequestEndpointController.resolveResponseUri(casProperties));
         }
     }
 }

@@ -2,8 +2,22 @@ package org.apereo.cas.oidc.web;
 
 import module java.base;
 import org.apereo.cas.oidc.discovery.OidcServerDiscoverySettingsFactory;
+import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.web.DefaultOAuth20RequestParameterResolver;
 import org.apereo.cas.token.JwtBuilder;
+import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
+import com.nimbusds.jose.JWSAlgorithm;
+import com.nimbusds.jose.crypto.MACSigner;
+import com.nimbusds.jose.crypto.MACVerifier;
+import com.nimbusds.jwt.JWTClaimsSet;
+import com.nimbusds.jwt.JWTParser;
+import com.nimbusds.jwt.SignedJWT;
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
+import org.jooq.lambda.Unchecked;
+import org.jspecify.annotations.Nullable;
 import jakarta.servlet.http.HttpServletRequest;
 
 /**
@@ -15,9 +29,48 @@ import jakarta.servlet.http.HttpServletRequest;
 public class OidcRequestParameterResolver extends DefaultOAuth20RequestParameterResolver {
     private final OidcRequestObjectDecrypter requestObjectDecrypter;
 
-    public OidcRequestParameterResolver(final JwtBuilder jwtBuilder, final OidcRequestObjectDecrypter requestObjectDecrypter) {
+    private final CipherExecutor<Serializable, String> clientSecretCipherExecutor;
+
+    public OidcRequestParameterResolver(final JwtBuilder jwtBuilder, final OidcRequestObjectDecrypter requestObjectDecrypter,
+                                        final CipherExecutor<Serializable, String> clientSecretCipherExecutor) {
         super(jwtBuilder);
         this.requestObjectDecrypter = requestObjectDecrypter;
+        this.clientSecretCipherExecutor = clientSecretCipherExecutor;
+    }
+
+    /**
+     * A request object signed with HMAC, {@code HS256}, {@code HS384} or {@code HS512}, is verified with the client
+     * secrets of the client (OpenID Connect Core 1.0, sections 6.1 and 10.1): its unexpired secrets, decoded, whose
+     * octets are at least as long as the hash output of the algorithm (RFC 7518, section 3.2). Request objects signed
+     * otherwise are verified with the keys of the client, as the default resolver does.
+     *
+     * @param registeredService the registered service of the client, if known
+     * @param requestObject     the request object
+     * @return the claims
+     */
+    @Override
+    protected @Nullable JWTClaimsSet unpackRequestObject(@Nullable final RegisteredService registeredService, final String requestObject) {
+        val jwt = Unchecked.supplier(() -> JWTParser.parse(requestObject)).get();
+        if (!(jwt instanceof final SignedJWT signedJwt) || !JWSAlgorithm.Family.HMAC_SHA.contains(signedJwt.getHeader().getAlgorithm())) {
+            return super.unpackRequestObject(registeredService, requestObject);
+        }
+        if (!(registeredService instanceof final OAuthRegisteredService oauthService)) {
+            throw new IllegalArgumentException("Request object signed with a client secret names no registered client");
+        }
+        val minimumLength = Unchecked.supplier(() -> MACSigner.getMinRequiredSecretLength(signedJwt.getHeader().getAlgorithm())).get() / Byte.SIZE;
+        val verified = oauthService.getClientSecrets()
+            .stream()
+            .filter(secret -> !secret.hasClientSecretExpired(oauthService))
+            .map(secret -> SpringExpressionLanguageValueResolver.getInstance().resolve(secret.getValue()))
+            .map(secret -> clientSecretCipherExecutor.decode(secret, new Object[]{oauthService}))
+            .filter(StringUtils::isNotBlank)
+            .map(secret -> secret.getBytes(StandardCharsets.UTF_8))
+            .filter(secret -> secret.length >= minimumLength)
+            .anyMatch(Unchecked.predicate(secret -> signedJwt.verify(new MACVerifier(secret))));
+        if (!verified) {
+            throw new IllegalArgumentException("Request object does not verify with a client secret of " + oauthService.getClientId());
+        }
+        return Unchecked.supplier(signedJwt::getJWTClaimsSet).get();
     }
 
     /**

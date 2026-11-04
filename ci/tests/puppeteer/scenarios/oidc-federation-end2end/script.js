@@ -89,6 +89,16 @@ async function verifyTrustMarkIssuance(rp) {
     const statusEndpoint = federationEntity.federation_trust_mark_status_endpoint;
     assert.equal(statusEndpoint, `${TRUST_ANCHOR}/federation_trust_mark_status`);
 
+    await cas.log("Trust anchor: trust mark requests, authenticated or not");
+    assert.deepEqual(federationEntity.federation_trust_mark_endpoint_auth_methods, ["none", "private_key_jwt"]);
+    assert(federationEntity.endpoint_auth_signing_alg_values_supported.includes("RS256"));
+    const unauthenticated = await cas.doRequest(`${federationEntity.federation_trust_mark_endpoint}?${
+        new URLSearchParams({trust_mark_type: RELYING_PARTY_TRUST_MARK, sub: ENTITY_ID})}`, "GET", {}, 200);
+    assert.equal(jose.decodeJwt(unauthenticated).sub, ENTITY_ID);
+    const markOfAnother = JSON.parse(await cas.doRequest(federationEntity.federation_trust_mark_endpoint, "POST",
+        {"Content-Type": "application/x-www-form-urlencoded"}, 401, await rp.trustMarkRequest(OFFA_ENTITY_ID)));
+    assert.equal(markOfAnother.error, "invalid_client");
+
     const listing = JSON.parse(await cas.doRequest(`${federationEntity.federation_trust_mark_list_endpoint}?${
         new URLSearchParams({trust_mark_type: RELYING_PARTY_TRUST_MARK})}`, "GET", {}, 200));
     assert.deepEqual(listing.sort(), [ENTITY_ID, OFFA_ENTITY_ID].sort());
@@ -293,6 +303,23 @@ async function verifyKeyRollover(page, rp, op) {
     await completeAuthorization(page, rp, op, await rp.pushAuthorizationRequest(op), op.issuer);
 }
 
+/**
+ * A genuine trust chain of the relying party captured before its key rollover, which anyone can fetch, replayed with a
+ * request object the relying party did not sign, is not used: the OP resolves the relying party instead, so the next
+ * request of the relying party, signed with its new key, is accepted right away.
+ */
+async function verifyReplayedTrustChain(page, rp, op) {
+    await cas.sleep(6000);
+    await cas.log("Someone else replays a trust chain of the relying party captured before its key rollover");
+    const capturedTrustChain = await rp.trustChain();
+    await rp.rolloverOidcKey();
+    const {privateKey} = await jose.generateKeyPair("RS256");
+    await assertRefused((await rp.authorizationRequest(op, {}, {signingKey: privateKey, trustChain: capturedTrustChain})).url,
+        "Request object signature or claims are invalid");
+    await cas.log("Node RP: request object signed with the new key right after the replay");
+    await completeAuthorization(page, rp, op, await rp.authorizationRequest(op), op.token_endpoint);
+}
+
 (async () => {
     const rp = new FederationRelyingParty(__dirname);
     await rp.start();
@@ -314,6 +341,7 @@ async function verifyKeyRollover(page, rp, op) {
         await cas.log("Node RP: signed request object encrypted to the OP, passed by value");
         await completeAuthorization(page, rp, op, await rp.authorizationRequest(op, {}, {encrypted: true}), op.token_endpoint);
         await verifyKeyRollover(page, rp, op);
+        await verifyReplayedTrustChain(page, rp, op);
 
         await verifyRefusedRequests(rp, op, request);
         await verifyFederatedPresentation(rp);

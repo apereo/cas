@@ -2,19 +2,22 @@ package org.apereo.cas.oidc.web;
 
 import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeyStoreUtils;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeyUsage;
 import org.apereo.cas.oidc.jwks.generator.OidcJsonWebKeystoreGeneratorService;
 import org.apereo.cas.util.function.FunctionUtils;
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.PlainJWT;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
 import org.jose4j.jwa.AlgorithmConstraints;
 import org.jose4j.jwe.JsonWebEncryption;
+import org.jose4j.jwe.KeyManagementAlgorithmIdentifiers;
 import org.jose4j.jwk.JsonWebKeySet;
 import org.jose4j.jwk.PublicJsonWebKey;
 import org.jose4j.jwx.HeaderParameterNames;
@@ -25,8 +28,10 @@ import org.jspecify.annotations.Nullable;
  * A request object is encrypted to one of the encryption keys of the OpenID Connect keystore, which CAS publishes in its
  * JWKS, and names it with {@code kid}; without a {@code kid}, each encryption key is tried in turn. Every encryption key
  * the JWKS publishes is accepted, whatever its rotation state, since clients may still hold a key set from before a
- * rotation. Only the key management
- * and content encryption algorithms that discovery advertises are accepted, and compressed request objects are refused.
+ * rotation. The keys are read from the keystore once per JWKS cache period, not for every request, so that encrypted
+ * request objects, which anyone can send, do not make CAS read and parse its keystore each time. Only the key management
+ * and content encryption algorithms that discovery advertises are accepted, except {@code RSA1_5}, which is never
+ * accepted (RFC 8725, section 3.2), and compressed request objects are refused.
  * <p>
  * The result is the nested JWT, normally signed by the client, which is then verified with the client's keys like any
  * signed request object. A request object encrypted without being signed comes back as an unsigned JWT, and is accepted
@@ -36,7 +41,6 @@ import org.jspecify.annotations.Nullable;
  * @author Misagh Moayyed
  * @since 8.1.0
  */
-@RequiredArgsConstructor
 @Slf4j
 public class OidcRequestObjectDecrypter {
     /**
@@ -46,9 +50,23 @@ public class OidcRequestObjectDecrypter {
 
     private static final int ENCRYPTED_JWT_PARTS_SEPARATORS = 4;
 
+    private static final String DECRYPTION_KEYS = "decryptionKeys";
+
     private final OidcJsonWebKeystoreGeneratorService keystoreGeneratorService;
 
     private final CasConfigurationProperties casProperties;
+
+    private final Cache<String, List<PublicJsonWebKey>> decryptionKeys;
+
+    public OidcRequestObjectDecrypter(final OidcJsonWebKeystoreGeneratorService keystoreGeneratorService,
+                                      final CasConfigurationProperties casProperties) {
+        this.keystoreGeneratorService = keystoreGeneratorService;
+        this.casProperties = casProperties;
+        this.decryptionKeys = Caffeine.newBuilder()
+            .maximumSize(1)
+            .expireAfterWrite(Beans.newDuration(casProperties.getAuthn().getOidc().getJwks().getCore().getJwksCacheExpiration()))
+            .build();
+    }
 
     /**
      * Whether the request object is encrypted: a JWE in compact serialization has five parts.
@@ -84,12 +102,17 @@ public class OidcRequestObjectDecrypter {
     }
 
     /**
-     * Encryption keys of the OpenID Connect keystore that have a private key, in any rotation state.
+     * Encryption keys of the OpenID Connect keystore that have a private key, in any rotation state, as read once per
+     * JWKS cache period. A keystore that cannot be read, or has no such key, is read again on the next call.
      *
      * @return the keys
      */
-    protected List<PublicJsonWebKey> getDecryptionKeys() {
-        return FunctionUtils.doAndHandle(() -> {
+    public List<PublicJsonWebKey> getDecryptionKeys() {
+        return Objects.requireNonNullElseGet(decryptionKeys.get(DECRYPTION_KEYS, _ -> loadDecryptionKeys()), List::of);
+    }
+
+    private @Nullable List<PublicJsonWebKey> loadDecryptionKeys() {
+        val keys = FunctionUtils.doAndHandle(() -> {
             val keystore = OidcJsonWebKeystoreGeneratorService.toJsonWebKeyStore(keystoreGeneratorService.generate());
             return OidcJsonWebKeyStoreUtils.getJsonWebKeyFromJsonWebKeySet(keystore, Optional.empty(), Optional.of(OidcJsonWebKeyUsage.ENCRYPTION))
                 .map(JsonWebKeySet::getJsonWebKeys)
@@ -103,6 +126,7 @@ public class OidcRequestObjectDecrypter {
             LOGGER.warn("Unable to read the encryption keys of the OpenID Connect keystore: [{}]", e.getMessage());
             return List.<PublicJsonWebKey>of();
         }).get();
+        return keys.isEmpty() ? null : keys;
     }
 
     private String decryptWith(final String requestObject, final PublicJsonWebKey key) throws Exception {
@@ -113,7 +137,10 @@ public class OidcRequestObjectDecrypter {
             throw new IllegalArgumentException("Compressed request objects are not supported");
         }
         jwe.setAlgorithmConstraints(new AlgorithmConstraints(AlgorithmConstraints.ConstraintType.PERMIT,
-            discovery.getRequestObjectEncryptionAlgValuesSupported().toArray(String[]::new)));
+            discovery.getRequestObjectEncryptionAlgValuesSupported()
+                .stream()
+                .filter(algorithm -> !KeyManagementAlgorithmIdentifiers.RSA1_5.equals(algorithm))
+                .toArray(String[]::new)));
         jwe.setContentEncryptionAlgorithmConstraints(new AlgorithmConstraints(AlgorithmConstraints.ConstraintType.PERMIT,
             discovery.getRequestObjectEncryptionEncodingValuesSupported().toArray(String[]::new)));
         jwe.setKey(key.getPrivateKey());

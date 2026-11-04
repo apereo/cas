@@ -38,6 +38,23 @@
       ]
     }
   },
+  "metadataPolicy": {
+    "openid_relying_party": {
+      "scope": {
+        "subset_of": [
+          "openid",
+          "email",
+          "profile"
+        ]
+      },
+      "contacts": {
+        "add": [
+          "ops@example.org"
+        ]
+      }
+    }
+  },
+  "metadataPolicyCrit": [],
   "federationKeys": [
     {
       "kty": "EC",

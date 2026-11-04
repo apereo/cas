@@ -18,6 +18,7 @@ import org.apereo.cas.oidc.federation.signature.OidcFederationDefaultEntityState
 import org.apereo.cas.oidc.federation.signature.OidcFederationDefaultJsonWebKeystoreService;
 import org.apereo.cas.oidc.federation.signature.OidcFederationEntityStatementService;
 import org.apereo.cas.oidc.federation.signature.OidcFederationJsonWebKeystoreService;
+import org.apereo.cas.oidc.federation.subordinate.OidcFederationSubordinateClientAuthenticator;
 import org.apereo.cas.oidc.federation.subordinate.OidcFederationSubordinateRepository;
 import org.apereo.cas.oidc.federation.trustmark.OidcFederationDefaultTrustMarkIssuer;
 import org.apereo.cas.oidc.federation.trustmark.OidcFederationDefaultTrustMarkValidator;
@@ -179,9 +180,25 @@ class OidcFederationConfiguration {
         final OidcFederationEntityStatementService oidcFederationEntityStatementService,
         @Qualifier(OidcFederationTrustMarkIssuer.BEAN_NAME)
         final OidcFederationTrustMarkIssuer oidcFederationTrustMarkIssuer,
+        @Qualifier(OidcFederationSubordinateClientAuthenticator.BEAN_NAME)
+        final OidcFederationSubordinateClientAuthenticator oidcFederationSubordinateClientAuthenticator,
         final CasConfigurationProperties casProperties) {
         return new OidcTrustMarkFederationEndpointController(oidcFederationIssuerService,
-            oidcFederationEntityStatementService, casProperties.getAuthn().getOidc(), oidcFederationTrustMarkIssuer);
+            oidcFederationEntityStatementService, casProperties.getAuthn().getOidc(), oidcFederationTrustMarkIssuer,
+            oidcFederationSubordinateClientAuthenticator);
+    }
+
+    @ConditionalOnMissingBean(name = OidcFederationSubordinateClientAuthenticator.BEAN_NAME)
+    @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    public OidcFederationSubordinateClientAuthenticator oidcFederationSubordinateClientAuthenticator(
+        @Qualifier("oidcFederationSubordinateRepository")
+        final OidcFederationSubordinateRepository oidcFederationSubordinateRepository,
+        @Qualifier(TicketRegistry.BEAN_NAME)
+        final TicketRegistry ticketRegistry,
+        @Qualifier(TicketFactory.BEAN_NAME)
+        final TicketFactory ticketFactory) {
+        return new OidcFederationSubordinateClientAuthenticator(oidcFederationSubordinateRepository, ticketRegistry, ticketFactory);
     }
 
     @ConditionalOnMissingBean(name = "oidcHistoricalKeysFederationController")

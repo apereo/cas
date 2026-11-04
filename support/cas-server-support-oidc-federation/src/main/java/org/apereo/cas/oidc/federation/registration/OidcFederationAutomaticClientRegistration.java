@@ -3,6 +3,7 @@ package org.apereo.cas.oidc.federation.registration;
 import module java.base;
 import org.apereo.cas.oidc.federation.chain.OidcFederationDefaultTrustChainResolver;
 import org.apereo.cas.oidc.federation.chain.OidcFederationTrustChainResolver;
+import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
@@ -37,6 +38,11 @@ import org.jspecify.annotations.Nullable;
  * its registration does not hold after rolling its keys over. Each entity is reevaluated at most once in the same
  * period, so requests signed with keys a relying party never published cannot make CAS fetch its statements again and
  * again; a reevaluation that fails keeps the current registration.
+ * <p>
+ * A trust chain the relying party sends is a candidate only, since anyone can send the genuine statements of an entity:
+ * it replaces a registration only when its entity configuration was issued after the one the registration was built
+ * from, and when the request that carries it is signed with the keys it resolves to. Otherwise the trust chains are
+ * resolved, so that a replayed chain cannot bring back keys the relying party has replaced.
  *
  * @author Misagh Moayyed
  * @since 8.1.0
@@ -87,18 +93,20 @@ public class OidcFederationAutomaticClientRegistration {
      * @return the registered service, or null when the client is neither registered nor resolvable in the federation
      */
     public @Nullable OAuthRegisteredService register(final String clientId) {
-        return register(clientId, List.of());
+        return register(clientId, List.of(), _ -> false);
     }
 
     /**
      * Find or register the relying party as {@link #register(String)} does, using the trust chain the relying party
-     * sent when its trust chains would otherwise be resolved.
+     * sent when its trust chains would otherwise be resolved, provided the request is signed with the keys it carries.
      *
-     * @param clientId   the client id
-     * @param trustChain the serialized statements of the trust chain the relying party sent, which may be empty
+     * @param clientId       the client id
+     * @param trustChain     the serialized statements of the trust chain the relying party sent, which may be empty
+     * @param signedWithKeys whether the request that carries the trust chain is signed with the keys of a registration
      * @return the registered service, or null when the client is neither registered nor resolvable in the federation
      */
-    public @Nullable OAuthRegisteredService register(final String clientId, final List<String> trustChain) {
+    public @Nullable OAuthRegisteredService register(final String clientId, final List<String> trustChain,
+                                                     final Predicate<OAuthRegisteredService> signedWithKeys) {
         val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(servicesManager, clientId);
         if (registeredService != null && !shouldRefresh(registeredService)) {
             return registeredService;
@@ -111,7 +119,7 @@ public class OidcFederationAutomaticClientRegistration {
             if ((currentService != null && !shouldRefresh(currentService)) || isUnresolved(clientId)) {
                 return currentService;
             }
-            val resolvedService = resolveAndSave(clientId, currentService, trustChain);
+            val resolvedService = resolveAndSave(clientId, currentService, trustChain, signedWithKeys);
             if (resolvedService.isEmpty()) {
                 LOGGER.debug("Trust chains of [{}] could not be resolved; they are not resolved again for a while", clientId);
                 unresolvedEntities.put(clientId, Boolean.TRUE);
@@ -136,7 +144,9 @@ public class OidcFederationAutomaticClientRegistration {
 
     /**
      * Reevaluate the registration as {@link #reevaluate(String, Predicate)} does, using the trust chain the relying
-     * party sent when there is one.
+     * party sent when there is one, provided the registration it resolves to is no longer stale, that is, the request
+     * is signed with the keys the chain carries. The reevaluation counts against the period before the request is
+     * verified, but always ends with keys the relying party has published.
      *
      * @param clientId   the client id
      * @param stale      whether the registration no longer holds what the request needs
@@ -156,7 +166,7 @@ public class OidcFederationAutomaticClientRegistration {
             }
             reevaluatedEntities.put(clientId, Boolean.TRUE);
             LOGGER.info("Registration of [{}] does not hold the keys it signs with; resolving its trust chains again", clientId);
-            return resolveAndSave(clientId, currentService, trustChain).orElse(currentService);
+            return resolveAndSave(clientId, currentService, trustChain, stale.negate()).orElse(currentService);
         });
     }
 
@@ -202,24 +212,21 @@ public class OidcFederationAutomaticClientRegistration {
     }
 
     /**
-     * Resolve the relying party, from the trust chain it sent when there is one, and save it under the id of its current
-     * registration. A sent trust chain whose entity configuration was issued before the one the current registration was
-     * built from is not allowed to replace it, so that an older chain, still unexpired, cannot bring back keys or metadata
-     * the relying party has since replaced; the trust chains are resolved instead.
+     * Resolve the relying party, from the trust chain it sent when that chain can be used, and save it under the id of
+     * its current registration.
      *
      * @param clientId       the client id
      * @param currentService the current registration
      * @param trustChain     the serialized statements of the trust chain the relying party sent, which may be empty
+     * @param signedWithKeys whether the request that carries the trust chain is signed with the keys of a registration
      * @return the saved registration
      */
     private Optional<OAuthRegisteredService> resolveAndSave(final String clientId, @Nullable final OAuthRegisteredService currentService,
-                                                            final List<String> trustChain) {
+                                                            final List<String> trustChain,
+                                                            final Predicate<OAuthRegisteredService> signedWithKeys) {
         try {
-            var resolvedService = trustChainResolver.resolveTrustChains(clientId, trustChain);
-            if (!trustChain.isEmpty() && resolvedService.isPresent() && isOlderThan(resolvedService.get(), currentService)) {
-                LOGGER.warn("Trust chain sent by [{}] is older than its registration and is not used", clientId);
-                resolvedService = trustChainResolver.resolveTrustChains(clientId);
-            }
+            val sentService = resolveSentTrustChain(clientId, currentService, trustChain, signedWithKeys);
+            val resolvedService = sentService.isPresent() ? sentService : trustChainResolver.resolveTrustChains(clientId);
             LOGGER.debug("Resolved service: [{}]", resolvedService);
             return resolvedService.map(service -> {
                 if (currentService != null) {
@@ -233,13 +240,50 @@ public class OidcFederationAutomaticClientRegistration {
         }
     }
 
-    private static boolean isOlderThan(final OAuthRegisteredService resolvedService, @Nullable final OAuthRegisteredService currentService) {
+    /**
+     * The registration built from the trust chain the relying party sent, when the chain verifies, its entity
+     * configuration was issued after the one the current registration was built from, and the request that carries it
+     * is signed with the keys it resolves to. Statements of an entity are public, so a chain alone proves nothing about
+     * who sends it: an older chain, or the very chain of the current registration, replayed with a request the relying
+     * party did not sign, must not keep or bring back keys the relying party has replaced.
+     *
+     * @param clientId       the client id
+     * @param currentService the current registration
+     * @param trustChain     the serialized statements of the trust chain the relying party sent, which may be empty
+     * @param signedWithKeys whether the request that carries the trust chain is signed with the keys of a registration
+     * @return the registration from the sent trust chain, or empty when the trust chains must be resolved instead
+     * @throws Exception the exception
+     */
+    private Optional<OidcRegisteredService> resolveSentTrustChain(final String clientId, @Nullable final OAuthRegisteredService currentService,
+                                                                  final List<String> trustChain,
+                                                                  final Predicate<OAuthRegisteredService> signedWithKeys)
+            throws Exception {
+        if (trustChain.isEmpty()) {
+            return Optional.empty();
+        }
+        val sentService = trustChainResolver.resolveSentTrustChain(clientId, trustChain);
+        if (sentService.isEmpty()) {
+            LOGGER.debug("Trust chain sent by [{}] cannot be used; its trust chains are resolved instead", clientId);
+            return Optional.empty();
+        }
+        if (!isNewerThan(sentService.get(), currentService)) {
+            LOGGER.warn("Trust chain sent by [{}] is not newer than its registration and is not used", clientId);
+            return Optional.empty();
+        }
+        if (!signedWithKeys.test(sentService.get())) {
+            LOGGER.warn("Request of [{}] is not signed with the keys of the trust chain it sent, which is not used", clientId);
+            return Optional.empty();
+        }
+        return sentService;
+    }
+
+    private static boolean isNewerThan(final OAuthRegisteredService resolvedService, @Nullable final OAuthRegisteredService currentService) {
         if (currentService == null) {
-            return false;
+            return true;
         }
         val resolved = readIssuedAt(resolvedService);
         val current = readIssuedAt(currentService);
-        return resolved.isPresent() && current.isPresent() && resolved.get() < current.get();
+        return resolved.isEmpty() || current.isEmpty() || resolved.get() > current.get();
     }
 
     private static Optional<Long> readIssuedAt(final RegisteredService registeredService) {

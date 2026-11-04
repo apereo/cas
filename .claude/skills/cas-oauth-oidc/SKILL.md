@@ -276,6 +276,58 @@ description: "Review and change CAS OAuth2/OIDC protocol behavior: token endpoin
   `getJSONObjectClaim` (fails on statements built in code). `trust_mark_issuers` is published only by the TA role.
   `TrustChain` is final but constructible (leaf + superior statements), and `TrustChainResolver` can be subclassed,
   for smoke tests without Mockito.
+- Tests: methods of one test class run in parallel and share the Spring context. Never rotate or revoke keys in a context
+  other tests use (give the test its own nested class and keystore file), and anything a `@BeforeEach` writes into
+  shared beans (e.g. `getSubordinates().put(...)`) must be identical for every instance, so keys must be `static`.
+  `OAuthRegisteredService.setClientSecret` appends; clear with `setClientSecrets(new ArrayList<>())` first.
+- Redirect URIs to service ids: always `OidcClientRegistrationUtils.toServiceId` (`^(Pattern.quote|...)$`, full-regex
+  match) and back with `toRedirectUris` for registration responses; never join raw URIs (`.` matched look-alike hosts,
+  `?` broke URIs with a query, `,` never matched). Used by dynamic registration, client ID metadata documents, federation.
+- Request objects: `DefaultOAuth20RequestParameterResolver.unpackRequestObject` is the verification hook;
+  `OidcRequestParameterResolver` verifies `HS*` with the client's unexpired, decoded secrets (min length per alg via
+  `MACSigner.getMinRequiredSecretLength`), the rest through `JwtBuilder.unpack` with the client's keys. Clients without
+  keys otherwise fall back to CAS's own token keys, which never verify a client's object.
+- `OidcRequestObjectDecrypter.getDecryptionKeys()` is the cached (JWKS cache period) source of CAS encryption keys in
+  any rotation state; the OID4VP verifier decrypts `direct_post.jwt` with it after its current keys. `RSA1_5` is filtered
+  from the permit list and from discovery. `oidcDefaultJsonWebKeystoreCache` holds CURRENT keys only.
+- Use `OidcIssuerService.determineIssuer(Optional.empty())` (strips the trailing slash) for identifiers others compare
+  to the entity id (OID4VP `openid_federation:` client id); the raw `cas.authn.oidc.core.issuer` may end with `/`.
+- Subordinate statements: `federation_fetch/list/trust_mark_status_endpoint` are stripped from `federation_entity`
+  (entity configuration only, spec 8.1/8.2/8.4); `constraints` come from the subordinate file only.
+- Historical keys (`chain/OidcFederationHistoricalKeys`): fetch + verify `jwk-set+jwt`, `isRevoked`, `mayHaveSigned`
+  (never revoked, statement `iat` <= key `exp`). Retired, unrevoked keys keep statements and trust marks valid (spec
+  8.7): the issuer's status endpoint looks the `kid` up in `getHistoricalKeys()`, the validator falls back to the
+  issuer's historical keys endpoint (`resolveVerificationKeys`). Revoked-key checks match by `kid`, so every chain
+  statement must carry one (`OidcFederationTrustChainConstraints.isSatisfiedBy`): nimbus `verifySignatures` tries every
+  key when the header has no `kid`, which let a statement signed with a revoked but still trusted key pass.
+- Client authentication at federation endpoints (spec 8.8): `OidcFederationSubordinateClientAuthenticator` verifies
+  `private_key_jwt` against the subordinate file's `federationKeys` (nimbus `DefaultJWTProcessor`, exact iss/sub, only
+  aud = CAS entity id, jti + exp) and records the jti in the ticket registry with a `HardTimeoutExpirationPolicy` until
+  exp + skew (the pattern of `OidcJwtAuthenticator.registerJwtIdentifier`; never the default transient lifetime).
+  Trust mark endpoint: `trust-mark-endpoint-authentication` NONE/OPTIONAL/REQUIRED; POST form, requester must be the
+  `sub`; metadata `federation_trust_mark_endpoint_auth_methods` + `endpoint_auth_signing_alg_values_supported`.
+  Errors: `invalid_client` 401. Tests can add a subordinate through `getSubordinates()` (mutable map).
+- Sent trust chains (`trust_chain` header): statements are public, so a verified chain proves nothing about the sender.
+  `OidcFederationTrustChainResolver.resolveSentTrustChain` only verifies (no fallback); the registration uses it only
+  when strictly newer (`>` on the `OPENIDFEDERATION_ENTITY_CONFIGURATION_ISSUED_AT` property) than the registration and
+  when the signed objects verify with the keys it resolves to (`reevaluate` passes `stale.negate()`), else resolves.
+  The reevaluation slot is consumed before verification by design; it must always end in a fresh or proven chain.
+  Federation `jwks_uri` must be `https` (`extractRegisteredService`), else `file:`/`jar:` reach the keystore loader.
+- Never run client-supplied values through `SpringExpressionLanguageValueResolver`: its context exposes `#env`,
+  `#environmentVars` and `#systemProperties` as maps, and map indexing needs no method or property access, so the
+  allow-listed context still reads them. Service `jwks` goes through `OidcJsonWebKeyStoreUtils.resolveJsonWebKeySet`
+  (expressions for locations only, inline JSON literal); federation and dynamic registration store inline JSON, and the
+  `kid` of a client's keys is echoed in JWE headers. Dynamic registration also rejects expressions at intake
+  (`OidcJsonWebKeyStoreJacksonDeserializer`), federation metadata does not pass through it.
+- Metadata policies (`chain/OidcFederationMetadataPolicies`): do not use nimbus `TrustChain.resolveCombinedMetadataPolicy`
+  (11.38). Its `MetadataPolicy.parse` fails on any unknown operator instead of ignoring non-critical ones, `scope`
+  operators fail on the space-separated string, the superior's `metadata` is never applied, and
+  `EntityStatementClaimsSet` still reads the draft name `policy_language_crit` (read `metadata_policy_crit` from the
+  raw claims). `resolveMetadata(chain, type)` overlays the immediate superior's `metadata`, sanitizes each policy (drop
+  unknown ops, `PolicyViolationException` when critical, split a `scope` string operand), combines from the TA down and
+  applies with `scope` as a list. Subordinate files carry optional `metadata`, `metadataPolicy`, `metadataPolicyCrit`
+  (only `federationKeys` is required); the fetch endpoint validates the policy (500 when unreadable) and `/list`
+  matches entity types on metadata and policy keys.
 - Scenarios: `oidc-federation-op-role`, `-int-role`, `-ta-role` (endpoint shape) and `oidc-federation-end2end` (CAS trust
   anchor plus CAS OP, the go-oidfed OFFA relying party in docker and the scenario's Node RP with negative cases; see the
   `cas-puppeteer-scenarios` skill); `delegated-oidc-rp-federation-endpoint` for the RP side (`404` for an unknown client).

@@ -16,7 +16,7 @@ import jakarta.validation.constraints.NotBlank;
  * @author Jerome LELEU
  * @since 8.0.0
  */
-@ToString(exclude = {"metadata", "federationKeys"})
+@ToString(exclude = {"metadata", "metadataPolicy", "federationKeys"})
 @Getter
 @Setter
 @EqualsAndHashCode
@@ -29,7 +29,23 @@ public class OidcFederationSubordinate {
 
     private JsonNode metadata;
 
+    /**
+     * The metadata policy this entity sets for the subordinate, by entity type (OpenID Federation 1.0, section 6.1).
+     */
+    private JsonNode metadataPolicy;
+
+    /**
+     * The non-standard metadata policy operators that parties must understand to use the metadata policy.
+     */
+    private List<String> metadataPolicyCrit = new ArrayList<>();
+
     private JsonNode federationKeys;
+
+    /**
+     * The constraints this entity sets for the subordinate and the entities below it (OpenID Federation 1.0,
+     * section 6.2), published as they are in the subordinate statement.
+     */
+    private JsonNode constraints;
 
     private String description;
 }

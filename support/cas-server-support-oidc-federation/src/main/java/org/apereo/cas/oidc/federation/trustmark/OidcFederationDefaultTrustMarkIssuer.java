@@ -4,6 +4,7 @@ import module java.base;
 import org.apereo.cas.configuration.model.support.oidc.federation.OidcFederationIssuedTrustMarkProperties;
 import org.apereo.cas.configuration.model.support.oidc.federation.OidcFederationProperties;
 import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.oidc.federation.chain.OidcFederationHistoricalKeys;
 import org.apereo.cas.oidc.federation.signature.OidcFederationJsonWebKeystoreService;
 import org.apereo.cas.oidc.issuer.OidcIssuerService;
 import org.apereo.cas.util.ResourceUtils;
@@ -27,10 +28,11 @@ import org.jspecify.annotations.Nullable;
  * is signed when it is requested, and its status is derived from the settings and the trust mark itself.
  * <p>
  * The status of a trust mark is {@code invalid} when it is not typed as a trust mark or does not verify with the
- * federation keys this entity publishes, {@code expired} once its {@code exp} has passed, {@code revoked} when its
- * subject no longer holds the type, and {@code active} otherwise. A trust mark that names another issuer, or a type
- * this entity does not issue, is unknown. A trust mark signed with a key that has since been retired is
- * {@code invalid}, so holders fetch a fresh trust mark from the trust mark endpoint after a key rollover.
+ * federation keys of this entity, {@code expired} once its {@code exp} has passed, {@code revoked} when its subject no
+ * longer holds the type, and {@code active} otherwise. A trust mark that names another issuer, or a type this entity
+ * does not issue, is unknown. The federation keys are those this entity publishes and its historical keys (OpenID
+ * Federation 1.0, section 8.7): a trust mark signed with a key that has since been retired stays valid for the rest of
+ * its life, provided it was issued before the key was retired and the key was never revoked.
  *
  * @author Misagh Moayyed
  * @since 8.1.0
@@ -150,7 +152,7 @@ public class OidcFederationDefaultTrustMarkIssuer implements OidcFederationTrust
     protected String determineStatus(final SignedJWT trustMark, final JWTClaimsSet claims,
                                       final OidcFederationIssuedTrustMarkProperties definition) {
         if (!OidcFederationDefaultTrustMarkValidator.TRUST_MARK_JWT_TYPE.equals(trustMark.getHeader().getType())
-            || !isSignedByThisEntity(trustMark)) {
+            || !isSignedByThisEntity(trustMark, claims)) {
             return STATUS_INVALID;
         }
         val expiration = claims.getExpirationTime();
@@ -160,9 +162,19 @@ public class OidcFederationDefaultTrustMarkIssuer implements OidcFederationTrust
         return definition.getSubjects().contains(claims.getSubject()) ? STATUS_ACTIVE : STATUS_REVOKED;
     }
 
-    private boolean isSignedByThisEntity(final SignedJWT trustMark) {
+    private boolean isSignedByThisEntity(final SignedJWT trustMark, final JWTClaimsSet claims) {
         try {
-            val key = keystoreService.toJWKSet().getKeyByKeyId(trustMark.getHeader().getKeyID());
+            val keyId = trustMark.getHeader().getKeyID();
+            if (StringUtils.isBlank(keyId)) {
+                return false;
+            }
+            val key = Optional.ofNullable(keystoreService.toJWKSet().getKeyByKeyId(keyId))
+                .or(() -> keystoreService.getHistoricalKeys()
+                    .stream()
+                    .filter(historicalKey -> keyId.equals(historicalKey.getKeyID()))
+                    .filter(historicalKey -> OidcFederationHistoricalKeys.mayHaveSigned(historicalKey, claims.getIssueTime()))
+                    .findFirst())
+                .orElse(null);
             if (!(key instanceof final AsymmetricJWK asymmetricKey)) {
                 return false;
             }

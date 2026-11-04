@@ -105,7 +105,9 @@ public class OidcFederationAutomaticRegistrationInterceptor implements HandlerIn
             .filter(Objects::nonNull)
             .toList();
         val trustChain = resolveTrustChain(signedObjects);
-        var registeredService = authorizationRequest ? clientRegistration.register(clientId, trustChain) : null;
+        var registeredService = authorizationRequest
+            ? clientRegistration.register(clientId, trustChain, service -> !signedObjects.isEmpty() && isSignedWithKeysOf(service, signedObjects))
+            : null;
         if (!signedObjects.isEmpty()) {
             registeredService = clientRegistration.reevaluate(clientId, service -> !isSignedWithKeysOf(service, signedObjects), trustChain);
         }
@@ -200,7 +202,9 @@ public class OidcFederationAutomaticRegistrationInterceptor implements HandlerIn
 
     /**
      * The trust chain the relying party sent in the {@code trust_chain} header (OpenID Federation 1.0, section 4.3) of
-     * its request object, or else of its client assertion. It is only a candidate: it is verified before it is used.
+     * its request object, or else of its client assertion. It is only a candidate, read before the signature of the
+     * object is checked: the chain is verified, and used only when the objects the client sent are signed with the
+     * keys it resolves to.
      *
      * @param signedObjects the signed JWTs the client sent, the request object first
      * @return the serialized statements, or an empty list

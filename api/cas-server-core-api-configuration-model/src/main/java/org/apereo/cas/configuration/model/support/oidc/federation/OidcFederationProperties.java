@@ -117,6 +117,14 @@ public class OidcFederationProperties implements Serializable {
     private List<OidcFederationIssuedTrustMarkProperties> issuedTrustMarks = new ArrayList<>();
 
     /**
+     * Client authentication at the trust mark endpoint of this entity as a trust mark issuer. Authenticated requests
+     * use {@code POST} and {@code private_key_jwt}, signed with the federation keys of a subordinate of this entity
+     * as its subordinate definition holds them, and may only ask for the trust marks issued to the requester itself.
+     * Accepted values are {@code NONE}, {@code OPTIONAL} and {@code REQUIRED}.
+     */
+    private OidcFederationEndpointAuthenticationModes trustMarkEndpointAuthentication = OidcFederationEndpointAuthenticationModes.NONE;
+
+    /**
      * Rotation of the federation keys: the future key becomes current and starts signing, the current key
      * becomes previous, and a new future key is published.
      */

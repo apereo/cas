@@ -4,7 +4,9 @@ import module java.base;
 import org.apereo.cas.config.CasOidcVerifiableCredentialsAutoConfiguration;
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.oidc.OidcConstants;
+import org.apereo.cas.oidc.jwks.OidcJsonWebKeyCacheKey;
 import org.apereo.cas.oidc.vc.issuer.status.OidcVerifiableCredentialStatusListService;
+import org.apereo.cas.oidc.web.OidcRequestObjectDecrypter;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.ticket.TransientSessionTicket;
@@ -41,6 +43,7 @@ import com.authlete.mdoc.ValidityInfo;
 import com.authlete.sd.Disclosure;
 import com.authlete.sd.SDJWT;
 import com.authlete.sd.SDObjectBuilder;
+import com.github.benmanes.caffeine.cache.LoadingCache;
 import com.nimbusds.jose.JOSEObjectType;
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.JWSHeader;
@@ -62,6 +65,7 @@ import org.jose4j.jwe.JsonWebEncryption;
 import org.jose4j.jwe.KeyManagementAlgorithmIdentifiers;
 import org.jose4j.jwk.EcJwkGenerator;
 import org.jose4j.jwk.JsonWebKey;
+import org.jose4j.jwk.JsonWebKeySet;
 import org.jose4j.jwk.PublicJsonWebKey;
 import org.jose4j.jwk.RsaJsonWebKey;
 import org.jose4j.jwt.JwtClaims;
@@ -81,6 +85,7 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.ResultActions;
 import tools.jackson.databind.ObjectMapper;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -298,6 +303,29 @@ class OidcVerifiableCredentialPresentationResponseEndpointControllerTests extend
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.status").value("verified"));
         assertNull(ticketRegistry.getTicket(transaction.ticket().getId()));
+    }
+
+    /**
+     * A wallet may still hold verifier metadata from before a key rotation: a response encrypted to an encryption key of
+     * the keystore that is no longer current is still decrypted, while only current keys are published.
+     */
+    @Test
+    void verifyResponseEncryptionKeyFromBeforeRotation() throws Throwable {
+        val current = EcJwkGenerator.generateJwk(EllipticCurves.P256);
+        current.setKeyId("current");
+        current.setUse("enc");
+        val previous = EcJwkGenerator.generateJwk(EllipticCurves.P256);
+        previous.setKeyId("previous");
+        previous.setUse("enc");
+        val keystoreCache = (LoadingCache<OidcJsonWebKeyCacheKey, JsonWebKeySet>) mock(LoadingCache.class);
+        when(keystoreCache.get(any())).thenReturn(new JsonWebKeySet(current));
+        val decrypter = mock(OidcRequestObjectDecrypter.class);
+        when(decrypter.getDecryptionKeys()).thenReturn(List.of(current, previous));
+        val service = new OidcVerifiableCredentialVerifierMetadataService(oidcConfigurationContext, keystoreCache, decrypter);
+        assertEquals(List.of("current"), service.getResponseEncryptionKeys().stream().map(JsonWebKey::getKeyId).toList());
+        assertEquals("current", service.findResponseEncryptionKey("current").orElseThrow().getKeyId());
+        assertEquals("previous", service.findResponseEncryptionKey("previous").orElseThrow().getKeyId());
+        assertTrue(service.findResponseEncryptionKey("unknown").isEmpty());
     }
 
     @Test

@@ -6,7 +6,11 @@ import org.apereo.cas.oidc.discovery.OidcFederationEntityMetadataContributor;
 import org.apereo.cas.oidc.federation.AbstractOidcIntermediateFederationTests;
 import org.apereo.cas.oidc.federation.AbstractOidcOpenIdProviderFederationTests;
 import org.apereo.cas.oidc.federation.AbstractOidcTrustAnchorFederationTests;
+import org.apereo.cas.oidc.federation.signature.OidcFederationJsonWebKeystoreService;
+import org.apereo.cas.oidc.federation.subordinate.OidcFederationSubordinate;
+import org.apereo.cas.oidc.federation.subordinate.OidcFederationSubordinateRepository;
 import org.apereo.cas.support.oauth.OAuth20Constants;
+import org.apereo.cas.util.function.FunctionUtils;
 import com.nimbusds.jose.JOSEObjectType;
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.JWSHeader;
@@ -21,6 +25,7 @@ import com.nimbusds.jwt.SignedJWT;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -30,6 +35,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
+import tools.jackson.databind.json.JsonMapper;
 import jakarta.servlet.ServletException;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -395,6 +403,8 @@ class OidcWellKnownFederationEndpointControllerTests {
                 federationEntity.get("federation_trust_mark_status_endpoint"));
             assertEquals("https://sso.example.org/cas/oidc" + OidcConstants.TRUST_MARK_LIST_FEDERATION_URL,
                 federationEntity.get("federation_trust_mark_list_endpoint"));
+            assertNull(federationEntity.get("federation_trust_mark_endpoint_auth_methods"));
+            assertNull(federationEntity.get("endpoint_auth_signing_alg_values_supported"));
 
             val owner = (Map<String, Object>) ((Map<String, Object>) claims.getClaim("trust_mark_owners")).get("https://refeds.org/sirtfi");
             assertEquals("https://refeds.org", owner.get("sub"));
@@ -424,6 +434,11 @@ class OidcWellKnownFederationEndpointControllerTests {
                     .with(withHttpRequestProcessor()))
                 .andExpect(status().isNotFound());
             mockMvc.perform(get(TRUST_MARK_URL).param("trust_mark_type", MEMBER_TRUST_MARK_TYPE).with(withHttpRequestProcessor()))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error").value(OAuth20Constants.INVALID_REQUEST));
+            mockMvc.perform(post(TRUST_MARK_URL).contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                    .param("trust_mark_type", MEMBER_TRUST_MARK_TYPE).param("sub", "https://rp.example.org")
+                    .with(withHttpRequestProcessor()))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.error").value(OAuth20Constants.INVALID_REQUEST));
         }
@@ -490,6 +505,179 @@ class OidcWellKnownFederationEndpointControllerTests {
                 .andExpect(content().contentType(OidcConstants.TRUST_MARK_CONTENT_TYPE))
                 .andReturn();
             return SignedJWT.parse(result.getResponse().getContentAsString());
+        }
+    }
+
+    /**
+     * A trust mark stays {@code active} once its signing key is retired, since the historical keys keep it verifiable
+     * (OpenID Federation 1.0, section 8.7), and becomes {@code invalid} once that key is revoked. Keys are rotated here,
+     * in a keystore of its own, so that tests running alongside never see the signing key change under them.
+     */
+    @SpringBootTest(
+        classes = AbstractOidcTrustAnchorFederationTests.SharedTestConfiguration.class,
+        properties = {
+            "cas.server.name=https://sso.example.org/",
+            "cas.server.prefix=https://sso.example.org/cas",
+            "cas.authn.oidc.core.issuer=https://sso.example.org/cas/oidc",
+            "cas.authn.oidc.federation.role=TRUST_ANCHOR",
+            "cas.authn.oidc.federation.jwks-file=file:${#systemProperties['java.io.tmpdir']}/trust-mark-retirement-federation.jwks",
+            "cas.authn.oidc.federation.subordinate-directory=./src/test/resources/subordinates",
+            "cas.authn.oidc.federation.issued-trust-marks[0].trust-mark-type=" + MEMBER_TRUST_MARK_TYPE,
+            "cas.authn.oidc.federation.issued-trust-marks[0].subjects[0]=https://rp.example.org"
+        }, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+    @Nested
+    class TrustMarkKeyRetirementTrustAnchorFederationTests extends AbstractOidcTrustAnchorFederationTests {
+        private static final String TRUST_MARK_URL = "/cas/" + OidcConstants.BASE_OIDC_URL + OidcConstants.TRUST_MARK_FEDERATION_URL;
+
+        private static final String TRUST_MARK_STATUS_URL = "/cas/" + OidcConstants.BASE_OIDC_URL + OidcConstants.TRUST_MARK_STATUS_FEDERATION_URL;
+
+        @Autowired
+        @Qualifier(OidcFederationJsonWebKeystoreService.BEAN_NAME)
+        private OidcFederationJsonWebKeystoreService oidcFederationWebKeystoreService;
+
+        @Test
+        void verifyTrustMarkStatusAfterKeyRetirement() throws Exception {
+            val result = mockMvc.perform(get(TRUST_MARK_URL).param("trust_mark_type", MEMBER_TRUST_MARK_TYPE).param("sub", "https://rp.example.org")
+                    .with(withHttpRequestProcessor()))
+                .andExpect(status().isOk())
+                .andReturn();
+            val trustMark = SignedJWT.parse(result.getResponse().getContentAsString());
+            oidcFederationWebKeystoreService.rotate();
+            oidcFederationWebKeystoreService.revoke();
+            assertTrue(oidcFederationWebKeystoreService.getHistoricalKeys().stream()
+                .anyMatch(key -> trustMark.getHeader().getKeyID().equals(key.getKeyID())));
+            assertEquals("active", trustMarkStatus(trustMark));
+
+            oidcFederationWebKeystoreService.revokeKey(trustMark.getHeader().getKeyID(), "compromised");
+            assertEquals("invalid", trustMarkStatus(trustMark));
+        }
+
+        private String trustMarkStatus(final SignedJWT trustMark) throws Exception {
+            val result = mockMvc.perform(post(TRUST_MARK_STATUS_URL).param("trust_mark", trustMark.serialize())
+                    .with(withHttpRequestProcessor()))
+                .andExpect(status().isOk())
+                .andReturn();
+            return SignedJWT.parse(result.getResponse().getContentAsString()).getJWTClaimsSet().getStringClaim("status");
+        }
+    }
+
+    /**
+     * Client authentication at the trust mark endpoint (OpenID Federation 1.0, sections 8.6 and 8.8), required: only a
+     * subordinate authenticated with {@code private_key_jwt}, signed with the federation key of its subordinate
+     * definition and addressed only to this entity, gets its own trust marks, once per client assertion.
+     */
+    @SpringBootTest(
+        classes = AbstractOidcTrustAnchorFederationTests.SharedTestConfiguration.class,
+        properties = {
+            "cas.server.name=https://sso.example.org/",
+            "cas.server.prefix=https://sso.example.org/cas",
+            "cas.authn.oidc.core.issuer=https://sso.example.org/cas/oidc",
+            "cas.authn.oidc.federation.role=TRUST_ANCHOR",
+            "cas.authn.oidc.federation.jwks-file=file:${#systemProperties['java.io.tmpdir']}/authenticated-trust-mark-issuer-federation.jwks",
+            "cas.authn.oidc.federation.subordinate-directory=./src/test/resources/subordinates",
+            "cas.authn.oidc.federation.trust-mark-endpoint-authentication=REQUIRED",
+            "cas.authn.oidc.federation.issued-trust-marks[0].trust-mark-type=" + MEMBER_TRUST_MARK_TYPE,
+            "cas.authn.oidc.federation.issued-trust-marks[0].subjects[0]=https://rp.example.org",
+            "cas.authn.oidc.federation.issued-trust-marks[0].subjects[1]=https://op.example.org"
+        }, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+    @Nested
+    class AuthenticatedTrustMarkIssuerTrustAnchorFederationTests extends AbstractOidcTrustAnchorFederationTests {
+        private static final String TRUST_MARK_URL = "/cas/" + OidcConstants.BASE_OIDC_URL + OidcConstants.TRUST_MARK_FEDERATION_URL;
+
+        private static final String ENTITY_ID = "https://sso.example.org/cas/oidc";
+
+        private static final String RELYING_PARTY = "https://rp.example.org";
+
+        private static final RSAKey RELYING_PARTY_KEY = generateKey("rp-federation");
+
+        @Autowired
+        @Qualifier("oidcFederationSubordinateRepository")
+        private OidcFederationSubordinateRepository oidcFederationSubordinateRepository;
+
+        @BeforeEach
+        void registerSubordinate() {
+            val federationKeys = JsonMapper.builder().build().readTree('[' + RELYING_PARTY_KEY.toPublicJWK().toJSONString() + ']');
+            oidcFederationSubordinateRepository.getSubordinates().put(RELYING_PARTY,
+                new OidcFederationSubordinate().setEntityId(RELYING_PARTY).setFederationKeys(federationKeys));
+        }
+
+        @Test
+        void verifyClientAuthenticationIsPublished() throws Exception {
+            val result = mockMvc.perform(get(FEDERATION_ENDPOINT_URL).with(withHttpRequestProcessor()))
+                .andExpect(status().isOk())
+                .andReturn();
+            val claims = SignedJWT.parse(result.getResponse().getContentAsString()).getJWTClaimsSet();
+            val federationEntity = (Map<String, Object>) ((Map<String, Object>) claims.getClaim("metadata")).get("federation_entity");
+            assertEquals(List.of("private_key_jwt"), federationEntity.get("federation_trust_mark_endpoint_auth_methods"));
+            val algorithms = (List<String>) federationEntity.get("endpoint_auth_signing_alg_values_supported");
+            assertTrue(algorithms.contains(JWSAlgorithm.RS256.getName()));
+            assertTrue(algorithms.contains(JWSAlgorithm.ES256.getName()));
+            assertFalse(algorithms.contains("none"));
+        }
+
+        @Test
+        void verifyOnlyAuthenticatedSubjectGetsItsTrustMark() throws Exception {
+            mockMvc.perform(get(TRUST_MARK_URL).param("trust_mark_type", MEMBER_TRUST_MARK_TYPE).param("sub", RELYING_PARTY)
+                    .with(withHttpRequestProcessor()))
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.error").value("invalid_client"));
+
+            val assertion = clientAssertion(RELYING_PARTY_KEY, RELYING_PARTY, List.of(ENTITY_ID));
+            val result = mockMvc.perform(authenticatedRequest(RELYING_PARTY, assertion))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(OidcConstants.TRUST_MARK_CONTENT_TYPE))
+                .andReturn();
+            val trustMark = SignedJWT.parse(result.getResponse().getContentAsString()).getJWTClaimsSet();
+            assertEquals(RELYING_PARTY, trustMark.getSubject());
+            assertEquals(MEMBER_TRUST_MARK_TYPE, trustMark.getStringClaim("trust_mark_type"));
+
+            mockMvc.perform(authenticatedRequest(RELYING_PARTY, assertion))
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.error").value("invalid_client"));
+            mockMvc.perform(authenticatedRequest("https://op.example.org", clientAssertion(RELYING_PARTY_KEY, RELYING_PARTY, List.of(ENTITY_ID))))
+                .andExpect(status().isUnauthorized());
+            mockMvc.perform(authenticatedRequest(RELYING_PARTY,
+                    clientAssertion(RELYING_PARTY_KEY, RELYING_PARTY, List.of(ENTITY_ID, "https://other.example.org"))))
+                .andExpect(status().isUnauthorized());
+            mockMvc.perform(authenticatedRequest(RELYING_PARTY, clientAssertion(generateKey("rp-federation"), RELYING_PARTY, List.of(ENTITY_ID))))
+                .andExpect(status().isUnauthorized());
+            val outsider = generateKey("op-federation");
+            mockMvc.perform(authenticatedRequest("https://op.example.org", clientAssertion(outsider, "https://op.example.org", List.of(ENTITY_ID))))
+                .andExpect(status().isUnauthorized());
+            mockMvc.perform(post(TRUST_MARK_URL).contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                    .param("trust_mark_type", MEMBER_TRUST_MARK_TYPE).param("sub", RELYING_PARTY).with(withHttpRequestProcessor()))
+                .andExpect(status().isUnauthorized());
+            mockMvc.perform(post(TRUST_MARK_URL).contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                    .param("trust_mark_type", MEMBER_TRUST_MARK_TYPE).with(withHttpRequestProcessor()))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error").value(OAuth20Constants.INVALID_REQUEST));
+        }
+
+        private MockHttpServletRequestBuilder authenticatedRequest(final String subject, final String clientAssertion) {
+            return post(TRUST_MARK_URL).contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .param("trust_mark_type", MEMBER_TRUST_MARK_TYPE)
+                .param("sub", subject)
+                .param(OAuth20Constants.CLIENT_ASSERTION_TYPE, OAuth20Constants.CLIENT_ASSERTION_TYPE_JWT_BEARER)
+                .param(OAuth20Constants.CLIENT_ASSERTION, clientAssertion)
+                .with(withHttpRequestProcessor());
+        }
+
+        private static String clientAssertion(final RSAKey key, final String issuer, final List<String> audience) throws Exception {
+            val claims = new JWTClaimsSet.Builder()
+                .issuer(issuer)
+                .subject(issuer)
+                .audience(audience)
+                .jwtID(UUID.randomUUID().toString())
+                .issueTime(new Date())
+                .expirationTime(Date.from(Instant.now().plusSeconds(60)))
+                .build();
+            val jwt = new SignedJWT(new JWSHeader.Builder(JWSAlgorithm.RS256).keyID(key.getKeyID()).build(), claims);
+            jwt.sign(new RSASSASigner(key));
+            return jwt.serialize();
+        }
+
+        private static RSAKey generateKey(final String keyId) {
+            return FunctionUtils.doUnchecked(() -> new RSAKeyGenerator(2048).keyID(keyId).generate());
         }
     }
 

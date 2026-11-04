@@ -40,8 +40,8 @@ class FederationRelyingParty {
     async start() {
         this.federationKey = await jose.importJWK(this.federationJwk, "RS256");
         this.oidcKey = await jose.importJWK(this.oidcJwk, "RS256");
-        const trustMarkRequest = new URLSearchParams({trust_mark_type: RELYING_PARTY_TRUST_MARK, sub: ENTITY_ID});
-        this.trustMark = await cas.doRequest(`${TRUST_ANCHOR}/federation_trust_mark?${trustMarkRequest}`, "GET", {}, 200);
+        this.trustMark = await cas.doRequest(`${TRUST_ANCHOR}/federation_trust_mark`, "POST",
+            {"Content-Type": "application/x-www-form-urlencoded"}, 200, await this.trustMarkRequest());
         const app = express();
         app.get("/.well-known/openid-federation", async (req, res) => {
             res.type("application/entity-statement+jwt").send(await this.entityConfiguration());
@@ -99,6 +99,27 @@ class FederationRelyingParty {
         this.oidcJwk = {...await jose.exportJWK(privateKey), kid: `node-rp-oidc-${crypto.randomUUID()}`, use: "sig", alg: "RS256"};
         this.oidcKey = privateKey;
         await cas.log(`Relying party signing key rolled over to ${this.oidcJwk.kid}`);
+    }
+
+    /**
+     * The body of a trust mark request authenticated with private_key_jwt, signed with the federation key that the
+     * subordinate definition of this relying party at the trust anchor holds, and addressed only to the trust anchor.
+     */
+    async trustMarkRequest(subject = ENTITY_ID) {
+        const clientAssertion = await new jose.SignJWT({
+            iss: ENTITY_ID,
+            sub: ENTITY_ID,
+            aud: TRUST_ANCHOR,
+            jti: crypto.randomUUID(),
+            iat: now(),
+            exp: now() + 60
+        }).setProtectedHeader({alg: "RS256", kid: this.federationJwk.kid, typ: "JWT"}).sign(this.federationKey);
+        return new URLSearchParams({
+            trust_mark_type: RELYING_PARTY_TRUST_MARK,
+            sub: subject,
+            client_assertion_type: "urn:ietf:params:oauth:client-assertion-type:jwt-bearer",
+            client_assertion: clientAssertion
+        }).toString();
     }
 
     async fetchStatement(url) {
@@ -180,6 +201,8 @@ class FederationRelyingParty {
         const header = {alg: "RS256", kid: this.oidcJwk.kid, typ: REQUEST_OBJECT_TYPE};
         if (options.trustChain === true) {
             header.trust_chain = await this.trustChain();
+        } else if (Array.isArray(options.trustChain)) {
+            header.trust_chain = options.trustChain;
         }
         const signingKey = options.signingKey ?? this.oidcKey;
         const signedRequestObject = options.unsigned === true

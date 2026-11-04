@@ -43,6 +43,33 @@ class OidcJsonWebKeyStoreUtilsTests extends AbstractOidcTests {
             null, applicationContext, Optional.of(OidcJsonWebKeyUsage.SIGNING)).isEmpty());
     }
 
+    /**
+     * Expressions are evaluated in keystore locations only; keys defined inline, which may come from the application
+     * itself, are taken as they are, so that their key identifiers cannot read the environment of CAS.
+     */
+    @Test
+    void verifyExpressionsInKeystoreLocationsOnly() throws Throwable {
+        val keyId = "${#systemProperties['java.version']}";
+        val key = RsaJwkGenerator.generateJwk(2048);
+        key.setKeyId(keyId);
+        key.setUse(Use.ENCRYPTION);
+        val service = getOidcRegisteredService();
+        service.setJwks(new JsonWebKeySet(key).toJson());
+        val inline = OidcJsonWebKeyStoreUtils.getJsonWebKeySet(service, applicationContext, Optional.of(OidcJsonWebKeyUsage.ENCRYPTION));
+        assertEquals(keyId, inline.orElseThrow().getJsonWebKeys().getFirst().getKeyId());
+
+        val keystore = Files.createTempFile("keystore", ".jwks");
+        try {
+            key.setKeyId("located");
+            Files.writeString(keystore, new JsonWebKeySet(key).toJson());
+            service.setJwks("file:${#systemProperties['java.io.tmpdir']}/" + keystore.getFileName());
+            val located = OidcJsonWebKeyStoreUtils.getJsonWebKeySet(service, applicationContext, Optional.of(OidcJsonWebKeyUsage.ENCRYPTION));
+            assertEquals("located", located.orElseThrow().getJsonWebKeys().getFirst().getKeyId());
+        } finally {
+            Files.deleteIfExists(keystore);
+        }
+    }
+
     @Test
     void verifyEmptyKeySet() {
         val service = getOidcRegisteredService();

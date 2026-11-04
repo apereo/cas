@@ -19,8 +19,9 @@ import tools.jackson.databind.ObjectMapper;
  * {@code oauth_authorization_server}, since {@code authorization_servers} names CAS itself and each authorization
  * server it names must be a federation entity of that type. When wallets authenticate CAS as a verifier with the
  * {@code openid_federation} client identifier prefix, the verifier metadata is published under
- * {@code openid_credential_verifier} as well. When the issuer of CAS is not the entity identifier, for example because
- * the issuer is resolved per tenant, nothing is published.
+ * {@code openid_credential_verifier}, since wallets must find it there. When the credential issuer is not the entity
+ * identifier, for example because the issuer is resolved per tenant, the issuer and authorization server metadata are
+ * not published.
  *
  * @author Misagh Moayyed
  * @since 8.1.0
@@ -55,17 +56,17 @@ public class OidcVerifiableCredentialFederationMetadataContributor implements Oi
 
     @Override
     public Map<String, Map<String, Object>> contribute(final String entityId) {
+        val contributed = new LinkedHashMap<String, Map<String, Object>>();
         val metadata = issuerMetadataService.build();
-        if (!entityId.equals(metadata.getCredentialIssuer())) {
+        if (entityId.equals(metadata.getCredentialIssuer())) {
+            contributed.put(ENTITY_TYPE_CREDENTIAL_ISSUER, MAPPER.convertValue(metadata, JSON_OBJECT));
+            val discovery = configurationContext.getDiscoverySettings();
+            if (metadata.getAuthorizationServers().contains(discovery.getIssuer())) {
+                contributed.put(ENTITY_TYPE_AUTHORIZATION_SERVER, MAPPER.readValue(discovery.toJson(), JSON_OBJECT));
+            }
+        } else {
             LOGGER.warn("Credential issuer [{}] is not the federation entity identifier [{}] and is not published in the entity configuration",
                 metadata.getCredentialIssuer(), entityId);
-            return Map.of();
-        }
-        val contributed = new LinkedHashMap<String, Map<String, Object>>();
-        contributed.put(ENTITY_TYPE_CREDENTIAL_ISSUER, MAPPER.convertValue(metadata, JSON_OBJECT));
-        val discovery = configurationContext.getDiscoverySettings();
-        if (metadata.getAuthorizationServers().contains(discovery.getIssuer())) {
-            contributed.put(ENTITY_TYPE_AUTHORIZATION_SERVER, MAPPER.readValue(discovery.toJson(), JSON_OBJECT));
         }
         if (verifierMetadataService.isFederationVerifier()) {
             contributed.put(OidcVerifiableCredentialVerifierMetadataService.ENTITY_TYPE_CREDENTIAL_VERIFIER,
