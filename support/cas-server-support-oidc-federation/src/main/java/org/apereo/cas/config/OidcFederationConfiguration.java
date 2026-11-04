@@ -19,13 +19,16 @@ import org.apereo.cas.oidc.federation.signature.OidcFederationDefaultJsonWebKeys
 import org.apereo.cas.oidc.federation.signature.OidcFederationEntityStatementService;
 import org.apereo.cas.oidc.federation.signature.OidcFederationJsonWebKeystoreService;
 import org.apereo.cas.oidc.federation.subordinate.OidcFederationSubordinateRepository;
+import org.apereo.cas.oidc.federation.trustmark.OidcFederationDefaultTrustMarkIssuer;
 import org.apereo.cas.oidc.federation.trustmark.OidcFederationDefaultTrustMarkValidator;
+import org.apereo.cas.oidc.federation.trustmark.OidcFederationTrustMarkIssuer;
 import org.apereo.cas.oidc.federation.trustmark.OidcFederationTrustMarkValidator;
 import org.apereo.cas.oidc.federation.validator.OpenIdFederationAuthorizationCodeResponseTypeAuthorizationRequestValidator;
 import org.apereo.cas.oidc.federation.web.OidcFederationJwksEndpoint;
 import org.apereo.cas.oidc.federation.web.OidcFetchFederationEndpointController;
 import org.apereo.cas.oidc.federation.web.OidcHistoricalKeysFederationEndpointController;
 import org.apereo.cas.oidc.federation.web.OidcListFederationEndpointController;
+import org.apereo.cas.oidc.federation.web.OidcTrustMarkFederationEndpointController;
 import org.apereo.cas.oidc.federation.web.OidcWellKnownFederationEndpointController;
 import org.apereo.cas.oidc.issuer.OidcDefaultIssuerService;
 import org.apereo.cas.oidc.issuer.OidcIssuerService;
@@ -151,6 +154,34 @@ class OidcFederationConfiguration {
         final CasConfigurationProperties casProperties)
             throws Exception {
         return new OidcFederationDefaultJsonWebKeystoreService(casProperties.getAuthn().getOidc());
+    }
+
+    @ConditionalOnMissingBean(name = OidcFederationTrustMarkIssuer.BEAN_NAME)
+    @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    public OidcFederationTrustMarkIssuer oidcFederationTrustMarkIssuer(
+        @Qualifier("oidcFederationIssuerService")
+        final OidcIssuerService oidcFederationIssuerService,
+        @Qualifier(OidcFederationJsonWebKeystoreService.BEAN_NAME)
+        final OidcFederationJsonWebKeystoreService oidcFederationWebKeystoreService,
+        final CasConfigurationProperties casProperties) {
+        return new OidcFederationDefaultTrustMarkIssuer(casProperties.getAuthn().getOidc().getFederation(),
+            oidcFederationIssuerService, oidcFederationWebKeystoreService);
+    }
+
+    @ConditionalOnMissingBean(name = "oidcTrustMarkFederationController")
+    @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    public OidcTrustMarkFederationEndpointController oidcTrustMarkFederationController(
+        @Qualifier("oidcFederationIssuerService")
+        final OidcIssuerService oidcFederationIssuerService,
+        @Qualifier(OidcFederationEntityStatementService.BEAN_NAME)
+        final OidcFederationEntityStatementService oidcFederationEntityStatementService,
+        @Qualifier(OidcFederationTrustMarkIssuer.BEAN_NAME)
+        final OidcFederationTrustMarkIssuer oidcFederationTrustMarkIssuer,
+        final CasConfigurationProperties casProperties) {
+        return new OidcTrustMarkFederationEndpointController(oidcFederationIssuerService,
+            oidcFederationEntityStatementService, casProperties.getAuthn().getOidc(), oidcFederationTrustMarkIssuer);
     }
 
     @ConditionalOnMissingBean(name = "oidcHistoricalKeysFederationController")
@@ -343,6 +374,9 @@ class OidcFederationConfiguration {
         val endpoints = new ArrayList<String>();
         endpoints.add(baseEndpoint + '/' + WELL_KNOWN_OPENID_FEDERATION_URL);
         endpoints.add(baseEndpoint + HISTORICAL_KEYS_FEDERATION_URL);
+        endpoints.add(baseEndpoint + TRUST_MARK_FEDERATION_URL);
+        endpoints.add(baseEndpoint + TRUST_MARK_STATUS_FEDERATION_URL);
+        endpoints.add(baseEndpoint + TRUST_MARK_LIST_FEDERATION_URL);
 
         if (role.isTrustAnchorOrIntermediate()) {
             endpoints.add(baseEndpoint + FETCH_FEDERATION_URL);

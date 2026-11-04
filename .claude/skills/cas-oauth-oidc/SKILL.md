@@ -146,6 +146,30 @@ description: "Review and change CAS OAuth2/OIDC protocol behavior: token endpoin
   stays on `/cas/login?service=...callbackAuthorize...`. A request object with a `trust_chain` header (about 9 KB) hits
   that. Misagh chose not to exempt CAS's own callback services in code: `oidc-federation-end2end` turns the check off
   with the property (`0`) on its OP, and the federation docs recommend PAR or raising the limit.
+- Sent trust chains (`trust_chain` header of the request object, else the client assertion): Misagh chose "always, as
+  the spec allows" (first contact, refresh, key-rollover reevaluation). `OidcFederationDefaultTrustChainResolver
+  .resolveTrustChains(clientId, chain)` verifies with nimbus `TrustChain.parseSerialized` + `verifySignatures(TA keys)`
+  (the TA EC needs a `metadata` claim; `exp` is checked) + `TrustChainSet.filter(resolver.getConstraints())` for path
+  length, only for anchors with out-of-band keys, then the same trust marks/metadata policy as resolved chains; anything
+  else falls back to resolving. Registrations carry `OPENIDFEDERATION_ENTITY_CONFIGURATION_ISSUED_AT`; a sent chain with
+  an older leaf `iat` than the registration it would replace is ignored (rollback guard).
+- Statement `constraints` (section 6.2): nimbus only applies the configured `TrustChainConstraints`, so
+  `OidcFederationTrustChainConstraints.isSatisfiedBy(chain, leafEntityType)` (used by
+  `OidcFederationDefaultTrustChainResolver.satisfiesConstraints` and by the trust mark validator for issuer chains,
+  with a null type since `federation_entity` is always allowed) applies each subordinate statement's `max_path_length`
+  (k - 1 intermediates below the k-th superior), `naming_constraints` (RFC 5280 host matching: `.example.org` =
+  subdomains only, other names = exact host; excluded wins) and `allowed_entity_types` (must keep
+  `openid_relying_party` for RPs) to resolved chains (filtered before `getShortest`), sent chains and trust mark issuer
+  chains. Tests that mock `TrustChainSet` break this filtering (`stream()` of a mock is empty): use a real set holding a
+  mocked `TrustChain`, whose `getSuperiorStatements()` defaults to an empty list.
+- Trust mark issuer: `OidcFederationDefaultTrustMarkIssuer` behind `OidcTrustMarkFederationEndpointController`
+  (`/federation_trust_mark` GET, `/federation_trust_mark_status` POST, `/federation_trust_mark_list` GET; all roles,
+  unauthenticated, in the federation `CasWebSecurityConfigurer` ignored endpoints). Misagh chose properties as the
+  source (`issued-trust-marks[]`: type, subjects, expiration, logo/ref/delegation), stateless: marks are signed on
+  request, status is derived (`invalid` = wrong `typ` or no published key by `kid` verifies, so marks signed by a
+  retired key become invalid; `expired`; `revoked` = subject removed; unknown issuer or type → 404). The federation
+  entity metadata advertises the three endpoints only when marks are issued. `trust_mark_owners` (TA only) publishes the
+  public JWKS of each owner. The OP's trust mark validator then reaches the TA status endpoint in `oidc-federation-end2end`.
 - `OidcJwtAuthenticator` accepts the issuer as client assertion audience as well as the token endpoint URLs (federation
   PAR requires the OP entity id).
 - Key rollover of a federated RP: the interceptor is mapped to all of `/oidc/**` and filters itself. A signed request

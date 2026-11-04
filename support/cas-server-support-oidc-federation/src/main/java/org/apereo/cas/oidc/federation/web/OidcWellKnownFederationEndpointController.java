@@ -31,6 +31,12 @@ import jakarta.servlet.http.HttpServletResponse;
 public class OidcWellKnownFederationEndpointController extends AbstractOidcFederationEndpointController {
     private static final String FEDERATION_HISTORICAL_KEYS_ENDPOINT = "federation_historical_keys_endpoint";
 
+    private static final String FEDERATION_TRUST_MARK_ENDPOINT = "federation_trust_mark_endpoint";
+
+    private static final String FEDERATION_TRUST_MARK_STATUS_ENDPOINT = "federation_trust_mark_status_endpoint";
+
+    private static final String FEDERATION_TRUST_MARK_LIST_ENDPOINT = "federation_trust_mark_list_endpoint";
+
     private final ObjectProvider<OidcServerDiscoverySettings> serverDiscoverySettings;
 
     private final ObjectProvider<OidcFederationEntityMetadataContributor> metadataContributors;
@@ -105,6 +111,11 @@ public class OidcWellKnownFederationEndpointController extends AbstractOidcFeder
 
         val federationMetadata = buildMetadata(issuer).toJSONObject();
         federationMetadata.put(FEDERATION_HISTORICAL_KEYS_ENDPOINT, issuer + OidcConstants.HISTORICAL_KEYS_FEDERATION_URL);
+        if (!oidcProperties.getFederation().getIssuedTrustMarks().isEmpty()) {
+            federationMetadata.put(FEDERATION_TRUST_MARK_ENDPOINT, issuer + OidcConstants.TRUST_MARK_FEDERATION_URL);
+            federationMetadata.put(FEDERATION_TRUST_MARK_STATUS_ENDPOINT, issuer + OidcConstants.TRUST_MARK_STATUS_FEDERATION_URL);
+            federationMetadata.put(FEDERATION_TRUST_MARK_LIST_ENDPOINT, issuer + OidcConstants.TRUST_MARK_LIST_FEDERATION_URL);
+        }
         metadata.put(EntityType.FEDERATION_ENTITY.getValue(), federationMetadata);
 
         return buildEntityStatement(issuer, issuer, metadata, null, authorityHints);

@@ -23,6 +23,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
+import org.jooq.lambda.Unchecked;
 import org.jose4j.jwk.JsonWebKey;
 import org.jose4j.jwk.JsonWebKeySet;
 import org.jose4j.jws.JsonWebSignature;
@@ -76,6 +77,8 @@ public class OidcFederationAutomaticRegistrationInterceptor implements HandlerIn
 
     private static final int ALLOWED_CLOCK_SKEW_SECONDS = 30;
 
+    private static final String TRUST_CHAIN = "trust_chain";
+
     private final OidcFederationAutomaticClientRegistration clientRegistration;
 
     private final OidcIssuerService issuerService;
@@ -98,12 +101,13 @@ public class OidcFederationAutomaticRegistrationInterceptor implements HandlerIn
         if ((!authorizationRequest && clientAssertion == null) || !OidcFederationAutomaticClientRegistration.isFederatedEntityId(clientId)) {
             return true;
         }
-        var registeredService = authorizationRequest ? clientRegistration.register(clientId) : null;
-        val signedObjects = Stream.of(clientAssertion, authorizationRequest ? resolveRequestObject(request) : null)
+        val signedObjects = Stream.of(authorizationRequest ? resolveRequestObject(request) : null, clientAssertion)
             .filter(Objects::nonNull)
             .toList();
+        val trustChain = resolveTrustChain(signedObjects);
+        var registeredService = authorizationRequest ? clientRegistration.register(clientId, trustChain) : null;
         if (!signedObjects.isEmpty()) {
-            registeredService = clientRegistration.reevaluate(clientId, service -> !isSignedWithKeysOf(service, signedObjects));
+            registeredService = clientRegistration.reevaluate(clientId, service -> !isSignedWithKeysOf(service, signedObjects), trustChain);
         }
         if (authorizationRequest && registeredService instanceof final OidcRegisteredService oidcService
             && OidcFederationAutomaticClientRegistration.isAutomaticallyRegistered(oidcService)
@@ -192,6 +196,24 @@ public class OidcFederationAutomaticRegistrationInterceptor implements HandlerIn
             LOGGER.trace("Signed object does not verify with key [{}]: [{}]", key.getKeyId(), e.getMessage());
             return false;
         }
+    }
+
+    /**
+     * The trust chain the relying party sent in the {@code trust_chain} header (OpenID Federation 1.0, section 4.3) of
+     * its request object, or else of its client assertion. It is only a candidate: it is verified before it is used.
+     *
+     * @param signedObjects the signed JWTs the client sent, the request object first
+     * @return the serialized statements, or an empty list
+     */
+    private static List<String> resolveTrustChain(final List<String> signedObjects) {
+        return signedObjects
+            .stream()
+            .map(Unchecked.function(signedObject -> SignedJWT.parse(signedObject).getHeader().getCustomParam(TRUST_CHAIN)))
+            .filter(value -> value instanceof final List<?> statements && !statements.isEmpty()
+                && statements.stream().allMatch(String.class::isInstance))
+            .findFirst()
+            .map(value -> ((List<?>) value).stream().map(String.class::cast).toList())
+            .orElseGet(List::of);
     }
 
     private static @Nullable String resolveClientAssertion(final HttpServletRequest request) {

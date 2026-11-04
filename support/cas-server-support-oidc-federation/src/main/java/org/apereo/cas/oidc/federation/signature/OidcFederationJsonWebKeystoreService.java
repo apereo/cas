@@ -8,6 +8,7 @@ import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 import com.nimbusds.openid.connect.sdk.federation.entities.EntityStatement;
 import com.nimbusds.openid.connect.sdk.federation.entities.EntityStatementClaimsSet;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Holds the Federation Entity Keys of CAS and signs with them. Keys go through the lifecycle of the OpenID Connect
@@ -75,4 +76,18 @@ public interface OidcFederationJsonWebKeystoreService {
      * @throws Exception the exception
      */
     JWKSet revoke() throws Exception;
+
+    /**
+     * Revoke a key, such as one whose private key is believed compromised (OpenID Federation 1.0, section 8.7): it is
+     * published as a historical key marked {@code revoked}, with the time of the revocation and the reason, if any. A
+     * key that was still published leaves the entity configuration at once and expires now; when it was the current
+     * key, the future key starts signing, or a new key when there is none.
+     *
+     * @param keyId  the key identifier
+     * @param reason the reason of the revocation, such as {@code compromised}, {@code superseded} or
+     *               {@code unspecified}, or null
+     * @return the keys published after the revocation, or empty when no such key is known
+     * @throws Exception the exception
+     */
+    Optional<JWKSet> revokeKey(String keyId, @Nullable String reason) throws Exception;
 }

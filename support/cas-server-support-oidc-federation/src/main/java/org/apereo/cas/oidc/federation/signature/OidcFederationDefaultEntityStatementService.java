@@ -4,6 +4,7 @@ import module java.base;
 import org.apereo.cas.configuration.model.support.oidc.OidcProperties;
 import org.apereo.cas.configuration.model.support.oidc.federation.OidcFederationRole;
 import org.apereo.cas.configuration.model.support.oidc.federation.OidcFederationTrustMarkIssuerProperties;
+import org.apereo.cas.configuration.model.support.oidc.federation.OidcFederationTrustMarkOwnerProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.function.FunctionUtils;
@@ -44,6 +45,8 @@ public class OidcFederationDefaultEntityStatementService implements OidcFederati
     private static final String TRUST_MARK_CLAIM_NAME = "trust_mark";
 
     private static final String TRUST_MARK_ISSUERS_CLAIM_NAME = "trust_mark_issuers";
+
+    private static final String TRUST_MARK_OWNERS_CLAIM_NAME = "trust_mark_owners";
 
     private static final int TRUST_MARK_REFERENCE_LENGTH = 64;
 
@@ -105,6 +108,10 @@ public class OidcFederationDefaultEntityStatementService implements OidcFederati
             if (!trustMarkIssuers.isEmpty()) {
                 claims.setClaim(TRUST_MARK_ISSUERS_CLAIM_NAME, trustMarkIssuers);
             }
+            val trustMarkOwners = resolveTrustMarkOwners();
+            if (!trustMarkOwners.isEmpty()) {
+                claims.setClaim(TRUST_MARK_OWNERS_CLAIM_NAME, trustMarkOwners);
+            }
         }
 
         val federationEntity = (JSONObject) metadata.get(EntityType.FEDERATION_ENTITY.getValue());
@@ -149,6 +156,41 @@ public class OidcFederationDefaultEntityStatementService implements OidcFederati
             .filter(entry -> StringUtils.isNotBlank(entry.getTrustMarkType()))
             .collect(Collectors.toMap(OidcFederationTrustMarkIssuerProperties::getTrustMarkType,
                 entry -> List.copyOf(entry.getIssuers()), (first, second) -> first, LinkedHashMap::new));
+    }
+
+    /**
+     * The owners of trust mark types whose issuance is delegated, with the keys their delegations are verified with,
+     * published as {@code trust_mark_owners} (OpenID Federation 1.0, section 7.2). Only a trust anchor publishes them,
+     * and only their public keys; an owner whose keys cannot be read is left out and reported in the logs.
+     *
+     * @return the trust mark types and their owners
+     */
+    protected Map<String, Map<String, Object>> resolveTrustMarkOwners() {
+        val federation = oidcProperties.getFederation();
+        if (federation.getRole() != OidcFederationRole.TRUST_ANCHOR) {
+            return Map.of();
+        }
+        val owners = new LinkedHashMap<String, Map<String, Object>>();
+        federation.getTrustMarkOwners()
+            .stream()
+            .filter(entry -> StringUtils.isNoneBlank(entry.getTrustMarkType(), entry.getOwner(), entry.getJwks()))
+            .forEach(entry -> readOwnerKeys(entry).ifPresent(keys ->
+                owners.putIfAbsent(entry.getTrustMarkType(), Map.of("sub", entry.getOwner(), "jwks", keys))));
+        return owners;
+    }
+
+    private static Optional<Map<String, Object>> readOwnerKeys(final OidcFederationTrustMarkOwnerProperties owner) {
+        try {
+            val value = StringUtils.trim(SpringExpressionLanguageValueResolver.getInstance().resolve(owner.getJwks()));
+            val json = Strings.CS.startsWith(value, "{")
+                ? value
+                : IOUtils.toString(ResourceUtils.getRawResourceFrom(value).getInputStream(), StandardCharsets.UTF_8);
+            return Optional.of(JWKSet.parse(json).toPublicJWKSet().toJSONObject());
+        } catch (final Exception e) {
+            LOGGER.warn("Unable to read the keys of [{}], owner of trust mark type [{}]: [{}]",
+                owner.getOwner(), owner.getTrustMarkType(), e.getMessage());
+            return Optional.empty();
+        }
     }
 
     private static Optional<Map<String, String>> readTrustMark(final String configured, final String entityId) {

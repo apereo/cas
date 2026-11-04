@@ -2,6 +2,7 @@ package org.apereo.cas.oidc.federation.trustmark;
 
 import module java.base;
 import org.apereo.cas.configuration.model.support.oidc.federation.OidcFederationProperties;
+import org.apereo.cas.oidc.federation.chain.OidcFederationTrustChainConstraints;
 import com.nimbusds.common.contenttype.ContentType;
 import com.nimbusds.jose.JOSEObjectType;
 import com.nimbusds.jose.JWSAlgorithm;
@@ -178,7 +179,7 @@ public class OidcFederationDefaultTrustMarkValidator implements OidcFederationTr
 
     /**
      * The entity configuration of the trust mark issuer: the trust anchor itself, or the leaf of the issuer's
-     * shortest trust chain to the same trust anchor.
+     * shortest trust chain to the same trust anchor that satisfies the constraints of its subordinate statements.
      *
      * @param trustChainResolver the trust chain resolver
      * @param trustAnchor        the entity configuration of the trust anchor
@@ -196,6 +197,7 @@ public class OidcFederationDefaultTrustMarkValidator implements OidcFederationTr
         return trustChainResolver.resolveTrustChains(new EntityID(issuer))
             .stream()
             .filter(chain -> trustAnchor.getEntityID().equals(chain.getTrustAnchorEntityID()))
+            .filter(chain -> OidcFederationTrustChainConstraints.isSatisfiedBy(chain, null))
             .min(Comparator.comparingInt(TrustChain::length))
             .map(TrustChain::getLeafConfiguration)
             .orElseThrow(() -> new BadJWTException("Trust mark issuer " + issuer + " has no trust chain to " + trustAnchor.getEntityID()));

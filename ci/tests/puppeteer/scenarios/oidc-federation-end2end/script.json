@@ -20,7 +20,13 @@
       "--cas.authn.oidc.federation.trust-mark-issuers[0].trust-mark-type=https://localhost:8443/cas/oidc/trust-marks/relying-party",
       "--cas.authn.oidc.federation.trust-mark-issuers[0].issuers[0]=https://localhost:8443/cas/oidc",
       "--cas.authn.oidc.federation.trust-mark-issuers[1].trust-mark-type=https://localhost:8443/cas/oidc/trust-marks/identity-provider",
-      "--cas.authn.oidc.federation.trust-mark-issuers[1].issuers[0]=https://localhost:8443/cas/oidc"
+      "--cas.authn.oidc.federation.trust-mark-issuers[1].issuers[0]=https://localhost:8443/cas/oidc",
+      "--cas.authn.oidc.federation.issued-trust-marks[0].trust-mark-type=https://localhost:8443/cas/oidc/trust-marks/relying-party",
+      "--cas.authn.oidc.federation.issued-trust-marks[0].subjects[0]=https://localhost:9861",
+      "--cas.authn.oidc.federation.issued-trust-marks[0].subjects[1]=https://localhost",
+      "--cas.authn.oidc.federation.issued-trust-marks[0].expiration=P1D",
+      "--cas.authn.oidc.federation.issued-trust-marks[1].trust-mark-type=https://localhost:8443/cas/oidc/trust-marks/identity-provider",
+      "--cas.authn.oidc.federation.issued-trust-marks[1].subjects[0]=https://localhost:8444/cas/oidc"
     ]
   },
   "instance2": {

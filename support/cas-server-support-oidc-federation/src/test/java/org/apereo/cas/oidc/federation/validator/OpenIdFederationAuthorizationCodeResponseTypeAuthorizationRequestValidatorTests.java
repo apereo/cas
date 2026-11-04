@@ -5,6 +5,7 @@ import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.federation.AbstractOidcOpenIdProviderFederationTests;
 import org.apereo.cas.oidc.federation.chain.OidcFederationDefaultTrustChainResolver;
 import org.apereo.cas.oidc.federation.chain.OidcFederationTrustChainResolver;
+import org.apereo.cas.oidc.federation.registration.OidcFederationAutomaticClientRegistration;
 import org.apereo.cas.oidc.issuer.OidcIssuerService;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeyCacheKey;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeyUsage;
@@ -88,6 +89,10 @@ class OpenIdFederationAuthorizationCodeResponseTypeAuthorizationRequestValidator
     @Autowired
     @Qualifier("oidcFederationAutomaticRegistrationInterceptor")
     private HandlerInterceptor automaticRegistrationInterceptor;
+
+    @Autowired
+    @Qualifier(OidcFederationAutomaticClientRegistration.BEAN_NAME)
+    private OidcFederationAutomaticClientRegistration clientRegistration;
 
     @Autowired
     @Qualifier("oidcDefaultJsonWebKeystoreCache")
@@ -373,6 +378,45 @@ class OpenIdFederationAuthorizationCodeResponseTypeAuthorizationRequestValidator
             .anyMatch(service -> clientId.equals(service.getClientId()) && service.getJwks().contains(rolledOverKey.getKeyID())));
     }
 
+    /**
+     * The trust chain a relying party sends in the {@code trust_chain} header of its request object is handed to the
+     * registration (OpenID Federation 1.0, section 12.1.1.1).
+     */
+    @Test
+    void verifyTrustChainHeaderIsUsedForRegistration() throws Throwable {
+        val clientId = newSignedClientId();
+        val header = new JWSHeader.Builder(JWSAlgorithm.RS256)
+            .keyID(RELYING_PARTY_KEY.getKeyID())
+            .type(new JOSEObjectType("oauth-authz-req+jwt"))
+            .customParam("trust_chain", List.of("first-statement", "second-statement"))
+            .build();
+        val requestObject = new SignedJWT(header, requestObjectClaims(clientId, UUID.randomUUID().toString()).build());
+        requestObject.sign(new RSASSASigner(RELYING_PARTY_KEY));
+        assertTrue(preHandle(AUTHORIZE_URL, clientId, Map.of(OAuth20Constants.REQUEST, requestObject.serialize())).getLeft());
+        assertEquals(List.of("first-statement", "second-statement"), TestOidcFederationTrustChainResolver.SENT_TRUST_CHAINS.get(clientId));
+    }
+
+    /**
+     * A sent trust chain may register a relying party or replace its registration, but not with an entity configuration
+     * older than the one the registration was built from: the trust chains are resolved instead.
+     */
+    @Test
+    void verifySentTrustChainCannotRollBackRegistration() throws Throwable {
+        val clientId = "https://rp-sent-" + UUID.randomUUID() + ".example.org";
+        assertEquals("sent-service", clientRegistration.register(clientId, List.of("100")).getName());
+        val rolledBack = clientRegistration.reevaluate(clientId, _ -> true, List.of("50"));
+        assertEquals("fetched-service", rolledBack.getName());
+        assertEquals("200", rolledBack.getProperties()
+            .get(OidcFederationDefaultTrustChainResolver.OPENIDFEDERATION_ENTITY_CONFIGURATION_ISSUED_AT).getValue(String.class));
+
+        val otherClientId = "https://rp-sent-" + UUID.randomUUID() + ".example.org";
+        assertEquals("sent-service", clientRegistration.register(otherClientId, List.of("100")).getName());
+        val newer = clientRegistration.reevaluate(otherClientId, _ -> true, List.of("150"));
+        assertEquals("sent-service", newer.getName());
+        assertEquals("150", newer.getProperties()
+            .get(OidcFederationDefaultTrustChainResolver.OPENIDFEDERATION_ENTITY_CONFIGURATION_ISSUED_AT).getValue(String.class));
+    }
+
     private Pair<Boolean, MockHttpServletResponse> preHandle(final String uri, final String clientId,
                                                              final Map<String, String> parameters)
             throws Exception {
@@ -468,6 +512,16 @@ class OpenIdFederationAuthorizationCodeResponseTypeAuthorizationRequestValidator
         return service;
     }
 
+    private static OidcRegisteredService buildAutomaticallyRegisteredService(final String clientId, final String name, final String issuedAt) {
+        val service = buildOidcRegisteredService(clientId, name);
+        service.setExpirationPolicy(new DefaultRegisteredServiceExpirationPolicy(true, ZonedDateTime.now(Clock.systemUTC()).plusDays(1)));
+        service.getProperties().put(OidcFederationDefaultTrustChainResolver.TEMPORARY_OPENIDFEDERATION_SERVICE,
+            new DefaultRegisteredServiceProperty(Boolean.TRUE.toString()));
+        service.getProperties().put(OidcFederationDefaultTrustChainResolver.OPENIDFEDERATION_ENTITY_CONFIGURATION_ISSUED_AT,
+            new DefaultRegisteredServiceProperty(issuedAt));
+        return service;
+    }
+
     @TestConfiguration(value = "OpenIdFederationAuthorizationCodeResponseTypeAuthorizationRequestValidatorTestConfiguration", proxyBeanMethods = false)
     static class OpenIdFederationAuthorizationCodeResponseTypeAuthorizationRequestValidatorTestConfiguration {
         @Bean(name = OidcFederationTrustChainResolver.BEAN_NAME)
@@ -481,6 +535,19 @@ class OpenIdFederationAuthorizationCodeResponseTypeAuthorizationRequestValidator
 
         static final Map<String, RSAKey> PUBLISHED_KEYS = new ConcurrentHashMap<>();
 
+        static final Map<String, List<String>> SENT_TRUST_CHAINS = new ConcurrentHashMap<>();
+
+        @Override
+        public Optional<OidcRegisteredService> resolveTrustChains(final String clientId, final List<String> trustChain) {
+            if (!trustChain.isEmpty()) {
+                SENT_TRUST_CHAINS.put(clientId, trustChain);
+                if (clientId.contains("rp-sent-")) {
+                    return Optional.of(buildAutomaticallyRegisteredService(clientId, "sent-service", trustChain.getFirst()));
+                }
+            }
+            return resolveTrustChains(clientId);
+        }
+
         @Override
         public Optional<OidcRegisteredService> resolveTrustChains(final String clientId) {
             RESOLUTIONS.computeIfAbsent(clientId, _ -> new AtomicInteger()).incrementAndGet();
@@ -489,6 +556,9 @@ class OpenIdFederationAuthorizationCodeResponseTypeAuthorizationRequestValidator
             }
             if (clientId.contains("rp-refresh-")) {
                 return Optional.of(buildOidcRegisteredService(clientId, "new-service"));
+            }
+            if (clientId.contains("rp-sent-")) {
+                return Optional.of(buildAutomaticallyRegisteredService(clientId, "fetched-service", "200"));
             }
             if (clientId.contains("rp-signed-") || clientId.contains("rp-rotated-")) {
                 val service = buildOidcRegisteredService(clientId, "signed-service");

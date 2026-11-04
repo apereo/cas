@@ -36,10 +36,13 @@ import com.nimbusds.openid.connect.sdk.federation.trust.ResolveException;
 import com.nimbusds.openid.connect.sdk.federation.trust.TrustChain;
 import com.nimbusds.openid.connect.sdk.federation.trust.TrustChainResolver;
 import com.nimbusds.openid.connect.sdk.federation.trust.TrustChainSet;
+import com.nimbusds.openid.connect.sdk.federation.trust.constraints.TrustChainConstraints;
 import com.nimbusds.openid.connect.sdk.rp.ApplicationType;
 import com.nimbusds.openid.connect.sdk.rp.OIDCClientMetadata;
 import lombok.val;
 import net.minidev.json.JSONObject;
+import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -216,8 +219,9 @@ class OidcFederationDefaultTrustChainResolverTests {
                         .getFederation().getAuthorityHints().stream().map(EntityID::new).toList();
 
                 val resolver = mock(TrustChainResolver.class);
-                val trustChainSet = mock(TrustChainSet.class);
                 val trustChain = mock(TrustChain.class);
+                val trustChainSet = new TrustChainSet();
+                trustChainSet.add(trustChain);
                 val metadataPolicy = mock(MetadataPolicy.class);
 
                 val clientMetadata = new OIDCClientMetadata();
@@ -243,10 +247,164 @@ class OidcFederationDefaultTrustChainResolverTests {
                 val leafConfiguration = oidcFederationEntityStatementService.createAndSign(issuer, issuer,
                         metadata, null, authorityHints);
                 when(trustChain.getLeafConfiguration()).thenReturn(leafConfiguration);
-                when(trustChainSet.getShortest()).thenReturn(trustChain);
                 when(resolver.resolveTrustChains(any(EntityID.class))).thenReturn(trustChainSet);
                 return resolver;
             }
+        }
+    }
+
+    /**
+     * A trust chain the relying party sends, such as in the {@code trust_chain} header of its request object, is used
+     * once verified, without resolving; a chain that cannot be used has the trust chains resolved instead, which the
+     * retriever of these tests refuses.
+     */
+    @Nested
+    class SentTrustChainTests {
+        private static final String TRUST_ANCHOR = "https://ta.example.org";
+
+        private static final String INTERMEDIATE = "https://intermediate.example.org";
+
+        private static final String RELYING_PARTY = "https://rp.example.org";
+
+        private final RSAKey trustAnchorKey = generateKey("ta");
+
+        private final RSAKey intermediateKey = generateKey("intermediate");
+
+        private final RSAKey relyingPartyKey = generateKey("rp");
+
+        private final EntityStatementRetriever retriever = mock(EntityStatementRetriever.class);
+
+        @Test
+        void verifySentTrustChainIsUsedWithoutResolving() throws Exception {
+            when(retriever.fetchEntityConfiguration(any())).thenThrow(new ResolveException("Not reachable"));
+            val chain = List.of(relyingPartyConfiguration(), statement(trustAnchorKey, TRUST_ANCHOR, RELYING_PARTY, relyingPartyKey, 0),
+                entityConfiguration(TRUST_ANCHOR, trustAnchorKey, Map.of("metadata", Map.of(EntityType.FEDERATION_ENTITY.getValue(), Map.of()))));
+            val service = resolver(new JWKSet(trustAnchorKey.toPublicJWK()), new TrustChainConstraints(3))
+                .resolveTrustChains(RELYING_PARTY, chain).orElseThrow();
+            assertEquals(RELYING_PARTY, service.getClientId());
+            assertTrue(service.getJwks().contains("rp-oidc"));
+            assertTrue(StringUtils.isNumeric(service.getProperties()
+                .get(OidcFederationDefaultTrustChainResolver.OPENIDFEDERATION_ENTITY_CONFIGURATION_ISSUED_AT).getValue(String.class)));
+            verify(retriever, never()).fetchEntityConfiguration(any());
+
+            val throughIntermediate = List.of(relyingPartyConfiguration(),
+                statement(intermediateKey, INTERMEDIATE, RELYING_PARTY, relyingPartyKey, 0),
+                statement(trustAnchorKey, TRUST_ANCHOR, INTERMEDIATE, intermediateKey, 0));
+            assertTrue(resolver(new JWKSet(trustAnchorKey.toPublicJWK()), new TrustChainConstraints(1))
+                .resolveTrustChains(RELYING_PARTY, throughIntermediate).isPresent());
+            assertTrue(resolver(new JWKSet(trustAnchorKey.toPublicJWK()), new TrustChainConstraints(0))
+                .resolveTrustChains(RELYING_PARTY, throughIntermediate).isEmpty());
+        }
+
+        @Test
+        void verifyUnusableTrustChainIsResolvedInstead() throws Exception {
+            when(retriever.fetchEntityConfiguration(any())).thenThrow(new ResolveException("Not reachable"));
+            val trustAnchorKeys = new JWKSet(trustAnchorKey.toPublicJWK());
+            val resolver = resolver(trustAnchorKeys, new TrustChainConstraints(3));
+            val valid = List.of(relyingPartyConfiguration(), statement(trustAnchorKey, TRUST_ANCHOR, RELYING_PARTY, relyingPartyKey, 0));
+            assertTrue(resolver.resolveTrustChains("https://other.example.org", valid).isEmpty());
+            assertTrue(resolver(null, new TrustChainConstraints(3)).resolveTrustChains(RELYING_PARTY, valid).isEmpty());
+            assertTrue(resolver.resolveTrustChains(RELYING_PARTY, List.of(relyingPartyConfiguration(),
+                statement(generateKey("forged"), TRUST_ANCHOR, RELYING_PARTY, relyingPartyKey, 0))).isEmpty());
+            assertTrue(resolver.resolveTrustChains(RELYING_PARTY, List.of(relyingPartyConfiguration(),
+                statement(trustAnchorKey, "https://other-ta.example.org", RELYING_PARTY, relyingPartyKey, 0))).isEmpty());
+            assertTrue(resolver.resolveTrustChains(RELYING_PARTY, List.of(relyingPartyConfiguration(),
+                statement(trustAnchorKey, TRUST_ANCHOR, RELYING_PARTY, relyingPartyKey, -7200))).isEmpty());
+            assertTrue(resolver.resolveTrustChains(RELYING_PARTY, List.of("not-a-statement", "either")).isEmpty());
+            verify(retriever, atLeastOnce()).fetchEntityConfiguration(any());
+        }
+
+        /**
+         * The {@code constraints} of every subordinate statement apply to the entities below its issuer (section 6.2).
+         */
+        @Test
+        void verifyConstraintsOfSubordinateStatements() throws Exception {
+            when(retriever.fetchEntityConfiguration(any())).thenThrow(new ResolveException("Not reachable"));
+            val resolver = resolver(new JWKSet(trustAnchorKey.toPublicJWK()), new TrustChainConstraints(3));
+            for (val accepted : List.<Map<String, Object>>of(
+                Map.of("max_path_length", 0),
+                Map.of("naming_constraints", Map.of("permitted", List.of(".example.org"))),
+                Map.of("naming_constraints", Map.of("permitted", List.of("rp.example.org"), "excluded", List.of(".example.com"))),
+                Map.of("allowed_entity_types", List.of("openid_provider", "openid_relying_party")),
+                Map.of("unknown_constraint", true))) {
+                assertTrue(resolver.resolveTrustChains(RELYING_PARTY, List.of(relyingPartyConfiguration(),
+                    statement(trustAnchorKey, TRUST_ANCHOR, RELYING_PARTY, relyingPartyKey, 0, accepted))).isPresent(), accepted::toString);
+            }
+            for (val refused : List.<Map<String, Object>>of(
+                Map.of("max_path_length", -1),
+                Map.of("naming_constraints", Map.of("permitted", List.of(".example.com"))),
+                Map.of("naming_constraints", Map.of("permitted", List.of("example.org"))),
+                Map.of("naming_constraints", Map.of("permitted", List.of(".example.org"), "excluded", List.of("rp.example.org"))),
+                Map.of("naming_constraints", Map.of("permitted", "example.org")),
+                Map.of("allowed_entity_types", List.of("openid_provider")),
+                Map.of("allowed_entity_types", List.of()))) {
+                assertTrue(resolver.resolveTrustChains(RELYING_PARTY, List.of(relyingPartyConfiguration(),
+                    statement(trustAnchorKey, TRUST_ANCHOR, RELYING_PARTY, relyingPartyKey, 0, refused))).isEmpty(), refused::toString);
+            }
+
+            val trustAnchorAllowsOne = List.of(relyingPartyConfiguration(),
+                statement(intermediateKey, INTERMEDIATE, RELYING_PARTY, relyingPartyKey, 0, Map.of("max_path_length", 0)),
+                statement(trustAnchorKey, TRUST_ANCHOR, INTERMEDIATE, intermediateKey, 0, Map.of("max_path_length", 1)));
+            assertTrue(resolver.resolveTrustChains(RELYING_PARTY, trustAnchorAllowsOne).isPresent());
+            val trustAnchorAllowsNone = List.of(relyingPartyConfiguration(),
+                statement(intermediateKey, INTERMEDIATE, RELYING_PARTY, relyingPartyKey, 0),
+                statement(trustAnchorKey, TRUST_ANCHOR, INTERMEDIATE, intermediateKey, 0, Map.of("max_path_length", 0)));
+            assertTrue(resolver.resolveTrustChains(RELYING_PARTY, trustAnchorAllowsNone).isEmpty());
+            val trustAnchorExcludesIntermediate = List.of(relyingPartyConfiguration(),
+                statement(intermediateKey, INTERMEDIATE, RELYING_PARTY, relyingPartyKey, 0),
+                statement(trustAnchorKey, TRUST_ANCHOR, INTERMEDIATE, intermediateKey, 0,
+                    Map.of("naming_constraints", Map.of("excluded", List.of("intermediate.example.org")))));
+            assertTrue(resolver.resolveTrustChains(RELYING_PARTY, trustAnchorExcludesIntermediate).isEmpty());
+        }
+
+        private OidcFederationDefaultTrustChainResolver resolver(@Nullable final JWKSet trustAnchorKeys, final TrustChainConstraints constraints) {
+            val trustAnchors = new HashMap<EntityID, JWKSet>();
+            trustAnchors.put(new EntityID(TRUST_ANCHOR), trustAnchorKeys);
+            return new OidcFederationDefaultTrustChainResolver(List.of(new TrustChainResolver(trustAnchors, constraints, retriever)),
+                new OidcFederationDefaultTrustMarkValidator(new OidcFederationProperties()));
+        }
+
+        private String relyingPartyConfiguration() throws Exception {
+            val relyingParty = new JSONObject();
+            relyingParty.put("client_name", "Sent trust chain RP");
+            relyingParty.put("redirect_uris", List.of(RELYING_PARTY + "/callback"));
+            relyingParty.put("scope", OidcConstants.StandardScopes.OPENID.getScope());
+            relyingParty.put("token_endpoint_auth_method", ClientAuthenticationMethod.PRIVATE_KEY_JWT.getValue());
+            relyingParty.put("jwks", new JWKSet(generateKey("rp-oidc").toPublicJWK()).toJSONObject());
+            return entityConfiguration(RELYING_PARTY, relyingPartyKey, Map.of(
+                "authority_hints", List.of(TRUST_ANCHOR),
+                "metadata", Map.of(EntityType.OPENID_RELYING_PARTY.getValue(), relyingParty)));
+        }
+
+        private static String statement(final RSAKey issuerKey, final String issuer, final String subject,
+                                        final RSAKey subjectKey, final long expirationOffset)
+                throws Exception {
+            return statement(issuerKey, issuer, subject, subjectKey, expirationOffset, Map.of());
+        }
+
+        private static String statement(final RSAKey issuerKey, final String issuer, final String subject,
+                                        final RSAKey subjectKey, final long expirationOffset, final Map<String, Object> constraints)
+                throws Exception {
+            val now = Instant.now(Clock.systemUTC());
+            val expiration = expirationOffset < 0 ? now.plusSeconds(expirationOffset) : now.plusSeconds(86400);
+            val claims = new EntityStatementClaimsSet(new EntityID(issuer), new EntityID(subject),
+                Date.from(now.minusSeconds(86400)), Date.from(expiration), new JWKSet(subjectKey.toPublicJWK()));
+            if (!constraints.isEmpty()) {
+                claims.setClaim("constraints", new JSONObject(constraints));
+            }
+            return EntityStatement.sign(claims, issuerKey).getSignedStatement().serialize();
+        }
+
+        private static String entityConfiguration(final String entityId, final RSAKey key, final Map<String, ?> extraClaims) throws Exception {
+            val now = Instant.now(Clock.systemUTC());
+            val claims = new EntityStatementClaimsSet(new EntityID(entityId), new EntityID(entityId),
+                Date.from(now), Date.from(now.plusSeconds(86400)), new JWKSet(key.toPublicJWK()));
+            extraClaims.forEach(claims::setClaim);
+            return EntityStatement.sign(claims, key).getSignedStatement().serialize();
+        }
+
+        private static RSAKey generateKey(final String keyId) {
+            return FunctionUtils.doUnchecked(() -> new RSAKeyGenerator(2048).keyID(keyId).generate());
         }
     }
 
@@ -311,6 +469,15 @@ class OidcFederationDefaultTrustChainResolverTests {
 
             val otherTrustAnchor = entityConfiguration("https://other-ta.example.org", generateKey("other"), Map.of());
             assertFalse(hasRequiredTrustMarks(trustAnchor, trustMark, Map.of(ISSUER, trustChain(issuer, otherTrustAnchor))));
+
+            val excluded = trustChain(issuer, trustAnchor);
+            when(excluded.getSuperiorStatements()).thenReturn(List.of(subordinateStatement(ISSUER, issuerKey,
+                Map.of("naming_constraints", Map.of("excluded", List.of("issuer.example.org"))))));
+            assertFalse(hasRequiredTrustMarks(trustAnchor, trustMark, Map.of(ISSUER, excluded)));
+            val federationEntityOnly = trustChain(issuer, trustAnchor);
+            when(federationEntityOnly.getSuperiorStatements()).thenReturn(List.of(subordinateStatement(ISSUER, issuerKey,
+                Map.of("allowed_entity_types", List.of(), "naming_constraints", Map.of("permitted", List.of(".example.org"))))));
+            assertTrue(hasRequiredTrustMarks(trustAnchor, trustMark, Map.of(ISSUER, federationEntityOnly)));
         }
 
         @Test
@@ -410,6 +577,16 @@ class OidcFederationDefaultTrustChainResolverTests {
                 Date.from(now), Date.from(now.plusSeconds(86400)), new JWKSet(key.toPublicJWK()));
             extraClaims.forEach(claims::setClaim);
             return EntityStatement.sign(claims, key);
+        }
+
+        private EntityStatement subordinateStatement(final String subject, final RSAKey subjectKey,
+                                                     final Map<String, Object> constraints)
+                throws Exception {
+            val now = Instant.now(Clock.systemUTC());
+            val claims = new EntityStatementClaimsSet(new EntityID(TRUST_ANCHOR), new EntityID(subject),
+                Date.from(now), Date.from(now.plusSeconds(86400)), new JWKSet(subjectKey.toPublicJWK()));
+            claims.setClaim("constraints", new JSONObject(constraints));
+            return EntityStatement.sign(claims, trustAnchorKey);
         }
 
         private static JWTClaimsSet trustMarkClaims(final String issuer, final String subject, final String type,

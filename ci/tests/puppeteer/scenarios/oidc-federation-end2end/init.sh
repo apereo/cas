@@ -4,8 +4,11 @@
 # prepares what the CAS trust anchor needs before it starts: a truststore with the shared localhost certificate,
 # the TLS key pair for OFFA and the scenario's Node RP, and the subordinate statements (op.json and rp.json from this
 # scenario plus offa.json, built from OFFA's live entity configuration since OFFA generates its keys on first start).
-# OFFA and the Node RP carry a relying party trust mark issued by the trust anchor (trust-mark.js), which the OP requires;
-# OFFA's is added as extra entity configuration data, since go-oidfed refuses a configured trust mark JWT it cannot verify.
+# OFFA and the Node RP carry a relying party trust mark of the trust anchor, which the OP requires. The Node RP fetches its
+# own from the trust anchor's trust mark endpoint; OFFA starts before the trust anchor, so its trust mark is signed here
+# with the trust anchor's key (trust-mark.js), and the trust anchor's status endpoint vouches for it since OFFA is one of
+# the subjects it issues the type to. OFFA's is added as extra entity configuration data, since go-oidfed refuses a
+# configured trust mark JWT it cannot verify.
 # The OP's service registry is a fresh copy of this scenario's services, since relying parties registered automatically
 # are written there and would otherwise carry the keys of an earlier run into the next one.
 # run.sh sources this script once per CAS instance; the second call finds OFFA running and does nothing.

@@ -219,7 +219,30 @@ defined using CAS properties.
 
 As a trust anchor, CAS publishes in its entity configuration the trust mark types of the federation and the entities it
 accepts as their issuers, as `trust_mark_issuers`. A trust mark type listed without issuers may be issued by anyone.
-Both can be defined using CAS properties.
+Both can be defined using CAS properties. A trust anchor also publishes, as `trust_mark_owners`, the owners of trust mark
+types whose issuance they delegate to other issuers, each with the keys their delegations are verified with; only the
+public members of those keys are published.
+
+### Trust Mark Issuer
+
+In any role, CAS can issue trust marks, as described by
+[OpenID Federation](https://openid.net/specs/openid-federation-1_0.html#section-7). Each trust mark type is defined with
+the entities it is issued to, how long its trust marks are valid, and optionally a logo, a reference to human-readable
+information and a delegation from the owner of the type, all of which can be defined using CAS properties. Nothing is
+stored: a trust mark is signed with the current federation key when it is requested. When CAS issues trust marks, its
+entity configuration advertises three endpoints, which do not require authentication:
+
+- The trust mark endpoint answers a request for a trust mark type and an entity with a trust mark of that type about
+  that entity, typed `trust-mark+jwt`, or with `404` when the entity does not hold that type.
+- The trust mark status endpoint answers the status of a trust mark it was sent, in a signed status response:
+  `active`; `expired` once the trust mark has expired; `revoked` when its subject no longer holds the type; or `invalid`
+  when it is not typed as a trust mark or does not verify with the federation keys CAS publishes. A trust mark issued by
+  another entity, or of a type CAS does not issue, is answered with `404`.
+- The trust marked entities listing endpoint lists the entities that hold a trust mark type, optionally only the one
+  asked for.
+
+Removing an entity from a trust mark type revokes the trust marks of that type it holds. A trust mark signed with a
+federation key that has since been retired is `invalid`: its holder should fetch a new trust mark after a key rollover.
 
 ## Key Rollover
 
@@ -282,10 +305,26 @@ registration step:
 - A request object may also be [encrypted to CAS](OIDC-Authentication-JWKS.html#encrypted-request-objects); it is
   decrypted first, and the signed request object inside is checked as above.
 - Requests that fail these checks are refused with `invalid_request` and are never redirected to the relying party.
+- The constraints that trust anchors and intermediates set in their subordinate statements apply to every trust chain
+  of a relying party, whether resolved or sent, as
+  [OpenID Federation](https://openid.net/specs/openid-federation-1_0.html#section-6.2) requires: the maximum number of
+  intermediates below the entity that sets them, the permitted and excluded domain names of the entities below it, and
+  the entity types they may have, which must include `openid_relying_party`. A trust chain that breaks any of them is
+  not used. The trust chains of trust mark issuers are held to the same constraints, except for entity types.
 - Resolving trust chains is bounded: CAS follows a limited number of authority hints from any entity configuration and
   accepts a limited number of intermediates between the relying party and a trust anchor, and an entity identifier
   whose trust chains could not be resolved is not resolved again for a while. Meanwhile, a registration that could not
   be refreshed is kept as it is. These limits can be tuned using CAS properties.
+- A relying party may send its trust chain in the `trust_chain` header of its request object or client assertion, as
+  [OpenID Federation](https://openid.net/specs/openid-federation-1_0.html#section-12.1.1.1) allows. Whenever CAS would
+  resolve the relying party, to register it, to refresh its registration or after a key rollover, it uses that chain
+  instead, once fully verified: the chain must start with the entity configuration of the relying party, end at a trust
+  anchor whose keys are defined out of band, verify statement by statement from those keys, not have expired and not
+  exceed the maximum path length; the required trust marks and the metadata policies of the chain apply as usual. A
+  chain whose entity configuration is older than the one the current registration was built from is not used, so that
+  an older chain cannot bring back keys the relying party has replaced. CAS resolves the trust chains itself when the
+  sent chain cannot be used, and always when the trust anchor is trusted with the keys of its own entity configuration,
+  which a sent chain could forge.
 - A relying party that rolls its keys over is resolved again before its registration expires, as
   [OpenID Federation](https://openid.net/specs/openid-federation-1_0.html#section-12.3) allows: when a request object
   or a client assertion it sends, at any endpoint, verifies with none of the keys of its registration, CAS resolves its

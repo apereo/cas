@@ -104,6 +104,19 @@ public class OidcFederationProperties implements Serializable {
     private List<OidcFederationTrustMarkIssuerProperties> trustMarkIssuers = new ArrayList<>();
 
     /**
+     * For a trust anchor, the owners of trust mark types whose issuance is delegated to trust mark issuers,
+     * published as {@code trust_mark_owners} in its entity configuration.
+     */
+    private List<OidcFederationTrustMarkOwnerProperties> trustMarkOwners = new ArrayList<>();
+
+    /**
+     * Trust marks this entity issues as a trust mark issuer, each type with the entities it is issued to.
+     * When defined, this entity publishes its trust mark, trust mark status and trust marked entities listing
+     * endpoints.
+     */
+    private List<OidcFederationIssuedTrustMarkProperties> issuedTrustMarks = new ArrayList<>();
+
+    /**
      * Rotation of the federation keys: the future key becomes current and starts signing, the current key
      * becomes previous, and a new future key is published.
      */

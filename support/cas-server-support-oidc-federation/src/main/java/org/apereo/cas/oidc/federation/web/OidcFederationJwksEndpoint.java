@@ -6,6 +6,8 @@ import org.apereo.cas.oidc.federation.signature.OidcFederationJsonWebKeystoreSer
 import org.apereo.cas.web.BaseCasRestActuatorEndpoint;
 import com.nimbusds.jose.jwk.JWK;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.actuate.endpoint.Access;
@@ -14,7 +16,9 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 /**
  * Rotates and retires the OpenID Federation keys of CAS on demand, as the rotation and revocation schedules do.
@@ -70,5 +74,28 @@ public class OidcFederationJwksEndpoint extends BaseCasRestActuatorEndpoint {
     @Operation(summary = "Retire the previous OpenID Federation keys, which move to the historical keys")
     public ResponseEntity<Map<String, Object>> revoke() throws Exception {
         return ResponseEntity.ok(keystoreService.getObject().revoke().toJSONObject(true));
+    }
+
+    /**
+     * Revoke a federation key, such as one whose private key is believed compromised.
+     *
+     * @param keyId  the key identifier
+     * @param reason the reason of the revocation
+     * @return the keys published after the revocation, or 404 when no such key is known
+     * @throws Exception the exception
+     */
+    @PostMapping(path = "/revoke/{kid}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Revoke an OpenID Federation key, which is published as a revoked historical key",
+        parameters = {
+            @Parameter(name = "kid", description = "The key identifier", required = true, in = ParameterIn.PATH),
+            @Parameter(name = "reason", description = "The reason: compromised, superseded, unspecified or a reason of the federation",
+                in = ParameterIn.QUERY)
+        })
+    public ResponseEntity<Map<String, Object>> revokeKey(@PathVariable("kid") final String keyId,
+                                                         @RequestParam(value = "reason", required = false) final String reason)
+            throws Exception {
+        return keystoreService.getObject().revokeKey(keyId, reason)
+            .map(keys -> ResponseEntity.ok(keys.toJSONObject(true)))
+            .orElseGet(() -> ResponseEntity.notFound().build());
     }
 }

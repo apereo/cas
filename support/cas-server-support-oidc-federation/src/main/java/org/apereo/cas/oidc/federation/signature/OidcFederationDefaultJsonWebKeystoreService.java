@@ -27,6 +27,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jose4j.jwk.JsonWebKey;
 import org.jose4j.jwk.JsonWebKeySet;
 import org.jose4j.jwk.PublicJsonWebKey;
@@ -50,6 +51,12 @@ public class OidcFederationDefaultJsonWebKeystoreService implements OidcFederati
     private static final String ISSUED_AT = "iat";
 
     private static final String EXPIRATION = "exp";
+
+    private static final String REVOKED = "revoked";
+
+    private static final String REVOKED_AT = "revoked_at";
+
+    private static final String REASON = "reason";
 
     private final CasReentrantLock lock = new CasReentrantLock();
 
@@ -186,6 +193,49 @@ public class OidcFederationDefaultJsonWebKeystoreService implements OidcFederati
             store(updated);
             keys = updated;
             return toJWKSet();
+        });
+    }
+
+    @Override
+    public Optional<JWKSet> revokeKey(final String keyId, @Nullable final String reason) throws Exception {
+        return lock.executeAndThrow(() -> {
+            if (keys.stream().noneMatch(key -> keyId.equals(key.getKeyId()))) {
+                return Optional.<JWKSet>empty();
+            }
+            val revokedAt = Instant.now(Clock.systemUTC()).getEpochSecond();
+            val revocation = new LinkedHashMap<String, Object>();
+            revocation.put(REVOKED_AT, revokedAt);
+            if (StringUtils.isNotBlank(reason)) {
+                revocation.put(REASON, reason);
+            }
+            val updated = new ArrayList<JsonWebKey>();
+            for (val key : keys) {
+                if (keyId.equals(key.getKeyId())) {
+                    val revoked = isRetired(key) ? key : JsonWebKey.Factory.newJwk(key.toParams(JsonWebKey.OutputControlLevel.PUBLIC_ONLY));
+                    if (!isRetired(key)) {
+                        revoked.setOtherParameter(EXPIRATION, revokedAt);
+                    }
+                    revoked.setOtherParameter(REVOKED, revocation);
+                    updated.add(revoked);
+                } else {
+                    updated.add(key);
+                }
+            }
+            if (getActiveKeys(updated, JsonWebKeyLifecycleStates.CURRENT).isEmpty()) {
+                val futureKeys = getActiveKeys(updated, JsonWebKeyLifecycleStates.FUTURE);
+                if (futureKeys.isEmpty()) {
+                    updated.add(generateKey(JsonWebKeyLifecycleStates.CURRENT));
+                } else {
+                    JsonWebKeyLifecycleStates.setJsonWebKeyState(futureKeys.getFirst(), JsonWebKeyLifecycleStates.CURRENT);
+                }
+            }
+            if (getActiveKeys(updated, JsonWebKeyLifecycleStates.FUTURE).isEmpty()) {
+                updated.add(generateKey(JsonWebKeyLifecycleStates.FUTURE));
+            }
+            store(updated);
+            keys = updated;
+            LOGGER.warn("Revoked OpenID Connect Federation key [{}] for reason [{}]", keyId, StringUtils.defaultIfBlank(reason, "unspecified"));
+            return Optional.of(toJWKSet());
         });
     }
 

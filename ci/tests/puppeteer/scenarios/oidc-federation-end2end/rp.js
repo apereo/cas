@@ -6,7 +6,7 @@ const assert = require("assert");
 const express = require("express");
 const jose = require("jose");
 const cas = require("../../cas.js");
-const {RELYING_PARTY_TRUST_MARK, issueRelyingPartyTrustMark} = require("./trust-mark.js");
+const {RELYING_PARTY_TRUST_MARK} = require("./trust-mark.js");
 
 const ENTITY_ID = "https://localhost:9861";
 const REDIRECT_URI = `${ENTITY_ID}/callback`;
@@ -40,7 +40,8 @@ class FederationRelyingParty {
     async start() {
         this.federationKey = await jose.importJWK(this.federationJwk, "RS256");
         this.oidcKey = await jose.importJWK(this.oidcJwk, "RS256");
-        this.trustMark = await issueRelyingPartyTrustMark(this.trustAnchorJwksFile, ENTITY_ID);
+        const trustMarkRequest = new URLSearchParams({trust_mark_type: RELYING_PARTY_TRUST_MARK, sub: ENTITY_ID});
+        this.trustMark = await cas.doRequest(`${TRUST_ANCHOR}/federation_trust_mark?${trustMarkRequest}`, "GET", {}, 200);
         const app = express();
         app.get("/.well-known/openid-federation", async (req, res) => {
             res.type("application/entity-statement+jwt").send(await this.entityConfiguration());

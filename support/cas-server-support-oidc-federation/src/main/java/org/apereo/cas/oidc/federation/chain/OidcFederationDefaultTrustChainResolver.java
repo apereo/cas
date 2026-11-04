@@ -22,8 +22,11 @@ import com.nimbusds.openid.connect.sdk.federation.entities.CommonFederationClaim
 import com.nimbusds.openid.connect.sdk.federation.entities.EntityID;
 import com.nimbusds.openid.connect.sdk.federation.entities.EntityType;
 import com.nimbusds.openid.connect.sdk.federation.trust.DefaultEntityStatementRetriever;
+import com.nimbusds.openid.connect.sdk.federation.trust.TrustChain;
 import com.nimbusds.openid.connect.sdk.federation.trust.TrustChainResolver;
+import com.nimbusds.openid.connect.sdk.federation.trust.TrustChainSet;
 import com.nimbusds.openid.connect.sdk.federation.trust.constraints.TrustChainConstraints;
+import com.nimbusds.openid.connect.sdk.rp.ApplicationType;
 import com.nimbusds.openid.connect.sdk.rp.OIDCClientMetadata;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,6 +35,7 @@ import net.minidev.json.JSONObject;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
+import org.apache.commons.lang3.tuple.Pair;
 import org.jooq.lambda.Unchecked;
 import org.jspecify.annotations.Nullable;
 
@@ -49,6 +53,12 @@ public class OidcFederationDefaultTrustChainResolver implements OidcFederationTr
      * Tag to indicate that a service has been temporarily registered in case of an automatic registration.
      */
     public static final String TEMPORARY_OPENIDFEDERATION_SERVICE = "TEMPORARY_OPENIDFEDERATION_SERVICE";
+
+    /**
+     * Property of an automatically registered service: the time, in seconds since the epoch, at which the entity
+     * configuration of the relying party that the registration was built from was issued.
+     */
+    public static final String OPENIDFEDERATION_ENTITY_CONFIGURATION_ISSUED_AT = "OPENIDFEDERATION_ENTITY_CONFIGURATION_ISSUED_AT";
 
     /**
      * Client authentication methods an automatically registered client may use: asymmetric cryptography is required,
@@ -121,13 +131,90 @@ public class OidcFederationDefaultTrustChainResolver implements OidcFederationTr
             for (val trustChainResolver : trustChainResolvers) {
                 val trustMetadataResult = fetchRelyingPartyMetadata(trustChainResolver, entityId);
                 if (trustMetadataResult.isPresent()) {
-                    val trustMetadata = trustMetadataResult.get();
-                    val oidcRegisteredService = extractRegisteredService(entityId, trustMetadata.metadata(), trustMetadata.expirationTime());
-                    return Optional.ofNullable(oidcRegisteredService);
+                    return Optional.ofNullable(toRegisteredService(entityId, trustMetadataResult.get()));
                 }
             }
         }
         return Optional.empty();
+    }
+
+    /**
+     * Register the relying party from the trust chain it sent, verified as a resolved chain would be: it must start
+     * with the entity configuration of the client, end at a configured trust anchor whose keys are defined out of band,
+     * verify statement by statement down from those keys, not have expired, and respect the maximum path length; the
+     * required trust marks and the metadata policies of the chain then apply as usual. A chain that cannot be used, or
+     * a trust anchor trusted with the keys of its own entity configuration, which a sent chain could forge, has the
+     * trust chains resolved instead.
+     *
+     * @param id         the client id
+     * @param trustChain the serialized statements of the sent trust chain
+     * @return the registered service
+     * @throws Exception the exception
+     */
+    @Override
+    public Optional<OidcRegisteredService> resolveTrustChains(final String id, final List<String> trustChain) throws Exception {
+        if (!trustChain.isEmpty() && Strings.CI.startsWith(id, "https://")) {
+            val entityId = new EntityID(id);
+            val sentMetadata = verifyTrustChain(entityId, trustChain)
+                .flatMap(verified -> toRelyingPartyMetadata(verified.getLeft(), verified.getRight()));
+            if (sentMetadata.isPresent()) {
+                LOGGER.debug("Relying party [{}] is registered from the trust chain it sent", entityId);
+                return Optional.ofNullable(toRegisteredService(entityId, sentMetadata.get()));
+            }
+            LOGGER.debug("Trust chain sent by [{}] cannot be used; its trust chains are resolved instead", entityId);
+        }
+        return resolveTrustChains(id);
+    }
+
+    /**
+     * Verify a trust chain sent by the relying party.
+     *
+     * @param entityId   the entity id of the relying party
+     * @param trustChain the serialized statements
+     * @return the trust chain resolver of its trust anchor and the verified chain, or empty when it cannot be used
+     */
+    protected Optional<Pair<TrustChainResolver, TrustChain>> verifyTrustChain(final EntityID entityId, final List<String> trustChain) {
+        try {
+            val chain = TrustChain.parseSerialized(trustChain);
+            if (!entityId.equals(chain.getLeafConfiguration().getEntityID())) {
+                LOGGER.warn("Trust chain sent by [{}] starts at [{}]", entityId, chain.getLeafConfiguration().getEntityID());
+                return Optional.empty();
+            }
+            val trustAnchorId = chain.getTrustAnchorEntityID();
+            val trustChainResolver = trustChainResolvers
+                .stream()
+                .filter(resolver -> resolver.getTrustAnchors().get(trustAnchorId) != null)
+                .findFirst();
+            if (trustChainResolver.isEmpty()) {
+                LOGGER.warn("Trust chain sent by [{}] ends at [{}], which is not a trust anchor with keys defined out of band",
+                    entityId, trustAnchorId);
+                return Optional.empty();
+            }
+            chain.verifySignatures(trustChainResolver.get().getTrustAnchors().get(trustAnchorId));
+            if (!chain.resolveExpirationTime().after(new Date())) {
+                LOGGER.warn("Trust chain sent by [{}] has expired", entityId);
+                return Optional.empty();
+            }
+            val chains = new TrustChainSet();
+            chains.add(chain);
+            if (chains.filter(trustChainResolver.get().getConstraints()).isEmpty() || !satisfiesConstraints(chain)) {
+                LOGGER.warn("Trust chain sent by [{}] is longer than allowed or breaks the constraints of its statements", entityId);
+                return Optional.empty();
+            }
+            return Optional.of(Pair.of(trustChainResolver.get(), chain));
+        } catch (final Exception e) {
+            LOGGER.warn("Trust chain sent by [{}] cannot be verified: [{}]", entityId, e.getMessage());
+            return Optional.empty();
+        }
+    }
+
+    private @Nullable OidcRegisteredService toRegisteredService(final EntityID entityId, final TrustChainMetadata trustMetadata) {
+        val registeredService = extractRegisteredService(entityId, trustMetadata.metadata(), trustMetadata.expirationTime());
+        if (registeredService != null) {
+            registeredService.getProperties().put(OPENIDFEDERATION_ENTITY_CONFIGURATION_ISSUED_AT,
+                new DefaultRegisteredServiceProperty(String.valueOf(trustMetadata.issuedAt().toInstant().getEpochSecond())));
+        }
+        return registeredService;
     }
 
     /**
@@ -162,7 +249,7 @@ public class OidcFederationDefaultTrustChainResolver implements OidcFederationTr
         registeredService.setClientId(entityId.toClientID().getValue());
 
         registeredService.setScopes(new HashSet<>(rpMetadata.getScope().toStringList()));
-        registeredService.setApplicationType(rpMetadata.getApplicationType().toString());
+        registeredService.setApplicationType(Objects.requireNonNullElse(rpMetadata.getApplicationType(), ApplicationType.WEB).toString());
         val subjectType = rpMetadata.getSubjectType();
         if (subjectType != null) {
             registeredService.setSubjectType(subjectType.toString());
@@ -234,21 +321,50 @@ public class OidcFederationDefaultTrustChainResolver implements OidcFederationTr
     protected Optional<TrustChainMetadata> fetchRelyingPartyMetadata(final TrustChainResolver trustChainResolver,
                                                                      final EntityID entityId) {
         return FunctionUtils.doAndHandle(() -> {
-            val resolvedChains = trustChainResolver.resolveTrustChains(entityId);
-            val chain = resolvedChains.getShortest();
+            val validChains = new TrustChainSet();
+            trustChainResolver.resolveTrustChains(entityId).stream().filter(this::satisfiesConstraints).forEach(validChains::add);
+            if (validChains.isEmpty()) {
+                LOGGER.warn("No trust chain of [{}] satisfies the constraints of its statements", entityId);
+                return Optional.<TrustChainMetadata>empty();
+            }
+            return toRelyingPartyMetadata(trustChainResolver, validChains.getShortest());
+        }, e -> Optional.<TrustChainMetadata>empty()).get();
+    }
+
+    /**
+     * Whether the trust chain of a relying party satisfies the {@code constraints} of each of its subordinate statements,
+     * whose allowed entity types must then include {@code openid_relying_party}.
+     *
+     * @param chain the trust chain
+     * @return true or false
+     */
+    protected boolean satisfiesConstraints(final TrustChain chain) {
+        return OidcFederationTrustChainConstraints.isSatisfiedBy(chain, EntityType.OPENID_RELYING_PARTY);
+    }
+
+    /**
+     * The relying party metadata of a verified trust chain, with the metadata policies of the chain applied, once the
+     * relying party holds the required trust marks.
+     *
+     * @param trustChainResolver the trust chain resolver of the trust anchor of the chain
+     * @param chain              the trust chain
+     * @return the metadata, or empty when the relying party lacks a required trust mark or its metadata is invalid
+     */
+    protected Optional<TrustChainMetadata> toRelyingPartyMetadata(final TrustChainResolver trustChainResolver, final TrustChain chain) {
+        return FunctionUtils.doAndHandle(() -> {
             if (!trustMarkValidator.hasRequiredTrustMarks(trustChainResolver, chain)) {
                 return Optional.<TrustChainMetadata>empty();
             }
             val metadataPolicy = chain.resolveCombinedMetadataPolicy(EntityType.OPENID_RELYING_PARTY);
-
             val claims = chain.getLeafConfiguration().getSignedStatement().getJWTClaimsSet();
             val metadata = (Map) claims.getClaim(CommonFederationClaimsSet.METADATA_CLAIM_NAME);
             val rawRp = new JSONObject((Map) metadata.get(EntityType.OPENID_RELYING_PARTY.getValue()));
             val clientMetadataJson = metadataPolicy.apply(rawRp);
-            return Optional.of(new TrustChainMetadata(OIDCClientMetadata.parse(clientMetadataJson), chain.resolveExpirationTime()));
+            return Optional.of(new TrustChainMetadata(OIDCClientMetadata.parse(clientMetadataJson),
+                chain.resolveExpirationTime(), chain.getLeafConfiguration().getClaimsSet().getIssueTime()));
         }, e -> Optional.<TrustChainMetadata>empty()).get();
     }
 
-    protected record TrustChainMetadata(OIDCClientMetadata metadata, Date expirationTime) {
+    protected record TrustChainMetadata(OIDCClientMetadata metadata, Date expirationTime, Date issuedAt) {
     }
 }

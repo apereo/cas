@@ -87,6 +87,18 @@ public class OidcFederationAutomaticClientRegistration {
      * @return the registered service, or null when the client is neither registered nor resolvable in the federation
      */
     public @Nullable OAuthRegisteredService register(final String clientId) {
+        return register(clientId, List.of());
+    }
+
+    /**
+     * Find or register the relying party as {@link #register(String)} does, using the trust chain the relying party
+     * sent when its trust chains would otherwise be resolved.
+     *
+     * @param clientId   the client id
+     * @param trustChain the serialized statements of the trust chain the relying party sent, which may be empty
+     * @return the registered service, or null when the client is neither registered nor resolvable in the federation
+     */
+    public @Nullable OAuthRegisteredService register(final String clientId, final List<String> trustChain) {
         val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(servicesManager, clientId);
         if (registeredService != null && !shouldRefresh(registeredService)) {
             return registeredService;
@@ -99,7 +111,7 @@ public class OidcFederationAutomaticClientRegistration {
             if ((currentService != null && !shouldRefresh(currentService)) || isUnresolved(clientId)) {
                 return currentService;
             }
-            val resolvedService = resolveAndSave(clientId, currentService);
+            val resolvedService = resolveAndSave(clientId, currentService, trustChain);
             if (resolvedService.isEmpty()) {
                 LOGGER.debug("Trust chains of [{}] could not be resolved; they are not resolved again for a while", clientId);
                 unresolvedEntities.put(clientId, Boolean.TRUE);
@@ -119,6 +131,20 @@ public class OidcFederationAutomaticClientRegistration {
      * @return the registered service, refreshed when it was reevaluated, or null when the client is not registered
      */
     public @Nullable OAuthRegisteredService reevaluate(final String clientId, final Predicate<OAuthRegisteredService> stale) {
+        return reevaluate(clientId, stale, List.of());
+    }
+
+    /**
+     * Reevaluate the registration as {@link #reevaluate(String, Predicate)} does, using the trust chain the relying
+     * party sent when there is one.
+     *
+     * @param clientId   the client id
+     * @param stale      whether the registration no longer holds what the request needs
+     * @param trustChain the serialized statements of the trust chain the relying party sent, which may be empty
+     * @return the registered service, refreshed when it was reevaluated, or null when the client is not registered
+     */
+    public @Nullable OAuthRegisteredService reevaluate(final String clientId, final Predicate<OAuthRegisteredService> stale,
+                                                       final List<String> trustChain) {
         val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(servicesManager, clientId);
         if (!isReevaluationDue(registeredService, stale)) {
             return registeredService;
@@ -130,7 +156,7 @@ public class OidcFederationAutomaticClientRegistration {
             }
             reevaluatedEntities.put(clientId, Boolean.TRUE);
             LOGGER.info("Registration of [{}] does not hold the keys it signs with; resolving its trust chains again", clientId);
-            return resolveAndSave(clientId, currentService).orElse(currentService);
+            return resolveAndSave(clientId, currentService, trustChain).orElse(currentService);
         });
     }
 
@@ -175,9 +201,25 @@ public class OidcFederationAutomaticClientRegistration {
         return unresolvedEntities.getIfPresent(clientId) != null;
     }
 
-    private Optional<OAuthRegisteredService> resolveAndSave(final String clientId, @Nullable final OAuthRegisteredService currentService) {
+    /**
+     * Resolve the relying party, from the trust chain it sent when there is one, and save it under the id of its current
+     * registration. A sent trust chain whose entity configuration was issued before the one the current registration was
+     * built from is not allowed to replace it, so that an older chain, still unexpired, cannot bring back keys or metadata
+     * the relying party has since replaced; the trust chains are resolved instead.
+     *
+     * @param clientId       the client id
+     * @param currentService the current registration
+     * @param trustChain     the serialized statements of the trust chain the relying party sent, which may be empty
+     * @return the saved registration
+     */
+    private Optional<OAuthRegisteredService> resolveAndSave(final String clientId, @Nullable final OAuthRegisteredService currentService,
+                                                            final List<String> trustChain) {
         try {
-            val resolvedService = trustChainResolver.resolveTrustChains(clientId);
+            var resolvedService = trustChainResolver.resolveTrustChains(clientId, trustChain);
+            if (!trustChain.isEmpty() && resolvedService.isPresent() && isOlderThan(resolvedService.get(), currentService)) {
+                LOGGER.warn("Trust chain sent by [{}] is older than its registration and is not used", clientId);
+                resolvedService = trustChainResolver.resolveTrustChains(clientId);
+            }
             LOGGER.debug("Resolved service: [{}]", resolvedService);
             return resolvedService.map(service -> {
                 if (currentService != null) {
@@ -189,6 +231,22 @@ public class OidcFederationAutomaticClientRegistration {
             LoggingUtils.warn(LOGGER, "Unable to resolve federated service [" + clientId + "]", e);
             return Optional.empty();
         }
+    }
+
+    private static boolean isOlderThan(final OAuthRegisteredService resolvedService, @Nullable final OAuthRegisteredService currentService) {
+        if (currentService == null) {
+            return false;
+        }
+        val resolved = readIssuedAt(resolvedService);
+        val current = readIssuedAt(currentService);
+        return resolved.isPresent() && current.isPresent() && resolved.get() < current.get();
+    }
+
+    private static Optional<Long> readIssuedAt(final RegisteredService registeredService) {
+        return Optional.ofNullable(registeredService.getProperties().get(OidcFederationDefaultTrustChainResolver.OPENIDFEDERATION_ENTITY_CONFIGURATION_ISSUED_AT))
+            .map(property -> property.getValue(String.class))
+            .filter(StringUtils::isNumeric)
+            .map(Long::valueOf);
     }
 
     private static boolean shouldRefresh(final OAuthRegisteredService registeredService) {

@@ -5,6 +5,7 @@ const crypto = require("crypto");
 const jose = require("jose");
 const cas = require("../../cas.js");
 const {FederationRelyingParty, ENTITY_ID, REDIRECT_URI} = require("./rp.js");
+const {RELYING_PARTY_TRUST_MARK, issueRelyingPartyTrustMark} = require("./trust-mark.js");
 const {FederationWallet} = require("./wallet.js");
 
 const OP_ENTITY_ID = "https://localhost:8444/cas/oidc";
@@ -71,6 +72,49 @@ async function verifyTrustMarkIssuers() {
         [`${TRUST_ANCHOR}/trust-marks/relying-party`]: [TRUST_ANCHOR],
         [`${TRUST_ANCHOR}/trust-marks/identity-provider`]: [TRUST_ANCHOR]
     });
+}
+
+/**
+ * The trust anchor is also the issuer of the federation's trust marks (OpenID Federation 1.0, sections 8.4 to 8.6): it
+ * publishes its trust mark endpoints, lists the entities it issues relying party trust marks to, issued the Node RP its
+ * trust mark, and answers the status of a trust mark: active for an entity it issues the type to, revoked for one it
+ * no longer does, and not found for an entity it never issued it to. The status response verifies with its key.
+ */
+async function verifyTrustMarkIssuance(rp) {
+    await cas.log("Trust anchor: trust mark issuer endpoints");
+    const federationEntity = jose.decodeJwt(await cas.doRequest(`${TRUST_ANCHOR}/.well-known/openid-federation`, "GET", {}, 200))
+        .metadata.federation_entity;
+    assert.equal(federationEntity.federation_trust_mark_endpoint, `${TRUST_ANCHOR}/federation_trust_mark`);
+    assert.equal(federationEntity.federation_trust_mark_list_endpoint, `${TRUST_ANCHOR}/federation_trust_mark_list`);
+    const statusEndpoint = federationEntity.federation_trust_mark_status_endpoint;
+    assert.equal(statusEndpoint, `${TRUST_ANCHOR}/federation_trust_mark_status`);
+
+    const listing = JSON.parse(await cas.doRequest(`${federationEntity.federation_trust_mark_list_endpoint}?${
+        new URLSearchParams({trust_mark_type: RELYING_PARTY_TRUST_MARK})}`, "GET", {}, 200));
+    assert.deepEqual(listing.sort(), [ENTITY_ID, OFFA_ENTITY_ID].sort());
+
+    const issued = jose.decodeJwt(rp.trustMark);
+    assert.equal(issued.iss, TRUST_ANCHOR);
+    assert.equal(issued.sub, ENTITY_ID);
+    assert.equal(issued.trust_mark_type, RELYING_PARTY_TRUST_MARK);
+    assert.equal(jose.decodeProtectedHeader(rp.trustMark).typ, "trust-mark+jwt");
+
+    const trustAnchorKey = JSON.parse(fs.readFileSync(path.join(__dirname, "metadata", "ta-federation.jwks"), "utf8")).keys[0];
+    const publicKey = await jose.importJWK(Object.fromEntries(Object.entries(trustAnchorKey)
+        .filter(([name]) => !["d", "p", "q", "dp", "dq", "qi"].includes(name))), "RS256");
+    const statusOf = async (trustMark) => {
+        const response = await cas.doRequest(statusEndpoint, "POST", {"Content-Type": "application/x-www-form-urlencoded"}, 200,
+            new URLSearchParams({trust_mark: trustMark}).toString());
+        const {payload} = await jose.jwtVerify(response, publicKey, {issuer: TRUST_ANCHOR, typ: "trust-mark-status-response+jwt"});
+        assert.equal(payload.trust_mark, trustMark);
+        return payload.status;
+    };
+    assert.equal(await statusOf(rp.trustMark), "active");
+    const revoked = await issueRelyingPartyTrustMark(path.join(__dirname, "metadata", "ta-federation.jwks"), "https://localhost:9862");
+    assert.equal(await statusOf(revoked), "revoked");
+
+    await cas.doRequest(`${federationEntity.federation_trust_mark_endpoint}?${
+        new URLSearchParams({trust_mark_type: RELYING_PARTY_TRUST_MARK, sub: "https://localhost:9862"})}`, "GET", {}, 404);
 }
 
 async function verifySubordinateListing() {
@@ -257,6 +301,7 @@ async function verifyKeyRollover(page, rp, op) {
         const page = await cas.newPage(browser);
         await verifySubordinateListing();
         await verifyTrustMarkIssuers();
+        await verifyTrustMarkIssuance(rp);
         await verifyOpEntityConfiguration();
         await verifyOffaDiscovery(page);
         await verifyOffaLogin(page);

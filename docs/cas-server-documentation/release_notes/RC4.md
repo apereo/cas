@@ -418,6 +418,20 @@ one-time codes can be added when `cas.authn.mfa.simple.mail.accepted-email-patte
   its delegation checked when the trust anchor names an owner of the type, and its status asked of the issuer when it
   publishes a status endpoint. A CAS trust anchor publishes the issuers it accepts, defined with
   `cas.authn.oidc.federation.trust-mark-issuers`{: .cas-setting}.
+- {: .new data-area="oidc"} CAS can act as an [OpenID Federation trust mark issuer](../authentication/OIDC-Authentication-Federation.html#trust-mark-issuer)
+  in any role: the trust mark types it issues and the entities each is issued to are defined with
+  `cas.authn.oidc.federation.issued-trust-marks`{: .cas-setting}, and CAS publishes the trust mark, trust mark status and
+  trust marked entities listing endpoints. Removing an entity from a type revokes its trust marks of that type. A trust
+  anchor also publishes the owners of delegated trust mark types, defined with
+  `cas.authn.oidc.federation.trust-mark-owners`{: .cas-setting}.
+- {: .fixed data-area="oidc"} [OpenID Federation](../authentication/OIDC-Authentication-Federation.html#automatic-registration)
+  relying parties are only registered through trust chains that satisfy the constraints of their subordinate
+  statements: maximum path length, naming constraints and allowed entity types; the same applies to the trust chains of
+  the issuers of their trust marks. Those constraints used to be ignored.
+- {: .new data-area="oidc"} An [OpenID Federation](../authentication/OIDC-Authentication-Federation.html#automatic-registration)
+  relying party can send its trust chain in its request object or client assertion, which CAS verifies and uses instead
+  of resolving the relying party, unless it is older than the current registration. Relying parties whose metadata
+  names no `application_type` are registered as `web` applications; their registration used to fail.
 - {: .new data-area="oidc"} An [OpenID Federation](../authentication/OIDC-Authentication-Federation.html#automatic-registration)
   relying party that rolls its keys over is no longer refused until its registration expires: a request object or
   client assertion signed with a key its registration does not hold has CAS resolve the relying party again, at most
