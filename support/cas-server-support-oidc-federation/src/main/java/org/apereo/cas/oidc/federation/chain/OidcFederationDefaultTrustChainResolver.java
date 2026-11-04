@@ -13,13 +13,25 @@ import org.apereo.cas.services.RegisteredServiceContact;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
+import com.nimbusds.jose.JOSEObjectType;
+import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.jwk.JWK;
 import com.nimbusds.jose.jwk.JWKSet;
+import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
+import com.nimbusds.jose.proc.DefaultJOSEObjectTypeVerifier;
+import com.nimbusds.jose.proc.JWSVerificationKeySelector;
+import com.nimbusds.jose.proc.SecurityContext;
+import com.nimbusds.jwt.JWTClaimNames;
+import com.nimbusds.jwt.JWTClaimsSet;
+import com.nimbusds.jwt.proc.DefaultJWTClaimsVerifier;
+import com.nimbusds.jwt.proc.DefaultJWTProcessor;
 import com.nimbusds.oauth2.sdk.GrantType;
 import com.nimbusds.oauth2.sdk.ResponseType;
 import com.nimbusds.oauth2.sdk.auth.ClientAuthenticationMethod;
+import com.nimbusds.oauth2.sdk.http.HTTPRequest;
 import com.nimbusds.openid.connect.sdk.federation.entities.CommonFederationClaimsSet;
 import com.nimbusds.openid.connect.sdk.federation.entities.EntityID;
+import com.nimbusds.openid.connect.sdk.federation.entities.EntityStatement;
 import com.nimbusds.openid.connect.sdk.federation.entities.EntityType;
 import com.nimbusds.openid.connect.sdk.federation.trust.DefaultEntityStatementRetriever;
 import com.nimbusds.openid.connect.sdk.federation.trust.TrustChain;
@@ -59,6 +71,14 @@ public class OidcFederationDefaultTrustChainResolver implements OidcFederationTr
      * configuration of the relying party that the registration was built from was issued.
      */
     public static final String OPENIDFEDERATION_ENTITY_CONFIGURATION_ISSUED_AT = "OPENIDFEDERATION_ENTITY_CONFIGURATION_ISSUED_AT";
+
+    private static final String HISTORICAL_KEYS_ENDPOINT = "federation_historical_keys_endpoint";
+
+    private static final JOSEObjectType HISTORICAL_KEYS_TYPE = new JOSEObjectType("jwk-set+jwt");
+
+    private static final String KEYS = "keys";
+
+    private static final int HISTORICAL_KEYS_TIMEOUT_MILLIS = 5000;
 
     /**
      * Client authentication methods an automatically registered client may use: asymmetric cryptography is required,
@@ -352,7 +372,8 @@ public class OidcFederationDefaultTrustChainResolver implements OidcFederationTr
      */
     protected Optional<TrustChainMetadata> toRelyingPartyMetadata(final TrustChainResolver trustChainResolver, final TrustChain chain) {
         return FunctionUtils.doAndHandle(() -> {
-            if (!trustMarkValidator.hasRequiredTrustMarks(trustChainResolver, chain)) {
+            if (isSignedWithRevokedTrustAnchorKey(trustChainResolver, chain)
+                || !trustMarkValidator.hasRequiredTrustMarks(trustChainResolver, chain)) {
                 return Optional.<TrustChainMetadata>empty();
             }
             val metadataPolicy = chain.resolveCombinedMetadataPolicy(EntityType.OPENID_RELYING_PARTY);
@@ -363,6 +384,80 @@ public class OidcFederationDefaultTrustChainResolver implements OidcFederationTr
             return Optional.of(new TrustChainMetadata(OIDCClientMetadata.parse(clientMetadataJson),
                 chain.resolveExpirationTime(), chain.getLeafConfiguration().getClaimsSet().getIssueTime()));
         }, e -> Optional.<TrustChainMetadata>empty()).get();
+    }
+
+    /**
+     * Whether the trust anchor signed its statements in the chain with a key it has since revoked (OpenID Federation 1.0,
+     * section 8.7), as published by its federation historical keys endpoint. The keys a trust anchor is trusted with
+     * out of band may still list a key it has revoked; its historical keys are verified with those keys, and the
+     * entity configuration that advertises them comes from the chain or is fetched. When the trust anchor publishes no
+     * historical keys, or they cannot be obtained or verified, the chain is not refused on that account, which is
+     * reported in the logs.
+     *
+     * @param trustChainResolver the trust chain resolver of the trust anchor of the chain
+     * @param chain              the trust chain
+     * @return true or false
+     */
+    protected boolean isSignedWithRevokedTrustAnchorKey(final TrustChainResolver trustChainResolver, final TrustChain chain) {
+        val trustAnchorId = chain.getTrustAnchorEntityID();
+        try {
+            val trustAnchorKeys = trustChainResolver.getTrustAnchors().get(trustAnchorId);
+            val configuration = Objects.requireNonNullElseGet(chain.getTrustAnchorConfiguration(),
+                Unchecked.supplier(() -> trustChainResolver.getEntityStatementRetriever().fetchEntityConfiguration(trustAnchorId)));
+            if (trustAnchorKeys == null) {
+                configuration.verifySignatureOfSelfStatement();
+            } else {
+                configuration.verifySignature(trustAnchorKeys);
+            }
+            val federationEntity = configuration.getClaimsSet().getMetadata(EntityType.FEDERATION_ENTITY);
+            val endpoint = federationEntity == null ? null : federationEntity.get(HISTORICAL_KEYS_ENDPOINT);
+            if (endpoint == null) {
+                return false;
+            }
+            val revokedKeys = fetchRevokedKeys(endpoint.toString(), trustAnchorId,
+                Objects.requireNonNullElseGet(trustAnchorKeys, () -> configuration.getClaimsSet().getJWKSet()));
+            val statements = new ArrayList<EntityStatement>();
+            statements.add(chain.getSuperiorStatements().getLast());
+            FunctionUtils.doIfNotNull(chain.getTrustAnchorConfiguration(), statements::add);
+            val revoked = statements.stream()
+                .map(statement -> statement.getSignedStatement().getHeader().getKeyID())
+                .filter(Objects::nonNull)
+                .anyMatch(revokedKeys::contains);
+            if (revoked) {
+                LOGGER.warn("Trust chain of [{}] is signed with a key that trust anchor [{}] has revoked",
+                    chain.getLeafConfiguration().getEntityID(), trustAnchorId);
+            }
+            return revoked;
+        } catch (final Exception e) {
+            LOGGER.warn("Unable to check the revoked keys of trust anchor [{}]: [{}]", trustAnchorId, e.getMessage());
+            return false;
+        }
+    }
+
+    private static Set<String> fetchRevokedKeys(final String endpoint, final EntityID trustAnchorId, final JWKSet trustAnchorKeys)
+            throws Exception {
+        val request = new HTTPRequest(HTTPRequest.Method.GET, new URI(endpoint));
+        request.setConnectTimeout(HISTORICAL_KEYS_TIMEOUT_MILLIS);
+        request.setReadTimeout(HISTORICAL_KEYS_TIMEOUT_MILLIS);
+        val response = request.send();
+        if (!response.indicatesSuccess()) {
+            throw new IllegalStateException("Historical keys endpoint " + endpoint + " answered " + response.getStatusCode());
+        }
+        val processor = new DefaultJWTProcessor<SecurityContext>();
+        processor.setJWSTypeVerifier(new DefaultJOSEObjectTypeVerifier<>(HISTORICAL_KEYS_TYPE));
+        processor.setJWSKeySelector(new JWSVerificationKeySelector<>(Set.copyOf(JWSAlgorithm.Family.SIGNATURE),
+            new ImmutableJWKSet<>(trustAnchorKeys)));
+        processor.setJWTClaimsSetVerifier(new DefaultJWTClaimsVerifier<>(
+            new JWTClaimsSet.Builder().issuer(trustAnchorId.getValue()).build(), Set.of(JWTClaimNames.ISSUER, JWTClaimNames.ISSUED_AT, KEYS)));
+        val claims = processor.process(response.getBody(), null);
+        val now = new Date();
+        return JWKSet.parse(Map.<String, Object>of(KEYS, claims.getListClaim(KEYS)))
+            .getKeys()
+            .stream()
+            .filter(key -> key.getKeyRevocation() != null && !key.getKeyRevocation().getRevocationTime().after(now))
+            .map(JWK::getKeyID)
+            .filter(Objects::nonNull)
+            .collect(Collectors.toSet());
     }
 
     protected record TrustChainMetadata(OIDCClientMetadata metadata, Date expirationTime, Date issuedAt) {

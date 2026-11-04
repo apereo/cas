@@ -424,6 +424,11 @@ one-time codes can be added when `cas.authn.mfa.simple.mail.accepted-email-patte
   trust marked entities listing endpoints. Removing an entity from a type revokes its trust marks of that type. A trust
   anchor also publishes the owners of delegated trust mark types, defined with
   `cas.authn.oidc.federation.trust-mark-owners`{: .cas-setting}.
+- {: .new data-area="oidc"} An [OpenID Federation key](../authentication/OIDC-Authentication-Federation.html#key-rollover)
+  can be revoked through the `oidcFederationJwks` actuator endpoint, for instance when it is compromised: it leaves the
+  entity configuration at once and is published as a historical key marked `revoked`, with the time and the reason.
+  When registering a relying party, a CAS OpenID provider does not use trust chains that its trust anchor signed with a
+  key the trust anchor's historical keys mark revoked.
 - {: .fixed data-area="oidc"} [OpenID Federation](../authentication/OIDC-Authentication-Federation.html#automatic-registration)
   relying parties are only registered through trust chains that satisfy the constraints of their subordinate
   statements: maximum path length, naming constraints and allowed entity types; the same applies to the trust chains of
@@ -659,9 +664,9 @@ one-time codes can be added when `cas.authn.mfa.simple.mail.accepted-email-patte
   protected endpoints, such as actuator endpoints and the [MCP server](../installation/Admin-MCP-Server.html), to the CAS
   login page; they challenge for their own credentials again, as API clients expect, and only Palantir redirects to CAS.
 
-## Other Stuff
+### Multifactor Authentication
+{: .changed data-area="mfa"}
 
-- {: .changed data-area="project"} A large number of dependencies and libraries have been updated to their latest versions.
 - {: .fixed data-area="mfa"} The Google Authenticator registration QR code includes `digits` and `period` when
   `cas.authn.mfa.gauth.core.code-digits`{: .cas-setting} or `cas.authn.mfa.gauth.core.time-step-size`{: .cas-setting} differ
   from the defaults, so authenticator apps generate codes CAS accepts.
@@ -672,11 +677,19 @@ one-time codes can be added when `cas.authn.mfa.simple.mail.accepted-email-patte
   register their event resolvers by tagging the resolver bean with an annotation; CAS collects tagged resolvers on its own, and
   resolvers no longer add themselves to the initial authentication event resolver. Custom resolvers, and beans that override a
   built-in trigger resolver, must carry the annotation.
+
+### Documentation
+{: .changed data-area="docs"}
+
 - {: .changed data-area="docs"} The [SPNEGO](../authentication/SPNEGO-Authentication.html) settings explain that
   `cas.authn.spnego.properties[0].jcifs-service-password`{: .cas-setting} is only used when
   `cas.authn.spnego.system.use-subject-creds-only`{: .cas-setting} is `true` (otherwise the service keys come from a keytab),
   and that setting both the Kerberos KDC and realm makes the JDK ignore the Kerberos configuration file.
 - {: .fixed data-area="docs"} Setting lists show default values in full instead of cutting them off; where a list is narrow, the
   value moves to a second row under the setting name. Each setting in the configuration catalog also has a *Copy link* button.
+
+## Other Stuff
+
+- {: .changed data-area="project"} A large number of dependencies and libraries have been updated to their latest versions.
 
 {% include release-footer.html %}

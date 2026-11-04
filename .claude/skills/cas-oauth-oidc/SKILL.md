@@ -162,6 +162,17 @@ description: "Review and change CAS OAuth2/OIDC protocol behavior: token endpoin
   `openid_relying_party` for RPs) to resolved chains (filtered before `getShortest`), sent chains and trust mark issuer
   chains. Tests that mock `TrustChainSet` break this filtering (`stream()` of a mock is empty): use a real set holding a
   mocked `TrustChain`, whose `getSuperiorStatements()` defaults to an empty list.
+- Federation key revocation (section 8.7): `OidcFederationJsonWebKeystoreService.revokeKey(kid, reason)` and the
+  actuator `POST oidcFederationJwks/revoke/{kid}?reason=` (404 for an unknown kid). Revoked keys keep a jose4j other
+  parameter `revoked` = {`revoked_at`, `reason`}, which nimbus `JWK.parse` maps to `KeyRevocation` on the historical keys
+  endpoint (the lifecycle `state` is dropped there). Revoking the current key promotes the future key (or generates a
+  current one) and adds a future key when none is left; retiring with `revoke()` never sets `revoked`.
+- Receiving side (Misagh chose: trust anchor only, fail-open): `OidcFederationDefaultTrustChainResolver
+  .isSignedWithRevokedTrustAnchorKey` runs in `toRelyingPartyMetadata` (resolved and sent chains). It takes the TA EC
+  from the chain or the retriever (verified with the out-of-band keys), GETs its `federation_historical_keys_endpoint`
+  (5 s), verifies the `jwk-set+jwt` with the out-of-band keys, and refuses chains whose TA-issued statement (or TA EC)
+  `kid` is revoked by now. Failures only log a warning. Intermediates' and leaves' revocations are not checked (would need
+  their entity configurations, which chains do not carry).
 - Trust mark issuer: `OidcFederationDefaultTrustMarkIssuer` behind `OidcTrustMarkFederationEndpointController`
   (`/federation_trust_mark` GET, `/federation_trust_mark_status` POST, `/federation_trust_mark_list` GET; all roles,
   unauthenticated, in the federation `CasWebSecurityConfigurer` ignored endpoints). Misagh chose properties as the

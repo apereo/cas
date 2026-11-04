@@ -357,6 +357,52 @@ class OidcFederationDefaultTrustChainResolverTests {
             assertTrue(resolver.resolveTrustChains(RELYING_PARTY, trustAnchorExcludesIntermediate).isEmpty());
         }
 
+        /**
+         * The keys a trust anchor is trusted with out of band may still list a key it has since revoked (section 8.7):
+         * a chain whose trust anchor statement is signed with it is refused. Keys that are only expired, and historical
+         * keys that cannot be obtained or verified, do not refuse the chain.
+         */
+        @Test
+        void verifyTrustAnchorKeyRevokedInHistoricalKeys() throws Exception {
+            val chain = List.of(relyingPartyConfiguration(), statement(trustAnchorKey, TRUST_ANCHOR, RELYING_PARTY, relyingPartyKey, 0));
+            val now = Instant.now(Clock.systemUTC());
+            val revokedKey = new JSONObject(trustAnchorKey.toPublicJWK().toJSONObject());
+            revokedKey.put("exp", now.getEpochSecond());
+            revokedKey.put("revoked", Map.of("revoked_at", now.minusSeconds(60).getEpochSecond(), "reason", "compromised"));
+            val expiredKey = new JSONObject(trustAnchorKey.toPublicJWK().toJSONObject());
+            expiredKey.put("exp", now.getEpochSecond());
+
+            try (val webServer = new MockWebServer(new ByteArrayResource(historicalKeys(trustAnchorKey, revokedKey).getBytes(StandardCharsets.UTF_8)),
+                "application/jwk-set+jwt")) {
+                webServer.start();
+                val endpoint = "http://localhost:%s/federation_historical_keys".formatted(webServer.getPort());
+                when(retriever.fetchEntityConfiguration(new EntityID(TRUST_ANCHOR))).thenReturn(EntityStatement.parse(
+                    entityConfiguration(TRUST_ANCHOR, trustAnchorKey, Map.of("metadata", Map.of(EntityType.FEDERATION_ENTITY.getValue(),
+                        Map.of("federation_historical_keys_endpoint", endpoint))))));
+                val resolver = resolver(new JWKSet(trustAnchorKey.toPublicJWK()), new TrustChainConstraints(3));
+                assertTrue(resolver.resolveTrustChains(RELYING_PARTY, chain).isEmpty());
+
+                webServer.responseBody(historicalKeys(trustAnchorKey, expiredKey));
+                assertTrue(resolver.resolveTrustChains(RELYING_PARTY, chain).isPresent());
+                webServer.responseBody(historicalKeys(generateKey("ta"), revokedKey));
+                assertTrue(resolver.resolveTrustChains(RELYING_PARTY, chain).isPresent());
+            }
+            assertTrue(resolver(new JWKSet(trustAnchorKey.toPublicJWK()), new TrustChainConstraints(3))
+                .resolveTrustChains(RELYING_PARTY, chain).isPresent());
+        }
+
+        private String historicalKeys(final RSAKey signingKey, final Map<String, Object> key) throws Exception {
+            val claims = new JWTClaimsSet.Builder()
+                .issuer(TRUST_ANCHOR)
+                .issueTime(new Date())
+                .claim("keys", List.of(key))
+                .build();
+            val jwt = new SignedJWT(new JWSHeader.Builder(JWSAlgorithm.RS256).keyID(signingKey.getKeyID())
+                .type(new JOSEObjectType("jwk-set+jwt")).build(), claims);
+            jwt.sign(new RSASSASigner(signingKey));
+            return jwt.serialize();
+        }
+
         private OidcFederationDefaultTrustChainResolver resolver(@Nullable final JWKSet trustAnchorKeys, final TrustChainConstraints constraints) {
             val trustAnchors = new HashMap<EntityID, JWKSet>();
             trustAnchors.put(new EntityID(TRUST_ANCHOR), trustAnchorKeys);

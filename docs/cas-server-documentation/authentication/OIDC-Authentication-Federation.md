@@ -260,8 +260,16 @@ keystore and go through the same lifecycle as the [OpenID Connect keys](OIDC-Aut
   as historical keys, with the time they were retired as their expiration.
 - Every role publishes its historical keys at the federation historical keys endpoint, advertised in its
   entity configuration, as a JWK set signed with the current key.
+- A key can also be revoked, for instance when its private key is believed compromised. A key that is still published
+  leaves the entity configuration at once and is published as a historical key that expires at the time of the
+  revocation and is marked `revoked`, with that time and the reason, such as `compromised`, `superseded` or a reason
+  defined by the federation. A key that was already retired keeps its expiration and is marked revoked as well. When the
+  revoked key was signing, the future key starts signing, or a new key when there is none, and a new future key is
+  published. A key that signs without having been published before is unknown to superiors until they update their
+  subordinate statements about CAS.
 
-Rotation and revocation can run on a schedule, which can be defined using CAS properties, or be triggered on demand:
+Rotation and revocation can run on a schedule, which can be defined using CAS properties, or be triggered on demand,
+which is also how a key is revoked:
 
 {% include_cached actuators.html endpoints="oidcFederationJwks" casModule="cas-server-support-oidc-federation" %}
 
@@ -311,6 +319,10 @@ registration step:
   intermediates below the entity that sets them, the permitted and excluded domain names of the entities below it, and
   the entity types they may have, which must include `openid_relying_party`. A trust chain that breaks any of them is
   not used. The trust chains of trust mark issuers are held to the same constraints, except for entity types.
+- The keys a trust anchor is trusted with out of band may still list a key the trust anchor has since revoked. When the
+  trust anchor publishes its historical keys, CAS reads them, verified with those keys, and does not use a trust chain
+  in which the trust anchor signed with a key it marks revoked. When the historical keys cannot be obtained or verified,
+  the trust chain is still used and the problem is reported in the logs.
 - Resolving trust chains is bounded: CAS follows a limited number of authority hints from any entity configuration and
   accepts a limited number of intermediates between the relying party and a trust anchor, and an entity identifier
   whose trust chains could not be resolved is not resolved again for a while. Meanwhile, a registration that could not

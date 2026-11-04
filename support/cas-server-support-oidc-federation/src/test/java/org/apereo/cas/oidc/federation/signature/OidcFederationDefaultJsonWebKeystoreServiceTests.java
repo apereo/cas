@@ -7,6 +7,7 @@ import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import com.nimbusds.jose.jwk.JWK;
 import com.nimbusds.jose.jwk.JWKSet;
+import com.nimbusds.jose.jwk.KeyRevocation;
 import com.nimbusds.jose.jwk.gen.RSAKeyGenerator;
 import com.nimbusds.openid.connect.sdk.federation.entities.EntityID;
 import com.nimbusds.openid.connect.sdk.federation.entities.EntityStatementClaimsSet;
@@ -114,6 +115,46 @@ class OidcFederationDefaultJsonWebKeystoreServiceTests {
             assertEquals(initial.get(1), signingKeyId(reloaded));
         }
 
+        /**
+         * A revoked key (section 8.7) leaves the published keys at once and is published as a revoked historical key; a
+         * key already retired keeps its expiration and is marked revoked as well.
+         */
+        @Test
+        void verifyRevocationOfCompromisedKeys() throws Exception {
+            val file = new File(directory, "compromised.jwks");
+            val service = newService(file);
+            val initial = keyIds(service.toJWKSet());
+            assertTrue(service.revokeKey("unknown", "compromised").isEmpty());
+
+            val published = keyIds(service.revokeKey(initial.getFirst(), "compromised").orElseThrow());
+            assertEquals(2, published.size());
+            assertFalse(published.contains(initial.getFirst()));
+            assertEquals(initial.get(1), signingKeyId(service));
+            val revoked = service.getHistoricalKeys().getFirst();
+            assertEquals(initial.getFirst(), revoked.getKeyID());
+            assertEquals(KeyRevocation.Reason.COMPROMISED, revoked.getKeyRevocation().getReason());
+            assertNotNull(revoked.getKeyRevocation().getRevocationTime());
+            assertNotNull(revoked.getExpirationTime());
+            assertFalse(revoked.isPrivate());
+
+            service.rotate();
+            service.revoke();
+            val retired = findHistoricalKey(service, initial.get(1));
+            assertNull(retired.getKeyRevocation());
+            assertTrue(service.revokeKey(initial.get(1), null).isPresent());
+            val revokedLater = findHistoricalKey(newService(file), initial.get(1));
+            assertNotNull(revokedLater.getKeyRevocation());
+            assertNull(revokedLater.getKeyRevocation().getReason());
+            assertEquals(retired.getExpirationTime(), revokedLater.getExpirationTime());
+
+            val legacyFile = new File(directory, "single.jwks");
+            FileUtils.writeStringToFile(legacyFile, new JWKSet(new RSAKeyGenerator(2048).keyID("single").generate()).toString(false),
+                StandardCharsets.UTF_8);
+            val legacy = newService(legacyFile);
+            assertEquals(2, keyIds(legacy.revokeKey("single", "superseded").orElseThrow()).size());
+            assertNotEquals("single", signingKeyId(legacy));
+        }
+
         @Test
         void verifyKeystoreWithoutFutureKeyRotatesInTwoSteps() throws Exception {
             val file = new File(directory, "legacy.jwks");
@@ -132,6 +173,10 @@ class OidcFederationDefaultJsonWebKeystoreServiceTests {
             val properties = new OidcProperties();
             properties.getFederation().setJwksFile("file:" + file.getAbsolutePath());
             return new OidcFederationDefaultJsonWebKeystoreService(properties);
+        }
+
+        private static JWK findHistoricalKey(final OidcFederationJsonWebKeystoreService service, final String keyId) {
+            return service.getHistoricalKeys().stream().filter(key -> keyId.equals(key.getKeyID())).findFirst().orElseThrow();
         }
 
         private static List<String> keyIds(final JWKSet keys) {

@@ -320,6 +320,7 @@ class OidcWellKnownFederationEndpointControllerTests {
             val revoked = fetchEntityConfiguration();
             assertFalse(keyIds(revoked).contains(retiringKey));
             assertEquals(HttpStatus.OK, oidcFederationJwksEndpoint.keys().getStatusCode());
+            assertEquals(HttpStatus.NOT_FOUND, oidcFederationJwksEndpoint.revokeKey("unknown", "compromised").getStatusCode());
 
             val result = mockMvc.perform(get("/cas/" + OidcConstants.BASE_OIDC_URL + OidcConstants.HISTORICAL_KEYS_FEDERATION_URL)
                     .with(withHttpRequestProcessor()))
