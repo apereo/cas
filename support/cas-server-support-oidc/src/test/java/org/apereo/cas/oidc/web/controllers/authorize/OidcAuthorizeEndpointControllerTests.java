@@ -51,6 +51,28 @@ class OidcAuthorizeEndpointControllerTests {
             assertEquals(HttpStatus.FORBIDDEN.value(), result.getResponse().getStatus());
         }
 
+        /**
+         * Pushed authorization requests are required at every path that reaches the authorization endpoint, an encoded
+         * one, one with path parameters or the OAuth one under the OpenID Connect base path included, for a valid
+         * authorization request of a registered client.
+         */
+        @Test
+        void verifyEncodedAndOAuthEndpointRequests() throws Exception {
+            val id = UUID.randomUUID().toString();
+            servicesManager.save(getOidcRegisteredService(id));
+            for (val uri : List.of("/cas/oidc/oidcAuthoriz%65", "/cas/oidc/" + OidcConstants.AUTHORIZE_URL + ";x=y",
+                "/cas/oidc/" + OAuth20Constants.AUTHORIZE_URL)) {
+                val result = mockMvc.perform(get(URI.create(uri))
+                        .param(OAuth20Constants.CLIENT_ID, id)
+                        .param(OAuth20Constants.REDIRECT_URI, "https://oauth.example.org/callback")
+                        .param(OAuth20Constants.RESPONSE_TYPE, OAuth20Constants.CODE)
+                        .param(OAuth20Constants.SCOPE, OidcConstants.StandardScopes.OPENID.getScope())
+                        .with(withHttpRequestProcessor()))
+                    .andReturn();
+                assertEquals(HttpStatus.FORBIDDEN.value(), result.getResponse().getStatus(), uri);
+            }
+        }
+
     }
 
     @Nested

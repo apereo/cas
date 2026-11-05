@@ -156,7 +156,7 @@ public class OidcWellKnownFederationEndpointController extends AbstractOidcFeder
             federationMetadata.put(parameter, authentication == OidcFederationEndpointAuthenticationModes.REQUIRED
                 ? List.of(PRIVATE_KEY_JWT)
                 : List.of(NO_CLIENT_AUTHENTICATION, PRIVATE_KEY_JWT));
-            federationMetadata.put(ENDPOINT_AUTH_SIGNING_ALG_VALUES_SUPPORTED, OidcFederationSubordinateClientAuthenticator.SIGNING_ALGORITHMS);
+            federationMetadata.put(ENDPOINT_AUTH_SIGNING_ALG_VALUES_SUPPORTED, OidcFederationSubordinateClientAuthenticator.getSigningAlgorithms());
         }
     }
 

@@ -118,8 +118,14 @@ public class OidcClientConfigurationEndpointController extends BaseOidcControlle
                 val registrationRequest = (OidcClientRegistrationRequest) getConfigurationContext()
                     .getClientRegistrationRequestSerializer().from(jsonInput);
                 LOGGER.debug("Received client registration request [{}]", registrationRequest);
-                service = getConfigurationContext().getClientRegistrationRequestTranslator()
-                    .translate(registrationRequest, Optional.of(service));
+                try {
+                    service = getConfigurationContext().getClientRegistrationRequestTranslator()
+                        .translate(registrationRequest, Optional.of(service));
+                } catch (final IllegalArgumentException e) {
+                    LOGGER.warn("Client metadata update of [{}] is refused: [{}]", clientId, e.getMessage());
+                    val body = OAuth20Utils.getErrorResponseBody("invalid_client_metadata", "Unable to accept client metadata");
+                    return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+                }
             }
             val secretUpdated = processClientSecretExpirationIfAny(service);
             if (StringUtils.isNotBlank(jsonInput) || secretUpdated) {

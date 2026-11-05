@@ -1,6 +1,7 @@
 package org.apereo.cas.oidc.jwks;
 
 import module java.base;
+import org.apereo.cas.oidc.dynareg.DefaultOidcClientIdMetadataDocumentFetcher;
 import org.apereo.cas.oidc.token.OidcRegisteredServiceJwtCipherExecutor;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.RegisteredService;
@@ -33,6 +34,7 @@ import org.jspecify.annotations.Nullable;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
+import org.springframework.core.io.UrlResource;
 
 /**
  * This is {@link OidcJsonWebKeyStoreUtils}.
@@ -48,6 +50,8 @@ public class OidcJsonWebKeyStoreUtils {
     private static final int JWK_EC_P512_SIZE = 512;
 
     private static final int JWK_EC_P521_SIZE = 521;
+
+    private static final int REMOTE_KEYS_TIMEOUT_MILLIS = 5_000;
 
     /**
      * Gets json web key set.
@@ -182,10 +186,42 @@ public class OidcJsonWebKeyStoreUtils {
         return jwks.startsWith("{") ? jwks : SpringExpressionLanguageValueResolver.getInstance().resolve(jwks);
     }
 
+    /**
+     * The keystore of the application: a location the deployment defines, keys published at a URL, or keys defined
+     * inline. Keys published at an {@code http} or {@code https} URL are never requested at a link-local, unspecified or
+     * multicast address, such as the metadata service of a cloud provider, and redirects are not followed, so that a
+     * redirect cannot lead there either; addresses of private and loopback networks are allowed, since applications may
+     * run there.
+     *
+     * @param service        the service
+     * @param resourceLoader the resource loader
+     * @return the resource, or null
+     * @throws Exception when the keys cannot be located
+     */
     private static @Nullable Resource getJsonWebKeySetResource(final OidcRegisteredService service,
-                                                               final ResourceLoader resourceLoader) {
+                                                               final ResourceLoader resourceLoader)
+            throws Exception {
         val serviceJwks = resolveJsonWebKeySet(service);
         if (StringUtils.isNotBlank(serviceJwks)) {
+            if (Strings.CI.startsWithAny(serviceJwks, "http://", "https://")) {
+                val url = new URI(serviceJwks).toURL();
+                if (!DefaultOidcClientIdMetadataDocumentFetcher.isAllowedWithPrivateNetworks(url)) {
+                    LOGGER.warn("Keys of [{}] at [{}] are not requested: the host resolves to an address that is not allowed",
+                        service.getClientId(), serviceJwks);
+                    return null;
+                }
+                return new UrlResource(url) {
+                    @Override
+                    protected void customizeConnection(final URLConnection connection) throws IOException {
+                        super.customizeConnection(connection);
+                        connection.setConnectTimeout(REMOTE_KEYS_TIMEOUT_MILLIS);
+                        connection.setReadTimeout(REMOTE_KEYS_TIMEOUT_MILLIS);
+                        if (connection instanceof final HttpURLConnection httpConnection) {
+                            httpConnection.setInstanceFollowRedirects(false);
+                        }
+                    }
+                };
+            }
             if (ResourceUtils.doesResourceExist(serviceJwks)) {
                 return resourceLoader.getResource(serviceJwks);
             }

@@ -1051,9 +1051,15 @@ class OidcConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "oidcClientRegistrationRequestTranslator")
         public OidcClientRegistrationRequestTranslator oidcClientRegistrationRequestTranslator(
+            final CasConfigurationProperties casProperties,
+            @Qualifier(HttpClient.BEAN_NAME_HTTPCLIENT)
+            final HttpClient httpClient,
             @Qualifier(OidcConfigurationContext.BEAN_NAME)
             final ObjectProvider<OidcConfigurationContext> oidcConfigurationContext) {
-            return new OidcDefaultClientRegistrationRequestTranslator(oidcConfigurationContext);
+            val timeout = Beans.newDuration(casProperties.getAuthn().getOidc().getRegistration().getClientIdMetadataDocument().getTimeout());
+            return new OidcDefaultClientRegistrationRequestTranslator(oidcConfigurationContext,
+                new DefaultOidcClientIdMetadataDocumentFetcher(httpClient, timeout,
+                    OidcDefaultClientRegistrationRequestTranslator.MAXIMUM_SECTOR_IDENTIFIER_DOCUMENT_SIZE));
         }
 
         @Bean

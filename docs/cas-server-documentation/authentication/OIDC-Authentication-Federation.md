@@ -249,8 +249,8 @@ not supported with `400` and `invalid_request`.
 - Errors are answered as JSON: a missing or malformed parameter with `400` and `invalid_request`; trust anchors CAS
   does not trust with `404` and `invalid_trust_anchor`; an entity without a usable trust chain to them with `400` and
   `invalid_trust_chain`; metadata the policies of the chain cannot apply to with `400` and `invalid_metadata`; a
-  resolution that cannot start because too many are running with `503` and `temporarily_unavailable`, which is not
-  remembered. An OpenID Provider answers `404` and `not_found`.
+  resolution that cannot start because too many are running, or that cannot tell about a trust anchor that cannot be
+  reached or whose historical keys cannot be read, with `503` and `temporarily_unavailable`, which is not remembered. An OpenID Provider answers `404` and `not_found`.
 
 ## Entity Configuration
 
@@ -346,12 +346,16 @@ Rotation and revocation can run on a schedule, which can be defined using CAS pr
 which is also how a key is revoked. A scheduled run only changes keys once they are old enough, at half the time
 between two runs of its schedule: a scheduled rotation makes the future key current only once that key has been
 published that long, and a scheduled revocation retires a previous key only once it has been previous that long. A
-schedule that runs again soon after another run, on a restart or on another node, leaves the keys as they are. On
-demand, rotation and revocation apply at once:
+schedule that runs again soon after another run leaves the keys as they are: after a restart, or on another node that
+shares the keystore file and reads it after the change. Nodes whose schedules run at the very same moment may each
+change the keys, so in a cluster the schedules are best enabled on a single node. On demand, rotation and revocation
+apply at once:
 
 {% include_cached actuators.html endpoints="oidcFederationJwks" casModule="cas-server-support-oidc-federation" %}
 
-The keystore must be writable for rotation and revocation. CAS reads the keystore again when it changes, so nodes
+The keystore must be writable for rotation and revocation; CAS writes a new keystore file next to it, readable by its
+owner only where the file system allows it, which then replaces the keystore at once, so that the keystore is never
+read half written. CAS reads the keystore again when it changes, so nodes
 that share the keystore file sign with the same keys; nodes that do not share it each have their own keys, which
 superiors would all have to know. Superiors verify the entity configuration of CAS with the
 keys of their subordinate statement about it: when CAS is a subordinate, its future key should be added to the
@@ -402,7 +406,8 @@ registration step:
 - Requests that fail these checks are refused with `invalid_request` and are never redirected to the relying party.
 - The relying party that must prove its keys is the client of the authorization request: the `client_id` parameter or,
   when the request carries none, the `client_id` of its request object, on the OpenID Connect and the OAuth
-  authorization endpoints alike. A request object whose `client_id` differs from the `client_id` parameter is refused
+  authorization endpoints alike, including the OpenID Connect authorization and pushed authorization endpoints that
+  also answer outside the OpenID Connect base path, whatever the encoding of the path. A request object whose `client_id` differs from the `client_id` parameter is refused
   for every client, as [OpenID Connect](https://openid.net/specs/openid-connect-core-1_0.html#RequestObject) requires.
 - The constraints that trust anchors and intermediates set in their subordinate statements apply to every trust chain
   of a relying party, whether resolved or sent, as
@@ -423,9 +428,11 @@ registration step:
   in which the trust anchor signed with a key it marks revoked, or with a key it had already retired when it issued the
   statement. The historical keys are always found through the entity configuration CAS fetches from the trust anchor,
   never through one a trust chain sent by a relying party carries; they must be served over `https`, and each must carry
-  its expiration, as the specification requires. A trust anchor that advertises no historical keys has revoked none. When its entity configuration or the historical keys
-  it advertises cannot be obtained or verified, CAS cannot tell whether the key was revoked and does not use the trust
-  chain. Every statement of a trust chain must name the key it is signed with, as the specification requires; a trust
+  its expiration, as the specification requires. A trust anchor that advertises no historical keys has revoked none. CAS
+  keeps the historical keys of a trust anchor for a minute. When its entity configuration or the historical keys it
+  advertises cannot be obtained or verified, CAS cannot tell whether the key was revoked and does not use the trust
+  chain for now; the relying party is not remembered as unresolved on that account, so it can be registered as soon as
+  the trust anchor can be reached again. Every statement of a trust chain must name the key it is signed with, as the specification requires; a trust
   chain with a statement that does not is not used.
 - The metadata superiors assert about a relying party, and their metadata policies, apply only to the entity types
   its entity configuration publishes: an entity that publishes no `openid_relying_party` metadata is not registered,
@@ -436,9 +443,29 @@ registration step:
   be refreshed is kept as it is. Each resolution sends a limited number of requests, 50 by default, counting entity
   configurations, subordinate statements, historical keys and trust mark status requests together, including those for
   the issuers of its trust marks; a statement fetched once is reused within the same resolution, and a resolution that
-  needs more fails. A limited number of resolutions run at the same time, 10 by default, for automatic registration and
-  the resolve endpoint together; one that cannot start within a few seconds fails without the entity being remembered
-  as unresolved. These limits can be tuned using CAS properties.
+  needs more fails. The historical keys of trust anchors are not counted. Each resolution must also be done within a
+  limited time, 10 seconds by default, all of its requests together, however slowly the other side answers, and every
+  response is limited in size; the time limit covers each whole request, from the host name lookup and the TLS handshake
+  to the last byte of the response. Requests are only sent over `https`, never to link-local, unspecified or multicast
+  addresses such as the metadata service of a cloud provider, including such addresses embedded in IPv6 addresses, use
+  the TLS settings of CAS and do not follow redirects. Addresses are checked when CAS connects directly; requests sent
+  through an HTTPS proxy of the JVM are resolved by the proxy, which then decides where they may go. A limited number of
+  requests run at the same time, those abandoned at the deadline included. A trust anchor that does not answer in the
+  time a request is given is treated as unreachable, while a request that the resolution no longer had the time for says
+  nothing about its host. A limited number of resolutions run at the same time, 10 by default, for automatic
+  registration and the resolve endpoint together; one that cannot start within a second fails without the entity being
+  remembered as unresolved, and so does a registration that cannot get its turn within a few seconds. Using the trust
+  chain a relying party sent and, when it cannot be used, resolving its trust chains is a single resolution, within one
+  time limit and request budget. A relying party that is not registered yet and cannot be registered for now is answered
+  with `temporarily_unavailable` rather than as an unknown client. These limits can be tuned using CAS properties.
+- A relying party whose metadata asks for pairwise subject identifiers receives them, calculated with a salt that can be
+  defined using CAS properties, so that they stay the same whenever the relying party is registered again and are
+  shared by relying parties of the same sector; the salt is never written into its registration. Without that salt, such
+  a relying party is not registered. Its sector must be its own: its sector identifier URI, when it has one, must be an
+  `https` URL, is fetched as a request of the resolution and must list all of its redirect URIs, and without one, its
+  redirect URIs must all be on the same host, read as they are when identifiers are calculated. A sector identifier
+  document that cannot be fetched for now leaves the relying party unregistered for now, without remembering it as
+  unresolved, and its other trust anchors are tried.
 - A relying party may send its trust chain in the `trust_chain` header of its request object or client assertion, as
   [OpenID Federation](https://openid.net/specs/openid-federation-1_0.html#section-12.1.1.1) allows. Whenever CAS would
   resolve the relying party, to register it, to refresh its registration or after a key rollover, it uses that chain
@@ -474,7 +501,8 @@ them, the entity configuration of the relying party must carry a trust mark of t
 - verifies with the federation keys of its issuer: the trust anchor's own keys, or the keys of the issuer's entity
   configuration, whose trust chain must end at the same trust anchor. A trust mark signed with a key the issuer has
   since retired verifies with that key as the issuer's historical keys publish it, provided the key was never revoked
-  and the trust mark was issued before the key was retired;
+  and the trust mark was issued before the key was retired. The historical keys of an issuer are kept for a minute,
+  except when a resolution could not request them because it had used up its requests or its time;
 - carries a valid `delegation` from the owner of the type, when the trust anchor names one in `trust_mark_owners`;
 - is reported `active` by the issuer's trust mark status endpoint, when the issuer publishes one; the endpoint must be
   an `https` URL.

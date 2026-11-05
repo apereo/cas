@@ -14,6 +14,7 @@ import com.nimbusds.jose.crypto.MACVerifier;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.JWTParser;
 import com.nimbusds.jwt.SignedJWT;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
@@ -26,6 +27,7 @@ import jakarta.servlet.http.HttpServletRequest;
  * @author Misagh Moayyed
  * @since 8.0.0
  */
+@Slf4j
 public class OidcRequestParameterResolver extends DefaultOAuth20RequestParameterResolver {
     private final OidcRequestObjectDecrypter requestObjectDecrypter;
 
@@ -43,7 +45,9 @@ public class OidcRequestParameterResolver extends DefaultOAuth20RequestParameter
      * secrets of the client (OpenID Connect Core 1.0, sections 6.1 and 10.1): its secrets that the client secret validator
      * does not consider expired, decoded with the cipher of the validator, whose
      * octets are at least as long as the hash output of the algorithm (RFC 7518, section 3.2). Request objects signed
-     * otherwise are verified with the keys of the client, as the default resolver does.
+     * otherwise are verified with the keys of the client, as the default resolver does. A request object signed with HMAC
+     * that names no registered client, or verifies with none of its secrets, is not read, so that the request is refused
+     * as an invalid request object instead of failing.
      *
      * @param registeredService the registered service of the client, if known
      * @param requestObject     the request object
@@ -56,7 +60,8 @@ public class OidcRequestParameterResolver extends DefaultOAuth20RequestParameter
             return super.unpackRequestObject(registeredService, requestObject);
         }
         if (!(registeredService instanceof final OAuthRegisteredService oauthService)) {
-            throw new IllegalArgumentException("Request object signed with a client secret names no registered client");
+            LOGGER.warn("Request object signed with a client secret names no registered client");
+            return null;
         }
         val minimumLength = Unchecked.supplier(() -> MACSigner.getMinRequiredSecretLength(signedJwt.getHeader().getAlgorithm())).get() / Byte.SIZE;
         val verified = oauthService.getClientSecrets()
@@ -69,7 +74,8 @@ public class OidcRequestParameterResolver extends DefaultOAuth20RequestParameter
             .filter(secret -> secret.length >= minimumLength)
             .anyMatch(Unchecked.predicate(secret -> signedJwt.verify(new MACVerifier(secret))));
         if (!verified) {
-            throw new IllegalArgumentException("Request object does not verify with a client secret of " + oauthService.getClientId());
+            LOGGER.warn("Request object does not verify with a client secret of [{}]", oauthService.getClientId());
+            return null;
         }
         return Unchecked.supplier(signedJwt::getJWTClaimsSet).get();
     }

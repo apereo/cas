@@ -3,6 +3,7 @@ package org.apereo.cas.oidc.jwks;
 import module java.base;
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.oidc.jwks.generator.OidcJsonWebKeystoreGeneratorService;
+import org.apereo.cas.util.MockWebServer;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.jose4j.jwk.EcJwkGenerator;
@@ -19,6 +20,8 @@ import org.jose4j.keys.EllipticCurves;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.io.ByteArrayResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -68,6 +71,33 @@ class OidcJsonWebKeyStoreUtilsTests extends AbstractOidcTests {
         } finally {
             Files.deleteIfExists(keystore);
         }
+    }
+
+    /**
+     * Keys published at a URL are read from loopback and private addresses, never from a link-local address such as
+     * the metadata service of a cloud provider, and redirects are not followed.
+     */
+    @Test
+    void verifyKeysPublishedAtUrl() throws Throwable {
+        val key = RsaJwkGenerator.generateJwk(2048);
+        key.setKeyId("published");
+        key.setUse(Use.SIGNATURE);
+        val service = getOidcRegisteredService();
+        try (val keysServer = new MockWebServer(false, new JsonWebKeySet(key).toJson());
+             val redirectingServer = new MockWebServer(false, "{}")) {
+            keysServer.start();
+            redirectingServer.start();
+            service.setJwks("http://localhost:%s/jwks".formatted(keysServer.getPort()));
+            val published = OidcJsonWebKeyStoreUtils.getJsonWebKeySet(service, applicationContext, Optional.of(OidcJsonWebKeyUsage.SIGNING));
+            assertEquals("published", published.orElseThrow().getJsonWebKeys().getFirst().getKeyId());
+
+            redirectingServer.responseStatus(HttpStatus.FOUND);
+            redirectingServer.headers(Map.of(HttpHeaders.LOCATION, "http://localhost:%s/jwks".formatted(keysServer.getPort())));
+            service.setJwks("http://localhost:%s/jwks".formatted(redirectingServer.getPort()));
+            assertTrue(OidcJsonWebKeyStoreUtils.getJsonWebKeySet(service, applicationContext, Optional.of(OidcJsonWebKeyUsage.SIGNING)).isEmpty());
+        }
+        service.setJwks("http://169.254.169.254/latest/jwks");
+        assertTrue(OidcJsonWebKeyStoreUtils.getJsonWebKeySet(service, applicationContext, Optional.of(OidcJsonWebKeyUsage.SIGNING)).isEmpty());
     }
 
     @Test

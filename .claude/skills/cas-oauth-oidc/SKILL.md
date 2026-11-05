@@ -327,24 +327,30 @@ description: "Review and change CAS OAuth2/OIDC protocol behavior: token endpoin
   configuration through the resolver's retriever: a sent chain's TA configuration may be forged with the revoked key and
   advertise no (or someone else's) historical keys endpoint. The trust mark validator's `resolveTrustAnchorConfiguration`
   also always fetches (never the chain's TA configuration), so neither check depends on the other running first. It fails closed: TA configuration or advertised historical
-  keys unobtainable/unverifiable means revoked (no endpoint advertised means none revoked); resolver tests stub the TA
+  keys unobtainable/unverifiable makes the resolution unavailable (`OidcFederationResolutionUnavailableException`, the
+  parent of the busy exception: chain not used, entity not remembered as unresolved, `503` at resolve); no endpoint
+  advertised means none revoked. The check lives in `chain/OidcFederationTrustAnchorKeys` (bean
+  `oidcFederationTrustAnchorKeys`), which keeps historical keys a minute per TA and keys and fetches them outside the
+  request budget; tests that change the served keys need a new resolver instance. Resolver tests stub the TA
   configuration (`trustAnchorPublishesNoHistoricalKeys`). `OidcRequestObjectDecrypter` drops its decryption keys on the
   keystore generated/modified/rotated events (`@EventListener`) and caches a keystore without encryption keys for at
   most a minute.
-- Resolve endpoint (spec 8.3, `resolve/OidcFederationDefaultEntityResolver`, `/oidc/resolve`, TA + intermediate, GET
-  only): TA resolves to itself, intermediate to `trust-anchors` (else authority hints). Its own EC and subordinate
+- Resolve endpoint (spec 8.3, `resolve/OidcFederationDefaultEntityResolver`, `/oidc/resolve`, TA + intermediate, GET,
+  and POST when authenticated): TA resolves to itself, intermediate to `trust-anchors` (else authority hints). Its own EC and subordinate
   statements come from `chain/OidcFederationLocalEntityStatementRetriever` (wraps the `oidcFederationEntityStatementRetriever`
   bean, swap it in tests) via the well-known/fetch controllers' `buildEntityConfiguration()`/`buildSubordinateStatement()`,
   no self-HTTP. nimbus `TrustChainResolver` chains carry no TA configuration and `TrustChain` needs at least one superior
   (a TA cannot resolve itself): fetch + verify the TA EC once and rebuild with the 3-arg constructor so `trust_chain` ends
-  with it. Resolutions/failures cached per (sub, trusted TAs) for min(retention, exp); signed per request. Trust marks via
+  with it. Resolutions/failures cached per (sub, trusted TAs) for min(retention, exp), resolved outside the Caffeine compute
+  (`getIfPresent`/`put`, never `get(key, loader)` around network calls); unavailable resolutions are not cached and
+  answer `503`; signed per request. Trust marks via
   `OidcFederationTrustMarkValidator.resolveValidTrustMarks`. Authenticated POST (8.8, `resolve-endpoint-authentication`,
   subordinates only through `OidcFederationSubordinateClientAuthenticator`) adds `aud` = requester at signing; the
   cache holds the resolution, never a signed response. `resolveMetadata` refuses entity types the leaf EC lacks
   (superior `metadata`/`value`/`default` must not create one), so resolve types come from the leaf only.
 - Client of an authorization request: validators read `client_id` from the request object first, so the federation
   interceptor uses the query `client_id`, else the request object's (also on `/oauth2.0/authorize`, registered there at
-  order 0: the OAuth interceptor at order 1 redirects to the login first, so order 50 only ran after the login),
+  order 5: the OAuth interceptor at order 10 redirects to the login first, so order 50 only ran after the login),
   and `DefaultOAuth20RequestParameterResolver` refuses a request object whose `client_id` differs from the query one
   (unpack returns null, so `isRequestObjectVerified` fails). Plain (`alg=none`) request objects are otherwise accepted by
   `JwtBuilder.unpack`; only the federation interceptor demands a signature.
@@ -380,10 +386,63 @@ description: "Review and change CAS OAuth2/OIDC protocol behavior: token endpoin
 - Resolution limits (M4, `chain/OidcFederationResolutionLimiter`): `max-requests-per-resolution` (50) and
   `max-concurrent-resolutions` (10). The budget is a `ScopedValue` bound for the resolution (nested calls share it and
   the slot); `OidcFederationBudgetedEntityStatementRetriever` counts remote fetches and memoizes statements per
-  resolution (wrap the remote retriever, under the local one for the resolve endpoint), and historical keys and trust
-  mark status requests call `consumeRequest`. Entry points: `resolveTrustChains`, `resolveSentTrustChain`, the entity
-  resolver. `OidcFederationResolutionBusyException` (runtime) must not mark the entity unresolved (registration) and is
-  `503 temporarily_unavailable` at the resolve endpoint. Trust mark status endpoints must be https.
+  resolution (wrap the remote retriever, under the local one for the resolve endpoint), and issuer historical keys and
+  trust mark status requests call `consumeRequest` (TA historical keys do not). Entry points: `resolveTrustChains`,
+  `resolveSentTrustChain`, the entity resolver. `OidcFederationResolutionUnavailableException` (busy, unreachable TA,
+  unreadable TA historical keys) must not mark the entity unresolved (registration) and is `503 temporarily_unavailable`
+  at the resolve endpoint. Trust mark status endpoints must be https. The budget also carries a deadline
+  (`resolution-timeout`, PT10S) and the entities that could not be reached for reasons other than the deadline; slots
+  wait 1 s.
+- Federation HTTP: every outbound federation request goes through `chain/OidcFederationHttpClient` (bean
+  `oidcFederationHttpClient`, TLS from `CasSSLContext`, no redirects, per-resolution deadline, 256 KB response cap; the
+  exchange runs on its own virtual thread and the caller waits with `Future.get(remaining)`, so DNS, TLS and headers are
+  inside the deadline; https only, link-local/any-local/multicast refused, embedded IPv4 included, loopback/private
+  allowed, no check when a JVM proxy is selected; at most 64 exchanges in flight, abandoned ones included, released by
+  whichever of start/abandon claims the exchange first; `RefusedRequestException` for a refused target,
+  `OutOfTimeException` for a request that started with less than the read timeout left, which the retriever does not
+  mark unreachable, while a full-time timeout does) and
+  `OidcFederationHttpEntityStatementRetriever`; never nimbus `DefaultEntityStatementRetriever` (it records every URL in
+  an unbounded list and uses JVM-wide TLS defaults) or `HTTPRequest.send()`. Tests reach `MockWebServer(true, ...)`
+  with a client built on `CasSSLContext.disabled()` passed to the resolver/validator, never
+  `HTTPRequest.setDefaultSSLSocketFactory`.
+- Pairwise subjects for clients CAS registers: `cas.authn.oidc.core.pairwise-subject-salt`, read at generation time from
+  the `Environment` by `PairwiseOidcRegisteredServiceUsernameAttributeProvider` for generators without a salt (never
+  stored in service definitions). Federation refuses an RP that asks for `pairwise` without it; dynamic registration
+  registers a salt-less provider when it has none, else `withSalt(random)`; an update keeps the provider and its
+  generator (`assignSaltIfMissing` only salts a salt-less Shibboleth generator when CAS has no salt); read the salt with
+  `getPairwiseSubjectSalt(Environment)`. Sectors must be verified: hosts come only from
+  `OidcRedirectUriUtils.toHost/toHosts` (Spring `UriComponentsBuilder`, the parser the provider uses at runtime; `toHosts`
+  refuses an authority without a readable host); never `new URI(uri).getHost()`, which drops IDN/underscore hosts or
+  throws on `{`. DCR fetches `sector_identifier_uri` with a `DefaultOidcClientIdMetadataDocumentFetcher` (public
+  addresses, no redirects, one attempt, 64 KB); federation fetches it through the federation client inside the
+  resolution (counted in the budget), refuses http/refused targets/4xx/bad lists, and throws
+  `OidcFederationResolutionUnavailableException` for IO/5xx/budget so the RP is not negative-cached.
+- The DCR translator validates the request before touching the given service: `translate` may receive the instance the
+  services manager caches, so nothing may be set on it before `validate`. The client configuration endpoint answers a
+  refused update with `400 invalid_client_metadata`.
+- Address policy shared by core and federation: `DefaultOidcClientIdMetadataDocumentFetcher.isPublicAddress` (client
+  documents) and `isAllowedWithPrivateNetworks(InetAddress|URL)` (federation, client `jwks` URLs: only
+  link-local/any-local/multicast refused). Client keys at an http(s) `jwks` URL are read through a `UrlResource` without
+  redirects (5 s timeouts), checked before any request.
+- Endpoint detection from requests: `OidcRequestSupport.isRequestForEndpoint` (decoded path within the application, no
+  path parameters or trailing slash, as handler mappings match); never `getRequestURI()`/`getRequestURL().endsWith`,
+  which `/oidc/oidcAuthoriz%65` or `;x=y` bypasses. `OAuth20HandlerInterceptorAdapter.doesUriMatchPattern` strips
+  `;params` before decoding, so the OAuth/OIDC interceptors see `/oidc/oidcPushAuthorize;x=y` as PAR. MockMvc tests of encoded paths need `get(URI.create(...))`
+  (the String template re-encodes `%`).
+- CIBA signed authentication requests (`OidcCibaController.validateRequestObject`): asymmetric only, `iss` = client,
+  `aud` contains the issuer, `exp`/`iat`/`nbf`/`jti` required, within the OIDC core skew, `iat` not in the future,
+  exp − iat and exp − nbf at most 60 minutes (FAPI CIBA), `jti` kept as a transient session ticket until exp + skew;
+  refused with `invalid_request`. The controller wraps a request without `client_id` with the authenticated client id
+  (`withAuthenticatedClientId`), since the request parameter resolver verifies request objects with the client of the
+  `client_id` parameter.
+- Federation registration: `register` throws `OidcFederationResolutionUnavailableException` for a client that is not
+  registered yet when the resolution is busy/unavailable or the stripe lock is not had within 5 s (`tryLock`); the
+  interceptor answers `503 temporarily_unavailable`, the validator returns null. `resolveAndSave` runs the sent chain and
+  the full resolution in one `resolutionLimiter.execute`. Trust-mark issuer historical keys are not cached when the
+  budget or time ran out. The federation keystore is written to a temp file and moved over the keystore atomically.
+- Federation interceptor paths: `baseEndpoint/**` (order 50) plus, at order 5, `/oauth2.0/authorize`,
+  `/**/oidcAuthorize` and `/**/oidcPushAuthorize` outside the base endpoint (the controllers answer there and the
+  issuer check accepts them); the OAuth interceptor is at order 10, after the OAuth throttle (0).
 - Federated PAR: the interceptor refuses (`401 invalid_client`) a client assertion of an automatically registered RP
   whose `aud` is not exactly the OP entity id (12.1.1.2); the generic authenticator still accepts token endpoint URLs.
 - Federation endpoint JSON errors go through `AbstractOidcFederationEndpointController.errorResponse`, which presets

@@ -152,8 +152,9 @@ class DefaultOidcRequestParameterResolverTests extends AbstractOidcTests {
         assertFalse(oauthRequestParameterResolver.isRequestObjectVerified(
             requestWith(service.getClientId(), signWithSecret(JWSAlgorithm.HS256, RandomUtils.randomAlphanumeric(64), service.getClientId()))));
         val unknownClientId = UUID.randomUUID().toString();
-        assertFalse(oauthRequestParameterResolver.isRequestObjectVerified(
-            requestWith(unknownClientId, signWithSecret(JWSAlgorithm.HS256, service.getClientSecret(), unknownClientId))));
+        val unknownClientRequest = requestWith(unknownClientId, signWithSecret(JWSAlgorithm.HS256, service.getClientSecret(), unknownClientId));
+        assertFalse(oauthRequestParameterResolver.isRequestObjectVerified(unknownClientRequest));
+        assertTrue(oauthRequestParameterResolver.resolveRequestParameter(unknownClientRequest, OAuth20Constants.SCOPE).isEmpty());
 
         val shortSecretService = getOidcRegisteredService(UUID.randomUUID().toString());
         shortSecretService.setClientSecrets(new ArrayList<>());

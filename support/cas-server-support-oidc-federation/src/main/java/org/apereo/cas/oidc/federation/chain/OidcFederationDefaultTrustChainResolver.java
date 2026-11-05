@@ -9,6 +9,7 @@ import org.apereo.cas.oidc.web.controllers.dynareg.OidcClientRegistrationUtils;
 import org.apereo.cas.services.DefaultRegisteredServiceContact;
 import org.apereo.cas.services.DefaultRegisteredServiceExpirationPolicy;
 import org.apereo.cas.services.DefaultRegisteredServiceProperty;
+import org.apereo.cas.services.OidcRedirectUriUtils;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.RegisteredServiceContact;
 import org.apereo.cas.util.ResourceUtils;
@@ -19,9 +20,12 @@ import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.oauth2.sdk.GrantType;
 import com.nimbusds.oauth2.sdk.ResponseType;
 import com.nimbusds.oauth2.sdk.auth.ClientAuthenticationMethod;
+import com.nimbusds.oauth2.sdk.http.HTTPRequest;
+import com.nimbusds.oauth2.sdk.http.HTTPResponse;
+import com.nimbusds.oauth2.sdk.util.JSONArrayUtils;
+import com.nimbusds.openid.connect.sdk.SubjectType;
 import com.nimbusds.openid.connect.sdk.federation.entities.EntityID;
 import com.nimbusds.openid.connect.sdk.federation.entities.EntityType;
-import com.nimbusds.openid.connect.sdk.federation.trust.DefaultEntityStatementRetriever;
 import com.nimbusds.openid.connect.sdk.federation.trust.EntityStatementRetriever;
 import com.nimbusds.openid.connect.sdk.federation.trust.TrustChain;
 import com.nimbusds.openid.connect.sdk.federation.trust.TrustChainResolver;
@@ -73,9 +77,28 @@ public class OidcFederationDefaultTrustChainResolver implements OidcFederationTr
 
     private final OidcFederationResolutionLimiter resolutionLimiter;
 
+    private final OidcFederationTrustAnchorKeys trustAnchorKeys;
+
+    private final OidcFederationHttpClient httpClient;
+
     public OidcFederationDefaultTrustChainResolver(final List<TrustChainResolver> trustChainResolvers,
                                                    final OidcFederationTrustMarkValidator trustMarkValidator) {
         this(trustChainResolvers, trustMarkValidator, new OidcFederationResolutionLimiter(new OidcFederationProperties()));
+    }
+
+    public OidcFederationDefaultTrustChainResolver(final List<TrustChainResolver> trustChainResolvers,
+                                                   final OidcFederationTrustMarkValidator trustMarkValidator,
+                                                   final OidcFederationResolutionLimiter resolutionLimiter) {
+        this(trustChainResolvers, trustMarkValidator, resolutionLimiter,
+            new OidcFederationTrustAnchorKeys(new OidcFederationHttpClient(new OidcFederationProperties())));
+    }
+
+    public OidcFederationDefaultTrustChainResolver(final List<TrustChainResolver> trustChainResolvers,
+                                                   final OidcFederationTrustMarkValidator trustMarkValidator,
+                                                   final OidcFederationResolutionLimiter resolutionLimiter,
+                                                   final OidcFederationTrustAnchorKeys trustAnchorKeys) {
+        this(trustChainResolvers, trustMarkValidator, resolutionLimiter, trustAnchorKeys,
+            new OidcFederationHttpClient(new OidcFederationProperties()));
     }
 
     /**
@@ -91,7 +114,8 @@ public class OidcFederationDefaultTrustChainResolver implements OidcFederationTr
      * @return the trust chain resolvers
      */
     public static List<TrustChainResolver> buildTrustChainResolvers(final OidcFederationProperties properties) {
-        return buildTrustChainResolvers(properties, new OidcFederationBudgetedEntityStatementRetriever(new DefaultEntityStatementRetriever()));
+        return buildTrustChainResolvers(properties, new OidcFederationBudgetedEntityStatementRetriever(
+            new OidcFederationHttpEntityStatementRetriever(new OidcFederationHttpClient(properties))));
     }
 
     /**
@@ -157,7 +181,9 @@ public class OidcFederationDefaultTrustChainResolver implements OidcFederationTr
 
     /**
      * Resolve the trust chains of the relying party to each trust anchor in turn, as a single resolution within the
-     * limits of the resolution limiter.
+     * limits of the resolution limiter, until one gives a relying party that can be registered. When none does and a
+     * trust anchor, or what the registration needed, could not be told about, the resolution is unavailable rather than
+     * failed.
      *
      * @param id the client id
      * @return the registered service, or empty when no trust chain can be used
@@ -170,11 +196,20 @@ public class OidcFederationDefaultTrustChainResolver implements OidcFederationTr
         }
         return resolutionLimiter.execute(() -> {
             val entityId = new EntityID(id);
+            val unavailable = new ArrayList<OidcFederationResolutionUnavailableException>();
             for (val trustChainResolver : trustChainResolvers) {
-                val trustMetadataResult = fetchRelyingPartyMetadata(trustChainResolver, entityId);
-                if (trustMetadataResult.isPresent()) {
-                    return Optional.ofNullable(toRegisteredService(entityId, trustMetadataResult.get()));
+                try {
+                    val registeredService = fetchRelyingPartyMetadata(trustChainResolver, entityId)
+                        .map(metadata -> toRegisteredService(entityId, metadata));
+                    if (registeredService.isPresent()) {
+                        return registeredService;
+                    }
+                } catch (final OidcFederationResolutionUnavailableException e) {
+                    unavailable.add(e);
                 }
+            }
+            if (!unavailable.isEmpty()) {
+                throw unavailable.getFirst();
             }
             return Optional.<OidcRegisteredService>empty();
         });
@@ -186,7 +221,8 @@ public class OidcFederationDefaultTrustChainResolver implements OidcFederationTr
      * verify statement by statement down from those keys, not have expired, and respect the maximum path length; the
      * required trust marks and the metadata policies of the chain then apply as usual. A chain that cannot be used, or
      * a trust anchor trusted with the keys of its own entity configuration, which a sent chain could forge, is refused.
-     * Verifying the chain is a resolution within the limits of the resolution limiter.
+     * Verifying the chain and building the registration from it, which may fetch the sector identifier document of the
+     * relying party, is a single resolution within the limits of the resolution limiter.
      *
      * @param id         the client id
      * @param trustChain the serialized statements of the sent trust chain
@@ -199,14 +235,15 @@ public class OidcFederationDefaultTrustChainResolver implements OidcFederationTr
             return Optional.empty();
         }
         val entityId = new EntityID(id);
-        val sentMetadata = resolutionLimiter.execute(() -> verifyTrustChain(entityId, trustChain)
-            .flatMap(verified -> toRelyingPartyMetadata(verified.getLeft(), verified.getRight())));
-        if (sentMetadata.isEmpty()) {
+        val registeredService = resolutionLimiter.execute(() -> verifyTrustChain(entityId, trustChain)
+            .flatMap(verified -> toRelyingPartyMetadata(verified.getLeft(), verified.getRight()))
+            .map(metadata -> toRegisteredService(entityId, metadata)));
+        if (registeredService.isEmpty()) {
             LOGGER.debug("Trust chain sent by [{}] cannot be used", entityId);
             return Optional.empty();
         }
         LOGGER.debug("Relying party [{}] is registered from the trust chain it sent", entityId);
-        return Optional.ofNullable(toRegisteredService(entityId, sentMetadata.get()));
+        return registeredService;
     }
 
     /**
@@ -266,7 +303,8 @@ public class OidcFederationDefaultTrustChainResolver implements OidcFederationTr
      * any other method is refused, and so is a relying party without redirect URIs. Post-logout redirect URIs are kept
      * as a comma-separated list, so one that contains a comma is left out: it would otherwise be split into URIs that
      * the metadata policies of the chain never saw. Keys published at a {@code jwks_uri} must be served over
-     * {@code https}, so that a relying party cannot have CAS read keys from local files or other schemes.
+     * {@code https}, so that a relying party cannot have CAS read keys from local files or other schemes. A relying party
+     * that asks for pairwise subject identifiers must have a sector of its own, as {@link #hasVerifiedSector} tells.
      *
      * @param entityId       the entity id
      * @param rpMetadata     the resolved relying party metadata
@@ -289,6 +327,9 @@ public class OidcFederationDefaultTrustChainResolver implements OidcFederationTr
         if (jwksUri != null && !Strings.CI.equals(jwksUri.getScheme(), "https")) {
             LOGGER.warn("Relying party [{}] cannot be registered automatically with keys published at [{}], which is not an https URL",
                 entityId, jwksUri);
+            return null;
+        }
+        if (!hasVerifiedSector(entityId, rpMetadata)) {
             return null;
         }
         val registeredService = new OidcRegisteredService();
@@ -377,6 +418,89 @@ public class OidcFederationDefaultTrustChainResolver implements OidcFederationTr
         return registeredService;
     }
 
+    /**
+     * Whether the sector of a relying party that asks for pairwise subject identifiers is its own, since relying parties
+     * of the same sector share identifiers (OpenID Connect Core 1.0, section 8.1). Its {@code sector_identifier_uri} must
+     * be fetched, as a request of the running resolution, and list every redirect URI of the relying party; without one,
+     * its redirect URIs must all be on the same host, read as hosts are when identifiers are calculated, and a redirect
+     * URI with an authority whose host cannot be read is refused. A sector identifier URI must be an {@code https} URL
+     * that federation requests may be sent to. A relying party that does not ask for pairwise subject identifiers has
+     * nothing to verify. A sector identifier document that cannot be had now, because the request fails,
+     * the server answers with an error of its own, or the resolution runs out of time or requests, leaves the sector
+     * unknown rather than refused, so that the relying party is not remembered as unresolved for an outage.
+     *
+     * @param entityId   the entity identifier of the relying party
+     * @param rpMetadata the metadata of the relying party
+     * @return true or false
+     * @throws OidcFederationResolutionUnavailableException when the sector identifier document cannot be had now
+     */
+    protected boolean hasVerifiedSector(final EntityID entityId, final OIDCClientMetadata rpMetadata) {
+        if (!SubjectType.PAIRWISE.equals(rpMetadata.getSubjectType())) {
+            return true;
+        }
+        val redirectUris = rpMetadata.getRedirectionURIStrings();
+        val sectorUri = rpMetadata.getSectorIDURI();
+        if (sectorUri == null) {
+            try {
+                val hosts = OidcRedirectUriUtils.toHosts(redirectUris);
+                if (hosts.size() > 1) {
+                    LOGGER.warn("Relying party [{}] asks for pairwise subject identifiers for redirect URIs on several hosts [{}] without a "
+                        + "sector identifier URI", entityId, hosts);
+                }
+                return hosts.size() <= 1;
+            } catch (final IllegalArgumentException e) {
+                LOGGER.warn("Relying party [{}] asks for pairwise subject identifiers: [{}]", entityId, e.getMessage());
+                return false;
+            }
+        }
+        if (!Strings.CI.equals(sectorUri.getScheme(), "https")
+            || !Objects.equals(sectorUri.getHost(), OidcRedirectUriUtils.toHost(sectorUri.toString()).orElse(null))) {
+            LOGGER.warn("Sector identifier URI [{}] of relying party [{}] is not an https URL with a host that can be read", sectorUri, entityId);
+            return false;
+        }
+        val response = fetchSectorIdentifierDocument(entityId, sectorUri);
+        if (response == null) {
+            return false;
+        }
+        if (response.getStatusCode() >= HttpURLConnection.HTTP_INTERNAL_ERROR) {
+            LOGGER.warn("Sector identifier URI [{}] of relying party [{}] answers [{}]", sectorUri, entityId, response.getStatusCode());
+            throw new OidcFederationResolutionUnavailableException("Sector identifier URI %s cannot be read now".formatted(sectorUri));
+        }
+        try {
+            val listed = response.indicatesSuccess() ? JSONArrayUtils.parse(response.getBody()) : List.of();
+            if (listed.containsAll(redirectUris)) {
+                return true;
+            }
+            LOGGER.warn("Sector identifier URI [{}] of relying party [{}] does not list all of its redirect URIs", sectorUri, entityId);
+        } catch (final Exception e) {
+            LOGGER.warn("Sector identifier document [{}] of relying party [{}] cannot be read: [{}]", sectorUri, entityId, e.getMessage());
+        }
+        return false;
+    }
+
+    private @Nullable HTTPResponse fetchSectorIdentifierDocument(final EntityID entityId, final URI sectorUri) {
+        try {
+            OidcFederationResolutionLimiter.consumeRequest("sector identifier document " + sectorUri);
+            return httpClient.send(new HTTPRequest(HTTPRequest.Method.GET, sectorUri));
+        } catch (final OidcFederationHttpClient.RefusedRequestException e) {
+            LOGGER.warn("Sector identifier URI [{}] of relying party [{}] may not be requested: [{}]", sectorUri, entityId, e.getMessage());
+            return null;
+        } catch (final IOException | IllegalStateException e) {
+            LOGGER.warn("Sector identifier URI [{}] of relying party [{}] cannot be read now: [{}]", sectorUri, entityId, e.getMessage());
+            throw new OidcFederationResolutionUnavailableException("Sector identifier URI %s cannot be read now".formatted(sectorUri));
+        }
+    }
+
+    /**
+     * The relying party metadata of the shortest trust chain of the relying party to the trust anchor of the resolver
+     * that satisfies the constraints of its statements.
+     *
+     * @param trustChainResolver the trust chain resolver of the trust anchor
+     * @param entityId           the entity identifier of the relying party
+     * @return the metadata, or empty when no trust chain can be used
+     * @throws OidcFederationResolutionUnavailableException when the trust anchor could not be reached, or its historical
+     *                                                      keys could not be read, so that the chains cannot be told
+     */
     protected Optional<TrustChainMetadata> fetchRelyingPartyMetadata(final TrustChainResolver trustChainResolver,
                                                                      final EntityID entityId) {
         return FunctionUtils.doAndHandle(() -> {
@@ -387,7 +511,19 @@ public class OidcFederationDefaultTrustChainResolver implements OidcFederationTr
                 return Optional.<TrustChainMetadata>empty();
             }
             return toRelyingPartyMetadata(trustChainResolver, validChains.getShortest());
-        }, e -> Optional.<TrustChainMetadata>empty()).get();
+        }, e -> {
+            if (e instanceof final OidcFederationResolutionUnavailableException unavailable) {
+                throw unavailable;
+            }
+            val unreachable = trustChainResolver.getTrustAnchors().keySet().stream()
+                .filter(trustAnchor -> OidcFederationResolutionLimiter.currentBudget()
+                    .filter(budget -> budget.isUnreachable(trustAnchor.getValue())).isPresent())
+                .findFirst();
+            if (unreachable.isPresent()) {
+                throw new OidcFederationResolutionUnavailableException("Trust anchor %s cannot be reached now".formatted(unreachable.get()));
+            }
+            return Optional.<TrustChainMetadata>empty();
+        }).get();
     }
 
     /**
@@ -418,7 +554,12 @@ public class OidcFederationDefaultTrustChainResolver implements OidcFederationTr
             val clientMetadataJson = OidcFederationMetadataPolicies.resolveMetadata(chain, EntityType.OPENID_RELYING_PARTY);
             return Optional.of(new TrustChainMetadata(OIDCClientMetadata.parse(clientMetadataJson),
                 chain.resolveExpirationTime(), chain.getLeafConfiguration().getClaimsSet().getIssueTime()));
-        }, e -> Optional.<TrustChainMetadata>empty()).get();
+        }, e -> {
+            if (e instanceof final OidcFederationResolutionUnavailableException unavailable) {
+                throw unavailable;
+            }
+            return Optional.<TrustChainMetadata>empty();
+        }).get();
     }
 
     /**
@@ -427,10 +568,10 @@ public class OidcFederationDefaultTrustChainResolver implements OidcFederationTr
      * @param trustChainResolver the trust chain resolver of the trust anchor of the chain
      * @param chain              the trust chain
      * @return true or false
-     * @see OidcFederationHistoricalKeys#isSignedWithRevokedTrustAnchorKey(TrustChainResolver, TrustChain)
+     * @see OidcFederationTrustAnchorKeys#isSignedWithRevokedKey(TrustChainResolver, TrustChain)
      */
     protected boolean isSignedWithRevokedTrustAnchorKey(final TrustChainResolver trustChainResolver, final TrustChain chain) {
-        return OidcFederationHistoricalKeys.isSignedWithRevokedTrustAnchorKey(trustChainResolver, chain);
+        return trustAnchorKeys.isSignedWithRevokedKey(trustChainResolver, chain);
     }
 
     protected record TrustChainMetadata(OIDCClientMetadata metadata, Date expirationTime, Date issuedAt) {

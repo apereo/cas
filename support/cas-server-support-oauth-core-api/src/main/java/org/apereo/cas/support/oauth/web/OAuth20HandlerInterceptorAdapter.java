@@ -15,6 +15,7 @@ import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -33,6 +34,8 @@ import jakarta.servlet.http.HttpServletResponse;
  */
 @RequiredArgsConstructor
 public class OAuth20HandlerInterceptorAdapter implements AsyncHandlerInterceptor {
+    private static final Pattern PATH_PARAMETERS = Pattern.compile(";[^/]*");
+
     /**
      * Access token interceptor.
      */
@@ -156,14 +159,16 @@ public class OAuth20HandlerInterceptorAdapter implements AsyncHandlerInterceptor
     }
 
     /**
-     * Does uri match pattern.
+     * Whether the request path is that of one of the endpoints, as handler mappings see it: without the path parameters
+     * of its segments, such as {@code ;x=y}, and decoded, so that a decorated or encoded path that reaches an endpoint is
+     * recognized as such.
      *
      * @param requestPath the request path
      * @param patternUrls the pattern urls
      * @return true /false
      */
     protected boolean doesUriMatchPattern(final String requestPath, final List<String> patternUrls) {
-        val decodedRequestPath = UriUtils.decode(requestPath, StandardCharsets.UTF_8);
+        val decodedRequestPath = UriUtils.decode(PATH_PARAMETERS.matcher(requestPath).replaceAll(StringUtils.EMPTY), StandardCharsets.UTF_8);
         return patternUrls.stream().anyMatch(patternUrl -> {
             val pattern = RegexUtils.createPattern('/' + patternUrl + "(/)*$");
             return pattern.matcher(decodedRequestPath).find();

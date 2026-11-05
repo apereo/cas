@@ -4,6 +4,7 @@ import module java.base;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.federation.AbstractOidcOpenIdProviderFederationTests;
 import org.apereo.cas.oidc.federation.chain.OidcFederationDefaultTrustChainResolver;
+import org.apereo.cas.oidc.federation.chain.OidcFederationResolutionUnavailableException;
 import org.apereo.cas.oidc.federation.chain.OidcFederationTrustChainResolver;
 import org.apereo.cas.oidc.federation.registration.OidcFederationAutomaticClientRegistration;
 import org.apereo.cas.oidc.issuer.OidcIssuerService;
@@ -12,6 +13,8 @@ import org.apereo.cas.oidc.jwks.OidcJsonWebKeyUsage;
 import org.apereo.cas.services.DefaultRegisteredServiceExpirationPolicy;
 import org.apereo.cas.services.DefaultRegisteredServiceProperty;
 import org.apereo.cas.services.OidcRegisteredService;
+import org.apereo.cas.services.OidcSubjectTypes;
+import org.apereo.cas.services.PairwiseOidcRegisteredServiceUsernameAttributeProvider;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
@@ -238,6 +241,40 @@ class OpenIdFederationAuthorizationCodeResponseTypeAuthorizationRequestValidator
         assertEquals(1, TestOidcFederationTrustChainResolver.RESOLUTIONS.get(clientId).get());
     }
 
+    /**
+     * A relying party that asks for pairwise subject identifiers is given them, with the pairwise subject salt of CAS,
+     * and is not registered when no salt is defined.
+     */
+    @Test
+    void verifyPairwiseRelyingPartyUsesPairwiseSubjectSalt() throws Throwable {
+        assertNull(resolveByClientId("https://rp-pairwise-" + UUID.randomUUID() + ".example.org"));
+
+        val registration = new OidcFederationAutomaticClientRegistration(servicesManager,
+            new TestOidcFederationTrustChainResolver(), Duration.ofMinutes(5), "pairwise-salt");
+        val registeredService = registration.register("https://rp-pairwise-" + UUID.randomUUID() + ".example.org");
+        assertNotNull(registeredService);
+        assertInstanceOf(PairwiseOidcRegisteredServiceUsernameAttributeProvider.class, registeredService.getUsernameAttributeProvider());
+        assertFalse(PairwiseOidcRegisteredServiceUsernameAttributeProvider.hasSalt(registeredService), "The salt of CAS is not stored");
+        val stored = servicesManager.findServiceBy(registeredService.getId());
+        assertInstanceOf(PairwiseOidcRegisteredServiceUsernameAttributeProvider.class, stored.getUsernameAttributeProvider());
+        assertFalse(PairwiseOidcRegisteredServiceUsernameAttributeProvider.hasSalt(stored));
+    }
+
+    /**
+     * A relying party that cannot be registered now is neither remembered as unresolved nor answered as an unknown
+     * client: its authorization request is answered as temporarily unavailable, and it is resolved again later.
+     */
+    @Test
+    void verifyUnavailableRegistrationIsNotAnUnknownClient() throws Throwable {
+        val clientId = "https://rp-unavailable-" + UUID.randomUUID() + ".example.org";
+        assertThrows(OidcFederationResolutionUnavailableException.class, () -> clientRegistration.register(clientId));
+        assertNull(resolveByClientId(clientId));
+        val result = mockMvc.perform(authorize(clientId)).andReturn();
+        assertEquals(HttpStatus.SERVICE_UNAVAILABLE.value(), result.getResponse().getStatus());
+        assertTrue(result.getResponse().getContentAsString().contains("temporarily_unavailable"));
+        assertTrue(TestOidcFederationTrustChainResolver.RESOLUTIONS.get(clientId).get() >= 3);
+    }
+
     @Test
     void verifyHttpEntityIdIsIgnored() throws Throwable {
         val clientId = "http://rp-missing-" + UUID.randomUUID() + ".example.org";
@@ -249,6 +286,33 @@ class OpenIdFederationAuthorizationCodeResponseTypeAuthorizationRequestValidator
         val clientId = newSignedClientId();
         val result = mockMvc.perform(authorize(clientId)).andReturn();
         assertRefused(result, "Automatic registration requires a signed request object or a pushed authorization request");
+        assertTrue(servicesManager.getAllServicesOfType(OAuthRegisteredService.class)
+            .stream()
+            .anyMatch(service -> clientId.equals(service.getClientId())));
+    }
+
+    /**
+     * The authorization endpoints also answer outside the OpenID Connect base endpoint, and at encoded paths that decode
+     * to them; the proof is required there too.
+     */
+    @Test
+    void verifyAuthorizationOutsideBaseEndpointIsRefused() throws Throwable {
+        for (val uri : List.of("/cas/" + OidcConstants.AUTHORIZE_URL, "/cas/custom/" + OidcConstants.AUTHORIZE_URL,
+            "/cas/" + OidcConstants.BASE_OIDC_URL + "/oidcAuthoriz%65", "/cas/" + OidcConstants.BASE_OIDC_URL + "/oidcAuthorize;x=y")) {
+            val result = mockMvc.perform(authorize(uri, newSignedClientId())).andReturn();
+            assertRefused(result, "Automatic registration requires a signed request object or a pushed authorization request");
+        }
+        val clientId = newSignedClientId();
+        val pushed = post("/cas/" + OidcConstants.PUSHED_AUTHORIZE_URL)
+            .param(OAuth20Constants.CLIENT_ID, clientId)
+            .param(OAuth20Constants.REDIRECT_URI, REDIRECT_URI)
+            .param(OAuth20Constants.RESPONSE_TYPE, OAuth20Constants.CODE)
+            .with(withHttpRequestProcessor());
+        clientAssertionParameters(clientId, List.of(OP_ENTITY_ID, "https://other.example.org")).forEach(pushed::param);
+        val result = mockMvc.perform(pushed).andReturn();
+        assertEquals(HttpStatus.UNAUTHORIZED.value(), result.getResponse().getStatus());
+        val body = result.getResponse().getContentAsString();
+        assertTrue(body.contains("Client assertion aud must only be the OP Entity Identifier"), body);
         assertTrue(servicesManager.getAllServicesOfType(OAuthRegisteredService.class)
             .stream()
             .anyMatch(service -> clientId.equals(service.getClientId())));
@@ -583,7 +647,11 @@ class OpenIdFederationAuthorizationCodeResponseTypeAuthorizationRequestValidator
     }
 
     private MockHttpServletRequestBuilder authorize(final String clientId) {
-        return get(AUTHORIZE_URL)
+        return authorize(AUTHORIZE_URL, clientId);
+    }
+
+    private MockHttpServletRequestBuilder authorize(final String uri, final String clientId) {
+        return get(URI.create(uri))
             .param(OAuth20Constants.CLIENT_ID, clientId)
             .param(OAuth20Constants.REDIRECT_URI, REDIRECT_URI)
             .param(OAuth20Constants.RESPONSE_TYPE, OAuth20Constants.CODE)
@@ -715,6 +783,11 @@ class OpenIdFederationAuthorizationCodeResponseTypeAuthorizationRequestValidator
             if (clientId.contains("rp-missing-")) {
                 return Optional.of(buildOidcRegisteredService(clientId, "resolved-service"));
             }
+            if (clientId.contains("rp-pairwise-")) {
+                val service = buildOidcRegisteredService(clientId, "pairwise-service");
+                service.setSubjectType(OidcSubjectTypes.PAIRWISE.getType());
+                return Optional.of(service);
+            }
             if (clientId.contains("rp-refresh-")) {
                 return Optional.of(buildOidcRegisteredService(clientId, "new-service"));
             }
@@ -723,6 +796,9 @@ class OpenIdFederationAuthorizationCodeResponseTypeAuthorizationRequestValidator
             }
             if (clientId.contains("rp-signed-") || clientId.contains("rp-rotated-")) {
                 return Optional.of(buildSignedService(clientId, PUBLISHED_KEYS.getOrDefault(clientId, RELYING_PARTY_KEY)));
+            }
+            if (clientId.contains("rp-unavailable-")) {
+                throw new OidcFederationResolutionUnavailableException("Trust anchor cannot be reached now");
             }
             return Optional.empty();
         }

@@ -16,13 +16,20 @@ import com.nimbusds.jose.JOSEObjectType;
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.JWSHeader;
 import com.nimbusds.jose.crypto.RSASSASigner;
+import com.nimbusds.jose.crypto.factories.DefaultJWSSignerFactory;
 import com.nimbusds.jose.crypto.factories.DefaultJWSVerifierFactory;
+import com.nimbusds.jose.jwk.Curve;
 import com.nimbusds.jose.jwk.JWK;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
+import com.nimbusds.jose.jwk.gen.ECKeyGenerator;
 import com.nimbusds.jose.jwk.gen.RSAKeyGenerator;
+import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
+import com.nimbusds.jose.proc.JWSVerificationKeySelector;
+import com.nimbusds.jose.proc.SecurityContext;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
+import com.nimbusds.jwt.proc.DefaultJWTProcessor;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.BeforeAll;
@@ -672,8 +679,17 @@ class OidcWellKnownFederationEndpointControllerTests {
             assertTrue(algorithms.contains(JWSAlgorithm.RS256.getName()));
             assertTrue(algorithms.contains(JWSAlgorithm.ES256.getName()));
             assertFalse(algorithms.contains("none"));
-            val verifiable = new DefaultJWSVerifierFactory().supportedJWSAlgorithms();
-            assertTrue(algorithms.stream().map(JWSAlgorithm::parse).allMatch(verifiable::contains), algorithms::toString);
+            assertFalse(algorithms.contains(JWSAlgorithm.Ed448.getName()));
+            for (val algorithm : algorithms.stream().map(JWSAlgorithm::parse).toList()) {
+                val key = JWSAlgorithm.Family.RSA.contains(algorithm)
+                    ? new RSAKeyGenerator(2048).generate()
+                    : new ECKeyGenerator(Curve.forJWSAlgorithm(algorithm).iterator().next()).generate();
+                val assertion = new SignedJWT(new JWSHeader(algorithm), new JWTClaimsSet.Builder().subject(RELYING_PARTY).build());
+                assertion.sign(new DefaultJWSSignerFactory().createJWSSigner(key, algorithm));
+                val processor = new DefaultJWTProcessor<SecurityContext>();
+                processor.setJWSKeySelector(new JWSVerificationKeySelector<>(algorithm, new ImmutableJWKSet<>(new JWKSet(key.toPublicJWK()))));
+                assertEquals(RELYING_PARTY, processor.process(assertion, null).getSubject(), algorithm::getName);
+            }
         }
 
         @Test

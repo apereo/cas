@@ -2,9 +2,11 @@ package org.apereo.cas.oidc.federation.registration;
 
 import module java.base;
 import org.apereo.cas.oidc.OidcConstants;
+import org.apereo.cas.oidc.federation.chain.OidcFederationResolutionUnavailableException;
 import org.apereo.cas.oidc.issuer.OidcIssuerService;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeyStoreUtils;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeyUsage;
+import org.apereo.cas.oidc.util.OidcRequestSupport;
 import org.apereo.cas.oidc.web.OidcRequestObjectDecrypter;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.support.oauth.OAuth20Constants;
@@ -66,7 +68,9 @@ import jakarta.servlet.http.HttpServletResponse;
  * Entity Identifier as its only {@code aud} (section 12.1.1.2), or the request is refused with {@code invalid_client}. A request object encrypted to CAS is decrypted
  * first and its nested JWT checked as above, while replay is tracked on the request object as sent. Requests that fail
  * are refused with {@code invalid_request} and are never redirected to the client, since its trust could not be
- * established.
+ * established. A relying party that is not registered yet and cannot be registered now, because registrations are busy
+ * or what its registration depends on cannot be reached, is answered with {@code 503} and
+ * {@code temporarily_unavailable} rather than as an unknown client.
  * <p>
  * A relying party that rolls its keys over signs with keys its registration does not hold until the registration is
  * resolved again. A request object of an authorization request, or a {@code client_assertion} sent to any of the
@@ -96,6 +100,8 @@ public class OidcFederationAutomaticRegistrationInterceptor implements HandlerIn
 
     private static final String INVALID_CLIENT = "invalid_client";
 
+    private static final String TEMPORARILY_UNAVAILABLE = "temporarily_unavailable";
+
     private final OidcFederationAutomaticClientRegistration clientRegistration;
 
     private final OidcIssuerService issuerService;
@@ -123,13 +129,20 @@ public class OidcFederationAutomaticRegistrationInterceptor implements HandlerIn
             .filter(Objects::nonNull)
             .toList();
         val trustChain = resolveTrustChain(signedObjects);
-        var registeredService = authorizationRequest
-            ? clientRegistration.register(clientId, trustChain, service -> !signedObjects.isEmpty() && isSignedWithKeysOf(service, signedObjects))
-            : null;
-        if (!signedObjects.isEmpty()) {
-            registeredService = clientRegistration.reevaluate(clientId, service -> !isSignedWithKeysOf(service, signedObjects), trustChain);
+        var registeredService = Optional.<OAuthRegisteredService>empty();
+        if (authorizationRequest) {
+            try {
+                registeredService = Optional.ofNullable(clientRegistration.register(clientId, trustChain,
+                    service -> !signedObjects.isEmpty() && isSignedWithKeysOf(service, signedObjects)));
+            } catch (final OidcFederationResolutionUnavailableException e) {
+                LOGGER.warn("Relying party [{}] cannot be registered now: [{}]", clientId, e.getMessage());
+                return refuse(response, HttpStatus.SERVICE_UNAVAILABLE, TEMPORARILY_UNAVAILABLE, "Relying party cannot be registered now; try again later");
+            }
         }
-        if (!authorizationRequest || !(registeredService instanceof final OidcRegisteredService oidcService)
+        if (!signedObjects.isEmpty()) {
+            registeredService = Optional.ofNullable(clientRegistration.reevaluate(clientId, service -> !isSignedWithKeysOf(service, signedObjects), trustChain));
+        }
+        if (!authorizationRequest || !(registeredService.orElse(null) instanceof final OidcRegisteredService oidcService)
             || !OidcFederationAutomaticClientRegistration.isAutomaticallyRegistered(oidcService)) {
             return true;
         }
@@ -403,17 +416,20 @@ public class OidcFederationAutomaticRegistrationInterceptor implements HandlerIn
         }
     }
 
+    /**
+     * Whether the request is an authorization or pushed authorization request, by its path as handler mappings see it:
+     * a path that reaches an authorization endpoint once decoded, such as one with an encoded letter, is one.
+     *
+     * @param request the request
+     * @return true or false
+     */
     private static boolean isAuthorizationRequest(final HttpServletRequest request) {
         return isPushedAuthorizationRequest(request)
-            || requestPathEndsWith(request, OidcConstants.AUTHORIZE_URL)
-            || requestPathEndsWith(request, OAuth20Constants.AUTHORIZE_URL);
+            || OidcRequestSupport.isRequestForEndpoint(request, OidcConstants.AUTHORIZE_URL)
+            || OidcRequestSupport.isRequestForEndpoint(request, OAuth20Constants.AUTHORIZE_URL);
     }
 
     private static boolean isPushedAuthorizationRequest(final HttpServletRequest request) {
-        return requestPathEndsWith(request, OidcConstants.PUSHED_AUTHORIZE_URL);
-    }
-
-    private static boolean requestPathEndsWith(final HttpServletRequest request, final String endpoint) {
-        return Strings.CS.endsWith(Strings.CS.removeEnd(request.getRequestURI(), "/"), '/' + endpoint);
+        return OidcRequestSupport.isRequestForEndpoint(request, OidcConstants.PUSHED_AUTHORIZE_URL);
     }
 }

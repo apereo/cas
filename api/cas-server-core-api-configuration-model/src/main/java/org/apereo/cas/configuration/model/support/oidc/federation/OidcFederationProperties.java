@@ -78,13 +78,22 @@ public class OidcFederationProperties implements Serializable {
      * The maximum number of requests a single resolution may send: entity configurations, subordinate statements,
      * historical keys and trust mark status requests, counted together across the trust chains of the entity and those
      * of the issuers of its trust marks. Statements already fetched in the same resolution are reused and not counted
-     * again. A resolution that needs more fails, which bounds what a single client id or resolve request can cost.
+     * again, and neither are the historical keys of trust anchors, which are kept for a while. A resolution that needs
+     * more fails, which bounds what a single client id or resolve request can cost.
      */
     private int maxRequestsPerResolution = 50;
 
     /**
+     * The longest time a single resolution may take, all of its requests together; every response is also limited in
+     * size. A resolution that takes longer fails, so that slow or unresponsive entities cannot hold the resolutions
+     * that may run at the same time.
+     */
+    @DurationCapable
+    private String resolutionTimeout = "PT10S";
+
+    /**
      * The maximum number of resolutions that run at the same time, for automatic registration and the resolve endpoint
-     * together. A resolution that cannot start within a few seconds fails without being remembered as unresolved.
+     * together. A resolution that cannot start within a second fails without being remembered as unresolved.
      */
     private int maxConcurrentResolutions = 10;
 

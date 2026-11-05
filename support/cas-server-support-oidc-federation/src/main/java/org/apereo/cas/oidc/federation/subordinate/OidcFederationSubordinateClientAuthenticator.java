@@ -12,10 +12,22 @@ import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.DigestUtils;
 import org.apereo.cas.util.concurrent.CasReentrantLock;
 import org.apereo.cas.util.function.FunctionUtils;
+import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JOSEObjectType;
 import com.nimbusds.jose.JWSAlgorithm;
+import com.nimbusds.jose.JWSHeader;
+import com.nimbusds.jose.JWSObject;
+import com.nimbusds.jose.Payload;
+import com.nimbusds.jose.crypto.factories.DefaultJWSSignerFactory;
 import com.nimbusds.jose.crypto.factories.DefaultJWSVerifierFactory;
+import com.nimbusds.jose.jwk.AsymmetricJWK;
+import com.nimbusds.jose.jwk.Curve;
+import com.nimbusds.jose.jwk.JWK;
 import com.nimbusds.jose.jwk.JWKSet;
+import com.nimbusds.jose.jwk.RSAKey;
+import com.nimbusds.jose.jwk.gen.ECKeyGenerator;
+import com.nimbusds.jose.jwk.gen.OctetKeyPairGenerator;
+import com.nimbusds.jose.jwk.gen.RSAKeyGenerator;
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
 import com.nimbusds.jose.proc.DefaultJOSEObjectTypeVerifier;
 import com.nimbusds.jose.proc.JWSVerificationKeySelector;
@@ -53,15 +65,7 @@ public class OidcFederationSubordinateClientAuthenticator {
      */
     public static final String BEAN_NAME = "oidcFederationSubordinateClientAuthenticator";
 
-    /**
-     * The algorithms client assertions may be signed with, published as {@code endpoint_auth_signing_alg_values_supported}:
-     * the asymmetric signature algorithms CAS can verify, which leave out the EdDSA family unless its library is present.
-     */
-    public static final List<String> SIGNING_ALGORITHMS = JWSAlgorithm.Family.SIGNATURE
-        .stream()
-        .filter(new DefaultJWSVerifierFactory().supportedJWSAlgorithms()::contains)
-        .map(JWSAlgorithm::getName)
-        .toList();
+    private static final int RSA_KEY_SIZE = 2048;
 
     private static final String TICKET_PREFIX = "OidcFederationClientAssertion:";
 
@@ -163,5 +167,47 @@ public class OidcFederationSubordinateClientAuthenticator {
         val factory = (TransientSessionTicketFactory) ticketFactory.get(TransientSessionTicket.class);
         ticketRegistry.addTicket(factory.create(ticketId, properties));
         return true;
+    }
+
+    /**
+     * The algorithms client assertions may be signed with, published as {@code endpoint_auth_signing_alg_values_supported}:
+     * the asymmetric signature algorithms whose signatures CAS can verify here, found once by signing and verifying with
+     * a key generated for each. The verifier library lists algorithms that this runtime may not handle, such as
+     * {@code ES256K}, whose curve the runtime may not support, or the EdDSA family, which needs a library of its own.
+     *
+     * @return the algorithms
+     */
+    public static List<String> getSigningAlgorithms() {
+        return SigningAlgorithms.VERIFIABLE;
+    }
+
+    private static boolean canVerify(final JWSAlgorithm algorithm, final RSAKey rsaKey) {
+        try {
+            val key = JWSAlgorithm.Family.RSA.contains(algorithm) ? rsaKey : generateKey(algorithm);
+            val signed = new JWSObject(new JWSHeader(algorithm), new Payload(algorithm.getName()));
+            signed.sign(new DefaultJWSSignerFactory().createJWSSigner(key, algorithm));
+            return signed.verify(new DefaultJWSVerifierFactory().createJWSVerifier(signed.getHeader(), ((AsymmetricJWK) key).toPublicKey()));
+        } catch (final Throwable e) {
+            LOGGER.debug("Signatures with [{}] cannot be verified here: [{}]", algorithm, e.getMessage());
+            return false;
+        }
+    }
+
+    private static JWK generateKey(final JWSAlgorithm algorithm) throws JOSEException {
+        val curve = Curve.forJWSAlgorithm(algorithm).iterator().next();
+        return JWSAlgorithm.Family.EC.contains(algorithm) ? new ECKeyGenerator(curve).generate() : new OctetKeyPairGenerator(curve).generate();
+    }
+
+    private static final class SigningAlgorithms {
+        private static final List<String> VERIFIABLE = findVerifiableSigningAlgorithms();
+
+        private static List<String> findVerifiableSigningAlgorithms() {
+            val rsaKey = FunctionUtils.doUnchecked(() -> new RSAKeyGenerator(RSA_KEY_SIZE).generate());
+            return JWSAlgorithm.Family.SIGNATURE
+                .stream()
+                .filter(algorithm -> canVerify(algorithm, rsaKey))
+                .map(JWSAlgorithm::getName)
+                .toList();
+        }
     }
 }

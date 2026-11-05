@@ -209,6 +209,23 @@ class OidcFederationDefaultJsonWebKeystoreServiceTests {
             assertEquals(keyIds(first.toJWKSet()), keyIds(second.rotateWhenDue(Duration.ofDays(1))));
         }
 
+        /**
+         * Changes work on copies of the keys: keys that cannot be saved are not used, and the keys in use stay as they are.
+         */
+        @Test
+        void verifyKeysThatCannotBeSavedAreNotUsed() throws Exception {
+            val file = new File(directory, "unsaved.jwks");
+            val service = newService(file);
+            val published = keyIds(service.toJWKSet());
+            val signingKey = signingKeyId(service);
+            Files.delete(file.toPath());
+            Files.createDirectory(file.toPath());
+            assertThrows(Exception.class, service::rotate);
+            assertThrows(Exception.class, () -> service.revokeKey(signingKey, "compromised"));
+            assertEquals(published, keyIds(service.toJWKSet()));
+            assertEquals(signingKey, signingKeyId(service));
+        }
+
         @Test
         void verifyScheduledKeyAge() {
             assertEquals(Duration.ofDays(45), OidcFederationDefaultJsonWebKeystoreService.getScheduledKeyAge(

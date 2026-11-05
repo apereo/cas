@@ -6,11 +6,11 @@ import org.apereo.cas.configuration.model.support.oidc.federation.OidcFederation
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.oidc.federation.chain.OidcFederationBudgetedEntityStatementRetriever;
 import org.apereo.cas.oidc.federation.chain.OidcFederationDefaultTrustChainResolver;
-import org.apereo.cas.oidc.federation.chain.OidcFederationHistoricalKeys;
 import org.apereo.cas.oidc.federation.chain.OidcFederationLocalEntityStatementRetriever;
 import org.apereo.cas.oidc.federation.chain.OidcFederationMetadataPolicies;
-import org.apereo.cas.oidc.federation.chain.OidcFederationResolutionBusyException;
 import org.apereo.cas.oidc.federation.chain.OidcFederationResolutionLimiter;
+import org.apereo.cas.oidc.federation.chain.OidcFederationResolutionUnavailableException;
+import org.apereo.cas.oidc.federation.chain.OidcFederationTrustAnchorKeys;
 import org.apereo.cas.oidc.federation.chain.OidcFederationTrustChainConstraints;
 import org.apereo.cas.oidc.federation.signature.OidcFederationJsonWebKeystoreService;
 import org.apereo.cas.oidc.federation.trustmark.OidcFederationTrustMarkValidator;
@@ -57,8 +57,10 @@ import org.springframework.http.HttpStatus;
  * Resolved chains, and subjects that cannot be resolved, are kept per subject and trusted trust anchors for at most the
  * retention of unresolved entities, or until the chain or a trust mark expires, so that repeated requests do not cause
  * the chains to be resolved again. The number of kept resolutions is bounded. Responses are signed per request. Each
- * resolution runs within the limits of the resolution limiter, which bounds the requests it sends and how many run at
- * once; one that cannot start is answered with {@code temporarily_unavailable} and is not remembered.
+ * resolution runs within the limits of the resolution limiter, which bounds the requests it sends, the time it takes
+ * and how many run at once, and outside the cache of resolutions. One that cannot start, or cannot tell about a trust
+ * anchor that cannot be reached or whose historical keys cannot be read, is answered with
+ * {@code temporarily_unavailable} and is not remembered.
  *
  * @author Misagh Moayyed
  * @since 8.1.0
@@ -106,6 +108,8 @@ public class OidcFederationDefaultEntityResolver implements OidcFederationEntity
     private final CheckedFunction<EntityID, Optional<EntityStatement>> subordinateStatements;
 
     private final OidcFederationResolutionLimiter resolutionLimiter;
+
+    private final OidcFederationTrustAnchorKeys trustAnchorKeys;
 
     private final Map<EntityID, Map<EntityID, TrustChainResolver>> trustChainResolvers = new ConcurrentHashMap<>();
 
@@ -160,15 +164,34 @@ public class OidcFederationDefaultEntityResolver implements OidcFederationEntity
         return resolvers;
     }
 
+    /**
+     * The resolution remembered for the request, or a new one, which is remembered unless it is unavailable. The
+     * resolution runs outside the cache of resolutions, so that its requests hold no lock of the cache; requests for the
+     * same entity that arrive together may each resolve it, within the limits of the resolution limiter.
+     *
+     * @param key          the key of the request
+     * @param entityId     the entity identifier of this entity
+     * @param subject      the entity to resolve
+     * @param trustAnchors the trust anchors to resolve the entity to
+     * @param resolvers    the trust chain resolvers by trust anchor
+     * @return the resolution
+     * @throws OidcFederationResolveException when the resolution is unavailable now
+     */
     private Resolution findResolution(final String key, final EntityID entityId, final EntityID subject,
                                       final List<EntityID> trustAnchors, final Map<EntityID, TrustChainResolver> resolvers)
             throws OidcFederationResolveException {
+        val remembered = resolutions.getIfPresent(key);
+        if (remembered != null) {
+            return remembered;
+        }
         try {
-            return resolutions.get(key, _ -> resolveEntityWithinLimits(entityId, subject, trustAnchors, resolvers));
-        } catch (final OidcFederationResolutionBusyException e) {
+            val resolution = resolveEntityWithinLimits(entityId, subject, trustAnchors, resolvers);
+            resolutions.put(key, resolution);
+            return resolution;
+        } catch (final OidcFederationResolutionUnavailableException e) {
             LOGGER.warn("[{}] is not resolved now: [{}]", subject, e.getMessage());
             throw new OidcFederationResolveException(HttpStatus.SERVICE_UNAVAILABLE, TEMPORARILY_UNAVAILABLE,
-                "Too many federation resolutions are running; try again later");
+                "The entity cannot be resolved now; try again later");
         }
     }
 
@@ -176,7 +199,7 @@ public class OidcFederationDefaultEntityResolver implements OidcFederationEntity
                                                  final Map<EntityID, TrustChainResolver> resolvers) {
         try {
             return resolutionLimiter.execute(() -> resolveEntity(entityId, subject, trustAnchors, resolvers));
-        } catch (final OidcFederationResolutionBusyException e) {
+        } catch (final OidcFederationResolutionUnavailableException e) {
             throw e;
         } catch (final Exception e) {
             LOGGER.warn("[{}] cannot be resolved: [{}]", subject, e.getMessage());
@@ -189,16 +212,25 @@ public class OidcFederationDefaultEntityResolver implements OidcFederationEntity
                                      final Map<EntityID, TrustChainResolver> resolvers) {
         val retention = Beans.newDuration(properties.getUnresolvedEntityRetention());
         val candidates = new ArrayList<ResolvedChain>();
+        val unavailable = new ArrayList<OidcFederationResolutionUnavailableException>();
         for (val trustAnchor : trustAnchors) {
             val resolver = resolvers.get(trustAnchor);
             try {
                 resolveTrustChains(entityId, subject, trustAnchor, resolver)
                     .forEach(chain -> candidates.add(new ResolvedChain(resolver, chain)));
+            } catch (final OidcFederationResolutionUnavailableException e) {
+                unavailable.add(e);
             } catch (final Exception e) {
                 LOGGER.debug("Trust chains of [{}] to [{}] cannot be resolved: [{}]", subject, trustAnchor, e.getMessage());
+                if (OidcFederationResolutionLimiter.currentBudget().filter(budget -> budget.isUnreachable(trustAnchor.getValue())).isPresent()) {
+                    unavailable.add(new OidcFederationResolutionUnavailableException("Trust anchor %s cannot be reached now".formatted(trustAnchor)));
+                }
             }
         }
         val selected = candidates.stream().min(Comparator.comparingInt(candidate -> candidate.chain().length()));
+        if (selected.isEmpty() && !unavailable.isEmpty()) {
+            throw unavailable.getFirst();
+        }
         if (selected.isEmpty()) {
             LOGGER.warn("[{}] has no valid trust chain to any of [{}]", subject, trustAnchors);
             return new Resolution(null, new OidcFederationResolveException(HttpStatus.BAD_REQUEST, INVALID_TRUST_CHAIN,
@@ -215,8 +247,8 @@ public class OidcFederationDefaultEntityResolver implements OidcFederationEntity
         return new Resolution(new ResolvedEntity(chain, trustMarks, expirationTime), null, kept.isNegative() ? Duration.ZERO : kept);
     }
 
-    private static List<TrustChain> resolveTrustChains(final EntityID entityId, final EntityID subject, final EntityID trustAnchor,
-                                                       final TrustChainResolver resolver)
+    private List<TrustChain> resolveTrustChains(final EntityID entityId, final EntityID subject, final EntityID trustAnchor,
+                                                final TrustChainResolver resolver)
             throws Exception {
         val chains = resolver.resolveTrustChains(subject)
             .stream()
@@ -235,7 +267,7 @@ public class OidcFederationDefaultEntityResolver implements OidcFederationEntity
         return chains
             .stream()
             .map(chain -> new TrustChain(chain.getLeafConfiguration(), chain.getSuperiorStatements(), configuration))
-            .filter(chain -> trustAnchor.equals(entityId) || !OidcFederationHistoricalKeys.isSignedWithRevokedTrustAnchorKey(resolver, chain))
+            .filter(chain -> trustAnchor.equals(entityId) || !trustAnchorKeys.isSignedWithRevokedKey(resolver, chain))
             .toList();
     }
 

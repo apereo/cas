@@ -27,7 +27,6 @@ import com.nimbusds.openid.connect.sdk.federation.entities.EntityStatement;
 import com.nimbusds.openid.connect.sdk.federation.entities.EntityStatementClaimsSet;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jose4j.jwk.JsonWebKey;
@@ -189,7 +188,7 @@ public class OidcFederationDefaultJsonWebKeystoreService implements OidcFederati
         return lock.executeAndThrow(() -> {
             reloadKeystoreIfModified();
             val now = Instant.now(Clock.systemUTC()).getEpochSecond();
-            val updated = new ArrayList<>(keys);
+            val updated = copyOf(keys);
             val futureKeys = getActiveKeys(updated, JsonWebKeyLifecycleStates.FUTURE);
             if (futureKeys.isEmpty()) {
                 LOGGER.info("No future OpenID Connect Federation key is published yet; adding one, which the next rotation makes current");
@@ -249,7 +248,7 @@ public class OidcFederationDefaultJsonWebKeystoreService implements OidcFederati
             val now = Instant.now(Clock.systemUTC()).getEpochSecond();
             val updated = new ArrayList<JsonWebKey>();
             var modified = false;
-            for (val key : keys) {
+            for (val key : copyOf(keys)) {
                 val previousSince = readEpochSecond(key, PREVIOUS_SINCE);
                 if (isRetired(key) || !JsonWebKeyLifecycleStates.getJsonWebKeyState(key).isPrevious()) {
                     updated.add(key);
@@ -289,7 +288,7 @@ public class OidcFederationDefaultJsonWebKeystoreService implements OidcFederati
                 revocation.put(REASON, reason);
             }
             val updated = new ArrayList<JsonWebKey>();
-            for (val key : keys) {
+            for (val key : copyOf(keys)) {
                 if (keyId.equals(key.getKeyId())) {
                     val revoked = isRetired(key) ? key : JsonWebKey.Factory.newJwk(key.toParams(JsonWebKey.OutputControlLevel.PUBLIC_ONLY));
                     if (!isRetired(key)) {
@@ -342,12 +341,14 @@ public class OidcFederationDefaultJsonWebKeystoreService implements OidcFederati
     }
 
     /**
-     * The keys, read again from the keystore file when it changed since they were read, such as by another node.
+     * The keys, read again from the keystore file when it changed since they were read, such as by another node. A
+     * keystore file that is missing, or is not a file, leaves the keys as they are.
      *
      * @return the keys
      */
     private List<JsonWebKey> getKeys() {
-        if (getKeystoreLastModified() != keysLastModified) {
+        val lastModified = getKeystoreLastModified();
+        if (lastModified != 0L && lastModified != keysLastModified) {
             lock.execute(this::reloadKeystoreIfModified);
         }
         return keys;
@@ -355,7 +356,7 @@ public class OidcFederationDefaultJsonWebKeystoreService implements OidcFederati
 
     private void reloadKeystoreIfModified() {
         val lastModified = getKeystoreLastModified();
-        if (resource != null && lastModified != keysLastModified) {
+        if (resource != null && lastModified != 0L && lastModified != keysLastModified) {
             try (val input = resource.getInputStream()) {
                 val loaded = new JsonWebKeySet(IOUtils.toString(input, StandardCharsets.UTF_8)).getJsonWebKeys();
                 if (!loaded.isEmpty()) {
@@ -376,6 +377,20 @@ public class OidcFederationDefaultJsonWebKeystoreService implements OidcFederati
             LOGGER.trace(e.getMessage(), e);
             return 0L;
         }
+    }
+
+    /**
+     * Copies of the keys, private keys included, which a change works on, so that the keys in use stay as they are
+     * until the changed keys are saved, and stay so when they cannot be.
+     *
+     * @param keys the keys
+     * @return the copies
+     */
+    private static List<JsonWebKey> copyOf(final List<JsonWebKey> keys) {
+        return keys
+            .stream()
+            .map(key -> FunctionUtils.doUnchecked(() -> JsonWebKey.Factory.newJwk(key.toParams(JsonWebKey.OutputControlLevel.INCLUDE_PRIVATE))))
+            .collect(Collectors.toCollection(ArrayList::new));
     }
 
     private static Optional<Long> readEpochSecond(final JsonWebKey key, final String name) {
@@ -399,13 +414,33 @@ public class OidcFederationDefaultJsonWebKeystoreService implements OidcFederati
         return key;
     }
 
+    /**
+     * Write the keys to the keystore file, through a file of its own in the same directory that then replaces the
+     * keystore at once, so that the keystore is never read half written. The new file is created readable by its owner
+     * only, where the file system supports it.
+     *
+     * @param updated the keys
+     * @throws Exception when the keys cannot be written
+     */
     private void store(final List<JsonWebKey> updated) throws Exception {
         if (resource == null) {
             throw new IllegalStateException("No keystore file is defined for OpenID Connect Federation keys");
         }
         val json = new JsonWebKeySet(updated).toJson(JsonWebKey.OutputControlLevel.INCLUDE_PRIVATE);
         LOGGER.debug("Writing OpenID Connect Federation JSON web keys to [{}]", resource);
-        FileUtils.write(resource.getFile(), json, StandardCharsets.UTF_8);
+        val keystore = resource.getFile().toPath().toAbsolutePath();
+        Files.createDirectories(keystore.getParent());
+        val written = Files.createTempFile(keystore.getParent(), keystore.getFileName().toString(), ".tmp");
+        try {
+            Files.writeString(written, json, StandardCharsets.UTF_8);
+            try {
+                Files.move(written, keystore, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
+            } catch (final AtomicMoveNotSupportedException e) {
+                Files.move(written, keystore, StandardCopyOption.REPLACE_EXISTING);
+            }
+        } finally {
+            Files.deleteIfExists(written);
+        }
         keysLastModified = getKeystoreLastModified();
     }
 

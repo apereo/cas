@@ -1,6 +1,7 @@
 package org.apereo.cas.services;
 
 import module java.base;
+import org.apereo.cas.authentication.principal.OidcPairwisePersistentIdGenerator;
 import org.apereo.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredServiceClientSecret;
 import lombok.val;
@@ -8,6 +9,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.StaticApplicationContext;
+import org.springframework.core.env.MapPropertySource;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -95,6 +97,37 @@ class PairwiseOidcRegisteredServiceUsernameAttributeProviderTests {
         registeredService.setServiceId("https://sso.example.org/oidc");
         val uid1 = provider.resolveUsername(usernameContext);
         assertEquals(uid1, uid);
+    }
+
+    /**
+     * A generator without a salt of its own calculates identifiers with the pairwise subject salt of CAS, which is not
+     * written into it: clients of the same sector share identifiers, and clients of other sectors do not.
+     */
+    @Test
+    void verifyPairwiseSubjectSaltOfCasIsUsedAndNotStored() throws Throwable {
+        val applicationContext = new StaticApplicationContext();
+        applicationContext.getEnvironment().getPropertySources().addFirst(new MapPropertySource("salt",
+            Map.<String, Object>of(PairwiseOidcRegisteredServiceUsernameAttributeProvider.PAIRWISE_SUBJECT_SALT_PROPERTY, "global-salt")));
+        applicationContext.refresh();
+        val provider = new PairwiseOidcRegisteredServiceUsernameAttributeProvider();
+        val principal = RegisteredServiceTestUtils.getPrincipal("casuser");
+        val uids = new ArrayList<String>();
+        for (val redirectUri : List.of("https://app.example.org/cb", "https://app.example.org/other", "https://other.example.org/cb")) {
+            val registeredService = new OidcRegisteredService();
+            registeredService.setClientId(UUID.randomUUID().toString());
+            registeredService.setSubjectType(OidcSubjectTypes.PAIRWISE.getType());
+            registeredService.setServiceId(OidcRedirectUriUtils.toServiceId(List.of(redirectUri)));
+            uids.add(provider.resolveUsername(RegisteredServiceUsernameProviderContext.builder()
+                .registeredService(registeredService)
+                .service(RegisteredServiceTestUtils.getService())
+                .principal(principal)
+                .applicationContext(applicationContext)
+                .build()));
+        }
+        assertEquals(new ShibbolethCompatiblePersistentIdGenerator("global-salt").generate(principal, "app.example.org"), uids.getFirst());
+        assertEquals(uids.getFirst(), uids.get(1));
+        assertNotEquals(uids.getFirst(), uids.get(2));
+        assertTrue(StringUtils.isBlank(((OidcPairwisePersistentIdGenerator) provider.getPersistentIdGenerator()).getSalt()));
     }
 
     @Test

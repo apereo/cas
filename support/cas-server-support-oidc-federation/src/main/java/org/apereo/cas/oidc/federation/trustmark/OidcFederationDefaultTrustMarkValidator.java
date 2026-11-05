@@ -3,6 +3,7 @@ package org.apereo.cas.oidc.federation.trustmark;
 import module java.base;
 import org.apereo.cas.configuration.model.support.oidc.federation.OidcFederationProperties;
 import org.apereo.cas.oidc.federation.chain.OidcFederationHistoricalKeys;
+import org.apereo.cas.oidc.federation.chain.OidcFederationHttpClient;
 import org.apereo.cas.oidc.federation.chain.OidcFederationResolutionLimiter;
 import org.apereo.cas.oidc.federation.chain.OidcFederationTrustChainConstraints;
 import com.github.benmanes.caffeine.cache.Cache;
@@ -88,13 +89,13 @@ public class OidcFederationDefaultTrustMarkValidator implements OidcFederationTr
 
     private static final int MAX_CLOCK_SKEW_SECONDS = 60;
 
-    private static final int STATUS_ENDPOINT_TIMEOUT_MILLIS = 5000;
-
     private static final Duration HISTORICAL_KEYS_CACHE_DURATION = Duration.ofMinutes(1);
 
     private static final int HISTORICAL_KEYS_CACHE_SIZE = 1000;
 
     private final OidcFederationProperties properties;
+
+    private final OidcFederationHttpClient httpClient;
 
     /**
      * The historical keys of trust mark issuers, by issuer, endpoint and verification keys, including issuers whose
@@ -105,6 +106,10 @@ public class OidcFederationDefaultTrustMarkValidator implements OidcFederationTr
         .maximumSize(HISTORICAL_KEYS_CACHE_SIZE)
         .expireAfterWrite(HISTORICAL_KEYS_CACHE_DURATION)
         .build();
+
+    public OidcFederationDefaultTrustMarkValidator(final OidcFederationProperties properties) {
+        this(properties, new OidcFederationHttpClient(properties));
+    }
 
     @Override
     public boolean hasRequiredTrustMarks(final TrustChainResolver trustChainResolver, final TrustChain trustChain) {
@@ -223,7 +228,9 @@ public class OidcFederationDefaultTrustMarkValidator implements OidcFederationTr
      * issuer no longer publishes, that key from the issuer's historical keys (OpenID Federation 1.0, section 8.7),
      * provided the key was never revoked and the trust mark was issued before the key was retired. Trust marks signed
      * before a key rollover thus stay valid for the rest of their life. Historical keys are kept for a minute per issuer,
-     * and an issuer whose historical keys cannot be obtained has none for that minute.
+     * and an issuer whose historical keys cannot be obtained has none for that minute; when they are not requested
+     * because the running resolution has used up its requests or its time, which other resolutions have not, nothing is
+     * kept and the trust mark is verified with the federation keys of its issuer.
      *
      * @param trustMark           the trust mark
      * @param issuerConfiguration the entity configuration of the issuer
@@ -239,7 +246,15 @@ public class OidcFederationDefaultTrustMarkValidator implements OidcFederationTr
         val issuedAt = trustMark.getJWTClaimsSet().getIssueTime();
         val cacheKey = issuerConfiguration.getEntityID().getValue() + ' '
             + issuerConfiguration.getClaimsSet().getMetadata(EntityType.FEDERATION_ENTITY) + ' ' + issuerKeys.toString(true);
-        return historicalKeys.get(cacheKey, _ -> fetchHistoricalKeys(issuerConfiguration, issuerKeys))
+        val cachedKeys = historicalKeys.getIfPresent(cacheKey);
+        val keys = cachedKeys == null ? fetchHistoricalKeys(issuerConfiguration, issuerKeys) : cachedKeys;
+        if (keys == null) {
+            return issuerKeys;
+        }
+        if (cachedKeys == null) {
+            historicalKeys.put(cacheKey, keys);
+        }
+        return keys
             .stream()
             .filter(key -> keyId.equals(key.getKeyID()))
             .filter(key -> OidcFederationHistoricalKeys.mayHaveSigned(key, issuedAt))
@@ -248,9 +263,18 @@ public class OidcFederationDefaultTrustMarkValidator implements OidcFederationTr
             .orElse(issuerKeys);
     }
 
-    private static List<JWK> fetchHistoricalKeys(final EntityStatement issuerConfiguration, final JWKSet issuerKeys) {
+    private @Nullable List<JWK> fetchHistoricalKeys(final EntityStatement issuerConfiguration, final JWKSet issuerKeys) {
         try {
-            return OidcFederationHistoricalKeys.fetch(issuerConfiguration, issuerKeys);
+            OidcFederationResolutionLimiter.consumeRequest("historical keys of " + issuerConfiguration.getEntityID());
+        } catch (final IllegalStateException e) {
+            LOGGER.warn("Historical keys of trust mark issuer [{}] are not requested now: [{}]", issuerConfiguration.getEntityID(), e.getMessage());
+            return null;
+        }
+        try {
+            return OidcFederationHistoricalKeys.fetch(issuerConfiguration, issuerKeys, httpClient);
+        } catch (final OidcFederationHttpClient.OutOfTimeException e) {
+            LOGGER.warn("Historical keys of trust mark issuer [{}] are not requested now: [{}]", issuerConfiguration.getEntityID(), e.getMessage());
+            return null;
         } catch (final Exception e) {
             LOGGER.warn("Unable to obtain the historical keys of trust mark issuer [{}]: [{}]", issuerConfiguration.getEntityID(), e.getMessage());
             return List.of();
@@ -343,9 +367,7 @@ public class OidcFederationDefaultTrustMarkValidator implements OidcFederationTr
         val request = new HTTPRequest(HTTPRequest.Method.POST, endpointUri);
         request.setEntityContentType(ContentType.APPLICATION_URLENCODED);
         request.setBody(URLUtils.serializeParameters(Map.of(TRUST_MARK, List.of(serialized))));
-        request.setConnectTimeout(STATUS_ENDPOINT_TIMEOUT_MILLIS);
-        request.setReadTimeout(STATUS_ENDPOINT_TIMEOUT_MILLIS);
-        val response = request.send();
+        val response = httpClient.send(request);
         if (!response.indicatesSuccess()) {
             throw new BadJWTException("Trust mark status endpoint " + endpoint + " answered " + response.getStatusCode());
         }

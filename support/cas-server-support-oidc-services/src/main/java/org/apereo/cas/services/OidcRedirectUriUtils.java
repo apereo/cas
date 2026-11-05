@@ -4,7 +4,9 @@ import module java.base;
 import org.apereo.cas.util.CollectionUtils;
 import lombok.experimental.UtilityClass;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
+import org.springframework.web.util.UriComponentsBuilder;
 
 /**
  * Translates between the redirect URIs of a client registered by CAS, dynamically or through the federation, and the
@@ -26,6 +28,8 @@ public class OidcRedirectUriUtils {
     private static final String SERVICE_ID_PREFIX = "^(";
 
     private static final String SERVICE_ID_SUFFIX = ")$";
+
+    private static final Pattern AUTHORITY = Pattern.compile("^[a-zA-Z][a-zA-Z0-9+.-]*://");
 
     /**
      * The service id of a client registered with the given redirect URIs: a regular expression that matches each of them
@@ -80,5 +84,44 @@ public class OidcRedirectUriUtils {
         }
         redirectUris.add(current.toString());
         return redirectUris;
+    }
+
+    /**
+     * The host of a redirect URI, as the sector identifier of pairwise subject identifiers is read from it when the client
+     * has no sector identifier URI (OpenID Connect Core 1.0, section 8.1). Every check of the sector of a client reads
+     * hosts this way, so that the host a check sees is the host identifiers are calculated for.
+     *
+     * @param redirectUri the redirect URI
+     * @return the host, or empty when the redirect URI names none or cannot be read
+     */
+    public static Optional<String> toHost(final String redirectUri) {
+        try {
+            return Optional.ofNullable(UriComponentsBuilder.fromUriString(redirectUri).build().getHost()).filter(StringUtils::isNotBlank);
+        } catch (final IllegalArgumentException e) {
+            return Optional.empty();
+        }
+    }
+
+    /**
+     * The distinct hosts of the redirect URIs of a client, read as {@link #toHost(String)} does. A redirect URI without an
+     * authority, such as one with the private-use scheme of a native application, names no host; one with an authority
+     * whose host cannot be read is refused, since a check that set it aside would not see the host it may stand for.
+     *
+     * @param redirectUris the redirect URIs
+     * @return the hosts
+     * @throws IllegalArgumentException when a redirect URI has an authority without a host that can be read
+     */
+    public static List<String> toHosts(final Collection<String> redirectUris) {
+        return redirectUris
+            .stream()
+            .map(redirectUri -> toHost(redirectUri).or(() -> {
+                if (AUTHORITY.matcher(redirectUri).find()) {
+                    throw new IllegalArgumentException("Redirect URI %s has no host that can be read".formatted(redirectUri));
+                }
+                return Optional.empty();
+            }))
+            .flatMap(Optional::stream)
+            .distinct()
+            .toList();
     }
 }

@@ -263,6 +263,13 @@ class DefaultOidcClientIdMetadataDocumentResolverTests {
             for (val address : List.of("93.184.216.34", "8.8.8.8", "2606:4700::6810:84e5", "64:ff9b::808:808")) {
                 assertTrue(DefaultOidcClientIdMetadataDocumentFetcher.isPublicAddress(InetAddress.getByName(address)), address);
             }
+            for (val address : List.of("169.254.169.254", "::ffff:169.254.169.254", "64:ff9b::a9fe:a9fe", "::a9fe:a9fe", "0.0.0.0",
+                "::", "224.0.0.1", "fe80::1")) {
+                assertFalse(DefaultOidcClientIdMetadataDocumentFetcher.isAllowedWithPrivateNetworks(InetAddress.getByName(address)), address);
+            }
+            for (val address : List.of("10.0.0.1", "127.0.0.1", "::1", "fd12:3456::1", "93.184.216.34", "64:ff9b::808:808")) {
+                assertTrue(DefaultOidcClientIdMetadataDocumentFetcher.isAllowedWithPrivateNetworks(InetAddress.getByName(address)), address);
+            }
             val publicAddress = InetAddress.getByAddress(new byte[]{93, (byte) 184, (byte) 216, 34});
             val fetcher = new DefaultOidcClientIdMetadataDocumentFetcher(httpClient, Duration.ofSeconds(1),
                 DefaultOidcClientIdMetadataDocumentFetcher::isPublicAddress,

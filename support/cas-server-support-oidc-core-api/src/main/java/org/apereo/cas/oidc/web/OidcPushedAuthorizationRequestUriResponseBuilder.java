@@ -11,6 +11,7 @@ import org.apereo.cas.oidc.OidcConfigurationContext;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.ticket.OidcPushedAuthorizationRequest;
 import org.apereo.cas.oidc.ticket.OidcPushedAuthorizationRequestFactory;
+import org.apereo.cas.oidc.util.OidcRequestSupport;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.web.response.OAuth20AuthorizationRequest;
@@ -84,7 +85,7 @@ public class OidcPushedAuthorizationRequestUriResponseBuilder extends BaseOAuth2
         final OAuthRegisteredService registeredService) {
 
         val requestUri = Optional.ofNullable(request.getParameter(OidcConstants.REQUEST_URI));
-        if (request.getRequestURL().toString().endsWith(OidcConstants.AUTHORIZE_URL) && requestUri.isEmpty()) {
+        if (OidcRequestSupport.isRequestForEndpoint(request, OidcConstants.AUTHORIZE_URL) && requestUri.isEmpty()) {
             return Optional.empty();
         }
 
@@ -114,7 +115,7 @@ public class OidcPushedAuthorizationRequestUriResponseBuilder extends BaseOAuth2
                     .grantType(tokenRequest.getGrantType().getType());
                 return Optional.of(value);
             }))
-            .orElseGet(() -> Optional.of(authzRequestBuilder.singleSignOnSessionRequired(!request.getRequestURL().toString().endsWith(OidcConstants.PUSHED_AUTHORIZE_URL))));
+            .orElseGet(() -> Optional.of(authzRequestBuilder.singleSignOnSessionRequired(!OidcRequestSupport.isRequestForEndpoint(request, OidcConstants.PUSHED_AUTHORIZE_URL))));
     }
 
     /**

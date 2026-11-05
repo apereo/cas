@@ -5,6 +5,7 @@ import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.federation.AbstractOidcIntermediateFederationTests;
 import org.apereo.cas.oidc.federation.AbstractOidcOpenIdProviderFederationTests;
 import org.apereo.cas.oidc.federation.AbstractOidcTrustAnchorFederationTests;
+import org.apereo.cas.oidc.federation.chain.OidcFederationResolutionUnavailableException;
 import org.apereo.cas.oidc.federation.signature.OidcFederationJsonWebKeystoreService;
 import org.apereo.cas.oidc.federation.subordinate.OidcFederationSubordinate;
 import org.apereo.cas.oidc.federation.subordinate.OidcFederationSubordinateRepository;
@@ -421,6 +422,10 @@ class OidcFetchFederationEndpointControllerTests {
 
         private static final String UNREACHABLE = "https://unreachable.resolve.example.org";
 
+        private static final String UNAVAILABLE_ONCE = "https://unavailable.resolve.example.org";
+
+        private static final AtomicInteger UNAVAILABLE_ATTEMPTS = new AtomicInteger();
+
         private static final RSAKey LEAF_KEY = FunctionUtils.doUnchecked(() -> new RSAKeyGenerator(2048).keyID("leaf-federation").generate());
 
         @Autowired
@@ -597,6 +602,25 @@ class OidcFetchFederationEndpointControllerTests {
             verify(entityStatementRetriever, times(1)).fetchEntityConfiguration(new EntityID(UNREACHABLE));
         }
 
+        /**
+         * A resolution that is unavailable, such as when a trust anchor cannot be reached for now, is answered with
+         * {@code 503} and not remembered, so that the subject is resolved again with the next request.
+         */
+        @Test
+        void verifyUnavailableResolutionIsNotRemembered() throws Exception {
+            UNAVAILABLE_ATTEMPTS.set(0);
+            val subject = UNAVAILABLE_ONCE + '/' + UUID.randomUUID();
+            mockMvc.perform(get(RESOLVE_ENDPOINT_URL).param("sub", subject).param("trust_anchor", ISSUER)
+                    .with(withHttpRequestProcessor()))
+                .andExpect(status().isServiceUnavailable())
+                .andExpect(jsonPath("$.error").value("temporarily_unavailable"));
+            mockMvc.perform(get(RESOLVE_ENDPOINT_URL).param("sub", subject).param("trust_anchor", ISSUER)
+                    .with(withHttpRequestProcessor()))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error").value("invalid_trust_chain"));
+            assertEquals(2, UNAVAILABLE_ATTEMPTS.get());
+        }
+
         static EntityStatement leafConfiguration(final String entityId, final String applicationType) throws Exception {
             val now = Instant.now(Clock.systemUTC());
             val claims = new EntityStatementClaimsSet(new EntityID(entityId), new EntityID(entityId),
@@ -619,7 +643,12 @@ class OidcFetchFederationEndpointControllerTests {
                     return switch (target) {
                         case RELYING_PARTY -> leafConfiguration(RELYING_PARTY, "web");
                         case NATIVE_RELYING_PARTY -> leafConfiguration(NATIVE_RELYING_PARTY, "native");
-                        default -> throw new ResolveException("Not reachable: " + target);
+                        default -> {
+                            if (target.startsWith(UNAVAILABLE_ONCE) && UNAVAILABLE_ATTEMPTS.incrementAndGet() == 1) {
+                                throw new OidcFederationResolutionUnavailableException("Not reachable for now: " + target);
+                            }
+                            throw new ResolveException("Not reachable: " + target);
+                        }
                     };
                 });
                 return retriever;

@@ -403,7 +403,8 @@ one-time codes can be added when `cas.authn.mfa.simple.mail.accepted-email-patte
   decrypt with: `cas.authn.oidc.discovery.request-object-encryption-alg-values-supported`{: .cas-setting} now defaults to
   `RSA-OAEP`, `RSA-OAEP-256` and the `ECDH-ES` family, without `RSA1_5` and symmetric key wrapping. `RSA1_5` is never
   accepted nor advertised, even when listed, and the encryption keys are read from the keystore once per JWKS cache period
-  instead of for every request object, and again as soon as the keystore changes or its keys are rotated or revoked;
+  instead of for every request object, and again as soon as the node sees the keystore change or rotates or revokes its
+  keys;
   signing keys are never used to decrypt.
 - {: .fixed data-area="oidc"} Elliptic curve keys that CAS generates for its
   [OpenID Connect keystore](../authentication/OIDC-Authentication-JWKS.html#key-types) carry the signing algorithm of their
@@ -415,8 +416,16 @@ one-time codes can be added when `cas.authn.mfa.simple.mail.accepted-email-patte
   is refused with `invalid_request_object`, as OpenID Connect requires. CAS used to ignore such a request object and carry
   on with the query parameters alone. Request objects signed with `HS256`, `HS384` or `HS512` are
   [verified with the client secret](../authentication/OIDC-Authentication-JWKS-Clients.html#request-objects) of the
-  application, which is checked for expiry and decoded as when the application authenticates with it.
-- {: .fixed data-area="oidc"} [Dynamically registered](../authentication/OIDC-Authentication-Dynamic-Registration.html)
+  application, which is checked for expiry and decoded as when the application authenticates with it; one that names
+  no registered client or verifies with none of its secrets is refused the same way instead of failing with a server
+  error. [Backchannel authentication](../authentication/OIDC-Authentication-CIBA.html) requests whose request object
+  cannot be verified, or is for another client, are refused with `invalid_request` instead of being answered from their
+  other parameters. [Signed backchannel authentication requests](../authentication/OIDC-Authentication-CIBA.html#signed-authentication-requests)
+  must be signed with an asymmetric algorithm, name the client as their issuer, be addressed to the CAS issuer and carry
+  `exp`, `iat`, `nbf` and `jti`, as CIBA requires; they may not be issued in the future, may be valid for 60 minutes at
+  most and are used once. They are verified with the keys of the client that authenticated the request, also when the
+  request names no `client_id`.
+- {: .action data-area="oidc"} [Dynamically registered](../authentication/OIDC-Authentication-Dynamic-Registration.html)
   OpenID Connect clients, and [OpenID Federation](../authentication/OIDC-Authentication-Federation.html#automatic-registration)
   relying parties registered automatically, have their redirect URIs matched exactly, case included. Dynamic registration used to join
   them into a pattern where `.` matched any character, so look-alike hosts matched, and `?` was not literal, so a redirect
@@ -425,7 +434,21 @@ one-time codes can be added when `cas.authn.mfa.simple.mail.accepted-email-patte
 - {: .action data-area="oidc"} [Pairwise subject identifiers](../authentication/OIDC-Authentication-Claims-Pairwise.html) of
   clients that CAS registered, dynamically or through OpenID Federation, without a sector identifier URI use the host of
   their first redirect URI, as before. When their redirect URIs name no host, as with native applications, each client is
-  now its own sector; such clients used to share a single sector, so their users receive new identifiers.
+  now its own sector; such clients used to share a single sector, so their users receive new identifiers. OpenID
+  Federation relying parties that ask for pairwise identifiers now receive them; they used to receive the plain user id.
+  Clients whose definition carries no salt of their own, which includes clients that CAS registers, calculate them with
+  `cas.authn.oidc.core.pairwise-subject-salt`{: .cas-setting}, read when they are used and never written into client
+  definitions; without it, federation relying parties that ask for them are not registered, and clients registered
+  dynamically are each given a random salt kept with their registration, where they used to get one that changed with
+  every restart. Clients registered dynamically before keep such a changing salt until the setting is defined or they
+  update their registration. Clients that ask for pairwise identifiers with redirect URIs on several hosts must register
+  a sector identifier URI, which must be an `https` URL that can be fetched and lists all of their redirect URIs; the
+  sector identifier URI of a federation relying party is fetched and checked the same way. Hosts are read the same way
+  when clients register and when identifiers are calculated, and a redirect URI whose host cannot be read is refused.
+  Sector identifier documents of dynamically registered clients are fetched from public addresses only, without
+  redirects or retries, within a limited time and size. A client configuration update that is refused now leaves the
+  client as it was and is answered with `invalid_client_metadata`, and an update keeps the generator of pairwise
+  identifiers the client has.
 - {: .fixed data-area="oidc"} [Pushed authorization requests](../authentication/OIDC-Authentication-PAR.html) are
   accepted again when [verifiable credentials](../authentication/OIDC-Authentication-Verifiable-Credentials.html) are
   turned on; CAS answered them with `401` as if they needed a single sign-on session. A wallet that pushes its
@@ -434,7 +457,10 @@ one-time codes can be added when `cas.authn.mfa.simple.mail.accepted-email-patte
   `invalid_authorization_details` when they are pushed, instead of after the redirect to the authorization endpoint.
 - {: .changed data-area="oidc"} [Pushed authorization requests](../authentication/OIDC-Authentication-PAR.html) that
   fail validation are answered with `400` and the actual error, such as `invalid_request_object` or
-  `unsupported_response_type`, as RFC 9126 requires, instead of `403` with a generic `invalid_request`.
+  `unsupported_response_type`, as RFC 9126 requires, instead of `403` with a generic `invalid_request`. When pushed authorization
+  requests are required, an authorization request without one is refused at every path of the authorization endpoint,
+  including encoded ones and the OAuth path under the OpenID Connect base path. Endpoints that require client or token
+  authentication now recognize their paths with path parameters, such as `;x=y`, too.
 - {: .changed data-area="oidc"} The `aud` of a token introspection response is the audience of the JWT access token: the
   service `audience` (or the client ID) and the token's resources, or the audience requested by a token exchange. It used
   to be the service URL the token was issued for. Custom introspection response generators now receive the registered
@@ -475,7 +501,7 @@ one-time codes can be added when `cas.authn.mfa.simple.mail.accepted-email-patte
 
 - {: .action data-area="oidc"} [OpenID Federation](../authentication/OIDC-Authentication-Federation.html#automatic-registration)
   relying parties registered automatically must prove they control their keys. Every authorization request, on the
-  OpenID Connect or the OAuth authorization endpoint, carries a signed request object addressed to the CAS issuer, valid
+  OpenID Connect or the OAuth authorization endpoint, wherever they answer and however their path is encoded, carries a signed request object addressed to the CAS issuer, valid
   for 10 minutes at most and used once, or refers to a pushed authorization request for which the relying party
   authenticated itself; the proof is for the client the request is actually for, taken from the request object when the
   request has no `client_id`; at the pushed authorization endpoint, a client assertion must be addressed to the CAS
@@ -492,10 +518,22 @@ one-time codes can be added when `cas.authn.mfa.simple.mail.accepted-email-patte
   not resolved again for `cas.authn.oidc.federation.unresolved-entity-retention`{: .cas-setting}, during which a
   registration that failed to refresh is kept. Each resolution sends at most
   `cas.authn.oidc.federation.max-requests-per-resolution`{: .cas-setting} requests (50), reusing statements it already
-  fetched, and at most `cas.authn.oidc.federation.max-concurrent-resolutions`{: .cas-setting} resolutions (10) run at
-  once. The constraints of subordinate statements (maximum path length, naming
+  fetched, within `cas.authn.oidc.federation.resolution-timeout`{: .cas-setting} (10 seconds) all requests together, with
+  responses limited in size, the TLS settings of CAS and no redirects; at most
+  `cas.authn.oidc.federation.max-concurrent-resolutions`{: .cas-setting} resolutions (10) run at once. The time limit
+  covers each whole request, host name lookup and TLS handshake included, and requests are only sent over `https` and
+  never to link-local, unspecified or multicast addresses, IPv6 forms included, unless a proxy of the JVM sends them.
+  A trust anchor that cannot be reached or answer in time, or whose historical keys cannot be read, and a sector
+  identifier document that cannot be fetched for now make the resolution unavailable rather than failed, so the relying
+  party is not remembered as unresolved; a relying party that is not registered yet is then answered with
+  `temporarily_unavailable` instead of as an unknown client. Using a trust chain the relying party sent and resolving its
+  trust chains share one time limit and request budget. The constraints of subordinate statements (maximum path length, naming
   constraints, allowed entity types) now apply to the trust chains of relying parties and of their trust mark issuers;
   they used to be ignored. A maximum path length must be a whole number that is not negative.
+- {: .changed data-area="oidc"} [Application keys](../authentication/OIDC-Authentication-Clients.html) published at a URL
+  are no longer requested at link-local, unspecified or multicast addresses, and redirects are not followed. The
+  [OpenID Federation](../authentication/OIDC-Authentication-Federation.html#key-rollover) keystore is replaced at once
+  when it changes, so it is never read half written.
 - {: .changed data-area="oidc"} A CAS [OpenID Federation](../authentication/OIDC-Authentication-Federation.html#subordinates)
   trust anchor or intermediate issues subordinate statements that carry only the subordinate's keys, its metadata
   without the fetch, list and trust mark status endpoints, and the `constraints` of its definition rather than a fixed
@@ -552,8 +590,9 @@ one-time codes can be added when `cas.authn.mfa.simple.mail.accepted-email-patte
   `cas.authn.oidc.federation.revocation.schedule.enabled`{: .cas-setting}) or through the new `oidcFederationJwks`
   actuator endpoint, which can also revoke a key, for instance when it is compromised. Retired and revoked keys are
   published by the new federation historical keys endpoint. A scheduled rotation or revocation only changes keys that are
-  old enough, at half the time between two runs of its schedule, so it does not run again on a restart or on another
-  node, and nodes that share the keystore file read it again when it changes. New keystores start with a future key; existing single-key
+  old enough, at half the time between two runs of its schedule, so it does not run again after a restart, and nodes
+  that share the keystore file read it again when it changes; in a cluster, the schedules are best enabled on one node.
+  Keys are changed on copies and used only once saved. New keystores start with a future key; existing single-key
   keystores keep working, and published keys carry the algorithm they sign with, matching the key's curve. A CAS
   OpenID provider does not use trust chains whose statements do not name their signing key, or that the trust anchor
   signed with a key it has revoked or had retired before, as the historical keys it publishes over `https` show; they
