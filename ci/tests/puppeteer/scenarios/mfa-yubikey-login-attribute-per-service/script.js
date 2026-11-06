@@ -78,7 +78,8 @@ async function submitToken(page, token) {
             await cas.assertCookie(page, false);
         }
 
-        const signedRequest = requests[0];
+        const signedRequest = requests.find((query) => query.otp !== undefined);
+        assert(signedRequest !== undefined);
         assert.equal(signedRequest.id, "18421");
         assert.equal(signedRequest.h, sign(signedRequest));
 

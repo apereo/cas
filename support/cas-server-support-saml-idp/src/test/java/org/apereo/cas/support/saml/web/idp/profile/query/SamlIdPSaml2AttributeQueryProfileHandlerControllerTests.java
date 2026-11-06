@@ -211,6 +211,10 @@ class SamlIdPSaml2AttributeQueryProfileHandlerControllerTests {
             val xml = SamlUtils.transformSamlObject(openSamlConfigBean, envelope).toString();
             val result = performSoapPost(xml);
             assertEquals(HttpStatus.SC_OK, result.getResponse().getStatus());
+            assertNull(result.getRequest().getAttribute(SamlIdPConstants.REQUEST_ATTRIBUTE_ERROR));
+            val content = result.getResponse().getContentAsString();
+            assertTrue(content.contains(":Envelope"));
+            assertFalse(content.contains("<form"));
         }
 
         @Test

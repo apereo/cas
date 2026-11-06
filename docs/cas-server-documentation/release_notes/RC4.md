@@ -717,6 +717,10 @@ one-time codes can be added when `cas.authn.mfa.simple.mail.accepted-email-patte
   the [REST registration store](../mfa/GoogleAuthenticator-Authentication-Registration-Rest.html) no longer loses
   precision when reading them back. Scratch codes that can no longer be decrypted, such as codes stored under another
   key, stop working; users can generate new ones from the account profile.
+- {: .fixed data-area="authentication"} A login request that carries both `renew` and `gateway` now shows the login form,
+  as the [CAS protocol](../protocol/CAS-Protocol-Specification.html) recommends, instead of returning to the application
+  without a ticket. When renewed authentication is turned off with `cas.sso.renew-authn-enabled`{: .cas-setting}, the
+  `gateway` parameter is honored as before.
 
 ### SAML2
 {: .changed data-area="saml"}
@@ -771,6 +775,9 @@ one-time codes can be added when `cas.authn.mfa.simple.mail.accepted-email-patte
 - {: .changed data-area="saml"} [SAML2 identity provider metadata](../installation/Configuring-SAML2-DynamicMetadata.html)
   is served as `application/samlmetadata+xml` when asked for, carries an `ETag`, and answers `304 Not Modified` to a
   client that already holds it.
+- {: .fixed data-area="saml"} A signed [SAML2 attribute query](../installation/Configuring-SAML2-AttributeQuery.html) is
+  answered with the SOAP response alone. The identity provider also wrote the POST-binding form of the response before
+  it, so the service provider received an HTML page and the SOAP response could not be sent.
 
 ### User Interface
 {: .fixed data-area="ui"}

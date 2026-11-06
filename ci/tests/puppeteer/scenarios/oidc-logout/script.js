@@ -144,7 +144,7 @@ async function verifyLogoutWithIdTokenHint(clientId, casService, page) {
     const customScheme = "custom://localhost:9859/anything/customissuer";
     await verifyLogoutWithIdTokenHint("customclient", customScheme, page);
 
-    await verifyLogoutRedirectValidation(page);
+    await verifyLogoutRedirectValidation(await cas.newPage(context, true));
 
     await context.close();
     await cas.closeBrowser(browser);
