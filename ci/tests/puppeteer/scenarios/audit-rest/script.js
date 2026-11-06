@@ -44,6 +44,12 @@ function parseLocalDateTime(value) {
         records.length = 0;
         res.sendStatus(200);
     });
+    const groovyFailures = [];
+    app.get("/groovy-failure", (req, res) => {
+        cas.log(`Groovy audit trail manager is about to fail for ${req.query.action}`);
+        groovyFailures.push(req.query.action);
+        res.sendStatus(200);
+    });
     const server = await new Promise((resolve) => {
         const started = app.listen(5614, () => resolve(started));
     });
@@ -76,6 +82,32 @@ function parseLocalDateTime(value) {
             {"Accept": "application/json", "Content-Type": "application/json"}, 200));
         assert(filtered.length > 0);
         assert(filtered.every((record) => record.principal === "casuser" && record.actionPerformed === "TICKET_GRANTING_TICKET_CREATED"));
+
+        await cas.logg("Only supported actions that are not excluded reach the audit trail");
+        const service = "https://localhost:9859/anything/audit";
+        await cas.gotoLogin(page, service);
+        await cas.sleep(1000);
+        const ticket = await cas.assertTicketParameter(page);
+        const validation = await cas.validateTicket(service, ticket);
+        assert.equal(validation.serviceResponse.authenticationSuccess.user, "casuser");
+        const recorded = records.map((record) => record.actionPerformed);
+        await cas.log(recorded);
+        assert(recorded.includes("SERVICE_TICKET_CREATED"));
+        assert(recorded.every((action) => /^(AUTHENTICATION_|TICKET_GRANTING_TICKET_|SERVICE_TICKET_)/.test(action)),
+            "Actions outside supported-actions, such as SERVICE_ACCESS_ENFORCEMENT_TRIGGERED, are not recorded");
+        assert(recorded.every((action) => !action.startsWith("SERVICE_TICKET_VALIDATE")), "Excluded actions are not recorded");
+
+        await cas.logg("A failing audit trail manager does not stop the login when audit failures are ignored");
+        await cas.gotoLogout(page);
+        await cas.gotoLogin(page, service);
+        await cas.loginWith(page, "auditfail", "Mellon");
+        await cas.sleep(1000);
+        const failedTicket = await cas.assertTicketParameter(page);
+        const failedValidation = await cas.validateTicket(service, failedTicket);
+        assert.equal(failedValidation.serviceResponse.authenticationSuccess.user, "auditfail");
+        await cas.log(groovyFailures);
+        assert(groovyFailures.includes("AUTHENTICATION_SUCCESS"), "The Groovy audit trail manager failed while recording the login");
+        assert(groovyFailures.includes("TICKET_GRANTING_TICKET_CREATED"));
     } finally {
         await cas.closeBrowser(browser);
         server.close();

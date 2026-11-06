@@ -128,7 +128,7 @@ to build and verify Graal VM native images and we plan to extend the coverage to
 {: data-area="project"}
 
 The collection of end-to-end [browser tests based on Puppeteer](../../developer/Test-Process.html) continue to grow to cover more use cases
-and scenarios. At the moment, total number of jobs stands at approximately `618` distinct scenarios. The overall
+and scenarios. At the moment, total number of jobs stands at approximately `621` distinct scenarios. The overall
 test coverage of the CAS codebase is approximately `94%`.
 
 - {: .changed data-area="project"} MariaDB integration tests and functional test scenarios use port `3307`, so they can run
@@ -146,6 +146,18 @@ test coverage of the CAS codebase is approximately `94%`.
 - {: .changed data-area="project"} Browser tests now sign in with [SPNEGO](../authentication/SPNEGO-Authentication.html) against a
   real Kerberos KDC: the browser presents a Kerberos ticket and is signed in without a password, with and without
   `cas.authn.spnego.principal-with-domain-name`{: .cas-setting}, and falls back to the login form when it has no ticket.
+- {: .changed data-area="project"} Browser tests now cover refusal paths of the CAS protocol and its security controls:
+  validation error codes and per-service supported protocols, refused and mismatched proxy callbacks and multi-hop proxy
+  chains, plain gateway requests, time-based access strategies, global authentication policies (any with try-all, all
+  handlers, required handler, not prevented, Groovy and REST), request parameter filtering
+  (`cas.http-web-request.pattern-to-block`{: .cas-setting}), actuator endpoint `DENY`, `PERMIT` and `AUTHORITY` access,
+  audit action filters with `cas.audit.engine.ignore-audit-failures`{: .cas-setting}, and CAPTCHA verification on the login form.
+- {: .changed data-area="project"} Browser tests now cover OAuth refresh token rotation and expiration, rejected client
+  assertions and enforced client authentication methods, PKCE on the OAuth endpoints, expired client secrets, tampered request
+  objects and logout redirect validation; trusted device fingerprints, expiration and per-service bypass, multifactor bypass by
+  request attributes, simple multifactor token expiration and rate limiting, YubiKey verification against a mock server, REST
+  authentication account states, password history (`cas.authn.pm.history.core.enabled`{: .cas-setting}), passwordless token
+  expiration, and SAML2 signed logout requests, AuthnRequest rejection, artifact resolution, attribute queries and ECP.
 
 ### JSpecify & NullAway
 {: data-area="project"}

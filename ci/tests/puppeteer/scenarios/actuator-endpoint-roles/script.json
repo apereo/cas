@@ -19,6 +19,12 @@
     "--cas.monitor.endpoints.endpoint.defaults.access=ROLE",
     "--cas.monitor.endpoints.endpoint.defaults.requiredRoles=ADMIN",
 
+    "--management.endpoints.web.exposure.exclude=heapdump",
+    "--cas.monitor.endpoints.endpoint.env.access=DENY",
+    "--cas.monitor.endpoints.endpoint.metrics.access=PERMIT",
+    "--cas.monitor.endpoints.endpoint.loggers.access=AUTHORITY",
+    "--cas.monitor.endpoints.endpoint.loggers.required-authorities=ROLE_OPS",
+
     "--cas.monitor.endpoints.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/users.json"
   ]
 }

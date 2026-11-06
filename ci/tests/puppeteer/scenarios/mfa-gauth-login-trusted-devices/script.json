@@ -16,6 +16,13 @@
     "--cas.authn.mfa.gauth.crypto.enabled=false",
     "--cas.authn.mfa.gauth.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/accounts.json",
 
+    "--cas.authn.mfa.trusted.device-fingerprint.cookie.enabled=false",
+    "--cas.authn.mfa.trusted.device-fingerprint.client-ip.enabled=true",
+    "--cas.authn.mfa.trusted.device-fingerprint.user-agent.enabled=true",
+    "--cas.authn.mfa.trusted.json.location=file:${TMPDIR}/${SCENARIO}-trusted-devices.json",
+    "--cas.authn.mfa.trusted.cleaner.schedule.start-delay=PT5S",
+    "--cas.authn.mfa.trusted.cleaner.schedule.repeat-interval=PT5S",
+
     "--cas.service-registry.core.init-from-json=true",
     "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services",
 

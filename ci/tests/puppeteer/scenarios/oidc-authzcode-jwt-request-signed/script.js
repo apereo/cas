@@ -2,6 +2,7 @@
 const cas = require("../../cas.js");
 const assert = require("assert");
 const jose = require("jose");
+const crypto = require("crypto");
 
 (async () => {
     const browser = await cas.newBrowser(cas.browserOptions());
@@ -60,6 +61,7 @@ const jose = require("jose");
     
     await verifyEncryptedRequestObject(page, request);
     await verifyTamperedRequestObject(page, request);
+    await verifyForeignRequestObjects(page, request);
     await cas.closeBrowser(browser);
 })();
 
@@ -105,4 +107,31 @@ async function verifyTamperedRequestObject(page, signedRequest) {
     assert(page.url().startsWith(redirectUri), page.url());
     const error = new URL(page.url()).searchParams.get("error");
     assert.equal(error, "invalid_request_object");
+}
+
+/**
+ * Request objects that verify with no key of the client named by client_id are refused with invalid_request_object
+ * at the redirect URI: one signed by a key the client never registered, and a genuine request object of client
+ * presented under client_id=otherclient, whose own key set did not sign it.
+ */
+async function verifyForeignRequestObjects(page, signedRequest) {
+    const claims = JSON.parse(Buffer.from(signedRequest.split(".")[1], "base64url").toString("utf8"));
+    assert.equal(claims.client_id, "client");
+
+    const foreignKey = crypto.generateKeyPairSync("rsa", {modulusLength: 2048})
+        .privateKey.export({type: "pkcs8", format: "pem"});
+    const foreignRequest = await cas.createJwt(claims, foreignKey, "RS256", {noTimestamp: true});
+    await verifyRequestObjectRefused(page, foreignRequest, "client", "https://localhost:9859/anything/cas");
+    await verifyRequestObjectRefused(page, signedRequest, "otherclient", "https://localhost:9859/anything/otherclient");
+}
+
+async function verifyRequestObjectRefused(page, requestObject, clientId, redirectUri) {
+    const url = `https://localhost:8443/cas/oidc/authorize?request=${requestObject}&client_id=${clientId}&redirect_uri=${redirectUri}`;
+    await cas.log(`Browsing to ${url}`);
+    await cas.goto(page, url);
+    await cas.sleep(1000);
+    assert(page.url().startsWith(redirectUri), page.url());
+    const params = new URL(page.url()).searchParams;
+    assert.equal(params.get("error"), "invalid_request_object");
+    assert(params.get("code") === null, "No code may be issued for a refused request object");
 }

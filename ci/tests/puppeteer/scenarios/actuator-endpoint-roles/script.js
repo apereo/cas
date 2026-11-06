@@ -4,6 +4,7 @@ const cas = require("../../cas.js");
 const BASE_URL = "https://localhost:8443/cas/actuator/";
 const ADMIN = `Basic ${btoa("casadmin:pa$$w0rd")}`;
 const VIEWER = `Basic ${btoa("casviewer:Mellon")}`;
+const OPS = `Basic ${btoa("casops:0p$Secret")}`;
 const SERVICE = encodeURIComponent("https://localhost:9859/anything/cas");
 const CREDENTIALS = `username=casuser&password=Mellon&service=${SERVICE}`;
 const FORM = "application/x-www-form-urlencoded";
@@ -37,6 +38,19 @@ const ENDPOINTS = [
     {method: "POST", path: "duoAdmin/bypassCodes?username=casuser", expect: "ok"},
     {method: "GET", path: "qrDevices/casuser", expect: "ok"},
     {method: "POST", path: "qrDevices/casuser/device1", expect: "ok"}
+];
+
+/*
+ * Endpoints whose access level is set on their own, overriding the ROLE default, and one left out of the exposure.
+ * Each row gives the exact status per caller. A request no rule claims is denied by Spring Security, which answers
+ * 401 to an anonymous caller (Basic entry point) and 403 to an authenticated one. The JSON user loader prefixes
+ * every authority with ROLE_, so casops' "OPS" is granted as ROLE_OPS, the authority loggers requires.
+ */
+const ACCESS_LEVELS = [
+    {path: "metrics", access: "PERMIT", anonymous: 200, viewer: 200, admin: 200, ops: 200},
+    {path: "env", access: "DENY", anonymous: 401, viewer: 403, admin: 403, ops: 403},
+    {path: "loggers", access: "AUTHORITY", anonymous: 401, viewer: 403, admin: 403, ops: 200},
+    {path: "heapdump", access: "not exposed", anonymous: 401, viewer: 403, admin: 403, ops: 403}
 ];
 
 async function call(endpoint, authorization) {
@@ -78,6 +92,23 @@ async function call(endpoint, authorization) {
             failures.push(`${endpoint.path}: with the ADMIN role expected ${endpoint.expect} but got ${admin}`);
         }
         await cas.log(`anonymous=${anonymous}, viewer=${viewer}, admin=${admin}`);
+    }
+    for (const level of ACCESS_LEVELS) {
+        await cas.separator();
+        await cas.log(`GET ${level.path} (${level.access})`);
+        const endpoint = {method: "GET", path: level.path};
+        const statuses = {
+            anonymous: await call(endpoint),
+            viewer: await call(endpoint, VIEWER),
+            admin: await call(endpoint, ADMIN),
+            ops: await call(endpoint, OPS)
+        };
+        for (const [caller, status] of Object.entries(statuses)) {
+            if (status !== level[caller]) {
+                failures.push(`${level.path} (${level.access}): as ${caller} expected ${level[caller]} but got ${status}`);
+            }
+        }
+        await cas.log(statuses);
     }
     await cas.separator();
     failures.forEach((failure) => cas.logr(failure));

@@ -109,6 +109,15 @@ description: "Write, fix and review the end-to-end puppeteer scenarios under ci/
   jcifs-ext logs the service principal in with `jcifs-service-password` only when `javax.security.auth.useSubjectCredsOnly`
   is true (`cas.authn.spnego.system.use-subject-creds-only=true`). With the CAS default (false) it skips its JAAS login
   and the JDK looks for a keytab instead, which fails with "Cannot find key of appropriate type to decrypt AP-REQ".
+- Negative-path facts learned while adding refusal checks (read from the code, confirm on first run):
+  `RegisteredServiceResponseHeadersEnforcementFilter` answers 403 for any request whose `service` is unregistered or denied,
+  validation endpoints included, so mismatch against a registered service; a TGT id passed as `ticket` is `INTERNAL_ERROR`, not
+  `INVALID_TICKET_SPEC`. `OidcJwtAuthenticator` refuses a reused `jti`, so client assertions need a random one or in-process
+  retries fail. PKCE failures (wrong, missing or replayed verifier) are client-authentication failures (401), not
+  `invalid_grant`. `RequestParameterPolicyEnforcementFilter` matches `pattern-to-block` against the raw (encoded) request URI and
+  takes `characters-to-forbid` as space-separated single characters. `ValidateCaptchaAction` refuses a blank token without
+  calling the verify URL, and a reCAPTCHA v3 score equal to the threshold is refused. Trusted-device storages drop expired
+  records on every read, so the cleaner is only observable in the backend itself (the JSON file).
 
 ## Storage backend scenarios (service registry, SAML2 metadata, MFA devices, consent)
 

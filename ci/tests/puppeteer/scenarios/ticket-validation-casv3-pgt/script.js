@@ -6,9 +6,10 @@ const fs = require("fs");
 const crypto = require("crypto");
 
 const PROXIED = "https://localhost:9859/anything";
+const PGT_URL = `${PROXIED}/pgt`;
 
-async function validateTicket(service, ticket, format = "JSON") {
-    const body = await cas.doRequest(`https://localhost:8443/cas/p3/proxyValidate?service=${service}&ticket=${ticket}&format=${format}&pgtUrl=https://localhost:9859/anything/pgt`);
+async function validateTicket(service, ticket, format = "JSON", pgtUrl = PGT_URL) {
+    const body = await cas.doRequest(`https://localhost:8443/cas/p3/proxyValidate?service=${service}&ticket=${ticket}&format=${format}&pgtUrl=${pgtUrl}`);
     await cas.log(body);
     return body;
 }
@@ -19,11 +20,12 @@ async function validateTicket(service, ticket, format = "JSON") {
  * rather than by Node, which no longer decrypts PKCS#1 v1.5 padding.
  *
  * @param service the service that proxies
- * @param ticket its service ticket
+ * @param ticket its service or proxy ticket
+ * @param pgtUrl the proxy callback URL
  * @returns the proxy-granting ticket
  */
-async function proxyGrantingTicket(service, ticket) {
-    const body = await validateTicket(service, ticket, "XML");
+async function proxyGrantingTicket(service, ticket, pgtUrl = PGT_URL) {
+    const body = await validateTicket(service, ticket, "XML", pgtUrl);
     const encrypted = body.match(/<cas:proxyGrantingTicket>(.*?)<\/cas:proxyGrantingTicket>/)[1];
     const decrypted = crypto.privateDecrypt(
         {
@@ -43,9 +45,90 @@ async function proxyGrantingTicket(service, ticket) {
  * @returns the proxy ticket, or undefined if CAS refused to issue one
  */
 async function proxyTicket(target, pgt) {
+    const body = await requestProxyTicket(target, pgt);
+    return body.match(/<cas:proxyTicket>(.*?)<\/cas:proxyTicket>/)?.[1];
+}
+
+async function requestProxyTicket(target, pgt) {
     const body = await cas.doRequest(`https://localhost:8443/cas/proxy?service=${target}&pgt=${pgt}`, "GET", {}, 0);
     await cas.log(body);
-    return body.match(/<cas:proxyTicket>(.*?)<\/cas:proxyTicket>/)?.[1];
+    return body;
+}
+
+async function serviceTicket(page, service) {
+    await cas.gotoLogin(page, service);
+    return cas.assertTicketParameter(page);
+}
+
+async function assertProxyCallbackRefused(service, pgtUrl, page) {
+    const body = await validateTicket(service, await serviceTicket(page, service), "JSON", pgtUrl);
+    const response = JSON.parse(body).serviceResponse;
+    assert(response.authenticationSuccess === undefined, `${service} must not receive a proxy-granting ticket for ${pgtUrl}`);
+    assert.equal(response.authenticationFailure.code, "INVALID_PROXY_CALLBACK");
+}
+
+async function assertProxyCallbackAccepted(service, pgtUrl, page) {
+    const body = await validateTicket(service, await serviceTicket(page, service), "JSON", pgtUrl);
+    const success = JSON.parse(body).serviceResponse.authenticationSuccess;
+    assert.equal(success.user, "casuser");
+    assert(success.proxyGrantingTicket.startsWith("PGTIOU-"), `${service} must receive a proxy-granting ticket IOU for ${pgtUrl}`);
+}
+
+/**
+ * The proxy policy of a service decides which callback URLs may receive a proxy-granting ticket; the callback must
+ * also answer with an acceptable status. A refused callback fails validation with INVALID_PROXY_CALLBACK.
+ *
+ * @param page the page, with a single sign-on session
+ */
+async function verifyProxyCallbackPolicies(page) {
+    await cas.logg("A service whose proxy policy refuses proxying gets no proxy-granting ticket");
+    await assertProxyCallbackRefused(`${PROXIED}/proxyrefused`, PGT_URL, page);
+
+    await cas.logg("A callback that answers with an unacceptable status gets no proxy-granting ticket");
+    await assertProxyCallbackRefused(`${PROXIED}/cas`, "https://localhost:9859/status/404", page);
+
+    await cas.logg("An exact-match proxy policy accepts only the callback URL it names, not one it is a prefix of");
+    await assertProxyCallbackRefused(`${PROXIED}/proxyexact`, `${PROXIED}/pgtexactly`, page);
+    await assertProxyCallbackAccepted(`${PROXIED}/proxyexact`, `${PROXIED}/pgtexact`, page);
+
+    await cas.logg("A proxy policy that reuses the service id accepts only callbacks matching that id");
+    await assertProxyCallbackRefused(`${PROXIED}/proxyself`, PGT_URL, page);
+    await assertProxyCallbackAccepted(`${PROXIED}/proxyself`, `${PROXIED}/proxyself/callback`, page);
+}
+
+/**
+ * Proxy requests and proxy ticket validations that must fail, and a proxy chain of two hops: the proxied service
+ * receives its own proxy-granting ticket, and the final proxy ticket lists both callbacks, most recent first.
+ *
+ * @param pgt a proxy-granting ticket issued to the service at /anything/cas
+ */
+async function verifyProxyFailuresAndChains(pgt) {
+    await cas.logg("A proxy-granting ticket unknown to CAS issues no proxy ticket");
+    const failure = await requestProxyTicket(`${PROXIED}/ptdefault`, "PGT-1-unknown-ticket");
+    assert(failure.includes("<cas:proxyFailure code=\"INVALID_TICKET\">"));
+
+    await cas.logg("A proxy ticket validated for another service is refused, and the failed attempt counts as a use");
+    const ticket = await proxyTicket(`${PROXIED}/ptdefault`, pgt);
+    let response = JSON.parse(await cas.doRequest(`https://localhost:8443/cas/p3/proxyValidate?service=${PROXIED}/ptonce&ticket=${ticket}&format=JSON`)).serviceResponse;
+    assert.equal(response.authenticationFailure.code, "INVALID_SERVICE");
+    assert(await proxyTicketValidates(`${PROXIED}/ptdefault`, ticket), "A proxy ticket allowed ten uses survives one failed attempt");
+
+    await cas.logg("A proxied service that may proxy again builds a chain of two proxies");
+    const hopService = `${PROXIED}/proxyhop`;
+    const hopCallback = `${PROXIED}/pgthop`;
+    const secondPgt = await proxyGrantingTicket(hopService, await proxyTicket(hopService, pgt), hopCallback);
+    assert(secondPgt.startsWith("PGT-"));
+
+    const chainedTicket = await proxyTicket(`${PROXIED}/ptdefault`, secondPgt);
+    response = JSON.parse(await cas.doRequest(`https://localhost:8443/cas/p3/proxyValidate?service=${PROXIED}/ptdefault&ticket=${chainedTicket}&format=JSON`)).serviceResponse;
+    assert.equal(response.authenticationSuccess.user, "casuser");
+    assert.deepStrictEqual(response.authenticationSuccess.proxies, [hopCallback, PGT_URL]);
+
+    const chainedXmlTicket = await proxyTicket(`${PROXIED}/ptdefault`, secondPgt);
+    const xml = await cas.doRequest(`https://localhost:8443/cas/p3/proxyValidate?service=${PROXIED}/ptdefault&ticket=${chainedXmlTicket}`);
+    await cas.log(xml);
+    const proxies = [...xml.matchAll(/<cas:proxy>(.*?)<\/cas:proxy>/g)].map((match) => match[1]);
+    assert.deepStrictEqual(proxies, [hopCallback, PGT_URL]);
 }
 
 /**
@@ -121,5 +204,7 @@ async function verifyProxyExpirationPolicies(page, pgt) {
     await cas.gotoLogin(page, service);
     const pgt = await proxyGrantingTicket(service, await cas.assertTicketParameter(page));
     await verifyProxyExpirationPolicies(page, pgt);
+    await verifyProxyCallbackPolicies(page);
+    await verifyProxyFailuresAndChains(pgt);
     await cas.closeBrowser(browser);
 })();

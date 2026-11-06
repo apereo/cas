@@ -1,16 +1,29 @@
 {
-  "dependencies": "audit-rest,reports",
+  "dependencies": "audit-rest,reports,scripting",
+  "conditions": {
+    "docker": "true"
+  },
   "properties": [
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",
+
+    "--cas.service-registry.core.init-from-json=true",
+    "--cas.authn.accept.users=casuser::Mellon,auditfail::Mellon",
 
     "--cas.audit.slf4j.enabled=false",
 
     "--cas.audit.rest.url=http://localhost:5614/audit",
     "--cas.audit.rest.asynchronous=false",
 
+    "--cas.audit.groovy.template.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/AuditTemplate.gtemplate",
+
+    "--cas.audit.engine.ignore-audit-failures=true",
+    "--cas.audit.engine.supported-actions=^AUTHENTICATION_,^TICKET_GRANTING_TICKET_,^SERVICE_TICKET_",
+    "--cas.audit.engine.excluded-actions=^SERVICE_TICKET_VALIDATE",
+
     "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
     "--management.endpoints.web.exposure.include=auditLog",
     "--management.endpoints.access.default=UNRESTRICTED"
-  ]
+  ],
+  "initScript": "${PWD}/ci/tests/httpbin/run-httpbin-server.sh"
 }
