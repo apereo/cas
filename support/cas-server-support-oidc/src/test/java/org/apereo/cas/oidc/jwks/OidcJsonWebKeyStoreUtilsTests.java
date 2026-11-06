@@ -84,7 +84,7 @@ class OidcJsonWebKeyStoreUtilsTests extends AbstractOidcTests {
         key.setUse(Use.SIGNATURE);
         val service = getOidcRegisteredService();
         try (val keysServer = new MockWebServer(false, new JsonWebKeySet(key).toJson());
-             val redirectingServer = new MockWebServer(false, "{}")) {
+             val redirectingServer = new MockWebServer(false, "{\"keys\":[]}")) {
             keysServer.start();
             redirectingServer.start();
             service.setJwks("http://localhost:%s/jwks".formatted(keysServer.getPort()));

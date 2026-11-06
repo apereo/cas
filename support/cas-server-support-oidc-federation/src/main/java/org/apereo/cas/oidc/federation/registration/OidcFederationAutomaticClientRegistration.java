@@ -16,8 +16,12 @@ import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.concurrent.CasReentrantLock;
+import org.apereo.cas.util.function.FunctionUtils;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
+import com.nimbusds.oauth2.sdk.util.JSONObjectUtils;
+import com.nimbusds.openid.connect.sdk.federation.entities.EntityType;
+import com.nimbusds.openid.connect.sdk.federation.trust.TrustChain;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -70,6 +74,8 @@ public class OidcFederationAutomaticClientRegistration {
 
     private static final int LOCK_STRIPES = 64;
 
+    private static final String JWKS = "jwks";
+
     private static final int MAX_UNRESOLVED_ENTITIES = 10_000;
 
     private final List<CasReentrantLock> serviceLocks = Stream.generate(CasReentrantLock::new).limit(LOCK_STRIPES).toList();
@@ -82,7 +88,7 @@ public class OidcFederationAutomaticClientRegistration {
 
     private final Cache<String, Boolean> reevaluatedEntities;
 
-    private final @Nullable String pairwiseSubjectSalt;
+    private final Supplier<String> pairwiseSubjectSalt;
 
     private final OidcFederationResolutionLimiter resolutionLimiter;
 
@@ -96,14 +102,14 @@ public class OidcFederationAutomaticClientRegistration {
                                                      final OidcFederationTrustChainResolver trustChainResolver,
                                                      final Duration unresolvedEntityRetention,
                                                      @Nullable final String pairwiseSubjectSalt) {
-        this(servicesManager, trustChainResolver, unresolvedEntityRetention, pairwiseSubjectSalt,
+        this(servicesManager, trustChainResolver, unresolvedEntityRetention, () -> pairwiseSubjectSalt,
             new OidcFederationResolutionLimiter(new OidcFederationProperties()));
     }
 
     public OidcFederationAutomaticClientRegistration(final ServicesManager servicesManager,
                                                      final OidcFederationTrustChainResolver trustChainResolver,
                                                      final Duration unresolvedEntityRetention,
-                                                     @Nullable final String pairwiseSubjectSalt,
+                                                     final Supplier<String> pairwiseSubjectSalt,
                                                      final OidcFederationResolutionLimiter resolutionLimiter) {
         this.resolutionLimiter = resolutionLimiter;
         this.servicesManager = servicesManager;
@@ -342,7 +348,7 @@ public class OidcFederationAutomaticClientRegistration {
             || !Strings.CI.equals(OidcSubjectTypes.PAIRWISE.getType(), oidcService.getSubjectType())) {
             return true;
         }
-        if (StringUtils.isBlank(pairwiseSubjectSalt)) {
+        if (StringUtils.isBlank(pairwiseSubjectSalt.get())) {
             LOGGER.warn("[{}] asks for pairwise subject identifiers, but no pairwise subject salt is defined; it is not registered", clientId);
             return false;
         }
@@ -372,7 +378,11 @@ public class OidcFederationAutomaticClientRegistration {
         if (trustChain.isEmpty()) {
             return Optional.empty();
         }
-        val sentService = trustChainResolver.resolveSentTrustChain(clientId, trustChain);
+        if (!isSignedWithDeclaredKeys(clientId, trustChain, signedWithKeys)) {
+            LOGGER.warn("Request of [{}] is not signed with the keys its sent trust chain declares, which is not used", clientId);
+            return Optional.empty();
+        }
+        val sentService = verifySentTrustChain(clientId, trustChain);
         if (sentService.isEmpty()) {
             LOGGER.debug("Trust chain sent by [{}] cannot be used; its trust chains are resolved instead", clientId);
             return Optional.empty();
@@ -386,6 +396,51 @@ public class OidcFederationAutomaticClientRegistration {
             return Optional.empty();
         }
         return sentService;
+    }
+
+    private Optional<OidcRegisteredService> verifySentTrustChain(final String clientId, final List<String> trustChain) throws Exception {
+        try {
+            return trustChainResolver.resolveSentTrustChain(clientId, trustChain);
+        } catch (final OidcFederationResolutionUnavailableException e) {
+            LOGGER.warn("Trust chain sent by [{}] cannot be verified now; its trust chains are resolved instead: [{}]", clientId, e.getMessage());
+            return Optional.empty();
+        }
+    }
+
+    /**
+     * Whether the request is signed with the keys that the sent trust chain declares inline for the relying party, those
+     * of the metadata its immediate superior asserts or else those of its entity configuration, checked before the chain
+     * is verified, which fetches statements, historical keys, trust marks and documents: a chain anyone could replay is
+     * not worth that unless the request is signed with its keys. Metadata policies of the chain may still change those
+     * keys, which the resolved registration is checked against afterwards; a relying party that publishes its keys at a
+     * URL only, or a chain that cannot be read, which the chain verification refuses, is not checked here.
+     *
+     * @param clientId       the client id
+     * @param trustChain     the serialized statements of the trust chain the relying party sent
+     * @param signedWithKeys whether the request that carries the trust chain is signed with the keys of a registration
+     * @return true or false
+     */
+    private static boolean isSignedWithDeclaredKeys(final String clientId, final List<String> trustChain,
+                                                    final Predicate<OAuthRegisteredService> signedWithKeys) {
+        try {
+            val chain = TrustChain.parseSerialized(trustChain);
+            val declaredKeys = Stream.concat(chain.getSuperiorStatements().stream().limit(1), Stream.of(chain.getLeafConfiguration()))
+                .map(statement -> statement.getClaimsSet().getMetadata(EntityType.OPENID_RELYING_PARTY))
+                .filter(Objects::nonNull)
+                .map(metadata -> FunctionUtils.doUnchecked(() -> JSONObjectUtils.getJSONObject(metadata, JWKS, null)))
+                .filter(Objects::nonNull)
+                .findFirst();
+            if (declaredKeys.isEmpty()) {
+                return true;
+            }
+            val declared = new OidcRegisteredService();
+            declared.setClientId(clientId);
+            declared.setJwks(declaredKeys.get().toJSONString());
+            return signedWithKeys.test(declared);
+        } catch (final Exception e) {
+            LOGGER.debug("Trust chain sent by [{}] cannot be read: [{}]", clientId, e.getMessage());
+            return true;
+        }
     }
 
     private static boolean isNewerThan(final OAuthRegisteredService resolvedService, @Nullable final OAuthRegisteredService currentService) {

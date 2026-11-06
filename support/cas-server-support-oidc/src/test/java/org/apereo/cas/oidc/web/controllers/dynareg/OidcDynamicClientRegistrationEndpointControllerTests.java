@@ -305,8 +305,10 @@ class OidcDynamicClientRegistrationEndpointControllerTests {
         /**
          * A client that asks for pairwise subject identifiers with redirect URIs on several hosts must register a sector
          * identifier URI, which must be an {@code https} URL that can be fetched (OpenID Connect Core 1.0, section 8.1),
-         * from a public address. Hosts are read as they are when identifiers are calculated, so a redirect URI that another
-         * parser cannot read still counts, and one with an authority but no host is refused.
+         * from a public address. Sectors are read as they are when identifiers are calculated: a web redirect URI is in the
+         * sector of its host, so one that another parser cannot read still counts, any other redirect URI is in the
+         * client's own sector, so mixing them needs a sector identifier URI, and a web redirect URI without a host is
+         * refused.
          */
         @Test
         void verifySectorIdentifierIsRequiredAndVerified() throws Throwable {
@@ -321,7 +323,10 @@ class OidcDynamicClientRegistrationEndpointControllerTests {
                 for (val metadata : List.of(twoHosts,
                     "\"redirect_uris\": [\"https://client.example.org/callback\", \"https://other.example.org/callback?x={y}\"]",
                     "\"redirect_uris\": [\"https://client.example.org/callback\", \"https:///callback\"]",
+                    "\"redirect_uris\": [\"https://client.example.org/callback\", \"https:/other.example.org/callback\"]",
+                    "\"redirect_uris\": [\"https://client.example.org/callback\", \"com.example.app:/callback\"]",
                     twoHosts + ",\"sector_identifier_uri\": \"http://localhost:9813/sector\"",
+                    twoHosts + ",\"sector_identifier_uri\": \"https:///sector\"",
                     twoHosts + ",\"sector_identifier_uri\": \"https://localhost:%s/sector\"".formatted(webServer.getPort()))) {
                     val registrationReq = """
                             {
@@ -349,6 +354,8 @@ class OidcDynamicClientRegistrationEndpointControllerTests {
             registrationRequest.setRedirectUris(redirectUris);
             registrationRequest.setSubjectType("pairwise");
             registrationRequest.setSectorIdentifierUri("https://sector.example.org/sector.json");
+            assertThrows(IllegalArgumentException.class, () -> translator.translate(registrationRequest, Optional.empty()));
+            sectorDocument.set("[\"https://client.example.org/callback\", \"https://other.example.org/callback\",]");
             assertThrows(IllegalArgumentException.class, () -> translator.translate(registrationRequest, Optional.empty()));
             sectorDocument.set("[\"https://client.example.org/callback\", \"https://other.example.org/callback\"]");
             val registeredService = translator.translate(registrationRequest, Optional.empty());

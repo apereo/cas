@@ -32,6 +32,7 @@ import org.apereo.cas.ticket.expiration.HardTimeoutExpirationPolicy;
 import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.util.DigestUtils;
 import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.util.concurrent.CasReentrantLock;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
@@ -78,6 +79,11 @@ public class OidcCibaController extends BaseOidcController {
     private static final Duration MAX_REQUEST_OBJECT_LIFETIME = Duration.ofMinutes(MAX_REQUEST_OBJECT_LIFETIME_MINUTES);
 
     private static final String REQUEST_OBJECT_TICKET_PREFIX = "OidcCibaRequestObject:";
+
+    private static final int REQUEST_OBJECT_LOCK_STRIPES = 64;
+
+    private static final List<CasReentrantLock> REQUEST_OBJECT_LOCKS =
+        Stream.generate(CasReentrantLock::new).limit(REQUEST_OBJECT_LOCK_STRIPES).toList();
 
     protected final List<CibaTokenDeliveryHandler> tokenDeliveryHandlers;
 
@@ -407,8 +413,9 @@ public class OidcCibaController extends BaseOidcController {
      * {@code nbf} and {@code jti}, with {@code exp} in the future and {@code iat} and {@code nbf} in the past, within the
      * allowed skew. It may be valid for {@value #MAX_REQUEST_OBJECT_LIFETIME_MINUTES} minutes at most from its
      * {@code iat} and its {@code nbf}, as FAPI CIBA allows, and is used once: its {@code jti} is kept in the ticket
-     * registry until it expires, beyond the allowed skew. A request object that is not valid is refused rather than set
-     * aside for the parameters of the request.
+     * registry until it expires, beyond the allowed skew; checking and recording it is a single step on each node. When
+     * CAS does not support the request parameter, a request object is refused, since it could not be verified. A request
+     * object that is not valid is refused rather than set aside for the parameters of the request.
      *
      * @param request           the request
      * @param registeredService the authenticated client
@@ -418,6 +425,9 @@ public class OidcCibaController extends BaseOidcController {
         val requestObject = request.getParameter(OAuth20Constants.REQUEST);
         if (StringUtils.isBlank(requestObject)) {
             return null;
+        }
+        if (!getConfigurationContext().getCasProperties().getAuthn().getOidc().getDiscovery().isRequestParameterSupported()) {
+            return "Signed authentication requests are not supported";
         }
         val clientId = registeredService.getClientId();
         val requestParameterResolver = getConfigurationContext().getRequestParameterResolver();
@@ -465,7 +475,9 @@ public class OidcCibaController extends BaseOidcController {
     }
 
     /**
-     * Record the use of a signed authentication request, unless it was used before.
+     * Record the use of a signed authentication request, unless it was used before. Checking and recording is a single
+     * step on this node, under a lock striped by the request object; nodes that share the ticket registry may still each
+     * accept the same request object once at the very same moment.
      *
      * @param clientId the client id
      * @param jwtId    the jti of the request object
@@ -473,8 +485,13 @@ public class OidcCibaController extends BaseOidcController {
      * @return true when it was not used before
      */
     protected boolean isFirstUse(final String clientId, final String jwtId, final Instant keepTill) {
-        val ticketRegistry = getConfigurationContext().getTicketRegistry();
         val ticketId = TransientSessionTicketFactory.normalizeTicketId(REQUEST_OBJECT_TICKET_PREFIX + clientId + ':' + DigestUtils.sha256(jwtId));
+        return REQUEST_OBJECT_LOCKS.get(Math.floorMod(ticketId.hashCode(), REQUEST_OBJECT_LOCKS.size()))
+            .execute(() -> recordFirstUse(clientId, ticketId, keepTill));
+    }
+
+    private boolean recordFirstUse(final String clientId, final String ticketId, final Instant keepTill) {
+        val ticketRegistry = getConfigurationContext().getTicketRegistry();
         try {
             val used = ticketRegistry.getTicket(ticketId, TransientSessionTicket.class);
             if (used != null && !used.isExpired()) {

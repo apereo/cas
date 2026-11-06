@@ -258,7 +258,11 @@ description: "Review and change CAS OAuth2/OIDC protocol behavior: token endpoin
   current key through `EntityStatement.sign(claims, jwk, alg)`. `rotate()` without a future key only adds one;
   `revoke()` retires previous keys. Historical keys at `/oidc/federation_historical_keys` (all roles, ignored by
   security, `application/jwk-set+jwt`, `typ` `jwk-set+jwt`). Schedules `cas.authn.oidc.federation.rotation|revocation`
-  and actuator `oidcFederationJwks` (GET, POST rotate/revoke). Startup never writes an existing keystore file. Schedules
+  and actuator `oidcFederationJwks` (GET, POST rotate/revoke). Startup writes the keystore only when it is missing,
+  empty or holds no keys; one that exists but cannot be read or parsed fails the bean (never made-up per-node keys).
+  Test existence with `resource.exists()` and the file length, never `ResourceUtils.doesResourceExist`, which answers
+  false for an unreadable file or an I/O error and so would let CAS replace it. On POSIX
+  the replacement keeps mode/owner/group, set separately, and drops group bits when the group cannot be kept. Schedules
   call `rotateWhenDue`/`revokeWhenDue` with `getScheduledKeyAge` (half the repeat interval, or of the gap between two
   cron fires): rotate only when every future key's `iat` is that old, retire only keys whose `previous_since` (set by
   `rotate()`; stamped on first sight for older files) is that old, so `start-delay` runs after restarts and other nodes
@@ -281,6 +285,13 @@ description: "Review and change CAS OAuth2/OIDC protocol behavior: token endpoin
   future checked by hand); `delegation` against `trust_mark_owners`; status endpoint POST `trust_mark=`, response typed
   `trust-mark-status-response+jwt` must echo the mark with `status` `active`. Read federation claims as raw `Map`s, not
   `getJSONObjectClaim` (fails on statements built in code). `trust_mark_issuers` is published only by the TA role.
+  Every required type is checked: one definitely missing fails the RP, and only otherwise does a type whose marks
+  cannot be told now (status/historical keys 5xx or IO, out of time/slots, the TA found unreachable during the step,
+  e.g. while an issuer's chain is resolved) make it unavailable. Every "cannot tell" check is per step: take
+  `indeterminateMark()` and `unreachableMark(trustAnchor)` when the step starts and compare with
+  `isIndeterminateSince`/`isUnreachableSince`; the budget only counts (`getUnreachableCount`), never a
+  resolution-wide flag. Misagh keeps issuer 5xx as "cannot tell" though a member's issuer can keep its RPs from being
+  negative-cached (bounded by the budget and slots).
   `TrustChain` is final but constructible (leaf + superior statements), and `TrustChainResolver` can be subclassed,
   for smoke tests without Mockito.
 - Tests: methods of one test class run in parallel and share the Spring context. Never rotate or revoke keys in a context
@@ -298,6 +309,11 @@ description: "Review and change CAS OAuth2/OIDC protocol behavior: token endpoin
   `,` never matched). Used by dynamic registration, client ID metadata documents, federation. Anything that reads a
   host from a service id must go through `toRedirectUris` (`UriComponentsBuilder` finds no host after `(?-i)`); the
   pairwise sector identifier does: first redirect URI host, else the client id for built ids, else null.
+- Unsigned JWTs (`alg: none`): `JwtBuilder.unpack` returns null for them (`JwtBuilder.isUnsigned`), so request objects
+  (encrypted-but-unsigned too), token exchange subject/actor JWTs, risk/QR tokens and JWT access/refresh tokens are
+  refused; `OAuth20JwtAccessTokenEncodableCipher.encode` refuses to issue an unsigned JWT token (IllegalStateException);
+  discovery never advertises `none` for request objects. Tests sign request objects with the client's keys or
+  `accessTokenJwtBuilder.getDefaultTokenCipherExecutor().encode(claims.toString())`, never `PlainJWT`.
 - Request objects: `DefaultOAuth20RequestParameterResolver.unpackRequestObject` is the verification hook; the unpacked
   request object is cached as a request attribute, so tests need a fresh request for each verification they assert;
   `OidcRequestParameterResolver` verifies `HS*` with the client's secrets that `OAuth20ClientSecretValidator` (expiry,
@@ -344,7 +360,8 @@ description: "Review and change CAS OAuth2/OIDC protocol behavior: token endpoin
   with it. Resolutions/failures cached per (sub, trusted TAs) for min(retention, exp), resolved outside the Caffeine compute
   (`getIfPresent`/`put`, never `get(key, loader)` around network calls); unavailable resolutions are not cached and
   answer `503`; signed per request. Trust marks via
-  `OidcFederationTrustMarkValidator.resolveValidTrustMarks`. Authenticated POST (8.8, `resolve-endpoint-authentication`,
+  `OidcFederationTrustMarkValidator.resolveValidTrustMarks`, which returns `ValidTrustMarks(trustMarks, complete)`: a
+  mark that cannot be told now is left out, `complete` false, and the resolution is kept for zero time. Authenticated POST (8.8, `resolve-endpoint-authentication`,
   subordinates only through `OidcFederationSubordinateClientAuthenticator`) adds `aud` = requester at signing; the
   cache holds the resolution, never a signed response. `resolveMetadata` refuses entity types the leaf EC lacks
   (superior `metadata`/`value`/`default` must not create one), so resolve types come from the leaf only.
@@ -397,10 +414,13 @@ description: "Review and change CAS OAuth2/OIDC protocol behavior: token endpoin
   `oidcFederationHttpClient`, TLS from `CasSSLContext`, no redirects, per-resolution deadline, 256 KB response cap; the
   exchange runs on its own virtual thread and the caller waits with `Future.get(remaining)`, so DNS, TLS and headers are
   inside the deadline; https only, link-local/any-local/multicast refused, embedded IPv4 included, loopback/private
-  allowed, no check when a JVM proxy is selected; at most 64 exchanges in flight, abandoned ones included, released by
+  allowed, no check when a JVM HTTP proxy is selected (SOCKS resolves locally, so it is checked unless the JVM cannot
+  resolve the name; `isAllowedWithPrivateNetworks(URL, ProxySelector)` is the testable form); at most 64 exchanges in flight, abandoned ones included, released by
   whichever of start/abandon claims the exchange first; `RefusedRequestException` for a refused target,
   `OutOfTimeException` for a request that started with less than the read timeout left, which the retriever does not
-  mark unreachable, while a full-time timeout does) and
+  mark unreachable, while a full-time timeout, a connect timeout (fixed 2 s, always given in full) and a 5xx answer
+  do; `markUnreachable` matters only for trust anchors, whose 5xx thus gives 503, and issuer historical keys 5xx is an
+  `IOException`, unavailable and not cached) and
   `OidcFederationHttpEntityStatementRetriever`; never nimbus `DefaultEntityStatementRetriever` (it records every URL in
   an unbounded list and uses JVM-wide TLS defaults) or `HTTPRequest.send()`. Tests reach `MockWebServer(true, ...)`
   with a client built on `CasSSLContext.disabled()` passed to the resolver/validator, never
@@ -410,19 +430,30 @@ description: "Review and change CAS OAuth2/OIDC protocol behavior: token endpoin
   stored in service definitions). Federation refuses an RP that asks for `pairwise` without it; dynamic registration
   registers a salt-less provider when it has none, else `withSalt(random)`; an update keeps the provider and its
   generator (`assignSaltIfMissing` only salts a salt-less Shibboleth generator when CAS has no salt); read the salt with
-  `getPairwiseSubjectSalt(Environment)`. Sectors must be verified: hosts come only from
-  `OidcRedirectUriUtils.toHost/toHosts` (Spring `UriComponentsBuilder`, the parser the provider uses at runtime; `toHosts`
-  refuses an authority without a readable host); never `new URI(uri).getHost()`, which drops IDN/underscore hosts or
-  throws on `{`. DCR fetches `sector_identifier_uri` with a `DefaultOidcClientIdMetadataDocumentFetcher` (public
-  addresses, no redirects, one attempt, 64 KB); federation fetches it through the federation client inside the
+  `getPairwiseSubjectSalt(Environment)` (federation too, through a `Supplier`); a salt-less generator is cloned
+  (`SerializationUtils.clone`, keeps subclasses; falls back to a default generator with the same attribute when it
+  cannot be serialized) and salted at runtime. Sectors must be verified: for CAS-built service ids only
+  `OidcRedirectUriUtils.toSectorHost` (web URIs, `http(s)://` with a readable non-loopback host, Spring
+  `UriComponentsBuilder`) and `toSectors` (that host, or "" for the client's own sector for any other or loopback URI;
+  `https:/x` or hostless web URIs refused); never `new URI(uri).getHost()` (drops IDN/underscore hosts, throws on `{`)
+  nor hosts of private-use schemes. Hand-defined service ids (`toRedirectUris(id) == [id]`) keep the lenient
+  `UriComponentsBuilder.fromUriString(serviceId).getHost()` (`^https://host/...` gives `host`, `^https?://host/...` none,
+  `^https://.*` gives `.*`); no host at all gives the client id as sector, never null. Legacy dynamic ids (`a|b` joined
+  before 8.1) are hand-defined for this rule until a client configuration PATCH rebuilds them with `toServiceId`, which
+  changes their sector and `sub`; hand-written `^(\Q…\E)$` ids count as CAS-built. The generator copy WARNs once per
+  generator class. Sector URIs need a non-blank host equal to `toHost`. DCR fetches `sector_identifier_uri` with a `DefaultOidcClientIdMetadataDocumentFetcher` (public
+  addresses, no redirects, one attempt, 64 KB, any content type, strict JSON); federation fetches it through the federation client inside the
   resolution (counted in the budget), refuses http/refused targets/4xx/bad lists, and throws
   `OidcFederationResolutionUnavailableException` for IO/5xx/budget so the RP is not negative-cached.
-- The DCR translator validates the request before touching the given service: `translate` may receive the instance the
-  services manager caches, so nothing may be set on it before `validate`. The client configuration endpoint answers a
-  refused update with `400 invalid_client_metadata`.
+- The DCR translator validates the request before touching the given service, and the client configuration endpoint
+  translates a `SerializationUtils.clone` of the registered service (the services manager hands out its cached
+  instance); any clone or translation failure is `400 invalid_client_metadata`. GET renews an expired secret on a clone
+  too, falling back to the cached instance only when it cannot be cloned.
 - Address policy shared by core and federation: `DefaultOidcClientIdMetadataDocumentFetcher.isPublicAddress` (client
   documents) and `isAllowedWithPrivateNetworks(InetAddress|URL)` (federation, client `jwks` URLs: only
-  link-local/any-local/multicast refused). Client keys at an http(s) `jwks` URL are read through a `UrlResource` without
+  link-local/any-local/multicast refused; IP literals always checked, host names skipped through a JVM proxy). IPv4-mapped
+  `::ffff:0:0/96` is a 16-byte `AddressBlock` built from bytes: `InetAddress.getByName("::ffff:…")` returns an
+  `Inet4Address`, so tests of mapped DNS answers need `Inet6Address.getByAddress(null, bytes, null)`. Client keys at an http(s) `jwks` URL are read through a `UrlResource` without
   redirects (5 s timeouts), checked before any request.
 - Endpoint detection from requests: `OidcRequestSupport.isRequestForEndpoint` (decoded path within the application, no
   path parameters or trailing slash, as handler mappings match); never `getRequestURI()`/`getRequestURL().endsWith`,
@@ -435,11 +466,23 @@ description: "Review and change CAS OAuth2/OIDC protocol behavior: token endpoin
   refused with `invalid_request`. The controller wraps a request without `client_id` with the authenticated client id
   (`withAuthenticatedClientId`), since the request parameter resolver verifies request objects with the client of the
   `client_id` parameter.
+- Federation "cannot tell now" (Misagh: time and slots only, per step): the HTTP client counts `OutOfTimeException` and
+  `TooManyRequestsException` in `RequestBudget.markIndeterminate()`; a step takes `indeterminateMark()` when it starts
+  and fails as `Unavailable` (503, not remembered) only if `isIndeterminateSince(mark)` after it found nothing. A used-up
+  request budget is a failure (remembered), since fabricated `authority_hints` would otherwise bypass the negative
+  cache. Trust-mark loops throw `Unavailable` only when no candidate of the type is valid; unreachable status or
+  historical keys endpoints (IO, 5xx) are `Unavailable`, not invalid. A sent chain whose leaf declares inline RP
+  `jwks` the request is not signed with is skipped before verification; `Unavailable` from a sent chain falls back to
+  resolution.
 - Federation registration: `register` throws `OidcFederationResolutionUnavailableException` for a client that is not
   registered yet when the resolution is busy/unavailable or the stripe lock is not had within 5 s (`tryLock`); the
   interceptor answers `503 temporarily_unavailable`, the validator returns null. `resolveAndSave` runs the sent chain and
   the full resolution in one `resolutionLimiter.execute`. Trust-mark issuer historical keys are not cached when the
-  budget or time ran out. The federation keystore is written to a temp file and moved over the keystore atomically.
+  budget or time ran out. The federation keystore is written to a temp file (0600 for a new keystore; an existing one's
+  POSIX permissions/owner/group copied; symlinks followed with `readSymbolicLink`, dangling ones included) and moved over
+  the keystore atomically; a refused move fails the save (never an in-place write). The federation HTTP client keeps
+  fixed connect/read timeouts and enforces the deadline only by abandoning the exchange. CIBA `jti` check-and-record runs under striped `CasReentrantLock`s; request objects are refused when
+  the discovery request parameter is off.
 - Federation interceptor paths: `baseEndpoint/**` (order 50) plus, at order 5, `/oauth2.0/authorize`,
   `/**/oidcAuthorize` and `/**/oidcPushAuthorize` outside the base endpoint (the controllers answer there and the
   issuer check accepts them); the OAuth interceptor is at order 10, after the OAuth throttle (0).

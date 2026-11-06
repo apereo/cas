@@ -44,6 +44,7 @@ import org.apereo.cas.oidc.federation.web.OidcWellKnownFederationEndpointControl
 import org.apereo.cas.oidc.issuer.OidcDefaultIssuerService;
 import org.apereo.cas.oidc.issuer.OidcIssuerService;
 import org.apereo.cas.oidc.web.OidcRequestObjectDecrypter;
+import org.apereo.cas.services.PairwiseOidcRegisteredServiceUsernameAttributeProvider;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
@@ -53,7 +54,6 @@ import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.RefreshableHandlerInterceptor;
-import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.web.CasWebSecurityConfigurer;
@@ -414,6 +414,7 @@ class OidcFederationConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = OidcFederationAutomaticClientRegistration.BEAN_NAME)
     public OidcFederationAutomaticClientRegistration oidcFederationAutomaticClientRegistration(
+        final ConfigurableApplicationContext applicationContext,
         final CasConfigurationProperties casProperties,
         @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager,
@@ -422,10 +423,9 @@ class OidcFederationConfiguration {
         @Qualifier(OidcFederationResolutionLimiter.BEAN_NAME)
         final OidcFederationResolutionLimiter oidcFederationResolutionLimiter) {
         val retention = Beans.newDuration(casProperties.getAuthn().getOidc().getFederation().getUnresolvedEntityRetention());
-        val pairwiseSubjectSalt = SpringExpressionLanguageValueResolver.getInstance()
-            .resolve(casProperties.getAuthn().getOidc().getCore().getPairwiseSubjectSalt());
         return new OidcFederationAutomaticClientRegistration(servicesManager, oidcFederationTrustChainResolver, retention,
-            pairwiseSubjectSalt, oidcFederationResolutionLimiter);
+            () -> PairwiseOidcRegisteredServiceUsernameAttributeProvider.getPairwiseSubjectSalt(applicationContext.getEnvironment()),
+            oidcFederationResolutionLimiter);
     }
 
     @Bean

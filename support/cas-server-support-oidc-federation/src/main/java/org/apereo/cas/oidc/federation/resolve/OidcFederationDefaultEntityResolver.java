@@ -51,7 +51,8 @@ import org.springframework.http.HttpStatus;
  * anchor; without one, the request fails with {@code invalid_trust_chain}. The metadata of each entity type of the
  * subject, or of each requested type, is resolved with the metadata policies of the chain; types the constraints of
  * the chain do not allow are left out, and a policy that cannot apply fails the request with {@code invalid_metadata}.
- * Only valid trust marks are included, and the response expires with the chain or the first of those trust marks. A
+ * Only valid trust marks are included, and the response expires with the chain or the first of those trust marks; a
+ * trust mark whose validity cannot be told now is left out, and the resolution is then not kept. A
  * response for an authenticated requester is addressed to it with {@code aud}, and to no one else.
  * <p>
  * Resolved chains, and subjects that cannot be resolved, are kept per subject and trusted trust anchors for at most the
@@ -59,7 +60,7 @@ import org.springframework.http.HttpStatus;
  * the chains to be resolved again. The number of kept resolutions is bounded. Responses are signed per request. Each
  * resolution runs within the limits of the resolution limiter, which bounds the requests it sends, the time it takes
  * and how many run at once, and outside the cache of resolutions. One that cannot start, or cannot tell about a trust
- * anchor that cannot be reached or whose historical keys cannot be read, is answered with
+ * anchor that cannot be reached, answers with a server error, or whose historical keys cannot be read, is answered with
  * {@code temporarily_unavailable} and is not remembered.
  *
  * @author Misagh Moayyed
@@ -215,15 +216,22 @@ public class OidcFederationDefaultEntityResolver implements OidcFederationEntity
         val unavailable = new ArrayList<OidcFederationResolutionUnavailableException>();
         for (val trustAnchor : trustAnchors) {
             val resolver = resolvers.get(trustAnchor);
+            val mark = OidcFederationResolutionLimiter.indeterminateMark();
+            val unreachableMark = OidcFederationResolutionLimiter.unreachableMark(trustAnchor);
             try {
-                resolveTrustChains(entityId, subject, trustAnchor, resolver)
-                    .forEach(chain -> candidates.add(new ResolvedChain(resolver, chain)));
+                val chains = resolveTrustChains(entityId, subject, trustAnchor, resolver);
+                if (chains.isEmpty() && OidcFederationResolutionLimiter.isIndeterminateSince(mark)) {
+                    unavailable.add(new OidcFederationResolutionUnavailableException("Trust chains to %s cannot be resolved now".formatted(trustAnchor)));
+                }
+                chains.forEach(chain -> candidates.add(new ResolvedChain(resolver, chain)));
             } catch (final OidcFederationResolutionUnavailableException e) {
                 unavailable.add(e);
             } catch (final Exception e) {
                 LOGGER.debug("Trust chains of [{}] to [{}] cannot be resolved: [{}]", subject, trustAnchor, e.getMessage());
-                if (OidcFederationResolutionLimiter.currentBudget().filter(budget -> budget.isUnreachable(trustAnchor.getValue())).isPresent()) {
+                if (OidcFederationResolutionLimiter.isUnreachableSince(trustAnchor, unreachableMark)) {
                     unavailable.add(new OidcFederationResolutionUnavailableException("Trust anchor %s cannot be reached now".formatted(trustAnchor)));
+                } else if (OidcFederationResolutionLimiter.isIndeterminateSince(mark)) {
+                    unavailable.add(new OidcFederationResolutionUnavailableException("Trust chains to %s cannot be resolved now".formatted(trustAnchor)));
                 }
             }
         }
@@ -237,14 +245,16 @@ public class OidcFederationDefaultEntityResolver implements OidcFederationEntity
                 "No valid trust chain to the requested trust anchors"), retention);
         }
         val chain = selected.get().chain();
-        val trustMarks = trustMarkValidator.resolveValidTrustMarks(selected.get().resolver(), chain);
+        val validTrustMarks = trustMarkValidator.resolveValidTrustMarks(selected.get().resolver(), chain);
+        val trustMarks = validTrustMarks.trustMarks();
         val expirationTime = Stream.concat(Stream.of(chain.resolveExpirationTime()),
                 trustMarks.stream().map(OidcFederationDefaultEntityResolver::readExpirationTime).flatMap(Optional::stream))
             .min(Date::compareTo)
             .orElseThrow();
         val lifetime = Duration.between(Instant.now(Clock.systemUTC()), expirationTime.toInstant());
         val kept = lifetime.compareTo(retention) < 0 ? lifetime : retention;
-        return new Resolution(new ResolvedEntity(chain, trustMarks, expirationTime), null, kept.isNegative() ? Duration.ZERO : kept);
+        val remembered = kept.isNegative() || !validTrustMarks.complete() ? Duration.ZERO : kept;
+        return new Resolution(new ResolvedEntity(chain, trustMarks, expirationTime), null, remembered);
     }
 
     private List<TrustChain> resolveTrustChains(final EntityID entityId, final EntityID subject, final EntityID trustAnchor,

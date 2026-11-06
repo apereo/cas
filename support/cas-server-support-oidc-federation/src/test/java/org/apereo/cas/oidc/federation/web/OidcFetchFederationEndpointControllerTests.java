@@ -5,6 +5,7 @@ import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.federation.AbstractOidcIntermediateFederationTests;
 import org.apereo.cas.oidc.federation.AbstractOidcOpenIdProviderFederationTests;
 import org.apereo.cas.oidc.federation.AbstractOidcTrustAnchorFederationTests;
+import org.apereo.cas.oidc.federation.chain.OidcFederationResolutionLimiter;
 import org.apereo.cas.oidc.federation.chain.OidcFederationResolutionUnavailableException;
 import org.apereo.cas.oidc.federation.signature.OidcFederationJsonWebKeystoreService;
 import org.apereo.cas.oidc.federation.subordinate.OidcFederationSubordinate;
@@ -424,6 +425,10 @@ class OidcFetchFederationEndpointControllerTests {
 
         private static final String UNAVAILABLE_ONCE = "https://unavailable.resolve.example.org";
 
+        private static final String OUT_OF_TIME = "https://out-of-time.resolve.example.org";
+
+        private static final String CONSTRAINED_OUT_OF_TIME = "https://constrained.resolve.example.org";
+
         private static final AtomicInteger UNAVAILABLE_ATTEMPTS = new AtomicInteger();
 
         private static final RSAKey LEAF_KEY = FunctionUtils.doUnchecked(() -> new RSAKeyGenerator(2048).keyID("leaf-federation").generate());
@@ -455,6 +460,11 @@ class OidcFetchFederationEndpointControllerTests {
                 subordinateRepository.getSubordinates().put(entityId, new OidcFederationSubordinate()
                     .setEntityId(entityId).setFederationKeys(federationKeys).setMetadataPolicy(metadataPolicy));
             }
+            subordinateRepository.getSubordinates().put(CONSTRAINED_OUT_OF_TIME, new OidcFederationSubordinate()
+                .setEntityId(CONSTRAINED_OUT_OF_TIME).setFederationKeys(federationKeys).setMetadataPolicy(metadataPolicy)
+                .setConstraints(mapper.readTree("""
+                    {"naming_constraints": {"excluded": ["constrained.resolve.example.org"]}}
+                    """)));
         }
 
         @Test
@@ -621,6 +631,30 @@ class OidcFetchFederationEndpointControllerTests {
             assertEquals(2, UNAVAILABLE_ATTEMPTS.get());
         }
 
+        /**
+         * A resolution whose request to a trust anchor ran out of time, or found no room among the running requests,
+         * cannot tell whether the subject has a trust chain to it: it is answered with {@code 503} and not remembered,
+         * whether the resolution failed or every chain it found was refused by the constraints of its statements.
+         */
+        @Test
+        void verifyResolutionOutOfTimeIsNotRemembered() throws Exception {
+            val subject = OUT_OF_TIME + '/' + UUID.randomUUID();
+            for (var attempt = 0; attempt < 2; attempt++) {
+                mockMvc.perform(get(RESOLVE_ENDPOINT_URL).param("sub", subject).param("trust_anchor", ISSUER)
+                        .with(withHttpRequestProcessor()))
+                    .andExpect(status().isServiceUnavailable())
+                    .andExpect(jsonPath("$.error").value("temporarily_unavailable"));
+            }
+            verify(entityStatementRetriever, times(2)).fetchEntityConfiguration(new EntityID(subject));
+
+            for (var attempt = 0; attempt < 2; attempt++) {
+                mockMvc.perform(get(RESOLVE_ENDPOINT_URL).param("sub", CONSTRAINED_OUT_OF_TIME).param("trust_anchor", ISSUER)
+                        .with(withHttpRequestProcessor()))
+                    .andExpect(status().isServiceUnavailable())
+                    .andExpect(jsonPath("$.error").value("temporarily_unavailable"));
+            }
+        }
+
         static EntityStatement leafConfiguration(final String entityId, final String applicationType) throws Exception {
             val now = Instant.now(Clock.systemUTC());
             val claims = new EntityStatementClaimsSet(new EntityID(entityId), new EntityID(entityId),
@@ -643,9 +677,16 @@ class OidcFetchFederationEndpointControllerTests {
                     return switch (target) {
                         case RELYING_PARTY -> leafConfiguration(RELYING_PARTY, "web");
                         case NATIVE_RELYING_PARTY -> leafConfiguration(NATIVE_RELYING_PARTY, "native");
+                        case CONSTRAINED_OUT_OF_TIME -> {
+                            OidcFederationResolutionLimiter.currentBudget().ifPresent(OidcFederationResolutionLimiter.RequestBudget::markIndeterminate);
+                            yield leafConfiguration(CONSTRAINED_OUT_OF_TIME, "web");
+                        }
                         default -> {
                             if (target.startsWith(UNAVAILABLE_ONCE) && UNAVAILABLE_ATTEMPTS.incrementAndGet() == 1) {
                                 throw new OidcFederationResolutionUnavailableException("Not reachable for now: " + target);
+                            }
+                            if (target.startsWith(OUT_OF_TIME)) {
+                                OidcFederationResolutionLimiter.currentBudget().ifPresent(OidcFederationResolutionLimiter.RequestBudget::markIndeterminate);
                             }
                             throw new ResolveException("Not reachable: " + target);
                         }

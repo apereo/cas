@@ -63,7 +63,9 @@ class OidcWellKnownEndpointControllerTests extends AbstractOidcTests {
             .andExpect(jsonPath("$.token_endpoint_auth_methods_supported").value(hasItem("private_key_jwt")))
             .andExpect(jsonPath("$.token_endpoint_auth_methods_supported").value(hasItem("none")))
             .andExpect(jsonPath("$.token_endpoint_auth_signing_alg_values_supported").value(hasItem("RS256")))
-            .andExpect(jsonPath("$.token_endpoint_auth_signing_alg_values_supported").value(not(hasItem("none"))));
+            .andExpect(jsonPath("$.token_endpoint_auth_signing_alg_values_supported").value(not(hasItem("none"))))
+            .andExpect(jsonPath("$.request_object_signing_alg_values_supported").value(hasItem("RS256")))
+            .andExpect(jsonPath("$.request_object_signing_alg_values_supported").value(not(hasItem("none"))));
     }
 
     @Test

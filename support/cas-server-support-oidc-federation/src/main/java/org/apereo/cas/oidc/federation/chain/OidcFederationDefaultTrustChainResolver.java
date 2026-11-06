@@ -422,12 +422,14 @@ public class OidcFederationDefaultTrustChainResolver implements OidcFederationTr
      * Whether the sector of a relying party that asks for pairwise subject identifiers is its own, since relying parties
      * of the same sector share identifiers (OpenID Connect Core 1.0, section 8.1). Its {@code sector_identifier_uri} must
      * be fetched, as a request of the running resolution, and list every redirect URI of the relying party; without one,
-     * its redirect URIs must all be on the same host, read as hosts are when identifiers are calculated, and a redirect
-     * URI with an authority whose host cannot be read is refused. A sector identifier URI must be an {@code https} URL
+     * its redirect URIs must all be in the same sector, read as sectors are when identifiers are calculated: a web
+     * redirect URI is in the sector of its host and any other one in the relying party's own, and a web redirect URI
+     * whose host cannot be read is refused. A sector identifier URI must be an {@code https} URL
      * that federation requests may be sent to. A relying party that does not ask for pairwise subject identifiers has
      * nothing to verify. A sector identifier document that cannot be had now, because the request fails,
-     * the server answers with an error of its own, or the resolution runs out of time or requests, leaves the sector
-     * unknown rather than refused, so that the relying party is not remembered as unresolved for an outage.
+     * the server answers with an error of its own, or the resolution runs out of time, leaves the sector unknown rather
+     * than refused, so that the relying party is not remembered as unresolved for an outage; a resolution that used up
+     * its requests refuses it.
      *
      * @param entityId   the entity identifier of the relying party
      * @param rpMetadata the metadata of the relying party
@@ -442,19 +444,19 @@ public class OidcFederationDefaultTrustChainResolver implements OidcFederationTr
         val sectorUri = rpMetadata.getSectorIDURI();
         if (sectorUri == null) {
             try {
-                val hosts = OidcRedirectUriUtils.toHosts(redirectUris);
-                if (hosts.size() > 1) {
-                    LOGGER.warn("Relying party [{}] asks for pairwise subject identifiers for redirect URIs on several hosts [{}] without a "
-                        + "sector identifier URI", entityId, hosts);
+                val sectors = OidcRedirectUriUtils.toSectors(redirectUris);
+                if (sectors.size() > 1) {
+                    LOGGER.warn("Relying party [{}] asks for pairwise subject identifiers for redirect URIs in several sectors [{}] without a "
+                        + "sector identifier URI", entityId, sectors);
                 }
-                return hosts.size() <= 1;
+                return sectors.size() <= 1;
             } catch (final IllegalArgumentException e) {
                 LOGGER.warn("Relying party [{}] asks for pairwise subject identifiers: [{}]", entityId, e.getMessage());
                 return false;
             }
         }
         if (!Strings.CI.equals(sectorUri.getScheme(), "https")
-            || !Objects.equals(sectorUri.getHost(), OidcRedirectUriUtils.toHost(sectorUri.toString()).orElse(null))) {
+            || OidcRedirectUriUtils.toHost(sectorUri.toString()).filter(host -> host.equals(sectorUri.getHost())).isEmpty()) {
             LOGGER.warn("Sector identifier URI [{}] of relying party [{}] is not an https URL with a host that can be read", sectorUri, entityId);
             return false;
         }
@@ -482,10 +484,10 @@ public class OidcFederationDefaultTrustChainResolver implements OidcFederationTr
         try {
             OidcFederationResolutionLimiter.consumeRequest("sector identifier document " + sectorUri);
             return httpClient.send(new HTTPRequest(HTTPRequest.Method.GET, sectorUri));
-        } catch (final OidcFederationHttpClient.RefusedRequestException e) {
+        } catch (final OidcFederationHttpClient.RefusedRequestException | IllegalStateException e) {
             LOGGER.warn("Sector identifier URI [{}] of relying party [{}] may not be requested: [{}]", sectorUri, entityId, e.getMessage());
             return null;
-        } catch (final IOException | IllegalStateException e) {
+        } catch (final IOException e) {
             LOGGER.warn("Sector identifier URI [{}] of relying party [{}] cannot be read now: [{}]", sectorUri, entityId, e.getMessage());
             throw new OidcFederationResolutionUnavailableException("Sector identifier URI %s cannot be read now".formatted(sectorUri));
         }
@@ -499,14 +501,22 @@ public class OidcFederationDefaultTrustChainResolver implements OidcFederationTr
      * @param entityId           the entity identifier of the relying party
      * @return the metadata, or empty when no trust chain can be used
      * @throws OidcFederationResolutionUnavailableException when the trust anchor could not be reached, or its historical
-     *                                                      keys could not be read, so that the chains cannot be told
+     *                                                      keys could not be read, or no trust chain was found while a
+     *                                                      request ran out of time or found no room, so that the chains
+     *                                                      cannot be told
      */
     protected Optional<TrustChainMetadata> fetchRelyingPartyMetadata(final TrustChainResolver trustChainResolver,
                                                                      final EntityID entityId) {
+        val mark = OidcFederationResolutionLimiter.indeterminateMark();
+        val unreachableMarks = trustChainResolver.getTrustAnchors().keySet().stream()
+            .collect(Collectors.toMap(Function.identity(), OidcFederationResolutionLimiter::unreachableMark));
         return FunctionUtils.doAndHandle(() -> {
             val validChains = new TrustChainSet();
             trustChainResolver.resolveTrustChains(entityId).stream().filter(this::satisfiesConstraints).forEach(validChains::add);
             if (validChains.isEmpty()) {
+                if (OidcFederationResolutionLimiter.isIndeterminateSince(mark)) {
+                    throw new OidcFederationResolutionUnavailableException("Trust chains of %s cannot be resolved now".formatted(entityId));
+                }
                 LOGGER.warn("No trust chain of [{}] satisfies the constraints of its statements", entityId);
                 return Optional.<TrustChainMetadata>empty();
             }
@@ -515,12 +525,15 @@ public class OidcFederationDefaultTrustChainResolver implements OidcFederationTr
             if (e instanceof final OidcFederationResolutionUnavailableException unavailable) {
                 throw unavailable;
             }
-            val unreachable = trustChainResolver.getTrustAnchors().keySet().stream()
-                .filter(trustAnchor -> OidcFederationResolutionLimiter.currentBudget()
-                    .filter(budget -> budget.isUnreachable(trustAnchor.getValue())).isPresent())
+            val unreachable = unreachableMarks.entrySet().stream()
+                .filter(entry -> OidcFederationResolutionLimiter.isUnreachableSince(entry.getKey(), entry.getValue()))
+                .map(Map.Entry::getKey)
                 .findFirst();
             if (unreachable.isPresent()) {
                 throw new OidcFederationResolutionUnavailableException("Trust anchor %s cannot be reached now".formatted(unreachable.get()));
+            }
+            if (OidcFederationResolutionLimiter.isIndeterminateSince(mark)) {
+                throw new OidcFederationResolutionUnavailableException("Trust chains of %s cannot be resolved now".formatted(entityId));
             }
             return Optional.<TrustChainMetadata>empty();
         }).get();

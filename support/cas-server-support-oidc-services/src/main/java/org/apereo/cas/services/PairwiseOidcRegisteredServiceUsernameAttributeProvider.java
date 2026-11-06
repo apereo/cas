@@ -11,9 +11,10 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.SerializationException;
+import org.apache.commons.lang3.SerializationUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
-import org.jspecify.annotations.Nullable;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.env.Environment;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -55,6 +56,8 @@ public class PairwiseOidcRegisteredServiceUsernameAttributeProvider extends Base
     private static final long serialVersionUID = 469929103943101717L;
 
     private static final AtomicBoolean UNSALTED_WARNING_LOGGED = new AtomicBoolean();
+
+    private static final Set<String> UNCOPYABLE_GENERATORS_LOGGED = ConcurrentHashMap.newKeySet();
 
     private PersistentIdGenerator persistentIdGenerator = new OidcPairwisePersistentIdGenerator();
 
@@ -135,9 +138,12 @@ public class PairwiseOidcRegisteredServiceUsernameAttributeProvider extends Base
     /**
      * The generator of the identifiers. A generator without a salt of its own, as clients that CAS registers are given
      * when the pairwise subject salt of CAS is defined, calculates them with that salt, which is thus never written
-     * into client definitions; the generator itself is left as it is. Without either salt, the generator makes up one
-     * that is not kept, so the identifiers change from one node or restart to the next; that is logged as a warning
-     * once, and for each client at debug level.
+     * into client definitions; the generator itself is left as it is, and a copy of it, of the same type, calculates
+     * them. A generator that cannot be copied, such as one that holds state that cannot be serialized, is replaced by a
+     * default generator with the same attribute, which calculates identifiers as the default type does, without what the
+     * type of the generator changes; that is logged as a warning once for each type. Without either salt, the generator
+     * makes up one that is not kept, so the identifiers change from one node or restart to the next; that is logged as a
+     * warning once, and for each client at debug level.
      *
      * @param client             the client
      * @param applicationContext the application context
@@ -147,9 +153,8 @@ public class PairwiseOidcRegisteredServiceUsernameAttributeProvider extends Base
         if (persistentIdGenerator instanceof final ShibbolethCompatiblePersistentIdGenerator generator && StringUtils.isBlank(generator.getSalt())) {
             val salt = getPairwiseSubjectSalt(applicationContext.getEnvironment());
             if (StringUtils.isNotBlank(salt)) {
-                val salted = new OidcPairwisePersistentIdGenerator();
+                val salted = copyOf(generator);
                 salted.setSalt(salt);
-                salted.setAttribute(generator.getAttribute());
                 return salted;
             }
             if (UNSALTED_WARNING_LOGGED.compareAndSet(false, true)) {
@@ -161,34 +166,57 @@ public class PairwiseOidcRegisteredServiceUsernameAttributeProvider extends Base
         return persistentIdGenerator;
     }
 
+    private static ShibbolethCompatiblePersistentIdGenerator copyOf(final ShibbolethCompatiblePersistentIdGenerator generator) {
+        try {
+            return SerializationUtils.clone(generator);
+        } catch (final SerializationException e) {
+            if (UNCOPYABLE_GENERATORS_LOGGED.add(generator.getClass().getName())) {
+                LOGGER.warn("Pairwise subject identifier generator [{}] cannot be copied, so a default one with its attribute is used: [{}]",
+                    generator.getClass().getName(), e.getMessage());
+            }
+            val copy = new OidcPairwisePersistentIdGenerator();
+            copy.setAttribute(generator.getAttribute());
+            return copy;
+        }
+    }
+
     /**
-     * The host of the sector identifier URI of the client, or else of its first redirect URI. The redirect URIs of a
-     * client registered by CAS are read from its service id, which matches them; any other service id is read as the
-     * redirect URI. A client whose redirect URIs name several hosts should register a sector identifier URI; one whose
-     * registered redirect URIs name no host, such as a native application with a private-use scheme, is its own sector.
+     * The sector of the client: the host of its sector identifier URI, or else of its first redirect URI. The redirect
+     * URIs of a client registered by CAS are read from its service id, which matches them, and only a web redirect URI, an
+     * {@code http} or {@code https} URI with an authority on a host other than a loopback one, gives a host; a service id
+     * written by hand in the same quoted form is read the same way. Any other service id, such as one defined by hand or
+     * one CAS built for a client it registered before it quoted redirect URIs, is read as it always was, a regular
+     * expression included, until CAS builds it again when the client updates its registration. A client whose redirect
+     * URIs name several hosts should register a sector identifier URI; a client whose service id or sector identifier URI
+     * gives no host, such as a native application, is a sector of its own, its client id, so that it shares identifiers
+     * with no other such client.
      *
      * @param client the client
      * @return the sector identifier
      */
-    private static @Nullable String getSectorIdentifier(final OidcRegisteredService client) {
+    private static String getSectorIdentifier(final OidcRegisteredService client) {
         if (StringUtils.isNotBlank(client.getSectorIdentifierUri())) {
             val uri = UriComponentsBuilder.fromUriString(client.getSectorIdentifierUri()).build();
-            return uri.getHost();
+            return StringUtils.defaultIfBlank(uri.getHost(), client.getClientId());
         }
         val redirectUris = OidcRedirectUriUtils.toRedirectUris(client.getServiceId());
-        val hosts = redirectUris.stream()
-            .map(OidcRedirectUriUtils::toHost)
-            .flatMap(Optional::stream)
-            .distinct()
-            .toList();
+        val hosts = redirectUris.equals(List.of(client.getServiceId()))
+            ? readHost(client.getServiceId()).stream().toList()
+            : redirectUris.stream().map(OidcRedirectUriUtils::toSectorHost).flatMap(Optional::stream).distinct().toList();
         if (hosts.size() > 1) {
             LOGGER.warn("Redirect URIs of [{}] name several hosts [{}] and no sector identifier URI; [{}] is used as the sector identifier",
                 client.getClientId(), hosts, hosts.getFirst());
         }
-        if (hosts.isEmpty()) {
-            return redirectUris.equals(List.of(client.getServiceId())) ? null : client.getClientId();
+        return hosts.isEmpty() ? client.getClientId() : hosts.getFirst();
+    }
+
+    private static Optional<String> readHost(final String serviceId) {
+        try {
+            return Optional.ofNullable(UriComponentsBuilder.fromUriString(serviceId).build().getHost()).filter(StringUtils::isNotBlank);
+        } catch (final IllegalArgumentException e) {
+            LOGGER.trace("Service id [{}] names no host: [{}]", serviceId, e.getMessage());
+            return Optional.empty();
         }
-        return hosts.getFirst();
     }
 
 }

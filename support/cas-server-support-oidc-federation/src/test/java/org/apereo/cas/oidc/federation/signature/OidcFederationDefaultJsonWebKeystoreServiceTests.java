@@ -23,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.TestPropertySource;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assumptions.*;
 
 /**
  * This is {@link OidcFederationDefaultJsonWebKeystoreServiceTests}.
@@ -34,22 +35,24 @@ import static org.junit.jupiter.api.Assertions.*;
 class OidcFederationDefaultJsonWebKeystoreServiceTests {
 
     @Nested
-    @TestPropertySource(properties = "cas.authn.oidc.federation.jwks-file=file:${#systemProperties['java.io.tmpdir']}/corrupted.jwks")
-    class KeystoreCorrupted extends AbstractOidcTrustAnchorFederationTests {
+    @TestPropertySource(properties = "cas.authn.oidc.federation.jwks-file=file:${#systemProperties['java.io.tmpdir']}/keystore-without-keys.jwks")
+    class KeystoreWithoutKeys extends AbstractOidcTrustAnchorFederationTests {
         @Autowired
         @Qualifier(OidcFederationJsonWebKeystoreService.BEAN_NAME)
         private OidcFederationJsonWebKeystoreService oidcFederationWebKeystoreService;
 
         @BeforeAll
         static void setup() throws Exception {
-            val resource = new File(FileUtils.getTempDirectoryPath(), "corrupted.jwks");
-            FileUtils.writeStringToFile(resource, "corrupted", StandardCharsets.UTF_8);
+            val resource = new File(FileUtils.getTempDirectoryPath(), "keystore-without-keys.jwks");
+            FileUtils.writeStringToFile(resource, "{\"keys\":[]}", StandardCharsets.UTF_8);
         }
 
         @Test
         void verifyOperation() throws Exception {
             val keystore = oidcFederationWebKeystoreService.toJWKSet();
-            assertNotNull(keystore);
+            assertFalse(keystore.getKeys().isEmpty());
+            val stored = FileUtils.readFileToString(new File(FileUtils.getTempDirectoryPath(), "keystore-without-keys.jwks"), StandardCharsets.UTF_8);
+            assertTrue(keystore.getKeys().stream().allMatch(key -> stored.contains(key.getKeyID())));
         }
     }
 
@@ -224,6 +227,51 @@ class OidcFederationDefaultJsonWebKeystoreServiceTests {
             assertThrows(Exception.class, () -> service.revokeKey(signingKey, "compromised"));
             assertEquals(published, keyIds(service.toJWKSet()));
             assertEquals(signingKey, signingKeyId(service));
+        }
+
+        /**
+         * The keystore is replaced at once, keeping its permissions, and written where a symbolic link to it points, even
+         * before the target exists; a new keystore is readable by its owner only.
+         */
+        @Test
+        void verifyKeystoreIsReplacedKeepingItsLinkAndPermissions() throws Exception {
+            assumeTrue(FileSystems.getDefault().supportedFileAttributeViews().contains("posix"));
+            val target = new File(directory, "target.jwks");
+            newService(target);
+            assertEquals(PosixFilePermissions.fromString("rw-------"), Files.getPosixFilePermissions(target.toPath()));
+            val dangling = Files.createSymbolicLink(new File(directory, "dangling.jwks").toPath(), new File(directory, "later.jwks").toPath());
+            newService(dangling.toFile());
+            assertTrue(Files.isSymbolicLink(dangling));
+            assertTrue(new File(directory, "later.jwks").isFile());
+            val permissions = PosixFilePermissions.fromString("rw-r-----");
+            Files.setPosixFilePermissions(target.toPath(), permissions);
+            val link = Files.createSymbolicLink(new File(directory, "link.jwks").toPath(), target.toPath());
+            val service = newService(link.toFile());
+            service.rotate();
+            assertTrue(Files.isSymbolicLink(link));
+            assertEquals(permissions, Files.getPosixFilePermissions(target.toPath()));
+            assertEquals(keyIds(service.toJWKSet()), keyIds(newService(target).toJWKSet()));
+        }
+
+        @Test
+        void verifyKeystoreThatCannotBeReadIsNotReplaced() throws Exception {
+            val file = new File(directory, "corrupted.jwks");
+            FileUtils.writeStringToFile(file, "corrupted", StandardCharsets.UTF_8);
+            assertThrows(IllegalStateException.class, () -> newService(file));
+            assertEquals("corrupted", FileUtils.readFileToString(file, StandardCharsets.UTF_8));
+
+            assumeTrue(FileSystems.getDefault().supportedFileAttributeViews().contains("posix"));
+            val unreadable = new File(directory, "unreadable.jwks");
+            newService(unreadable);
+            val keys = FileUtils.readFileToString(unreadable, StandardCharsets.UTF_8);
+            Files.setPosixFilePermissions(unreadable.toPath(), PosixFilePermissions.fromString("-w-------"));
+            try {
+                assumeFalse(Files.isReadable(unreadable.toPath()));
+                assertThrows(IllegalStateException.class, () -> newService(unreadable));
+            } finally {
+                Files.setPosixFilePermissions(unreadable.toPath(), PosixFilePermissions.fromString("rw-------"));
+            }
+            assertEquals(keys, FileUtils.readFileToString(unreadable, StandardCharsets.UTF_8));
         }
 
         @Test

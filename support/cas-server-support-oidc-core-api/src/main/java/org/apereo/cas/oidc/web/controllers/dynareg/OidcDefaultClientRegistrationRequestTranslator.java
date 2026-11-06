@@ -25,7 +25,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
-import org.hjson.JsonValue;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.util.Assert;
 import tools.jackson.databind.ObjectMapper;
@@ -297,8 +296,9 @@ public class OidcDefaultClientRegistrationRequestTranslator implements OidcClien
      * section 5); one that cannot be fetched with the protections of client ID metadata documents, or does not list them,
      * refuses the registration. A client that asks for pairwise subject identifiers with redirect URIs on several hosts
      * must register a {@code sector_identifier_uri} (OpenID Connect Core 1.0, section 8.1), or the host it is given
-     * identifiers for could be the host of another client; hosts are read as they are when identifiers are calculated,
-     * and a redirect URI whose host cannot be read is refused.
+     * identifiers for could be the host of another client; sectors are read as they are when identifiers are calculated:
+     * a web redirect URI is in the sector of its host and any other one in the client's own, so that mixing them needs a
+     * sector identifier URI too, and a web redirect URI whose host cannot be read is refused.
      *
      * @param registrationRequest the registration request
      * @throws Exception when the registration is not valid
@@ -309,7 +309,7 @@ public class OidcDefaultClientRegistrationRequestTranslator implements OidcClien
         if (StringUtils.isNotBlank(sectorIdentifierUri)) {
             validateSectorIdentifierUri(sectorIdentifierUri, registrationRequest.getRedirectUris());
         } else if (Strings.CI.equals(OidcSubjectTypes.PAIRWISE.getType(), registrationRequest.getSubjectType())
-            && OidcRedirectUriUtils.toHosts(registrationRequest.getRedirectUris()).size() > 1) {
+            && OidcRedirectUriUtils.toSectors(registrationRequest.getRedirectUris()).size() > 1) {
             throw new IllegalArgumentException("Pairwise subject identifiers for redirect uris on several hosts need a sector identifier uri");
         }
 
@@ -363,12 +363,13 @@ public class OidcDefaultClientRegistrationRequestTranslator implements OidcClien
     private List<String> readSectorIdentifierDocument(final String sectorIdentifierUri) {
         try {
             val uri = new URI(sectorIdentifierUri);
-            if (!Objects.equals(uri.getHost(), OidcRedirectUriUtils.toHost(sectorIdentifierUri).orElse(null))) {
+            val host = OidcRedirectUriUtils.toHost(sectorIdentifierUri);
+            if (host.isEmpty() || !host.get().equals(uri.getHost())) {
                 throw new IllegalArgumentException("Sector identifier uri has no host that can be read");
             }
             val document = sectorIdentifierDocumentFetcher.fetch(uri);
             val expectedType = MAPPER.getTypeFactory().constructParametricType(List.class, String.class);
-            return MAPPER.readValue(JsonValue.readHjson(document.json()).toString(), expectedType);
+            return MAPPER.readValue(document.json(), expectedType);
         } catch (final Exception e) {
             LOGGER.warn("Sector identifier uri [{}] cannot be fetched or read: [{}]", sectorIdentifierUri, e.getMessage());
             throw new IllegalArgumentException("Sector identifier uri cannot be fetched", e);

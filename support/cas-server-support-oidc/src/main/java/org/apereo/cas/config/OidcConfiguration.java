@@ -1059,7 +1059,7 @@ class OidcConfiguration {
             val timeout = Beans.newDuration(casProperties.getAuthn().getOidc().getRegistration().getClientIdMetadataDocument().getTimeout());
             return new OidcDefaultClientRegistrationRequestTranslator(oidcConfigurationContext,
                 new DefaultOidcClientIdMetadataDocumentFetcher(httpClient, timeout,
-                    OidcDefaultClientRegistrationRequestTranslator.MAXIMUM_SECTOR_IDENTIFIER_DOCUMENT_SIZE));
+                    OidcDefaultClientRegistrationRequestTranslator.MAXIMUM_SECTOR_IDENTIFIER_DOCUMENT_SIZE, false));
         }
 
         @Bean

@@ -28,7 +28,8 @@ signed by the client first, is encrypted to one of the encryption keys that CAS 
 `kid`. CAS decrypts it with that key, or tries each of its encryption keys when no `kid` is given, and then verifies
 the nested request object with the keys of the client like any signed request object. Every encryption key the JWKS
 publishes is accepted, whatever its rotation state, so clients that still hold the key set from before a rotation are
-not refused.
+not refused. A request object that was encrypted without being signed is refused, as any unsigned request object is,
+since anyone can encrypt to the keys CAS publishes.
 
 Only the key management and content encryption algorithms that discovery advertises are accepted: by default `RSA-OAEP`
 and `RSA-OAEP-256` for RSA keys and the `ECDH-ES` family for elliptic curve keys, with the AES-CBC-HMAC and AES-GCM

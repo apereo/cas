@@ -391,6 +391,14 @@ one-time codes can be added when `cas.authn.mfa.simple.mail.accepted-email-patte
   that publish their keys at a URL other than `https` are not registered.
 - {: .fixed data-area="oidc"} OpenID Connect applications whose keys change no longer keep being checked against the keys
   cached for their earlier definition until that cache expires.
+- {: .action data-area="oidc"} Unsigned JWTs, whose algorithm is `none`, are refused everywhere CAS reads one: request
+  objects, including those encrypted without being signed, are refused with `invalid_request_object`, and `none` is no
+  longer advertised for request objects, even when listed with
+  `cas.authn.oidc.discovery.request-object-signing-alg-values-supported`{: .cas-setting}; JWT
+  [access and refresh tokens](../authentication/OAuth-Authentication-JWT-AccessTokens.html) that would be neither signed
+  nor encrypted are no longer issued, nor accepted, so applications whose JWT access tokens are not signed must have
+  signing turned on; subject and actor tokens of a token exchange, risk verification tokens and QR authentication
+  tokens must be signed.
 - {: .action data-area="oidc"} A request object whose `client_id` differs from the `client_id` parameter of the request is
   refused with `invalid_request_object`, as [OpenID Connect](https://openid.net/specs/openid-connect-core-1_0.html#RequestObject)
   requires, instead of being used for the client it names.
@@ -424,7 +432,7 @@ one-time codes can be added when `cas.authn.mfa.simple.mail.accepted-email-patte
   must be signed with an asymmetric algorithm, name the client as their issuer, be addressed to the CAS issuer and carry
   `exp`, `iat`, `nbf` and `jti`, as CIBA requires; they may not be issued in the future, may be valid for 60 minutes at
   most and are used once. They are verified with the keys of the client that authenticated the request, also when the
-  request names no `client_id`.
+  request names no `client_id`, and refused when CAS does not support the request parameter.
 - {: .action data-area="oidc"} [Dynamically registered](../authentication/OIDC-Authentication-Dynamic-Registration.html)
   OpenID Connect clients, and [OpenID Federation](../authentication/OIDC-Authentication-Federation.html#automatic-registration)
   relying parties registered automatically, have their redirect URIs matched exactly, case included. Dynamic registration used to join
@@ -443,12 +451,23 @@ one-time codes can be added when `cas.authn.mfa.simple.mail.accepted-email-patte
   every restart. Clients registered dynamically before keep such a changing salt until the setting is defined or they
   update their registration. Clients that ask for pairwise identifiers with redirect URIs on several hosts must register
   a sector identifier URI, which must be an `https` URL that can be fetched and lists all of their redirect URIs; the
-  sector identifier URI of a federation relying party is fetched and checked the same way. Hosts are read the same way
-  when clients register and when identifiers are calculated, and a redirect URI whose host cannot be read is refused.
-  Sector identifier documents of dynamically registered clients are fetched from public addresses only, without
-  redirects or retries, within a limited time and size. A client configuration update that is refused now leaves the
-  client as it was and is answered with `invalid_client_metadata`, and an update keeps the generator of pairwise
-  identifiers the client has.
+  sector identifier URI of a federation relying party is fetched and checked the same way. For clients that CAS
+  registers, only `http` and `https` redirect URIs on hosts other than loopback ones give a sector host; any other
+  redirect URI, such as the private-use scheme of a native application or a loopback redirect URI, puts the client in a
+  sector of its own, its client id, whatever it names, so clients registered by CAS with such redirect URIs receive new
+  identifiers, and mixing both kinds needs a sector identifier URI. Clients registered dynamically before keep the sector
+  they had until they next update their registration, which then gives them the sector described here, and so new
+  identifiers, even when their redirect URIs stay the same. Clients defined by hand keep the host read from their
+  service id; those whose service id names no host, such as `^https?://app.example.org/.*`, in which the `?` ends what
+  is read as the host, or whose sector identifier URI names no host, used to share one sector, and are now each a sector
+  of their own and receive new identifiers. A service id whose host is a pattern, such as `^https://.*`, gives that
+  pattern as its sector; without a salt of their own, such clients used to get a salt that changed with every restart,
+  and with the setting above they now share identifiers. Sectors
+  are read the same way when clients register and when identifiers are calculated, and an `http` or `https` redirect URI
+  whose host cannot be read is refused. Sector identifier documents of dynamically registered clients are fetched from
+  public addresses only, without redirects or retries, within a limited time and size, and must be valid JSON, whatever
+  type they are served as. A client configuration update that is refused now leaves the client as it was and is
+  answered with `invalid_client_metadata`, and an update keeps the generator of pairwise identifiers the client has.
 - {: .fixed data-area="oidc"} [Pushed authorization requests](../authentication/OIDC-Authentication-PAR.html) are
   accepted again when [verifiable credentials](../authentication/OIDC-Authentication-Verifiable-Credentials.html) are
   turned on; CAS answered them with `401` as if they needed a single sign-on session. A wallet that pushes its
@@ -522,18 +541,23 @@ one-time codes can be added when `cas.authn.mfa.simple.mail.accepted-email-patte
   responses limited in size, the TLS settings of CAS and no redirects; at most
   `cas.authn.oidc.federation.max-concurrent-resolutions`{: .cas-setting} resolutions (10) run at once. The time limit
   covers each whole request, host name lookup and TLS handshake included, and requests are only sent over `https` and
-  never to link-local, unspecified or multicast addresses, IPv6 forms included, unless a proxy of the JVM sends them.
-  A trust anchor that cannot be reached or answer in time, or whose historical keys cannot be read, and a sector
-  identifier document that cannot be fetched for now make the resolution unavailable rather than failed, so the relying
-  party is not remembered as unresolved; a relying party that is not registered yet is then answered with
+  never to link-local, unspecified or multicast addresses, IPv6 forms included, unless a proxy of the JVM resolves
+  them: an HTTP proxy, or a SOCKS proxy for host names CAS cannot resolve. A trust anchor that cannot be reached, answer in time or answers with a server error, or whose historical keys
+  cannot be read, a sector identifier
+  document that cannot be fetched for now, and a resolution that runs out of time or requests or finds no room among the
+  running requests make the resolution unavailable rather than failed, so the relying party is not remembered as
+  unresolved; a relying party that is not registered yet is then answered with
   `temporarily_unavailable` instead of as an unknown client. Using a trust chain the relying party sent and resolving its
   trust chains share one time limit and request budget. The constraints of subordinate statements (maximum path length, naming
   constraints, allowed entity types) now apply to the trust chains of relying parties and of their trust mark issuers;
   they used to be ignored. A maximum path length must be a whole number that is not negative.
-- {: .changed data-area="oidc"} [Application keys](../authentication/OIDC-Authentication-Clients.html) published at a URL
-  are no longer requested at link-local, unspecified or multicast addresses, and redirects are not followed. The
+- {: .action data-area="oidc"} [Application keys](../authentication/OIDC-Authentication-Clients.html) published at a URL
+  are no longer requested at link-local, unspecified or multicast addresses, and redirects are not followed, so keys
+  published behind a redirect must be published at their final location. The
   [OpenID Federation](../authentication/OIDC-Authentication-Federation.html#key-rollover) keystore is replaced at once
-  when it changes, so it is never read half written.
+  when it changes, so it is never read half written, keeping its permissions and any symbolic link to it. A keystore
+  that holds no keys is given new ones, and one that cannot be read stops CAS from starting, where CAS used to sign with
+  keys of its own on each node and restart, kept nowhere.
 - {: .changed data-area="oidc"} A CAS [OpenID Federation](../authentication/OIDC-Authentication-Federation.html#subordinates)
   trust anchor or intermediate issues subordinate statements that carry only the subordinate's keys, its metadata
   without the fetch, list and trust mark status endpoints, and the `constraints` of its definition rather than a fixed
@@ -567,7 +591,9 @@ one-time codes can be added when `cas.authn.mfa.simple.mail.accepted-email-patte
   `cas.authn.oidc.federation.required-trust-marks`{: .cas-setting}. Each trust mark is checked against the issuers that
   the trust anchor's own entity configuration accepts in `trust_mark_issuers`, verified with its issuer's keys through
   the issuer's own trust chain, its delegation checked when the trust anchor names an owner of the type, and its status
-  asked of the issuer when it publishes a status endpoint, which must be an `https` URL. A CAS trust anchor publishes the issuers it accepts, defined
+  asked of the issuer when it publishes a status endpoint, which must be an `https` URL. A trust mark that cannot be
+  checked for now leaves the relying party unregistered for now, unless another trust mark of its type is valid and
+  no required type is missing. A CAS trust anchor publishes the issuers it accepts, defined
   with `cas.authn.oidc.federation.trust-mark-issuers`{: .cas-setting}.
 - {: .new data-area="oidc"} CAS can act as an [OpenID Federation trust mark issuer](../authentication/OIDC-Authentication-Federation.html#trust-mark-issuer)
   in any role: the trust mark types it issues and the entities each is issued to are defined with
@@ -581,8 +607,8 @@ one-time codes can be added when `cas.authn.mfa.simple.mail.accepted-email-patte
 - {: .new data-area="oidc"} A CAS [OpenID Federation](../authentication/OIDC-Authentication-Federation.html#resolve-endpoint)
   trust anchor or intermediate publishes a resolve endpoint, which returns the resolved metadata, trust chain and valid
   trust marks of an entity for a trust anchor it trusts, as a signed resolve response. Resolutions and entities that
-  could not be resolved are remembered for at most `cas.authn.oidc.federation.unresolved-entity-retention`{: .cas-setting}.
-  Resolve requests can be authenticated with `private_key_jwt` by subordinates, optionally or always, using
+  could not be resolved are remembered for at most `cas.authn.oidc.federation.unresolved-entity-retention`{: .cas-setting};
+  a trust mark that cannot be checked for now is left out of the response, which is then not remembered. Resolve requests can be authenticated with `private_key_jwt` by subordinates, optionally or always, using
   `cas.authn.oidc.federation.resolve-endpoint-authentication`{: .cas-setting}; the response is then addressed to the requester.
 - {: .new data-area="oidc"} [OpenID Federation keys roll over](../authentication/OIDC-Authentication-Federation.html#key-rollover):
   the federation keystore holds current, future and previous keys, all published in the entity configuration, rotated

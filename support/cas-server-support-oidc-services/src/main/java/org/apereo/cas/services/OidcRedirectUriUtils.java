@@ -29,7 +29,12 @@ public class OidcRedirectUriUtils {
 
     private static final String SERVICE_ID_SUFFIX = ")$";
 
-    private static final Pattern AUTHORITY = Pattern.compile("^[a-zA-Z][a-zA-Z0-9+.-]*://");
+    private static final Pattern WEB_SCHEME = Pattern.compile("^https?:", Pattern.CASE_INSENSITIVE);
+
+    private static final Pattern WEB_AUTHORITY = Pattern.compile("^https?://", Pattern.CASE_INSENSITIVE);
+
+    private static final Pattern LOOPBACK_HOST = Pattern.compile(
+        "^(localhost|.+\\.localhost|127\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}|\\[(::1|0:0:0:0:0:0:0:1)])\\.?$", Pattern.CASE_INSENSITIVE);
 
     /**
      * The service id of a client registered with the given redirect URIs: a regular expression that matches each of them
@@ -87,14 +92,19 @@ public class OidcRedirectUriUtils {
     }
 
     /**
-     * The host of a redirect URI, as the sector identifier of pairwise subject identifiers is read from it when the client
-     * has no sector identifier URI (OpenID Connect Core 1.0, section 8.1). Every check of the sector of a client reads
-     * hosts this way, so that the host a check sees is the host identifiers are calculated for.
+     * The host of a web redirect URI, an {@code http} or {@code https} URI with an authority, as the sector identifier of
+     * pairwise subject identifiers is read from it when the client has no sector identifier URI (OpenID Connect Core 1.0,
+     * section 8.1). Any other redirect URI, such as one with the private-use scheme of a native application, gives no
+     * host, whatever it names after its scheme. Every check of the sector of a client reads hosts this way, so that the
+     * host a check sees is the host identifiers are calculated for.
      *
      * @param redirectUri the redirect URI
-     * @return the host, or empty when the redirect URI names none or cannot be read
+     * @return the host, or empty when the redirect URI is not a web URI or its host cannot be read
      */
     public static Optional<String> toHost(final String redirectUri) {
+        if (!WEB_AUTHORITY.matcher(redirectUri).find()) {
+            return Optional.empty();
+        }
         try {
             return Optional.ofNullable(UriComponentsBuilder.fromUriString(redirectUri).build().getHost()).filter(StringUtils::isNotBlank);
         } catch (final IllegalArgumentException e) {
@@ -103,24 +113,39 @@ public class OidcRedirectUriUtils {
     }
 
     /**
-     * The distinct hosts of the redirect URIs of a client, read as {@link #toHost(String)} does. A redirect URI without an
-     * authority, such as one with the private-use scheme of a native application, names no host; one with an authority
-     * whose host cannot be read is refused, since a check that set it aside would not see the host it may stand for.
+     * The sector host of a redirect URI of a client registered by CAS: the host of a web redirect URI, read as
+     * {@link #toHost(String)} does, unless it is a loopback host, which native applications of every kind use, so that it
+     * identifies none of them.
+     *
+     * @param redirectUri the redirect URI
+     * @return the host, or empty when the redirect URI puts the client in a sector of its own
+     */
+    public static Optional<String> toSectorHost(final String redirectUri) {
+        return toHost(redirectUri).filter(host -> !LOOPBACK_HOST.matcher(host).matches());
+    }
+
+    /**
+     * The distinct sectors of the redirect URIs of a client that has no sector identifier URI. A web redirect URI is in the
+     * sector of its host, read as {@link #toSectorHost(String)} does; any other redirect URI, and one on a loopback host,
+     * is in the sector of the client itself, returned as an empty string, as identifiers of a client without a sector host
+     * are calculated for its client id. A web redirect URI whose host cannot be read, or an {@code http} or {@code https}
+     * URI without an authority, such as {@code https:/host/path} that browsers read differently, is refused.
      *
      * @param redirectUris the redirect URIs
-     * @return the hosts
-     * @throws IllegalArgumentException when a redirect URI has an authority without a host that can be read
+     * @return the sectors
+     * @throws IllegalArgumentException when a redirect URI is an {@code http} or {@code https} URI without a host that can be read
      */
-    public static List<String> toHosts(final Collection<String> redirectUris) {
+    public static List<String> toSectors(final Collection<String> redirectUris) {
         return redirectUris
             .stream()
-            .map(redirectUri -> toHost(redirectUri).or(() -> {
-                if (AUTHORITY.matcher(redirectUri).find()) {
-                    throw new IllegalArgumentException("Redirect URI %s has no host that can be read".formatted(redirectUri));
+            .map(redirectUri -> {
+                if (WEB_SCHEME.matcher(redirectUri).find()) {
+                    val host = toHost(redirectUri).orElseThrow(() ->
+                        new IllegalArgumentException("Redirect URI %s has no host that can be read".formatted(redirectUri)));
+                    return LOOPBACK_HOST.matcher(host).matches() ? StringUtils.EMPTY : host;
                 }
-                return Optional.empty();
-            }))
-            .flatMap(Optional::stream)
+                return StringUtils.EMPTY;
+            })
             .distinct()
             .toList();
     }

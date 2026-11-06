@@ -233,9 +233,10 @@ public class OidcDiscoveryProperties implements Serializable {
     private List<String> acrValuesSupported = new ArrayList<>();
 
     /**
-     * Supported algorithms for request object signing.
+     * Supported algorithms for request object signing. Unsigned request objects, whose algorithm is {@code none}, are
+     * refused, so {@code none} is never advertised, even when listed here.
      */
-    private List<String> requestObjectSigningAlgValuesSupported = Stream.of("none", "RS256", "RS384",
+    private List<String> requestObjectSigningAlgValuesSupported = Stream.of("RS256", "RS384",
         "RS512", "PS256", "PS384",
         "PS512", "ES256", "ES384",
         "ES512", "HS256", "HS384",

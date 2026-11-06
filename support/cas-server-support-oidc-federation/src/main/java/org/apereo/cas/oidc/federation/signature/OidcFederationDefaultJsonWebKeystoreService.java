@@ -7,7 +7,6 @@ import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeyStoreUtils;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeyUsage;
 import org.apereo.cas.oidc.jwks.rotation.OidcJsonWebKeystoreRotationService.JsonWebKeyLifecycleStates;
-import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.concurrent.CasReentrantLock;
 import org.apereo.cas.util.function.FunctionUtils;
@@ -52,6 +51,8 @@ import org.springframework.scheduling.support.CronExpression;
  */
 @Slf4j
 public class OidcFederationDefaultJsonWebKeystoreService implements OidcFederationJsonWebKeystoreService {
+    private static final int MAX_SYMBOLIC_LINKS = 10;
+
     private static final String ISSUED_AT = "iat";
 
     private static final String EXPIRATION = "exp";
@@ -78,7 +79,7 @@ public class OidcFederationDefaultJsonWebKeystoreService implements OidcFederati
         this.oidcProperties = oidcProperties;
         val jwksFile = SpringExpressionLanguageValueResolver.getInstance().resolve(oidcProperties.getFederation().getJwksFile());
         this.resource = ResourceUtils.getRawResourceFrom(jwksFile);
-        this.keys = loadOrGenerate(jwksFile);
+        this.keys = loadOrGenerate();
         this.keysLastModified = getKeystoreLastModified();
     }
 
@@ -100,27 +101,44 @@ public class OidcFederationDefaultJsonWebKeystoreService implements OidcFederati
         return Beans.newDuration(schedule.getRepeatInterval()).dividedBy(2);
     }
 
-    private List<JsonWebKey> loadOrGenerate(final String jwksFile) throws Exception {
-        try {
-            if (ResourceUtils.doesResourceExist(jwksFile)) {
-                LOGGER.debug("Loading OpenID Connect Federation JSON web keys from [{}]", resource);
-                val jwks = IOUtils.toString(Objects.requireNonNull(resource).getInputStream(), StandardCharsets.UTF_8);
-                val loaded = new JsonWebKeySet(jwks).getJsonWebKeys();
-                if (!loaded.isEmpty()) {
-                    return new ArrayList<>(loaded);
-                }
+    /**
+     * The keys of the keystore file, or a current and a future key, which are then written to it, when the file is
+     * missing, empty or holds no keys. A keystore that exists but cannot be read, for want of permissions or because of an
+     * error of the file system, or cannot be parsed, is refused rather than replaced, and its keys are not made up in
+     * memory, which would leave every node and restart signing with keys of its own.
+     *
+     * @return the keys
+     * @throws Exception when the keystore cannot be read, or the generated keys cannot be written
+     */
+    private List<JsonWebKey> loadOrGenerate() throws Exception {
+        if (hasKeystoreContent()) {
+            LOGGER.debug("Loading OpenID Connect Federation JSON web keys from [{}]", resource);
+            val loaded = readKeystore();
+            if (!loaded.isEmpty()) {
+                return new ArrayList<>(loaded);
             }
-        } catch (final Exception e) {
-            LoggingUtils.error(LOGGER, e);
         }
         LOGGER.debug("JSON web keys for OpenID Connect Federation are not found. Generating a current and a future key");
         val generated = new ArrayList<JsonWebKey>();
         generated.add(generateKey(JsonWebKeyLifecycleStates.CURRENT));
         generated.add(generateKey(JsonWebKeyLifecycleStates.FUTURE));
-        if (!ResourceUtils.doesResourceExist(jwksFile)) {
-            store(generated);
-        }
+        store(generated);
         return generated;
+    }
+
+    private boolean hasKeystoreContent() throws IOException {
+        if (resource == null || !resource.exists()) {
+            return false;
+        }
+        return !resource.isFile() || resource.getFile().length() > 0;
+    }
+
+    private List<JsonWebKey> readKeystore() {
+        try (val input = Objects.requireNonNull(resource).getInputStream()) {
+            return new JsonWebKeySet(IOUtils.toString(input, StandardCharsets.UTF_8)).getJsonWebKeys();
+        } catch (final Exception e) {
+            throw new IllegalStateException("OpenID Connect Federation keystore %s cannot be read: %s".formatted(resource, e.getMessage()), e);
+        }
     }
 
     /**
@@ -416,8 +434,12 @@ public class OidcFederationDefaultJsonWebKeystoreService implements OidcFederati
 
     /**
      * Write the keys to the keystore file, through a file of its own in the same directory that then replaces the
-     * keystore at once, so that the keystore is never read half written. The new file is created readable by its owner
-     * only, where the file system supports it.
+     * keystore at once, so that the keystore is never read half written, nor left empty when the keys cannot be written.
+     * A keystore that is a symbolic link, even one whose target does not exist yet, is written where the link points. On a
+     * file system with POSIX permissions, the new file takes the permissions, owner and group of the keystore, as far as
+     * the file system allows it, and is not opened to a group other than the keystore's; a new keystore is readable by its
+     * owner only. On other file systems, the new file takes what its directory gives new files. When the file system
+     * refuses to replace the keystore, as Windows may while it is open, the keys are not saved and stay as they were.
      *
      * @param updated the keys
      * @throws Exception when the keys cannot be written
@@ -428,11 +450,14 @@ public class OidcFederationDefaultJsonWebKeystoreService implements OidcFederati
         }
         val json = new JsonWebKeySet(updated).toJson(JsonWebKey.OutputControlLevel.INCLUDE_PRIVATE);
         LOGGER.debug("Writing OpenID Connect Federation JSON web keys to [{}]", resource);
-        val keystore = resource.getFile().toPath().toAbsolutePath();
+        val keystore = resolveLinks(resource.getFile().toPath().toAbsolutePath());
         Files.createDirectories(keystore.getParent());
         val written = Files.createTempFile(keystore.getParent(), keystore.getFileName().toString(), ".tmp");
         try {
             Files.writeString(written, json, StandardCharsets.UTF_8);
+            if (Files.exists(keystore)) {
+                copyAttributes(keystore, written);
+            }
             try {
                 Files.move(written, keystore, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
             } catch (final AtomicMoveNotSupportedException e) {
@@ -442,6 +467,52 @@ public class OidcFederationDefaultJsonWebKeystoreService implements OidcFederati
             Files.deleteIfExists(written);
         }
         keysLastModified = getKeystoreLastModified();
+    }
+
+    private static Path resolveLinks(final Path location) throws IOException {
+        var path = location;
+        for (var hops = 0; Files.isSymbolicLink(path) && hops < MAX_SYMBOLIC_LINKS; hops++) {
+            path = path.resolveSibling(Files.readSymbolicLink(path)).normalize();
+        }
+        return path;
+    }
+
+    private static void copyAttributes(final Path keystore, final Path written) {
+        val view = Files.getFileAttributeView(keystore, PosixFileAttributeView.class);
+        if (view == null) {
+            return;
+        }
+        try {
+            val attributes = view.readAttributes();
+            val writtenView = Files.getFileAttributeView(written, PosixFileAttributeView.class);
+            val permissions = EnumSet.noneOf(PosixFilePermission.class);
+            permissions.addAll(attributes.permissions());
+            if (!attributes.owner().equals(writtenView.readAttributes().owner())) {
+                keepAttribute(keystore, "owner", () -> writtenView.setOwner(attributes.owner()));
+            }
+            if (!attributes.group().equals(writtenView.readAttributes().group())
+                && !keepAttribute(keystore, "group", () -> writtenView.setGroup(attributes.group()))) {
+                permissions.removeAll(EnumSet.of(PosixFilePermission.GROUP_READ, PosixFilePermission.GROUP_WRITE, PosixFilePermission.GROUP_EXECUTE));
+            }
+            Files.setPosixFilePermissions(written, permissions);
+        } catch (final IOException e) {
+            LOGGER.warn("Permissions of OpenID Connect Federation keystore [{}] cannot be kept: [{}]", keystore, e.getMessage());
+        }
+    }
+
+    private static boolean keepAttribute(final Path keystore, final String attribute, final AttributeChange change) {
+        try {
+            change.apply();
+            return true;
+        } catch (final IOException e) {
+            LOGGER.warn("The [{}] of OpenID Connect Federation keystore [{}] cannot be kept: [{}]", attribute, keystore, e.getMessage());
+            return false;
+        }
+    }
+
+    @FunctionalInterface
+    private interface AttributeChange {
+        void apply() throws IOException;
     }
 
     private static JWK toJwk(final JsonWebKey key) throws Exception {

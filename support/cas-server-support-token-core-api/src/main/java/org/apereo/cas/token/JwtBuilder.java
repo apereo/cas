@@ -129,6 +129,22 @@ public class JwtBuilder {
     }
 
     /**
+     * Whether the value is an unsigned JWT, one whose algorithm is {@code none}, which carries no proof of who issued it
+     * and is never accepted.
+     *
+     * @param jwt the value
+     * @return true or false
+     */
+    public static boolean isUnsigned(@Nullable final String jwt) {
+        try {
+            return StringUtils.isNotBlank(jwt) && JWTParser.parse(jwt) instanceof PlainJWT;
+        } catch (final Exception e) {
+            LOGGER.trace("Unable to parse [{}] as a JWT", jwt);
+            return false;
+        }
+    }
+
+    /**
      * Build plain string.
      *
      * @param claimsSet         the claims set
@@ -154,11 +170,13 @@ public class JwtBuilder {
     }
 
     /**
-     * Unpack jwt.
+     * Verify the JWT, signed or encrypted, with the keys of the service, or else with the default keys, and read its
+     * claims. An unsigned JWT, whose algorithm is {@code none}, carries no proof of who issued it, so it is refused and
+     * unpacks to nothing, whatever it claims.
      *
      * @param service the service
      * @param jwtJson the jwt json
-     * @return the string
+     * @return the claims, or null when the JWT is unsigned
      */
     public @Nullable JWTClaimsSet unpack(final Optional<RegisteredService> service, final String jwtJson) {
         return FunctionUtils.doUnchecked(() -> {
@@ -168,26 +186,27 @@ public class JwtBuilder {
             });
 
             val jwt = JWTParser.parse(jwtJson);
-            if (jwt instanceof SignedJWT || jwt instanceof EncryptedJWT) {
-                if (service.isPresent()) {
-                    val registeredService = service.get();
-                    LOGGER.trace("Locating service signing and encryption keys for [{}]", registeredService.getServiceId());
-                    val decoder = registeredServiceCipherExecutor.findDecoderFor(registeredService);
-                    if (decoder.isPresent()) {
-                        LOGGER.trace("Decoding JWT based on keys provided by service [{}]", registeredService.getServiceId());
-                        return parse(decoder.get().apply(jwtJson));
-                    }
-                }
-
-                return FunctionUtils.doIf(defaultTokenCipherExecutor.isEnabled(),
-                    () -> {
-                        LOGGER.trace("Decoding JWT based on default global keys");
-                        return parse(defaultTokenCipherExecutor.decode(jwtJson));
-                    }, () -> {
-                        throw new IllegalArgumentException("Unable to validate JWT signature");
-                    }).get();
+            if (jwt instanceof PlainJWT) {
+                LOGGER.warn("Unsigned JWT is refused");
+                return null;
             }
-            return parse(jwtJson);
+            if (service.isPresent()) {
+                val registeredService = service.get();
+                LOGGER.trace("Locating service signing and encryption keys for [{}]", registeredService.getServiceId());
+                val decoder = registeredServiceCipherExecutor.findDecoderFor(registeredService);
+                if (decoder.isPresent()) {
+                    LOGGER.trace("Decoding JWT based on keys provided by service [{}]", registeredService.getServiceId());
+                    return parse(decoder.get().apply(jwtJson));
+                }
+            }
+
+            return FunctionUtils.doIf(defaultTokenCipherExecutor.isEnabled(),
+                () -> {
+                    LOGGER.trace("Decoding JWT based on default global keys");
+                    return parse(defaultTokenCipherExecutor.decode(jwtJson));
+                }, () -> {
+                    throw new IllegalArgumentException("Unable to validate JWT signature");
+                }).get();
         });
     }
 

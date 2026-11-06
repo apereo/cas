@@ -2,6 +2,7 @@ package org.apereo.cas.oidc.federation.chain;
 
 import module java.base;
 import com.nimbusds.oauth2.sdk.ParseException;
+import com.nimbusds.oauth2.sdk.http.HTTPResponse;
 import com.nimbusds.openid.connect.sdk.federation.api.FetchEntityStatementRequest;
 import com.nimbusds.openid.connect.sdk.federation.api.FetchEntityStatementResponse;
 import com.nimbusds.openid.connect.sdk.federation.config.FederationEntityConfigurationRequest;
@@ -17,9 +18,11 @@ import lombok.val;
  * Retrieves entity configurations, at the well-known location of the entity identifier (OpenID Federation 1.0,
  * section 9), and subordinate statements, from the fetch endpoint of their issuer (section 8.1), through the federation
  * HTTP client, so that every request is bounded in time and size and nothing is kept between resolutions. An entity
- * that cannot be reached, or does not answer in the time a request is given, is remembered by the running resolution,
- * which can then tell an unreachable trust anchor from an entity without a valid trust chain; a request that could not
- * be given that time, because the resolution had used it up, tells nothing about the entity.
+ * that cannot be reached, does not answer in the time a request is given, or answers with a server error, is remembered
+ * by the running resolution, which can then tell an unreachable trust anchor from an entity without a valid trust chain;
+ * a request that could not
+ * be given that time, because the resolution had used it up, or found no room among the running requests, tells nothing
+ * about the entity and leaves the resolution unable to tell.
  *
  * @author Misagh Moayyed
  * @since 8.1.0
@@ -32,7 +35,9 @@ public class OidcFederationHttpEntityStatementRetriever implements EntityStateme
     public EntityStatement fetchEntityConfiguration(final EntityID target) throws ResolveException {
         val request = new FederationEntityConfigurationRequest(target).toHTTPRequest();
         try {
-            val response = FederationEntityConfigurationResponse.parse(httpClient.send(request));
+            val httpResponse = httpClient.send(request);
+            markUnreachableOnServerError(target, httpResponse);
+            val response = FederationEntityConfigurationResponse.parse(httpResponse);
             if (!response.indicatesSuccess()) {
                 val error = response.toErrorResponse().getErrorObject();
                 throw new ResolveException("Entity configuration error response from %s: %s %s"
@@ -52,7 +57,9 @@ public class OidcFederationHttpEntityStatementRetriever implements EntityStateme
             throws ResolveException {
         val request = new FetchEntityStatementRequest(federationAPIEndpoint, issuer, subject).toHTTPRequest();
         try {
-            val response = FetchEntityStatementResponse.parse(httpClient.send(request));
+            val httpResponse = httpClient.send(request);
+            markUnreachableOnServerError(issuer, httpResponse);
+            val response = FetchEntityStatementResponse.parse(httpResponse);
             if (!response.indicatesSuccess()) {
                 val error = response.toErrorResponse().getErrorObject();
                 throw new ResolveException("Entity statement error response from %s at %s: %s %s"
@@ -68,8 +75,14 @@ public class OidcFederationHttpEntityStatementRetriever implements EntityStateme
         }
     }
 
+    private static void markUnreachableOnServerError(final EntityID entityId, final HTTPResponse response) {
+        if (response.getStatusCode() >= HttpURLConnection.HTTP_INTERNAL_ERROR) {
+            OidcFederationResolutionLimiter.currentBudget().ifPresent(budget -> budget.markUnreachable(entityId.getValue()));
+        }
+    }
+
     private static void markUnreachable(final EntityID entityId, final IOException failure) {
-        if (!(failure instanceof OidcFederationHttpClient.OutOfTimeException)) {
+        if (!(failure instanceof OidcFederationHttpClient.OutOfTimeException) && !(failure instanceof OidcFederationHttpClient.TooManyRequestsException)) {
             OidcFederationResolutionLimiter.currentBudget().ifPresent(budget -> budget.markUnreachable(entityId.getValue()));
         }
     }

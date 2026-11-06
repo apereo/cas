@@ -98,6 +98,9 @@ class OAuth20TokenExchangeGrantTypeTokenRequestValidatorTests extends AbstractOA
         request.addParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.TOKEN_EXCHANGE.getType());
         request.addParameter(OAuth20Constants.CLIENT_ID, service.getClientId());
         assertThrows(IllegalArgumentException.class, () -> validator.validate(request, response));
+
+        request.setParameter(OAuth20Constants.SUBJECT_TOKEN, JwtBuilder.buildPlain(claims, Optional.of(service)));
+        assertThrows(IllegalArgumentException.class, () -> validator.validate(request, response));
     }
 
     @MethodSource("contextProvider")
@@ -106,7 +109,9 @@ class OAuth20TokenExchangeGrantTypeTokenRequestValidatorTests extends AbstractOA
                                         final OAuthRegisteredService registeredService,
                                         final Boolean expectation)
             throws Throwable {
-        request.setParameter(OAuth20Constants.SUBJECT_TOKEN, subject.toString());
+        request.setParameter(OAuth20Constants.SUBJECT_TOKEN, subject instanceof final JWTClaimsSet claims
+            ? configurationContext.getAccessTokenJwtBuilder().build(registeredService, claims)
+            : subject.toString());
         if (subject instanceof final Ticket at) {
             ticketRegistry.addTicket(at);
         }
@@ -181,7 +186,6 @@ class OAuth20TokenExchangeGrantTypeTokenRequestValidatorTests extends AbstractOA
         ));
         val jwtRegisteredService = getRegisteredService(claims.getIssuer(), claims.getSubject(),
             UUID.randomUUID().toString(), Set.of(OAuth20GrantTypes.TOKEN_EXCHANGE));
-        val jwt = JwtBuilder.buildPlain(claims, Optional.of(jwtRegisteredService));
 
         val accessToken = getAccessToken(UUID.randomUUID().toString(), UUID.randomUUID().toString(), UUID.randomUUID().toString());
         val accessTokenRegisteredService = getRegisteredService(accessToken.getService().getId(),
@@ -194,7 +198,7 @@ class OAuth20TokenExchangeGrantTypeTokenRequestValidatorTests extends AbstractOA
         return Stream.of(
             Arguments.of(accessToken, OAuth20TokenExchangeTypes.ACCESS_TOKEN, accessTokenRegisteredService, true),
             Arguments.of(accessTokenBadGrant, OAuth20TokenExchangeTypes.ACCESS_TOKEN, accessTokenBadGrantService, false),
-            Arguments.of(jwt, OAuth20TokenExchangeTypes.JWT, jwtRegisteredService, true)
+            Arguments.of(claims, OAuth20TokenExchangeTypes.JWT, jwtRegisteredService, true)
         );
     }
 }

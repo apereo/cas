@@ -39,9 +39,8 @@ import org.springframework.context.event.EventListener;
  * accepted (RFC 8725, section 3.2), and compressed request objects are refused.
  * <p>
  * The result is the nested JWT, normally signed by the client, which is then verified with the client's keys like any
- * signed request object. A request object encrypted without being signed comes back as an unsigned JWT, and is accepted
- * or refused exactly as an unsigned request object would be. Symmetric key wrapping, with keys derived from client
- * secrets, is not supported.
+ * signed request object. A request object encrypted without being signed comes back as an unsigned JWT, and is refused
+ * as any unsigned request object is. Symmetric key wrapping, with keys derived from client secrets, is not supported.
  * <p>
  * The keystore generator service is looked up when the keys are first read, since it publishes the keystore events this
  * decrypter listens to while it is created.
@@ -209,7 +208,8 @@ public class OidcRequestObjectDecrypter {
 
     /**
      * The payload of an encrypted request object is the nested JWT, or, for a request object that was encrypted without
-     * being signed, the claims themselves, which are handed on as an unsigned JWT.
+     * being signed, the claims themselves, which are handed on as an unsigned JWT and so are refused, since anyone can
+     * encrypt to the keys CAS publishes.
      *
      * @param payload the decrypted payload
      * @return the nested JWT

@@ -47,7 +47,9 @@ public class OidcFederationHistoricalKeys {
      * @param verificationKeys the keys of the entity to verify the signed key set with
      * @param httpClient       the client that sends the request
      * @return the historical keys, or an empty list when the entity advertises no historical keys endpoint
-     * @throws Exception when the keys cannot be obtained or verified
+     * @throws IOException when the endpoint cannot be reached or answers with a server error, so that the keys cannot be
+     *                     told now
+     * @throws Exception   when the keys cannot be obtained or verified
      */
     public static List<JWK> fetch(final EntityStatement configuration, final JWKSet verificationKeys,
                                   final OidcFederationHttpClient httpClient)
@@ -62,6 +64,9 @@ public class OidcFederationHistoricalKeys {
             throw new IllegalStateException("Historical keys endpoint " + endpoint + " is not an https URL");
         }
         val response = httpClient.send(new HTTPRequest(HTTPRequest.Method.GET, endpointUri));
+        if (response.getStatusCode() >= HttpURLConnection.HTTP_INTERNAL_ERROR) {
+            throw new IOException("Historical keys endpoint " + endpoint + " answered " + response.getStatusCode());
+        }
         if (!response.indicatesSuccess()) {
             throw new IllegalStateException("Historical keys endpoint " + endpoint + " answered " + response.getStatusCode());
         }

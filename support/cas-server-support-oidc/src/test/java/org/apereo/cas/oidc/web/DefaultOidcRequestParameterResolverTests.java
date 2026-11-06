@@ -271,12 +271,16 @@ class DefaultOidcRequestParameterResolverTests extends AbstractOidcTests {
         verify(generator, times(2)).generate();
     }
 
+    /**
+     * A request object encrypted without being signed proves nothing about who sent it, since anyone can encrypt to the
+     * keys CAS publishes: it is refused as any unsigned request object is, and none of its parameters are used.
+     */
     @Test
-    void verifyEncryptedUnsignedRequestObject() throws Throwable {
+    void verifyEncryptedUnsignedRequestObjectIsRefused() throws Throwable {
         val request = new MockHttpServletRequest();
         request.addParameter(OAuth20Constants.REQUEST, encrypt(requestObjectClaims("client").toString(), resolveEncryptionKey()));
-        val scopes = oauthRequestParameterResolver.resolveRequestParameter(request, OAuth20Constants.SCOPE, List.class).orElseThrow();
-        assertTrue(scopes.contains(OidcConstants.StandardScopes.OPENID.getScope()));
+        assertTrue(oauthRequestParameterResolver.resolveRequestParameter(request, OAuth20Constants.SCOPE, List.class).isEmpty());
+        assertFalse(oauthRequestParameterResolver.isRequestObjectVerified(request));
     }
 
     @Test

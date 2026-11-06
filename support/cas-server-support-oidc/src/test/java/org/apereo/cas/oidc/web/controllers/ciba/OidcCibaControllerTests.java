@@ -2,6 +2,7 @@ package org.apereo.cas.oidc.web.controllers.ciba;
 
 import module java.base;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.ticket.OidcCibaRequest;
@@ -41,6 +42,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpHeaders;
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
@@ -161,7 +163,9 @@ class OidcCibaControllerTests extends AbstractOidcTests {
     /**
      * A signed authentication request is verified with the keys of the authenticated client, whether or not the request
      * names it with {@code client_id}; it must carry {@code iss}, {@code aud}, {@code exp}, {@code iat}, {@code nbf} and
-     * {@code jti}, be valid for 60 minutes at most, not be issued in the future, and is used once.
+     * {@code jti}, be valid for 60 minutes at most, not be issued in the future, and is used once. A request
+     * authenticated as one client that names another registered client is refused, and so is any signed authentication
+     * request when CAS does not support the request parameter.
      */
     @Test
     void verifySignedAuthenticationRequest() throws Throwable {
@@ -192,19 +196,40 @@ class OidcCibaControllerTests extends AbstractOidcTests {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.error_description").value("Request object jti has already been used"));
 
-            val invalid = new LinkedHashMap<String, JWTClaimsSet.Builder>();
-            invalid.put("Request object must be issued by client " + registeredService.getClientId(), claims.get().issuer("https://other.example.org"));
-            invalid.put("Request object must be addressed to " + issuer, claims.get().audience("https://other.example.org"));
-            invalid.put("Request object must carry iat and jti", claims.get().jwtID(null));
-            invalid.put("Request object has no expiration or has expired", claims.get().expirationTime(Date.from(now.minus(Duration.ofHours(1)))));
-            invalid.put("Request object has no nbf or is not valid yet", claims.get().notBeforeTime(Date.from(now.plus(Duration.ofHours(1)))));
-            invalid.put("Request object is issued in the future", claims.get().issueTime(Date.from(now.plus(Duration.ofHours(1)))));
-            invalid.put("Request object may be valid for 60 minutes at most", claims.get().expirationTime(Date.from(now.plus(Duration.ofHours(2)))));
-            for (val entry : invalid.entrySet()) {
+            val invalid = List.of(
+                Map.entry("Request object must be issued by client " + registeredService.getClientId(), claims.get().issuer("https://other.example.org")),
+                Map.entry("Request object must be addressed to " + issuer, claims.get().audience("https://other.example.org")),
+                Map.entry("Request object must carry iat and jti", claims.get().jwtID(null)),
+                Map.entry("Request object has no expiration or has expired", claims.get().expirationTime(null)),
+                Map.entry("Request object has no expiration or has expired", claims.get().expirationTime(Date.from(now.minus(Duration.ofHours(1))))),
+                Map.entry("Request object has no nbf or is not valid yet", claims.get().notBeforeTime(null)),
+                Map.entry("Request object has no nbf or is not valid yet", claims.get().notBeforeTime(Date.from(now.plus(Duration.ofHours(1))))),
+                Map.entry("Request object is issued in the future", claims.get().issueTime(Date.from(now.plus(Duration.ofHours(1))))),
+                Map.entry("Request object may be valid for 60 minutes at most", claims.get().expirationTime(Date.from(now.plus(Duration.ofHours(2))))));
+            for (val entry : invalid) {
                 mockMvc.perform(cibaRequest(registeredService, signWithKey(signingKey, entry.getValue()), true))
                     .andExpect(status().isBadRequest())
                     .andExpect(jsonPath("$.error_description").value(entry.getKey()));
             }
+            val otherClient = getOidcRegisteredService(UUID.randomUUID().toString());
+            otherClient.setSupportedGrantTypes(Set.of(OAuth20GrantTypes.CIBA.getType()));
+            otherClient.setBackchannelTokenDeliveryMode(OidcBackchannelTokenDeliveryModes.PUSH.getMode());
+            otherClient.setBackchannelClientNotificationEndpoint(registeredService.getBackchannelClientNotificationEndpoint());
+            otherClient.setJwks(registeredService.getJwks());
+            servicesManager.save(otherClient);
+            mockMvc.perform(cibaRequest(registeredService, signWithKey(signingKey, claims.get()), false)
+                    .queryParam(OAuth20Constants.CLIENT_ID, otherClient.getClientId()))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error_description").value("Request object cannot be verified or is not for client " + registeredService.getClientId()));
+
+            val properties = new CasConfigurationProperties();
+            properties.getAuthn().getOidc().getDiscovery().setRequestParameterSupported(false);
+            val context = spy(oidcConfigurationContext);
+            when(context.getCasProperties()).thenReturn(properties);
+            val request = new MockHttpServletRequest();
+            request.setParameter(OAuth20Constants.REQUEST, signWithKey(signingKey, claims.get()));
+            assertEquals("Signed authentication requests are not supported",
+                new OidcCibaController(context, List.of()).validateRequestObject(request, registeredService));
         }
     }
 

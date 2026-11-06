@@ -273,6 +273,8 @@ class OidcClientConfigurationEndpointControllerTests {
             val updatedService = servicesManager.findServiceBy(service.getId(), OidcRegisteredService.class);
             val decodedSecret = oauthRegisteredServiceCipherExecutor.decode(updatedService.getClientSecrets().getFirst().getValue());
             assertNotEquals(decodedSecret, originalSecret);
+            assertEquals(originalSecret, oauthRegisteredServiceCipherExecutor.decode(service.getClientSecrets().getFirst().getValue()),
+                "The secret is renewed on a copy of the client, which is then saved");
         }
     }
 }

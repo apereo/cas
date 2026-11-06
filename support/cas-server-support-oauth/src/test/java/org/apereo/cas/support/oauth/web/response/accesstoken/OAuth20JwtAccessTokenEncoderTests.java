@@ -14,6 +14,7 @@ import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20Acc
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20JwtAccessTokenEncoder;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.token.JwtBuilder;
+import com.nimbusds.jwt.JWTClaimsSet;
 import lombok.val;
 import org.jose4j.jwe.ContentEncryptionAlgorithmIdentifiers;
 import org.jose4j.jwt.JwtClaims;
@@ -166,14 +167,41 @@ class OAuth20JwtAccessTokenEncoderTests {
             return registeredService;
         }
         
+        /**
+         * A JWT access token that neither CAS nor the client signs or encrypts would be unsigned: it is not issued, and an
+         * unsigned JWT presented as an access token is not accepted.
+         */
         @Test
-        void verifyAccessTokenIdEncodingWithJwtWithNoCipher() {
+        void verifyUnsignedJwtAccessTokenIsRefused() {
+            val accessToken = getAccessToken();
+            val registeredService = getRegisteredServiceForJwtAccessTokenWithoutKeys(accessToken);
+            val cipher = OAuth20JwtAccessTokenEncoder.toEncodableCipher(configurationContext, registeredService, accessToken);
+            assertThrows(IllegalStateException.class, () -> cipher.encode(accessToken.getId()));
+            val unsigned = JwtBuilder.buildPlain(new JWTClaimsSet.Builder().jwtID(accessToken.getId()).build(), Optional.of(registeredService));
+            assertNull(OAuth20JwtAccessTokenEncoder.toDecodableCipher(configurationContext.getAccessTokenJwtBuilder()).decode(unsigned));
+        }
+    }
+
+    @Nested
+    @TestPropertySource(properties = "cas.authn.oauth.access-token.crypto.encryption-enabled=false")
+    class SigningOnly extends AbstractOAuth20Tests {
+
+        private OAuthRegisteredService getRegisteredServiceForJwtAccessTokenWithoutKeys(final OAuth20AccessToken accessToken) {
+            val registeredService = getRegisteredService(accessToken.getService().getId(), "secret", new LinkedHashSet<>());
+            registeredService.setJwtAccessToken(true);
+            servicesManager.save(registeredService);
+            return registeredService;
+        }
+
+        @Test
+        void verifyAccessTokenIdEncodingWithSigningOnly() {
             val accessToken = getAccessToken();
             val registeredService = getRegisteredServiceForJwtAccessTokenWithoutKeys(accessToken);
             val encodedAccessToken1 = OAuth20JwtAccessTokenEncoder.toEncodableCipher(configurationContext, registeredService, accessToken).encode(accessToken.getId());
             assertNotNull(encodedAccessToken1);
-            val encodedAccessToken2 = OAuth20JwtAccessTokenEncoder.toEncodableCipher(configurationContext, registeredService, accessToken).encode(accessToken.getId());
-            assertEquals(encodedAccessToken1, encodedAccessToken2);
+            assertFalse(JwtBuilder.isUnsigned(encodedAccessToken1));
+            assertEquals(accessToken.getId(),
+                OAuth20JwtAccessTokenEncoder.toDecodableCipher(configurationContext.getAccessTokenJwtBuilder()).decode(encodedAccessToken1));
         }
 
         @Test
@@ -193,7 +221,7 @@ class OAuth20JwtAccessTokenEncoderTests {
 
     @Nested
     @TestPropertySource(properties = {
-        "cas.authn.oauth.access-token.crypto.enabled=false",
+        "cas.authn.oauth.access-token.crypto.encryption-enabled=false",
         "cas.authn.oauth.access-token.create-as-jwt=true",
         "cas.authn.oauth.access-token.include-claims-in-jwt=false"
     })
@@ -207,7 +235,7 @@ class OAuth20JwtAccessTokenEncoderTests {
         }
 
         @Test
-        void verifyAccessTokenIdEncodingWithJwtWithNoCipher() throws Throwable {
+        void verifyAccessTokenIdEncodingWithoutClaims() throws Throwable {
             val accessToken = getAccessToken();
             val registeredService = getRegisteredServiceForJwtAccessTokenWithoutKeys(accessToken);
             val encodedAccessToken = OAuth20JwtAccessTokenEncoder.toEncodableCipher(configurationContext, registeredService, accessToken).encode(accessToken.getId());

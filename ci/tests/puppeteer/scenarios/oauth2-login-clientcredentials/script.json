@@ -8,7 +8,7 @@
     "--cas.authn.attribute-repository.stub.attributes.email=casuser@apereo.org",
     "--cas.authn.attribute-repository.stub.attributes.password=ThisIsTheP@ssword",
 
-    "--cas.authn.oauth.access-token.crypto.enabled=false",
+    "--cas.authn.oauth.access-token.crypto.encryption-enabled=false",
     "--cas.authn.oauth.access-token.create-as-jwt=true",
 
     "--cas.service-registry.core.init-from-json=true",

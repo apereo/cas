@@ -15,6 +15,7 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
 import org.jose4j.jwe.KeyManagementAlgorithmIdentifiers;
+import org.jose4j.jws.AlgorithmIdentifiers;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.context.ConfigurableApplicationContext;
 
@@ -122,7 +123,10 @@ public class OidcServerDiscoverySettingsFactory implements FactoryBean<OidcServe
         discovery.setNativeSsoSupported(discoveryConfig.isNativeSsoSupported());
         discovery.setRequestParameterSupported(discoveryConfig.isRequestParameterSupported());
         discovery.setRequestUriParameterSupported(discoveryConfig.isRequestUriParameterSupported());
-        discovery.setRequestObjectSigningAlgValuesSupported(new LinkedHashSet<>(discoveryConfig.getRequestObjectSigningAlgValuesSupported()));
+        discovery.setRequestObjectSigningAlgValuesSupported(discoveryConfig.getRequestObjectSigningAlgValuesSupported()
+            .stream()
+            .filter(algorithm -> !AlgorithmIdentifiers.NONE.equalsIgnoreCase(algorithm))
+            .collect(Collectors.toCollection(LinkedHashSet::new)));
         discovery.setRequestObjectEncryptionAlgValuesSupported(discoveryConfig.getRequestObjectEncryptionAlgValuesSupported()
             .stream()
             .filter(algorithm -> !KeyManagementAlgorithmIdentifiers.RSA1_5.equals(algorithm))

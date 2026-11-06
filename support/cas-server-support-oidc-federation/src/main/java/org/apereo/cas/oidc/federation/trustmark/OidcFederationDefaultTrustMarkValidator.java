@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.model.support.oidc.federation.OidcFederation
 import org.apereo.cas.oidc.federation.chain.OidcFederationHistoricalKeys;
 import org.apereo.cas.oidc.federation.chain.OidcFederationHttpClient;
 import org.apereo.cas.oidc.federation.chain.OidcFederationResolutionLimiter;
+import org.apereo.cas.oidc.federation.chain.OidcFederationResolutionUnavailableException;
 import org.apereo.cas.oidc.federation.chain.OidcFederationTrustChainConstraints;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
@@ -24,6 +25,7 @@ import com.nimbusds.jwt.proc.BadJWTException;
 import com.nimbusds.jwt.proc.DefaultJWTClaimsVerifier;
 import com.nimbusds.jwt.proc.DefaultJWTProcessor;
 import com.nimbusds.oauth2.sdk.http.HTTPRequest;
+import com.nimbusds.oauth2.sdk.http.HTTPResponse;
 import com.nimbusds.oauth2.sdk.util.URLUtils;
 import com.nimbusds.openid.connect.sdk.federation.entities.EntityID;
 import com.nimbusds.openid.connect.sdk.federation.entities.EntityStatement;
@@ -118,44 +120,117 @@ public class OidcFederationDefaultTrustMarkValidator implements OidcFederationTr
             return true;
         }
         val entityId = trustChain.getLeafConfiguration().getEntityID();
+        val mark = StepMark.of(trustChain.getTrustAnchorEntityID());
         try {
             val trustAnchor = resolveTrustAnchorConfiguration(trustChainResolver, trustChain);
             val trustMarks = readTrustMarks(trustChain.getLeafConfiguration());
-            return requiredTypes.stream().allMatch(type -> {
-                val valid = trustMarks
+            var unavailable = Optional.<OidcFederationResolutionUnavailableException>empty();
+            for (val type : requiredTypes) {
+                val candidates = trustMarks
                     .stream()
                     .filter(entry -> type.equals(entry.get(TRUST_MARK_TYPE)))
                     .map(entry -> entry.get(TRUST_MARK))
                     .filter(String.class::isInstance)
                     .map(String.class::cast)
-                    .anyMatch(trustMark -> isValidTrustMark(trustMark, type, entityId, trustChainResolver, trustAnchor));
-                if (!valid) {
-                    LOGGER.warn("[{}] holds no valid trust mark of type [{}], which is required of relying parties", entityId, type);
+                    .toList();
+                try {
+                    if (!hasValidTrustMark(candidates, type, entityId, trustChainResolver, trustAnchor)) {
+                        LOGGER.warn("[{}] holds no valid trust mark of type [{}], which is required of relying parties", entityId, type);
+                        return false;
+                    }
+                } catch (final OidcFederationResolutionUnavailableException e) {
+                    unavailable = Optional.of(e);
                 }
-                return valid;
-            });
+            }
+            if (unavailable.isPresent()) {
+                throw unavailable.get();
+            }
+            return true;
+        } catch (final OidcFederationResolutionUnavailableException e) {
+            throw e;
         } catch (final Exception e) {
             LOGGER.warn("Unable to validate the trust marks of [{}]: [{}]", entityId, e.getMessage());
             LOGGER.debug(e.getMessage(), e);
+            throwIfCannotTell(mark, entityId, trustChain.getTrustAnchorEntityID());
             return false;
         }
     }
 
+    /**
+     * Whether one of the trust marks of the type is valid. A trust mark whose validity cannot be told now, for want of time
+     * or room among the running requests, makes the answer unavailable only when no other one of the type is valid.
+     *
+     * @param candidates         the trust marks of the type
+     * @param type               the trust mark type
+     * @param entityId           the entity the trust marks must be about
+     * @param trustChainResolver the trust chain resolver
+     * @param trustAnchor        the entity configuration of the trust anchor
+     * @return true or false
+     */
+    private boolean hasValidTrustMark(final List<String> candidates, final String type, final EntityID entityId,
+                                      final TrustChainResolver trustChainResolver, final EntityStatement trustAnchor) {
+        var unavailable = Optional.<OidcFederationResolutionUnavailableException>empty();
+        for (val trustMark : candidates) {
+            try {
+                if (isValidTrustMark(trustMark, type, entityId, trustChainResolver, trustAnchor)) {
+                    return true;
+                }
+            } catch (final OidcFederationResolutionUnavailableException e) {
+                unavailable = Optional.of(e);
+            }
+        }
+        if (unavailable.isPresent()) {
+            throw unavailable.get();
+        }
+        return false;
+    }
+
     @Override
-    public List<Map<String, Object>> resolveValidTrustMarks(final TrustChainResolver trustChainResolver, final TrustChain trustChain) {
+    public ValidTrustMarks resolveValidTrustMarks(final TrustChainResolver trustChainResolver, final TrustChain trustChain) {
         val entityId = trustChain.getLeafConfiguration().getEntityID();
+        val mark = StepMark.of(trustChain.getTrustAnchorEntityID());
         try {
             val trustAnchor = resolveTrustAnchorConfiguration(trustChainResolver, trustChain);
-            return readTrustMarks(trustChain.getLeafConfiguration())
-                .stream()
-                .filter(entry -> entry.get(TRUST_MARK_TYPE) instanceof final String type
-                    && entry.get(TRUST_MARK) instanceof final String trustMark
-                    && isValidTrustMark(trustMark, type, entityId, trustChainResolver, trustAnchor))
-                .toList();
+            val valid = new ArrayList<Map<String, Object>>();
+            var complete = true;
+            for (val entry : readTrustMarks(trustChain.getLeafConfiguration())) {
+                if (entry.get(TRUST_MARK_TYPE) instanceof final String type && entry.get(TRUST_MARK) instanceof final String trustMark) {
+                    try {
+                        if (isValidTrustMark(trustMark, type, entityId, trustChainResolver, trustAnchor)) {
+                            valid.add(entry);
+                        }
+                    } catch (final OidcFederationResolutionUnavailableException e) {
+                        LOGGER.warn("Trust mark of type [{}] held by [{}] cannot be validated now and is left out: [{}]", type, entityId, e.getMessage());
+                        complete = false;
+                    }
+                }
+            }
+            return new ValidTrustMarks(List.copyOf(valid), complete);
+        } catch (final OidcFederationResolutionUnavailableException e) {
+            throw e;
         } catch (final Exception e) {
             LOGGER.warn("Unable to validate the trust marks of [{}]: [{}]", entityId, e.getMessage());
             LOGGER.debug(e.getMessage(), e);
-            return List.of();
+            throwIfCannotTell(mark, entityId, trustChain.getTrustAnchorEntityID());
+            return new ValidTrustMarks(List.of(), true);
+        }
+    }
+
+    /**
+     * Fail as unavailable when it could not be told whether a trust mark is valid: since the mark was taken, a request of
+     * the running resolution ran out of time or found no room among the running requests, or the trust anchor, whose
+     * entity configuration and statements about trust mark issuers the validation needs, could not be reached or
+     * answered with a server error. The entity is then not remembered as lacking the trust mark. A trust anchor found
+     * unreachable before the validation started, and reached since, tells nothing about it.
+     *
+     * @param mark          the mark taken when the validation started
+     * @param entityId      the entity whose trust marks are validated
+     * @param trustAnchorId the trust anchor of the trust chain of the entity
+     */
+    private static void throwIfCannotTell(final StepMark mark, final EntityID entityId, final EntityID trustAnchorId) {
+        if (OidcFederationResolutionLimiter.isUnreachableSince(trustAnchorId, mark.unreachable())
+            || OidcFederationResolutionLimiter.isIndeterminateSince(mark.indeterminate())) {
+            throw new OidcFederationResolutionUnavailableException("Trust marks of %s cannot be validated now".formatted(entityId));
         }
     }
 
@@ -197,6 +272,7 @@ public class OidcFederationDefaultTrustMarkValidator implements OidcFederationTr
      */
     protected boolean isValidTrustMark(final String serialized, final String type, final EntityID entityId,
                                        final TrustChainResolver trustChainResolver, final EntityStatement trustAnchor) {
+        val mark = StepMark.of(trustAnchor.getEntityID());
         try {
             val trustMark = SignedJWT.parse(serialized);
             val issuer = trustMark.getJWTClaimsSet().getIssuer();
@@ -216,9 +292,12 @@ public class OidcFederationDefaultTrustMarkValidator implements OidcFederationTr
             verifyDelegation(trustAnchor, type, issuer, claims);
             verifyStatus(issuerConfiguration, serialized);
             return true;
+        } catch (final OidcFederationResolutionUnavailableException e) {
+            throw e;
         } catch (final Exception e) {
             LOGGER.warn("Trust mark of type [{}] held by [{}] is not valid: [{}]", type, entityId, e.getMessage());
             LOGGER.debug(e.getMessage(), e);
+            throwIfCannotTell(mark, entityId, trustAnchor.getEntityID());
             return false;
         }
     }
@@ -228,9 +307,11 @@ public class OidcFederationDefaultTrustMarkValidator implements OidcFederationTr
      * issuer no longer publishes, that key from the issuer's historical keys (OpenID Federation 1.0, section 8.7),
      * provided the key was never revoked and the trust mark was issued before the key was retired. Trust marks signed
      * before a key rollover thus stay valid for the rest of their life. Historical keys are kept for a minute per issuer,
-     * and an issuer whose historical keys cannot be obtained has none for that minute; when they are not requested
-     * because the running resolution has used up its requests or its time, which other resolutions have not, nothing is
-     * kept and the trust mark is verified with the federation keys of its issuer.
+     * and an issuer whose historical keys are invalid has none for that minute. When they cannot be requested now, because
+     * the request fails, is answered with a server error, or runs out of time or room, nothing is kept and the
+     * validation is unavailable; when the running
+     * resolution has used up its requests, nothing is kept and the trust mark is verified with the federation keys of its
+     * issuer.
      *
      * @param trustMark           the trust mark
      * @param issuerConfiguration the entity configuration of the issuer
@@ -272,9 +353,13 @@ public class OidcFederationDefaultTrustMarkValidator implements OidcFederationTr
         }
         try {
             return OidcFederationHistoricalKeys.fetch(issuerConfiguration, issuerKeys, httpClient);
-        } catch (final OidcFederationHttpClient.OutOfTimeException e) {
-            LOGGER.warn("Historical keys of trust mark issuer [{}] are not requested now: [{}]", issuerConfiguration.getEntityID(), e.getMessage());
-            return null;
+        } catch (final OidcFederationHttpClient.RefusedRequestException e) {
+            LOGGER.warn("Historical keys of trust mark issuer [{}] may not be requested: [{}]", issuerConfiguration.getEntityID(), e.getMessage());
+            return List.of();
+        } catch (final IOException e) {
+            LOGGER.warn("Historical keys of trust mark issuer [{}] cannot be requested now: [{}]", issuerConfiguration.getEntityID(), e.getMessage());
+            throw new OidcFederationResolutionUnavailableException("Historical keys of trust mark issuer %s cannot be requested now"
+                .formatted(issuerConfiguration.getEntityID()));
         } catch (final Exception e) {
             LOGGER.warn("Unable to obtain the historical keys of trust mark issuer [{}]: [{}]", issuerConfiguration.getEntityID(), e.getMessage());
             return List.of();
@@ -367,7 +452,7 @@ public class OidcFederationDefaultTrustMarkValidator implements OidcFederationTr
         val request = new HTTPRequest(HTTPRequest.Method.POST, endpointUri);
         request.setEntityContentType(ContentType.APPLICATION_URLENCODED);
         request.setBody(URLUtils.serializeParameters(Map.of(TRUST_MARK, List.of(serialized))));
-        val response = httpClient.send(request);
+        val response = sendStatusRequest(request, endpoint);
         if (!response.indicatesSuccess()) {
             throw new BadJWTException("Trust mark status endpoint " + endpoint + " answered " + response.getStatusCode());
         }
@@ -379,6 +464,31 @@ public class OidcFederationDefaultTrustMarkValidator implements OidcFederationTr
         verify(SignedJWT.parse(response.getBody()), TRUST_MARK_STATUS_RESPONSE_JWT_TYPE,
             issuerConfiguration.getClaimsSet().getJWKSet(), expectedClaims,
             Set.of(JWTClaimNames.ISSUER, JWTClaimNames.ISSUED_AT, TRUST_MARK, STATUS));
+    }
+
+    /**
+     * Send the trust mark status request. An endpoint that cannot be reached now, or answers with an error of its own,
+     * says nothing about the trust mark: the validation is unavailable rather than failed.
+     *
+     * @param request  the request
+     * @param endpoint the endpoint
+     * @return the response
+     * @throws IOException when the request may not be sent
+     */
+    private HTTPResponse sendStatusRequest(final HTTPRequest request, final Object endpoint) throws IOException {
+        try {
+            val response = httpClient.send(request);
+            if (response.getStatusCode() >= HttpURLConnection.HTTP_INTERNAL_ERROR) {
+                throw new OidcFederationResolutionUnavailableException("Trust mark status endpoint %s answered %s"
+                    .formatted(endpoint, response.getStatusCode()));
+            }
+            return response;
+        } catch (final OidcFederationHttpClient.RefusedRequestException e) {
+            throw e;
+        } catch (final IOException e) {
+            throw new OidcFederationResolutionUnavailableException("Trust mark status endpoint %s cannot be reached now: %s"
+                .formatted(endpoint, e.getMessage()));
+        }
     }
 
     private static boolean isAcceptedIssuer(final EntityStatement trustAnchor, final String type,
@@ -425,5 +535,18 @@ public class OidcFederationDefaultTrustMarkValidator implements OidcFederationTr
             return (Map<String, Object>) map;
         }
         throw new BadJWTException("Trust mark owner has no keys");
+    }
+
+    /**
+     * What the running resolution had found when a step of the validation started: the requests that could not be sent
+     * or completed for want of time or room, and the times the trust anchor could not be reached.
+     *
+     * @param indeterminate the mark of the requests that could not be sent or completed
+     * @param unreachable   the mark of the times the trust anchor could not be reached
+     */
+    private record StepMark(int indeterminate, int unreachable) {
+        static StepMark of(final EntityID trustAnchorId) {
+            return new StepMark(OidcFederationResolutionLimiter.indeterminateMark(), OidcFederationResolutionLimiter.unreachableMark(trustAnchorId));
+        }
     }
 }

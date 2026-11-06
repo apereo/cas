@@ -4,6 +4,7 @@ import module java.base;
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeyCacheKey;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeyUsage;
+import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.web.DefaultOAuth20RequestParameterResolver;
 import org.apereo.cas.token.JwtBuilder;
@@ -28,23 +29,29 @@ import static org.mockito.Mockito.*;
 @Tag("OAuth")
 class DefaultOAuth20RequestParameterResolverTests extends AbstractOidcTests {
 
-    private static MockHttpServletRequest getJwtRequest() {
-        val request = new MockHttpServletRequest();
-        val claims = new JWTClaimsSet.Builder().subject("cas")
+    private static JWTClaimsSet getRequestObjectClaims() {
+        return new JWTClaimsSet.Builder().subject("cas")
             .claim("scope", new String[]{"openid", "profile"})
             .claim("response", "code")
             .claim("client_id", List.of("client1", "client2"))
             .build();
-        val jwt = new PlainJWT(claims);
-        val jwtString = jwt.serialize();
-        request.removeAllParameters();
-        request.addParameter(OAuth20Constants.REQUEST, jwtString);
+    }
+
+    private static MockHttpServletRequest getUnsignedJwtRequest() {
+        val request = new MockHttpServletRequest();
+        request.addParameter(OAuth20Constants.REQUEST, new PlainJWT(getRequestObjectClaims()).serialize());
+        return request;
+    }
+
+    private MockHttpServletRequest getJwtRequest() {
+        val request = new MockHttpServletRequest();
+        request.addParameter(OAuth20Constants.REQUEST, oidcAccessTokenJwtBuilder.getDefaultTokenCipherExecutor().encode(getRequestObjectClaims().toString()));
         return request;
     }
 
     @Test
     void verifyRequestObjectUnpackedOncePerRequest() throws Throwable {
-        val request = getJwtRequest();
+        val request = getUnsignedJwtRequest();
         val claims = PlainJWT.parse(request.getParameter(OAuth20Constants.REQUEST)).getJWTClaimsSet();
         val jwtBuilder = mock(JwtBuilder.class);
         when(jwtBuilder.getServicesManager()).thenReturn(servicesManager);
@@ -55,17 +62,25 @@ class DefaultOAuth20RequestParameterResolverTests extends AbstractOidcTests {
         assertEquals("code", resolver.resolveRequestParameter(request, "response").orElseThrow());
         verify(jwtBuilder, times(1)).unpack(any(Optional.class), anyString());
 
-        resolver.resolveRequestParameter(getJwtRequest(), "response");
+        resolver.resolveRequestParameter(getUnsignedJwtRequest(), "response");
         verify(jwtBuilder, times(2)).unpack(any(Optional.class), anyString());
     }
 
+    /**
+     * A request object is read once verified; an unsigned one, whose algorithm is {@code none}, is refused and none of
+     * its parameters are used.
+     */
     @Test
-    void verifyPlainJwtWithoutClientId() {
+    void verifyJwtWithoutClientId() {
         val request = getJwtRequest();
         val scope = oauthRequestParameterResolver.resolveRequestParameter(request, OAuth20Constants.SCOPE, List.class);
         assertFalse(scope.isEmpty());
         assertTrue(scope.get().contains("openid"));
         assertTrue(scope.get().contains("profile"));
+
+        val unsigned = getUnsignedJwtRequest();
+        assertTrue(oauthRequestParameterResolver.resolveRequestParameter(unsigned, OAuth20Constants.SCOPE, List.class).isEmpty());
+        assertFalse(oauthRequestParameterResolver.isRequestObjectVerified(unsigned));
     }
 
     /**
@@ -73,11 +88,11 @@ class DefaultOAuth20RequestParameterResolverTests extends AbstractOidcTests {
      * 1.0, section 6.1): the parameters come from the request itself.
      */
     @Test
-    void verifyPlainJwtWithClientId() {
-        val request = getJwtRequest();
-
+    void verifyJwtWithClientId() throws Exception {
         val registeredService = getOidcRegisteredService(UUID.randomUUID().toString());
         servicesManager.save(registeredService);
+        val request = new MockHttpServletRequest();
+        request.addParameter(OAuth20Constants.REQUEST, signWithServiceKey(registeredService, getRequestObjectClaims()));
         request.addParameter(OAuth20Constants.CLIENT_ID, registeredService.getClientId());
 
         val clientIds = oauthRequestParameterResolver.resolveRequestParameter(request, OAuth20Constants.CLIENT_ID, List.class);
@@ -123,15 +138,24 @@ class DefaultOAuth20RequestParameterResolverTests extends AbstractOidcTests {
         assertFalse(oauthRequestParameterResolver.isParameterOnQueryString(request, OAuth20Constants.CLIENT_SECRET));
     }
 
-    @Test
-    void verifyRequestAsSignedJwt() throws Exception {
-        val service = getOidcRegisteredService("whatever");
+    private String signWithServiceKey(final OidcRegisteredService service, final JWTClaimsSet claims) throws Exception {
         val serviceJsonWebKeys = oidcServiceJsonWebKeystoreCache.get(new OidcJsonWebKeyCacheKey(service, OidcJsonWebKeyUsage.SIGNING));
         val jsonWebKey = (PublicJsonWebKey) serviceJsonWebKeys.orElseThrow().getJsonWebKeys()
             .stream()
             .filter(key -> !OidcJsonWebKeyUsage.ENCRYPTION.is(key))
             .findFirst()
             .orElseThrow();
+        return JsonWebTokenSigner
+            .builder()
+            .key(jsonWebKey.getPrivateKey())
+            .algorithm(jsonWebKey.getAlgorithm())
+            .build()
+            .sign(JwtClaims.parse(claims.toString()));
+    }
+
+    @Test
+    void verifyRequestAsSignedJwt() throws Exception {
+        val service = getOidcRegisteredService("whatever");
         val claims = new JWTClaimsSet.Builder()
             .subject("cas")
             .claim("scope", new String[]{"openid", "profile"})
@@ -141,12 +165,7 @@ class DefaultOAuth20RequestParameterResolverTests extends AbstractOidcTests {
             .build();
         servicesManager.save(service);
 
-        val signedJwt = JsonWebTokenSigner
-            .builder()
-            .key(jsonWebKey.getPrivateKey())
-            .algorithm(jsonWebKey.getAlgorithm())
-            .build()
-            .sign(JwtClaims.parse(claims.toString()));
+        val signedJwt = signWithServiceKey(service, claims);
 
         val request = new MockHttpServletRequest();
         request.addParameter(OAuth20Constants.REQUEST, signedJwt);

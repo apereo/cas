@@ -63,6 +63,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.DefaultResourceLoader;
+import org.springframework.http.HttpStatus;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -333,6 +334,34 @@ class OidcFederationDefaultTrustChainResolverTests {
             assertTrue(calls.get() <= 3, () -> calls.get() + " requests");
         }
 
+        /**
+         * A step of a resolution cannot tell only when one of its own requests ran out of time or found no room, or found
+         * the trust anchor unreachable; a request that did so in an earlier step, or a budget used up, does not make a
+         * later step unavailable.
+         */
+        @Test
+        void verifyIndeterminateStepsAreTrackedPerStep() throws Exception {
+            new OidcFederationResolutionLimiter(1, 1, Duration.ofSeconds(1)).execute(() -> {
+                val before = OidcFederationResolutionLimiter.indeterminateMark();
+                OidcFederationResolutionLimiter.currentBudget().orElseThrow().markIndeterminate();
+                val after = OidcFederationResolutionLimiter.indeterminateMark();
+                assertTrue(OidcFederationResolutionLimiter.isIndeterminateSince(before));
+                assertFalse(OidcFederationResolutionLimiter.isIndeterminateSince(after));
+                val trustAnchor = new EntityID(TRUST_ANCHOR);
+                val beforeUnreachable = OidcFederationResolutionLimiter.unreachableMark(trustAnchor);
+                OidcFederationResolutionLimiter.currentBudget().orElseThrow().markUnreachable(TRUST_ANCHOR);
+                val afterUnreachable = OidcFederationResolutionLimiter.unreachableMark(trustAnchor);
+                assertTrue(OidcFederationResolutionLimiter.isUnreachableSince(trustAnchor, beforeUnreachable));
+                assertFalse(OidcFederationResolutionLimiter.isUnreachableSince(trustAnchor, afterUnreachable));
+                assertFalse(OidcFederationResolutionLimiter.isUnreachableSince(new EntityID(RELYING_PARTY), 0));
+                OidcFederationResolutionLimiter.consumeRequest("first");
+                assertThrows(IllegalStateException.class, () -> OidcFederationResolutionLimiter.consumeRequest("second"));
+                assertFalse(OidcFederationResolutionLimiter.isIndeterminateSince(after));
+                return null;
+            });
+            assertFalse(OidcFederationResolutionLimiter.isIndeterminateSince(0));
+        }
+
         @Test
         void verifyStatementsAreFetchedOncePerResolution() throws Exception {
             val retriever = mock(EntityStatementRetriever.class);
@@ -391,37 +420,75 @@ class OidcFederationDefaultTrustChainResolverTests {
             val unreachable = new EntityID("https://localhost:1");
             new OidcFederationResolutionLimiter(new OidcFederationProperties()).execute(() -> {
                 assertThrows(ResolveException.class, () -> retriever.fetchEntityConfiguration(unreachable));
-                assertTrue(OidcFederationResolutionLimiter.currentBudget().orElseThrow().isUnreachable(unreachable.getValue()));
+                assertTrue(OidcFederationResolutionLimiter.currentBudget().orElseThrow().getUnreachableCount(unreachable.getValue()) > 0);
                 return null;
             });
             new OidcFederationResolutionLimiter(1, 10, Duration.ofSeconds(1), Duration.ZERO).execute(() -> {
                 assertThrows(ResolveException.class, () -> retriever.fetchEntityConfiguration(unreachable));
-                assertFalse(OidcFederationResolutionLimiter.currentBudget().orElseThrow().isUnreachable(unreachable.getValue()));
+                assertEquals(0, OidcFederationResolutionLimiter.currentBudget().orElseThrow().getUnreachableCount(unreachable.getValue()));
                 return null;
             });
         }
 
         /**
-         * A host that never answers is abandoned at the deadline: given the time a request normally has, it is remembered
-         * as unreachable, as a trust anchor that hangs must be; given less, because the resolution used up its time, it
-         * is not, since that tells nothing about the host.
+         * An entity that answers with a server error is remembered as unreachable, as one that cannot be reached is, so
+         * that a trust anchor in that state makes the resolution unavailable rather than failed; one that answers that
+         * the statement is not found is not.
+         */
+        @Test
+        void verifyServerErrorsAreUnreachable() throws Exception {
+            try (val webServer = new MockWebServer(true, new ByteArrayResource("{}".getBytes(StandardCharsets.UTF_8)))) {
+                webServer.start();
+                val retriever = new OidcFederationHttpEntityStatementRetriever(TEST_HTTP_CLIENT);
+                val entityId = new EntityID("https://localhost:%s".formatted(webServer.getPort()));
+                webServer.responseStatus(HttpStatus.SERVICE_UNAVAILABLE);
+                new OidcFederationResolutionLimiter(new OidcFederationProperties()).execute(() -> {
+                    assertThrows(ResolveException.class, () -> retriever.fetchEntityConfiguration(entityId));
+                    assertThrows(ResolveException.class, () -> retriever.fetchEntityStatement(
+                        new URI(entityId.getValue() + "/fetch"), entityId, new EntityID(RELYING_PARTY)));
+                    assertTrue(OidcFederationResolutionLimiter.currentBudget().orElseThrow().getUnreachableCount(entityId.getValue()) > 0);
+                    return null;
+                });
+                webServer.responseStatus(HttpStatus.NOT_FOUND);
+                new OidcFederationResolutionLimiter(new OidcFederationProperties()).execute(() -> {
+                    assertThrows(ResolveException.class, () -> retriever.fetchEntityConfiguration(entityId));
+                    assertEquals(0, OidcFederationResolutionLimiter.currentBudget().orElseThrow().getUnreachableCount(entityId.getValue()));
+                    return null;
+                });
+            }
+        }
+
+        /**
+         * A host that never answers is abandoned at the deadline and its connection closed: given the time a request
+         * normally has, it is remembered as unreachable, as a trust anchor that hangs must be; given less, because the
+         * resolution used up its time, it is not, since that tells nothing about the host, and the resolution cannot tell.
          */
         @Test
         void verifySilentHostIsAbandonedAtTheDeadline() throws Exception {
             val retriever = new OidcFederationHttpEntityStatementRetriever(TEST_HTTP_CLIENT);
-            try (val silent = new ServerSocket(0)) {
+            try (val silent = new ServerSocket(0); val executor = Executors.newVirtualThreadPerTaskExecutor()) {
+                silent.setSoTimeout(5_000);
                 val entityId = new EntityID("https://localhost:%s".formatted(silent.getLocalPort()));
+                val closedByClient = executor.submit(() -> {
+                    try (val socket = silent.accept()) {
+                        socket.setSoTimeout(5_000);
+                        socket.getInputStream().transferTo(OutputStream.nullOutputStream());
+                        return Boolean.TRUE;
+                    }
+                });
                 val started = Instant.now(Clock.systemUTC());
                 new OidcFederationResolutionLimiter(1, 10, Duration.ofSeconds(1), Duration.ofMillis(1500)).execute(() -> {
                     val failure = assertThrows(ResolveException.class, () -> retriever.fetchEntityConfiguration(entityId));
                     assertInstanceOf(OidcFederationHttpClient.OutOfTimeException.class, failure.getCause());
-                    assertFalse(OidcFederationResolutionLimiter.currentBudget().orElseThrow().isUnreachable(entityId.getValue()));
+                    assertEquals(0, OidcFederationResolutionLimiter.currentBudget().orElseThrow().getUnreachableCount(entityId.getValue()));
+                    assertTrue(OidcFederationResolutionLimiter.isIndeterminateSince(0));
                     return null;
                 });
-                assertTrue(Duration.between(started, Instant.now(Clock.systemUTC())).toSeconds() < 4);
+                assertTrue(Duration.between(started, Instant.now(Clock.systemUTC())).toMillis() < 3_000);
+                assertTrue(closedByClient.get(3, TimeUnit.SECONDS), "The connection is closed once the request is abandoned");
                 new OidcFederationResolutionLimiter(new OidcFederationProperties()).execute(() -> {
                     assertThrows(ResolveException.class, () -> retriever.fetchEntityConfiguration(entityId));
-                    assertTrue(OidcFederationResolutionLimiter.currentBudget().orElseThrow().isUnreachable(entityId.getValue()));
+                    assertTrue(OidcFederationResolutionLimiter.currentBudget().orElseThrow().getUnreachableCount(entityId.getValue()) > 0);
                     return null;
                 });
             }
@@ -455,7 +522,8 @@ class OidcFederationDefaultTrustChainResolverTests {
             metadata.setSubjectType(SubjectType.PAIRWISE);
             metadata.setRedirectionURI(new URI(RELYING_PARTY + "/callback"));
             assertTrue(resolver.hasVerifiedSector(entityId, metadata));
-            for (val other : List.of("https://other.example.org/callback", "https://b\u00e9.example.org/callback", "https:///callback")) {
+            for (val other : List.of("https://other.example.org/callback", "https://b\u00e9.example.org/callback", "https:///callback",
+                "https:/other.example.org/callback", "com.example.app:/callback", "com.example.app://rp.example.org/callback")) {
                 metadata.setRedirectionURIs(new LinkedHashSet<>(List.of(new URI(RELYING_PARTY + "/callback"), new URI(other))));
                 assertFalse(resolver.hasVerifiedSector(entityId, metadata), other);
             }
@@ -476,6 +544,40 @@ class OidcFederationDefaultTrustChainResolverTests {
             assertThrows(OidcFederationResolutionUnavailableException.class, () -> resolver.hasVerifiedSector(entityId, metadata));
             metadata.setSectorIDURI(new URI("https://169.254.169.254/sector"));
             assertFalse(resolver.hasVerifiedSector(entityId, metadata));
+            metadata.setSectorIDURI(null);
+            metadata.setRedirectionURI(new URI("com.example.app://rp.example.org/callback"));
+            assertTrue(resolver.hasVerifiedSector(entityId, metadata));
+        }
+
+        /**
+         * A trust anchor whose registration of the relying party cannot be built now, as when its sector identifier
+         * document cannot be read, leaves the next trust anchor to try.
+         */
+        @Test
+        void verifyNextTrustAnchorIsTriedWhenRegistrationIsUnavailable() throws Exception {
+            val properties = new OidcFederationProperties();
+            val metadata = new OIDCClientMetadata();
+            metadata.setScope(new Scope(OidcConstants.StandardScopes.OPENID.getScope()));
+            metadata.setRedirectionURI(new URI(RELYING_PARTY + "/callback"));
+            val attempts = new AtomicInteger();
+            val resolver = new OidcFederationDefaultTrustChainResolver(List.of(mock(TrustChainResolver.class), mock(TrustChainResolver.class)),
+                new OidcFederationDefaultTrustMarkValidator(properties, TEST_HTTP_CLIENT), new OidcFederationResolutionLimiter(properties)) {
+                @Override
+                protected Optional<TrustChainMetadata> fetchRelyingPartyMetadata(final TrustChainResolver trustChainResolver, final EntityID entityId) {
+                    return Optional.of(new TrustChainMetadata(metadata, Date.from(Instant.now(Clock.systemUTC()).plusSeconds(3600)), new Date()));
+                }
+
+                @Override
+                protected OidcRegisteredService extractRegisteredService(final EntityID entityId, final OIDCClientMetadata rpMetadata,
+                                                                         final Date expirationTime) {
+                    if (attempts.incrementAndGet() == 1) {
+                        throw new OidcFederationResolutionUnavailableException("Sector identifier URI cannot be read now");
+                    }
+                    return super.extractRegisteredService(entityId, rpMetadata, expirationTime);
+                }
+            };
+            assertTrue(resolver.resolveTrustChains(RELYING_PARTY).isPresent());
+            assertEquals(2, attempts.get());
         }
 
         private EntityStatement entityConfiguration(final String entityId, final List<String> authorityHints) throws Exception {
@@ -1073,6 +1175,66 @@ class OidcFederationDefaultTrustChainResolverTests {
         }
 
         /**
+         * A trust mark whose validity cannot be told now, because its issuer's status endpoint or historical keys endpoint
+         * answers with a server error, makes the validation unavailable only when no other trust mark of its type is
+         * valid and no required type is missing; the trust marks of a resolution leave it out and say so. A trust anchor that
+         * cannot be reached while the chain of an issuer is resolved makes its trust marks unavailable too.
+         */
+        @Test
+        void verifyTrustMarksThatCannotBeToldNow() throws Exception {
+            try (val webServer = new MockWebServer(true, new ByteArrayResource("{}".getBytes(StandardCharsets.UTF_8)))) {
+                webServer.start();
+                webServer.responseStatus(HttpStatus.SERVICE_UNAVAILABLE);
+                val endpoint = "https://localhost:%s".formatted(webServer.getPort());
+                val otherType = TYPE + "/other";
+                val trustAnchor = trustAnchorConfiguration(Map.of(TYPE, List.of(TRUST_ANCHOR, ISSUER), otherType, List.of(TRUST_ANCHOR)), Map.of());
+                val issuer = entityConfiguration(ISSUER, issuerKey, Map.of("metadata", Map.of(EntityType.FEDERATION_ENTITY.getValue(),
+                    Map.of("federation_trust_mark_status_endpoint", endpoint + "/status"))));
+                val resolver = resolver(trustAnchor, Map.of(ISSUER, trustChain(issuer, trustAnchor)));
+                val unavailable = Map.of("trust_mark_type", TYPE, "trust_mark", trustMark(issuerKey, ISSUER, RELYING_PARTY, TYPE, Map.of()));
+                val expired = Map.of("trust_mark_type", TYPE, "trust_mark", trustMark(trustAnchorKey, TRUST_ANCHOR, RELYING_PARTY, TYPE,
+                    Map.of(JWTClaimNames.EXPIRATION_TIME, Date.from(Instant.now(Clock.systemUTC()).minusSeconds(3600)))));
+                val valid = Map.of("trust_mark_type", TYPE, "trust_mark", trustMark(trustAnchorKey, TRUST_ANCHOR, RELYING_PARTY, TYPE, Map.of()));
+                val validOfOtherType = Map.of("trust_mark_type", otherType,
+                    "trust_mark", trustMark(trustAnchorKey, TRUST_ANCHOR, RELYING_PARTY, otherType, Map.of()));
+
+                assertThrows(OidcFederationResolutionUnavailableException.class,
+                    () -> validator.hasRequiredTrustMarks(resolver, trustChain(relyingParty(List.of(unavailable)), trustAnchor)));
+                assertTrue(validator.hasRequiredTrustMarks(resolver, trustChain(relyingParty(List.of(unavailable, valid)), trustAnchor)));
+                assertTrue(validator.hasRequiredTrustMarks(resolver, trustChain(relyingParty(List.of(expired, valid)), trustAnchor)));
+                assertFalse(validator.hasRequiredTrustMarks(resolver, trustChain(relyingParty(List.of(expired)), trustAnchor)));
+
+                val bothTypes = new OidcFederationDefaultTrustMarkValidator(
+                    new OidcFederationProperties().setRequiredTrustMarks(List.of(TYPE, otherType)), TEST_HTTP_CLIENT);
+                assertFalse(bothTypes.hasRequiredTrustMarks(resolver, trustChain(relyingParty(List.of(unavailable)), trustAnchor)));
+                assertThrows(OidcFederationResolutionUnavailableException.class, () -> bothTypes.hasRequiredTrustMarks(resolver,
+                    trustChain(relyingParty(List.of(unavailable, validOfOtherType)), trustAnchor)));
+
+                val resolved = validator.resolveValidTrustMarks(resolver, trustChain(relyingParty(List.of(unavailable, valid)), trustAnchor));
+                assertEquals(List.of(valid), resolved.trustMarks());
+                assertFalse(resolved.complete());
+                assertTrue(validator.resolveValidTrustMarks(resolver, trustChain(relyingParty(List.of(expired, valid)), trustAnchor)).complete());
+
+                val unreachable = resolver(trustAnchor, Map.of());
+                when(unreachable.resolveTrustChains(any(EntityID.class))).thenAnswer(_ -> {
+                    OidcFederationResolutionLimiter.currentBudget().orElseThrow().markUnreachable(TRUST_ANCHOR);
+                    throw new ResolveException("Trust anchor answers 503");
+                });
+                new OidcFederationResolutionLimiter(new OidcFederationProperties()).execute(() -> {
+                    assertThrows(OidcFederationResolutionUnavailableException.class,
+                        () -> validator.hasRequiredTrustMarks(unreachable, trustChain(relyingParty(List.of(unavailable)), trustAnchor)));
+                    assertFalse(validator.hasRequiredTrustMarks(resolver, trustChain(relyingParty(List.of(expired)), trustAnchor)),
+                        "A trust anchor found unreachable by an earlier step tells nothing about this one");
+                    return null;
+                });
+
+                val signedWithRetiredKey = trustMark(generateKey("ta-unavailable"), TRUST_ANCHOR, RELYING_PARTY, TYPE, Map.of());
+                assertThrows(OidcFederationResolutionUnavailableException.class, () -> hasRequiredTrustMarks(
+                    trustAnchorWithHistoricalKeys(endpoint + "/historical-unavailable"), signedWithRetiredKey, Map.of()));
+            }
+        }
+
+        /**
          * Trust marks are validated against the configuration fetched from the trust anchor, never the one a chain
          * carries, which could list issuers of its own if signed with a revoked but still trusted key.
          */
@@ -1084,9 +1246,9 @@ class OidcFederationDefaultTrustChainResolverTests {
             val chain = trustChain(relyingParty(List.of(Map.of("trust_mark_type", TYPE, "trust_mark", trustMark))), genuine);
             when(chain.getTrustAnchorConfiguration()).thenReturn(carried);
             assertFalse(validator.hasRequiredTrustMarks(resolver(genuine, Map.of()), chain));
-            assertTrue(validator.resolveValidTrustMarks(resolver(genuine, Map.of()), chain).isEmpty());
+            assertTrue(validator.resolveValidTrustMarks(resolver(genuine, Map.of()), chain).trustMarks().isEmpty());
             assertTrue(validator.hasRequiredTrustMarks(resolver(carried, Map.of()), chain));
-            assertEquals(1, validator.resolveValidTrustMarks(resolver(carried, Map.of()), chain).size());
+            assertEquals(1, validator.resolveValidTrustMarks(resolver(carried, Map.of()), chain).trustMarks().size());
         }
 
         private EntityStatement trustAnchorWithHistoricalKeys(final String endpoint) throws Exception {

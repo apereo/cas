@@ -34,7 +34,7 @@ class OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidatorTests ext
     }
 
     @Test
-    void verifyUnsignedRequestParameter() throws Throwable {
+    void verifyUnsignedRequestParameterIsRefused() throws Throwable {
         val clientId = UUID.randomUUID().toString();
         addRegisteredService(Set.of(), clientId, UUID.randomUUID().toString(), "https://.+");
         val validator = getValidator(servicesManager);
@@ -49,8 +49,17 @@ class OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidatorTests ext
             + Base64.getUrlEncoder().withoutPadding().encodeToString(claims.getBytes(StandardCharsets.UTF_8)) + '.';
 
         request.setParameter(OAuth20Constants.REQUEST, authnRequest);
-        assertTrue(validator.supports(request, response));
-        assertTrue(validator.validate(request, response));
+        request.setParameter(OAuth20Constants.CLIENT_ID, clientId);
+        request.setParameter(OAuth20Constants.REDIRECT_URI, "https://staging.certification.openid.net/test/a/CAS/callback");
+        request.setParameter(OAuth20Constants.RESPONSE_TYPE, OAuth20ResponseTypes.CODE.getType());
+        assertFalse(oauthRequestParameterResolver.isRequestObjectVerified(request));
+        assertFalse(validator.supports(request, response));
+        assertEquals(OAuth20Constants.INVALID_REQUEST_OBJECT, request.getAttribute(OAuth20Constants.ERROR));
+
+        val signedRequest = new MockHttpServletRequest();
+        signedRequest.setParameter(OAuth20Constants.REQUEST, configurationContext.getAccessTokenJwtBuilder().getDefaultTokenCipherExecutor().encode(claims));
+        assertTrue(validator.supports(signedRequest, response));
+        assertTrue(validator.validate(signedRequest, response));
     }
 
     @Test

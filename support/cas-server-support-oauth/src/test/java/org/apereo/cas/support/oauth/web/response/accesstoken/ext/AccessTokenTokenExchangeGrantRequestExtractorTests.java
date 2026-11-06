@@ -146,6 +146,12 @@ class AccessTokenTokenExchangeGrantRequestExtractorTests extends AbstractOAuth20
         actorRequest.addParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.TOKEN_EXCHANGE.getType());
         storeProfileIntoSession(actorRequest, userProfile);
         assertThrows(IllegalArgumentException.class, () -> extractor.extract(actorRequest, new MockHttpServletResponse()));
+
+        val unsigned = JwtBuilder.buildPlain(claims, Optional.of(service));
+        subjectRequest.setParameter(OAuth20Constants.SUBJECT_TOKEN, unsigned);
+        assertThrows(IllegalArgumentException.class, () -> extractor.extract(subjectRequest, new MockHttpServletResponse()));
+        actorRequest.setParameter(OAuth20Constants.ACTOR_TOKEN, unsigned);
+        assertThrows(IllegalArgumentException.class, () -> extractor.extract(actorRequest, new MockHttpServletResponse()));
     }
 
     @Test

@@ -49,7 +49,8 @@ An application may send its authentication request as a signed request object, a
 allows. The request object is verified with the keys of the application that authenticated the request, whether or not
 the request names it with `client_id`, and must be signed with an asymmetric algorithm. It must name the application as
 its issuer, be addressed to CAS and carry `exp`, `iat`, `nbf` and `jti`; it may not be issued in the future, may be valid
-for 60 minutes at most, and is used once: its `jti` is remembered until it expires. A request object that does not meet
+for 60 minutes at most, and is used once: its `jti` is remembered until it expires. Request objects are refused
+altogether when CAS is configured not to support the request parameter. A request object that does not meet
 these rules is refused with `invalid_request`, rather than set aside for the other parameters of the request.
 
 ### Delivery Modes

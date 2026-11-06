@@ -40,7 +40,13 @@ import com.nimbusds.jose.jwk.gen.RSAKeyGenerator;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.PlainJWT;
 import com.nimbusds.jwt.SignedJWT;
+import com.nimbusds.openid.connect.sdk.federation.entities.EntityID;
+import com.nimbusds.openid.connect.sdk.federation.entities.EntityStatement;
+import com.nimbusds.openid.connect.sdk.federation.entities.EntityStatementClaimsSet;
+import com.nimbusds.openid.connect.sdk.federation.entities.EntityType;
+import com.nimbusds.openid.connect.sdk.federation.trust.TrustChain;
 import lombok.val;
+import net.minidev.json.JSONObject;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jose4j.jwk.JsonWebKeySet;
@@ -273,6 +279,60 @@ class OpenIdFederationAuthorizationCodeResponseTypeAuthorizationRequestValidator
         assertEquals(HttpStatus.SERVICE_UNAVAILABLE.value(), result.getResponse().getStatus());
         assertTrue(result.getResponse().getContentAsString().contains("temporarily_unavailable"));
         assertTrue(TestOidcFederationTrustChainResolver.RESOLUTIONS.get(clientId).get() >= 3);
+    }
+
+    /**
+     * A sent trust chain that cannot be verified now leaves the relying party to be resolved through its trust anchors.
+     */
+    @Test
+    void verifyUnavailableSentTrustChainFallsBackToResolution() throws Throwable {
+        val clientId = "https://rp-sentunavailable-" + UUID.randomUUID() + ".example.org";
+        val registeredService = clientRegistration.register(clientId, List.of("sent-statement"), _ -> true);
+        assertNotNull(registeredService);
+        assertEquals("resolved-service", registeredService.getName());
+    }
+
+    /**
+     * A sent trust chain whose relying party declares keys inline is verified only when the request is signed with them,
+     * so that a replayed chain does not make CAS fetch what its verification needs.
+     */
+    @Test
+    void verifySentTrustChainIsVerifiedOnlyWhenSignedWithDeclaredKeys() throws Throwable {
+        val clientId = "https://rp-sentdeclared-" + UUID.randomUUID() + ".example.org";
+        val leafKey = generateKey("leaf-key");
+        val trustAnchorKey = generateKey("ta-key");
+        val now = Instant.now(Clock.systemUTC());
+        val leafClaims = new EntityStatementClaimsSet(new EntityID(clientId), new EntityID(clientId),
+            Date.from(now), Date.from(now.plusSeconds(3600)), new JWKSet(leafKey.toPublicJWK()));
+        leafClaims.setMetadata(EntityType.OPENID_RELYING_PARTY,
+            new JSONObject(Map.of("jwks", new JWKSet(RELYING_PARTY_KEY.toPublicJWK()).toJSONObject())));
+        val superiorClaims = new EntityStatementClaimsSet(new EntityID("https://ta.example.org"), new EntityID(clientId),
+            Date.from(now), Date.from(now.plusSeconds(3600)), new JWKSet(leafKey.toPublicJWK()));
+        val trustChain = List.of(EntityStatement.sign(leafClaims, leafKey).getSignedStatement().serialize(),
+            EntityStatement.sign(superiorClaims, trustAnchorKey).getSignedStatement().serialize());
+
+        assertNull(clientRegistration.register(clientId, trustChain, _ -> false));
+        assertFalse(TestOidcFederationTrustChainResolver.SENT_TRUST_CHAINS.containsKey(clientId));
+        val otherClientId = "https://rp-sentdeclared-" + UUID.randomUUID() + ".example.org";
+        assertNull(clientRegistration.register(otherClientId, trustChain, _ -> true));
+        assertTrue(TestOidcFederationTrustChainResolver.SENT_TRUST_CHAINS.containsKey(otherClientId));
+
+        val withoutKeysId = "https://rp-sentdeclared-" + UUID.randomUUID() + ".example.org";
+        val withoutKeysClaims = new EntityStatementClaimsSet(new EntityID(withoutKeysId), new EntityID(withoutKeysId),
+            Date.from(now), Date.from(now.plusSeconds(3600)), new JWKSet(leafKey.toPublicJWK()));
+        withoutKeysClaims.setMetadata(EntityType.OPENID_RELYING_PARTY, new JSONObject(Map.of("jwks_uri", "https://rp.example.org/jwks")));
+        val withoutKeysSuperiorClaims = new EntityStatementClaimsSet(new EntityID("https://ta.example.org"), new EntityID(withoutKeysId),
+            Date.from(now), Date.from(now.plusSeconds(3600)), new JWKSet(leafKey.toPublicJWK()));
+        val withoutKeys = List.of(EntityStatement.sign(withoutKeysClaims, leafKey).getSignedStatement().serialize(),
+            EntityStatement.sign(withoutKeysSuperiorClaims, trustAnchorKey).getSignedStatement().serialize());
+        assertEquals(1, TrustChain.parseSerialized(withoutKeys).getSuperiorStatements().size());
+        assertNull(clientRegistration.register(withoutKeysId, withoutKeys, _ -> false));
+        assertTrue(TestOidcFederationTrustChainResolver.SENT_TRUST_CHAINS.containsKey(withoutKeysId),
+            "A chain that declares no keys inline is verified, which needs its keys");
+        val unreadableId = "https://rp-sentdeclared-" + UUID.randomUUID() + ".example.org";
+        assertNull(clientRegistration.register(unreadableId, List.of("unreadable-statement"), _ -> false));
+        assertTrue(TestOidcFederationTrustChainResolver.SENT_TRUST_CHAINS.containsKey(unreadableId),
+            "A chain that cannot be read is verified, which refuses it");
     }
 
     @Test
@@ -764,6 +824,9 @@ class OpenIdFederationAuthorizationCodeResponseTypeAuthorizationRequestValidator
         public Optional<OidcRegisteredService> resolveSentTrustChain(final String clientId, final List<String> trustChain) {
             if (!trustChain.isEmpty()) {
                 SENT_TRUST_CHAINS.put(clientId, trustChain);
+                if (clientId.contains("rp-sentunavailable-")) {
+                    throw new OidcFederationResolutionUnavailableException("Trust anchor of the sent chain cannot be reached now");
+                }
                 if (clientId.contains("rp-sent-")) {
                     return Optional.of(buildAutomaticallyRegisteredService(clientId, "sent-service", trustChain.getFirst()));
                 }
@@ -799,6 +862,9 @@ class OpenIdFederationAuthorizationCodeResponseTypeAuthorizationRequestValidator
             }
             if (clientId.contains("rp-unavailable-")) {
                 throw new OidcFederationResolutionUnavailableException("Trust anchor cannot be reached now");
+            }
+            if (clientId.contains("rp-sentunavailable-")) {
+                return Optional.of(buildOidcRegisteredService(clientId, "resolved-service"));
             }
             return Optional.empty();
         }

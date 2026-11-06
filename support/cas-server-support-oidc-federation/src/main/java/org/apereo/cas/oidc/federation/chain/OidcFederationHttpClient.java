@@ -22,13 +22,18 @@ import org.springframework.http.HttpHeaders;
  * them up. Its response may not exceed a fixed size. Requests are only sent over {@code https}, as federation entity
  * identifiers and endpoints are (OpenID Federation 1.0, sections 1.2 and 5.1.1), and never to a link-local, unspecified
  * or multicast address, such as the metadata service of a cloud provider, including one embedded in an IPv6 address.
- * Addresses are checked when the host is resolved for a direct connection; a request sent through an HTTPS proxy of the
- * JVM is resolved by the proxy, which then decides where it may go. Redirects are not followed, and TLS is configured by
- * CAS rather than by defaults shared with the rest of the JVM.
+ * Addresses written in the URL are always checked, and host names when they are resolved here, for a direct connection
+ * or one through a SOCKS proxy of the JVM; a host name sent through an HTTP proxy of the JVM is resolved by the proxy,
+ * which then decides where it may go. Redirects are not followed, and TLS is configured by CAS rather than by defaults
+ * shared with the rest of the JVM.
  * <p>
  * A request that runs out of time while it is sent, having been given the time a request normally has, tells that its
- * host does not answer; one that cannot be given that time, because the resolution has used it up, tells nothing about
- * its host and fails with {@link OutOfTimeException}.
+ * host does not answer, and so does one whose host does not accept the connection in the time a connection is given,
+ * which a connection is always given; one that cannot be given the time of a request, because the resolution has used
+ * it up, tells nothing about
+ * its host and fails with {@link OutOfTimeException}, and one that finds no room among the running requests fails with
+ * {@link TooManyRequestsException}; both leave the running resolution unable to tell, so it is unavailable rather than
+ * failed.
  *
  * @author Misagh Moayyed
  * @since 8.1.0
@@ -82,7 +87,7 @@ public class OidcFederationHttpClient {
             .orElseGet(() -> Instant.now(Clock.systemUTC()).plus(resolutionTimeout));
         val remaining = remainingMillis(deadline);
         if (!RUNNING_EXCHANGES.tryAcquire()) {
-            throw new IOException("Too many federation requests are running; %s is not requested".formatted(request.getURL()));
+            throw indeterminate(new TooManyRequestsException("Too many federation requests are running; %s is not requested".formatted(request.getURL())));
         }
         val connection = new AtomicReference<HttpURLConnection>();
         val claimed = new AtomicBoolean();
@@ -93,7 +98,7 @@ public class OidcFederationHttpClient {
             abandon(exchange, connection, claimed);
             throw remaining >= READ_TIMEOUT_MILLIS
                 ? new SocketTimeoutException("Federation request to %s did not complete in time".formatted(request.getURL()))
-                : new OutOfTimeException();
+                : indeterminate(new OutOfTimeException());
         } catch (final InterruptedException e) {
             abandon(exchange, connection, claimed);
             Thread.currentThread().interrupt();
@@ -102,8 +107,10 @@ public class OidcFederationHttpClient {
             if (e.getCause() instanceof final RuntimeException runtimeException) {
                 throw runtimeException;
             }
-            if (e.getCause() instanceof SocketTimeoutException && remaining < READ_TIMEOUT_MILLIS) {
-                throw new OutOfTimeException();
+            if (e.getCause() instanceof OutOfTimeException) {
+                throw remaining >= READ_TIMEOUT_MILLIS
+                    ? new SocketTimeoutException("Federation request to %s did not complete in time".formatted(request.getURL()))
+                    : indeterminate(new OutOfTimeException());
             }
             throw e.getCause() instanceof final IOException ioException ? ioException : new IOException(e.getCause());
         }
@@ -153,8 +160,8 @@ public class OidcFederationHttpClient {
             }
             connection.setInstanceFollowRedirects(false);
             connection.setUseCaches(false);
-            connection.setConnectTimeout((int) Math.min(CONNECT_TIMEOUT_MILLIS, remainingMillis(deadline)));
-            connection.setReadTimeout((int) Math.min(READ_TIMEOUT_MILLIS, remainingMillis(deadline)));
+            connection.setConnectTimeout(CONNECT_TIMEOUT_MILLIS);
+            connection.setReadTimeout(READ_TIMEOUT_MILLIS);
             connection.setRequestMethod(request.getMethod().name());
             request.getHeaderMap().forEach((name, values) -> values.forEach(value -> connection.addRequestProperty(name, value)));
             val body = request.getBody();
@@ -184,8 +191,8 @@ public class OidcFederationHttpClient {
     /**
      * Refuse a request that is not sent over {@code https}, or whose host resolves to a link-local, unspecified or
      * multicast address, including one embedded in an IPv4-compatible or NAT64 IPv6 address. Addresses of private and
-     * loopback networks are allowed, since federations may run there. A request sent through a proxy is not resolved
-     * here, since the proxy resolves it.
+     * loopback networks are allowed, since federations may run there. A request sent through an HTTP proxy is not
+     * resolved here, since the proxy resolves it.
      *
      * @param url the URL of the request
      * @throws IOException when the request is not allowed
@@ -211,9 +218,14 @@ public class OidcFederationHttpClient {
     private static long remainingMillis(final Instant deadline) throws OutOfTimeException {
         val remaining = Duration.between(Instant.now(Clock.systemUTC()), deadline).toMillis();
         if (remaining <= 0) {
-            throw new OutOfTimeException();
+            throw indeterminate(new OutOfTimeException());
         }
         return remaining;
+    }
+
+    private static <T extends IOException> T indeterminate(final T failure) {
+        OidcFederationResolutionLimiter.currentBudget().ifPresent(OidcFederationResolutionLimiter.RequestBudget::markIndeterminate);
+        return failure;
     }
 
     private static String read(final InputStream input, final Instant deadline) throws IOException {
@@ -226,11 +238,24 @@ public class OidcFederationHttpClient {
                 throw new IOException("Federation response is larger than %s bytes".formatted(MAX_RESPONSE_BYTES));
             }
             if (!Instant.now(Clock.systemUTC()).isBefore(deadline)) {
-                throw new SocketTimeoutException("Federation resolution has run out of time");
+                throw new OutOfTimeException();
             }
             read = input.read(buffer);
         }
         return output.toString(StandardCharsets.UTF_8);
+    }
+
+    /**
+     * A request that is not sent because too many requests are running, abandoned ones included; it tells nothing about
+     * its host.
+     */
+    public static final class TooManyRequestsException extends IOException {
+        @Serial
+        private static final long serialVersionUID = 5137402962274021863L;
+
+        TooManyRequestsException(final String message) {
+            super(message);
+        }
     }
 
     /**
