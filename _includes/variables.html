@@ -1,0 +1,8 @@
+{% capture version %}{{ page.url | replace:'/',' ' | truncatewords: 1 | strip | remove:'...' }}{% endcapture %}
+{% capture siteDataVersion %}{{ version | remove: "." }}{% endcapture %}
+{%- comment -%} Local builds are served under /cas as well (publish.sh keeps the configured baseurl), so paths match production. {%- endcomment -%}
+{%- assign basePath = "/cas" -%}
+
+{% assign siteUrl = site.url | default: temp_dir %}
+{% assign baseUrl = siteUrl | append: basePath | append: "/" | append: version | append: "/" %}
+

@@ -1,0 +1,21 @@
+{%- assign actuatorSnippetFormats = "properties,yaml,env" | split: "," -%}
+<div class="cas-actuator-snippets">
+    <div class="cas-actuator-format" role="group" aria-label="Settings format">
+        <button type="button" data-format="properties" aria-pressed="true">.properties</button>
+        <button type="button" data-format="yaml" aria-pressed="false">YAML</button>
+        <button type="button" data-format="env" aria-pressed="false">Env vars</button>
+    </div>
+    {%- for actuatorSnippetFormat in actuatorSnippetFormats -%}
+    {%- if include.kind == "enable" -%}
+    {%- assign actuatorSnippetText = include.ids | cas_actuator_enable_snippet: actuatorSnippetFormat -%}
+    {%- else -%}
+    {%- assign actuatorSnippetText = include.ids | cas_actuator_security_snippet: include.rule, actuatorSnippetFormat -%}
+    {%- endif -%}
+    {%- capture actuatorSnippetMarkdown -%}
+```{% if actuatorSnippetFormat == "yaml" %}yaml{% elsif actuatorSnippetFormat == "env" %}bash{% else %}properties{% endif %}
+{{ actuatorSnippetText }}
+```
+{%- endcapture -%}
+    <div class="cas-actuator-snippet" data-format="{{ actuatorSnippetFormat }}"{% unless actuatorSnippetFormat == "properties" %} hidden{% endunless %}>{{ actuatorSnippetMarkdown | markdownify }}</div>
+    {%- endfor -%}
+</div>
