@@ -258,3 +258,17 @@ description: "Review and change SAML2 SP and IdP metadata handling: resolvers, M
   `SamlObjectSignatureValidatorTests` are signed with OpenSAML and the `metadata/idp-signing.*` key pair, whose
   certificate is written into a temporary SP metadata file. Do not reintroduce a pac4j `SAML2Client` as a test SP.
 - OpenSAML 5 has no `BasicSignatureSigningParameters`; build `org.opensaml.xmlsec.SignatureSigningParameters` directly.
+
+## SAML2 SOAP profiles (ECP, attribute query, artifact resolution)
+
+- SOAP endpoints answer failures with a SOAP fault and HTTP 200, so a test that only checks the status passes on a fault;
+  assert that `SamlIdPConstants.REQUEST_ATTRIBUTE_ERROR` and the `FaultString` request attribute are absent and that the
+  body carries the `Response`. `ECPSamlIdPProfileHandlerControllerTests.verifyOK` once passed while every ECP login failed
+  with a `ClassCastException`, because `samlProfileSamlSoap11ResponseBuilder` was given the NameID builder.
+- The SAML2 response inside a SOAP envelope must be built with `PARAMETER_ENCODE_RESPONSE` set to false in the
+  `ScratchContext` of its message context (`SamlProfileSamlSoap11ResponseBuilder.buildSaml2Response`), or the response
+  builder also writes an HTML POST form to the HTTP response ahead of the envelope.
+- SAML attribute release policies find the SP metadata through `SamlIdPSAttributeReleasePolicyUtils.getEntityIdFromRequest`,
+  which reads the service attributes or the `entityId`/`service` request parameters. A SOAP request carries neither, so
+  the attribute query ticket's service records the relying party as `entityId`. `SamlIdPTestUtils.getSamlRegisteredService()`
+  puts `entityId` on the mock request, which hides a missing entity id; reset the request attributes when testing that path.

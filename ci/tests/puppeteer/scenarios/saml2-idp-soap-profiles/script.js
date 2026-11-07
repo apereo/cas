@@ -137,6 +137,17 @@ async function verifyEcpProfile() {
     body = await postSoap(ECP_URL, soapEnvelope(buildEcpAuthnRequest("https://localhost:9859/unknown-sp")), 200,
         {"Authorization": `Basic ${credentials}`});
     await assertSoapFault(body);
+
+    await cas.log("ECP: valid credentials produce a SAML2 response in the SOAP envelope");
+    body = await postSoap(ECP_URL, soapEnvelope(buildEcpAuthnRequest(SP_ENTITY_ID)), 200,
+        {"Authorization": `Basic ${credentials}`});
+    assert(!body.includes("<form"), "Only the SOAP envelope may be written to the response");
+    const ecpEnvelope = await parseSoapEnvelope(body);
+    assert(ecpEnvelope.Body[0].Fault === undefined, "A successful ECP login must not produce a SOAP fault");
+    assert(ecpEnvelope.Header[0].Response[0].$.AssertionConsumerServiceURL === "https://localhost:9859/anything/soap-sp/ecp");
+    const ecpResponse = ecpEnvelope.Body[0].Response[0];
+    assert(ecpResponse.Status[0].StatusCode[0].$.Value === STATUS_SUCCESS);
+    assert(textOf(ecpResponse.Assertion[0].Subject[0].NameID[0]) !== undefined);
 }
 
 async function loginWithArtifactBinding(page) {
@@ -201,13 +212,7 @@ async function verifyAttributeQuery(nameId, privateKey) {
     let body = await postSoap(ATTRIBUTE_QUERY_URL, soapEnvelope(buildAttributeQuery(newRequestId(), nameId)));
     await assertSoapFault(body);
 
-    /*
-     * Only the outcome and the upper bound of the release are asserted: the release policy looks up the
-     * service provider metadata by an entity id it takes from the service attributes or request parameters
-     * (SamlIdPSAttributeReleasePolicyUtils.getEntityIdFromRequest), and neither is present on a SOAP
-     * attribute query, so the policy may release nothing at all. It must never release more than mail and sn.
-     */
-    await cas.log("A signed attribute query for the NameID of the SSO session releases nothing beyond the allowed attributes");
+    await cas.log("A signed attribute query for the NameID of the SSO session releases exactly the allowed attributes");
     const queryId = newRequestId();
     body = await postSoap(ATTRIBUTE_QUERY_URL,
         soapEnvelope(signRequest(buildAttributeQuery(queryId, nameId), queryId, privateKey)));
@@ -223,10 +228,9 @@ async function verifyAttributeQuery(nameId, privateKey) {
     const names = attributes.map((attribute) => attribute.$.FriendlyName ?? attribute.$.Name);
     await cas.log(`Released attributes: ${names}`);
     assert(names.every((name) => ["mail", "sn"].includes(name)), `Only mail and sn may be released, but got ${names}`);
+    assert(names.includes("mail") && names.includes("sn"), `mail and sn must be released, but got ${names}`);
     const mail = attributes.find((attribute) => (attribute.$.FriendlyName ?? attribute.$.Name) === "mail");
-    if (mail !== undefined) {
-        assert(mail.AttributeValue.map(textOf).includes("casuser@example.org"));
-    }
+    assert(mail.AttributeValue.map(textOf).includes("casuser@example.org"));
 
     await cas.log("An attribute query for a NameID without an SSO session fails");
     const unknownId = newRequestId();

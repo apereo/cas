@@ -81,6 +81,11 @@ release:
       text: service and ticket registries are removed; move service definitions and tickets to another registry before upgrading.
       section: Tickets & Sessions
       area: tickets
+    - type: action
+      title: Trusted devices
+      text: include the client IP address in the device fingerprint by default, as documented; devices trusted before the upgrade are asked for multifactor authentication once more. Set `cas.authn.mfa.trusted.device-fingerprint.client-ip.enabled=false` to keep the previous fingerprint.
+      section: Multifactor Authentication
+      area: mfa
   spotlight:
     section: Theme Properties
     kicker: User interface
@@ -313,6 +318,8 @@ one-time codes can be added when `cas.authn.mfa.simple.mail.accepted-email-patte
 ### Tickets & Sessions
 {: .changed data-area="tickets"}
 
+- {: .fixed data-area="protocols"} [CAS 2.0 proxy validation](../protocol/CAS-Protocol-V2-Specification.html) responses list
+  each proxy of a chain once; a ticket obtained through several proxies listed each of them as many times as there were proxies.
 - {: .action data-area="tickets"} New deployments of CAS, and upgrades to a new CAS version, should always start with a
   clean [JPA ticket registry](../ticketing/JPA-Ticket-Registry.html) table: drop the existing table and let CAS create it.
   Schema updates do not change the type or length of an existing column, and this version changes several of them.
@@ -725,6 +732,11 @@ one-time codes can be added when `cas.authn.mfa.simple.mail.accepted-email-patte
 ### SAML2
 {: .changed data-area="saml"}
 
+- {: .fixed data-area="saml"} The [ECP profile](../authentication/Configuring-SAML2-Authentication.html) answers a
+  successful login with the SAML2 response in the SOAP envelope again, instead of a SOAP fault.
+- {: .fixed data-area="saml"} The [attribute query profile](../installation/Configuring-SAML2-AttributeQuery.html) releases
+  the attributes its release policy allows; the policy could not find the metadata of the service provider for a query
+  and released none of them.
 - {: .action data-area="authentication"} For [unsolicited SSO](../authentication/Configuring-SAML2-Authentication-Unsolicited.html),
   the SAML2 identity provider no longer signs the authentication request it builds itself, nor checks it for a signature,
   and the `signUnsolicitedAuthnRequest` setting of SAML2 service definitions is removed. Unsolicited SSO also works when
@@ -804,6 +816,13 @@ one-time codes can be added when `cas.authn.mfa.simple.mail.accepted-email-patte
 ### Multifactor Authentication
 {: .changed data-area="mfa"}
 
+- {: .action data-area="mfa"} The [device fingerprint](../mfa/Multifactor-TrustedDevice-Authentication-DeviceFingerprint.html)
+  of trusted devices includes the client IP address by default, as documented; it was only used when
+  `cas.authn.mfa.trusted.device-fingerprint.client-ip.enabled`{: .cas-setting} was set explicitly. Devices trusted before the
+  upgrade are asked for multifactor authentication once more; set that setting to `false` to keep the previous fingerprint.
+- {: .fixed data-area="mfa"} The [browser fingerprint](../mfa/Multifactor-TrustedDevice-Authentication-DeviceFingerprint.html)
+  that the login form collects is kept for the rest of the multifactor flow, so a device trusted while that fingerprint is
+  part of the device fingerprint is recognized at the next login.
 - {: .fixed data-area="mfa"} The Google Authenticator registration QR code includes `digits` and `period` when
   `cas.authn.mfa.gauth.core.code-digits`{: .cas-setting} or `cas.authn.mfa.gauth.core.time-step-size`{: .cas-setting} differ
   from the defaults, so authenticator apps generate codes CAS accepts.
