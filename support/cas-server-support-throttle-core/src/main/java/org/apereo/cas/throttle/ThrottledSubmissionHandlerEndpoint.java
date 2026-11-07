@@ -10,6 +10,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
+import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.actuate.endpoint.Access;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
@@ -40,10 +42,23 @@ public class ThrottledSubmissionHandlerEndpoint extends BaseCasRestActuatorEndpo
         this.throttledSubmissionsStore = throttledSubmissionsStore;
     }
 
+    /**
+     * Get throttled authentication records, all of them or only those submitted for one username.
+     * The username is matched regardless of case.
+     *
+     * @param username the username whose records are returned; blank returns every record
+     * @return the records
+     */
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    @Operation(summary = "Get throttled authentication records")
-    public List<ThrottledSubmission> getRecords() {
-        return throttledSubmissionsStore.getObject().entries().toList();
+    @Operation(summary = "Get throttled authentication records, optionally only those of a username",
+        parameters = @Parameter(name = "username", required = false,
+            description = "Return only the records submitted for this username, matched regardless of case"))
+    public List<ThrottledSubmission> getRecords(@RequestParam(value = "username", required = false) final @Nullable String username) {
+        final Stream<?> entries = throttledSubmissionsStore.getObject().entries();
+        return entries
+            .map(ThrottledSubmission.class::cast)
+            .filter(submission -> StringUtils.isBlank(username) || Strings.CI.equals(username, submission.getUsername()))
+            .toList();
     }
     
     /**

@@ -341,6 +341,8 @@ one-time codes can be added when `cas.authn.mfa.simple.mail.accepted-email-patte
   `cas.ticket.registry.jpa.properties`{: .cas-setting}.
 - {: .fixed data-area="tickets"} Looking up sessions by attribute in the [JPA ticket registry](../ticketing/JPA-Ticket-Registry.html)
   no longer fails on MySQL when the caller runs outside a transaction, as delegated OpenID Connect and SAML2 logout do.
+  The [single sign-on sessions endpoint](../authentication/Configuring-SSO.html#actuator-endpoints) reads sessions inside
+  a ticket transaction, so listing or removing sessions no longer fails with the JPA ticket registry on PostgreSQL.
   Updating a ticket encrypts it once instead of twice when ticket encryption is turned on.
 - {: .changed data-area="tickets"} The [JPA ticket registry](../ticketing/JPA-Ticket-Registry.html) updates a ticket with a
   single statement instead of reading the row back first, no longer deletes service tickets twice when a session ends,
@@ -743,6 +745,9 @@ one-time codes can be added when `cas.authn.mfa.simple.mail.accepted-email-patte
   as the [CAS protocol](../protocol/CAS-Protocol-Specification.html) recommends, instead of returning to the application
   without a ticket. When renewed authentication is turned off with `cas.sso.renew-authn-enabled`{: .cas-setting}, the
   `gateway` parameter is honored as before.
+- {: .new data-area="authentication"} The `throttles` actuator endpoint of
+  [authentication throttling](../authentication/Configuring-Authentication-Throttling-Failure.html) can return only the
+  throttled records of one username, matched regardless of case, instead of every record.
 
 ### SAML2
 {: .changed data-area="saml"}

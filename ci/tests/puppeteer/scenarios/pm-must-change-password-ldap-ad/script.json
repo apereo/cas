@@ -36,6 +36,7 @@
     "--cas.authn.pm.ldap[0].trust-manager=ANY",
 
     "--cas.authn.pm.core.enabled=true",
+    "--cas.authn.accept.enabled=false",
     
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=https://localhost:8443/cas",

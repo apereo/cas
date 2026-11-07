@@ -120,6 +120,18 @@ description: "Change CAS views and presentation: Thymeleaf render path, theme re
 - Palantir's feature catalog (`palantir-cas-features.js`) groups `CasFeatureModule.<Feature>[.<module>]` names into one
   card per feature; `CAS_FEATURE_TITLES` holds titles the casing can't split. `CAS_FEATURES` stays the flat name list
   other scripts read.
+- A Palantir page is a `Tabs` entry (`PalantirDashboardTab(name, index, shortcut)`), a positional MDC tab button in
+  `dashboardtabs.html`, a panel `#attribute-tab-N`, a nav `<li data-tab-index=N>`, its scripts in
+  `casPalantirDashboardView.html` and lazy initializers through `registerDashboardTabInitializers`; hide it in
+  `processNavigationTabs()` when its endpoints are missing. The Users page (index 16, `palantir-users.js`) is a list of
+  `PalantirUserLookup.sources()` (key, title, icon, `available()`, `load(username)`, `render(records, username)`): add a
+  per-user source there, not a new page (cards are `<details>`; an empty source keeps a hidden card so a reload can
+  bring it back, and only the first non-empty card opens by default); reads go through `PalantirUserLookup.get` (404 means no records; the audit log
+  endpoint needs a form content type even on GET and matches its principal as a regex, so quote it).
+- The command palette (`palantir-command-palette.js`, Ctrl/⌘+K and `/`) reads its entries from the nav, the outer inner-tab
+  row of each panel, `registeredServicesById` and a few actions each time it opens, so a new page or inner tab shows up on its
+  own; it is a jQuery UI dialog with a categorized autocomplete, not another library. Ctrl+K is a document keydown handler so
+  it works inside fields; `/` goes through hotkeys like the page shortcuts.
 - To look at Palantir without a running CAS: render `palantir/casPalantirDashboardView` with Thymeleaf, the layout dialect,
   OGNL and a stub `#cas` expression object (jars from a built war; SpEL `?:` inside `${}` and `T(...)` need rewriting for
   OGNL), serve `static/` with the webjars (npm for those not in the war), and stub the actuator URLs in Playwright.

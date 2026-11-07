@@ -225,7 +225,10 @@ description: "Review and change ticket registries: stateless (compact tickets), 
   parameter). `build/jpa-ticket-registry-run.sh` runs the module against MySQL, MariaDB and Postgres in turn.
 - JPA registry streams (`stream`, `getSessionsFor`, `getTicketsFor`) must be consumed inside a ticket transaction:
   outside one, MySQL fails on the first row with "Operation not allowed after ResultSet closed", because the connection
-  goes back to the pool. Tests that read them wrap the read in `jpaTicketRegistryTransactionTemplate`.
+  goes back to the pool (on Postgres, "This ResultSet is closed"). Tests that read them wrap the read in
+  `jpaTicketRegistryTransactionTemplate`; backend-agnostic callers such as the `ssoSessions` actuator collect the
+  stream inside a `TicketRegistry.TICKET_TRANSACTION_MANAGER` transaction (a pseudo transaction manager when the
+  registry is not JPA) and act on the collected ids afterwards (`SingleSignOnSessionsEndpoint.readInTicketTransaction`).
   `getSessionsWithAttributes` is the exception: its results are small and its callers (delegated OIDC/SAML2 logout, MCP
   tools) run without one, so it collects the matches inside its own transaction and returns the list's stream.
 
