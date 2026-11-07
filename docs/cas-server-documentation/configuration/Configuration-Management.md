@@ -51,7 +51,7 @@ CAS uses a very particular order that is designed to allow
 sensible overriding of values. Properties passed to the CAS web application 
 are considered in the following order:
 
-1. Command line arguments, starting with `--` (e.g. `--server.port=9000`)
+1. Command line arguments, starting with `--` and followed by the name of a setting and its value
 2. Properties from `SPRING_APPLICATION_JSON` (inline JSON embedded in an environment variable/system property)
 3. JNDI attributes from `java:comp/env`.
 4. Configuration files (i.e. `application.properties|yml`) indicated by the [configuration server](#configuration-server) and profile.

@@ -824,6 +824,12 @@ one-time codes can be added when `cas.authn.mfa.simple.mail.accepted-email-patte
   and that setting both the Kerberos KDC and realm makes the JDK ignore the Kerberos configuration file.
 - {: .fixed data-area="docs"} Setting lists show default values in full instead of cutting them off; where a list is narrow, the
   value moves to a second row under the setting name. Each setting in the configuration catalog also has a *Copy link* button.
+- {: .new data-area="docs"} Every page of the documentation has a Markdown copy at the same address ending in `.md`, which
+  the page toolbar copies to the clipboard, and each version publishes an `llms.txt` index of its pages for AI assistants
+  and other tools.
+- {: .new data-area="docs"} The new [Configuration Properties Changes](../configuration/Configuration-Properties-Changes.html) page lists the
+  CAS settings added, removed, replaced or given a new default since the previous version, generated from the configuration
+  catalogs and also published as JSON.
 
 ## Other Stuff
 

@@ -302,7 +302,7 @@ SAML2 authentication request inside its `Scoping` element matches the defined pa
   "metadataLocation": "path/to/metadata.xml",
   "attributeReleasePolicy": {
     "@class": "org.apereo.cas.support.saml.services.AuthnRequestRequesterIdAttributeReleasePolicy",
-    "allowedAttributes" : [ "java.util.ArrayList", [ "cn", "mail", "sn" ] ]
+    "allowedAttributes" : [ "java.util.ArrayList", [ "cn", "mail", "sn" ] ],
     "requesterIdPattern" : ".*"
   }
 }
