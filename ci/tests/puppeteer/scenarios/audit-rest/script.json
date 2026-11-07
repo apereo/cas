@@ -17,7 +17,6 @@
 
     "--cas.audit.groovy.template.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/AuditTemplate.gtemplate",
 
-    "--cas.audit.engine.ignore-audit-failures=true",
     "--cas.audit.engine.supported-actions=^AUTHENTICATION_,^TICKET_GRANTING_TICKET_,^SERVICE_TICKET_",
     "--cas.audit.engine.excluded-actions=^SERVICE_TICKET_VALIDATE",
 
@@ -25,5 +24,19 @@
     "--management.endpoints.web.exposure.include=auditLog",
     "--management.endpoints.access.default=UNRESTRICTED"
   ],
-  "initScript": "${PWD}/ci/tests/httpbin/run-httpbin-server.sh"
+  "initScript": "${PWD}/ci/tests/httpbin/run-httpbin-server.sh",
+  "variations": [
+    {
+      "name": "ignore",
+      "properties": [
+        "--cas.audit.engine.ignore-audit-failures=true"
+      ]
+    },
+    {
+      "name": "strict",
+      "properties": [
+        "--cas.audit.engine.ignore-audit-failures=false"
+      ]
+    }
+  ]
 }

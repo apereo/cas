@@ -5,10 +5,8 @@
   },
 
   "properties": [
-    "--cas.authn.ldap[0].type=AUTHENTICATED",
     "--cas.authn.ldap[0].bind-dn=Administrator@cas.example.org",
     "--cas.authn.ldap[0].bind-credential=M3110nM3110n#1",
-    "--cas.authn.ldap[0].ldap-url=ldap://localhost:10390",
     "--cas.authn.ldap[0].use-start-tls=false",
     "--cas.authn.ldap[0].subtree-search=true",
     "--cas.authn.ldap[0].base-dn=dc=cas,dc=example,dc=org",
@@ -17,12 +15,10 @@
     "--cas.authn.ldap[0].enhance-with-entry-resolver=true",
     "--cas.authn.ldap[0].search-filter=(sAMAccountName={user})",
     "--cas.authn.ldap[0].min-pool-size=0",
-    "--cas.authn.ldap[0].trust-store=file:${#systemProperties['java.io.tmpdir']}/adcacerts.jks",
-    "--cas.authn.ldap[0].trust-store-type=JKS",
-    "--cas.authn.ldap[0].trust-store-password=changeit",
     "--cas.authn.ldap[0].hostname-verifier=ANY",
     "--cas.authn.ldap[0].password-policy.type=AD",
     "--cas.authn.ldap[0].password-policy.enabled=true",
+    "--cas.authn.ldap[0].password-policy.warning-days=10",
 
     "--cas.authn.pm.ldap[0].type=AD",
     "--cas.authn.pm.ldap[0].ldap-url=ldaps://localhost:10636",
@@ -45,5 +41,26 @@
     "--cas.server.prefix=https://localhost:8443/cas",
     "--cas.server.scope=example.net"
   ],
-  "initScript": "${PWD}/ci/tests/ldap/run-ad-server.sh"
+  "variations": [
+    {
+      "name": "authenticated",
+      "properties": [
+        "--cas.authn.ldap[0].type=AUTHENTICATED",
+        "--cas.authn.ldap[0].ldap-url=ldap://localhost:10390",
+        "--cas.authn.ldap[0].trust-store=file:${#systemProperties['java.io.tmpdir']}/adcacerts.jks",
+        "--cas.authn.ldap[0].trust-store-type=JKS",
+        "--cas.authn.ldap[0].trust-store-password=changeit"
+      ]
+    },
+    {
+      "name": "ad",
+      "properties": [
+        "--cas.authn.ldap[0].type=AD",
+        "--cas.authn.ldap[0].dn-format=%s@cas.example.org",
+        "--cas.authn.ldap[0].ldap-url=ldaps://localhost:10636",
+        "--cas.authn.ldap[0].trust-manager=ANY"
+      ]
+    }
+  ],
+  "initScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/init.sh"
 }

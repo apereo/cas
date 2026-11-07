@@ -19,6 +19,7 @@
     "--cas.authn.mfa.trusted.device-fingerprint.cookie.enabled=false",
     "--cas.authn.mfa.trusted.device-fingerprint.client-ip.enabled=true",
     "--cas.authn.mfa.trusted.device-fingerprint.user-agent.enabled=true",
+    "--cas.authn.mfa.trusted.device-fingerprint.browser.enabled=true",
     "--cas.authn.mfa.trusted.json.location=file:${TMPDIR}/${SCENARIO}-trusted-devices.json",
     "--cas.authn.mfa.trusted.cleaner.schedule.start-delay=PT5S",
     "--cas.authn.mfa.trusted.cleaner.schedule.repeat-interval=PT5S",

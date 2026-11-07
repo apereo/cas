@@ -21,6 +21,7 @@ import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
+import org.jspecify.annotations.Nullable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.Assert;
@@ -55,7 +56,9 @@ public class OidcLogoutEndpointController extends BaseOidcController {
     }
 
     /**
-     * Handle request.
+     * Handle request. The post-logout redirect URL is followed only when it matches the client of the ID token hint,
+     * one of the client's logout URLs, or a registered service found by that URL alone: the {@code client_id} of the
+     * request is not used to find that service, since any URL would then resolve to the requesting client.
      *
      * @param postLogoutRedirectUrl the post logout redirect url
      * @param state                 the state
@@ -106,11 +109,7 @@ public class OidcLogoutEndpointController extends BaseOidcController {
             }
             val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(
                 getConfigurationContext().getServicesManager(), clientIdInIdToken, OidcRegisteredService.class);
-            val idTokenClaims = getConfigurationContext().getIdTokenSigningAndEncryptionService().decode(idToken, Optional.of(registeredService));
-            Assert.isTrue(idTokenClaims.getClaimValueAsString(OAuth20Constants.CLIENT_ID).equalsIgnoreCase(registeredService.getClientId()),
-                "Client id in ID token does not match client id in registered service");
-            Assert.isTrue(idTokenClaims.hasClaim(OidcConstants.AUD), "Audience claim is not present");
-            Assert.isTrue(idTokenClaims.hasClaim(OAuth20Constants.CLAIM_SUB), "Subject claim is not present");
+            verifyIdTokenHint(idToken, registeredService);
 
             LOGGER.debug("Located registered service [{}]", registeredService);
             val service = getConfigurationContext().getWebApplicationServiceServiceFactory().createService(clientIdInIdToken);
@@ -133,6 +132,7 @@ public class OidcLogoutEndpointController extends BaseOidcController {
             LOGGER.debug("Logout urls assigned to registered service are [{}]", urls);
             if (StringUtils.isNotBlank(postLogoutRedirectUrl) && registeredService.getMatchingStrategy() != null) {
                 val postLogoutService = getConfigurationContext().getWebApplicationServiceServiceFactory().createService(postLogoutRedirectUrl);
+                postLogoutService.getAttributes().remove(OAuth20Constants.CLIENT_ID);
                 val matchResult = registeredService.matches(postLogoutRedirectUrl)
                     || urls.stream().anyMatch(url -> postLogoutRedirectUrlMatcher.matches(postLogoutRedirectUrl, url))
                     || getConfigurationContext().getServicesManager().findServiceBy(postLogoutService) != null;
@@ -161,6 +161,28 @@ public class OidcLogoutEndpointController extends BaseOidcController {
         }
         return executeLogoutRedirect(Optional.ofNullable(StringUtils.trimToNull(state)),
             Optional.empty(), Optional.ofNullable(givenClientId), request, response);
+    }
+
+    /**
+     * Verify the ID token hint against the client it names. A hint that names no registered client, whose signature
+     * cannot be verified, or that lacks the client, audience or subject claims is a bad request, answered with
+     * {@code 400} rather than as a server error.
+     *
+     * @param idToken           the ID token hint
+     * @param registeredService the registered service of the client named by the hint
+     */
+    private void verifyIdTokenHint(final String idToken, @Nullable final OidcRegisteredService registeredService) {
+        try {
+            val clientService = Objects.requireNonNull(registeredService, "ID token hint names no registered client");
+            val idTokenClaims = getConfigurationContext().getIdTokenSigningAndEncryptionService().decode(idToken, Optional.of(clientService));
+            Assert.isTrue(idTokenClaims.getClaimValueAsString(OAuth20Constants.CLIENT_ID).equalsIgnoreCase(clientService.getClientId()),
+                "Client id in ID token does not match client id in registered service");
+            Assert.isTrue(idTokenClaims.hasClaim(OidcConstants.AUD), "Audience claim is not present");
+            Assert.isTrue(idTokenClaims.hasClaim(OAuth20Constants.CLAIM_SUB), "Subject claim is not present");
+        } catch (final Exception e) {
+            LOGGER.warn("ID token hint in logout request cannot be verified: [{}]", e.getMessage());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "ID token hint cannot be verified", e);
+        }
     }
 
     private boolean enforceIssuer(final HttpServletRequest request, final OidcRegisteredService registeredService) {

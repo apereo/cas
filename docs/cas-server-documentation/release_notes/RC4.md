@@ -133,7 +133,7 @@ to build and verify Graal VM native images and we plan to extend the coverage to
 {: data-area="project"}
 
 The collection of end-to-end [browser tests based on Puppeteer](../../developer/Test-Process.html) continue to grow to cover more use cases
-and scenarios. At the moment, total number of jobs stands at approximately `621` distinct scenarios. The overall
+and scenarios. At the moment, total number of jobs stands at approximately `627` distinct scenarios. The overall
 test coverage of the CAS codebase is approximately `94%`.
 
 - {: .changed data-area="project"} MariaDB integration tests and functional test scenarios use port `3307`, so they can run
@@ -163,6 +163,11 @@ test coverage of the CAS codebase is approximately `94%`.
   request attributes, simple multifactor token expiration and rate limiting, YubiKey verification against a mock server, REST
   authentication account states, password history (`cas.authn.pm.history.core.enabled`{: .cas-setting}), passwordless token
   expiration, and SAML2 signed logout requests, AuthnRequest rejection, artifact resolution, attribute queries and ECP.
+- {: .changed data-area="project"} Browser tests now cover OpenID Connect client attestation and JWKS rotation and revocation
+  across issued tokens, SAML2 back-channel logout, offline metadata signature trust, persistent NameIDs, signing and encryption
+  algorithms, Active Directory and OpenLDAP password policy warnings, X.509 revocation through CRLs, the ticket registry
+  cleaner, concurrent ticket validation across nodes, ticket encryption at rest in MongoDb, masking of tickets in logs, and
+  strict audit failure handling (`cas.audit.engine.ignore-audit-failures`{: .cas-setting}).
 
 ### JSpecify & NullAway
 {: data-area="project"}
@@ -533,6 +538,11 @@ one-time codes can be added when `cas.authn.mfa.simple.mail.accepted-email-patte
 - {: .changed data-area="oidc"} OAuth/OpenID Connect endpoints no longer send the `X-XSS-Protection` header, which browsers
   ignore. Only the `X-Requested-With: XMLHttpRequest` header now marks a script request that is answered with `401` instead
   of a redirect to the login; the `is_ajax_request` header and parameter are no longer recognized.
+- {: .fixed data-area="oidc"} [OpenID Connect logout](../authentication/OIDC-Authentication-Logout.html) no longer
+  follows any `post_logout_redirect_uri` sent along with a `client_id`. The URI must match the client of the ID token
+  hint, one of its logout URLs, or a registered service; otherwise the session ends without a redirect. An ID token
+  hint that names no registered client or whose signature cannot be verified is answered with `400` instead of a
+  server error.
 
 ### OpenID Federation
 {: .changed data-area="oidc"}
@@ -734,6 +744,11 @@ one-time codes can be added when `cas.authn.mfa.simple.mail.accepted-email-patte
 
 - {: .fixed data-area="saml"} The [ECP profile](../authentication/Configuring-SAML2-Authentication.html) answers a
   successful login with the SAML2 response in the SOAP envelope again, instead of a SOAP fault.
+- {: .fixed data-area="saml"} [Back-channel SAML2 logout](../installation/Configuring-SAML2-Logout.html) with the SOAP binding
+  sends the SOAP envelope as the body of the request, instead of a URL-encoded copy of it.
+- {: .fixed data-area="saml"} A `nameIdQualifier` or `serviceProviderNameIdQualifier` set to `none` on a
+  [SAML2 service](../services/SAML2-Service-Management.html) leaves that qualifier out of the NameID, as documented, instead of
+  sending the value `none`.
 - {: .fixed data-area="saml"} The [attribute query profile](../installation/Configuring-SAML2-AttributeQuery.html) releases
   the attributes its release policy allows; the policy could not find the metadata of the service provider for a query
   and released none of them.

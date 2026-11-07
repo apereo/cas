@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Service providers whose ACS is httpbin, used to inspect the SAML2 response.
+    The encryption certificate matches sp-encryption.key, which the scenario uses to decrypt.
+    sp-optional and sp-required have no encryption key on purpose.
+-->
+<md:EntitiesDescriptor xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata"
+                       xmlns:ds="http://www.w3.org/2000/09/xmldsig#"
+                       Name="https://encryption.example.org/federation">
+    <md:EntityDescriptor entityID="https://encryption.example.org/sp-gcm">
+        <md:SPSSODescriptor AuthnRequestsSigned="false" WantAssertionsSigned="false"
+                            protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol">
+            <md:KeyDescriptor use="encryption">
+                <ds:KeyInfo>
+                    <ds:X509Data>
+                        <ds:X509Certificate>
+                            MIIDJTCCAg2gAwIBAgIUSpa+Yn2ENtEzHsb+lacV8gspix0wDQYJKoZIhvcNAQEL
+                            BQAwITEfMB0GA1UEAwwWZW5jcnlwdGlvbi5leGFtcGxlLm9yZzAgFw0yNjExMDcw
+                            MjQ1NDBaGA8yMTI2MTAxNDAyNDU0MFowITEfMB0GA1UEAwwWZW5jcnlwdGlvbi5l
+                            eGFtcGxlLm9yZzCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAMJjLHUr
+                            imVG5Cyoj8BJ/MgrhwcWXkrhXaul3oKhXqyCPvzE/D42Jk1U06KLBd6SxZOeEjY6
+                            XDfK9rnQplA4jFp8Qi2gQ7c6q6lxv8GKcBivcHDLrfhZxS4FCXH097SE43ersCJr
+                            uEt1DVzpVcse4EU8NDwcZP06nN7EFF8e5OzAnuVtDfGbJ1pOhl27jnkjtJKS9FU6
+                            8dWBkWrQ0VOF2I11hxMTY0dteJV0Oi49A+ezBqJxhlQT8dmCl4O0C9eRSFXBZsDS
+                            jlEJ7KnW5+PoHJXvDVNwt/gbvRF+oXJGEPncMA8az0pOKc8O5CGlZENHswTBeob5
+                            Rte3ZlPQUX8jxDcCAwEAAaNTMFEwHQYDVR0OBBYEFF1z9uAPKUEpZ67ORlwHt9Yw
+                            XRlUMB8GA1UdIwQYMBaAFF1z9uAPKUEpZ67ORlwHt9YwXRlUMA8GA1UdEwEB/wQF
+                            MAMBAf8wDQYJKoZIhvcNAQELBQADggEBAGn4wTy7iVc//D5CPtOVksnC8B4Uv/1H
+                            4hwBUbST2x3YvuA0LIyNLbxenFx9l7bGkz8kTlcR+UCTCiryGq8enwNwxzmJLWzH
+                            ykKEuAejfCNNk6DVIGE5HEw7cv6wpW2rEVvZQhARL3AHAabO4FDPBRcimTscwTht
+                            8jNcjSqdsz8LEQacec1JR8sJqIjRp5j+5NJu1wLks/v2yZWmffvFwuBq+i9xRwd8
+                            cM/tYJEf/c83riXO0JRXABgiqlz7u7noGRnBcdAphm3n+o/thQRqo9B56e3JvwVb
+                            Txbl/kG/s5rBrQwQADm2VIyJXjIWs4hzLYSVRxZboMyojBldrLBSxuw=
+                        </ds:X509Certificate>
+                    </ds:X509Data>
+                </ds:KeyInfo>
+            </md:KeyDescriptor>
+            <md:NameIDFormat>urn:oasis:names:tc:SAML:2.0:nameid-format:transient</md:NameIDFormat>
+            <md:AssertionConsumerService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"
+                                         Location="https://localhost:9859/post" index="1"/>
+        </md:SPSSODescriptor>
+    </md:EntityDescriptor>
+    <md:EntityDescriptor entityID="https://encryption.example.org/sp-cbc">
+        <md:SPSSODescriptor AuthnRequestsSigned="false" WantAssertionsSigned="false"
+                            protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol">
+            <md:KeyDescriptor use="encryption">
+                <ds:KeyInfo>
+                    <ds:X509Data>
+                        <ds:X509Certificate>
+                            MIIDJTCCAg2gAwIBAgIUSpa+Yn2ENtEzHsb+lacV8gspix0wDQYJKoZIhvcNAQEL
+                            BQAwITEfMB0GA1UEAwwWZW5jcnlwdGlvbi5leGFtcGxlLm9yZzAgFw0yNjExMDcw
+                            MjQ1NDBaGA8yMTI2MTAxNDAyNDU0MFowITEfMB0GA1UEAwwWZW5jcnlwdGlvbi5l
+                            eGFtcGxlLm9yZzCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAMJjLHUr
+                            imVG5Cyoj8BJ/MgrhwcWXkrhXaul3oKhXqyCPvzE/D42Jk1U06KLBd6SxZOeEjY6
+                            XDfK9rnQplA4jFp8Qi2gQ7c6q6lxv8GKcBivcHDLrfhZxS4FCXH097SE43ersCJr
+                            uEt1DVzpVcse4EU8NDwcZP06nN7EFF8e5OzAnuVtDfGbJ1pOhl27jnkjtJKS9FU6
+                            8dWBkWrQ0VOF2I11hxMTY0dteJV0Oi49A+ezBqJxhlQT8dmCl4O0C9eRSFXBZsDS
+                            jlEJ7KnW5+PoHJXvDVNwt/gbvRF+oXJGEPncMA8az0pOKc8O5CGlZENHswTBeob5
+                            Rte3ZlPQUX8jxDcCAwEAAaNTMFEwHQYDVR0OBBYEFF1z9uAPKUEpZ67ORlwHt9Yw
+                            XRlUMB8GA1UdIwQYMBaAFF1z9uAPKUEpZ67ORlwHt9YwXRlUMA8GA1UdEwEB/wQF
+                            MAMBAf8wDQYJKoZIhvcNAQELBQADggEBAGn4wTy7iVc//D5CPtOVksnC8B4Uv/1H
+                            4hwBUbST2x3YvuA0LIyNLbxenFx9l7bGkz8kTlcR+UCTCiryGq8enwNwxzmJLWzH
+                            ykKEuAejfCNNk6DVIGE5HEw7cv6wpW2rEVvZQhARL3AHAabO4FDPBRcimTscwTht
+                            8jNcjSqdsz8LEQacec1JR8sJqIjRp5j+5NJu1wLks/v2yZWmffvFwuBq+i9xRwd8
+                            cM/tYJEf/c83riXO0JRXABgiqlz7u7noGRnBcdAphm3n+o/thQRqo9B56e3JvwVb
+                            Txbl/kG/s5rBrQwQADm2VIyJXjIWs4hzLYSVRxZboMyojBldrLBSxuw=
+                        </ds:X509Certificate>
+                    </ds:X509Data>
+                </ds:KeyInfo>
+            </md:KeyDescriptor>
+            <md:NameIDFormat>urn:oasis:names:tc:SAML:2.0:nameid-format:transient</md:NameIDFormat>
+            <md:AssertionConsumerService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"
+                                         Location="https://localhost:9859/post" index="1"/>
+        </md:SPSSODescriptor>
+    </md:EntityDescriptor>
+    <md:EntityDescriptor entityID="https://encryption.example.org/sp-attributes">
+        <md:SPSSODescriptor AuthnRequestsSigned="false" WantAssertionsSigned="false"
+                            protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol">
+            <md:KeyDescriptor use="encryption">
+                <ds:KeyInfo>
+                    <ds:X509Data>
+                        <ds:X509Certificate>
+                            MIIDJTCCAg2gAwIBAgIUSpa+Yn2ENtEzHsb+lacV8gspix0wDQYJKoZIhvcNAQEL
+                            BQAwITEfMB0GA1UEAwwWZW5jcnlwdGlvbi5leGFtcGxlLm9yZzAgFw0yNjExMDcw
+                            MjQ1NDBaGA8yMTI2MTAxNDAyNDU0MFowITEfMB0GA1UEAwwWZW5jcnlwdGlvbi5l
+                            eGFtcGxlLm9yZzCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAMJjLHUr
+                            imVG5Cyoj8BJ/MgrhwcWXkrhXaul3oKhXqyCPvzE/D42Jk1U06KLBd6SxZOeEjY6
+                            XDfK9rnQplA4jFp8Qi2gQ7c6q6lxv8GKcBivcHDLrfhZxS4FCXH097SE43ersCJr
+                            uEt1DVzpVcse4EU8NDwcZP06nN7EFF8e5OzAnuVtDfGbJ1pOhl27jnkjtJKS9FU6
+                            8dWBkWrQ0VOF2I11hxMTY0dteJV0Oi49A+ezBqJxhlQT8dmCl4O0C9eRSFXBZsDS
+                            jlEJ7KnW5+PoHJXvDVNwt/gbvRF+oXJGEPncMA8az0pOKc8O5CGlZENHswTBeob5
+                            Rte3ZlPQUX8jxDcCAwEAAaNTMFEwHQYDVR0OBBYEFF1z9uAPKUEpZ67ORlwHt9Yw
+                            XRlUMB8GA1UdIwQYMBaAFF1z9uAPKUEpZ67ORlwHt9YwXRlUMA8GA1UdEwEB/wQF
+                            MAMBAf8wDQYJKoZIhvcNAQELBQADggEBAGn4wTy7iVc//D5CPtOVksnC8B4Uv/1H
+                            4hwBUbST2x3YvuA0LIyNLbxenFx9l7bGkz8kTlcR+UCTCiryGq8enwNwxzmJLWzH
+                            ykKEuAejfCNNk6DVIGE5HEw7cv6wpW2rEVvZQhARL3AHAabO4FDPBRcimTscwTht
+                            8jNcjSqdsz8LEQacec1JR8sJqIjRp5j+5NJu1wLks/v2yZWmffvFwuBq+i9xRwd8
+                            cM/tYJEf/c83riXO0JRXABgiqlz7u7noGRnBcdAphm3n+o/thQRqo9B56e3JvwVb
+                            Txbl/kG/s5rBrQwQADm2VIyJXjIWs4hzLYSVRxZboMyojBldrLBSxuw=
+                        </ds:X509Certificate>
+                    </ds:X509Data>
+                </ds:KeyInfo>
+            </md:KeyDescriptor>
+            <md:NameIDFormat>urn:oasis:names:tc:SAML:2.0:nameid-format:transient</md:NameIDFormat>
+            <md:AssertionConsumerService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"
+                                         Location="https://localhost:9859/post" index="1"/>
+        </md:SPSSODescriptor>
+    </md:EntityDescriptor>
+    <md:EntityDescriptor entityID="https://encryption.example.org/sp-optional">
+        <md:SPSSODescriptor AuthnRequestsSigned="false" WantAssertionsSigned="false"
+                            protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol">
+            <md:NameIDFormat>urn:oasis:names:tc:SAML:2.0:nameid-format:transient</md:NameIDFormat>
+            <md:AssertionConsumerService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"
+                                         Location="https://localhost:9859/post" index="1"/>
+        </md:SPSSODescriptor>
+    </md:EntityDescriptor>
+    <md:EntityDescriptor entityID="https://encryption.example.org/sp-required">
+        <md:SPSSODescriptor AuthnRequestsSigned="false" WantAssertionsSigned="false"
+                            protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol">
+            <md:NameIDFormat>urn:oasis:names:tc:SAML:2.0:nameid-format:transient</md:NameIDFormat>
+            <md:AssertionConsumerService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"
+                                         Location="https://localhost:9859/post" index="1"/>
+        </md:SPSSODescriptor>
+    </md:EntityDescriptor>
+</md:EntitiesDescriptor>

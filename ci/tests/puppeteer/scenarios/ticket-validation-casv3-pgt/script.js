@@ -129,6 +129,15 @@ async function verifyProxyFailuresAndChains(pgt) {
     await cas.log(xml);
     const proxies = [...xml.matchAll(/<cas:proxy>(.*?)<\/cas:proxy>/g)].map((match) => match[1]);
     assert.deepStrictEqual(proxies, [hopCallback, PGT_URL]);
+
+    await cas.logg("The CAS 2.0 response lists each proxy of the chain once, most recent first");
+    const chainedCas2Ticket = await proxyTicket(`${PROXIED}/ptdefault`, secondPgt);
+    const cas2Xml = await cas.doRequest(`https://localhost:8443/cas/proxyValidate?service=${PROXIED}/ptdefault&ticket=${chainedCas2Ticket}`);
+    await cas.log(cas2Xml);
+    assert(cas2Xml.includes("<cas:user>casuser</cas:user>"), "The CAS 2.0 proxy ticket validation must succeed");
+    assert.equal((cas2Xml.match(/<cas:proxies>/g) || []).length, 1, "The CAS 2.0 response must carry one proxies element");
+    const cas2Proxies = [...cas2Xml.matchAll(/<cas:proxy>(.*?)<\/cas:proxy>/g)].map((match) => match[1].trim());
+    assert.deepStrictEqual(cas2Proxies, [hopCallback, PGT_URL]);
 }
 
 /**

@@ -30,14 +30,14 @@ import jakarta.servlet.http.HttpServletRequest;
 @Setter
 @Accessors(chain = true)
 public class ClientInfo implements Serializable {
-    @Serial
-    private static final long serialVersionUID = 7492721606084356617L;
-
     /**
      * Value of a client detail that the request did not carry.
      */
     public static final String UNKNOWN = "unknown";
 
+    @Serial
+    private static final long serialVersionUID = 7492721606084356617L;
+    
     /**
      * IP Address of the client (Remote).
      */

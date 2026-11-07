@@ -497,3 +497,11 @@ description: "Review and change CAS OAuth2/OIDC protocol behavior: token endpoin
   does not), signs it with the first of its `signing.oidc.algs` the OP lists, and addresses client assertions to the token
   endpoint. It signs ID token and userinfo algorithms into its RP metadata from the same setting, so keep OFFA on `RS256`
   against CAS's RSA keystore.
+- `WebApplicationServiceFactory.createService(url)` copies the current request's parameters into the service attributes,
+  and the OAuth/OIDC service locator finds a service by its `client_id` attribute alone. Looking up a URL taken from the
+  request (a redirect or logout URI) that way finds the requesting client whatever the URL is. Remove `client_id` from
+  the service first, or check that the located service matches the URL (`OidcLogoutEndpointController`).
+- OIDC logout follows a `post_logout_redirect_uri` that matches any registered CAS service, not only the client's own
+  URIs. That is intended: deployments are expected to tighten the service registry and remove the catch-all
+  `^(https|imaps)://.*` service, so do not report it as an open redirect
+  (`OidcLogoutEndpointControllerTests.verifyPostLogoutRedirectToAnotherRegisteredApplication`).

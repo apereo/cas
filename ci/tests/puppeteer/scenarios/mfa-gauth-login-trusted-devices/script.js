@@ -10,10 +10,17 @@ const SENSITIVE_SERVICE = "https://localhost:9859/anything/sensitive";
 const TRUSTED_DEVICE_NAME = "My Trusted Device";
 const EXPIRING_DEVICE_NAME = "Expiring Device";
 const EXPIRING_DEVICE_SECONDS = 30;
+const TRUSTED_BROWSER_FINGERPRINT = "cas-trusted-browser";
+const OTHER_BROWSER_FINGERPRINT = "cas-other-browser";
 
 /*
- * The device fingerprint is "<client-ip>@<user-agent>": the cookie component is turned off, so a fresh browser
- * context with the same user agent is the same device, while another user agent or client address is not.
+ * The device fingerprint is "<client-ip>@<user-agent>@<browser>": the cookie component is turned off, so a fresh
+ * browser context with the same user agent and browser fingerprint is the same device, while another user agent,
+ * client address or browser fingerprint is not. The browser fingerprint is what the login form submits in its hidden
+ * deviceFingerprint field (captured by FingerprintJS when the theme turns cas.login-form.device-fingerprint.enabled on);
+ * the script replaces the captured value with a fixed one before submitting, so that every browser context of the
+ * script presents the same browser unless a step asks for another. CAS remembers it for the multifactor flow, where the
+ * device is registered by a later request that does not carry it.
  * Records are kept in a JSON file, which lets the script see what the cleaner removed without asking CAS,
  * since every read through CAS removes expired records first.
  */
@@ -32,6 +39,27 @@ async function withPage(browser, options, callback) {
     } finally {
         await context.close();
     }
+}
+
+async function useBrowserFingerprint(page, fingerprint) {
+    const field = "input[name='deviceFingerprint']";
+    const captured = await page.waitForFunction((selector) => {
+        const input = document.querySelector(selector);
+        return input !== null && input.value !== "" ? input.value : false;
+    }, {timeout: 10000}, field)
+        .then((handle) => handle.jsonValue())
+        .catch(() => "");
+    await page.$eval(field, (input, value) => {
+        input.value = value;
+    }, fingerprint);
+    await cas.log(`Login form captured browser fingerprint [${captured}]; submitting [${fingerprint}]`);
+    return captured;
+}
+
+async function loginWithBrowserFingerprint(page, fingerprint = TRUSTED_BROWSER_FINGERPRINT) {
+    const captured = await useBrowserFingerprint(page, fingerprint);
+    await cas.loginWith(page);
+    return captured;
 }
 
 async function fetchTrustedDevices() {
@@ -82,15 +110,15 @@ function toMillis(date) {
 
 async function assertTrustedDeviceSkipsMfa(page) {
     await cas.gotoLoginWithAuthnMethod(page, undefined, "mfa-gauth");
-    await cas.loginWith(page);
+    await loginWithBrowserFingerprint(page);
     await cas.sleep(2000);
     await cas.assertInvisibility(page, "#token");
     await cas.assertInnerText(page, "#content div h2", "Log In Successful");
 }
 
-async function assertMfaRequired(page) {
+async function assertMfaRequired(page, fingerprint = TRUSTED_BROWSER_FINGERPRINT) {
     await cas.gotoLoginWithAuthnMethod(page, undefined, "mfa-gauth");
-    await cas.loginWith(page);
+    await loginWithBrowserFingerprint(page, fingerprint);
     await cas.sleep(2000);
     await cas.assertVisibility(page, "#token");
 }
@@ -98,7 +126,10 @@ async function assertMfaRequired(page) {
 async function loginAndRegisterTrustedDevice(browser, deviceName, options = {}) {
     return withPage(browser, options, async (page) => {
         await cas.gotoLoginWithAuthnMethod(page, undefined, "mfa-gauth");
-        await cas.loginWith(page);
+        const captured = await loginWithBrowserFingerprint(page);
+        if (options.requireCapturedFingerprint === true) {
+            assert(captured.length > 0, "The login form must capture a browser fingerprint");
+        }
         await cas.sleep(1000);
         await cas.log("Using scratch code to login...");
 
@@ -127,14 +158,18 @@ async function verifyDeviceFingerprint(userAgent) {
     assert.equal(records.length, 1);
     assert.equal(records[0].name, TRUSTED_DEVICE_NAME);
     const fingerprint = records[0].deviceFingerprint;
-    assert(fingerprint.endsWith(`@${userAgent}`), `Fingerprint ${fingerprint} must end with the user agent`);
-    const clientIp = fingerprint.substring(0, fingerprint.length - userAgent.length - 1);
+    const suffix = `@${userAgent}@${TRUSTED_BROWSER_FINGERPRINT}`;
+    assert(fingerprint.endsWith(suffix), `Fingerprint ${fingerprint} must end with the user agent and the browser fingerprint`);
+    const clientIp = fingerprint.substring(0, fingerprint.length - suffix.length);
     assert(clientIp.length > 0 && !clientIp.includes("@"), `Fingerprint ${fingerprint} must start with the client address`);
 }
 
 async function verifyFingerprintMismatch(browser, userAgent) {
-    await cas.log("A fresh browser with the same address and user agent is the trusted device, without any cookie");
+    await cas.log("A fresh browser with the same address, user agent and browser fingerprint is the trusted device, without any cookie");
     await withPage(browser, {}, assertTrustedDeviceSkipsMfa);
+
+    await cas.log("Another browser fingerprint is another device and must complete multifactor authentication");
+    await withPage(browser, {}, (page) => assertMfaRequired(page, OTHER_BROWSER_FINGERPRINT));
 
     await cas.log("Another user agent is another device and must complete multifactor authentication");
     await withPage(browser, {userAgent: `${userAgent} CasOtherDevice`}, assertMfaRequired);
@@ -147,7 +182,7 @@ async function verifyServiceBypassesTrustedDevice(browser) {
     await cas.log("The trusted device skips multifactor authentication for an ordinary application");
     await withPage(browser, {}, async (page) => {
         await cas.gotoLoginWithAuthnMethod(page, TRUSTED_SERVICE, "mfa-gauth");
-        await cas.loginWith(page);
+        await loginWithBrowserFingerprint(page);
         await cas.sleep(2000);
         const ticket = await cas.assertTicketParameter(page);
         const json = await cas.validateTicket(TRUSTED_SERVICE, ticket);
@@ -157,7 +192,7 @@ async function verifyServiceBypassesTrustedDevice(browser) {
     await cas.log("An application whose policy bypasses trusted devices asks for the token on the trusted device");
     await withPage(browser, {}, async (page) => {
         await cas.gotoLogin(page, SENSITIVE_SERVICE);
-        await cas.loginWith(page);
+        await loginWithBrowserFingerprint(page);
         await cas.sleep(2000);
         await cas.assertVisibility(page, "#token");
         const scratch = await cas.fetchGoogleAuthenticatorScratchCode();
@@ -233,7 +268,7 @@ async function verifyExpiredTrustedDevice(browser, userAgent) {
 (async () => {
     const browser = await cas.newBrowser(cas.browserOptions());
     await removeAllTrustedDevices();
-    const userAgent = await loginAndRegisterTrustedDevice(browser, TRUSTED_DEVICE_NAME);
+    const userAgent = await loginAndRegisterTrustedDevice(browser, TRUSTED_DEVICE_NAME, {requireCapturedFingerprint: true});
     await verifyDeviceFingerprint(userAgent);
     await verifyFingerprintMismatch(browser, userAgent);
     await verifyServiceBypassesTrustedDevice(browser);

@@ -97,17 +97,25 @@ function parseLocalDateTime(value) {
             "Actions outside supported-actions, such as SERVICE_ACCESS_ENFORCEMENT_TRIGGERED, are not recorded");
         assert(recorded.every((action) => !action.startsWith("SERVICE_TICKET_VALIDATE")), "Excluded actions are not recorded");
 
-        await cas.logg("A failing audit trail manager does not stop the login when audit failures are ignored");
         await cas.gotoLogout(page);
         await cas.gotoLogin(page, service);
         await cas.loginWith(page, "auditfail", "Mellon");
         await cas.sleep(1000);
-        const failedTicket = await cas.assertTicketParameter(page);
-        const failedValidation = await cas.validateTicket(service, failedTicket);
-        assert.equal(failedValidation.serviceResponse.authenticationSuccess.user, "auditfail");
         await cas.log(groovyFailures);
         assert(groovyFailures.includes("AUTHENTICATION_SUCCESS"), "The Groovy audit trail manager failed while recording the login");
-        assert(groovyFailures.includes("TICKET_GRANTING_TICKET_CREATED"));
+        if (process.env.SCENARIO_VARIATION === "strict") {
+            await cas.logg("A failing audit trail manager stops the login when audit failures are not ignored");
+            await cas.assertTicketParameter(page, false);
+            await cas.assertCookie(page, false);
+            await cas.assertVisibility(page, "#username");
+            assert(!groovyFailures.includes("TICKET_GRANTING_TICKET_CREATED"), "No ticket-granting ticket is created once the audit fails");
+        } else {
+            await cas.logg("A failing audit trail manager does not stop the login when audit failures are ignored");
+            const failedTicket = await cas.assertTicketParameter(page);
+            const failedValidation = await cas.validateTicket(service, failedTicket);
+            assert.equal(failedValidation.serviceResponse.authenticationSuccess.user, "auditfail");
+            assert(groovyFailures.includes("TICKET_GRANTING_TICKET_CREATED"));
+        }
     } finally {
         await cas.closeBrowser(browser);
         server.close();
