@@ -31,7 +31,8 @@ attribute value `http://id.incommon.org/category/research-and-scholarship`:
       [
          {
            "@class": "org.apereo.cas.support.saml.services.InCommonRSAttributeReleasePolicy",
-           "useUniformResourceName": false
+           "useUniformResourceName": false,
+           "entityIds": [ "java.util.LinkedHashSet", [ "^https://sp\\.example\\.org/.+" ] ]
          }
       ]
     ]
@@ -41,6 +42,9 @@ attribute value `http://id.incommon.org/category/research-and-scholarship`:
 
 Attributes authorized for release are set to be `eduPersonPrincipalName`, `eduPersonTargetedID`, `mail`, `displayName`,
 `givenName`, `surname`, `eduPersonScopedAffiliation`.
+
+Service providers whose metadata does not carry this entity attribute value still receive the bundle when their
+entity id matches one of the optional `entityIds` patterns, as described for the *Entity Attributes* policy.
 
 {% endtab %}
 
@@ -61,7 +65,10 @@ the entity attribute value `http://refeds.org/category/research-and-scholarship`
     "@class": "org.apereo.cas.services.ChainingAttributeReleasePolicy",
     "policies": [ "java.util.ArrayList",
       [
-         {"@class": "org.apereo.cas.support.saml.services.RefedsRSAttributeReleasePolicy"}
+         {
+           "@class": "org.apereo.cas.support.saml.services.RefedsRSAttributeReleasePolicy",
+           "entityIds": [ "java.util.LinkedHashSet", [ "^https://sp\\.example\\.org/.+" ] ]
+         }
       ]
     ]
   }
@@ -69,6 +76,9 @@ the entity attribute value `http://refeds.org/category/research-and-scholarship`
 ```
 
 This policy is an extension of `InCommonRSAttributeReleasePolicy` that operates based on different entity attribute value.
+
+Service providers whose metadata does not carry this entity attribute value still receive the bundle when their
+entity id matches one of the optional `entityIds` patterns, as described for the *Entity Attributes* policy.
 
 {% endtab %}
 
@@ -207,12 +217,23 @@ metadata for the service provider contains attributes that match certain values.
     "allowedAttributes" : [ "java.util.ArrayList", [ "cn", "mail", "sn" ] ],
     "entityAttributeValues" : [ "java.util.LinkedHashSet", [ "entity-attribute-value" ] ],
     "entityAttribute" : "http://somewhere.org/category-x",
-    "entityAttributeFormat" : "urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified"
+    "entityAttributeFormat" : "urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified",
+    "entityIds" : [ "java.util.LinkedHashSet", [ "^https://sp\\.example\\.org/.+" ] ]
   }
 }
 ```
 
 The specification of `entityAttributeFormat` is optional.
+
+The policy may also list the service providers it trusts by entity id. `entityIds` is an optional set of regular
+expressions that are compared with the entity id of the service provider when its metadata does not carry
+the entity attribute with one of the expected values. Attributes are released if any of the patterns matches, so a
+service provider qualifies through its metadata **or** its entity id. Patterns are compared without regard to case and
+may match any part of the entity id; anchor them with `^` and `$` to match the entity id as a whole.
+The entity attribute itself remains required.
+
+The entity id patterns are also available to the policies that release attribute bundles based on entity categories, such
+as InCommon or REFEDS Research and Scholarship and the REFEDS anonymous, pseudonymous and personalized access policies.
 
 {% endtab %}
 
@@ -326,12 +347,18 @@ to service providers that contain the entity attribute value `https://refeds.org
     "@class": "org.apereo.cas.services.ChainingAttributeReleasePolicy",
     "policies": [ "java.util.ArrayList",
       [
-         {"@class": "org.apereo.cas.support.saml.services.AnonymousAccessAttributeReleasePolicy"}
+         {
+           "@class": "org.apereo.cas.support.saml.services.AnonymousAccessAttributeReleasePolicy",
+           "entityIds": [ "java.util.LinkedHashSet", [ "^https://sp\\.example\\.org/.+" ] ]
+         }
       ]
     ]
   }
 }
 ```
+
+Service providers whose metadata does not carry this entity attribute value still receive the bundle when their
+entity id matches one of the optional `entityIds` patterns, as described for the *Entity Attributes* policy.
 
 {% endtab %}
 
@@ -351,12 +378,18 @@ to service providers that contain the entity attribute value `https://refeds.org
     "@class": "org.apereo.cas.services.ChainingAttributeReleasePolicy",
     "policies": [ "java.util.ArrayList",
       [
-         {"@class": "org.apereo.cas.support.saml.services.PseudonymousAccessAttributeReleasePolicy"}
+         {
+           "@class": "org.apereo.cas.support.saml.services.PseudonymousAccessAttributeReleasePolicy",
+           "entityIds": [ "java.util.LinkedHashSet", [ "^https://sp\\.example\\.org/.+" ] ]
+         }
       ]
     ]
   }
 }
 ```
+
+Service providers whose metadata does not carry this entity attribute value still receive the bundle when their
+entity id matches one of the optional `entityIds` patterns, as described for the *Entity Attributes* policy.
 
 {% endtab %}
 
@@ -376,12 +409,18 @@ to service providers that contain the entity attribute value `https://refeds.org
     "@class": "org.apereo.cas.services.ChainingAttributeReleasePolicy",
     "policies": [ "java.util.ArrayList",
       [
-         {"@class": "org.apereo.cas.support.saml.services.PersonalizedAccessAttributeReleasePolicy"}
+         {
+           "@class": "org.apereo.cas.support.saml.services.PersonalizedAccessAttributeReleasePolicy",
+           "entityIds": [ "java.util.LinkedHashSet", [ "^https://sp\\.example\\.org/.+" ] ]
+         }
       ]
     ]
   }
 }
 ```
+
+Service providers whose metadata does not carry this entity attribute value still receive the bundle when their
+entity id matches one of the optional `entityIds` patterns, as described for the *Entity Attributes* policy.
 
 {% endtab %}
 

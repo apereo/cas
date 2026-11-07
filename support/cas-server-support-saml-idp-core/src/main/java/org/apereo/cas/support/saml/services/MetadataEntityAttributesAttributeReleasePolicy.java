@@ -1,11 +1,13 @@
 package org.apereo.cas.support.saml.services;
 
 import module java.base;
+import org.apereo.cas.configuration.support.RegularExpressionCapable;
 import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicyContext;
 import org.apereo.cas.support.saml.SamlIdPUtils;
 import org.apereo.cas.support.saml.services.idp.metadata.MetadataEntityAttributeQuery;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceMetadataAdaptor;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
+import org.apereo.cas.util.RegexUtils;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
 import lombok.EqualsAndHashCode;
@@ -39,6 +41,10 @@ public class MetadataEntityAttributesAttributeReleasePolicy extends BaseSamlRegi
     @JsonSetter(nulls = Nulls.AS_EMPTY)
     private Set<String> entityAttributeValues = new LinkedHashSet<>();
 
+    @RegularExpressionCapable
+    @JsonSetter(nulls = Nulls.AS_EMPTY)
+    private Set<String> entityIds = new LinkedHashSet<>();
+
     @Override
     protected Map<String, List<Object>> getAttributesForSamlRegisteredService(
         final Map<String, List<Object>> attributes,
@@ -49,8 +55,14 @@ public class MetadataEntityAttributesAttributeReleasePolicy extends BaseSamlRegi
 
         LOGGER.trace("Loading entity attribute predicate filter for candidate [{}] with values [{}]",
             getEntityAttribute(), getEntityAttributeValues());
-        val match = SamlIdPUtils.doesEntityDescriptorMatchEntityAttribute(entityDescriptor,
+        var match = SamlIdPUtils.doesEntityDescriptorMatchEntityAttribute(entityDescriptor,
             List.of(MetadataEntityAttributeQuery.of(getEntityAttribute(), getEntityAttributeFormat(), getEntityAttributeValues())));
+        if (!match && !getEntityIds().isEmpty()) {
+            LOGGER.trace("Loading entity id predicate filter for candidate [{}] with values [{}]",
+                getEntityIds(), entityDescriptor.getEntityID());
+            match = getEntityIds().stream().anyMatch(id -> RegexUtils.find(id, entityDescriptor.getEntityID()));
+        }
+
         if (match) {
             LOGGER.debug("Authorizing release of allowed attributes [{}] for entity id [{}]",
                 attributes, entityDescriptor.getEntityID());

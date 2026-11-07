@@ -23,6 +23,9 @@ description: "Compile and test CAS changes from a restricted sandbox or remote V
   the tarball. Checkstyle then runs in the cloud container, which can download the `checkstyle-<version>-all.jar` of
   `gradle/libs.versions.toml` from github.com releases; Maven Central, Lombok and the Gradle cache stay out of reach from
   both machines, so without the cache a `javac` check is not possible: hand over a `build/<name>-run.sh` instead.
+- Running a downloaded `checkstyle-<version>-all.jar` in the cloud container can also be refused (external code); then
+  check the changed files against `style/checkstyle-rules.xml` by reading and put the Checkstyle tasks in the hand-over
+  `build/<name>-run.sh`.
 - Deleting a file in the device VM is refused there; leave the file in place and ask Misagh to `git rm` it.
 - Claude's session cannot get folder access to `~/.gradle` (the auto-mode classifier refuses it), so the VM javac check
   below is not available there; compiled classes under `*/build/classes` from Misagh's IDE show which main modules

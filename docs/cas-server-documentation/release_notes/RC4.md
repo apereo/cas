@@ -692,6 +692,11 @@ one-time codes can be added when `cas.authn.mfa.simple.mail.accepted-email-patte
   the attribute is not released when none of its values match, as the inline Groovy transformation already did.
 - {: .fixed data-area="attributes"} The [return linked attribute release policy](../integration/Attribute-Release-Policy-ReturnLinked.html)
   releases the values of the first linked attribute that has a value, as documented; it used to release the last one.
+- {: .new data-area="saml"} [SAML2 attribute release policies](../installation/Configuring-SAML2-Attribute-Release.html) that
+  match metadata entity attributes, entity categories included (InCommon and REFEDS Research and Scholarship, anonymous,
+  pseudonymous and personalized access), accept entity id patterns: a service provider whose metadata does not carry the
+  entity attribute still receives the attributes when its entity id matches one of them. The Palantir service wizard
+  can edit these patterns.
 
 ### Authentication and Session Security
 {: .changed data-area="authentication"}

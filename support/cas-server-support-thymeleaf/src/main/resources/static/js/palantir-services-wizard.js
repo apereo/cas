@@ -484,6 +484,19 @@ function createRegisteredServiceAttributeReleasePolicy() {
         title: "Define the entity attribute format to match for metadata-based attribute release."
     });
 
+    createInputField({
+        cssClasses: "hide MetadataEntityAttributesAttributeReleasePolicy InCommonRSAttributeReleasePolicy RefedsRSAttributeReleasePolicy AnonymousAccessAttributeReleasePolicy PseudonymousAccessAttributeReleasePolicy PersonalizedAccessAttributeReleasePolicy",
+        labelTitle: "Entity ID Patterns (separated by comma)",
+        name: "registeredServiceAttrReleasePolicyMetadataEntityIds",
+        paramName: "attributeReleasePolicy.entityIds",
+        required: false,
+        containerId: "editServiceWizardMenuItemAttributeReleasePolicy",
+        title: "Define regular expressions matched against the service provider entity ID; attributes are also released when its metadata does not carry the entity attribute but its entity ID matches one of them."
+    })
+        .data("renderer", function (value) {
+            return ["java.util.LinkedHashSet", String(value).split(",").map(v => v.trim()).filter(v => v.length > 0)];
+        });
+
 
     createInputField({
         cssClasses: "hide MetadataRegistrationAuthorityAttributeReleasePolicy",
