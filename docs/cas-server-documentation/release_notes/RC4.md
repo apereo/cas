@@ -211,18 +211,20 @@ opens on a server that already serves such a `custom.css`, it reads its own bloc
 Nothing is saved on the server; the builder is turned on by default and is controlled by the `cas.theme-builder.enabled`
 theme property.
 
-### Palantir Search, User Lookup & Service History
+### Palantir Search, User Lookup, Service History & Interrupts
 {: .new data-area="ui"}
 
 [Palantir](../installation/Admin-Dashboard.html) has a search box, opened from the navigation bar or with `Ctrl+K`
 (`⌘K` on macOS) or `/`, that goes to any page or section, finds a registered application by name, identifier or service id,
 and runs common actions without leaving the keyboard. A new *Users* page looks up one user and gathers in one place their
 single sign-on sessions, multifactor and trusted devices, consent decisions, resolved attributes, impersonation accounts,
-passwordless account, password history, throttled login attempts and recent audit events, each with its usual actions
+passwordless account, password history, throttled login attempts, the interrupt they would see at login and recent audit events, each with its usual actions
 such as ending a session, removing a device or releasing a throttled attempt. Only sources with something recorded for
 the user are shown, and sources whose actuator endpoints are not enabled are left out. The change history of an application
 compares any recorded version side by side with the current definition or the version before it, and restores the
-selected version from the same dialog.
+selected version from the same dialog. Under *Interrupts*, the authentication section shows which
+[interrupt](../webflow/Webflow-Customization-Interrupt.html) a user would see at login and what each interrupt
+source answered.
 
 ### Theme Properties
 {: .new data-area="ui"}

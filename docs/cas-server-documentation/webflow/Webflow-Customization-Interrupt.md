@@ -68,3 +68,6 @@ application's interrupt policy that are evaluated by the login flow itself, such
 are not evaluated by this endpoint. Note that interrupt strategies may reach out to external services or run scripts.
 
 {% include_cached actuators.html endpoints="interrupts" casModule="cas-server-support-interrupt-webflow" %}
+
+The same inquiry is available in [Palantir](../installation/Admin-Dashboard.html), under *Interrupts* in the
+authentication section, when this endpoint is enabled and exposed.

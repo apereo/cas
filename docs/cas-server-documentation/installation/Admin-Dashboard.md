@@ -67,7 +67,7 @@ creating an application, switching the theme, opening the settings or signing ou
 
 The *Users* page gathers what CAS holds about one user: single sign-on sessions, registered multifactor devices,
 trusted devices, attribute consent decisions, resolved attributes, accounts the user may impersonate, the passwordless
-account, password history, throttled login attempts and recent audit events, over the last day, week or month. Each source that has something
+account, password history, throttled login attempts, the interrupt the user would see at login and recent audit events, over the last day, week or month. Each source that has something
 recorded for the user gets a card, which expands to show its records and its usual actions, such as ending a session,
 removing a device or revoking a consent decision; the first card starts expanded. A source is only consulted when the
 actuator endpoint behind it is enabled and exposed, and the page itself is hidden when none of them is.
@@ -76,6 +76,10 @@ When the history of application definitions is recorded, the change history of a
 latest first, and shows the selected version side by side with the current definition or with the version before it,
 highlighting the lines and words that differ. *Restore this version* makes the selected version the current definition
 again, after a confirmation.
+
+The authentication section lists, under *Interrupts*, which [interrupt](../webflow/Webflow-Customization-Interrupt.html)
+a user would see at login, optionally signing in to a given application: the message, links and data of the interrupt,
+whether it blocks the login, and what each interrupt source answered.
 
 {% endtab %}
 

@@ -135,6 +135,13 @@ description: "Change CAS views and presentation: Thymeleaf render path, theme re
   `#entityHistoryTable` (latest first, row data carries `serviceId`/`revisionId`/`index`), a side-by-side diff drawn with
   the jsdiff webjar (global `Diff`) over JSON with sorted keys, the right side always the selected version; restore goes
   through `PalantirServiceHistory.restore` from the footer and the row context menu.
+- A lookup panel inside a page (passwordless account, interrupt inquiry in `palantir-interrupts.js`) uses the
+  `passwordless-account-*` classes: search form, banner message, result card, detail/capability grids, chips, and a
+  DataTable per list; reveal its inner tab with `showElements($("#<id>").parent())` only when its endpoint exists.
+  The Users page links to it with `openInterruptInquiry(username)` (`data-user-navigate`, not `data-user-action`).
+- Markup that CAS sends to be shown as HTML (interrupt messages) goes through `sanitizePalantirHtml` (palantir-utils.js:
+  inert parse, allow-listed tags without attributes, http/https/mailto links only); use `palantirHtmlText` for plain-text
+  cells. Never put such markup in the page with `.html()` directly.
 - The command palette (`palantir-command-palette.js`, Ctrl/⌘+K and `/`) reads its entries from the nav, the outer inner-tab
   row of each panel, `registeredServicesById` and a few actions each time it opens, so a new page or inner tab shows up on its
   own; it is a jQuery UI dialog with a categorized autocomplete, not another library. Ctrl+K is a document keydown handler so

@@ -767,6 +767,41 @@ async function verifyServiceHistory(page) {
     }, serviceId);
 }
 
+/**
+ * Ask the Interrupts section of the Authentication page which interrupt a user would see, and check that it
+ * reports the resolved user and the answer of every interrupt source.
+ *
+ * @param page the puppeteer page
+ */
+async function verifyInterruptInquiry(page) {
+    await cas.separator();
+    if (!await page.evaluate(() => Boolean(CasActuatorEndpoints.interrupts()))) {
+        await cas.logy("Interrupts endpoint is not available; skipping");
+        return;
+    }
+    await page.evaluate(() => $("#authenticationTabButton").trigger("click"));
+    await page.waitForFunction(() => $.fn.dataTable.isDataTable("#interruptInquirersTable"), {timeout: 30000});
+    await page.evaluate(() => {
+        const tabs = $("#authentication-tabs");
+        tabs.tabs("option", "active", tabs.find("> ul > li").index($("#interrupts").parent()));
+    });
+    await page.waitForSelector("#interruptUsername", {visible: true});
+    await page.type("#interruptUsername", "casuser");
+    await page.keyboard.press("Enter");
+    await page.waitForFunction(() => $("#interruptInquiryResult").is(":visible")
+        || $("#interruptInquiryMessage").is(":visible"), {timeout: 30000});
+    const inquiry = await page.evaluate(() => ({
+        principal: $("#interruptInquiryPrincipal").text(),
+        status: $("#interruptInquiryStatus").text(),
+        sources: $("#interruptInquirersTable").DataTable().rows().count(),
+        message: $("#interruptInquiryMessage").is(":visible") ? $("#interruptInquiryMessage").text().trim() : ""
+    }));
+    await cas.logg(`Interrupt inquiry for ${inquiry.principal}: ${inquiry.status}, ${inquiry.sources} source(s)`);
+    assert(inquiry.message === "", inquiry.message);
+    assert(inquiry.principal === "casuser");
+    await cas.screenshot(page);
+}
+
 (async () => {
     const browser = await cas.newBrowser(cas.browserOptions());
     const page = await cas.newPage(browser);
@@ -799,6 +834,7 @@ async function verifyServiceHistory(page) {
     await verifyCommandPalette(page);
     await verifyUserLookup(page, failures);
     await verifyServiceHistory(page);
+    await verifyInterruptInquiry(page);
 
     if (failures.length > 0) {
         await cas.logr(`Browser reported ${failures.length} error(s):`);

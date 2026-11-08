@@ -1271,6 +1271,38 @@ html.palantir-page table.dataTable > tbody > tr.selected > :first-child {
 }
 
 /* ==========================================================================
+   Interrupt inquiry: username, application and button on one row
+   ========================================================================== */
+.passwordless-account-search.interrupt-inquiry-search {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.5fr) auto;
+    align-items: end;
+}
+
+#dashboard .interrupt-inquiry-search .passwordless-account-search-button.mdc-button {
+    align-self: end;
+    height: 52px;
+    min-height: 52px;
+}
+
+#interruptInquirersTable td.mdc-data-table__cell,
+#interruptInquiryDataTable td.mdc-data-table__cell {
+    height: auto;
+    padding-top: 12px;
+    padding-bottom: 12px;
+    overflow: visible;
+    overflow-wrap: anywhere;
+    text-overflow: clip;
+    white-space: normal;
+    vertical-align: top;
+}
+
+@media (max-width: 767px) {
+    .passwordless-account-search.interrupt-inquiry-search {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
+
+/* ==========================================================================
    Service history: versions beside a side-by-side diff
    ========================================================================== */
 .palantir-history-dialog .ui-dialog-content.palantir-history {
@@ -3231,6 +3263,33 @@ html.palantir-page[data-theme="dark"] .palantir-user-card__note.is-error {
     max-width: 420px;
     color: var(--palantir-text-2);
     word-break: break-all;
+}
+
+.palantir-user-card__message {
+    margin: 6px 0 2px;
+    color: var(--palantir-text);
+    font-size: 14px;
+}
+
+.palantir-user-card__message :is(p, ul, ol, blockquote, pre),
+#interruptInquiryMessageText :is(p, ul, ol, blockquote, pre) {
+    margin: 0 0 4px;
+}
+
+.palantir-user-card__message > :last-child,
+#interruptInquiryMessageText > :last-child {
+    margin-bottom: 0;
+}
+
+.palantir-user-card__links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin: 8px 0;
+}
+
+.palantir-user-card__body > .palantir-button {
+    margin: 4px 0;
 }
 
 .palantir-user-card__more {

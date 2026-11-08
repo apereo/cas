@@ -54,9 +54,8 @@ public class ThrottledSubmissionHandlerEndpoint extends BaseCasRestActuatorEndpo
         parameters = @Parameter(name = "username", required = false,
             description = "Return only the records submitted for this username, matched regardless of case"))
     public List<ThrottledSubmission> getRecords(@RequestParam(value = "username", required = false) final @Nullable String username) {
-        final Stream<?> entries = throttledSubmissionsStore.getObject().entries();
+        val entries = throttledSubmissionsStore.getObject().entries();
         return entries
-            .map(ThrottledSubmission.class::cast)
             .filter(submission -> StringUtils.isBlank(username) || Strings.CI.equals(username, submission.getUsername()))
             .toList();
     }

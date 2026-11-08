@@ -987,3 +987,69 @@ function initializeAccordionAccessibility() {
         }
     });
 }
+
+const PALANTIR_SAFE_HTML_TAGS = new Set(["A", "ABBR", "B", "BLOCKQUOTE", "BR", "CODE", "DIV", "EM", "H1", "H2", "H3", "H4",
+    "H5", "H6", "HR", "I", "LI", "OL", "P", "PRE", "S", "SMALL", "SPAN", "STRONG", "SUB", "SUP", "U", "UL"]);
+
+const PALANTIR_DROPPED_HTML_TAGS = new Set(["SCRIPT", "STYLE", "TEMPLATE", "IFRAME", "FRAME", "OBJECT", "EMBED", "NOSCRIPT",
+    "SVG", "MATH", "LINK", "META", "BASE", "FORM", "INPUT", "BUTTON", "SELECT", "TEXTAREA", "TITLE"]);
+
+/**
+ * Turn markup from CAS, such as an interrupt message, into markup that is safe to put on the page.
+ *
+ * The markup is parsed into an inert document, where nothing runs or loads, and copied node by node into fresh
+ * elements: text is kept, formatting tags on an allow list are kept without any of their attributes, links keep only
+ * an http, https or mailto address and open in a new window, the content of scripts, styles, frames, forms and
+ * embedded documents is dropped, and any other tag is replaced by its content.
+ *
+ * @param html the markup to clean
+ * @returns {string} markup with only the allowed tags and link addresses
+ */
+function sanitizePalantirHtml(html) {
+    const source = new DOMParser().parseFromString(`<!DOCTYPE html><body>${String(html ?? "")}</body>`, "text/html").body;
+    const target = document.createElement("div");
+    const copy = (from, to) => {
+        for (const node of from.childNodes) {
+            if (node.nodeType === Node.TEXT_NODE) {
+                to.appendChild(document.createTextNode(node.textContent));
+            } else if (node.nodeType === Node.ELEMENT_NODE) {
+                const tag = node.tagName.toUpperCase();
+                if (PALANTIR_DROPPED_HTML_TAGS.has(tag)) {
+                    continue;
+                }
+                if (!PALANTIR_SAFE_HTML_TAGS.has(tag)) {
+                    copy(node, to);
+                    continue;
+                }
+                const element = document.createElement(tag.toLowerCase());
+                if (tag === "A") {
+                    try {
+                        const url = new URL(node.getAttribute("href") ?? "", window.location.href);
+                        if (["http:", "https:", "mailto:"].includes(url.protocol)) {
+                            element.setAttribute("href", url.href);
+                            element.setAttribute("target", "_blank");
+                            element.setAttribute("rel", "noopener noreferrer");
+                        }
+                    } catch (error) {
+                        console.debug("Palantir dropped a link it could not read", error);
+                    }
+                }
+                copy(node, element);
+                to.appendChild(element);
+            }
+        }
+    };
+    copy(source, target);
+    return target.innerHTML;
+}
+
+/**
+ * The text of markup from CAS, for places that show plain text such as table cells. The content of scripts,
+ * styles and other dropped tags is not part of it.
+ *
+ * @param html the markup
+ * @returns {string} its text
+ */
+function palantirHtmlText(html) {
+    return new DOMParser().parseFromString(`<!DOCTYPE html><body>${sanitizePalantirHtml(html)}</body>`, "text/html").body.textContent.trim();
+}

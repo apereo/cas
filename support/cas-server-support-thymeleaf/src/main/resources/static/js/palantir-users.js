@@ -28,7 +28,7 @@ class PalantirUserLookup {
         return [
             {
                 key: "sessions",
-                title: "SSO sessions",
+                title: "SSO Sessions",
                 icon: "mdi-account-key",
                 available: () => Boolean(CasActuatorEndpoints.ssoSessions()),
                 load: async username => {
@@ -49,7 +49,7 @@ class PalantirUserLookup {
             },
             {
                 key: "mfaDevices",
-                title: "MFA devices",
+                title: "MFA Devices",
                 icon: "mdi-cellphone-key",
                 available: () => Boolean(CasActuatorEndpoints.mfaDevices())
                     && PalantirDashboardConfiguration.availableMultifactorProviders().length > 0,
@@ -67,7 +67,7 @@ class PalantirUserLookup {
             },
             {
                 key: "trustedDevices",
-                title: "Trusted devices",
+                title: "Trusted Devices",
                 icon: "mdi-shield-check",
                 available: () => Boolean(CasActuatorEndpoints.multifactorTrustedDevices())
                     && PalantirDashboardConfiguration.availableMultifactorProviders().length > 0,
@@ -82,7 +82,7 @@ class PalantirUserLookup {
             },
             {
                 key: "consent",
-                title: "Consent decisions",
+                title: "Consent Decisions",
                 icon: "mdi-check-decagram",
                 available: () => Boolean(CasActuatorEndpoints.attributeConsent()) && CAS_FEATURES.includes("Consent"),
                 load: async username => await PalantirUserLookup.get(
@@ -151,7 +151,7 @@ class PalantirUserLookup {
             },
             {
                 key: "passwordless",
-                title: "Passwordless account",
+                title: "Passwordless Account",
                 icon: "mdi-email-fast",
                 available: () => Boolean(CasActuatorEndpoints.passwordless()),
                 load: async username => {
@@ -165,7 +165,7 @@ class PalantirUserLookup {
             },
             {
                 key: "passwordHistory",
-                title: "Password history",
+                title: "Password History",
                 icon: "mdi-form-textbox-password",
                 available: () => Boolean(CasActuatorEndpoints.passwordManagement()),
                 load: async username => await PalantirUserLookup.get(
@@ -176,8 +176,20 @@ class PalantirUserLookup {
                 })))
             },
             {
+                key: "interrupts",
+                title: "Interrupts",
+                icon: "mdi-alert-octagon-outline",
+                available: () => Boolean(CasActuatorEndpoints.interrupts()),
+                load: async username => {
+                    const report = await PalantirUserLookup.get(`${CasActuatorEndpoints.interrupts()}/${encodeURIComponent(username)}`);
+                    const failed = (report?.inquirers ?? []).some(inquirer => inquirer.error);
+                    return report && (report.interrupt || failed) ? [report] : [];
+                },
+                render: (reports, username) => PalantirUserLookup.interruptCard(reports[0], username)
+            },
+            {
                 key: "throttles",
-                title: "Throttled attempts",
+                title: "Throttled Attempts",
                 icon: "mdi-timer-lock",
                 available: () => Boolean(CasActuatorEndpoints.throttles()),
                 load: async username => {
@@ -194,7 +206,7 @@ class PalantirUserLookup {
             },
             {
                 key: "activity",
-                title: "Recent activity",
+                title: "Recent Activity",
                 icon: "mdi-history",
                 available: () => Boolean(CasActuatorEndpoints.auditLog()),
                 load: async username => {
@@ -306,6 +318,52 @@ class PalantirUserLookup {
      */
     static quoteRegex(value) {
         return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    }
+
+    /**
+     * Draw what the login flow would show the user without an application: the interrupt with its message as
+     * sanitized markup and its links, any interrupt source that failed, a note that interrupts for particular
+     * applications are not covered, and a way to open the full inquiry on the Authentication page.
+     *
+     * @param report the interrupt inquiry report
+     * @param username the user being looked up
+     * @returns {string} the card body markup
+     */
+    static interruptCard(report, username) {
+        const interrupt = report.interrupt;
+        const rows = [];
+        let message = "";
+        if (interrupt) {
+            const redirect = interrupt.autoRedirect
+                ? `redirects ${Number(interrupt.autoRedirectAfterSeconds) > 0 ? `after ${interrupt.autoRedirectAfterSeconds} seconds` : "immediately"}`
+                : null;
+            const behavior = [interrupt.block ? "blocks the login" : "lets the user continue",
+                interrupt.ssoEnabled ? "single sign-on afterwards" : "no single sign-on afterwards", redirect]
+                .filter(Boolean).join(" · ");
+            const text = interrupt.message
+                ? sanitizePalantirHtml(interrupt.message)
+                : escapePalantirMarkup(interrupt.messageCode || "Interrupts the login");
+            message = `
+                <div class="palantir-user-card__message">${text}</div>
+                <p class="palantir-user-card__secondary">${escapePalantirMarkup(behavior)}</p>`;
+        }
+        for (const inquirer of (report.inquirers ?? []).filter(entry => entry.error)) {
+            rows.push({primary: `${inquirer.name} failed`, secondary: [inquirer.error]});
+        }
+        const links = Object.entries(interrupt?.links ?? {})
+            .map(([name, url]) => `<a class="palantir-tag" href="${escapePalantirMarkup(url)}" target="_blank" rel="noopener noreferrer">${escapePalantirMarkup(name)}</a>`)
+            .join(" ");
+        return `
+            ${message}
+            ${rows.length > 0 ? PalantirUserLookup.list(rows) : ""}
+            ${links ? `<p class="palantir-user-card__links">${links}</p>` : ""}
+            <p class="palantir-user-card__note">
+                <i class="mdi mdi-information-outline" aria-hidden="true"></i>
+                Asked without an application: interrupts that apply only when signing in to a particular application are not shown.
+            </p>
+            <button type="button" class="palantir-button" data-user-navigate="interrupts" data-username="${escapePalantirMarkup(username)}">
+                <i class="mdi mdi-open-in-app" aria-hidden="true"></i>Open in Interrupts
+            </button>`;
     }
 
     /**
@@ -543,5 +601,8 @@ async function initializeUserLookupOperations() {
     });
     $("#userLookupResults").off("click").on("click", "[data-user-action]", event => {
         PalantirUserLookup.runAction(event.currentTarget);
+    });
+    $("#userLookupResults").on("click", "[data-user-navigate=interrupts]", event => {
+        openInterruptInquiry(event.currentTarget.dataset.username);
     });
 }
