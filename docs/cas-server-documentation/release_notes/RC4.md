@@ -86,6 +86,11 @@ release:
       text: include the client IP address in the device fingerprint by default, as documented; devices trusted before the upgrade are asked for multifactor authentication once more. Set `cas.authn.mfa.trusted.device-fingerprint.client-ip.enabled=false` to keep the previous fingerprint.
       section: Multifactor Authentication
       area: mfa
+    - type: action
+      title: Interrupt inquirers
+      text: no longer receive the Spring Webflow request context; custom inquirers drop that parameter, and Groovy interrupt scripts receive the logger as their fifth argument.
+      section: Authentication Interrupts
+      area: ui
   spotlight:
     section: Theme Properties
     kicker: User interface
@@ -829,6 +834,19 @@ one-time codes can be added when `cas.authn.mfa.simple.mail.accepted-email-patte
   answered with the SOAP response alone. The identity provider also wrote the POST-binding form of the response before
   it, so the service provider received an HTML page and the SOAP response could not be sent.
 
+### Authentication Interrupts
+{: .changed data-area="ui"}
+
+- {: .action data-area="ui"} [Interrupt inquirers](../webflow/Webflow-Customization-Interrupt-Custom.html) no longer receive
+  the Spring Webflow request context, so they can be asked outside the login flow. Custom inquirers must drop that
+  parameter, and [Groovy interrupt scripts](../webflow/Webflow-Customization-Interrupt-Groovy.html) now receive the logger
+  as their fifth argument: scripts that read the sixth argument or destructure six arguments must be updated. The REST
+  strategy still passes the language preferences of the current request along to the interrupt endpoint.
+- {: .new data-area="ui"} The new `interrupts` [actuator endpoint](../webflow/Webflow-Customization-Interrupt.html#actuator-endpoints)
+  determines the interrupt payload produced for a user, optionally signing in to an application: it asks every
+  interrupt strategy in order and reports what each one produced, or why it failed, along with the interrupt the login
+  flow would present.
+
 ### User Interface
 {: .fixed data-area="ui"}
 
@@ -871,6 +889,10 @@ one-time codes can be added when `cas.authn.mfa.simple.mail.accepted-email-patte
   register their event resolvers by tagging the resolver bean with an annotation; CAS collects tagged resolvers on its own, and
   resolvers no longer add themselves to the initial authentication event resolver. Custom resolvers, and beans that override a
   built-in trigger resolver, must carry the annotation.
+- {: .fixed data-area="mfa"} [YubiKey accounts kept in a JSON file](../mfa/YubiKey-Authentication-Registration-JSON.html)
+  are written to a temporary file that then replaces the JSON file in one step, so a failed or concurrent write no longer
+  leaves a truncated file behind that stops CAS from starting; removing a single device no longer fails a change made
+  at the same time.
 
 ### Documentation
 {: .changed data-area="docs"}

@@ -5,7 +5,6 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.configuration.model.support.interrupt.RestfulInterruptProperties;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.util.MockWebServer;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.val;
@@ -16,13 +15,15 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.io.ByteArrayResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 import tools.jackson.databind.DeserializationFeature;
 import tools.jackson.databind.cfg.EnumFeature;
 import tools.jackson.databind.json.JsonMapper;
@@ -38,9 +39,6 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = RefreshAutoConfiguration.class)
 @ExtendWith(CasTestExtension.class)
 class RestEndpointInterruptInquirerTests {
-    @Autowired
-    private ConfigurableApplicationContext applicationContext;
-
     private MockWebServer webServer;
 
     @BeforeEach
@@ -74,19 +72,26 @@ class RestEndpointInterruptInquirerTests {
     void verifyResponseCanBeFoundFromRest() throws Throwable {
         val restProps = new RestfulInterruptProperties();
         restProps.setUrl("http://localhost:%s".formatted(webServer.getPort()));
-        val context = MockRequestContext.create(applicationContext);
-        context.addHeader("accept-language", "fr");
-        val q = new RestEndpointInterruptInquirer(restProps);
-        val response = q.inquire(CoreAuthenticationTestUtils.getAuthentication("casuser"),
-            CoreAuthenticationTestUtils.getRegisteredService(),
-            CoreAuthenticationTestUtils.getService(),
-            CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(),
-            context);
-        assertNotNull(response);
-        assertTrue(response.isBlock());
-        assertTrue(response.isSsoEnabled());
-        assertEquals(2, response.getLinks().size());
-        assertEquals(getClass().getSimpleName(), response.getMessage());
+        val receivedHeaders = new ConcurrentSkipListMap<String, String>(String.CASE_INSENSITIVE_ORDER);
+        webServer.headersConsumer(receivedHeaders::putAll);
+        val request = new MockHttpServletRequest();
+        request.addHeader(HttpHeaders.ACCEPT_LANGUAGE, "fr");
+        RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));
+        try {
+            val q = new RestEndpointInterruptInquirer(restProps);
+            val response = q.inquire(CoreAuthenticationTestUtils.getAuthentication("casuser"),
+                CoreAuthenticationTestUtils.getRegisteredService(),
+                CoreAuthenticationTestUtils.getService(),
+                CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
+            assertNotNull(response);
+            assertTrue(response.isBlock());
+            assertTrue(response.isSsoEnabled());
+            assertEquals(2, response.getLinks().size());
+            assertEquals(getClass().getSimpleName(), response.getMessage());
+            assertEquals("fr", receivedHeaders.get(HttpHeaders.ACCEPT_LANGUAGE));
+        } finally {
+            RequestContextHolder.resetRequestAttributes();
+        }
     }
 
     @ParameterizedTest
@@ -99,13 +104,11 @@ class RestEndpointInterruptInquirerTests {
             errorServer.start();
             val restProps = new RestfulInterruptProperties();
             restProps.setUrl("http://localhost:%s".formatted(errorServer.getPort()));
-            val context = MockRequestContext.create(applicationContext);
             val response = new RestEndpointInterruptInquirer(restProps).inquire(
                 CoreAuthenticationTestUtils.getAuthentication("casuser"),
                 CoreAuthenticationTestUtils.getRegisteredService(),
                 CoreAuthenticationTestUtils.getService(),
-                CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(),
-                context);
+                CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
             assertFalse(response.isInterrupt());
         }
     }
@@ -114,13 +117,11 @@ class RestEndpointInterruptInquirerTests {
     void verifyBadAttempt() throws Throwable {
         val restProps = new RestfulInterruptProperties();
         restProps.setUrl("http://localhost:%s".formatted(webServer.getPort()));
-        val context = MockRequestContext.create(applicationContext);
         val q = new RestEndpointInterruptInquirer(restProps);
         val response = q.inquire(null,
             CoreAuthenticationTestUtils.getRegisteredService(),
             CoreAuthenticationTestUtils.getService(),
-            CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(),
-            context);
+            CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
         assertFalse(response.isInterrupt());
     }
 }

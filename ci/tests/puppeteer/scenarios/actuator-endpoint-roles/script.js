@@ -26,6 +26,7 @@ const ENDPOINTS = [
     {method: "POST", path: `casValidate/p3/serviceValidate?${CREDENTIALS}`, expect: "ok", contentType: FORM},
     {method: "POST", path: `samlValidate?${CREDENTIALS}`, expect: "ok"},
     {method: "GET", path: "impersonation/casuser", expect: "ok"},
+    {method: "GET", path: `interrupts/casuser?service=${SERVICE}`, expect: "ok"},
     {method: "GET", path: "multitenancy/tenants", expect: "reachable"},
     {method: "GET", path: "oauthTokens", expect: "ok"},
     {method: "GET", path: "personDirectory/repositories", expect: "ok"},

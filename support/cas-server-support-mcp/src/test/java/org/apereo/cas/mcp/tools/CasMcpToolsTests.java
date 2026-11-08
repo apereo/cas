@@ -1217,27 +1217,21 @@ class CasMcpToolsTests extends BaseCasMcpTests {
         val serviceUrl = newServiceUrl();
         servicesManager.save(newRegisteredService(serviceUrl, Map.of(), new ReturnAllAttributeReleasePolicy()));
         val username = "interrupted-" + UUID.randomUUID();
-        assertThrows(IllegalStateException.class, () -> casInterruptTools.previewInterrupt(username, serviceUrl));
-        RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(new MockHttpServletRequest(), new MockHttpServletResponse()));
-        try {
-            val interrupted = casInterruptTools.previewInterrupt(username, serviceUrl);
-            val outcomes = interrupted.inquirers();
-            assertEquals(List.of("FailingInquirer", "TermsInquirer"), outcomes.stream().map(CasInterruptTools.InquirerOutcome::inquirer).toList());
-            assertEquals(List.of("FAILED", "INTERRUPT"), outcomes.stream().map(CasInterruptTools.InquirerOutcome::outcome).toList());
-            assertEquals("Interrupt endpoint is unavailable", outcomes.getFirst().error());
-            val interrupt = Objects.requireNonNull(interrupted.interrupt());
-            assertEquals("Accept the terms of " + serviceUrl + " as " + username, interrupt.message());
-            assertTrue(interrupt.block());
-            assertEquals(Map.of("Terms", "https://terms.example.org"), interrupt.links());
-            assertTrue(Objects.requireNonNull(interrupted.interruptPolicy()).enabled());
+        val interrupted = casInterruptTools.previewInterrupt(username, serviceUrl);
+        val outcomes = interrupted.inquirers();
+        assertEquals(List.of("FailingInquirer", "TermsInquirer"), outcomes.stream().map(CasInterruptTools.InquirerOutcome::inquirer).toList());
+        assertEquals(List.of("FAILED", "INTERRUPT"), outcomes.stream().map(CasInterruptTools.InquirerOutcome::outcome).toList());
+        assertEquals("Interrupt endpoint is unavailable", outcomes.getFirst().error());
+        val interrupt = Objects.requireNonNull(interrupted.interrupt());
+        assertEquals("Accept the terms of " + serviceUrl + " as " + username, interrupt.message());
+        assertTrue(interrupt.block());
+        assertEquals(Map.of("Terms", "https://terms.example.org"), interrupt.links());
+        assertTrue(Objects.requireNonNull(interrupted.interruptPolicy()).enabled());
 
-            val quiet = casInterruptTools.previewInterrupt("casuser", serviceUrl);
-            assertNull(quiet.interrupt());
-            assertEquals(List.of("FAILED", "NO_INTERRUPT", "NO_INTERRUPT"),
-                quiet.inquirers().stream().map(CasInterruptTools.InquirerOutcome::outcome).toList());
-        } finally {
-            RequestContextHolder.resetRequestAttributes();
-        }
+        val quiet = casInterruptTools.previewInterrupt("casuser", serviceUrl);
+        assertNull(quiet.interrupt());
+        assertEquals(List.of("FAILED", "NO_INTERRUPT", "NO_INTERRUPT"),
+            quiet.inquirers().stream().map(CasInterruptTools.InquirerOutcome::outcome).toList());
     }
 
     @Test

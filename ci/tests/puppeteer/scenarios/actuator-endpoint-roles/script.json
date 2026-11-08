@@ -1,5 +1,5 @@
 {
-  "dependencies": "reports,metrics,monitor,scripting,surrogate-webflow,oauth-webflow,saml,duo,qr-authentication",
+  "dependencies": "reports,metrics,monitor,scripting,surrogate-webflow,oauth-webflow,saml,duo,qr-authentication,interrupt-webflow",
   "properties": [
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",

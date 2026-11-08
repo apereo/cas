@@ -117,6 +117,10 @@ When you learn something new, record it in the skill that owns the area, or here
 - Prefer real protocol artifacts for crypto tests: sign/encrypt with matching test credentials, serialize and unmarshal when validating embedded XML, and include negative cases for tampering, blocked algorithms, or mismatched destinations.
 - Keep tests deterministic and independent of external DNS or network availability. Use loopback addresses, local mock servers, classpath resources, and uniquely named temporary files; clean up local resources in `finally` or try-with-resources blocks.
 - Changes and tests must tolerate Gradle parallel mode. Avoid shared mutable static state, fixed temporary filenames, cross-test cache assumptions, and mutation of shared application state when a local fixture will work.
+- In-memory registries whose stored objects other threads may read or serialize at the same time (the JSON-backed ones
+  write the whole map after every change) must replace a stored object with a changed copy, never mutate it in place:
+  `PermissiveYubiKeyAccountRegistry` removed a device from the stored account's list and failed a concurrent JSON write
+  with `ConcurrentModificationException`.
 - Never add the Java `synchronized` keyword. When mutual exclusion is genuinely required, use `CasReentrantLock` and its execution helpers consistently with nearby CAS code.
 - If the user requests a `PLANS.md` plan, create it before implementation work and check off each step as it is completed.
 - When code cannot be compiled locally, check overridden and called signatures for checked exceptions (for example `ByteArrayResource.getInputStream()` declares `IOException`) and reuse helpers' existing filtering instead of repeating it.
