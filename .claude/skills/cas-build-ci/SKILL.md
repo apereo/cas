@@ -33,3 +33,14 @@ description: "Gradle build settings (configuration cache, Isolated Projects, bui
 - The CodeQL job (`analysis.yml`) applies `--no-build-cache --rerun-tasks` after its shared build options so traced
   compilation actually runs. The current `settings.gradle` has no CodeQL-specific `JavaCompile` cache guard. Preserve
   these workflow flags: CodeQL only extracts compilations it observes, so restored or up-to-date outputs empty the scan.
+
+## Native images
+
+- Keep the native builder's default CI heap at 12 GiB on the 16 GiB hosted runner. A 14 GiB heap leaves too little
+  room for native allocations, Gradle and the runner; run 42389952060 lost 60 runners, most available logs ending near
+  image layout. The shutdown messages do not prove OOM, so verify the next CI run. Use `nativeImageHeapSize` to
+  override the budget on a larger runner; increasing the heap on the same machine is not a fix for Palantir's OOM.
+- Runtime-selected bean implementations can expose interfaces that their declared bean return type does not.
+  The JSON trusted-device store adds `DisposableBean` ahead of `MultifactorAuthenticationTrustStorage`; its Spring
+  transaction/audit proxy needs that ordered interface pair plus the Spring proxy interfaces in native metadata.
+  Test the interfaces discovered from the concrete implementation, not only the bean's declared interface.

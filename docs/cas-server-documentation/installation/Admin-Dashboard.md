@@ -72,6 +72,11 @@ recorded for the user gets a card, which expands to show its records and its usu
 removing a device or revoking a consent decision; the first card starts expanded. A source is only consulted when the
 actuator endpoint behind it is enabled and exposed, and the page itself is hidden when none of them is.
 
+When the history of application definitions is recorded, the change history of an application lists its versions,
+latest first, and shows the selected version side by side with the current definition or with the version before it,
+highlighting the lines and words that differ. *Restore this version* makes the selected version the current definition
+again, after a confirmation.
+
 {% endtab %}
 
 {% tab casadminoptions Spring Boot Admin %}

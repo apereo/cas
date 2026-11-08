@@ -144,6 +144,7 @@ jquery = "4.0.0"
 jqueryContextMenu = "2.10.1"
 jqueryUi = "1.14.2"
 jradius = "1.1.5"
+jsDiff = "8.0.4"
 json = "20260814"
 jsonSmart = "2.6.1"
 jsonassert = "1.5.3"
@@ -494,6 +495,7 @@ jradius-dictionary = { module = "net.jradius:jradius-dictionary", version.ref = 
 jradius-extended = { module = "net.jradius:jradius-extended", version.ref = "jradius" }
 jradius-extras = { module = "net.jradius:jradius-extras", version.ref = "jradius" }
 jradius-server = { module = "net.jradius:jradius-server", version.ref = "jradius" }
+jsdiff = { module = "org.webjars.npm:diff", version.ref = "jsDiff" }
 json-smart = { module = "net.minidev:json-smart", version.ref = "jsonSmart" }
 jsonassert = { module = "org.skyscreamer:jsonassert", version.ref = "jsonassert" }
 jsoup = { module = "org.jsoup:jsoup", version.ref = "jsoup" }

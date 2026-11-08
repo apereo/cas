@@ -206,7 +206,7 @@ opens on a server that already serves such a `custom.css`, it reads its own bloc
 Nothing is saved on the server; the builder is turned on by default and is controlled by the `cas.theme-builder.enabled`
 theme property.
 
-### Palantir Search & User Lookup
+### Palantir Search, User Lookup & Service History
 {: .new data-area="ui"}
 
 [Palantir](../installation/Admin-Dashboard.html) has a search box, opened from the navigation bar or with `Ctrl+K`
@@ -215,7 +215,9 @@ and runs common actions without leaving the keyboard. A new *Users* page looks u
 single sign-on sessions, multifactor and trusted devices, consent decisions, resolved attributes, impersonation accounts,
 passwordless account, password history, throttled login attempts and recent audit events, each with its usual actions
 such as ending a session, removing a device or releasing a throttled attempt. Only sources with something recorded for
-the user are shown, and sources whose actuator endpoints are not enabled are left out.
+the user are shown, and sources whose actuator endpoints are not enabled are left out. The change history of an application
+compares any recorded version side by side with the current definition or the version before it, and restores the
+selected version from the same dialog.
 
 ### Theme Properties
 {: .new data-area="ui"}

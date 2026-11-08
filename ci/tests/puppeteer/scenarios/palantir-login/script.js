@@ -1,6 +1,7 @@
 /* global $, CAS_FEATURES, CasActuatorEndpoints, PalantirDashboardConfiguration,
    RegisteredServiceSections, openRegisteredServiceWizardDialog, isPopulatingWizard,
-   activateDashboardTab, ace, currentActiveTab, registeredServicesById, PalantirUserLookup */
+   activateDashboardTab, ace, currentActiveTab, registeredServicesById, PalantirUserLookup,
+   PalantirServiceHistory, Swal */
 const assert = require("assert");
 const cas = require("../../cas.js");
 
@@ -694,6 +695,78 @@ async function verifyUserLookup(page, failures) {
     await cas.screenshot(page);
 }
 
+/**
+ * Record two versions of a new service, open its history, check that the latest version is selected and
+ * compared side by side with the version before it, then select the earlier version, restore it, and delete
+ * the service afterwards.
+ *
+ * @param page the puppeteer page
+ */
+async function verifyServiceHistory(page) {
+    await cas.separator();
+    if (!await page.evaluate(() => Boolean(CasActuatorEndpoints.entityHistory() && CasActuatorEndpoints.registeredServices()))) {
+        await cas.logy("Service history is not available; skipping");
+        return;
+    }
+    const serviceId = await page.evaluate(async () => {
+        const save = async (method, service) => {
+            const response = await fetch(CasActuatorEndpoints.registeredServices(), {
+                method: method,
+                headers: {"Content-Type": "application/json", "Accept": "application/json"},
+                body: JSON.stringify(service)
+            });
+            return response.json();
+        };
+        const created = await save("POST", {
+            "@class": "org.apereo.cas.services.CasRegisteredService",
+            serviceId: "^https://history.example.org/.*",
+            name: "HistoryExample",
+            description: "First description"
+        });
+        await save("PUT", {...created, description: "Second description"});
+        return created.id;
+    });
+    await cas.log(`Recorded two versions of service ${serviceId}`);
+
+    await page.evaluate((id) => PalantirServiceHistory.open(id), serviceId);
+    await page.waitForFunction(() => $("#viewEntityHistoryDialog").dialog("instance") !== undefined
+        && $("#viewEntityHistoryDialog").dialog("isOpen")
+        && $("#entityHistoryDiff .palantir-diff__table").length === 1, {timeout: 30000});
+    const history = await page.evaluate(() => ({
+        versions: $("#entityHistoryTable").DataTable().rows().count(),
+        latestSelected: $("#entityHistoryTable tbody tr:first-child").hasClass("is-selected"),
+        compare: $("#entityHistoryCompare").val(),
+        changed: $("#entityHistoryDiff td.is-added, #entityHistoryDiff td.is-removed").length,
+        summary: $("#entityHistorySummary").text()
+    }));
+    await cas.log(`History: ${history.versions} versions; ${history.summary}`);
+    assert(history.versions >= 2);
+    assert(history.latestSelected);
+    assert(history.compare === "previous");
+    assert(history.changed > 0);
+    await cas.screenshot(page);
+
+    await page.click("#entityHistoryTable tbody tr:nth-child(2)");
+    await page.waitForFunction(() => $("#entityHistoryTable tbody tr:nth-child(2)").hasClass("is-selected")
+        && !$(".palantir-history-restore").button("option", "disabled"), {timeout: 10000});
+
+    await cas.click(page, ".palantir-history-restore");
+    await page.waitForSelector(".swal2-confirm", {visible: true});
+    await page.click(".swal2-confirm");
+    await page.waitForFunction(() => !$("#viewEntityHistoryDialog").dialog("isOpen")
+        && $(".swal2-title").text() === "Service Restored", {timeout: 30000});
+    const description = await page.evaluate(async (id) => {
+        const response = await fetch(`${CasActuatorEndpoints.registeredServices()}/${id}`, {headers: {"Accept": "application/json"}});
+        return (await response.json()).description;
+    }, serviceId);
+    await cas.logg(`Restored service ${serviceId} to its first version: ${description}`);
+    assert(description === "First description");
+    await page.evaluate(async (id) => {
+        Swal.close();
+        await fetch(`${CasActuatorEndpoints.registeredServices()}/${id}`, {method: "DELETE"});
+    }, serviceId);
+}
+
 (async () => {
     const browser = await cas.newBrowser(cas.browserOptions());
     const page = await cas.newPage(browser);
@@ -725,6 +798,7 @@ async function verifyUserLookup(page, failures) {
     await verifySettingsDialog(page);
     await verifyCommandPalette(page);
     await verifyUserLookup(page, failures);
+    await verifyServiceHistory(page);
 
     if (failures.length > 0) {
         await cas.logr(`Browser reported ${failures.length} error(s):`);

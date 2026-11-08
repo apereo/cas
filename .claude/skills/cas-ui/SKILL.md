@@ -131,6 +131,10 @@ description: "Change CAS views and presentation: Thymeleaf render path, theme re
   bring it back, and only the first non-empty card opens by default; a table is the standard `mdc-data-table__table` DataTable, rendered
   empty and filled in the source's `afterRender`); reads go through `PalantirUserLookup.get` (404 means no records; the audit log
   endpoint needs a form content type even on GET and matches its principal as a regex, so quote it).
+- Service history (`palantir-services-history.js`) is a jQuery UI dialog over the `entityHistory` endpoint: versions in
+  `#entityHistoryTable` (latest first, row data carries `serviceId`/`revisionId`/`index`), a side-by-side diff drawn with
+  the jsdiff webjar (global `Diff`) over JSON with sorted keys, the right side always the selected version; restore goes
+  through `PalantirServiceHistory.restore` from the footer and the row context menu.
 - The command palette (`palantir-command-palette.js`, Ctrl/⌘+K and `/`) reads its entries from the nav, the outer inner-tab
   row of each panel, `registeredServicesById` and a few actions each time it opens, so a new page or inner tab shows up on its
   own; it is a jQuery UI dialog with a categorized autocomplete, not another library. Ctrl+K is a document keydown handler so

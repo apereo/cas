@@ -37,10 +37,10 @@ async function initializeServicesOperations() {
     $("#entityHistoryTable").DataTable({
         pageLength: 10,
         autoWidth: false,
+        order: [[2, "asc"]],
+        layout: {topStart: null, topEnd: null},
         columnDefs: [
-            {width: "5%", targets: 0},
-            {width: "25%", targets: 1},
-            {visible: false, targets: 2}
+            {visible: false, type: "num", targets: 2}
         ],
         drawCallback: settings => {
             $("#entityHistoryTable tr").addClass("mdc-data-table__row");
@@ -96,7 +96,6 @@ async function initializeServicesOperations() {
 
 let serviceEditorInstance = null;
 let editServiceDialogInstance = null;
-let entityHistoryDialogInstance = null;
 
 /**
  * Sizes the plain editor dialog to the window, leaving a small margin.
@@ -157,54 +156,12 @@ function getEditServiceDialogInstance() {
     return editServiceDialogInstance;
 }
 
-function getEntityHistoryDialogInstance() {
-    if (!entityHistoryDialogInstance) {
-        entityHistoryDialogInstance = window.mdc.dialog.MDCDialog.attachTo(document.getElementById("viewEntityHistoryDialog"));
-    }
-    return entityHistoryDialogInstance;
-}
-
 async function initializeServiceButtons() {
     getEditServiceDialogInstance();
     serviceEditorInstance = initializeAceEditor("serviceEditor");
 
     function viewEntityHistory(serviceId) {
-        const entityHistoryTable = $("#entityHistoryTable").DataTable();
-        $.get(`${CasActuatorEndpoints.entityHistory()}/registeredServices/${serviceId}`, response => {
-            entityHistoryTable.clear();
-
-            const editor = initializeAceEditor("entityHistoryEditor", "json");
-            editor.setValue("");
-            editor.setReadOnly(true);
-
-            for (const item of response) {
-                entityHistoryTable.row.add({
-                    0: `<code>${item.id}</code>`,
-                    1: `<code>${item.date}</code>`,
-                    2: `${JSON.stringify(item.entity, null, 4)}`,
-                    serviceId: serviceId,
-                    revisionId: item.id
-                });
-            }
-
-            entityHistoryTable.draw();
-            entityHistoryTable.off("click", "tbody tr").on("click", "tbody tr", function () {
-                let data = entityHistoryTable.row(this).data();
-                editor.setValue(data[2]);
-                editor.gotoLine(1);
-                editor.setReadOnly(true);
-            });
-
-            if (response.length > 0) {
-                getEntityHistoryDialogInstance()["open"]();
-            } else {
-                Swal.fire("No History!", "There are no changes recorded for this application definition.", "info");
-            }
-
-        }).fail((xhr, status, error) => {
-            console.error("Error fetching data:", error);
-            displayBanner(xhr);
-        });
+        PalantirServiceHistory.open(serviceId);
     }
 
     initializeDataTableContextMenu({
@@ -215,30 +172,7 @@ async function initializeServiceButtons() {
         },
         callback: (key, context) => {
             if (key === "restore") {
-                const {serviceId, revisionId} = context.rowData;
-                Swal.fire({
-                    title: "Restore this version?",
-                    text: `Version ${revisionId} will replace the current definition of service ${serviceId}.`,
-                    icon: "question",
-                    showCancelButton: true,
-                    confirmButtonText: "Restore",
-                    showLoaderOnConfirm: true,
-                    allowOutsideClick: () => !Swal.isLoading(),
-                    preConfirm: () => $.ajax({
-                        url: `${CasActuatorEndpoints.entityHistory()}/registeredServices/${encodeURIComponent(serviceId)}/restore/${encodeURIComponent(revisionId)}`,
-                        type: "POST",
-                        headers: {"Accept": "application/json"}
-                    }).catch(xhr => {
-                        console.error("Error restoring service:", xhr);
-                        Swal.showValidationMessage("Unable to restore this version. Please try again or check your access to service history.");
-                    })
-                }).then(result => {
-                    if (result.isConfirmed) {
-                        getEntityHistoryDialogInstance()["close"]();
-                        fetchServices(() => updateNavigationSidebar());
-                        Swal.fire("Service Restored", `Version ${revisionId} is now the current definition of service ${serviceId}.`, "success");
-                    }
-                });
+                PalantirServiceHistory.restore(context.rowData.serviceId, context.rowData.revisionId);
             }
         }
     });

@@ -1260,6 +1260,215 @@ html.palantir-page .ui-widget-overlay {
     color: var(--palantir-text);
 }
 
+/* A selected DataTables row, such as an application just saved, takes the theme's selection color. */
+html.palantir-page table.dataTable > tbody > tr.selected > * {
+    box-shadow: inset 0 0 0 9999px var(--palantir-selected);
+    color: var(--palantir-text);
+}
+
+html.palantir-page table.dataTable > tbody > tr.selected > :first-child {
+    box-shadow: inset 3px 0 0 var(--palantir-brand), inset 0 0 0 9999px var(--palantir-selected);
+}
+
+/* ==========================================================================
+   Service history: versions beside a side-by-side diff
+   ========================================================================== */
+.palantir-history-dialog .ui-dialog-content.palantir-history {
+    display: flex;
+    min-height: 0;
+    padding: 16px 20px !important;
+}
+
+.palantir-history__layout {
+    display: grid;
+    flex: 1;
+    grid-template-columns: minmax(300px, 400px) minmax(0, 1fr);
+    gap: 20px;
+    min-height: 0;
+}
+
+.palantir-history__versions,
+.palantir-history__compare {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    min-width: 0;
+    min-height: 0;
+}
+
+.palantir-history__versions {
+    overflow-y: auto;
+}
+
+.palantir-history__hint {
+    margin: 0;
+    color: var(--palantir-text-muted);
+    font-size: 13px;
+}
+
+#entityHistoryTable tbody tr {
+    cursor: pointer;
+}
+
+#entityHistoryTable tbody tr.is-selected > td {
+    background: var(--palantir-selected) !important;
+    box-shadow: inset 3px 0 0 var(--palantir-brand);
+}
+
+#entityHistoryTable tbody tr.is-selected > td + td {
+    box-shadow: none;
+}
+
+.palantir-tag.is-current {
+    border-color: var(--palantir-success-line);
+    color: var(--palantir-success-text);
+}
+
+.palantir-history__toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 16px;
+}
+
+.palantir-history__against {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+    color: var(--palantir-text-muted);
+    font-size: 14px;
+}
+
+.palantir-history__against .ui-selectmenu-button.ui-button {
+    width: 200px !important;
+    margin: 0 !important;
+}
+
+.palantir-history__summary {
+    margin: 0;
+    color: var(--palantir-text-2);
+    font-size: 14px;
+}
+
+.palantir-diff {
+    flex: 1;
+    min-height: 0;
+    overflow: auto;
+    border: 1px solid var(--palantir-border);
+    border-radius: 12px;
+    background: var(--palantir-surface);
+}
+
+.palantir-diff__table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+    font: 12.5px/1.55 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+
+.palantir-diff__number-column {
+    width: 48px;
+}
+
+.palantir-diff__table thead th {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--palantir-border);
+    background: var(--palantir-surface-2);
+    color: var(--palantir-text);
+    font: 600 13px/1.4 inherit;
+    font-family: var(--mdc-typography-font-family, inherit);
+    text-align: left;
+}
+
+.palantir-diff__table thead th + th {
+    border-left: 1px solid var(--palantir-border);
+}
+
+.palantir-diff__table td {
+    padding: 0 8px;
+    vertical-align: top;
+}
+
+.palantir-diff__number {
+    color: var(--palantir-text-muted);
+    text-align: right;
+    user-select: none;
+}
+
+.palantir-diff__table td:nth-child(3) {
+    border-left: 1px solid var(--palantir-border);
+}
+
+.palantir-diff__line {
+    color: var(--palantir-text);
+}
+
+.palantir-diff__text {
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+
+.palantir-diff__table td.is-removed {
+    background: var(--palantir-danger-bg);
+}
+
+.palantir-diff__table td.is-added {
+    background: var(--palantir-success-bg);
+}
+
+.palantir-diff__line.is-empty {
+    background: repeating-linear-gradient(135deg, transparent 0 6px, var(--palantir-divider) 6px 7px);
+}
+
+.palantir-diff__line.is-removed .palantir-diff__word {
+    border-radius: 3px;
+    background: color-mix(in srgb, var(--palantir-danger-line) 30%, transparent);
+    color: inherit;
+}
+
+.palantir-diff__line.is-added .palantir-diff__word {
+    border-radius: 3px;
+    background: color-mix(in srgb, var(--palantir-success-line) 35%, transparent);
+    color: inherit;
+}
+
+.palantir-diff__fold td {
+    padding: 0;
+    background: var(--palantir-tint);
+}
+
+.palantir-diff__unfold {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    width: 100%;
+    padding: 4px 12px;
+    border: 0;
+    background: transparent;
+    color: var(--palantir-brand);
+    font: 500 12px/1.6 var(--mdc-typography-font-family, inherit);
+    cursor: pointer;
+}
+
+.palantir-diff__unfold:hover {
+    background: var(--palantir-hover);
+}
+
+@media (max-width: 900px) {
+    .palantir-history__layout {
+        grid-template-columns: minmax(0, 1fr);
+        grid-template-rows: auto minmax(320px, 1fr);
+    }
+
+    .palantir-history__versions {
+        max-height: 240px;
+    }
+}
+
 /* ==========================================================================
    Tenant dialog: without the JSON editor, the fields fill the dialog in two columns
    ========================================================================== */
