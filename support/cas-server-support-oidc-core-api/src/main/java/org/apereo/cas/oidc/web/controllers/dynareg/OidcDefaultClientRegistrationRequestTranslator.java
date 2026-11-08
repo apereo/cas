@@ -25,6 +25,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
+import org.jose4j.jws.AlgorithmIdentifiers;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.util.Assert;
 import tools.jackson.databind.ObjectMapper;
@@ -231,8 +232,17 @@ public class OidcDefaultClientRegistrationRequestTranslator implements OidcClien
             _ -> registeredService.setIntrospectionEncryptedResponseEncoding(registrationRequest.getIntrospectionEncryptedResponseEncoding()));
     }
 
+    /**
+     * ID tokens are always signed: a client that asks for {@code none} as the ID token signing algorithm is not accepted.
+     *
+     * @param registrationRequest the registration request
+     * @param registeredService   the registered service
+     */
     private static void processIdTokenSigningAndEncryption(final OidcClientRegistrationRequest registrationRequest,
                                                            final OidcRegisteredService registeredService) {
+        if (Strings.CI.equals(AlgorithmIdentifiers.NONE, registrationRequest.getIdTokenSignedResponseAlg())) {
+            throw new IllegalArgumentException("Unsigned ID tokens are not issued");
+        }
         if (StringUtils.isNotBlank(registrationRequest.getIdTokenSignedResponseAlg())) {
             registeredService.setIdTokenSigningAlg(registrationRequest.getIdTokenSignedResponseAlg());
             registeredService.setSignIdToken(true);

@@ -68,6 +68,22 @@ class OidcWellKnownEndpointControllerTests extends AbstractOidcTests {
             .andExpect(jsonPath("$.request_object_signing_alg_values_supported").value(not(hasItem("none"))));
     }
 
+    /**
+     * Unsigned JWTs are neither issued nor accepted, so {@code none} is never advertised as a signing algorithm for ID
+     * tokens, user info, introspection responses or backchannel authentication requests.
+     */
+    @Test
+    void verifyUnsignedAlgorithmIsNotAdvertised() throws Exception {
+        mockMvc.perform(get("/cas/oidc/" + OidcConstants.WELL_KNOWN_OPENID_CONFIGURATION_URL)
+                .with(withHttpRequestProcessor()))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.id_token_signing_alg_values_supported").value(hasItem("RS256")))
+            .andExpect(jsonPath("$.id_token_signing_alg_values_supported").value(not(hasItem("none"))))
+            .andExpect(jsonPath("$.userinfo_signing_alg_values_supported").value(not(hasItem("none"))))
+            .andExpect(jsonPath("$.introspection_signing_alg_values_supported").value(not(hasItem("none"))))
+            .andExpect(jsonPath("$.backchannel_authentication_request_signing_alg_values_supported").value(not(hasItem("none"))));
+    }
+
     @Test
     void verifyPreAuthorizedGrantAnonymousAccessIsAdvertised() throws Exception {
         mockMvc.perform(get("/cas/oidc/" + OidcConstants.WELL_KNOWN_OAUTH_AUTHORIZATION_SERVER_URL)

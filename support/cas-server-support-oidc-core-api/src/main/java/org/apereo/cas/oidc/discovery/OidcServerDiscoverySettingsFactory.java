@@ -90,15 +90,14 @@ public class OidcServerDiscoverySettingsFactory implements FactoryBean<OidcServe
         discovery.setClaimsParameterSupported(discoveryConfig.isClaimsParameterSupported());
         discovery.setPromptValuesSupported(new LinkedHashSet<>(discoveryConfig.getPromptValuesSupported()));
 
-        discovery.setIdTokenSigningAlgValuesSupported(
-            new LinkedHashSet<>(discoveryConfig.getIdTokenSigningAlgValuesSupported()));
+        discovery.setIdTokenSigningAlgValuesSupported(withoutUnsignedAlgorithm(discoveryConfig.getIdTokenSigningAlgValuesSupported()));
         discovery.setIdTokenEncryptionAlgValuesSupported(
             new LinkedHashSet<>(discoveryConfig.getIdTokenEncryptionAlgValuesSupported()));
         discovery.setIdTokenEncryptionEncodingValuesSupported(
             new LinkedHashSet<>(discoveryConfig.getIdTokenEncryptionEncodingValuesSupported()));
 
         discovery.setIntrospectionSignedResponseAlgValuesSupported(
-            new LinkedHashSet<>(discoveryConfig.getIntrospectionSignedResponseAlgValuesSupported()));
+            withoutUnsignedAlgorithm(discoveryConfig.getIntrospectionSignedResponseAlgValuesSupported()));
         discovery.setIntrospectionEncryptedResponseAlgValuesSupported(
             new LinkedHashSet<>(discoveryConfig.getIntrospectionEncryptedResponseAlgValuesSupported()));
         discovery.setIntrospectionEncryptedResponseEncodingValuesSupported(
@@ -110,8 +109,7 @@ public class OidcServerDiscoverySettingsFactory implements FactoryBean<OidcServe
         discovery.setDPopSigningAlgValuesSupported(
             new LinkedHashSet<>(discoveryConfig.getDpopSigningAlgValuesSupported()));
 
-        discovery.setUserInfoSigningAlgValuesSupported(
-            new LinkedHashSet<>(discoveryConfig.getUserInfoSigningAlgValuesSupported()));
+        discovery.setUserInfoSigningAlgValuesSupported(withoutUnsignedAlgorithm(discoveryConfig.getUserInfoSigningAlgValuesSupported()));
         discovery.setUserInfoEncryptionAlgValuesSupported(
             new LinkedHashSet<>(discoveryConfig.getUserInfoEncryptionAlgValuesSupported()));
         discovery.setUserInfoEncryptionEncodingValuesSupported(
@@ -123,10 +121,7 @@ public class OidcServerDiscoverySettingsFactory implements FactoryBean<OidcServe
         discovery.setNativeSsoSupported(discoveryConfig.isNativeSsoSupported());
         discovery.setRequestParameterSupported(discoveryConfig.isRequestParameterSupported());
         discovery.setRequestUriParameterSupported(discoveryConfig.isRequestUriParameterSupported());
-        discovery.setRequestObjectSigningAlgValuesSupported(discoveryConfig.getRequestObjectSigningAlgValuesSupported()
-            .stream()
-            .filter(algorithm -> !AlgorithmIdentifiers.NONE.equalsIgnoreCase(algorithm))
-            .collect(Collectors.toCollection(LinkedHashSet::new)));
+        discovery.setRequestObjectSigningAlgValuesSupported(withoutUnsignedAlgorithm(discoveryConfig.getRequestObjectSigningAlgValuesSupported()));
         discovery.setRequestObjectEncryptionAlgValuesSupported(discoveryConfig.getRequestObjectEncryptionAlgValuesSupported()
             .stream()
             .filter(algorithm -> !KeyManagementAlgorithmIdentifiers.RSA1_5.equals(algorithm))
@@ -162,9 +157,24 @@ public class OidcServerDiscoverySettingsFactory implements FactoryBean<OidcServe
         
         discovery.setBackchannelUserCodeParameterSupported(discoveryConfig.isBackchannelUserCodeParameterSupported());
         discovery.setBackchannelTokenDeliveryModesSupported(new LinkedHashSet<>(discoveryConfig.getBackchannelTokenDeliveryModesSupported()));
-        discovery.setBackchannelAuthenticationRequestSigningAlgValuesSupported(new LinkedHashSet<>(discoveryConfig.getBackchannelAuthenticationRequestSigningAlgValuesSupported()));
+        discovery.setBackchannelAuthenticationRequestSigningAlgValuesSupported(
+            withoutUnsignedAlgorithm(discoveryConfig.getBackchannelAuthenticationRequestSigningAlgValuesSupported()));
 
         return discovery;
+    }
+
+    /**
+     * Signing algorithms without {@code none}: unsigned JWTs are neither issued nor accepted, so {@code none} is never
+     * advertised, even when configured.
+     *
+     * @param algorithms the configured signing algorithms
+     * @return the signing algorithms without none
+     */
+    private static Set<String> withoutUnsignedAlgorithm(final Collection<String> algorithms) {
+        return algorithms
+            .stream()
+            .filter(algorithm -> !AlgorithmIdentifiers.NONE.equalsIgnoreCase(algorithm))
+            .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
     /**

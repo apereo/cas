@@ -148,6 +148,15 @@ class OidcLogoutEndpointControllerTests {
         }
 
         @Test
+        void verifyOidcLogoutWithIdTokenHintThatIsNotJwt() throws Throwable {
+            mockMvc.perform(get("/cas/oidc/logout")
+                    .with(withHttpRequestProcessor())
+                    .queryParam(OidcConstants.ID_TOKEN_HINT, "not-a-jwt")
+                )
+                .andExpect(status().isBadRequest());
+        }
+
+        @Test
         void verifyPostLogoutRedirectToAnotherRegisteredApplication() throws Throwable {
             val registeredService = getOidcRegisteredService(UUID.randomUUID().toString(), randomServiceUrl(), true, false);
             servicesManager.save(registeredService);

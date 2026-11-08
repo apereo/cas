@@ -11,6 +11,8 @@ import org.apereo.cas.support.oauth.web.endpoints.OAuth20AccessTokenResponseEnco
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestContext;
 import org.apereo.cas.token.JwtBuilder;
 import com.nimbusds.jose.JWSHeader;
+import com.nimbusds.jwt.JWTParser;
+import com.nimbusds.jwt.SignedJWT;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.jose4j.jws.AlgorithmIdentifiers;
@@ -120,12 +122,15 @@ class OidcIdTokenSigningAndEncryptionServiceTests {
             assertFalse(oidcTokenSigningAndEncryptionService.shouldSignToken(getOAuthRegisteredService("1", "http://localhost/cas")));
         }
 
+        /**
+         * ID tokens are always signed, so a service that turns off signing is refused rather than given an unsigned ID token.
+         */
         @Test
         void verifySkipSigning() {
             val oidcRegisteredService = getOidcRegisteredService(UUID.randomUUID().toString(),
                 "https://example-%s.org".formatted(UUID.randomUUID().toString()), false, false);
-            val result = oidcTokenSigningAndEncryptionService.shouldSignToken(oidcRegisteredService);
-            assertFalse(result);
+            assertThrows(IllegalArgumentException.class, () -> oidcTokenSigningAndEncryptionService.shouldSignToken(oidcRegisteredService));
+            assertThrows(IllegalArgumentException.class, () -> oidcTokenSigningAndEncryptionService.encode(oidcRegisteredService, getClaims()));
         }
 
         @Test
@@ -179,16 +184,23 @@ class OidcIdTokenSigningAndEncryptionServiceTests {
                 () -> oidcTokenSigningAndEncryptionService.decode(result3, Optional.of(oidcRegisteredService)));
         }
 
+        /**
+         * {@code none} as the ID token signing algorithm is refused and never advertised; {@code none} as the encryption
+         * algorithm means the signed ID token is not encrypted.
+         */
         @Test
-        void verifyNoneNotSupported() {
+        void verifyNoneNotSupported() throws Throwable {
             val claims = getClaims();
             val oidcRegisteredService = getOidcRegisteredService(UUID.randomUUID().toString(),
                 "https://example-%s.org".formatted(UUID.randomUUID().toString()));
             oidcRegisteredService.setIdTokenSigningAlg(AlgorithmIdentifiers.NONE);
             assertThrows(IllegalArgumentException.class, () -> oidcTokenSigningAndEncryptionService.encode(oidcRegisteredService, claims));
+            assertFalse(oidcServerDiscoverySettings.getIdTokenSigningAlgValuesSupported().contains(AlgorithmIdentifiers.NONE));
             oidcRegisteredService.setIdTokenSigningAlg(AlgorithmIdentifiers.RSA_USING_SHA256);
             oidcRegisteredService.setIdTokenEncryptionAlg(AlgorithmIdentifiers.NONE);
-            assertThrows(IllegalArgumentException.class, () -> oidcTokenSigningAndEncryptionService.encode(oidcRegisteredService, claims));
+            assertFalse(oidcTokenSigningAndEncryptionService.shouldEncryptToken(oidcRegisteredService));
+            val result = oidcTokenSigningAndEncryptionService.encode(oidcRegisteredService, claims);
+            assertInstanceOf(SignedJWT.class, JWTParser.parse(result));
         }
     }
 
@@ -198,15 +210,19 @@ class OidcIdTokenSigningAndEncryptionServiceTests {
         "cas.authn.oidc.discovery.id-token-encryption-encoding-values-supported=none"
     })
     class NoneTests extends AbstractOidcTests {
+        /**
+         * Unsigned ID tokens are not issued even when {@code none} is configured as a supported algorithm, and
+         * {@code none} is not advertised.
+         */
         @Test
-        void verifyNoneSupported() throws Throwable {
+        void verifyNoneSupported() {
             val claims = getClaims();
             val oidcRegisteredService = getOidcRegisteredService(UUID.randomUUID().toString(),
                 "https://example-%s.org".formatted(UUID.randomUUID().toString()));
             oidcRegisteredService.setIdTokenSigningAlg(AlgorithmIdentifiers.NONE);
             oidcRegisteredService.setIdTokenEncryptionAlg(AlgorithmIdentifiers.NONE);
-            val result = oidcTokenSigningAndEncryptionService.encode(oidcRegisteredService, claims);
-            assertNotNull(result);
+            assertThrows(IllegalArgumentException.class, () -> oidcTokenSigningAndEncryptionService.encode(oidcRegisteredService, claims));
+            assertTrue(oidcServerDiscoverySettings.getIdTokenSigningAlgValuesSupported().isEmpty());
         }
     }
 }

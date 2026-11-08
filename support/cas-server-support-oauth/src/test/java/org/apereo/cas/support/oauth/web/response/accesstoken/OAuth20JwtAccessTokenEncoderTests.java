@@ -15,6 +15,7 @@ import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20Jwt
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.token.JwtBuilder;
 import com.nimbusds.jwt.JWTClaimsSet;
+import com.nimbusds.jwt.PlainJWT;
 import lombok.val;
 import org.jose4j.jwe.ContentEncryptionAlgorithmIdentifiers;
 import org.jose4j.jwt.JwtClaims;
@@ -177,7 +178,7 @@ class OAuth20JwtAccessTokenEncoderTests {
             val registeredService = getRegisteredServiceForJwtAccessTokenWithoutKeys(accessToken);
             val cipher = OAuth20JwtAccessTokenEncoder.toEncodableCipher(configurationContext, registeredService, accessToken);
             assertThrows(IllegalStateException.class, () -> cipher.encode(accessToken.getId()));
-            val unsigned = JwtBuilder.buildPlain(new JWTClaimsSet.Builder().jwtID(accessToken.getId()).build(), Optional.of(registeredService));
+            val unsigned = new PlainJWT(new JWTClaimsSet.Builder().jwtID(accessToken.getId()).build()).serialize();
             assertNull(OAuth20JwtAccessTokenEncoder.toDecodableCipher(configurationContext.getAccessTokenJwtBuilder()).decode(unsigned));
         }
     }

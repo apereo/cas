@@ -361,8 +361,13 @@ one-time codes can be added when `cas.authn.mfa.simple.mail.accepted-email-patte
   `cas.ticket.registry.jpa.properties`{: .cas-setting}.
 - {: .fixed data-area="tickets"} Looking up sessions by attribute in the [JPA ticket registry](../ticketing/JPA-Ticket-Registry.html)
   no longer fails on MySQL when the caller runs outside a transaction, as delegated OpenID Connect and SAML2 logout do.
-  The [single sign-on sessions endpoint](../authentication/Configuring-SSO.html#actuator-endpoints) reads sessions inside
-  a ticket transaction, so listing or removing sessions no longer fails with the JPA ticket registry on PostgreSQL.
+  Reading sessions and tickets without a transaction no longer fails on PostgreSQL or MySQL either, as the
+  [single sign-on sessions](../authentication/Configuring-SSO.html#actuator-endpoints) and
+  [ticket registry](../ticketing/Configuring-Ticketing-Components.html#actuator-endpoints) endpoints, the MCP server
+  tools, JMX, OAuth token management and deferred verifiable credential issuance do; outside a transaction the registry
+  reads the matching tickets in one of its own. Listing every ticket over JMX or every OAuth token through the
+  management endpoint reads the registry in batches instead of loading all of its tickets first, and the JMX ticket
+  count is a single count query rather than a read of every ticket.
   Updating a ticket encrypts it once instead of twice when ticket encryption is turned on.
 - {: .changed data-area="tickets"} The [JPA ticket registry](../ticketing/JPA-Ticket-Registry.html) updates a ticket with a
   single statement instead of reading the row back first, no longer deletes service tickets twice when a session ends,
@@ -437,14 +442,24 @@ one-time codes can be added when `cas.authn.mfa.simple.mail.accepted-email-patte
   that publish their keys at a URL other than `https` are not registered.
 - {: .fixed data-area="oidc"} OpenID Connect applications whose keys change no longer keep being checked against the keys
   cached for their earlier definition until that cache expires.
-- {: .action data-area="oidc"} Unsigned JWTs, whose algorithm is `none`, are refused everywhere CAS reads one: request
-  objects, including those encrypted without being signed, are refused with `invalid_request_object`, and `none` is no
-  longer advertised for request objects, even when listed with
-  `cas.authn.oidc.discovery.request-object-signing-alg-values-supported`{: .cas-setting}; JWT
-  [access and refresh tokens](../authentication/OAuth-Authentication-JWT-AccessTokens.html) that would be neither signed
-  nor encrypted are no longer issued, nor accepted, so applications whose JWT access tokens are not signed must have
-  signing turned on; subject and actor tokens of a token exchange, risk verification tokens and QR authentication
-  tokens must be signed.
+- {: .action data-area="oidc"} Unsigned JWTs, whose algorithm is `none`, are no longer supported: CAS neither issues nor
+  accepts them. Request objects, including those encrypted without being signed, are refused with `invalid_request_object`;
+  subject and actor tokens of a token exchange, risk verification tokens and QR authentication tokens must be signed.
+  JWT [access and refresh tokens](../authentication/OAuth-Authentication-JWT-AccessTokens.html),
+  [JWT service and ticket-granting tickets](../installation/Configure-ServiceTicket-JWT.html) and [JWT authorization
+  responses](../authentication/OIDC-Authentication-JARM.html) that would be neither signed nor encrypted are refused
+  rather than issued, so deployments that turn off both must turn on signing.
+  [ID tokens](../authentication/OIDC-Authentication-Clients.html) are always signed: applications that turn off ID token
+  signing or ask for `none` are refused, and dynamic registration refuses `none` with `invalid_client_metadata`.
+  `none` as the user info signing algorithm means a plain JSON response, and user info that is only encrypted is signed
+  first; [JWT introspection responses](../authentication/OAuth-Authentication-TokenIntrospection.html) are always signed,
+  with the default algorithm when none or `none` is set; `none` as an encryption algorithm means no encryption;
+  [UMA requesting party tokens](../protocol/OAuth-UMA-Protocol.html#requesting-party-tokens) are signed with their
+  keystore. Discovery no longer advertises `none` for ID tokens, user info, introspection, request objects or
+  backchannel authentication requests, even when configured, for example with
+  `cas.authn.oidc.discovery.id-token-signing-alg-values-supported`{: .cas-setting}. The
+  [CAS command-line shell](../installation/Configuring-Commandline-Shell.html) only generates signed JWTs: its JWT
+  commands refuse to run without a signing algorithm and secret size, or without a keystore.
 - {: .action data-area="oidc"} A request object whose `client_id` differs from the `client_id` parameter of the request is
   refused with `invalid_request_object`, as [OpenID Connect](https://openid.net/specs/openid-connect-core-1_0.html#RequestObject)
   requires, instead of being used for the client it names.
@@ -563,8 +578,8 @@ one-time codes can be added when `cas.authn.mfa.simple.mail.accepted-email-patte
 - {: .fixed data-area="oidc"} [OpenID Connect logout](../authentication/OIDC-Authentication-Logout.html) no longer
   follows any `post_logout_redirect_uri` sent along with a `client_id`. The URI must match the client of the ID token
   hint, one of its logout URLs, or a registered service; otherwise the session ends without a redirect. An ID token
-  hint that names no registered client or whose signature cannot be verified is answered with `400` instead of a
-  server error.
+  hint that is not a JWT, names no registered client or whose signature cannot be verified is answered with `400`
+  instead of a server error.
 
 ### OpenID Federation
 {: .changed data-area="oidc"}

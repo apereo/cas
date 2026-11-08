@@ -10,12 +10,12 @@ import org.apereo.cas.support.oauth.profile.DefaultOAuth20UserProfile;
 import org.apereo.cas.support.oauth.services.DefaultRegisteredServiceOAuthTokenExchangePolicy;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.ticket.Ticket;
-import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.util.RandomUtils;
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.JWSHeader;
 import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jwt.JWTClaimsSet;
+import com.nimbusds.jwt.PlainJWT;
 import com.nimbusds.jwt.SignedJWT;
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
@@ -99,7 +99,7 @@ class OAuth20TokenExchangeGrantTypeTokenRequestValidatorTests extends AbstractOA
         request.addParameter(OAuth20Constants.CLIENT_ID, service.getClientId());
         assertThrows(IllegalArgumentException.class, () -> validator.validate(request, response));
 
-        request.setParameter(OAuth20Constants.SUBJECT_TOKEN, JwtBuilder.buildPlain(claims, Optional.of(service)));
+        request.setParameter(OAuth20Constants.SUBJECT_TOKEN, new PlainJWT(claims).serialize());
         assertThrows(IllegalArgumentException.class, () -> validator.validate(request, response));
     }
 

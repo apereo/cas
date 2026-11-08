@@ -53,6 +53,20 @@ description: "Review and change CAS OAuth2/OIDC protocol behavior: token endpoin
   values or headers, and hash the token actually issued (`IdTokenGenerationContext.encodedAccessToken`) when checking
   `at_hash`.
 
+## Unsigned JWTs
+
+- CAS neither issues nor accepts unsigned JWTs (`alg: none`). Reading: `JwtBuilder.unpack` refuses a `PlainJWT`. Issuing:
+  `JwtBuilder.build` throws when neither the service nor the default cipher can sign or encrypt, and
+  `BaseTokenSigningAndEncryptionService.signTokenIfNecessary` throws when `shouldSignToken` is false. There is no
+  `buildPlain`; tests that need an unsigned JWT build one with `new PlainJWT(claims).serialize()`.
+- `shouldSignToken`/`shouldEncryptToken` per service: ID tokens always sign (`signIdToken=false` or `none` throws);
+  user info signs when an algorithm is set or encryption is asked for (renderer returns plain JSON otherwise);
+  introspection JWTs always sign (default `RS512`, also for `none`); UMA RPTs always sign with the UMA JWKS. `none` as an
+  encryption algorithm means no encryption. Discovery filters `none` out of every signing algorithm list it publishes.
+- `JsonWebTokenEncryptor` always sets `cty: JWT`, so its payload must be a signed JWT, never bare claims.
+- The shell's `generate-jwt` and `generate-full-jwt` always sign. Their tests assert refusals by calling the command
+  method directly, as `GenerateJwtCommandTests` already did for a blank subject, not through `runShellCommand`.
+
 ## Sender-constrained tokens (DPoP)
 
 - CAS mints DPoP-bound tokens but the protected-resource half of RFC 9449 is thin. `BaseOAuth20Controller.getAccessTokenFromRequest` is the single place every protected resource resolves a token from, and it parses the authorization scheme by name; a token type CAS is willing to issue has to be listed there or the token is silently unusable, reported as `[access_token]: [null]` and then `INVALID_TICKET`.

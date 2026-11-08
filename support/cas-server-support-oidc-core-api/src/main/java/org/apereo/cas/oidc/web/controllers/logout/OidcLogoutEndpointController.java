@@ -99,7 +99,7 @@ public class OidcLogoutEndpointController extends BaseOidcController {
         if (StringUtils.isNotBlank(idToken)) {
             LOGGER.trace("Decoding logout ID token [{}]", idToken);
 
-            val clientIdInIdToken = OAuth20Utils.extractClientIdFromToken(idToken);
+            val clientIdInIdToken = readClientIdFromIdTokenHint(idToken);
             LOGGER.debug("Client id retrieved from ID token is [{}]", clientIdInIdToken);
 
             if (StringUtils.isNotBlank(givenClientId) && !Strings.CI.equals(givenClientId, clientIdInIdToken)) {
@@ -161,6 +161,23 @@ public class OidcLogoutEndpointController extends BaseOidcController {
         }
         return executeLogoutRedirect(Optional.ofNullable(StringUtils.trimToNull(state)),
             Optional.empty(), Optional.ofNullable(givenClientId), request, response);
+    }
+
+    /**
+     * Read the client id the ID token hint names, before the hint is verified. A hint that is not a JWT, or that names
+     * no client, is a bad request, answered with {@code 400} rather than as a server error.
+     *
+     * @param idToken the ID token hint
+     * @return the client id
+     */
+    private String readClientIdFromIdTokenHint(final String idToken) {
+        try {
+            return Objects.requireNonNull(StringUtils.trimToNull(OAuth20Utils.extractClientIdFromToken(idToken)),
+                "ID token hint names no client");
+        } catch (final Exception e) {
+            LOGGER.warn("ID token hint in logout request cannot be read: [{}]", e.getMessage());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "ID token hint cannot be read", e);
+        }
     }
 
     /**

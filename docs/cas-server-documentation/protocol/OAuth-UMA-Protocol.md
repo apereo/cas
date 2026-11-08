@@ -50,6 +50,8 @@ scopes, claims, and any other relevant information.
 A `RPT` is an OAuth access token associated with the UMA grant. An `RPT` is 
 unique to a requesting party, client, authorization server, resource server, 
 and resource owner. This token represents some number of granted permissions.
+The claims of the `RPT` are always signed with the keys of the configured keystore, whose public keys are published
+by the [requesting party token endpoint](#requesting-party-token); without that keystore, no `RPT` is issued.
 
 {% include_cached casproperties.html properties="cas.authn.oauth.uma.requesting-party-token" %}
 

@@ -15,6 +15,7 @@ import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.JWSHeader;
 import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jwt.JWTClaimsSet;
+import com.nimbusds.jwt.PlainJWT;
 import com.nimbusds.jwt.SignedJWT;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -147,7 +148,7 @@ class AccessTokenTokenExchangeGrantRequestExtractorTests extends AbstractOAuth20
         storeProfileIntoSession(actorRequest, userProfile);
         assertThrows(IllegalArgumentException.class, () -> extractor.extract(actorRequest, new MockHttpServletResponse()));
 
-        val unsigned = JwtBuilder.buildPlain(claims, Optional.of(service));
+        val unsigned = new PlainJWT(claims).serialize();
         subjectRequest.setParameter(OAuth20Constants.SUBJECT_TOKEN, unsigned);
         assertThrows(IllegalArgumentException.class, () -> extractor.extract(subjectRequest, new MockHttpServletResponse()));
         actorRequest.setParameter(OAuth20Constants.ACTOR_TOKEN, unsigned);

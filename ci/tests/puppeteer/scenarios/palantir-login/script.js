@@ -617,13 +617,17 @@ async function searchCommandPalette(page, query) {
  * Open the command palette with Ctrl+K and with "/", and check that Enter goes to the first match:
  * a page by its name, then an application, which filters the applications to it.
  *
+ * The page opened first is never Users: that tab puts the focus in its username field once it has loaded,
+ * which can happen after the "/" below is pressed, and "/" typed in a field is a slash, not the shortcut.
+ *
  * @param page the puppeteer page
  */
 async function verifyCommandPalette(page) {
     await cas.separator();
     const target = await page.evaluate(() => {
         const item = $("nav.sidebar-navigation ul li[data-tab-index]").toArray()
-            .find((li) => Number(li.dataset.tabIndex) > 0 && Number(li.dataset.tabIndex) < 100 && $(li).is(":visible"));
+            .find((li) => Number(li.dataset.tabIndex) > 0 && Number(li.dataset.tabIndex) < 100
+                && li.id !== "usersTabButton" && $(li).is(":visible"));
         return {index: Number(item.dataset.tabIndex), label: $(item).find(".sidebar-navigation-label").text().trim()};
     });
     await page.keyboard.down("Control");

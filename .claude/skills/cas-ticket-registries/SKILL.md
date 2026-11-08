@@ -223,14 +223,18 @@ description: "Review and change ticket registries: stateless (compact tickets), 
 - `getSessionsWithAttributes` binds the ticket type and values; attribute names stay in the JSON paths as quoted literals
   (bound on Postgres via `->`, which is matched with `jsonb_exists` rather than the `?` operator Hibernate would read as a
   parameter). `build/jpa-ticket-registry-run.sh` runs the module against MySQL, MariaDB and Postgres in turn.
-- JPA registry streams (`stream`, `getSessionsFor`, `getTicketsFor`) must be consumed inside a ticket transaction:
-  outside one, MySQL fails on the first row with "Operation not allowed after ResultSet closed", because the connection
-  goes back to the pool (on Postgres, "This ResultSet is closed"). Tests that read them wrap the read in
-  `jpaTicketRegistryTransactionTemplate`; backend-agnostic callers such as the `ssoSessions` actuator collect the
-  stream inside a `TicketRegistry.TICKET_TRANSACTION_MANAGER` transaction (a pseudo transaction manager when the
-  registry is not JPA) and act on the collected ids afterwards (`SingleSignOnSessionsEndpoint.readInTicketTransaction`).
-  `getSessionsWithAttributes` is the exception: its results are small and its callers (delegated OIDC/SAML2 logout, MCP
-  tools) run without one, so it collects the matches inside its own transaction and returns the list's stream.
+- JPA registry streams (`stream`, `getSessionsFor`, `getTicketsFor`, and `getTickets(predicate)` on top of `stream`) read
+  lazily only inside a ticket transaction (the ticket `EntityManagerFactory` is bound,
+  `JpaTicketRegistry.streamTickets`). Outside one, MySQL fails on the first row with "Operation not allowed after
+  ResultSet closed" and PostgreSQL with "This ResultSet is closed", because the connection goes back to the pool, so
+  the registry runs the query in its own transaction and returns the collected tickets. Whole-registry scans that must
+  not be held in memory open a ticket transaction (`DefaultTicketRegistryCleaner`, `PrepareAccountProfileViewAction`,
+  `TicketRegistrySessionRepository`, `SingleSignOnSessionsEndpoint.readInTicketTransaction`,
+  `TicketRegistryManagedResource` and `OAuth20TokenManagementEndpoint`, which are given a read-only
+  `TransactionTemplate` over `TicketRegistry.TICKET_TRANSACTION_MANAGER` by their configuration). `query` and
+  `getSessionsWithAttributes` always collect inside the registry's transaction. `BaseJpaTicketRegistryTests`
+  `verifyStreamsOutsideTransaction` and `verifyRegistryQuery` run without `@Transactional` so they catch a read that
+  does not.
 
 ## Registry tests and two-node scenarios
 

@@ -136,7 +136,7 @@ public class OidcDiscoveryProperties implements Serializable {
     /**
      * Supported algorithms for ID token signing.
      */
-    private List<String> idTokenSigningAlgValuesSupported = Stream.of("none", "RS256", "RS384",
+    private List<String> idTokenSigningAlgValuesSupported = Stream.of("RS256", "RS384",
         "RS512", "PS256", "PS384",
         "PS512", "ES256", "ES384",
         "ES512", "HS256", "HS384", "HS512").toList();
@@ -158,7 +158,7 @@ public class OidcDiscoveryProperties implements Serializable {
      * Accepted values containing a list of the JWS signing algorithms
      * supported by the introspection endpoint to sign the response.
      */
-    private List<String> introspectionSignedResponseAlgValuesSupported = Stream.of("none", "RS256", "RS384",
+    private List<String> introspectionSignedResponseAlgValuesSupported = Stream.of("RS256", "RS384",
         "RS512", "PS256", "PS384",
         "PS512", "ES256", "ES384",
         "ES512", "HS256", "HS384", "HS512").toList();
@@ -181,7 +181,7 @@ public class OidcDiscoveryProperties implements Serializable {
     /**
      * Supported algorithms for user-info signing.
      */
-    private List<String> userInfoSigningAlgValuesSupported = Stream.of("none", "RS256", "RS384",
+    private List<String> userInfoSigningAlgValuesSupported = Stream.of("RS256", "RS384",
         "RS512", "PS256", "PS384",
         "PS512", "ES256", "ES384",
         "ES512", "HS256", "HS384", "HS512").toList();
@@ -267,7 +267,7 @@ public class OidcDiscoveryProperties implements Serializable {
      * List of the JWS signing algorithms (alg values) supported by the CAS for signed authentication requests.
      * If omitted, signed authentication requests are not supported by the CAS.
      */
-    private List<String> backchannelAuthenticationRequestSigningAlgValuesSupported = Stream.of("none", "RS256", "RS384",
+    private List<String> backchannelAuthenticationRequestSigningAlgValuesSupported = Stream.of("RS256", "RS384",
         "RS512", "PS256", "PS384",
         "PS512", "ES256", "ES384",
         "ES512", "HS256", "HS384",

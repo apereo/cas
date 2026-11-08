@@ -44,7 +44,15 @@ async function verifyLogoutRedirectValidation(page) {
         + `&state=1234567890&id_token_hint=${forgedIdToken}`);
     await cas.sleep(1000);
     await cas.log(`${response.status()} ${response.statusText()}`);
-    assert(response.status() >= 400);
+    assert(response.status() === 400);
+    await cas.assertPageUrlHost(page, "localhost:8443");
+
+    await cas.log("An ID token hint that is not a JWT is refused as a bad request");
+    response = await cas.goto(page, `${oidcLogoutEndpoint}?post_logout_redirect_uri=https://localhost:9859/anything/cas`
+        + "&state=1234567890&id_token_hint=not-a-jwt");
+    await cas.sleep(1000);
+    await cas.log(`${response.status()} ${response.statusText()}`);
+    assert(response.status() === 400);
     await cas.assertPageUrlHost(page, "localhost:8443");
 
     await cas.log("A post_logout_redirect_uri that matches no registered service ends the session without redirecting");

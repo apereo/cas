@@ -157,6 +157,32 @@ class OidcDynamicClientRegistrationEndpointControllerTests {
                 )
                 .andExpect(status().isBadRequest());
         }
+
+        /**
+         * ID tokens are always signed, so a client asking for {@code none} as its ID token signing algorithm is not registered.
+         */
+        @Test
+        void verifyUnsignedIdTokensAreNotRegistered() throws Throwable {
+            val registrationReq = """
+                {
+                   "redirect_uris": ["https://client.example.org/callback"],
+                   "id_token_signed_response_alg": "none"
+                }
+                """;
+            val accessToken = getAccessToken(UUID.randomUUID().toString(), Set.of(OidcConstants.CLIENT_REGISTRATION_SCOPE));
+            ticketRegistry.addTicket(accessToken);
+
+            mockMvc
+                .perform(post("/cas/oidc/" + OidcConstants.REGISTRATION_URL)
+                    .accept(MediaType.APPLICATION_JSON)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .with(withHttpRequestProcessor())
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer %s".formatted(accessToken.getId()))
+                    .content(registrationReq)
+                )
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error").value("invalid_client_metadata"));
+        }
         
         @Test
         void verifyNoClientNameOperation() throws Throwable {
