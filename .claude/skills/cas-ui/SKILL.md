@@ -104,6 +104,8 @@ description: "Change CAS views and presentation: Thymeleaf render path, theme re
   Sessions, Platform) and the theme, settings and sign-out buttons. Only destinations may be `<li>` (scripts treat every
   `nav.sidebar-navigation ul li` as one and count them with `:visible`; polling also stops when a destination is not
   `:visible`), so closed menus and the narrow-screen overlay hide with `visibility`, never `display: none`.
+  `visibility` is animatable: a `transition: all` on anything inside a menu (cas.css has one on sidebar items and icons)
+  keeps it on screen after the menu closes, so transitions there name their properties.
   `updatePalantirNavigationGroups()` hides empty groups, marks the active one and writes the page heading.
   A row of inner jQuery UI tabs with one visible tab is clipped out of sight, not hidden, for the same reason.
   DataTables group header rows come from `palantirTableGroupRow(label, columns)` (palantir-utils.js); never inline-style them.
@@ -126,7 +128,8 @@ description: "Change CAS views and presentation: Thymeleaf render path, theme re
   `processNavigationTabs()` when its endpoints are missing. The Users page (index 16, `palantir-users.js`) is a list of
   `PalantirUserLookup.sources()` (key, title, icon, `available()`, `load(username)`, `render(records, username)`): add a
   per-user source there, not a new page (cards are `<details>`; an empty source keeps a hidden card so a reload can
-  bring it back, and only the first non-empty card opens by default); reads go through `PalantirUserLookup.get` (404 means no records; the audit log
+  bring it back, and only the first non-empty card opens by default; a table is the standard `mdc-data-table__table` DataTable, rendered
+  empty and filled in the source's `afterRender`); reads go through `PalantirUserLookup.get` (404 means no records; the audit log
   endpoint needs a form content type even on GET and matches its principal as a regex, so quote it).
 - The command palette (`palantir-command-palette.js`, Ctrl/⌘+K and `/`) reads its entries from the nav, the outer inner-tab
   row of each panel, `registeredServicesById` and a few actions each time it opens, so a new page or inner tab shows up on its

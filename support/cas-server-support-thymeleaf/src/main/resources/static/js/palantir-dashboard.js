@@ -23,6 +23,7 @@ class Tabs {
     static MFA = new PalantirDashboardTab("MFA Tab", 13, "m");
     static MULTITENANCY = new PalantirDashboardTab("Multitenancy Tab", 14, "u");
     static CLUSTER = new PalantirDashboardTab("Cluster & High Availability Tab", 15, "v");
+    static USERS = new PalantirDashboardTab("Users Tab", 16, "i");
     static SETTINGS = new PalantirDashboardTab("Settings Dialog", 100, ",");
     static LOGOUT = new PalantirDashboardTab("Logout", 200, "x");
 
@@ -208,6 +209,9 @@ function activateDashboardTab(idx) {
                     if (currentActiveTab === Tabs.CLUSTER.index && typeof refreshActiveClusterTab === "function") {
                         refreshActiveClusterTab();
                     }
+                    if (currentActiveTab === Tabs.USERS.index) {
+                        $("#userLookupUsername").trigger("focus");
+                    }
                 });
                 break;
         }
@@ -388,6 +392,10 @@ function processNavigationTabs() {
     if (!CasActuatorEndpoints.clusterTopology()) {
         hideElements($("#clusterTabButton"));
         hideElements($(`#attribute-tab-${Tabs.CLUSTER.index}`));
+    }
+    if (PalantirUserLookup.availableSources().length === 0) {
+        hideElements($("#usersTabButton"));
+        hideElements($(`#attribute-tab-${Tabs.USERS.index}`));
     }
     if (!CasActuatorEndpoints.restart()) {
         hideElements($("#restartServerButton"));

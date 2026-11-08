@@ -137,10 +137,15 @@ function decryptElement(element, privateKey) {
     return {keyAlgorithm, dataAlgorithm, plaintext};
 }
 
+/*
+ * Attributes keyed by friendly name: the default SAML2 attribute definitions release uid and mail under
+ * their urn:oid names, with the friendly name carrying the plain one.
+ */
 function attributesOf(attributeStatement) {
     const attributes = {};
     children(attributeStatement, "Attribute").forEach((attribute) => {
-        attributes[attributeOf(attribute, "Name")] = children(attribute, "AttributeValue").map(textOf);
+        const name = attributeOf(attribute, "FriendlyName") ?? attributeOf(attribute, "Name");
+        attributes[name] = children(attribute, "AttributeValue").map(textOf);
     });
     return attributes;
 }
@@ -220,7 +225,8 @@ async function verifyEncryptableAttributes(browser, privateKey) {
     await cas.log(`Data encryption algorithm: ${result.dataAlgorithm}, key transport algorithm: ${result.keyAlgorithm}`);
     assert.equal(result.keyAlgorithm, `${XMLENC}rsa-oaep-mgf1p`);
     const attribute = child(await cas.parseXML(result.plaintext), "Attribute");
-    assert.equal(attributeOf(attribute, "Name"), "mail");
+    assert.equal(attributeOf(attribute, "FriendlyName"), "mail");
+    assert.equal(attributeOf(attribute, "Name"), "urn:oid:0.9.2342.19200300.100.1.3");
     assert.deepEqual(children(attribute, "AttributeValue").map(textOf), ["casuser@example.org"]);
 }
 

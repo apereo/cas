@@ -60,6 +60,18 @@ Palantir follows the light or dark appearance of the operating system. The theme
 bar switches between light and dark, and the settings dialog can return Palantir to the operating system's choice;
 the choice is remembered by the browser.
 
+The search button in the navigation bar, also opened with `Ctrl+K` (`⌘K` on macOS) or `/`, finds any page or
+section of Palantir, a registered application by its name, identifier or service id, and common actions such as
+creating an application, switching the theme, opening the settings or signing out. Arrow keys move through the matches and
+`Enter` opens one. Typing a username also offers to look that user up.
+
+The *Users* page gathers what CAS holds about one user: single sign-on sessions, registered multifactor devices,
+trusted devices, attribute consent decisions, resolved attributes, accounts the user may impersonate, the passwordless
+account, password history, throttled login attempts and recent audit events, over the last day, week or month. Each source that has something
+recorded for the user gets a card, which expands to show its records and its usual actions, such as ending a session,
+removing a device or revoking a consent decision; the first card starts expanded. A source is only consulted when the
+actuator endpoint behind it is enabled and exposed, and the page itself is hidden when none of them is.
+
 {% endtab %}
 
 {% tab casadminoptions Spring Boot Admin %}

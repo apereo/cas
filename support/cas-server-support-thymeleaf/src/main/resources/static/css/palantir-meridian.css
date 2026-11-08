@@ -259,6 +259,15 @@ html.palantir-page div#dashboard {
     transition: none;
 }
 
+/*
+ * The CAS sidebar transitions "all" on its items and icons, visibility included, which kept the icons of a closed
+ * menu on screen for the length of the transition. Only colors animate here.
+ */
+#dashboard nav.palantir-nav ul li,
+#dashboard nav.palantir-nav ul li i {
+    transition-property: background-color, color;
+}
+
 #dashboard nav.palantir-nav .sidebar-navigation-head {
     display: none;
 }
@@ -1236,6 +1245,9 @@ html.palantir-page .ui-widget-overlay {
 }
 
 .ui-dialog.palantir-dialog .ui-dialog-titlebar .ui-dialog-titlebar-close.ui-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     border-color: var(--palantir-border-strong);
     background: var(--palantir-surface);
     color: var(--palantir-text-2);
@@ -1246,6 +1258,29 @@ html.palantir-page .ui-widget-overlay {
     border-color: var(--palantir-border);
     background: var(--palantir-surface);
     color: var(--palantir-text);
+}
+
+/* ==========================================================================
+   Tenant dialog: without the JSON editor, the fields fill the dialog in two columns
+   ========================================================================== */
+#tenantControlsPanel.is-full-width {
+    display: grid;
+    flex: 1 1 auto;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-content: start;
+    column-gap: 24px;
+    min-width: 0 !important;
+    margin-right: 0;
+}
+
+#tenantControlsPanel.is-full-width > :not([id$="FieldContainer"]) {
+    grid-column: 1 / -1;
+}
+
+@media (max-width: 900px) {
+    #tenantControlsPanel.is-full-width {
+        grid-template-columns: minmax(0, 1fr);
+    }
 }
 
 /* ==========================================================================
@@ -2716,4 +2751,503 @@ html.palantir-page[data-theme="dark"] .palantir-feature-card mark {
     border: 0;
     background: transparent;
     cursor: pointer;
+}
+
+/* ==========================================================================
+   Users: everything recorded about one user, one card per source
+   ========================================================================== */
+.palantir-user-lookup__form {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: 12px;
+    margin: 0 0 16px;
+}
+
+.registered-service-sections__search.palantir-user-lookup__search {
+    flex: 1 1 320px;
+    max-width: 480px;
+}
+
+.registered-service-sections__search.palantir-user-lookup__search:focus-within {
+    border-color: var(--palantir-focus);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--palantir-focus) 22%, transparent);
+}
+
+#dashboard .palantir-user-lookup__search input:focus-visible {
+    outline: none;
+}
+
+.palantir-user-lookup__window {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--palantir-text-muted);
+    font-size: 14px;
+}
+
+.palantir-user-lookup__window {
+    height: 40px;
+}
+
+.palantir-user-lookup__window .ui-selectmenu-button.ui-button {
+    margin: 0 !important;
+    display: inline-flex;
+    align-items: center;
+    box-sizing: border-box;
+    width: 180px !important;
+    height: 40px;
+    min-height: 40px;
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
+.palantir-user-lookup__form .palantir-button {
+    box-sizing: border-box;
+    height: 40px;
+}
+
+.palantir-user-lookup__summary {
+    margin: 0 0 16px;
+    color: var(--palantir-text-2);
+    font-size: 14px;
+}
+
+.palantir-user-lookup__summary:empty {
+    display: none;
+}
+
+.palantir-user-lookup__grid {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.palantir-user-card {
+    display: block;
+    min-width: 0;
+    border: 1px solid var(--palantir-border);
+    border-radius: 12px;
+    background: var(--palantir-surface);
+    box-shadow: var(--palantir-shadow-soft);
+}
+
+.palantir-user-card[hidden] {
+    display: none;
+}
+
+.palantir-user-card.is-error {
+    border-color: var(--palantir-danger-line);
+}
+
+.palantir-user-card__head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 16px;
+    border-radius: 12px;
+    cursor: pointer;
+    list-style: none;
+}
+
+.palantir-user-card__head::-webkit-details-marker {
+    display: none;
+}
+
+.palantir-user-card__head:hover {
+    background: var(--palantir-hover);
+}
+
+.palantir-user-card[open] > .palantir-user-card__head {
+    border-bottom: 1px solid var(--palantir-divider);
+    border-radius: 12px 12px 0 0;
+}
+
+.palantir-user-card__head .palantir-user-card__chevron {
+    color: var(--palantir-text-muted);
+    font-size: 20px;
+    transition: transform .15s ease;
+}
+
+.palantir-user-card[open] .palantir-user-card__chevron {
+    transform: rotate(180deg);
+}
+
+.palantir-user-card__head .palantir-user-card__alert {
+    color: var(--palantir-danger-line);
+}
+
+.palantir-user-card__head .mdi {
+    color: var(--palantir-brand);
+    font-size: 18px;
+}
+
+.palantir-user-card__head h4 {
+    flex: 1;
+    margin: 0;
+    color: var(--palantir-text);
+    font-size: 15px;
+    font-weight: 600;
+}
+
+.palantir-user-card__count {
+    min-width: 24px;
+    padding: 1px 8px;
+    border-radius: 999px;
+    background: var(--palantir-tint);
+    color: var(--palantir-brand);
+    font-size: 12px;
+    font-weight: 600;
+    text-align: center;
+}
+
+.palantir-user-card__body {
+    min-width: 0;
+    padding: 8px 16px 12px;
+    overflow-wrap: anywhere;
+}
+
+.palantir-user-card__note {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin: 4px 0;
+    color: var(--palantir-text-muted);
+    font-size: 14px;
+}
+
+.palantir-user-card.is-loading .palantir-user-card__note::before {
+    content: "";
+    width: 12px;
+    height: 12px;
+    border: 2px solid var(--palantir-border-strong);
+    border-top-color: var(--palantir-brand);
+    border-radius: 50%;
+    animation: palantir-user-spin .8s linear infinite;
+}
+
+@keyframes palantir-user-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.palantir-user-card__note.is-error {
+    color: var(--palantir-danger);
+}
+
+html.palantir-page[data-theme="dark"] .palantir-user-card__note.is-error {
+    color: #f3a6ae;
+}
+
+.palantir-user-card__list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.palantir-user-card__list > li {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--palantir-divider);
+}
+
+.palantir-user-card__list > li:last-child {
+    border-bottom: 0;
+}
+
+.palantir-user-card__row-text {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+}
+
+.palantir-user-card__primary {
+    color: var(--palantir-text);
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.palantir-user-card__secondary {
+    color: var(--palantir-text-muted);
+    font-size: 12px;
+}
+
+.palantir-user-card code.palantir-user-card__code,
+.palantir-user-card__table code {
+    color: var(--palantir-text-2);
+    font-size: 12px;
+    word-break: break-all;
+}
+
+.palantir-user-card__list .palantir-button {
+    flex: none;
+}
+
+.palantir-user-card__body:has(.palantir-user-card__table) {
+    overflow-x: auto;
+}
+
+.palantir-user-card__table {
+    width: 100%;
+    min-width: 640px;
+    border-collapse: collapse;
+    font-size: 13px;
+}
+
+.palantir-user-card__table :is(th, td) {
+    padding: 6px 8px;
+    border-bottom: 1px solid var(--palantir-divider);
+    color: var(--palantir-text);
+    text-align: left;
+    vertical-align: top;
+    overflow-wrap: normal;
+}
+
+.palantir-user-card__table code {
+    word-break: normal;
+}
+
+.palantir-user-card__table th {
+    color: var(--palantir-text-muted);
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.palantir-user-card__resource {
+    max-width: 420px;
+    color: var(--palantir-text-2);
+    word-break: break-all;
+}
+
+.palantir-user-card__more {
+    margin: 8px 0 0;
+    color: var(--palantir-text-muted);
+    font-size: 12px;
+}
+
+@media (max-width: 599px) {
+    .palantir-user-lookup__form > * {
+        flex: 1 1 100%;
+        max-width: none;
+    }
+
+    .palantir-user-card__list > li {
+        flex-wrap: wrap;
+    }
+
+    .palantir-user-lookup__window .ui-selectmenu-button.ui-button {
+        flex: 1;
+        width: auto !important;
+    }
+}
+
+/* ==========================================================================
+   Command palette
+   ========================================================================== */
+#dashboard .palantir-nav-search {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    height: 40px;
+    margin: 0;
+    padding: 0 8px 0 12px;
+    border: 1px solid var(--palantir-border);
+    border-radius: 999px;
+    background: var(--palantir-surface);
+    color: var(--palantir-text-muted);
+    font: inherit;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+#dashboard .palantir-nav-search:hover {
+    border-color: var(--palantir-border-strong);
+    background: var(--palantir-hover);
+    color: var(--palantir-brand);
+}
+
+#dashboard .palantir-nav-search .mdi::before {
+    font-size: 19px;
+}
+
+.palantir-nav-search-key,
+.palantir-command-palette__hint kbd {
+    padding: 1px 6px;
+    border: 1px solid var(--palantir-border);
+    border-radius: 6px;
+    background: var(--palantir-surface-2);
+    color: var(--palantir-text-muted);
+    font: 500 11px/1.6 ui-monospace, SFMono-Regular, Menlo, monospace;
+    white-space: nowrap;
+}
+
+@media (max-width: 1199px) and (min-width: 992px) {
+    #dashboard .palantir-nav-search {
+        width: 40px;
+        padding: 0;
+        justify-content: center;
+        border-radius: 50%;
+    }
+
+    #dashboard .palantir-nav-search :is(.palantir-nav-search-label, .palantir-nav-search-key) {
+        display: none;
+    }
+}
+
+html.palantir-page .ui-dialog.palantir-command-palette-dialog {
+    max-width: calc(100vw - 32px);
+}
+
+.palantir-command-palette-dialog .ui-dialog-content.palantir-command-palette {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 12px 16px 14px !important;
+}
+
+.palantir-command-palette__search {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    height: 46px;
+    margin: 0;
+    padding: 0 14px;
+    border: 1px solid var(--palantir-border-strong);
+    border-radius: 12px;
+    background: var(--palantir-surface);
+    color: var(--palantir-text-muted);
+}
+
+.palantir-command-palette__search:focus-within {
+    border-color: var(--palantir-focus);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--palantir-focus) 22%, transparent);
+}
+
+.palantir-command-palette__search .mdi::before {
+    font-size: 20px;
+}
+
+.palantir-command-palette__search input {
+    flex: 1;
+    min-width: 0;
+    height: auto !important;
+    padding: 0 !important;
+    border: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    color: var(--palantir-text);
+    font: inherit;
+    font-size: 16px;
+    outline: none;
+}
+
+.palantir-command-palette__results {
+    min-height: 0;
+}
+
+.palantir-command-palette__results .ui-autocomplete.palantir-command-palette__menu {
+    position: static !important;
+    max-height: min(420px, 60vh);
+    margin: 0;
+    padding: 0;
+    overflow-y: auto;
+    border: 0;
+    background: transparent !important;
+    color: var(--palantir-text);
+    font-family: inherit !important;
+    font-size: inherit !important;
+}
+
+.ui-dialog.palantir-dialog .palantir-command-palette__search input:focus-visible {
+    outline: none;
+}
+
+.palantir-command-palette__category {
+    padding: 10px 10px 4px;
+    color: var(--palantir-text-muted);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+}
+
+.palantir-command-palette__menu .ui-menu-item .palantir-command-palette__item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 0;
+    padding: 8px 10px;
+    border: 0;
+    border-radius: 8px;
+    color: var(--palantir-text);
+}
+
+html.palantir-page .palantir-command-palette__menu .ui-menu-item .palantir-command-palette__item.ui-state-active {
+    margin: 0;
+    border: 0;
+    background: var(--palantir-selected);
+    color: var(--palantir-text);
+}
+
+.palantir-command-palette__item .mdi {
+    flex: none;
+    color: var(--palantir-brand);
+    font-size: 18px;
+}
+
+.palantir-command-palette__text {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.palantir-command-palette__label {
+    overflow: hidden;
+    font-size: 14px;
+    font-weight: 500;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.palantir-command-palette__detail {
+    overflow: hidden;
+    color: var(--palantir-text-muted);
+    font-size: 12px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.palantir-command-palette__results[data-empty="true"]::before {
+    content: "Nothing matches. Try a page, an application or a username.";
+    display: block;
+    padding: 12px 10px;
+    color: var(--palantir-text-muted);
+    font-size: 14px;
+}
+
+.palantir-command-palette__hint {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px;
+    margin: 0;
+    color: var(--palantir-text-muted);
+    font-size: 12px;
+}
+
+@media (max-width: 599px) {
+    .palantir-command-palette__hint {
+        display: none;
+    }
+}
+
+@media (forced-colors: active) {
+    .palantir-command-palette__menu .ui-menu-item .palantir-command-palette__item.ui-state-active {
+        outline: 2px solid Highlight;
+    }
 }

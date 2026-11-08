@@ -133,7 +133,7 @@ to build and verify Graal VM native images and we plan to extend the coverage to
 {: data-area="project"}
 
 The collection of end-to-end [browser tests based on Puppeteer](../../developer/Test-Process.html) continue to grow to cover more use cases
-and scenarios. At the moment, total number of jobs stands at approximately `627` distinct scenarios. The overall
+and scenarios. At the moment, total number of jobs stands at approximately `628` distinct scenarios. The overall
 test coverage of the CAS codebase is approximately `94%`.
 
 - {: .changed data-area="project"} MariaDB integration tests and functional test scenarios use port `3307`, so they can run
@@ -205,6 +205,17 @@ and the result downloads as a `cas-theme-custom.properties` file and a `custom.c
 opens on a server that already serves such a `custom.css`, it reads its own block back so the file can keep evolving.
 Nothing is saved on the server; the builder is turned on by default and is controlled by the `cas.theme-builder.enabled`
 theme property.
+
+### Palantir Search & User Lookup
+{: .new data-area="ui"}
+
+[Palantir](../installation/Admin-Dashboard.html) has a search box, opened from the navigation bar or with `Ctrl+K`
+(`⌘K` on macOS) or `/`, that goes to any page or section, finds a registered application by name, identifier or service id,
+and runs common actions without leaving the keyboard. A new *Users* page looks up one user and gathers in one place their
+single sign-on sessions, multifactor and trusted devices, consent decisions, resolved attributes, impersonation accounts,
+passwordless account, password history, throttled login attempts and recent audit events, each with its usual actions
+such as ending a session, removing a device or releasing a throttled attempt. Only sources with something recorded for
+the user are shown, and sources whose actuator endpoints are not enabled are left out.
 
 ### Theme Properties
 {: .new data-area="ui"}

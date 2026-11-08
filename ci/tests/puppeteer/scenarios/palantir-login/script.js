@@ -1,6 +1,6 @@
 /* global $, CAS_FEATURES, CasActuatorEndpoints, PalantirDashboardConfiguration,
    RegisteredServiceSections, openRegisteredServiceWizardDialog, isPopulatingWizard,
-   activateDashboardTab, ace */
+   activateDashboardTab, ace, currentActiveTab, registeredServicesById, PalantirUserLookup */
 const assert = require("assert");
 const cas = require("../../cas.js");
 
@@ -22,7 +22,8 @@ const TABS = [
     {index: 12, label: "Throttles", button: "#throttlesTabButton", tabs: null, tables: ["throttlesTable"]},
     {index: 13, label: "MFA", button: "#mfaTabButton", tabs: "mfa-tabs", tables: ["mfaDevicesTable"]},
     {index: 14, label: "Multitenancy", button: "#tenantsTabButton", tabs: "tenancy-tabs", tables: ["tenantsTable"]},
-    {index: 15, label: "Cluster", button: "#clusterTabButton", tabs: "cluster-tabs", tables: []}
+    {index: 15, label: "Cluster", button: "#clusterTabButton", tabs: "cluster-tabs", tables: []},
+    {index: 16, label: "Users", button: "#usersTabButton", tabs: null, tables: []}
 ];
 
 const PROTOCOL_FIELDS = {
@@ -596,6 +597,103 @@ async function verifySettingsDialog(page) {
     await page.evaluate(() => $("#palantirSettingsDialog").dialog("close"));
 }
 
+/**
+ * Wait for the command palette to open with its search field focused, then type a query.
+ *
+ * @param page the puppeteer page
+ * @param query what to type
+ */
+async function searchCommandPalette(page, query) {
+    await page.waitForFunction(() => $("#palantirCommandPalette").dialog("isOpen")
+        && document.activeElement?.id === "palantirCommandPaletteInput", {timeout: 10000});
+    await page.type("#palantirCommandPaletteInput", query);
+    await page.waitForFunction((term) => $("#palantirCommandPaletteInput").paletteautocomplete("instance").term === term
+        && $(".palantir-command-palette__item.ui-state-active").length === 1, {timeout: 10000}, query);
+    return page.evaluate(() => $(".palantir-command-palette__item.ui-state-active .palantir-command-palette__label").text());
+}
+
+/**
+ * Open the command palette with Ctrl+K and with "/", and check that Enter goes to the first match:
+ * a page by its name, then an application, which filters the applications to it.
+ *
+ * @param page the puppeteer page
+ */
+async function verifyCommandPalette(page) {
+    await cas.separator();
+    const target = await page.evaluate(() => {
+        const item = $("nav.sidebar-navigation ul li[data-tab-index]").toArray()
+            .find((li) => Number(li.dataset.tabIndex) > 0 && Number(li.dataset.tabIndex) < 100 && $(li).is(":visible"));
+        return {index: Number(item.dataset.tabIndex), label: $(item).find(".sidebar-navigation-label").text().trim()};
+    });
+    await page.keyboard.down("Control");
+    await page.keyboard.press("k");
+    await page.keyboard.up("Control");
+    const first = await searchCommandPalette(page, target.label);
+    await cas.logg(`Command palette offers ${first} first for "${target.label}"`);
+    assert(first === target.label);
+    await page.keyboard.press("Enter");
+    await page.waitForFunction((index) => currentActiveTab === index
+        && !$("#palantirCommandPalette").dialog("isOpen"), {timeout: 10000}, target.index);
+    await cas.logg(`Command palette opened ${target.label}`);
+
+    const application = await page.evaluate(() => [...registeredServicesById.values()][0]?.name);
+    if (application) {
+        await page.evaluate(() => document.activeElement?.blur());
+        await page.keyboard.press("/");
+        const match = await searchCommandPalette(page, application);
+        assert(match === application);
+        await page.keyboard.press("Enter");
+        await page.waitForFunction((name) => currentActiveTab === 0
+            && $("#applicationsTable").DataTable().search() === name, {timeout: 10000}, application);
+        await cas.logg(`Command palette found the application ${application}`);
+        await page.evaluate(() => {
+            $("#applicationsTable").DataTable().search("").draw();
+            $("#applications-tab .dt-search input").val("");
+        });
+    }
+    await cas.screenshot(page);
+}
+
+/**
+ * Look a user up from the command palette and check that every source the deployment enables draws
+ * a card that settles without an error.
+ *
+ * An endpoint that answers 404 has nothing for the user, which the page shows as an empty card, so
+ * those responses are not counted as browser errors.
+ *
+ * @param page the puppeteer page
+ * @param failures the failures recorded so far
+ */
+async function verifyUserLookup(page, failures) {
+    await cas.separator();
+    if (!await page.evaluate(() => $("#usersTabButton").is(":visible"))) {
+        await cas.logy("No per-user endpoint is enabled; skipping the user lookup");
+        return;
+    }
+    const before = failures.length;
+    await cas.click(page, "#palantirCommandPaletteButton");
+    const first = await searchCommandPalette(page, "casuser");
+    assert(first === "Look up user casuser", `First match was ${first}`);
+    await page.keyboard.press("Enter");
+    await page.waitForFunction(() => currentActiveTab === 16
+        && $("#userLookupResults .palantir-user-card").length > 0
+        && $("#userLookupResults .palantir-user-card.is-loading").length === 0, {timeout: 60000});
+    const lookup = await page.evaluate(() => ({
+        sources: PalantirUserLookup.availableSources().length,
+        cards: $("#userLookupResults .palantir-user-card").toArray()
+            .map((card) => `${card.dataset.userSource}:${card.className.match(/is-(loaded|empty|error)/)?.[1]}`),
+        summary: $("#userLookupSummary").text()
+    }));
+    await cas.log(`User lookup: ${lookup.cards.join(", ")}`);
+    await cas.logg(lookup.summary);
+    assert(lookup.cards.length === lookup.sources);
+    assert(lookup.cards.every((card) => !card.endsWith(":error")), `Failed sources: ${lookup.cards.join(", ")}`);
+    const unexpected = failures.splice(before).filter((failure) => !/^response: 404 GET .*\/actuator\//.test(failure)
+        && !/status of 404/.test(failure));
+    failures.push(...unexpected);
+    await cas.screenshot(page);
+}
+
 (async () => {
     const browser = await cas.newBrowser(cas.browserOptions());
     const page = await cas.newPage(browser);
@@ -625,6 +723,8 @@ async function verifySettingsDialog(page) {
     await verifyFeatureCatalog(page);
     await verifyServiceWizard(page);
     await verifySettingsDialog(page);
+    await verifyCommandPalette(page);
+    await verifyUserLookup(page, failures);
 
     if (failures.length > 0) {
         await cas.logr(`Browser reported ${failures.length} error(s):`);

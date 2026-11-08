@@ -3,7 +3,7 @@ async function initializeHotKeyOperations() {
         .filter(tab => tab.shortcut)
         .map(tab => tab.shortcut)
         .join(",");
-    shortcuts += ",w,n,esc";
+    shortcuts += ",w,n,esc,/";
 
     hotkeys(shortcuts, function (event, handler) {
         const key = handler.key.toLowerCase();
@@ -11,6 +11,10 @@ async function initializeHotKeyOperations() {
         case "esc":
             event.preventDefault();
             closeAllDialogs();
+            break;
+        case "/":
+            event.preventDefault();
+            openPalantirCommandPalette();
             break;
         case "w":
             event.preventDefault();
@@ -94,6 +98,10 @@ async function initializeHotKeyOperations() {
         <div class="shortcut-item">
           <kbd class="key">w</kbd>
           <span>Application Wizard Dialog</span>
+        </div>
+        <div class="shortcut-item">
+          <kbd class="key">Ctrl K</kbd>
+          <span>Search Palantir (also / or ⌘K)</span>
         </div>
       `);
 }

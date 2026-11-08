@@ -272,3 +272,8 @@ description: "Review and change SAML2 SP and IdP metadata handling: resolvers, M
   which reads the service attributes or the `entityId`/`service` request parameters. A SOAP request carries neither, so
   the attribute query ticket's service records the relying party as `entityId`. `SamlIdPTestUtils.getSamlRegisteredService()`
   puts `entityId` on the mock request, which hides a missing entity id; reset the request attributes when testing that path.
+- In `cas-server-support-saml-idp` tests, `signSamlObject` (and helpers built on it, such as `getSignedAttributeQuery`)
+  signs with the identity provider's key generated for the test run, which no service provider metadata lists, so a
+  signature-required SOAP request signed that way is refused at signature validation. To reach the success path, sign
+  with `metadata/idp-signing.crt`/`.key`, whose certificate the `https://cassp.example.org` metadata in
+  `testshib-providers.xml` lists (`SamlIdPSaml2AttributeQueryProfileHandlerControllerTests.verifyOK`).

@@ -11,7 +11,7 @@
 </head>
 
 <body>
-<div th:fragment="header" th:with="themeBuilder=${#cas.themeBuilderEnabled}">
+<div th:fragment="header" th:with="themeBuilder=${#cas.themeBuilderEnabled and themeBuilderDisabled != true}">
 
     <style th:inline="css">
         :root {

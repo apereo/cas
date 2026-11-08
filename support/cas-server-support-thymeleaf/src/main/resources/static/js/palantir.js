@@ -98,6 +98,8 @@ function registerPalantirTabInitializers() {
         initializeMultitenancyOperations);
     registerDashboardTabInitializers(Tabs.CLUSTER,
         initializeClusterTopologyOperations);
+    registerDashboardTabInitializers(Tabs.USERS,
+        initializeUserLookupOperations);
 }
 
 /**
@@ -156,6 +158,7 @@ async function initializePalantir() {
         registerPalantirTabInitializers();
 
         await initializeHotKeyOperations();
+        initializeCommandPalette();
         await initializePalantirSession();
 
         $(`nav.sidebar-navigation ul li[data-tab-index=${selectedTab}]`).click();
