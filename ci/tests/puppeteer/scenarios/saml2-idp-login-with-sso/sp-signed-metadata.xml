@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<EntityDescriptor entityID="https://localhost:9859/authnrequest-signed-sp" xmlns="urn:oasis:names:tc:SAML:2.0:metadata">
+    <SPSSODescriptor AuthnRequestsSigned="true" protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol">
+        <KeyDescriptor use="signing">
+            <ds:KeyInfo xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
+                <ds:X509Data>
+                    <ds:X509Certificate>
+                    MIIDJTCCAg2gAwIBAgIUU3jQp/X6CfQEnmm74NeqpRuQYoMwDQYJKoZIhvcNAQEL
+                    BQAwITEfMB0GA1UEAwwWYXV0aG5yZXF1ZXN0LXNpZ25lZC1zcDAgFw0yNjExMDYw
+                    NDI5MThaGA8yMDU2MTAyOTA0MjkxOFowITEfMB0GA1UEAwwWYXV0aG5yZXF1ZXN0
+                    LXNpZ25lZC1zcDCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAMpFoChp
+                    Ya8q+F1RHAInrdqPRexECOrHEJxlcqxkzLWY3CzaSinznswl3akZTcp656n/Z4xH
+                    D63iEPnH5dynop/iBq5m2Lg0rmcyMlIKy5OtPeCCMzVT15JYGtyiIqqd6TewTlfA
+                    VeKLEOi4Rn7eWgGdaevEDCWuQNh86tp+0Czn+gU8naDATD1bFIIAV8RoOzSqUnQt
+                    Y9X4GvYCZPoKWc6DP5frHbgVwHOaDqVJI3GOU9aOSYuIVq7aTkvBWx/bCVf0Nc7Z
+                    pex618j6kI0hy5mi95iG90R7qJa2Mchglzf4XFQUygYB0waZBNsVG0nGShQxP6BK
+                    ciwR0QMIw2SRv7cCAwEAAaNTMFEwHQYDVR0OBBYEFHbx8W+SmHxH4y6M9hTvFFkN
+                    U2m1MB8GA1UdIwQYMBaAFHbx8W+SmHxH4y6M9hTvFFkNU2m1MA8GA1UdEwEB/wQF
+                    MAMBAf8wDQYJKoZIhvcNAQELBQADggEBABr9a2jW8GGUOt1k7Hr/u/nAS3bY4Hfl
+                    vNyMjypArUOw4O2RAtdF4RzVd8kRyf2WbbueW+TiRQppIqKapeAX8YFPwIYY3QVX
+                    VkuKmQNOPqznhOpukuNmCeZ3FWimzQX17dEyCsE7M9XyAYmmkhn4TijPmzBY0Apt
+                    rw7q/mJh1CNu18/ITaE1mfUsI9/lHj4PR+nW8sQxzuMIKs33GG28jcviPFazF3N0
+                    KnBWWXvDLa60T3HSHsAuN/elgWrjfsl74yDKO9RN70x2slFCeu24mj+fFBXGi3Ap
+                    3XnLI0aYnkhQHw2Hxxxl2e8dK4jZvSn4t66tGRnzuN8PejDIwZIUgs8=
+                    </ds:X509Certificate>
+                </ds:X509Data>
+            </ds:KeyInfo>
+        </KeyDescriptor>
+        <AssertionConsumerService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="https://localhost:9859/post" index="1"/>
+    </SPSSODescriptor>
+</EntityDescriptor>

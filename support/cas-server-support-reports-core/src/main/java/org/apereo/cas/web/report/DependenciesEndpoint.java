@@ -70,6 +70,8 @@ public class DependenciesEndpoint extends BaseCasRestActuatorEndpoint {
 
     private static final int OSV_MAX_BATCH_SIZE = 1000;
 
+    private static final QueryResult EMPTY_QUERY_RESULT = new QueryResult(List.of(), null);
+
     public DependenciesEndpoint(final ConfigurableApplicationContext applicationContext,
                                 final CasConfigurationProperties casProperties) {
         super(casProperties, applicationContext);
@@ -113,14 +115,25 @@ public class DependenciesEndpoint extends BaseCasRestActuatorEndpoint {
             vulnerableDependencies, vulnerabilities, errors);
     }
 
+    /**
+     * Query OSV for a batch of dependencies. OSV pages each query on its own: a result with a {@code next_page_token}
+     * has more vulnerabilities, which the next request asks for by sending that token as the {@code page_token} of the
+     * same query, and only for the queries that had one, until no result carries a token.
+     *
+     * @param dependencies    the dependencies
+     * @param vulnerabilities the vulnerabilities found
+     * @param errors          the errors
+     */
     private static void queryOsvBatch(final List<Dependency> dependencies,
                                       final Collection<DependencyVulnerability> vulnerabilities,
                                       final Collection<String> errors) {
-        var pageToken = StringUtils.EMPTY;
-        do {
+        Map<Dependency, String> pageTokens = new LinkedHashMap<>();
+        for (val dependency : dependencies) {
+            pageTokens.put(dependency, StringUtils.EMPTY);
+        }
+        while (!pageTokens.isEmpty()) {
             try {
-                val requestBody = buildOsvBatchRequest(dependencies, pageToken);
-                val entity = MAPPER.writeValueAsString(requestBody);
+                val entity = MAPPER.writeValueAsString(buildOsvBatchRequest(pageTokens));
                 val exec = HttpExecutionRequest.builder()
                     .url(OSV_QUERY_BATCH_URL)
                     .entity(entity)
@@ -138,8 +151,7 @@ public class DependenciesEndpoint extends BaseCasRestActuatorEndpoint {
                     try (val content = ((HttpEntityContainer) response).getEntity().getContent()) {
                         val responseBody = IOUtils.toString(content, StandardCharsets.UTF_8);
                         val osvResponse = MAPPER.readValue(responseBody, BatchResponse.class);
-                        mapOsvResults(dependencies, osvResponse, vulnerabilities, errors);
-                        pageToken = StringUtils.defaultString(osvResponse.nextPageToken());
+                        pageTokens = mapOsvResults(new ArrayList<>(pageTokens.keySet()), osvResponse, vulnerabilities, errors);
                     }
                 } finally {
                     HttpUtils.close(response);
@@ -149,34 +161,43 @@ public class DependenciesEndpoint extends BaseCasRestActuatorEndpoint {
                 errors.add(e.getMessage());
                 return;
             }
-        } while (StringUtils.isNotBlank(pageToken));
-    }
-
-    private static Map<String, Object> buildOsvBatchRequest(final List<Dependency> dependencies,
-                                                            final String pageToken) {
-        val queries = dependencies
-            .stream()
-            .map(dependency -> Map.of(
-                "version", dependency.version(),
-                "package", Map.of("name", dependency.name(), "ecosystem", "Maven")))
-            .toList();
-
-        val request = new LinkedHashMap<String, Object>();
-        request.put("queries", queries);
-        if (StringUtils.isNotBlank(pageToken)) {
-            request.put("page_token", pageToken);
         }
-        return request;
     }
 
-    private static void mapOsvResults(final List<Dependency> dependencies,
-                                      final BatchResponse response,
-                                      final Collection<DependencyVulnerability> vulnerabilities,
-                                      final Collection<String> errors) {
+    private static Map<String, Object> buildOsvBatchRequest(final Map<Dependency, String> pageTokens) {
+        val queries = pageTokens.entrySet()
+            .stream()
+            .map(entry -> {
+                val query = new LinkedHashMap<String, Object>();
+                query.put("version", entry.getKey().version());
+                query.put("package", Map.of("name", entry.getKey().name(), "ecosystem", "Maven"));
+                if (StringUtils.isNotBlank(entry.getValue())) {
+                    query.put("page_token", entry.getValue());
+                }
+                return query;
+            })
+            .toList();
+        return Map.of("queries", queries);
+    }
+
+    /**
+     * Map the results of a batch, in the order of its queries, to the vulnerabilities of each dependency.
+     *
+     * @param dependencies    the dependencies of the batch, in query order
+     * @param response        the response
+     * @param vulnerabilities the vulnerabilities found
+     * @param errors          the errors
+     * @return the page tokens of the dependencies whose results continue on another page
+     */
+    private static Map<Dependency, String> mapOsvResults(final List<Dependency> dependencies,
+                                                         final BatchResponse response,
+                                                         final Collection<DependencyVulnerability> vulnerabilities,
+                                                         final Collection<String> errors) {
         val osvResults = response.results() == null ? List.<QueryResult>of() : response.results();
+        val nextPageTokens = new LinkedHashMap<Dependency, String>();
         for (var i = 0; i < dependencies.size(); i++) {
             val dependency = dependencies.get(i);
-            val queryResult = i < osvResults.size() ? osvResults.get(i) : new QueryResult(List.of());
+            val queryResult = i < osvResults.size() ? Objects.requireNonNullElse(osvResults.get(i), EMPTY_QUERY_RESULT) : EMPTY_QUERY_RESULT;
             val osvVulnerabilities = queryResult.vulnerabilities() == null
                 ? List.<Vulnerability>of()
                 : queryResult.vulnerabilities();
@@ -185,7 +206,12 @@ public class DependenciesEndpoint extends BaseCasRestActuatorEndpoint {
                 .map(vulnerability -> getOsvVulnerabilityDetails(dependency, vulnerability, errors))
                 .filter(Objects::nonNull)
                 .forEach(vulnerabilities::add);
+            val nextPageToken = StringUtils.trimToNull(queryResult.nextPageToken());
+            if (nextPageToken != null) {
+                nextPageTokens.put(dependency, nextPageToken);
+            }
         }
+        return nextPageTokens;
     }
 
     private static @Nullable DependencyVulnerability getOsvVulnerabilityDetails(
@@ -210,6 +236,7 @@ public class DependenciesEndpoint extends BaseCasRestActuatorEndpoint {
             }
         } catch (final Exception e) {
             LOGGER.warn("Unable to query OSV vulnerability details for [{}]", vulnerability.id(), e);
+            errors.add("OSV vulnerability details for " + vulnerability.id() + " cannot be read: " + e.getMessage());
         } finally {
             HttpUtils.close(response);
         }
@@ -357,13 +384,13 @@ public class DependenciesEndpoint extends BaseCasRestActuatorEndpoint {
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
-    private record BatchResponse(List<QueryResult> results,
-        @JsonProperty("next_page_token") String nextPageToken) {
+    private record BatchResponse(List<QueryResult> results) {
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
-    private record QueryResult(@JsonProperty("vulns") List<Vulnerability> vulnerabilities) {
+    private record QueryResult(@JsonProperty("vulns") List<Vulnerability> vulnerabilities,
+                               @JsonProperty("next_page_token") @Nullable String nextPageToken) {
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)

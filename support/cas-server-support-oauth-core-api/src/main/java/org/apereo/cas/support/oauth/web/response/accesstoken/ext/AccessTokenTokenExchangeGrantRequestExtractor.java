@@ -100,6 +100,15 @@ public class AccessTokenTokenExchangeGrantRequestExtractor<T extends OAuth20Conf
             .build();
     }
 
+    /**
+     * Extract the token exchange request from the subject token. A JWT subject token whose claims cannot be unpacked
+     * (one whose signature cannot be verified unpacks to nothing) is refused.
+     *
+     * @param request  the request
+     * @param response the response
+     * @return the token exchange request
+     * @throws Throwable the throwable
+     */
     protected TokenExchangeRequest extractSubjectTokenExchangeRequest(final HttpServletRequest request, final HttpServletResponse response) throws Throwable {
         val configurationContext = getConfigurationContext().getObject();
         val requestParameterResolver = configurationContext.getRequestParameterResolver();
@@ -116,7 +125,8 @@ public class AccessTokenTokenExchangeGrantRequestExtractor<T extends OAuth20Conf
                 yield new TokenExchangeRequest(token, token.getService(), registeredService, token.getAuthentication());
             }
             case JWT -> {
-                val claimSet = configurationContext.getAccessTokenJwtBuilder().unpack(Optional.empty(), subjectToken);
+                val claimSet = Optional.ofNullable(configurationContext.getAccessTokenJwtBuilder().unpack(Optional.empty(), subjectToken))
+                    .orElseThrow(() -> new IllegalArgumentException("Subject token cannot be verified"));
                 val service = configurationContext.getWebApplicationServiceServiceFactory().createService(claimSet.getIssuer());
                 service.getAttributes().put(OAuth20Constants.CLIENT_ID, List.of(claimSet.getIssuer()));
                 val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(configurationContext.getServicesManager(), claimSet.getIssuer());
@@ -175,9 +185,20 @@ public class AccessTokenTokenExchangeGrantRequestExtractor<T extends OAuth20Conf
         };
     }
 
+    /**
+     * Build the actor authentication from a JWT actor token. A token whose claims cannot be unpacked
+     * (one whose signature cannot be verified unpacks to nothing) is refused.
+     *
+     * @param actorToken the actor token
+     * @param request    the request
+     * @param response   the response
+     * @return the authentication
+     * @throws Throwable the throwable
+     */
     protected Authentication buildActorTokenAuthenticationFromJwt(final String actorToken, final HttpServletRequest request, final HttpServletResponse response) throws Throwable {
         val configurationContext = getConfigurationContext().getObject();
-        val claimSet = configurationContext.getAccessTokenJwtBuilder().unpack(Optional.empty(), actorToken);
+        val claimSet = Optional.ofNullable(configurationContext.getAccessTokenJwtBuilder().unpack(Optional.empty(), actorToken))
+            .orElseThrow(() -> new IllegalArgumentException("Actor token cannot be verified"));
         val service = configurationContext.getWebApplicationServiceServiceFactory().createService(claimSet.getIssuer());
         service.getAttributes().put(OAuth20Constants.CLIENT_ID, List.of(claimSet.getIssuer()));
         val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(configurationContext.getServicesManager(), claimSet.getIssuer());

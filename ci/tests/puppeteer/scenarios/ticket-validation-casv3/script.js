@@ -34,5 +34,17 @@ const cas = require("../../cas.js");
     assert(mismatched.serviceResponse.authenticationFailure.code === "INVALID_SERVICE");
     const retried = await cas.validateTicket(service1, ticket);
     assert(retried.serviceResponse.authenticationFailure.code === "INVALID_TICKET");
+
+    await cas.log("A validation request without a ticket or without a service is invalid");
+    let xml = await cas.doRequest(`https://localhost:8443/cas/p3/serviceValidate?service=${service1}`);
+    await cas.log(xml);
+    assert(xml.includes("<cas:authenticationFailure code=\"INVALID_REQUEST\">"));
+    const missingService = JSON.parse(await cas.doRequest(`https://localhost:8443/cas/p3/serviceValidate?ticket=${ticket}&format=JSON`));
+    assert(missingService.serviceResponse.authenticationFailure.code === "INVALID_REQUEST");
+    assert(missingService.serviceResponse.authenticationSuccess === undefined);
+
+    await cas.log("A ticket unknown to CAS is reported as INVALID_TICKET");
+    xml = await cas.validateTicket(service1, "ST-1-unknown-ticket", "XML");
+    assert(xml.includes("<cas:authenticationFailure code=\"INVALID_TICKET\">"));
     await cas.closeBrowser(browser);
 })();

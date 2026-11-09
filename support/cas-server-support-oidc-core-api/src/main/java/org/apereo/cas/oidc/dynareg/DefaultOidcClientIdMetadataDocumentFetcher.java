@@ -5,6 +5,7 @@ import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.http.HttpExecutionRequest;
 import org.apereo.cas.util.http.HttpUtils;
+import com.google.common.net.InetAddresses;
 import com.google.common.primitives.Longs;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
@@ -18,13 +19,16 @@ import org.jspecify.annotations.Nullable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
+import java.net.Proxy;
 
 /**
  * This is {@link DefaultOidcClientIdMetadataDocumentFetcher}. It fetches client ID metadata documents with the
  * protections the specification asks for (draft-ietf-oauth-client-id-metadata-document, section 6): the host is resolved
  * once and every address it resolves to must be public, the connection is made to those addresses only, so a host whose
  * name later resolves elsewhere cannot redirect the request, redirects are not followed, only {@code 200} responses are
- * accepted, the body must be JSON and at most {@value #MAXIMUM_DOCUMENT_SIZE} bytes, and the request has a timeout.
+ * accepted, the body must be served as JSON and be at most {@value #MAXIMUM_DOCUMENT_SIZE} bytes, unless another limit is
+ * given, and the request has a timeout. The same protections apply to other documents a client points CAS to, such as
+ * its sector identifier document, which need not be served as JSON, since such files are often hosted as plain text.
  * TLS follows the CAS HTTP client, so its trust store settings apply. An outbound HTTP proxy configured through system
  * properties resolves the host itself, which bypasses the address check; do not route these requests through one.
  *
@@ -48,7 +52,12 @@ public class DefaultOidcClientIdMetadataDocumentFetcher implements OidcClientIdM
 
     private static final List<AddressBlock> NON_PUBLIC_IPV6 = AddressBlock.of("fc00::/7", "fe80::/10", "ff00::/8", "2001:db8::/32");
 
-    private static final List<AddressBlock> IPV4_EMBEDDING_IPV6 = AddressBlock.of("::/96", "64:ff9b::/96");
+    private static final int IPV4_EMBEDDING_PREFIX_LENGTH = 96;
+
+    private static final byte[] IPV4_MAPPED_PREFIX = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, (byte) 0xff, (byte) 0xff, 0, 0, 0, 0};
+
+    private static final List<AddressBlock> IPV4_EMBEDDING_IPV6 = Stream.concat(AddressBlock.of("::/96", "64:ff9b::/96").stream(),
+        Stream.of(new AddressBlock(IPV4_MAPPED_PREFIX, IPV4_EMBEDDING_PREFIX_LENGTH))).toList();
 
     private static final Pattern MAX_AGE = Pattern.compile("(?:^|,)\\s*max-age\\s*=\\s*\"?(\\d+)\"?", Pattern.CASE_INSENSITIVE);
 
@@ -60,7 +69,16 @@ public class DefaultOidcClientIdMetadataDocumentFetcher implements OidcClientIdM
 
     private final Function<String, InetAddress[]> hostResolver;
 
+    private final int maximumDocumentSize;
+
+    private final boolean jsonContentTypeRequired;
+
     public DefaultOidcClientIdMetadataDocumentFetcher(final HttpClient httpClient, final Duration timeout) {
+        this(httpClient, timeout, MAXIMUM_DOCUMENT_SIZE, true);
+    }
+
+    public DefaultOidcClientIdMetadataDocumentFetcher(final HttpClient httpClient, final Duration timeout,
+                                                      final int maximumDocumentSize, final boolean jsonContentTypeRequired) {
         this(httpClient, timeout, DefaultOidcClientIdMetadataDocumentFetcher::isPublicAddress,
             host -> {
                 try {
@@ -68,7 +86,13 @@ public class DefaultOidcClientIdMetadataDocumentFetcher implements OidcClientIdM
                 } catch (final UnknownHostException e) {
                     return new InetAddress[0];
                 }
-            });
+            }, maximumDocumentSize, jsonContentTypeRequired);
+    }
+
+    public DefaultOidcClientIdMetadataDocumentFetcher(final HttpClient httpClient, final Duration timeout,
+                                                      final Predicate<InetAddress> addressPolicy,
+                                                      final Function<String, InetAddress[]> hostResolver) {
+        this(httpClient, timeout, addressPolicy, hostResolver, MAXIMUM_DOCUMENT_SIZE, true);
     }
 
     @Override
@@ -88,7 +112,7 @@ public class DefaultOidcClientIdMetadataDocumentFetcher implements OidcClientIdM
             .headers(Map.of(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE))
             .redirectsEnabled(false)
             .maximumRetryAttempts(1)
-            .maximumResponseSize(MAXIMUM_DOCUMENT_SIZE)
+            .maximumResponseSize(maximumDocumentSize)
             .responseTimeout(timeout)
             .resolvedAddresses(Map.of(host, addresses))
             .build();
@@ -100,7 +124,7 @@ public class DefaultOidcClientIdMetadataDocumentFetcher implements OidcClientIdM
                     .formatted(response == null ? "none" : response.getCode()));
             }
             val contentType = response.getFirstHeader(HttpHeaders.CONTENT_TYPE);
-            if (contentType == null || !isJson(contentType.getValue())) {
+            if (jsonContentTypeRequired && (contentType == null || !isJson(contentType.getValue()))) {
                 throw new IllegalArgumentException("Document is not served as JSON");
             }
             if (!(response instanceof final HttpEntityContainer container) || container.getEntity() == null) {
@@ -120,7 +144,7 @@ public class DefaultOidcClientIdMetadataDocumentFetcher implements OidcClientIdM
     /**
      * Whether an address may be contacted to fetch a document. Unspecified, loopback, link-local, private (site-local,
      * carrier-grade NAT and unique local), multicast, documentation, benchmarking and reserved addresses are refused,
-     * including IPv4 addresses embedded in IPv4-compatible and NAT64 IPv6 addresses.
+     * including IPv4 addresses embedded in IPv4-mapped, IPv4-compatible and NAT64 IPv6 addresses.
      *
      * @param address the address
      * @return true if the address is public
@@ -143,6 +167,73 @@ public class DefaultOidcClientIdMetadataDocumentFetcher implements OidcClientIdM
                 Arrays.copyOfRange(address.getAddress(), IPV6_LENGTH - IPV4_LENGTH, IPV6_LENGTH))))
             .map(DefaultOidcClientIdMetadataDocumentFetcher::isPublicAddress)
             .orElse(Boolean.TRUE);
+    }
+
+    /**
+     * Whether an address may be contacted where addresses of private and loopback networks are allowed: link-local,
+     * unspecified and multicast addresses are refused, such as the metadata service of a cloud provider, including IPv4
+     * addresses embedded in IPv4-mapped, IPv4-compatible and NAT64 IPv6 addresses.
+     *
+     * @param address the address
+     * @return true or false
+     */
+    public static boolean isAllowedWithPrivateNetworks(final InetAddress address) {
+        if (address.isAnyLocalAddress() || address.isLinkLocalAddress() || address.isMulticastAddress()) {
+            return false;
+        }
+        if (address instanceof Inet4Address) {
+            return true;
+        }
+        return IPV4_EMBEDDING_IPV6.stream()
+            .filter(block -> block.contains(address))
+            .findFirst()
+            .map(_ -> FunctionUtils.doUnchecked(() -> InetAddress.getByAddress(
+                Arrays.copyOfRange(address.getAddress(), IPV6_LENGTH - IPV4_LENGTH, IPV6_LENGTH))))
+            .map(DefaultOidcClientIdMetadataDocumentFetcher::isAllowedWithPrivateNetworks)
+            .orElse(Boolean.TRUE);
+    }
+
+    /**
+     * Whether a request may be sent to the host of the URL where addresses of private and loopback networks are allowed:
+     * none of the addresses the host resolves to may be refused by {@link #isAllowedWithPrivateNetworks(InetAddress)}. A
+     * host written as an address is always checked. A host name sent through an HTTP proxy of the JVM, which the proxy
+     * selector names with an address, is resolved by the proxy, which then decides where it may go, so it is not resolved
+     * here; one sent through a SOCKS proxy is resolved by the JVM before it connects, so it is checked as for a direct
+     * connection, unless the JVM cannot resolve it and leaves it to the proxy.
+     *
+     * @param url the URL
+     * @return true or false
+     * @throws IOException when the host cannot be resolved
+     */
+    public static boolean isAllowedWithPrivateNetworks(final URL url) throws IOException {
+        return isAllowedWithPrivateNetworks(url, ProxySelector.getDefault());
+    }
+
+    static boolean isAllowedWithPrivateNetworks(final URL url, @Nullable final ProxySelector proxySelector) throws IOException {
+        if (InetAddresses.isUriInetAddress(url.getHost())) {
+            return isAllowedWithPrivateNetworks(InetAddresses.forUriString(url.getHost()));
+        }
+        val proxies = selectProxies(url, proxySelector);
+        if (proxies.stream().anyMatch(proxy -> proxy.type() == Proxy.Type.HTTP && proxy.address() != null)) {
+            return true;
+        }
+        try {
+            return Arrays.stream(InetAddress.getAllByName(url.getHost())).allMatch(DefaultOidcClientIdMetadataDocumentFetcher::isAllowedWithPrivateNetworks);
+        } catch (final UnknownHostException e) {
+            if (proxies.stream().anyMatch(proxy -> proxy.type() == Proxy.Type.SOCKS && proxy.address() != null)) {
+                return true;
+            }
+            throw e;
+        }
+    }
+
+    private static List<Proxy> selectProxies(final URL url, @Nullable final ProxySelector proxySelector) {
+        return FunctionUtils.doAndHandle(() -> {
+            val uri = url.toURI();
+            return Optional.ofNullable(proxySelector)
+                .map(selector -> selector.select(uri))
+                .orElseGet(List::of);
+        }, _ -> List.<Proxy>of()).get();
     }
 
     private static boolean isJson(final String contentType) {

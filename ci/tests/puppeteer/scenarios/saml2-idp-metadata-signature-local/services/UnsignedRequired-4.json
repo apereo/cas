@@ -1,0 +1,13 @@
+{
+  "@class" : "org.apereo.cas.support.saml.services.SamlRegisteredService",
+  "serviceId" : "^https://localhost:9859/sig-unsigned$",
+  "name" : "UnsignedRequired",
+  "id" : 4,
+  "evaluationOrder" : 4,
+  "metadataLocation" : "file://${#environmentVariables['PWD']}/ci/tests/puppeteer/overlay/${#environmentVariables['SCENARIO']}/aggregate-unsigned.xml",
+  "metadataSignatureLocation" : "file://${#environmentVariables['PWD']}/ci/tests/puppeteer/overlay/${#environmentVariables['SCENARIO']}/signer.crt",
+  "requireSignedRoot" : true,
+  "attributeReleasePolicy" : {
+    "@class" : "org.apereo.cas.services.ReturnAllAttributeReleasePolicy"
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "@class": "org.apereo.cas.services.CasRegisteredService",
+  "serviceId": "^https://localhost:9859/anything/bypass-mismatched-attribute.*",
+  "id": 6,
+  "name": "BypassMismatchedAttribute",
+  "evaluationOrder": 6,
+  "multifactorPolicy": {
+    "@class": "org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy",
+    "multifactorAuthenticationProviders": [
+      "java.util.LinkedHashSet",
+      [
+        "mfa-yubikey"
+      ]
+    ],
+    "bypassPrincipalAttributeName": "memberOf",
+    "bypassPrincipalAttributeValue": "staff",
+    "bypassIfMissingPrincipalAttribute": true
+  }
+}

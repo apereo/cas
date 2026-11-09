@@ -1,0 +1,11 @@
+{
+  "@class": "org.apereo.cas.services.CasRegisteredService",
+  "serviceId": "^https://localhost:9859/anything/sensitive.*",
+  "id": 2,
+  "name": "Sensitive",
+  "multifactorPolicy": {
+    "@class": "org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy",
+    "multifactorAuthenticationProviders": [ "java.util.LinkedHashSet", [ "mfa-gauth" ] ],
+    "bypassTrustedDeviceEnabled": true
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "keys": [
+    {
+      "kty": "RSA",
+      "e": "AQAB",
+      "use": "sig",
+      "kid": "refeds-sirtfi-owner",
+      "n": "0oqxPxMmzpd3JCxoqrs-zYoV91rBhi7wao8ViIlCsPyTTpiOWVp32VjPSsrCSEUSTk8gwa2oxAnlothtYyZntr8aCBvUNaGHyRcMGonzMAFeImdy6p9WBE6JZWhP35S0HRL7Pmh3-uV5kY3xrleD9ATAAbK1DGkPX5Mqfmv5R34P1RD7kGc6YFYH-zMh5Y-kaej9E4Y774OmSg25JAdnoFJheuwMfJXwcVoraPQT3KQk-Avbummb5P9jmUKXFSZPBgsZ9OA_JPbq3Gbn44oRNfHeaObl1xHRS4hPUNNJux9oQNSwC5DWeEOcNWlykaaj-tvESqacTI_k1PE7-b2a8w"
+    }
+  ]
+}

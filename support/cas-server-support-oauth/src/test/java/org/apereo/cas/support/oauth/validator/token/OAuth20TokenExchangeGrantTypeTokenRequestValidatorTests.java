@@ -10,8 +10,13 @@ import org.apereo.cas.support.oauth.profile.DefaultOAuth20UserProfile;
 import org.apereo.cas.support.oauth.services.DefaultRegisteredServiceOAuthTokenExchangePolicy;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.ticket.Ticket;
-import org.apereo.cas.token.JwtBuilder;
+import org.apereo.cas.util.RandomUtils;
+import com.nimbusds.jose.JWSAlgorithm;
+import com.nimbusds.jose.JWSHeader;
+import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jwt.JWTClaimsSet;
+import com.nimbusds.jwt.PlainJWT;
+import com.nimbusds.jwt.SignedJWT;
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
@@ -79,13 +84,34 @@ class OAuth20TokenExchangeGrantTypeTokenRequestValidatorTests extends AbstractOA
         assertThrows(IllegalArgumentException.class, () -> validator.validate(request, response));
     }
 
+    @Test
+    void verifyJwtSignedByAnotherKey() throws Throwable {
+        val service = addRegisteredService(Set.of(OAuth20GrantTypes.TOKEN_EXCHANGE), UUID.randomUUID().toString(), UUID.randomUUID().toString());
+        val claims = new JWTClaimsSet.Builder()
+            .subject(service.getClientId())
+            .issuer(RegisteredServiceTestUtils.CONST_TEST_URL)
+            .build();
+        val jwt = new SignedJWT(new JWSHeader(JWSAlgorithm.HS256), claims);
+        jwt.sign(new MACSigner(RandomUtils.randomAlphanumeric(256).getBytes(StandardCharsets.UTF_8)));
+        request.addParameter(OAuth20Constants.SUBJECT_TOKEN, jwt.serialize());
+        request.addParameter(OAuth20Constants.SUBJECT_TOKEN_TYPE, OAuth20TokenExchangeTypes.JWT.getType());
+        request.addParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.TOKEN_EXCHANGE.getType());
+        request.addParameter(OAuth20Constants.CLIENT_ID, service.getClientId());
+        assertThrows(IllegalArgumentException.class, () -> validator.validate(request, response));
+
+        request.setParameter(OAuth20Constants.SUBJECT_TOKEN, new PlainJWT(claims).serialize());
+        assertThrows(IllegalArgumentException.class, () -> validator.validate(request, response));
+    }
+
     @MethodSource("contextProvider")
     @ParameterizedTest
     void verifyServicePassingWithTicket(final Object subject, final OAuth20TokenExchangeTypes type,
                                         final OAuthRegisteredService registeredService,
                                         final Boolean expectation)
             throws Throwable {
-        request.setParameter(OAuth20Constants.SUBJECT_TOKEN, subject.toString());
+        request.setParameter(OAuth20Constants.SUBJECT_TOKEN, subject instanceof final JWTClaimsSet claims
+            ? configurationContext.getAccessTokenJwtBuilder().build(registeredService, claims)
+            : subject.toString());
         if (subject instanceof final Ticket at) {
             ticketRegistry.addTicket(at);
         }
@@ -160,7 +186,6 @@ class OAuth20TokenExchangeGrantTypeTokenRequestValidatorTests extends AbstractOA
         ));
         val jwtRegisteredService = getRegisteredService(claims.getIssuer(), claims.getSubject(),
             UUID.randomUUID().toString(), Set.of(OAuth20GrantTypes.TOKEN_EXCHANGE));
-        val jwt = JwtBuilder.buildPlain(claims, Optional.of(jwtRegisteredService));
 
         val accessToken = getAccessToken(UUID.randomUUID().toString(), UUID.randomUUID().toString(), UUID.randomUUID().toString());
         val accessTokenRegisteredService = getRegisteredService(accessToken.getService().getId(),
@@ -173,7 +198,7 @@ class OAuth20TokenExchangeGrantTypeTokenRequestValidatorTests extends AbstractOA
         return Stream.of(
             Arguments.of(accessToken, OAuth20TokenExchangeTypes.ACCESS_TOKEN, accessTokenRegisteredService, true),
             Arguments.of(accessTokenBadGrant, OAuth20TokenExchangeTypes.ACCESS_TOKEN, accessTokenBadGrantService, false),
-            Arguments.of(jwt, OAuth20TokenExchangeTypes.JWT, jwtRegisteredService, true)
+            Arguments.of(claims, OAuth20TokenExchangeTypes.JWT, jwtRegisteredService, true)
         );
     }
 }

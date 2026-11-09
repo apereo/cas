@@ -3,10 +3,14 @@ package org.apereo.cas.web.report;
 import module java.base;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.logout.slo.SingleLogoutRequestExecutor;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.ticket.registry.TicketRegistryStreamCriteria;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
+import org.apereo.cas.util.spring.DirectObjectProvider;
 import lombok.val;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,10 +20,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.TestPropertySource;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 import tools.jackson.databind.ObjectMapper;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -150,6 +156,25 @@ class SingleSignOnSessionsEndpointTests extends AbstractCasEndpointTests {
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.deleted").exists())
             .andExpect(jsonPath("$.length()", equalTo(1)));
+    }
+
+    @Test
+    void verifyRegistryIsReadInsideTicketTransaction() {
+        val transactionActive = new ArrayList<Boolean>();
+        val registry = mock(TicketRegistry.class);
+        when(registry.stream(any(TicketRegistryStreamCriteria.class))).thenAnswer(_ -> {
+            transactionActive.add(TransactionSynchronizationManager.isActualTransactionActive());
+            return Stream.empty();
+        });
+        when(registry.getSessionsFor(anyString())).thenAnswer(_ -> {
+            transactionActive.add(TransactionSynchronizationManager.isActualTransactionActive());
+            return Stream.empty();
+        });
+        val endpoint = new SingleSignOnSessionsEndpoint(new DirectObjectProvider<>(registry), applicationContext,
+            applicationContext.getBean(CasConfigurationProperties.class), new DirectObjectProvider<>(mock(SingleLogoutRequestExecutor.class)));
+        endpoint.getSsoSessions(new SingleSignOnSessionsEndpoint.SsoSessionsRequest());
+        endpoint.getSsoSessionsForUser(username);
+        assertEquals(List.of(true, true), transactionActive);
     }
 
     @Test

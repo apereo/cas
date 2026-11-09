@@ -15,8 +15,6 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
 import com.nimbusds.jose.Header;
-import com.nimbusds.jose.JOSEObjectType;
-import com.nimbusds.jose.PlainHeader;
 import com.nimbusds.jwt.EncryptedJWT;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.JWTParser;
@@ -129,18 +127,19 @@ public class JwtBuilder {
     }
 
     /**
-     * Build plain string.
+     * Whether the value is an unsigned JWT, one whose algorithm is {@code none}, which carries no proof of who issued it
+     * and is never accepted.
      *
-     * @param claimsSet         the claims set
-     * @param registeredService the registered service
-     * @return the jwt
+     * @param jwt the value
+     * @return true or false
      */
-    public static String buildPlain(final JWTClaimsSet claimsSet,
-                                    final Optional<RegisteredService> registeredService) {
-        val header = new PlainHeader.Builder().type(JOSEObjectType.JWT);
-        registeredService.ifPresent(svc ->
-            header.customParam(RegisteredServiceCipherExecutor.CUSTOM_HEADER_REGISTERED_SERVICE_ID, svc.getId()));
-        return new PlainJWT(header.build(), claimsSet).serialize();
+    public static boolean isUnsigned(@Nullable final String jwt) {
+        try {
+            return StringUtils.isNotBlank(jwt) && JWTParser.parse(jwt) instanceof PlainJWT;
+        } catch (final Exception e) {
+            LOGGER.trace("Unable to parse [{}] as a JWT", jwt);
+            return false;
+        }
     }
 
     /**
@@ -154,11 +153,13 @@ public class JwtBuilder {
     }
 
     /**
-     * Unpack jwt.
+     * Verify the JWT, signed or encrypted, with the keys of the service, or else with the default keys, and read its
+     * claims. An unsigned JWT, whose algorithm is {@code none}, carries no proof of who issued it, so it is refused and
+     * unpacks to nothing, whatever it claims.
      *
      * @param service the service
      * @param jwtJson the jwt json
-     * @return the string
+     * @return the claims, or null when the JWT is unsigned
      */
     public @Nullable JWTClaimsSet unpack(final Optional<RegisteredService> service, final String jwtJson) {
         return FunctionUtils.doUnchecked(() -> {
@@ -168,26 +169,27 @@ public class JwtBuilder {
             });
 
             val jwt = JWTParser.parse(jwtJson);
-            if (jwt instanceof SignedJWT || jwt instanceof EncryptedJWT) {
-                if (service.isPresent()) {
-                    val registeredService = service.get();
-                    LOGGER.trace("Locating service signing and encryption keys for [{}]", registeredService.getServiceId());
-                    val decoder = registeredServiceCipherExecutor.findDecoderFor(registeredService);
-                    if (decoder.isPresent()) {
-                        LOGGER.trace("Decoding JWT based on keys provided by service [{}]", registeredService.getServiceId());
-                        return parse(decoder.get().apply(jwtJson));
-                    }
-                }
-
-                return FunctionUtils.doIf(defaultTokenCipherExecutor.isEnabled(),
-                    () -> {
-                        LOGGER.trace("Decoding JWT based on default global keys");
-                        return parse(defaultTokenCipherExecutor.decode(jwtJson));
-                    }, () -> {
-                        throw new IllegalArgumentException("Unable to validate JWT signature");
-                    }).get();
+            if (jwt instanceof PlainJWT) {
+                LOGGER.warn("Unsigned JWT is refused");
+                return null;
             }
-            return parse(jwtJson);
+            if (service.isPresent()) {
+                val registeredService = service.get();
+                LOGGER.trace("Locating service signing and encryption keys for [{}]", registeredService.getServiceId());
+                val decoder = registeredServiceCipherExecutor.findDecoderFor(registeredService);
+                if (decoder.isPresent()) {
+                    LOGGER.trace("Decoding JWT based on keys provided by service [{}]", registeredService.getServiceId());
+                    return parse(decoder.get().apply(jwtJson));
+                }
+            }
+
+            return FunctionUtils.doIf(defaultTokenCipherExecutor.isEnabled(),
+                () -> {
+                    LOGGER.trace("Decoding JWT based on default global keys");
+                    return parse(defaultTokenCipherExecutor.decode(jwtJson));
+                }, () -> {
+                    throw new IllegalArgumentException("Unable to validate JWT signature");
+                }).get();
         });
     }
 
@@ -247,11 +249,13 @@ public class JwtBuilder {
 
 
     /**
-     * Build JWT.
+     * Build the JWT, signed or encrypted with the keys of the service, or else with the default keys.
+     * An unsigned JWT, whose algorithm is {@code none}, carries no proof of who issued it, so it is never built;
+     * when neither the service nor the default keys can sign or encrypt it, the JWT is refused.
      *
      * @param registeredService the registered service
      * @param claimsSet         the claims set
-     * @return the string
+     * @return the signed or encrypted JWT
      */
     public String build(@Nullable final RegisteredService registeredService,
                         final JWTClaimsSet claimsSet) {
@@ -271,9 +275,8 @@ public class JwtBuilder {
             LOGGER.trace("Encoding JWT based on default global keys");
             return defaultTokenCipherExecutor.encode(jwtJson);
         }
-        val token = buildPlain(claimsSet, Optional.ofNullable(registeredService));
-        LOGGER.trace("Generating plain JWT as the ticket: [{}]", token);
-        return token;
+        throw new IllegalStateException("JWT for [%s] cannot be signed or encrypted and unsigned JWTs are not issued; turn on signing of JWTs"
+            .formatted(registeredService != null ? registeredService.getServiceId() : "CAS"));
     }
 
     protected @Nullable RegisteredService locateRegisteredService(final String serviceAudience) {

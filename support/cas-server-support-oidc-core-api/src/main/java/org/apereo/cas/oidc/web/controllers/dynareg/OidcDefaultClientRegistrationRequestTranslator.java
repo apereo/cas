@@ -3,11 +3,13 @@ package org.apereo.cas.oidc.web.controllers.dynareg;
 import module java.base;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.oidc.OidcConfigurationContext;
+import org.apereo.cas.oidc.dynareg.OidcClientIdMetadataDocumentFetcher;
 import org.apereo.cas.oidc.dynareg.OidcClientRegistrationRequest;
 import org.apereo.cas.oidc.profile.OidcUserProfileSigningAndEncryptionService;
 import org.apereo.cas.services.DefaultRegisteredServiceContact;
 import org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy;
 import org.apereo.cas.services.OidcBackchannelTokenDeliveryModes;
+import org.apereo.cas.services.OidcRedirectUriUtils;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.OidcSubjectTypes;
 import org.apereo.cas.services.PairwiseOidcRegisteredServiceUsernameAttributeProvider;
@@ -17,26 +19,22 @@ import org.apereo.cas.support.oauth.services.OAuthRegisteredServiceClientSecret;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.function.FunctionUtils;
-import org.apereo.cas.util.http.HttpExecutionRequest;
-import org.apereo.cas.util.http.HttpUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
-import org.apache.hc.core5.http.HttpEntityContainer;
-import org.apache.hc.core5.http.HttpResponse;
-import org.apache.hc.core5.http.HttpStatus;
-import org.hjson.JsonValue;
+import org.jose4j.jws.AlgorithmIdentifiers;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.http.HttpMethod;
 import org.springframework.util.Assert;
 import tools.jackson.databind.ObjectMapper;
 
 /**
- * This is {@link OidcDefaultClientRegistrationRequestTranslator}.
+ * This is {@link OidcDefaultClientRegistrationRequestTranslator}. A registration request is validated before the client
+ * it updates, which may be the very instance the services manager hands out, is changed, so that a refused update leaves
+ * the client as it was. The {@code sector_identifier_uri} of a client is fetched with the protections of client ID
+ * metadata documents: public addresses only, no redirects, a single attempt, a bounded size and a timeout.
  *
  * @author Misagh Moayyed
  * @since 6.6.0
@@ -44,12 +42,21 @@ import tools.jackson.databind.ObjectMapper;
 @RequiredArgsConstructor
 @Slf4j
 public class OidcDefaultClientRegistrationRequestTranslator implements OidcClientRegistrationRequestTranslator {
+    /**
+     * The largest sector identifier document read, in bytes.
+     */
+    public static final int MAXIMUM_SECTOR_IDENTIFIER_DOCUMENT_SIZE = 64 * 1024;
+
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(false).build().toObjectMapper();
 
     private static final int GENERATED_CLIENT_NAME_LENGTH = 8;
 
+    private static final int PAIRWISE_SUBJECT_SALT_LENGTH = 32;
+
     private final ObjectProvider<OidcConfigurationContext> configurationContext;
+
+    private final OidcClientIdMetadataDocumentFetcher sectorIdentifierDocumentFetcher;
 
     @Override
     public OidcRegisteredService translate(
@@ -65,6 +72,7 @@ public class OidcDefaultClientRegistrationRequestTranslator implements OidcClien
         if (containsFragment) {
             throw new IllegalArgumentException("Redirect URI cannot contain a fragment");
         }
+        validate(registrationRequest);
 
         val registeredService = givenService.orElseGet(OidcRegisteredService::new);
         if (StringUtils.isNotBlank(registrationRequest.getClientName())) {
@@ -73,14 +81,11 @@ public class OidcDefaultClientRegistrationRequestTranslator implements OidcClien
             registeredService.setName(RandomUtils.randomAlphabetic(GENERATED_CLIENT_NAME_LENGTH));
         }
 
-        val serviceId = String.join("|", registrationRequest.getRedirectUris());
-        registeredService.setServiceId(serviceId);
+        registeredService.setServiceId(OidcClientRegistrationUtils.toServiceId(registrationRequest.getRedirectUris()));
 
         registeredService.setSectorIdentifierUri(registrationRequest.getSectorIdentifierUri());
         registeredService.setSubjectType(registrationRequest.getSubjectType());
-        if (Strings.CI.equals(OidcSubjectTypes.PAIRWISE.getType(), registeredService.getSubjectType())) {
-            registeredService.setUsernameAttributeProvider(new PairwiseOidcRegisteredServiceUsernameAttributeProvider());
-        }
+        processPairwiseSubjects(context, registeredService);
 
         if (StringUtils.isNotBlank(registrationRequest.getJwksUri())) {
             if (context.getUrlValidator().isValid(registrationRequest.getJwksUri())) {
@@ -136,8 +141,31 @@ public class OidcDefaultClientRegistrationRequestTranslator implements OidcClien
         processClientBackchannelAuthentication(registrationRequest, registeredService);
 
         registeredService.setDescription("Registered service ".concat(registeredService.getName()));
-        validate(registrationRequest, registeredService);
         return registeredService;
+    }
+
+    /**
+     * Give a client that asks for pairwise subject identifiers a generator of them. A client without one gets a generator
+     * without a salt of its own when the pairwise subject salt of CAS is defined, which then applies, or else one with a
+     * random salt that is kept with the client. A client that has one keeps it, as an administrator may have defined it,
+     * and its identifiers stay as they are; only a generator without a salt gets a random one when CAS has none.
+     *
+     * @param context           the configuration context
+     * @param registeredService the client
+     */
+    private static void processPairwiseSubjects(final OidcConfigurationContext context, final OidcRegisteredService registeredService) {
+        if (!Strings.CI.equals(OidcSubjectTypes.PAIRWISE.getType(), registeredService.getSubjectType())) {
+            return;
+        }
+        val salt = PairwiseOidcRegisteredServiceUsernameAttributeProvider.getPairwiseSubjectSalt(context.getApplicationContext().getEnvironment());
+        if (!(registeredService.getUsernameAttributeProvider() instanceof PairwiseOidcRegisteredServiceUsernameAttributeProvider)) {
+            registeredService.setUsernameAttributeProvider(StringUtils.isNotBlank(salt)
+                ? new PairwiseOidcRegisteredServiceUsernameAttributeProvider()
+                : PairwiseOidcRegisteredServiceUsernameAttributeProvider.withSalt(RandomUtils.randomAlphanumeric(PAIRWISE_SUBJECT_SALT_LENGTH)));
+        } else if (StringUtils.isBlank(salt)) {
+            PairwiseOidcRegisteredServiceUsernameAttributeProvider.assignSaltIfMissing(registeredService,
+                RandomUtils.randomAlphanumeric(PAIRWISE_SUBJECT_SALT_LENGTH));
+        }
     }
 
     private static void processClientBackchannelAuthentication(final OidcClientRegistrationRequest registrationRequest,
@@ -204,13 +232,20 @@ public class OidcDefaultClientRegistrationRequestTranslator implements OidcClien
             _ -> registeredService.setIntrospectionEncryptedResponseEncoding(registrationRequest.getIntrospectionEncryptedResponseEncoding()));
     }
 
+    /**
+     * ID tokens are always signed: a client that asks for {@code none} as the ID token signing algorithm is not accepted.
+     *
+     * @param registrationRequest the registration request
+     * @param registeredService   the registered service
+     */
     private static void processIdTokenSigningAndEncryption(final OidcClientRegistrationRequest registrationRequest,
                                                            final OidcRegisteredService registeredService) {
-        if (StringUtils.isNotBlank(registrationRequest.getIdTokenSignedResponseAlg())) {
-            registeredService.setIdTokenSigningAlg(registrationRequest.getIdTokenSignedResponseAlg());
-            registeredService.setSignIdToken(true);
+        if (Strings.CI.equals(AlgorithmIdentifiers.NONE, registrationRequest.getIdTokenSignedResponseAlg())) {
+            throw new IllegalArgumentException("Unsigned ID tokens are not issued");
         }
 
+        FunctionUtils.doIfNotBlank(registrationRequest.getIdTokenSignedResponseAlg(), registeredService::setIdTokenSigningAlg);
+        
         if (StringUtils.isNotBlank(registrationRequest.getIdTokenEncryptedResponseAlg())) {
             registeredService.setIdTokenEncryptionAlg(registrationRequest.getIdTokenEncryptedResponseAlg());
             registeredService.setEncryptIdToken(true);
@@ -263,32 +298,27 @@ public class OidcDefaultClientRegistrationRequestTranslator implements OidcClien
         });
     }
 
-    private void validate(final OidcClientRegistrationRequest registrationRequest,
-                          final OidcRegisteredService registeredService)
-            throws Exception {
+    /**
+     * Validate the registration, before any client is changed. A {@code sector_identifier_uri} must be an {@code https}
+     * URL whose JSON array lists every redirect URI of the client (OpenID Connect Dynamic Client Registration 1.0,
+     * section 5); one that cannot be fetched with the protections of client ID metadata documents, or does not list them,
+     * refuses the registration. A client that asks for pairwise subject identifiers with redirect URIs on several hosts
+     * must register a {@code sector_identifier_uri} (OpenID Connect Core 1.0, section 8.1), or the host it is given
+     * identifiers for could be the host of another client; sectors are read as they are when identifiers are calculated:
+     * a web redirect URI is in the sector of its host and any other one in the client's own, so that mixing them needs a
+     * sector identifier URI too, and a web redirect URI whose host cannot be read is refused.
+     *
+     * @param registrationRequest the registration request
+     * @throws Exception when the registration is not valid
+     */
+    private void validate(final OidcClientRegistrationRequest registrationRequest) throws Exception {
         val context = configurationContext.getObject();
-        if (StringUtils.isNotBlank(registeredService.getSectorIdentifierUri())) {
-            HttpResponse sectorResponse = null;
-            try {
-                val exec = HttpExecutionRequest
-                    .builder()
-                    .method(HttpMethod.GET)
-                    .url(registeredService.getSectorIdentifierUri())
-                    .build();
-                sectorResponse = HttpUtils.execute(exec);
-                if (sectorResponse != null && sectorResponse.getCode() == HttpStatus.SC_OK) {
-                    try (val content = ((HttpEntityContainer) sectorResponse).getEntity().getContent()) {
-                        val result = IOUtils.toString(content, StandardCharsets.UTF_8);
-                        val expectedType = MAPPER.getTypeFactory().constructParametricType(List.class, String.class);
-                        val urls = MAPPER.readValue(JsonValue.readHjson(result).toString(), expectedType);
-                        if (!urls.equals(registrationRequest.getRedirectUris())) {
-                            throw new IllegalArgumentException("Invalid sector identifier uri");
-                        }
-                    }
-                }
-            } finally {
-                HttpUtils.close(sectorResponse);
-            }
+        val sectorIdentifierUri = registrationRequest.getSectorIdentifierUri();
+        if (StringUtils.isNotBlank(sectorIdentifierUri)) {
+            validateSectorIdentifierUri(sectorIdentifierUri, registrationRequest.getRedirectUris());
+        } else if (Strings.CI.equals(OidcSubjectTypes.PAIRWISE.getType(), registrationRequest.getSubjectType())
+            && OidcRedirectUriUtils.toSectors(registrationRequest.getRedirectUris()).size() > 1) {
+            throw new IllegalArgumentException("Pairwise subject identifiers for redirect uris on several hosts need a sector identifier uri");
         }
 
         val oidc = context.getCasProperties().getAuthn().getOidc();
@@ -312,14 +342,46 @@ public class OidcDefaultClientRegistrationRequestTranslator implements OidcClien
             }
         }
 
-        if (Strings.CI.equalsAny(registeredService.getBackchannelTokenDeliveryMode(),
+        if (Strings.CI.equalsAny(registrationRequest.getBackchannelTokenDeliveryMode(),
             OidcBackchannelTokenDeliveryModes.PUSH.getMode(), OidcBackchannelTokenDeliveryModes.PING.getMode())) {
-            Assert.hasText(registeredService.getBackchannelClientNotificationEndpoint(),
+            Assert.hasText(registrationRequest.getBackchannelClientNotificationEndpoint(),
                 "Backchannel client notification endpoint must be specified");
-            Assert.isTrue(Strings.CI.startsWith(registeredService.getBackchannelClientNotificationEndpoint(), "https://"),
+            Assert.isTrue(Strings.CI.startsWith(registrationRequest.getBackchannelClientNotificationEndpoint(), "https://"),
                 "Backchannel client notification endpoint MUST be an HTTPS url");
         }
+    }
 
+    /**
+     * Fetch the sector identifier document, which must list every redirect URI. Its host, the sector of the client, must
+     * be read the same way when the document is fetched and when identifiers are calculated.
+     *
+     * @param sectorIdentifierUri the sector identifier URI
+     * @param redirectUris        the redirect URIs of the client
+     */
+    private void validateSectorIdentifierUri(final String sectorIdentifierUri, final List<String> redirectUris) {
+        if (!Strings.CI.startsWith(sectorIdentifierUri, "https://")) {
+            throw new IllegalArgumentException("Sector identifier uri must be an https URL");
+        }
+        val urls = readSectorIdentifierDocument(sectorIdentifierUri);
+        if (!urls.containsAll(redirectUris)) {
+            throw new IllegalArgumentException("Invalid sector identifier uri");
+        }
+    }
+
+    private List<String> readSectorIdentifierDocument(final String sectorIdentifierUri) {
+        try {
+            val uri = new URI(sectorIdentifierUri);
+            val host = OidcRedirectUriUtils.toHost(sectorIdentifierUri);
+            if (host.isEmpty() || !host.get().equals(uri.getHost())) {
+                throw new IllegalArgumentException("Sector identifier uri has no host that can be read");
+            }
+            val document = sectorIdentifierDocumentFetcher.fetch(uri);
+            val expectedType = MAPPER.getTypeFactory().constructParametricType(List.class, String.class);
+            return MAPPER.readValue(document.json(), expectedType);
+        } catch (final Exception e) {
+            LOGGER.warn("Sector identifier uri [{}] cannot be fetched or read: [{}]", sectorIdentifierUri, e.getMessage());
+            throw new IllegalArgumentException("Sector identifier uri cannot be fetched", e);
+        }
     }
 
 }

@@ -88,6 +88,24 @@ async function introspect(token, scopes, client) {
         });
 }
 
+async function verifyIntrospectionState(token, client, active) {
+    const authzHeader = `Basic ${Buffer.from(`${client}:secret`).toString("base64")}`;
+    await cas.log(`Introspecting token ${token}, expecting active=${active}`);
+    await cas.doGet(`https://localhost:8443/cas/oidc/introspect?token=${token}`,
+        (res) => {
+            cas.log({"introspect": res.data});
+            assert(res.data.active === active);
+            if (active) {
+                assert(res.data.client_id === client);
+            }
+        }, (error) => {
+            throw `Introspection operation failed: ${error}`;
+        }, {
+            "Authorization": authzHeader,
+            "Content-Type": "application/json"
+        });
+}
+
 (async () => {
     const browser = await cas.newBrowser(cas.browserOptions());
     const page = await cas.newPage(browser);
@@ -101,6 +119,20 @@ async function introspect(token, scopes, client) {
     await cas.logg("Fetching second refresh token");
     const redirectUrl2 = "https://localhost:9859/anything/sample";
     let refreshToken2 = await fetchRefreshToken(page, "client2", redirectUrl2);
+
+    await cas.log("**********************************************");
+
+    await cas.logg("Fetching a refresh token whose service expires it after 5 seconds");
+    const redirectUrl3 = "https://localhost:9859/anything/shortlived";
+    const refreshToken3 = await fetchRefreshToken(page, "client3", redirectUrl3);
+    await exchangeToken(refreshToken3, "client3", "",
+        (res) => {
+            cas.log(res.data);
+            assert(res.status === 200);
+            assert(res.data.access_token !== undefined);
+        }, (error) => {
+            throw `Short-lived refresh token should still be valid: ${error}`;
+        });
 
     await cas.logg(`Refresh Token 1: ${refreshToken1}`);
     await cas.logg(`Refresh Token 2: ${refreshToken2}`);
@@ -176,6 +208,29 @@ async function introspect(token, scopes, client) {
             assert(error.response.data.error === "invalid_scope");
         });
 
+    await cas.log("A rotated refresh token is removed from the registry and cannot be used again");
+    const rotatedRefreshToken = refreshToken2;
+    await exchangeToken(rotatedRefreshToken, "client2", "",
+        (res) => {
+            cas.log({"rotated": res.data});
+            assert(res.status === 200);
+            assert(res.data.refresh_token !== undefined);
+            assert(res.data.refresh_token !== rotatedRefreshToken);
+            refreshToken2 = res.data.refresh_token;
+        }, (error) => {
+            throw `Operation should not fail but instead produced: ${error}`;
+        });
+    await exchangeToken(rotatedRefreshToken, "client2", "",
+        (res) => {
+            throw `Rotated refresh token should be refused but instead produced: ${res.data}`;
+        }, (error) => {
+            cas.log(`Status: ${error.response.status}`);
+            assert(error.response.status === 400);
+            assert(error.response.data.error === "invalid_grant");
+        });
+    await verifyIntrospectionState(rotatedRefreshToken, "client2", false);
+    await verifyIntrospectionState(refreshToken2, "client2", true);
+
     await cas.log("Let's test scope reduction with refresh token renewal");
 
     await cas.logg("Reducing scope to 'openid offline_access'");
@@ -239,6 +294,17 @@ async function introspect(token, scopes, client) {
             assert(res.status === 200);
         }, () => {
             throw "Operation should not fail";
+        });
+
+    await cas.log("The refresh token of client3 has outlived the 5 second time-to-kill of its service");
+    await cas.sleep(1000);
+    await exchangeToken(refreshToken3, "client3", "",
+        (res) => {
+            throw `Expired refresh token should be refused but instead produced: ${res.data}`;
+        }, (error) => {
+            cas.log(`Status: ${error.response.status}`);
+            assert(error.response.status === 400);
+            assert(error.response.data.error === "invalid_grant");
         });
 
     await cas.closeBrowser(browser);

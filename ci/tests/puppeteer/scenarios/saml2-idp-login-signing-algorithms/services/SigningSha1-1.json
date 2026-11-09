@@ -1,0 +1,15 @@
+{
+  "@class" : "org.apereo.cas.support.saml.services.SamlRegisteredService",
+  "serviceId" : "^https://signing\\.example\\.org/sp-sha1$",
+  "name" : "SigningSha1",
+  "id" : 1,
+  "evaluationOrder" : 1,
+  "metadataLocation" : "file://${#env['PWD']}/ci/tests/puppeteer/scenarios/${#env['SCENARIO']}/sp-metadata.xml",
+  "signingCredentialType" : "BASIC",
+  "signingSignatureAlgorithms" : [ "java.util.ArrayList", [ "http://www.w3.org/2000/09/xmldsig#rsa-sha1" ] ],
+  "signingSignatureReferenceDigestMethods" : [ "java.util.ArrayList", [ "http://www.w3.org/2000/09/xmldsig#sha1" ] ],
+  "signingSignatureBlackListedAlgorithms" : [ "java.util.ArrayList", [ "http://www.w3.org/2001/04/xmldsig-more#rsa-md5" ] ],
+  "attributeReleasePolicy" : {
+    "@class" : "org.apereo.cas.services.ReturnAllAttributeReleasePolicy"
+  }
+}

@@ -13,9 +13,9 @@ import org.pac4j.jee.context.JEEContext;
 import org.pac4j.oidc.client.OidcClient;
 import org.pac4j.oidc.federation.entity.DefaultEntityConfigurationGenerator;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -38,9 +38,13 @@ public class DelegatedOidcFederationEntityStatementController extends AbstractCo
     private final DelegatedIdentityProviders identityProviders;
 
     /**
-     * Get the entity statement for the OIDC RP (client).
+     * Get the entity configuration of a delegated OIDC client (RP) that takes part in an OpenID Federation.
+     * An unknown client, or one that is not configured for a federation, has no entity configuration: not found.
      *
-     * @return the entity statement
+     * @param clientName the client name
+     * @param request    the request
+     * @param response   the response
+     * @return the entity configuration
      */
     @Operation(summary = "Display the entity statement of the delegated OIDC client (RP)",
         parameters = {
@@ -48,8 +52,7 @@ public class DelegatedOidcFederationEntityStatementController extends AbstractCo
         })
     @GetMapping(path = BASE_ENDPOINT_RELYING_PARTY + "/{clientName}/.well-known/openid-federation", consumes = MediaType.ALL_VALUE,
         produces = DefaultEntityConfigurationGenerator.CONTENT_TYPE)
-    @ResponseBody
-    public String getOpenIdFederationEndpoint(
+    public ResponseEntity<String> getOpenIdFederationEndpoint(
             @PathVariable final String clientName,
             final HttpServletRequest request,
             final HttpServletResponse response) {
@@ -60,10 +63,10 @@ public class DelegatedOidcFederationEntityStatementController extends AbstractCo
             if (client instanceof final OidcClient oidcClient) {
                 val federation = oidcClient.getConfiguration().getFederation();
                 if (StringUtils.isNotBlank(federation.getTargetOp())) {
-                    return federation.getEntityConfigurationGenerator().generateEntityStatement();
+                    return ResponseEntity.ok(federation.getEntityConfigurationGenerator().generateEntityStatement());
                 }
             }
         }
-        return StringUtils.EMPTY;
+        return ResponseEntity.notFound().build();
     }
 }

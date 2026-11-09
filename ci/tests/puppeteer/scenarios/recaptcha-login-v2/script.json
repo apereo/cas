@@ -5,10 +5,22 @@
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",
     "--cas.google-recaptcha.enabled=true",
-    "--cas.google-recaptcha.verify-url=https://www.google.com/recaptcha/api/siteverify",
+    "--cas.google-recaptcha.verify-url=http://localhost:5611/siteverify",
     "--cas.google-recaptcha.site-key=7Let09ISAAAAAL-ip28pWHPkk-DtRz5HNpT4lVDf",
     "--cas.google-recaptcha.secret=7Let09ISAAAAAIwdE2YXEQ3k4BBRmfGabOQpA3ka",
     "--cas.google-recaptcha.version=GOOGLE_RECAPTCHA_V2",
     "--cas.google-recaptcha.invisible=false"
+  ],
+  "variations": [
+    {
+      "name": "default",
+      "properties": []
+    },
+    {
+      "name": "ip-pattern-unmatched",
+      "properties": [
+        "--cas.google-recaptcha.activate-for-ip-address-pattern=^192\\.0\\.2\\."
+      ]
+    }
   ]
 }

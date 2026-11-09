@@ -9,6 +9,12 @@ import org.apereo.cas.config.CasCoreMultifactorAuthenticationWebflowAutoConfigur
 import org.apereo.cas.config.CasElectronicFenceAutoConfiguration;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.MockRequestContext;
+import org.apereo.cas.util.RandomUtils;
+import com.nimbusds.jose.JWSAlgorithm;
+import com.nimbusds.jose.JWSHeader;
+import com.nimbusds.jose.crypto.MACSigner;
+import com.nimbusds.jwt.JWTClaimsSet;
+import com.nimbusds.jwt.SignedJWT;
 import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
@@ -69,6 +75,20 @@ class RiskAuthenticationCheckTokenActionTests extends BaseWebflowConfigurerTests
         context.setParameter(RiskAuthenticationCheckTokenAction.PARAMETER_NAME_RISK_TOKEN, riskToken);
         val event = riskCheckAction.execute(context);
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, event.getId());
+    }
+
+    @Test
+    void verifyTokenSignedByAnotherKey() throws Throwable {
+        val claims = new JWTClaimsSet.Builder()
+            .subject("casuser")
+            .expirationTime(Date.from(Instant.now(Clock.systemUTC()).plus(1, ChronoUnit.DAYS)))
+            .build();
+        val riskToken = new SignedJWT(new JWSHeader(JWSAlgorithm.HS256), claims);
+        riskToken.sign(new MACSigner(RandomUtils.randomAlphanumeric(256).getBytes(StandardCharsets.UTF_8)));
+        val context = MockRequestContext.create(applicationContext);
+        context.setParameter(RiskAuthenticationCheckTokenAction.PARAMETER_NAME_RISK_TOKEN, riskToken.serialize());
+        val event = riskCheckAction.execute(context);
+        assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, event.getId());
     }
 
     @Test

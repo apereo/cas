@@ -102,7 +102,7 @@ Code coverage metrics are collected and reported by the following platforms:
 | System     | Badge                                                                                                                                                                                                                        |
 |------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Codacy     | [![Codacy Badge](https://app.codacy.com/project/badge/Coverage/29973e19266547dab7ab73f1a511c826)](https://app.codacy.com/gh/apereo/cas/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_coverage) |
-| SonarCloud | [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=org.apereo.cas%3Acas-server&metric=coverage)](https://sonarcloud.io/dashboard?id=org.apereo.cas%3Acas-server)                                          |
+| SonarCloud | [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=apereo_cas&metric=coverage)](https://sonarcloud.io/dashboard?id=apereo_cas)                                          |
 | CodeCov    | [![codecov](https://codecov.io/gh/apereo/cas/branch/master/graph/badge.svg)](https://codecov.io/gh/apereo/cas)                                                                                                               |
 
 Quality metrics are collected and reported by the following platforms:
@@ -110,8 +110,8 @@ Quality metrics are collected and reported by the following platforms:
 | System                     | Badge                                                                                                                                                                                                                  |
 |----------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Codacy                     | [![Codacy Badge](https://app.codacy.com/project/badge/Grade/29973e19266547dab7ab73f1a511c826)](https://app.codacy.com/gh/apereo/cas/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade) |
-| SonarCloud Quality Gate    | [![Sonarqube Quality](https://sonarcloud.io/api/project_badges/measure?project=org.apereo.cas%3Acas-server&metric=alert_status)](https://sonarcloud.io/dashboard?id=org.apereo.cas%3Acas-server)                       |
-| SonarCloud Maintainability | [![Sonarqube Quality](https://sonarcloud.io/api/project_badges/measure?project=org.apereo.cas%3Acas-server&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=org.apereo.cas%3Acas-server)                       |
+| SonarCloud Quality Gate    | [![Sonarqube Quality](https://sonarcloud.io/api/project_badges/measure?project=apereo_cas&metric=alert_status)](https://sonarcloud.io/dashboard?id=apereo_cas)                       |
+| SonarCloud Maintainability | [![Sonarqube Quality](https://sonarcloud.io/api/project_badges/measure?project=apereo_cas&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=apereo_cas)                       |
 
 ## Browser & Functional Testing
 

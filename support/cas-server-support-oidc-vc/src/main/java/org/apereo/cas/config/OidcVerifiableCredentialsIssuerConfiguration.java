@@ -7,7 +7,9 @@ import org.apereo.cas.audit.AuditTrailConstants;
 import org.apereo.cas.audit.AuditTrailRecordResolutionPlanConfigurer;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.oidc.OidcConfigurationContext;
+import org.apereo.cas.oidc.discovery.OidcFederationEntityMetadataContributor;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeyCacheKey;
+import org.apereo.cas.oidc.vc.federation.OidcVerifiableCredentialFederationMetadataContributor;
 import org.apereo.cas.oidc.vc.issuer.OidcDefaultVerifiableCredentialIssuerService;
 import org.apereo.cas.oidc.vc.issuer.OidcVerifiableCredentialIssuerService;
 import org.apereo.cas.oidc.vc.issuer.deferred.OidcVerifiableCredentialDefaultDeferredIssuanceService;
@@ -39,6 +41,7 @@ import org.apereo.cas.oidc.vc.issuer.web.OidcVerifiableCredentialStatusListEndpo
 import org.apereo.cas.oidc.vc.issuer.web.OidcVerifiableCredentialTypeMetadataController;
 import org.apereo.cas.oidc.vc.token.OidcVerifiableCredentialsAccessTokenGeneratorCustomizer;
 import org.apereo.cas.support.oauth.validator.OAuth20DPoPNonceService;
+import org.apereo.cas.vc.presentation.OidcVerifiableCredentialVerifierMetadataService;
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import lombok.val;
 import org.apereo.inspektr.audit.spi.support.DefaultAuditActionResolver;
@@ -184,6 +187,17 @@ class OidcVerifiableCredentialsIssuerConfiguration {
         @Qualifier(OidcConfigurationContext.BEAN_NAME) final OidcConfigurationContext oidcConfigurationContext,
         @Qualifier("oidcCredentialIssuerMetadataService") final OidcCredentialIssuerMetadataService metadataService) {
         return new OidcVerifiableCredentialIssuerMetadataController(oidcConfigurationContext, metadataService);
+    }
+
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    @ConditionalOnMissingBean(name = "oidcVerifiableCredentialFederationMetadataContributor")
+    @Bean
+    public OidcFederationEntityMetadataContributor oidcVerifiableCredentialFederationMetadataContributor(
+        @Qualifier(OidcConfigurationContext.BEAN_NAME) final OidcConfigurationContext oidcConfigurationContext,
+        @Qualifier("oidcCredentialIssuerMetadataService") final OidcCredentialIssuerMetadataService metadataService,
+        @Qualifier(OidcVerifiableCredentialVerifierMetadataService.BEAN_NAME)
+        final OidcVerifiableCredentialVerifierMetadataService verifierMetadataService) {
+        return new OidcVerifiableCredentialFederationMetadataContributor(oidcConfigurationContext, metadataService, verifierMetadataService);
     }
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

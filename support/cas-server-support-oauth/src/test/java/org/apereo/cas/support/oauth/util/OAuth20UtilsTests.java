@@ -104,8 +104,7 @@ class OAuth20UtilsTests extends AbstractOAuth20Tests {
             .claim("client_id", List.of("client1", "client2"))
             .claim(OAuth20Constants.RESOURCE, "https://api.example.org/")
             .build();
-        val jwt = new PlainJWT(claims);
-        val jwtString = jwt.serialize();
+        val jwtString = configurationContext.getAccessTokenJwtBuilder().getDefaultTokenCipherExecutor().encode(claims.toString());
         request.removeAllParameters();
         request.addParameter(OAuth20Constants.REQUEST, jwtString);
 
