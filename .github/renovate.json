@@ -25,7 +25,7 @@
   "regexManagers": [
     {
       "fileMatch": [
-        "run-.*\\.sh"
+        ".*\\.sh"
       ],
       "matchStrings": [
         "export\\s+DOCKER_IMAGE\\s*=\\s*\"(?<depName>[^\"]+):(?<currentValue>[^\"]+)\""

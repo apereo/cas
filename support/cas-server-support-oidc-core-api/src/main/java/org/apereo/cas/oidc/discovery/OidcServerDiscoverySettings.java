@@ -192,7 +192,7 @@ public class OidcServerDiscoverySettings {
     private Set<String> backchannelTokenDeliveryModesSupported;
 
     @JsonProperty("client_registration_types_supported")
-    private Set<String> clientRegistrationTypesSupported = Set.of("automatic");
+    private Set<String> clientRegistrationTypesSupported = new LinkedHashSet<>();
 
     @JsonProperty("backchannel_authentication_endpoint")
     public String getBackchannelAuthenticationEndpoint() {

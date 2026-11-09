@@ -5,6 +5,9 @@ import org.apereo.cas.config.CasOidcVerifiableCredentialsAutoConfiguration;
 import org.apereo.cas.configuration.model.support.oidc.OidcVerifiableCredentialConfigurationProperties.CredentialConfigurationFormats;
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.oidc.OidcConstants;
+import org.apereo.cas.oidc.discovery.OidcFederationEntityMetadataContributor;
+import org.apereo.cas.oidc.vc.federation.OidcVerifiableCredentialFederationMetadataContributor;
+import org.apereo.cas.vc.presentation.OidcVerifiableCredentialVerifierMetadataService;
 import com.nimbusds.jose.crypto.RSASSAVerifier;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
@@ -12,6 +15,8 @@ import com.nimbusds.jwt.SignedJWT;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpHeaders;
@@ -50,6 +55,10 @@ class OidcVerifiableCredentialIssuerMetadataControllerTests extends AbstractOidc
     private static final String METADATA_ENDPOINT_URL =
         "/cas/" + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.WELL_KNOWN_OPENID_CREDENTIAL_ISSUER_URL;
 
+    @Autowired
+    @Qualifier("oidcVerifiableCredentialFederationMetadataContributor")
+    private OidcFederationEntityMetadataContributor federationMetadataContributor;
+
     @Test
     void verifyMetadataEndpointReturnsOk() throws Throwable {
         mockMvc.perform(get(METADATA_ENDPOINT_URL)
@@ -64,6 +73,23 @@ class OidcVerifiableCredentialIssuerMetadataControllerTests extends AbstractOidc
             .andExpect(jsonPath("$.credential_configurations_supported").exists())
             .andExpect(jsonPath("$.batch_credential_issuance.batch_size").isNumber())
             .andExpect(jsonPath("$.batch_credential_endpoint").doesNotExist());
+    }
+
+    @Test
+    void verifyFederationMetadataContribution() {
+        val issuer = casProperties.getAuthn().getOidc().getCore().getIssuer();
+        val contributed = federationMetadataContributor.contribute(issuer);
+        assertEquals(Set.of(OidcVerifiableCredentialFederationMetadataContributor.ENTITY_TYPE_CREDENTIAL_ISSUER,
+            OidcVerifiableCredentialFederationMetadataContributor.ENTITY_TYPE_AUTHORIZATION_SERVER), contributed.keySet());
+        val credentialIssuer = contributed.get(OidcVerifiableCredentialFederationMetadataContributor.ENTITY_TYPE_CREDENTIAL_ISSUER);
+        assertEquals(issuer, credentialIssuer.get("credential_issuer"));
+        assertEquals(List.of(issuer), credentialIssuer.get("authorization_servers"));
+        assertTrue(((Map<?, ?>) credentialIssuer.get("credential_configurations_supported")).containsKey("myorg"));
+        val authorizationServer = contributed.get(OidcVerifiableCredentialFederationMetadataContributor.ENTITY_TYPE_AUTHORIZATION_SERVER);
+        assertEquals(issuer, authorizationServer.get("issuer"));
+        assertNotNull(authorizationServer.get("token_endpoint"));
+        assertFalse(contributed.containsKey(OidcVerifiableCredentialVerifierMetadataService.ENTITY_TYPE_CREDENTIAL_VERIFIER));
+        assertTrue(federationMetadataContributor.contribute("https://other.example.org").isEmpty());
     }
 
     @Test

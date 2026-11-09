@@ -61,13 +61,17 @@ public abstract class BaseOneTimeTokenCredentialRepository implements OneTimeTok
     /**
      * Decode a copy of the account: the secret and the scratch codes are decrypted. A scratch code that cannot be
      * decrypted is left out rather than kept as it was stored, since a stored value that is not a scratch code must
-     * never be offered to the validator as one.
+     * never be offered to the validator as one. A secret that cannot be decoded (one whose signature cannot be
+     * verified decodes to null) refuses the account.
      *
      * @param account the account
      * @return the one time token account
      */
     protected OneTimeTokenAccount decode(final OneTimeTokenAccount account) {
-        val decodedSecret = toTokenCredentialCipherExecutor(account).decode(account.getSecretKey()).toString();
+        val decodedSecret = Optional.ofNullable(toTokenCredentialCipherExecutor(account).decode(account.getSecretKey()))
+            .map(Object::toString)
+            .orElseThrow(() -> new IllegalStateException("Secret key of device [%s] registered to [%s] cannot be decoded"
+                .formatted(account.getId(), account.getUsername())));
         val scratchCodesCipherExecutor = toScratchCodesCipherExecutor(account);
         val decodedScratchCodes = account.getScratchCodes()
             .stream()

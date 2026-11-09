@@ -1,0 +1,11 @@
+{
+  "@class": "org.apereo.cas.services.CasRegisteredService",
+  "serviceId": "^https://localhost:9859/anything/proxyexact.*",
+  "name": "ProxyExactCallback",
+  "id": 7,
+  "proxyPolicy": {
+    "@class": "org.apereo.cas.services.RegexMatchingRegisteredServiceProxyPolicy",
+    "pattern": "https://localhost:9859/anything/pgtexact",
+    "exactMatch": true
+  }
+}

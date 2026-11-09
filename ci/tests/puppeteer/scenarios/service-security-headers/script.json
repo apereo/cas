@@ -9,6 +9,12 @@
 
     "--cas.http-web-request.header.xss=false",
 
+    "--cas.http-web-request.pattern-to-block=javascript(:|%3A)",
+    "--cas.http-web-request.characters-to-forbid=<",
+    "--cas.http-web-request.only-post-params=username,password",
+    "--cas.http-web-request.allow-multi-value-parameters=false",
+    "--cas.http-web-request.params-to-check=ticket,service,renew,gateway,locale",
+
     "--cas.service-registry.core.init-from-json=true",
     "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services"
   ],

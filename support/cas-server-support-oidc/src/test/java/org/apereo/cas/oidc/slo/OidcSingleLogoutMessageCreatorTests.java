@@ -37,7 +37,7 @@ class OidcSingleLogoutMessageCreatorTests extends AbstractOidcTests {
     @ParameterizedTest
     @EnumSource(RegisteredServiceLogoutType.class)
     void verifyBackChannelLogout(final RegisteredServiceLogoutType logoutType) throws Throwable {
-        val service = getOidcRegisteredService(true, false);
+        val service = getOidcRegisteredService(false);
         val principal = RegisteredServiceTestUtils.getPrincipal("casuser");
         val authentication = CoreAuthenticationTestUtils.getAuthentication(principal);
         val tgt = mock(TicketGrantingTicket.class);

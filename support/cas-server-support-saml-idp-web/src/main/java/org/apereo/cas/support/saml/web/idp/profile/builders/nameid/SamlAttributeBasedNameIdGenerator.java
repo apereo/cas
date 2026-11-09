@@ -9,7 +9,10 @@ import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.saml2.core.RequestAbstractType;
 import org.opensaml.saml.saml2.profile.AbstractSAML2NameIDGenerator;
@@ -43,18 +46,28 @@ public class SamlAttributeBasedNameIdGenerator extends AbstractSAML2NameIDGenera
         val encoder = new SamlAttributeBasedNameIdGenerator(attributeValue);
         encoder.setId(SamlAttributeBasedNameIdGenerator.class.getSimpleName());
         encoder.setFormat(nameFormat);
-        encoder.setDefaultIdPNameQualifierLookupStrategy(baseContexts -> service.getNameIdQualifier());
-        encoder.setDefaultSPNameQualifierLookupStrategy(baseContexts -> service.getServiceProviderNameIdQualifier());
+        encoder.setDefaultIdPNameQualifierLookupStrategy(baseContexts -> qualifierOf(service.getNameIdQualifier()));
+        encoder.setDefaultSPNameQualifierLookupStrategy(baseContexts -> qualifierOf(service.getServiceProviderNameIdQualifier()));
 
         authnRequest.flatMap(SamlIdPUtils::getNameIDPolicy).ifPresent(policy -> {
             val qualifier = policy.getSPNameQualifier();
             LOGGER.debug("NameID SP qualifier is set to [{}]", qualifier);
             encoder.setSPNameQualifier(qualifier);
         });
-        encoder.setIdPNameQualifier(service.getNameIdQualifier());
+        encoder.setIdPNameQualifier(qualifierOf(service.getNameIdQualifier()));
         encoder.setOmitQualifiers(service.isSkipGeneratingNameIdQualifiers());
         FunctionUtils.doUnchecked(_ -> encoder.initialize());
         return encoder;
+    }
+
+    /**
+     * The qualifier a service defines for the NameID, where {@code none} means the qualifier is left out.
+     *
+     * @param qualifier the qualifier defined by the service
+     * @return the qualifier, or null when the service defines none or asks to skip it
+     */
+    private static @Nullable String qualifierOf(@Nullable final String qualifier) {
+        return (StringUtils.isBlank(qualifier) || Strings.CI.equals(qualifier, "none")) ? null : qualifier;
     }
 
     @Override

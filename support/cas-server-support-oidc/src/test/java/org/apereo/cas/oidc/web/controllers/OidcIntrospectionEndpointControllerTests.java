@@ -8,7 +8,6 @@ import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import com.nimbusds.jwt.EncryptedJWT;
 import com.nimbusds.jwt.JWTParser;
-import com.nimbusds.jwt.PlainJWT;
 import com.nimbusds.jwt.SignedJWT;
 import lombok.val;
 import org.jose4j.jws.AlgorithmIdentifiers;
@@ -87,6 +86,9 @@ class OidcIntrospectionEndpointControllerTests extends AbstractOidcTests {
         assertInstanceOf(SignedJWT.class, JWTParser.parse(response));
     }
 
+    /**
+     * Introspection responses as JWTs are always signed: {@code none} as the signing algorithm falls back to the default.
+     */
     @Test
     void verifyOperationWithValidTicketAsJwtSignedWithNone() throws Throwable {
         val accessToken = getAccessToken(UUID.randomUUID().toString());
@@ -97,15 +99,23 @@ class OidcIntrospectionEndpointControllerTests extends AbstractOidcTests {
         servicesManager.save(oidcRegisteredService);
         ticketRegistry.addTicket(accessToken);
 
-        mockMvc.perform(post("/cas/" + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.INTROSPECTION_URL)
+        val response = mockMvc.perform(post("/cas/" + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.INTROSPECTION_URL)
                 .with(withHttpRequestProcessor())
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .header(HttpHeaders.ACCEPT, OAuth20Constants.INTROSPECTION_JWT_HEADER_CONTENT_TYPE)
                 .header(HttpHeaders.AUTHORIZATION, "Basic " + credentials)
                 .param(OAuth20Constants.TOKEN, accessToken.getId()))
-            .andExpect(status().is4xxClientError());
+            .andExpect(status().isOk())
+            .andReturn()
+            .getResponse()
+            .getContentAsString();
+        val jwt = assertInstanceOf(SignedJWT.class, JWTParser.parse(response));
+        assertEquals(AlgorithmIdentifiers.RSA_USING_SHA512, jwt.getHeader().getAlgorithm().getName());
     }
 
+    /**
+     * {@code none} as the encryption algorithm means the signed introspection response is not encrypted.
+     */
     @Test
     void verifyOperationWithValidTicketAsJwtSignedWithNoneEncryption() throws Throwable {
         val accessToken = getAccessToken(UUID.randomUUID().toString());
@@ -116,17 +126,24 @@ class OidcIntrospectionEndpointControllerTests extends AbstractOidcTests {
         servicesManager.save(oidcRegisteredService);
         ticketRegistry.addTicket(accessToken);
 
-        mockMvc.perform(post("/cas/" + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.INTROSPECTION_URL)
+        val response = mockMvc.perform(post("/cas/" + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.INTROSPECTION_URL)
                 .with(withHttpRequestProcessor())
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .header(HttpHeaders.ACCEPT, OAuth20Constants.INTROSPECTION_JWT_HEADER_CONTENT_TYPE)
                 .header(HttpHeaders.AUTHORIZATION, "Basic " + credentials)
                 .param(OAuth20Constants.TOKEN, accessToken.getId()))
-            .andExpect(status().is4xxClientError());
+            .andExpect(status().isOk())
+            .andReturn()
+            .getResponse()
+            .getContentAsString();
+        assertInstanceOf(SignedJWT.class, JWTParser.parse(response));
     }
 
+    /**
+     * Without a signing algorithm, the introspection response is signed with the default; it is never an unsigned JWT.
+     */
     @Test
-    void verifyOperationWithValidTicketAsJwtPlain() throws Throwable {
+    void verifyOperationWithValidTicketAsJwtWithoutAlgorithm() throws Throwable {
         val accessToken = getAccessToken(UUID.randomUUID().toString());
         val credentials = EncodingUtils.encodeBase64((accessToken.getClientId() + ":secret").getBytes(StandardCharsets.UTF_8));
 
@@ -146,7 +163,7 @@ class OidcIntrospectionEndpointControllerTests extends AbstractOidcTests {
             .andReturn()
             .getResponse()
             .getContentAsString();
-        assertInstanceOf(PlainJWT.class, JWTParser.parse(response));
+        assertInstanceOf(SignedJWT.class, JWTParser.parse(response));
     }
 
     @Test

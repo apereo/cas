@@ -79,7 +79,8 @@ class JsonWebKeySetStringCipherExecutorTests {
     void verifyEmptyJwks() throws Throwable {
         val keystoreFile = getKeystoreFile();
         try (val cipher = new JsonWebKeySetStringCipherExecutor(keystoreFile, Optional.empty(), null)) {
-            assertNotNull(cipher.decode("value", EMPTY_OBJECT_ARRAY));
+            assertNull(cipher.decode("value", EMPTY_OBJECT_ARRAY));
+            assertEquals("value", cipher.decode(cipher.encode("value", EMPTY_OBJECT_ARRAY), EMPTY_OBJECT_ARRAY));
         }
     }
 
