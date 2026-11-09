@@ -34,7 +34,7 @@ thirdPartyExactMatch="spring.cloud.vault.authentication"
 ## AppID Authentication
 
 Vault supports AppId authentication that consists of two hard to guess
-tokens. The AppId defaults to `spring.application.name`{: .cas-setting} that is statically
+tokens. The AppId defaults to the application name that is statically
 configured. The second token is the UserId which is a part determined by the
 application, usually related to the runtime environment. Spring Cloud Vault
 Config supports IP address, Mac address and static
@@ -55,7 +55,7 @@ export $MAC_ADDRESS=`echo -n ABCDEFGH | sha256sum`
 
 {% include_cached casproperties.html
 thirdPartyStartsWith="spring.cloud.vault.app-id"
-thirdPartyExactMatch="spring.cloud.vault.authentication"
+thirdPartyExactMatch="spring.cloud.vault.authentication,spring.application.name"
 %}
 
 

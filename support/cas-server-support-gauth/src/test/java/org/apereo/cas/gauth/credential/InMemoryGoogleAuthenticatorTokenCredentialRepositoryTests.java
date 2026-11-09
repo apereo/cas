@@ -19,7 +19,9 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.gen.Base64RandomStringGenerator;
 import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import lombok.val;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.jose4j.jwe.ContentEncryptionAlgorithmIdentifiers;
+import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -131,6 +133,27 @@ class InMemoryGoogleAuthenticatorTokenCredentialRepositoryTests {
             assertEquals(account.getSecretKey(), stored.getSecretKey());
             assertTrue(stored.getScratchCodes().isEmpty());
             assertTrue(repo.get(username).iterator().next().getScratchCodes().isEmpty());
+        }
+
+        @Test
+        void verifyUndecodableSecretIsRefused() {
+            val tokenCredentialCipher = new CipherExecutor<String, String>() {
+                @Override
+                public String encode(final String value, final Object[] parameters) {
+                    return value;
+                }
+
+                @Override
+                public @Nullable String decode(final String value, final Object[] parameters) {
+                    return null;
+                }
+            };
+            val repo = new InMemoryGoogleAuthenticatorTokenCredentialRepository(tokenCredentialCipher,
+                CipherExecutor.noOpOfNumberToNumber(), new DefaultCasGoogleAuthenticator(casProperties, tenantExtractor));
+            val username = UUID.randomUUID().toString();
+            val id = repo.save(repo.create(username)).getId();
+            val error = assertThrows(RuntimeException.class, () -> repo.get(username, id));
+            assertInstanceOf(IllegalStateException.class, ExceptionUtils.getRootCause(error));
         }
 
         @Test

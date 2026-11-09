@@ -9,6 +9,7 @@ import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.web.AbstractController;
 import com.nimbusds.openid.connect.sdk.federation.entities.EntityID;
+import com.nimbusds.openid.connect.sdk.federation.entities.EntityStatement;
 import com.nimbusds.openid.connect.sdk.federation.entities.FederationEntityMetadata;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +19,7 @@ import org.jspecify.annotations.Nullable;
 import org.springframework.http.CacheControl;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import tools.jackson.databind.JsonNode;
 import jakarta.servlet.http.HttpServletRequest;
@@ -40,10 +42,24 @@ abstract class AbstractOidcFederationEndpointController extends AbstractControll
     protected @Nullable ResponseEntity retrieveInvalidIssuerError(
         final HttpServletRequest request, final HttpServletResponse response, final String path) {
         if (!oidcIssuerService.validateIssuer(request, List.of(path))) {
-            val body = OAuth20Utils.getErrorResponseBody(OAuth20Constants.INVALID_REQUEST, "Invalid issuer");
-            return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+            return errorResponse(HttpStatus.BAD_REQUEST, OAuth20Constants.INVALID_REQUEST, "Invalid issuer");
         }
         return null;
+    }
+
+    /**
+     * A JSON error response (OpenID Federation 1.0, section 8.9). Its content type is set, so that it is sent as JSON
+     * whatever the request accepts, such as the JWT media type of the endpoint, instead of failing with {@code 406}.
+     *
+     * @param status      the status
+     * @param error       the error code
+     * @param description the error description
+     * @return the response
+     */
+    protected static ResponseEntity errorResponse(final HttpStatus status, final String error, @Nullable final String description) {
+        return ResponseEntity.status(status)
+            .contentType(MediaType.APPLICATION_JSON)
+            .body(OAuth20Utils.getErrorResponseBody(error, description));
     }
 
     protected FederationEntityMetadata buildMetadata(final String issuer) throws URISyntaxException {
@@ -54,6 +70,7 @@ abstract class AbstractOidcFederationEndpointController extends AbstractControll
         if (role.isTrustAnchorOrIntermediate()) {
             fedMeta.setFederationFetchEndpointURI(new URI(issuer + OidcConstants.FETCH_FEDERATION_URL));
             fedMeta.setFederationListEndpointURI(new URI(issuer + OidcConstants.LIST_FEDERATION_URL));
+            fedMeta.setFederationResolveEndpointURI(new URI(issuer + OidcConstants.RESOLVE_FEDERATION_URL));
         }
         return fedMeta;
     }
@@ -63,8 +80,20 @@ abstract class AbstractOidcFederationEndpointController extends AbstractControll
         @Nullable final JsonNode federationKeys,
         @Nullable final List<EntityID> authorityHints)
             throws Exception {
-        val entityStatement = federationEntityStatementService.createAndSign(
-            issuer, subject, metadata, federationKeys, authorityHints);
+        return buildEntityStatement(issuer, subject, metadata, federationKeys, authorityHints, Map.of());
+    }
+
+    protected ResponseEntity buildEntityStatement(
+        final String issuer, final String subject, @Nullable final JSONObject metadata,
+        @Nullable final JsonNode federationKeys,
+        @Nullable final List<EntityID> authorityHints,
+        final Map<String, Object> additionalClaims)
+            throws Exception {
+        return toResponse(federationEntityStatementService.createAndSign(
+            issuer, subject, metadata, federationKeys, authorityHints, additionalClaims));
+    }
+
+    protected static ResponseEntity toResponse(final EntityStatement entityStatement) {
         return ResponseEntity.ok()
             .cacheControl(CacheControl.noStore().mustRevalidate())
             .header(HttpHeaders.ACCEPT, OidcConstants.ENTITY_STATEMENT_CONTENT_TYPE.toString())

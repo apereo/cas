@@ -1,0 +1,44 @@
+{
+  "dependencies": "x509-webflow",
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
+    "--cas.authn.x509.extract-cert=true",
+    "--cas.authn.x509.ssl-header-name=ssl-client-cert-from-proxy",
+    "--cas.authn.x509.reg-ex-trusted-issuer-dn-pattern=CN=CasTest.+",
+    "--cas.authn.x509.mixed-mode=true",
+
+    "--cas.authn.x509.crl-resources[0]=file:${PWD}/ci/tests/puppeteer/overlay/${SCENARIO}/ca.crl",
+    "--cas.authn.x509.crl-resources[1]=file:${PWD}/ci/tests/puppeteer/overlay/${SCENARIO}/expired-ca.crl"
+  ],
+  "variations": [
+    {
+      "name": "resource",
+      "properties": [
+        "--cas.authn.x509.revocation-checker=RESOURCE",
+        "--cas.authn.x509.crl-resource-unavailable-policy=DENY",
+        "--cas.authn.x509.crl-resource-expired-policy=DENY"
+      ]
+    },
+    {
+      "name": "resource-lenient",
+      "properties": [
+        "--cas.authn.x509.revocation-checker=RESOURCE",
+        "--cas.authn.x509.crl-resource-unavailable-policy=ALLOW",
+        "--cas.authn.x509.crl-resource-expired-policy=THRESHOLD",
+        "--cas.authn.x509.revocation-policy-threshold=631152000"
+      ]
+    },
+    {
+      "name": "crl",
+      "properties": [
+        "--cas.authn.x509.revocation-checker=CRL",
+        "--cas.authn.x509.crl-fetcher=RESOURCE",
+        "--cas.authn.x509.crl-unavailable-policy=DENY",
+        "--cas.authn.x509.crl-expired-policy=THRESHOLD"
+      ]
+    }
+  ],
+  "initScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/init.sh"
+}

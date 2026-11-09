@@ -60,7 +60,6 @@ class OidcUserProfileViewRendererFlatTests extends AbstractOidcTests {
         val accessToken = getAccessToken(clientId);
         val service = getOidcRegisteredService(clientId);
         service.setUserInfoSigningAlg("RS256");
-        service.setSignIdToken(true);
         service.setEncryptIdToken(false);
         servicesManager.save(service);
 
@@ -75,8 +74,12 @@ class OidcUserProfileViewRendererFlatTests extends AbstractOidcTests {
         assertEquals("https://sso.example.org/cas/oidc", claims.getIssuer());
     }
 
+    /**
+     * {@code none} as the user info signing or encryption algorithm means no signing or no encryption: without either,
+     * user info is plain JSON, and with signing alone it is a signed JWT; it is never an unsigned JWT.
+     */
     @Test
-    void verifyFailsOperation() throws Throwable {
+    void verifyNoneMeansNoSigningOrEncryption() throws Throwable {
         val id = UUID.randomUUID().toString();
         val service = getOidcRegisteredService(id);
         service.setUserInfoSigningAlg(AlgorithmIdentifiers.NONE);
@@ -87,12 +90,16 @@ class OidcUserProfileViewRendererFlatTests extends AbstractOidcTests {
         val accessToken = getAccessToken(id);
         val data = oidcUserProfileDataCreator.createFrom(accessToken);
         val entity = oidcUserProfileViewRenderer.render(data, accessToken, response);
-        assertNotNull(entity);
-        assertEquals(HttpStatus.BAD_REQUEST, entity.getStatusCode());
+        assertEquals(HttpStatus.OK, entity.getStatusCode());
+        assertEquals("casuser@example.org", MAPPER.readValue(entity.getBody().toString(), Map.class).get("email"));
 
         service.setUserInfoSigningAlg(AlgorithmIdentifiers.RSA_USING_SHA256);
         service.setUserInfoEncryptedResponseAlg(AlgorithmIdentifiers.NONE);
         servicesManager.save(service);
-        assertEquals(HttpStatus.BAD_REQUEST, oidcUserProfileViewRenderer.render(data, accessToken, response).getStatusCode());
+        val signed = oidcUserProfileViewRenderer.render(data, accessToken, new MockHttpServletResponse());
+        assertEquals(HttpStatus.OK, signed.getStatusCode());
+        val body = signed.getBody().toString();
+        assertFalse(JwtBuilder.isUnsigned(body));
+        assertEquals("casuser@example.org", Objects.requireNonNull(JwtBuilder.parse(body)).getClaim("email"));
     }
 }

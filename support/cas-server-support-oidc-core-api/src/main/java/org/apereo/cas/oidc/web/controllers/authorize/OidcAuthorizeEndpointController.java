@@ -3,6 +3,7 @@ package org.apereo.cas.oidc.web.controllers.authorize;
 import module java.base;
 import org.apereo.cas.oidc.OidcConfigurationContext;
 import org.apereo.cas.oidc.OidcConstants;
+import org.apereo.cas.oidc.util.OidcRequestSupport;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20AuthorizeEndpointController;
@@ -44,7 +45,7 @@ public class OidcAuthorizeEndpointController extends OAuth20AuthorizeEndpointCon
         }
 
         if (getConfigurationContext().getDiscoverySettings().isRequirePushedAuthorizationRequests()
-            && request.getRequestURL().toString().endsWith(OidcConstants.AUTHORIZE_URL)
+            && !OidcRequestSupport.isRequestForEndpoint(request, OidcConstants.PUSHED_AUTHORIZE_URL)
             && StringUtils.isBlank(request.getParameter(OidcConstants.REQUEST_URI))) {
             LOGGER.warn("CAS is configured to only accept pushed authorization requests");
             return OAuth20Utils.produceUnauthorizedErrorView(HttpStatus.FORBIDDEN);

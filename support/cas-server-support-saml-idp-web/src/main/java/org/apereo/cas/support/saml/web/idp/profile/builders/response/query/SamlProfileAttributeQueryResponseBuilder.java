@@ -27,6 +27,15 @@ public class SamlProfileAttributeQueryResponseBuilder extends SamlProfileSamlSoa
         super(configurationContext);
     }
 
+    /**
+     * Build the SOAP envelope that answers the attribute query. The SAML2 response inside it is built for the POST
+     * binding in a context of its own, which is told not to encode that response: the envelope is the only thing
+     * written to the HTTP response.
+     *
+     * @param context the context
+     * @return the envelope
+     * @throws Exception the exception
+     */
     @Override
     public Envelope build(final SamlProfileBuilderContext context) throws Exception {
 
@@ -35,11 +44,10 @@ public class SamlProfileAttributeQueryResponseBuilder extends SamlProfileSamlSoa
         val body = SamlUtils.newSoapObject(Body.class);
         val query = (AttributeQuery) context.getSamlRequest();
 
-        val scratch = context.getMessageContext().ensureSubcontext(ScratchContext.class);
+        val buildContext = context.transferTo(query, SAMLConstants.SAML2_POST_BINDING_URI);
+        val scratch = buildContext.getMessageContext().ensureSubcontext(ScratchContext.class);
         val map = (Map) Objects.requireNonNull(scratch).getMap();
         map.put(SamlProtocolConstants.PARAMETER_ENCODE_RESPONSE, Boolean.FALSE);
-
-        val buildContext = context.transferTo(query, SAMLConstants.SAML2_POST_BINDING_URI);
         val saml2Response = buildSaml2Response(buildContext);
         body.getUnknownXMLObjects().add(saml2Response);
 
@@ -47,8 +55,6 @@ public class SamlProfileAttributeQueryResponseBuilder extends SamlProfileSamlSoa
         envelope.setHeader(header);
         envelope.setBody(body);
         openSamlConfigBean.logObject(envelope);
-
-        map.remove(SamlProtocolConstants.PARAMETER_ENCODE_RESPONSE);
         return encodeFinalResponse(context, envelope);
     }
 }

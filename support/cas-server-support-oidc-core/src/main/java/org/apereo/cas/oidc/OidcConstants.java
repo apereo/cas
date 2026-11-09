@@ -390,6 +390,44 @@ public interface OidcConstants {
      */
     String LIST_FEDERATION_URL = "/list";
     /**
+     * Federation historical keys URL.
+     */
+    String HISTORICAL_KEYS_FEDERATION_URL = "/federation_historical_keys";
+    /**
+     * Federation historical keys content type.
+     */
+    MediaType HISTORICAL_KEYS_CONTENT_TYPE = new MediaType("application", "jwk-set+jwt");
+    /**
+     * Federation trust mark endpoint URL.
+     */
+    String TRUST_MARK_FEDERATION_URL = "/federation_trust_mark";
+    /**
+     * Federation trust mark status endpoint URL.
+     */
+    String TRUST_MARK_STATUS_FEDERATION_URL = "/federation_trust_mark_status";
+    /**
+     * Federation trust marked entities listing endpoint URL.
+     */
+    String TRUST_MARK_LIST_FEDERATION_URL = "/federation_trust_mark_list";
+    /**
+     * Trust mark content type.
+     */
+    MediaType TRUST_MARK_CONTENT_TYPE = new MediaType("application", "trust-mark+jwt");
+    /**
+     * Trust mark status response content type.
+     */
+    MediaType TRUST_MARK_STATUS_RESPONSE_CONTENT_TYPE = new MediaType("application", "trust-mark-status-response+jwt");
+
+    /**
+     * Federation resolve endpoint URL.
+     */
+    String RESOLVE_FEDERATION_URL = "/resolve";
+
+    /**
+     * Resolve response content type.
+     */
+    MediaType RESOLVE_RESPONSE_CONTENT_TYPE = new MediaType("application", "resolve-response+jwt");
+    /**
      * Scope assigned to access token internally
      * to access client config urls and look up relying parties.
      */

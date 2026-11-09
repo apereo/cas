@@ -12,7 +12,7 @@ const querystring = require("querystring");
     let postData = querystring.stringify(formData);
 
     let tgt = await executeRequest("https://localhost:8443/cas/v1/tickets", 201, postData);
-    await cas.decodeJwt(tgt);
+    await assertSignedJwt(tgt);
 
     await cas.log("Creating service ticket as JWT");
     formData = {
@@ -25,8 +25,19 @@ const querystring = require("querystring");
     assert(tgt !== null);
 
     const st = await executeRequest(`https://localhost:8443/cas/v1/tickets/${tgt}?service=https://github.com/apereo/cas`, 200);
-    await cas.decodeJwt(st);
+    await assertSignedJwt(st);
 })();
+
+/**
+ * Tickets issued as JWTs are signed; unsigned JWTs are never issued.
+ *
+ * @param token the ticket as a JWT
+ */
+async function assertSignedJwt(token) {
+    const decoded = await cas.decodeJwt(token, true);
+    assert.notEqual(decoded.header.alg, "none");
+    assert(decoded.payload.sub !== undefined);
+}
 
 async function executeRequest(url, statusCode, requestBody = undefined) {
     return cas.doRequest(url, "POST",

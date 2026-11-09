@@ -1,6 +1,8 @@
 
 const cas = require("../../cas.js");
 const assert = require("assert");
+const jose = require("jose");
+const crypto = require("crypto");
 
 (async () => {
     const browser = await cas.newBrowser(cas.browserOptions());
@@ -57,5 +59,79 @@ const assert = require("assert");
         throw `Operation failed to obtain access token: ${error}`;
     });
     
+    await verifyEncryptedRequestObject(page, request);
+    await verifyTamperedRequestObject(page, request);
+    await verifyForeignRequestObjects(page, request);
     await cas.closeBrowser(browser);
 })();
+
+/**
+ * The same signed request object, encrypted to the encryption key CAS publishes in its JWKS (OpenID Connect Core 1.0,
+ * section 6.3.1): CAS decrypts it and verifies the nested JWT with the client's keys.
+ */
+async function verifyEncryptedRequestObject(page, signedRequest) {
+    const jwks = JSON.parse(await cas.doRequest("https://localhost:8443/cas/oidc/jwks", "GET", {}, 200));
+    const encryptionKey = jwks.keys.find((key) => key.use === "enc" && key.kty === "RSA");
+    assert(encryptionKey !== undefined, "CAS publishes no RSA encryption key");
+    const encryptedRequest = await new jose.CompactEncrypt(new TextEncoder().encode(signedRequest))
+        .setProtectedHeader({alg: "RSA-OAEP-256", enc: "A256GCM", cty: "JWT", kid: encryptionKey.kid})
+        .encrypt(await jose.importJWK(encryptionKey, "RSA-OAEP-256"));
+    assert.equal(encryptedRequest.split(".").length, 5);
+
+    const url = `https://localhost:8443/cas/oidc/authorize?request=${encryptedRequest}&client_id=client&redirect_uri=https://unknown.net`;
+    await cas.log(`Browsing to ${url}`);
+    await cas.goto(page, url);
+    if (await cas.isVisible(page, "#username")) {
+        await cas.loginWith(page);
+    }
+    if (await cas.isVisible(page, "#allow")) {
+        await cas.click(page, "#allow");
+        await cas.waitForNavigation(page);
+    }
+    const code = await cas.assertParameter(page, "code");
+    await cas.log(`OAuth code ${code} for the encrypted request object`);
+    assert(page.url().startsWith("https://localhost:9859/anything/cas"), page.url());
+}
+
+/**
+ * The same request object with a broken signature is refused with invalid_request_object at the registered redirect URI
+ * (OpenID Connect Core 1.0, section 6.3.2), instead of being ignored in favor of the query parameters.
+ */
+async function verifyTamperedRequestObject(page, signedRequest) {
+    const tampered = `${signedRequest.substring(0, signedRequest.lastIndexOf(".") + 1)}AAAA`;
+    const redirectUri = "https://localhost:9859/anything/cas";
+    const url = `https://localhost:8443/cas/oidc/authorize?request=${tampered}&client_id=client&redirect_uri=${redirectUri}`;
+    await cas.log(`Browsing to ${url}`);
+    await cas.goto(page, url);
+    await cas.sleep(1000);
+    assert(page.url().startsWith(redirectUri), page.url());
+    const error = new URL(page.url()).searchParams.get("error");
+    assert.equal(error, "invalid_request_object");
+}
+
+/**
+ * Request objects that verify with no key of the client named by client_id are refused with invalid_request_object
+ * at the redirect URI: one signed by a key the client never registered, and a genuine request object of client
+ * presented under client_id=otherclient, whose own key set did not sign it.
+ */
+async function verifyForeignRequestObjects(page, signedRequest) {
+    const claims = JSON.parse(Buffer.from(signedRequest.split(".")[1], "base64url").toString("utf8"));
+    assert.equal(claims.client_id, "client");
+
+    const foreignKey = crypto.generateKeyPairSync("rsa", {modulusLength: 2048})
+        .privateKey.export({type: "pkcs8", format: "pem"});
+    const foreignRequest = await cas.createJwt(claims, foreignKey, "RS256", {noTimestamp: true});
+    await verifyRequestObjectRefused(page, foreignRequest, "client", "https://localhost:9859/anything/cas");
+    await verifyRequestObjectRefused(page, signedRequest, "otherclient", "https://localhost:9859/anything/otherclient");
+}
+
+async function verifyRequestObjectRefused(page, requestObject, clientId, redirectUri) {
+    const url = `https://localhost:8443/cas/oidc/authorize?request=${requestObject}&client_id=${clientId}&redirect_uri=${redirectUri}`;
+    await cas.log(`Browsing to ${url}`);
+    await cas.goto(page, url);
+    await cas.sleep(1000);
+    assert(page.url().startsWith(redirectUri), page.url());
+    const params = new URL(page.url()).searchParams;
+    assert.equal(params.get("error"), "invalid_request_object");
+    assert(params.get("code") === null, "No code may be issued for a refused request object");
+}

@@ -24,7 +24,8 @@ CAS having received an authentication request via its `/login` endpoint will con
 application in form of a `ticket` parameter via the requested http method.
 
 All JWTs are by default signed and encrypted by CAS based on keys generated and controlled during deployment. Such keys may be 
-exchanged with client applications to unpack the JWT and access claims.
+exchanged with client applications to unpack the JWT and access claims. A JWT is always signed or encrypted: when neither CAS nor 
+the application defines keys to do so, the ticket is refused rather than issued as an unsigned JWT, whose algorithm is `none`.
 
 ## Flow Diagram
 

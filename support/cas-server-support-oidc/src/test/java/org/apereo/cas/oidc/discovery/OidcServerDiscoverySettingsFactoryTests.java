@@ -4,7 +4,9 @@ import module java.base;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.model.support.oidc.OidcVerifiableCredentialConfigurationProperties;
+import org.apereo.cas.configuration.model.support.oidc.federation.OidcFederationRole;
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.support.oauth.OAuth20ClientAuthenticationMethods;
@@ -59,6 +61,23 @@ class OidcServerDiscoverySettingsFactoryTests extends AbstractOidcTests {
         assertNotNull(oidcServerDiscoverySettings.getUserinfoEndpoint());
         assertNotNull(oidcServerDiscoverySettings.getIssuer());
         assertNotNull(oidcServerDiscoverySettings.getJwksUri());
+    }
+
+    @Test
+    void verifyAutomaticRegistrationIsOnlyAdvertisedByFederationOpenIdProvider() throws Exception {
+        assertTrue(oidcServerDiscoverySettings.getClientRegistrationTypesSupported().isEmpty());
+        assertFalse(oidcServerDiscoverySettings.toJson().contains("client_registration_types_supported"));
+
+        val properties = new CasConfigurationProperties();
+        properties.getAuthn().getOidc().getFederation().setRole(OidcFederationRole.OPENID_PROVIDER);
+        CasFeatureModule.FeatureCatalog.OpenIDConnect.register("federation");
+        val federationProvider = new OidcServerDiscoverySettingsFactory(properties, oidcIssuerService, applicationContext).getObject();
+        assertEquals(Set.of("automatic"), federationProvider.getClientRegistrationTypesSupported());
+        assertTrue(federationProvider.toJson().contains("client_registration_types_supported"));
+
+        properties.getAuthn().getOidc().getFederation().setRole(OidcFederationRole.TRUST_ANCHOR);
+        val trustAnchor = new OidcServerDiscoverySettingsFactory(properties, oidcIssuerService, applicationContext).getObject();
+        assertTrue(trustAnchor.getClientRegistrationTypesSupported().isEmpty());
     }
 
     @Test

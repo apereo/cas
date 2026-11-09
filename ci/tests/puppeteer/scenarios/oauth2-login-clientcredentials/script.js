@@ -45,10 +45,33 @@ async function executeRequestForUnknownResource() {
     });
 }
 
+async function verifyClientSecret(clientId, clientSecret, expectedStatus) {
+    await cas.log(`Client ${clientId} authenticates with secret ${clientSecret}; expecting status ${expectedStatus}`);
+    await cas.doPost("https://localhost:8443/cas/oauth2.0/token?grant_type=client_credentials", "", {
+        "Content-Type": "application/json",
+        "Authorization": `Basic ${btoa(`${clientId}:${clientSecret}`)}`
+    }, (res) => {
+        assert(expectedStatus === 200, `Client secret ${clientSecret} of ${clientId} should be refused but produced: ${JSON.stringify(res.data)}`);
+        assert(res.data.access_token !== undefined);
+    }, (error) => {
+        assert(error.response !== undefined, `No response: ${error}`);
+        cas.log(`Status: ${error.response.status}`);
+        assert(error.response.status === expectedStatus);
+    });
+}
+
 (async () => {
     await executeRequest("client", "example", "https://api.example.com/app/");
     await cas.separator();
     await executeRequest("client2", "");
     await cas.separator();
     await executeRequestForUnknownResource();
+    await cas.separator();
+
+    await cas.log("An expired client secret is refused while the current one is accepted");
+    await verifyClientSecret("rotatedclient", "oldsecret", 401);
+    await verifyClientSecret("rotatedclient", "newsecret", 200);
+    await cas.log("A client whose secrets have all expired is refused and is not taken for a public client");
+    await verifyClientSecret("expiredclient", "secret", 401);
+    await verifyClientSecret("expiredclient", "anything", 401);
 })();

@@ -3,7 +3,6 @@ package org.apereo.cas.interrupt;
 import module java.base;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -43,15 +42,13 @@ class JsonResourceInterruptInquirerTests {
         response = inquirer.inquire(CoreAuthenticationTestUtils.getAuthentication("unknown"),
             CoreAuthenticationTestUtils.getRegisteredService(),
             CoreAuthenticationTestUtils.getService(),
-            CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(),
-            new MockRequestContext());
+            CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
         assertFalse(response.isInterrupt());
 
         response = inquirer.inquire(CoreAuthenticationTestUtils.getAuthentication("casuser"),
             CoreAuthenticationTestUtils.getRegisteredService(),
             CoreAuthenticationTestUtils.getService(),
-            CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(),
-            new MockRequestContext());
+            CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
         assertNotNull(response);
         assertFalse(response.isBlock());
         assertTrue(response.isSsoEnabled());
@@ -109,8 +106,7 @@ class JsonResourceInterruptInquirerTests {
             return inquirer.inquire(CoreAuthenticationTestUtils.getAuthentication(username),
                 CoreAuthenticationTestUtils.getRegisteredService(),
                 CoreAuthenticationTestUtils.getService(),
-                CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(),
-                new MockRequestContext());
+                CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
         } catch (final Throwable e) {
             throw new RuntimeException(e);
         }
