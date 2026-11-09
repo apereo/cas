@@ -8,8 +8,10 @@
     
     "--cas.authn.rest[0].uri=http://localhost:5433/unknown",
     "--cas.authn.rest[0].order=0",
+    "--cas.authn.rest[0].name=RestUnreachable",
 
     "--cas.authn.rest[1].uri=http://localhost:5432/authn.json",
-    "--cas.authn.rest[1].order=1"
+    "--cas.authn.rest[1].order=1",
+    "--cas.authn.rest[1].name=RestMock"
   ]
 }

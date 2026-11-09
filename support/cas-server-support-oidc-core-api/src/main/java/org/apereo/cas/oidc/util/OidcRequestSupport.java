@@ -20,6 +20,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.hc.core5.http.message.BasicNameValuePair;
 import org.apache.hc.core5.net.URIBuilder;
+import org.springframework.web.util.UrlPathHelper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -35,6 +36,20 @@ public class OidcRequestSupport {
     private final CasCookieBuilder ticketGrantingTicketCookieGenerator;
 
     private final TicketRegistrySupport ticketRegistrySupport;
+
+    /**
+     * Whether the request is for the given endpoint, judged by its path within the application as handler mappings see
+     * it: decoded, without path parameters and without a trailing slash, so that an encoded or decorated path that
+     * reaches the endpoint is recognized as such.
+     *
+     * @param request  the request
+     * @param endpoint the last segment of the endpoint path, such as {@link OidcConstants#AUTHORIZE_URL}
+     * @return true or false
+     */
+    public static boolean isRequestForEndpoint(final HttpServletRequest request, final String endpoint) {
+        val path = StringUtils.removeEnd(UrlPathHelper.defaultInstance.getPathWithinApplication(request), "/");
+        return StringUtils.endsWith(path, '/' + endpoint);
+    }
 
     /**
      * Gets oidc max age from authorization request.

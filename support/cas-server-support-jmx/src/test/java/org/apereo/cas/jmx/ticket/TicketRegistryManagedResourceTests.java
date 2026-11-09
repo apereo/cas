@@ -17,6 +17,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.support.StaticListableBeanFactory;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.support.SimpleTransactionStatus;
+import org.springframework.transaction.support.TransactionCallback;
+import org.springframework.transaction.support.TransactionOperations;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -32,8 +35,18 @@ import static org.mockito.Mockito.*;
 class TicketRegistryManagedResourceTests {
     private final TicketRegistry registry = mock(TicketRegistry.class);
 
+    private final AtomicInteger transactions = new AtomicInteger();
+
+    private final TransactionOperations ticketTransactionOperations = new TransactionOperations() {
+        @Override
+        public <T> T execute(final TransactionCallback<T> action) {
+            transactions.incrementAndGet();
+            return action.doInTransaction(new SimpleTransactionStatus());
+        }
+    };
+
     private final TicketRegistryManagedResource resource = new TicketRegistryManagedResource(registry,
-        new StaticListableBeanFactory().getBeanProvider(TicketRegistryCleaner.class));
+        new StaticListableBeanFactory().getBeanProvider(TicketRegistryCleaner.class), ticketTransactionOperations);
 
     @Autowired
     @Qualifier("ticketRegistryManagedResource")
@@ -51,6 +64,7 @@ class TicketRegistryManagedResourceTests {
         val ticket = mock(Ticket.class);
         when(ticket.getId()).thenReturn("TGT-example");
         when(registry.stream()).thenAnswer(_ -> Stream.of(ticket).onClose(closed::incrementAndGet));
+        when(registry.countTickets()).thenReturn(1L);
         when(registry.sessionCount()).thenReturn(1L);
         when(registry.serviceTicketCount()).thenReturn(Long.MIN_VALUE);
 
@@ -58,7 +72,9 @@ class TicketRegistryManagedResourceTests {
         assertEquals(1, resource.getTicketCount());
         assertEquals(1, resource.getSessionCount());
         assertEquals(Long.MIN_VALUE, resource.getServiceTicketCount());
-        assertEquals(2, closed.get());
+        assertEquals(1, closed.get());
+        assertEquals(1, transactions.get());
+        verify(registry, times(1)).stream();
     }
 
     @Test
@@ -76,6 +92,7 @@ class TicketRegistryManagedResourceTests {
         verifyNoInteractions(unused);
         assertArrayEquals(ArrayUtils.EMPTY_STRING_ARRAY, resource.getTicketsByPrefix("TG", 10));
         assertEquals(2, closed.get());
+        assertEquals(2, transactions.get());
     }
 
     @Test
@@ -123,7 +140,8 @@ class TicketRegistryManagedResourceTests {
         val cleaner = mock(TicketRegistryCleaner.class);
         when(cleaner.clean()).thenReturn(5);
         val beans = new StaticListableBeanFactory(Map.of("cleaner", cleaner));
-        val managedResource = new TicketRegistryManagedResource(registry, beans.getBeanProvider(TicketRegistryCleaner.class));
+        val managedResource = new TicketRegistryManagedResource(registry, beans.getBeanProvider(TicketRegistryCleaner.class),
+            ticketTransactionOperations);
 
         assertEquals(5, managedResource.clean());
         verify(cleaner).clean();

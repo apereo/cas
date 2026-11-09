@@ -17,3 +17,13 @@ description: "Review and change interrupt notifications: InterruptWebflowConfigu
 - Inquirer errors currently fail open; any fix must state the intended behavior for blocking policies.
 - Reloadable inquirer state (files, watchers) must be published atomically; a failed reload keeps the last good contents rather than failing open.
 - Payloads map onto `InterruptResponse`, whose no-arg constructor means "interrupt". Parse external responses only after the status check, and test error bodies against random-port `MockWebServer` instances.
+- `InterruptInquirer.inquire` takes the authentication, registered service, service and credential only; there is no
+  webflow `RequestContext`, so inquirers also run outside the login flow (the `interrupts` actuator endpoint, the MCP
+  `previewInterrupt` tool). An inquirer that needs the HTTP request reads it with
+  `HttpRequestUtils.getHttpServletRequestFromRequestAttributes()` and copes with null (the REST inquirer forwards
+  `Accept-Language` that way). Groovy interrupt scripts get `principal, attributes, service, registeredService, logger`.
+- The `interrupts` endpoint (`InterruptInquiryEndpoint`, `GET /actuator/interrupts/{username}?service=`) lives in
+  `interrupt-core` and is tested in `interrupt-webflow` through `AbstractCasEndpointTests`, as `throttles` is. Unlike the
+  login flow, which stops at the first interrupting inquirer, it asks every inquirer and reports each response or failure
+  plus the first interrupt; it does not evaluate the service interrupt policy's attribute, script or force conditions.
+  Scenario coverage: a row in `actuator-endpoint-roles` and a call in `interrupt-aftersso-login-groovy`.

@@ -9,6 +9,7 @@ import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.trusted.AbstractMultifactorAuthenticationTrustStorageTests;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
 import org.apereo.cas.trusted.util.MultifactorAuthenticationTrustUtils;
+import org.apereo.cas.trusted.web.flow.fingerprint.BrowserDeviceFingerprintExtractor;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
@@ -118,5 +119,17 @@ class MultifactorAuthenticationVerifyTrustActionTests extends AbstractMultifacto
         WebUtils.putRegisteredService(context, registeredService);
         WebUtils.putPublicWorkstationToFlowIfRequestParameterPresent(context);
         assertEquals(CasWebflowConstants.TRANSITION_ID_SKIP, mfaVerifyTrustAction.execute(context).getId());
+    }
+
+    @Test
+    void verifyBrowserFingerprintRememberedWithoutTrustedDevices() throws Throwable {
+        val context = MockRequestContext.create(applicationContext);
+        WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService());
+        WebUtils.putRegisteredService(context, RegisteredServiceTestUtils.getRegisteredService("sample-service", Collections.emptyMap()));
+        WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(UUID.randomUUID().toString()), context);
+        context.setParameter("deviceFingerprint", "b6f1a7c2d93e");
+        context.setClientInfo();
+        assertEquals(CasWebflowConstants.TRANSITION_ID_NO, mfaVerifyTrustAction.execute(context).getId());
+        assertEquals("b6f1a7c2d93e", context.getFlowScope().get(BrowserDeviceFingerprintExtractor.FLOW_SCOPE_ATTRIBUTE_BROWSER_FINGERPRINT));
     }
 }

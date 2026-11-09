@@ -11,7 +11,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jspecify.annotations.Nullable;
 import org.springframework.core.io.Resource;
-import org.springframework.webflow.execution.RequestContext;
 
 /**
  * This is {@link GroovyScriptInterruptInquirer}.
@@ -32,13 +31,12 @@ public class GroovyScriptInterruptInquirer extends BaseInterruptInquirer {
     public @Nullable InterruptResponse inquireInternal(final Authentication authentication,
                                                        final RegisteredService registeredService,
                                                        final Service service,
-                                                       final Credential credential,
-                                                       final RequestContext requestContext)
+                                                       final Credential credential)
             throws Throwable {
         val principal = authentication.getPrincipal();
         val attributes = new HashMap<String, Object>(principal.getAttributes());
         attributes.putAll(authentication.getAttributes());
-        val args = new Object[]{principal, attributes, service, registeredService, requestContext, LOGGER};
+        val args = new Object[]{principal, attributes, service, registeredService, LOGGER};
         LOGGER.trace("Invoking Groovy script with attributes=[{}], service=[{}] and default logger",
             attributes, service != null ? service.getId() : "null");
         return watchableScript.execute(args, InterruptResponse.class);

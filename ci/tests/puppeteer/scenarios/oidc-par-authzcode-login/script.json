@@ -24,10 +24,14 @@
     "--cas.authn.oidc.core.claims-map.family_name=lastname",
 
     "--cas.authn.oauth.core.user-profile-view-type=FLAT",
-    
+
+    "--cas.authn.oidc.client-attestation.trust-anchors=file:${PWD}/ci/tests/puppeteer/overlay/${SCENARIO}/attester-ca.pem",
+    "--cas.authn.oidc.client-attestation.challenge.enabled=true",
+    "--cas.authn.oidc.client-attestation.challenge.time-to-live=PT20S",
+
     "--cas.service-registry.core.init-from-json=true",
     "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services"
   ],
-  "initScript": "${PWD}/ci/tests/httpbin/run-httpbin-server.sh"
+  "initScript": "${PWD}/ci/tests/httpbin/run-httpbin-server.sh,${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/init.sh"
 }
 

@@ -34,7 +34,7 @@ class OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidatorTests ext
     }
 
     @Test
-    void verifyUnsignedRequestParameter() throws Throwable {
+    void verifyUnsignedRequestParameterIsRefused() throws Throwable {
         val clientId = UUID.randomUUID().toString();
         addRegisteredService(Set.of(), clientId, UUID.randomUUID().toString(), "https://.+");
         val validator = getValidator(servicesManager);
@@ -49,8 +49,45 @@ class OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidatorTests ext
             + Base64.getUrlEncoder().withoutPadding().encodeToString(claims.getBytes(StandardCharsets.UTF_8)) + '.';
 
         request.setParameter(OAuth20Constants.REQUEST, authnRequest);
+        request.setParameter(OAuth20Constants.CLIENT_ID, clientId);
+        request.setParameter(OAuth20Constants.REDIRECT_URI, "https://staging.certification.openid.net/test/a/CAS/callback");
+        request.setParameter(OAuth20Constants.RESPONSE_TYPE, OAuth20ResponseTypes.CODE.getType());
+        assertFalse(oauthRequestParameterResolver.isRequestObjectVerified(request));
+        assertFalse(validator.supports(request, response));
+        assertEquals(OAuth20Constants.INVALID_REQUEST_OBJECT, request.getAttribute(OAuth20Constants.ERROR));
+
+        val signedRequest = new MockHttpServletRequest();
+        signedRequest.setParameter(OAuth20Constants.REQUEST, configurationContext.getAccessTokenJwtBuilder().getDefaultTokenCipherExecutor().encode(claims));
+        assertTrue(validator.supports(signedRequest, response));
+        assertTrue(validator.validate(signedRequest, response));
+    }
+
+    @Test
+    void verifyRequestObjectThatCannotBeVerifiedIsRefused() throws Throwable {
+        val clientId = UUID.randomUUID().toString();
+        addRegisteredService(Set.of(), clientId, UUID.randomUUID().toString(), "https://.+");
+        val validator = getValidator(servicesManager);
+
+        val request = new MockHttpServletRequest();
+        val response = new MockHttpServletResponse();
+        request.addParameter(OAuth20Constants.CLIENT_ID, clientId);
+        request.addParameter(OAuth20Constants.REDIRECT_URI, "https://oauth.example.org");
+        request.addParameter(OAuth20Constants.RESPONSE_TYPE, OAuth20ResponseTypes.CODE.getType());
+        val encoder = Base64.getUrlEncoder().withoutPadding();
+        val claims = """
+            {"response_type":"code","redirect_uri":"https://oauth.example.org","client_id":"%s"}""".formatted(clientId);
+        request.addParameter(OAuth20Constants.REQUEST, encoder.encodeToString("{\"alg\":\"RS256\"}".getBytes(StandardCharsets.UTF_8))
+            + '.' + encoder.encodeToString(claims.getBytes(StandardCharsets.UTF_8)) + ".AAAA");
+
+        assertFalse(oauthRequestParameterResolver.isRequestObjectVerified(request));
+        assertFalse(validator.supports(request, response));
+        assertEquals(OAuth20Constants.INVALID_REQUEST_OBJECT, request.getAttribute(OAuth20Constants.ERROR));
+        assertEquals(Boolean.TRUE, request.getAttribute(OAuth20Constants.ERROR_WITH_CALLBACK));
+
+        request.removeAttribute(OAuth20Constants.ERROR);
+        request.removeParameter(OAuth20Constants.REQUEST);
+        assertTrue(oauthRequestParameterResolver.isRequestObjectVerified(request));
         assertTrue(validator.supports(request, response));
-        assertTrue(validator.validate(request, response));
     }
 
     @Test

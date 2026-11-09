@@ -12,7 +12,7 @@ This strategy allows one to locate user records via a JSON resource, as such:
 ```json 
 {
   "@class" : "java.util.LinkedHashMap",
-  "casuser@\w+.com" : {
+  "casuser@\\w+.com" : {
     "@class": "org.apereo.cas.api.PasswordlessUserAccount",
     "username": "casuser",
     "attributes": {

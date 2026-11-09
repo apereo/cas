@@ -358,24 +358,23 @@ public abstract class AbstractOidcTests {
     protected CipherExecutor oauthRegisteredServiceCipherExecutor;
 
     protected static OidcRegisteredService getOidcRegisteredService() {
-        return getOidcRegisteredService(true, true);
+        return getOidcRegisteredService(true);
     }
 
-    protected static OidcRegisteredService getOidcRegisteredService(final boolean sign, final boolean encrypt) {
-        return getOidcRegisteredService("clientid", "https://oauth\\.example\\.org.*", sign, encrypt);
+    protected static OidcRegisteredService getOidcRegisteredService(final boolean encrypt) {
+        return getOidcRegisteredService("clientid", "https://oauth\\.example\\.org.*", encrypt);
     }
 
     protected static OidcRegisteredService getOidcRegisteredService(final String clientId, final String redirectUri) {
-        return getOidcRegisteredService(clientId, redirectUri, true, true);
+        return getOidcRegisteredService(clientId, redirectUri, true);
     }
 
     protected static OidcRegisteredService getOidcRegisteredService(final String clientId) {
-        return getOidcRegisteredService(clientId, "https://oauth\\.example\\.org.*", true, true);
+        return getOidcRegisteredService(clientId, "https://oauth\\.example\\.org.*", true);
     }
 
     protected static OidcRegisteredService getOidcRegisteredService(final String clientId,
                                                                     final String redirectUri,
-                                                                    final boolean sign,
                                                                     final boolean encrypt) {
         val svc = new OidcRegisteredService();
         svc.setClientId(clientId);
@@ -383,7 +382,6 @@ public abstract class AbstractOidcTests {
         svc.setDescription("description");
         svc.setClientSecrets(CollectionUtils.wrapList(OAuthRegisteredServiceClientSecret.withoutExpiration("secret")));
         svc.setServiceId(redirectUri);
-        svc.setSignIdToken(sign);
         svc.setEncryptIdToken(encrypt);
         svc.setIdTokenEncryptionAlg(KeyManagementAlgorithmIdentifiers.RSA_OAEP_256);
         svc.setIdTokenEncryptionEncoding(ContentEncryptionAlgorithmIdentifiers.AES_128_CBC_HMAC_SHA_256);
@@ -648,8 +646,7 @@ public abstract class AbstractOidcTests {
     protected static String buildClientAttestation(final String clientId, final JWK instanceKey,
                                                    final boolean includeTrustAnchor)
             throws Exception {
-        val providerKey = (ECKey) JWKSet.load(new ClassPathResource("client-attestation-x5c.jwks").getInputStream())
-            .getKeyByKeyId("wallet-provider");
+        val providerKey = getClientAttestationProviderKey();
         val certificateChain = providerKey.getX509CertChain();
         val chain = includeTrustAnchor ? certificateChain : certificateChain.subList(0, 1);
         val header = new JWSHeader.Builder(JWSAlgorithm.ES256)
@@ -665,6 +662,19 @@ public abstract class AbstractOidcTests {
         val attestation = new SignedJWT(header, claims);
         attestation.sign(new ECDSASigner(providerKey));
         return attestation.serialize();
+    }
+
+    /**
+     * The key of the wallet provider that signs client attestations, whose certificate chain leads to the trust anchor
+     * the tests configure.
+     *
+     * @return the wallet provider key
+     * @throws Exception the exception
+     */
+    protected static ECKey getClientAttestationProviderKey() throws Exception {
+        try (val input = new ClassPathResource("client-attestation-x5c.jwks").getInputStream()) {
+            return (ECKey) JWKSet.load(input).getKeyByKeyId("wallet-provider");
+        }
     }
 
     /**

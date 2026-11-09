@@ -6,11 +6,13 @@
     "--cas.server.prefix=${cas.server.name}/cas",
 
     "--cas.authn.oidc.core.issuer=https://localhost:8443/cas/oidc",
-    "--cas.authn.oidc.jwks.file-system.jwks-file=file:${#systemProperties['java.io.tmpdir']}/keystore.jwks",
+    "--cas.authn.oidc.jwks.file-system.jwks-file=file:${#systemProperties['java.io.tmpdir']}/jwks-rotation-keystore.jwks",
+
+    "--cas.service-registry.core.init-from-json=true",
+    "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services",
 
     "--management.endpoints.access.default=UNRESTRICTED",
     "--management.endpoints.web.exposure.include=oidcJwks",
     "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS"
   ]
 }
-

@@ -1,0 +1,12 @@
+{
+  "@class" : "org.apereo.cas.support.saml.services.SamlRegisteredService",
+  "serviceId" : "^https://encryption\\.example\\.org/sp-required$",
+  "name" : "EncryptionRequired",
+  "id" : 6,
+  "evaluationOrder" : 6,
+  "metadataLocation" : "file://${#env['PWD']}/ci/tests/puppeteer/scenarios/${#env['SCENARIO']}/sp-metadata.xml",
+  "encryptAssertions" : true,
+  "attributeReleasePolicy" : {
+    "@class" : "org.apereo.cas.services.ReturnAllAttributeReleasePolicy"
+  }
+}

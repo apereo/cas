@@ -10,6 +10,13 @@ import org.apereo.cas.support.oauth.OAuth20TokenExchangeTypes;
 import org.apereo.cas.support.oauth.profile.DefaultOAuth20UserProfile;
 import org.apereo.cas.ticket.OAuth20UnauthorizedScopeRequestException;
 import org.apereo.cas.token.JwtBuilder;
+import org.apereo.cas.util.RandomUtils;
+import com.nimbusds.jose.JWSAlgorithm;
+import com.nimbusds.jose.JWSHeader;
+import com.nimbusds.jose.crypto.MACSigner;
+import com.nimbusds.jwt.JWTClaimsSet;
+import com.nimbusds.jwt.PlainJWT;
+import com.nimbusds.jwt.SignedJWT;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -108,6 +115,44 @@ class AccessTokenTokenExchangeGrantRequestExtractorTests extends AbstractOAuth20
         assertEquals(OAuth20TokenExchangeTypes.ACCESS_TOKEN, tokenContext.getSubjectTokenType());
         assertEquals(OAuth20TokenExchangeTypes.ACCESS_TOKEN, tokenContext.getRequestedTokenType());
         assertNotNull(tokenContext.getActorToken());
+    }
+
+    @Test
+    void verifyJwtSignedByAnotherKey() throws Throwable {
+        val service = addRegisteredService(Set.of(OAuth20GrantTypes.TOKEN_EXCHANGE));
+        val claims = new JWTClaimsSet.Builder()
+            .subject(UUID.randomUUID().toString())
+            .issuer(service.getClientId())
+            .build();
+        val jwt = new SignedJWT(new JWSHeader(JWSAlgorithm.HS256), claims);
+        jwt.sign(new MACSigner(RandomUtils.randomAlphanumeric(256).getBytes(StandardCharsets.UTF_8)));
+        val userProfile = new DefaultOAuth20UserProfile(service.getClientId());
+        userProfile.addAttribute(OAuth20Constants.CLIENT_ID, service.getClientId());
+
+        val subjectRequest = new MockHttpServletRequest();
+        subjectRequest.addParameter(OAuth20Constants.SUBJECT_TOKEN, jwt.serialize());
+        subjectRequest.addParameter(OAuth20Constants.SUBJECT_TOKEN_TYPE, OAuth20TokenExchangeTypes.JWT.getType());
+        subjectRequest.addParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.TOKEN_EXCHANGE.getType());
+        storeProfileIntoSession(subjectRequest, userProfile);
+        assertThrows(IllegalArgumentException.class, () -> extractor.extract(subjectRequest, new MockHttpServletResponse()));
+
+        val subjectToken = getAccessToken(service.getServiceId(), service.getClientId());
+        when(subjectToken.getScopes()).thenReturn(Set.of("read"));
+        ticketRegistry.addTicket(subjectToken);
+        val actorRequest = new MockHttpServletRequest();
+        actorRequest.addParameter(OAuth20Constants.SUBJECT_TOKEN, subjectToken.getId());
+        actorRequest.addParameter(OAuth20Constants.SUBJECT_TOKEN_TYPE, OAuth20TokenExchangeTypes.ACCESS_TOKEN.getType());
+        actorRequest.addParameter(OAuth20Constants.ACTOR_TOKEN, jwt.serialize());
+        actorRequest.addParameter(OAuth20Constants.ACTOR_TOKEN_TYPE, OAuth20TokenExchangeTypes.JWT.getType());
+        actorRequest.addParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.TOKEN_EXCHANGE.getType());
+        storeProfileIntoSession(actorRequest, userProfile);
+        assertThrows(IllegalArgumentException.class, () -> extractor.extract(actorRequest, new MockHttpServletResponse()));
+
+        val unsigned = new PlainJWT(claims).serialize();
+        subjectRequest.setParameter(OAuth20Constants.SUBJECT_TOKEN, unsigned);
+        assertThrows(IllegalArgumentException.class, () -> extractor.extract(subjectRequest, new MockHttpServletResponse()));
+        actorRequest.setParameter(OAuth20Constants.ACTOR_TOKEN, unsigned);
+        assertThrows(IllegalArgumentException.class, () -> extractor.extract(actorRequest, new MockHttpServletResponse()));
     }
 
     @Test

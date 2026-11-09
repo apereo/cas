@@ -25,11 +25,11 @@ allow the flow to present available forms of authentication to the user:
     "@class" : "org.apereo.cas.api.PasswordlessUserAccount",
     "username": "casuser",
     "name" : "CAS",
-    "email": "casuser@example.org"
+    "email": "casuser@example.org",
     "allowSelectionMenu": true,
-    "requestPassword": true
+    "requestPassword": true,
     "delegatedAuthenticationEligible": "TRUE",
-    "allowedDelegatedClients" : [ "java.util.ArrayList", [ "ExternalIdP" ] ]
+    "allowedDelegatedClients" : [ "java.util.ArrayList", [ "ExternalIdP" ] ],
     "multifactorAuthenticationEligible": "TRUE",
     "attributes" : {
       "@class" : "java.util.TreeMap",

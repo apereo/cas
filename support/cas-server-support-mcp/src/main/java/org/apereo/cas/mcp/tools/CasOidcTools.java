@@ -92,7 +92,6 @@ public class CasOidcTools {
             summary.applicationType(oidcClient.getApplicationType())
                 .subjectType(oidcClient.getSubjectType())
                 .sectorIdentifierUri(oidcClient.getSectorIdentifierUri())
-                .signIdToken(oidcClient.isSignIdToken())
                 .idTokenSigningAlg(oidcClient.getIdTokenSigningAlg())
                 .encryptIdToken(oidcClient.isEncryptIdToken())
                 .idTokenEncryptionAlg(oidcClient.getIdTokenEncryptionAlg())
@@ -215,7 +214,7 @@ public class CasOidcTools {
                              @Nullable Boolean jwtAccessToken, @Nullable Boolean dpopBoundAccessTokens,
                              @Nullable Boolean tlsClientCertificateBoundAccessTokens, @Nullable String issuer,
                              @Nullable String applicationType, @Nullable String subjectType, @Nullable String sectorIdentifierUri,
-                             @Nullable Boolean signIdToken, @Nullable String idTokenSigningAlg, @Nullable Boolean encryptIdToken,
+                             @Nullable String idTokenSigningAlg, @Nullable Boolean encryptIdToken,
                              @Nullable String idTokenEncryptionAlg, @Nullable String jwks, @Nullable String reason) {
     }
 

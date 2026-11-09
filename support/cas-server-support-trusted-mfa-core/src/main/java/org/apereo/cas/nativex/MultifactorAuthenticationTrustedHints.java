@@ -10,6 +10,7 @@ import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import org.springframework.aot.hint.RuntimeHints;
+import org.springframework.beans.factory.DisposableBean;
 
 /**
  * This is {@link MultifactorAuthenticationTrustedHints}.
@@ -26,5 +27,6 @@ public class MultifactorAuthenticationTrustedHints implements CasRuntimeHintsReg
         registerProxyHints(hints, DeviceFingerprintExtractor.class,
             MultifactorAuthenticationTrustStorage.class,
             MultifactorAuthenticationTrustRecordKeyGenerator.class);
+        registerSpringProxyHints(hints, DisposableBean.class, MultifactorAuthenticationTrustStorage.class);
     }
 }

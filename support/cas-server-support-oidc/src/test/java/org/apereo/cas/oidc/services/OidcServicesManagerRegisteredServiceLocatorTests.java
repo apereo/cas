@@ -122,7 +122,7 @@ class OidcServicesManagerRegisteredServiceLocatorTests extends AbstractOidcTests
         service1.setEvaluationOrder(5);
 
         val oidcClientId = UUID.randomUUID().toString();
-        val service2 = getOidcRegisteredService(oidcClientId, ".+", false, false);
+        val service2 = getOidcRegisteredService(oidcClientId, ".+", false);
         service2.setEvaluationOrder(10);
 
         val oauthClientId = UUID.randomUUID().toString();

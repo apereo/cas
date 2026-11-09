@@ -8,11 +8,11 @@ import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.validator.CertificateBoundAccessTokenRequiredException;
 import org.apereo.cas.support.oauth.validator.token.OAuth20InvalidTargetException;
 import org.apereo.cas.support.oauth.validator.token.OAuth20TokenRequestValidator;
-import org.apereo.cas.token.JwtBuilder;
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.jwk.Curve;
 import com.nimbusds.jose.jwk.gen.ECKeyGenerator;
 import com.nimbusds.jwt.JWTClaimsSet;
+import com.nimbusds.jwt.PlainJWT;
 import com.nimbusds.oauth2.sdk.dpop.DefaultDPoPProofFactory;
 import com.nimbusds.oauth2.sdk.dpop.verifiers.InvalidDPoPProofException;
 import lombok.val;
@@ -58,7 +58,7 @@ class OidcAccessTokenJwtBearerGrantRequestValidatorTests extends AbstractOidcTes
         request.setServerPort(443);
         val response = new MockHttpServletResponse();
         val claims = JWTClaimsSet.parse(Map.of(OAuth20Constants.CLIENT_ID, registeredService.getClientId()));
-        request.addParameter(OAuth20Constants.ASSERTION, JwtBuilder.buildPlain(claims, Optional.of(registeredService)));
+        request.addParameter(OAuth20Constants.ASSERTION, new PlainJWT(claims).serialize());
         request.addParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.JWT_BEARER.getType());
         assertThrows(InvalidDPoPProofException.class, () -> validator.validate(request, response));
 
@@ -79,7 +79,7 @@ class OidcAccessTokenJwtBearerGrantRequestValidatorTests extends AbstractOidcTes
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         val claims = JWTClaimsSet.parse(Map.of(OAuth20Constants.CLIENT_ID, registeredService.getClientId()));
-        request.addParameter(OAuth20Constants.ASSERTION, JwtBuilder.buildPlain(claims, Optional.of(registeredService)));
+        request.addParameter(OAuth20Constants.ASSERTION, new PlainJWT(claims).serialize());
         request.addParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.JWT_BEARER.getType());
         request.addParameter(OAuth20Constants.RESOURCE, "https://api.example.org/");
         assertTrue(validator.validate(request, response));
@@ -95,7 +95,7 @@ class OidcAccessTokenJwtBearerGrantRequestValidatorTests extends AbstractOidcTes
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         val claims = JWTClaimsSet.parse(Map.of(OAuth20Constants.CLIENT_ID, registeredService.getClientId()));
-        request.addParameter(OAuth20Constants.ASSERTION, JwtBuilder.buildPlain(claims, Optional.of(registeredService)));
+        request.addParameter(OAuth20Constants.ASSERTION, new PlainJWT(claims).serialize());
         request.addParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.JWT_BEARER.getType());
         assertThrows(CertificateBoundAccessTokenRequiredException.class, () -> validator.validate(request, response));
     }
