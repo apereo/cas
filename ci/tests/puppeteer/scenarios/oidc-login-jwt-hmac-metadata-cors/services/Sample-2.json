@@ -1,0 +1,13 @@
+{
+  "@class": "org.apereo.cas.services.OidcRegisteredService",
+  "clientId": "shortsecretclient",
+  "serviceId": "^https://localhost:9859/anything/shortsecret.*",
+  "name": "SampleShortSecret",
+  "id": 2,
+  "description": "A 16-byte client secret is too short to verify HS256 client assertions",
+  "evaluationOrder": 2,
+  "tokenEndpointAuthenticationMethod": "client_secret_jwt",
+  "scopes" : [ "java.util.HashSet", [ "openid", "profile" ] ],
+  "supportedGrantTypes": [ "java.util.HashSet", [ "client_credentials" ] ],
+  "clientSecret": "0123456789abcdef"
+}

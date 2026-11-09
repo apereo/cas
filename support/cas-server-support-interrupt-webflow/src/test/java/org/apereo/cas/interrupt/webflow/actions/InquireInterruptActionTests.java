@@ -34,7 +34,6 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.webflow.execution.Action;
-import org.springframework.webflow.execution.RequestContext;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -329,7 +328,7 @@ class InquireInterruptActionTests {
             val interrupt = mock(InterruptInquirer.class);
             when(interrupt.inquire(any(Authentication.class),
                 any(RegisteredService.class), any(Service.class),
-                any(Credential.class), any(RequestContext.class)))
+                any(Credential.class)))
                 .thenReturn(InterruptResponse.interrupt().setBlock(true));
             return plan -> plan.registerInterruptInquirer(interrupt);
         }
@@ -342,7 +341,7 @@ class InquireInterruptActionTests {
             val interrupt = mock(InterruptInquirer.class);
             when(interrupt.inquire(any(Authentication.class),
                 any(RegisteredService.class), any(Service.class),
-                any(Credential.class), any(RequestContext.class)))
+                any(Credential.class)))
                 .thenReturn(InterruptResponse.interrupt());
             return plan -> plan.registerInterruptInquirer(interrupt);
         }
@@ -355,7 +354,7 @@ class InquireInterruptActionTests {
             val interrupt = mock(InterruptInquirer.class);
             when(interrupt.inquire(any(Authentication.class),
                 any(RegisteredService.class), any(Service.class),
-                any(Credential.class), any(RequestContext.class)))
+                any(Credential.class)))
                 .thenReturn(InterruptResponse.none());
             return plan -> plan.registerInterruptInquirer(interrupt);
         }

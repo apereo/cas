@@ -1,0 +1,31 @@
+{
+  "dependencies": "scripting",
+  "conditions": {
+    "docker": "true"
+  },
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
+    "--cas.service-registry.core.init-from-json=true",
+
+    "--cas.authn.accept.users=casuser::Mellon,blocked::Mellon,locked::Mellon,broken::Mellon"
+  ],
+  "variations": [
+    {
+      "name": "groovy",
+      "properties": [
+        "--cas.authn.policy.groovy[0].script=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/AuthenticationPolicy.groovy"
+      ]
+    },
+    {
+      "name": "rest",
+      "properties": [
+        "--cas.authn.policy.rest[0].url=http://localhost:5612/policy",
+        "--cas.authn.policy.rest[0].headers.x-policy-client=cas",
+        "--cas.authn.policy.rest[0].maximum-retry-attempts=0"
+      ]
+    }
+  ],
+  "initScript": "${PWD}/ci/tests/httpbin/run-httpbin-server.sh"
+}

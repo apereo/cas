@@ -167,7 +167,7 @@ public class InquireInterruptAction extends BaseCasWebflowAction {
                     val service = WebUtils.getService(requestContext);
                     val registeredService = (WebBasedRegisteredService) WebUtils.getRegisteredService(requestContext);
                     val credential = WebUtils.getCredential(requestContext);
-                    return inquirer.inquire(authentication, registeredService, service, credential, requestContext);
+                    return inquirer.inquire(authentication, registeredService, service, credential);
                 } catch (final Throwable e) {
                     LoggingUtils.error(LOGGER, e);
                     return null;

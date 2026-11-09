@@ -22,5 +22,31 @@
     "--cas.authn.mfa.simple.mail.subject=Token",
     "--cas.authn.mfa.simple.mail.text=${tokenWithoutPrefix}"
   ],
+  "variations": [
+    {
+      "name": "default",
+      "properties": []
+    },
+    {
+      "name": "token-policy",
+      "properties": [
+        "--cas.authn.mfa.simple.token.core.time-to-kill-in-seconds=20",
+        "--cas.authn.mfa.simple.token.core.token-type=ALPHANUMERIC",
+        "--cas.authn.mfa.simple.token.core.token-length=10"
+      ]
+    },
+    {
+      "name": "rate-limited",
+      "properties": [
+        "--cas.authn.accept.users=casuser::Mellon,casuser2::Mellon,casuser3::Mellon",
+        "--cas.authn.mfa.simple.bucket4j.enabled=true",
+        "--cas.authn.mfa.simple.bucket4j.blocking=false",
+        "--cas.authn.mfa.simple.bucket4j.bandwidth[0].capacity=2",
+        "--cas.authn.mfa.simple.bucket4j.bandwidth[0].refill-count=2",
+        "--cas.authn.mfa.simple.bucket4j.bandwidth[0].refill-duration=PT20S",
+        "--cas.authn.mfa.simple.bucket4j.bandwidth[0].refill-strategy=INTERVALLY"
+      ]
+    }
+  ],
   "initScript": "${PWD}/ci/tests/mail/run-mail-server.sh"
 }

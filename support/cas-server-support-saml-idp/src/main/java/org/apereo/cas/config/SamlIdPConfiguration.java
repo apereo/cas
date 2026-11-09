@@ -207,11 +207,11 @@ class SamlIdPConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public SamlProfileObjectBuilder<Envelope> samlProfileSamlSoap11ResponseBuilder(
-            @Qualifier("samlProfileSamlNameIdBuilder")
-            final SamlProfileObjectBuilder<SAMLObject> samlProfileSamlNameIdBuilder,
+            @Qualifier("samlProfileSamlResponseBuilder")
+            final SamlProfileObjectBuilder<Response> samlProfileSamlResponseBuilder,
             @Qualifier("samlResponseBuilderConfigurationContext")
             final SamlProfileSamlResponseBuilderConfigurationContext samlResponseBuilderConfigurationContext) {
-            return new SamlProfileSamlSoap11ResponseBuilder(samlResponseBuilderConfigurationContext.withSamlSoapResponseBuilder(samlProfileSamlNameIdBuilder));
+            return new SamlProfileSamlSoap11ResponseBuilder(samlResponseBuilderConfigurationContext.withSamlSoapResponseBuilder(samlProfileSamlResponseBuilder));
         }
 
         @ConditionalOnMissingBean(name = "samlProfileSamlArtifactFaultResponseBuilder")

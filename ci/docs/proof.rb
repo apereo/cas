@@ -39,7 +39,7 @@ options = {
   :check_external_hash => false,
   # :only_4xx => true,
   :empty_alt_ignore => true,
-  :ignore_status_codes => [0,401,429,301,302,502,504],
+  :ignore_status_codes => [0,401,402,429,301,302,502,504],
   :parallel => { :in_processes => 2},
   :enforce_https => false,
   :swap_urls => {

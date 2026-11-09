@@ -1,13 +1,16 @@
 package org.apereo.cas.nativex;
 
 import module java.base;
+import org.apereo.cas.trusted.authentication.storage.JsonMultifactorAuthenticationTrustStorage;
 import org.apereo.cas.trusted.web.flow.MultifactorAuthenticationTrustBean;
 import org.apereo.cas.trusted.web.flow.fingerprint.DeviceFingerprintExtractor;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.aop.framework.AopProxyUtils;
 import org.springframework.aot.hint.RuntimeHints;
 import org.springframework.aot.hint.predicate.RuntimeHintsPredicates;
+import org.springframework.util.ClassUtils;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -30,5 +33,14 @@ class MultifactorAuthenticationTrustedHintsTests {
         val trustHint = hints.reflection().getTypeHint(MultifactorAuthenticationTrustBean.class);
         assertNotNull(trustHint);
         assertTrue(trustHint.hasJavaSerialization());
+    }
+
+    @Test
+    void verifyJsonStorageProxyHints() {
+        val hints = new RuntimeHints();
+        new MultifactorAuthenticationTrustedHints().registerHints(hints, getClass().getClassLoader());
+        val interfaces = ClassUtils.getAllInterfacesForClass(JsonMultifactorAuthenticationTrustStorage.class);
+        val proxyInterfaces = AopProxyUtils.completeJdkProxyInterfaces(interfaces);
+        assertTrue(RuntimeHintsPredicates.proxies().forInterfaces(proxyInterfaces).test(hints));
     }
 }

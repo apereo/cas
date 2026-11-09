@@ -7,6 +7,7 @@ import org.apereo.cas.trusted.authentication.MultifactorAuthenticationTrustedDev
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
 import org.apereo.cas.trusted.util.MultifactorAuthenticationTrustUtils;
+import org.apereo.cas.trusted.web.flow.fingerprint.BrowserDeviceFingerprintExtractor;
 import org.apereo.cas.trusted.web.flow.fingerprint.DeviceFingerprintStrategy;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
@@ -48,6 +49,7 @@ public class MultifactorAuthenticationVerifyTrustAction extends BaseCasWebflowAc
             LOGGER.warn("Could not determine authentication from the request context");
             return no();
         }
+        BrowserDeviceFingerprintExtractor.rememberDeviceFingerprint(requestContext);
         val registeredService = WebUtils.getRegisteredService(requestContext);
         val service = WebUtils.getService(requestContext);
 

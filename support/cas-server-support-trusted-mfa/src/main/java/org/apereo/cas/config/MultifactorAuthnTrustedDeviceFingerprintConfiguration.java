@@ -103,7 +103,8 @@ class MultifactorAuthnTrustedDeviceFingerprintConfiguration {
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties) {
             return BeanSupplier.of(DeviceFingerprintExtractor.class)
-                .when(BeanCondition.on("cas.authn.mfa.trusted.device-fingerprint.client-ip.enabled").isTrue().given(applicationContext.getEnvironment()))
+                .when(BeanCondition.on("cas.authn.mfa.trusted.device-fingerprint.client-ip.enabled").isTrue().evenIfMissing()
+                    .given(applicationContext.getEnvironment()))
                 .supply(() -> {
                     val properties = casProperties.getAuthn().getMfa().getTrusted().getDeviceFingerprint().getClientIp();
                     val component = new ClientIpDeviceFingerprintExtractor();

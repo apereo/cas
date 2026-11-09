@@ -210,6 +210,39 @@ class OidcClientConfigurationEndpointControllerTests {
             assertFalse(renewedSecret.hasClientSecretExpired(service));
         }
 
+
+        /**
+         * An update that is refused leaves the client as it was, although the services manager may hand out the very
+         * instance it keeps; a redirect URI that another parser cannot read still counts as a host of its own.
+         */
+        @Test
+        void verifyRefusedUpdateLeavesClientUnchanged() throws Throwable {
+            val clientId = UUID.randomUUID().toString();
+            val service = getOidcRegisteredService(clientId);
+            servicesManager.save(service);
+            val serviceId = service.getServiceId();
+            val subjectType = service.getSubjectType();
+            val accessToken = getAccessToken(clientId, Set.of(OidcConstants.CLIENT_CONFIGURATION_SCOPE));
+            ticketRegistry.addTicket(accessToken);
+            for (val otherRedirectUri : List.of("https://other.example.org/cb", "https://other.example.org/cb?x={y}")) {
+                val jsonBody = """
+                    {"redirect_uris": ["https://client.example.org/cb", "%s"],
+                    "subject_type": "pairwise"}""".formatted(otherRedirectUri);
+                mockMvc
+                    .perform(patch("/cas/oidc/" + OidcConstants.CLIENT_CONFIGURATION_URL)
+                        .param(OAuth20Constants.CLIENT_ID, clientId)
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer %s".formatted(accessToken.getId()))
+                        .accept(MediaType.APPLICATION_JSON)
+                        .content(jsonBody)
+                        .with(withHttpRequestProcessor())
+                    )
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.error").value("invalid_client_metadata"));
+                val stored = servicesManager.findServiceBy(service.getId(), OidcRegisteredService.class);
+                assertEquals(serviceId, stored.getServiceId());
+                assertEquals(subjectType, stored.getSubjectType());
+            }
+        }
     }    
 
     @Nested
@@ -240,6 +273,8 @@ class OidcClientConfigurationEndpointControllerTests {
             val updatedService = servicesManager.findServiceBy(service.getId(), OidcRegisteredService.class);
             val decodedSecret = oauthRegisteredServiceCipherExecutor.decode(updatedService.getClientSecrets().getFirst().getValue());
             assertNotEquals(decodedSecret, originalSecret);
+            assertEquals(originalSecret, oauthRegisteredServiceCipherExecutor.decode(service.getClientSecrets().getFirst().getValue()),
+                "The secret is renewed on a copy of the client, which is then saved");
         }
     }
 }

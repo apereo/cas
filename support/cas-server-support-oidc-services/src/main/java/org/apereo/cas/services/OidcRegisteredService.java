@@ -7,6 +7,7 @@ import org.apereo.cas.services.RegisteredServiceProperty.RegisteredServiceProper
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import com.fasterxml.jackson.annotation.JacksonInject;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.OptBoolean;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.EqualsAndHashCode;
@@ -19,6 +20,8 @@ import org.apache.commons.lang3.StringUtils;
 
 /**
  * This is {@link OidcRegisteredService}.
+ * ID tokens are always signed, so there is no setting to turn signing off; the removed {@code signIdToken} property is
+ * ignored when an older service definition still carries it.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
@@ -29,6 +32,7 @@ import org.apache.commons.lang3.StringUtils;
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 @Accessors(chain = true)
+@JsonIgnoreProperties("signIdToken")
 public class OidcRegisteredService extends OAuthRegisteredService {
     /**
      * Friendly name for this OAuth service.
@@ -46,9 +50,6 @@ public class OidcRegisteredService extends OAuthRegisteredService {
 
     @DurationCapable
     private String jwksCacheDuration;
-
-    @JacksonInject(value = "signIdToken", optional = OptBoolean.TRUE)
-    private boolean signIdToken = true;
 
     @JacksonInject(value = "encryptIdToken", optional = OptBoolean.TRUE)
     private boolean encryptIdToken;

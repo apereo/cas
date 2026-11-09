@@ -24,6 +24,7 @@ import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.jmx.export.annotation.AnnotationMBeanExporter;
+import org.springframework.transaction.PlatformTransactionManager;
 import javax.management.MBeanAttributeInfo;
 import javax.management.MBeanParameterInfo;
 import javax.management.ObjectName;
@@ -112,6 +113,8 @@ class CasJmxConfigurationTests {
             when(manager.load()).thenReturn(List.of(service));
             context.registerBean(ServicesManager.BEAN_NAME, ServicesManager.class, () -> manager);
             context.registerBean(TicketRegistry.BEAN_NAME, TicketRegistry.class, () -> mock(TicketRegistry.class));
+            context.registerBean(TicketRegistry.TICKET_TRANSACTION_MANAGER, PlatformTransactionManager.class,
+                () -> mock(PlatformTransactionManager.class));
             context.registerBean("jmxTestMBeanServerConfigurer", BeanPostProcessor.class,
                 BaseCasJmxTests.SharedTestConfiguration::jmxTestMBeanServerConfigurer);
             context.register(CasJmxAutoConfiguration.class);

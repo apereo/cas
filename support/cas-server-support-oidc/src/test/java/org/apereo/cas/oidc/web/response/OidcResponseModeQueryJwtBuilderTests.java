@@ -3,7 +3,6 @@ package org.apereo.cas.oidc.web.response;
 import module java.base;
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.support.oauth.OAuth20ResponseModeTypes;
-import org.apereo.cas.token.JwtBuilder;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Nested;
@@ -28,18 +27,18 @@ class OidcResponseModeQueryJwtBuilderTests {
     })
     @Nested
     class DisabledTests extends AbstractOidcTests {
+        /**
+         * A JWT authorization response that neither CAS nor the client can sign or encrypt would be an unsigned JWT,
+         * which is never issued.
+         */
         @Test
-        void verifyResponseModeWithoutCrypto() throws Throwable {
+        void verifyResponseModeWithoutCrypto() {
             val registeredService = getOidcRegisteredService("client").setJwks(StringUtils.EMPTY);
             servicesManager.save(registeredService);
             val builder = oauthResponseModeFactory.getBuilder(registeredService, OAuth20ResponseModeTypes.QUERY_JWT);
             assertNotNull(builder);
-            val mv = builder.build(registeredService, "https://apereo.github.io",
-                Map.of("code", "123456", "state", "abcdef"));
-            val response = mv.getModel().get("response").toString();
-            val claims = JwtBuilder.parse(response);
-            assertNotNull(claims.getClaim("code"));
-            assertNotNull(claims.getClaim("state"));
+            assertThrows(IllegalStateException.class, () -> builder.build(registeredService, "https://apereo.github.io",
+                Map.of("code", "123456", "state", "abcdef")));
         }
     }
 

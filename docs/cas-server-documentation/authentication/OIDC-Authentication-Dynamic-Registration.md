@@ -20,6 +20,10 @@ endpoint requires user authentication.
 The registration endpoint's response on a successful operation will contain information about the registered entity
 along with an access token found at `registration_access_token` which can be used to update or retrieve the registered
 entity found at `registration_client_uri`.
+
+The redirect URIs of a registered client are matched exactly, case included: characters such as `.` and `?` stand for
+themselves, and any number of redirect URIs can be registered. Clients registered with an earlier version keep the
+pattern they were registered with until they update their registration.
      
 ## Protected Dynamic Client Registration
 

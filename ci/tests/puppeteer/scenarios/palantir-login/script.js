@@ -1,6 +1,7 @@
 /* global $, CAS_FEATURES, CasActuatorEndpoints, PalantirDashboardConfiguration,
    RegisteredServiceSections, openRegisteredServiceWizardDialog, isPopulatingWizard,
-   activateDashboardTab, ace */
+   activateDashboardTab, ace, currentActiveTab, registeredServicesById, PalantirUserLookup,
+   PalantirServiceHistory, Swal, applicationActionHandler, applicationRowContext */
 const assert = require("assert");
 const cas = require("../../cas.js");
 
@@ -22,7 +23,8 @@ const TABS = [
     {index: 12, label: "Throttles", button: "#throttlesTabButton", tabs: null, tables: ["throttlesTable"]},
     {index: 13, label: "MFA", button: "#mfaTabButton", tabs: "mfa-tabs", tables: ["mfaDevicesTable"]},
     {index: 14, label: "Multitenancy", button: "#tenantsTabButton", tabs: "tenancy-tabs", tables: ["tenantsTable"]},
-    {index: 15, label: "Cluster", button: "#clusterTabButton", tabs: "cluster-tabs", tables: []}
+    {index: 15, label: "Cluster", button: "#clusterTabButton", tabs: "cluster-tabs", tables: []},
+    {index: 16, label: "Users", button: "#usersTabButton", tabs: null, tables: []}
 ];
 
 const PROTOCOL_FIELDS = {
@@ -488,6 +490,23 @@ async function verifyWizardDatePickers(page, name) {
 }
 
 /**
+ * Answer the unsaved-changes question, if closing a dialog asked it, by discarding the changes, which also removes
+ * the draft kept for them.
+ *
+ * @param page the puppeteer page
+ * @param name the registered service type under test, for the log
+ */
+async function discardUnsavedChanges(page, name) {
+    await cas.sleep(500);
+    const asked = await page.evaluate(() => $(".swal2-popup:visible").length > 0
+        && $(".swal2-title").text() === "Discard your changes?");
+    if (asked) {
+        await page.click(".swal2-deny");
+        await cas.logg(`${name}: closing the wizard with changes asked before discarding them`);
+    }
+}
+
+/**
  * Exercise the service wizard for each service type it models.
  *
  * The wizard's fields are built when the dialog is first opened rather than while the page parses,
@@ -549,6 +568,7 @@ async function verifyServiceWizard(page) {
 
         await cas.logg(`Wizard verified for ${name}`);
         await page.evaluate(() => $("#cancelServiceWizard").trigger("click"));
+        await discardUnsavedChanges(page, name);
         await page.waitForFunction(() => $("#editServiceWizardDialog").hasClass("ui-dialog-content")
             && $("#editServiceWizardDialog").dialog("isOpen") === false, {timeout: 15000});
     }
@@ -596,6 +616,266 @@ async function verifySettingsDialog(page) {
     await page.evaluate(() => $("#palantirSettingsDialog").dialog("close"));
 }
 
+/**
+ * Wait for the command palette to open with its search field focused, then type a query.
+ *
+ * @param page the puppeteer page
+ * @param query what to type
+ */
+async function searchCommandPalette(page, query) {
+    try {
+        await page.waitForFunction(() => $("#palantirCommandPalette").dialog("instance") !== undefined
+            && $("#palantirCommandPalette").dialog("isOpen")
+            && document.activeElement?.id === "palantirCommandPaletteInput", {timeout: 10000});
+    } catch (error) {
+        const state = await page.evaluate(() => ({
+            open: $("#palantirCommandPalette").dialog("instance") !== undefined && $("#palantirCommandPalette").dialog("isOpen"),
+            focused: `${document.activeElement?.tagName}#${document.activeElement?.id}.${document.activeElement?.className}`,
+            dialogs: $(".ui-dialog:visible .ui-dialog-title").toArray().map((title) => title.textContent),
+            alert: $(".swal2-title:visible").text()
+        }));
+        await cas.logr(`The command palette did not open: ${JSON.stringify(state)}`);
+        throw error;
+    }
+    await page.type("#palantirCommandPaletteInput", query);
+    await page.waitForFunction((term) => $("#palantirCommandPaletteInput").paletteautocomplete("instance").term === term
+        && $(".palantir-command-palette__item.ui-state-active").length === 1, {timeout: 10000}, query);
+    return page.evaluate(() => $(".palantir-command-palette__item.ui-state-active .palantir-command-palette__label").text());
+}
+
+/**
+ * Open the command palette with Ctrl+K and with "/", and check that Enter goes to the first match:
+ * a page by its name, then an application, which filters the applications to it.
+ *
+ * The page opened first is never Users: that tab puts the focus in its username field once it has loaded,
+ * which can happen after the "/" below is pressed, and "/" typed in a field is a slash, not the shortcut.
+ *
+ * @param page the puppeteer page
+ */
+async function verifyCommandPalette(page) {
+    await cas.separator();
+    const target = await page.evaluate(() => {
+        const item = $("nav.sidebar-navigation ul li[data-tab-index]").toArray()
+            .find((li) => Number(li.dataset.tabIndex) > 0 && Number(li.dataset.tabIndex) < 100
+                && li.id !== "usersTabButton" && $(li).is(":visible"));
+        return {index: Number(item.dataset.tabIndex), label: $(item).find(".sidebar-navigation-label").text().trim()};
+    });
+    await page.keyboard.down("Control");
+    await page.keyboard.press("k");
+    await page.keyboard.up("Control");
+    const first = await searchCommandPalette(page, target.label);
+    await cas.logg(`Command palette offers ${first} first for "${target.label}"`);
+    assert(first === target.label);
+    await page.keyboard.press("Enter");
+    await page.waitForFunction((index) => currentActiveTab === index
+        && !$("#palantirCommandPalette").dialog("isOpen"), {timeout: 10000}, target.index);
+    await cas.logg(`Command palette opened ${target.label}`);
+
+    const application = await page.evaluate(() => [...registeredServicesById.values()][0]?.name);
+    if (application) {
+        await cas.sleep(1000);
+        await page.evaluate(() => document.activeElement?.blur());
+        await page.keyboard.press("/");
+        const match = await searchCommandPalette(page, application);
+        assert(match === application);
+        await page.keyboard.press("Enter");
+        await page.waitForFunction((name) => currentActiveTab === 0
+            && $("#applicationsTable").DataTable().search() === name, {timeout: 10000}, application);
+        await cas.logg(`Command palette found the application ${application}`);
+        await page.evaluate(() => {
+            $("#applicationsTable").DataTable().search("").draw();
+            $("#applications-tab .dt-search input").val("");
+        });
+    }
+    await cas.screenshot(page);
+}
+
+/**
+ * Look a user up from the command palette and check that every source the deployment enables draws
+ * a card that settles without an error.
+ *
+ * An endpoint that answers 404 has nothing for the user, which the page shows as an empty card, so
+ * those responses are not counted as browser errors.
+ *
+ * @param page the puppeteer page
+ * @param failures the failures recorded so far
+ */
+async function verifyUserLookup(page, failures) {
+    await cas.separator();
+    if (!await page.evaluate(() => $("#usersTabButton").is(":visible"))) {
+        await cas.logy("No per-user endpoint is enabled; skipping the user lookup");
+        return;
+    }
+    const before = failures.length;
+    await cas.click(page, "#palantirCommandPaletteButton");
+    const first = await searchCommandPalette(page, "casuser");
+    assert(first === "Look up user casuser", `First match was ${first}`);
+    await page.keyboard.press("Enter");
+    await page.waitForFunction(() => currentActiveTab === 16
+        && $("#userLookupResults .palantir-user-card").length > 0
+        && $("#userLookupResults .palantir-user-card.is-loading").length === 0, {timeout: 60000});
+    const lookup = await page.evaluate(() => ({
+        sources: PalantirUserLookup.availableSources().length,
+        cards: $("#userLookupResults .palantir-user-card").toArray()
+            .map((card) => `${card.dataset.userSource}:${card.className.match(/is-(loaded|empty|error)/)?.[1]}`),
+        summary: $("#userLookupSummary").text()
+    }));
+    await cas.log(`User lookup: ${lookup.cards.join(", ")}`);
+    await cas.logg(lookup.summary);
+    assert(lookup.cards.length === lookup.sources);
+    assert(lookup.cards.every((card) => !card.endsWith(":error")), `Failed sources: ${lookup.cards.join(", ")}`);
+    const unexpected = failures.splice(before).filter((failure) => !/^response: 404 GET .*\/actuator\//.test(failure)
+        && !/status of 404/.test(failure));
+    failures.push(...unexpected);
+    await cas.screenshot(page);
+}
+
+/**
+ * Record two versions of a new service, open its history, check that the latest version is selected and
+ * compared side by side with the version before it, then select the earlier version, restore it, and delete
+ * the service afterwards.
+ *
+ * @param page the puppeteer page
+ */
+async function verifyServiceHistory(page) {
+    await cas.separator();
+    if (!await page.evaluate(() => Boolean(CasActuatorEndpoints.entityHistory() && CasActuatorEndpoints.registeredServices()))) {
+        await cas.logy("Service history is not available; skipping");
+        return;
+    }
+    const serviceId = await page.evaluate(async () => {
+        const save = async (method, service) => {
+            const response = await fetch(CasActuatorEndpoints.registeredServices(), {
+                method: method,
+                headers: {"Content-Type": "application/json", "Accept": "application/json"},
+                body: JSON.stringify(service)
+            });
+            return response.json();
+        };
+        const created = await save("POST", {
+            "@class": "org.apereo.cas.services.CasRegisteredService",
+            serviceId: "^https://history.example.org/.*",
+            name: "HistoryExample",
+            description: "First description"
+        });
+        await save("PUT", {...created, description: "Second description"});
+        return created.id;
+    });
+    await cas.log(`Recorded two versions of service ${serviceId}`);
+
+    await page.evaluate((id) => PalantirServiceHistory.open(id), serviceId);
+    await page.waitForFunction(() => $("#viewEntityHistoryDialog").dialog("instance") !== undefined
+        && $("#viewEntityHistoryDialog").dialog("isOpen")
+        && $("#entityHistoryDiff .palantir-diff__table").length === 1, {timeout: 30000});
+    const history = await page.evaluate(() => ({
+        versions: $("#entityHistoryTable").DataTable().rows().count(),
+        latestSelected: $("#entityHistoryTable tbody tr:first-child").hasClass("is-selected"),
+        compare: $("#entityHistoryCompare").val(),
+        changed: $("#entityHistoryDiff td.is-added, #entityHistoryDiff td.is-removed").length,
+        summary: $("#entityHistorySummary").text()
+    }));
+    await cas.log(`History: ${history.versions} versions; ${history.summary}`);
+    assert(history.versions >= 2);
+    assert(history.latestSelected);
+    assert(history.compare === "previous");
+    assert(history.changed > 0);
+    await cas.screenshot(page);
+
+    await page.click("#entityHistoryTable tbody tr:nth-child(2)");
+    await page.waitForFunction(() => $("#entityHistoryTable tbody tr:nth-child(2)").hasClass("is-selected")
+        && !$(".palantir-history-restore").button("option", "disabled"), {timeout: 10000});
+
+    await cas.click(page, ".palantir-history-restore");
+    await page.waitForSelector(".swal2-confirm", {visible: true});
+    await page.click(".swal2-confirm");
+    await page.waitForFunction(() => !$("#viewEntityHistoryDialog").dialog("isOpen")
+        && $(".swal2-title").text() === "Service Restored", {timeout: 30000});
+    const description = await page.evaluate(async (id) => {
+        const response = await fetch(`${CasActuatorEndpoints.registeredServices()}/${id}`, {headers: {"Accept": "application/json"}});
+        return (await response.json()).description;
+    }, serviceId);
+    await cas.logg(`Restored service ${serviceId} to its first version: ${description}`);
+    assert(description === "First description");
+
+    await page.waitForFunction((id) => $(`#applicationsTable span[serviceId=${id}]`).length > 0, {timeout: 30000}, serviceId);
+    await page.evaluate((id) => applicationActionHandler("duplicate", applicationRowContext(String(id))), serviceId);
+    await page.waitForFunction(() => $("#editServiceWizardDialog").dialog("instance") !== undefined
+        && $("#editServiceWizardDialog").dialog("isOpen") && !isPopulatingWizard
+        && $("#registeredServiceName").val() === "Copy of HistoryExample", {timeout: 30000});
+    const duplicate = await page.evaluate(() => ({
+        title: $("#editServiceWizardDialog").dialog("option", "title"),
+        newService: $("#editServiceWizardDialog").attr("newService")
+    }));
+    await cas.logg(`${duplicate.title} opened as a new application`);
+    assert(duplicate.newService === "true");
+    await page.evaluate(() => $("#cancelServiceWizard").trigger("click"));
+    await discardUnsavedChanges(page, "Duplicate");
+    await page.waitForFunction(() => !$("#editServiceWizardDialog").dialog("isOpen"), {timeout: 15000});
+
+    await page.evaluate(async (id) => {
+        Swal.close();
+        await fetch(`${CasActuatorEndpoints.registeredServices()}/${id}`, {
+            method: "DELETE",
+            headers: {"Content-Type": "application/json"}
+        });
+    }, serviceId);
+}
+
+/**
+ * Ask the Interrupts section of the Authentication page which interrupt a user would see, and check that it
+ * reports the resolved user and the answer of every interrupt source.
+ *
+ * @param page the puppeteer page
+ */
+async function verifyInterruptInquiry(page) {
+    await cas.separator();
+    if (!await page.evaluate(() => Boolean(CasActuatorEndpoints.interrupts()))) {
+        await cas.logy("Interrupts endpoint is not available; skipping");
+        return;
+    }
+    await page.evaluate(() => $("#authenticationTabButton").trigger("click"));
+    await page.waitForFunction(() => $.fn.dataTable.isDataTable("#interruptInquirersTable"), {timeout: 30000});
+    await page.evaluate(() => {
+        const tabs = $("#authentication-tabs");
+        tabs.tabs("option", "active", tabs.find("> ul > li").index($("#interrupts").parent()));
+    });
+    await page.waitForSelector("#interruptUsername", {visible: true});
+    await page.type("#interruptUsername", "casuser");
+    await page.keyboard.press("Enter");
+    await page.waitForFunction(() => $("#interruptInquiryResult").is(":visible")
+        || $("#interruptInquiryMessage").is(":visible"), {timeout: 30000});
+    const inquiry = await page.evaluate(() => ({
+        principal: $("#interruptInquiryPrincipal").text(),
+        status: $("#interruptInquiryStatus").text(),
+        sources: $("#interruptInquirersTable").DataTable().rows().count(),
+        message: $("#interruptInquiryMessage").is(":visible") ? $("#interruptInquiryMessage").text().trim() : ""
+    }));
+    await cas.logg(`Interrupt inquiry for ${inquiry.principal}: ${inquiry.status}, ${inquiry.sources} source(s)`);
+    assert(inquiry.message === "", inquiry.message);
+    assert(inquiry.principal === "casuser");
+    await cas.screenshot(page);
+}
+
+/**
+ * Open the keyboard shortcuts overlay with ? and close it with Escape.
+ *
+ * @param page the puppeteer page
+ */
+async function verifyShortcutsOverlay(page) {
+    await cas.separator();
+    await page.evaluate(() => document.activeElement?.blur());
+    await page.keyboard.down("Shift");
+    await page.keyboard.press("Slash");
+    await page.keyboard.up("Shift");
+    await page.waitForFunction(() => $("#palantirShortcutsDialog").dialog("instance") !== undefined
+        && $("#palantirShortcutsDialog").dialog("isOpen"), {timeout: 10000});
+    const groups = await page.evaluate(() => $("#palantirShortcutsDialog .palantir-shortcuts__group h4").toArray().map((heading) => heading.textContent));
+    await cas.logg(`Keyboard shortcuts: ${groups.join(", ")}`);
+    assert(groups.includes("Pages") && groups.includes("Anywhere"));
+    await page.keyboard.press("Escape");
+    await page.waitForFunction(() => !$("#palantirShortcutsDialog").dialog("isOpen"), {timeout: 10000});
+}
+
 (async () => {
     const browser = await cas.newBrowser(cas.browserOptions());
     const page = await cas.newPage(browser);
@@ -625,6 +905,11 @@ async function verifySettingsDialog(page) {
     await verifyFeatureCatalog(page);
     await verifyServiceWizard(page);
     await verifySettingsDialog(page);
+    await verifyCommandPalette(page);
+    await verifyUserLookup(page, failures);
+    await verifyServiceHistory(page);
+    await verifyInterruptInquiry(page);
+    await verifyShortcutsOverlay(page);
 
     if (failures.length > 0) {
         await cas.logr(`Browser reported ${failures.length} error(s):`);
