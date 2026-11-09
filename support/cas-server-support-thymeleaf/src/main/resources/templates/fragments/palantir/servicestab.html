@@ -106,7 +106,7 @@
                 <table id="applicationsTable" class="mdc-data-table__table table table-striped noborder">
                     <thead>
                     <tr class="mdc-data-table__header-row">
-	                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col"></th>
+	                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col"><span class="palantir-sr-only">Type</span></th>
 	                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Service</th>
 	                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">URL Pattern</th>
 	                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Description</th>
@@ -124,7 +124,7 @@
                 <div id="applicationsCards" class="palantir-application-cards"></div>
                 <p class="palantir-applications-hint">
                     <i class="mdi mdi-information-outline" aria-hidden="true"></i>
-                    Right-click a row, or use a card's menu, for more actions.
+                    Right-click a row (or press Shift+F10 on it), or use a card's menu, for more actions.
                 </p>
 
                 <section class="palantir-chart-card" aria-labelledby="servicesChartTitle">
@@ -842,7 +842,7 @@
                                 </form>
                             </div>
 
-                            <footer class="registered-service-wizard__actions">
+                            <footer class="registered-service-wizard__actions" role="group" aria-label="Application definition actions">
                                 <button id="previousServiceWizardStep" type="button" class="palantir-button registered-service-wizard__back">
                                     <i class="mdi mdi-chevron-left" aria-hidden="true"></i><span>Back</span>
                                 </button>
@@ -895,7 +895,7 @@
                         </section>
                     </div>
 
-                    <footer class="registered-service-wizard__actions">
+                    <footer class="registered-service-wizard__actions" role="group" aria-label="Application definition actions">
                         <button id="cancelService" name="cancelService" type="button"
                                 class="mdc-button mdc-button--raised btn mdc-button--lg">
                             <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-close"

@@ -3,7 +3,7 @@ async function initializeHotKeyOperations() {
         .filter(tab => tab.shortcut)
         .map(tab => tab.shortcut)
         .join(",");
-    shortcuts += ",w,n,esc,/";
+    shortcuts += ",w,n,esc";
 
     hotkeys(shortcuts, function (event, handler) {
         const key = handler.key.toLowerCase();
@@ -11,10 +11,6 @@ async function initializeHotKeyOperations() {
         case "esc":
             event.preventDefault();
             closeAllDialogs();
-            break;
-        case "/":
-            event.preventDefault();
-            openPalantirCommandPalette();
             break;
         case "w":
             event.preventDefault();
@@ -80,28 +76,98 @@ async function initializeHotKeyOperations() {
         }
     });
 
-    $(`nav.sidebar-navigation ul li:visible`).each(function () {
-        const index = $(this).data("tab-index");
-        const tab = Object.values(Tabs).find(
-            t => t instanceof PalantirDashboardTab && t.index === index
-        );
-        if (tab && tab.shortcut) {
-            $("#palantirShortcutsPanel").append(`
-                <div class="shortcut-item">
-                  <kbd class="key">${tab.shortcut}</kbd>
-                  <span>${tab.name}</span>
-                </div>
-              `);
+    $("#palantirShortcutsPanel").html(renderPalantirShortcuts());
+}
+
+/**
+ * The keyboard shortcuts of Palantir, grouped: the pages the navigation shows, the actions, the search palette,
+ * and forms and dialogs. Built from the navigation each time, so pages hidden for lack of endpoints are left out.
+ *
+ * @returns {Array<{title: string, items: Array<{keys: Array<Array<string>>, label: string}>}>} the groups; each item
+ *          lists one or more alternative key combinations
+ */
+function palantirShortcutGroups() {
+    const mac = /Mac|iPhone|iPad/.test(navigator.platform || navigator.userAgent);
+    const pages = $("nav.sidebar-navigation ul li[data-tab-index]:visible").toArray()
+        .map(item => {
+            const index = Number($(item).data("tab-index"));
+            const tab = Object.values(Tabs).find(entry => entry instanceof PalantirDashboardTab && entry.index === index);
+            return tab?.shortcut
+                ? {keys: [[tab.shortcut]], label: $(item).find(".sidebar-navigation-label").first().text().trim() || tab.name}
+                : null;
+        })
+        .filter(Boolean);
+    return [
+        {
+            title: "Anywhere",
+            items: [
+                {keys: [[mac ? "⌘" : "Ctrl", "K"], ["/"]], label: "Search pages, sections, applications and actions"},
+                {keys: [["?"]], label: "Show these keyboard shortcuts"},
+                {keys: [["w"]], label: "Create an application in the wizard"},
+                {keys: [["n"]], label: "Create an item on the current page: an application, property, logger, handler, attribute definition or repository, tenant or access resource"},
+                {keys: [["Esc"]], label: "Close open dialogs; Palantir asks first when an application has unsaved changes"}
+            ]
+        },
+        {
+            title: "Search palette",
+            items: [
+                {keys: [["↑"], ["↓"]], label: "Move between results"},
+                {keys: [["Enter"]], label: "Open the selected result"},
+                {keys: [["Esc"]], label: "Close the palette"}
+            ]
+        },
+        {
+            title: "Forms, tables and dialogs",
+            items: [
+                {keys: [["Enter"]], label: "Submit the form you are typing in"},
+                {keys: [["Tab"], ["Shift", "Tab"]], label: "Move to the next or previous control; focus stays inside an open dialog"},
+                {keys: [["Enter"]], label: "Sort by the focused column header, or choose the focused row"},
+                {keys: [["Shift", "F10"]], label: "Open the actions of the focused row, like a right click"}
+            ]
+        },
+        {
+            title: "Pages",
+            items: pages
         }
-    });
-    $("#palantirShortcutsPanel").append(`
-        <div class="shortcut-item">
-          <kbd class="key">w</kbd>
-          <span>Application Wizard Dialog</span>
-        </div>
-        <div class="shortcut-item">
-          <kbd class="key">Ctrl K</kbd>
-          <span>Search Palantir (also / or ⌘K)</span>
-        </div>
-      `);
+    ].filter(group => group.items.length > 0);
+}
+
+/**
+ * Write the keyboard shortcuts as a list of groups.
+ *
+ * @returns {string} the markup
+ */
+function renderPalantirShortcuts() {
+    const key = combination => combination.map(name => `<kbd class="key">${escapePalantirMarkup(name)}</kbd>`).join("<span aria-hidden=\"true\">+</span>");
+    return palantirShortcutGroups().map(group => `
+        <section class="palantir-shortcuts__group${group.title === "Pages" ? " is-pages" : ""}" aria-label="${escapePalantirMarkup(group.title)}">
+            <h4>${escapePalantirMarkup(group.title)}</h4>
+            <dl class="palantir-shortcuts__list">${group.items.map(item => `
+                <div class="palantir-shortcuts__item">
+                    <dt>${item.keys.map(key).join("<span class=\"palantir-shortcuts__or\">or</span>")}</dt>
+                    <dd>${escapePalantirMarkup(item.label)}</dd>
+                </div>`).join("")}
+            </dl>
+        </section>`).join("");
+}
+
+/**
+ * Open the keyboard shortcuts overlay.
+ */
+function openPalantirShortcuts() {
+    let dialog = $("#palantirShortcutsDialog");
+    if (dialog.length === 0) {
+        dialog = $("<div>", {id: "palantirShortcutsDialog", "class": "palantir-shortcuts", title: "Keyboard shortcuts"}).appendTo("body");
+        dialog.dialog({
+            autoOpen: false,
+            modal: true,
+            classes: {"ui-dialog": "palantir-shortcuts-dialog"},
+            buttons: [{text: "Close", click: () => dialog.dialog("close")}]
+        });
+    }
+    dialog.html(renderPalantirShortcuts()).attr({"tabindex": "0", "aria-label": "Keyboard shortcuts"});
+    dialog.dialog("option", "width", Math.min(900, $(window).width() - 32));
+    dialog.dialog("option", "maxHeight", $(window).height() - 48);
+    dialog.dialog("option", "position", {my: "center", at: "center", of: window});
+    dialog.dialog("open");
 }

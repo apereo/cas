@@ -25,6 +25,9 @@ description: "Gradle build settings (configuration cache, Isolated Projects, bui
   coverage, quality-gate and maintainability badges and dashboard links in `developer/Test-Process.md` aligned with it.
   The legacy `org.apereo.cas:cas-server` project reports older CAS 7.3 results; compare project keys and analysis
   revisions before diagnosing a coverage-import failure from a badge discrepancy.
+- Codecov receives the aggregate JaCoCo XML without flags. Its project status must not filter on an absent `unit`
+  flag or a root `src` directory; CAS sources live in module directories. `parsers.jacoco.partials_as_hits: true`
+  counts executed lines with missed branches as covered, aligning the percentage with JaCoCo line coverage.
 - Every `gradle/actions/setup-gradle` step sets `gradle-home-cache-excludes: caches/build-cache-1` and
   `cache-encryption-key: ${{ secrets.GRADLE_ENCRYPTION_KEY }}`. Preserve both: the local build cache duplicates Develocity
   outputs, and the encryption key enables saving/restoring the project configuration cache. Fork PRs without this secret

@@ -81,6 +81,16 @@ The authentication section lists, under *Interrupts*, which [interrupt](../webfl
 a user would see at login, optionally signing in to a given application: the message, links and data of the interrupt,
 whether it blocks the login, and what each interrupt source answered.
 
+*Duplicate Application* opens a copy of an application in the wizard as a new application, named after the original,
+with its service id left empty and, where the application has them, a new client id and secret. When the wizard or the
+definition editor holds changes that are not saved, closing it asks whether to keep editing, keep a draft and close, or
+discard the changes. Drafts are kept by the browser, never on the server, while changes stay unsaved, so a reload or a closed
+tab loses nothing; reopening the application, or a new application of the same type, offers to resume the draft.
+
+Pressing `?` outside a text field, or choosing *Keyboard shortcuts* in the search palette, lists every keyboard shortcut.
+Rows with actions in Palantir's tables can be reached with the keyboard: `Enter` chooses the focused row and `Shift+F10`
+opens its actions, as a right click does.
+
 {% endtab %}
 
 {% tab casadminoptions Spring Boot Admin %}

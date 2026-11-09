@@ -130,14 +130,14 @@ function activateDashboardTab(idx) {
             case Tabs.SETTINGS.index:
                 $("#palantirSettingsDialog").dialog({
                     position: {
-                        my: "center top",
-                        at: "center top+100",
+                        my: "center",
+                        at: "center",
                         of: window
                     },
                     autoOpen: false,
                     modal: true,
-                    width: 850,
-                    height: "auto",
+                    width: Math.min(850, $(window).width() - 32),
+                    height: Math.min(760, $(window).height() - 48),
                     buttons: {
                         OK: function () {
                             const storedSettings = localStorage.getItem("PalantirSettings");

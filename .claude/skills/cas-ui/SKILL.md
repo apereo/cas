@@ -142,10 +142,21 @@ description: "Change CAS views and presentation: Thymeleaf render path, theme re
 - Markup that CAS sends to be shown as HTML (interrupt messages) goes through `sanitizePalantirHtml` (palantir-utils.js:
   inert parse, allow-listed tags without attributes, http/https/mailto links only); use `palantirHtmlText` for plain-text
   cells. Never put such markup in the page with `.html()` directly.
+- The wizard and the plain editor are guarded by `PalantirServiceEditGuard` (`palantir-services-guard.js`): each dialog's
+  `beforeClose` asks when its JSON differs from the settled baseline, drafts live in localStorage under
+  `PalantirServiceDraft:<wizard|editor>:<id|new:<class>>`, and a successful save must call `saved(mode)` before closing.
+  Scripts and scenarios that cancel a dialog after changing fields must answer "Discard your changes?" (deny button).
+- Keyboard shortcuts are listed from `palantirShortcutGroups()` (palantir-hotkeys.js) for both the `?` overlay and the
+  Settings tab; add a new hotkey there too.
+- `initializeTableAndDialogAccessibility()` (palantir-utils.js) names every DataTable and its pagination, names icon-only
+  controls from their `title`, marks modal dialogs `aria-modal` and names jQuery UI select menus from their label (jQuery
+  UI points the label's `for` at the button). Tables with a row context menu get focusable rows (Enter clicks, Shift+F10
+  opens the menu) through `initializeDataTableContextMenu`. jQuery UI tabs still trip axe's nested-interactive rule.
 - The command palette (`palantir-command-palette.js`, Ctrl/⌘+K and `/`) reads its entries from the nav, the outer inner-tab
   row of each panel, `registeredServicesById` and a few actions each time it opens, so a new page or inner tab shows up on its
-  own; it is a jQuery UI dialog with a categorized autocomplete, not another library. Ctrl+K is a document keydown handler so
-  it works inside fields; `/` goes through hotkeys like the page shortcuts.
+  own; it is a jQuery UI dialog with a categorized autocomplete, not another library. Ctrl+K, `/` and `?` are one document keydown
+  handler in `initializeCommandPalette`: Ctrl+K works inside fields, `/` and `?` are matched on `event.key` (not
+  hotkeys key codes) so they work on any layout and the numeric keypad, and are ignored while typing in a field.
 - To look at Palantir without a running CAS: render `palantir/casPalantirDashboardView` with Thymeleaf, the layout dialect,
   OGNL and a stub `#cas` expression object (jars from a built war; SpEL `?:` inside `${}` and `T(...)` need rewriting for
   OGNL), serve `static/` with the webjars (npm for those not in the war), and stub the actuator URLs in Playwright.

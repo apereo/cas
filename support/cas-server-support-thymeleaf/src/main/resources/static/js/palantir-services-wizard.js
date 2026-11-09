@@ -3187,6 +3187,9 @@ function initializeDescriptionEditor(containerId) {
         }).on("tbwchange tbwblur", function () {
             generateServiceDefinition();
         });
+        $("#registeredServiceDescriptionEditor").attr("aria-label", "Description");
+        $("#registeredServiceDescriptionEditorContainer .trumbowyg-editor")
+            .attr({"role": "textbox", "aria-multiline": "true", "aria-label": "Description"});
     }, 150);
 }
 
@@ -3845,7 +3848,11 @@ function createRegisteredServiceWizardDialog() {
             draggable: false,
             resizable: false,
             classes: {"ui-dialog": "ui-corner-all registered-service-wizard-dialog"},
-            close: () => $(window).off("resize.registeredServiceWizard")
+            beforeClose: () => PalantirServiceEditGuard.beforeClose("wizard"),
+            close: () => {
+                $(window).off("resize.registeredServiceWizard");
+                PalantirServiceEditGuard.closed("wizard");
+            }
         });
     }
     return {
@@ -3884,10 +3891,23 @@ function sizeRegisteredServiceWizardDialog() {
     }
 }
 
-async function openRegisteredServiceWizardDialog(existingService = null) {
+async function openRegisteredServiceWizardDialog(existingService = null, options = {}) {
     await buildRegisteredServiceWizardFields();
 
-    function openWizardDialog(serviceClass, serviceData = null) {
+    async function openWizardDialog(serviceClass, serviceData = null) {
+        const isNewService = serviceData === null || options.duplicate === true;
+        const draftKey = PalantirServiceEditGuard.key("wizard", isNewService ? null : serviceData.id, serviceClass);
+        const draft = await PalantirServiceEditGuard.offerDraft(draftKey,
+            serviceData === null || isNewService ? null : JSON.stringify(serviceData));
+        let draftDefinition = null;
+        if (draft !== null) {
+            try {
+                draftDefinition = JSON.parse(draft);
+            } catch (error) {
+                PalantirServiceEditGuard.removeDraft(draftKey);
+            }
+        }
+
         editServiceWizardDialog = createRegisteredServiceWizardDialog();
         $("#editServiceWizardGeneralContainer").find("input").val("");
         $(".jqueryui-multiselectmenu").each(function () {
@@ -3915,7 +3935,6 @@ async function openRegisteredServiceWizardDialog(existingService = null) {
 
         const editServiceWizardDialogElement = document.getElementById("editServiceWizardDialog");
 
-        const isNewService = serviceData === null;
         $(editServiceWizardDialogElement).attr("newService", isNewService);
         $(editServiceWizardDialogElement).attr("serviceClass", serviceClass);
 
@@ -3958,15 +3977,18 @@ async function openRegisteredServiceWizardDialog(existingService = null) {
         }
         dropdown.selectmenu("option", "appendTo", $(editServiceWizardDialogElement).dialog("widget"));
 
-        if (serviceData !== null) {
+        const definition = draftDefinition ?? serviceData;
+        if (definition !== null) {
+            isPopulatingWizard = true;
             setTimeout(() => {
-                populateWizardFromServiceDefinition(serviceData);
+                populateWizardFromServiceDefinition(definition);
             }, 300);
         } else {
             generateServiceDefinition();
         }
 
         editServiceWizardDialog["open"]();
+        PalantirServiceEditGuard.watch("wizard", draftKey, draftDefinition !== null);
 
         const savedAdvancedOptionsPref = localStorage.getItem("hideAdvancedOptionsPreference") ?? "true";
         const currentAdvancedOptionsValue = $("#hideAdvancedOptions").val();
@@ -4016,8 +4038,11 @@ async function openRegisteredServiceWizardDialog(existingService = null) {
         }
         RegisteredServiceSections.start();
         const protocol = applicationProtocolOf(serviceClass);
-        $(editServiceWizardDialogElement).dialog("option", "title",
-            isNewService ? `New ${protocol.label}` : `Edit ${serviceData.name ?? protocol.label}`);
+        let title = isNewService ? `New ${protocol.label}` : `Edit ${serviceData.name ?? protocol.label}`;
+        if (options.duplicate === true) {
+            title = `Duplicate ${options.original ?? protocol.label}`;
+        }
+        $(editServiceWizardDialogElement).dialog("option", "title", title);
         setTimeout(function () {
             $("#editServiceWizardForm input[data-param-name]:visible:enabled").first().focus();
         }, 200);

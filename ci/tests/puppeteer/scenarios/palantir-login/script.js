@@ -1,7 +1,7 @@
 /* global $, CAS_FEATURES, CasActuatorEndpoints, PalantirDashboardConfiguration,
    RegisteredServiceSections, openRegisteredServiceWizardDialog, isPopulatingWizard,
    activateDashboardTab, ace, currentActiveTab, registeredServicesById, PalantirUserLookup,
-   PalantirServiceHistory, Swal */
+   PalantirServiceHistory, Swal, applicationActionHandler, applicationRowContext */
 const assert = require("assert");
 const cas = require("../../cas.js");
 
@@ -490,6 +490,23 @@ async function verifyWizardDatePickers(page, name) {
 }
 
 /**
+ * Answer the unsaved-changes question, if closing a dialog asked it, by discarding the changes, which also removes
+ * the draft kept for them.
+ *
+ * @param page the puppeteer page
+ * @param name the registered service type under test, for the log
+ */
+async function discardUnsavedChanges(page, name) {
+    await cas.sleep(500);
+    const asked = await page.evaluate(() => $(".swal2-popup:visible").length > 0
+        && $(".swal2-title").text() === "Discard your changes?");
+    if (asked) {
+        await page.click(".swal2-deny");
+        await cas.logg(`${name}: closing the wizard with changes asked before discarding them`);
+    }
+}
+
+/**
  * Exercise the service wizard for each service type it models.
  *
  * The wizard's fields are built when the dialog is first opened rather than while the page parses,
@@ -551,6 +568,7 @@ async function verifyServiceWizard(page) {
 
         await cas.logg(`Wizard verified for ${name}`);
         await page.evaluate(() => $("#cancelServiceWizard").trigger("click"));
+        await discardUnsavedChanges(page, name);
         await page.waitForFunction(() => $("#editServiceWizardDialog").hasClass("ui-dialog-content")
             && $("#editServiceWizardDialog").dialog("isOpen") === false, {timeout: 15000});
     }
@@ -605,8 +623,20 @@ async function verifySettingsDialog(page) {
  * @param query what to type
  */
 async function searchCommandPalette(page, query) {
-    await page.waitForFunction(() => $("#palantirCommandPalette").dialog("isOpen")
-        && document.activeElement?.id === "palantirCommandPaletteInput", {timeout: 10000});
+    try {
+        await page.waitForFunction(() => $("#palantirCommandPalette").dialog("instance") !== undefined
+            && $("#palantirCommandPalette").dialog("isOpen")
+            && document.activeElement?.id === "palantirCommandPaletteInput", {timeout: 10000});
+    } catch (error) {
+        const state = await page.evaluate(() => ({
+            open: $("#palantirCommandPalette").dialog("instance") !== undefined && $("#palantirCommandPalette").dialog("isOpen"),
+            focused: `${document.activeElement?.tagName}#${document.activeElement?.id}.${document.activeElement?.className}`,
+            dialogs: $(".ui-dialog:visible .ui-dialog-title").toArray().map((title) => title.textContent),
+            alert: $(".swal2-title:visible").text()
+        }));
+        await cas.logr(`The command palette did not open: ${JSON.stringify(state)}`);
+        throw error;
+    }
     await page.type("#palantirCommandPaletteInput", query);
     await page.waitForFunction((term) => $("#palantirCommandPaletteInput").paletteautocomplete("instance").term === term
         && $(".palantir-command-palette__item.ui-state-active").length === 1, {timeout: 10000}, query);
@@ -643,6 +673,7 @@ async function verifyCommandPalette(page) {
 
     const application = await page.evaluate(() => [...registeredServicesById.values()][0]?.name);
     if (application) {
+        await cas.sleep(1000);
         await page.evaluate(() => document.activeElement?.blur());
         await page.keyboard.press("/");
         const match = await searchCommandPalette(page, application);
@@ -765,9 +796,28 @@ async function verifyServiceHistory(page) {
     }, serviceId);
     await cas.logg(`Restored service ${serviceId} to its first version: ${description}`);
     assert(description === "First description");
+
+    await page.waitForFunction((id) => $(`#applicationsTable span[serviceId=${id}]`).length > 0, {timeout: 30000}, serviceId);
+    await page.evaluate((id) => applicationActionHandler("duplicate", applicationRowContext(String(id))), serviceId);
+    await page.waitForFunction(() => $("#editServiceWizardDialog").dialog("instance") !== undefined
+        && $("#editServiceWizardDialog").dialog("isOpen") && !isPopulatingWizard
+        && $("#registeredServiceName").val() === "Copy of HistoryExample", {timeout: 30000});
+    const duplicate = await page.evaluate(() => ({
+        title: $("#editServiceWizardDialog").dialog("option", "title"),
+        newService: $("#editServiceWizardDialog").attr("newService")
+    }));
+    await cas.logg(`${duplicate.title} opened as a new application`);
+    assert(duplicate.newService === "true");
+    await page.evaluate(() => $("#cancelServiceWizard").trigger("click"));
+    await discardUnsavedChanges(page, "Duplicate");
+    await page.waitForFunction(() => !$("#editServiceWizardDialog").dialog("isOpen"), {timeout: 15000});
+
     await page.evaluate(async (id) => {
         Swal.close();
-        await fetch(`${CasActuatorEndpoints.registeredServices()}/${id}`, {method: "DELETE"});
+        await fetch(`${CasActuatorEndpoints.registeredServices()}/${id}`, {
+            method: "DELETE",
+            headers: {"Content-Type": "application/json"}
+        });
     }, serviceId);
 }
 
@@ -806,6 +856,26 @@ async function verifyInterruptInquiry(page) {
     await cas.screenshot(page);
 }
 
+/**
+ * Open the keyboard shortcuts overlay with ? and close it with Escape.
+ *
+ * @param page the puppeteer page
+ */
+async function verifyShortcutsOverlay(page) {
+    await cas.separator();
+    await page.evaluate(() => document.activeElement?.blur());
+    await page.keyboard.down("Shift");
+    await page.keyboard.press("Slash");
+    await page.keyboard.up("Shift");
+    await page.waitForFunction(() => $("#palantirShortcutsDialog").dialog("instance") !== undefined
+        && $("#palantirShortcutsDialog").dialog("isOpen"), {timeout: 10000});
+    const groups = await page.evaluate(() => $("#palantirShortcutsDialog .palantir-shortcuts__group h4").toArray().map((heading) => heading.textContent));
+    await cas.logg(`Keyboard shortcuts: ${groups.join(", ")}`);
+    assert(groups.includes("Pages") && groups.includes("Anywhere"));
+    await page.keyboard.press("Escape");
+    await page.waitForFunction(() => !$("#palantirShortcutsDialog").dialog("isOpen"), {timeout: 10000});
+}
+
 (async () => {
     const browser = await cas.newBrowser(cas.browserOptions());
     const page = await cas.newPage(browser);
@@ -839,6 +909,7 @@ async function verifyInterruptInquiry(page) {
     await verifyUserLookup(page, failures);
     await verifyServiceHistory(page);
     await verifyInterruptInquiry(page);
+    await verifyShortcutsOverlay(page);
 
     if (failures.length > 0) {
         await cas.logr(`Browser reported ${failures.length} error(s):`);

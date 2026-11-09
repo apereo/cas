@@ -143,6 +143,13 @@ class PalantirCommandPalette {
                 run: () => PalantirTheme.toggle()
             });
         }
+        actions.push({
+            label: "Keyboard shortcuts",
+            detail: "Every shortcut, also shown with ?",
+            icon: "mdi-keyboard-outline",
+            keywords: "keys hotkeys help accessibility",
+            run: () => openPalantirShortcuts()
+        });
         const settings = $("#palantirSettingsTabButton");
         if (settings.length > 0 && !PalantirCommandPalette.isHidden(settings)) {
             actions.push({
@@ -352,8 +359,9 @@ function openPalantirCommandPalette() {
 }
 
 /**
- * Wire the sidebar search button and Ctrl/⌘+K, which works in form fields too; "/" is bound with the other
- * hotkeys so it still types a slash in a field.
+ * Wire the sidebar search button and the keys that open the palette and the shortcut overlay. Ctrl/⌘+K works in
+ * form fields too. "/" and "?" are read from the character the key produces rather than from the key itself, so
+ * they work on every keyboard layout and on the numeric keypad, and they still type into a form field.
  */
 function initializeCommandPalette() {
     $("#palantirCommandPaletteButton").off("click.palette").on("click.palette", () => openPalantirCommandPalette());
@@ -364,6 +372,20 @@ function initializeCommandPalette() {
         if ((event.ctrlKey || event.metaKey) && !event.altKey && !event.shiftKey && event.key?.toLowerCase() === "k") {
             event.preventDefault();
             openPalantirCommandPalette();
+            return;
+        }
+        const target = event.target;
+        const typing = target instanceof HTMLElement
+            && (target.isContentEditable || ["INPUT", "TEXTAREA", "SELECT"].includes(target.tagName));
+        if (typing || event.ctrlKey || event.metaKey || event.altKey) {
+            return;
+        }
+        if (event.key === "/") {
+            event.preventDefault();
+            openPalantirCommandPalette();
+        } else if (event.key === "?") {
+            event.preventDefault();
+            openPalantirShortcuts();
         }
     });
 }

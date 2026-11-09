@@ -211,7 +211,7 @@ opens on a server that already serves such a `custom.css`, it reads its own bloc
 Nothing is saved on the server; the builder is turned on by default and is controlled by the `cas.theme-builder.enabled`
 theme property.
 
-### Palantir Search, User Lookup, Service History & Interrupts
+### Palantir Search, User Lookup, Service History, Interrupts & Drafts
 {: .new data-area="ui"}
 
 [Palantir](../installation/Admin-Dashboard.html) has a search box, opened from the navigation bar or with `Ctrl+K`
@@ -225,6 +225,11 @@ compares any recorded version side by side with the current definition or the ve
 selected version from the same dialog. Under *Interrupts*, the authentication section shows which
 [interrupt](../webflow/Webflow-Customization-Interrupt.html) a user would see at login and what each interrupt
 source answered.
+
+Applications can be duplicated into the wizard as new applications, and the wizard and the definition editor ask before
+closing with unsaved changes, keeping a draft in the browser that can be resumed later. A keyboard shortcut overlay opens
+with `?`, and tables and dialogs are easier to use with a keyboard and a screen reader: tables are named, rows with actions
+take focus and open their actions with `Shift+F10`, modal dialogs announce themselves, and icon-only buttons are named.
 
 ### Theme Properties
 {: .new data-area="ui"}

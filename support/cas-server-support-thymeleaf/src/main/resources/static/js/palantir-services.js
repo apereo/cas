@@ -139,7 +139,11 @@ function getEditServiceDialogInstance() {
                 draggable: false,
                 resizable: false,
                 classes: {"ui-dialog": "ui-corner-all registered-service-wizard-dialog"},
-                close: () => $(window).off("resize.serviceEditor")
+                beforeClose: () => PalantirServiceEditGuard.beforeClose("editor"),
+                close: () => {
+                    $(window).off("resize.serviceEditor");
+                    PalantirServiceEditGuard.closed("editor");
+                }
             });
         }
         editServiceDialogInstance = {
@@ -149,6 +153,22 @@ function getEditServiceDialogInstance() {
                 $(window)
                     .off("resize.serviceEditor")
                     .on("resize.serviceEditor", sizeServiceEditorDialog);
+                const text = serviceEditorInstance.getValue();
+                let serviceId = null;
+                if (element.attr("newService") !== "true") {
+                    try {
+                        serviceId = JSON.parse(text).id;
+                    } catch (error) {
+                        serviceId = null;
+                    }
+                }
+                const key = PalantirServiceEditGuard.key("editor", serviceId);
+                PalantirServiceEditGuard.offerDraft(key, text).then(draft => {
+                    if (draft !== null) {
+                        serviceEditorInstance.setValue(draft, -1);
+                    }
+                    PalantirServiceEditGuard.watch("editor", key, draft !== null);
+                });
             },
             close: () => element.dialog("close")
         };
@@ -157,6 +177,7 @@ function getEditServiceDialogInstance() {
 }
 
 async function initializeServiceButtons() {
+    PalantirServiceEditGuard.initialize();
     getEditServiceDialogInstance();
     serviceEditorInstance = initializeAceEditor("serviceEditor");
 
@@ -279,6 +300,7 @@ async function initializeServiceButtons() {
                             contentType: "application/json",
                             data: value,
                             success: async response => {
+                                PalantirServiceEditGuard.saved(saveButton.attr("name") === "saveServiceWizard" ? "wizard" : "editor");
                                 dialogInstance["close"]();
                                 await fetchServices(() => {
                                     let newServiceId = response.id;
@@ -300,27 +322,28 @@ async function initializeServiceButtons() {
         }
     });
 
-    function copyService(serviceId) {
+    /**
+     * Open a copy of an application in the wizard as a new application: named "Copy of" the original, without its
+     * numeric id, with an empty service id to fill in, and with a new client id and secret where it has them.
+     *
+     * @param serviceId the numeric id of the application to duplicate
+     */
+    function duplicateService(serviceId) {
         if (CasActuatorEndpoints.registeredServices()) {
             $.get(`${CasActuatorEndpoints.registeredServices()}/${serviceId}`, response => {
-                let clone = {...response};
-                clone.serviceId = "...";
-                clone.name = `...`;
+                const clone = structuredClone(response);
                 delete clone.id;
-
-                ["clientId", "clientSecret", "metadataLocation"].forEach(entry => {
-                    if (Object.hasOwn(clone, entry)) {
-                        clone[entry] = `...`;
-                    }
-                });
-                const value = JSON.stringify(clone, null, 4);
-                serviceEditorInstance.setValue(value, -1);
-                serviceEditorInstance.gotoLine(1);
-                serviceEditorInstance.findAll("...", {regExp: false});
-
-                const editServiceDialogElement = document.getElementById("editServiceDialog");
-                $(editServiceDialogElement).attr("newService", true);
-                getEditServiceDialogInstance()["open"]();
+                clone.name = `Copy of ${response.name ?? serviceId}`;
+                clone.serviceId = "";
+                if (Object.hasOwn(clone, "clientId")) {
+                    clone.clientId = generateRandom(24);
+                }
+                if (Object.hasOwn(clone, "clientSecret") || Object.hasOwn(clone, "clientSecrets")) {
+                    delete clone.clientSecrets;
+                    delete clone.clientSecretExpiration;
+                    clone.clientSecret = generateRandom(48);
+                }
+                openRegisteredServiceWizardDialog(clone, {duplicate: true, original: response.name ?? String(serviceId)});
             }).fail((xhr, status, error) => {
                 console.error("Error fetching data:", error);
                 displayBanner(xhr);
@@ -335,7 +358,7 @@ async function initializeServiceButtons() {
         items: {
             editPlain: {name: "Edit in Editor", icon: contextMenuIcon("mdi-pencil")},
             editWizard: {name: "Edit in Wizard", icon: contextMenuIcon("mdi-wizard-hat")},
-            copy: {name: "Copy Service Definition", icon: contextMenuIcon("mdi-content-copy")},
+            duplicate: {name: "Duplicate Application", icon: contextMenuIcon("mdi-content-duplicate")},
             delete: {name: "Delete Service Definition", icon: contextMenuIcon("mdi-delete")},
             sep1: "---------",
             history: {
@@ -358,8 +381,8 @@ async function initializeServiceButtons() {
             editService(serviceId, false);
         } else if (key === "editWizard") {
             editService(serviceId, true);
-        } else if (key === "copy") {
-            copyService(serviceId);
+        } else if (key === "duplicate") {
+            duplicateService(serviceId);
         } else if (key === "delete") {
             deleteService(context);
         } else if (key === "history") {

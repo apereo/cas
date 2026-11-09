@@ -138,6 +138,7 @@ async function initializePalantir() {
     try {
         installJQueryCompatibility();
         applySharedDialogStyle();
+        initializeTableAndDialogAccessibility();
         await initializeCasFeatures();
         showElements("#dashboard");
         const visibleCount = processNavigationTabs();

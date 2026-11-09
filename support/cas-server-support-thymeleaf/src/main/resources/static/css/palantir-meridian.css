@@ -1260,6 +1260,12 @@ html.palantir-page .ui-widget-overlay {
     color: var(--palantir-text);
 }
 
+/* Rows with actions take keyboard focus; show where it is. */
+html.palantir-page table.dataTable > tbody > tr[tabindex]:focus-visible {
+    outline: 2px solid var(--palantir-focus);
+    outline-offset: -2px;
+}
+
 /* A selected DataTables row, such as an application just saved, takes the theme's selection color. */
 html.palantir-page table.dataTable > tbody > tr.selected > * {
     box-shadow: inset 0 0 0 9999px var(--palantir-selected);
@@ -1300,6 +1306,92 @@ html.palantir-page table.dataTable > tbody > tr.selected > :first-child {
     .passwordless-account-search.interrupt-inquiry-search {
         grid-template-columns: minmax(0, 1fr);
     }
+}
+
+/* ==========================================================================
+   Keyboard shortcuts: the ? overlay and the Settings tab
+   ========================================================================== */
+.palantir-shortcuts {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+    gap: 20px 28px;
+}
+
+.palantir-shortcuts__group h4 {
+    margin: 0 0 6px;
+    color: var(--palantir-text-muted);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+}
+
+.palantir-shortcuts__list {
+    margin: 0;
+}
+
+.palantir-shortcuts__group.is-pages {
+    grid-column: 1 / -1;
+}
+
+.palantir-shortcuts__group.is-pages .palantir-shortcuts__list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 200px), 1fr));
+    column-gap: 28px;
+}
+
+.palantir-shortcuts__group.is-pages .palantir-shortcuts__item {
+    grid-template-columns: 32px minmax(0, 1fr);
+}
+
+.palantir-shortcuts__item {
+    display: grid;
+    grid-template-columns: 150px minmax(0, 1fr);
+    align-items: baseline;
+    gap: 12px;
+    padding: 7px 0;
+    border-bottom: 1px solid var(--palantir-divider);
+}
+
+.palantir-shortcuts__item dt {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px;
+    margin: 0;
+    color: var(--palantir-text-muted);
+    font-size: 12px;
+}
+
+.palantir-shortcuts__item dd {
+    margin: 0;
+    color: var(--palantir-text-2);
+    font-size: 14px;
+}
+
+.palantir-shortcuts__or {
+    margin: 0 4px;
+    color: var(--palantir-text-muted);
+    font-size: 12px;
+}
+
+:is(.palantir-shortcuts, .palantir-shortcuts__hint) kbd.key {
+    display: inline-block;
+    min-width: 24px;
+    padding: 1px 7px;
+    border: 1px solid var(--palantir-border-strong);
+    border-bottom-width: 2px;
+    border-radius: 6px;
+    background: var(--palantir-surface-2);
+    color: var(--palantir-text);
+    font: 600 12px/1.6 ui-monospace, SFMono-Regular, Menlo, monospace;
+    text-align: center;
+}
+
+.palantir-shortcuts__hint {
+    margin: 0 0 14px;
+    color: var(--palantir-text-muted);
+    font-size: 14px;
 }
 
 /* ==========================================================================
