@@ -17,14 +17,12 @@ import com.nimbusds.jose.crypto.DirectEncrypter;
 import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jose.crypto.impl.AESCryptoProvider;
 import com.nimbusds.jose.crypto.impl.DirectCryptoProvider;
-import com.nimbusds.jwt.EncryptedJWT;
-import com.nimbusds.jwt.JWT;
 import com.nimbusds.jwt.JWTClaimsSet;
-import com.nimbusds.jwt.PlainJWT;
 import com.nimbusds.jwt.SignedJWT;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.jooq.lambda.Unchecked;
 import org.springframework.shell.core.command.annotation.Command;
 import org.springframework.shell.core.command.annotation.Option;
@@ -59,7 +57,7 @@ public class GenerateJwtCommand implements CasShellCommand {
      * @param encryptionAlgorithm  the encryption algorithm
      * @param encryptionMethod     the encryption algorithm
      * @param subject              the subject, which is required
-     * @throws IllegalArgumentException when no subject is given
+     * @throws IllegalArgumentException when no subject, signing algorithm or signing secret size is given
      */
     @Command(group = "JWT", name = "generate-jwt", description = "Generate a JWT with given size and algorithm for signing and encryption.")
     public void generate(
@@ -124,8 +122,8 @@ public class GenerateJwtCommand implements CasShellCommand {
     }
 
     /**
-     * Encrypt the token with a random secret of the given size: a signed token travels as the payload of a JWE whose
-     * content type is {@code JWT}, an unsigned one as an encrypted JWT.
+     * Encrypt the signed token with a random secret of the given size: it travels as the payload of a JWE whose
+     * content type is {@code JWT}.
      *
      * @param encryptionSecretSize the encryption secret size
      * @param encryptionAlgorithm  the encryption algorithm
@@ -134,7 +132,7 @@ public class GenerateJwtCommand implements CasShellCommand {
      * @return the encrypted token, or empty when the token stays unencrypted
      */
     private static Optional<String> encryptJwt(final int encryptionSecretSize, final String encryptionAlgorithm,
-                                               final String encryptionMethod, final JWT jwt) {
+                                               final String encryptionMethod, final SignedJWT jwt) {
         if (encryptionSecretSize <= 0 || StringUtils.isBlank(encryptionMethod) || StringUtils.isBlank(encryptionAlgorithm)) {
             LOGGER.info("No encryption algorithm or size specified, so the generated JWT will not be encrypted");
             return Optional.empty();
@@ -179,29 +177,25 @@ public class GenerateJwtCommand implements CasShellCommand {
         return Optional.of(FunctionUtils.doUnchecked(() -> {
             val secret = encryptionSecret.getBytes(StandardCharsets.UTF_8);
             val encrypter = DirectCryptoProvider.SUPPORTED_ALGORITHMS.contains(algorithm) ? new DirectEncrypter(secret) : new AESEncrypter(secret);
-            if (jwt instanceof final SignedJWT signedJwt) {
-                val jwe = new JWEObject(new JWEHeader.Builder(algorithm, encryptionMethodAlg).contentType("JWT").build(), new Payload(signedJwt));
-                jwe.encrypt(encrypter);
-                return jwe.serialize();
-            }
-            val encryptedJwt = new EncryptedJWT(new JWEHeader(algorithm, encryptionMethodAlg), jwt.getJWTClaimsSet());
-            encryptedJwt.encrypt(encrypter);
-            return encryptedJwt.serialize();
+            val jwe = new JWEObject(new JWEHeader.Builder(algorithm, encryptionMethodAlg).contentType("JWT").build(), new Payload(jwt));
+            jwe.encrypt(encrypter);
+            return jwe.serialize();
         }));
     }
 
     /**
-     * Sign the claims with a random secret of the given size.
+     * Sign the claims with a random secret of the given size. Unsigned JWTs, whose algorithm is {@code none}, are
+     * neither issued nor accepted by CAS, so a signing algorithm and secret size are required.
      *
      * @param signingSecretSize the signing secret size
      * @param signingAlgorithm  the signing algorithm
      * @param claims            the claims
-     * @return the signed token, or an unsigned one when no signing algorithm or size is given
+     * @return the signed token
+     * @throws IllegalArgumentException when no signing algorithm or size is given, or the algorithm is {@code none}
      */
-    private static JWT signJwt(final int signingSecretSize, final String signingAlgorithm, final JWTClaimsSet claims) {
-        if (signingSecretSize <= 0 || StringUtils.isBlank(signingAlgorithm)) {
-            LOGGER.info("No signing algorithm or size specified, so the generated JWT will not be signed");
-            return new PlainJWT(claims);
+    private static SignedJWT signJwt(final int signingSecretSize, final String signingAlgorithm, final JWTClaimsSet claims) {
+        if (signingSecretSize <= 0 || StringUtils.isBlank(signingAlgorithm) || Strings.CI.equals(signingAlgorithm, "none")) {
+            throw new IllegalArgumentException("A signing algorithm and signing secret size are required; unsigned JWTs are not supported");
         }
 
         val signingSecret = RandomUtils.randomAlphanumeric(signingSecretSize);

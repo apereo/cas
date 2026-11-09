@@ -4,6 +4,7 @@ import module java.base;
 import org.apereo.cas.configuration.model.support.oidc.OidcClientIdMetadataDocumentProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.oidc.web.controllers.dynareg.OidcClientRegistrationRequestTranslator;
+import org.apereo.cas.oidc.web.controllers.dynareg.OidcClientRegistrationUtils;
 import org.apereo.cas.services.DefaultRegisteredServiceExpirationPolicy;
 import org.apereo.cas.services.DefaultRegisteredServiceProperty;
 import org.apereo.cas.services.OidcRegisteredService;
@@ -171,10 +172,7 @@ public class DefaultOidcClientIdMetadataDocumentResolver implements OidcClientId
             val registeredService = translator.translate(registrationRequest, Optional.of(service));
             registeredService.setClientId(document.clientId());
             registeredService.setClientSecrets(new ArrayList<>());
-            registeredService.setServiceId(registrationRequest.getRedirectUris()
-                .stream()
-                .map(uri -> "\\Q" + uri + "\\E")
-                .collect(Collectors.joining("|", "^(", ")$")));
+            registeredService.setServiceId(OidcClientRegistrationUtils.toServiceId(registrationRequest.getRedirectUris()));
             registeredService.setEvaluationOrder(Integer.MAX_VALUE);
             registeredService.setBypassApprovalPrompt(false);
             registeredService.setGenerateRefreshToken(registrationRequest.getGrantTypes()

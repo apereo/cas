@@ -1,0 +1,13 @@
+{
+  "@class": "org.apereo.cas.services.OidcRegisteredService",
+  "clientId": "attested",
+  "serviceId": "^https://localhost:9859/anything/attested",
+  "name": "Attested",
+  "id": 2,
+  "description": "Client that authenticates with a client attestation and its proof of possession",
+  "evaluationOrder": 100,
+  "tokenEndpointAuthenticationMethod": "attest_jwt_client_auth",
+  "scopes" : [ "java.util.HashSet", [ "openid", "profile" ] ],
+  "supportedGrantTypes": [ "java.util.HashSet", [ "authorization_code", "client_credentials" ] ],
+  "supportedResponseTypes": [ "java.util.HashSet", [ "code" ] ]
+}

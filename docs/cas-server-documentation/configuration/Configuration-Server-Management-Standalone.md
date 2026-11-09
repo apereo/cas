@@ -25,18 +25,20 @@ Settings found in external configuration files are and will be able to override 
 provided by CAS. The naming of the configuration files inside the CAS configuration directory follows the below pattern:
 
 - An `application.(properties|yml|yaml)` file is always loaded, if found.
-- Settings located inside `properties|yml|yaml` files whose name matches the value of `spring.application.name`{: .cas-setting} are loaded (i.e `cas.properties`) Note: `spring.application.name`{: .cas-setting} defaults to uppercase `CAS` but the lowercase name will also be loaded.
-- Settings located inside `properties|yml|yaml` files whose name matches the value of `spring.profiles.active`{: .cas-setting} are loaded (i.e `ldap.properties`).
+- Settings located inside `properties|yml|yaml` files whose name matches the application name are loaded (i.e `cas.properties`). Note: the application name defaults to uppercase `CAS` but the lowercase name will also be loaded.
+- Settings located inside `properties|yml|yaml` files whose name matches one of the active profiles are loaded (i.e `ldap.properties`).
 - Profile-specific application properties outside of your packaged web application (`application-{profile}.properties|yml|yaml`)
   This allows you to, if needed, split your settings into multiple property files and then locate them by assigning their name
-  to the list of active profiles (i.e. `spring.profiles.active=standalone,testldap,stagingMfa`{: .cas-setting})
+  to the list of active profiles (i.e. `standalone,testldap,stagingMfa`)
 
-Configuration files are loaded in the following order where `spring.profiles.active=standalone,profile1,profile2`{: .cas-setting}. Note
+{% include_cached casproperties.html thirdPartyExactMatch="spring.application.name,spring.profiles.active" %}
+
+Configuration files are loaded in the following order when the active profiles are `standalone,profile1,profile2`. Note
 that the last configuration file loaded will override any duplicate properties from configuration files loaded earlier:
 
 1. `application.(properties|yml|yaml) `
-2. (lower case) `spring.application.name.(properties|yml|yaml)`
-3. `spring.application.name.(properties|yml|yaml)`
+2. (lower case) `<application name>.(properties|yml|yaml)`
+3. `<application name>.(properties|yml|yaml)`
 4. `application-standalone.(properties|yml|yaml)`
 5. `standalone.(properties|yml|yaml)`
 6. `application-profile1.(properties|yml|yaml)`

@@ -42,9 +42,9 @@ description: "Review and extend the CAS MCP server (support/cas-server-support-m
   evaluator need that bean (`PseudoTransactionManager`, as `CasCoreEventsAutoConfiguration` registers it).
 - Tools that evaluate a person at an application build their subject with `CasMcpEvaluationContextFactory.build`
   (service, matching registered service, resolved principal, `authentication()`); request-aware components get
-  `currentHttpExchange()`, the live request with parameters, headers, cookies and query string hidden, or
-  `newWebflowRequestContext(context)`, a webflow request context over it with service, registered service, credential
-  and authentication in scope. Do not resolve services or principals by hand in a tool. Tools that need client details
+  `currentHttpExchange()`, the live request with parameters, headers, cookies and query string hidden. Interrupt
+  inquirers take no webflow request context; the REST inquirer reads `Accept-Language` from the request attributes of
+  the thread, which during a tool call are the live MCP request. Do not resolve services or principals by hand in a tool. Tools that need client details
   (IP address, user agent, location) take them as parameters and wrap them in `CasMcpClient`: `ClientInfoHolder`
   describes the MCP operator. `currentHttpExchange(client)` exposes them as remote address, `User-Agent` and the
   `geolocation` parameter; `withClientInfo(client, ...)` swaps `ClientInfoHolder` only around components that read it

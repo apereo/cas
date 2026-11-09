@@ -31,11 +31,34 @@ class OidcUserProfileSigningAndEncryptionServiceTests extends AbstractOidcTests 
         });
     }
 
+    /**
+     * User info for a service that is not an OpenID Connect service is never signed, and unsigned JWTs are not issued.
+     */
     @Test
-    void verifyOAuth() throws Throwable {
+    void verifyOAuth() {
         val service = getOAuthRegisteredService("example", "https://example.org");
+        assertThrows(IllegalStateException.class, () -> oidcUserProfileSigningAndEncryptionService.encode(service, getClaims()));
+    }
+
+    /**
+     * A service that asks only for encryption gets user info signed with the default algorithm, then encrypted; one that
+     * asks for {@code none} and no encryption gets no JWT at all.
+     */
+    @Test
+    void verifyEncryptionOnlyIsSigned() throws Throwable {
+        val service = getOidcRegisteredService();
+        service.setUserInfoSigningAlg(null);
+        service.setUserInfoEncryptedResponseEncoding(OidcUserProfileSigningAndEncryptionService.USER_INFO_RESPONSE_ENCRYPTION_ENCODING_DEFAULT);
+        service.setUserInfoEncryptedResponseAlg("RSA-OAEP-256");
+        assertTrue(oidcUserProfileSigningAndEncryptionService.shouldSignToken(service));
         val input = oidcUserProfileSigningAndEncryptionService.encode(service, getClaims());
-        assertFalse(input.isEmpty());
+        assertNotNull(oidcUserProfileSigningAndEncryptionService.decode(input, Optional.of(service)));
+
+        service.setUserInfoSigningAlg("none");
+        service.setUserInfoEncryptedResponseAlg(null);
+        assertFalse(oidcUserProfileSigningAndEncryptionService.shouldSignToken(service));
+        assertFalse(oidcUserProfileSigningAndEncryptionService.shouldEncryptToken(service));
+        assertFalse(oidcServerDiscoverySettings.getUserInfoSigningAlgValuesSupported().contains("none"));
     }
 
     @Test

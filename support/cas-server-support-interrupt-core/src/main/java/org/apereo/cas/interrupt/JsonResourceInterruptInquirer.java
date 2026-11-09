@@ -16,7 +16,6 @@ import org.apache.commons.io.IOUtils;
 import org.hjson.JsonValue;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.core.io.Resource;
-import org.springframework.webflow.execution.RequestContext;
 import tools.jackson.core.type.TypeReference;
 import tools.jackson.databind.ObjectMapper;
 
@@ -55,8 +54,7 @@ public class JsonResourceInterruptInquirer extends BaseInterruptInquirer impleme
     public InterruptResponse inquireInternal(final Authentication authentication,
                                              final RegisteredService registeredService,
                                              final Service service,
-                                             final Credential credential,
-                                             final RequestContext requestContext) {
+                                             final Credential credential) {
         val user = authentication.getPrincipal().getId();
         LOGGER.info("Locating interrupt for user [{}]", user);
         return Objects.requireNonNullElseGet(interrupts.get().get(user), InterruptResponse::none);

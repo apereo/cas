@@ -88,7 +88,7 @@ function toggleTenantJsonEditorVisibility() {
 
     if (showEditor === "true" || showEditor === true) {
         showElements($editorContainer);
-        $controlsPanel.css({"max-width": "520px"});
+        $controlsPanel.removeClass("is-full-width").css({"max-width": "520px"});
         setTimeout(() => {
             const editor = ace.edit("tenantEditor");
             if (editor) {
@@ -98,7 +98,7 @@ function toggleTenantJsonEditorVisibility() {
         }, 50);
     } else {
         hideElements($editorContainer);
-        $controlsPanel.css({"max-width": "none"});
+        $controlsPanel.addClass("is-full-width").css({"max-width": "none"});
     }
 }
 
@@ -486,7 +486,7 @@ function newTenant(prefillData = null, options = {}) {
     dialogContainer.dialog({
         title: editMode ? "Edit Tenant" : "New Tenant",
         modal: true,
-        width: 1400,
+        width: Math.min(1400, $(window).width() - 32),
         autoOpen: false,
         position: {
             my: "center top",
@@ -597,7 +597,7 @@ function newTenant(prefillData = null, options = {}) {
             const showEditor = localStorage.getItem("showTenantJsonEditorPreference");
             if (showEditor === "false") {
                 hideElements($("#tenantEditorContainer"));
-                $("#tenantControlsPanel").css({"max-width": "none"});
+                $("#tenantControlsPanel").addClass("is-full-width").css({"max-width": "none"});
             }
         },
         close: function () {

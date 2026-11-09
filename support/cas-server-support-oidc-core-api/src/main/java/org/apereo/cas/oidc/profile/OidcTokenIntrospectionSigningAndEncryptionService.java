@@ -42,7 +42,10 @@ public class OidcTokenIntrospectionSigningAndEncryptionService extends BaseOidcJ
     @Override
     public String getJsonWebKeySigningAlgorithm(final OAuthRegisteredService registeredService,
                                                 final JsonWebKey jsonWebKey) {
-        return StringUtils.defaultIfBlank(registeredService.getIntrospectionSignedResponseAlg(), AlgorithmIdentifiers.RSA_USING_SHA512);
+        val algorithm = registeredService.getIntrospectionSignedResponseAlg();
+        return StringUtils.isBlank(algorithm) || Strings.CI.equals(algorithm, AlgorithmIdentifiers.NONE)
+            ? AlgorithmIdentifiers.RSA_USING_SHA512
+            : algorithm;
     }
 
     @Override
@@ -50,30 +53,26 @@ public class OidcTokenIntrospectionSigningAndEncryptionService extends BaseOidcJ
         return MediaType.parseMediaType(OAuth20Constants.INTROSPECTION_JWT_HEADER_CONTENT_TYPE).getSubtype();
     }
 
+    /**
+     * Introspection responses as JWTs are always signed, with the algorithm the service asks for, or else with the
+     * default algorithm; unsigned JWTs are not issued, so {@code none} as the signing algorithm is not honored.
+     *
+     * @param registeredService the registered service
+     * @return true
+     */
     @Override
     public boolean shouldSignToken(final OAuthRegisteredService registeredService) {
-        if (AlgorithmIdentifiers.NONE.equalsIgnoreCase(registeredService.getIntrospectionSignedResponseAlg())
-            && !discoverySettings.getIntrospectionSignedResponseAlgValuesSupported().contains(AlgorithmIdentifiers.NONE)) {
-            LOGGER.error("Service [{}] has defined 'none' for introspection signing algorithm, "
-                    + "yet CAS is configured to support the following signing algorithms: [{}]. "
-                    + "This is quite likely due to misconfiguration of the CAS server or the service definition",
-                registeredService.getServiceId(), discoverySettings.getIntrospectionSignedResponseAlgValuesSupported());
-            throw new IllegalArgumentException("Unable to use 'none' as introspection signing algorithm");
-        }
-        return StringUtils.isNotBlank(registeredService.getIntrospectionSignedResponseAlg())
-            && !Strings.CI.equals(registeredService.getIntrospectionSignedResponseAlg(), AlgorithmIdentifiers.NONE);
+        return true;
     }
 
+    /**
+     * Introspection responses are encrypted when the service asks for an encryption algorithm other than {@code none}.
+     *
+     * @param registeredService the registered service
+     * @return true or false
+     */
     @Override
     public boolean shouldEncryptToken(final OAuthRegisteredService registeredService) {
-        if (AlgorithmIdentifiers.NONE.equalsIgnoreCase(registeredService.getIntrospectionEncryptedResponseAlg())
-            && !discoverySettings.getIntrospectionEncryptedResponseAlgValuesSupported().contains(AlgorithmIdentifiers.NONE)) {
-            LOGGER.error("Service [{}] has defined 'none' for introspection encryption algorithm, "
-                    + "yet CAS is configured to support the following encryption algorithms: [{}]. "
-                    + "This is quite likely due to misconfiguration of the CAS server or the service definition",
-                registeredService.getServiceId(), discoverySettings.getIntrospectionEncryptedResponseAlgValuesSupported());
-            throw new IllegalArgumentException("Unable to use 'none' as introspection encryption algorithm");
-        }
         return StringUtils.isNotBlank(registeredService.getIntrospectionEncryptedResponseAlg())
             && !Strings.CI.equals(registeredService.getIntrospectionEncryptedResponseAlg(), AlgorithmIdentifiers.NONE);
     }

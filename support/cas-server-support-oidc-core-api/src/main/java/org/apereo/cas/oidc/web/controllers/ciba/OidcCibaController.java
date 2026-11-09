@@ -23,13 +23,23 @@ import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
+import org.apereo.cas.ticket.ExpirationPolicy;
+import org.apereo.cas.ticket.InvalidTicketException;
+import org.apereo.cas.ticket.TransientSessionTicket;
+import org.apereo.cas.ticket.TransientSessionTicketFactory;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
+import org.apereo.cas.ticket.expiration.HardTimeoutExpirationPolicy;
 import org.apereo.cas.token.JwtBuilder;
+import org.apereo.cas.util.DigestUtils;
 import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.util.concurrent.CasReentrantLock;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
+import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jwt.JWTClaimsSet;
+import com.nimbusds.jwt.JWTParser;
+import com.nimbusds.jwt.SignedJWT;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -52,6 +62,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequestWrapper;
 import jakarta.servlet.http.HttpServletResponse;
 
 /**
@@ -63,6 +74,17 @@ import jakarta.servlet.http.HttpServletResponse;
 @Slf4j
 @Tag(name = "OpenID Connect")
 public class OidcCibaController extends BaseOidcController {
+    private static final long MAX_REQUEST_OBJECT_LIFETIME_MINUTES = 60;
+
+    private static final Duration MAX_REQUEST_OBJECT_LIFETIME = Duration.ofMinutes(MAX_REQUEST_OBJECT_LIFETIME_MINUTES);
+
+    private static final String REQUEST_OBJECT_TICKET_PREFIX = "OidcCibaRequestObject:";
+
+    private static final int REQUEST_OBJECT_LOCK_STRIPES = 64;
+
+    private static final List<CasReentrantLock> REQUEST_OBJECT_LOCKS =
+        Stream.generate(CasReentrantLock::new).limit(REQUEST_OBJECT_LOCK_STRIPES).toList();
+
     protected final List<CibaTokenDeliveryHandler> tokenDeliveryHandlers;
 
     public OidcCibaController(final OidcConfigurationContext configurationContext,
@@ -161,10 +183,10 @@ public class OidcCibaController extends BaseOidcController {
     }
 
     /**
-     * Handle back-channel authn request.
+     * Handle back-channel authn request, read as the authenticated client sent it.
      *
-     * @param request  the request
-     * @param response the response
+     * @param httpRequest the request
+     * @param response    the response
      * @return the response entity
      */
     @PostMapping(value = {
@@ -174,7 +196,8 @@ public class OidcCibaController extends BaseOidcController {
         actionResolverName = AuditActionResolvers.OIDC_CIBA_RESPONSE_ACTION_RESOLVER,
         resourceResolverName = AuditResourceResolvers.OIDC_CIBA_RESPONSE_RESOURCE_RESOLVER)
     @Operation(summary = "Handle back-channel authn request")
-    public ResponseEntity handleBackchannelAuthnRequest(final HttpServletRequest request, final HttpServletResponse response) throws Throwable {
+    public ResponseEntity handleBackchannelAuthnRequest(final HttpServletRequest httpRequest, final HttpServletResponse response) throws Throwable {
+        val request = withAuthenticatedClientId(httpRequest, response);
         val cibaRequestContext = buildCibaRequestContext(request, response);
 
         var hintCount = StringUtils.isNotBlank(cibaRequestContext.getLoginHint()) ? 1 : 0;
@@ -187,6 +210,10 @@ public class OidcCibaController extends BaseOidcController {
             return badCibaRequest("Scope must contain %s".formatted(OidcConstants.StandardScopes.OPENID.getScope()));
         }
         val registeredService = findRegisteredService(cibaRequestContext);
+        val requestObjectError = validateRequestObject(request, registeredService);
+        if (requestObjectError != null) {
+            return badCibaRequest(requestObjectError);
+        }
         if (!getConfigurationContext().getRequestParameterResolver().isAuthorizedResourceForService(request, registeredService)) {
             val body = OAuth20Utils.getErrorResponseBody(OAuth20Constants.INVALID_TARGET,
                 "Requested resource is invalid or not authorized for this client");
@@ -337,6 +364,149 @@ public class OidcCibaController extends BaseOidcController {
             ? Objects.requireNonNull(configurationContext.getTicketRegistry().getTicket(storedRequest.getId(), OidcCibaRequest.class),
                 "Unable to resolve CIBA request")
             : cibaRequest;
+    }
+
+    /**
+     * The request as the authenticated client sent it. A request that names no {@code client_id}, as one authenticated
+     * with HTTP Basic or a client assertion need not, is read as naming the authenticated client, so that its signed
+     * authentication request is verified with the keys of that client and its parameters are read from it.
+     *
+     * @param request  the request
+     * @param response the response
+     * @return the request
+     */
+    protected HttpServletRequest withAuthenticatedClientId(final HttpServletRequest request, final HttpServletResponse response) {
+        if (StringUtils.isNotBlank(request.getParameter(OAuth20Constants.CLIENT_ID))) {
+            return request;
+        }
+        val userProfile = OAuth20Utils.getAuthenticatedUserProfile(request, response, getConfigurationContext().getSessionStore());
+        val clientId = Objects.requireNonNull(userProfile.getAttribute(OAuth20Constants.CLIENT_ID)).toString();
+        val parameterMap = new LinkedHashMap<>(request.getParameterMap());
+        parameterMap.put(OAuth20Constants.CLIENT_ID, new String[]{clientId});
+        return new HttpServletRequestWrapper(request) {
+            @Override
+            public String getParameter(final String name) {
+                return OAuth20Constants.CLIENT_ID.equals(name) ? clientId : super.getParameter(name);
+            }
+
+            @Override
+            public String[] getParameterValues(final String name) {
+                return OAuth20Constants.CLIENT_ID.equals(name) ? new String[]{clientId} : super.getParameterValues(name);
+            }
+
+            @Override
+            public Map<String, String[]> getParameterMap() {
+                return parameterMap;
+            }
+
+            @Override
+            public Enumeration<String> getParameterNames() {
+                return Collections.enumeration(parameterMap.keySet());
+            }
+        };
+    }
+
+    /**
+     * Validate the signed authentication request, if any (CIBA Core 1.0, section 7.1.1): it must verify with the keys of
+     * the authenticated client, be signed with an asymmetric algorithm, name the client as its issuer and as its
+     * {@code client_id} when it has one, be addressed to the issuer of CAS, and carry {@code exp}, {@code iat},
+     * {@code nbf} and {@code jti}, with {@code exp} in the future and {@code iat} and {@code nbf} in the past, within the
+     * allowed skew. It may be valid for {@value #MAX_REQUEST_OBJECT_LIFETIME_MINUTES} minutes at most from its
+     * {@code iat} and its {@code nbf}, as FAPI CIBA allows, and is used once: its {@code jti} is kept in the ticket
+     * registry until it expires, beyond the allowed skew; checking and recording it is a single step on each node. When
+     * CAS does not support the request parameter, a request object is refused, since it could not be verified. A request
+     * object that is not valid is refused rather than set aside for the parameters of the request.
+     *
+     * @param request           the request
+     * @param registeredService the authenticated client
+     * @return the error, or null when the request carries no request object or a valid one
+     */
+    protected @Nullable String validateRequestObject(final HttpServletRequest request, final OidcRegisteredService registeredService) {
+        val requestObject = request.getParameter(OAuth20Constants.REQUEST);
+        if (StringUtils.isBlank(requestObject)) {
+            return null;
+        }
+        if (!getConfigurationContext().getCasProperties().getAuthn().getOidc().getDiscovery().isRequestParameterSupported()) {
+            return "Signed authentication requests are not supported";
+        }
+        val clientId = registeredService.getClientId();
+        val requestParameterResolver = getConfigurationContext().getRequestParameterResolver();
+        if (!requestParameterResolver.isRequestObjectVerified(request)
+            || !requestParameterResolver.resolveRequestParameter(request, OAuth20Constants.CLIENT_ID).map(clientId::equals).orElse(Boolean.TRUE)) {
+            return "Request object cannot be verified or is not for client " + clientId;
+        }
+        try {
+            if (!(JWTParser.parse(requestObject) instanceof final SignedJWT signedJwt)
+                || !JWSAlgorithm.Family.SIGNATURE.contains(signedJwt.getHeader().getAlgorithm())) {
+                return "Request object must be signed with an asymmetric algorithm";
+            }
+            val claims = signedJwt.getJWTClaimsSet();
+            val issuer = getConfigurationContext().getIssuerService().determineIssuer(Optional.of(registeredService));
+            val skew = Beans.newDuration(getConfigurationContext().getCasProperties().getAuthn().getOidc().getCore().getSkew());
+            val now = Instant.now(Clock.systemUTC());
+            if (!clientId.equals(claims.getIssuer())) {
+                return "Request object must be issued by client " + clientId;
+            }
+            if (claims.getAudience() == null || !claims.getAudience().contains(issuer)) {
+                return "Request object must be addressed to " + issuer;
+            }
+            if (claims.getIssueTime() == null || StringUtils.isBlank(claims.getJWTID())) {
+                return "Request object must carry iat and jti";
+            }
+            if (claims.getExpirationTime() == null || !claims.getExpirationTime().toInstant().plus(skew).isAfter(now)) {
+                return "Request object has no expiration or has expired";
+            }
+            if (claims.getNotBeforeTime() == null || claims.getNotBeforeTime().toInstant().minus(skew).isAfter(now)) {
+                return "Request object has no nbf or is not valid yet";
+            }
+            if (claims.getIssueTime().toInstant().minus(skew).isAfter(now)) {
+                return "Request object is issued in the future";
+            }
+            val expiration = claims.getExpirationTime().toInstant();
+            if (expiration.isAfter(claims.getIssueTime().toInstant().plus(MAX_REQUEST_OBJECT_LIFETIME))
+                || expiration.isAfter(claims.getNotBeforeTime().toInstant().plus(MAX_REQUEST_OBJECT_LIFETIME))) {
+                return "Request object may be valid for %s minutes at most".formatted(MAX_REQUEST_OBJECT_LIFETIME_MINUTES);
+            }
+            return isFirstUse(clientId, claims.getJWTID(), expiration.plus(skew)) ? null : "Request object jti has already been used";
+        } catch (final ParseException e) {
+            LOGGER.debug("Request object cannot be parsed", e);
+            return "Request object cannot be parsed";
+        }
+    }
+
+    /**
+     * Record the use of a signed authentication request, unless it was used before. Checking and recording is a single
+     * step on this node, under a lock striped by the request object; nodes that share the ticket registry may still each
+     * accept the same request object once at the very same moment.
+     *
+     * @param clientId the client id
+     * @param jwtId    the jti of the request object
+     * @param keepTill until when the use is kept
+     * @return true when it was not used before
+     */
+    protected boolean isFirstUse(final String clientId, final String jwtId, final Instant keepTill) {
+        val ticketId = TransientSessionTicketFactory.normalizeTicketId(REQUEST_OBJECT_TICKET_PREFIX + clientId + ':' + DigestUtils.sha256(jwtId));
+        return REQUEST_OBJECT_LOCKS.get(Math.floorMod(ticketId.hashCode(), REQUEST_OBJECT_LOCKS.size()))
+            .execute(() -> recordFirstUse(clientId, ticketId, keepTill));
+    }
+
+    private boolean recordFirstUse(final String clientId, final String ticketId, final Instant keepTill) {
+        val ticketRegistry = getConfigurationContext().getTicketRegistry();
+        try {
+            val used = ticketRegistry.getTicket(ticketId, TransientSessionTicket.class);
+            if (used != null && !used.isExpired()) {
+                return false;
+            }
+        } catch (final InvalidTicketException e) {
+            LOGGER.trace("Request object [{}] has not been used", ticketId);
+        }
+        val factory = (TransientSessionTicketFactory) getConfigurationContext().getTicketFactory().get(TransientSessionTicket.class);
+        val lifetime = Math.max(1, Duration.between(Instant.now(Clock.systemUTC()), keepTill).toSeconds());
+        val properties = new HashMap<String, Serializable>();
+        properties.put(OAuth20Constants.CLIENT_ID, clientId);
+        properties.put(ExpirationPolicy.class.getName(), new HardTimeoutExpirationPolicy(lifetime));
+        FunctionUtils.doUnchecked(_ -> ticketRegistry.addTicket(factory.create(ticketId, properties)));
+        return true;
     }
 
     protected ResponseEntity badCibaRequest(final String error) {

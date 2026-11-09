@@ -4,6 +4,7 @@ import module java.base;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccount;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccountValidator;
 import org.apereo.cas.util.ResourceUtils;
+import org.apereo.cas.util.concurrent.CasReentrantLock;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.io.FileWatcherService;
 import org.apereo.cas.util.io.WatcherService;
@@ -28,7 +29,9 @@ public class JsonYubiKeyAccountRegistry extends PermissiveYubiKeyAccountRegistry
         .defaultTypingEnabled(true).build().toObjectMapper();
 
     private final Resource jsonResource;
-    
+
+    private final CasReentrantLock lock = new CasReentrantLock();
+
     private WatcherService watcherService;
     
     public JsonYubiKeyAccountRegistry(final Resource jsonResource,
@@ -119,10 +122,23 @@ public class JsonYubiKeyAccountRegistry extends PermissiveYubiKeyAccountRegistry
         return result;
     }
 
+    /**
+     * Write the accounts to a temporary file next to the JSON file and move it over the JSON file in one atomic step,
+     * so that a failed write, or a read of the file while it is being written, never sees a truncated file: a truncated
+     * file fails every later load of the accounts, CAS startup included. The lock keeps writers of this JVM from
+     * replacing each other's file half way; the JSON registry is not meant to be shared by several CAS nodes.
+     */
     private void writeDevicesToFile() {
-        FunctionUtils.doUnchecked(_ -> {
-            val file = jsonResource.getFile();
-            MAPPER.writer().withDefaultPrettyPrinter().writeValue(file, this.devices);
-        });
+        lock.execute(() -> FunctionUtils.doUnchecked(_ -> {
+            val path = jsonResource.getFile().toPath();
+            val target = Files.exists(path) ? path.toRealPath() : path.toAbsolutePath();
+            val temp = Files.createTempFile(target.getParent(), target.getFileName().toString(), ".tmp");
+            try {
+                MAPPER.writer().withDefaultPrettyPrinter().writeValue(temp.toFile(), this.devices);
+                Files.move(temp, target, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
+            } finally {
+                Files.deleteIfExists(temp);
+            }
+        }));
     }
 }

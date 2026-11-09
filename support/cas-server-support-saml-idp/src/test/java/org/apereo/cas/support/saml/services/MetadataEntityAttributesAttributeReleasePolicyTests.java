@@ -38,10 +38,25 @@ class MetadataEntityAttributesAttributeReleasePolicyTests extends BaseSamlIdPCon
         filter.setEntityAttribute("entity-attribute");
         filter.setEntityAttributeFormat("entity-format");
         filter.setEntityAttributeValues(CollectionUtils.wrapSet("one", "two"));
+        filter.setEntityIds(CollectionUtils.wrapSet("^https://sp\\.example\\.org/.+"));
         MAPPER.writeValue(JSON_FILE, filter);
         val strategyRead = MAPPER.readValue(JSON_FILE, MetadataEntityAttributesAttributeReleasePolicy.class);
         assertEquals(filter, strategyRead);
         assertNotNull(strategyRead.toString());
+    }
+
+    @Test
+    void verifyNullEntityIdsAreEmpty() {
+        val json = """
+            {
+              "@class": "org.apereo.cas.support.saml.services.MetadataEntityAttributesAttributeReleasePolicy",
+              "entityAttribute": "entity-attribute",
+              "entityIds": null
+            }
+            """;
+        val policy = MAPPER.readValue(json, MetadataEntityAttributesAttributeReleasePolicy.class);
+        assertNotNull(policy.getEntityIds());
+        assertTrue(policy.getEntityIds().isEmpty());
     }
 
     @Test
@@ -50,17 +65,52 @@ class MetadataEntityAttributesAttributeReleasePolicyTests extends BaseSamlIdPCon
         filter.setEntityAttribute("entity-attribute");
         filter.setEntityAttributeFormat("entity-format");
         filter.setEntityAttributeValues(CollectionUtils.wrapSet("one", "two"));
+        val attributes = filter.getAttributes(buildContext(filter));
+        assertTrue(attributes.isEmpty());
+    }
 
+    @Test
+    void verifyEntityAttributeMatches() throws Throwable {
+        val filter = new MetadataEntityAttributesAttributeReleasePolicy();
+        filter.setEntityAttribute("http://macedir.org/entity-category");
+        filter.setEntityAttributeValues(CollectionUtils.wrapSet("http://refeds.org/category/research-and-scholarship"));
+        filter.setEntityIds(CollectionUtils.wrapSet("^https://unknown\\.example\\.org"));
+        filter.setAllowedAttributes(CollectionUtils.wrapList("givenName"));
+        val attributes = filter.getAttributes(buildContext(filter));
+        assertTrue(attributes.containsKey("givenName"));
+    }
+
+    @Test
+    void verifyEntityIdMatches() throws Throwable {
+        val filter = new MetadataEntityAttributesAttributeReleasePolicy();
+        filter.setEntityAttribute("entity-attribute");
+        filter.setEntityAttributeValues(CollectionUtils.wrapSet("one", "two"));
+        filter.setEntityIds(CollectionUtils.wrapSet("^https://unknown\\.example\\.org", "^HTTPS://sp\\.testshib\\.org/.+"));
+        filter.setAllowedAttributes(CollectionUtils.wrapList("givenName"));
+        val attributes = filter.getAttributes(buildContext(filter));
+        assertTrue(attributes.containsKey("givenName"));
+    }
+
+    @Test
+    void verifyEntityIdDoesNotMatch() throws Throwable {
+        val filter = new MetadataEntityAttributesAttributeReleasePolicy();
+        filter.setEntityAttribute("entity-attribute");
+        filter.setEntityAttributeValues(CollectionUtils.wrapSet("one", "two"));
+        filter.setEntityIds(CollectionUtils.wrapSet("^https://unknown\\.example\\.org", "testshib\\.org/unknown"));
+        filter.setAllowedAttributes(CollectionUtils.wrapList("givenName"));
+        val attributes = filter.getAttributes(buildContext(filter));
+        assertTrue(attributes.isEmpty());
+    }
+
+    private RegisteredServiceAttributeReleasePolicyContext buildContext(final MetadataEntityAttributesAttributeReleasePolicy filter) {
         val registeredService = SamlIdPTestUtils.getSamlRegisteredService();
         registeredService.setAttributeReleasePolicy(filter);
-        val context = RegisteredServiceAttributeReleasePolicyContext.builder()
+        return RegisteredServiceAttributeReleasePolicyContext.builder()
             .registeredService(registeredService)
             .applicationContext(applicationContext)
             .service(CoreAuthenticationTestUtils.getService())
             .principal(CoreAuthenticationTestUtils.getPrincipal("casuser",
                 CollectionUtils.wrap("givenName", UUID.randomUUID().toString())))
             .build();
-        val attributes = filter.getAttributes(context);
-        assertTrue(attributes.isEmpty());
     }
 }

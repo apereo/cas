@@ -66,8 +66,7 @@ class OAuth20AuthenticationServiceSelectionStrategyTests extends AbstractOAuth20
             .claim("grant_type", OAuth20GrantTypes.CLIENT_CREDENTIALS.getType())
             .claim("client_id", registeredService.getClientId())
             .build();
-        val jwt = new PlainJWT(claims);
-        val jwtRequest = jwt.serialize();
+        val jwtRequest = configurationContext.getAccessTokenJwtBuilder().getDefaultTokenCipherExecutor().encode(claims.toString());
 
         val request = new MockHttpServletRequest();
         request.addParameter(OAuth20Constants.REQUEST, jwtRequest);
@@ -103,9 +102,9 @@ class OAuth20AuthenticationServiceSelectionStrategyTests extends AbstractOAuth20
     @Test
     void verifyJwtRequestParametersOnly() throws Throwable {
         val registeredService = addRegisteredService();
-        val jwtRequest = new PlainJWT(new JWTClaimsSet.Builder().subject("cas")
+        val jwtRequest = configurationContext.getAccessTokenJwtBuilder().getDefaultTokenCipherExecutor().encode(new JWTClaimsSet.Builder().subject("cas")
             .claim("client_id", registeredService.getClientId())
-            .build()).serialize();
+            .build().toString());
         val service = RegisteredServiceTestUtils.getService("https://example.org?" + OAuth20Constants.REDIRECT_URI + '=' + REDIRECT_URI);
         service.getAttributes().put(OAuth20Constants.REQUEST, List.of(jwtRequest));
         val resolved = strategy.resolveServiceFrom(service);

@@ -72,7 +72,6 @@ class OidcRegisteredServiceTests {
         registeredService.setName("checkSaveMethod");
         registeredService.setServiceId("testId");
         registeredService.setJwks("file:/tmp/thekeystorehere.jwks");
-        registeredService.setSignIdToken(true);
         registeredService.setBypassApprovalPrompt(true);
         val r2 = servicesManager.save(registeredService);
         assertInstanceOf(OidcRegisteredService.class, r2);
@@ -91,7 +90,6 @@ class OidcRegisteredServiceTests {
         serviceWritten.setName("verifySerializeAOidcRegisteredServiceToJson");
         serviceWritten.setServiceId("testId");
         serviceWritten.setJwks("file:/tmp/thekeystorehere.jwks");
-        serviceWritten.setSignIdToken(true);
         serviceWritten.setBypassApprovalPrompt(true);
         serviceWritten.setUsernameAttributeProvider(new PairwiseOidcRegisteredServiceUsernameAttributeProvider());
         MAPPER.writeValue(jsonFile, serviceWritten);
@@ -99,5 +97,27 @@ class OidcRegisteredServiceTests {
         assertEquals(serviceWritten, serviceRead);
     }
 
-
+    /**
+     * ID tokens are always signed and the {@code signIdToken} property is gone, yet an older definition that still
+     * carries it is read as before, even by a mapper that refuses unknown properties.
+     */
+    @Test
+    void verifyDefinitionWithRemovedSignIdTokenIsRead() {
+        val json = """
+            {
+              "@class": "org.apereo.cas.services.OidcRegisteredService",
+              "clientId": "client",
+              "serviceId": "^https://app.example.org/.*",
+              "name": "Sample",
+              "id": 1,
+              "signIdToken": false,
+              "encryptIdToken": true
+            }
+            """;
+        val mapper = JacksonObjectMapperFactory.builder().defaultTypingEnabled(true).failOnUnknownProperties(true).build().toObjectMapper();
+        val service = mapper.readValue(json, OidcRegisteredService.class);
+        assertEquals("client", service.getClientId());
+        assertTrue(service.isEncryptIdToken());
+        assertFalse(mapper.writeValueAsString(service).contains("signIdToken"));
+    }
 }

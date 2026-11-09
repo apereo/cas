@@ -33,6 +33,8 @@ import org.springframework.boot.actuate.endpoint.Access;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.MediaType;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -89,14 +91,16 @@ public class SingleSignOnSessionsEndpoint extends BaseCasRestActuatorEndpoint {
         parameters = @Parameter(name = "username", required = true, in = ParameterIn.PATH, description = "The username to look up"))
     public Map<String, Object> getSsoSessionsForUser(@PathVariable final String username) {
         val sessionsMap = new HashMap<String, Object>();
-        try (val sessions = ticketRegistryProvider.getObject().getSessionsFor(username)) {
-            val activeSsoSessions = sessions
-                .sorted(Comparator.comparing(Ticket::getId))
-                .map(TicketGrantingTicket.class::cast)
-                .map(tgt -> buildSingleSignOnSessionFromTicketGrantingTicket(SsoSessionReportOptions.ALL, tgt))
-                .toList();
-            sessionsMap.put("activeSsoSessions", activeSsoSessions);
-        }
+        val activeSsoSessions = readInTicketTransaction(() -> {
+            try (val sessions = ticketRegistryProvider.getObject().getSessionsFor(username)) {
+                return sessions
+                    .sorted(Comparator.comparing(Ticket::getId))
+                    .map(TicketGrantingTicket.class::cast)
+                    .map(tgt -> buildSingleSignOnSessionFromTicketGrantingTicket(SsoSessionReportOptions.ALL, tgt))
+                    .toList();
+            }
+        });
+        sessionsMap.put("activeSsoSessions", activeSsoSessions);
         return sessionsMap;
     }
 
@@ -135,9 +139,11 @@ public class SingleSignOnSessionsEndpoint extends BaseCasRestActuatorEndpoint {
     public Map<String, Object> getSsoSessions(
         @ModelAttribute final @Valid SsoSessionsRequest ssoSessionsRequest) {
         val sessionsMap = new HashMap<String, Object>();
-        try (val sessions = getActiveSsoSessions(ssoSessionsRequest)) {
-            sessionsMap.put("activeSsoSessions", sessions.toList());
-        }
+        sessionsMap.put("activeSsoSessions", readInTicketTransaction(() -> {
+            try (val sessions = getActiveSsoSessions(ssoSessionsRequest)) {
+                return sessions.toList();
+            }
+        }));
         sessionsMap.put("totalSsoSessions", ticketRegistryProvider.getObject().sessionCount());
         return sessionsMap;
     }
@@ -198,27 +204,33 @@ public class SingleSignOnSessionsEndpoint extends BaseCasRestActuatorEndpoint {
 
         if (StringUtils.isNotBlank(ssoSessionsRequest.getUsername())) {
             val sessionsMap = new HashMap<String, Object>();
-            try (val sessions = ticketRegistryProvider.getObject().getSessionsFor(ssoSessionsRequest.getUsername())) {
-                var tickets = sessions;
-                if (ssoSessionsRequest.getFrom() > 0) {
-                    tickets = tickets.skip(ssoSessionsRequest.getFrom());
+            val ticketGrantingTickets = readInTicketTransaction(() -> {
+                try (val sessions = ticketRegistryProvider.getObject().getSessionsFor(ssoSessionsRequest.getUsername())) {
+                    var tickets = sessions;
+                    if (ssoSessionsRequest.getFrom() > 0) {
+                        tickets = tickets.skip(ssoSessionsRequest.getFrom());
+                    }
+                    if (ssoSessionsRequest.getCount() > 0) {
+                        tickets = tickets.limit(ssoSessionsRequest.getCount());
+                    }
+                    return tickets.map(Ticket::getId).toList();
                 }
-                if (ssoSessionsRequest.getCount() > 0) {
-                    tickets = tickets.limit(ssoSessionsRequest.getCount());
-                }
-                tickets.forEach(ticket -> sessionsMap.put(ticket.getId(), destroySsoSession(ticket.getId(), request, response)));
-            }
+            });
+            ticketGrantingTickets.forEach(ticketId -> sessionsMap.put(ticketId, destroySsoSession(ticketId, request, response)));
             val deletedCount = sessionsMap.size() + getTicketRegistryProvider().getObject().deleteTicketsFor(ssoSessionsRequest.getUsername());
             sessionsMap.put("deleted", deletedCount);
             return sessionsMap;
         }
 
         val sessionsMap = new HashMap<String, Object>();
-        try (val sessions = getActiveSsoSessions(ssoSessionsRequest)) {
-            sessions
-                .map(sso -> sso.get(SsoSessionAttributeKeys.TICKET_GRANTING_TICKET_ID.getAttributeKey()).toString())
-                .forEach(ticketGrantingTicket -> destroySsoSession(ticketGrantingTicket, request, response));
-        }
+        val ticketGrantingTickets = readInTicketTransaction(() -> {
+            try (val sessions = getActiveSsoSessions(ssoSessionsRequest)) {
+                return sessions
+                    .map(sso -> sso.get(SsoSessionAttributeKeys.TICKET_GRANTING_TICKET_ID.getAttributeKey()).toString())
+                    .toList();
+            }
+        });
+        ticketGrantingTickets.forEach(ticketGrantingTicket -> destroySsoSession(ticketGrantingTicket, request, response));
         sessionsMap.put(STATUS, HttpServletResponse.SC_OK);
         return sessionsMap;
     }
@@ -339,6 +351,26 @@ public class SingleSignOnSessionsEndpoint extends BaseCasRestActuatorEndpoint {
         private long from;
 
         private long count = 10_000L;
+    }
+
+    /**
+     * Read from the ticket registry inside a ticket transaction and collect the result before it ends. A registry
+     * backed by a database (JPA) streams its rows through a result set that only stays open while a transaction
+     * does; outside one, the connection goes back to the pool and the result set is closed before it is read.
+     * Sessions are destroyed after the transaction, so logout requests to applications do not hold it open.
+     *
+     * @param <T>    the type of the collected items
+     * @param reader the reader
+     * @return the collected items
+     */
+    private <T> List<T> readInTicketTransaction(final Supplier<List<T>> reader) {
+        if (!applicationContext.containsBean(TicketRegistry.TICKET_TRANSACTION_MANAGER)) {
+            return reader.get();
+        }
+        val transactionManager = applicationContext.getBean(TicketRegistry.TICKET_TRANSACTION_MANAGER, PlatformTransactionManager.class);
+        val transactionTemplate = new TransactionTemplate(transactionManager);
+        transactionTemplate.setReadOnly(true);
+        return Objects.requireNonNullElseGet(transactionTemplate.execute(_ -> reader.get()), List::of);
     }
 
     private Stream<Map<String, Object>> getActiveSsoSessions(final SsoSessionsRequest ssoSessionsRequest) {

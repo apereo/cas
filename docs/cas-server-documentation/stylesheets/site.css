@@ -1026,7 +1026,8 @@ button, a {
     gap: .15rem;
 }
 
-#toolbarIcons a {
+#toolbarIcons a,
+#toolbarIcons button {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -1039,6 +1040,16 @@ button, a {
     transition: background .15s ease, color .15s ease, transform .15s ease;
 }
 
+#toolbarIcons button {
+    padding: 0;
+    border: 0;
+    background: none;
+    cursor: pointer;
+    font-size: .82rem;
+}
+
+#toolbarIcons button:hover,
+#toolbarIcons button:focus-visible,
 #toolbarIcons a:hover {
     background: var(--docs-soft);
     color: var(--docs-accent);
@@ -2725,7 +2736,8 @@ ul.tab-content > li:not(.active):not(.property-name):not(.property-tab):not(.cas
     #toolbarIcons {
         gap: 0;
     }
-    #toolbarIcons a {
+    #toolbarIcons a,
+    #toolbarIcons button {
         width: 1.65rem;
         height: 1.75rem;
         font-size: .68rem;
@@ -4395,6 +4407,70 @@ ul.tab-content > li:not(.active):not(.property-name):not(.property-tab):not(.cas
 
 .cas-settings-palette-detail .cas-property-detail {
     grid-template-columns: minmax(0, 1fr);
+}
+
+.cas-settings-changes-summary {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .5rem;
+    margin: 1rem 0;
+    padding: 0;
+    list-style: none;
+}
+
+.cas-settings-changes-summary a {
+    display: inline-flex;
+    align-items: baseline;
+    gap: .35rem;
+    padding: .35rem .8rem;
+    border: 1px solid var(--docs-line);
+    border-radius: 999px;
+    background: var(--docs-surface);
+    color: var(--docs-text);
+    text-decoration: none;
+}
+
+.cas-settings-changes-summary a:hover {
+    border-color: var(--docs-accent);
+    color: var(--docs-accent);
+}
+
+.cas-settings-changes-summary strong {
+    color: var(--docs-heading);
+    font-size: 1.05rem;
+}
+
+.cas-settings-changes h3 {
+    margin-top: 1.4rem;
+    font-family: var(--bs-font-monospace, monospace);
+    font-size: .85rem;
+    color: var(--docs-muted);
+}
+
+.cas-settings-changes-list {
+    padding-left: 0;
+    list-style: none;
+}
+
+.cas-settings-changes-list li {
+    padding: .45rem 0;
+    border-bottom: 1px solid var(--docs-line);
+}
+
+.cas-settings-changes-default,
+.cas-settings-changes-text {
+    margin-left: .6rem;
+    color: var(--docs-muted);
+    font-size: .88rem;
+}
+
+.cas-settings-changes-text {
+    display: block;
+    margin: .2rem 0 0;
+}
+
+.cas-settings-changes-defaults code {
+    overflow-wrap: anywhere;
 }
 
 .cas-setting-link {

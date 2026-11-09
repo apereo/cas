@@ -22,6 +22,7 @@ import org.springframework.boot.actuate.endpoint.annotation.DeleteOperation;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
 import org.springframework.boot.actuate.endpoint.annotation.Selector;
+import org.springframework.transaction.support.TransactionOperations;
 
 /**
  * This is {@link OAuth20TokenManagementEndpoint}.
@@ -37,29 +38,38 @@ public class OAuth20TokenManagementEndpoint extends BaseCasActuatorEndpoint {
 
     private final ObjectProvider<JwtBuilder> accessTokenJwtBuilder;
 
+    private final TransactionOperations ticketTransactionOperations;
+
     public OAuth20TokenManagementEndpoint(final CasConfigurationProperties casProperties,
                                           final ObjectProvider<TicketRegistry> ticketRegistry,
-                                          final ObjectProvider<JwtBuilder> accessTokenJwtBuilder) {
+                                          final ObjectProvider<JwtBuilder> accessTokenJwtBuilder,
+                                          final TransactionOperations ticketTransactionOperations) {
         super(casProperties);
         this.ticketRegistry = ticketRegistry;
         this.accessTokenJwtBuilder = accessTokenJwtBuilder;
+        this.ticketTransactionOperations = ticketTransactionOperations;
     }
 
     /**
-     * Gets access tokens.
+     * Gets access tokens. Every ticket is scanned to find them, inside a ticket transaction, so that a registry backed
+     * by a database reads the rows a batch at a time instead of collecting every ticket in memory first.
      *
      * @return the access tokens
      */
     @ReadOperation
     @Operation(summary = "Get access and/or refresh tokens")
     public Collection<Ticket> getTokens() {
-        try (val tokens = ticketRegistry
-            .getObject()
-            .getTickets(ticket -> (ticket instanceof OAuth20AccessToken || ticket instanceof OAuth20RefreshToken) && !ticket.isExpired())) {
-            return tokens
-                .sorted(Comparator.comparing(Ticket::getId))
-                .collect(Collectors.toList());
-        }
+        val tokens = ticketTransactionOperations.execute(_ -> {
+            try (val found = ticketRegistry
+                .getObject()
+                .getTickets(ticket -> (ticket instanceof OAuth20AccessToken || ticket instanceof OAuth20RefreshToken) && !ticket.isExpired())) {
+                return found
+                    .sorted(Comparator.comparing(Ticket::getId))
+                    .<Ticket>map(Ticket.class::cast)
+                    .collect(Collectors.toList());
+            }
+        });
+        return Objects.requireNonNullElseGet(tokens, List::of);
     }
 
 

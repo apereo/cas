@@ -1,0 +1,17 @@
+{
+  "@class": "org.apereo.cas.services.CasRegisteredService",
+  "serviceId": "^https://localhost:9859/anything/bypass-remote-address.*",
+  "id": 3,
+  "name": "BypassRemoteAddress",
+  "evaluationOrder": 3,
+  "multifactorPolicy": {
+    "@class": "org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy",
+    "multifactorAuthenticationProviders": [
+      "java.util.LinkedHashSet",
+      [
+        "mfa-yubikey"
+      ]
+    ],
+    "bypassForRequestIpAddress": "^203\\.0\\.113\\..+"
+  }
+}

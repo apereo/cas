@@ -1,0 +1,12 @@
+{
+  "@class": "org.apereo.cas.services.CasRegisteredService",
+  "serviceId": "^https://localhost:9859/anything/timepast.*",
+  "id": 2,
+  "name": "TimeWindowInThePast",
+  "accessStrategy": {
+    "@class": "org.apereo.cas.services.TimeBasedRegisteredServiceAccessStrategy",
+    "startingDateTime": "2015-11-01T00:00:00Z",
+    "endingDateTime": "2015-11-10T00:00:00Z",
+    "zoneId": "UTC"
+  }
+}

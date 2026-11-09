@@ -60,6 +60,38 @@ Palantir follows the light or dark appearance of the operating system. The theme
 bar switches between light and dark, and the settings dialog can return Palantir to the operating system's choice;
 the choice is remembered by the browser.
 
+The search button in the navigation bar, also opened with `Ctrl+K` (`⌘K` on macOS) or `/`, finds any page or
+section of Palantir, a registered application by its name, identifier or service id, and common actions such as
+creating an application, switching the theme, opening the settings or signing out. Arrow keys move through the matches and
+`Enter` opens one. Typing a username also offers to look that user up.
+
+The *Users* page gathers what CAS holds about one user: single sign-on sessions, registered multifactor devices,
+trusted devices, attribute consent decisions, resolved attributes, accounts the user may impersonate, the passwordless
+account, password history, throttled login attempts, the interrupt the user would see at login and recent audit events, over the last day, week or month. Each source that has something
+recorded for the user gets a card, which expands to show its records and its usual actions, such as ending a session,
+removing a device or revoking a consent decision; the first card starts expanded. A source is only consulted when the
+actuator endpoint behind it is enabled and exposed, and the page itself is hidden when none of them is.
+
+When the history of application definitions is recorded, the change history of an application lists its versions,
+latest first, and shows the selected version side by side with the current definition or with the version before it,
+highlighting the lines and words that differ. *Restore this version* makes the selected version the current definition
+again, after a confirmation.
+
+The authentication section lists, under *Interrupts*, which [interrupt](../webflow/Webflow-Customization-Interrupt.html)
+a user would see at login, optionally signing in to a given application: the message, links and data of the interrupt,
+whether it blocks the login, and what each interrupt source answered.
+
+*Duplicate Application* opens a copy of an application in the wizard as a new application, named after the original,
+with its service id left empty and, where the application has them, a new client id and secret. When the wizard or the
+definition editor holds changes that are not saved, closing it asks whether to keep editing, keep a draft and close, or
+discard the changes. Drafts are kept by the browser, never on the server, while changes stay unsaved, so a reload or a closed
+tab loses nothing; reopening the application, or a new application of the same type, offers to resume the draft. A draft
+is dropped once it is thirty days old.
+
+Pressing `?` outside a text field, or choosing *Keyboard shortcuts* in the search palette, lists every keyboard shortcut.
+Rows with actions in Palantir's tables can be reached with the keyboard: `Enter` chooses the focused row and `Shift+F10`
+opens its actions, as a right click does.
+
 {% endtab %}
 
 {% tab casadminoptions Spring Boot Admin %}

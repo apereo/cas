@@ -17,7 +17,7 @@ const assert = require("assert");
     const service = {
         "application_type": "web",
         "default_acr_values": ["mfa-duo", "mfa-gauth"],
-        "redirect_uris": ["https://apereo.github.io", "https://github.com/apereo/cas"],
+        "redirect_uris": ["https://apereo.github.io", "https://apereo.github.io/cas"],
         "client_name": "My Example",
         "client_name#ja-Japan-JP": "Japanese",
         "logo_uri": "https://apereo.github.io/logo.png",

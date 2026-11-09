@@ -112,7 +112,9 @@ The code is not redeemed by such a request, so the client that holds the key can
 DPoP proofs are designed to be used exactly once. Each proof JWT carries a unique `jti` (JWT ID) claim 
 alongside its `iat` timestamp, and any endpoint validating the proof such as the token or profile endpoints 
 are expected to track previously-seen `jti` values and reject a proof whose `jti` has already been presented.
-To enforce single-use DPoP proofs are tracked in the CAS ticket registry as CAS tickets and will auto-expire.
+To enforce single-use DPoP proofs are tracked in the CAS ticket registry as CAS tickets, and each is remembered for as
+long as its `iat` keeps it acceptable, which is twice the allowed clock skew, before it expires on its own. A proof
+presented again within that time is refused, and a proof older than that is refused for its `iat`.
 
 ## Server-Provided Nonces
 

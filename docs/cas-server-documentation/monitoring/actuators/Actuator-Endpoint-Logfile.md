@@ -8,7 +8,9 @@ category: Monitoring & Statistics
 
 # Actuator Endpoint - Logfile
 
-Returns the contents of the logfile (if the `logging.file.name`{: .cas-setting} or the `logging.file.path`{: .cas-setting} property has been set). 
+Returns the contents of the logfile, if the name or the path of the log file has been set in the logging settings. 
 Supports the use of the HTTP `Range` header to retrieve part of the log file’s content.
+
+{% include_cached casproperties.html thirdPartyExactMatch="logging.file.name,logging.file.path" %}
 
 {% include_cached actuators.html endpoints="logfile" %}

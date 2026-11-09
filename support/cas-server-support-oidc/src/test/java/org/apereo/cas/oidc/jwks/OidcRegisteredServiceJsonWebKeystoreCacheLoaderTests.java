@@ -3,6 +3,9 @@ package org.apereo.cas.oidc.jwks;
 import module java.base;
 import org.apereo.cas.oidc.AbstractOidcTests;
 import lombok.val;
+import org.jose4j.jwk.JsonWebKey;
+import org.jose4j.jwk.JsonWebKeySet;
+import org.jose4j.jwk.RsaJwkGenerator;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
@@ -20,6 +23,19 @@ class OidcRegisteredServiceJsonWebKeystoreCacheLoaderTests extends AbstractOidcT
         val service = getOidcRegisteredService(UUID.randomUUID().toString());
         assertTrue(oidcServiceJsonWebKeystoreCache.get(new OidcJsonWebKeyCacheKey(service, OidcJsonWebKeyUsage.SIGNING)).isPresent());
         assertTrue(oidcServiceJsonWebKeystoreCache.get(new OidcJsonWebKeyCacheKey(service, OidcJsonWebKeyUsage.SIGNING)).isPresent());
+    }
+
+    @Test
+    void verifyServiceWithOtherKeysIsNotAnsweredFromCache() throws Exception {
+        val service = getOidcRegisteredService(UUID.randomUUID().toString());
+        assertTrue(oidcServiceJsonWebKeystoreCache.get(new OidcJsonWebKeyCacheKey(service, OidcJsonWebKeyUsage.SIGNING)).isPresent());
+
+        val rolledOverKey = RsaJwkGenerator.generateJwk(2048);
+        rolledOverKey.setKeyId("rolled-over");
+        rolledOverKey.setUse("sig");
+        service.setJwks(new JsonWebKeySet(rolledOverKey).toJson());
+        val keys = oidcServiceJsonWebKeystoreCache.get(new OidcJsonWebKeyCacheKey(service, OidcJsonWebKeyUsage.SIGNING)).orElseThrow();
+        assertEquals(List.of("rolled-over"), keys.getJsonWebKeys().stream().map(JsonWebKey::getKeyId).toList());
     }
 
     @Test
