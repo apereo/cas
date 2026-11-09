@@ -40,7 +40,7 @@ account profile management feature. The following providers are supported:
   device can get a new set of scratch codes. The new codes are shown once, and the old codes stop working.
 - [FIDO2 WebAuthn](../mfa/FIDO2-WebAuthn-Authentication.html): passkeys and security keys can be registered and renamed.
 - [YubiKey](../mfa/YubiKey-Authentication.html): devices are listed and removed, and another device can be registered from the profile
-  when the user has none or when `cas.authn.mfa.yubikey.multiple-device-registration-enabled`{: .cas-setting} is turned on.
+  when the user has none or when the YubiKey settings allow more than one device per user.
 
 A device, session, token or trusted device is only removed, renamed or changed when it belongs to the signed-in user.
 
@@ -61,8 +61,8 @@ IP address, location and browser.
 The profile shows the email addresses and phone numbers that receive one-time codes for
 [simple multifactor authentication](../mfa/Simple-Multifactor-Authentication.html), taken from the principal attributes that
 the provider is configured to read, and the email address and phone number that receive
-[passwordless](../authentication/Passwordless-Authentication.html) sign-in tokens. When email registration is turned on with
-`cas.authn.mfa.simple.mail.accepted-email-pattern`{: .cas-setting}, the user can add an email address: CAS sends a code to it,
+[passwordless](../authentication/Passwordless-Authentication.html) sign-in tokens. When email registration is turned on by setting
+the pattern of accepted email addresses for simple multifactor authentication, the user can add an email address: CAS sends a code to it,
 and the address is registered once the code is entered. Phone numbers and passwordless contact details come from the account
 store and are shown read-only.
 

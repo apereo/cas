@@ -18,7 +18,7 @@ The script may be defined as:
 import org.apereo.cas.interrupt.InterruptResponse
 
 def run(final Object... args) {
-    def (principal,attributes,service,registeredService,requestContext,logger) = args
+    def (principal,attributes,service,registeredService,logger) = args
     ...
     def block = false
     def ssoEnabled = true
@@ -37,7 +37,6 @@ The following parameters are passed to the script:
 | `attributes`        | A map of type `Map<String, Object>` that contains both principal and authentication attributes. |
 | `service`           | The `Service` object representing the requesting application.                                   |
 | `registeredService` | The `RegisteredService` object representing the service definition in the registry.             |
-| `requestContext`    | The object representing the Spring Webflow `RequestContext`.                                    |
 | `logger`            | The object responsible for issuing log messages such as `logger.info(...)`.                     |
 
 To prepare CAS to support and integrate with Apache Groovy, please [review this guide](../integration/Apache-Groovy-Scripting.html).

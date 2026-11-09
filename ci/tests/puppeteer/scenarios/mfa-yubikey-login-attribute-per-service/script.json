@@ -10,6 +10,7 @@
     "--cas.authn.mfa.yubikey.crypto.enabled=false",
     "--cas.authn.mfa.yubikey.client-id=18421",
     "--cas.authn.mfa.yubikey.secret-key=aBIehjui12aK8x82oe5qzGeb0As=",
+    "--cas.authn.mfa.yubikey.api-urls=http://localhost:5611/wsapi/2.0/verify",
 
     "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
     "--management.endpoints.web.exposure.include=yubikeyAccountRepository",

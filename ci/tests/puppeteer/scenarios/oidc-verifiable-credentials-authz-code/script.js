@@ -6,6 +6,9 @@ const jwkToPem = require("jwk-to-pem");
 
 const key = JSON.parse(fs.readFileSync(path.join(__dirname, "/keystore.json"))).keys[0];
 const privateKey = jwkToPem(key, {private: true});
+const CODE_CHALLENGE = "cwr1RXW4wcqyi0Eq9h1tD2tliFRYf36HMqG0lumwCtE";
+const CODE_VERIFIER = "zkuyfY0CcG1yuVojREYwtbnpjOsOleD.OWkBpNVTHKyABMJ0ly_ZKTeOi."
+    + "STPvshXsHyShcyAzm6z4ThKr2Y91RKFLvmOkJEiBhaSzIp~YHH3wkrzlB6m~y8h~td_pPg";
 
 async function createPublicKey() {
     const nonce = await cas.doPost("https://localhost:8443/cas/oidc/oidcVcNonce", "", {
@@ -118,21 +121,80 @@ async function createPublicKey() {
     assert(scopedResult.credentials.length === 1);
     const scopedCredential = await cas.decodeJwt(scopedResult.credentials[0].credential.split("~")[0]);
     assert(scopedCredential.given_name === "CAS");
+
+    await cas.log("Requesting the credential with authorization details sent through a pushed authorization request");
+    const pushedBrowser = await cas.newBrowser(cas.browserOptions());
+    const pushedPage = await cas.newPage(pushedBrowser);
+    const pushedPayload = await getPayloadWithPushedAuthorizationRequest(pushedPage, "https://localhost:9859/anything/wallet", [
+        {
+            "type": "openid_credential",
+            "credential_configuration_id": "myorg"
+        }
+    ]);
+    await cas.closeBrowser(pushedBrowser);
+    const pushedIdentifiers = pushedPayload.authorization_details[0].credential_identifiers;
+    assert(Array.isArray(pushedIdentifiers) && pushedIdentifiers.length > 0);
+
+    const pushedResult = JSON.parse(await cas.doRequest(url, "POST", {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${pushedPayload.access_token}`
+    }, 200, JSON.stringify({
+        credential_identifier: pushedIdentifiers[0],
+        proofs: {
+            jwt: [await createPublicKey()]
+        }
+    })));
+    await cas.log(pushedResult);
+    assert(pushedResult.credentials.length === 1);
+
+    await cas.log("Pushing authorization details for a credential the issuer does not offer is refused right away");
+    const refused = JSON.parse(await cas.doRequest("https://localhost:8443/cas/oidc/oidcPushAuthorize", "POST", {
+        "Content-Type": "application/x-www-form-urlencoded"
+    }, 400, new URLSearchParams({
+        response_type: "code",
+        client_id: "wallet",
+        client_secret: "secret",
+        scope: "openid",
+        redirect_uri: "https://localhost:9859/anything/wallet",
+        authorization_details: JSON.stringify([{type: "openid_credential", credential_configuration_id: "unknown"}])
+    }).toString()));
+    assert.equal(refused.error, "invalid_authorization_details");
+    assert(refused.request_uri === undefined);
 })();
 
-async function getPayload(page, redirectUri, clientId, authorizationDetails, scope) {
-    const codeChallenge = "cwr1RXW4wcqyi0Eq9h1tD2tliFRYf36HMqG0lumwCtE";
-    const codeVerifier = "zkuyfY0CcG1yuVojREYwtbnpjOsOleD.OWkBpNVTHKyABMJ0ly_ZKTeOi."
-        + "STPvshXsHyShcyAzm6z4ThKr2Y91RKFLvmOkJEiBhaSzIp~YHH3wkrzlB6m~y8h~td_pPg";
+/**
+ * A wallet that pushes its authorization request (RFC 9126) sends authorization_details with the pushed request,
+ * and the authorization request that follows carries only the client id and the request URI.
+ */
+async function getPayloadWithPushedAuthorizationRequest(page, redirectUri, authorizationDetails) {
+    const clientAuthentication = "client_id=wallet&client_secret=secret";
+    const parameters = `response_type=code&${clientAuthentication}&scope=openid&redirect_uri=${redirectUri}`
+        + `&authorization_details=${encodeURIComponent(JSON.stringify(authorizationDetails))}`
+        + `&code_challenge=${CODE_CHALLENGE}&code_challenge_method=S256&issuer_state=abcdefg1234567890`;
+    const requestUri = await cas.doPost(`https://localhost:8443/cas/oidc/oidcPushAuthorize?${parameters}`, "", {
+        "Content-Type": "application/x-www-form-urlencoded"
+    }, (res) => res.data.request_uri, (error) => {
+        throw `Operation failed to push the authorization request: ${error}`;
+    });
+    assert(requestUri !== undefined && requestUri.length > 0);
+    await cas.log(`Request URI ${requestUri}`);
+    await cas.goto(page, `https://localhost:8443/cas/oidc/authorize?client_id=wallet&request_uri=${encodeURIComponent(requestUri)}`);
+    return completeAuthorization(page, redirectUri, clientAuthentication);
+}
 
+async function getPayload(page, redirectUri, clientId, authorizationDetails, scope) {
     let url = "https://localhost:8443/cas/oidc/authorize";
     url += `?response_type=code&client_id=${clientId}&scope=${encodeURIComponent(scope)}&redirect_uri=${redirectUri}`;
     if (authorizationDetails !== undefined) {
         url += `&authorization_details=${encodeURIComponent(JSON.stringify(authorizationDetails))}`;
     }
-    url += `&code_challenge=${codeChallenge}&code_challenge_method=S256&issuer_state=abcdefg1234567890`;
+    url += `&code_challenge=${CODE_CHALLENGE}&code_challenge_method=S256&issuer_state=abcdefg1234567890`;
 
     await cas.goto(page, url);
+    return completeAuthorization(page, redirectUri, `client_id=${clientId}`);
+}
+
+async function completeAuthorization(page, redirectUri, clientAuthentication) {
     await cas.logPage(page);
     await cas.sleep(1000);
 
@@ -148,7 +210,7 @@ async function getPayload(page, redirectUri, clientId, authorizationDetails, sco
     const code = await cas.assertParameter(page, "code");
     await cas.log(`Current code is ${code}`);
     const accessTokenUrl = "https://localhost:8443/cas/oidc/token?grant_type=authorization_code"
-        + `&client_id=${clientId}&redirect_uri=${redirectUri}&code=${code}&code_verifier=${codeVerifier}`;
+        + `&${clientAuthentication}&redirect_uri=${redirectUri}&code=${code}&code_verifier=${CODE_VERIFIER}`;
     return cas.doPost(accessTokenUrl, "", {
         "Content-Type": "application/json"
     }, (res) => res.data, (error) => {

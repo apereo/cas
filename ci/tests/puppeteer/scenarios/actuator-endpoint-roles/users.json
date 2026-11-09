@@ -12,5 +12,12 @@
     "authorities": [
       "ROLE_USER"
     ]
+  },
+  {
+    "username": "casops",
+    "password": "{noop}0p$Secret",
+    "authorities": [
+      "OPS"
+    ]
   }
 ]

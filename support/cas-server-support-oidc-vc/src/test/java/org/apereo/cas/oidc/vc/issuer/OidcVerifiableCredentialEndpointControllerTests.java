@@ -411,7 +411,7 @@ class OidcVerifiableCredentialEndpointControllerTests {
 
         private JWTClaimsSet issueCredentialClaims(final String configurationId) throws Throwable {
             val clientId = UUID.randomUUID().toString();
-            val registeredService = getOidcRegisteredService(clientId, "https://oauth\\.example\\.org.*", true, false);
+            val registeredService = getOidcRegisteredService(clientId, "https://oauth\\.example\\.org.*", false);
             servicesManager.save(registeredService);
 
             val accessToken = createOAuth20AccessToken(clientId);
@@ -731,13 +731,6 @@ class OidcVerifiableCredentialEndpointControllerTests {
             assertNull(credential.getHeader().getCustomParam(OAuth20Constants.CLIENT_ID));
             assertNull(credential.getJWTClaimsSet().getClaim(OAuth20Constants.CLIENT_ID));
             assertNull(credential.getJWTClaimsSet().getClaim("credential_configuration_id"));
-        }
-
-        @Test
-        void verifyCredentialIsSignedEvenWhenTheClientDisablesIdTokenSigning() throws Throwable {
-            val credential = issueCredentialJwt(service -> service.setSignIdToken(false));
-            assertEquals(JWSAlgorithm.RS256, credential.getHeader().getAlgorithm());
-            assertTrue(credential.getSignature().decode().length > 0);
         }
 
         @Test

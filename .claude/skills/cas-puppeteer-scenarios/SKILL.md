@@ -37,6 +37,11 @@ description: "Write, fix and review the end-to-end puppeteer scenarios under ci/
 - `actuator-endpoint-roles` is the table-driven check of endpoint security: every row is called anonymously (401), as `casviewer` without `ADMIN` (403) and as `casadmin` (2xx, or "reachable" for operations needing a payload). Users come from its `users.json` (`cas.monitor.endpoints.json.location`). Add a row there when adding an actuator endpoint whose module needs no external service; rows default to `Content-Type: application/json`, so give operations that consume form parameters (the `casValidate` ones) `contentType: FORM`, or they answer 415.
 - To prove CAS refuses a tampered SAML2 AuthnRequest, intercept the browser hop from the SP to `/cas/idp/profile/SAML2/*/SSO` with `page.setRequestInterception(true)` (see `saml2-idp-login-acs-signed`). POST binding: rewrite `SAMLRequest` in `postData` and `request.continue({postData})`. Redirect binding: inflate with `zlib.inflateRawSync`, alter, deflate, then `request.abort()` and `cas.goto` the altered URL rather than overriding `url` on a redirected request. Assert that the tampering really happened, otherwise a request without the attribute passes for the wrong reason.
 - `cas.newPage(browser)` returns the browser's first tab when one exists; it opens a new one only with `cas.newPage(browser, true)`. A helper that takes a page, intercepts its requests and closes it must force a new page, or it closes the scenario's main page and later calls fail with "Attempted to use detached Frame" (`saml2-idp-login-acs-signed`).
+- After a redirect to a `custom://` scheme, the tab stops taking keyboard input in CI (most likely Chrome's tab-modal external-protocol prompt): `cas.type` and `cas.pressEnter` report success but the form is never submitted, so a later `cas.loginWith` times out while navigation still works and CAS logs nothing. Continue on a fresh tab (`cas.newPage(context, true)`) after a custom-scheme step (`oidc-logout`).
+- A scenario that stubs an MFA verification service sees the provider's availability check as well as the real calls (YubiKey pings its API URL without parameters before the first verification), so pick the request to assert by its content, not by position (`mfa-yubikey-login-attribute-per-service`).
+- The SAML2 identity provider releases attributes listed in its default attribute definitions (`samlidp-attribute-definitions.json`: `uid`, `mail`, ...) under their `urn:oid` names, with the plain name as `FriendlyName`. Scripts that read an assertion key attributes by `FriendlyName`, falling back to `Name` (`saml2-idp-login-encrypted`).
+- With static users enabled (the default `casuser`), a wrong password for an LDAP user is reported as "account not recognized": the static handler's `AccountNotFoundException` outranks the LDAP handler's `FailedLoginException` in the webflow exception catalog. LDAP scenarios that assert login errors set `--cas.authn.accept.enabled=false` (`pm-must-change-password-ldap-ad`).
+- Palantir's Users tab puts the focus in its username field once the tab has loaded, asynchronously, so a hotkey such as "/" pressed soon after opening it is typed into the field instead (`palantir-login` opens another tab before testing "/").
 - Before writing a negative assertion, read the server code for the exact error. Each token-endpoint failure surfaces differently: device code reuse → `access_denied` (`InvalidOAuth20DeviceTokenException`), a mismatched ST service → `INVALID_SERVICE` and the ticket is consumed. Where the specification names the error (CIBA Core §11: `authorization_pending`, `invalid_grant`), the scenario asserts the specification even when the current code differs, and the hand-off says so.
 - `from` in actuator and ticket registry queries (`ssoSessions?from=`, `TicketRegistryStreamCriteria`) is a 0-based offset in every registry. A scenario that deletes all SSO sessions passes `from=0` (or omits it); `from=1` leaves the first session alive, which only shows once that session outlives the scenario's other timeouts, such as a remember-me TGT in a browser profile that later browsers share.
 - In CI, `cas.prepareChromium` unzips the Chromium profile only when it is missing, so the in-process attempts of a
@@ -55,6 +60,11 @@ description: "Write, fix and review the end-to-end puppeteer scenarios under ci/
   4.2 (gh-51372) extracting a war writes `cas/cas.jar` (root web content moved to `META-INF/resources/`), no longer
   `cas/cas.war`; `run.sh` launches `cas/cas.jar` and falls back to `cas/cas.<projectType>`. When a Spring Boot bump fails
   every AOT scenario at once, diff `loader/spring-boot-jarmode-tools/.../ExtractCommand.java` between the two tags first.
+- `ci/tests/gcp/Dockerfile` builds the Firestore and Pub/Sub emulators on the pinned `google-cloud-cli` Alpine image and
+  installs the JDK the emulators need. Do not run `gcloud components update` there: it pulls the newest emulators onto
+  the pinned image, so the same commit can pass in the morning and fail in the afternoon. Firestore emulator v1.23.0
+  (Cloud SDK 592) requires Java 25, and the container died within the 5 second start check on Java 21. When Renovate
+  bumps the image, check the Cloud SDK release notes for emulator Java requirements.
 - `ci/tests/aws/run-aws-server.sh` serves the `AmazonWebServices` unit test category, not only scenarios: tests start as
   soon as it returns, and `@EnabledIfListeningOnPort(port = 4566)` passes while localstack's services are still starting.
   Components that create their AWS resources while starting (the log4j2 `SQSAppender` creates its queue in `start()`, and
@@ -104,6 +114,15 @@ description: "Write, fix and review the end-to-end puppeteer scenarios under ci/
   jcifs-ext logs the service principal in with `jcifs-service-password` only when `javax.security.auth.useSubjectCredsOnly`
   is true (`cas.authn.spnego.system.use-subject-creds-only=true`). With the CAS default (false) it skips its JAAS login
   and the JDK looks for a keytab instead, which fails with "Cannot find key of appropriate type to decrypt AP-REQ".
+- Negative-path facts learned while adding refusal checks (read from the code, confirm on first run):
+  `RegisteredServiceResponseHeadersEnforcementFilter` answers 403 for any request whose `service` is unregistered or denied,
+  validation endpoints included, so mismatch against a registered service; a TGT id passed as `ticket` is `INTERNAL_ERROR`, not
+  `INVALID_TICKET_SPEC`. `OidcJwtAuthenticator` refuses a reused `jti`, so client assertions need a random one or in-process
+  retries fail. PKCE failures (wrong, missing or replayed verifier) are client-authentication failures (401), not
+  `invalid_grant`. `RequestParameterPolicyEnforcementFilter` matches `pattern-to-block` against the raw (encoded) request URI and
+  takes `characters-to-forbid` as space-separated single characters. `ValidateCaptchaAction` refuses a blank token without
+  calling the verify URL, and a reCAPTCHA v3 score equal to the threshold is refused. Trusted-device storages drop expired
+  records on every read, so the cleaner is only observable in the backend itself (the JSON file).
 
 ## Storage backend scenarios (service registry, SAML2 metadata, MFA devices, consent)
 
@@ -172,6 +191,10 @@ description: "Write, fix and review the end-to-end puppeteer scenarios under ci/
 - Service ids in scenario JSON are regular expressions: `^https://localhost:9859/anything/1` also matches `/anything/10`,
   so give new services distinct path names. A scenario that sets `cas.service-registry.json.location` has no catch-all
   service, which is what lets it assert that a URL is refused.
+- The JSON service registry writes every service CAS saves, such as automatically or dynamically registered clients,
+  into its location. Point it at a fresh copy under `overlay/${SCENARIO}` made by `init.sh` (as `oidc-federation-end2end`
+  does), never at the scenario's own `services/` folder, or a later run reuses stale registrations (an OpenID Federation
+  RP registered with keys that no longer exist fails as "Request object signature or claims are invalid").
 - The login page is a webflow response, which sets its own cache headers; check per-service security headers on
   `/cas/p3/serviceValidate?service=...` instead (`service-security-headers`).
 - A ticket-granting ticket's last used time changes only when a ticket is issued from it, not when the login page is shown;
@@ -238,3 +261,34 @@ description: "Write, fix and review the end-to-end puppeteer scenarios under ci/
   from starting without Google credentials (exit code 4 in `actuator-endpoint-roles`).
 - `qrauthn-login` logs in over a STOMP callback; `connectAndLogin` returns a promise that settles when that
   callback's assertions finish, and the browser is closed only after it, or the assertions hit a detached frame.
+- `oidc-federation-end2end` runs a CAS trust anchor (8443) and a CAS OP (8444) with two relying parties: go-oidfed OFFA
+  (`oidfed/offa`, pinned, `https://localhost` on port 443 with host networking) and the scenario's Node RP (`rp.js`,
+  `https://localhost:9861`, started inside the script). `init.sh` works in the git-ignored
+  `overlay/oidc-federation-end2end/`: it exports the CAS keystore's key pair as PEM for both RPs (OpenSSL 3 needs the
+  current PKCS12 format, LibreSSL on macOS the legacy one), builds the JVM truststore, pins the trust anchor's public key in
+  OFFA's config, and writes the trust anchor's subordinate directory there, adding `offa.json` from OFFA's live entity
+  configuration because OFFA generates its keys on first start. The OP requires a relying party trust mark: both RPs
+  carry one issued by the trust anchor with its scenario key (`trust-mark.js`, also a CLI); `init.sh` puts OFFA's in
+  `federation.extra_entity_configuration_data.trust_marks` (raw `trust_marks` claim). Not in `federation.trust_marks`:
+  go-oidfed v0.14.0 parses a configured `trust_mark_jwt` with verification on and no keys, and OFFA exits at startup. OFFA's root page (`/`) shows the claims of its session,
+  which is what the script asserts after logging in through `/login?op=<OP entity id>&next=...`. That page calls OFFA's
+  own `/auth` from loopback, which fiber v3 refuses (`403 Untrusted Proxy`) unless `server.trusted_proxies` lists
+  `127.0.0.1` and `::1`: without `TrustProxy`, `IsProxyTrusted()` is false. OFFA discovers OPs by walking the trust
+  anchor's `/list` without parameters and fetching each subordinate's entity configuration (go-oidfed
+  `SimpleEntityCollector`), every `op_discovery.local.entity_collection_interval` (10 s here); its first run happens
+  before the trust anchor starts, so the script reloads `/login` until the OP's `data-value="<entity id>"` shows. The
+  Node RP covers what OFFA does not send (trust chain header, PAR, client assertions addressed to the issuer) and the
+  refused requests; the script also checks the trust anchor's `/list` filters directly. The OP also runs `oidc-vc` and
+  publishes `metadata/op-trust-mark.jwt` (signed RS256 with the trust anchor's federation key, no `exp`; re-sign it with
+  that key if the trust anchor's keys or the OP's entity id change), so the script checks `openid_credential_issuer`,
+  `oauth_authorization_server` and a trust mark that verifies with the trust anchor's key in the OP entity configuration.
+  Its OP is also an OID4VP verifier with the `openid_federation` prefix and `direct_post.jwt`: `wallet.js` (no walt.id,
+  which lacks the prefix) gets a `dc+sd-jwt` credential through a pre-authorized offer (`vc-client` from `services/`),
+  resolves CAS through the trust anchor with `rp.resolveEntity`, verifies the request object with the
+  `openid_credential_verifier` signing keys, encrypts its response with `RSA-OAEP-256` to the OP keystore encryption key
+  published there, and the script collects the verified claims. `trust-mark.js` issues relying party trust marks
+  for the trust anchor: required by the Node RP and, as a CLI from `init.sh`, for OFFA. The waits before the OP may
+  resolve an entity again (`RERESOLUTION_DELAY`) are read from the OP's `unresolved-entity-retention` in `script.json`;
+  keep that setting in seconds (`PTnS`). Scenario `*.jwks` files are git-ignored (`ci/tests/puppeteer/**/*.jwks`)
+  except under `oidc-federation-end2end/metadata/`: a scenario that needs committed keys must add its own exception to
+  `.gitignore`, or `git status` will not show the file and CI will run without it.

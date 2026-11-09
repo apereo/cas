@@ -1,0 +1,18 @@
+{
+  "@class" : "org.apereo.cas.support.saml.services.SamlRegisteredService",
+  "serviceId" : "^https://localhost:9859/slo-soap-unsigned$",
+  "name" : "SloSoapUnsigned",
+  "id" : 2,
+  "evaluationOrder" : 2,
+  "metadataLocation" : "file://${#environmentVariables['PWD']}/ci/tests/puppeteer/scenarios/${#environmentVariables['SCENARIO']}/sp-metadata.xml",
+  "logoutType" : "BACK_CHANNEL",
+  "signLogoutRequest" : false,
+  "requiredNameIdFormat" : "urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress",
+  "usernameAttributeProvider" : {
+    "@class" : "org.apereo.cas.services.PrincipalAttributeRegisteredServiceUsernameProvider",
+    "usernameAttribute" : "mail"
+  },
+  "attributeReleasePolicy" : {
+    "@class" : "org.apereo.cas.services.ReturnAllAttributeReleasePolicy"
+  }
+}

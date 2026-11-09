@@ -1,0 +1,12 @@
+{
+  "@class" : "org.apereo.cas.support.oauth.services.OAuthRegisteredService",
+  "clientId": "pkceclient",
+  "serviceId" : "^https://localhost:9859/anything/pkce.*",
+  "bypassApprovalPrompt": true,
+  "name" : "PublicPKCE",
+  "id" : 2,
+  "description": "Public client without a secret that redeems its codes with PKCE",
+  "supportedGrantTypes": [ "java.util.HashSet", [ "authorization_code" ] ],
+  "supportedResponseTypes": [ "java.util.HashSet", [ "code" ] ],
+  "scopes": [ "java.util.HashSet", [ "read" ] ]
+}

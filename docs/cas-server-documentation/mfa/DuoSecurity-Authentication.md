@@ -82,7 +82,7 @@ hostname from Duo Security when you register CAS as a protected application.
 
 Before redirecting to Duo Security, CAS must keep the state of the authentication flow so it can be
 restored when Duo Security redirects back. By default (`BROWSER_STORAGE`), that state is signed and encrypted,
-expires with the lifetime of transient session tickets (`cas.ticket.tst.time-to-kill-in-seconds`{: .cas-setting}), and is
+expires with the lifetime of [transient session tickets](../ticketing/Configuring-Ticket-Expiration-Policy-TST.html), and is
 handed to the browser, which keeps it in its local storage. If local storage is unavailable, blocked or full,
 CAS falls back to keeping the same payload in a set of cookies instead, split into chunks named `CasBrowserStorage_*`
 and scoped to the CAS context path. Those cookies are removed as soon as the Duo Security response is processed.

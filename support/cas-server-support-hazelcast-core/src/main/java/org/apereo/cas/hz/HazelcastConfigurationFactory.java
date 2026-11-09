@@ -157,7 +157,9 @@ public class HazelcastConfigurationFactory {
             ? SpringExpressionLanguageValueResolver.getInstance().resolve(cluster.getCore().getInstanceName())
             : UUID.randomUUID().toString();
         LOGGER.trace("Configuring Hazelcast instance name [{}]", instanceName);
-        return config.setInstanceName(instanceName)
+        return config
+            .setClusterName(cluster.getCore().getClusterName())
+            .setInstanceName(instanceName)
             .setProperty(BaseHazelcastProperties.HAZELCAST_DISCOVERY_ENABLED_PROP,
                 BooleanUtils.toStringTrueFalse(cluster.getDiscovery().isEnabled()))
             .setProperty(BaseHazelcastProperties.IPV4_STACK_PROP, String.valueOf(cluster.getNetwork().isIpv4Enabled()))

@@ -14,6 +14,7 @@ import org.apereo.cas.token.cipher.RegisteredServiceJwtTicketCipherExecutor;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import com.nimbusds.jwt.JWTClaimsSet;
+import com.nimbusds.jwt.PlainJWT;
 import lombok.val;
 import org.jose4j.jwe.ContentEncryptionAlgorithmIdentifiers;
 import org.jspecify.annotations.Nullable;
@@ -64,6 +65,27 @@ class JwtBuilderTests {
         assertEquals("casuser", Objects.requireNonNull(claims).getSubject());
     }
 
+    /**
+     * An unsigned JWT carries no proof of who issued it, so it unpacks to nothing, with or without a service and whether
+     * or not default keys are defined, and it is never built when there are no keys to sign or encrypt it.
+     */
+    @Test
+    void verifyUnsignedJwtIsRefused() {
+        val service = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString());
+        val unsigned = new PlainJWT(new JWTClaimsSet.Builder().subject("casuser").build()).serialize();
+        assertTrue(JwtBuilder.isUnsigned(unsigned));
+        assertFalse(JwtBuilder.isUnsigned("not-a-jwt"));
+        assertFalse(JwtBuilder.isUnsigned(null));
+        val builder = new JwtBuilder(CipherExecutor.noOpOfSerializableToString(), mock(ApplicationContext.class),
+            mock(ServicesManager.class), mock(PrincipalResolver.class), new RegisteredServiceJwtTicketCipherExecutor(), mock(ServiceFactory.class),
+            new CasConfigurationProperties());
+        assertNull(builder.unpack(unsigned));
+        assertNull(builder.unpack(Optional.of(service), unsigned));
+        val claims = new JWTClaimsSet.Builder().subject("casuser").build();
+        assertThrows(IllegalStateException.class, () -> builder.build(service, claims));
+        assertThrows(IllegalStateException.class, () -> builder.build(null, claims));
+    }
+
     @Nested
     class DefaultTests extends BaseJwtTokenTicketBuilderTests {
         @Test
@@ -82,6 +104,9 @@ class JwtBuilderTests {
                 .issuer(casProperties.getServer().getPrefix())
                 .build());
             assertNotNull(jwt);
+            assertFalse(JwtBuilder.isUnsigned(jwt));
+            assertEquals("casuser", Objects.requireNonNull(tokenTicketJwtBuilder.unpack(jwt)).getSubject());
+            assertNull(tokenTicketJwtBuilder.unpack(new PlainJWT(new JWTClaimsSet.Builder().subject("casuser").build()).serialize()));
         }
     }
 

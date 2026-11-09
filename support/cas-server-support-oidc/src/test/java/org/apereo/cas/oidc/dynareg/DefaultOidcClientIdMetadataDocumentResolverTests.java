@@ -21,6 +21,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.TestPropertySource;
+import java.net.Proxy;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -247,6 +248,9 @@ class DefaultOidcClientIdMetadataDocumentResolverTests {
                 webServer.responseStatus(org.springframework.http.HttpStatus.OK);
                 webServer.setContentType("text/html");
                 assertThrows(IllegalArgumentException.class, () -> fetcher.fetch(location));
+                val anyContentType = new DefaultOidcClientIdMetadataDocumentFetcher(httpClient, Duration.ofSeconds(5),
+                    _ -> true, _ -> new InetAddress[]{loopback}, DefaultOidcClientIdMetadataDocumentFetcher.MAXIMUM_DOCUMENT_SIZE, false);
+                assertTrue(anyContentType.fetch(location).json().contains("Example MCP Client"));
                 webServer.setContentType("application/json");
                 webServer.responseBody("x".repeat(DefaultOidcClientIdMetadataDocumentFetcher.MAXIMUM_DOCUMENT_SIZE + 1));
                 assertThrows(IllegalArgumentException.class, () -> fetcher.fetch(location));
@@ -263,6 +267,28 @@ class DefaultOidcClientIdMetadataDocumentResolverTests {
             for (val address : List.of("93.184.216.34", "8.8.8.8", "2606:4700::6810:84e5", "64:ff9b::808:808")) {
                 assertTrue(DefaultOidcClientIdMetadataDocumentFetcher.isPublicAddress(InetAddress.getByName(address)), address);
             }
+            for (val address : List.of("169.254.169.254", "::ffff:169.254.169.254", "64:ff9b::a9fe:a9fe", "::a9fe:a9fe", "0.0.0.0",
+                "::", "224.0.0.1", "fe80::1")) {
+                assertFalse(DefaultOidcClientIdMetadataDocumentFetcher.isAllowedWithPrivateNetworks(InetAddress.getByName(address)), address);
+            }
+            for (val address : List.of("10.0.0.1", "127.0.0.1", "::1", "fd12:3456::1", "93.184.216.34", "64:ff9b::808:808")) {
+                assertTrue(DefaultOidcClientIdMetadataDocumentFetcher.isAllowedWithPrivateNetworks(InetAddress.getByName(address)), address);
+            }
+            val mapped = Inet6Address.getByAddress(null, new byte[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, (byte) 0xff, (byte) 0xff,
+                (byte) 169, (byte) 254, (byte) 169, (byte) 254}, null);
+            assertFalse(DefaultOidcClientIdMetadataDocumentFetcher.isPublicAddress(mapped));
+            assertFalse(DefaultOidcClientIdMetadataDocumentFetcher.isAllowedWithPrivateNetworks(mapped));
+            for (val url : List.of("https://169.254.169.254/x", "https://[::ffff:a9fe:a9fe]/x", "https://[64:ff9b::a9fe:a9fe]/x")) {
+                assertFalse(DefaultOidcClientIdMetadataDocumentFetcher.isAllowedWithPrivateNetworks(new URI(url).toURL()), url);
+            }
+            val unresolvable = new URI("https://cas-test.invalid/x").toURL();
+            assertTrue(DefaultOidcClientIdMetadataDocumentFetcher.isAllowedWithPrivateNetworks(unresolvable, proxySelector(Proxy.Type.HTTP)));
+            assertTrue(DefaultOidcClientIdMetadataDocumentFetcher.isAllowedWithPrivateNetworks(unresolvable, proxySelector(Proxy.Type.SOCKS)));
+            assertThrows(UnknownHostException.class, () -> DefaultOidcClientIdMetadataDocumentFetcher.isAllowedWithPrivateNetworks(unresolvable, null));
+            for (val type : List.of(Proxy.Type.HTTP, Proxy.Type.SOCKS)) {
+                assertFalse(DefaultOidcClientIdMetadataDocumentFetcher.isAllowedWithPrivateNetworks(
+                    new URI("https://169.254.169.254/x").toURL(), proxySelector(type)), type::name);
+            }
             val publicAddress = InetAddress.getByAddress(new byte[]{93, (byte) 184, (byte) 216, 34});
             val fetcher = new DefaultOidcClientIdMetadataDocumentFetcher(httpClient, Duration.ofSeconds(1),
                 DefaultOidcClientIdMetadataDocumentFetcher::isPublicAddress,
@@ -271,6 +297,19 @@ class DefaultOidcClientIdMetadataDocumentResolverTests {
             val unresolved = new DefaultOidcClientIdMetadataDocumentFetcher(httpClient, Duration.ofSeconds(1),
                 DefaultOidcClientIdMetadataDocumentFetcher::isPublicAddress, _ -> new InetAddress[0]);
             assertThrows(IllegalArgumentException.class, () -> unresolved.fetch(URI.create("https://app.example.org/client.json")));
+        }
+
+        private static ProxySelector proxySelector(final Proxy.Type type) {
+            return new ProxySelector() {
+                @Override
+                public List<Proxy> select(final URI uri) {
+                    return List.of(new Proxy(type, InetSocketAddress.createUnresolved("proxy.example.org", 3128)));
+                }
+
+                @Override
+                public void connectFailed(final URI uri, final SocketAddress address, final IOException failure) {
+                }
+            };
         }
 
         @Test

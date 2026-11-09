@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Service providers whose ACS is httpbin, used to inspect the signatures of the SAML2 response.
+    None of them publishes signing method preferences, so the algorithms come from CAS settings only.
+-->
+<md:EntitiesDescriptor xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata"
+                       Name="https://signing.example.org/federation">
+    <md:EntityDescriptor entityID="https://signing.example.org/sp-sha1">
+        <md:SPSSODescriptor AuthnRequestsSigned="false" WantAssertionsSigned="false"
+                            protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol">
+            <md:NameIDFormat>urn:oasis:names:tc:SAML:2.0:nameid-format:transient</md:NameIDFormat>
+            <md:AssertionConsumerService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"
+                                         Location="https://localhost:9859/post" index="1"/>
+        </md:SPSSODescriptor>
+    </md:EntityDescriptor>
+    <md:EntityDescriptor entityID="https://signing.example.org/sp-assertion">
+        <md:SPSSODescriptor AuthnRequestsSigned="false" WantAssertionsSigned="false"
+                            protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol">
+            <md:NameIDFormat>urn:oasis:names:tc:SAML:2.0:nameid-format:transient</md:NameIDFormat>
+            <md:AssertionConsumerService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"
+                                         Location="https://localhost:9859/post" index="1"/>
+        </md:SPSSODescriptor>
+    </md:EntityDescriptor>
+    <md:EntityDescriptor entityID="https://signing.example.org/sp-default">
+        <md:SPSSODescriptor AuthnRequestsSigned="false" WantAssertionsSigned="false"
+                            protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol">
+            <md:NameIDFormat>urn:oasis:names:tc:SAML:2.0:nameid-format:transient</md:NameIDFormat>
+            <md:AssertionConsumerService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"
+                                         Location="https://localhost:9859/post" index="1"/>
+        </md:SPSSODescriptor>
+    </md:EntityDescriptor>
+    <md:EntityDescriptor entityID="https://signing.example.org/sp-blocked">
+        <md:SPSSODescriptor AuthnRequestsSigned="false" WantAssertionsSigned="false"
+                            protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol">
+            <md:NameIDFormat>urn:oasis:names:tc:SAML:2.0:nameid-format:transient</md:NameIDFormat>
+            <md:AssertionConsumerService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"
+                                         Location="https://localhost:9859/post" index="1"/>
+        </md:SPSSODescriptor>
+    </md:EntityDescriptor>
+</md:EntitiesDescriptor>

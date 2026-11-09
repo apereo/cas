@@ -57,6 +57,18 @@ public interface OAuth20AuthorizationResponseBuilder extends Ordered {
      */
     boolean supports(OAuth20AuthorizationRequest context);
 
+    /**
+     * Verify a pushed authorization request (RFC 9126) before it is stored, as this builder would verify the
+     * authorization request that later refers to it, so the client is told when it pushes the request instead of
+     * being redirected with the error later. Only the builder that will answer that authorization request is asked.
+     *
+     * @param context the pushed authorization request
+     * @return the error response body, with {@code error} and {@code error_description}, or empty when the request is accepted
+     */
+    default Optional<Map<String, Object>> verifyPushedAuthorizationRequest(final AccessTokenRequestContext context) {
+        return Optional.empty();
+    }
+
     @Override
     default int getOrder() {
         return Ordered.LOWEST_PRECEDENCE;

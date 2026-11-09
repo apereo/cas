@@ -2,8 +2,13 @@
   "entityId" : "http://intermediate",
   "metadata": {
     "federation_entity": {
-      "federation_fetch_endpoint": "http://someurl"
+      "federation_fetch_endpoint": "http://someurl",
+      "federation_list_endpoint": "http://someurl/list",
+      "organization_name": "Intermediate"
     }
+  },
+  "constraints": {
+    "max_path_length": 2
   },
   "federationKeys": [
     {

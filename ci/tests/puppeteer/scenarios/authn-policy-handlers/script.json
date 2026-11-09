@@ -1,0 +1,55 @@
+{
+  "dependencies": "generic",
+  "conditions": {
+    "docker": "true"
+  },
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
+    "--cas.service-registry.core.init-from-json=true",
+    "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services",
+
+    "--cas.authn.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/accounts.json",
+    "--cas.authn.json.name=JsonHandler",
+
+    "--cas.authn.accept.enabled=true",
+    "--cas.authn.accept.name=AcceptHandler",
+    "--cas.authn.accept.users=casuser::Mellon,bothuser::Mellon"
+  ],
+  "variations": [
+    {
+      "name": "all",
+      "properties": [
+        "--cas.authn.policy.all.enabled=true",
+        "--cas.authn.policy.required-handler-authentication-policy-enabled=true"
+      ]
+    },
+    {
+      "name": "tryall",
+      "properties": [
+        "--cas.authn.policy.any.try-all=true"
+      ]
+    },
+    {
+      "name": "allhandlers",
+      "properties": [
+        "--cas.authn.policy.all-handlers.enabled=true"
+      ]
+    },
+    {
+      "name": "required",
+      "properties": [
+        "--cas.authn.policy.req.enabled=true",
+        "--cas.authn.policy.req.handler-name=AcceptHandler"
+      ]
+    },
+    {
+      "name": "notprevented",
+      "properties": [
+        "--cas.authn.policy.not-prevented.enabled=true"
+      ]
+    }
+  ],
+  "initScript": "${PWD}/ci/tests/httpbin/run-httpbin-server.sh"
+}
