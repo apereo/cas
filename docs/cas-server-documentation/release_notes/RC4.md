@@ -936,6 +936,9 @@ one-time codes can be added when `cas.authn.mfa.simple.mail.accepted-email-patte
 
 ## Other Stuff
 
+- {: .fixed data-area="project"} The vulnerability report of the [dependencies endpoint](../installation/Dependency-Management-Versions.html#actuator-endpoints)
+  follows OSV pagination for each dependency, so vulnerabilities past the first page of a result are no longer left out,
+  and vulnerability details that cannot be read are reported as errors instead of being dropped silently.
 - {: .changed data-area="project"} A large number of dependencies and libraries have been updated to their latest versions.
 
 {% include release-footer.html %}

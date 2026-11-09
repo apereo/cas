@@ -243,10 +243,9 @@ public class OidcDefaultClientRegistrationRequestTranslator implements OidcClien
         if (Strings.CI.equals(AlgorithmIdentifiers.NONE, registrationRequest.getIdTokenSignedResponseAlg())) {
             throw new IllegalArgumentException("Unsigned ID tokens are not issued");
         }
-        if (StringUtils.isNotBlank(registrationRequest.getIdTokenSignedResponseAlg())) {
-            registeredService.setIdTokenSigningAlg(registrationRequest.getIdTokenSignedResponseAlg());
-        }
 
+        FunctionUtils.doIfNotBlank(registrationRequest.getIdTokenSignedResponseAlg(), registeredService::setIdTokenSigningAlg);
+        
         if (StringUtils.isNotBlank(registrationRequest.getIdTokenEncryptedResponseAlg())) {
             registeredService.setIdTokenEncryptionAlg(registrationRequest.getIdTokenEncryptedResponseAlg());
             registeredService.setEncryptIdToken(true);

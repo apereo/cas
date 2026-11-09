@@ -646,8 +646,7 @@ public abstract class AbstractOidcTests {
     protected static String buildClientAttestation(final String clientId, final JWK instanceKey,
                                                    final boolean includeTrustAnchor)
             throws Exception {
-        val providerKey = (ECKey) JWKSet.load(new ClassPathResource("client-attestation-x5c.jwks").getInputStream())
-            .getKeyByKeyId("wallet-provider");
+        val providerKey = getClientAttestationProviderKey();
         val certificateChain = providerKey.getX509CertChain();
         val chain = includeTrustAnchor ? certificateChain : certificateChain.subList(0, 1);
         val header = new JWSHeader.Builder(JWSAlgorithm.ES256)
@@ -663,6 +662,19 @@ public abstract class AbstractOidcTests {
         val attestation = new SignedJWT(header, claims);
         attestation.sign(new ECDSASigner(providerKey));
         return attestation.serialize();
+    }
+
+    /**
+     * The key of the wallet provider that signs client attestations, whose certificate chain leads to the trust anchor
+     * the tests configure.
+     *
+     * @return the wallet provider key
+     * @throws Exception the exception
+     */
+    protected static ECKey getClientAttestationProviderKey() throws Exception {
+        try (val input = new ClassPathResource("client-attestation-x5c.jwks").getInputStream()) {
+            return (ECKey) JWKSet.load(input).getKeyByKeyId("wallet-provider");
+        }
     }
 
     /**

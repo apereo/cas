@@ -9,13 +9,17 @@ import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.util.CollectionUtils;
 import com.jayway.jsonpath.JsonPath;
+import com.nimbusds.jose.JOSEObjectType;
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.JWSHeader;
+import com.nimbusds.jose.crypto.ECDSASigner;
+import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jose.crypto.RSASSASigner;
 import com.nimbusds.jose.jwk.Curve;
 import com.nimbusds.jose.jwk.ECKey;
 import com.nimbusds.jose.jwk.gen.ECKeyGenerator;
 import com.nimbusds.jose.jwk.gen.RSAKeyGenerator;
+import com.nimbusds.jose.util.Base64;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 import com.nimbusds.oauth2.sdk.dpop.DefaultDPoPProofFactory;
@@ -25,6 +29,8 @@ import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.ResultActions;
@@ -189,6 +195,102 @@ class OidcPushedAuthorizeEndpointControllerTests extends AbstractOidcTests {
             .andExpect(status().isUnauthorized());
     }
 
+    @ParameterizedTest
+    @ValueSource(strings = {"missing-chain", "unparseable-key", "invalid-certificate", "missing-subject", "blank-subject",
+        "missing-expiration", "expired", "future-issued-at", "missing-confirmation", "missing-key", "malformed-key",
+        "private-key", "wrong-type", "disallowed-algorithm", "wrong-signature"})
+    void verifyRejectsInvalidClientAttestation(final String failure) throws Exception {
+        val id = registerClient();
+        val instanceKey = new ECKeyGenerator(Curve.P_256).generate();
+        val valid = SignedJWT.parse(buildClientAttestation(id, instanceKey, false));
+        val header = new JWSHeader.Builder(valid.getHeader());
+        val claims = new JWTClaimsSet.Builder(valid.getJWTClaimsSet());
+        val now = Instant.now();
+        switch (failure) {
+            case "missing-chain" -> header.x509CertChain(null);
+            case "unparseable-key" -> claims.claim("cnf", Map.of("jwk", Map.of("kty", "invalid")));
+            case "invalid-certificate" -> header.x509CertChain(List.of(Base64.encode("invalid certificate")));
+            case "missing-subject" -> claims.subject(null);
+            case "blank-subject" -> claims.subject(" ");
+            case "missing-expiration" -> claims.expirationTime(null);
+            case "expired" -> claims.expirationTime(Date.from(now.minusSeconds(600)));
+            case "future-issued-at" -> claims.issueTime(Date.from(now.plusSeconds(600)));
+            case "missing-confirmation" -> claims.claim("cnf", null);
+            case "missing-key" -> claims.claim("cnf", Map.of());
+            case "malformed-key" -> claims.claim("cnf", Map.of("jwk", "invalid"));
+            case "private-key" -> claims.claim("cnf", Map.of("jwk", instanceKey.toJSONObject()));
+            case "wrong-type" -> header.type(new JOSEObjectType("JWT"));
+            case "disallowed-algorithm", "wrong-signature" -> {
+            }
+            default -> fail("Unexpected attestation case " + failure);
+        }
+        val modifiedHeader = "disallowed-algorithm".equals(failure)
+            ? new JWSHeader.Builder(JWSAlgorithm.HS256).type(valid.getHeader().getType())
+                .x509CertChain(valid.getHeader().getX509CertChain()).build()
+            : header.build();
+        val invalid = new SignedJWT(modifiedHeader, claims.build());
+        if ("disallowed-algorithm".equals(failure)) {
+            invalid.sign(new MACSigner(new byte[32]));
+        } else if ("wrong-signature".equals(failure)) {
+            invalid.sign(new ECDSASigner(new ECKeyGenerator(Curve.P_256).generate()));
+        } else {
+            invalid.sign(new ECDSASigner(getClientAttestationProviderKey()));
+        }
+        val proof = buildClientAttestationProof(instanceKey, oidcServerDiscoverySettings.getIssuer());
+        performPushedAuthorizationRequest(id, invalid.serialize(), proof)
+            .andExpect(status().isUnauthorized());
+        performPushedAuthorizationRequest(id, valid.serialize(), proof)
+            .andExpect(status().isCreated())
+            .andExpect(jsonPath("$.request_uri").exists());
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"missing-issued-at", "future-issued-at", "stale-issued-at", "missing-audience",
+        "missing-identifier", "blank-identifier", "wrong-type"})
+    void verifyRejectsInvalidClientAttestationProof(final String failure) throws Exception {
+        val id = registerClient();
+        val instanceKey = new ECKeyGenerator(Curve.P_256).generate();
+        val attestation = buildClientAttestation(id, instanceKey, false);
+        val valid = SignedJWT.parse(buildClientAttestationProof(instanceKey, oidcServerDiscoverySettings.getIssuer()));
+        val header = new JWSHeader.Builder(valid.getHeader());
+        val claims = new JWTClaimsSet.Builder(valid.getJWTClaimsSet());
+        val now = Instant.now();
+        switch (failure) {
+            case "missing-issued-at" -> claims.issueTime(null);
+            case "future-issued-at" -> claims.issueTime(Date.from(now.plusSeconds(600)));
+            case "stale-issued-at" -> claims.issueTime(Date.from(now.minusSeconds(600)));
+            case "missing-audience" -> claims.audience(List.of());
+            case "missing-identifier" -> claims.jwtID(null);
+            case "blank-identifier" -> claims.jwtID(" ");
+            case "wrong-type" -> header.type(new JOSEObjectType("JWT"));
+            default -> fail("Unexpected proof case " + failure);
+        }
+        val invalid = new SignedJWT(header.build(), claims.build());
+        invalid.sign(new ECDSASigner(instanceKey));
+        performPushedAuthorizationRequest(id, attestation, invalid.serialize())
+            .andExpect(status().isUnauthorized());
+        performPushedAuthorizationRequest(id, attestation, valid.serialize())
+            .andExpect(status().isCreated())
+            .andExpect(jsonPath("$.request_uri").exists());
+    }
+
+    @Test
+    void verifyClientAttestationWithRsaInstanceKey() throws Exception {
+        val id = registerClient();
+        val instanceKey = new RSAKeyGenerator(2048).generate();
+        val attestation = buildClientAttestation(id, instanceKey, false);
+        val proof = new SignedJWT(new JWSHeader.Builder(JWSAlgorithm.RS256)
+            .type(new JOSEObjectType("oauth-client-attestation-pop+jwt")).build(),
+            new JWTClaimsSet.Builder().audience(oidcServerDiscoverySettings.getIssuer())
+                .issueTime(new Date()).jwtID(UUID.randomUUID().toString()).build());
+        proof.sign(new RSASSASigner(instanceKey));
+        performPushedAuthorizationRequest(id, attestation, proof.serialize())
+            .andExpect(status().isCreated())
+            .andExpect(jsonPath("$.request_uri").exists());
+        performPushedAuthorizationRequest(id, attestation, proof.serialize())
+            .andExpect(status().isUnauthorized());
+    }
+
     @Test
     void verifyPostWithClientAttestationInDPoPCombinedMode() throws Exception {
         val id = UUID.randomUUID().toString();
@@ -265,6 +367,14 @@ class OidcPushedAuthorizeEndpointControllerTests extends AbstractOidcTests {
         return CollectionUtils.firstElement(request.getAuthentication().getAttributes().get(OAuth20Constants.DPOP_JKT))
             .map(Object::toString)
             .orElse(null);
+    }
+
+    private String registerClient() {
+        val id = UUID.randomUUID().toString();
+        val service = getOidcRegisteredService(id);
+        service.setBypassApprovalPrompt(true);
+        servicesManager.save(service);
+        return id;
     }
 
     private ResultActions performPushedAuthorizationRequest(final String clientId, final String attestation,
