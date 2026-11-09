@@ -59,6 +59,14 @@ public class RiskAuthenticationCheckTokenAction extends BaseCasWebflowAction {
 
     protected final TenantExtractor tenantExtractor;
 
+    /**
+     * Verify the risk token and record the confirmed risky authentication. A token whose claims cannot be unpacked
+     * (one whose signature cannot be verified unpacks to nothing) or that has expired is refused with an error event.
+     *
+     * @param requestContext the request context
+     * @return the event
+     * @throws Throwable the throwable
+     */
     @Override
     protected @Nullable Event doExecuteInternal(final RequestContext requestContext) throws Throwable {
         try {
@@ -66,7 +74,8 @@ public class RiskAuthenticationCheckTokenAction extends BaseCasWebflowAction {
             val riskToken = requestContext.getRequestParameters().getRequired(PARAMETER_NAME_RISK_TOKEN);
             val jwtBuilder = new JwtBuilder(riskVerificationCipherExecutor, applicationContext,
                 servicesManager, principalResolver, casProperties, serviceFactory);
-            val jwtClaims = jwtBuilder.unpack(riskToken);
+            val jwtClaims = Optional.ofNullable(jwtBuilder.unpack(riskToken))
+                .orElseThrow(() -> new IllegalArgumentException("Risk token cannot be verified"));
 
             val event = new CasEvent();
             event.setType(CasRiskyAuthenticationVerifiedEvent.class.getCanonicalName());

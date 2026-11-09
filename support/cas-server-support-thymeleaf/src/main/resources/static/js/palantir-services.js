@@ -37,10 +37,10 @@ async function initializeServicesOperations() {
     $("#entityHistoryTable").DataTable({
         pageLength: 10,
         autoWidth: false,
+        order: [[2, "asc"]],
+        layout: {topStart: null, topEnd: null},
         columnDefs: [
-            {width: "5%", targets: 0},
-            {width: "25%", targets: 1},
-            {visible: false, targets: 2}
+            {visible: false, type: "num", targets: 2}
         ],
         drawCallback: settings => {
             $("#entityHistoryTable tr").addClass("mdc-data-table__row");
@@ -96,7 +96,6 @@ async function initializeServicesOperations() {
 
 let serviceEditorInstance = null;
 let editServiceDialogInstance = null;
-let entityHistoryDialogInstance = null;
 
 /**
  * Sizes the plain editor dialog to the window, leaving a small margin.
@@ -140,7 +139,11 @@ function getEditServiceDialogInstance() {
                 draggable: false,
                 resizable: false,
                 classes: {"ui-dialog": "ui-corner-all registered-service-wizard-dialog"},
-                close: () => $(window).off("resize.serviceEditor")
+                beforeClose: () => PalantirServiceEditGuard.beforeClose("editor"),
+                close: () => {
+                    $(window).off("resize.serviceEditor");
+                    PalantirServiceEditGuard.closed("editor");
+                }
             });
         }
         editServiceDialogInstance = {
@@ -150,6 +153,22 @@ function getEditServiceDialogInstance() {
                 $(window)
                     .off("resize.serviceEditor")
                     .on("resize.serviceEditor", sizeServiceEditorDialog);
+                const text = serviceEditorInstance.getValue();
+                let serviceId = null;
+                if (element.attr("newService") !== "true") {
+                    try {
+                        serviceId = JSON.parse(text).id;
+                    } catch (error) {
+                        serviceId = null;
+                    }
+                }
+                const key = PalantirServiceEditGuard.key("editor", serviceId);
+                PalantirServiceEditGuard.offerDraft(key, text).then(draft => {
+                    if (draft !== null) {
+                        serviceEditorInstance.setValue(draft, -1);
+                    }
+                    PalantirServiceEditGuard.watch("editor", key, draft !== null);
+                });
             },
             close: () => element.dialog("close")
         };
@@ -157,54 +176,13 @@ function getEditServiceDialogInstance() {
     return editServiceDialogInstance;
 }
 
-function getEntityHistoryDialogInstance() {
-    if (!entityHistoryDialogInstance) {
-        entityHistoryDialogInstance = window.mdc.dialog.MDCDialog.attachTo(document.getElementById("viewEntityHistoryDialog"));
-    }
-    return entityHistoryDialogInstance;
-}
-
 async function initializeServiceButtons() {
+    PalantirServiceEditGuard.initialize();
     getEditServiceDialogInstance();
     serviceEditorInstance = initializeAceEditor("serviceEditor");
 
     function viewEntityHistory(serviceId) {
-        const entityHistoryTable = $("#entityHistoryTable").DataTable();
-        $.get(`${CasActuatorEndpoints.entityHistory()}/registeredServices/${serviceId}`, response => {
-            entityHistoryTable.clear();
-
-            const editor = initializeAceEditor("entityHistoryEditor", "json");
-            editor.setValue("");
-            editor.setReadOnly(true);
-
-            for (const item of response) {
-                entityHistoryTable.row.add({
-                    0: `<code>${item.id}</code>`,
-                    1: `<code>${item.date}</code>`,
-                    2: `${JSON.stringify(item.entity, null, 4)}`,
-                    serviceId: serviceId,
-                    revisionId: item.id
-                });
-            }
-
-            entityHistoryTable.draw();
-            entityHistoryTable.off("click", "tbody tr").on("click", "tbody tr", function () {
-                let data = entityHistoryTable.row(this).data();
-                editor.setValue(data[2]);
-                editor.gotoLine(1);
-                editor.setReadOnly(true);
-            });
-
-            if (response.length > 0) {
-                getEntityHistoryDialogInstance()["open"]();
-            } else {
-                Swal.fire("No History!", "There are no changes recorded for this application definition.", "info");
-            }
-
-        }).fail((xhr, status, error) => {
-            console.error("Error fetching data:", error);
-            displayBanner(xhr);
-        });
+        PalantirServiceHistory.open(serviceId);
     }
 
     initializeDataTableContextMenu({
@@ -215,30 +193,7 @@ async function initializeServiceButtons() {
         },
         callback: (key, context) => {
             if (key === "restore") {
-                const {serviceId, revisionId} = context.rowData;
-                Swal.fire({
-                    title: "Restore this version?",
-                    text: `Version ${revisionId} will replace the current definition of service ${serviceId}.`,
-                    icon: "question",
-                    showCancelButton: true,
-                    confirmButtonText: "Restore",
-                    showLoaderOnConfirm: true,
-                    allowOutsideClick: () => !Swal.isLoading(),
-                    preConfirm: () => $.ajax({
-                        url: `${CasActuatorEndpoints.entityHistory()}/registeredServices/${encodeURIComponent(serviceId)}/restore/${encodeURIComponent(revisionId)}`,
-                        type: "POST",
-                        headers: {"Accept": "application/json"}
-                    }).catch(xhr => {
-                        console.error("Error restoring service:", xhr);
-                        Swal.showValidationMessage("Unable to restore this version. Please try again or check your access to service history.");
-                    })
-                }).then(result => {
-                    if (result.isConfirmed) {
-                        getEntityHistoryDialogInstance()["close"]();
-                        fetchServices(() => updateNavigationSidebar());
-                        Swal.fire("Service Restored", `Version ${revisionId} is now the current definition of service ${serviceId}.`, "success");
-                    }
-                });
+                PalantirServiceHistory.restore(context.rowData.serviceId, context.rowData.revisionId);
             }
         }
     });
@@ -345,6 +300,7 @@ async function initializeServiceButtons() {
                             contentType: "application/json",
                             data: value,
                             success: async response => {
+                                PalantirServiceEditGuard.saved(saveButton.attr("name") === "saveServiceWizard" ? "wizard" : "editor");
                                 dialogInstance["close"]();
                                 await fetchServices(() => {
                                     let newServiceId = response.id;
@@ -366,27 +322,28 @@ async function initializeServiceButtons() {
         }
     });
 
-    function copyService(serviceId) {
+    /**
+     * Open a copy of an application in the wizard as a new application: named "Copy of" the original, without its
+     * numeric id, with an empty service id to fill in, and with a new client id and secret where it has them.
+     *
+     * @param serviceId the numeric id of the application to duplicate
+     */
+    function duplicateService(serviceId) {
         if (CasActuatorEndpoints.registeredServices()) {
             $.get(`${CasActuatorEndpoints.registeredServices()}/${serviceId}`, response => {
-                let clone = {...response};
-                clone.serviceId = "...";
-                clone.name = `...`;
+                const clone = structuredClone(response);
                 delete clone.id;
-
-                ["clientId", "clientSecret", "metadataLocation"].forEach(entry => {
-                    if (Object.hasOwn(clone, entry)) {
-                        clone[entry] = `...`;
-                    }
-                });
-                const value = JSON.stringify(clone, null, 4);
-                serviceEditorInstance.setValue(value, -1);
-                serviceEditorInstance.gotoLine(1);
-                serviceEditorInstance.findAll("...", {regExp: false});
-
-                const editServiceDialogElement = document.getElementById("editServiceDialog");
-                $(editServiceDialogElement).attr("newService", true);
-                getEditServiceDialogInstance()["open"]();
+                clone.name = `Copy of ${response.name ?? serviceId}`;
+                clone.serviceId = "";
+                if (Object.hasOwn(clone, "clientId")) {
+                    clone.clientId = generateRandom(24);
+                }
+                if (Object.hasOwn(clone, "clientSecret") || Object.hasOwn(clone, "clientSecrets")) {
+                    delete clone.clientSecrets;
+                    delete clone.clientSecretExpiration;
+                    clone.clientSecret = generateRandom(48);
+                }
+                openRegisteredServiceWizardDialog(clone, {duplicate: true, original: response.name ?? String(serviceId)});
             }).fail((xhr, status, error) => {
                 console.error("Error fetching data:", error);
                 displayBanner(xhr);
@@ -401,7 +358,7 @@ async function initializeServiceButtons() {
         items: {
             editPlain: {name: "Edit in Editor", icon: contextMenuIcon("mdi-pencil")},
             editWizard: {name: "Edit in Wizard", icon: contextMenuIcon("mdi-wizard-hat")},
-            copy: {name: "Copy Service Definition", icon: contextMenuIcon("mdi-content-copy")},
+            duplicate: {name: "Duplicate Application", icon: contextMenuIcon("mdi-content-duplicate")},
             delete: {name: "Delete Service Definition", icon: contextMenuIcon("mdi-delete")},
             sep1: "---------",
             history: {
@@ -424,8 +381,8 @@ async function initializeServiceButtons() {
             editService(serviceId, false);
         } else if (key === "editWizard") {
             editService(serviceId, true);
-        } else if (key === "copy") {
-            copyService(serviceId);
+        } else if (key === "duplicate") {
+            duplicateService(serviceId);
         } else if (key === "delete") {
             deleteService(context);
         } else if (key === "history") {

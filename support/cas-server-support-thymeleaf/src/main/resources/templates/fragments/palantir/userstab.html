@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+</head>
+<body>
+<span th:fragment="main">
+    <!--/*
+        Everything the enabled actuator endpoints know about one user, gathered on one page. Each card is
+        drawn by palantir-users.js from one source; a source whose endpoint is not enabled has no card.
+    */-->
+    <div class="attribute-tab w-100 d-none" id="attribute-tab-16">
+        <section class="palantir-user-lookup" aria-labelledby="userLookupHeading">
+            <form id="fmUserLookup" class="palantir-user-lookup__form" onsubmit="return false;">
+                <h3 id="userLookupHeading" class="palantir-sr-only">Look up a user</h3>
+                <label class="registered-service-sections__search palantir-user-lookup__search" for="userLookupUsername">
+                    <i class="mdi mdi-account-search" aria-hidden="true"></i>
+                    <span class="palantir-sr-only">Username</span>
+                    <input type="search" id="userLookupUsername" name="userLookupUsername" autocomplete="off"
+                           placeholder="Username" required/>
+                </label>
+                <label class="palantir-user-lookup__window" for="userLookupAuditWindow">
+                    <span>Activity</span>
+                    <select id="userLookupAuditWindow" class="jqueryui-selectmenu">
+                        <option value="PT24H">Last 24 hours</option>
+                        <option value="P7D" selected>Last 7 days</option>
+                        <option value="P30D">Last 30 days</option>
+                    </select>
+                </label>
+                <button type="submit" id="userLookupButton" class="palantir-button is-primary">
+                    <i class="mdi mdi-magnify" aria-hidden="true"></i><span>Look up</span>
+                </button>
+            </form>
+            <p id="userLookupSummary" class="palantir-user-lookup__summary" role="status" aria-live="polite">
+                Enter a username to see its sessions, devices, consent decisions, attributes and recent activity.
+            </p>
+            <div id="userLookupResults" class="palantir-user-lookup__grid"></div>
+        </section>
+    </div>
+</span>
+</body>
+</html>

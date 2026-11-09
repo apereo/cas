@@ -36,6 +36,19 @@ const assert = require("assert");
         assert(error.response.status === 401);
     });
 
+    const wrongVerifier = "dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk";
+    accessTokenParams = `client_id=client&code_verifier=${wrongVerifier}&grant_type=authorization_code&redirect_uri=${redirectUrl}`;
+    accessTokenUrl = `https://localhost:8443/cas/oidc/token?${accessTokenParams}&code=${code}`;
+    await cas.log(`Calling ${accessTokenUrl} with a code verifier that does not match the challenge`);
+    await cas.doPost(accessTokenUrl, "", {
+        "Content-Type": "application/json"
+    }, async (res) => {
+        throw `Operation should fail to obtain access token: ${res}`;
+    }, (error) => {
+        cas.log(`Expected status code: ${error.response.status}`);
+        assert(error.response.status === 401);
+    });
+
     accessTokenParams = `client_id=client&code_verifier=${codeVerifier}&grant_type=authorization_code&redirect_uri=${redirectUrl}`;
     accessTokenUrl = `https://localhost:8443/cas/oidc/token?${accessTokenParams}&code=${code}`;
     await cas.log(`Calling ${accessTokenUrl}`);

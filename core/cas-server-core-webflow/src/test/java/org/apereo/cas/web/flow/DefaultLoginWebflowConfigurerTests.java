@@ -1,6 +1,9 @@
 package org.apereo.cas.web.flow;
 
 import module java.base;
+import org.apereo.cas.CasProtocolConstants;
+import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.web.support.CasLocaleChangeInterceptor;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -8,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.binding.expression.Expression;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.web.servlet.resource.ResourceUrlProviderExposingInterceptor;
+import org.springframework.webflow.engine.DecisionState;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.Transition;
 import org.springframework.webflow.engine.ViewState;
@@ -68,6 +72,20 @@ class DefaultLoginWebflowConfigurerTests extends BaseWebflowConfigurerTests {
         assertNull(cfg.createViewState(null, "ViewState", (ViewFactory) null));
         assertNull(cfg.createViewState(null, "ViewState", (Expression) null, null));
         assertNotNull(cfg.createViewState(flow, CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM, (ViewFactory) null));
+    }
+
+    @Test
+    void verifyGatewayIgnoredWhenRenewIsRequested() throws Throwable {
+        val flow = (Flow) flowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
+        val gatewayCheck = (DecisionState) flow.getState(CasWebflowConstants.STATE_ID_GATEWAY_REQUEST_CHECK);
+        val context = MockRequestContext.create(applicationContext);
+        context.getFlowScope().put(CasWebflowConstants.ATTRIBUTE_SERVICE, CoreAuthenticationTestUtils.getWebApplicationService());
+        context.setParameter(CasProtocolConstants.PARAMETER_GATEWAY, "true");
+        assertEquals(CasWebflowConstants.STATE_ID_GATEWAY_SERVICES_MGMT,
+            gatewayCheck.getTransitionSet().getTransition(context).getTargetStateId());
+        context.setParameter(CasProtocolConstants.PARAMETER_RENEW, "true");
+        assertEquals(CasWebflowConstants.STATE_ID_SERVICE_AUTHZ,
+            gatewayCheck.getTransitionSet().getTransition(context).getTargetStateId());
     }
 
     @Test

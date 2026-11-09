@@ -44,7 +44,6 @@ import org.springframework.context.annotation.Import;
 import org.springframework.orm.jpa.EntityManagerFactoryUtils;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.util.AopTestUtils;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionOperations;
 import jakarta.persistence.EntityManagerFactory;
 import static org.junit.jupiter.api.Assertions.*;
@@ -419,7 +418,32 @@ public abstract class BaseJpaTicketRegistryTests extends BaseTicketRegistryTests
     }
 
     @RepeatedTest(2)
-    @Transactional(transactionManager = TicketRegistry.TICKET_TRANSACTION_MANAGER, readOnly = false)
+    void verifyStreamsOutsideTransaction() throws Throwable {
+        val principal = UUID.randomUUID().toString();
+        val tgt = new TicketGrantingTicketImpl(TestTicketIdentifiers.generate().ticketGrantingTicketId(),
+            CoreAuthenticationTestUtils.getAuthentication(principal), NeverExpiresExpirationPolicy.INSTANCE);
+        newTicketRegistry.addTicket(tgt);
+        val service = RegisteredServiceTestUtils.getService(UUID.randomUUID().toString());
+        val serviceTicket = tgt.grantServiceTicket(TestTicketIdentifiers.generate().serviceTicketId(), service,
+            NeverExpiresExpirationPolicy.INSTANCE, false, serviceTicketSessionTrackingPolicy);
+        newTicketRegistry.addTicket(serviceTicket);
+        newTicketRegistry.updateTicket(tgt);
+
+        try (val sessions = newTicketRegistry.getSessionsFor(principal)) {
+            assertEquals(List.of(tgt.getId()), sessions.map(Ticket::getId).toList());
+        }
+        try (val tickets = newTicketRegistry.getTicketsFor(service)) {
+            assertTrue(tickets.anyMatch(ticket -> ticket.getId().equals(serviceTicket.getId())));
+        }
+        try (val tickets = newTicketRegistry.stream()) {
+            assertTrue(tickets.anyMatch(ticket -> ticket.getId().equals(tgt.getId())));
+        }
+        try (val tickets = newTicketRegistry.getTickets(ticket -> ticket.getId().equals(serviceTicket.getId()))) {
+            assertEquals(1, tickets.count());
+        }
+    }
+
+    @RepeatedTest(2)
     void verifyRegistryQuery() throws Throwable {
         val tgt = new TicketGrantingTicketImpl(TestTicketIdentifiers.generate().ticketGrantingTicketId(),
             CoreAuthenticationTestUtils.getAuthentication(), NeverExpiresExpirationPolicy.INSTANCE);

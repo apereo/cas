@@ -7,6 +7,7 @@ import org.apereo.cas.audit.AuditableActions;
 import org.apereo.cas.oidc.vc.services.OidcVerifiableCredentialPolicyUtils;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.support.oauth.OAuth20Constants;
+import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 import org.apereo.cas.support.oauth.web.response.OAuth20AuthorizationRequest;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestContext;
@@ -33,7 +34,11 @@ import org.springframework.web.servlet.ModelAndView;
 public class OidcVerifiableCredentialAuthorizationCodeAuthorizationResponseBuilder
     extends OAuth20AuthorizationCodeAuthorizationResponseBuilder {
 
-    private int order = Ordered.HIGHEST_PRECEDENCE;
+    /**
+     * Ahead of the generic authorization code builder, and after the pushed authorization request builder: the first
+     * builder in order builds the authorization request, and pushed authorization requests must be built by the latter.
+     */
+    private int order = Ordered.LOWEST_PRECEDENCE - 1;
 
     public OidcVerifiableCredentialAuthorizationCodeAuthorizationResponseBuilder(
         final OAuth20ConfigurationContext context,
@@ -69,6 +74,24 @@ public class OidcVerifiableCredentialAuthorizationCodeAuthorizationResponseBuild
         code.setAuthorizationDetails(authzDetails);
         code.setIssuerState(StringUtils.stripToNull(tokenRequestContext.getIssuerState()));
         return code;
+    }
+
+    /**
+     * A pushed authorization request whose authorization details name no credential this client may receive is refused
+     * with {@code invalid_authorization_details} when it is pushed (RFC 9396, section 5), as it would be at the
+     * authorization endpoint.
+     *
+     * @param context the pushed authorization request
+     * @return the error response body, or empty
+     */
+    @Override
+    public Optional<Map<String, Object>> verifyPushedAuthorizationRequest(final AccessTokenRequestContext context) {
+        if (extractAuthorizationDetails(context.getRegisteredService(), context.getAuthorizationDetails()).isEmpty()) {
+            LOGGER.warn("Client [{}] pushed authorization details [{}] that cannot be granted", context.getClientId(), context.getAuthorizationDetails());
+            return Optional.of(OAuth20Utils.getErrorResponseBody(OAuth20Constants.INVALID_AUTHORIZATION_DETAILS,
+                "None of the requested credentials can be issued to this client"));
+        }
+        return Optional.empty();
     }
 
     @Override

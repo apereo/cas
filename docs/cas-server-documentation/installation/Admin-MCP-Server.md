@@ -199,7 +199,7 @@ server only when the corresponding module is present, and each group can be turn
 | `findConsentDecisions`       | [Attribute consent](../integration/Attribute-Release-Consent.html)                       | `username` (string)                                                                      | Return the consent decisions of a person: the application, when consent was given, the reminder settings and the names of the attributes consented to. Attribute values are never returned.                                                                                                                                                      |
 | `resolveSamlMetadata`        | [SAML2 identity provider](../authentication/Configuring-SAML2-Authentication.html)       | `entityId` (string)                                                                      | Resolve the metadata of a service provider the way CAS does, and report the matching registration and metadata source, the validity period, assertion consumer and single logout endpoints, name id formats and certificates with their expiration dates, or the error when resolution fails.                                                    |
 | `findOidcClient`             | [OpenID Connect](../authentication/OIDC-Authentication.html)                             | `clientId` (string)                                                                      | Summarize an OAuth or OpenID Connect client registration: redirect URI pattern, grant and response types, scopes, audience, allowed resource indicators, client authentication, token settings, issuer and ID token settings. Client secrets are never returned.                                                                                 |
-| `checkOidcClientResource`    | [OpenID Connect](../authentication/OIDC-Authentication.html)                             | `clientId`, `resource` (string)                                                          | Check whether a client may request a resource with the RFC 8707 `resource` parameter: whether it is an absolute URI without a fragment, the allowed resource expression it fully matches, or why it would be refused with `invalid_target`, whether the client or `cas.authn.oauth.core.allowed-resources` allowed it, and the token audience.   |
+| `checkOidcClientResource`    | [OpenID Connect](../authentication/OIDC-Authentication.html)                             | `clientId`, `resource` (string)                                                          | Check whether a client may request a resource with the RFC 8707 `resource` parameter: whether it is an absolute URI without a fragment, the allowed resource expression it fully matches, or why it would be refused with `invalid_target`, whether the client or the allowed resources in the OAuth settings allowed it, and the token audience. |
 | `listJwksKeys`               | [OpenID Connect](../authentication/OIDC-Authentication.html)                             | none                                                                                     | List the keys of the CAS OpenID Connect keystore with their key id, type, algorithm, use and rotation state. Key material is never returned.                                                                                                                                                                                                     |
 | `findTrustedDevices`         | [Trusted devices](../mfa/Multifactor-TrustedDevice-Authentication.html)                  | `username` (string)                                                                      | Return the devices a person has registered as trusted for multifactor authentication: the device name, the multifactor authentication provider, when it was registered, when it expires and whether it has expired. Device fingerprints and record keys are never returned.                                                                      |
 | `findSurrogateAccounts`      | [Surrogate authentication](../authentication/Surrogate-Authentication.html)              | `username` (string), `service` (optional)                                                | Return the accounts a person may impersonate, optionally for an application, and whether the person may impersonate any account.                                                                                                                                                                                                                 |
@@ -255,7 +255,7 @@ logs; reset the logger when done.
 ## Resources
 
 The MCP server offers the CAS settings catalog as an [MCP resource](https://modelcontextprotocol.io/specification/2025-11-25/server/resources)
-template, `cas://settings/{name}`, which clients read with `resources/read`, for example `cas://settings/cas.server.name`.
+template, `cas://settings/{name}`, which clients read with `resources/read`, for example `cas://settings/` followed by the name of the setting.
 The JSON result describes the setting: its description, type, default value, the CAS module that provides it, whether it is
 required, deprecated, or accepts durations, regular expressions or expressions, and whether it is defined in this deployment.
 The value of a setting is never returned, since settings carry keys, passwords and other secrets. Reading a resource requires
@@ -268,14 +268,12 @@ fifty settings with their name, a short description, module, type, deprecation a
 Registered services are offered as the resource template `cas://services/{id}`, such as `cas://services/1001`, which returns
 the definition as JSON with the same secret redaction as `findService`.
 
-Resources are advertised only when the resource capability of the MCP server is turned on, which CAS does by default with
-`spring.ai.mcp.server.capabilities.resource=true`{: .cas-setting}.
+Resources are advertised only when the resource capability of the MCP server is turned on, which CAS does by default.
 
 Clients that support [argument completion](https://modelcontextprotocol.io/specification/2025-11-25/server/utilities/completion)
 can complete the setting name of `cas://settings/{name}` from at least two typed characters, and the service id of
 `cas://services/{id}` from the first digits of the id or part of the service name. MCP completion applies to resource
-templates and prompts only, not to tool parameters. Completion is turned on by default with
-`spring.ai.mcp.server.capabilities.completion=true`{: .cas-setting}, and requires the `ROLE_MCP_ADMIN` role/authority.
+templates and prompts only, not to tool parameters. Completion is turned on by default and requires the `ROLE_MCP_ADMIN` role/authority.
 
 {% include_cached featuretoggles.html features="AI.mcp-settings" %}
 

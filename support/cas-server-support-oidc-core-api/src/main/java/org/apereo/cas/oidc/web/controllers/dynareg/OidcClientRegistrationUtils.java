@@ -4,7 +4,9 @@ import module java.base;
 import org.apereo.cas.oidc.OidcConfigurationContext;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.dynareg.OidcClientRegistrationResponse;
+import org.apereo.cas.oidc.jwks.OidcJsonWebKeyStoreUtils;
 import org.apereo.cas.oidc.jwks.generator.OidcJsonWebKeystoreGeneratorService;
+import org.apereo.cas.services.OidcRedirectUriUtils;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.RegisteredServiceProperty;
 import org.apereo.cas.services.RegisteredServiceProperty.RegisteredServiceProperties;
@@ -12,11 +14,9 @@ import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredServiceClientSecret;
-import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.function.FunctionUtils;
-import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import lombok.experimental.UtilityClass;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -31,6 +31,27 @@ import org.jose4j.jwk.JsonWebKeySet;
  */
 @UtilityClass
 public class OidcClientRegistrationUtils {
+    /**
+     * The service id of a client registered with the given redirect URIs.
+     *
+     * @param redirectUris the redirect URIs
+     * @return the service id
+     * @see OidcRedirectUriUtils#toServiceId(Collection)
+     */
+    public static String toServiceId(final Collection<String> redirectUris) {
+        return OidcRedirectUriUtils.toServiceId(redirectUris);
+    }
+
+    /**
+     * The redirect URIs a service id matches.
+     *
+     * @param serviceId the service id
+     * @return the redirect URIs
+     * @see OidcRedirectUriUtils#toRedirectUris(String)
+     */
+    public static List<String> toRedirectUris(final String serviceId) {
+        return OidcRedirectUriUtils.toRedirectUris(serviceId);
+    }
 
     /**
      * Gets client registration response.
@@ -62,7 +83,7 @@ public class OidcClientRegistrationUtils {
         clientResponse.setDpopBoundAccessTokens(registeredService.isDpopBoundAccessTokens() ? Boolean.TRUE : null);
         clientResponse.setTlsClientCertificateBoundAccessTokens(registeredService.isTlsClientCertificateBoundAccessTokens() ? Boolean.TRUE : null);
         clientResponse.setClientName(registeredService.getName());
-        clientResponse.setRedirectUris(CollectionUtils.wrap(registeredService.getServiceId()));
+        clientResponse.setRedirectUris(toRedirectUris(registeredService.getServiceId()));
         clientResponse.setUserInfoSignedResponseAlg(registeredService.getUserInfoSigningAlg());
         clientResponse.setUserInfoEncryptedResponseAlg(registeredService.getUserInfoEncryptedResponseAlg());
         clientResponse.setUserInfoEncryptedResponseEncoding(registeredService.getUserInfoEncryptedResponseEncoding());
@@ -85,7 +106,7 @@ public class OidcClientRegistrationUtils {
                 .collect(Collectors.toList()));
 
         val validator = configurationContext.getUrlValidator();
-        val keystore = SpringExpressionLanguageValueResolver.getInstance().resolve(registeredService.getJwks());
+        val keystore = OidcJsonWebKeyStoreUtils.resolveJsonWebKeySet(registeredService);
         FunctionUtils.doUnchecked(param -> {
             if (Objects.requireNonNull(validator).isValid(keystore)) {
                 clientResponse.setJwksUri(keystore);
@@ -100,7 +121,7 @@ public class OidcClientRegistrationUtils {
             clientResponse.setLogo(registeredService.getLogo());
             clientResponse.setPolicyUri(registeredService.getInformationUrl());
             clientResponse.setTermsOfUseUri(registeredService.getPrivacyUrl());
-            clientResponse.setRedirectUris(CollectionUtils.wrapList(registeredService.getServiceId()));
+            clientResponse.setRedirectUris(toRedirectUris(registeredService.getServiceId()));
 
             val serverPrefix = configurationContext.getCasProperties().getServer().getPrefix();
             val clientConfigUri = getClientConfigurationUri(registeredService, serverPrefix);

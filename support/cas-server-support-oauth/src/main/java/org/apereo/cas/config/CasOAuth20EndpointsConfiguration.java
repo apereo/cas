@@ -20,6 +20,7 @@ import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.web.CasWebSecurityConfigurer;
+import lombok.val;
 import org.apache.commons.lang3.Strings;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -30,6 +31,8 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.support.TransactionTemplate;
 
 /**
  * This this {@link CasOAuth20EndpointsConfiguration}.
@@ -118,8 +121,12 @@ class CasOAuth20EndpointsConfiguration {
             final ObjectProvider<TicketRegistry> ticketRegistry,
             @Qualifier(JwtBuilder.ACCESS_TOKEN_JWT_BUILDER_BEAN_NAME)
             final ObjectProvider<JwtBuilder> accessTokenJwtBuilder,
+            @Qualifier(TicketRegistry.TICKET_TRANSACTION_MANAGER)
+            final PlatformTransactionManager ticketTransactionManager,
             final CasConfigurationProperties casProperties) {
-            return new OAuth20TokenManagementEndpoint(casProperties, ticketRegistry, accessTokenJwtBuilder);
+            val ticketTransactionTemplate = new TransactionTemplate(ticketTransactionManager);
+            ticketTransactionTemplate.setReadOnly(true);
+            return new OAuth20TokenManagementEndpoint(casProperties, ticketRegistry, accessTokenJwtBuilder, ticketTransactionTemplate);
         }
         
         @Bean

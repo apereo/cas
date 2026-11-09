@@ -4,6 +4,7 @@ import module java.base;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.trusted.AbstractMultifactorAuthenticationTrustStorageTests;
+import org.apereo.cas.trusted.web.flow.fingerprint.ClientIpDeviceFingerprintExtractor;
 import org.apereo.cas.util.MockRequestContext;
 import lombok.Getter;
 import lombok.val;
@@ -51,5 +52,12 @@ class DefaultDeviceFingerprintStrategyTests extends AbstractMultifactorAuthentic
 
         val f4 = deviceFingerprintStrategy.determineFingerprint(authentication, request, context.getHttpServletResponse());
         assertEquals(f3, f4);
+    }
+
+    @Test
+    void verifyClientIpIsPartOfFingerprintByDefault() {
+        assertTrue(deviceFingerprintStrategy.getDeviceFingerprintExtractors()
+            .stream()
+            .anyMatch(ClientIpDeviceFingerprintExtractor.class::isInstance));
     }
 }
