@@ -21,6 +21,10 @@ description: "Gradle build settings (configuration cache, Isolated Projects, bui
 ## GitHub Actions workflows
 
 - Unit-test matrix jobs (`tests.yml`) record JaCoCo data only (`testcas.sh --with-coverage` only turns on the agent) and upload the `.exec` files; the single `coverage` job builds `jacocoRootReport` and does every Sonar/Codecov/Coveralls/Codacy upload. Do not move `jacocoRootReport` or `sonar` back into the matrix: the root report compiles all ~430 projects and Sonar re-analyses the whole code base, which is what made each category job 17 minutes instead of 7.
+- SonarCloud's project key is `${sonarOrganization}_${sonarProjectName}` (`apereo_cas` for upstream). Keep the
+  coverage, quality-gate and maintainability badges and dashboard links in `developer/Test-Process.md` aligned with it.
+  The legacy `org.apereo.cas:cas-server` project reports older CAS 7.3 results; compare project keys and analysis
+  revisions before diagnosing a coverage-import failure from a badge discrepancy.
 - Every `gradle/actions/setup-gradle` step sets `gradle-home-cache-excludes: caches/build-cache-1` and
   `cache-encryption-key: ${{ secrets.GRADLE_ENCRYPTION_KEY }}`. Preserve both: the local build cache duplicates Develocity
   outputs, and the encryption key enables saving/restoring the project configuration cache. Fork PRs without this secret
