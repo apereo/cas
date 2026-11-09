@@ -941,6 +941,133 @@ function initializeDataTableContextMenu({table, selector, callback, items, trigg
         items: items,
         callback: (key, options) => callback(key, options.context)
     });
+    makeDataTableRowsKeyboardReachable(table, selector);
+}
+
+/**
+ * Let keyboard users reach the rows of a table whose rows have actions: each row takes focus with Tab, Enter does
+ * what a click does, and Shift+F10 or the context menu key opens the row's actions where a right click would.
+ *
+ * @param table the DataTables instance
+ * @param selector the rows' selector, as given to the context menu
+ */
+function makeDataTableRowsKeyboardReachable(table, selector) {
+    const focusable = () => $(selector).not(".dataTables_empty").filter((index, row) => !$(row).find("td.dataTables_empty").length)
+        .attr("tabindex", "0");
+    focusable();
+    table.off("draw.palantirKeyboard").on("draw.palantirKeyboard", focusable);
+    const namespace = `keydown.palantirRows${selector.replace(/[^A-Za-z0-9]/g, "")}`;
+    $(document).off(namespace).on(namespace, selector, event => {
+        if (event.target !== event.currentTarget) {
+            return;
+        }
+        if (event.key === "ContextMenu" || (event.shiftKey && event.key === "F10")) {
+            event.preventDefault();
+            const bounds = event.currentTarget.getBoundingClientRect();
+            $(event.currentTarget).contextMenu({x: bounds.left + 24, y: bounds.top + bounds.height / 2});
+        } else if (event.key === "Enter") {
+            event.preventDefault();
+            $(event.currentTarget).trigger("click");
+        }
+    });
+}
+
+/**
+ * The accessible name of a table: the heading just before it, or the label of the inner tab it sits in, or its
+ * id written out in words.
+ *
+ * @param table the table element
+ * @returns {string} the name
+ */
+function palantirTableName(table) {
+    let node = $(table).closest(".dt-container")[0] ?? table;
+    for (let depth = 0; depth < 4 && node; depth++) {
+        let sibling = node.previousElementSibling;
+        while (sibling) {
+            const heading = $(sibling).is("h1,h2,h3,h4,h5") ? $(sibling) : $(sibling).find("h1,h2,h3,h4,h5").last();
+            if (heading.length > 0 && heading.text().trim()) {
+                return heading.text().replace(/\s+/g, " ").trim();
+            }
+            sibling = sibling.previousElementSibling;
+        }
+        node = node.parentElement;
+        if ($(node).is(".ui-tabs-panel, .ui-dialog-content, .attribute-tab")) {
+            break;
+        }
+    }
+    const panel = $(table).closest(".ui-tabs-panel");
+    const tab = panel.length > 0 ? $(`.ui-tabs-anchor[href="#${panel.attr("id")}"]`).first().text().trim() : "";
+    if (tab) {
+        return tab;
+    }
+    return String(table.id || "Table").replace(/Table$/, "").replace(/([a-z0-9])([A-Z])/g, "$1 $2")
+        .replace(/^./, character => character.toUpperCase());
+}
+
+/**
+ * Give buttons and links that show only an icon the name their tooltip already carries.
+ *
+ * @param root the element to look in
+ */
+function nameIconOnlyControls(root = document) {
+    $(root).find("button, a[href], [role=button]").each((index, control) => {
+        if (control.hasAttribute("aria-label") || control.hasAttribute("aria-labelledby") || control.textContent.trim()) {
+            return;
+        }
+        const name = control.getAttribute("title") || control.dataset.originalTitle;
+        if (name) {
+            control.setAttribute("aria-label", name);
+        }
+    });
+}
+
+/**
+ * Accessibility of tables and dialogs across Palantir, applied as they are created rather than at every call site:
+ * tables get a name and name their pagination after it, icon-only controls get the name of their tooltip, modal
+ * dialogs say they are modal, and jQuery UI select menus take the name of their label (jQuery UI points the label
+ * at its button, which a span cannot take a name from).
+ */
+function initializeTableAndDialogAccessibility() {
+    $(document).off("init.dt.palantirA11y").on("init.dt.palantirA11y", (event, settings) => {
+        const table = event.target?.tagName === "TABLE" ? event.target : settings?.nTable;
+        if (!table) {
+            return;
+        }
+        if (!table.hasAttribute("aria-label") && !table.hasAttribute("aria-labelledby") && !table.querySelector("caption")) {
+            table.setAttribute("aria-label", palantirTableName(table));
+        }
+        const name = table.getAttribute("aria-label") ?? palantirTableName(table);
+        $(table).closest(".dt-container").find("nav[aria-label]").attr("aria-label", `${name}, pages`);
+        nameIconOnlyControls($(table).closest(".dt-container"));
+    });
+    $(document).off("draw.dt.palantirA11y").on("draw.dt.palantirA11y", event => nameIconOnlyControls(event.target));
+    $(document).off("dialogcreate.palantirA11y").on("dialogcreate.palantirA11y", event => {
+        const content = $(event.target);
+        if (content.dialog("option", "modal")) {
+            content.closest(".ui-dialog").attr("aria-modal", "true");
+        }
+    });
+    $(document).off("dialogopen.palantirA11y").on("dialogopen.palantirA11y", event => {
+        nameIconOnlyControls($(event.target).closest(".ui-dialog"));
+    });
+    $(document).off("selectmenucreate.palantirA11y").on("selectmenucreate.palantirA11y", event => {
+        const select = event.target;
+        const button = $(select).selectmenu("widget");
+        if (button.attr("aria-label") || button.attr("aria-labelledby")) {
+            return;
+        }
+        const label = select.labels?.[0] ?? $(`label[for="${button.attr("id")}"]`)[0] ?? $(select).closest("label")[0];
+        let name = select.getAttribute("aria-label") || select.title || "";
+        if (label) {
+            const copy = label.cloneNode(true);
+            $(copy).find("select, .ui-selectmenu-button, .ui-selectmenu-menu").remove();
+            name = copy.textContent.replace(/\s+/g, " ").trim() || name;
+        }
+        if (name) {
+            button.attr("aria-label", name);
+        }
+    });
+    nameIconOnlyControls(document);
 }
 
 /**
@@ -951,6 +1078,8 @@ function initializeDataTableContextMenu({table, selector, callback, items, trigg
  * is not, and role="tab" on an <h3> overrides its heading semantics, so a
  * screen reader user cannot move through the sections by heading at all.
  *
+ * The root loses role="tablist" for the same reason, since it no longer holds tabs.
+ *
  * This restores what the ARIA authoring practices describe: headers stay
  * headings and keep aria-expanded and aria-controls, and each panel becomes a
  * region named by its header. jQuery UI's keyboard handling, roving tab index
@@ -960,6 +1089,7 @@ function initializeDataTableContextMenu({table, selector, callback, items, trigg
  */
 function applyAccordionAccessibility(element) {
     const accordion = $(element);
+    accordion.removeAttr("role");
     accordion.children(".ui-accordion-header").removeAttr("role").removeAttr("aria-selected");
     accordion.children(".ui-accordion-content").attr("role", "region");
 }
@@ -986,4 +1116,70 @@ function initializeAccordionAccessibility() {
             applyAccordionAccessibility(this.element);
         }
     });
+}
+
+const PALANTIR_SAFE_HTML_TAGS = new Set(["A", "ABBR", "B", "BLOCKQUOTE", "BR", "CODE", "DIV", "EM", "H1", "H2", "H3", "H4",
+    "H5", "H6", "HR", "I", "LI", "OL", "P", "PRE", "S", "SMALL", "SPAN", "STRONG", "SUB", "SUP", "U", "UL"]);
+
+const PALANTIR_DROPPED_HTML_TAGS = new Set(["SCRIPT", "STYLE", "TEMPLATE", "IFRAME", "FRAME", "OBJECT", "EMBED", "NOSCRIPT",
+    "SVG", "MATH", "LINK", "META", "BASE", "FORM", "INPUT", "BUTTON", "SELECT", "TEXTAREA", "TITLE"]);
+
+/**
+ * Turn markup from CAS, such as an interrupt message, into markup that is safe to put on the page.
+ *
+ * The markup is parsed into an inert document, where nothing runs or loads, and copied node by node into fresh
+ * elements: text is kept, formatting tags on an allow list are kept without any of their attributes, links keep only
+ * an http, https or mailto address and open in a new window, the content of scripts, styles, frames, forms and
+ * embedded documents is dropped, and any other tag is replaced by its content.
+ *
+ * @param html the markup to clean
+ * @returns {string} markup with only the allowed tags and link addresses
+ */
+function sanitizePalantirHtml(html) {
+    const source = new DOMParser().parseFromString(`<!DOCTYPE html><body>${String(html ?? "")}</body>`, "text/html").body;
+    const target = document.createElement("div");
+    const copy = (from, to) => {
+        for (const node of from.childNodes) {
+            if (node.nodeType === Node.TEXT_NODE) {
+                to.appendChild(document.createTextNode(node.textContent));
+            } else if (node.nodeType === Node.ELEMENT_NODE) {
+                const tag = node.tagName.toUpperCase();
+                if (PALANTIR_DROPPED_HTML_TAGS.has(tag)) {
+                    continue;
+                }
+                if (!PALANTIR_SAFE_HTML_TAGS.has(tag)) {
+                    copy(node, to);
+                    continue;
+                }
+                const element = document.createElement(tag.toLowerCase());
+                if (tag === "A") {
+                    try {
+                        const url = new URL(node.getAttribute("href") ?? "", window.location.href);
+                        if (["http:", "https:", "mailto:"].includes(url.protocol)) {
+                            element.setAttribute("href", url.href);
+                            element.setAttribute("target", "_blank");
+                            element.setAttribute("rel", "noopener noreferrer");
+                        }
+                    } catch (error) {
+                        console.debug("Palantir dropped a link it could not read", error);
+                    }
+                }
+                copy(node, element);
+                to.appendChild(element);
+            }
+        }
+    };
+    copy(source, target);
+    return target.innerHTML;
+}
+
+/**
+ * The text of markup from CAS, for places that show plain text such as table cells. The content of scripts,
+ * styles and other dropped tags is not part of it.
+ *
+ * @param html the markup
+ * @returns {string} its text
+ */
+function palantirHtmlText(html) {
+    return new DOMParser().parseFromString(`<!DOCTYPE html><body>${sanitizePalantirHtml(html)}</body>`, "text/html").body.textContent.trim();
 }

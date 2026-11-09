@@ -33,6 +33,12 @@
     "--cas.ticket.registry.mongo.drop-collection=true",
     "--cas.ticket.registry.mongo.user-id=root",
     "--cas.ticket.registry.mongo.password=secret",
+    "--cas.ticket.registry.mongo.crypto.enabled=true",
+    "--cas.ticket.registry.mongo.crypto.encryption.key=7CITiW3O2dOpUYOwHJX3-w",
+    "--cas.ticket.registry.mongo.crypto.signing.key=CYPAXgmLzDnPjWEdCMeP360LorQjurUFtUgJGvBLdctpGgUDK1NjTnfjEmHJpnQHwQ52KYWpmQ4GlAmsxlDjiQ",
+
+    "--cas.authn.attribute-repository.stub.attributes.employeeNumber=EN7731CAS",
+    "--cas.authn.attribute-repository.stub.attributes.mail=casuser@example.org",
 
     "--cas.monitor.mongo[0].user-id=root",
     "--cas.monitor.mongo[0].password=secret",
@@ -48,5 +54,5 @@
     "--cas.monitor.mongo[1].authentication-database-name=admin",
     "--cas.monitor.mongo[1].database-name=service-registry"
   ],
-  "initScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/init.sh"
+  "initScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/init.sh,${PWD}/ci/tests/httpbin/run-httpbin-server.sh"
 }

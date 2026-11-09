@@ -74,6 +74,12 @@ class CasOAuth20ThrottleConfiguration {
     @Configuration(value = "CasOAuth20ThrottleMvcConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     static class CasOAuth20ThrottleMvcConfiguration {
+        /**
+         * After authentication throttling (order 0), leaving room for interceptors that must run in between, such as
+         * the automatic registration of OpenID Federation relying parties.
+         */
+        private static final int OAUTH_INTERCEPTOR_ORDER = 10;
+
 
         @ConditionalOnMissingBean(name = "oauthHandlerInterceptorAdapter")
         @Bean
@@ -108,7 +114,7 @@ class CasOAuth20ThrottleConfiguration {
                     val handler = new RefreshableHandlerInterceptor(oauthHandlerInterceptorAdapter);
                     registry
                         .addInterceptor(handler)
-                        .order(1)
+                        .order(OAUTH_INTERCEPTOR_ORDER)
                         .addPathPatterns(BASE_OAUTH20_URL.concat("/*"));
                 }
             };

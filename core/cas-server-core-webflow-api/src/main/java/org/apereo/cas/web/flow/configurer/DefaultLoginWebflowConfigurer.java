@@ -382,9 +382,19 @@ public class DefaultLoginWebflowConfigurer extends AbstractCasWebflowConfigurer 
             CasWebflowConstants.STATE_ID_REDIRECT);
     }
 
+    /**
+     * Create the gateway request check: a gateway request for a service without a usable single sign-on session
+     * returns to the service without a ticket. When the request also asks to renew authentication (and renewing is
+     * enabled), the gateway parameter is ignored and the login form is shown, as the CAS protocol recommends.
+     *
+     * @param flow the flow
+     */
     protected void createGatewayRequestCheckDecisionState(final Flow flow) {
-        createDecisionState(flow, CasWebflowConstants.STATE_ID_GATEWAY_REQUEST_CHECK,
-            "requestParameters.gateway != '' and requestParameters.gateway != null and flowScope.service != null",
+        val gatewayRequested = "requestParameters.gateway != '' and requestParameters.gateway != null and flowScope.service != null";
+        val expression = casProperties.getSso().isRenewAuthnEnabled()
+            ? gatewayRequested + " and requestParameters.renew == null"
+            : gatewayRequested;
+        createDecisionState(flow, CasWebflowConstants.STATE_ID_GATEWAY_REQUEST_CHECK, expression,
             CasWebflowConstants.STATE_ID_GATEWAY_SERVICES_MGMT,
             CasWebflowConstants.STATE_ID_SERVICE_AUTHZ);
     }

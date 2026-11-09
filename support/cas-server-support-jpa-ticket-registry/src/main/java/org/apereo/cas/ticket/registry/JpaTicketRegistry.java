@@ -236,6 +236,7 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
      * amount of time, and logging in to an application with an existing TGT will update the TGT row in the database.
      * The page is applied by the query, so rows before it are never read. When the criteria ask only for tickets
      * expiring before an instant, the indexed expiration time selects them, earliest first.
+     * Outside a ticket transaction the tickets are collected first; see {@code streamTickets}.
      *
      * @return streamable results
      */
@@ -246,22 +247,46 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
             ? String.format("SELECT t FROM %s t", ticketEntityFactory.getEntityName())
             : String.format("SELECT t FROM %s t WHERE t.expirationTime <= :expiringBefore ORDER BY t.expirationTime",
                 ticketEntityFactory.getEntityName());
-        val query = streaming(entityManager.createQuery(sql, ticketEntityFactory.getType()));
-        query.setLockMode(LockModeType.NONE);
-        if (expiringBefore != null) {
-            query.setParameter("expiringBefore", expiringBefore);
+        return streamTickets(() -> {
+            val query = streaming(entityManager.createQuery(sql, ticketEntityFactory.getType()));
+            query.setLockMode(LockModeType.NONE);
+            if (expiringBefore != null) {
+                query.setParameter("expiringBefore", expiringBefore);
+            }
+            if (criteria.getFrom() > 0) {
+                query.setFirstResult((int) Math.min(criteria.getFrom(), Integer.MAX_VALUE));
+            }
+            if (!criteria.isInfiniteCount()) {
+                query.setMaxResults((int) Math.min(criteria.getCount(), Integer.MAX_VALUE));
+            }
+            return jpaBeanFactory
+                .streamQuery(query)
+                .map(BaseTicketEntity.class::cast)
+                .map(this::toDetachedTicket)
+                .map(this::decodeTicket);
+        });
+    }
+
+    /**
+     * Stream the tickets a query reads. Inside a ticket transaction the rows are read a batch at a time as the stream
+     * is consumed. Outside one, the connection goes back to the pool as soon as the statement has run and the result
+     * set is closed before it is read (on PostgreSQL and MySQL), so the query runs in a transaction of the registry and
+     * its tickets are collected before that transaction ends. Callers that scan the whole registry should open a ticket
+     * transaction to keep reading lazily.
+     *
+     * @param tickets the query and the mapping of its rows, run when the tickets are read
+     * @return the tickets
+     */
+    private Stream<Ticket> streamTickets(final Supplier<Stream<Ticket>> tickets) {
+        if (TransactionSynchronizationManager.hasResource(entityManagerFactory)) {
+            return tickets.get();
         }
-        if (criteria.getFrom() > 0) {
-            query.setFirstResult((int) Math.min(criteria.getFrom(), Integer.MAX_VALUE));
-        }
-        if (!criteria.isInfiniteCount()) {
-            query.setMaxResults((int) Math.min(criteria.getCount(), Integer.MAX_VALUE));
-        }
-        return jpaBeanFactory
-            .streamQuery(query)
-            .map(BaseTicketEntity.class::cast)
-            .map(this::toDetachedTicket)
-            .map(this::decodeTicket);
+        val collected = transactionTemplate.execute(_ -> {
+            try (val stream = tickets.get()) {
+                return stream.toList();
+            }
+        });
+        return Objects.requireNonNullElse(collected, List.<Ticket>of()).stream();
     }
 
     /**
@@ -319,36 +344,62 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
         });
     }
 
+    /**
+     * Get the unexpired tickets issued for the service. Outside a ticket transaction the tickets are collected first;
+     * see {@code streamTickets}.
+     *
+     * @param service the service
+     * @return the tickets
+     */
     @Override
     public Stream<? extends Ticket> getTicketsFor(final Service service) {
         val sql = String.format("SELECT t FROM %s t WHERE t.service=:service", ticketEntityFactory.getEntityName());
-        val query = streaming(entityManager.createQuery(sql, ticketEntityFactory.getType())).setParameter("service", service.getId());
-        query.setLockMode(LockModeType.NONE);
-        return jpaBeanFactory
-            .streamQuery(query)
-            .map(BaseTicketEntity.class::cast)
-            .map(this::toDetachedTicket)
-            .map(this::decodeTicket)
-            .filter(Objects::nonNull)
-            .filter(ticket -> !ticket.isExpired());
+        return streamTickets(() -> {
+            val query = streaming(entityManager.createQuery(sql, ticketEntityFactory.getType())).setParameter("service", service.getId());
+            query.setLockMode(LockModeType.NONE);
+            return jpaBeanFactory
+                .streamQuery(query)
+                .map(BaseTicketEntity.class::cast)
+                .map(this::toDetachedTicket)
+                .map(this::decodeTicket)
+                .filter(Objects::nonNull)
+                .filter(ticket -> !ticket.isExpired());
+        });
     }
-    
+
+    /**
+     * Get the unexpired single sign-on sessions of the principal. Outside a ticket transaction the tickets are
+     * collected first; see {@code streamTickets}.
+     *
+     * @param principalId the principal id
+     * @return the sessions
+     */
     @Override
     public Stream<? extends Ticket> getSessionsFor(final String principalId) {
         val sql = String.format("SELECT t FROM %s t WHERE t.type=:type AND t.principalId=:principalId", ticketEntityFactory.getEntityName());
-        val query = streaming(entityManager.createQuery(sql, ticketEntityFactory.getType()))
-            .setParameter("principalId", digestIdentifier(principalId))
-            .setParameter("type", getTicketTypeName(TicketGrantingTicket.class));
-        query.setLockMode(LockModeType.NONE);
-        return jpaBeanFactory
-            .streamQuery(query)
-            .map(BaseTicketEntity.class::cast)
-            .map(this::toDetachedTicket)
-            .map(this::decodeTicket)
-            .filter(Objects::nonNull)
-            .filter(ticket -> !ticket.isExpired());
+        return streamTickets(() -> {
+            val query = streaming(entityManager.createQuery(sql, ticketEntityFactory.getType()))
+                .setParameter("principalId", digestIdentifier(principalId))
+                .setParameter("type", getTicketTypeName(TicketGrantingTicket.class));
+            query.setLockMode(LockModeType.NONE);
+            return jpaBeanFactory
+                .streamQuery(query)
+                .map(BaseTicketEntity.class::cast)
+                .map(this::toDetachedTicket)
+                .map(this::decodeTicket)
+                .filter(Objects::nonNull)
+                .filter(ticket -> !ticket.isExpired());
+        });
     }
 
+    /**
+     * Query tickets by type, and optionally by id and principal. The rows are read and collected inside a transaction
+     * of the registry: callers such as the ticket registry endpoint run without one, and outside a transaction the
+     * connection goes back to the pool and the result set is closed before it is read.
+     *
+     * @param criteria the criteria
+     * @return the tickets
+     */
     @Override
     public List<? extends Serializable> query(final TicketRegistryQueryCriteria criteria) {
         var sql = String.format("SELECT t FROM %s t WHERE t.type=:type", ticketEntityFactory.getEntityName());
@@ -359,26 +410,30 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
             sql = sql.concat(" AND t.principalId = :principalId");
         }
         val definition = ticketCatalog.find(criteria.getType());
-        val query = streaming(entityManager.createQuery(sql, ticketEntityFactory.getType()));
-        query.setParameter("type", getTicketTypeName(definition.getApiClass()));
-        if (StringUtils.isNotBlank(criteria.getId())) {
-            query.setParameter("id", digestIdentifier(criteria.getId()));
-        }
-        if (StringUtils.isNotBlank(criteria.getPrincipal())) {
-            query.setParameter("principalId", digestIdentifier(criteria.getPrincipal()));
-        }
-        if (criteria.getCount() > 0) {
-            query.setMaxResults(Long.valueOf(criteria.getCount()).intValue());
-        }
-        query.setLockMode(LockModeType.NONE);
-
-        return jpaBeanFactory
-            .streamQuery(query)
-            .map(BaseTicketEntity.class::cast)
-            .map(this::toDetachedTicket)
-            .map(ticket -> criteria.isDecode() ? decodeTicket(ticket) : ticket)
-            .filter(Objects::nonNull)
-            .collect(Collectors.toList());
+        val statement = sql;
+        val tickets = transactionTemplate.execute(_ -> {
+            val query = streaming(entityManager.createQuery(statement, ticketEntityFactory.getType()));
+            query.setParameter("type", getTicketTypeName(definition.getApiClass()));
+            if (StringUtils.isNotBlank(criteria.getId())) {
+                query.setParameter("id", digestIdentifier(criteria.getId()));
+            }
+            if (StringUtils.isNotBlank(criteria.getPrincipal())) {
+                query.setParameter("principalId", digestIdentifier(criteria.getPrincipal()));
+            }
+            if (criteria.getCount() > 0) {
+                query.setMaxResults(Long.valueOf(criteria.getCount()).intValue());
+            }
+            query.setLockMode(LockModeType.NONE);
+            try (val rows = jpaBeanFactory.streamQuery(query)) {
+                return rows
+                    .map(BaseTicketEntity.class::cast)
+                    .map(this::toDetachedTicket)
+                    .map(ticket -> criteria.isDecode() ? decodeTicket(ticket) : ticket)
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toList());
+            }
+        });
+        return Objects.requireNonNullElse(tickets, List.of());
     }
 
     /**

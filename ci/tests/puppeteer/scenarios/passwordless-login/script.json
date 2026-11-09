@@ -13,6 +13,7 @@
     "--spring.mail.host=localhost",
     "--spring.mail.port=25000",
 
+    "--cas.authn.passwordless.tokens.core.expiration=PT30S",
     "--cas.authn.passwordless.tokens.mail.html=false",
     "--cas.authn.passwordless.tokens.mail.text=${token}",
     "--cas.authn.passwordless.tokens.mail.from=casuser@apereo.org",

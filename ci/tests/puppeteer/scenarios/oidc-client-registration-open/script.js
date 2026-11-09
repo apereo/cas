@@ -15,7 +15,7 @@ const assert = require("assert");
             "logo_uri": "https://apereo.github.io/logo.png",
             "policy_uri": "https://github.com/apereo/cas",
             "tos_uri": "https://client.example.org/tos",
-            "subject_type": "pairwise",
+            "subject_type": "public",
             "token_endpoint_auth_method": "client_secret_basic",
             "jwks": jwkPayload.jwks,
             "id_token_signed_response_alg": "RS256",
@@ -25,6 +25,14 @@ const assert = require("assert");
             "userinfo_encrypted_response_enc": "A128CBC-HS256",
             "contacts": ["sample@example.org", "user@example.org"]
         };
+
+        await cas.log("Pairwise subjects for redirect URIs on several hosts need a sector identifier URI");
+        const pairwise = JSON.stringify({...service, "subject_type": "pairwise"}, undefined, 2);
+        await cas.doRequest("https://localhost:8443/cas/oidc/register", "POST",
+            {
+                "Content-Length": pairwise.length,
+                "Content-Type": "application/json"
+            }, 400, pairwise);
 
         const body = JSON.stringify(service, undefined, 2);
         await cas.log(`Sending ${body}`);

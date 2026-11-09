@@ -22,7 +22,7 @@ public class OidcServicesProperties implements Serializable {
 
     /**
      * Control the default, initial values for fields that are part of a OIDC service definition.
-     * This is defined as a map where the key is the field name (i.e. {@code signIdToken})
+     * This is defined as a map where the key is the field name (i.e. {@code encryptIdToken})
      * and the value should be the default value.
      * If a service definition explicitly defines a value for a field, that value
      * will take over and the default defined here will be ignored.

@@ -12,6 +12,12 @@ import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.util.DateTimeUtils;
+import org.apereo.cas.util.RandomUtils;
+import com.nimbusds.jose.JWSAlgorithm;
+import com.nimbusds.jose.JWSHeader;
+import com.nimbusds.jose.crypto.MACSigner;
+import com.nimbusds.jwt.JWTClaimsSet;
+import com.nimbusds.jwt.SignedJWT;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -66,6 +72,28 @@ class DefaultQRAuthenticationTokenValidatorServiceTests {
             .deviceId(UUID.randomUUID().toString())
             .build();
         assertThrows(InvalidTicketException.class,
+            () -> qrAuthenticationTokenValidatorService.validate(request));
+    }
+
+    @Test
+    void verifyTokenSignedByAnotherKey() throws Throwable {
+        val tgt = new MockTicketGrantingTicket("casuser");
+        ticketRegistry.addTicket(tgt);
+
+        val claims = new JWTClaimsSet.Builder()
+            .subject(tgt.getAuthentication().getPrincipal().getId())
+            .jwtID(tgt.getId())
+            .issuer(casProperties.getServer().getPrefix())
+            .expirationTime(DateTimeUtils.dateOf(LocalDate.now(Clock.systemUTC()).plusDays(1)))
+            .build();
+        val jwt = new SignedJWT(new JWSHeader(JWSAlgorithm.HS256), claims);
+        jwt.sign(new MACSigner(RandomUtils.randomAlphanumeric(256).getBytes(StandardCharsets.UTF_8)));
+        val request = QRAuthenticationTokenValidationRequest.builder()
+            .registeredService(Optional.empty())
+            .token(jwt.serialize())
+            .deviceId(UUID.randomUUID().toString())
+            .build();
+        assertThrows(AuthenticationException.class,
             () -> qrAuthenticationTokenValidatorService.validate(request));
     }
 

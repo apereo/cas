@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<EntitiesDescriptor Name="urn:apereo:cas:puppeteer:slo-backchannel" xmlns="urn:oasis:names:tc:SAML:2.0:metadata">
+    <EntityDescriptor entityID="https://localhost:9859/slo-soap-signed">
+        <SPSSODescriptor AuthnRequestsSigned="false" WantAssertionsSigned="false"
+                         protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol">
+            <SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:SOAP"
+                                 Location="http://localhost:5611/slo/signed"/>
+            <NameIDFormat>urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress</NameIDFormat>
+            <AssertionConsumerService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"
+                                      Location="https://localhost:9859/post" index="0" isDefault="true"/>
+        </SPSSODescriptor>
+    </EntityDescriptor>
+    <EntityDescriptor entityID="https://localhost:9859/slo-soap-unsigned">
+        <SPSSODescriptor AuthnRequestsSigned="false" WantAssertionsSigned="false"
+                         protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol">
+            <SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:SOAP"
+                                 Location="http://localhost:5611/slo/unsigned"/>
+            <NameIDFormat>urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress</NameIDFormat>
+            <AssertionConsumerService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"
+                                      Location="https://localhost:9859/post" index="0" isDefault="true"/>
+        </SPSSODescriptor>
+    </EntityDescriptor>
+    <EntityDescriptor entityID="https://localhost:9859/slo-soap-none">
+        <SPSSODescriptor AuthnRequestsSigned="false" WantAssertionsSigned="false"
+                         protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol">
+            <SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:SOAP"
+                                 Location="http://localhost:5611/slo/none"/>
+            <NameIDFormat>urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress</NameIDFormat>
+            <AssertionConsumerService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"
+                                      Location="https://localhost:9859/post" index="0" isDefault="true"/>
+        </SPSSODescriptor>
+    </EntityDescriptor>
+</EntitiesDescriptor>

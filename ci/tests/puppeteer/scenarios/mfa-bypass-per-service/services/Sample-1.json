@@ -3,6 +3,7 @@
   "serviceId": "^(https|imaps)://.*",
   "id": 1,
   "name": "Sample",
+  "evaluationOrder": 1000,
   "multifactorPolicy": {
     "@class": "org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy",
     "bypassEnabled": true

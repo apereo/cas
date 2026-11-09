@@ -5,7 +5,7 @@
   "conditions": {
     "docker": true
   },
-  "jvmArgs": "-Djavax.net.ssl.trustStore=${PWD}/ci/tests/puppeteer/scenarios/oidc-federation-end2end/temp/pac4j-demo-truststore.p12 -Djavax.net.ssl.trustStorePassword=changeit -Djavax.net.ssl.trustStoreType=PKCS12",
+  "jvmArgs": "-Djavax.net.ssl.trustStore=${PWD}/ci/tests/puppeteer/overlay/oidc-federation-end2end/federation-truststore.p12 -Djavax.net.ssl.trustStorePassword=changeit -Djavax.net.ssl.trustStoreType=PKCS12",
   "instance1": {
     "properties": [
       "--cas.server.name=https://localhost:8443",
@@ -16,11 +16,23 @@
       "--cas.authn.oidc.federation.organization=ApereoTA",
       "--cas.authn.oidc.jwks.file-system.jwks-file=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/metadata/ta-oidc.jwks",
       "--cas.authn.oidc.federation.jwks-file=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/metadata/ta-federation.jwks",
-      "--cas.authn.oidc.federation.subordinate-directory=${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/subordinates"
+      "--cas.authn.oidc.federation.subordinate-directory=${PWD}/ci/tests/puppeteer/overlay/${SCENARIO}/subordinates",
+      "--cas.authn.oidc.federation.trust-mark-issuers[0].trust-mark-type=https://localhost:8443/cas/oidc/trust-marks/relying-party",
+      "--cas.authn.oidc.federation.trust-mark-issuers[0].issuers[0]=https://localhost:8443/cas/oidc",
+      "--cas.authn.oidc.federation.trust-mark-issuers[1].trust-mark-type=https://localhost:8443/cas/oidc/trust-marks/identity-provider",
+      "--cas.authn.oidc.federation.trust-mark-issuers[1].issuers[0]=https://localhost:8443/cas/oidc",
+      "--cas.authn.oidc.federation.issued-trust-marks[0].trust-mark-type=https://localhost:8443/cas/oidc/trust-marks/relying-party",
+      "--cas.authn.oidc.federation.issued-trust-marks[0].subjects[0]=https://localhost:9861",
+      "--cas.authn.oidc.federation.issued-trust-marks[0].subjects[1]=https://localhost",
+      "--cas.authn.oidc.federation.issued-trust-marks[0].expiration=P1D",
+      "--cas.authn.oidc.federation.issued-trust-marks[1].trust-mark-type=https://localhost:8443/cas/oidc/trust-marks/identity-provider",
+      "--cas.authn.oidc.federation.issued-trust-marks[1].subjects[0]=https://localhost:8444/cas/oidc",
+      "--cas.authn.oidc.federation.trust-mark-endpoint-authentication=OPTIONAL",
+      "--cas.authn.oidc.federation.resolve-endpoint-authentication=OPTIONAL"
     ]
   },
   "instance2": {
-    "dependencies": "oidc",
+    "dependencies": "oidc,oidc-vc",
     "properties": [
       "--cas.server.name=https://localhost:8444",
       "--cas.server.prefix=https://localhost:8444/cas",
@@ -30,7 +42,21 @@
       "--cas.authn.oidc.federation.organization=ApereoOP",
       "--cas.authn.oidc.jwks.file-system.jwks-file=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/metadata/op-oidc.jwks",
       "--cas.authn.oidc.federation.jwks-file=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/metadata/op-federation.jwks",
-      "--cas.authn.oidc.federation.authority-hints[0]=https://localhost:8443/cas/oidc"
+      "--cas.authn.oidc.federation.authority-hints[0]=https://localhost:8443/cas/oidc",
+      "--cas.authn.oidc.federation.trust-anchors[0].entity-id=https://localhost:8443/cas/oidc",
+      "--cas.authn.oidc.federation.trust-anchors[0].jwks=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/metadata/ta-federation.jwks",
+      "--cas.authn.oidc.federation.trust-marks[0]=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/metadata/op-trust-mark.jwt",
+      "--cas.authn.oidc.federation.required-trust-marks[0]=https://localhost:8443/cas/oidc/trust-marks/relying-party",
+      "--cas.authn.oidc.federation.unresolved-entity-retention=PT5S",
+      "--cas.authn.oidc.vc.issuer.credential-configurations.member.format=DC_SD_JWT",
+      "--cas.authn.oidc.vc.issuer.credential-configurations.member.scope=MemberCredential",
+      "--cas.authn.oidc.vc.issuer.credential-configurations.member.claims.given_name.mandatory=true",
+      "--cas.authn.attribute-repository.stub.attributes.given_name=CAS",
+      "--cas.authn.oidc.vc.presentation.client-identifier-prefix=OPENID_FEDERATION",
+      "--cas.authn.oidc.vc.presentation.response-mode=DIRECT_POST_JWT",
+      "--cas.service-registry.core.init-from-json=true",
+      "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/overlay/${SCENARIO}/services",
+      "--cas.service-registry.core.maximum-service-id-length=0"
     ]
   },
   "initScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/init.sh",

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<EntityDescriptor entityID="https://localhost:9859/soap-sp" xmlns="urn:oasis:names:tc:SAML:2.0:metadata">
+    <SPSSODescriptor protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol">
+        <KeyDescriptor use="signing">
+            <ds:KeyInfo xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
+                <ds:X509Data>
+                    <ds:X509Certificate>
+                    MIIDBzCCAe+gAwIBAgIUNQyjoAcjKWwIUp/i7awD0j2SAcowDQYJKoZIhvcNAQEL
+                    BQAwEjEQMA4GA1UEAwwHc29hcC1zcDAgFw0yNjExMDYwNDMyMDRaGA8yMDU2MTAy
+                    OTA0MzIwNFowEjEQMA4GA1UEAwwHc29hcC1zcDCCASIwDQYJKoZIhvcNAQEBBQAD
+                    ggEPADCCAQoCggEBAL/7XkuHMWxDb2lvUX3Rc5v/eeq9683PBl7AX7KUajXoBjL5
+                    Y2i/KRxJ5v9HH2dNY91DRkvK0+CeuLdj2BXRi3vVf+4ZwtQjnEeNXlGuU/YlKJu3
+                    oBmYri9FEEfoBKcGgs3SdK9b3yVjrz1F5WJWt/VAI3aYLkqD/xtgrOmQBdC7+UDX
+                    T6XbE1Mm9TF9co0Q4K0KhnicJdFSxRXhtkc+BKZ/eGbXGMogNmg1d12WjUY7CvE+
+                    Mgrj3pEc5Ke2EsSGl+nt37DoF3YzFf0oIACeEiLqzuY5EzGCv7OVjABPyS+EbG6Z
+                    xxMjKPsnVTiUzhd/pDS+SFYcjOMooPgFG658JQECAwEAAaNTMFEwHQYDVR0OBBYE
+                    FPVUrJjyJjUFzsTkJH7hqeGt0nIRMB8GA1UdIwQYMBaAFPVUrJjyJjUFzsTkJH7h
+                    qeGt0nIRMA8GA1UdEwEB/wQFMAMBAf8wDQYJKoZIhvcNAQELBQADggEBAGkGAdsv
+                    VtTo9NfLtzl+ANSqfQKagd/Zvj9QgM2xv8WTgVjedICkE5Lh2WA5erO0pK8Qx7kW
+                    ZlvprfsEJk9/QEvZK566F3/UJtHtA4Fq+4ijMH9829/pYIxISfM5o+LsH46UwGgr
+                    o/3FSrAA8yGf3KiFCgYfizzIzSSUYLxDaJBMDu0ozJh1vEusML+gFhqwnvbuEUDv
+                    gAS8ZuyupSA+dG1lInEPZ4fSgtj5RNwyetQAvsViMUT8N/2q9zLS7ErMJ0Auvybh
+                    wAxuGeMgMusVqolKgIcIBGUhCtLsK4nlD9gOYjyBBMI8e0IkW9tPklOopONFHVVo
+                    xlDFNN1SjzcOd8Q=
+                    </ds:X509Certificate>
+                </ds:X509Data>
+            </ds:KeyInfo>
+        </KeyDescriptor>
+        <NameIDFormat>urn:oasis:names:tc:SAML:2.0:nameid-format:transient</NameIDFormat>
+        <AssertionConsumerService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"
+                                  Location="https://localhost:9859/post" index="0" isDefault="true"/>
+        <AssertionConsumerService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Artifact"
+                                  Location="https://localhost:9859/anything/soap-sp/artifact" index="1"/>
+        <AssertionConsumerService Binding="urn:oasis:names:tc:SAML:2.0:bindings:PAOS"
+                                  Location="https://localhost:9859/anything/soap-sp/ecp" index="2"/>
+    </SPSSODescriptor>
+</EntityDescriptor>

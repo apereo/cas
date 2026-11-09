@@ -18,6 +18,48 @@ async function serviceHeaders(service) {
     return headers;
 }
 
+/**
+ * RequestParameterPolicyEnforcementFilter throws from the servlet filter chain when a request breaks the
+ * cas.http-web-request policy, which the container answers with 500 before any controller runs.
+ */
+async function verifyRequestParameterPolicy() {
+    const login = "https://localhost:8443/cas/login";
+    const service = "https://localhost:9859/anything/default";
+    const blocked = 500;
+
+    await cas.logg("A parameter listed in params-to-check may not repeat");
+    await cas.doRequest(`${login}?service=${service}&service=https://localhost:9859/anything/custom`, "GET", {}, blocked);
+    await cas.doRequest(`${login}?locale=en&locale=de`, "GET", {}, blocked);
+    await cas.logg("A parameter left out of params-to-check may repeat");
+    await cas.doRequest(`${login}?unchecked=en&unchecked=de`, "GET", {}, 200);
+
+    await cas.logg("Parameters listed in only-post-params are refused on GET");
+    await cas.doRequest(`${login}?username=casuser`, "GET", {}, blocked);
+    await cas.doRequest(`${login}?password=Mellon`, "GET", {}, blocked);
+
+    await cas.logg("A forbidden character in a checked parameter is refused");
+    await cas.doRequest(`${login}?service=${encodeURIComponent(`${service}/<x`)}`, "GET", {}, blocked);
+    await cas.doRequest(`${login}?unchecked=${encodeURIComponent("<x")}`, "GET", {}, 200);
+
+    await cas.logg("A request URI matching pattern-to-block is refused, whatever the parameter");
+    await cas.doRequest(`${login}?unchecked=javascript:void`, "GET", {}, blocked);
+    await cas.doRequest(`${login}?unchecked=javascript%3Avoid`, "GET", {}, blocked);
+
+    await cas.logg("A well-formed login still works, posting the credentials");
+    const browser = await cas.newBrowser(cas.browserOptions());
+    try {
+        const page = await cas.newPage(browser);
+        await cas.gotoLogin(page, service);
+        await cas.loginWith(page);
+        await cas.sleep(1000);
+        const ticket = await cas.assertTicketParameter(page);
+        const json = await cas.validateTicket(service, ticket);
+        assert.equal(json.serviceResponse.authenticationSuccess.user, "casuser");
+    } finally {
+        await cas.closeBrowser(browser);
+    }
+}
+
 (async () => {
     await cas.logg("A service without header properties gets the global headers; X-XSS-Protection is turned off globally");
     let headers = await serviceHeaders("https://localhost:9859/anything/default");
@@ -41,4 +83,6 @@ async function serviceHeaders(service) {
     assert.equal(headers["strict-transport-security"], "max-age=60");
     assert.equal(headers["x-xss-protection"], "1; mode=block");
     assert(headers["content-security-policy"] !== undefined);
+
+    await verifyRequestParameterPolicy();
 })();

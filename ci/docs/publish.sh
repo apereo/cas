@@ -96,6 +96,17 @@ function publishConfigurationMetadata() {
   printgreen "Uploaded combined configuration metadata to MongoDB collection $collectionName"
 }
 
+# Exits with 5 when the documentation checks fail.
+function checkProjectDocumentation() {
+  [[ -d "$PWD/ci/docs/node_modules" ]] || npm --prefix "$PWD/ci/docs" install
+  node "$PWD/ci/docs/checks.js" "$PWD/docs/cas-server-documentation" \
+    "$PWD/gh-pages/_site/$branchVersion" "$PWD/gh-pages/assets/data/$branchVersion/index.json"
+  if [[ $? -ne 0 ]]; then
+    printred "Documentation checks failed; see the failures above."
+    exit 5
+  fi
+}
+
 # Returns 0 when all links pass, 3 when internal links, images or scripts are broken,
 # 4 when only external links failed, and 1 when the proofer itself could not run.
 function validateProjectDocumentation() {
@@ -469,6 +480,12 @@ if [[ $generateData == "true" ]]; then
     printred "Unable to create configuration metadata index. Aborting..."
     exit 1
   fi
+  printgreen "Comparing configuration settings with the previous documentation version..."
+  node "$PWD/ci/docs/settings-changes.js" "$PWD/gh-pages" "$branchVersion" "$dataDir"
+  if [[ $? -ne 0 ]]; then
+    printred "Unable to compare configuration settings with the previous documentation version. Aborting..."
+    exit 1
+  fi
   publishConfigurationMetadata "$combinedConfigurationMetadata" "$casVersion"
   if [[ $? -ne 0 ]]; then
     rm -f "$combinedConfigurationMetadata" >/dev/null 2>&1
@@ -568,6 +585,15 @@ if [[ ${buildDocs} == "true" ]]; then
   fi
   popd
 
+  printgreen "Writing Markdown copies of the pages and llms.txt..."
+  node "$PWD/ci/docs/markdown.js" "$PWD/gh-pages/_site" "$branchVersion"
+  if [[ $? -ne 0 ]]; then
+    printyellow "Some pages have no Markdown copy; see the messages above."
+    if [[ "$CI" == "true" ]]; then
+      echo "::warning title=Markdown copies::Some pages have no Markdown copy; see the job log."
+    fi
+  fi
+
   if [[ "$CI" == "true" ]]; then
     mkdir -p "$PWD/jekyll"
     if [[ -d "$PWD/gh-pages/.jekyll-cache" ]]; then
@@ -583,6 +609,8 @@ fi
 recordPhase "Jekyll"
 
 if [[ $proofRead == "true" ]]; then
+  printgreen "Checking documentation pages..."
+  checkProjectDocumentation
   printgreen "Validating documentation links..."
   validateProjectDocumentation
   retVal=$?

@@ -1,5 +1,5 @@
 {
-  "dependencies": "jpa-ticket-registry",
+  "dependencies": "jpa-ticket-registry,rest",
   "conditions": {
     "docker": "true"
   },

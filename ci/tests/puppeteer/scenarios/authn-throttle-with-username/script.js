@@ -17,6 +17,10 @@ const cas = require("../../cas.js");
     await cas.log(`${response.status()} ${response.statusText()}`);
     assert(response.ok());
 
+    await verifyThrottledRecords(`${url}?username=CASUSER`, (records) => records.length > 0
+        && records.every((record) => record.username === "casuser"));
+    await verifyThrottledRecords(`${url}?username=unknown`, (records) => records.length === 0);
+
     await cas.closeBrowser(browser);
 })();
 
@@ -25,3 +29,14 @@ async function submitLoginFailure(page) {
     await cas.loginWith(page, "casuser", "BadPassword1");
 }
 
+async function verifyThrottledRecords(url, expectation) {
+    await cas.doGet(url, async (res) => {
+        assert(res.status === 200);
+        assert(expectation(res.data), `Unexpected throttled records from ${url}`);
+    }, async (err) => {
+        throw err;
+    }, {
+        "Accept": "application/json",
+        "Content-Type": "application/x-www-form-urlencoded"
+    });
+}

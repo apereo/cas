@@ -136,7 +136,7 @@ public class OidcDiscoveryProperties implements Serializable {
     /**
      * Supported algorithms for ID token signing.
      */
-    private List<String> idTokenSigningAlgValuesSupported = Stream.of("none", "RS256", "RS384",
+    private List<String> idTokenSigningAlgValuesSupported = Stream.of("RS256", "RS384",
         "RS512", "PS256", "PS384",
         "PS512", "ES256", "ES384",
         "ES512", "HS256", "HS384", "HS512").toList();
@@ -158,7 +158,7 @@ public class OidcDiscoveryProperties implements Serializable {
      * Accepted values containing a list of the JWS signing algorithms
      * supported by the introspection endpoint to sign the response.
      */
-    private List<String> introspectionSignedResponseAlgValuesSupported = Stream.of("none", "RS256", "RS384",
+    private List<String> introspectionSignedResponseAlgValuesSupported = Stream.of("RS256", "RS384",
         "RS512", "PS256", "PS384",
         "PS512", "ES256", "ES384",
         "ES512", "HS256", "HS384", "HS512").toList();
@@ -181,7 +181,7 @@ public class OidcDiscoveryProperties implements Serializable {
     /**
      * Supported algorithms for user-info signing.
      */
-    private List<String> userInfoSigningAlgValuesSupported = Stream.of("none", "RS256", "RS384",
+    private List<String> userInfoSigningAlgValuesSupported = Stream.of("RS256", "RS384",
         "RS512", "PS256", "PS384",
         "PS512", "ES256", "ES384",
         "ES512", "HS256", "HS384", "HS512").toList();
@@ -233,19 +233,22 @@ public class OidcDiscoveryProperties implements Serializable {
     private List<String> acrValuesSupported = new ArrayList<>();
 
     /**
-     * Supported algorithms for request object signing.
+     * Supported algorithms for request object signing. Unsigned request objects, whose algorithm is {@code none}, are
+     * refused, so {@code none} is never advertised, even when listed here.
      */
-    private List<String> requestObjectSigningAlgValuesSupported = Stream.of("none", "RS256", "RS384",
+    private List<String> requestObjectSigningAlgValuesSupported = Stream.of("RS256", "RS384",
         "RS512", "PS256", "PS384",
         "PS512", "ES256", "ES384",
         "ES512", "HS256", "HS384",
         "HS512").toList();
 
     /**
-     * Supported algorithms for request object encryption.
+     * Supported algorithms for request object encryption. Request objects are encrypted to the encryption keys
+     * of the OpenID Connect keystore, so only key management algorithms that work with those keys apply:
+     * RSA algorithms for RSA keys, ECDH-ES algorithms for elliptic curve keys. Symmetric key wrapping with keys
+     * derived from client secrets is not supported.
      */
-    private List<String> requestObjectEncryptionAlgValuesSupported = Stream.of("RSA1_5", "RSA-OAEP", "RSA-OAEP-256",
-        "A128KW", "A192KW", "A256KW", "A128GCMKW", "A192GCMKW", "A256GCMKW",
+    private List<String> requestObjectEncryptionAlgValuesSupported = Stream.of("RSA-OAEP", "RSA-OAEP-256",
         "ECDH-ES", "ECDH-ES+A128KW", "ECDH-ES+A192KW", "ECDH-ES+A256KW").toList();
 
     /**
@@ -264,7 +267,7 @@ public class OidcDiscoveryProperties implements Serializable {
      * List of the JWS signing algorithms (alg values) supported by the CAS for signed authentication requests.
      * If omitted, signed authentication requests are not supported by the CAS.
      */
-    private List<String> backchannelAuthenticationRequestSigningAlgValuesSupported = Stream.of("none", "RS256", "RS384",
+    private List<String> backchannelAuthenticationRequestSigningAlgValuesSupported = Stream.of("RS256", "RS384",
         "RS512", "PS256", "PS384",
         "PS512", "ES256", "ES384",
         "ES512", "HS256", "HS384",

@@ -49,12 +49,26 @@ class OAuth20JwtAccessTokenEncodableCipher implements EncodableCipher<String, St
     private final boolean forceEncodeAsJwt;
     private String tokenAudience;
 
+    /**
+     * Encode the token as a JWT, when the client or CAS asks for one, signed or encrypted with the keys of the client
+     * or else with the keys of CAS. A JWT that would be unsigned, because neither signs nor encrypts it, is not issued:
+     * CAS never accepts one back.
+     *
+     * @param value      the token identifier
+     * @param parameters the parameters
+     * @return the encoded token
+     */
     @Override
     public String encode(final String value, final Object[] parameters) {
-        if (registeredService instanceof OAuthRegisteredService && shouldEncodeAsJwt()) {
+        if (registeredService instanceof final OAuthRegisteredService oauthService && shouldEncodeAsJwt()) {
             return FunctionUtils.doUnchecked(() -> {
                 val request = getJwtRequestBuilder();
-                return configurationContext.getAccessTokenJwtBuilder().build(request);
+                val jwt = configurationContext.getAccessTokenJwtBuilder().build(request);
+                if (JwtBuilder.isUnsigned(jwt)) {
+                    throw new IllegalStateException("Token of client [%s] would be issued as an unsigned JWT; turn on signing of its JWT tokens"
+                        .formatted(oauthService.getClientId()));
+                }
+                return jwt;
             });
         }
         return token.getId();

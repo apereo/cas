@@ -44,12 +44,32 @@ Several requests can be evaluated in one call to `/heimdall/authzen/evaluations`
 
 ```json
 {
-  "subject": { "type": "user", "id": "alice@acmecorp.com" },
-  "action": { "name": "can_read" },
-  "options": { "evaluations_semantic": "execute_all" },
+  "subject": {
+    "type": "user",
+    "id": "alice@acmecorp.com"
+  },
+  "action": {
+    "name": "can_read"
+  },
+  "options": {
+    "evaluations_semantic": "execute_all"
+  },
   "evaluations": [
-    { "resource": { "type": "document", "id": "1" } },
-    { "resource": { "type": "document", "id": "2" }, "action": { "name": "can_edit" } }
+    {
+      "resource": {
+        "type": "document",
+        "id": "1"
+      }
+    },
+    {
+      "resource": {
+        "type": "document",
+        "id": "2"
+      },
+      "action": {
+        "name": "can_edit"
+      }
+    }
   ]
 }
 ```
@@ -87,7 +107,7 @@ a search would enumerate.
 
 ## Policy Decision Point Metadata
 
-The policy decision point is identified by `${cas.server.prefix}/heimdall`, for example `https://sso.example.org/cas/heimdall`,
+The policy decision point is identified by the CAS server prefix followed by `/heimdall`, for example `https://sso.example.org/cas/heimdall`,
 and publishes its [metadata](https://openid.net/specs/authorization-api-1_0.html#name-policy-decision-point-metadata)
 at `/cas/heimdall/.well-known/authzen-configuration`:
 

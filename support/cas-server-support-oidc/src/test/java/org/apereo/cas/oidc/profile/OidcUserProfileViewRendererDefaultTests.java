@@ -71,7 +71,6 @@ class OidcUserProfileViewRendererDefaultTests extends AbstractOidcTests {
         service.setUserInfoEncryptedResponseEncoding(OidcUserProfileSigningAndEncryptionService.USER_INFO_RESPONSE_ENCRYPTION_ENCODING_DEFAULT);
         service.setUserInfoEncryptedResponseAlg("RSA-OAEP-256");
         service.setUserInfoSigningAlg("RS256");
-        service.setSignIdToken(true);
         service.setEncryptIdToken(true);
         servicesManager.save(service);
 
@@ -88,7 +87,6 @@ class OidcUserProfileViewRendererDefaultTests extends AbstractOidcTests {
         val accessToken = getAccessToken(clientId);
         val service = getOidcRegisteredService(clientId);
         service.setUserInfoSigningAlg("RS256");
-        service.setSignIdToken(true);
         service.setEncryptIdToken(false);
         servicesManager.save(service);
 

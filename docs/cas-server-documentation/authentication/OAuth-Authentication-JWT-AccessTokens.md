@@ -46,6 +46,9 @@ also the option to generate JWTs as access tokens on a per-service basis:
 }
 ```
 
-Signing and encryption keys may also be defined on a per-service basis, or globally via CAS settings.
+Signing and encryption keys may also be defined on a per-service basis, or globally via CAS settings. A JWT access
+token must be signed or encrypted, with the keys of the service or of CAS: one that neither would sign nor encrypt
+would be an unsigned JWT, whose algorithm is `none`, which CAS neither issues nor accepts, whether as an access token,
+a refresh token, or a subject or actor token of a token exchange.
 
 {% include_cached registeredserviceproperties.html groups="JWT_ACCESS_TOKENS" %}

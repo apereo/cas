@@ -4,12 +4,16 @@ import module java.base;
 import org.apereo.cas.configuration.model.support.oidc.OidcProperties;
 import org.apereo.cas.configuration.support.CasConfigurationJasyptCipherExecutor;
 import org.apereo.cas.oidc.AbstractOidcTests;
+import org.apereo.cas.oidc.jwks.OidcJsonWebKeyUsage;
 import org.apereo.cas.util.RandomUtils;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.awaitility.Awaitility;
+import org.jose4j.jwk.EllipticCurveJsonWebKey;
 import org.jose4j.jwk.JsonWebKeySet;
+import org.jose4j.jws.AlgorithmIdentifiers;
+import org.jose4j.keys.EllipticCurves;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -90,7 +94,7 @@ class OidcDefaultJsonWebKeystoreGeneratorServiceTests {
             val properties = new OidcProperties();
             properties.getJwks().getCore().setJwksType("ec");
             properties.getJwks().getCore().setJwksKeySize(256);
-            verifyGeneration(properties);
+            verifyGeneration(properties, EllipticCurves.P_256, AlgorithmIdentifiers.ECDSA_USING_P256_CURVE_AND_SHA256);
         }
 
         @Test
@@ -98,7 +102,7 @@ class OidcDefaultJsonWebKeystoreGeneratorServiceTests {
             val properties = new OidcProperties();
             properties.getJwks().getCore().setJwksType("ec");
             properties.getJwks().getCore().setJwksKeySize(384);
-            verifyGeneration(properties);
+            verifyGeneration(properties, EllipticCurves.P_384, AlgorithmIdentifiers.ECDSA_USING_P384_CURVE_AND_SHA384);
         }
 
         @Test
@@ -106,7 +110,7 @@ class OidcDefaultJsonWebKeystoreGeneratorServiceTests {
             val properties = new OidcProperties();
             properties.getJwks().getCore().setJwksType("ec");
             properties.getJwks().getCore().setJwksKeySize(521);
-            verifyGeneration(properties);
+            verifyGeneration(properties, EllipticCurves.P_521, AlgorithmIdentifiers.ECDSA_USING_P521_CURVE_AND_SHA512);
         }
 
         @Test
@@ -160,12 +164,20 @@ class OidcDefaultJsonWebKeystoreGeneratorServiceTests {
             return keystore;
         }
 
-        private void verifyGeneration(final OidcProperties properties) throws Throwable {
+        private void verifyGeneration(final OidcProperties properties, final String curve,
+                                      final String signingAlgorithm)
+                throws Throwable {
             val file = Files.createTempFile(RandomUtils.randomAlphabetic(6), ".jwks").toFile();
             properties.getJwks().getFileSystem().setJwksFile(file.getAbsolutePath());
             val service = new OidcDefaultJsonWebKeystoreGeneratorService(properties, applicationContext);
             service.generate(new FileSystemResource(file));
             assertTrue(file.exists());
+            val keys = OidcJsonWebKeystoreGeneratorService.toJsonWebKeyStore(new FileSystemResource(file)).getJsonWebKeys();
+            assertEquals(4, keys.size());
+            keys.forEach(key -> {
+                assertEquals(curve, assertInstanceOf(EllipticCurveJsonWebKey.class, key).getCurveName());
+                assertEquals(OidcJsonWebKeyUsage.SIGNING.is(key) ? signingAlgorithm : null, key.getAlgorithm());
+            });
             service.destroy();
         }
     }

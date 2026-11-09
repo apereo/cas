@@ -72,10 +72,10 @@ class RsaKeyPairCipherExecutorTests {
     }
 
     @Test
-    void verifyRsaKeyPairDoesNothing() {
+    void verifyRsaKeyPairWithoutKeysRefusesValues() {
         val cipher = new RsaKeyPairCipherExecutor();
         val testValue = cipher.encode("TestValue");
         assertNotNull(testValue);
-        assertEquals("TestValue", cipher.decode(testValue));
+        assertNull(cipher.decode(testValue));
     }
 }
