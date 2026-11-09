@@ -166,9 +166,10 @@ public abstract class AbstractCipherExecutor<T, R> implements CipherExecutor<T, 
         setSigningKey(object);
     }
 
-    protected byte @Nullable [] verifySignature(final byte[] value, final Key givenKey) {
+    protected byte @Nullable [] verifySignature(final byte[] value, @Nullable final Key givenKey) {
         if (givenKey == null) {
-            return value;
+            LOGGER.warn("No signing key is defined to verify the signature of the value, which is therefore refused");
+            return null;
         }
         try {
             val activeSigningKey = givenKey instanceof final IdentifiableKey idk ? idk.getKey() : givenKey;

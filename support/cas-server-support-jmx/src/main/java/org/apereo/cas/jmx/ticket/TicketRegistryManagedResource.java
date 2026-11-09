@@ -12,6 +12,7 @@ import org.springframework.jmx.export.annotation.ManagedOperation;
 import org.springframework.jmx.export.annotation.ManagedOperationParameter;
 import org.springframework.jmx.export.annotation.ManagedOperationParameters;
 import org.springframework.jmx.export.annotation.ManagedResource;
+import org.springframework.transaction.support.TransactionOperations;
 import org.springframework.util.Assert;
 
 /**
@@ -27,6 +28,8 @@ public class TicketRegistryManagedResource {
 
     private final ObjectProvider<TicketRegistryCleaner> ticketRegistryCleaner;
 
+    private final TransactionOperations ticketTransactionOperations;
+
     /**
      * Gets tickets.
      *
@@ -34,21 +37,22 @@ public class TicketRegistryManagedResource {
      */
     @ManagedOperation(description = "List all ticket identifiers; use getTicketsByPrefix for bounded results")
     public Collection<String> getTickets() {
-        try (val stream = ticketRegistry.stream()) {
-            return stream.map(Ticket::getId).collect(Collectors.toSet());
-        }
+        return readInTicketTransaction(() -> {
+            try (val stream = ticketRegistry.stream()) {
+                return stream.map(Ticket::getId).collect(Collectors.toSet());
+            }
+        });
     }
 
     /**
-     * Gets ticket count.
+     * Gets ticket count from the registry's own count, which a registry backed by a store answers without reading
+     * every ticket (a single count query for JPA).
      *
      * @return the ticket count
      */
     @ManagedAttribute(description = "Total tickets currently stored in the registry")
     public long getTicketCount() {
-        try (val stream = ticketRegistry.stream()) {
-            return stream.count();
-        }
+        return ticketRegistry.countTickets();
     }
 
     @ManagedAttribute(description = "Stored single sign-on sessions; a negative value means the count is unavailable")
@@ -76,12 +80,14 @@ public class TicketRegistryManagedResource {
     public String[] getTicketsByPrefix(final String prefix, final int limit) {
         Assert.hasText(prefix, "Ticket prefix cannot be blank");
         Assert.isTrue(limit > 0 && limit <= 1_000, "Limit must be between 1 and 1000");
-        try (val stream = ticketRegistry.stream()) {
-            return stream.filter(ticket -> prefix.equals(ticket.getPrefix()))
-                .limit(limit)
-                .map(Ticket::getId)
-                .toArray(String[]::new);
-        }
+        return readInTicketTransaction(() -> {
+            try (val stream = ticketRegistry.stream()) {
+                return stream.filter(ticket -> prefix.equals(ticket.getPrefix()))
+                    .limit(limit)
+                    .map(Ticket::getId)
+                    .toArray(String[]::new);
+            }
+        });
     }
 
     /**
@@ -102,6 +108,18 @@ public class TicketRegistryManagedResource {
         try (val stream = ticketRegistry.getSessionsFor(principalId)) {
             return stream.limit(limit).map(Ticket::getId).toArray(String[]::new);
         }
+    }
+
+    /**
+     * Scan the registry inside a ticket transaction. A registry backed by a database reads the rows a batch at a time
+     * while one is open, instead of collecting every ticket of the scan in memory first.
+     *
+     * @param <T>    the result type
+     * @param reader the scan
+     * @return the result
+     */
+    private <T> T readInTicketTransaction(final Supplier<T> reader) {
+        return Objects.requireNonNull(ticketTransactionOperations.execute(_ -> reader.get()));
     }
 
     /**

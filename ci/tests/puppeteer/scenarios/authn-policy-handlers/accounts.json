@@ -1,0 +1,13 @@
+{
+  "@class" : "java.util.LinkedHashMap",
+  "jsonuser" : {
+    "@class" : "org.apereo.cas.adaptors.generic.CasUserAccount",
+    "password" : "Mellon",
+    "status" : "OK"
+  },
+  "bothuser" : {
+    "@class" : "org.apereo.cas.adaptors.generic.CasUserAccount",
+    "password" : "Mellon",
+    "status" : "OK"
+  }
+}

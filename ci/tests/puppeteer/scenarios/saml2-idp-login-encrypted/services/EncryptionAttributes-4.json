@@ -1,0 +1,13 @@
+{
+  "@class" : "org.apereo.cas.support.saml.services.SamlRegisteredService",
+  "serviceId" : "^https://encryption\\.example\\.org/sp-attributes$",
+  "name" : "EncryptionAttributes",
+  "id" : 4,
+  "evaluationOrder" : 4,
+  "metadataLocation" : "file://${#env['PWD']}/ci/tests/puppeteer/scenarios/${#env['SCENARIO']}/sp-metadata.xml",
+  "encryptAttributes" : true,
+  "encryptableAttributes" : [ "java.util.HashSet", [ "mail" ] ],
+  "attributeReleasePolicy" : {
+    "@class" : "org.apereo.cas.services.ReturnAllAttributeReleasePolicy"
+  }
+}

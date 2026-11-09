@@ -20,6 +20,7 @@ import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.MockWebServer;
 import lombok.Getter;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.junit.jupiter.api.BeforeEach;
@@ -220,6 +221,60 @@ class ProxyValidateControllerTests {
             assertFalse(body.contains(SUCCESS));
             assertTrue(body.contains("code=\"%s\"".formatted(CasProtocolConstants.ERROR_CODE_INVALID_TICKET_SPEC)), body);
         }
+    }
+
+    /**
+     * A proxy ticket obtained through two proxies lists each proxy once in the CAS 2.0 response.
+     */
+    @Test
+    void verifyProxyChainListsEachProxyOnce() throws Throwable {
+        try (val webServer = new MockWebServer(HttpStatus.OK)) {
+            webServer.start();
+            val service = RegisteredServiceTestUtils.getService("http://localhost:%s".formatted(webServer.getPort()));
+            val registeredService = RegisteredServiceTestUtils.getRegisteredService(service.getId(), Map.of());
+            registeredService.setProxyPolicy(new RegexMatchingRegisteredServiceProxyPolicy().setUseServiceId(true));
+            servicesManager.save(registeredService);
+
+            val ctx = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport(), service);
+            val tId = getCentralAuthenticationService().createTicketGrantingTicket(ctx);
+            val sId = getCentralAuthenticationService().grantServiceTicket(tId.getId(), service, ctx);
+
+            val firstProxyGrantingTicket = validateWithProxyCallback(service.getId(), sId.getId());
+            val firstProxyTicket = requestProxyTicket(service.getId(), firstProxyGrantingTicket);
+            val secondProxyGrantingTicket = validateWithProxyCallback(service.getId(), firstProxyTicket);
+            val secondProxyTicket = requestProxyTicket(service.getId(), secondProxyGrantingTicket);
+
+            val result = mockMvc.perform(get(CasProtocolConstants.ENDPOINT_PROXY_VALIDATE)
+                    .param(CasProtocolConstants.PARAMETER_SERVICE, service.getId())
+                    .param(CasProtocolConstants.PARAMETER_TICKET, secondProxyTicket))
+                .andExpect(status().isOk())
+                .andReturn();
+            val body = result.getResponse().getContentAsString();
+            assertTrue(body.contains(SUCCESS), body);
+            assertEquals(2, StringUtils.countMatches(body, "<cas:proxy>"), body);
+        }
+    }
+
+    private String validateWithProxyCallback(final String service, final String ticket) throws Exception {
+        val result = mockMvc.perform(get(CasProtocolConstants.ENDPOINT_PROXY_VALIDATE)
+                .param(CasProtocolConstants.PARAMETER_SERVICE, service)
+                .param(CasProtocolConstants.PARAMETER_TICKET, ticket)
+                .param(CasProtocolConstants.PARAMETER_PROXY_CALLBACK_URL, service))
+            .andExpect(status().isOk())
+            .andReturn();
+        assertTrue(result.getResponse().getContentAsString().contains(SUCCESS));
+        return Objects.requireNonNull(result.getModelAndView())
+            .getModelMap().get(CasViewConstants.MODEL_ATTRIBUTE_NAME_PROXY_GRANTING_TICKET).toString();
+    }
+
+    private String requestProxyTicket(final String targetService, final String proxyGrantingTicket) throws Exception {
+        val result = mockMvc.perform(get(CasProtocolConstants.ENDPOINT_PROXY)
+                .param(CasProtocolConstants.PARAMETER_TARGET_SERVICE, targetService)
+                .param(CasProtocolConstants.PARAMETER_PROXY_GRANTING_TICKET, proxyGrantingTicket))
+            .andExpect(status().isOk())
+            .andReturn();
+        return Objects.requireNonNull(result.getModelAndView())
+            .getModelMap().get(CasProtocolConstants.PARAMETER_TICKET).toString();
     }
 
     private long countProxyGrantingTickets(final String ticketGrantingTicketId) {

@@ -8,7 +8,7 @@ The `health` endpoint may also be configured to show details via the following c
 |-------------------|--------------------------------------------------------------------------------------------------------------------------|
 | `never`           | Never display details of health monitors.                                                                                |
 | `always`          | Always display details of health monitors.                                                                               |
-| `when-authorized` | Details are only shown to authorized users. Authorized roles can be configured using `management.endpoint.health.roles`. |
+| `when-authorized` | Details are only shown to authorized users. The authorized roles are set through the endpoint settings.          |
 
 The results and details of the `health` endpoints are produced by a number of
 health indicator components that may monitor different systems, such as LDAP connection

@@ -274,6 +274,11 @@ public interface OAuth20Constants {
     String INVALID_REQUEST = "invalid_request";
 
     /**
+     * The request object of the request cannot be decrypted or verified.
+     */
+    String INVALID_REQUEST_OBJECT = "invalid_request_object";
+
+    /**
      * The invalid grant.
      */
     String INVALID_GRANT = "invalid_grant";

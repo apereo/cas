@@ -2,6 +2,7 @@ package org.apereo.cas.configuration.model.support.oidc;
 
 import module java.base;
 import org.apereo.cas.configuration.support.DurationCapable;
+import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
 import org.apereo.cas.configuration.support.RegularExpressionCapable;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
@@ -93,4 +94,17 @@ public class OidcCoreProperties implements Serializable {
      * Once successful, {@code acr} and {@code amr} values are passed back to the relying party as part of the ID token.
      */
     private List<String> authenticationContextReferenceMappings = new ArrayList<>();
+
+    /**
+     * Salt used to calculate the pairwise subject identifiers of clients whose definition carries no salt of its own,
+     * such as clients that CAS registers itself, dynamically or through OpenID Federation, when they ask for pairwise
+     * subject identifiers. The salt is read when identifiers are calculated and is never written into client
+     * definitions. Clients in the same sector receive the same identifier for a user. Relying parties registered through
+     * OpenID Federation that ask for pairwise subject identifiers are not registered unless this salt is defined;
+     * clients registered dynamically while it is not defined are each given a random salt of their own, kept with their
+     * registration, which they keep using afterwards and which they do not share with other clients of their sector.
+     * Changing this salt changes the identifiers of the clients that use it.
+     */
+    @ExpressionLanguageCapable
+    private String pairwiseSubjectSalt;
 }

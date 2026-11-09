@@ -1,0 +1,14 @@
+{
+  "@class" : "org.apereo.cas.support.saml.services.SamlRegisteredService",
+  "serviceId" : "^https://encryption\\.example\\.org/sp-cbc$",
+  "name" : "EncryptionCbc",
+  "id" : 3,
+  "evaluationOrder" : 3,
+  "metadataLocation" : "file://${#env['PWD']}/ci/tests/puppeteer/scenarios/${#env['SCENARIO']}/sp-metadata.xml",
+  "encryptAssertions" : true,
+  "encryptionDataAlgorithms" : [ "java.util.ArrayList", [ "http://www.w3.org/2001/04/xmlenc#aes128-cbc" ] ],
+  "encryptionKeyAlgorithms" : [ "java.util.ArrayList", [ "http://www.w3.org/2009/xmlenc11#rsa-oaep" ] ],
+  "attributeReleasePolicy" : {
+    "@class" : "org.apereo.cas.services.ReturnAllAttributeReleasePolicy"
+  }
+}

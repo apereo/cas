@@ -13,6 +13,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistryCleaner;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
+import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
@@ -22,6 +23,8 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.annotation.EnableMBeanExport;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.support.TransactionTemplate;
 
 /**
  * This is {@link CasJmxAutoConfiguration}.
@@ -50,8 +53,12 @@ public class CasJmxAutoConfiguration {
         @Qualifier(TicketRegistry.BEAN_NAME)
         final TicketRegistry ticketRegistry,
         @Qualifier(TicketRegistryCleaner.BEAN_NAME)
-        final ObjectProvider<TicketRegistryCleaner> ticketRegistryCleaner) {
-        return new TicketRegistryManagedResource(ticketRegistry, ticketRegistryCleaner);
+        final ObjectProvider<TicketRegistryCleaner> ticketRegistryCleaner,
+        @Qualifier(TicketRegistry.TICKET_TRANSACTION_MANAGER)
+        final PlatformTransactionManager ticketTransactionManager) {
+        val ticketTransactionTemplate = new TransactionTemplate(ticketTransactionManager);
+        ticketTransactionTemplate.setReadOnly(true);
+        return new TicketRegistryManagedResource(ticketRegistry, ticketRegistryCleaner, ticketTransactionTemplate);
     }
 
     @Bean

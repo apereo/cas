@@ -1,6 +1,7 @@
 
 const assert = require("assert");
 const cas = require("../../cas.js");
+const crypto = require("crypto");
 
 const redirectUri = "https://localhost:9859/anything/cas";
 const apiResource = "https://localhost:9859/anything/api";
@@ -41,6 +42,58 @@ async function verifyRefreshWithResource(refreshToken, resource, expectedAudienc
     });
     assert(accessToken !== null);
     await verifyAudience(accessToken, expectedAudience);
+}
+
+async function requestPkceCode(page, codeChallenge, codeChallengeMethod) {
+    const pkceRedirectUri = "https://localhost:9859/anything/pkce";
+    const url = "https://localhost:8443/cas/oauth2.0/authorize?client_id=pkceclient&scope=read&state=P4kc3"
+        + `&response_type=code&redirect_uri=${pkceRedirectUri}`
+        + `&code_challenge=${codeChallenge}&code_challenge_method=${codeChallengeMethod}`;
+    await cas.goto(page, url);
+    await cas.sleep(1000);
+    if (await cas.isVisible(page, "#username")) {
+        await cas.loginWith(page);
+        await cas.sleep(1000);
+    }
+    await cas.assertPageUrlStartsWith(page, pkceRedirectUri);
+    return cas.assertParameter(page, "code");
+}
+
+async function redeemPkceCode(code, codeVerifier, expectedStatus) {
+    let params = `client_id=pkceclient&grant_type=authorization_code&redirect_uri=https://localhost:9859/anything/pkce&code=${code}`;
+    if (codeVerifier !== undefined) {
+        params += `&code_verifier=${codeVerifier}`;
+    }
+    await requestTokens(params, (res) => {
+        assert(expectedStatus === 200, `PKCE token request should have failed but produced: ${JSON.stringify(res.data)}`);
+        assert(res.data.access_token !== undefined);
+    }, (error) => {
+        assert(error.response !== undefined, `No response: ${error}`);
+        cas.log(`Status: ${error.response.status}`);
+        assert(error.response.status === expectedStatus);
+    });
+}
+
+async function verifyProofKeyCodeExchange(page) {
+    await cas.log("PKCE with the plain method on the OAuth endpoints, for a public client");
+    const plainVerifier = crypto.randomBytes(32).toString("base64url");
+    const plainCode = await requestPkceCode(page, plainVerifier, "plain");
+    await cas.log("A code issued with a challenge is not redeemed without a verifier");
+    await redeemPkceCode(plainCode, undefined, 401);
+    await cas.log("A code issued with a challenge is not redeemed with a verifier that does not match it");
+    await redeemPkceCode(plainCode, crypto.randomBytes(32).toString("base64url"), 401);
+    await redeemPkceCode(plainCode, plainVerifier, 200);
+    await cas.log("A redeemed code is not redeemed again, even with its verifier");
+    await redeemPkceCode(plainCode, plainVerifier, 401);
+    await cas.separator();
+
+    await cas.log("PKCE with the S256 method on the OAuth endpoints");
+    const s256Verifier = crypto.randomBytes(32).toString("base64url");
+    const s256Challenge = crypto.createHash("sha256").update(s256Verifier).digest("base64url");
+    const s256Code = await requestPkceCode(page, s256Challenge, "S256");
+    await cas.log("The challenge itself is not accepted as the verifier of an S256 challenge");
+    await redeemPkceCode(s256Code, s256Challenge, 401);
+    await redeemPkceCode(s256Code, s256Verifier, 200);
 }
 
 (async () => {
@@ -84,6 +137,15 @@ async function verifyRefreshWithResource(refreshToken, resource, expectedAudienc
     accessTokenParams += "client_secret=secret&";
     accessTokenParams += "grant_type=authorization_code&";
     accessTokenParams += `redirect_uri=${redirectUri}`;
+
+    await cas.log("A code issued without a challenge is not redeemed with a code verifier");
+    await requestTokens(`${accessTokenParams}&code=${code}&code_verifier=${crypto.randomBytes(32).toString("base64url")}`,
+        (res) => {
+            throw `Token request should have failed: ${res.data}`;
+        }, (error) => {
+            assert(error.response.status === 400);
+            assert(error.response.data.error === "invalid_grant");
+        });
 
     await cas.log("The token request may not name a resource the code was not granted for");
     await requestTokens(`${accessTokenParams}&code=${code}&resource=${encodeURIComponent("https://localhost:9859/anything/other")}`,
@@ -142,6 +204,9 @@ async function verifyRefreshWithResource(refreshToken, resource, expectedAudienc
         }, (error) => {
             throw error;
         });
+
+    await cas.separator();
+    await verifyProofKeyCodeExchange(page);
 
     await cas.closeBrowser(browser);
 })();

@@ -1,0 +1,13 @@
+{
+  "@class" : "org.apereo.cas.support.saml.services.SamlRegisteredService",
+  "serviceId" : "^https://encryption\\.example\\.org/sp-gcm$",
+  "name" : "EncryptionGcm",
+  "id" : 2,
+  "evaluationOrder" : 2,
+  "metadataLocation" : "file://${#env['PWD']}/ci/tests/puppeteer/scenarios/${#env['SCENARIO']}/sp-metadata.xml",
+  "encryptAssertions" : true,
+  "encryptionDataAlgorithms" : [ "java.util.ArrayList", [ "http://www.w3.org/2009/xmlenc11#aes256-gcm" ] ],
+  "attributeReleasePolicy" : {
+    "@class" : "org.apereo.cas.services.ReturnAllAttributeReleasePolicy"
+  }
+}

@@ -98,16 +98,24 @@ public abstract class BaseTokenSigningAndEncryptionService implements OAuth20Tok
         return "JWT";
     }
 
+    /**
+     * Sign the token for the service. An unsigned JWT, whose algorithm is {@code none}, carries no proof of who issued it,
+     * so it is never issued: a token that would not be signed for the service is refused.
+     *
+     * @param claims            the claims
+     * @param registeredService the registered service
+     * @return the signed token
+     * @throws Throwable the throwable
+     */
     protected String signTokenIfNecessary(final JwtClaims claims, final OAuthRegisteredService registeredService) throws Throwable {
-        if (shouldSignToken(registeredService)) {
-            LOGGER.debug("Fetching JSON web key to sign the token for : [{}]", registeredService.getClientId());
-            val jsonWebKey = getJsonWebKeySigningKey(Optional.of(registeredService));
-            LOGGER.debug("Found JSON web key to sign the token: [{}]", jsonWebKey);
-            Objects.requireNonNull(jsonWebKey.getPrivateKey(), "JSON web key used to sign the token has no associated private key");
-            return signToken(registeredService, claims, jsonWebKey);
-        }
-        val claimSet = JwtBuilder.tryParse(claims.toJson()).orElseThrow();
-        return JwtBuilder.buildPlain(claimSet, Optional.of(registeredService));
+        FunctionUtils.throwIf(!shouldSignToken(registeredService),
+            () -> new IllegalStateException("Token for client [%s] would be an unsigned JWT and unsigned JWTs are not issued"
+                .formatted(registeredService.getClientId())));
+        LOGGER.debug("Fetching JSON web key to sign the token for : [{}]", registeredService.getClientId());
+        val jsonWebKey = getJsonWebKeySigningKey(Optional.of(registeredService));
+        LOGGER.debug("Found JSON web key to sign the token: [{}]", jsonWebKey);
+        Objects.requireNonNull(jsonWebKey.getPrivateKey(), "JSON web key used to sign the token has no associated private key");
+        return signToken(registeredService, claims, jsonWebKey);
     }
 
     protected byte @Nullable [] verifySignature(final String token, final PublicJsonWebKey jsonWebKey) {

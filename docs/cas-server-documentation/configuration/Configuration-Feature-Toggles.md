@@ -9,12 +9,11 @@ category: Configuration
 
 # Configuration Feature Toggles
 
-You can control the list of auto-configuration classes to exclude them in the `cas.properties` file:
+You can exclude auto-configuration classes by listing their fully-qualified class names, such as
+`org.apereo.cas.custom.config.SomethingConfigurationClass`, in the Spring Boot setting that excludes auto-configuration
+classes, in the `cas.properties` file.
 
-```properties
-spring.autoconfigure.exclude=org.apereo.cas.custom.config.SomethingConfigurationClass
-```
-{: .cas-settings-linked}
+{% include_cached casproperties.html thirdPartyExactMatch="spring.autoconfigure.exclude" %}
 
 This is a very granular, internal way to control the auto-configuration classes, but it comes with a few important caveats: 
 
