@@ -59,7 +59,7 @@ description: "Review and change CAS OAuth2/OIDC protocol behavior: token endpoin
   `JwtBuilder.build` throws when neither the service nor the default cipher can sign or encrypt, and
   `BaseTokenSigningAndEncryptionService.signTokenIfNecessary` throws when `shouldSignToken` is false. There is no
   `buildPlain`; tests that need an unsigned JWT build one with `new PlainJWT(claims).serialize()`.
-- `shouldSignToken`/`shouldEncryptToken` per service: ID tokens always sign (`signIdToken=false` or `none` throws);
+- `shouldSignToken`/`shouldEncryptToken` per service: ID tokens always sign (`none` throws; there is no `signIdToken` property, and `OidcRegisteredService` ignores it in older definitions);
   user info signs when an algorithm is set or encryption is asked for (renderer returns plain JSON otherwise);
   introspection JWTs always sign (default `RS512`, also for `none`); UMA RPTs always sign with the UMA JWKS. `none` as an
   encryption algorithm means no encryption. Discovery filters `none` out of every signing algorithm list it publishes.

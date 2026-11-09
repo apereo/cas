@@ -239,8 +239,7 @@
                                                      <div th:replace="~{fragments/switchbutton :: switchbutton (id='dpopBoundAccessTokens', label='#DPoP-Bound Access Tokens', cssClass='pt-2 advanced-option', dataAttrs='param-skip-false=true')}"/>
                                                      <div th:replace="~{fragments/switchbutton :: switchbutton (id='tlsClientCertificateBoundAccessTokens', label='#Certificate-Bound Access Tokens', cssClass='pt-2 advanced-option', dataAttrs='param-skip-false=true')}"/>
 
-                                                     <div th:replace="~{fragments/switchbutton :: switchbutton (id='signIdToken', label='#Sign ID Tokens', cssClass='class-OidcRegisteredService pt-2', dataAttrs='param-skip-true=true', selected=true)}"/>
-                                                     <div th:replace="~{fragments/switchbutton :: switchbutton (id='encryptIdToken', label='#Encrypt ID Tokens', cssClass='class-OidcRegisteredService advanced-option', dataAttrs='param-skip-false=true')}"/>
+                                                     <div th:replace="~{fragments/switchbutton :: switchbutton (id='encryptIdToken', label='#Encrypt ID Tokens', cssClass='class-OidcRegisteredService pt-2 advanced-option', dataAttrs='param-skip-false=true')}"/>
                                                      <div th:replace="~{fragments/switchbutton :: switchbutton (id='idTokenEncryptionOptional', label='#Encrypt ID Tokens Optionally', cssClass='class-OidcRegisteredService pt-2 advanced-option', dataAttrs='param-skip-false=true')}"/>
                                                      <div th:replace="~{fragments/switchbutton :: switchbutton (id='includeIdTokenClaims', label='#Include Claims in ID Tokens', selected=true, cssClass='class-OidcRegisteredService advanced-option', dataAttrs='param-skip-true=true')}"/>
                                                  </div>

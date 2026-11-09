@@ -60,7 +60,6 @@ class OidcUserProfileViewRendererFlatTests extends AbstractOidcTests {
         val accessToken = getAccessToken(clientId);
         val service = getOidcRegisteredService(clientId);
         service.setUserInfoSigningAlg("RS256");
-        service.setSignIdToken(true);
         service.setEncryptIdToken(false);
         servicesManager.save(service);
 

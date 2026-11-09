@@ -449,8 +449,10 @@ one-time codes can be added when `cas.authn.mfa.simple.mail.accepted-email-patte
   [JWT service and ticket-granting tickets](../installation/Configure-ServiceTicket-JWT.html) and [JWT authorization
   responses](../authentication/OIDC-Authentication-JARM.html) that would be neither signed nor encrypted are refused
   rather than issued, so deployments that turn off both must turn on signing.
-  [ID tokens](../authentication/OIDC-Authentication-Clients.html) are always signed: applications that turn off ID token
-  signing or ask for `none` are refused, and dynamic registration refuses `none` with `invalid_client_metadata`.
+  [ID tokens](../authentication/OIDC-Authentication-Clients.html) are always signed: the `signIdToken` field of OpenID
+  Connect applications is removed, from the Palantir service editor and MCP client summaries too, and ignored in existing
+  definitions, so applications that turned it off now get signed ID tokens; applications that ask for `none` are
+  refused, and dynamic registration refuses `none` with `invalid_client_metadata`.
   `none` as the user info signing algorithm means a plain JSON response, and user info that is only encrypted is signed
   first; [JWT introspection responses](../authentication/OAuth-Authentication-TokenIntrospection.html) are always signed,
   with the default algorithm when none or `none` is set; `none` as an encryption algorithm means no encryption;

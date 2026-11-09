@@ -136,7 +136,7 @@ class OidcVerifiableCredentialPresentationResponseEndpointControllerTests extend
     @BeforeEach
     void registerCredentialClient() {
         credentialClient = getOidcRegisteredService(CREDENTIAL_CLIENT_ID,
-            "https://wallet\\.example\\.org/.*", true, false);
+            "https://wallet\\.example\\.org/.*", false);
         credentialClient.setIdTokenSigningAlg(JWSAlgorithm.ES512.getName());
         credentialClient.setJwksKeyId("EC");
         credentialClient = (OidcRegisteredService) servicesManager.save(credentialClient);
@@ -446,7 +446,7 @@ class OidcVerifiableCredentialPresentationResponseEndpointControllerTests extend
     void verifyOutcomeIsReleasedOnlyToTheCreatingClient() throws Throwable {
         val transaction = createTransaction();
         val otherClient = (OidcRegisteredService) servicesManager.save(getOidcRegisteredService("other-presentation-client",
-            "https://other\\.example\\.org/.*", true, false));
+            "https://other\\.example\\.org/.*", false));
         fetchResult(transaction.ticket().getId(), otherClient, null).andExpect(status().isNotFound());
 
         submitPresentation(transaction.ticket().getId(), buildVpToken(bindCredential(issueCredential(), transaction.nonce())))
@@ -832,7 +832,7 @@ class OidcVerifiableCredentialPresentationResponseEndpointControllerTests extend
         }
 
         private ResultActions submitDigitalCredentialsMdocResponse(final String requestId, final String response) throws Exception {
-            val client = getOidcRegisteredService(CREDENTIAL_CLIENT_ID, "https://wallet\\.example\\.org/.*", true, false);
+            val client = getOidcRegisteredService(CREDENTIAL_CLIENT_ID, "https://wallet\\.example\\.org/.*", false);
             servicesManager.save(client);
             return mockMvc.perform(post(PRESENTATION_RESULT_ENDPOINT_URL)
                 .with(withHttpRequestProcessor())

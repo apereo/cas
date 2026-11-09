@@ -358,24 +358,23 @@ public abstract class AbstractOidcTests {
     protected CipherExecutor oauthRegisteredServiceCipherExecutor;
 
     protected static OidcRegisteredService getOidcRegisteredService() {
-        return getOidcRegisteredService(true, true);
+        return getOidcRegisteredService(true);
     }
 
-    protected static OidcRegisteredService getOidcRegisteredService(final boolean sign, final boolean encrypt) {
-        return getOidcRegisteredService("clientid", "https://oauth\\.example\\.org.*", sign, encrypt);
+    protected static OidcRegisteredService getOidcRegisteredService(final boolean encrypt) {
+        return getOidcRegisteredService("clientid", "https://oauth\\.example\\.org.*", encrypt);
     }
 
     protected static OidcRegisteredService getOidcRegisteredService(final String clientId, final String redirectUri) {
-        return getOidcRegisteredService(clientId, redirectUri, true, true);
+        return getOidcRegisteredService(clientId, redirectUri, true);
     }
 
     protected static OidcRegisteredService getOidcRegisteredService(final String clientId) {
-        return getOidcRegisteredService(clientId, "https://oauth\\.example\\.org.*", true, true);
+        return getOidcRegisteredService(clientId, "https://oauth\\.example\\.org.*", true);
     }
 
     protected static OidcRegisteredService getOidcRegisteredService(final String clientId,
                                                                     final String redirectUri,
-                                                                    final boolean sign,
                                                                     final boolean encrypt) {
         val svc = new OidcRegisteredService();
         svc.setClientId(clientId);
@@ -383,7 +382,6 @@ public abstract class AbstractOidcTests {
         svc.setDescription("description");
         svc.setClientSecrets(CollectionUtils.wrapList(OAuthRegisteredServiceClientSecret.withoutExpiration("secret")));
         svc.setServiceId(redirectUri);
-        svc.setSignIdToken(sign);
         svc.setEncryptIdToken(encrypt);
         svc.setIdTokenEncryptionAlg(KeyManagementAlgorithmIdentifiers.RSA_OAEP_256);
         svc.setIdTokenEncryptionEncoding(ContentEncryptionAlgorithmIdentifiers.AES_128_CBC_HMAC_SHA_256);

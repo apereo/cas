@@ -122,22 +122,11 @@ class OidcIdTokenSigningAndEncryptionServiceTests {
             assertFalse(oidcTokenSigningAndEncryptionService.shouldSignToken(getOAuthRegisteredService("1", "http://localhost/cas")));
         }
 
-        /**
-         * ID tokens are always signed, so a service that turns off signing is refused rather than given an unsigned ID token.
-         */
-        @Test
-        void verifySkipSigning() {
-            val oidcRegisteredService = getOidcRegisteredService(UUID.randomUUID().toString(),
-                "https://example-%s.org".formatted(UUID.randomUUID().toString()), false, false);
-            assertThrows(IllegalArgumentException.class, () -> oidcTokenSigningAndEncryptionService.shouldSignToken(oidcRegisteredService));
-            assertThrows(IllegalArgumentException.class, () -> oidcTokenSigningAndEncryptionService.encode(oidcRegisteredService, getClaims()));
-        }
-
         @Test
         void verifyValidationOperation() throws Throwable {
             val claims = getClaims();
             val oidcRegisteredService = getOidcRegisteredService(UUID.randomUUID().toString(),
-                "https://example-%s.org".formatted(UUID.randomUUID().toString()), true, false);
+                "https://example-%s.org".formatted(UUID.randomUUID().toString()), false);
             val result = oidcTokenSigningAndEncryptionService.encode(oidcRegisteredService, claims);
             val jwt = oidcTokenSigningAndEncryptionService.decode(result, Optional.of(oidcRegisteredService));
             assertNotNull(jwt);
@@ -146,7 +135,7 @@ class OidcIdTokenSigningAndEncryptionServiceTests {
         @Test
         void verifyDecodingFailureBadToken() {
             val oidcRegisteredService = getOidcRegisteredService(UUID.randomUUID().toString(),
-                "https://example-%s.org".formatted(UUID.randomUUID().toString()), true, false);
+                "https://example-%s.org".formatted(UUID.randomUUID().toString()), false);
             assertThrows(IllegalArgumentException.class,
                 () -> oidcTokenSigningAndEncryptionService.decode("bad-token", Optional.of(oidcRegisteredService)));
         }
@@ -154,7 +143,7 @@ class OidcIdTokenSigningAndEncryptionServiceTests {
         @Test
         void verifyDecodingFailureNoIssuer() throws Throwable {
             val oidcRegisteredService = getOidcRegisteredService(UUID.randomUUID().toString(),
-                "https://example-%s.org".formatted(UUID.randomUUID().toString()), true, false);
+                "https://example-%s.org".formatted(UUID.randomUUID().toString()), false);
             val claims = getClaims();
             claims.setIssuer(StringUtils.EMPTY);
             val result = oidcTokenSigningAndEncryptionService.encode(oidcRegisteredService, claims);
@@ -165,7 +154,7 @@ class OidcIdTokenSigningAndEncryptionServiceTests {
         @Test
         void verifyDecodingFailureBadIssuer() throws Throwable {
             val oidcRegisteredService = getOidcRegisteredService(UUID.randomUUID().toString(),
-                "https://example-%s.org".formatted(UUID.randomUUID().toString()), true, false);
+                "https://example-%s.org".formatted(UUID.randomUUID().toString()), false);
             val claims = getClaims();
             claims.setIssuer("bad-issuer");
             val result2 = oidcTokenSigningAndEncryptionService.encode(oidcRegisteredService, claims);
@@ -176,7 +165,7 @@ class OidcIdTokenSigningAndEncryptionServiceTests {
         @Test
         void verifyDecodingFailureBadClient() throws Throwable {
             val oidcRegisteredService = getOidcRegisteredService(UUID.randomUUID().toString(),
-                "https://example-%s.org".formatted(UUID.randomUUID().toString()), true, false);
+                "https://example-%s.org".formatted(UUID.randomUUID().toString()), false);
             val claims = getClaims();
             claims.setStringClaim(OAuth20Constants.CLIENT_ID, StringUtils.EMPTY);
             val result3 = oidcTokenSigningAndEncryptionService.encode(oidcRegisteredService, claims);

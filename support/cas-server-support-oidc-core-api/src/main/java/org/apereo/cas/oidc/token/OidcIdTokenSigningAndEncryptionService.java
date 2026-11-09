@@ -49,7 +49,7 @@ public class OidcIdTokenSigningAndEncryptionService extends BaseOidcJsonWebKeyTo
 
     /**
      * ID tokens are always signed. An unsigned ID token, whose algorithm is {@code none}, carries no proof of who issued it,
-     * so a service that turns off signing of ID tokens or asks for {@code none} is refused.
+     * so a service that asks for {@code none} is refused.
      *
      * @param registeredService the registered service
      * @return true for OpenID Connect services
@@ -57,9 +57,9 @@ public class OidcIdTokenSigningAndEncryptionService extends BaseOidcJsonWebKeyTo
     @Override
     public boolean shouldSignToken(final OAuthRegisteredService registeredService) {
         if (registeredService instanceof final OidcRegisteredService service) {
-            if (!service.isSignIdToken() || AlgorithmIdentifiers.NONE.equalsIgnoreCase(service.getIdTokenSigningAlg())) {
-                LOGGER.error("Service [{}] asks for unsigned ID tokens, which are not issued; turn on signing of ID tokens "
-                    + "with an algorithm other than 'none'", registeredService.getServiceId());
+            if (AlgorithmIdentifiers.NONE.equalsIgnoreCase(service.getIdTokenSigningAlg())) {
+                LOGGER.error("Service [{}] asks for unsigned ID tokens, which are not issued; choose an ID token signing algorithm "
+                    + "other than 'none'", registeredService.getServiceId());
                 throw new IllegalArgumentException("Unsigned ID tokens are not issued");
             }
             return true;

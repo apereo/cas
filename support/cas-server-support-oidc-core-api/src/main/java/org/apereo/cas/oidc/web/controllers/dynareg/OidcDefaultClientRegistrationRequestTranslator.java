@@ -245,7 +245,6 @@ public class OidcDefaultClientRegistrationRequestTranslator implements OidcClien
         }
         if (StringUtils.isNotBlank(registrationRequest.getIdTokenSignedResponseAlg())) {
             registeredService.setIdTokenSigningAlg(registrationRequest.getIdTokenSignedResponseAlg());
-            registeredService.setSignIdToken(true);
         }
 
         if (StringUtils.isNotBlank(registrationRequest.getIdTokenEncryptedResponseAlg())) {
